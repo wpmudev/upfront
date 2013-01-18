@@ -1,0 +1,95 @@
+#upfront-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12000px;
+  background-color: rgba(33,33,33,.7);
+  color: #fff;
+  font-size: 72pt;
+  font-weight: bold;
+  padding-top: 2em;
+  text-align: center;
+}
+
+#properties {
+  position: fixed;
+  top: 50px;
+  right: 0;
+  background: #eee;
+  width: 200px;
+  padding: 2em;
+  padding-top: 0;
+}
+#commands, .upfront-editable_trigger {
+  position: fixed;
+  top: 50px;
+  left: 0;
+}
+.upfront-edit_content {
+  right: 5px;
+  left: auto;
+}
+#commands {
+  background: #eee;
+  width: 200px;
+  padding: 2em;
+  padding-top: 0; 
+}
+
+#layouts {
+  position: fixed;
+  top: 28px;
+  width: 100%;
+  height: 22px;
+  background: #eee;
+}
+#layouts nav {
+  display: table;
+  width: 100%;
+}
+#layouts ul {
+  display: table-row;
+  width: 100%;
+}
+#layouts li {
+  display: table-cell;
+  text-align: center;
+  line-height: 22px;
+  padding-left: 1em;
+}
+#layouts li:first-child {
+  text-align: right;
+}
+#layouts li:last-child {
+  text-align: left;
+}
+#layouts li.active {
+  text-shadow: 1px 1px 3px #000;
+  color: #fff;
+}
+
+
+.upfront-active_entity .upfront-editable_entity {
+  background: #b3da11;
+}
+.upfront-placeholder {
+  background-color: red;
+  height: 20px;
+  width: 100px;
+  float: left;
+}
+
+.upfront-region {
+  background-color: rgba(127, 127, 127, .5);
+  padding: 0;
+}
+.upfront-region:after,
+.upfront-region:before
+ {
+  content: " "; /* 1 */
+  display: table; /* 2 */
+ }
+.upfront-region:after {
+  clear: both;
+}

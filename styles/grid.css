@@ -1,0 +1,132 @@
+/* --- Desktop --- */
+/*
+#page.desktop {
+  max-width: 992px;
+  background-size: 4.5454545455% 4.5454545455%;
+}
+.desktop .c1  { width:4.5454545455%; }
+.desktop .c2  { width:9.090909091%; }
+.desktop .c3  { width:13.6363636365%; }
+.desktop .c4  { width:18.181818182%; }
+.desktop .c5  { width:22.7272727275%; }
+.desktop .c6  { width:27.272727273%; }
+.desktop .c7  { width:31.8181818185%; }
+.desktop .c8  { width:36.363636364%; }
+.desktop .c9  { width:40.9090909095%; }
+.desktop .c10 { width:45.454545455%; }
+.desktop .c11 { width:50.0000000005%; }
+.desktop .c12 { width:54.545454546%; }
+.desktop .c13 { width:59.0909090915%; }
+.desktop .c14 { width:63.636363637%; }
+.desktop .c15 { width:68.1818181825%; }
+.desktop .c16 { width:72.727272728%; }
+.desktop .c17 { width:77.27272727350001%; }
+.desktop .c18 { width:81.818181819%; }
+.desktop .c19 { width:86.3636363645%; }
+.desktop .c20 { width:90.90909091%; }
+.desktop .c21 { width:95.45454545550001%; }
+.desktop .c22 { width:100%; }
+
+.desktop .ml1  { margin-left:4.5454545455%; }
+.desktop .ml2  { margin-left:9.090909091%; }
+.desktop .ml3  { margin-left:13.6363636365%; }
+.desktop .ml4  { margin-left:18.181818182%; }
+.desktop .ml5  { margin-left:22.7272727275%; }
+.desktop .ml6  { margin-left:27.272727273%; }
+.desktop .ml7  { margin-left:31.8181818185%; }
+.desktop .ml8  { margin-left:36.363636364%; }
+.desktop .ml9  { margin-left:40.9090909095%; }
+.desktop .ml10 { margin-left:45.454545455%; }
+.desktop .ml11 { margin-left:50.0000000005%; }
+.desktop .ml12 { margin-left:54.545454546%; }
+.desktop .ml13 { margin-left:59.0909090915%; }
+.desktop .ml14 { margin-left:63.636363637%; }
+.desktop .ml15 { margin-left:68.1818181825%; }
+.desktop .ml16 { margin-left:72.727272728%; }
+.desktop .ml17 { margin-left:77.27272727350001%; }
+.desktop .ml18 { margin-left:81.818181819%; }
+.desktop .ml19 { margin-left:86.3636363645%; }
+.desktop .ml20 { margin-left:90.90909091%; }
+.desktop .ml21 { margin-left:95.45454545550001%; }
+*/
+
+
+/* --- Tablet --- */
+/*
+#page.tablet {
+  max-width: 780px;
+  background-size: 9.090909091% 9.090909091%;
+}
+
+.tablet .t1  { width:9.090909091%; }
+.tablet .t2  { width:18.181818182%; }
+.tablet .t3  { width:27.272727273%; }
+.tablet .t4  { width:36.363636364%; }
+.tablet .t5 { width:45.454545455%; }
+.tablet .t6 { width:54.545454546%; }
+.tablet .t7 { width:63.636363637%; }
+.tablet .t8 { width:72.727272728%; }
+.tablet .t9 { width:81.818181819%; }
+.tablet .t10 { width:90.90909091%; }
+.tablet .t11 { width:95.45454545550001%; }
+.tablet .t12 { width:100%; }
+
+.tablet .tml1  { margin-left:4.5454545455%; }
+.tablet .tml2  { margin-left:9.090909091%; }
+.tablet .tml3  { margin-left:13.6363636365%; }
+.tablet .tml4  { margin-left:18.181818182%; }
+.tablet .tml5  { margin-left:22.7272727275%; }
+.tablet .tml6  { margin-left:27.272727273%; }
+.tablet .tml7  { margin-left:31.8181818185%; }
+.tablet .tml8  { margin-left:36.363636364%; }
+.tablet .tml9  { margin-left:40.9090909095%; }
+.tablet .tml10 { margin-left:45.454545455%; }
+.tablet .tml11 { margin-left:50.0000000005%; }
+.tablet .tml12 { margin-left:54.545454546%; }
+.tablet .tml13 { margin-left:59.0909090915%; }
+.tablet .tml14 { margin-left:63.636363637%; }
+.tablet .tml15 { margin-left:68.1818181825%; }
+.tablet .tml16 { margin-left:72.727272728%; }
+.tablet .tml17 { margin-left:77.27272727350001%; }
+.tablet .tml18 { margin-left:81.818181819%; }
+.tablet .tml19 { margin-left:86.3636363645%; }
+.tablet .tml20 { margin-left:90.90909091%; }
+.tablet .tml21 { margin-left:95.45454545550001%; }
+*/
+
+/* --- Mobile --- */
+/*
+#page.mobile {
+  max-width: 460px;
+  background-size: 18.181818182% 18.181818182%;
+}
+
+.mobile .m1  { width:18.181818182%; }
+.mobile .m2  { width:36.363636364%; }
+.mobile .m3 { width:54.545454546%; }
+.mobile .m4 { width:72.727272728%; }
+.mobile .m5 { width:90.90909091%; }
+.mobile .m6 { width:100%; }
+
+.mobile .mml1  { margin-left:4.5454545455%; }
+.mobile .mml2  { margin-left:9.090909091%; }
+.mobile .mml3  { margin-left:13.6363636365%; }
+.mobile .mml4  { margin-left:18.181818182%; }
+.mobile .mml5  { margin-left:22.7272727275%; }
+.mobile .mml6  { margin-left:27.272727273%; }
+.mobile .mml7  { margin-left:31.8181818185%; }
+.mobile .mml8  { margin-left:36.363636364%; }
+.mobile .mml9  { margin-left:40.9090909095%; }
+.mobile .mml10 { margin-left:45.454545455%; }
+.mobile .mml11 { margin-left:50.0000000005%; }
+.mobile .mml12 { margin-left:54.545454546%; }
+.mobile .mml13 { margin-left:59.0909090915%; }
+.mobile .mml14 { margin-left:63.636363637%; }
+.mobile .mml15 { margin-left:68.1818181825%; }
+.mobile .mml16 { margin-left:72.727272728%; }
+.mobile .mml17 { margin-left:77.27272727350001%; }
+.mobile .mml18 { margin-left:81.818181819%; }
+.mobile .mml19 { margin-left:86.3636363645%; }
+.mobile .mml20 { margin-left:90.90909091%; }
+.mobile .mml21 { margin-left:95.45454545550001%; }
+*/
