@@ -93,6 +93,7 @@ require.config({
 		views: "upfront/upfront-views",
 		editor_views: "upfront/upfront-views-editor",
 		util: "upfront/upfront-util",
+		behaviors: "upfront/upfront-behaviors",
 		application: "upfront/upfront-application",
 		objects: "upfront/upfront-objects"
 	}
