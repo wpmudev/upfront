@@ -64,6 +64,11 @@ var LayoutEditor = {
 					className = Upfront.Settings.LayoutEditor.Grid.class + classNum,
 					prop = model.replace_class(className)
 				;
+			},
+			resize: function (e, ui) {
+				// Hack for losing height
+				var $el = ui.element;
+				$el.height((ui.size.height > 5 ? ui.size.height : 0) || ui.originalSize.height);
 			}
 		});
 	},
