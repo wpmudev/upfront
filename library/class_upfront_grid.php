@@ -42,7 +42,11 @@ class Upfront_Grid {
 		foreach ($this->get_breakpoints() as $name => $point) {
 			$point_css = '';
 			foreach ($layout['regions'] as $region) {
+				// Cascade defaults
+				$region_view = new Upfront_Region($region);
+				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
 				foreach ($region['modules'] as $module) {
+					// Particular overrides
 					$point_css .= $point->apply($module, $this->get_grid_scope());
 					foreach ($module['objects'] as $object) {
 						$point_css .= $point->apply($object, $this->get_grid_scope());
@@ -58,6 +62,13 @@ class Upfront_Grid {
 	}
 }
 
+class Upfront_Grid_Factory {
+	public static function get_grid () {
+		$grid = 'Upfront_Grid';
+		if (class_exists($grid)) return new $grid;
+	}	
+}
+
 abstract class Upfront_GridBreakpoint {
 	const PREFIX_WIDTH = 'width';
 	const PREFIX_MARGIN_LEFT = 'margin-left';
@@ -71,6 +82,12 @@ abstract class Upfront_GridBreakpoint {
 		'margin-right' => 'mr',
 	);
 	protected $_color = 'red';
+
+	protected $_debugger;
+
+	public function __construct () {
+		$this->_debugger = Upfront_Debug::get_debugger();
+	}
 
 	public function get_debug_rule ($scope) {
 		return ".{$scope} * {color:{$this->_color}!important;}\n";
@@ -91,12 +108,49 @@ abstract class Upfront_GridBreakpoint {
 		return false;
 	}
 
+	public function get_prefix_regex ($pfx) {
+		$prefix = $this->get_prefix($pfx);
+		if (!$prefix) return false;
+		return '^' . preg_quote($prefix, '/') . '(\d+)$';	
+	}
+
+	public function get_column_size_for ($entity, $pfx=false) {
+		$size = 0;
+		if (!$pfx) $pfx = self::PREFIX_WIDTH;
+
+		$regex = $this->get_prefix_regex($pfx);
+		if (!$regex) return $size;
+
+		$raw_classes = $this->_get_property('class', $entity);
+		$classes = array_map('trim', explode(' ', $raw_classes));
+		if (!$classes) return $size;
+		foreach ($classes as $class) {
+			$matches = array();
+			if (!preg_match("/{$regex}/", $class, $matches)) continue; // We don't know what's this
+			$size = $matches[1];
+			break;
+		}
+
+		return $size;
+	}
+
+	public function get_relative_size_for ($entity, $pfx) {
+		$columns = $this->get_column_size_for($entity, $pfx);
+		return $this->_columns_to_size($columns);
+	}
+
 	public function get_breakpoint_rule () {
 		return $this->_rule;
 	}
 
 	public function wrap ($style) {
-		$media = "@media {$this->_rule}";
+		$media = '';
+		if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
+			$class_name = get_class($this);
+			$columns = $this->get_columns();
+			$media .= "/* Breakpoint {$class_name}: {$columns} columns */\n";
+		}
+		$media .= "@media {$this->_rule}";
 		$rules = "{\n{$style} }\n\n";
 		return "{$media}{$rules}";
 	}
@@ -134,7 +188,7 @@ abstract class Upfront_GridBreakpoint {
 			$rx = '^' . preg_quote($prefix, '/') . '(\d+)$';
 			$matches = array();
 			if (!preg_match("/{$rx}/", $class, $matches)) continue; // We don't know what's this
-			$size = $this->_columns_to_size($matches[1]);
+			$size = $this->_columns_to_size($matches[1]) . '%';
 			$style .= "{$rule}: {$size}";
 		}
 		return $style;
@@ -159,7 +213,7 @@ abstract class Upfront_GridBreakpoint {
 			$span *= $columns_modifier;
 		}
 		*/
-		return ((float)$span * $base) . '%';
+		return ((float)$span * $base);
 	}
 }
 

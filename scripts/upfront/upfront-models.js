@@ -128,6 +128,7 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0].properties)
 			}
+			if (this.init) this.init();
 		},
 	}),
 

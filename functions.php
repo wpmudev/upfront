@@ -24,6 +24,7 @@ class Upfront {
 
 	private function __construct () {
 		foreach ($this->_servers as $component) $this->_run_server($component);
+		do_action('uprfont-core-initialized');
 	}
 
 	public static function serve () {
@@ -48,7 +49,7 @@ class Upfront {
 	}
 
 	function inject_grid_scope_class ($cls) {
-		$grid = new Upfront_Grid;
+		$grid = Upfront_Grid_Factory::get_grid();
 		$cls[] = $grid->get_grid_scope();
 		return $cls;
 	}
@@ -88,6 +89,8 @@ class Upfront {
   </div>
   <button class="upfront-edit_layout upfront-editable_trigger">Edit layout</button>
 EOAdditivemarkup;
+		
+		do_action('upfront-core-inject_dependencies');
 	}
 
 }

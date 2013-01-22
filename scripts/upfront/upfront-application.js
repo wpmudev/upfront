@@ -119,13 +119,13 @@ var LayoutEditor = new (Subapplication.extend({
 
 		// @TODO:remove this
 		$("body").append('<div id="upfront-loading">Loading...</div>');
-
-		require(['models', 'views', 'editor_views', 'behaviors'], function (models, views, editor, behaviors) {
+		require(Upfront.Settings.LayoutEditor.Requirements.core, function (models, views, editor, behaviors) {
 			_.extend(Upfront, models);
 			_.extend(Upfront, views);
 			_.extend(Upfront.Views, editor);
 			_.extend(Upfront, behaviors);
-			require(['objects'], function (objects) {
+
+			require(Upfront.Settings.LayoutEditor.Requirements.entities, function (objects) {
 				_.extend(Upfront.Objects, objects);
 				app.load_layout(layout);
 			});

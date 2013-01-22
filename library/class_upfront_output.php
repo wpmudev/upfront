@@ -53,6 +53,7 @@ class Upfront_Output {
 abstract class Upfront_Entity {
 
 	protected $_data;
+	protected $_tag = 'div';
 	protected $_debugger;
 
 	public function __construct ($data) {
@@ -62,17 +63,34 @@ abstract class Upfront_Entity {
 
 	abstract public function get_markup ();
 
-	protected function _get_property ($prop) {
-		$properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
-		if (empty($properties)) return false;
 
-		$value = false;
-		foreach ($properties as $property) {
-			if ($prop != $property['name']) continue;
-			$value = $property['value'];
-			break;
-		}
-		return $value;
+	public function get_style_for ($breakpoint, $context) {
+
+		return '';
+
+		$post = $pre = '';
+		$post = $this->_debugger->is_active(Upfront_Debug::STYLE)
+			? "/* General styles for {$this->get_name()} */"
+			: ""
+		;
+		return trim("{$pre} .{$context} .{$this->get_css_class()} {" .
+			'width: 100%;' .
+		"} {$post}") . "\n";
+	}
+
+	public function get_front_context () {
+		return 'default';
+	}
+
+	public function get_css_class () {
+		return join(' ', array(
+			"upfront-output-" . strtolower($this->_type),
+			$this->get_front_context(),
+		));
+	}
+
+	protected function _get_property ($prop) {
+		return upfront_get_property_value($prop, $this->_data);
 	}
 
 	public function get_name () {
@@ -89,15 +107,31 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_child_view_class;
 
 	public function get_markup () {
-		foreach ($this->_data[$this->_children] as $child) {
-			$child_view = new $this->_child_view_class($child);
+		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
+			$child_view = $this->instantiate_child($child, $idx);
 			$html .= $child_view->get_markup();
 		}
 		return $this->wrap($html);
 	}
 
-	public function get_css_class () {
-		return "upfront-output-" . strtolower($this->_type);
+	// Overriden from Upfront_Entity
+	public function get_style_for ($breakpoint, $context) {
+		$style = parent::get_style_for($breakpoint, $context);
+		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
+			$child_view = $this->instantiate_child($child, $idx);
+			$style .= $child_view->get_style_for($breakpoint, $context);
+		}
+		return $style;
+	}
+
+	public function instantiate_child ($child_data, $idx) {
+		$view_class = upfront_get_property_value("view_class", $child_data);
+		$view = $view_class
+			? "Upfront_{$view_class}"
+			: $this->_child_view_class
+		;
+		if (!class_exists($view)) $view = $this->_child_view_class;
+		return new $view($child_data);
 	}
 
 	public function wrap ($out) {
@@ -111,7 +145,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 		}
 		
 		$element_id = $element_id ? "id='{$element_id}'" : '';
-		return "{$pre}<div class='{$class}' {$element_id}>{$out}</div>{$post}";
+		return "{$pre}<{$this->_tag} class='{$class}' {$element_id}>{$out}</{$this->_tag}>{$post}";
 	}
 }
 
@@ -127,6 +161,7 @@ class Upfront_Module extends Upfront_Container {
 	protected $_child_view_class = 'Upfront_Object';
 }
 class Upfront_Object extends Upfront_Entity {
+	protected $_type = 'Object';
 
 	public function get_markup () {
 		$view_class = 'Upfront_' . $this->_get_property("view_class");

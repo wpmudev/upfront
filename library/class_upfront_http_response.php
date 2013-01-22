@@ -8,9 +8,11 @@ abstract class Upfront_HttpResponse {
 	protected $_data;
 	protected $_status = 200;
 	protected $_content_type = 'text/html';
+	protected $_debugger;
 
 	public function __construct ($data) {
 		$this->_data = $data;
+		$this->_debugger = Upfront_Debug::get_debugger();
 	}
 
 	public function get_status () {

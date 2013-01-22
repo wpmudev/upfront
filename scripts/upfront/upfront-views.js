@@ -22,6 +22,24 @@ define(_template_files, function () {
 			"dispatcher": _dispatcher
 		},
 
+	/* ----- Core View Mixins ----- */
+
+		FixedObject_Mixin = {
+			activate_condition: function () {
+				return false;
+			}
+		},
+
+		FixedObjectInAnonymousModule_Mixin = {
+			activate_condition: function () {
+				var parent_view = this.parent_module_view,
+					parent_model = parent_view && parent_view.model ? parent_view.model : false
+				;
+				if (!parent_model) return true; // Something went wrong, assume we're not in anonymos module
+				return !!parent_model.get("name").length; // Anonymous parent check
+			}
+		},
+
 	/* ----- Core views ----- */
 
 		_Upfront_SingularEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
@@ -44,6 +62,7 @@ define(_template_files, function () {
 				return false;
 			},
 			activate: function () {
+				if (this.activate_condition && !this.activate_condition()) return false;
 				$(".upfront-active_entity").removeClass("upfront-active_entity");
 				this.$el.addClass("upfront-active_entity");
 				this.trigger("upfront:entity:activate", this);
@@ -129,6 +148,8 @@ define(_template_files, function () {
 						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "ObjectView",
 						local_view = new Upfront.Views[view_class]({model: obj})
 					;
+					local_view.parent_view = me;
+					local_view.parent_module_view = me.parent_view;
 					local_view.render();
 					$el.append(local_view.el);
 					local_view.bind("upfront:entity:activate", me.on_activate, me);
@@ -162,6 +183,7 @@ define(_template_files, function () {
 				this.$el.html(template);
 
 				var objects_view = new Objects({"model": this.model.get("objects")});
+				objects_view.parent_view = this;
 				objects_view.render();
 				this.$(".upfront-objects_container").append(objects_view.el);
 
@@ -255,6 +277,10 @@ define(_template_files, function () {
 			"ObjectView": ObjectView,
 			"Module": Module,
 			"Layout": Layout
+		},
+		"Mixins": {
+			"FixedObject": FixedObject_Mixin,
+			"FixedObjectInAnonymousModule": FixedObjectInAnonymousModule_Mixin
 		}
 	};
 });

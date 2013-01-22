@@ -7,6 +7,7 @@ if (!Upfront || !Upfront.Application.LayoutEditor || !Upfront.Application.Layout
 
 // These will be filterable!
 var object_dependencies = [
+	'upfront/objects/loading',
 	'upfront/objects/image',
 	'upfront/objects/plain_text',
 ];

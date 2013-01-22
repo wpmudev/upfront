@@ -7,11 +7,12 @@ var ImageModel = Upfront.Models.ObjectModel.extend({
 	}
 });
 
-var ImageView = Upfront.Views.ObjectView.extend({
+var ImageView = Upfront.Views.ObjectView.extend(_.extend({}, Upfront.Mixins.FixedObjectInAnonymousModule, {
 	model: ImageModel,
 	get_content_markup: function () {
 		return '<img src="' + this.model.get_content() + '" />';
 	},
+
 	on_edit: function () {
 		this.$el.html(
 			'<input type="text" style="width:99%" value="' + this.model.get_content() + '" />' +
@@ -36,7 +37,7 @@ var ImageView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 		this.render();	
 	}
-});
+}));
 
 var ImageCommand = Upfront.Views.Editor.Command.extend({
 	render: function () {

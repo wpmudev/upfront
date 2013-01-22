@@ -6,6 +6,7 @@ abstract class Upfront_Debug {
 
 	const STYLE = 'style';
 	const MARKUP = 'markup';
+	const RESPONSE = 'response';
 
 	protected $_levels = array();
 

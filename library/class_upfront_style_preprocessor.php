@@ -8,10 +8,15 @@ class Upfront_StylePreprocessor {
 	public function __construct (Upfront_Grid $grid, Upfront_Layout $layout=NULL) {
 		$this->_grid = $grid;
 		$this->_layout = $layout;
+		$this->_debugger = Upfront_Debug::get_debugger();
 	}
 
 	public function process () {
-		return $this->_grid->apply_breakpoints($this->_layout->to_php());
+		$style = $this->_grid->apply_breakpoints($this->_layout->to_php());
+		return $this->_debugger->is_active(Upfront_Debug::STYLE)
+			? $style
+			: $this->_compress($style)
+		;
 	}
 
 	public function get_editor_grid () {
@@ -39,5 +44,25 @@ class Upfront_StylePreprocessor {
 			$style .= join("\n", $rules);
 		}
 		return $style;
+	}
+
+	/**
+	 * Code based on: 
+	 * 	Reinhold Weber's compression method (source: )
+	 * 	Manas Tungare's compression method (source: https://gist.github.com/2625128)
+	 * @param  string $buffer Raw CSS
+	 * @return string Compressed CSS
+	 */
+	private function _compress ($buffer) {
+		/* remove comments */
+		$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+
+		/* remove tabs, spaces, newlines, etc. */
+		$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+		
+		// Remove space after colons
+		$buffer = str_replace(': ', ':', $buffer);
+
+		return $buffer;
 	}
 }
