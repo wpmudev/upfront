@@ -175,6 +175,10 @@ define(_template_files, function () {
 				this.model.get("properties").bind("change", this.render, this);
 				this.model.get("properties").bind("add", this.render, this);
 				this.model.get("properties").bind("remove", this.render, this);
+
+				if (this.on_resize) {
+					this.on("upfront:entity:resize", this.on_resize, this);
+				}
 			},
 			render: function () {
 				var props = {},
@@ -205,7 +209,11 @@ define(_template_files, function () {
 					me = this
 				;
 				this.model.each(function (module) {
-					var local_view = new Module({"model": module});
+					var view_class_prop = module.get("properties").where({"name": "view_class"}),
+						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "Module",
+						//view_class = Upfront.Views[view_class] ? view_class : "Module",
+						local_view = new Upfront.Views[view_class]({model: module})
+					;
 					local_view.render();
 					$el.append(local_view.el);
 					local_view.bind("upfront:entity:activate", me.on_activate, me);

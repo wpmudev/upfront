@@ -68,7 +68,7 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function save_layout () {
-		$data = !empty($_POST['data']) ? $_POST['data'] : false;
+		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 
 		$layout = Upfront_Layout::from_php($data);

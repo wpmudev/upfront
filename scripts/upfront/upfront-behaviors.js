@@ -62,8 +62,10 @@ var LayoutEditor = {
 					diff = $el.outerWidth() / parent_width,
 					classNum = parseInt(diff * GRID_SIZE, 10),
 					className = Upfront.Settings.LayoutEditor.Grid.class + classNum,
-					prop = model.replace_class(className)
+					prop = model.replace_class(className),
+					relative_percentage = 100 * (classNum/GRID_SIZE)
 				;
+				view.trigger("upfront:entity:resize", classNum, relative_percentage);
 			},
 			resize: function (e, ui) {
 				// Hack for losing height

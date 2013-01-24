@@ -138,7 +138,7 @@ var _alpha = "alpha",
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0].properties)
+				this.set("properties", args[0]["properties"])
 			}
 			if (this.init) this.init();
 		},

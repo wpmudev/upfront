@@ -57,7 +57,7 @@ var ImageCommand = Upfront.Views.Editor.Command.extend({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c20 ml2"}
+					{"name": "class", "value": "c22 upfront-image_module"}
 				],
 				"objects": [
 					object

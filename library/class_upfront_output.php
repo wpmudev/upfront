@@ -16,6 +16,10 @@ class Upfront_Output {
 		$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
 		$layout = Upfront_Layout::from_id($layout_id);
 
+if (!$layout->to_php()) {
+	$layout = Upfront_Layout::create_layout();
+}
+
 		$post = get_post($post_id);
 		$me = new self($layout, $post);
 
