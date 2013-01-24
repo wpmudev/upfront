@@ -33,6 +33,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 	},
 	on_cancel: function () {
 		this.undelegateEvents();
+		this.deactivate();
 		this.delegateEvents();
 		this.render();	
 	}

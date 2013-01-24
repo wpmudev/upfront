@@ -16,3 +16,17 @@ function upfront_get_property_value ($prop, $data) {
 	}
 	return $value;
 }
+
+
+
+// ----- API -----
+
+/**
+ * Registers LayoutEditor Entity (Module/Object) resource.
+ * @param  string $name Entity name, as used for registering
+ * @param  string $path Entity main resource URL
+ */
+function upfront_add_layout_editor_entity ($name, $path) {
+	$entities = Upfront_Entity_Registry::get_instance();
+	return $entities->set($name, $path);
+}

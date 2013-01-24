@@ -2,8 +2,11 @@
 
 var LoadingModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		if (!this.get("properties").where({"name": "type"}).length) this.get("properties").add(new Upfront.Models.Property({"name": "type", "value": "LoadingModel"}));
-		if (!this.get("properties").where({"name": "view_class"}).length) this.get("properties").add(new Upfront.Models.Property({"name": "view_class", "value": "LoadingView"}));
+		this.init_property("type", "LoadingModel");
+		this.init_property("view_class", "LoadingView");
+		this.init_property("element_id", Upfront.Util.get_unique_id("please_wait"));
+		this.init_property("content", 'Please, wait...');
+		this.init_property("class", 'c22');
 	}
 });
 

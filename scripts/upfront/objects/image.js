@@ -2,8 +2,11 @@
 
 var ImageModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		if (!this.get("properties").where({"name": "type"}).length) this.get("properties").add(new Upfront.Models.Property({"name": "type", "value": "ImageModel"}));
-		if (!this.get("properties").where({"name": "view_class"}).length) this.get("properties").add(new Upfront.Models.Property({"name": "view_class", "value": "ImageView"}));
+		this.init_property("type", "ImageModel");
+		this.init_property("view_class", "ImageView");
+		
+		this.init_property("element_id", Upfront.Util.get_unique_id("image-object"));
+		this.init_property("class", "c22");
 	}
 });
 
@@ -47,9 +50,7 @@ var ImageCommand = Upfront.Views.Editor.Command.extend({
 		var object = new ImageModel({
 				"name": "",
 				"properties": [
-					{"name": "element_id", "value": Upfront.Util.get_unique_id("image-object")},
 					{"name": "content", "value": "http://wpsalad.com/wp-content/uploads/2012/11/wpmudev.png"},
-					{"name": "class", "value": "c22"}
 				]
 			}),
 			module = new Upfront.Models.Module({

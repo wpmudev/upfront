@@ -1,6 +1,17 @@
 <?php
+/**
+ * Core Upfront server classes.
+ * All AJAX requests should be routed through a Server implementation,
+ * in order to leverage joint debugging, server response standards and compression.
+ */
 
-class Upfront_Server {
+
+
+interface IUpfront_Server {
+	public static function serve ();
+}
+
+abstract class Upfront_Server implements IUpfront_Server {
 
 	protected $_debugger;
 
@@ -24,7 +35,9 @@ class Upfront_Server {
 }
 
 
-
+/**
+ * Layout editor AJAX request hub.
+ */
 class Upfront_Ajax extends Upfront_Server {
 
 	public static function serve () {
@@ -66,7 +79,9 @@ class Upfront_Ajax extends Upfront_Server {
 }
 
 
-
+/**
+ * Serves require.js main config file and initializes Upfront.
+ */
 class Upfront_JavascriptMain extends Upfront_Server {
 
 	public static function serve () {
@@ -83,6 +98,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$root = Upfront::get_root_url();
 		$ajax = admin_url('admin-ajax.php');
 
+
+		$entities = Upfront_Entity_Registry::get_instance();
+		$registered = $entities->get_all();
+
 		$paths = array(
 			"models" => "upfront/upfront-models",
 			"views" => "upfront/upfront-views",
@@ -92,19 +111,28 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"application" => "upfront/upfront-application",
 			"objects" => "upfront/upfront-objects",
 		);
-		$paths = json_encode(
-			apply_filters('upfront-settings-requirement_paths', $paths)
+		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
+		
+		$require_config = array(
+			'baseUrl' => "{$root}/scripts",
+			'paths' => $paths,
+		);
+		if ($this->_debugger->is_active(Upfront_Debug::CACHED_RESPONSE)) {
+			$require_config['urlArgs'] = "nocache=" + microtime(true);
+		}
+		$require_config = json_encode(
+			apply_filters('upfront-settings-require_js_config', $require_config)
 		);
 
 		$layout_editor_requirements = array(
 			"core" => array('models', 'views', 'editor_views', 'behaviors'),
-			"entities" => array('objects'),
+			"entities" => array_merge(array('objects'), array_keys($registered)),
 		);
 		$layout_editor_requirements = json_encode(
 			apply_filters('upfront-settings-layout_editor_requirements', $layout_editor_requirements)
 		);
 
-		$grid = Upfront_Grid_Factory::get_grid();
+		$grid = Upfront_Grid::get_grid();
 		$breakpoints = $grid->get_breakpoints();
 
 		$grid_info = array(
@@ -135,11 +163,7 @@ var Upfront = window.Upfront || {};
 
 (function () {
 
-require.config({
-	urlArgs: "nocache=" + (new Date).getTime(),
-	baseUrl: '{$root}/scripts',
-	paths: {$paths}
-});
+require.config($require_config);
 
 (function ($) {
 $(function () {
@@ -189,7 +213,9 @@ EOMainJs;
 }
 
 
-
+/**
+ * Serves frontend stylesheet.
+ */
 class Upfront_StylesheetMain extends Upfront_Server {
 	public static function serve () {
 		$me = new self;
@@ -201,7 +227,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function load_styles () {
-		$grid = Upfront_Grid_Factory::get_grid();
+		$grid = Upfront_Grid::get_grid();
 		$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
 		$layout = Upfront_Layout::from_id($layout_id);
 
@@ -212,7 +238,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 }
 
 
-
+/**
+ * Serves LayoutEditor grid stylesheet.
+ */
 class Upfront_StylesheetEditor extends Upfront_Server {
 	public static function serve () {
 		$me = new self;
@@ -224,7 +252,7 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 	}
 
 	function load_styles () {
-		$grid = Upfront_Grid_Factory::get_grid();
+		$grid = Upfront_Grid::get_grid();
 
 		$preprocessor = new Upfront_StylePreprocessor($grid);
 		$style = $preprocessor->get_editor_grid();

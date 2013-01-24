@@ -3,6 +3,7 @@
 define('UPFRONT_DEBUG_LEVELS', 'all');
 
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_registry.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_http_response.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_server.php');
@@ -49,7 +50,7 @@ class Upfront {
 	}
 
 	function inject_grid_scope_class ($cls) {
-		$grid = Upfront_Grid_Factory::get_grid();
+		$grid = Upfront_Grid::get_grid();
 		$cls[] = $grid->get_grid_scope();
 		return $cls;
 	}
@@ -60,7 +61,6 @@ class Upfront {
 		wp_enqueue_script('underscore');
 		wp_enqueue_script('backbone');
 		wp_enqueue_script('jquery-ui');
-		//wp_enqueue_script('jquery-ui-sortable');
 		wp_enqueue_script('jquery-ui-draggable');
 		wp_enqueue_script('jquery-ui-resizable');
 		wp_enqueue_script('jquery-ui-selectable');
@@ -73,7 +73,6 @@ class Upfront {
 		$url = self::get_root_url();
 		echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/font-awesome.min.css" />';
 		echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/global.css" />';
-		//echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/grid.css" />';
 		echo '<link type="text/css" rel="stylesheet" href="' . admin_url('admin-ajax.php?action=upfront_load_editor_grid') . '" />';
 		echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/editor-interface.css" />';
 		echo '<script src="' . $url . '/scripts/require.js"></script>';

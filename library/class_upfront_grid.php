@@ -12,9 +12,14 @@ class Upfront_Grid {
 
 	private $_max_columns = 0;
 
-	public function __construct () {
+	protected function __construct () {
 		$this->_instantiate_breakpoints();
 		$this->_debugger = Upfront_Debug::get_debugger();
+	}
+
+	public static function get_grid () {
+		$grid = apply_filters('uprfont-core-grid_class', 'Upfront_Grid');
+		if (class_exists($grid)) return new $grid;
 	}
 
 	private function _instantiate_breakpoints () {
@@ -60,13 +65,6 @@ class Upfront_Grid {
 		}
 		return $css;
 	}
-}
-
-class Upfront_Grid_Factory {
-	public static function get_grid () {
-		$grid = 'Upfront_Grid';
-		if (class_exists($grid)) return new $grid;
-	}	
 }
 
 abstract class Upfront_GridBreakpoint {

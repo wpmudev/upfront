@@ -61,6 +61,10 @@ define(_template_files, function () {
 				this.activate();
 				return false;
 			},
+			deactivate: function () {
+				this.$el.removeClass("upfront-active_entity");
+				this.trigger("upfront:entity:deactivate", this);
+			},
 			activate: function () {
 				if (this.activate_condition && !this.activate_condition()) return false;
 				$(".upfront-active_entity").removeClass("upfront-active_entity");
@@ -129,7 +133,7 @@ define(_template_files, function () {
 				;
 				this.$el.html(template);
 
-				if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
+				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 			}
 		}),
 

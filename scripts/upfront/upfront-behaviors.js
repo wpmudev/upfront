@@ -75,7 +75,7 @@ var LayoutEditor = {
 
 
 	create_sortable: function (view, model) {
-		$(".ui-draggable").draggable("destroy");
+		//$(".ui-draggable").draggable("destroy"); // Draggables destroying in this way breaks Chrome
 		// Don't allow sorting on non-desktop layouts
 		if (!$(Upfront.Settings.LayoutEditor.Selectors.main).is(".desktop")) return false;
 
@@ -91,6 +91,7 @@ var LayoutEditor = {
 			GRID_SIZE = Upfront.Settings.LayoutEditor.Grid.size
 		;
 		$measure.remove();
+
 		if ($draggable.draggable) $draggable.draggable({
 			//containment: $containment,
 			revert: true,

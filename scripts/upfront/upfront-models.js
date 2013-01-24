@@ -53,6 +53,18 @@ var _alpha = "alpha",
 			var prop = this.get_property_by_name(name);
 			return prop && prop.get ? prop.get("value") : false;
 		},
+		has_property: function (name) {
+			return !!this.get_property_value_by_name(name);
+		},
+		has_property_value: function (property, value) {
+			return (value == this.get_property_value_by_name(property));
+		},
+		add_property: function (name, value) {
+			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}));
+		},
+		init_property: function (name, value) {
+			if (!this.has_property(name)) this.add_property(name, value);
+		},
 	// ----- Magic properties manipulation ----- */
 		get_content: function () {
 			return this.get_property_value_by_name("content");

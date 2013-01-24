@@ -4,6 +4,7 @@ abstract class Upfront_Debug {
 
 	const ALL = 'all';
 
+	const CACHED_RESPONSE = 'cached_response';
 	const STYLE = 'style';
 	const MARKUP = 'markup';
 	const RESPONSE = 'response';
