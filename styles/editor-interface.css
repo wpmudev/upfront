@@ -117,7 +117,11 @@ html, body {
 	height: 100%;
 	z-index: 0;
 	display: none;
-	background: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 1px, transparent 1px, transparent);
+	background: -webkit-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
+	background: -moz-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
+	background: -ms-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
+	background: -o-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
+	background: linear-gradient(to top, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
 	background-size: 100% 15px;
 }
 .upfront-overlay-grid .c1 {

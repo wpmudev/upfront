@@ -317,6 +317,7 @@ class Upfront_BaselineGrid_All extends Upfront_BaselineGrid {
 		$line_height = $this->get_line_height();
 		return '' .
 			"#page {line-height: {$line_height}px;}" .
+			"#page .upfront-overlay-grid {background-size: 100% {$this->_baseline}px}" . 
 		'';
 	}
 }

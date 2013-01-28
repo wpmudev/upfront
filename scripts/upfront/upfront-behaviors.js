@@ -60,9 +60,10 @@ var LayoutEditor = {
 		;
 		if ($resizable.resizable) $resizable.resizable({
 			"containment": "parent",
-			/*"grid": [parseInt(main_width/GRID_SIZE, 10), BASELINE],*/
+			/*"grid": [parseInt(main_width/GRID_SIZE, 10), BASELINE],*/ // @TODO this doesn't work well with box-sizing: border-box that we use, disable it for now and might need nicer custom coding grid snapping
 			start: function (e, ui) {
 				var $el = ui.element;
+				// retain width on grid elements, so it remains fixed during resize
 				$el.find(grid_selector).each(function(){
 					$(this).css({
 						'width': parseInt($(this).outerWidth())+'px',
@@ -78,7 +79,16 @@ var LayoutEditor = {
 					prop = model.replace_class(className),
 					relative_percentage = 100 * (classNum/GRID_SIZE)
 				;
-				view.trigger("upfront:entity:resize", classNum, relative_percentage);;
+				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
+				// @TODO this is temporary hack, we need to somehow retain height and snap it to baseline
+				$el.css({
+					'width': '',
+					'height': '',
+					'top': '',
+					'left': ''
+				});
+				view.trigger("upfront:entity:resize", classNum, relative_percentage);
+				// remove width on stop
 				$el.find(grid_selector).css({
 					'width': '',
 					'margin-left': ''
