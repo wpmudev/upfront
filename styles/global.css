@@ -85,23 +85,23 @@
   max-width: 1232px; 
   margin:0 auto;
   /*background-color: #ebebeb;*/
-  background-image: linear-gradient(90deg, #fce1ec 50%, #fff 50%);
+  /*background-image: linear-gradient(90deg, #fce1ec 50%, #fff 50%);
   background-image: -webkit-linear-gradient(0deg, #fce1ec 50%, #fff 50%);
   background-size: 4.5454545455% 4.5454545455%;
-  height: 1000px;
+  height: 1000px;*/
   /*padding: 0 15px; */
 }
 
 .c1, .c2, .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11, .c12, .c13, .c14, .c15, .c16, .c17, .c18, .c19, .c20, .c21, .c22 { 
-  float: left; min-height: 10px; margin-bottom: 10px; background-color: #bada55; color:#fff; padding:0 15px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+  float: left; min-height: 10px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 }
 
 .clear-example div { clear:both; }
 .example { width: 100%; clear: both; }
 
 
-
-
+.upfront-module { padding: 15px 0; margin: 0 0 15px; }
+.upfront-object { padding: 0 15px; }
 
 
 

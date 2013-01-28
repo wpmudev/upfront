@@ -4,6 +4,7 @@ var _template_files = [
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
+	"text!upfront/templates/overlay_grid.html",
 ];
 
 define(_template_files, function () {
@@ -210,6 +211,51 @@ define(_template_files, function () {
 		}
 	})
 
+	var Command_ToggleGrid = Command.extend({
+		initialize: function () {
+			this._active = false;
+			this._created = false;
+		},
+		render: function () {
+			this.$el.html('Toggle grid');
+		},
+		on_click: function () {
+			this._created || this.create_grid();
+			this.toggle_grid();
+		},
+		create_grid: function () {
+			this.update_grid();
+			this.attach_event();
+			this._created = true;
+		},
+		toggle_grid: function () {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+			if (!this._active){
+				$main.find('.upfront-overlay-grid').show();
+				this._active = true;
+			}
+			else {
+				$main.find('.upfront-overlay-grid').hide();
+				this._active = false;
+			}
+		},
+		update_grid: function (size) {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				columns = Upfront.Settings.LayoutEditor.Grid.size,
+				size_class = Upfront.Settings.LayoutEditor.Grid.class,
+				template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: size_class});
+			$main.find('.upfront-overlay-grid').remove();
+			$main.append(template);
+			!this._active || $main.find('.upfront-overlay-grid').show();
+		},
+		attach_event: function () {
+			var me = this;
+			Upfront.Application.LayoutEditor.layout_sizes.sizes.each(function (layout_size) {
+				layout_size.bind("upfront:layout_size:change_size", me.update_grid, me);
+			});
+		}
+	})
+
 	var Commands = Backbone.View.extend({
 		"tagName": "ul",
 
@@ -220,6 +266,7 @@ define(_template_files, function () {
 				new Command_LoadLayout({"model": this.model}),
 				new Command_Delete({"model": this.model}),
 				new Command_Select({"model": this.model}),
+				new Command_ToggleGrid({"model": this.model}),
 			]);
 		},
 		render: function () {
@@ -311,7 +358,9 @@ define(_template_files, function () {
 			this.sizes.first().$el.trigger("click");
 		},
 		change_size: function (new_size) {
-			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				default_baseline = 'all',
+				baseline = new_size;
 			this.sizes.each(function (size) {
 				$main.removeClass(size.get_size_class());
 			});
@@ -321,6 +370,11 @@ define(_template_files, function () {
 			Upfront.Settings.LayoutEditor.Grid.class = Upfront.Settings.LayoutEditor.Grid.size_classes[new_size];
 			Upfront.Settings.LayoutEditor.Grid.left_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_left_classes[new_size];
 			Upfront.Settings.LayoutEditor.Grid.right_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_right_classes[new_size];
+			
+			baseline = (!Upfront.Settings.LayoutEditor.Grid.baselines[baseline]) ? default_baseline : baseline;
+			Upfront.Settings.LayoutEditor.Grid.baseline = Upfront.Settings.LayoutEditor.Grid.baselines[baseline];
+			Upfront.Settings.LayoutEditor.Grid.top_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_top_classes[baseline];
+			Upfront.Settings.LayoutEditor.Grid.bottom_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_bottom_classes[baseline];
 		}
 	});
 

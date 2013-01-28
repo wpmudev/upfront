@@ -8,12 +8,17 @@ class Upfront_Grid {
 		"desktop" => "Upfront_GridBreakpoint_Desktop",
 	);
 	protected $_breakpoint_instances = array();
+	protected $_baselines = array(
+		"all" => "Upfront_BaselineGrid_All"
+	);
+	protected $_baseline_instances = array();
 	protected $_debugger;
 
 	private $_max_columns = 0;
 
 	protected function __construct () {
 		$this->_instantiate_breakpoints();
+		$this->_instantiate_baselines();
 		$this->_debugger = Upfront_Debug::get_debugger();
 	}
 
@@ -30,8 +35,19 @@ class Upfront_Grid {
 		}
 	}
 
+	private function _instantiate_baselines () {
+		foreach ($this->_baselines as $name => $class) {
+			$baseline = new $class;
+			$this->_baseline_instances[$name] = $baseline;
+		}
+	}
+
 	public function get_breakpoints () {
 		return $this->_breakpoint_instances;
+	}
+	
+	public function get_baselines () {
+		return $this->_baseline_instances;
 	}
 
 	public function get_max_columns () {
@@ -217,7 +233,7 @@ abstract class Upfront_GridBreakpoint {
 
 class Upfront_GridBreakpoint_Desktop extends Upfront_GridBreakpoint {
 	protected $_columns = 22;
-	protected $_rule = 'only screen and (min-width: 992px)';
+	protected $_rule = 'only screen and (min-width: 993px)';
 	protected $_prefixes = array(
 		'width' => 'c',
 		'margin-left' => 'ml',
@@ -226,13 +242,13 @@ class Upfront_GridBreakpoint_Desktop extends Upfront_GridBreakpoint {
 	protected $_color = "red";
 	public function get_editor_root_rule ($scope) {
 		return '' .
-			"#page.{$scope} {max-width: 992px; background-size: 4.5454545455% 4.5454545455%;}" .
+			"#page.{$scope} {min-width: 968px; max-width: 1386px;}" .
 		'';
 	}
 }
 class Upfront_GridBreakpoint_Tablet extends Upfront_GridBreakpoint {
 	protected $_columns = 12;
-	protected $_rule = 'only screen and (min-width: 768px)';
+	protected $_rule = 'only screen and (min-width: 577px) and (max-width: 992px)';
 	protected $_prefixes = array(
 		'width' => 't',
 		'margin-left' => 'tml',
@@ -241,13 +257,13 @@ class Upfront_GridBreakpoint_Tablet extends Upfront_GridBreakpoint {
 	protected $_color = "green";
 	public function get_editor_root_rule ($scope) {
 		return '' .
-			"#page.{$scope} {max-width: 768px; background-size: 8.333333% 8.333333%;}" .
+			"#page.{$scope} {min-width: 552px; max-width: 960px;}" .
 		'';
 	}
 }
 class Upfront_GridBreakpoint_Mobile extends Upfront_GridBreakpoint {
-	protected $_columns = 6;
-	protected $_rule = 'only screen and (min-width: 480px)';
+	protected $_columns = 3;
+	protected $_rule = 'only screen and (max-width: 576px)';
 	protected $_prefixes = array(
 		'width' => 'm',
 		'margin-left' => 'mml',
@@ -256,7 +272,52 @@ class Upfront_GridBreakpoint_Mobile extends Upfront_GridBreakpoint {
 	protected $_color = "blue";
 	public function get_editor_root_rule ($scope) {
 		return '' .
-			"#page.{$scope} {max-width: 480px; background-size: 16.666667% 16.666667%;}" .
+			"#page.{$scope} {min-width: 210px; max-width: 576px;}" .
 		'';
 	}
 }
+
+abstract class Upfront_BaselineGrid {
+	const PREFIX_MARGIN_TOP = 'margin-top';
+	const PREFIX_MARGIN_BOTTOM = 'margin-bottom';
+
+	protected $_baseline = 15;
+	protected $_line_height = 2; // Multiplier to $this->_baseline
+	protected $_rule = 'min-width:1024px';
+	protected $_prefixes = array(
+		'width' => 'c',
+		'margin-top' => 'mt',
+		'margin-bottom' => 'mb',
+	);
+	protected $_debugger;
+
+	public function __construct () {
+		$this->_debugger = Upfront_Debug::get_debugger();
+	}
+	
+	public function get_baseline () {
+		return $this->_baseline;
+	}
+	
+	public function get_line_height () {
+		return $this->_baseline * $this->_line_height;
+	}
+	
+	public function get_prefix ($pfx) {
+		if (!empty($this->_prefixes[$pfx])) return $this->_prefixes[$pfx];
+		return false;
+	}
+}
+
+class Upfront_BaselineGrid_All extends Upfront_BaselineGrid {
+	protected $_baseline = 15;
+	protected $_line_height = 2;
+	
+	public function get_editor_root_rule ($scope) {
+		$line_height = $this->get_line_height();
+		return '' .
+			"#page {line-height: {$line_height}px;}" .
+		'';
+	}
+}
+

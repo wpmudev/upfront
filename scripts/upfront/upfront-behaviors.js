@@ -49,26 +49,43 @@ var LayoutEditor = {
 		if (!$(Upfront.Settings.LayoutEditor.Selectors.main).is(".desktop")) return false;
 
 		// - Resizable - snap to base grid and replace size with class on release
-		var $parent = view.$el,
+		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			main_width = $main.width() || 210,
+			$parent = view.$el,
 			parent_width = $parent.width() || 100,
 			GRID_SIZE = Upfront.Settings.LayoutEditor.Grid.size,
-			$resizable = view.$el.find(">.upfront-editable_entity")
+			BASELINE = Upfront.Settings.LayoutEditor.Grid.baseline,
+			$resizable = view.$el.find(">.upfront-editable_entity"),
+			grid_selector = _.range(1, GRID_SIZE+1).map(function(i){ return '.'+Upfront.Settings.LayoutEditor.Grid.class+i }).join(',');
 		;
 		if ($resizable.resizable) $resizable.resizable({
 			"containment": "parent",
-			"grid": [parseInt(parent_width/GRID_SIZE, 10), 10],
+			/*"grid": [parseInt(main_width/GRID_SIZE, 10), BASELINE],*/
+			start: function (e, ui) {
+				var $el = ui.element;
+				$el.find(grid_selector).each(function(){
+					$(this).css({
+						'width': parseInt($(this).outerWidth())+'px',
+						'margin-left': parseInt($(this).outerWidth(true)-$(this).outerWidth())+'px'
+					});
+				});
+			},
 			stop: function (e, ui) {
 				var $el = ui.element,
-					diff = $el.outerWidth() / parent_width,
-					classNum = parseInt(diff * GRID_SIZE, 10),
+					diff = $el.outerWidth() / main_width,
+					classNum = parseInt(Math.round(diff * GRID_SIZE), 10),
 					className = Upfront.Settings.LayoutEditor.Grid.class + classNum,
 					prop = model.replace_class(className),
 					relative_percentage = 100 * (classNum/GRID_SIZE)
 				;
-				view.trigger("upfront:entity:resize", classNum, relative_percentage);
+				view.trigger("upfront:entity:resize", classNum, relative_percentage);;
+				$el.find(grid_selector).css({
+					'width': '',
+					'margin-left': ''
+				});
 			},
 			resize: function (e, ui) {
-				// Hack for losing height
+				// Hack for better resize behavior
 				var $el = ui.element;
 				$el.height((ui.size.height > 5 ? ui.size.height : 0) || ui.originalSize.height);
 			}

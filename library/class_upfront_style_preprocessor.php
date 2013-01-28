@@ -21,6 +21,7 @@ class Upfront_StylePreprocessor {
 
 	public function get_editor_grid () {
 		$breakpoints = $this->_grid->get_breakpoints();
+		$baselines = $this->_grid->get_baselines();
 		$style = '';
 		foreach ($breakpoints as $scope => $breakpoint_class) {
 			$breakpoint = new $breakpoint_class;
@@ -39,8 +40,43 @@ class Upfront_StylePreprocessor {
 						sprintf('margin-left: %f%%;', (100.00 / $columns)*$i) .
 					'}' .
 				'';
+				if ($i==$columns)
+					continue;
+				for ($c=1; $c<=$i; $c++) {
+					$rules[] = ".{$scope} .{$width}{$i} .{$width}{$c}" . 
+						'{' . 
+							sprintf('width: %f%%;', (100.00 / $i)*$c) .
+						'}' .
+					'';
+					$rules[] = ".{$scope} .{$width}{$i} .{$margin}{$c}" . 
+						'{' . 
+							sprintf('margin-left: %f%%;', (100.00 / $i)*$c) .
+						'}' .
+					'';
+				}
 			}
 			$style .= $breakpoint->get_editor_root_rule($scope) . "\n";
+			$style .= join("\n", $rules);
+		}
+		foreach ($baselines as $scope => $baseline_class) {
+			$baseline = new $baseline_class;
+			$baseline_grid = $baseline->get_baseline();
+			$margin_top = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_TOP);
+			$margin_bottom = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_BOTTOM);
+			$rules = array();
+			for ($i=1; $i<=20; $i++) {
+				$rules[] = ".{$margin_top}{$i}" . 
+					'{' . 
+						sprintf('margin-top: %dpx;', $i*$baseline_grid) .
+					'}' .
+				'';
+				$rules[] = ".{$margin_bottom}{$i}" . 
+					'{' . 
+						sprintf('margin-bottom: %dpx;', $i*$baseline_grid) .
+					'}' .
+				'';
+			}
+			$style .= $baseline->get_editor_root_rule($scope) . "\n";
 			$style .= join("\n", $rules);
 		}
 		return $style;

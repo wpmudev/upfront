@@ -134,24 +134,38 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$grid = Upfront_Grid::get_grid();
 		$breakpoints = $grid->get_breakpoints();
+		$baselines = $grid->get_baselines();
 
 		$grid_info = array(
 			'breakpoint_columns' => array(),
 			'size_classes' => array(),
 			'margin_left_classes' => array(),
 			'margin_right_classes' => array(),
+			
+			'baselines' => array(),
+			'margin_top_classes' => array(),
+			'margin_bottom_classes' => array(),
 
 			'scope' => $grid->get_grid_scope(),
 			'size' => '',
 			'class' => '',
 			'left_margin_class' => '',
 			'right_margin_class' => '',
+			
+			'baseline' => '',
+			'top_margin_class' => '',
+			'bottom_margin_class' => '',
 		);
 		foreach ($breakpoints as $context => $breakpoint) {
 			$grid_info['breakpoint_columns'][$context] = $breakpoint->get_columns();
 			$grid_info['size_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			$grid_info['margin_left_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
 			$grid_info['margin_right_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
+		}
+		foreach ($baselines as $context => $baseline) {
+			$grid_info['baselines'][$context] = $baseline->get_baseline();
+			$grid_info['margin_top_classes'][$context] = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_TOP);
+			$grid_info['margin_bottom_classes'][$context] = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_BOTTOM);
 		}
 		$grid_info = json_encode(
 			apply_filters('upfront-settings-grid_info', $grid_info)
@@ -169,7 +183,8 @@ require.config($require_config);
 $(function () {
 	// Fix Underscore templating to Mustache style
 	_.templateSettings = {
-		interpolate : /\{\{(.+?)\}\}/g
+		evaluate : /\{\[([\s\S]+?)\]\}/g,
+		interpolate : /\{\{([\s\S]+?)\}\}/g
 	};
 
 	require(['application', 'util'], function (application, util) {
