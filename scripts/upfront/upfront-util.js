@@ -1,6 +1,15 @@
 (function ($) {
 
 var Util = {
+
+	model_to_json: function (model) {
+		var raw = (model.toJSON ? model.toJSON() : model),
+			data_str = JSON.stringify(raw),
+			json = JSON.parse(data_str)
+		;
+		return json;
+	},
+
 	get_unique_id: function (pfx) {
 		return _.template("{{prefix}}-{{stamp}}-{{numeric}}", {
 			prefix: pfx || "entity",

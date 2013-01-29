@@ -229,7 +229,16 @@ var LayoutEditor = {
 				//view.resort_bound_collection();
 			}
 		});
+	},
+
+
+	create_undo: function () {
+		this.layout.store_undo_state();
+	},
+	apply_undo: function () {
+		this.layout_view.render();
 	}
+
 };
 
 define({

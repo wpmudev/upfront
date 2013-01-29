@@ -52,10 +52,7 @@ var LayoutEditor = new (Subapplication.extend({
 	},
 
 	save_layout: function () {
-		var raw = this.layout.toJSON(),
-			data_str = JSON.stringify(raw),
-			data = JSON.parse(data_str)
-		;
+		var data = Upfront.Util.model_to_json(this.layout);
 		Upfront.Util.post({"action": this.actions.save, "data": data})
 			.success(function () {
 				Upfront.Util.log("layout saved");
@@ -180,7 +177,11 @@ var LayoutEditor = new (Subapplication.extend({
 		// Set up behaviors - resizable/selectable
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_sortable, this);
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_resizable, this);
-		
+
+		// Undo
+		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);
+		Upfront.Events.on("command:undo", Upfront.Behaviors.LayoutEditor.apply_undo, this);
+
 		// Set up element merging
 		Upfront.Events.on("command:select", Upfront.Behaviors.LayoutEditor.create_mergeable, this);
 		Upfront.Events.on("command:deselect", Upfront.Behaviors.LayoutEditor.destroy_mergeable, this);

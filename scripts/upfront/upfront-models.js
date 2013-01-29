@@ -238,6 +238,29 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0].properties)
 			}
+			this._upfront_undo_states = [];
+			this._upfront_redo_states = [];
+		},
+		get_current_state: function () {
+			return Upfront.Util.model_to_json(this.get("regions"));
+		},
+		has_undo_states: function () {
+			return !!this._upfront_undo_states.length;
+		},
+		store_undo_state: function () {
+			this._upfront_undo_states.push(this.get_current_state());
+		},
+		restore_undo_state: function () {
+			if (!this.has_undo_states()) return false;
+
+			var state = this._upfront_undo_states.pop();
+			if (!state.length) {
+				Upfront.Util.log("Invalid undo state");
+				return false;
+			}
+
+			this._upfront_redo_states.push(this.get_current_state());
+			this.get("regions").reset(state);
 		}
 	})
 

@@ -124,6 +124,30 @@ define(_template_files, function () {
 
 	});
 
+	var Command_Undo = Command.extend({
+		initialize: function () {
+			Upfront.Events.on("entity:activated", this.activate, this);
+			Upfront.Events.on("entity:deactivated", this.deactivate, this);
+			this.deactivate();
+		},
+		render: function () {
+			this.$el.html("Undo");
+			if (this.model.has_undo_states()) this.activate();
+			else this.deactivate();
+		},
+		activate: function () {
+			this.$el.css("text-decoration", "none");
+		},
+		deactivate: function () {
+			this.$el.css("text-decoration", "line-through");
+		},
+		on_click: function () {
+			this.model.restore_undo_state();
+			Upfront.Events.trigger("command:undo")
+			this.render();
+		}
+	});
+
 	var Command_Merge = Command.extend({
 		render: function () {
 			if (!this.model.merge.length) return false;
@@ -263,7 +287,8 @@ define(_template_files, function () {
 			this.commands = _([
 				//new Command_AddModule({"model": this.model}),
 				new Command_SaveLayout({"model": this.model}),
-				new Command_LoadLayout({"model": this.model}),
+				//new Command_LoadLayout({"model": this.model}),
+				new Command_Undo({"model": this.model}),
 				new Command_Delete({"model": this.model}),
 				new Command_Select({"model": this.model}),
 				new Command_ToggleGrid({"model": this.model}),
