@@ -185,6 +185,9 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("command:select", Upfront.Behaviors.LayoutEditor.create_mergeable, this);
 		Upfront.Events.on("command:deselect", Upfront.Behaviors.LayoutEditor.destroy_mergeable, this);
 		Upfront.Events.on("command:merge", Upfront.Behaviors.LayoutEditor.destroy_mergeable, this);
+
+		// Set up entity settings (modules, for now)
+		Upfront.Events.on("entity:settings:activate", this.create_settings, this);
 	},
 
 	create_properties: function (view, model) {
@@ -198,6 +201,17 @@ var LayoutEditor = new (Subapplication.extend({
 	destroy_properties: function () {
 		$(Upfront.Settings.LayoutEditor.Selectors.properties).html('');
 	},
+
+	create_settings: function (view) {
+		//$(Upfront.Settings.LayoutEditor.Selectors.settings).show();
+		var settings_view = new Upfront.Views.Editor.Settings({
+			"model": view.model, 
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.settings)
+		});
+		settings_view.for_view = view;
+		settings_view.render();
+	}
+
 }))();
 
 

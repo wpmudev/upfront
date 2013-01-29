@@ -67,7 +67,11 @@ var PlainTxtCommand = Upfront.Views.Editor.Command.extend({
 	}
 });
 
-Upfront.Application.LayoutEditor.add_object("PlainTxt", {"Model": PlainTxtModel, "Command": PlainTxtCommand});
+Upfront.Application.LayoutEditor.add_object("PlainTxt", {
+	"Model": PlainTxtModel, 
+	"View": PlainTxtView,
+	"Command": PlainTxtCommand
+});
 Upfront.Models.PlainTxtModel = PlainTxtModel;
 Upfront.Views.PlainTxtView = PlainTxtView;
 

@@ -86,6 +86,7 @@ class Upfront {
     <h3>Actions</h3>
     <button class="upfront-finish_layout_editing">Finish editing</button>
   </div>
+  <div id="settings" style="display:none"></div>
   <button class="upfront-edit_layout upfront-editable_trigger">Edit layout</button>
 EOAdditivemarkup;
 		

@@ -199,6 +199,7 @@ $(function () {
 					"commands": "#commands",
 					"properties": "#properties",
 					"layouts": "#layouts",
+					"settings": "#settings",
 					//"main": "#upfront-output"
 					"main": "#page"
 				},

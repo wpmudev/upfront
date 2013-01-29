@@ -62,8 +62,20 @@ var _alpha = "alpha",
 		add_property: function (name, value) {
 			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}));
 		},
+		set_property: function (name, value) {
+			if (!name) return false;
+			var prop = this.get_property_by_name(name);
+			if (!prop || !prop.set) return this.add_property(name, value);
+			prop.set({"value": value});
+		}, 
 		init_property: function (name, value) {
 			if (!this.has_property(name)) this.add_property(name, value);
+		},
+		init_properties: function (hash) {
+			var me = this;
+			_(hash).each(function (value, name) {
+				me.init_property(name, value);
+			})
 		},
 	// ----- Magic properties manipulation ----- */
 		get_content: function () {
@@ -146,6 +158,26 @@ var _alpha = "alpha",
 
 	Modules = Backbone.Collection.extend({
 		"model": Module,
+		/*
+		initialize: function () {
+			if (!arguments.length) return false;
+			var _modules = [],
+				me = this,
+				args = arguments[0]
+			;
+			_(args).each(function (arg) {
+				var self_class = _(arg.properties).where({"name": "type"}),
+					self_instance =  (self_class.length && self_class[0].value && Upfront.Models[self_class[0].value]) 
+						? new Upfront.Models[self_class[0].value](arg)
+						: new Upfront.Models.Module(arg)
+				;
+				me.add(self_instance);
+				//_modules.push(self_instance);
+			});
+			//this.reset(_modules);
+			//console.log(this);
+		},
+		*/
 		get_by_element_id: function (element_id) {
 			var found = false;
 			this.each(function (model) {

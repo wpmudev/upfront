@@ -76,6 +76,12 @@ html, body {
 	color: #fff;
 }
 
+#settings {
+  position: fixed;
+  left: 0;
+  top: 480px;
+}
+
 #layouts {
   position: fixed;
   top: 28px;
@@ -190,4 +196,14 @@ html, body {
 
 .upfront-editable_entity img {
   max-width: 100%;
+}
+
+
+.upfront-entity_meta {
+  float: right;
+  margin-right: 5px;
+}
+.upfront-entity_meta a {
+  color: #333;
+  text-decoration: none;
 }

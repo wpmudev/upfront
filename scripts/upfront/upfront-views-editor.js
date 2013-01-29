@@ -378,6 +378,57 @@ define(_template_files, function () {
 		}
 	});
 
+	var Setting = Backbone.View.extend({
+		get_name: function () {},
+		get_value: function () {}
+	});
+
+	var TextSetting = Setting.extend({
+		render: function () {
+			this.$el.html('<input type="text" name="' + this.model.get("name") + '" value="' + this.model.get("value") + '" />');
+		},
+		get_name: function () {
+			return this.model.get("name");
+		},
+		get_value: function () {
+			return this.$el.find("input").val();
+		},
+	});
+
+	var Settings = Backbone.View.extend({
+		tagName: "ul",
+
+		events: {
+			"click .upfront-save_settings": "on_save"
+		},
+
+		render: function () {
+			var me = this;
+			me.$el.empty().show();
+			if (!me.for_view) return false();
+			
+			me.settings = me.for_view.get_settings();
+			if (me.settings) me.settings.each(function (setting) {
+				setting.render();
+				me.$el.append(setting.el)
+			});
+			me.$el.append("<button type='button' class='upfront-save_settings'>Save</button>")
+		},
+
+		on_save: function () {
+			if (!this.settings) return false;
+
+			var me = this;
+			this.settings.each(function (setting) {
+				me.model.set_property(
+					setting.get_name(),
+					setting.get_value()
+				);
+			});
+		}
+
+	});
+
 	return {
 		"Editor": {
 			"Property": Property,
@@ -385,7 +436,10 @@ define(_template_files, function () {
 			"Commands": Commands,
 			"Command": Command,
 			"Command_Merge": Command_Merge,
-			"Layouts": LayoutSizes
+			"Layouts": LayoutSizes,
+			"Setting": Setting,
+			"TextSetting": TextSetting,
+			"Settings": Settings
 		}
 	};
 });

@@ -68,7 +68,11 @@ var ImageCommand = Upfront.Views.Editor.Command.extend({
 	}
 });
 
-Upfront.Application.LayoutEditor.add_object("Image", {"Model": ImageModel, "Command": ImageCommand});
+Upfront.Application.LayoutEditor.add_object("Image", {
+	"Model": ImageModel, 
+	"View": ImageView,
+	"Command": ImageCommand
+});
 Upfront.Models.ImageModel = ImageModel;
 Upfront.Views.ImageView = ImageView;
 
