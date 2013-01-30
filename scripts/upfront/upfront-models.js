@@ -238,28 +238,41 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0].properties)
 			}
-			this._upfront_undo_states = [];
-			this._upfront_redo_states = [];
 		},
 		get_current_state: function () {
 			return Upfront.Util.model_to_json(this.get("regions"));
 		},
 		has_undo_states: function () {
-			return !!this._upfront_undo_states.length;
+			return !!Upfront.Util.Transient.length("undo");
+		},
+		has_redo_states: function () {
+			return !!Upfront.Util.Transient.length("redo");
 		},
 		store_undo_state: function () {
-			this._upfront_undo_states.push(this.get_current_state());
+			Upfront.Util.Transient.push("undo", this.get_current_state());
 		},
 		restore_undo_state: function () {
 			if (!this.has_undo_states()) return false;
-
-			var state = this._upfront_undo_states.pop();
-			if (!state.length) {
-				Upfront.Util.log("Invalid undo state");
+			this.restore_state_from_stack("undo");
+		},
+		restore_redo_state: function () {
+			if (!this.has_redo_states()) return false;
+			this.restore_state_from_stack("redo");
+		},
+		restore_redo_state: function () {
+			if (!this.has_redo_states()) return false;
+			this.restore_state_from_stack("redo");
+		},
+		restore_state_from_stack: function (stack) {
+			var other = ("undo" == stack ? "redo" : "undo"),
+				state = Upfront.Util.Transient.pop(stack)
+			;
+			if (!state || !state.length) {
+				Upfront.Util.log("Invalid " + stack + " state");
 				return false;
 			}
 
-			this._upfront_redo_states.push(this.get_current_state());
+			Upfront.Util.Transient.push(other, this.get_current_state());
 			this.get("regions").reset(state);
 		}
 	})

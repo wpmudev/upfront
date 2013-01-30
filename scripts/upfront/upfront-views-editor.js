@@ -128,6 +128,7 @@ define(_template_files, function () {
 		initialize: function () {
 			Upfront.Events.on("entity:activated", this.activate, this);
 			Upfront.Events.on("entity:deactivated", this.deactivate, this);
+			Upfront.Events.on("command:redo", this.render, this);
 			this.deactivate();
 		},
 		render: function () {
@@ -145,6 +146,44 @@ define(_template_files, function () {
 			this.model.restore_undo_state();
 			Upfront.Events.trigger("command:undo")
 			this.render();
+		}
+	});
+
+	var Command_Redo = Command.extend({
+		initialize: function () {
+			Upfront.Events.on("entity:activated", this.activate, this);
+			Upfront.Events.on("entity:deactivated", this.deactivate, this);
+			Upfront.Events.on("command:undo", this.render, this);
+			this.deactivate();
+		},
+		render: function () {
+			this.$el.html("Redo");
+			if (this.model.has_redo_states()) this.activate();
+			else this.deactivate();
+		},
+		activate: function () {
+			this.$el.css("text-decoration", "none");
+		},
+		deactivate: function () {
+			this.$el.css("text-decoration", "line-through");
+		},
+		on_click: function () {
+			this.model.restore_redo_state();
+			Upfront.Events.trigger("command:redo")
+			this.render();
+		}
+	});
+
+	var Command_ExportHistory = Command.extend({
+		render: function () {
+			this.$el.html("Export history");
+		},
+		on_click: function () {
+			alert("Check console output");
+			console.log({
+				"undo": Upfront.Util.Transient.get_all("undo"),
+				"redo": Upfront.Util.Transient.get_all("redo")
+			});
 		}
 	});
 
@@ -289,10 +328,12 @@ define(_template_files, function () {
 				new Command_SaveLayout({"model": this.model}),
 				//new Command_LoadLayout({"model": this.model}),
 				new Command_Undo({"model": this.model}),
+				new Command_Redo({"model": this.model}),
 				new Command_Delete({"model": this.model}),
 				new Command_Select({"model": this.model}),
 				new Command_ToggleGrid({"model": this.model}),
 			]);
+			if (Upfront.Settings.Debug.transients) this.commands.push(new Command_ExportHistory({model: this.model}));
 		},
 		render: function () {
 			this.$el.find("li").remove();

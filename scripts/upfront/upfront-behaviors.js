@@ -235,7 +235,7 @@ var LayoutEditor = {
 	create_undo: function () {
 		this.layout.store_undo_state();
 	},
-	apply_undo: function () {
+	apply_history_change: function () {
 		this.layout_view.render();
 	}
 

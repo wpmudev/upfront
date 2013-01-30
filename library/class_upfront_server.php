@@ -171,6 +171,13 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			apply_filters('upfront-settings-grid_info', $grid_info)
 		);
 
+		$debug = array(
+			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
+		);
+		$debug = json_encode(
+			apply_filters('upfront-settings-debug', $debug)
+		);
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -193,6 +200,7 @@ $(function () {
 		Upfront.Settings = {
 			"root_url": "{$root}",
 			"ajax_url": "{$ajax}",
+			"Debug": {$debug},
 			"LayoutEditor": {
 				"Requirements": {$layout_editor_requirements},
 				"Selectors": {
@@ -203,7 +211,7 @@ $(function () {
 					//"main": "#upfront-output"
 					"main": "#page"
 				},
-				"Grid": {$grid_info}
+				"Grid": {$grid_info},
 			}
 		};
 
@@ -211,7 +219,8 @@ $(function () {
 		_.extend(Upfront.Events, Backbone.Events);
 		_.extend(Upfront, application);
 		_.extend(Upfront, util);
-
+		Upfront.Util.Transient.initialize();
+		
 		// Set up deferreds
 		Upfront.LoadedObjectsDeferreds = {};
 		Upfront.Events.trigger("application:loaded:layout_editor");

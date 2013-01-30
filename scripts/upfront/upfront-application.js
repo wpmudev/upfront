@@ -178,9 +178,10 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_sortable, this);
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_resizable, this);
 
-		// Undo
+		// Undo / Redo
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);
-		Upfront.Events.on("command:undo", Upfront.Behaviors.LayoutEditor.apply_undo, this);
+		Upfront.Events.on("command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);
+		Upfront.Events.on("command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);
 
 		// Set up element merging
 		Upfront.Events.on("command:select", Upfront.Behaviors.LayoutEditor.create_mergeable, this);
