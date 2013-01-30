@@ -93,7 +93,11 @@
 }
 
 .c1, .c2, .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11, .c12, .c13, .c14, .c15, .c16, .c17, .c18, .c19, .c20, .c21, .c22 { 
-  float: left; min-height: 15px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+  float: left;
+  min-height: 15px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   max-width: 100%;
 }
 
@@ -101,7 +105,7 @@
 .example { width: 100%; clear: both; }
 
 
-.upfront-module { padding: 15px 0; margin: 0 0 15px; }
+.upfront-module { margin: 0 0 15px; }
 .upfront-object { padding: 0 15px; }
 
 

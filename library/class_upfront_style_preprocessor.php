@@ -42,7 +42,7 @@ class Upfront_StylePreprocessor {
 				'';
 				if ($i==$columns)
 					continue;
-				for ($c=1; $c<=$i; $c++) {
+				for ($c=1; $c<$i; $c++) {
 					$rules[] = ".{$scope} .{$width}{$i} .{$width}{$c}" . 
 						'{' . 
 							sprintf('width: %f%%;', (100.00 / $i)*$c) .
@@ -54,6 +54,24 @@ class Upfront_StylePreprocessor {
 						'}' .
 					'';
 				}
+				$max_classes_width = array();
+				$max_classes_margin = array();
+				for (;$c<=$columns;$c++) {
+					$max_classes_width[] = ".{$scope} .{$width}{$i} .{$width}{$c}";
+					$max_classes_margin[] = ".{$scope} .{$width}{$i} .{$margin}{$c}";
+				}
+				if (!empty($max_classes_width))
+					$rules[] = implode(', ', $max_classes_width) . 
+						'{' . 
+							sprintf('width: %f%%;', 100.00) .
+						'}' .
+					'';
+				if (!empty($max_classes_margin))
+					$rules[] = implode(', ', $max_classes_margin) . 
+						'{' . 
+							sprintf('margin-left: %f%%;', 100.00) .
+						'}' .
+					'';
 			}
 			$style .= $breakpoint->get_editor_root_rule($scope) . "\n";
 			$style .= join("\n", $rules);
