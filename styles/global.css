@@ -101,11 +101,13 @@
   max-width: 100%;
 }
 
+.clr { clear:both; }
+
 .clear-example div { clear:both; }
 .example { width: 100%; clear: both; }
 
 
-.upfront-module { margin: 0 0 15px; }
+.upfront-module { }
 .upfront-object { padding: 0 15px; }
 
 

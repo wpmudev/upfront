@@ -132,6 +132,9 @@ html, body {
 }
 .upfront-overlay-grid .c1 {
 	height: 100%;
+	text-align: center;
+	font-size: 10px;
+	color: #aaa;
 }
 .upfront-grid-border {
 	background: -webkit-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 0 0, -webkit-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 100% 0;
@@ -153,15 +156,15 @@ html, body {
 }
 
 .upfront-active_entity > .upfront-editable_entity {
-	background: #f1ffb2;
+	background: rgba(241, 255, 178, 0.8);
 }
 .upfront-module {
 	border: 1px solid #b3da11;
-	background: rgba(242, 255, 186, 0.6);
+	background: rgba(242, 255, 186, 0.4);
 }
 .upfront-object {
 	border: 1px solid #bada55;
-	background: rgba(255, 255, 255, 0.5);
+	background: rgba(255, 255, 255, 0.4);
 }
 .upfront-module, .upfront-object {
 	position: relative;
@@ -203,6 +206,14 @@ html, body {
 
 .upfront-preview-helper {
 	background: rgba(0, 0, 0, 0.1);
+	position: relative;
+}
+
+.upfront-prev {
+	background: rgba(255, 179, 227, 0.7);
+}
+.upfront-next {
+	background: rgba(179, 225, 255, 0.7);
 }
 
 .ui-draggable {

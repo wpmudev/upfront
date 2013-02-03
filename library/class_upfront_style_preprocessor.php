@@ -27,7 +27,8 @@ class Upfront_StylePreprocessor {
 			$breakpoint = new $breakpoint_class;
 			$columns = $breakpoint->get_columns();
 			$width = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
-			$margin = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
+			$margin_left = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
+			$margin_right = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
 			$rules = array();
 			for ($i=1; $i<=$columns; $i++) {
 				$rules[] = ".{$scope} .{$width}{$i}" . 
@@ -35,9 +36,14 @@ class Upfront_StylePreprocessor {
 						sprintf('width: %f%%;', (100.00 / $columns)*$i) .
 					'}' .
 				'';
-				$rules[] = ".{$scope} .{$margin}{$i}" . 
+				$rules[] = ".{$scope} .{$margin_left}{$i}" . 
 					'{' . 
 						sprintf('margin-left: %f%%;', (100.00 / $columns)*$i) .
+					'}' .
+				'';
+				$rules[] = ".{$scope} .{$margin_right}{$i}" . 
+					'{' . 
+						sprintf('margin-right: %f%%;', (100.00 / $columns)*$i) .
 					'}' .
 				'';
 				if ($i==$columns)
@@ -48,17 +54,24 @@ class Upfront_StylePreprocessor {
 							sprintf('width: %f%%;', (100.00 / $i)*$c) .
 						'}' .
 					'';
-					$rules[] = ".{$scope} .{$width}{$i} .{$margin}{$c}" . 
+					$rules[] = ".{$scope} .{$width}{$i} .{$margin_left}{$c}" . 
 						'{' . 
 							sprintf('margin-left: %f%%;', (100.00 / $i)*$c) .
 						'}' .
 					'';
+					$rules[] = ".{$scope} .{$width}{$i} .{$margin_right}{$c}" . 
+						'{' . 
+							sprintf('margin-right: %f%%;', (100.00 / $i)*$c) .
+						'}' .
+					'';
 				}
 				$max_classes_width = array();
-				$max_classes_margin = array();
+				$max_classes_margin_left = array();
+				$max_classes_margin_right = array();
 				for (;$c<=$columns;$c++) {
 					$max_classes_width[] = ".{$scope} .{$width}{$i} .{$width}{$c}";
-					$max_classes_margin[] = ".{$scope} .{$width}{$i} .{$margin}{$c}";
+					$max_classes_margin_left[] = ".{$scope} .{$width}{$i} .{$margin_left}{$c}";
+					$max_classes_margin_right[] = ".{$scope} .{$width}{$i} .{$margin_right}{$c}";
 				}
 				if (!empty($max_classes_width))
 					$rules[] = implode(', ', $max_classes_width) . 
@@ -66,10 +79,16 @@ class Upfront_StylePreprocessor {
 							sprintf('width: %f%%;', 100.00) .
 						'}' .
 					'';
-				if (!empty($max_classes_margin))
-					$rules[] = implode(', ', $max_classes_margin) . 
+				if (!empty($max_classes_margin_left))
+					$rules[] = implode(', ', $max_classes_margin_left) . 
 						'{' . 
 							sprintf('margin-left: %f%%;', 100.00) .
+						'}' .
+					'';
+				if (!empty($max_classes_margin_right))
+					$rules[] = implode(', ', $max_classes_margin_right) . 
+						'{' . 
+							sprintf('margin-right: %f%%;', 100.00) .
 						'}' .
 					'';
 			}

@@ -275,9 +275,11 @@ define(_template_files, function () {
 	})
 
 	var Command_ToggleGrid = Command.extend({
+		defaults: {
+			_active: false,
+			_created: false
+		},
 		initialize: function () {
-			this._active = false;
-			this._created = false;
 		},
 		render: function () {
 			this.$el.html('Toggle grid');
