@@ -302,6 +302,8 @@ var LayoutEditor = {
 					
 					relative_margin_size = -1 * (relative_left ? Math.round(relative_left / margin_increment) : 0),
 					margin_size = margin_data.original.left + relative_margin_size,
+					relative_margin_top_size = -1 * (relative_top ? Math.round(relative_top / BASELINE) : 0),
+					margin_top_size = margin_data.original.top + relative_margin_top_size,
 					
 					// bind_(left|right)_elements will hold elements that is affected by the flow of current element
 					bind_left_elements = [],
@@ -375,6 +377,9 @@ var LayoutEditor = {
 					$preview.css('left', (margin_data.current.left-margin_data.original.left)*margin_increment);
 					recalc_margin = true;
 				}
+				margin_data.current.top = margin_top_size;
+				$me.data('margin', margin_data);
+				_update_margin_class($preview, margin_top_class, margin_data.current.top);
 				
 				if ( recalc_margin ){
 					_.each(bind_right_elements, function(each){
@@ -512,7 +517,7 @@ var LayoutEditor = {
 					//$draggable.css({"destroy"});
 				}
 				
-				$el.find(".upfront-debug-info").text('current offset: '+current_left+','+current_top+','+current_right+','+current_bottom+' | x,y: '+current_x+','+current_y+' | relative offset: '+relative_left+','+relative_top+' | margin size: '+margin_data.current.left+','+margin_data.current.right);
+				$el.find(".upfront-debug-info").text('current offset: '+current_left+','+current_top+','+current_right+','+current_bottom+' | x,y: '+current_x+','+current_y+' | relative offset: '+relative_left+','+relative_top+' | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
 				//return !resort;
 
 			},
@@ -539,6 +544,7 @@ var LayoutEditor = {
 				view.$el.find('.upfront-preview-helper').remove();
 				view.model.replace_class(margin_left_class+margin_data.current.left);
 				view.model.replace_class(margin_right_class+margin_data.current.right);
+				view.model.replace_class(margin_top_class+margin_data.current.top);
 				
 				view.$el.parent().children().each(function(){
 					var $el = $(this).find(">.upfront-editable_entity:first"),
@@ -608,22 +614,29 @@ var LayoutEditor = {
 				margin_bottom_class = Upfront.Settings.LayoutEditor.Grid.bottom_margin_class,
 				margin_left_rx = new RegExp('\\b' + margin_left_class + '(\\d+)'),
 				margin_right_rx = new RegExp('\\b' + margin_right_class + '(\\d+)'),
+				margin_top_rx = new RegExp('\\b' + margin_top_class + '(\\d+)'),
+				margin_bottom_rx = new RegExp('\\b' + margin_bottom_class + '(\\d+)'),
 				
 				current_margin_left = $el.attr("class").match(margin_left_rx),
 				current_margin_left_size = current_margin_left && current_margin_left.length ? parseInt(current_margin_left[1], 10) : 0,
 	
 				current_margin_right = $el.attr("class").match(margin_right_rx),
-				current_margin_right_size = current_margin_right && current_margin_right.length ? parseInt(current_margin_right[1], 10) : 0
+				current_margin_right_size = current_margin_right && current_margin_right.length ? parseInt(current_margin_right[1], 10) : 0,
+				
+				current_margin_top = $el.attr("class").match(margin_top_rx),
+				current_margin_top_size = current_margin_top && current_margin_top.length ? parseInt(current_margin_top[1], 10) : 0
 			;
 			
 			$el.data('margin', {
 				original: {
 					left: current_margin_left_size,
-					right: current_margin_right_size
+					right: current_margin_right_size,
+					top: current_margin_top_size
 				},
 				current: {
 					left: current_margin_left_size,
-					right: current_margin_right_size
+					right: current_margin_right_size,
+					top: current_margin_top_size
 				}
 			});
 		});
