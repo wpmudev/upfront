@@ -256,8 +256,8 @@ var LayoutEditor = {
 						return ( each == me_pos );
 					}),
 					lines = _.groupBy(filtered_elements_pos, function(each){ return each.outer_position.top; }),
-					lines_pos = [],
-					/*lines_pos = _.keys(lines),
+					//lines_pos = [],
+					lines_pos = _.keys(lines),
 					next_line = _.find(lines, function(els, top){
 						top = parseInt(top);
 						first_top = parseInt(lines_pos[0]);
@@ -282,7 +282,7 @@ var LayoutEditor = {
 					}),
 					next_index = next ? _.indexOf(filtered_elements_pos, next) : false,
 					prev = next_index > 0 ? filtered_elements_pos[next_index-1] : ( next_index === 0 ? false : _.last(use_line)),
-					prev_index = prev ? _.indexOf(filtered_elements_pos, prev) : false,*/
+					prev_index = prev ? _.indexOf(filtered_elements_pos, prev) : false,
 					
 					// Finding the closest element
 					closest = _.min(filtered_elements_pos, function(each){
@@ -312,8 +312,8 @@ var LayoutEditor = {
 					recalc_margin = false,
 					
 					// Get direction
-					//direction_next = next ? _get_direction(next.$el) : false,
-					//direction_prev = prev ? _get_direction(prev.$el) : false,
+					direction_next = next ? _get_direction(next.$el, current_x, current_top+pos_tolerance) : false,
+					direction_prev = prev ? _get_direction(prev.$el, current_x, current_top+pos_tolerance) : false,
 					direction = _get_direction(closest.$el, current_x, current_top+pos_tolerance),
 					
 					new_line = false,
@@ -325,7 +325,7 @@ var LayoutEditor = {
 				//console.log(direction);
 				
 				// Filter lines
-				var tmp_bottom = -1, tmp_index = -1;
+				/*var tmp_bottom = -1, tmp_index = -1;
 				_.each(lines, function(els, top, list){
 					top = parseInt(top);
 					if ( top < tmp_bottom ){
@@ -341,7 +341,7 @@ var LayoutEditor = {
 					var max_bottom = parseInt(_.max(els, function(each){ return parseInt(each.outer_position.bottom); }).outer_position.bottom);
 					tmp_bottom = max_bottom > tmp_bottom ? max_bottom : tmp_bottom;
 					lines_pos[tmp_index].bottom = tmp_bottom;
-				});
+				});*/
 				
 				// Figure out the move_limit as well as the bind_(left|right)_elements
 				_.each(filtered_elements_pos, function(each){
@@ -401,17 +401,17 @@ var LayoutEditor = {
 				//@TODO if the margins between previous and next element have enough space to fit this width, adjust next element margin left
 				
 				
-				/*if ( (prev && ! prev.$el.hasClass('upfront-prev')) || (next && ! next.$el.hasClass('upfront-next')) ){
+				if ( (prev && ! prev.$el.hasClass('upfront-prev')) || (next && ! next.$el.hasClass('upfront-next')) ){
 					$('.upfront-prev, .upfront-next').removeClass('upfront-prev upfront-next');
 					if (prev) prev.$el.addClass('upfront-prev');
 					if (next) next.$el.addClass('upfront-next');
-				}*/
-				if ( !closest.$el.hasClass('upfront-prev') ){
+				}
+				/*if ( !closest.$el.hasClass('upfront-prev') ){
 					$('.upfront-prev').removeClass('upfront-prev');
 					closest.$el.addClass('upfront-prev');
-				}
+				}*/
 				
-				/*if ( next && $el.next().find(">.upfront-editable_entity:first").attr('id') != next.$el.attr('id') ){
+				if ( next && $el.next().find(">.upfront-editable_entity:first").attr('id') != next.$el.attr('id') ){
 					//new_line = true;
 					next.$el.parent().before($el);
 					resort = true;
@@ -421,10 +421,10 @@ var LayoutEditor = {
 						new_line = true;
 					prev.$el.parent().after($el);
 					resort = true;
-				}*/
+				}
 				
 				// Find the line that contain closest element
-				var line = _.find(lines_pos, function(l){ return _.contains(l.elements, closest); });
+				/*var line = _.find(lines_pos, function(l){ return _.contains(l.elements, closest); });
 				switch (direction){
 					case 0: // top
 						// @TODO Check if this should create a new line above, or on the same line
@@ -448,7 +448,7 @@ var LayoutEditor = {
 					case 3: // left
 						//closest.$el.parent().before($el);
 						break;
-				}
+				}*/
 				
 				if (resort) {
 					view.resort_bound_collection();
