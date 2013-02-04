@@ -280,6 +280,8 @@ define(_template_files, function () {
 			_created: false
 		},
 		initialize: function () {
+			this._active = false;
+			this._created = false;
 		},
 		render: function () {
 			this.$el.html('Toggle grid');
@@ -446,41 +448,81 @@ define(_template_files, function () {
 		}
 	});
 
-	var Setting = Backbone.View.extend({
+	var SettingsItem = Backbone.View.extend({
+		tagName: "li",
 		get_name: function () {},
-		get_value: function () {}
+		get_value: function () {},
+
+		wrap: function (wrapped) {
+			if (!wrapped) return false;
+			var title = wrapped.title || '',
+				markup = wrapped.markup || wrapped
+			;
+			this.$el.append(
+				'<div class="upfront-settings-item">' +
+					'<div class="upfront-settings-item-title">' + title + '</div>' +
+					'<div class="upfront-settings-item-content">' + markup + '</div>' +
+				'</div>'
+			);
+		}
 	});
 
-	var TextSetting = Setting.extend({
-		render: function () {
-			this.$el.html('<input type="text" name="' + this.model.get("name") + '" value="' + this.model.get("value") + '" />');
-		},
-		get_name: function () {
-			return this.model.get("name");
-		},
-		get_value: function () {
-			return this.$el.find("input").val();
-		},
-	});
-
-	var Settings = Backbone.View.extend({
+	var SettingsPanel = Backbone.View.extend({
 		tagName: "ul",
 
 		events: {
-			"click .upfront-save_settings": "on_save"
+			"click .upfront-save_settings": "on_save",
+			"click .upfront-cancel_settings": "on_cancel",
+			"click .upfront-settings_label": "on_toggle"
+		},
+		get_title: function () {},
+		get_label: function () {},
+
+		initialize: function () {
+			this.settings = _([]);
 		},
 
 		render: function () {
-			var me = this;
-			me.$el.empty().show();
-			if (!me.for_view) return false();
-			
-			me.settings = me.for_view.get_settings();
-			if (me.settings) me.settings.each(function (setting) {
+			this.$el.empty().show();
+			this.$el.append('<div class="upfront-settings_label" />');
+			this.$el.append('<div class="upfront-settings_panel" style="display:none" />');
+			var $label = this.$el.find(".upfront-settings_label"),
+				$panel = this.$el.find(".upfront-settings_panel")
+			;
+			$label.append(this.get_label());
+			this.settings.each(function (setting) {
 				setting.render();
-				me.$el.append(setting.el)
+				$panel.append(setting.el)
 			});
-			me.$el.append("<button type='button' class='upfront-save_settings'>Save</button>")
+			$panel.append(
+				"<div class='upfront-settings-button_panel'>" +
+					"<button type='button' class='upfront-cancel_settings'><i class='icon-arrow-left'></i> Back</button>" +
+					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
+				'</div>'
+			);
+		},
+
+		conceal: function () { 
+			this.$el.find(".upfront-settings_panel").hide();
+			this.$el.find(".upfront-settings_label").show();
+		},
+
+		reveal: function () {
+			this.$el.find(".upfront-settings_label").hide();
+			this.$el.find(".upfront-settings_panel").show();
+		},
+
+		show: function () {
+			this.$el.show();
+		},
+		
+		hide: function () {
+			this.$el.hide();
+		},
+
+		on_toggle: function () {
+			this.trigger("upfront:settings:panel:toggle", this);
+			this.show();
 		},
 
 		on_save: function () {
@@ -493,8 +535,67 @@ define(_template_files, function () {
 					setting.get_value()
 				);
 			});
+		},
+		
+		on_cancel: function () {
+			this.trigger("upfront:settings:panel:close", this);
 		}
 
+	});
+
+	var Settings = Backbone.View.extend({
+		get_title: function () {
+			return "Settings";
+		},
+
+		render: function () {
+			var me = this,
+				$view = me.for_view.$el.find(".upfront-editable_entity"),
+				view_pos = $view.offset()
+			;
+			me.$el
+				.empty()
+				.show()
+				.html(
+					'<div class="upfront-settings_title">' + this.get_title() + '</dv>'
+				)
+			;
+			me.panels.each(function (panel) {
+				panel.render();
+				panel.on("upfront:settings:panel:toggle", me.toggle_panel, me);
+				panel.on("upfront:settings:panel:close", me.close_panel, me);
+				me.$el.append(panel.el)
+			});
+
+			this.$el
+				.css({
+					"position": "absolute",
+					"z-index": 10000000
+				})
+				.offset({
+					"top": view_pos.top,
+					"left": view_pos.left + $view.outerWidth()
+				})
+			;
+		},
+
+		set_title: function (title) {
+			if (!title || !title.length) return false;
+			this.$el.find(".upfront-settings_title").html(title);
+		},
+
+		toggle_panel: function (panel) {
+			this.panels.invoke("hide");
+			panel.show();
+			panel.reveal();
+			this.set_title(panel.get_title());
+		},
+
+		close_panel: function (panel) {
+			this.panels.invoke("conceal");
+			this.panels.invoke("show");
+			this.set_title(this.get_title());
+		}
 	});
 
 	return {
@@ -505,9 +606,11 @@ define(_template_files, function () {
 			"Command": Command,
 			"Command_Merge": Command_Merge,
 			"Layouts": LayoutSizes,
-			"Setting": Setting,
-			"TextSetting": TextSetting,
-			"Settings": Settings
+			"Settings": {
+				"Settings": Settings,
+				"Panel": SettingsPanel,
+				"Item": SettingsItem,
+			}
 		}
 	};
 });

@@ -221,12 +221,94 @@ html, body {
 }
 
 .upfront-entity_meta {
-  text-align: right;
-  padding-right: 5px;
+  float: right;
+  padding-right: 1px;
   display: block;
 }
-.upfront-entity_meta a {
-  color: #333;
+.upfront-editable_entity .upfront-entity_meta a {
+  display: none;
+}
+.upfront-editable_entity:hover .upfront-entity_meta a {
+  color: #fff;
+  display: block;
+  height: 15px;
+  line-height: 1em;
   text-decoration: none;
+  width: 15px;
+  border-radius: 2px;
+  text-align: center;
+  font-weight: normal;
+}
+.upfront-entity_meta a.upfront-entity-settings_trigger {
+  background-color: #3472ac;
+}
+.upfront-entity_meta a.upfront-entity-delete_trigger {
+  background-color: #cf3a3a;
 }
 
+
+
+/* ----- Settings ----- */
+
+#settings ul, #settings ul li {
+  margin: 0; padding: 0;
+  list-style: none;
+}
+#settings {
+  background-color: #fff;
+  border: 1px solid #dee3e3;
+  min-width: 95px;
+}
+#settings .upfront-settings_title {
+  background-color: #ebf5ff;
+  border-bottom: 1px solid #dee3e3;
+  padding: 5px 15px;
+}
+#settings .upfront-settings_label, #settings .upfront-settings_panel li {
+  padding: 5px 15px;
+}
+#settings .upfront-settings_label:hover {
+  background-color: #087fca;
+  color: #fff;
+}
+
+#settings .upfront-settings-button_panel {
+  background-color: #ebf5ff;
+  overflow: hidden;
+  margin-top: 1em;
+  border-top: 1px solid #dee3e3;
+}
+#settings .upfront-settings_panel .upfront-cancel_settings, #settings .upfront-settings_panel .upfront-save_settings {
+  width: 50px;
+  border: none;
+  background-color: #fff;
+  padding: 5px;
+}
+#settings .upfront-settings_panel .upfront-cancel_settings {
+  border-right: 1px solid #dee3e3;
+  float: left;
+}
+#settings .upfront-settings_panel .upfront-save_settings {
+  border-left: 1px solid #dee3e3;
+  float: right;
+}
+#settings .upfront-settings_panel .upfront-save_settings i {
+  color: #1aca07;
+}
+
+#settings .upfront-settings-item {
+  padding: 5px;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #dee3e3;
+}
+#settings .upfront-settings-item .upfront-settings-item-title {
+  font-weight: bold;
+  font-style: italic;
+  color: #808d9a;
+}
+#settings .upfront-settings-item .upfront-settings-item-content {
+  padding: 5px 15px;
+}
+#settings .upfront-settings-item .upfront-settings-item-content [contenteditable] {
+  border-bottom: 1px dashed #dee3e3;
+}

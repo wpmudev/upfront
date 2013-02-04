@@ -50,11 +50,11 @@ define(_template_files, function () {
 		})),
 
 		_Upfront_EditableEntity = _Upfront_SingularEditor.extend({
-			events: {
-				"click": "on_click",
-				"click .upfront-entity_meta": "on_meta_click",
+			/*events: {
 				"click .upfront-entity_meta a": "on_settings_click",
-			},
+				"click .upfront-entity_meta": "on_meta_click",
+				"click": "on_click",
+			},*/
 			// Propagate collection sorting event
 			resort_bound_collection: function () {
 				this.$el.trigger("resort", [this]);
@@ -75,10 +75,14 @@ define(_template_files, function () {
 				$(".upfront-active_entity").removeClass("upfront-active_entity");
 				this.$el.addClass("upfront-active_entity");
 				this.trigger("upfront:entity:activate", this);
-				return false;
+				//return false;
 			},
 			// Stub handlers
 			on_meta_click: function () {},
+			on_delete_click: function () {
+				this.$el.trigger("upfront:entity:remove", [this]);
+				return false; // Stop propagation in order not to cause error with missing sortables etc
+			},
 			on_settings_click: function () {
 				Upfront.Events.trigger("entity:settings:activate", this);
 			}
@@ -108,7 +112,8 @@ define(_template_files, function () {
 
 		_Upfront_EditableEntities = _Upfront_PluralEditor.extend({
 			"events": {
-				"resort": "on_resort_collection"
+				"resort": "on_resort_collection",
+				"upfront:entity:remove": "on_entity_remove"
 			},
 
 			on_resort_collection: function () {
@@ -123,10 +128,21 @@ define(_template_files, function () {
 				});
 				this.model.reset(models);
 				return false; // Don't bubble up
+			},
+
+			on_entity_remove: function (e,view) {
+				view.remove();
+				this.model.remove(view.model);
 			}
 		}),
 
 		ObjectView = _Upfront_EditableContentEntity.extend({
+			events: {
+				"click .upfront-entity_meta a.upfront-entity-settings_trigger": "on_settings_click",
+				"click .upfront-entity_meta a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-entity_meta": "on_meta_click",
+				"click": "on_click",
+			},
 			initialize: function () {
 				this.model.get("properties").bind("change", this.render, this);
 				this.model.get("properties").bind("add", this.render, this);
@@ -181,6 +197,12 @@ define(_template_files, function () {
 		}),
 
 		Module = _Upfront_EditableEntity.extend({
+			events: {
+				"click .upfront-entity_meta a.upfront-entity-settings_trigger": "on_settings_click",
+				"click .upfront-entity_meta a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-entity_meta": "on_meta_click",
+				"click": "on_click",
+			},
 			initialize: function () {
 				var callback = this.update || this.render;
 				this.model.get("properties").bind("change", callback, this);

@@ -205,13 +205,27 @@ var LayoutEditor = new (Subapplication.extend({
 	},
 
 	create_settings: function (view) {
-		//$(Upfront.Settings.LayoutEditor.Selectors.settings).show();
-		var settings_view = new Upfront.Views.Editor.Settings({
-			"model": view.model, 
-			"el": $(Upfront.Settings.LayoutEditor.Selectors.settings)
-		});
+		if (this.settings_view) return this.destroy_settings();
+
+		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
+		var current_object = _(this.Objects).reduce(function (obj, current) { 
+				return (view instanceof current.View) ? current : obj; 
+			}, false),
+			current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings)
+			settings_view = new current_object.Settings({
+				model: view.model,
+				el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
+			})
+		;
 		settings_view.for_view = view;
 		settings_view.render();
+		this.settings_view = settings_view;
+	},
+
+	destroy_settings: function () {
+		if (!this.settings_view) return false;
+		$(Upfront.Settings.LayoutEditor.Selectors.settings).html('');
+		this.settings_view = false;
 	}
 
 }))();
