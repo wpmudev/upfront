@@ -321,7 +321,25 @@ define(_template_files, function () {
 				layout_size.bind("upfront:layout_size:change_size", me.update_grid, me);
 			});
 		}
-	})
+	});
+
+	var Command_ResetEverything = Command.extend({
+		render: function () {
+			this.$el.html("<span title='destroy the layout and clear everything up'>Reset everything</span>");
+		},
+		on_click: function () {
+			var data = Upfront.Util.model_to_json(this.model);
+			Upfront.Util.post({"action": "upfront_reset_layout", "data": data})
+				.success(function () {
+					Upfront.Util.log("layout reset");
+					window.location.reload();
+				})
+				.error(function () {
+					Upfront.Util.log("error resetting layout");
+				})
+			;
+		}
+	});
 
 	var Commands = Backbone.View.extend({
 		"tagName": "ul",
@@ -336,6 +354,7 @@ define(_template_files, function () {
 				new Command_Delete({"model": this.model}),
 				new Command_Select({"model": this.model}),
 				new Command_ToggleGrid({"model": this.model}),
+				new Command_ResetEverything({"model": this.model}),
 			]);
 			if (Upfront.Settings.Debug.transients) this.commands.push(new Command_ExportHistory({model: this.model}));
 		},

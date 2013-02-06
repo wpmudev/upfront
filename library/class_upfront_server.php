@@ -48,6 +48,7 @@ class Upfront_Ajax extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('wp_ajax_upfront_load_layout', array($this, "load_layout"));
 		add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
+		add_action('wp_ajax_upfront_reset_layout', array($this, "reset_layout"));
 	}
 
 	// STUB LOADING
@@ -74,6 +75,13 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout = Upfront_Layout::from_php($data);
 		$key = $layout->save();
 		$this->_out(new Upfront_JsonResponse_Success($key));
+	}
+
+	function reset_layout () {
+		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
+		$layout = Upfront_Layout::from_php($data);
+		$layout->delete();
+		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
 	}
 
 }

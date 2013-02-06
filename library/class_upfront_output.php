@@ -16,7 +16,7 @@ class Upfront_Output {
 		$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
 		$layout = Upfront_Layout::from_id($layout_id);
 
-if (!$layout->to_php()) {
+if ($layout->is_empty()) {
 	$layout = Upfront_Layout::create_layout();
 }
 
