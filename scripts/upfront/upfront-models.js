@@ -100,6 +100,21 @@ var _alpha = "alpha",
 			else if (!prop) this.get("properties").add(new Property({"name": "class", "value": value})); // No class property
 			return false;
 		},
+		add_class: function (value) {
+			var val_rx = new RegExp(value),
+				prop = this.get_property_by_name("class"),
+				old = prop ? prop.get("value") : false;
+			if (prop && !old.match(val_rx)) return prop.set("value", old + " " + value);
+			else if (!prop) this.get("properties").add(new Property({"name": "class", "value": value}));
+			return false;
+		},
+		remove_class: function (value) {
+			var val_rx = new RegExp(value),
+				prop = this.get_property_by_name("class"),
+				old = prop ? prop.get("value") : false;
+			if (prop && old.match(val_rx)) return prop.set("value", old.replace(val_rx, ""));
+			return false;
+		},
 		is_visible: function () {
 			return this.get_property_value_by_name("visibility");
 		}

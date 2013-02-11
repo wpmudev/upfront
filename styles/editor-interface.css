@@ -161,6 +161,7 @@ html, body {
 .upfront-module {
 	border: 1px solid #b3da11;
 	background: rgba(242, 255, 186, 0.4);
+	padding: 30px 0 0;
 }
 .upfront-object {
 	border: 1px solid #bada55;
@@ -168,11 +169,13 @@ html, body {
 }
 .upfront-module, .upfront-object {
 	position: relative;
+	/*-webkit-transition: margin .2s ease;*/
 }
 .upfront-debug-info {
 	position: absolute;
 	bottom: -10px;
 	left: 5px;
+	right: 5px;
 	background: #fff;
 	border: 1px solid #ccc;
 	padding: 0 5px;
@@ -207,13 +210,29 @@ html, body {
 .upfront-preview-helper {
 	background: rgba(0, 0, 0, 0.1);
 	position: relative;
+	-webkit-transition: margin .1s ease, left .1s ease, top .1s ease;
 }
 
+.upfront-closest {
+	background: rgba(246, 247, 181, 0.7);
+}
 .upfront-prev {
 	background: rgba(255, 179, 227, 0.7);
 }
 .upfront-next {
 	background: rgba(179, 225, 255, 0.7);
+}
+.upfront-affected-top {
+	border-bottom-color: #11c4d9;
+}
+.upfront-affected-bottom {
+	border-top-color: #11c4d9;
+}
+.upfront-affected-left {
+	border-right-color: #11c4d9;
+}
+.upfront-affected-right {
+	border-left-color: #11c4d9;
 }
 
 .ui-draggable {
@@ -221,14 +240,18 @@ html, body {
 }
 
 .upfront-entity_meta {
-  float: right;
+  /*float: right;*/
   padding-right: 1px;
   display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 .upfront-editable_entity .upfront-entity_meta a {
   display: none;
 }
-.upfront-editable_entity:hover .upfront-entity_meta a {
+.upfront-editable_entity:hover > .upfront-entity_meta a {
   color: #fff;
   display: block;
   height: 15px;
@@ -238,6 +261,7 @@ html, body {
   border-radius: 2px;
   text-align: center;
   font-weight: normal;
+  float: right;
 }
 .upfront-entity_meta a.upfront-entity-settings_trigger {
   background-color: #3472ac;

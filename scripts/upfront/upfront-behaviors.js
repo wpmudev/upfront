@@ -55,6 +55,8 @@ var LayoutEditor = {
 			parent_width = $parent.width() || 100,
 			GRID_SIZE = Upfront.Settings.LayoutEditor.Grid.size,
 			BASELINE = Upfront.Settings.LayoutEditor.Grid.baseline,
+			margin_right_class = Upfront.Settings.LayoutEditor.Grid.right_margin_class,
+			margin_right_rx = new RegExp(margin_right_class+'\\d+'),
 			$resizable = view.$el.find(">.upfront-editable_entity"),
 			grid_selector = _.range(1, GRID_SIZE+1).map(function(i){ return '.'+Upfront.Settings.LayoutEditor.Grid.class+i }).join(',');
 		;
@@ -71,6 +73,7 @@ var LayoutEditor = {
 						'margin-left': parseInt($(this).outerWidth(true)-$(this).outerWidth())+'px'
 					});
 				});
+				classes = classes.replace(margin_right_rx, "");
 				view.$el.append('<div class="upfront-preview-helper '+classes+'" style="height:'+$el.outerHeight()+'px;"></div>');
 			},
 			stop: function (e, ui) {
@@ -127,6 +130,7 @@ var LayoutEditor = {
 			containment_limit = [containment_pos.left, containment_pos.left+$containment.outerWidth()],
 			$draggable = view.$el.find(">.upfront-editable_entity"),
 			$target = view.$el.find(">.upfront-editable_entity:first"),
+			width_class = Upfront.Settings.LayoutEditor.Grid.class,
 			margin_left_class = Upfront.Settings.LayoutEditor.Grid.left_margin_class,
 			margin_right_class = Upfront.Settings.LayoutEditor.Grid.right_margin_class,
 			margin_top_class = Upfront.Settings.LayoutEditor.Grid.top_margin_class,
@@ -135,6 +139,7 @@ var LayoutEditor = {
 			tmp = view.$el.append("<div id='upfront-temp-measurement' class='" + margin_left_class + "1 " + width_class + "1' />"),
 			$measure = $("#upfront-temp-measurement"),
 			margin_increment = parseFloat($("#upfront-temp-measurement").css("margin-left"), 10),
+			width_rx = new RegExp('\\b' + width_class + '\\d+'),
 			margin_left_rx = new RegExp('\\b' + margin_left_class + '\\d+'),
 			margin_right_rx = new RegExp('\\b' + margin_right_class + '\\d+'),
 			margin_top_rx = new RegExp('\\b' + margin_top_class + '\\d+'),
@@ -149,19 +154,19 @@ var LayoutEditor = {
 			
 					
 			// Some functions
-			_update_margin_class = function ($el, margin_class, margin_size) {
-				var rx = new RegExp('\\b' + margin_class + '\\d+');
-				if ( ! $el.hasClass(margin_class+margin_size) ){
+			_update_class = function ($el, class_name, class_size) {
+				var rx = new RegExp('\\b' + class_name + '\\d+');
+				if ( ! $el.hasClass(class_name+class_size) ){
 					if ( $el.attr('class').match(rx) )
-						$el.attr('class', $el.attr('class').replace(rx, margin_class+margin_size));
+						$el.attr('class', $el.attr('class').replace(rx, class_name+class_size));
 					else
-						$el.addClass(margin_class+margin_size);
+						$el.addClass(class_name+class_size);
 				}
 			},
 			_update_margin_classes = function ($el) {
 				var el_margin = $el.data('margin');
-				_update_margin_class($el, margin_left_class, el_margin.current.left);
-				_update_margin_class($el, margin_right_class, el_margin.current.right);
+				_update_class($el, margin_left_class, el_margin.current.left);
+				_update_class($el, margin_right_class, el_margin.current.right);
 			},
 			_update_elements_pos = function () {
 				elements_pos = Upfront.Behaviors.LayoutEditor._generate_elements_position(view.$el.parent().children());
@@ -187,6 +192,192 @@ var LayoutEditor = {
 				 add 3 and do a modulo by 4  to shift the quadrants to a proper clockwise TRBL (top/right/bottom/left) **/
 					direction = Math.round((((Math.atan2(y, x) * (180 / Math.PI)) + 180 ) / 90 ) + 3 )  % 4;
 				return direction; // 0 = top, 1 = right, 2 = bottom, 3 = left
+			},
+			_get_affected_elements = function (el_pos, els_pos) {
+				var affected_els = {
+						top: [],
+						left: [],
+						bottom: [],
+						right: []
+					};
+				_.each(els_pos, function(each){
+					if ( el_pos == each )
+						return;
+					if ( (el_pos.outer_position.top <= each.outer_position.top &&
+						el_pos.outer_position.bottom > each.outer_position.top) ||
+						(el_pos.outer_position.top >= each.outer_position.top &&
+						el_pos.outer_position.top < each.outer_position.bottom) ){
+						if ( el_pos.outer_position.left >= each.outer_position.right &&
+							el_pos.outer_position.left-each.outer_position.right <= 2 ){
+							affected_els.left.push(each);
+						}
+						if ( el_pos.outer_position.right <= each.outer_position.left &&
+							each.outer_position.left-el_pos.outer_position.right <= 2 ){
+								affected_els.right.push(each);
+						}
+					}
+					if ( (el_pos.outer_position.left >= each.outer_position.left && 
+						el_pos.outer_position.left <= each.outer_position.right) ||
+						(el_pos.outer_position.right <= each.outer_position.right && 
+						el_pos.outer_position.right >= each.outer_position.left) ){
+						if ( el_pos.outer_position.top >= each.outer_position.bottom &&
+							el_pos.outer_position.top-each.outer_position.bottom <= 2 )
+							affected_els.top.push(each);
+						if ( el_pos.outer_position.bottom <= each.outer_position.top && 
+							each.outer_position.top-el_pos.outer_position.bottom <= 2 )
+							affected_els.bottom.push(each);
+					}
+				});
+				return affected_els;
+			},
+			_get_move_limit = function (affected_els, containment_limit) {
+				var move_limit = [containment_limit[0], containment_limit[1]];
+				_.each(affected_els.left, function(each){
+					if ( each.position.right > move_limit[0] )
+						move_limit[0] = each.position.right;
+				});
+				_.each(affected_els.right, function(each){
+					if ( each.position.left < move_limit[1] )
+						move_limit[1] = each.position.left;
+				});
+				return move_limit;
+			},
+			_preview_t = null,
+			_preview_delay = 400, // in ms
+			_preview_resort = function (me, v) {
+				console.log(v);
+				var
+					$preview = me.$el.parent().find(">.upfront-preview-helper"),
+					// Get direction
+					direction_next = v.next ? _get_direction(v.next.$el, v.offset.x, v.offset.top+pos_tolerance) : false,
+					direction_prev = v.prev ? _get_direction(v.prev.$el, v.offset.x, v.offset.top+pos_tolerance) : false,
+					direction = _get_direction(v.closest.$el, v.offset.x, v.offset.top+pos_tolerance),
+					margin_data = me.$el.data('margin'),
+					avail_top_width = 0,
+					avail_width = 0,
+					avail_space = 0,
+					avail_space_left = 0,
+					avail_space_right = 0,
+					
+					moved = false,
+					resort = false
+				;
+				// Use next if exists and the direction is either top/left
+				if ( v.next && (direction_next == 0 || direction_next == 3) ){
+					// available width and space
+					var next_affected_els = _get_affected_elements(v.next, elements_pos),
+						next_move_limit = _get_move_limit(next_affected_els, containment_limit),
+						next_margin = v.next.$el.data('margin'),
+						current_direction = _get_direction(v.next.$el, me.center.x, me.position.top+pos_tolerance),
+						is_prev = v.next.$el.parent().prev().find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id');
+					console.log([current_direction, direction_next]);
+					//if ( is_prev && current_direction == direction_next ) // Same order and direction, no need to resort/move
+					//	return;
+					if ( next_affected_els.left.length > 0 && next_affected_els.left[0].$el == me.$el ){ // Since the left affected elements is current element, add it's position to the move limit
+						next_move_limit[0] = me.outer_position.left;
+					}
+					avail_top_width = containment_limit[1]-next_move_limit[0];
+					avail_width = next_move_limit[1]-next_move_limit[0];
+					avail_space = avail_width-(v.next.width);
+					avail_space_left = v.next.position.left-next_move_limit[0];
+					avail_space_right = avail_space-avail_space_left;
+					
+					if ( direction_next == 3 && avail_space_left >= me.width ) {
+						margin_data.current.left = 0;
+						margin_data.current.right = 0;
+						next_margin.current.left = Math.round((avail_space_left-me.width)/margin_increment);
+						_update_class(v.next.$el, margin_left_class, next_margin.current.left);
+						v.next.$el.data('margin', next_margin);
+						moved = true;
+					}
+					else if ( direction_next == 0 || avail_space_left < me.width ) {
+						if ( avail_top_width >= me.width ){
+							margin_data.current.left = 0;
+							margin_data.current.right = Math.round((avail_top_width-me.width)/margin_increment);
+							moved = true;
+						}
+					}
+					if ( moved ){
+						if ( ! is_prev ){
+							v.next.$el.parent().before(me.$el.parent());
+							resort = true;
+						}
+					}
+				}
+				// Use prev is exists and the direction is right/bottom
+				else if ( v.prev && (direction_prev == 1 || direction_prev == 2) ){
+					// available width and space
+					var prev_affected_els = _get_affected_elements(v.prev, elements_pos),
+						prev_move_limit = _get_move_limit(prev_affected_els, containment_limit),
+						prev_margin = v.prev.$el.data('margin'),
+						current_direction = _get_direction(v.prev.$el, me.center.x, me.position.top+pos_tolerance),
+						is_next = v.prev.$el.parent().next().find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id');
+					console.log([current_direction, direction_prev]);
+					//if ( is_next && current_direction == direction_prev ) // Same order and direction, no need to resort/move
+					//	return;
+					if ( prev_affected_els.right.length > 0 && prev_affected_els.right[0].$el == me.$el ){ // Since the right affected elements is current element, add it's position to the move limit
+						prev_move_limit[1] = me.outer_position.right;
+					}
+					avail_top_width = containment_limit[1]-prev_move_limit[0];
+					avail_width = prev_move_limit[1]-prev_move_limit[0];
+					avail_space = avail_width-(v.prev.width);
+					avail_space_left = v.prev.position.left-prev_move_limit[0];
+					avail_space_right = avail_space-avail_space_left;
+					console.log(prev_move_limit);
+					
+					if ( direction_prev == 1 && avail_space_right >= me.width ) {
+						margin_data.current.left = 0;
+						margin_data.current.right = Math.round((avail_space_right-me.width)/margin_increment);
+						prev_margin.current.right = 0;
+						_update_class(v.prev.$el, margin_right_class, prev_margin.current.right);
+						v.prev.$el.data('margin', prev_margin);
+						moved = true;
+					}
+					else if ( direction_prev == 2 || avail_space_right < me.width ) {
+						if ( avail_top_width >= me.width ){
+							margin_data.current.left = 0;
+							margin_data.current.right = Math.round((avail_top_width-me.width)/margin_increment);
+							moved = true;
+						}
+					}
+					if ( moved ){
+						if ( ! is_next ){
+							v.prev.$el.parent().after(me.$el.parent());
+							resort = true;
+						}
+					}
+				}
+				
+				if ( moved ){
+					// Update classes
+					_update_class($preview, margin_left_class, margin_data.current.left);
+					_update_class($preview, margin_right_class, margin_data.current.right);
+					_update_class(me.$el, margin_left_class, margin_data.current.left);
+					_update_class(me.$el, margin_right_class, margin_data.current.right);
+					me.$el.data('margin', margin_data);
+					// Resort
+					if ( resort ){
+						_.each(v.affected_els.right, function(each){
+							var each_margin = each.$el.data('margin'),
+								each_margin_size = Math.round((me.position.right-me.outer_position.left)/margin_increment) + each_margin.original.left;
+							each_margin.current.left = each_margin_size;
+							each.$el.data('margin', each_margin);
+							_update_margin_classes(each.$el);
+						});
+						view.resort_bound_collection();
+					}
+					me.$el.show();
+					$preview.hide();
+					_update_elements_pos(); // Generate list of elements and it's position
+					_update_margin_data(); // Generate margin data
+					// Check if there's affected left element after updated position
+					var updated_affected_els = _get_affected_elements(me, elements_pos);
+					if ( updated_affected_els.left.length == 0 ){ // none, then add clear
+					}
+					me.$el.hide();
+					$preview.show();
+				}
+				console.log('moved:'+moved+', resort:'+resort);
 			}
 		;
 		
@@ -213,7 +404,7 @@ var LayoutEditor = {
 				
 				// debug info
 				_.each(elements_pos, function(each){
-					each.$el.find(".upfront-debug-info").text('current offset: '+each.position.left+','+each.outer_position.top+','+each.position.right+','+each.outer_position.bottom);
+					each.$el.find(".upfront-debug-info").text('offset: '+each.position.left+','+each.position.top+','+each.position.right+','+each.position.bottom + '| outer offset: '+each.outer_position.left+','+each.outer_position.top+','+each.outer_position.right+','+each.outer_position.bottom);
 				});
 				
 				$me.hide();
@@ -232,14 +423,6 @@ var LayoutEditor = {
 					height = $me.outerHeight(),
 					width = $me.outerWidth(),
 
-					/*original_left = ui.originalPosition.left,
-					original_top = ui.originalPosition.top,
-					ui_left = ui.position.left,
-					ui_top = ui.position.top,
-
-					relative_left = original_left - ui_left,
-					relative_top = original_top - ui_top,*/
-
 					current_offset = $helper.offset(),
 					current_left = current_offset.left,
 					current_top = current_offset.top,
@@ -256,26 +439,32 @@ var LayoutEditor = {
 						return ( each == me_pos );
 					}),
 					lines = _.groupBy(filtered_elements_pos, function(each){ return each.outer_position.top; }),
-					//lines_pos = [],
-					lines_pos = _.keys(lines),
+					lines_pos = [],
+					lines_top = _.keys(lines),
 					next_line = _.find(lines, function(els, top){
 						top = parseInt(top);
-						first_top = parseInt(lines_pos[0]);
+						first_top = parseInt(lines_top[0]);
 						if ( current_top < top && (top == first_top || (top > first_top && top-current_top <= pos_tolerance)) && top != me_pos.outer_position.top )
 							return true;
 						return false;
 					}),
-					current_line = lines[_.find(lines_pos, function(line, index, list){
+					current_line = lines[_.find(lines_top, function(line, index, list){
 						if ( index < list.length-1 && line <= current_top && list[index+1] > current_top )
 							return true;
-						if ( line == me_pos.outer_position.top || index == list.length-1 )
+						if ( (index == 0 && current_top < line) || index == list.length-1 )
 							return true;
 						return false;
 					})],
 					use_line = next_line ? next_line : current_line,
 					next = _.find(use_line, function(each, index, list){
-						if ( current_left < each.position.left && each.position.bottom > current_top )
-							return true;
+						if ( each.width < width ){
+							if ( current_left < each.position.left && each.position.bottom > current_top )
+								return true;
+						}
+						else if ( each.width >= width ){
+							if ( current_right <= each.position.right && each.position.bottom > current_top )
+								return true;
+						}
 						if ( next_line && index == list.length-1 )
 							return true;
 						return false;
@@ -285,10 +474,14 @@ var LayoutEditor = {
 					prev_index = prev ? _.indexOf(filtered_elements_pos, prev) : false,
 					
 					// Finding the closest element
-					closest = _.min(filtered_elements_pos, function(each){
+					filtered_elements_pos = _.map(filtered_elements_pos, function(each){
 						var diff_x = each.center.x - current_x,
 							diff_y = each.center.y - current_y;
-						return Math.sqrt(Math.pow(diff_x, 2) + Math.pow(diff_y, 2));
+						each.distance = Math.sqrt(Math.pow(diff_x, 2) + Math.pow(diff_y, 2));
+						return each;
+					});
+					closest = _.min(filtered_elements_pos, function(each){
+						return each.distance;
 					}),
 					closest_index = _.indexOf(filtered_elements_pos, closest),
 					closest_next = filtered_elements_pos.length-1 > closest_index ? filtered_elements_pos[closest_index+1] : false,
@@ -305,29 +498,22 @@ var LayoutEditor = {
 					relative_margin_top_size = -1 * (relative_top ? Math.round(relative_top / BASELINE) : 0),
 					margin_top_size = margin_data.original.top + relative_margin_top_size,
 					
-					// bind_(left|right)_elements will hold elements that is affected by the flow of current element
-					bind_left_elements = [],
-					bind_right_elements = [],
+					// affected_elements will hold elements that is affected by the flow of current element
+					affected_elements = _get_affected_elements(me_pos, elements_pos),
 					// move_limit store the available movement on left/right
-					move_limit = [containment_limit[0], containment_limit[1]],
-					max_margin = 0,
-					recalc_margin = false,
-					
-					// Get direction
-					direction_next = next ? _get_direction(next.$el, current_x, current_top+pos_tolerance) : false,
-					direction_prev = prev ? _get_direction(prev.$el, current_x, current_top+pos_tolerance) : false,
-					direction = _get_direction(closest.$el, current_x, current_top+pos_tolerance),
+					move_limit = _get_move_limit(affected_elements, containment_limit),
+					max_margin_x = 0,
+					max_margin_y = 0,
+					recalc_margin_x = false,
+					recalc_margin_y = false,
 					
 					new_line = false,
 
 					resort = false
 				;
+			
 				
-				//console.log([direction_prev, direction_next]);
-				//console.log(direction);
-				
-				// Filter lines
-				/*var tmp_bottom = -1, tmp_index = -1;
+				var tmp_bottom = -1, tmp_index = -1;
 				_.each(lines, function(els, top, list){
 					top = parseInt(top);
 					if ( top < tmp_bottom ){
@@ -343,50 +529,43 @@ var LayoutEditor = {
 					var max_bottom = parseInt(_.max(els, function(each){ return parseInt(each.outer_position.bottom); }).outer_position.bottom);
 					tmp_bottom = max_bottom > tmp_bottom ? max_bottom : tmp_bottom;
 					lines_pos[tmp_index].bottom = tmp_bottom;
-				});*/
-				
-				// Figure out the move_limit as well as the bind_(left|right)_elements
-				_.each(filtered_elements_pos, function(each){
-					if ( (me_pos.outer_position.top <= each.outer_position.top &&
-						me_pos.outer_position.bottom > each.outer_position.top) ||
-						(me_pos.outer_position.top >= each.outer_position.top &&
-						me_pos.outer_position.bottom < each.outer_position.bottom) ){
-						if ( me_pos.position.left >= each.position.right ){
-							bind_left_elements.push(each);
-							if ( each.position.right > move_limit[0] )
-								move_limit[0] = each.position.right;
-						}
-						if ( me_pos.position.right-1 <= each.position.left ){
-							bind_right_elements.push(each);
-							if ( each.position.left < move_limit[1] )
-								move_limit[1] = each.position.left;
-						}
-					}
 				});
 				
-				max_margin = Math.round((move_limit[1]-move_limit[0]-width)/margin_increment);
 				
-				margin_size = margin_size > 0 ? (margin_size > max_margin ? max_margin : margin_size) : 0;
+				// Calculate margins
+				max_margin_x = Math.round((move_limit[1]-move_limit[0]-width)/margin_increment);
+				
+				margin_size = margin_size > 0 ? (margin_size > max_margin_x ? max_margin_x : margin_size) : 0;
 				if ( margin_data.current.left != margin_size ){
 					margin_data.current.left = margin_size;
-					if ( bind_right_elements.length == 0 ){ // No elements on the right, adjusting margin right
-						//var margin_right_size = max_margin-margin_size;
-						//margin_data.current.right = margin_right_size > 0 ? margin_right_size : 0;
+					if ( affected_elements.right.length == 0 ){ // No elements on the right, adjusting margin right
+						var margin_right_size = max_margin_x-margin_size;
+						margin_data.current.right = margin_right_size > 0 ? margin_right_size : 0;
 					}
 					$me.data('margin', margin_data);
 					$preview.css('left', (margin_data.current.left-margin_data.original.left)*margin_increment);
-					recalc_margin = true;
+					recalc_margin_x = true;
 				}
-				margin_data.current.top = margin_top_size;
-				$me.data('margin', margin_data);
-				_update_margin_class($preview, margin_top_class, margin_data.current.top);
 				
-				if ( recalc_margin ){
-					_.each(bind_right_elements, function(each){
-						if ( me_pos.position.right-1 > each.outer_position.left || each.outer_position.left-me_pos.position.right > 4 )
-							return false;
+				var bottom_el = _.min(affected_elements.bottom, function(each){ return each.$el.data('margin').original.top; }),
+					bottom_el_margin = bottom_el ? bottom_el.$el.data('margin').original.top : 0;
+				max_margin_y = affected_elements.bottom.length > 0 ? bottom_el_margin : -1;
+				max_margin_y = max_margin_y > -1 ? max_margin_y+margin_data.original.top : max_margin_y;
+				margin_data.current.top = margin_top_size > 0 ? (max_margin_y > -1 && margin_top_size > max_margin_y ? max_margin_y : margin_top_size) : 0;
+				$me.data('margin', margin_data);
+				if ( max_margin_y > -1 ){
+					$preview.css('top', (margin_data.current.top-margin_data.original.top)*BASELINE);
+					recalc_margin_y = true;
+				}
+				else {
+					_update_class($preview, margin_top_class, margin_data.current.top);
+				}
+				
+				// Recalculate margin so the affected elements remain in their position
+				if ( recalc_margin_x ){
+					_.each(affected_elements.right, function(each){
 						var each_margin = each.$el.data('margin'),
-							each_margin_size = max_margin-margin_data.current.left,
+							each_margin_size = max_margin_x-margin_data.current.left,
 							each_margin_relative = (each.position.left > move_limit[1]) ? Math.round((each.position.left-move_limit[1])/margin_increment) : 0;
 						if ( each_margin.current.left != each_margin_size+each_margin_relative ){
 							each_margin.current.left = each_margin_size+each_margin_relative;
@@ -394,176 +573,99 @@ var LayoutEditor = {
 						}
 					});
 				}
+				/*if ( recalc_margin_y ){
+					_.each(affected_elements.bottom, function(each){
+						var each_margin = each.$el.data('margin'),
+							each_margin_size = max_margin_y-margin_data.current.top,
+							each_margin_relative = each_margin.original.top-bottom_el_margin;
+						if ( each_margin.current.top != each_margin_size+each_margin_relative ){
+							each_margin.current.top = each_margin_size+each_margin_relative;
+							each.$el.data('margin', each_margin);
+						}
+					});
+				}*/
+				
+				// Preview resort
+				clearTimeout(_preview_t);
+				_preview_t = setTimeout(function(){ _preview_resort(me_pos, {
+					prev: prev,
+					next: next,
+					closest: closest,
+					offset: {
+						top: current_top,
+						left: current_left,
+						bottom: current_bottom,
+						right: current_right,
+						x: current_x,
+						y: current_y
+					},
+					affected_els: affected_elements
+				}); }, _preview_delay);
 				
 				
-				//@TODO if previous element is on the same line and this is dragging to the right of it, remove margin right, just in case that the space on the right will fit this width
-				//if ( prev && direction_prev == 1 ){
-				//	var prev_margin = prev.$el.data('margin');
-					//if ( prev_margin.current.right > 0 )
-						//prev.$el.attr('class', prev.$el.attr('class').replace(margin_right_rx, margin_right_class+0))
-				//}
-				
-				//@TODO if the margins between previous and next element have enough space to fit this width, adjust next element margin left
-				
-				
+				if ( !closest.$el.hasClass('upfront-closest') ){
+					$('.upfront-closest').removeClass('upfront-closest');
+					closest.$el.addClass('upfront-closest');
+				}
+				if ( !next || !prev ) {
+					$('.upfront-prev, .upfront-next').removeClass('upfront-prev upfront-next');
+				}
 				if ( (prev && ! prev.$el.hasClass('upfront-prev')) || (next && ! next.$el.hasClass('upfront-next')) ){
 					$('.upfront-prev, .upfront-next').removeClass('upfront-prev upfront-next');
 					if (prev) prev.$el.addClass('upfront-prev');
 					if (next) next.$el.addClass('upfront-next');
 				}
-				/*if ( !closest.$el.hasClass('upfront-prev') ){
-					$('.upfront-prev').removeClass('upfront-prev');
-					closest.$el.addClass('upfront-prev');
-				}*/
-				
-				if ( next && $el.next().find(">.upfront-editable_entity:first").attr('id') != next.$el.attr('id') ){
-					//new_line = true;
-					next.$el.parent().before($el);
-					resort = true;
-				}
-				else if ( prev && $el.prev().find(">.upfront-editable_entity:first").attr('id') != prev.$el.attr('id') ){
-					if ( direction_prev == 2 || direction_prev == 3 )
-						new_line = true;
-					prev.$el.parent().after($el);
-					resort = true;
-				}
-				
-				// Find the line that contain closest element
-				/*var line = _.find(lines_pos, function(l){ return _.contains(l.elements, closest); });
-				switch (direction){
-					case 0: // top
-						// @TODO Check if this should create a new line above, or on the same line
-						closest.$el.parent().before($el);
-						break;
-					case 1: // right
-						//closest.$el.parent().after($el);
-						break;
-					case 2: // bottom
-						// Check if this should drop to the next line, or keep in the same line
-						if (line.bottom > closest.outer_position.bottom && 
-							(closest.outer_position.top != line.top || 
-							 closest_next.outer_position.top != closest.outer_position.top)){ // keep in the same line
-							closest.$el.parent().after($el);
+				$('.upfront-affected-top, .upfront-affected-bottom, .upfront-affected-left, .upfront-affected-right').removeClass('upfront-affected-top upfront-affected-bottom upfront-affected-left upfront-affected-right');
+				_.each(affected_elements, function(els, key){
+					_.each(els, function(each){
+						if ( !each.$el.hasClass('upfront-affected-'+key) ){
+							each.$el.addClass('upfront-affected-'+key);
 						}
-						else { // drop to the next line
-							_.last(line.elements).$el.parent().after($el);
-							new_line = true;
-						}
-						break;
-					case 3: // left
-						//closest.$el.parent().before($el);
-						break;
-				}*/
-				
-				if (resort) {
-					view.resort_bound_collection();
-					
-					if ( new_line && ! $me.hasClass('clr') ){
-						$me.addClass('clr');
-						$preview.addClass('clr');
-					}
-					else if ( $me.hasClass('clr') ) {
-						$me.removeClass('clr');
-						$preview.removeClass('clr');
-					}
-					
-					// Reset margins after a fresh replace
-					margin_data.current.left = 0;
-					_update_margin_class($me, margin_left_class, margin_data.current.left);
-					_update_margin_class($preview, margin_left_class, margin_data.current.left);
-					
-					margin_data.current.right = 0;
-					_update_margin_class($me, margin_right_class, margin_data.current.right);
-					_update_margin_class($preview, margin_right_class, margin_data.current.right);
-					
-					// Don't forget to set the margin
-					$me.data('margin', margin_data);
-						
-					$preview.hide();
-					$me.show();
-					_update_elements_pos();
-					
-					// Generate margin data
-					Upfront.Behaviors.LayoutEditor._generate_elements_margin_data(view.$el.parent().children());
-					margin_data = $me.data('margin');
-					
-					// If there's elements on the right, add the width to the margin so it retain the spaces
-					// @TODO maybe use temporary element instead?
-					/*_.each(bind_right_elements, function(each){
-						var each_margin = each.$el.data('margin'),
-							each_margin_size = Math.round(width/margin_increment)+each_margin.current.left;
-						each_margin.current.left = each_margin_size;
-						each.$el.data('margin', each_margin);
-						_update_margin_classes(each.$el);
-					});*/
-					
-					// Occupy the rest space with right margin to push the next elements down
-					/*me_pos = _.find(elements_pos, function(each){
-						return ( $me.attr('id') == each.$el.attr('id') );
-					});
-					var margin_right_size = Math.round((containment_limit[1]-me_pos.position.right)/margin_increment);
-					margin_data.current.right = margin_right_size > 0 ? margin_right_size : 0;
-					_update_margin_class($me, margin_right_class, margin_data.current.right);
-					_update_margin_class($preview, margin_right_class, margin_data.current.right);
-					
-					$me.data('margin', margin_data);
-					
-					_update_elements_pos();*/
-					
-					$me.hide();
-					$preview.show();
-					
-					
-					//$draggable.css({"destroy"});
-				}
+					})
+				});
 				
 				$el.find(".upfront-debug-info").text('current offset: '+current_left+','+current_top+','+current_right+','+current_bottom+' | x,y: '+current_x+','+current_y+' | relative offset: '+relative_left+','+relative_top+' | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
 				//return !resort;
 
 			},
 			stop: function (e, ui) {
-				// Set up margins
-				if (view.$el.is(".upfront-replaced")) {
-					view.$el.removeClass("upfront-replaced");
-					view.model.replace_class("ml0");
-					return true;
-				}
 				var 
 					$target = view.$el.find(">.upfront-editable_entity:first"),
-					
-					original_left = ui.originalPosition.left,
-					original_top = ui.originalPosition.top,
-					current_left = ui.position.left,
-					current_top = ui.position.top,
-
-					relative_left = original_left - current_left,
-					relative_top = original_top - current_top,
-					
 					margin_data = $target.data('margin')
 				;
+				
+				// Clear preview timeout
+				clearTimeout(_preview_t);
+				
 				view.$el.find('.upfront-preview-helper').remove();
 				view.model.replace_class(margin_left_class+margin_data.current.left);
 				view.model.replace_class(margin_right_class+margin_data.current.right);
 				view.model.replace_class(margin_top_class+margin_data.current.top);
 				
+				// Change affecting elements margin size as well
 				view.$el.parent().children().each(function(){
-					var $el = $(this).find(">.upfront-editable_entity:first"),
-						each_margin_data = $el.data('margin');
-					if ( each_margin_data && each_margin_data.original.left != each_margin_data.current.left ){
-						// @TODO Better way to get correct model instead of iterate like this?
-						var modules = app.layout.get('regions').active_region.get('modules'),
-							model = modules.get_by_element_id($el.attr('id'));
-						if ( ! model )
-							modules.each(function(module){
-								var objects = module.get('objects'),
-									object_model = objects.get_by_element_id($el.attr('id'));
-								if ( object_model )
-									model = object_model;
-							});
-						console.log(each_margin_data.current.left);
+					var $el = $(this).find(">.upfront-editable_entity:first");
+					if ( $el.attr('id') == $target.attr('id') )
+						return;
+					var
+						each_margin_data = $el.data('margin'),
+					// @TODO Better way to get correct model instead of iterate like this?
+						modules = app.layout.get('regions').active_region.get('modules'),
+						model = modules.get_by_element_id($el.attr('id'));
+					if ( ! model )
+						modules.each(function(module){
+							var objects = module.get('objects'),
+								object_model = objects.get_by_element_id($el.attr('id'));
+							if ( object_model )
+								model = object_model;
+						});
+					if ( each_margin_data && each_margin_data.original != each_margin_data.current ){
 						model.replace_class(margin_left_class+each_margin_data.current.left);
+						model.replace_class(margin_right_class+each_margin_data.current.right);
+						model.replace_class(margin_top_class+each_margin_data.current.top);
 					}
 				});
+				
 				$target.show();
 				//console.log(margin_increment)
 				//console.log([current_margin_left_size, margin_size]);
@@ -579,8 +681,8 @@ var LayoutEditor = {
 					var $el = $(each).find(">.upfront-editable_entity:first"),
 						top = $el.offset().top,
 						left = $el.offset().left,
-						outer_top = top-parseInt($el.css('margin-top')),
-						outer_left = left-parseInt($el.css('margin-left'));
+						outer_top = top-parseFloat($el.css('margin-top')),
+						outer_left = left-parseFloat($el.css('margin-left'));
 					return {
 						$el: $el,
 						position: {
@@ -590,10 +692,10 @@ var LayoutEditor = {
 							right: left+$el.outerWidth()
 						},
 						outer_position: {
-							top: outer_top,
-							left: outer_left,
-							bottom: outer_top+$el.outerHeight(true),
-							right: outer_left+$el.outerWidth(true)
+							top: Math.round(outer_top),
+							left: Math.round(outer_left),
+							bottom: Math.round(outer_top+$el.outerHeight(true)),
+							right: Math.round(outer_left+$el.outerWidth(true))
 						},
 						width: $el.outerWidth(),
 						height: $el.outerHeight(),
