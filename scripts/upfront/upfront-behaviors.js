@@ -55,14 +55,14 @@ var LayoutEditor = {
 			parent_width = $parent.width() || 100,
 			GRID_SIZE = Upfront.Settings.LayoutEditor.Grid.size,
 			BASELINE = Upfront.Settings.LayoutEditor.Grid.baseline,
+			width_rx = new RegExp(Upfront.Settings.LayoutEditor.Grid.class+'(\\d+)'),
 			margin_right_class = Upfront.Settings.LayoutEditor.Grid.right_margin_class,
-			margin_right_rx = new RegExp(margin_right_class+'\\d+'),
+			margin_right_rx = new RegExp(margin_right_class+'(\\d+)'),
 			$resizable = view.$el.find(">.upfront-editable_entity"),
 			grid_selector = _.range(1, GRID_SIZE+1).map(function(i){ return '.'+Upfront.Settings.LayoutEditor.Grid.class+i }).join(',');
 		;
 		if ($resizable.resizable) $resizable.resizable({
 			"containment": "parent",
-			/*"grid": [parseInt(main_width/GRID_SIZE, 10), BASELINE],*/ // @TODO this doesn't work well with box-sizing: border-box that we use, disable it for now and might need nicer custom coding grid snapping
 			start: function (e, ui) {
 				var $el = ui.element,
 					classes = view.model.get_property_value_by_name('class');
@@ -73,16 +73,18 @@ var LayoutEditor = {
 						'margin-left': parseInt($(this).outerWidth(true)-$(this).outerWidth())+'px'
 					});
 				});
-				classes = classes.replace(margin_right_rx, "");
 				view.$el.append('<div class="upfront-preview-helper '+classes+'" style="height:'+$el.outerHeight()+'px;"></div>');
 			},
 			stop: function (e, ui) {
 				var $el = ui.element,
+					$preview = view.$el.find('.upfront-preview-helper'),
 					diff = $el.outerWidth() / main_width,
 					classNum = parseInt(Math.round((diff > 1 ? 1 : diff) * GRID_SIZE), 10),
 					className = Upfront.Settings.LayoutEditor.Grid.class + classNum,
 					prop = model.replace_class(className),
-					relative_percentage = 100 * (classNum/GRID_SIZE)
+					relative_percentage = 100 * (classNum/GRID_SIZE),
+					margin_right = $preview.attr('class').match(margin_right_rx),
+					margin_right_num = margin_right ? parseInt(margin_right[1]) : 0
 				;
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				// @TODO this is temporary hack, we need to somehow retain height and snap it to baseline
@@ -93,6 +95,7 @@ var LayoutEditor = {
 					'top': '',
 					'left': ''
 				});
+				model.replace_class(margin_right_class+margin_right_num);
 				view.trigger("upfront:entity:resize", classNum, relative_percentage);
 				// remove width on stop
 				$el.find(grid_selector).css({
@@ -102,16 +105,21 @@ var LayoutEditor = {
 				view.$el.find('.upfront-preview-helper').remove();
 			},
 			resize: function (e, ui) {
-				// Hack for better resize behavior
 				var $el = ui.element,
 					$preview = view.$el.find('.upfront-preview-helper'),
+					preview_class = $preview.attr('class'),
+					current_width = preview_class.match(width_rx),
+					current_width_num = current_width ? parseInt(current_width[1]) : 1;
 					diff = ui.size.width / main_width,
 					classNum = parseInt(Math.round((diff > 1 ? 1 : diff) * GRID_SIZE), 10),
 					className = Upfront.Settings.LayoutEditor.Grid.class + classNum,
-					replace_rx = new RegExp(Upfront.Settings.LayoutEditor.Grid.class+'\\d+');
+					current_margin_right = preview_class.match(margin_right_rx),
+					current_margin_right_num = current_margin_right ? parseInt(current_margin_right[1]) : 0,
+					margin_right = (current_width_num+current_margin_right_num)-classNum;
 				$el.height((ui.size.height > 5 ? ui.size.height : 0) || ui.originalSize.height)
 					.width(ui.size.width > parent_width ? parent_width : ui.size.width);
-				$preview.height($el.outerHeight()).attr('class', $preview.attr('class').replace(replace_rx, className));
+				$preview.height($el.outerHeight())
+					.attr('class', $preview.attr('class').replace(width_rx, className).replace(margin_right_rx, margin_right_class+margin_right));
 			}
 		});
 	},
@@ -147,6 +155,7 @@ var LayoutEditor = {
 			GRID_SIZE = Upfront.Settings.LayoutEditor.Grid.size,
 			BASELINE = Upfront.Settings.LayoutEditor.Grid.baseline,
 			app = this,
+			behavior = Upfront.Behaviors.LayoutEditor,
 			
 			// Keep tracking of variables
 			elements_pos = [],
@@ -169,10 +178,10 @@ var LayoutEditor = {
 				_update_class($el, margin_right_class, el_margin.current.right);
 			},
 			_update_elements_pos = function () {
-				elements_pos = Upfront.Behaviors.LayoutEditor._generate_elements_position(view.$el.parent().children());
+				elements_pos = behavior._generate_elements_position(view.$el.parent().children());
 			},
 			_update_margin_data = function () {
-				Upfront.Behaviors.LayoutEditor._generate_elements_margin_data(view.$el.parent().children());
+				behavior._generate_elements_margin_data(view.$el.parent().children());
 			},
 			_get_direction = function ($el, pos_x, pos_y) {
 				// Credit: http://stackoverflow.com/a/3647634
@@ -193,57 +202,8 @@ var LayoutEditor = {
 					direction = Math.round((((Math.atan2(y, x) * (180 / Math.PI)) + 180 ) / 90 ) + 3 )  % 4;
 				return direction; // 0 = top, 1 = right, 2 = bottom, 3 = left
 			},
-			_get_affected_elements = function (el_pos, els_pos) {
-				var affected_els = {
-						top: [],
-						left: [],
-						bottom: [],
-						right: []
-					};
-				_.each(els_pos, function(each){
-					if ( el_pos == each )
-						return;
-					if ( (el_pos.outer_position.top <= each.outer_position.top &&
-						el_pos.outer_position.bottom > each.outer_position.top) ||
-						(el_pos.outer_position.top >= each.outer_position.top &&
-						el_pos.outer_position.top < each.outer_position.bottom) ){
-						if ( el_pos.outer_position.left >= each.outer_position.right &&
-							el_pos.outer_position.left-each.outer_position.right <= 2 ){
-							affected_els.left.push(each);
-						}
-						if ( el_pos.outer_position.right <= each.outer_position.left &&
-							each.outer_position.left-el_pos.outer_position.right <= 2 ){
-								affected_els.right.push(each);
-						}
-					}
-					if ( (el_pos.outer_position.left >= each.outer_position.left && 
-						el_pos.outer_position.left <= each.outer_position.right) ||
-						(el_pos.outer_position.right <= each.outer_position.right && 
-						el_pos.outer_position.right >= each.outer_position.left) ){
-						if ( el_pos.outer_position.top >= each.outer_position.bottom &&
-							el_pos.outer_position.top-each.outer_position.bottom <= 2 )
-							affected_els.top.push(each);
-						if ( el_pos.outer_position.bottom <= each.outer_position.top && 
-							each.outer_position.top-el_pos.outer_position.bottom <= 2 )
-							affected_els.bottom.push(each);
-					}
-				});
-				return affected_els;
-			},
-			_get_move_limit = function (affected_els, containment_limit) {
-				var move_limit = [containment_limit[0], containment_limit[1]];
-				_.each(affected_els.left, function(each){
-					if ( each.position.right > move_limit[0] )
-						move_limit[0] = each.position.right;
-				});
-				_.each(affected_els.right, function(each){
-					if ( each.position.left < move_limit[1] )
-						move_limit[1] = each.position.left;
-				});
-				return move_limit;
-			},
 			_preview_t = null,
-			_preview_delay = 400, // in ms
+			_preview_delay = 1000, // in ms
 			_preview_resort = function (me, v) {
 				console.log(v);
 				var
@@ -265,8 +225,8 @@ var LayoutEditor = {
 				// Use next if exists and the direction is either top/left
 				if ( v.next && (direction_next == 0 || direction_next == 3) ){
 					// available width and space
-					var next_affected_els = _get_affected_elements(v.next, elements_pos),
-						next_move_limit = _get_move_limit(next_affected_els, containment_limit),
+					var next_affected_els = behavior._get_affected_elements(v.next, elements_pos),
+						next_move_limit = behavior._get_move_limit(next_affected_els, containment_limit),
 						next_margin = v.next.$el.data('margin'),
 						current_direction = _get_direction(v.next.$el, me.center.x, me.position.top+pos_tolerance),
 						is_prev = v.next.$el.parent().prev().find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id');
@@ -283,19 +243,22 @@ var LayoutEditor = {
 					avail_space_right = avail_space-avail_space_left;
 					
 					if ( direction_next == 3 && avail_space_left >= me.width ) {
-						margin_data.current.left = 0;
-						margin_data.current.right = 0;
+						if ( margin_data.original.left != 0 || margin_data.original.right != 0 ){
+							margin_data.current.left = 0;
+							margin_data.current.right = 0;
+						}
 						next_margin.current.left = Math.round((avail_space_left-me.width)/margin_increment);
 						_update_class(v.next.$el, margin_left_class, next_margin.current.left);
 						v.next.$el.data('margin', next_margin);
 						moved = true;
 					}
-					else if ( direction_next == 0 || avail_space_left < me.width ) {
-						if ( avail_top_width >= me.width ){
+					else /*if ( avail_top_width >= me.width )*/{
+						var fill_margin = Math.round((avail_top_width-me.width)/margin_increment);
+						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin ){
 							margin_data.current.left = 0;
-							margin_data.current.right = Math.round((avail_top_width-me.width)/margin_increment);
-							moved = true;
+							margin_data.current.right = fill_margin;
 						}
+						moved = true;
 					}
 					if ( moved ){
 						if ( ! is_prev ){
@@ -307,8 +270,8 @@ var LayoutEditor = {
 				// Use prev is exists and the direction is right/bottom
 				else if ( v.prev && (direction_prev == 1 || direction_prev == 2) ){
 					// available width and space
-					var prev_affected_els = _get_affected_elements(v.prev, elements_pos),
-						prev_move_limit = _get_move_limit(prev_affected_els, containment_limit),
+					var prev_affected_els = behavior._get_affected_elements(v.prev, elements_pos),
+						prev_move_limit = behavior._get_move_limit(prev_affected_els, containment_limit),
 						prev_margin = v.prev.$el.data('margin'),
 						current_direction = _get_direction(v.prev.$el, me.center.x, me.position.top+pos_tolerance),
 						is_next = v.prev.$el.parent().next().find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id');
@@ -326,19 +289,23 @@ var LayoutEditor = {
 					console.log(prev_move_limit);
 					
 					if ( direction_prev == 1 && avail_space_right >= me.width ) {
-						margin_data.current.left = 0;
-						margin_data.current.right = Math.round((avail_space_right-me.width)/margin_increment);
+						var fill_margin = Math.round((avail_space_right-me.width)/margin_increment);
+						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin || prev_margin.original.right != 0 ){
+							margin_data.current.left = 0;
+							margin_data.current.right = fill_margin;
+						}
 						prev_margin.current.right = 0;
 						_update_class(v.prev.$el, margin_right_class, prev_margin.current.right);
 						v.prev.$el.data('margin', prev_margin);
 						moved = true;
 					}
-					else if ( direction_prev == 2 || avail_space_right < me.width ) {
-						if ( avail_top_width >= me.width ){
+					else /*if ( avail_top_width >= me.width )*/{
+						var fill_margin = Math.round((avail_top_width-me.width)/margin_increment);
+						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin ){
 							margin_data.current.left = 0;
-							margin_data.current.right = Math.round((avail_top_width-me.width)/margin_increment);
-							moved = true;
+							margin_data.current.right = fill_margin;
 						}
+						moved = true;
 					}
 					if ( moved ){
 						if ( ! is_next ){
@@ -350,13 +317,19 @@ var LayoutEditor = {
 				
 				if ( moved ){
 					// Update classes
+					margin_data.current.top = 0;
+					_update_class($preview, margin_top_class, margin_data.current.top);
 					_update_class($preview, margin_left_class, margin_data.current.left);
 					_update_class($preview, margin_right_class, margin_data.current.right);
+					_update_class(me.$el, margin_top_class, margin_data.current.top);
 					_update_class(me.$el, margin_left_class, margin_data.current.left);
 					_update_class(me.$el, margin_right_class, margin_data.current.right);
 					me.$el.data('margin', margin_data);
 					// Resort
 					if ( resort ){
+						view.resort_bound_collection();
+					}
+					if ( v.affected_els.right.length > 0 ){
 						_.each(v.affected_els.right, function(each){
 							var each_margin = each.$el.data('margin'),
 								each_margin_size = Math.round((me.position.right-me.outer_position.left)/margin_increment) + each_margin.original.left;
@@ -364,14 +337,25 @@ var LayoutEditor = {
 							each.$el.data('margin', each_margin);
 							_update_margin_classes(each.$el);
 						});
-						view.resort_bound_collection();
+					}
+					if ( v.affected_els.left.length > 0 ){
+						_.each(v.affected_els.left, function(each){
+							var each_affected_els = behavior._get_affected_elements(each, elements_pos, [me]),
+								each_margin = each.$el.data('margin'),
+								fill_margin = Math.round((containment_limit[1]-each.position.right)/margin_increment);
+							if ( each_affected_els.right.length > 0 )
+								return;
+							each_margin.current.right = fill_margin;
+							each.$el.data('margin', each_margin);
+							_update_margin_classes(each.$el);
+						});
 					}
 					me.$el.show();
 					$preview.hide();
 					_update_elements_pos(); // Generate list of elements and it's position
 					_update_margin_data(); // Generate margin data
 					// Check if there's affected left element after updated position
-					var updated_affected_els = _get_affected_elements(me, elements_pos);
+					var updated_affected_els = behavior._get_affected_elements(me, elements_pos);
 					if ( updated_affected_els.left.length == 0 ){ // none, then add clear
 					}
 					me.$el.hide();
@@ -499,9 +483,9 @@ var LayoutEditor = {
 					margin_top_size = margin_data.original.top + relative_margin_top_size,
 					
 					// affected_elements will hold elements that is affected by the flow of current element
-					affected_elements = _get_affected_elements(me_pos, elements_pos),
+					affected_elements = behavior._get_affected_elements(me_pos, elements_pos, [], true),
 					// move_limit store the available movement on left/right
-					move_limit = _get_move_limit(affected_elements, containment_limit),
+					move_limit = behavior._get_move_limit(affected_elements, containment_limit),
 					max_margin_x = 0,
 					max_margin_y = 0,
 					recalc_margin_x = false,
@@ -676,35 +660,37 @@ var LayoutEditor = {
 		});
 	},
 	
+	_get_element_position: function (el) {
+		var $el = $(el).find(">.upfront-editable_entity:first"),
+			top = $el.offset().top,
+			left = $el.offset().left,
+			outer_top = top-parseFloat($el.css('margin-top')),
+			outer_left = left-parseFloat($el.css('margin-left'));
+		return {
+			$el: $el,
+			position: {
+				top: top,
+				left: left,
+				bottom: top+$el.outerHeight(),
+				right: left+$el.outerWidth()
+			},
+			outer_position: {
+				top: Math.round(outer_top),
+				left: Math.round(outer_left),
+				bottom: Math.round(outer_top+$el.outerHeight(true)),
+				right: Math.round(outer_left+$el.outerWidth(true))
+			},
+			width: $el.outerWidth(),
+			height: $el.outerHeight(),
+			center: {
+				y: top+($el.outerHeight()/2),
+				x: left+($el.outerWidth()/2)
+			}
+		};
+	},
+	
 	_generate_elements_position: function (elements) {
-		return _.map(elements, function(each){
-					var $el = $(each).find(">.upfront-editable_entity:first"),
-						top = $el.offset().top,
-						left = $el.offset().left,
-						outer_top = top-parseFloat($el.css('margin-top')),
-						outer_left = left-parseFloat($el.css('margin-left'));
-					return {
-						$el: $el,
-						position: {
-							top: top,
-							left: left,
-							bottom: top+$el.outerHeight(),
-							right: left+$el.outerWidth()
-						},
-						outer_position: {
-							top: Math.round(outer_top),
-							left: Math.round(outer_left),
-							bottom: Math.round(outer_top+$el.outerHeight(true)),
-							right: Math.round(outer_left+$el.outerWidth(true))
-						},
-						width: $el.outerWidth(),
-						height: $el.outerHeight(),
-						center: {
-							y: top+($el.outerHeight()/2),
-							x: left+($el.outerWidth()/2)
-						}
-					};
-			});
+		return _.map(elements, Upfront.Behaviors.LayoutEditor._get_element_position);
 	},
 	
 	_generate_elements_margin_data: function (elements) {
@@ -743,10 +729,77 @@ var LayoutEditor = {
 			});
 		});
 	},
+	
+	_get_affected_elements: function (el_pos, els_pos, ignore, direct) {
+		var affected_els = {
+				top: [],
+				left: [],
+				bottom: [],
+				right: []
+			},
+			compare = {
+				top: el_pos.outer_position.top,
+				left: el_pos.outer_position.left,
+				bottom: el_pos.outer_position.bottom,
+				right: el_pos.outer_position.right
+			};
+		if ( Array.isArray(ignore) )
+			ignore.push(el_pos);
+		else
+			ignore = [el_pos];
+		direct = direct ? true : false;
+		_.each(_.reject(els_pos, function(each){
+				var ignored = _.find(ignore, function(i){
+					return i.$el.attr('id') == each.$el.attr('id');
+				});
+				return ignored ? true : false;
+			}), 
+			function(each){
+				if ( (compare.bottom >= each.outer_position.top &&
+					compare.bottom <= each.outer_position.bottom) ||
+					(compare.top >= each.outer_position.top &&
+					compare.top <= each.outer_position.bottom) ){
+					if ( compare.left+2 >= each.outer_position.right &&
+						(!direct || compare.left-each.outer_position.right <= 3) ){
+						affected_els.left.push(each);
+					}
+					if ( compare.right-2 <= each.outer_position.left &&
+						(!direct || each.outer_position.left-compare.right <= 3) ){
+						affected_els.right.push(each);
+					}
+				}
+				if ( (compare.left >= each.outer_position.left && 
+					compare.left <= each.outer_position.right) ||
+					(compare.right >= each.outer_position.left && 
+					compare.right <= each.outer_position.right) ){
+					if ( compare.top+2 >= each.outer_position.bottom &&
+						(!direct || compare.top-each.outer_position.bottom <= 3) )
+						affected_els.top.push(each);
+					if ( compare.bottom-2 <= each.outer_position.top && 
+						(!direct || each.outer_position.top-compare.bottom <= 3) )
+						affected_els.bottom.push(each);
+				}
+			}
+		);
+		return affected_els;
+	},
+	
+	_get_move_limit: function (affected_els, containment_limit) {
+		var move_limit = [containment_limit[0], containment_limit[1]];
+		_.each(affected_els.left, function(each){
+			if ( each.position.right > move_limit[0] )
+				move_limit[0] = each.position.right;
+		});
+		_.each(affected_els.right, function(each){
+			if ( each.position.left < move_limit[1] )
+				move_limit[1] = each.position.left;
+		});
+		return move_limit;
+	},
 
 	create_undo: function () {
 		// @TODO Jeffri: noticed performance issue with Chrome, GC events overload in timeline when storing undo state
-		this.layout.store_undo_state();
+		//this.layout.store_undo_state();
 	},
 	apply_history_change: function () {
 		this.layout_view.render();
