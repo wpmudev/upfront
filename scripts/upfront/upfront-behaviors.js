@@ -203,7 +203,7 @@ var LayoutEditor = {
 				return direction; // 0 = top, 1 = right, 2 = bottom, 3 = left
 			},
 			_preview_t = null,
-			_preview_delay = 1000, // in ms
+			_preview_delay = 500, // in ms
 			_preview_resort = function (me, v) {
 				console.log(v);
 				var
@@ -219,23 +219,26 @@ var LayoutEditor = {
 					avail_space_left = 0,
 					avail_space_right = 0,
 					
+					update_class = false,
+					add_clear = false,
 					moved = false,
 					resort = false
 				;
 				// Use next if exists and the direction is either top/left
-				if ( v.next && (direction_next == 0 || direction_next == 3) ){
+				if ( v.next && (direction_next != 2 || v.offset.top < v.next.outer_position.top) ){
 					// available width and space
-					var next_affected_els = behavior._get_affected_elements(v.next, elements_pos),
+					var next_affected_els = behavior._get_affected_elements(v.next, elements_pos, [me]),
 						next_move_limit = behavior._get_move_limit(next_affected_els, containment_limit),
 						next_margin = v.next.$el.data('margin'),
 						current_direction = _get_direction(v.next.$el, me.center.x, me.position.top+pos_tolerance),
+						same_line = ( me.outer_position.top == v.next.outer_position.top ),
 						is_prev = v.next.$el.parent().prev().find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id');
 					console.log([current_direction, direction_next]);
-					//if ( is_prev && current_direction == direction_next ) // Same order and direction, no need to resort/move
+					//if ( is_prev && direction_next == 3 && same_line ) // Same order and direction, no need to resort/move
 					//	return;
-					if ( next_affected_els.left.length > 0 && next_affected_els.left[0].$el == me.$el ){ // Since the left affected elements is current element, add it's position to the move limit
+					/*if ( _.find(next_affected_els.left, function(each){ return ( each.$el == me.$el ); }) ){ // Since the left affected elements is current element, add it's position to the move limit
 						next_move_limit[0] = me.outer_position.left;
-					}
+					}*/
 					avail_top_width = containment_limit[1]-next_move_limit[0];
 					avail_width = next_move_limit[1]-next_move_limit[0];
 					avail_space = avail_width-(v.next.width);
@@ -243,20 +246,32 @@ var LayoutEditor = {
 					avail_space_right = avail_space-avail_space_left;
 					
 					if ( direction_next == 3 && avail_space_left >= me.width ) {
+						if ( is_prev && same_line )
+							return;
 						if ( margin_data.original.left != 0 || margin_data.original.right != 0 ){
 							margin_data.current.left = 0;
 							margin_data.current.right = 0;
+							update_class = true;
+						}
+						if ( v.next.outer_position.left-2 <= containment_limit[0] ){
+							add_clear = true;
 						}
 						next_margin.current.left = Math.round((avail_space_left-me.width)/margin_increment);
 						_update_class(v.next.$el, margin_left_class, next_margin.current.left);
 						v.next.$el.data('margin', next_margin);
+						if ( v.next.$el.hasClass('clr') )
+							v.next.$el.removeClass('clr');
 						moved = true;
 					}
-					else /*if ( avail_top_width >= me.width )*/{
+					else if ( avail_top_width >= me.width ){
 						var fill_margin = Math.round((avail_top_width-me.width)/margin_increment);
 						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin ){
 							margin_data.current.left = 0;
 							margin_data.current.right = fill_margin;
+							update_class = true;
+						}
+						if ( avail_top_width == containment_limit[1]-containment_limit[0] ){
+							add_clear = true;
 						}
 						moved = true;
 					}
@@ -268,19 +283,20 @@ var LayoutEditor = {
 					}
 				}
 				// Use prev is exists and the direction is right/bottom
-				else if ( v.prev && (direction_prev == 1 || direction_prev == 2) ){
+				else if ( v.prev && (direction_prev != 0) ){
 					// available width and space
-					var prev_affected_els = behavior._get_affected_elements(v.prev, elements_pos),
+					var prev_affected_els = behavior._get_affected_elements(v.prev, elements_pos, [me]),
 						prev_move_limit = behavior._get_move_limit(prev_affected_els, containment_limit),
 						prev_margin = v.prev.$el.data('margin'),
 						current_direction = _get_direction(v.prev.$el, me.center.x, me.position.top+pos_tolerance),
+						same_line = ( me.outer_position.top == v.prev.outer_position.top ),
 						is_next = v.prev.$el.parent().next().find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id');
 					console.log([current_direction, direction_prev]);
-					//if ( is_next && current_direction == direction_prev ) // Same order and direction, no need to resort/move
+					//if ( is_next && direction_prev == 1 && same_line ) // Same order and direction, no need to resort/move
 					//	return;
-					if ( prev_affected_els.right.length > 0 && prev_affected_els.right[0].$el == me.$el ){ // Since the right affected elements is current element, add it's position to the move limit
+					/*if ( _.find(prev_affected_els.right, function(each){ return ( each.$el == me.$el ); }) ){ // Since the right affected elements is current element, add it's position to the move limit
 						prev_move_limit[1] = me.outer_position.right;
-					}
+					}*/
 					avail_top_width = containment_limit[1]-prev_move_limit[0];
 					avail_width = prev_move_limit[1]-prev_move_limit[0];
 					avail_space = avail_width-(v.prev.width);
@@ -289,21 +305,34 @@ var LayoutEditor = {
 					console.log(prev_move_limit);
 					
 					if ( direction_prev == 1 && avail_space_right >= me.width ) {
+						if ( is_next && same_line )
+							return;
 						var fill_margin = Math.round((avail_space_right-me.width)/margin_increment);
 						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin || prev_margin.original.right != 0 ){
 							margin_data.current.left = 0;
 							margin_data.current.right = fill_margin;
+							update_class = true;
+							prev_margin.current.right = 0;
+							_update_class(v.prev.$el, margin_right_class, prev_margin.current.right);
+							v.prev.$el.data('margin', prev_margin);
 						}
-						prev_margin.current.right = 0;
-						_update_class(v.prev.$el, margin_right_class, prev_margin.current.right);
-						v.prev.$el.data('margin', prev_margin);
 						moved = true;
 					}
 					else /*if ( avail_top_width >= me.width )*/{
-						var fill_margin = Math.round((avail_top_width-me.width)/margin_increment);
+						var prev_line = _.find(v.lines_pos, function(line){
+							return _.find(line.elements, function(each){ return each.$el == v.prev.$el; }) ? true : false;
+						});
+						if ( v.offset.top > prev_line.bottom ){
+							var fill_margin = Math.round((containment_limit[1]-containment_limit[0]-me.width)/margin_increment);
+							add_clear = true;
+						}
+						else{
+							var fill_margin = Math.round((avail_top_width-me.width)/margin_increment);
+						}
 						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin ){
 							margin_data.current.left = 0;
 							margin_data.current.right = fill_margin;
+							update_class = true;
 						}
 						moved = true;
 					}
@@ -317,13 +346,25 @@ var LayoutEditor = {
 				
 				if ( moved ){
 					// Update classes
-					margin_data.current.top = 0;
-					_update_class($preview, margin_top_class, margin_data.current.top);
-					_update_class($preview, margin_left_class, margin_data.current.left);
-					_update_class($preview, margin_right_class, margin_data.current.right);
-					_update_class(me.$el, margin_top_class, margin_data.current.top);
-					_update_class(me.$el, margin_left_class, margin_data.current.left);
-					_update_class(me.$el, margin_right_class, margin_data.current.right);
+					/*if ( margin_data.original.top != 0 ){
+						margin_data.current.top = 0;
+						_update_class($preview, margin_top_class, margin_data.current.top);
+						_update_class(me.$el, margin_top_class, margin_data.current.top);
+					}*/
+					if ( update_class ){
+						_update_class($preview, margin_left_class, margin_data.current.left);
+						_update_class($preview, margin_right_class, margin_data.current.right);
+						_update_class(me.$el, margin_left_class, margin_data.current.left);
+						_update_class(me.$el, margin_right_class, margin_data.current.right);
+					}
+					if ( add_clear ){
+						$preview.addClass('clr');
+						me.$el.addClass('clr');
+					}
+					else {
+						$preview.removeClass('clr');
+						me.$el.removeClass('clr');
+					}
 					me.$el.data('margin', margin_data);
 					// Resort
 					if ( resort ){
@@ -336,6 +377,8 @@ var LayoutEditor = {
 							each_margin.current.left = each_margin_size;
 							each.$el.data('margin', each_margin);
 							_update_margin_classes(each.$el);
+							if ( me.outer_position.left-2 <= containment_limit[0] )
+								each.$el.addClass('clr');
 						});
 					}
 					if ( v.affected_els.left.length > 0 ){
@@ -354,10 +397,6 @@ var LayoutEditor = {
 					$preview.hide();
 					_update_elements_pos(); // Generate list of elements and it's position
 					_update_margin_data(); // Generate margin data
-					// Check if there's affected left element after updated position
-					var updated_affected_els = behavior._get_affected_elements(me, elements_pos);
-					if ( updated_affected_els.left.length == 0 ){ // none, then add clear
-					}
 					me.$el.hide();
 					$preview.show();
 				}
@@ -531,10 +570,10 @@ var LayoutEditor = {
 					recalc_margin_x = true;
 				}
 				
-				var bottom_el = _.min(affected_elements.bottom, function(each){ return each.$el.data('margin').original.top; }),
-					bottom_el_margin = bottom_el ? bottom_el.$el.data('margin').original.top : 0;
-				max_margin_y = affected_elements.bottom.length > 0 ? bottom_el_margin : -1;
-				max_margin_y = max_margin_y > -1 ? max_margin_y+margin_data.original.top : max_margin_y;
+				var bottom_closest_el = _.min(affected_elements.bottom, function(each){ return each.position.top; }),
+					bottom_el_margin = bottom_closest_el ? bottom_closest_el.$el.data('margin').original.top : 0;
+					line_bottom = _.max(current_line, function(each){ return bottom_closest_el && each.outer_position.bottom < bottom_closest_el.outer_position.top ? parseInt(each.outer_position.bottom) : 0; });
+				max_margin_y = affected_elements.bottom.length > 0 ? Math.round((bottom_closest_el.position.top-me_pos.outer_position.top-me_pos.height)/BASELINE) : -1;
 				margin_data.current.top = margin_top_size > 0 ? (max_margin_y > -1 && margin_top_size > max_margin_y ? max_margin_y : margin_top_size) : 0;
 				$me.data('margin', margin_data);
 				if ( max_margin_y > -1 ){
@@ -557,17 +596,17 @@ var LayoutEditor = {
 						}
 					});
 				}
-				/*if ( recalc_margin_y ){
+				if ( recalc_margin_y ){
 					_.each(affected_elements.bottom, function(each){
 						var each_margin = each.$el.data('margin'),
-							each_margin_size = max_margin_y-margin_data.current.top,
+							each_margin_size = max_margin_y-margin_data.current.top - (line_bottom && line_bottom.outer_position.bottom > current_bottom ? Math.round((line_bottom.outer_position.bottom-current_bottom)/BASELINE) : 0),
 							each_margin_relative = each_margin.original.top-bottom_el_margin;
 						if ( each_margin.current.top != each_margin_size+each_margin_relative ){
 							each_margin.current.top = each_margin_size+each_margin_relative;
 							each.$el.data('margin', each_margin);
 						}
 					});
-				}*/
+				}
 				
 				// Preview resort
 				clearTimeout(_preview_t);
@@ -583,7 +622,9 @@ var LayoutEditor = {
 						x: current_x,
 						y: current_y
 					},
-					affected_els: affected_elements
+					affected_els: affected_elements,
+					lines: lines,
+					lines_pos: lines_pos
 				}); }, _preview_delay);
 				
 				
@@ -626,6 +667,11 @@ var LayoutEditor = {
 				view.model.replace_class(margin_right_class+margin_data.current.right);
 				view.model.replace_class(margin_top_class+margin_data.current.top);
 				
+				if ( $target.hasClass('clr') )
+					view.model.add_class('clr');
+				else
+					view.model.remove_class('clr');
+				
 				// Change affecting elements margin size as well
 				view.$el.parent().children().each(function(){
 					var $el = $(this).find(">.upfront-editable_entity:first");
@@ -648,6 +694,10 @@ var LayoutEditor = {
 						model.replace_class(margin_right_class+each_margin_data.current.right);
 						model.replace_class(margin_top_class+each_margin_data.current.top);
 					}
+					if ( $el.hasClass('clr') )
+						model.add_class('clr');
+					else
+						model.remove_class('clr');
 				});
 				
 				$target.show();
@@ -768,19 +818,24 @@ var LayoutEditor = {
 						affected_els.right.push(each);
 					}
 				}
-				if ( (compare.left >= each.outer_position.left && 
-					compare.left <= each.outer_position.right) ||
-					(compare.right >= each.outer_position.left && 
-					compare.right <= each.outer_position.right) ){
-					if ( compare.top+2 >= each.outer_position.bottom &&
-						(!direct || compare.top-each.outer_position.bottom <= 3) )
-						affected_els.top.push(each);
-					if ( compare.bottom-2 <= each.outer_position.top && 
-						(!direct || each.outer_position.top-compare.bottom <= 3) )
-						affected_els.bottom.push(each);
+				if ( compare.top+2 >= each.outer_position.bottom ){
+					affected_els.top.push(each);
+				}
+				if ( compare.bottom-2 <= each.outer_position.top ){
+					affected_els.bottom.push(each);
 				}
 			}
 		);
+		if ( direct ){
+			var direct_top = _.max(affected_els.top, function(each){ return each.outer_position.top; });
+			affected_els.top = _.filter(affected_els.top, function(each){
+				return ( each.outer_position.top == direct_top.outer_position.top );
+			});
+			var direct_bottom = _.min(affected_els.bottom, function(each){ return each.outer_position.top; });
+			affected_els.bottom = _.filter(affected_els.bottom, function(each){
+				return ( each.outer_position.top == direct_bottom.outer_position.top );
+			});
+		}
 		return affected_els;
 	},
 	

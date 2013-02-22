@@ -101,7 +101,7 @@ class Upfront_StylePreprocessor {
 			$margin_top = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_TOP);
 			$margin_bottom = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_BOTTOM);
 			$rules = array();
-			for ($i=1; $i<=20; $i++) {
+			for ($i=1; $i<=100; $i++) {
 				$rules[] = ".{$margin_top}{$i}" . 
 					'{' . 
 						sprintf('margin-top: %dpx;', $i*$baseline_grid) .
