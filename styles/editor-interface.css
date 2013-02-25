@@ -213,6 +213,10 @@ html, body {
 	-webkit-transition: margin .1s ease, left .1s ease, top .1s ease;
 }
 
+.upfront-preview-hide {
+	visibility: hidden;
+}
+
 .upfront-closest {
 	background: rgba(246, 247, 181, 0.7);
 }
