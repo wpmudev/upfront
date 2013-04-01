@@ -111,6 +111,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_child_view_class;
 
 	public function get_markup () {
+		$html='';
 		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
 			$child_view = $this->instantiate_child($child, $idx);
 			$html .= $child_view->get_markup();

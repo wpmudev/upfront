@@ -483,6 +483,10 @@ var LayoutEditor = {
 				$el.append('<div class="upfront-preview-helper '+classes+'" style="height:'+height+'px;"></div>');
 			},
 			drag: function (e, ui) {
+				if(model.get_property_value_by_name('disable_drag')===1){
+					return false;
+				}
+
 				// Set up collection position
 				var 
 					$el = view.$el,

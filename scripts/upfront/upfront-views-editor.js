@@ -576,7 +576,7 @@ define(_template_files, function () {
 				.empty()
 				.show()
 				.html(
-					'<div class="upfront-settings_title">' + this.get_title() + '</dv>'
+					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
 				)
 			;
 			me.panels.each(function (panel) {

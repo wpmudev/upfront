@@ -72,7 +72,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 
-		$layout = Upfront_Layout::from_php($data);
+		$layout = Upfront_Layout::from_json($data);
 		$key = $layout->save();
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
@@ -120,7 +120,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"objects" => "upfront/upfront-objects",
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
-		
+
 		$require_config = array(
 			'baseUrl' => "{$root}/scripts",
 			'paths' => $paths,

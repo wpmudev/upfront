@@ -25,7 +25,7 @@ class Upfront {
 
 	private function __construct () {
 		foreach ($this->_servers as $component) $this->_run_server($component);
-		do_action('uprfont-core-initialized');
+		do_action('upfront-core-initialized');
 	}
 
 	public static function serve () {
@@ -104,7 +104,7 @@ class Upfront {
     <button class="upfront-finish_layout_editing">Finish editing</button>
   </div>
   <div id="settings" style="display:none"></div>
-  <button class="upfront-edit_layout upfront-editable_trigger">Edit layout</button>
+  <button class="upfront-edit_layout upfront-editable_trigger" id="edit-layout">Edit layout</button>
 EOAdditivemarkup;
 		
 		do_action('upfront-core-inject_dependencies');

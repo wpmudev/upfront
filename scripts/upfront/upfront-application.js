@@ -52,7 +52,7 @@ var LayoutEditor = new (Subapplication.extend({
 	},
 
 	save_layout: function () {
-		var data = Upfront.Util.model_to_json(this.layout);
+		var data = JSON.stringify(Upfront.Util.model_to_json(this.layout), undefined, 2);
 		Upfront.Util.post({"action": this.actions.save, "data": data})
 			.success(function () {
 				Upfront.Util.log("layout saved");
@@ -206,10 +206,9 @@ var LayoutEditor = new (Subapplication.extend({
 
 	create_settings: function (view) {
 		if (this.settings_view) return this.destroy_settings();
-
 		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
-		var current_object = _(this.Objects).reduce(function (obj, current) { 
-				return (view instanceof current.View) ? current : obj; 
+		var current_object = _(this.Objects).reduce(function (obj, current) {
+				return (view instanceof current.View) ? current : obj;
 			}, false),
 			current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings)
 			settings_view = new current_object.Settings({
