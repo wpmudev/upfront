@@ -218,17 +218,21 @@ define(_template_files, function () {
 					run = this.model.get("properties").each(function (prop) {
 						props[prop.get("name")] = prop.get("value");
 					}),
-					model = _.extend(this.model.toJSON(), {"properties": props}),
+					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
+					model = _.extend(this.model.toJSON(), {"properties": props, "height": height}),
 					template = _.template(_Upfront_Templates["module"], model)
 				;
+				console.log(Upfront.Settings.LayoutEditor.Grid);
+				Upfront.Events.trigger("entity:module:before_render", this, this.model);
 				this.$el.html(template);
-
+				
 				var objects_view = new Objects({"model": this.model.get("objects")});
 				objects_view.parent_view = this;
 				objects_view.render();
 				this.$(".upfront-objects_container").append(objects_view.el);
 
 				if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
+				Upfront.Events.trigger("entity:module:after_render", this, this.model);
 			}
 		}),
 
@@ -239,16 +243,29 @@ define(_template_files, function () {
 			render: function () {
 				this.$el.html('');
 				var $el = this.$el,
-					me = this
+					me = this,
+					wrappers = Upfront.Application ? Upfront.Application.LayoutEditor.layout.get('wrappers') : false
 				;
 				this.model.each(function (module) {
 					var view_class_prop = module.get("properties").where({"name": "view_class"}),
 						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "Module",
 						//view_class = Upfront.Views[view_class] ? view_class : "Module",
-						local_view = new Upfront.Views[view_class]({model: module})
+						local_view = new Upfront.Views[view_class]({model: module}),
+						wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
+						wrapper_view, wrapper_el
 					;
+					if ( $('#'+wrapper.get_wrapper_id()).size() > 0 ){
+						wrapper_el = $('#'+wrapper.get_wrapper_id()).get(0);
+					}
+					else {
+						wrapper_view = new Upfront.Views.Wrapper({model: wrapper});
+						wrapper_view.render();
+						wrapper_el = wrapper_view.el;
+					}
 					local_view.render();
-					$el.append(local_view.el);
+					$(wrapper_el).append(local_view.el);
+					if ( wrapper_view )
+						$el.append(wrapper_el);
 					local_view.bind("upfront:entity:activate", me.on_activate, me);
 					local_view.model.bind("remove", me.deactivate, me);
 				});
@@ -302,6 +319,25 @@ define(_template_files, function () {
 				this.model.active_region = region.model || region;
 			}
 		}),
+		
+		Wrapper = _Upfront_SingularEditor.extend({
+			attributes: function(){
+				var cls = "upfront-wrapper",
+					model_cls = this.model.get_property_value_by_name('class');
+				return {
+					"class": cls + " " + model_cls,
+					"id": this.model.get_wrapper_id()
+				}
+			},
+			init: function () {
+				this.model.get("properties").bind("change", this.update, this);
+			},
+			update: function () {
+				this.$el.attr('class', this.attributes().class);
+			},
+			render: function () {
+			}
+		}),
 
 		Layout = _Upfront_PluralEditor.extend({
 			initialize: function () {
@@ -321,6 +357,7 @@ define(_template_files, function () {
 		"Views": {
 			"ObjectView": ObjectView,
 			"Module": Module,
+			"Wrapper": Wrapper,
 			"Layout": Layout
 		},
 		"Mixins": {

@@ -71,13 +71,17 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Util.post({"action": this.actions.load, "data": layout_id})
 			.success(function (test_data) {
 				app.layout = new Upfront.Models.Layout(test_data.data);
+				
+				if (!present) app.set_up_event_plumbing_before_render();
+
+				app.set_up_editor_interface();
+				
 				app.layout_view = new Upfront.Views.Layout({
 					"model": app.layout, 
 					"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
 				});
-
-				app.set_up_editor_interface();
-				if (!present) app.set_up_event_plumbing();
+				
+				if (!present) app.set_up_event_plumbing_after_render();
 
 				// @TODO:remove this
 				$(
@@ -162,8 +166,15 @@ var LayoutEditor = new (Subapplication.extend({
 	add_object: function (name, data) {
 		this.Objects[name] = data;
 	},
+	
+	
+	set_up_event_plumbing_before_render: function () {
+		// Set up behavior
+		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable, this);
+		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable, this);
+	},
 
-	set_up_event_plumbing: function () {
+	set_up_event_plumbing_after_render: function () {
 		// Set up properties
 		Upfront.Events.on("entity:activated", this.create_properties, this);
 		Upfront.Events.on("entity:deactivated", this.destroy_properties, this);
@@ -175,8 +186,10 @@ var LayoutEditor = new (Subapplication.extend({
 		// Bahviors mixin setup
 
 		// Set up behaviors - resizable/selectable
-		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_sortable, this);
-		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_resizable, this);
+		//Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_sortable, this);
+		//Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_resizable, this);
+		
+		Upfront.Behaviors.GridEditor.init();
 
 		// Undo / Redo
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);

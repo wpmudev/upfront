@@ -1,4 +1,3 @@
-
 (function () {
 
 var _alpha = "alpha",
@@ -89,6 +88,9 @@ var _alpha = "alpha",
 		},
 		get_element_id: function () {
 			return this.get_property_value_by_name("element_id");
+		},
+		get_wrapper_id: function () {
+			return this.get_property_value_by_name("wrapper_id");
 		},
 		replace_class: function (value) {
 			var val_esc = value.replace(/\d+/, '\\d+')
@@ -231,12 +233,42 @@ var _alpha = "alpha",
 	Regions = Backbone.Collection.extend({
 		"model": Region,
 	}),
+	
+	Wrapper = ObjectModel.extend({
+		"defaults": {
+			"name": "",
+			"properties": new Properties()
+		},
+		initialize: function () {
+			var args = arguments;
+			if (args && args[0] && args[0]["properties"]) {
+				args[0]["properties"] = args[0]["properties"] instanceof Properties
+					? args[0]["properties"]
+					: new Properties(args[0]["properties"])
+				;
+				this.set("properties", args[0].properties)
+			}
+		},
+	}),
+
+	Wrappers = Backbone.Collection.extend({
+		"model": Wrapper,
+		
+		get_by_wrapper_id: function (wrapper_id) {
+			var found = false;
+			this.each(function (model) {
+				if (model.get_wrapper_id() == wrapper_id) found = model;
+			});
+			return found;
+		}
+	}),
 
 	Layout = Backbone.Model.extend({
 		"defaults": {
 			"name": "",
 			"properties": new Properties(),
 			"regions": new Regions(),
+			"wrappers": new Wrappers(),
 		},
 		initialize: function () {
 			var args = arguments;
@@ -253,6 +285,13 @@ var _alpha = "alpha",
 					: new Properties(args[0]["properties"])
 				;
 				this.set("properties", args[0].properties)
+			}
+			if (args && args[0] && args[0]["wrappers"]) {
+				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
+					? args[0]["wrappers"]
+					: new Wrappers(args[0]["wrappers"])
+				;
+				this.set("wrappers", args[0].wrappers)
 			}
 		},
 		get_current_state: function () {
@@ -301,6 +340,7 @@ define({
 		"ObjectModel": ObjectModel,
 		"Module": Module,
 		"Region": Region,
+		"Wrapper": Wrapper,
 		"Layout": Layout,
 	},
 	"Collections": {
@@ -308,6 +348,7 @@ define({
 		"Objects": Objects,
 		"Modules": Modules,
 		"Regions": Regions,
+		"Wrappers": Wrappers,
 	}
 });
 

@@ -40,774 +40,57 @@ var LayoutEditor = {
 		});
 	},
 
-
-	create_resizable: function (view, model) {
-		$(".ui-resizable").each(function () {
-			$(this).resizable("destroy");
-		});
-		// Don't allow reiszing on non-desktop layouts
-		if (!$(Upfront.Settings.LayoutEditor.Selectors.main).is(".desktop")) return false;
-
-		// - Resizable - snap to base grid and replace size with class on release
-		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-			main_width = $main.width() || 210,
-			$parent = view.$el,
-			parent_width = $parent.width() || 100,
-			GRID_SIZE = Upfront.Settings.LayoutEditor.Grid.size,
-			BASELINE = Upfront.Settings.LayoutEditor.Grid.baseline,
-			width_rx = new RegExp(Upfront.Settings.LayoutEditor.Grid.class+'(\\d+)'),
-			margin_right_class = Upfront.Settings.LayoutEditor.Grid.right_margin_class,
-			margin_right_rx = new RegExp(margin_right_class+'(\\d+)'),
-			$resizable = view.$el.find(">.upfront-editable_entity"),
-			grid_selector = _.range(1, GRID_SIZE+1).map(function(i){ return '.'+Upfront.Settings.LayoutEditor.Grid.class+i }).join(',');
-		;
-		if ($resizable.resizable) $resizable.resizable({
-			"containment": "parent",
-			start: function (e, ui) {
-				var $el = ui.element,
-					classes = view.model.get_property_value_by_name('class');
-				// retain width on grid elements, so it remains fixed during resize
-				$el.find(grid_selector).each(function(){
-					$(this).css({
-						'width': parseInt($(this).outerWidth())+'px',
-						'margin-left': parseInt($(this).outerWidth(true)-$(this).outerWidth())+'px'
-					});
-				});
-				view.$el.append('<div class="upfront-preview-helper '+classes+'" style="height:'+$el.outerHeight()+'px;"></div>');
-			},
-			stop: function (e, ui) {
-				var $el = ui.element,
-					$preview = view.$el.find('.upfront-preview-helper'),
-					diff = $el.outerWidth() / main_width,
-					classNum = parseInt(Math.round((diff > 1 ? 1 : diff) * GRID_SIZE), 10),
-					className = Upfront.Settings.LayoutEditor.Grid.class + classNum,
-					prop = model.replace_class(className),
-					relative_percentage = 100 * (classNum/GRID_SIZE),
-					margin_right = $preview.attr('class').match(margin_right_rx),
-					margin_right_num = margin_right ? parseInt(margin_right[1]) : 0
-				;
-				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
-				// @TODO this is temporary hack, we need to somehow retain height and snap it to baseline
-				$el.css({
-					'width': '',
-					'height': '',
-					'position': '',
-					'top': '',
-					'left': ''
-				});
-				model.replace_class(margin_right_class+margin_right_num);
-				view.trigger("upfront:entity:resize", classNum, relative_percentage);
-				// remove width on stop
-				$el.find(grid_selector).css({
-					'width': '',
-					'margin-left': ''
-				});
-				view.$el.find('.upfront-preview-helper').remove();
-			},
-			resize: function (e, ui) {
-				var $el = ui.element,
-					$preview = view.$el.find('.upfront-preview-helper'),
-					preview_class = $preview.attr('class'),
-					current_width = preview_class.match(width_rx),
-					current_width_num = current_width ? parseInt(current_width[1]) : 1;
-					diff = ui.size.width / main_width,
-					classNum = parseInt(Math.round((diff > 1 ? 1 : diff) * GRID_SIZE), 10),
-					className = Upfront.Settings.LayoutEditor.Grid.class + classNum,
-					current_margin_right = preview_class.match(margin_right_rx),
-					current_margin_right_num = current_margin_right ? parseInt(current_margin_right[1]) : 0,
-					margin_right = (current_width_num+current_margin_right_num)-classNum;
-				$el.height((ui.size.height > 5 ? ui.size.height : 0) || ui.originalSize.height)
-					.width(ui.size.width > parent_width ? parent_width : ui.size.width);
-				$preview.height($el.outerHeight())
-					.attr('class', $preview.attr('class').replace(width_rx, className).replace(margin_right_rx, margin_right_class+margin_right));
-			}
-		});
+	create_undo: function () {
+		this.layout.store_undo_state();
 	},
+	apply_history_change: function () {
+		this.layout_view.render();
+	}
+};
 
 
-	create_sortable: function (view, model) {
-		//$(".ui-draggable").draggable("destroy"); // Draggables destroying in this way breaks Chrome
-		// Don't allow sorting on non-desktop layouts
-		if (!$(Upfront.Settings.LayoutEditor.Selectors.main).is(".desktop")) return false;
-
-		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-			main_pos = $main.offset(),
-			main_limit = [main_pos.left, main_pos.left+$main.outerWidth()],
-			$containment = view.$el.find(".upfront-editable_entity:first").is(".upfront-object") ? view.$el.parents(".upfront-editable_entities_container:first") : view.$el.parents(".upfront-region:first"),
-			containment_pos = $containment.offset(),
-			containment_limit = [containment_pos.left, containment_pos.left+$containment.outerWidth()],
-			$draggable = view.$el.find(">.upfront-editable_entity"),
-			$target = view.$el.find(">.upfront-editable_entity:first"),
-			width_class = Upfront.Settings.LayoutEditor.Grid.class,
-			margin_left_class = Upfront.Settings.LayoutEditor.Grid.left_margin_class,
-			margin_right_class = Upfront.Settings.LayoutEditor.Grid.right_margin_class,
-			margin_top_class = Upfront.Settings.LayoutEditor.Grid.top_margin_class,
-			margin_bottom_class = Upfront.Settings.LayoutEditor.Grid.bottom_margin_class,
-			width_class = Upfront.Settings.LayoutEditor.Grid.class
-			tmp = view.$el.append("<div id='upfront-temp-measurement' class='" + margin_left_class + "1 " + width_class + "1' />"),
-			$measure = $("#upfront-temp-measurement"),
-			margin_increment = parseFloat($("#upfront-temp-measurement").css("margin-left"), 10),
-			width_rx = new RegExp('\\b' + width_class + '\\d+'),
-			margin_left_rx = new RegExp('\\b' + margin_left_class + '\\d+'),
-			margin_right_rx = new RegExp('\\b' + margin_right_class + '\\d+'),
-			margin_top_rx = new RegExp('\\b' + margin_top_class + '\\d+'),
-			margin_bottom_rx = new RegExp('\\b' + margin_bottom_class + '\\d+'),
-			GRID_SIZE = Upfront.Settings.LayoutEditor.Grid.size,
-			BASELINE = Upfront.Settings.LayoutEditor.Grid.baseline,
-			app = this,
-			behavior = Upfront.Behaviors.LayoutEditor,
-			
-			// Keep tracking of variables
-			elements_pos = [],
-			pos_tolerance = 50,
-			
-					
-			// Some functions
-			_update_class = function ($el, class_name, class_size) {
-				var rx = new RegExp('\\b' + class_name + '\\d+');
-				if ( ! $el.hasClass(class_name+class_size) ){
-					if ( $el.attr('class').match(rx) )
-						$el.attr('class', $el.attr('class').replace(rx, class_name+class_size));
-					else
-						$el.addClass(class_name+class_size);
-				}
-			},
-			_update_margin_classes = function ($el) {
-				var el_margin = $el.data('margin');
-				_update_class($el, margin_left_class, el_margin.current.left);
-				_update_class($el, margin_right_class, el_margin.current.right);
-			},
-			_update_elements_pos = function () {
-				elements_pos = behavior._generate_elements_position(view.$el.parent().children(':not(.upfront-preview-transition)'));
-			},
-			_update_margin_data = function () {
-				behavior._generate_elements_margin_data(view.$el.parent().children(':not(.upfront-preview-transition)'));
-			},
-			_get_direction = function ($el, pos_x, pos_y) {
-				// Credit: http://stackoverflow.com/a/3647634
-				/** the width and height of the current div **/
-				var w = $el.outerWidth(),
-					h = $el.outerHeight(),
-					offset = $el.offset(),
-				/** calculate the x and y to get an angle to the center of the div from that x and y. **/
-				/** gets the x value relative to the center of the DIV and "normalize" it **/
-					x = (pos_x - offset.left - (w/2)) * ( w > h ? (h/w) : 1 ),
-					y = (pos_y - offset.top  - (h/2)) * ( h > w ? (w/h) : 1 ),
-				
-				/** the angle and the direction from where the mouse came in/went out clockwise (TRBL=0123);**/
-				/** first calculate the angle of the point, 
-				 add 180 deg to get rid of the negative values
-				 divide by 90 to get the quadrant
-				 add 3 and do a modulo by 4  to shift the quadrants to a proper clockwise TRBL (top/right/bottom/left) **/
-					direction = Math.round((((Math.atan2(y, x) * (180 / Math.PI)) + 180 ) / 90 ) + 3 )  % 4;
-				return direction; // 0 = top, 1 = right, 2 = bottom, 3 = left
-			},
-			_preview_t = null,
-			_preview_delay = 500, // in ms
-			_preview_resort = function (me, v) {
-				console.log(v);
-				var
-					$preview = me.$el.parent().find(">.upfront-preview-helper"),
-					// Get direction
-					direction_next = v.next ? _get_direction(v.next.$el, v.offset.x, v.offset.top+pos_tolerance) : false,
-					direction_prev = v.prev ? _get_direction(v.prev.$el, v.offset.x, v.offset.top+pos_tolerance) : false,
-					direction = _get_direction(v.closest.$el, v.offset.x, v.offset.top+pos_tolerance),
-					margin_data = me.$el.data('margin'),
-					avail_top_width = 0,
-					avail_width = 0,
-					avail_space = 0,
-					avail_space_left = 0,
-					avail_space_right = 0,
-					
-					animate_duration = 200,
-					
-					update_class = false, // if margin class update is needed
-					add_clear = false, // if clear is needed (the element moved to a new line)
-					moved = false, // if it's moved
-					swapped = false, // if element is swapped
-					resort = false // if resort is needed
-				;
-				// Use next if exists and the direction is either top/left
-				if ( v.next && (direction_next != 2 || v.offset.top < v.next.outer_position.top) ){
-					// available width and space
-					var next_affected_els = behavior._get_affected_elements(v.next, elements_pos, [me]),
-						next_move_limit = behavior._get_move_limit(next_affected_els, containment_limit),
-						next_margin = v.next.$el.data('margin'),
-						current_direction = _get_direction(v.next.$el, me.center.x, me.position.top+pos_tolerance),
-						same_line = ( me.outer_position.top == v.next.outer_position.top ),
-						get_prev = v.next.$el.parent().prev(),
-						is_prev = get_prev ? get_prev.find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id') : false,
-						get_next = v.next.$el.parent().next(),
-						is_next = !is_prev && get_next ? get_next.find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id') : false;
-					console.log([current_direction, direction_next]);
-					//if ( is_prev && direction_next == 3 && same_line ) // Same order and direction, no need to resort/move
-					//	return;
-					/*if ( _.find(next_affected_els.left, function(each){ return ( each.$el == me.$el ); }) ){ // Since the left affected elements is current element, add it's position to the move limit
-						next_move_limit[0] = me.outer_position.left;
-					}*/
-					avail_top_width = containment_limit[1]-next_move_limit[0];
-					avail_width = next_move_limit[1]-next_move_limit[0];
-					avail_space = avail_width-(v.next.width);
-					avail_space_left = v.next.position.left-next_move_limit[0];
-					avail_space_right = avail_space-avail_space_left;
-					
-					if ( direction_next == 3 && avail_space_left >= me.width ) {
-						if ( is_prev && same_line )
-							return;
-						if ( margin_data.original.left != 0 || margin_data.original.right != 0 ){
-							margin_data.current.left = 0;
-							margin_data.current.right = 0;
-							update_class = true;
-						}
-						if ( v.next.outer_position.left-2 <= containment_limit[0] ){
-							add_clear = true;
-						}
-						next_margin.current.left = Math.round((avail_space_left-me.width)/margin_increment);
-						_update_class(v.next.$el, margin_left_class, next_margin.current.left);
-						v.next.$el.data('margin', next_margin);
-						if ( v.next.$el.hasClass('clr') )
-							v.next.$el.removeClass('clr');
-						moved = true;
-					}
-					else if ( direction_next == 3 && same_line ) {
-						var next_affected_direct = behavior._get_affected_elements(v.next, elements_pos, [], true);
-						if ( next_affected_direct.right > 1 )
-							return;
-						if ( margin_data.original.right > 0 ){
-							next_margin.current.right = margin_data.original.right;
-							_update_class(v.next.$el, margin_right_class, next_margin.current.right);
-							v.next.$el.data('margin', next_margin);
-							margin_data.current.right = 0;
-							update_class = true;
-						}
-						swapped = true;
-						moved = true;
-					}
-					else if ( avail_top_width >= me.width ){
-						var fill_margin = Math.round((avail_top_width-me.width)/margin_increment);
-						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin || margin_data.original.bottom > 0 ){
-							margin_data.current.left = 0;
-							margin_data.current.right = fill_margin;
-							margin_data.current.bottom = 0;
-							update_class = true;
-						}
-						if ( avail_top_width == containment_limit[1]-containment_limit[0] ){
-							add_clear = true;
-						}
-						moved = true;
-					}
-					if ( moved ){
-						/*$preview.css({width:0, height:0}).addClass('upfront-preview-hide');
-						me.$el.parent().after('<div class="upfront-preview-transition" style="width:'+v.width+'px;height:'+v.height+'px"></div>');
-						$('.upfront-preview-transition').animate({width:0, height:0}, animate_duration, 'linear', function(){ $(this).remove(); });*/
-						if ( ! is_prev ){
-							v.next.$el.parent().before(me.$el.parent());
-							resort = true;
-						}
-					}
-				}
-				// Use prev is exists and the direction is right/bottom
-				else if ( v.prev && (direction_prev != 0) ){
-					// available width and space
-					var prev_affected_els = behavior._get_affected_elements(v.prev, elements_pos, [me]),
-						prev_move_limit = behavior._get_move_limit(prev_affected_els, containment_limit),
-						prev_margin = v.prev.$el.data('margin'),
-						current_direction = _get_direction(v.prev.$el, me.center.x, me.position.top+pos_tolerance),
-						same_line = ( me.outer_position.top == v.prev.outer_position.top ),
-						get_prev = v.prev.$el.parent().prev(),
-						is_prev = get_prev ? get_prev.find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id') : false,
-						get_next = v.prev.$el.parent().next(),
-						is_next = !is_prev && get_next ? get_next.find(">.upfront-editable_entity:first").attr('id') == me.$el.attr('id') : false;
-					console.log([current_direction, direction_prev]);
-					//if ( is_next && direction_prev == 1 && same_line ) // Same order and direction, no need to resort/move
-					//	return;
-					/*if ( _.find(prev_affected_els.right, function(each){ return ( each.$el == me.$el ); }) ){ // Since the right affected elements is current element, add it's position to the move limit
-						prev_move_limit[1] = me.outer_position.right;
-					}*/
-					avail_top_width = containment_limit[1]-prev_move_limit[0];
-					avail_width = prev_move_limit[1]-prev_move_limit[0];
-					avail_space = avail_width-(v.prev.width);
-					avail_space_left = v.prev.position.left-prev_move_limit[0];
-					avail_space_right = avail_space-avail_space_left;
-					console.log(prev_move_limit);
-					
-					if ( direction_prev == 1 && avail_space_right >= me.width ) {
-						if ( is_next && same_line )
-							return;
-						var fill_margin = Math.round((avail_space_right-me.width)/margin_increment);
-						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin || prev_margin.original.right != 0 ){
-							margin_data.current.left = 0;
-							margin_data.current.right = fill_margin;
-							update_class = true;
-							prev_margin.current.right = 0;
-							_update_class(v.prev.$el, margin_right_class, prev_margin.current.right);
-							v.prev.$el.data('margin', prev_margin);
-						}
-						moved = true;
-					}
-					else if ( direction_prev == 1 && is_prev && same_line ) {
-						if ( prev_margin.original.right > 0 ){
-							margin_data.current.right = prev_margin.original.right;
-							prev_margin.current.right = 0;
-							_update_class(v.prev.$el, margin_right_class, prev_margin.current.right);
-							v.prev.$el.data('margin', prev_margin);
-						}
-						swapped = true;
-						moved = true;
-					}
-					else /*if ( avail_top_width >= me.width )*/{
-						var prev_line = _.find(v.lines_pos, function(line){
-							return _.find(line.elements, function(each){ return each.$el == v.prev.$el; }) ? true : false;
-						});
-						if ( v.offset.top > prev_line.bottom ){
-							var fill_margin = Math.round((containment_limit[1]-containment_limit[0]-me.width)/margin_increment);
-							add_clear = true;
-						}
-						else{
-							var fill_margin = Math.round((avail_top_width-me.width)/margin_increment);
-							prev_margin.current.bottom = 0;
-							_update_class(v.prev.$el, margin_bottom_class, prev_margin.current.bottom);
-							v.prev.$el.data('margin', prev_margin);
-						}
-						if ( margin_data.original.left != 0 || margin_data.original.right != fill_margin || margin_data.original.bottom > 0 ){
-							margin_data.current.left = 0;
-							margin_data.current.right = fill_margin;
-							margin_data.current.bottom = 0;
-							update_class = true;
-						}
-						moved = true;
-					}
-					if ( moved ){
-						/*$preview.css({width:0, height:0}).addClass('upfront-preview-hide');
-						me.$el.parent().after('<div class="upfront-preview-transition" style="width:'+v.width+'px;height:'+v.height+'px"></div>');
-						$('.upfront-preview-transition').animate({width:0, height:0}, animate_duration, 'linear', function(){ $(this).remove(); });*/
-						if ( ! is_next ){
-							v.prev.$el.parent().after(me.$el.parent());
-							resort = true;
-						}
-					}
-				}
-				
-				if ( moved ){
-					/*setTimeout(function(){*/
-						/*$preview.animate({width:v.width, height:v.height}, animate_duration, 'linear', function(){
-							$(this).removeClass('upfront-preview-hide');
-						});*/
-						// Update classes
-						/*if ( margin_data.original.top != 0 ){
-							margin_data.current.top = 0;
-							_update_class($preview, margin_top_class, margin_data.current.top);
-							_update_class(me.$el, margin_top_class, margin_data.current.top);
-						}*/
-						if ( update_class ){
-							_update_class($preview, margin_left_class, margin_data.current.left);
-							_update_class($preview, margin_right_class, margin_data.current.right);
-							_update_class(me.$el, margin_left_class, margin_data.current.left);
-							_update_class(me.$el, margin_right_class, margin_data.current.right);
-						}
-						if ( add_clear ){
-							$preview.addClass('clr');
-							me.$el.addClass('clr');
-						}
-						else {
-							$preview.removeClass('clr');
-							me.$el.removeClass('clr');
-						}
-						me.$el.data('margin', margin_data);
-						// Resort
-						if ( resort ){
-							view.resort_bound_collection();
-						}
-						if ( v.affected_els.right.length > 0 && !swapped ){
-							_.each(v.affected_els.right, function(each){
-								var each_margin = each.$el.data('margin'),
-									each_margin_size = Math.round((me.position.right-me.outer_position.left)/margin_increment) + each_margin.original.left;
-								each_margin.current.left = each_margin_size;
-								each.$el.data('margin', each_margin);
-								_update_margin_classes(each.$el);
-								if ( me.outer_position.left-2 <= containment_limit[0] )
-									each.$el.addClass('clr');
-							});
-						}
-						if ( v.affected_els.left.length > 0 && !swapped ){
-							_.each(v.affected_els.left, function(each){
-								var each_affected_els = behavior._get_affected_elements(each, elements_pos, [me]),
-									each_margin = each.$el.data('margin'),
-									fill_margin = Math.round((containment_limit[1]-each.position.right)/margin_increment);
-								if ( each_affected_els.right.length > 0 )
-									return;
-								each_margin.current.right = fill_margin;
-								each.$el.data('margin', each_margin);
-								_update_margin_classes(each.$el);
-							});
-						}
-						me.$el.show();
-						$preview.hide();
-						_update_elements_pos(); // Generate list of elements and it's position
-						_update_margin_data(); // Generate margin data
-						me.$el.hide();
-						$preview.show();
-					/*}, animate_duration);*/
-				}
-				console.log('moved:'+moved+', resort:'+resort);
-			}
-		;
-		
-		$measure.remove();
-
-		if ($draggable.draggable) $draggable.draggable({
-			//containment: $containment,
-			revert: true,
-			revertDuration: 1,
-			zIndex: 100,
-			helper: 'clone',
-			start: function (e, ui) {
-				var 
-					$el = view.$el,
-					$me = $el.find(">.upfront-editable_entity:first"),
-					height = $me.outerHeight(),
-					width = $me.outerWidth(),
-					classes = view.model.get_property_value_by_name('class')
-				;
-				
-				
-				_update_elements_pos(); // Generate list of elements and it's position
-				_update_margin_data(); // Generate margin data
-				
-				// debug info
-				_.each(elements_pos, function(each){
-					each.$el.find(".upfront-debug-info").text('offset: '+each.position.left+','+each.position.top+','+each.position.right+','+each.position.bottom + '| outer offset: '+each.outer_position.left+','+each.outer_position.top+','+each.outer_position.right+','+each.outer_position.bottom);
-				});
-				
-				$me.hide();
-				$el.append('<div class="upfront-preview-helper '+classes+'" style="height:'+height+'px;"></div>');
-			},
-			drag: function (e, ui) {
-				if(model.get_property_value_by_name('disable_drag')===1){
-					return false;
-				}
-
-				// Set up collection position
-				var 
-					$el = view.$el,
-					$me = $el.find(">.upfront-editable_entity:first"),
-					$helper = $el.find(">.ui-draggable-dragging"),
-					$preview = $el.find(">.upfront-preview-helper"),
-					$prevs = $el.prevAll(),
-					$nexts = $el.nextAll(),
-					
-					height = $me.outerHeight(),
-					width = $me.outerWidth(),
-
-					current_offset = $helper.offset(),
-					current_left = current_offset.left,
-					current_top = current_offset.top,
-					current_bottom = current_top+height,
-					current_right = current_left+width,
-					current_x = current_left+(width/2),
-					current_y = current_top+(height/2),
-					
-					// Find the previous or next element
-					me_pos = _.find(elements_pos, function(each){
-						return ( $me.attr('id') == each.$el.attr('id') );
-					}),
-					filtered_elements_pos = _.reject(elements_pos, function(each){
-						return ( each == me_pos );
-					}),
-					lines = _.groupBy(filtered_elements_pos, function(each){ return each.outer_position.top; }),
-					lines_pos = [],
-					lines_top = _.keys(lines),
-					next_line = _.find(lines, function(els, top){
-						top = parseInt(top);
-						first_top = parseInt(lines_top[0]);
-						if ( current_top < top && (top == first_top || (top > first_top && top-current_top <= pos_tolerance)) && top != me_pos.outer_position.top )
-							return true;
-						return false;
-					}),
-					current_line = lines[_.find(lines_top, function(line, index, list){
-						if ( index < list.length-1 && line <= current_top && list[index+1] > current_top )
-							return true;
-						if ( (index == 0 && current_top < line) || index == list.length-1 )
-							return true;
-						return false;
-					})],
-					use_line = next_line ? next_line : current_line,
-					next = _.find(use_line, function(each, index, list){
-						if ( each.width < width ){
-							if ( current_left < each.position.left && each.position.bottom > current_top )
-								return true;
-						}
-						else if ( each.width >= width ){
-							if ( current_right <= each.position.right && each.position.bottom > current_top )
-								return true;
-						}
-						if ( next_line && index == list.length-1 )
-							return true;
-						return false;
-					}),
-					next_index = next ? _.indexOf(filtered_elements_pos, next) : false,
-					prev = next_index > 0 ? filtered_elements_pos[next_index-1] : ( next_index === 0 ? false : _.last(use_line)),
-					prev_index = prev ? _.indexOf(filtered_elements_pos, prev) : false,
-					
-					// Finding the closest element
-					filtered_elements_pos = _.map(filtered_elements_pos, function(each){
-						var diff_x = each.center.x - current_x,
-							diff_y = each.center.y - current_y;
-						each.distance = Math.sqrt(Math.pow(diff_x, 2) + Math.pow(diff_y, 2));
-						return each;
-					});
-					closest = _.min(filtered_elements_pos, function(each){
-						return each.distance;
-					}),
-					closest_index = _.indexOf(filtered_elements_pos, closest),
-					closest_next = filtered_elements_pos.length-1 > closest_index ? filtered_elements_pos[closest_index+1] : false,
-					closest_prev = closest_index > 0 ? filtered_elements_pos[closest_index-1] : false,
-					
-					// Figure out the margin
-					margin_data = $me.data('margin'),
-					
-					relative_left = me_pos.position.left - current_left,
-					relative_top = me_pos.position.top - current_top,
-					
-					relative_margin_size = -1 * (relative_left ? Math.round(relative_left / margin_increment) : 0),
-					margin_size = margin_data.original.left + relative_margin_size,
-					relative_margin_top_size = -1 * (relative_top ? Math.round(relative_top / BASELINE) : 0),
-					margin_top_size = margin_data.original.top + relative_margin_top_size,
-					
-					// affected_elements will hold elements that is affected by the flow of current element
-					affected_elements = behavior._get_affected_elements(me_pos, elements_pos, [], true),
-					affected_elements_all = behavior._get_affected_elements(me_pos, elements_pos),
-					
-					// figure out the bottom affected elements and get the max bottom position
-					bottom_closest_el = _.min(affected_elements.bottom, function(each){ return each.position.top; }),
-					bottom_el_margin = bottom_closest_el ? bottom_closest_el.$el.data('margin').original.top : 0,
-					affected_all_x = _.filter(affected_elements_all.left.concat(affected_elements_all.right), function(each){
-						return ( (bottom_closest_el && each.position.bottom <= bottom_closest_el.outer_position.top) || !bottom_closest_el );
-					}),
-					line_bottom = _.max(affected_all_x, function(each){
-						return parseInt(each.position.bottom); 
-					}),
-					
-					// move_limit store the available movement on left/right
-					move_limit = behavior._get_move_limit(affected_elements, containment_limit),
-					max_margin_x = 0,
-					max_margin_y = 0,
-					recalc_margin_x = false,
-					recalc_margin_y = false,
-					
-					new_line = false,
-
-					resort = false
-				;
-			
-				
-				var tmp_bottom = -1, tmp_index = -1;
-				_.each(lines, function(els, top, list){
-					top = parseInt(top);
-					if ( top < tmp_bottom ){
-						_.each(els, function(each){ lines_pos[tmp_index].elements.push(each) });
-					}
-					else {
-						tmp_index++;
-						lines_pos[tmp_index] = {
-							elements: els,
-							top: top
-						};
-					}
-					var max_bottom = parseInt(_.max(els, function(each){ return parseInt(each.outer_position.bottom); }).outer_position.bottom);
-					tmp_bottom = max_bottom > tmp_bottom ? max_bottom : tmp_bottom;
-					lines_pos[tmp_index].bottom = tmp_bottom;
-				});
-				
-				
-				// Calculate margins
-				max_margin_x = Math.round((move_limit[1]-move_limit[0]-width)/margin_increment);
-				
-				margin_size = margin_size > 0 ? (margin_size > max_margin_x ? max_margin_x : margin_size) : 0;
-				if ( margin_data.current.left != margin_size ){
-					margin_data.current.left = margin_size;
-					if ( affected_elements.right.length == 0 ){ // No elements on the right, adjusting margin right
-						var margin_right_size = max_margin_x-margin_size;
-						margin_data.current.right = margin_right_size > 0 ? margin_right_size : 0;
-					}
-					$me.data('margin', margin_data);
-					$preview.css('left', (margin_data.current.left-margin_data.original.left)*margin_increment);
-					recalc_margin_x = true;
-				}
-				
-				max_margin_y = affected_elements.bottom.length > 0 ? Math.round((bottom_closest_el.position.top-me_pos.outer_position.top-me_pos.height)/BASELINE) : -1;
-				margin_data.current.top = margin_top_size > 0 ? (max_margin_y > -1 && margin_top_size > max_margin_y ? max_margin_y : margin_top_size) : 0;
-				$me.data('margin', margin_data);
-				if ( max_margin_y > -1 ){
-					$preview.css('top', (margin_data.current.top-margin_data.original.top)*BASELINE);
-					recalc_margin_y = true;
-				}
-				else {
-					_update_class($preview, margin_top_class, margin_data.current.top);
-				}
-				// Recalculate margin bottom
-				if ( line_bottom ){
-					if ( affected_elements.right.length == 0 ){
-						margin_data.current.bottom = line_bottom.position.bottom > current_bottom ? Math.round((line_bottom.position.bottom-current_bottom)/BASELINE) : 0;
-					}
-					else {
-						margin_data.current.bottom = 0;
-						var line_right = _.max(affected_elements_all.right, function(each){ return each.outer_position.left; }),
-							line_right_margin = line_right.$el.data('margin'),
-							bottom_cmp = current_bottom > line_bottom.position.bottom ? current_bottom : line_bottom.position.bottom;
-						line_right_margin.current.bottom = bottom_cmp > line_right.position.bottom ? Math.round((bottom_cmp-line_right.position.bottom)/BASELINE) : 0;
-						line_right.$el.data('margin', line_right_margin);
-					}
-					_.each(affected_all_x, function(each){
-						var each_margin = each.$el.data('margin');
-						if ( line_right && line_right.$el == each.$el )
-							return;
-						if ( each.position.bottom <= line_bottom.position.bottom ){
-							each_margin.current.bottom = 0;
-							each.$el.data('margin', each_margin);
-						}
-					});
-				}
-				else {
-					margin_data.current.bottom = 0;
-				}
-				
-				// Recalculate margin so the affected elements remain in their position
-				if ( recalc_margin_x ){
-					_.each(affected_elements.right, function(each){
-						var each_margin = each.$el.data('margin'),
-							each_margin_size = max_margin_x-margin_data.current.left,
-							each_margin_relative = (each.position.left > move_limit[1]) ? Math.round((each.position.left-move_limit[1])/margin_increment) : 0;
-						if ( each_margin.current.left != each_margin_size+each_margin_relative ){
-							each_margin.current.left = each_margin_size+each_margin_relative;
-							each.$el.data('margin', each_margin);
-						}
-					});
-				}
-				if ( recalc_margin_y ){
-					_.each(affected_elements.bottom, function(each){
-						var each_margin = each.$el.data('margin'),
-							each_margin_size = max_margin_y-margin_data.current.top - (line_bottom && line_bottom.position.bottom > current_bottom ? Math.round((line_bottom.position.bottom-current_bottom)/BASELINE) : 0),
-							each_margin_relative = each_margin.original.top-bottom_el_margin;
-						if ( each_margin.current.top != each_margin_size+each_margin_relative ){
-							each_margin.current.top = each_margin_size+each_margin_relative;
-							each.$el.data('margin', each_margin);
-						}
-					});
-				}
-				
-				// Preview resort
-				clearTimeout(_preview_t);
-				_preview_t = setTimeout(function(){ _preview_resort(me_pos, {
-					prev: prev,
-					next: next,
-					closest: closest,
-					offset: {
-						top: current_top,
-						left: current_left,
-						bottom: current_bottom,
-						right: current_right,
-						x: current_x,
-						y: current_y
-					},
-					width: width,
-					height: height,
-					affected_els: affected_elements,
-					lines: lines,
-					lines_pos: lines_pos
-				}); }, _preview_delay);
-				
-				
-				if ( !closest.$el.hasClass('upfront-closest') ){
-					$('.upfront-closest').removeClass('upfront-closest');
-					closest.$el.addClass('upfront-closest');
-				}
-				if ( !next || !prev ) {
-					$('.upfront-prev, .upfront-next').removeClass('upfront-prev upfront-next');
-				}
-				if ( (prev && ! prev.$el.hasClass('upfront-prev')) || (next && ! next.$el.hasClass('upfront-next')) ){
-					$('.upfront-prev, .upfront-next').removeClass('upfront-prev upfront-next');
-					if (prev) prev.$el.addClass('upfront-prev');
-					if (next) next.$el.addClass('upfront-next');
-				}
-				$('.upfront-affected-top, .upfront-affected-bottom, .upfront-affected-left, .upfront-affected-right').removeClass('upfront-affected-top upfront-affected-bottom upfront-affected-left upfront-affected-right');
-				_.each(affected_elements, function(els, key){
-					_.each(els, function(each){
-						if ( !each.$el.hasClass('upfront-affected-'+key) ){
-							each.$el.addClass('upfront-affected-'+key);
-						}
-					})
-				});
-				
-				$el.find(".upfront-debug-info").text('current offset: '+current_left+','+current_top+','+current_right+','+current_bottom+' | x,y: '+current_x+','+current_y+' | relative offset: '+relative_left+','+relative_top+' | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
-				//return !resort;
-
-			},
-			stop: function (e, ui) {
-				var 
-					$target = view.$el.find(">.upfront-editable_entity:first"),
-					margin_data = $target.data('margin')
-				;
-				
-				// Clear preview timeout
-				clearTimeout(_preview_t);
-				
-				view.$el.find('.upfront-preview-helper').remove();
-				view.model.replace_class(margin_left_class+margin_data.current.left);
-				view.model.replace_class(margin_right_class+margin_data.current.right);
-				view.model.replace_class(margin_top_class+margin_data.current.top);
-				view.model.replace_class(margin_bottom_class+margin_data.current.bottom);
-				
-				if ( $target.hasClass('clr') )
-					view.model.add_class('clr');
-				else
-					view.model.remove_class('clr');
-				
-				// Change affecting elements margin size as well
-				view.$el.parent().children().each(function(){
-					var $el = $(this).find(">.upfront-editable_entity:first");
-					if ( $el.attr('id') == $target.attr('id') )
-						return;
-					var
-						each_margin_data = $el.data('margin'),
-					// @TODO Better way to get correct model instead of iterate like this?
-						modules = app.layout.get('regions').active_region.get('modules'),
-						model = modules.get_by_element_id($el.attr('id'));
-					if ( ! model )
-						modules.each(function(module){
-							var objects = module.get('objects'),
-								object_model = objects.get_by_element_id($el.attr('id'));
-							if ( object_model )
-								model = object_model;
-						});
-					if ( each_margin_data && each_margin_data.original != each_margin_data.current ){
-						model.replace_class(margin_left_class+each_margin_data.current.left);
-						model.replace_class(margin_right_class+each_margin_data.current.right);
-						model.replace_class(margin_top_class+each_margin_data.current.top);
-						model.replace_class(margin_bottom_class+each_margin_data.current.bottom);
-					}
-					if ( $el.hasClass('clr') )
-						model.add_class('clr');
-					else
-						model.remove_class('clr');
-				});
-				
-				$target.show();
-				//console.log(margin_increment)
-				//console.log([current_margin_left_size, margin_size]);
-				//console.log([relative_left, margin_pfx + margin_size])
-				
-				//view.resort_bound_collection();
-			}
-		});
+var GridEditor = {
+	
+	containment: {$el: null, top: 0, left: 0, right: 0},
+	col_size: 0,
+	baseline: 0,
+	grid: null,
+	
+	els: [],
+	wraps: [],
+	drops: [],
+	
+	/**
+	 * Get grid position of an x,y offset
+	 * 
+	 * @param {Int} x
+	 * @param {Int} y
+	 */
+	get_grid: function(x, y){		
+		var	ed = Upfront.Behaviors.GridEditor,
+			grid_x = Math.round((x-ed.containment.left)/ed.col_size)+1,
+			grid_y = Math.round((y-ed.containment.top)/ed.baseline)+1;
+		return {x: grid_x, y: grid_y};
 	},
 	
-	_get_element_position: function (el) {
-		var $el = $(el).find(">.upfront-editable_entity:first"),
+	/**
+	 * Get position of an element
+	 * 
+	 * @param {DOM Object} el
+	 */
+	get_position: function(el){
+		var ed = Upfront.Behaviors.GridEditor,
+			$el = $(el),
 			top = $el.offset().top,
 			left = $el.offset().left,
 			outer_top = top-parseFloat($el.css('margin-top')),
-			outer_left = left-parseFloat($el.css('margin-left'));
+			outer_left = left-parseFloat($el.css('margin-left')),
+			grid = ed.get_grid(left, top),
+			outer_grid = ed.get_grid(outer_left, outer_top),
+			col = ed.get_class_num($el, ed.grid.class),
+			outer_col = Math.round($el.outerWidth(true)/ed.col_size),
+			row = Math.round($el.outerHeight()/ed.baseline),
+			outer_row = Math.round($el.outerHeight(true)/ed.baseline);
 		return {
 			$el: $el,
 			position: {
@@ -825,141 +108,926 @@ var LayoutEditor = {
 			width: $el.outerWidth(),
 			height: $el.outerHeight(),
 			center: {
-				y: top+($el.outerHeight()/2),
-				x: left+($el.outerWidth()/2)
+				y: Math.round(top+($el.outerHeight()/2)),
+				x: Math.round(left+($el.outerWidth()/2))
+			},
+			col: col,
+			row: row,
+			grid: {
+				top: grid.y,
+				left: grid.x,
+				right: grid.x+col-1,
+				bottom: grid.y+row-1
+			},
+			outer_grid: {
+				top: outer_grid.y,
+				left: outer_grid.x,
+				right: outer_grid.x+outer_col-1,
+				bottom: outer_grid.y+outer_row-1
+			},
+			grid_center: {
+				y: grid.y+(row/2)-1,
+				x: grid.x+(col/2)-1
 			}
 		};
 	},
 	
-	_generate_elements_position: function (elements) {
-		return _.map(elements, Upfront.Behaviors.LayoutEditor._get_element_position);
-	},
-	
-	_generate_elements_margin_data: function (elements) {
-		_.each(elements, function(each){
-			var $el = $(each).find(">.upfront-editable_entity:first"),
-				margin_left_class = Upfront.Settings.LayoutEditor.Grid.left_margin_class,
-				margin_right_class = Upfront.Settings.LayoutEditor.Grid.right_margin_class,
-				margin_top_class = Upfront.Settings.LayoutEditor.Grid.top_margin_class,
-				margin_bottom_class = Upfront.Settings.LayoutEditor.Grid.bottom_margin_class,
-				margin_left_rx = new RegExp('\\b' + margin_left_class + '(\\d+)'),
-				margin_right_rx = new RegExp('\\b' + margin_right_class + '(\\d+)'),
-				margin_top_rx = new RegExp('\\b' + margin_top_class + '(\\d+)'),
-				margin_bottom_rx = new RegExp('\\b' + margin_bottom_class + '(\\d+)'),
-				
-				current_margin_left = $el.attr("class").match(margin_left_rx),
-				current_margin_left_size = current_margin_left && current_margin_left.length ? parseInt(current_margin_left[1], 10) : 0,
-	
-				current_margin_right = $el.attr("class").match(margin_right_rx),
-				current_margin_right_size = current_margin_right && current_margin_right.length ? parseInt(current_margin_right[1], 10) : 0,
-				
-				current_margin_top = $el.attr("class").match(margin_top_rx),
-				current_margin_top_size = current_margin_top && current_margin_top.length ? parseInt(current_margin_top[1], 10) : 0,
-				
-				current_margin_bottom = $el.attr("class").match(margin_bottom_rx),
-				current_margin_bottom_size = current_margin_bottom && current_margin_bottom.length ? parseInt(current_margin_bottom[1], 10) : 0
-			;
-			
-			$el.data('margin', {
-				original: {
-					left: current_margin_left_size,
-					right: current_margin_right_size,
-					top: current_margin_top_size,
-					bottom: current_margin_bottom_size
-				},
-				current: {
-					left: current_margin_left_size,
-					right: current_margin_right_size,
-					top: current_margin_top_size,
-					bottom: current_margin_bottom_size
-				}
-			});
+	/**
+	 * Get margin from class name and store in data to use later
+	 * 
+	 * @param {DOM Object} el
+	 */
+	init_margin: function (el){
+		var ed = Upfront.Behaviors.GridEditor,
+			$el = $(el),
+			left = ed.get_class_num($el, ed.grid.left_margin_class),
+			right = ed.get_class_num($el, ed.grid.right_margin_class),
+			top = ed.get_class_num($el, ed.grid.top_margin_class),
+			bottom = ed.get_class_num($el, ed.grid.bottom_margin_class)
+		;
+		$el.data('margin', {
+			original: {
+				left: left,
+				right: right,
+				top: top,
+				bottom: bottom
+			},
+			current: {
+				left: left,
+				right: right,
+				top: top,
+				bottom: bottom
+			}
 		});
 	},
 	
-	_get_affected_elements: function (el_pos, els_pos, ignore, direct) {
-		var affected_els = {
-				top: [],
-				left: [],
-				bottom: [],
-				right: []
-			},
-			compare = {
-				top: el_pos.outer_position.top,
-				left: el_pos.outer_position.left,
-				bottom: el_pos.outer_position.bottom,
-				right: el_pos.outer_position.right
-			};
+	get_affected_els: function (el, els, ignore, direct) {
+		var aff_els = { top: [], left: [], bottom: [], right: [] },
+			compare = el.outer_grid;
 		if ( Array.isArray(ignore) )
-			ignore.push(el_pos);
+			ignore.push(el);
 		else
-			ignore = [el_pos];
+			ignore = [el];
 		direct = direct ? true : false;
-		_.each(_.reject(els_pos, function(each){
+		_.each(_.reject(els, function(each){
 				var ignored = _.find(ignore, function(i){
-					return i.$el.attr('id') == each.$el.attr('id');
+					return i.$el.get(0) == each.$el.get(0);
 				});
 				return ignored ? true : false;
 			}), 
 			function(each){
-				if ( (compare.bottom > each.outer_position.top &&
-					compare.bottom <= each.outer_position.bottom) ||
-					(compare.top >= each.outer_position.top &&
-					compare.top < each.outer_position.bottom) ){
-					if ( compare.left+2 >= each.outer_position.right &&
-						(!direct || compare.left-each.outer_position.right <= 3) ){
-						affected_els.left.push(each);
+				if ( ( each.outer_grid.top >= compare.top && each.outer_grid.top <= compare.bottom ) ||
+					 ( each.outer_grid.bottom >= compare.top && each.outer_grid.bottom <= compare.bottom ) ||
+					 ( compare.top >= each.outer_grid.top && compare.top <= each.outer_grid.bottom ) || 
+					 ( compare.bottom >= each.outer_grid.top && compare.bottom <= each.outer_grid.bottom ) ){
+					if ( compare.left > each.outer_grid.right ){
+						aff_els.left.push(each);
 					}
-					if ( compare.right-2 <= each.outer_position.left &&
-						(!direct || each.outer_position.left-compare.right <= 3) ){
-						affected_els.right.push(each);
+					if ( compare.right < each.outer_grid.left ){
+						aff_els.right.push(each);
 					}
 				}
-				if ( compare.top+2 >= each.outer_position.bottom ){
-					affected_els.top.push(each);
+				if ( compare.top > each.outer_grid.bottom ){
+					aff_els.top.push(each);
 				}
-				if ( compare.bottom-2 <= each.outer_position.top ){
-					affected_els.bottom.push(each);
+				if ( compare.bottom < each.outer_grid.top ){
+					aff_els.bottom.push(each);
 				}
 			}
 		);
 		if ( direct ){
-			var direct_top = _.max(affected_els.top, function(each){ return each.outer_position.top; });
-			affected_els.top = _.filter(affected_els.top, function(each){
-				return ( each.outer_position.top == direct_top.outer_position.top );
+			var direct_left = _.max(aff_els.left, function(each){ return each.outer_grid.right; });
+			aff_els.left = _.filter(aff_els.left, function(each){
+				return ( each.outer_grid.right == direct_left.outer_grid.right );
 			});
-			var direct_bottom = _.min(affected_els.bottom, function(each){ return each.outer_position.top; });
-			affected_els.bottom = _.filter(affected_els.bottom, function(each){
-				return ( each.outer_position.top == direct_bottom.outer_position.top );
+			var direct_right = _.min(aff_els.right, function(each){ return each.outer_grid.left; });
+			aff_els.right = _.filter(aff_els.right, function(each){
+				return ( each.outer_grid.left == direct_right.outer_grid.left );
+			});
+			var direct_top = _.max(aff_els.top, function(each){ return each.outer_grid.top; });
+			aff_els.top = _.filter(aff_els.top, function(each){
+				return ( each.outer_grid.top == direct_top.outer_grid.top );
+			});
+			var direct_bottom = _.min(aff_els.bottom, function(each){ return each.outer_grid.top; });
+			aff_els.bottom = _.filter(aff_els.bottom, function(each){
+				return ( each.outer_grid.top == direct_bottom.outer_grid.top );
 			});
 		}
-		return affected_els;
+		return aff_els;
 	},
-	
-	_get_move_limit: function (affected_els, containment_limit) {
-		var move_limit = [containment_limit[0], containment_limit[1]];
-		_.each(affected_els.left, function(each){
-			if ( each.position.right > move_limit[0] )
-				move_limit[0] = each.position.right;
+		
+	get_affected_wrapper_els: function(el, els, ignore, direct){
+		var ed = Upfront.Behaviors.GridEditor,
+			aff = ed.get_affected_els(el, els, ignore, direct),
+			aff_els = {
+				top: _.flatten(_.map(aff.top, function(w){
+					var els = _.reject(ed.get_wrap_els(w), function(el){ 
+							return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false; 
+						}),
+						max = ed.get_wrap_el_max(w, ignore, true);
+					return _.filter(els, function(el){ return el.outer_grid.bottom == max.outer_grid.bottom; });
+				})),
+				bottom: _.flatten(_.map(aff.bottom, function(w){
+					var els = _.reject(ed.get_wrap_els(w), function(el){ 
+							return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false; 
+						}),
+						min = ed.get_wrap_el_min(w, ignore, true);
+					return _.filter(els, function(el){ return el.outer_grid.top == min.outer_grid.top; });
+				})),
+				left: _.flatten(_.map(aff.left, function(w){
+					var els = _.reject(ed.get_wrap_els(w), function(el){ 
+							return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false; 
+						}),
+						max = ed.get_wrap_el_max(w, ignore, false);
+					return _.filter(els, function(el){ return el.outer_grid.right == max.outer_grid.right; });
+				})),
+				right: _.flatten(_.map(aff.right, function(w){
+					var els = _.reject(ed.get_wrap_els(w), function(el){ 
+							return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false; 
+						}),
+						min = ed.get_wrap_el_min(w, ignore, false);
+					return _.filter(els, function(el){ return el.outer_grid.left == min.outer_grid.left; });
+				}))
+			};
+		return aff_els;
+	},
+		
+	get_move_limit: function (aff_els, grid) {
+		var move_limit = [1, grid];
+		_.each(aff_els.left, function(each){
+			if ( each.grid.right > move_limit[0] )
+				move_limit[0] = each.grid.right+1;
 		});
-		_.each(affected_els.right, function(each){
-			if ( each.position.left < move_limit[1] )
-				move_limit[1] = each.position.left;
+		_.each(aff_els.right, function(each){
+			if ( each.grid.left < move_limit[1] )
+				move_limit[1] = each.grid.left-1;
 		});
 		return move_limit;
 	},
-
-	create_undo: function () {
-		this.layout.store_undo_state();
+	
+	
+	get_wrap_els: function( use_wrap ){
+		var ed = Upfront.Behaviors.GridEditor;
+		return _.filter(ed.els, function(each){
+			return use_wrap.$el.get(0) == each.$el.closest('.upfront-wrapper').get(0);
+		});
 	},
-	apply_history_change: function () {
-		this.layout_view.render();
+	
+	get_wrap_el_min: function( use_wrap, ignore, top ){
+		var ed = Upfront.Behaviors.GridEditor,
+			wrap_els = ed.get_wrap_els(use_wrap),
+			wrap_el_min = _.min(_.reject(wrap_els, function(el){
+				return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false;
+			}), function(each){
+				return top ? each.grid.top : each.grid.left;
+			});
+		return wrap_el_min;
+	},
+	
+	get_wrap_el_max: function( use_wrap, ignore, bottom ){
+		var ed = Upfront.Behaviors.GridEditor,
+			wrap_els = ed.get_wrap_els(use_wrap),
+			wrap_el_max = _.max(_.reject(wrap_els, function(el){
+				return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false;
+			}), function(each){
+				return bottom ? each.grid.bottom : each.grid.right;
+			});
+		return wrap_el_max;
+	},
+	
+	/**
+	 * Get element position data
+	 * 
+	 * @param {jQuery Object} $el 
+	 */
+	get_el: function ($el){
+		var ed = Upfront.Behaviors.GridEditor;
+		return _.find(ed.els, function(each){ return ( $el.get(0) == each.$el.get(0) ); })
+	},
+	
+	/**
+	 * Get wrapper position data
+	 * 
+	 * @param {jQuery Object} $el 
+	 */
+	get_wrap: function ($el){
+		var ed = Upfront.Behaviors.GridEditor;
+		return _.find(ed.wraps, function(each){ return ( $el.get(0) == each.$el.get(0) ); })
+	},
+	
+	/**
+	 * Get integer value from class name
+	 * 
+	 * @param {jQuery Object} $el
+	 * @param {String} class_name
+	 */
+	get_class_num: function ($el, class_name){
+		var rx = new RegExp('\\b' + class_name + '(\\d+)')
+			val = $el.attr('class').match(rx);
+		return ( val && val[1] ) ? parseInt(val[1]) : 0;
+	},
+	
+	/**
+	 * Update class name with new value
+	 * 
+	 * @param {jQuery Object} $el
+	 * @param {String} class_name
+	 * @param {Int} class_size
+	 */
+	update_class: function ($el, class_name, class_size) {
+		var rx = new RegExp('\\b' + class_name + '\\d+');
+		if ( ! $el.hasClass(class_name+class_size) ){
+			if ( $el.attr('class').match(rx) )
+				$el.attr('class', $el.attr('class').replace(rx, class_name+class_size));
+			else
+				$el.addClass(class_name+class_size);
+		}
+	},
+	
+	/**
+	 * Update margin class name
+	 * 
+	 * @param {jQuery Object} $el
+	 */
+	update_margin_classes: function ($el) {
+		var el_margin = $el.data('margin'),
+			ed = Upfront.Behaviors.GridEditor;
+		ed.update_class($el, ed.grid.left_margin_class, el_margin.current.left);
+		ed.update_class($el, ed.grid.right_margin_class, el_margin.current.right);
+		ed.update_class($el, ed.grid.top_margin_class, el_margin.current.top);
+		ed.update_class($el, ed.grid.bottom_margin_class, el_margin.current.bottom);
+	},
+	
+	update_model_classes: function ($el, classes) {
+		var app = Upfront.Application.LayoutEditor,
+			ed = Upfront.Behaviors.GridEditor,
+			modules = app.layout.get('regions').active_region.get('modules'),
+			model = modules.get_by_element_id($el.attr('id'));
+		if ( ! model ){
+			_.each(modules, function(module){
+				var object_model = module.get('objects').get_by_element_id($el.attr('id'));
+				if ( object_model )
+					model = object_model;
+			})
+		}
+		if ( model ){
+			_.each(classes, function(cls){
+				model.replace_class(cls);
+			});
+		}
+	},
+	
+	adjust_els_right: function( adj_els, cmp_right, update_class ){
+		var	ed = Upfront.Behaviors.GridEditor;
+		_.each(adj_els, function(each){
+			var each_margin = each.$el.data('margin'),
+				each_margin_size = each.grid.left > cmp_right ? each.grid.left-cmp_right-1 : each_margin.current.left;
+			if ( each_margin.current.left != each_margin_size ){
+				each_margin.current.left = each_margin_size;
+				if ( update_class )
+					ed.update_margin_classes(each.$el);
+				each.$el.data('margin', each_margin);
+			}
+		});
+	},
+	adjust_affected_right: function( adj_wrap, adj_wrap_aff_right, ignore, cmp_right, update_class ){
+		var	ed = Upfront.Behaviors.GridEditor,
+			wrap_el_max = ed.get_wrap_el_max(adj_wrap, ignore),
+			wrap_right = wrap_el_max ? ( cmp_right && cmp_right > wrap_el_max.grid.right ? cmp_right : wrap_el_max.grid.right ) : ( cmp_right ? cmp_right : adj_wrap.grid.left-1 );
+		ed.adjust_els_right(adj_wrap_aff_right, wrap_right, update_class);
+	},
+	
+	/**
+	 * Init the GridEditor object 
+	 */
+	init: function(){
+		var app = Upfront.Application.LayoutEditor,
+			ed = Upfront.Behaviors.GridEditor,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+		ed.col_size = $main.outerWidth()/Upfront.Settings.LayoutEditor.Grid.size;
+		ed.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
+		ed.grid = Upfront.Settings.LayoutEditor.Grid;
+		
+	},
+	
+	/**
+	 * Start event, to set all required variables
+	 * 
+	 * @param {Object} view
+	 * @param {Object} model
+	 */
+	start: function(view, model){
+		var app = Upfront.Application.LayoutEditor,
+			ed = Upfront.Behaviors.GridEditor,
+			is_object = view.$el.find(".upfront-editable_entity:first").is(".upfront-object"),
+			$containment = view.$el.parents(".upfront-editable_entities_container:first"),
+			containment_pos = $containment.offset(),
+			$els = $containment.find( is_object ? '.upfront-object' : '.upfront-module' ),
+			$wraps = $containment.find('>.upfront-wrapper');
+		// Set variables
+		ed.containment = {
+			$el: $containment,
+			top: containment_pos.top,
+			left: containment_pos.left,
+			right: containment_pos.left + $containment.outerWidth(),
+			col: Math.round($containment.outerWidth()/ed.col_size)
+		};
+		ed.els = _.map($els, ed.get_position ); // Generate elements position data
+		$els.each(function(){ ed.init_margin(this); }); // Generate margin data
+		ed.wraps = _.map($wraps, ed.get_position ); // Generate wrappers position data
+	},
+	
+	/**
+	 * Create droppable points 
+	 */
+	create_drop_point: function(me, wrap){
+		var app = Upfront.Application.LayoutEditor,
+			ed = Upfront.Behaviors.GridEditor,
+			aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+			margin = me.$el.data('margin'),
+			col = ed.get_class_num(me.$el, ed.grid.class),
+			wrap_col = ed.get_class_num(wrap.$el, ed.grid.class);
+		// Finding dropable places that's outside of wrapper (full width, side by side)
+		_.each(ed.wraps, function(each, index, list){
+			var is_me = ( each.$el.get(0) == wrap.$el.get(0) && wrap.$el.children(':not(.upfront-drop)').size() == 1 ),
+				aff = ed.get_affected_wrapper_els(each, ed.wraps, [], true),
+				lmt = ed.get_move_limit(aff, ed.containment.col),
+				els = ed.get_wrap_els(each),
+				el_min = ed.get_wrap_el_min(each),
+				drop_wrap_full = '<div class="upfront-drop upfront-drop-wrap upfront-drop-wrap-full upfront-drop-y" style="height:0px;"></div>';
+				drop_wrap_fxd = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed '+ed.grid.class+(lmt[1]-each.grid.right)+'" style="height:'+each.$el.outerHeight()+'px;"></div>';
+			// The wrapper placed on the first column, which means before it should be a full width dropable place
+			if ( !is_me && each.grid.left == 1 ){
+				each.$el.before(drop_wrap_full);
+			}
+			// Add the last full wrapper
+			if ( index+1 == list.length ){
+				each.$el.after(drop_wrap_full);
+			}
+			// The wrapper right side has enough space, so add a dropable place after it
+			if ( !is_me && lmt[1]-each.grid.right >= col ){
+				each.$el.after(drop_wrap_fxd);
+			}
+			// The wrapper placed on first column and the left side has enough space, so add a dropable place before it
+			if ( !is_me && each.grid.left == 1 && el_min.grid.left-each.grid.left >= col ){
+				each.$el.before($(drop_wrap_fxd).addClass('clr'));
+			}
+		});
+		// Add sibling swap dropable
+		/*if ( aff_els.left.length == 1 ||  aff_els.right.length == 1 ){
+			var drop_wrap_x = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed upfront-drop-swap"></div>';
+			if ( aff_els.left.length == 1 ){
+				var $left_wrap = aff_els.left[0].$el.closest('.upfront-wrapper');
+				$left_wrap.before($(drop_wrap_x).css('height', $left_wrap.outerHeight()));
+			}
+			if ( aff_els.right.length == 1 ){
+				var $right_wrap = aff_els.right[0].$el.closest('.upfront-wrapper');
+				$right_wrap.after($(drop_wrap_x).css('height', $right_wrap.outerHeight()));
+			}
+		}*/
+		$('.upfront-drop-fixed').each(function(){
+			var pos = $(this).position();
+			$(this).css({
+				position: 'absolute',
+				top: pos.top,
+				left: pos.left
+			});
+		});
+		_.each(ed.els, function(each, index, els){
+			var is_me = ( each.$el.get(0) == me.$el.get(0) ),
+				$each_wrap = each.$el.closest('.upfront-wrapper'),
+				wrap_pos = _.find(ed.wraps, function(w){ return w.$el.get(0) == $each_wrap.get(0); }),
+				aff = ed.get_affected_wrapper_els(wrap_pos, ed.wraps, [me], true),
+				lmt = ed.get_move_limit(aff, ed.containment.col),
+				drop = '<div class="upfront-drop upfront-drop-obj upfront-drop-y '+( is_me ? ' upfront-drop-me '+ed.grid.top_margin_class : '' )+'" style="height:0;"></div>',
+				drop_wrap_y = '<div class="upfront-drop upfront-drop-wrap upfront-drop-y '+( is_me ? ' upfront-drop-me' : '' )+'" style="height:0;"></div>';
+		
+			// Is current element and the only element in the wrapper
+			if ( is_me && $each_wrap.children().size() == 1 ){
+				var clr = $each_wrap.hasClass('clr') ? ' clr' : '';
+				/*if ( $each_wrap.prev().hasClass('upfront-drop') )
+					$each_wrap.prev().addClass('upfront-drop-me'+clr);
+				else if ( lmt[0] == 1 && lmt[1] == ed.containment.col )
+					$each_wrap.before($(drop_wrap_y).addClass('upfront-drop-wrap-full'));*/
+				// The dropable already there, so just add class
+				if ( $each_wrap.hasClass('clr') && $each_wrap.next().hasClass('upfront-drop-wrap-full') )
+					$each_wrap.next().addClass('upfront-drop-me');
+				// Else we add the dropable
+				else
+					$each_wrap.before($(drop_wrap_y).addClass(ed.grid.class + (lmt[1] == ed.containment.col ? lmt[1]-lmt[0]+1 : wrap_col) + clr));
+				wrap.$el.hide();
+			}
+			// Add dropable inside wrapper, in condition that the element has affected elements on either left/right
+			else if ( lmt[1]-lmt[0]+1 >= col && ( aff.right.length > 0 || aff.left.length > 0 ) ){
+				if ( !is_me && ( !each.$el.prev() || !each.$el.prev().hasClass('upfront-drop') ) )
+					each.$el.before(drop);
+				if ( is_me && each.$el.prev() && each.$el.prev().hasClass('upfront-drop') )
+					each.$el.prev().addClass('upfront-drop-me');
+				else if ( is_me )
+					each.$el.after(drop);
+				else
+					each.$el.after($(drop).addClass('upfront-drop-after'));
+			}
+			/*else if ( ( !is_me && ed.containment.col-lmt[0]+1 >= col && ed.containment.col-lmt[0]+1 < col+lmt[1]-lmt[0]+1 ) && ( !$each_wrap.prev() || !$each_wrap.prev().hasClass('upfront-drop') ) ) {
+				$each_wrap.before($(drop_wrap_y).addClass(ed.grid.size+(ed.containment.col-lmt[0]+1)));
+			}*/
+			/*else if ( !is_me && lmt[1] == ed.containment.col  ){
+				$each_wrap.after($(drop_wrap_y).addClass('upfront-drop-after '+ed.grid.class+col));
+			}*/
+			/*if ( lmt[1] == ed.containment.col ){
+				ed.update_class($each_wrap, ed.grid.class, lmt[1]-lmt[0]+1);
+			}*/
+		});
+		$('.upfront-drop-me').addClass(ed.grid.top_margin_class+margin.original.top);
+		ed.drops = _.map($('.upfront-drop'), function(each){
+			var $el = $(each),
+				off = $el.offset(),
+				left = off.left,
+				right = left + $el.outerWidth(),
+				top = off.top,
+				bottom = top + $el.outerHeight(),
+				y = top + ( (bottom-top)/2 ),
+				x = left + ( (right-left)/2 ),
+				grid = ed.get_grid(x, y),
+				grid1 = ed.get_grid(left, top),
+				grid2 = ed.get_grid(right, bottom),
+				is_after = $el.hasClass('upfront-drop-after'),
+				is_me = $el.hasClass('upfront-drop-me'),
+				is_full = $el.hasClass('upfront-drop-wrap-full');
+			if ( is_me ){
+				grid1.y -= margin.original.top;
+			}
+			return {
+				$el: $el,
+				x: grid.x,
+				y: ( is_after ? grid.y-2 : ( is_full ? grid.y : grid.y+2 ) ),
+				left: grid1.x,
+				right: grid2.x-1,
+				top: ( is_after ? grid1.y-2 : ( is_full ? grid.y : grid1.y+2 ) ),
+				bottom: ( is_after ? grid2.y-2 : ( is_full ? grid.y : grid2.y+2 ) )
+			};
+		});
+		$('.upfront-drop-me').css({height:me.height});
+		$('.upfront-drop-x').css({width:0});
+	},
+	
+	/**
+	 * Update wrappers
+	 */
+	update_wrappers: function(){
+		var app = Upfront.Application.LayoutEditor,
+			ed = Upfront.Behaviors.GridEditor;
+		ed.containment.$el.find('>.upfront-wrapper').each(function(){
+			var $wrap = $(this),
+				wrap_id = $wrap.attr('id'),
+				wraps = app.layout.get('wrappers'),
+				wrap_model = wraps.get_by_wrapper_id(wrap_id);
+			if ( $wrap.children().size() == 0 ){
+				if ( wrap_model )
+					wraps.remove(wrap_model);
+				return;
+			}
+			if ( $wrap.hasClass('upfront-wrapper-preview') )
+				return;
+			if ( ! wrap_model )
+				return;
+			var child_els = _.map($wrap.children(), function(each){
+					var $el = $(each).find('>.upfront-editable_entity:first');
+					return {
+						$el: $el,
+						col: ed.get_class_num($el, ed.grid.class),
+						margin: $el.data('margin')
+					};
+				}),
+				max = _.max(child_els, function(each){ return each.col + each.margin.current.left + each.margin.current.right; }),
+				wrap_col = max.col+max.margin.current.left+max.margin.current.right;
+			//ed.update_class(wrap.$el, ed.grid.class, wrap_col);
+			wrap_model.replace_class(ed.grid.class+wrap_col);
+			if ( $wrap.hasClass('clr') )
+				wrap_model.add_class('clr');
+			else
+				wrap_model.remove_class('clr');
+		});
+	},
+	
+	
+	/**
+	 * Create resizable
+	 * 
+	 * @param {Object} view
+	 * @param {Object} model
+	 */
+	create_resizable: function(view, model){
+		var app = this,
+			ed = Upfront.Behaviors.GridEditor,
+			$me = view.$el.find('.upfront-editable_entity:first'),
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main)
+		;
+		$me.resizable({
+			"containment": "parent",
+			start: function(e, ui){
+				ed.start(view, model);
+				
+				var col = ed.get_class_num($me, ed.grid.class),
+					cls = ed.grid.class+col,
+					me = ed.get_el($me),
+					margin = $me.data('margin');
+				cls += ' '+ed.grid.top_margin_class+margin.original.top;
+				cls += ' '+ed.grid.bottom_margin_class+margin.original.bottom;
+				cls += ' '+ed.grid.left_margin_class+margin.original.left;
+				cls += ' '+ed.grid.right_margin_class+margin.original.right;
+				
+				$me.before('<div class="upfront-resize '+cls+'" style="height:'+me.height+'px;"></div>');
+			},
+			resize: function(e, ui){
+				var $wrap = $me.closest('.upfront-wrapper'),
+					col = ed.get_class_num($me, ed.grid.class),
+					me = ed.get_el($me),
+					wrap = ed.get_wrap($wrap),
+					aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
+					max_col = col + (move_limit[1]-me.grid.right),
+					
+					current_col = Math.ceil(ui.size.width/ed.col_size),
+					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
+					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
+					rsz_col = ( current_col > max_col ? max_col : current_col ),
+					rsz_row = Math.ceil(h/ed.baseline)
+				;
+				/*if ( Math.abs($(window).height()-e.clientY) < 50 ){
+					h += (BASELINE*10);
+					$(window).scrollTop( $(window).scrollTop()+(BASELINE*10) );
+				}*/
+				$me.css({
+					height: h,
+					minWidth: w,
+					maxWidth: w
+				});
+				$me.data('resize-col', rsz_col);
+				$me.data('resize-row', rsz_row);
+				$me.prevAll('.upfront-resize').last().css({
+					height: rsz_row*ed.baseline,
+					minWidth: rsz_col*ed.col_size,
+					maxWidth: rsz_col*ed.col_size
+				});
+			},
+			stop: function(e, ui){
+				var $wrap = $me.closest('.upfront-wrapper'),
+					me = ed.get_el($me),
+					wrap = ed.get_wrap($wrap),
+					aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
+					rsz_col = $me.data('resize-col'),
+					rsz_row = $me.data('resize-row')
+				;
+				
+				$me.prevAll('.upfront-resize').last().remove();
+				
+				ed.update_class($me, ed.grid.class, rsz_col);
+				ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+rsz_col-1, true);
+				ed.update_wrappers();
+				
+				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
+				// @TODO this is temporary hack, we need to somehow retain height and snap it to baseline
+				$me.css({
+					width: '',
+					minWidth: '',
+					maxWidth: '',
+					height: '',
+					position: '',
+					top: '',
+					left: ''
+				});
+				
+				model.set_property('row', rsz_row);
+				model.replace_class(ed.grid.class+rsz_col);
+			}
+		});
+	},
+	
+	/**
+	 * Create draggable
+	 * 
+	 * @param {Object} view
+	 * @param {Object} model
+	 */
+	create_draggable: function(view, model){
+		var app = this,
+			ed = Upfront.Behaviors.GridEditor,
+			$me = view.$el.find('.upfront-editable_entity:first'),
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main)
+		;
+		$me.draggable({
+			revert: true,
+			revertDuration: 1,
+			zIndex: 100,
+			helper: 'clone',
+			appendTo: $main,
+			start: function(e, ui){
+				ed.start(view, model);
+				var $wrap = $me.closest('.upfront-wrapper'),
+					me = ed.get_el($me),
+					wrap = ed.get_wrap($wrap);
+				$me.hide();
+				ed.create_drop_point(me, wrap);
+				
+				
+				_.each(ed.els, function(each){
+					if ( each.$el.find(".upfront-debug-info").size() == 0 )
+						each.$el.append('<div class="upfront-debug-info"></div>');
+					each.$el.find(".upfront-debug-info").text('grid: ('+each.grid.left+','+each.grid.top+'),('+each.grid.right+','+each.grid.bottom+') | outer: ('+each.outer_grid.left+','+each.outer_grid.top+'),('+each.outer_grid.right+','+each.outer_grid.bottom+') | center: '+each.grid_center.x+','+each.grid_center.y);
+				});
+				_.each(ed.drops, function(each){
+					each.$el.html('<div class="upfront-drop-debug">('+each.left+','+each.top+'),('+each.right+','+each.bottom+'),('+each.x+','+each.y+')</div>');
+				});
+			},
+			drag: function(e, ui){
+				if ( model.get_property_value_by_name('disable_drag') === 1 ){
+					return false;
+				}
+				var $helper = $('.ui-draggable-dragging'),
+					$wrap = $me.closest('.upfront-wrapper'),
+					me = ed.get_el($me),
+					wrap = ed.get_wrap($wrap),
+					
+					height = $helper.outerHeight(),
+					width = $helper.outerWidth(),
+	
+					current_offset = $helper.offset(),
+					current_left = current_offset.left,
+					current_top = current_offset.top,
+					current_bottom = current_top+height,
+					current_right = current_left+width,
+					current_x = current_left+(width/2),
+					current_y = current_top+(height/2),
+					
+					current_grid = ed.get_grid(current_left, current_top),
+					current_grid_left = current_grid.x,
+					current_grid_top = current_grid.y,
+					current_grid2 = ed.get_grid(current_right, current_bottom),
+					current_grid_right = current_grid2.x-1,
+					current_grid_bottom = current_grid2.y-1,
+					
+					grid = ed.get_grid(e.pageX, e.pageY),
+					col = ed.get_class_num($me, ed.grid.class),
+					
+					// Figure out the margin
+					margin_data = $me.data('margin'),
+					
+					relative_left = current_grid_left - me.grid.left,
+					relative_top = current_grid_top - me.grid.top,
+					
+					margin_size = margin_data.original.left + relative_left,
+					margin_top_size = margin_data.original.top + relative_top,
+					
+					aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
+					
+					max_margin_x = 0,
+					max_margin_y = 0,
+					recalc_margin_x = false,
+					recalc_margin_y = false;
+					
+				// Get closest dropable
+				var hovered_drops = _.filter(ed.drops, function(each){
+					if ( // This works for vertical drops
+						(( current_grid_left >= each.left && current_grid_left <= each.right ) ||
+						( current_grid_right >= each.left && current_grid_right <= each.right ))/* && 
+						(( each.top >= current_grid_top && each.top <= current_grid_bottom ) || 
+						( each.bottom >= current_grid_top && each.bottom <= current_grid_bottom ))*/
+					)
+						return true;
+					if ( // This works for horizontal drops
+						(( each.left >= current_grid_left && each.left <= current_grid_right ) || 
+						( each.right >= current_grid_left && each.right <= current_grid_right )) && 
+						(( current_grid_top >= each.top && current_grid_top <= each.bottom ) || 
+						( current_grid_bottom >= each.top && current_grid_bottom <= each.bottom ))
+					)
+						return true;
+				}),
+				drop = _.map(hovered_drops, function(each){
+					var diff_x = /*each.left - current_grid_left*/ 0,
+						diff_y = each.y - current_grid_top;
+						d = Math.sqrt(Math.pow(diff_x, 2) + Math.pow(diff_y, 2)),
+						diff_x1 = /*each.left - current_grid_left*/ 0,
+						diff_y1 = each.top - current_grid_top,
+						d1 = Math.sqrt(Math.pow(diff_x1, 2) + Math.pow(diff_y1, 2)),
+						diff_x2 = /*each.left - current_grid_left*/ 0,
+						diff_y2 = each.bottom - current_grid_top,
+						d2 = Math.sqrt(Math.pow(diff_x2, 2) + Math.pow(diff_y2, 2)),
+						//d_min = (d+d1+d2)/3;
+						d_min = _.min([d, d1, d2]);
+					return {
+						$el: each.$el,
+						left: each.left,
+						right: each.right,
+						top: each.top,
+						bottom: each.bottom,
+						d: d_min
+					};
+				}),
+				get_clst_drop = _.min(drop, function(each){ return each.d; }),
+				clst_drops = _.filter(drop, function(each){ return each.d == get_clst_drop.d; }),
+				clst_drops_sort = _.sortBy(clst_drops, function(each, index, list){
+					// Sort by priority
+					if ( each.$el.hasClass('upfront-drop-me') )
+						return 1;
+					else if ( each.$el.hasClass('upfront-drop-use') )
+						return 2;
+					else if ( each.$el.hasClass('upfront-drop-after') )
+						return 4;
+					else if ( each.$el.hasClass('upfront-drop-wrap-full') )
+						return 5;
+					else
+						return 3;
+				}),
+				clst_drop = _.first(clst_drops_sort),
+				$clst_drop_el = clst_drop ? clst_drop.$el : $('.upfront-drop-me');
+				if ( !$clst_drop_el.hasClass('upfront-drop-use') ){
+					$('.upfront-drop-use').removeClass('upfront-drop-use');
+					$('.upfront-drop-x').not($clst_drop_el).stop().animate({width:0}, 500);
+					$('.upfront-drop-y').not($clst_drop_el).stop().animate({height:0}, 500);
+					if ( $clst_drop_el.hasClass('upfront-drop-x') ){
+						var ani_w = $clst_drop_el.hasClass('clr') ? width : (clst_drop.right-clst_drop.left+1)*ed.col_size;
+						$clst_drop_el.addClass('upfront-drop-use').stop().animate({width:ani_w}, 500);
+					}
+					else{
+						$clst_drop_el.addClass('upfront-drop-use').stop().animate({height:height}, 500);
+					}
+				}
+				
+				
+				// normalize all margin first
+				_.each(ed.els, function(each){
+					var each_margin = each.$el.data('margin');
+					each_margin.current.left = each_margin.original.left;
+					each_margin.current.right = each_margin.original.right;
+					each_margin.current.top = each_margin.original.top;
+					each_margin.current.bottom = each_margin.original.bottom;
+					each.$el.data('margin', each_margin);
+				});
+				
+				if ( $clst_drop_el.hasClass('upfront-drop-me') ){
+					// Not moving so calculate margin
+				
+					// Calculate margins
+					max_margin_x = move_limit[1]-move_limit[0]-col+1;
+					
+					margin_size = margin_size > 0 ? (margin_size > max_margin_x ? max_margin_x : margin_size) : 0;
+					if ( margin_data.current.left != margin_size ){
+						margin_data.current.left = margin_size;
+						$me.data('margin', margin_data);
+						recalc_margin_x = true;
+					}
+					
+					margin_data.current.top = margin_top_size > 0 ? margin_top_size : 0;
+					$me.data('margin', margin_data);
+					
+					// Recalculate margin so the affected elements remain in their position
+					if ( recalc_margin_x ){
+						ed.adjust_affected_right(wrap, aff_els.right, [me], move_limit[0]+col+margin_size-1);
+					}
+				}
+				else { // Moved
+					ed.adjust_affected_right(wrap, aff_els.right, [me], wrap.grid.left-1);
+					margin_data.current.left = 0;
+					margin_data.current.top = 0;
+					margin_data.current.right = 0;
+					margin_data.current.bottom = 0;
+					if ( $clst_drop_el.hasClass('upfront-drop-wrap') && $clst_drop_el.hasClass('upfront-drop-fixed') ){
+						var adjusted = false;
+						if ( $clst_drop_el.nextAll('.upfront-wrapper').size() > 0 ){
+							var $nx_wrap = $clst_drop_el.nextAll('.upfront-wrapper').eq(0),
+								nx_wrap = _.find(ed.wraps, function(each){ return $nx_wrap.get(0) == each.$el.get(0); });
+								need_adj = _.filter(ed.get_wrap_els(nx_wrap), function(each){
+									return ( me.$el.get(0) != each.$el.get(0) && each.outer_grid.left == nx_wrap.grid.left )
+								}),
+								need_adj_min = ed.get_wrap_el_min(nx_wrap),
+								drop_margin = current_grid_left-nx_wrap.grid.left,
+								drop_margin_top = current_grid_top-nx_wrap.grid.top,
+								adjusted = false;
+							if ( ! $nx_wrap.hasClass('clr') || $clst_drop_el.hasClass('clr') ){
+								var drop_margin_max = need_adj_min.grid.left-nx_wrap.grid.left-col;
+								margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
+								margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
+								ed.adjust_els_right(need_adj, nx_wrap.grid.left+col+margin_data.current.left-1);
+								adjusted = true;
+							}
+						}
+						if ( ! adjusted ){
+							var drop_margin = current_grid_left-clst_drop.left,
+								drop_margin_max = clst_drop.right-clst_drop.left-col+1,
+								drop_margin_top = current_grid_top-clst_drop.top;
+							margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
+							margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
+						}
+					}
+					else if ( !$clst_drop_el.hasClass('upfront-drop-wrap') ) {
+						var drop_wrap = _.find(ed.wraps, function(each){
+								return ( each.$el.get(0) == $clst_drop_el.closest('.upfront-wrapper').get(0) );
+							}),
+							drop_wrap_aff = drop_wrap ? ed.get_affected_wrapper_els(drop_wrap, ed.wraps, (ed.get_wrap_els(drop_wrap).length == 1 ? [wrap, me] : [me]), true) : false,
+							drop_lmt = drop_wrap ? ed.get_move_limit(drop_wrap_aff, ed.containment.col) : false,
+							drop_margin = drop_wrap ? current_grid_left-drop_lmt[0] : 0,
+							drop_margin_max = drop_wrap ? drop_lmt[1]-drop_lmt[0]-col+1 : 0,
+							drop_margin_top = current_grid_top-clst_drop.top;
+						margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
+						margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
+						if ( drop_wrap )
+							ed.adjust_affected_right(drop_wrap, drop_wrap_aff.right, [me], drop_lmt[0]+col+margin_data.current.left-1);
+					}
+					else if ( $clst_drop_el.hasClass('upfront-drop-wrap-full') ){
+						var drop_margin = current_grid_left-clst_drop.left,
+							drop_margin_max = clst_drop.right-clst_drop.left-col+1,
+							drop_margin_top = current_grid_top-clst_drop.top;
+						margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
+						margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
+					}
+					$me.data('margin', margin_data);
+				}
+				
+				
+			$helper.find(".upfront-debug-info").text('grid: '+grid.x+','+grid.y+' | current: ('+current_grid_left+','+current_grid_top+'),('+current_grid_right+','+current_grid_bottom+') | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
+				
+			},
+			stop: function(e, ui){
+				var $wrap = $me.closest('.upfront-wrapper'),
+					me = ed.get_el($me),
+					wrap = ed.get_wrap($wrap),
+					col = ed.get_class_num($me, ed.grid.class),
+					$drop = $('.upfront-drop-use'),
+					wrappers = app.layout.get('wrappers'),
+					is_object = view.$el.find(".upfront-editable_entity:first").is(".upfront-object");
+				if ( $drop.hasClass('upfront-drop-me') ){
+					$wrap.show();
+				}
+				else {
+					$me.addClass('upfront-dropped');
+					setTimeout(function(){ $me.removeClass('upfront-dropped'); }, 500);
+					if ( $drop.hasClass('upfront-drop-wrap') ){
+						var wrapper_id = Upfront.Util.get_unique_id("wrapper");
+							wrap_model = new Upfront.Models.Wrapper({
+								"name": "",
+								"properties": [
+									{"name": "wrapper_id", "value": wrapper_id},
+									{"name": "class", "value": ed.grid.class+col}
+								]
+							}),
+							wrap_view = new Upfront.Views.Wrapper({model: wrap_model});
+						wrappers.add(wrap_model);
+						if ( $drop.hasClass('upfront-drop-wrap-full') || $drop.hasClass('clr') )
+							wrap_model.add_class('clr');
+						wrap_view.render();
+						wrap_view.$el.append(view.$el);
+						if ( $drop.hasClass('upfront-drop-fixed') && $drop.hasClass('clr') )
+							$drop.nextAll('.upfront-wrapper').eq(0).removeClass('clr');
+						$drop.before(wrap_view.$el);
+					}
+					else {
+						$drop.before(view.$el);
+					}
+					if ( $wrap.children(':not(.upfront-drop)').size() == 0 ){
+						if ( wrap.grid.left == 1 )
+							$wrap.nextAll('.upfront-wrapper').eq(0).addClass('clr');
+						$wrap.remove();
+					}
+				}
+				$('.upfront-drop').remove();
+				
+				ed.containment.$el.find( is_object ? '.upfront-object' : '.upfront-module' ).each(function(){
+					ed.update_margin_classes($(this));
+				});
+				
+				ed.update_wrappers();
+				$me.show();
+				
+				// Update model value
+				ed.containment.$el.find( is_object ? '.upfront-object' : '.upfront-module' ).each(function(){
+					var $el = $(this),
+						margin = $el.data('margin');
+					if ( margin && margin.original != margin.current){
+						ed.update_model_classes($el, [
+							ed.grid.left_margin_class+margin.current.left,
+							ed.grid.right_margin_class+margin.current.right
+						]);
+					}
+				});
+				
+				if ( wrapper_id )
+					model.set_property('wrapper_id', wrapper_id);
+				
+				view.resort_bound_collection();
+			}
+		});
 	}
+	
+	
 };
 
 define({
 	"Behaviors": {
-		"LayoutEditor": LayoutEditor
+		"LayoutEditor": LayoutEditor,
+		"GridEditor": GridEditor
 	}
 });
 })(jQuery);
