@@ -48,7 +48,7 @@ var Util = {
 
 		initialize: function () {
 			try {
-				if ('localStorage' in window && window['localStorage'] !== null) this._memory_queue = localStorage;
+				if ('sessionStorage' in window && window['sessionStorage'] !== null) this._memory_queue = sessionStorage;
 			} catch (e) {
 				Util.log("No local storage available, working off memory");
 			}

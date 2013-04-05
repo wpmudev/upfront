@@ -222,7 +222,6 @@ define(_template_files, function () {
 					model = _.extend(this.model.toJSON(), {"properties": props, "height": height}),
 					template = _.template(_Upfront_Templates["module"], model)
 				;
-				console.log(Upfront.Settings.LayoutEditor.Grid);
 				Upfront.Events.trigger("entity:module:before_render", this, this.model);
 				this.$el.html(template);
 				
@@ -244,7 +243,8 @@ define(_template_files, function () {
 				this.$el.html('');
 				var $el = this.$el,
 					me = this,
-					wrappers = Upfront.Application ? Upfront.Application.LayoutEditor.layout.get('wrappers') : false
+					wrappers = Upfront.Application ? Upfront.Application.LayoutEditor.layout.get('wrappers') : false,
+					current_wrapper_id, current_wrapper_el
 				;
 				this.model.each(function (module) {
 					var view_class_prop = module.get("properties").where({"name": "view_class"}),
@@ -254,14 +254,16 @@ define(_template_files, function () {
 						wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
 						wrapper_view, wrapper_el
 					;
-					if ( $('#'+wrapper.get_wrapper_id()).size() > 0 ){
-						wrapper_el = $('#'+wrapper.get_wrapper_id()).get(0);
+					if ( current_wrapper_id == wrapper.get_wrapper_id() ){
+						wrapper_el = current_wrapper_el;
 					}
 					else {
 						wrapper_view = new Upfront.Views.Wrapper({model: wrapper});
 						wrapper_view.render();
 						wrapper_el = wrapper_view.el;
 					}
+					current_wrapper_id = wrapper.get_wrapper_id();
+					current_wrapper_el = wrapper_el;
 					local_view.render();
 					$(wrapper_el).append(local_view.el);
 					if ( wrapper_view )

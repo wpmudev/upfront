@@ -93,7 +93,7 @@ var _alpha = "alpha",
 			return this.get_property_value_by_name("wrapper_id");
 		},
 		replace_class: function (value) {
-			var val_esc = value.replace(/\d+/, '\\d+')
+			var val_esc = value.replace(/-?\d+/, '-?\\d+')
 				val_rx = new RegExp(val_esc),
 				prop = this.get_property_by_name("class"),
 				old = prop ? prop.get("value") : false
@@ -295,7 +295,10 @@ var _alpha = "alpha",
 			}
 		},
 		get_current_state: function () {
-			return Upfront.Util.model_to_json(this.get("regions"));
+			return {
+				"regions": Upfront.Util.model_to_json(this.get("regions")),
+				"wrappers": Upfront.Util.model_to_json(this.get("wrappers"))
+			};
 		},
 		has_undo_states: function () {
 			return !!Upfront.Util.Transient.length("undo");
@@ -314,21 +317,18 @@ var _alpha = "alpha",
 			if (!this.has_redo_states()) return false;
 			this.restore_state_from_stack("redo");
 		},
-		restore_redo_state: function () {
-			if (!this.has_redo_states()) return false;
-			this.restore_state_from_stack("redo");
-		},
 		restore_state_from_stack: function (stack) {
 			var other = ("undo" == stack ? "redo" : "undo"),
 				state = Upfront.Util.Transient.pop(stack)
 			;
-			if (!state || !state.length) {
+			if (!state) {
 				Upfront.Util.log("Invalid " + stack + " state");
 				return false;
 			}
 
 			Upfront.Util.Transient.push(other, this.get_current_state());
-			this.get("regions").reset(state);
+			this.get("regions").reset(state.regions);
+			this.get("wrappers").reset(state.wrappers);
 		}
 	})
 
