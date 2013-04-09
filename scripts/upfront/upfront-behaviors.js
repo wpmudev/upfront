@@ -87,7 +87,7 @@ var GridEditor = {
 			outer_left = left-parseFloat($el.css('margin-left')),
 			grid = ed.get_grid(left, top),
 			outer_grid = ed.get_grid(outer_left, outer_top),
-			col = ed.get_class_num($el, ed.grid.class),
+			col = Math.round($el.outerWidth()/ed.col_size),
 			outer_col = Math.round($el.outerWidth(true)/ed.col_size),
 			row = Math.round($el.outerHeight()/ed.baseline),
 			outer_row = Math.round($el.outerHeight(true)/ed.baseline);
@@ -452,10 +452,10 @@ var GridEditor = {
 	create_drop_point: function(me, wrap){
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
-			aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+			aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 			margin = me.$el.data('margin'),
-			col = ed.get_class_num(me.$el, ed.grid.class),
-			wrap_col = ed.get_class_num(wrap.$el, ed.grid.class);
+			col = me.col,
+			wrap_col = wrap ? ed.get_class_num(wrap.$el, ed.grid.class) : col;
 		// Finding dropable places that's outside of wrapper (full width, side by side)
 		_.each(ed.wraps, function(each, index, list){
 			var is_me = ( each.$el.get(0) == wrap.$el.get(0) && wrap.$el.children(':not(.upfront-drop)').size() == 1 ),
@@ -464,7 +464,7 @@ var GridEditor = {
 				els = ed.get_wrap_els(each),
 				el_min = ed.get_wrap_el_min(each),
 				drop_wrap_full = '<div class="upfront-drop upfront-drop-wrap upfront-drop-wrap-full upfront-drop-y" style="height:0px;"></div>';
-				drop_wrap_fxd = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed '+ed.grid.class+(lmt[1]-each.grid.right)+'" style="height:'+each.$el.outerHeight()+'px;"></div>';
+				drop_wrap_fxd = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed" style="height:'+each.$el.outerHeight()+'px;"></div>';
 			// The wrapper placed on the first column, which means before it should be a full width dropable place
 			if ( !is_me && each.grid.left == 1 ){
 				each.$el.before(drop_wrap_full);
@@ -475,11 +475,11 @@ var GridEditor = {
 			}
 			// The wrapper right side has enough space, so add a dropable place after it
 			if ( !is_me && lmt[1]-each.grid.right >= col ){
-				each.$el.after(drop_wrap_fxd);
+				each.$el.after($(drop_wrap_fxd).addClass(ed.grid.class+(lmt[1]-each.grid.right)));
 			}
 			// The wrapper placed on first column and the left side has enough space, so add a dropable place before it
 			if ( !is_me && each.grid.left == 1 && el_min.grid.left-each.grid.left >= col ){
-				each.$el.before($(drop_wrap_fxd).addClass('clr'));
+				each.$el.before($(drop_wrap_fxd).addClass(ed.grid.class+(el_min.grid.left-lmt[0])+' clr'));
 			}
 		});
 		// Add sibling swap dropable
@@ -506,13 +506,13 @@ var GridEditor = {
 			var is_me = ( each.$el.get(0) == me.$el.get(0) ),
 				$each_wrap = each.$el.closest('.upfront-wrapper'),
 				wrap_pos = _.find(ed.wraps, function(w){ return w.$el.get(0) == $each_wrap.get(0); }),
-				aff = ed.get_affected_wrapper_els(wrap_pos, ed.wraps, [me], true),
+				aff = wrap_pos ? ed.get_affected_wrapper_els(wrap_pos, ed.wraps, [me], true) : ed.get_affected_els(each, ed.els, [me], true),
 				lmt = ed.get_move_limit(aff, ed.containment.col),
 				drop = '<div class="upfront-drop upfront-drop-obj upfront-drop-y '+( is_me ? ' upfront-drop-me '+ed.grid.top_margin_class : '' )+'" style="height:0;"></div>',
 				drop_wrap_y = '<div class="upfront-drop upfront-drop-wrap upfront-drop-y '+( is_me ? ' upfront-drop-me' : '' )+'" style="height:0;"></div>';
 		
 			// Is current element and the only element in the wrapper
-			if ( is_me && $each_wrap.children().size() == 1 ){
+			if ( is_me && wrap_pos && $each_wrap.children().size() == 1 ){
 				var clr = $each_wrap.hasClass('clr') ? ' clr' : '';
 				/*if ( $each_wrap.prev().hasClass('upfront-drop') )
 					$each_wrap.prev().addClass('upfront-drop-me'+clr);
@@ -527,7 +527,7 @@ var GridEditor = {
 				wrap.$el.hide();
 			}
 			// Add dropable inside wrapper, in condition that the element has affected elements on either left/right
-			else if ( lmt[1]-lmt[0]+1 >= col && ( aff.right.length > 0 || aff.left.length > 0 ) ){
+			else if ( lmt[1]-lmt[0]+1 >= col && ( ( wrap_pos && ( aff.right.length > 0 || aff.left.length > 0 ) ) || !wrap_pos ) ){
 				if ( !is_me && ( !each.$el.parent().prev() || !each.$el.parent().prev().hasClass('upfront-drop') ) )
 					each.$el.parent().before(drop);
 				if ( is_me && each.$el.prev() && each.$el.parent().prev().hasClass('upfront-drop') )
@@ -585,11 +585,12 @@ var GridEditor = {
 	 */
 	update_wrappers: function(){
 		var app = Upfront.Application.LayoutEditor,
-			ed = Upfront.Behaviors.GridEditor;
+			ed = Upfront.Behaviors.GridEditor,
+			wraps = app.layout.get('wrappers'),
+			wrap_list = [];
 		ed.containment.$el.find('>.upfront-wrapper').each(function(){
 			var $wrap = $(this),
 				wrap_id = $wrap.attr('id'),
-				wraps = app.layout.get('wrappers'),
 				wrap_model = wraps.get_by_wrapper_id(wrap_id);
 			if ( $wrap.children().size() == 0 ){
 				if ( wrap_model )
@@ -600,6 +601,7 @@ var GridEditor = {
 				return;
 			if ( ! wrap_model )
 				return;
+			wrap_list.push(wrap_id);
 			var child_els = _.map($wrap.children(), function(each){
 					var $el = $(each).find('>.upfront-editable_entity:first');
 					return {
@@ -616,6 +618,10 @@ var GridEditor = {
 				wrap_model.add_class('clr');
 			else
 				wrap_model.remove_class('clr');
+		});
+		wraps.forEach(function(wrap){
+			if ( _.indexOf(wrap_list, wrap.get_wrapper_id()) === -1 )
+				wraps.remove(wrap);
 		});
 	},
 	
@@ -654,7 +660,7 @@ var GridEditor = {
 					col = ed.get_class_num($me, ed.grid.class),
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap),
-					aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+					aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
 					max_col = col + (move_limit[1]-me.grid.right),
 					
@@ -685,7 +691,7 @@ var GridEditor = {
 				var $wrap = $me.closest('.upfront-wrapper'),
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap),
-					aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+					aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
 					rsz_col = $me.data('resize-col'),
 					rsz_row = $me.data('resize-row')
@@ -694,7 +700,8 @@ var GridEditor = {
 				$me.prevAll('.upfront-resize').last().remove();
 				
 				ed.update_class($me, ed.grid.class, rsz_col);
-				ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+rsz_col-1, true);
+				if ( wrap )
+					ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+rsz_col-1, true);
 				ed.update_wrappers();
 				
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
@@ -728,11 +735,13 @@ var GridEditor = {
 			$me = view.$el.find('.upfront-editable_entity:first'),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main)
 		;
+		$me.append('<div class="upfront-drag-handle" />');
 		$me.draggable({
 			revert: true,
 			revertDuration: 1,
 			zIndex: 100,
 			helper: 'clone',
+			handle: '.upfront-drag-handle',
 			appendTo: $main,
 			start: function(e, ui){
 				ed.start(view, model);
@@ -745,7 +754,7 @@ var GridEditor = {
 				
 				_.each(ed.els, function(each){
 					if ( each.$el.find(".upfront-debug-info").size() == 0 )
-						each.$el.append('<div class="upfront-debug-info"></div>');
+						each.$el.find('.upfront-editable_entity:first').append('<div class="upfront-debug-info"></div>');
 					each.$el.find(".upfront-debug-info").text('grid: ('+each.grid.left+','+each.grid.top+'),('+each.grid.right+','+each.grid.bottom+') | outer: ('+each.outer_grid.left+','+each.outer_grid.top+'),('+each.outer_grid.right+','+each.outer_grid.bottom+') | center: '+each.grid_center.x+','+each.grid_center.y);
 				});
 				_.each(ed.drops, function(each){
@@ -792,7 +801,7 @@ var GridEditor = {
 					margin_size = margin_data.original.left + relative_left,
 					margin_top_size = margin_data.original.top + relative_top,
 					
-					aff_els = ed.get_affected_wrapper_els(wrap, ed.wraps, [], true),
+					aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
 					
 					max_margin_x = 0,
@@ -897,11 +906,17 @@ var GridEditor = {
 					
 					// Recalculate margin so the affected elements remain in their position
 					if ( recalc_margin_x ){
-						ed.adjust_affected_right(wrap, aff_els.right, [me], move_limit[0]+col+margin_size-1);
+						if ( wrap )
+							ed.adjust_affected_right(wrap, aff_els.right, [me], move_limit[0]+col+margin_size-1);
+						//else
+						//	ed.adjust_els_right(aff_els.right, move_limit[0]+col+margin_size-1);
 					}
 				}
 				else { // Moved
-					ed.adjust_affected_right(wrap, aff_els.right, [me], wrap.grid.left-1);
+					if ( wrap )
+						ed.adjust_affected_right(wrap, aff_els.right, [me], wrap.grid.left-1);
+				//	else
+				//		ed.adjust_els_right(aff_els.right, me.grid.left-1);
 					margin_data.current.left = 0;
 					margin_data.current.top = 0;
 					margin_data.current.right = 0;
@@ -969,13 +984,13 @@ var GridEditor = {
 					col = ed.get_class_num($me, ed.grid.class),
 					$drop = $('.upfront-drop-use'),
 					wrappers = app.layout.get('wrappers'),
-					is_object = view.$el.find(".upfront-editable_entity:first").is(".upfront-object");
+					is_object = view.$el.find(".upfront-editable_entity:first").is(".upfront-object"),
+					dropped = false;
 				if ( $drop.hasClass('upfront-drop-me') ){
 					$wrap.show();
 				}
 				else {
-					$me.addClass('upfront-dropped');
-					setTimeout(function(){ $me.removeClass('upfront-dropped'); }, 500);
+					dropped = true;
 					if ( $drop.hasClass('upfront-drop-wrap') ){
 						var wrapper_id = Upfront.Util.get_unique_id("wrapper");
 							wrap_model = new Upfront.Models.Wrapper({
@@ -1022,7 +1037,9 @@ var GridEditor = {
 					if ( margin && margin.original != margin.current){
 						ed.update_model_classes($el, [
 							ed.grid.left_margin_class+margin.current.left,
-							ed.grid.right_margin_class+margin.current.right
+							ed.grid.right_margin_class+margin.current.right,
+							ed.grid.top_margin_class+margin.current.top,
+							ed.grid.bottom_margin_class+margin.current.bottom
 						]);
 					}
 				});
@@ -1031,6 +1048,14 @@ var GridEditor = {
 					model.set_property('wrapper_id', wrapper_id);
 				
 				view.resort_bound_collection();
+				
+				// Add drop animation
+				if ( dropped ){
+					$me = view.$el.find('.upfront-editable_entity:first');
+					$me.addClass('upfront-dropped');
+					setTimeout(function(){ $me.removeClass('upfront-dropped'); }, 500);
+				}
+				
 				Upfront.Events.trigger("entity:drag_stop", view, view.model);
 			}
 		});

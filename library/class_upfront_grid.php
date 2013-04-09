@@ -8,22 +8,17 @@ class Upfront_Grid {
 		"desktop" => "Upfront_GridBreakpoint_Desktop",
 	);
 	protected $_breakpoint_instances = array();
-	protected $_baselines = array(
-		"all" => "Upfront_BaselineGrid_All"
-	);
-	protected $_baseline_instances = array();
 	protected $_debugger;
 
 	private $_max_columns = 0;
 
 	protected function __construct () {
 		$this->_instantiate_breakpoints();
-		$this->_instantiate_baselines();
 		$this->_debugger = Upfront_Debug::get_debugger();
 	}
 
 	public static function get_grid () {
-		$grid = apply_filters('uprfont-core-grid_class', 'Upfront_Grid');
+		$grid = apply_filters('upfront-core-grid_class', 'Upfront_Grid');
 		if (class_exists($grid)) return new $grid;
 	}
 
@@ -35,19 +30,8 @@ class Upfront_Grid {
 		}
 	}
 
-	private function _instantiate_baselines () {
-		foreach ($this->_baselines as $name => $class) {
-			$baseline = new $class;
-			$this->_baseline_instances[$name] = $baseline;
-		}
-	}
-
 	public function get_breakpoints () {
 		return $this->_breakpoint_instances;
-	}
-	
-	public function get_baselines () {
-		return $this->_baseline_instances;
 	}
 
 	public function get_max_columns () {
@@ -62,15 +46,35 @@ class Upfront_Grid {
 		$css = '';
 		foreach ($this->get_breakpoints() as $name => $point) {
 			$point_css = '';
+			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
+			foreach ($layout['wrappers'] as $wrapper) {
+				$point_css .= $point->apply($wrapper, $this->get_grid_scope(), 'wrapper_id');
+			}
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
 				$region_view = new Upfront_Region($region);
 				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
 				foreach ($region['modules'] as $module) {
 					// Particular overrides
-					$point_css .= $point->apply($module, $this->get_grid_scope());
+					$class = upfront_get_property_value('class', $module);
+					$module_col = upfront_get_class_num($width_pfx, $class);
+					$wrapper_id = upfront_get_property_value('wrapper_id', $module);
+					foreach ($layout['wrappers'] as $wrapper){
+						if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
+							$wrapper_data = $wrapper;
+							break;
+						}
+					}
+					if ( isset($wrapper_data) ){
+						$wrapper_class = upfront_get_property_value('class', $wrapper_data);
+						$wrapper_col = upfront_get_class_num($width_pfx, $wrapper_class);
+						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
+					}
+					else{
+						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id');
+					}
 					foreach ($module['objects'] as $object) {
-						$point_css .= $point->apply($object, $this->get_grid_scope());
+						$point_css .= $point->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
 					}
 				}
 			}
@@ -85,15 +89,23 @@ class Upfront_Grid {
 
 abstract class Upfront_GridBreakpoint {
 	const PREFIX_WIDTH = 'width';
+	const PREFIX_HEIGHT = 'height';
+	const PREFIX_CLEAR = 'clear';
 	const PREFIX_MARGIN_LEFT = 'margin-left';
 	const PREFIX_MARGIN_RIGHT = 'margin-right';
+	const PREFIX_MARGIN_TOP = 'margin-top';
+	const PREFIX_MARGIN_BOTTOM = 'margin-bottom';
 
 	protected $_columns = 22;
+	protected $_baseline = 15;
+	protected $_line_height = 2; // Multiplier to $this->_baseline
 	protected $_rule = 'min-width:1024px';
 	protected $_prefixes = array(
 		'width' => 'c',
 		'margin-left' => 'ml',
 		'margin-right' => 'mr',
+		'margin-top' => 'mt',
+		'margin-bottom' => 'mb',
 	);
 	protected $_color = 'red';
 
@@ -104,17 +116,31 @@ abstract class Upfront_GridBreakpoint {
 	}
 
 	public function get_debug_rule ($scope) {
-		return ".{$scope} * {color:{$this->_color}!important;}\n";
+		//return ".{$scope} * {color:{$this->_color}!important;}\n";
 	}
 
 	/**
 	 * @TODO: destubify this!!!!
 	 * @return string Root CSS rule for editor grid server auto-generation
 	 */
-	abstract public function get_editor_root_rule ($scope);
+	public function get_editor_root_rule ($scope) {
+		$line_height = $this->get_line_height();
+		return '' .
+			"#page {line-height: {$line_height}px;}" .
+			"#page .upfront-overlay-grid {background-size: 100% {$this->_baseline}px}" . 
+		'';
+	}
 
 	public function get_columns () {
 		return $this->_columns;
+	}
+	
+	public function get_baseline () {
+		return $this->_baseline;
+	}
+	
+	public function get_line_height () {
+		return $this->_baseline * $this->_line_height;
 	}
 
 	public function get_prefix ($pfx) {
@@ -169,19 +195,25 @@ abstract class Upfront_GridBreakpoint {
 		return "{$media}{$rules}";
 	}
 
-	public function apply ($entity, $scope=false, $max_columns=false) {
+	public function apply ($entity, $scope=false, $property='element_id', $max_columns=false) {
 		$raw_classes = $this->_get_property('class', $entity);
 		$classes = array_map('trim', explode(' ', $raw_classes));
+		$selector = $this->_get_property($property, $entity);
 		if (!$classes) return '';
 
 		$raw_styles = array();
 		foreach ($classes as $class) {
-			$selector = $this->_get_property('element_id', $entity);
 			$style = $this->_map_class_to_style($class, $max_columns);
 			if (!$style) continue;
 			
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
+		}
+		$row = $this->_get_property('row', $entity);
+		if ($row){
+			$style = $this->_row_to_style($row);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
 		$all_styles = '';
@@ -195,17 +227,30 @@ abstract class Upfront_GridBreakpoint {
 		return $all_styles;
 	}
 
-	protected function _map_class_to_style ($class) {
+	protected function _map_class_to_style ($class, $max_columns) {
 		$style = '';
 
 		foreach ($this->_prefixes as $rule => $prefix) {
-			$rx = '^' . preg_quote($prefix, '/') . '(\d+)$';
-			$matches = array();
-			if (!preg_match("/{$rx}/", $class, $matches)) continue; // We don't know what's this
-			$size = $this->_columns_to_size($matches[1]) . '%';
+			$val = upfront_get_class_num($prefix, $class);
+			if ($val===false) continue; // We don't know what's this
+			if ( $rule == self::PREFIX_MARGIN_TOP || $rule == self::PREFIX_MARGIN_BOTTOM ){
+				$size = ($val*$this->_baseline) . 'px';
+			}
+			else {
+				$size = $this->_columns_to_size($val, $max_columns) . '%';
+			}
 			$style .= "{$rule}: {$size}";
 		}
+		if ( $class == 'clr' )
+			$style .= self::PREFIX_CLEAR . ": both";
+		
 		return $style;
+	}
+	
+	protected function _row_to_style ($row) {
+		$rule = 'min-'.self::PREFIX_HEIGHT;
+		$size = ($row * $this->_baseline) . 'px';
+		return "{$rule}: {$size}";
 	}
 
 	protected function _get_property ($prop, $entity) {
@@ -219,15 +264,15 @@ abstract class Upfront_GridBreakpoint {
 		return $value;
 	}
 
-	protected function _columns_to_size ($span) {
-		$base = (float)(100 / $this->_columns);
+	protected function _columns_to_size ($span, $max_columns=false) {
+		$base = (float)(100 / ($max_columns!==false ? $max_columns : $this->_columns));
 		/*
 		if ($max_columns) {
 			$columns_modifier = $this->_columns / $max_columns;
 			$span *= $columns_modifier;
 		}
 		*/
-		return ((float)$span * $base);
+		return ((float)($max_columns!==false && $span > $max_columns ? $max_columns : $span) * $base);
 	}
 }
 
@@ -238,10 +283,14 @@ class Upfront_GridBreakpoint_Desktop extends Upfront_GridBreakpoint {
 		'width' => 'c',
 		'margin-left' => 'ml',
 		'margin-right' => 'mr',
+		'margin-top' => 'mt',
+		'margin-bottom' => 'mb',
 	);
 	protected $_color = "red";
 	public function get_editor_root_rule ($scope) {
+		$parent_rule = parent::get_editor_root_rule($scope);
 		return '' .
+			$parent_rule.
 			"#page.{$scope} {min-width: 968px; max-width: 1386px;}" .
 		'';
 	}
@@ -253,10 +302,14 @@ class Upfront_GridBreakpoint_Tablet extends Upfront_GridBreakpoint {
 		'width' => 't',
 		'margin-left' => 'tml',
 		'margin-right' => 'tmr',
+		'margin-top' => 'tmt',
+		'margin-bottom' => 'tmb',
 	);
 	protected $_color = "green";
 	public function get_editor_root_rule ($scope) {
+		$parent_rule = parent::get_editor_root_rule($scope);
 		return '' .
+			$parent_rule.
 			"#page.{$scope} {min-width: 552px; max-width: 960px;}" .
 		'';
 	}
@@ -268,57 +321,17 @@ class Upfront_GridBreakpoint_Mobile extends Upfront_GridBreakpoint {
 		'width' => 'm',
 		'margin-left' => 'mml',
 		'margin-right' => 'mmr',
+		'margin-top' => 'mmt',
+		'margin-bottom' => 'mmb',
 	);
 	protected $_color = "blue";
 	public function get_editor_root_rule ($scope) {
+		$parent_rule = parent::get_editor_root_rule($scope);
 		return '' .
+			$parent_rule .
 			"#page.{$scope} {min-width: 210px; max-width: 576px;}" .
 		'';
 	}
 }
 
-abstract class Upfront_BaselineGrid {
-	const PREFIX_MARGIN_TOP = 'margin-top';
-	const PREFIX_MARGIN_BOTTOM = 'margin-bottom';
-
-	protected $_baseline = 15;
-	protected $_line_height = 2; // Multiplier to $this->_baseline
-	protected $_rule = 'min-width:1024px';
-	protected $_prefixes = array(
-		'width' => 'c',
-		'margin-top' => 'mt',
-		'margin-bottom' => 'mb',
-	);
-	protected $_debugger;
-
-	public function __construct () {
-		$this->_debugger = Upfront_Debug::get_debugger();
-	}
-	
-	public function get_baseline () {
-		return $this->_baseline;
-	}
-	
-	public function get_line_height () {
-		return $this->_baseline * $this->_line_height;
-	}
-	
-	public function get_prefix ($pfx) {
-		if (!empty($this->_prefixes[$pfx])) return $this->_prefixes[$pfx];
-		return false;
-	}
-}
-
-class Upfront_BaselineGrid_All extends Upfront_BaselineGrid {
-	protected $_baseline = 15;
-	protected $_line_height = 2;
-	
-	public function get_editor_root_rule ($scope) {
-		$line_height = $this->get_line_height();
-		return '' .
-			"#page {line-height: {$line_height}px;}" .
-			"#page .upfront-overlay-grid {background-size: 100% {$this->_baseline}px}" . 
-		'';
-	}
-}
 

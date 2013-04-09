@@ -107,6 +107,7 @@
 .example { width: 100%; clear: both; }
 
 
+.upfront-output-wrapper { float: left; }
 .upfront-module { }
 .upfront-object { padding: 0 15px; }
 

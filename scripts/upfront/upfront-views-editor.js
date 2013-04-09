@@ -312,10 +312,12 @@ define(_template_files, function () {
 		toggle_grid: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			if (!this._active){
+				$main.addClass('show-debug');
 				$main.find('.upfront-overlay-grid').show();
 				this._active = true;
 			}
 			else {
+				$main.removeClass('show-debug');
 				$main.find('.upfront-overlay-grid').hide();
 				this._active = false;
 			}
@@ -461,23 +463,19 @@ define(_template_files, function () {
 			this.sizes.first().$el.trigger("click");
 		},
 		change_size: function (new_size) {
-			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-				default_baseline = 'all',
-				baseline = new_size;
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			this.sizes.each(function (size) {
 				$main.removeClass(size.get_size_class());
 			});
 			$main.addClass(new_size);
 			
 			Upfront.Settings.LayoutEditor.Grid.size = Upfront.Settings.LayoutEditor.Grid.breakpoint_columns[new_size];
+			Upfront.Settings.LayoutEditor.Grid.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 			Upfront.Settings.LayoutEditor.Grid.class = Upfront.Settings.LayoutEditor.Grid.size_classes[new_size];
 			Upfront.Settings.LayoutEditor.Grid.left_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_left_classes[new_size];
 			Upfront.Settings.LayoutEditor.Grid.right_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_right_classes[new_size];
-			
-			baseline = (!Upfront.Settings.LayoutEditor.Grid.baselines[baseline]) ? default_baseline : baseline;
-			Upfront.Settings.LayoutEditor.Grid.baseline = Upfront.Settings.LayoutEditor.Grid.baselines[baseline];
-			Upfront.Settings.LayoutEditor.Grid.top_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_top_classes[baseline];
-			Upfront.Settings.LayoutEditor.Grid.bottom_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_bottom_classes[baseline];
+			Upfront.Settings.LayoutEditor.Grid.top_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_top_classes[new_size];
+			Upfront.Settings.LayoutEditor.Grid.bottom_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_bottom_classes[new_size];
 		}
 	});
 

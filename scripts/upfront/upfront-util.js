@@ -47,11 +47,11 @@ var Util = {
 		_key: window.location.path + window.location.search,
 
 		initialize: function () {
-			try {
+			/*try {
 				if ('sessionStorage' in window && window['sessionStorage'] !== null) this._memory_queue = sessionStorage;
 			} catch (e) {
 				Util.log("No local storage available, working off memory");
-			}
+			}*/
 			if (!Upfront.Settings.Debug.transients) this._memory_queue[this._key] = JSON.stringify({});
 		},
 

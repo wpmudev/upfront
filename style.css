@@ -17,9 +17,14 @@ For now, Upfront is a twentytwelve child
 
 /*@import url("../twentytwelve/style.css");*/
 
-.upfront-output-module, .upfront-output-object {
-	float: left; min-height: 10px; margin-bottom: 10px; background-color: #bada55; color:#fff; padding:0 15px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-	overflow: hidden;
+.upfront-output-module {
+	/*border: 1px solid #b3da11;
+	background: rgba(242, 255, 186, 0.4);*/
+}
+.upfront-output-object {
+	/*border: 1px solid #bada55;
+	background: rgba(255, 255, 255, 0.4);*/
+	padding: 0 15px;
 }
 
 

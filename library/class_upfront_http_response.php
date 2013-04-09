@@ -66,7 +66,7 @@ class Upfront_JavascriptResponse_Error extends Upfront_HttpResponse_Error {
 	}
 }
 
-class Upfront_CssResponse_Succcess extends Upfront_HttpResponse_Success {
+class Upfront_CssResponse_Success extends Upfront_HttpResponse_Success {
 	protected $_content_type = 'text/css';
 	public function get_output () {
 		return $this->_data;

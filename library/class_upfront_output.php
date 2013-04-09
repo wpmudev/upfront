@@ -4,6 +4,8 @@ class Upfront_Output {
 
 	private $_layout;
 	private $_debugger;
+	
+	private static $_instance;
 
 	public function __construct ($layout, $post) {
 		$this->_layout = $layout;
@@ -16,18 +18,24 @@ class Upfront_Output {
 		$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
 		$layout = Upfront_Layout::from_id($layout_id);
 
-if ($layout->is_empty()) {
-	$layout = Upfront_Layout::create_layout();
-}
+		if ($layout->is_empty()) {
+			$layout = Upfront_Layout::create_layout();
+		}
 
 		$post = get_post($post_id);
-		$me = new self($layout, $post);
+		self::$_instance = new self($layout, $post);
 
 		// Add actions
-		add_action('wp_footer', array($me, 'add_styles'));
+		add_action('wp_footer', array(self::$_instance, 'add_styles'));
 
 		// Do the template...
-		return $me->apply_layout();
+		return self::$_instance->apply_layout();
+	}
+	
+	public static function get_layout_data () {
+		if ( self::$_instance )
+			return self::$_instance->_layout->to_php();
+		return false;
 	}
 
 	public function apply_layout () {
@@ -109,13 +117,34 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_type;
 	protected $_children;
 	protected $_child_view_class;
+	protected $_wrapper;
 
 	public function get_markup () {
 		$html='';
+		$wrap='';
 		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
 			$child_view = $this->instantiate_child($child, $idx);
-			$html .= $child_view->get_markup();
+			if ($child_view instanceof Upfront_Container){
+				// Have wrapper? If so, then add wrappers
+				$wrapper = $child_view->get_wrapper();
+				if ( $wrapper && !$this->_wrapper )
+					$this->_wrapper = $wrapper;
+				if ( $wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id() ){
+					$wrap .= $child_view->get_markup();
+				}
+				else if ( $wrapper ) {
+					$html .= $this->_wrapper->wrap($wrap);
+					$this->_wrapper = $wrapper;
+					$wrap = $child_view->get_markup();
+				}
+			}
+			// No wrapper, just appending html
+			if ( !isset($wrapper) || !$wrapper )
+				$html .= $child_view->get_markup();
 		}
+		// Have wrapper, append the last one
+		if ( isset($wrapper) && $wrapper )
+			$html .= $this->_wrapper->wrap($wrap);
 		return $this->wrap($html);
 	}
 
@@ -152,6 +181,11 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 		return "{$pre}<{$this->_tag} class='{$class}' {$element_id}>{$out}</{$this->_tag}>{$post}";
 	}
+	
+	public function get_wrapper () {
+		$wrapper_id = $this->_get_property('wrapper_id');
+		return Upfront_Wrapper::get_instance($wrapper_id);
+	}
 }
 
 
@@ -160,11 +194,66 @@ class Upfront_Region extends Upfront_Container {
 	protected $_children = 'modules';
 	protected $_child_view_class = 'Upfront_Module';
 }
+
+class Upfront_Wrapper extends Upfront_Entity {
+	static protected $_instances = array();
+	protected $_type = 'Wrapper';
+	protected $_wrapper_id = '';
+	
+	static public function get_instance ($wrapper_id) {
+		foreach ( self::$_instances as $instance ){
+			if ( $instance->_wrapper_id == $wrapper_id )
+				return $instance;
+		}
+		$layout = Upfront_Output::get_layout_data();
+		if ( !$layout )
+			return false;
+		$wrapper_data = false;
+		foreach ( $layout['wrappers'] as $wrapper ){
+			if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
+				$wrapper_data = $wrapper;
+				break;
+			}
+		}
+		if ( !$wrapper_data )
+			return false;
+		self::$_instances[] = new self($wrapper_data);
+		return end(self::$_instances);
+	}
+	
+	public function __construct ($data) {
+		parent::__construct($data);
+		$this->_wrapper_id = $this->_get_property('wrapper_id');
+	}
+	
+	public function get_markup () {
+		return '';
+	}
+	
+	public function get_wrapper_id () {
+		return $this->_wrapper_id;
+	}
+	
+	public function wrap ($out) {
+		$class = $this->get_css_class();
+		
+		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
+			$name = $this->get_name();
+			$pre = "\n\t<!-- Upfront {$this->_type} [{$name} - #{$this->_wrapper_id}] -->\n";
+			$post = "\n<!-- End {$this->_type} [{$name} - #{$this->_wrapper_id}] --> \n";
+		}
+		
+		$wrapper_id = $this->_wrapper_id ? "id='{$this->_wrapper_id}'" : '';
+		return "{$pre}<{$this->_tag} class='{$class}' {$wrapper_id}>{$out}</{$this->_tag}>{$post}";
+	}
+}
+
 class Upfront_Module extends Upfront_Container {
 	protected $_type = 'Module';
 	protected $_children = 'objects';
 	protected $_child_view_class = 'Upfront_Object';
 }
+
 class Upfront_Object extends Upfront_Entity {
 	protected $_type = 'Object';
 

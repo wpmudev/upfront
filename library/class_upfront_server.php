@@ -142,19 +142,17 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$grid = Upfront_Grid::get_grid();
 		$breakpoints = $grid->get_breakpoints();
-		$baselines = $grid->get_baselines();
 
 		$grid_info = array(
 			'breakpoint_columns' => array(),
 			'size_classes' => array(),
 			'margin_left_classes' => array(),
 			'margin_right_classes' => array(),
-			
-			'baselines' => array(),
 			'margin_top_classes' => array(),
 			'margin_bottom_classes' => array(),
 
 			'scope' => $grid->get_grid_scope(),
+			'baseline' => '',
 			'size' => '',
 			'class' => '',
 			'left_margin_class' => '',
@@ -166,14 +164,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		foreach ($breakpoints as $context => $breakpoint) {
 			$grid_info['breakpoint_columns'][$context] = $breakpoint->get_columns();
+			$grid_info['baseline'] = $breakpoint->get_baseline();
 			$grid_info['size_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			$grid_info['margin_left_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
 			$grid_info['margin_right_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
-		}
-		foreach ($baselines as $context => $baseline) {
-			$grid_info['baselines'][$context] = $baseline->get_baseline();
-			$grid_info['margin_top_classes'][$context] = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_TOP);
-			$grid_info['margin_bottom_classes'][$context] = $baseline->get_prefix(Upfront_BaselineGrid::PREFIX_MARGIN_BOTTOM);
+			$grid_info['margin_top_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_TOP);
+			$grid_info['margin_bottom_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_BOTTOM);
 		}
 		$grid_info = json_encode(
 			apply_filters('upfront-settings-grid_info', $grid_info)
@@ -266,7 +262,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$style = $preprocessor->process();
-		$this->_out(new Upfront_CssResponse_Succcess($style));
+		$this->_out(new Upfront_CssResponse_Success($style));
 	}
 }
 
@@ -289,6 +285,6 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 
 		$preprocessor = new Upfront_StylePreprocessor($grid);
 		$style = $preprocessor->get_editor_grid();
-		$this->_out(new Upfront_CssResponse_Succcess($style));
+		$this->_out(new Upfront_CssResponse_Success($style));
 	}
 }

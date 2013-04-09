@@ -17,6 +17,16 @@ function upfront_get_property_value ($prop, $data) {
 	return $value;
 }
 
+function upfront_get_class_num ($classname, $classes) {
+	$classes = array_map('trim', explode(' ', $classes));
+	$rx = '^' . preg_quote($classname, '/') . '(\d+)$';
+	foreach ($classes as $class) {
+		if (preg_match("/{$rx}/", $class, $matches))
+			return intval($matches[1]);
+	}
+	return false;
+}
+
 
 
 // ----- API -----

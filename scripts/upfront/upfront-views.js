@@ -153,17 +153,19 @@ define(_template_files, function () {
 					run = this.model.get("properties").each(function (prop) {
 						props[prop.get("name")] = prop.get("value");
 					}),
+					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
-					model = _.extend(this.model.toJSON(), {"properties": props, "content": content}),
+					model = _.extend(this.model.toJSON(), {"properties": props, "content": content, "height": height}),
 					template = _.template(_Upfront_Templates["object"], model)
 				;
+				Upfront.Events.trigger("entity:object:before_render", this, this.model);
 				this.$el.html(template);
-
 				// render subview if it exists
 				if(typeof this.subview != 'undefined'){
 					this.subview.setElement(this.$('.upfront-object-content')).render();
 				}
 
+				Upfront.Events.trigger("entity:object:after_render", this, this.model);
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 			}
 		}),
@@ -259,6 +261,8 @@ define(_template_files, function () {
 						wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
 						wrapper_view, wrapper_el
 					;
+					if ( !wrapper )
+						return;
 					if ( current_wrapper_id == wrapper.get_wrapper_id() ){
 						wrapper_el = current_wrapper_el;
 					}
