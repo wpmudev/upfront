@@ -159,6 +159,11 @@ define(_template_files, function () {
 				;
 				this.$el.html(template);
 
+				// render subview if it exists
+				if(typeof this.subview != 'undefined'){
+					this.subview.setElement(this.$('.upfront-object-content')).render();
+				}
+
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 			}
 		}),
