@@ -127,6 +127,15 @@ define(_template_files, function () {
 		}
 
 	});
+	var Command_SaveLayoutAs = Command.extend({
+		render: function () {
+			this.$el.html("Save As...");
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:save_as");
+		}
+
+	});
 
 	var Command_LoadLayout = Command.extend({
 		render: function () {
@@ -364,6 +373,7 @@ define(_template_files, function () {
 			this.commands = _([
 				//new Command_AddModule({"model": this.model}),
 				new Command_SaveLayout({"model": this.model}),
+				new Command_SaveLayoutAs({"model": this.model}),
 				//new Command_LoadLayout({"model": this.model}),
 				new Command_Undo({"model": this.model}),
 				new Command_Redo({"model": this.model}),

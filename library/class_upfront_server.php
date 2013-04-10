@@ -53,11 +53,10 @@ class Upfront_Ajax extends Upfront_Server {
 
 	// STUB LOADING
 	function load_layout () {
-		$layout_id = $_POST['data'];
-		if (!$layout_id) $this->_out(new Upfront_JsonResponse_Error("No such layout"));
+		$layout_ids = $_POST['data'];
+		if (empty($layout_ids)) $this->_out(new Upfront_JsonResponse_Error("No such layout"));
 
-		$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-' . $layout_id; // @TODO: destubify
-		$layout = Upfront_Layout::from_id($layout_id);
+		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
 		if (!$layout->is_empty()) $this->_out(new Upfront_JsonResponse_Success($layout->to_php()));
 		else {
@@ -69,10 +68,10 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function save_layout () {
-		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
+		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 
-		$layout = Upfront_Layout::from_json($data);
+		$layout = Upfront_Layout::from_php($data);
 		$key = $layout->save();
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
@@ -182,6 +181,13 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			apply_filters('upfront-settings-debug', $debug)
 		);
 
+
+		$specificity = json_encode(array(
+			'specificity' => __('This post only'),
+			'item' => __('All posts of this type'),
+			'type' => __('All posts'),
+		));
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -215,6 +221,7 @@ $(function () {
 					//"main": "#upfront-output"
 					"main": "#page"
 				},
+				"Specificity": {$specificity},
 				"Grid": {$grid_info},
 			}
 		};
@@ -253,6 +260,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 	private function _add_hooks () {
 		add_action('wp_ajax_upfront_load_styles', array($this, "load_styles"));
+		add_action('wp_ajax_nopriv_upfront_load_styles', array($this, "load_styles"));
 	}
 
 	function load_styles () {

@@ -12,11 +12,8 @@ class Upfront_Output {
 		$this->_debugger = Upfront_Debug::get_debugger();
 	}
 
-	public static function get_layout ($post_id) {
-		// ... some magic to map $post_id to $layout_id...
-		// ...
-		$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
-		$layout = Upfront_Layout::from_id($layout_id);
+	public static function get_layout ($layout_ids) {
+		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
 		if ($layout->is_empty()) {
 			$layout = Upfront_Layout::create_layout();

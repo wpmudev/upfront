@@ -11,6 +11,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_model.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_grid.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_style_preprocessor.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_output.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_form.php');
 
 
 
@@ -25,7 +26,7 @@ class Upfront {
 
 	private function __construct () {
 		foreach ($this->_servers as $component) $this->_run_server($component);
-		do_action('upfront-core-initialized');
+		do_action('uprfont-core-initialized');
 	}
 
 	public static function serve () {
@@ -94,6 +95,9 @@ class Upfront {
 		echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/editor-interface.css" />';
 		echo '<script src="' . $url . '/scripts/require.js"></script>';
 		echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+		echo '<script type="text/javascript">var _upfront_post_data=' . json_encode(array(
+			'layout' => Upfront_EntityResolver::get_entity_ids(),
+)) . ';</script>';
 		echo <<<EOAdditivemarkup
 <div id="layouts" style="display:none"></div>
 <div id="properties" style="display:none">
@@ -104,7 +108,7 @@ class Upfront {
     <button class="upfront-finish_layout_editing">Finish editing</button>
   </div>
   <div id="settings" style="display:none"></div>
-  <button class="upfront-edit_layout upfront-editable_trigger" id="edit-layout">Edit layout</button>
+  <button class="upfront-edit_layout upfront-editable_trigger">Edit layout</button>
 EOAdditivemarkup;
 		
 		do_action('upfront-core-inject_dependencies');

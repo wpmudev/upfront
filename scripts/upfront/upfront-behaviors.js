@@ -45,6 +45,42 @@ var LayoutEditor = {
 	},
 	apply_history_change: function () {
 		this.layout_view.render();
+	},
+
+	save_dialog: function (on_complete, context) {
+		$("body").append("<div id='upfront-save-dialog-background' />");
+		$("body").append("<div id='upfront-save-dialog' />");
+		var $dialog = $("#upfront-save-dialog"),
+			$bg = $("#upfront-save-dialog-background"),
+			current = Upfront.Application.LayoutEditor.layout.get("current_layout"),
+			html = ''
+		;
+		$bg
+			.width($(window).width())
+			.height($(document).height())
+		;
+		$.each(_upfront_post_data.layout, function (idx, el) {
+			var checked = el == current ? "checked='checked'" : '';
+			html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
+			html += '&nbsp;<label for="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</label><br />';
+		});
+		html += '<button type="button" id="upfront-save_as">Save</button>';
+		html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
+		$dialog
+			.html(html)
+		;
+		$("#upfront-save-dialog").on("click", "#upfront-save_as", function () {
+			var $check = $dialog.find(":radio:checked"),
+				selected = $check.length ? $check.val() : false
+			;
+			$bg.remove(); $dialog.remove();
+			on_complete.apply(context, [selected]);
+			return false;
+		});
+		$("#upfront-save-dialog").on("click", "#upfront-cancel_save", function () {
+			$bg.remove(); $dialog.remove();
+			return false;
+		});
 	}
 };
 

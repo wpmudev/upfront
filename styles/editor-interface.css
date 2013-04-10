@@ -462,3 +462,28 @@ html, body {
 #settings .upfront-settings-item .upfront-settings-item-content [contenteditable] {
   border-bottom: 1px dashed #dee3e3;
 }
+
+
+
+
+/* ----- Save As dialog ----- */
+
+#upfront-save-dialog-background {
+  background: #333;
+  opacity: .5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999998;
+}
+
+#upfront-save-dialog {
+  background: #eee;
+  position: fixed;
+  top: 10%;
+  left: 40%;
+  width: 20%;
+  z-index: 999999;
+  box-shadow: 1px 1px 5px #333;
+  padding: 2em;
+}
