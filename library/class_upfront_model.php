@@ -238,3 +238,31 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return delete_option($this->get_id());
 	}
 }
+
+
+// ----- Post Model
+
+abstract class  Upfront_PostModel {
+
+	public static function create ($post_type, $title='', $content='') {
+		$post_id = wp_insert_post(apply_filters('upfront-post_model-create-defaults', array(
+			'post_type' => $post_type,
+			'post_status' => 'auto-draft',
+			'post_title' => apply_filters('upfront-post_model-create-default_title', $title, $post_type),
+			'post_content' => apply_filters('upfront-post_model-create-default_content', $content, $post_type),
+		), $post_type));
+		$post = self::get($post_id);
+		return $post;
+	}
+
+	public static function get ($post_id) {
+		return get_post($post_id);
+	}
+
+	public static function save ($changes) {
+		$post_id = wp_insert_post($changes);
+		$post = self::get($post_id);
+		return $post;
+	}
+
+}

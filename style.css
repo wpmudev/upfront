@@ -4,18 +4,14 @@ Theme URI: http://premium.wpmudev.org
 Author: Incsub Team
 Author URI: http://premium.wpmudev.org
 Description: Total awesomeness
-Version: 0.4
+Version: 0.5
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: awesome
 Text Domain: upfront
 
-Template: twentytwelve
-
-For now, Upfront is a twentytwelve child
+Upfront is not a twentytwelve child anymore
 */
-
-/*@import url("../twentytwelve/style.css");*/
 
 .upfront-output-module {
 	/*border: 1px solid #b3da11;

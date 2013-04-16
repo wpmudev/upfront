@@ -118,6 +118,25 @@ define(_template_files, function () {
 		}
 	});
 
+	var Command_NewPage = Command.extend({
+		render: function () {
+			this.$el.html("New page");
+		},
+		on_click: function () {
+			window.location = Upfront.Settings.Content.create.page;
+		}
+
+	});
+	var Command_NewPost = Command.extend({
+		render: function () {
+			this.$el.html("New post");
+		},
+		on_click: function () {
+			window.location = Upfront.Settings.Content.create.post;
+		}
+
+	});
+
 	var Command_SaveLayout = Command.extend({
 		render: function () {
 			this.$el.html("Save layout");
@@ -371,7 +390,8 @@ define(_template_files, function () {
 
 		initialize: function () {
 			this.commands = _([
-				//new Command_AddModule({"model": this.model}),
+				new Command_NewPage({"model": this.model}),
+				new Command_NewPost({"model": this.model}),
 				new Command_SaveLayout({"model": this.model}),
 				new Command_SaveLayoutAs({"model": this.model}),
 				//new Command_LoadLayout({"model": this.model}),

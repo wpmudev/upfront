@@ -188,6 +188,13 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'type' => __('All posts'),
 		));
 
+		$content = json_encode(array(
+			'create' => array (
+				'page' => Upfront_VirtualPage::get_url('create/page'),
+				'post' => Upfront_VirtualPage::get_url('create/post'),
+			),
+		));
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -223,7 +230,8 @@ $(function () {
 				},
 				"Specificity": {$specificity},
 				"Grid": {$grid_info},
-			}
+			},
+			"Content": {$content},
 		};
 
 		// Populate basics
