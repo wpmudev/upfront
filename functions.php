@@ -12,6 +12,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_grid.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_style_preprocessor.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_output.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_form.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_endpoint.php');
 
 
 
@@ -22,22 +23,32 @@ class Upfront {
 		'javascript_main',
 		'stylesheet_main',
 		'stylesheet_editor',
+		
+		'menu_setting'
 	);
 
 	private function __construct () {
-		foreach ($this->_servers as $component) $this->_run_server($component);
+		$servers = apply_filters('upfront-servers', $this->_servers);
+		foreach ($servers as $component) $this->_run_server($component);
 		do_action('uprfont-core-initialized');
 	}
 
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
+		$me->_add_supports();
 	}
 
 	private function _add_hooks () {
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
+		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
+	}
+	
+	private function _add_supports () {
+		add_theme_support('post-thumbnails');
+		register_nav_menu('default', _('Default'));
 	}
 
 	private function _run_server ($comp) {
@@ -47,7 +58,7 @@ class Upfront {
 	}
 
 	public static function get_root_url () {
-		return get_stylesheet_directory_uri();
+		return get_template_directory_uri();
 	}
 
 	function inject_grid_scope_class ($cls) {
@@ -108,10 +119,21 @@ class Upfront {
     <button class="upfront-finish_layout_editing">Finish editing</button>
   </div>
   <div id="settings" style="display:none"></div>
-  <button class="upfront-edit_layout upfront-editable_trigger">Edit layout</button>
 EOAdditivemarkup;
 		
 		do_action('upfront-core-inject_dependencies');
+	}
+	
+	function add_edit_menu( $wp_admin_bar ){
+		global $post, $tag, $wp_the_query;
+		$current_object = $wp_the_query->get_queried_object();
+		
+		$wp_admin_bar->add_menu( array(
+			'id' => 'upfront-edit_layout',
+			'title' => __('Edit Layout'),
+			'href' => '#',
+			'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
+		) );
 	}
 
 }

@@ -10,8 +10,13 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: awesome
 Text Domain: upfront
 
-Upfront is not a twentytwelve child anymore
 */
+
+.upfront-output-module, .upfront-output-object {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
 
 .upfront-output-module {
 	/*border: 1px solid #b3da11;

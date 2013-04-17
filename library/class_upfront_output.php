@@ -18,12 +18,13 @@ class Upfront_Output {
 		if ($layout->is_empty()) {
 			$layout = Upfront_Layout::create_layout();
 		}
-
+		
+		$post_id = get_the_ID();
 		$post = get_post($post_id);
 		self::$_instance = new self($layout, $post);
 
 		// Add actions
-		add_action('wp_footer', array(self::$_instance, 'add_styles'));
+		add_action('wp_enqueue_scripts', array(self::$_instance, 'add_styles'));
 
 		// Do the template...
 		return self::$_instance->apply_layout();
@@ -53,7 +54,7 @@ class Upfront_Output {
 	}
 
 	function add_styles () {
-		wp_enqueue_style('upfront-main', admin_url('admin-ajax.php?action=upfront_load_styles'), array(), 0.1, 'all');
+		wp_enqueue_style('upfront-main', admin_url('admin-ajax.php?action=upfront_load_styles&layout_id='.$this->_layout->get_id()), array(), 0.1, 'all');
 	}
 }
 
@@ -92,10 +93,14 @@ abstract class Upfront_Entity {
 	}
 
 	public function get_css_class () {
-		return join(' ', array(
+		$classes = array(
 			"upfront-output-" . strtolower($this->_type),
-			$this->get_front_context(),
-		));
+			$this->get_front_context()
+		);
+		$name = $this->get_name();
+		if ( $name != 'anonymous' )
+			$classes[] = "upfront-" . strtolower($this->_type) . "-" . strtolower(str_replace(" ", "-", $name));
+		return join(' ', $classes);
 	}
 
 	protected function _get_property ($prop) {
@@ -273,7 +278,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 	public function get_markup () {
 		$element_id = $this->_get_property('element_id');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
-		return "<div class='upfront-output-object upfront-output-plain_txt' {$element_id}><pre>" . $this->_get_property('content') . '</pre></div>';
+		return "<div class='upfront-output-object upfront-plain_txt' {$element_id}>" . $this->_get_property('content') . '</div>';
 	}
 }
 
@@ -283,5 +288,21 @@ class Upfront_ImageView extends Upfront_Object {
 		$element_id = $this->_get_property('element_id');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 		return "<div class='upfront-output-object upfront-output-image' {$element_id}><img src='" . esc_attr($this->_get_property('content')) . "' /></div>";
+	}
+}
+
+class Upfront_NavigationView extends Upfront_Object {
+
+	public function get_markup () {
+		$element_id = $this->_get_property('element_id');
+		$element_id = $element_id ? "id='{$element_id}'" : '';
+		$menu_id = $this->_get_property('menu_id');
+		$menu = '';
+		if ( $menu_id )
+			$menu = wp_nav_menu(array(
+				'menu' => $menu_id,
+				'echo' => false
+			));
+		return "<div class='upfront-output-object upfront-navigation' {$element_id}>" . $menu . "</div>";
 	}
 }

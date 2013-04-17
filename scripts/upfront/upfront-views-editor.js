@@ -108,7 +108,7 @@ define(_template_files, function () {
 					"name": "",
 					"properties": [
 						{"name": "wrapper_id", "value": wrapper_id},
-						{"name": "class", "value": "c22"}
+						{"name": "class", "value": "c22 clr"}
 					]
 				});
 			module.set_property('wrapper_id', wrapper_id);
@@ -591,11 +591,14 @@ define(_template_files, function () {
 
 			var me = this;
 			this.settings.each(function (setting) {
-				me.model.set_property(
-					setting.get_name(),
-					setting.get_value()
-				);
+				var value = me.model.get_property_value_by_name(setting.get_name());
+				if ( value != setting.get_value() )
+					me.model.set_property(
+						setting.get_name(),
+						setting.get_value()
+					);
 			});
+			this.trigger("upfront:settings:panel:saved", this);
 		},
 		
 		on_cancel: function () {

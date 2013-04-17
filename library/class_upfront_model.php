@@ -32,7 +32,7 @@ abstract class Upfront_EntityResolver {
 	public static function get_entity_cascade ($query=false) {
 		$query = self::_get_query($query);
 
-		if ($query->post_count <= 1 && !$query->tax_query) return self::resolve_singular_entity($query, $scope);
+		if ($query->post_count <= 1 && !$query->tax_query) return self::resolve_singular_entity($query/*, $scope*/);
 		else return self::resolve_archive_entity($query);
 	}
 
@@ -224,8 +224,23 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function create_layout () {
 		//$data = '{"name":"Layout 1","regions":[{"name":"Main","modules":[{"name":"Merged module","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357456975525-1753"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c6"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]},{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719047636-1467"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c14"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]},{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719048044-1716"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1357719072172-1882"},{"name":"class","value":"c22"}]},{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"image-object-1357460676135-1523"},{"name":"content","value":"http:\/\/wpsalad.com\/wp-content\/uploads\/2012\/11\/wpmudev.png"},{"name":"class","value":"c22"},{"name":"type","value":"ImageModel"},{"name":"view_class","value":"ImageView"}]}],"properties":[{"name":"element_id","value":"module-1357460676140-1230"},{"name":"class","value":"c20 ml2"}]},{"name":"Merged module","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719370220-1638"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]},{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719370581-1294"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1357719375784-1417"},{"name":"class","value":"c22"}]}]},{"name":"sidebar","modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357460687069-1239"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1357460687072-1451"},{"name":"class","value":"c20 ml2"}]}]}]}';
 		//$data = '{"name":"Layout 1","regions":[{"name":"Main"},{"name":"sidebar","modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1360045228310-1131"},{"name":"content","value":"Edit away!"},{"name":"class","value":"c22 ml0 mr0 mt0"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1360045228313-1375"},{"name":"class","value":"c22"},{"name":"has_settings","value":"0"}]}]}]}';
-		$data = '{"name":"Layout 1","regions":[{"name":"Main"},{"name":"sidebar","modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1360045228310-1131"},{"name":"content","value":"Edit away!"},{"name":"class","value":"c22 ml0 mr0 mt0"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1360045228313-1375"},{"name":"wrapper_id","value":"wrapper-13548645456-1231"},{"name":"class","value":"c22"},{"name":"has_settings","value":"0"}]}]}], "wrappers":[{"name":"","properties":[{"name":"wrapper_id","value":"wrapper-13548645456-1231"},{"name":"class","value":"c22"}]}]}';
-		return self::from_json($data);
+		/*$data = '{"name":"Layout 1","regions":[{"name":"Main"},{"name":"sidebar","modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1360045228310-1131"},{"name":"content","value":"Edit away!"},{"name":"class","value":"c22 ml0 mr0 mt0"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1360045228313-1375"},{"name":"wrapper_id","value":"wrapper-13548645456-1231"},{"name":"class","value":"c22"},{"name":"has_settings","value":"0"}]}]}], "wrappers":[{"name":"","properties":[{"name":"wrapper_id","value":"wrapper-13548645456-1231"},{"name":"class","value":"c22"}]}]}';
+		return self::from_json($data);*/
+		$data = array(
+			"name" => "Default Layout",
+			"regions" => self::_get_regions()
+		);
+		return self::from_php($data);
+	}
+	
+	protected static function _get_regions () {
+		return apply_filters('upfront-regions', array(
+			array('name' => "Header"),
+			array('name' => "Left Sidebar"),
+			array('name' => "Main"),
+			array('name' => "Right Sidebar"),
+			array('name' => "Footer")
+		));
 	}
 
 	public function save () {

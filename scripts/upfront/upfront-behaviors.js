@@ -447,9 +447,7 @@ var GridEditor = {
 	 */
 	init: function(){
 		var app = Upfront.Application.LayoutEditor,
-			ed = Upfront.Behaviors.GridEditor,
-			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-		ed.col_size = $main.outerWidth()/Upfront.Settings.LayoutEditor.Grid.size;
+			ed = Upfront.Behaviors.GridEditor;
 		ed.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		ed.grid = Upfront.Settings.LayoutEditor.Grid;
 		
@@ -468,8 +466,10 @@ var GridEditor = {
 			$containment = view.$el.parents(".upfront-editable_entities_container:first"),
 			containment_pos = $containment.offset(),
 			$els = $containment.find( is_object ? '.upfront-object' : '.upfront-module' ),
-			$wraps = $containment.find('>.upfront-wrapper');
+			$wraps = $containment.find('>.upfront-wrapper'),
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 		// Set variables
+		ed.col_size = $main.outerWidth()/Upfront.Settings.LayoutEditor.Grid.size;
 		ed.containment = {
 			$el: $containment,
 			top: containment_pos.top,
@@ -656,7 +656,7 @@ var GridEditor = {
 				wrap_model.remove_class('clr');
 		});
 		wraps.forEach(function(wrap){
-			if ( _.indexOf(wrap_list, wrap.get_wrapper_id()) === -1 )
+			if ( $('#'+wrap.get_wrapper_id()).size() == 0 )
 				wraps.remove(wrap);
 		});
 	},
@@ -676,6 +676,7 @@ var GridEditor = {
 		;
 		$me.resizable({
 			"containment": "parent",
+			autoHide: true,
 			start: function(e, ui){
 				ed.start(view, model);
 				
@@ -706,12 +707,13 @@ var GridEditor = {
 					rsz_col = ( current_col > max_col ? max_col : current_col ),
 					rsz_row = Math.ceil(h/ed.baseline)
 				;
-				/*if ( Math.abs($(window).height()-e.clientY) < 50 ){
-					h += (BASELINE*10);
-					$(window).scrollTop( $(window).scrollTop()+(BASELINE*10) );
-				}*/
+				if ( Math.abs($(window).height()-e.clientY) < 50 ){
+					h += (ed.baseline*10);
+					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
+				}
 				$me.css({
 					height: h,
+					width: w,
 					minWidth: w,
 					maxWidth: w
 				});
@@ -719,6 +721,7 @@ var GridEditor = {
 				$me.data('resize-row', rsz_row);
 				$me.prevAll('.upfront-resize').last().css({
 					height: rsz_row*ed.baseline,
+					width: rsz_col*ed.col_size,
 					minWidth: rsz_col*ed.col_size,
 					maxWidth: rsz_col*ed.col_size
 				});
@@ -771,13 +774,13 @@ var GridEditor = {
 			$me = view.$el.find('.upfront-editable_entity:first'),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main)
 		;
-		$me.append('<div class="upfront-drag-handle" />');
+		//$me.append('<div class="upfront-drag-handle" />');
 		$me.draggable({
 			revert: true,
 			revertDuration: 1,
 			zIndex: 100,
 			helper: 'clone',
-			handle: '.upfront-drag-handle',
+			//handle: '.upfront-drag-handle',
 			appendTo: $main,
 			start: function(e, ui){
 				ed.start(view, model);

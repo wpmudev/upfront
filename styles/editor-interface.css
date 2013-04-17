@@ -1,17 +1,9 @@
-/** {
-  -moz-transition: all .2s ease;
-  -webkit-transition: all .2s ease;
-  -o-transition: all .2s ease;
-  -ms-transition: all .2s ease;
-  transition: all .2s ease;
-} @TODO Not a good idea to select all elements and have it transition, need improvement */
-
-html, body {
+.upfront-edit-layout, .upfront-edit-layout body {
 	background: #ccc;
   	height: 100%;
 }
 
-#page {
+.upfront-edit-layout #page {
 	background: #fff;
   	position: relative;
   	min-height: 100%;
@@ -45,13 +37,13 @@ html, body {
   padding-top: 0;
   z-index: 5;
 }
-#commands, .upfront-editable_trigger {
+#commands {
   position: fixed;
   top: 50px;
   left: 0;
   z-index: 5;
 }
-#properties, #commands, .upfront-editable_trigger {
+#properties, #commands {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 }
 .upfront-edit_content {
@@ -156,7 +148,7 @@ html, body {
 }
 
 .upfront-active_entity > .upfront-editable_entity {
-	background: rgba(241, 255, 178, 0.8);
+	outline: 2px dashed #666;
 }
 .upfront-module {
 	position: relative;
@@ -168,6 +160,7 @@ html, body {
 }
 .upfront-module:hover {
 	outline: 2px dashed #888;
+	z-index: 40;
 }
 .upfront-object {
 	position: relative;
@@ -203,61 +196,28 @@ html, body {
 	font-size: 10px;
 	line-height: 15px;
 }
-.upfront-placeholder {
-  background-color: red;
-  height: 20px;
-  width: 100px;
-  float: left;
-}
 
 .upfront-region {
   /*background-color: rgba(127, 127, 127, .5);*/
   padding: 0;
+  opacity: .5;
+  -webkit-transition: opacity .3s;
+  float: left;
+  width: 100%;
 }
-.upfront-region:after,
-.upfront-region:before
- {
-  content: " "; /* 1 */
-  display: table; /* 2 */
- }
-.upfront-region:after {
-  clear: both;
+.upfront-region-active,
+.upfront-region:hover {
+	opacity: 1;
+}
+.upfront-region-active {
+	outline: 3px dotted #666;
+}
+.upfront-region:hover {
 }
 
 .upfront-editable_entity img {
   max-width: 100%;
-}
-
-.upfront-preview-helper {
-	background: rgba(0, 0, 0, 0.1);
-	position: relative;
-	-webkit-transition: margin .1s ease, left .1s ease, top .1s ease;
-}
-
-.upfront-preview-hide {
-	visibility: hidden;
-}
-
-.upfront-closest {
-	background: rgba(246, 247, 181, 0.7);
-}
-.upfront-prev {
-	background: rgba(255, 179, 227, 0.7);
-}
-.upfront-next {
-	background: rgba(179, 225, 255, 0.7);
-}
-.upfront-affected-top {
-	border-bottom-color: #11c4d9;
-}
-.upfront-affected-bottom {
-	border-top-color: #11c4d9;
-}
-.upfront-affected-left {
-	border-right-color: #11c4d9;
-}
-.upfront-affected-right {
-	border-left-color: #11c4d9;
+  max-height: 100%;
 }
 
 .ui-draggable {
@@ -272,21 +232,31 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
+  z-index: 30;
+}
+.upfront-module > .upfront-entity_meta {
+	top: -15px;
+}
+.upfront-object > .upfront-entity_meta {
+	top: 2px;
 }
 .upfront-editable_entity .upfront-entity_meta a {
   display: none;
-}
-.upfront-editable_entity:hover > .upfront-entity_meta a {
   color: #fff;
-  display: block;
   height: 15px;
   line-height: 1em;
   text-decoration: none;
   width: 15px;
   border-radius: 2px;
+  margin: 0 0 2px;
   text-align: center;
   font-weight: normal;
   float: right;
+  clear: right;
+}
+.upfront-editable_entity:hover > .upfront-entity_meta a,
+.upfront-active_entity .upfront-entity_meta a {
+  display: block;
 }
 .upfront-entity_meta a.upfront-entity-settings_trigger {
   background-color: #3472ac;
@@ -461,6 +431,9 @@ html, body {
 }
 #settings .upfront-settings-item .upfront-settings-item-content [contenteditable] {
   border-bottom: 1px dashed #dee3e3;
+}
+#settings .upfront-settings-item .upfront-settings-item-content [contenteditable]:focus {
+  outline: none;
 }
 
 

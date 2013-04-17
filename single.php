@@ -1,7 +1,7 @@
 <?php
+the_post();
+$layout = Upfront_Output::get_layout(Upfront_EntityResolver::get_entity_ids());
+
 get_header();
-while (have_posts()) {
-	the_post();
-	echo Upfront_Output::get_layout(Upfront_EntityResolver::get_entity_ids());
-}
+echo $layout;
 get_footer();

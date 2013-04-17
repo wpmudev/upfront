@@ -93,6 +93,8 @@ var LayoutEditor = new (Subapplication.extend({
 				});
 
 				if (!present) app.set_up_event_plumbing_after_render();
+				
+				$("html").addClass("upfront-edit-layout");
 
 				// @TODO:remove this
 				$(
@@ -250,7 +252,7 @@ var LayoutEditor = new (Subapplication.extend({
 
 	destroy_settings: function () {
 		if (!this.settings_view) return false;
-		$(Upfront.Settings.LayoutEditor.Selectors.settings).html('');
+		$(Upfront.Settings.LayoutEditor.Selectors.settings).html('').hide();
 		this.settings_view = false;
 	}
 

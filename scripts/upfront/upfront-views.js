@@ -131,6 +131,13 @@ define(_template_files, function () {
 			},
 
 			on_entity_remove: function (e,view) {
+				var wrapper_id = view.model.get_wrapper_id();
+				if ( wrapper_id ){
+					var wrappers = Upfront.Application ? Upfront.Application.LayoutEditor.layout.get('wrappers') : false,
+						wrapper = wrappers.get_by_wrapper_id(wrapper_id);
+					if ( wrapper )
+						wrappers.remove(wrapper);
+				}
 				view.remove();
 				this.model.remove(view.model);
 			}
@@ -142,6 +149,7 @@ define(_template_files, function () {
 				"click .upfront-entity_meta a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
+				"dblclick": "on_edit"
 			},
 			initialize: function () {
 				this.model.get("properties").bind("change", this.render, this);
@@ -167,6 +175,7 @@ define(_template_files, function () {
 
 				Upfront.Events.trigger("entity:object:after_render", this, this.model);
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
+				if ( this.on_render ) this.on_render();
 			}
 		}),
 
@@ -295,8 +304,11 @@ define(_template_files, function () {
 			events: {
 				"mouseup": "on_click" // Bound on mouseup because "click" prevents bubbling (for module/object activation)
 			},
-			attributes: {
-				"class": "upfront-region"
+			attributes: function(){
+				var name = this.model.get("name");
+				return {
+					"class": 'upfront-region' + ( ' upfront-region-' + name.toLowerCase().replace(/ /, "-") )
+				}
 			},
 			init: function () {
 				this.dispatcher.on("plural:propagate_activation", this.on_click, this);
@@ -318,16 +330,22 @@ define(_template_files, function () {
 				var me = this,
 					$el = this.$el
 				;
-				this.model.each(function (region) {
+				this.model.each(function (region, index) {
 					var local_view = new Region({"model": region});
 					local_view.render();
 					local_view.bind("activate_region", me.activate_region, me);
 					$el.append(local_view.el);
+					if ( index == 0 )
+						local_view.trigger("activate_region", local_view);
 				});
-				this.activate_region(this.model.at(0));
+				//this.activate_region(this.model.at(0));
 			},
 			activate_region: function (region) {
 				this.model.active_region = region.model || region;
+				if ( region.$el ){
+					$('.upfront-region-active').removeClass('upfront-region-active');
+					region.$el.addClass('upfront-region-active');
+				}
 			}
 		}),
 		

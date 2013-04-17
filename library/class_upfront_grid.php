@@ -44,8 +44,11 @@ class Upfront_Grid {
 
 	public function apply_breakpoints ($layout) {
 		$css = '';
+		
 		foreach ($this->get_breakpoints() as $name => $point) {
 			$point_css = '';
+			$line_height = $point->get_line_height();
+			$point_css .= "body {line-height: {$line_height}px;}" . "\n";
 			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			foreach ($layout['wrappers'] as $wrapper) {
 				$point_css .= $point->apply($wrapper, $this->get_grid_scope(), 'wrapper_id');
@@ -248,7 +251,7 @@ abstract class Upfront_GridBreakpoint {
 	}
 	
 	protected function _row_to_style ($row) {
-		$rule = 'min-'.self::PREFIX_HEIGHT;
+		$rule = self::PREFIX_HEIGHT;
 		$size = ($row * $this->_baseline) . 'px';
 		return "{$rule}: {$size}";
 	}

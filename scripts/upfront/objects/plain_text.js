@@ -2,19 +2,23 @@
 
 var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		if (!this.get("properties").where({"name": "type"}).length) this.get("properties").add(new Upfront.Models.Property({"name": "type", "value": "PlainTxtModel"}));
-		if (!this.get("properties").where({"name": "view_class"}).length) this.get("properties").add(new Upfront.Models.Property({"name": "view_class", "value": "PlainTxtView"}));
+		this.init_property("type", "PlainTxtModel");
+		this.init_property("view_class", "PlainTxtView");
+		
+		this.init_property("element_id", Upfront.Util.get_unique_id("text-object"));
+		this.init_property("class", "c22 upfront-plain_txt");
+		this.init_property("has_settings", 0);
 	}
 });
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	model: PlainTxtModel,
 	get_content_markup: function () {
-		return '<pre>' + this.model.get_content() + '</pre>';
+		return this.model.get_content();
 	},
 	on_edit: function () {
 		this.$el.html(
-			'<textarea style="width:99%">' + this.model.get_content() + '</textarea>' +
+			'<textarea style="width:90%; margin:0 5%;" rows="10">' + this.model.get_content() + '</textarea>' +
 			'<button type="button" class="upfront-save">Save</button>' +
 			'<button type="button" class="upfront-cancel">Cancel</button>'
 		);
@@ -47,16 +51,15 @@ var PlainTxtCommand = Upfront.Views.Editor.Command.extend({
 		var object = new PlainTxtModel({
 				"name": "",
 				"properties": [
-					{"name": "element_id", "value": Upfront.Util.get_unique_id("text-object")},
 					{"name": "content", "value": "My awesome stub content goes here"},
-					{"name": "class", "value": "c22"}
 				]
 			}),
 			module = new Upfront.Models.Module({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c20 ml2"},
+					{"name": "class", "value": "c22"},
+					{"name": "row", "value": "10"},
 					{"name": "has_settings", "value": 0}
 				],
 				"objects": [

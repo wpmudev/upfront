@@ -273,7 +273,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 	function load_styles () {
 		$grid = Upfront_Grid::get_grid();
-		$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
+		//$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
+		$layout_id = sanitize_text_field($_GET['layout_id']);
 		$layout = Upfront_Layout::from_id($layout_id);
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
@@ -304,3 +305,38 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
 }
+
+
+/**
+ * Serves menu setting
+ */
+class Upfront_MenuSetting extends Upfront_Server {
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		add_action('wp_ajax_upfront_load_menu_list', array($this, "load_menu_list"));
+		add_action('wp_ajax_upfront_load_menu_html', array($this, "load_menu_html"));
+	}
+
+	public function load_menu_list () {
+		$menus = wp_get_nav_menus();
+		$this->_out(new Upfront_JsonResponse_Success($menus));
+	}
+	
+	public function load_menu_html () {
+		$menu_id = isset($_POST['data']) ? intval($_POST['data']) : false;
+		if ( $menu_id && is_nav_menu($menu_id) ){
+			$html = wp_nav_menu(array(
+				'menu' => $menu_id,
+				'echo' => false
+			));
+			$this->_out(new Upfront_JsonResponse_Success($html));
+		}
+		$this->_out(new Upfront_JsonResponse_Error('Menu not found'));
+	}
+}
+
+
