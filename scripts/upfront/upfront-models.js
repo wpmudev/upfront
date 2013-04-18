@@ -196,6 +196,7 @@ var _alpha = "alpha",
 			//console.log(this);
 		},
 		*/
+
 		get_by_element_id: function (element_id) {
 			var found = false;
 			this.each(function (model) {
@@ -206,10 +207,12 @@ var _alpha = "alpha",
 	}),
 
 	Region = Backbone.Model.extend({
-		"defaults": {
-			"name": "",
-			"properties": new Properties(),
-			"modules": new Modules(),
+		defaults: function(){
+			return {
+				"name": "",
+				"properties": new Properties(),
+				"modules": new Modules()
+			}
 		},
 		initialize: function () {
 			var args = arguments;
