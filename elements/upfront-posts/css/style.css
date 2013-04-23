@@ -1,0 +1,24 @@
+ul.uposts-posts {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+li.uposts-post {
+	padding-bottom: 5px;
+	margin-bottom: 15px;
+	border-bottom: 1px solid #ccc;
+}
+span.uposts-tumbnail_container {
+	float: left;
+	margin-right: 5px;
+}
+li.uposts-post h3 {
+	margin: 0;
+	padding: 0;
+}
+li.uposts-post h3 a {
+	text-decoration: none;
+	text-transform: uppercase;
+	font-family: serif;
+	color: #009;
+}

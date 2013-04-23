@@ -8,6 +8,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_http_response.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_server.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_model.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_module_loader.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_grid.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_style_preprocessor.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_output.php');
@@ -30,7 +31,8 @@ class Upfront {
 	private function __construct () {
 		$servers = apply_filters('upfront-servers', $this->_servers);
 		foreach ($servers as $component) $this->_run_server($component);
-		do_action('uprfont-core-initialized');
+		Upfront_ModuleLoader::serve();
+		do_action('upfront-core-initialized');
 	}
 
 	public static function serve () {
@@ -108,6 +110,7 @@ class Upfront {
 		echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
 		echo '<script type="text/javascript">var _upfront_post_data=' . json_encode(array(
 			'layout' => Upfront_EntityResolver::get_entity_ids(),
+			'post_id' => (is_singular() ? get_the_ID() : false),
 )) . ';</script>';
 		echo <<<EOAdditivemarkup
 <div id="layouts" style="display:none"></div>

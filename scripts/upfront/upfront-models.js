@@ -28,7 +28,7 @@ var _alpha = "alpha",
 		"defaults": {
 			"name": "",
 			"element_id": "",
-			"properties":  new Properties(),
+			"properties":  new Properties()
 		},
 		initialize: function () {
 			var args = arguments;
@@ -37,8 +37,8 @@ var _alpha = "alpha",
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0].properties)
-			}
+				this.set("properties", args[0].properties);
+			} else this.set("properties", new Properties([]));
 			if (this.init) this.init();
 		},
 	// ----- Object interface ----- */
@@ -67,7 +67,7 @@ var _alpha = "alpha",
 			var prop = this.get_property_by_name(name);
 			if (!prop || !prop.set) return this.add_property(name, value);
 			prop.set({"value": value});
-		}, 
+		},
 		init_property: function (name, value) {
 			if (!this.has_property(name)) this.add_property(name, value);
 		},
@@ -75,7 +75,7 @@ var _alpha = "alpha",
 			var me = this;
 			_(hash).each(function (value, name) {
 				me.init_property(name, value);
-			})
+			});
 		},
 	// ----- Magic properties manipulation ----- */
 		get_content: function () {
@@ -161,17 +161,17 @@ var _alpha = "alpha",
 					? args[0]["objects"]
 					: new Objects(args[0]["objects"])
 				;
-				this.set("objects", args[0].objects)
+				this.set("objects", args[0].objects);
 			}
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0]["properties"])
-			}
+				this.set("properties", args[0]["properties"]);
+			} else this.set("properties", new Properties([]));
 			if (this.init) this.init();
-		},
+		}
 	}),
 
 	Modules = Backbone.Collection.extend({
@@ -212,7 +212,7 @@ var _alpha = "alpha",
 				"name": "",
 				"properties": new Properties(),
 				"modules": new Modules()
-			}
+			};
 		},
 		initialize: function () {
 			var args = arguments;
@@ -228,8 +228,8 @@ var _alpha = "alpha",
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0].properties)
-			}
+				this.set("properties", args[0].properties);
+			} else this.set("properties", new Properties([]));
 		}
 	}),
 
