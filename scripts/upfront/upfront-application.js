@@ -67,9 +67,11 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Util.post({"action": this.actions.save, "data": data})
 			.success(function () {
 				Upfront.Util.log("layout saved");
+				Upfront.Events.trigger("command:layout:save_success");
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
+				Upfront.Events.trigger("command:layout:save_error");
 			})
 		;
 	},

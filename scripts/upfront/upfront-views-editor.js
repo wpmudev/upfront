@@ -473,9 +473,19 @@ define(_template_files, function () {
 	var SidebarPanel_DraggableElements = SidebarPanel.extend({
 		initialize: function () {
 			this.elements = _([]);
+			Upfront.Events.on("command:layout:save", this.on_save, this);
+			Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
+			Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
 		},
 		get_title: function () {
 			return "Draggable Elements";
+		},
+		on_save: function () {
+			var regions = this.model.get('regions');
+			regions.remove(regions.get_by_name('shadow'));
+		},
+		on_save_after: function () {
+			this.reset_modules();
 		},
 		on_render: function () {
 			this.elements.each(this.render_element, this);
@@ -483,6 +493,13 @@ define(_template_files, function () {
 		},
 		reset_modules: function () {
 			var region = this.model.get("regions").get_by_name('shadow');
+			if ( ! region ){
+				region = new Upfront.Models.Region({
+					"name": "shadow",
+					"title": "Shadow Region"
+				});
+				this.model.get('regions').add( region );
+			}
 			region.get("modules").reset([]);
 			this.elements.each(function (element) {
 				element.add_element();

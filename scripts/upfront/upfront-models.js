@@ -290,11 +290,7 @@ var _alpha = "alpha",
 				;
 				this.set("regions", args[0].regions)
 			}
-			// Add shadow region
-			this.get('regions').add( new Region({
-				"name": "shadow",
-				"title": "Shadow Region"
-			}) );
+			
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
