@@ -29,11 +29,11 @@ var NavigationView = Upfront.Views.ObjectView.extend({
 	}
 });
 
-var NavigationCommand = Upfront.Views.Editor.Command.extend({
+var NavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	render: function () {
-		this.$el.html('Add new Navigation');
+		this.$el.html('Navigation');
 	},
-	on_click: function () {
+	add_element: function () {
 		var object = new NavigationModel({
 				"name": "",
 				"properties": [
@@ -56,7 +56,6 @@ var NavigationCommand = Upfront.Views.Editor.Command.extend({
 		this.add_module(module);
 	}
 });
-
 
 var NavigationSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function () {
@@ -122,7 +121,7 @@ var NavigationMenuSetting_Menu = Upfront.Views.Editor.Settings.Item.extend({
 Upfront.Application.LayoutEditor.add_object("Navigation", {
 	"Model": NavigationModel, 
 	"View": NavigationView,
-	"Command": NavigationCommand,
+	"Element": NavigationElement,
 	"Settings": NavigationSettings
 });
 Upfront.Models.NavigationModel = NavigationModel;

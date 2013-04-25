@@ -237,11 +237,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 	
 	protected static function _get_regions () {
 		return apply_filters('upfront-regions', array(
-			array('name' => "Header", 'properties' => array(), 'modules' => array()),
-			array('name' => "Left Sidebar", 'properties' => array(), 'modules' => array()),
-			array('name' => "Main", 'properties' => array(), 'modules' => array()),
-			array('name' => "Right Sidebar", 'properties' => array(), 'modules' => array()),
-			array('name' => "Footer", 'properties' => array(), 'modules' => array())
+			array('name' => "Header", 'title' => __("Header Area"), 'properties' => array(), 'modules' => array()),
+			array('name' => "Left Sidebar", 'title' => __("Left Sidebar Area"), 'properties' => array(), 'modules' => array()),
+			array('name' => "Main", 'title' => __("Main Area"), 'properties' => array(), 'modules' => array()),
+			array('name' => "Right Sidebar", 'title' => __("Right Sidebar Area"), 'properties' => array(), 'modules' => array()),
+			array('name' => "Footer", 'title' => __("Footer Area"), 'properties' => array(), 'modules' => array())
 		));
 	}
 

@@ -42,11 +42,11 @@ var ImageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.Fi
 	}
 }));
 
-var ImageCommand = Upfront.Views.Editor.Command.extend({
+var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	render: function () {
-		this.$el.html('Add new Image');
+		this.$el.html('Image');
 	},
-	on_click: function () {
+	add_element: function () {
 		var object = new ImageModel({
 				"name": "",
 				"properties": [
@@ -57,7 +57,7 @@ var ImageCommand = Upfront.Views.Editor.Command.extend({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c22 upfront-image_module"},
+					{"name": "class", "value": "c6 upfront-image_module"},
 					{"name": "has_settings", "value": 0}
 				],
 				"objects": [
@@ -72,7 +72,7 @@ var ImageCommand = Upfront.Views.Editor.Command.extend({
 Upfront.Application.LayoutEditor.add_object("Image", {
 	"Model": ImageModel, 
 	"View": ImageView,
-	"Command": ImageCommand
+	"Element": ImageElement
 });
 Upfront.Models.ImageModel = ImageModel;
 Upfront.Views.ImageView = ImageView;

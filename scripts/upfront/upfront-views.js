@@ -239,7 +239,11 @@ define(_template_files, function () {
 					template = _.template(_Upfront_Templates["module"], model)
 				;
 				Upfront.Events.trigger("entity:module:before_render", this, this.model);
+					
 				this.$el.html(template);
+				
+				if ( this.model.get("shadow") )
+					this.$el.find('.upfront-editable_entity:first').attr("data-shadow", this.model.get("shadow"));
 				
 				var objects_view = new Objects({"model": this.model.get("objects")});
 				objects_view.parent_view = this;
@@ -270,22 +274,26 @@ define(_template_files, function () {
 						wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
 						wrapper_view, wrapper_el
 					;
-					if ( !wrapper )
-						return;
-					if ( current_wrapper_id == wrapper.get_wrapper_id() ){
-						wrapper_el = current_wrapper_el;
+					if ( !wrapper ){
+						local_view.render();
+						$el.append(local_view.el);
 					}
 					else {
-						wrapper_view = new Upfront.Views.Wrapper({model: wrapper});
-						wrapper_view.render();
-						wrapper_el = wrapper_view.el;
+						if ( current_wrapper_id == wrapper.get_wrapper_id() ){
+							wrapper_el = current_wrapper_el;
+						}
+						else {
+							wrapper_view = new Upfront.Views.Wrapper({model: wrapper});
+							wrapper_view.render();
+							wrapper_el = wrapper_view.el;
+						}
+						current_wrapper_id = wrapper.get_wrapper_id();
+						current_wrapper_el = wrapper_el;
+						local_view.render();
+						$(wrapper_el).append(local_view.el);
+						if ( wrapper_view )
+							$el.append(wrapper_el);
 					}
-					current_wrapper_id = wrapper.get_wrapper_id();
-					current_wrapper_el = wrapper_el;
-					local_view.render();
-					$(wrapper_el).append(local_view.el);
-					if ( wrapper_view )
-						$el.append(wrapper_el);
 					local_view.bind("upfront:entity:activate", me.on_activate, me);
 					local_view.model.bind("remove", me.deactivate, me);
 				});
@@ -317,6 +325,8 @@ define(_template_files, function () {
 				this.trigger("activate_region", this)
 			},
 			render: function () {
+				this.$el.data('name', this.model.get("name"));
+				this.$el.attr('data-title', this.model.get("title"));
 				this.$el.html('');
 				var local_view = new Modules({"model": this.model.get("modules")})
 				local_view.render();

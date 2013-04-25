@@ -91,7 +91,6 @@ define(_template_files, function () {
 		}
 	});
 
-
 	var Command = Backbone.View.extend({
 		"tagName": "li",
 		"events": {
@@ -138,8 +137,9 @@ define(_template_files, function () {
 	});
 
 	var Command_SaveLayout = Command.extend({
+		"className": "command-save",
 		render: function () {
-			this.$el.html("Save layout");
+			this.$el.html("Save");
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:save");
@@ -427,6 +427,214 @@ define(_template_files, function () {
 			this.render();
 		}
 	});
+	
+	
+	
+	var DraggableElement = Backbone.View.extend({
+		"tagName": "span",
+		"className": "draggable-element",
+		"shadow_id": '',
+		
+		add_module: function (module) {
+			// Add module to shadow region so it's available to add by dragging
+			var region = this.model.get("regions").get_by_name('shadow');
+			this.shadow_id = Upfront.Util.get_unique_id("shadow");
+			module.set("shadow", this.shadow_id);
+			region.get("modules").add(module);
+		}
+	});
+	
+	
+	var SidebarPanel = Backbone.View.extend({
+		"tagName": "li",
+		"className": "sidebar-panel",
+		events: {
+			"click .sidebar-panel-title": "on_click"
+		},
+		get_title: function () {},
+		render: function () {
+			this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
+			this.$el.append('<div class="sidebar-panel-content" />');
+			if ( this.on_render ) this.on_render();
+		},
+		on_click: function () {
+			var $panel = this.$el.find('.sidebar-panel-content');
+			$('.sidebar-panel-content').not($panel).removeClass('expanded');
+			$panel.addClass('expanded');
+		}
+	});
+	
+	var SidebarPanel_Posts = SidebarPanel.extend({
+		get_title: function () {
+			return "Pages / Posts";
+		}
+	});
+	
+	var SidebarPanel_DraggableElements = SidebarPanel.extend({
+		initialize: function () {
+			this.elements = _([]);
+		},
+		get_title: function () {
+			return "Draggable Elements";
+		},
+		on_render: function () {
+			this.elements.each(this.render_element, this);
+			this.reset_modules();
+		},
+		reset_modules: function () {
+			var region = this.model.get("regions").get_by_name('shadow');
+			region.get("modules").reset([]);
+			this.elements.each(function (element) {
+				element.add_element();
+			}, this);
+		},
+		render_element: function (element) {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				me = this;
+			element.remove();
+			element.render();
+			this.$el.find('.sidebar-panel-content').append(element.el);
+			element.$el.on('mousedown', function (e) {
+				// Trigger shadow element drag
+				var $shadow = $('[data-shadow='+element.shadow_id+']'),
+					pos = $shadow.position(),
+					off = $shadow.offset(),
+					target_off = element.$el.offset(),
+					h = $shadow.outerHeight(),
+					w = $shadow.outerWidth(),
+					$clone = element.$el.clone(),
+					clone_h = element.$el.outerHeight(),
+					clone_w = element.$el.outerWidth();
+				$shadow.css({
+					position: "absolute",
+					top: e.pageY-(off.top-pos.top)-(h/2),
+					left: e.pageX-(off.left-pos.left)-(w/2),
+					visibility: "hidden",
+					zIndex: -1
+				})
+				.trigger(e)
+				.on('dragstart', function (e, ui) {
+					$clone.appendTo('body');
+					$clone.addClass('element-dragging');
+					$clone.css({
+						position: "absolute",
+						top: e.pageY-(clone_h/2),
+						left: e.pageX-(clone_w/2),
+						zIndex: 999
+					});
+				})
+				.on('drag', function (e, ui) {
+					$clone.css({
+						top: e.pageY-(clone_h/2),
+						left: e.pageX-(clone_w/2)
+					});
+				})
+				.on('dragstop', function (e, ui) {
+					$clone.remove();
+					setTimeout(function(){me.reset_modules()}, 1000);
+				});
+			});
+		}
+	});
+	
+	var SidebarPanel_Settings = SidebarPanel.extend({
+		get_title: function () {
+			return "Settings";
+		}
+	});
+	
+	var SidebarPanels = Backbone.View.extend({
+		"tagName": "ul",
+		"className": "sidebar-panels",
+		initialize: function () {
+			this.panels = {
+				posts: new SidebarPanel_Posts({"model": this.model}),
+				elements: new SidebarPanel_DraggableElements({"model": this.model}),
+				settings: new SidebarPanel_Settings({"model": this.model})
+			};
+		},
+		render: function () {
+			var me = this;
+			_.each(this.panels, function(panel, key){
+				panel.render();
+				me.$el.append(panel.el);
+			});
+		}
+	});
+	
+	var SidebarCommands_PrimaryPostType = Commands.extend({
+		"className": "sidebar-commands sidebar-commands-primary",
+		initialize: function () {
+			this.commands = _([
+				new Command_NewPage({"model": this.model}),
+				new Command_NewPost({"model": this.model}),
+			]);
+		}
+	});
+	
+	var SidebarCommands_AdditionalPostType = Commands.extend({
+		"className": "sidebar-commands sidebar-commands-additional",
+		initialize: function () {
+			this.commands = _([]);
+		}
+		
+	});
+	
+	var SidebarCommands_Control = Commands.extend({
+		"className": "sidebar-commands sidebar-commands-control",
+		initialize: function () {
+			this.commands = _([
+				new Command_Undo({"model": this.model}),
+				new Command_Redo({"model": this.model}),
+				new Command_SaveLayout({"model": this.model}),
+				new Command_SaveLayoutAs({"model": this.model}),
+				//new Command_LoadLayout({"model": this.model}),
+				new Command_ToggleGrid({"model": this.model}),
+				new Command_ResetEverything({"model": this.model}),
+			]);
+		}
+	});
+	
+	var SidebarEditorMode = Backbone.View.extend({
+		
+	});
+	
+	var Sidebar = Backbone.View.extend({
+		"tagName": "div",
+		initialize: function () {
+			this.sidebar_commands = {
+				primary: new SidebarCommands_PrimaryPostType({"model": this.model}),
+				additional: new SidebarCommands_AdditionalPostType({"model": this.model}),
+				control: new SidebarCommands_Control({"model": this.model})
+			};
+			this.sidebar_panels = new SidebarPanels({"model": this.model})
+		},
+		render: function () {
+			// Primary post types
+			this.sidebar_commands.primary.render();
+			this.$el.append(this.sidebar_commands.primary.el);
+			// Additional post types
+			this.sidebar_commands.additional.render();
+			this.$el.append(this.sidebar_commands.additional.el);
+			// Sidebar panels
+			this.sidebar_panels.render();
+			this.$el.append(this.sidebar_panels.el);
+			// Control
+			this.sidebar_commands.control.render();
+			this.$el.append(this.sidebar_commands.control.el);
+		},
+		get_panel: function ( panel ) {
+			if ( ! this.sidebar_panels.panels[panel] )
+				return false;
+			return this.sidebar_panels.panels[panel];
+		},
+		get_commands: function ( commands ) {
+			if ( ! this.sidebar_commands[commands] )
+				return false;
+			return this.sidebar_commands[commands];
+		}
+	});
+
 
 
 	var LayoutSize = Backbone.View.extend({
@@ -674,6 +882,11 @@ define(_template_files, function () {
 				"Settings": Settings,
 				"Panel": SettingsPanel,
 				"Item": SettingsItem,
+			},
+			"Sidebar": {
+				"Sidebar": Sidebar,
+				"Panel": SidebarPanel,
+				"Element": DraggableElement
 			}
 		}
 	};

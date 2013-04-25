@@ -221,6 +221,7 @@ $(function () {
 			"LayoutEditor": {
 				"Requirements": {$layout_editor_requirements},
 				"Selectors": {
+					"sidebar": "#sidebar-ui",
 					"commands": "#commands",
 					"properties": "#properties",
 					"layouts": "#layouts",

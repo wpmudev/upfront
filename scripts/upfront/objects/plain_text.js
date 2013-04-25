@@ -43,11 +43,12 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 	}
 });
 
-var PlainTxtCommand = Upfront.Views.Editor.Command.extend({
+
+var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	render: function () {
-		this.$el.html('Add new Plain Text object');
+		this.$el.html('Text');
 	},
-	on_click: function () {
+	add_element: function () {
 		var object = new PlainTxtModel({
 				"name": "",
 				"properties": [
@@ -58,8 +59,8 @@ var PlainTxtCommand = Upfront.Views.Editor.Command.extend({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c22"},
-					{"name": "row", "value": "10"},
+					{"name": "class", "value": "c11"},
+					{"name": "row", "value": "5"},
 					{"name": "has_settings", "value": 0}
 				],
 				"objects": [
@@ -74,7 +75,7 @@ var PlainTxtCommand = Upfront.Views.Editor.Command.extend({
 Upfront.Application.LayoutEditor.add_object("PlainTxt", {
 	"Model": PlainTxtModel, 
 	"View": PlainTxtView,
-	"Command": PlainTxtCommand
+	"Element": PlainTxtElement
 });
 Upfront.Models.PlainTxtModel = PlainTxtModel;
 Upfront.Views.PlainTxtView = PlainTxtView;

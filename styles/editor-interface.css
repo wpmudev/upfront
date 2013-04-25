@@ -1,5 +1,5 @@
 .upfront-edit-layout, .upfront-edit-layout body {
-	background: #ccc;
+	background: #fff;
   	height: 100%;
 }
 
@@ -7,7 +7,7 @@
 	background: #fff;
   	position: relative;
   	min-height: 100%;
-  	margin: 22px 180px 0;
+  	margin: 22px 20px 0 320px;
   	width: auto;
 }
 
@@ -29,13 +29,17 @@
 #properties {
   position: fixed;
   top: 50px;
-  right: 0;
+  right: -160px;
   border: 1px solid #bbb;
   background: #eee;
   width: 180px;
   padding: 15px;
   padding-top: 0;
   z-index: 5;
+  -webkit-transition: right .3s;
+}
+#properties:hover {
+	right: 0;
 }
 #commands {
   position: fixed;
@@ -67,6 +71,123 @@
 	background: #888;
 	color: #fff;
 }
+
+#sidebar-ui {
+	position: fixed;
+	top: 50px;
+	bottom: 0;
+	left: 0;
+	width: 300px;
+	background: #395269;
+	color: #a1c5e6;
+	border-right: 1px solid #324253;
+	display: none;
+}
+#sidebar-ui .sidebar-commands li,
+#sidebar-ui .sidebar-panel-title,
+#sidebar-ui .sidebar-panel-content,
+.draggable-element {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+#sidebar-ui ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#sidebar-ui .sidebar-commands li {
+	display: inline-block;
+	cursor: pointer;
+}
+#sidebar-ui .sidebar-commands-primary {
+	padding: 20px 10px 10px;
+}
+#sidebar-ui .sidebar-commands-primary li {
+	padding: 0 15px;
+	margin: 0 10px 10px;
+	height: 39px;
+	line-height: 35px;
+	font-size: 16px;
+	border: 2px solid #2f465b;
+	border-radius: 10px;
+}
+#sidebar-ui .sidebar-commands-primary li:hover {
+	border-color: #1fcd8f;
+	color: #cce6ff;
+}
+#sidebar-ui .sidebar-commands-control {
+	border-top: 3px solid #335b80;
+	padding: 10px 10px 0;
+}
+#sidebar-ui .sidebar-commands-control li {
+	padding: 0;
+	margin: 0 10px 10px;
+	height: 39px;
+	line-height: 39px;
+	font-size: 16px;
+	color: #85aacc;
+}
+#sidebar-ui .sidebar-commands-control .command-save {
+	padding: 0 15px;
+	line-height: 35px;
+	border: 2px solid #abc4db;
+	border-radius: 10px;
+	color: #abc4db;
+	font-weight: bold;
+}
+#sidebar-ui .sidebar-panels {
+	background: #cee1f2;
+	color: #395773;
+}
+#sidebar-ui .sidebar-panel {
+	margin: 0 0 1px;
+}
+#sidebar-ui .sidebar-panel-title {
+	font-size: 18px;
+	font-weight: normal;
+	line-height: 41px;
+	height: 45px;
+	background: #accae6;
+	border-top: 3px solid #bfe1ff;
+	border-bottom: 1px solid #8fa9bf;
+	padding: 0 0 0 54px;
+	margin: 0;
+	cursor: pointer;
+}
+#sidebar-ui .sidebar-panel-content {
+	background: #cee1f2;
+	-webkit-transition: height .3s;
+	height: 0;
+	overflow: hidden;
+}
+#sidebar-ui .sidebar-panel-content.expanded {
+	height: 280px;
+	padding: 10px;
+}
+.draggable-element {
+	display: inline-block;
+	margin: 0 5px 5px 0;
+	padding: 0 10px;
+	height: 38px;
+	line-height: 34px;
+	background: #e5f3ff;
+	border-top: 2px solid #fff;
+	border-left: 1px solid #a3bfd9;
+	border-right: 1px solid #a3bfd9;
+	border-bottom: 1px solid #a3bfd9;
+	border-radius: 6px;
+	color: #395269;
+	cursor: move;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+}
+.draggable-element.element-dragging {
+	cursor: move;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
+}
+
 
 #settings {
   position: fixed;
@@ -200,19 +321,48 @@
 .upfront-region {
   /*background-color: rgba(127, 127, 127, .5);*/
   padding: 0;
-  opacity: .5;
-  -webkit-transition: opacity .3s;
+  -webkit-transition: all .3s;
+  -moz-transition: all .3s;
+  -ms-transition: all .3s;
+  -o-transition: all .3s;
+  transition: all .3s;
   float: left;
   width: 100%;
+  position: relative;
 }
-.upfront-region-active,
-.upfront-region:hover {
+.upfront-region:before {
+	content: attr(data-title);
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	font-size: 14px;
+	padding: 0 15px;
+	background: #888;
+	color: #fff;
+	display: none;
+}
+.upfront-dragging .upfront-region {
+	opacity: .4;
+	/*-webkit-transform: scale(.96, .96);*/
+}
+.upfront-dragging .upfront-region-drag-active {
 	opacity: 1;
+	/*-webkit-transform: scale(1, 1);*/
+	outline: 2px dashed #888;
+}
+
+.upfront-dragging .upfront-region-drag-active:before {
+	display: block;
 }
 .upfront-region-active {
-	outline: 3px dotted #666;
 }
 .upfront-region:hover {
+}
+
+.upfront-region-shadow {
+	visibility: hidden;
+	height: 0;
+	overflow: hidden;
 }
 
 .upfront-editable_entity img {
@@ -323,14 +473,12 @@
 }
 .show-debug .upfront-drop-wrap-full .upfront-drop-debug {
 	background: #ccc;
-	left: auto;
-	right: 100%;
+	left: 0;
 	margin-right: 10px;
 	margin-left: 0;
 }
 .show-debug .upfront-drop-wrap-full .upfront-drop-debug:before {
-	left: auto;
-	right: -10px;
+	left: 0;
 }
 .show-debug .upfront-drop-after .upfront-drop-debug {
 	background: #bbf;
@@ -346,6 +494,10 @@
 }
 .upfront-drop-wrap-full {
 	min-width: 100%;
+}
+.upfront-drop-use .upfront-drop-preview {
+	background: rgba(0,0,0,.1);
+	max-width: 100%;
 }
 
 

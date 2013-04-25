@@ -235,6 +235,14 @@ var _alpha = "alpha",
 
 	Regions = Backbone.Collection.extend({
 		"model": Region,
+		
+		get_by_name: function (name) {
+			var found = false;
+			this.each(function (model) {
+				if (model.get("name") == name) found = model;
+			});
+			return found;
+		}
 	}),
 	
 	Wrapper = ObjectModel.extend({
@@ -282,6 +290,11 @@ var _alpha = "alpha",
 				;
 				this.set("regions", args[0].regions)
 			}
+			// Add shadow region
+			this.get('regions').add( new Region({
+				"name": "shadow",
+				"title": "Shadow Region"
+			}) );
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]

@@ -121,6 +121,7 @@ class Upfront {
     <h3>Actions</h3>
     <button class="upfront-finish_layout_editing">Finish editing</button>
   </div>
+  <div id="sidebar-ui"></div>
   <div id="settings" style="display:none"></div>
 EOAdditivemarkup;
 		

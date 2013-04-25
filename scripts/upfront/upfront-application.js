@@ -98,8 +98,10 @@ var LayoutEditor = new (Subapplication.extend({
 
 				// @TODO:remove this
 				$(
-					Upfront.Settings.LayoutEditor.Selectors.commands +
+					Upfront.Settings.LayoutEditor.Selectors.sidebar +
 					", " +
+					//Upfront.Settings.LayoutEditor.Selectors.commands +
+					//", " +
 					Upfront.Settings.LayoutEditor.Selectors.properties +
 					", " +
 					Upfront.Settings.LayoutEditor.Selectors.layouts
@@ -112,8 +114,10 @@ var LayoutEditor = new (Subapplication.extend({
 				Upfront.Util.log("Error loading layout " + layout_id);
 				// @TODO:remove this
 				$(
-					Upfront.Settings.LayoutEditor.Selectors.commands +
+					Upfront.Settings.LayoutEditor.Selectors.sidebar +
 					", " +
+					//Upfront.Settings.LayoutEditor.Selectors.commands +
+					//", " +
 					Upfront.Settings.LayoutEditor.Selectors.properties +
 					", " +
 					Upfront.Settings.LayoutEditor.Selectors.layouts
@@ -158,7 +162,7 @@ var LayoutEditor = new (Subapplication.extend({
 		if (!this.layout) return false;
 		var app = this;
 
-		app.command_view = new Upfront.Views.Editor.Commands({
+		/*app.command_view = new Upfront.Views.Editor.Commands({
 			"model": app.layout,
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.commands)
 		});
@@ -166,7 +170,19 @@ var LayoutEditor = new (Subapplication.extend({
 			if (!obj.Command) return true;
 			app.command_view.commands.push(new obj.Command({"model": app.layout}));
 		});
-		app.command_view.render();
+		app.command_view.render();*/
+		
+		app.sidebar = new Upfront.Views.Editor.Sidebar.Sidebar({
+			"model": app.layout,
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.sidebar)
+		});
+		_(this.Objects).each(function (obj) {
+			if ( obj.Element )
+				app.sidebar.get_panel("elements").elements.push(new obj.Element({"model": app.layout}));
+			if ( obj.Command )
+				app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
+		});
+		app.sidebar.render();
 
 		// Layouts
 		app.layout_sizes = new Upfront.Views.Editor.Layouts({
