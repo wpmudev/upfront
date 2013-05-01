@@ -277,6 +277,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		//$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
 		$layout_id = sanitize_text_field($_GET['layout_id']);
 		$layout = Upfront_Layout::from_id($layout_id);
+		if ($layout->is_empty()) {
+			$layout = Upfront_Layout::create_layout();
+		}
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$style = $preprocessor->process();

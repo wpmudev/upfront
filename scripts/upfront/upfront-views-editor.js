@@ -118,7 +118,9 @@ define(_template_files, function () {
 	});
 
 	var Command_NewPage = Command.extend({
+		"className": "command-new-page",
 		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-page');
 			this.$el.html("New page");
 		},
 		on_click: function () {
@@ -127,7 +129,9 @@ define(_template_files, function () {
 
 	});
 	var Command_NewPost = Command.extend({
+		"className": "command-new-post",
 		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-post');
 			this.$el.html("New post");
 		},
 		on_click: function () {
@@ -139,6 +143,7 @@ define(_template_files, function () {
 	var Command_SaveLayout = Command.extend({
 		"className": "command-save",
 		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html("Save");
 		},
 		on_click: function () {
@@ -167,6 +172,7 @@ define(_template_files, function () {
 	});
 
 	var Command_Undo = Command.extend({
+		"className": "command-undo",
 		initialize: function () {
 			Upfront.Events.on("entity:activated", this.activate, this);
 			Upfront.Events.on("entity:deactivated", this.deactivate, this);
@@ -174,6 +180,7 @@ define(_template_files, function () {
 			this.deactivate();
 		},
 		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-undo');
 			this.$el.html("Undo");
 			if (this.model.has_undo_states()) this.activate();
 			else this.deactivate();
@@ -192,6 +199,7 @@ define(_template_files, function () {
 	});
 
 	var Command_Redo = Command.extend({
+		"className": "command-redo",
 		initialize: function () {
 			Upfront.Events.on("entity:activated", this.activate, this);
 			Upfront.Events.on("entity:deactivated", this.deactivate, this);
@@ -199,6 +207,7 @@ define(_template_files, function () {
 			this.deactivate();
 		},
 		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-redo');
 			this.$el.html("Redo");
 			if (this.model.has_redo_states()) this.activate();
 			else this.deactivate();
@@ -430,20 +439,6 @@ define(_template_files, function () {
 	
 	
 	
-	var DraggableElement = Backbone.View.extend({
-		"tagName": "span",
-		"className": "draggable-element",
-		"shadow_id": '',
-		
-		add_module: function (module) {
-			// Add module to shadow region so it's available to add by dragging
-			var region = this.model.get("regions").get_by_name('shadow');
-			this.shadow_id = Upfront.Util.get_unique_id("shadow");
-			module.set("shadow", this.shadow_id);
-			region.get("modules").add(module);
-		}
-	});
-	
 	
 	var SidebarPanel = Backbone.View.extend({
 		"tagName": "li",
@@ -458,15 +453,33 @@ define(_template_files, function () {
 			if ( this.on_render ) this.on_render();
 		},
 		on_click: function () {
-			var $panel = this.$el.find('.sidebar-panel-content');
-			$('.sidebar-panel-content').not($panel).removeClass('expanded');
-			$panel.addClass('expanded');
+			$('.sidebar-panel').not(this.$el).removeClass('expanded');
+			this.$el.addClass('expanded');
 		}
 	});
 	
 	var SidebarPanel_Posts = SidebarPanel.extend({
+		initialize: function () {
+		},
 		get_title: function () {
 			return "Pages / Posts";
+		},
+		on_render: function () {
+			this.$el.find('.sidebar-panel-title').addClass('upfront-icon upfront-icon-panel-post');
+		}
+	});
+	
+	var DraggableElement = Backbone.View.extend({
+		"tagName": "span",
+		"className": "draggable-element",
+		"shadow_id": '',
+		
+		add_module: function (module) {
+			// Add module to shadow region so it's available to add by dragging
+			var region = this.model.get("regions").get_by_name('shadow');
+			this.shadow_id = Upfront.Util.get_unique_id("shadow");
+			module.set("shadow", this.shadow_id);
+			region.get("modules").add(module);
 		}
 	});
 	
@@ -474,8 +487,9 @@ define(_template_files, function () {
 		initialize: function () {
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
-			Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
-			Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
+			Upfront.Events.on("command:layout:save_success", this.reset_modules, this);
+			Upfront.Events.on("command:layout:save_error", this.reset_modules, this);
+			Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
 		},
 		get_title: function () {
 			return "Draggable Elements";
@@ -484,10 +498,9 @@ define(_template_files, function () {
 			var regions = this.model.get('regions');
 			regions.remove(regions.get_by_name('shadow'));
 		},
-		on_save_after: function () {
-			this.reset_modules();
-		},
 		on_render: function () {
+			this.$el.addClass('expanded');
+			this.$el.find('.sidebar-panel-title').addClass('upfront-icon upfront-icon-panel-elements');
 			this.elements.each(this.render_element, this);
 			this.reset_modules();
 		},
@@ -524,13 +537,14 @@ define(_template_files, function () {
 					clone_w = element.$el.outerWidth();
 				$shadow.css({
 					position: "absolute",
-					top: e.pageY-(off.top-pos.top)-(h/2),
-					left: e.pageX-(off.left-pos.left)-(w/2),
+					top: e.pageY-(off.top-pos.top)-(clone_h/2),
+					left: e.pageX-(off.left-pos.left)-(clone_w/2),
 					visibility: "hidden",
 					zIndex: -1
 				})
 				.trigger(e)
 				.on('dragstart', function (e, ui) {
+					element.$el.addClass('element-drag-active');
 					$clone.appendTo('body');
 					$clone.addClass('element-dragging');
 					$clone.css({
@@ -547,16 +561,115 @@ define(_template_files, function () {
 					});
 				})
 				.on('dragstop', function (e, ui) {
+					element.$el.removeClass('element-drag-active');
 					$clone.remove();
-					setTimeout(function(){me.reset_modules()}, 1000);
 				});
 			});
 		}
 	});
 	
+	var SidebarPanel_Settings_Item = Backbone.View.extend({
+		"tagName": "div",
+		"className": "panel-setting",
+		render: function () {
+			if ( this.on_render ) this.on_render();
+		}
+	});
+	
+	var SidebarPanel_Settings_Item_EditArea = SidebarPanel_Settings_Item.extend({
+		events: {
+			"click .switch": "on_switch"
+		},
+		initialize: function () {
+			Upfront.Events.on("region:activated", this.on_region_activate, this);
+		},
+		on_render: function () {
+			this.$el.html(
+				'<div class="panel-setting-item">' + 
+					'<div class="panel-setting-item-label">' + 'Edit areas' + '</div>' +
+					'<div class="panel-setting-switcher">' + 
+						'<span class="switch switch-off">Off</span>' +
+						'<span class="switch switch-on">On</span>' +
+						'<span class="knob"></span>' +
+					'</div>' +
+				'</div>' +
+				'<div class="panel-setting-dialog"></div>'
+			);
+			this.on_switch();
+		},
+		on_region_activate: function (region) {
+			var name = region.model.get('title');
+			this.$el.find('.panel-setting-dialog').text(name);
+		},
+		on_switch: function () {
+			if ( this.$el.find('.switch-on').hasClass('active') ){
+				this.$el.find('.switch-off').addClass('active');
+				this.$el.find('.switch-on').removeClass('active');
+			}
+			else {
+				this.$el.find('.switch-off').removeClass('active');
+				this.$el.find('.switch-on').addClass('active');
+			}
+		}
+	});
+	
+	var SidebarPanel_Settings_Section = Backbone.View.extend({
+		"tagName": "div",
+		"className": "panel-section",
+		initialize: function () {
+			this.settings = _([]);
+		},
+		get_title: function () {},
+		render: function () {
+			var me = this;
+			this.$el.html('<h4 class="panel-section-title">' + this.get_title() + '</h4>');
+			this.$el.append('<div class="panel-section-content" />');
+			this.settings.each(function (setting) {
+				setting.render();
+				me.$el.find('.panel-section-content').append(setting.el);
+			});
+			if ( this.on_render ) this.on_render();
+		}
+	});
+	
+	var SidebarPanel_Settings_Section_Structure = SidebarPanel_Settings_Section.extend({
+		initialize: function () {
+			this.settings = _([
+				new SidebarPanel_Settings_Item_EditArea({"model": this.model}),
+			]);
+		},
+		get_title: function () {
+			return "Structure";
+		},
+		on_render: function () {
+		}
+	});
+	
+	var SidebarPanel_Settings_Section_Behavior = SidebarPanel_Settings_Section.extend({
+		get_title: function () {
+			return "Behavior";
+		},
+		on_render: function () {
+		}
+	});
+	
 	var SidebarPanel_Settings = SidebarPanel.extend({
+		initialize: function () {
+			this.sections = _([
+				new SidebarPanel_Settings_Section_Structure({"model": this.model}),
+				new SidebarPanel_Settings_Section_Behavior({"model": this.model})
+			]);
+		},
 		get_title: function () {
 			return "Settings";
+		},
+		on_render: function () {
+			var me = this;
+			this.$el.find('.sidebar-panel-title').addClass('upfront-icon upfront-icon-panel-settings');
+			this.sections.each(function (section) {
+				section.render();
+				me.$el.find('.sidebar-panel-content').append(section.el);
+			});
 		}
 	});
 	
@@ -593,6 +706,9 @@ define(_template_files, function () {
 		"className": "sidebar-commands sidebar-commands-additional",
 		initialize: function () {
 			this.commands = _([]);
+		},
+		render: function () {
+			
 		}
 		
 	});
@@ -613,20 +729,50 @@ define(_template_files, function () {
 	});
 	
 	var SidebarEditorMode = Backbone.View.extend({
-		
+		"className": "sidebar-editor-mode",
+		events: {
+			"click .switch-mode-simple": "switch_simple",
+			"click .switch-mode-advanced": "switch_advanced"
+		},
+		render: function () {
+			this.$el.html(
+				'<div class="sidebar-editor-mode-label">Editor mode:</div>' + 
+				'<div class="switch-mode-ui">' +
+					'<span class="switch-mode switch-mode-simple">simple <i class="upfront-icon upfront-icon-simple"></i></span>' +
+					'<span class="switch-slider"><span class="knob"></span></span>' +
+					'<span class="switch-mode switch-mode-advanced">advanced <i class="upfront-icon upfront-icon-advanced"></i></span>' +
+				'</div>'
+			);
+			this.switch_simple();
+		},
+		switch_simple: function () {
+			this.$el.find('.switch-mode-simple').addClass('active');
+			this.$el.find('.switch-mode-advanced').removeClass('active');
+			this.$el.find('.switch-slider').removeClass('switch-slider-full');
+		},
+		switch_advanced: function () {
+			this.$el.find('.switch-mode-advanced').addClass('active');
+			this.$el.find('.switch-mode-simple').removeClass('active');
+			this.$el.find('.switch-slider').addClass('switch-slider-full');
+		}
 	});
 	
 	var Sidebar = Backbone.View.extend({
 		"tagName": "div",
 		initialize: function () {
+			this.editor_mode = new SidebarEditorMode({"model": this.model});
 			this.sidebar_commands = {
 				primary: new SidebarCommands_PrimaryPostType({"model": this.model}),
 				additional: new SidebarCommands_AdditionalPostType({"model": this.model}),
 				control: new SidebarCommands_Control({"model": this.model})
 			};
-			this.sidebar_panels = new SidebarPanels({"model": this.model})
+			this.sidebar_panels = new SidebarPanels({"model": this.model});
 		},
 		render: function () {
+			this.$el.html('<div class="upfront-logo" />');
+			// Editor Mode
+			this.editor_mode.render();
+			this.$el.append(this.editor_mode.el);
 			// Primary post types
 			this.sidebar_commands.primary.render();
 			this.$el.append(this.sidebar_commands.primary.el);

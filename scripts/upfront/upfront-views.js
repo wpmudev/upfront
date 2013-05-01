@@ -263,15 +263,21 @@ define(_template_files, function () {
 				this.$el.html('');
 				var $el = this.$el,
 					me = this,
-					wrappers = Upfront.Application ? Upfront.Application.LayoutEditor.layout.get('wrappers') : false,
-					current_wrapper_id, current_wrapper_el
+					regions = Upfront.Application ? Upfront.Application.LayoutEditor.layout.get('regions') : false,
+					wrappers, current_wrapper_id, current_wrapper_el
 				;
+				regions.each(function(region){
+					if ( region.get('modules') == me.model )
+						wrappers = region.get('wrappers');
+				});
+				//console.log(wrappers);
 				this.model.each(function (module) {
 					var view_class_prop = module.get("properties").where({"name": "view_class"}),
 						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "Module",
 						//view_class = Upfront.Views[view_class] ? view_class : "Module",
 						local_view = new Upfront.Views[view_class]({model: module}),
-						wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
+						wrapper_id = module.get_wrapper_id(),
+						wrapper = wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
 						wrapper_view, wrapper_el
 					;
 					if ( !wrapper ){
@@ -279,7 +285,7 @@ define(_template_files, function () {
 						$el.append(local_view.el);
 					}
 					else {
-						if ( current_wrapper_id == wrapper.get_wrapper_id() ){
+						if ( current_wrapper_id == wrapper_id ){
 							wrapper_el = current_wrapper_el;
 						}
 						else {
@@ -287,7 +293,7 @@ define(_template_files, function () {
 							wrapper_view.render();
 							wrapper_el = wrapper_view.el;
 						}
-						current_wrapper_id = wrapper.get_wrapper_id();
+						current_wrapper_id = wrapper_id;
 						current_wrapper_el = wrapper_el;
 						local_view.render();
 						$(wrapper_el).append(local_view.el);
@@ -355,6 +361,7 @@ define(_template_files, function () {
 				if ( region.$el ){
 					$('.upfront-region-active').removeClass('upfront-region-active');
 					region.$el.addClass('upfront-region-active');
+					Upfront.Events.trigger("region:activated", region);
 				}
 			}
 		}),

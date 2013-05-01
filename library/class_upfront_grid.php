@@ -50,9 +50,6 @@ class Upfront_Grid {
 			$line_height = $point->get_line_height();
 			$point_css .= "body {line-height: {$line_height}px;}" . "\n";
 			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
-			foreach ($layout['wrappers'] as $wrapper) {
-				$point_css .= $point->apply($wrapper, $this->get_grid_scope(), 'wrapper_id');
-			}
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
 				$region_view = new Upfront_Region($region);
@@ -62,7 +59,7 @@ class Upfront_Grid {
 					$class = upfront_get_property_value('class', $module);
 					$module_col = upfront_get_class_num($width_pfx, $class);
 					$wrapper_id = upfront_get_property_value('wrapper_id', $module);
-					foreach ($layout['wrappers'] as $wrapper){
+					foreach ($region['wrappers'] as $wrapper){
 						if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
 							$wrapper_data = $wrapper;
 							break;
@@ -71,6 +68,7 @@ class Upfront_Grid {
 					if ( isset($wrapper_data) ){
 						$wrapper_class = upfront_get_property_value('class', $wrapper_data);
 						$wrapper_col = upfront_get_class_num($width_pfx, $wrapper_class);
+						$point_css .= $point->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id');
 						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
 					}
 					else{

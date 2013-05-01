@@ -211,6 +211,7 @@ var _alpha = "alpha",
 			return {
 				"name": "",
 				"properties": new Properties(),
+				"wrappers": new Wrappers(),
 				"modules": new Modules()
 			};
 		},
@@ -222,6 +223,13 @@ var _alpha = "alpha",
 					: new Modules(args[0]["modules"])
 				;
 				this.set("modules", args[0].modules)
+			}
+			if (args && args[0] && args[0]["wrappers"]) {
+				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
+					? args[0]["wrappers"]
+					: new Wrappers(args[0]["wrappers"])
+				;
+				this.set("wrappers", args[0].wrappers)
 			}
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties

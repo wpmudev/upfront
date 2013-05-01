@@ -14,7 +14,7 @@ var UsearchModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("view_class", "UsearchView");
 		
 		this.init_property("element_id", Upfront.Util.get_unique_id("usearch-object"));
-		this.init_property("class", "c22");
+		this.init_property("class", "c22 upfront-search");
 		this.init_property("has_settings", 1);
 	}
 });
@@ -63,6 +63,7 @@ var UsearchElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * Set up element appearance that will be displayed on sidebar panel.
 	 */
 	render: function () {
+		this.$el.addClass('upfront-icon-element upfront-icon-element-search');
 		this.$el.html('Search');
 	},
 

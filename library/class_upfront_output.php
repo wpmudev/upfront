@@ -211,10 +211,12 @@ class Upfront_Wrapper extends Upfront_Entity {
 		if ( !$layout )
 			return false;
 		$wrapper_data = false;
-		foreach ( $layout['wrappers'] as $wrapper ){
-			if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
-				$wrapper_data = $wrapper;
-				break;
+		foreach ( $layout['regions'] as $region ){
+			foreach ( $region['wrappers'] as $wrapper ){
+				if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
+					$wrapper_data = $wrapper;
+					break 2;
+				}
 			}
 		}
 		if ( !$wrapper_data )

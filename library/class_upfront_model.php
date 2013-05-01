@@ -217,8 +217,22 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function from_id ($id) {
-		$data = get_option($id, json_encode(array()));
-		return self::from_json($data);
+		$data = json_decode( get_option($id, json_encode(array())), true );
+		// Load global region
+		if ( ! empty($data) ) {
+			foreach ( self::_get_regions() as $region ){
+				if ( ! $region['global'] )
+					continue;
+				$region_data = json_decode( get_option(self::_get_region_id($region['name']), json_encode(array())), true );
+				if ( empty($region_data) )
+					continue;
+				foreach ( $data['regions'] as $i => $r ) {
+					if ( $r['name'] == $region['name'] )
+						$data['regions'][$i] = $region_data;
+				}
+			}
+		}
+		return self::from_php($data);
 	}
 
 	public static function create_layout () {
@@ -232,21 +246,47 @@ class Upfront_Layout extends Upfront_JsonModel {
 			"regions" => self::_get_regions(),
 			"wrappers" => array('name' => "", 'properties' => array())
 		);
+		foreach ( $data['regions'] as $i => $region ) {
+			if ( $region['global'] )
+				$data['regions'][$i] = json_decode( get_option(self::_get_region_id($region['name']), json_encode(array())), true );
+		}
 		return self::from_php($data);
 	}
 	
 	protected static function _get_regions () {
 		return apply_filters('upfront-regions', array(
-			array('name' => "Header", 'title' => __("Header Area"), 'properties' => array(), 'modules' => array()),
-			array('name' => "Left Sidebar", 'title' => __("Left Sidebar Area"), 'properties' => array(), 'modules' => array()),
-			array('name' => "Main", 'title' => __("Main Area"), 'properties' => array(), 'modules' => array()),
-			array('name' => "Right Sidebar", 'title' => __("Right Sidebar Area"), 'properties' => array(), 'modules' => array()),
-			array('name' => "Footer", 'title' => __("Footer Area"), 'properties' => array(), 'modules' => array())
+			array('name' => "Header", 'title' => __("Header Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
+			array('name' => "Left Sidebar", 'title' => __("Left Sidebar Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
+			array('name' => "Main", 'title' => __("Main Area"), 'properties' => array(), 'modules' => array(), 'global' => false),
+			array('name' => "Right Sidebar", 'title' => __("Right Sidebar Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
+			array('name' => "Footer", 'title' => __("Footer Area"), 'properties' => array(), 'modules' => array(), 'global' => true)
 		));
+	}
+	
+	protected static function _get_region_id ($region_name) {
+		$region_id = preg_replace('/[^-_a-z0-9]/', '-', strtolower($region_name));
+		return self::STORAGE_KEY . '-' . $region_id;
+	}
+	
+	public function get_region_data ($region_name) {
+		$found = array();
+		foreach ( $this->_data['regions'] as $region ){
+			if ( $region['name'] == $region_name )
+				$found = $region;
+		}
+		return $found;
+	}
+	
+	public function region_to_json ($region_name) {
+		return json_encode($this->get_region_data($region_name), true);
 	}
 
 	public function save () {
 		$key = $this->get_id();
+		foreach ( self::_get_regions() as $region ){
+			if ( $region['global'] )
+				update_option(self::_get_region_id($region['name']), $this->region_to_json($region['name']));
+		}
 		update_option($key, $this->to_json());
 		return $key;
 	}

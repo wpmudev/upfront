@@ -637,12 +637,12 @@ var GridEditor = {
 	/**
 	 * Update wrappers
 	 */
-	update_wrappers: function(){
+	update_wrappers: function (region) {
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
-			wraps = app.layout.get('wrappers');
+			wraps = region.get('wrappers');
 		$layout.find('.upfront-wrapper').each(function(){
 			var $wrap = $(this),
 				wrap_id = $wrap.attr('id'),
@@ -673,7 +673,7 @@ var GridEditor = {
 			else
 				wrap_model.remove_class('clr');
 		});
-		wraps.forEach(function(wrap){
+		wraps.each(function(wrap){
 			if ( $('#'+wrap.get_wrapper_id()).size() == 0 )
 				wraps.remove(wrap);
 		});
@@ -752,15 +752,24 @@ var GridEditor = {
 					aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
 					rsz_col = $me.data('resize-col'),
-					rsz_row = $me.data('resize-row')
+					rsz_row = $me.data('resize-row'),
+					
+					regions = app.layout.get('regions'),
+					region
 				;
+				
+				regions.each(function(reg){
+					if ( reg.get('modules') == model.collection )
+						region = reg;
+				});
 				
 				$me.prevAll('.upfront-resize').last().remove();
 				
 				ed.update_class($me, ed.grid.class, rsz_col);
 				if ( wrap )
 					ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+rsz_col-1, true);
-				ed.update_wrappers();
+					
+				ed.update_wrappers(region);
 				
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				// @TODO this is temporary hack, we need to somehow retain height and snap it to baseline
@@ -806,6 +815,8 @@ var GridEditor = {
 			//handle: '.upfront-drag-handle',
 			appendTo: $main,
 			start: function(e, ui){
+				$main.addClass('upfront-dragging');
+				
 				ed.start(view, model);
 				var $helper = $('.ui-draggable-dragging'),
 					$wrap = $me.closest('.upfront-wrapper'),
@@ -813,8 +824,6 @@ var GridEditor = {
 					wrap = ed.get_wrap($wrap);
 				$me.hide();
 				ed.create_drop_point(me, wrap);
-				
-				$main.addClass('upfront-dragging');
 				
 				_.each(ed.els, function(each){
 					each.$el.find(".upfront-debug-info").size() || each.$el.find('.upfront-editable_entity:first').append('<div class="upfront-debug-info"></div>');
@@ -902,7 +911,7 @@ var GridEditor = {
 							bottom = compare_area_bottom;
 						else if ( compare_area_bottom > each.grid.bottom )
 							bottom = each.grid.bottom;
-						if ( top && bottom && left && right )
+						if ( top && bottom && left && right && grid.x > 0 && grid.x <= ed.containment.col )
 							area = (right-left+1) * (bottom-top+1);
 						else
 							area = 0;
@@ -1075,7 +1084,7 @@ var GridEditor = {
 						var drop_wrap = _.find(ed.wraps, function(each){
 								return ( each.$el.get(0) == $clst_drop_el.closest('.upfront-wrapper').get(0) );
 							}),
-							drop_wrap_aff = drop_wrap ? ed.get_affected_wrapper_els(drop_wrap, ed.wraps, (ed.get_wrap_els(wrap).length == 1 ? [wrap, me] : [me]), true) : false,
+							drop_wrap_aff = drop_wrap ? ed.get_affected_wrapper_els(drop_wrap, ed.wraps, (wrap && ed.get_wrap_els(wrap).length == 1 ? [wrap, me] : [me]), true) : false,
 							drop_lmt = drop_wrap ? ed.get_move_limit(drop_wrap_aff, ed.containment.col) : false,
 							drop_margin = drop_wrap ? current_grid_left-drop_lmt[0] : 0,
 							drop_margin_max = drop_wrap ? drop_lmt[1]-drop_lmt[0]-col+1 : 0,
@@ -1109,10 +1118,13 @@ var GridEditor = {
 					wrap = ed.get_wrap($wrap),
 					col = ed.get_class_num($me, ed.grid.class),
 					$drop = $('.upfront-drop-use'),
-					wrappers = app.layout.get('wrappers'),
 					is_object = view.$el.find(".upfront-editable_entity:first").is(".upfront-object"),
 					dropped = false,
+					regions = app.layout.get("regions");
+					region = regions.get_by_name( $('.upfront-region-drag-active').data('name') ),
+					wrappers = region.get('wrappers'),
 					move_region = !($me.closest('.upfront-region').hasClass('upfront-region-drag-active'));
+				
 				if ( $drop.hasClass('upfront-drop-me') ){
 					$wrap.show();
 				}
@@ -1154,14 +1166,19 @@ var GridEditor = {
 					ed.update_margin_classes($(this));
 				});
 				
-				ed.update_wrappers();
+				ed.update_wrappers(region);
 				$me.show();
 				
 				// Update model value
 				( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
 					var $el = $(this),
 						margin = $el.data('margin');
-					if ( margin && margin.original != margin.current){
+					if ( margin && 
+						( margin.original.left != margin.current.left ||
+						margin.original.top != margin.current.top ||
+						margin.original.bottom != margin.current.bottom ||
+						margin.original.right != margin.current.right )
+					){
 						ed.update_model_classes($el, [
 							ed.grid.left_margin_class+margin.current.left,
 							ed.grid.right_margin_class+margin.current.right,
@@ -1178,9 +1195,7 @@ var GridEditor = {
 					view.resort_bound_collection();
 				}
 				else {
-					var regions = app.layout.get("regions");
-						region = regions.get_by_name( $('.upfront-region-drag-active').data('name') ),
-						modules = region.get('modules'),
+					var modules = region.get('modules'),
 						models = [];
 					model.unset('shadow');
 					model.collection.remove(model);

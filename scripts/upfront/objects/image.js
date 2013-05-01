@@ -44,6 +44,7 @@ var ImageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.Fi
 
 var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	render: function () {
+		this.$el.addClass('upfront-icon-element upfront-icon-element-image');
 		this.$el.html('Image');
 	},
 	add_element: function () {
