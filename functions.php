@@ -46,6 +46,10 @@ class Upfront {
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
+
+		if (is_admin()) {
+			add_action('init', array($this, 'init_admin_behaviors'));
+		}
 	}
 	
 	private function _add_supports () {
@@ -63,6 +67,37 @@ class Upfront {
 		return get_template_directory_uri();
 	}
 
+	/**
+	 * Dispatch admin transforms
+	 */
+	function init_admin_behaviors () {
+		if (!empty($_REQUEST['upfront-meta_frame'])) {
+			add_action('admin_head', array($this, 'inject_admin_meta_frame_styles'));
+		}
+	}
+
+	function inject_admin_meta_frame_styles () {
+		echo <<<EOAdminStyle
+<style>
+html {
+	padding: 0 !important;
+}
+#adminmenuback, #adminmenuwrap, #wpadminbar, #wpfooter {
+	display: none;
+}
+#wpcontent {
+	margin: 0 !important;
+}
+div.icon32, h2, #post-body-content, #message {
+	display: none;
+}
+#submitdiv, #categorydiv, #tagsdiv-post_tag {
+	display: none;
+}
+</style>
+EOAdminStyle;
+	}
+
 	function inject_grid_scope_class ($cls) {
 		$grid = Upfront_Grid::get_grid();
 		$cls[] = $grid->get_grid_scope();
@@ -75,6 +110,8 @@ class Upfront {
 		wp_enqueue_script('underscore');
 		wp_enqueue_script('backbone');
 		wp_enqueue_script('jquery-ui');
+		wp_enqueue_script('jquery-effects-core');
+		wp_enqueue_script('jquery-effects-slide');
 		wp_enqueue_script('jquery-ui-draggable');
 		wp_enqueue_script('jquery-ui-resizable');
 		wp_enqueue_script('jquery-ui-selectable');

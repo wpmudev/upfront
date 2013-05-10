@@ -247,7 +247,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			"wrappers" => array('name' => "", 'properties' => array())
 		);
 		foreach ( $data['regions'] as $i => $region ) {
-			if ( $region['global'] )
+			if ( !empty($region['global']) )
 				$data['regions'][$i] = json_decode( get_option(self::_get_region_id($region['name']), json_encode(array())), true );
 		}
 		return self::from_php($data);

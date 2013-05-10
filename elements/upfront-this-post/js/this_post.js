@@ -35,13 +35,16 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 	on_render: function () {
 		var element_id = this.model.get_property_value_by_name("element_id");
+
 		Upfront.Util.post({
 			"action": "this_post-get_markup",
 			"data": JSON.stringify({
 				"post_id": _upfront_post_data.post_id
 			})
 		}).success(function (response) {
-			$("#" + element_id).find(".upfront-object-content").html(response.data);
+			$("#" + element_id)
+				.find(".upfront-object-content").html(response.data)
+			;
 		});
 	}
 });
@@ -52,19 +55,19 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
  * and allow adding the new entity instance to the work area.
  * @type {Upfront.Views.Editor.Command}
  */
-var ThisPostCommand = Upfront.Views.Editor.Command.extend({
+var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	/**
 	 * Set up command appearance.
 	 */
 	render: function () {
-		this.$el.html('Add This Post content');
+		this.$el.html('This Post');
 	},
 
 	/**
 	 * What happens when user clicks the command?
 	 * We're instantiating a module with search entity (object), and add it to the workspace.
 	 */
-	on_click: function () {
+	add_element: function () {
 		var object = new ThisPostModel(), // Instantiate the model
 			// Since search entity is an object,
 			// we don't need a specific module instance -
@@ -95,7 +98,7 @@ if (_upfront_post_data.post_id) {
 	Upfront.Application.LayoutEditor.add_object("ThisPost", {
 		"Model": ThisPostModel,
 		"View": ThisPostView,
-		"Command": ThisPostCommand
+		"Element": ThisPostElement
 	});
 	Upfront.Models.ThisPostModel = ThisPostModel;
 	Upfront.Views.ThisPostView = ThisPostView;

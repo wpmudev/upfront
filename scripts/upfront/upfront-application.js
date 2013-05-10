@@ -95,7 +95,7 @@ var LayoutEditor = new (Subapplication.extend({
 				});
 
 				if (!present) app.set_up_event_plumbing_after_render();
-				
+
 				$("html").addClass("upfront-edit-layout");
 
 				// @TODO:remove this
@@ -173,7 +173,7 @@ var LayoutEditor = new (Subapplication.extend({
 			app.command_view.commands.push(new obj.Command({"model": app.layout}));
 		});
 		app.command_view.render();*/
-		
+
 		app.sidebar = new Upfront.Views.Editor.Sidebar.Sidebar({
 			"model": app.layout,
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.sidebar)
@@ -278,42 +278,54 @@ var LayoutEditor = new (Subapplication.extend({
 
 
 var ContentEditor = new (Subapplication.extend({
-	routes: {
-		//"done": "destroy_editor",
-		"content(/:id)": "dispatch_content_loading",
-		"new-content": "dispatch_content_creation"
-	},
 
 	run: function () {
 		var app = this;
-		// Temporary Edit switch event plumbing
-		$("body").on("click", ".upfront-edit_content", function () {
-			$(".upfront-editable_trigger").remove();
-			app.go("content");
+		require(Upfront.Settings.ContentEditor.Requirements.core, function (models, views, editor, behaviors) {
+			_.extend(Upfront, models);
+			_.extend(Upfront, views);
+			_.extend(Upfront.Views, editor);
+			_.extend(Upfront, behaviors);
+
+			app.create_editor();
 			return false;
 		});
-		$("body").on("click", ".upfront-finish_layout_editing", function () {
-			$(
-				Upfront.Settings.LayoutEditor.Selectors.commands +
-				", " +
-				Upfront.Settings.LayoutEditor.Selectors.properties +
-				", " +
-				Upfront.Settings.LayoutEditor.Selectors.layouts
-			).hide("slow", function () {
-				app.go("done");
-			});
-			return false;
+	},
+
+	create_editor: function () {
+		var app = this;
+		app.set_up_event_plumbing();
+		app.set_up_editor_interface();
+	},
+
+	set_up_event_plumbing: function () {},
+
+	set_up_editor_interface: function () {
+		var app = this;
+		app.sidebar = new Upfront.Views.ContentEditor.Sidebar({
+			"model": new Backbone.Model([]),
+			"el": $(Upfront.Settings.ContentEditor.Selectors.sidebar)
+		});
+		app.sidebar.render();
+		$("body").addClass("upfront-edit-layout");
+		$(Upfront.Settings.ContentEditor.Selectors.sidebar).show();
+		/*
+		_(this.Objects).each(function (obj) {
+			if ( obj.Element )
+				app.sidebar.get_panel("elements").elements.push(new obj.Element({"model": app.layout}));
+			if ( obj.Command )
+				app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
 		});
 
-		//Backbone.history.start();
-	},
-
-	dispatch_content_loading: function (content_id) {
-		content_id ? Upfront.Util.log('loading') : Upfront.Util.log('loading current');
-	},
-	dispatch_content_creation: function () {
-		Upfront.Util.log('creating');
+		// Layouts
+		app.layout_sizes = new Upfront.Views.Editor.Layouts({
+			"model": app.layout,
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.layouts)
+		});
+		app.layout_sizes.render();
+		*/
 	}
+
 
 }))();
 
@@ -324,8 +336,7 @@ var Application = new (Backbone.Router.extend({
 
 	run: function () {
 		this.LayoutEditor.run();
-		this.ContentEditor.run();
-
+		$(document).trigger('upfront-load');
 		Backbone.history.start(); // One history starting
 	}
 }))();

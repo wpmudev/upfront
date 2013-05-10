@@ -82,23 +82,23 @@ Upfront.Util.post({
 
 
 	/**
-	 * Editor command class - this will be injected into commands
-	 * and allow adding the new entity instance to the work area.
-	 * @type {Upfront.Views.Editor.Command}
+	 * Sidebar element class - this let you inject element into 
+	 * sidebar elements panel and allow drag and drop element adding
+	 * @type {Upfront.Views.Editor.Sidebar.Element}
 	 */
-	var UpostsCommand = Upfront.Views.Editor.Command.extend({
+	var UpostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		/**
-		 * Set up command appearance.
+		 * Set up element appearance that will be displayed on sidebar panel.
 		 */
 		render: function () {
-			this.$el.html('Add new Posts');
+			this.$el.html('Posts');
 		},
 
 		/**
-		 * What happens when user clicks the command?
-		 * We're instantiating a module with search entity (object), and add it to the workspace.
+		 * This will be called by editor to request module instantiation, set
+		 * the default module appearance here
 		 */
-		on_click: function () {
+		add_element: function () {
 			var object = new UpostsModel(), // Instantiate the model
 				// Since search entity is an object,
 				// we don't need a specific module instance -
@@ -525,7 +525,7 @@ Upfront.Util.post({
 	Upfront.Application.LayoutEditor.add_object("Uposts", {
 		"Model": UpostsModel,
 		"View": UpostsView,
-		"Command": UpostsCommand,
+		"Element": UpostsElement,
 		"Settings": UpostsSettings
 	});
 	Upfront.Models.UpostsModel = UpostsModel;

@@ -90,7 +90,7 @@ var Util = {
 		},
 
 // ----- Stack-like interface (for history) -----
-		
+
 		push: function (key, value) {
 			var items = this.get(key) || [];
 			items.push(value);
@@ -108,8 +108,106 @@ var Util = {
 	}
 };
 
+var Popup = {
+
+	$popup: {},
+	$background: {},
+	_deferred: {},
+
+	init: function () {
+		if (!$("#upfront-popup").length) {
+			$("body")
+				.append('<div id="upfront-popup" style="display:none">' +
+					'<div id="upfront-popup-close">X</div>' +
+					'<div class="upfront-popup-meta" id="upfront-popup-top">' +
+					'</div>' +
+					'<div id="upfront-popup-content"></div>' +
+					'<div class="upfront-popup-meta" id="upfront-popup-bottom">' +
+					'</div>' +
+				'</div>')
+				.append("<div id='upfront-popup-background' style='display:none' />")
+			;
+		} else {
+			this.close();
+		}
+		this.$popup = $("#upfront-popup");
+		this.$background = $("#upfront-popup-background");
+
+		this.$popup.find("#upfront-popup-content").empty();
+	},
+
+	open: function (callback, data) {
+		data = data || {};
+		this.init();
+		var me = this,
+			$win = $(window),
+			width = data.width || 800,
+			left_pos = ($win.width() - width) / 2,
+			height = ($win.height() / 3) * 2,
+			close_func = function () { me.close(); return false; }
+		;
+		data.width = width, data.height = height;
+		this.$background
+			.css({
+				'height': $win.height(),
+				'width': $win.width()
+			})
+			.on("click", close_func)
+			.show()
+		;
+		this.$popup
+			.css({
+				'width': width,
+				'height': height,
+				'left': left_pos
+			})
+			.show()
+			.find("#upfront-popup-close").on("click", close_func).end()
+		;
+
+		$win.off("resize.upfront-popup").on("resize.upfront-popup", function () {
+			if (me.$background.is(":visible")) me.$background
+				.css({
+					'height': $win.height(),
+					'width': $win.width()
+				})
+			;
+			if (me.$popup.is(":visible")) {
+				var left_pos = ($win.width() - width) / 2,
+					height = ($win.height() / 3) * 2
+				;
+				me.$popup
+					.css({
+						'width': width,
+						'height': height,
+						'left': left_pos
+					})
+				;
+			}
+		});
+
+		callback.apply(this.$popup.find("#upfront-popup-content").get(), [data, this.$popup.find("#upfront-popup-top"), this.$popup.find("#upfront-popup-bottom")]);
+		this._deferred = new $.Deferred();
+		return this._deferred.promise();
+	},
+
+	close: function () {
+		this._deferred.notify('before_close');
+
+		this.$background.hide();
+		this.$popup.hide().css('height', 'auto').find("#upfront-popup-content").empty();
+
+		this.$popup.find("#upfront-popup-top").empty();
+		this.$popup.find("#upfront-popup-bottom").empty();
+
+		this._deferred.resolve(this.$popup);
+	}
+
+};
+
 define({
-	"Util": Util
+	"Util": Util,
+	"Popup": Popup
 });
 
 })(jQuery);

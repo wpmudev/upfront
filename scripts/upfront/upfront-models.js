@@ -350,7 +350,40 @@ var _alpha = "alpha",
 			this.get("regions").reset(state.regions);
 			this.get("wrappers").reset(state.wrappers);
 		}
-	})
+	}),
+
+	Taxonomy = Backbone.Model.extend({
+		initialize: function () {
+			var args = arguments,
+				data = args[0] || {}
+			;
+			this.taxonomy = data.taxonomy ? new Backbone.Model(data.taxonomy) : Backbone.Model({});
+			this.all_terms = data.all_terms ? new Backbone.Collection(data.all_terms) : new Backbone.Collection([]);
+			this.post_terms = data.post_terms ? new Backbone.Collection(data.post_terms) : new Backbone.Collection([]);
+		}
+	}),
+
+	Posts = Backbone.Model.extend({
+		initialize: function () {
+			var args = arguments,
+				data = args[0] || {}
+			;
+			this.posts = data.posts ? new Backbone.Collection(data.posts) : new Backbone.Collection([]);
+			this.pagination = data.pagination ? new Backbone.Model(data.pagination) : new Backbone.Model([]);
+		}
+	}),
+
+	Pages = Posts.extend({}),
+
+	Comments = Backbone.Model.extend({
+		initialize: function () {
+			var args = arguments,
+				data = args[0] || {}
+			;
+			this.comments = data.comments ? new Backbone.Collection(data.comments) : new Backbone.Collection([]);
+			this.pagination = data.pagination ? new Backbone.Model(data.pagination) : new Backbone.Model([]);
+		}
+	}),
 
 _omega = 'omega';
 
@@ -362,13 +395,17 @@ define({
 		"Region": Region,
 		"Wrapper": Wrapper,
 		"Layout": Layout,
+		"Taxonomy": Taxonomy,
+		"Posts": Posts,
+		"Pages": Pages,
+		"Comments": Comments
 	},
 	"Collections": {
 		"Properties": Properties,
 		"Objects": Objects,
 		"Modules": Modules,
 		"Regions": Regions,
-		"Wrappers": Wrappers,
+		"Wrappers": Wrappers
 	}
 });
 

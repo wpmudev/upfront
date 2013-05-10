@@ -193,6 +193,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
 				'page' => Upfront_VirtualPage::get_url('create/page'),
 				'post' => Upfront_VirtualPage::get_url('create/post'),
 			),
+			'edit' => array (
+				'page' => Upfront_VirtualPage::get_url('edit/page/'),
+				'post' => Upfront_VirtualPage::get_url('edit/post/'),
+			),
 		));
 
 		$main = <<<EOMainJs
@@ -218,6 +222,12 @@ $(function () {
 			"root_url": "{$root}",
 			"ajax_url": "{$ajax}",
 			"Debug": {$debug},
+			"ContentEditor": {
+				"Requirements": {$layout_editor_requirements},
+				"Selectors": {
+					"sidebar": "#sidebar-ui",
+				},
+			},
 			"LayoutEditor": {
 				"Requirements": {$layout_editor_requirements},
 				"Selectors": {
@@ -277,9 +287,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		//$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
 		$layout_id = sanitize_text_field($_GET['layout_id']);
 		$layout = Upfront_Layout::from_id($layout_id);
-		if ($layout->is_empty()) {
-			$layout = Upfront_Layout::create_layout();
-		}
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$style = $preprocessor->process();
