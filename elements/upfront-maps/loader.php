@@ -41,6 +41,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	issue with search module. e.g click on map, then search command and it always adds a map. also vice versa
 */
+define('UPFRONT_MAPS_ROOT_FILE', __FILE__);
 
 /**
  * This is the entity entry point, where we inform Upfront of our existence.
@@ -51,7 +52,7 @@ function umap_initialize () {
 	require_once (dirname(__FILE__) . '/lib/visitor.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('umap', upfront_element_url('js/edit-init', __FILE__));
+	upfront_add_layout_editor_entity('umap', upfront_element_url('js/edit-init', UPFRONT_MAPS_ROOT_FILE));
 
 	add_filter('upfront-settings-requirement_paths', 'add_plugin_path_to_requirejs');
 	add_action('upfront-core-inject_dependencies', 'include_edit_css');
@@ -60,26 +61,27 @@ function umap_initialize () {
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'umap_initialize');
 
+
 function add_plugin_path_to_requirejs($paths){
-	$paths['m-map'] = upfront_element_url('js/', __FILE__);
+	$paths['m-map'] = upfront_element_url('js/', UPFRONT_MAPS_ROOT_FILE);
 	return $paths;
 }
 
 // add template snippets to main document
 function add_templates(){
-	echo file_get_contents(dirname( __FILE__).'/template/all.html');
+	echo file_get_contents(dirname( UPFRONT_MAPS_ROOT_FILE).'/template/all.html');
 }
 add_action( 'wp_head' , 'add_templates', 1);
 
 function ufmap_get_js_url(){
-	return upfront_element_url('/js', __FILE__);
+	return upfront_element_url('/js', UPFRONT_MAPS_ROOT_FILE);
 }
 
 function include_edit_css(){
 	// css applicable to the edit/upfront admin
-	echo '<link type="text/css" rel="stylesheet" href="'.upfront_element_url('/css', __FILE__).'/edit.css" />';
+	echo '<link type="text/css" rel="stylesheet" href="'.upfront_element_url('/css', UPFRONT_MAPS_ROOT_FILE).'/edit.css" />';
 }
 
 function include_plugin_path(){
-	echo "<script>var upfrontMap = {pluginPath:'".upfront_element_url('/', __FILE__)."'};</script>";
+	echo "<script>var upfrontMap = {pluginPath:'".upfront_element_url('/', UPFRONT_MAPS_ROOT_FILE)."'};</script>";
 }

@@ -1927,7 +1927,7 @@ define(_template_files, function () {
 	});
 
 	var SettingsItem = Backbone.View.extend({
-		tagName: "li",
+		//tagName: "li",
 		get_name: function () {},
 		get_value: function () {},
 
@@ -1946,7 +1946,7 @@ define(_template_files, function () {
 	});
 
 	var SettingsPanel = Backbone.View.extend({
-		tagName: "ul",
+		//tagName: "ul",
 
 		events: {
 			"click .upfront-save_settings": "on_save",
@@ -1974,7 +1974,7 @@ define(_template_files, function () {
 			});
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +
-					"<button type='button' class='upfront-cancel_settings'><i class='icon-arrow-left'></i> Back</button>" +
+					//"<button type='button' class='upfront-cancel_settings'><i class='icon-arrow-left'></i> Back</button>" +
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
 				'</div>'
 			);
@@ -1982,11 +1982,13 @@ define(_template_files, function () {
 
 		conceal: function () { 
 			this.$el.find(".upfront-settings_panel").hide();
-			this.$el.find(".upfront-settings_label").show();
+			this.$el.find(".upfront-settings_label").removeClass("active");
+			//this.$el.find(".upfront-settings_label").show();
 		},
 
 		reveal: function () {
-			this.$el.find(".upfront-settings_label").hide();
+			this.$el.find(".upfront-settings_label").addClass("active");
+			//this.$el.find(".upfront-settings_label").hide();
 			this.$el.find(".upfront-settings_panel").show();
 		},
 
@@ -2058,6 +2060,7 @@ define(_template_files, function () {
 					"left": view_pos.left + $view.outerWidth()
 				})
 			;
+			this.toggle_panel(this.panels.first());
 		},
 
 		set_title: function (title) {
@@ -2066,10 +2069,11 @@ define(_template_files, function () {
 		},
 
 		toggle_panel: function (panel) {
-			this.panels.invoke("hide");
+			this.panels.invoke("conceal");
 			panel.show();
 			panel.reveal();
 			this.set_title(panel.get_title());
+			this.$el.height(panel.$el.find(".upfront-settings_panel").outerHeight())
 		},
 
 		close_panel: function (panel) {

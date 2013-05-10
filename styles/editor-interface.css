@@ -749,72 +749,59 @@
 
 /* ----- Settings ----- */
 
-#settings ul, #settings ul li {
-  margin: 0; padding: 0;
-  list-style: none;
+#settings, #settings * {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
 }
+
 #settings {
-  background-color: #fff;
-  border: 1px solid #dee3e3;
-  min-width: 95px;
+  background-color: #dae7f1;
+  border: 1px solid #a2c5e4;
+  border-right: none;
+  border-left: 3px solid #6486a4;
+  min-width: 90px;
+
 }
 #settings .upfront-settings_title {
-  background-color: #ebf5ff;
-  border-bottom: 1px solid #dee3e3;
-  padding: 5px 15px;
+  display: none;
 }
-#settings .upfront-settings_label, #settings .upfront-settings_panel li {
-  padding: 5px 15px;
+#settings .upfront-settings_label {
+	padding-left: 15px;
+	width: 90px;
+	height: 40px;
+	line-height: 40px;
+	background: #a2c5e4;
+	color: #f2f9ff;
+	border: 1px solid #7ba6ca;
+	border-top: none;
 }
-#settings .upfront-settings_label:hover {
-  background-color: #087fca;
-  color: #fff;
+#settings .upfront-settings_label.active {
+	color: #a2c5e4;
+	background: #f2f9ff;
+	border-right: none;
 }
-
+#settings .upfront-settings_panel {
+	position: absolute;
+	left: 90px;
+	top: 0;
+	padding: 15px;
+	min-width: 200px;
+	border: 1px solid #a2c5e4;
+	border-left: none;
+	margin-top: -1px;
+	background: #f2f9ff;
+}
+#settings .upfront-settings-item-title {
+	text-transform: uppercase;
+	border-bottom: 1px solid #a2c5e4;
+	font-size: .8em;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
 #settings .upfront-settings-button_panel {
-  background-color: #ebf5ff;
-  overflow: hidden;
-  margin-top: 1em;
-  border-top: 1px solid #dee3e3;
+	float: right;
 }
-#settings .upfront-settings_panel .upfront-cancel_settings, #settings .upfront-settings_panel .upfront-save_settings {
-  width: 50px;
-  border: none;
-  background-color: #fff;
-  padding: 5px;
-}
-#settings .upfront-settings_panel .upfront-cancel_settings {
-  border-right: 1px solid #dee3e3;
-  float: left;
-}
-#settings .upfront-settings_panel .upfront-save_settings {
-  border-left: 1px solid #dee3e3;
-  float: right;
-}
-#settings .upfront-settings_panel .upfront-save_settings i {
-  color: #1aca07;
-}
-
-#settings .upfront-settings-item {
-  padding: 5px;
-  padding-bottom: 1em;
-  border-bottom: 1px solid #dee3e3;
-}
-#settings .upfront-settings-item .upfront-settings-item-title {
-  font-weight: bold;
-  font-style: italic;
-  color: #808d9a;
-}
-#settings .upfront-settings-item .upfront-settings-item-content {
-  padding: 5px 15px;
-}
-#settings .upfront-settings-item .upfront-settings-item-content [contenteditable] {
-  border-bottom: 1px dashed #dee3e3;
-}
-#settings .upfront-settings-item .upfront-settings-item-content [contenteditable]:focus {
-  outline: none;
-}
-
 
 
 

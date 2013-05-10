@@ -17,20 +17,20 @@ class Upfront_ObjectViewTarget extends Upfront_Object{
 		
 		wp_enqueue_script(
 			'requirejs',
-			plugins_url('/upfront-map/js/require.js')
+			upfront_element_url('/js/require.js', UPFRONT_MAPS_ROOT_FILE)
 		);
 		wp_localize_script( 'requirejs', 'upfrontMap', array('pluginPath'=>ufmap_get_js_url() ) ); 	
 		// <<< test this on visitor side
 
 		wp_enqueue_script(
 			'visitor-init',
-			plugins_url('/upfront-map/js/visitor-init.js'),
+			upfront_element_url('/js/visitor-init.js', UPFRONT_MAPS_ROOT_FILE),
 			array('jquery', 'backbone', 'underscore')
 		);
 
 		wp_enqueue_style(
 			'visitor-css',
-			plugins_url('/upfront-map/css/visitor.css')
+			upfront_element_url('/css/visitor.css', UPFRONT_MAPS_ROOT_FILE)
 		);
 
 		wp_localize_script( 'visitor-init', 'mapModels', $upfront_map_visitor_models );
