@@ -113,7 +113,7 @@ var LayoutEditor = new (Subapplication.extend({
 				});
 			})
 			.error(function (xhr) {
-				Upfront.Util.log("Error loading layout " + layout_id);
+				Upfront.Util.log("Error loading layout " + layout_ids);
 				// @TODO:remove this
 				$(
 					Upfront.Settings.LayoutEditor.Selectors.sidebar +
@@ -301,6 +301,15 @@ var ContentEditor = new (Subapplication.extend({
 	set_up_event_plumbing: function () {},
 
 	set_up_editor_interface: function () {
+		var app = this,
+			sidebar = Upfront.Application.LayoutEditor.sidebar
+		;
+		if (!sidebar) this.create_new_sidebar();
+		else sidebar.to_content_editor();
+
+	},
+
+	create_new_sidebar: function () {
 		var app = this;
 		app.sidebar = new Upfront.Views.ContentEditor.Sidebar({
 			"model": new Backbone.Model([]),
@@ -309,21 +318,6 @@ var ContentEditor = new (Subapplication.extend({
 		app.sidebar.render();
 		$("body").addClass("upfront-edit-layout");
 		$(Upfront.Settings.ContentEditor.Selectors.sidebar).show();
-		/*
-		_(this.Objects).each(function (obj) {
-			if ( obj.Element )
-				app.sidebar.get_panel("elements").elements.push(new obj.Element({"model": app.layout}));
-			if ( obj.Command )
-				app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
-		});
-
-		// Layouts
-		app.layout_sizes = new Upfront.Views.Editor.Layouts({
-			"model": app.layout,
-			"el": $(Upfront.Settings.LayoutEditor.Selectors.layouts)
-		});
-		app.layout_sizes.render();
-		*/
 	}
 
 

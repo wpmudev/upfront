@@ -460,12 +460,18 @@ define(_template_files, function () {
 	
 	var SidebarPanel_Posts = SidebarPanel.extend({
 		initialize: function () {
+
 		},
 		get_title: function () {
 			return "Pages / Posts";
 		},
 		on_render: function () {
+			var me = this;
 			this.$el.find('.sidebar-panel-title').addClass('upfront-icon upfront-icon-panel-post');
+			if (this.commands) this.commands.each(function (command) {
+				command.render();
+				me.$el.find('.sidebar-panel-content').append(command.$el);
+			});
 		}
 	});
 	
@@ -795,13 +801,30 @@ define(_template_files, function () {
 			if ( ! this.sidebar_commands[commands] )
 				return false;
 			return this.sidebar_commands[commands];
+		},
+		to_content_editor: function () {
+			var panel = this.sidebar_panels.panels.posts;
+			panel.commands = _([
+				new Command_PopupList({"model": this.model}),
+				new Command_PopupSlug({"model": this.model}),
+				new Command_PopupMeta({"model": this.model}),
+				new Command_PopupTax({"model": this.model}),
+				new Command_SaveDraft({"model": this.model}),
+				new Command_SavePublish({"model": this.model})
+			]);
+			panel.render();
+			panel.$el.find(".sidebar-panel-title").trigger("click");
 		}
 	});
 
 // ----- Bringing things back
 
+	var ContentEditor_SidebarCommand = Command.extend({
+		tagName: "div",
+		className: "upfront-sidebar-content_editor-sidebar_command"
+	});
 
-	var Command_SaveState = Command.extend({
+	var Command_SaveState = ContentEditor_SidebarCommand.extend({
 		on_click: function () {
 			var data = {
 				"id": $("#upfront-post_id").val(),
@@ -822,20 +845,54 @@ define(_template_files, function () {
 	var Command_SaveDraft = Command_SaveState.extend({
 		save_state: "draft",
 		render: function () {
-			this.$el.html("<span title='Draft'>Save Draft</span>");
+			this.$el.addClass("upfront-save_state upfront-draft").html("<span title='Draft'>Save Draft</span>");
+		},
+		on_click: function () {
+			var $post_id =  $("#upfront-post_id"),
+				$title = $("#upfront-title"),
+				$body = $("#upfront-body")
+			;
+			if (!$post_id.length || !$title.length || !$body.length) return false;
+			Upfront.Util.post({
+				"action": "upfront-edit-draft",
+				"data": {
+					"id": $post_id.val(),
+					"title": $title.val(),
+					"body": $body.val()
+				}
+			}).success(function () {
+				Upfront.Util.log("Draft saved");
+			});
 		}
 	});
 
-	var Command_SavePublish = Command.extend({
+	var Command_SavePublish = ContentEditor_SidebarCommand.extend({
 		save_state: "publish",
 		render: function () {
-			this.$el.html("<span title='Publish'>Publish</span>");
+			this.$el.addClass("upfront-save_state upfront-publish").html("<span title='Publish'>Publish</span>");
+		},
+		on_click: function () {
+			var $post_id =  $("#upfront-post_id"),
+				$title = $("#upfront-title"),
+				$body = $("#upfront-body")
+			;
+			if (!$post_id.length || !$title.length || !$body.length) return false;
+			Upfront.Util.post({
+				"action": "upfront-edit-publish",
+				"data": {
+					"id": $post_id.val(),
+					"title": $title.val(),
+					"body": $body.val()
+				}
+			}).success(function () {
+				Upfront.Util.log("Post published");
+			});
 		}
 	});
 
-	var Command_PopupMeta = Command.extend({
+	var Command_PopupMeta = ContentEditor_SidebarCommand.extend({
 		render: function () {
-			this.$el.html("<span title='Meta'>Meta</span>");
+			this.$el.addClass("upfront-meta").html("<span title='Meta'>Meta</span>");
 		},
 		on_click: function () {
 			var post_id = $("#upfront-post_id").val(),
@@ -869,10 +926,10 @@ define(_template_files, function () {
 		}
 	});
 
-	var Command_PopupTax = Command.extend({
+	var Command_PopupTax = ContentEditor_SidebarCommand.extend({
 		$popup: {},
 		render: function () {
-			this.$el.html("<span title='Categories&amp;Tags'>Categories&amp;Tags</span>");
+			this.$el.addClass("upfront-taxonomy_list").html("<span title='Categories&amp;Tags'>Categories&amp;Tags</span>");
 		},
 		on_click: function () {
 			var tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
@@ -936,10 +993,10 @@ define(_template_files, function () {
 		}
 	});
 
-	var Command_PopupList = Command.extend({
+	var Command_PopupList = ContentEditor_SidebarCommand.extend({
 		$popup: {},
 		render: function () {
-			this.$el.html("Browse posts/pages/comments");
+			this.$el.addClass("upfront-entity_list").html("Browse posts/pages/comments");
 		},
 		on_click: function () {
 			var me = this,
@@ -1031,6 +1088,63 @@ define(_template_files, function () {
 		}
 	});
 
+	var Command_PopupSlug = ContentEditor_SidebarCommand.extend({
+		$popup: {},
+		render: function () {
+			this.$el.addClass("upfront-entity_list").html("Edit slug");
+		},
+		on_click: function () {
+			var me = this,
+				popup = Upfront.Popup.open(function (data, $top, $bottom) {
+					var $me = $(this);
+					$me.empty()
+						.append('<p class="upfront-popup-placeholder">No such thing as <q>too many drinks</q>.</p>')
+					;
+					me.$popup = {
+						"top": $top,
+						"content": $me,
+						"bottom": $bottom
+					};
+				})
+			;
+			Upfront.Util.post({
+				"action": "upfront-get_post_data",
+				"post_id": $("#upfront-post_id").val()
+			}).success(function (resp) {
+				var $permalink = $('<div>' + resp.data.sample_permalink + '</div>'),
+					$link = $permalink.find("#sample-permalink")
+				;
+				$link.find("#editable-post-name").remove();
+				me.$popup.content.empty().append(
+					'<div class="upfront-permalink_sample">' +
+						$link.text().replace(/\/+$/, '/') +
+						'<input type="text" id="upfront-post_slug" value="' + resp.data.post_name + '" />' +
+						'<button type="button" id="upfront-post_slug-send">OK</button>' +
+					'</div>'
+				);
+				$("#upfront-post_slug-send").on("click", function () {
+					me.update_post_slug($("#upfront-post_slug").val());
+				});
+			});
+			popup.done(function () {
+				console.log('slug cleanup');
+			});
+			me.on("upfront:posts:post:slug_updated", function () {
+				Upfront.Popup.close();
+			});
+		},
+		update_post_slug: function (slug) {
+			var me = this;
+			Upfront.Util.post({
+				"action": "upfront-post-update_slug",
+				"post_id": $("#upfront-post_id").val(),
+				"slug": slug
+			}).success(function (resp) {
+				me.trigger("upfront:posts:post:slug_updated");
+			});
+		}
+	});
+
 	var ContentEditorSidebarCommands_Control = Commands.extend({
 		"className": "sidebar-commands sidebar-commands-control",
 		initialize: function () {
@@ -1039,7 +1153,8 @@ define(_template_files, function () {
 				new Command_SavePublish({"model": this.model}),
 				new Command_PopupMeta({"model": this.model}),
 				new Command_PopupTax({"model": this.model}),
-				new Command_PopupList({"model": this.model})
+				new Command_PopupList({"model": this.model}),
+				new Command_PopupSlug({"model": this.model})
 			]);
 		}
 	});

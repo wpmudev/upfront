@@ -257,7 +257,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return apply_filters('upfront-regions', array(
 			array('name' => "Header", 'title' => __("Header Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
 			array('name' => "Left Sidebar", 'title' => __("Left Sidebar Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
-			array('name' => "Main", 'title' => __("Main Area"), 'properties' => array(), 'modules' => array(), 'global' => false),
+			//array('name' => "Main", 'title' => __("Main Area"), 'properties' => array(), 'modules' => array(), 'global' => false),
+			// Use this instead of main, so we have some content:
+			json_decode('{"name":"Main","properties":[],"wrappers":[{"name":"","properties":[{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"class","value":"c19 clr"}]}],"modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"type","value":"ThisPostModel"},{"name":"view_class","value":"ThisPostView"},{"name":"element_id","value":"this_post-object-1368256944132-1598"},{"name":"class","value":"c22"},{"name":"has_settings","value":0}]}],"properties":[{"name":"element_id","value":"module-1368256944133-1595"},{"name":"class","value":"c17 upfront-this_post_module ml2 mr0 mt5 mb0"},{"name":"has_settings","value":0},{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"row","value":7}]}],"title":"Main Area","global":false}', true),
 			array('name' => "Right Sidebar", 'title' => __("Right Sidebar Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
 			array('name' => "Footer", 'title' => __("Footer Area"), 'properties' => array(), 'modules' => array(), 'global' => true)
 		));

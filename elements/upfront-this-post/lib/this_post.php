@@ -14,7 +14,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$post = get_post($post_id);
 		$permalink = get_permalink($post->ID);
 		return "<article id='post-{$post->ID}' data-post_id='{$post->ID}'>" . 
-			"<h3><a href='{$permalink}'>" . apply_filters('the_title', $post->post_title) . '</a></h3>' .
+			"<h3 class='post_title'><a href='{$permalink}'>" . apply_filters('the_title', $post->post_title) . '</a></h3>' .
 			'<div class="post_content">' . apply_filters('the_content', $post->post_content) . '</div>' .
 		'</article>';
 	}
@@ -37,8 +37,16 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$data = json_decode(stripslashes($_POST['data']), true);
 		if (empty($data['post_id'])) die('error');
 		if (!is_numeric($data['post_id'])) die('error');
+
+		$post = get_post($data['post_id']);
 		
-		$this->_out(new Upfront_JsonResponse_Success(Upfront_ThisPostView::get_post_markup($data['post_id'])));
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			"filtered" => Upfront_ThisPostView::get_post_markup($data['post_id']),
+			"raw" => array(
+				"title" => $post->post_title,
+				"content" => $post->post_content,
+			),
+		)));
 	}
 }
 Upfront_ThisPostAjax::serve();

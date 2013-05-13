@@ -54,6 +54,7 @@ $(function () {
 </script>
 
 <style>
+/* Popup */
 #upfront-popup-background {
 	position: fixed;
 	top: 0;

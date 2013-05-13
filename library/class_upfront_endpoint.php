@@ -178,14 +178,32 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 
 	public function render ($request) {
 		$post_id = end($request);
-		$post = Upfront_PostModel::get($post_id);
-		add_filter('wp_title', array($this, 'get_title'));
-		require_once('templates/edit.php');
+		global $post, $wp_query;
+		$wp_query = new WP_Query(array(
+			'p' => $post_id,
+		));
+		//add_filter('wp_title', array($this, 'get_title'));
+		add_action('wp_footer', array($this, 'start_editor'), 999);
+		load_template(get_single_template());
 		die;
 	}
 
 	public function get_title () {
 		return 'Edit post';
+	}
+
+	public function start_editor () {
+		echo <<<EOSEJS
+<script>
+(function ($) {
+
+$(window).load(function () {
+	$("body").append("<a class='upfront-edit_layout' />");
+	$(".upfront-edit_layout").trigger("click");
+});
+})(jQuery);
+</script>
+EOSEJS;
 	}
 }
 
@@ -235,6 +253,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		add_action('wp_ajax_upfront-get_page_data', array($this, "get_page_data"));
 		add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
 		
+		add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
+		
 		add_action('wp_ajax_upfront-comments-approve', array($this, "approve_comment"));
 		add_action('wp_ajax_upfront-comments-unapprove', array($this, "unapprove_comment"));
 		add_action('wp_ajax_upfront-comments-thrash', array($this, "thrash_comment"));
@@ -267,6 +287,25 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$post['post_status'] = $status;
 		$post['post_title'] = $data['title'];
 		$post['post_content'] = $data['body'];
+
+		$updated = Upfront_PostModel::save($post);
+		$updated->permalink = get_permalink($updated->ID);
+		$this->_out(new Upfront_JsonResponse_Success($updated));
+	}
+
+	function update_post_slug () {
+		$data = stripslashes_deep($_POST);
+		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
+		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
+
+		$slug = !empty($data['slug']) ? $data['slug'] : false;
+		if (!$slug) $this->_out(new Upfront_JsonResponse_Error("No slug"));
+
+		if (!current_user_can('edit_post', $post_id)) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+
+		$post = (array)Upfront_PostModel::get($post_id);
+		if (empty($post)) $this->_out(new Upfront_JsonResponse_Error("Invalid post"));
+		$post['post_name'] = $slug;
 
 		$updated = Upfront_PostModel::save($post);
 		$updated->permalink = get_permalink($updated->ID);
@@ -456,6 +495,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		
 		$post = $this->_get_post_info($post_id);
 		$post->post_content = apply_filters('the_content', $post->post_content);
+		$post->sample_permalink = get_sample_permalink_html($post_id);
 		$this->_out(new Upfront_JsonResponse_Success($post));
 	}
 

@@ -30,22 +30,56 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	 * @return {string} Markup to be shown.
 	 */
 	get_content_markup: function () {
-		return 'Hold on please';
+		var content = $(document).data("upfront-post-" + _upfront_post_data.post_id);
+		return content ? content.filtered : 'Hold on please';
 	},
 
 	on_render: function () {
-		var element_id = this.model.get_property_value_by_name("element_id");
+		var element_id = this.model.get_property_value_by_name("element_id"),
+			content = $(document).data("upfront-post-" + _upfront_post_data.post_id)
+		;
 
-		Upfront.Util.post({
+		if (content) $("#" + element_id).find(".upfront-object-content").html(content.filtered);
+		else this._get_post_content();
+	},
+
+	_get_post_content: function () {
+		var me = this;
+		if (!this._content) Upfront.Util.post({
 			"action": "this_post-get_markup",
 			"data": JSON.stringify({
 				"post_id": _upfront_post_data.post_id
 			})
 		}).success(function (response) {
-			$("#" + element_id)
-				.find(".upfront-object-content").html(response.data)
-			;
+			$(document).data("upfront-post-" + _upfront_post_data.post_id, response.data);
+			me.render();
 		});
+	},
+
+	on_edit: function () {
+		var content = $(document).data("upfront-post-" + _upfront_post_data.post_id),
+			$title = this.$el.find('h3.post_title a'),
+			$body = this.$el.find('.post_content')
+		;
+		$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + content.raw.title + '"/>');
+		$body.html(
+			'<input type="hidden" name="post_id" id="upfront-post_id" value="' + _upfront_post_data.post_id + '" />' +
+			'<textarea id="upfront-body" rows="8" style="width:100%">' + content.raw.content + '</textarea>'
+		);
+		Upfront.Application.ContentEditor.run();
+	},
+	on_save: function () {
+		//var txt = this.$el.find("textarea").val();
+		//this.model.set_content(txt);
+		this.undelegateEvents();
+		this.delegateEvents();
+		this.render();
+	},
+	on_cancel: function () {
+		this.undelegateEvents();
+		this.deactivate();
+		this.delegateEvents();
+		this.render();
 	}
 });
 

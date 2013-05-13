@@ -98,7 +98,7 @@ define(_template_files, function () {
 				return false;
 			}
 
-		})
+		}),
 
 		_Upfront_PluralEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
 			initialize: function () {
