@@ -206,7 +206,7 @@ var _alpha = "alpha",
 		}
 	}),
 
-	Region = Backbone.Model.extend({
+	Region = ObjectModel.extend({
 		defaults: function(){
 			return {
 				"name": "",
@@ -245,9 +245,10 @@ var _alpha = "alpha",
 		"model": Region,
 		
 		get_by_name: function (name) {
-			var found = false;
+			var found = false,
+				name = name.toLowerCase();
 			this.each(function (model) {
-				if (model.get("name") == name) found = model;
+				if (model.get("name").toLowerCase() == name) found = model;
 			});
 			return found;
 		}
@@ -315,10 +316,7 @@ var _alpha = "alpha",
 			}
 		},
 		get_current_state: function () {
-			return {
-				"regions": Upfront.Util.model_to_json(this.get("regions")),
-				"wrappers": Upfront.Util.model_to_json(this.get("wrappers"))
-			};
+			return Upfront.Util.model_to_json(this.get("regions"));
 		},
 		has_undo_states: function () {
 			return !!Upfront.Util.Transient.length("undo");
@@ -347,8 +345,7 @@ var _alpha = "alpha",
 			}
 
 			Upfront.Util.Transient.push(other, this.get_current_state());
-			this.get("regions").reset(state.regions);
-			this.get("wrappers").reset(state.wrappers);
+			this.get("regions").reset(state);
 		}
 	}),
 

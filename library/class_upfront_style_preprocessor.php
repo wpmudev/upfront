@@ -50,18 +50,22 @@ class Upfront_StylePreprocessor {
 				'';
 				if ($i==$columns)
 					continue;
+				$sub_selector = array(".{$scope} .{$width}{$i}");
+				for ($s=$i+1; $s<=$columns; $s++){
+					$sub_selector[] = ".{$scope} .{$width}{$s} .{$width}{$i}";
+				}
 				for ($c=1; $c<$i; $c++) {
-					$rules[] = ".{$scope} .{$width}{$i} .{$width}{$c}" . 
+					$rules[] = implode(" .{$width}{$c}, ", $sub_selector) . " .{$width}{$c}" . 
 						'{' . 
 							sprintf('width: %f%%;', (100.00 / $i)*$c) .
 						'}' .
 					'';
-					$rules[] = ".{$scope} .{$width}{$i} .{$margin_left}{$c}" . 
+					$rules[] = implode(" .{$margin_left}{$c}, ", $sub_selector) . " .{$margin_left}{$c}" . 
 						'{' . 
 							sprintf('margin-left: %f%%;', (100.00 / $i)*$c) .
 						'}' .
 					'';
-					$rules[] = ".{$scope} .{$width}{$i} .{$margin_right}{$c}" . 
+					$rules[] = implode(" .{$margin_right}{$c}, ", $sub_selector) . " .{$margin_right}{$c}" . 
 						'{' . 
 							sprintf('margin-right: %f%%;', (100.00 / $i)*$c) .
 						'}' .
@@ -71,9 +75,9 @@ class Upfront_StylePreprocessor {
 				$max_classes_margin_left = array();
 				$max_classes_margin_right = array();
 				for (;$c<=$columns;$c++) {
-					$max_classes_width[] = ".{$scope} .{$width}{$i} .{$width}{$c}";
-					$max_classes_margin_left[] = ".{$scope} .{$width}{$i} .{$margin_left}{$c}";
-					$max_classes_margin_right[] = ".{$scope} .{$width}{$i} .{$margin_right}{$c}";
+					$max_classes_width[] = implode(" .{$width}{$c}, ", $sub_selector) . " .{$width}{$c}";
+					$max_classes_margin_left[] = implode(" .{$margin_left}{$c}, ", $sub_selector) . " .{$margin_left}{$c}";
+					$max_classes_margin_right[] = implode(" .{$margin_right}{$c}, ", $sub_selector) . " .{$margin_right}{$c}";
 				}
 				if (!empty($max_classes_width))
 					$rules[] = implode(', ', $max_classes_width) . 

@@ -93,6 +93,8 @@ var LayoutEditor = new (Subapplication.extend({
 					"model": app.layout,
 					"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
 				});
+				
+				Upfront.Events.trigger("layout:render", this);
 
 				if (!present) app.set_up_event_plumbing_after_render();
 
@@ -203,6 +205,7 @@ var LayoutEditor = new (Subapplication.extend({
 		// Set up behavior
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable, this);
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable, this);
+		Upfront.Events.on("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
 	},
 
 	set_up_event_plumbing_after_render: function () {
@@ -222,6 +225,9 @@ var LayoutEditor = new (Subapplication.extend({
 		//Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_resizable, this);
 
 		Upfront.Behaviors.GridEditor.init();
+		
+		// Region
+		Upfront.Events.on("command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable, this);
 
 		// Undo / Redo
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);

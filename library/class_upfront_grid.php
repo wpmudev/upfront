@@ -52,8 +52,13 @@ class Upfront_Grid {
 			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
+				$container = isset($region['container']) ? $region['container'] : $region['name'];
+				$region_col = upfront_get_property_value('col', $region);
+				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions'], $point->get_columns());
 				$region_view = new Upfront_Region($region);
+				$name = strtolower(str_replace(" ", "-", $region_view->get_name()));
 				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
+				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
 				foreach ($region['modules'] as $module) {
 					// Particular overrides
 					$class = upfront_get_property_value('class', $module);
@@ -68,11 +73,11 @@ class Upfront_Grid {
 					if ( isset($wrapper_data) ){
 						$wrapper_class = upfront_get_property_value('class', $wrapper_data);
 						$wrapper_col = upfront_get_class_num($width_pfx, $wrapper_class);
-						$point_css .= $point->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id');
+						$point_css .= $point->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $region_col);
 						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
 					}
 					else{
-						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id');
+						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $region_col);
 					}
 					foreach ($module['objects'] as $object) {
 						$point_css .= $point->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
@@ -85,6 +90,18 @@ class Upfront_Grid {
 			$css .= $point->wrap($point_css, $this->get_grid_scope());
 		}
 		return $css;
+	}
+
+	protected function _get_available_container_col ($container, $regions, $columns) {
+		$occupied = 0;
+		foreach ( $regions as $region ){
+			if ( isset($region['container']) && $region['container'] != $container )
+				continue;
+			$region_col = upfront_get_property_value('col', $region);
+			if ( $region_col )
+				$occupied += $region_col;
+		}
+		return ( $occupied > $columns ) ? $columns : $columns-$occupied;
 	}
 }
 
@@ -226,6 +243,16 @@ abstract class Upfront_GridBreakpoint {
 			) . "\n";
 		}
 		return $all_styles;
+	}
+
+	public function apply_col ($col, $entity, $scope=false, $selector='', $max_columns=false) {
+		$rule = self::PREFIX_WIDTH;
+		$size = $this->_columns_to_size($col, $max_columns) . '%';
+		return sprintf('%s %s {%s}', 
+			'.' . ltrim($scope, '. '), 
+			$selector,
+			"{$rule}: {$size};"
+		) . "\n";
 	}
 
 	protected function _map_class_to_style ($class, $max_columns) {

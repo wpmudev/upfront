@@ -82,8 +82,6 @@
 
 #page { 
   width:100%; 
-  max-width: 1232px; 
-  margin:0 auto;
   /*background-color: #ebebeb;*/
   /*background-image: linear-gradient(90deg, #fce1ec 50%, #fff 50%);
   background-image: -webkit-linear-gradient(0deg, #fce1ec 50%, #fff 50%);
@@ -92,9 +90,13 @@
   /*padding: 0 15px; */
 }
 
+.upfront-grid-layout {
+  max-width: 1232px; 
+  margin:0 auto;
+}
+
 .c1, .c2, .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11, .c12, .c13, .c14, .c15, .c16, .c17, .c18, .c19, .c20, .c21, .c22 { 
   float: left;
-  min-height: 15px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;

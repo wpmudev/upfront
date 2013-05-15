@@ -84,7 +84,7 @@ border-radius: 3px;
 
 
 /* override upfront styles that cause visual google maps bugs */
-div.upfront-editable_entity img {
+.upfront-map_module .upfront-editable_entity img {
 max-width: none;
 }
 

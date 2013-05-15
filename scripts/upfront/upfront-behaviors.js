@@ -87,7 +87,9 @@ var LayoutEditor = {
 
 var GridEditor = {
 	
-	containment: {$el: null, top: 0, left: 0, right: 0},
+	main: {$el: null, top: 0, left: 0, right: 0},
+	grid_layout: {left: 0, right: 0},
+	containment: {$el: null, top: 0, left: 0, right: 0, col: 0, grid: {top: 0, left: 0, right: 0}},
 	col_size: 0,
 	baseline: 0,
 	grid: null,
@@ -105,8 +107,10 @@ var GridEditor = {
 	 */
 	get_grid: function(x, y){		
 		var	ed = Upfront.Behaviors.GridEditor,
-			grid_x = Math.round((x-ed.containment.left)/ed.col_size)+1,
-			grid_y = Math.round((y-ed.containment.top)/ed.baseline)+1;
+			/*grid_x = Math.round((x-ed.containment.left)/ed.col_size)+1,
+			grid_y = Math.round((y-ed.containment.top)/ed.baseline)+1;*/
+			grid_x = Math.round((x-ed.grid_layout.left)/ed.col_size)+1,
+			grid_y = Math.round((y-ed.main.top)/ed.baseline)+1;
 		return {x: grid_x, y: grid_y};
 	},
 	
@@ -127,7 +131,9 @@ var GridEditor = {
 			col = Math.round($el.outerWidth()/ed.col_size),
 			outer_col = Math.round($el.outerWidth(true)/ed.col_size),
 			row = Math.round($el.outerHeight()/ed.baseline),
-			outer_row = Math.round($el.outerHeight(true)/ed.baseline);
+			outer_row = Math.round($el.outerHeight(true)/ed.baseline),
+			$region = $el.closest('.upfront-region'),
+			region = $region.data('name');
 		return {
 			$el: $el,
 			position: {
@@ -165,7 +171,8 @@ var GridEditor = {
 			grid_center: {
 				y: grid.y+(row/2)-1,
 				x: grid.x+(col/2)-1
-			}
+			},
+			region: region
 		};
 	},
 	
@@ -213,6 +220,8 @@ var GridEditor = {
 				return ignored ? true : false;
 			}), 
 			function(each){
+				if ( el.region != each.region )
+					return;
 				if ( ( each.outer_grid.top >= compare.top && each.outer_grid.top <= compare.bottom ) ||
 					 ( each.outer_grid.bottom >= compare.top && each.outer_grid.bottom <= compare.bottom ) ||
 					 ( compare.top >= each.outer_grid.top && compare.top <= each.outer_grid.bottom ) || 
@@ -289,8 +298,8 @@ var GridEditor = {
 		return aff_els;
 	},
 		
-	get_move_limit: function (aff_els, grid) {
-		var move_limit = [1, grid];
+	get_move_limit: function (aff_els, containment) {
+		var move_limit = [containment.grid.left, containment.grid.right];
 		_.each(aff_els.left, function(each){
 			if ( each.grid.right > move_limit[0] )
 				move_limit[0] = each.grid.right+1;
@@ -474,21 +483,41 @@ var GridEditor = {
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			main_pos = $main.offset(),
 			$layout = $main.find('.upfront-layout'),
+			$grid_layout = $main.find('.upfront-grid-layout:first'),
+			grid_layout_pos = $grid_layout.offset(),
 			is_object = view.$el.find(".upfront-editable_entity:first").is(".upfront-object"),
 			$containment = $cont || view.$el.parents(".upfront-editable_entities_container:first"),
 			containment_pos = $containment.offset(),
 			$els = is_object ? $containment.find('.upfront-object') : $layout.find('.upfront-module'),
 			$wraps = $layout.find('.upfront-wrapper'),
-			$regions = $layout.find('.upfront-region');
+			$regions = $layout.find('.upfront-region:not(.upfront-region-locked)');
 		// Set variables
-		ed.col_size = $main.outerWidth()/Upfront.Settings.LayoutEditor.Grid.size;
+		ed.col_size = $('.upfront-grid-layout:first').outerWidth()/ed.grid.size;
+		ed.main = {
+			$el: $main,
+			top: main_pos.top,
+			left: main_pos.left,
+			right: main_pos.left + $main.outerWidth()
+		};
+		ed.grid_layout = {
+			left: grid_layout_pos.left,
+			right: grid_layout_pos.left + $grid_layout.outerWidth()
+		};
+		var containment_col = Math.round($containment.outerWidth()/ed.col_size),
+			containment_grid = ed.get_grid(containment_pos.left, containment_pos.top);
 		ed.containment = {
 			$el: $containment,
 			top: containment_pos.top,
 			left: containment_pos.left,
 			right: containment_pos.left + $containment.outerWidth(),
-			col: Math.round($containment.outerWidth()/ed.col_size)
+			col: containment_col,
+			grid: { 
+				top: containment_grid.y,
+				left: containment_grid.x, 
+				right: containment_grid.x+containment_col-1
+			}
 		};
 		ed.els = _.map($els, ed.get_position ); // Generate elements position data
 		$els.each(function(){ ed.init_margin(this); }); // Generate margin data
@@ -517,7 +546,7 @@ var GridEditor = {
 		_.each(ed.wraps, function(each, index, list){
 			var is_me = ( wrap && each.$el.get(0) == wrap.$el.get(0) && wrap.$el.children(':not(.upfront-drop)').size() == 1 ),
 				aff = ed.get_affected_wrapper_els(each, ed.wraps, [], true),
-				lmt = ed.get_move_limit(aff, ed.containment.col),
+				lmt = ed.get_move_limit(aff, ed.containment),
 				els = ed.get_wrap_els(each),
 				el_min = ed.get_wrap_el_min(each),
 				drop_wrap_full = '<div class="upfront-drop upfront-drop-wrap upfront-drop-wrap-full upfront-drop-y" style="height:0px;"></div>';
@@ -557,7 +586,7 @@ var GridEditor = {
 				$each_wrap = each.$el.closest('.upfront-wrapper'),
 				wrap_pos = _.find(ed.wraps, function(w){ return w.$el.get(0) == $each_wrap.get(0); }),
 				aff = wrap_pos ? ed.get_affected_wrapper_els(wrap_pos, ed.wraps, [me], true) : ed.get_affected_els(each, ed.els, [me], true),
-				lmt = ed.get_move_limit(aff, ed.containment.col),
+				lmt = ed.get_move_limit(aff, ed.containment),
 				drop = '<div class="upfront-drop upfront-drop-obj upfront-drop-y '+( is_me ? ' upfront-drop-me '+ed.grid.top_margin_class : '' )+'" style="height:0;"></div>',
 				drop_wrap_y = '<div class="upfront-drop upfront-drop-wrap upfront-drop-y '+( is_me ? ' upfront-drop-me' : '' )+'" style="height:0;"></div>';
 		
@@ -566,14 +595,14 @@ var GridEditor = {
 				var clr = $each_wrap.hasClass('clr') ? ' clr' : '';
 				/*if ( $each_wrap.prev().hasClass('upfront-drop') )
 					$each_wrap.prev().addClass('upfront-drop-me'+clr);
-				else if ( lmt[0] == 1 && lmt[1] == ed.containment.col )
+				else if ( lmt[0] == 1 && lmt[1] == ed.containment.grid.right )
 					$each_wrap.before($(drop_wrap_y).addClass('upfront-drop-wrap-full'));*/
 				// The dropable already there, so just add class
 				if ( $each_wrap.hasClass('clr') && $each_wrap.next().hasClass('upfront-drop-wrap-full') )
 					$each_wrap.next().addClass('upfront-drop-me');
 				// Else we add the dropable
 				else
-					$each_wrap.before($(drop_wrap_y).addClass(ed.grid.class + (lmt[1] == ed.containment.col ? lmt[1]-lmt[0]+1 : wrap_col) + clr));
+					$each_wrap.before($(drop_wrap_y).addClass(ed.grid.class + (lmt[1] == ed.containment.grid.right ? lmt[1]-lmt[0]+1 : wrap_col) + clr));
 				wrap.$el.hide();
 			}
 			// Add dropable inside wrapper, in condition that the element has affected elements on either left/right
@@ -587,13 +616,13 @@ var GridEditor = {
 				else
 					each.$el.parent().after($(drop).addClass('upfront-drop-after'));
 			}
-			/*else if ( ( !is_me && ed.containment.col-lmt[0]+1 >= col && ed.containment.col-lmt[0]+1 < col+lmt[1]-lmt[0]+1 ) && ( !$each_wrap.prev() || !$each_wrap.prev().hasClass('upfront-drop') ) ) {
-				$each_wrap.before($(drop_wrap_y).addClass(ed.grid.size+(ed.containment.col-lmt[0]+1)));
+			/*else if ( ( !is_me && ed.containment.grid.right-lmt[0]+1 >= col && ed.containment.grid.right-lmt[0]+1 < col+lmt[1]-lmt[0]+1 ) && ( !$each_wrap.prev() || !$each_wrap.prev().hasClass('upfront-drop') ) ) {
+				$each_wrap.before($(drop_wrap_y).addClass(ed.grid.size+(ed.containment.grid.right-lmt[0]+1)));
 			}*/
-			/*else if ( !is_me && lmt[1] == ed.containment.col  ){
+			/*else if ( !is_me && lmt[1] == ed.containment.grid.right  ){
 				$each_wrap.after($(drop_wrap_y).addClass('upfront-drop-after '+ed.grid.class+col));
 			}*/
-			/*if ( lmt[1] == ed.containment.col ){
+			/*if ( lmt[1] == ed.containment.grid.right ){
 				ed.update_class($each_wrap, ed.grid.class, lmt[1]-lmt[0]+1);
 			}*/
 		});
@@ -646,7 +675,8 @@ var GridEditor = {
 		$layout.find('.upfront-wrapper').each(function(){
 			var $wrap = $(this),
 				wrap_id = $wrap.attr('id'),
-				wrap_model = wraps.get_by_wrapper_id(wrap_id);
+				wrap_model = wraps.get_by_wrapper_id(wrap_id),
+				clear = $wrap.data('clear');
 			if ( $wrap.children().size() == 0 ){
 				if ( wrap_model )
 					wraps.remove(wrap_model);
@@ -668,7 +698,7 @@ var GridEditor = {
 				wrap_col = max.col+max.margin.current.left+max.margin.current.right;
 			//ed.update_class(wrap.$el, ed.grid.class, wrap_col);
 			wrap_model.replace_class(ed.grid.class+wrap_col);
-			if ( $wrap.hasClass('clr') )
+			if ( (clear && clear == 'clear') || (!clear && $wrap.hasClass('clr')) )
 				wrap_model.add_class('clr');
 			else
 				wrap_model.remove_class('clr');
@@ -709,6 +739,10 @@ var GridEditor = {
 				cls += ' '+ed.grid.right_margin_class+margin.original.right;
 				
 				$me.before('<div class="upfront-resize '+cls+'" style="height:'+me.height+'px;"></div>');
+				// Refreshing the wrapper position
+				_.each(ed.wraps, function(each, index){
+					ed.wraps[index] = ed.get_position(each.$el);
+				});
 				Upfront.Events.trigger("entity:resize_start", view, view.model);
 			},
 			resize: function(e, ui){
@@ -717,7 +751,7 @@ var GridEditor = {
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap),
 					aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
-					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
+					move_limit = ed.get_move_limit(aff_els, ed.containment),
 					max_col = col + (move_limit[1]-me.grid.right),
 					
 					current_col = Math.ceil(ui.size.width/ed.col_size),
@@ -750,7 +784,7 @@ var GridEditor = {
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap),
 					aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
-					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
+					move_limit = ed.get_move_limit(aff_els, ed.containment),
 					rsz_col = $me.data('resize-col'),
 					rsz_row = $me.data('resize-row'),
 					
@@ -772,7 +806,6 @@ var GridEditor = {
 				ed.update_wrappers(region);
 				
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
-				// @TODO this is temporary hack, we need to somehow retain height and snap it to baseline
 				$me.css({
 					width: '',
 					minWidth: '',
@@ -823,6 +856,7 @@ var GridEditor = {
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap);
 				$me.hide();
+				$helper.css('max-width', me.width);
 				ed.create_drop_point(me, wrap);
 				
 				_.each(ed.els, function(each){
@@ -883,7 +917,7 @@ var GridEditor = {
 					margin_top_size = margin_data.original.top + relative_top,
 					
 					aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
-					move_limit = ed.get_move_limit(aff_els, ed.containment.col),
+					move_limit = ed.get_move_limit(aff_els, ed.containment),
 					
 					max_margin_x = 0,
 					max_margin_y = 0,
@@ -911,7 +945,7 @@ var GridEditor = {
 							bottom = compare_area_bottom;
 						else if ( compare_area_bottom > each.grid.bottom )
 							bottom = each.grid.bottom;
-						if ( top && bottom && left && right && grid.x > 0 && grid.x <= ed.containment.col )
+						if ( top && bottom && left && right && grid.x > 0 && grid.x <= ed.grid.size )
 							area = (right-left+1) * (bottom-top+1);
 						else
 							area = 0;
@@ -923,10 +957,19 @@ var GridEditor = {
 					max_region = _.max(regions_area, function(each){ return each.area; }),
 					region = max_region.area > 0 ? max_region.region : ed.get_region($me.closest('.upfront-region'));
 				
+				_.each(regions_area, function(r){
+					r.region.$el.find('>.upfront-debug-info').text(r.area);
+				});
+				
 				if ( !region.$el.hasClass('upfront-region-drag-active') ){				
 					$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
 					region.$el.addClass('upfront-region-drag-active');
 				}
+				
+				$helper.css('max-width', region.col*ed.col_size);
+				
+				col = col > region.col ? region.col : col;
+				compare_area_right = compare_area_left+region.col-1;
 					
 				// Get closest dropable
 				var hovered_drops = _.filter(ed.drops, function(each){
@@ -989,7 +1032,7 @@ var GridEditor = {
 				if ( !$clst_drop_el.hasClass('upfront-drop-use') ){
 					$('.upfront-drop-use').removeClass('upfront-drop-use');
 					$('.upfront-drop-x').not($clst_drop_el).stop().animate({width:0}, 500);
-					$('.upfront-drop-y').not($clst_drop_el).not('.upfront-drop-me.upfront-drop-wrap:not(.upfront-drop-wrap-full)').stop().animate({height:0}, 500);
+					$('.upfront-drop-y').not($clst_drop_el)/*.not('.upfront-drop-me.upfront-drop-wrap:not(.upfront-drop-wrap-full)')*/.stop().animate({height:0}, 500);
 					if ( $clst_drop_el.hasClass('upfront-drop-x') ){
 						var ani_w = $clst_drop_el.hasClass('clr') ? width : (clst_drop.right-clst_drop.left+1)*ed.col_size;
 						$clst_drop_el.addClass('upfront-drop-use').stop().animate({width:ani_w}, 500);
@@ -998,7 +1041,7 @@ var GridEditor = {
 						$clst_drop_el.addClass('upfront-drop-use').stop().animate({height:height}, 500);
 					}
 					$preview.css({
-						width: width,
+						width: col*ed.col_size,
 						height: height
 					});
 				}
@@ -1012,6 +1055,10 @@ var GridEditor = {
 					each_margin.current.top = each_margin.original.top;
 					each_margin.current.bottom = each_margin.original.bottom;
 					each.$el.data('margin', each_margin);
+				});
+				// normalize clear
+				_.each(ed.wraps, function(each){
+					each.$el.data('clear', (each.$el.hasClass('clr') ? 'clear' : 'none'));
 				});
 				
 				if ( $clst_drop_el.hasClass('upfront-drop-me') ){
@@ -1069,6 +1116,7 @@ var GridEditor = {
 								margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
 								margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
 								ed.adjust_els_right(need_adj, nx_wrap.grid.left+col+margin_data.current.left-1);
+								$nx_wrap.data('clear', 'none');
 								adjusted = true;
 							}
 						}
@@ -1085,7 +1133,7 @@ var GridEditor = {
 								return ( each.$el.get(0) == $clst_drop_el.closest('.upfront-wrapper').get(0) );
 							}),
 							drop_wrap_aff = drop_wrap ? ed.get_affected_wrapper_els(drop_wrap, ed.wraps, (wrap && ed.get_wrap_els(wrap).length == 1 ? [wrap, me] : [me]), true) : false,
-							drop_lmt = drop_wrap ? ed.get_move_limit(drop_wrap_aff, ed.containment.col) : false,
+							drop_lmt = drop_wrap ? ed.get_move_limit(drop_wrap_aff, ed.containment) : false,
 							drop_margin = drop_wrap ? current_grid_left-drop_lmt[0] : 0,
 							drop_margin_max = drop_wrap ? drop_lmt[1]-drop_lmt[0]-col+1 : 0,
 							drop_margin_top = clst_drop ? current_grid_top-clst_drop.top : current_grid_top;
@@ -1211,17 +1259,110 @@ var GridEditor = {
 				}
 				
 				// Add drop animation
-				if ( dropped ){
+				//if ( dropped ){
 					$me = view.$el.find('.upfront-editable_entity:first');
-					$me.addClass('upfront-dropped');
-					setTimeout(function(){ $me.removeClass('upfront-dropped'); }, 500);
-				}
+					$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){ $(this).removeClass('upfront-dropped'); }).addClass('upfront-dropped');
+					//setTimeout(function(){ $me.removeClass('upfront-dropped'); }, 500);
+				//}
 				
 				$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
 				$main.removeClass('upfront-dragging');
 				
 				Upfront.Events.trigger("entity:drag_stop", view, view.model);
 			}
+		});
+	},
+	
+	
+	
+	/**
+	 * Create region resizable
+	 * 
+	 * @param {Object} view
+	 * @param {Object} model
+	 */
+	create_region_resizable: function(view, model){
+		var app = this,
+			ed = Upfront.Behaviors.GridEditor,
+			$me = view.$el,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			$layout = $main.find('.upfront-layout')
+		;
+		if ( !model.get("container") || model.get("container") == model.get("name") )
+			return;
+		$me.resizable({
+			"containment": "parent",
+			//handles: "n, e, s, w",
+			handles: "e, w",
+			helper: "region-resizable-helper",
+			disabled: true,
+			start: function(e, ui){
+				var col = ed.get_class_num($me, ed.grid.class);
+				ed.col_size = $('.upfront-grid-layout:first').outerWidth()/ed.grid.size;
+				
+				Upfront.Events.trigger("entity:region:resize_start", view, view.model);
+			},
+			resize: function(e, ui){
+				var $helper = ui.helper;
+					col = ed.get_class_num($me, ed.grid.class),
+					prev_col = $me.prev('.upfront-region').size() > 0 ? ed.get_class_num($me.prev('.upfront-region'), ed.grid.class) : 0,
+					next_col = $me.next('.upfront-region').size() > 0 ? ed.get_class_num($me.next('.upfront-region'), ed.grid.class) : 0,
+					max_col = col + ( next_col > prev_col ? next_col : prev_col ),
+					current_col = Math.ceil(ui.size.width/ed.col_size),
+					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
+					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
+					rsz_col = ( current_col > max_col ? max_col : current_col ),
+					rsz_row = Math.ceil(h/ed.baseline)
+				;
+				if ( Math.abs($(window).height()-e.clientY) < 50 ){
+					h += (ed.baseline*10);
+					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
+				}
+				$helper.css({
+					height: h,
+					width: w,
+					minWidth: w,
+					maxWidth: w
+				});
+				$me.data('resize-col', rsz_col);
+				$me.data('resize-row', rsz_row);
+				/*$me.prevAll('.upfront-resize').last().css({
+					height: rsz_row*ed.baseline,
+					width: rsz_col*ed.col_size,
+					minWidth: rsz_col*ed.col_size,
+					maxWidth: rsz_col*ed.col_size
+				});*/
+			},
+			stop: function(e, ui){
+				var rsz_col = $me.data('resize-col'),
+					rsz_row = $me.data('resize-row');
+				
+				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
+				$me.css({
+					width: '',
+					minWidth: '',
+					maxWidth: '',
+					height: '',
+					position: '',
+					top: '',
+					left: ''
+				});
+				model.set_property('col', rsz_col);
+				model.set_property('row', rsz_row);
+				Upfront.Events.trigger("entity:region:resize_stop", view, view.model);
+			}
+		});
+	},
+	
+	/**
+	 * Toggle region resizable
+	 * 
+	 */
+	toggle_region_resizable: function(enable){
+		$('.upfront-region').each(function(){		
+			if ( !$(this).data('resizable') )
+				return;
+			$(this).resizable('option', 'disabled', (!enable));
 		});
 	}
 	

@@ -80,6 +80,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
 		$layout = Upfront_Layout::from_php($data);
 		$layout->delete();
+		$layout->delete_regions();
 		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
 	}
 
@@ -104,6 +105,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 	function load_main () {
 		$root = Upfront::get_root_url();
 		$ajax = admin_url('admin-ajax.php');
+		$admin = admin_url();
+		$site = site_url();
 
 
 		$entities = Upfront_Entity_Registry::get_instance();
@@ -221,6 +224,8 @@ $(function () {
 		Upfront.Settings = {
 			"root_url": "{$root}",
 			"ajax_url": "{$ajax}",
+			"admin_url": "{$admin}",
+			"site_url": "{$site}",
 			"Debug": {$debug},
 			"ContentEditor": {
 				"Requirements": {$layout_editor_requirements},
@@ -285,8 +290,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	function load_styles () {
 		$grid = Upfront_Grid::get_grid();
 		//$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
-		$layout_id = sanitize_text_field($_GET['layout_id']);
-		$layout = Upfront_Layout::from_id($layout_id);
+		$layout_ids = $_GET['layout_ids'];
+		$layout = Upfront_Layout::from_entity_ids($layout_ids);
+		if ( $layout->is_empty() )
+			$layout = Upfront_Layout::create_layout();
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$style = $preprocessor->process();

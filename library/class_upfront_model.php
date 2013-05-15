@@ -193,10 +193,13 @@ abstract class Upfront_JsonModel extends Upfront_Model {
 
 
 class Upfront_Layout extends Upfront_JsonModel {
-
+	
+	protected static $cascade;
+	
 	public static function from_entity_ids ($cascade) {
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
+		self::$cascade = $cascade;
 		foreach ($cascade as $id_part) {
 			$id = self::STORAGE_KEY . '-' . $id_part;
 			$layout = self::from_id($id);
@@ -209,6 +212,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function from_php ($data) {
+		if ( isset($data['layout']) )
+			self::$cascade = $data['layout'];
 		return new self($data);
 	}
 
@@ -217,52 +222,114 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function from_id ($id) {
+		$regions = self::get_regions_data();
 		$data = json_decode( get_option($id, json_encode(array())), true );
-		// Load global region
 		if ( ! empty($data) ) {
-			foreach ( self::_get_regions() as $region ){
-				if ( ! $region['global'] )
+			foreach ( $regions as $i => $region ) {
+				if ( isset($region['scope']) && $region['scope'] == 'global' )
 					continue;
-				$region_data = json_decode( get_option(self::_get_region_id($region['name']), json_encode(array())), true );
-				if ( empty($region_data) )
-					continue;
-				foreach ( $data['regions'] as $i => $r ) {
-					if ( $r['name'] == $region['name'] )
-						$data['regions'][$i] = $region_data;
+				foreach ( $data['regions'] as $region_data ) {
+					if ( $region['name'] != $region_data['name'] )
+						continue;
+					$regions[$i] = $region_data;
 				}
 			}
-		}
-		return self::from_php($data);
-	}
-
-	public static function create_layout () {
-		//$data = '{"name":"Layout 1","regions":[{"name":"Main","modules":[{"name":"Merged module","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357456975525-1753"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c6"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]},{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719047636-1467"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c14"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]},{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719048044-1716"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1357719072172-1882"},{"name":"class","value":"c22"}]},{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"image-object-1357460676135-1523"},{"name":"content","value":"http:\/\/wpsalad.com\/wp-content\/uploads\/2012\/11\/wpmudev.png"},{"name":"class","value":"c22"},{"name":"type","value":"ImageModel"},{"name":"view_class","value":"ImageView"}]}],"properties":[{"name":"element_id","value":"module-1357460676140-1230"},{"name":"class","value":"c20 ml2"}]},{"name":"Merged module","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719370220-1638"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]},{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357719370581-1294"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1357719375784-1417"},{"name":"class","value":"c22"}]}]},{"name":"sidebar","modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1357460687069-1239"},{"name":"content","value":"My awesome stub content goes here"},{"name":"class","value":"c22"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1357460687072-1451"},{"name":"class","value":"c20 ml2"}]}]}]}';
-		//$data = '{"name":"Layout 1","regions":[{"name":"Main"},{"name":"sidebar","modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1360045228310-1131"},{"name":"content","value":"Edit away!"},{"name":"class","value":"c22 ml0 mr0 mt0"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1360045228313-1375"},{"name":"class","value":"c22"},{"name":"has_settings","value":"0"}]}]}]}';
-		//$data = '{"name":"Layout 1","regions":[{"name":"Main"},{"name":"sidebar","modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"element_id","value":"text-object-1360045228310-1131"},{"name":"content","value":"Edit away!"},{"name":"class","value":"c22 ml0 mr0 mt0"},{"name":"type","value":"PlainTxtModel"},{"name":"view_class","value":"PlainTxtView"}]}],"properties":[{"name":"element_id","value":"module-1360045228313-1375"},{"name":"wrapper_id","value":"wrapper-13548645456-1231"},{"name":"class","value":"c22"},{"name":"has_settings","value":"0"}]}]}], "wrappers":[{"name":"","properties":[{"name":"wrapper_id","value":"wrapper-13548645456-1231"},{"name":"class","value":"c22"}]}]}';
-		//return self::from_json($data);
-		$data = array(
-			"name" => "Default Layout",
-			"properties" => array(),
-			"regions" => self::_get_regions(),
-			"wrappers" => array('name' => "", 'properties' => array())
-		);
-		foreach ( $data['regions'] as $i => $region ) {
-			if ( !empty($region['global']) )
-				$data['regions'][$i] = json_decode( get_option(self::_get_region_id($region['name']), json_encode(array())), true );
+			$data['regions'] = $regions;
 		}
 		return self::from_php($data);
 	}
 	
-	protected static function _get_regions () {
-		return apply_filters('upfront-regions', array(
-			array('name' => "Header", 'title' => __("Header Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
-			array('name' => "Left Sidebar", 'title' => __("Left Sidebar Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
-			//array('name' => "Main", 'title' => __("Main Area"), 'properties' => array(), 'modules' => array(), 'global' => false),
-			// Use this instead of main, so we have some content:
-			json_decode('{"name":"Main","properties":[],"wrappers":[{"name":"","properties":[{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"class","value":"c19 clr"}]}],"modules":[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"type","value":"ThisPostModel"},{"name":"view_class","value":"ThisPostView"},{"name":"element_id","value":"this_post-object-1368256944132-1598"},{"name":"class","value":"c22"},{"name":"has_settings","value":0}]}],"properties":[{"name":"element_id","value":"module-1368256944133-1595"},{"name":"class","value":"c17 upfront-this_post_module ml2 mr0 mt5 mb0"},{"name":"has_settings","value":0},{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"row","value":7}]}],"title":"Main Area","global":false}', true),
-			array('name' => "Right Sidebar", 'title' => __("Right Sidebar Area"), 'properties' => array(), 'modules' => array(), 'global' => true),
-			array('name' => "Footer", 'title' => __("Footer Area"), 'properties' => array(), 'modules' => array(), 'global' => true)
-		));
+	public static function get_regions_data () {
+		$regions = self::_get_regions();
+		foreach ( $regions as $i => $region ) {
+			if ( $region['scope'] == 'global' ){
+				$region_data = json_decode( get_option(self::_get_region_id($region['name']), json_encode(array())), true );
+				if ( empty($region_data) )
+					continue;
+				$regions[$i] = $region_data;
+			}
+		}
+		return $regions;
+	}
+
+	public static function create_layout () {
+		$data = array(
+			"name" => "Default Layout",
+			"properties" => array(),
+			"regions" => self::get_regions_data(),
+			"wrappers" => array('name' => "", 'properties' => array())
+		);
+		return self::from_php($data);
+	}
+	
+	protected static function _get_regions ($all = false) {
+		$regions = array();
+		$region_support = apply_filters('upfront_region_support', array('header', 'left-sidebar', 'right-sidebar', 'footer'), self::$cascade);
+		if ( $all || in_array('header', $region_support) )
+			$regions[] = array(
+				'name' => "header", 
+				'title' => __("Header Area"), 
+				'properties' => array(), 
+				'modules' => array(), 
+				'wrappers' => array(), 
+				'scope' => "global"
+			);
+		if ( $all || in_array('left-sidebar', $region_support) )
+			$regions[] = array(
+				'name' => "left-sidebar", 
+				'title' => __("Left Sidebar Area"), 
+				'properties' => array(
+					array( 'name' => 'col', 'value' => '5' )
+				), 
+				'modules' => array(), 
+				'wrappers' => array(), 
+				'scope' => "global",
+				'container' => 'main'
+			);
+		$regions[] = array(
+			'name' => "main", 
+			'title' => __("Main Area"), 
+			'properties' => array(), 
+			'modules' => array(), 
+			'wrappers' => array(), 
+			'scope' => "local", 
+			'container' => 'main',
+			'default' => true
+		);
+		// Use this instead of main, so we have some content:
+		/*$regions[] = array(
+			'name' => "main", 
+			'title' => __("Main Area"), 
+			'properties' => array(), 
+			'modules' => json_decode('[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"type","value":"ThisPostModel"},{"name":"view_class","value":"ThisPostView"},{"name":"element_id","value":"this_post-object-1368256944132-1598"},{"name":"class","value":"c22"},{"name":"has_settings","value":0}]}],"properties":[{"name":"element_id","value":"module-1368256944133-1595"},{"name":"class","value":"c17 upfront-this_post_module ml2 mr0 mt5 mb0"},{"name":"has_settings","value":0},{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"row","value":7}]}]', true), 
+			'wrappers' => json_decode('[{"name":"","properties":[{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"class","value":"c19 clr"}]}]', true), 
+			'scope' => "local", 
+			'container' => 'main',
+			'default' => true
+		);*/
+		
+		if ( $all || in_array('right-sidebar', $region_support) )
+			$regions[] = array(
+				'name' => "right-sidebar", 
+				'title' => __("Right Sidebar Area"), 
+				'properties' => array(
+					array( 'name' => 'col', 'value' => '5' )
+				), 
+				'modules' => array(), 
+				'wrappers' => array(), 
+				'scope' => "global",
+				'container' => 'main'
+			);
+		if ( $all || in_array('footer', $region_support) )
+			$regions[] = array(
+				'name' => "footer", 
+				'title' => __("Footer Area"), 
+				'properties' => array(), 
+				'modules' => array(), 
+				'wrappers' => array(), 
+				'scope' => "global"
+			);
+		return apply_filters('upfront_regions', $regions);
 	}
 	
 	protected static function _get_region_id ($region_name) {
@@ -286,7 +353,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public function save () {
 		$key = $this->get_id();
 		foreach ( self::_get_regions() as $region ){
-			if ( $region['global'] )
+			if ( $region['scope'] == 'global' )
 				update_option(self::_get_region_id($region['name']), $this->region_to_json($region['name']));
 		}
 		update_option($key, $this->to_json());
@@ -295,6 +362,16 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public function delete () {
 		return delete_option($this->get_id());
+	}
+	
+	public function delete_region ($region_name) {
+		return delete_option(self::_get_region_id($region_name));
+	}
+	
+	public function delete_regions () {
+		foreach ( self::_get_regions() as $i => $region ) {
+			$this->delete_region($region['name']);
+		}
 	}
 }
 

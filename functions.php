@@ -46,7 +46,8 @@ class Upfront {
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
-
+		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
+		
 		if (is_admin()) {
 			add_action('init', array($this, 'init_admin_behaviors'));
 		}
@@ -115,8 +116,12 @@ EOAdminStyle;
 		wp_enqueue_script('jquery-ui-draggable');
 		wp_enqueue_script('jquery-ui-resizable');
 		wp_enqueue_script('jquery-ui-selectable');
+		wp_enqueue_script('thickbox');
 
-		wp_enqueue_style('upfront-jquery-ui', 'http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css');
+		//wp_enqueue_style('upfront-jquery-ui', 'http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css');
+		wp_enqueue_style('wp-jquery-ui-dialog');
+		wp_enqueue_style('thickbox');
+		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic');
 		
 		// Color picker dependency - new stuff only works in admin :(
 		//wp_enqueue_script('wp-color-picker');
@@ -165,7 +170,7 @@ EOAdditivemarkup;
 		do_action('upfront-core-inject_dependencies');
 	}
 	
-	function add_edit_menu( $wp_admin_bar ){
+	function add_edit_menu ( $wp_admin_bar ) {
 		global $post, $tag, $wp_the_query;
 		$current_object = $wp_the_query->get_queried_object();
 		
@@ -175,6 +180,16 @@ EOAdditivemarkup;
 			'href' => '#',
 			'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
 		) );
+	}
+	
+	function attachment_fields_to_edit ( $form_fields, $post ) {
+		$image_src = wp_get_attachment_image_src($post->ID, 'full');
+		$form_fields['use_image'] = array(
+			'label' => __(''),
+			'input' => 'html',
+			'html'  => '<a href="#" onclick="top.Upfront.Events.trigger(\'uploader:image:selected\', ' . $post->ID . ', \'' . $image_src[0] . '\'); top.tb_remove(); return false;" class="button" id="upfront-use-image">Use Image</a>',
+		);
+		return $form_fields;
 	}
 
 }

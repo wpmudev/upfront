@@ -5,6 +5,9 @@ var _template_files = [
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
 	"text!upfront/templates/overlay_grid.html",
+	"text!upfront/templates/sidebar_settings_edit_area.html",
+	"text!upfront/templates/sidebar_settings_lock_area.html",
+	"text!upfront/templates/sidebar_settings_background.html",
 ];
 
 define(_template_files, function () {
@@ -327,35 +330,32 @@ define(_template_files, function () {
 
 	var Command_ToggleGrid = Command.extend({
 		defaults: {
-			_active: false,
-			_created: false
+			_active: false
 		},
 		initialize: function () {
 			this._active = false;
-			this._created = false;
 		},
 		render: function () {
 			this.$el.html('Toggle grid');
 		},
 		on_click: function () {
-			this._created || this.create_grid();
+			$('.upfront-overlay-grid').size() || this.create_grid();
 			this.toggle_grid();
 		},
 		create_grid: function () {
 			this.update_grid();
 			this.attach_event();
-			this._created = true;
 		},
 		toggle_grid: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			if (!this._active){
 				$main.addClass('show-debug');
-				$main.find('.upfront-overlay-grid').show();
+				$('.upfront-overlay-grid').show();
 				this._active = true;
 			}
 			else {
 				$main.removeClass('show-debug');
-				$main.find('.upfront-overlay-grid').hide();
+				$('.upfront-overlay-grid').hide();
 				this._active = false;
 			}
 		},
@@ -364,9 +364,9 @@ define(_template_files, function () {
 				columns = Upfront.Settings.LayoutEditor.Grid.size,
 				size_class = Upfront.Settings.LayoutEditor.Grid.class,
 				template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: size_class});
-			$main.find('.upfront-overlay-grid').remove();
-			$main.append(template);
-			!this._active || $main.find('.upfront-overlay-grid').show();
+			$('.upfront-overlay-grid').remove();
+			$('.upfront-grid-layout').prepend(template);
+			!this._active || $('.upfront-overlay-grid').show();
 		},
 		attach_event: function () {
 			var me = this;
@@ -497,6 +497,7 @@ define(_template_files, function () {
 			Upfront.Events.on("command:layout:save_success", this.reset_modules, this);
 			Upfront.Events.on("command:layout:save_error", this.reset_modules, this);
 			Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
+			Upfront.Events.on("layout:render", this.apply_state_binding, this);
 		},
 		get_title: function () {
 			return "Draggable Elements";
@@ -504,6 +505,10 @@ define(_template_files, function () {
 		on_save: function () {
 			var regions = this.model.get('regions');
 			regions.remove(regions.get_by_name('shadow'));
+		},
+		apply_state_binding: function () {
+			Upfront.Events.on("command:undo", this.reset_modules, this);
+			Upfront.Events.on("command:redo", this.reset_modules, this);
 		},
 		on_render: function () {
 			this.$el.addClass('expanded');
@@ -516,14 +521,17 @@ define(_template_files, function () {
 			if ( ! region ){
 				region = new Upfront.Models.Region({
 					"name": "shadow",
+					"container": "shadow",
 					"title": "Shadow Region"
 				});
 				this.model.get('regions').add( region );
 			}
-			region.get("modules").reset([]);
-			this.elements.each(function (element) {
-				element.add_element();
-			}, this);
+			if ( region.get("modules").length != this.elements.length ) {
+				region.get("modules").reset([]);
+				this.elements.each(function (element) {
+					element.add_element();
+				}, this);
+			}
 		},
 		render_element: function (element) {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -591,32 +599,179 @@ define(_template_files, function () {
 			Upfront.Events.on("region:activated", this.on_region_activate, this);
 		},
 		on_render: function () {
-			this.$el.html(
-				'<div class="panel-setting-item">' + 
-					'<div class="panel-setting-item-label">' + 'Edit areas' + '</div>' +
-					'<div class="panel-setting-switcher">' + 
-						'<span class="switch switch-off">Off</span>' +
-						'<span class="switch switch-on">On</span>' +
-						'<span class="knob"></span>' +
-					'</div>' +
-				'</div>' +
-				'<div class="panel-setting-dialog"></div>'
-			);
-			this.on_switch();
+			var template = _.template(_Upfront_Templates.sidebar_settings_edit_area, {})
+			this.$el.html(template);
 		},
 		on_region_activate: function (region) {
 			var name = region.model.get('title');
 			this.$el.find('.panel-setting-dialog').text(name);
 		},
 		on_switch: function () {
-			if ( this.$el.find('.switch-on').hasClass('active') ){
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+			if ( this.$el.find('.switch-on').hasClass('active') ){ // Switch off
 				this.$el.find('.switch-off').addClass('active');
 				this.$el.find('.switch-on').removeClass('active');
+				$main.removeClass('upfront-region-editing');
+				Upfront.Events.trigger("command:region:edit_toggle", false);
 			}
-			else {
+			else { // Switch on
 				this.$el.find('.switch-off').removeClass('active');
 				this.$el.find('.switch-on').addClass('active');
+				$main.addClass('upfront-region-editing');
+				Upfront.Events.trigger("command:region:edit_toggle", true);
 			}
+		}
+	});
+	
+	var SidebarPanel_Settings_Item_Background = SidebarPanel_Settings_Item.extend({
+		events: {
+			'click .background-image-delete': 'delete_image',
+			'click .position-select': 'update_position',
+			'click .tile-select': 'update_tile'
+		},
+		initialize: function () {
+			Upfront.Events.on("region:activated", this.on_region_activate, this);
+			Upfront.Events.on("uploader:image:selected", this.on_image_selected, this);
+		},
+		on_render: function () {
+			var template = _.template(_Upfront_Templates.sidebar_settings_background, {}),
+				post_id = _upfront_post_data.post_id || '';
+			this.$el.html(template);
+			this.$el.find("#region-bg-color").wpColorPicker({
+				change: this.on_update_color
+			});
+			this.$el.find("#region-bg-image-upload").attr('href', Upfront.Settings.admin_url+'media-upload.php?post_id='+post_id+'&type=image&TB_iframe=1')
+		},
+		on_region_activate: function (region) {
+			var name = region.model.get('title'),
+				color = region.model.get_property_value_by_name('background_color');
+			this.$el.find("#region-bg-color").val(color);
+			this.toggle_image(region.model);
+		},
+		on_image_selected: function (id, url) {
+			var app = Upfront.Application.LayoutEditor.layout,
+				region = app.get('regions').active_region;
+			region.set_property('background_image', url);
+			region.set_property('background_image_id', id);
+			region.set_property('background_repeat', 'repeat-x');
+			region.set_property('background_position', 'center');
+			region.set_property('background_fill', '');
+			this.toggle_image(region);
+		},
+		toggle_image: function (model) {
+			var	image = model.get_property_value_by_name('background_image'),
+				image_file = image ? image.split('/').reverse()[0] : '',
+				repeat = model.get_property_value_by_name('background_repeat'),
+				position = model.get_property_value_by_name('background_position'),
+				fill = model.get_property_value_by_name('background_fill');
+			if ( image ) {
+				this.$el.find('.panel-setting-background-more').addClass('expanded');
+				this.$el.find('.background-image-wrap').html(
+					'<div class="panel-setting-dialog panel-setting-dialog-image">' + 
+						'<img src="' + image + '" />' + image_file + 
+						'<a href="#" class="background-image-delete upfront-icon upfront-icon-delete"><span class="tooltip" data-tooltip="delete image"></span></a>' + 
+					'</div>'
+				);
+				this.$el.find('.position-select, .tile-select').prop('checked', false);
+				this.$el.find('.position-select[value="' + position + '"]').prop('checked', true);
+				if ( repeat == 'repeat' || repeat == 'repeat-x' )
+					this.$el.find('.tile-select[value=repeat-x]').prop('checked', true);
+				if ( repeat == 'repeat' || repeat == 'repeat-y' )
+					this.$el.find('.tile-select[value=repeat-y]').prop('checked', true);
+				if ( fill == 'fill' )
+					this.$el.find('.tile-select[value=fill]').prop('checked', true);
+				this.$el.find('#region-bg-image-upload').hide();
+				this.$el.find('#region-bg-image-edit').show();
+			}
+			else {
+				this.$el.find('.panel-setting-background-more').removeClass('expanded');
+				this.$el.find('#region-bg-image-edit').hide();
+				this.$el.find('#region-bg-image-upload').show();
+			}
+		},
+		delete_image: function () {
+			var app = Upfront.Application.LayoutEditor.layout,
+				region = app.get('regions').active_region;
+			region.set_property('background_image', '');
+			region.set_property('background_image_id', '');
+			region.set_property('background_repeat', '');
+			region.set_property('background_position', '');
+			region.set_property('background_fill', '');
+			this.toggle_image(region);
+		},
+		update_position: function () {
+			var app = Upfront.Application.LayoutEditor.layout,
+				region = app.get('regions').active_region,
+				position = region.get_property_value_by_name('background_position'),
+				new_position = this.$el.find('.position-select:checked').val();
+			if ( position != new_position )
+				region.set_property('background_position', new_position);
+		},
+		update_tile: function () {
+			var app = Upfront.Application.LayoutEditor.layout,
+				region = app.get('regions').active_region,
+				repeat = region.get_property_value_by_name('background_repeat'),
+				fill = region.get_property_value_by_name('background_fill'),
+				is_repeat_x = this.$el.find('.tile-select[value=repeat-x]').is(':checked'),
+				is_repeat_y = this.$el.find('.tile-select[value=repeat-y]').is(':checked'),
+				is_fill = this.$el.find('.tile-select[value=fill]').is(':checked');
+			if ( is_repeat_x && is_repeat_y )
+				region.set_property('background_repeat', 'repeat');
+			else if ( is_repeat_x )
+				region.set_property('background_repeat', 'repeat-x');
+			else if ( is_repeat_y )
+				region.set_property('background_repeat', 'repeat-y');
+			else
+				region.set_property('background_repeat', 'no-repeat');
+			if ( is_fill )
+				region.set_property('background_fill', 'fill');
+			else
+				region.set_property('background_fill', '');
+		},
+		on_update_color: function (e, ui) {
+			var app = Upfront.Application.LayoutEditor.layout,
+				region = app.get('regions').active_region,
+				color = ui.color.toString();
+			if ( color )
+				region.set_property('background_color', color);
+			else
+				region.set_property('background_color', '');
+		}
+	});
+	
+	var SidebarPanel_Settings_Item_LockArea = SidebarPanel_Settings_Item.extend({
+		events: {
+			"click .region-lock-switch": "on_switch"
+		},
+		initialize: function () {
+		},
+		on_render: function () {
+			var app = Upfront.Application.LayoutEditor.layout,
+				regions = app.get('regions'),
+				header = regions.get_by_name('header'),
+				footer = regions.get_by_name('footer'),
+				is_locked = header.get_property_value_by_name('is_locked') || footer.get_property_value_by_name('is_locked'),
+				template = _.template(_Upfront_Templates.sidebar_settings_lock_area, { lock_class: (is_locked ? 'locked' : '') })
+			this.$el.html(template);
+		},
+		on_switch: function () {
+			var app = Upfront.Application.LayoutEditor.layout,
+				regions = app.get('regions'),
+				header = regions.get_by_name('header'),
+				footer = regions.get_by_name('footer');
+			if ( this.$el.find('.region-lock-switch').hasClass('locked') ) {
+				// Unlock header/footer region
+				header.set_property('is_locked', 0);
+				footer.set_property('is_locked', 0);
+				this.$el.find('.region-lock-switch').removeClass('locked');
+			}
+			else {
+				// Lock header/footer region
+				header.set_property('is_locked', 1);
+				footer.set_property('is_locked', 1);
+				this.$el.find('.region-lock-switch').addClass('locked');
+			}
+			
 		}
 	});
 	
@@ -643,6 +798,7 @@ define(_template_files, function () {
 		initialize: function () {
 			this.settings = _([
 				new SidebarPanel_Settings_Item_EditArea({"model": this.model}),
+				new SidebarPanel_Settings_Item_Background({"model": this.model}),
 			]);
 		},
 		get_title: function () {
@@ -653,6 +809,11 @@ define(_template_files, function () {
 	});
 	
 	var SidebarPanel_Settings_Section_Behavior = SidebarPanel_Settings_Section.extend({
+		initialize: function () {
+			this.settings = _([
+				new SidebarPanel_Settings_Item_LockArea({"model": this.model}),
+			]);
+		},
 		get_title: function () {
 			return "Behavior";
 		},
@@ -735,7 +896,7 @@ define(_template_files, function () {
 		}
 	});
 	
-	var SidebarEditorMode = Backbone.View.extend({
+	/*var SidebarEditorMode = Backbone.View.extend({
 		"className": "sidebar-editor-mode",
 		events: {
 			"click .switch-mode-simple": "switch_simple",
@@ -762,12 +923,12 @@ define(_template_files, function () {
 			this.$el.find('.switch-mode-simple').removeClass('active');
 			this.$el.find('.switch-slider').addClass('switch-slider-full');
 		}
-	});
+	});*/
 	
 	var Sidebar = Backbone.View.extend({
 		"tagName": "div",
 		initialize: function () {
-			this.editor_mode = new SidebarEditorMode({"model": this.model});
+			//this.editor_mode = new SidebarEditorMode({"model": this.model});
 			this.sidebar_commands = {
 				primary: new SidebarCommands_PrimaryPostType({"model": this.model}),
 				additional: new SidebarCommands_AdditionalPostType({"model": this.model}),
@@ -780,8 +941,8 @@ define(_template_files, function () {
 		render: function () {
 			this.$el.html('<div class="upfront-logo" />');
 			// Editor Mode
-			this.editor_mode.render();
-			this.$el.append(this.editor_mode.el);
+			//this.editor_mode.render();
+			//this.$el.append(this.editor_mode.el);
 			// Primary post types
 			this.sidebar_commands.primary.render();
 			this.$el.append(this.sidebar_commands.primary.el);
