@@ -1,4 +1,8 @@
-<?php get_header(); ?>
+<?php 
+/*
+ --- Dead code ---
+*/
+get_header(); ?>
 
 <div id="upfront-title">
 	<h3 class="upfront-original"><?php echo $post->post_title; ?></h3>

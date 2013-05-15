@@ -292,6 +292,13 @@ var ContentEditor = new (Subapplication.extend({
 		});
 	},
 
+	stop: function () {
+		var app = this,
+			sidebar = Upfront.Application.LayoutEditor.sidebar
+		;
+		sidebar.from_content_editor();
+	},
+
 	create_editor: function () {
 		var app = this;
 		app.set_up_event_plumbing();

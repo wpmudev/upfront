@@ -254,6 +254,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
 		
 		add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
+		add_action('wp_ajax_upfront-post-update_status', array($this, "update_post_status"));
+		add_action('wp_ajax_upfront-post-update_password', array($this, "update_post_password"));
 		
 		add_action('wp_ajax_upfront-comments-approve', array($this, "approve_comment"));
 		add_action('wp_ajax_upfront-comments-unapprove', array($this, "unapprove_comment"));
@@ -306,6 +308,43 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$post = (array)Upfront_PostModel::get($post_id);
 		if (empty($post)) $this->_out(new Upfront_JsonResponse_Error("Invalid post"));
 		$post['post_name'] = $slug;
+
+		$updated = Upfront_PostModel::save($post);
+		$updated->permalink = get_permalink($updated->ID);
+		$this->_out(new Upfront_JsonResponse_Success($updated));
+	}
+
+	function update_post_status () {
+		$data = stripslashes_deep($_POST);
+		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
+		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
+
+		$status = !empty($data['status']) ? $data['status'] : false;
+		if (!$status) $this->_out(new Upfront_JsonResponse_Error("No status"));
+
+		if (!current_user_can('edit_post', $post_id)) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+
+		$post = (array)Upfront_PostModel::get($post_id);
+		if (empty($post)) $this->_out(new Upfront_JsonResponse_Error("Invalid post"));
+		$post['post_status'] = $status;
+
+		$updated = Upfront_PostModel::save($post);
+		$updated->permalink = get_permalink($updated->ID);
+		$this->_out(new Upfront_JsonResponse_Success($updated));
+	}
+
+	function update_post_password () {
+		$data = stripslashes_deep($_POST);
+		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
+		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
+
+		$password = !empty($data['password']) ? $data['password'] : '';
+
+		if (!current_user_can('edit_post', $post_id)) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+
+		$post = (array)Upfront_PostModel::get($post_id);
+		if (empty($post)) $this->_out(new Upfront_JsonResponse_Error("Invalid post"));
+		$post['post_password'] = $password;
 
 		$updated = Upfront_PostModel::save($post);
 		$updated->permalink = get_permalink($updated->ID);

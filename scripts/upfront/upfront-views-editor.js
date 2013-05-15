@@ -459,6 +459,7 @@ define(_template_files, function () {
 	});
 	
 	var SidebarPanel_Posts = SidebarPanel.extend({
+		className: "sidebar-panel upfront-panel-post_panel",
 		initialize: function () {
 
 		},
@@ -773,6 +774,8 @@ define(_template_files, function () {
 				control: new SidebarCommands_Control({"model": this.model})
 			};
 			this.sidebar_panels = new SidebarPanels({"model": this.model});
+
+			Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
 		},
 		render: function () {
 			this.$el.html('<div class="upfront-logo" />');
@@ -803,8 +806,15 @@ define(_template_files, function () {
 			return this.sidebar_commands[commands];
 		},
 		to_content_editor: function () {
-			var panel = this.sidebar_panels.panels.posts;
+			var panel = this.sidebar_panels.panels.posts,
+				data = $(document).data("upfront-post-" + _upfront_post_data.post_id),
+				post = data && data.post ? data.post : {},
+				post_model = new Backbone.Model(post)
+			;
 			panel.commands = _([
+				new Command_PopupStatus({"model": post_model}),
+				new Command_PopupVisibility({"model": post_model}),
+
 				new Command_PopupList({"model": this.model}),
 				new Command_PopupSlug({"model": this.model}),
 				new Command_PopupMeta({"model": this.model}),
@@ -814,10 +824,20 @@ define(_template_files, function () {
 			]);
 			panel.render();
 			panel.$el.find(".sidebar-panel-title").trigger("click");
+		},
+		from_content_editor: function () {
+			var panel = this.sidebar_panels.panels.posts;
+			panel.commands = _([]);
+			panel.render();
+			$(".sidebar-panel-title.upfront-icon.upfront-icon-panel-elements").trigger("click");
+		},
+		handle_post_change: function (post) {
+			var data = $(document).data("upfront-post-" + _upfront_post_data.post_id);
+			data.post = post;
+			$(document).data("upfront-post-" + _upfront_post_data.post_id, data);
+			this.to_content_editor();
 		}
 	});
-
-// ----- Bringing things back
 
 	var ContentEditor_SidebarCommand = Command.extend({
 		tagName: "div",
@@ -832,8 +852,9 @@ define(_template_files, function () {
 				"body": $("#upfront-body textarea").val()
 			};
 			Upfront.Util.post({"action": "upfront-edit-" + this.save_state, "data": data})
-				.success(function () {
+				.success(function (resp) {
 					Upfront.Util.log("data saved as draft");
+					Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
 				})
 				.error(function () {
 					Upfront.Util.log("error saving draft");
@@ -860,7 +881,8 @@ define(_template_files, function () {
 					"title": $title.val(),
 					"body": $body.val()
 				}
-			}).success(function () {
+			}).success(function (resp) {
+				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
 				Upfront.Util.log("Draft saved");
 			});
 		}
@@ -884,7 +906,8 @@ define(_template_files, function () {
 					"title": $title.val(),
 					"body": $body.val()
 				}
-			}).success(function () {
+			}).success(function (resp) {
+				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
 				Upfront.Util.log("Post published");
 			});
 		}
@@ -1085,6 +1108,79 @@ define(_template_files, function () {
 				me.$popup.bottom.append(search.$el);
 			});
 			return false;
+		}
+	});
+
+	var Command_PopupStatus = ContentEditor_SidebarCommand.extend({
+		className: "upfront-post-state upfront-post-status",
+		events: {
+			"click a": "handle_status_change"
+		},
+		render: function () {
+			var status = this.model.get("post_status");
+			status = status.charAt(0).toUpperCase() + status.slice(1);
+			this.$el.addClass("upfront-entity_list").html(
+				_.template("Status: <b>{{status}}</b> <a href='#'>Edit</a>", {status: status})
+			);
+		},
+		handle_status_change: function () {
+			Upfront.Util.post({
+				"action": "upfront-post-update_status",
+				"post_id": this.model.get("ID"),
+				"status": ("publish" == this.model.get("post_status") ? "draft" : "publish")
+			}).success(function (resp) {
+				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
+			});
+		}
+	});
+
+	var Command_PopupVisibility = ContentEditor_SidebarCommand.extend({
+		className: "upfront-post-state upfront-post-visibility",
+		events: {
+			"click a": "handle_popup_open"
+		},
+		$popup: {},
+		render: function () {
+			var is_public = !!this.model.get("post_password"),
+				status = is_public ? "Password protected" : "Public"
+			;
+			this.$el.addClass("upfront-entity_list").html(
+				_.template("Visibility: <b>{{status}}</b> <a href='#'>Edit</a>", {status: status})
+			);
+		},
+		handle_popup_open: function () {
+			var me = this,
+				popup = Upfront.Popup.open(function (data, $top, $bottom) {
+					var $me = $(this);
+					$me.empty()
+						.append(
+							'<div class="upfront-post_password-wrapper">' +
+								'Enter your new post password: ' +
+								'<input type="text" id="upfront-post_password" value="" />' +
+								'<button type="button" id="upfront-post_password-send">OK</button>' +
+							'</div>'
+						)
+					;
+					me.$popup = {
+						"top": $top,
+						"content": $me,
+						"bottom": $bottom
+					};
+					$me.find("#upfront-post_password-send").click(function () {
+						me.update_post_status($("#upfront-post_password").val());
+					});
+				})
+			;
+		},
+		update_post_status: function (password) {
+			Upfront.Util.post({
+				"action": "upfront-post-update_password",
+				"post_id": this.model.get("ID"),
+				"password": password
+			}).success(function (resp) {
+				Upfront.Popup.close();
+				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
+			});
 		}
 	});
 

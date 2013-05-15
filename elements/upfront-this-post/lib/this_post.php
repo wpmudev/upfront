@@ -12,6 +12,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if (!$post_id || !is_numeric($post_id)) return '';
 		
 		$post = get_post($post_id);
+		if ($post->post_password && !is_user_logged_in()) return ''; // Augment this!
 		$permalink = get_permalink($post->ID);
 		return "<article id='post-{$post->ID}' data-post_id='{$post->ID}'>" . 
 			"<h3 class='post_title'><a href='{$permalink}'>" . apply_filters('the_title', $post->post_title) . '</a></h3>' .
@@ -46,6 +47,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				"title" => $post->post_title,
 				"content" => $post->post_content,
 			),
+			"post" => $post,
 		)));
 	}
 }

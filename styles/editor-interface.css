@@ -1298,6 +1298,20 @@
 
 /* Post slug popup */
 
+.upfront-post_password-wrapper {
+	padding: 5px;
+	margin: 1em;
+}
+#upfront-post_password {
+	padding: 5px;
+	margin-right: 1em;
+}
+#upfront-post_password-send {
+	padding: 5px;
+}
+
+/* Visibility slug popup */
+
 .upfront-permalink_sample {
 	padding: 5px;
 	margin: 1em;
@@ -1308,4 +1322,22 @@
 }
 #upfront-post_slug-send {
 	padding: 5px;
+}
+
+/* Posts panel fix */
+#sidebar-ui .sidebar-panels .upfront-panel-post_panel .sidebar-panel-content {
+	background: #33475b;
+}
+.sidebar-panels .upfront-panel-post_panel h3.sidebar-panel-title {
+	display: none;
+}
+
+.upfront-post-state {
+	color: #7a94ac;
+}
+.upfront-post-state b {
+	color: #cde6fe;
+}
+.upfront-post-state a {
+	color: #1fcd8f;
 }
