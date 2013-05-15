@@ -1,0 +1,30 @@
+.ucontact-label-above label {
+	display:block;
+}
+
+.ucontact-label-over label {
+	display:none;
+}
+
+.ucontact-field_style-1 input, .ucontact-field_style-1 textarea {
+	background: #fcc;
+	border: 1px solid #fcf;
+} 
+
+.ucontact-field_style-2 input, .ucontact-field_style-2 textarea {
+	background: #cFc;
+	border: 1px solid #efe;
+} 
+
+.ucontact-field_style-3 input, .ucontact-field_style-3 textarea {
+	background: #ccF;
+	border: 1px solid #eef;
+} 
+
+.upfront-radio-innerinput label {
+	display:none;
+}
+
+.upfront-submit-container.ucontact-field_style-2 {
+	text-align: right;
+}
