@@ -185,7 +185,8 @@ abstract class Upfront_JsonModel extends Upfront_Model {
 	}
 
 	public function to_json () {
-		return json_encode($this->to_php(), true);
+		//return json_encode($this->to_php(), true);
+		return json_encode($this->to_php());
 	}
 
 }
@@ -347,7 +348,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 	
 	public function region_to_json ($region_name) {
-		return json_encode($this->get_region_data($region_name), true);
+		//return json_encode($this->get_region_data($region_name), true);
+		return json_encode($this->get_region_data($region_name));
 	}
 
 	public function save () {
