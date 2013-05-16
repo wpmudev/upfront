@@ -1,3 +1,13 @@
+/* Border-box layout for everything inside the contact form */
+.upfront-contact-form * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+.upfront-contact-form label {
+	line-height: 1.1em;
+}
+
+.upfront-field-container {
+	margin-bottom: 0.5em;
+}
+
 .ucontact-label-above label {
 	display:block;
 }
@@ -6,19 +16,76 @@
 	display:none;
 }
 
-.ucontact-field_style-1 input, .ucontact-field_style-1 textarea {
+.ucontact-label-above input,
+.ucontact-label-above textarea,
+.ucontact-label-over input,
+.ucontact-label-over textarea {
+	display:block;
+	width: 95%;
+}
+
+.upfront-submit-container input[type="submit"] {
+	width: auto;
+	display: inline;
+}
+
+/*clearfix for inline fields*/
+.ucontact-label-inline:before,
+.ucontact-label-inline:after {
+    content: " ";
+    display: table;
+}
+.ucontact-label-inline:after {
+    clear: both;
+}
+.ucontact-label-inline {
+	zoom:1;
+}
+.ucontact-label-inline label {
+	display:block;
+	float:left;
+	width:25%;
+}
+.ucontact-label-inline input,
+.ucontact-label-inline textarea {
+	display:block;
+	float:right;
+	width:75%;
+}
+.ucontact-label-inline.upfront-submit-container {
+	float:none;
+}
+
+
+
+/* Different form styles */
+.ucontact-field_style-1 {
+	font-size: Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif;
+}
+.ucontact-field_style-1 input, 
+.ucontact-field_style-1 textarea {
 	background: #fcc;
 	border: 1px solid #fcf;
+	padding: 5px;
 } 
+.upfront-submit-container.ucontact-field_style-1 {
+	text-align: center;
+}
 
 .ucontact-field_style-2 input, .ucontact-field_style-2 textarea {
 	background: #cFc;
-	border: 1px solid #efe;
+	border: 2px solid #595;
+	-webkit-border-radius: 5px;    
+    border-radius: 5px;
+	padding: 5px;
 } 
 
 .ucontact-field_style-3 input, .ucontact-field_style-3 textarea {
 	background: #ccF;
 	border: 1px solid #eef;
+	-webkit-box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+	box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+	padding: 5px;
 } 
 
 .upfront-radio-innerinput label {
@@ -27,4 +94,49 @@
 
 .upfront-submit-container.ucontact-field_style-2 {
 	text-align: right;
+}
+
+.upfront-region {
+	min-height: 200px !important;
+}
+
+.upfront-contact-form .ucontact-field-error {
+	background: #fee;
+	border:1px solid #a00;
+}
+
+.ucontact-msg {
+	background: #efe;
+	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+	text-align: center;
+	margin-bottom: 1em;
+}
+.ucontact-msg.error{
+	background: #fee;
+}
+
+/* Tweaks for the setting panels */
+
+.upfront-settings_panel div {
+	margin-bottom: 5px
+}
+
+.upfront-settings_panel input[type="radio"],
+.upfront-settings_panel input[type="checkbox"] {
+	margin-right: 5px;
+	float:left;
+}
+
+.upfront-settings_panel label {
+	font-weight: bold;
+	margin-bottom:2px	;
+}
+
+.ucontact-radio-option, 
+.ucontact-optional-disabled {
+	color: #666;
+}
+
+.ucontact-radio-option.ucontact-radio-selected {
+	color: #000;
 }

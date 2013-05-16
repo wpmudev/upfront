@@ -36,7 +36,7 @@ function ucontact_initialize () {
 	upfront_add_layout_editor_entity('ucontact', upfront_element_url('js/ucontact', __FILE__));
 
 	// Add the public stylesheet
-	add_action('wp_enqueue_scripts', array('Upfront_UcontactView', 'add_styles'));
+	add_action('wp_enqueue_scripts', array('Upfront_UcontactView', 'add_styles_scripts'));
 }
 
 //Hook it when Upfront is ready

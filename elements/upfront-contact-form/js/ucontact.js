@@ -19,6 +19,7 @@ var UcontactModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("form_message_label", 'Your message:');
 		this.init_property("form_button_text", 'Send');
 		this.init_property("form_email_to", 'admin@' + location.host);
+		this.init_property("form_validate_when", 'submit');
 
 		this.init_property("form_label_position", 'above');
 		this.init_property("form_style", 1);
@@ -89,7 +90,8 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 	getFieldStyleClass: function () {
 		var style = this.property_value('form_style'),
-			classes = 'ucontact-label-' + this.property_value('form_label_position');
+			classes = ' ucontact-label-' + this.property_value('form_label_position')
+		;
 
 		//Field style
 		classes = style ? classes + ' ucontact-field_style-' + style : classes;
@@ -262,45 +264,14 @@ var UcontactAppearanceSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend
 		return "Contact form appearance";
 	}
 });
-var UcontactField_Text = Upfront.Views.Editor.Settings.Item.extend({
+
+var UcontactField = Upfront.Views.Editor.Settings.Item.extend({
 	initialize: function(attrs){
-		this.options = attrs;
-	},
-	render: function () {
-		if(this.options.field_title)
-			this.wrap({
-				title: this.options.field_title,
-				markup: this.get_markup()
-			});
-		else
-			this.$el.append(this.get_markup());
-	},
-
-	get_markup: function () {
-		var value = this.model.get_property_value_by_name(this.options.field_name) || this.options.field_value;
-		value = value || '';
-		return '<label for="' + this.options.field_name + '">' + this.options.field_label + '</label>' +
-			'<input type="text" name="' + this.options.field_name + '" value="' + value + '" />';
-	},
-
-	get_name: function() {
-		return this.options.field_name;
-	},
-
-	get_value: function() {
-		return this.$el.find('input[name="' + this.options.field_name + '"]').val();
-	},
-	get_label: function() {
-		return this.options.field_label;
-	}
-});
-
-var UcontactField_Radio = Upfront.Views.Editor.Settings.Item.extend({
-	initialize: function (attrs) {
-		this.options = attrs.field_options ? attrs.field_options : false;
 		this.field_title = attrs.field_title ? attrs.field_title : false;
 		this.field_name = attrs.field_name;
 		this.field_label = attrs.field_label;
+		this.field_classes = attrs.field_classes ? atts.field_classes + ' upfront-settings-item-content' : 'upfront-settings-item-content';
+		this.disabled = attrs.field_disabled ? 'disabled="disabled"' : '';
 	},
 	render: function () {
 		if(this.field_title)
@@ -309,7 +280,67 @@ var UcontactField_Radio = Upfront.Views.Editor.Settings.Item.extend({
 				markup: this.get_markup()
 			});
 		else
-			this.$el.append(this.get_markup());
+			this.$el.append('<div class="upfront-settings-item"><div class="' + this.field_classes + '">' + this.get_markup() + '</div></div>');
+	},
+	get_name: function() {
+		return this.options.field_name;
+	},
+	get_label: function() {
+		return this.options.field_label;
+	},
+	set_disabled: function(disabled){
+		if(disabled)
+			this.disabled = 'disabled="disabled"';
+		else
+			this.disabled = '';
+	}
+});
+
+var UcontactField_Text = UcontactField.extend({
+	initialize: function(attrs){
+		UcontactField_Text.__super__.initialize.call(this, attrs);
+		this.options = attrs;
+	},
+
+	get_markup: function () {
+		var value = this.model.get_property_value_by_name(this.options.field_name) || this.options.field_value;
+		value = value || '';
+		return '<label for="' + this.options.field_name + '">' + this.options.field_label + '</label>' +
+			'<input type="text" name="' + this.options.field_name + '" value="' + value + '" ' + this.disabled + ' />';
+	},
+
+	get_value: function() {
+		return this.$el.find('input[name="' + this.options.field_name + '"]').val();
+	}
+});
+
+var UcontactField_Radio = UcontactField.extend({
+	initialize: function (attrs) {
+		UcontactField_Text.__super__.initialize.call(this, attrs);
+		this.options = attrs.field_options ? attrs.field_options : false;
+	},
+	events: {
+		'click input[type="radio"]': 'on_click'
+	},
+	on_click: function(e){
+		var $input = $(e.target).parent();
+		//Disable inner inputs
+		$input
+			.parents('.upfront-settings-item-content')
+			.find('.upfront-radio-innerinput input')
+			.attr('disabled', true);
+
+		//Enable this inner input
+		$input.find('.upfront-radio-innerinput input').attr('disabled', false);
+
+		//Reset all selected classes
+		$input
+			.parents('.upfront-settings-item-content')
+			.find('.ucontact-radio-selected')
+			.removeClass('ucontact-radio-selected');
+
+		//Add the selected class to this input
+		$input.addClass('ucontact-radio-selected');
 	},
 	get_markup: function (attrs) {
 		var markup = this.field_label ? '<label for="' + this.field_name + '">' + this.field_label + '</label>' : '',
@@ -319,29 +350,38 @@ var UcontactField_Radio = Upfront.Views.Editor.Settings.Item.extend({
 		this.parse_value();
 		
 		for (var i = 0; i < this.options.length; i++) {
-			var radioData = {extra: '', checked: ''},
+			var radioData = {
+					extra: '', 
+					checked: '',
+					selected: ''
+				},
 				option = this.options[i]
 			;
 			if(option instanceof UcontactField_Text){
 				radioData.label = option.get_label();
-				radioData.extra = '<div class="upfront-radio-innerinput">' + option.get_markup() + '</div>';
 				radioData.value = option.get_name();
+				if(radioData.value == this.field_value || (i == 0 && !this.field_value)){
+					radioData.checked = 'checked="checked"';
+					radioData.selected = 'ucontact-radio-selected';
+				}
+				else
+					option.set_disabled(true);
+				radioData.extra = '<div class="upfront-radio-innerinput">' + option.get_markup() + '</div>';
+				
 			}
 			else {
 				radioData.label = option.label,
 				radioData.value = option.value ? option.value : i;
+				if(radioData.value == this.field_value || (i == 0 && !this.field_value)){
+					radioData.checked = 'checked="checked"';
+					radioData.selected = 'ucontact-radio-selected';
+				}
 			}
-			if(radioData.value == this.field_value || i == 0 && !this.field_value)
-				radioData.checked = 'checked="checked"';
 
-			markup += '<input type="radio" name="' + this.field_name + '" value="' + radioData.value  +'" '+ radioData.checked +' />' + radioData.label + radioData.extra;
-		};
+			markup += '<div class="ucontact-radio-option ' + radioData.selected + '"><input type="radio" name="' + this.field_name + '" value="' + radioData.value  +'" '+ radioData.checked +' ' + this.disabled + ' />' + radioData.label + radioData.extra + '</div>';
+		}
 
 		return markup;
-	},
-
-	get_name: function() {
-		return this.field_name;
 	},
 
 	get_value: function() {
@@ -377,68 +417,65 @@ var UcontactField_Radio = Upfront.Views.Editor.Settings.Item.extend({
 	}
 })
 
-var UcontactField_Optional = Upfront.Views.Editor.Settings.Item.extend({
+var UcontactField_Optional = UcontactField.extend({
 	initialize: function (attrs) {
-		this.field_name = attrs.field_name;
-		this.field_title = attrs.field_title;
+		UcontactField_Text.__super__.initialize.call(this, attrs);
 		this.optional_field = attrs.field;
 	},
-	render: function () {
-		if(this.field_title)
-			this.wrap({
-				title: this.field_title,
-				markup: this.get_markup()
-			});
-		else
-			this.$el.append(this.get_markup());
+	events: {
+		'click input[type="checkbox"]': 'on_click'
+	},
+	on_click: function (e) {
+		var $input = $(e.target),
+			$optional = $input.parent('.upfront-settings-item-content'),
+			isDisabled = ! $input.is(':checked')
+		;
+		$optional.find('.ucontact-optional-innerinput input').attr('disabled', isDisabled);
+		$optional.toggleClass('ucontact-optional-disabled');
 	},
 	get_markup: function () {
 		var value = this.model.get_property_value_by_name(this.field_name),
 			checked = value ? 'checked="checked"' : '',
 			markup = '<input type="checkbox" value="1" name="' + this.field_name + '" ' + checked + ' />'
 		;
+
+		if(! checked)
+			this.field_classes += ' ucontact-optional-disabled';
+
 		//If all the fields extended the same parent view, we could use any kind of field
 		//to be optional, for now, only text fields are allowed
-		if(this.optional_field instanceof UcontactField_Text)
-			return markup + this.optional_field.get_markup();
+		if(this.optional_field instanceof UcontactField_Text){
+			if(!checked)
+				this.optional_field.set_disabled(true);
+			return markup + '<div class="ucontact-optional-innerinput">' + this.optional_field.get_markup() + '</div>';
+		}
 
-		//If not a actual field, we use the string as a label for the checkbox
+		//Otherwise a actual field, we use the string as a label for the checkbox
 		return markup + '<label for="' + this.field_name  + '">' + this.optional_field + '</label>';
-	},
-	get_name: function() {
-		return this.field_name;
 	},
 	get_value: function(){
 		var checkbox = this.$el.find('input[name=' + this.field_name + ']');
 		if(!checkbox.length || !checkbox.is(':checked'))
 			return 0; // Not checked;
-		if(this.optional_field instanceof UcontactField_Text)
+
+		if(this.optional_field instanceof UcontactField_Text){
 			return this.$el.find('input[name=' + this.optional_field.get_name() + ']').val();
+		}
 		return 1; 
 	}
 });
 
-var UcontactField_Select = Upfront.Views.Editor.Settings.Item.extend({
+var UcontactField_Select = UcontactField.extend({
 	initialize: function (attrs) {
-		this.field_name = attrs.field_name;
-		this.field_title = attrs.field_title;
+		UcontactField_Text.__super__.initialize.call(this, attrs);
 		this.field_options = attrs.field_options;
-	},
-	render: function () {
-		if(this.field_title)
-			this.wrap({
-				title: this.field_title,
-				markup: this.get_markup()
-			});
-		else
-			this.$el.append(this.get_markup());
 	},
 	get_markup: function () {
 		var value = this.model.get_property_value_by_name(this.field_name),
 			markup = this.field_label ? '<label for="' + this.field_name + '">' + this.field_label + '</label>' : ''
 		;
 
-		markup += '<select name="' + this.field_name + '">';
+		markup += '<select name="' + this.field_name + '" ' + this.disabled + '>';
 
 		for (var i = 0; i < this.field_options.length; i++) {
 			var option = this.field_options[i],
@@ -449,9 +486,6 @@ var UcontactField_Select = Upfront.Views.Editor.Settings.Item.extend({
 		};
 
 		return markup + '</select>';
-	},
-	get_name: function() {
-		return this.field_name;
 	},
 	get_value: function(){
 		return this.$el.find('select').val();
