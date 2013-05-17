@@ -1,29 +1,39 @@
 (function($) {
 
+/**
+ * Define the model for Upfront Contact form, initializing the properities
+ * to their default values.
+ * @type {Upfront.Models.ObjectModel}                                                                       [description]
+ */
 var UcontactModel = Upfront.Models.ObjectModel.extend({
+	/**
+	 * The init function is called after the contructor and Model intialize.
+	 * Here the default values for the model properties are set.
+	 * @return {null}
+	 */
 	init: function () {
-		this.init_property("type", "UcontactModel");
-		this.init_property("view_class", "UcontactView");
+		this.init_properties({
+			type: "UcontactModel",
+			view_class: "UcontactView",
+			element_id: Upfront.Util.get_unique_id("ucontact-object"),
+			"class": "c34 upfront-contact-form",
+			has_settings: 1,
 
-		this.init_property("element_id", Upfront.Util.get_unique_id("ucontact-object"));
-		this.init_property("class", "c34 upfront-contact-form");
-		this.init_property("has_settings", 1);
-
-		this.init_property("form_add_title", false);
-		this.init_property("form_name_label", 'Your name:');
-		this.init_property("form_email_label", 'Your email:');
-		this.init_property("show_subject", false);
-		this.init_property("form_subject", 'form_default_subject');
-		this.init_property("form_subject_label", 'Your subject:');
-		this.init_property("form_default_subject", 'Sent from the website');
-		this.init_property("form_message_label", 'Your message:');
-		this.init_property("form_button_text", 'Send');
-		this.init_property("form_email_to", 'admin@' + location.host);
-		this.init_property("form_validate_when", 'submit');
-
-		this.init_property("form_label_position", 'above');
-		this.init_property("form_style", 1);
-		this.init_property("form_use_icons", 1);
+			form_add_title: false,
+			form_name_label: "Your name:",
+			form_email_label: "Your email:",
+			show_subject: false,
+			form_subject: 'form_default_subject',
+			form_subject_label: 'Your subject:',
+			form_default_subject: 'Sent from the website',
+			form_message_label: 'Your message:',
+			form_button_text: 'Send',
+			form_email_to: 'admin@' + location.host,
+			form_validate_when: 'submit',
+			form_label_position: 'above',
+			form_style: 1,
+			form_use_icons: 1
+		});
 	}
 });
 
@@ -283,10 +293,10 @@ var UcontactField = Upfront.Views.Editor.Settings.Item.extend({
 			this.$el.append('<div class="upfront-settings-item"><div class="' + this.field_classes + '">' + this.get_markup() + '</div></div>');
 	},
 	get_name: function() {
-		return this.options.field_name;
+		return this.field_name;
 	},
 	get_label: function() {
-		return this.options.field_label;
+		return this.field_label;
 	},
 	set_disabled: function(disabled){
 		if(disabled)
@@ -431,27 +441,37 @@ var UcontactField_Optional = UcontactField.extend({
 			isDisabled = ! $input.is(':checked')
 		;
 		$optional.find('.ucontact-optional-innerinput input').attr('disabled', isDisabled);
-		$optional.toggleClass('ucontact-optional-disabled');
+
+		//It would be much easier if the wrap element let adding classes to the item-content div.
+		if(!isDisabled){
+			//In the first click, remove the class from every tag that have it.
+			$optional.parent().find('.ucontact-optional-disabled').removeClass('ucontact-optional-disabled');
+		}
+		else //Add the class only to the container.
+			$optional.addClass('ucontact-optional-disabled');
 	},
 	get_markup: function () {
 		var value = this.model.get_property_value_by_name(this.field_name),
 			checked = value ? 'checked="checked"' : '',
-			markup = '<input type="checkbox" value="1" name="' + this.field_name + '" ' + checked + ' />'
+			markup = '<input type="checkbox" value="1" name="' + this.field_name + '" ' + checked + ' />',
+			disabled_class = checked ? '' : ' ucontact-optional-disabled'
 		;
 
+		//This would always work if the wrap method of SettingsItem accepted the field_classes
+		//attribute. Now only work if the setting field doesn't have a title.
 		if(! checked)
-			this.field_classes += ' ucontact-optional-disabled';
+			this.field_classes += disabled_class;
 
 		//If all the fields extended the same parent view, we could use any kind of field
 		//to be optional, for now, only text fields are allowed
 		if(this.optional_field instanceof UcontactField_Text){
 			if(!checked)
 				this.optional_field.set_disabled(true);
-			return markup + '<div class="ucontact-optional-innerinput">' + this.optional_field.get_markup() + '</div>';
+			return markup + '<div class="ucontact-optional-innerinput' + disabled_class + '">' + this.optional_field.get_markup() + '</div>';
 		}
 
 		//Otherwise a actual field, we use the string as a label for the checkbox
-		return markup + '<label for="' + this.field_name  + '">' + this.optional_field + '</label>';
+		return markup + '<label for="' + this.field_name  + '" class="' + disabled_class + '">' + this.optional_field + '</label>';
 	},
 	get_value: function(){
 		var checkbox = this.$el.find('input[name=' + this.field_name + ']');
