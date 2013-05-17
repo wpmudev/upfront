@@ -1,3 +1,5 @@
+@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:200');
+
 /* Border-box layout for everything inside the contact form */
 .upfront-contact-form * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 .upfront-contact-form label {
@@ -88,9 +90,49 @@
 	padding: 5px;
 } 
 
-.upfront-radio-innerinput label {
-	display:none;
+
+.ucontact-field_style-4 {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size:18px;
 }
+
+.ucontact-field_style-4 label{
+	padding-left: 10px;
+	margin-bottom: 10px;
+	color:#999;
+}
+
+.ucontact-field_style-4 input,
+.ucontact-field_style-4 textarea {
+	background: rgba(255,255,255,0.7);
+	padding: 10px;
+	border: 1px solid #777;
+	margin: 10px 0px 20px;
+	width: 100%;
+	font-family: 'Source Sans Pro', sans-serif;
+	color: #555;
+}
+
+.upfront-submit-container.ucontact-field_style-4 {
+	text-align: right;
+}
+
+.ucontact-field_style-4 input[type="submit"] {
+	width: auto;
+	background: #28DC96;
+	border-radius: 10px;
+	color: #0F6545;
+	font-family: 'Source Sans Pro', sans-serif;
+	border:none;
+	border-bottom: 1px solid #0F6545;
+	border-top: 1px solid #2FFDAD;
+	padding: 0.5em 2em;
+}
+
+.ucontact-field_style-4 input[type="submit"]:hover {
+	background: #3ea;
+}
+
 
 .upfront-submit-container.ucontact-field_style-2 {
 	text-align: right;
@@ -114,6 +156,7 @@
 .ucontact-msg.error{
 	background: #fee;
 }
+
 
 /* Tweaks for the setting panels */
 
@@ -139,4 +182,8 @@
 
 .ucontact-radio-option.ucontact-radio-selected {
 	color: #000;
+}
+
+.upfront-radio-innerinput label {
+	display:none;
 }

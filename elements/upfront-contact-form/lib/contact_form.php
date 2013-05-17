@@ -32,6 +32,20 @@ class Upfront_UcontactView extends Upfront_Object {
 		wp_enqueue_script('ucontact-validator', upfront_element_url('js/validator.js', dirname(__FILE__)), array('jquery'));
 	}
 
+	public function on_ajax_submit () {
+		$this->check_form_received();
+		$error = $this->msg_class == 'error';
+		$this->json_response(array(
+			'error'=> $error,
+			'message' => $this->msg
+		));
+	}
+
+	private static function json_response ($data) {
+		header("Content-type: application/json; charset=utf-8");
+		die(json_encode($data));
+	}
+
 	private function check_form_received () {
 		if($_POST['ucontact'] && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')){
 			//Get all the needed fields and sanitize them
@@ -79,11 +93,11 @@ class Upfront_UcontactView extends Upfront_Object {
 				$this->msg_class = 'error';
 
 			else if(! wp_mail($emailto, $subject, $message, $headers)){
-				$this->msg = 'There was an error sending the email.';
+				$this->msg = __('There was an error sending the email.');
 				$this->msg_class = 'error';
 			}
 			else
-				$this->msg = 'The email has been sent successfully.';
+				$this->msg = __('The email has been sent successfully.');
 		}
 	}
 
@@ -122,5 +136,10 @@ class Upfront_UcontactView extends Upfront_Object {
 			$classes .= ' ucontact-field-icons';
 
 		return $classes;	
+	}
+
+	private function echo_placeholder($label){
+		if($this->_get_property('form_label_position') == 'over')
+			echo 'placeholder="' . $label . '"';
 	}
 }

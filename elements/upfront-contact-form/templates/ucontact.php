@@ -12,24 +12,28 @@
 		<input type="hidden" name="contactformid" value="<?php echo $id ?>">
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="sendername"><?php echo $name_label ?></label>
-			<input type="text" class="text-field <?php echo $validate ?>" name="sendername" value="<?php echo $_POST['sendername'] ?>" />
+			<input type="text" class="text-field <?php echo $validate ?>" name="sendername" value="<?php echo $_POST['sendername'] ?>" <?php $this->echo_placeholder($name_label) ?> />
 		</div>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="senderemail"><?php echo $email_label ?></label>
-			<input type="email" class="email-field <?php echo $validate ?>" name="senderemail" value="<?php echo $_POST['senderemail'] ?>" />
+			<input type="email" class="email-field <?php echo $validate ?>" name="senderemail" value="<?php echo $_POST['senderemail'] ?>" <?php $this->echo_placeholder($email_label) ?> />
 		</div>
 		<?php if($show_subject): ?>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="subject"><?php echo $subject_label ?></label>
-			<input type="text" class="text-field <?php echo $validate ?>" name="subject" value="<?php echo $_POST['subject'] ?>" />
+			<input type="text" class="text-field <?php echo $validate ?>" name="subject" value="<?php echo $_POST['subject'] ?>" <?php $this->echo_placeholder($subject_label) ?> />
 		</div>
 		<?php endif; ?>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="sendermessage"><?php echo $message_label ?></label>
-			<textarea class="textarea-field <?php echo $validate ?>" name="sendermessage"><?php echo $_POST['sendermessage'] ?></textarea>
+			<textarea class="textarea-field <?php echo $validate ?>" name="sendermessage" <?php $this->echo_placeholder($message_label) ?>><?php echo $_POST['sendermessage'] ?></textarea>
 		</div>
 		<div class="upfront-field-container upfront-submit-container <?php echo $field_classes ?>">
 			<input type="submit" name="send" value="<?php echo $button_text ?>" class="button submit-field">
 		</div>
 	</form>
 </div>
+<script type="text/javascript">
+	if(typeof(window.ajaxurl) == 'undefined')
+		window.ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
+</script>
