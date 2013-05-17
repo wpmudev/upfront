@@ -305,15 +305,17 @@
 	display: inline-block;
 	margin: 0 5px 5px 0;
 	padding: 5px 10px 0;
-	height: 38px;
-	font-size: 13px;
+	height: 35px;
+	font-family: verdana; 
+	font-weight: 200;
+	font-size: 11px;
 	line-height: 24px;
 	background: #e5f3ff;
-	border-top: 2px solid #fff;
-	border-left: 1px solid #a3bfd9;
-	border-right: 1px solid #a3bfd9;
-	border-bottom: 2px solid #a3bfd9;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
 	border-radius: 6px;
+	border: 1px solid #a2bed8;
+	box-shadow: 0 1px 0 #a2bed8, inset 0 1px 0px #fff;
 	color: #395269;
 	cursor: move;
 	cursor: -moz-grab;
@@ -325,19 +327,19 @@
 .draggable-element.element-drag-active {
 	background: #b8d1e6;
 	border: 1px solid #d9eeff;
+	box-shadow: none;
 	height: 37px;
 	color: #6b92b2;
 	opacity: .8;
 }
-.draggable-element.element-dragging {
+.draggable-element:active, .draggable-element.element-dragging {
 	cursor: move;
 	cursor: -moz-grabbing;
 	cursor: -webkit-grabbing;
 }
 .draggable-element:hover, .draggable-element.element-dragging {
-	border-left-color: #537ea6;
-	border-right-color: #537ea6;
-	border-bottom-color: #537ea6;
+	border: 1px solid #537ea6;
+	box-shadow: 0 1px 0 #537ea6, inset 0 1px 0px #fff;
 }
 #sidebar-ui .panel-section {
 	font-size: 15px;
