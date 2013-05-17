@@ -43,12 +43,13 @@ abstract class Upfront_EntityResolver {
 		$query = self::_get_query($query);
 		
 		$wp_entity = array();
+		$wp_object = $query->get_queried_object();
 		$wp_id = $query->get_queried_object_id();
 		
 		if (!$wp_id && $query->is_404) {
 			$wp_entity = self::_to_entity('404_page');
 		} else {
-			$post_type = !empty($query->post_type) ? $query->post_type : 'post';
+			$post_type = !empty($wp_object->post_type) ? $wp_object->post_type : 'post';
 			$wp_entity = self::_to_entity($post_type, $wp_id);
 		}
 		
@@ -253,14 +254,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $regions;
 	}
 
-	public static function create_layout () {
+	public static function create_layout ($layout_ids = array()) {
 		$data = array(
 			"name" => "Default Layout",
 			"properties" => array(),
-			"regions" => self::get_regions_data(),
-			"wrappers" => array('name' => "", 'properties' => array())
+			"regions" => self::get_regions_data()
 		);
-		return self::from_php($data);
+		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
 	
 	protected static function _get_regions ($all = false) {
@@ -330,7 +330,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'wrappers' => array(), 
 				'scope' => "global"
 			);
-		return apply_filters('upfront_regions', $regions);
+		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
 	
 	protected static function _get_region_id ($region_name) {

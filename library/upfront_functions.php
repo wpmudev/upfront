@@ -36,6 +36,10 @@ function upfront_element_url ($relpath, $filepath) {
 	return trailingslashit(Upfront::get_root_url()) . $relpath;
 }
 
+function upfront_get_unique_id ($pfx = '') {
+	return sprintf("%s-%s-%s", ($pfx ? $pfx : "entity"), time(), rand(1000,1999));
+}
+
 
 
 // ----- API -----

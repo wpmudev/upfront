@@ -107,7 +107,7 @@ class Upfront_Grid {
 
 abstract class Upfront_GridBreakpoint {
 	const PREFIX_WIDTH = 'width';
-	const PREFIX_HEIGHT = 'height';
+	const PREFIX_HEIGHT = 'min-height';
 	const PREFIX_CLEAR = 'clear';
 	const PREFIX_MARGIN_LEFT = 'margin-left';
 	const PREFIX_MARGIN_RIGHT = 'margin-right';
