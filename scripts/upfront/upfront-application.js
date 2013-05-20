@@ -206,6 +206,7 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable, this);
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable, this);
 		Upfront.Events.on("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
+		Upfront.Events.on("layout:render", Upfront.Behaviors.GridEditor.refresh_draggables, this);
 	},
 
 	set_up_event_plumbing_after_render: function () {

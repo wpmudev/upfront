@@ -90,6 +90,7 @@ var GridEditor = {
 	main: {$el: null, top: 0, left: 0, right: 0},
 	grid_layout: {left: 0, right: 0},
 	containment: {$el: null, top: 0, left: 0, right: 0, col: 0, grid: {top: 0, left: 0, right: 0}},
+	max_row: 0,
 	col_size: 0,
 	baseline: 0,
 	grid: null,
@@ -222,9 +223,9 @@ var GridEditor = {
 			function(each){
 				if ( el.region != each.region )
 					return;
-				if ( ( each.outer_grid.top >= compare.top && each.outer_grid.top <= compare.bottom ) ||
+				if ( ( each.outer_grid.top >= compare.top && each.outer_grid.top < compare.bottom ) ||
 					 ( each.outer_grid.bottom >= compare.top && each.outer_grid.bottom <= compare.bottom ) ||
-					 ( compare.top >= each.outer_grid.top && compare.top <= each.outer_grid.bottom ) || 
+					 ( compare.top >= each.outer_grid.top && compare.top < each.outer_grid.bottom ) || 
 					 ( compare.bottom >= each.outer_grid.top && compare.bottom <= each.outer_grid.bottom ) ){
 					if ( compare.left > each.outer_grid.right ){
 						aff_els.left.push(each);
@@ -460,6 +461,19 @@ var GridEditor = {
 			wrap_el_max = ed.get_wrap_el_max(adj_wrap, ignore),
 			wrap_right = wrap_el_max ? ( cmp_right && cmp_right > wrap_el_max.grid.right ? cmp_right : wrap_el_max.grid.right ) : ( cmp_right ? cmp_right : adj_wrap.grid.left-1 );
 		ed.adjust_els_right(adj_wrap_aff_right, wrap_right, update_class);
+		if ( cmp_right+1 == ed.containment.grid.left && ed.get_wrap_els(adj_wrap).length == 1 ) {
+			adj_wrap.$el.nextAll('.upfront-wrapper:eq(0)').data('clear', 'clear');
+		}
+	},
+	
+	/**
+	 * Normalize elements and wrappers 
+	 */
+	normalize: function (els, wraps) {
+		_.each(wraps, function(wrap){
+			if ( wrap.outer_grid.left == 1 && !wrap.$el.hasClass('clr') )
+				wrap.$el.addClass('clr');
+		});
 	},
 	
 	/**
@@ -471,6 +485,7 @@ var GridEditor = {
 		ed.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		ed.grid = Upfront.Settings.LayoutEditor.Grid;
 		
+		ed.max_row = Math.floor(($(window).height()*.6)/ed.baseline);
 	},
 	
 	/**
@@ -523,6 +538,8 @@ var GridEditor = {
 		$els.each(function(){ ed.init_margin(this); }); // Generate margin data
 		ed.wraps = _.map($wraps, ed.get_position ); // Generate wrappers position data
 		ed.regions = _.map($regions, ed.get_position ); // Generate regions position data
+		
+		ed.normalize(ed.els, ed.wraps);
 	},
 	
 	/**
@@ -549,15 +566,20 @@ var GridEditor = {
 				lmt = ed.get_move_limit(aff, ed.containment),
 				els = ed.get_wrap_els(each),
 				el_min = ed.get_wrap_el_min(each),
+				region = ed.get_region(each.$el.closest('.upfront-region')),
 				drop_wrap_full = '<div class="upfront-drop upfront-drop-wrap upfront-drop-wrap-full upfront-drop-y" style="height:0px;"></div>';
 				drop_wrap_fxd = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed" style="height:'+each.$el.outerHeight()+'px;"></div>';
 			
+			// Add full dropable after each first column wrapper
+			if ( each.grid.left == region.grid.left && !each.$el.prev().hasClass('upfront-drop-wrap-full') ){
+				each.$el.before(drop_wrap_full);
+			}
 			// The wrapper right side has enough space, so add a dropable place after it
 			if ( !is_me && lmt[1]-each.grid.right >= col ){
 				each.$el.after($(drop_wrap_fxd).addClass(ed.grid.class+(lmt[1]-each.grid.right)));
 			}
 			// The wrapper placed on first column and the left side has enough space, so add a dropable place before it
-			if ( !is_me && each.grid.left == 1 && el_min.grid.left-each.grid.left >= col ){
+			if ( !is_me && each.grid.left == region.grid.left && el_min.grid.left-each.grid.left >= col ){
 				each.$el.before($(drop_wrap_fxd).addClass(ed.grid.class+(el_min.grid.left-lmt[0])+' clr'));
 			}
 		});
@@ -573,14 +595,6 @@ var GridEditor = {
 				$right_wrap.after($(drop_wrap_x).css('height', $right_wrap.outerHeight()));
 			}
 		}*/
-		$('.upfront-drop-fixed').each(function(){
-			var pos = $(this).position();
-			$(this).css({
-				position: 'absolute',
-				top: pos.top,
-				left: pos.left
-			});
-		});
 		_.each(ed.els, function(each, index, els){
 			var is_me = ( each.$el.get(0) == me.$el.get(0) ),
 				$each_wrap = each.$el.closest('.upfront-wrapper'),
@@ -626,7 +640,16 @@ var GridEditor = {
 				ed.update_class($each_wrap, ed.grid.class, lmt[1]-lmt[0]+1);
 			}*/
 		});
-		$('.upfront-drop-me').addClass(ed.grid.top_margin_class+margin.original.top);
+		//$('.upfront-drop-me').addClass(ed.grid.top_margin_class+margin.original.top);
+		$('.upfront-drop-me').css({height:me.height+(margin.original.top*ed.baseline)});
+		$('.upfront-drop-fixed').each(function(){
+			var pos = $(this).position();
+			$(this).css({
+				position: 'absolute',
+				top: pos.top,
+				left: pos.left
+			});
+		});
 		ed.drops = _.map($('.upfront-drop'), function(each){
 			var $el = $(each),
 				off = $el.offset(),
@@ -645,9 +668,6 @@ var GridEditor = {
 				is_first = $el.hasClass('upfront-drop-first'),
 				is_last = $el.hasClass('upfront-drop-last'),
 				y_rel = ( is_after ? -2 : ( is_full ? ( is_first ? -2 : 0 ) : 2 ) );
-			if ( is_me ){
-				grid1.y -= margin.original.top;
-			}
 			return {
 				$el: $el,
 				x: grid.x,
@@ -658,10 +678,10 @@ var GridEditor = {
 				bottom: grid2.y+y_rel
 			};
 		});
-		$('.upfront-drop-me').css({height:me.height});
 		$('.upfront-drop-x').css({width:0});
 		$('.upfront-drop').append('<div class="upfront-drop-preview">');
 	},
+	
 	
 	/**
 	 * Update wrappers
@@ -739,6 +759,10 @@ var GridEditor = {
 				cls += ' '+ed.grid.right_margin_class+margin.original.right;
 				
 				$me.before('<div class="upfront-resize '+cls+'" style="height:'+me.height+'px;"></div>');
+				// Refreshing the elements position
+				_.each(ed.els, function(each, index){
+					ed.els[index] = ed.get_position(each.$el);
+				});
 				// Refreshing the wrapper position
 				_.each(ed.wraps, function(each, index){
 					ed.wraps[index] = ed.get_position(each.$el);
@@ -842,7 +866,7 @@ var GridEditor = {
 		//$me.append('<div class="upfront-drag-handle" />');
 		$me.draggable({
 			revert: true,
-			revertDuration: 1,
+			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
 			//handle: '.upfront-drag-handle',
@@ -857,6 +881,8 @@ var GridEditor = {
 					wrap = ed.get_wrap($wrap);
 				$me.hide();
 				$helper.css('max-width', me.width);
+				$helper.css('height', me.height);
+				$helper.css('max-height', ed.max_row*ed.baseline);
 				ed.create_drop_point(me, wrap);
 				
 				_.each(ed.els, function(each){
@@ -880,7 +906,7 @@ var GridEditor = {
 					
 					height = $helper.outerHeight(),
 					width = $helper.outerWidth(),
-	
+					
 					current_offset = $helper.offset(),
 					current_left = current_offset.left,
 					current_top = current_offset.top,
@@ -906,6 +932,7 @@ var GridEditor = {
 					//compare_area_right = compare_area_right > current_grid_right ? current_grid_right : compare_area_right,
 					compare_area_bottom = grid.y-compare_area_top+grid.y,
 					compare_area_bottom = compare_area_bottom > current_grid_bottom ? current_grid_bottom : compare_area_bottom,
+					compare_are_bottom = compare_area_bottom > compare_area_top+ed.max_row ? compare_area_top+ed.max_row : compare_area_bottom,
 					
 					// Figure out the margin
 					margin_data = $me.data('margin'),
@@ -966,10 +993,10 @@ var GridEditor = {
 					region.$el.addClass('upfront-region-drag-active');
 				}
 				
-				$helper.css('max-width', region.col*ed.col_size);
+				//$helper.css('max-width', region.col*ed.col_size);
 				
 				col = col > region.col ? region.col : col;
-				compare_area_right = compare_area_left+region.col-1;
+				compare_area_right = compare_area_left+col-1;
 					
 				// Get closest dropable
 				var hovered_drops = _.filter(ed.drops, function(each){
@@ -992,13 +1019,13 @@ var GridEditor = {
 				}),
 				drop = _.map(hovered_drops, function(each){
 					var diff_x = /*each.left - current_grid_left*/ 0,
-						diff_y = each.y - current_grid_top;
+						diff_y = each.y - compare_area_top;
 						d = Math.sqrt(Math.pow(diff_x, 2) + Math.pow(diff_y, 2)),
 						diff_x1 = /*each.left - current_grid_left*/ 0,
-						diff_y1 = each.top - current_grid_top,
+						diff_y1 = each.top - compare_area_top,
 						d1 = Math.sqrt(Math.pow(diff_x1, 2) + Math.pow(diff_y1, 2)),
 						diff_x2 = /*each.left - current_grid_left*/ 0,
-						diff_y2 = each.bottom - current_grid_top,
+						diff_y2 = each.bottom - compare_area_top,
 						d2 = Math.sqrt(Math.pow(diff_x2, 2) + Math.pow(diff_y2, 2)),
 						//d_min = (d+d1+d2)/3;
 						d_min = _.min([d, d1, d2]);
@@ -1015,30 +1042,34 @@ var GridEditor = {
 				clst_drops = _.filter(drop, function(each){ return each.d == get_clst_drop.d; }),
 				clst_drops_sort = _.sortBy(clst_drops, function(each, index, list){
 					// Sort by priority
-					if ( each.$el.hasClass('upfront-drop-me') )
+					/*if ( each.$el.hasClass('upfront-drop-me') )
 						return 1;
 					else if ( each.$el.hasClass('upfront-drop-use') )
 						return 2;
-					else if ( each.$el.hasClass('upfront-drop-after') )
+					else*/ if ( each.$el.hasClass('upfront-drop-after') )
 						return 4;
 					else if ( each.$el.hasClass('upfront-drop-wrap-full') )
 						return 5;
+					else if ( each.$el.hasClass('upfront-drop-fixed') )
+						return 2;
 					else
 						return 3;
 				}),
 				clst_drop = _.first(clst_drops_sort),
 				$clst_drop_el = clst_drop ? clst_drop.$el : $('.upfront-drop-me'),
 				$preview = $clst_drop_el.find('.upfront-drop-preview');
+				
 				if ( !$clst_drop_el.hasClass('upfront-drop-use') ){
 					$('.upfront-drop-use').removeClass('upfront-drop-use');
 					$('.upfront-drop-x').not($clst_drop_el).stop().animate({width:0}, 500);
-					$('.upfront-drop-y').not($clst_drop_el)/*.not('.upfront-drop-me.upfront-drop-wrap:not(.upfront-drop-wrap-full)')*/.stop().animate({height:0}, 500);
+					$('.upfront-drop-y').not($clst_drop_el).not('.upfront-drop-me.upfront-drop-wrap:not(.upfront-drop-wrap-full)').stop().animate({height:0}, 500);
 					if ( $clst_drop_el.hasClass('upfront-drop-x') ){
 						var ani_w = $clst_drop_el.hasClass('clr') ? width : (clst_drop.right-clst_drop.left+1)*ed.col_size;
 						$clst_drop_el.addClass('upfront-drop-use').stop().animate({width:ani_w}, 500);
 					}
 					else{
-						$clst_drop_el.addClass('upfront-drop-use').stop().animate({height:height}, 500);
+						var ani_h = (margin_data.original.top*ed.baseline) + height;
+						$clst_drop_el.addClass('upfront-drop-use').stop().animate({height:ani_h}, 500);
 					}
 					$preview.css({
 						width: col*ed.col_size,
@@ -1087,7 +1118,7 @@ var GridEditor = {
 					
 					$preview.css({
 						marginLeft: margin_data.current.left * ed.col_size,
-						marginTop: (margin_data.current.top-margin_data.original.top) * ed.baseline
+						marginTop: margin_data.current.top * ed.baseline
 					});
 				}
 				else { // Moved
@@ -1103,7 +1134,7 @@ var GridEditor = {
 						var adjusted = false;
 						if ( $clst_drop_el.nextAll('.upfront-wrapper').size() > 0 ){
 							var $nx_wrap = $clst_drop_el.nextAll('.upfront-wrapper').eq(0),
-								nx_wrap = _.find(ed.wraps, function(each){ return $nx_wrap.get(0) == each.$el.get(0); });
+								nx_wrap = _.find(ed.wraps, function(each){ return $nx_wrap.get(0) == each.$el.get(0); }),
 								need_adj = _.filter(ed.get_wrap_els(nx_wrap), function(each){
 									return ( me.$el.get(0) != each.$el.get(0) && each.outer_grid.left == nx_wrap.grid.left )
 								}),
@@ -1265,6 +1296,7 @@ var GridEditor = {
 					//setTimeout(function(){ $me.removeClass('upfront-dropped'); }, 500);
 				//}
 				
+				$('.upfront-region-drag-active .upfront-module').css('max-height', '');
 				$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
 				$main.removeClass('upfront-dragging');
 				
@@ -1273,6 +1305,17 @@ var GridEditor = {
 		});
 	},
 	
+	refresh_draggables: function(){
+		var app = this,
+			ed = Upfront.Behaviors.GridEditor,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			$layout = $main.find('.upfront-layout');
+		$layout.find('.ui-draggable').each(function(){
+			var cursor_top = $(this).outerHeight() > 60 ? 60 : $(this).outerHeight()/2;
+			$(this).draggable('option', 'cursorAt', {top: cursor_top});
+		});
+		
+	},
 	
 	
 	/**

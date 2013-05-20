@@ -736,6 +736,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .upfront-dragging .upfront-module {
 	outline: 1px dotted #888;
+	overflow: hidden;
 }
 .upfront-dragging .upfront-module:hover {
 	outline: 2px dashed #666;
@@ -934,10 +935,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	top: 50%;
 	margin-top: -7px;
 	margin-left: 10px;
+	width: 50px;
 	border: 1px solid #aaa;
 	border-radius: 4px;
 	padding: 0 5px;
-	white-space: nowrap;
+	/*white-space: nowrap;*/
 	z-index: 1000;
 }
 .show-debug .upfront-drop-debug:before {
@@ -1000,7 +1002,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .ui-draggable-dragging {
 	opacity: .6;
-	-webkit-transition: max-width .2s;
+	min-height: 0 !important;
+	/*-webkit-transition: max-width .3s, max-height .3s;*/
 }
 .upfront-dropped {
 	-webkit-animation-fill-mode: both;
