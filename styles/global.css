@@ -78,6 +78,18 @@
 	     url('../ui/fonts/websymbols-regular-webfont.svg') format('svg');
 }
 
+@font-face {
+    font-family: 'RobotoRegular';
+    src:url('../font/robotocondensed-regular-webfont.eot');
+    src: url('../font/robotocondensed-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/robotocondensed-regular-webfont.woff') format('woff'),
+         url('../font/robotocondensed-regular-webfont.ttf') format('truetype'),
+         url('../font/robotocondensed-regular-webfont.svg#roboto_condensedregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 /* grid experiment */
 
 #page { 
