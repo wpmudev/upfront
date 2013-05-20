@@ -130,6 +130,12 @@ var UcontactModel = Upfront.Models.ObjectModel.extend({
  * @type {Upfront.Views.ObjectView}
  */
 var UcontactView = Upfront.Views.ObjectView.extend({
+	initialize: function(options){
+		this.constructor.__super__.initialize.call(this, [options]);
+		Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
+	},
+	checkDeleteElement: function() {
+	},
 	get_content_markup: function() {
 		//Add a title to the form?
 		var markup = this.property_value('form_add_title') ? '<div class="upfront-contact-form-title">' + this.property_value('form_add_title') + '</div>' : '',
@@ -263,17 +269,44 @@ var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	}
 });
 
+/**
+ * A settings panel which sent the model to storing when saved.
+ * @type {Upfront.Views.Editor.Settings.Panel}
+ */
+var OnSaveStoringPanel = Upfront.Views.Editor.Settings.Panel.extend({
+	actions: {
+		save: 'ucontact_save'
+	},
+	initialize: function(options){
+		//Listen to the save event
+		this.on('upfront:settings:panel:saved', this.storeElement, this);
+	},
+	storeElement: function(that) {
+		// this == that
+		Upfront.Util.post({action: this.actions.save, data: Upfront.Util.model_to_json(this.model)})
+			.success(function(){
+				Upfront.Util.log('Contact from saved.');
+			})
+			.error(function(){
+				Upfront.Util.log('Error saving contact form');
+			})
+		;
+	}
+});
+
 
 /**
  * Creates a settings panel for the contact form editor with all the field settings properties.
- * @type {Upfront.Views.Editor.Settings.Panel}
+ * @type {OnSaveStoringPanel}
  */
-var UcontactFieldSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
+var UcontactFieldSettingsPanel = OnSaveStoringPanel.extend({
 	/**
 	 * Add all the fields (settings) to the settings panel.
 	 * @return {null}
 	 */
-	initialize: function () {
+	initialize: function (options) {
+		// call parent initialize
+		this.constructor.__super__.initialize.call(this, [options]);
 		this.settings = _([
 			new UcontactField_Optional({
 				model: this.model,
@@ -371,14 +404,16 @@ var UcontactFieldSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 /**
  * Creates a settings panel for the contact form editor with all the field appearance properties.
- * @type {Upfront.Views.Editor.Settings.Panel}
+ * @type {OnSaveStoringPanel}
  */
-var UcontactAppearanceSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
+var UcontactAppearanceSettingsPanel = OnSaveStoringPanel.extend({
 	/**
 	 * Add all the fields (settings) to the settings panel.
 	 * @return {null}
 	 */
-	initialize: function () {
+	initialize: function (options) {
+		// call parent initialize
+		this.constructor.__super__.initialize.call(this, [options]);
 		this.settings = _([
 			new UcontactField_Radio({
 				model: this.model,
@@ -425,6 +460,7 @@ var UcontactAppearanceSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend
 		return "Contact form appearance";
 	}
 });
+
 
 /**
  * Abstraction of a HTML field, to be added easily to the settings panel.

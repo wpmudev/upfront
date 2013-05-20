@@ -8,7 +8,6 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		//Check if the form has been sent
 		$this->check_form_received();
-	
 
 		return $this->get_template('ucontact', array(
 			'title' => $this->_get_property('form_add_title'),
@@ -29,20 +28,56 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public static function add_styles_scripts () {
 		wp_enqueue_style('ucontact-style', upfront_element_url('css/ucontact.css', dirname(__FILE__)));
-		wp_enqueue_script('ucontact-validator', upfront_element_url('js/validator.js', dirname(__FILE__)), array('jquery'));
+		wp_enqueue_script('ucontact-front', upfront_element_url('js/ucontact-front.js', dirname(__FILE__)), array('jquery'));
 	}
 
-	public function on_ajax_submit () {
-		$this->check_form_received();
-		$error = $this->msg_class == 'error';
-		$this->json_response(array(
-			'error'=> $error,
-			'message' => $this->msg
+	public static function on_ajax_submit () {
+		if(!$_POST['contactformid'])
+			self::json_response(array(
+				'error' => true,
+				'message' => __('Unknown contact form.')
+			));
+		$contactid = $_POST['contactformid'];
+		$form = self::find($_POST['contactformid']);
+		if(!$form)
+			self::json_response(array(
+				'error' => true,
+				'message' => __('Unknown contact form.')
+			));
+
+		$form->check_form_received();
+		$form->json_response(array(
+			'error'=> $form->msg_class == 'error',
+			'message' => $form->msg
 		));
+	}
+
+	public static function store () {
+		if(!$_POST['data'] || !$_POST['data']['properties'])
+			self::json_response(new Upfront_JsonResponse_Error('The contact form data is not valid.'));
+		$contact_form = array();
+		$data = $_POST['data']['properties'];
+		foreach($data as $prop){
+			$contact_form[$prop['name']] = $prop['value'];
+		}
+		if(!$contact_form['element_id'])
+			self::json_response(new Upfront_JsonResponse_Error('Unknown contact form.'));
+		update_option($contact_form['element_id'], $_POST['data']);
+		$contact_form_object = self::find($contact_form['element_id']);
+		self::json_response(new Upfront_JsonResponse_Success($contact_form_object->get_markup()));
+	}
+
+	public static function find ($id) {
+		$contact_form = get_option($id);
+		if(!$contact_form)
+			return false;
+		return new Upfront_UcontactView($contact_form);
 	}
 
 	private static function json_response ($data) {
 		header("Content-type: application/json; charset=utf-8");
+		if($data instanceof Upfront_HttpResponse)
+			die($data->get_output());
 		die(json_encode($data));
 	}
 
@@ -52,10 +87,15 @@ class Upfront_UcontactView extends Upfront_Object {
 			$_POST = stripslashes_deep( $_POST );
 			$name = sanitize_text_field($_POST['sendername']);
 			$email = is_email($_POST['senderemail']);
-			if($this->_get_property('show_subject'))
+			$show_subject = $this->_get_property('show_subject');
+
+			if($show_subject && $show_subject != 'false'){
 				$subject = sanitize_text_field($_POST['subject']);
-			else
+			}
+			else{
+				$show_subject = false;
 				$subject = $this->_get_property('form_default_subject');
+			}
 
 			//Strip unwanted tags from the message
 			$message = wp_kses(
@@ -101,6 +141,14 @@ class Upfront_UcontactView extends Upfront_Object {
 		}
 	}
 
+	/**
+	 * Validation check for the contact form fields.
+	 * @param  String $name    Name sent by the user
+	 * @param  String $email   Email sent by the user
+	 * @param  String $subject Subject for the email
+	 * @param  String $message Message sent by the user
+	 * @return String|Boolean          A message with the error or false if no errors.
+	 */
 	private function check_fields($name, $email, $subject, $message){
 		if(empty($name))
 			return __('You must write your name.');

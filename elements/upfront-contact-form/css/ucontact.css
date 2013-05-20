@@ -46,13 +46,13 @@
 .ucontact-label-inline label {
 	display:block;
 	float:left;
-	width:25%;
+	width:25% !important;
 }
 .ucontact-label-inline input,
 .ucontact-label-inline textarea {
 	display:block;
 	float:right;
-	width:75%;
+	width:75% !important;
 }
 .ucontact-label-inline.upfront-submit-container {
 	float:none;
@@ -107,7 +107,7 @@
 	background: rgba(255,255,255,0.7);
 	padding: 10px;
 	border: 1px solid #777;
-	margin: 10px 0px 20px;
+	margin: 0 0 20px;
 	width: 100%;
 	font-family: 'Source Sans Pro', sans-serif;
 	color: #555;
@@ -118,7 +118,7 @@
 }
 
 .ucontact-field_style-4 input[type="submit"] {
-	width: auto;
+	width: auto !important;
 	background: #28DC96;
 	border-radius: 10px;
 	color: #0F6545;
@@ -157,6 +157,13 @@
 	background: #fee;
 }
 
+.ucontact-loading {
+	background: url('../../../img/loading.gif') no-repeat center center;
+	display: block;
+	float:left;
+	width: 16px;
+	height: 16px;
+}
 
 /* Tweaks for the setting panels */
 

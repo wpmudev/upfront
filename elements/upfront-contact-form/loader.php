@@ -39,7 +39,11 @@ function ucontact_initialize () {
 	add_action('wp_enqueue_scripts', array('Upfront_UcontactView', 'add_styles_scripts'));
 
 	// Add the ajax form submit handler
+	add_action('wp_ajax_upfront_contact-form',  array('Upfront_UcontactView', 'on_ajax_submit'));
 	add_action('wp_ajax_nopriv_upfront_contact-form',  array('Upfront_UcontactView', 'on_ajax_submit'));
+
+	// Add the ajax handler for the contact form settings save.
+	add_action('wp_ajax_ucontact_save', array('Upfront_UcontactView', 'store'));
 }
 
 //Hook it when Upfront is ready

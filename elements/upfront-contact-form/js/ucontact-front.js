@@ -74,26 +74,28 @@ jQuery(function($){
 			//Stop sending
 			e.preventDefault();
 			show_message($this.parent(), errors.join('<br />'));
-		}/* Waiting for knowing the best way to do this
+		}
 		else{
 			e.preventDefault();
+			$this.find('.upfront-submit-container').prepend('<span class="ucontact-loading"></span>');
 			$.post(
 				ajaxurl,
 				{
 					action: 'upfront_contact-form',
 					sendername: name.val().trim(),
 					senderemail: email.val().trim(),
-					subject: subject.val().trim(),
+					subject: subject.length ? subject.val().trim() : '',
 					sendermessage: message.val().trim(),
 					ucontact: $form.find('input[name=ucontact]').val(),
 					contactformid: $form.find('input[name=contactformid]').val()
 
 				},
 				function(data) {
+					$this.find('.ucontact-loading').remove();
 					show_message($form, data.message, !data.error);
 				}
 			);
-		} */
+		}
 	});
 });
 })(jQuery);
