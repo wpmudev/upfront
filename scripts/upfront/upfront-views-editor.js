@@ -2428,8 +2428,8 @@ define(_template_files, function () {
 					"z-index": 10000000
 				})
 				.offset({
-					"top": view_pos.top,
-					"left": view_pos.left + $view.outerWidth()
+					"top": view_pos.top + $view.height() + 16,
+					"left": view_pos.left + $view.width() - 380
 				})
 			;
 			this.toggle_panel(this.panels.first());
@@ -2445,7 +2445,7 @@ define(_template_files, function () {
 			panel.show();
 			panel.reveal();
 			this.set_title(panel.get_title());
-			this.$el.height(panel.$el.find(".upfront-settings_panel").outerHeight())
+			this.$el.height(panel.$el.find(".upfront-settings_panel").outerHeight() - 2)
 		},
 
 		close_panel: function (panel) {
