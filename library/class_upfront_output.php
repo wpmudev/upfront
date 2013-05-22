@@ -367,19 +367,3 @@ class Upfront_ImageView extends Upfront_Object {
 		return "<div class='upfront-output-object upfront-output-image' {$element_id}><img src='" . esc_attr($this->_get_property('content')) . "' /></div>";
 	}
 }
-
-class Upfront_NavigationView extends Upfront_Object {
-
-	public function get_markup () {
-		$element_id = $this->_get_property('element_id');
-		$element_id = $element_id ? "id='{$element_id}'" : '';
-		$menu_id = $this->_get_property('menu_id');
-		$menu = '';
-		if ( $menu_id )
-			$menu = wp_nav_menu(array(
-				'menu' => $menu_id,
-				'echo' => false
-			));
-		return "<div class='upfront-output-object upfront-navigation' {$element_id}>" . $menu . "</div>";
-	}
-}
