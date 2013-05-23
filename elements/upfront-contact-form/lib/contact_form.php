@@ -31,40 +31,54 @@ class Upfront_UcontactView extends Upfront_Object {
 		wp_enqueue_script('ucontact-front', upfront_element_url('js/ucontact-front.js', dirname(__FILE__)), array('jquery'));
 	}
 
-	public static function on_ajax_submit () {
+	public static function ajax_send () {
 		if(!$_POST['contactformid'])
-			self::json_response(array(
+			return array(
 				'error' => true,
 				'message' => __('Unknown contact form.')
-			));
+			);
 		$contactid = $_POST['contactformid'];
 		$form = self::find($_POST['contactformid']);
 		if(!$form)
-			self::json_response(array(
+			return array(
 				'error' => true,
 				'message' => __('Unknown contact form.')
-			));
+			);
 
 		$form->check_form_received();
-		$form->json_response(array(
+		return array(
 			'error'=> $form->msg_class == 'error',
 			'message' => $form->msg
-		));
+		);
 	}
 
 	public static function store () {
 		if(!$_POST['data'] || !$_POST['data']['properties'])
-			self::json_response(new Upfront_JsonResponse_Error('The contact form data is not valid.'));
+			return array(
+				'error' => true,
+				'message' => 'The contact form data is not valid.'
+			);
+
 		$contact_form = array();
 		$data = $_POST['data']['properties'];
 		foreach($data as $prop){
 			$contact_form[$prop['name']] = $prop['value'];
 		}
 		if(!$contact_form['element_id'])
-			self::json_response(new Upfront_JsonResponse_Error('Unknown contact form.'));
-		update_option($contact_form['element_id'], $_POST['data']);
-		$contact_form_object = self::find($contact_form['element_id']);
-		self::json_response(new Upfront_JsonResponse_Success($contact_form_object->get_markup()));
+			return array(
+				'error' => true,
+				'message' => 'Unknown contact form.'
+			);
+
+		if(update_option($contact_form['element_id'], $_POST['data']))
+			return array(
+				'error' => false,
+				'message' => 'Contact form settings stored.'
+			);
+		return array(
+			'error' => true,
+			'message' => 'There was a problem storing the contact form settings.'
+		);
 	}
 
 	public static function find ($id) {
@@ -189,5 +203,33 @@ class Upfront_UcontactView extends Upfront_Object {
 	private function echo_placeholder($label){
 		if($this->_get_property('form_label_position') == 'over')
 			echo 'placeholder="' . $label . '"';
+	}
+}
+
+class Ucontact_Server extends Upfront_Server {
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {		
+		add_action('wp_ajax_ucontact_save', array($this, 'on_settings_store'));
+		add_action('wp_ajax_upfront_contact-form',  array($this, 'on_ajax_send'));
+		add_action('wp_ajax_nopriv_upfront_contact-form',  array($this, 'on_ajax_send'));
+	}
+
+	public function on_settings_store () {
+		$this->send_results(Upfront_UcontactView::store());
+	}
+
+	public function on_ajax_send () {
+		$this->send_results(Upfront_UcontactView::ajax_send());
+
+	}
+	protected function send_results ($results) {
+		if($results['error'])
+			$this->_out(new Upfront_JsonResponse_Error($results['message']));
+		else
+			$this->_out(new Upfront_JsonResponse_Success($results));
 	}
 }

@@ -76,11 +76,11 @@ jQuery(function($){
 			show_message($this.parent(), errors.join('<br />'));
 		}
 		else{
+			//Everything ok, try to send it via ajax
 			e.preventDefault();
-			$this.find('.upfront-submit-container').prepend('<span class="ucontact-loading"></span>');
-			$.post(
-				ajaxurl,
-				{
+			$.ajax({
+				url: ajaxurl,
+				data: {
 					action: 'upfront_contact-form',
 					sendername: name.val().trim(),
 					senderemail: email.val().trim(),
@@ -90,11 +90,18 @@ jQuery(function($){
 					contactformid: $form.find('input[name=contactformid]').val()
 
 				},
-				function(data) {
-					$this.find('.ucontact-loading').remove();
-					show_message($form, data.message, !data.error);
+				success: function(data){
+						show_message($form, data.message, !data.error);					
+				},
+				error: function(error){
+					var response = JSON.parse(error.responseText);
+					if(response.error == 'Unknown contact form.'){
+						$this.off('submit').submit(); //Submit no ajax
+					}
+					else
+						show_message($this, response.error);
 				}
-			);
+			});
 		}
 	});
 });
