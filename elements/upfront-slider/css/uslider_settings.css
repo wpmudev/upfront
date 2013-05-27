@@ -85,3 +85,50 @@
 	width: 100px;
 }
 
+.uslider-frame .media-sidebar label.setting,
+.uslider-frame .media-sidebar .compat-item {
+	display: none;
+}
+
+.uslider-frame #uslider-editor h3 {
+	margin-top: 10px;
+}
+
+.uslider-frame #uslider-editor label.setting{
+	display: block;
+}
+
+.uslider_content_slide {
+	border:2px solid transparent;
+	cursor: pointer;
+	opacity: 0.8;
+}
+
+.uslider_content_slide:hover {
+	border-color: #ccc;
+	opacity: 1;
+}
+
+.uslider_content_imgslide {
+	width:40%;
+	margin-left:5%;
+	float:left;
+}
+
+.uslider_content_imgslide img{
+	width: 100%;
+}
+
+.slide-selected {
+	border-color: #4cd285;
+	opacity: 1;
+}
+.uslider_content_slide.slide-selected:hover {
+	border-color: #4cd285 ;
+}
+
+.uslider_content_buttons {
+	clear:both;
+}
+
+

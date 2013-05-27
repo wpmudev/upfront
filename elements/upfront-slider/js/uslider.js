@@ -7,7 +7,13 @@ var Uslider_Slide = Backbone.Model.extend({
 		images: [],
 		title: '',
 		description: '',
-		link: false
+		link: false,
+		attachmentId: 0,
+		id:0
+	},
+
+	initialize: function() {
+		this.set('id', this.cid);
 	}
 });
 
@@ -967,573 +973,183 @@ var UsliderSettings_Contents = Upfront.Views.Editor.Settings.Item.extend({
 		this.addSlideEvents();
 	},
 	render: function() {
-		var slideTemplateSelector = this.model.get_property_value_by_name('slide_style') == 'text' ? '#uslider-content-textslide-template' : '#uslider-content-imgslide-template';
-		this.wrap({
-			title: 'Slider contents',
-			markup: this.template({
-				slides: this.slides,
+		var self = this,
+			slideTemplateSelector = this.model.get_property_value_by_name('slide_style') == 'text' ? '#uslider-content-textslide-template' : '#uslider-content-imgslide-template',
+			settingContent = this.$('.upfront-settings-item-content');
+
+		if(settingContent.length){
+			settingContent.html(this.template({
+				slides: this.slides.toJSON(),
 				slideTemplate: _.template($(slideTemplateSelector).html())
-			})
-		});
+			}));
+		}
+		else{
+			this.wrap({
+				title: 'Slider contents',
+				markup: this.template({
+					slides: this.slides.toJSON(),
+					slideTemplate: _.template($(slideTemplateSelector).html())
+				})
+			});
+			//Make the thumbs sortable
+			this.$('.uslider_content_thumbs').sortable({
+				start: function(event, ui) {
+					ui.item.addClass('uslider-is-dragged');
+				},
+				stop: function(event, ui) {
+					// When the drag stops we record the list of IDs into our array for use later. 
+					var slideId = ui.item.attr('rel'),
+						newPosition = self.getSlidePosition(slideId),
+						slide = false,
+						slides = self.slides;
+					if(newPosition != -1){
+						slide = slides.get(slideId);
+						slides.remove(slideId, {silent:true});
+						self.slides.add(slide, {silent:true, at: newPosition});
+					}
+				}			
+			});
+		}
 	},
 	addSlideEvents: function(){
+		var self = this;
 		this.slides.on('add remove sort reset', this.render, this);
 	},
 	events: {
 		'click a.uslider_content_add' : 'addRequest',
 		'click a.uslider_content_edit' : 'editRequest',
-		'click a.uslider_content_remove' : 'removeRequest'
+		'click a.uslider_content_remove' : 'removeRequest',
+		'click .uslider_content_slide': 'selectSlide'
 	},
 	addRequest: function(e){
 		e.preventDefault();
-		var file_frame = wp.media.frames.file_frame = wp.media({
-	      title: 'Titulo',
-	      button: {
-	        text: 'Botón',
-	      },
-	      multiple: false  // Set to true to allow multiple files to be selected
-	    });
-
-	    file_frame.on( 'select', function() {
-	      // We set multiple to false so only get one image from the uploader
-	      console.log(file_frame.state().get('selection').first().toJSON());
-	 
-	      // Do something with attachment.id and/or attachment.url here
-	      // 
-	    });
-	    // Finally, open the modal
-    file_frame.open();
-		alert('add');
+		this.openMediaSelector(false);
 	},
 	editRequest: function(e){
 		e.preventDefault();
-		alert('edit');
+		this.openMediaSelector(true);
 	},
 	removeRequest: function(e){
-		e.preventDefault();
-		alert('remove');
-	},
-	attachmentToSlide: function(attachment) {
-		return new Uslider_Slide({
-			images: attachment.sizes,
-			title: attachment.title,
-			description: attachment.description ? attachment.description : attachment.caption,
-			link: false
-		});
-	}
-});
-
-/**
- * @type {Upfront.Views.Editor.Settings.Item}
- */
-var USliderSettingsSlideContent = Upfront.Views.Editor.Settings.Item.extend({
-	events: {
-		'click a.uslider-slide-anchor-new-wp': 'handle_new_slide_button',
-		'click a.uslider-slide-anchor-edit-wp': 'handle_show_wp_media_gallery_button',
-		'click a.uslider-slide-anchor-delete': 'handle_delete_slide_button',
-		'click ul.uslider-slides-thumbs li.uslider-slide-item': 'handle_slide_edit_button'
-	},
-	
-	self: {},
-	module_settings: {},
-	module_slides_objs: {},
-	module_slides_ids: [],
-
-	/**
-	 * Set up setting item appearance.
-	 */
-	render: function () {
-		// Because we loose the this reference in various click events with the jQuery UI dialog and such. 
-		USliderSettingsSlideContent.self = this;
-		
-		this.load_settings();			
-			
-		// Build the output for the Modal Dialog to allow editing the slide
-		var slides_edit_dialog_form = this.build_slide_dialog_form();
-		
-		var slider_slides_html = this.build_slides_list_thumbs_html();
-			slider_slides_html = '<ul class="uslider-slides-thumbs">'+slider_slides_html+'</ul>';
-		
-		slider_admin_html = 	'<ul class="uslider-slides-admin">';
-		slider_admin_html += 	'<li class="uslider-slide-item"><a href="#" title="'+uslider_i18n['settings-content-edit-wp-slides-anchor-title']+'" class="uslider-slide-anchor-edit-wp">'+uslider_i18n['settings-content-edit-wp-slides-anchor-text']+'</a></li>';
-		slider_admin_html += 	'<li class="uslider-slide-item"><a href="#" title="'+uslider_i18n['settings-content-new-slides-anchor-title']+'" class="uslider-slide-anchor-new-wp">'+uslider_i18n['settings-content-new-slides-anchor-text']+'</a></li>';
-		slider_admin_html += 	'<li class="uslider-slide-item"><a href="#" disabled="disabled" title="'+uslider_i18n['settings-content-delete-slides-anchor-title']+'" class="uslider-slide-anchor-delete">'+uslider_i18n['settings-content-delete-slides-anchor-text']+' <span class="count"></span></a></li>';
-		slider_admin_html += 	'</ul>';
-		
-		this.wrap({
-			"title": uslider_i18n['settings-content-header'],
-			"markup": slider_slides_html+slider_admin_html+slides_edit_dialog_form
-		});						
-				
-		// Add support to sort/drag thumbs into order
-		this.$el.find("ul.uslider-slides-thumbs").sortable({
-			start: function(event, ui) {
-				ui.item.addClass('uslider-is-dragged');
-			},
-			stop: function(event, ui) {
-				// When the drag stops we record the list of IDs into our array for use later. 
-				var slides_ids = [];
-				USliderSettingsSlideContent.self.$el.find("ul.uslider-slides-thumbs li.uslider-slide-item a.uslider-slide-anchor").each(function(){
-					slides_ids.push(jQuery(this).attr('rel'));
-				});
-				USliderSettingsSlideContent.module_slides_ids = slides_ids;
-			}
-		});
-
-/*
-		this.$el.find("ul.uslider-slides-thumbs a.uslider-slide-anchor-delete").droppable({
-			accept: "ul.uslider-slides-thumbs li",
-			tolerance: "touch",
-			over: function( event, ui ) {
-				console.log('droppable > over');
-			},
-			drop: function( event, ui ) {
-				//$( this ).addClass( "ui-state-highlight" ).find( "p" ).html( "Dropped!" );
-				console.log('droppable > drop');
-			}
-		});
-*/
-	},
-	load_settings: function() {
-		var uslider_content = {};
-		uslider_content = this.model.get_property_value_by_name("uslider_content");
-		if (uslider_content != false) {
-			USliderSettingsSlideContent.module_slides_ids 	= uslider_content.module_slides_ids;
-			USliderSettingsSlideContent.module_slides_objs	= uslider_content.module_slides_objs;
-		} else {
-			USliderSettingsSlideContent.module_slides_ids 	= [];
-			USliderSettingsSlideContent.module_slides_objs	= {};
-		}
-	},		
-	build_slides_list_thumbs_html: function() {
-
-		var slides_list_items_html = '';
-		
-		for (var slide_idx in USliderSettingsSlideContent.module_slides_ids) {
-			var slide_id = USliderSettingsSlideContent.module_slides_ids[slide_idx];
-			var slide = USliderSettingsSlideContent.module_slides_objs[slide_id];
-			if (slide['sizes'] != undefined) {
-				var slide_url = slide['sizes']['thumbnail']['url'];
-				slides_list_items_html += '<li id="uslider-slide-item-'+slide['id']+'" class="uslider-slide-item ui-state-default"><a rel="'+slide['id']+'" href="#" class="uslider-slide-anchor"><img src="'+slide_url+'" alt="" /></a></li>';
-			} else {
-				slides_list_items_html += '<li id="uslider-slide-item-'+slide['id']+'" class="uslider-slide-item ui-state-default"><a rel="'+slide['id']+'" href="#" class="uslider-slide-anchor">Text</a></li>';
-			}
-		}
-		return slides_list_items_html;
-	},
-	update_slides_list_thumbs_html: function(slider_slides_html) {
-		if (slider_slides_html == undefined)
-			slider_slides_html = '';
-		
-		USliderSettingsSlideContent.self.$el.find("ul.uslider-slides-thumbs").html(slider_slides_html);
-	},
-	update_slides_from_attachments: function(attachments) {
-		var module_slides_ids = [];
-		var module_slides_objs = {};
-		
-		for (var attachment_idx in attachments) {
-			var attachment = attachments[attachment_idx];
-			
-			var slide_obj = USliderSettingsSlideContent.self.convert_attachment_to_object(attachment);
-			if (slide_obj != undefined) {
-				module_slides_ids.push(attachment['id']);
-				module_slides_objs[attachment['id']] = slide_obj;
-			}
-		}
-		USliderSettingsSlideContent.module_slides_objs = module_slides_objs;
-		USliderSettingsSlideContent.module_slides_ids 	= module_slides_ids;
-	},
-	// Convert from the Attachment object returned from WP Media into our own version of the object for storage
-	convert_attachment_to_object: function(attachment) {
-
-		var slide_url = '';
-		if ((attachment['sizes']['full'] != undefined) && (attachment['sizes']['thumbnail'] == undefined))
-			attachment['sizes']['thumbnail'] = attachment['sizes']['full'];
-
-		slide_url = attachment['sizes']['thumbnail']['url'];
-		if (slide_url != '') {
-
-			var slide_obj = {};
-			slide_obj['id'] 			= attachment['id'];
-			slide_obj['title'] 			= attachment['title'];
-			slide_obj['sizes'] 			= attachment['sizes'];
-			slide_obj['description'] 	= attachment['description'];
-			slide_obj['caption'] 		= attachment['caption'];
-			slide_obj['alt'] 			= attachment['alt'];
-			slide_obj['links_to'] 		= '';
-
-			return slide_obj;
+		var remove = confirm('Are you sure to remove the slide?');
+		if(remove){
+			this.slides.remove(this.selectedSlide);
+			this.selectedSlide = false;
 		}
 	},
-	build_slide_dialog_form: function() {
-		slides_edit_dialog_form = 	'';
-		slides_edit_dialog_form += 	'<div id="uslider-slide-edit-dialog-form" style="display:none;" title="'+uslider_i18n['settings-dialog-title-slide-edit']+'">';
-		slides_edit_dialog_form += 		'<table><tr>';
-		slides_edit_dialog_form += 		'<td class="uslider-slide-image-col">';
-		slides_edit_dialog_form += 			'<input type="hidden" name="uslider-slide-edit-id-original" id="uslider-slide-edit-id-original" value="" />';
-		slides_edit_dialog_form += 			'<input type="hidden" name="uslider-slide-edit-id" id="uslider-slide-edit-id" value="" />';
-		slides_edit_dialog_form += 			'<input type="hidden" name="uslider-slide-edit-obj" id="uslider-slide-edit-obj" value="" />';
-		slides_edit_dialog_form += 			'<img id="uslider-slide-image-thumb" src="" alt="" />';
-		slides_edit_dialog_form += 			'<button type="button" id="uslider-slide-change-image-button">'+uslider_i18n['settings-content-dialog-change-image-button']+'</button>';		
-		slides_edit_dialog_form += 			'<button type="button" id="uslider-slide-remove-image-button">'+uslider_i18n['settings-content-dialog-remove-image-button']+'</button>';		
-		slides_edit_dialog_form += 		'</td>';
-		slides_edit_dialog_form += 		'<td class="uslider-slide-info-col">';
-		slides_edit_dialog_form += 			'<label for="uslider-slide-title">'+uslider_i18n['settings-content-dialog-title']+'</label><input type="text" name="uslider-slide-title" id="uslider-slide-title" />';
-		slides_edit_dialog_form += 			'<label for="uslider-slide-description">'+uslider_i18n['settings-content-dialog-description']+'</label><textarea name="uslider-slide-description" rows="12" id="uslider-slide-description"></textarea>';
-		slides_edit_dialog_form += 			'<label for="uslider-slide-links-to">'+uslider_i18n['settings-content-dialog-links-to']+'</label><input type="text" name="uslider-slide-links-to" id="uslider-slide-links-to" />';
-		slides_edit_dialog_form += 		'</td>';
-		slides_edit_dialog_form += 		'</tr></table>';
-		slides_edit_dialog_form += 	'</div>';
-		
-		return slides_edit_dialog_form;
+	selectSlide: function(e){
+		var target = $(e.currentTarget);
+		this.$('div.slide-selected').removeClass('slide-selected');
+		target.addClass('slide-selected');		
+
+		// Set the selected slide
+		this.selectedSlide = this.slides.get(target.attr('rel'));
 	},
-	handle_show_wp_media_gallery_button: function ( event ) {
 
-		event.preventDefault();
+	openMediaSelector: function(edit){
+		var self = this,
+			selection = [];
 
-		// kludge to hide the #settings box with its z-index: 10000000;
-		//var settings_current_zindex = jQuery('#settings').css('z-index');	// Doesn't work because the set value is large than int. Damn!
-		jQuery('#settings').css('z-index', '-1');
+		if(edit)
+			selection.push(this.selectedSlide.get('attachmentId'));
 
-		var gallery_ids_text = "[gallery";
-		if (USliderSettingsSlideContent.module_slides_ids.length) {
-			gallery_ids_text += ' ids="'+USliderSettingsSlideContent.module_slides_ids+'" ';
-		} else {
-			gallery_ids_text += ' ids="0" ';
-		}
-		gallery_ids_text += "]";
-		//console.log(gallery_ids_text);
-		
-		wp.media.gallery.edit(gallery_ids_text).on('update', function(obj) { 
-
-			// Return the Settings box into view. 
-			jQuery('#settings').css('z-index', '10000000');
-
-			// Here we want to convert the Backbone collection to just notive data element objects. 
-			var attachments = jQuery.parseJSON(JSON.stringify(obj));
-			if (attachments != '') {
-				
-				// First update our internal object references for the IDs and object(post item). 
-				USliderSettingsSlideContent.self.update_slides_from_attachments(attachments);
-				
-				// Then call the function to rebuild the HTML list items for the thumbnails
-				USliderSettingsSlideContent.self.update_slides_list_thumbs_html(USliderSettingsSlideContent.self.build_slides_list_thumbs_html());
-			}
-		});		
-	},
-	
-	handle_slide_edit_button: function( event ) {
-
-		event.preventDefault();
-		var el = jQuery(event.target);
-		
-		var this_li = jQuery(el).parents('li.uslider-slide-item');
-		var slide_li_id = jQuery(this_li).attr('id');
-		var slide_id 	= slide_li_id.replace('uslider-slide-item-', '');
-		
-		
-		// If the item is being dragged we added a class 'uslider-is-dragged' when the drag starts. We want to ignore these items because the jQuery UI will 
-		// automatically fire a click even after the drag stops. So we remove the class we added and return.
-		if (jQuery(this_li).hasClass('uslider-is-dragged')) {
-			jQuery(this_li).removeClass('uslider-is-dragged');
-			return;
-		}
-
-		if (event.shiftKey) {
-
-			if (jQuery(this_li).hasClass('uslider-slide-item-delete')) {
-				jQuery(this_li).removeClass('uslider-slide-item-delete');
-			} else {
-				jQuery(this_li).addClass('uslider-slide-item-delete');
-			}
-			USliderSettingsSlideContent.self.update_delete_button_count();
-		} else {
-			var slide = USliderSettingsSlideContent.module_slides_objs[slide_id];
-		
-			if ((slide != undefined) && (slide != '')) {
-				USliderSettingsSlideContent.self.show_slide_edit_dialog(slide, uslider_i18n['settings-dialog-title-slide-edit']);
-			}
-		}
-	},
-	handle_new_slide_button: function( event ) {
-
-		event.preventDefault();
-		
-		var slide = {};
-		slide['id'] = 'new';
-		USliderSettingsSlideContent.self.show_slide_edit_dialog(slide);
-		
-	},
-	handle_delete_slide_button: function( event ) {
-		event.preventDefault();
-		var has_deleted = false;
-		USliderSettingsSlideContent.self.$el.find("ul.uslider-slides-thumbs li.uslider-slide-item-delete a").each(function(){
-			var slide_id = jQuery(this).attr('rel');
-
-			USliderSettingsSlideContent.module_slides_ids.splice( jQuery.inArray(slide_id, USliderSettingsSlideContent.module_slides_ids), 1 );
-			delete USliderSettingsSlideContent.module_slides_objs[slide_id]
-			
-			//console.log('delete slide_id=['+slide_id+']');
-			has_deleted = true;
-		});
-		
-		if (has_deleted == true) {
-			USliderSettingsSlideContent.self.update_slides_list_thumbs_html(USliderSettingsSlideContent.self.build_slides_list_thumbs_html());
-			USliderSettingsSlideContent.self.update_delete_button_count();
-		}		
-	},
-	update_delete_button_count: function() {
-		var delete_count = jQuery('ul.uslider-slides-thumbs li.uslider-slide-item-delete').length;
-		if (delete_count > 0) {			
-			jQuery('ul.uslider-slides-admin a.uslider-slide-anchor-delete span').html('( '+delete_count+' )')
-			jQuery('ul.uslider-slides-admin a.uslider-slide-anchor-delete').attr('disabled', '');
-		} else {
-			jQuery('ul.uslider-slides-admin a.uslider-slide-anchor-delete span').html('');
-			jQuery('ul.uslider-slides-admin a.uslider-slide-anchor-delete').attr('disabled', 'disabled');
-		}					
-	},
-	/**
-	 * Shows a slide edit or new slide dialog.
-	 * @param  {Object} slide The slide object. If it is a new slide will have the id='new'
-	 * @return {null}
-	 */
-	show_slide_edit_dialog: function(slide) {
-		var self = $this,
-			dialog_title = uslider_i18n['settings-dialog-title-slide-edit'],
-			$dialog = $('#uslider-slide-edit-dialog-form'),
-			slide_url = ''
-		;
-
-		if (slide['id'] == "new")
-			dialog_title = uslider_i18n['settings-dialog-title-slide-new'];
-
-		if (slide['sizes']) {
-			if (slide['sizes']['thumbnail'])
-				slide_url = slide['sizes']['thumbnail']['url'];
-			else if (slide['sizes']['full'])
-				slide_url = slide['sizes']['full']['url'];
-
-			$dialog.find('#uslider-slide-remove-image-button').show();
-			
-		} else {
-			$dialog.find('#uslider-slide-remove-image-button').hide();			
-		}
-
-		$dialog.find('#uslider-slide-image-thumb').attr('src', slide_url);
-		
-		if ((slide['id'] != undefined) && (slide['id'] != "new")) {
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id').val(slide['id']);
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id-original').val(slide['id']);
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-obj').val(JSON.stringify(slide));
-		} else {
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id').val('');
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id-original').val(slide['id']);
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-obj').val('');
-		}
-	
-		if (slide['title'] != undefined) {
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-title').val(slide['title']);
-		} else {
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-title').val('');
-		}
-		
-		if (slide['description'] != undefined) {
-			jQuery('#uslider-slide-edit-dialog-form textarea#uslider-slide-description').val(slide['description']);
-		} else {
-			jQuery('#uslider-slide-edit-dialog-form textarea#uslider-slide-description').val('');
-		}
-		
-		if (slide['links_to'] != undefined) {
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-links-to').val(slide['links_to']);
-		} else {
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-links-to').val(slide['']);
-		}
-
-		USliderSettingsSlideContent.self.$el.find("#uslider-slide-edit-dialog-form button#uslider-slide-change-image-button").click(USliderSettingsSlideContent.self.handle_edit_slide_show_wp_media_single);
-		USliderSettingsSlideContent.self.$el.find("#uslider-slide-edit-dialog-form button#uslider-slide-remove-image-button").click(function(){
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id').val('');
-			jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-obj').val('');
-			jQuery('#uslider-slide-edit-dialog-form img#uslider-slide-image-thumb').attr('src', '');
-			jQuery('#uslider-slide-edit-dialog-form button#uslider-slide-remove-image-button').hide();
-		});
-
-		jQuery('#settings').css('z-index', '-1');
-
-		var buttonsOpts = {};
-		buttonsOpts[uslider_i18n['settings-content-dialog-cancel-button']] = function() {
-			jQuery( this ).dialog( "close" );
-		
-			// Return the Settings box into view. 
-			jQuery('#settings').css('z-index', '10000000');						
-		}
-	
-		buttonsOpts[uslider_i18n['settings-content-dialog-save-button']] = function() {
-          jQuery( this ).dialog( "close" );
-			var slide_id_original 	= jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id-original').val();
-			var slide_id_new 		= jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id').val();
-			
-			var slide_obj_new 		= jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-obj').val();		
-			if ((slide_obj_new != undefined) && (slide_obj_new != '')) {
-				slide_obj_new 				= jQuery.parseJSON(slide_obj_new);
-				slide_obj_new['slide_type'] = "image";
-			} else {
-				slide_obj_new				= {};
-				slide_obj_new['slide_type'] = "text";
-				slide_obj_new['id']			= slide_id_new = USliderSettingsSlideContent.self.get_slide_text_unique_id();
-			}
-
-			slide_obj_new['title'] 			= jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-title').val();
-			slide_obj_new['description'] 	= jQuery('#uslider-slide-edit-dialog-form textarea#uslider-slide-description').val();
-			slide_obj_new['links_to'] 		= jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-links-to').val();
-		
-			if ((slide_id_original != undefined) && (slide_id_original != '') && (slide_id_original != 'new')) {
-				USliderSettingsSlideContent.self.replace_slide(slide_id_original, slide_obj_new);
-			} else {
-				// here need to append new slide to end of list. 
-				USliderSettingsSlideContent.module_slides_objs[slide_id_new] = slide_obj_new;
-				USliderSettingsSlideContent.module_slides_ids.push(slide_id_new);				
-			}
-			
-			USliderSettingsSlideContent.self.update_slides_list_thumbs_html(USliderSettingsSlideContent.self.build_slides_list_thumbs_html());
-		};
-
-		buttonsOpts[uslider_i18n['settings-content-dialog-cancel-button']] = function() {
-          	jQuery( this ).dialog( "close" );
-		};
-
-		jQuery( "#uslider-slide-edit-dialog-form" ).dialog({
-			title: dialog_title, 
-			autoOpen: false,
-			height: 400,
-			width: 450,
-			modal: true,
-			buttons: buttonsOpts,
-			beforeClose: function( event, ui ) {
-				// Return the Settings box into view. 
-				jQuery('#settings').css('z-index', '10000000');				
-			}
-		});
-	
-		jQuery( "#uslider-slide-edit-dialog-form" ).dialog( "open" );
-		
-	},
-	
-	handle_edit_slide_show_wp_media_single: function( event ) {
-		// Uploading files
-		var file_frame;
-
-		event.preventDefault();
-
-		// If the media frame already exists, reopen it.
-		if ( file_frame ) {
-			file_frame.open();
-			return;
-		}
-
-		// Create the media frame.
-		file_frame = wp.media.frames.file_frame = wp.media({
-			title: jQuery( this ).data( 'uploader_title' ),
-			button: {
-				text: jQuery( this ).data( 'uploader_button_text' ),
-			},
-			multiple: false  // Set to true to allow multiple files to be selected
-		});
-
-		// When an image is selected, run a callback.
-		file_frame.on( 'select', function() {
-			// We set multiple to false so only get one image from the uploader
-
-			var current_slide_id = jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id').val();			
-			attachment = file_frame.state().get('selection').first().toJSON();
-			//console.log('current_slide_id=['+current_slide_id+'] attachment[id]=['+attachment['id']+']');
-			
-			if (current_slide_id != attachment['id']) {
-				var slide_obj = USliderSettingsSlideContent.self.convert_attachment_to_object(attachment);
-				if (slide_obj != undefined) {
-					jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-id').val(slide_obj['id']);
-					jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-edit-obj').val(JSON.stringify(slide_obj));
-					jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-title').val(slide_obj['title']);
-					jQuery('#uslider-slide-edit-dialog-form textarea#uslider-slide-description').val(slide_obj['description']);				
-					jQuery('#uslider-slide-edit-dialog-form input#uslider-slide-links-to').val('');
-
-					jQuery('#uslider-slide-edit-dialog-form img#uslider-slide-image-thumb').attr('src', slide_obj['sizes']['thumbnail']['url']);
-					
-					jQuery('#uslider-slide-edit-dialog-form button#uslider-slide-remove-image-button').show();
-				}				
-			}
+		this.usliderFrame = wp.media.frames.usliderFrame = wp.media({
+	      title: edit ? 'Edit slide' : 'New slide',
+	      button: {
+	        text: edit ? 'Save slide' : 'Add slide',
+	      },
+	      className: 'media-frame uslider-frame',
+	      library: {
+	      	type: 'image'
+	      },
+	      multiple: false,  // Set to true to allow multiple files to be selected
+	      selection: selection
 	    });
 
-		// Finally, open the modal
-		file_frame.open();
-	},
-	/** 
-	 * Replaces a slide in out slides_objs group. 
-	* arg: slide_id_original: Is the original slide_id from USliderSettingsSlideContent.module_slides_ids values to be replaced. 
-	* arg: slide_obj_new: Is the replacement slide_obj to be updated to USliderSettingsSlideContent.module_slides_objs
-	 */
-	replace_slide: function(slide_id_original, slide_obj_new) {
+	    this.usliderFrame.edit = edit;
 
-		// We need to loop over the slide ids. Wehn we find the original id we want to replace the value of the slide_id. This will retain the slide position. 
-		for (var slide_id_idx in USliderSettingsSlideContent.module_slides_ids) {
-			if (USliderSettingsSlideContent.module_slides_ids[slide_id_idx] == slide_id_original) {
-				USliderSettingsSlideContent.module_slides_ids[slide_id_idx] = slide_obj_new['id'];
-				
-				// Then we need to remove the slide_obj and add the new slide_obj in its place.
-				var tmp_slide_objs = {};
-				for (var slide_obj_idx in USliderSettingsSlideContent.module_slides_objs) {
-					if (slide_obj_idx != slide_id_original) {
-						tmp_slide_objs[slide_obj_idx] = USliderSettingsSlideContent.module_slides_objs[slide_obj_idx];
-					} else {
-						tmp_slide_objs[slide_obj_new['id']] = slide_obj_new;
-					}
-				}
-				USliderSettingsSlideContent.module_slides_objs = tmp_slide_objs;
-			}
+		//Set event handlers and open the modal
+	    this.usliderFrame
+	    	.on( 'select', function() {
+				self.usliderFrame.edit ? self.updateSlide(self.usliderFrame.slide) : self.addSlide(self.usliderFrame.slide);
+		    })
+		    .on( 'open', function() {
+		    	if(self.usliderFrame.edit)
+		    		self.updateSelection();
+		    	$('#settings').hide();
+		    })
+		    .on( 'close', function() {
+		    	$('#settings').show();
+		    })
+		    .on( 'content:create:browse', function(content) {
+		    	if(content.view){
+		    		content.view.options.selection.on( 'selection:single', self.addSliderToSidebar, self );
+		    		self.editorSidebar = content.view.sidebar;
+		    	}
+		    	if(self.usliderFrame.edit)
+		    		self.usliderFrame.slide = self.slides.get(self.selectedSlide);
+		    	else
+		    		self.usliderFrame.slide = new Uslider_Slide();
+		    	//console.log(content);
+		    })
+		    .open();
+
+	},
+	updateSelection: function (attachmentId) {
+		var selection = this.usliderFrame.state().get('selection'),
+			attachment = wp.media.attachment(this.selectedSlide.get('attachmentId'));
+
+		selection.reset([attachment]);
+	},
+	addSliderToSidebar: function (selection) {
+		var self = this,
+			editor = this.editorSidebar.$('#uslider-editor'),
+			slide = this.usliderFrame.slide;
+
+		slide.set({
+			attachmentId: selection.get('id'),
+			images: selection.get('sizes')
+		});		
+
+		if(editor.length)
+			editor.html(_.template($('#uslider-slide-editorform').html(), slide.toJSON()));
+		else {
+			var form = $('<div id="uslider-editor"></div>')
+							.on('blur', 'input', function(e){
+								var $this = $(this),
+									slideAttribute = $this.attr('rel');
+								slide.set(slideAttribute, $this.val());
+							})
+							.html(_.template($('#uslider-slide-editorform').html(), slide.toJSON()));
+			this.editorSidebar.$el.append(form);
 		}
 	},
-	// For image type slides we use the image ID as the slide ID. But for text slides we need to user 'text-X'. This utility function simply counts the slides 
-	// and returns that next 'text-X' ID. The X integer starts at 1
-	get_slide_text_unique_id: function() {
-		var text_slide_count = 0;
-
-		for (var slide_obj_idx in USliderSettingsSlideContent.module_slides_objs) {
-			var slide_obj = USliderSettingsSlideContent.module_slides_objs[slide_obj_idx];
-			if ((slide_obj['slide_type'] == undefined) || (slide_obj['slide_type'] == 'text')) {
-				text_slide_count = parseInt(text_slide_count) + 1;
-			}
-		}
-		text_slide_count = parseInt(text_slide_count) + 1;
-
-		return 'text-'+ text_slide_count;
-		
+	updateSlide: function(newSlide) {
+		this.slides.add(newSlide, {merge: true});
+		this.render();
 	},
-	/**
-	 * Defines under which Property name the value will be saved.
-	 * @return {string} Property name
-	 */
-	get_name: function () {
-		return "uslider_content";
+	addSlide: function(slide){
+		this.slides.add(slide);
 	},
-	/**
-	 * Extracts the finalized value from the setting markup.
-	 * @return {mixed} Value.
-	 */
-	get_value: function () {
-		return {
-			slides: USliderSettingsSlideContent.module_slides_objs,
-			order: USliderSettingsSlideContent.module_slides_ids
-		}
-		
-		//console.log("get_value: module_slides_ids["+USliderSetting_Label.module_slides_ids+"]");
-		//return USliderSettingsSlideContent.module_slides_ids;
-		//return USliderSettingsSlideContent.module_slides_objs;
+	getSlidePosition: function(slideId){
+		var i = 0,
+			found = false;
+		this.$('div.uslider_content_slide').each(function(item){
+			if($(this).attr('rel') == slideId)
+				found = i;
+			i++;
+		});
+		if(found !== false)
+			return found;
+		return -1;
 	},
-	get_content: function () {
-		console.log('get_content called');
-		return "This is the content";
+	get_name: function() {
+		return 'slides';
+	},
+	get_value: function() {
+		return this.slides.toJSON();
 	}
-
 });
+
 
 
 /***********************************************************************************************************************************************

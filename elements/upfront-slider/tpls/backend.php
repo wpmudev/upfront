@@ -57,9 +57,9 @@
 
 <script type="text/template" id="uslider-contentfield-template">
 <div class="uslider_content_thumbs">
-{[ _.each(slides, function(slide){ ]}
-{{slideTemplate(slide)}}
-{[ }) ]}
+{[ for(var slide in slides){ ]}
+{{ slideTemplate(slides[slide]) }}
+{[ } ]}
 </div>
 <div class="uslider_content_buttons">
 	<a href="#" class="uslider_content_button uslider_content_add">Add</a>
@@ -70,14 +70,31 @@
 
 
 <script type="text/template" id="uslider-content-imgslide-template">
-	<div class="uslider_content_imgslide">
-		<img src="{{image}}" title="{{title}}" />
+	<div class="uslider_content_imgslide uslider_content_slide" rel="{{id}}">
+		<img src="{{images.thumbnail.url}}" title="{{title}}" />
 	</div>
 </script>
 
 <script type="text/template" id="uslider-content-textslide-template">
-	<div class="uslider_content_textslide" title="{{description}}">
+	<div class="uslider_content_textslide uslider_content_slide" title="{{description}}">
 		{{title}}
 	</div>
+</script>
+
+
+<script type="text/template" id="uslider-slide-editorform">
+	<h3>Slide settings</h3>
+	<label class="setting">
+		<span>Title</span>
+		<input type="text" value="{{title}}" rel="title">
+	</label>
+	<label class="setting">
+		<span>Description</span>
+		<input type="text" value="{{description}}" rel="description">
+	</label>
+	<label class="setting">
+		<span>Link URL</span>
+		<input type="text" value="{{link}}" rel="link">
+	</label>
 </script>
 
