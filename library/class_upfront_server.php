@@ -62,7 +62,7 @@ class Upfront_Ajax extends Upfront_Server {
 		else {
 			//$this->_out(new Upfront_JsonResponse_Error("Unknown layout: " . $layout_id));
 			// Instead of whining, create a stub layout and load that
-			$layout = Upfront_Layout::create_layout();
+			$layout = Upfront_Layout::create_layout($layout_ids);
 			$this->_out(new Upfront_JsonResponse_Success($layout->to_php()));
 		}
 	}
@@ -293,7 +293,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout_ids = $_GET['layout_ids'];
 		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 		if ( $layout->is_empty() )
-			$layout = Upfront_Layout::create_layout();
+			$layout = Upfront_Layout::create_layout($layout_ids);
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$style = $preprocessor->process();
@@ -323,3 +323,5 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
 }
+
+

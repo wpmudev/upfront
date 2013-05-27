@@ -1017,7 +1017,7 @@ var UsliderSettings_Contents = Upfront.Views.Editor.Settings.Item.extend({
 		return new Uslider_Slide({
 			images: attachment.sizes,
 			title: attachment.title,
-			description: attachment.description ? attachment.description : attachment.caption;
+			description: attachment.description ? attachment.description : attachment.caption,
 			link: false
 		});
 	}

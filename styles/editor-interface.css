@@ -8,7 +8,7 @@
   	position: relative;
   	min-height: 100%;
   	/*margin: 22px 20px 0 320px;*/
-  	margin: 22px 0 0 300px;
+  	margin: 0 0 0 300px;
   	width: auto;
 }
 .upfront-grid-layout {
@@ -52,6 +52,10 @@
   padding-top: 0;
   z-index: 5;
   -webkit-transition: right .3s;
+  display: none !important;
+}
+.show-debug ~ #properties {
+	display: block !important;
 }
 #properties:hover {
 	right: 0;
@@ -89,7 +93,7 @@
 
 #sidebar-ui {
 	position: fixed;
-	top: 50px;
+	top: 28px;
 	bottom: 0;
 	left: 0;
 	width: 300px;
@@ -249,6 +253,7 @@
 	background: #accae6;
 	border-top: 3px solid #bfe1ff;
 	border-bottom: 1px solid #8fa9bf;
+	color: #395773;
 	padding: 8px 0 0 18px;
 	margin: 0;
 	cursor: pointer;
@@ -289,16 +294,14 @@
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
-#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar
-{
+#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar {
 	background: none;
 	width: 6px;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-track {
 }
  
-#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-thumb
-{
+#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-thumb {
 	border-right: 3px solid #1fcd8f;
 	width: 3px;
 }
@@ -306,15 +309,17 @@
 	display: inline-block;
 	margin: 0 5px 5px 0;
 	padding: 5px 10px 0;
-	height: 38px;
-	font-size: 13px;
+	height: 35px;
+	font-family: verdana; 
+	font-weight: 200;
+	font-size: 11px;
 	line-height: 24px;
 	background: #e5f3ff;
-	border-top: 2px solid #fff;
-	border-left: 1px solid #a3bfd9;
-	border-right: 1px solid #a3bfd9;
-	border-bottom: 2px solid #a3bfd9;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
 	border-radius: 6px;
+	border: 1px solid #a2bed8;
+	box-shadow: 0 1px 0 #a2bed8, inset 0 1px 0px #fff;
 	color: #395269;
 	cursor: move;
 	cursor: -moz-grab;
@@ -326,19 +331,19 @@
 .draggable-element.element-drag-active {
 	background: #b8d1e6;
 	border: 1px solid #d9eeff;
+	box-shadow: none;
 	height: 37px;
 	color: #6b92b2;
 	opacity: .8;
 }
-.draggable-element.element-dragging {
+.draggable-element:active, .draggable-element.element-dragging {
 	cursor: move;
 	cursor: -moz-grabbing;
 	cursor: -webkit-grabbing;
 }
 .draggable-element:hover, .draggable-element.element-dragging {
-	border-left-color: #537ea6;
-	border-right-color: #537ea6;
-	border-bottom-color: #537ea6;
+	border: 1px solid #537ea6;
+	box-shadow: 0 1px 0 #537ea6, inset 0 1px 0px #fff;
 }
 #sidebar-ui .panel-section {
 	font-size: 15px;
@@ -637,7 +642,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
   position: fixed;
   top: 28px;
   width: 100%;
-  height: 22px;
+  height: 0;
+  overflow: hidden; /* @TODO temporary hide this with CSS, need to remove this on the code? */
   background: #eee;
   z-index: 5;
 }
@@ -734,10 +740,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	z-index: 40;
 }
 .upfront-dragging .upfront-module {
-	outline: 1px dotted #888;
+	outline: 1px dotted #5c7c9b;
+	overflow: hidden;
 }
 .upfront-dragging .upfront-module:hover {
-	outline: 2px dashed #666;
+	outline: 1px dotted #5c7c9b;
 	z-index: 40;
 }
 .upfront-object {
@@ -843,7 +850,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 .upfront-region-shadow {
 	visibility: hidden;
+	/*min-height: 0 !important;*/
 	height: 0;
+	max-height: 0;
 	overflow: hidden;
 }
 
@@ -861,17 +870,22 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 }
 
+
+.upfront-dragging .upfront-editable_entity .upfront-entity_meta {
+	display: none;
+}
 .upfront-editable_entity .upfront-entity_meta a {
 	width: 0;
 	height: 0;	
 	position: absolute;
+	z-index: 2000;
 	cursor:pointer;
 	display:none;
 	border-top: 0px solid transparent;
 	color:#fff;
 	text-decoration:none;
 }
-.upfront-editable_entity:hover > .upfront-entity_meta a,
+.upfront-editable_entity:hover .upfront-entity_meta a,
 .upfront-active_entity .upfront-entity_meta a {
   display: block;
 }
@@ -879,7 +893,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	border-bottom: 28px solid #1fcd8f;
 	border-left: 28px solid #21d998;
 	right:-13px;
-	bottom:-10px;
+	top:33px;
 }
 .upfront-entity_meta a.upfront-entity-delete_trigger {
 	border-bottom: 28px solid #dd4f49;
@@ -936,10 +950,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	top: 50%;
 	margin-top: -7px;
 	margin-left: 10px;
+	width: 50px;
 	border: 1px solid #aaa;
 	border-radius: 4px;
 	padding: 0 5px;
-	white-space: nowrap;
+	/*white-space: nowrap;*/
 	z-index: 1000;
 }
 .show-debug .upfront-drop-debug:before {
@@ -985,6 +1000,10 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	max-width: 100%;
 }
 
+.upfront-drop-view {
+	position: absolute;
+	border: 2px dotted #88f;
+}
 
 /* Experimental animation */
 @-webkit-keyframes dropped {
@@ -1002,7 +1021,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .ui-draggable-dragging {
 	opacity: .6;
-	-webkit-transition: max-width .2s;
+	min-height: 0 !important;
+	/*-webkit-transition: max-width .3s, max-height .3s;*/
 }
 .upfront-dropped {
 	-webkit-animation-fill-mode: both;

@@ -373,6 +373,16 @@ var GridEditor = {
 	},
 	
 	/**
+	 * Get drop data
+	 * 
+	 * @param {jQuery Object} $region 
+	 */
+	get_drop: function ($drop){
+		var ed = Upfront.Behaviors.GridEditor;
+		return _.find(ed.drops, function(each){ return ( $drop.get(0) == each.$el.get(0) ); })
+	},
+	
+	/**
 	 * Get integer value from class name
 	 * 
 	 * @param {jQuery Object} $el
@@ -485,7 +495,7 @@ var GridEditor = {
 		ed.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		ed.grid = Upfront.Settings.LayoutEditor.Grid;
 		
-		ed.max_row = Math.floor(($(window).height()*.6)/ed.baseline);
+		ed.max_row = Math.floor(($(window).height()*.5)/ed.baseline);
 	},
 	
 	/**
@@ -538,110 +548,147 @@ var GridEditor = {
 		$els.each(function(){ ed.init_margin(this); }); // Generate margin data
 		ed.wraps = _.map($wraps, ed.get_position ); // Generate wrappers position data
 		ed.regions = _.map($regions, ed.get_position ); // Generate regions position data
-		
-		ed.normalize(ed.els, ed.wraps);
 	},
 	
 	/**
 	 * Create droppable points 
 	 */
-	create_drop_point: function(me, wrap){
+	create_drop_point: function(me, me_wrap){
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
-			aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 			margin = me.$el.data('margin'),
 			col = me.col,
-			wrap_col = wrap ? ed.get_class_num(wrap.$el, ed.grid.class) : col;
-		// Add dropables in each regions
-		_.each(ed.regions, function(each){
-			var drop_wrap_full = '<div class="upfront-drop upfront-drop-wrap upfront-drop-wrap-full upfront-drop-y" style="height:0px;"></div>';
-			each.$el.find(".upfront-editable_entities_container:first").prepend($(drop_wrap_full).addClass('upfront-drop-first'));
-			if ( each.$el.find('.upfront-module').size() > 0 )
-				each.$el.find(".upfront-editable_entities_container:first").append($(drop_wrap_full).addClass('upfront-drop-last'));
-		});
-		// Finding dropable places that's outside of wrapper
-		_.each(ed.wraps, function(each, index, list){
-			var is_me = ( wrap && each.$el.get(0) == wrap.$el.get(0) && wrap.$el.children(':not(.upfront-drop)').size() == 1 ),
-				aff = ed.get_affected_wrapper_els(each, ed.wraps, [], true),
-				lmt = ed.get_move_limit(aff, ed.containment),
-				els = ed.get_wrap_els(each),
-				el_min = ed.get_wrap_el_min(each),
-				region = ed.get_region(each.$el.closest('.upfront-region')),
-				drop_wrap_full = '<div class="upfront-drop upfront-drop-wrap upfront-drop-wrap-full upfront-drop-y" style="height:0px;"></div>';
-				drop_wrap_fxd = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed" style="height:'+each.$el.outerHeight()+'px;"></div>';
+			row = me.row > ed.max_row ? ed.max_row : me.row,
+			drop_wrap_full = '<div class="upfront-drop upfront-drop-wrap upfront-drop-wrap-full upfront-drop-y"></div>',
+			drop_wrap_x = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x"></div>',
+			drop_wrap_fxd = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed"></div>',
+			drop = '<div class="upfront-drop upfront-drop-obj upfront-drop-y""></div>';
 			
-			// Add full dropable after each first column wrapper
-			if ( each.grid.left == region.grid.left && !each.$el.prev().hasClass('upfront-drop-wrap-full') ){
-				each.$el.before(drop_wrap_full);
-			}
-			// The wrapper right side has enough space, so add a dropable place after it
-			if ( !is_me && lmt[1]-each.grid.right >= col ){
-				each.$el.after($(drop_wrap_fxd).addClass(ed.grid.class+(lmt[1]-each.grid.right)));
-			}
-			// The wrapper placed on first column and the left side has enough space, so add a dropable place before it
-			if ( !is_me && each.grid.left == region.grid.left && el_min.grid.left-each.grid.left >= col ){
-				each.$el.before($(drop_wrap_fxd).addClass(ed.grid.class+(el_min.grid.left-lmt[0])+' clr'));
-			}
+		// Add dropables in each regions
+		_.each(ed.regions, function(region){
+			var $region = region.$el.find(".upfront-editable_entities_container:first"),
+				$wraps = $region.find('> .upfront-wrapper');
+				
+			$wraps.each(function(){
+				var $wrap = $(this),
+					wrap = ed.get_wrap($wrap),
+					$prev_wrap = $wrap.prevAll('.upfront-wrapper:first'),
+					$next_wrap = $wrap.nextAll('.upfront-wrapper:first'),
+					wrap_el_min = ed.get_wrap_el_min(wrap);
+				// Finding the droppable on inside wrapper, only if siblings wrapper exists
+				if ( 
+					( wrap.col >= col ) && (
+					( $next_wrap.size() > 0 && !$next_wrap.hasClass('clr') && ( $next_wrap.find('.upfront-module').size() > 1 || (me_wrap && $next_wrap.get(0) != me_wrap.$el.get(0)) ) ) || 
+					( $prev_wrap.size() > 0 && !$wrap.hasClass('clr') && ( $prev_wrap.find('.upfront-module').size() > 1 || (me_wrap && $prev_wrap.get(0) != me_wrap.$el.get(0)) ) ) || 
+					( $next_wrap.size() > 0 && $prev_wrap.size() > 0 && !$next_wrap.hasClass('clr') && !$wrap.hasClass('clr') ) )
+				){
+					$els = $wrap.find('.upfront-module');
+					$els.each(function(){
+						if ( $(this).get(0) == me.$el.get(0) )
+							return;
+						var $el = $(this),
+							el = ed.get_el($el);
+						$el.parent().before($(drop).data('drop_size', { col: wrap.col, row: (row > el.row ? el.row : row) }));
+					});
+					$wrap.append($(drop).data('drop_size', { col: wrap.col, row: row }));
+				}
+				// Return if this is the current wrapper
+				if ( me_wrap && $wrap.get(0) == me_wrap.$el.get(0) && ( $next_wrap.size() == 0 || ($next_wrap.size() > 0 && $next_wrap.hasClass('clr')) ) )
+					return;
+				// Add droppable before each wrapper that start in new line
+				if ( $wrap.hasClass('clr') ){
+					$wrap.before($(drop_wrap_full).data('drop_size', { col: region.col, row: row }));
+				}
+				// Check to see if the right side on wrapper has enough column to add droppable
+				if ( ( $next_wrap.size() == 0 || ($next_wrap.size() > 0 && $next_wrap.hasClass('clr')) ) && region.grid.right-wrap.grid.right >= col ){
+					$wrap.after($(drop_wrap_x).data('drop_size', { col: region.grid.right-wrap.grid.right, row: wrap.row }));
+				}
+				// Now check the left side, finding spaces between wrapper and inner modules
+				if ( wrap_el_min.grid.left-wrap.grid.left >= col ){
+					$wrap.before($(drop_wrap_fxd).data('drop_size', { col: wrap_el_min.grid.left-wrap.grid.left, row: wrap.row }).addClass( $wrap.hasClass('clr') ? 'clr' : '' ));
+				}
+			});
+			if ( $wraps.size() > 0 )
+				$region.append($(drop_wrap_full).data('drop_size', { col: region.col, row: row }));
+			else
+				$region.append($(drop_wrap_full).data('drop_size', { col: region.col, row: region.row }));
 		});
-		// Add sibling swap dropable
-		/*if ( aff_els.left.length == 1 ||  aff_els.right.length == 1 ){
-			var drop_wrap_x = '<div class="upfront-drop upfront-drop-wrap upfront-drop-x upfront-drop-fixed upfront-drop-swap"></div>';
-			if ( aff_els.left.length == 1 ){
-				var $left_wrap = aff_els.left[0].$el.closest('.upfront-wrapper');
-				$left_wrap.before($(drop_wrap_x).css('height', $left_wrap.outerHeight()));
-			}
-			if ( aff_els.right.length == 1 ){
-				var $right_wrap = aff_els.right[0].$el.closest('.upfront-wrapper');
-				$right_wrap.after($(drop_wrap_x).css('height', $right_wrap.outerHeight()));
-			}
-		}*/
-		_.each(ed.els, function(each, index, els){
-			var is_me = ( each.$el.get(0) == me.$el.get(0) ),
-				$each_wrap = each.$el.closest('.upfront-wrapper'),
-				wrap_pos = _.find(ed.wraps, function(w){ return w.$el.get(0) == $each_wrap.get(0); }),
-				aff = wrap_pos ? ed.get_affected_wrapper_els(wrap_pos, ed.wraps, [me], true) : ed.get_affected_els(each, ed.els, [me], true),
-				lmt = ed.get_move_limit(aff, ed.containment),
-				drop = '<div class="upfront-drop upfront-drop-obj upfront-drop-y '+( is_me ? ' upfront-drop-me '+ed.grid.top_margin_class : '' )+'" style="height:0;"></div>',
-				drop_wrap_y = '<div class="upfront-drop upfront-drop-wrap upfront-drop-y '+( is_me ? ' upfront-drop-me' : '' )+'" style="height:0;"></div>';
 		
-			// Is current element and the only element in the wrapper
-			if ( is_me && wrap_pos && $each_wrap.children().size() == 1 ){
-				var clr = $each_wrap.hasClass('clr') ? ' clr' : '';
-				/*if ( $each_wrap.prev().hasClass('upfront-drop') )
-					$each_wrap.prev().addClass('upfront-drop-me'+clr);
-				else if ( lmt[0] == 1 && lmt[1] == ed.containment.grid.right )
-					$each_wrap.before($(drop_wrap_y).addClass('upfront-drop-wrap-full'));*/
-				// The dropable already there, so just add class
-				if ( $each_wrap.hasClass('clr') && $each_wrap.next().hasClass('upfront-drop-wrap-full') )
-					$each_wrap.next().addClass('upfront-drop-me');
-				// Else we add the dropable
-				else
-					$each_wrap.before($(drop_wrap_y).addClass(ed.grid.class + (lmt[1] == ed.containment.grid.right ? lmt[1]-lmt[0]+1 : wrap_col) + clr));
-				wrap.$el.hide();
+		// Add the current dragging element droppable
+		if ( me_wrap ){
+			if ( me_wrap.$el.find('.upfront-module').size() > 1 ){
+				// The wrapper has more than one element
+				var $next = me.$el.parent().next();
+				// Check if there is droppable after the element
+				if ( $next.size() > 0 && $next.hasClass('upfront-drop-obj') ){
+					var drop_size = $next.data('drop_size');
+					drop_size.row = row;
+					$next.data('drop_size', drop_size);
+					$next.addClass('upfront-drop-me');
+				}
 			}
-			// Add dropable inside wrapper, in condition that the element has affected elements on either left/right
-			else if ( lmt[1]-lmt[0]+1 >= col && ( ( wrap_pos && ( aff.right.length > 0 || aff.left.length > 0 ) ) || !wrap_pos ) ){
-				if ( !is_me && ( !each.$el.parent().prev() || !each.$el.parent().prev().hasClass('upfront-drop') ) )
-					each.$el.parent().before(drop);
-				if ( is_me && each.$el.prev() && each.$el.parent().prev().hasClass('upfront-drop') )
-					each.$el.parent().prev().addClass('upfront-drop-me');
-				else if ( is_me )
-					each.$el.parent().after(drop);
-				else
-					each.$el.parent().after($(drop).addClass('upfront-drop-after'));
+			else {
+				var $next = me_wrap.$el.next(),
+					region = ed.get_region(me_wrap.$el.closest('.upfront-region'));
+				// Check if there is the wrapper start in new line and that the next droppable is full column
+				if ( $next.size() > 0 && me_wrap.$el.hasClass('clr') && $next.hasClass('upfront-drop-wrap-full') ){
+					$next.addClass('upfront-drop-me');
+				}
+				// Check if the next droppable is a fixed one
+				else if ( $next.size() > 0 && $next.hasClass('upfront-drop-fixed') ){
+					var drop_size = $next.data('drop_size');
+					drop_size.col += me_wrap.col;
+					$next.data('drop_size', drop_size);
+					$next.css('left', parseInt($next.css('left'))-me_wrap.width);
+					$next.addClass('upfront-drop-me');
+				}
+				// Add one if the next element is not droppable
+				else if ( $next.size() > 0 && $next.hasClass('upfront-wrapper') && !$next.hasClass('clr') ) {
+					var next_wrap = ed.get_wrap($next),
+						next_wrap_el_min = ed.get_wrap_el_min(next_wrap);
+					me_wrap.$el.after(
+						$(drop_wrap_fxd)
+							.addClass('upfront-drop-me')
+							.data('drop_size', { col: next_wrap_el_min.grid.left-me_wrap.grid.left, row: (next_wrap.row > me_wrap.row ? next_wrap.row : me_wrap.row) })
+							.css('width', (next_wrap.grid.left-me_wrap.grid.left)*ed.col_size)
+							.css('height', me.height)
+					);
+				}
+				// Or add one after if the wrapper is not started in a new line
+				else if ( $next.size() > 0 && !me_wrap.$el.hasClass('clr') && $next.hasClass('upfront-drop-wrap-full') ) {
+					var $prev_wrap = me_wrap.$el.prevAll('.upfront-wrapper:first'),
+						prev_wrap = ed.get_wrap($prev_wrap);
+					me_wrap.$el.after(
+						$(drop_wrap_x)
+							.addClass('upfront-drop-me')
+							.data('drop_size', { col: region.grid.right-me_wrap.grid.left+1, row: (prev_wrap.row > me_wrap.row ? prev_wrap.row : me_wrap.row) })
+					);
+				}
 			}
-			/*else if ( ( !is_me && ed.containment.grid.right-lmt[0]+1 >= col && ed.containment.grid.right-lmt[0]+1 < col+lmt[1]-lmt[0]+1 ) && ( !$each_wrap.prev() || !$each_wrap.prev().hasClass('upfront-drop') ) ) {
-				$each_wrap.before($(drop_wrap_y).addClass(ed.grid.size+(ed.containment.grid.right-lmt[0]+1)));
-			}*/
-			/*else if ( !is_me && lmt[1] == ed.containment.grid.right  ){
-				$each_wrap.after($(drop_wrap_y).addClass('upfront-drop-after '+ed.grid.class+col));
-			}*/
-			/*if ( lmt[1] == ed.containment.grid.right ){
-				ed.update_class($each_wrap, ed.grid.class, lmt[1]-lmt[0]+1);
-			}*/
+		}
+		else {
+			// No wrapper? It must be from shadow region (invisible region that holds elements initial state)
+			// Just add some droppable as a return point
+			me.$el.after($(drop).addClass('upfront-drop-me').data('drop_size', { col: col, row: row }));
+		}
+		
+		ed.drops = _.map($('.upfront-drop'), function(each){
+			var $el = $(each),
+				off = $el.offset(),
+				left = off.left,
+				top = off.top,
+				drop_size = $(each).data('drop_size'),
+				grid = ed.get_grid(left, top);
+			return {
+				$el: $el,
+				left: grid.x,
+				right: grid.x+drop_size.col-1,
+				top: grid.y,
+				bottom: grid.y+drop_size.row
+			};
 		});
-		//$('.upfront-drop-me').addClass(ed.grid.top_margin_class+margin.original.top);
-		$('.upfront-drop-me').css({height:me.height+(margin.original.top*ed.baseline)});
+		
+		// Set fixed droppables to absolute position
 		$('.upfront-drop-fixed').each(function(){
 			var pos = $(this).position();
 			$(this).css({
@@ -650,38 +697,9 @@ var GridEditor = {
 				left: pos.left
 			});
 		});
-		ed.drops = _.map($('.upfront-drop'), function(each){
-			var $el = $(each),
-				off = $el.offset(),
-				left = off.left,
-				right = left + $el.outerWidth(),
-				top = off.top,
-				bottom = top + $el.outerHeight(),
-				y = top + ( (bottom-top)/2 ),
-				x = left + ( (right-left)/2 ),
-				grid = ed.get_grid(x, y),
-				grid1 = ed.get_grid(left, top),
-				grid2 = ed.get_grid(right, bottom),
-				is_after = $el.hasClass('upfront-drop-after'),
-				is_me = $el.hasClass('upfront-drop-me'),
-				is_full = $el.hasClass('upfront-drop-wrap-full'),
-				is_first = $el.hasClass('upfront-drop-first'),
-				is_last = $el.hasClass('upfront-drop-last'),
-				y_rel = ( is_after ? -2 : ( is_full ? ( is_first ? -2 : 0 ) : 2 ) );
-			return {
-				$el: $el,
-				x: grid.x,
-				y: grid.y+y_rel,
-				left: grid1.x,
-				right: grid2.x-1,
-				top: grid1.y+y_rel,
-				bottom: grid2.y+y_rel
-			};
-		});
-		$('.upfront-drop-x').css({width:0});
-		$('.upfront-drop').append('<div class="upfront-drop-preview">');
+		
+		$('.upfront-drop').append('<div class="upfront-drop-preview" />');
 	},
-	
 	
 	/**
 	 * Update wrappers
@@ -767,6 +785,7 @@ var GridEditor = {
 				_.each(ed.wraps, function(each, index){
 					ed.wraps[index] = ed.get_position(each.$el);
 				});
+				ed.normalize(ed.els, ed.wraps);
 				Upfront.Events.trigger("entity:resize_start", view, view.model);
 			},
 			resize: function(e, ui){
@@ -875,24 +894,38 @@ var GridEditor = {
 				$main.addClass('upfront-dragging');
 				
 				ed.start(view, model);
+				ed.normalize(ed.els, ed.wraps);
 				var $helper = $('.ui-draggable-dragging'),
 					$wrap = $me.closest('.upfront-wrapper'),
+					$region = $me.closest('.upfront-region'),
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap);
+				$region.css('min-height', $region.css('height'));
 				$me.hide();
 				$helper.css('max-width', me.width);
 				$helper.css('height', me.height);
 				$helper.css('max-height', ed.max_row*ed.baseline);
 				ed.create_drop_point(me, wrap);
 				
-				_.each(ed.els, function(each){
+				$wrap.css('min-height', '1px');
+				
+				/*_.each(ed.els, function(each){
 					each.$el.find(".upfront-debug-info").size() || each.$el.find('.upfront-editable_entity:first').append('<div class="upfront-debug-info"></div>');
 					each.$el.find(".upfront-debug-info").text('grid: ('+each.grid.left+','+each.grid.top+'),('+each.grid.right+','+each.grid.bottom+') | outer: ('+each.outer_grid.left+','+each.outer_grid.top+'),('+each.outer_grid.right+','+each.outer_grid.bottom+') | center: '+each.grid_center.x+','+each.grid_center.y);
 				});
 				_.each(ed.drops, function(each){
-					each.$el.append('<div class="upfront-drop-debug">('+each.left+','+each.top+'),('+each.right+','+each.bottom+'),('+each.x+','+each.y+')</div>');
+					each.$el.append('<div class="upfront-drop-debug">('+each.left+','+each.top+'),('+each.right+','+each.bottom+')</div>');
+					var $view = $('<div class="upfront-drop-view"></div>');
+					$view.css({
+						top: each.top*ed.baseline,
+						left: (each.left-1)*ed.col_size + (ed.grid_layout.left-ed.main.left),
+						width: (each.right-each.left+1) * ed.col_size,
+						height: (each.bottom-each.top) * ed.baseline
+					});
+					$view.text('('+each.left+','+each.right+')'+'('+each.top+','+each.bottom+')');
+					$main.append($view);
 				});
-				$helper.find(".upfront-debug-info").size() || $helper.append('<div class="upfront-debug-info"></div>');
+				$helper.find(".upfront-debug-info").size() || $helper.append('<div class="upfront-debug-info"></div>');/**/
 				
 				Upfront.Events.trigger("entity:drag_start", view, view.model);
 			},
@@ -954,8 +987,10 @@ var GridEditor = {
 				//console.log([grid.x, grid.y, compare_area_top, compare_area_right, compare_area_bottom, compare_area_left]);
 				
 				// Finding the regions we currently on
-				var regions_area = _.map(ed.regions, function(each){
-						var top, bottom, left, right, area;
+				var $last_region_container = $('.upfront-region-container:not(.upfront-region-container-shadow):last'),
+					regions_area = _.map(ed.regions, function(each){
+						var top, bottom, left, right, area,
+							region_bottom = ( each.$el.closest('.upfront-region-container').get(0) == $last_region_container.get(0) ) ? 999999 : each.grid.bottom; // Make this bottom-less if it's in the last region container
 						if ( compare_area_left >= each.grid.left && compare_area_left <= each.grid.right )
 							left = compare_area_left;
 						else if ( compare_area_left < each.grid.left )
@@ -964,18 +999,20 @@ var GridEditor = {
 							right = compare_area_right;
 						else if ( compare_area_right > each.grid.right )
 							right = each.grid.right;
-						if ( compare_area_top >= each.grid.top && compare_area_top <= each.grid.bottom )
+						if ( compare_area_top >= each.grid.top && compare_area_top <= region_bottom )
 							top = compare_area_top;
 						else if ( compare_area_top < each.grid.top )
 							top = each.grid.top;
-						if ( compare_area_bottom >= each.grid.top && compare_area_bottom <= each.grid.bottom )
+						if ( compare_area_bottom >= each.grid.top && compare_area_bottom <= region_bottom )
 							bottom = compare_area_bottom;
-						else if ( compare_area_bottom > each.grid.bottom )
-							bottom = each.grid.bottom;
+						else if ( compare_area_bottom > region_bottom )
+							bottom = region_bottom;
 						if ( top && bottom && left && right && grid.x > 0 && grid.x <= ed.grid.size )
 							area = (right-left+1) * (bottom-top+1);
 						else
 							area = 0;
+						if ( each.$el.hasClass('upfront-region-drag-active') )
+							area *= 1.2;
 						return {
 							area: area,
 							region: each
@@ -997,86 +1034,99 @@ var GridEditor = {
 				
 				col = col > region.col ? region.col : col;
 				compare_area_right = compare_area_left+col-1;
-					
-				// Get closest dropable
-				var hovered_drops = _.filter(ed.drops, function(each){
-					if ( !each.$el.closest('.upfront-region').hasClass('upfront-region-drag-active') )
-						return false;
-					if ( // This works for vertical drops
-						(( compare_area_left >= each.left && compare_area_left <= each.right ) ||
-						( compare_area_right >= each.left && compare_area_right <= each.right ))/* && 
-						(( each.top >= compare_area_top && each.top <= compare_area_bottom ) || 
-						( each.bottom >= compare_area_top && each.bottom <= compare_area_bottom ))*/
-					)
-						return true;
-					if ( // This works for horizontal drops
-						(( each.left >= compare_area_left && each.left <= compare_area_right ) || 
-						( each.right >= compare_area_left && each.right <= compare_area_right )) && 
-						(( compare_area_top >= each.top && compare_area_top <= each.bottom ) || 
-						( compare_area_bottom >= each.top && compare_area_bottom <= each.bottom ))
-					)
-						return true;
-				}),
-				drop = _.map(hovered_drops, function(each){
-					var diff_x = /*each.left - current_grid_left*/ 0,
-						diff_y = each.y - compare_area_top;
-						d = Math.sqrt(Math.pow(diff_x, 2) + Math.pow(diff_y, 2)),
-						diff_x1 = /*each.left - current_grid_left*/ 0,
-						diff_y1 = each.top - compare_area_top,
-						d1 = Math.sqrt(Math.pow(diff_x1, 2) + Math.pow(diff_y1, 2)),
-						diff_x2 = /*each.left - current_grid_left*/ 0,
-						diff_y2 = each.bottom - compare_area_top,
-						d2 = Math.sqrt(Math.pow(diff_x2, 2) + Math.pow(diff_y2, 2)),
-						//d_min = (d+d1+d2)/3;
-						d_min = _.min([d, d1, d2]);
-					return {
-						$el: each.$el,
-						left: each.left,
-						right: each.right,
-						top: each.top,
-						bottom: each.bottom,
-						d: d_min
-					};
-				}),
-				get_clst_drop = _.min(drop, function(each){ return each.d; }),
-				clst_drops = _.filter(drop, function(each){ return each.d == get_clst_drop.d; }),
-				clst_drops_sort = _.sortBy(clst_drops, function(each, index, list){
-					// Sort by priority
-					/*if ( each.$el.hasClass('upfront-drop-me') )
-						return 1;
-					else if ( each.$el.hasClass('upfront-drop-use') )
-						return 2;
-					else*/ if ( each.$el.hasClass('upfront-drop-after') )
-						return 4;
-					else if ( each.$el.hasClass('upfront-drop-wrap-full') )
-						return 5;
-					else if ( each.$el.hasClass('upfront-drop-fixed') )
-						return 2;
-					else
-						return 3;
-				}),
-				clst_drop = _.first(clst_drops_sort),
-				$clst_drop_el = clst_drop ? clst_drop.$el : $('.upfront-drop-me'),
-				$preview = $clst_drop_el.find('.upfront-drop-preview');
 				
-				if ( !$clst_drop_el.hasClass('upfront-drop-use') ){
+				
+				var drops_area = _.map(ed.drops, function(each){
+						if ( !each.$el.closest('.upfront-region').hasClass('upfront-region-drag-active') )
+							return false;
+						var top, bottom, left, right, area;
+						if ( compare_area_left >= each.left && compare_area_left <= each.right )
+							left = compare_area_left;
+						else if ( compare_area_left < each.left )
+							left = each.left;
+						if ( compare_area_right >= each.left && compare_area_right <= each.right )
+							right = compare_area_right;
+						else if ( compare_area_right > each.right )
+							right = each.right;
+						if ( compare_area_top >= each.top && compare_area_top <= each.bottom )
+							top = compare_area_top;
+						else if ( compare_area_top < each.top )
+							top = each.top;
+						if ( compare_area_bottom >= each.top && compare_area_bottom <= each.bottom )
+							bottom = compare_area_bottom;
+						else if ( compare_area_bottom > each.bottom )
+							bottom = each.bottom;
+						if ( top && bottom && left && right && grid.x > 0 && grid.x <= ed.grid.size )
+							area = (right-left+1) * (bottom-top+1);
+						else
+							area = 0;
+						if ( each.$el.hasClass('upfront-drop-me') )
+							area *= 1.5;
+						else if ( each.$el.hasClass('upfront-drop-fixed') )
+							area *= 1.3;
+						else if ( each.$el.hasClass('upfront-drop-obj') )
+							area *= 1.2;
+						return {
+							area: area,
+							drop: each
+						}
+					}).filter(function(each){
+						if ( each !== false )
+							return true;
+						return false;
+					}),
+					max_drop = _.max(drops_area, function(each){ return each.area; });
+				
+				if ( max_drop.area > 0 ){
+					var max_drops = _.filter(drops_area, function(each){ return each.area == max_drop.area; }),
+						max_drops_sort = _.sortBy(max_drops, function(each, index, list){
+							if ( each.drop.$el.hasClass('upfront-drop-fixed') )
+								return 2;
+							else if ( each.drop.$el.hasClass('upfront-drop-wrap-full') )
+								return 5;
+							return 3;
+						}),
+						drop = _.first(max_drops_sort).drop;
+				}
+				else {
+					if ( region.$el.find('.upfront-drop-me').size() > 0 ){
+						var drop = ed.get_drop($('.upfront-drop-me'));
+					}
+					else {
+						var $first_drop = region.$el.find('.upfront-drop:first'),
+							first_drop = ed.get_drop($first_drop),
+							$last_drop = region.$el.find('.upfront-drop:last'),
+							last_drop = ed.get_drop($last_drop);
+						if ( compare_area_top < region.grid.top + ((region.grid.bottom-region.grid.top)/2) )
+							var drop = first_drop;
+						else
+							var drop = last_drop;
+					}
+				}
+				
+				var $preview = drop.$el.find('.upfront-drop-preview'),
+					preview_left = 0,
+					preview_top = 0;
+				
+				
+				if ( !drop.$el.hasClass('upfront-drop-use') ){
 					$('.upfront-drop-use').removeClass('upfront-drop-use');
-					$('.upfront-drop-x').not($clst_drop_el).stop().animate({width:0}, 500);
-					$('.upfront-drop-y').not($clst_drop_el).not('.upfront-drop-me.upfront-drop-wrap:not(.upfront-drop-wrap-full)').stop().animate({height:0}, 500);
-					if ( $clst_drop_el.hasClass('upfront-drop-x') ){
-						var ani_w = $clst_drop_el.hasClass('clr') ? width : (clst_drop.right-clst_drop.left+1)*ed.col_size;
-						$clst_drop_el.addClass('upfront-drop-use').stop().animate({width:ani_w}, 500);
+					$('.upfront-drop-x').not(drop.$el).stop().animate({width:0}, 500);
+					$('.upfront-drop-y').not(drop.$el).not('.upfront-drop-me.upfront-drop-wrap:not(.upfront-drop-wrap-full)').stop().animate({height:0}, 500);
+					if ( drop.$el.hasClass('upfront-drop-x') ){
+						var ani_w = (drop.right-drop.left+1)*ed.col_size,
+							ani_h = (drop.bottom-drop.top)*ed.baseline;
+						drop.$el.addClass('upfront-drop-use').css('width', ani_w).css('height', ani_h);
 					}
 					else{
-						var ani_h = (margin_data.original.top*ed.baseline) + height;
-						$clst_drop_el.addClass('upfront-drop-use').stop().animate({height:ani_h}, 500);
+						var ani_h = height;
+						drop.$el.addClass('upfront-drop-use').stop().animate({height:ani_h}, 500);
 					}
 					$preview.css({
 						width: col*ed.col_size,
 						height: height
 					});
 				}
-				
 				
 				// normalize all margin first
 				_.each(ed.els, function(each){
@@ -1092,7 +1142,7 @@ var GridEditor = {
 					each.$el.data('clear', (each.$el.hasClass('clr') ? 'clear' : 'none'));
 				});
 				
-				if ( $clst_drop_el.hasClass('upfront-drop-me') ){
+				if ( drop.$el.hasClass('upfront-drop-me') ){
 					// Not moving so calculate margin
 				
 					// Calculate margins
@@ -1115,11 +1165,8 @@ var GridEditor = {
 						//else
 						//	ed.adjust_els_right(aff_els.right, move_limit[0]+col+margin_size-1);
 					}
-					
-					$preview.css({
-						marginLeft: margin_data.current.left * ed.col_size,
-						marginTop: margin_data.current.top * ed.baseline
-					});
+					preview_left = margin_data.current.left;
+					preview_top = margin_data.current.top;
 				}
 				else { // Moved
 					if ( wrap )
@@ -1130,10 +1177,10 @@ var GridEditor = {
 					margin_data.current.top = 0;
 					margin_data.current.right = 0;
 					margin_data.current.bottom = 0;
-					if ( $clst_drop_el.hasClass('upfront-drop-wrap') && $clst_drop_el.hasClass('upfront-drop-fixed') ){
+					if ( drop.$el.hasClass('upfront-drop-wrap') && drop.$el.hasClass('upfront-drop-fixed') ){
 						var adjusted = false;
-						if ( $clst_drop_el.nextAll('.upfront-wrapper').size() > 0 ){
-							var $nx_wrap = $clst_drop_el.nextAll('.upfront-wrapper').eq(0),
+						if ( drop.$el.nextAll('.upfront-wrapper').size() > 0 ){
+							var $nx_wrap = drop.$el.nextAll('.upfront-wrapper').eq(0),
 								nx_wrap = _.find(ed.wraps, function(each){ return $nx_wrap.get(0) == each.$el.get(0); }),
 								need_adj = _.filter(ed.get_wrap_els(nx_wrap), function(each){
 									return ( me.$el.get(0) != each.$el.get(0) && each.outer_grid.left == nx_wrap.grid.left )
@@ -1142,7 +1189,7 @@ var GridEditor = {
 								drop_margin = current_grid_left-nx_wrap.grid.left,
 								drop_margin_top = current_grid_top-nx_wrap.grid.top,
 								adjusted = false;
-							if ( ! $nx_wrap.hasClass('clr') || $clst_drop_el.hasClass('clr') ){
+							if ( ! $nx_wrap.hasClass('clr') || drop.$el.hasClass('clr') ){
 								var drop_margin_max = need_adj_min.grid.left-nx_wrap.grid.left-col;
 								margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
 								margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
@@ -1152,43 +1199,53 @@ var GridEditor = {
 							}
 						}
 						if ( ! adjusted ){
-							var drop_margin = clst_drop ? current_grid_left-clst_drop.left : current_grid_left,
-								drop_margin_max = clst_drop ? clst_drop.right-clst_drop.left-col+1 : 0,
-								drop_margin_top = clst_drop ? current_grid_top-clst_drop.top : current_grid_top;
+							var drop_margin = drop ? current_grid_left-drop.left : current_grid_left,
+								drop_margin_max = drop ? drop.right-drop.left-col+1 : 0,
+								drop_margin_top = drop ? current_grid_top-drop.top : current_grid_top;
 							margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
 							margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
 						}
+						preview_left = margin_data.current.left;
+						preview_top = margin_data.current.top;
 					}
-					else if ( !$clst_drop_el.hasClass('upfront-drop-wrap') ) {
-						var drop_wrap = _.find(ed.wraps, function(each){
-								return ( each.$el.get(0) == $clst_drop_el.closest('.upfront-wrapper').get(0) );
+					else if ( !drop.$el.hasClass('upfront-drop-wrap') ) {
+						var $drop_wrap = drop.$el.closest('.upfront-wrapper'),
+							drop_wrap = _.find(ed.wraps, function(each){
+								return ( each.$el.get(0) == $drop_wrap.get(0) );
 							}),
 							drop_wrap_aff = drop_wrap ? ed.get_affected_wrapper_els(drop_wrap, ed.wraps, (wrap && ed.get_wrap_els(wrap).length == 1 ? [wrap, me] : [me]), true) : false,
 							drop_lmt = drop_wrap ? ed.get_move_limit(drop_wrap_aff, ed.containment) : false,
 							drop_margin = drop_wrap ? current_grid_left-drop_lmt[0] : 0,
 							drop_margin_max = drop_wrap ? drop_lmt[1]-drop_lmt[0]-col+1 : 0,
-							drop_margin_top = clst_drop ? current_grid_top-clst_drop.top : current_grid_top;
+							drop_margin_top = drop ? current_grid_top-drop.top : current_grid_top;
 						margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
 						margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
-						if ( drop_wrap )
+						preview_left = margin_data.current.left;
+						preview_top = margin_data.current.top;
+						if ( drop_wrap ){
 							ed.adjust_affected_right(drop_wrap, drop_wrap_aff.right, [me], drop_lmt[0]+col+margin_data.current.left-1);
+							preview_left -= drop_wrap.left-drop_lmt[0];
+						}
 					}
-					else if ( $clst_drop_el.hasClass('upfront-drop-wrap-full') ){
-						var drop_margin = clst_drop ? current_grid_left-clst_drop.left : current_grid_left,
-							drop_margin_max = clst_drop ? clst_drop.right-clst_drop.left-col+1 : 0,
-							drop_margin_top = current_grid_top-clst_drop.top;
+					else if ( drop.$el.hasClass('upfront-drop-wrap-full') || (drop.$el.hasClass('upfront-drop-wrap') && drop.$el.hasClass('upfront-drop-x')) ){
+						var drop_margin = drop ? current_grid_left-drop.left : current_grid_left,
+							drop_margin_max = drop ? drop.right-drop.left-col+1 : 0,
+							drop_margin_top = current_grid_top-drop.top;
 						margin_data.current.left = drop_margin && drop_margin > 0 ? ( drop_margin > drop_margin_max ? drop_margin_max : drop_margin ) : 0;
 						margin_data.current.top = drop_margin_top > 0 ? drop_margin_top : 0;
+						preview_left = margin_data.current.left;
+						preview_top = margin_data.current.top;
 					}
 					$me.data('margin', margin_data);
-				
-					$preview.css({
-						marginLeft: margin_data.current.left * ed.col_size,
-						marginTop: margin_data.current.top * ed.baseline
-					});
 				}
 				
-				$helper.find(".upfront-debug-info").text('grid: '+grid.x+','+grid.y+' | current: ('+current_grid_left+','+current_grid_top+'),('+current_grid_right+','+current_grid_bottom+') | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
+				$preview.css({
+					marginLeft: preview_left * ed.col_size,
+					marginTop: preview_top * ed.baseline
+				});
+				
+				
+				//$helper.find(".upfront-debug-info").text('grid: '+grid.x+','+grid.y+' | current: ('+current_grid_left+','+current_grid_top+'),('+current_grid_right+','+current_grid_bottom+') | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
 				
 			},
 			stop: function(e, ui){
@@ -1240,6 +1297,7 @@ var GridEditor = {
 					}
 				}
 				$('.upfront-drop').remove();
+				$('.upfront-drop-view').remove();
 				
 				( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
 					ed.update_margin_classes($(this));
@@ -1298,6 +1356,7 @@ var GridEditor = {
 				
 				$('.upfront-region-drag-active .upfront-module').css('max-height', '');
 				$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
+				$wrap.css('min-height', '');
 				$main.removeClass('upfront-dragging');
 				
 				Upfront.Events.trigger("entity:drag_stop", view, view.model);
@@ -1419,3 +1478,4 @@ define({
 	}
 });
 })(jQuery);
+//@ sourceURL=upfront-behavior.js
