@@ -1,0 +1,20 @@
+<li id="menu-item-{{ item.db_id }}" class="menu-item menu-item-depth-{{depth}} menu-item-page menu-item-edit-inactive">
+    <dl class="menu-item-bar">
+        <dt class="menu-item-handle">
+            <span class="item-title">
+                {{ item.title }}
+            </span>
+
+            <span class="item-controls">
+                <span class="item-type">{{ item.type_label }}</span>
+            </span>
+        </dt>
+    </dl>
+
+    <div class="menu-item-settings" id="menu-item-settings-251">
+        <input class="menu-item-data-db-id" type="hidden" name="menu-item-db-id[{{ item.db_id }}]" value="{{ item.db_id }}" />
+        <input class="menu-item-data-parent-id" type="hidden" name="menu-item-parent-id[{{ item.db_id }}]" value="{{ item.menu_item_parent }}" />
+    </div><!-- .menu-item-settings-->
+
+    <ul class="menu-item-transport"></ul>
+</li>
