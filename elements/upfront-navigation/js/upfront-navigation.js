@@ -2,7 +2,9 @@
 
     var _template_files = [
         "text!../elements/upfront-navigation/templates/navigation_contents.html",
-        "text!../elements/upfront-navigation/templates/navigation_menuorder.html"
+        "text!../elements/upfront-navigation/templates/navigation_menuorder.html",
+        "text!../elements/upfront-navigation/templates/navigation_contents_item_values.html",
+        "text!../elements/upfront-navigation/templates/navigation_menuorder_list.html"
     ];
 
     define(_template_files, function () {
@@ -50,20 +52,22 @@
                     menuStyle, menuAliment, allowSubNav, addNewPage;
 
                 if (parsedSetting == null) {
-                    menuStyle = false,
+                        menuStyle = false,
                         menuAliment = false,
                         allowSubNav = false,
                         addNewPage = true;
                 }
                 else {
-                    menuStyle = parsedSetting.style,
-                    menuAliment = parsedSetting.aliment,
-                    allowSubNav = parsedSetting.subNavigation,
-                    addNewPage = parsedSetting.newPage;
+                        menuStyle = parsedSetting.style,
+                        menuAliment = parsedSetting.aliment,
+                        allowSubNav = parsedSetting.subNavigation,
+                        addNewPage = parsedSetting.newPage;
                 }
 
                 $upfrontObjectContent = this.$el.find('.upfront-object-content');
                 $upfrontObjectContent.attr('data-aliment',(menuAliment == false ? 'left' : menuAliment));
+                $upfrontObjectContent.attr('data-style',(menuStyle == false ? 'horizontal' : menuStyle));
+                $upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav == false ? false : allowSubNav));
             }
         });
 
@@ -231,7 +235,6 @@
             },
             get_value: function () {
 
-                //var layout_setting = this.$el.find('input[name="menu-style"]:checked').val();
                 var layout_setting = JSON.stringify({
                     "style": this.$el.find('input[name="menu-style"]:checked').val(),
                     "aliment": this.$el.find('input[name="menu-alignment"]:checked').val(),
@@ -318,14 +321,10 @@
 
         MenuitemView = Backbone.View.extend({
 
-            //define this.el, the wrapper element
-            //el: $('#menu'),  //used in cases where the view wrapper already exists in the DOM
             tagName: 'li',
-            //id: '',
-            //className: 'menuitem',
 
             // Cache the template function for a single item.
-            template: _.template('<div class="blank"></div><input type="checkbox" id="{{ slug }}" class="regular-checkbox" value="{{ ID }}" /><label for="{{ slug }}"></label><span>{{ name }}</span>'),
+            template: _.template(_Upfront_Templates["navigation_contents_item_values"]),
 
             initialize: function(options) {
                 _.bindAll(this, 'render');
@@ -343,18 +342,144 @@
         var NavigationMenuSettingContents = Upfront.Views.Editor.Settings.Item.extend({
 
             initialize: function(){
-
+                this.model.get("properties").on("change", this.render, this);
             },
 
             navContentsTemplate: _.template(_Upfront_Templates["navigation_contents"]),
+
+            addSelectedToMenu : function(listBox) {
+
+                    var t = listBox, menuItems = {},
+                        me = this,
+                        checkboxes = t.find('ul li input:checked'),
+                        re = new RegExp('menu-item\\[(\[^\\]\]*)');
+
+                    // If no items are checked, bail.
+                    if ( !checkboxes.length )
+                        return false;
+
+                    me.$el.find('.upfront_menu_pages_box .spinner, .upfront_menu_categories_box .spinner').show();
+
+                    // Retrieve menu item data
+                    $(checkboxes).each(function(){
+                        var t = $(this),
+                            listItemDBIDMatch = re.exec( t.attr('name') ),
+                            listItemDBID = 'undefined' == typeof listItemDBIDMatch[1] ? 0 : parseInt(listItemDBIDMatch[1], 10);
+
+                        menuItems[listItemDBID] = me.getItemData( 'add-menu-item', listItemDBID, t.closest('li') );
+
+                    });
+
+                    me.addItemToMenu(menuItems);
+
+                return menuItems;
+
+            },
+
+            getItemData : function( itemType, id, currentItem ) {
+                itemType = itemType || 'menu-item';
+
+                var itemData = {}, i, item,
+                    fields = [
+                        'menu-item-db-id',
+                        'menu-item-object-id',
+                        'menu-item-object',
+                        'menu-item-parent-id',
+                        'menu-item-position',
+                        'menu-item-type',
+                        'menu-item-title',
+                        'menu-item-url',
+                        'menu-item-description',
+                        'menu-item-attr-title',
+                        'menu-item-target',
+                        'menu-item-classes',
+                        'menu-item-xfn'
+                    ];
+                item = currentItem;
+
+                if( !id && itemType == 'menu-item' ) {
+                    id = item.find('.menu-item-data-db-id').val();
+                }
+
+                if( !id ) return itemData;
+
+                item.find('input').each(function() {
+                    var field;
+                    i = fields.length;
+                    while ( i-- ) {
+                        if( itemType == 'menu-item' )
+                            field = fields[i] + '[' + id + ']';
+                        else if( itemType == 'add-menu-item' )
+                            field = 'menu-item[' + id + '][' + fields[i] + ']';
+
+                        if (
+                            this.name &&
+                                field == this.name
+                            ) {
+                            itemData[fields[i]] = this.value;
+                        }
+                    }
+                });
+
+                return itemData;
+            },
+
+            update_post_status: function(data){
+
+                var me = this;
+
+                if ( !data )
+                    return false;
+
+                Upfront.Util.post({"action": "upfront_update_post_status",'postIds': data})
+                    .success(function (ret) {
+                        console.log(ret.data);
+                        me.getThisMenuItems();
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error updating status");
+                    });
+
+            },
+            addItemToMenu : function(menuItems){
+
+                var menu_id = this.model.get_property_value_by_name('menu_id'),
+                    me = this;
+                if ( !menu_id )
+                    return "Please select menu on settings";
+
+                    Upfront.Util.post({"action": "upfront_add_menu_item",'menu': menu_id, 'menu-item': menuItems})
+                        .success(function (ret) {
+                            console.log(ret.data);
+                            me.update_post_status(ret);
+                        })
+                        .error(function (ret) {
+                            Upfront.Util.log("Error loading menu");
+                        });
+                return 'Loading';
+
+            },
 
             getThisMenuItems: function () {
                 var menu_id = this.model.get_property_value_by_name('menu_id'),
                     me = this;
                 if ( !menu_id )
                     return "Please select menu on settings";
+
                 Upfront.Util.post({"action": "upfront_load_menu_items", "data": menu_id})
                     .success(function (ret) {
+
+                        me.$el.find('.upfront_selected_pages_box').empty();
+
+                        // Deselect the items
+                        me.$el.find('.upfront_menu_pages_box ul li :checked, .upfront_menu_categories_box ul li :checked').removeAttr('checked');
+                        //Reset custom link fields
+                        me.$el.find('.upfront_customlink_area input[name="label"]').val('').blur();
+                        me.$el.find('.upfront_customlink_area input[name="url"]').val('');
+
+                        //Remove the ajax spinner
+                        me.$el.find('.upfront_customlink_area .spinner, .upfront_menu_pages_box .spinner, .upfront_menu_categories_box .spinner, .upfront_menu_customlink_box .spinner').hide();
+
                         _.each(ret.data, function(item){
                             me.$el.find('.upfront_selected_pages_box')
                                 .append('<span id="'+item.ID+'">'+item.title+'</span>');
@@ -420,7 +545,8 @@
                 'click .upfront_menu_contents_tabs a':'menuContentTab',
                 'click .upfront_page_scroll_box li > div':'pagesListToggle',
                 'click .upfront_categories_scroll_box li > div':'pagesListToggle',
-                'click .add_custom_link':'addCustomLink'
+                'click .add_custom_link':'addCustomLink',
+                'click .upfront_selected_pages_box span':'deleteMenuItem'
             },
 
             menuContentTab: function(e){
@@ -458,12 +584,51 @@
             },
 
             addCustomLink: function(){
-                this.$el.find('.upfront_customlink_area input[name="url"]').val();
-                this.$el.find('.upfront_customlink_area input[name="label"]').val();
+
+                var url = this.$el.find('.upfront_customlink_area input[name="url"]').val(),
+                    label = this.$el.find('.upfront_customlink_area input[name="label"]').val();
+
+                if ( '' == url || 'http://' == url || '' == label )
+                    return false;
+
+                // Show the ajax spinner
+                this.$el.find('.upfront_customlink_area .spinner').show();
+
+                this.addItemToMenu({
+                    '-1': {
+                        'menu-item-type': 'custom',
+                        'menu-item-url': url,
+                        'menu-item-title': label
+                    }
+                });
+
+            },
+
+            deleteMenuItem: function(e){
+
+                var me = this;
+                me.$el.find('.upfront_menu_pages_box .spinner, .upfront_menu_categories_box .spinner, .upfront_menu_customlink_box .spinner').show();
+                Upfront.Util.post({"action": "upfront_delete_menu_item", "menu_item_id": e.target.id})
+                    .success(function (ret) {
+                        me.getThisMenuItems()
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error Deleting Menu Item");
+                    });
+                return 'Loading';
             },
 
             get_name: function () {
                 return "contents_setting";
+            },
+
+            get_value: function () {
+
+                console.log(this.addSelectedToMenu(this.$el.find('.upfront_page_scroll_box, .upfront_categories_scroll_box')));
+                var contents_setting = JSON.stringify({
+                    "meniItems": ''
+                });
+                return contents_setting;
             }
 
         });
@@ -472,22 +637,363 @@
         var NavigationMenuSettingMenuOrder = Upfront.Views.Editor.Settings.Item.extend({
 
             navMenuOrderTemplate: _.template(_Upfront_Templates["navigation_menuorder"]),
-            MenuOrderListTemplate: _.template('<li><dl><dt><span class="page_title">{{ title }}</span><span class="type">page</span></dt></dl></li>'),
+            MenuOrderListTemplate: _.template(_Upfront_Templates["navigation_menuorder_list"]),
+
+            options : {
+                menuItemDepthPerLevel : 20, // Do not use directly. Use depthToPx and pxToDepth instead.
+                globalMaxDepth : 4
+            },
+
+            menuList : undefined,	// Set in init.
+            targetList : undefined, // Set in init.
+            menusChanged : false,
+            isRTL: !! ( 'undefined' != typeof isRtl && isRtl ),
+            negateIfRTL: ( 'undefined' != typeof isRtl && isRtl ) ? -1 : 1,
+
+            initialize: function(){
+                this.model.get("properties").on("change", this.render, this);
+            },
+
+            registerChange : function() {
+                this.menusChanged = true;
+            },
+
+            jQueryExtensions : function() {
+                var me = this;
+                // jQuery extensions
+                $.fn.extend({
+                    menuItemDepth : function() {
+                        var margin = me.isRTL ? this.eq(0).css('margin-right') : this.eq(0).css('margin-left');
+                        return me.pxToDepth( margin && -1 != margin.indexOf('px') ? margin.slice(0, -2) : 0 );
+                    },
+                    updateDepthClass : function(current, prev) {
+                        return this.each(function(){
+                            var t = $(this);
+                            prev = prev || t.menuItemDepth();
+                            $(this).removeClass('menu-item-depth-'+ prev )
+                                .addClass('menu-item-depth-'+ current );
+                        });
+                    },
+                    shiftDepthClass : function(change) {
+                        return this.each(function(){
+                            var t = $(this),
+                                depth = t.menuItemDepth();
+                            $(this).removeClass('menu-item-depth-'+ depth )
+                                .addClass('menu-item-depth-'+ (depth + change) );
+                        });
+                    },
+                    childMenuItems : function() {
+                        var result = $();
+                        this.each(function(){
+                            var t = $(this), depth = t.menuItemDepth(), next = t.next();
+                            while( next.length && next.menuItemDepth() > depth ) {
+                                result = result.add( next );
+                                next = next.next();
+                            }
+                        });
+                        return result;
+                    },
+                    updateParentMenuItemDBId : function() {
+                        return this.each(function(){
+                            var item = $(this),
+                                input = item.find('.menu-item-data-parent-id'),
+                                depth = item.menuItemDepth(),
+                                parent = item.prev();
+
+                            if( depth == 0 ) { // Item is on the top level, has no parent
+                                input.val(0);
+                            } else { // Find the parent item, and retrieve its object id.
+                                while( ! parent[0] || ! parent[0].className || -1 == parent[0].className.indexOf('menu-item') || ( parent.menuItemDepth() != depth - 1 ) )
+                                    parent = parent.prev();
+                                input.val( parent.find('.menu-item-data-db-id').val() );
+                            }
+                        });
+                    }
+
+                });
+            },
+
+            initSortables : function() {
+                var currentDepth = 0, originalDepth, minDepth, maxDepth,
+                    prev, next, prevBottom, nextThreshold, helperHeight, transport,
+                    menuEdge = this.menuList.offset().left,
+                    body = $('body'), maxChildDepth,
+                    me = this,
+                    menuMaxDepth = initialMenuMaxDepth();
+
+                // Use the right edge if RTL.
+                menuEdge += this.isRTL ? this.menuList.width() : 0;
+
+                this.menuList.sortable({
+                    handle: '.menu-item-handle',
+                    placeholder: 'sortable-placeholder',
+                    start: function(e, ui) {
+                        var height, width, parent, children, tempHolder;
+
+                        // handle placement for rtl orientation
+                        if ( me.isRTL )
+                            ui.item[0].style.right = 'auto';
+
+                        transport = ui.item.children('.menu-item-transport');
+
+                        // Set depths. currentDepth must be set before children are located.
+                        originalDepth = ui.item.menuItemDepth();
+                        updateCurrentDepth(ui, originalDepth);
+
+                        // Attach child elements to parent
+                        // Skip the placeholder
+                        parent = ( ui.item.next()[0] == ui.placeholder[0] ) ? ui.item.next() : ui.item;
+                        children = parent.childMenuItems();
+                        transport.append( children );
+
+                        // Update the height of the placeholder to match the moving item.
+                        height = transport.outerHeight();
+                        // If there are children, account for distance between top of children and parent
+                        height += ( height > 0 ) ? (ui.placeholder.css('margin-top').slice(0, -2) * 1) : 0;
+                        height += ui.helper.outerHeight();
+                        helperHeight = height;
+                        height -= 2; // Subtract 2 for borders
+                        ui.placeholder.height(height);
+
+                        // Update the width of the placeholder to match the moving item.
+                        maxChildDepth = originalDepth;
+                        children.each(function(){
+                            var depth = $(this).menuItemDepth();
+                            maxChildDepth = (depth > maxChildDepth) ? depth : maxChildDepth;
+                        });
+                        width = ui.helper.find('.menu-item-handle').outerWidth(); // Get original width
+                        width += me.depthToPx(maxChildDepth - originalDepth); // Account for children
+                        width -= 2; // Subtract 2 for borders
+                        ui.placeholder.width(width);
+
+                        // Update the list of menu items.
+                        tempHolder = ui.placeholder.next();
+                        tempHolder.css( 'margin-top', helperHeight + 'px' ); // Set the margin to absorb the placeholder
+                        ui.placeholder.detach(); // detach or jQuery UI will think the placeholder is a menu item
+                        $(this).sortable( "refresh" ); // The children aren't sortable. We should let jQ UI know.
+                        ui.item.after( ui.placeholder ); // reattach the placeholder.
+                        tempHolder.css('margin-top', 0); // reset the margin
+
+                        // Now that the element is complete, we can update...
+                        updateSharedVars(ui);
+                    },
+                    stop: function(e, ui) {
+                        var children, depthChange = currentDepth - originalDepth;
+
+                        // Return child elements to the list
+                        children = transport.children().insertAfter(ui.item);
+
+                        // Update depth classes
+                        if( depthChange != 0 ) {
+                            ui.item.updateDepthClass( currentDepth );
+                            children.shiftDepthClass( depthChange );
+                            updateMenuMaxDepth( depthChange );
+                        }
+                        // Register a change
+                        me.registerChange();
+                        // Update the item data.
+                        ui.item.updateParentMenuItemDBId();
+
+                        // address sortable's incorrectly-calculated top in opera
+                        ui.item[0].style.top = 0;
+
+                        // handle drop placement for rtl orientation
+                        if ( me.isRTL ) {
+                            ui.item[0].style.left = 'auto';
+                            ui.item[0].style.right = 0;
+                        }
+
+                    },
+                    change: function(e, ui) {
+                        // Make sure the placeholder is inside the menu.
+                        // Otherwise fix it, or we're in trouble.
+                        if( ! ui.placeholder.parent().hasClass('menu') )
+                            (prev.length) ? prev.after( ui.placeholder ) : me.menuList.prepend( ui.placeholder );
+
+                        updateSharedVars(ui);
+                    },
+                    sort: function(e, ui) {
+                        var offset = ui.helper.offset(),
+                            edge = me.isRTL ? offset.left + ui.helper.width() : offset.left,
+                            depth = me.negateIfRTL * me.pxToDepth( edge - menuEdge );
+                        // Check and correct if depth is not within range.
+                        // Also, if the dragged element is dragged upwards over
+                        // an item, shift the placeholder to a child position.
+                        if ( depth > maxDepth || offset.top < prevBottom ) depth = maxDepth;
+                        else if ( depth < minDepth ) depth = minDepth;
+
+                        if( depth != currentDepth )
+                            updateCurrentDepth(ui, depth);
+
+                        // If we overlap the next element, manually shift downwards
+                        if( nextThreshold && offset.top + helperHeight > nextThreshold ) {
+                            next.after( ui.placeholder );
+                            updateSharedVars( ui );
+                            $(this).sortable( "refreshPositions" );
+                        }
+                    }
+                });
+
+                function updateSharedVars(ui) {
+                    var depth;
+
+                    prev = ui.placeholder.prev();
+                    next = ui.placeholder.next();
+
+                    // Make sure we don't select the moving item.
+                    if( prev[0] == ui.item[0] ) prev = prev.prev();
+                    if( next[0] == ui.item[0] ) next = next.next();
+
+                    prevBottom = (prev.length) ? prev.offset().top + prev.height() : 0;
+                    nextThreshold = (next.length) ? next.offset().top + next.height() / 3 : 0;
+                    minDepth = (next.length) ? next.menuItemDepth() : 0;
+
+                    if( prev.length )
+                        maxDepth = ( (depth = prev.menuItemDepth() + 1) > me.options.globalMaxDepth ) ? me.options.globalMaxDepth : depth;
+                    else
+                        maxDepth = 0;
+                }
+
+                function updateCurrentDepth(ui, depth) {
+                    ui.placeholder.updateDepthClass( depth, currentDepth );
+                    currentDepth = depth;
+                }
+
+                function initialMenuMaxDepth() {
+                    if( ! body[0].className ) return 0;
+                    var match = body[0].className.match(/menu-max-depth-(\d+)/);
+                    return match && match[1] ? parseInt(match[1]) : 0;
+                }
+
+                function updateMenuMaxDepth( depthChange ) {
+                    var depth, newDepth = menuMaxDepth;
+                    if ( depthChange === 0 ) {
+                        return;
+                    } else if ( depthChange > 0 ) {
+                        depth = maxChildDepth + depthChange;
+                        if( depth > menuMaxDepth )
+                            newDepth = depth;
+                    } else if ( depthChange < 0 && maxChildDepth == menuMaxDepth ) {
+                        while( ! $('.menu-item-depth-' + newDepth, me.menuList).length && newDepth > 0 )
+                            newDepth--;
+                    }
+                    // Update the depth class.
+                    body.removeClass( 'menu-max-depth-' + menuMaxDepth ).addClass( 'menu-max-depth-' + newDepth );
+                    menuMaxDepth = newDepth;
+                }
+            },
+            depthToPx : function(depth) {
+                return depth * this.options.menuItemDepthPerLevel;
+            },
+
+            pxToDepth : function(px) {
+                return Math.floor(px / this.options.menuItemDepthPerLevel);
+            },
 
             MenuOrder: function () {
                 var menu_id = this.model.get_property_value_by_name('menu_id'),
+                    depths = [],
                     me = this;
                 if ( !menu_id )
                     return "Please select menu on settings";
                 Upfront.Util.post({"action": "upfront_load_menu_items", "data": menu_id})
                     .success(function (ret) {
                         _.each(ret.data, function(item){
+                            depths[item.ID] = (depths[item.menu_item_parent] || 0) + 1;
                             me.$el.find('#menu-to-edit')
-                                .append(me.MenuOrderListTemplate(item));
+                                .append(me.MenuOrderListTemplate({item: item, depth: depths[item.ID]-1 }));
+
                         });
+
+
+                        me.menuList = me.$el.find('#menu-to-edit');
+                        me.targetList = me.menuList;
+                        me.jQueryExtensions();
+
+                        if( me.menuList.length ) // If no menu, we're in the + tab.
+                            me.initSortables();
+
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading menu");
+                    });
+                return 'Loading';
+            },
+
+            getItemData : function( itemType, id, currentItem ) {
+                itemType = itemType || 'menu-item';
+
+                var itemData = {}, i, item,
+                    fields = [
+                        'menu-item-db-id',
+                        'menu-item-parent-id'
+                    ];
+                item = currentItem;
+
+                if( !id && itemType == 'menu-item' ) {
+                    id = item.find('.menu-item-data-db-id').val();
+                }
+
+                if( !id ) return itemData;
+
+                item.find('input').each(function() {
+                    var field;
+                    i = fields.length;
+                    while ( i-- ) {
+                        if( itemType == 'menu-item' )
+                            field = fields[i] + '[' + id + ']';
+
+                        if (
+                            this.name &&
+                                field == this.name
+                            ) {
+                            itemData[fields[i]] = this.value;
+                        }
+                    }
+                });
+
+                return itemData;
+            },
+
+            addSelectedToMenu : function(listBox) {
+
+                var t = listBox, menuItems = {},
+                    me = this,
+                    Li = t.find('li');
+
+                // If no items are checked, bail.
+                if ( !Li.length )
+                    return false;
+
+                me.$el.find('.upfront_menu_order_box .spinner').show();
+
+                // Retrieve menu item data
+                $(Li).each(function(index){
+                    var t = $(this),
+                    listItemDBID = t.find('.menu-item-data-db-id').val();
+                    menuItems[index] = me.getItemData( 'menu-item', listItemDBID, t );
+
+                });
+
+                return menuItems;
+
+            },
+
+            update_menu_order: function () {
+
+                var menuItems,
+                me = this;
+                menuItems = this.addSelectedToMenu(this.$el.find('#menu-to-edit'));
+
+                if ( !menuItems )
+                    return false;
+
+                Upfront.Util.post({"action": "upfront_update_menu_order", "menu_items": menuItems})
+                    .success(function (ret) {
+                        me.$el.find('.upfront_menu_order_box .spinner').hide();
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error updating menu");
                     });
                 return 'Loading';
             },
@@ -497,6 +1003,16 @@
                 this.$el.html(this.navMenuOrderTemplate());
                 this.MenuOrder();
 
+            },
+
+            get_name: function () {
+                return "menu_order";
+            },
+
+            get_value: function () {
+                this.update_menu_order();
+                var menu_order = '';
+                return menu_order;
             }
 
         });

@@ -1,3 +1,88 @@
+/*/////////Menu start////////*/
+.upfront-navigation
+{
+    padding:0;
+}
+.upfront-navigation .menu{
+    list-style:none;
+    margin:0;
+    padding:0 30px;
+    position:relative;
+    z-index:999999;
+}
+[data-aliment="left"] .menu
+{
+    text-align:left;
+}
+[data-aliment="center"] .menu
+{
+    text-align:center;
+}
+[data-aliment="right"] .menu
+{
+    text-align:right;
+}
+.upfront-navigation .menu li{
+    position:relative;
+    display:inline;
+}
+[data-style="vertical"] .menu li
+{
+    width: 100%;
+    float: left;
+}
+.upfront-navigation .menu a{
+    display:inline-block;
+    padding:10px;
+    text-decoration:none;
+    color:#a3c1d9;
+    text-transform:uppercase;
+}
+.upfront-navigation .menu ul{
+    position:absolute;
+    /*top:100%; Uncommenting this makes the dropdowns work in IE7 but looks a little worse in all other browsers. Your call. */
+    left:0;
+    margin:0;
+    padding:0;
+    text-align:left;
+    display:none;
+    border:1px solid #5c7c9b;
+    z-index:9999;
+}
+.upfront-navigation .menu ul li{
+    display:block;
+}
+[data-allow-sub-nav="true"] .menu li:hover > ul,
+[data-allow-sub-nav="1"] .menu li:hover > ul{
+    display:block;
+}
+.upfront-navigation .menu ul ul { /* this is applied to 3rd and all after ULs as well */
+    left: 100%;
+    top: 0;
+}
+.upfront-navigation .menu li:hover a{
+    color:#1fcd8f;
+}
+.upfront-navigation .menu li:hover ul a{
+    text-decoration:none;
+    background:none;
+    color:#a3c1d9;
+}
+.upfront-navigation .menu li:hover ul a:hover{
+    color:#1fcd8f;
+}
+.upfront-navigation .menu ul a{
+    white-space:nowrap;
+    display:block;
+    font-size:12px;
+    border-bottom:1px solid #ccc;
+}
+.upfront-navigation .menu li.current_page_item > a,
+.upfront-navigation .menu ul li.current_page_item > a,
+.upfront-navigation .menu li.current_page_parent > a
+{
+    color:#1fcd8f;
+}
 /*/////////Menu Editor start////////*/
 .upfront_page_scroll_box::-webkit-scrollbar,
 .upfront_categories_scroll_box::-webkit-scrollbar,
@@ -5,6 +90,28 @@
 {
     background: none;
     width: 6px;
+}
+.spinner
+{
+    background: url("../images/loading.gif") no-repeat;
+    background-size: 16px 16px;
+    display: none;
+    float: left;
+    opacity: .7;
+    width: 16px;
+    height: 16px;
+    margin: 10px 5px 0 94px;
+}
+.upfront_menu_pages_box .spinner,
+.upfront_menu_categories_box .spinner
+{
+    position: relative;
+    margin-bottom: -26px;
+    margin-left: 269px;
+}
+.upfront_menu_order_box .spinner
+{
+    margin: 4px 0 0 0;
 }
 .upfront_page_scroll_box::-webkit-scrollbar-thumb,
 .upfront_categories_scroll_box::-webkit-scrollbar-thumb,
@@ -128,6 +235,7 @@ label {
     float: left;
     line-height: 8px;
     margin-bottom: 4px;
+    margin-top: 5px;
     font-weight: normal;
 }
 .horizontal_style
@@ -225,6 +333,8 @@ label {
     float: left;
     line-height: 8px;
     margin-bottom: 4px;
+    margin-bottom: 4px;
+    margin-top: 5px;
     text-align:center;
     width:42px;
     font-weight:normal;
@@ -273,6 +383,7 @@ label {
     float: left;
     line-height: 8px;
     margin-bottom: 4px;
+    margin-top: 5px;
     text-align:center;
     width:42px;
     font-weight: normal;
@@ -322,6 +433,7 @@ label {
     float: left;
     line-height: 8px;
     margin-bottom: 4px;
+    margin-top: 5px;
     text-align:center;
     width:42px;
     font-weight: normal;
@@ -704,14 +816,15 @@ label {
 }
 .upfront_menuorder
 {
-    width:286px;
+    width:278px;
     float:left;
 }
 .upfront_menuorder > ul
 {
     width:266px;
     float:left;
-    margin:10px;
+    margin:0 10px 10px;
+
     padding:0;
 }
 .upfront_menuorder ul ul
@@ -722,48 +835,90 @@ label {
 }
 .upfront_menuorder ul li
 {
-    width:175px;
-    float:left;
-    margin:0;
-    padding:0;
-    list-style:none;
-    cursor:move;
+    margin-bottom: 0;
+    position: relative;
+    list-style: none;
 }
-.upfront_menuorder ul li dl
+.menu-item-bar {
+    clear: both;
+    line-height: 1.5em;
+    position: relative;
+    margin: 13px 0 0 0;
+}
+.menu-item-handle
 {
-    width:175px;
-    float:left;
-    margin:0 0 10px 0;
-    padding:0 15px 0 19px;
-    list-style:none;
+    cursor: move;
     background:#dae7f2;
-    font-size:14px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    position: relative;
+    padding-left: 15px;
+    height: auto;
+    width: 175px;
+    line-height: 31px;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+.menu-item-handle .item-title {
+    font-size: 14px;
+    line-height: 31px;
+    display: block;
+    margin-right: 5px;
+    color:#30475e;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.item-controls {
+    font-size: 12px;
+    position: absolute;
+    right: 15px;
+    top: -1px;
+    color: #94a3b1;
+}
+/* Sortables */
+li.menu-item.ui-sortable-helper dl {
+    margin-top: 0;
+}
+
+li.menu-item.ui-sortable-helper .menu-item-transport dl {
+    margin-top: 13px;
+}
+
+.menu .sortable-placeholder {
+    height: 31px;
+    margin-top: 13px;
+    width: 175px;
+    border: dotted 1px #6386a6;
     -webkit-border-radius: 5px;
     border-radius: 5px;
 }
-.upfront_menuorder ul ul
-{
-    margin-left:20px;
-}
-.upfront_menuorder span.page_title
-{
-    line-height:31px;
-    color:#30475e;
-}
-.upfront_menuorder span.type
-{
-    line-height:31px;
-    color:#94a3b1;
-    float:right;
-}
-.ui-state-highlight
-{
-    background: #21d998;
-    height: 31px;
-    width:100px;
-    float: left;
-    margin:0 0 10px 0;
-}
+
+/* WARNING: The factor of 20px is hardcoded into the nav-menus javascript. */
+.menu-item-depth-0 { margin-left: 0px; }
+.menu-item-depth-1 { margin-left: 20px; }
+.menu-item-depth-2 { margin-left: 40px; }
+.menu-item-depth-3 { margin-left: 60px; }
+.menu-item-depth-4 { margin-left: 80px; }
+.menu-item-depth-5 { margin-left: 120px; }
+.menu-item-depth-6 { margin-left: 140px; }
+.menu-item-depth-7 { margin-left: 160px; }
+.menu-item-depth-8 { margin-left: 180px; }
+.menu-item-depth-9 { margin-left: 200px; }
+.menu-item-depth-10 { margin-left: 220px; }
+.menu-item-depth-11 { margin-left: 240px; }
+
+.menu-item-depth-0 .menu-item-transport { margin-left: 0px; }
+.menu-item-depth-1 .menu-item-transport { margin-left: -20px; }
+.menu-item-depth-2 .menu-item-transport { margin-left: -40px; }
+.menu-item-depth-3 .menu-item-transport { margin-left: -60px; }
+.menu-item-depth-4 .menu-item-transport { margin-left: -80px; }
+.menu-item-depth-5 .menu-item-transport { margin-left: -120px; }
+.menu-item-depth-6 .menu-item-transport { margin-left: -140px; }
+.menu-item-depth-7 .menu-item-transport { margin-left: -160px; }
+.menu-item-depth-8 .menu-item-transport { margin-left: -180px; }
+.menu-item-depth-9 .menu-item-transport { margin-left: -200px; }
+.menu-item-depth-10 .menu-item-transport { margin-left: -220px; }
+.menu-item-depth-11 .menu-item-transport { margin-left: -240px; }
+
 .upfront-save_settings
 {
     background: #4cd285;

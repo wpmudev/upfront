@@ -5,6 +5,9 @@ function upfront_navigation_initialize(){
     // Include the backend support stuff
     require_once (dirname(__FILE__) . '/lib/upfront-navigation.php');
 
+    // Include the backend support stuff
+    require_once( ABSPATH . 'wp-admin/includes/nav-menu.php' );
+
     // Expose our JavaScript definitions to the Upfront API
     upfront_add_layout_editor_entity('upfront-navigation', upfront_element_url('js/upfront-navigation', __FILE__));
 
