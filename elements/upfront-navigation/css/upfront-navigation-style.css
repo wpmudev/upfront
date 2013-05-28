@@ -195,7 +195,7 @@ label {
 {
     float:left;
     margin:0;
-    /*width:114px;*/
+    width:114px;
     border-right:solid 1px #bad2e8;
 }
 .upfront-settings_panel div .upfront-settings-item:nth-child(2)
@@ -516,7 +516,7 @@ label {
     padding:0 0 0 10px;
     border-bottom:solid 1px #95b8d9;
 }
-.upfront_menu_contents_tabs ul li
+#settings .upfront-settings_panel .upfront_menu_contents_tabs ul li
 {
     float:left;
     list-style:none;
@@ -562,9 +562,9 @@ label {
     margin-bottom:11px;
     border-bottom:none;
 }
-.upfront_page_scroll_box,
-.upfront_categories_scroll_box,
-.upfront_menuorder_scroll_box
+#settings .upfront-settings_panel .upfront_page_scroll_box,
+#settings .upfront-settings_panel .upfront_categories_scroll_box,
+#settings .upfront-settings_panel .upfront_menuorder_scroll_box
 {
     margin:0;
     padding:0;
@@ -576,7 +576,8 @@ label {
     overflow: auto;
     overflow-x: hidden;
 }
-.upfront_page_scroll_box ul, .upfront_categories_scroll_box ul
+#settings .upfront-settings_panel .upfront_page_scroll_box ul,
+#settings .upfront-settings_panel .upfront_categories_scroll_box ul
 {
     margin:15px 0 0 8px;
     padding:0;
@@ -584,7 +585,8 @@ label {
     width:286px;
     position:relative;
 }
-.upfront_page_scroll_box ul ul, .upfront_categories_scroll_box ul ul
+#settings .upfront-settings_panel .upfront_page_scroll_box ul ul,
+#settings .upfront-settings_panel .upfront_categories_scroll_box ul ul
 {
     margin:12px 0 0 8px;
     padding:0;
@@ -593,7 +595,8 @@ label {
     position:relative;
     display: none;
 }
-.upfront_page_scroll_box ul li, .upfront_categories_scroll_box ul li
+#settings .upfront-settings_panel .upfront_page_scroll_box ul li,
+#settings .upfront-settings_panel .upfront_categories_scroll_box ul li
 {
     padding:0 0 8px 0;
     margin:0;
@@ -603,12 +606,14 @@ label {
     color:#6b8399;
     font-size:15px;
 }
-.upfront_page_scroll_box ul li li, .upfront_categories_scroll_box ul li li
+#settings .upfront-settings_panel .upfront_page_scroll_box ul li li,
+#settings .upfront-settings_panel .upfront_categories_scroll_box ul li li
 {
     position:relative;
     margin:1px 0 0 0;
 }
-.upfront_page_scroll_box ul li li::before, .upfront_categories_scroll_box ul li li::before
+#settings .upfront-settings_panel .upfront_page_scroll_box ul li li::before,
+#settings .upfront-settings_panel .upfront_categories_scroll_box ul li li::before
 {
     content: '';
     position: absolute;
@@ -619,7 +624,8 @@ label {
     left: -4px;
     border-left: 1px dotted #ccc;
 }
-.upfront_page_scroll_box ul li li::after, .upfront_categories_scroll_box ul li li::after
+#settings .upfront-settings_panel .upfront_page_scroll_box ul li li::after,
+#settings .upfront-settings_panel .upfront_categories_scroll_box ul li li::after
 {
     content: '';
     position: absolute;
@@ -631,7 +637,9 @@ label {
     border-top: 1px dotted #ccc;
 }
 /*Remove connectors before root*/
-.upfront_page_scroll_box > ul > li::before, .tree > ul > li::after, .upfront_categories_scroll_box > ul > li::before, .tree > ul > li::after
+#settings .upfront-settings_panel .upfront_page_scroll_box > ul > li::before,
+#settings .upfront-settings_panel .tree > ul > li::after, .upfront_categories_scroll_box > ul > li::before,
+#settings .upfront-settings_panel .tree > ul > li::after
 {
     border: 0;
 }
@@ -808,18 +816,18 @@ label {
     margin-top: 0;
     border-bottom: 0;
 }
-.upfront_menuorder_scroll_box
+#settings .upfront-settings_panel .upfront_menuorder_scroll_box
 {
     height:272px;
     margin-bottom:15px;
     margin-top:5px;
 }
-.upfront_menuorder
+#settings .upfront-settings_panel .upfront_menuorder
 {
     width:278px;
     float:left;
 }
-.upfront_menuorder > ul
+#settings .upfront-settings_panel .upfront_menuorder > ul
 {
     width:266px;
     float:left;
@@ -827,25 +835,25 @@ label {
 
     padding:0;
 }
-.upfront_menuorder ul ul
+#settings .upfront-settings_panel .upfront_menuorder ul ul
 {
     float:left;
     padding:0;
     margin:0;
 }
-.upfront_menuorder ul li
+#settings .upfront-settings_panel .upfront_menuorder ul li
 {
     margin-bottom: 0;
     position: relative;
     list-style: none;
 }
-.menu-item-bar {
+#settings .upfront-settings_panel .menu-item-bar {
     clear: both;
     line-height: 1.5em;
     position: relative;
     margin: 13px 0 0 0;
 }
-.menu-item-handle
+#settings .upfront-settings_panel .menu-item-handle
 {
     cursor: move;
     background:#dae7f2;
@@ -859,7 +867,7 @@ label {
     overflow: hidden;
     word-wrap: break-word;
 }
-.menu-item-handle .item-title {
+#settings .upfront-settings_panel .menu-item-handle .item-title {
     font-size: 14px;
     line-height: 31px;
     display: block;
@@ -867,7 +875,7 @@ label {
     color:#30475e;
     font-family: 'Source Sans Pro', sans-serif;
 }
-.item-controls {
+#settings .upfront-settings_panel .item-controls {
     font-size: 12px;
     position: absolute;
     right: 15px;
@@ -875,15 +883,15 @@ label {
     color: #94a3b1;
 }
 /* Sortables */
-li.menu-item.ui-sortable-helper dl {
+#settings .upfront-settings_panel li.menu-item.ui-sortable-helper dl {
     margin-top: 0;
 }
 
-li.menu-item.ui-sortable-helper .menu-item-transport dl {
+#settings .upfront-settings_panel li.menu-item.ui-sortable-helper .menu-item-transport dl {
     margin-top: 13px;
 }
 
-.menu .sortable-placeholder {
+#settings .upfront-settings_panel .menu .sortable-placeholder {
     height: 31px;
     margin-top: 13px;
     width: 175px;
@@ -893,31 +901,31 @@ li.menu-item.ui-sortable-helper .menu-item-transport dl {
 }
 
 /* WARNING: The factor of 20px is hardcoded into the nav-menus javascript. */
-.menu-item-depth-0 { margin-left: 0px; }
-.menu-item-depth-1 { margin-left: 20px; }
-.menu-item-depth-2 { margin-left: 40px; }
-.menu-item-depth-3 { margin-left: 60px; }
-.menu-item-depth-4 { margin-left: 80px; }
-.menu-item-depth-5 { margin-left: 120px; }
-.menu-item-depth-6 { margin-left: 140px; }
-.menu-item-depth-7 { margin-left: 160px; }
-.menu-item-depth-8 { margin-left: 180px; }
-.menu-item-depth-9 { margin-left: 200px; }
-.menu-item-depth-10 { margin-left: 220px; }
-.menu-item-depth-11 { margin-left: 240px; }
+#settings .upfront-settings_panel .menu-item-depth-0 { margin-left: 0px; }
+#settings .upfront-settings_panel .menu-item-depth-1 { margin-left: 20px; }
+#settings .upfront-settings_panel .menu-item-depth-2 { margin-left: 40px; }
+#settings .upfront-settings_panel .menu-item-depth-3 { margin-left: 60px; }
+#settings .upfront-settings_panel .menu-item-depth-4 { margin-left: 80px; }
+#settings .upfront-settings_panel .menu-item-depth-5 { margin-left: 120px; }
+#settings .upfront-settings_panel .menu-item-depth-6 { margin-left: 140px; }
+#settings .upfront-settings_panel .menu-item-depth-7 { margin-left: 160px; }
+#settings .upfront-settings_panel .menu-item-depth-8 { margin-left: 180px; }
+#settings .upfront-settings_panel .menu-item-depth-9 { margin-left: 200px; }
+#settings .upfront-settings_panel .menu-item-depth-10 { margin-left: 220px; }
+#settings .upfront-settings_panel .menu-item-depth-11 { margin-left: 240px; }
 
-.menu-item-depth-0 .menu-item-transport { margin-left: 0px; }
-.menu-item-depth-1 .menu-item-transport { margin-left: -20px; }
-.menu-item-depth-2 .menu-item-transport { margin-left: -40px; }
-.menu-item-depth-3 .menu-item-transport { margin-left: -60px; }
-.menu-item-depth-4 .menu-item-transport { margin-left: -80px; }
-.menu-item-depth-5 .menu-item-transport { margin-left: -120px; }
-.menu-item-depth-6 .menu-item-transport { margin-left: -140px; }
-.menu-item-depth-7 .menu-item-transport { margin-left: -160px; }
-.menu-item-depth-8 .menu-item-transport { margin-left: -180px; }
-.menu-item-depth-9 .menu-item-transport { margin-left: -200px; }
-.menu-item-depth-10 .menu-item-transport { margin-left: -220px; }
-.menu-item-depth-11 .menu-item-transport { margin-left: -240px; }
+#settings .upfront-settings_panel .menu-item-depth-0 .menu-item-transport { margin-left: 0px; }
+#settings .upfront-settings_panel .menu-item-depth-1 .menu-item-transport { margin-left: -20px; }
+#settings .upfront-settings_panel .menu-item-depth-2 .menu-item-transport { margin-left: -40px; }
+#settings .upfront-settings_panel .menu-item-depth-3 .menu-item-transport { margin-left: -60px; }
+#settings .upfront-settings_panel .menu-item-depth-4 .menu-item-transport { margin-left: -80px; }
+#settings .upfront-settings_panel .menu-item-depth-5 .menu-item-transport { margin-left: -120px; }
+#settings .upfront-settings_panel .menu-item-depth-6 .menu-item-transport { margin-left: -140px; }
+#settings .upfront-settings_panel .menu-item-depth-7 .menu-item-transport { margin-left: -160px; }
+#settings .upfront-settings_panel .menu-item-depth-8 .menu-item-transport { margin-left: -180px; }
+#settings .upfront-settings_panel .menu-item-depth-9 .menu-item-transport { margin-left: -200px; }
+#settings .upfront-settings_panel .menu-item-depth-10 .menu-item-transport { margin-left: -220px; }
+#settings .upfront-settings_panel .menu-item-depth-11 .menu-item-transport { margin-left: -240px; }
 
 .upfront-save_settings
 {
