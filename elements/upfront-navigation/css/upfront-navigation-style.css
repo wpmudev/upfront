@@ -195,7 +195,7 @@ label {
 {
     float:left;
     margin:0;
-    /*width:114px;*/ /* breaks up testing */
+    /*width:114px;*/
     border-right:solid 1px #bad2e8;
 }
 .upfront-settings_panel div .upfront-settings-item:nth-child(2)

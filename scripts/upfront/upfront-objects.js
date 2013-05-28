@@ -9,7 +9,7 @@ if (!Upfront || !Upfront.Application.LayoutEditor || !Upfront.Application.Layout
 var object_dependencies = [
 	'upfront/objects/loading',
 	'upfront/objects/image',
-	'upfront/objects/plain_text',
+	'upfront/objects/plain_text'
 ];
 define(object_dependencies, function () {
 	//Upfront.Util.log('loaded');

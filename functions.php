@@ -137,6 +137,9 @@ EOAdminStyle;
 		));
 		wp_enqueue_style('wp-color-picker', admin_url('css/color-picker.css'));
 
+		// Enqueue media uploader dependencies.
+		wp_enqueue_media();
+
 	}
 
 	function inject_upfront_dependencies () {
@@ -164,6 +167,9 @@ EOAdminStyle;
   <div id="sidebar-ui"></div>
   <div id="settings" style="display:none"></div>
 EOAdditivemarkup;
+
+		echo '<script src="' . $url . '/scripts/ckeditor/ckeditor.js" type="text/javascript"></script>';
+		echo '<script type="text/javascript" src="' . $url . '/scripts/jscolor/jscolor.js"></script>';
 		
 		do_action('upfront-core-inject_dependencies');
 	}

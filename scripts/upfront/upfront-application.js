@@ -245,6 +245,8 @@ var LayoutEditor = new (Subapplication.extend({
 		// Set up entity settings (modules, for now)
 		Upfront.Events.on("entity:settings:activate", this.create_settings, this);
 		Upfront.Events.on("entity:settings:deactivate", this.destroy_settings, this);
+		
+		Upfront.Events.on("upfront:posts:post:post_updated", this.layout_view.render, this.layout_view);
 	},
 
 	create_properties: function (view, model) {

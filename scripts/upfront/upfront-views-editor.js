@@ -1057,7 +1057,8 @@ define(_template_files, function () {
 		on_click: function () {
 			var $post_id =  $("#upfront-post_id"),
 				$title = $("#upfront-title"),
-				$body = $("#upfront-body")
+				$body = $("#upfront-body"),
+				body_content = (CKEDITOR.instances['upfront-body'] ? CKEDITOR.instances['upfront-body'].getData() : $body.val())
 			;
 			if (!$post_id.length || !$title.length || !$body.length) return false;
 			Upfront.Util.post({
@@ -1065,7 +1066,7 @@ define(_template_files, function () {
 				"data": {
 					"id": $post_id.val(),
 					"title": $title.val(),
-					"body": $body.val()
+					"body": body_content
 				}
 			}).success(function (resp) {
 				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
@@ -2455,6 +2456,35 @@ define(_template_files, function () {
 		}
 	});
 
+	var ContentEditorUploader = Backbone.View.extend({
+
+		initialize: function () {
+			window.send_to_editor = this.add_to_editor;
+			Upfront.Events.on("upfront:editor:init", this.rebind_ckeditor_image, this);
+		},
+		open: function () {
+			var height = $(window).height()*0.67;
+			tb_show("Upload Image", Upfront.Settings.admin_url + "media-upload.php?type=image&TB_iframe=1&width=640&height="+height);
+			return false;
+		},
+		close: function () {
+			tb_remove();
+			this.remove();
+		},
+		rebind_ckeditor_image: function () {
+			var me = this;
+			_(CKEDITOR.instances).each(function (editor) {
+				var img = editor.getCommand('image');
+				if (img && img.on) img.on("exec", me.open, me);
+			});
+		},
+		add_to_editor: function (html) {
+			var el = CKEDITOR.dom.element.createFromHtml(html);
+			CKEDITOR.instances['upfront-body'].insertElement(el);
+			tb_remove();
+		}
+	});
+
 	return {
 		"Editor": {
 			"Property": Property,
@@ -2475,7 +2505,8 @@ define(_template_files, function () {
 			}
 		},	
 		"ContentEditor": {
-			"Sidebar": ContentEditorSidebar
+			"Sidebar": ContentEditorSidebar,
+			"Uploader": new ContentEditorUploader
 		}
 	};
 });

@@ -64,10 +64,10 @@ class Upfront_UpostsView extends Upfront_Object {
 
 			$link = get_permalink($post->ID);
 
-			$ret .= "<li class='uposts-post'>" .
+			$ret .= "<li class='uposts-post' data-post_id='{$post->ID}'>" .
 				"<span class='uposts-tumbnail_container'>{$thumbnail}</span>" .
-				"<h3><a href='{$link}'>{$title}</a></h3>" .
-				"<div>{$content}</div>" .
+				"<h3 class='post_title'><a href='{$link}'>{$title}</a></h3>" .
+				"<div class='post_content'>{$content}</div>" .
 			"</li>";
 		}
 		return "<ul class='uposts-posts'>{$ret}</ul>";

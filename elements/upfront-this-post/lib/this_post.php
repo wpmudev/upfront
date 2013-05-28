@@ -46,6 +46,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			"raw" => array(
 				"title" => $post->post_title,
 				"content" => $post->post_content,
+				"excerpt" => $post->post_excerpt,
 			),
 			"post" => $post,
 		)));

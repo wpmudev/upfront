@@ -77,7 +77,56 @@ Upfront.Util.post({
 				});
 			}
 			this.$el.data('settings', this.model.get("properties").toJSON());
+		},
+
+		on_edit: function (e) {
+			var me = this,
+				$post = $(e.target).parents(".uposts-post"),
+				$title = $post.find("h3.post_title a"),
+				$body = $post.find(".post_content"),
+				post_id = $post.attr("data-post_id"),
+				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type")
+			;
+			Upfront.Util.post({
+				"action": "this_post-get_markup",
+				"data": JSON.stringify({
+					"post_id": post_id
+				})
+			}).success(function (response) {
+				_upfront_post_data._old_post_id = _upfront_post_data.post_id;
+				_upfront_post_data.post_id = post_id;
+				$(document).data("upfront-post-" + post_id, response.data);
+				$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + response.data.raw.title + '"/>');
+				$body.html(
+					(is_excerpt ? 'Excerpt' : 'Content') +
+					'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post_id + '" />' +
+					'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + (is_excerpt ? response.data.raw.excerpt : response.data.raw.content) + '</div>' +
+					'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
+				);
+
+				// Prevent default events, we're in editor mode.
+				me.undelegateEvents();
+				// Kill the draggable, so we can work with regular inline editor.
+				me.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('disable');
+
+				CKEDITOR.inline('upfront-body');
+				$body.find("#upfront-post-cancel_edit").click(function () {
+					me.on_cancel();
+					Upfront.Application.ContentEditor.stop();
+				});
+				Upfront.Application.ContentEditor.run();
+			});
+		},
+		on_cancel: function () {
+			_upfront_post_data.post_id = _upfront_post_data._old_post_id;
+			// Re-enable the draggable on edit stop
+			this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('enable');
+			this.undelegateEvents();
+			this.deactivate();
+			this.delegateEvents();
+			this.render();
 		}
+
 	});
 
 

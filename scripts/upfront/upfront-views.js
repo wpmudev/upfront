@@ -130,7 +130,10 @@ define(_template_files, function () {
 				"dblclick": "on_edit"
 			},
 			on_edit: function () {
-				Upfront.Util.log("Implement editor");
+				var contentEditable = this.$el.find('[contenteditable]');
+				if(contentEditable.length > 0){
+					contentEditable[0].focus();
+				}
 				return false;
 			}
 
@@ -204,15 +207,91 @@ define(_template_files, function () {
 				;
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
 				this.$el.html(template);
+				
 				// render subview if it exists
 				if(typeof this.subview != 'undefined'){
 					this.subview.setElement(this.$('.upfront-object-content')).render();
 				}
 
+				this.init_ckeditor_on_focus();
+
 				Upfront.Events.trigger("entity:object:after_render", this, this.model);
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 				if ( this.on_render ) this.on_render();
+			},
+
+			// Create a ckeditor instance when any contenteditable element receives focus for the first time.
+			// Creating the ckeditor instance on focus prevents having to recreate ckeditor instances on each
+			// render, which can happen 10-15 in a row when the user drags and drops modules.
+			init_ckeditor_on_focus: function(){
+				this.preload_ckeditor();
+				this.remove_unused_editors();
+
+				var self = this,
+					contenteditables = this.$el.find('[contenteditable]');
+				
+				contenteditables.one('focus', function(){
+					var $self = $(this); 
+						editor = CKEDITOR.inline(this);
+					
+					editor.model_cid = self.model.cid;
+
+					editor.on('change', function(){
+						$self.trigger('editor-change');
+
+						// Dynamically change the height of the module container when the user 
+						// inserts height-changing content.
+						$self.trigger('descendant_change.height');
+					});
+
+					editor.on('change', function(){
+						$self.trigger('editor-change');
+					});
+
+					editor.on('selectionChange', function(event){
+						// TODO: Hover editor over selected text node.
+					});
+					
+					// TODO: when the upfront module is removed by the user: "editor.destroy();editor=null;"
+				});
+
+				// Disable drag and drop behaviour whilst user is editing text to allow text selection.
+				contenteditables.on('mousedown', function(event){
+					event.stopPropagation(); 
+				});
+			},
+
+			// The first inline editor on page takes 2 seconds to load, 
+			// any editors initialised afterwards are instant.
+			preload_ckeditor: function(){
+				if(typeof window.preload_ckeditor == 'undefined'){
+					var focusEl = document.activeElement;
+					
+					var $el = $('<div contenteditable="true"></div>');
+
+					var editor = CKEDITOR.inline($el[0]);
+					$el.focus();
+
+					$(focusEl).focus();
+					window.preload_ckeditor = true;
+				}
+			},
+
+			// When a view is re-rendered the contenteditable elements are recreated.
+			// Destroy the ckeditor instances for the old views.
+			remove_unused_editors: function(){
+				var self = this;
+
+				$.each(CKEDITOR.instances, function(k, editor){
+					if(	editor.model_cid == self.model.cid &&
+						!$.contains(self.$el.find('.upfront-object-content')[0], editor.element) ){
+
+						editor.destroy();
+						editor = null;
+					}
+				});
 			}
+
 		}),
 
 		Objects = _Upfront_EditableEntities.extend({
@@ -265,7 +344,7 @@ define(_template_files, function () {
 					this.on("upfront:entity:resize", this.on_resize, this);
 				}
 			},
-			render: function () {
+			render: function () {				
 				var props = {},
 					run = this.model.get("properties").each(function (prop) {
 						props[prop.get("name")] = prop.get("value");
@@ -576,4 +655,3 @@ define(_template_files, function () {
 });
 
 })(jQuery);
-//@ sourceURL=upfront-views.js
