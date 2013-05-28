@@ -1,0 +1,6 @@
+﻿/*
+ Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+ For licensing, see LICENSE.html or http://ckeditor.com/license
+*/
+var CKBUILDER_CONFIG={skin:"incsub",preset:"full",ignore:["dev",".gitignore",".gitattributes","README.md",".mailmap"],plugins:{dialogui:1,dialog:1,about:1,a11yhelp:1,dialogadvtab:1,basicstyles:1,bidi:1,blockquote:1,clipboard:1,button:1,panelbutton:1,panel:1,floatpanel:1,colorbutton:1,colordialog:1,templates:1,menu:1,div:1,resize:1,toolbar:1,elementspath:1,list:1,indent:1,enterkey:1,entities:1,popup:1,filebrowser:1,find:1,fakeobjects:1,flash:1,floatingspace:1,listblock:1,richcombo:1,font:1,forms:1,
+format:1,htmlwriter:1,horizontalrule:1,iframe:1,wysiwygarea:1,image:1,smiley:1,justify:1,link:1,maximize:1,newpage:1,pagebreak:1,pastetext:1,pastefromword:1,preview:1,print:1,removeformat:1,save:1,selectall:1,showblocks:1,showborders:1,sourcearea:1,specialchar:1,stylescombo:1,tab:1,table:1,undo:1,wsc:1,onchange:1,kitchensink:1,colorselect:1},languages:{en:1}};
