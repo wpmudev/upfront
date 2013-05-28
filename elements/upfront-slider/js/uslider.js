@@ -36,23 +36,22 @@ var USliderModel = Upfront.Models.ObjectModel.extend({
 			type: 'USliderModel',
 			view_class: 'USliderView',
 			element_id: Upfront.Util.get_unique_id("uslider-object"),
-			'class': "c22 upfront-uslider",
+			'class': "upfront-uslider",
 			has_settings: 1,
 
-			uslider_content: {order:[], slides:{}},
-			slide_style: 'right',
-			slide_text: 'no',
-			slide_layout: 'right',
-			slide_behaviour: {
+			style: 'right', // right, group, tabbed, text
+			slide_text: 'no', // no, yes
+			text_layout: 'right', // right, tabbed: [right, left, bottom, split, over], group: [block, individual], text: [text]
+			behaviour: { 
 				autoStart: true,
 				hover: true,
 				interval: 5,
 				speed: 1
 			},
-			slide_transition: 'scrollLeft',
-			controls_type: 'arrows-simple',
-			controls_position: 'inside',
-			slides: []
+			slide_transition: 'scrollLeft', // scrollLeft, scrollRight, scrollDown, scrollUp, shuffle, fade
+			controls_type: 'arrows-simple', // arrows-simple, dots, thumbnails, arrows-stacked, none
+			controls_position: 'inside', // a-simple: [ins+, outs+], dots: [b-out, b-in, top-out, ...], thumbnails: [b+,l+,r+,t+], t-stacked: [left-top, left-bottom, top-left, ...]
+			slides: [], // Convert to Uslider_Slides to use, and to Object to store
 		});
 	}
 });
@@ -67,68 +66,49 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	template: _.template($('#uslider-template').html()),
 
 	get_content_markup: function () {
-		var sliderOptions = {},
+		var self = this,
 			settings = {
-				style: this.property_value('slide_style'),
+				style: this.property_value('style'),
 				desc_text: this.property_value('slide_text'),
-				layout: this.property_value('slide_layout'),
+				layout: this.property_value('text_layout'),
 				controls_type: this.property_value('controls_type'),
 				controls_position: this.property_value('controls_position'),
 			},
-			behaviour = this.property_value('slide_behaviour'),
 			controls = settings['controls_type'],
 			pagerAnchorBuilder = null,
 			tplOptions = {},
-			slides = this.property_value('uslider_content')
+			slides = this.property_value('slides')
 		;
 
-		//Page anchor builder
-		if(controls == 'dots'){
-			pagerAnchorBuilder = function(idx, slide) { return '<li><a href="#">' + idx + '</a></li>' }
-		}
-		if(controls == 'thumbnails'){
-			pagerAnchorBuilder = function(idx, slide) { 
-				return '<li><a href="#">' + idx + '</a></li>';
-			}
-		}
-
-		sliderOptions = {
-			fx: behaviour['transition'],
-			timeout: behaviour['interval'] * 1000,
-			speed: behaviour['speed'] * 1000,
-			pause: behaviour['hover'] == "on",
-			//prev: controls.indexOf('arrows') == 0 ? '#' + element_id + ' a.uslider-control-prev' : null,
-			//next: controls.indexOf('arrows') == 0 ? '#' + element_id + ' a.uslider-control-next' : null,
-			//pager: ['dots', 'thumbnails'].indexOf(controls) != -1 ? '#' + element_id + ' ul.uslider-pager' : null,
-			//pagerAnchorBuilder: pagerAnchorBuilder,
-			fit: true,
-			width: '400px',
-			height: '400px'
-		}
+		// Destroy existing cycle if any
+		$('#' +  this.property_value('element_id') + ' .uslider-slides').cycle('destroy');
+		$('#' +  this.property_value('element_id')).remove();
 
 		tplSettings = {
-			sliderOptions: sliderOptions,
 			settings: settings,
-			content: slides,
-			slidesLength: slides.order.length,
+			slides: slides,
+			slidesLength: slides.length,
 			i:0,
-			sliderId: this.model.get_property_value_by_name('element_id'),
-			selector: '#' + this.model.get_property_value_by_name('element_id') + ' div.uslider-slides',
-			sliderClasses: ''
+			sliderId: this.property_value('element_id'),
+			sliderClasses: this.get_slider_classes()
 		}
+
+		//Start the slider when the markup is ready
+		setTimeout(function(){
+			self.startSlider();
+		}, 1000);
+
+		// render the template and out.
 		return this.template(tplSettings);
 	},
 	property_value: function(name){
 		return this.model.get_property_value_by_name(name);
 	},
-	get_container_classes: function() {
-		var container_classes = '';
-		container_classes += 'uslider-container-style-'+this.property_value('slide_style')+' ';
-		container_classes += 'uslider-container-layout-'+this.property_value('slide_layout');
-		container_classes += 'uslider-container-controls-type-'+this.property_value('controls_type');
-		container_classes += 'uslider-container-controls-position-'+this.property_value('controls_position');
-
-		return container_classes;
+	get_slider_classes: function() {
+		return 'uslider-style-' + this.property_value('style') +
+			' uslider-text-'+ this.property_value('text_layout') +
+			' uslider-controls-'+ this.property_value('controls_type') +
+			' uslider-controls-'+ this.property_value('controls_position');
 	},
 	html_to_server_debug: function(slides_html, slides_js) {
 		var post = jQuery.ajax({
@@ -151,6 +131,68 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	isLocalURL: function(anchor_href) {
 		var regExp = new RegExp("//" + location.host + "($|/)");
 	    return (anchor_href.substring(0,4) === "http") ? regExp.test(anchor_href) : true;		
+	},
+	startSlider: function() {
+		var self = this,
+			behaviour = this.property_value('behaviour'),
+			controls = this.property_value('controls_type'),
+			pagerAnchorBuilder = null,
+			elementId = this.property_value('element_id'),
+			options = {
+				fx: behaviour['transition'],
+				timeout: behaviour['interval'] * 1000,
+				speed: behaviour['speed'] * 1000,
+				pause: behaviour['hover'] == "on",
+				prev: controls.indexOf('arrows') == 0 ? '#' + elementId + ' a.uslider-control-prev' : null,
+				next: controls.indexOf('arrows') == 0 ? '#' + elementId + ' a.uslider-control-next' : null,
+				pager: ['dots', 'thumbnails'].indexOf(controls) != -1 ? '#' + elementId + ' ul.uslider-pager' : null,
+				fit: true,
+				width: '400px',
+				height: '300px',
+				before: function () {
+					$('#' + elementId).find('.uslider-caption').animate({opacity:0.01}, '400');
+				},
+				after: function () {
+					self.setSlideTextsAndThumbs(this);
+				}
+			},
+			$element = $('#' + elementId + ' .uslider-slides')
+		;
+		//Page anchor builder
+		if(controls == 'dots'){
+			pagerAnchorBuilder = function(idx, slide) { return '<li><a href="#">' + idx + '</a></li>' }
+		}
+		if(controls == 'thumbnails'){
+			pagerAnchorBuilder = function(idx, slide) { 
+				return '<li><a href="#">' + idx + '</a></li>';
+			}
+		}
+		options.pagerAnchorBuilder = pagerAnchorBuilder;
+
+		// Kick off
+		if($element[0] && typeof($element[0].cycleStop) == 'undefined')
+			$element.cycle(options);
+	},
+	setSlideTextsAndThumbs: function(item) {
+		var controls = this.property_value('controls_type'),
+			texts = this.property_value('slide_text'),
+			layout = this.property_value('text_layout'),
+			slideIndex = $(item).attr('rel'),
+			$slider = $(item).closest('#' + this.property_value('element_id'))
+		;
+		if(texts == 'yes'){
+			var texts = $slider.find('div.uslider-slide-' + slideIndex);
+			if(layout == 'right' || layout == 'top')
+				$slider.find('div.uslider-preslide-caption').html(texts.html());
+			else if(layout == 'bottom' || layout == 'left')
+				$slider.find('div.uslider-postslide-caption').html(texts.html());
+			else if(layout == 'split'){
+				$slider.find('div.uslider-preslide-caption').html(texts.find('.uslider-slide-title'));
+				$slider.find('div.uslider-postslide-caption').html(texts.find('.uslider-slide-description'));
+			}
+		}
+		$slider.find('div.uslider-caption').animate({opacity:1}, '400');
+
 	}
 });
 
@@ -190,7 +232,7 @@ var USliderSettingsSlideStyle = Upfront.Views.Editor.Settings.Item.extend({
 	 */
 	render: function () {
 		
-		var style_option_idx = this.model.get_property_value_by_name("slide_style");
+		var style_option_idx = this.model.get_property_value_by_name("style");
 		style_option_idx = this.get_settings_defaults(style_option_idx);
 		
 		uslider_settings_html = '';
@@ -238,7 +280,7 @@ var USliderSettingsSlideStyle = Upfront.Views.Editor.Settings.Item.extend({
 	 * @return {string} Property name
 	 */
 	get_name: function () {
-		return "slide_style";
+		return "style";
 	},
 	/**
 	 * Extracts the finalized value from the setting markup.
@@ -342,9 +384,9 @@ var USliderSettingsSlideLayout = Upfront.Views.Editor.Settings.Item.extend({
 	render: function () {
 		var module_settings = {};
 		
-		module_settings['style_idx'] = this.model.get_property_value_by_name("slide_style");		
+		module_settings['style_idx'] = this.model.get_property_value_by_name("style");		
 		module_settings['style_idx'] = 'xxx';
-		module_settings['layout_idx'] = this.model.get_property_value_by_name("slide_layout");
+		module_settings['layout_idx'] = this.model.get_property_value_by_name("text_layout");
 		current_layout_option_idx = this.get_settings_defaults(module_settings);
 
 		//console.log('style_idx=['+module_settings['style_idx']+']');
@@ -390,7 +432,7 @@ var USliderSettingsSlideLayout = Upfront.Views.Editor.Settings.Item.extend({
 	 * @return {string} Property name
 	 */
 	get_name: function () {
-		return "slide_layout";
+		return "text_layout";
 	},
 	/**
 	 * Extracts the finalized value from the setting markup.
@@ -399,7 +441,7 @@ var USliderSettingsSlideLayout = Upfront.Views.Editor.Settings.Item.extend({
 	get_value: function () {
 		var layout_option_idx = false;
 		
-		var style_option_idx = this.model.get_property_value_by_name("slide_style");		
+		var style_option_idx = this.model.get_property_value_by_name("style");		
 		if (style_option_idx != false) {
 			var layout_option_idx = this.$el.find(':radio[name="uslider-slider[layout]['+style_option_idx+']"]:checked').val();
 			if ((layout_option_idx == undefined) || (layout_option_idx == '')) {
@@ -498,7 +540,7 @@ var USliderSettingsSlideBehaviour = Upfront.Views.Editor.Settings.Item.extend({
 	 */
 	render: function () {
 		
-		var module_settings = this.model.get_property_value_by_name("slide_behaviour");
+		var module_settings = this.model.get_property_value_by_name("behaviour");
 		module_settings = this.get_settings_defaults(module_settings);
 
 		uslider_settings_html = '';
@@ -533,7 +575,7 @@ var USliderSettingsSlideBehaviour = Upfront.Views.Editor.Settings.Item.extend({
 	 * @return {string} Property name
 	 */
 	get_name: function () {
-		return "slide_behaviour";
+		return "behaviour";
 	},
 	/**
 	 * Extracts the finalized value from the setting markup.
@@ -974,7 +1016,7 @@ var UsliderSettings_Contents = Upfront.Views.Editor.Settings.Item.extend({
 	},
 	render: function() {
 		var self = this,
-			slideTemplateSelector = this.model.get_property_value_by_name('slide_style') == 'text' ? '#uslider-content-textslide-template' : '#uslider-content-imgslide-template',
+			slideTemplateSelector = this.model.get_property_value_by_name('style') == 'text' ? '#uslider-content-textslide-template' : '#uslider-content-imgslide-template',
 			settingContent = this.$('.upfront-settings-item-content');
 
 		if(settingContent.length){
