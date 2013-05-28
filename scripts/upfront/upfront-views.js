@@ -541,6 +541,9 @@ define(_template_files, function () {
 		}),
 
 		Layout = _Upfront_PluralEditor.extend({
+			events: {
+				"click": "on_click"
+			},
 			initialize: function () {
 				this.render();
 			},
@@ -550,6 +553,10 @@ define(_template_files, function () {
 				var local_view = new Regions({"model": this.model.get("regions")});
 				local_view.render();
 				this.$("section").append(local_view.el);
+			},
+			on_click: function () {
+				// Deactivate settings on clicking anywhere in layout
+				Upfront.Events.trigger("entity:settings:deactivate");
 			}
 		})
 	;
@@ -569,3 +576,4 @@ define(_template_files, function () {
 });
 
 })(jQuery);
+//@ sourceURL=upfront-views.js

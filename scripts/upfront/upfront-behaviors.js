@@ -764,6 +764,7 @@ var GridEditor = {
 		$me.resizable({
 			"containment": "parent",
 			autoHide: true,
+			delay: 100,
 			start: function(e, ui){
 				ed.start(view, model);
 				
@@ -877,17 +878,25 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			$me = view.$el.find('.upfront-editable_entity:first'),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-			$layout = $main.find('.upfront-layout')
+			$layout = $main.find('.upfront-layout'),
+			handle_timeout
 		;
 		if ( model.get_property_value_by_name('disable_drag') === 1 ){
 			return false;
 		}
-		//$me.append('<div class="upfront-drag-handle" />');
+		/*$me.append('<div class="upfront-drag-handle" />');
+		$me.hover(function () {
+			handle_timeout = setTimeout(function(){ $me.addClass('handle-active'); }, 1000);
+		}, function () {
+			$me.removeClass('handle-active');
+			clearTimeout(handle_timeout);
+		});*/
 		$me.draggable({
 			revert: true,
 			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
+			delay: 100,
 			//handle: '.upfront-drag-handle',
 			appendTo: $main,
 			start: function(e, ui){
@@ -908,6 +917,8 @@ var GridEditor = {
 				ed.create_drop_point(me, wrap);
 				
 				$wrap.css('min-height', '1px');
+				
+				$('.upfront-drop-me').css('height', (me.outer_grid.bottom-me.outer_grid.top)*ed.baseline);
 				
 				/*_.each(ed.els, function(each){
 					each.$el.find(".upfront-debug-info").size() || each.$el.find('.upfront-editable_entity:first').append('<div class="upfront-debug-info"></div>');
@@ -1108,7 +1119,6 @@ var GridEditor = {
 					preview_left = 0,
 					preview_top = 0;
 				
-				
 				if ( !drop.$el.hasClass('upfront-drop-use') ){
 					$('.upfront-drop-use').removeClass('upfront-drop-use');
 					$('.upfront-drop-x').not(drop.$el).stop().animate({width:0}, 500);
@@ -1119,7 +1129,7 @@ var GridEditor = {
 						drop.$el.addClass('upfront-drop-use').css('width', ani_w).css('height', ani_h);
 					}
 					else{
-						var ani_h = height;
+						var ani_h = drop.$el.hasClass('upfront-drop-me') ? (me.outer_grid.bottom-me.outer_grid.top)*ed.baseline : height;
 						drop.$el.addClass('upfront-drop-use').stop().animate({height:ani_h}, 500);
 					}
 					$preview.css({
