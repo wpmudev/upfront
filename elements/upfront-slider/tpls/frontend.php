@@ -2,8 +2,15 @@
 <div class="uslider-container {{ sliderClasses }}">
 
 	{[ if(settings['controls_type'] == "arrows-simple") { ]}
-	<div class="uslider-controls uslider-control-prev"><a href="#" title="Prev">Prev</a></div>
-	{[ } ]}
+	<div class="uslider-controls uslider-control-prev clearfix uslider-controls-{{ settings['controls_position'] }}" ><a href="#" title="Prev">Prev</a></div>
+	{[ } else if(settings['controls_type'] == "dots" && settings['controls_position'] != 'bottom-out'){ ]}
+	<ul class="uslider-controls uslider-pager clearfix  uslider-controls-{{ settings['controls_position'] }}"></ul>
+	{[ } else if(settings['controls_type'] == "arrows-stacked" && settings['controls_position'] != 'bottom-left' && settings['controls_position'] != 'bottom-right'){ ]}
+	<div class="uslider-controls clearfix uslider-controls-{{ settings['controls_position'] }}">
+		<div class="uslider-control uslider-control-prev"><a href="#" title="Prev">Prev</a></div>
+		<div class="uslider-control uslider-control-next"><a href="#" title="Next">Next</a></div>
+	</div>
+	{[ }]}
 	<div class="uslider-preslide-caption uslider-caption">
 	</div>
 	<div class="uslider-slides">
@@ -23,16 +30,16 @@
 	</div>
 
 	{[ if(settings['controls_type'] == "arrows-simple") { ]}
-	<div class="uslider-controls uslider-control-next"><a href="#" title="Next">Next</a></div>
-	{[ } else if(settings['controls_type'] == "arrows-stacked"){ ]}
-	<ul class="uslider-controls"><li class="uslider-controls uslider-control-prev"><a href="#" title="Prev">Prev</a></li><li class="uslider-controls uslider-control-next"><a href="#" title="Next">Next</a></li></ul>
-	{[ } else if(settings['controls_type'] == "dots"){ ]}
-	<ul class="uslider-controls uslider-pager"></ul>
+	<div class="uslider-controls uslider-control-next clearfix uslider-controls-{{ settings['controls_position'] }}"><a href="#" title="Next">Next</a></div>
+	{[ } else if(settings['controls_type'] == "arrows-stacked" && (settings['controls_position'] == 'bottom-left' || settings['controls_position'] == 'bottom-right')){ ]}
+	<div class="uslider-controls clearfix uslider-controls-{{ settings['controls_position'] }}">
+		<div class="uslider-control uslider-control-prev"><a href="#" title="Prev">Prev</a></div>
+		<div class="uslider-control uslider-control-next"><a href="#" title="Next">Next</a></div>
+	</div>
+	{[ } else if(settings['controls_type'] == "dots" && settings['controls_position'] == 'bottom-out'){ ]}
+	<ul class="uslider-controls uslider-pager clearfix uslider-controls-{{ settings['controls_position'] }}"></ul>
 	{[ } else if(settings['controls_type'] == "thumbnails"){ ]}
-		<div class="uslider-controls uslider-thumbnails">
-		{[ for(var i=0; i<slidesLength; i++){ var slide = slides[i]; ]}
-			<img src="{{ slide['images']['thumbnail']['url'] }}" alt="{{ slide['title'] }}" class="uslide-thumbnail uslide-thumbnail-{{ i }}">
-		{[ } ]}	
+		<ul class="uslider-controls uslider-pager uslider-thumbnails clearfix uslider-controls-{{ settings['controls_position'] }}"></ul>
 	{[ } ]}
 
 	<div class="uslider-postslide-caption uslider-caption">

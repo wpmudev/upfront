@@ -1,18 +1,15 @@
 
 /* Styles for the actul slideshow view */
 div.uslider-container ul.uslider-pager{
-	clear: both;
-	width: 100%;
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	text-align: center;
 }
 
 div.uslider-container ul.uslider-pager li {
 	list-style: none;
-	margin: 0 3px;
-	padding: 0;
-	float: left;
+	display: inline;
 	border: 1px solid transparent;
 }
 
@@ -41,19 +38,6 @@ div.uslider-container.uslider-container-controls-type-thumbnails ul.uslider-page
 	float: left;	
 }
 
-div.uslider-container div.uslider-controls {
-	border: 1px solid red;
-	width: 10px;
-}
-
-div.uslider-container div.uslider-control-prev {
-	float: left;	
-}
-
-div.uslider-container div.uslider-control-next {
-	float: right;
-}
-
 div.uslider-container div.uslider-pager {
 	border: 1px solid red;
 	width: 100px;
@@ -66,6 +50,140 @@ div.uslider-container div.uslider-slides {
 div.uslider-container div.uslider-slide-item img {
 	margin: auto;
 	width: 100%;
+}
+
+
+/** JAVI UPDATES **/
+
+div.uslider-controls-arrows-simple div.uslider-controls {
+	position: absolute;
+	top: 48%;
+	z-index: 10;
+}
+
+div.uslider-controls-arrows-simple .uslider-control-prev.uslider-controls-inside {
+	left: 0;
+}
+div.uslider-controls-arrows-simple .uslider-control-prev.uslider-controls-outside {
+	left: -30px;
+}
+div.uslider-controls-arrows-simple .uslider-control-next.uslider-controls-inside {
+	right: 0px;
+}
+div.uslider-controls-arrows-simple .uslider-control-next.uslider-controls-outside {
+	right: -30px;
+}
+.uslider-controls-dots .uslider-controls {
+	position: absolute;
+	z-index: 10;
+}
+
+div.uslider-controls-dots .uslider-controls-bottom-out,
+div.uslider-controls-dots .uslider-controls-top-out {
+	position: static;
+}
+
+.uslider-controls-dots .uslider-controls-top-in {
+	top: 0;
+	width:100%;
+}
+.uslider-controls-dots .uslider-controls-bottom-in {
+	bottom: 0;
+	width:100%;
+}
+
+div.uslider-controls-dots ul.uslider-controls-left-in li, 
+div.uslider-controls-dots ul.uslider-controls-left-out li,
+div.uslider-controls-dots ul.uslider-controls-right-in li, 
+div.uslider-controls-dots ul.uslider-controls-right-out li{
+	display:block;
+}
+
+.uslider-controls-dots .uslider-controls-left-in, 
+.uslider-controls-dots .uslider-controls-left-out,
+.uslider-controls-dots .uslider-controls-right-in, 
+.uslider-controls-dots .uslider-controls-right-out {
+	top: 0;
+}
+
+.uslider-controls-dots .uslider-controls-left-in {
+	left: 0;
+}
+.uslider-controls-dots .uslider-controls-left-out {
+	left: -20px;
+} 
+
+.uslider-controls-dots .uslider-controls-right-in {
+	right: 0;
+}
+.uslider-controls-dots .uslider-controls-right-out {
+	right: -20px;
+} 
+
+
+.uslider-controls-arrows-stacked .uslider-control {
+	float:left;
+}
+
+.uslider-controls-arrows-stacked .uslider-controls {
+	position:relative;
+	height: 30px;
+}
+
+.uslider-controls-arrows-stacked div.uslider-controls-left-top,
+.uslider-controls-arrows-stacked div.uslider-controls-left-bottom,
+.uslider-controls-arrows-stacked div.uslider-controls-right-top,
+.uslider-controls-arrows-stacked div.uslider-controls-right-bottom {
+	position:absolute;
+}
+
+div.uslider-controls-left-top .uslider-control,
+div.uslider-controls-left-bottom .uslider-control,
+div.uslider-controls-right-top .uslider-control,
+div.uslider-controls-right-bottom .uslider-control {
+	float: none;
+}
+
+div.uslider-controls-top-left.uslider-controls{
+
+}
+div.uslider-controls-top-right .uslider-control-prev{
+	position: absolute;
+	top:0;
+	right:30px;
+}
+div.uslider-controls-top-right .uslider-control-next{
+	position: absolute;
+	top:0;
+	right:0;
+}
+div.uslider-controls-right-top.uslider-controls{
+	top:0;
+	right: -30px;
+}
+div.uslider-controls-right-bottom.uslider-controls{
+	bottom:0;
+	right: -30px;
+}
+div.uslider-controls-bottom-right .uslider-control-prev{
+	position: absolute;
+	right:30px;
+}
+div.uslider-controls-bottom-right .uslider-control-next{
+	position: absolute;
+	right:0;
+}
+div.uslider-controls-bottom-left.uslider-controls{
+	
+}
+div.uslider-controls-left-bottom.uslider-controls{
+	bottom:0;
+	left:-30px;
+
+}
+div.uslider-controls-left-top.uslider-controls{
+	top:0;
+	left:-30px;
 }
 
 

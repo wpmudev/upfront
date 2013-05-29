@@ -77,7 +77,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			controls = settings['controls_type'],
 			pagerAnchorBuilder = null,
 			tplOptions = {},
-			slides = this.property_value('slides')
+			slides = this.property_value('slides'),
+			thumbSize = {width: 'auto', height: 'auto'}
 		;
 
 		// Destroy existing cycle if any
@@ -90,7 +91,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			slidesLength: slides.length,
 			i:0,
 			sliderId: this.property_value('element_id'),
-			sliderClasses: this.get_slider_classes()
+			sliderClasses: this.get_slider_classes(),
+			thumbSize: thumbSize
 		}
 
 		//Start the slider when the markup is ready
@@ -107,8 +109,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	get_slider_classes: function() {
 		return 'uslider-style-' + this.property_value('style') +
 			' uslider-text-'+ this.property_value('text_layout') +
-			' uslider-controls-'+ this.property_value('controls_type') +
-			' uslider-controls-'+ this.property_value('controls_position');
+			' uslider-controls-'+ this.property_value('controls_type');
 	},
 	html_to_server_debug: function(slides_html, slides_js) {
 		var post = jQuery.ajax({
@@ -138,17 +139,19 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			controls = this.property_value('controls_type'),
 			pagerAnchorBuilder = null,
 			elementId = this.property_value('element_id'),
+			style = this.property_value('style'),
+			textLayout = this.property_value('text_layout'),
 			options = {
 				fx: behaviour['transition'],
 				timeout: behaviour['interval'] * 1000,
 				speed: behaviour['speed'] * 1000,
 				pause: behaviour['hover'] == "on",
-				prev: controls.indexOf('arrows') == 0 ? '#' + elementId + ' a.uslider-control-prev' : null,
-				next: controls.indexOf('arrows') == 0 ? '#' + elementId + ' a.uslider-control-next' : null,
+				prev: controls.indexOf('arrows') == 0 ? '#' + elementId + ' .uslider-control-prev a' : null,
+				next: controls.indexOf('arrows') == 0 ? '#' + elementId + ' .uslider-control-next a' : null,
 				pager: ['dots', 'thumbnails'].indexOf(controls) != -1 ? '#' + elementId + ' ul.uslider-pager' : null,
-				fit: true,
+				fit: false,
 				width: '400px',
-				height: '300px',
+				height: '100px',
 				before: function () {
 					$('#' + elementId).find('.uslider-caption').animate({opacity:0.01}, '400');
 				},
@@ -164,9 +167,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 		if(controls == 'thumbnails'){
 			pagerAnchorBuilder = function(idx, slide) { 
-				return '<li><a href="#">' + idx + '</a></li>';
+				return '<li><a href="#"><img src="' + $(slide).find('img').attr('src') + '" style="width: ' +  (Math.floor(100 / self.property_value('slides').length) - 1) + '%" /></a></li>';
 			}
 		}
+		//Slider width if the text is beside it
+		if(this.property_value('slide_text') == 'yes' && style == 'right' && (textLayout == 'right' || textLayout == 'left'))
+			options.width = '50%';
+
 		options.pagerAnchorBuilder = pagerAnchorBuilder;
 
 		// Kick off
@@ -182,14 +189,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		;
 		if(texts == 'yes'){
 			var texts = $slider.find('div.uslider-slide-' + slideIndex);
-			if(layout == 'right' || layout == 'top')
-				$slider.find('div.uslider-preslide-caption').html(texts.html());
-			else if(layout == 'bottom' || layout == 'left')
+
+			if(layout == 'bottom')
 				$slider.find('div.uslider-postslide-caption').html(texts.html());
 			else if(layout == 'split'){
 				$slider.find('div.uslider-preslide-caption').html(texts.find('.uslider-slide-title'));
 				$slider.find('div.uslider-postslide-caption').html(texts.find('.uslider-slide-description'));
 			}
+			else
+				$slider.find('div.uslider-preslide-caption').html(texts.html());
 		}
 		$slider.find('div.uslider-caption').animate({opacity:1}, '400');
 
@@ -384,15 +392,8 @@ var USliderSettingsSlideLayout = Upfront.Views.Editor.Settings.Item.extend({
 	render: function () {
 		var module_settings = {};
 		
-		module_settings['style_idx'] = this.model.get_property_value_by_name("style");		
-		module_settings['style_idx'] = 'xxx';
-		module_settings['layout_idx'] = this.model.get_property_value_by_name("text_layout");
-		current_layout_option_idx = this.get_settings_defaults(module_settings);
-
-		//console.log('style_idx=['+module_settings['style_idx']+']');
-		//console.log('layout_idx=['+module_settings['layout_idx']+']');
-		
-		
+		module_settings['style_idx'] = this.model.get_property_value_by_name("style");	
+		module_settings['layout_idx'] = this.model.get_property_value_by_name("text_layout");		
 
 		uslider_settings_html = '';
 
@@ -451,49 +452,6 @@ var USliderSettingsSlideLayout = Upfront.Views.Editor.Settings.Item.extend({
 		//console.log('get_value: layout=['+layout_option_idx+']');	
 
 		return layout_option_idx;
-	},
-	get_settings_defaults: function(module_settings) {
-
-		// Total kludge here. Need a better way to access the options from the style model. Seems dirty. Should be able to call the get_settings_defaults for the style model. 
-		var _first_option_style = false;
-		for (var option_idx in this.setting_options_styles) {
-
-			// Grab our first option for later. 
-			 if (_first_option_style == false)
-				_first_option_style = option_idx;
-				
-			// If we don't have a value then just set it to the first item. 
-			if (module_settings['style_idx'] == false) {
-				module_settings['style_idx'] = option_idx;
-				break;
-			} else if (module_settings['style_idx'] == option_idx) {
-				break;
-			}			
-		}
-		if (option_idx != module_settings['style_idx']) {
-			module_settings['style_idx'] = _first_option_style;
-		}
-
-		var _first_option_layout = false;
-		for (var option_idx in this.setting_options_styles) {
-
-			// Grab our first option for later. 
-			 if (_first_option_layout == false)
-				_first_option_layout = option_idx;
-				
-			// If we don't have a value then just set it to the first item. 
-			if (module_settings['layout_idx'] == false) {
-				module_settings['layout_idx'] = option_idx;
-				break;
-			} else if (module_settings['layout_idx'] == option_idx) {
-				break;
-			}			
-		}
-		if (option_idx != module_settings['layout_idx']) {
-			module_settings['layout_idx'] = _first_option_layout;
-		}
-
-		return module_settings;
 	}
 	
 });
