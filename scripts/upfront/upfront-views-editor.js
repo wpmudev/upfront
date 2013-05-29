@@ -2407,7 +2407,9 @@ define(_template_files, function () {
 		render: function () {
 			var me = this,
 				$view = me.for_view.$el.find(".upfront-editable_entity"),
-				view_pos = $view.offset()
+				view_pos = $view.offset(),
+				$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				main_pos = $main.offset()
 			;
 			me.$el
 				.empty()
@@ -2422,6 +2424,10 @@ define(_template_files, function () {
 				panel.on("upfront:settings:panel:close", me.close_panel, me);
 				me.$el.append(panel.el)
 			});
+			this.toggle_panel(this.panels.first());
+			
+			var label_width = this.panels.first().$el.find('.upfront-settings_label').outerWidth(),
+				panel_width = this.panels.first().$el.find('.upfront-settings_panel').outerWidth();
 
 			this.$el
 				.css({
@@ -2429,11 +2435,10 @@ define(_template_files, function () {
 					"z-index": 10000000
 				})
 				.offset({
-					"top": view_pos.top + $view.height() + 16,
-					"left": view_pos.left + $view.width() - 380
+					"top": view_pos.top + /*$view.height() + 16*/ 49,
+					"left": view_pos.left + $view.outerWidth() - (view_pos.left+$view.outerWidth() > (main_pos.left+$main.outerWidth()/2) ? label_width+panel_width : 0)
 				})
 			;
-			this.toggle_panel(this.panels.first());
 		},
 
 		set_title: function (title) {
