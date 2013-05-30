@@ -636,6 +636,9 @@ define(_template_files, function () {
 			on_click: function () {
 				// Deactivate settings on clicking anywhere in layout
 				Upfront.Events.trigger("entity:settings:deactivate");
+				// Deactivate element
+				$(".upfront-active_entity").removeClass("upfront-active_entity");
+				Upfront.Events.trigger("entity:deactivated");
 			}
 		})
 	;
