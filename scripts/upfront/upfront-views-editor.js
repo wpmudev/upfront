@@ -1556,9 +1556,11 @@ define(_template_files, function () {
 			);
 			Upfront.Events.off("upfront:posts:post:expand");
 		},
-		handle_back_to_posts: function () {
-			Upfront.Events.trigger("upfront:posts:post:contract");
-			Upfront.Events.trigger("upfront:posts:sort");
+		handle_back_to_posts: function (e) {
+			//Upfront.Events.trigger("upfront:posts:post:contract");
+			//Upfront.Events.trigger("upfront:posts:sort");
+			e.preventDefault();
+			$('#upfront-list-page-path').find('a.upfront-path-back').click();
 		},
 		get_type: function () { return 'posts'; }
 	});
@@ -1690,28 +1692,29 @@ define(_template_files, function () {
 	});
 
 	var ContentEditorPosts = Backbone.View.extend({
-		className: "upfront-entity_list-posts",
+		className: "upfront-entity_list-posts bordered-bottom",
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 			"click .upfront-list_item-post": "handle_post_reveal",
-			"click #upfront-list-page-path a:not(.last)": "handle_return_to_posts"
+			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts"
 		},
 		render: function () {
 			var me = this,
-				markup = '<div id="upfront-list"><div id="upfront-list-meta" class="upfront-list_item">' +
+				markup = '<div id="upfront-list"><div id="upfront-list-meta" class="upfront-list_item clearfix">' +
 					'<div class="upfront-list_item-component upfront-date upfront-header">Date</div>' +
-					'<div class="upfront-list_item-component upfront-title upfront-header">Title</div>' +
+					'<div class="upfront-list_item-component upfront-title upfront-header">Post Title</div>' +
 					'<div class="upfront-list_item-component upfront-author upfront-header">Author</div>' +
 				'</div>'
 			;
+			markup += '<div class="upfront-list-items upfront-scroll-panel">'
 			this.model.posts.each(function (post, idx) {
-				markup += '<div class="upfront-list_item-post upfront-list_item" data-post_id="' + post.get("ID") + '">' +
+				markup += '<div class="upfront-list_item-post upfront-list_item clearfix" data-post_id="' + post.get("ID") + '">' +
 					'<div class="upfront-list_item-component upfront-date">' + post.get("post_date") + '</div>' +
 					'<div class="upfront-list_item-component upfront-title">' + post.get("post_title") + '</div>' +
-					'<div class="upfront-list_item-component upfrot-author">' + post.get("post_author") + '</div>' +
+					'<div class="upfront-list_item-component upfront-author">' + post.get("post_author") + '</div>' +
 				'</div>';
 			});
-			markup += '</div>';
+			markup += '</div></div>';
 			this.$el.empty().append(markup);
 			this.mark_sort_order();
 		},
@@ -1769,21 +1772,22 @@ define(_template_files, function () {
 				var data = resp.data || {};
 				markup += '<div id="upfront-list-page" style="display:none">' +
 					'<div id="upfront-list-page-path">' +
-						'<a href="#">Posts</a>&nbsp;&raquo;&nbsp;' +
+						'<a href="#" class="upfront-path-back">Posts</a>&nbsp;&raquo;&nbsp;' +
 						'<a href="#" class="last">' + data.post_title + '</a>' +
 					'</div>' +
 					'<div id="upfront-list-page-preview">' +
 						'<div id="upfront-page_preview-wrapper">' +
 							'<div id="upfront-page_preview-featured_image">' +
-								'<h4>Featured Image</h4>' +
+								'<h4 class="upfront-settings-item-title">Featured Image</h4>' +
 								'<img src="' + data.featured_image + '" />' +
+								'<div class="upfront-page_preview-edit_feature"><a href="#">Edit</a></div>' +
 							'</div>' +
-							'<div id="upfront-page_preview-edit">' +
+							'<div class="upfront-page_preview-bottom" id="upfront-page_preview-edit">' +
 								'<button type="button">Edit post</button>' +
 							'</div>' +
 						'</div>' +
 					'</div>' +
-					'<div id="upfront-list-page-tree">' +
+					'<div id="upfront-list-page-tree" class="upfront-scroll-panel">' +
 						'<div class="upfront-post_content-wrapper">' +
 							'<h3>' + data.post_title + '</h3>' +
 							'<div class="upfront-post_content">' + data.post_content + '</div>' +
@@ -1801,7 +1805,7 @@ define(_template_files, function () {
 		},
 
 		handle_return_to_posts: function () {
-			this.$el.find("#upfront-list").show('slide', { direction: "left"}, 'slow');
+			this.$el.find("#upfront-list").show('slide', { direction: "left"}, 'fast');
 			$("#upfront-list-page").hide();
 			Upfront.Events.trigger("upfront:posts:post:contract");
 			Upfront.Events.trigger("upfront:posts:sort");
@@ -2164,18 +2168,19 @@ define(_template_files, function () {
 
 		render: function () {
 			var me = this,
-				markup = '<div id="upfront-list" class="upfront-list-comments"><div id="upfront-list-meta" class="upfront-list_item">' +
+				markup = '<div id="upfront-list" class="upfront-list-comments clearfix"><div id="upfront-list-meta" class="upfront-list_item">' +
 					'<div class="upfront-comment-approved"></div>' +
 					'<div class="upfront-list_item-component upfront-comment_author upfront-header">Author</div>' +
 					'<div class="upfront-list_item-component upfront-date upfront-header">Date</div>' +
 					'<div class="upfront-list_item-component upfront-comment_content upfront-header">Comment</div>' +
-				'</div></div>'
+				'</div>' +
+				'<div class="upfront-list-items"></div></div>'
 			;
 			this.$el.empty().append(markup);
 			this.model.comments.each(function (comment, idx) {
 				var view = new ContentEditorComments_Comment({model: comment});
 				view.render();
-				me.$el.find("#upfront-list").append(view.$el);
+				me.$el.find("#upfront-list .upfront-list-items").append(view.$el);
 			});
 			this.mark_sort_order();
 		},
