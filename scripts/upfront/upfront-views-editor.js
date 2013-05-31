@@ -2338,10 +2338,12 @@ define(_template_files, function () {
 			this.$el.append('<div class="upfront-settings_label" />');
 			this.$el.append('<div class="upfront-settings_panel" style="display:none" />');
 			var $label = this.$el.find(".upfront-settings_label"),
-				$panel = this.$el.find(".upfront-settings_panel")
+				$panel = this.$el.find(".upfront-settings_panel"),
+				me = this
 			;
 			$label.append(this.get_label());
 			this.settings.each(function (setting) {
+				setting.panel = me;
 				setting.render();
 				$panel.append(setting.el)
 			});
@@ -2371,6 +2373,10 @@ define(_template_files, function () {
 		
 		hide: function () {
 			this.$el.hide();
+		},
+
+		is_active: function () {
+			return this.$el.find(".upfront-settings_panel").is(":visible");
 		},
 
 		on_toggle: function () {
@@ -2422,6 +2428,7 @@ define(_template_files, function () {
 				panel.render();
 				panel.on("upfront:settings:panel:toggle", me.toggle_panel, me);
 				panel.on("upfront:settings:panel:close", me.close_panel, me);
+				panel.on("upfront:settings:panel:refresh", me.refresh_panel, me);
 				me.$el.append(panel.el)
 			});
 			this.toggle_panel(this.panels.first());
@@ -2452,6 +2459,10 @@ define(_template_files, function () {
 			panel.reveal();
 			this.set_title(panel.get_title());
 			this.$el.height(panel.$el.find(".upfront-settings_panel").outerHeight() - 2)
+		},
+
+		refresh_panel: function (panel) {
+			if (panel.is_active()) this.toggle_panel(panel);
 		},
 
 		close_panel: function (panel) {
