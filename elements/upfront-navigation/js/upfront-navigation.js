@@ -545,6 +545,8 @@
                                 .append('<span id="'+item.ID+'">'+item.title+'</span>');
                         });
 
+                        me.panel.trigger("upfront:settings:panel:refresh", me.panel);
+
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading menu");
@@ -630,6 +632,7 @@
                     this.$el.find('.upfront_menu_pages_box, .upfront_menu_categories_box').hide();
                     this.$el.find('.upfront_menu_customlink_box').show();
                 }
+                this.panel.trigger("upfront:settings:panel:refresh", this.panel);
             },
 
             pagesListToggle: function(e){
