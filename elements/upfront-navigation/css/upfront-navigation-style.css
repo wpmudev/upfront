@@ -37,6 +37,7 @@
     text-decoration:none;
     color:#a3c1d9;
     text-transform:uppercase;
+    position: relative;
 }
 .upfront-navigation .menu ul{
     position:absolute;
@@ -143,6 +144,7 @@ label {
     border-radius: 3px;
     display: inline-block;
     position: relative;
+    font-weight: normal;
 }
 .regular-checkbox:checked + label {
     background-color: #263a4d;
@@ -497,6 +499,7 @@ label {
 {
     margin:0 0 0 8px;
     line-height: 15px;
+    cursor: auto;
 }
 .upfront_menu_contents_box
 {
@@ -942,4 +945,68 @@ label {
 .upfront-save_settings i
 {
     color: #379962;
+}
+.nav_tooltip
+{
+    margin: 0;
+    padding: 0;
+    float: left;
+    width: 75px;
+    height: 33px;
+    border: solid 1px #395269;
+    background-color:rgba(38,58,77,0.9);
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    position: absolute;
+    z-index: 999999;
+    top: 8px;
+}
+.nav_tooltip:after, .nav_tooltip:before {
+    border: solid transparent;
+    content: ' ';
+    height: 0;
+    left: -13px;
+    position: absolute;
+    width: 0;
+}
+
+.nav_tooltip:after {
+    border-width: 7px;
+    border-right-color: rgba(38,58,77,0.9);
+    top: 9px;
+}
+
+.nav_tooltip:before {
+    border-width: 7px;
+    border-right-color: #395269;
+    top: 9px;
+    left: -15px;
+}
+.nav_tooltip .edit_url, .nav_tooltip .visit_page
+{
+    margin: 3px 0 0 3px !important;
+    padding: 0 0 0 14px !important;
+    display: block;
+    width: 64px;
+    font-family: verdana;
+    font-size: 10px !important;
+    color: #1fcd8f !important;
+    line-height: 11px !important;
+    height: 11px !important;
+    display: block !important;
+    text-align: left !important;
+    text-decoration: none;
+    text-transform:none !important;
+}
+.nav_tooltip .edit_url
+{
+    background: url("../images/edit_link.png") left top no-repeat;
+}
+.nav_tooltip .visit_page
+{
+    background: url("../images/visit_icon.png") left top no-repeat;
+}
+.nav_tooltip a:hover
+{
+    text-decoration: underline;
 }

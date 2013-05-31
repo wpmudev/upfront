@@ -30,7 +30,21 @@
         });
 
         var NavigationView = Upfront.Views.ObjectView.extend({
+            initialize:function(){
+
+                var me = this;
+                this.events = _.extend({}, this.events, {
+                    "hover .upfront-object-content .menu-item > a": "onMenuItemHover",
+                    "click .upfront-object-content .menu-item > a .visit_page": "openNewWindow"
+                });
+
+                // Call the parent's initialization function
+                Upfront.Views.ObjectView.prototype.initialize.call(this);
+                Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
+            },
+
             model:NavigationModel,
+
             get_content_markup: function () {
                 var menu_id = this.model.get_property_value_by_name('menu_id'),
                     me = this;
@@ -44,6 +58,35 @@
                         Upfront.Util.log("Error loading menu");
                     });
                 return 'Loading';
+            },
+
+            renderTrigger: function(){
+              this.render();
+            },
+
+            toolTip : _.template('<div class="nav_tooltip" style="display: none;"><a class="edit_url" href="#">edit URL</a><a class="visit_page" href="#">visit page</a></div>'),
+
+            onMenuItemHover: function(evt) {
+
+                $item = $(evt.target).parent('li'),
+                $itemWidth = $item.width();
+
+                if (evt.type == "mouseenter") {
+                    // hover-in on menu item
+                    $toolTip = $(this.toolTip());
+                    this.$el.find('.nav_tooltip').remove();
+                    $(evt.target).append($toolTip);
+                    $toolTip.find('.visit_page').attr('href',$(evt.target).attr('href'));
+                    $toolTip.css({'left':$itemWidth});
+                    $toolTip.show();
+                }
+                else {
+                    // hover-out on menu item
+                    $toolTip.hide();
+                }
+            },
+            openNewWindow: function(e){
+                window.open(e.target.href)
             },
             on_render: function () {
 
@@ -69,6 +112,7 @@
                 $upfrontObjectContent.attr('data-style',(menuStyle == false ? 'horizontal' : menuStyle));
                 $upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav == false ? false : allowSubNav));
             }
+
         });
 
         var NavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
@@ -354,8 +398,24 @@
                         checkboxes = t.find('ul li input:checked'),
                         re = new RegExp('menu-item\\[(\[^\\]\]*)');
 
+
+
+                var layout_settings = this.model.get_property_value_by_name("layout_setting"),
+                    parsedSetting = $.parseJSON(layout_settings),
+                    addNewPage;
+
+                if (parsedSetting == null) {
+                        addNewPage = true;
+                }
+                else {
+                        addNewPage = parsedSetting.newPage;
+                }
+
+                if ( !addNewPage)
+                    return false;
+
                     // If no items are checked, bail.
-                    if ( !checkboxes.length )
+                    if ( !checkboxes.length && addNewPage)
                         return false;
 
                     me.$el.find('.upfront_menu_pages_box .spinner, .upfront_menu_categories_box .spinner').show();
@@ -433,8 +493,9 @@
 
                 Upfront.Util.post({"action": "upfront_update_post_status",'postIds': data})
                     .success(function (ret) {
-                        console.log(ret.data);
                         me.getThisMenuItems();
+                        Upfront.Events.trigger("entity:object:render_navigation");
+                        Upfront.Events.trigger("entity:settings:render_menu_order");
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error updating status");
@@ -450,7 +511,6 @@
 
                     Upfront.Util.post({"action": "upfront_add_menu_item",'menu': menu_id, 'menu-item': menuItems})
                         .success(function (ret) {
-                            console.log(ret.data);
                             me.update_post_status(ret);
                         })
                         .error(function (ret) {
@@ -484,6 +544,7 @@
                             me.$el.find('.upfront_selected_pages_box')
                                 .append('<span id="'+item.ID+'">'+item.title+'</span>');
                         });
+
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading menu");
@@ -504,6 +565,7 @@
                         $pagesBox.append(menuView.render().el);
                         $pagesBox.find('ul li:has(ul)').find('> div').removeClass('blank').addClass('plus');
                         //console.log(me.renderMenu(ret.data));
+
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading Pages");
@@ -536,8 +598,8 @@
                 this.$el.html(this.navContentsTemplate());
                 this.$el.find('.upfront_menu_categories_box').hide();
                 this.$el.find('.upfront_menu_customlink_box').hide();
-                this.getAllPages();
                 this.getThisMenuItems();
+                this.getAllPages();
                 this.getAllCategories();
             },
 
@@ -591,6 +653,20 @@
                 if ( '' == url || 'http://' == url || '' == label )
                     return false;
 
+                var layout_settings = this.model.get_property_value_by_name("layout_setting"),
+                    parsedSetting = $.parseJSON(layout_settings),
+                    addNewPage;
+
+                if (parsedSetting == null) {
+                    addNewPage = true;
+                }
+                else {
+                    addNewPage = parsedSetting.newPage;
+                }
+
+                if ( !addNewPage)
+                    return false;
+
                 // Show the ajax spinner
                 this.$el.find('.upfront_customlink_area .spinner').show();
 
@@ -610,7 +686,9 @@
                 me.$el.find('.upfront_menu_pages_box .spinner, .upfront_menu_categories_box .spinner, .upfront_menu_customlink_box .spinner').show();
                 Upfront.Util.post({"action": "upfront_delete_menu_item", "menu_item_id": e.target.id})
                     .success(function (ret) {
-                        me.getThisMenuItems()
+                        me.getThisMenuItems();
+                        Upfront.Events.trigger("entity:object:render_navigation");
+                        Upfront.Events.trigger("entity:settings:render_menu_order");
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error Deleting Menu Item");
@@ -624,7 +702,7 @@
 
             get_value: function () {
 
-                console.log(this.addSelectedToMenu(this.$el.find('.upfront_page_scroll_box, .upfront_categories_scroll_box')));
+                this.addSelectedToMenu(this.$el.find('.upfront_page_scroll_box, .upfront_categories_scroll_box'));
                 var contents_setting = JSON.stringify({
                     "meniItems": ''
                 });
@@ -652,6 +730,7 @@
 
             initialize: function(){
                 this.model.get("properties").on("change", this.render, this);
+                Upfront.Events.on("entity:settings:render_menu_order",this.menuOrderRenderTrigger, this );
             },
 
             registerChange : function() {
@@ -905,13 +984,14 @@
 
                         });
 
-
                         me.menuList = me.$el.find('#menu-to-edit');
                         me.targetList = me.menuList;
                         me.jQueryExtensions();
 
                         if( me.menuList.length ) // If no menu, we're in the + tab.
                             me.initSortables();
+
+
 
                     })
                     .error(function (ret) {
@@ -991,11 +1071,16 @@
                 Upfront.Util.post({"action": "upfront_update_menu_order", "menu_items": menuItems})
                     .success(function (ret) {
                         me.$el.find('.upfront_menu_order_box .spinner').hide();
+                        Upfront.Events.trigger("entity:object:render_navigation");
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error updating menu");
                     });
                 return 'Loading';
+            },
+
+            menuOrderRenderTrigger: function(){
+                this.render();
             },
 
             render: function () {
