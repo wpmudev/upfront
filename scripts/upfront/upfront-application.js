@@ -112,6 +112,7 @@ var LayoutEditor = new (Subapplication.extend({
 				).show("slow", function () {
 					$(".upfront-editable_trigger").hide();
 					$("#upfront-loading").remove();
+					Upfront.Events.trigger("upfront:layout:loaded");
 				});
 			})
 			.error(function (xhr) {

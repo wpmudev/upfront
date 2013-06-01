@@ -81,9 +81,10 @@ var _alpha = "alpha",
 		get_content: function () {
 			return this.get_property_value_by_name("content");
 		},
-		set_content: function (content) {
+		set_content: function (content, options) {
 			var prop = this.get_property_by_name("content");
-			if (prop) return prop.set("value", content);
+			var options = typeof options != 'undefined' ? options: {};
+			if (prop) return prop.set("value", content, options);
 			return this.get("properties").add(new Upfront.Models.Property({"name": "content", "value": content}));
 		},
 		get_element_id: function () {

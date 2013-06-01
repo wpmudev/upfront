@@ -392,7 +392,7 @@ define(_template_files, function () {
 						//view_class = Upfront.Views[view_class] ? view_class : "Module",
 						local_view = new Upfront.Views[view_class]({model: module}),
 						wrapper_id = module.get_wrapper_id(),
-						wrapper = wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
+						wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
 						wrapper_view, wrapper_el
 					;
 					if ( !wrapper ){

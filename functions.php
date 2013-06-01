@@ -153,7 +153,7 @@ EOAdminStyle;
 		echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
 		echo '<script type="text/javascript">var _upfront_post_data=' . json_encode(array(
 			'layout' => Upfront_EntityResolver::get_entity_ids(),
-			'post_id' => (is_singular() ? get_the_ID() : false),
+			'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false),
 )) . ';</script>';
 		echo <<<EOAdditivemarkup
 <div id="layouts" style="display:none"></div>

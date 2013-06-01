@@ -27,7 +27,7 @@ var ImageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.Fi
 					  	"caption_alignment":that.model.get_property_value_by_name("caption_alignment"),
 					  	"caption_trigger":that.model.get_property_value_by_name("caption_trigger"),
 					}
-					console.log(data);
+					//console.log(data);
 					var rendered = '';
 					rendered = _.template(template, data);
 					that.$el.find('.upfront-object-content').html(rendered);
@@ -177,7 +177,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				,
 				do: function () { 
 					var value = this.$el.find('input:radio[name=when_clicked]:checked').val();
-					console.log(value);
+					//console.log(value);
 					if(value == 'open_link'){
 						$('#field_image_link').show();
 					}else{

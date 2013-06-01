@@ -110,15 +110,23 @@ Upfront.Util.post({
 				me.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('disable');
 
 				CKEDITOR.inline('upfront-body');
-				$body.find("#upfront-post-cancel_edit").click(function () {
-					me.on_cancel();
-					Upfront.Application.ContentEditor.stop();
-				});
+				$body
+					.find("#upfront-body").focus().end()
+					.find("#upfront-post-cancel_edit").click(function () {
+						me.stop_editor();
+					})
+				;
 				Upfront.Application.ContentEditor.run();
+				Upfront.Events.on("entity:deactivated", me.stop_editor, me);
 			});
+		},
+		stop_editor: function () {
+			this.on_cancel();
+			Upfront.Application.ContentEditor.stop();
 		},
 		on_cancel: function () {
 			_upfront_post_data.post_id = _upfront_post_data._old_post_id;
+			if (CKEDITOR.instances['upfront-body']) CKEDITOR.instances['upfront-body'].destroy(); // Clean up the editor.
 			// Re-enable the draggable on edit stop
 			this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('enable');
 			this.undelegateEvents();

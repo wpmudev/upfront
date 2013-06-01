@@ -46,6 +46,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		Upfront.Events.on("upfront:posts:post:post_updated", function () {
 			me._get_post_content();
 		});
+		this.trigger("rendered", this);
 	},
 
 	_get_post_content: function () {
@@ -58,6 +59,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}).success(function (response) {
 			$(document).data("upfront-post-" + _upfront_post_data.post_id, response.data);
 			me.render();
+			Upfront.Events.trigger("elements:this_post:loaded", me);
 		});
 	},
 
@@ -65,7 +67,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			content = $(document).data("upfront-post-" + _upfront_post_data.post_id),
 			$title = this.$el.find('h3.post_title a'),
-			$body = this.$el.find('.post_content')
+			$body = this.$el.find('.post_content'),
+			$parent = me.parent_module_view.$el.find('.upfront-editable_entity:first')
 		;
 		$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + content.raw.title + '"/>');
 		$body.html(
@@ -76,14 +79,22 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		// Prevent default events, we're in editor mode.
 		me.undelegateEvents();
 		// Kill the draggable, so we can work with regular inline editor.
-		me.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('disable');
+		if ($parent.is(".ui-draggable")) $parent.draggable('disable');
 
 		CKEDITOR.inline('upfront-body');
-		$body.find("#upfront-post-cancel_edit").click(function () {
-			me.on_cancel();
-			Upfront.Application.ContentEditor.stop();
-		});
+		$body
+			.find("#upfront-body").focus().end()
+			.find("#upfront-post-cancel_edit").on("click", function () {
+				me.stop_editor();
+			})
+		;
 		Upfront.Application.ContentEditor.run();
+
+		Upfront.Events.on("entity:deactivated", this.stop_editor, this);
+	},
+	stop_editor: function () {
+		this.on_cancel();
+		Upfront.Application.ContentEditor.stop();
 	},
 	on_save: function () {
 		this.undelegateEvents();
@@ -93,10 +104,12 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		this.render();
 	},
 	on_cancel: function () {
+		var $parent = this.parent_module_view.$el.find('.upfront-editable_entity:first');
 		this.undelegateEvents();
 		this.deactivate();
+		if (CKEDITOR.instances['upfront-body']) CKEDITOR.instances['upfront-body'].destroy(); // Clean up the editor.
 		// Re-enable the draggable on edit stop
-		this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('enable');
+		if ($parent.is(".ui-draggable")) $parent.draggable('enable');
 		this.delegateEvents();
 		this.render();
 	}

@@ -2500,8 +2500,10 @@ define(_template_files, function () {
 			});
 		},
 		add_to_editor: function (html) {
-			var el = CKEDITOR.dom.element.createFromHtml(html);
-			CKEDITOR.instances['upfront-body'].insertElement(el);
+			var instance = CKEDITOR.currentInstance,
+				el = CKEDITOR.dom.element.createFromHtml(html)
+			;
+			if (instance) instance.insertElement(el);
 			tb_remove();
 		}
 	});

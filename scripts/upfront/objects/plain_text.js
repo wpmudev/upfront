@@ -4,7 +4,6 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		this.init_property("type", "PlainTxtModel");
 		this.init_property("view_class", "PlainTxtView");
-		
 		this.init_property("element_id", Upfront.Util.get_unique_id("text-object"));
 		this.init_property("class", "c22 upfront-plain_txt");
 		this.init_property("has_settings", 0);
@@ -13,33 +12,17 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	model: PlainTxtModel,
+	events: {
+		'editor-change [contenteditable]': 'saveContent'
+	},
+
 	get_content_markup: function () {
-		return this.model.get_content();
+		return ['<div contenteditable="true">',
+					this.model.get_content(), '</div>'].join('');
 	},
-	on_edit: function () {
-		this.$el.html(
-			'<textarea style="width:90%; margin:0 5%;" rows="10">' + this.model.get_content() + '</textarea>' +
-			'<button type="button" class="upfront-save">Save</button>' +
-			'<button type="button" class="upfront-cancel">Cancel</button>'
-		);
-		this.undelegateEvents();
-		this.delegateEvents({
-			"click .upfront-save": "on_save",
-			"click .upfront-cancel": "on_cancel",
-		});
-	},
-	on_save: function () {
-		var txt = this.$el.find("textarea").val();
-		this.model.set_content(txt);
-		this.undelegateEvents();
-		this.delegateEvents();
-		this.render();
-	},
-	on_cancel: function () {
-		this.undelegateEvents();
-		this.deactivate();
-		this.delegateEvents();
-		this.render();	
+	saveContent: function (event){
+		this.model.set_content($(event.currentTarget).html(), {silent: true});
+		event.stopPropagation(); // Only this view handles 'editor-change' of descendant contenteditables.
 	}
 });
 
@@ -53,7 +36,7 @@ var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		var object = new PlainTxtModel({
 				"name": "",
 				"properties": [
-					{"name": "content", "value": "My awesome stub content goes here"},
+					{"name": "content", "value": "<p>My awesome stub content goes here</p>"}
 				]
 			}),
 			module = new Upfront.Models.Module({
@@ -74,7 +57,7 @@ var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 Upfront.Application.LayoutEditor.add_object("PlainTxt", {
-	"Model": PlainTxtModel, 
+	"Model": PlainTxtModel,
 	"View": PlainTxtView,
 	"Element": PlainTxtElement
 });

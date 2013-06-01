@@ -22,7 +22,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	
 	protected function _add_hooks () {
 		$this->_add_subpages();
-		add_action('template_redirect', array($this, "intercept_page"));
+		add_action('template_redirect', array($this, "intercept_page"), 0);
 	}
 
 	protected function _add_subpages () {}
@@ -184,6 +184,7 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 		));
 		//add_filter('wp_title', array($this, 'get_title'));
 		add_action('wp_footer', array($this, 'start_editor'), 999);
+		add_filter('upfront-data-post_id', create_function('', "return $post_id;"));
 		load_template(get_single_template());
 		die;
 	}
@@ -200,6 +201,23 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 $(window).load(function () {
 	$("body").append("<a class='upfront-edit_layout' />");
 	$(".upfront-edit_layout").trigger("click");
+	var c1 = function (view, model) {
+			var objects = model.get("objects"),
+				is_this_post = objects.find(function (obj) { return 'ThisPostView' == obj.get_property_value_by_name('view_class'); })
+			;
+			if (is_this_post) {
+				Upfront.Events.on("elements:this_post:loaded", c2);
+				Upfront.Events.off("entity:module:after_render", c1);
+			}
+		},
+		c2 = function (view) {
+			setTimeout(function () {
+				$("#" + view.model.get_property_value_by_name("element_id")).trigger("dblclick")	
+			}, 2000);
+			Upfront.Events.off("elements:this_post:loaded", c2);
+		}
+	;
+	Upfront.Events.on("entity:module:after_render", c1);
 });
 })(jQuery);
 </script>
