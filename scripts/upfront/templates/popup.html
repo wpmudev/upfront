@@ -1,0 +1,134 @@
+<div> 
+<!-- 
+	Wrap everything in a div to convert this file's content in a jquery element 
+	so it is possible to use $.find.
+-->
+<script type="text/template" id="upfront-post-list-tpl">
+<div id="upfront-list">
+	<div id="upfront-list-meta" class="upfront-list_item clearfix">
+		<div class="upfront-list_item-component upfront-date upfront-header">Date</div>
+		<div class="upfront-list_item-component upfront-title upfront-header">Post Title</div>
+		<div class="upfront-list_item-component upfront-author upfront-header">Author</div>
+	</div>
+	<div class="upfront-list-items upfront-scroll-panel">
+	{[ posts.each(function (post, idx){ ]} 
+		<div class="upfront-list_item-post upfront-list_item clearfix" data-post_id="{{ post.get("ID") }}">
+			<div class="upfront-list_item-component upfront-date">{{ post.get("post_date") }}</div>
+			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
+			<div class="upfront-list_item-component upfront-author">{{ post.get("post_author") }}</div>
+		</div>
+	{[ }); ]}
+	</div>
+</div>
+</script>
+
+<script type="text/template" type="text/template" id="upfront-post-single-tpl">
+<div id="upfront-list-page" style="display:none">
+	<div id="upfront-list-page-path">
+		<a href="#" class="upfront-path-back">Posts</a> &nbsp;&raquo;&nbsp; 
+		<a href="#" class="last">{{ data.post_title }}</a>
+	</div>
+	<div id="upfront-list-page-preview">
+		<div id="upfront-page_preview-wrapper">
+			<div id="upfront-page_preview-featured_image">
+				<h4 class="upfront-settings-item-title">Featured Image</h4>
+				<img src="{{ data.featured_image }}" />
+				<div class="upfront-page_preview-edit_feature"><a href="#">Edit</a></div>
+			</div>
+			<div class="upfront-page_preview-bottom" id="upfront-page_preview-edit">
+				<button type="button">Edit post</button>
+			</div>
+		</div>
+	</div>
+	<div id="upfront-list-page-tree" class="upfront-scroll-panel">
+		<div class="upfront-post_content-wrapper">
+			<h3>{{ data.post_title }}</h3>
+			<div class="upfront-post_content">{{ data.post_content }}</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<script type="text/template" id="upfront-page-list-tpl">
+<div id="upfront-list-page">
+	<div id="upfront-list-page-path"></div>
+	<div id="upfront-list-page-preview"><h3>Please select Page</h3></div>
+	<div id="upfront-list-page-tree" class="upfront-list-items upfront-scroll-panel">
+	{[ _.each(pages, function (page, idx){ ]}
+		{{ pageItemTemplate({page: page, pageItemTemplate: pageItemTemplate}) }}
+	{[ }); ]}
+	</div>
+</div>
+</script>
+
+<script type="text/template"  id="upfront-page-list-item-tpl">
+	<div class="upfront-list-page_item {{ page.children ? 'has_children' : '' }}" id="upfront-list-page_item-{{ page.get("ID") }}" data-post_id="{{ page.get("ID") }}">
+		{{ page.get("post_title") }} 
+		{[if(page.children){ _.each(page.children, function(child, idx) { ]}
+			{{ pageItemTemplate({page: child, pageItemTemplate: pageItemTemplate}) }}
+		{[ })}; ]}
+	</div>
+</script>
+
+<script type="text/template"  id="upfront-page-preview-tpl">
+	<div id="upfront-page_preview-wrapper">
+		<div id="upfront-page_preview-featured_image">
+			<h4>Featured Image</h4>
+			<img src="{{ data.featured_image }}" />
+		</div>
+		<div id="upfront-page_preview-template">
+			<h4>Template</h4>
+			<b>{{ template }}</b>
+		</div>
+		<div id="upfront-page_preview-edit">
+			<button type="button">Edit page</button>
+		</div>
+	</div>
+</script>
+
+<script type="text/template"  id="upfront-comments-tpl">
+<div id="upfront-list" class="upfront-list-comments clearfix">
+	<div id="upfront-list-meta" class="upfront-list_item">
+		<div class="upfront-list_item-component upfront-comment_author upfront-header">Author</div>
+		<div class="upfront-list_item-component upfront-date upfront-header">Date</div>
+		<div class="upfront-list_item-component upfront-comment_content upfront-header">Comment</div>
+	</div>
+	<div class="upfront-list-items upfront-list-comment-items upfront-scroll-panel">
+		{[ comments.each(function(comment){ ]}
+		<div class="upfront-list_item-comment upfront-list_item clearfix" data-comment_id="{{ comment.get("comment_ID") }}">
+			<div class="upfront-comment-approved">
+				{[ if(comment.get("comment_aproved") === '0'){ ]}
+				<i class="upfront-comments-approve icon-circle-blank" data-comment_id="{{ comment.get("comment_ID") }}"></i>
+				{[ } ]}
+			</div>
+			<div class="upfront-list_item-component upfront-comment_author">{{comment.get('avatar')}} {{comment.get("comment_author")}}</div>
+			<div class="upfront-list_item-component upfront-date">{{ comment.get("comment_date") }}</div>
+			<div class="upfront-list_item-component upfront-comment_content upfront-list_item-main">{{ comment.get("comment_content") }}</div>
+			<div class="upfront-list_item-component upfront-comment_content-full-wrapper upfront-list_item-main" style="display:none">
+				<div class="upfront-comment_content-full">{{ comment.get("comment_content") }}</div>
+			</div>
+			<div class="upfront-comment_actions-wrapper" style="display:none">
+				<a href="#reply" class="reply"><i class="icon-reply"></i> Reply</a>
+				<a href="#edit" class="edit"><i class="icon-edit"></i> Edit</a>
+				{[ if(comment.get("comment_aproved") === '0'){ ]}
+				<a href="#approve" class="approve"><i class="icon-ok"></i> Approve</a>
+				{[ } else { ]}
+				<a href="#unapprove" class="unapprove"><i class="icon-circle-blank"></i> Unapprove</a>
+				{[ } if(comment.get("comment_aproved") === 'spam'){ ]}
+				<a href="#unspam" class="unspam"><i class="icon-comment-alt"></i> Unspam</a>
+				{[ } else { ]}
+				<a href="#spam" class="spam"><i class="icon-ban-circle"></i> Spam</a>
+				{[ } if(comment.get("comment_aproved") === 'trash'){ ]}
+				<a href="#unthrash" class="unthrash"><i class="icon-comment"></i> Untrash</a>
+				{[ } else { ]}
+				<a href="#thrash" class="thrash"><i class="icon-remove"></i> Trash</a>
+				{[ } ]}
+			</div>
+		</div>
+		{[ }) ]}
+	</div>
+</div>
+
+</script>
+<!-- end of the wrap div -->
+</div>

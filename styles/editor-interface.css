@@ -1534,9 +1534,6 @@ input[type=checkbox]:checked {
 /* Entities(Posts) list */
 .upfront-entity_list-posts {
 }
-.upfront-entity_list-posts #upfront-list-meta {
-	padding-top: 20px;	
-}
 #upfront-list {
 	width: 100%;
 	color: #99b3cc;
@@ -1550,7 +1547,6 @@ input[type=checkbox]:checked {
 
 .upfront-list-items {
 	max-height: 350px;
-	overflow: auto;
 	border-bottom: 1px solid #a4b9cb;
 }
 
@@ -1563,6 +1559,7 @@ input[type=checkbox]:checked {
 
 #upfront-list .upfront-list_item .upfront-list_item-component {
 	padding: 10px 15px;
+	float:left;
 }
 #upfront-list .upfront-list_item .upfront-list_item-component:first-child {
 	padding-left: 30px;
@@ -1589,6 +1586,9 @@ input[type=checkbox]:checked {
 }
 #upfront-list .upfront-list_item:nth-child(even) {
 	background: #e8f4fe;
+}
+#upfront-list #upfront-list-meta {
+	padding-top: 20px;
 }
 #upfront-list #upfront-list-meta.upfront-list_item {
 	background: #e5f3fe;
@@ -1620,17 +1620,18 @@ input[type=checkbox]:checked {
 #upfront-list-meta .upfront-header.active {
 	font-weight: bold;
 }
-.upfront-list_item-component {
-	line-height: 1.2em;
-	float: left;
+
+#upfront-list .upfront-list_item-main {
+	color: #32475c;
 }
 
 /* Posts list */
 .upfront-list_item-component.upfront-date {
 	width: 15%;
+	vertical-align: middle;
 }
 .upfront-list_item-component.upfront-title {
-	width: 70%;	
+	width: 70%;
 }
 .upfront-list_item-component.upfront-author {
 	width: 15%;	
@@ -1725,27 +1726,71 @@ input[type=checkbox]:checked {
 	color: #2ecc90;
 }
 
+
 /* Comments-specific additions to Entities list */
 .upfront-comment-approved {
 	display: block;
-	position: absolute;
-	width: 20px;
-	left: -30px;
+	width: 40px;
 	height: 38px;
 	line-height: 38px;
+	position:absolute;
+	top:0;
+	left: -40px;
 }
 
-.upfront-list-comments .upfront-list_item-component.upfront-comment_author {
-	width: 30%;
+.upfront-list-comments .upfront-list-items {
+	width: 840px;
+	margin-left:-40px;
+	border-bottom:0;
 }
-.upfront-list-comments .upfront-list_item-component.upfront-date {
-	width: 15%;
+
+.upfront-comment-approved {
+	width: 40px;
 }
-.upfront-list-comments .upfront-list_item-component.upfront-comment_content {
-	width: 55%;
+
+.upfront-list-comments .upfront-comment_author {
+	width: 200px;
 }
-#upfront-list .upfront-list_item-comment .upfront-comment_author {
+.upfront-list-comments .upfront-date {
+	width: 120px;
+}
+.upfront-list-comments .upfront-comment_content {
+	width: 480px;
+}
+#upfront-list .upfront-comment_author {
 	color: #2ecc90;
+	vertical-align: top;
+}
+
+#upfront-list .upfront-comment_author img{
+	margin: -7px 5px 0 0;
+}
+
+.upfront-list-comments .upfront-list-comment-items .upfront-list_item {
+	width: 800px;
+	margin-left:40px;
+	position: relative;
+	height: 40px;
+	clear: both;
+	overflow: hidden;
+}
+
+
+#upfront-list .upfront-list-comment-items .upfront-list_item-component {
+	line-height: 1.2em;
+	float: left;
+	padding: 10px 15px;
+}
+
+.upfront-list-comments #upfront-list-meta {
+	margin-left:0;
+}
+
+.upfront-list-comments #upfront-list-meta  .upfront-header {
+	float:left;
+}
+
+.upfront-list-comments .upfront-list_item:hover {
 }
 
 .upfront-list-comments .upfront-list_item .upfront-comment_content-full {
@@ -1753,15 +1798,17 @@ input[type=checkbox]:checked {
 	overflow-y: scroll;
 }
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper {
-	position: relative;
-	left: -1em;
-	top: 85px;
+	position: absolute;
+	left: 0;
+	bottom: 10px;
 	clear: both;
+	height: 40px;
+	overflow: hidden;
 }
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a {
 	display: block;
 	float: left;
-	width: 40px;
+	padding: 0 7px;
 	height: 40px;
 	padding-top: 5px;
 	text-align: center;
@@ -1769,12 +1816,28 @@ input[type=checkbox]:checked {
 	color: #2ecc90;
 	text-decoration: none;
 	font-size: 10px;
+	opacity: 0.8;
+}
+.upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a:hover {
+	opacity: 1;
 }
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a i {
 	display: block;
 	font-size: 12px;
-	height: 6px;
+	height: 15px;
+	padding: 4px;
 	color: #a4b9cb;
+}
+
+.upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a:hover i {
+	color: #2ecc90;
+}
+
+#upfront-list .upfront-list-items .expanded {
+	width:808px;
+	margin-left: 36px;
+	border: 1px solid #a4b9cb;
+	height: 98px;
 }
 
 .upfront-list_item-comment textarea {
