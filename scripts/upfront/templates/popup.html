@@ -30,20 +30,22 @@
 	</div>
 	<div id="upfront-list-page-preview">
 		<div id="upfront-page_preview-wrapper">
-			<div id="upfront-page_preview-featured_image">
-				<h4 class="upfront-settings-item-title">Featured Image</h4>
+			<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
+				<h4>Featured Image: </h4>
 				<img src="{{ data.featured_image }}" />
-				<div class="upfront-page_preview-edit_feature"><a href="#">Edit</a></div>
+			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-edit"></i></a></div>
 			</div>
 			<div class="upfront-page_preview-bottom" id="upfront-page_preview-edit">
-				<button type="button">Edit post</button>
+				<button type="button"><i class="icon-edit"></i> Edit post</button>
 			</div>
 		</div>
 	</div>
 	<div id="upfront-list-page-tree" class="upfront-scroll-panel">
 		<div class="upfront-post_content-wrapper">
-			<h3>{{ data.post_title }}</h3>
-			<div class="upfront-post_content">{{ data.post_content }}</div>
+			<div class="upfront-post_content">
+				<h3>{{ data.post_title }}</h3>
+				{{ data.post_content }}
+			</div>
 		</div>
 	</div>
 </div>
@@ -52,7 +54,11 @@
 <script type="text/template" id="upfront-page-list-tpl">
 <div id="upfront-list-page">
 	<div id="upfront-list-page-path"></div>
-	<div id="upfront-list-page-preview"><h3>Please select Page</h3></div>
+	<div id="upfront-list-page-preview" class="upfront-scroll-panel">
+		<div id="upfront-page_preview-wrapper">
+			<h4>Please select Page</h4>
+		</div>
+	</div>
 	<div id="upfront-list-page-tree" class="upfront-list-items upfront-scroll-panel">
 	{[ _.each(pages, function (page, idx){ ]}
 		{{ pageItemTemplate({page: page, pageItemTemplate: pageItemTemplate}) }}
@@ -62,8 +68,12 @@
 </script>
 
 <script type="text/template"  id="upfront-page-list-item-tpl">
-	<div class="upfront-list-page_item {{ page.children ? 'has_children' : '' }}" id="upfront-list-page_item-{{ page.get("ID") }}" data-post_id="{{ page.get("ID") }}">
-		{{ page.get("post_title") }} 
+	<div class="upfront-list-page_item {{ page.children ? 'has_children closed' : '' }}" id="upfront-list-page_item-{{ page.get("ID") }}" data-post_id="{{ page.get("ID") }}">
+		{[if(page.children){ ]}
+		<i class="icon-caret-right"></i>
+		<i class="icon-caret-down"></i>
+		{[ } ]}
+		{{ page.get("post_title") }} 		
 		{[if(page.children){ _.each(page.children, function(child, idx) { ]}
 			{{ pageItemTemplate({page: child, pageItemTemplate: pageItemTemplate}) }}
 		{[ })}; ]}
@@ -71,17 +81,20 @@
 </script>
 
 <script type="text/template"  id="upfront-page-preview-tpl">
-	<div id="upfront-page_preview-wrapper">
-		<div id="upfront-page_preview-featured_image">
-			<h4>Featured Image</h4>
+	<div id="upfront-page_preview-wrapper" class="upfront-scroll-panel">
+		<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
+			<h4>Featured Image:</h4>
 			<img src="{{ data.featured_image }}" />
+			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-edit"></i></a></div>
 		</div>
-		<div id="upfront-page_preview-template">
-			<h4>Template</h4>
-			<b>{{ template }}</b>
+		<div id="upfront-page_preview-template" class="upfront-page_preview-item">
+			<h4>Template: </h4>
+			<select>
+				<option value="0">{{ template }}</option>
+			</select>
 		</div>
 		<div id="upfront-page_preview-edit">
-			<button type="button">Edit page</button>
+			<button type="button"><i class="icon-edit"></i> Edit page</button>
 		</div>
 	</div>
 </script>
@@ -94,7 +107,7 @@
 		<div class="upfront-list_item-component upfront-comment_content upfront-header">Comment</div>
 	</div>
 	<div class="upfront-list-items upfront-list-comment-items upfront-scroll-panel">
-		{[ comments.each(function(comment){ ]}
+		{[ comments.each(function(comment){ var excerpt = jQuery('<div></div>').html(comment.get('comment_content')).text();]}
 		<div class="upfront-list_item-comment upfront-list_item clearfix" data-comment_id="{{ comment.get("comment_ID") }}">
 			<div class="upfront-comment-approved">
 				{[ if(comment.get("comment_aproved") === '0'){ ]}
@@ -103,8 +116,8 @@
 			</div>
 			<div class="upfront-list_item-component upfront-comment_author">{{comment.get('avatar')}} {{comment.get("comment_author")}}</div>
 			<div class="upfront-list_item-component upfront-date">{{ comment.get("comment_date") }}</div>
-			<div class="upfront-list_item-component upfront-comment_content upfront-list_item-main">{{ comment.get("comment_content") }}</div>
-			<div class="upfront-list_item-component upfront-comment_content-full-wrapper upfront-list_item-main" style="display:none">
+			<div class="upfront-list_item-component upfront-comment_content upfront-comment_excerpt upfront-list_item-main upfront-post_content">{{ excerpt.length > excerptLength ? excerpt.substring(0, excerptLength) + ' [...]' : excerpt }}</div>
+			<div class="upfront-list_item-component upfront-comment_content upfront-comment_content-full-wrapper upfront-list_item-main upfront-post_content  upfront-scroll-panel">
 				<div class="upfront-comment_content-full">{{ comment.get("comment_content") }}</div>
 			</div>
 			<div class="upfront-comment_actions-wrapper" style="display:none">
@@ -128,7 +141,69 @@
 		{[ }) ]}
 	</div>
 </div>
-
 </script>
+
+<script type="text/template" id="upfront-slug-tpl">
+<div class="upfront-slug_editor">
+	<div class="upfront-slug_editor-title">Edit the <b>URL</b> for this post</div>
+	<p class="upfront-slug_editor-info">By default, your URL is determined by a post's or page's title. You can change it here.<br/>It is a good idea to keep them short and memorable.</p>
+	<p class="upfront-slug_editor-url">
+		{{ rootURL }}
+		<input type="text" id="upfront-post_slug" value	="{{ slug }}" />
+		<button id="upfront-post_slug-send" value="OK"><i class="icon-ok"></i> OK</button>
+	</p>
+</div>
+</script>
+
+<script type="text/template" id="upfront-term-list-tpl">
+<div id="upfront-taxonomy-list" class="upfront-taxonomy-hierarchical">
+	{[ _.each(terms, function(term, idx){ ]}
+	{{ termTemplate({term: term, termTemplate: termTemplate, inPost: allTerms.where({term_id: term.get('term_id')}).length, termId: term.get('term_id'), allTerms: allTerms}) }}
+	{[ }); ]}
+</div>
+<div id="upfront-taxonomy-add">
+	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
+	<select id="upfront-taxonomy-parents">
+		{[ _.each(terms, function(term, idx) { ]}
+		<option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
+		{[ }) ]}
+	</select>
+	<button id="upfront-add_term">Add {{ labels.singular_name }}</button>
+</div>
+</script>
+
+<script type="text/template" id="upfront-flat-term-list-tpl">
+<div id="upfront-taxonomy-list" class="upfront-taxonomy-flat">
+	<div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-current">
+		<h3>{{ labels.name }} applied to this post</h3>
+		{[ _.each(currentTerms, function(term, idx){ ]}
+		{{ termTemplate({term: term, termTemplate: termTemplate, inPost: true, termId: term.get('term_id'), allTerms: allTerms}) }}
+		{[ }); ]}
+	</div>
+	<div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-all">
+		<h3>Previously used {{ labels.name }}</h3>
+		{[ _.each(otherTerms, function(term, idx){ ]}
+		{{ termTemplate({term: term, termTemplate: termTemplate, inPost: false, termId: term.get('term_id'), allTerms: allTerms}) }}
+		{[ }); ]}
+	</div>
+</div>
+<div id="upfront-taxonomy-add">
+	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
+	<button id="upfront-add_term">Add {{ labels.singular_name }}</button>
+</div>
+</script>
+
+<script type="text/template" id="upfront-term-single-tpl">
+	<div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
+		<label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
+			<input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ inPost ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
+		</label>
+		{[ _.each(term.children, function(child, idx){ ]}
+		{{ termTemplate({term: child, termTemplate: termTemplate, inPost: allTerms.where({term_id: child.get('term_id')}).length, termId: child.get('term_id'), allTerms: allTerms}) }}
+		{[ }) ]}
+	</div>
+</script>
+
+
 <!-- end of the wrap div -->
 </div>

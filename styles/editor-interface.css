@@ -1347,6 +1347,39 @@ input[type=checkbox]:checked {
 	-moz-box-sizing: border-box;
 }
 
+#upfront-popup select{
+padding: 3px;
+border: 1px solid #A4BFD8;
+background: #E5F3FE;
+color: #A4BFD8;
+font-family: 'Source Sans Pro';
+border-radius: 3px;
+box-shadow: inset 0 2px 0 0 #fff;
+-webkit-box-shadow: inset 0 2px 0 0 #fff;
+}
+
+#upfront-popup input[type=text] {
+	background: #F2F9FF;
+	border: 1px solid #A4BFD8;
+}
+
+#upfront-popup  .button,
+#upfront-popup  button {
+	padding: 7px;
+	border: 2px solid #A4B6C6;
+	border-radius: 10px;
+	width: 100%;
+	font-family: 'Source Sans Pro';
+	text-transform: uppercase;
+	color: #6C92B1;
+	background: none;
+}
+#upfront-popup  .button:hover,
+#upfront-popup  button:hover {
+	border: 2px solid #1fcd8f;
+	color: #30475e;
+}
+
 /* Border box for everybody! */
 #upfront-popup *{ 
 	box-sizing: border-box;
@@ -1669,17 +1702,27 @@ input[type=checkbox]:checked {
 	border-right: 1px solid #a4b9cb;
 	border-bottom: 1px solid #a4b9cb;
 	min-height: 350px;
+	max-height: 350px;
 	position: relative;
 }
-#upfront-page_preview-wrapper {
-	padding: 30px 30px 20px;
+
+#upfront-list-page-preview h4 {
+	text-transform: uppercase;
+	font-size:14px;
+	color:#30475e;
+	margin: 0 0 10px;
+	font-weight: normal;
+
 }
 
-#upfront-page_preview-wrapper .upfront-settings-item-title{
-	border-bottom: 0;
-	margin: 0;
-	font-weight: normal;
+#upfront-page_preview-wrapper {
+	padding: 20px 30px;
 }
+
+.upfront-page_preview-item {
+	margin-bottom: 20px;
+}
+
 #upfront-page_preview-featured_image {
 	position:relative;
 }
@@ -1703,6 +1746,11 @@ input[type=checkbox]:checked {
 #upfront-page_preview-featured_image .upfront-page_preview-edit_feature a:hover{
 	text-decoration: underline;
 }
+
+#upfront-page_preview-template select{
+	width: 100%;
+}
+
 #upfront-list-page-tree {
 	background: #f2f9ff;
 	max-height: 350px;
@@ -1712,18 +1760,56 @@ input[type=checkbox]:checked {
 	border-bottom: 1px solid #a4b9cb;
 }
 #upfront-list-page-tree .upfront-list-page_item {
-	padding-left: 1em;
+	padding-left: 40px;
 	font-weight: normal;
 	color: #33475b;
 	line-height: 30px;
 	border-top: 1px solid #dde7ef;
+	position:relative;
+	cursor: pointer;
+}
+#upfront-list-page-tree .upfront-list-page_item i {
+	width:15px;
+	margin-top:9px;
+	display: block;
+	float: left;
+}
+#upfront-list-page-tree .upfront-list-page_item i.icon-caret-right {
+	display:none;
+}
+#upfront-list-page-tree .upfront-list-page_item.closed i.icon-caret-down {
+	display:none;
+}
+#upfront-list-page-tree .upfront-list-page_item.closed i.icon-caret-right {
+	display:block;
+}
+#upfront-list-page-tree .upfront-list-page_item.closed .upfront-list-page_item {
+	display: none;
 }
 #upfront-list-page-tree .upfront-list-page_item.has_children {
 	font-weight: bold;
+	padding-left: 25px;
 }
 #upfront-list-page-tree .upfront-list-page_item.active {
 	background: #33475b;
 	color: #2ecc90;
+}
+
+#upfront-list-page-tree .upfront-list-page_item.active .upfront-list-page_item {
+	background: #F2F9FF;
+}
+
+#upfront-list-page-tree>.has_children>.upfront-list-page_item {
+	margin-left: -40px;
+	padding-left: 80px;
+}
+#upfront-list-page-tree>.has_children>.has_children>.upfront-list-page_item {
+	margin-left: -80px;
+	padding-left: 120px;
+}
+#upfront-list-page-tree>.has_children>.has_children>.has_children>.upfront-list-page_item {
+	margin-left: -120px;
+	padding-left: 160px;
 }
 
 
@@ -1756,6 +1842,10 @@ input[type=checkbox]:checked {
 }
 .upfront-list-comments .upfront-comment_content {
 	width: 480px;
+}
+
+.upfront-list-comments .expanded .upfront-comment_content {
+	width: 470px;
 }
 #upfront-list .upfront-comment_author {
 	color: #2ecc90;
@@ -1794,8 +1884,7 @@ input[type=checkbox]:checked {
 }
 
 .upfront-list-comments .upfront-list_item .upfront-comment_content-full {
-	height: 185px;
-	overflow-y: scroll;
+	max-height: 185px;
 }
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper {
 	position: absolute;
@@ -1837,7 +1926,20 @@ input[type=checkbox]:checked {
 	width:808px;
 	margin-left: 36px;
 	border: 1px solid #a4b9cb;
-	height: 98px;
+	height: auto;
+	min-height:96px;
+}
+
+.upfront-list-comments .upfront-comment_content-full-wrapper {
+	display:none;
+}
+
+.upfront-list-comments .expanded .upfront-comment_excerpt {
+	display:none;
+}
+
+.upfront-list-comments .expanded .upfront-comment_content-full-wrapper {
+	display:block;
 }
 
 .upfront-list_item-comment textarea {
@@ -1847,27 +1949,43 @@ input[type=checkbox]:checked {
 /* Post single view */
 
 .upfront-post_content-wrapper {
-	padding-left: 30px;
-	padding-right: 30px;
-	font-family: ''
+	padding: 0 30px;
+	font-size: 16px;
+	line-height: 1.4em;
 }
 
-#upfront-page_preview-wrapper .button,
-#upfront-page_preview-wrapper button {
-	padding: 7px;
-	border: 2px solid #A4B6C6;
-	border-radius: 10px;
-	width: 100%;
-	font-family: 'Source Sans Pro';
-	text-transform: uppercase;
-	color: #6C92B1;
-	background: none;
+.upfront-post_content{
 }
-#upfront-page_preview-wrapper .button:hover,
-#upfront-page_preview-wrapper button:hover {
-	border: 2px solid #1fcd8f;
-	color: #30475e;
+
+.upfront-post_content h1, 
+.upfront-post_content h2,
+.upfront-post_content h3,
+.upfront-post_content h4,
+.upfront-post_content h5 {
+	color: #273a4c;
+	font-weight: bold;
 }
+.upfront-post_content h1 {
+	font-size: 27px;
+}
+.upfront-post_content h2 {
+	font-size: 27px;
+}
+.upfront-post_content h3 {
+	font-size: 24px;
+}
+.upfront-post_content h4 {
+	font-size: 21px;
+}
+.upfront-post_content h5 {
+	font-size: 18px;
+}
+
+.upfront-post_content p {
+}
+
+
+
 .upfront-page_preview-bottom {
 	position: absolute;
 	width:100%;
@@ -1876,20 +1994,8 @@ input[type=checkbox]:checked {
 	padding: 20px 30px;
 }
 
-.upfront-post_content-wrapper h3 {
-	color: #273a4c;
-	font-size: 24px;
-	font-weight: bold;
-}
 
-.upfront-post_content{
-	font-size: 16px;
-}
 
-.upfront-post_content p{
-	font-size: 16px;
-	line-height: 1.4em;
-}
 
 #upfront-back_to_posts {
 	display: block;
@@ -1916,16 +2022,32 @@ input[type=checkbox]:checked {
 
 /* Visibility slug popup */
 
-.upfront-permalink_sample {
-	padding: 5px;
+.upfront-slug_editor{
+	padding: 30px;
 	margin: 1em;
+	color: #3A5268;
+}
+.upfront-slug_editor-title {
+	font-size: 30px;
+	font-weight: 200;
+	margin-bottom: 5px;
+}
+.upfront-slug_editor-info {
+	color: #7a94ac;
+	font-size: 15px;
+	margin: 0 0 30px;
+}
+.upfront-slug_editor-url {
+	font-size: 15px;
 }
 #upfront-post_slug {
-	padding: 5px;
-	margin-right: 1em;
+	padding: 8px 5px;
+	font-size: 15px;
+width: 360px;
 }
-#upfront-post_slug-send {
-	padding: 5px;
+.upfront-slug_editor button#upfront-post_slug-send {
+	width: 100px;
+	float: right;
 }
 
 /* Posts panel fix */

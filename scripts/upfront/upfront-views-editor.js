@@ -1349,6 +1349,7 @@ define(_template_files, function () {
 
 	var Command_PopupSlug = ContentEditor_SidebarCommand.extend({
 		$popup: {},
+		slugTpl:  _.template($(_Upfront_Templates.popup).find('#upfront-slug-tpl').html()),
 		render: function () {
 			this.$el.addClass("upfront-entity_list").html("Edit slug");
 		},
@@ -1374,13 +1375,12 @@ define(_template_files, function () {
 					$link = $permalink.find("#sample-permalink")
 				;
 				$link.find("#editable-post-name").remove();
-				me.$popup.content.empty().append(
-					'<div class="upfront-permalink_sample">' +
-						$link.text().replace(/\/+$/, '/') +
-						'<input type="text" id="upfront-post_slug" value="' + resp.data.post_name + '" />' +
-						'<button type="button" id="upfront-post_slug-send">OK</button>' +
-					'</div>'
-				);
+				
+				me.$popup.content.html(me.slugTpl({
+					rootURL: $link.text().replace(/\/+$/, '/'),
+					slug: resp.data.post_name
+				}));
+
 				$("#upfront-post_slug-send").on("click", function () {
 					me.update_post_slug($("#upfront-post_slug").val());
 				});
@@ -1574,55 +1574,48 @@ define(_template_files, function () {
 			"click #upfront-add_term": "handle_new_term",
 			"change .upfront-taxonomy_item": "handle_terms_update"
 		},
+		termListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-list-tpl').html()),
+		termSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-single-tpl').html()),
 		render: function () {
-			this.$el.empty();
-			var me = this,
-				tmp = me.$el.append('<div id="upfront-taxonomy-list" />').append('<div id="upfront-taxonomy-add" />'),
-				$list = me.$el.find("#upfront-taxonomy-list"),
-				$add = me.$el.find("#upfront-taxonomy-add")
+			var unmatched = [],
+				terms = [],
+				termHierarchy = {}
 			;
+
+			//Add the parents as main terms
 			this.model.all_terms.each(function (term, idx) {
-				var parent = parseInt(term.get('parent'), 10),
-					term_id = term.get("term_id"),
-					item_markup = me.get_term_item_markup(term),
-					markup = '<div class="upfront-taxonomy_item" id="upfront-term_item-' + term_id + '">' + item_markup + '</div>'
-				;
-				if (parent) {
-					var $parent = $list.find("#upfront-term_item-" + parent).append(markup);
-				} else {
-					$list.append(markup);
+				var parentId = parseInt(term.get("parent")),
+					parent = false;
+				if (parentId){
+					parent = termHierarchy[parentId];
+					if(parent){
+						parent.children.push(term);
+					}
+					else
+						unmatched.push(term);
+				}
+				else
+					terms.push(term);
+
+				term.children = [];
+				termHierarchy[term.get('term_id')] = term;
+			});
+
+			// Bind the children to their parents
+			_(unmatched).each(function(term) {
+				var parent = termHierarchy[term.get("parent")];
+				if(parent){
+					parent.children.push(term);
 				}
 			});
-			$add.append(me.get_add_new_term_markup());
-		},
-
-		get_term_item_markup: function (term) {
-			var term_id = term.get("term_id"),
-				tax = term.taxonomy,
-				in_post = this.model.post_terms.where({term_id: term_id}),
-				checked = in_post.length ? 'checked="checked"' : ''
-			;
-			return '<label for="upfront-taxonomy-' + tax + '-' + term_id + '">' +
-				'<input type="checkbox" id="upfront-taxonomy-' + tax + '-' + term_id + '" value="' + term_id + '" ' + checked + ' />&nbsp;' +
-				term.get("name") +
-			'</label>';
-		},
-
-		get_add_new_term_markup: function () {
-			var labels = this.model.taxonomy.get("labels");
-			return '' +
-				'<input type="text" id="upfront-new_term" placeholder="Enter ' + labels.singular_name + '" />&nbsp;' +
-				this.get_parent_terms_selection_markup () +
-				'&nbsp;<button id="upfront-add_term">Add ' + labels.singular_name + '</button>' +
-			'';
-		},
-
-		get_parent_terms_selection_markup: function () {
-			var markup = '<option>- Parent ' + this.model.taxonomy.get("labels").singular_name + ' -</option>';
-			this.model.all_terms.each(function (term, idx) {
-				markup += '<option value="' + term.get("term_id") + '">' + term.get("name") + '</option>';
-			});
-			return '<select id="upfront-taxonomy-parents">' + markup + '</select>';
+			this.$el.html(
+				this.termListTpl({ 
+					terms: terms, 
+					termTemplate: this.termSingleTpl, 
+					labels: this.model.taxonomy.get("labels"),
+					allTerms: this.model.all_terms
+				})
+			);
 		},
 
 		handle_new_term: function () {
@@ -1662,33 +1655,29 @@ define(_template_files, function () {
 	});
 	var ContentEditorTaxonomy_Flat = ContentEditorTaxonomy.extend({
 		"className": "upfront-taxonomy-flat",
-		get_parent_terms_selection_markup: function () { return ''; },
+		termListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-flat-term-list-tpl').html()),
+		termSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-single-tpl').html()),
 		render: function () {
-			this.$el.empty();
-			var me = this,
-				tax_name = this.model.taxonomy.get("labels").name,
-				tmp = me.$el.append('<div class="clearfix" id="upfront-taxonomy-list">' +
-					'<div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-current">' +
-						'<h3>' + tax_name + ' applied to this post</h3>' +
-					'</div>' +
-					'<div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-all">' +
-						'<h3>Previously used ' + tax_name + '</h3>' +
-					'</div>' +
-				'</div>').append('<div id="upfront-taxonomy-add" />'),
-				$list = me.$el.find("#upfront-taxonomy-list"),
-				$add = me.$el.find("#upfront-taxonomy-add"),
-				$current = $list.find("#upfront-taxonomy-list-current"),
-				$alltax = $list.find("#upfront-taxonomy-list-all")
+			var	me = this,
+				currentTerms = [],
+				otherTerms = []
 			;
+
 			this.model.all_terms.each(function (term, idx) {
-				var term_id = term.get("term_id"),
-					in_post = me.model.post_terms.where({term_id: term_id}),
-					item_markup = me.get_term_item_markup(term),
-					markup = '<div class="upfront-taxonomy_item" id="upfront-term_item-' + term_id + '">' + item_markup + '</div>'
-				;
-				(in_post.length ? $current : $alltax).append(markup);
+				term.children = [];
+				if(me.model.post_terms.where({term_id: term.get('term_id')}).length)
+					currentTerms.push(term);
+				else
+					otherTerms.push(term);
 			});
-			$add.append(me.get_add_new_term_markup());
+
+			this.$el.html(this.termListTpl({
+				currentTerms: currentTerms,
+				otherTerms: otherTerms,
+				termTemplate: this.termSingleTpl,
+				allTerms: this.model.all_terms,
+				labels: this.model.taxonomy.get("labels")
+			}));
 		}
 	});
 
@@ -1842,7 +1831,7 @@ define(_template_files, function () {
 				post_id = $el.attr("data-post_id")
 			;
 			me.$el.find(".upfront-list-page_item").removeClass("active");
-			$el.addClass("active");
+			$el.addClass("active").toggleClass('closed');
 
 			Upfront.Util.post({
 				"action": "upfront-get_page_data",
@@ -1900,7 +1889,7 @@ define(_template_files, function () {
 		},
 		commentsTpl: _.template($(_Upfront_Templates.popup).find('#upfront-comments-tpl').html()),
 		render: function () {
-			this.$el.html(this.commentsTpl({comments: this.model.comments}));
+			this.$el.html(this.commentsTpl({comments: this.model.comments, excerptLength: 60}));
 			this.mark_sort_order();
 		},
 
