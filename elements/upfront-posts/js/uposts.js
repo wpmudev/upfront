@@ -98,7 +98,6 @@ Upfront.Util.post({
 				$(document).data("upfront-post-" + post_id, response.data);
 				$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + response.data.raw.title + '"/>');
 				$body.html(
-					(is_excerpt ? 'Excerpt' : 'Content') +
 					'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post_id + '" />' +
 					'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + (is_excerpt ? response.data.raw.excerpt : response.data.raw.content) + '</div>' +
 					'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'

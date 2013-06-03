@@ -41,7 +41,8 @@ CKEDITOR.editorConfig = function( config ) {
 		jQuery(document.documentElement).addClass('svg');
 	}
 
-	config.floatSpaceDockedOffsetY = 2;
+	config.floatSpaceDockedOffsetY = 62; // Move toolbar out of the way
+	config.floatSpacePinnedOffsetY = 30; // Deal with the Admin Toolbar
 
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';

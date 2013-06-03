@@ -200,7 +200,7 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 
 $(window).load(function () {
 	$("body").append("<a class='upfront-edit_layout' />");
-	$(".upfront-edit_layout").trigger("click");
+	$(".upfront-edit_layout:first").trigger("click");
 	var c1 = function (view, model) {
 			var objects = model.get("objects"),
 				is_this_post = objects.find(function (obj) { return 'ThisPostView' == obj.get_property_value_by_name('view_class'); })
@@ -211,9 +211,14 @@ $(window).load(function () {
 			}
 		},
 		c2 = function (view) {
-			setTimeout(function () {
-				$("#" + view.model.get_property_value_by_name("element_id")).trigger("dblclick")	
-			}, 2000);
+			var el = $("#" + view.model.get_property_value_by_name("element_id"));
+			if (el.length) {
+				el.trigger('dblclick');
+			} else {
+				setTimeout(function () {
+					c2(view);
+				}, 200);
+			}
 			Upfront.Events.off("elements:this_post:loaded", c2);
 		}
 	;
