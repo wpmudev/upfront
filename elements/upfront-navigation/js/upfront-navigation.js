@@ -286,12 +286,6 @@
                     "newPage": this.$el.find('#add_new_page').is(':checked')
                 })
                 return layout_setting;
-            },
-            events: {
-                'click input': 'EleClicked'
-            },
-            EleClicked: function (e) {
-                // console.log(e.target.id);
             }
 
         });
@@ -387,6 +381,7 @@
 
             initialize: function(){
                 this.model.get("properties").on("change", this.render, this);
+                this.model.get("properties").on("add", this.getThisMenuItems, this);
             },
 
             navContentsTemplate: _.template(_Upfront_Templates["navigation_contents"]),
@@ -733,6 +728,7 @@
 
             initialize: function(){
                 this.model.get("properties").on("change", this.render, this);
+                this.model.get("properties").on("add", this.MenuOrder, this);
                 Upfront.Events.on("entity:settings:render_menu_order",this.menuOrderRenderTrigger, this );
             },
 
@@ -1116,7 +1112,6 @@
         Upfront.Models.NavigationModel = NavigationModel;
         Upfront.Views.NavigationView = NavigationView;
 
-        return {};
     });
 
 })(jQuery);
