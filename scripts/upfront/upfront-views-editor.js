@@ -1114,6 +1114,7 @@ define(_template_files, function () {
 
 	var Command_PopupTax = ContentEditor_SidebarCommand.extend({
 		$popup: {},
+		views: {category: false, post_tag: false},
 		render: function () {
 			this.$el.addClass("upfront-taxonomy_list").html("<span title='Categories&amp;Tags'>Categories&amp;Tags</span>");
 		},
@@ -1149,16 +1150,21 @@ define(_template_files, function () {
 				me.dispatch_taxonomy_call(me.$popup.top.find('.upfront-tabs li.active'));
 			});
 			popup.done(function () {
-				Upfront.Events.off("upfront:post:taxonomy_changed");
+				//Upfront.Events.off("upfront:post:taxonomy_changed");
 			});
 		},
 		dispatch_taxonomy_call: function (el) {
 			var me = this,
 				$el = $(el),
-				tax = $el.attr("data-type")
+				tax = $el.attr("data-type"),
+				type = $el.attr('rel')
 			;
 			me.$popup.top.find('.upfront-tabs li').removeClass('active');
 			$el.addClass('active');
+
+			if(this.views[tax])
+				return me.render_panel(this.views[tax]);
+
 			me.$popup.content.html('<p class="upfront-popup-placeholder"><q>Them frogs chirp really loud today.</q></p>');
 
 			Upfront.Util.post({
@@ -1172,15 +1178,21 @@ define(_template_files, function () {
 					tax_view = new tax_view_constructor({model: taxonomy}),
 					tmp = false
 				;
-				tax_view.render();
-				me.$popup.content.empty().append(tax_view.$el);
+				me.render_panel(tax_view);
+				me.views[tax] = tax_view;
 			});
 			return false;
+		},
+		render_panel: function(view){
+			view.render();
+			this.$popup.content.html(view.$el);
+			view.setElement(view.$el);
 		}
 	});
 
 	var Command_PopupList = ContentEditor_SidebarCommand.extend({
 		$popup: {},
+		views: {posts: false, pages: false, comments: false},
 		render: function () {
 			this.$el.addClass("upfront-entity_list").html("Browse posts/pages/comments");
 		},
@@ -1234,43 +1246,64 @@ define(_template_files, function () {
 			me.$popup.top.find('.upfront-tabs li').removeClass('active');
 			$el.addClass('active');
 
+			//Already loaded?
+			if(me.views[panel] && !data)
+				 return this.render_panel(me.views[panel]);
+
+			//If not, load them.
 			send_data["action"] = "upfront-load-" + panel;
 			send_data["for"] = $("#upfront-post_id").val();
 			Upfront.Util.post(send_data).success(function (resp) {
 				var model = new Upfront.Models[class_suffix](resp.data),
-					view = {},
-					pagination = false,
-					search = false
+					views = false
 				;
 				switch (panel) {
 					case "posts":
-						view = new ContentEditorPosts({model: model});
-						search = new ContentEditorSearch_Posts({model: model});
-						pagination = new ContentEditorPagination_Posts({model: model});
+						views = {
+							view: new ContentEditorPosts({model: model}),
+							search: new ContentEditorSearch_Posts({model: model}),
+							pagination: new ContentEditorPagination_Posts({model: model})
+						}
+						me.views.posts = views;
 						break;
 					case "pages":
-						view = new ContentEditorPages({model: model});
-						search = new ContentEditorSearch_Pages({model: model});
+						views = {
+							view: new ContentEditorPages({model: model}),
+							search: new ContentEditorSearch_Pages({model: model})					
+						}
+						me.views.pages = views;
 						break;
 					case "comments":
-						view = new ContentEditorComments({model: model});
-						search = new ContentEditorSearch_Comments({model: model});
-						pagination = new ContentEditorPagination_Comments({model: model});
+						views = {
+							view: new ContentEditorComments({model: model}),
+							search: new ContentEditorSearch_Comments({model: model}),
+							pagination: new ContentEditorPagination_Comments({model: model})
+						}
+						me.views.comments = views;
 						break;
 				}
-				view.render();
-				me.$popup.content.empty().append(view.$el);
-
-				me.$popup.bottom.empty();
-				if (pagination) {
-					pagination.render();
-					me.$popup.bottom.empty().append(pagination.$el);
-				}
-
-				search.render();
-				me.$popup.bottom.append(search.$el);
+				me.render_panel(views);
 			});
 			return false;
+		},
+
+		render_panel: function(views){
+			var me = this;
+			views.view.render();
+			me.$popup.content.empty().append(views.view.$el);
+			views.view.setElement(views.view.$el);
+
+			me.$popup.bottom.empty();
+
+			if (views.pagination) {
+				views.pagination.render();
+				me.$popup.bottom.empty().append(views.pagination.$el);
+				views.pagination.setElement(views.pagination.$el);
+			}
+
+			views.search.render();
+			me.$popup.bottom.append(views.search.$el);
+			views.search.setElement(views.search.$el);
 		}
 	});
 
@@ -1493,30 +1526,15 @@ define(_template_files, function () {
 	});
 
 	var ContentEditorPagination = Backbone.View.extend({
+		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click .upfront-pagination_item": "handle_pagination_request"
 		},
 		render: function () {
-			var me = this,
-				total = this.model.pagination.get("total"),
-				page_size = this.model.pagination.get("page_size"),
-				current = this.model.pagination.get("page"),
-				markup = ''
-			;
-			if (!total || total <= page_size) return false;
-
-			_(_.range(0, total, page_size)).each(function (count, idx) {
-				markup += '<div class="upfront-pagination_item ' + (idx == current ? 'current' : '') + '" data-page_idx="' + idx + '">' +
-					(idx+1) +
-				'</div>';
-			});
-			this.$el.empty().append(
-				'<div id="upfront-entity_list-pagination" data-total="' + total + '" data-page_size="' + page_size + '">' +
-					'<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></div>' +
-					markup +
-					'<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"><i class="icon-angle-right"></i></div>' +
-				'</div>'
-			);
+			this.$el.html(this.paginationTpl({
+				pages: _.range(0, this.model.pagination.get("total"), this.model.pagination.get("page_size")),
+				current: this.model.pagination.get("page")
+			}));
 		},
 		handle_pagination_request: function (e) {
 			var me = this,
@@ -1569,15 +1587,20 @@ define(_template_files, function () {
 		get_type: function () { return 'comments'; }
 	});
 
-	var ContentEditorTaxonomy = Backbone.View.extend({
+	var ContentEditorTaxonomy_Hierarchical = Backbone.View.extend({
+		className: "upfront-taxonomy-hierarchical",
 		events: {
 			"click #upfront-add_term": "handle_new_term",
-			"change .upfront-taxonomy_item": "handle_terms_update"
+			"keydown #upfront-add_term": "handle_enter_new_term",
+			"change .upfront-taxonomy_item": "handle_terms_update",
+			'keydown #upfront-new_term': 'handle_enter_new_term'
 		},
 		termListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-list-tpl').html()),
 		termSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-single-tpl').html()),
+		updateTimer: false,
 		render: function () {
-			var unmatched = [],
+			var me = this,
+				unmatched = [],
 				terms = [],
 				termHierarchy = {}
 			;
@@ -1586,6 +1609,9 @@ define(_template_files, function () {
 			this.model.all_terms.each(function (term, idx) {
 				var parentId = parseInt(term.get("parent")),
 					parent = false;
+
+				term.inPost = me.model.post_terms.where({term_id: term.get('term_id')}).length;
+
 				if (parentId){
 					parent = termHierarchy[parentId];
 					if(parent){
@@ -1613,26 +1639,44 @@ define(_template_files, function () {
 					terms: terms, 
 					termTemplate: this.termSingleTpl, 
 					labels: this.model.taxonomy.get("labels"),
-					allTerms: this.model.all_terms
 				})
 			);
 		},
 
 		handle_new_term: function () {
-			var data = {
+			var me = this,
+				data = {
 				"action": "upfront-post-create_term",
 				"taxonomy": this.model.taxonomy.get("name"),
 				"term": this.$el.find("#upfront-new_term").val(),
-				"post_id": $("#upfront-post_id").val()
+				"post_id": $("#upfront-post_id").val(),
+				newterm: false
 			};
+
+			if(!data.term)
+				return false;
+
 			if ($("#upfront-taxonomy-parents").length) data.parent_id = $("#upfront-taxonomy-parents").val();
+
+			newterm = new Backbone.Model({
+				term_id: data.term,
+				name: data.term,
+				parent: data.parent_id ? data.parent_id : 0
+			});
+
 			Upfront.Util.post(data).success(function (resp) {
+				newterm.set('term_id', resp.data.term_id);
+				me.model.post_terms.add(newterm);
+				me.model.all_terms.add(newterm);
+				me.render();
 				Upfront.Events.trigger("upfront:post:taxonomy_changed");
 			});
 		},
 
-		handle_terms_update: function () {
-			var $terms = this.$el.find(".upfront-taxonomy_item :input:checked"),
+		handle_terms_update: function (e) {
+			var me = this,
+				$target = $(e.target),
+				$terms = false,
 				data = {
 					"action": "upfront-post-update_terms",
 					"taxonomy": this.model.taxonomy.get("name"),
@@ -1640,23 +1684,71 @@ define(_template_files, function () {
 					"post_id": $("#upfront-post_id").val()
 				}
 			;
+			// If uncheck, uncheck the children.
+			if(!$target.is(':checked')){
+				var container = $target.parents('.upfront-taxonomy_item');
+				if(container.length)
+					$(container[0]).find('input[type=checkbox]').attr('checked', false);
+			}
+			// If check, check the parents
+			else
+				$target.parents('.upfront-taxonomy_item').children('label').find('input[type=checkbox]').attr('checked', true);
+
+			//Delay the current update to let the user add/remove more terms
+			clearTimeout(this.updateTimer);
+			this.updateTimer = setTimeout(function(){
+				me.update_terms();
+			}, 2000);
+		},
+
+		handle_enter_new_term: function (e) {
+			if(e.which == 13){
+				this.handle_new_term(e);
+			}
+		},
+
+		update_terms: function(){
+			var me = this,
+				data = {
+					"action": "upfront-post-update_terms",
+					"taxonomy": this.model.taxonomy.get("name"),
+					"terms": [],
+					"post_id": $("#upfront-post_id").val()
+				},
+				$terms = this.$el.find(".upfront-taxonomy_item :input:checked"),
+				currentTerms = new Backbone.Collection({})
+			;
 			if (!$terms.length) return false;
+
 			$terms.each(function () {
-				data.terms.push($(this).val());
+				var id = $(this).val(),
+					models = false;
+				data.terms.push(id);
+				models = me.model.all_terms.where({'term_id': id});
+				if(models.length)
+					currentTerms.add(models[0]);
 			});
+
 			Upfront.Util.post(data).success(function (resp) {
-				Upfront.Events.trigger("upfront:post:taxonomy_changed");
+				me.model.post_terms = currentTerms;
 			});
+
+			this.updateTimer = false;
 		}
 	});
 
-	var ContentEditorTaxonomy_Hierarchical = ContentEditorTaxonomy.extend({
-		"className": "upfront-taxonomy-hierarchical"
-	});
-	var ContentEditorTaxonomy_Flat = ContentEditorTaxonomy.extend({
+	var ContentEditorTaxonomy_Flat = Backbone.View.extend({
 		"className": "upfront-taxonomy-flat",
 		termListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-flat-term-list-tpl').html()),
-		termSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-single-tpl').html()),
+		termSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-flat-single-tpl').html()),
+		changed: false,
+		updateTimer: false,
+		events: {
+			"click #upfront-add_term": "handle_new_term",
+			'click .upfront-taxonomy_item-flat': 'handle_term_click',
+			'keydown #upfront-add_term': 'handle_enter_new_term',
+			'keydown #upfront-new_term': 'handle_enter_new_term'
+		},
 		render: function () {
 			var	me = this,
 				currentTerms = [],
@@ -1675,9 +1767,113 @@ define(_template_files, function () {
 				currentTerms: currentTerms,
 				otherTerms: otherTerms,
 				termTemplate: this.termSingleTpl,
-				allTerms: this.model.all_terms,
 				labels: this.model.taxonomy.get("labels")
 			}));
+		},
+
+		handle_term_click: function(e){
+			var $target = $(e.currentTarget),
+				termId = $target.attr('data-term_id');
+
+			if($target.parent().attr('id') == 'upfront-taxonomy-list-current')
+				this.removeTerm(termId);
+			else
+				this.addTerm(termId);
+		},
+
+
+		handle_new_term: function (e) {
+			var me = this,
+				data = {
+				"action": "upfront-post-create_term",
+				"taxonomy": this.model.taxonomy.get("name"),
+				"term": this.$el.find("#upfront-new_term").val(),
+				"post_id": $("#upfront-post_id").val(),
+				newterm: false
+			};
+
+			e.preventDefault();
+
+			if(! data.term)
+				return false;
+
+			newterm = new Backbone.Model({term_id: data.term, name: data.term});
+			this.$('#upfront-taxonomy-list-current').append(this.termSingleTpl({term: newterm}));
+
+			Upfront.Util.post(data).success(function (resp) {
+				newterm.set('term_id', resp.data.term_id);
+				me.model.post_terms.add(newterm);
+				me.model.all_terms.add(newterm);
+				Upfront.Events.trigger("upfront:post:taxonomy_changed");
+			});
+		},
+		handle_enter_new_term: function (e) {
+			if(e.which == 13){
+				this.handle_new_term(e);
+			}
+		},
+
+		removeTerm: function(termId){
+			var me = this;
+			this.$el.find('#upfront-taxonomy-list-all').append(
+				this.$el.find('#upfront-term_item-' + termId).detach()
+			);
+			this.changed = true;
+			//Delay the current update to let the user add/remove more terms
+			clearTimeout(this.updateTimer);
+			this.updateTimer = setTimeout(function(){
+				me.update_terms();
+			}, 2000);
+		},
+
+		addTerm: function(termId){
+			var me = this;
+			this.$el.find('#upfront-taxonomy-list-current').append(
+				this.$el.find('#upfront-term_item-' + termId).detach()
+			);
+
+			this.changed = true;
+			//Delay the current update to let the user add/remove more terms
+			clearTimeout(this.updateTimer);
+			this.updateTimer = setTimeout(function(){
+				me.update_terms();
+			}, 2000);
+		},
+
+		update_terms: function() {
+			var me = this;
+			if(!this.changed)
+				return;
+
+			var me = this,
+				termIds = [],
+				data = [],
+				currentTerms = new Backbone.Collection({})
+			;
+
+			this.$el.find('#upfront-taxonomy-list-current').find('div.upfront-taxonomy_item').each(function(term){
+				var id = $(this).attr('data-term_id'),
+					models = false;
+				termIds.push(id);
+				models = me.model.all_terms.where({'term_id': id});
+				if(models.length)
+					currentTerms.add(models[0]);
+			});
+
+			data = {
+				"action": "upfront-post-update_terms",
+				"taxonomy": this.model.taxonomy.get("name"),
+				"terms": termIds,
+				"post_id": $("#upfront-post_id").val()				
+			}
+
+			Upfront.Util.post(data).success(function (resp) {
+				me.changed = false;
+				me.model.post_terms = currentTerms;
+			});
+
+
+			this.updateTimer = false;
 		}
 	});
 
@@ -1763,7 +1959,7 @@ define(_template_files, function () {
 		},
 
 		handle_return_to_posts: function () {
-			this.$el.find("#upfront-list").show('slide', { direction: "left"}, 'fast');
+			this.$el.find("#upfront-list").show('slide', { direction: "left"});
 			$("#upfront-list-page").hide();
 			Upfront.Events.trigger("upfront:posts:post:contract");
 			Upfront.Events.trigger("upfront:posts:sort");
@@ -1884,11 +2080,20 @@ define(_template_files, function () {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 			"mouseenter .upfront-list_item-comment": "start_reveal_counter",
 			"mouseleave .upfront-list_item-comment": "stop_reveal_counter",
+			"click .upfront-list_item-comment": "toggle_full_post",
 			"click .upfront-comments-approve": "handle_approval_request",
 			"click .upfront-comment_actions-wrapper a": "handle_action_bar_request"
 		},
 		commentsTpl: _.template($(_Upfront_Templates.popup).find('#upfront-comments-tpl').html()),
 		render: function () {
+			//Parse comment meta data
+			this.model.comments.each(function(comment){
+				try{
+					comment.set('comment_meta', JSON.parse(comment.get('comment_meta')));
+				} catch (e) {
+					comment.set('comment_meta', {});
+				}
+			});
 			this.$el.html(this.commentsTpl({comments: this.model.comments, excerptLength: 60}));
 			this.mark_sort_order();
 		},
@@ -1942,32 +2147,22 @@ define(_template_files, function () {
 		},
 
 		reveal_comment: function (e) {
-			var me = this,
-				$el = $(e.currentTarget);
-			$(".upfront-list-comments .upfront-list_item").removeClass("expanded");
-			$el
-				//.find(".upfront-comment_content").hide().end()
-				.find(".upfront-comment_actions-wrapper").show().end()
-				//.find(".upfront-comment_content-full-wrapper").show().end()
-				.addClass("expanded")
-			;
-			clearTimeout(me._reveal_counter);
+			this.$(".upfront-list-comments .upfront-list_item").removeClass("expanded");
+			$(e.currentTarget).addClass("expanded");
+			clearTimeout(this._reveal_counter);
 		},
 
 		revert_comment: function (e) {
-			var me = this,
-				$el = $(e.currentTarget);
-			$el
-				.removeClass("expanded")
-				//.find(".upfront-comment_content").show().end()
-				.find(".upfront-comment_actions-wrapper").hide().end()
-				//.find(".upfront-comment_content-full-wrapper").hide().end()
-			;
-			clearTimeout(me._reveal_counter);
+			$(e.currentTarget).removeClass("expanded");
+			clearTimeout(this._reveal_counter);
+		},
+
+		toggle_full_post: function (e) {
+			$(e.currentTarget).toggleClass("expanded");
 		},
 
 		stop_reveal_counter: function (e) {
-			clearTimeout(this._reveal_counter);
+			if (this._currently_working) return false;
 			this.revert_comment(e);
 		},
 
@@ -1980,7 +2175,7 @@ define(_template_files, function () {
 				"action": "upfront-comments-approve",
 				"comment_id": comment_id
 			}).success(function () {
-				Upfront.Events.trigger("upfront:comments:sort");
+				Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 			});
 		},
 
@@ -2000,42 +2195,42 @@ define(_template_files, function () {
 					"action": "upfront-comments-approve",
 					"comment_id": comment_id
 				}).success(function () {
-					Upfront.Events.trigger("upfront:comments:sort");
+					Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 				});
 			} else if ($el.is(".unapprove")) {
 				Upfront.Util.post({
 					"action": "upfront-comments-unapprove",
 					"comment_id": comment_id
 				}).success(function () {
-					Upfront.Events.trigger("upfront:comments:sort");
+					Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 				});
 			} else if ($el.is(".thrash")) {
 				Upfront.Util.post({
 					"action": "upfront-comments-thrash",
 					"comment_id": comment_id
 				}).success(function () {
-					Upfront.Events.trigger("upfront:comments:sort");
+					Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 				});
 			} else if ($el.is(".unthrash")) {
 				Upfront.Util.post({
 					"action": "upfront-comments-unthrash",
 					"comment_id": comment_id
 				}).success(function () {
-					Upfront.Events.trigger("upfront:comments:sort");
+					Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 				});
 			} else if ($el.is(".spam")) {
 				Upfront.Util.post({
 					"action": "upfront-comments-spam",
 					"comment_id": comment_id
 				}).success(function () {
-					Upfront.Events.trigger("upfront:comments:sort");
+					Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 				});
 			} else if ($el.is(".unspam")) {
 				Upfront.Util.post({
 					"action": "upfront-comments-unspam",
 					"comment_id": comment_id
 				}).success(function () {
-					Upfront.Events.trigger("upfront:comments:sort");
+					Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 				});
 			}
 			return false;
@@ -2049,14 +2244,18 @@ define(_template_files, function () {
 			$content.hide()
 				.find("textarea,button").remove().end()
 				.after(
-					'<textarea class="edit" rows="16">' + $content.html() + '</textarea>' +
+					'<textarea class="comment-edit-box" class="edit" rows="16">' + $content.html() + '</textarea>' +
 					'<button type="button" class="comment-edit-ok">OK</button> ' +
 					'<button type="button" class="comment-edit-cancel">Cancel</button> '
 				)
 			;
 			this._currently_working = true;
 			$root
-				.one("click", ".comment-edit-cancel", function () {
+				.on("click", ".comment-edit-box", function(e){
+					e.stopPropagation();
+				})
+				.one("click", ".comment-edit-cancel", function (e) {
+					e.stopPropagation();
 					$root
 						.find("textarea,button").remove().end()
 					;
@@ -2064,15 +2263,16 @@ define(_template_files, function () {
 					me._currently_working = false;
 					return false;
 				})
-				.one("click", ".comment-edit-ok", function () {
+				.one("click", ".comment-edit-ok", function (e) {
 					var text = $root.find("textarea").val();
+					e.stopPropagation();
 					Upfront.Util.post({
 						"action": "upfront-comments-update_comment",
 						"comment_id": comment_id,
 						"post_id": $("#upfront-post_id").val(),
 						"content": text
 					}).success(function () {
-						Upfront.Events.trigger("upfront:comments:sort");
+						Upfront.Events.trigger("upfront:comments:sort", {refresh: true});						
 					}).always(function () {
 						$content
 							.find("textarea,button").remove().end()
@@ -2100,22 +2300,27 @@ define(_template_files, function () {
 			this._currently_working = true;
 			$content.scrollTop($content.get(0).scrollHeight);
 			$root
-				.one("click", ".comment-edit-cancel", function () {
+				.on("click", ".reply", function(e){
+					e.stopPropagation();
+				})
+				.one("click", ".comment-edit-cancel", function (e) {
+					e.stopPropagation();
 					$content
 						.find("textarea,button").remove().end()
 					;
 					me._currently_working = false;
 					return false;
 				})
-				.one("click", ".comment-edit-ok", function () {
+				.one("click", ".comment-edit-ok", function (e) {
 					var text = $content.find("textarea").val();
+					e.stopPropagation();
 					Upfront.Util.post({
 						"action": "upfront-comments-reply_to",
 						"comment_id": comment_id,
 						"post_id": $("#upfront-post_id").val(),
 						"content": text
 					}).success(function () {
-						Upfront.Events.trigger("upfront:comments:sort");
+						Upfront.Events.trigger("upfront:comments:sort", {refresh: true});
 					}).always(function () {
 						$content
 							.find("textarea,button").remove().end()

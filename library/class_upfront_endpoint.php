@@ -436,7 +436,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if ($post_id) {
 			wp_set_object_terms($post_id, $result['term_id'], $taxonomy, true);
 		}
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true)));
+		$this->_out(new Upfront_JsonResponse_Success(array("status" => true, "term_id" => $result['term_id'])));
 	}
 
 	function get_posts () {

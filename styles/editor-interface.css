@@ -1358,10 +1358,21 @@ box-shadow: inset 0 2px 0 0 #fff;
 -webkit-box-shadow: inset 0 2px 0 0 #fff;
 }
 
+#upfront-popup input::-webkit-input-placeholder,
+#upfront-popup input:-moz-placeholder,
+#upfront-popup input::-moz-placeholder,
+#upfront-popup input::-ms-input-placeholder {
+	color: #A4BFD8;
+}
+
 #upfront-popup input[type=text] {
 	background: #F2F9FF;
 	border: 1px solid #A4BFD8;
+	padding: 8px 5px;
+	font-size: 15px;
+	color: #3A5268;
 }
+
 
 #upfront-popup  .button,
 #upfront-popup  button {
@@ -1379,6 +1390,17 @@ box-shadow: inset 0 2px 0 0 #fff;
 	border: 2px solid #1fcd8f;
 	color: #30475e;
 }
+#upfront-popup .button i,
+#upfront-popup button i {
+	margin-right: 5px;
+	color: #A4B6C6;
+}
+
+#upfront-popup .button:hover i,
+#upfront-popup button:hover i {
+	color: #30475e;
+}
+
 
 /* Border box for everybody! */
 #upfront-popup *{ 
@@ -1393,7 +1415,8 @@ box-shadow: inset 0 2px 0 0 #fff;
 #upfront-popup-close {
 	color: #e5f3fe;
 	position: absolute;
-	font-size: 18px;
+	font-weight: 200;
+	font-size: 28px;
 	top: 0;
 	right: 0;
 	cursor: pointer;
@@ -1413,7 +1436,15 @@ box-shadow: inset 0 2px 0 0 #fff;
 
 #upfront-popup .bordered-bottom {
 	padding-bottom: 5px;
-	background: #C3DCF1;
+}
+#upfront-popup .bordered-bottom:after{
+	content: '';
+	display: block;
+	position: absolute;
+	height: 5px;
+	width: 100%;
+	background: #c3dcf1;
+	border-top: 1px solid #a4b9cb;
 }
 
 /* Tabs */
@@ -1508,7 +1539,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 #upfront-search_action:hover {
 	color: #fff;
 }
-#upfront-search_container input {
+#upfront-search_container input[type=text] {
 	height: 50px;
 	border: none;
 	line-height: 1em;
@@ -1525,20 +1556,50 @@ box-shadow: inset 0 2px 0 0 #fff;
 }
 
 /* Tax */
+.upfront-taxonomy-hierarchical #upfront-taxonomy-list {
+	padding: 30px;
+}
 #upfront-taxonomy-list, #upfront-taxonomy-add {
-	padding: 1em;
 	color: #476d8a;
 }
 #upfront-taxonomy-list {
 	max-height: 300px;
-	overflow-y: scroll;
+}
+#upfront-taxonomy-list label {
+	clear:right;
+	margin-bottom: 10px;
 }
 #upfront-taxonomy-add {
-	height: 86px;
-	line-height: 86px;
+	padding: 30px 20px;
+}
+#upfront-taxonomy-add input#upfront-new_term{
+	width: 49%;
+	margin-right: 4%;
+	background: #E5F3FE;
+}
+#upfront-taxonomy-add select{
+	padding: 7px 5px;
+	width: 22%;
+	margin-right: 4%;
+}
+#upfront-taxonomy-add button {
+	width: 20%;
+
 }
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item {
 	padding-left: 1em;
+	width: 33%;
+	float: left;
+	margin: 0 0 10px;
+}
+.upfront-taxonomy-hierarchical .upfront-taxonomy_item input {
+	margin-right: 5px;
+}
+.upfront-taxonomy-hierarchical .upfront-taxonomy_item .upfront-taxonomy_item {
+	clear:left;
+	width: 100%;
+	padding: 10px 0 0 10px;
+	margin: 0 0 0 7px;
 }
 #upfront-taxonomy-add {
 	background: #c3dcf1;
@@ -1550,18 +1611,54 @@ box-shadow: inset 0 2px 0 0 #fff;
 }
 .upfront-taxonomy-list-panel {
 	float: left;
-	width: 46%;
-	padding: 2%;
+	width: 50%;
+	padding: 30px 20px;
+	max-height: 300px;
+	color: #7a94ac;
 }
-.upfront-taxonomy-list-panel h3 {
-	font-weight: normal;
+
+.upfront-taxonomy-list-panel i {
+	margin: 2px 5px 0 0;
+	display: block;
+	float: left;
+}
+
+.upfront-taxonomy-list-title {
+	font-size: 18px;
+	margin-bottom: 30px;
+	color: #476d8a;
 }
 #upfront-taxonomy-list-all {
 	background: #d9edfe;
 }
+.upfront-taxonomy-flat #upfront-new_term {
+	width: 250px;
+}
 .upfront-taxonomy-flat .upfront-taxonomy_item {
 	width: 48%;
 	float: left;
+	margin: 0 2% 10px 0;
+	cursor: pointer;
+}
+
+.upfront-taxonomy-flat .upfront-taxonomy_item:hover {
+	color: #476d8a;
+}
+
+.upfront-taxonomy-flat .upfront-taxonomy_item:hover i.icon-plus{
+	color: #2FCC90;
+}
+
+.upfront-taxonomy-flat .upfront-taxonomy_item:hover i.icon-remove-circle{
+	color: #DB474B;
+}
+
+#upfront-taxonomy-list-current i.icon-plus {
+	display: none;
+}
+
+#upfront-taxonomy-list-all i.icon-remove-circle {
+	display: none;
 }
 
 /* Entities(Posts) list */
@@ -1580,7 +1677,6 @@ box-shadow: inset 0 2px 0 0 #fff;
 
 .upfront-list-items {
 	max-height: 350px;
-	border-bottom: 1px solid #a4b9cb;
 }
 
 .upfront-list-items .upfront-list_item {
@@ -1700,7 +1796,6 @@ box-shadow: inset 0 2px 0 0 #fff;
 	width: 250px;
 	background: #cfdbe5;
 	border-right: 1px solid #a4b9cb;
-	border-bottom: 1px solid #a4b9cb;
 	min-height: 350px;
 	max-height: 350px;
 	position: relative;
@@ -1757,7 +1852,6 @@ box-shadow: inset 0 2px 0 0 #fff;
 	min-height: 350px;
 	overflow-y: scroll;
 	width: 550px;
-	border-bottom: 1px solid #a4b9cb;
 }
 #upfront-list-page-tree .upfront-list-page_item {
 	padding-left: 40px;
@@ -1832,6 +1926,13 @@ box-shadow: inset 0 2px 0 0 #fff;
 
 .upfront-comment-approved {
 	width: 40px;
+	color: #fff;
+	opacity: 0.8;
+	text-align: center;
+}
+
+.upfront-comment-approved:hover {
+	opacity: 1;
 }
 
 .upfront-list-comments .upfront-comment_author {
@@ -1862,15 +1963,32 @@ box-shadow: inset 0 2px 0 0 #fff;
 	position: relative;
 	height: 40px;
 	clear: both;
-	overflow: hidden;
 }
 
 
 #upfront-list .upfront-list-comment-items .upfront-list_item-component {
 	line-height: 1.2em;
 	float: left;
-	padding: 10px 15px;
+	padding: 10px 15px 0;
 }
+
+#upfront-list .upfront-list-comment-items textarea {
+	max-height:150px;
+	margin-bottom:10px;
+}
+
+#upfront-list .comment-edit-ok {
+	width:100px;
+	float:right;
+	margin-left:10px;
+}
+
+#upfront-list .comment-edit-cancel {
+	width: 100px;
+	float: right;
+	margin-bottom: 10px;
+}
+
 
 .upfront-list-comments #upfront-list-meta {
 	margin-left:0;
@@ -1893,6 +2011,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	clear: both;
 	height: 40px;
 	overflow: hidden;
+	display: none;
 }
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a {
 	display: block;
@@ -1928,6 +2047,10 @@ box-shadow: inset 0 2px 0 0 #fff;
 	border: 1px solid #a4b9cb;
 	height: auto;
 	min-height:96px;
+}
+
+#upfront-list .upfront-list-items .expanded .upfront-comment_actions-wrapper{
+	display: block;
 }
 
 .upfront-list-comments .upfront-comment_content-full-wrapper {

@@ -33,10 +33,10 @@
 			<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
 				<h4>Featured Image: </h4>
 				<img src="{{ data.featured_image }}" />
-			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-edit"></i></a></div>
+			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
 			</div>
 			<div class="upfront-page_preview-bottom" id="upfront-page_preview-edit">
-				<button type="button"><i class="icon-edit"></i> Edit post</button>
+				<button type="button"><i class="icon-pencil"></i> Edit post</button>
 			</div>
 		</div>
 	</div>
@@ -52,7 +52,7 @@
 </script>
 
 <script type="text/template" id="upfront-page-list-tpl">
-<div id="upfront-list-page">
+<div id="upfront-list-page" class="bordered-bottom">
 	<div id="upfront-list-page-path"></div>
 	<div id="upfront-list-page-preview" class="upfront-scroll-panel">
 		<div id="upfront-page_preview-wrapper">
@@ -85,7 +85,7 @@
 		<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
 			<h4>Featured Image:</h4>
 			<img src="{{ data.featured_image }}" />
-			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-edit"></i></a></div>
+			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
 		</div>
 		<div id="upfront-page_preview-template" class="upfront-page_preview-item">
 			<h4>Template: </h4>
@@ -94,13 +94,13 @@
 			</select>
 		</div>
 		<div id="upfront-page_preview-edit">
-			<button type="button"><i class="icon-edit"></i> Edit page</button>
+			<button type="button"><i class="icon-pencil"></i> Edit page</button>
 		</div>
 	</div>
 </script>
 
 <script type="text/template"  id="upfront-comments-tpl">
-<div id="upfront-list" class="upfront-list-comments clearfix">
+<div id="upfront-list" class="upfront-list-comments clearfix bordered-bottom">
 	<div id="upfront-list-meta" class="upfront-list_item">
 		<div class="upfront-list_item-component upfront-comment_author upfront-header">Author</div>
 		<div class="upfront-list_item-component upfront-date upfront-header">Date</div>
@@ -110,7 +110,7 @@
 		{[ comments.each(function(comment){ var excerpt = jQuery('<div></div>').html(comment.get('comment_content')).text();]}
 		<div class="upfront-list_item-comment upfront-list_item clearfix" data-comment_id="{{ comment.get("comment_ID") }}">
 			<div class="upfront-comment-approved">
-				{[ if(comment.get("comment_aproved") === '0'){ ]}
+				{[ if(comment.get("comment_approved") === '0'){ ]}
 				<i class="upfront-comments-approve icon-circle-blank" data-comment_id="{{ comment.get("comment_ID") }}"></i>
 				{[ } ]}
 			</div>
@@ -120,18 +120,18 @@
 			<div class="upfront-list_item-component upfront-comment_content upfront-comment_content-full-wrapper upfront-list_item-main upfront-post_content  upfront-scroll-panel">
 				<div class="upfront-comment_content-full">{{ comment.get("comment_content") }}</div>
 			</div>
-			<div class="upfront-comment_actions-wrapper" style="display:none">
+			<div class="upfront-comment_actions-wrapper">
 				<a href="#reply" class="reply"><i class="icon-reply"></i> Reply</a>
-				<a href="#edit" class="edit"><i class="icon-edit"></i> Edit</a>
-				{[ if(comment.get("comment_aproved") === '0'){ ]}
+				<a href="#edit" class="edit"><i class="icon-pencil"></i> Edit</a>
+				{[ if(comment.get("comment_approved") === '0'){ ]}
 				<a href="#approve" class="approve"><i class="icon-ok"></i> Approve</a>
 				{[ } else { ]}
 				<a href="#unapprove" class="unapprove"><i class="icon-circle-blank"></i> Unapprove</a>
-				{[ } if(comment.get("comment_aproved") === 'spam'){ ]}
+				{[ } if(comment.get("comment_approved") === 'spam'){ ]}
 				<a href="#unspam" class="unspam"><i class="icon-comment-alt"></i> Unspam</a>
 				{[ } else { ]}
 				<a href="#spam" class="spam"><i class="icon-ban-circle"></i> Spam</a>
-				{[ } if(comment.get("comment_aproved") === 'trash'){ ]}
+				{[ } if(comment.get("comment_approved") === 'trash'){ ]}
 				<a href="#unthrash" class="unthrash"><i class="icon-comment"></i> Untrash</a>
 				{[ } else { ]}
 				<a href="#thrash" class="thrash"><i class="icon-remove"></i> Trash</a>
@@ -156,52 +156,79 @@
 </script>
 
 <script type="text/template" id="upfront-term-list-tpl">
-<div id="upfront-taxonomy-list" class="upfront-taxonomy-hierarchical">
+<div id="upfront-taxonomy-list" class="upfront-scroll-panel">
 	{[ _.each(terms, function(term, idx){ ]}
-	{{ termTemplate({term: term, termTemplate: termTemplate, inPost: allTerms.where({term_id: term.get('term_id')}).length, termId: term.get('term_id'), allTerms: allTerms}) }}
+	{{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id')}) }}
 	{[ }); ]}
 </div>
 <div id="upfront-taxonomy-add">
 	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
 	<select id="upfront-taxonomy-parents">
+		<option value="0">-- Parent Category --</option>
 		{[ _.each(terms, function(term, idx) { ]}
 		<option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
 		{[ }) ]}
 	</select>
-	<button id="upfront-add_term">Add {{ labels.singular_name }}</button>
-</div>
-</script>
-
-<script type="text/template" id="upfront-flat-term-list-tpl">
-<div id="upfront-taxonomy-list" class="upfront-taxonomy-flat">
-	<div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-current">
-		<h3>{{ labels.name }} applied to this post</h3>
-		{[ _.each(currentTerms, function(term, idx){ ]}
-		{{ termTemplate({term: term, termTemplate: termTemplate, inPost: true, termId: term.get('term_id'), allTerms: allTerms}) }}
-		{[ }); ]}
-	</div>
-	<div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-all">
-		<h3>Previously used {{ labels.name }}</h3>
-		{[ _.each(otherTerms, function(term, idx){ ]}
-		{{ termTemplate({term: term, termTemplate: termTemplate, inPost: false, termId: term.get('term_id'), allTerms: allTerms}) }}
-		{[ }); ]}
-	</div>
-</div>
-<div id="upfront-taxonomy-add">
-	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
-	<button id="upfront-add_term">Add {{ labels.singular_name }}</button>
+	<button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
 </div>
 </script>
 
 <script type="text/template" id="upfront-term-single-tpl">
 	<div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
 		<label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
-			<input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ inPost ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
+			<input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ term.inPost ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
 		</label>
 		{[ _.each(term.children, function(child, idx){ ]}
-		{{ termTemplate({term: child, termTemplate: termTemplate, inPost: allTerms.where({term_id: child.get('term_id')}).length, termId: child.get('term_id'), allTerms: allTerms}) }}
+		{{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id')}) }}
 		{[ }) ]}
 	</div>
+</script>
+
+
+
+<script type="text/template" id="upfront-flat-term-list-tpl">
+<div id="upfront-taxonomy-list" class="clearfix">
+	<div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-current">
+		<div class="upfront-taxonomy-list-title">{{ labels.name }} applied to this post</div>
+		{[ _.each(currentTerms, function(term, idx){ ]}
+		{{ termTemplate({ term: term }) }}
+		{[ }); ]}
+	</div>
+	<div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-all">
+		<div class="upfront-taxonomy-list-title">Previously used {{ labels.name }}</div>
+		{[ _.each(otherTerms, function(term, idx){ ]}
+		{{ termTemplate({ term: term }) }}
+		{[ }); ]}
+	</div>
+</div>
+<div id="upfront-taxonomy-add">
+	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
+	<button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
+</div>
+</script>
+
+<script type="text/template" id="upfront-term-flat-single-tpl">
+	<div class="upfront-taxonomy_item upfront-taxonomy_item-flat" id="upfront-term_item-{{ term.get('term_id') }}" data-term_id="{{ term.get('term_id') }}">
+		<i class="icon-plus"></i>
+		<i class="icon-remove-circle"></i>
+		{{ term.get('name') }}
+	</div>
+</script>
+
+<script type="text/template" id="upfront-pagination-tpl">
+<div id="upfront-entity_list-pagination" data-total="' + total + '" data-page_size="' + page_size + '">
+	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev">
+		<i class="icon-angle-left"></i>
+	</div>
+	
+	{[ _.each(pages, function(page, idx){ ]}
+	<div class="upfront-pagination_item {{ idx == current ? 'current' : '' }}" data-page_idx="{{ idx }}">{{ idx + 1}}</div>
+	{[ }) ]}
+
+	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next">
+		<i class="icon-angle-right"></i>
+	</div>
+</div>
 </script>
 
 
