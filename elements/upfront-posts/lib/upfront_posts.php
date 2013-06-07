@@ -63,11 +63,15 @@ class Upfront_UpostsView extends Upfront_Object {
 			$title = apply_filters('the_title', $post->post_title);
 
 			$link = get_permalink($post->ID);
+			
+			$post_classes = apply_filters('upfront_posts_post_classes', array('uposts-post'), $post, $content_type, $featured_image);
+			$post_class = implode(" ", $post_classes);
 
-			$ret .= "<li class='uposts-post' data-post_id='{$post->ID}'>" .
-				"<span class='uposts-tumbnail_container'>{$thumbnail}</span>" .
-				"<h3 class='post_title'><a href='{$link}'>{$title}</a></h3>" .
-				"<div class='post_content'>{$content}</div>" .
+			$ret .= "<li class='{$post_class}' data-post_id='{$post->ID}'>" .
+				apply_filters('upfront_posts_post_markup', 
+					"<span class='uposts-tumbnail_container'>{$thumbnail}</span>" .
+					"<h3 class='post_title'><a href='{$link}'>{$title}</a></h3>" .
+					"<div class='post_content'>{$content}</div>", $post, $content_type, $featured_image) .
 			"</li>";
 		}
 		return "<ul class='uposts-posts'>{$ret}</ul>";

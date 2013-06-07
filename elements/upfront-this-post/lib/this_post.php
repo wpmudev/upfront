@@ -14,9 +14,13 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$post = get_post($post_id);
 		if ($post->post_password && !is_user_logged_in()) return ''; // Augment this!
 		$permalink = get_permalink($post->ID);
+		$title = apply_filters('the_title', $post->post_title);
+		$content = apply_filters('the_content', $post->post_content);
+		
 		return "<article id='post-{$post->ID}' data-post_id='{$post->ID}'>" . 
-			"<h3 class='post_title'><a href='{$permalink}'>" . apply_filters('the_title', $post->post_title) . '</a></h3>' .
-			'<div class="post_content">' . apply_filters('the_content', $post->post_content) . '</div>' .
+			apply_filters('upfront_this_post_post_markup', 
+				"<h3 class='post_title'><a href='{$permalink}'>{$title}</a></h3>" .
+				'<div class="post_content">' . $content . '</div>', $post) .
 		'</article>';
 	}
 }

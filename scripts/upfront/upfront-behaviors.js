@@ -1358,11 +1358,11 @@ var GridEditor = {
 				}
 				
 				// Add drop animation
-				//if ( dropped ){
-					$me = view.$el.find('.upfront-editable_entity:first');
-					$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){ $(this).removeClass('upfront-dropped'); }).addClass('upfront-dropped');
-					//setTimeout(function(){ $me.removeClass('upfront-dropped'); }, 500);
-				//}
+				$me = view.$el.find('.upfront-editable_entity:first');
+				$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+					$(this).removeClass('upfront-dropped'); 
+					Upfront.Events.trigger("entity:drag_animate_stop", view, view.model);
+				}).addClass('upfront-dropped');
 				
 				$('.upfront-region-drag-active .upfront-module').css('max-height', '');
 				$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');

@@ -497,7 +497,7 @@ define(_template_files, function () {
 			Upfront.Events.on("command:layout:save", this.on_save, this);
 			Upfront.Events.on("command:layout:save_success", this.reset_modules, this);
 			Upfront.Events.on("command:layout:save_error", this.reset_modules, this);
-			Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
+			Upfront.Events.on("entity:drag_animate_stop", this.reset_modules, this);
 			Upfront.Events.on("layout:render", this.apply_state_binding, this);
 		},
 		get_title: function () {
@@ -527,7 +527,7 @@ define(_template_files, function () {
 				});
 				this.model.get('regions').add( region );
 			}
-			if ( region.get("modules").length != this.elements.length ) {
+			if ( region.get("modules").length != this.elements.size() ) {
 				region.get("modules").reset([]);
 				this.elements.each(function (element) {
 					element.add_element();
