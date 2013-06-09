@@ -311,6 +311,9 @@
 .upfront-scroll-panel{
 	overflow-x: hidden;
 	overflow-y: scroll;
+  	-webkit-mask-image: -webkit-linear-gradient(rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%), -webkit-linear-gradient(right, rgba(0,0,0,1) 0, rgba(0,0,0,1) 10px, rgba(0,0,0,0) 10px, rgba(0,0,0,0) 100%);
+}
+.upfront-inner-scroll-panel{
 }
 /* It doesn't work
 .upfront-scroll-panel:after {
@@ -1612,8 +1615,6 @@ box-shadow: inset 0 2px 0 0 #fff;
 .upfront-taxonomy-list-panel {
 	float: left;
 	width: 50%;
-	padding: 30px 20px;
-	max-height: 300px;
 	color: #7a94ac;
 }
 
@@ -1628,8 +1629,17 @@ box-shadow: inset 0 2px 0 0 #fff;
 	margin-bottom: 30px;
 	color: #476d8a;
 }
+#upfront-taxonomy-list-current {
+	padding: 30px 20px;
+	max-height: 300px;
+}
 #upfront-taxonomy-list-all {
 	background: #d9edfe;
+	padding:;
+}
+#upfront-taxonomy-list-all>div {
+	padding: 30px 20px;
+	max-height: 300px;
 }
 .upfront-taxonomy-flat #upfront-new_term {
 	width: 250px;
@@ -1812,6 +1822,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 
 #upfront-page_preview-wrapper {
 	padding: 20px 30px;
+	max-height: 350px;
 }
 
 .upfront-page_preview-item {
@@ -1953,6 +1964,11 @@ box-shadow: inset 0 2px 0 0 #fff;
 	vertical-align: top;
 }
 
+#upfront-list #upfront-list-meta .upfront-comment_author {
+	color: #263a4d;
+	vertical-align: top;
+}
+
 #upfront-list .upfront-comment_author img{
 	margin: -7px 5px 0 0;
 }
@@ -1970,6 +1986,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	line-height: 1.2em;
 	float: left;
 	padding: 10px 15px 0;
+	min-height: 38px;
 }
 
 #upfront-list .upfront-list-comment-items textarea {
@@ -2047,6 +2064,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	border: 1px solid #a4b9cb;
 	height: auto;
 	min-height:96px;
+	opacity: 1;
 }
 
 #upfront-list .upfront-list-items .expanded .upfront-comment_actions-wrapper{
