@@ -540,8 +540,15 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 	function fetch_post($data) {
 		$post = get_post($data['id']);
-		if($post)
+
+		if($post){
+			if($data['filterContent']){
+				$post->post_content = apply_filters('the_content', $post->post_content);
+				$post->post_title = apply_filters('the_title', $post->post_title);
+				$post->post_excerpt = apply_filters('the_excerpt', $post->post_excerpt);
+			}
 			$this->_out(new Upfront_JsonResponse_Success($post));
+		}
 		
 		$this->_out(new Upfront_JsonResponse_Error("Post not found."));
 	}
@@ -550,12 +557,19 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if(!$data['postType'])
 			$this->_out(new Upfront_JsonResponse_Error("Invalid post type."));
 
-		$query = $this->_spawn_query($data['postType'], $data);
+		$posts = $this->_spawn_query($data['postType'], $data)->posts;
 		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
 
+		if($posts && $data['filterContent']){
+			for ($i=0; $i < sizeof($posts); $i++) { 
+				$posts[$i]->post_content = apply_filters('the_content', $posts[$i]->post_content);
+				$posts[$i]->post_title = apply_filters('the_title', $posts[$i]->post_title);
+				$posts[$i]->post_excerpt = apply_filters('the_excerpt', $posts[$i]->post_excerpt);
+			}
+		}
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			"results" => $query->posts,
+			"results" => $posts,
 			"pagination" => array(
 				"total" => $query->found_posts,
 				"page_size" => $limit,
@@ -667,7 +681,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
 		$search = !empty($data['search']) ? $data['search'] : false;
-		$comment_type = !empty($data['comment_type']) ? $data['comment_type'] : false;
+		if(!isset($data['commentType']) || $data['commentType'] == 'all')
+			$comment_type = false;
+		else if ($data['commentType'] == 'comment')
+			$comment_type = '';
+		else
+			$comment_type = $data['commentType'];
 		$comment_approved = !empty($data['comment_approved']) ? $data['comment_approved'] : false;
 
 		global $wpdb;
@@ -675,7 +694,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		if($post_id)
 			$where_query[] = $wpdb->prepare('comment_post_ID=%d', $post_id);
-		if($comment_type)
+		if($comment_type !== false)
 			$where_query[] = $wpdb->prepare('comment_type=%s', $comment_type);
 		if($comment_approved)
 			$where_query[] = $wpdb->prepare('comment_approved=%s', $comment_approved);

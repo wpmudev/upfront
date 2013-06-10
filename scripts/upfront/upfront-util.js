@@ -39,6 +39,23 @@ var Util = {
 		return $.post(Upfront.Settings.ajax_url, request, function () {}, "json");
 	},
 
+	format_date: function(date, show_time){
+		var output = date.getFullYear() + '/',
+			day = date.getDate(),
+			month = (date.getMonth()+1)
+		;
+		if(day < 10)
+			day = '0' + day;
+		if(month < 10)
+			month = '0' + month;
+
+		output += month + '/' + day;
+		
+		if(show_time)
+			output += ' ' + date.getHours() + ':' + date.getMinutes();
+		return output;
+	},
+
 	Transient: {
 
 		// Local storage object, or the in-memory queue

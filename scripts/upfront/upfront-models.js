@@ -598,13 +598,13 @@ var _alpha = "alpha",
 				// Add the children
 				if(this.orphans[model.id]){
 					if(!model[this.childrenAttribute])
-						model[this.childrenAttribute] = new this.constructor(this.orphans[model.id]);
+						model[this.childrenAttribute] = new this.constructor(this.orphans[model.id], options);
 					else
-						model[this.childrenAttribute].add(this.orphans[model.id]);
+						model[this.childrenAttribute].add(this.orphans[model.id], options);
 					delete this.orphans[model.id];
 				}
 				else if(!model[this.childrenAttribute])
-					model[this.childrenAttribute] = new this.constructor([]);
+					model[this.childrenAttribute] = new this.constructor([], options);
 
 				
 
@@ -789,6 +789,7 @@ var _alpha = "alpha",
 				this.set('comment_approved', 'trash');
 			else if(!trashed && this.get('comment_approved') == 'trash')
 				this.set('comment_approved', '0');
+			return this;
 		},
 
 		spam: function(spammed){
@@ -796,6 +797,7 @@ var _alpha = "alpha",
 				this.set('comment_approved', 'spam');
 			else if(!spammed && this.get('comment_approved') == 'spam')
 				this.set('comment_approved', '0');
+			return this;
 		},
 
 		approve: function(approved){
@@ -803,6 +805,7 @@ var _alpha = "alpha",
 				this.set('comment_approved', '1');
 			else if(!approved && this.get('comment_approved') == '1')
 				this.set('comment_approved', '0');
+			return this;
 		},
 		isTrash: function(){
 			return this.get('comment_approved') == 'trash';
@@ -819,9 +822,10 @@ var _alpha = "alpha",
 		model: Comment,
 		collectionName: 'comment_list',
 		postId: false,
-		fetchAttributes: ['postId'],
+		fetchAttributes: ['postId', 'commentType'],
 		parentAttribute: 'comment_parent',
 		childrenAttribute: 'replies',
+		commentType: 'comment', // all, comment, trackback, pingback
 
 		initialize: function(models, options){
 			if(options.postId)
