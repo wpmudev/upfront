@@ -198,7 +198,7 @@ a.cke_button_disabled:active
 }
 
 .svg .cke_button_icon {
-	background: url('../../../../img/icon_sprite.svg') no-repeat;
+	background: url('../../../../img/icon_sprite-toggleables.svg') no-repeat;
 }
 
 .cke_button_off .cke_button__kitchensink_icon,
@@ -596,4 +596,63 @@ a.cke_button__colorselect{
 	border: 0;
 	margin-top: 0;
 	margin-right: 2px;
+}
+
+
+/*
+----- Toggle states for multiple-state items -----
+*/
+.cke_button__bulletedlist, .cke_button__numberedlist,
+.cke_button__justifyleft, .cke_button__justifyright, .cke_button__justifycenter 
+{
+	/* We're adding the commands to kitchensink, but hiding them in favor of toggleables. */
+	display: none !important; 
+}
+
+/*
+--- Lists ---
+*/
+.cke_button_off .cke_button__listtypetoggle_icon,
+.cke_button_disabled .cke_button__listtypetoggle_icon  
+{ 
+	/*background-position: -444px -180px; /* bullet */
+	background-position: -407px -551px; /* bullet */
+}
+.cke_button_on .cke_button__listtypetoggle_icon,
+.cke_button_on.toggle_state_bullet .cke_button__listtypetoggle_icon { 
+	/*background-position: -478px -180px; /* bullet */
+	background-position: -407px -551px; /* bullet */
+}
+.cke_button_on.toggle_state_number .cke_button__listtypetoggle_icon { 
+	/*background-position: -478px -214px; */
+	background-position: -407px -585px; /* number */
+}
+
+/*
+--- Text alignment ---
+*/
+.cke_button_off .cke_button__alignmenttypetoggle_icon ,
+.cke_button_disabled .cke_button__alignmenttypetoggle_icon { 
+	/*background-position: -444px -78px; /* left */
+	background-position: -407px -449px; /* left */
+}
+.cke_button_on .cke_button__alignmenttypetoggle_icon  { 
+	/*background-position: -478px -78px; /* left */
+	background-position: -407px -449px; /* left */
+}
+
+.cke_button_off.toggle_state_center .cke_button__alignmenttypetoggle_icon,
+.cke_button_disabled.toggle_state_center .cke_button__alignmenttypetoggle_icon  { 
+	background-position: -407px -483px; /* center */
+}
+.cke_button_on.toggle_state_center .cke_button__alignmenttypetoggle_icon  { 
+	background-position: -407px -483px; /* center */
+}
+
+.cke_button_off.toggle_state_right .cke_button__alignmenttypetoggle_icon,
+.cke_button_disabled.toggle_state_right .cke_button__alignmenttypetoggle_icon  { 
+	background-position: -407px -517px; /* right */
+}
+.cke_button_on.toggle_state_right .cke_button__alignmenttypetoggle_icon  { 
+	background-position: -407px -517px; /* right */
 }

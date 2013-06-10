@@ -212,13 +212,7 @@ $(window).load(function () {
 		},
 		c2 = function (view) {
 			var el = $("#" + view.model.get_property_value_by_name("element_id"));
-			if (el.length) {
-				el.trigger('dblclick');
-			} else {
-				setTimeout(function () {
-					c2(view);
-				}, 200);
-			}
+			el.trigger('dblclick');
 			Upfront.Events.off("elements:this_post:loaded", c2);
 		}
 	;

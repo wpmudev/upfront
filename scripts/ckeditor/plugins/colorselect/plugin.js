@@ -7,7 +7,7 @@ var colorselect = (function () {
 	*/
 
 	var $dom = jQuery(jQuery.parseHTML(' \
-	<div class="cke-color-select-panel"> \
+	<div class="cke-color-select-panel" style="display:none"> \
 		 \
 		<h3>Theme Colors:</h3> \
 		<div class="cke-color-section cke-theme-color"> \
@@ -74,13 +74,21 @@ var colorselect = (function () {
 			// One colorselect is shared between all editors.
 			jQuery('body').append($dom);
 
+
 			current_color = jQuery('#jscolor-styleElement', $dom);
 			$picker = jQuery('#jscolor-picker', $dom);
 			picker = new jscolor.color(document.getElementById('jscolor-picker'), config);
 
+			// Let's try to rebind click handlers - solving editor conflict
+			jQuery(document).on("click", "#jscolor-picker", function () {
+				picker.showPicker();
+				return false;
+			});
+
 			initColors();
 			initEvents();
 		}
+		jQuery(".cke-color-select-panel").hide();
 	}
 
 	function initColors(){
@@ -125,7 +133,7 @@ var colorselect = (function () {
 			jQuery('.cke_chrome.'+editor.id).append(a);
 			a.click();
 			*/
-			
+			return false;
 		};
 
 		jQuery(document).on('onImmediateChange.jscolor', onNewColorSelected); // When user drags mouse on picker.
@@ -305,3 +313,6 @@ CKEDITOR.config.colorSelect_foreStyle = {
 		element: 'font', attributes: { 'color': null }
 	}]
 };
+CKEDITOR.on('instanceReady', function (e) {
+	colorselect.setEditor( e.editor ); 
+});

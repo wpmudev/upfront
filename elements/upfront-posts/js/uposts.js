@@ -87,6 +87,11 @@ Upfront.Util.post({
 				post_id = $post.attr("data-post_id"),
 				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type")
 			;
+			// Hacky way of closing other instances
+			if ($("#upfront-post-cancel_edit").length) {
+				$("#upfront-post-cancel_edit").trigger("click");
+			}
+			// End hack
 			Upfront.Util.post({
 				"action": "this_post-get_markup",
 				"data": JSON.stringify({

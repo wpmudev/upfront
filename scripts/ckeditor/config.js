@@ -15,15 +15,15 @@ CKEDITOR.editorConfig = function( config ) {
 			{
 				name: 'basicstyles',
 				items: [ 
-					'Bold', 'Italic', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 
-					'BulletedList', 'NumberedList', 'Link', 'Blockquote', 'Image', 'KitchenSink'
+					'Bold', 'Italic', 'AlignmentTypeToggle',/*'JustifyLeft', 'JustifyCenter', 'JustifyRight', <-- These get killed in favor of AlignmentTypeToggle */
+					/*'BulletedList', 'NumberedList', <-- These get killed in favor of ListTypeToggle */ 'ListTypeToggle', 'Link', 'Blockquote', 'Image', 'KitchenSink'
 				] 
 			},
 			'/',
 			{
 				name: 'kitchensink',
 				items: [ 
-					'Format', 'Underline', 'JustifyBlock', 'ColorSelect', 'ExtrasSelect'
+					'Format', 'Underline', /*'JustifyBlock', <-- This gets killed just because */'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'ColorSelect', 'ExtrasSelect','BulletedList', 'NumberedList',
 
 					/*
 					'TextColor',
@@ -34,7 +34,7 @@ CKEDITOR.editorConfig = function( config ) {
 			}
 	];
 
-	config.extraPlugins = 'onchange,kitchensink,colorselect';
+	config.extraPlugins = 'onchange,kitchensink,colorselect,toggled_items';
 
 	// use SVG icons for editor buttons if possible
 	if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){

@@ -70,6 +70,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			$body = this.$el.find('.post_content'),
 			$parent = me.parent_module_view.$el.find('.upfront-editable_entity:first')
 		;
+		// Hacky way of closing other instances
+		if ($("#upfront-post-cancel_edit").length) {
+			$("#upfront-post-cancel_edit").trigger("click");
+		}
+		// End hack
 		$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + content.raw.title + '"/>');
 		$body.html(
 			'<input type="hidden" name="post_id" id="upfront-post_id" value="' + _upfront_post_data.post_id + '" />' +

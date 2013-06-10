@@ -1370,6 +1370,7 @@ var GridEditor = {
 				$main.removeClass('upfront-dragging');
 				
 				Upfront.Events.trigger("entity:drag_stop", view, view.model);
+				view.trigger("entity:self:drag_stop");
 			}
 		});
 	},
