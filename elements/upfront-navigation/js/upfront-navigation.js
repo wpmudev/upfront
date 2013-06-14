@@ -238,7 +238,7 @@
         });
 
         var   NavigationMenuSetting_Layout = Upfront.Views.Editor.Settings.Item.extend({
-
+        	className: 'upfront-navigation-settings-layout',
             render: function () {
 
                 var layout_settings = this.model.get_property_value_by_name("layout_setting"),

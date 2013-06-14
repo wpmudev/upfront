@@ -861,6 +861,13 @@ var GridEditor = {
 				});
 				
 				model.set_property('row', rsz_row);
+				// Also resize containing object if it's only one object
+				var objects = model.get('objects');
+				if ( objects && objects.length == 1 ){
+					objects.each(function(object){
+						object.set_property('row', rsz_row);
+					});
+				}
 				model.replace_class(ed.grid.class+rsz_col);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model);
 			}

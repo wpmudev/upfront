@@ -1,5 +1,5 @@
 <script id="uslider-template" type="text/template">
-<div class="uslider-container {{ sliderClasses }}">
+<div class="uslider-container clearfix {{ sliderClasses }}">
 
 	{[ if(settings['controls_type'] == "arrows-simple") { ]}
 	<div class="uslider-controls uslider-control-prev clearfix uslider-controls-{{ settings['controls_position'] }}" ><a href="#" title="Prev">Prev</a></div>

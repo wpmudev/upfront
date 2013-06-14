@@ -193,24 +193,24 @@ label {
     color: #99a1a7;
     border: 1px solid #263a4d;
 }
-.upfront-settings_panel div .upfront-settings-item:nth-child(1)
+.upfront-settings_panel .upfront-navigation-settings-layout .upfront-settings-item:nth-child(1)
 {
     float:left;
     margin:0;
     width:114px;
     border-right:solid 1px #bad2e8;
 }
-.upfront-settings_panel div .upfront-settings-item:nth-child(2)
+.upfront-settings_panel .upfront-navigation-settings-layout .upfront-settings-item:nth-child(2)
 {
     float:left;
     margin:0;
     width:172px;
 }
-#settings .upfront-settings_panel div .upfront-settings-item:nth-child(2) .upfront-settings-item-title
+#settings .upfront-settings_panel .upfront-navigation-settings-layout .upfront-settings-item:nth-child(2) .upfront-settings-item-title
 {
     padding:0 0 0 15px;
 }
-.upfront-settings_panel div .upfront-settings-item:nth-child(3)
+.upfront-settings_panel .upfront-navigation-settings-layout .upfront-settings-item:nth-child(3)
 {
     margin:15px 0 29px 0;
     padding:0;

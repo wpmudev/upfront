@@ -137,10 +137,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var self = this,
 			behaviour = this.property_value('behaviour'),
 			controls = this.property_value('controls_type'),
+			controlsPosition = this.property_value('controls_position'),
 			pagerAnchorBuilder = null,
 			elementId = this.property_value('element_id'),
 			style = this.property_value('style'),
 			textLayout = this.property_value('text_layout'),
+			row = this.property_value('row'),
+			slider_row = ( row && controls == 'thumbnails' && ['top', 'bottom'].indexOf('controlsPosition') ? Math.floor(0.8*row) : row ),
+			pager_row = ( row && slider_row != row ? row-slider_row : 0 ),
 			options = {
 				fx: behaviour['transition'],
 				timeout: behaviour['interval'] * 1000,
@@ -150,8 +154,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				next: controls.indexOf('arrows') == 0 ? '#' + elementId + ' .uslider-control-next a' : null,
 				pager: ['dots', 'thumbnails'].indexOf(controls) != -1 ? '#' + elementId + ' ul.uslider-pager' : null,
 				fit: false,
-				width: '400px',
-				height: '100px',
+				width: '100%',
+				height: ( slider_row ? (slider_row*Upfront.Settings.LayoutEditor.Grid.baseline)+'px' : 'auto' ),
 				before: function () {
 					$('#' + elementId).find('.uslider-caption').animate({opacity:0.01}, '400');
 				},
@@ -167,7 +171,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 		if(controls == 'thumbnails'){
 			pagerAnchorBuilder = function(idx, slide) { 
-				return '<li><a href="#"><img src="' + $(slide).find('img').attr('src') + '" style="width: ' +  (Math.floor(100 / self.property_value('slides').length) - 1) + '%" /></a></li>';
+				return '<li><a href="#"><img src="' + $(slide).find('img').attr('src') + '" style="max-width: ' +  (Math.floor(100 / self.property_value('slides').length) - 1) + '%; max-height: ' + (pager_row*Upfront.Settings.LayoutEditor.Grid.baseline) + 'px;" /></a></li>';
 			}
 		}
 		//Slider width if the text is beside it

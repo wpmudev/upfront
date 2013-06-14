@@ -139,16 +139,17 @@ EOAdminStyle;
 
 		// Enqueue media uploader dependencies.
 		wp_enqueue_media();
-
+		
+		// Enqueue needed styles
+		wp_enqueue_style('font-awesome', self::get_root_url() . '/styles/font-awesome.min.css');
+		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css');
+		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
+		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
 	}
 
 	function inject_upfront_dependencies () {
 		if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		$url = self::get_root_url();
-		echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/font-awesome.min.css" />';
-		echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/global.css" />';
-		echo '<link type="text/css" rel="stylesheet" href="' . admin_url('admin-ajax.php?action=upfront_load_editor_grid') . '" />';
-		echo '<link type="text/css" rel="stylesheet" href="' . $url . '/styles/editor-interface.css" />';
 		echo '<script src="' . $url . '/scripts/require.js"></script>';
 		echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
 		echo '<script type="text/javascript">var _upfront_post_data=' . json_encode(array(

@@ -6,6 +6,9 @@ class Upfront_Output {
 	private $_debugger;
 	
 	private static $_instance;
+	
+	public static $current_object;
+	public static $current_module;
 
 	public function __construct ($layout, $post) {
 		$this->_layout = $layout;
@@ -33,6 +36,18 @@ class Upfront_Output {
 	public static function get_layout_data () {
 		if ( self::$_instance )
 			return self::$_instance->_layout->to_php();
+		return false;
+	}
+	
+	public static function get_current_object () {
+		if ( self::$current_object )
+			return self::$current_object;
+		return false;
+	}
+	
+	public static function get_current_module () {
+		if ( self::$current_module )
+			return self::$current_module;
 		return false;
 	}
 
@@ -135,6 +150,11 @@ abstract class Upfront_Entity {
 	public function get_container () {
 		if (!empty($this->_data['container'])) return $this->_data['container'];
 		return $this->get_name();
+	}
+	
+	public function get_class_num ($classname) {
+		$classes = $this->_get_property('class');
+		return upfront_get_class_num($classname, $classes);
 	}
 	
 	protected function _get_background_css () {
@@ -331,11 +351,21 @@ class Upfront_Module extends Upfront_Container {
 	protected $_type = 'Module';
 	protected $_children = 'objects';
 	protected $_child_view_class = 'Upfront_Object';
+	
+	public function __construct ($data) {
+		parent::__construct($data);
+		Upfront_Output::$current_module = $this;
+	}
 }
 
 class Upfront_Object extends Upfront_Entity {
 	protected $_type = 'Object';
 
+	public function __construct ($data) {
+		parent::__construct($data);
+		Upfront_Output::$current_object = $this;
+	}
+	
 	public function get_markup () {
 		$view_class = 'Upfront_' . $this->_get_property("view_class");
 		$view = new $view_class($this->_data);
