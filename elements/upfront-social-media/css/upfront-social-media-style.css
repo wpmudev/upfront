@@ -1,0 +1,61 @@
+.upfront_social_box
+{
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.upfront_social_tabs
+{
+    float:left;
+}
+#settings .upfront-settings_panel .upfront_social_tabs ul
+{
+    float:left;
+    margin:0;
+    /*height:29px;*/
+    padding:0 10px;
+    /*border-bottom:solid 1px #95b8d9;*/
+}
+#settings .upfront-settings_panel .upfront_social_tabs ul li
+{
+    float:left;
+    list-style:none;
+    margin-right:1px;
+}
+.upfront_social_tabs ul li a
+{
+    float:left;
+    text-decoration:none;
+    font-size:14px;
+    color:#30475e;
+    background:#d9e8f6;
+    padding:0 12px;
+    line-height:28px;
+}
+.upfront_social_tabs a:hover,
+.upfront_social_tabs .act_tabs
+{
+    background:#f2f9ff;
+    border:solid 1px #95b8d9;
+    border-bottom:none;
+    padding:0 11px;
+    margin-top:-3px;
+    margin-bottom:-1px;
+    line-height:31px;
+}
+.upfront_tab_one_box,
+.upfront_tab_two_box,
+.upfront_tab_three_box
+{
+    margin:0;
+    padding:0;
+    float:left;
+    width:412px;
+    display: none;
+}
+#upfront-popup .upfront-social-media-save_settings, #upfront-popup-content .add_page_url_button
+{
+    width: auto;
+}
+.upfront-popup-social-media-meta
+{
+    background: #e5f3fe;
+}
