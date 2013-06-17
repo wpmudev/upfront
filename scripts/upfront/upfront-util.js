@@ -59,6 +59,22 @@ var Util = {
 		return output;
 	},
 
+	get_avatar: function(obj, size){
+		var protocolParts = window.location.href.split('//'),
+			url = protocolParts[0] + '//www.gravatar.com/avatar/',
+			size = size && parseInt(size) == size ? size : 32,
+			hash = ''
+		;
+		if(_.isString(obj))
+			hash = obj;
+		else if(obj instanceof Upfront.Models.User || obj instanceof Upfront.Models.Comment)
+			hash = obj.get('gravatar');
+		else
+			return false;
+
+		return url + hash + '?d=mm&s=' + size;
+	},
+
 	Transient: {
 
 		// Local storage object, or the in-memory queue

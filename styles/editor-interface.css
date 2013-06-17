@@ -1760,6 +1760,18 @@ box-shadow: inset 0 2px 0 0 #fff;
 	font-weight: bold;
 }
 
+#upfront-list-meta .upfront-header i {
+	display: none;
+}
+
+#upfront-list-meta .upfront-header.ordered-asc i.icon-caret-up {
+	display: inline;
+}
+
+#upfront-list-meta .upfront-header.ordered-desc i.icon-caret-down {
+	display: inline;
+}
+
 #upfront-list .upfront-list_item-main {
 	color: #32475c;
 }

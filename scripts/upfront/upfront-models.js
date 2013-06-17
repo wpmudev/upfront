@@ -368,24 +368,25 @@ var _alpha = "alpha",
 		saveAttributes: [],
 		fetch: function(data) {
 			var me = this;
-			data = _.isObject(data) ? data : {};
-
-			data.action = 'fetch_' + this.modelName;
-			data.id = this.id;
+				postdata = {
+					action: 'fetch_' + this.modelName,
+					id: this.id
+				}
+			;
 
 			_.each(this.fetchAttributes, function(attr){
-				data[attr] = me[attr];
+				postdata[attr] = me[attr];
 			});
 
-			return this.post(data)
+			postdata = _.extend(postdata, data);
+
+			return this.post(postdata)
 				.done(function(response){
 					me.set(response.data);
-					if(userSuccess)
-						userSuccess.call(this, response);
 				}
 			);
 		},
-		save: function(successClbk){
+		save: function(){
 			var me = this,
 				data = this.toJSON()
 			;
@@ -398,13 +399,11 @@ var _alpha = "alpha",
 			return this.post(data)
 				.done(function(response){
 					me.changed = {};
-					if(successClbk)
-						successClbk.call(this, response);
 				}
 			);
 		},
 		post: function(data){
-			data = _.isObject(data) ? data : {};
+			data = _.isObject(data) ? _.clone(data) : {};
 			data.model_action = data.action;
 			data.action = this.action;
 
@@ -452,16 +451,36 @@ var _alpha = "alpha",
 		parentAttribute: false,
 		childrenAttribute: false,
 		orphans: {},
+		orderby: false,
+		order: 'desc',
+		pagination: {
+			pages: 1,
+			pageSize: 10,
+			currentPage:1,
+			totalElements: 0,
+			loaded: {}
+		},
+		lastFetchOptions: {},
 		fetch: function(data) {
-			var success, userSuccess, me = this;
-			data = _.isObject(data) ? data : {};
+			var me = this,
+				postdata = {
+					action: 'fetch_' + this.collectionName,
+					id: this.id
+				}
+			;
 
-			data.action = 'fetch_' + this.collectionName;
-			data.id = this.id;
+			if(this.orderby){
+				postdata['orderby'] = this.orderby;
+				postdata['order'] = this.order;
+			}
 
 			_.each(this.fetchAttributes, function(attr){
-				data[attr] = me[attr];
+				postdata[attr] = me[attr];
 			});
+
+			postdata = this.checkPostFlush(_.extend(postdata, data));
+
+			
 
 
 			// Set change observers here, so we leave the initialize method
@@ -478,23 +497,51 @@ var _alpha = "alpha",
 
 			this.isNew = false;
 
-			return this.post(data)
+			return this.post(postdata)
 				.done(function(response){
-					me.reset(response.data.results);
-					if(userSuccess)
-						userSuccess.call(this, response);
+					if(response.data.pagination){
+						var pagination = response.data.pagination,
+							models = [];
+						if(postdata.flush || me.pagination.totalElements != pagination.total){
+							me.pagination = {
+								totalElements: pagination.total,
+								pageSize: pagination.page_size,
+								pages: Math.ceil(pagination.total / pagination.page_size),
+								currentPage: pagination.page,
+								loaded: postdata.flush ? {} : me.pagination.loaded
+							}
+							me.pagination.loaded[pagination.page] = true;
+							_.each(response.data.results, function(modelData){
+								var model = new me.model(modelData);
+								model.belongsToPage = pagination.page;
+								models.push(model);
+							});
+							me.reset(models);						
+						}
+						else {
+							me.pagination.currentPage = pagination.page;
+							me.pagination.loaded[pagination.page] = true;
+							_.each(response.data.results, function(modelData){
+								var model = new me.model(modelData);
+								model.belongsToPage = pagination.page;
+								me.add(model, {silent: true, merge: true});
+							});
+							me.trigger('reset', me);	
+						}
+					}
+					else
+						me.reset(response.data.results);
 				}
 			);
 		},
 		post: function(data){
-			var userSuccess;
-			data = _.isObject(data) ? data : {};
+			data = _.isObject(data) ? _.clone(data) : {};
 			data.model_action = data.action;
 			data.action = this.action;
 
 			return Upfront.Util.post(data);
 		},
-		save: function(data){
+		save: function(){
 			var me = this,
 				data = {
 					all: this.toJSON(),
@@ -638,13 +685,107 @@ var _alpha = "alpha",
 
 			// Delete the children
 			for (i = 0, l = models.length; i < l; i++) {
-				models[i][this.childrenAttribute].each(function(child){
-					me.remove(child, options);
-				});
+				var model = this.get(models[i]);
+				if(model){
+					model[this.childrenAttribute].each(function(child){
+						me.remove(child, options);
+					});
+				}
 			}
 			return Backbone.Collection.prototype.remove.call(this, models, options);
-		}
+		},
 
+		getPage: function(pageNumber){
+			var me = this;
+
+			return this.filter(function(model){
+				return model.belongsToPage == pageNumber;
+			});
+		},
+
+		fetchPage: function(pageNumber, options){
+			if(this.pagination.loaded[pageNumber]){
+				this.pagination.currentPage = pageNumber;
+				/*
+				//All elements loaded, return them following the current order (sorting without fetch)
+				if(this.pagination.totalElements == this.length){
+					var start = this.pagination.currentPage * this.pagination.pageSize,
+						end = start + this.pagination.pageSize
+						results = []
+					;
+
+					this.each(function(result, idx){
+						if(idx >= start && idx < end)
+							results.push(result);
+					});
+
+					return jQuery.Deferred().resolve({results: results});
+				}
+				*/
+
+				var models = this.getPage(pageNumber),
+					results = [];
+				_.each(models, function(model){
+					results.push(model.toJSON());
+				});
+				this.pagination.currentPage = pageNumber;
+				return jQuery.Deferred().resolve({results: results});
+			}
+			
+			return this.fetch(_.extend({page: pageNumber, limit: this.pagination.pageSize}, options));
+		},
+
+		checkPostFlush: function(fetchOptions){
+			var me = this,
+				flush = false,
+				newOptions = _.clone(fetchOptions)
+			;
+
+			if(fetchOptions.flush){
+				delete newOptions.flush;
+				this.lastFetchOptions = newOptions;
+				return fetchOptions;
+			}
+
+			_.each(fetchOptions, function(value, key){
+				if(['limit', 'page'].indexOf(key) == -1)
+					flush = flush || me.lastFetchOptions[key] != value;
+			});
+
+
+			if(flush){
+				me.lastFetchOptions = _.clone(fetchOptions);
+				newOptions.flush = true;
+			}
+			else
+				newOptions = _.extend(this.lastFetchOptions, newOptions);
+
+			return newOptions;
+		},
+
+		reSort: function(attribute, asc){
+			var direction = asc == 'asc' ? 'asc' : 'desc';
+			
+			this.orderby = attribute;
+			this.order = direction;
+
+			return this.fetch({page: 0, sort: attribute, direction: direction});
+
+
+			/* // Possible changes to not reload when fetched all elements
+			if(this.pagination.totalElements > this.length)
+				return this.fetch({page: 0, sort: attribute, direction: direction});
+			
+			this.comparator = function(a, b){
+				var factor = asc ? 1 : -1;
+				return a.get(attribute) < b.get(attribute) ? 1 * factor : -1 * factor;
+			}
+
+			this.sort();
+
+			return jQuery.Deferred().resolve(this.toJSON());
+			*/
+		}
 	}),
 
 	Post = WPModel.extend({
@@ -682,21 +823,35 @@ var _alpha = "alpha",
 		terms: false,
 		meta: false,
 
-		initialize: function(options){
+		initialize: function(model, options){
 			var me = this;
-			if(options && options['id'])
-				this.set(this.idAttribute, options['id']);
+			if(model){
+				if(model['id'])
+					this.set(this.idAttribute, model['id']);
+				if(model['author'])
+					this.author = new Upfront.Models.User(model['author']);
 
-			this.comments = false;
-			this.parent = false;
-			this.terms = false;
-			this.meta = false;
+				if(model['meta'])
+					this.meta = new Upfront.Collections.MetaList(model['meta'], {postId: this.id, metaType: 'post'});
+			}
+		},
+
+		fetch: function(data) {
+			var me = this;
+			return WPModel.prototype.fetch.call(this, data)
+				.done(function(response){
+					if(response.data.author)
+						me.author = new Upfront.Models.User(response.data.author);
+					if(response.data.meta)
+						me.meta = new Upfront.Collections.MetaList(response.data.meta, {postId: this.id, metaType: 'post'});
+				})
+			;
 		},
 
 		idAttribute: 'ID',
 
 		fetch_comments: function(data){
-			var success, error, me = this;
+			var  me = this;
 			data = _.isObject(data) ? data : {};
 
 			this.comments = new Upfront.Collections.CommentList([], {postId: this.id});
@@ -711,14 +866,14 @@ var _alpha = "alpha",
 			var me = this,
 				data = {
 					action: 'fetch_post',
-					id: this.get('post_parent'),
-					success: function(response){
-						me.parent = new Post(response.data);
-					}
+					id: this.get('post_parent')
 				}
 			;
 
-			return this.post(data);
+			return this.post(data)
+				.done(function(response){
+						me.parent = new Post(response.data);
+				});
 		},
 
 		fetch_author: function() {
@@ -748,12 +903,20 @@ var _alpha = "alpha",
 		childrenAttribute: 'children',
 		postId: false,
 		postType: 'post',
-		fetchAttributes: ['postId', 'postType'],
+		withMeta: false,
+		withAuthor: false,
+		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor'],
 		initialize: function(models, options){
-			if(options && options.postId)
-				this.postId = options.postId;
-			if(options && options.postType)
-				this.postType = options.postType;
+			if(options){
+				if(options.postId)
+					this.postId = options.postId;
+				if(options.postType)
+					this.postType = options.postType;
+				if(options.withMeta)
+					this.withMeta = options.withMeta;
+				if(options.withAuthor)
+					this.withAuthor = options.withAuthor;
+			}
 		}
 	});
 	
@@ -764,7 +927,7 @@ var _alpha = "alpha",
 			comment_post_id: 0,
 			comment_author: '',
 			comment_author_email: '',
-			comment_author_url: false,
+			comment_author_url: '',
 			comment_author_IP: '0.0.0.0',
 			comment_date: new Date(),
 			comment_date_gmt: new Date(),
@@ -853,22 +1016,11 @@ var _alpha = "alpha",
 		fetchAttributes: ['objectId', 'metaType'],
 		saveAttributes: ['objectId', 'metaType'],
 		initialize: function(models, options){
+			var metaModels = [];
 			if(options.objectId)
 				this.objectId = options.objectId;
 			if(options.metaType)
 				this.metaType = options.metaType;
-		},
-		fetch: function(response){
-			var me = this;
-			WPCollection.prototype.fetch.call(this, {})
-				.done(function(response){
-					var metadata = []
-					_.each(response.data, function(val, key){
-						metadata.push(new Meta({meta_key: key, meta_value: val}));
-					});
-					me.reset(metadata);
-				})
-			;			
 		},
 		getValue: function(key){
 			var meta = this.get(key);
@@ -908,7 +1060,7 @@ var _alpha = "alpha",
 		},
 		save: function(data){
 			var me = this;
-			WPModel.prototype.save.call(this, data).
+			return WPModel.prototype.save.call(this, data).
 				done(function(response){
 					me.set('term_id', response.data.term_id);
 				})
@@ -920,6 +1072,7 @@ var _alpha = "alpha",
 		collectionName: 'term_list',
 		model: Term,
 		taxonomy: false,
+		taxonomyObject: false,
 		postId: false,
 		fetchAttributes: ['taxonomy', 'postId'],
 		saveAttributes: ['taxonomy', 'postId'],
@@ -934,7 +1087,28 @@ var _alpha = "alpha",
 				if(options.postId)
 					this.postId = options.postId;
 			}
+		},
+		fetch: function(options){
+			var me = this;
+			 return WPCollection.prototype.fetch.call(this, options)
+				.done(function(response){
+					me.taxonomyObject = response.data.taxonomy;
+				})
+			;
 		}
+	}),
+
+	User = WPModel.extend({
+		modelName: 'user',
+		defaults: {
+			ID: 0,
+			caps: [],
+			cap_key: '',
+			roles: [],
+			allcaps: [],
+			data: {}
+		},
+		idAttribute: 'ID'
 	}),
 
 
@@ -977,7 +1151,8 @@ define({
 		"Comment": Comment,
 		"Comments": Comments,
 		"Meta": Meta,
-		"Term": Term
+		"Term": Term,
+		"User": User
 	},
 	"Collections": {
 		"Properties": Properties,
