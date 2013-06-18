@@ -32,20 +32,22 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	public static function ajax_send () {
-		if(!$_POST['contactformid'])
-			return array(
-				'error' => true,
-				'message' => __('Unknown contact form.')
-			);
-		$contactid = $_POST['contactformid'];
-		$form = self::find($_POST['contactformid']);
+		$settings  = self::get_settings_from_ajax();
+		$unknown_form_error = array(
+			'error' => true,
+			'message' => __('Unknown contact form.')
+		);
+
+		if(!$settings)
+			return $unknown_form_error;
+
+		$form = new Upfront_UcontactView($settings);
+
 		if(!$form)
-			return array(
-				'error' => true,
-				'message' => __('Unknown contact form.')
-			);
+			return $unknown_form_error;
 
 		$form->check_form_received();
+
 		return array(
 			'error'=> $form->msg_class == 'error',
 			'message' => $form->msg
@@ -79,13 +81,6 @@ class Upfront_UcontactView extends Upfront_Object {
 			'error' => true,
 			'message' => 'There was a problem storing the contact form settings.'
 		);
-	}
-
-	public static function find ($id) {
-		$contact_form = get_option($id);
-		if(!$contact_form)
-			return false;
-		return new Upfront_UcontactView($contact_form);
 	}
 
 	private static function json_response ($data) {
@@ -187,6 +182,47 @@ class Upfront_UcontactView extends Upfront_Object {
 		return $output;
 	}
 
+	private function get_entity_ids_value(){
+		$entities = Upfront_EntityResolver::get_entity_ids();
+		//var_dump($entities);
+		return base64_encode(json_encode($entities));
+	}
+
+	private function get_settings_from_ajax(){
+		try{
+			$entity_ids = (array) json_decode(base64_decode($_POST['entity_ids']));
+		} catch(Exception $e) {
+			return false;
+		}
+
+		$layout = Upfront_Layout::from_entity_ids($entity_ids);
+
+		if($layout instanceof Upfront_Layout)
+			$layout = $layout->to_php();
+		else
+			return false;
+
+		$settings = array();
+
+		foreach($layout['regions'] as $region){
+			if(sizeof($region['modules'])){
+				foreach($region['modules'] as $module){
+					if(sizeof($module['objects'])){
+						foreach($module['objects'] as $object){
+							if(sizeof($object['properties'])){
+								foreach($object['properties'] as $prop){
+									if($prop['name'] == 'element_id' && $prop['value'] == $_POST['contactformid'])
+										return $object;
+								}
+							} 
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	private function get_field_classes(){
 		$style = $this->_get_property('form_style');
 		$label = $this->_get_property('form_label_position');
@@ -212,8 +248,7 @@ class Ucontact_Server extends Upfront_Server {
 		$me->_add_hooks();
 	}
 
-	private function _add_hooks () {		
-		add_action('wp_ajax_ucontact_save', array($this, 'on_settings_store'));
+	private function _add_hooks () {
 		add_action('wp_ajax_upfront_contact-form',  array($this, 'on_ajax_send'));
 		add_action('wp_ajax_nopriv_upfront_contact-form',  array($this, 'on_ajax_send'));
 	}

@@ -2,14 +2,15 @@
 	<?php if($title): ?>
 	<div class="upfront-contact-form-title"><?php echo $title ?></div>
 	<?php endif; ?>
-	<div class="ucontact-message-container">
-		<?php if($this->msg): ?>
-		<div class="ucontact-msg msg <?php echo $this->msg_class ?>"><?php echo $this->msg ?></div>
-		<?php endif; ?>
-	</div>
 	<form action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="POST">
+		<div class="ucontact-message-container">
+			<?php if($this->msg): ?>
+			<div class="ucontact-msg msg <?php echo $this->msg_class ?>"><?php echo $this->msg ?></div>
+			<?php endif; ?>
+		</div>
 		<input type="hidden" name="ucontact" value="sent">
 		<input type="hidden" name="contactformid" value="<?php echo $id ?>">
+		<input type="hidden" name="entity_ids" value='<?php echo $this->get_entity_ids_value() ?>'>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="sendername"><?php echo $name_label ?></label>
 			<input type="text" class="text-field <?php echo $validate ?>" name="sendername" value="<?php echo $_POST['sendername'] ?>" <?php $this->echo_placeholder($name_label) ?> />

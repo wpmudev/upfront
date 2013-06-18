@@ -80,18 +80,19 @@ jQuery(function($){
 			e.preventDefault();
 			$.ajax({
 				url: ajaxurl,
+				type: 'POST',
 				data: {
 					action: 'upfront_contact-form',
 					sendername: name.val().trim(),
 					senderemail: email.val().trim(),
 					subject: subject.length ? subject.val().trim() : '',
 					sendermessage: message.val().trim(),
-					ucontact: $form.find('input[name=ucontact]').val(),
-					contactformid: $form.find('input[name=contactformid]').val()
-
+					ucontact: $this.find('input[name=ucontact]').val(),
+					contactformid: $this.find('input[name=contactformid]').val(),
+					entity_ids: $this.find('input[name=entity_ids]').val()
 				},
 				success: function(data){
-						show_message($form, data.message, !data.error);					
+					show_message($this, data.message, !data.error);					
 				},
 				error: function(error){
 					var response = JSON.parse(error.responseText);

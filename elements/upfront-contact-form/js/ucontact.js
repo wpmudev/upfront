@@ -196,8 +196,11 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					this.model.set_property('show_subject', true);
 					this.model.set_property('form_subject_label', subjectParts[1]);
 				}
-				else
+				else{
 					this.model.set_property('show_subject', false);
+					this.model.set_property('form_default_subject', subjectParts[1]);
+
+				}
 			}
 		}
 		else
@@ -269,44 +272,19 @@ var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	}
 });
 
-/**
- * A settings panel which sent the model to storing when saved.
- * @type {Upfront.Views.Editor.Settings.Panel}
- */
-var OnSaveStoringPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	actions: {
-		save: 'ucontact_save'
-	},
-	initialize: function(options){
-		//Listen to the save event
-		this.on('upfront:settings:panel:saved', this.storeElement, this);
-	},
-	storeElement: function(that) {
-		// this == that
-		Upfront.Util.post({action: this.actions.save, data: Upfront.Util.model_to_json(this.model)})
-			.success(function(){
-				Upfront.Util.log('Contact from saved.');
-			})
-			.error(function(){
-				Upfront.Util.log('Error saving contact form');
-			})
-		;
-	}
-});
-
 
 /**
  * Creates a settings panel for the contact form editor with all the field settings properties.
  * @type {OnSaveStoringPanel}
  */
-var UcontactFieldSettingsPanel = OnSaveStoringPanel.extend({
+var UcontactFieldSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	/**
 	 * Add all the fields (settings) to the settings panel.
 	 * @return {null}
 	 */
 	initialize: function (options) {
 		// call parent initialize
-		this.constructor.__super__.initialize.call(this, [options]);
+		//this.constructor.__super__.initialize.call(this, [options]);
 		this.settings = _([
 			new UcontactField_Optional({
 				model: this.model,
@@ -406,7 +384,7 @@ var UcontactFieldSettingsPanel = OnSaveStoringPanel.extend({
  * Creates a settings panel for the contact form editor with all the field appearance properties.
  * @type {OnSaveStoringPanel}
  */
-var UcontactAppearanceSettingsPanel = OnSaveStoringPanel.extend({
+var UcontactAppearanceSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	/**
 	 * Add all the fields (settings) to the settings panel.
 	 * @return {null}
