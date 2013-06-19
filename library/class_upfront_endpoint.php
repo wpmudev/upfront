@@ -263,10 +263,6 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		add_action('wp_ajax_upfront-post-create_term', array($this, "create_new_term"));
 		add_action('wp_ajax_upfront-post-update_terms', array($this, "update_post_terms"));
 		
-		add_action('wp_ajax_upfront-load-posts', array($this, "get_posts"));
-		add_action('wp_ajax_upfront-load-pages', array($this, "get_pages"));
-		add_action('wp_ajax_upfront-load-comments', array($this, "get_comments"));
-		
 		add_action('wp_ajax_upfront-get_page_data', array($this, "get_page_data"));
 		add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
 		
@@ -461,85 +457,39 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success(get_the_terms($data['postId'], $data['taxonomy'])));
 	}
+	
+	/**
+	 * Updates the template file for a page.
+	 * @param  Object $data The data sent to update the template, at least a postId and a template name are needed.
+	 * @return null       Json response {postId, template}
+	 */
+	function update_page_template($data){
+		if(!current_user_can('edit_pages'))
+			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 
-	function get_terms () {
-		$data = stripslashes_deep($_POST);
+		if(!$data['postId'])
+			$this->_out(new Upfront_JsonResponse_Error("No page id."));
+		if(!$data['template'])
+			$this->_out(new Upfront_JsonResponse_Error("No template given."));
 
-		$taxonomy = !empty($data['taxonomy']) ? $data['taxonomy'] : false;		
-		if (!$taxonomy) $this->_out(new Upfront_JsonResponse_Error("No taxonomy"));
-
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-		if (!$post_id) 
-			$terms = get_terms($taxonomy, array('hide_empty' => false));
-		else
-			$terms = get_the_terms($post_id, $taxonomy);
-
-		$this->_out(new Upfront_JsonResponse_Success($terms));
-	}
-
-	function get_post_taxonomy () {
-		$data = stripslashes_deep($_POST);
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
-
-		$taxonomy = !empty($data['taxonomy']) ? $data['taxonomy'] : false;
-		if (!$taxonomy) $this->_out(new Upfront_JsonResponse_Error("No taxonomy"));
-
-		$tax_info = get_taxonomy($taxonomy);
-
-		$all_terms = get_terms($taxonomy, array(
-			'hide_empty' => false,
+		$key = '_wp_page_template';
+		$post_id = $data['postId'];
+		$template = $data['template'];
+		$success_response = new Upfront_JsonResponse_Success(array(
+			'template' => $data['template'],
+			'postId' => $data['postId']
 		));
 
-		$post_terms = get_the_terms($post_id, $taxonomy);
-
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			'taxonomy' => $tax_info,
-			'all_terms' => $all_terms,
-			'post_terms' => $post_terms,
-		)));
-	}
-
-	function update_post_terms () {
-		if (!current_user_can('manage_categories')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
-
-		$taxonomy = !empty($data['taxonomy']) ? $data['taxonomy'] : false;
-		if (!$taxonomy) $this->_out(new Upfront_JsonResponse_Error("No taxonomy"));
-
-		$terms = !empty($data['terms']) ? $data['terms'] : array();
-		$terms = array_map('intval', $terms);
-
-		wp_set_object_terms($post_id, $terms, $taxonomy, false);
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true)));
-	}
-
-	function create_new_term () {
-		if (!current_user_can('manage_categories')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$args = array();
-		$data = stripslashes_deep($_POST);
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-
-		$taxonomy = !empty($data['taxonomy']) ? $data['taxonomy'] : false;
-		if (!$taxonomy) $this->_out(new Upfront_JsonResponse_Error("No taxonomy"));
-
-		$term = !empty($data['term']) ? $data['term'] : false;
-		if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
-
-		$parent_id = !empty($data['parent_id']) ? $data['parent_id'] : false;
-		if ($parent_id) {
-			$args['parent'] = (int)$parent_id;
+		$tpl = get_post_meta($post_id, $key, true);
+		if($template){
+			if(update_post_meta($post_id, $key, $template))
+				$this->_out($success_response);
 		}
+		else if(add_post_meta($post_id, $key, $template, true))
+				$this->_out($success_response);
 
-		$result = wp_insert_term($term, $taxonomy, $args);
-		if (empty($result['term_id'])) $this->_out(new Upfront_JsonResponse_Error("Error creating a term"));
+		$this->_out(new Upfront_JsonResponse_Error("There was an error saving the template." . $post_id . $key . $template));
 
-		if ($post_id) {
-			wp_set_object_terms($post_id, $result['term_id'], $taxonomy, true);
-		}
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true, "term_id" => $result['term_id'])));
 	}
 
 	function fetch_post($data) {
@@ -561,18 +511,6 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 		
 		$this->_out(new Upfront_JsonResponse_Error("Post not found."));
-	}
-
-
-	function get_featured_image ($data) {
-		if(!$data['postId'])
-			$this->_out(new Upfront_JsonResponse_Error("No post id."));
-
-		$image = wp_get_attachment_image_src( get_post_thumbnail_id( $data['postId'] ) );
-		if (!empty($image[0]))
-			$this->_out(new Upfront_JsonResponse_Success(array('image' => $image[0], 'postId' => $data['postId'])));
-
-		$this->_out(new Upfront_JsonResponse_Success(array('image' => false, 'postId' => $data['postId'])));
 	}
 
 	function remove_private_user_fields($user) {
@@ -670,43 +608,6 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
 
 		$this->_out(new Upfront_JsonResponse_Success( array('id' => $id) ));
-	}
-
-	function get_posts () {
-		$query = $this->_spawn_query('post', $_POST);
-		$limit = isset($_POST['limit']) ? (int)$_POST['limit'] : 10;
-		$page = isset($_POST['page']) ? (int)$_POST['page'] : 0;
-
-		$result = array();
-		foreach ($query->posts as $post) {
-			$user = get_user_by('id', $post->post_author);
-			$result[] = array(
-				"ID" => $post->ID,
-				"post_title" => $post->post_title,
-				"post_author" => $user->display_name,
-				"post_date" => mysql2date("Y/m/d", $post->post_date, true),
-			);
-		}
-
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			"posts" => $result,
-			"pagination" => array(
-				"total" => $query->found_posts,
-				"page_size" => $limit,
-				"page" => $page,
-			),
-		)));
-	}
-
-	function get_pages () {
-		$data = array(
-			'sort' => 'parent',
-			'limit' => -1,
-		);
-		$query = $this->_spawn_query('page', $data);
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			"posts" => $query->posts,
-		)));
 	}
 
 	function fetch_user($data) {
@@ -862,69 +763,6 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($meta));
 	}
 
-	function get_comments () {
-		$for = !empty($_POST['for']) ? $_POST['for'] : false;
-		$orderby = !empty($_POST['sort']) ? 'comment_' . $_POST['sort'] : 'comment_date';
-		$order = !empty($_POST['direction']) ? $_POST['direction'] : 'ASC';
-		$limit = isset($_POST['limit']) ? (int)$_POST['limit'] : 10;
-		$page = isset($_POST['page']) ? (int)$_POST['page'] : 0;
-		$search = !empty($_POST['search']) ? $_POST['search'] : false;
-
-/*
-		$comments = get_comments(array(
-			'orderby' => $orderby,
-			'order' => $order,
-			'post_id' => $for,
-			'type' => 'comment',
-			'status' => '',
-			//'number' => $limit,
-			//'offset' => $page * $limit,
-			'search' => $search,
-		));
-*/
-		// Using raw query for comments, so we can get spam ones too.
-		$search = $search
-			? "AND (comment_content LIKE '%$" . esc_sql(like_escape($search)) . "%')"
-			: ''
-		;
-		global $wpdb;
-		$comments = $wpdb->get_results(
-			$wpdb->prepare("SELECT * FROM {$wpdb->comments} WHERE comment_post_ID=%d AND comment_type='' {$search} ORDER BY {$orderby} {$order} LIMIT %d, %d", $for, ($page*$limit), $limit)
-		);
-
-		$result = array();
-		foreach ($comments as $idx => $comment) {
-			$result[] = array(
-				"comment_ID" => $comment->comment_ID,
-				"avatar" => get_avatar($comment, 32),
-				"comment_author" => $comment->comment_author,
-				"comment_approved" => $comment->comment_approved,
-				"comment_content" => $comment->comment_content,
-				"comment_date" => mysql2date("Y/m/d", $comment->comment_date, true),
-			);
-		}
-		/*
-		$comments_count = get_comments(array(
-			'post_id' => $for,
-			'type' => 'comment',
-			'search' => $search,
-			'count' => true,
-		));
-		*/
-		$comments_count = $wpdb->get_var(
-			$wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->comments} WHERE comment_post_ID=%d AND comment_type='' {$search}", $for)
-		);
-
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			"comments" => $result,
-			"pagination" => array(
-				"total" => $comments_count,
-				"page_size" => $limit,
-				"page" => $page,
-			),
-		)));
-	}
-
 	function get_post_extra($data) {
 		if(!$data['postId'])
 			$this->_out(new Upfront_JsonResponse_Error("No post id."));
@@ -942,110 +780,6 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success($extra));
-	}
-
-	function get_page_data () {
-		$data = stripslashes_deep($_POST);
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
-		
-		$post = $this->_get_post_info($post_id);
-		$post->all_templates = get_page_templates();
-		$post->page_template = get_page_template_slug($post->ID);
-		$this->_out(new Upfront_JsonResponse_Success($post));
-	}
-	
-	function get_post_data () {
-		$data = stripslashes_deep($_POST);
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
-		
-		$post = $this->_get_post_info($post_id);
-		$post->post_content = apply_filters('the_content', $post->post_content);
-		$post->sample_permalink = get_sample_permalink_html($post_id);
-		$this->_out(new Upfront_JsonResponse_Success($post));
-	}
-
-	function approve_comment () {
-		if (!current_user_can('moderate_comments')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$comment_id = !empty($data['comment_id']) ? $data['comment_id'] : false;
-		if (!$comment_id) $this->_out(new Upfront_JsonResponse_Error("No comment id"));
-		wp_set_comment_status($comment_id, 'approve');
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true)));
-	}
-	function unapprove_comment () {
-		if (!current_user_can('moderate_comments')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$comment_id = !empty($data['comment_id']) ? $data['comment_id'] : false;
-		if (!$comment_id) $this->_out(new Upfront_JsonResponse_Error("No comment id"));
-		wp_set_comment_status($comment_id, 'hold');
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true)));
-	}
-	function thrash_comment () {
-		if (!current_user_can('moderate_comments')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$comment_id = !empty($data['comment_id']) ? $data['comment_id'] : false;
-		if (!$comment_id) $this->_out(new Upfront_JsonResponse_Error("No comment id"));
-		wp_delete_comment($comment_id);
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true)));
-	}
-	function unthrash_comment () {
-		if (!current_user_can('moderate_comments')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$comment_id = !empty($data['comment_id']) ? $data['comment_id'] : false;
-		if (!$comment_id) $this->_out(new Upfront_JsonResponse_Error("No comment id"));
-		wp_set_comment_status($comment_id, 'hold');
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true)));
-	}
-	function spam_comment () {
-		if (!current_user_can('moderate_comments')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$comment_id = !empty($data['comment_id']) ? $data['comment_id'] : false;
-		if (!$comment_id) $this->_out(new Upfront_JsonResponse_Error("No comment id"));
-		wp_set_comment_status($comment_id, 'spam');
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => true)));
-	}
-
-	function post_comment () {
-		if (!current_user_can('moderate_comments')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
-
-		$comment_id = !empty($data['comment_id']) ? $data['comment_id'] : false;
-		$text = !empty($data['content']) ? $data['content'] : false;
-		if (!$text) $this->_out(new Upfront_JsonResponse_Error("Say something meaningful"));
-
-		$user = wp_get_current_user();
-
-		$status = wp_insert_comment(array(
-			'comment_post_ID' => $post_id,
-			'comment_author' => $user->display_name,
-			'comment_author_email' => $user->user_email,
-			'user_id' => $user->ID,
-			'comment_date' => current_time('mysql'),
-			'comment_approved' => 1,
-			'comment_parent' => $comment_id,
-			'comment_content' => $text,
-		));
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => $status)));
-	}
-
-	function update_comment () {
-		if (!current_user_can('moderate_comments')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
-		$data = stripslashes_deep($_POST);
-		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
-
-		$comment_id = !empty($data['comment_id']) ? $data['comment_id'] : false;
-		if (!$comment_id) $this->_out(new Upfront_JsonResponse_Error("No comment id"));
-		$text = !empty($data['content']) ? $data['content'] : false;
-
-		$comment = get_comment($comment_id, ARRAY_A);
-		$comment['comment_content'] = $text; 
-		$status = wp_update_comment($comment);
-		$this->_out(new Upfront_JsonResponse_Success(array("status" => $status)));
 	}
 
 	private function _spawn_query ($post_type, $data=array()) {

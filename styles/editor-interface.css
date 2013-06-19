@@ -1808,7 +1808,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	color: #2ecc90;
 	text-decoration: none;
 }
-#upfront-list-page-path a.last {
+#upfront-list-page-path .last {
 	color: #273a4c;
 	font-weight: bold;
 }
@@ -2006,16 +2006,10 @@ box-shadow: inset 0 2px 0 0 #fff;
 	margin-bottom:10px;
 }
 
-#upfront-list .comment-edit-ok {
+#upfront-list button {
 	width:100px;
 	float:right;
-	margin-left:10px;
-}
-
-#upfront-list .comment-edit-cancel {
-	width: 100px;
-	float: right;
-	margin-bottom: 10px;
+	margin:0 0 10px 10px;
 }
 
 
@@ -2070,6 +2064,16 @@ box-shadow: inset 0 2px 0 0 #fff;
 	color: #2ecc90;
 }
 
+.upfront-comment_edit,
+.upfront-comment_reply,
+.upfront-comment_content-full-wrapper {
+	display: none;
+}
+
+.upfront-comment_reply textarea {
+	margin-top: 10px;
+}
+
 #upfront-list .upfront-list-items .expanded {
 	width:808px;
 	margin-left: 36px;
@@ -2081,10 +2085,6 @@ box-shadow: inset 0 2px 0 0 #fff;
 
 #upfront-list .upfront-list-items .expanded .upfront-comment_actions-wrapper{
 	display: block;
-}
-
-.upfront-list-comments .upfront-comment_content-full-wrapper {
-	display:none;
 }
 
 .upfront-list-comments .expanded .upfront-comment_excerpt {

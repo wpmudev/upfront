@@ -92,7 +92,7 @@
 		</div>
 		<div id="upfront-page_preview-template" class="upfront-page_preview-item">
 			<h4>Template: </h4>
-			<select>				
+			<select id="upfront-page_template-select">				
 				<option value="0">Default</option>
 				{[ _.each(allTemplates, function(tpl, name){ var selected = tpl == template ? 'selected="selected"' : ""; ]}
 				<option value="{{tpl}}" {{selected}}>{{name}}</option>
@@ -134,18 +134,30 @@
 		<div class="upfront-list_item-component upfront-date">{{ Upfront.Util.format_date(comment.get("comment_date")) }}</div>
 		<div class="upfront-list_item-component upfront-comment_content upfront-comment_excerpt upfront-list_item-main upfront-post_content">{{ excerpt.length > excerptLength ? excerpt.substring(0, excerptLength) + ' [...]' : excerpt }}</div>
 		<div class="upfront-list_item-component upfront-comment_content upfront-comment_content-full-wrapper upfront-list_item-main upfront-post_content  upfront-scroll-panel">
-			<div class="upfront-comment_content-full">{{ comment.get("comment_content") }}</div>
+			<div class="upfront-comment_content-full upfront-comment_togglable">{{ comment.get("comment_content") }}</div>
+			<div class="upfront-comment_edit upfront-comment_togglable" data-comment_id="{{ comment.get('comment_ID') }}">
+				<textarea class="comment-edit-box" class="edit" rows="16">{{ comment.get("comment_content") }}</textarea>
+				<button type="button" class="comment-edit-ok">OK</button>
+				<button type="button" class="comment-edit-cancel">Cancel</button>
+			</div>
+			<div class="upfront-comment_reply upfront-comment_togglable" data-comment_id="{{ comment.get('comment_ID') }}">
+				<textarea class="comment-edit-box" class="edit" rows="16"></textarea>
+				<button type="button" class="comment-reply-ok">OK</button>
+				<button type="button" class="comment-reply-cancel">Cancel</button>
+			</div>
 		</div>
 		<div class="upfront-comment_actions-wrapper">
+			{[ if(comment.get("comment_approved") !== 'trash'){ ]}
 			<a href="#reply" class="reply"><i class="icon-reply"></i> Reply</a>
+			{[ } ]}
 			<a href="#edit" class="edit"><i class="icon-pencil"></i> Edit</a>
 			{[ if(comment.get("comment_approved") === '0'){ ]}
 			<a href="#approve" class="approve"><i class="icon-ok"></i> Approve</a>
-			{[ } else { ]}
+			{[ } else if(comment.get("comment_approved") === '1'){ ]}
 			<a href="#unapprove" class="unapprove"><i class="icon-circle-blank"></i> Unapprove</a>
 			{[ } if(comment.get("comment_approved") === 'spam'){ ]}
 			<a href="#unspam" class="unspam"><i class="icon-comment-alt"></i> Unspam</a>
-			{[ } else { ]}
+			{[ } else if(comment.get("comment_approved") !== 'trash') { ]}
 			<a href="#spam" class="spam"><i class="icon-ban-circle"></i> Spam</a>
 			{[ } if(comment.get("comment_approved") === 'trash'){ ]}
 			<a href="#unthrash" class="unthrash"><i class="icon-comment"></i> Untrash</a>

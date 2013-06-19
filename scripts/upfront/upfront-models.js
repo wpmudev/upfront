@@ -362,10 +362,21 @@ var _alpha = "alpha",
 		}
 	}),
 
+	/**
+	 * Represents a WP object. Extending WPModel it is easy to communicate with the server
+	 * to fetch a Post, User or Comment, and let the user update them easily.
+	 */
 	WPModel = Backbone.Model.extend({
 		action: 'upfront-wp-model',
 		fetchAttributes: [],
 		saveAttributes: [],
+
+		/**
+		 * Loads the model from the db data. Uses the attribute modelName, implemented in a children class, to
+		 * know what to fecth. When finished it trigger the change event if there have been any change in the Model.
+		 * @param  {Object} data Aditional data to be sent with the fetch request.
+		 * @return {jQuery.Deferred}	A promise for the fetching. The server response will be passed as argument to the done function.
+		 */
 		fetch: function(data) {
 			var me = this;
 				postdata = {
@@ -386,6 +397,13 @@ var _alpha = "alpha",
 				}
 			);
 		},
+
+		/**
+		 * Update, or create if no model id given, the model in the database. 
+		 * Uses the attribute modelName, implemented in a children class, to
+		 * know what to save.
+		 * @return {jQuery.Deferred}	A promise for the saving. The server response will be passed as argument to the done function.
+		 */
 		save: function(){
 			var me = this,
 				data = this.toJSON()
@@ -402,6 +420,13 @@ var _alpha = "alpha",
 				}
 			);
 		},
+
+		/**
+		 * Send a POST request to the server setting all the parameters needed to communicate with
+		 * the models endpoint.
+		 * @param  {Object} data Data to be sent with the request.
+		 * @return {jQuery.Deferred}	A promise for the response. The server response will be passed as argument to the done function.
+		 */
 		post: function(data){
 			data = _.isObject(data) ? _.clone(data) : {};
 			data.model_action = data.action;
@@ -409,12 +434,24 @@ var _alpha = "alpha",
 
 			return Upfront.Util.post(data);
 		},
+		/**
+		 * Overrides Backbone.Model.get to convert the PHP dates in javascript ones.
+		 * @param  {String} attr The attribute name to get.
+		 * @return {Mixed}      The attribute value or false if not found.
+		 */
 		get: function(attr){
 			var value = this.attributes[attr];
 			if(_.isString(value) && value.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/))
 				return new Date(value);
 			return this.attributes[attr];
 		},
+		/**
+		 * Overrides Backbone.Model.set to convert javascript dates in PHP format.
+		 * @param  {String} key     Attribute name
+		 * @param  {Mixed} val     The value for the attribute
+		 * @param  {Object} options Extended options for set. See http://backbonejs.org/#Model-set
+		 * @return {WPModel}         This object
+		 */
 		set: function(key, val, options){
 			var newval = val,
 				parsedAttrs = {};
@@ -439,20 +476,39 @@ var _alpha = "alpha",
 			return this;
 		}
 	}),
+	
 
+	/**
+	 * Represent a collection of WPModels, to fetch and save Posts, Comments or metadata list.
+	 * It handle pagination, sorting and hierarchical lists out of the box.
+	 */
 	WPCollection = Backbone.Collection.extend({
+		//WP ajax action
 		action: 'upfront-wp-model',
+		// Collection's attributes to be sent with their values in every fetch request.
 		fetchAttributes: [],
+		// Collection's attributes to be sent with their values in every save request.
 		saveAttributes: [],
+
+		// These are used to know what has changed since the last save.
 		changedModels: [],
 		addedModels: [],
 		removedModels: [],
 		isNew: true,
+
+		// Model attribute where the parent id is stored.
 		parentAttribute: false,
+		// Attribute to store the collection of children.
 		childrenAttribute: false,
+
+		// Used to store the store the models without parents. (Only when parentAttribute and childrenAttribute are set)
 		orphans: {},
+
+		// Attribute to sort the collection. Use the reSort methods to change it properly.
 		orderby: false,
 		order: 'desc',
+
+		// Pagination default parameters. Set pageSize to -1 to deactivate pagination.
 		pagination: {
 			pages: 1,
 			pageSize: 10,
@@ -460,7 +516,15 @@ var _alpha = "alpha",
 			totalElements: 0,
 			loaded: {}
 		},
+
+		// Used to keep the last fetch options and be able to fetch more pages.
 		lastFetchOptions: {},
+
+		/**
+		 * Loads the Collection with models from the database. Uses the collectionName attribute to know what to fetch.
+		 * @param  {Object} data Extra data to be sent with the fetch request
+		 * @return {jQuery.Deferred}      Promise for the fetch request. The server response will be passed as argument to the done function.
+		 */
 		fetch: function(data) {
 			var me = this,
 				postdata = {
@@ -534,6 +598,13 @@ var _alpha = "alpha",
 				}
 			);
 		},
+
+		/**
+		 * Send a POST request to the server setting all the parameters needed to communicate with
+		 * the models endpoint.
+		 * @param  {Object} data Data to be sent with the request.
+		 * @return {jQuery.Deferred}	A promise for the response. The server response will be passed as argument to the done function.
+		 */
 		post: function(data){
 			data = _.isObject(data) ? _.clone(data) : {};
 			data.model_action = data.action;
@@ -541,6 +612,12 @@ var _alpha = "alpha",
 
 			return Upfront.Util.post(data);
 		},
+
+		/**
+		 * Store the data base. Different lists are sent to the server with all, added, changed and removed models
+		 * for making easy to store the changes.
+		 * @return {jQuery.Deferred} A promise for the response. The server response will be passed as argument to the done function.
+		 */
 		save: function(){
 			var me = this,
 				data = {
@@ -581,6 +658,11 @@ var _alpha = "alpha",
 					me.removedModels = [];
 				});
 		},
+		/**
+		 * Used to synchro the changed model list.
+		 * @param  {WPModel} model The model to add to the changed list.
+		 * @return {null}       
+		 */
 		updateChanged: function(model){
 			var id = model.id,
 				addedIndex = _.indexOf(this.addedModels, id)
@@ -591,6 +673,12 @@ var _alpha = "alpha",
 			else if(!_.contains(this.changedModels, id))
 				this.changedModels.push(id);
 		},
+
+		/**
+		 * Used to synchro the added model list.
+		 * @param  {WPModel} model The model to add to the added list.
+		 * @return {null}       
+		 */
 		updateAdded: function(model){
 			var id = model.id,
 				removedIndex = _.indexOf(this.removedModels, id)
@@ -602,6 +690,12 @@ var _alpha = "alpha",
 			else if(!_.contains(this.addedModels, id))
 				this.addedModels.push(id);
 		},
+
+		/**
+		 * Used to synchro the removed model list.
+		 * @param  {WPModel} model The model to add to the removed list.
+		 * @return {null}       
+		 */
 		updateRemoved: function(model){
 			var id = model.id,
 				addedIndex = _.indexOf(this.addedModels, id),
@@ -616,6 +710,12 @@ var _alpha = "alpha",
 				this.changedModels.splice(changedIndex, 1);
 		},
 
+		/**
+		 * Override the Backbone.Collection function to handle hierarchical data when the 
+		 * parentAttribute and childrenAttribute are set for the collection.
+		 * @param  {Array} models  Array of data for the new models
+		 * @param  {Object} options Options for the adding. See http://backbonejs.org/#Collection-add
+		 */
 		add: function(models, options){
 			//Check for hierarchy
 			if(!this.parentAttribute || !this.childrenAttribute)
@@ -674,6 +774,14 @@ var _alpha = "alpha",
 			}
 		},
 
+		/**
+		 * Overrides Backbone.Collection.remove to handle hierarchical data when the 
+		 * parentAttribute and childrenAttribute are set for the collection.
+		 * 		
+		 * @param  {Array|Model} models  Models to remove.
+		 * @param  {Object} options Options for removing elements. See http://backbonejs.org/#Collection-remove
+		 * @return {WPCollection}        this
+		 */
 		remove: function(models, options){
 			//Check for hierarchy
 			if(!this.parentAttribute || !this.childrenAttribute)
@@ -694,7 +802,14 @@ var _alpha = "alpha",
 			}
 			return Backbone.Collection.prototype.remove.call(this, models, options);
 		},
-
+		/**
+		 * Get a page from the collection using the pagination parameters. The model must be fetched before
+		 * using this function. A page is known to be loaded checking the WPCollection.pagination.loaded[pageNumber]
+		 * attribute.
+		 * 
+		 * @param  {Number} pageNumber The page number
+		 * @return {Array}            Models that belongs to the requested paged
+		 */
 		getPage: function(pageNumber){
 			var me = this;
 
@@ -703,7 +818,12 @@ var _alpha = "alpha",
 			});
 		},
 
-		fetchPage: function(pageNumber, options){
+		/**
+		 * Load the models of the given page from the database.
+		 * @param  {Number} pageNumber The number of the page to fetch.
+		 * @return {jQuery.Deferred} A promise for the fetching. The server response will be passed as arguments for the done function.
+		 */
+		fetchPage: function(pageNumber){
 			if(this.pagination.loaded[pageNumber]){
 				this.pagination.currentPage = pageNumber;
 				/*
@@ -732,9 +852,42 @@ var _alpha = "alpha",
 				return jQuery.Deferred().resolve({results: results});
 			}
 			
-			return this.fetch(_.extend({page: pageNumber, limit: this.pagination.pageSize}, options));
+			return this.fetch(_.extend({page: pageNumber, limit: this.pagination.pageSize}));
 		},
 
+		/**
+		 * Re-Sort the collection based on the model attribute. This always flush the collection elements.
+		 * @param  {String} attribute Model attribute for using to sort.
+		 * @param  {String} asc       asc|desc Order of the sorting.
+		 * @return {[type]}           [description]
+		 */
+		reSort: function(attribute, asc){
+			var direction = asc == 'asc' ? 'asc' : 'desc';
+			
+			this.orderby = attribute;
+			this.order = direction;
+
+			return this.fetch({page: 0, sort: attribute, direction: direction});
+
+
+			/* // Possible changes to not reload when fetched all elements
+			if(this.pagination.totalElements > this.length)
+				return this.fetch({page: 0, sort: attribute, direction: direction});
+			
+			this.comparator = function(a, b){
+				var factor = asc ? 1 : -1;
+				return a.get(attribute) < b.get(attribute) ? 1 * factor : -1 * factor;
+			}
+
+			this.sort();
+
+			return jQuery.Deferred().resolve(this.toJSON());
+			*/
+		}, 
+
+		/**
+		 * Check if the fetch options must be flushed.
+		 */
 		checkPostFlush: function(fetchOptions){
 			var me = this,
 				flush = false,
@@ -761,33 +914,9 @@ var _alpha = "alpha",
 				newOptions = _.extend(this.lastFetchOptions, newOptions);
 
 			return newOptions;
-		},
-
-		reSort: function(attribute, asc){
-			var direction = asc == 'asc' ? 'asc' : 'desc';
-			
-			this.orderby = attribute;
-			this.order = direction;
-
-			return this.fetch({page: 0, sort: attribute, direction: direction});
-
-
-			/* // Possible changes to not reload when fetched all elements
-			if(this.pagination.totalElements > this.length)
-				return this.fetch({page: 0, sort: attribute, direction: direction});
-			
-			this.comparator = function(a, b){
-				var factor = asc ? 1 : -1;
-				return a.get(attribute) < b.get(attribute) ? 1 * factor : -1 * factor;
-			}
-
-			this.sort();
-
-			return jQuery.Deferred().resolve(this.toJSON());
-			*/
 		}
 	}),
-
+	
 	Post = WPModel.extend({
 		modelName: 'post',
 		defaults: {
@@ -947,7 +1076,7 @@ var _alpha = "alpha",
 				this.set(this.idAttribute, options['id']);
 		},
 
-		trash: function(thrashed){
+		trash: function(trashed){
 			if(trashed)
 				this.set('comment_approved', 'trash');
 			else if(!trashed && this.get('comment_approved') == 'trash')
