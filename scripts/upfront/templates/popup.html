@@ -35,7 +35,8 @@
 		<div id="upfront-page_preview-wrapper">
 			<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
 				<h4>Featured Image: </h4>
-				<img src="{{post.featuredImage ? post.featuredImage : 'http://upload.wikimedia.org/wikipedia/en/thumb/1/11/Maurice-Sendak_portrait2.jpg/220px-Maurice-Sendak_portrait2.jpg'}}" />
+				<div class="upfront-thumbnailinfo">Loading...</div>
+				<img src="{{post.featuredImage }}" style="{{post.featuredImage ? '' : 'display:none'}}" />
 			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
 			</div>
 			<div class="upfront-page_preview-bottom" id="upfront-page_preview-edit">
@@ -86,8 +87,9 @@
 <script type="text/template" id="upfront-page-preview-tpl">
 	<div id="upfront-page_preview-wrapper" class="upfront-scroll-panel">
 		<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
-			<h4>Featured Image:</h4>
-			<img src="{{page.featuredImage ? page.featuredImage : 'http://upload.wikimedia.org/wikipedia/en/thumb/1/11/Maurice-Sendak_portrait2.jpg/220px-Maurice-Sendak_portrait2.jpg'}}" />
+			<h4>Featured Image: </h4>
+			<div class="upfront-thumbnailinfo" style="{{page.thumbnail ? 'display:none' : ''}}">Loading...</div>
+			<img src="{{page.thumbnail }}" style="{{page.thumbnail ? '' : 'display:none'}}" />
 			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
 		</div>
 		<div id="upfront-page_preview-template" class="upfront-page_preview-item">
@@ -141,7 +143,7 @@
 				<button type="button" class="comment-edit-cancel">Cancel</button>
 			</div>
 			<div class="upfront-comment_reply upfront-comment_togglable" data-comment_id="{{ comment.get('comment_ID') }}">
-				<textarea class="comment-edit-box" class="edit" rows="16"></textarea>
+				<textarea class="comment-edit-box" class="edit" rows="16" placeholder="Reply here..."></textarea>
 				<button type="button" class="comment-reply-ok">OK</button>
 				<button type="button" class="comment-reply-cancel">Cancel</button>
 			</div>

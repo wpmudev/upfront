@@ -65,7 +65,6 @@ define(_template_files, function () {
 			"click #done-adding-property": "add_new_property",
 		},
 		initialize: function () {
-			//console.log(this.model)
 			this.model.get("properties").bind("change", this.render, this);
 			this.model.get("properties").bind("add", this.render, this);
 			this.model.get("properties").bind("remove", this.render, this);
@@ -1478,6 +1477,13 @@ define(_template_files, function () {
 				.on('click', '#upfront-post_slug-send', function(){
 					me.update_post_slug($('#upfront-post_slug').val());
 				})
+				.off('keydown', '#upfront-post_slug')
+				.on('keydown', '#upfront-post_slug', function(e){
+					if(e.which == 13){
+						e.preventDefault();
+						me.update_post_slug($('#upfront-post_slug').attr('disabled', true).val());
+					}
+				});
 			;
 
 			popup.done(function () {
@@ -1493,6 +1499,9 @@ define(_template_files, function () {
 			me.post.set('post_name', slug).save()
 				.done(function(response){
 					me.trigger("upfront:posts:post:slug_updated");
+					if(confirm('Do you want to reload the page with the new URL?'))
+						window.location.href = window.location.origin + '/' + me.post.get('post_name') + '/';
+
 				})
 			;
 		}
@@ -1593,7 +1602,6 @@ define(_template_files, function () {
 				pagination = this.collection.pagination,
 				page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0
 			;
-			console.log('editing');
 			this.collection.fetchPage(page).
 				done(function(response){
 					me.collection.trigger('reset');
@@ -1826,8 +1834,13 @@ define(_template_files, function () {
 				this.collection.post({action: 'get_post_extra', postId: post.id, thumbnail: true, thumbnailSize: 'medium'})
 					.done(function(response){
 						if(response.data.thumbnail && response.data.postId == post.id){
-							me.$('#upfront-page_preview-featured_image img').attr('src', response.data.thumbnail[0]);
+							me.$('#upfront-page_preview-featured_image img').attr('src', response.data.thumbnail[0]).show();
+							me.$('.upfront-thumbnailinfo').hide();
 							post.featuredImage = response.data.thumbnail[0];
+						}
+						else{
+							me.$('.upfront-thumbnailinfo').text('No Image');
+							me.$('.upfront-page_preview-edit_feature a').html('<i class="icon-plus"></i> Add');
 						}
 
 					})
@@ -1944,8 +1957,13 @@ define(_template_files, function () {
 				this.collection.post(extra)
 					.done(function(response){
 						if(response.data.thumbnail && response.data.postId == page.get('ID')){
-							me.$('#upfront-page_preview-featured_image img').attr('src', response.data.thumbnail[0]);
+							me.$('#upfront-page_preview-featured_image img').attr('src', response.data.thumbnail[0]).show();
+							me.$('.upfront-thumbnailinfo').hide();
 							page.thumbnail = response.data.thumbnail[0];
+						}
+						else{
+							me.$('.upfront-thumbnailinfo').text('No Image');
+							me.$('.upfront-page_preview-edit_feature a').html('<i class="icon-plus"></i> Add');
 						}
 
 						if(response.data.allTemplates)

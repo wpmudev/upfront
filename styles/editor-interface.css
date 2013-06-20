@@ -1376,6 +1376,10 @@ box-shadow: inset 0 2px 0 0 #fff;
 	color: #3A5268;
 }
 
+#upfront-popup input[type=text]:focus {
+	background: #fff;
+}
+
 
 #upfront-popup  .button,
 #upfront-popup  button {
@@ -1850,6 +1854,13 @@ box-shadow: inset 0 2px 0 0 #fff;
 	margin: 0 auto;
 	border: 3px solid #A4BFD8;
 }
+.upfront-thumbnailinfo {
+	margin: 0 auto;
+	border: 3px solid #A4BFD8;
+	height: 100px;
+	line-height: 95px;
+	text-align: center;
+}
 #upfront-page_preview-featured_image .upfront-page_preview-edit_feature {
 	position:absolute;
 	bottom:3px;
@@ -2004,6 +2015,8 @@ box-shadow: inset 0 2px 0 0 #fff;
 #upfront-list .upfront-list-comment-items textarea {
 	max-height:150px;
 	margin-bottom:10px;
+	padding: 10px;
+	width: 100%;
 }
 
 #upfront-list button {
