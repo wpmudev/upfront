@@ -59,3 +59,32 @@
 {
     background: #e5f3fe;
 }
+.upfront-social-icon
+{
+    float: left;
+    margin-right:10px;
+}
+.upfront-social-icon a
+{
+    color: #fff !important;
+}
+#settings .upfront-settings_panel .cal_to_action_social_media_services_list li,
+#settings .upfront-settings_panel .fan_social_media_services_list li,
+#settings .upfront-settings_panel .like_social_media_services_list li
+{
+    cursor: move;
+    background: #a2c5e4;
+    padding: 5px 0;
+}
+.alert-url
+{
+    color: #fff;
+    background: #871b15;
+    -webkit-border-radius: 100px;
+    border-radius: 100px;
+    padding: 3px;
+}
+.ser_header .toggle
+{
+    cursor: pointer;
+}

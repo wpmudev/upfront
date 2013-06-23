@@ -3,8 +3,65 @@
 class Upfront_SocialMediaView extends Upfront_Object {
 
     public function get_markup () {
+        $element_id = $this->_get_property('element_id');
+        $element_id = $element_id ? "id='{$element_id}'" : '';
 
-        return "Upfront Social Media";
+        $panel_settings = json_decode($this->_get_property("social_media_panel_settings"));
+
+        switch ($panel_settings->layoutStyle) {
+            case 0:
+                return "Please select an option from backend";
+                break;
+            case 1:
+                return self::like_follow_plus_one($panel_settings);
+                break;
+            case 2:
+                return self::fan_follower_count($panel_settings);
+                break;
+            case 3:
+                return self::call_to_action($panel_settings);
+                break;
+        }
+
+    }
+
+    public static function like_follow_plus_one($social_services){
+        $output = '<div class="upfront-like-follow-plusone-box">';
+        foreach($social_services->likeSocialMediaServices as $service) :
+            $output .= '<div data-id="upfront-icon-'.$service->id.'" class="upfront-social-icon">';
+            $output .= $service->name;
+            $output .= '</div>';
+        endforeach;
+        $output .= '</div>';
+        return $output;
+    }
+
+    public static function fan_follower_count($social_services){
+        $output = '<div class="upfront-fan-follower-count-box">';
+        foreach($social_services->fanSocialMediaServices as $service) :
+            $output .= '<div data-id="upfront-icon-'.$service->id.'" class="upfront-social-icon">';
+            $output .= '<a href="'.$service->url.'">';
+            $output .= $service->name;
+            $output .= '<span> 666</span>';
+            $output .= '</a>';
+            $output .= '</div>';
+        endforeach;
+        $output .= '</div>';
+        return $output;
+    }
+
+    public static function call_to_action($social_services){
+        $output = '<div class="upfront-call-to-action-box">';
+        foreach($social_services->calToActionSocialMediaServices as $service) :
+            $output .= '<div data-id="upfront-icon-'.$service->id.'" class="upfront-social-icon">';
+            $output .= '<a href="'.$service->url.'">';
+            $output .= $service->name;
+            $output .= '<span> 666</span>';
+            $output .= '</a>';
+            $output .= '</div>';
+        endforeach;
+        $output .= '</div>';
+        return $output;
     }
 
     // Inject style dependencies
