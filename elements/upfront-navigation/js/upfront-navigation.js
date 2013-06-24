@@ -68,8 +68,9 @@
 
             onMenuItemHover: function(evt) {
 
-                $item = $(evt.target).parent('li'),
-                $itemWidth = $item.width();
+                var $item = $(evt.target).parent('li'),
+                $itemWidth = $item.width(),
+                $itemHeight = $item.height();
 
                 if (evt.type == "mouseenter") {
                     // hover-in on menu item
@@ -77,7 +78,7 @@
                     this.$el.find('.nav_tooltip').remove();
                     $(evt.target).append($toolTip);
                     $toolTip.find('.visit_page').attr('href',$(evt.target).attr('href'));
-                    $toolTip.css({'left':$itemWidth});
+                    $toolTip.css({'left':$itemWidth,'top':$itemHeight/2});
                     $toolTip.show();
                 }
                 else {
