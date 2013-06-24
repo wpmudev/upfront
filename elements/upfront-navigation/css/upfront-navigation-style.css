@@ -958,7 +958,7 @@ label {
     border-radius: 1px;
     position: absolute;
     z-index: 999999;
-    top: 8px;
+    top: 0px;
 }
 .nav_tooltip:after, .nav_tooltip:before {
     border: solid transparent;
