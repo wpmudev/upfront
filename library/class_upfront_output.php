@@ -39,6 +39,12 @@ class Upfront_Output {
 		return false;
 	}
 	
+	public static function get_layout_object () {
+		if ( self::$_instance )
+			return self::$_instance->_layout;
+		return false;
+	}
+	
 	public static function get_current_object () {
 		if ( self::$current_object )
 			return self::$current_object;

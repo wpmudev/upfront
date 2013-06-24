@@ -159,6 +159,10 @@ abstract class Upfront_Model {
 		$this->_data[$key] = $value;
 	}
 
+	public function get ($key) {
+		return isset($this->_data[$key]) ? $this->_data[$key] : false;
+	}
+
 	public function is_empty () {
 		return empty($this->_data);
 	}
@@ -168,9 +172,16 @@ abstract class Upfront_Model {
 
 abstract class Upfront_JsonModel extends Upfront_Model {
 
+	protected static $instance;
+
 	protected function __construct ($json=false) {
 		$this->_data = $json;
 		$this->initialize();
+		self::$instance = $this;
+	}
+	
+	public function get_instance () {
+		return self::$instance;
 	}
 
 	public function initialize () {
@@ -207,7 +218,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			$layout = self::from_id($id);
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
-				return $layout;
+				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
 		return $layout;
@@ -237,6 +248,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				}
 			}
 			$data['regions'] = $regions;
+			$data['layout'] = self::$cascade;
 		}
 		return self::from_php($data);
 	}
