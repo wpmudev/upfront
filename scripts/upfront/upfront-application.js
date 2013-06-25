@@ -24,7 +24,8 @@ var LayoutEditor = new (Subapplication.extend({
 	routes: {
 		"done": "destroy_editor",
 		"layout(/:id)": "dispatch_layout_loading",
-		"new-layout": "dispatch_layout_creation"
+		"new-layout": "dispatch_layout_creation",
+		"create(/:postType)": "create_post",
 	},
 
 	run: function () {
@@ -81,7 +82,7 @@ var LayoutEditor = new (Subapplication.extend({
 			present = !!app.layout
 		;
 		$("body").removeClass(Upfront.Settings.LayoutEditor.Grid.scope);
-		Upfront.Util.post({"action": this.actions.load, "data": layout_ids})
+		return Upfront.Util.post({"action": this.actions.load, "data": layout_ids})
 			.success(function (test_data) {
 				app.layout = new Upfront.Models.Layout(test_data.data);
 
@@ -283,6 +284,11 @@ var LayoutEditor = new (Subapplication.extend({
 		if (!this.settings_view) return false;
 		$(Upfront.Settings.LayoutEditor.Selectors.settings).html('').hide();
 		this.settings_view = false;
+	},
+
+	create_post: function(postType){
+		Upfront.Settings.LayoutEditor.newpostType = postType;
+		this.load_layout({item: 'single-' + postType, type: 'single'});
 	}
 
 }))();
@@ -314,6 +320,9 @@ var ContentEditor = new (Subapplication.extend({
 		var app = this;
 		app.set_up_event_plumbing();
 		app.set_up_editor_interface();
+
+
+		Upfront.Events.trigger('upfront:application:contenteditor:render');
 	},
 
 	set_up_event_plumbing: function () {},
@@ -324,6 +333,7 @@ var ContentEditor = new (Subapplication.extend({
 		;
 		if (!sidebar) this.create_new_sidebar();
 		else sidebar.to_content_editor();
+
 
 	},
 

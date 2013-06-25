@@ -67,7 +67,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			$post_classes = apply_filters('upfront_posts_post_classes', array('uposts-post'), $post, $content_type, $featured_image);
 			$post_class = implode(" ", $post_classes);
 
-			$ret .= "<li class='{$post_class}' data-post_id='{$post->ID}'>" .
+			$ret .= "<li class='{$post_class} uposts-posts-{$post->ID}' data-post_id='{$post->ID}'>" .
 				apply_filters('upfront_posts_post_markup', 
 					"<span class='uposts-tumbnail_container'>{$thumbnail}</span>" .
 					"<h3 class='post_title'><a href='{$link}'>{$title}</a></h3>" .
@@ -75,7 +75,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			"</li>";
 		}
 		return "<ul class='uposts-posts'>{$ret}</ul>";
-	}
+	}	
 
 	// Inject style dependencies
 	public static function add_public_style () {

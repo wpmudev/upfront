@@ -127,27 +127,71 @@ define(_template_files, function () {
 		}
 	});
 
-	var Command_NewPage = Command.extend({
-		"className": "command-new-page",
-		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-page');
-			this.$el.html("New page");
-		},
-		on_click: function () {
-			window.location = Upfront.Settings.Content.create.page;
-		}
-
-	});
+	
 	var Command_NewPost = Command.extend({
 		"className": "command-new-post",
+		postView: false,
+		postType: 'post',
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-post');
 			this.$el.html("New post");
 		},
 		on_click: function () {
-			window.location = Upfront.Settings.Content.create.post;
-		}
+			//window.location = Upfront.Settings.Content.create.post;
+			var me = this;
 
+			//Destroy any previous ckeditor instances
+			if (CKEDITOR.instances['upfront-body']) CKEDITOR.instances['upfront-body'].destroy();
+
+			$(".upfront-layout").append('<div id="upfront-loading">Loading...</div>');
+			this.postView = false;
+
+			Upfront.Settings.LayoutEditor.newpostType = this.postType;
+			Upfront.Application.LayoutEditor.load_layout({item: 'single-' + this.postType, type: 'single'})
+				.done(function(response){
+					//Upfront.Events.off("elements:this_post:loaded", this.on_post_loaded, this);
+					Upfront.Events.on("elements:this_post:loaded", me.on_post_loaded, me);
+				})
+			;
+			/*
+			//Try to get the element from the layout
+			.done(function(response){
+				var layout = new Upfront.Models.Layout(response),
+					region = layout.get('regions').get_by_name('main'),
+					modules = region.get('modules')
+				;
+
+				modules.each(function(module){
+					module.get('objects').each(function(element){
+						if(element.get_property_value_by_name('type') == 'ThisPostModel'){
+							var id = element.id
+						}
+					});
+				});
+
+			});*/
+		},
+		on_post_loaded: function(view) {
+			if(!this.postView){
+				this.postView = view;
+				view.editPost(view.post);
+				Upfront.Events.off("upfront:application:contenteditor:render", this.select_title, this);
+				Upfront.Events.on("upfront:application:contenteditor:render", this.select_title, this);
+			}
+		},
+		select_title: function(){
+			var input = this.postView.$('.post_title input').focus();
+			input.val(input.val()); //Deselect the text
+			$('#upfront-loading').remove();
+		}
+	});
+	var Command_NewPage = Command_NewPost.extend({
+		"className": "command-new-page",
+		postType: 'page',
+		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-page');
+			this.$el.html("New page");
+		}
 	});
 
 	var Command_SaveLayout = Command.extend({
@@ -444,9 +488,6 @@ define(_template_files, function () {
 		}
 	});
 	
-	
-	
-	
 	var SidebarPanel = Backbone.View.extend({
 		"tagName": "li",
 		"className": "sidebar-panel",
@@ -489,6 +530,12 @@ define(_template_files, function () {
 				command.render();
 				me.$el.find('.sidebar-panel-content').append(command.$el);
 			});
+		},
+		show: function() {
+			this.$el.show();
+		},
+		hide: function() {
+			this.$el.hide();
 		}
 	});
 	
@@ -986,28 +1033,30 @@ define(_template_files, function () {
 		},
 		to_content_editor: function () {
 			var panel = this.sidebar_panels.panels.posts,
-				data = $(document).data("upfront-post-" + _upfront_post_data.post_id),
-				post = data && data.post ? data.post : {},
-				post_model = new Backbone.Model(post)
+				post_model = $(document).data("upfront-post-current")
 			;
-			panel.commands = _([
-				new Command_PopupStatus({"model": post_model}),
-				new Command_PopupVisibility({"model": post_model}),
+			if(!panel.commands){
+				panel.commands = _([
+					new Command_PopupStatus({"model": post_model}),
+					new Command_PopupVisibility({"model": post_model}),
 
-				new Command_PopupList({"model": this.model}),
-				new Command_PopupSlug({"model": this.model}),
-				new Command_PopupMeta({"model": this.model}),
-				new Command_PopupTax({"model": this.model}),
-				new Command_SaveDraft({"model": this.model}),
-				new Command_SavePublish({"model": this.model})
-			]);
-			panel.render();
+					new Command_PopupList({"model": this.model}),
+					new Command_PopupSlug({"model": this.model}),
+					new Command_PopupMeta({"model": this.model}),
+					new Command_PopupTax({"model": this.model}),
+					new Command_SaveDraft({"model": this.model}),
+					new Command_SavePublish({"model": this.model})
+				]);
+				panel.render();
+			}
+			else
+				panel.show();
 			panel.$el.find(".sidebar-panel-title").trigger("click");
 		},
 		from_content_editor: function () {
 			var panel = this.sidebar_panels.panels.posts;
-			panel.commands = _([]);
-			panel.render();
+			//panel.commands = _([]);
+			panel.hide();//render();
 			$(".sidebar-panel-title.upfront-icon.upfront-icon-panel-elements").trigger("click");
 		},
 		handle_post_change: function (post) {

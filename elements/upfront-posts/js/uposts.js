@@ -1,9 +1,14 @@
 (function ($) {
 
+	var _initial = {};
 
-Upfront.Util.post({
-	"action": "uposts_list_initial_info"
-}).success(function (_initial) {
+
+	Upfront.Util.post({
+		"action": "uposts_list_initial_info"
+	}).success(function (initialData) {
+		_initial = initialData.data;
+	}); // End response wrap
+
 
 	/**
 	 * Define the model - initialize properties to their default values.
@@ -15,12 +20,19 @@ Upfront.Util.post({
 		 * Used for setting up instance defaults, initialization and the like.
 		 */
 		init: function () {
-			this.init_property("type", "UpostsModel");
-			this.init_property("view_class", "UpostsView");
+			this.init_properties({
+				type: 'UpostsModel',
+				view_class: 'UpostsView',
+				element_id: Upfront.Util.get_unique_id("uposts-object"),
+				has_settings: 1,
 
-			this.init_property("element_id", Upfront.Util.get_unique_id("uposts-object"));
-			this.init_property("class", "c22");
-			this.init_property("has_settings", 1);
+				post_type: 'post',
+				taxonomy: '',
+				term: '',
+				limit: 10,
+				content_type: 'full',
+				featured_image: true
+			});
 		}
 	});
 
@@ -29,6 +41,8 @@ Upfront.Util.post({
 	 * @type {Upfront.Views.ObjectView}
 	 */
 	var UpostsView = Upfront.Views.ObjectView.extend({
+		post: false,
+		currentPost: false,
 		/**
 		 * Element contents markup.
 		 * @return {string} Markup to be shown.
@@ -82,47 +96,22 @@ Upfront.Util.post({
 		on_edit: function (e) {
 			var me = this,
 				$post = $(e.target).parents(".uposts-post"),
-				$title = $post.find("h3.post_title a"),
-				$body = $post.find(".post_content"),
-				post_id = $post.attr("data-post_id"),
-				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type")
+				post_id = $post.attr("data-post_id")
 			;
 			// Hacky way of closing other instances
 			if ($("#upfront-post-cancel_edit").length) {
 				$("#upfront-post-cancel_edit").trigger("click");
 			}
-			// End hack
-			Upfront.Util.post({
-				"action": "this_post-get_markup",
-				"data": JSON.stringify({
-					"post_id": post_id
-				})
-			}).success(function (response) {
-				_upfront_post_data._old_post_id = _upfront_post_data.post_id;
-				_upfront_post_data.post_id = post_id;
-				$(document).data("upfront-post-" + post_id, response.data);
-				$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + response.data.raw.title + '"/>');
-				$body.html(
-					'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post_id + '" />' +
-					'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + (is_excerpt ? response.data.raw.excerpt : response.data.raw.content) + '</div>' +
-					'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
-				);
 
-				// Prevent default events, we're in editor mode.
-				me.undelegateEvents();
-				// Kill the draggable, so we can work with regular inline editor.
-				me.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('disable');
-
-				CKEDITOR.inline('upfront-body');
-				$body
-					.find("#upfront-body").focus().end()
-					.find("#upfront-post-cancel_edit").click(function () {
-						me.stop_editor();
-					})
-				;
-				Upfront.Application.ContentEditor.run();
-				Upfront.Events.on("entity:deactivated", me.stop_editor, me);
-			});
+			this.post = $(document).data("upfront-post-" + post_id);
+			if(!this.post){
+				this.post = new Upfront.Models.Post({ID: post_id});
+				this.post.fetch().done(function(response){
+					me.editPost(me.post);
+				});
+			}
+			else
+				this.editPost(this.post);
 		},
 		stop_editor: function () {
 			this.on_cancel();
@@ -137,6 +126,45 @@ Upfront.Util.post({
 			this.deactivate();
 			this.delegateEvents();
 			this.render();
+		},
+		editPost: function(post){
+			var me = this,
+				$post = this.$('.uposts-posts-' + post.id),
+				$title = $post.find("h3.post_title a"),
+				$body = $post.find(".post_content"),
+				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type")
+			;
+
+			debugger;
+
+			$(document).data("upfront-post-" + post.id, post);
+			$(document).data("upfront-post-current", post);
+
+			_upfront_post_data._old_post_id = _upfront_post_data.post_id;
+			_upfront_post_data.post_id = post.id;
+
+
+			$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + post.get('post_title') + '"/>');
+			$body.html(
+				'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post.id + '" />' +
+				'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + (is_excerpt ? post.get('post_excerpt') : post.get('post_content')) + '</div>' +
+				'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
+			);
+
+			// Prevent default events, we're in editor mode.
+			this.undelegateEvents();
+			// Kill the draggable, so we can work with regular inline editor.
+			this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('disable');
+
+			CKEDITOR.inline('upfront-body');
+			$body
+				.find("#upfront-body").focus().end()
+				.find("#upfront-post-cancel_edit").click(function () {
+					me.stop_editor();
+				})
+			;
+			Upfront.Application.ContentEditor.run();
+			Upfront.Events.on("entity:deactivated", this.stop_editor, this);
 		}
 
 	});
@@ -237,7 +265,7 @@ Upfront.Util.post({
 			;
 
 			markup = '<select name="post_types">';
-			$.each(_initial.data.post_types, function (type, label) {
+			$.each(_initial.post_types, function (type, label) {
 				var active = post_type == type ? 'selected="selected"' : '';
 				markup += '<option value="' + type + '" ' + active + '>' + label + '</option>';
 			});
@@ -280,7 +308,7 @@ Upfront.Util.post({
 			;
 
 			markup = '<select name="taxonomy"><option></option>';
-			$.each(_initial.data.taxonomies, function (type, label) {
+			$.each(_initial.taxonomies, function (type, label) {
 				var active = taxonomy == type ? 'selected="selected"' : '';
 				markup += '<option value="' + type + '" ' + active + '>' + label + '</option>';
 			});
@@ -592,9 +620,6 @@ Upfront.Util.post({
 	Upfront.Models.UpostsModel = UpostsModel;
 	Upfront.Views.UpostsView = UpostsView;
 
-
-
-}); // End response wrap
 
 
 })(jQuery);

@@ -509,6 +509,19 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			}
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
+		else if( $data['id'] === '0') { //New post
+			$post_type = $data['post_type'] ? $data['post_type'] : 'post';
+			$post = array(
+				'ID' => 0, 
+				'post_type' => $post_type,
+				'post_title' => 'Please enter your new ' . $post_type . ' title here',
+				'post_content' => 'Your ' . $post_type . ' content goes here. Have fun writing :)'
+			);
+			if($post_type == 'page'){
+				$post['post_content'] = 'Type your page content here. Feel free to add some elements from the left sidebar.';
+			}
+			$this->_out(new Upfront_JsonResponse_Success($post));
+		}
 		
 		$this->_out(new Upfront_JsonResponse_Error("Post not found."));
 	}

@@ -25,47 +25,68 @@ var ThisPostModel = Upfront.Models.ObjectModel.extend({
  * @type {Upfront.Views.ObjectView}
  */
 var ThisPostView = Upfront.Views.ObjectView.extend({
+	post: false,
+	content: false,
+	loading: false,
+
+	initialize: function(){
+		var me = this,
+			postType = Upfront.Settings.LayoutEditor.newpostType ? Upfront.Settings.LayoutEditor.newpostType : 'post'
+		;
+		Upfront.Views.ObjectView.prototype.initialize.call(this);
+
+		this.loading = this.get_post_content().done(function(response){
+			me.content = response.data.filtered;
+		});
+
+
+		this.post = new Upfront.Models.Post({id: _upfront_post_data.post_id, post_type: postType});
+		this.post.fetch().done(function(response){
+			$(document).data("upfront-post-" + me.post.id, me.post);
+			$(document).data("upfront-post-current", me.post);
+			Upfront.Events.trigger("elements:this_post:loaded", me);
+		});
+	},
+
 	/**
 	 * Element contents markup.
 	 * @return {string} Markup to be shown.
 	 */
 	get_content_markup: function () {
-		var content = $(document).data("upfront-post-" + _upfront_post_data.post_id);
-		return content ? content.filtered : 'Hold on please';
+		var content = this.content;
+		return content ? content : 'Hold on please';
 	},
 
 	on_render: function () {
 		var me = this,
-			element_id = this.model.get_property_value_by_name("element_id"),
-			content = $(document).data("upfront-post-" + _upfront_post_data.post_id)
+			element_id = this.model.get_property_value_by_name("element_id")
 		;
 
-		if (content) $("#" + element_id).find(".upfront-object-content").html(content.filtered);
-		else this._get_post_content();
-		Upfront.Application.ContentEditor.stop();
-		Upfront.Events.on("upfront:posts:post:post_updated", function () {
-			me._get_post_content();
-		});
+		if (this.content) 
+			$("#" + element_id).find(".upfront-object-content").html(this.content);
+		else 
+			this.loading.done(function(response){
+				me.render();
+			});
+
+		//Upfront.Application.ContentEditor.stop();
 		this.trigger("rendered", this);
 	},
 
-	_get_post_content: function () {
-		var me = this;
-		if (!this._content) Upfront.Util.post({
+	get_post_content: function () {
+		var postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+		return Upfront.Util.post({
 			"action": "this_post-get_markup",
 			"data": JSON.stringify({
-				"post_id": _upfront_post_data.post_id
+				"post_id": postId,
+				"post_type": Upfront.Settings.LayoutEditor.newpostType
 			})
-		}).success(function (response) {
-			$(document).data("upfront-post-" + _upfront_post_data.post_id, response.data);
-			me.render();
-			Upfront.Events.trigger("elements:this_post:loaded", me);
 		});
 	},
 
-	on_edit: function () {
+	on_edit: function (e) {
 		var me = this,
-			content = $(document).data("upfront-post-" + _upfront_post_data.post_id),
+			content = this.content,
 			$title = this.$el.find('h3.post_title a'),
 			$body = this.$el.find('.post_content'),
 			$parent = me.parent_module_view.$el.find('.upfront-editable_entity:first')
@@ -74,30 +95,19 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if ($("#upfront-post-cancel_edit").length) {
 			$("#upfront-post-cancel_edit").trigger("click");
 		}
-		// End hack
-		$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + content.raw.title + '"/>');
-		$body.html(
-			'<input type="hidden" name="post_id" id="upfront-post_id" value="' + _upfront_post_data.post_id + '" />' +
-			'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + content.raw.content + '</div>' +
-			'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
-		);
-		// Prevent default events, we're in editor mode.
-		me.undelegateEvents();
-		// Kill the draggable, so we can work with regular inline editor.
-		if ($parent.is(".ui-draggable")) $parent.draggable('disable');
 
-		CKEDITOR.inline('upfront-body');
-		$body
-			.find("#upfront-body").focus().end()
-			.find("#upfront-post-cancel_edit").on("click", function () {
-				me.stop_editor();
-			})
-		;
-		Upfront.Application.ContentEditor.run();
-
-		Upfront.Events.on("entity:deactivated", this.stop_editor, this);
+		if(!this.post){
+			this.post = new Upfront.Model.Post({id: _upfront_post_data.post_id});
+			this.post.fetch().done(function(response){
+				me.editPost(me.post, e);
+			});
+		}
+		else
+			this.editPost(this.post, e);
 	},
 	stop_editor: function () {
+		this.post.set('post-title', this.$('#upfront-title').val());
+		this.post.set('upfront-body', this.$('#upfront-title').val());
 		this.on_cancel();
 		Upfront.Application.ContentEditor.stop();
 	},
@@ -117,6 +127,79 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if ($parent.is(".ui-draggable")) $parent.draggable('enable');
 		this.delegateEvents();
 		this.render();
+	},
+	editPost: function (post, e) {
+		var me = this,
+			content = this.content,
+			$title = this.$el.find('h1.post_title'),
+			$body = this.$el.find('.post_content'),
+			$parent = me.parent_module_view.$el.find('.upfront-editable_entity:first')
+		;
+
+		//Wait to the post to be fetched
+		if(!this.content)
+			return this.loading.done(function(){
+				me.editPost(post,e);
+			})
+		;
+
+		$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + $title.text() + '"/>');
+		$body.html(
+			'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post.id + '" />' +
+			'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + post.get('post_content') + '</div>' +
+			'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
+		);
+		this.applyStyles($title);
+		// Prevent default events, we're in editor mode.
+		me.undelegateEvents();
+		// Kill the draggable, so we can work with regular inline editor.
+		if ($parent.is(".ui-draggable")) $parent.draggable('disable');
+
+
+		CKEDITOR.inline('upfront-body');
+
+		$body.find('#upfront-body').off('focus')
+			.on('focus', function(){
+				$('#cke_upfront-body').show();
+			})
+			.off('blur')
+			.on('blur', function(){
+				$('#cke_upfront-body').hide();
+			})
+		;
+
+		$body
+			.find("#upfront-body").focus().end()
+			.find("#upfront-post-cancel_edit").on("click", function () {
+				me.stop_editor();
+			})
+		;
+		Upfront.Application.ContentEditor.run();
+
+		Upfront.Events.on("entity:deactivated", this.stop_editor, this);
+	},
+	applyStyles: function ($element) {
+		var styles = window.getComputedStyle ? window.getComputedStyle($element[0]) : $element[0].currentStyle,
+			transform = !window.getComputedStyle
+		;
+		if(styles){
+			$element.children().css({
+				background: 'transparent',
+				border: 0,
+				'font-weight': styles[this.toCamelCase('font-weight', transform)],
+				'font-size': styles[this.toCamelCase('font-size', transform)],
+				'font-family': styles[this.toCamelCase('font-family', transform)],
+				'color': styles.color,
+				'outline': 0,
+				margin:0,
+				padding: 0
+			});
+		}
+	},
+	toCamelCase: function(str, transform) {
+		if(!transform)
+			return str;
+		return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase() });
 	}
 });
 
@@ -164,15 +247,12 @@ var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
 // ----- Bringing everything together -----
 // The definitions part is over.
 // Now, to tie it all up and expose to the Subapplication.
-
-if (_upfront_post_data.post_id) {
-	Upfront.Application.LayoutEditor.add_object("ThisPost", {
-		"Model": ThisPostModel,
-		"View": ThisPostView,
-		"Element": ThisPostElement
-	});
-	Upfront.Models.ThisPostModel = ThisPostModel;
-	Upfront.Views.ThisPostView = ThisPostView;
-}
+Upfront.Application.LayoutEditor.add_object("ThisPost", {
+	"Model": ThisPostModel,
+	"View": ThisPostView,
+	"Element": ThisPostElement
+});
+Upfront.Models.ThisPostModel = ThisPostModel;
+Upfront.Views.ThisPostView = ThisPostView;
 	
 })(jQuery);
