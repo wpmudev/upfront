@@ -8,7 +8,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		"</div>";
 	}
 
-	public static function get_post_markup ($post_id, $post_type) {
+	public static function get_post_markup ($post_id, $post_type = 'post') {
 		if($post_id === 0)
 			return self::get_new_post($post_type);
 
@@ -23,7 +23,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return self::post_template($post->post_type, $title, $content, $post);
 	}
 
-	public static function get_new_post($post_type) {
+	public static function get_new_post($post_type = 'post') {
 
 		$title = sprintf(__('Enter your new %s title here', 'upfront'), $post_type);
 		$content = sprintf(__('Your %s content goes here. Have fun writing :)', 'upfront'), $post_type);

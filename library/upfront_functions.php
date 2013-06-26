@@ -37,7 +37,7 @@ function upfront_element_url ($relpath, $filepath) {
 }
 
 function upfront_get_unique_id ($pfx = '') {
-	return sprintf("%s-%s-%s", ($pfx ? $pfx : "entity"), time(), rand(1000,1999));
+	return sprintf("%s-%s-%s", ($pfx ? $pfx : "entity"), time(), rand(1000,99999));
 }
 
 

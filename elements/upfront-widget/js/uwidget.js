@@ -18,18 +18,28 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		 	me = this;
 		if ( !widget )
 			return "Please select widget on settings";
+		var widget_data = $(document).data('upfront-widget-' + widget);
+		return widget_data ? widget_data : 'Loading';
+	},
+	
+	on_render: function () {
+		var widget = this.model.get_property_value_by_name('widget');
+		if ( !widget )
+			return;
+		if ( !$(document).data('upfront-widget-' + widget) )
+			this._get_widget_markup(widget);
+	},
+	
+	_get_widget_markup: function (widget) {
+		var me = this;
 		Upfront.Util.post({"action": "uwidget_get_widget_markup", "data": JSON.stringify({"widget": widget})})
 			.success(function (ret) {
-				me.$el.find('.upfront-object-content').html(ret.data);
+				$(document).data('upfront-widget-' + widget, ret.data);
+				me.render();
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error loading widget");
 		});
-		return 'Loading';
-	},
-	
-	on_render: function () {
-		
 	}
 });
 
