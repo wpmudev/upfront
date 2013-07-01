@@ -26,45 +26,43 @@
      */
     var FacepileView = Upfront.Views.ObjectView.extend({
 
+        model: FacepileModel,
+
         initialize: function(){
             Upfront.Views.ObjectView.prototype.initialize.call(this);
-            //Upfront.Events.on("re_render_facepile",this.reRenderFacepile, this );
-            //this.faceBookScript(document, 'script', 'facebook-jssdk');
             this.socialMediaGlobalSettingsView = new Upfront.SocialMediaGlobalSettings();
-        },
-
-        runScript: false,
-
-        faceBookScript: function(d, s, id){
-
-            if(this.runScript) return;
-
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-            fjs.parentNode.insertBefore(js, fjs);
-
-            this.runScript = true;
-        },
-
-        reRenderFacepile: function(){
-            var isShowCounts = this.model.get_property_value_by_name("is_show_counts");
-            this.$el.find('.upfront-facepile-box').empty().append('<div id="fb-root"></div></div><fb:facepile href="'+ this.socialMediaGlobalSettingsView.model.get_property_value_by_name('facebook_page_url') +'" '+( isShowCounts ? '' : 'show_count="false"')+' width="300" max_rows="1"></fb:facepile>');
-            if (typeof FB  != "undefined"){
-               FB.XFBML.parse()
+            if(this.socialMediaGlobalSettingsView.model.get("properties").length){
+                this.socialMediaGlobalSettingsView.model.get("properties").where({name:'facebook_page_url'})[0].on("change:value", this.render, this);
             }
+        },
+
+        events: function(){
+            return _.extend({},Upfront.Views.ObjectView.prototype.events,{
+                'click a.back_global_settings' : 'backToGlobalSettings'
+            });
+        },
+
+        backToGlobalSettings: function(e){
+            e.preventDefault();
+            this.socialMediaGlobalSettingsView.popupFunc();
         },
         /**
          * Element contents markup.
          * @return {string} Markup to be shown.
          */
-        model: FacepileModel,
-
         get_content_markup: function () {
-            var isShowCounts = this.model.get_property_value_by_name("is_show_counts");
-            //return '<div class="upfront-facepile-box"><div id="fb-root"></div><fb:facepile href="'+ this.socialMediaGlobalSettingsView.model.get_property_value_by_name('facebook_page_url') +'" '+( isShowCounts ? '' : 'show_count="false"')+' width="300" max_rows="1"></fb:facepile></div>';
-        return 'Facepile'
+
+            var fbUrl = this.socialMediaGlobalSettingsView.model.get_property_value_by_name('facebook_page_url');
+
+            if(fbUrl || !fbUrl == ''){
+                var pageName = this.socialMediaGlobalSettingsView.getLastPartOfUrl(fbUrl);
+                var isShowCounts = this.model.get_property_value_by_name("is_show_counts");
+
+                return '<iframe src="//www.facebook.com/plugins/facepile.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName == '0' || pageName == ''  ? '' : pageName )+'&amp;app_id&amp;action&amp;max_rows=3&amp;size=medium&amp;show_count='+(isShowCounts ? 'true':'false')+'&amp;width=256&amp;colorscheme=light" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:256px;" allowTransparency="true"></iframe>'+ (pageName == '0' || pageName == ''  ? '<span class="alert-url">!</span>' : '' )
+            }else{
+                return 'Whoops! it looks like you need to update your <a class="back_global_settings" href="#">global settings</a>';
+            }
+
         }
 
     });
@@ -144,8 +142,9 @@
 
         initialize: function(){
             this.socialMediaGlobalSettingsView = new Upfront.SocialMediaGlobalSettings();
-            this.socialMediaGlobalSettingsView.model.get("properties").on("change", this.render, this);
-
+            if(this.socialMediaGlobalSettingsView.model.get("properties").length){
+                this.socialMediaGlobalSettingsView.model.get("properties").where({name:'facebook_page_url'})[0].on("change:value", this.render, this);
+            }
         },
         /**
          * Set up setting item Facebook Page Url options.
@@ -189,7 +188,13 @@
         updateFacebookPageUrl: function(){
             var $fbUrlDiv = this.$el.find('.facepile_url_input_box');
             var $url = $fbUrlDiv.find('#style_layput_type-fb-page-url').val();
-            $fbUrlDiv.empty().append(this.$editMarkup).find('span a').text($url);
+
+            if($url !== ''){
+                $fbUrlDiv.empty().append(this.$editMarkup).find('span a').text($url);
+            }
+            else{
+                $fbUrlDiv.find('input').focus();
+            }
 
             var currentData = this.socialMediaGlobalSettingsView.model.get('properties').toJSON();
 
