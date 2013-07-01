@@ -237,9 +237,6 @@
                     (pintrestPageUrl ? 'Pinterest <input type="text" id="social_media_global_settings-pintrest" name="pintrest_page_url" value="' + pintrestPageUrl + '" placeholder="https://www.pinterest.com/yourpage" /> <br>' : '') +
 
                     '<select id="select_page_url" name="select_page_url">' +
-                    // '<option id="social_media_global_settings-facebook" data-name="facebook_page_url" data-placeholder="https://www.facebook.com/yourpage">Facebook</option>' +
-                    // '<option id="social_media_global_settings-twitter" data-name="twitter_page_url" data-placeholder="https://www.twitter.com/yourpage">Twitter</option>' +
-                    // '<option id="social_media_global_settings-google" data-name="google_page_url" data-placeholder="https://www.google.com/yourpage">Google</option>' +
                     '<option value="0">Other</option>' +
                     '<option id="social_media_global_settings-linkedin" data-name="linkedin_page_url" data-placeholder="https://www.linkedin.com/yourpage">LinkedIn</option>' +
                     '<option id="social_media_global_settings-pintrest" data-name="pintrest_page_url" data-placeholder="https://www.pintrest.com/yourpage">Pintrest</option>' +
@@ -335,6 +332,7 @@
 
             var currentData = this.model.get('properties').toJSON();
 
+            //TODO: Inject Social buttons to post top and bottom
             var $PostOptions = this.$popup.content.find(':checkbox[name="post-options"]:checked');
             $PostOptions = $PostOptions.length ? parseInt($PostOptions.val(), 10) : 0;
 
@@ -409,6 +407,11 @@
                         Upfront.Util.log("Error Saving settings");
                     });
             }
+        },
+        getLastPartOfUrl: function(url){
+            var splitUrlArray = url.split('/'),
+                lastPart = splitUrlArray.pop();
+            return lastPart;
         }
 
     });
@@ -442,8 +445,8 @@
     var SocialMediaView = Upfront.Views.ObjectView.extend({
 
         model:SocialMediaModel,
-
         initialize: function(){
+            var me = this;
             Upfront.Views.ObjectView.prototype.initialize.call(this);
             Upfront.Events.on("entity:drag_stop", this.dragStop, this);
         },
@@ -452,12 +455,6 @@
             return _.extend({},Upfront.Views.ObjectView.prototype.events,{
                 "click input[name='social_button_layout_option']": "setLayoutStyle"
             });
-        },
-
-        getLastPartOfUrl: function(url){
-            var splitUrlArray = url.split('/'),
-            lastPart = splitUrlArray.pop();
-            return lastPart;
         },
 
         setLayoutStyle: function(e){
@@ -597,8 +594,47 @@
             if(pSettings.fanSocialMediaServices){
                 _.each(pSettings.fanSocialMediaServices, function(social) {
                     if(social.value == 0) return;
-                    $fanFollowerCount.append('<div class="ufront-'+ social.name.toLowerCase()+'-box upfront-social-icon"><a href="'+ (social.url == '0' || social.url == ''  ? '#' : social.url )+'">'+ social.name + '<span class="upfront-fan-follow-count upfront-fan-'+social.name.toLowerCase()+'-count"> 666 Fan</span></a>'+ (social.url == '0' || social.url == '' ? '<span class="alert-url">!</span>':'' )+'</div>');
+                    $fanFollowerCount.append('<div data-id="upfront-icon-'+social.id+'" class="upfront-social-icon"><a href="'+ (social.url == '0' || social.url == ''  ? '#' : social.url )+'">'+ social.name + '</a>'+ (social.url == '0' || social.url == '' ? '<span class="alert-url">!</span>':'' )+'</div>');
                 });
+
+                var fbUrl = socialMediaGlobalSettingsPanel.model.get_property_value_by_name('facebook_page_url');
+
+                if(fbUrl || !fbUrl == ''){
+                    var pageName = socialMediaGlobalSettingsPanel.getLastPartOfUrl(fbUrl);
+                    $.getJSON('https://graph.facebook.com/'+pageName)
+                        .done(function( data ) {
+                            var likes;
+                            if(data.likes){
+                                likes = data.likes;
+                            }
+                            else{
+                                likes = 'Error';
+                            }
+                            var countText = data.likes+' FANS';
+                            me.appendCounts(1, countText);
+                        });
+                }else{
+                    var countText = 'Error FANS';
+                    me.appendCounts(1, countText);
+                }
+
+                Upfront.Util.post({"action": "upfront_get_twitter_page_likes"})
+                    .success(function (ret) {
+                        var countText = ret.data+' FOLLOWERS';
+                        me.appendCounts(2, countText);
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error loading Twitter Followers counts");
+                    });
+
+                Upfront.Util.post({"action": "upfront_get_google_page_subscribers"})
+                    .success(function (ret) {
+                        var countText = ret.data+' SUBSCRIBERS';
+                        me.appendCounts(3, countText);
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error loading Google subscribers counts");
+                    });
 
                 if( !$.trim( $fanFollowerCount.html() ).length ) {
                     $fanFollowerCount.append('Please select Social Media Services ...!');
@@ -609,6 +645,10 @@
             }
 
             return $fanFollowerCount.html();
+        },
+
+        appendCounts: function(id,countText){
+            this.$el.find('div[data-id="upfront-icon-'+id+'"] a').append('<span class="upfront-fan-count"> '+countText+'</span>');
         },
 
         likeFollowPlusOne: function(){
@@ -636,9 +676,41 @@
             $likeFollowPlusOne.empty();
 
             if(pSettings.likeSocialMediaServices){
+                //TODO: Get post url and short content
+                var pageUrl = 'http://furqankhanzada.com/backbonejs/task/',
+                pageContent = 'Hi, Here is the test content';
+
                 _.each(pSettings.likeSocialMediaServices, function(social) {
                     if(social.value == 0) return;
-                    $likeFollowPlusOne.append('<div class="ufront-'+ social.name.toLowerCase()+'-box upfront-social-icon"><a href="'+ (social.url == '0' || social.url == ''  ? '#' : social.url )+'">'+ social.name + '</a>'+ (social.url == '0' || social.url == '' ? '<span class="alert-url">!</span>':'' )+'</div>');
+                    $likeFollowPlusOne.append('<div data-id="upfront-icon-'+social.id+'" class="upfront-social-icon">' +
+
+                        (social.id == 1 ? '<iframe src="//www.facebook.com/plugins/like.php?' +
+                            'href='+pageUrl+'&amp;' +
+                            'send=false&amp;' +
+                            'layout='+(pSettings.counterOptions ? 'box_count' : 'button_count')+'&amp;' +
+                            'width=80&amp;' +
+                            'show_faces=true&amp;' +
+                            'font&amp;' +
+                            'colorscheme=light&amp;' +
+                            'action=like&amp;' +
+                            'height='+(pSettings.counterOptions ? '65' : '20')+'" ' +
+                            'scrolling="no" frameborder="0" style="border:none; overflow:hidden; ' +
+                            'width:'+(pSettings.counterOptions ? '45' : '80')+'px; ' +
+                            'height:'+(pSettings.counterOptions ? '65' : '20')+'px;" ' +
+                            'allowTransparency="true"></iframe>':'' )+
+
+                        (social.id == 2 ? '<iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?' +
+                            'url='+pageUrl+'&amp;' +
+                            'text='+pageContent+'&amp;' +
+                            'count='+(pSettings.counterOptions ? 'vertical' : 'horizontal')+'&amp;' +
+                            'size=medium" style="' +
+                            'width:'+(pSettings.counterOptions ? '60' : '80')+'px; ' +
+                            'height:'+(pSettings.counterOptions ? '63' : '20')+'px;"></iframe>':'' )+
+
+                        (social.id == 3 ? '<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script><div class="g-plusone" '+(pSettings.counterOptions ? 'data-size="tall"' : 'data-size="medium"')+'></div>':'' )+
+
+                        (social.url == '0' || social.url == '' ? '<span class="alert-url">!</span>':'' )+
+                    '</div>');
                 });
 
                 if( !$.trim( $likeFollowPlusOne.html() ).length ) {
@@ -715,7 +787,7 @@
                     "name": "",
                     "properties": [
                         {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-                        {"name": "class", "value": "c6 upfront-social-media_module"},
+                        {"name": "class", "value": "c7 upfront-social-media_module"},
                         {"name": "has_settings", "value": 0}
                     ],
                     "objects": [
@@ -1172,7 +1244,7 @@
             $input = this.$el.find('.blank_add_page_url_field'),
             url = $selected.attr('data-url');
 
-            if(url == '0'){
+            if(url == '0' || url == ''){
                 $input.val('');
             }
             else{
