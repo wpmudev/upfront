@@ -23,10 +23,6 @@ define(_template_files, function () {
 
 			console.log('refresh');
 
-	// Current user to make it available in the editor.
-	// Fetching its data in the SidePanel rendering.
-	var currentUser;
-
 	// Stubbing interface control
 
 	var Property = Backbone.View.extend({
@@ -140,16 +136,21 @@ define(_template_files, function () {
 			//window.location = Upfront.Settings.Content.create.post;
 			var me = this;
 
+			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
+				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
+
+			//Set a new post as current
+			_upfront_post_data.post_id = 0;
+			Upfront.Settings.LayoutEditor.newpostType = this.postType;
+
 			//Destroy any previous ckeditor instances
 			if (CKEDITOR.instances['upfront-body']) CKEDITOR.instances['upfront-body'].destroy();
 
 			$(".upfront-layout").append('<div id="upfront-loading">Loading...</div>');
 			this.postView = false;
 
-			Upfront.Settings.LayoutEditor.newpostType = this.postType;
 			Upfront.Application.LayoutEditor.load_layout({item: 'single-' + this.postType, type: 'single'})
 				.done(function(response){
-					//Upfront.Events.off("elements:this_post:loaded", this.on_post_loaded, this);
 					Upfront.Events.on("elements:this_post:loaded", me.on_post_loaded, me);
 				})
 			;
@@ -175,14 +176,19 @@ define(_template_files, function () {
 			if(!this.postView){
 				this.postView = view;
 				view.editPost(view.post);
-				Upfront.Events.off("upfront:application:contenteditor:render", this.select_title, this);
+
+				Upfront.Events.off("elements:this_post:loaded", this.on_post_loaded, this);
+
 				Upfront.Events.on("upfront:application:contenteditor:render", this.select_title, this);
 			}
 		},
 		select_title: function(){
 			var input = this.postView.$('.post_title input').focus();
+
 			input.val(input.val()); //Deselect the text
 			$('#upfront-loading').remove();
+
+			Upfront.Events.off("upfront:application:contenteditor:render", this.select_title, this);
 		}
 	});
 	var Command_NewPage = Command_NewPost.extend({
@@ -499,19 +505,10 @@ define(_template_files, function () {
 			this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
 			this.$el.append('<div class="sidebar-panel-content" />');
 			if ( this.on_render ) this.on_render();
-			this.fetchCurrentUser();
 		},
 		on_click: function () {
 			$('.sidebar-panel').not(this.$el).removeClass('expanded');
 			this.$el.addClass('expanded');
-		},
-		fetchCurrentUser: function() {
-			currentUser = new Upfront.Models.User();
-			currentUser.fetch();
-
-			Upfront.Util.get_current_user = function(){
-				return currentUser;
-			}
 		}
 	});
 	
@@ -553,7 +550,8 @@ define(_template_files, function () {
 		}
 	});
 	
-	var SidebarPanel_DraggableElements = SidebarPanel.extend({
+	var SidebarPanel_DraggableElements = SidebarPanel.extend({		
+		"className": "sidebar-panel sidebar-panel-elements",
 		initialize: function () {
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
@@ -929,6 +927,7 @@ define(_template_files, function () {
 			this.commands = _([
 				new Command_NewPage({"model": this.model}),
 				new Command_NewPost({"model": this.model}),
+				new Command_PopupList({"model": this.model}),
 			]);
 		}
 	});
@@ -999,7 +998,7 @@ define(_template_files, function () {
 			};
 			this.sidebar_panels = new SidebarPanels({"model": this.model});
 
-			this.fetch_current_post_and_user();
+			this.fetch_current_user();
 
 			Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
 		},
@@ -1033,24 +1032,26 @@ define(_template_files, function () {
 		},
 		to_content_editor: function () {
 			var panel = this.sidebar_panels.panels.posts,
-				post_model = $(document).data("upfront-post-current")
+				post_model = Upfront.data.currentPost
 			;
 			if(!panel.commands){
 				panel.commands = _([
 					new Command_PopupStatus({"model": post_model}),
 					new Command_PopupVisibility({"model": post_model}),
+					new Command_PopupSchedule({model: post_model}),
 
-					new Command_PopupList({"model": this.model}),
-					new Command_PopupSlug({"model": this.model}),
-					new Command_PopupMeta({"model": this.model}),
 					new Command_PopupTax({"model": this.model}),
+					new Command_PopupSlug({"model": this.model}),
+					//new Command_PopupMeta({"model": this.model}),
 					new Command_SaveDraft({"model": this.model}),
-					new Command_SavePublish({"model": this.model})
+					new Command_SavePublish({"model": this.model}),
+					new Command_Trash({"model": this.model})
 				]);
 				panel.render();
 			}
 			else
 				panel.show();
+
 			panel.$el.find(".sidebar-panel-title").trigger("click");
 		},
 		from_content_editor: function () {
@@ -1060,74 +1061,56 @@ define(_template_files, function () {
 			$(".sidebar-panel-title.upfront-icon.upfront-icon-panel-elements").trigger("click");
 		},
 		handle_post_change: function (post) {
-			var data = $(document).data("upfront-post-" + _upfront_post_data.post_id);
-			data.post = post;
-			$(document).data("upfront-post-" + _upfront_post_data.post_id, data);
 			this.to_content_editor();
 		},
-		fetch_current_post_and_user: function() {
-			var user = new Upfront.Models.User(), 
-				post, 
-				postId = _upfront_post_data.post_id
-			;
-			if(postId){
-				post = new Upfront.Models.Post({id: postId});
-				post.fetch().done(function(){
-					$(document).data('upfront-post-current', post);
+		fetch_current_user: function() {
+			var user = Upfront.data.currentUser;
+
+			if(!user){
+				user = new Upfront.Models.User();
+				user.fetch().done(function(){
+					Upfront.data.currentUser = user;
 				});
 			}
-
-			user.fetch().done(function(){
-				$(document).data('upfront-user-current', user);
-			});
 		}
 	});
 
 	var ContentEditor_SidebarCommand = Command.extend({
 		tagName: "div",
-		className: "upfront-sidebar-content_editor-sidebar_command"
-	});
+		className: "upfront-sidebar-content_editor-sidebar_command",
+		post: false,
+		initialize: function(){
+			this.setPost();
+			Upfront.Events.on("data:current_post:change", this.setPost, this);
+		},
+		setPost: function(){
+			var currentPost = Upfront.data.currentPost;
 
-	var Command_SaveState = ContentEditor_SidebarCommand.extend({
-		on_click: function () {
-			var data = {
-				"id": $("#upfront-post_id").val(),
-				"title": $("#upfront-title input").val(),
-				"body": $("#upfront-body textarea").val()
-			};
-			Upfront.Util.post({"action": "upfront-edit-" + this.save_state, "data": data})
-				.success(function (resp) {
-					Upfront.Util.log("data saved as draft");
-					Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
-				})
-				.error(function () {
-					Upfront.Util.log("error saving draft");
-				})
-			;
+			if(!currentPost)
+				this.post = new Upfront.Models.Post({post_type: 'post', id: '0'});
+			else if(!this.post || this.post.id !=  currentPost.id){
+				this.post = Upfront.data.currentPost;
+			    if(this.onPostChange)
+			    	this.onPostChange();
+			}
+
+			return this;
 		}
 	});
 
-	var Command_SaveDraft = Command_SaveState.extend({
+	var Command_SaveDraft = ContentEditor_SidebarCommand.extend({
 		save_state: "draft",
 		render: function () {
-			this.$el.addClass("upfront-save_state upfront-draft").html("<span title='Draft'>Save Draft</span>");
+			this.$el.addClass("upfront-save_state upfront-draft").html("<a class='button' href='#'>Save Draft</a>");
 		},
 		on_click: function () {
-			var $post_id =  $("#upfront-post_id"),
-				$title = $("#upfront-title"),
-				$body = $("#upfront-body")
-			;
-			if (!$post_id.length || !$title.length || !$body.length) return false;
-			Upfront.Util.post({
-				"action": "upfront-edit-draft",
-				"data": {
-					"id": $post_id.val(),
-					"title": $title.val(),
-					"body": $body.val()
-				}
-			}).success(function (resp) {
-				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
-				Upfront.Util.log("Draft saved");
+			var postView = Upfront.data.currentEntity;
+
+			if(postView && postView.updatePost)
+				postView.updatePost();
+
+			this.post.set('post_status', 'draft').save().done(function(){
+				Upfront.Views.Editor.notify('Post saved as draft.');
 			});
 		}
 	});
@@ -1135,26 +1118,22 @@ define(_template_files, function () {
 	var Command_SavePublish = ContentEditor_SidebarCommand.extend({
 		save_state: "publish",
 		render: function () {
-			this.$el.addClass("upfront-save_state upfront-publish").html("<span title='Publish'>Publish</span>");
+			this.$el.addClass("upfront-save_state upfront-publish").html("<a class='button' href='#'><i class='icon-ok'></i> Publish</a>");
 		},
 		on_click: function () {
-			var $post_id =  $("#upfront-post_id"),
-				$title = $("#upfront-title"),
-				$body = $("#upfront-body"),
-				body_content = (CKEDITOR.instances['upfront-body'] ? CKEDITOR.instances['upfront-body'].getData() : $body.val())
+			var postView = Upfront.data.currentEntity;
+
+			if(postView && postView.updatePost)
+				postView.updatePost();
+
+			this.post.set({
+					post_status: 'publish'
+				})
+				.save().done(function(){
+					Upfront.Events.trigger("upfront:posts:post:post_updated", Upfront.data.currentPost);
+					Upfront.Views.Editor.notify("Post published");
+				})
 			;
-			if (!$post_id.length || !$title.length || !$body.length) return false;
-			Upfront.Util.post({
-				"action": "upfront-edit-publish",
-				"data": {
-					"id": $post_id.val(),
-					"title": $title.val(),
-					"body": body_content
-				}
-			}).success(function (resp) {
-				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
-				Upfront.Util.log("Post published");
-			});
 		}
 	});
 
@@ -1179,6 +1158,7 @@ define(_template_files, function () {
 					;
 				})
 			;
+			
 			popup.done(function ($popup) {
 				console.log('updating potentially changed meta data');
 			});
@@ -1200,11 +1180,9 @@ define(_template_files, function () {
 		currentView: 'category',
 		post: false,
 		terms: {},
-		initialize: function() {
-			this.post = $(document).data('upfront-post-current');
-		},
+		className: 'upfront-command_inline upfront-command_taxonomies',
 		render: function () {
-			this.$el.addClass("upfront-taxonomy_list").html("<span title='Categories&amp;Tags'>Categories&amp;Tags</span>");
+			this.$el.html('<i class="icon-tag"></i> <a href="#">Edit Categories / Tags</a>');
 		},
 		on_click: function () {
 			var tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
@@ -1223,6 +1201,7 @@ define(_template_files, function () {
 					};
 				})
 			;
+			
 			$(".upfront-popup-placeholder").remove();
 			me.$popup.top.html(
 				'<ul class="upfront-tabs">' +
@@ -1291,7 +1270,7 @@ define(_template_files, function () {
 		views: {},
 		currentPanel: false,
 		render: function () {
-			this.$el.addClass("upfront-entity_list").html("Browse posts/pages/comments");
+			this.$el.addClass("upfront-entity_list").html('<i class="icon-reorder"></i><a href="#">Browse Posts / Pages / Comments</a>');
 		},
 		on_click: function () {
 			var me = this,
@@ -1334,7 +1313,7 @@ define(_template_files, function () {
 				class_suffix = panel.charAt(0).toUpperCase() + panel.slice(1).toLowerCase(),
 				send_data = data || {},
 				collection = false,
-				postId = $("#upfront-post_id").val(),
+				postId = this.post.id,
 				fetchOptions = {}
 			;
 
@@ -1344,8 +1323,10 @@ define(_template_files, function () {
 			this.currentPanel = panel;
 
 			//Already loaded?
-			if(me.views[panel])
-				 return this.render_panel(me.views[panel]);
+			if(me.views[panel]){
+				if(panel != 'comments' || me.views[panel].view.collection.postId == Upfront.data.currentPost.id)
+			 		return this.render_panel(me.views[panel]);
+			}
 
 			if(panel == 'posts'){
 				collection = new Upfront.Collections.PostList([], {postType: 'post'});
@@ -1357,7 +1338,7 @@ define(_template_files, function () {
 				fetchOptions = {limit: -1}
 			}
 			else{
-				collection = new Upfront.Collections.CommentList([], {postId: postId});
+				collection = new Upfront.Collections.CommentList([], {postId: Upfront.data.currentPost.id});
 				collection.orderby = 'comment_date';
 			}
 
@@ -1424,11 +1405,17 @@ define(_template_files, function () {
 			"click a": "handle_status_change"
 		},
 		render: function () {
-			var status = this.model.get("post_status");
-			status = status.charAt(0).toUpperCase() + status.slice(1);
+			var status = this.post.get("post_status");
+			if(status)
+				status = status.charAt(0).toUpperCase() + status.slice(1);
+			else
+				status = 'New';
+			
 			this.$el.addClass("upfront-entity_list").html(
-				_.template("Status: <b>{{status}}</b> <a href='#'>Edit</a>", {status: status})
+				_.template("Status: <b>{{status}}</b> <a href='#'>Edit <i class='icon-pencil'></i></a>", {status: status})
 			);
+			this.post.off('change', this.onPostChange, this);
+			this.post.on('change', this.onPostChange, this);
 		},
 		handle_status_change: function () {
 			Upfront.Util.post({
@@ -1438,6 +1425,9 @@ define(_template_files, function () {
 			}).success(function (resp) {
 				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
 			});
+		},
+		onPostChange: function(){
+			this.render();
 		}
 	});
 
@@ -1448,17 +1438,20 @@ define(_template_files, function () {
 		},
 		$popup: {},
 		render: function () {
-			var is_public = !!this.model.get("post_password"),
+			var is_public = !!this.post.get("post_password"),
 				status = is_public ? "Password protected" : "Public"
 			;
 			this.$el.addClass("upfront-entity_list").html(
-				_.template("Visibility: <b>{{status}}</b> <a href='#'>Edit</a>", {status: status})
+				_.template("Visibility: <b>{{status}}</b> <a href='#'>Edit <i class='icon-pencil'></i></a>", {status: status})
 			);
+			this.post.off('change', this.onPostChange, this);
+			this.post.on('change', this.onPostChange, this);
 		},
 		handle_popup_open: function () {
 			var me = this,
 				popup = Upfront.Popup.open(function (data, $top, $bottom) {
 					var $me = $(this);
+					me.setPost();
 					$me.empty()
 						.append(
 							'<div class="upfront-post_password-wrapper">' +
@@ -1488,19 +1481,46 @@ define(_template_files, function () {
 				Upfront.Popup.close();
 				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
 			});
+		},
+		onPostChange: function(){
+			this.render();
+		}
+	});
+
+	var Command_PopupSchedule = ContentEditor_SidebarCommand.extend({
+		className: "upfront-post-state upfront-post-schedule upfront-entity_list",
+
+		render: function(){
+			
+			var status = this.post.get('post_status') == 'future' ? Upfront.Util.format_date(this.post.get('post_date'), true) : 'Immediately';
+			this.$el.addClass('upfront-entity_list')
+				.html('Publish: <b>' + status + '</b> <a href="#">Edit <i class="icon-pencil"></i></a>')
+			;
+			this.post.off('change', this.onPostChange, this);
+			this.post.on('change', this.onPostChange, this);
+		},
+		onPostChange: function(){
+			this.render();
+		}
+	});
+
+	var Command_Trash = ContentEditor_SidebarCommand.extend({
+		className: "upfront-post-state upfront-post-trash upfront-entity_list",
+
+		render: function(){
+			this.$el.html('<i class="icon-remove"></i> <a href="#">Move to trash</a>');
 		}
 	});
 
 	var Command_PopupSlug = ContentEditor_SidebarCommand.extend({
 		$popup: {},
 		post : false,
+		className: "upfront-command_inline",
 
 		slugTpl:  _.template($(_Upfront_Templates.popup).find('#upfront-slug-tpl').html()),
-		initialize: function(options){
-			this.post = $(document).data('upfront-post-current');
-		},
+
 		render: function () {
-			this.$el.addClass("upfront-entity_list").html("Edit slug");
+			this.$el.addClass("upfront-entity_list").html('<i class="icon-link"></i> <a href="#">Edit URL</a>');
 		},
 		on_click: function () {
 			var me = this,
@@ -1516,6 +1536,8 @@ define(_template_files, function () {
 					};
 				})
 			;
+
+			
 
 			me.$popup.content.html(me.slugTpl({
 				rootURL: window.location.origin + '/',
@@ -1550,7 +1572,6 @@ define(_template_files, function () {
 					me.trigger("upfront:posts:post:slug_updated");
 					if(confirm('Do you want to reload the page with the new URL?'))
 						window.location.href = window.location.origin + '/' + me.post.get('post_name') + '/';
-
 				})
 			;
 		}
@@ -1564,11 +1585,11 @@ define(_template_files, function () {
 				new Command_SavePublish({"model": this.model}),
 				new Command_PopupMeta({"model": this.model}),
 				new Command_PopupTax({"model": this.model}),
-				new Command_PopupList({"model": this.model}),
 				new Command_PopupSlug({"model": this.model})
 			]);
 		}
 	});
+
 	var ContentEditorSidebar = Backbone.View.extend({
 		"tagName": "div",
 		initialize: function () {
@@ -2070,9 +2091,10 @@ define(_template_files, function () {
 		
 		render: function () {
 			//Parse comment meta data
+			var comments = this.collection.postId == 0 ? [] : this.collection.getPage(this.collection.pagination.currentPage);
 			this.$el.html(
 				this.commentsTpl({
-					comments: this.collection.getPage(this.collection.pagination.currentPage), 
+					comments: comments, 
 					excerptLength: 60, 
 					commentTpl: this.commentTpl, 
 					orderby: this.collection.orderby, 
@@ -2192,7 +2214,8 @@ define(_template_files, function () {
 				$container = $(e.target).parent(),
 				comment = this.collection.get($container.attr('data-comment_id')),
 				$comment = this.$('#upfront-list_item-comment-' + comment.get('comment_ID')),
-				text = $container.find('textarea').val()
+				text = $container.find('textarea').val(),
+				currentUser = Upfront.data.currentUser
 			;
 
 
@@ -2214,7 +2237,7 @@ define(_template_files, function () {
 					me.renderComment(comment);
 					reply.set('comment_ID', response.data.comment_ID);
 					me.collection.add(reply);
-					this.$('#upfront-list_item-comment-' + response.data.comment_ID).hide().slideDown();
+					me.$('#upfront-list_item-comment-' + response.data.comment_ID).hide().slideDown();
 				});
 			}
 		},

@@ -28,10 +28,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	post: false,
 	content: false,
 	loading: false,
+	titleSelector: 'h1.post_title',
+	contentSelector: '.post_content',
+
 
 	initialize: function(){
 		var me = this,
-			postType = Upfront.Settings.LayoutEditor.newpostType ? Upfront.Settings.LayoutEditor.newpostType : 'post'
+			postType = Upfront.Settings.LayoutEditor.newpostType ? Upfront.Settings.LayoutEditor.newpostType : 'post',
+			post = false
 		;
 		Upfront.Views.ObjectView.prototype.initialize.call(this);
 
@@ -40,10 +44,24 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		});
 
 
-		this.post = new Upfront.Models.Post({id: _upfront_post_data.post_id, post_type: postType});
-		this.post.fetch().done(function(response){
+		post = new Upfront.Models.Post({id: _upfront_post_data.post_id, post_type: postType});
+		post.fetch().done(function(response){
+			me.post = post;
+			/*
 			$(document).data("upfront-post-" + me.post.id, me.post);
 			$(document).data("upfront-post-current", me.post);
+			*/
+			
+			Upfront.data.currentPost = post;
+			if(!Upfront.data.posts)
+				Upfront.data.posts = {};
+			Upfront.data.posts[post.id] = post;
+
+			Upfront.Events.trigger("data:current_post:change");
+
+			_upfront_post_data.post_id = me.post.id;
+
+			me.render();
 			Upfront.Events.trigger("elements:this_post:loaded", me);
 		});
 	},
@@ -54,17 +72,21 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	 */
 	get_content_markup: function () {
 		var content = this.content;
-		return content ? content : 'Hold on please';
+		console.log('this_post');
+		if(content && this.post){
+			content = $(content)
+				.find(this.titleSelector).html(this.post.get('post_title')).end()
+				.find(this.contentSelector).html(this.post.get('post_content')).end()
+			;
+			return content.clone().wrap('<p/>').parent().html();
+		}
+		return 'Hold on please';
 	},
 
 	on_render: function () {
-		var me = this,
-			element_id = this.model.get_property_value_by_name("element_id")
-		;
+		var me = this;
 
-		if (this.content) 
-			$("#" + element_id).find(".upfront-object-content").html(this.content);
-		else 
+		if (!this.content)
 			this.loading.done(function(response){
 				me.render();
 			});
@@ -75,6 +97,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 	get_post_content: function () {
 		var postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+
+		if(postId === false)
+			return new $.Deferred().resolve({data:{filtered: 'Error'}});
+
 		return Upfront.Util.post({
 			"action": "this_post-get_markup",
 			"data": JSON.stringify({
@@ -85,12 +111,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_edit: function (e) {
-		var me = this,
-			content = this.content,
-			$title = this.$el.find('h3.post_title a'),
-			$body = this.$el.find('.post_content'),
-			$parent = me.parent_module_view.$el.find('.upfront-editable_entity:first')
-		;
+		var me = this;
+
 		// Hacky way of closing other instances
 		if ($("#upfront-post-cancel_edit").length) {
 			$("#upfront-post-cancel_edit").trigger("click");
@@ -99,6 +121,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if(!this.post){
 			this.post = new Upfront.Model.Post({id: _upfront_post_data.post_id});
 			this.post.fetch().done(function(response){
+				Upfront.data.currentPost = post;
+				Upfront.Events.trigger("data:current_post:change");
 				me.editPost(me.post, e);
 			});
 		}
@@ -106,8 +130,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.editPost(this.post, e);
 	},
 	stop_editor: function () {
-		this.post.set('post-title', this.$('#upfront-title').val());
-		this.post.set('upfront-body', this.$('#upfront-title').val());
+		this.updatePost();
+
+		Upfront.Events.off("entity:deactivated", this.stop_editor, this);
+
 		this.on_cancel();
 		Upfront.Application.ContentEditor.stop();
 	},
@@ -131,10 +157,15 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	editPost: function (post, e) {
 		var me = this,
 			content = this.content,
-			$title = this.$el.find('h1.post_title'),
-			$body = this.$el.find('.post_content'),
+			$title = this.$el.find(this.titleSelector),
+			$body = this.$el.find(this.contentSelector),
 			$parent = me.parent_module_view.$el.find('.upfront-editable_entity:first')
 		;
+
+		if(Upfront.data.currentPost != post){
+			Upfront.data.currentPost = post;
+			Upfront.Events.trigger("data:current_post:change");			
+		}
 
 		//Wait to the post to be fetched
 		if(!this.content)
@@ -200,6 +231,15 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if(!transform)
 			return str;
 		return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase() });
+	},
+	updatePost: function() {
+		var $title = this.$('#upfront-title'),
+			$content =  this.$('#upfront-body')
+		;
+		if($title.length)
+			this.post.set('post_title', $title.val());
+		if($content.length)
+			this.post.set('post_content', $content.html());
 	}
 });
 

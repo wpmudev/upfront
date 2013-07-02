@@ -104,12 +104,15 @@ define(_template_files, function () {
 			},
 			deactivate: function () {
 				this.$el.removeClass("upfront-active_entity");
+				this.check_deactivated();
 				this.trigger("upfront:entity:deactivate", this);
 			},
 			activate: function () {
 				if (this.activate_condition && !this.activate_condition()) return false;
 				$(".upfront-active_entity").removeClass("upfront-active_entity");
 				this.$el.addClass("upfront-active_entity");
+				if(this instanceof ObjectView)
+				    Upfront.data.currentEntity = this;
 				this.trigger("upfront:entity:activate", this);
 				//return false;
 			},
@@ -121,6 +124,10 @@ define(_template_files, function () {
 			},
 			on_settings_click: function () {
 				Upfront.Events.trigger("entity:settings:activate", this);
+			},
+			check_deactivated: function (){
+				if(Upfront.data.currentEntity == this)
+					Upfront.data.currentEntity = false;
 			}
 		}),
 
@@ -179,6 +186,16 @@ define(_template_files, function () {
 				}
 				view.remove();
 				this.model.remove(view.model);
+			},
+			on_activate: function (view) {
+				this.model.active_entity = view.model;
+				//Upfront.data.currentEntity = view;
+				Upfront.Events.trigger("entity:activated", view, view.model);
+			},
+			deactivate: function (removed) {
+				if (removed == this.model.active_entity) this.model.active_entity = false;
+				//this.check_deactivated();
+				Upfront.Events.trigger("entity:deactivated", removed);
 			}
 		}),
 
@@ -316,14 +333,6 @@ define(_template_files, function () {
 					local_view.bind("upfront:entity:activate", me.on_activate, me);
 					local_view.model.bind("remove", me.deactivate, me);
 				});
-			},
-			on_activate: function (view) {
-				this.model.active_entity = view.model;
-				Upfront.Events.trigger("entity:activated", view, view.model);
-			},
-			deactivate: function (removed) {
-				if (removed == this.model.active_entity) this.model.active_entity = false;
-				Upfront.Events.trigger("entity:deactivated", removed);
 			}
 		}),
 
@@ -418,14 +427,6 @@ define(_template_files, function () {
 					local_view.bind("upfront:entity:activate", me.on_activate, me);
 					local_view.model.bind("remove", me.deactivate, me);
 				});
-			},
-			on_activate: function (view) {
-				this.model.active_entity = view.model;
-				Upfront.Events.trigger("entity:activated", view, view.model);
-			},
-			deactivate: function (removed) {
-				if (removed == this.model.active_entity) this.model.active_entity = false;
-				Upfront.Events.trigger("entity:deactivated", removed);
 			}
 		}),
 		

@@ -103,15 +103,23 @@
 				$("#upfront-post-cancel_edit").trigger("click");
 			}
 
-			this.post = $(document).data("upfront-post-" + post_id);
+			this.post = Upfront.data.posts ? Upfront.data.posts[post_id] : false;
 			if(!this.post){
 				this.post = new Upfront.Models.Post({ID: post_id});
 				this.post.fetch().done(function(response){
+					if(!Upfront.data.posts)
+						Upfront.data.posts = {};
+					Upfront.data.posts[post_id] = me.post;
+					Upfront.data.currentPost = me.post;
+					Upfront.Events.trigger("data:current_post:change");
 					me.editPost(me.post);
 				});
 			}
-			else
+			else{
 				this.editPost(this.post);
+				Upfront.data.currentPost = me.post;
+				Upfront.Events.trigger("data:current_post:change");
+			}
 		},
 		stop_editor: function () {
 			this.on_cancel();
@@ -119,6 +127,10 @@
 		},
 		on_cancel: function () {
 			_upfront_post_data.post_id = _upfront_post_data._old_post_id;
+			if(_upfront_post_data.post_id && Upfront.data.posts[_upfront_post_data.post_id]){
+				Upfront.data.currentPost = Upfront.data.posts[_upfront_post_data.post_id];
+				Upfront.Events.trigger("data:current_post:change");				
+			}
 			if (CKEDITOR.instances['upfront-body']) CKEDITOR.instances['upfront-body'].destroy(); // Clean up the editor.
 			// Re-enable the draggable on edit stop
 			this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('enable');
@@ -134,11 +146,6 @@
 				$body = $post.find(".post_content"),
 				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type")
 			;
-
-			debugger;
-
-			$(document).data("upfront-post-" + post.id, post);
-			$(document).data("upfront-post-current", post);
 
 			_upfront_post_data._old_post_id = _upfront_post_data.post_id;
 			_upfront_post_data.post_id = post.id;

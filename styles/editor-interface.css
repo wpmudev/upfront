@@ -243,8 +243,9 @@
 }
 #sidebar-ui .sidebar-panel {
 	background: #cee1f2;
-	margin: 0 0 1px;
+	margin: 0;
 }
+
 #sidebar-ui .sidebar-panel-title {
 	font-size: 18px;
 	font-weight: normal;
@@ -289,7 +290,7 @@
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
 	height: 280px;
-	padding: 10px;
+	padding: 15px 0;
 	opacity: 1;
 	overflow-x: hidden;
 	overflow-y: scroll;
@@ -1301,33 +1302,92 @@ input[type=checkbox]:checked {
 
 /* ContentEditor sidebar */
 
+.upfront-sidebar-content_editor-sidebar_command{
+	font-size: 15px;
+	margin: 0 10px;
+}
+.upfront-sidebar-content_editor-sidebar_command i{
+	font-size: 14px;
+	color: #6C92B1;
+}
+
 .upfront-save_state {
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-	box-sizing: border-box;         /* Opera/IE 8+ */
-	height: 39px;
-	line-height: 24px;
-	padding: 5px 15px 0;
-	margin: 0 10px 10px;
-	font-size: 16px;
-	border: 2px solid #2f465b;
-	border-radius: 10px;
-	padding-left: 4px;
-	background: #395269;
-	color: #a1c5e6;
-	display: inline-block;
+	float:left;
+	clear:none;
+	display:block;
+	margin-right: 0;
+}
+#sidebar-ui .upfront-save_state a{
+	margin-right: 0;
 }
 .upfront-save_state:hover {
 	border-color: #1fcd8f;
 	color: #cce6ff;
 }
 
-.upfront-sidebar-content_editor-sidebar_command.upfront-entity_list,
-.upfront-sidebar-content_editor-sidebar_command.upfront-meta,
-.upfront-sidebar-content_editor-sidebar_command.upfront-taxonomy_list {
+
+#sidebar-ui a {
 	margin: 1em;
 	color: #1fcd8f;
+	text-decoration: none;
+	margin: 0 10px;
+}
+#sidebar-ui a:hover {
 	text-decoration: underline;
+}
+
+
+#sidebar-ui i{
+	font-size: 14px;
+	color: #6C92B1;
+}
+
+#sidebar-ui a i{
+	color: #1fcd8f;
+	text-decoration: none;
+}
+
+#sidebar-ui .button {
+	width: 118px;
+	display: block;
+	text-align: center;	
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	height: 39px;
+	line-height: 33px;
+	margin: 0 10px 10px;
+	font-size: 16px;
+	border: 2px solid #273A4C;
+	border-radius: 10px;
+	color: #B9CFE5;
+}
+
+#sidebar-ui .button:hover {
+	border-color: #1fcd8f;
+	text-decoration: none;
+}
+
+.upfront-post-state b, .upfront-post-state a {
+	font-size: 15px;
+
+}
+
+.upfront-command_inline {
+	float: left;
+	margin: 0 0 15px 20px;
+	font-size: 15px;
+}
+#sidebar-ui .upfront-command_inline a{
+	margin: 0;
+}
+
+#sidebar-ui .upfront-post-trash a{
+	color: #6C92B1;
+	margin: 0;
+}
+#sidebar-ui .upfront-post-trash a:hover{
+	color: #E3474A;
 }
 
 
@@ -2219,19 +2279,32 @@ width: 360px;
 /* Posts panel fix */
 #sidebar-ui .sidebar-panels .upfront-panel-post_panel .sidebar-panel-content {
 	background: #33475b;
+	border-top: 1px solid #273A4C;
 }
+
 .sidebar-panels .upfront-panel-post_panel h3.sidebar-panel-title {
 	display: none;
 }
 
 .upfront-post-state {
 	color: #7a94ac;
+	padding: 0 20px;
 }
 .upfront-post-state b {
 	color: #cde6fe;
 }
 .upfront-post-state a {
 	color: #1fcd8f;
+}
+
+.upfront-post-schedule {
+	padding-bottom: 15px;
+	border-bottom: 1px solid #2E4153;
+	margin-bottom: 15px;
+}
+
+#sidebar-ui .sidebar-panel-elements.expanded .sidebar-panel-content{
+	padding: 15px 20px;
 }
 
 /* Notifier */

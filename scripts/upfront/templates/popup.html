@@ -109,18 +109,23 @@
 
 <script type="text/template"  id="upfront-comments-tpl">
 <div id="upfront-list" class="upfront-list-comments clearfix bordered-bottom">
+	{[ if(!comments.length){ ]}
+		<p class="upfront-no-results">This post or page has no comments.</p>
+	{[ } else { ]}
 	<div id="upfront-list-meta" class="upfront-list_item">
 		<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">Author <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">Date <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 		<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">Comment <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 	</div>
 	<div class="upfront-list-items upfront-list-comment-items upfront-scroll-panel">
+
 		{[ _.each(comments, function(comment){ ]}
 		<div class="upfront-list_item-comment upfront-list_item clearfix" id="upfront-list_item-comment-{{ comment.get("comment_ID") }}" data-comment_id="{{ comment.get("comment_ID") }}">
 				{{ commentTpl({comment:comment, excerptLength: excerptLength}) }}
 		</div>
 		{[ }) ]}
 	</div>
+	{[ } ]}
 </div>
 </script>
 
