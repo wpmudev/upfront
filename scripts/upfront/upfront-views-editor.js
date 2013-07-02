@@ -1068,7 +1068,7 @@ define(_template_files, function () {
 
 			if(!user){
 				user = new Upfront.Models.User();
-				user.fetch().done(function(){
+				Upfront.data.loading.currentUser = user.fetch().done(function(){
 					Upfront.data.currentUser = user;
 				});
 			}
@@ -1410,7 +1410,7 @@ define(_template_files, function () {
 				status = status.charAt(0).toUpperCase() + status.slice(1);
 			else
 				status = 'New';
-			
+
 			this.$el.addClass("upfront-entity_list").html(
 				_.template("Status: <b>{{status}}</b> <a href='#'>Edit <i class='icon-pencil'></i></a>", {status: status})
 			);

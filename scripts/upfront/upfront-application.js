@@ -144,13 +144,13 @@ var LayoutEditor = new (Subapplication.extend({
 		// @TODO:remove this
 		$("body").append('<div id="upfront-loading">Loading...</div>');
 		require(Upfront.Settings.LayoutEditor.Requirements.core, function (models, views, editor, behaviors) {
+			//The application can use Upfront.data to share data among elements.
+			Upfront.data = {loading: {}};
+
 			_.extend(Upfront, models);
 			_.extend(Upfront, views);
 			_.extend(Upfront.Views, editor);
-			_.extend(Upfront, behaviors);
-
-			//The application can use Upfront.data to share data among elements.
-			Upfront.data = {};
+			_.extend(Upfront, behaviors);			
 
 			require(Upfront.Settings.LayoutEditor.Requirements.entities, function (objects) {
 				_.extend(Upfront.Objects, objects);

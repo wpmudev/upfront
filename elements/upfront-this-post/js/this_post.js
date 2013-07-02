@@ -45,7 +45,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 
 		post = new Upfront.Models.Post({id: _upfront_post_data.post_id, post_type: postType});
-		post.fetch().done(function(response){
+		
+		if(!Upfront.data.loading.post)
+			Upfront.data.loading.post = {};
+
+		Upfront.data.loading.post[_upfront_post_data.post_id] = post.fetch().done(function(response){
 			me.post = post;
 			/*
 			$(document).data("upfront-post-" + me.post.id, me.post);

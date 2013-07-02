@@ -29,12 +29,17 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$title = sprintf(__('Enter your new %s title here', 'upfront'), $post_type);
 		$content = sprintf(__('Your %s content goes here. Have fun writing :)', 'upfront'), $post_type);
 
-		$post = new WP_Post(array(
+		$post_arr = array(
 			'ID' => 0,
 			'post_title' => $title,
 			'post_content' => $content,
 			'post_type' => $post_type
-		));
+		);
+		$post_obj = new stdClass();
+		foreach($post_arr as $key => $value)
+			$post_obj->$key = $value;
+
+		$post = new WP_Post($post_obj);
 
 		return self::post_template($post);
 	}
