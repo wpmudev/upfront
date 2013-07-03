@@ -1640,17 +1640,17 @@ box-shadow: inset 0 2px 0 0 #fff;
 	padding: 30px 20px;
 }
 #upfront-taxonomy-add input#upfront-new_term{
-	width: 49%;
+	width: 40%;
 	margin-right: 4%;
 	background: #E5F3FE;
 }
 #upfront-taxonomy-add select{
 	padding: 7px 5px;
-	width: 22%;
+	width: 25%;
 	margin-right: 4%;
 }
 #upfront-taxonomy-add button {
-	width: 20%;
+	width: 25%;
 
 }
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item {
@@ -1747,6 +1747,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	width: 100%;
 	border-top: 1px solid transparent;
 	border-bottom: 1px solid transparent;
+	line-height: 18px;
 }
 
 .upfront-list-items {
@@ -1846,10 +1847,10 @@ box-shadow: inset 0 2px 0 0 #fff;
 	vertical-align: middle;
 }
 .upfront-list_item-component.upfront-title {
-	width: 70%;
+	width: 60%;
 }
 .upfront-list_item-component.upfront-author {
-	width: 15%;	
+	width: 25%;	
 }
 
 .upfront-entity_list-posts .
@@ -1945,7 +1946,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	max-height: 350px;
 	min-height: 350px;
 	overflow-y: scroll;
-	width: 550px;
+	width: 380px;
 }
 #upfront-list-page-tree .upfront-list-page_item {
 	padding-left: 40px;
@@ -2013,7 +2014,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 }
 
 .upfront-list-comments .upfront-list-items {
-	width: 840px;
+	width: 670px;
 	margin-left:-40px;
 	border-bottom:0;
 }
@@ -2036,11 +2037,11 @@ box-shadow: inset 0 2px 0 0 #fff;
 	width: 120px;
 }
 .upfront-list-comments .upfront-comment_content {
-	width: 480px;
+	width: 310px;
 }
 
 .upfront-list-comments .expanded .upfront-comment_content {
-	width: 470px;
+	width: 310px;
 }
 #upfront-list .upfront-comment_author {
 	color: #2ecc90;
@@ -2262,14 +2263,17 @@ box-shadow: inset 0 2px 0 0 #fff;
 	color: #7a94ac;
 	font-size: 15px;
 	margin: 0 0 30px;
+	line-height: 1.4em;
 }
+
 .upfront-slug_editor-url {
 	font-size: 15px;
 }
 #upfront-post_slug {
 	padding: 8px 5px;
 	font-size: 15px;
-width: 360px;
+
+	width: 270px;
 }
 .upfront-slug_editor button#upfront-post_slug-send {
 	width: 100px;

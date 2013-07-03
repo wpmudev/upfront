@@ -2114,7 +2114,7 @@ define(_template_files, function () {
 			this.$el.html(
 				this.commentsTpl({
 					comments: comments, 
-					excerptLength: 60, 
+					excerptLength: 45, 
 					commentTpl: this.commentTpl, 
 					orderby: this.collection.orderby, 
 					order: this.collection.order

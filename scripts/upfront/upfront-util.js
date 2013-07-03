@@ -152,7 +152,7 @@ var Popup = {
 
 	init: function () {
 		if (!$("#upfront-popup").length) {
-			$("body")
+			$("#page")
 				.append('<div id="upfront-popup" style="display:none">' +
 					'<div id="upfront-popup-close">X</div>' +
 					'<div class="upfront-popup-meta" id="upfront-popup-top">' +
@@ -176,9 +176,10 @@ var Popup = {
 		data = data || {};
 		this.init();
 		var me = this,
+			sidebarWidth = $('#sidebar-ui').width(),
 			$win = $(window),
-			width = data.width || 800,
-			left_pos = ($win.width() - width) / 2,
+			width = data.width || 630,
+			left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
 			height = ($win.height() / 3) * 2,
 			close_func = function () { me.close(); return false; }
 		;
@@ -186,7 +187,8 @@ var Popup = {
 		this.$background
 			.css({
 				'height': $win.height(),
-				'width': $win.width()
+				'width': $win.width() - sidebarWidth,
+				'left': sidebarWidth
 			})
 			.on("click", close_func)
 			.show()
@@ -202,14 +204,17 @@ var Popup = {
 		;
 
 		$win.off("resize.upfront-popup").on("resize.upfront-popup", function () {
+			var sidebarWidth = $('#sidebar-ui').width();
+
 			if (me.$background.is(":visible")) me.$background
 				.css({
 					'height': $win.height(),
-					'width': $win.width()
+					'width': $win.width() - sidebarWidth,
+					'left': sidebarWidth
 				})
 			;
 			if (me.$popup.is(":visible")) {
-				var left_pos = ($win.width() - width) / 2,
+				var left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
 					height = ($win.height() / 3) * 2
 				;
 				me.$popup
