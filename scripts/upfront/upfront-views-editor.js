@@ -177,6 +177,8 @@ define(_template_files, function () {
 				this.postView = view;
 				view.editPost(view.post);
 
+				Upfront.data.currentEntity = view;
+
 				Upfront.Events.off("elements:this_post:loaded", this.on_post_loaded, this);
 
 				Upfront.Events.on("upfront:application:contenteditor:render", this.select_title, this);
@@ -1104,12 +1106,21 @@ define(_template_files, function () {
 			this.$el.addClass("upfront-save_state upfront-draft").html("<a class='button' href='#'>Save Draft</a>");
 		},
 		on_click: function () {
-			var postView = Upfront.data.currentEntity;
+			var postView = Upfront.data.currentEntity,
+			    newPost = false,
+			    me = this
+			;
 
 			if(postView && postView.updatePost)
 				postView.updatePost();
 
-			this.post.set('post_status', 'draft').save().done(function(){
+			newPost = this.post.clone();
+
+			newPost.set('post_status', 'draft').save().done(function(){
+				me.post.set({
+					post_status: newPost.get('post_status')
+				});
+				Upfront.Events.trigger("upfront:posts:post:post_updated", Upfront.data.currentPost);
 				Upfront.Views.Editor.notify('Post saved as draft.');
 			});
 		}
@@ -1121,15 +1132,23 @@ define(_template_files, function () {
 			this.$el.addClass("upfront-save_state upfront-publish").html("<a class='button' href='#'><i class='icon-ok'></i> Publish</a>");
 		},
 		on_click: function () {
-			var postView = Upfront.data.currentEntity;
+			var me = this,
+				postView = Upfront.data.currentEntity,
+				newPost = false
+			;
 
 			if(postView && postView.updatePost)
 				postView.updatePost();
 
-			this.post.set({
+			newPost = this.post.clone();
+
+			newPost.set({
 					post_status: 'publish'
 				})
 				.save().done(function(){
+					me.post.set({
+						post_status: newPost.get('post_status')
+					});
 					Upfront.Events.trigger("upfront:posts:post:post_updated", Upfront.data.currentPost);
 					Upfront.Views.Editor.notify("Post published");
 				})
