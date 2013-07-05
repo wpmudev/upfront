@@ -22,10 +22,11 @@
 	});
 
 	var ActiveMediaFilter_Collection = Backbone.Model.extend({
+		labels_cache: false,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
-			Upfront.Events.on("media_manager:media:labels_updated", this.set_labels_to_defaults, this);
+			Upfront.Events.on("media_manager:media:labels_updated", this.reload_labels, this);
 		},
 		to_defaults: function () {
 			this.set("type", new MediaFilter_Collection([
@@ -50,15 +51,24 @@
 			this.set_labels_to_defaults();
 		},
 		set_labels_to_defaults: function () {
+			if (this.labels_cache) {
+				var arr = [];
+				_(this.labels_cache).each(function (item) {
+					arr.push(new MediaFilter_Item({filter: item.name, value: item.term_id, state: false}));
+				});
+				this.set("label", new MediaFilter_Collection(arr), {silent: true});
+				Upfront.Events.trigger("media_manager:media:labels_loaded");
+			} else this.reload_labels();
+		},
+		reload_labels: function () {
 			var me = this;
 			Upfront.Util.post({action: "upfront-media-get_labels"})
 				.success(function (response) {
 					var arr = [];
-					_(response.data).each(function (item) {
-						arr.push(new MediaFilter_Item({filter: item.name, value: item.term_id, state: false}));
-					});
-					me.set("label", new MediaFilter_Collection(arr), {silent: true});
-					Upfront.Events.trigger("media_manager:media:labels_loaded");
+					if (response.data) {
+						me.labels_cache = response.data;
+						me.set_labels_to_defaults();
+					}
 				})
 			;
 		},
@@ -240,6 +250,7 @@
 			},
 			initialize_model: function () {
 				this.model = ActiveFilters.get(this.filter_type);
+				this.model.on("change", this.apply_changes, this);
 			},
 			render: function () {
 				var me = this;
@@ -343,7 +354,6 @@
 				this.filter_name = "Media type";
 				this.filter_type = "type";
 				this.initialize_model();
-				this.model.on("change", this.apply_changes, this);
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
@@ -355,7 +365,6 @@
 				this.filter_name = "Date";
 				this.filter_type = "order";
 				this.initialize_model();
-				this.model.on("change", this.apply_changes, this);
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
@@ -367,7 +376,6 @@
 				this.filter_name = "File Name";
 				this.filter_type = "order";
 				this.initialize_model();
-				this.model.on("change", this.apply_changes, this);
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
@@ -378,7 +386,6 @@
 				this.filter_name = "Recent";
 				this.filter_type = "recent";
 				this.initialize_model();
-				this.model.on("change", this.apply_changes, this);
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
@@ -389,7 +396,6 @@
 				this.filter_name = "Labels";
 				this.filter_type = "label";
 				this.initialize_model();
-				this.model.on("change", this.apply_changes, this);
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 				Upfront.Events.on("media_manager:media:labels_loaded", this.reinitialize_model, this);
