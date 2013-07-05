@@ -165,6 +165,13 @@ class Upfront_MediaCollection extends Upfront_Media {
             ));
             if ($order) $video_oembed->_args['order'] = strtoupper($order);
             if ($orderby) $video_oembed->_args['orderby'] = $orderby;
+            if (!empty($filters['label'])) {
+                $video_oembed->_args['tax_query'] = array(array(
+                    'taxonomy' => 'media_label',
+                    'field' => 'id',
+                    'terms' => $filters['label'],
+                ));
+            }
             $video_oembed->_spawn();
             $collection->_query->posts = array_merge(
                 $collection->_query->posts,
@@ -179,6 +186,13 @@ class Upfront_MediaCollection extends Upfront_Media {
             ));
             if ($order) $audio_oembed->_args['order'] = strtoupper($order);
             if ($orderby) $audio_oembed->_args['orderby'] = $orderby;
+            if (!empty($filters['label'])) {
+                $audio_oembed->_args['tax_query'] = array(array(
+                    'taxonomy' => 'media_label',
+                    'field' => 'id',
+                    'terms' => $filters['label'],
+                ));
+            }
             $audio_oembed->_spawn();
             $collection->_query->posts = array_merge(
                 $collection->_query->posts,

@@ -647,19 +647,21 @@
 			className: "upfront-pane",
 			initialize: function () {
 				this.preview_view = new MediaManager_Embed_Preview({model: this.model});
-				//this.labels_view = new MediaManager_Embed_Labels({model: this.model});
+				this.labels_view = new MediaItem_Labels({model: this.model});
 				this.on("embed:media:imported", this.update_media_preview, this);
 			},
 			render: function () {
-				//console.log('RENDER YAY');
 				this.preview_view.render();
+				this.labels_view.render();
 				this.$el.empty()
 					.append(this.preview_view.$el)
-					//.append('PREVIEW')
+					.append(this.labels_view.$el)
 				;
 			},
 			update_media_preview: function () {
 				this.preview_view.render();
+				this.labels_view.render();
+				this.labels_view.delegateEvents();
 				var progress = this.preview_view.is_image() ? 100 : 33;
 				this.preview_view.set_progress(progress);
 			}
@@ -874,8 +876,8 @@
 			this.render();
 		},
 		render: function () {
-			var own_labels_template = _.template('<a class="own_label" href="#" data-idx="{{value}}">{{filter}}</a>&nbsp;'),
-				all_labels_template = _.template('<a class="all_label" href="#" data-idx="{{value}}">{{filter}}</a>&nbsp;'),
+			var own_labels_template = _.template('<a class="own_label" href="#" data-idx="{{value}}">{{filter}}</a> '),
+				all_labels_template = _.template('<a class="all_label" href="#" data-idx="{{value}}">{{filter}}</a> '),
 				me = this,
 				model_labels = this.model.get("labels"),
 				own_labels = [],
@@ -883,7 +885,7 @@
 			;
 			this.$el.empty();
 			if (this.labels) this.labels.each(function (item) {
-				if (model_labels.indexOf(item.get("value")) >= 0) own_labels.push(own_labels_template(item.toJSON()));
+				if (model_labels && model_labels.length && model_labels.indexOf(item.get("value")) >= 0) own_labels.push(own_labels_template(item.toJSON()));
 				else all_labels.push(all_labels_template(item.toJSON()));
 			});
 			me.$el.append("Applied labels: ");
