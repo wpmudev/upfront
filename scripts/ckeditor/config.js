@@ -23,7 +23,8 @@ CKEDITOR.editorConfig = function( config ) {
 			{
 				name: 'kitchensink',
 				items: [ 
-					'Format', 'Underline', /*'JustifyBlock', <-- This gets killed just because */'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'ColorSelect', 'ExtrasSelect','BulletedList', 'NumberedList',
+					'Format', 'Underline', 'ColorSelect', /*'JustifyBlock', <-- This gets killed just because */
+					'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'ExtrasSelect','BulletedList', 'NumberedList' // <-- Hidden
 
 					/*
 					'TextColor',

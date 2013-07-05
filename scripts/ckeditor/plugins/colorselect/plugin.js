@@ -63,6 +63,7 @@ var colorselect = (function () {
 			};
 
 			editor.applyStyle( new CKEDITOR.style( colorStyle, { color: newColor } ) );
+
 		}
 	} );
 
@@ -108,9 +109,11 @@ var colorselect = (function () {
 	}
 
 	function initEvents(){
+/*
 		current_color.on('click', function(){
 			picker.togglePicker();
 		});
+*/
 
 		jQuery(document).on('close.jscolor', function(){
 			setLatestColor(picker.toString());
@@ -121,18 +124,9 @@ var colorselect = (function () {
 			var newColor = picker.toString();
 			// Update SVG color for all editors.
 			jQuery('span.cke_button__colorselect_icon svg path').attr('fill', '#'+newColor);
-			
+		
 			CKEDITOR.tools.callFunction( setFontColor, newColor );
 			
-			/*
-			a = jQuery('<a> </a>');
-			a.attr('_cke_focus','1');
-			a.attr('hidefocus', 'true');
-			a.attr('onclick', 'CKEDITOR.tools.callFunction(', setFontColor, ',\'', newColor, '\',\'', 'del', '\'); return false;');
-			debugger;
-			jQuery('.cke_chrome.'+editor.id).append(a);
-			a.click();
-			*/
 			return false;
 		};
 
@@ -236,7 +230,7 @@ CKEDITOR.plugins.add( 'colorselect', {
 					btn = jQuery('.cke_button__colorselect', $editor);
 
 				this.setState( new_state );
-				
+
 				if( !jQuery.contains($editor[0], colorselect.$dom[0]) ){
 					colorselect.$dom.detach(); // Remove from other editors.
 					$editor.append(colorselect.$dom);
@@ -259,7 +253,8 @@ CKEDITOR.plugins.add( 'colorselect', {
 		editor.ui.addButton( 'ColorSelect', {
 			label: 'Set font color.',
 			command: 'showhideColorSelect',
-			toolbar: 'kitchensink'
+			toolbar: 'kitchensink',
+			allowedContent: new CKEDITOR.style(CKEDITOR.config.colorSelect_foreStyle),
 		});
 
 		editor.on('instanceReady', function(e){
@@ -286,7 +281,6 @@ CKEDITOR.plugins.add( 'colorselect', {
 
 				icon.html(svg);
 			}
-
 		});
 	}
 });
@@ -314,5 +308,5 @@ CKEDITOR.config.colorSelect_foreStyle = {
 	}]
 };
 CKEDITOR.on('instanceReady', function (e) {
-	colorselect.setEditor( e.editor ); 
+	colorselect.setEditor( e.editor );
 });

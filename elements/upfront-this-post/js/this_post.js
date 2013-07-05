@@ -95,6 +95,29 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				me.render();
 			});
 
+/*
+		// Allow select-edit tiggering
+		me.$el.find(".post_content")
+			.off("mouseover.upfront-select_to_edit").on("mouseover.upfront-select_to_edit", function () {
+				me.$el.closest(".upfront-editable_entity").draggable('disable');
+			})
+			.off("mouseout.upfront-select_to_edit").on("mouseout.upfront-select_to_edit", function () {
+				me.$el.closest(".upfront-editable_entity").draggable('enable');
+				flag = false;
+			})
+			.on("mousedown.upfront-select_to_edit", function () {
+				flag = false;
+				$(this).on("mousemove", function () {
+					flag = true;
+					return false;
+				})
+				.on("mouseup.upfront-select_to_edit", function (e) {
+					if (flag) me.on_edit();
+					return false;
+				});
+			})
+		;
+*/
 		//Upfront.Application.ContentEditor.stop();
 		this.trigger("rendered", this);
 	},
@@ -116,7 +139,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 	on_edit: function (e) {
 		var me = this;
-
+/*
+		// Break select-editing trigger
+		this.$el
+			.off("mouseover.upfront-select_to_edit")
+			.off("mouseout.upfront-select_to_edit")
+			.off("mousedown.upfront-select_to_edit")
+		;
+*/
 		// Hacky way of closing other instances
 		if ($("#upfront-post-cancel_edit").length) {
 			$("#upfront-post-cancel_edit").trigger("click");

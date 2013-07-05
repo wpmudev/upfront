@@ -120,6 +120,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"behaviors" => "upfront/upfront-behaviors",
 			"application" => "upfront/upfront-application",
 			"objects" => "upfront/upfront-objects",
+			"media" => "upfront/upfront-media",
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
@@ -136,7 +137,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		$layout_editor_requirements = array(
-			"core" => array('models', 'views', 'editor_views', 'behaviors'),
+			"core" => array('models', 'views', 'editor_views', 'behaviors', 'media'),
 			"entities" => array_merge(array('objects'), array_keys($registered)),
 		);
 		$layout_editor_requirements = json_encode(

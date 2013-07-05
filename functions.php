@@ -14,6 +14,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_style_preprocessor.php'
 require_once(dirname(__FILE__) . '/library/class_upfront_output.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_form.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_endpoint.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 
 
 
