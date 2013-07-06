@@ -16,8 +16,6 @@
             if (file.match(/text!/)) _Upfront_Templates[file.replace(/text!..\/elements\/upfront-navigation\/templates\//, '').replace(/\.html/, '')] = _template_args[idx];
         });
 
-
-
         var NavigationModel = Upfront.Models.ObjectModel.extend({
             init: function () {
                 this.init_property("type", "NavigationModel");
@@ -69,8 +67,9 @@
             onMenuItemHover: function(evt) {
 
                 var $item = $(evt.target).parent('li'),
+                $itemUl = $(evt.target).closest('.menu'),
                 $itemWidth = $item.width(),
-                $itemHeight = $item.height();
+                $itemHeight = $itemUl.height();
 
                 if (evt.type == "mouseenter") {
                     // hover-in on menu item
@@ -78,7 +77,7 @@
                     this.$el.find('.nav_tooltip').remove();
                     $(evt.target).append($toolTip);
                     $toolTip.find('.visit_page').attr('href',$(evt.target).attr('href'));
-                    $toolTip.css({'left':$itemWidth,'top':$itemHeight/2});
+                    $toolTip.css({'left':$itemWidth,'top':($itemHeight/2) - 17});
                     $toolTip.show();
                 }
                 else {

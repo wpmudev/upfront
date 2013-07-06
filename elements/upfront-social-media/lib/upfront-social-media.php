@@ -2,9 +2,6 @@
 
 class Upfront_SocialMediaView extends Upfront_Object {
 
-    public function __construct() {
-        add_filter('the_content', array($this, "my_the_content_filter"));
-    }
     const COUNT_ERROR = 'Error';
 
     public function get_markup () {
@@ -201,25 +198,6 @@ class Upfront_SocialMediaView extends Upfront_Object {
         endforeach;
         $output .= '</div>';
         return $output;
-    }
-
-    /**
-     * Add a icon to the beginning of every post page.
-     *
-     * @uses is_single()
-     */
-    public function my_the_content_filter( $content ) {
-
-        if ( is_single() )
-            // Add image to the beginning of each page
-        $content = sprintf(
-            '<img class="post-icon" src="%s/images/post_icon.png" alt="Post icon" title=""/>%s',
-            get_bloginfo( 'stylesheet_directory' ),
-            $content
-        );
-
-        // Returns the content.
-        return $content;
     }
 
     // Inject style dependencies

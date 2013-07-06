@@ -1,5 +1,7 @@
 (function ($) {
-
+    Upfront.data.social.loading.then(function(){
+        console.log('run ...');
+    });
     /**
      * Define the model - initialize properties to their default values.
      * @type {Upfront.Models.ObjectModel}
@@ -29,11 +31,10 @@
         model: FacepileModel,
 
         initialize: function(){
+            var me = this;
             Upfront.Views.ObjectView.prototype.initialize.call(this);
-            this.socialMediaGlobalSettingsView = new Upfront.SocialMediaGlobalSettings();
-            if(this.socialMediaGlobalSettingsView.model.get("properties").length){
-                this.socialMediaGlobalSettingsView.model.get("properties").where({name:'facebook_page_url'})[0].on("change:value", this.render, this);
-            }
+                Upfront.data.social.panel.model.get("properties").on("change", this.render, this);
+                Upfront.data.social.panel.model.get("properties").on("add", this.render, this);
         },
 
         events: function(){
@@ -44,24 +45,25 @@
 
         backToGlobalSettings: function(e){
             e.preventDefault();
-            this.socialMediaGlobalSettingsView.popupFunc();
+            Upfront.data.social.panel.popupFunc();
         },
         /**
          * Element contents markup.
          * @return {string} Markup to be shown.
          */
         get_content_markup: function () {
+            var me = this;
 
-            var fbUrl = this.socialMediaGlobalSettingsView.model.get_property_value_by_name('facebook_page_url');
+                var fbUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url');
 
-            if(fbUrl || !fbUrl == ''){
-                var pageName = this.socialMediaGlobalSettingsView.getLastPartOfUrl(fbUrl);
-                var isShowCounts = this.model.get_property_value_by_name("is_show_counts");
+                if(fbUrl){
+                    var pageName = Upfront.data.social.panel.getLastPartOfUrl(fbUrl);
+                    var isShowCounts = me.model.get_property_value_by_name("is_show_counts");
 
-                return '<iframe src="//www.facebook.com/plugins/facepile.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName == '0' || pageName == ''  ? '' : pageName )+'&amp;app_id&amp;action&amp;max_rows=3&amp;size=medium&amp;show_count='+(isShowCounts ? 'true':'false')+'&amp;width=256&amp;colorscheme=light" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:256px;" allowTransparency="true"></iframe>'+ (pageName == '0' || pageName == ''  ? '<span class="alert-url">!</span>' : '' )
-            }else{
-                return 'Whoops! it looks like you need to update your <a class="back_global_settings" href="#">global settings</a>';
-            }
+                    return '<iframe src="//www.facebook.com/plugins/facepile.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName == '0' || pageName == ''  ? '' : pageName )+'&amp;app_id&amp;action&amp;max_rows=3&amp;size=medium&amp;show_count='+(isShowCounts ? 'true':'false')+'&amp;width=256&amp;colorscheme=light" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:256px;" allowTransparency="true"></iframe>'+ (pageName == '0' || pageName == ''  ? '<span class="alert-url">!</span>' : '' )
+                }else{
+                    return 'Whoops! it looks like you need to update your <a class="back_global_settings" href="#">global settings</a>';
+                }
 
         }
 
@@ -141,10 +143,8 @@
     var facepileLayoutStyleSetting_FbPageUrl = Upfront.Views.Editor.Settings.Item.extend({
 
         initialize: function(){
-            this.socialMediaGlobalSettingsView = new Upfront.SocialMediaGlobalSettings();
-            if(this.socialMediaGlobalSettingsView.model.get("properties").length){
-                this.socialMediaGlobalSettingsView.model.get("properties").where({name:'facebook_page_url'})[0].on("change:value", this.render, this);
-            }
+            Upfront.data.social.panel.model.get("properties").on("change", this.render, this);
+            Upfront.data.social.panel.model.get("properties").on("add", this.render, this);
         },
         /**
          * Set up setting item Facebook Page Url options.
@@ -153,7 +153,7 @@
         render: function () {
                 var $urlMarkup;
 
-            this.FacebookPageUrl = this.socialMediaGlobalSettingsView.model.get_property_value_by_name('facebook_page_url');
+            this.FacebookPageUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url');
 
             this.$editMarkup = '<span><a target="_blank" href="'+ this.FacebookPageUrl +'" >'+ this.FacebookPageUrl +'</a></span>' +
                 ' <a href="#" class="edit_fb_page_url">Edit</a> ';
@@ -196,11 +196,11 @@
                 $fbUrlDiv.find('input').focus();
             }
 
-            var currentData = this.socialMediaGlobalSettingsView.model.get('properties').toJSON();
+            var currentData = Upfront.data.social.panel.model.get('properties').toJSON();
 
-            this.socialMediaGlobalSettingsView.model.set_property('facebook_page_url',$url)
+            Upfront.data.social.panel.model.set_property('facebook_page_url',$url)
 
-            var setData = this.socialMediaGlobalSettingsView.model.get('properties').toJSON();
+            var setData = Upfront.data.social.panel.model.get('properties').toJSON();
 
             if(!_.isEqual(currentData, setData)){
 
