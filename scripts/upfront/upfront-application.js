@@ -136,6 +136,18 @@ var LayoutEditor = new (Subapplication.extend({
 		;
 	},
 
+    load_social_global_panel: function(){
+        Upfront.data.social = {
+            loading: false,
+            panel: {},
+            settingsReady: false
+        }
+        Upfront.data.social.loading = Upfront.Util.post({"action": "upfront_get_social_media_global_settings"})
+            .error(function (ret) {
+                Upfront.Util.log("Error loading social settings");
+            });
+    },
+
 	dispatch_layout_loading: function (layout_id) {
 		var layout = layout_id || "1",
 			app = this
@@ -146,6 +158,8 @@ var LayoutEditor = new (Subapplication.extend({
 		require(Upfront.Settings.LayoutEditor.Requirements.core, function (models, views, editor, behaviors) {
 			//The application can use Upfront.data to share data among elements.
 			Upfront.data = {loading: {}};
+            // Load Social settings
+            app.load_social_global_panel();
 
 			_.extend(Upfront, models);
 			_.extend(Upfront, views);
