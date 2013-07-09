@@ -69,8 +69,9 @@ if (_upfront_post_data.post_id) {
 		"View": UcommentView,
 		"Element": UcommentElement
 	});
-	Upfront.Models.UcommentModel = UcommentModel;
-	Upfront.Views.UcommentView = UcommentView;
 }
+
+Upfront.Models.UcommentModel = UcommentModel;
+Upfront.Views.UcommentView = UcommentView;
 
 })(jQuery);
