@@ -149,8 +149,21 @@ define(_template_files, function () {
 			$(".upfront-layout").append('<div id="upfront-loading">Loading...</div>');
 			this.postView = false;
 
-			Upfront.Application.LayoutEditor.load_layout({item: 'single-' + this.postType, type: 'single'})
+
+
+			Upfront.Application.LayoutEditor.load_layout({item: 'single-' + this.postType, type: 'single', specificity: 'single-' + this.postType + '-1000000'})
 				.done(function(response){
+					var bodyClasses = 'logged-in admin-bar upfront customize-support flex-support';
+					if(me.postType == 'page')
+						bodyClasses += ' page page-id-1000000 page-template-default';
+					else
+						bodyClasses += ' single single-' + me.postType + ' postid-1000000';
+
+					$('body')
+						.removeClass()
+						.addClass(bodyClasses)
+					;
+
 					Upfront.Events.on("elements:this_post:loaded", me.on_post_loaded, me);
 				})
 			;
