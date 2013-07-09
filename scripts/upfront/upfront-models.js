@@ -15,7 +15,8 @@ var _alpha = "alpha",
 		"defaults": {
 			"name": "",
 			"value": ""
-		}
+		},
+		idAttribute: 'name'
 	}),
 
 	// Basic behavior/appearance dataset

@@ -1,0 +1,59 @@
+<div> 
+<!-- 
+	Wrap everything in a div to convert this file's content in a jquery element 
+	so it is possible to use $.find.
+-->
+
+<script type="text/template" id="selector-tpl">
+<div id="upfront-image-overlay">
+	<div id="upront-image-placeholder" class="upfront-image-section">
+		<div class="upfront-image-selector-container">
+			<h2>Drop files here to upload</h2>
+			<a class="button select-files" href="#">Select Files</a>
+			<div id="upfront-image-maxsize">Maximum upload file size: 32MB</div>
+			or browse your
+			<div class="upfront-image-media-container">
+			<i class="icon-picture"></i> <a class="open-media-gallery" href="#">media gallery</a>
+			</div>
+			<span class="dragimagehand"></span>	
+		</div>
+	</div>
+	<div id="upfront-image-uploading" class="upfront-image-section">
+		<h2>Uploading...</h2>
+		<div class="upfront-progress-container">
+			<div id="upfront-progress"></div>
+		</div>
+	</div>
+	<div id="upfront-image-edit" class="upfront-image-section">
+		<div id="image-edit-container" class="clearfix">
+			<div class="image-edit-canvas-container">
+				<div class="image-edit-outer-mask">
+					<img class="image-edit-canvas" src="http://dorsvenabili.com/wp-content/uploads/wordpress_helpsheet.jpg">		
+					<div class="image-edit-resize image-edit-control"><i class="icon-resize-full ui-resizable-handle ui-resizable-handle-se"></i></div>
+					<div class="image-edit-rotate image-edit-control"><i class="icon-repeat"></i></div>
+					<div class="image-edit-drag-handle"></div>
+				</div>
+				<div class="image-edit-mask">
+					
+				</div>
+			</div>
+			<div class="image-edit-save-container">
+				<div class="no-shadow">
+					<a class="image-edit-save" href="#"><i class="icon-ok"></i> I like that</a>
+					<a class="image-edit-change"><i class="icon-upload-alt "></i> upload a different image</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<script type="text/template" id="upload-form-tpl">
+<form id="upfront-upload-image" name="upfront-upload-image" enctype="multipart/form-data" method="post" action="{{url}}">
+	<input type="file" name="media" id="upfront-image-file-input" >
+	<input type="hidden" name="action" value="upfront-media-upload">
+	<input type="submit" value="Upload">
+</form>
+</script>
+
+</div>

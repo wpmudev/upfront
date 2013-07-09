@@ -1,0 +1,2 @@
+<?php
+	include('image.html');

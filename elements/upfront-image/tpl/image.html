@@ -1,0 +1,17 @@
+<div class="upfront-image-container upfront-<?php echo $caption_trigger ?>" width="" height="">
+<?php if($image_caption && $caption_position=='below_image'){ ?>
+<div class="wp-caption"><?php echo $image_caption ?></div>
+<?php } ?>
+<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" />
+<?php if($image_caption){ ?>
+<div class="wp-caption <?php echo $caption_position ?> <?php echo $caption_alignment ?>"><?php echo $image_caption ?></div>
+<?php } ?>
+<?php if($image_status == 'starting'){ ?>
+<div class="upfront-image-starting-select">
+	<div>
+		<span class="upfront-image-resizethiselement">Resize this element</span><span class="upfront-image-and">&amp;</span>
+		<a class="upfront-image-select-button button" href="#">Upload Image</a>
+	</div>
+</div>
+<?php } ?>
+</div>
