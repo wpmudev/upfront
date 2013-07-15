@@ -24,8 +24,11 @@ class Upfront_NavigationView extends Upfront_Object {
         if ( $menu_id )
             $menu = wp_nav_menu(array(
                 'menu' => $menu_id,
+                'fallback_cb'     => false,
                 'echo' => false
             ));
+        if(!$menu)
+            return "Please add menu items";
         return "<div class='upfront-output-object upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
     }
 
@@ -55,6 +58,8 @@ class Upfront_MenuSetting extends Upfront_Server {
         add_action('wp_ajax_upfront_update_post_status', array($this, "update_post_status"));
         add_action('wp_ajax_upfront_delete_menu_item', array($this, "delete_menu_item"));
         add_action('wp_ajax_upfront_update_menu_order', array($this, "update_menu_order"));
+        add_action('wp_ajax_upfront_create_menu', array($this, "create_menu"));
+        add_action('wp_ajax_upfront_delete_menu', array($this, "delete_menu"));
 
     }
 
@@ -68,8 +73,10 @@ class Upfront_MenuSetting extends Upfront_Server {
         if ( $menu_id && is_nav_menu($menu_id) ){
             $html = wp_nav_menu(array(
                 'menu' => $menu_id,
+                'fallback_cb'     => false,
                 'echo' => false
             ));
+
             $this->_out(new Upfront_JsonResponse_Success($html));
         }
         $this->_out(new Upfront_JsonResponse_Error('Menu not found'));
@@ -85,8 +92,8 @@ class Upfront_MenuSetting extends Upfront_Server {
                 'post_status'            => 'publish',
                 'output'                 =>  ARRAY_A,
                 'output_key'             => 'menu_order',
-                //'nopaging'               => true,
-                //'update_post_term_cache' => false
+                'nopaging'               => true,
+                'update_post_term_cache' => false
             );
 
             $menu_items = wp_get_nav_menu_items($menu_id, $args);
@@ -239,8 +246,26 @@ class Upfront_MenuSetting extends Upfront_Server {
         $this->_out(new Upfront_JsonResponse_Error('Cannot Update Menu!'));
     }
 
+    public function create_menu(){
+        $menu_name = isset($_POST['menu_name']) ? $_POST['menu_name'] : false;
+        if ( $menu_name ){
+            $response = wp_create_nav_menu($menu_name);
+            $this->_out(new Upfront_JsonResponse_Success($response));
+        }
+        $this->_out(new Upfront_JsonResponse_Error('Cannot Create Menu!'));
+
+    }
+
+    public function delete_menu(){
+        $menu_id = isset($_POST['menu_id']) ? $_POST['menu_id'] : false;
+        if ( $menu_id ){
+            $response = wp_delete_nav_menu($menu_id);
+            $this->_out(new Upfront_JsonResponse_Success($response));
+        }
+        $this->_out(new Upfront_JsonResponse_Error('Cannot delete Menu!'));
+
+    }
+
 }
-
-
 
 Upfront_MenuSetting::serve();

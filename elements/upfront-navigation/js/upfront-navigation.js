@@ -28,17 +28,23 @@
         });
 
         var NavigationView = Upfront.Views.ObjectView.extend({
-            initialize:function(){
 
+            toolTip : _.template('<div class="nav_tooltip" style="display: none;"><a class="edit_url" href="#">edit URL</a><a class="visit_page" href="#">visit page</a></div>'),
+
+            initialize:function(){
                 var me = this;
-                this.events = _.extend({}, this.events, {
-                    "hover .upfront-object-content .menu-item > a": "onMenuItemHover",
-                    "click .upfront-object-content .menu-item > a .visit_page": "openNewWindow"
-                });
 
                 // Call the parent's initialization function
                 Upfront.Views.ObjectView.prototype.initialize.call(this);
+                this.thisMe = this;
                 Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
+                this.toolTipAppend();
+            },
+
+            events: function(){
+                return _.extend({},Upfront.Views.ObjectView.prototype.events,{
+                    "hover .upfront-object-content .menu-item > a": "onMenuItemHover"
+                });
             },
 
             model:NavigationModel,
@@ -50,6 +56,10 @@
                     return "Please select menu on settings";
                 Upfront.Util.post({"action": "upfront_load_menu_html", "data": menu_id})
                     .success(function (ret) {
+                        if(!ret.data){
+                            me.$el.find('.upfront-object-content').html('Please add menu items');
+                            return;
+                        }
                         me.$el.find('.upfront-object-content').html(ret.data);
                     })
                     .error(function (ret) {
@@ -58,36 +68,55 @@
                 return 'Loading';
             },
 
+            toolTipAppend: function(){
+
+                var $body = $('body'),
+                    me = this;
+                $body.find('.nav_tooltip').remove().end()
+                    .append(this.toolTip);
+
+                $body.find('.nav_tooltip').hover(function(){
+                    $(this).show();
+
+                },function(){
+                    $(this).hide();
+
+                });
+
+                $body.find('.nav_tooltip').find('.visit_page').click(function(e){
+                    e.preventDefault();
+                    window.open(e.target.href)
+                });
+
+                $body.find('.nav_tooltip').find('.edit_url').click(function(e){
+                    e.preventDefault();
+                    Upfront.Events.trigger("entity:settings:activate", me);
+                });
+
+            },
+
             renderTrigger: function(){
               this.render();
             },
 
-            toolTip : _.template('<div class="nav_tooltip" style="display: none;"><a class="edit_url" href="#">edit URL</a><a class="visit_page" href="#">visit page</a></div>'),
+            onMenuItemHover: function(e) {
+                var $Ele = $(e.target),
+                $toolTip = $('.nav_tooltip');
+                if (e.type == "mouseenter") {
 
-            onMenuItemHover: function(evt) {
+                    $toolTip.find('.visit_page').attr('href', e.target.href);
 
-                var $item = $(evt.target).parent('li'),
-                $itemUl = $(evt.target).closest('.menu'),
-                $itemWidth = $item.width(),
-                $itemHeight = $itemUl.height();
-
-                if (evt.type == "mouseenter") {
-                    // hover-in on menu item
-                    $toolTip = $(this.toolTip());
-                    this.$el.find('.nav_tooltip').remove();
-                    $(evt.target).append($toolTip);
-                    $toolTip.find('.visit_page').attr('href',$(evt.target).attr('href'));
-                    $toolTip.css({'left':$itemWidth,'top':($itemHeight/2) - 17});
-                    $toolTip.show();
+                    var x = $Ele.offset().left + ($Ele.outerWidth()/2) - ($toolTip.outerWidth()/2);
+                    var y = $Ele.offset().top - ($toolTip.outerHeight());
+                    $toolTip.css( { top: y, left: x, position: 'absolute' } )
+                        .show();
                 }
                 else {
                     // hover-out on menu item
                     $toolTip.hide();
                 }
             },
-            openNewWindow: function(e){
-                window.open(e.target.href)
-            },
+
             on_render: function () {
 
                 var layout_settings = this.model.get_property_value_by_name("layout_setting"),
@@ -143,88 +172,276 @@
             }
         });
 
+        // --- Tie the settings together ---
+
+        /**
+         * Navigation settings hub, populated with the panels we'll be showing.
+         * @type {Upfront.Views.Editor.Settings.Settings}
+         */
         var NavigationSettings = Upfront.Views.Editor.Settings.Settings.extend({
+            /**
+             * Bootstrap the object - populate the internal
+             * panels array with the panel instances we'll be showing.
+             */
             initialize: function () {
                 this.panels = _([
-                    // layout tab
-                    new NavigationMenuSettingsPanel({
-                        model: this.model,
-                        settings: [
-                            new NavigationMenuSetting_Layout({model: this.model})
-                        ],
-                        label: "Layout",
-                        title: "Layout"
-                    }),
-                    // Contents tab
-                    new NavigationMenuSettingsPanel({
-                        model: this.model,
-                        settings: [
-                            new NavigationMenuSettingContents({model: this.model})
-                        ],
-                        label: "Contents",
-                        title: "Contents"
-                    }),
-                    // Menu order tab
-                    new NavigationMenuSettingsPanel({
-                        model: this.model,
-                        settings: [
-                            new NavigationMenuSettingMenuOrder({model: this.model})
-                        ],
-                        label: "Menu order",
-                        title: "Menu order"
-                    }),
-                    // menu tab
-                    new NavigationMenuSettingsPanel({
-                        model: this.model,
-                        settings: [
-                            new NavigationMenuSetting_Menu({model: this.model})
-                        ],
-                        label: "Menu",
-                        title: "Menu"
-                    })
+                    new NavigationMenuSettingsPanel({model: this.model}),
+                    new NavigationLayoutSettingsPanel({model: this.model}),
+                    new NavigationContentsSettingsPanel({model: this.model}),
+                    new NavigationMenuOrderSettingsPanel({model: this.model})
                 ]);
             },
+            /**
+             * Get the title (goes into settings title area)
+             * @return {string} Title
+             */
             get_title: function () {
                 return "Navigation settings";
             }
         });
 
+        // ----- Settings API -----
+        // We'll be working from the bottom up here.
+        // We will first define settings panels, and items for each panel.
+        // Then we'll slot in the panels in a settings instance.
 
+        // --- Menu settings ---
+
+        /**
+         * Menu settings panel.
+         * @type {Upfront.Views.Editor.Settings.Panel}
+         */
         var NavigationMenuSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
-            initialize: function (options) {
-                this.settings = _(options.settings);
-                this.label = options.label;
-                this.title = options.title;
+            /**
+             * Initialize the view, and populate the internal
+             * setting items array with Item instances.
+             */
+            initialize: function () {
+                this.settings = _([
+                    new NavigationMenuSetting_Menu({model: this.model}),
+                    new NavigationMenuSetting_CreateMenu({model: this.model})
+                ]);
             },
+            /**
+             * Get the label (what will be shown in the settings overview)
+             * @return {string} Label.
+             */
             get_label: function () {
-                return this.label;
+                return "Menu";
             },
+            /**
+             * Get the title (goes into settings title area)
+             * @return {string} Title
+             */
             get_title: function () {
-                return this.title;
+                return "Menu";
             }
         });
 
+        // ----- Settings API -----
+        // We'll be working from the bottom up here.
+        // We will first define settings panels, and items for each panel.
+        // Then we'll slot in the panels in a settings instance.
+
+        // --- Layout settings ---
+
+        /**
+         * Layout settings panel.
+         * @type {Upfront.Views.Editor.Settings.Panel}
+         */
+        var NavigationLayoutSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
+            /**
+             * Initialize the view, and populate the internal
+             * setting items array with Item instances.
+             */
+            initialize: function () {
+                this.settings = _([
+                    new NavigationMenuSetting_Layout({model: this.model})
+                ]);
+            },
+            /**
+             * Get the label (what will be shown in the settings overview)
+             * @return {string} Label.
+             */
+            get_label: function () {
+                return "Layout";
+            },
+            /**
+             * Get the title (goes into settings title area)
+             * @return {string} Title
+             */
+            get_title: function () {
+                return "Layout";
+            }
+        });
+
+        // ----- Settings API -----
+        // We'll be working from the bottom up here.
+        // We will first define settings panels, and items for each panel.
+        // Then we'll slot in the panels in a settings instance.
+
+        // --- Contents settings ---
+
+        /**
+         * Contents settings panel.
+         * @type {Upfront.Views.Editor.Settings.Panel}
+         */
+        var NavigationContentsSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
+            /**
+             * Initialize the view, and populate the internal
+             * setting items array with Item instances.
+             */
+            initialize: function () {
+                this.settings = _([
+                    new NavigationMenuSettingContents({model: this.model})
+                ]);
+            },
+            /**
+             * on save create selected pages
+             */
+            on_save: function(){
+                this.settings._wrapped[0].createPages();
+            },
+            /**
+             * Get the label (what will be shown in the settings overview)
+             * @return {string} Label.
+             */
+            get_label: function () {
+                return "Contents";
+            },
+            /**
+             * Get the title (goes into settings title area)
+             * @return {string} Title
+             */
+            get_title: function () {
+                return "Contents";
+            }
+        });
+
+        // ----- Settings API -----
+        // We'll be working from the bottom up here.
+        // We will first define settings panels, and items for each panel.
+        // Then we'll slot in the panels in a settings instance.
+
+        // --- Menu Order settings ---
+
+        /**
+         * Menu Order settings panel.
+         * @type {Upfront.Views.Editor.Settings.Panel}
+         */
+        var NavigationMenuOrderSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
+            /**
+             * Initialize the view, and populate the internal
+             * setting items array with Item instances.
+             */
+            initialize: function () {
+                this.settings = _([
+                    new NavigationMenuSettingMenuOrder({model: this.model})
+                ]);
+            },
+            /**
+             * on save create selected pages
+             */
+            on_save: function(){
+                this.settings._wrapped[0].saveAllChanges();
+            },
+            /**
+             * Get the label (what will be shown in the settings overview)
+             * @return {string} Label.
+             */
+            get_label: function () {
+                return "Menu order";
+            },
+            /**
+             * Get the title (goes into settings title area)
+             * @return {string} Title
+             */
+            get_title: function () {
+                return "Menu order";
+            }
+        });
 
         var NavigationMenuSetting_Menu = Upfront.Views.Editor.Settings.Item.extend({
-
+            className: 'upfront-navigation-settings-menu',
+            events: {
+              'click .add_new_menu': 'addNewMenu',
+              'click .upfront_selected_pages_box span': 'deleteMenu'
+            },
             render: function () {
-                var value = this.model.get_property_value_by_name("menu_id"),
-                    me = this
+               var me = this,
+                    options
                     ;
                 // Wrap method accepts an object, with defined "title" and "markup" properties.
                 // The "markup" one holds the actual Item markup.
+                me.wrap({
+                    "title": "Select Menu",
+                    "markup": '<select id="select_menu_id" name="select_menu_id"><option>Loading ...</option></select>'
+                });
+
+                me.wrap({
+                    "title": "Create Menu",
+                    "markup": '<input class="menu_name_input" type="text" /><button class="add_new_menu">Add New Menu</button>'
+                });
+
+                me.wrap({
+                    "title": "All Menus",
+                    "markup": '<div class="upfront_selected_pages_box"></div>'
+                });
+
+                this.getMenus();
+
+            },
+            getMenus: function(){
+                var me = this,
+                    value = this.model.get_property_value_by_name("menu_id");
+                // Ajax call for Menu list
                 Upfront.Util.post({"action": "upfront_load_menu_list"})
                     .success(function (ret) {
                         options = _.map(ret.data, function (each) {
-                            return '<option value="' + each.term_id + '" ' + (value && value==each.term_id ? 'selected' : '') + '>' + each.name + '</option>';
+                            return '<option value="' + each.term_id + '" ' + ( value && value == each.term_id ? 'selected' : '' ) + '>' + each.name + '</option>';
                         });
-                        me.wrap({
-                            "title": "Select Menu",
-                            "markup": '<select id="select_menu_id" name="select_menu_id">' + options + '</select>'
+                        // find and append data
+                        me.$el.find('#select_menu_id').empty().append(options);
+                        // display all menus
+                        spans = _.map(ret.data, function (each) {
+                            return '<span id="' + each.term_id + '" >' + each.name + '</span>';
                         });
+                        me.$el.find('.upfront_selected_pages_box').empty().append(spans);
+                        me.panel.trigger("upfront:settings:panel:refresh", me.panel);
+
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading menu list");
+                    });
+            },
+            // add new menus on navigation
+            addNewMenu: function(){
+                var $input = this.$el.find('.menu_name_input');
+                ($input.val() ? this.addNewMenuCall($input.val()) : $input.focus())
+            },
+            addNewMenuCall: function(MenuName){
+                var me = this,
+                    $input = this.$el.find('.menu_name_input').val('');
+                $input.val('Loading ...')
+                // Ajax call for creating menu
+                var newMenu = Upfront.Util.post({"action": "upfront_create_menu", "menu_name": MenuName})
+                    .success(function (ret) {
+                        me.$el.find('.menu_name_input').val('');
+                        me.getMenus();
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error creating menu");
+                    });
+            },
+            deleteMenu: function(e){
+                var me = this;
+                // Ajax call for deleting menu
+                var newMenu = Upfront.Util.post({"action": "upfront_delete_menu", "menu_id": e.target.id})
+                    .success(function (ret) {
+                        me.getMenus();
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error deleting menu");
                     });
             },
             get_name: function () {
@@ -233,6 +450,19 @@
             get_value: function () {
                 var menu_id = this.$el.find('#select_menu_id').val();
                 return menu_id;
+            }
+
+        });
+
+        var NavigationMenuSetting_CreateMenu = Upfront.Views.Editor.Settings.Item.extend({
+
+            render: function () {
+                var me = this;
+
+                // Wrap method accepts an object, with defined "title" and "markup" properties.
+                // The "markup" one holds the actual Item markup.
+
+
             }
 
         });
@@ -290,90 +520,90 @@
 
         });
 
-        MenuitemsCollection = Backbone.Collection.extend({
-            //url : './api/menuitems',
-            initialize: function(options){
-                this.bind('reset', this.relationships); //collection loads so calculate relationships
-            },
+        var MenuitemsCollection = Backbone.Collection.extend({
+                //url : './api/menuitems',
+                initialize: function(options){
+                    this.bind('reset', this.relationships); //collection loads so calculate relationships
+                },
 
-            relationships: function(){
-                this.relations = _.groupBy(this.models, this.parent);
-            },
-            //return an array of root models
-            root: function(){
-                if(!this.relations) this.relationships();
-                return this.relations[0];
-            },
-            //return an array of child models
-            children: function(model){
-                if(!this.relations) this.relationships();
-                return (typeof this.relations[model.get('ID')] === 'undefined')? [] : this.relations[model.get('ID')];
-            },
-            //return parent_id or 0 if model.parent_id is undefined
-            parent: function(model){
-                var parent_id = model.get('parent_id');
-                return (!parent_id)? 0: parent_id;
-            }
+                relationships: function(){
+                    this.relations = _.groupBy(this.models, this.parent);
+                },
+                //return an array of root models
+                root: function(){
+                    if(!this.relations) this.relationships();
+                    return this.relations[0];
+                },
+                //return an array of child models
+                children: function(model){
+                    if(!this.relations) this.relationships();
+                    return (typeof this.relations[model.get('ID')] === 'undefined')? [] : this.relations[model.get('ID')];
+                },
+                //return parent_id or 0 if model.parent_id is undefined
+                parent: function(model){
+                    var parent_id = model.get('parent_id');
+                    return (!parent_id)? 0: parent_id;
+                }
         });
 
-        MenuView = Backbone.View.extend({
+        var MenuView = Backbone.View.extend({
 
-            initialize: function(options) {
+                initialize: function(options) {
 
-                if (!options.collection) throw 'no collection provided';
+                    if (!options.collection) throw 'no collection provided';
 
-                //listen on non-this events
-                _.bindAll(this, 'render');
-                this.collection.bind('reset', this.render); //collection loaded
-            },
-            /***************************************
-             Render the view into the view's element
-             ****************************************/
-            render: function (event){
+                    //listen on non-this events
+                    _.bindAll(this, 'render');
+                    this.collection.bind('reset', this.render); //collection loaded
+                },
+                /***************************************
+                 Render the view into the view's element
+                 ****************************************/
+                render: function (event){
 
-                //render list menu
-                this.$el.append(this.renderMenu(this.collection.root()));
-                return this;
-            },
-            /**********************************************
-             Render list menu. Input is an array of models.
-             Output is DOM fragment.
-             **********************************************/
-            renderMenu: function(list){
-                if(_.size(list) === 0) {return null;}
-                var $dom = $('<ul></ul>');
-                _.each(list, function(model){
-                    $dom.append(this.renderMenuItem(model));
-                    var kids = this.collection.children(model);
-                    $dom.find('li:last').append(this.renderMenu(kids)); //recursive
-                }, this);
-                return $dom;
+                    //render list menu
+                    this.$el.append(this.renderMenu(this.collection.root()));
+                    return this;
+                },
+                /**********************************************
+                 Render list menu. Input is an array of models.
+                 Output is DOM fragment.
+                 **********************************************/
+                renderMenu: function(list){
+                    if(_.size(list) === 0) {return null;}
+                    var $dom = $('<ul></ul>');
+                    _.each(list, function(model){
+                        $dom.append(this.renderMenuItem(model));
+                        var kids = this.collection.children(model);
+                        $dom.find('li:last').append(this.renderMenu(kids)); //recursive
+                    }, this);
+                    return $dom;
 
-            },
-            //	returns a DOM element fragment for a single menu item
-            renderMenuItem: function (model){
-                var view = new MenuitemView({model: model});
-                return view.render().el;
-            }
-        });
+                },
+                //	returns a DOM element fragment for a single menu item
+                renderMenuItem: function (model){
+                    var view = new MenuitemView({model: model});
+                    return view.render().el;
+                }
+            });
 
-        MenuitemView = Backbone.View.extend({
+        var MenuitemView = Backbone.View.extend({
 
-            tagName: 'li',
+                tagName: 'li',
 
-            // Cache the template function for a single item.
-            template: _.template(_Upfront_Templates["navigation_contents_item_values"]),
+                // Cache the template function for a single item.
+                template: _.template(_Upfront_Templates["navigation_contents_item_values"]),
 
-            initialize: function(options) {
-                _.bindAll(this, 'render');
-                this.model.bind('change', this.render);
-            },
-            //render the view using a template
-            render: function (event) {
-                var content = this.template(this.model.toJSON());
-                $(this.el).html(content);
-                return this;
-            }
+                initialize: function(options) {
+                    _.bindAll(this, 'render');
+                    this.model.bind('change', this.render);
+                },
+                //render the view using a template
+                render: function (event) {
+                    var content = this.template(this.model.toJSON());
+                    $(this.el).html(content);
+                    return this;
+                }
         });
 
 
@@ -382,6 +612,7 @@
             initialize: function(){
                 this.model.get("properties").on("change", this.render, this);
                 this.model.get("properties").on("add", this.getThisMenuItems, this);
+                //Upfront.Events.on("upfront:settings:panel:saved:clicked", this.createPages, this);
             },
 
             navContentsTemplate: _.template(_Upfront_Templates["navigation_contents"]),
@@ -555,10 +786,10 @@
                 Upfront.Util.post({"action": "upfront_load_all_pages"})
                     .success(function (ret) {
 
-                        var menuitemsCollection = new MenuitemsCollection(ret.data);
-                        var menuView = new MenuView({collection: menuitemsCollection});
-
+                        var menuitemsCollection = new MenuitemsCollection(ret.data),
+                        menuView = new MenuView({collection: menuitemsCollection}),
                         $pagesBox = me.$el.find('.upfront_page_scroll_box');
+
                         $pagesBox.append(menuView.render().el);
                         $pagesBox.find('ul li:has(ul)').find('> div').removeClass('blank').addClass('plus');
                         //console.log(me.renderMenu(ret.data));
@@ -576,10 +807,10 @@
                 Upfront.Util.post({"action": "upfront_load_all_categories"})
                     .success(function (ret) {
 
-                        var menuitemsCollection = new MenuitemsCollection(ret.data);
-                        var menuView = new MenuView({collection: menuitemsCollection});
-
+                        var menuitemsCollection = new MenuitemsCollection(ret.data),
+                        menuView = new MenuView({collection: menuitemsCollection}),
                         $categoriesBox = me.$el.find('.upfront_categories_scroll_box');
+
                         $categoriesBox.append(menuView.render().el);
                         $categoriesBox.find('ul li:has(ul)').find('> div').removeClass('blank').addClass('plus');
                         //console.log(me.renderMenu(ret.data));
@@ -691,20 +922,10 @@
                     .error(function (ret) {
                         Upfront.Util.log("Error Deleting Menu Item");
                     });
-                return 'Loading';
             },
 
-            get_name: function () {
-                return "contents_setting";
-            },
-
-            get_value: function () {
-
+            createPages: function () {
                 this.addSelectedToMenu(this.$el.find('.upfront_page_scroll_box, .upfront_categories_scroll_box'));
-                var contents_setting = JSON.stringify({
-                    "meniItems": ''
-                });
-                return contents_setting;
             }
 
         });
@@ -727,9 +948,10 @@
             negateIfRTL: ( 'undefined' != typeof isRtl && isRtl ) ? -1 : 1,
 
             initialize: function(){
-                this.model.get("properties").on("change", this.render, this);
+                Upfront.Events.on("entity:settings:render_menu_order",this.MenuOrder, this );
+                this.model.get("properties").on("change", this.MenuOrder, this);
                 this.model.get("properties").on("add", this.MenuOrder, this);
-                Upfront.Events.on("entity:settings:render_menu_order",this.menuOrderRenderTrigger, this );
+                this.jQueryExtensions();
             },
 
             registerChange : function() {
@@ -799,6 +1021,9 @@
                     me = this,
                     menuMaxDepth = initialMenuMaxDepth();
 
+                //TODO: Need to fix this issue
+
+                console.log(menuEdge);
                 // Use the right edge if RTL.
                 menuEdge += this.isRTL ? this.menuList.width() : 0;
 
@@ -968,37 +1193,6 @@
                 return Math.floor(px / this.options.menuItemDepthPerLevel);
             },
 
-            MenuOrder: function () {
-                var menu_id = this.model.get_property_value_by_name('menu_id'),
-                    depths = [],
-                    me = this;
-                if ( !menu_id )
-                    return "Please select menu on settings";
-                Upfront.Util.post({"action": "upfront_load_menu_items", "data": menu_id})
-                    .success(function (ret) {
-                        _.each(ret.data, function(item){
-                            depths[item.ID] = (depths[item.menu_item_parent] || 0) + 1;
-                            me.$el.find('#menu-to-edit')
-                                .append(me.MenuOrderListTemplate({item: item, depth: depths[item.ID]-1 }));
-
-                        });
-
-                        me.menuList = me.$el.find('#menu-to-edit');
-                        me.targetList = me.menuList;
-                        me.jQueryExtensions();
-
-                        if( me.menuList.length ) // If no menu, we're in the + tab.
-                            me.initSortables();
-
-
-
-                    })
-                    .error(function (ret) {
-                        Upfront.Util.log("Error loading menu");
-                    });
-                return 'Loading';
-            },
-
             getItemData : function( itemType, id, currentItem ) {
                 itemType = itemType || 'menu-item';
 
@@ -1078,10 +1272,6 @@
                 return 'Loading';
             },
 
-            menuOrderRenderTrigger: function(){
-                this.render();
-            },
-
             render: function () {
 
                 this.$el.html(this.navMenuOrderTemplate());
@@ -1089,14 +1279,42 @@
 
             },
 
-            get_name: function () {
-                return "menu_order";
+            iniSort: true,
+
+            MenuOrder: function () {
+                var menu_id = this.model.get_property_value_by_name('menu_id'),
+                    depths = [],
+                    me = this;
+                if ( !menu_id )
+                    return "Please select menu on settings";
+
+                Upfront.Util.post({"action": "upfront_load_menu_items", "data": menu_id})
+                    .success(function (ret) {
+                        var $ul = me.$el.find('#menu-to-edit');
+                        $ul.empty();
+                        _.each(ret.data, function(item){
+                            depths[item.ID] = (depths[item.menu_item_parent] || 0) + 1;
+                            $ul.append(me.MenuOrderListTemplate({item: item, depth: depths[item.ID]-1 }));
+                        });
+                    })
+                    .done(function(){
+                        me.menuList = me.$el.find('#menu-to-edit');
+                        me.targetList = me.menuList;
+
+                        if( me.menuList.length && me.iniSort ) {// If no menu, we're in the + tab.
+                            me.initSortables();
+                            console.log('ini sort');
+                            me.iniSort = false;
+                        }
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error loading menu");
+                    });
+
             },
 
-            get_value: function () {
+            saveAllChanges: function () {
                 this.update_menu_order();
-                var menu_order = '';
-                return menu_order;
             }
 
         });

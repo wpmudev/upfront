@@ -193,6 +193,10 @@ label {
     color: #99a1a7;
     border: 1px solid #263a4d;
 }
+.upfront-settings_panel .upfront-navigation-settings-menu
+{
+    width: 286px;
+}
 .upfront-settings_panel .upfront-navigation-settings-layout .upfront-settings-item:nth-child(1)
 {
     float:left;
@@ -686,7 +690,7 @@ label {
 {
     content: "+";
     position: relative;
-    top: -8px;
+    top: -14px;
     font-size: 9px;
     left: 1px;
 }
@@ -701,7 +705,7 @@ label {
 .upfront_categories_scroll_box ul li .minus:before {
     content: "-";
     position: relative;
-    top: -7px;
+    top: -13px;
     font-size: 15px;
     left: 1px;
 }
