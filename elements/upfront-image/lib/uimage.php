@@ -7,6 +7,12 @@ class Upfront_UimageView extends Upfront_Object {
 		return "Hola";
 	}
 
+	public static function set_jquery_form () {
+		wp_deregister_script('jquery-form');
+		wp_register_script('jquery-form', upfront_element_url('js/jquery.form.min.js', dirname(__FILE__)), array('jquery'), '3.36.0');
+
+	}
+
 	public static function add_styles_scripts () {
 		wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
 		wp_enqueue_script('jquery-form');
