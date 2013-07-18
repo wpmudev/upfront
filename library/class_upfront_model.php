@@ -256,8 +256,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function get_regions_data () {
 		$regions = self::_get_regions();
 		foreach ( $regions as $i => $region ) {
-			if ( $region['scope'] == 'global' ){
-				$region_data = json_decode( get_option(self::_get_region_id($region['name']), json_encode(array())), true );
+			if ( $region['scope'] != 'local' ){
+				$region_data = json_decode( get_option(self::_get_region_id($region['name'], $region['scope']), json_encode(array())), true );
 				if ( empty($region_data) )
 					continue;
 				$regions[$i] = $region_data;
@@ -277,18 +277,18 @@ class Upfront_Layout extends Upfront_JsonModel {
 	
 	protected static function _get_regions ($all = false) {
 		$regions = array();
-		$region_support = apply_filters('upfront_region_support', array('header', 'left-sidebar', 'right-sidebar', 'footer'), self::$cascade);
-		if ( $all || in_array('header', $region_support) )
-			$regions[] = array(
+		do_action('upfront_get_regions', self::$cascade);
+		if ( $all || ($arr = upfront_region_supported('header')) )
+			$regions[] = array_merge(array(
 				'name' => "header", 
 				'title' => __("Header Area"), 
 				'properties' => array(), 
 				'modules' => array(), 
 				'wrappers' => array(), 
 				'scope' => "global"
-			);
-		if ( $all || in_array('left-sidebar', $region_support) )
-			$regions[] = array(
+			), ( is_array($arr) ? $arr : array() ));
+		if ( $all || ($arr = upfront_region_supported('left-sidebar')) )
+			$regions[] = array_merge(array(
 				'name' => "left-sidebar", 
 				'title' => __("Left Sidebar Area"), 
 				'properties' => array(
@@ -298,7 +298,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'wrappers' => array(), 
 				'scope' => "global",
 				'container' => 'main'
-			);
+			), ( is_array($arr) ? $arr : array() ));
 		$regions[] = array(
 			'name' => "main", 
 			'title' => __("Main Area"), 
@@ -321,8 +321,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 			'default' => true
 		);*/
 		
-		if ( $all || in_array('right-sidebar', $region_support) )
-			$regions[] = array(
+		if ( $all || ($arr = upfront_region_supported('right-sidebar')) )
+			$regions[] = array_merge(array(
 				'name' => "right-sidebar", 
 				'title' => __("Right Sidebar Area"), 
 				'properties' => array(
@@ -332,22 +332,29 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'wrappers' => array(), 
 				'scope' => "global",
 				'container' => 'main'
-			);
-		if ( $all || in_array('footer', $region_support) )
-			$regions[] = array(
+			), ( is_array($arr) ? $arr : array() ));
+		if ( $all || ($arr = upfront_region_supported('footer')) )
+			$regions[] = array_merge(array(
 				'name' => "footer", 
 				'title' => __("Footer Area"), 
 				'properties' => array(), 
 				'modules' => array(), 
 				'wrappers' => array(), 
 				'scope' => "global"
-			);
+			), ( is_array($arr) ? $arr : array() ));
 		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
 	
-	protected static function _get_region_id ($region_name) {
+	protected static function _get_region_id ($region_name, $scope = '') {
 		$region_id = preg_replace('/[^-_a-z0-9]/', '-', strtolower($region_name));
-		return self::STORAGE_KEY . '-' . $region_id;
+		return self::STORAGE_KEY . '-' . $region_id . ( !empty($scope) ? '-' . $scope : '' );
+	}
+	
+	
+	
+	public function initialize () {
+		parent::initialize();
+		do_action('upfront_layout_init', $this);
 	}
 	
 	public function get_region_data ($region_name) {
@@ -367,8 +374,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public function save () {
 		$key = $this->get_id();
 		foreach ( self::_get_regions() as $region ){
-			if ( $region['scope'] == 'global' )
-				update_option(self::_get_region_id($region['name']), $this->region_to_json($region['name']));
+			if ( $region['scope'] != 'local' )
+				update_option(self::_get_region_id($region['name'], $region['scope']), $this->region_to_json($region['name']));
 		}
 		update_option($key, $this->to_json());
 		return $key;

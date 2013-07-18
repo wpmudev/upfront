@@ -760,15 +760,15 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background: rgba(242, 255, 186, 0.4);
 }
 .upfront-module:hover {
-	outline: 1px dotted #5c7c9b;
+	outline: 1px dotted #7f7f7f;
 	/*z-index: 40;*/
 }
 .upfront-dragging .upfront-module {
-	outline: 1px dotted #5c7c9b;
+	outline: 1px dotted #7f7f7f;
 	overflow: hidden;
 }
 .upfront-dragging .upfront-module:hover {
-	outline: 1px dotted #5c7c9b;
+	outline: 1px dotted #7f7f7f;
 	/*z-index: 40;*/
 }
 .upfront-object {
@@ -894,8 +894,33 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 
 .upfront-entity_meta {
-  /*float: right;*/
-
+	position: absolute;
+	z-index: 2000;
+	overflow: hidden;
+}
+.upfront-module > .upfront-entity_meta {
+	top: 5px;
+	right: 5px;
+}
+.upfront-module[data-row="1"] > .upfront-entity_meta,
+.upfront-module[data-row="2"] > .upfront-entity_meta {
+	top: 0;
+	right: 5px;
+}
+.upfront-object > .upfront-entity_meta {
+	top: 50px;
+	right: 5px;
+}
+.upfront-module[data-row="1"] .upfront-object > .upfront-entity_meta,
+.upfront-module[data-row="2"] .upfront-object > .upfront-entity_meta {
+	top: 0;
+	right: 50px;
+}
+.upfront-module[data-row="3"] .upfront-object > .upfront-entity_meta,
+.upfront-module[data-row="4"] .upfront-object > .upfront-entity_meta,
+.upfront-module[data-row="5"] .upfront-object > .upfront-entity_meta {
+	top: 5px;
+	right: 50px;
 }
 
 
@@ -903,40 +928,46 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	display: none;
 }
 .upfront-editable_entity .upfront-entity_meta a {
-	width: 0;
-	height: 0;	
-	position: absolute;
+	width: 28px;
+	height: 28px;
 	z-index: 2000;
 	cursor:pointer;
 	display:none;
-	border-top: 0px solid transparent;
+	border-radius: 2px;
 	color:#fff;
 	text-decoration:none;
+	margin: 0 0 15px;
+}
+.upfront-module[data-row="1"] .upfront-object > .upfront-entity_meta a,
+.upfront-module[data-row="2"] .upfront-object > .upfront-entity_meta a,
+.upfront-module[data-row="3"] .upfront-object > .upfront-entity_meta a,
+.upfront-module[data-row="4"] .upfront-object > .upfront-entity_meta a,
+.upfront-module[data-row="5"] .upfront-object > .upfront-entity_meta a {
+	float: right;
+	margin-left: 15px;
 }
 .upfront-editable_entity:hover .upfront-entity_meta a,
 .upfront-active_entity .upfront-entity_meta a {
-  display: block;
+	display: block;
 }
 .upfront-entity_meta a.upfront-entity-settings_trigger {
-	border-bottom: 28px solid #1fcd8f;
-	border-left: 28px solid #21d998;
-	right:-13px;
-	top:33px;
+	border: 1px solid #13bf83;
+	background: #1fcd8f;
 }
 .upfront-entity_meta a.upfront-entity-delete_trigger {
-	border-bottom: 28px solid #dd4f49;
-	border-left: 28px solid #eb534d;
-	right:-13px;
-	top:-10px;
+	border: 1px solid #cc423d;
+	background: #d94641 url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZWI1MzRkIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjZWI1MzRkIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTElIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
+	background: #d94641 -moz-linear-gradient(-45deg, rgba(235,83,77,1) 0%, rgba(235,83,77,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+	background: #d94641 -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(235,83,77,1)), color-stop(50%,rgba(235,83,77,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+	background: #d94641 -webkit-linear-gradient(-45deg, rgba(235,83,77,1) 0%,rgba(235,83,77,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: #d94641 -o-linear-gradient(-45deg, rgba(235,83,77,1) 0%,rgba(235,83,77,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+	background: #d94641 -ms-linear-gradient(-45deg, rgba(235,83,77,1) 0%,rgba(235,83,77,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
+	background: #d94641 linear-gradient(135deg, rgba(235,83,77,1) 0%,rgba(235,83,77,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
 .upfront-editable_entity .upfront-entity_meta a [class^="icon-"]
 {
 	width: 28px;
 	height: 28px;
-	float: left;
-	position: relative;
-	left: -28px;
-	top: 0px;
 	font-size: 18px;
 	font-weight: normal;
 	text-align: center;

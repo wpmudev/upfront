@@ -580,7 +580,7 @@ define(_template_files, function () {
 		},
 		on_save: function () {
 			var regions = this.model.get('regions');
-			regions.remove(regions.get_by_name('shadow'));
+			regions.remove(regions.get_by_name('shadow'), {silent: true});
 		},
 		apply_state_binding: function () {
 			Upfront.Events.on("command:undo", this.reset_modules, this);
@@ -603,9 +603,16 @@ define(_template_files, function () {
 				this.model.get('regions').add( region );
 			}
 			if ( region.get("modules").length != this.elements.size() ) {
-				region.get("modules").reset([]);
+				var modules = region.get("modules");
 				this.elements.each(function (element) {
-					element.add_element();
+					var found = false;
+					modules.forEach(function(module){
+						if ( module.get('shadow') == element.shadow_id )
+							found = true;
+					});
+					if ( ! found ){
+						element.add_element();
+					}
 				}, this);
 			}
 		},
@@ -626,6 +633,8 @@ define(_template_files, function () {
 					$clone = element.$el.clone(),
 					clone_h = element.$el.outerHeight(),
 					clone_w = element.$el.outerWidth();
+				console.log(element.shadow_id);
+				console.log($shadow);
 				$shadow.css({
 					position: "absolute",
 					top: e.pageY-(off.top-pos.top)-(clone_h/2),
@@ -2485,6 +2494,7 @@ define(_template_files, function () {
 					);
 			});
 			this.trigger("upfront:settings:panel:saved", this);
+			Upfront.Events.trigger("entity:settings:deactivate");
 		},
 		
 		on_cancel: function () {
@@ -2502,8 +2512,13 @@ define(_template_files, function () {
 			var me = this,
 				$view = me.for_view.$el.find(".upfront-editable_entity"),
 				view_pos = $view.offset(),
+				view_pos_right = view_pos.left + $view.outerWidth(),
+				$button = me.for_view.$el.find(".upfront-entity-settings_trigger"),
+				button_pos = $button.offset(),
+				button_pos_right = button_pos.left + $button.outerWidth(),
 				$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-				main_pos = $main.offset()
+				main_pos = $main.offset(),
+				main_pos_right = main_pos.left + $main.outerWidth()
 			;
 			me.$el
 				.empty()
@@ -2530,8 +2545,8 @@ define(_template_files, function () {
 					"z-index": 10000000
 				})
 				.offset({
-					"top": view_pos.top + /*$view.height() + 16*/ 49,
-					"left": view_pos.left + $view.outerWidth() - (view_pos.left+$view.outerWidth() > (main_pos.left+$main.outerWidth()/2) ? label_width+panel_width : 0)
+					"top": view_pos.top /*+ $view.height() + 16*/,
+					"left": view_pos.left + $view.outerWidth() - ((view_pos_right+label_width+panel_width > main_pos_right) ? label_width+panel_width+(view_pos_right-button_pos.left)+5 : 0)
 				})
 			;
 		},
@@ -2697,3 +2712,5 @@ define(_template_files, function () {
 });
 
 })(jQuery);
+
+//@ sourceURL=upfront-views-editor.js

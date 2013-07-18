@@ -60,14 +60,16 @@ var _alpha = "alpha",
 		has_property_value: function (property, value) {
 			return (value == this.get_property_value_by_name(property));
 		},
-		add_property: function (name, value) {
-			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}));
+		add_property: function (name, value, silent) {
+			if (!silent) silent = false;
+			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}), {"silent": silent});
 		},
-		set_property: function (name, value) {
+		set_property: function (name, value, silent) {
 			if (!name) return false;
+			if (!silent) silent = false;
 			var prop = this.get_property_by_name(name);
-			if (!prop || !prop.set) return this.add_property(name, value);
-			prop.set({"value": value});
+			if (!prop || !prop.set) return this.add_property(name, value, silent);
+			prop.set({"value": value}, {"silent": silent});
 		},
 		init_property: function (name, value) {
 			if (!this.has_property(name)) this.add_property(name, value);
@@ -95,13 +97,23 @@ var _alpha = "alpha",
 			return this.get_property_value_by_name("wrapper_id");
 		},
 		replace_class: function (value) {
-			var val_esc = value.replace(/-?\d+/, '-?\\d+')
-				val_rx = new RegExp(val_esc),
-				prop = this.get_property_by_name("class"),
+			var prop = this.get_property_by_name("class"),
 				old = prop ? prop.get("value") : false
 			;
-			if (prop && old && old.match(val_rx)) return prop.set("value", old.replace(val_rx, value)); // Have class, have old value to replace
-			else if (prop && old) return prop.set("value", old + " " + value); // Have class, no old value to replace
+			if (prop && old){
+				 // Have class
+				var values = value.split(" "),
+					new_val = old;
+				for ( var i = 0; i < values.length; i++ ){
+					var val_esc = values[i].replace(/-?\d+/, '-?\\d+'),
+						val_rx = new RegExp(val_esc);
+					if ( new_val.match(val_rx) )
+						new_val = new_val.replace(val_rx, values[i]);
+					else
+						new_val += " " + values[i];
+				}
+				return prop.set("value", new_val);
+			}
 			else if (!prop) this.get("properties").add(new Property({"name": "class", "value": value})); // No class property
 			return false;
 		},
@@ -1298,3 +1310,5 @@ define({
 });
 
 })();
+
+//@ sourceURL=upfront-models.js

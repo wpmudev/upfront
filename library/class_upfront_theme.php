@@ -1,0 +1,188 @@
+<?php
+
+class Upfront_Theme {
+	
+	protected static $instance;
+	protected $supported_regions = array();
+	protected $template_dir = 'templates';
+	
+	public static function get_instance () {
+		if ( ! is_a(self::$instance, __CLASS__) )
+			self::$instance = new self;
+		return self::$instance;
+	}
+	
+	public function __construct () {
+		
+	}
+	
+	public function add_region_support ($region, $args = array()) {
+		$this->supported_regions[$region] = $args;
+	}
+	
+	public function has_region_support ($region) {
+		if ( array_key_exists($region, $this->supported_regions) ) {
+			if ( !empty($this->supported_regions[$region]) )
+				return $this->supported_regions[$region];
+			return true;
+		}
+		return false;
+	}
+	
+	public function set_template_dir ($dir) {
+		$this->template_dir = $dir;
+	}
+	
+	public function get_template ($slugs, $args = array(), $default_file = '') {
+		extract($args);
+		$template_files = array();
+		$found = false;
+		foreach ( (array)$slugs as $file ) {
+			$template_files[] = get_stylesheet_directory() . '/' . $this->template_dir . '/' . $file . '.php';
+			$template_files[] = get_template_directory() . '/' . $this->template_dir . '/' . $file . '.php';
+		}
+		foreach ( $template_files as $template_file ) {
+			if ( file_exists($template_file) ) {
+				$found = true;
+				break;
+			}
+		}
+		if ( ! $found ){
+			if ( ! file_exists($default_file) )
+				return false;
+			$found = true;
+			$template_file = $default_file;
+		}
+		ob_start();
+		include $template_file;
+		return ob_get_clean();
+	}
+	
+	
+	
+	
+	
+}
+
+// @TODO API to get module/object
+// @TODO API to create module/object
+
+class Upfront_Virtual_Region {
+	
+	protected $data = array();
+	protected $wrappers = array();
+	protected $modules = array();
+	protected $current_wrapper;
+	protected $current_wrapper_col = 0;
+	protected $current_module;
+	protected $grid;
+	
+	public function __construct ($properties = array()) {
+		$this->data = array(
+			'properties' => array(),
+			'wrappers' => array(),
+			'modules' => array()
+		);
+		foreach ( $properties as $prop => $value ){
+			$this->set_property($prop, $value);
+		}
+		$this->grid = Upfront_Grid::get_grid();
+	}
+	
+	public function get_data () {
+		return array_merge(
+			$this->data, 
+			array(
+				'wrappers' => array_values($this->wrappers), 
+				'modules' => array_values($this->modules)
+			)
+		);
+	}
+	
+	public function set_property ($property, $value) {
+		$arr = array( 'name' => $property, 'value' => $value );
+		$this->_set_property($property, $value, $this->data);
+	}
+	
+	protected function _set_property ($property, $value, &$data) {
+		$arr = array( 'name' => $property, 'value' => $value );
+		$found = false;
+		foreach ( $data['properties'] as $i => $prop ){
+			if ( $prop['name'] == $property ){
+				$data['properties'][$i] = $arr;
+				$found = true;
+				break;
+			}
+		}
+		if ( ! $found )
+			$data['properties'][] = $arr;
+	}
+	
+	public function get_property ($property, $data = null) {
+		return upfront_get_property_value($property, (is_null($data) ? $this->data : $data));
+	}
+	
+	public function start_wrapper ($newline = true) {
+		$wrapper_id = upfront_get_unique_id('wrapper');
+		$this->wrappers[$wrapper_id] = array('name' => '', 'properties' => array());
+		if ( $newline )
+			$this->_set_property('class', 'clr', $this->wrappers[$wrapper_id]);
+		$this->_set_property('wrapper_id', $wrapper_id, $this->wrappers[$wrapper_id]);
+		$this->current_wrapper = $wrapper_id;
+	}
+	
+	public function end_wrapper () {
+		$class = $this->get_property('class', $this->wrappers[$this->current_wrapper]);
+		$breakpoints = $this->grid->get_breakpoints();
+		$this->_set_property('class', $class . ' ' . $breakpoints['desktop']->get_prefix('width') . $this->current_wrapper_col, $this->wrappers[$this->current_wrapper]);
+		$this->current_wrapper = null;
+		$this->current_wrapper_col = 0;
+	}
+	
+	public function start_module ($position = array(), $properties = array(), $other_data = array()) {
+		$module_id = upfront_get_unique_id('module');
+		$this->modules[$module_id] = array_merge(array('name' => '', 'properties' => array(), 'objects' => array()), $other_data);
+		$pos_class = '';
+		$total_col = 0;
+		$breakpoints = $this->grid->get_breakpoints();
+		$position = array_merge(array(
+			'width' => 1,
+			'margin-left' => 0,
+			'margin-right' => 0,
+			'margin-top' => 0,
+			'margin-bottom' => 0
+		), $position);
+		foreach ( $position as $pfx => $value ) {
+			$pos_class .= $breakpoints['desktop']->get_prefix($pfx) . $value . ' ';
+			if ( in_array($pfx, array('width', 'margin-left', 'margin-right')) )
+				$total_col += $value;
+		}
+		$this->current_wrapper_col = ( $total_col > $this->current_wrapper_col ) ? $total_col : $this->current_wrapper_col;
+		$properties['class'] = rtrim($pos_class) . ( isset($properties['class']) ? ' ' . $properties['class'] : '' );
+		foreach ( $properties as $prop => $value ) {
+			$this->_set_property($prop, $value, $this->modules[$module_id]);
+		}
+		$this->_set_property('element_id', $module_id, $this->modules[$module_id]);
+		$this->_set_property('wrapper_id', $this->current_wrapper, $this->modules[$module_id]);
+		$this->current_module = $module_id;
+	}
+	
+	public function end_module () {
+		$this->current_module = null;
+	}
+	
+	public function add_object ($id = 'object', $properties = array(), $other_data = array()) {
+		$object_id = upfront_get_unique_id($id);
+		$object_data = array_merge(array('name' => '', 'properties' => array()), $other_data);
+		$breakpoints = $this->grid->get_breakpoints();
+		$col_class = $breakpoints['desktop']->get_prefix('width') . $breakpoints['desktop']->get_columns();
+		$properties['class'] = rtrim($col_class) . ( isset($properties['class']) ? ' ' . $properties['class'] : '' );
+		foreach ( $properties as $prop => $value ) {
+			$this->_set_property($prop, $value, $object_data);
+		}
+		$this->_set_property('element_id', $object_id, $object_data);
+		$this->modules[$this->current_module]['objects'][] = $object_data;
+	}
+	
+}
+

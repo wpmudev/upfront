@@ -87,11 +87,7 @@ class Upfront_Output {
 	}
 
 	function add_styles () {
-		$http_query = array(
-			'action' => 'upfront_load_styles',
-			'layout_ids' => Upfront_EntityResolver::get_entity_ids()
-		);
-		wp_enqueue_style('upfront-main', admin_url('admin-ajax.php?'.http_build_query($http_query)), array(), 0.1, 'all');
+		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), 0.1, 'all');
 	}
 }
 

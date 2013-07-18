@@ -3,12 +3,14 @@
 define('UPFRONT_DEBUG_LEVELS', 'all');
 
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
+require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_registry.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_http_response.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_server.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_model.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_module_loader.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_grid.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_style_preprocessor.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_output.php');
@@ -65,6 +67,10 @@ class Upfront {
 
 	public static function get_root_url () {
 		return get_template_directory_uri();
+	}
+	
+	public static function get_root_dir () {
+		return get_template_directory();
 	}
 
 	/**

@@ -285,17 +285,13 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_upfront_load_styles', array($this, "load_styles"));
-		add_action('wp_ajax_nopriv_upfront_load_styles', array($this, "load_styles"));
+		upfront_add_ajax('upfront_load_styles', array($this, "load_styles"));
+		upfront_add_ajax_nopriv('upfront_load_styles', array($this, "load_styles"));
 	}
 
 	function load_styles () {
 		$grid = Upfront_Grid::get_grid();
-		//$layout_id = Upfront_Layout::STORAGE_KEY . '-layout-1'; // @TODO: destubify
-		$layout_ids = $_GET['layout_ids'];
-		$layout = Upfront_Layout::from_entity_ids($layout_ids);
-		if ( $layout->is_empty() )
-			$layout = Upfront_Layout::create_layout($layout_ids);
+		$layout = Upfront_Layout::get_instance();
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$style = $preprocessor->process();

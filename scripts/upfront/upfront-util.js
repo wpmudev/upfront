@@ -38,7 +38,7 @@ var Util = {
 		;
 		// @TODO need a better way to attach upfront layout data on request?
 		if ( Upfront.Application.LayoutEditor.layout )
-			request.upfront_layout = Upfront.Application.LayoutEditor.layout.get('layout');
+			request.layout = Upfront.Application.LayoutEditor.layout.get('layout');
 		return $.post(Upfront.Settings.ajax_url, request, function () {}, "json");
 	},
 

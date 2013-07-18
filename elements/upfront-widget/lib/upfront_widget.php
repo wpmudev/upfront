@@ -7,7 +7,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 		$widget = $this->_get_property('widget');
 		
-		return "<div class='upfront-output-object upfront-widget {$element_id}>" .
+		return "<div class='upfront-output-object upfront-widget' {$element_id}>" .
 			self::get_widget_markup($widget) .
 		"</div>";
 	}

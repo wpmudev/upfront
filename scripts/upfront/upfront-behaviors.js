@@ -447,9 +447,7 @@ var GridEditor = {
 			}
 		});
 		if ( model ){
-			_.each(classes, function(cls){
-				model.replace_class(cls);
-			});
+			model.replace_class(classes.join(' '));
 		}
 	},
 	
@@ -761,6 +759,8 @@ var GridEditor = {
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout')
 		;
+		if ( $me.hasClass('ui-resizable') )
+			return false;
 		$me.resizable({
 			"containment": "parent",
 			autoHide: true,
@@ -888,9 +888,10 @@ var GridEditor = {
 			$layout = $main.find('.upfront-layout'),
 			handle_timeout
 		;
-		if ( model.get_property_value_by_name('disable_drag') === 1 ){
+		if ( model.get_property_value_by_name('disable_drag') === 1 )
 			return false;
-		}
+		if ( $me.hasClass('ui-draggable') )
+			return false;
 		/*$me.append('<div class="upfront-drag-handle" />');
 		$me.hover(function () {
 			handle_timeout = setTimeout(function(){ $me.addClass('handle-active'); }, 1000);
@@ -1343,7 +1344,7 @@ var GridEditor = {
 				});
 				
 				if ( wrapper_id )
-					model.set_property('wrapper_id', wrapper_id);
+					model.set_property('wrapper_id', wrapper_id, true);
 				
 				if ( !move_region ){
 					view.resort_bound_collection();
@@ -1351,8 +1352,9 @@ var GridEditor = {
 				else {
 					var modules = region.get('modules'),
 						models = [];
-					model.unset('shadow');
-					model.collection.remove(model);
+					model.collection.remove(model, {silent: true});
+					model.unset('shadow', {silent: true});
+					$me.removeAttr('data-shadow');
 					$('.upfront-region-drag-active').find('.upfront-module').each(function(){
 						var element_id = $(this).attr('id'),
 							each_model = modules.get_by_element_id(element_id);

@@ -30,49 +30,7 @@ class Upfront_UcommentView extends Upfront_Object {
 	
 	public static function list_comment ( $comment, $args, $depth ) {
 		$GLOBALS['comment'] = $comment;
-		switch ( $comment->comment_type ){
-			case 'pingback':
-			case 'trackback':
-				break;
-			default:
-				$comment_meta = apply_filters( 'upfront_comment_list_comment_meta', array(
-					'avatar' => get_avatar($comment, 50),
-					'author' => '<cite class="fn">' . get_comment_author_link() . '</cite>',
-					'time' => 	'<a href="' . get_comment_link($comment->comment_ID) . '" class="comment-time">' . 
-	 								'<time datetime="' . get_comment_time('c') . '">' . sprintf('%1$s at %2$s', get_comment_date(), get_comment_time()) . '</time>' . 
-	 							'</a>'
-				), $comment, $args, $depth );
-				$comment_arr = apply_filters( 'upfront_comment_list_comment', array(
-					'comment_meta' => '<header class="comment-meta comment-author vcard">%1$s</header>',
-					'comment_pending' => '<p class="comment-awaiting-moderation">' . __('Your comment is awaiting moderation.') . '</p>',
-					'comment_content' => '<div class="comment-content">%1$s</div>',
-					'comment_reply' => '<div class="reply">%1$s</div>'
-				), $comment, $args, $depth );
-				echo '<li class="' . join(' ', get_comment_class()) . '" id="li-comment-' . get_comment_ID() . '">';
-				echo '<article id="comment-' . get_comment_ID() . '" class="comment">';
-				foreach ( $comment_arr as $type => $part ) {
-					switch ( $type ){
-						case 'comment_meta':
-							printf($part, join('', $comment_meta));
-							break;
-						case 'comment_pending':
-							if ( '0' == $comment->comment_approved )
-								echo $part;
-							break;
-						case 'comment_content':
-							$content = apply_filters( 'comment_text', get_comment_text(), $comment );
-							$edit = '<p class="edit-link"><a class="comment-edit-link" href="' . get_edit_comment_link() . '">' . __('Edit') . '</a></p>';
-							printf($part, $content . $edit);
-							break;
-						case 'comment_reply':
-							$reply_link = get_comment_reply_link( array_merge( $args, array( 'reply_text' => __('Reply'), 'after' => ' <span>&darr;</span>', 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); 
-							printf($part, $reply_link);
-							break;
-					}
-				}
-				echo '</article>';
-				break;
-		}
+		echo upfront_get_template('upfront-comment-list', array( 'comment' => $comment, 'args' => $args, 'depth' => $depth ), upfront_element_dir('templates/upfront-comment-list.php', __DIR__));
 	}
 
 	public static function add_public_script () {

@@ -13,20 +13,25 @@ var UwidgetModel = Upfront.Models.ObjectModel.extend({
 
 var UwidgetView = Upfront.Views.ObjectView.extend({
 	
+	init: function () {
+		if ( !Upfront.data.uwidget )
+			Upfront.data.uwidget = {};
+	},
+	
 	get_content_markup: function () {
 		var widget = this.model.get_property_value_by_name('widget'),
 		 	me = this;
 		if ( !widget )
 			return "Please select widget on settings";
-		var widget_data = $(document).data('upfront-widget-' + widget);
-		return widget_data ? widget_data : 'Loading';
+		var widget_data =  Upfront.data.uwidget[widget] || "Loading";
+		return widget_data;
 	},
 	
 	on_render: function () {
 		var widget = this.model.get_property_value_by_name('widget');
 		if ( !widget )
 			return;
-		if ( !$(document).data('upfront-widget-' + widget) )
+		if ( typeof Upfront.data.uwidget[widget] == 'undefined' )
 			this._get_widget_markup(widget);
 	},
 	
@@ -34,7 +39,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		Upfront.Util.post({"action": "uwidget_get_widget_markup", "data": JSON.stringify({"widget": widget})})
 			.success(function (ret) {
-				$(document).data('upfront-widget-' + widget, ret.data);
+				Upfront.data.uwidget[widget] = ret.data;
 				me.render();
 			})
 			.error(function (ret) {
