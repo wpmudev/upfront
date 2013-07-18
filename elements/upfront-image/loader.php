@@ -35,6 +35,9 @@ function uimage_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('uimage', upfront_element_url('js/uimage', __FILE__));
 
+	//re_register the jQuery forms plugin for upload percentage
+	Upfront_UimageView::set_jquery_form();
+
 	// Add the public stylesheet
 	add_action('wp_enqueue_scripts', array('Upfront_UimageView', 'add_styles_scripts'));
 }

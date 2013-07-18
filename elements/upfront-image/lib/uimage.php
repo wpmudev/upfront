@@ -4,7 +4,32 @@
  */
 class Upfront_UimageView extends Upfront_Object {
 	public function get_markup () {
-		return "Hola";
+		$data = $this->properties_to_array();
+		
+		$url = false;
+		if($data['when_clicked'] == 'open_link')
+			$url = $data['image_link'];
+		else if($data['when_clicked'] == 'show_larger_image')
+			$url = $data['srcFull'];
+		$data['url'] = $url;
+
+		return $this->get_template_content($data);
+	}
+
+	private function get_template_content($data){
+		extract($data);
+		ob_start();
+		include dirname(dirname(__FILE__)) . '/tpl/image.html';
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output;
+	}
+
+	private function properties_to_array(){
+		$out = array();
+		foreach($this->_data['properties'] as $prop)
+			$out[$prop['name']] = $prop['value'];
+		return $out;
 	}
 
 	public static function set_jquery_form () {

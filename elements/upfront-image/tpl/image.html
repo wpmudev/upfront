@@ -1,17 +1,59 @@
-<div class="upfront-image-container upfront-<?php echo $caption_trigger ?>" style="overflow: hidden; position:relative;min-height:10px;width:<?php echo $element_size['width'] ?>px;height:<?php echo $element_size['height'] ?>px;">
-<?php if($image_caption && $caption_position=='below_image'){ ?>
-<div class="wp-caption"><?php echo $image_caption ?></div>
-<?php } ?>
-<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width: <?php echo $size['width'] ?>px; height: <?php echo $size['height'] ?>px; top: <?php echo $position['top'] ?>px; left: <?php echo $position['left'] ?>px; -moz-transform:rotate(<?php echo $rotation ?>deg); -webkit-transform:rotate(<?php echo $rotation ?>deg); -o-transform:rotate(<?php echo $rotation ?>deg); -ie-transform:rotate(<?php echo $rotation ?>deg); transform:rotate(<?php echo $rotation ?>deg); position:absolute;"/>
-<?php if($image_caption){ ?>
-<div class="wp-caption <?php echo $caption_position ?> <?php echo $caption_alignment ?>"><?php echo $image_caption ?></div>
-<?php } ?>
-<?php if($image_status == 'starting'){ ?>
-<div class="upfront-image-starting-select">
-	<div>
-		<span class="upfront-image-resizethiselement">Resize this element</span><span class="upfront-image-and">&amp;</span>
-		<a class="upfront-image-select-button button" href="#">Upload Image</a>
+<div class="upfront-image-container uimage-<?php echo $caption_trigger ?> uimage-<?php echo $caption_position ?>" style="width:<?php echo $element_size['width'] ?>px">
+	<?php if($url) { ?>
+	<a href="<?php echo $url ?>">
+	<?php } ?>
+	<div class="uimage-wrapper" style="overflow: hidden; position:relative;min-height:10px;width:<?php echo $element_size['width'] ?>px;height:<?php echo $element_size['height'] ?>px;">
+		
+		<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width: <?php echo $size['width'] ?>px; height: <?php echo $size['height'] ?>px; top: <?php echo $position['top'] ?>px; left: <?php echo $position['left'] ?>px; -moz-transform:rotate(<?php echo $rotation ?>deg); -webkit-transform:rotate(<?php echo $rotation ?>deg); -o-transform:rotate(<?php echo $rotation ?>deg); -ie-transform:rotate(<?php echo $rotation ?>deg); transform:rotate(<?php echo $rotation ?>deg); position:absolute;"/>
+		
 	</div>
-</div>
-<?php } ?>
+
+
+	<?php if($include_image_caption){ ?>
+	<div class="wp-caption uimage-<?php echo $caption_alignment ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>"><?php echo $image_caption ?></div>
+	<?php } ?>
+	
+	<?php if($url) { ?>
+	</a>
+	<?php } ?>		
+	
+	<?php if($image_status == 'starting'){ ?>
+	<div class="upfront-image-starting-select">
+		<div>
+			<span class="upfront-image-resizethiselement">Resize this element</span><span class="upfront-image-and">&amp;</span>
+			<a class="upfront-image-select-button button" href="#">Upload Image</a>
+		</div>
+	</div>
+	<?php } ?>
+	<style>
+		.uimage-over_image {
+			position:relative;
+		}
+		.uimage-over_image .wp-caption{
+			position:absolute;
+			width: 100%;
+			top:0;
+			left:0;
+		}
+		.uimage-over_image .uimage-fill{
+			height:100%;
+		}
+		.uimage-over_image div.uimage-bottom{
+			top:auto;
+			bottom:0;
+		}
+
+		.uimage-hover_show .wp-caption {
+			opacity:0;
+			-moz-transition:opacity .2s;
+		    -webkit-transition:opacity .2s;
+		    -o-transition:opacity .2s;
+		    transition:opacity .2s;
+		}
+
+		.uimage-hover_show:hover .wp-caption {
+			opacity:1;
+		}
+
+	</style>
 </div>
