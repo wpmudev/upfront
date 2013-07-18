@@ -835,7 +835,7 @@ define(_template_files, function () {
 				regions = app.get('regions'),
 				header = regions.get_by_name('header'),
 				footer = regions.get_by_name('footer'),
-				is_locked = header.get_property_value_by_name('is_locked') || footer.get_property_value_by_name('is_locked'),
+				is_locked = false,//header.get_property_value_by_name('is_locked') || footer.get_property_value_by_name('is_locked'),
 				template = _.template(_Upfront_Templates.sidebar_settings_lock_area, { lock_class: (is_locked ? 'locked' : '') })
 			this.$el.html(template);
 		},
@@ -2407,7 +2407,7 @@ define(_template_files, function () {
 				markup = wrapped.markup || wrapped
 			;
 			this.$el.append(
-				'<div class="upfront-settings-item">' +
+				'<div id="usetting-' + this.get_name() + '" class="upfront-settings-item">' +
 					'<div class="upfront-settings-item-title">' + title + '</div>' +
 					'<div class="upfront-settings-item-content">' + markup + '</div>' +
 				'</div>'
@@ -2450,18 +2450,21 @@ define(_template_files, function () {
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
 				'</div>'
 			);
+			this.trigger('rendered');
 		},
 
 		conceal: function () { 
 			this.$el.find(".upfront-settings_panel").hide();
 			this.$el.find(".upfront-settings_label").removeClass("active");
 			//this.$el.find(".upfront-settings_label").show();
+			this.trigger('concealed');
 		},
 
 		reveal: function () {
 			this.$el.find(".upfront-settings_label").addClass("active");
 			//this.$el.find(".upfront-settings_label").hide();
 			this.$el.find(".upfront-settings_panel").show();
+			this.trigger('revealed');
 		},
 
 		show: function () {
