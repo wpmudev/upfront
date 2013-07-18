@@ -60,6 +60,8 @@ class Upfront_MenuSetting extends Upfront_Server {
         add_action('wp_ajax_upfront_update_menu_order', array($this, "update_menu_order"));
         add_action('wp_ajax_upfront_create_menu', array($this, "create_menu"));
         add_action('wp_ajax_upfront_delete_menu', array($this, "delete_menu"));
+        add_action('wp_ajax_upfront_change_menu_label', array($this, "change_menu_label"));
+        add_action('wp_ajax_upfront_update_menu_item', array($this, "update_menu_item"));
 
     }
 
@@ -175,7 +177,30 @@ class Upfront_MenuSetting extends Upfront_Server {
             $new_menu_items = wp_save_nav_menu_items( $menu_id, $_POST['menu-item'] );
             $this->_out(new Upfront_JsonResponse_Success($new_menu_items));
         }
-        $this->_out(new Upfront_JsonResponse_Error('Cannot craete menu!'));
+        $this->_out(new Upfront_JsonResponse_Error('Cannot create menu!'));
+    }
+
+    public function update_menu_item () {
+
+        $menu_id = isset($_POST['menu']) ? intval($_POST['menu']) : false;
+        $menu_item_id = isset($_POST['menu-item-id']) ? intval($_POST['menu-item-id']) : false;
+        $menu_item = isset($_POST['menu-item']) ? $_POST['menu-item'] : false;
+
+        $items_saved = array();
+        if ( $menu_id && is_nav_menu($menu_id) ){
+
+            $args = array(
+                'menu-item-db-id' => $menu_item_id,
+                'menu-item-type' => 'custom',
+                'menu-item-title' => ( isset( $menu_item['menu-item-title'] ) ? $menu_item['menu-item-title'] : 'Custom menu' ),
+                'menu-item-url' => ( isset( $menu_item['menu-item-url'] ) ? $menu_item['menu-item-url'] : '' ),
+            );
+
+            $items_updated[] = wp_update_nav_menu_item( $menu_id, $menu_item_id, $args );
+
+            $this->_out(new Upfront_JsonResponse_Success($items_updated));
+        }
+        $this->_out(new Upfront_JsonResponse_Error('Cannot update menu!'));
     }
 
     /*
@@ -263,6 +288,22 @@ class Upfront_MenuSetting extends Upfront_Server {
             $this->_out(new Upfront_JsonResponse_Success($response));
         }
         $this->_out(new Upfront_JsonResponse_Error('Cannot delete Menu!'));
+
+    }
+
+    public function change_menu_label(){
+
+        $post_id = isset($_POST['item_id']) ? $_POST['item_id'] : false;
+        $title = isset($_POST['item_label']) ? $_POST['item_label'] : false;
+
+        if ( $post_id && $title ){
+            $current_post = get_post( $post_id, 'ARRAY_A' );
+            $current_post['post_title'] = $title;
+            $response = wp_update_post($current_post);
+
+            $this->_out(new Upfront_JsonResponse_Success($response));
+        }
+        $this->_out(new Upfront_JsonResponse_Error('Cannot update menu item label!'));
 
     }
 

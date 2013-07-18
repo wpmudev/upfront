@@ -949,15 +949,14 @@ label {
 {
     color: #379962;
 }
-.nav_tooltip
-{
-    margin: 0;
-    padding: 0;
-    float: left;
+
+
+
+.nav_tooltip {
+    background: rgba(38,58,77,0.9);
+    border: 1px solid #395269;
     width: 75px;
     height: 33px;
-    border: solid 1px #395269;
-    background-color:rgba(38,58,77,0.9);
     -webkit-border-radius: 1px;
     border-radius: 1px;
     position: absolute;
@@ -965,26 +964,30 @@ label {
     top: 0px;
 }
 .nav_tooltip:after, .nav_tooltip:before {
+    top: 100%;
     border: solid transparent;
-    content: ' ';
+    content: " ";
     height: 0;
-    left: -13px;
-    position: absolute;
     width: 0;
+    position: absolute;
+    pointer-events: none;
 }
 
 .nav_tooltip:after {
+    border-color: rgba(57, 82, 105, 0);
+    border-top-color: rgba(38,58,77,0.9);
     border-width: 7px;
-    border-right-color: rgba(38,58,77,0.9);
-    top: 9px;
+    left: 50%;
+    margin-left: -7px;
+}
+.nav_tooltip:before {
+    border-color: rgba(57, 82, 105, 0);
+    border-top-color: #395269;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
 }
 
-.nav_tooltip:before {
-    border-width: 7px;
-    border-right-color: #395269;
-    top: 9px;
-    left: -15px;
-}
 .nav_tooltip .edit_url, .nav_tooltip .visit_page
 {
     margin: 3px 0 0 3px !important;

@@ -27,6 +27,9 @@
             }
         });
 
+        var CurrentMenuItemData = Backbone.Model.extend();
+        var currentMenuItemData = new CurrentMenuItemData();
+
         var NavigationView = Upfront.Views.ObjectView.extend({
 
             toolTip : _.template('<div class="nav_tooltip" style="display: none;"><a class="edit_url" href="#">edit URL</a><a class="visit_page" href="#">visit page</a></div>'),
@@ -36,14 +39,14 @@
 
                 // Call the parent's initialization function
                 Upfront.Views.ObjectView.prototype.initialize.call(this);
-                this.thisMe = this;
                 Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
                 this.toolTipAppend();
             },
 
             events: function(){
                 return _.extend({},Upfront.Views.ObjectView.prototype.events,{
-                    "hover .upfront-object-content .menu-item > a": "onMenuItemHover"
+                    "hover .upfront-object-content .menu-item > a": "onMenuItemHover",
+                    "blur .upfront-object-content .menu-item > a": "changeMenuItemTitle"
                 });
             },
 
@@ -91,6 +94,7 @@
                 $body.find('.nav_tooltip').find('.edit_url').click(function(e){
                     e.preventDefault();
                     Upfront.Events.trigger("entity:settings:activate", me);
+                    Upfront.Events.trigger("entity:settings:panel:open");
                 });
 
             },
@@ -99,13 +103,39 @@
               this.render();
             },
 
+            changeMenuItemTitle: function(e){
+                var $Ele = $(e.target),
+                    $text = $Ele.html(),
+                    parentId = e.target.parentElement.id,
+                    listItemDBID = parentId.replace( /^\D+/g, '');
+
+                if ( !listItemDBID )
+                    return "Error Item id is missing";
+                Upfront.Util.post({"action": "upfront_change_menu_label", "item_id": listItemDBID, "item_label": $text})
+                    .success(function (ret) {
+                        console.log(ret.data)
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error changing menu item label");
+                    });
+            },
+
             onMenuItemHover: function(e) {
                 var $Ele = $(e.target),
-                $toolTip = $('.nav_tooltip');
+                    $text = $Ele.html(),
+                    $url = $Ele.attr('href'),
+                    parentId = e.target.parentElement.id,
+                    listItemDBID = parentId.replace( /^\D+/g, ''),
+                    $toolTip = $('.nav_tooltip');
+
+                // add attribute on anchor tag
+                $Ele.attr('contenteditable',true);
+                // set current item data
+                currentMenuItemData.set({ id: listItemDBID, name: $text, url: $url });
+
                 if (e.type == "mouseenter") {
-
+                    // hover on menu item
                     $toolTip.find('.visit_page').attr('href', e.target.href);
-
                     var x = $Ele.offset().left + ($Ele.outerWidth()/2) - ($toolTip.outerWidth()/2);
                     var y = $Ele.offset().top - ($toolTip.outerHeight());
                     $toolTip.css( { top: y, left: x, position: 'absolute' } )
@@ -114,6 +144,7 @@
                 else {
                     // hover-out on menu item
                     $toolTip.hide();
+                    $Ele.removeAttr('contenteditable');
                 }
             },
 
@@ -295,6 +326,13 @@
                 this.settings = _([
                     new NavigationMenuSettingContents({model: this.model})
                 ]);
+                Upfront.Events.off("entity:settings:panel:open",this.openPanel, this );
+                Upfront.Events.on("entity:settings:panel:open",this.openPanel, this );
+            },
+            openPanel: function(){
+                this.on_toggle();
+                this.settings._wrapped[0].actCustomLink();
+                console.log('function called');
             },
             /**
              * on save create selected pages
@@ -338,7 +376,26 @@
                 this.settings = _([
                     new NavigationMenuSettingMenuOrder({model: this.model})
                 ]);
+                Upfront.Events.on("entity:settings:init:sort",this.showPanel, this );
+                Upfront.Events.on("entity:settings:init:sort:after",this.hidePanel, this );
             },
+
+            showPanel: function(){
+                if(!this.is_active()){
+                    this.$el.find(".upfront-settings_panel").show();
+                }
+            },
+
+            hidePanel: function(){
+                if(!this.is_active_tab()){
+                    this.$el.find(".upfront-settings_panel").hide();
+                }
+            },
+
+            is_active_tab: function () {
+                return this.$el.find(".upfront-settings_label").hasClass('active');
+            },
+
             /**
              * on save create selected pages
              */
@@ -612,7 +669,6 @@
             initialize: function(){
                 this.model.get("properties").on("change", this.render, this);
                 this.model.get("properties").on("add", this.getThisMenuItems, this);
-                //Upfront.Events.on("upfront:settings:panel:saved:clicked", this.createPages, this);
             },
 
             navContentsTemplate: _.template(_Upfront_Templates["navigation_contents"]),
@@ -722,6 +778,9 @@
                         me.getThisMenuItems();
                         Upfront.Events.trigger("entity:object:render_navigation");
                         Upfront.Events.trigger("entity:settings:render_menu_order");
+                        //Reset custom link fields
+                        me.$el.find('.upfront_customlink_area input[name="label"]').val('').blur();
+                        me.$el.find('.upfront_customlink_area input[name="url"]').val('');
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error updating status");
@@ -731,18 +790,30 @@
             addItemToMenu : function(menuItems){
 
                 var menu_id = this.model.get_property_value_by_name('menu_id'),
-                    me = this;
+                    me = this,
+                    menuItemId = (menuItems["menu-item-db-id"] ? menuItems["menu-item-db-id"] : 0);
                 if ( !menu_id )
                     return "Please select menu on settings";
 
+                if(!menuItemId){
                     Upfront.Util.post({"action": "upfront_add_menu_item",'menu': menu_id, 'menu-item': menuItems})
                         .success(function (ret) {
                             me.update_post_status(ret);
                         })
                         .error(function (ret) {
-                            Upfront.Util.log("Error loading menu");
+                            Upfront.Util.log("Error adding menu item");
                         });
-                return 'Loading';
+                }else{
+                    Upfront.Util.post({"action": "upfront_update_menu_item",'menu': menu_id, 'menu-item-id': menuItemId, 'menu-item': menuItems})
+                        .success(function (ret) {
+                            me.getThisMenuItems();
+                            Upfront.Events.trigger("entity:object:render_navigation");
+                            Upfront.Events.trigger("entity:settings:render_menu_order");
+                        })
+                        .error(function (ret) {
+                            Upfront.Util.log("Error updating menu item");
+                        });
+                }
 
             },
 
@@ -759,9 +830,6 @@
 
                         // Deselect the items
                         me.$el.find('.upfront_menu_pages_box ul li :checked, .upfront_menu_categories_box ul li :checked').removeAttr('checked');
-                        //Reset custom link fields
-                        me.$el.find('.upfront_customlink_area input[name="label"]').val('').blur();
-                        me.$el.find('.upfront_customlink_area input[name="url"]').val('');
 
                         //Remove the ajax spinner
                         me.$el.find('.upfront_customlink_area .spinner, .upfront_menu_pages_box .spinner, .upfront_menu_categories_box .spinner, .upfront_menu_customlink_box .spinner').hide();
@@ -877,7 +945,9 @@
             addCustomLink: function(){
 
                 var url = this.$el.find('.upfront_customlink_area input[name="url"]').val(),
-                    label = this.$el.find('.upfront_customlink_area input[name="label"]').val();
+                    label = this.$el.find('.upfront_customlink_area input[name="label"]').val(),
+                    $itemId = this.$el.find('.upfront_customlink_area input.menu-item-db-id'),
+                    itemId = $itemId.length ? parseInt($itemId.val(), 10) : 0;
 
                 if ( '' == url || 'http://' == url || '' == label )
                     return false;
@@ -899,14 +969,38 @@
                 // Show the ajax spinner
                 this.$el.find('.upfront_customlink_area .spinner').show();
 
-                this.addItemToMenu({
-                    '-1': {
-                        'menu-item-type': 'custom',
-                        'menu-item-url': url,
-                        'menu-item-title': label
-                    }
-                });
+                if(!itemId){
+                    this.addItemToMenu({
+                        '-1': {
+                            'menu-item-type': 'custom',
+                            'menu-item-url': url,
+                            'menu-item-title': label
+                        }
+                    });
+                }else{
+                    this.addItemToMenu({
+                            'menu-item-db-id': itemId,
+                            'menu-item-type': 'custom',
+                            'menu-item-url': url,
+                            'menu-item-title': label
+                    });
+                }
+            },
 
+            actCustomLink: function(){
+                this.$el.find('.upfront_menu_categories_box').hide();
+                this.$el.find('.upfront_menu_pages_box').hide();
+                this.$el.find('.upfront_menu_customlink_box').show();
+                this.$el.find('.upfront_menu_contents_tabs a').removeClass('act_tabs');
+                this.$el.find('.upfront_menu_contents_tabs a.tab-customlinks').addClass('act_tabs');
+                this.$el.find('.add_custom_link').text('Update Link');
+
+                var id = this.$el.find('.upfront_customlink_area input.menu-item-db-id').val(currentMenuItemData.get('id')),
+                    url = this.$el.find('.upfront_customlink_area input[name="url"]').val(currentMenuItemData.get('url')),
+                    label = this.$el.find('.upfront_customlink_area input[name="label"]').val(currentMenuItemData.get('name'));
+
+                this.panel.trigger("upfront:settings:panel:refresh", this.panel);
+                console.log(currentMenuItemData.toJSON())
             },
 
             deleteMenuItem: function(e){
@@ -1021,9 +1115,6 @@
                     me = this,
                     menuMaxDepth = initialMenuMaxDepth();
 
-                //TODO: Need to fix this issue
-
-                console.log(menuEdge);
                 // Use the right edge if RTL.
                 menuEdge += this.isRTL ? this.menuList.width() : 0;
 
@@ -1302,8 +1393,9 @@
                         me.targetList = me.menuList;
 
                         if( me.menuList.length && me.iniSort ) {// If no menu, we're in the + tab.
+                            Upfront.Events.trigger("entity:settings:init:sort");
                             me.initSortables();
-                            console.log('ini sort');
+                            Upfront.Events.trigger("entity:settings:init:sort:after");
                             me.iniSort = false;
                         }
                     })
