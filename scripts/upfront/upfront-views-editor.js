@@ -1112,7 +1112,6 @@ define(_template_files, function () {
 			var me = this;
 			this.$el.append('<div id="sidebar-ui-toggler"><div id="sidebar-ui-toggler-handle" class="sidebar-ui-hide"></div></div>');
 			$('body').on('mousemove', function(e){
-				console.log(e.pageX + '::' + (me.visible * 300 + 100));
 				if(me.visible * 300 + 100 > e.pageX){
 					if(!me.collapsibleHint){
 						$('#sidebar-ui-toggler').fadeIn();
