@@ -1013,6 +1013,10 @@ define(_template_files, function () {
 	
 	var Sidebar = Backbone.View.extend({
 		"tagName": "div",
+		visible: 1,
+		events: {
+			'click #sidebar-ui-toggler-handle': 'toggleSidebar'
+		},
 		initialize: function () {
 			//this.editor_mode = new SidebarEditorMode({"model": this.model});
 			this.sidebar_commands = {
@@ -1027,22 +1031,29 @@ define(_template_files, function () {
 			Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
 		},
 		render: function () {
-			this.$el.html('<div class="upfront-logo" />');
+			var output = $('<div id="sidebar-ui-wrapper"></div>');;
+			output.append('<div class="upfront-logo" />');
 			// Editor Mode
 			//this.editor_mode.render();
 			//this.$el.append(this.editor_mode.el);
+
 			// Primary post types
 			this.sidebar_commands.primary.render();
-			this.$el.append(this.sidebar_commands.primary.el);
+			output.append(this.sidebar_commands.primary.el);
 			// Additional post types
 			this.sidebar_commands.additional.render();
-			this.$el.append(this.sidebar_commands.additional.el);
+			output.append(this.sidebar_commands.additional.el);
 			// Sidebar panels
 			this.sidebar_panels.render();
-			this.$el.append(this.sidebar_panels.el);
+			output.append(this.sidebar_panels.el);
 			// Control
 			this.sidebar_commands.control.render();
-			this.$el.append(this.sidebar_commands.control.el);
+			output.append(this.sidebar_commands.control.el);
+
+			this.$el.html(output);
+
+			//Collapsible
+			this.addCollapsibleEvents();
 		},
 		get_panel: function ( panel ) {
 			if ( ! this.sidebar_panels.panels[panel] )
@@ -1096,7 +1107,54 @@ define(_template_files, function () {
 					Upfront.data.currentUser = user;
 				});
 			}
+		},
+		addCollapsibleEvents: function(){
+			var me = this;
+			this.$el.append('<div id="sidebar-ui-toggler"><div id="sidebar-ui-toggler-handle" class="sidebar-ui-hide"></div></div>');
+			$('body').on('mousemove', function(e){
+				console.log(e.pageX + '::' + (me.visible * 300 + 100));
+				if(me.visible * 300 + 100 > e.pageX){
+					if(!me.collapsibleHint){
+						$('#sidebar-ui-toggler').fadeIn();
+						me.collapsibleHint = true;
+					}
+				}
+				else {
+					if(me.collapsibleHint){
+						$('#sidebar-ui-toggler').fadeOut();
+						me.collapsibleHint = false;
+					}
+				}
+			});
+
+			this.resizeCollapseHandle();
+			$(window).on('resize', function(){
+				me.resizeCollapseHandle();
+			});
+		},
+
+		resizeCollapseHandle: function(){
+			var height = $(window).height();
+			this.$('#sidebar-ui-toggler').height(height);
+		},
+
+		toggleSidebar: function(){
+			if(!this.visible){
+				$('#sidebar-ui').removeClass('collapsed').stop().animate({width: '300px'}, 300);
+				$('#page').animate({'margin-left': '300px'}, 300);
+				this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-hide');
+				this.visible = 1;
+			}
+			else {
+				$('#sidebar-ui').stop().animate({width: '0px'}, 300, function(){
+					$('#sidebar-ui').addClass('collapsed');
+				});
+				$('#page').animate({'margin-left': '0px'}, 300);
+				this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-show');
+				this.visible = 0;
+			}
 		}
+
 	});
 
 	var ContentEditor_SidebarCommand = Command.extend({

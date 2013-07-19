@@ -102,6 +102,7 @@
 	border-right: 1px solid #324253;
 	display: none;
 	font: 16px/24px 'Source Sans Pro', sans-serif;
+	z-index:1;
 	/* Disable text selection */
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -109,6 +110,15 @@
 	-o-user-select: none;
 	user-select: none;
 }
+
+#sidebar-ui-wrapper {
+	width:300px;
+}
+
+#sidebar-ui.collapsed #sidebar-ui-wrapper {
+	display:none;
+}
+
 #sidebar-ui .sidebar-commands li,
 #sidebar-ui .sidebar-panel-title,
 #sidebar-ui .sidebar-panel-content,
@@ -309,6 +319,63 @@
 	border-right: 3px solid #1fcd8f;
 	width: 3px;
 }
+
+#sidebar-ui-toggler{
+	display: none;
+	border-left: 3px solid #1fcd8f;
+	overflow:hidden;
+	width: 20px;
+	position:absolute;
+	top: 0;
+	right:-22px;
+	z-index:1000;
+}
+
+.collapsed #sidebar-ui-toggler{
+	display: block !important;
+	border-left: 5px solid #1fcd8f;
+}
+
+#sidebar-ui-toggler-handle {
+	background: url(../img/collapsible.png);
+	color: #fff;
+	position: absolute;
+	height: 90px;
+	width: 20px;
+	left: -20px;
+	top: 45%;
+	cursor:pointer;
+	-webkit-transition: left .3s;
+	-moz-transition: left .3s;
+	-ms-transition: left .3s;
+	-o-transition: left .3s;
+	transition: left .3s;
+}
+
+#sidebar-ui-toggler-handle:before {
+	position:absolute;
+	top: 32px;
+	left: 3px;
+	font-size:24px;
+}
+
+#sidebar-ui-toggler-handle.sidebar-ui-show:before {
+	content: '▸';
+}
+#sidebar-ui-toggler-handle.sidebar-ui-hide:before {
+	content: '◂';
+}
+
+#sidebar-ui:hover #sidebar-ui-toggler-handle {
+	left: 0;
+}
+#sidebar-ui-toggler:hover #sidebar-ui-toggler-handle{
+	left: 0;
+}
+#sidebar-ui-toggler-handle:hover {
+	left: 0;
+}
+
 .upfront-scroll-panel{
 	overflow-x: hidden;
 	overflow-y: scroll;
