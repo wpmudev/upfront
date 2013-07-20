@@ -5,6 +5,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
     public function get_markup () {
         $element_id = $this->_get_property('element_id');
         $element_id = $element_id ? "id='{$element_id}'" : '';
+        $element_size = $this->_get_property('element_size');
 
         if(get_option('upfront_social_media_global_settings')){
 
@@ -21,7 +22,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
             endforeach;
 
             return "<div class='upfront-output-object upfront-like-box ' {$element_id}>" .
-            "<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$facebook_page_name}&amp;width=292&amp;height=258&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:292px; height:258px;' allowTransparency='true'></iframe>".
+            "<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$facebook_page_name}&amp;width={$element_size['width']}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:{$element_size['width']}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>".
             "</div>";
         }else{
             return "<div class='upfront-output-object upfront-like-box ' {$element_id}>" .

@@ -16,6 +16,7 @@
             this.init_property("element_id", Upfront.Util.get_unique_id("Like-box-object"));
             this.init_property("class", "c22 upfront-like-box");
             this.init_property("has_settings", 1);
+            this.init_property("element_size", {width: 278, height: 270});
         }
     });
 
@@ -26,14 +27,42 @@
     var LikeBoxView = Upfront.Views.ObjectView.extend({
 
         model: LikeBoxModel,
-
+        elementSize: {width: 0, height: 0},
         initialize: function(){
             var me = this;
             Upfront.Views.ObjectView.prototype.initialize.call(this);
             Upfront.data.social.panel.model.get("properties").on("change", this.render, this);
             Upfront.data.social.panel.model.get("properties").on("add", this.render, this);
+            Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
         },
 
+        onElementResize: function(view, model){
+            if(this.parent_module_view == view)
+                this.setElementSize();
+        },
+
+        setElementSize: function(){
+            var me = this,
+                parent = this.parent_module_view.$('.upfront-editable_entity:first')
+                ;
+            if(parent.length && parent.height()){
+                this.elementSize.height = parent.height();
+                setTimeout(function(){
+                    me.elementSize.width = parent.find('.upfront-object-content').width();
+                    if(me.elementSize.width != 0){
+                        me.property('element_size', {
+                            width: me.elementSize.width,
+                            height: me.elementSize.height
+                        });
+                    }
+                }, 1000);
+            }
+        },
+        property: function(name, value) {
+            if(typeof value != "undefined")
+                return this.model.set_property(name, value);
+            return this.model.get_property_value_by_name(name);
+        },
         events: function(){
             return _.extend({},Upfront.Views.ObjectView.prototype.events,{
                 'click a.back_global_settings' : 'backToGlobalSettings'
@@ -49,14 +78,15 @@
          * @return {string} Markup to be shown.
          */
         get_content_markup: function () {
-            var me = this;
+            var me = this,
+            fbUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url');
 
-            var fbUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url');
-
+            console.log(this.model.get_property_value_by_name('element_size').width)
+            console.log(this.model.get_property_value_by_name('element_size').height)
             if(fbUrl){
                 var pageName = Upfront.data.social.panel.getLastPartOfUrl(fbUrl);
 
-                return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width=292&amp;height=258&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:258px;" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+                return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+this.model.get_property_value_by_name('element_size').width+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:'+this.model.get_property_value_by_name('element_size').width+'px; float:left; height:'+this.model.get_property_value_by_name('element_size').height+'px;" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
             }else{
                 return 'Whoops! it looks like you need to update your <a class="back_global_settings" href="#">global settings</a>';
             }
