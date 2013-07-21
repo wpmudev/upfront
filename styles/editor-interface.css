@@ -2412,12 +2412,12 @@ box-shadow: inset 0 2px 0 0 #fff;
 /* Notifier */
 #upfront-notifier {
 	width: 100%;
-	position: absolute;
+	position: fixed;
 	top: 0px;
 	left: 0;
 	background-color: transparent;
 	height: 1px;
-	z-index:1000;
+	z-index:30000;
 }
 #upfront-notice {
 	width: 500px;
