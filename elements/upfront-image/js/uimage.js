@@ -55,8 +55,9 @@ var UimageModel = Upfront.Models.ObjectModel.extend({
 			position: {top: 0, left: 0},
 			element_size: {width: 250, height: 250},
 			rotation: 0,
-			color: '#fff',
-			background: '#000'
+			color: '#ffffff',
+			background: '#000000',
+			background_transparency: 0
 		});
 	}
 });
@@ -79,13 +80,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	invert: false,
 	bordersWidth: 10,
 	onScrollFunction: false,
+	justUploaded: false,
 	
 	initialize: function(){
 		 this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
 		 });
 		 this.delegateEvents();
-		 Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
+		 Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
 		 //this.on('upfront:entity:resize', this.setElementSize, this);
 		 this.model.on('uimage:edit', this.editRequest, this);
 
@@ -104,10 +106,22 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		props.url = onclick == 'do_nothing' ? false : 
 			onclick == 'open_link' ? this.property('image_link') : this.property('srcFull');
 
+		props.background = this.hexToRGBA(props.background);
+
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
 
 		return rendered;
+	},
+	hexToRGBA: function (hex){
+		if(this.property('background_transparency') == 0)
+			return hex;
+		var opacity = (100 - this.property('background_transparency')) / 100,
+			r = parseInt(hex.substring(1,3),16),
+			g = parseInt(hex.substring(3,5),16),
+			b = parseInt(hex.substring(5,7),16)
+		;
+		return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
 	},
 	extract_properties: function() {
 		var props = {};
@@ -116,26 +130,25 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		});
 		return props;
 	},
-	onElementResize: function(view, model){
+	onElementResize: function(view, model, ui){
 		if(this.parent_module_view == view)
-			this.setElementSize();
+			this.setElementSize(ui);
 	},
-	setElementSize: function(){
+	setElementSize: function(ui){
 		var me = this,
-			parent = this.parent_module_view.$('.upfront-editable_entity:first')
+			parent = this.parent_module_view.$('.upfront-editable_entity:first'),
+			resizer = ui ? $('.upfront-resize') : parent
 		;
-		if(parent.length && parent.height()){
-			this.elementSize.height = parent.height();
-			setTimeout(function(){
-				me.elementSize.width = parent.find('.upfront-object-content').width();
-				if(me.elementSize.width != 0){
-					me.property('element_size', {
-						width: me.elementSize.width,
-						height: me.elementSize.height
-					});
-				}
-			}, 1000);
-		}
+
+		me.elementSize = {
+			width: resizer.width() - 30,
+			height: resizer.height()
+		};
+
+		if(this.property('caption_position') == 'below_image')
+			this.elementSize.height -= parent.find('.wp-caption').outerHeight();
+
+		me.property('element_size', me.elementSize);
 	},
 	openImageSelector: function(e){
 		var me = this;
@@ -199,9 +212,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(e)
 			e.preventDefault();
 
-		if(this.sizes.full){
+		if(this.justUploaded){
 			src = this.sizes.full[0];
 			this.imageSize = this.initialImageSize();
+			this.justUploaded = false;
 		}
 		else
 			src = this.property('srcFull');
@@ -284,11 +298,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				handles: {se: '.image-edit-resize i'},
 				autoHide: 0,
 				aspectRatio: true,
+				start: function() {
+					$('.image-edit-save-container').fadeOut('fast');
+				},
 				resize: function(e, ui){
 					e.preventDefault();
 					e.stopPropagation();
 					me.setImageSize(ui.size);
 					me.positionEditorElements();
+					$('.image-edit-save-container').fadeOut('fast');
 				},
 				stop: function(e, ui){
 					e.preventDefault();
@@ -298,22 +316,27 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					me.iLikeThatPosition();
 					$('#uimage-canvas-container')
 						.draggable('option', 'containment', me.getContainment())
-						.height($('.image-edit-outer-mask').height());
+						.height($('.image-edit-outer-mask').height())
+					;
+					$('.image-edit-save-container').fadeIn('fast');
 				},
 				minWidth: this.elementSize.width + this.maskOffset.left,
 				minHeight: this.elementSize.height + this.maskOffset.top
 			})
 			.draggable({
 				opacity:1,
+				start: function(e, ui){
+					$('.image-edit-save-container').fadeOut('fast');
+				},
 				drag: function(e, ui){
 					me.moveMask(ui.position);
-					me.iLikeThatPosition();
 				},
 				stop: function(e, ui){
 					//me.imageOffset = ui.position;
 					me.moveMask(ui.position);
 					me.iLikeThatPosition();
 					me.setResizingLimits();
+					$('.image-edit-save-container').fadeIn('fast');
 				},
 				containment: me.getContainment()
 			})
@@ -362,19 +385,19 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	iLikeThatPosition: function(){
-		var container = $('#uimage-canvas-container');
-		if(container.offset().left + container.width() + 200 > $(window).width()){
-			$('.image-edit-save-container').css({
-				top: container.position().top + container.height() - 150 + 'px',
-				left: container.position().left - 200 + 'px'
-			});
-		}
-		else {
-			$('.image-edit-save-container').css({
-				top: container.position().top + 'px',
-				left: container.position().left + container.width() + this.bordersWidth + 'px'
-			});
-		}
+		var container = $('#uimage-canvas-container'),
+			left = container.offset().left + container.width() + 200 > $(window).width() ? 
+				container.position().left - 200 + 'px' : 
+				container.position().left + container.width() + this.bordersWidth + 'px',
+		 	top = container.offset().top < 0 ? 
+		 		container.position().top + container.height() - 150 + 'px' :
+		 		container.position().top + 50 + 'px'
+ 		;
+
+ 		$('.image-edit-save-container').css({
+ 			top: top,
+ 			left: left
+ 		});
 	},
 
 	initialImageSize: function() {
@@ -425,11 +448,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		_.each(this.sizes, function(data){
 			//No cropping
-			if(!data[3]){
+			if(Math.floor(me.imageSize.width / data[1] * 100) / 100 == Math.floor(me.imageSize.height / data[2] * 100) / 100){
 				var sizeWidth = parseInt(data[1], 10),
 					sizeHeight = parseInt(data[2], 10)
 				;
-				if(sizeWidth > me.imageSize.width && sizeHeight > me.imageSize.height && sizeHeight + sizeWidth < height + width) {
+				if(sizeWidth > me.imageSize.width && sizeHeight > me.imageSize.height && (!width || sizeHeight + sizeWidth < height + width)) {
 					image = data[0];
 					width = data[1];
 					height = data[2];
@@ -592,6 +615,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	setOverlayEvents: function() {
 		var me = this;
 		$('#upfront-image-overlay')
+			.on('click', function(e){
+				me.cancelOverlay(e);
+			})
 			.on('click', 'a.select-files', function(e){
 				me.openFileBrowser(e);
 			})
@@ -600,9 +626,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			})
 			.on('click', '.image-edit-rotate', function(e){
 				me.rotate(e);
-			})
-			.on('click', '#upfront-image-overlay', function(e){
-				me.cancelOverlay(e);
 			})
 			.on('click', '.image-edit-save', function(e){
 				me.iLikeThat(e);
@@ -635,8 +658,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			wifth: 'auto'
 		});
 
-		if(this.onScrollFunction)
-			$(document).off(scroll, this.onScrollFunction);
+		if(this.onScrollFunction){
+			$(document).off('scroll', this.onScrollFunction);
+			this.onScrollFunction = false;
+		}
 
 		if(this.reopenSettings){
 			$('#settings').fadeIn();
@@ -712,10 +737,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				me.imageId = response.data;
 				me.getImageData()
 					.done(function(){
+						me.justUploaded = true;
 						me.openEditor();
 					})
 					.error(function(){
-						Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.");
+						Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
 						me.openImageSelector();
 					})
 				;
@@ -732,10 +758,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			})
 			.done(function(response){
 				me.sizes = response.data;
-			})
-			.error(function(response){
-				Upfront.Views.Editor.notify(response);
-			})
+			})	
 		;
 	},
 
@@ -965,12 +988,29 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				name: 'background',
 				label: 'Background',
 				value: this.model.get_property_value_by_name('background')
+			}),
+			new Field_Number({
+				model: this.model,
+				name: 'background_transparency',
+				label: '% Background transparency',
+				value: this.model.get_property_value_by_name('background_transparency'),
+				get_value: function(){
+					var val = this.$('[name="' + this.name + '"]').val(),
+						intval = parseInt(val, 10);
+					return  intval >= 0 && intval < 101 ? intval : 0;
+				}
 			})
 		]);
-		this.$el.on('change', 'input[name=when_clicked]', function(e){
-			me.toggleLink();
-		});
-		this.on('rendered', this.toggleLink, this);
+
+		this.$el
+			.on('change', 'input[name=when_clicked]', function(e){
+				me.toggleLink();
+			})
+			.on('change', 'input[name=caption_position]', function(e){
+				me.toggleCaptionSettings();
+			})
+		;
+		this.on('concealed', this.setFieldEvents, this);
 	},
 	get_label: function () {
 		return 'Behavior';
@@ -986,6 +1026,21 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			this.$('#field_image_link').hide();
 		}
 		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);		
+	},
+	toggleCaptionSettings: function(){
+		if(this.$('input[name=caption_position]:checked').val() == 'over_image'){
+			this.$('#usetting-caption_trigger').show();
+			this.$('#usetting-caption_alignment').show();
+		}
+		else{
+			this.$('#usetting-caption_trigger').hide();
+			this.$('#usetting-caption_alignment').hide();
+		}
+		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);	
+	},
+	setFieldEvents: function() {
+		this.toggleLink();
+		this.toggleCaptionSettings();
 	}
 });
 
@@ -1013,15 +1068,7 @@ var EditImage = Upfront.Views.Editor.Settings.Item.extend({
 
 var Field = Upfront.Views.Editor.Settings.Item.extend({
 	initialize: function (data) {
-		this.title = data.title ? data.title : false;
-		this.name = data.name;
-		this.label = data.label ? data.label : false;
-		this.value = data.value;
-		this.icon = data.icon ? data.icon : false;
-		this.type = data.type ? data.type : false;
-		this.options = data.options ? data.options : false;
-		this.events = data.events ? data.events : '';
-		this.do = data.do;
+		_.extend(this, data);
 	},
 	render: function (){
 		this.$el.empty();
@@ -1037,6 +1084,8 @@ var Field = Upfront.Views.Editor.Settings.Item.extend({
 		else{
 			this.$el.append('<div id="usetting-' + this.name + '" ><div class="upfront-settings-item"><div class="'+this.name+'-field">' + this.get_markup() + '</div></div></div>');
 		}
+		if(this.afterRender)
+			this.afterRender();
 	},
 	get_name: function() {
 		return this.name;
@@ -1118,12 +1167,42 @@ var Field_Radio = Field.extend({
 var Field_Color = Field.extend({
 	get_markup: function(){
 		return '<div id="field_' + this.name + '">' + 
-			'<span>' + this.label + ':</span> <a class="color-pick color-' + this.name + '" href="#">' + this.value + ' <span class="color-tip" style="background:' + this.value + '"></span></a>' + 
+			'<span>' + this.label + ':</span> <a class="color-pick color-' + this.name + '" href="#"><span class="color-value">' + this.value + '</span> <span class="color-tip" style="background:' + this.value + '"></span></a>' +
 			'<input type="hidden" name="' + this.name + '" id="' + this.name + '" value="' + this.value + '">' +
 			'</div>'
 		;
+	},
+	afterRender: function(){
+		var me = this;
+		this.$('#' + this.name).wpColorPicker({
+			change: function(e, ui) {
+				var color = me.$('#' + me.name).val();
+				me.$('.color-value').text(color);
+				me.$('.color-tip').css('background', color);
+			}
+		});
+		this.$el
+			.on('click', '.color-pick', function(e){
+				e.preventDefault();
+				$(this).siblings('.wp-picker-container').find('.iris-picker').toggle();
+				$('#settings').height($(this).parents('.upfront-settings_panel').outerHeight() - 2);	
+				//me.$('#' + me.name).click();
+			})
+		;
 	}
 })
+
+var Field_Number = Field.extend({
+	min: 0,
+	max: 100,
+	get_markup: function(){
+		return '<div id="field_' + this.name + '">' + 
+			'<span>' + this.label + ':</span> ' +
+			'<input type="number" min="' + this.min + '" max="' + this.max  + '"name="' + this.name + '" id="' + this.name + '" value="' + this.value + '">' +
+			'</div>'
+		;
+	},
+});
 
 
 Upfront.Application.LayoutEditor.add_object("Uimage", {

@@ -1,4 +1,4 @@
-<div class="upfront-image-container uimage-<?php echo $caption_trigger ?> uimage-<?php echo $caption_position ?>" style="width:<?php echo $element_size['width'] ?>px">
+<div class="upfront-image-container uimage-<?php echo $caption_position ?>" style="width:<?php echo $element_size['width'] ?>px">
 	<?php if($url) { ?>
 	<a href="<?php echo $url ?>">
 	<?php } ?>
@@ -10,7 +10,7 @@
 
 
 	<?php if($include_image_caption){ ?>
-	<div class="wp-caption uimage-<?php echo $caption_alignment ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>"><?php echo $image_caption ?></div>
+	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>"><?php echo $image_caption ?></div>
 	<?php } ?>
 	
 	<?php if($url) { ?>
@@ -26,6 +26,10 @@
 	</div>
 	<?php } ?>
 	<style>
+		.upfront-image-container .wp-caption {
+			padding:10px;
+			-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;		
+		}
 		.uimage-over_image {
 			position:relative;
 		}
@@ -43,7 +47,7 @@
 			bottom:0;
 		}
 
-		.uimage-hover_show .wp-caption {
+		.uimage-over_image .uimage-hover_show {
 			opacity:0;
 			-moz-transition:opacity .2s;
 		    -webkit-transition:opacity .2s;
@@ -51,9 +55,8 @@
 		    transition:opacity .2s;
 		}
 
-		.uimage-hover_show:hover .wp-caption {
+		.uimage-over_image:hover .uimage-hover_show {
 			opacity:1;
 		}
-
 	</style>
 </div>

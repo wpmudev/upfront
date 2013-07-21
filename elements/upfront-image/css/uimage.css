@@ -426,3 +426,24 @@ a.open-media-gallery:hover i {
 	border:1px solid #a2c5e4;
 	vertical-align: bottom;
 }
+
+.upfront-settings-item .iris-picker .iris-square {
+	margin-right: 10px;
+}
+
+.upfront-settings-item .iris-palette-container {
+	top: 200px;
+}
+
+.upfront-settings-item .iris-picker {
+	height: 230px !important;
+	width: 245px !important;
+}
+
+.upfront-settings-item .wp-color-result {
+	display: none;
+}
+
+.upfront-settings-item .iris-square-value {
+	z-index: 10 !important;
+}
