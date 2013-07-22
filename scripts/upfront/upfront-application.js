@@ -385,5 +385,3 @@ define({
 });
 
 })(jQuery);
-
-//@ sourceURL=upfront-application.js

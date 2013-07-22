@@ -9,6 +9,99 @@
 		}
 		*/
 	});
+	var MediaCollection_Selection = Backbone.Collection.extend({
+		model: MediaItem_Model,
+		initialize: function () {
+			Upfront.Events.on("media_manager:media:labels_loaded", this.global_labels_loaded, this);
+		},
+		get_shared_labels: function () {
+			var known_labels = ActiveFilters.get("label"),
+				selected_labels = [],
+				shared_labels = [],
+				tmp_shared = {}
+			;
+			this.each(function (item) {
+				tmp_shared[item.get("ID")] = item.get("labels") || [];
+			});
+			selected_labels = _.intersection.apply(this, _(tmp_shared).values());
+			known_labels.each(function (label) {
+				if (selected_labels.indexOf(label.get("value")) >= 0) shared_labels.push(label);
+			});
+			return shared_labels;
+		},
+		is_used_label: function (label) {
+			return (_(this.get_shared_labels()).invoke("get", "value").indexOf(label.get("value")) >= 0);
+		},
+		update_label_state: function (label) {
+			return this.is_used_label(label)
+				? this.disassociate_label(label)
+				: this.associate_label(label)
+			;
+		},
+		associate_label: function (label) {
+			this._update_label('', label);
+		},
+		disassociate_label: function (label) {
+			Upfront.Util.log("disassocisting labels");
+			this._update_label('dis', label);
+		},
+		_update_label: function (pfx, label) {
+			pfx = pfx || '';
+			var me = this,
+				idx = label.get("value"),
+				data = {
+					action: "upfront-media-" + pfx + "associate_label",
+					term: idx,
+					post_ids: this.invoke("get", "ID")
+				}
+			;
+			Upfront.Util.post(data)
+				.success(function (response) {
+					me.each(function (model) {
+						var labels = response.data[model.get("ID")];
+						if (labels) model.set({labels: labels}, {silent: true});
+					});
+					me.trigger("change");
+				})
+			;
+		},
+		add_new_label: function (label) {
+			var me = this,
+				data = {
+					"action": "upfront-media-add_label",
+					"term": label,
+					"post_ids": this.invoke("get", "ID")
+				}
+			;
+			Upfront.Util.post(data)
+				.success(function (response) {
+					me.each(function (model) {
+						var labels = response.data[model.get("ID")];
+						if (labels) model.set({labels: labels}, {silent: true});
+					});
+					Upfront.Events.trigger("media_manager:media:labels_updated");
+					me.trigger("change");
+				})
+			;
+		},
+		delete_media_items: function () {
+			var me = this,
+				data = {
+					"action": "upfront-media-remove_item",
+					"post_ids": this.invoke("get", "ID")
+				}
+			;
+			Upfront.Util.post(data)
+				.success(function (response) {
+					me.reset([]);
+					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+				})
+			;
+		},
+		global_labels_loaded: function () {
+			this.trigger("change");
+		}
+	});
 	var MediaItem_Model = Backbone.Model.extend({
 		defaults: {
 			thumbnail: "<img src='http://cdn5.iconfinder.com/data/icons/app-tab-bar-icons-for-iphone/60/Flickr_social_circle_square_social_media_icontexto_gray_button.png' />"
@@ -34,19 +127,23 @@
 				new MediaFilter_Item({filter: "Videos", value: 'videos', state: false}),
 				new MediaFilter_Item({filter: "Audios", value: 'audios', state: false})
 			]), {silent: true});
+
 			this.set("recent", new MediaFilter_Collection([
-				new MediaFilter_Item({filter: "5", value: 5, state: true}),
+				new MediaFilter_Item({filter: "5", value: 5, state: false}),
 				new MediaFilter_Item({filter: "10", value: 10, state: false}),
 				new MediaFilter_Item({filter: "20", value: 20, state: false}),
 				new MediaFilter_Item({filter: "40", value: 40, state: false}),
 				new MediaFilter_Item({filter: "100", value: 100, state: false})
 			]), {silent: true});
+
 			this.set("order", new MediaFilter_Collection([
 				new MediaFilter_Item({filter: "Newest", value: 'date_desc', state: true}),
 				new MediaFilter_Item({filter: "Oldest", value: 'date_asc', state: false}),
 				new MediaFilter_Item({filter: "A>Z", value: 'title_asc', state: false}),
 				new MediaFilter_Item({filter: "Z>A", value: 'title_desc', state: false})
 			]), {silent: true});
+
+			this.set({"search": new MediaFilter_Collection([])}, {silent: true});
 
 			this.set_labels_to_defaults();
 		},
@@ -118,15 +215,313 @@
 // ----- Views -----
 
 
-	var MediaManager_TopControls_View = Backbone.View.extend({
+	var MediaManager_Controls_View = Backbone.View.extend({
+		className: "upfront-media-controls",
+		is_search_active: false,
 		initialize: function () {
-			this.filters_control = new MediaManager_FiltersControl();
+			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
+			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
 		},
 		render: function () {
-			this.filters_control.render();
-			this.$el.empty().append(this.filters_control.$el);
+			this.render_filters();
+		},
+		render_filters: function () {
+			var control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
+			control.render();
+			this.$el.empty().append(control.$el);
+		},
+		render_media: function (selected) {
+			var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
+			item_control.render();
+			this.$el.empty();
+			if (this.is_search_active) {
+				var control = new MediaManager_SearchFiltersControl();
+				control.render();
+				this.$el.append(control.$el);
+			}
+			this.$el.append(item_control.$el);
+		},
+		switch_controls: function (media_collection) {
+			var positive = media_collection.where({selected: true});
+			if (positive.length) this.render_media(positive);
+			else this.render_filters();
+		},
+		switch_to_search: function (search) {
+			this.is_search_active = search && search.get("state");
+			this.render_filters();
 		}
 	});
+
+	var MediaManager_AuxControls_View = Backbone.View.extend({
+		className: "upfront-media-aux_controls",
+		initialize: function () {
+			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
+		},
+		render: function () {
+			this.render_selection();
+		},
+		render_selection: function () {
+			var selection_control = new MediaManager_SelectionControl({model: this.model});
+			selection_control.render();
+			this.$el.empty().append(selection_control.$el);
+		},
+		render_delete: function (selected) {
+			var delete_control = new MediaManager_DeleteControl({model: new MediaCollection_Selection(selected)});
+			delete_control.render();
+			this.render_selection();
+			this.$el.append(delete_control.$el);
+		},
+		switch_controls: function (media_collection) {
+			var positive = media_collection.where({selected: true});
+			if (positive.length) this.render_delete(positive);
+			else this.render_selection();
+		}
+	});
+
+		var MediaManager_SelectionControl = Backbone.View.extend({
+			className: "select_control_container",
+			events: {
+				"click a.none": "select_none",
+				"click a.all": "select_all"
+			},
+			render: function () {
+				this.$el.empty().append('Select <a href="#all" class="all">All</a>&nbsp;|&nbsp;<a href="#none" class="none">None</a>');
+			},
+			select_none: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				this.model.each(function (item) {
+					item.set({selected: false}, {silent: true});
+				});
+				this.model.trigger("change");
+				Upfront.Events.trigger("media:item:selection_changed", this.model);
+			},
+			select_all: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				var all = [];
+				this.model.each(function (item) {
+					item.set({selected: true}, {silent: true});
+					all.push(item);
+				});
+				this.model.trigger("change");
+				Upfront.Events.trigger("media:item:selection_changed", this.model);
+			}
+		});
+		var MediaManager_DeleteControl = Backbone.View.extend({
+			className: "delete_control_container",
+			events: {
+				click: "delete_selection"
+			},
+			render: function () {
+				this.$el.empty().append('<a href="#delete">Delete</a>');
+			},
+			delete_selection: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				var show_nag = false;
+				this.model.each(function (item) {
+					if (item.get("parent")) show_nag = true;
+				});
+				if (!show_nag || (show_nag && confirm("The selected media file is already in use. Are you sure?"))) {
+					this.model.delete_media_items();
+				}
+			}
+		});
+
+		var MediaManager_ItemControl = Backbone.View.extend({
+			templates: {
+				title: _.template('<input type="text" value="{{post_title}}" />'),
+				caption: _.template('<label>{{title}}</label>'),
+				shared_label: _.template('<a href="#remove" data-idx="{{value}}">{{filter}}</a>&nbsp;')
+			},
+			events: {
+				"change .change_title :text": "change_title",
+				"click .existing_labels a": "drop_label"
+			},
+			initialize: function () {
+				this.model.on("change", this.render, this);
+			},
+			render: function () {
+				this.$el.empty()
+					.append('<div class="change_title" />')
+					.append('<div class="add_labels" />')
+					.append('<div class="existing_labels" />')
+				;
+				this.render_title();
+				this.render_labels_adding();
+				this.render_shared_labels();
+			},
+			render_title: function () {
+				var $hub = this.$el.find(".change_title");
+				$hub.empty();
+				if (this.model.length > 1) {
+					$hub.append(this.model.length + ' files selected');
+				} else {
+					$hub
+						.append(this.templates.caption({title: "Media Title"}))
+						.append(this.templates.title(this.model.at(0).toJSON()))
+					;
+				}
+			},
+			render_labels_adding: function () {
+				var me = this,
+					$hub = this.$el.find(".add_labels"),
+					container = new MediaManager_ItemControl_LabelsContainer({model: this.model})
+				;
+				$hub.empty().append(this.templates.caption({title: "Add Label(s)"}));
+				container.render();
+				$hub.append(container.$el);
+			},
+			render_shared_labels: function () {
+				var me = this,
+					$hub = this.$el.find(".existing_labels"),
+					shared_labels = this.model.get_shared_labels(),
+					title = (this.model.length > 1 ? 'Shared Label(s)' : 'Current Label(s)')
+				;
+				$hub.empty()
+					.append(this.templates.caption({title: title}))
+					.append('<br />')
+				;
+				_(shared_labels).each(function (label) {
+					$hub.append(me.templates.shared_label(label.toJSON()));
+				});
+			},
+			change_title: function (e) {
+				var model = this.model.at(0),
+					$title = this.$el.find(".change_title :text")
+				;
+				model.set({post_title: $title.val()});
+				var me = this,
+					data = {
+						action: "upfront-media-update_media_item",
+						data: model.toJSON()
+					}
+				;
+				Upfront.Util.post(data)
+					.done(function () {
+						model.trigger("change");
+					})
+				;
+			},
+			drop_label: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				var $label = $(e.target),
+					idx = $label.attr("data-idx"),
+					shared = this.model.get_shared_labels(),
+					label_idx = _(shared).invoke("get", "value").indexOf(idx),
+					label = label_idx >= 0 && shared[label_idx] ? shared[label_idx] : false
+				;
+				if (label) this.model.update_label_state(label);
+			}
+		});
+
+			var MediaManager_ItemControl_LabelsContainer = Backbone.View.extend({
+				className: "upfront-additive_multiselection",
+				selection: '',
+				events: {
+					"keyup .search_labels :text": "update_selection",
+					"click .add_labels a": "add_new_labels"
+				},
+				render: function () {
+					this.$el.empty()
+						.append('<div class="search_labels" />')
+						.append('<div class="labels_list" />')
+						.append('<div class="add_labels" />')
+					;
+					this.render_search();
+					this.render_labels();
+					this.render_addition();
+				},
+				render_search: function () {
+					var $hub = this.$el.find(".search_labels");
+					$hub.empty().append('<input type="text" value="' + this.selection + '"/>');
+				},
+				render_labels: function () {
+					var me = this,
+						$hub = this.$el.find(".labels_list"),
+						known_labels = ActiveFilters.get("label"),
+						shared_labels = this.model.get_shared_labels()
+					;
+					$hub.empty();
+					known_labels.each(function (label) {
+						var item = new MediaManager_ItemControl_LabelItem({model: label});
+						item.shared = shared_labels;
+						item.media_items = me.model;
+						item.selection = me.selection;
+						item.render();
+						$hub.append(item.$el);
+					});
+
+				},
+				render_addition: function () {
+					var $hub = this.$el.find(".add_labels");
+					$hub.empty();
+					if (this.selection) $hub.append('<b>' + this.selection + '</b> <a href="#add">+Add</a>');
+				},
+				update_selection: function (e) {
+					var $text = this.$el.find(".search_labels :text"),
+						selection = $text.val()
+					;
+					this.selection = selection;
+
+					this.render_labels();
+					this.render_addition();
+				},
+				add_new_labels: function (e) {
+					e.preventDefault();
+					var $text = this.$el.find(".search_labels :text"),
+						selection = $text.val()
+					;
+					this.model.add_new_label(selection);
+				}
+			});
+
+				var MediaManager_ItemControl_LabelItem = Backbone.View.extend({
+					events: {
+						click: "toggle_label_assignment"
+					},
+					render: function () {
+						var me = this,
+							is_used = this.media_items.is_used_label(this.model),
+							used = _.template('<input type="checkbox" value="{{value}}" checked />'),
+							free = _.template('<input type="checkbox" value="{{value}}" />'),
+							name = this.model.get("filter"),
+							match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false
+						;
+						this.$el.empty();
+						if (!name.match(match_rx)) return false;
+						this.$el
+							.append(name.replace(match_rx, '<span class="selection">$1</span>'))
+							.append('&nbsp;')
+							.append((is_used ? used : free)(this.model.toJSON()))
+						;
+					},
+					toggle_label_assignment: function (e) {
+						e.preventDefault();
+						this.media_items.update_label_state(this.model);
+					}
+				});
+
+		var MediaManager_SearchFiltersControl = Backbone.View.extend({
+			events: {
+				"click a": "clear_search"
+			},
+			render: function () {
+				var search = ActiveFilters.get("search").first();
+				this.$el.empty().append(
+					_.template('Showing X results for <b>{{value}}</b> <a href="#clear">Clear search</a>', search.toJSON())
+				);
+			},
+			clear_search: function (e) {
+				e.preventDefault();
+				var search = new MediaFilter_Item({filter: false, value: false, state: false});
+				ActiveFilters.set({search: new MediaFilter_Collection([search])});
+				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+				Upfront.Events.trigger("media:search:requested", search);
+			}
+		});
 
 		var MediaManager_FiltersControl = Backbone.View.extend({
 			events: {
@@ -243,7 +638,7 @@
 			}
 		});
 
-		var Media_FilterSelection_Collection = Backbone.View.extend({
+		var Media_FilterSelection_Multiselection = Backbone.View.extend({
 			tagName: "ul",
 			get_name: function () {
 				return this.filter_name;
@@ -257,7 +652,7 @@
 				this.$el.empty();
 				this.model.each(function (model) {
 					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
-					var item = new Media_FilterSelection_Item({model: model});
+					var item = new Media_FilterSelection_Multiselection_Item({model: model});
 					item.render();
 					me.$el.append(item.$el);
 				});
@@ -284,13 +679,51 @@
 			}
 		});
 
-		var Media_FilterUniqueSelection_Collection = Media_FilterSelection_Collection.extend({
+		var Media_FilterSelection_AdditiveMultiselection = Media_FilterSelection_Multiselection.extend({
+			className: "upfront-additive_multiselection",
+			events: {
+				"keyup :text.filter": "show_matching_labels"
+			},
+			render: function () {
+				var me = this,
+					sel = this.selection || ''
+				;
+				this.$el
+					.empty()
+					.append('<input type="text" class="filter" value="' + sel + '" />')
+					.append('<div class="labels_hub" />')
+				;
+				this.render_items();
+			},
+			render_items: function () {
+				var me = this,
+					$hub = this.$el.find("div.labels_hub")
+				;
+				$hub.empty();
+				this.model.each(function (model) {
+					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
+					var item = new Media_FilterSelection_AdditiveMultiselection_Item({model: model});
+					item.selection = me.selection;
+					item.render();
+					$hub.append(item.$el);
+				});
+			},
+			show_matching_labels: function (e) {
+				var $text = this.$el.find(":text.filter"),
+					selection = $text.val()
+				;
+				this.selection = selection;
+				this.render_items();
+			}
+		});
+
+		var Media_FilterSelection_Uniqueselection = Media_FilterSelection_Multiselection.extend({
 			render: function () {
 				var me = this;
 				this.$el.empty();
 				this.model.each(function (model) {
 					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
-					var item = new Media_FilterUniqueSelection_Item({model: model});
+					var item = new Media_FilterSelection_Uniqueselection_Item({model: model});
 					item.render();
 					me.$el.append(item.$el);
 					item.on("model:unique_state:change", me.change_state, me);
@@ -306,7 +739,7 @@
 			}
 		});
 
-			var Media_FilterSelection_Item = Backbone.View.extend({
+			var Media_FilterSelection_Multiselection_Item = Backbone.View.extend({
 				tagName: "li",
 				events: {
 					"click": "on_click"
@@ -324,10 +757,27 @@
 				}
 			});
 
-			var Media_FilterUniqueSelection_Item = Media_FilterSelection_Item.extend({
+			var Media_FilterSelection_Uniqueselection_Item = Media_FilterSelection_Multiselection_Item.extend({
 				on_click: function () {
 					this.model.set({state: !this.model.get("state")}, {silent: true});
 					this.trigger("model:unique_state:change", this.model);
+				}
+			});
+
+			var Media_FilterSelection_AdditiveMultiselection_Item = Media_FilterSelection_Multiselection_Item.extend({
+				render: function () {
+					var checked = _.template('<input type="checkbox" name="{{filter}}" value="{{value}}" checked />'),
+						unchecked = _.template('<input type="checkbox" name="{{filter}}" value="{{value}}" />'),
+						name = this.model.get("filter"),
+						match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false
+					;
+					this.$el.empty();
+					if (match_rx && !name.match(match_rx)) return false;
+					this.$el
+						.append(name.replace(match_rx, '<span class="selection">$1</span>'))
+						.append('&nbsp;')
+						.append((this.model.get("state") ? checked : unchecked)(this.model.toJSON()))
+					;
 				}
 			});
 
@@ -349,7 +799,7 @@
 				}
 			});
 
-		var Control_MediaType = Media_FilterSelection_Collection.extend({
+		var Control_MediaType = Media_FilterSelection_Multiselection.extend({
 			initialize: function () {
 				this.filter_name = "Media type";
 				this.filter_type = "type";
@@ -359,7 +809,7 @@
 			}
 		});
 
-		var Control_MediaDate = Media_FilterUniqueSelection_Collection.extend({
+		var Control_MediaDate = Media_FilterSelection_Uniqueselection.extend({
 			allowed_values: ['date_asc', 'date_desc'],
 			initialize: function () {
 				this.filter_name = "Date";
@@ -370,7 +820,7 @@
 			}
 		});
 
-		var Control_MediaFileName = Media_FilterUniqueSelection_Collection.extend({
+		var Control_MediaFileName = Media_FilterSelection_Uniqueselection.extend({
 			allowed_values: ['title_desc', 'title_asc'],
 			initialize: function () {
 				this.filter_name = "File Name";
@@ -381,7 +831,7 @@
 			}
 		});
 
-		var Control_MediaRecent = Media_FilterUniqueSelection_Collection.extend({
+		var Control_MediaRecent = Media_FilterSelection_Uniqueselection.extend({
 			initialize: function () {
 				this.filter_name = "Recent";
 				this.filter_type = "recent";
@@ -391,7 +841,7 @@
 			}
 		});
 
-		var Control_MediaLabels = Media_FilterSelection_Collection.extend({
+		var Control_MediaLabels = Media_FilterSelection_AdditiveMultiselection.extend({
 			initialize: function () {
 				this.filter_name = "Labels";
 				this.filter_type = "label";
@@ -413,11 +863,10 @@
 	var MediaManager_Switcher = Backbone.View.extend({
 		events: {
 			"click .library": "switch_to_library",
-			"click .embed": "switch_to_embed",
-			"click .upload": "switch_to_upload"
+			"click .embed": "switch_to_embed"
 		},
 		template: _.template(
-			'<ul class="upfront-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul> <a href="#" class="upload">Upload new media</a>'
+			'<ul class="upfront-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul>'
 		),
 		render: function () {
 			this.$el.empty().append(
@@ -443,10 +892,6 @@
 				.filter(".embed").addClass("active")
 			;
 			this.trigger("media_manager:switcher:to_embed");
-		},
-		switch_to_upload: function (e) {
-			e.preventDefault();
-			this.trigger("media_manager:switcher:to_upload");
 		}
 	});
 
@@ -460,6 +905,7 @@
 			this.popup_data = data.data;
 
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
+			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
 			this.embed_view = new MediaManager_EmbedMedia({});
 
@@ -470,7 +916,9 @@
 
 			this.switcher_view.on("media_manager:switcher:to_library", this.render_library, this);
 			this.switcher_view.on("media_manager:switcher:to_embed", this.render_embed, this);
-			this.switcher_view.on("media_manager:switcher:to_upload", this.render_upload, this);
+
+			this.command_view.render();
+			this.command_view.on("media_manager:switcher:to_upload", this.render_upload, this);
 
 			this.render_library();
 		},
@@ -566,6 +1014,114 @@
 	});
 
 	/**
+	 * Bottom commands view (search etc)
+	 */
+	var MediaManager_BottomCommand = Backbone.View.extend({
+		render: function () {
+			var upload = new MediaManager_BottomCommand_Upload(),
+				search = new MediaManager_BottomCommand_Search(),
+				use = new MediaManager_BottomCommand_UseSelection()
+			;
+			upload.render();
+			upload.on("media_manager:switcher:to_upload", this.switch_to_upload, this);
+			search.render();
+			use.render();
+			this.$el.empty()
+				.append(upload.$el)
+				.append(use.$el)
+				.append(search.$el)
+			;
+		},
+		switch_to_upload: function (e) {
+			this.trigger("media_manager:switcher:to_upload");
+		}
+	});
+
+		var MediaManager_BottomCommand_Upload = Backbone.View.extend({
+			className: "upload_media_container",
+			events: {
+				"click .upload": "switch_to_upload"
+			},
+			render: function () {
+				this.$el.empty().append('<button type="button" class="upload">Upload new media</button>');
+			},
+			switch_to_upload: function (e) {
+				e.preventDefault();
+				this.trigger("media_manager:switcher:to_upload");
+			}
+		});
+
+		var MediaManager_BottomCommand_Search = Backbone.View.extend({
+			className: "search_container clearfix",
+			events: {
+				"click .search": "do_search",
+				"click .clear": "clear_search"
+			},
+			render: function () {
+				var active = ActiveFilters.get("search"),
+					search = !!active.length ? active.first() : false,
+					has_search = !!search && search.get("state")
+				;
+				this.$el.empty()
+					.append('<input type="text" placeholder="Search" value="' + (has_search && search ? search.get("value") : '') + '" />')
+				;
+				if (has_search) {
+					this.$el.append('<a href="#clear" class="clear">x</a>');
+				}
+				this.$el.append('<div class="search" id="upfront-search_action"><i class="icon-search"></i></div>');
+			},
+			do_search: function (e) {
+				e.preventDefault();
+				var $text = this.$el.find(":text"),
+					text = $text.val(),
+					search = new MediaFilter_Item({filter: text, value: text, state: true})
+				;
+				if (!text) {
+					search = new MediaFilter_Item({filter: false, value: false, state: false});
+				}
+
+				ActiveFilters.to_defaults();
+				ActiveFilters.set("search", new MediaFilter_Collection([search]));
+				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+				Upfront.Events.trigger("media:search:requested", search);
+				this.render();
+			},
+			clear_search: function (e) {
+				var $text = this.$el.find(":text");
+				$text.val('');
+				this.do_search(e);
+			}
+		});
+
+		var MediaManager_BottomCommand_UseSelection = Backbone.View.extend({
+			className: "use_selection_container",
+			events: {
+				"click a": "use_selection"
+			},
+			initialize: function () {
+				Upfront.Events.on("media:item:selection_changed", this.update_model, this);
+			},
+			render: function () {
+				this.$el.empty().append('<a href="#use" class="use">OK</a>');
+			},
+			update_model: function (selected) {
+				var positive = selected.where({selected: true});
+				this.model = new MediaCollection_Selection(positive);
+			},
+			use_selection: function (e) {
+				e.preventDefault();
+				/*
+				if (this.model && this.model.length) {
+					Upfront.Util.dbg(this.model);
+				} else {
+					Upfront.Util.log('nothing to use, closing');
+				}
+				*/
+				Upfront.Popup.close(this.model);
+			}
+		});
+
+	/**
 	 * Embed media from URL
 	 */
 	var MediaManager_EmbedMedia = Backbone.View.extend({
@@ -608,9 +1164,7 @@
 				this.editables = _([
 					new MediaItem_EmbedableUrl({model: this.model}),
 					new MediaItem_EditableTitle({model: this.model}),
-					new MediaItem_EditableCaption({model: this.model}),
-					new MediaItem_EditableAlt({model: this.model}),
-					new MediaItem_EditableDescription({model: this.model})
+					new MediaItem_EditableLabels({model: this.model})
 				]);
 			},
 			render: function () {
@@ -652,10 +1206,10 @@
 			},
 			render: function () {
 				this.preview_view.render();
-				this.labels_view.render();
+				//this.labels_view.render();
 				this.$el.empty()
 					.append(this.preview_view.$el)
-					.append(this.labels_view.$el)
+					//.append(this.labels_view.$el)
 				;
 			},
 			update_media_preview: function () {
@@ -702,13 +1256,16 @@
 		},
 		render: function () {
 			var media = new MediaCollection_View({model: this.media_collection}),
-				controls = new MediaManager_TopControls_View({model: this.media_collection})
+				aux = new MediaManager_AuxControls_View({model: this.media_collection}),
+				controls = new MediaManager_Controls_View({model: this.media_collection})
 			;
 			controls.render();
+			aux.render();
 			media.render();
 			this.$el
 				.empty()
 				.append(controls.$el)
+				.append(aux.$el)
 				.append(media.$el)
 			;
 			this.media_view = media;
@@ -725,6 +1282,7 @@
 		initialize: function () {
 			this.model.on("add", this.render, this);
 			this.model.on("change", this.render, this);
+			this.model.on("change:selected", this.propagate_selection, this);
 		},
 		render: function () {
 			var me = this;
@@ -738,17 +1296,19 @@
 					me.$el.append(view.$el);
 				});
 			}
+		},
+		propagate_selection: function () {
+			Upfront.Events.trigger("media:item:selection_changed", this.model);
 		}
 	});
 		var MediaItem_View = Backbone.View.extend({
 			tagName: 'li',
 			className: 'upfront-media_item',
 			events: {
-				"click a.edit": "edit_media",
-				"click a.delete": "delete_media"
+				click: "toggle_item_selection"
 			},
 			initialize: function () {
-				this.template = _.template("{{thumbnail}} <span class='title'>{{post_title}}</span> <a class='delete' href='#delete'>Delete</a> <a class='edit' href='#edit'>Edit</a> <div class='upfront-media_item-editor-container' />");
+				this.template = _.template("{{thumbnail}} <span class='title'>{{post_title}}</span> <div class='upfront-media_item-editor-container' />");
 				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
 
 				this.model.on("upload:start", this.upload_start, this);
@@ -760,31 +1320,18 @@
 					this.template(this.model.toJSON())
 				);
 				if (this.model.get("parent")) this.$el.addClass("has-parent");
+				if (this.model.get("selected")) {
+					this.$el.addClass("selected");
+					this.$el.find("img").after('<i class="icon-ok"></i>');
+				}
 			},
 			toggle_title: function () {
 				var $el = this.$el.find(".title");
 				if ($el.is(":visible")) $el.hide();
 				else $el.show();
 			},
-			edit_media: function (e) {
-				e.preventDefault();
-				$(".upfront-media_item-editor").remove();
-				var editor = new MediaItem_EditorView({model: this.model});
-				editor.render();
-				this.$el.find(".upfront-media_item-editor-container").append(editor.$el);
-			},
-			delete_media: function (e) {
-				e.preventDefault();
-				if (this.$el.is(".has-parent") && !confirm('Are you sure')) return false;
-				var me = this;
-				Upfront.Util.post({
-					action: "upfront-media-remove_item",
-					item_id: this.model.get("ID")
-				}).done(function () {
-					me.remove();
-				})/*.always(function () {
-					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
-				})*/;
+			toggle_item_selection: function (e) {
+				this.model.set({selected: !this.model.get("selected")});
 			},
 			upload_start: function (media) {
 				$(".upfront-media_item-editor").remove();
@@ -812,10 +1359,7 @@
 		},
 		initialize: function (data) {
 			this.editables = _([
-				new MediaItem_EditableTitle({model: this.model}),
-				new MediaItem_EditableCaption({model: this.model}),
-				new MediaItem_EditableAlt({model: this.model}),
-				new MediaItem_EditableDescription({model: this.model})
+				new MediaItem_EditableTitle({model: this.model})
 			]);
 			if (data && data.media) this.media = data.media;
 		},
@@ -932,14 +1476,18 @@
 				$label = $(e.target),
 				idx = $label.attr("data-idx"),
 				data = {
-					action: pfx + "upfront-media-associate_label",
+					action: "upfront-media-" + pfx + "associate_label",
 					term: idx,
 					post_id: this.model.get("ID")
 				}
 			;
 			Upfront.Util.post(data)
 				.success(function (response) {
-					me.model.set("labels", response.data, {silent: true});
+					var id = me.model.get("ID"),
+						data = response.data || {},
+						labels = data[id] || data
+					;
+					me.model.set("labels", labels, {silent: true});
 					me.render();
 				})
 			;
@@ -975,20 +1523,23 @@
 				change: "update"
 			},
 			template: _.template(
-				"<input type='text' name='{{name}}' value='{{value}}' placeholder='{{label}}' />"
+				"<label>{{label}}<input type='text' name='{{name}}' value='{{value}}' placeholder='{{placeholder}}' /></label>"
 			),
 			get_name: function () {},
 			get_label: function () {},
+			get_placeholder: function () {},
 			get_value: function () {
 				return this.$el.find('[name="' + this.get_name() + '"]:first').val();
 			},
 			render: function () {
 				var name = this.get_name() || '',
 					label = this.get_label() || '',
+					placeholder = this.get_placeholder() || '',
 					value = this.model.get(this.get_name()) || '',
 					data = {
 						name:  name,
 						label: label,
+						placeholder: placeholder,
 						value: value
 					}
 				;
@@ -1014,33 +1565,34 @@
 
 		var MediaItem_EmbedableUrl = MediaItem_EditorEmbedableEditable.extend({
 			get_name: function () { return "original_url"; },
-			get_label: function () { return "URL"; }
+			get_label: function () { return "URL of the media"; },
+			get_placeholder: function () { return "http://sample.com/path-to-image/image.jpg"; }
 		});
 
 		var MediaItem_EditableTitle = MediaItem_EditorEditable.extend({
 			get_name: function () { return "post_title"; },
-			get_label: function () { return "Title"; }
+			get_label: function () { return "Image Title"; },
+			get_placeholder: function () { return "Your image title"; }
 		});
-		var MediaItem_EditableCaption = MediaItem_EditorEditable.extend({
-			get_name: function () { return "post_excerpt"; },
-			get_label: function () { return "Caption"; }
-		});
-		var MediaItem_EditableAlt = MediaItem_EditorEditable.extend({
-			get_name: function () { return "alt"; },
-			get_label: function () { return "Alt"; }
-		});
-		var MediaItem_EditableDescription = MediaItem_EditorEditable.extend({
-			template: _.template(
-				"<textarea rows='4' name='{{name}}' placeholder='{{label}}'>{{value}}</textarea>"
-			),
-			get_name: function () { return "post_content"; },
-			get_label: function () { return "Description (optional)"; }
+
+		var MediaItem_EditableLabels = MediaItem_EditorEditable.extend({
+			get_label: function () { return "Labels"; },
+			render: function () {
+				var collection = new MediaCollection_Selection([this.model]),
+					view = new MediaManager_ItemControl_LabelsContainer({model: collection})
+				;
+				view.render();
+				collection.on("change", view.render_labels, view);
+				this.$el.empty()
+					.append('<label>' + this.get_label() + '</label>')
+					.append(view.$el)
+				;
+			}
 		});
 
 // ----- Interface -----
 
 	var ContentEditorUploader = Backbone.View.extend({
-
 		initialize: function () {
 			Upfront.Events.on("upfront:editor:init", this.rebind_ckeditor_image, this);
 		},
@@ -1049,13 +1601,18 @@
 				pop = false,
 				type = type || "images"
 			;
-			pop = Upfront.Popup.open(function (data, $top) {
+			pop = Upfront.Popup.open(function (data, $top, $bottom) {
 				me.out = this;
 				me.popup_data = data;
 				me.popup_data.$top = $top;
+				me.popup_data.$bottom = $bottom;
 				me.load(type);
 			});
-			pop.always(this.close);
+			return pop;
+		},
+		ck_open: function () {
+			var pop = this.open();
+			pop.always(this.on_close);
 			return false;
 		},
 		load: function (data) {
@@ -1067,18 +1624,21 @@
 			media.render();
 			return false;
 		},
-		close: function () {
+		on_close: function (popup, result) {
+			//console.log(result);
 			console.log('closing');
 		},
 		rebind_ckeditor_image: function () {
 			var me = this;
 			_(CKEDITOR.instances).each(function (editor) {
 				var img = editor.getCommand('image');
-				if (img && img.on) img.on("exec", me.open, me);
+				if (img && img.on) img.on("exec", me.ck_open, me);
 			});
 		}
 	});
 
-var _run = new ContentEditorUploader();
+Upfront.Media = {
+	"Manager": new ContentEditorUploader()
+};
 
 })(jQuery);

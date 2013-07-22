@@ -31,14 +31,20 @@ var Util = {
 		console.log(msg);
 	},
 
+	dbg: function () {
+		Upfront.Util.log(JSON.stringify(arguments[0]));
+	},
+
 	post: function (data) {
 		var request = (_.isObject(data) && data.action) 
 			? data 
 			: {"action": "upfront_request", "data": data}
 		;
 		// @TODO need a better way to attach upfront layout data on request?
-		if ( Upfront.Application.LayoutEditor.layout )
+		if ( Upfront.Application.LayoutEditor.layout ) {
+			//request.upfront_layout = Upfront.Application.LayoutEditor.layout.get('layout');
 			request.layout = Upfront.Application.LayoutEditor.layout.get('layout');
+		}
 		return $.post(Upfront.Settings.ajax_url, request, function () {}, "json");
 	},
 
@@ -232,7 +238,7 @@ var Popup = {
 		return this._deferred.promise();
 	},
 
-	close: function () {
+	close: function (result) {
 		this._deferred.notify('before_close');
 
 		this.$background.hide();
@@ -241,7 +247,7 @@ var Popup = {
 		this.$popup.find("#upfront-popup-top").empty();
 		this.$popup.find("#upfront-popup-bottom").empty();
 
-		this._deferred.resolve(this.$popup);
+		this._deferred.resolve(this.$popup, result);
 	}
 
 };

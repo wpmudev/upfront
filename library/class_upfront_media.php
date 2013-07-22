@@ -151,6 +151,10 @@ class Upfront_MediaCollection extends Upfront_Media {
             ));
         }
 
+        if (!empty($filters['search'])) {
+            $collection->_args['s'] = $filters['search'][0];
+        }
+
         $collection->_spawn();
 
         if (!empty($filters['recent']) && !empty($recent_callback)) {
@@ -172,6 +176,9 @@ class Upfront_MediaCollection extends Upfront_Media {
                     'terms' => $filters['label'],
                 ));
             }
+            if (!empty($filters['search'])) {
+                $video_oembed->_args['s'] = $filters['search'][0];
+            }
             $video_oembed->_spawn();
             $collection->_query->posts = array_merge(
                 $collection->_query->posts,
@@ -192,6 +199,9 @@ class Upfront_MediaCollection extends Upfront_Media {
                     'field' => 'id',
                     'terms' => $filters['label'],
                 ));
+            }
+            if (!empty($filters['search'])) {
+                $audio_oembed->_args['s'] = $filters['search'][0];
             }
             $audio_oembed->_spawn();
             $collection->_query->posts = array_merge(
@@ -279,6 +289,11 @@ class Upfront_MediaServer extends Upfront_Server {
     public function add_label () {
         $data = stripslashes_deep($_POST);
         $post_id = !empty($data['post_id']) ? $data['post_id'] : false;
+        $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
+
+        if ($post_id) {
+            $post_ids[] = $post_id;
+        }
         
         $term = !empty($data['term']) ? $data['term'] : false;
         if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
@@ -286,35 +301,47 @@ class Upfront_MediaServer extends Upfront_Server {
         $res = wp_insert_term($term, 'media_label');
         if (is_wp_error($res)) $this->_out(new Upfront_JsonResponse_Error("Something went wrong"));
 
-        if ($post_id) {
-            $label_objs = wp_get_object_terms($post_id, 'media_label');
-            $labels = array();
-            foreach ($label_objs as $label) {
-                $labels[] = (int)$label->term_id;
+        if ($post_ids) {
+            $result = array();
+            foreach ($post_ids as $post_id) {
+                $label_objs = wp_get_object_terms($post_id, 'media_label');
+                $labels = array();
+                foreach ($label_objs as $label) {
+                    $labels[] = (int)$label->term_id;
+                }
+                $labels[] = (int)$res['term_id'];
+                $result[$post_id] = wp_set_object_terms($post_id, $labels, 'media_label');
             }
-            $labels[] = (int)$res['term_id'];
-            $res = wp_set_object_terms($post_id, $labels, 'media_label');
+            $this->_out(new Upfront_JsonResponse_Success($result));
+        } else {
+            $this->_out(new Upfront_JsonResponse_Success($res));
         }
-
-        $this->_out(new Upfront_JsonResponse_Success($res));
     }
 
     public function associate_label () {
         $data = stripslashes_deep($_POST);
         
         $post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-        if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+        $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
+        if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+
+        if ($post_id) {
+            $post_ids[] = $post_id;
+        }
         
         $term = !empty($data['term']) ? $data['term'] : false;
         if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
-        $label_objs = wp_get_object_terms($post_id, 'media_label');
-        $labels = array();
-        foreach ($label_objs as $label) {
-            $labels[] = (int)$label->term_id;
+        $res = array();
+        foreach ($post_ids as $post_id) {
+            $label_objs = wp_get_object_terms($post_id, 'media_label');
+            $labels = array();
+            foreach ($label_objs as $label) {
+                $labels[] = (int)$label->term_id;
+            }
+            $labels[] = (int)$term;
+            $res[$post_id] = wp_set_object_terms($post_id, $labels, 'media_label');
         }
-        $labels[] = (int)$term;
-        $res = wp_set_object_terms($post_id, $labels, 'media_label');
 
         $this->_out(new Upfront_JsonResponse_Success($res));
     }
@@ -323,17 +350,25 @@ class Upfront_MediaServer extends Upfront_Server {
         $data = stripslashes_deep($_POST);
         
         $post_id = !empty($data['post_id']) ? $data['post_id'] : false;
-        if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+        $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
+        if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+
+        if ($post_id) {
+            $post_ids[] = $post_id;
+        }
         
         $term = !empty($data['term']) ? $data['term'] : false;
         if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
-        $label_objs = wp_get_object_terms($post_id, 'media_label');
-        $labels = array();
-        foreach ($label_objs as $label) {
-            if ($label->term_id != $term) $labels[] = (int)$label->term_id;
+        $res = array();
+        foreach ($post_ids as $post_id) {
+            $label_objs = wp_get_object_terms($post_id, 'media_label');
+            $labels = array();
+            foreach ($label_objs as $label) {
+                if ($label->term_id != $term) $labels[] = (int)$label->term_id;
+            }
+            $res[$post_id] = wp_set_object_terms($post_id, $labels, 'media_label');
         }
-        $res = wp_set_object_terms($post_id, $labels, 'media_label');
 
         $this->_out(new Upfront_JsonResponse_Success($res));
     }
@@ -441,12 +476,19 @@ class Upfront_MediaServer extends Upfront_Server {
     public function remove_item () {
         $data = stripslashes_deep($_POST);
         
-        $item_id = !empty($data['item_id']) ? $data['item_id'] : false;
-        if (!$item_id) $this->_out(new Upfront_JsonResponse_Error("Invalid item ID"));
+        $post_id = !empty($data['item_id']) ? $data['item_id'] : false;
+        $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
+        if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
 
-        if (!current_user_can('delete_post', $item_id)) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+        if ($post_id) {
+            $post_ids[] = $post_id;
+        }
 
-        if (!wp_delete_attachment($item_id)) $this->_out(new Upfront_JsonResponse_Error("Error deleting media"));
+
+        foreach ($post_ids as $post_id) {
+            if (!current_user_can('delete_post', $post_id)) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+            if (!wp_delete_attachment($post_id)) $this->_out(new Upfront_JsonResponse_Error("Error deleting media"));
+        }
         $this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
     }
 

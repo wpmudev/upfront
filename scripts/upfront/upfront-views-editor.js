@@ -1191,12 +1191,17 @@ define(_template_files, function () {
 			if(postView && postView.updatePost)
 				postView.updatePost();
 
-			newPost = this.post.clone();
+			//newPost = this.post.clone();
+			newPost = (postView && postView.post ? postView.post : this.post).clone();
 
-			newPost.set('post_status', 'draft').save().done(function(){
-				me.post.set({
-					post_status: newPost.get('post_status')
-				});
+			newPost.set('post_status', 'draft').save().done(function(response){
+				/*
+ 				me.post.set({
+ 					post_status: newPost.get('post_status')
+ 				});
+				*/
+				newPost.set(response.data);
+				me.post.set(newPost.toJSON());
 				Upfront.Events.trigger("upfront:posts:post:post_updated", Upfront.data.currentPost);
 				Upfront.Views.Editor.notify('Post saved as draft.');
 			});
@@ -1217,15 +1222,19 @@ define(_template_files, function () {
 			if(postView && postView.updatePost)
 				postView.updatePost();
 
-			newPost = this.post.clone();
+			newPost = (postView && postView.post ? postView.post : this.post).clone();
 
 			newPost.set({
 					post_status: 'publish'
 				})
-				.save().done(function(){
-					me.post.set({
-						post_status: newPost.get('post_status')
-					});
+				.save().done(function(response){
+					/*
+ 					me.post.set({
+ 						post_status: newPost.get('post_status')
+ 					});
+					*/
+					newPost.set(response.data);
+					me.post.set(newPost.toJSON());
 					Upfront.Events.trigger("upfront:posts:post:post_updated", Upfront.data.currentPost);
 					Upfront.Views.Editor.notify("Post published");
 				})
@@ -1666,8 +1675,7 @@ define(_template_files, function () {
 			me.post.set('post_name', slug).save()
 				.done(function(response){
 					me.trigger("upfront:posts:post:slug_updated");
-					if(confirm('Do you want to reload the page with the new URL?'))
-						window.location.href = window.location.origin + '/' + me.post.get('post_name') + '/';
+					//if(confirm('Do you want to reload the page with the new URL?')) window.location.href = window.location.origin + '/' + me.post.get('post_name') + '/';
 				})
 			;
 		}
