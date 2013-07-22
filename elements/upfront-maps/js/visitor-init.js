@@ -17,22 +17,22 @@ _.templateSettings = {
 (function ($) {
 require(['m-map/mv'], function() {
 
-	if(_.isObject(mapModels)){
+	$(function () {
+		if(_.isObject(mapModels)){
+			_.each(mapModels, function(model, model_name){
+				_.each(model, function(data){
 
-		_.each(mapModels, function(model, model_name){
-			_.each(model, function(data){
-				
-				var instantiatedModel = new Ufmap.Model[model_name](data.model);
+					var instantiatedModel = new Ufmap.Model[model_name](data.model);
 
-				var instantiatedView = new Ufmap.View[model_name]({
-					el: $('#vt-'+data.elementId),
-					model: instantiatedModel
+					var instantiatedView = new Ufmap.View[model_name]({
+						el: $('#vt-'+data.elementId),
+						model: instantiatedModel
+					});
+					instantiatedView.render();
 				});
-				
-				instantiatedView.render();
 			});
-			
-		});
-	}
+		}
+	});
+
 });
 })(jQuery);

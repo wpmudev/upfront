@@ -13,6 +13,7 @@
 /*global define, window, document */
 
 (function (factory) {
+    /*
     'use strict';
     if (typeof define === 'function' && define.amd) {
         // Register as an anonymous AMD module:
@@ -21,6 +22,8 @@
         // Browser globals:
         factory(window.jQuery);
     }
+    */
+    factory(window.jQuery);
 }(function ($) {
     'use strict';
 

@@ -122,3 +122,8 @@ border-color: transparent transparent #cccccc transparent;
 border-style: solid;
 border-width: 11px;
 }
+
+.ufm-map-main img {
+	height: auto;
+	width: auto;
+}

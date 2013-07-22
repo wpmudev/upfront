@@ -14,7 +14,7 @@ class Upfront_ObjectViewTarget extends Upfront_Object{
 			'elementId' => $element_id, 
 			'model' => $this->_data['subviewModel'] ? $this->_data['subviewModel'] : array()
 		);
-		
+
 		wp_enqueue_script(
 			'requirejs',
 			upfront_element_url('/js/require.js', UPFRONT_MAPS_ROOT_FILE)

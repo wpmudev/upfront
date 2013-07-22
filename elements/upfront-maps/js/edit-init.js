@@ -29,7 +29,7 @@ require(['m-map/upfront', 'm-map/settings', 'm-map/mv'], function(){
 
 		var UmapElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			render: function () {
-				this.$el.html('Add New Map');
+				this.$el.html('Map');
 			},
 
 			add_element: function () {
