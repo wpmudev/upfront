@@ -1302,6 +1302,7 @@ var GridEditor = {
 						if ( $drop.hasClass('upfront-drop-fixed') && $drop.hasClass('clr') )
 							$drop.nextAll('.upfront-wrapper').eq(0).removeClass('clr');
 						$drop.before(wrap_view.$el);
+						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 					}
 					else {
 						var $drop_wrap = $drop.closest('.upfront-wrapper'),

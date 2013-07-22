@@ -326,21 +326,21 @@ define(_template_files, function () {
 					me = this
 				;
 				$el.html('');
-				if ( typeof this._views == 'undefined' )
-					this._views = {};
+				if ( typeof Upfront.data.object_views == 'undefined' )
+					Upfront.data.object_views = {};
 				this.model.each(function (obj) {
 					var view_class_prop = obj.get("properties").where({"name": "view_class"}),
 						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "ObjectView",
-						local_view = me._views[obj.cid] || new Upfront.Views[view_class]({model: obj})
+						local_view = Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj})
 					;
 					local_view.parent_view = me;
 					local_view.parent_module_view = me.parent_view;
 					local_view.render();
 					$el.append(local_view.el);
-					if ( ! me._views[obj.cid] ){
+					if ( ! Upfront.data.object_views[obj.cid] ){
 						local_view.bind("upfront:entity:activate", me.on_activate, me);
 						local_view.model.bind("remove", me.deactivate, me);
-						me._views[obj.cid] = local_view;
+						Upfront.data.object_views[obj.cid] = local_view;
 					}
 					else {
 						local_view.delegateEvents();
@@ -387,7 +387,7 @@ define(_template_files, function () {
 				
 				if ( this.model.get("shadow") ){
 					this.$el.find('.upfront-editable_entity:first').attr("data-shadow", this.model.get("shadow"));
-				console.log(this.model.get('shadow'));}
+				}
 				
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
 				objects_view.parent_view = this;
@@ -409,9 +409,10 @@ define(_template_files, function () {
 			},
 			init: function () {
 				this.model.unbind('add', this.render, this);
-				this.model.bind('add', this.add, this);
+				this.model.bind('add', this.on_add, this);
 				this.model.unbind('remove', this.render, this);
-				this.model.bind('remove', this.remove, this);
+				this.model.bind('remove', this.on_remove, this);
+				this.model.bind('reset', this.on_reset, this);
 			},
 			on_entity_remove: function(e, view) {
 				var wrapper_id = view.model.get_wrapper_id(),
@@ -422,7 +423,6 @@ define(_template_files, function () {
 					if ( wrapper )
 						wrappers.remove(wrapper);
 				}
-				view.remove();
 				this.model.remove(view.model);
 			},
 			render: function () {
@@ -431,10 +431,10 @@ define(_template_files, function () {
 					me = this;
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				console.log('Modules render - ' + this.cid + ' - ' + this.region_view.model.get('name'));
-				if ( typeof this._views == 'undefined' )
-					this._views = {};
-				if ( typeof this._wrapper_views == 'undefined' )
-					this._wrapper_views = {};
+				if ( typeof Upfront.data.module_views == 'undefined' )
+					Upfront.data.module_views = {};
+				if ( typeof Upfront.data.wrapper_views == 'undefined' )
+					Upfront.data.wrapper_views = {};
 				this.model.each(function (module) {
 					me.render_module(module);
 				});
@@ -444,7 +444,7 @@ define(_template_files, function () {
 					view_class_prop = module.get("properties").where({"name": "view_class"}),
 					view_class = view_class_prop.length ? view_class_prop[0].get("value") : "Module",
 					//view_class = Upfront.Views[view_class] ? view_class : "Module",
-					local_view = this._views[module.cid] || new Upfront.Views[view_class]({model: module}),
+					local_view = Upfront.data.module_views[module.cid] || new Upfront.Views[view_class]({model: module}),
 					wrappers = this.region_view.model.get('wrappers'),
 					wrapper_id = module.get_wrapper_id(),
 					wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
@@ -459,7 +459,7 @@ define(_template_files, function () {
 						wrapper_el = this.current_wrapper_el;
 					}
 					else {
-						wrapper_view = this._wrapper_views[wrapper.cid] || new Upfront.Views.Wrapper({model: wrapper});
+						wrapper_view = Upfront.data.wrapper_views[wrapper.cid] || new Upfront.Views.Wrapper({model: wrapper});
 						wrapper_view.render();
 						wrapper_el = wrapper_view.el;
 					}
@@ -469,26 +469,32 @@ define(_template_files, function () {
 					$(wrapper_el).append(local_view.el);
 					if ( wrapper_view ){
 						$el.append(wrapper_el);
-						if ( ! this._wrapper_views[wrapper.cid] )
-							this._wrapper_views[wrapper.cid] = wrapper_view;
+						if ( ! Upfront.data.wrapper_views[wrapper.cid] )
+							Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
 					}
 				}
-				if ( ! this._views[module.cid] ){
+				if ( ! Upfront.data.module_views[module.cid] ){
 					local_view.bind("upfront:entity:activate", this.on_activate, this);
 					local_view.model.bind("remove", this.deactivate, this);
-					this._views[module.cid] = local_view;
+					Upfront.data.module_views[module.cid] = local_view;
 				}
 				else {
 					local_view.delegateEvents();
 				}
 			},
-			add: function (model) {
+			on_add: function (model) {
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model);
 			},
-			remove: function (model) {
-				this.unbind();
-				this.remove();
+			on_remove: function (model) {
+				var view = Upfront.data.module_views[model.cid];
+				if ( !view )
+					return;
+				view.unbind();
+				view.remove();
+			},
+			on_reset: function () {
+				
 			}
 		}),
 		
@@ -691,11 +697,17 @@ define(_template_files, function () {
 			init: function () {
 				this.model.get("properties").bind("change", this.update, this);
 				//this.listenTo(this.model.get("properties"), 'change', this.update);
+				this.model.bind("remove", this.on_remove, this);
+				//this.listenTo(this.model, 'remove', this.on_remove);
 			},
 			update: function () {
 				this.$el.attr('class', this.attributes().class);
 			},
 			render: function () {
+			},
+			on_remove: function () {
+				this.unbind();
+				this.remove();
 			}
 		}),
 

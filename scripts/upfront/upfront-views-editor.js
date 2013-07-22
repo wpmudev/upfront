@@ -572,7 +572,7 @@ define(_template_files, function () {
 			Upfront.Events.on("command:layout:save", this.on_save, this);
 			Upfront.Events.on("command:layout:save_success", this.reset_modules, this);
 			Upfront.Events.on("command:layout:save_error", this.reset_modules, this);
-			Upfront.Events.on("entity:drag_animate_stop", this.reset_modules, this);
+			Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
 			Upfront.Events.on("layout:render", this.apply_state_binding, this);
 		},
 		get_title: function () {
@@ -633,8 +633,6 @@ define(_template_files, function () {
 					$clone = element.$el.clone(),
 					clone_h = element.$el.outerHeight(),
 					clone_w = element.$el.outerWidth();
-				console.log(element.shadow_id);
-				console.log($shadow);
 				$shadow.css({
 					position: "absolute",
 					top: e.pageY-(off.top-pos.top)-(clone_h/2),
