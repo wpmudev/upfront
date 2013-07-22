@@ -111,7 +111,18 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
 
+		this.addImageEditingButton();
+
 		return rendered;
+	},
+	addImageEditingButton: function(){
+		var me = this;
+		if(this.property('image_status') != 'ok' || this.$('a.uimage-edit_trigger').length)
+			return;
+		this.parent_module_view.$('b.upfront-entity_meta').after('<b class="upfront-entity_meta uimage-edit-entity_meta"><a href="#" class="uimage-edit_trigger"><i class="icon-crop"></i></a></b>')
+		this.parent_module_view.$el.on('click', 'a.uimage-edit_trigger', function(){
+			me.editRequest();
+		});
 	},
 	hexToRGBA: function (hex){
 		if(this.property('background_transparency') == 0)
@@ -131,8 +142,27 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		return props;
 	},
 	onElementResize: function(view, model, ui){
+		var resizer = $('.upfront-resize'),
+			imageSize = this.property('size'),
+			imageOffset = this.property('position')
+		;
 		if(this.parent_module_view == view)
 			this.setElementSize(ui);
+
+		if(resizer.width() > imageSize.width + imageOffset.left){
+			if(resizer.width() >= imageSize.width)
+				imageOffset.left = 0;
+			else
+				imageOffset.left =  resizer.width() - imageSize.width;
+		}
+
+		if(resizer.height() > imageSize.height + imageOffset.top){
+			if(resizer.height() >= imageSize.height)
+				imageOffset.top = 0;
+			else
+				imageOffset.top =  resizer.height() - imageSize.height;
+		}
+		this.property('position', imageOffset);
 	},
 	setElementSize: function(ui){
 		var me = this,
@@ -215,6 +245,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(this.justUploaded){
 			src = this.sizes.full[0];
 			this.imageSize = this.initialImageSize();
+			this.initialMaskOffset();
 			this.justUploaded = false;
 		}
 		else
@@ -355,6 +386,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			};
 	},
 
+	initialMaskOffset: function() {
+		this.maskOffset = {
+			top: (this.imageSize.height - this.elementSize.height) / 2,
+			left: (this.imageSize.width - this.elementSize.width) / 2
+		}
+	},
 	moveMask: function(position){
 		this.maskOffset.top = this.initPoint.top - position.top;
 		this.maskOffset.left = this.initPoint.left - position.left;
@@ -367,9 +404,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	setContainerPosition: function(){
 		var $win = $('#upfront-image-overlay'),
 			mask = $('#uimage-mask'),
+
+			/*
 			centered = {
 				top: $win.height() / 2 - mask.height() / 2,
 				left: $win.width() / 2 - mask.width() / 2
+			}, */
+			centered = {
+				top: this.$el.offset().top - $(window).scrollTop() - this.bordersWidth / 2,
+				left: this.$('.upfront-object-content').offset().left - $(window).scrollLeft() - $('#sidebar-ui').width() - this.bordersWidth / 2
 			},
 			position = {
 				top: centered.top - this.maskOffset.top,
@@ -386,10 +429,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	iLikeThatPosition: function(){
 		var container = $('#uimage-canvas-container'),
-			left = container.offset().left + container.width() + 200 > $(window).width() ? 
+			left = container.offset().left + container.width() + 200 > $(window).width() - $(window).scrollLeft() ? 
 				container.position().left - 200 + 'px' : 
 				container.position().left + container.width() + this.bordersWidth + 'px',
-		 	top = container.offset().top < 0 ? 
+		 	top = container.offset().top < $(window).scrollTop() ? 
 		 		container.position().top + container.height() - 150 + 'px' :
 		 		container.position().top + 50 + 'px'
  		;
@@ -406,9 +449,16 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				width: this.sizes.full[1],
 				height: this.sizes.full[2]
 			},
-			pivot = this.elementSize.width - size.width > this.elementSize.height - size.height ? 'width' : 'height',
-			factor = size[pivot] / this.elementSize[pivot]
+
+			pivot, factor
 		;
+
+		if(size.width < this.elementSize.width || size.height < this.elementSize.height){
+			this.elementSize = size;
+		}
+
+		pivot = this.elementSize.width - size.width > this.elementSize.height - size.height ? 'width' : 'height';
+		factor = size[pivot] / this.elementSize[pivot];
 
 		size = {
 			width: Math.ceil(size.width / factor),
@@ -438,7 +488,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		];
 	},
 
-	iLikeThat: function(){
+	iLikeThat: function(e){
+		e.preventDefault();
 		//Select the best image
 		var me = this,
 			image = false,
@@ -470,6 +521,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('position', {left: - this.maskOffset.left + this.imageOffset.left, top: - this.maskOffset.top + this.imageOffset.top});
 		this.property('rotation', this.rotation);
 		this.property('image_status', 'ok');
+		this.property('element_size', this.elementSize);
 
 		this.closeOverlay();
 	},
@@ -540,7 +592,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			bodyOverlay = $('#' + me.property('element_id'))
 		;
 
-		this.setElementSize();
+		if(!this.elementSize.width)
+			this.setElementSize();
 
 		if(overlay.length){
 			$('.upfront-image-section').fadeOut('fast', function(){
@@ -633,6 +686,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			.on('click', 'a.image-edit-change', function(e){
 				me.openImageSelector(e);
 			})
+			.on('click', 'a.open-media-gallery', function(e){
+				me.openMediaGallery(e);
+			})
 		;
 	},
 
@@ -706,6 +762,26 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		placeholder.css(phcss);
 		uploading.css(phcss);
+	},
+	openMediaGallery: function(e) {
+		var me = this;
+		e.preventDefault();
+		Upfront.Media.Manager.open().done(function(popup, result){
+			if(result && result.length > 0){
+				var image = result.at(0);
+				me.imageId = image.get('ID');
+				me.getImageData()
+					.done(function(){
+						me.justUploaded = true;
+						me.openEditor();
+					})
+				;
+
+				me.openProgress(function(){
+					$('#upfront-image-uploading h2').html('Preparing Image');
+				});
+			}
+		});
 	},
 	openFileBrowser: function(e){
 	    console.log('clicking');
@@ -875,7 +951,6 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		;
 		this.model.on('doit', render_all, this);
 		this.settings = _([
-			new EditImage({model: this.model}),
 			new Field_Radio({
 				model: this.model,
 				title: 'When Clicked',
@@ -1043,28 +1118,6 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.toggleCaptionSettings();
 	}
 });
-
-
-var EditImage = Upfront.Views.Editor.Settings.Item.extend({
-	events: {
-		'click .uimage-settings-edit-image': 'editImage'
-	},
-	render: function () {
-		this.$el.append('<a class="uimage-settings-edit-image" href="#">Edit Image</a>');
-	},
-	get_name: function() {
-		return 'src';
-	},
-	get_value: function() {
-		return this.model.get_property_value_by_name('src');
-	},
-	editImage: function(e){
-		e.preventDefault();
-		e.stopPropagation();
-		this.model.trigger('uimage:edit');
-	}
-});
-
 
 var Field = Upfront.Views.Editor.Settings.Item.extend({
 	initialize: function (data) {

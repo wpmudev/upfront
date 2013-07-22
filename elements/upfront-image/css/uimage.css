@@ -447,3 +447,34 @@ a.open-media-gallery:hover i {
 .upfront-settings-item .iris-square-value {
 	z-index: 10 !important;
 }
+
+.upfront-module > .upfront-entity_meta.uimage-edit-entity_meta {
+	top: 95px;
+}
+
+.uimage-edit-entity_meta a {
+	opacity: .9;
+	border: 1px solid #2582BD;
+	background: #288ACA -moz-linear-gradient(-45deg, #2C9BE3 0%, #2C9BE3 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+	background: #288ACA -webkit-gradient(linear, left top, right bottom, color-stop(0%,#2C9BE3), color-stop(50%,#2C9BE3), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+	background: #288ACA -webkit-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: #288ACA -o-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+	background: #288ACA -ms-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
+	background: #288ACA linear-gradient(135deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
+}
+.uimage-edit-entity_meta a:hover {
+	opacity: 1;
+}
+
+.upfront-module[data-row="3"] > .upfront-entity_meta.uimage-edit-entity_meta,
+.upfront-module[data-row="4"] > .upfront-entity_meta.uimage-edit-entity_meta,
+.upfront-module[data-row="5"] > .upfront-entity_meta.uimage-edit-entity_meta {
+	top: 5px;
+	right: 95px;
+}
+
+.upfront-module[data-row="6"] > .upfront-entity_meta.uimage-edit-entity_meta,
+.upfront-module[data-row="7"] > .upfront-entity_meta.uimage-edit-entity_meta {
+	top: 5px;
+	right: 50px;
+}
