@@ -43,6 +43,8 @@
 	var UpostsView = Upfront.Views.ObjectView.extend({
 		post: false,
 		currentPost: false,
+		titleSelector: 'h1.post_title',
+		contentSelector: '.post_content',
 		/**
 		 * Element contents markup.
 		 * @return {string} Markup to be shown.
@@ -122,6 +124,7 @@
 			}
 		},
 		stop_editor: function () {
+			this.updatePost();
 			this.on_cancel();
 			Upfront.Application.ContentEditor.stop();
 		},
@@ -142,14 +145,18 @@
 		editPost: function(post){
 			var me = this,
 				$post = this.$('.uposts-posts-' + post.id),
-				$title = $post.find("h3.post_title a"),
-				$body = $post.find(".post_content"),
+				$title = $post.find(this.titleSelector),
+				$body = $post.find(this.contentSelector),
 				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type")
 			;
 
 			_upfront_post_data._old_post_id = _upfront_post_data.post_id;
 			_upfront_post_data.post_id = post.id;
 
+			if(Upfront.data.currentPost != post){
+				Upfront.data.currentPost = post;
+				Upfront.Events.trigger("data:current_post:change");			
+			}
 
 			$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + post.get('post_title') + '"/>');
 			$body.html(
@@ -172,6 +179,15 @@
 			;
 			Upfront.Application.ContentEditor.run();
 			Upfront.Events.on("entity:deactivated", this.stop_editor, this);
+		},
+		updatePost: function() {
+			var $title = this.$(this.titleSelector).find(":text"),
+				$content =  this.$(this.contentSelector).find("#upfront-body")
+			;
+			if($title.length)
+				this.post.set('post_title', $title.val());
+			if($content.length)
+				this.post.set('post_content', $content.html());
 		}
 
 	});

@@ -47,8 +47,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function post_template($post) {
 		return '<article id="post-' . $post->ID . '" data-post_id="' . $post->ID . '">' . 
 			apply_filters('upfront_this_post_post_markup', 
-				'<h3 class="post_title"><a href="{{link}}">{{title}}</a></h3>' .
-				'<div class="post_content">{{content}}</div>', $post) .
+				'<h1 class="post_title"><a href="' . get_permalink($post->ID) . '">' . apply_filters('the_title', $post->post_title) . '</a></h1>' .
+				'<div class="post_content">' . apply_filters('the_content', $post->post_content) . '</div>', $post) .
 		'</article>';
 	}
 }

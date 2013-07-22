@@ -263,8 +263,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		add_action('wp_ajax_upfront-post-create_term', array($this, "create_new_term"));
 		add_action('wp_ajax_upfront-post-update_terms', array($this, "update_post_terms"));
 		
-		add_action('wp_ajax_upfront-get_page_data', array($this, "get_page_data"));
-		add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
+		//add_action('wp_ajax_upfront-get_page_data', array($this, "get_page_data"));
+		//add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
 		
 		add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
 		add_action('wp_ajax_upfront-post-update_status', array($this, "update_post_status"));
@@ -616,7 +616,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if(is_wp_error($id))
 			$this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
 
-		$this->_out(new Upfront_JsonResponse_Success( array('id' => $id) ));
+		$post = get_post($id);
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'id' => $id,
+			'post_name' => $post->post_name,
+		)));
 	}
 
 	function fetch_user($data) {

@@ -76,7 +76,6 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	 */
 	get_content_markup: function () {
 		var content = this.content;
-		console.log('this_post');
 		if(content && this.post){
 			content = $(content)
 				.find(this.titleSelector).html(this.post.get('post_title')).end()
@@ -95,7 +94,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				me.render();
 			});
 
-/*
+
 		// Allow select-edit tiggering
 		me.$el.find(".post_content")
 			.off("mouseover.upfront-select_to_edit").on("mouseover.upfront-select_to_edit", function () {
@@ -117,7 +116,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				});
 			})
 		;
-*/
+
 		//Upfront.Application.ContentEditor.stop();
 		this.trigger("rendered", this);
 	},
@@ -139,14 +138,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 	on_edit: function (e) {
 		var me = this;
-/*
+
 		// Break select-editing trigger
 		this.$el
 			.off("mouseover.upfront-select_to_edit")
 			.off("mouseout.upfront-select_to_edit")
 			.off("mousedown.upfront-select_to_edit")
 		;
-*/
+
 		// Hacky way of closing other instances
 		if ($("#upfront-post-cancel_edit").length) {
 			$("#upfront-post-cancel_edit").trigger("click");
@@ -195,7 +194,26 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			$body = this.$el.find(this.contentSelector),
 			$parent = me.parent_module_view.$el.find('.upfront-editable_entity:first')
 		;
-
+/*
+		if (window.getSelection) {
+			var rng = window.getSelection().getRangeAt(0),
+				str_content = $body.text(),
+				selection = rng.extractContents().textContent,
+				cnt = 0,
+				limit = str_content.indexOf(selection),
+				begin = []
+			;
+			$.each(str_content.split(' '), function (idx, str) {
+				cnt += str.length;
+				if (cnt > limit) return false;
+				begin.push(str);
+			});
+			this.dom_range = {
+				start: begin.length,
+				end: selection.split(' ').length + begin.length
+			};
+		}
+*/
 		if(Upfront.data.currentPost != post){
 			Upfront.data.currentPost = post;
 			Upfront.Events.trigger("data:current_post:change");			
@@ -222,6 +240,22 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 
 		CKEDITOR.inline('upfront-body');
+		// Apply buffered selection
+		/*
+		if (this.dom_range) {
+console.log(this.dom_range)
+			CKEDITOR.instances['upfront-body'].on('instanceReady', function (e) {
+				//var ck_range = new CKEDITOR.dom.range(e.editor.document);
+				var sel = e.editor.getSelection(),
+					rng = sel.getRanges(),
+					ck_range = rng[0]
+				;
+				ck_range.setStart(e.editor.document.getActive().getFirst(), me.dom_range.start);
+				ck_range.setEnd(e.editor.document.getActive().getFirst(), me.dom_range.end);
+				e.editor.getSelection().selectRanges([ck_range]);
+			});
+		}
+		*/
 
 		$body.find('#upfront-body').off('focus')
 			.on('focus', function(){
@@ -267,8 +301,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase() });
 	},
 	updatePost: function() {
-		var $title = this.$('#upfront-title'),
-			$content =  this.$('#upfront-body')
+		var $title = this.$(this.titleSelector).find(":text"),
+			$content =  this.$(this.contentSelector).find("#upfront-body")
 		;
 		if($title.length)
 			this.post.set('post_title', $title.val());

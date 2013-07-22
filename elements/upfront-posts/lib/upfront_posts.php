@@ -70,7 +70,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			$ret .= "<li class='{$post_class} uposts-posts-{$post->ID}' data-post_id='{$post->ID}'>" .
 				apply_filters('upfront_posts_post_markup', 
 					"<span class='uposts-tumbnail_container'>{$thumbnail}</span>" .
-					"<h3 class='post_title'><a href='{$link}'>{$title}</a></h3>" .
+					"<h1 class='post_title'><a href='{$link}'>{$title}</a></h1>" .
 					"<div class='post_content'>{$content}</div>", $post, $content_type, $featured_image) .
 			"</li>";
 		}
