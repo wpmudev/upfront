@@ -1110,6 +1110,7 @@
 			},
 			use_selection: function (e) {
 				e.preventDefault();
+				e.stopPropagation();
 				/*
 				if (this.model && this.model.length) {
 					Upfront.Util.dbg(this.model);
@@ -1331,6 +1332,8 @@
 				else $el.show();
 			},
 			toggle_item_selection: function (e) {
+				e.stopPropagation();
+				e.preventDefault();
 				this.model.set({selected: !this.model.get("selected")});
 			},
 			upload_start: function (media) {
@@ -1612,6 +1615,7 @@
 		},
 		ck_open: function () {
 			var pop = this.open();
+			this.instance = CKEDITOR.currentInstance;
 			pop.always(this.on_close);
 			return false;
 		},
@@ -1626,7 +1630,16 @@
 		},
 		on_close: function (popup, result) {
 			//console.log(result);
-			console.log('closing');
+			//console.log('closing');
+			var html = '',
+				img_tpl = _.template('<div>{{thumbnail}}<br/>{{post_title}}</div>'),
+				av_tpl = _.template('<div>{{post_content}}<br />{{post_title}}</div>')
+			;
+			if (result && result.each) result.each(function (item) {
+				html += ((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? av_tpl : img_tpl)(item.toJSON());
+			});
+			//this.instance.insertHtml('<h1>LALALA</h1>');
+			CKEDITOR.currentInstance.insertHtml(html);
 		},
 		rebind_ckeditor_image: function () {
 			var me = this;
