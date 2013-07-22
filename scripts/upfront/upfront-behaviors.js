@@ -824,6 +824,7 @@ var GridEditor = {
 				});
 			},
 			stop: function(e, ui){
+				Upfront.Events.trigger("entity:pre_resize_stop", view, view.model, ui);
 				var $wrap = $me.closest('.upfront-wrapper'),
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap),
@@ -869,7 +870,7 @@ var GridEditor = {
 					});
 				}
 				model.replace_class(ed.grid.class+rsz_col);
-				Upfront.Events.trigger("entity:resize_stop", view, view.model);
+				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
 			}
 		});
 	},
