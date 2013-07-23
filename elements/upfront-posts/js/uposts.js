@@ -50,12 +50,15 @@
 		 * @return {string} Markup to be shown.
 		 */
 		get_content_markup: function () {
-			return 'Hold on please';
+			var element_id = this.model.get_property_value_by_name("element_id"),
+				data = $(document).data("content-" + element_id)
+			;
+			return data || 'Hold on please';
 		},
 
 		on_render: function () {
 			var raw_settings = this.$el.data('settings'),
-				settings = raw_settings || {},
+				settings = raw_settings || [],
 				post_type = this.model.get_property_value_by_name("post_type"),
 				taxonomy = this.model.get_property_value_by_name("taxonomy"),
 				term = this.model.get_property_value_by_name("term"),
@@ -64,6 +67,13 @@
 				featured_image = this.model.get_property_value_by_name("featured_image"),
 				element_id = this.model.get_property_value_by_name("element_id")
 			;
+			//Upfront.Util.dbg(raw_settings);
+			if (settings.length) {
+				settings = _.object(
+					_(settings).pluck("name"),
+					_(settings).pluck("value")
+				);
+			}
 
 			if (
 				settings.post_type != post_type
@@ -89,7 +99,11 @@
 						"featured_image": featured_image
 					})
 				}).success(function (response) {
-					$("#" + element_id).find(".upfront-object-content").html(response.data);
+					$("#" + element_id)
+						.find(".upfront-object-content")
+						.html(response.data)
+					;
+					$(document).data("content-" + element_id, response.data);
 				});
 			}
 			this.$el.data('settings', this.model.get("properties").toJSON());
