@@ -51,9 +51,36 @@
     width:412px;
     display: none;
 }
-#upfront-popup .upfront-social-media-save_settings, #upfront-popup-content .add_page_url_button
+#upfront-popup .upfront-social-media-save_settings
 {
     width: auto;
+    background: #1fcd8f;
+    border: none;
+    border-radius:0;
+    color: #fff;
+    font-size: 18px;
+    line-height: 49px;
+    padding: 0 25px;
+    float: right;
+    font-weight: 600;
+}
+#upfront-popup .upfront-social-media-save_settings i
+{
+    color: #19a674;
+}
+#upfront-popup .upfront-social-media-save_settings:hover
+{
+    border: none;
+}
+#upfront-popup select#select_page_url
+{
+    color: #607f99;
+    font-family: 'Verdana';
+    font-size: 11px;
+    padding: 4px 3px 5px 3px;
+    top: 1px;
+    position: relative;
+    outline: none;
 }
 .upfront-popup-social-media-meta
 {
@@ -83,4 +110,158 @@
 .ser_header .toggle
 {
     cursor: pointer;
+}
+.upfront-global-social-settings
+{
+    margin: 0;
+    padding: 4px 32px 32px 32px;
+}
+.upfront-global-social-settings fieldset
+{
+    border: solid 1px #c3d8ec;
+    padding: 4px 15px 14px 15px;
+    margin:12px 0 0 0;
+}
+.upfront-global-social-settings legend
+{
+    color: #6386a6;
+    font-size: 17px;
+    margin-left: -11px;
+    padding: 0 13px;
+}
+.upfront-social-setting-box
+{
+    line-height: 12px;
+    float: left;
+    width: 100%;
+}
+.location_top_box, .button_counter_top_box
+{
+    margin-bottom:12px ;
+}
+.social-pages-link-box .social-setting-title{
+    width: 92px;
+}
+#upfront-popup .social-pages-link-box input[type="text"]
+{
+    width: 270px;
+    height: 26px;
+    color: #7c9ebf;
+    font-size: 11px;
+    outline: none;
+    font-family: 'Verdana', sans-serif;
+    background: #fff;
+}
+#upfront-popup .social-pages-link-box .upfront-social-setting-box
+{
+    margin-bottom: 10px;
+}
+#upfront-popup .social-pages-link-box .upfront-social-setting-box:last-child
+{
+    margin-bottom: 0;
+}
+.social-setting-title
+{
+    color: #637587;
+    font-size: 11px;
+    font-family: 'Verdana', sans-serif;
+    display: inline-block;
+    padding-left: 4px;
+    padding-right: 15px;
+    top: -1px;
+    position: relative;
+}
+.upfront-social-sub-title
+{
+    color: #6386a6;
+    font-size: 11px;
+    font-family: 'Verdana', sans-serif;
+    float: left;
+    width: 100%;
+    line-height: 11px;
+    padding: 15px 0;
+}
+.add_page_url_button
+{
+    cursor: pointer;
+    margin-left: 6px;
+}
+label {
+    display: inline;
+}
+
+.upfront-checkbox, .upfront-radio {
+    display: none;
+}
+
+.upfront-checkbox + label, .upfront-radio + label {
+    display: inline-block;
+    position: relative;
+    font-weight: normal;
+    padding: 0 15px 0 16px;
+    color: #637587;
+    font-size: 11px;
+    font-family: 'Verdana', sans-serif;
+}
+.upfront-checkbox + label:before {
+    background-color: transparent;
+    border: 2px solid #4c5f71;
+    padding: 4px;
+    border-radius: 2px;
+    position: absolute;
+    content: "";
+    left: 0px;
+}
+.upfront-checkbox:checked + label
+{
+    color: #30475e;
+}
+.upfront-checkbox:checked + label:after {
+    content: '\2714';
+    font-size: 10px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    line-height: 8px;
+    color: #1fcd8f;
+    background-color: #263a4d;
+    padding: 2px;
+    border-radius: 2px;
+}
+
+.upfront-radio + label:before {
+    -webkit-appearance: none;
+    background-color: #f2f9ff;
+    border: 2px solid #4c5f71;
+    padding: 4px;
+    border-radius: 60px;
+    position: absolute;
+    content: "";
+    left: 0;
+}
+
+.upfront-radio:checked + label:after {
+    content: ' ';
+    width: 6px;
+    height: 6px;
+    border-radius: 60px;
+    position: absolute;
+    top: 1px;
+    background: #1fcd8f;
+    color: #99a1a7;
+    border: 2px solid #263a4d;
+    text-shadow: 0px;
+    left: 1px;
+    font-size: 32px;
+}
+.upfront-radio:checked + label
+{
+    color: #30475e;
+}
+.upfront-social-popup-hd {
+    width: 100% !important;
+    padding-left: 32px !important;
+    color: #263a4d !important;
+    font-size: 24px !important;
+    font-weight: 200;
 }

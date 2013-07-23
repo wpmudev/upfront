@@ -37,19 +37,25 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
     public static function like_follow_plus_one($social_services){
         $counter_options = $social_services->counterOptions;
+
+        global $post;
+
+        $content = strip_shortcodes(wp_filter_nohtml_kses($post->post_content));
+        $content = substr($content,0,55);
+
+        $page_url = (is_home() ? site_url() : $post->guid);
+        $page_content = (is_home() ? '' : $content.'...');
+
         $output = '<div class="upfront-like-follow-plusone-box">';
 
         foreach($social_services->likeSocialMediaServices as $service) :
             if($service->value == 0) return;
-            //TODO: Get post url and short content
-            $page_url = 'http://furqankhanzada.com/backbonejs/task/';
-            $page_content = 'Hi, Here is the test content';
 
             $output .= '<div data-id="upfront-icon-'.$service->id.'" class="upfront-social-icon">';
             switch ($service->id) {
                 case 1:
                     $facebook_button = $counter_options ? "box_count" : "button_count";
-                    $facebook_width = $counter_options ? "45" : "72";
+                    $facebook_width = $counter_options ? "65" : "92";
                     $facebook_height = $counter_options ? "65" : "20";
 
                     $output .= "<iframe src='//www.facebook.com/plugins/like.php?".
@@ -64,13 +70,13 @@ class Upfront_SocialMediaView extends Upfront_Object {
                     "height={$facebook_height}' ".
                     "scrolling='no' frameborder='0' ".
                     "style='border:none; overflow:hidden; ".
-                    "width:{$facebook_width}px; ".
+                    "max-width:{$facebook_width}px; ".
                     "height:{$facebook_height}px;' ".
                     "allowTransparency='true'></iframe>";
                     break;
                 case 2:
                     $tweet_button = $counter_options ? "vertical" : "horizontal";
-                    $tweet_width = $counter_options ? "60" : "80";
+                    $tweet_width = $counter_options ? "80" : "100";
                     $tweet_height = $counter_options ? "63" : "20";
 
                     $output .= "<iframe allowtransparency='true' frameborder='0' scrolling='no' src='https://platform.twitter.com/widgets/tweet_button.html?".

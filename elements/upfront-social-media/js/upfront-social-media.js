@@ -72,40 +72,6 @@
 
             },
 
-            setLocationPreview: function(){
-                var $TopAlignment = this.$popup.content.find('.top_location_preview'),
-                    locationTop = this.model.get_property_value_by_name('location_top'),
-                    locationTopAlignment = this.model.get_property_value_by_name('location_top_alignment'),
-                    $BottomAlignment = this.$popup.content.find('.bottom_location_preview'),
-                    locationBottom = this.model.get_property_value_by_name('location_bottom'),
-                    locationBottomAlignment = this.model.get_property_value_by_name('location_bottom_alignment');
-
-                this.locationPreview(locationTop,locationTopAlignment,'Top',$TopAlignment);
-                this.locationPreview(locationBottom,locationBottomAlignment,'Bottom',$BottomAlignment);
-            },
-
-            setCounterOptionPreview: function(){
-                var counterOptions = this.model.get_property_value_by_name('counter_options'),
-                    $CounterOptions = this.$popup.content.find('.counter_options_preview');
-
-                if(counterOptions !== ''){
-
-                    switch (counterOptions)
-                    {
-                        case 0:
-                            $CounterOptions.text('Like counter right');
-                            break;
-                        case 1:
-                            $CounterOptions.text('Like counter top');
-                            break;
-                    }
-                }
-                else{
-                    $CounterOptions.text('');
-                }
-
-            },
-
             $popup : {},
             popupFunc:function(){
                 var me = this;
@@ -114,10 +80,9 @@
                         $top,
                         $bottom;
 
-                    $top.empty().append('<div id="upfront-popup-top" class="upfront-popup-meta upfront-popup-social-media-meta">' +
-                        '<span>FIRST SETUP PLEASE FILL UP YOUR SOCIAL MEDIA DETAILES </span><br>' +
-                        '<b>GLOBAL SOCIAL SETTINGS</b>' +
-                        '</div>');
+                    $top.empty().append('<ul class="upfront-tabs">' +
+                        '<li class="active upfront-social-popup-hd">Global Social Settings</li>' +
+                        '</ul>');
 
                     $me.empty()
                         .append('<p class="upfront-popup-placeholder">No such thing as <q>too many drinks</q>.</p>')
@@ -148,128 +113,104 @@
                     isGplus = me.model.get_property_value_by_name('is_gplus');
 
                 me.$popup.content.html(
-
-                    '<div class="upfront-settings-item">' +
-                        '<div class="upfront-settings-item-title">Post options</div>' +
-                        '<div class="upfront-settings-item-content">' +
-
-                        '<input type="checkbox" id="social_media_global_settings-post-options" name="post-options" value="1" '+ ( postOptions ? 'checked="checked"' : '') + ' /> Add social buttons to all posts' +
-
+                    '<div class="upfront-global-social-settings">' +
+                        '<fieldset>' +
+                        '<legend>Post options:</legend>' +
+                        '<div class="upfront-social-setting-box"> ' +
+                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-post-options" name="post-options" value="1" '+ ( postOptions ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-post-options">Add social buttons to all posts</label>' +
                         '</div>' +
-                        '</div>'+
-
-
-                        '<div class="upfront-settings-item">' +
-                        '<div class="upfront-settings-item-title">Locations</div>' +
-                        '<div class="upfront-settings-item-content">' +
-
-                        '<div class="location_top_box">' +
-                        '<input type="checkbox" id="social_media_global_settings-location-top" name="location-top" value="1" '+ ( locationTop ? 'checked="checked"' : '') + ' /> Top' +
-
-                        '<input type="radio" id="social_media_global_settings-top-left" name="location-top-alignment" value="0" ' + (!locationTopAlignment ? 'checked="checked"' : '') + ' /> Left' +
-                        '<input type="radio" id="social_media_global_settings-top-center" name="location-top-alignment" value="1" ' + (locationTopAlignment == 1 ? 'checked="checked"' : '') + ' /> Center' +
-                        '<input type="radio" id="social_media_global_settings-top-right" name="location-top-alignment" value="2" ' + (locationTopAlignment == 2 ? 'checked="checked"' : '') + ' /> Right' +
+                        '<div class="upfront-social-sub-title">Locations</div>' +
+                        '<div class="upfront-social-setting-box location_top_box">' +
+                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-location-top" name="location-top" value="1" '+ ( locationTop ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-location-top">Top</label>' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-top-left" name="location-top-alignment" value="0" ' + (!locationTopAlignment ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-top-left">Left</label>' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-top-center" name="location-top-alignment" value="1" ' + (locationTopAlignment == 1 ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-top-center">Center</label>' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-top-right" name="location-top-alignment" value="2" ' + (locationTopAlignment == 2 ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-top-right">Right</label>' +
                         '</div>' +
-
-                        '<div class="location_bottom_box">' +
-                        '<input type="checkbox" id="social_media_global_settings-location-bottom" name="location-bottom" value="1" '+ ( locationBottom ? 'checked="checked"' : '') + ' /> Bottom' +
-
-                        '<input type="radio" id="social_media_global_settings-bottom-left" name="location-bottom-alignment" value="0" ' + (!locationBottomAlignment ? 'checked="checked"' : '') + ' /> Left' +
-                        '<input type="radio" id="social_media_global_settings-bottom-center" name="location-bottom-alignment" value="1" ' + (locationBottomAlignment == 1 ? 'checked="checked"' : '') + ' /> Center' +
-                        '<input type="radio" id="social_media_global_settings-bottom-right" name="location-bottom-alignment" value="2" ' + (locationBottomAlignment == 2 ? 'checked="checked"' : '') + ' /> Right' +
+                        '<div class="upfront-social-setting-box location_bottom_box">' +
+                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-location-bottom" name="location-bottom" value="1" '+ ( locationBottom ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-location-bottom">Bottom</label>' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-bottom-left" name="location-bottom-alignment" value="0" ' + (!locationBottomAlignment ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-bottom-left">Left</label>' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-bottom-center" name="location-bottom-alignment" value="1" ' + (locationBottomAlignment == 1 ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-bottom-center">Center</label>' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-bottom-right" name="location-bottom-alignment" value="2" ' + (locationBottomAlignment == 2 ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-bottom-right">Right</label>' +
                         '</div>' +
-                        '<div class="top_location_preview"></div> ' +
-                        '<div class="bottom_location_preview"></div> ' +
-
+                        '</fieldset>' +
+                        '<fieldset>' +
+                        '<legend>Button Counter:</legend>' +
+                        '<div class="upfront-social-setting-box button_counter_top_box"> ' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-counter-right" name="counter-options" value="0" ' + (!counterOptions ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-counter-right">Counter right</label>' +
+                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-counter-top" name="counter-options" value="1" ' + (counterOptions == 1 ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-counter-top">Counter top</label>' +
                         '</div>' +
+                        '<div class="upfront-social-setting-box"> ' +
+                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-is-liked" name="is_liked" value="1" '+ ( isLiked ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-is-liked">Like</label>' +
+                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-is-tweet" name="is_tweet" value="1" '+ ( isTweet ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-is-tweet">Tweet</label>' +
+                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-is-gplus" name="is_gplus" value="1" '+ ( isGplus ? 'checked="checked"' : '') + ' />' +
+                            '<label for="social_media_global_settings-is-gplus">Google +1</label>' +
                         '</div>' +
+                        '</fieldset>' +
 
-                        '<div class="upfront-settings-item">' +
-                        '<div class="upfront-settings-item-title">Button counter</div>' +
-                        '<div class="upfront-settings-item-content">' +
+                        '<fieldset class="social-pages-link-box">' +
+                        '<legend>Global Social Media Pages:</legend>' +
+                        '<div class="upfront-social-setting-box"> ' +
+                        '<div class="social-setting-title">Facebook</div>' +
+                        '<input type="text" id="social_media_global_settings-facebook" name="facebook_page_url" value="' + (facebookPageUrl ? facebookPageUrl : '') + '" placeholder="https://www.facebook.com/yourpage" />' +
+                        '</div> ' +
+                        '<div class="upfront-social-setting-box"> ' +
+                        '<div class="social-setting-title">Twitter</div>' +
+                        '<input type="text" id="social_media_global_settings-twitter" name="twitter_page_url" value="' + (twitterPageUrl ? twitterPageUrl : '') + '" placeholder="https://www.twitter.com/yourpage" /> ' +
+                        '</div> ' +
+                        '<div class="upfront-social-setting-box"> ' +
+                        '<div class="social-setting-title">Google</div>' +
+                        '<input type="text" id="social_media_global_settings-google" name="google_page_url" value="' + (googlePageUrl ? googlePageUrl : '') + '" placeholder="https://www.google.com/yourpage" /> ' +
+                        '</div> ' +
 
-                        '<input type="radio" id="social_media_global_settings-counter-right" name="counter-options" value="0" ' + (!counterOptions ? 'checked="checked"' : '') + ' /> Counter right' +
-                        '<input type="radio" id="social_media_global_settings-counter-top" name="counter-options" value="1" ' + (counterOptions == 1 ? 'checked="checked"' : '') + ' /> Counter top' +
+                        (linkedinPageUrl ? '<div class="upfront-social-setting-box"><div class="social-setting-title">LinkedIn</div><input type="text" id="social_media_global_settings-linkedin" name="linkedin_page_url" value="' + linkedinPageUrl + '" placeholder="https://www.linkedin.com/yourpage" /></div>' : '') +
+                        (youtubePageUrl ? '<div class="upfront-social-setting-box"><div class="social-setting-title">Youtube</div><input type="text" id="social_media_global_settings-youtube" name="youtube_page_url" value="' + youtubePageUrl + '" placeholder="https://www.youtube.com/yourpage" /> </div>' : '') +
+                        (pintrestPageUrl ? '<div class="upfront-social-setting-box"><div class="social-setting-title">Pinterest</div><input type="text" id="social_media_global_settings-pintrest" name="pintrest_page_url" value="' + pintrestPageUrl + '" placeholder="https://www.pinterest.com/yourpage" /> </div>' : '') +
 
-                        '</div>' +
-                        '<div class="counter_options_preview"></div> ' +
-                        '</div>' +
-
-                        '<div class="upfront-settings-item">' +
-                        '<div class="upfront-settings-item-title">Post options</div>' +
-                        '<div class="upfront-settings-item-content">' +
-
-                        '<div class="upfront-is_like_box">' +
-                        '<input type="checkbox" id="social_media_global_settings-is-liked" name="is_liked" value="1" '+ ( isLiked ? 'checked="checked"' : '') + ' /> Like' +
-                        '<div class="upfront-is_like_icon"></div> ' +
-                        '</div>' +
-
-                        '<div class="upfront-is_tweet_box">' +
-                        '<input type="checkbox" id="social_media_global_settings-is-tweet" name="is_tweet" value="1" '+ ( isTweet ? 'checked="checked"' : '') + ' /> Tweet' +
-                        '<div class="upfront-is_tweet_icon"></div> ' +
-                        '</div>' +
-
-                        '<div class="upfront-is_gplus_box">' +
-                        '<input type="checkbox" id="social_media_global_settings-is-gplus" name="is_gplus" value="1" '+ ( isGplus ? 'checked="checked"' : '') + ' /> Google +1' +
-                        '<div class="upfront-is_like_icon"></div> ' +
-                        '</div>' +
-
-                        '</div>' +
-                        '</div>'+
-
-                        '<div class="upfront-settings-item">' +
-                        '<div class="upfront-settings-item-title">Global social media pages</div>' +
-                        '<div class="upfront-settings-item-content">' +
-
-                        'Facebook <input type="text" id="social_media_global_settings-facebook" name="facebook_page_url" value="' + (facebookPageUrl ? facebookPageUrl : '') + '" placeholder="https://www.facebook.com/yourpage" />' +
-                        '<br> ' +
-                        'Twitter <input type="text" id="social_media_global_settings-twitter" name="twitter_page_url" value="' + (twitterPageUrl ? twitterPageUrl : '') + '" placeholder="https://www.twitter.com/yourpage" /> ' +
-                        '<br> ' +
-                        'Google <input type="text" id="social_media_global_settings-google" name="google_page_url" value="' + (googlePageUrl ? googlePageUrl : '') + '" placeholder="https://www.google.com/yourpage" /> ' +
-                        '<br> ' +
-
-                        (linkedinPageUrl ? 'LinkedIn <input type="text" id="social_media_global_settings-linkedin" name="linkedin_page_url" value="' + linkedinPageUrl + '" placeholder="https://www.linkedin.com/yourpage" /> <br>' : '') +
-                        (youtubePageUrl ? 'Youtube <input type="text" id="social_media_global_settings-youtube" name="youtube_page_url" value="' + youtubePageUrl + '" placeholder="https://www.youtube.com/yourpage" /> <br>' : '') +
-                        (pintrestPageUrl ? 'Pinterest <input type="text" id="social_media_global_settings-pintrest" name="pintrest_page_url" value="' + pintrestPageUrl + '" placeholder="https://www.pinterest.com/yourpage" /> <br>' : '') +
-
+                        '<div class="upfront-social-setting-box"> ' +
+                        '<div class="social-setting-title">' +
                         '<select id="select_page_url" name="select_page_url">' +
                         '<option value="0">Other</option>' +
                         '<option id="social_media_global_settings-linkedin" data-name="linkedin_page_url" data-placeholder="https://www.linkedin.com/yourpage">LinkedIn</option>' +
                         '<option id="social_media_global_settings-pintrest" data-name="pintrest_page_url" data-placeholder="https://www.pintrest.com/yourpage">Pintrest</option>' +
                         '<option id="social_media_global_settings-youtube" data-name="youtube_page_url" data-placeholder="https://www.youtube.com/yourpage">Youtube</option>' +
                         '</select>' +
+                        '</div>' +
                         '<input class="blank_add_page_url_field" placeholder="https://www" type="text" />' +
-                        '<button class="add_page_url_button">Add</button>' +
+                        '<i class="icon-plus-sign add_page_url_button"></i>' +
 
                         '</div>' +
-                        '</div>' +
-
-                        '<div class="change_global_settings_from_sidebar">These global settings can be change from the <a href="#">upfront sidebar</a></div>'
-
+                        '</fieldset>' +
+                    '</div>'
                 );
 
-                me.$popup.bottom.html('<div id="upfront-popup-bottom" class="upfront-popup-meta upfront-popup-social-media-meta">' +
-                    '<button type="button" class="upfront-social-media-save_settings"><i class="icon-ok"></i> Save</button>' +
-                    '</div>');
+                me.$popup.bottom.html('<button type="button" class="upfront-social-media-save_settings"><i class="icon-ok"></i>OK</button>');
 
                 if(linkedinPageUrl) me.$popup.content.find('#select_page_url option#social_media_global_settings-linkedin').remove();
                 if(youtubePageUrl) me.$popup.content.find('#select_page_url option#social_media_global_settings-youtube').remove();
                 if(pintrestPageUrl) me.$popup.content.find('#select_page_url option#social_media_global_settings-pintrest').remove();
 
-                me.setLocationPreview();
-                me.setCounterOptionPreview();
                 me.clickOnSaveButton();
                 me.clickOnAddPageButton();
                 me.hideAddButton();
-                me.changeGlobalSettingsFromSidebar();
             },
 
             clickOnSaveButton: function(){
                 var me = this;
                 this.$popup.bottom.find('.upfront-social-media-save_settings').on("click", function () {
                     me.on_save();
-                    me.setLocationPreview();
-                    me.setCounterOptionPreview();
                 });
             },
 
@@ -290,7 +231,7 @@
 
                     $input = me.$popup.content.find('.blank_add_page_url_field');
                     $select = me.$popup.content.find('#select_page_url option:selected');
-                    $selectEle = me.$popup.content.find('#select_page_url');
+                    $selectEle = me.$popup.content.find('#select_page_url').closest('.upfront-social-setting-box');
 
                     if($select.val() == '0' ){
                         $input.focus();
@@ -298,7 +239,7 @@
                     }
 
                     $selectEle
-                        .before($select.val()+' <input type="text" id="'+$select.attr('id')+'" name="'+$select.attr('data-name')+'" value="'+$input.val()+'" placeholder="'+$select.attr('data-placeholder')+'" /><br>');
+                        .before('<div class="upfront-social-setting-box"><div class="social-setting-title">'+$select.val()+'</div><input type="text" id="'+$select.attr('id')+'" name="'+$select.attr('data-name')+'" value="'+$input.val()+'" placeholder="'+$select.attr('data-placeholder')+'" /></div>');
                     $select.remove();
                     $input.val('');
 
@@ -308,17 +249,8 @@
 
             hideAddButton: function(){
                 if(this.$popup.content.find('#select_page_url option').length === 1){
-                    this.$popup.content.find('#select_page_url').hide();
-                    this.$popup.content.find('.blank_add_page_url_field').hide();
-                    this.$popup.content.find('.add_page_url_button').hide();
+                    this.$popup.content.find('.add_page_url_button').closest('.upfront-social-setting-box').hide();
                 }
-            },
-
-            changeGlobalSettingsFromSidebar: function(){
-                this.$popup.content.find('.change_global_settings_from_sidebar a').on("click", function (e) {
-                    e.preventDefault();
-                    alert('Currently this option is not avalible');
-                });
             },
 
             get_title: 'GLOBAL SOCIAL SETTINGS',
@@ -365,15 +297,16 @@
                 var $PintrestPageUrl = this.$popup.content.find('input#social_media_global_settings-pintrest');
                 $PintrestPageUrl = $PintrestPageUrl.val() !== '' ? $PintrestPageUrl.val() : 0;
 
-                var $IsLiked = this.$popup.content.find('input#social_media_global_settings-is-liked');
+                var $IsLiked = this.$popup.content.find('input#social_media_global_settings-is-liked:checked');
                 $IsLiked = $IsLiked.length ? parseInt($IsLiked.val(), 10) : 0;
 
-                var $IsTweet = this.$popup.content.find('input#social_media_global_settings-is-tweet');
+                var $IsTweet = this.$popup.content.find('input#social_media_global_settings-is-tweet:checked');
                 $IsTweet = $IsTweet.length ? parseInt($IsTweet.val(), 10) : 0;
 
-                var $IsGoogle = this.$popup.content.find('input#social_media_global_settings-is-gplus');
+                var $IsGoogle = this.$popup.content.find('input#social_media_global_settings-is-gplus:checked');
                 $IsGoogle = $IsGoogle.length ? parseInt($IsGoogle.val(), 10) : 0;
 
+                console.log($IsLiked)
 
                 this.model.set_property('post_options', $PostOptions );
                 this.model.set_property('location_top', $LocationTop );
@@ -397,7 +330,7 @@
 
                     Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
                         .success(function (ret) {
-                            //console.log(ret.data);
+                            //Upfront.Views.Editor.notify('Global Social Settings Updated!')
                         })
                         .error(function (ret) {
                             Upfront.Util.log("Error Saving settings");
@@ -432,6 +365,7 @@
             this.init_property("element_id", Upfront.Util.get_unique_id("SocialMedia-Object"));
             this.init_property("class", "c22 upfront-Social-Media");
             this.init_property("has_settings", 1);
+            this.init_property("popup_dialog", true);
         }
     });
 
@@ -482,18 +416,23 @@
             this.model.set_property('social_media_panel_settings', JSON.stringify(pSettings));
         },
 
-        showingDialog: false,
-
-        dragStop: function(e1, e2){
-
-            if(this.showingDialog) return;
-
-            var type = e1.model.get('objects').models[0].get('properties').where({'name':'type'})[0].get('value');
-            if(type !== 'SocialMediaModel') return;
-            this.showingDialog = true;
-            Upfront.data.social.panel.popupFunc();
+        dragStop: function(view, model){
+            if(this.parent_module_view == view)
+                this.openGlobalSettingsPopup();
         },
 
+        openGlobalSettingsPopup: function(){
+            if(this.model.get_property_value_by_name("popup_dialog")) {
+                Upfront.data.social.panel.popupFunc();
+                this.property('popup_dialog', false);
+            };
+        },
+
+        property: function(name, value) {
+            if(typeof value != "undefined")
+                return this.model.set_property(name, value);
+            return this.model.get_property_value_by_name(name);
+        },
         selectSocialButtonType: function(){
             var layoutStyle,
                 panelSettings = $.parseJSON(this.model.get_property_value_by_name("social_media_panel_settings"));
@@ -695,46 +634,49 @@
 
             if(pSettings.likeSocialMediaServices){
 
-                var pageUrl = Upfront.data.currentPost.get('guid'),
-                    pageContent = this.getShortContent(Upfront.data.currentPost.get('post_content'),15);
+                var post = new Upfront.Models.Post({id: _upfront_post_data.post_id}).fetch();
+                post.success(function(res){
+                    var pageUrl = (!res.data.guid ? window.location.href : res.data.guid ),
+                        pageContent = me.getShortContent(res.data.post_content,15)
+                    me.$el.find('.upfront-object-content').empty();
+                    _.each(pSettings.likeSocialMediaServices, function(social) {
+                        if(social.value == 0) return;
+                        me.$el.find('.upfront-object-content').append('<div data-id="upfront-icon-'+social.id+'" class="upfront-social-icon">' +
+                            (social.id == 1 ? '<iframe src="//www.facebook.com/plugins/like.php?' +
+                                'href='+me.rawUrlEncode(pageUrl)+'&amp;' +
+                                'send=false&amp;' +
+                                'layout='+(pSettings.counterOptions ? 'box_count' : 'button_count')+'&amp;' +
+                                'width=80&amp;' +
+                                'show_faces=true&amp;' +
+                                'font&amp;' +
+                                'colorscheme=light&amp;' +
+                                'action=like&amp;' +
+                                'height='+(pSettings.counterOptions ? '65' : '20')+'" ' +
+                                'scrolling="no" frameborder="0" style="border:none; overflow:hidden; ' +
+                                'width:'+(pSettings.counterOptions ? '45' : '80')+'px; ' +
+                                'height:'+(pSettings.counterOptions ? '65' : '20')+'px;" ' +
+                                'allowTransparency="true"></iframe>':'' )+
 
-                _.each(pSettings.likeSocialMediaServices, function(social) {
-                    if(social.value == 0) return;
-                    $likeFollowPlusOne.append('<div data-id="upfront-icon-'+social.id+'" class="upfront-social-icon">' +
+                            (social.id == 2 ? '<iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?' +
+                                'text='+pageContent+'&amp;' +
+                                'url='+me.rawUrlEncode(pageUrl)+'&amp;' +
+                                'original_referer='+me.rawUrlEncode(pageUrl)+'&amp;' +
+                                'count='+(pSettings.counterOptions ? 'vertical' : 'horizontal')+'&amp;' +
+                                'size=medium" style="' +
+                                'width:'+(pSettings.counterOptions ? '60' : '80')+'px; ' +
+                                'height:'+(pSettings.counterOptions ? '63' : '20')+'px;"></iframe>':'' )+
 
-                        (social.id == 1 ? '<iframe src="//www.facebook.com/plugins/like.php?' +
-                            'href='+me.rawUrlEncode(pageUrl)+'&amp;' +
-                            'send=false&amp;' +
-                            'layout='+(pSettings.counterOptions ? 'box_count' : 'button_count')+'&amp;' +
-                            'width=80&amp;' +
-                            'show_faces=true&amp;' +
-                            'font&amp;' +
-                            'colorscheme=light&amp;' +
-                            'action=like&amp;' +
-                            'height='+(pSettings.counterOptions ? '65' : '20')+'" ' +
-                            'scrolling="no" frameborder="0" style="border:none; overflow:hidden; ' +
-                            'width:'+(pSettings.counterOptions ? '45' : '80')+'px; ' +
-                            'height:'+(pSettings.counterOptions ? '65' : '20')+'px;" ' +
-                            'allowTransparency="true"></iframe>':'' )+
+                            (social.id == 3 ? '<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script><div class="g-plusone" '+(pSettings.counterOptions ? 'data-size="tall"' : 'data-size="medium"')+'></div>':'' )+
 
-                        (social.id == 2 ? '<iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?' +
-                            'text='+pageContent+'&amp;' +
-                            'url='+me.rawUrlEncode(pageUrl)+'&amp;' +
-                            'original_referer='+me.rawUrlEncode(pageUrl)+'&amp;' +
-                            'count='+(pSettings.counterOptions ? 'vertical' : 'horizontal')+'&amp;' +
-                            'size=medium" style="' +
-                            'width:'+(pSettings.counterOptions ? '60' : '80')+'px; ' +
-                            'height:'+(pSettings.counterOptions ? '63' : '20')+'px;"></iframe>':'' )+
+                            (!social.url ? '<span class="alert-url">!</span>':'' )+
+                            '</div>');
+                    });
 
-                        (social.id == 3 ? '<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script><div class="g-plusone" '+(pSettings.counterOptions ? 'data-size="tall"' : 'data-size="medium"')+'></div>':'' )+
-
-                        (!social.url ? '<span class="alert-url">!</span>':'' )+
-                        '</div>');
+                    if( !$.trim( $likeFollowPlusOne.html() ).length ) {
+                        $likeFollowPlusOne.append('Please select Social Media Services ...!');
+                    }
                 });
-
-                if( !$.trim( $likeFollowPlusOne.html() ).length ) {
-                    $likeFollowPlusOne.append('Please select Social Media Services ...!');
-                }
+                $likeFollowPlusOne.append('Loading ...');
             }
             else{
                 $likeFollowPlusOne.append('Please select Social Media Services ...!');
@@ -880,14 +822,14 @@
             '<div class="upfront_social_box">' +
             '<div class="upfront_social_tabs">' +
             '<ul>' +
-            '<li><a class="tab_one" href="#">Like, Follow, +1 </a>' +
-            '<br><input type="radio" id="social_type-social-layout-option-one" name="social_layout_option" value="1" {[ if (layoutStyle == 1) { ]}   {{checked="checked"}} {[ } ]} />' +
+            '<li>' +
+            '<input type="radio" class="upfront-radio" id="social_type-social-layout-option-one" name="social_layout_option" value="1" {[ if (layoutStyle == 1) { ]}   {{checked="checked"}} {[ } ]} /><label for="social_type-social-layout-option-one">Like, Follow, +1 </label>' +
             '</li>' +
-            '<li><a class="tab_two" href="#">Fan, Follower count</a>' +
-            '<br><input type="radio" id="social_type-social-layout-option-two" name="social_layout_option" value="2" {[ if (layoutStyle == 2) { ]}   {{checked="checked"}} {[ } ]} />' +
+            '<li>' +
+            '<input type="radio" class="upfront-radio" id="social_type-social-layout-option-two" name="social_layout_option" value="2" {[ if (layoutStyle == 2) { ]}   {{checked="checked"}} {[ } ]} /><label for="social_type-social-layout-option-two">Fan, Follower count</label>' +
             '</li>' +
-            '<li><a class="tab_three" href="#">Call to action icon</a>' +
-            '<br><input type="radio" id="social_type-social-layout-option-three" name="social_layout_option" value="3" {[ if (layoutStyle == 3) { ]}   {{checked="checked"}} {[ } ]} />' +
+            '<li>' +
+            '<input type="radio" class="upfront-radio" id="social_type-social-layout-option-three" name="social_layout_option" value="3" {[ if (layoutStyle == 3) { ]}   {{checked="checked"}} {[ } ]} /><label for="social_type-social-layout-option-three">Call to action icon</label>' +
             '</li>' +
             '</ul>' +
             '</div>' +
@@ -1017,7 +959,6 @@
             this.getPagesLinks();
             var panelSettings = $.parseJSON(this.model.get_property_value_by_name("social_media_panel_settings")),
                 me = this,
-                $tabA,
                 pSettings,
                 actMenu = 1;
 
@@ -1040,23 +981,18 @@
             // Here i Need to Create Tab menu inside panel so i can not use Warp method.
             this.$el.html(this.template(pSettings));
 
-            $tabA = this.$el.find('.upfront_social_tabs a');
             switch (pSettings.layoutStyle)
             {
                 case 0:
-                    $($tabA[0]).addClass('act_tabs');
                     this.$el.find('.upfront_tab_one_box').show();
                     break;
                 case 1:
-                    $($tabA[0]).addClass('act_tabs');
                     this.$el.find('.upfront_tab_one_box').show();
                     break;
                 case 2:
-                    $($tabA[1]).addClass('act_tabs');
                     this.$el.find('.upfront_tab_two_box').show();
                     break;
                 case 3:
-                    $($tabA[2]).addClass('act_tabs');
                     this.$el.find('.upfront_tab_three_box').show();
                     break;
             }
@@ -1144,7 +1080,7 @@
         },
 
         events:{
-            'click .upfront_social_tabs a': 'tabMenu',
+            'click .upfront_social_tabs input': 'tabMenu',
             'click .back_global_settings a' : 'backToGlobalSettings',
             'click .add_page_url_button': 'addSocialMediaItem',
             'change #select_page_url': 'onChangeFillUrl',
@@ -1282,22 +1218,18 @@
         },
 
         tabMenu: function(e){
-            e.preventDefault();
 
-            $(e.target).addClass('act_tabs');
-            this.$el.find('.upfront_social_tabs a').not(e.target).removeClass('act_tabs');
-
-            if($(e.target).hasClass('tab_one')){
+            if($(e.target).is('#social_type-social-layout-option-one')){
                 this.$el.find('.upfront_tab_two_box, .upfront_tab_three_box').hide();
                 this.$el.find('.upfront_tab_one_box').show();
             }
 
-            if($(e.target).hasClass('tab_two')){
+            if($(e.target).is('#social_type-social-layout-option-two')){
                 this.$el.find('.upfront_tab_one_box, .upfront_tab_three_box').hide();
                 this.$el.find('.upfront_tab_two_box').show();
             }
 
-            if($(e.target).hasClass('tab_three')){
+            if($(e.target).is('#social_type-social-layout-option-three')){
                 this.$el.find('.upfront_tab_one_box, .upfront_tab_two_box').hide();
                 this.$el.find('.upfront_tab_three_box').show();
             }
