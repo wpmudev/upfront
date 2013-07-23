@@ -40,7 +40,6 @@
                 // Call the parent's initialization function
                 Upfront.Views.ObjectView.prototype.initialize.call(this);
                 Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
-                this.toolTipAppend();
             },
 
             events: function(){
@@ -64,6 +63,7 @@
                             return;
                         }
                         me.$el.find('.upfront-object-content').html(ret.data);
+                        me.toolTipAppend();
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading menu");
@@ -96,7 +96,6 @@
                     Upfront.Events.trigger("entity:settings:activate", me);
                     Upfront.Events.trigger("entity:settings:panel:open");
                 });
-
             },
 
             renderTrigger: function(){
@@ -1000,7 +999,6 @@
                     label = this.$el.find('.upfront_customlink_area input[name="label"]').val(currentMenuItemData.get('name'));
 
                 this.panel.trigger("upfront:settings:panel:refresh", this.panel);
-                console.log(currentMenuItemData.toJSON())
             },
 
             deleteMenuItem: function(e){
