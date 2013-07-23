@@ -562,6 +562,7 @@
 				var me = this,
 					tpl = _.template(' <a href="#" class="filter" data-type="{{type}}" data-filter="{{filter}}">{{filter}}</a>')
 				;
+				this.$el.append('<label>Active filters</label>');
 				_(this.model.to_list()).each(function (filters, type) {
 					_(filters).each(function (filter) {
 						me.$el.append(tpl({filter: filter, type: type}));
@@ -603,6 +604,7 @@
 		var MediaManager_FiltersSelectionControl = Backbone.View.extend({
 			className: "upfront-filter_selection-control clearfix",
 			events: {
+				click: "expand_control_selection",
 				"click li a": "select_control"
 			},
 			initialize: function () {
@@ -617,24 +619,38 @@
 			render: function () {
 				var me = this,
 					$target = this.$el.empty().append("<ul />").find("ul:first"),
-					tpl = _.template("<li><a href='#' data-idx='{{idx}}'>{{name}}</a></li>")
+					tpl = _.template("<li style='display:none'><a href='#' data-idx='{{idx}}'>{{name}}</a></li>")
 				;
 				this.controls.each(function (ctl, idx) {
 					$target.append(tpl({idx:idx, name:ctl.get_name()}));
 				});
 				this.$el.append('<div class="upfront-filter_control" />');
 				this.$control = this.$el.find("div.upfront-filter_control");
+
+				this.$el.find("li:first").show();
+
 				Upfront.Events.on("media_manager:media:filters_updated");
 			},
 			select_control: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
 				var $el = $(e.target),
 					idx = $el.attr("data-idx"),
 					control = this.controls.toArray()[idx]
 				;
 
+				this.$el.find("li").hide();
+				$el.closest("li").show();
+
 				control.render();
 				this.$control.empty().append(control.$el);
 				return false;
+			},
+			expand_control_selection: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				this.$el.find("li").show();
+				this.$control.empty();
 			}
 		});
 
@@ -682,8 +698,10 @@
 		var Media_FilterSelection_AdditiveMultiselection = Media_FilterSelection_Multiselection.extend({
 			className: "upfront-additive_multiselection",
 			events: {
+				click: "stop_prop",
 				"keyup :text.filter": "show_matching_labels"
 			},
+			stop_prop: function (e) { e.stopPropagation(); },
 			render: function () {
 				var me = this,
 					sel = this.selection || ''
@@ -752,13 +770,17 @@
 					if (this.model.get("state")) name = '<b>' + name + '</b>';
 					this.$el.empty().append(name);
 				},
-				on_click: function () {
+				on_click: function (e) {
+					e.preventDefault();
+					e.stopPropagation();
 					this.model.set({state: !this.model.get("state")});
 				}
 			});
 
 			var Media_FilterSelection_Uniqueselection_Item = Media_FilterSelection_Multiselection_Item.extend({
-				on_click: function () {
+				on_click: function (e) {
+					e.preventDefault();
+					e.stopPropagation();
 					this.model.set({state: !this.model.get("state")}, {silent: true});
 					this.trigger("model:unique_state:change", this.model);
 				}
@@ -866,7 +888,7 @@
 			"click .embed": "switch_to_embed"
 		},
 		template: _.template(
-			'<ul class="upfront-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul>'
+			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul>'
 		),
 		render: function () {
 			this.$el.empty().append(

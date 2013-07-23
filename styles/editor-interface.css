@@ -2931,7 +2931,8 @@ box-shadow: inset 0 2px 0 0 #fff;
 }
 #upfront-popup .upfront-popup-meta .search_container input:focus {
 	color: #fff;
-	background: #333;
+	background: #394a59;
+	background: rgba(59,77,91,0.9);
 	outline: none;
 	-moz-appearance: none;
 }
@@ -3011,4 +3012,14 @@ box-shadow: inset 0 2px 0 0 #fff;
 .upfront-filter_selection-control ul, .upfront-filter_selection-control ul li {
 	margin: 0;
 	padding: 0;
+}
+
+/* --- Media Manager - Additional --- */
+
+.upfront-additive_multiselection .labels_hub {
+	max-height: 6em;
+	overflow-y: scroll;
+}
+.upfront-media_manager-tabs {
+	width: 100%;
 }
