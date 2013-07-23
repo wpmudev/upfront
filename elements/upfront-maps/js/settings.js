@@ -52,13 +52,23 @@ var UmapSettings = {};
 			
 			var address = $('input#address', this.$el).val(),
 				geocoder = new google.maps.Geocoder(),
-				map = Ufmap.Maps[this.model.get('subviewModel').cid];
+				map = Ufmap.Maps[this.model.get('subviewModel').cid],
+				model = this.model.get('subviewModel')
+			;
 
-			this.model.get('subviewModel').set('address', address);
+			model.set('address', address);
 
 			geocoder.geocode( { 'address': address}, function(results, status) {
 				if (status == google.maps.GeocoderStatus.OK) {
 					map.setCenter(results[0].geometry.location);
+					var marker = new google.maps.Marker({
+						position: results[0].geometry.location,
+						map: map,
+						title: address,
+						draggable: true
+						//icon: icon
+					});
+					model.save_marker(marker);
 				} else {
 					alert('Address not found.');
 				}

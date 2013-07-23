@@ -59,6 +59,32 @@ require(['https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&
 			},
 			markers: {},
 			address: ''
+		},
+		save_marker: function(marker){
+			// store marker JSON data in the backbone model.
+			var markers = this.get('markers'),
+				next_id = parseInt(_.max(_.keys(markers), function(v){return parseInt(v);}))+1,
+				lat = marker.position.lat(),
+				lng = marker.position.lng();
+
+			if(!next_id){
+				markers = {}; // PHP json_encode converts an empty JS object to an array. re-init 'markers' to a JS object.
+				next_id=1;
+			}
+
+			marker.set('id', next_id);
+
+			markers[next_id] = {
+				latLng: [lat, lng],
+				infowindow: {content:0, open:0},
+				icon: null 
+			};
+
+
+
+			this.set('markers', markers);
+
+			return marker;
 		}
 	});
 
