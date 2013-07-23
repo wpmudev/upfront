@@ -105,16 +105,15 @@ var UsearchElement = Upfront.Views.Editor.Sidebar.Element.extend({
  * Field settings panel.
  * @type {Upfront.Views.Editor.Settings.Panel}
  */
-var UsearchFieldSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
+var UsearchSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	/**
 	 * Initialize the view, and populate the internal 
 	 * setting items array with Item instances.
 	 */
 	initialize: function () {
 		this.settings = _([
-			new UsearchFieldSetting_Style({model: this.model}),
-			new UsearchFieldSetting_Color({model: this.model}),
 			new UsearchFieldSetting_Placeholder({model: this.model}),
+			new UsearchButtonSetting_Label({model: this.model})
 		]);
 	},
 	/**
@@ -133,78 +132,6 @@ var UsearchFieldSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	}
 });
 
-/**
- * Field settings - Style item
- * @type {Upfront.Views.Editor.Settings.Item}
- */
-var UsearchFieldSetting_Style = Upfront.Views.Editor.Settings.Item.extend({
-	/**
-	 * Set up setting item appearance.
-	 */
-	render: function () {
-		var rounded = this.model.get_property_value_by_name("is_rounded");
-
-		// Wrap method accepts an object, with defined "title" and "markup" properties.
-		// The "markup" one holds the actual Item markup.
-		this.wrap({
-			"title": "Style",
-			"markup": '<input type="radio" id="search_type-appearance-rounded" name="search_appearance" value="1" ' + (rounded ? 'checked="checked"' : '') + ' /> Rounded' +
-				'<br />' +
-				'<input type="radio" id="search_type-appearance-normal" name="search_appearance" value="0" ' + (!rounded ? 'checked="checked"' : '') + ' /> Normal'
-		});
-	},
-	/**
-	 * Defines under which Property name the value will be saved.
-	 * @return {string} Property name
-	 */
-	get_name: function () {
-		return "is_rounded";
-	},
-	/**
-	 * Extracts the finalized value from the setting markup.
-	 * @return {mixed} Value.
-	 */
-	get_value: function () {
-		var $appearance = this.$el.find(':radio[name="search_appearance"]:checked');
-		return $appearance.length ? parseInt($appearance.val(), 10) : 0;
-	}
-});
-/**
- * Field settings - Color item
- * @type {Upfront.Views.Editor.Settings.Item}
- */
-var UsearchFieldSetting_Color = Upfront.Views.Editor.Settings.Item.extend({
-	/**
-	 * Set up setting item appearance.
-	 */
-	render: function () {
-		var value = this.model.get_property_value_by_name("color"),
-			value = value ? value : ''
-		;
-		// Wrap method accepts an object, with defined "title" and "markup" properties.
-		// The "markup" one holds the actual Item markup.
-		this.wrap({
-			"title": "Color",
-			"markup": '<input type="text" id="search-seach_color" name="search_color" value="' + value + '" />'
-		});
-		this.$el.find("#search-seach_color").wpColorPicker();
-	},
-	/**
-	 * Defines under which Property name the value will be saved.
-	 * @return {string} Property name
-	 */
-	get_name: function () {
-		return "color";
-	},
-	/**
-	 * Extracts the finalized value from the setting markup.
-	 * @return {mixed} Value.
-	 */
-	get_value: function () {
-		var $color = this.$el.find('#search-seach_color');
-		return $color.length ? $color.val() : '';
-	}
-});
 /**
  * Field settings - Placeholder item
  * @type {Upfront.Views.Editor.Settings.Item}
@@ -250,35 +177,6 @@ var UsearchFieldSetting_Placeholder = Upfront.Views.Editor.Settings.Item.extend(
 
 // --- Button settings ---
 
-/**
- * Button settings panel.
- * @type {Upfront.Views.Editor.Settings.Panel}
- */
-var UsearchButtonSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	/**
-	 * Initialize the view, and populate the internal 
-	 * setting items array with Item instances.
-	 */
-	initialize: function () {
-		this.settings = _([
-			new UsearchButtonSetting_Label({model: this.model}),
-		]);
-	},
-	/**
-	 * Get the label (what will be shown in the settings overview)
-	 * @return {string} Label.
-	 */
-	get_label: function () {
-		return "Button";
-	},
-	/**
-	 * Get the title (goes into settings title area)
-	 * @return {string} Title
-	 */
-	get_title: function () {
-		return "Button options";
-	}
-});
 /**
  * Button settings - Label item
  * @type {Upfront.Views.Editor.Settings.Item}
@@ -329,15 +227,14 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
  * Search settings hub, populated with the panels we'll be showing.
  * @type {Upfront.Views.Editor.Settings.Settings}
  */
-var UsearchSettings = Upfront.Views.Editor.Settings.Settings.extend({	
+var UsearchSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	/**
 	 * Bootstrap the object - populate the internal
 	 * panels array with the panel instances we'll be showing.
 	 */
 	initialize: function () {
 		this.panels = _([
-			new UsearchFieldSettingsPanel({model: this.model}),
-			new UsearchButtonSettingsPanel({model: this.model})
+			new UsearchSettingsPanel({model: this.model})
 		]);
 	},
 	/**
@@ -356,7 +253,7 @@ var UsearchSettings = Upfront.Views.Editor.Settings.Settings.extend({
 // Now, to tie it all up and expose to the Subapplication.
 
 Upfront.Application.LayoutEditor.add_object("Usearch", {
-	"Model": UsearchModel, 
+	"Model": UsearchModel,
 	"View": UsearchView,
 	"Element": UsearchElement,
 	"Settings": UsearchSettings
