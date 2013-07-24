@@ -226,7 +226,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			})
 		;
 
-		$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + $title.text() + '"/>');
+		$title.html((post.get("is_new")
+			? '<input type="text" id="upfront-title" style="width:100%" value="" placeholder="' + $title.text() + '"/>'
+			: '<input type="text" id="upfront-title" style="width:100%" value="' + $title.text() + '"/>'
+		));
 		$body.html(
 			'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post.id + '" />' +
 			'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + post.get('post_content') + '</div>' +
@@ -304,6 +307,7 @@ console.log(this.dom_range)
 		var $title = this.$(this.titleSelector).find(":text"),
 			$content =  this.$(this.contentSelector).find("#upfront-body")
 		;
+		this.post.set({is_new: false}, {silent: true});
 		if($title.length)
 			this.post.set('post_title', $title.val());
 		if($content.length)

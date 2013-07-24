@@ -3078,3 +3078,19 @@ box-shadow: inset 0 2px 0 0 #fff;
 	margin: 0;
 	padding: 0;
 }
+
+
+/* --- Media Manager - Additional --- */
+
+.upfront-additive_multiselection .labels_hub {
+	max-height: 6em;
+	overflow-y: scroll;
+}
+.upfront-media_manager-tabs {
+	width: 100%;
+}
+
+/* --- Make text editing look better --- */
+[contenteditable=true]:focus {
+	outline: none;
+}

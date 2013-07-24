@@ -516,6 +516,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($post_type == 'page'){
 				$post->post_content = 'Type your page content here. Feel free to add some elements from the left sidebar.';
 			}
+			$post->is_new = true;
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
 		

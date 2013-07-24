@@ -58,7 +58,9 @@ class Upfront_UpostsView extends Upfront_Object {
 			}
 
 			$content = apply_filters('the_content', $post->post_content);
-			if ('excerpt' == $content_type) $content = wp_strip_all_tags($content) . '... read more';
+			if ('excerpt' == $content_type) {
+				$content = ($post->post_excerpt ? $post->post_excerpt : wp_strip_all_tags($content)) . '... read more';
+			}
 
 			$title = apply_filters('the_title', $post->post_title);
 

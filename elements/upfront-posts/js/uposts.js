@@ -57,7 +57,9 @@
 		},
 
 		on_render: function () {
-			var raw_settings = this.$el.data('settings'),
+			var 
+				element_id = this.model.get_property_value_by_name("element_id"),
+				raw_settings = $(document).data('settings-' + element_id),
 				settings = raw_settings || [],
 				post_type = this.model.get_property_value_by_name("post_type"),
 				taxonomy = this.model.get_property_value_by_name("taxonomy"),
@@ -65,7 +67,7 @@
 				limit = this.model.get_property_value_by_name("limit"),
 				content_type = this.model.get_property_value_by_name("content_type"),
 				featured_image = this.model.get_property_value_by_name("featured_image"),
-				element_id = this.model.get_property_value_by_name("element_id")
+				data = !!$(document).data("content-" + element_id)
 			;
 			//Upfront.Util.dbg(raw_settings);
 			if (settings.length) {
@@ -74,7 +76,6 @@
 					_(settings).pluck("value")
 				);
 			}
-
 			if (
 				settings.post_type != post_type
 				||
@@ -87,6 +88,7 @@
 				settings.content_type != content_type
 				||
 				settings.featured_image != featured_image
+				|| !data
 			) {
 				Upfront.Util.post({
 					"action": "uposts_get_markup",
@@ -106,7 +108,7 @@
 					$(document).data("content-" + element_id, response.data);
 				});
 			}
-			this.$el.data('settings', this.model.get("properties").toJSON());
+			$(document).data('settings-' + element_id, this.model.get("properties").toJSON());
 		},
 
 		on_edit: function (e) {
@@ -169,7 +171,7 @@
 
 			if(Upfront.data.currentPost != post){
 				Upfront.data.currentPost = post;
-				Upfront.Events.trigger("data:current_post:change");			
+				Upfront.Events.trigger("data:current_post:change");
 			}
 
 			$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + post.get('post_title') + '"/>');
@@ -195,13 +197,20 @@
 			Upfront.Events.on("entity:deactivated", this.stop_editor, this);
 		},
 		updatePost: function() {
+console.log('updating')
 			var $title = this.$(this.titleSelector).find(":text"),
-				$content =  this.$(this.contentSelector).find("#upfront-body")
+				$content =  this.$(this.contentSelector).find("#upfront-body"),
+				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
+				element_id = this.model.get_property_value_by_name("element_id")
 			;
 			if($title.length)
 				this.post.set('post_title', $title.val());
-			if($content.length)
-				this.post.set('post_content', $content.html());
+			if($content.length) {
+				this.post.set(
+					(is_excerpt ? 'post_excerpt' : 'post_content'), $content.html()
+				);
+			}
+			$(document).data("content-" + element_id, false);
 		}
 
 	});
