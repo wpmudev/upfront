@@ -1,8 +1,9 @@
 <div class="upfront-editable_entity upfront-object {{properties.class}}" id="{{properties.element_id}}" {[ if (height > 0){ ]}style="min-height: {{height}}px;"{[ } ]}>
 	<b class="upfront-entity_meta">
 		{{name}} 
-		{[ if (parseInt(properties.has_settings, 10)) { ]} <a href="#" class="upfront-entity-settings_trigger"><i class="icon-cogs"></i></a> {[ } ]}
-		<!--<a href="#" class="upfront-entity-delete_trigger"><i class="icon-remove"></i></a>-->
+		{[ if (parseInt(properties.has_settings, 10)) { ]} <a href="#" class="upfront-icon-button upfront-icon-button-setting upfront-entity-settings_trigger"></a> {[ } ]}
+		<!--<a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-entity-delete_trigger"></a>-->
+		{{buttons}}
 	</b>
 	<div class="upfront-object-content">
 		{{content}}

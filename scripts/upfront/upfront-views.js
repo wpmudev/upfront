@@ -222,8 +222,9 @@ define(_template_files, function () {
 						props[prop.get("name")] = prop.get("value");
 					}),
 					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
+					buttons = (this.get_buttons ? this.get_buttons() : ''),
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
-					model = _.extend(this.model.toJSON(), {"properties": props, "content": content, "height": height}),
+					model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height}),
 					template = _.template(_Upfront_Templates["object"], model)
 				;
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);

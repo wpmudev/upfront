@@ -26,6 +26,10 @@
 	zoom: 1; 
 }
 
+[contenteditable="true"] {
+	outline: none;
+}
+
 #upfront-loading {
   position: fixed;
   top: 0;
@@ -972,7 +976,13 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-module[data-row="1"] > .upfront-entity_meta,
 .upfront-module[data-row="2"] > .upfront-entity_meta {
 	top: 0;
-	right: 5px;
+	right: 50px;
+}
+.upfront-module[data-row="3"] > .upfront-entity_meta,
+.upfront-module[data-row="4"] > .upfront-entity_meta,
+.upfront-module[data-row="5"] > .upfront-entity_meta {
+	top: 5px;
+	right: 50px;
 }
 .upfront-object > .upfront-entity_meta {
 	top: 50px;
@@ -981,49 +991,67 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-module[data-row="1"] .upfront-object > .upfront-entity_meta,
 .upfront-module[data-row="2"] .upfront-object > .upfront-entity_meta {
 	top: 0;
-	right: 50px;
+	right: 95px;
 }
 .upfront-module[data-row="3"] .upfront-object > .upfront-entity_meta,
 .upfront-module[data-row="4"] .upfront-object > .upfront-entity_meta,
 .upfront-module[data-row="5"] .upfront-object > .upfront-entity_meta {
 	top: 5px;
-	right: 50px;
+	right: 95px;
+}
+
+.upfront-resize-handle {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+	z-index: 2000;
+	overflow: hidden;
+}
+.upfront-module[data-row="1"] .upfront-resize-handle,
+.upfront-module[data-row="2"] .upfront-resize-handle {
+	bottom: auto;
+	top: 0;
+}
+.upfront-module[data-row="3"] .upfront-resize-handle,
+.upfront-module[data-row="4"] .upfront-resize-handle,
+.upfront-module[data-row="5"] .upfront-resize-handle {
+	bottom: auto;
+	top: 5px;
 }
 
 
 .upfront-dragging .upfront-editable_entity .upfront-entity_meta {
 	display: none;
 }
-.upfront-editable_entity .upfront-entity_meta a {
+.upfront-icon-button {
 	width: 28px;
-	height: 28px;
+	height: 23px;
 	z-index: 2000;
 	cursor:pointer;
-	display:none;
+	display:block;
 	border-radius: 2px;
 	color:#fff;
 	text-decoration:none;
-	margin: 0 0 15px;
+	padding: 3px 0 2px;
 }
-.upfront-module[data-row="1"] .upfront-object > .upfront-entity_meta a,
-.upfront-module[data-row="2"] .upfront-object > .upfront-entity_meta a,
-.upfront-module[data-row="3"] .upfront-object > .upfront-entity_meta a,
-.upfront-module[data-row="4"] .upfront-object > .upfront-entity_meta a,
-.upfront-module[data-row="5"] .upfront-object > .upfront-entity_meta a {
+.upfront-module[data-row="1"] .upfront-object > .upfront-entity_meta .upfront-icon-button,
+.upfront-module[data-row="2"] .upfront-object > .upfront-entity_meta .upfront-icon-button,
+.upfront-module[data-row="3"] .upfront-object > .upfront-entity_meta .upfront-icon-button,
+.upfront-module[data-row="4"] .upfront-object > .upfront-entity_meta .upfront-icon-button,
+.upfront-module[data-row="5"] .upfront-object > .upfront-entity_meta .upfront-icon-button {
 	float: right;
 	margin-left: 15px;
 }
-.upfront-editable_entity:hover .upfront-entity_meta a,
-.upfront-active_entity .upfront-entity_meta a {
+.upfront-entity_meta .upfront-icon-button {
+	display: none;
+	margin: 0 0 15px;
+}
+.upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button,
+.upfront-active_entity .upfront-entity_meta .upfront-icon-button {
 	display: block;
 }
-.upfront-entity_meta a.upfront-entity-settings_trigger {
-	border: 1px solid #13bf83;
-	background: #1fcd8f;
-}
-.upfront-entity_meta a.upfront-entity-delete_trigger {
+.upfront-icon-button-delete {
 	border: 1px solid #cc423d;
-	background: #d94641 url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZWI1MzRkIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjZWI1MzRkIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTElIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
 	background: #d94641 -moz-linear-gradient(-45deg, rgba(235,83,77,1) 0%, rgba(235,83,77,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
 	background: #d94641 -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(235,83,77,1)), color-stop(50%,rgba(235,83,77,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
 	background: #d94641 -webkit-linear-gradient(-45deg, rgba(235,83,77,1) 0%,rgba(235,83,77,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
@@ -1031,14 +1059,33 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background: #d94641 -ms-linear-gradient(-45deg, rgba(235,83,77,1) 0%,rgba(235,83,77,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
 	background: #d94641 linear-gradient(135deg, rgba(235,83,77,1) 0%,rgba(235,83,77,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
-.upfront-editable_entity .upfront-entity_meta a [class^="icon-"]
-{
-	width: 28px;
-	height: 28px;
-	font-size: 18px;
-	font-weight: normal;
-	text-align: center;
-	line-height: 28px;
+.upfront-icon-button-setting {
+	border: 1px solid #13bf83;
+	background: #1fcd8f -moz-linear-gradient(-45deg, rgba(33,217,152,1) 0%, rgba(33,217,152,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+	background: #1fcd8f -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(33,217,152,1)), color-stop(50%,rgba(33,217,152,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+	background: #1fcd8f -webkit-linear-gradient(-45deg, rgba(33,217,152,1) 0%,rgba(33,217,152,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: #1fcd8f -o-linear-gradient(-45deg, rgba(33,217,152,1) 0%,rgba(33,217,152,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+	background: #1fcd8f -ms-linear-gradient(-45deg, rgba(33,217,152,1) 0%,rgba(33,217,152,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
+	background: #1fcd8f linear-gradient(135deg, rgba(33,217,152,1) 0%,rgba(33,217,152,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
+}
+.upfront-icon-button-resize {
+	border: 1px solid #d99e21;
+	background: #e6ab2e -moz-linear-gradient(-45deg, rgba(242,181,48,1) 0%, rgba(242,181,48,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+	background: #e6ab2e -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(242,181,48,1)), color-stop(50%,rgba(242,181,48,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+	background: #e6ab2e -webkit-linear-gradient(-45deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: #e6ab2e -o-linear-gradient(-45deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+	background: #e6ab2e -ms-linear-gradient(-45deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
+	background: #e6ab2e linear-gradient(135deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
+	cursor: se-resize;
+}
+.upfront-icon-button-crop {
+	border: 1px solid #1d81bf;
+	background: #1f89cd -moz-linear-gradient(-45deg, rgba(34,155,230,1) 0%, rgba(34,155,230,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+	background: #1f89cd -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(34,155,230,1)), color-stop(50%,rgba(34,155,230,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+	background: #1f89cd -webkit-linear-gradient(-45deg, rgba(34,155,230,1) 0%,rgba(34,155,230,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: #1f89cd -o-linear-gradient(-45deg, rgba(34,155,230,1) 0%,rgba(34,155,230,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+	background: #1f89cd -ms-linear-gradient(-45deg, rgba(34,155,230,1) 0%,rgba(34,155,230,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
+	background: #1f89cd linear-gradient(135deg, rgba(34,155,230,1) 0%,rgba(34,155,230,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
 
 .upfront-resize {
@@ -1250,13 +1297,13 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 
 /* Upfront icon */
-.upfront-icon-element:before, .upfront-icon:before,
+.upfront-icon-element:before, .upfront-icon:before, .upfront-icon-button:before,
 .region-lock-switch:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap input[type=radio]:checked,
 input[type=checkbox]:checked {
 	content: " ";
-	background-image: url('../img/upfront-icon-sprite.svg?v=20130507');
+	background-image: url('../img/upfront-icon-sprite.svg?v=20130719');
 	background-repeat: no-repeat;
 	float: left;
 }
@@ -1387,6 +1434,25 @@ input[type=checkbox]:checked {
 }
 .upfront-icon-redo:hover:before {
 	background-position: -391px -76px;
+}
+.upfront-icon-button:before {
+	width: 18px;
+	height: 23px;
+	margin: 0 auto;
+	float: none;
+	display: block;
+}
+.upfront-icon-button-delete:before {
+	background-position: -453px -505px;
+}
+.upfront-icon-button-setting:before {
+	background-position: -486px -505px;
+}
+.upfront-icon-button-resize:before {
+	background-position: -453px -538px;
+}
+.upfront-icon-button-crop:before {
+	background-position: -486px -538px;
 }
 .panel-setting-dialog-region:before {
 	
@@ -2931,8 +2997,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 }
 #upfront-popup .upfront-popup-meta .search_container input:focus {
 	color: #fff;
-	background: #394a59;
-	background: rgba(59,77,91,0.9);
+	background: #333;
 	outline: none;
 	-moz-appearance: none;
 }
@@ -3012,14 +3077,4 @@ box-shadow: inset 0 2px 0 0 #fff;
 .upfront-filter_selection-control ul, .upfront-filter_selection-control ul li {
 	margin: 0;
 	padding: 0;
-}
-
-/* --- Media Manager - Additional --- */
-
-.upfront-additive_multiselection .labels_hub {
-	max-height: 6em;
-	overflow-y: scroll;
-}
-.upfront-media_manager-tabs {
-	width: 100%;
 }

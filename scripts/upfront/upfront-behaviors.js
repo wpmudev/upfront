@@ -761,10 +761,14 @@ var GridEditor = {
 		;
 		if ( $me.hasClass('ui-resizable') )
 			return false;
+		$me.append('<span class="upfront-icon-button upfront-icon-button-resize upfront-resize-handle ui-resizable-handle ui-resizable-se"></span>');
 		$me.resizable({
 			"containment": "parent",
 			autoHide: true,
 			delay: 100,
+			handles: {
+				se: '.upfront-resize-handle'
+			},
 			start: function(e, ui){
 				ed.start(view, model);
 				
