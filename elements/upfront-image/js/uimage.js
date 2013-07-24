@@ -119,7 +119,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var me = this;
 		if(this.property('image_status') != 'ok' || this.$('a.uimage-edit_trigger').length)
 			return;
-		this.parent_module_view.$('b.upfront-entity_meta').after('<b class="upfront-entity_meta uimage-edit-entity_meta"><a href="#" class="uimage-edit_trigger"><i class="icon-crop"></i></a></b>')
+		this.parent_module_view.$('b.upfront-entity_meta').after('<b class="upfront-entity_meta uimage-edit-entity_meta"><a href="#" class="uimage-edit_trigger upfront-icon-button"><i class="icon-crop"></i></a></b>')
 		this.parent_module_view.$el.on('click', 'a.uimage-edit_trigger', function(){
 			me.editRequest();
 		});
@@ -766,7 +766,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	openMediaGallery: function(e) {
 		var me = this;
 		e.preventDefault();
-		Upfront.Media.Manager.open().done(function(popup, result){
+		Upfront.Media.Manager.open({
+			multiple_selection: false,
+			media_type:['images']
+		}).done(function(popup, result){
 			if(result && result.length > 0){
 				var image = result.at(0);
 				me.imageId = image.get('ID');
@@ -830,10 +833,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var me = this;
 		return Upfront.Util.post({
 				action: 'upfront-media-image_sizes',
-				item_id: me.imageId
+				item_id: JSON.stringify([me.imageId])
 			})
 			.done(function(response){
-				me.sizes = response.data;
+				me.sizes = response.data.images[me.imageId];
 			})	
 		;
 	},

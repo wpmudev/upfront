@@ -74,22 +74,35 @@ class Upfront_Uimage_Server extends Upfront_Server {
         if (!$item_id) 
         	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
 
-        $item = get_post($item_id);
+        $ids = json_decode($item_id);
 
-        if(!$item || $item->post_type != 'attachment' || substr($item->post_mime_type, 0, 5) != 'image')
-        	$this->_out(new Upfront_JsonResponse_Error("That is not a image ID"));
+        if(is_null($ids) || !is_array($ids))
+        	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
 
-        $sizes = get_intermediate_image_sizes();
-		$sizes[] = 'full';
-		$images = array();
+    	$images = array();
+    	$intermediate_sizes = get_intermediate_image_sizes();
+    	$intermediate_sizes[] = 'full';
+    	foreach($ids as $id){
+    		$sizes = array();
+    		foreach ( $intermediate_sizes as $size ) {
+				$image = wp_get_attachment_image_src( $id, $size);
+				if($image)
+					$sizes[$size] = $image;
+			}
+			if(sizeof($sizes) != 0)
+				$images[$id] = $sizes;
+    	}
 
-		foreach ( $sizes as $size ) {
-			$image = wp_get_attachment_image_src( $item_id, $size);
-			if ( !empty( $image ) )
-				$images[$size] = $image;
-		}
+        if(sizeof($images) == 0)
+        	$this->_out(new Upfront_JsonResponse_Error("No images ids given"));
 
-        return $this->_out(new Upfront_JsonResponse_Success($images));
+        $result = array(
+        	'given' => sizeof($ids),
+        	'returned' => sizeof($ids),
+        	'images' => $images
+    	);
+
+        return $this->_out(new Upfront_JsonResponse_Success($result));
 	}
 }
 Upfront_Uimage_Server::serve();
