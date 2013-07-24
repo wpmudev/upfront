@@ -81,6 +81,29 @@ var Util = {
 		return url + hash + '?d=mm&s=' + size;
 	},
 
+	/* JS - PHP compatible templates */
+	template: function(markup){
+		var oldSettings = _.templateSettings,
+			tpl = false;
+
+		_.templateSettings = {
+		    interpolate : /<\?php echo (.+?) \?>/g,
+		    evaluate: /<\?php (.+?) \?>/g		
+		};
+
+		tpl = _.template(markup);
+
+		_.templateSettings = oldSettings;
+
+		return function(data){
+			_.each(data, function(value, key){
+				data['$' + key] = value;
+			})
+
+			return tpl(data);
+		}
+	},
+
 	Transient: {
 
 		// Local storage object, or the in-memory queue
