@@ -1,0 +1,61 @@
+<div> 
+<!-- 
+	Wrap everything in a div to convert this file's content in a jquery element 
+	so it is possible to use $.find.
+-->
+
+<script type="text/template" id="selector-tpl">
+	<div id="upront-image-placeholder" class="upfront-image-section">
+		<div class="upfront-image-selector-container">
+			<h2>Drop images here</h2>
+			or<br>
+			<a class="button select-files" href="#">Select images</a>
+			<div id="upfront-image-maxsize">Maximum upload file size: 32MB</div>
+			or browse your
+			<div class="upfront-image-media-container">
+			<i class="icon-picture"></i> <a class="open-media-gallery" href="#">media gallery</a>
+			</div>
+			<span class="dragimagehand"></span>	
+		</div>
+	</div>	
+</div>
+</script>
+
+<script type="text/template" id="progress-tpl">
+	<div id="upfront-image-uploading" class="upfront-image-section">
+		<h2>Uploading...</h2>
+		<div class="upfront-progress-container">
+			<div id="upfront-progress"></div>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="editor-tpl">
+	<div id="upfront-image-edit" class="upfront-image-section">
+		<div id="uimage-canvas-container" style="position:absolute">
+			<div id="uimage-canvas" style="position:relative; overflow:hidden;">
+				<img class="uimage-img {{ rotation }}" src="{{src}}" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute">
+				<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{offset.top}}px; left:{{offset.left}}px"></div>
+			</div>
+			<div class="image-edit-resize image-edit-control"><i class="icon-resize-full ui-resizable-handle ui-resizable-handle-se"></i></div>
+			<div class="image-edit-rotate image-edit-control"><i class="icon-repeat"></i></div>
+		</div>
+		<div class="image-edit-save-container">
+			<div class="no-shadow">
+				<a class="image-edit-save" href="#"><i class="icon-ok"></i> I like that</a>
+				<a class="image-edit-change" href="#"><i class="icon-upload-alt "></i> upload a different image</a>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+<script type="text/template" id="upload-form-tpl">
+<form id="upfront-upload-image" name="upfront-upload-image" enctype="multipart/form-data" method="post" action="{{url}}">
+	<input type="file" name="media[]" id="upfront-image-file-input" multiple="multiple">
+	<input type="hidden" name="action" value="upfront-media-upload">
+	<input type="submit" value="Upload">
+</form>
+</script>
+
+</div>

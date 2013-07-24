@@ -1,0 +1,46 @@
+.ugallery-starting-wrapper {
+	min-height: 200px;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.ugallery_item {
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
+.ugallery .upfront-image-resizethiselement {
+	color: #28DC96;
+}
+
+.ugallery .upfront-image-and {
+	background: url('../img/ampersand.png') no-repeat center center;
+	width:50px;
+}
+
+#upfront-image-overlay.ugallery-overlay h2 {
+	margin-bottom:20px;
+}
+
+.ugallery-overlay a.select-files {
+	margin-top: 7px;
+}
+
+.ugallery-overlay.small_placeholder a.select-files {
+	margin-top: 0;
+}
+
+.ugallery-overlay.small_placeholder #upfront-image-maxsize {
+	margin-bottom: 10px;
+}
+
+.ugallery_addmore { 
+	background: #cee1f2;
+	cursor: pointer;
+}
+
+.ugallery_addmore:hover{
+	background: #1fcd8f;
+	color: #fff;
+}
