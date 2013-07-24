@@ -124,11 +124,13 @@
 			Upfront.Events.on("media_manager:media:labels_updated", this.reload_labels, this);
 		},
 		to_defaults: function () {
-			var types = new MediaFilter_Collection([]);
+			var types = new MediaFilter_Collection([]),
+				has_images = (this.allowed_media_types.indexOf('images') >= 0)
+			;
 			if (!this.allowed_media_types.length) this.allowed_media_types = this.default_media_types;
-			if (this.allowed_media_types.indexOf('images') >= 0) types.add(new MediaFilter_Item({filter: "Images", value: 'images', state: true}), {silent: true});
-			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: "Videos", value: 'videos', state: false}), {silent: true});
-			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: "Audios", value: 'audios', state: false}), {silent: true});
+			if (has_images) types.add(new MediaFilter_Item({filter: "Images", value: 'images', state: true}), {silent: true});
+			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: "Videos", value: 'videos', state: !has_images}), {silent: true});
+			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: "Audios", value: 'audios', state: !has_images}), {silent: true});
 			this.set("type", types, {silent: true});
 				/*
 			this.set("type", new MediaFilter_Collection([
