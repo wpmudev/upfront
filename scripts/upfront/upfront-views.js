@@ -332,19 +332,21 @@ define(_template_files, function () {
 				this.model.each(function (obj) {
 					var view_class_prop = obj.get("properties").where({"name": "view_class"}),
 						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "ObjectView",
-						local_view = Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj})
+						local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false
 					;
-					local_view.parent_view = me;
-					local_view.parent_module_view = me.parent_view;
-					local_view.render();
-					$el.append(local_view.el);
-					if ( ! Upfront.data.object_views[obj.cid] ){
-						local_view.bind("upfront:entity:activate", me.on_activate, me);
-						local_view.model.bind("remove", me.deactivate, me);
-						Upfront.data.object_views[obj.cid] = local_view;
-					}
-					else {
-						local_view.delegateEvents();
+					if(local_view) {
+						local_view.parent_view = me;
+						local_view.parent_module_view = me.parent_view;
+						local_view.render();
+						$el.append(local_view.el);
+						if ( ! Upfront.data.object_views[obj.cid] ){
+							local_view.bind("upfront:entity:activate", me.on_activate, me);
+							local_view.model.bind("remove", me.deactivate, me);
+							Upfront.data.object_views[obj.cid] = local_view;
+						}
+						else {
+							local_view.delegateEvents();
+						}
 					}
 				});
 			}
@@ -445,42 +447,44 @@ define(_template_files, function () {
 					view_class_prop = module.get("properties").where({"name": "view_class"}),
 					view_class = view_class_prop.length ? view_class_prop[0].get("value") : "Module",
 					//view_class = Upfront.Views[view_class] ? view_class : "Module",
-					local_view = Upfront.data.module_views[module.cid] || new Upfront.Views[view_class]({model: module}),
+					local_view = Upfront.Views[view_class] ? Upfront.data.module_views[module.cid] || new Upfront.Views[view_class]({model: module}): false,
 					wrappers = this.region_view.model.get('wrappers'),
 					wrapper_id = module.get_wrapper_id(),
 					wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
 					wrapper_view, wrapper_el
 				;
-				if ( !wrapper ){
-					local_view.render();
-					$el.append(local_view.el);
-				}
-				else {
-					if ( this.current_wrapper_id == wrapper_id ){
-						wrapper_el = this.current_wrapper_el;
+				if(local_view){
+					if ( !wrapper ){
+						local_view.render();
+						$el.append(local_view.el);
 					}
 					else {
-						wrapper_view = Upfront.data.wrapper_views[wrapper.cid] || new Upfront.Views.Wrapper({model: wrapper});
-						wrapper_view.render();
-						wrapper_el = wrapper_view.el;
+						if ( this.current_wrapper_id == wrapper_id ){
+							wrapper_el = this.current_wrapper_el;
+						}
+						else {
+							wrapper_view = Upfront.data.wrapper_views[wrapper.cid] || new Upfront.Views.Wrapper({model: wrapper});
+							wrapper_view.render();
+							wrapper_el = wrapper_view.el;
+						}
+						this.current_wrapper_id = wrapper_id;
+						this.current_wrapper_el = wrapper_el;
+						local_view.render();
+						$(wrapper_el).append(local_view.el);
+						if ( wrapper_view ){
+							$el.append(wrapper_el);
+							if ( ! Upfront.data.wrapper_views[wrapper.cid] )
+								Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
+						}
 					}
-					this.current_wrapper_id = wrapper_id;
-					this.current_wrapper_el = wrapper_el;
-					local_view.render();
-					$(wrapper_el).append(local_view.el);
-					if ( wrapper_view ){
-						$el.append(wrapper_el);
-						if ( ! Upfront.data.wrapper_views[wrapper.cid] )
-							Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
+					if ( ! Upfront.data.module_views[module.cid] ){
+						local_view.bind("upfront:entity:activate", this.on_activate, this);
+						local_view.model.bind("remove", this.deactivate, this);
+						Upfront.data.module_views[module.cid] = local_view;
 					}
-				}
-				if ( ! Upfront.data.module_views[module.cid] ){
-					local_view.bind("upfront:entity:activate", this.on_activate, this);
-					local_view.model.bind("remove", this.deactivate, this);
-					Upfront.data.module_views[module.cid] = local_view;
-				}
-				else {
-					local_view.delegateEvents();
+					else {
+						local_view.delegateEvents();
+					}
 				}
 			},
 			on_add: function (model) {
