@@ -513,6 +513,7 @@ class Upfront_MediaServer extends Upfront_Server {
         if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
         $wp_upload_dir = wp_upload_dir();
         $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
+        $new_ids = array();
         foreach ($result['media'] as $media) {
             if (!empty($media->error)) {
                 // We have an error happening!
@@ -531,8 +532,9 @@ class Upfront_MediaServer extends Upfront_Server {
             $attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
             $attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
             wp_update_attachment_metadata( $attach_id, $attach_data );
+            $new_ids[] = $attach_id;
         }
-        $this->_out(new Upfront_JsonResponse_Success($attach_id));
+        $this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
 }
 Upfront_MediaServer::serve();
