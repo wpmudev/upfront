@@ -116,17 +116,27 @@
 
 	var ActiveMediaFilter_Collection = Backbone.Model.extend({
 		labels_cache: false,
+		default_media_types: ['images', 'videos', 'audios'],
+		allowed_media_types: [],
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
 			Upfront.Events.on("media_manager:media:labels_updated", this.reload_labels, this);
 		},
 		to_defaults: function () {
+			var types = new MediaFilter_Collection([]);
+			if (!this.allowed_media_types.length) this.allowed_media_types = this.default_media_types;
+			if (this.allowed_media_types.indexOf('images') >= 0) types.add(new MediaFilter_Item({filter: "Images", value: 'images', state: true}), {silent: true});
+			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: "Videos", value: 'videos', state: false}), {silent: true});
+			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: "Audios", value: 'audios', state: false}), {silent: true});
+			this.set("type", types, {silent: true});
+				/*
 			this.set("type", new MediaFilter_Collection([
 				new MediaFilter_Item({filter: "Images", value: 'images', state: true}),
 				new MediaFilter_Item({filter: "Videos", value: 'videos', state: false}),
 				new MediaFilter_Item({filter: "Audios", value: 'audios', state: false})
 			]), {silent: true});
+*/
 
 			this.set("recent", new MediaFilter_Collection([
 				new MediaFilter_Item({filter: "5", value: 5, state: false}),
@@ -922,14 +932,25 @@
 	 */
 	var MediaManager_View = Backbone.View.extend({
 		initialize: function (data) {
-			data = data || {};
-			var type = data.type || "PostImage";
+			data = _.extend({
+				type: "PostImage",
+				multiple_selection: true
+			}, data);
+
+			var type = data.type,
+				multiple_selection = data.multiple_selection
+			;
+
 			this.popup_data = data.data;
+
+			ActiveFilters.to_defaults();
 
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
 			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
 			this.embed_view = new MediaManager_EmbedMedia({});
+
+			this.library_view.multiple_selection = multiple_selection;
 
 			Upfront.Events.on("media_manager:media:list", this.switch_media_type, this);
 		},
@@ -1275,6 +1296,8 @@
 				aux = new MediaManager_AuxControls_View({model: this.media_collection}),
 				controls = new MediaManager_Controls_View({model: this.media_collection})
 			;
+			media.multiple_selection = this.multiple_selection;
+
 			controls.render();
 			aux.render();
 			media.render();
@@ -1313,7 +1336,16 @@
 				});
 			}
 		},
-		propagate_selection: function () {
+		propagate_selection: function (model) {
+			if (!this.multiple_selection) {
+				var has = this.model.where({selected: true});
+				if (has.length) _(has).each(function (item) {
+					item.set({selected: false}, {silent: true});
+					item.trigger("appearance:update");
+				});
+				model.set({selected: true}, {silent: true});
+				model.trigger("appearance:update");
+			}
 			Upfront.Events.trigger("media:item:selection_changed", this.model);
 		}
 	});
@@ -1326,6 +1358,8 @@
 			initialize: function () {
 				this.template = _.template("{{thumbnail}} <span class='title'>{{post_title}}</span> <div class='upfront-media_item-editor-container' />");
 				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
+
+				this.model.on("appearance:update", this.render, this);
 
 				this.model.on("upload:start", this.upload_start, this);
 				this.model.on("upload:progress", this.upload_progress, this);
@@ -1614,19 +1648,30 @@
 		initialize: function () {
 			Upfront.Events.on("upfront:editor:init", this.rebind_ckeditor_image, this);
 		},
-		open: function () {
+		open: function (options) {
+			options = _.extend({
+				media_type: [],
+				multiple_selection: true
+			}, options);
+
 			var me = this,
 				pop = false,
-				type = type || "images"
+				media_type = options.media_type,
+				multiple_selection = options.multiple_selection
 			;
+			ActiveFilters.allowed_media_types = media_type;
 			pop = Upfront.Popup.open(function (data, $top, $bottom) {
 				me.out = this;
 				me.popup_data = data;
 				me.popup_data.$top = $top;
 				me.popup_data.$bottom = $bottom;
-				me.load(type);
+				me.load(multiple_selection);
 			});
+			pop.always(this.cleanup_active_filters);
 			return pop;
+		},
+		cleanup_active_filters: function () {
+			ActiveFilters.allowed_media_types = [];
 		},
 		ck_open: function () {
 			var pop = this.open();
@@ -1634,10 +1679,11 @@
 			pop.always(this.on_close);
 			return false;
 		},
-		load: function (data) {
+		load: function (multiple_selection) {
 			var media = new MediaManager_View({
 					el: this.out,
-					data: this.popup_data
+					data: this.popup_data,
+					multiple_selection: multiple_selection
 				})
 			;
 			media.render();
