@@ -108,12 +108,18 @@ define(_template_files, function () {
 				this.trigger("upfront:entity:deactivate", this);
 			},
 			activate: function () {
+				var currentEntity = Upfront.data.currentEntity;
 				if (this.activate_condition && !this.activate_condition()) return false;
+				if(currentEntity && currentEntity != this){
+					Upfront.data.currentEntity.trigger('deactivated');
+				}
+				else {
+					if(this instanceof ObjectView)
+					    Upfront.data.currentEntity = this;
+					this.trigger("activated", this);
+				}
 				$(".upfront-active_entity").removeClass("upfront-active_entity");
 				this.$el.addClass("upfront-active_entity");
-				if(this instanceof ObjectView)
-				    Upfront.data.currentEntity = this;
-				this.trigger("upfront:entity:activate", this);
 				//return false;
 			},
 			// Stub handlers
@@ -189,11 +195,13 @@ define(_template_files, function () {
 				this.model.active_entity = view.model;
 				//Upfront.data.currentEntity = view;
 				Upfront.Events.trigger("entity:activated", view, view.model);
+				this.trigger('activated');
 			},
 			deactivate: function (removed) {
 				if (removed == this.model.active_entity) this.model.active_entity = false;
 				//this.check_deactivated();
 				Upfront.Events.trigger("entity:deactivated", removed);
+				this.trigger('deactivated');
 			}
 		}),
 
@@ -735,6 +743,10 @@ define(_template_files, function () {
 				Upfront.Events.trigger("entity:settings:deactivate");
 				// Deactivate element
 				$(".upfront-active_entity").removeClass("upfront-active_entity");
+				if(Upfront.data.currentEntity){
+					Upfront.data.currentEntity.trigger('deactivated');
+					Upfront.data.currentEntity = false;
+				}
 				Upfront.Events.trigger("entity:deactivated");
 			}
 		})
