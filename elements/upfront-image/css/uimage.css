@@ -448,11 +448,7 @@ a.open-media-gallery:hover i {
 	z-index: 10 !important;
 }
 
-.upfront-module > .upfront-entity_meta.uimage-edit-entity_meta {
-	top: 95px;
-}
-
-.uimage-edit-entity_meta a {
+a.uimage_edit_toggle {
 	opacity: .9;
 	border: 1px solid #2582BD;
 	background: #288ACA -moz-linear-gradient(-45deg, #2C9BE3 0%, #2C9BE3 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
@@ -462,19 +458,10 @@ a.open-media-gallery:hover i {
 	background: #288ACA -ms-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
 	background: #288ACA linear-gradient(135deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
-.uimage-edit-entity_meta a:hover {
+a.uimage_edit_toggle:hover {
 	opacity: 1;
 }
 
-.upfront-module[data-row="3"] > .upfront-entity_meta.uimage-edit-entity_meta,
-.upfront-module[data-row="4"] > .upfront-entity_meta.uimage-edit-entity_meta,
-.upfront-module[data-row="5"] > .upfront-entity_meta.uimage-edit-entity_meta {
-	top: 5px;
-	right: 94px;
-}
-
-.upfront-module[data-row="6"] > .upfront-entity_meta.uimage-edit-entity_meta,
-.upfront-module[data-row="7"] > .upfront-entity_meta.uimage-edit-entity_meta {
-	top: 5px;
-	right: 50px;
+a.uimage_edit_toggle:before {
+	background-position: -486px -538px;
 }

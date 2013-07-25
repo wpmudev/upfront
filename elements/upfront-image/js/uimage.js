@@ -85,6 +85,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	initialize: function(){
 		 this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
+			'click a.uimage_edit_toggle': 'editRequest'
 		 });
 		 this.delegateEvents();
 		 Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
@@ -111,19 +112,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
 
-		this.addImageEditingButton();
-
 		return rendered;
 	},
-	addImageEditingButton: function(){
-		var me = this;
-		if(this.property('image_status') != 'ok' || this.$('a.uimage-edit_trigger').length)
-			return;
-		this.parent_module_view.$('b.upfront-entity_meta').after('<b class="upfront-entity_meta uimage-edit-entity_meta"><a href="#" class="uimage-edit_trigger upfront-icon-button"><i class="icon-crop"></i></a></b>')
-		this.parent_module_view.$el.on('click', 'a.uimage-edit_trigger', function(){
-			me.editRequest();
-		});
+
+	get_buttons: function() {
+		if(this.property('image_status') == 'ok')
+			return '<a href="#" class="upfront-icon-button uimage_edit_toggle"></a>';
+		return '';
 	},
+
 	hexToRGBA: function (hex){
 		if(this.property('background_transparency') == 0)
 			return hex;
