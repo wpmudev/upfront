@@ -1,8 +1,23 @@
-<div class="ugallery">
+<div class="ugallery ugallery_publish">
 <?php if($imagesLength > 0){ ?>
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_item" style="position:relative; width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px">
+		<div class="ugallery_item" style="overflow:hidden; position:relative; width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px" rel="<?php echo $images[$i]['id'] ?>">
 			<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="position:absolute; width: <?php echo $images[$i]['size']['width'] ?>px; height: <?php echo $images[$i]['size']['height'] ?>px; top: <?php echo $images[$i]['position']['top'] ?>px; left: <?php echo $images[$i]['position']['left'] ?>px; -moz-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -webkit-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -o-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -ie-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); transform:rotate(<?php echo $images[$i]['rotation'] ?>deg);">
+			<?php if($editing){ ?>
+				<div class="ugallery_item_options" style="width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px">
+					<div class="ugallery_item_option ugallery_op_details">details</div>
+					<div class="ugallery_item_option ugallery_op_remove">remove</div>
+					<div class="ugallery_item_option ugallery_op_link">link</div>
+					<div class="ugallery_item_option ugallery_op_mask">mask</div> 
+				</div>
+				<div class="ugallery_item_rm_dialog" style="width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px">
+					<div>Remove from gallery?</div>
+					<div class="ugallery_item_rm_buttons clearfix clear cf">
+						<a href="#" class="ugallery_item_rm_yes">Yes</a>
+						<a href="#" class="ugallery_item_rm_no">No</a>
+					</div>
+				</div>
+			<?php } ?>
 		</div>
 	<?php } ?>
 	<?php if($editing) { ?>
@@ -23,3 +38,6 @@
 	<?php } ?>
 <?php } ?>
 </div>
+<?php if($editing) { ?>
+<a class="ugallery_order_ok" href="#">I like this</a>
+<?php } ?>

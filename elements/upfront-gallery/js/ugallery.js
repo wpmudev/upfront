@@ -75,6 +75,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	editorTpl: _.template($(editorTpl).find('#editor-tpl').html()),
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
 	images: [],
+	sortMode: false,
 
 	reopenSettings: false,
 
@@ -84,11 +85,21 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		//Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
 		this.events = _.extend({}, this.events, {
 			'click a.ugallery-select-images': 'openImageSelector',
-			'click .ugallery_addmore': 'openImageSelector'
+			'click .ugallery_addmore': 'openImageSelector',
+			'click .ugallery_op_details': 'imageEditDetails',
+			'click .ugallery_op_remove': 'imageEditRemove',
+			'click .ugallery_op_link': 'imageEditLink',
+			'click .ugallery_op_mask': 'imageEditMask',
+			'click .ugallery_item_rm_yes': 'removeImage',
+			'click .ugallery_item_rm_no': 'cancelRemoving',
+			'click .ugallery_sort_toggle': 'activateSortable',
+			'click .ugallery_order_ok': 'sortOk'
 		});
 
 		this.images = new UgalleryImages(this.property('images'));
 		this.images.on('add remove reset change', this.imagesChanged, this);
+
+		this.on('deactivated', this.sortCancel, this);
 	},
 
 	get_content_markup: function () {
@@ -101,6 +112,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		rendered = this.tpl(props);
 		return rendered;
+	},
+
+	get_buttons: function(){
+		if(this.images && this.images.length > 1)
+			return '<a href="#" class="upfront-icon-button ugallery_sort_toggle"></a>';
+		return '';
 	},
 
 	openOverlaySection: function(tpl, tplOptions, callback){
@@ -417,9 +434,107 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.render();
 	},
 
+	imageEditDetails: function(e) {
+		e.preventDefault();
+		console.log('Edit image details');
+	},
+
+	imageEditRemove: function(e) {
+		e.preventDefault();
+		$(e.target).closest('.ugallery_item').addClass('ugallery_item_removing');
+	},
+
+	imageEditLink: function(e) {
+		e.preventDefault();
+		console.log('Edit image link');
+	},
+
+	imageEditMask: function(e) {
+		e.preventDefault();
+		console.log('Edit image mask');
+	},
+
 	imagesChanged: function() {
 		this.property('images', this.images.toJSON());
 		this.render();
+	},
+
+	getItemElement: function(e){
+		return $(e.target).closest('.ugallery_item');
+	},
+
+	removeImage: function(e){
+		var me = this,
+			item = this.getItemElement(e);
+		e.preventDefault();
+		item.fadeOut('fast', function(){
+			me.images.remove(item.attr('rel'));
+		})
+	},
+
+	cancelRemoving: function(e){
+		e.preventDefault();
+		this.getItemElement(e).removeClass('ugallery_item_removing');
+	},
+
+	activateSortable: function(){
+		var parent = this.parent_module_view.$('.upfront-editable_entity:first');
+
+		this.$('.ugallery').sortable({
+			items: 'div.ugallery_item:not(.ugallery_addmore)'
+		});
+		this.$el.addClass('ugallery_sorting');
+
+		this.$('.ugallery_item_removing').removeClass('ugallery_item_removing');
+
+		//Stop element draggable
+		if (parent.is(".ui-draggable"))
+			parent.draggable('disable');
+
+		this.parent_module_view.$('.upfront-icon-button').css({
+			opacity: '.3'
+		});
+		this.$('.ugallery_sort_toggle').css({
+			opacity: '.9'
+		});
+
+	},
+
+	sortOk: function() {
+		var items = this.$('.ugallery_item'),
+			newOrder = [],
+			me = this
+		;
+		_.each(items, function(item){
+			var id = $(item).attr('rel');
+			if(id)
+				newOrder.push(me.images.get(id));
+		});
+
+		this.images.reset(newOrder);
+		this.sortCancel();
+	},
+
+	sortCancel: function() {
+		var parent = this.parent_module_view.$('.upfront-editable_entity:first');
+
+		this.$el.removeClass('ugallery_sorting');
+
+		try {
+			this.$('.ugallery').sortable('destroy');
+		}
+		catch(e) {
+			//Nothing here
+		}
+
+		//Restart element draggable
+		parent.draggable('enable');
+		this.render();
+
+
+		this.parent_module_view.$('.upfront-icon-button').css({
+			opacity: '.9'
+		});
 	},
 
 	/*
