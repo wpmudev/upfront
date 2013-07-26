@@ -56,8 +56,7 @@ var UimageModel = Upfront.Models.ObjectModel.extend({
 			element_size: {width: 250, height: 250},
 			rotation: 0,
 			color: '#ffffff',
-			background: '#000000',
-			background_transparency: 0
+			background: '#000000'
 		});
 	}
 });
@@ -107,8 +106,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		props.url = onclick == 'do_nothing' ? false : 
 			onclick == 'open_link' ? this.property('image_link') : this.property('srcFull');
 
-		props.background = this.hexToRGBA(props.background);
-
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
 
@@ -121,16 +118,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		return '';
 	},
 
-	hexToRGBA: function (hex){
-		if(this.property('background_transparency') == 0)
-			return hex;
-		var opacity = (100 - this.property('background_transparency')) / 100,
-			r = parseInt(hex.substring(1,3),16),
-			g = parseInt(hex.substring(3,5),16),
-			b = parseInt(hex.substring(5,7),16)
-		;
-		return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
-	},
 	extract_properties: function() {
 		var props = {};
 		this.model.get('properties').each(function(prop){
@@ -138,6 +125,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		});
 		return props;
 	},
+
 	onElementResize: function(view, model, ui){
 		var resizer = $('.upfront-resize'),
 			imageSize = this.property('size'),
@@ -1056,23 +1044,25 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				name: 'color',
 				label: 'Color',
 				title: 'Caption Style:',
-				value: this.model.get_property_value_by_name('color')
+				value: this.model.get_property_value_by_name('color'),
+				spectrum: {
+					clickoutFiresChange: true,
+					chooseText: 'OK',
+					showPalette: true,
+					showSelectionPalette: true
+				}
 			}),
 			new Field_Color({
 				model: this.model,
 				name: 'background',
 				label: 'Background',
-				value: this.model.get_property_value_by_name('background')
-			}),
-			new Field_Number({
-				model: this.model,
-				name: 'background_transparency',
-				label: '% Background transparency',
-				value: this.model.get_property_value_by_name('background_transparency'),
-				get_value: function(){
-					var val = this.$('[name="' + this.name + '"]').val(),
-						intval = parseInt(val, 10);
-					return  intval >= 0 && intval < 101 ? intval : 0;
+				value: this.model.get_property_value_by_name('background'),
+				spectrum: {
+					showAlpha: true,
+					clickoutFiresChange: true,
+					chooseText: 'OK',
+					showPalette: true,
+					showSelectionPalette: true					
 				}
 			})
 		]);
@@ -1220,28 +1210,14 @@ var Field_Radio = Field.extend({
 var Field_Color = Field.extend({
 	get_markup: function(){
 		return '<div id="field_' + this.name + '">' + 
-			'<span>' + this.label + ':</span> <a class="color-pick color-' + this.name + '" href="#"><span class="color-value">' + this.value + '</span> <span class="color-tip" style="background:' + this.value + '"></span></a>' +
-			'<input type="hidden" name="' + this.name + '" id="' + this.name + '" value="' + this.value + '">' +
+			'<span>' + this.label + ':</span> ' +
+			'<input type="text" name="' + this.name + '" id="' + this.name + '" value="' + this.value + '">' +
 			'</div>'
 		;
 	},
 	afterRender: function(){
 		var me = this;
-		this.$('#' + this.name).wpColorPicker({
-			change: function(e, ui) {
-				var color = me.$('#' + me.name).val();
-				me.$('.color-value').text(color);
-				me.$('.color-tip').css('background', color);
-			}
-		});
-		this.$el
-			.on('click', '.color-pick', function(e){
-				e.preventDefault();
-				$(this).siblings('.wp-picker-container').find('.iris-picker').toggle();
-				$('#settings').height($(this).parents('.upfront-settings_panel').outerHeight() - 2);	
-				//me.$('#' + me.name).click();
-			})
-		;
+		this.$('#' + this.name).spectrum(this.spectrum);
 	}
 })
 

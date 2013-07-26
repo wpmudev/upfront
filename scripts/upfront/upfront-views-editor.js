@@ -718,17 +718,36 @@ define(_template_files, function () {
 		},
 		on_render: function () {
 			var template = _.template(_Upfront_Templates.sidebar_settings_background, {}),
-				post_id = _upfront_post_data.post_id || '';
+				post_id = _upfront_post_data.post_id || '',
+				me = this
+			;
 			this.$el.html(template);
-			this.$el.find("#region-bg-color").wpColorPicker({
-				change: this.on_update_color
+			this.$("#region-bg-color").spectrum({
+				showAlpha: true,
+				clickoutFiresChange: true,
+				chooseText: 'Ok',
+				change: function(color) {
+					me.on_update_color(color);
+				},
+				move: function(color) { 
+					me.on_update_color(color);
+				},
+				hide: function(color) {
+					me.on_update_color(color);					
+				}
 			});
 			this.$el.find("#region-bg-image-upload").attr('href', Upfront.Settings.admin_url+'media-upload.php?post_id='+post_id+'&type=image&TB_iframe=1')
 		},
 		on_region_activate: function (region) {
 			var name = region.model.get('title'),
-				color = region.model.get_property_value_by_name('background_color');
-			this.$el.find("#region-bg-color").val(color);
+				color = region.model.get_property_value_by_name('background_color')
+			;
+			if(!color)
+				color = 'transparent';
+			this.$("#region-bg-color")
+				.attr('value', color)
+				.spectrum('set', color)
+			;
 			this.toggle_image(region.model);
 		},
 		on_image_selected: function (id, url) {
@@ -811,12 +830,12 @@ define(_template_files, function () {
 			else
 				region.set_property('background_fill', '');
 		},
-		on_update_color: function (e, ui) {
+		on_update_color: function (color) {
 			var app = Upfront.Application.LayoutEditor.layout,
-				region = app.get('regions').active_region,
-				color = ui.color.toString();
+				region = app.get('regions').active_region
+			;
 			if ( color )
-				region.set_property('background_color', color);
+				region.set_property('background_color', color.toRgbString());
 			else
 				region.set_property('background_color', '');
 		}

@@ -419,7 +419,7 @@ a.open-media-gallery:hover i {
 	margin-bottom:10px;
 }
 
-.color-tip {
+#settings .sp-preview {
 	display: inline-block;
 	width:15px;
 	height:15px;
@@ -427,25 +427,8 @@ a.open-media-gallery:hover i {
 	vertical-align: bottom;
 }
 
-.upfront-settings-item .iris-picker .iris-square {
-	margin-right: 10px;
-}
-
-.upfront-settings-item .iris-palette-container {
-	top: 200px;
-}
-
-.upfront-settings-item .iris-picker {
-	height: 230px !important;
-	width: 245px !important;
-}
-
-.upfront-settings-item .wp-color-result {
-	display: none;
-}
-
-.upfront-settings-item .iris-square-value {
-	z-index: 10 !important;
+#settings .sp-replacer {
+	line-height: 18px;
 }
 
 a.uimage_edit_toggle {

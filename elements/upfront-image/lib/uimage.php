@@ -13,8 +13,6 @@ class Upfront_UimageView extends Upfront_Object {
 			$url = $data['srcFull'];
 		$data['url'] = $url;
 
-		$data['background'] = $this->hex_to_rgba($data['background'], $data['background_transparency']);
-
 		return $this->get_template_content($data);
 	}
 
@@ -25,16 +23,6 @@ class Upfront_UimageView extends Upfront_Object {
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;
-	}
-
-	private function hex_to_rgba($hex, $transparency){
-		if(!$transparency)
-			return $hex;
-		$opacity = (100 - $transparency) / 100;
-		$r = hexdec(substr($hex, 1,2));
-		$g = hexdec(substr($hex, 3,2));
-		$b = hexdec(substr($hex, 5,2));
-		return 'rgba(' . $r . ', ' . $g . ', ' . $b . ', ' . $opacity . ')';
 	}
 
 	private function properties_to_array(){
