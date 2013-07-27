@@ -118,10 +118,12 @@
 		labels_cache: false,
 		default_media_types: ['images', 'videos', 'audios'],
 		allowed_media_types: [],
+		showing_titles: true,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
 			Upfront.Events.on("media_manager:media:labels_updated", this.reload_labels, this);
+			Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_titles, this);
 		},
 		to_defaults: function () {
 			var types = new MediaFilter_Collection([]),
@@ -158,6 +160,9 @@
 			this.set({"search": new MediaFilter_Collection([])}, {silent: true});
 
 			this.set_labels_to_defaults();
+		},
+		toggle_titles: function () {
+			this.showing_titles = !this.showing_titles;
 		},
 		set_labels_to_defaults: function () {
 			if (this.labels_cache) {
@@ -1395,11 +1400,14 @@
 					this.$el.addClass("selected");
 					this.$el.find("img").after('<i class="icon-ok"></i>');
 				}
+				this.toggle_title();
 			},
 			toggle_title: function () {
-				var $el = this.$el.find(".title");
-				if ($el.is(":visible")) $el.hide();
-				else $el.show();
+				var state = ActiveFilters.showing_titles,
+					$el = this.$el.find(".title")
+				;
+				if (state && !$el.is(":visible")) $el.show();
+				else $el.hide();
 			},
 			toggle_item_selection: function (e) {
 				e.stopPropagation();
