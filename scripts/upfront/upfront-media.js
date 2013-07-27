@@ -400,6 +400,7 @@
 				});
 			},
 			change_title: function (e) {
+				e.stopPropagation();
 				var model = this.model.at(0),
 					$title = this.$el.find(".change_title :text")
 				;
@@ -433,9 +434,11 @@
 				className: "upfront-additive_multiselection",
 				selection: '',
 				events: {
+					"click :text": "stop_prop",
 					"keyup .search_labels :text": "update_selection",
 					"click .add_labels a": "add_new_labels"
 				},
+				stop_prop: function (e) { e.stopPropagation(); },
 				render: function () {
 					this.$el.empty()
 						.append('<div class="search_labels" />')
@@ -473,6 +476,8 @@
 					if (this.selection) $hub.append('<b>' + this.selection + '</b> <a href="#add">+Add</a>');
 				},
 				update_selection: function (e) {
+					e.preventDefault();
+					e.stopPropagation();
 					var $text = this.$el.find(".search_labels :text"),
 						selection = $text.val()
 					;
@@ -483,6 +488,7 @@
 				},
 				add_new_labels: function (e) {
 					e.preventDefault();
+					e.stopPropagation();
 					var $text = this.$el.find(".search_labels :text"),
 						selection = $text.val()
 					;
@@ -512,6 +518,7 @@
 					},
 					toggle_label_assignment: function (e) {
 						e.preventDefault();
+						e.stopPropagation();
 						this.media_items.update_label_state(this.model);
 					}
 				});
@@ -528,6 +535,7 @@
 			},
 			clear_search: function (e) {
 				e.preventDefault();
+				e.stopPropagation();
 				var search = new MediaFilter_Item({filter: false, value: false, state: false});
 				ActiveFilters.set({search: new MediaFilter_Collection([search])});
 				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
@@ -537,8 +545,10 @@
 
 		var MediaManager_FiltersControl = Backbone.View.extend({
 			events: {
+				"click": "stop_prop",
 				"change #media_manager-show_titles": "toggle_titles"
 			},
+			stop_prop: function (e) { e.stopPropagation(); },
 			initialize: function () {
 				this.filter_selection = new MediaManager_FiltersSelectionControl();
 				this.filters_selected = new MediaManager_FiltersSelectedControl({model: ActiveFilters});
@@ -557,6 +567,7 @@
 				;
 			},
 			toggle_titles: function (e) {
+				e.stopPropagation();
 				Upfront.Events.trigger("media_manager:media:toggle_titles");
 			}
 		});
@@ -588,6 +599,7 @@
 			},
 			drop_filter: function (e) {
 				e.preventDefault();
+				e.stopPropagation();
 				var $el = $(e.target),
 					all = this.model,
 					type = $el.attr("data-type"),
@@ -609,6 +621,7 @@
 			},
 			drop_all: function (e) {
 				e.preventDefault();
+				e.stopPropagation();
 				Upfront.Events.trigger("media_manager:media:filters_updated", false, false);
 			}
 		});
@@ -916,11 +929,13 @@
 			;
 			if (e) {
 				e.preventDefault();
+				e.stopPropagation();
 				this.trigger("media_manager:switcher:to_library");
 			}
 		},
 		switch_to_embed: function (e) {
 			e.preventDefault();
+			e.stopPropagation();
 			this.$el
 				.find("li").removeClass("active")
 				.filter(".embed").addClass("active")
@@ -1092,6 +1107,7 @@
 			},
 			switch_to_upload: function (e) {
 				e.preventDefault();
+				e.stopPropagation();
 				this.trigger("media_manager:switcher:to_upload");
 			}
 		});
@@ -1117,6 +1133,7 @@
 			},
 			do_search: function (e) {
 				e.preventDefault();
+				e.stopPropagation();
 				var $text = this.$el.find(":text"),
 					text = $text.val(),
 					search = new MediaFilter_Item({filter: text, value: text, state: true})
@@ -1132,6 +1149,8 @@
 				this.render();
 			},
 			clear_search: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
 				var $text = this.$el.find(":text");
 				$text.val('');
 				this.do_search(e);
@@ -1517,9 +1536,13 @@
 			;
 		},
 		add_label: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
 			this._update_labels(e);
 		},
 		drop_label: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
 			this._update_labels(e, 'dis');
 		},
 		_update_labels: function (e, pfx) {
@@ -1564,9 +1587,11 @@
 		},
 		keep_file: function (e) {
 			e.preventDefault();
+			e.stopPropagation();
 		},
 		remove_file: function (e) {
 			e.preventDefault();
+			e.stopPropagation();
 			this.model.trigger("upload:abort");
 		}
 	});
@@ -1652,7 +1677,7 @@
 		},
 		open: function (options) {
 			options = _.extend({
-				media_type: [],
+				media_type: ["images"],
 				multiple_selection: true
 			}, options);
 
@@ -1669,6 +1694,7 @@
 				me.popup_data.$bottom = $bottom;
 				me.load(multiple_selection);
 			});
+
 			pop.always(this.cleanup_active_filters);
 			return pop;
 		},
@@ -1699,7 +1725,7 @@
 			if (result && result.each) result.each(function (item) {
 				html += ((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? av_tpl : img_tpl)(item.toJSON());
 			});
-			CKEDITOR.currentInstance.insertHtml(html);
+			CKEDITOR.instances["upfront-body"].insertHtml(html);
 		},
 		rebind_ckeditor_image: function () {
 			var me = this;
