@@ -10,6 +10,8 @@
 class Upfront_UgalleryView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
+		$data['imagesLength'] = sizeof($data['images']);
+		$data['editing'] = false;
 		return $this->get_template_content($data);
 	}
 
