@@ -56,7 +56,9 @@ var UimageModel = Upfront.Models.ObjectModel.extend({
 			element_size: {width: 250, height: 250},
 			rotation: 0,
 			color: '#ffffff',
-			background: '#000000'
+			background: '#000000',
+			imageId: 0,
+			imageSizes: false
 		});
 	}
 });
@@ -66,9 +68,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	imageTpl: utemplate(imageTpl),
 	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
 	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
-	editorTpl: _.template($(editorTpl).find('#editor-tpl2').html()),
+	editorTpl: _.template($(editorTpl).find('#editor-tpl').html()),
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
-	sizes: {},
+	sizes: false,
 	elementSize: {width: 0, height: 0},
 	image: 'http://dorsvenabili.com/wp-content/uploads/wordpress_helpsheet.jpg',
 	imageId: 0,
@@ -80,6 +82,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	bordersWidth: 10,
 	onScrollFunction: false,
 	justUploaded: false,
+	mode: 'big', // big | small | vertical | horizontal
 	
 	initialize: function(){
 		 this.events = _.extend({}, this.events, {
@@ -113,9 +116,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	get_buttons: function() {
-		if(this.property('image_status') == 'ok')
-			return '<a href="#" class="upfront-icon-button uimage_edit_toggle"></a>';
-		return '';
+		var buttons = '';
+		if(this.property('image_status') == 'ok'){
+			buttons = '<a href="#" class="upfront-icon-button uimage_edit_toggle"></a>';
+		}
+		return buttons;
 	},
 
 	extract_properties: function() {
@@ -229,8 +234,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		if(this.justUploaded){
 			src = this.sizes.full[0];
-			this.imageSize = this.initialImageSize();
-			this.initialMaskOffset();
+			//this.initialMaskOffset();
 			this.justUploaded = false;
 		}
 		else
@@ -245,26 +249,62 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		this.openOverlaySection(this.editorTpl, tplOptions, function(overlay){
 			me.resizeOverlay();
-			me.positionEditorElements();
-			me.setContainerPosition();
+			me.imageOffset = me.imgOffset();
+
+			me.positionEditorElements(); //Set init point
+
 			me.startEditorUI();
+			me.selectMode(me.imageSize);
+
+			me.positionEditorElements(); //Actually position elements
+
+			//me.setContainerPosition();
 			me.iLikeThatPosition();
 		});
+
+
+	},
+
+	resizeEditorElements: function(size) {
+		var editor = $('#upfront-image-edit');
+
+		editor.find('#uimage-canvas')
+			.height(size.height)
+			.width(size.width)
+			.find('img')
+				.height(this.imageSize.height)
+				.width(this.imageSize.width)
+				.css(this.imgOffset())
+		;
+
+		editor.find('#uimage-drag-handle')
+			.height(size.height)
+			.width(size.width)
+		;
 	},
 
 	positionEditorElements: function() {
-		var container = $('#uimage-canvas-container'),
-			canvas = container.find('#uimage-canvas'),
+		var editor = $('#upfront-image-edit'),
+			canvas = editor.find('#uimage-canvas'),
 			img = canvas.find('.uimage-img'),
-			mask = canvas.find('.image-edit-mask'),
+			mask = editor.find('#uimage-mask'),
+			dragHandle= editor.find('#uimage-drag-handle'),
 			canvasWidth = this.canvasWidth(),
-			canvasHeight = this.canvasHeight(),
-			imageOffset = this.imgOffset()
+			canvasHeight = this.canvasHeight()
 		;
 
-		container
+		this.initPoint = {
+			top: this.$el.offset().top - $(window).scrollTop() - this.bordersWidth / 2,
+			left: this.$('.upfront-object-content').offset().left - $(window).scrollLeft() - $('#sidebar-ui').width() - this.bordersWidth / 2
+		}
+
+		editor
 			.width(canvasWidth)
 			.height(canvasHeight)
+			.css({
+				top: this.initPoint.top - this.maskOffset.top + 'px',
+				left: this.initPoint.left - this.maskOffset.left + 'px'
+			})
 		;
 
 		canvas
@@ -272,22 +312,28 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			.height(canvasHeight)
 		;
 
-		this.imageOffset = imageOffset;
+		this.imageOffset = this.imgOffset();
+
 		img
 			.width(this.imageSize.width)
 			.height(this.imageSize.height)
 			.css({
-				top: imageOffset.top + 'px',
-				left: imageOffset.left + 'px'
+				top: this.imageOffset.top + 'px',
+				left: this.imageOffset.left + 'px'
 			})
 		;
 
 		mask.css({
 			top: this.maskOffset.top + 'px',
-			left: this.maskOffset.left + 'px',
+			left: this.maskOffset.left + 'px',	
 			width: this.elementSize.width + 'px',
 			height: this.elementSize.height + 'px'
 		});
+
+		dragHandle
+			.width(canvasWidth)
+			.height(canvasHeight)
+		;
 	},
 	imgOffset: function() {
 		if(! this.invert)
@@ -309,43 +355,47 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 	startEditorUI: function() {
 		var me = this;
-		$('#uimage-canvas-container')
+		$('#upfront-image-edit')
 			.resizable({
-				handles: {se: '.image-edit-resize i'},
+				handles: {se: $('.image-edit-resize i')},
 				autoHide: 0,
 				aspectRatio: true,
 				start: function() {
-					$('.image-edit-save-container').fadeOut('fast');
+					if(me.mode != 'vertical')
+						$('.image-edit-save-container').fadeOut('fast');
 				},
 				resize: function(e, ui){
 					e.preventDefault();
 					e.stopPropagation();
 					me.setImageSize(ui.size);
-					me.positionEditorElements();
-					$('.image-edit-save-container').fadeOut('fast');
+					me.resizeEditorElements(ui.size);
+					me.iLikeThatPosition();
 				},
 				stop: function(e, ui){
 					e.preventDefault();
 					e.stopPropagation();
 					me.setImageSize(ui.size);
-					me.positionEditorElements();
+					me.selectMode(me.imageSize);
+					me.resizeEditorElements(ui.size);
+					me.positionEditorElements(ui.size);
 					me.iLikeThatPosition();
-					$('#uimage-canvas-container')
-						.draggable('option', 'containment', me.getContainment())
-						.height($('.image-edit-outer-mask').height())
-					;
 					$('.image-edit-save-container').fadeIn('fast');
+					$('#upfront-image-edit').draggable('option', 'containment', me.getContainment());
 				},
-				minWidth: this.elementSize.width + this.maskOffset.left,
-				minHeight: this.elementSize.height + this.maskOffset.top
+				//minWidth: this.elementSize.width + this.maskOffset.left,
+				//minHeight: this.elementSize.height + this.maskOffset.top
 			})
 			.draggable({
 				opacity:1,
+				handle: '#uimage-drag-handle',
 				start: function(e, ui){
-					$('.image-edit-save-container').fadeOut('fast');
+					if(me.mode != 'vertical')
+						$('.image-edit-save-container').fadeOut('fast');
+					$('#upfront-image-edit').draggable('option', 'containment', me.getContainment());
 				},
 				drag: function(e, ui){
 					me.moveMask(ui.position);
+					me.iLikeThatPosition();
 				},
 				stop: function(e, ui){
 					//me.imageOffset = ui.position;
@@ -358,6 +408,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			})
 		;
 	},
+
 	setImageSize: function(uiSize){
 		if(this.invert)			
 			this.imageSize = {
@@ -371,12 +422,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			};
 	},
 
-	initialMaskOffset: function() {
-		this.maskOffset = {
-			top: (this.imageSize.height - this.elementSize.height) / 2,
-			left: (this.imageSize.width - this.elementSize.width) / 2
-		}
-	},
 	moveMask: function(position){
 		this.maskOffset.top = this.initPoint.top - position.top;
 		this.maskOffset.left = this.initPoint.left - position.left;
@@ -386,34 +431,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		});
 	},
 
-	setContainerPosition: function(){
-		var $win = $('#upfront-image-overlay'),
-			mask = $('#uimage-mask'),
-
-			/*
-			centered = {
-				top: $win.height() / 2 - mask.height() / 2,
-				left: $win.width() / 2 - mask.width() / 2
-			}, */
-			centered = {
-				top: this.$el.offset().top - $(window).scrollTop() - this.bordersWidth / 2,
-				left: this.$('.upfront-object-content').offset().left - $(window).scrollLeft() - $('#sidebar-ui').width() - this.bordersWidth / 2
-			},
-			position = {
-				top: centered.top - this.maskOffset.top,
-				left: centered.left - this.maskOffset.left
-			}
-		;
-		$('#uimage-canvas-container').css({
-			top: position.top + 'px',
-			left: position.left + 'px'
-		});
-
-		this.initPoint = centered;
-	},
-
 	iLikeThatPosition: function(){
-		var container = $('#uimage-canvas-container'),
+		var container = $('#uimage-canvas'),
 			left = container.offset().left + container.width() + 200 > $(window).width() - $(window).scrollLeft() ? 
 				container.position().left - 200 + 'px' : 
 				container.position().left + container.width() + this.bordersWidth + 'px',
@@ -422,28 +441,32 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		 		container.position().top + 50 + 'px'
  		;
 
- 		$('.image-edit-save-container').css({
- 			top: top,
- 			left: left
- 		});
+ 		if(this.mode != 'small' && this.mode != 'vertical')
+	 		$('.image-edit-save-container').css({
+	 			top: top,
+	 			left: left
+	 		});
+	 	else
+	 		$('.image-edit-save-container').css({
+	 			top: this.maskOffset.top,
+	 			left: this.maskOffset.left + this.elementSize.width + 'px'
+	 		});
+
 	},
 
-	initialImageSize: function() {
+	initialImageSize: function(overflow) {
 		var overlay = $('#upfront-image-overlay'),
 			size = {
 				width: this.sizes.full[1],
 				height: this.sizes.full[2]
 			},
-
-			pivot, factor
+			overflow = overflow ? overflow : 0,
+			pivot, factor, invertPivot
 		;
 
-		if(size.width < this.elementSize.width || size.height < this.elementSize.height){
-			this.elementSize = size;
-		}
-
 		pivot = this.elementSize.width - size.width > this.elementSize.height - size.height ? 'width' : 'height';
-		factor = size[pivot] / this.elementSize[pivot];
+		invertPivot = this.invert ? (pivot == 'width' ? 'height' : 'width') : pivot;
+		factor = size[pivot] / (this.elementSize[invertPivot] + overflow);
 
 		size = {
 			width: Math.ceil(size.width / factor),
@@ -454,23 +477,49 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	setResizingLimits: function() {
-		$('#uimage-canvas-container').resizable('option', {
-			minWidth: this.elementSize.width + this.maskOffset.left,
-			minHeight: this.elementSize.height + this.maskOffset.top
-		});
+		var limits = {
+			minWidth: 0,
+			minHeight:0			
+		};
+		if(this.mode == 'big'){
+			limits = {
+				minWidth: this.elementSize.width + this.maskOffset.left - this.bordersWidth / 2,
+				minHeight: this.elementSize.height + this.maskOffset.top - this.bordersWidth / 2
+			}
+		}
+		$('#upfront-image-edit').resizable('option', limits);
 	},
 
 	getContainment: function() {
 		var sbwidth = $('#sidebar-ui').width(),
 			scrollTop = $(window).scrollTop(),
-			scrollLeft = $(window).scrollLeft()
+			scrollLeft = $(window).scrollLeft(),
+			border = this.bordersWidth / 2
 		;
-		return [
-			this.initPoint.left + sbwidth - this.canvasWidth() + this.elementSize.width + scrollLeft,
-			this.initPoint.top - this.canvasHeight() + this.elementSize.height + scrollTop,
-			this.initPoint.left + sbwidth + scrollLeft,
-			this.initPoint.top + scrollTop
-		];
+		if(this.mode == 'big')
+			return [
+				this.initPoint.left + sbwidth - this.canvasWidth() + this.elementSize.width + scrollLeft - border,
+				this.initPoint.top - this.canvasHeight() + this.elementSize.height + scrollTop - border,
+				this.initPoint.left + sbwidth + scrollLeft - border,
+				this.initPoint.top + scrollTop - border
+			];
+		if(this.mode == 'vertical')
+			return [
+				this.initPoint.left + sbwidth - this.canvasWidth() / 2 + this.elementSize.width  / 2 + scrollLeft - border,
+				this.initPoint.top - this.canvasHeight() + this.elementSize.height + scrollTop - border,
+				this.initPoint.left + sbwidth - this.canvasWidth() / 2 + this.elementSize.width  / 2 + scrollLeft - border,
+				this.initPoint.top + scrollTop - border
+			];
+
+		if(this.mode == 'horizontal')
+			return [
+				this.initPoint.left + sbwidth - this.canvasWidth() + this.elementSize.width + scrollLeft - border,
+				this.initPoint.top - this.canvasHeight() / 2 + this.elementSize.height / 2 + scrollTop - border,
+				this.initPoint.left + sbwidth + scrollLeft - border,
+				this.initPoint.top - this.canvasHeight() / 2 + this.elementSize.height / 2 + scrollTop - border
+			];
+
+		return [0,0,10000,10000];
 	},
 
 	iLikeThat: function(e){
@@ -503,14 +552,22 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 
 		this.property('size', this.imageSize);
-		this.property('position', {left: - this.maskOffset.left + this.imageOffset.left, top: - this.maskOffset.top + this.imageOffset.top});
+		this.property('position', this.calculateImagePosition());
 		this.property('rotation', this.rotation);
 		this.property('image_status', 'ok');
 		this.property('element_size', this.elementSize);
+		this.property('imageSizes', this.sizes);
+		this.property('imageId', this.imageId);
 
 		this.closeOverlay();
 	},
 
+	calculateImagePosition: function() {
+		return {
+			top: - this.maskOffset.top + this.imageOffset.top,
+			left: - this.maskOffset.left + this.imageOffset.left
+		}
+	},
 
 	editRequest: function () {
 		if(this.property('image_status') == 'ok'){
@@ -519,12 +576,18 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				//Set editor properties
 				this.imageSize = this.property('size');
 				this.setRotation(this.property('rotation'));
+
 				this.imageOffset = this.imgOffset();
+				
 				this.maskOffset = {
 					top: this.imageOffset.top - imageOffset.top,
 					left: this.imageOffset.left - imageOffset.left
 				};
+				
 				this.elementSize = this.property('element_size');
+
+				this.sizes = this.property('imageSizes');
+				this.imageId = this.property('imageId');
 
 				this.openEditor();
 			}
@@ -554,7 +617,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.iLikeThatPosition();
 
 		this.setResizingLimits();
-		$('#uimage-canvas-container').draggable('option', 'containment', this.getContainment());
+		$('#upfront-image-edit').draggable('option', 'containment', this.getContainment());
 	},
 	setRotation: function(rotation){
 		this.rotation = rotation;
@@ -623,7 +686,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				if(e.target == window){
 					me.resizeOverlay();
 					me.positionEditorElements();
-					$('#image-edit-container').draggable('option', 'containment', me.getContainment());
+					$('#upfront-image-edit').draggable('option', 'containment', me.getContainment());
 				}
 			})
 		;
@@ -647,7 +710,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	onScroll: function(){
 		this.setResizingLimits();
-		$('#uimage-canvas-container').draggable('option', 'containment', this.getContainment());
+		$('#upfront-image-edit').draggable('option', 'containment', this.getContainment());
 	},
 
 	setOverlayEvents: function() {
@@ -674,7 +737,85 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			.on('click', 'a.open-media-gallery', function(e){
 				me.openMediaGallery(e);
 			})
+			.on('click', 'a.image-actual-size', function(e){
+				me.setImageFullSize(e, true);
+			})
+			.on('click', 'a.image-fit-element', function(e){
+				me.fitElementSize(e);
+			})
+		/*;
+		$(window)*/
+			.on('keydown', 'a.image-fit-element', function(e){
+				me.keyMove(e);
+			})
 		;
+	},
+
+	setImageFullSize: function(e, alert) {
+		if(e)
+			e.preventDefault();
+
+		var fullSize = this.sizes.full;
+		if(fullSize[1] < this.elementSize.width + 200 && fullSize[2] < this.elementSize.height + 200){
+			this.imageSize = {
+				width: fullSize[1],
+				height: fullSize[2]
+			}
+		}
+		else{
+			this.imageSize = this.initialImageSize(200);
+			if(alert)
+				Upfront.Views.Editor.notify('The image is too big to show it full size.', 'warning');
+			this.centerImage();
+		}
+		this.selectMode(this.imageSize);
+		this.positionEditorElements();
+		if(e)
+			this.iLikeThatPosition();
+	},
+
+	centerImage: function() {
+		if(this.invert)
+			this.maskOffset = {
+				top: (this.imageSize.width -  this.elementSize.height + this.bordersWidth) / 2 ,
+				left: (this.imageSize.height - this.elementSize.width + this.bordersWidth) / 2
+			}
+		else
+			this.maskOffset = {
+				top: (this.imageSize.height - this.elementSize.height + this.bordersWidth) / 2,
+				left: (this.imageSize.width -  this.elementSize.width + this.bordersWidth) / 2
+			}
+	},
+
+	fitElementSize: function(e) {
+		e.preventDefault();
+		this.imageSize = this.initialImageSize(0);
+		this.centerImage();
+		this.selectMode(this.imageSize);
+		this.positionEditorElements();
+		this.iLikeThatPosition();
+		this.setResizingLimits();
+		$('#upfront-image-edit').draggable('option', 'containment', this.getContainment());		
+	},
+
+	keyMove: function(e) {
+		switch(e.which){
+			case 40: //down
+				this.maskOffset.top--;
+				this.positionEditorElements();
+				break;
+			case 39: //right
+				this.maskOffset.left--;
+				this.positionEditorElements();
+				break;
+			case 37: //left
+				this.maskOffset.left++;
+				this.positionEditorElements();
+				break;
+			case 38: //up
+				this.maskOffset.top++;
+				this.positionEditorElements();
+		}
 	},
 
 	cancelOverlay: function(e) {
@@ -696,7 +837,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		$('html').css({
 			overflow: this.bodyOverflow ? this.bodyOverflow : 'auto',
 			height: 'auto',
-			wifth: 'auto'
+			width: 'auto'
 		});
 
 		if(this.onScrollFunction){
@@ -760,6 +901,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				me.imageId = image.get('ID');
 				me.getImageData()
 					.done(function(){
+						me.setRotation(0);
 						me.justUploaded = true;
 						me.openEditor();
 					})
@@ -798,9 +940,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			success: function(response){
 				progress.css('width', '100%');
 				console.log(response);
-				me.imageId = response.data;
+				me.imageId = response.data[0];
 				me.getImageData()
 					.done(function(){
+						this.setRotation(0);
 						me.justUploaded = true;
 						me.openEditor();
 					})
@@ -822,8 +965,50 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			})
 			.done(function(response){
 				me.sizes = response.data.images[me.imageId];
+				me.selectMode({
+					width: me.sizes.full[1],
+					height: me.sizes.full[2]
+				});
+				me.setImageFullSize();
 			})	
 		;
+	},
+
+	selectMode: function(size) {
+		var mode = 'small',
+			invertSize = this.invert ? {width: size.height, height: size.width} : size
+		;
+
+		if(invertSize.width >= this.elementSize.width){
+			if(invertSize.height >= this.elementSize.height)
+				mode = 'big';
+			else
+				mode = 'horizontal';
+		}
+		else if(invertSize.height > this.elementSize.height)
+				mode = 'vertical';
+
+		this.setMode(mode);
+	},
+
+	setMode: function(mode){
+		var editor = $('#upfront-image-edit');
+		editor
+			.removeClass('uimage-mode-big uimage-mode-small uimage-mode-vertical uimage-mode-horizontal')
+			.addClass('uimage-mode-' + mode)
+		;
+		if(mode == 'small'){
+			this.maskOffset = {top: this.bordersWidth / 2, left: this.bordersWidth / 2};
+			editor.resizable('disable');
+			editor.draggable('disable');
+		}
+		else {
+			editor.resizable('enable');
+			editor.draggable('enable');
+		}
+		this.mode = mode;
+		this.setResizingLimits();
+		$('#upfront-image-edit').draggable('option', this.getContainment());
 	},
 
 	property: function(name, value) {

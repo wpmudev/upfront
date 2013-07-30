@@ -31,18 +31,23 @@
 
 <script type="text/template" id="editor-tpl">
 	<div id="upfront-image-edit" class="upfront-image-section">
-		<div id="image-edit-container" class="clearfix" style="top: {{offset.top}}px; left:{{offset.left}}px;">
-			<div class="image-edit-outer-mask">
-				<img class="image-edit-canvas {{ rotation }}" src="{{src}}" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute">		
-				<div class="image-edit-resize image-edit-control"><i class="icon-resize-full ui-resizable-handle ui-resizable-handle-se"></i></div>
-				<div class="image-edit-rotate image-edit-control"><i class="icon-repeat"></i></div>
-				<div class="image-edit-drag-handle"></div>
-			</div>
-			<div class="image-edit-save-container">
-				<div class="no-shadow">
-					<a class="image-edit-save" href="#"><i class="icon-ok"></i> I like that</a>
-					<a class="image-edit-change" href="#"><i class="icon-upload-alt "></i> upload a different image</a>
-				</div>
+		<div id="uimage-canvas" style="position:relative; overflow:hidden; top: 0; left: 0">
+			<img class="uimage-img {{ rotation }}" src="{{src}}" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute">
+		</div>
+
+		<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{offset.top}}px; left:{{offset.left}}px"></div>
+
+		<div id="uimage-drag-handle" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute"></div>
+
+		<div class="image-edit-resize image-edit-control"><i class="icon-resize-full ui-resizable-handle ui-resizable-handle-se"></i></div>
+		<div class="image-edit-rotate image-edit-control"><i class="icon-repeat"></i></div>
+
+		<div class="image-edit-save-container">
+			<div class="no-shadow">
+				<a class="image-edit-save" href="#"><i class="icon-ok"></i> I like that</a>
+				<a class="image-edit-option image-edit-change" href="#"><i class="icon-upload-alt "></i> upload a different image</a>
+				<a class="image-edit-option image-actual-size" href="#">Reset image size</a>
+				<a class="image-edit-option image-fit-element" href="#">Fit the element</a>
 			</div>
 		</div>
 	</div>
@@ -51,19 +56,11 @@
 <script type="text/template" id="editor-tpl2">
 	<div id="upfront-image-edit" class="upfront-image-section">
 		<div id="uimage-canvas-container" style="position:absolute">
-			<div id="uimage-canvas" style="position:relative; overflow:hidden;">
-				<img class="uimage-img {{ rotation }}" src="{{src}}" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute">
-				<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{offset.top}}px; left:{{offset.left}}px"></div>
-			</div>
-			<div class="image-edit-resize image-edit-control"><i class="icon-resize-full ui-resizable-handle ui-resizable-handle-se"></i></div>
-			<div class="image-edit-rotate image-edit-control"><i class="icon-repeat"></i></div>
+
+			
+			
 		</div>
-		<div class="image-edit-save-container">
-			<div class="no-shadow">
-				<a class="image-edit-save" href="#"><i class="icon-ok"></i> I like that</a>
-				<a class="image-edit-change" href="#"><i class="icon-upload-alt "></i> upload a different image</a>
-			</div>
-		</div>
+		<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{offset.top}}px; left:{{offset.left}}px"></div>
 	</div>
 </script>
 

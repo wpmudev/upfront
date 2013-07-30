@@ -265,14 +265,19 @@ a.open-media-gallery:hover i {
 	font-size: 18px;
 }
 
-#upfront-image-edit a.image-edit-change {
+#upfront-image-edit a.image-edit-option  {
 	font-size: 14px;
 	color: #1C7F5B;
 	border-bottom: 2px dotted #86AACA;
 	font-weight: 400;
+	display: block;
 }
 
-#upfront-image-edit a.image-edit-change i {
+#upfront-image-edit a.image-edit-option:hover  {
+	border-bottom: 2px dotted #1fcd8f;
+}
+
+#upfront-image-edit a.image-edit-option  i {
 	font-size: 12px;
 	color: #86AACA;
 }
@@ -282,6 +287,14 @@ a.open-media-gallery:hover i {
 	width: 40px;
 	height: 40px;
 	box-shadow: 0 0 5px #000;
+	z-index: 11;
+}
+
+#uimage-drag-handle {
+	position: absolute;
+	top:0;
+	left:0;
+	z-index:10;
 }
 
 .image-edit-control>i {
@@ -407,11 +420,7 @@ a.open-media-gallery:hover i {
 } */
 
 
-#uimage-canvas-container {
-	padding: 5px;
-	background: #DAEDFE;
-	box-shadow: 0 0 5px #000;
-	z-index: 10;
+#upfront-image-edit {
 	opacity: 1 !important;
 }
 
@@ -447,4 +456,13 @@ a.uimage_edit_toggle:hover {
 
 a.uimage_edit_toggle:before {
 	background-position: -486px -538px;
+}
+
+#uimage-canvas{
+	border: 5px solid #DAEDFE;
+	z-index: 10;
+}
+
+.uimage-mode-small .image-edit-resize{
+	display:none;
 }
