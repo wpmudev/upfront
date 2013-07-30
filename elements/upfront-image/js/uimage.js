@@ -252,14 +252,19 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.imageOffset = me.imgOffset();
 
 			me.positionEditorElements(); //Set init point
+			me.selectMode(me.imageSize);
 
 			me.startEditorUI();
-			me.selectMode(me.imageSize);
+			me.selectMode(me.imageSize, true);
 
 			me.positionEditorElements(); //Actually position elements
 
 			//me.setContainerPosition();
 			me.iLikeThatPosition();
+
+			//Set constraints
+			me.setResizingLimits();
+			$('#upfront-image-edit').draggable('option', me.getContainment());
 		});
 
 
@@ -375,7 +380,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					e.preventDefault();
 					e.stopPropagation();
 					me.setImageSize(ui.size);
-					me.selectMode(me.imageSize);
+					me.selectMode(me.imageSize, true);
 					me.resizeEditorElements(ui.size);
 					me.positionEditorElements(ui.size);
 					me.iLikeThatPosition();
@@ -464,7 +469,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			pivot, factor, invertPivot
 		;
 
-		pivot = this.elementSize.width - size.width > this.elementSize.height - size.height ? 'width' : 'height';
+		pivot = this.elementSize.width / this.elementSize.height > size.width / size.height ? 'width' : 'height';
 		invertPivot = this.invert ? (pivot == 'width' ? 'height' : 'width') : pivot;
 		factor = size[pivot] / (this.elementSize[invertPivot] + overflow);
 
@@ -768,10 +773,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				Upfront.Views.Editor.notify('The image is too big to show it full size.', 'warning');
 			this.centerImage();
 		}
-		this.selectMode(this.imageSize);
+		this.selectMode(this.imageSize, true);
 		this.positionEditorElements();
-		if(e)
+		if(e){
 			this.iLikeThatPosition();
+			//Set constraints
+			this.setResizingLimits();
+			$('#upfront-image-edit').draggable('option', this.getContainment());
+		}
 	},
 
 	centerImage: function() {
@@ -791,7 +800,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		e.preventDefault();
 		this.imageSize = this.initialImageSize(0);
 		this.centerImage();
-		this.selectMode(this.imageSize);
+		this.selectMode(this.imageSize, true);
 		this.positionEditorElements();
 		this.iLikeThatPosition();
 		this.setResizingLimits();
@@ -933,6 +942,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			},
 			uploadProgress: function(e, position, total, percent) {
 				progress.css('width', percent + '%');
+				console.log(percent);
 			},
 			complete: function() {
 				$('#upfront-image-uploading h2').html('Preparing Image');
@@ -943,7 +953,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				me.imageId = response.data[0];
 				me.getImageData()
 					.done(function(){
-						this.setRotation(0);
+						me.setRotation(0);
 						me.justUploaded = true;
 						me.openEditor();
 					})
@@ -974,7 +984,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		;
 	},
 
-	selectMode: function(size) {
+	selectMode: function(size, constraints) {
 		var mode = 'small',
 			invertSize = this.invert ? {width: size.height, height: size.width} : size
 		;
@@ -988,27 +998,27 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		else if(invertSize.height > this.elementSize.height)
 				mode = 'vertical';
 
-		this.setMode(mode);
+		this.setMode(mode, constraints);
 	},
 
-	setMode: function(mode){
+	setMode: function(mode, constraints){
 		var editor = $('#upfront-image-edit');
 		editor
 			.removeClass('uimage-mode-big uimage-mode-small uimage-mode-vertical uimage-mode-horizontal')
 			.addClass('uimage-mode-' + mode)
 		;
-		if(mode == 'small'){
-			this.maskOffset = {top: this.bordersWidth / 2, left: this.bordersWidth / 2};
-			editor.resizable('disable');
-			editor.draggable('disable');
-		}
-		else {
-			editor.resizable('enable');
-			editor.draggable('enable');
+		if(constraints){
+			if(mode == 'small'){
+				this.maskOffset = {top: this.bordersWidth / 2, left: this.bordersWidth / 2};
+				editor.resizable('disable');
+				editor.draggable('disable');
+			}
+			else {
+				editor.resizable('enable');
+				editor.draggable('enable');
+			}
 		}
 		this.mode = mode;
-		this.setResizingLimits();
-		$('#upfront-image-edit').draggable('option', this.getContainment());
 	},
 
 	property: function(name, value) {
