@@ -1043,10 +1043,13 @@
 					new_media.trigger("upload:progress", progress);
 				},
 				done: function (e, data) {
-					new_media.set({ID: data.result.data}, {silent:true});
+					var result = data.result.data || [],
+						uploaded_id = result[0]
+					;
+					new_media.set({ID: uploaded_id}, {silent:true});
 					Upfront.Util.post({
 						action: "upfront-media-get_item",
-						item_id: data.result.data
+						item_id: uploaded_id
 					}).done(function (response) {
 						new_media.set(response.data, {silent:true});
 						new_media.trigger("upload:finish");
@@ -1711,7 +1714,7 @@
 		},
 		ck_open: function () {
 			var pop = this.open();
-			this.instance = CKEDITOR.currentInstance;
+			Upfront.Media.Manager.instance = CKEDITOR.currentInstance.name;
 			pop.always(this.on_close);
 			return false;
 		},
@@ -1726,14 +1729,39 @@
 			return false;
 		},
 		on_close: function (popup, result) {
-			var html = '',
-				img_tpl = _.template('<div>{{thumbnail}}<br/>{{post_title}}</div>'),
-				av_tpl = _.template('<div>{{post_content}}<br />{{post_title}}</div>')
-			;
+			/*
+			var html = '';
 			if (result && result.each) result.each(function (item) {
-				html += ((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? av_tpl : img_tpl)(item.toJSON());
+				html += _.template(
+					((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? Upfront.Media.Templates.embeddable : Upfront.Media.Templates.image),
+					item.toJSON()
+				);
 			});
-			CKEDITOR.instances["upfront-body"].insertHtml(html);
+			if (result && result.length && result.length > 1) {
+				html = _.template(
+					Upfront.Media.Templates.gallery,
+					{content: html}
+				);
+			}
+			*/
+			var html = Upfront.Media.Manager.results_html(result);
+			CKEDITOR.instances[Upfront.Media.Manager.instance].insertHtml(html);
+		},
+		results_html: function (result) {
+			var html = '';
+			if (result && result.each) result.each(function (item) {
+				html += _.template(
+					((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? Upfront.Media.Templates.embeddable : Upfront.Media.Templates.image),
+					item.toJSON()
+				);
+			});
+			if (result && result.length && result.length > 1) {
+				html = _.template(
+					Upfront.Media.Templates.gallery,
+					{content: html}
+				);
+			}
+			return html;
 		},
 		rebind_ckeditor_image: function () {
 			var me = this;
@@ -1745,7 +1773,26 @@
 	});
 
 Upfront.Media = {
-	"Manager": new ContentEditorUploader()
+	Manager: new ContentEditorUploader(),
+	Templates: {
+		image: '<div class="upfront-inserted_image-wrapper"><img src="{{image.src}}" title="{{post_title}}" alt="{{post_title}}" height="{{image.height}}" width="{{image.width}}" /></div>',
+		embeddable: '<div>{{post_content}}<br />{{post_title}}</div>',
+		//gallery: '<div class="gallery"><h1>Gallery</h1>{{content}}</div>',
+		gallery: '[upfront-gallery]{{content}}[/upfront-gallery]',
+		slider: '<div class="slider"><h1>Slider</h1>{{content}}</div>'
+	},
+	Transformations: {
+		_transformations: _([]),
+		add: function (f) {
+			this._transformations.push(f);
+		},
+		apply: function (content) {
+			this._transformations.each(function (t) {
+				content = t.apply(this, [content]);
+			});
+			return content;
+		}
+	}
 };
 
 })(jQuery);

@@ -227,15 +227,22 @@ class Upfront_MediaItem extends Upfront_Media {
         foreach ($label_objs as $label) {
             $labels[] = $label->term_id;
         }
+        $image_data = wp_get_attachment_image_src($this->_post->ID, 'full');
 		return array(
 			'ID' => $this->_post->ID,
 			'post_title' => $this->_post->post_title,
 			'thumbnail' => wp_get_attachment_image($this->_post->ID, array(80, 60), true),
-			'parent' => $this->_post->post_parent ? get_the_title($this->_post->post_parent) : false,
-			'post_content' => $this->_post->post_content ? $this->_post->post_content : false,
-			'post_excerpt' => $this->_post->post_excerpt ? $this->_post->post_excerpt : false,
+            'parent' => $this->_post->post_parent ? get_the_title($this->_post->post_parent) : false,
+            'post_content' => $this->_post->post_content ? $this->_post->post_content : false,
+            'post_excerpt' => $this->_post->post_excerpt ? $this->_post->post_excerpt : false,
             'original_url' => get_post_meta($this->_post->ID, 'original_url', true),
             'labels' => $labels,
+            'image' => array(
+                "src" => $image_data[0],
+                "width" => $image_data[1],
+                "height" => $image_data[2],
+                "resized" => $image_data[3],
+            ),
 		);
 	}
 }

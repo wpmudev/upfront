@@ -35,7 +35,7 @@ CKEDITOR.editorConfig = function( config ) {
 			}
 	];
 
-	config.extraPlugins = 'onchange,kitchensink,colorselect,toggled_items';
+	config.extraPlugins = 'onchange,kitchensink,colorselect,toggled_items,upfront_images';
 
 	// use SVG icons for editor buttons if possible
 	if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){
@@ -44,6 +44,8 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.floatSpaceDockedOffsetY = 62; // Move toolbar out of the way
 	config.floatSpacePinnedOffsetY = 30; // Deal with the Admin Toolbar
+
+	config.allowedContent = true; // RECONFIGURE THIS!!!
 
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';

@@ -3551,3 +3551,80 @@ License: MIT
 {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAMdJREFUOE+tkgsNwzAMRMugEAahEAahEAZhEAqlEAZhEAohEAYh81X2dIm8fKpEspLGvudPOsUYpxE2BIJCroJmEW9qJ+MKaBFhEMNabSy9oIcIPwrB+afvAUFoK4H0tMaQ3XtlrggDhOVVMuT4E5MMG0FBbCEYzjYT7OxLEvIHQLY2zWwQ3D+9luyOQTfKDiFD3iUIfPk8VqrKjgAiSfGFPecrg6HN6m/iBcwiDAo7WiBeawa+Kwh7tZoSCGLMqwlSAzVDhoK+6vH4G0P5wdkAAAAASUVORK5CYII=);
 }
+
+/* ----- Image Details dialog ----- */
+
+#upfront-image-details {
+	position: absolute;
+	background: rgba(56, 72, 85, .7);
+	color: #c2dcf5;
+	font-size: .8em;
+}
+#upfront-image-details .orientation {
+	width: 70%;
+	float: left;
+	margin-top: 5px;
+}
+#upfront-image-details .orientation .left,
+#upfront-image-details .orientation .center,
+#upfront-image-details .orientation .right,
+#upfront-image-details .orientation .full {
+	float: left;
+	width: 24%;
+	text-align: center;
+}
+#upfront-image-details .orientation i {
+	display: block;
+	font-size: 1.4em;
+}
+#upfront-image-details .actions {
+	width: 30%;
+	float: left;
+}
+#upfront-image-details .actions span {
+	display: block;
+	background: #c3ddf4;
+	color: #2c333d;
+	margin: 5px;
+	padding: 5px;
+	border-radius: 3px;
+	line-height: 1em;
+}
+#upfront-image-details .actions i {
+	font-size: 1.4em;
+	line-height: 1em;
+}
+
+#upfront-image-details-image_details {
+	padding: 5px;
+	border-radius: 3px;
+	box-shadow: 3px 3px 3px rgba(33,33,33,.3);
+	color: #32475c;
+}
+#upfront-image-details-image_details label {
+	display: block;
+	font-size: 1.2em;
+	padding-left: 1.2em;
+}
+#upfront-image-details-image_details button {
+	width: 116px;
+	margin-top: 1em;
+	background: #32475c;
+	color: #fff;
+	border: none;
+	border-radius: 3px;
+	font-size: .8em;
+	float: right;
+}
+#upfront-image-details-image_details .link, 
+#upfront-image-details-image_details .alt {
+	margin-top: 1em;
+}
+#upfront-image-details-image_details .link ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#upfront-image-details-image_details .link ul em {
+	color: #20ca8b;
+}
