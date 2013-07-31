@@ -2843,7 +2843,7 @@ define(_template_files, function () {
 
 			var me = this;
 			this.settings.each(function (setting) {
-				if ( setting.fields ) {
+				if ( setting.fields.size() > 0 ) {
 					setting.save_fields();
 				}
 				else {
@@ -2925,7 +2925,6 @@ define(_template_files, function () {
 			this.set_title(panel.get_title());
 			var min_height = 0;
 			this.panels.each(function(p){
-				console.log(p.$el.find(".upfront-settings_label").outerHeight());
 				min_height += p.$el.find(".upfront-settings_label").outerHeight();
 			});
 			var panel_height = panel.$el.find(".upfront-settings_panel").outerHeight() - 1;

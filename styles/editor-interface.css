@@ -801,6 +801,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background-color: #263a4d;
 }
 .upfront-field-multiple {
+	display: block;
 	opacity: 0.8;
 	line-height: 12px;
 	height: 24px;
