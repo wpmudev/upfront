@@ -391,11 +391,21 @@ class Upfront_PlainTxtView extends Upfront_Object {
 	}
 }
 
+
 class Upfront_ImageView extends Upfront_Object {
 
 	public function get_markup () {
 		$element_id = $this->_get_property('element_id');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 		return "<div class='upfront-output-object upfront-output-image' {$element_id}><img src='" . esc_attr($this->_get_property('content')) . "' /></div>";
+	}
+}
+
+class Upfront_SettingExampleView extends Upfront_Object {
+
+	public function get_markup () {
+		$element_id = $this->_get_property('element_id');
+		$element_id = $element_id ? "id='{$element_id}'" : '';
+		return "<div class='upfront-output-object upfront-settingexample' {$element_id}></div>";
 	}
 }

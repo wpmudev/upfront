@@ -12,6 +12,9 @@ var ImageModel = Upfront.Models.ObjectModel.extend({
 
 var ImageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.FixedObjectInAnonymousModule,*/ {
 	model: ImageModel,
+	get_buttons: function () {
+		return '<a href="#" class="upfront-icon-button upfront-icon-button-crop"></a>';
+	},
 	get_content_markup: function () {
 		var that = this;
 		require(['text!upfront/templates/objects/image/image.html'],function(template) {
@@ -38,7 +41,7 @@ var ImageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.Fi
 var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-image');
-		this.$el.html('Image');
+		this.$el.html('Image (old)');
 	},
 	add_element: function () {
 		var object = new ImageModel({

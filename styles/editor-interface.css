@@ -310,16 +310,19 @@
 	overflow-y: scroll;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar,
-.upfront-scroll-panel::-webkit-scrollbar {
+.upfront-scroll-panel::-webkit-scrollbar,
+.upfront-settings_panel_scroll::-webkit-scrollbar {
 	background: none;
 	width: 3px;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-track,
-.upfront-scroll-panel::-webkit-scrollbar-track {
+.upfront-scroll-panel::-webkit-scrollbar-track,
+.upfront-settings_panel_scroll::-webkit-scrollbar-track {
 }
  
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-thumb,
-.upfront-scroll-panel::-webkit-scrollbar-thumb {
+.upfront-scroll-panel::-webkit-scrollbar-thumb,
+.upfront-settings_panel_scroll::-webkit-scrollbar-thumb {
 	border-right: 3px solid #1fcd8f;
 	width: 3px;
 }
@@ -627,7 +630,7 @@
 	position: relative;
 	z-index: 5;
 }
-#sidebar-ui .position-select-wrap input[type=radio] {
+#sidebar-ui .position-select-wrap .position-select {
 	float: left;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -637,11 +640,13 @@
 	width: 13px;
 	height: 12px;
 	border: none;
+	border-radius: 2px;
 	position: relative;
 	z-index: 10;
 	margin: -1px 0 0 -1px;
+	cursor: pointer;
 }
-#sidebar-ui .position-select-wrap input[type=radio]:checked {
+#sidebar-ui .position-select-wrap .position-select:checked {
 	background-color: #263a4d;
 }
 #sidebar-ui .or-round {
@@ -707,31 +712,183 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	display: block;
 }
 
-/* Input */
-#sidebar-ui input[type=checkbox], #sidebar-ui input[type=radio] {
+/* Fields */
+/* @TODO all fields styling here */
+.upfront-field-text, .upfront-field-checkbox, .upfront-field-radio {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	-ms-appearance: none;
 	-o-appearance: none;
 	appearance: none;
 	display: inline-block;
-	width: 16px;
-	height: 16px;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
-	border: 2px solid #7a8d9f;
-	border-radius: 2px;
+}
+.upfront-field-text {
+	border: 1px solid rgb(163, 191, 217);
+	background: #fff;
+	color: rgb(38, 58, 77);
+	height: 30px;
+	width: 100%;
+	padding: 7px 10px;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	line-height: 16px;
+}
+.upfront-field-text::-webkit-input-placeholder {
+	color: rgb(124, 158, 191);
+}
+.upfront-field-text:-moz-placeholder {
+	color: rgb(124, 158, 191);
+}
+.upfront-field-text::-moz-placeholder {
+	color: rgb(124, 158, 191);
+}
+.upfront-field-text:-ms-input-placeholder {
+	color: rgb(124, 158, 191);
+}
+.upfront-field-empty {
+	opacity: 0.7;
+}
+.upfront-field-text:hover,
+.upfront-field-text:focus {
+	opacity: 1;
+	outline: none;
+}
+.upfront-field-textarea {
+	height: auto;
+}
+.upfront-field-number {
+	border: 1px solid rgb(163, 191, 217);
+	background: #fff;
+	color: rgb(38, 58, 77);
+	height: 30px;
+	padding: 0 10px;
+}
+.upfront-field-checkbox, .upfront-field-radio {
+	width: 12px;
+	height: 12px;
+	border: 2px solid rgb(38, 58, 77);
 	margin: 0 10px 0 0;
 	cursor: pointer;
+	float: none;
 }
-#sidebar-ui input[type=checkbox]:hover {
+.upfront-field-radio {
+	border-radius: 6px;
+}
+.upfront-field-radio:checked {
+	border-width: 3px;
+	background: rgb(31, 205, 143);
+}
+.upfront-field-checkbox {
+	border-radius: 2px;
+}
+.upfront-field-checkbox:checked {
+	border-width: 0;
+	background: rgb(38, 58, 77);
+}
+.tile-select {
+	width: 16px;
+	height: 16px;
+	border: 2px solid #7a8d9f;
+}
+.tile-select:hover {
 	border-color: #263a4d;
 }
-#sidebar-ui input[type=checkbox]:checked {
+.tile-select:checked {
 	border-color: #263a4d;
 	background-color: #263a4d;
 }
+.upfront-field-multiple {
+	opacity: 0.8;
+	line-height: 12px;
+	height: 24px;
+	margin: 0 0 6px;
+}
+.upfront-field-multiple-vertical {
+	display: inline-block;
+	max-width: 72px;
+	height: auto;
+	text-align: center;
+	margin: 0 10px 10px 0;
+	padding: 0 0 12px;
+	position: relative;
+}
+.upfront-field-multiple:hover,
+.upfront-field-selected {
+	opacity: 1;
+}
+.upfront-field-multiple-disabled, 
+.upfront-field-multiple-disabled:hover {
+	opacity: 0.5;
+}
+.upfront-field-multiple input.upfront-field-checkbox, 
+.upfront-field-multiple input.upfront-field-radio {
+	float: left;
+	margin: 6px 5px 0;
+}
+.upfront-field-multiple-vertical input.upfront-field-checkbox, 
+.upfront-field-multiple-vertical input.upfront-field-radio {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin: 0 0 0 -6px;
+}
+.upfront-field-multiple label {
+	display: table;
+	color: rgb(48, 71, 94);
+	height: 24px;
+	font-size: 11px;
+	font-weight: normal;
+	font-family: verdana, sans-serif;
+}
+.upfront-field-multiple label .upfront-field-label-text {
+	display: table-cell;
+	vertical-align: middle;
+}
+.upfront-field-multiple-vertical label {
+	display: block;
+	height: auto;
+}
+.upfront-field-multiple-vertical label .upfront-field-label-text {
+	display: block;
+	max-height: 30px;
+	padding: 3px 0;
+	overflow: hidden;
+}
+.upfront-field-icon {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 1px 5px 0 0;
+}
+.upfront-field-multiple-vertical .upfront-field-icon {
+	margin: 0 auto;
+}
+.upfront-field-wrap {
+	color: rgb(48, 71, 94);
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: normal;
+	font-family: verdana, sans-serif;
+}
+.upfront-field-wrap .upfront-field-label {
+	font-weight: normal;
+	margin: 0;
+}
+.upfront-field-wrap-text .upfront-field-label {
+	display: block;
+	color: rgb(124, 158, 191);
+	font-size: 13px;
+	font-weight: normal;
+	font-family: verdana, sans-serif;
+	line-height: 30px;
+	margin: 0;
+}
+
+
+
+
 
 #settings {
   position: fixed;
@@ -1221,62 +1378,105 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 
 #settings {
-  background-color: #dae7f1;
-  border: 1px solid #a2c5e4;
-  border-right: none;
-  border-left: 3px solid #6486a4;
-  min-width: 90px;
-
+	background-color: rgb(218, 231, 242);
+	border-left: 3px solid rgb(99, 134, 166);
+	width: 92px;
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
 }
 #settings .upfront-settings_title {
-  display: none;
+	display: none;
 }
 #settings .upfront-settings_label {
-	padding-left: 15px;
-	width: 90px;
+	position: relative;
+	padding-left: 7px;
+	width: 89px;
 	height: 40px;
 	line-height: 40px;
-	background: #a2c5e4;
-	color: #f2f9ff;
-	border: 1px solid #7ba6ca;
-	border-top: none;
-	font-family:Verdana, Geneva, sans-serif;
-	font-size:11px;
-    cursor: pointer;
+	background: rgb(143, 174, 204);
+	color: rgb(242, 249, 255);
+	border-top: 1px solid rgb(99, 134, 166);
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 11px;
+	cursor: pointer;
 }
 #settings .upfront-settings_label.active {
-	color: #a2c5e4;
-	background: #f2f9ff;
-	border-right: none;
-	border-left: solid 3px #1fcd8f;
-	margin-left: -3px;
-	width: 93px;
-	padding-left: 18px;
+	color: rgb(99, 134, 166);
+	background: rgb(242, 249, 255);
+	width: 90px;
+	z-index: 10;
+}
+#settings .upfront-settings_panel_wrap:last-child .upfront-settings_label.active {
+	border-bottom: 1px solid rgb(99, 134, 166);
+}
+#settings .upfront-settings_label.active:before {
+	content: " ";
+	display: block;
+	height: 100%;
+	width: 3px;
+	background: rgb(31, 205, 143);
+	position: absolute;
+	top: 0;
+	left: -3px;
 }
 #settings .upfront-settings_panel {
 	position: absolute;
-	left: 90px;
+	left: 89px;
 	top: 0;
-	padding: 15px 15px 17px 15px;
-	min-width: 200px;
-	border: 1px solid #a2c5e4;
-	border-left: none;
-	margin-top: -1px;
-	background: #f2f9ff;
+	border: 1px solid rgb(99, 134, 166);
+	background: rgb(242, 249, 255);
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+	z-index: 5;
 }
-.upfront-settings-item-title {
-	text-transform: uppercase;
-	border-bottom: 1px solid #a2c5e4;
-	font-size:14px;
-	color:#30475e;
-	height:20px;
-	line-height: 9px;
-	font-family: 'RobotoRegular';
+#settings .upfront-settings_panel_scroll {
+	padding: 10px;
+	min-width: 270px;
+	max-height: 350px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+#settings .upfront-settings-item {
+	position: relative;
+	border: 1px solid rgb(195, 216, 236);
+	margin: 9px 0 19px;
+	padding: 15px 15px 10px;
+}
+#settings .upfront-settings-item-title {
+	position: absolute;
+	top: -9px;
+	left: 5px;
+	font-size: 17px;
+	line-height: 17px;
+	color: rgb(99, 134, 166);
+	background: rgb(242, 249, 255);
+	padding: 0 10px;
+	font-family: 'Source Sans Pro';
+}
+#settings .upfront-settings-item-content {
+	margin: 0;
 }
 #settings .upfront-settings-button_panel {
-	float: right;
+	position: absolute;
+	bottom: -37px;
+	right: -1px;
+	margin: 0;
 }
-
+#settings .upfront-save_settings {
+	height: 36px;
+	width: auto;
+	border: 1px solid rgb(0, 219, 143);
+	padding: 0 26px 0 20px;
+	background: rgb(31, 205, 143);
+	line-height: 34px;
+	font-size: 18px;
+	font-family: 'Source Sans Pro';
+	color: rgb(242, 249, 255);
+	border-radius: 0;
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+}
+/* @TODO still using font awesome icon, need add it to sprite instead */
+#settings .upfront-save_settings i {
+	color: rgb(25, 166, 116);
+}
 
 
 /* ----- Save As dialog ----- */
@@ -1304,10 +1504,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 /* Upfront icon */
 .upfront-icon-element:before, .upfront-icon:before, .upfront-icon-button:before,
+.upfront-field-icon:before,
 .region-lock-switch:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
-.position-select-wrap input[type=radio]:checked,
-input[type=checkbox]:checked {
+.position-select-wrap .position-select:checked,
+.upfront-field-checkbox:checked {
 	content: " ";
 	background-image: url('../img/upfront-icon-sprite.svg?v=20130719');
 	background-repeat: no-repeat;
@@ -1391,11 +1592,14 @@ input[type=checkbox]:checked {
 .upfront-icon-check:before {
 	background-position: -218px -406px;
 }
-.position-select-wrap input[type=radio]:checked {
+.position-select-wrap .position-select:checked {
 	background-position: -222px -411px;
 }
-input[type=checkbox]:checked {
+.tile-select:checked {
 	background-position: -222px -411px;
+}
+.upfront-field-checkbox:checked {
+	background-position: -223px -411px;
 }
 .region-lock-switch:before {
 	width: 22px;
@@ -1468,6 +1672,19 @@ input[type=checkbox]:checked {
 	height: 23px;
 	margin: 0 0 0 -30px;
 	background-position: -218px -439px;
+}
+.upfront-field-icon:before {
+	width: 22px;
+	height: 22px;
+}
+.upfront-field-icon-contact-above-field:before {
+	background-position: -676px -49px;
+}
+.upfront-field-icon-contact-over-field:before {
+	background-position: -776px -49px;
+}
+.upfront-field-icon-contact-inline-field:before {
+	background-position: -876px -49px;
 }
 
 /* ContentEditor sidebar */

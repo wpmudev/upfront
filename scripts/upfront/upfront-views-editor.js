@@ -2477,12 +2477,282 @@ define(_template_files, function () {
 			Upfront.Settings.LayoutEditor.Grid.bottom_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_bottom_classes[new_size];
 		}
 	});
+	
+	var Field = Backbone.View.extend({
+		className: 'upfront-field-wrap',
+		initialize: function () {
+			this.multiple = this.options.multiple ? this.options.multiple : (this.multiple ? this.multiple : false);
+			this.label = this.options.label ? this.options.label : '';
+			this.default_value = this.options.default_value ? this.options.default_value : (this.multiple ? [] : '');
+			this.property = this.model.get_property_by_name(this.options.property);
+			if ( this.property === false ){
+				this.model.init_property(this.options.property, this.default_value);
+				this.property = this.model.get_property_by_name(this.options.property);
+			}
+			this.selected_state = this.selected_state ? this.selected_state : '';
+			if ( this.init )
+				this.init();
+		},
+		get_name: function () {
+			return this.property.get('name');
+		},
+		get_saved_value: function () {
+			return this.property.get('value');
+		},
+		get_value: function () {
+			var $field = this.get_field();
+			if ( $field.size() == 1 )
+				return $field.val();
+			else if ( $field.size() > 1 )
+				return _.map($field, function (el) { return $(el).val(); });
+			return false;
+		},
+		get_field_id: function () {
+			return this.cid + '-' + this.get_name();
+		},
+		get_field_name: function () {
+			return this.get_name();
+		},
+		get_field: function () {
+			return this.$el.find( '[name=' + this.get_field_name() + ']' + (this.selected_state ? ':'+this.selected_state : '') );
+		},
+		get_label_html: function () {
+			var attr = {
+				'for': this.get_field_id(),
+				'class': 'upfront-field-label'
+			};
+			return '<label ' + this.get_field_attr_html(attr) + '>' + this.label + '</label>';
+		},
+		get_field_attr_html: function (attr) {
+			return _.map(attr, function(value, att){
+				return att + '="' + value + '"';
+			}).join(' ');
+		}
+	});
+	
+	var Field_Text = Field.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-text',
+		render: function () {
+			this.$el.html();
+			if ( !this.options.compact )
+				this.$el.append(this.get_label_html());
+			this.$el.append(this.get_field_html());
+			var me = this;
+			this.$el.find('.upfront-field').keyup(function(){
+				if ( $(this).val() == '' ){
+					$(this).addClass('upfront-field-empty');
+					if ( me.options.compact )
+						me.$el.removeClass('tooltip');
+				}
+				else if ( $(this).hasClass('upfront-field-empty') ) {
+					$(this).removeClass('upfront-field-empty');
+					if ( me.options.compact )
+						me.$el.addClass('tooltip');
+				}
+			}).trigger('keyup');
+		},
+		get_field_html: function () {
+			var attr = {
+				'type': 'text',
+				'class': 'upfront-field upfront-field-text',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.get_saved_value()
+			};
+			if ( this.options.compact ) {
+				attr.placeholder = this.label;
+				this.$el.attr('data-tooltip', this.label);
+			}
+			return '<input ' + this.get_field_attr_html(attr) + ' />';
+		}
+	});
+	
+	var Field_Textarea = Field_Text.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-textarea',
+		get_field_html: function () {
+			var attr = {
+				'cols': '40',
+				'rows': '5',
+				'class': 'upfront-field upfront-field-text upfront-field-textarea',
+				'id': this.get_field_id(),
+				'name': this.get_field_name()
+			};
+			if ( this.options.compact ) {
+				attr.placeholder = this.label;
+				this.$el.attr('data-tooltip', this.label);
+			}
+			return '<textarea ' + this.get_field_attr_html(attr) + '>' + this.get_saved_value() + '</textarea>';
+		}
+	});
+	
+	var Field_Number = Field_Text.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-number',
+		get_field_html: function () {
+			var attr = {
+				'type': 'number',
+				'class': 'upfront-field upfront-field-number',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.get_saved_value(),
+				'min': this.options.min,
+				'max': this.options.max,
+				'step': this.options.step
+			};
+			return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
+		}
+	});
+	
+	var Field_Multiple = Field.extend({
+		render: function () {
+			this.$el.html();
+			if ( this.label )
+				this.$el.append(this.get_label_html());
+			this.$el.append(this.get_field_html());
+		},
+		get_values_html: function () {
+			return _.map(this.options.values, this.get_value_html, this).join('');
+		}
+	});
+	
+	var Field_Select = Field_Multiple.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-select',
+		get_field_html: function () {
+			var attr = {
+				'class': 'upfront-field upfront-field-select',
+				'id': this.get_field_id(),
+				'name': this.get_field_name()
+			};
+			if ( this.options.multiple )
+				attr.multiple = 'multiple';
+			return '<select ' + this.get_field_attr_html(attr) + '>' + this.get_values_html() + '</select>';
+		},
+		get_value_html: function (value) {
+			var attr = {
+				'value': value.value
+			};
+			var saved_value = this.get_saved_value();
+			if ( value.disabled )
+				attr.disabled = 'disabled';
+			if ( this.multiple && _.contains(saved_value, value.value) )
+				attr.selected = 'selected';
+			else if ( ! this.multiple && saved_value == value.value )
+				attr.selected = 'selected';
+			return '<option ' + this.get_field_attr_html(attr) + '>' + value.label + '</option>';
+		}
+	});
+	
+	
+	
+	var Field_Multiple_Input = Field_Multiple.extend({
+		selected_state: 'checked',
+		get_field_html: function () {
+			return this.get_values_html();
+		},
+		get_value_html: function (value, index) {
+			var id = this.get_field_id() + '-' + index;
+			var classes = "upfront-field-multiple";
+			var attr = {
+				'type': this.type,
+				'id': id,
+				'name': this.get_field_name(),
+				'value': value.value,
+				'class': 'upfront-field-' + this.type
+			};
+			var saved_value = this.get_saved_value();
+			if ( this.options.layout && this.options.layout == 'vertical' )
+				classes += ' upfront-field-multiple-vertical';
+			if ( value.disabled ){
+				attr.disabled = 'disabled';
+				classes += ' upfront-field-multiple-disabled';
+			}
+			if ( this.multiple && _.contains(saved_value, value.value) )
+				attr.checked = 'checked';
+			else if ( ! this.multiple && saved_value == value.value )
+				attr.checked = 'checked';
+			if ( attr.checked )
+				classes += ' upfront-field-multiple-selected';
+			return '<span class="' + classes + '"><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '">' + this.get_icon_html(value.icon) + '<span class="upfront-field-label-text">' + value.label + '</span></label></span>';
+		},
+		get_icon_html: function (src) {
+			if ( ! src )
+				return '';
+			if ( src.match(/^https?:\/\//) ) {
+				var attr = {
+					'src': src,
+					'alt': '',
+					'class': 'upfront-field-icon-img'
+				}
+				return '<img ' + this.get_field_attr_html(attr) + ' />';
+			}
+			else {
+				return '<i class="upfront-field-icon upfront-field-icon-' + src + '"></i>';
+			}
+		}
+	});
+	
+	var Field_Radios = Field_Multiple_Input.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+		type: 'radio'
+	});
+	
+	var Field_Checkboxes = Field_Multiple_Input.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes',
+		type: 'checkbox',
+		multiple: true
+	});
 
 	var SettingsItem = Backbone.View.extend({
 		//tagName: "li",
-		get_name: function () {},
-		get_value: function () {},
-
+		get_name: function () {
+			if ( this.fields.length == 1 )
+				return this.fields[0].get_name();
+			else if ( this.fields.length > 1 )
+				return this.fields.map(function(field){ return field.get_name(); });
+		},
+		get_value: function () {
+			if ( this.fields.length == 1 )
+				return this.fields[0].get_value();
+			else if ( this.fields.length > 1 )
+				return this.fields.map(function(field){ return field.get_value(); });
+		},
+		
+		initialize: function () {
+			this.fields = _([]);
+		},
+		
+		render: function () {
+			this.$el.append(
+				'<div class="upfront-settings-item">' +
+					'<div class="upfront-settings-item-title">' + this.get_title() + '</div>' +
+					'<div class="upfront-settings-item-content"></div>' +
+				'</div>'
+			);
+			$content = this.$el.find('.upfront-settings-item-content');
+			this.fields.each(function(field){
+				field.render();
+				$content.append(field.el);
+			});
+		},
+		
+		save_fields: function () {
+			var changed = _([]);
+			this.fields.each(function(field, index, list){
+				var value = field.get_value();
+				var saved_value = field.get_saved_value();
+				if ( ! field.multiple && value != saved_value ){
+					changed.push(field);
+				}
+				else if ( field.multiple && (value.length != saved_value.length || _.difference(value, saved_value).length != 0) ) {
+					changed.push(field);
+				}
+			});
+			changed.each(function(field, index, list){
+				console.log([index, list.length]);
+				field.property.set({'value': field.get_value()}, {'silent': (index < list.length-1)});
+			});
+		},
+		
+		//@TODO remove wrap method below when all elements have changed to use setting fields API
 		wrap: function (wrapped) {
 			if (!wrapped) return false;
 			var title = wrapped.title || '',
@@ -2499,7 +2769,8 @@ define(_template_files, function () {
 
 	var SettingsPanel = Backbone.View.extend({
 		//tagName: "ul",
-
+		className: 'upfront-settings_panel_wrap',
+		
 		events: {
 			"click .upfront-save_settings": "on_save",
 			"click .upfront-cancel_settings": "on_cancel",
@@ -2515,16 +2786,17 @@ define(_template_files, function () {
 		render: function () {
 			this.$el.empty().show();
 			this.$el.append('<div class="upfront-settings_label" />');
-			this.$el.append('<div class="upfront-settings_panel" style="display:none" />');
+			this.$el.append('<div class="upfront-settings_panel" style="display:none"><div class="upfront-settings_panel_scroll" /></div>');
 			var $label = this.$el.find(".upfront-settings_label"),
 				$panel = this.$el.find(".upfront-settings_panel"),
+				$panel_scroll = this.$el.find(".upfront-settings_panel_scroll"),
 				me = this
 			;
 			$label.append(this.get_label());
 			this.settings.each(function (setting) {
 				setting.panel = me;
 				setting.render();
-				$panel.append(setting.el)
+				$panel_scroll.append(setting.el)
 			});
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +
@@ -2571,12 +2843,17 @@ define(_template_files, function () {
 
 			var me = this;
 			this.settings.each(function (setting) {
-				var value = me.model.get_property_value_by_name(setting.get_name());
-				if ( value != setting.get_value() )
-					me.model.set_property(
-						setting.get_name(),
-						setting.get_value()
-					);
+				if ( setting.fields ) {
+					setting.save_fields();
+				}
+				else {
+					var value = me.model.get_property_value_by_name(setting.get_name());
+					if ( value != setting.get_value() )
+						me.model.set_property(
+							setting.get_name(),
+							setting.get_value()
+						);
+				}
 			});
 			this.trigger("upfront:settings:panel:saved", this);
 			Upfront.Events.trigger("entity:settings:deactivate");
@@ -2646,7 +2923,19 @@ define(_template_files, function () {
 			panel.show();
 			panel.reveal();
 			this.set_title(panel.get_title());
-			this.$el.height(panel.$el.find(".upfront-settings_panel").outerHeight() - 2)
+			var min_height = 0;
+			this.panels.each(function(p){
+				console.log(p.$el.find(".upfront-settings_label").outerHeight());
+				min_height += p.$el.find(".upfront-settings_label").outerHeight();
+			});
+			var panel_height = panel.$el.find(".upfront-settings_panel").outerHeight() - 1;
+			if ( panel_height >= min_height ) {
+				this.$el.css('height', panel_height);
+			}
+			else {
+				panel.$el.find(".upfront-settings_panel").css('height', min_height);
+				this.$el.css('height', min_height);
+			}
 		},
 
 		refresh_panel: function (panel) {
@@ -2779,6 +3068,14 @@ define(_template_files, function () {
 				"Settings": Settings,
 				"Panel": SettingsPanel,
 				"Item": SettingsItem,
+			},
+			"Field": {
+				"Text": Field_Text,
+				"Textarea": Field_Textarea,
+				"Number": Field_Number,
+				"Select": Field_Select,
+				"Radios": Field_Radios,
+				"Checkboxes": Field_Checkboxes
 			},
 			"Sidebar": {
 				"Sidebar": Sidebar,
