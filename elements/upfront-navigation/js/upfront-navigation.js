@@ -112,7 +112,7 @@
                     return "Error Item id is missing";
                 Upfront.Util.post({"action": "upfront_change_menu_label", "item_id": listItemDBID, "item_label": $text})
                     .success(function (ret) {
-                        console.log(ret.data)
+                        //console.log(ret.data)
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error changing menu item label");
@@ -190,7 +190,7 @@
                         "name": "",
                         "properties": [
                             {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-                            {"name": "class", "value": "c22"},
+                            {"name": "class", "value": "c6 upfront-navigation_module"},
                             {"name": "has_settings", "value": 0}
                         ],
                         "objects": [

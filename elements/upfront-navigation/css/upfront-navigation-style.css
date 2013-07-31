@@ -1,15 +1,4 @@
 /*/////////Menu start////////*/
-.upfront-navigation
-{
-    padding:0;
-}
-.upfront-navigation .menu{
-    list-style:none;
-    margin:0;
-    padding:0 30px;
-    position:relative;
-    z-index:999999;
-}
 [data-aliment="left"] .menu
 {
     text-align:left;
@@ -22,67 +11,14 @@
 {
     text-align:right;
 }
-.upfront-navigation .menu li{
-    position:relative;
-    display:inline;
-}
 [data-style="vertical"] .menu li
 {
     width: 100%;
     float: left;
 }
-.upfront-navigation .menu a{
-    display:inline-block;
-    padding:10px;
-    text-decoration:none;
-    color:#a3c1d9;
-    text-transform:uppercase;
-    position: relative;
-}
-.upfront-navigation .menu ul{
-    position:absolute;
-    /*top:100%; Uncommenting this makes the dropdowns work in IE7 but looks a little worse in all other browsers. Your call. */
-    left:0;
-    margin:0;
-    padding:0;
-    text-align:left;
-    display:none;
-    border:1px solid #5c7c9b;
-    z-index:9999;
-}
-.upfront-navigation .menu ul li{
-    display:block;
-}
 [data-allow-sub-nav="true"] .menu li:hover > ul,
 [data-allow-sub-nav="1"] .menu li:hover > ul{
     display:block;
-}
-.upfront-navigation .menu ul ul { /* this is applied to 3rd and all after ULs as well */
-    left: 100%;
-    top: 0;
-}
-.upfront-navigation .menu li:hover a{
-    color:#1fcd8f;
-}
-.upfront-navigation .menu li:hover ul a{
-    text-decoration:none;
-    background:none;
-    color:#a3c1d9;
-}
-.upfront-navigation .menu li:hover ul a:hover{
-    color:#1fcd8f;
-}
-.upfront-navigation .menu ul a{
-    white-space:nowrap;
-    display:block;
-    font-size:12px;
-    border-bottom:1px solid #ccc;
-}
-.upfront-navigation .menu li.current_page_item > a,
-.upfront-navigation .menu ul li.current_page_item > a,
-.upfront-navigation .menu li.current_page_parent > a
-{
-    color:#1fcd8f;
 }
 /*/////////Menu Editor start////////*/
 .upfront_page_scroll_box::-webkit-scrollbar,

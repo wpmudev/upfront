@@ -20,15 +20,16 @@ class Upfront_NavigationView extends Upfront_Object {
 
         $new_page = $layout_settings->newPage;
 
-        $menu = '';
-        if ( $menu_id )
+        if ( $menu_id ) :
             $menu = wp_nav_menu(array(
                 'menu' => $menu_id,
                 'fallback_cb'     => false,
                 'echo' => false
             ));
-        if(!$menu)
-            return "Please add menu items";
+        else:
+            return "<div class='upfront-output-object upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
+        endif;
+
         return "<div class='upfront-output-object upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
     }
 
