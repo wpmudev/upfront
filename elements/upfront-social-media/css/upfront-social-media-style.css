@@ -90,6 +90,8 @@
 {
     float: left;
     margin-right:10px;
+    position: relative;
+    line-height: 18px;
 }
 #settings .upfront-settings_panel .cal_to_action_social_media_services_list li,
 #settings .upfront-settings_panel .fan_social_media_services_list li,
@@ -105,7 +107,13 @@
     background: #871b15;
     -webkit-border-radius: 100px;
     border-radius: 100px;
-    padding: 3px;
+    position: absolute;
+    font-size: 12px;
+    width: 15px;
+    line-height: 15px;
+    text-align: center;
+    top: -4px;
+    right: -4px;
 }
 .ser_header .toggle
 {
@@ -199,22 +207,42 @@ label {
     position: relative;
     font-weight: normal;
     padding: 0 15px 0 16px;
-    color: #637587;
+    color: rgba(38, 58, 77, 0.8);
     font-size: 11px;
     font-family: 'Verdana', sans-serif;
 }
 .upfront-checkbox + label:before {
     background-color: transparent;
-    border: 2px solid #4c5f71;
+    border: 2px solid rgba(38, 58, 77, 0.8);
     padding: 4px;
     border-radius: 2px;
     position: absolute;
     content: "";
     left: 0px;
 }
+
+.upfront-checkbox + label:hover, .upfront-radio + label:hover {
+    display: inline-block;
+    position: relative;
+    font-weight: normal;
+    padding: 0 15px 0 16px;
+    color: rgba(38, 58, 77, 1);
+    font-size: 11px;
+    font-family: 'Verdana', sans-serif;
+}
+.upfront-checkbox:hover + label:before {
+    background-color: transparent;
+    border: 2px solid rgba(38, 58, 77, 1);
+    padding: 4px;
+    border-radius: 2px;
+    position: absolute;
+    content: "";
+    left: 0px;
+}
+
 .upfront-checkbox:checked + label
 {
-    color: #30475e;
+    color: rgba(38, 58, 77, 1);
 }
 .upfront-checkbox:checked + label:after {
     content: '\2714';
@@ -224,15 +252,23 @@ label {
     left: 0px;
     line-height: 8px;
     color: #1fcd8f;
-    background-color: #263a4d;
+    background-color: rgba(38, 58, 77, 1);
     padding: 2px;
     border-radius: 2px;
 }
 
 .upfront-radio + label:before {
     -webkit-appearance: none;
-    background-color: #f2f9ff;
-    border: 2px solid #4c5f71;
+    border: 2px solid rgba(38, 58, 77, 0.8);
+    padding: 4px;
+    border-radius: 60px;
+    position: absolute;
+    content: "";
+    left: 0;
+}
+.upfront-radio:hover + label:before {
+    -webkit-appearance: none;
+    border: 2px solid rgba(38, 58, 77, 1);
     padding: 4px;
     border-radius: 60px;
     position: absolute;
@@ -248,15 +284,42 @@ label {
     position: absolute;
     top: 1px;
     background: #1fcd8f;
-    color: #99a1a7;
-    border: 2px solid #263a4d;
+    color: rgba(38, 58, 77, 1);
+    border: 2px solid rgba(38, 58, 77, 1);
     text-shadow: 0px;
     left: 1px;
     font-size: 32px;
 }
 .upfront-radio:checked + label
 {
-    color: #30475e;
+    color: rgba(38, 58, 77, 1);
+}
+.upfront-radio:checked:disabled + label:after {
+    content: ' ';
+    width: 6px;
+    height: 6px;
+    border-radius: 60px;
+    position: absolute;
+    top: 1px;
+    background: rgba(31, 205, 143, 0.5);
+    color: rgba(38, 58, 77, 0.5);
+    border: 2px solid rgba(38, 58, 77, 0.5);
+    text-shadow: 0px;
+    left: 1px;
+    font-size: 32px;
+}
+.upfront-radio:disabled + label:before {
+
+    border: 2px solid rgba(38, 58, 77, 0.5);
+    padding: 4px;
+    border-radius: 60px;
+    position: absolute;
+    content: "";
+    left: 0;
+    color: rgba(38, 58, 77, 0.5);
+}
+.upfront-radio:disabled + label {
+    color: rgba(38, 58, 77, 0.5);
 }
 .upfront-social-popup-hd {
     width: 100% !important;
@@ -264,4 +327,142 @@ label {
     color: #263a4d !important;
     font-size: 24px !important;
     font-weight: 200;
+}
+.upfront-share-item {
+    display: inline-block;
+}
+.upfront-entry-share-top[data-alignment='left']{
+    text-align: left;
+}
+.upfront-entry-share-top[data-alignment='center']{
+    text-align: center;
+}
+.upfront-entry-share-top[data-alignment='right']{
+    text-align: right;
+}
+.upfront-entry-share-bottom[data-alignment='left']{
+    text-align: left;
+}
+.upfront-entry-share-bottom[data-alignment='center']{
+    text-align: center;
+}
+.upfront-entry-share-bottom[data-alignment='right']{
+    text-align: right;
+}
+.upfront-call-to-action
+{
+    display: block;
+}
+.upfront-button-style-0 .upfront-call-to-action
+{
+    background: url("../images/SM_Sprite_Style_01-01.svg") no-repeat;
+}
+.upfront-button-style-1 .upfront-call-to-action
+{
+    background: url("../images/SM_Sprite_Style_02-01.svg") no-repeat;
+}
+.upfront-button-style-2 .upfront-call-to-action
+{
+    background: url("../images/SM_Sprite_Style_11-01.svg") no-repeat;
+}
+.upfront-button-size-0 .upfront-call-to-action
+{
+    width: 16px;
+    height: 16px;
+    background-size: 40px 280px;
+}
+.upfront-button-size-1 .upfront-call-to-action
+{
+    width: 24px;
+    height: 24px;
+    background-size: 60px 420px;
+}
+.upfront-button-size-2 .upfront-call-to-action
+{
+    width: 40px;
+    height: 40px;
+}
+
+.upfront-button-size-2 .upfront-call-to-action.facebook-link {
+    background-position: -30px -30px;
+}
+.upfront-button-size-2 .upfront-call-to-action.twitter-link {
+    background-position: -30px -130px;
+}
+.upfront-button-size-2 .upfront-call-to-action.gplus-link {
+    background-position: -30px -230px;
+}
+.upfront-button-size-2 .upfront-call-to-action.linkedin-link {
+    background-position: -30px -430px;
+}
+.upfront-button-size-2 .upfront-call-to-action.pinterest-link {
+    background-position: -30px -630px;
+}
+.upfront-button-size-2 .upfront-call-to-action.youtube-link {
+    background-position: -30px -330px;
+}
+
+.upfront-button-size-1 .upfront-call-to-action.facebook-link {
+    background-position: -18px -18px;
+}
+.upfront-button-size-1 .upfront-call-to-action.twitter-link {
+    background-position: -18px -78px;
+}
+.upfront-button-size-1 .upfront-call-to-action.gplus-link {
+    background-position: -18px -138px;
+}
+.upfront-button-size-1 .upfront-call-to-action.linkedin-link {
+    background-position: -18px -258px;
+}
+.upfront-button-size-1 .upfront-call-to-action.pinterest-link {
+    background-position: -18px -378px;
+}
+.upfront-button-size-1 .upfront-call-to-action.youtube-link {
+    background-position: -18px -198px;
+}
+
+
+.upfront-button-size-0 .upfront-call-to-action.facebook-link {
+    background-position: -12px -12px;
+}
+.upfront-button-size-0 .upfront-call-to-action.twitter-link {
+    background-position: -12px -52px;
+}
+.upfront-button-size-0 .upfront-call-to-action.gplus-link {
+    background-position: -12px -92px;
+}
+.upfront-button-size-0 .upfront-call-to-action.linkedin-link {
+    background-position: -12px -172px;
+}
+.upfront-button-size-0 .upfront-call-to-action.pinterest-link {
+    background-position: -12px -252px;
+}
+.upfront-button-size-0 .upfront-call-to-action.youtube-link {
+    background-position: -12px -132px;
+}
+
+.upfront-fan-counts
+{
+    background: url("../images/SM_Sprite_Style_01-01.svg") no-repeat;
+    min-height: 40px;
+    min-width: 40px;
+    display: inline-block;
+}
+.upfront-fan-count
+{
+    padding-left: 48px;
+    display: inline-block;
+}
+.upfront-fan-counts .upfront-fan-count strong
+{
+    display: block;
+}
+.upfront-fan-counts.facebook-count {
+    background-position: -30px -30px;
+}
+.upfront-fan-counts.twitter-count {
+    background-position: -30px -130px;
+}
+.upfront-fan-counts.gplus-count {
+    background-position: -30px -230px;
 }

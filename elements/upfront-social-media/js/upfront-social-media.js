@@ -203,10 +203,30 @@
                 if(pintrestPageUrl) me.$popup.content.find('#select_page_url option#social_media_global_settings-pintrest').remove();
 
                 me.clickOnSaveButton();
+                me.clickOnCheckBoxes();
                 me.clickOnAddPageButton();
                 me.hideAddButton();
             },
+            clickOnCheckBoxes: function(){
+                this.toggleDisable('social_media_global_settings-location-top');
+                this.toggleDisable('social_media_global_settings-location-bottom');
+            },
+            toggleDisable: function(selectorName){
+                var me = this,
+                    checkbox = this.$popup.content.find('#'+selectorName),
+                    isChecked = checkbox.is(':checked');
+                if(!isChecked)
+                    checkbox.nextAll('input[type="radio"]').prop('disabled', true);
 
+                checkbox.on("click", function () {
+                    var checkbox = me.$popup.content.find('#'+selectorName),
+                        isChecked = checkbox.is(':checked');
+                    if(!isChecked)
+                        checkbox.nextAll('input[type="radio"]').prop('disabled', true);
+                    if(isChecked)
+                        checkbox.nextAll('input[type="radio"]').prop('disabled', false);
+                });
+            },
             clickOnSaveButton: function(){
                 var me = this;
                 this.$popup.bottom.find('.upfront-social-media-save_settings').on("click", function () {
@@ -289,13 +309,13 @@
                 $GooglePageUrl = $GooglePageUrl.val() !== '' ? $GooglePageUrl.val() : 0;
 
                 var $LinkedInPageUrl = this.$popup.content.find('input#social_media_global_settings-linkedin');
-                $LinkedInPageUrl = $LinkedInPageUrl.val() !== '' ? $LinkedInPageUrl.val() : 0;
+                $LinkedInPageUrl = ($LinkedInPageUrl.length ? ($LinkedInPageUrl.val() !== '' ? $LinkedInPageUrl.val() : 0) : 0);
 
                 var $YouTubePageUrl = this.$popup.content.find('input#social_media_global_settings-youtube');
-                $YouTubePageUrl = $YouTubePageUrl.val() !== '' ? $YouTubePageUrl.val() : 0;
+                $YouTubePageUrl = ($YouTubePageUrl.length ? ($YouTubePageUrl.val() !== '' ? $YouTubePageUrl.val() : 0) : 0);
 
                 var $PintrestPageUrl = this.$popup.content.find('input#social_media_global_settings-pintrest');
-                $PintrestPageUrl = $PintrestPageUrl.val() !== '' ? $PintrestPageUrl.val() : 0;
+                $PintrestPageUrl = ($PintrestPageUrl.length ? ($PintrestPageUrl.val() !== '' ? $PintrestPageUrl.val() : 0) : 0);
 
                 var $IsLiked = this.$popup.content.find('input#social_media_global_settings-is-liked:checked');
                 $IsLiked = $IsLiked.length ? parseInt($IsLiked.val(), 10) : 0;
@@ -467,6 +487,7 @@
             var $icons,
                 me = this,
                 pSettings,
+                iconClass,
                 panelSettings = $.parseJSON(this.model.get_property_value_by_name("social_media_panel_settings"));
             panelSettings = panelSettings !== null ? panelSettings : 0;
 
@@ -484,13 +505,37 @@
                 }
             }
 
-            $icons = $('<div class="upfront-call-toaction-box"></div>');
+            this.$el.find('.upfront-object-content').addClass('upfront-style-'+pSettings.buttonStyle);
+            $icons = $('<div class="upfront-call-to-action-box"></div>');
             $icons.empty();
 
             if(pSettings.calToActionSocialMediaServices){
                 _.each(pSettings.calToActionSocialMediaServices, function(social) {
                     if(social.value == 0) return;
-                    $icons.append('<div class="ufront-'+ social.name.toLowerCase()+'-box upfront-social-icon"><a href="'+ (!social.url || social.url == ''  ? '#' : social.url )+'">'+ social.name + '</a>'+ (!social.url ? '<span class="alert-url">!</span>':'' )+'</div>');
+
+                    switch (social.id)
+                    {
+                        case 1:
+                            iconClass = 'facebook-link';
+                            break;
+                        case 2:
+                            iconClass = 'twitter-link';
+                            break;
+                        case 3:
+                            iconClass = 'gplus-link';
+                            break;
+                        case 4:
+                            iconClass = 'linkedin-link';
+                            break;
+                        case 5:
+                            iconClass = 'pinterest-link';
+                            break;
+                        case 6:
+                            iconClass = 'youtube-link';
+                            break;
+                    }
+
+                    $icons.append('<div class="ufront-'+iconClass+'-box upfront-social-icon upfront-button-style-'+pSettings.buttonStyle+' upfront-button-size-'+pSettings.buttonSize+'"><a class="upfront-call-to-action '+iconClass+'" href="'+ (!social.url || social.url == ''  ? '#' : social.url )+'"></a>'+ (!social.url ? '<span class="alert-url">!</span>':'' )+'</div>');
                 });
 
                 if( !$.trim( $icons.html() ).length ) {
@@ -500,7 +545,7 @@
             else{
                 $icons.append('Please select Social Media Services ...!');
             }
-
+            $icons.wrap('<div />');
             return $icons.html();
         },
 
@@ -508,6 +553,7 @@
             var $fanFollowerCount,
                 me = this,
                 pSettings,
+                iconClass,
                 panelSettings = $.parseJSON(this.model.get_property_value_by_name("social_media_panel_settings"));
             panelSettings = panelSettings !== null ? panelSettings : 0;
 
@@ -531,7 +577,30 @@
             if(pSettings.fanSocialMediaServices){
                 _.each(pSettings.fanSocialMediaServices, function(social) {
                     if(social.value == 0) return;
-                    $fanFollowerCount.append('<div data-id="upfront-icon-'+social.id+'" class="upfront-social-icon"><a href="'+ (!social.url ? '#' : social.url )+'">'+ social.name + '</a>'+ (!social.url ? '<span class="alert-url">!</span>':'' )+'</div>');
+
+                    switch (social.id)
+                    {
+                        case 1:
+                            iconClass = 'facebook-count';
+                            break;
+                        case 2:
+                            iconClass = 'twitter-count';
+                            break;
+                        case 3:
+                            iconClass = 'gplus-count';
+                            break;
+                        case 4:
+                            iconClass = 'linkedin-count';
+                            break;
+                        case 5:
+                            iconClass = 'pinterest-count';
+                            break;
+                        case 6:
+                            iconClass = 'youtube-count';
+                            break;
+                    }
+
+                    $fanFollowerCount.append('<div data-id="upfront-icon-'+social.id+'" class="ufront-'+iconClass+'-box upfront-social-icon"><a class="upfront-fan-counts '+iconClass+'" href="'+ (!social.url ? '#' : social.url )+'"></a>'+ (!social.url ? '<span class="alert-url">!</span>':'' )+'</div>');
                 });
 
                 var fbUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url'),
@@ -549,7 +618,7 @@
                             else{
                                 likes = 'Error';
                             }
-                            var countText = data.likes+' FANS';
+                            var countText = '<strong>'+data.likes+'</strong> Fans';
                             me.appendCounts(1, countText);
                         });
                 }else{
@@ -560,7 +629,7 @@
                 if(twUrl){
                     Upfront.Util.post({"action": "upfront_get_twitter_page_likes"})
                         .success(function (ret) {
-                            var countText = ret.data+' FOLLOWERS';
+                            var countText = '<strong>'+ret.data+'</strong> Followers';
                             me.appendCounts(2, countText);
                         })
                         .error(function (ret) {
@@ -571,7 +640,7 @@
                 if(gpUrl){
                     Upfront.Util.post({"action": "upfront_get_google_page_subscribers"})
                         .success(function (ret) {
-                            var countText = ret.data+' SUBSCRIBERS';
+                            var countText = '<strong>'+ret.data+'</strong> Subscribers';
                             me.appendCounts(3, countText);
                         })
                         .error(function (ret) {
@@ -668,12 +737,11 @@
 
                             (social.id == 3 ? '<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script><div class="g-plusone" '+(pSettings.counterOptions ? 'data-size="tall"' : 'data-size="medium"')+'></div>':'' )+
 
-                            (!social.url ? '<span class="alert-url">!</span>':'' )+
                             '</div>');
                     });
 
-                    if( !$.trim( $likeFollowPlusOne.html() ).length ) {
-                        $likeFollowPlusOne.append('Please select Social Media Services ...!');
+                    if( !$.trim( me.$el.find('.upfront-object-content').html() ).length ) {
+                        me.$el.find('.upfront-object-content').append('Please select Social Media Services ...!');
                     }
                 });
                 $likeFollowPlusOne.append('Loading ...');
@@ -860,8 +928,6 @@
             '<ul class="like_social_media_services_list"></ul>' +
             '</div>' +
 
-            '<div class="back_global_settings">Back to your <a href="#">global settings</a></div> '+
-
             '</div>' +
             '</div>' +
 
@@ -912,13 +978,6 @@
             '<input type="radio" id="call_to_action_icon_type-button-style-2" name="call_to_action_button_style" value="1" {[ if (buttonStyle == 1) { ]}   {{checked="checked"}} {[ } ]} /> Two' +
             '<br />' +
             '<input type="radio" id="call_to_action_icon_type-button-style-3" name="call_to_action_button_style" value="2" {[ if (buttonStyle == 2) { ]}   {{checked="checked"}} {[ } ]} /> Three'+
-            '<br />' +
-            '<input type="radio" id="call_to_action_icon_type-button-style-4" name="call_to_action_button_style" value="3" {[ if (buttonStyle == 3) { ]}   {{checked="checked"}} {[ } ]} /> Four'+
-            '<br />' +
-            '<input type="radio" id="call_to_action_icon_type-button-style-5" name="call_to_action_button_style" value="4" {[ if (buttonStyle == 4) { ]}   {{checked="checked"}} {[ } ]} /> Five'+
-            '<br />' +
-            '<input type="radio" id="call_to_action_icon_type-button-style-6" name="call_to_action_button_style" value="5" {[ if (buttonStyle == 5) { ]}   {{checked="checked"}} {[ } ]} /> Six' +
-
             '</div>' +
             '</div>' +
 
@@ -952,6 +1011,7 @@
 
 
             '</div>' +
+            '<div class="back_global_settings">Back to your <a href="#">global settings</a></div> '+
             '</div>' +
             '<!--menu content end-->'),
 
@@ -1022,9 +1082,9 @@
 
             if(!pSettings.likeSocialMediaServices){
                 pSettings.likeSocialMediaServices  = [
-                    {id: 1, url: this.FacebookPageUrl, value: 0, name: "Facebook"},
-                    {id: 2, url: this.TwitterPageUrl, value: 0, name : "Twitter"},
-                    {id: 3, url: this.GooglePageUrl, value: 0, name: "Google+"}
+                    {id: 1, value: 0, name: "Facebook"},
+                    {id: 2, value: 0, name : "Twitter"},
+                    {id: 3, value: 0, name: "Google+"}
                 ];
             }
 
@@ -1033,7 +1093,8 @@
             this.updateObjectUrl(pSettings.likeSocialMediaServices,3,this.GooglePageUrl);
 
             _.map(pSettings.likeSocialMediaServices, function(social) {
-                me.$el.find('.like_social_media_services_list').append('<li><input type="checkbox" data-url="'+social.url+'" data-id='+ social.id + ' name='+ social.name.toLowerCase() + ' value="1" ' + (social.value == 1 ? 'checked' : '') + ' /><span>'+ social.name + '</span>'+(social.url == '0' || social.url == '' ? '<div class="update-url-like-box"><input '+( social.id == 1 ? 'data-name="facebook_page_url"' : '' )+( social.id == 2 ? 'data-name="twitter_page_url"' : '' )+( social.id == 3 ? 'data-name="google_page_url"' : '' )+' type="text"><button>ok</button></div>':'' )+'</li>');
+                //me.$el.find('.like_social_media_services_list').append('<li><input type="checkbox" data-url="'+social.url+'" data-id='+ social.id + ' name='+ social.name.toLowerCase() + ' value="1" ' + (social.value == 1 ? 'checked' : '') + ' /><span>'+ social.name + '</span>'+(social.url == '0' || social.url == '' ? '<div class="update-url-like-box"><input '+( social.id == 1 ? 'data-name="facebook_page_url"' : '' )+( social.id == 2 ? 'data-name="twitter_page_url"' : '' )+( social.id == 3 ? 'data-name="google_page_url"' : '' )+' type="text"><button>ok</button></div>':'' )+'</li>');
+                me.$el.find('.like_social_media_services_list').append('<li><input type="checkbox" data-url="'+social.url+'" data-id='+ social.id + ' name='+ social.name.toLowerCase() + ' value="1" ' + (social.value == 1 ? 'checked' : '') + ' /><span>'+ social.name + '</span></li>');
             });
 
             this.$el.find(".like_social_media_services_list" ).sortable({
@@ -1138,6 +1199,7 @@
                 Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
                     .success(function (ret) {
                         //console.log(ret.data);
+                        Upfront.Views.Editor.notify('Global Social Settings Updated!')
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error Saving settings");
@@ -1165,6 +1227,7 @@
                 Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
                     .success(function (ret) {
                         //console.log(ret.data);
+                        Upfront.Views.Editor.notify('Global Social Settings Updated!')
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error Saving settings");
@@ -1187,10 +1250,11 @@
 
             var modelName = $selected.attr('data-model-name');
             var $modelValue = $input.val();
-            this.updateCallToActionPageUrl(modelName, $modelValue);
+            if($modelValue)
+                this.updateCallToActionPageUrl(modelName, $modelValue);
 
             $input.val('');
-
+            this.panel.trigger("upfront:settings:panel:refresh", this.panel);
             this.hideSocialMediaItem();
         },
 
@@ -1199,7 +1263,7 @@
                 $input = this.$el.find('.blank_add_page_url_field'),
                 url = $selected.attr('data-url');
 
-            if(url == 'false' || url == ''){
+            if(url == 'false' || url == '' || url == '0'){
                 $input.val('');
             }
             else{
@@ -1268,7 +1332,6 @@
             $('.like_social_media_services_list').find('li').each(function(i) {
                 likeSocialItems[i] = {};
                 likeSocialItems[i]['id'] = parseInt($(this).find('input').attr('data-id'), 10);
-                likeSocialItems[i]['url'] = ($(this).find('input').attr('data-url') == 'false' || $(this).find('input').attr('data-url') == '0' ? 0 : $(this).find('input').attr('data-url'));
                 likeSocialItems[i]['value'] = ($(this).find('input:checked').val() ? 1 : 0);
                 likeSocialItems[i]['name'] = $(this).find('span').text();
             });

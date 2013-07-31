@@ -104,7 +104,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
     public function get_twitter_page_followers () {
 
-        $url = Upfront_SocialMedia_Setting::get_page_url('twitter_page_url');
+        $url = Upfront_SocialMedia_Setting::get_value_by_name('twitter_page_url');
         if($url){
             $page_url = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
         }
@@ -128,7 +128,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
     public function get_google_page_subscriber () {
 
-        $url = Upfront_SocialMedia_Setting::get_page_url('google_page_url');
+        $url = Upfront_SocialMedia_Setting::get_value_by_name('google_page_url');
         if($url){
             $page_url = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
         }
@@ -154,7 +154,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
     public function get_facebook_page_likes () {
 
-        $url = Upfront_SocialMedia_Setting::get_page_url('facebook_page_url');
+        $url = Upfront_SocialMedia_Setting::get_value_by_name('facebook_page_url');
         if($url){
             $page_url = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
         }
@@ -180,12 +180,46 @@ class Upfront_SocialMediaView extends Upfront_Object {
         $output = '<div class="upfront-fan-follower-count-box">';
 
         foreach($social_services->fanSocialMediaServices as $service) :
-            $output .= '<div data-id="upfront-icon-'.$service->id.'" class="upfront-social-icon">';
-            $output .= '<a target="_blank" href="'.$service->url.'">';
-            $output .= $service->name;
-            $service->id === 1 ? $output .= '<span> '.self::get_facebook_page_likes().' Fans</span>' : '';
-            $service->id === 2 ? $output .= '<span> '.self::get_twitter_page_followers().' Followers</span>' : '';
-            $service->id === 3 ? $output .= '<span> '.self::get_google_page_subscriber().' Subscribers</span>' : '';
+
+            switch ($service->id)
+            {
+                case 1:
+                    $iconClass = 'facebook-count';
+                    break;
+                case 2:
+                    $iconClass = 'twitter-count';
+                    break;
+                case 3:
+                    $iconClass = 'gplus-count';
+                    break;
+                case 4:
+                    $iconClass = 'linkedin-count';
+                    break;
+                case 5:
+                    $iconClass = 'pinterest-count';
+                    break;
+                case 6:
+                    $iconClass = 'youtube-count';
+                    break;
+            }
+
+            $output .= '<div data-id="upfront-icon-'.$service->id.'" class="ufront-'.$iconClass.'-box upfront-social-icon">';
+            $output .= '<a class="upfront-fan-counts '.$iconClass.'" target="_blank" href="'.($service->url ? $service->url:'#').'">';
+            if($service->url){
+                ($service->id === 1 ? $output .= '<span class="upfront-fan-count"><strong>'.self::get_facebook_page_likes().'</strong> Fans</span>' : '');
+            }else{
+                $output .= '<span class="alert-url">!</span>';
+            };
+            if($service->url){
+                ($service->id === 2 ? $output .= '<span class="upfront-fan-count"><strong>'.self::get_twitter_page_followers().'</strong> Followers</span>' : '');
+            }else{
+                $output .= '<span class="alert-url">!</span>';
+            };
+            if($service->url){
+                ($service->id === 3 ? $output .= '<span class="upfront-fan-count"><strong>'.self::get_google_page_subscriber().'</strong> Subscribers</span>' : '');
+            }else{
+                $output .= '<span class="alert-url">!</span>';
+            };
             $output .= '</a>';
             $output .= '</div>';
         endforeach;
@@ -193,16 +227,39 @@ class Upfront_SocialMediaView extends Upfront_Object {
         return $output;
     }
 
-    public static function call_to_action($social_services){
-        $output = '<div class="upfront-call-to-action-box">';
+    public function call_to_action($social_services){
+        $output = '';
         foreach($social_services->calToActionSocialMediaServices as $service) :
-            $output .= '<div data-id="upfront-icon-'.$service->id.'" class="upfront-social-icon">';
-            $output .= '<a target="_blank" href="'.$service->url.'">';
-            $output .= $service->name;
-            $output .= '</a>';
+            switch ($service->id)
+            {
+                case 1:
+                    $iconClass = 'facebook-link';
+                    break;
+                case 2:
+                    $iconClass = 'twitter-link';
+                    break;
+                case 3:
+                    $iconClass = 'gplus-link';
+                    break;
+                case 4:
+                    $iconClass = 'linkedin-link';
+                    break;
+                case 5:
+                    $iconClass = 'pinterest-link';
+                    break;
+                case 6:
+                    $iconClass = 'youtube-link';
+                    break;
+            }
+
+            $button_style = $social_services->buttonStyle;
+            $button_size = $social_services->buttonSize;
+
+            $output .= '<div class="ufront-'.$iconClass.'-box upfront-social-icon upfront-button-style-'.$button_style.' upfront-button-size-'.$button_size.'">';
+            $output .= '<a class="upfront-call-to-action '.$iconClass.'" target="_blank" href="'.($service->url ? $service->url : '#' ).'"></a>';
+            $output .= (!$service->url ? '<span class="alert-url">!</span>':'' );
             $output .= '</div>';
         endforeach;
-        $output .= '</div>';
         return $output;
     }
 
@@ -228,6 +285,118 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
         add_action('wp_ajax_upfront_get_social_media_global_settings', array($this, "get_social_media_global_settings"));
         add_action('wp_ajax_upfront_get_twitter_page_likes', array($this, "get_twitter_page_likes"));
         add_action('wp_ajax_upfront_get_google_page_subscribers', array($this, "get_google_page_subscribers"));
+        add_filter('the_content', array($this, "upfront_the_content_filter"));
+    }
+
+    public static function upfront_the_content_filter( $content ) {
+
+            if ( is_single() ):
+                global $post;
+                if ( get_option('upfront_social_media_global_settings') && self::get_value_by_name('post_options') ) :
+                    $content = strip_shortcodes(wp_filter_nohtml_kses($post->post_content));
+                    $content = substr($content,0,55);
+
+                    $page_url = (is_home() ? site_url() : $post->guid);
+                    $page_content = (is_home() ? '' : $content.'...');
+                    $counter_options = self::get_value_by_name('counter_options');
+
+                    $facebook_button = $counter_options ? "box_count" : "button_count";
+                    $facebook_width = $counter_options ? "65" : "92";
+                    $facebook_height = $counter_options ? "65" : "20";
+
+                    $tweet_button = $counter_options ? "vertical" : "horizontal";
+                    $tweet_width = $counter_options ? "80" : "100";
+                    $tweet_height = $counter_options ? "63" : "20";
+
+                    $google_button = $counter_options ? "tall" : "medium";
+                    $google_width = $counter_options ? "50" : "72";
+
+                    switch (self::get_value_by_name("location_top_alignment")) {
+                        case 0:
+                            $location_top_alignment = 'left';
+                            break;
+                        case 1:
+                            $location_top_alignment = 'center';
+                            break;
+                        case 2:
+                            $location_top_alignment = 'right';
+                            break;
+                    }
+
+                    switch (self::get_value_by_name("location_bottom_alignment")) {
+                        case 0:
+                            $location_bottom_alignment = 'left';
+                            break;
+                        case 1:
+                            $location_bottom_alignment = 'center';
+                            break;
+                        case 2:
+                            $location_bottom_alignment = 'right';
+                            break;
+                    }
+
+                    $location_top = (self::get_value_by_name("location_top") ? "data-alignment='{$location_top_alignment}'" : "");
+                    $location_bottom = (self::get_value_by_name("location_bottom") ? "data-alignment='{$location_bottom_alignment}'" : "");
+
+                    $facebook_icon = "<div class='upfront-share-item upfront-share-item-facebook'>".
+                        "<iframe src='//www.facebook.com/plugins/like.php?".
+                        "href=".rawurlencode($page_url)."&amp;".
+                        "send=false&amp;".
+                        "layout={$facebook_button}&amp;".
+                        "width={$facebook_width}&amp;".
+                        "show_faces=true&amp;".
+                        "font&amp;".
+                        "colorscheme=light&amp;".
+                        "action=like&amp;".
+                        "height={$facebook_height}' ".
+                        "scrolling='no' frameborder='0' ".
+                        "style='border:none; overflow:hidden; ".
+                        "max-width:{$facebook_width}px; ".
+                        "height:{$facebook_height}px;' ".
+                        "allowTransparency='true'></iframe>".
+                        "</div>";
+
+                    $twitter_icon = "<div class='upfront-share-item upfront-share-item-twitter'>".
+                        "<iframe allowtransparency='true' frameborder='0' scrolling='no' src='https://platform.twitter.com/widgets/tweet_button.html?".
+                        "url=".rawurlencode($page_url)."&amp;".
+                        "text={$page_content}&amp;".
+                        "count={$tweet_button}&amp;".
+                        "size=medium' ".
+                        "style='width:{$tweet_width}px; ".
+                        "height:{$tweet_height}px;'></iframe>".
+                        "</div>";
+
+                    $gplus_icon = "<div class='upfront-share-item upfront-share-item-plusone'>".
+                        "<script type='text/javascript' src='https://apis.google.com/js/plusone.js'></script><g:plusone width='".$google_width."' size='{$google_button}'></g:plusone>".
+                        "</div>";
+
+                    if(self::get_value_by_name("location_top")):
+                        $output = "<div class='upfront-entry-share upfront-entry-share-top' {$location_top} >".
+                            (self::get_value_by_name("is_liked") ? $facebook_icon : '').
+                            (self::get_value_by_name("is_tweet") ? $twitter_icon : '').
+                            (self::get_value_by_name("is_gplus") ? $gplus_icon : '').
+                        "</div>";
+                    endif;
+
+                    $output .= $content;
+
+                    if(self::get_value_by_name("location_bottom")):
+                        $output .= "<div class='upfront-entry-share upfront-entry-share-bottom' {$location_bottom} >".
+                            (self::get_value_by_name("is_liked") ? $facebook_icon : '').
+                            (self::get_value_by_name("is_tweet") ? $twitter_icon : '').
+                            (self::get_value_by_name("is_gplus") ? $gplus_icon : '').
+                        "</div>";
+                    endif;
+
+                else:
+                    $output = $content;
+                endif; // settings end
+            else:
+                $output = $content;
+            endif;
+            // Returns the content.
+            return $output;
+
     }
 
     public static function array_search_i($str,$array){
@@ -245,7 +414,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
         return $facebook_page_name = end($path); // get the value of the last element
     }
 
-    public static function get_page_url($url){
+    public static function get_value_by_name($url){
         $upfront_social_media_global_settings = get_option('upfront_social_media_global_settings');
         if($upfront_social_media_global_settings){
             $settings = json_decode($upfront_social_media_global_settings);
@@ -279,7 +448,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 
     public function get_twitter_page_likes () {
 
-        $url = $this->get_page_url('twitter_page_url');
+        $url = $this->get_value_by_name('twitter_page_url');
         if($url){
             $page_url = $this->get_last_part_of_page_url($url);
         }
@@ -302,7 +471,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
     }
 
     public function get_google_page_subscribers () {
-        $url = $this->get_page_url('google_page_url');
+        $url = $this->get_value_by_name('google_page_url');
         if($url){
             $page_url = $this->get_last_part_of_page_url($url);
         }
