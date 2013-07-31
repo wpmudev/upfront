@@ -697,6 +697,9 @@
 	background: #2b445d;
 	color: #f2f9ff;
 }
+.tooltip.upfront-field-wrap:before {
+	left: -22px;
+}
 .tooltip:after {
 	content: " ";
 	position: absolute;
