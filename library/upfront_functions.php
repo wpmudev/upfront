@@ -102,5 +102,23 @@ function upfront_ajax_url ($action, $args = '') {
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );
 }
 
+/**
+ * Register scripts
+ */
+
+function upfront_register_vendor_scripts() {
+	//Magnific lightbox
+	wp_register_script(
+		'magnific', 
+		Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js', 
+		array('jquery')
+	);
+	wp_register_style(
+		'magnific', 
+		Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.css'
+	);
+}
+add_action('init', 'upfront_register_vendor_scripts');
+
 
 
