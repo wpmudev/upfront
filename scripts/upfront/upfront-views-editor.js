@@ -2501,9 +2501,9 @@ define(_template_files, function () {
 		},
 		get_value: function () {
 			var $field = this.get_field();
-			if ( $field.size() == 1 )
+			if ( ! this.multiple || ($field.size() == 1 && $field.is('select')) )
 				return $field.val();
-			else if ( $field.size() > 1 )
+			else
 				return _.map($field, function (el) { return $(el).val(); });
 			return false;
 		},
