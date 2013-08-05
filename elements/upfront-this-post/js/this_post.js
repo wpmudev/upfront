@@ -311,7 +311,7 @@ console.log(this.dom_range)
 		if($title.length)
 			this.post.set('post_title', $title.val());
 		if($content.length)
-			this.post.set('post_content', Upfront.Media.transform($content.html()));
+			this.post.set('post_content', Upfront.Media.Transformations.apply($content.html()));
 	}
 });
 

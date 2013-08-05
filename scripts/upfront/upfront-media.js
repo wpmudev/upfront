@@ -1757,7 +1757,7 @@
 			});
 			if (result && result.length && result.length > 1) {
 				html = _.template(
-					Upfront.Media.Templates.gallery,
+					Upfront.Media.Templates.multiple,
 					{content: html}
 				);
 			}
@@ -1779,7 +1779,8 @@ Upfront.Media = {
 		embeddable: '<div>{{post_content}}<br />{{post_title}}</div>',
 		//gallery: '<div class="gallery"><h1>Gallery</h1>{{content}}</div>',
 		gallery: '[upfront-gallery]{{content}}[/upfront-gallery]',
-		slider: '<div class="slider"><h1>Slider</h1>{{content}}</div>'
+		slider: '<div class="slider"><h1>Slider</h1>{{content}}</div>',
+		multiple: '<div class="upfront-inserted_images-container">{{content}}</div>'
 	},
 	Transformations: {
 		_transformations: _([]),

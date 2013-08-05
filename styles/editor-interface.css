@@ -3849,3 +3849,14 @@ License: MIT
 #upfront-image-details-image_details .link ul em {
 	color: #20ca8b;
 }
+
+#upfront-popup .upfront-ucomment-tabs {
+	width: 80%;
+}
+#upfront-popup .upfront-ucomment-tabs .settings {
+	width: 60%;
+}
+.upfront-field-complex_field input[type="number"],
+.upfront-field-labeled_counter_field input[type="number"] {
+	width: 4em;
+}
