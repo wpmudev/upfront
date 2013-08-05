@@ -99,6 +99,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 	private function _add_hooks () {
 		add_action('wp_ajax_upfront_load_main', array($this, "load_main"));
+		add_action('wp_ajax_upfront_data', array($this, 'load_upfront_data'));
 		//add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
 	}
 
@@ -107,6 +108,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$ajax = admin_url('admin-ajax.php');
 		$admin = admin_url();
 		$site = site_url();
+		$upfront_data_url = $ajax . '?action=upfront_data';
 
 
 		$entities = Upfront_Entity_Registry::get_instance();
@@ -138,7 +140,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		$layout_editor_requirements = array(
-			"core" => array('models', 'views', 'editor_views', 'behaviors', 'media', 'spectrum'),
+			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'spectrum'),
 			"entities" => array_merge(array('objects'), array_keys($registered)),
 		);
 		$layout_editor_requirements = json_encode(
@@ -272,6 +274,10 @@ $(function () {
 })();
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));
+	}
+
+	public function load_upfront_data(){
+		include Upfront::get_root_dir() . '/scripts/upfront/upfront-data.php';
 	}
 }
 
