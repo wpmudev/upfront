@@ -32,34 +32,9 @@ var	templates = [
 require(templates, function(imageTpl, editorTpl) {
 var UimageModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		this.init_properties({
-			type: 'UimageModel',
-			view_class: 'UimageView',
-			element_id: Upfront.Util.get_unique_id("image-object"),
-			has_settings: 1,
-			'class':  'c34 upfront-image',
-
-			src: 'http://imgsrc.hubblesite.org/hu/db/images/hs-2010-22-a-web.jpg',
-			srcFull: 'http://imgsrc.hubblesite.org/hu/db/images/hs-2010-22-a-web.jpg',
-			image_title: '',
-			alternative_text: '',
-			when_clicked: 'do_nothing',
-			image_link: false,
-			include_image_caption: false,
-			image_caption: '',
-			caption_position: 'below_image',
-			caption_alignment: 'top',
-			caption_trigger: 'always_show',
-			image_status: 'starting',
-			size: {width: 1000, height: 1000},
-			position: {top: 0, left: 0},
-			element_size: {width: 250, height: 250},
-			rotation: 0,
-			color: '#ffffff',
-			background: '#000000',
-			imageId: 0,
-			imageSizes: false
-		});
+		var properties = _.clone(Upfront.data.uimage.defaults);
+		properties.element_id = Upfront.Util.get_unique_id("image-object"),
+		this.init_properties(properties);
 	}
 });
 

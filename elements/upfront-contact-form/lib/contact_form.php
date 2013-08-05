@@ -4,6 +4,51 @@
  */
 class Upfront_UcontactView extends Upfront_Object {
 	var $error = false;
+
+	var $defaults = array(
+		'form_add_title' => false,
+		'form_name_label' => 'Your name:',
+		'form_email_label' => 'Your email:',
+		'show_subject' => false,
+		'form_subject' => 'form_default_subject',
+		'form_subject_label' => 'Your subject:',
+		'form_default_subject' => 'Sent from the website',
+		'form_message_label' => 'Your message:',
+		'form_button_text' => 'Send',
+		'form_validate_when' => 'submit',
+		'form_label_position' => 'above',
+		'form_style' => '1',
+		'form_use_icons' => 1,
+
+		'type' => "UcontactModel",
+		'view_class' => "UcontactView",
+		"class" => "c34 upfront-contact-form",
+		'has_settings' => 1
+	);
+
+	function __construct($data) {
+		$this->defaults['form_email_to'] = get_option('admin_email');
+		$data['properties'] = $this->merge_default_properties($data);
+		parent::__construct($data);
+	}
+
+	protected function merge_default_properties($data){
+		$flat = array();
+		if(!$data['properties'])
+			return $flat;
+
+		foreach($data['properties'] as $prop)
+			$flat[$prop['name']] = $prop['value'];
+
+		$flat = array_merge($this->defaults, $flat);
+
+		$properties = array();
+		foreach($flat as $name => $value)
+			$properties[] = array('name' => $name, 'value' => $value);
+
+		return $properties;
+	}
+
 	public function get_markup () {
 
 		//Check if the form has been sent
@@ -24,6 +69,13 @@ class Upfront_UcontactView extends Upfront_Object {
 			'form_style' => $this->_get_property('form_style'),
 			'validate' => $this->_get_property('form_validate_when') == 'field' ? 'ucontact-validate-field' : ''
 		));
+	}
+
+	public function add_js_defaults($data){
+		$data['ucontact'] = array(
+			'defaults' => $this->defaults
+		);
+		return $data;
 	}
 
 	public static function add_styles_scripts () {

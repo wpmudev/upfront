@@ -35,6 +35,11 @@ function uimage_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('uimage', upfront_element_url('js/uimage', __FILE__));
 
+
+	// Add element defaults to data object
+	$uimage = new Upfront_UimageView(array());
+	add_action('upfront_data', array($uimage, 'add_js_defaults'));
+
 	//re_register the jQuery forms plugin for upload percentage
 	Upfront_UimageView::set_jquery_form();
 

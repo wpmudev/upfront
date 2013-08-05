@@ -35,6 +35,10 @@ function ucontact_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('ucontact', upfront_element_url('js/ucontact', __FILE__));
 
+	// Add element defaults to data object
+	$ucontact = new Upfront_UcontactView(array());
+	add_action('upfront_data', array($ucontact, 'add_js_defaults'));
+
 	// Add the public stylesheet
 	add_action('wp_enqueue_scripts', array('Upfront_UcontactView', 'add_styles_scripts'));
 

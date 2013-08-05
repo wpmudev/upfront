@@ -3,6 +3,56 @@
  * Image element for Upfront
  */
 class Upfront_UimageView extends Upfront_Object {
+	var $defaults = array(
+		'src' => 'http://imgsrc.hubblesite.org/hu/db/images/hs-2010-22-a-web.jpg',
+		'srcFull' => 'http://imgsrc.hubblesite.org/hu/db/images/hs-2010-22-a-web.jpg',
+		'image_title' => '',
+		'alternative_text' => '',
+		'when_clicked' => 'do_nothing',
+		'image_link' => false,
+		'include_image_caption' => false,
+		'image_caption' => '',
+		'caption_position' => '',
+		'caption_alignment' => 'top',
+		'caption_trigger' => 'always_show',
+		'image_status' => 'starting',
+		'size' => array('width' => 1000, 'height' => 1000),
+		'position' => array('top' => 0, 'left' => 0),
+		'element_size' => array('width' => 250, 'height' => 250),
+		'rotation' => 0,
+		'color' => '#ffffff',
+		'background' => '#000000',
+		'imageId' => 0,
+		'imageSizes' => false,
+
+		'type' => 'UimageModel',
+		'view_class' => 'UimageView',
+		'has_settings' => 1,
+		'class' =>  'c34 upfront-image'
+	);
+
+	function __construct($data) {
+		$data['properties'] = $this->merge_default_properties($data);
+		parent::__construct($data);
+	}
+
+	protected function merge_default_properties($data){
+		$flat = array();
+		if(!$data['properties'])
+			return $flat;
+
+		foreach($data['properties'] as $prop)
+			$flat[$prop['name']] = $prop['value'];
+
+		$flat = array_merge($this->defaults, $flat);
+
+		$properties = array();
+		foreach($flat as $name => $value)
+			$properties[] = array('name' => $name, 'value' => $value);
+
+		return $properties;
+	}
+
 	public function get_markup () {
 		$data = $this->properties_to_array();
 		
@@ -14,6 +64,13 @@ class Upfront_UimageView extends Upfront_Object {
 		$data['url'] = $url;
 
 		return $this->get_template_content($data);
+	}
+
+	public function add_js_defaults($data){
+		$data['uimage'] = array(
+			'defaults' => $this->defaults
+		);
+		return $data;
 	}
 
 	private function get_template_content($data){
@@ -43,6 +100,10 @@ class Upfront_UimageView extends Upfront_Object {
 		wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
 		wp_enqueue_script('jquery-form');
 		wp_enqueue_script('wp-color-picker');
+		
+		//Lightbox
+		wp_enqueue_style('magnific');
+		wp_enqueue_script('magnific');
 	}
 }
 
