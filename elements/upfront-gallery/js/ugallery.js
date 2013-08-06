@@ -597,12 +597,16 @@ var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function () {
-		var me = this,
-			render_all = function(){
-				this.settings.invoke('render');
-			}
-		;
 		this.settings = _([
+			new GalleryConfigFields({model: this.model}),
+			new Field_Button({
+				model: this.model,
+				info: 'Reset gallery settings to the default theme',
+				label: 'Reset',
+				on_click: function(){
+					alert('Button clicked');
+				}
+			})
 		]);
 	},
 
@@ -618,11 +622,30 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function () {
 		var me = this,
-			render_all = function(){
-				this.settings.invoke('render');
-			}
+			fields = Upfront.Views.Editor.Field
 		;
 		this.settings = _([
+			new ThumbnailFields({model: this.model}),
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'showTitle',
+				values: [
+					{
+						value: 'true',
+						label: 'Show Image Title'
+					}
+				]
+			}),
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'showDescription',
+				values: [
+					{
+						value: 'true',
+						label: 'Show Image Description'
+					}
+				]
+			})
 		]);
 	},
 
@@ -643,6 +666,7 @@ var LargeImagePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			}
 		;
 		this.settings = _([
+			new LightboxFields({model: this.model})
 		]);
 	},
 
@@ -651,6 +675,167 @@ var LargeImagePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	get_title: function () {
 		return false;
+	}
+});
+
+var GalleryConfigFields = Upfront.Views.Editor.Settings.Item.extend({
+	initialize: function(){
+		var me = this,
+			fields = Upfront.Views.Editor.Field
+		;
+
+		this.fields = _([
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'labelFilters',
+				values: [
+					{
+						label: 'Show Label Filters',
+						value: 'true'
+					}
+				]
+			}),
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'urlIcon',
+				values: [
+					{
+						label: 'Show URL icon on RollOver',
+						value: 'true'
+					}
+				]
+			}),
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'lightbox',
+				values: [
+					{
+						label: 'Disable lighbox',
+						value: 'true'
+					}
+				]
+			})
+		]);
+	},
+	get_title: function(){
+		return "Gallery Configuration";
+	}
+});
+
+var Field_Button = Upfront.Views.Editor.Field.Field.extend({
+	init: function() {
+		console.log('Button!!');
+	},
+	events: {
+		'click button': 'buttonClicked'
+	},
+	render: function() {
+		this.$el.html(this.get_field_html());
+	},
+	get_field_html: function() {
+		return '<p class="upfront-field-button-info">' + this.options.info + '</p><button class="upfront-field-button">' + this.options.label + '</button>';
+	},
+	buttonClicked: function(e) {
+		if(this.options.on_click)
+			this.options.on_click(e);
+	},
+	isProperty: false
+});
+
+var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
+	initialize: function(){
+		var me = this,
+			fields = Upfront.Views.Editor.Field
+		;
+
+		this.fields = _([
+			new fields.Radios({
+				model: this.model,
+				property: 'thumbProportions',
+				label: 'Crop',
+				values: [
+					{
+						label: 'Theme',
+						value: 'theme'
+					},
+					{
+						label: '1:1',
+						value: '1_1'
+					},
+					{
+						label: '2:3',
+						value: '2_3'
+					},
+					{
+						label: '4:3',
+						value: '4_3'
+					}
+				]
+			}),
+			new fields.Number({
+				model: this.model,
+				property: 'thumbWidth',
+				min: 50,
+				max: 400,
+				step: 10,
+				label: 'width'
+			}),
+			new fields.Number({
+				model: this.model,
+				property: 'thumbHeight',
+				min: 50,
+				max: 400,
+				step: 10,
+				label: 'height'
+			})
+		]);
+	},
+	get_title: function(){
+		return "Thumbnails Settings";
+	}
+});
+
+var LightboxFields = Upfront.Views.Editor.Settings.Item.extend({
+	initialize: function(){
+		var me = this,
+			fields = Upfront.Views.Editor.Field
+		;
+
+		this.fields = _([
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'lbTitle',
+				values: [
+					{
+						label: 'Show Image Title',
+						value: 'true'
+					}
+				]
+			}),
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'lbDescription',
+				values: [
+					{
+						label: 'Show Image Description',
+						value: 'true'
+					}
+				]
+			}),
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'lbLoop',
+				values: [
+					{
+						label: 'Loop Images When Viewing',
+						value: 'true'
+					}
+				]
+			})
+		]);
+	},
+	get_title: function(){
+		return "Lightbox Image Settings";
 	}
 });
 
