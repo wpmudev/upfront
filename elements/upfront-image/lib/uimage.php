@@ -16,7 +16,7 @@ class Upfront_UimageView extends Upfront_Object {
 		'caption_alignment' => 'top',
 		'caption_trigger' => 'always_show',
 		'image_status' => 'starting',
-		'size' => array('width' => 1000, 'height' => 1000),
+		'size' =>  array('width' => '100%', 'height' => 'auto'),
 		'position' => array('top' => 0, 'left' => 0),
 		'element_size' => array('width' => 250, 'height' => 250),
 		'rotation' => 0,
@@ -62,6 +62,12 @@ class Upfront_UimageView extends Upfront_Object {
 		else if($data['when_clicked'] == 'show_larger_image')
 			$url = $data['srcFull'];
 		$data['url'] = $url;
+
+		if(is_numeric($data['size']['width']))
+			$data['size']['width'] .= 'px';
+		if(is_numeric($data['size']['height']))
+			$data['size']['height'] .= 'px';
+		
 
 		return $this->get_template_content($data);
 	}

@@ -29,11 +29,12 @@ var	templates = [
 		tplPath + 'image_editor.html'
 	]
 ;
+
 require(templates, function(imageTpl, editorTpl) {
 var UimageModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.uimage.defaults);
-		properties.element_id = Upfront.Util.get_unique_id("image-object"),
+		properties.element_id = Upfront.Util.get_unique_id("image-object");
 		this.init_properties(properties);
 	}
 });
@@ -60,6 +61,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	mode: 'big', // big | small | vertical | horizontal
 	
 	initialize: function(){
+		if(! (this.model instanceof UimageModel)){
+			this.model = new UimageModel({properties: this.model.get('properties')});
+		}
 		 this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
 			'click a.uimage_edit_toggle': 'editRequest'
@@ -69,9 +73,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		 //this.on('upfront:entity:resize', this.setElementSize, this);
 		 this.model.on('uimage:edit', this.editRequest, this);
 
+		// Set the full size current size if we don't have attachment id
+		if(!this.property('imageId'))
+			this.property('srcFull', this.property('src'));
+
 		this.model.get("properties").bind("change", this.render, this);
 		this.model.get("properties").bind("add", this.render, this);
 		this.model.get("properties").bind("remove", this.render, this);
+
+
 	},
 
 	get_content_markup: function () {
@@ -83,6 +93,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		props.url = onclick == 'do_nothing' ? false : 
 			onclick == 'open_link' ? this.property('image_link') : this.property('srcFull');
+
+		if($.isNumeric(props.size.width))
+			props.size.width += 'px';
+		if($.isNumeric(props.size.height))
+			props.size.height += 'px';
 
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
@@ -552,9 +567,25 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	editRequest: function () {
 		if(this.property('image_status') == 'ok'){
 			if(! $('#upfront-image-overlay').length){
-				var imageOffset = this.property('position');
+				var imageOffset = this.property('position'),
+					img = this.$('img')
+				;
 				//Set editor properties
-				this.imageSize = this.property('size');
+				this.imageSize = {
+					width: img.width(),
+					height: img.height()
+				};
+
+				// Set size as only size if the sizes are not defined.
+				if(! this.property('imageSizes')){
+					img.css({width: 'auto', height: 'auto'});
+					this.property('imageSizes', {
+						full: [this.property('src'), img.width(), img.height()]
+					});
+					img.css(this.imageSize);
+				}
+
+
 				this.setRotation(this.property('rotation'));
 
 				this.imageOffset = this.imgOffset();

@@ -26,6 +26,9 @@ var UcontactModel = Upfront.Models.ObjectModel.extend({
 var UcontactView = Upfront.Views.ObjectView.extend({
 	initialize: function(options){
 		this.constructor.__super__.initialize.call(this, [options]);
+		if(! (this.model instanceof UcontactModel)){
+			this.model = new UcontactModel({properties: this.model.get('properties')});
+		}
 		Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
 	},
 	checkDeleteElement: function() {
