@@ -15,7 +15,7 @@ var ThisPostModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("view_class", "ThisPostView");
 
 		this.init_property("element_id", Upfront.Util.get_unique_id("this_post-object"));
-		this.init_property("class", "c22");
+		this.init_property("class", "c22 upfront-this_post");
 		this.init_property("has_settings", 0);
 	}
 });

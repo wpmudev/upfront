@@ -4,7 +4,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public function get_markup () {
 		global $post;
 		$element_id = $this->_get_property('element_id');
-		return "<div class='upfront-output-object upfront-this_post' {$element_id}>" .
+		return "<div class='upfront-output-object upfront-this_post' id='{$element_id}'>" .
 			self::get_post_markup(get_the_ID(), $post->post_type) .
 		"</div>";
 	}
