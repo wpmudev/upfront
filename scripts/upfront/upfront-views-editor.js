@@ -3069,6 +3069,7 @@ define(_template_files, function () {
 				"Item": SettingsItem,
 			},
 			"Field": {
+				"Field": Field,
 				"Text": Field_Text,
 				"Textarea": Field_Textarea,
 				"Number": Field_Number,
