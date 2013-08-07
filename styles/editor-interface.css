@@ -311,18 +311,21 @@
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar,
 .upfront-scroll-panel::-webkit-scrollbar,
-.upfront-settings_panel_scroll::-webkit-scrollbar {
+.upfront-settings_panel_scroll::-webkit-scrollbar,
+.upfront-field-select-options::-webkit-scrollbar {
 	background: none;
 	width: 3px;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-track,
 .upfront-scroll-panel::-webkit-scrollbar-track,
-.upfront-settings_panel_scroll::-webkit-scrollbar-track {
+.upfront-settings_panel_scroll::-webkit-scrollbar-track,
+.upfront-field-select-options::-webkit-scrollbar-track {
 }
  
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-thumb,
 .upfront-scroll-panel::-webkit-scrollbar-thumb,
-.upfront-settings_panel_scroll::-webkit-scrollbar-thumb {
+.upfront-settings_panel_scroll::-webkit-scrollbar-thumb,
+.upfront-field-select-options::-webkit-scrollbar-thumb {
 	border-right: 3px solid #1fcd8f;
 	width: 3px;
 }
@@ -717,6 +720,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 /* Fields */
 /* @TODO all fields styling here */
+/* @TODO !important stuff is temporary, need to remove */
 .upfront-field-text, .upfront-field-checkbox, .upfront-field-radio {
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -769,6 +773,124 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	height: 30px;
 	padding: 0 10px;
 }
+.upfront-field-select, .upfront-field-select-options {
+	background: rgb(242, 249, 255);
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+}
+.upfront-field-select {
+	display: inline-block;
+	height: 26px;
+	max-height: 26px;
+	margin: 0;
+	color: rgb(96, 127, 153);
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	line-height: 22px;
+	position: relative;
+	overflow: hidden;
+	cursor: pointer;
+}
+.upfront-field-select-disabled {
+	border-color: rgb(153, 181, 204);
+	color: rgb(153, 181, 204);
+}
+.upfront-field-select-expanded {
+	overflow: visible;
+}
+.upfront-field-select-multiple:hover {
+	height: auto;
+	overflow: visible;
+	margin-bottom: -1px;
+}
+.upfront-field-select:hover {
+	border-color: rgb(96, 127, 153);
+}
+.upfront-field-select:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 11px;
+	right: 11px;
+	border-top: 3px solid rgb(96, 127, 153);
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+}
+.upfront-field-select-disabled:after {
+	border-top-color: rgb(153, 181, 204);
+}
+.upfront-field-select-expanded:after,
+.upfront-field-select-multiple:hover:after {
+	display: none;
+}
+.upfront-field-select .upfront-field-select-value {
+	margin: 0;
+	padding: 1px 30px 1px 10px;
+	height: 24px;
+	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
+}
+.upfront-field-select-options {
+	list-style: none;
+	float: left;
+	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
+	border-color: rgb(96, 127, 153);
+	padding: 5px 0 !important;
+	margin: 10px -1px 0 !important;
+	position: relative;
+	max-height: 26px;
+	z-index: 10;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	-webkit-transition: max-height 0.3s;
+	-moz-transition: max-height 0.3s;
+	-ms-transition: max-height 0.3s;
+	-o-transition: max-height 0.3s;
+	transition: max-height 0.3s;
+}
+.upfront-field-select-expanded .upfront-field-select-options,
+.upfront-field-select-multiple:hover .upfront-field-select-options {
+	margin-top: -25px !important;
+	max-height: 142px;
+}
+.upfront-field-select-option {
+	margin: 0 !important;
+	position: relative;
+}
+.upfront-field-select-single .upfront-field-select-option-selected {
+	
+}
+.upfront-field-select-option .upfront-field-radio {
+	display: none;
+}
+.upfront-field-select-option .upfront-field-checkbox {
+	float: none !important;
+	position: absolute;
+	top: 50%;
+	right: 0;
+	margin-top: -6px;
+}
+.upfront-field-select-zebra .upfront-field-select-option-even {
+	background: rgb(218, 231, 242);
+}
+.upfront-field-select-option:hover {
+	background: rgb(96, 127, 153);
+	color: rgb(238, 247, 255);
+}
+.upfront-field-select-option label {
+	display: block;
+	font-weight: normal;
+	padding: 2px 30px 2px 10px;
+	margin: 0;
+}
+.upfront-field-select-option label .upfront-field-icon {
+	margin-top: 0;
+	vertical-align: top;
+}
+.upfront-field-select-option-disabled,
+.upfront-field-select-option-disabled:hover {
+	background: none;
+	color: rgb(153, 181, 204);
+}
 .upfront-field-checkbox, .upfront-field-radio {
 	width: 12px;
 	height: 12px;
@@ -820,7 +942,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	position: relative;
 }
 .upfront-field-multiple:hover,
-.upfront-field-selected {
+.upfront-field-multiple-selected {
 	opacity: 1;
 }
 .upfront-field-multiple-disabled, 
@@ -880,7 +1002,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	font-weight: normal;
 	margin: 0;
 }
-.upfront-field-wrap-text .upfront-field-label {
+.upfront-field-wrap .upfront-field-label-block {
 	display: block;
 	color: rgb(124, 158, 191);
 	font-size: 13px;
@@ -1438,6 +1560,106 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
+#settings .upfront-settings-item-tab-wrap {
+	display: inline;
+}
+#settings .upfront-settings-item-tab {
+	position: relative;
+	z-index: 11;
+	float: left;
+	font-size: 11px;
+	font-family: Verdana, sans-serif;
+	padding: 0 5px;
+	margin: 2px 0 0 1px;
+	height: 24px;
+	line-height: 24px;
+	background: rgb(221, 234, 246);
+	color: rgb(48, 71, 94);
+	color: rgba(48, 71, 94, 0.7);
+	cursor: pointer;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab {
+	max-width: 72px;
+	height: 80px;
+	margin: 0 5px;
+	padding: 0;
+	line-height: 12px;
+	background: none;
+	opacity: 0.7;
+	color: rgb(48, 71, 94);
+	text-align: center;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab label {
+	display: block;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab .upfront-field-icon {
+	margin: 0 0 4px;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab .upfront-settings-item-tab-radio-text {
+	display: block;
+	font-weight: normal;
+	height: 24px;
+	margin: 0 0 4px;
+	overflow: hidden;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab .upfront-field-radio {
+	float: none;
+	margin: 0;
+}
+#settings .upfront-settings-item-tab-wrap:first-child  .upfront-settings-item-tab {
+	margin-left: 10px;
+}
+#settings .upfront-settings-item-tab-active .upfront-settings-item-tab {
+	margin-top: 0;
+	font-weight: bold;
+	height: 27px;
+	background: none;
+	color: rgb(48, 71, 94);
+	border: 1px solid rgb(149, 184, 217);
+	border-bottom-color: rgb(242, 249, 255);
+}
+#settings .upfront-settings-item-tab-radio.upfront-settings-item-tab-active .upfront-settings-item-tab {
+	opacity: 1;
+	height: 80px;
+	border: none;
+}
+#settings .upfront-settings-item-tab-radio.upfront-settings-item-tab-active .upfront-settings-item-tab:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin-left: -3px;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-bottom: 3px solid rgb(149, 184, 217);
+}
+#settings .upfront-settings-item-tab-content {
+	position: absolute;
+	top: 36px;
+	left: 0;
+	z-index: 10;
+	width: 100%;
+	padding: 10px;
+	display: none;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab-content {
+	top: 90px;
+}
+#settings .upfront-settings-item-tab-content:before {
+	content: " ";
+	display: block;
+	border-top: 1px solid rgb(149, 184, 217);
+	position: relative;
+	top: -10px;
+	height: 0;
+}
+#settings .upfront-settings-item-tab-active .upfront-settings-item-tab-content {
+	display: block;
+}
+#settings .upfront-settings-tab-height {
+	width: 0;
+}
 #settings .upfront-settings-item {
 	position: relative;
 	border: 1px solid rgb(195, 216, 236);
@@ -1512,7 +1734,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .region-lock-switch:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
-.upfront-field-checkbox:checked {
+.upfront-field-checkbox:checked,
+.upfront-field-select-single .upfront-field-select-option-selected label:before {
 	content: " ";
 	background-image: url('../img/upfront-icon-sprite.svg?v=20130719');
 	background-repeat: no-repeat;
@@ -1604,6 +1827,12 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .upfront-field-checkbox:checked {
 	background-position: -223px -411px;
+}
+.upfront-field-select-single .upfront-field-select-option-selected label:before {
+	width: 11px;
+	height: 8px;
+	margin: 7px 5px 0 0;
+	background-position: -223px -413px;
 }
 .region-lock-switch:before {
 	width: 22px;

@@ -22,6 +22,36 @@ define(_template_files, function () {
 
 
 			console.log('refresh');
+		
+	var Upfront_Scroll_Mixin = {
+		stop_scroll_propagation: function ($el) {
+			$el.on('DOMMouseScroll mousewheel', function(ev) {
+			var $this = $(this),
+				scrollTop = this.scrollTop,
+				scrollHeight = this.scrollHeight,
+				height = $this.height(),
+				delta = ev.originalEvent.wheelDelta,
+				up = delta > 0;
+		
+			var prevent = function() {
+				ev.stopPropagation();
+				ev.preventDefault();
+				ev.returnValue = false;
+				return false;
+			}
+			
+			if (!up && -delta > scrollHeight - height - scrollTop) {
+				// Scrolling down, but this will take us past the bottom.
+				$this.scrollTop(scrollHeight);
+				return prevent();
+			} else if (up && delta > scrollTop) {
+				// Scrolling up, but this will take us past the top.
+				$this.scrollTop(0);
+		 		return prevent();
+			}
+		});
+		}
+	};
 
 	// Stubbing interface control
 
@@ -509,7 +539,7 @@ define(_template_files, function () {
 		}
 	});
 	
-	var SidebarPanel = Backbone.View.extend({
+	var SidebarPanel = Backbone.View.extend(_.extend({}, Upfront_Scroll_Mixin, {
 		"tagName": "li",
 		"className": "sidebar-panel",
 		events: {
@@ -519,13 +549,14 @@ define(_template_files, function () {
 		render: function () {
 			this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
 			this.$el.append('<div class="sidebar-panel-content" />');
+			this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 			if ( this.on_render ) this.on_render();
 		},
 		on_click: function () {
 			$('.sidebar-panel').not(this.$el).removeClass('expanded');
 			this.$el.addClass('expanded');
 		}
-	});
+	}));
 	
 	var SidebarPanel_Posts = SidebarPanel.extend({
 		className: "sidebar-panel upfront-panel-post_panel",
@@ -2478,6 +2509,26 @@ define(_template_files, function () {
 		}
 	});
 	
+	
+	var Upfront_Icon_Mixin = {
+		get_icon_html: function (src) {
+			if ( ! src )
+				return '';
+			if ( src.match(/^https?:\/\//) ) {
+				var attr = {
+					'src': src,
+					'alt': '',
+					'class': 'upfront-field-icon-img'
+				}
+				return '<img ' + this.get_field_attr_html(attr) + ' />';
+			}
+			else {
+				return '<i class="upfront-field-icon upfront-field-icon-' + src + '"></i>';
+			}
+		}
+	};
+	
+	
 	var Field = Backbone.View.extend({
 		className: 'upfront-field-wrap',
 		initialize: function () {
@@ -2519,7 +2570,7 @@ define(_template_files, function () {
 		get_label_html: function () {
 			var attr = {
 				'for': this.get_field_id(),
-				'class': 'upfront-field-label'
+				'class': 'upfront-field-label ' + ( this.options.label_style == 'inline' ? 'upfront-field-label-inline' : 'upfront-field-label-block' )
 			};
 			return '<label ' + this.get_field_attr_html(attr) + '>' + this.label + '</label>';
 		},
@@ -2533,7 +2584,7 @@ define(_template_files, function () {
 	var Field_Text = Field.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-text',
 		render: function () {
-			this.$el.html();
+			this.$el.html('');
 			if ( !this.options.compact )
 				this.$el.append(this.get_label_html());
 			this.$el.append(this.get_field_html());
@@ -2602,49 +2653,116 @@ define(_template_files, function () {
 		}
 	});
 	
-	var Field_Multiple = Field.extend({
-		render: function () {
-			this.$el.html();
-			if ( this.label )
-				this.$el.append(this.get_label_html());
-			this.$el.append(this.get_field_html());
-		},
+	var Field_Multiple = Field.extend(_.extend({}, Upfront_Icon_Mixin, {
 		get_values_html: function () {
 			return _.map(this.options.values, this.get_value_html, this).join('');
 		}
-	});
+	}));
 	
 	var Field_Select = Field_Multiple.extend({
+		selected_state: 'checked',
 		className: 'upfront-field-wrap upfront-field-wrap-select',
+		render: function () {
+			var me = this;
+			var select_label = ( this.options.select_label ) ? this.options.select_label : '';
+			this.$el.html('');
+			if ( this.label )
+				this.$el.append(this.get_label_html());
+			this.$el.append(this.get_field_html());
+			if ( !this.multiple ){
+				this.$el.on('click', '.upfront-field-select-value', function(e){
+					e.stopPropagation();
+					if ( me.options.disabled )
+						return;
+					me.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
+				});
+				this.$el.on('click', '.upfront-field-select-option label', function(e){
+					e.stopPropagation();
+					if ( $(this).closest('.upfront-field-select-option').hasClass('upfront-field-select-option-disabled') )
+						return;
+					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
+				});
+				$('#settings').on('click', '.upfront-settings_panel', function(){
+					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
+				});
+			}
+			this.$el.on('change', '.upfront-field-select-option input', function(){
+				var $select_value = me.$el.find('.upfront-field-select-value');
+				var $checked = me.$el.find('.upfront-field-select-option input:checked');
+				if ( $checked.size() == 1 && !this.multiple )
+					$select_value.text($checked.closest('.upfront-field-select-option').text());
+				else
+					$select_value.text( select_label ? select_label : me.$el.find('.upfront-field-select-option:eq(0)').text() );
+				me.$el.find('.upfront-field-select-option').each(function(){
+					if ( $(this).find('input:checked').size() > 0 )
+						$(this).addClass('upfront-field-select-option-selected');
+					else
+						$(this).removeClass('upfront-field-select-option-selected');
+				});
+			});
+			if ( ! this.multiple && ! this.get_saved_value() )
+				me.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
+			me.$el.find('.upfront-field-select-option:eq(0) input').trigger('change');
+		},
 		get_field_html: function () {
 			var attr = {
-				'class': 'upfront-field upfront-field-select',
-				'id': this.get_field_id(),
-				'name': this.get_field_name()
+				'class': 'upfront-field-select',
+				'id': this.get_field_id()
 			};
-			if ( this.options.multiple )
-				attr.multiple = 'multiple';
-			return '<select ' + this.get_field_attr_html(attr) + '>' + this.get_values_html() + '</select>';
+			attr.class += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
+			if ( this.options.disabled )
+				attr.class += ' upfront-field-select-disabled';
+			if ( this.options.style == 'zebra' )
+				attr.class += ' upfront-field-select-zebra';
+			//return '<select ' + this.get_field_attr_html(attr) + '>' + this.get_values_html() + '</select>';
+			return '<div ' + this.get_field_attr_html(attr) + '><div class="upfront-field-select-value"></div><ul class="upfront-field-select-options">' + this.get_values_html() + '</ul></div>';
 		},
-		get_value_html: function (value) {
+		get_value_html: function (value, index) {
+			var id = this.get_field_id() + '-' + index;
 			var attr = {
+				'type': ( this.multiple ? 'checkbox' : 'radio' ),
+				'id': id,
+				'name': this.get_field_name(),
+				'class': 'upfront-field-' + ( this.multiple ? 'checkbox' : 'radio' ),
 				'value': value.value
 			};
 			var saved_value = this.get_saved_value();
-			if ( value.disabled )
+			var classes = 'upfront-field-select-option';
+			if ( value.disabled ) {
 				attr.disabled = 'disabled';
+				classes += ' upfront-field-select-option-disabled';
+			}
 			if ( this.multiple && _.contains(saved_value, value.value) )
-				attr.selected = 'selected';
+				attr.checked = 'checked';
 			else if ( ! this.multiple && saved_value == value.value )
-				attr.selected = 'selected';
-			return '<option ' + this.get_field_attr_html(attr) + '>' + value.label + '</option>';
+				attr.checked = 'checked';
+			if ( attr.checked )
+				classes += ' upfront-field-select-option-selected';
+			classes += ' upfront-field-select-option-' + ( index%2 == 0 ? 'odd' : 'even' );
+			//return '<option ' + this.get_field_attr_html(attr) + '>' + value.label + '</option>';
+			var input = '<input ' + this.get_field_attr_html(attr) + ' />';
+			return '<li class="' + classes + '">' + '<label for="' + id + '">' + this.get_icon_html(value.icon) + '<span class="upfront-field-label-text">' + value.label + '</span></label>' + input + '</li>';
 		}
 	});
-	
 	
 	
 	var Field_Multiple_Input = Field_Multiple.extend({
 		selected_state: 'checked',
+		render: function () {
+			var me = this;
+			this.$el.html('');
+			if ( this.label )
+				this.$el.append(this.get_label_html());
+			this.$el.append(this.get_field_html());
+			this.$el.on('change', '.upfront-field-multiple input', function(){
+				me.$el.find('.upfront-field-multiple').each(function(){
+					if ( $(this).find('input:checked').size() > 0 )
+						$(this).addClass('upfront-field-multiple-selected');
+					else
+						$(this).removeClass('upfront-field-multiple-selected');
+				});
+			});
+		},
 		get_field_html: function () {
 			return this.get_values_html();
 		},
@@ -2672,21 +2790,6 @@ define(_template_files, function () {
 			if ( attr.checked )
 				classes += ' upfront-field-multiple-selected';
 			return '<span class="' + classes + '"><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '">' + this.get_icon_html(value.icon) + '<span class="upfront-field-label-text">' + value.label + '</span></label></span>';
-		},
-		get_icon_html: function (src) {
-			if ( ! src )
-				return '';
-			if ( src.match(/^https?:\/\//) ) {
-				var attr = {
-					'src': src,
-					'alt': '',
-					'class': 'upfront-field-icon-img'
-				}
-				return '<img ' + this.get_field_attr_html(attr) + ' />';
-			}
-			else {
-				return '<i class="upfront-field-icon upfront-field-icon-' + src + '"></i>';
-			}
 		}
 	});
 	
@@ -2766,8 +2869,87 @@ define(_template_files, function () {
 			);
 		}
 	});
+	
+	var SettingsItemTabbed = Backbone.View.extend(_.extend({}, Upfront_Icon_Mixin, {
+		className: 'upfront-settings-item-tab-wrap',
+		radio: false,
+		events: {
+			"click .upfront-settings-item-tab": "reveal"
+		},
+		initialize: function () {
+			this.settings = _([]);
+		},
+		get_title: function () {},
+		get_icon: function () {},
+		get_property: function () {},
+		get_value: function () {},
+		get_property_model: function () {
+			var property = this.get_property();
+			if ( !property )
+				return false;
+			return this.model.get_property_by_name(property);
+		},
+		get_property_value: function () {
+			var property_model = this.get_property_model();
+			return property_model ? property_model.get('value') : '';
+		},
+		render: function () {
+			this.$el.html('');
+			this.$el.append('<div class="upfront-settings-item-tab" />');
+			this.$el.append('<div class="upfront-settings-item-tab-content" />');
+			var $tab = this.$el.find('.upfront-settings-item-tab'),
+				$tab_content = this.$el.find('.upfront-settings-item-tab-content');
+			if ( this.radio ){
+				var property_model = this.get_property_model();
+				if ( ! property_model ){
+					if ( this.is_default )
+						this.model.init_property(this.get_property(), this.get_value());
+				}
+				var id = this.cid + '-' + this.get_property();
+				var $label = $('<label for="' + id + '" />')
+				var checked = ( this.get_property_value() == this.get_value() );
+				$label.append(this.get_icon_html(this.get_icon()));
+				$label.append('<span class="upfront-settings-item-tab-radio-text">' + this.get_title() + '</span>');
+				$tab.append($label);
+				$tab.append('<input type="radio" id="' + id + '" class="upfront-field-radio" name="' + this.get_property() + '" value="' + this.get_value() + '" ' + ( checked ? 'checked="checked"' : '' ) +  ' />');
+				this.$el.addClass('upfront-settings-item-tab-radio');
+			}
+			else {
+				$tab.text(this.get_title());
+			}
+			this.settings.each(function(setting){
+				setting.render();
+				$tab_content.append(setting.el);
+			});
+			this.panel.on('rendered', this.panel_rendered, this);
+		},
+		conceal: function () {
+			this.$el.removeClass('upfront-settings-item-tab-active');
+		},
+		reveal: function () {
+			this.panel.settings.invoke('conceal');
+			this.$el.addClass('upfront-settings-item-tab-active');
+			if ( this.radio )
+				this.$el.find('.upfront-settings-item-tab input').prop('checked', true);
+		},
+		panel_rendered: function () {
+			console.log('rendered!');
+			if ( this.radio && (this.get_property_value() == this.get_value()) )
+				this.reveal();
+		},
+		save_fields: function () {
+			this.settings.invoke('save_fields');
+			if ( this.radio && this.$el.find('.upfront-settings-item-tab input:checked').size() > 0 ) {
+				var property_model = this.get_property_model();
+				if ( property_model )
+					property_model.set({'value': this.get_value()});
+				else
+					this.model.init_property(this.get_property(), this.get_value());
+			}
+		}
+	}));
 
-	var SettingsPanel = Backbone.View.extend({
+	var SettingsPanel = Backbone.View.extend(_.extend({}, Upfront_Scroll_Mixin, {
 		//tagName: "ul",
 		className: 'upfront-settings_panel_wrap',
 		
@@ -2782,6 +2964,8 @@ define(_template_files, function () {
 		initialize: function () {
 			this.settings = _([]);
 		},
+		
+		tabbed: false,
 
 		render: function () {
 			this.$el.empty().show();
@@ -2798,6 +2982,13 @@ define(_template_files, function () {
 				setting.render();
 				$panel_scroll.append(setting.el)
 			});
+			if ( this.tabbed ) {
+				var first_tab = this.settings.first();
+				if ( !first_tab.radio )
+					first_tab.reveal();
+				$panel_scroll.append('<div class="upfront-settings-tab-height" />');
+			}
+			this.stop_scroll_propagation($panel_scroll);
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +
 					//"<button type='button' class='upfront-cancel_settings'><i class='icon-arrow-left'></i> Back</button>" +
@@ -2818,6 +3009,14 @@ define(_template_files, function () {
 			this.$el.find(".upfront-settings_label").addClass("active");
 			//this.$el.find(".upfront-settings_label").hide();
 			this.$el.find(".upfront-settings_panel").show();
+			if ( this.tabbed ) {
+				var tab_height = 0;
+				this.$el.find('.upfront-settings-item-tab-content').each(function(){
+					var h = $(this).outerHeight(true);
+					tab_height = h > tab_height ? h : tab_height;
+				});
+				this.$el.find('.upfront-settings-tab-height').css('height', tab_height);
+			}
 			this.trigger('revealed');
 		},
 
@@ -2843,7 +3042,7 @@ define(_template_files, function () {
 
 			var me = this;
 			this.settings.each(function (setting) {
-				if ( setting.fields.size() > 0 ) {
+				if ( setting.save_fields ) {
 					setting.save_fields();
 				}
 				else {
@@ -2863,7 +3062,7 @@ define(_template_files, function () {
 			this.trigger("upfront:settings:panel:close", this);
 		}
 
-	});
+	}));
 
 	var Settings = Backbone.View.extend({
 		get_title: function () {
@@ -3067,6 +3266,7 @@ define(_template_files, function () {
 				"Settings": Settings,
 				"Panel": SettingsPanel,
 				"Item": SettingsItem,
+				"ItemTabbed": SettingsItemTabbed,
 			},
 			"Field": {
 				"Field": Field,
