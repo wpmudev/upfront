@@ -33,35 +33,50 @@ class Upfront_Theme {
 		$this->template_dir = $dir;
 	}
 	
-	public function get_template ($slugs, $args = array(), $default_file = '') {
+	public function get_template($slugs, $args = array(), $default_file = '') {
+		$template_file = $this->get_template_path($slugs, $default_file);
+
 		extract($args);
-		$template_files = array();
-		$found = false;
-		foreach ( (array)$slugs as $file ) {
-			$template_files[] = get_stylesheet_directory() . '/' . $this->template_dir . '/' . $file . '.php';
-			$template_files[] = get_template_directory() . '/' . $this->template_dir . '/' . $file . '.php';
-		}
-		foreach ( $template_files as $template_file ) {
-			if ( file_exists($template_file) ) {
-				$found = true;
-				break;
-			}
-		}
-		if ( ! $found ){
-			if ( ! file_exists($default_file) )
-				return false;
-			$found = true;
-			$template_file = $default_file;
-		}
 		ob_start();
-		include $template_file;
+		include $template_file;		
 		return ob_get_clean();
 	}
-	
-	
-	
-	
-	
+
+	public function get_template_uri($slugs, $default, $url = false){
+		$template_files = array();
+		foreach ( (array)$slugs as $file ) {
+			$template_files[] = array('child', get_stylesheet_directory(), $this->template_dir . '/' . $file . '.php');
+			$template_files[] = array('child', get_stylesheet_directory(), $this->template_dir . '/' . $file . '.html');
+			$template_files[] = array('parent', get_template_directory(), $this->template_dir . '/' . $file . '.php');
+			$template_files[] = array('parent', get_template_directory(), $this->template_dir . '/' . $file . '.html');
+		}
+		foreach ( $template_files as $template ) {
+			if ( file_exists($template[1] . '/' .  $template[2]) ){
+				if($url){
+					if($template[0] == 'child')
+						return get_stylesheet_directory_uri() . '/' . $template[2];
+					return get_template_directory_uri() . '/' . $template[2] ;
+				}
+				return $template[1] . '/' .  $template[2];
+			}
+		}
+		return $default;
+	}
+
+	public function get_template_path($slugs, $default){
+		$template_files = array();
+		foreach ( (array)$slugs as $file ) {
+			$template_files[] = get_stylesheet_directory() . '/' . $this->template_dir . '/' . $file . '.php';
+			$template_files[] = get_stylesheet_directory() . '/' . $this->template_dir . '/' . $file . '.html';
+			$template_files[] = get_template_directory() . '/' . $this->template_dir . '/' . $file . '.php';
+			$template_files[] = get_template_directory() . '/' . $this->template_dir . '/' . $file . '.html';
+		}
+		foreach ( $template_files as $template_file ) {
+			if ( file_exists($template_file) )
+				return $template_file;
+		}
+		return $default;
+	}
 }
 
 // @TODO API to get module/object

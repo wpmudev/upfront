@@ -18,6 +18,12 @@ function upfront_region_supported ($region) {
 function upfront_get_template ($slugs, $args = array(), $default_file = '') {
 	return Upfront_Theme::get_instance()->get_template($slugs, $args, $default_file);
 }
+function upfront_get_template_url($slugs, $default_file = '') {
+	return Upfront_Theme::get_instance()->get_template_uri($slugs, $default_file, true);
+}
+function upfront_get_template_path($slugs, $default_file = '') {
+	return Upfront_Theme::get_instance()->get_template_uri($slugs, $default_file, true);
+}
 
 
 function upfront_is_page_template ($page_template, $layout_ids = null) {
