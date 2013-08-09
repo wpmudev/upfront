@@ -64,41 +64,12 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		return this.model.get_property_value_by_name(property);
 	},
 
-
-
 	extract_properties: function() {
 		var props = {};
 		this.model.get('properties').each(function(prop){
 			props[prop.get('name')] = prop.get('value');
 		});
 		return props;
-	},
-
-	/**
-	 * Parse the form_subject value when it is the form of '[type_of_subject]::[subject_field_label]'
-	 * It stores the right values in the 'show_subject' and 'form_subject' properties.
-	 * @return {null}
-	 */
-	set_subject_property: function(){
-		var subject = this.property_value('form_subject'),
-			showSubject = false,
-			subjectParts = [];
-		if(subject){
-			subjectParts = subject.split('::');
-			if(subjectParts.length == 2){
-				if(subjectParts[0] == 'form_subject_label'){
-					this.model.set_property('show_subject', true);
-					this.model.set_property('form_subject_label', subjectParts[1]);
-				}
-				else{
-					this.model.set_property('show_subject', false);
-					this.model.set_property('form_default_subject', subjectParts[1]);
-
-				}
-			}
-		}
-		else
-			this.model.set_property('show_subject', false);
 	},
 
 	/**

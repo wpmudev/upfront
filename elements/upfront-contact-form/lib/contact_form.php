@@ -11,7 +11,6 @@ class Upfront_UcontactView extends Upfront_Object {
 		'form_name_label' => 'Your name:',
 		'form_email_label' => 'Your email:',
 		'show_subject' => false,
-		'form_subject' => 'form_default_subject',
 		'form_subject_label' => 'Your subject:',
 		'form_default_subject' => 'Sent from the website',
 		'form_message_label' => 'Your message:',
