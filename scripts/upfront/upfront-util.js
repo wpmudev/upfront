@@ -182,7 +182,7 @@ var Popup = {
 	init: function () {
 		if (!$("#upfront-popup").length) {
 			$("#page")
-				.append('<div id="upfront-popup" style="display:none">' +
+				.append('<div id="upfront-popup" class="upfront-ui" style="display:none">' +
 					'<div id="upfront-popup-close">X</div>' +
 					'<div class="upfront-popup-meta" id="upfront-popup-top">' +
 					'</div>' +

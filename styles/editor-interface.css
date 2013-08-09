@@ -1,10 +1,8 @@
 .upfront-edit-layout, .upfront-edit-layout body {
-	background: #fff;
   	height: 100%;
 }
 
 .upfront-edit-layout #page {
-	background: #fff;
   	position: relative;
   	min-height: 100%;
   	/*margin: 22px 20px 0 320px;*/
@@ -28,6 +26,28 @@
 
 [contenteditable="true"] {
 	outline: none;
+}
+
+
+.upfront-ui {
+	font: 16px/24px 'Source Sans Pro', sans-serif;
+}
+
+.upfront-ui h1,
+.upfront-ui h2,
+.upfront-ui h3,
+.upfront-ui h4,
+.upfront-ui h5 {
+	font-family: 'Source Sans Pro', sans-serif;
+	text-transform: none;
+}
+
+.upfront-ui ul {
+	list-style: none;
+}
+
+.upfront-ui ul li:before {
+	display: none;
 }
 
 #upfront-loading {
@@ -1012,6 +1032,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	margin: 0;
 }
 
+.upfront-field-wrap-optional span {
+	margin: 20px 0 0 0;
+}
 
 
 
@@ -1729,8 +1752,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 
 /* Upfront icon */
-.upfront-icon-element:before, .upfront-icon:before, .upfront-icon-button:before,
-.upfront-field-icon:before,
+.upfront-ui .upfront-icon-element:before, .upfront-ui .upfront-icon:before, .upfront-icon-button:before,
+.upfront-ui .upfront-field-icon:before,
 .region-lock-switch:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
@@ -1740,6 +1763,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background-image: url('../img/upfront-icon-sprite.svg?v=20130719');
 	background-repeat: no-repeat;
 	float: left;
+	display: block;
 }
 .upfront-icon-element:before {
 	width: 26px;

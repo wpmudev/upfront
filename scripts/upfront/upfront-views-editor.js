@@ -1079,7 +1079,7 @@ define(_template_files, function () {
 			Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
 		},
 		render: function () {
-			var output = $('<div id="sidebar-ui-wrapper"></div>');;
+			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
 			output.append('<div class="upfront-logo" />');
 			// Editor Mode
 			//this.editor_mode.render();
@@ -2617,6 +2617,23 @@ define(_template_files, function () {
 			return '<input ' + this.get_field_attr_html(attr) + ' />';
 		}
 	});
+
+	var Field_Email = Field_Text.extend({
+		get_field_html: function () {
+			var attr = {
+				'type': 'email',
+				'class': 'upfront-field upfront-field-text upfront-field-email',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.get_saved_value()
+			};
+			if ( this.options.compact ) {
+				attr.placeholder = this.label;
+				this.$el.attr('data-tooltip', this.label);
+			}
+			return '<input ' + this.get_field_attr_html(attr) + ' />';
+		}
+	});
 	
 	var Field_Textarea = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-textarea',
@@ -2818,9 +2835,20 @@ define(_template_files, function () {
 			else if ( this.fields.length > 1 )
 				return this.fields.map(function(field){ return field.get_value(); });
 		},
-		
-		initialize: function () {
-			this.fields = _([]);
+
+		get_title: function () {
+			return this.options.title ? this.options.title : '';
+		},
+
+		initialize: function (opts) {
+			var me = this;
+			this.fields = opts.fields ? _(opts.fields) : _([]);
+			this.on('panel:set', function(){
+				me.fields.each(function(field){
+					field.panel = me.panel;
+					field.trigger('panel:set');
+				});
+			});
 		},
 		
 		render: function () {
@@ -2958,11 +2986,22 @@ define(_template_files, function () {
 			"click .upfront-cancel_settings": "on_cancel",
 			"click .upfront-settings_label": "on_toggle"
 		},
-		get_title: function () {},
-		get_label: function () {},
 
-		initialize: function () {
-			this.settings = _([]);
+		get_title: function () {
+			return this.options.title ? this.options.title : '';
+		},
+
+		get_label: function () {
+			return this.options.label ? this.options.label : '';
+		},
+
+		initialize: function (opts) {
+			var me = this;
+			this.settings = opts.settings ? _(opts.settings) : _([]);
+			this.settings.each(function(setting){
+				setting.panel = me;
+				setting.trigger('panel:set');
+			});
 		},
 		
 		tabbed: false,
@@ -2978,7 +3017,6 @@ define(_template_files, function () {
 			;
 			$label.append(this.get_label());
 			this.settings.each(function (setting) {
-				setting.panel = me;
 				setting.render();
 				$panel_scroll.append(setting.el)
 			});
@@ -3109,6 +3147,7 @@ define(_template_files, function () {
 					"top": view_pos.top /*+ $view.height() + 16*/,
 					"left": view_pos.left + $view.outerWidth() - ((view_pos_right+label_width+panel_width > main_pos_right) ? label_width+panel_width+(view_pos_right-button_pos.left)+5 : 0)
 				})
+				.addClass('upfront-ui')
 			;
 		},
 
@@ -3271,6 +3310,7 @@ define(_template_files, function () {
 			"Field": {
 				"Field": Field,
 				"Text": Field_Text,
+				"Email": Field_Email,
 				"Textarea": Field_Textarea,
 				"Number": Field_Number,
 				"Select": Field_Select,
