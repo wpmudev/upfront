@@ -7,6 +7,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	var $defaults = array(
 		'form_add_title' => false,
+		'form_title' => 'Contact form',
 		'form_name_label' => 'Your name:',
 		'form_email_label' => 'Your email:',
 		'show_subject' => false,
@@ -17,8 +18,6 @@ class Upfront_UcontactView extends Upfront_Object {
 		'form_button_text' => 'Send',
 		'form_validate_when' => 'submit',
 		'form_label_position' => 'above',
-		'form_style' => '1',
-		'form_use_icons' => 1,
 
 		'type' => "UcontactModel",
 		'view_class' => "UcontactView",
@@ -34,7 +33,8 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	protected function merge_default_properties($data){
 		$flat = array();
-		if(!$data['properties'])
+
+		if(!isset($data['properties']))
 			return $flat;
 
 		foreach($data['properties'] as $prop)
@@ -53,27 +53,46 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		//Check if the form has been sent
 		$this->check_form_received();
-
-		return $this->get_template('ucontact', array(
-			'title' => $this->_get_property('form_add_title'),
-			'name_label' => $this->_get_property('form_name_label'),
-			'email_label' => $this->_get_property('form_email_label'),
-			'show_subject' => $this->_get_property('show_subject'),
-			'subject_label' => $this->_get_property('form_subject_label'),
-			'default_subject' => $this->_get_property('form_default_subject'),
-			'message_label' => $this->_get_property('form_message_label'),
-			'button_text' => $this->_get_property('form_button_text'),
+		$args = array_merge($this->properties_to_array(), array(
 			'field_classes' => $this->get_field_classes(),
-			'id' => $this->_get_property('element_id'),
-			'emailto' => $this->_get_property('form_email_to'),
-			'form_style' => $this->_get_property('form_style'),
-			'validate' => $this->_get_property('form_validate_when') == 'field' ? 'ucontact-validate-field' : ''
+			'validate' => $this->_get_property('form_validate_when') == 'field' ? 'ucontact-validate-field' : '',
+			'message' => isset($this->msg) ? $this->msg : false,
+			'message_class' => isset($this->msg_class) ? $this->msg_class : 'error',
+			'entity_id' => $this->get_entity_ids_value(),
+			'placeholders' => array(
+				'name' => $this->get_placeholder($this->_get_property('form_name_label')),
+				'email' => $this->get_placeholder($this->_get_property('form_email_label')),
+				'subject' => $this->get_placeholder($this->_get_property('form_subject_label')),
+				'message' => $this->get_placeholder($this->_get_property('form_message_label'))
+			),
+			'values' => array(
+				'name' => $this->get_post('sendername'),
+				'email' => $this->get_post('senderemail'),
+				'subject' => $this->get_post('subject'),
+				'message' => $this->get_post('sendermessage')
+			)
 		));
+
+		$markup =  $this->get_template('ucontact', $args);
+
+		return $markup . '
+			<script type="text/javascript">
+				if(! window.ajax_url)
+					ajax_url = "' . admin_url( 'admin-ajax.php' ) . '";
+			</script>';
+	}
+
+	private function properties_to_array(){
+		$out = array();
+		foreach($this->_data['properties'] as $prop)
+			$out[$prop['name']] = $prop['value'];
+		return $out;
 	}
 
 	public function add_js_defaults($data){
 		$data['ucontact'] = array(
-			'defaults' => $this->defaults
+			'defaults' => $this->defaults,
+			'template' => upfront_get_template_url('ucontact', upfront_element_url('templates/ucontact.html', dirname(__FILE__)))
 		);
 		return $data;
 	}
@@ -143,7 +162,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	private function check_form_received () {
-		if($_POST['ucontact'] && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')){
+		if(isset($_POST['ucontact']) && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')){
 			//Get all the needed fields and sanitize them
 			$_POST = stripslashes_deep( $_POST );
 			$name = sanitize_text_field($_POST['sendername']);
@@ -202,6 +221,10 @@ class Upfront_UcontactView extends Upfront_Object {
 		}
 	}
 
+	public function get_post($param){
+		return isset($_POST[$param]) ? $_POST[$param] : '';
+	}
+
 	/**
 	 * Validation check for the contact form fields.
 	 * @param  String $name    Name sent by the user
@@ -226,6 +249,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	 * Parses the PHP file output to a variable
 	 */
 	private function get_template($templatename, $args = array()){
+		return upfront_get_template('ucontact', $args, dirname(dirname(__FILE__)) . '/templates/ucontact.html');
 		extract($args);
 		ob_start();
 		include dirname(dirname(__FILE__)) . '/templates/' . $templatename . '.php';
@@ -234,7 +258,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		return $output;
 	}
 
-	private function get_entity_ids_value(){
+	public function get_entity_ids_value(){
 		$entities = Upfront_EntityResolver::get_entity_ids();
 		//var_dump($entities);
 		return base64_encode(json_encode($entities));
@@ -256,17 +280,19 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		$settings = array();
 
-		foreach($layout['regions'] as $region){
-			if(sizeof($region['modules'])){
-				foreach($region['modules'] as $module){
-					if(sizeof($module['objects'])){
-						foreach($module['objects'] as $object){
-							if(sizeof($object['properties'])){
-								foreach($object['properties'] as $prop){
-									if($prop['name'] == 'element_id' && $prop['value'] == $_POST['contactformid'])
-										return $object;
-								}
-							} 
+		if(is_array($layout['regions'])){
+			foreach($layout['regions'] as $region){
+				if(sizeof($region['modules'])){
+					foreach($region['modules'] as $module){
+						if(sizeof($module['objects'])){
+							foreach($module['objects'] as $object){
+								if(sizeof($object['properties'])){
+									foreach($object['properties'] as $prop){
+										if($prop['name'] == 'element_id' && $prop['value'] == $_POST['contactformid'])
+											return $object;
+									}
+								} 
+							}
 						}
 					}
 				}
@@ -276,21 +302,13 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	private function get_field_classes(){
-		$style = $this->_get_property('form_style');
-		$label = $this->_get_property('form_label_position');
-		$icons = $this->_get_property('form_use_icons');
-
-		$classes = 'ucontact-label-' . $label . ' ucontact-field_style-' . $style;
-
-		if($icons == 1)
-			$classes .= ' ucontact-field-icons';
-
-		return $classes;	
+		return 'ucontact-label-' . $this->_get_property('form_label_position');
 	}
 
-	private function echo_placeholder($label){
+	public function get_placeholder($label){
 		if($this->_get_property('form_label_position') == 'over')
-			echo 'placeholder="' . $label . '"';
+			return 'placeholder="' . $label . '"';
+		return '';
 	}
 }
 

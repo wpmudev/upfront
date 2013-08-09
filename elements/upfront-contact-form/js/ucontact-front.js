@@ -79,7 +79,7 @@ jQuery(function($){
 			//Everything ok, try to send it via ajax
 			e.preventDefault();
 			$.ajax({
-				url: ajaxurl,
+				url: ajax_url,
 				type: 'POST',
 				data: {
 					action: 'upfront_contact-form',
