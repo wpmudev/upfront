@@ -41,11 +41,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	issue with search module. e.g click on map, then search command and it always adds a map. also vice versa
 */
-define('UPFRONT_MAPS_ROOT_FILE', __FILE__);
+//define('UPFRONT_MAPS_ROOT_FILE', __FILE__);
 
 /**
  * This is the entity entry point, where we inform Upfront of our existence.
  */
+/*
 function umap_initialize () {
 
 	// Include the backend support stuff
@@ -85,3 +86,13 @@ function include_edit_css(){
 function include_plugin_path(){
 	echo "<script>var upfrontMap = {pluginPath:'".upfront_element_url('/', UPFRONT_MAPS_ROOT_FILE)."'};</script>";
 }
+*/
+
+function upfront_maps_init () {
+	// Include the backend support stuff
+	require_once (dirname(__FILE__) . '/lib/upfront_maps.php');
+
+	// Expose our JavaScript definitions to the Upfront API
+	upfront_add_layout_editor_entity('upfront_maps', upfront_element_url('js/upfront_maps', __FILE__));
+}
+add_action('upfront-core-initialized', 'upfront_maps_init');

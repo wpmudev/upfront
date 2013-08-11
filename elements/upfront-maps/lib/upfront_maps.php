@@ -1,0 +1,34 @@
+<?php
+class Upfront_MapView extends Upfront_Object{
+
+	public function get_markup(){
+		$_id = $this->_get_property('element_id');
+		$element_id = $_id ? "id='{$_id}'" : '';
+		$raw_properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
+		$to_map = array('markers', 'map_center', 'use_zoom', 'zoom', 'use_style', 'style', 'use_controls', 'controls');
+		
+		$properties = array();
+		foreach ($raw_properties as $prop) {
+			if (in_array($prop['name'], $to_map)) $properties[$prop['name']] = $prop['value'];
+		}
+		if (!is_array($properties['controls'])) $properties['controls'] = array($properties['controls']);
+		$map = 'data-map="' . esc_attr(json_encode($properties)) . '"';
+
+		if (empty($properties)) return ''; // No info for this map, carry on.
+
+		$hub = Upfront_PublicScripts_Registry::get_instance();
+		$hub->set('upfront_maps', array('js/upfront_maps-public.js', dirname(__FILE__)));
+
+		$hub = Upfront_PublicStylesheets_Registry::get_instance();
+		$hub->set('upfront_maps', array('css/visitor.css', dirname(__FILE__)));
+
+		return "<div class='upfront_map-public' {$element_id} {$map}>This is where the map comes in.</div>";
+	}
+
+}
+
+function upfront_maps_add_context_menu ($paths) {
+	$paths['maps_context_menu'] = upfront_element_url('js/ContextMenu', dirname(__FILE__));
+	return $paths;
+}
+add_filter('upfront-settings-requirement_paths', 'upfront_maps_add_context_menu');

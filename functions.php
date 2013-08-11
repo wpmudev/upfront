@@ -27,6 +27,7 @@ class Upfront {
 		'javascript_main',
 		'stylesheet_main',
 		'stylesheet_editor',
+		'element_styles',
 	);
 
 	private function __construct () {

@@ -1,3 +1,20 @@
+.upfront-editable_entity .ufm-gmap-container img {
+  max-width: none !important;
+  max-height: none !important;
+}
+.upfront_map-fields-complex_boolean .upfront-field-wrap-checkboxes {
+	float: left;
+}
+.upfront_map-fields-simple_location .upfront-field-wrap-text {
+	float: left;
+}
+.upfront_map-fields-simple_location .upfront-field-wrap-refresh button {
+	width: 30px;
+	height: 30px;
+	border: none;
+	background: none;
+}
+
 .ufm-context-menu{
 background:white;
 -webkit-border-radius: 3px;

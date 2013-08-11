@@ -330,3 +330,75 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 }
 
 
+/**
+ * Serves registered element stylesheets.
+ */
+class Upfront_ElementStyles extends Upfront_Server {
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		add_action('wp_enqueue_scripts', array($this, 'load_styles'));
+		add_action('wp_enqueue_scripts', array($this, 'load_scripts'));
+
+		add_action('wp_ajax_upfront-element-styles', array($this, 'serve_styles'));
+		add_action('wp_ajax_nopriv_upfront-element-styles', array($this, 'serve_styles'));
+
+		add_action('wp_ajax_upfront-element-scripts', array($this, 'serve_scripts'));
+		add_action('wp_ajax_nopriv_upfront-element-scripts', array($this, 'serve_scripts'));
+	}
+
+	function load_styles () {
+		$hub = Upfront_PublicStylesheets_Registry::get_instance();
+		$styles = $hub->get_all();
+		if (empty($styles)) return false;
+
+		$cache_key = md5(serialize($styles));
+		$cache = Upfront_Debug::is_active() ? false : get_transient($cache_key);
+		if (empty($cache)) {
+			foreach ($styles as $key => $frags) {
+				$path = upfront_element_dir($frags[0], $frags[1]);
+				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
+			}
+			set_transient($cache_key, $cache);
+		}
+		
+		wp_enqueue_style('upfront-element-styles', admin_url('admin-ajax.php?action=upfront-element-styles&key=' . $cache_key));
+	}
+
+	function load_scripts () {
+		$hub = Upfront_PublicScripts_Registry::get_instance();
+		$scripts = $hub->get_all();
+		if (empty($scripts)) return false;
+
+		$cache_key = md5(serialize($scripts));
+		$cache = Upfront_Debug::is_active() ? false : get_transient($cache_key);
+		if (empty($cache)) {
+			foreach ($scripts as $key => $frags) {
+				$path = upfront_element_dir($frags[0], $frags[1]);
+				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
+			}
+			set_transient($cache_key, $cache);
+		}
+		
+		wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery'));
+	}
+
+	function serve_styles () {
+		$key = stripslashes($_REQUEST['key']);
+		if (empty($key)) $this->_out(new Upfront_CssResponse_Error());
+
+		$cache = get_transient($key);
+		$this->_out(new Upfront_CssResponse_Success($cache));
+	}
+
+	function serve_scripts () {
+		$key = stripslashes($_REQUEST['key']);
+		if (empty($key)) $this->_out(new Upfront_JavascriptResponse_Error());
+
+		$cache = get_transient($key);
+		$this->_out(new Upfront_JavascriptResponse_Success($cache));
+	}
+}
