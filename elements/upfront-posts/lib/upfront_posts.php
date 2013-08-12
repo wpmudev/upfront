@@ -32,6 +32,9 @@ class Upfront_UpostsView extends Upfront_Object {
 		}
 		$query = new WP_Query($args);
 
+		$hub = Upfront_PublicStylesheets_Registry::get_instance();
+		$hub->set('upfront-posts', array('css/style.css', dirname(__FILE__)));
+
 		return "<div class='upfront-output-object upfront-posts' {$element_id}>" .
 			self::get_posts_markup($query, $content_type, $featured_image) .
 		"</div>";
@@ -78,11 +81,12 @@ class Upfront_UpostsView extends Upfront_Object {
 		}
 		return "<ul class='uposts-posts'>{$ret}</ul>";
 	}	
-
+/*
 	// Inject style dependencies
 	public static function add_public_style () {
 		wp_enqueue_style('upfront-posts', upfront_element_url('css/style.css', dirname(__FILE__)));
 	}
+*/
 }
 
 

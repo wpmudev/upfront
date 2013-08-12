@@ -36,7 +36,7 @@ function uposts_initialize () {
 	upfront_add_layout_editor_entity('uposts', upfront_element_url('js/uposts', __FILE__));
 
 	// Add the public stylesheet
-	add_action('wp_enqueue_scripts', array('Upfront_UpostsView', 'add_public_style'));
+	//add_action('wp_enqueue_scripts', array('Upfront_UpostsView', 'add_public_style'));
 }
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'uposts_initialize'); 
