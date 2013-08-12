@@ -15,7 +15,7 @@ class Upfront_StylePreprocessor {
 		$style = $this->_grid->apply_breakpoints($this->_layout->to_php());
 		return $this->_debugger->is_active(Upfront_Debug::STYLE)
 			? $style
-			: $this->_compress($style)
+			: self::compress($style)
 		;
 	}
 
@@ -123,7 +123,7 @@ class Upfront_StylePreprocessor {
 	 * @param  string $buffer Raw CSS
 	 * @return string Compressed CSS
 	 */
-	private function _compress ($buffer) {
+	public static function compress ($buffer) {
 		/* remove comments */
 		$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
 

@@ -100,6 +100,7 @@ abstract class Upfront_VirtualSubpage {
 
 // --- Creators
 
+/*
 class Upfront_NewPage_VirtualSubpage extends Upfront_VirtualSubpage {
 	
 	public function get_slug () {
@@ -123,7 +124,6 @@ class Upfront_NewPost_VirtualSubpage extends Upfront_VirtualSubpage {
 		Upfront_VirtualPage::redirect('edit/post/' . $page->ID);
 	}
 }
-
 class Upfront_ContentCreator_VirtualPage extends Virtual_Content_Page {
 	
 	public static function serve () {
@@ -146,7 +146,7 @@ class Upfront_ContentCreator_VirtualPage extends Virtual_Content_Page {
 
 }
 Upfront_ContentCreator_VirtualPage::serve();
-
+*/
 
 // --- Editors
 
@@ -835,3 +835,56 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 }
 Upfront_Editor_Ajax::serve();
+
+
+
+/* ----- Prettify frontend element dependencies loading ----- */
+
+class Upfront_ElementDependiecies_Styles_VirtualSubpage extends Upfront_VirtualSubpage {
+
+	public function get_slug () { return 'styles'; }
+
+	public function render ($request) {
+		if (empty($request)) return false;
+		if (empty($request[2])) return false;
+		$_REQUEST['key'] = $request[2];
+		$action = is_user_logged_in() ? 'wp_ajax_upfront-element-styles' : 'wp_ajax_nopriv_upfront-element-styles';
+		do_action($action);
+		die;
+	}
+}
+
+class Upfront_ElementDependiecies_Scripts_VirtualSubpage extends Upfront_VirtualSubpage {
+
+	public function get_slug () { return 'scripts'; }
+
+	public function render ($request) {
+		if (empty($request)) return false;
+		if (empty($request[2])) return false;
+		$_REQUEST['key'] = $request[2];
+		$action = is_user_logged_in() ? 'wp_ajax_upfront-element-scripts' : 'wp_ajax_nopriv_upfront-element-scripts';
+		do_action($action);
+		die;
+	}
+}
+
+class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
+	
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	protected function _add_subpages () {
+		$this->_subpages = array(
+			new Upfront_ElementDependiecies_Styles_VirtualSubpage(),
+			new Upfront_ElementDependiecies_Scripts_VirtualSubpage(),
+		);
+	}
+	
+	public function get_slug () { return 'upfront-dependencies'; }
+
+	public function render ($request) { die; }
+
+}
+Upfront_ElementDependencies_VirtualPage::serve();

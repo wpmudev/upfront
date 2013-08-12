@@ -355,17 +355,24 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$styles = $hub->get_all();
 		if (empty($styles)) return false;
 
-		$cache_key = md5(serialize($styles));
-		$cache = Upfront_Debug::is_active() ? false : get_transient($cache_key);
+		$raw_cache_key = $this->_get_raw_cache_key($styles);
+		$cache_key = "css{$raw_cache_key}";
+		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
 				$path = upfront_element_dir($frags[0], $frags[1]);
 				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 			}
+			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) $cache = Upfront_StylePreprocessor::compress($cache);
 			set_transient($cache_key, $cache);
 		}
-		
-		wp_enqueue_style('upfront-element-styles', admin_url('admin-ajax.php?action=upfront-element-styles&key=' . $cache_key));
+
+		//wp_enqueue_style('upfront-element-styles', admin_url('admin-ajax.php?action=upfront-element-styles&key=' . $cache_key)); // It'll also work as an AJAX request
+		wp_enqueue_style('upfront-element-styles', Upfront_VirtualPage::get_url(join('/', array(
+			'upfront-dependencies',
+			'styles',
+			$raw_cache_key
+		)))); // But let's do pretty instead
 	}
 
 	function load_scripts () {
@@ -373,8 +380,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$scripts = $hub->get_all();
 		if (empty($scripts)) return false;
 
-		$cache_key = md5(serialize($scripts));
-		$cache = Upfront_Debug::is_active() ? false : get_transient($cache_key);
+		$raw_cache_key = $this->_get_raw_cache_key($scripts);
+		$cache_key = "js{$raw_cache_key}";
+		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
 		if (empty($cache)) {
 			foreach ($scripts as $key => $frags) {
 				$path = upfront_element_dir($frags[0], $frags[1]);
@@ -383,11 +391,16 @@ class Upfront_ElementStyles extends Upfront_Server {
 			set_transient($cache_key, $cache);
 		}
 		
-		wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery'));
+		//wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery')); // It'll also work as an AJAX request
+		wp_enqueue_script('upfront-element-scripts', Upfront_VirtualPage::get_url(join('/', array(
+			'upfront-dependencies',
+			'scripts',
+			$raw_cache_key
+		))), array('jquery')); // But let's do pretty instead
 	}
 
 	function serve_styles () {
-		$key = stripslashes($_REQUEST['key']);
+		$key = 'css' . stripslashes($_REQUEST['key']);
 		if (empty($key)) $this->_out(new Upfront_CssResponse_Error());
 
 		$cache = get_transient($key);
@@ -395,10 +408,15 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 	function serve_scripts () {
-		$key = stripslashes($_REQUEST['key']);
+		$key = 'js' . stripslashes($_REQUEST['key']);
 		if (empty($key)) $this->_out(new Upfront_JavascriptResponse_Error());
 
 		$cache = get_transient($key);
 		$this->_out(new Upfront_JavascriptResponse_Success($cache));
+	}
+
+	private function _get_raw_cache_key ($stuff) {
+		//return substr(md5(serialize($stuff)), 0, 24); // Forced length for transients API key length limitation
+		return md5(serialize($stuff));
 	}
 }
