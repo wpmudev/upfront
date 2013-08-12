@@ -32,3 +32,12 @@ function upfront_maps_add_context_menu ($paths) {
 	return $paths;
 }
 add_filter('upfront-settings-requirement_paths', 'upfront_maps_add_context_menu');
+
+function upfront_maps_add_maps_local_url ($data) {
+	$data['upfront_maps'] = array(
+		"root_url" => trailingslashit(upfront_element_url('/', dirname(__FILE__))),
+		"markers" => trailingslashit(upfront_element_url('img/markers/', dirname(__FILE__))),
+	);
+	return $data;
+}
+add_filter('upfront_data', 'upfront_maps_add_maps_local_url');

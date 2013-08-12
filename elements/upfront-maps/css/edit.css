@@ -5,14 +5,28 @@
 .upfront_map-fields-complex_boolean .upfront-field-wrap-checkboxes {
 	float: left;
 }
+#settings .upfront_map-fields-complex_boolean .upfront-field-select {
+	width: 70%;
+}
 .upfront_map-fields-simple_location .upfront-field-wrap-text {
 	float: left;
+	width: 80%;
 }
 .upfront_map-fields-simple_location .upfront-field-wrap-refresh button {
-	width: 30px;
+	width: 24px;
 	height: 30px;
 	border: none;
 	background: none;
+}
+#settings .upfront-settings-item-maps_element-location .upfront-settings-item {
+	border: none;
+	padding-right: 0;
+}
+#settings .ufpront-maps_element-settings_panel .upfront-settings_panel {
+	width: 180px;
+}
+#settings .ufpront-maps_element-settings_panel .upfront-settings_panel .upfront-settings_panel_scroll {
+	min-width: 180px;
 }
 
 .ufm-context-menu{

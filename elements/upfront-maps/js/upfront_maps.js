@@ -4,7 +4,7 @@ if (!window.google) require(['async!https://maps.google.com/maps/api/js?v=3&libr
 else init();
 
 function init () {
-require(['maps_context_menu', 'text!' + Upfront.Settings.root_url + '/elements/upfront-maps/css/edit.css'], function (_ctx, maps_style) {
+require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'css/edit.css'], function (_ctx, maps_style) {
 
 	$("head").append("<style>" + maps_style + "</style>");
 
@@ -83,7 +83,7 @@ require(['maps_context_menu', 'text!' + Upfront.Settings.root_url + '/elements/u
 			);
 		},
 		get_field_html: function () {
-			return '<button type="button"><img src="' + Upfront.Settings.root_url + '/elements/upfront-maps/img/refresh.png" /></button>';
+			return '<button type="button"><img src="' + Upfront.data.upfront_maps.root_url + 'img/refresh.png" /></button>';
 		},
 		propagate_activation_request: function (e) {
 			e.preventDefault();
@@ -383,7 +383,7 @@ require(['maps_context_menu', 'text!' + Upfront.Settings.root_url + '/elements/u
 
 				// add images
 				var img_names = ['POI.png', 'arts.png', 'bar.png', 'blue-dot.png', 'blue-pushpin.png', 'blue.png', 'bus.png', 'cabs.png', 'camera.png', 'campfire.png', 'campground.png', 'casetta_base.png', 'casetta_brown.png', 'casetta_green.png', 'casetta_red.png', 'casetta_yellow.png', 'caution.png', 'coffeehouse.png', 'convienancestore.png', 'cycling.png', 'dollar.png', 'drinking_water.png', 'earthquake.png', 'electronics.png', 'euro.png', 'fallingrocks.png', 'ferry.png', 'firedept.png', 'fishing.png', 'flag.png', 'gas.png', 'golfer.png', 'grocerystore.png', 'hiker.png', 'homegardenbusiness.png', 'hospitals.png', 'info_circle.png', 'man.png', 'marina.png', 'marker.png', 'plane.png', 'snack_bar.png', 'sportvenue.png', 'toilets.png', 'trail.png', 'tree.png', 'wheel_chair_accessible.png', 'woman.png'],
-					img_dir = Upfront.Settings.root_url + '/elements/upfront-maps/img/markers/',
+					img_dir = Upfront.data.upfront_maps.markers,
 					all_imgs = '';
 
 				_.each(img_names, function(img){
@@ -528,6 +528,10 @@ require(['maps_context_menu', 'text!' + Upfront.Settings.root_url + '/elements/u
 					new MapSettings_Field_Controls({model: this.model})
 				]);
 			},
+			render: function () {
+				Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
+				this.$el.addClass("ufpront-maps_element-settings_panel");
+			},
 			get_label: function () {
 				return "Google Map";
 			},
@@ -537,9 +541,9 @@ require(['maps_context_menu', 'text!' + Upfront.Settings.root_url + '/elements/u
 		});
 
 			var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({
+				className: "upfront-settings-item-maps_element-location",
 				initialize: function () {
 					this.fields = _([
-						//new Upfront.Views.Editor.Field.Text({
 						new Map_Fields_Simple_Location({
 							model: this.model,
 							property: 'location'
@@ -555,7 +559,7 @@ require(['maps_context_menu', 'text!' + Upfront.Settings.root_url + '/elements/u
 				initialize: function () {
 					var zooms = [];
 					_(_.range(1,19)).each(function (idx) {
-						zooms.push({label: idx, value: idx});
+						zooms.push({label: parseInt(((idx+2)/20)*100, 10) + '%', value: idx});
 					});
 					this.fields = _([
 						new Map_Fields_Complex_BooleanDropdown({
