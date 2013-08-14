@@ -328,7 +328,7 @@ var GridEditor = {
 			}), function(each){
 				return top ? each.grid.top : each.grid.left;
 			});
-		return wrap_el_min;
+		return _.isObject(wrap_el_min) ? wrap_el_min : false;
 	},
 	
 	get_wrap_el_max: function( use_wrap, ignore, bottom ){
@@ -339,7 +339,7 @@ var GridEditor = {
 			}), function(each){
 				return bottom ? each.grid.bottom : each.grid.right;
 			});
-		return wrap_el_max;
+		return _.isObject(wrap_el_max) ? wrap_el_max : false;
 	},
 	
 	/**
@@ -761,14 +761,14 @@ var GridEditor = {
 		;
 		if ( $me.hasClass('ui-resizable') )
 			return false;
-		$me.append('<span class="upfront-icon-button upfront-icon-button-resize upfront-resize-handle ui-resizable-handle ui-resizable-se"></span>');
+		$me.append('<span class="upfront-icon-control upfront-icon-control-resize upfront-resize-handle ui-resizable-handle ui-resizable-se"></span>');
 		$me.resizable({
 			"containment": "parent",
 			autoHide: true,
 			delay: 100,
-			handles: {
+			/*handles: {
 				se: '.upfront-resize-handle'
-			},
+			},*/
 			start: function(e, ui){
 				ed.start(view, model);
 				

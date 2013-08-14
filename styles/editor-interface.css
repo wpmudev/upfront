@@ -332,20 +332,23 @@
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar,
 .upfront-scroll-panel::-webkit-scrollbar,
 .upfront-settings_panel_scroll::-webkit-scrollbar,
-.upfront-field-select-options::-webkit-scrollbar {
+.upfront-field-select-options::-webkit-scrollbar,
+.upfront-suggest-lists::-webkit-scrollbar {
 	background: none;
 	width: 3px;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-track,
 .upfront-scroll-panel::-webkit-scrollbar-track,
 .upfront-settings_panel_scroll::-webkit-scrollbar-track,
-.upfront-field-select-options::-webkit-scrollbar-track {
+.upfront-field-select-options::-webkit-scrollbar-track,
+.upfront-suggest-lists::-webkit-scrollbar-track {
 }
  
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-thumb,
 .upfront-scroll-panel::-webkit-scrollbar-thumb,
 .upfront-settings_panel_scroll::-webkit-scrollbar-thumb,
-.upfront-field-select-options::-webkit-scrollbar-thumb {
+.upfront-field-select-options::-webkit-scrollbar-thumb,
+.upfront-suggest-lists::-webkit-scrollbar-thumb {
 	border-right: 3px solid #1fcd8f;
 	width: 3px;
 }
@@ -885,9 +888,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-field-select-option .upfront-field-checkbox {
 	float: none !important;
 	position: absolute;
-	top: 50%;
+	top: 0;
+	bottom: 0;
+	left: 0;
 	right: 0;
-	margin-top: -6px;
+	margin: auto;
 }
 .upfront-field-select-zebra .upfront-field-select-option-even {
 	background: rgb(218, 231, 242);
@@ -1011,12 +1016,79 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-field-multiple-vertical .upfront-field-icon {
 	margin: 0 auto;
 }
+.upfront-suggest-list-wrap {
+	height: 0;
+	max-height: 0;
+	overflow: hidden;
+	background: rgb(242, 249, 255);
+	-webkit-transition: max-height 0.3s;
+	-moz-transition: max-height 0.3s;
+	-ms-transition: max-height 0.3s;
+	-o-transition: max-height 0.3s;
+	transition: max-height 0.3s;
+}
+.upfront-suggest-list-wrap-expanded {
+	height: auto;
+	max-height: 142px;
+}
+.upfront-suggest-lists {
+	border: 1px solid rgb(163, 191, 217);
+	border-top: none;
+	max-height: 113px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+.upfront-suggest-list {
+	padding: 0;
+	margin: 0 !important;
+	line-height: 14px;
+	position: relative;
+}
+.upfront-suggest-list .upfront-field-checkbox {
+	float: none;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: auto;
+	right: 10px;
+	margin: auto;
+}
+.upfront-suggest-list label {
+	display: block;
+	padding: 7px 30px 7px 10px;
+}
+.upfront-suggest-match {
+	background: rgb(31, 205, 143);
+	box-shadow: 0 0 0 1px rgb(31, 205, 143), 0 2px 0 rgb(27, 179, 125), 0 0 0 2px rgb(31, 205, 143);
+	border-radius: 1px;
+	color: rgb(255, 255, 255);
+}
 .upfront-field-wrap {
 	color: rgb(48, 71, 94);
 	font-size: 11px;
 	line-height: 16px;
 	font-weight: normal;
 	font-family: verdana, sans-serif;
+	margin: 0 0 5px;
+}
+.upfront-suggest-add-wrap {
+	border: 1px solid rgb(163, 191, 217);
+	border-top: none;
+	background: rgb(204, 230, 255);
+	line-height: 16px;
+	position: relative;
+}
+.upfront-suggest-add-value {
+	display: block;
+	font-weight: bold;
+	padding: 6px 0 6px 12px;
+}
+.upfront-suggest-add {
+	display: block;
+	position: absolute;
+	top: 6px;
+	right: 10px;
+	cursor: pointer;
 }
 .upfront-field-wrap .upfront-field-label {
 	font-weight: normal;
@@ -1135,7 +1207,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	outline: 1px dotted #5c7c9b;
 }
 .upfront-module {
-	position: relative;
+	/*position: relative;*/
 	/*padding: 30px 0 0;*/
 }
 .show-debug .upfront-module {
@@ -1153,6 +1225,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-dragging .upfront-module:hover {
 	outline: 1px dotted #7f7f7f;
 	/*z-index: 40;*/
+}
+.upfront-objects_container {
+	overflow: hidden;
 }
 .upfront-object {
 	position: relative;
@@ -1314,21 +1389,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 .upfront-resize-handle {
 	position: absolute;
-	bottom: 5px;
-	right: 5px;
+	bottom: 0;
+	right: 0;
 	z-index: 2000;
 	overflow: hidden;
-}
-.upfront-module[data-row="1"] .upfront-resize-handle,
-.upfront-module[data-row="2"] .upfront-resize-handle {
-	bottom: auto;
-	top: 0;
-}
-.upfront-module[data-row="3"] .upfront-resize-handle,
-.upfront-module[data-row="4"] .upfront-resize-handle,
-.upfront-module[data-row="5"] .upfront-resize-handle {
-	bottom: auto;
-	top: 5px;
+	cursor: se-resize;
 }
 
 
@@ -1337,14 +1402,14 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .upfront-icon-button {
 	width: 28px;
-	height: 23px;
+	height: 24px;
 	z-index: 2000;
 	cursor:pointer;
 	display:block;
 	border-radius: 2px;
 	color:#fff;
 	text-decoration:none;
-	padding: 3px 0 2px;
+	padding: 2px 0;
 }
 .upfront-module[data-row="1"] .upfront-object > .upfront-entity_meta .upfront-icon-button,
 .upfront-module[data-row="2"] .upfront-object > .upfront-entity_meta .upfront-icon-button,
@@ -1379,16 +1444,6 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background: #1fcd8f -o-linear-gradient(-45deg, rgba(33,217,152,1) 0%,rgba(33,217,152,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
 	background: #1fcd8f -ms-linear-gradient(-45deg, rgba(33,217,152,1) 0%,rgba(33,217,152,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
 	background: #1fcd8f linear-gradient(135deg, rgba(33,217,152,1) 0%,rgba(33,217,152,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
-}
-.upfront-icon-button-resize {
-	border: 1px solid #d99e21;
-	background: #e6ab2e -moz-linear-gradient(-45deg, rgba(242,181,48,1) 0%, rgba(242,181,48,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
-	background: #e6ab2e -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(242,181,48,1)), color-stop(50%,rgba(242,181,48,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
-	background: #e6ab2e -webkit-linear-gradient(-45deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
-	background: #e6ab2e -o-linear-gradient(-45deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
-	background: #e6ab2e -ms-linear-gradient(-45deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
-	background: #e6ab2e linear-gradient(135deg, rgba(242,181,48,1) 0%,rgba(242,181,48,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
-	cursor: se-resize;
 }
 .upfront-icon-button-crop {
 	border: 1px solid #1d81bf;
@@ -1752,85 +1807,91 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 
 /* Upfront icon */
-.upfront-ui .upfront-icon-element:before, .upfront-ui .upfront-icon:before, .upfront-icon-button:before,
-.upfront-ui .upfront-field-icon:before,
+.upfront-ui .upfront-icon-element:before, 
+.upfront-icon-button:before,
+.upfront-icon-control:before,
+.upfront-ui .upfront-field-icon:before {
+	content: " ";
+	background-image: url('../img/uf-core-el-sprite.svg?v=20130814');
+	background-repeat: no-repeat;
+	float: left;
+	display: block;
+}
+.upfront-ui .upfront-icon:before,
 .region-lock-switch:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
 .upfront-field-select-single .upfront-field-select-option-selected label:before {
 	content: " ";
-	background-image: url('../img/upfront-icon-sprite.svg?v=20130719');
+	background-image: url('../img/uf-ui-sprite.svg?v=20130814');
 	background-repeat: no-repeat;
 	float: left;
 	display: block;
 }
 .upfront-icon-element:before {
-	width: 26px;
-	height: 23px;
+	width: 24px;
+	height: 24px;
 	margin: 0 3px 0 0;
 }
 .upfront-icon-element-text:before {
-	background-position: -10px -10px;
+	background-position: -39px -40px;
 }
 .upfront-icon-element-image:before {
-	background-position: -10px -43px;
+	background-position: -39px -74px;
 }
 .upfront-icon-element-search:before {
-	background-position: -10px -76px;
-}
-.upfront-icon-element-image-text:before {
-	background-position: -10px -109px;
-}
-.upfront-icon-element-columns:before {
-	background-position: -10px -142px;
+	background-position: -39px -108px;
 }
 .upfront-icon-element-social:before {
-	background-position: -10px -175px;
+	background-position: -39px -142px;
 }
-.upfront-icon-element-quote:before {
-	background-position: -10px -208px;
-}
-.upfront-icon-element-button:before {
-	background-position: -10px -241px;
+.upfront-icon-element-blockquote:before { /* @TODO is it blockquote? */
+	background-position: -39px -176px;
 }
 .upfront-icon-element-table:before {
-	background-position: -10px -274px;
+	background-position: -39px -210px;
+}
+.upfront-icon-element-button:before {
+	background-position: -39px -244px;
 }
 .upfront-icon-element-video:before {
-	background-position: -10px -307px;
+	background-position: -39px -278px;
 }
 .upfront-icon-element-maps:before {
-	background-position: -10px -340px;
+	background-position: -39px -312px;
 }
 .upfront-icon-element-slider:before {
-	background-position: -10px -373px;
+	background-position: -39px -346px;
+}
+.upfront-icon-element-multi-image:before { /* @TODO multi image? */
+	background-position: -39px -380px;
 }
 .upfront-icon:before {
-	width: 28px;
-	height: 23px;
+	width: 24px;
+	height: 24px;
 	margin: 0 3px 0 0;
 }
 .upfront-icon-page:before {
-	background-position: -218px -142px;
+	background-position: -41px -177px;
 }
 .upfront-icon-post:before {
-	background-position: -218px -175px;
+	background-position: -41px -210px;
 }
 .upfront-icon-panel-post:before {
-	background-position: -218px -208px;
+	background-position: -729px -40px;
 }
 .upfront-icon-panel-elements:before {
-	background-position: -218px -241px;
+	background-position: -41px -380px;
 }
 .upfront-icon-panel-settings:before {
-	background-position: -218px -274px;
+	background-position: -41px -415px;
 }
 .upfront-icon-save:before {
-	background-position: -218px -307px;
+	background-position: -190px -176px;
 }
 .upfront-icon-edit:before {
-	background-position: -218px -340px;
+	background-position: -341px -41px;
 }
 .upfront-icon-delete:before {
 	width: 18px;
@@ -1838,88 +1899,116 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	margin: 0;
 }
 .upfront-icon-delete:before {
-	background-position: -219px -375px;
+	background-position: -343px -77px;
 }
 .upfront-icon-check:before {
-	background-position: -218px -406px;
+	background-position: -733px -138px;
 }
 .position-select-wrap .position-select:checked {
-	background-position: -222px -411px;
+	background-position: -46px -353px;
 }
 .tile-select:checked {
-	background-position: -222px -411px;
+	background-position: -46px -353px;
 }
 .upfront-field-checkbox:checked {
-	background-position: -223px -411px;
+	background-position: -46px -353px;
 }
 .upfront-field-select-single .upfront-field-select-option-selected label:before {
 	width: 11px;
 	height: 8px;
 	margin: 7px 5px 0 0;
-	background-position: -223px -413px;
+	background-position: -46px -354px;
 }
 .region-lock-switch:before {
 	width: 22px;
 	height: 30px;
 	margin: 5px 20px 0 0;
-	background-position: -218px -501px;
+	background-position: -341px -157px;
 }
 .region-lock-switch.locked:before {
-	background-position: -218px -567px;
+	background-position: -341px -221px;
 }
 .upfront-icon-simple:before, .upfront-icon-advanced:before {
 	width: 20px;
 	height: 18px;
 }
 .upfront-icon-simple:before {
-	background-position: -225px -26px;
+	background-position: -41px -42px;
 }
 .upfront-icon-simple:hover:before,
 .active .upfront-icon-simple:before {
-	background-position: -225px -76px;
+	background-position: -41px -76px;
 }
 .upfront-icon-advanced:before {
-	background-position: -285px -26px;
+	background-position: -42px -111px;
 }
 .upfront-icon-advanced:hover:before,
 .active .upfront-icon-advanced:before {
-	background-position: -285px -76px;
+	background-position: -42px -145px;
 }
 .upfront-icon-undo:before, .upfront-icon-redo:before {
 	width: 10px;
-	height: 23px;
+	height: 24px;
 	margin: 0 6px 0 0;
 }
 .upfront-icon-undo:before {
-	background-position: -345px -26px;
+	background-position: -197px -40px;
 }
 .upfront-icon-undo:hover:before {
-	background-position: -345px -76px;
+	background-position: -197px -74px;
 }
 .upfront-icon-redo:before {
-	background-position: -391px -26px;
+	background-position: -196px -108px;
 }
 .upfront-icon-redo:hover:before {
-	background-position: -391px -76px;
+	background-position: -196px -142px;
 }
 .upfront-icon-button:before {
-	width: 18px;
-	height: 23px;
+	width: 20px;
+	height: 20px;
 	margin: 0 auto;
 	float: none;
 	display: block;
 }
 .upfront-icon-button-delete:before {
-	background-position: -453px -505px;
+	background-position: -260px -40px;
 }
 .upfront-icon-button-setting:before {
-	background-position: -486px -505px;
-}
-.upfront-icon-button-resize:before {
-	background-position: -453px -538px;
+	background-position: -260px -70px;
 }
 .upfront-icon-button-crop:before {
-	background-position: -486px -538px;
+	background-position: -260px -100px;
+}
+.upfront-icon-button-align-left:before {
+	background-position: -260px -130px;
+}
+.upfront-icon-button-align-center:before {
+	background-position: -260px -160px;
+}
+.upfront-icon-button-align-right:before {
+	background-position: -260px -190px;
+}
+.upfront-icon-button-move:before {
+	background-position: -260px -280px;
+}
+.upfront-icon-control:before {
+	margin: 0 auto;
+	float: none;
+	display: block;
+}
+.upfront-icon-control-resize:before {
+	width: 12px;
+	height: 12px;
+	background-position: -294px -44px;
+}
+.upfront-icon-control-expand:before,
+.upfront-icon-control-collapse:before {
+	width: 6px;
+	height: 3px;
+	background-position: -267px -229px;
+}
+.upfront-icon-control-collapse:before {
+	background-position: -267px -259px;
 }
 .panel-setting-dialog-region:before {
 	
@@ -1934,14 +2023,69 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	width: 22px;
 	height: 22px;
 }
+.upfront-field-icon-image-caption-below:before {
+	background-position: -700px -40px;
+}
+.upfront-field-icon-image-caption-over-bottom:before {
+	background-position: -808px -40px;
+}
+.upfront-field-icon-image-caption-over-top:before {
+	background-position: -700px -72px;
+}
+.upfront-field-icon-image-caption-over-fill:before {
+	background-position: -808px -72px;
+}
+.upfront-field-icon-navigation-link:before {
+	background-position: -920px -40px;
+}
+.upfront-field-icon-navigation-open:before {
+	background-position: -920px -72px;
+}
 .upfront-field-icon-contact-above-field:before {
-	background-position: -676px -49px;
+	background-position: -1140px -40px;
 }
 .upfront-field-icon-contact-over-field:before {
-	background-position: -776px -49px;
+	background-position: -1248px -40px;
 }
 .upfront-field-icon-contact-inline-field:before {
-	background-position: -876px -49px;
+	background-position: -1140px -72px;
+}
+.upfront-field-icon-social-like:before {
+	width: 40px;
+	background-position: -1360px -40px;
+}
+.upfront-field-icon-social-count:before {
+	width: 45px;
+	background-position: -1468px -40px;
+}
+.upfront-field-icon-social-button:before {
+	background-position: -1360px -72px;
+}
+.upfront-field-icon-social-button-style-1:before {
+	background-position: -1468px -72px;
+}
+.upfront-field-icon-social-button-style-2:before {
+	background-position: -1360px -104px;
+}
+.upfront-field-icon-social-button-style-3:before {
+	background-position: -1468px -104px;
+}
+.upfront-field-icon-social-sort:before {
+	background-position: -1360px -136px;
+}
+.upfront-field-icon-social-back:before {
+	background-position: -1468px -136px;
+}
+.upfront-field-icon-social-add:before {
+	background-position: -1360px -168px;
+}
+.upfront-field-icon-social-count-horizontal:before {
+	width: 70px;
+	background-position: -1360px -200px;
+}
+.upfront-field-icon-social-count-vertical:before {
+	height: 42px;
+	background-position: -1360px -244px;
 }
 
 /* ContentEditor sidebar */

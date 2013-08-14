@@ -319,7 +319,7 @@ class Upfront_GridBreakpoint_Desktop extends Upfront_GridBreakpoint {
 		$parent_rule = parent::get_editor_root_rule($scope);
 		return '' .
 			$parent_rule.
-			"#page.{$scope} {min-width: 968px; max-width: 1386px;}" .
+			"#page.{$scope} {min-width: 968px;}" .
 		'';
 	}
 }
