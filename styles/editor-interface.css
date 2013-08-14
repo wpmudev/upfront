@@ -890,8 +890,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	left: 0;
-	right: 0;
+	left: auto;
+	right: 5px;
 	margin: auto;
 }
 .upfront-field-select-zebra .upfront-field-select-option-even {
