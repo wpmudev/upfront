@@ -1363,28 +1363,28 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-module[data-row="1"] > .upfront-entity_meta,
 .upfront-module[data-row="2"] > .upfront-entity_meta {
 	top: 0;
-	right: 50px;
+	right: 5px;
 }
 .upfront-module[data-row="3"] > .upfront-entity_meta,
 .upfront-module[data-row="4"] > .upfront-entity_meta,
 .upfront-module[data-row="5"] > .upfront-entity_meta {
 	top: 5px;
-	right: 50px;
+	right: 5px;
 }
 .upfront-object > .upfront-entity_meta {
-	top: 50px;
+	top: 34px;
 	right: 5px;
 }
 .upfront-module[data-row="1"] .upfront-object > .upfront-entity_meta,
 .upfront-module[data-row="2"] .upfront-object > .upfront-entity_meta {
 	top: 0;
-	right: 95px;
+	right: 34px;
 }
 .upfront-module[data-row="3"] .upfront-object > .upfront-entity_meta,
 .upfront-module[data-row="4"] .upfront-object > .upfront-entity_meta,
 .upfront-module[data-row="5"] .upfront-object > .upfront-entity_meta {
 	top: 5px;
-	right: 95px;
+	right: 34px;
 }
 
 .upfront-resize-handle {
@@ -1401,8 +1401,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	display: none;
 }
 .upfront-icon-button {
-	width: 28px;
-	height: 24px;
+	width: 24px;
+	height: 20px;
 	z-index: 2000;
 	cursor:pointer;
 	display:block;
@@ -1421,7 +1421,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .upfront-entity_meta .upfront-icon-button {
 	display: none;
-	margin: 0 0 15px;
+	margin: 0 0 5px;
 }
 .upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button,
 .upfront-active_entity .upfront-entity_meta .upfront-icon-button {
