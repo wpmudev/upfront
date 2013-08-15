@@ -32,8 +32,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		}
 		$query = new WP_Query($args);
 
-		$hub = Upfront_PublicStylesheets_Registry::get_instance();
-		$hub->set('upfront-posts', array('css/style.css', dirname(__FILE__)));
+		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
 
 		return "<div class='upfront-output-object upfront-posts' {$element_id}>" .
 			self::get_posts_markup($query, $content_type, $featured_image) .

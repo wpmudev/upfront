@@ -16,11 +16,8 @@ class Upfront_MapView extends Upfront_Object{
 
 		if (empty($properties)) return ''; // No info for this map, carry on.
 
-		$hub = Upfront_PublicScripts_Registry::get_instance();
-		$hub->set('upfront_maps', array('js/upfront_maps-public.js', dirname(__FILE__)));
-
-		$hub = Upfront_PublicStylesheets_Registry::get_instance();
-		$hub->set('upfront_maps', array('css/visitor.css', dirname(__FILE__)));
+		upfront_add_element_script('upfront_maps', array('js/upfront_maps-public.js', dirname(__FILE__)));
+		upfront_add_element_style('upfront_maps', array('css/visitor.css', dirname(__FILE__)));
 
 		return "<div class='upfront_map-public' {$element_id} {$map}>This is where the map comes in.</div>";
 	}

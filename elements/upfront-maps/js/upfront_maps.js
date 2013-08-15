@@ -156,8 +156,8 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 				'width': '100%',
 				'height': height + 'px'
 			});
-			//$el.on('click mousedown mouseup', function(e){
-			$el.on('click', function(e){
+			$el.on('click mousedown mouseup', function(e){
+			//$el.on('click', function(e){
 				e.cancelBubble = true;
 				if (e.stopPropagation) {
 					e.stopPropagation();

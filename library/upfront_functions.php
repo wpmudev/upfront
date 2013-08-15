@@ -122,3 +122,43 @@ add_action('init', 'upfront_register_vendor_scripts');
 
 
 
+/* ----- Elements dependencies enqueueing wrappers----- */
+
+
+/**
+ * Adds element style resource.
+ * @param string $slug Stylesheet ID to be keyed under (hopefully unique)
+ * @param array $path_info Two-member array, describing resource location. The members are like arguments for upfront_element_dir/upfront_element_url
+ * @return bool False on failure/invalid arguments, true on success
+ */
+function upfront_add_element_style ($slug, $path_info) {
+	if (empty($slug) || empty($path_info)) return false;
+	if (!is_array($path_info)) return false;
+	if (count($path_info) != 2) return false;
+
+	if (current_theme_supports($slug)) return true; // Current theme supports this style
+
+	$hub = Upfront_PublicStylesheets_Registry::get_instance();
+	return $hub->set($slug, $path_info);
+}
+
+/**
+ * Adds element script resource.
+ * @param string $slug Script ID to be keyed under (hopefully unique)
+ * @param array $path_info Two-member array, describing resource location. The members are like arguments for upfront_element_dir/upfront_element_url
+ * @return bool False on failure/invalid arguments, true on success
+ */
+function upfront_add_element_script ($slug, $path_info) {
+	if (empty($slug) || empty($path_info)) return false;
+	if (!is_array($path_info)) return false;
+	if (count($path_info) != 2) return false;
+
+	if (
+		current_theme_supports("upfront-element_scripts") 
+		&& 
+		current_theme_supports("{$slug}-script")
+	) return true; // Current theme supports element scripts, and this script in particular
+
+	$hub = Upfront_PublicScripts_Registry::get_instance();
+	return $hub->set($slug, $path_info);
+}

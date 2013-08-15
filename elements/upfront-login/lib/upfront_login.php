@@ -5,8 +5,7 @@ class Upfront_LoginView extends Upfront_Object {
 	public function get_markup () {
 		
 		// We're registering the styles as it turns out we'll need them
-		$styles = Upfront_PublicStylesheets_Registry::get_instance();
-		$styles->set('upfront_login', array('css/public.css', dirname(__FILE__)));
+		upfront_add_element_style('upfront_login', array('css/public.css', dirname(__FILE__)));
 		// They'll get concatenated and cached later on, we're done with this. Get the actual markup.
 
 		return is_user_logged_in ()
