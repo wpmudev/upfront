@@ -132,6 +132,15 @@
                 // set current item data
                 currentMenuItemData.set({ id: listItemDBID, name: $text, url: $url });
 
+                // Prevent event from bubbling up to object handlers
+                // while we're contenteditable=true
+                $Ele.on('click mousedown mouseup', function (e) {
+                    e.cancelBubble = true;
+                    if (e.stopPropagation) {
+                        e.stopPropagation();
+                    }
+                });
+
                 if (e.type == "mouseenter") {
                     // hover on menu item
                     $toolTip.find('.visit_page').attr('href', e.target.href);
