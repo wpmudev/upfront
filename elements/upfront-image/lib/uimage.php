@@ -73,7 +73,7 @@ class Upfront_UimageView extends Upfront_Object {
 		if(is_numeric($data['size']['height']))
 			$data['size']['height'] .= 'px';
 		
-		return upfront_get_template('uimage', $data, upfront_element_url('tpl/image.html', dirname(__FILE__)));
+		return upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html');
 	}
 
 	public function add_js_defaults($data){
