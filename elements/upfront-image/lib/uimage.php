@@ -12,7 +12,7 @@ class Upfront_UimageView extends Upfront_Object {
 		'image_link' => false,
 		'include_image_caption' => false,
 		'image_caption' => '',
-		'caption_position' => '',
+		'caption_position' => 'below_image',
 		'caption_alignment' => 'top',
 		'caption_trigger' => 'always_show',
 		'image_status' => 'starting',
@@ -38,7 +38,7 @@ class Upfront_UimageView extends Upfront_Object {
 
 	protected function merge_default_properties($data){
 		$flat = array();
-		if(!$data['properties'])
+		if(!isset($data['properties']))
 			return $flat;
 
 		foreach($data['properties'] as $prop)
@@ -55,6 +55,11 @@ class Upfront_UimageView extends Upfront_Object {
 
 	public function get_markup () {
 		$data = $this->properties_to_array();
+
+		if($data['when_clicked'] == 'show_larger_image'){
+			wp_enqueue_style('magnific');
+			wp_enqueue_script('magnific');
+		}
 		
 		$url = false;
 		if($data['when_clicked'] == 'open_link')
@@ -68,24 +73,15 @@ class Upfront_UimageView extends Upfront_Object {
 		if(is_numeric($data['size']['height']))
 			$data['size']['height'] .= 'px';
 		
-
-		return $this->get_template_content($data);
+		return upfront_get_template('uimage', $data, upfront_element_url('tpl/image.html', dirname(__FILE__)));
 	}
 
 	public function add_js_defaults($data){
 		$data['uimage'] = array(
-			'defaults' => $this->defaults
+			'defaults' => $this->defaults,
+			'template' => upfront_get_template_url('uimage', upfront_element_url('tpl/image.html', dirname(__FILE__)))
 		);
 		return $data;
-	}
-
-	private function get_template_content($data){
-		extract($data);
-		ob_start();
-		include dirname(dirname(__FILE__)) . '/tpl/image.html';
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;
 	}
 
 	private function properties_to_array(){
@@ -94,22 +90,19 @@ class Upfront_UimageView extends Upfront_Object {
 			$out[$prop['name']] = $prop['value'];
 		return $out;
 	}
-
-	public static function set_jquery_form () {
+	
+	public static function add_styles_scripts () {
 		wp_deregister_script('jquery-form');
 		wp_register_script('jquery-form', upfront_element_url('js/jquery.form.min.js', dirname(__FILE__)), array('jquery'), '3.36.0');
+		wp_enqueue_script('jquery-form');
 
-	}
-
-	public static function add_styles_scripts () {
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
-		wp_enqueue_script('jquery-form');
 		wp_enqueue_script('wp-color-picker');
 		
 		//Lightbox
-		wp_enqueue_style('magnific');
-		wp_enqueue_script('magnific');
+		//wp_enqueue_style('magnific');
+		//wp_enqueue_script('magnific');
 	}
 }
 

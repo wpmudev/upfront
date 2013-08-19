@@ -40,9 +40,6 @@ function uimage_initialize () {
 	$uimage = new Upfront_UimageView(array());
 	add_action('upfront_data', array($uimage, 'add_js_defaults'));
 
-	//re_register the jQuery forms plugin for upload percentage
-	Upfront_UimageView::set_jquery_form();
-
 	// Add the public stylesheet
 	add_action('wp_enqueue_scripts', array('Upfront_UimageView', 'add_styles_scripts'));
 }

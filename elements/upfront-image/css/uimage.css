@@ -424,22 +424,6 @@ a.open-media-gallery:hover i {
 	opacity: 1 !important;
 }
 
-#settings .upfront-settings-item {
-	margin-bottom:10px;
-}
-
-#settings .sp-preview {
-	display: inline-block;
-	width:15px;
-	height:15px;
-	border:1px solid #a2c5e4;
-	vertical-align: bottom;
-}
-
-#settings .sp-replacer {
-	line-height: 18px;
-}
-
 a.uimage_edit_toggle {
 	opacity: .9;
 	border: 1px solid #2582BD;

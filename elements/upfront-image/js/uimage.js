@@ -1,32 +1,8 @@
 (function ($) {
 
-var utemplate = function(markup){
-	var oldSettings = _.templateSettings,
-		tpl = false;
-
-	_.templateSettings = {
-	    interpolate : /<\?php echo (.+?) \?>/g,
-	    evaluate: /<\?php (.+?) \?>/g		
-	};
-
-	tpl = _.template(markup);
-
-	_.templateSettings = oldSettings;
-
-	return function(data){
-		_.each(data, function(value, key){
-			data['$' + key] = value;
-		})
-
-		return tpl(data);
-	}
-};
-
-var	tplPath = 'text!../elements/upfront-image/tpl/';
-
 var	templates = [
-		tplPath + 'image.html', 
-		tplPath + 'image_editor.html'
+		'text!' + Upfront.data.uimage.template, 
+		'text!../elements/upfront-image/tpl/image_editor.html'
 	]
 ;
 
@@ -41,7 +17,7 @@ var UimageModel = Upfront.Models.ObjectModel.extend({
 
 var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.FixedObjectInAnonymousModule,*/ {
 	model: UimageModel,
-	imageTpl: utemplate(imageTpl),
+	imageTpl: Upfront.Util.template(imageTpl),
 	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
 	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
 	editorTpl: _.template($(editorTpl).find('#editor-tpl').html()),
@@ -1071,39 +1047,45 @@ var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
 var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function () {
 		var me = this,
-			render_all = function(){
-				this.settings.invoke('render');
-			}
+			SettingsItem =  Upfront.Views.Editor.Settings.Item,
+			Fields = Upfront.Views.Editor.Field
 		;
+
 		this.settings = _([
-			new Field_Input({
-				model: this.model,
-				name: 'image_title',
-				label: 'Image Title',
-				value: this.model.get_property_value_by_name('image_title')
-			}),
-			new Field_Input({
-				model: this.model,
-				name: 'alternative_text',
-				label: 'Alternative text',
-				value: this.model.get_property_value_by_name('alternative_text')
-			}),
-			new Field_Checkbox({
-				model: this.model,
-				name: 'include_image_caption',
-				label: 'Include image caption',
-				value: this.model.get_property_value_by_name('include_image_caption')
-			}),
-			new Field_Textarea({
-				model: this.model,
-				name: 'image_caption',
-				label: 'Image Caption',
-				value: this.model.get_property_value_by_name('image_caption'),
-				trigger_name: 'include_image_caption',
-				trigger_value: 'yes'
+			new SettingsItem({
+				title: 'Image info',
+				fields: [
+					new Fields.Text({
+						model: this.model,
+						property: 'image_title',
+						label: 'Image Title'
+					}),
+					new Fields.Text({
+						model: this.model,
+						property: 'alternative_text',
+						label: 'Alternative text'						
+					}),
+					new Fields.Checkboxes({
+						model: this.model,
+						property: 'include_image_caption',
+						values: [
+							{
+								label: 'Include image caption',
+								value: 'true'
+							}
+						]
+					}),
+					new Fields.Text({
+						model: this.model,
+						property: 'image_caption',
+						label: 'Image Caption',
+						className: 'upfront-field-wrap upfront-field-wrap-text optional-field'					
+					})
+				]
 			})
 		]);
-		this.$el.on('change', '#include_image_caption', function(){
+
+		this.$el.on('change', 'input[name=include_image_caption]', function(){
 			me.toggleCaption();
 		})
 		this.on('concealed', this.toggleCaption, this);
@@ -1115,19 +1097,14 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		return false;
 	},
 	toggleCaption: function (){
-		if(this.$('#include_image_caption').is(':checked')){
-			this.$('#usetting-image_caption').show();
-			$('#usetting-caption_position').show();
-			$('#usetting-caption_trigger').show();
-			$('#usetting-caption_alignment').show();
+		var include = this.$
+		if(this.$('input[name=include_image_caption]').is(':checked')){
+			$('#settings').find('.optional-field').show();
 		}
 		else{
-			this.$('#usetting-image_caption').hide();
-			$('#usetting-caption_position').hide();
-			$('#usetting-caption_trigger').hide();
-			$('#usetting-caption_alignment').hide();			
+			$('#settings').find('.optional-field').hide();		
 		}
-		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);	
+		$('#settings').height(this.$('.upfront-settings_panel').outerHeight());	
 	}
 });
 
@@ -1136,135 +1113,114 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		var render_all = function(){
 				this.settings.invoke('render');
 			},
-			me = this
+			me = this,
+			SettingsItem =  Upfront.Views.Editor.Settings.Item,
+			Fields = Upfront.Views.Editor.Field		
 		;
 		this.model.on('doit', render_all, this);
 		this.settings = _([
-			new Field_Radio({
-				model: this.model,
+			new SettingsItem({
 				title: 'When Clicked',
-				name: 'when_clicked',
-				label: 'when_clicked',
-				value: this.model.get_property_value_by_name('when_clicked') ? this.model.get_property_value_by_name('when_clicked') : false,
-				options: [
-					{
-					  'name': 'when_clicked',
-					  'value': 'do_nothing',
-					  'label': 'do nothing',
-					  'icon': '',
-					  'default': 'true'
-					},{
-					  'name': 'when_clicked',
-					  'value':'open_link',
-					  'label': 'open link',
-					  'icon': '',
-					  'default': 'false'
-					},{
-					  'name': 'when_clicked',
-					  'value':'show_larger_image',
-					  'label': 'show larger image',
-					  'icon': '',
-					  'default': 'false'
-					}
+				fields: [
+					new Fields.Radios({
+						model: this.model,
+						property: 'when_clicked',
+						values: [
+							{
+								label: 'Do nothing', 
+								value: 'do_nothing'
+							},
+							{
+								label: 'Open link', 
+								value: 'open_link'
+							},
+							{
+								label: 'Show larger image', 
+								value: 'show_larger_image'
+							}
+						]
+					}),
+					new Fields.Text({
+						model: this.model,
+						property: 'image_link',
+						label: 'Image link URL',
+						className: 'upfront-field-wrap upfront-field-wrap-text image-link-field'	
+					}),
+
 				]
 			}),
-			new Field_Input({
-				model: this.model,
-				name: 'image_link',
-				label: 'Image link',
-				value: this.model.get_property_value_by_name('image_link')
-			}),
-			new Field_Radio({
-				model: this.model,
-				name: 'caption_position',
+			new SettingsItem({
+				className: 'optional-field',
 				title: 'Caption Settings',
-				label: 'caption_position',
-				value: this.model.get_property_value_by_name('caption_position') ? this.model.get_property_value_by_name('caption_position') : false,
-				options: [
-					{ 'name': 'caption_position',
-					  'value': 'below_image',
-					  'label': 'below image',
-					  'icon': '<i class="icon-th-large"></i>',
-					  'default': 'true'
-					},{
-					    'name': 'caption_position',
-					    'value': 'over_image',
-					    'label': 'over image',
-					    'icon': '<i class="icon-th-large"></i>'
-					}]
+				fields: [
+					new Fields.Radios({
+						model: this.model,
+						property: 'caption_position',
+						values: [
+							{
+								label: 'below image',
+								value: 'below_image'
+							},
+							{
+								label: 'over image',
+								value: 'over_image'
+							}
+						]
+					}),
+					new Fields.Radios({
+						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+						model: this.model,
+						property: 'caption_trigger',
+						values: [
+							{
+								label: 'Always show',
+								value: 'always_show'
+							},
+							{
+								label: 'Show on hover',
+								value: 'hover_show'
+							}
+						]
+					}),
+					new Fields.Radios({
+						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+						model: this.model,
+						property: 'caption_alignment',
+						values: [
+							{
+								label: 'Top',
+								value: 'top'
+							},
+							{
+								label: 'Bottom',
+								value: 'bottom'
+							},
+							{
+								label: 'Fill',
+								value: 'fill'
+							}
+						]
+					})
+				]
 			}),
-			new Field_Radio({
-				model: this.model,
-				name: 'caption_trigger',
-				label: 'caption_trigger',
-				value: this.model.get_property_value_by_name('caption_trigger') ? this.model.get_property_value_by_name('caption_trigger') : false,
-				options: [
-					{
-					  'name': 'caption_trigger',
-					  'value': 'always_show',
-					  'label': 'Always show',
-					  'icon': '<i class="icon-th-large"></i>',
-					  'default': 'true'
-					},{
-					  'name': 'caption_trigger',
-					  'value': 'hover_show',
-					  'label': 'Show on hover',
-					  'icon': '<i class="icon-th-large"></i>',
-					  'default': 'false'
-					}]
-			}),
-			new Field_Radio({
-				model: this.model,
-				name: 'caption_alignment',
-				label: 'caption_alignment',
-				value: this.model.get_property_value_by_name('caption_alignment') ? this.model.get_property_value_by_name('caption_alignment') : false,
-				options: [
-					{
-					  'name': 'caption_alignment',
-					  'value': 'top',
-					  'label': 'Top',
-					  'icon': '<i class="icon-th-large"></i>',
-					  'default': 'true'
-					},{
-					  'name': 'caption_alignment',
-					  'value': 'bottom',
-					  'label': 'Bottom',
-					  'icon': '<i class="icon-th-large"></i>',
-					  'default': 'false'
-					},{
-					  'name': 'caption_alignment',
-					  'value': 'fill',
-					  'label': 'Fill',
-					  'icon': '<i class="icon-th-large"></i>',
-					  'default': 'false'
-					}]
-				
-			}),
-			new Field_Color({
-				model: this.model,
-				name: 'color',
-				label: 'Color',
-				title: 'Caption Style:',
-				value: this.model.get_property_value_by_name('color'),
-				spectrum: {
-					clickoutFiresChange: true,
-					chooseText: 'OK',
-					showPalette: true,
-					showSelectionPalette: true
-				}
-			}),
-			new Field_Color({
-				model: this.model,
-				name: 'background',
-				label: 'Background',
-				value: this.model.get_property_value_by_name('background'),
-				spectrum: {
-					showAlpha: true,
-					clickoutFiresChange: true,
-					chooseText: 'OK',
-					showPalette: true,
-					showSelectionPalette: true					
-				}
+			new SettingsItem({
+				className: 'optional-field',
+				title: 'Caption Style',
+				fields: [
+					new Fields.Color({
+						model: this.model,
+						property: 'color',
+						label: 'Color:'
+					}),
+					new Fields.Color({
+						model: this.model,
+						property: 'background',
+						label: 'Background:',
+						spectrum: {
+							showAlpha: true
+						}
+					})
+				]
 			})
 		]);
 
@@ -1286,22 +1242,19 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	toggleLink: function(){
 		if(this.$('input[name=when_clicked]:checked').val() == 'open_link'){
-			this.$('#field_image_link').show();
+			this.$('.image-link-field').show();
 		}
 		else{
-			this.$('#field_image_link').hide();
+			this.$('.image-link-field').hide();
 		}
 		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);		
 	},
 	toggleCaptionSettings: function(){
-		if(this.$('input[name=caption_position]:checked').val() == 'over_image'){
-			this.$('#usetting-caption_trigger').show();
-			this.$('#usetting-caption_alignment').show();
-		}
-		else{
-			this.$('#usetting-caption_trigger').hide();
-			this.$('#usetting-caption_alignment').hide();
-		}
+		if(this.$('input[name=caption_position]:checked').val() == 'over_image')
+			this.$('.over_image_field').show();
+		else
+			this.$('.over_image_field').hide();
+
 		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);	
 	},
 	setFieldEvents: function() {
