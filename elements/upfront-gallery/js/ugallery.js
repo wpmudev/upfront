@@ -14,10 +14,9 @@
 
 (function ($) {
 
-var tplPath = 'text!../elements/upfront-gallery/tpl/',
-	templates = [
-		tplPath + 'ugallery.html',
-		tplPath + 'ugallery_editor.html'
+var templates = [
+		'text!' + Upfront.data.ugallery.template, // Front
+		'text!../elements/upfront-gallery/tpl/ugallery_editor.html'
 	]
 ;
 
@@ -41,28 +40,9 @@ var UgalleryImages = Backbone.Collection.extend({
 /* Model */
 var UgalleryModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		this.init_properties({
-			type: 'UgalleryModel',
-			view_class: 'UgalleryView',
-			element_id: Upfront.Util.get_unique_id("ugallery"),
-			has_settings: 1,
-			'class':  'c34 upfront-gallery',
-
-			status: 'starting',
-			images: [], // Convert to new UgalleryImages() for using
-			elementSize: {width: 0, height: 0},
-			labelFilters: 0,
-			urlIcon: 0,
-			lightbox: 1,
-			thumbProportions: '1_1', // 'theme' | '1_1' | '2_3' | '4_3' | 'free'
-			thumbWidth: 140,
-			thumbHeight: 140,
-			showTitle: 0,
-			showDescription: 0,
-			lbTitle: 1,
-			lbDescription: 1,
-			lbLoop: 0
-		});
+		var properties = _.clone(Upfront.data.ugallery.defaults);
+		properties.element_id = Upfront.Util.get_unique_id("ugallery-object");
+		this.init_properties(properties);
 	}
 });
 
@@ -81,6 +61,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	initialize: function(options){
 		console.log('Gallery Element');
+
+		if(! (this.model instanceof UgalleryModel)){
+			this.model = new UgalleryModel({properties: this.model.get('properties')});
+		}
+
 		this.constructor.__super__.initialize.call(this, [options]);
 		//Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
 		this.events = _.extend({}, this.events, {
@@ -599,13 +584,18 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function () {
 		this.settings = _([
 			new GalleryConfigFields({model: this.model}),
-			new Field_Button({
-				model: this.model,
-				info: 'Reset gallery settings to the default theme',
-				label: 'Reset',
-				on_click: function(){
-					alert('Button clicked');
-				}
+			new Upfront.Views.Editor.Settings.Item({
+				group: false,
+				fields: [
+					new Field_Button({
+						model: this.model,
+						info: 'Reset gallery settings to the default theme',
+						label: 'Reset',
+						on_click: function(){
+							alert('Button clicked');
+						}
+					})
+				]
 			})
 		]);
 	},
@@ -626,24 +616,29 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		;
 		this.settings = _([
 			new ThumbnailFields({model: this.model}),
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'showTitle',
-				values: [
-					{
-						value: 'true',
-						label: 'Show Image Title'
-					}
-				]
-			}),
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'showDescription',
-				values: [
-					{
-						value: 'true',
-						label: 'Show Image Description'
-					}
+			new Upfront.Views.Editor.Settings.Item({
+				group: false,
+				fields: [
+					new fields.Checkboxes({
+						model: this.model,
+						property: 'showTitle',
+						values: [
+							{
+								value: 'true',
+								label: 'Show Image Title'
+							}
+						]
+					}),
+					new fields.Checkboxes({
+						model: this.model,
+						property: 'showDescription',
+						values: [
+							{
+								value: 'true',
+								label: 'Show Image Description'
+							}
+						]
+					})
 				]
 			})
 		]);
@@ -707,10 +702,10 @@ var GalleryConfigFields = Upfront.Views.Editor.Settings.Item.extend({
 			}),
 			new fields.Checkboxes({
 				model: this.model,
-				property: 'lightbox',
+				property: 'disableLightbox',
 				values: [
 					{
-						label: 'Disable lighbox',
+						label: 'Disable lightbox',
 						value: 'true'
 					}
 				]

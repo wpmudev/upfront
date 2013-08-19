@@ -36,6 +36,11 @@ function ugallery_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('' . $domain . '', upfront_element_url('js/' . $domain . '', __FILE__));
 
+
+	// Add element defaults to data object
+	$ugallery = new Upfront_UgalleryView(array());
+	add_action('upfront_data', array($ugallery, 'add_js_defaults'));
+
 	// Add the public stylesheet
 	add_action('wp_enqueue_scripts', array('Upfront_' . ucwords($domain) . 'View', 'add_styles_scripts'));
 }
