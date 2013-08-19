@@ -353,6 +353,7 @@
 	width: 3px;
 }
 
+
 #sidebar-ui-toggler{
 	display: none;
 	border-left: 3px solid #1fcd8f;
@@ -1108,7 +1109,33 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	margin: 20px 0 0 0;
 }
 
+.upfront-field-wrap-color {
+	clear: both;
+}
 
+.upfront-field-wrap-color label {
+	float: left;
+}
+
+.upfront-field-wrap-color .upfront-settings-item {
+	margin-bottom:10px;
+}
+
+.upfront-field-wrap-color .sp-preview {
+	display: inline-block;
+	width:25px;
+	height:20px;
+	border:1px solid #a2c5e4;
+	vertical-align: bottom;
+	margin: 5px;
+}
+
+.upfront-field-wrap-color .sp-replacer {
+	line-height: 30px;
+}
+
+.upfront-field-wrap-color .sp-texthint {
+}
 
 
 #settings {

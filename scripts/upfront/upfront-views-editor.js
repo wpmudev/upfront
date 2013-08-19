@@ -2601,6 +2601,7 @@ define(_template_files, function () {
 						me.$el.addClass('tooltip');
 				}
 			}).trigger('keyup');
+			this.trigger('rendered');
 		},
 		get_field_html: function () {
 			var attr = {
@@ -2678,6 +2679,39 @@ define(_template_files, function () {
 			return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
 		}
 	});
+
+	var Field_Color = Field_Text.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
+		spectrumDefaults: {
+			clickoutFiresChange: true,
+			chooseText: 'OK',
+			showPalette: true,
+			showSelectionPalette: true
+		},
+		initialize: function(){
+			debugger;
+			var me = this,
+				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
+			;
+
+			Field_Color.__super__.initialize.apply(this, arguments);
+
+			this.on('rendered', function(){
+				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
+			});
+		},
+		get_field_html: function () {
+			var attr = {
+				'type': 'text',
+				'class': 'upfront-field upfront-field-color',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.get_saved_value()
+			};
+			return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
+		}
+
+	})
 	
 	var Field_Multiple = Field.extend(_.extend({}, Upfront_Icon_Mixin, {
 		get_values_html: function () {
@@ -2729,7 +2763,9 @@ define(_template_files, function () {
 			this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
 			if ( ! this.multiple && ! this.get_saved_value() )
 				this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
-			this.$el.find('.upfront-field-select-option:eq(0) input').trigger('change')
+			this.$el.find('.upfront-field-select-option:eq(0) input').trigger('change');
+
+			this.trigger('rendered');
 		},
 		get_field_html: function () {
 			var attr = {
@@ -2789,6 +2825,8 @@ define(_template_files, function () {
 						$(this).removeClass('upfront-field-multiple-selected');
 				});
 			});
+
+			this.trigger('rendered');
 		},
 		get_field_html: function () {
 			return this.get_values_html();
@@ -2869,6 +2907,8 @@ define(_template_files, function () {
 			$('#settings').on('click', '.upfront-settings_panel', function(){
 				me.$el.find('.upfront-suggest-list-wrap').removeClass('upfront-suggest-list-wrap-expanded');
 			});
+
+			this.trigger('rendered');
 		},
 		reveal_suggest: function () {
 			this.$el.find('.upfront-suggest-list-wrap').addClass('upfront-suggest-list-wrap-expanded');
@@ -2943,7 +2983,7 @@ define(_template_files, function () {
 	}));
 
 	var SettingsItem = Backbone.View.extend({
-		//tagName: "li",
+		group: true, 
 		get_name: function () {
 			if ( this.fields.length == 1 )
 				return this.fields[0].get_name();
@@ -2964,6 +3004,7 @@ define(_template_files, function () {
 		initialize: function (opts) {
 			var me = this;
 			this.fields = opts.fields ? _(opts.fields) : _([]);
+			this.group = typeof opts.group != 'undefined' ? opts.group : true;
 			this.on('panel:set', function(){
 				me.fields.each(function(field){
 					field.panel = me.panel;
@@ -2973,29 +3014,38 @@ define(_template_files, function () {
 		},
 		
 		render: function () {
-			this.$el.append(
-				'<div class="upfront-settings-item">' +
-					'<div class="upfront-settings-item-title">' + this.get_title() + '</div>' +
-					'<div class="upfront-settings-item-content"></div>' +
-				'</div>'
-			);
+			if(this.group){
+				this.$el.append(
+					'<div class="upfront-settings-item">' +
+						'<div class="upfront-settings-item-title">' + this.get_title() + '</div>' +
+						'<div class="upfront-settings-item-content"></div>' +
+					'</div>'
+				);
+			}
+			else
+				this.$el.append('<div class="upfront-settings-item-content"></div>');
+
 			$content = this.$el.find('.upfront-settings-item-content');
 			this.fields.each(function(field){
 				field.render();
 				$content.append(field.el);
 			});
+
+			this.trigger('rendered');
 		},
 		
 		save_fields: function () {
 			var changed = _([]);
 			this.fields.each(function(field, index, list){
-				var value = field.get_value();
-				var saved_value = field.get_saved_value();
-				if ( ! field.multiple && value != saved_value ){
-					changed.push(field);
-				}
-				else if ( field.multiple && (value.length != saved_value.length || _.difference(value, saved_value).length != 0) ) {
-					changed.push(field);
+				if(field.property){
+					var value = field.get_value();
+					var saved_value = field.get_saved_value();
+					if ( ! field.multiple && value != saved_value ){
+						changed.push(field);
+					}
+					else if ( field.multiple && (value.length != saved_value.length || _.difference(value, saved_value).length != 0) ) {
+						changed.push(field);
+					}
 				}
 			});
 			changed.each(function(field, index, list){
@@ -3082,6 +3132,8 @@ define(_template_files, function () {
 				$tab_content.append(setting.el);
 			});
 			this.panel.on('rendered', this.panel_rendered, this);
+
+			this.trigger('rendered');
 		},
 		conceal: function () {
 			this.$el.removeClass('upfront-settings-item-tab-active');
@@ -3446,6 +3498,7 @@ define(_template_files, function () {
 				"Text": Field_Text,
 				"Email": Field_Email,
 				"Textarea": Field_Textarea,
+				"Color": Field_Color,
 				"Multiple_Suggest": Field_Multiple_Suggest,
 				"Number": Field_Number,
 				"Select": Field_Select,
