@@ -249,12 +249,6 @@ class Upfront_UcontactView extends Upfront_Object {
 	 */
 	private function get_template($templatename, $args = array()){
 		return upfront_get_template('ucontact', $args, dirname(dirname(__FILE__)) . '/templates/ucontact.html');
-		extract($args);
-		ob_start();
-		include dirname(dirname(__FILE__)) . '/templates/' . $templatename . '.php';
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;
 	}
 
 	public function get_entity_ids_value(){
