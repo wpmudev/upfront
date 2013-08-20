@@ -586,6 +586,8 @@ define(_template_files, function () {
 		"tagName": "span",
 		"className": "draggable-element",
 		"shadow_id": '',
+		"draggable": true,
+		"priority": 10000,
 		
 		add_module: function (module) {
 			// Add module to shadow region so it's available to add by dragging
@@ -648,6 +650,9 @@ define(_template_files, function () {
 			}
 		},
 		render_element: function (element) {
+			if(! element.draggable)
+				return;
+
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 				me = this;
 			element.remove();

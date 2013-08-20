@@ -184,6 +184,7 @@
         });
 
         var NavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
+            priority: 50,
             render: function () {
                 this.$el.html('Navigation');
             },

@@ -28,6 +28,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 
 
 var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	priority: 10,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-text');
 		this.$el.html('Text');

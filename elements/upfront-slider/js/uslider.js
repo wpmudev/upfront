@@ -1166,6 +1166,7 @@ var UsliderSettings_Contents = Upfront.Views.Editor.Settings.Item.extend({
  * @type {Upfront.Views.Editor.Command}
  */
 var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	draggable: false,
 	/**
 	 * Set up command appearance.
 	 */

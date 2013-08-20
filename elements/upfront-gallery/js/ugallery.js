@@ -545,6 +545,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 /* Element */
 var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	priority: 30,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-gallery');
 		this.$el.html('Gallery');

@@ -489,6 +489,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 	});
 
 	var MapElement = Upfront.Views.Editor.Sidebar.Element.extend({
+		priority: 40,
 		render: function () {
 			this.$el.html('Map');
 		},

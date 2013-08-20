@@ -98,6 +98,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
  * @type {Upfront.Views.Editor.Sidebar.Element}
  */
 var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
+    priority: 80,
 	/**
 	 * Print the draggable element into the sidebar panel.
 	 * @return {null} 

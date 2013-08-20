@@ -1011,6 +1011,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 }));
 
 var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	priority: 20,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-image');
 		this.$el.html('Image');

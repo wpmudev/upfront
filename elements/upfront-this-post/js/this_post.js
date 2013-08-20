@@ -322,6 +322,9 @@ console.log(this.dom_range)
  * @type {Upfront.Views.Editor.Command}
  */
 var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
+
+	draggable: false,
+
 	/**
 	 * Set up command appearance.
 	 */

@@ -35,6 +35,7 @@ var LoginView = Upfront.Views.ObjectView.extend({
 
 
 var LoginElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	priority: 100,
 
 	render: function () {
 		this.$el.html('Login');

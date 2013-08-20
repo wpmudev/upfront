@@ -201,12 +201,20 @@ var LayoutEditor = new (Subapplication.extend({
 			"model": app.layout,
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.sidebar)
 		});
+
+		var elements = [];
+
 		_(this.Objects).each(function (obj) {
 			if ( obj.Element )
-				app.sidebar.get_panel("elements").elements.push(new obj.Element({"model": app.layout}));
+				elements.push(new obj.Element({"model": app.layout}));
 			if ( obj.Command )
 				app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
 		});
+		debugger;
+		app.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
+			return element.priority;
+		}));
+
 		app.sidebar.render();
 
 		// Layouts
