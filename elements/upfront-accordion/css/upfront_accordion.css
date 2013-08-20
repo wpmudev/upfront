@@ -1,0 +1,21 @@
+.ui-accordion .ui-accordion-header {
+    display: block;
+    cursor: pointer;
+    position: relative;
+    margin-top: 1px;
+    padding: 5px;
+    min-height: 0; /* support: IE7 */
+    background-color: #cee1f2;
+}
+.ui-accordion ui-accordion-header-active,
+.ui-accordion .ui-state-active{
+    background-color: #accae6;
+}
+.ui-accordion .ui-accordion-content {
+    padding: 0;
+    border-top: 0;
+    overflow: auto;
+}
+.upfront-accordion {
+    margin: 15px;
+}
