@@ -210,7 +210,6 @@ var LayoutEditor = new (Subapplication.extend({
 			if ( obj.Command )
 				app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
 		});
-		debugger;
 		app.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
 			return element.priority;
 		}));
