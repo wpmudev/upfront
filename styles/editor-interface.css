@@ -1234,7 +1234,6 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .upfront-module {
 	/*position: relative;*/
-	/*padding: 30px 0 0;*/
 }
 .show-debug .upfront-module {
 	border: 1px solid #b3da11;
@@ -1253,6 +1252,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	/*z-index: 40;*/
 }
 .upfront-objects_container {
+	padding: 15px 0;
+	float: left;
+	width: 100%;
 }
 .upfront-object {
 	position: relative;
@@ -1385,11 +1387,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	right: 5px;
 }
 .upfront-object > .upfront-entity_meta {
-	top: 34px;
+	top: 19px;
 	right: 5px;
 }
 .upfront-object > .upfront-entity_meta_extra {
-	top: 63px;
+	top: 48px;
 	right: 5px;
 }
 

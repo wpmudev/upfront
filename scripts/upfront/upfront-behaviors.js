@@ -873,7 +873,7 @@ var GridEditor = {
 				var objects = model.get('objects');
 				if ( objects && objects.length == 1 ){
 					objects.each(function(object){
-						object.set_property('row', rsz_row);
+						object.set_property('row', rsz_row-2);
 					});
 				}
 				model.replace_class(ed.grid.class+rsz_col);
