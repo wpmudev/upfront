@@ -103,13 +103,13 @@ var LayoutEditor = new (Subapplication.extend({
 
 				// @TODO:remove this
 				$(
-					Upfront.Settings.LayoutEditor.Selectors.sidebar +
+					Upfront.Settings.LayoutEditor.Selectors.sidebar /*+
 					", " +
-					//Upfront.Settings.LayoutEditor.Selectors.commands +
-					//", " +
+					Upfront.Settings.LayoutEditor.Selectors.commands +
+					", " +
 					Upfront.Settings.LayoutEditor.Selectors.properties +
 					", " +
-					Upfront.Settings.LayoutEditor.Selectors.layouts
+					Upfront.Settings.LayoutEditor.Selectors.layouts*/
 				).show("slow", function () {
 					$(".upfront-editable_trigger").hide();
 					$("#upfront-loading").remove();
@@ -120,13 +120,13 @@ var LayoutEditor = new (Subapplication.extend({
 				Upfront.Util.log("Error loading layout " + layout_ids);
 				// @TODO:remove this
 				$(
-					Upfront.Settings.LayoutEditor.Selectors.sidebar +
+					Upfront.Settings.LayoutEditor.Selectors.sidebar /*+
 					", " +
-					//Upfront.Settings.LayoutEditor.Selectors.commands +
-					//", " +
+					Upfront.Settings.LayoutEditor.Selectors.commands +
+					", " +
 					Upfront.Settings.LayoutEditor.Selectors.properties +
 					", " +
-					Upfront.Settings.LayoutEditor.Selectors.layouts
+					Upfront.Settings.LayoutEditor.Selectors.layouts*/
 				).hide("slow", function () {
 					$(".upfront-editable_trigger").show();
 					$("#upfront-loading").remove();

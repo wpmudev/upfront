@@ -763,12 +763,12 @@ var GridEditor = {
 			return false;
 		$me.append('<span class="upfront-icon-control upfront-icon-control-resize upfront-resize-handle ui-resizable-handle ui-resizable-se"></span>');
 		$me.resizable({
-			"containment": "parent",
+			"containment": $layout,
 			autoHide: true,
 			delay: 100,
-			/*handles: {
+			handles: {
 				se: '.upfront-resize-handle'
-			},*/
+			},
 			start: function(e, ui){
 				ed.start(view, model);
 				
@@ -791,6 +791,9 @@ var GridEditor = {
 					ed.wraps[index] = ed.get_position(each.$el);
 				});
 				ed.normalize(ed.els, ed.wraps);
+				$me.css({
+					minHeight: ''
+				});
 				Upfront.Events.trigger("entity:resize_start", view, view.model);
 			},
 			resize: function(e, ui){

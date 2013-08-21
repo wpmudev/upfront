@@ -1,0 +1,93 @@
+<script type="text/responsive_css" data-bind=".upfront-module" data-max-height="59px">
+	(this) > .upfront-entity_meta {
+		height: 28px;
+		top: -28px;
+		right: 5px;
+	}
+	(this) .upfront-object > .upfront-entity_meta {
+		height: 28px;
+		top: -28px;
+		right: 33px;
+	}
+	(this) .upfront-object > .upfront-entity_meta_extra {
+		height: 28px;
+		top: -28px;
+		right: 61px;
+	}
+	(this) .upfront-entity_meta .upfront-icon-button {
+		margin: 0 0 0 4px;
+		float: right;
+	}
+</script>
+<script type="text/responsive_css" data-bind=".upfront-module" data-min-height="60px" data-max-height="70px">
+	(this) .upfront-icon-button {
+		width: 20px;
+		padding: 0;
+	}
+	(this) .upfront-object > .upfront-entity_meta {
+		top: 28px;
+		right: 5px;
+	}
+	(this) .upfront-entity_meta .upfront-icon-button {
+		margin-bottom: 3px;
+	}
+</script>
+<script type="text/responsive_css" data-bind=".upfront-module" data-min-height="60px" data-max-height="125px">
+	(this) .upfront-object > .upfront-entity_meta_extra {
+		display: none;
+		top: 100%;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 0;
+		background: #395269;
+		box-shadow: inset 0 1px 2px 0 #263a4d, inset 0 -1px 2px 0 #263a4d;
+		text-align: center;
+		-webkit-transition: height 0.3s;
+		-moz-transition: height 0.3s;
+		-ms-transition: height 0.3s;
+		-o-transition: height 0.3s;
+		transition: height 0.3s;
+	}
+	(this):hover .upfront-object > .upfront-entity_meta_extra {
+		display: block;
+	}
+	(this) .upfront-object > .upfront-entity_meta_extra:hover {
+		height: 38px;
+	}
+	(this) .upfront-object > .upfront-entity_meta_extra:before {
+		content: " ";
+		position: absolute;
+		top: -12px;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		width: 18px;
+		height: 12px;
+		background: #395269;
+	}
+	(this) .upfront-object > .upfront-entity_meta_extra:after {
+		content: " ";
+		position: absolute;
+		top: -8px;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		width: 0;
+		height: 0;
+		border-bottom: 4px solid #fff;
+		border-left: 4px solid transparent;
+		border-right: 4px solid transparent;
+	}
+	(this) .upfront-object > .upfront-entity_meta_extra:hover:after {
+		border-top: 4px solid #fff;
+		border-bottom: none;
+	}
+	(this) .upfront-object > .upfront-entity_meta_extra .upfront-icon-button {
+		display: none;
+		margin: 9px 5px 0;
+	}
+	(this) .upfront-object > .upfront-entity_meta_extra:hover .upfront-icon-button {
+		display: inline-block;
+	}
+</script>

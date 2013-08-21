@@ -153,6 +153,8 @@ EOAdminStyle;
 		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css');
 		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
 		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
+		
+		add_action('wp_footer', array($this, 'add_responsive_css'));
 	}
 
 	function inject_upfront_dependencies () {
@@ -181,6 +183,10 @@ EOAdditivemarkup;
 		echo '<script type="text/javascript" src="' . $url . '/scripts/jscolor/jscolor.js"></script>';
 		
 		do_action('upfront-core-inject_dependencies');
+	}
+
+	function add_responsive_css () {
+		include(self::get_root_dir().'/styles/editor-interface-responsive.html');
 	}
 	
 	function add_edit_menu ( $wp_admin_bar ) {
