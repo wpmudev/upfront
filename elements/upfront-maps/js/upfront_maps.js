@@ -560,9 +560,12 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 
 			var MapSettings_Field_Zoom = Map_SettingsItem_ComplexItem.extend({
 				initialize: function () {
-					var zooms = [];
+					var zooms = [],
+						saved = this.model.get_property_value_by_name("zoom")
+					;
+					if (!saved) this.model.set_property("zoom", 10, true);
 					_(_.range(1,19)).each(function (idx) {
-						zooms.push({label: parseInt(((idx+2)/20)*100, 10) + '%', value: idx});
+						zooms.push({label: idx, value: idx});
 					});
 					this.fields = _([
 						new Map_Fields_Complex_BooleanDropdown({
