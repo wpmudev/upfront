@@ -180,7 +180,6 @@ EOAdminStyle;
 EOAdditivemarkup;
 
 		echo '<script src="' . $url . '/scripts/ckeditor/ckeditor.js" type="text/javascript"></script>';
-		echo '<script type="text/javascript" src="' . $url . '/scripts/jscolor/jscolor.js"></script>';
 		
 		do_action('upfront-core-inject_dependencies');
 	}

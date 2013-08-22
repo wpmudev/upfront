@@ -15,27 +15,21 @@ CKEDITOR.editorConfig = function( config ) {
 			{
 				name: 'basicstyles',
 				items: [ 
-					'Bold', 'Italic', 'AlignmentTypeToggle',/*'JustifyLeft', 'JustifyCenter', 'JustifyRight', <-- These get killed in favor of AlignmentTypeToggle */
-					/*'BulletedList', 'NumberedList', <-- These get killed in favor of ListTypeToggle */ 'ListTypeToggle', 'Link', 'Blockquote', 'Image', 'KitchenSink'
+					'Bold', 'Italic', 'AlignmentTypeToggle',
+					'ListTypeToggle', 'Link', 'Blockquote', 'Image', 'KitchenSink'
 				] 
 			},
 			'/',
 			{
 				name: 'kitchensink',
 				items: [ 
-					'Format', 'Underline', 'ColorSelect', /*'JustifyBlock', <-- This gets killed just because */
+					'Format', 'Underline', 'Upfront_ColorSelect',
 					'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'ExtrasSelect','BulletedList', 'NumberedList' // <-- Hidden
-
-					/*
-					'TextColor',
-					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 
-					'ShowBlocks' , 'RemoveFormat', 'BGColor', 'Source'
-					*/
 				]
 			}
 	];
 
-	config.extraPlugins = 'onchange,kitchensink,colorselect,toggled_items,upfront_images';
+	config.extraPlugins = 'onchange,kitchensink,toggled_items,upfront_images,upfront_colorpicker';
 
 	// use SVG icons for editor buttons if possible
 	if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){
@@ -46,10 +40,6 @@ CKEDITOR.editorConfig = function( config ) {
 	config.floatSpacePinnedOffsetY = 30; // Deal with the Admin Toolbar
 
 	config.allowedContent = true; // RECONFIGURE THIS!!!
-
-	// Define changes to default configuration here. For example:
-	// config.language = 'fr';
-	// config.uiColor = '#AADC6E';
 };
 
 CKEDITOR.on('instanceReady', function(e){

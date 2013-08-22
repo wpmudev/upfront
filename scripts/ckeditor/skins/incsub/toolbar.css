@@ -245,15 +245,15 @@ a.cke_button_disabled:active
 .cke_button_disabled .cke_button__bold_icon { background-position: -444px -10px; }
 .cke_button_on .cke_button__bold_icon { background-position: -478px -10px; }
 
-.cke_button_off .cke_button__colorselect_icon,
-.cke_button_disabled .cke_button__colorselect_icon { 
+.cke_button_off .cke_button__upfront_colorselect_icon,
+.cke_button_disabled .cke_button__upfront_colorselect_icon { 
 	background: url('../../../../img/icon_sprite.png') no-repeat;
 	background-position: -479px -452px;
 	position: relative;
 	top: -1px; /* move background and contained SVG up one pixel */
 	left: 1px;
 }
-.cke_button_on .cke_button__colorselect_icon { 
+.cke_button_on .cke_button__upfront_colorselect_icon { 
 	background: url('../../../../img/icon_sprite.png') no-repeat;
 	background-position: -479px -452px;
 	position: relative;
@@ -368,17 +368,19 @@ div .cke-one-color.cke-placeholder:hover{
 .clear{
 	clear: both;
 }
-body .cke_button .cke_button__colorselect_icon{
+body .cke_button .cke_button__upfront_colorselect_icon{
 	width: 34px;
-	background-color: transparent;
+	/*background-color: transparent;*/
 }
-a.cke_button__colorselect{
+/*
+a.cke_button__upfront_colorselect{
 	background-color: #e5f3ff;
 	width: auto;
 }
-.cke_button__colorselect .cke_combo_open{
+.cke_button__upfront_colorselect .cke_combo_open{
 	margin-left: 6px;
 }
+*/
 
 
 .cke_button_off .cke_button__justifyblock_icon,
@@ -655,4 +657,8 @@ a.cke_button__colorselect{
 }
 .cke_button_on.toggle_state_right .cke_button__alignmenttypetoggle_icon  { 
 	background-position: -407px -517px; /* right */
+}
+
+.upfront-ckeditor-colorselect .sp-texthint {
+	display: none;
 }
