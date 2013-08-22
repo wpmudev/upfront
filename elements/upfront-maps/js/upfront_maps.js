@@ -132,13 +132,14 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 	});
 
 	var MapView = Upfront.Views.ObjectView.extend({
+		OPTIMUM_MAP_HEIGHT: 300,
 		map: false,
 
 		on_render: function () {
 			this.update_properties();
 			var me = this,
 				$el = this.$el.find('.ufm-gmap-container:first'),
-				height = $("#" + this.parent_module_view.model.get_property_value_by_name("element_id")).height() || 200,
+				height = this.parent_module_view.model.get_property_value_by_name("row"),
 				controls = this.model.get_property_value_by_name("controls") || [],
 				props =	 {
 					center: this.model.get_property_value_by_name("map_center") || [10.722250, 106.730762],
@@ -152,6 +153,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 					overviewMapControl: parseInt(this.model.get_property_value_by_name("use_controls"), 10) ? controls.indexOf("overview_map") >= 0 : false,
 				}
 			;
+			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : height = this.OPTIMUM_MAP_HEIGHT;
 			$el.css({
 				'width': '100%',
 				'height': height + 'px'
