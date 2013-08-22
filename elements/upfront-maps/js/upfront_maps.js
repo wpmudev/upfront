@@ -94,6 +94,9 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 
 	var Map_Fields_Simple_Location = Backbone.View.extend({
 		className: "upfront_map-fields-simple_location clearfix",
+		events: {
+			keypress: "wait_for_enter"
+		},
 		initialize: function () {
 			var options = _.extend({}, this.options);
 			this.options.field = new Upfront.Views.Editor.Field.Text(options);
@@ -102,6 +105,13 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			this.property = this.options.field.property;
 
 			this.options.locate.on("refresh", this.geocode, this);
+		},
+		wait_for_enter: function (e) {
+			if (13 == e.which) {
+				e.stopPropagation();
+				e.preventDefault();
+				this.geocode();
+			}
 		},
 		render: function () {
 			this.$el.empty();
@@ -125,7 +135,13 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			geocoder.geocode({address: location}, function (results, status) {
 				if (status != google.maps.GeocoderStatus.OK) return false;
 				var pos = results[0].geometry.location;
+
+				var markers = me.model.get_property_value_by_name("markers") || [];
+				markers.push({lat:pos.lat(), lng:pos.lng()});
+				me.model.set_property("markers", markers, true);
+
 				me.model.set_property("map_center", [pos.lat(), pos.lng()], false);
+
 				$(document).data(element_id + "-location", location);
 			});
 		}
