@@ -3271,7 +3271,7 @@ define(_template_files, function () {
 
 			var me = this;
 			this.settings.each(function (setting) {
-				if ( setting.fields.size() > 0 ) {
+				if ( (setting.fields || setting.settings).size() > 0 ) {
 					setting.save_fields();
 				}
 				else {
