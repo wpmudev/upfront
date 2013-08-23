@@ -954,17 +954,21 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	display: block;
 	opacity: 0.8;
 	line-height: 12px;
-	height: 24px;
 	margin: 0 0 6px;
+	padding: 0 0 0 17px;
+	position: relative;
 }
 .upfront-field-multiple-vertical {
 	display: inline-block;
 	max-width: 72px;
-	height: auto;
 	text-align: center;
 	margin: 0 10px 10px 0;
 	padding: 0 0 12px;
-	position: relative;
+}
+.upfront-field-multiple-horizontal-inline {
+	display: inline-block;
+	vertical-align: baseline;
+	margin: 0 20px 0 0;
 }
 .upfront-field-multiple:hover,
 .upfront-field-multiple-selected {
@@ -976,8 +980,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 .upfront-field-multiple input.upfront-field-checkbox, 
 .upfront-field-multiple input.upfront-field-radio {
-	float: left;
-	margin: 6px 5px 0;
+	position: absolute;
+	bottom: 6px;
+	left: 0;
 }
 .upfront-field-multiple-vertical input.upfront-field-checkbox, 
 .upfront-field-multiple-vertical input.upfront-field-radio {
@@ -1633,9 +1638,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	z-index: 5;
 }
 #settings .upfront-settings_panel_scroll {
+	position: relative;
 	padding: 10px;
 	min-width: 270px;
 	max-height: 350px;
+	height: 100%;
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
@@ -1754,6 +1761,10 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	color: rgb(99, 134, 166);
 	background: rgb(242, 249, 255);
 	padding: 0 10px;
+	white-space: nowrap;
+	max-width: 96%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	font-family: 'Source Sans Pro';
 }
 #settings .upfront-settings-item-content {
@@ -2085,6 +2096,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background-position: -1360px -200px;
 }
 .upfront-field-icon-social-count-vertical:before {
+	width: 39px;
 	height: 42px;
 	background-position: -1360px -244px;
 }

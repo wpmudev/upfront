@@ -2847,8 +2847,8 @@ define(_template_files, function () {
 				'class': 'upfront-field-' + this.type
 			};
 			var saved_value = this.get_saved_value();
-			if ( this.options.layout && this.options.layout == 'vertical' )
-				classes += ' upfront-field-multiple-vertical';
+			if ( this.options.layout )
+				classes += ' upfront-field-multiple-'+this.options.layout;
 			if ( value.disabled ){
 				attr.disabled = 'disabled';
 				classes += ' upfront-field-multiple-disabled';
