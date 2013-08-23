@@ -28,8 +28,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	post: false,
 	content: false,
 	loading: false,
-	titleSelector: 'h1.post_title',
-	contentSelector: '.post_content',
+	titleSelector: Upfront.data.this_post && Upfront.data.this_post.title_selector ? Upfront.data.this_post.title_selector : 'h1.post_title',
+	contentSelector: Upfront.data.this_post && Upfront.data.this_post.content_selector ? Upfront.data.this_post.content_selector : '.post_content',
 
 
 	initialize: function(){
@@ -225,7 +225,6 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				me.editPost(post,e);
 			})
 		;
-
 		$title.html((post.get("is_new")
 			? '<input type="text" id="upfront-title" style="width:100%" value="" placeholder="' + $title.text() + '"/>'
 			: '<input type="text" id="upfront-title" style="width:100%" value="' + $title.text() + '"/>'
