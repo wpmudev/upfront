@@ -9,7 +9,7 @@ class Upfront_UimageView extends Upfront_Object {
 		'image_title' => '',
 		'alternative_text' => '',
 		'when_clicked' => 'do_nothing',
-		'image_link' => false,
+		'image_link' => '',
 		'include_image_caption' => false,
 		'image_caption' => '',
 		'caption_position' => 'below_image',
@@ -18,7 +18,7 @@ class Upfront_UimageView extends Upfront_Object {
 		'image_status' => 'starting',
 		'size' =>  array('width' => '100%', 'height' => 'auto'),
 		'position' => array('top' => 0, 'left' => 0),
-		'element_size' => array('width' => 250, 'height' => 250),
+		'element_size' => array('width' => '100%', 'height' => 250),
 		'rotation' => 0,
 		'color' => '#ffffff',
 		'background' => '#000000',
@@ -73,7 +73,29 @@ class Upfront_UimageView extends Upfront_Object {
 		if(is_numeric($data['size']['height']))
 			$data['size']['height'] .= 'px';
 		
-		return upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html');
+		$markup = upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html');
+
+		if($data['when_clicked'] == 'show_larger_image'){
+			//Lightbox
+			wp_enqueue_style('magnific');
+			wp_enqueue_script('magnific');//Front script
+			upfront_add_element_script('uimage', array('js/uimage-front.js', dirname(__FILE__)));
+
+			//
+			$magnific_options = array(
+				'type' => 'image',
+				'delegate' => 'a'
+			);
+			$markup .= '
+				<script type="text/javascript">
+					if(typeof ugallery == "undefined")
+						uimages = [];
+					uimages["' . $data['element_id'] . '"] = ' . json_encode($magnific_options) . ';
+				</script>
+			';
+		}
+
+		return $markup;
 	}
 
 	public function add_js_defaults($data){

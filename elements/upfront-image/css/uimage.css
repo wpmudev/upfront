@@ -247,6 +247,26 @@ a.open-media-gallery:hover i {
 	padding:15px;
 }
 
+#upfront-image-edit {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index:10000;
+	height: 100000px;
+	width: 100000px;
+	cursor: pointer;
+}
+
+#upfront-image-edit *,
+#upfront-image-edit *:before,
+#upfront-image-edit *:after {
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+#uimage-cover {
+	background: #cee1f2;
+}
+
 #upfront-image-edit a.image-edit-save {
 	border-radius: 20px;
 	color: #1C7F5B;
@@ -286,7 +306,6 @@ a.open-media-gallery:hover i {
 	position:absolute;
 	width: 40px;
 	height: 40px;
-	box-shadow: 0 0 5px #000;
 	z-index: 11;
 }
 
@@ -295,6 +314,7 @@ a.open-media-gallery:hover i {
 	top:0;
 	left:0;
 	z-index:10;
+	opacity: 1 !important;
 }
 
 .image-edit-control>i {
@@ -317,27 +337,73 @@ a.open-media-gallery:hover i {
 }
 
 .image-edit-rotate {
-	top:-20px;
-	left: -20px;	
+	top:-17px;
+	left: -17px;	
 	border-radius:20px;
 }
 
 .image-edit-mask {
 	width: 300px;
 	height: 300px;
-	outline: rgba(0,0,0,.7) 2000px solid;
+	outline: rgba(57,82,105,.7) 20000px solid;
 	border: 5px solid rgba(255,255,255,.5);
 	z-index:10;
 	position:absolute;
 }
 
-.image-edit-drag-handle {
-	position:absolute;
+#image-edit-buttons {
 	z-index: 11;
-	width:5000px;
-	height: 5000px;
 }
 
+.image-edit-button {
+	display: block;
+	height: 36px;
+	width: 36px;
+	border-radius: 18px;
+	background: rgba(255, 255, 255, .8);
+	float:left;
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+.image-edit-button:hover {
+	background: #28DC96;
+}
+
+.image-edit-button:before {
+	content: ' ';
+	display: block;
+	width: 30px;
+	height: 30px;
+	background: url(../../../img/uf-core-el-sprite.png);
+	background: url(../../../img/uf-core-el-sprite.svg), none;
+}
+
+#image-edit-button-fit:before{
+	background-position: -693px -97px;
+}
+#image-edit-button-reset:before{
+	background-position: -801px -98px;	
+}
+#image-edit-button-swap:before{
+	background-position: -693px -162px;	
+}
+#image-edit-button-ok:before{
+	background-position: -801px -160px;	
+}
+
+#image-edit-button-fit:hover:before{
+	background-position: -693px -129px;
+}
+#image-edit-button-reset:hover:before{
+	background-position: -801px -130px;	
+}
+#image-edit-button-swap:hover:before{
+	background-position: -693px -194px;	
+}
+#image-edit-button-ok:hover:before{
+	background-position: -801px -192px;	
+}
 
 .image-edit-rotate i {
 	border-radius:20px;
@@ -345,8 +411,8 @@ a.open-media-gallery:hover i {
 
 .image-edit-resize {
 	position:absolute;
-	bottom: -20px;
-	right: -20px;
+	bottom: -17px;
+	right: -17px;
 	border-radius:5px;
 }
 
@@ -384,46 +450,6 @@ a.open-media-gallery:hover i {
 	transform: rotate(270deg) !important;	
 }
 
-/*
-.rotate_90 .image-edit-resize {
-	top: -20px;
-	bottom: auto;
-}
-
-.rotate_90 .image-edit-rotate {
-	bottom: -20px;
-	top: auto;
-}
-
-.rotate_180 .image-edit-resize {
-	top: -20px;
-	left: -20px;
-	right: auto;
-}
-
-.rotate_180 .image-edit-rotate {
-	bottom: -20px;
-	left: auto;
-	right: -20px;
-}
-
-.rotate_180 .image-edit-resize {
-	top: -20px;
-	left: -20px;
-	right: auto;
-}
-
-.rotate_180 .image-edit-rotate {
-	bottom: -20px;
-	left: auto;
-	right: -20px;
-} */
-
-
-#upfront-image-edit {
-	opacity: 1 !important;
-}
-
 a.uimage_edit_toggle {
 	opacity: .9;
 	border: 1px solid #2582BD;
@@ -434,12 +460,13 @@ a.uimage_edit_toggle {
 	background: #288ACA -ms-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
 	background: #288ACA linear-gradient(135deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
+
 a.uimage_edit_toggle:hover {
 	opacity: 1;
 }
 
 a.uimage_edit_toggle:before {
-	background-position: -486px -538px;
+	background-position: -1581px -169px;
 }
 
 #uimage-canvas{

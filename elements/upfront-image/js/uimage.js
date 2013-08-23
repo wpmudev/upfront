@@ -20,21 +20,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	imageTpl: Upfront.Util.template(imageTpl),
 	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
 	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
-	editorTpl: _.template($(editorTpl).find('#editor-tpl').html()),
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
 	sizes: false,
 	elementSize: {width: 0, height: 0},
-	image: 'http://dorsvenabili.com/wp-content/uploads/wordpress_helpsheet.jpg',
 	imageId: 0,
 	imageSize: {width: 0, height: 0},
 	imageOffset: {top: 0, left: 0},
 	maskOffset: {top: 0, left: 0},
-	rotation: 0,
-	invert: false,
-	bordersWidth: 10,
-	onScrollFunction: false,
-	justUploaded: false,
-	mode: 'big', // big | small | vertical | horizontal
 	
 	initialize: function(){
 		if(! (this.model instanceof UimageModel)){
@@ -46,7 +38,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		 });
 		 this.delegateEvents();
 		 Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
-		 //this.on('upfront:entity:resize', this.setElementSize, this);
 		 this.model.on('uimage:edit', this.editRequest, this);
 
 		// Set the full size current size if we don't have attachment id
@@ -56,8 +47,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.model.get("properties").bind("change", this.render, this);
 		this.model.get("properties").bind("add", this.render, this);
 		this.model.get("properties").bind("remove", this.render, this);
-
-
 	},
 
 	get_content_markup: function () {
@@ -189,240 +178,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
             me.resizeOverlay();
 		});
 	},
-	openEditor: function(e){
-		var me = this,
-			src = false,
-			size = this.imageSize
-		;
 
-		if(e)
-			e.preventDefault();
-
-		if(this.justUploaded){
-			src = this.sizes.full[0];
-			//this.initialMaskOffset();
-			this.justUploaded = false;
-		}
-		else
-			src = this.property('srcFull');
-
-		var tplOptions = {
-			size: size,
-			offset: this.imageOffset,
-			rotation: 'rotate_' + this.rotation,
-			src: src
-		}
-
-		this.openOverlaySection(this.editorTpl, tplOptions, function(overlay){
-			me.resizeOverlay();
-			me.imageOffset = me.imgOffset();
-
-			me.positionEditorElements(); //Set init point
-			me.selectMode(me.imageSize);
-
-			me.startEditorUI();
-			me.selectMode(me.imageSize, true);
-
-			me.positionEditorElements(); //Actually position elements
-
-			//me.setContainerPosition();
-			me.iLikeThatPosition();
-
-			//Set constraints
-			me.setResizingLimits();
-			$('#upfront-image-edit').draggable('option', me.getContainment());
-		});
-
-
-	},
-
-	resizeEditorElements: function(size) {
-		var editor = $('#upfront-image-edit');
-
-		editor.find('#uimage-canvas')
-			.height(size.height)
-			.width(size.width)
-			.find('img')
-				.height(this.imageSize.height)
-				.width(this.imageSize.width)
-				.css(this.imgOffset())
-		;
-
-		editor.find('#uimage-drag-handle')
-			.height(size.height)
-			.width(size.width)
-		;
-	},
-
-	positionEditorElements: function() {
-		var editor = $('#upfront-image-edit'),
-			canvas = editor.find('#uimage-canvas'),
-			img = canvas.find('.uimage-img'),
-			mask = editor.find('#uimage-mask'),
-			dragHandle= editor.find('#uimage-drag-handle'),
-			canvasWidth = this.canvasWidth(),
-			canvasHeight = this.canvasHeight()
-		;
-
-		this.initPoint = {
-			top: this.$el.offset().top - $(window).scrollTop() - this.bordersWidth / 2,
-			left: this.$('.upfront-object-content').offset().left - $(window).scrollLeft() - $('#sidebar-ui').width() - this.bordersWidth / 2
-		}
-
-		editor
-			.width(canvasWidth)
-			.height(canvasHeight)
-			.css({
-				top: this.initPoint.top - this.maskOffset.top + 'px',
-				left: this.initPoint.left - this.maskOffset.left + 'px'
-			})
-		;
-
-		canvas
-			.width(canvasWidth)
-			.height(canvasHeight)
-		;
-
-		this.imageOffset = this.imgOffset();
-
-		img
-			.width(this.imageSize.width)
-			.height(this.imageSize.height)
-			.css({
-				top: this.imageOffset.top + 'px',
-				left: this.imageOffset.left + 'px'
-			})
-		;
-
-		mask.css({
-			top: this.maskOffset.top + 'px',
-			left: this.maskOffset.left + 'px',	
-			width: this.elementSize.width + 'px',
-			height: this.elementSize.height + 'px'
-		});
-
-		dragHandle
-			.width(canvasWidth)
-			.height(canvasHeight)
-		;
-	},
-	imgOffset: function() {
-		if(! this.invert)
-			return {top: 0, left: 0};
-		return {
-			top: Math.floor((this.imageSize.width - this.imageSize.height) / 2),
-			left: Math.floor((this.imageSize.height - this.imageSize.width) / 2)
-		}
-	},
-	canvasWidth: function(){
-		if(this.invert)
-			return this.imageSize.height;
-		return this.imageSize.width;
-	},
-	canvasHeight: function(){
-		if(this.invert)
-			return this.imageSize.width;
-		return this.imageSize.height;
-	},
-	startEditorUI: function() {
-		var me = this;
-		$('#upfront-image-edit')
-			.resizable({
-				handles: {se: $('.image-edit-resize i')},
-				autoHide: 0,
-				aspectRatio: true,
-				start: function() {
-					if(me.mode != 'vertical')
-						$('.image-edit-save-container').fadeOut('fast');
-				},
-				resize: function(e, ui){
-					e.preventDefault();
-					e.stopPropagation();
-					me.setImageSize(ui.size);
-					me.resizeEditorElements(ui.size);
-					me.iLikeThatPosition();
-				},
-				stop: function(e, ui){
-					e.preventDefault();
-					e.stopPropagation();
-					me.setImageSize(ui.size);
-					me.selectMode(me.imageSize, true);
-					me.resizeEditorElements(ui.size);
-					me.positionEditorElements(ui.size);
-					me.iLikeThatPosition();
-					$('.image-edit-save-container').fadeIn('fast');
-					$('#upfront-image-edit').draggable('option', 'containment', me.getContainment());
-				},
-				//minWidth: this.elementSize.width + this.maskOffset.left,
-				//minHeight: this.elementSize.height + this.maskOffset.top
-			})
-			.draggable({
-				opacity:1,
-				handle: '#uimage-drag-handle',
-				start: function(e, ui){
-					if(me.mode != 'vertical')
-						$('.image-edit-save-container').fadeOut('fast');
-					$('#upfront-image-edit').draggable('option', 'containment', me.getContainment());
-				},
-				drag: function(e, ui){
-					me.moveMask(ui.position);
-					me.iLikeThatPosition();
-				},
-				stop: function(e, ui){
-					//me.imageOffset = ui.position;
-					me.moveMask(ui.position);
-					me.iLikeThatPosition();
-					me.setResizingLimits();
-					$('.image-edit-save-container').fadeIn('fast');
-				},
-				containment: me.getContainment()
-			})
-		;
-	},
-
-	setImageSize: function(uiSize){
-		if(this.invert)			
-			this.imageSize = {
-				width: Math.floor(uiSize.height),
-				height: Math.floor(uiSize.width)
-			};
-		else
-			this.imageSize = {
-				width: Math.floor(uiSize.width),
-				height: Math.floor(uiSize.height)
-			};
-	},
-
-	moveMask: function(position){
-		this.maskOffset.top = this.initPoint.top - position.top;
-		this.maskOffset.left = this.initPoint.left - position.left;
-		$('#uimage-mask').css({
-			top: this.maskOffset.top  + 'px',
-			left: this.maskOffset.left + 'px'
-		});
-	},
-
-	iLikeThatPosition: function(){
-		var container = $('#uimage-canvas'),
-			left = container.offset().left + container.width() + 200 > $(window).width() - $(window).scrollLeft() ? 
-				container.position().left - 200 + 'px' : 
-				container.position().left + container.width() + this.bordersWidth + 'px',
-		 	top = container.offset().top < $(window).scrollTop() ? 
-		 		container.position().top + container.height() - 150 + 'px' :
-		 		container.position().top + 50 + 'px'
- 		;
-
- 		if(this.mode != 'small' && this.mode != 'vertical')
-	 		$('.image-edit-save-container').css({
-	 			top: top,
-	 			left: left
-	 		});
-	 	else
-	 		$('.image-edit-save-container').css({
-	 			top: this.maskOffset.top,
-	 			left: this.maskOffset.left + this.elementSize.width + 'px'
-	 		});
-
+	handleEditorResult: function(result){
+		this.property('image_status', 'ok', true);
+		this.property('src', result.src, true);
+		this.property('srcFull', result.src, true);
+		this.property('size', result.imageSize, true);
+		this.property('position', result.imageOffset, true);
+		this.property('rotation', result.rotation, true);
+		this.render();
 	},
 
 	initialImageSize: function(overflow) {
@@ -461,154 +225,36 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		$('#upfront-image-edit').resizable('option', limits);
 	},
 
-	getContainment: function() {
-		var sbwidth = $('#sidebar-ui').width(),
-			scrollTop = $(window).scrollTop(),
-			scrollLeft = $(window).scrollLeft(),
-			border = this.bordersWidth / 2
-		;
-		if(this.mode == 'big')
-			return [
-				this.initPoint.left + sbwidth - this.canvasWidth() + this.elementSize.width + scrollLeft - border,
-				this.initPoint.top - this.canvasHeight() + this.elementSize.height + scrollTop - border,
-				this.initPoint.left + sbwidth + scrollLeft - border,
-				this.initPoint.top + scrollTop - border
-			];
-		if(this.mode == 'vertical')
-			return [
-				this.initPoint.left + sbwidth - this.canvasWidth() / 2 + this.elementSize.width  / 2 + scrollLeft - border,
-				this.initPoint.top - this.canvasHeight() + this.elementSize.height + scrollTop - border,
-				this.initPoint.left + sbwidth - this.canvasWidth() / 2 + this.elementSize.width  / 2 + scrollLeft - border,
-				this.initPoint.top + scrollTop - border
-			];
-
-		if(this.mode == 'horizontal')
-			return [
-				this.initPoint.left + sbwidth - this.canvasWidth() + this.elementSize.width + scrollLeft - border,
-				this.initPoint.top - this.canvasHeight() / 2 + this.elementSize.height / 2 + scrollTop - border,
-				this.initPoint.left + sbwidth + scrollLeft - border,
-				this.initPoint.top - this.canvasHeight() / 2 + this.elementSize.height / 2 + scrollTop - border
-			];
-
-		return [0,0,10000,10000];
-	},
-
-	iLikeThat: function(e){
-		e.preventDefault();
-		//Select the best image
-		var me = this,
-			image = false,
-			width = 0,
-			height = 0
-		;
-
-		_.each(this.sizes, function(data){
-			//No cropping
-			if(Math.floor(me.imageSize.width / data[1] * 100) / 100 == Math.floor(me.imageSize.height / data[2] * 100) / 100){
-				var sizeWidth = parseInt(data[1], 10),
-					sizeHeight = parseInt(data[2], 10)
-				;
-				if(sizeWidth > me.imageSize.width && sizeHeight > me.imageSize.height && (!width || sizeHeight + sizeWidth < height + width)) {
-					image = data[0];
-					width = data[1];
-					height = data[2];
-				}				
-			}			
-		});
-
-		//If no Image, we come from the layout editor. Already set
-		if(image || typeof this.sizes.full != 'undefined'){
-			this.property('src', image ? image : this.sizes.full[0]);
-			this.property('srcFull', this.sizes.full[0]);
-		}
-
-		this.property('size', this.imageSize);
-		this.property('position', this.calculateImagePosition());
-		this.property('rotation', this.rotation);
-		this.property('image_status', 'ok');
-		this.property('element_size', this.elementSize);
-		this.property('imageSizes', this.sizes);
-		this.property('imageId', this.imageId);
-
-		this.closeOverlay();
-	},
-
-	calculateImagePosition: function() {
-		return {
-			top: - this.maskOffset.top + this.imageOffset.top,
-			left: - this.maskOffset.left + this.imageOffset.left
-		}
-	},
-
 	editRequest: function () {
-		if(this.property('image_status') == 'ok'){
-			if(! $('#upfront-image-overlay').length){
-				var imageOffset = this.property('position'),
-					img = this.$('img')
-				;
-				//Set editor properties
-				this.imageSize = {
-					width: img.width(),
-					height: img.height()
-				};
-
-				// Set size as only size if the sizes are not defined.
-				if(! this.property('imageSizes')){
-					img.css({width: 'auto', height: 'auto'});
-					this.property('imageSizes', {
-						full: [this.property('src'), img.width(), img.height()]
-					});
-					img.css(this.imageSize);
-				}
-
-
-				this.setRotation(this.property('rotation'));
-
-				this.imageOffset = this.imgOffset();
-				
-				this.maskOffset = {
-					top: this.imageOffset.top - imageOffset.top,
-					left: this.imageOffset.left - imageOffset.left
-				};
-				
-				this.elementSize = this.property('element_size');
-
-				this.sizes = this.property('imageSizes');
-				this.imageId = this.property('imageId');
-
-				this.openEditor();
-			}
-		}
+		var me = this;
+		if(this.property('image_status') == 'ok')
+			this.openEditor();
 		else
 			this.openImageSelector();
 	},
-
-	rotate: function(){
-		var rotation = this.rotation,
-			img = $('.uimage-img'),
-			rotationClass = '',
-			size = {width: img.width(), height: img.height()},
-			position = {x: 0, y: 0}
+	openEditor: function(newImage){
+		var me = this,
+			options = {
+				rotation: this.property('rotation'),
+				setImageSize: newImage,
+				extraButtons: [{
+					id: 'image-edit-button-swap',
+					callback: function(e, editor){
+						editor.cancel();
+						me.openImageSelector();
+					}
+				}]
+			}
 		;
 
-		rotation = rotation == 270 ? 0 : rotation + 90;
-		if(rotation)
-			rotationClass = 'rotate_' + rotation;
-
-		img.removeClass()
-			.addClass('uimage-img ' + rotationClass);
-
-		this.setRotation(rotation);
-		this.positionEditorElements();
-
-		this.iLikeThatPosition();
-
-		this.setResizingLimits();
-		$('#upfront-image-edit').draggable('option', 'containment', this.getContainment());
-	},
-	setRotation: function(rotation){
-		this.rotation = rotation;
-		this.invert = [90,270].indexOf(rotation) != -1;
+		Upfront.Views.Editor.ImageEditor.open(this.$('.uimage-wrapper'), options)
+			.done(function(result){
+				me.handleEditorResult(result);
+			})
+			.fail(function(result){
+				me.render();
+			})
+		;
 	},
 
 	openProgress: function(callback){
@@ -677,12 +323,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				}
 			})
 		;
-		$(document)
-			.on('scroll', function(){
-				me.onScrollFunction = arguments.callee;
-				me.onScroll();
-			});
-		;	
 
 		if(settings.is(':visible')){
 			settings.fadeOut();
@@ -693,11 +333,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			callback(overlay);
 
 		//$('#upfront-image-overlay').fadeIn('fast');
-	},
-
-	onScroll: function(){
-		this.setResizingLimits();
-		$('#upfront-image-edit').draggable('option', 'containment', this.getContainment());
 	},
 
 	setOverlayEvents: function() {
@@ -712,23 +347,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			.on('click', '#upfront-image-file-input', function(e){
 				me.checkFileUpdate(e);
 			})
-			.on('click', '.image-edit-rotate', function(e){
-				me.rotate(e);
-			})
-			.on('click', '.image-edit-save', function(e){
-				me.iLikeThat(e);
-			})
 			.on('click', 'a.image-edit-change', function(e){
 				me.openImageSelector(e);
 			})
 			.on('click', 'a.open-media-gallery', function(e){
 				me.openMediaGallery(e);
-			})
-			.on('click', 'a.image-actual-size', function(e){
-				me.setImageFullSize(e, true);
-			})
-			.on('click', 'a.image-fit-element', function(e){
-				me.fitElementSize(e);
 			})
 		/*;
 		$(window)*/
@@ -736,46 +359,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				me.keyMove(e);
 			})
 		;
-	},
-
-	setImageFullSize: function(e, alert) {
-		if(e)
-			e.preventDefault();
-
-		var fullSize = this.sizes.full;
-		if(fullSize[1] < this.elementSize.width + 200 && fullSize[2] < this.elementSize.height + 200){
-			this.imageSize = {
-				width: fullSize[1],
-				height: fullSize[2]
-			}
-		}
-		else{
-			this.imageSize = this.initialImageSize(200);
-			if(alert)
-				Upfront.Views.Editor.notify('The image is too big to show it full size.', 'warning');
-			this.centerImage();
-		}
-		this.selectMode(this.imageSize, true);
-		this.positionEditorElements();
-		if(e){
-			this.iLikeThatPosition();
-			//Set constraints
-			this.setResizingLimits();
-			$('#upfront-image-edit').draggable('option', this.getContainment());
-		}
-	},
-
-	centerImage: function() {
-		if(this.invert)
-			this.maskOffset = {
-				top: (this.imageSize.width -  this.elementSize.height + this.bordersWidth) / 2 ,
-				left: (this.imageSize.height - this.elementSize.width + this.bordersWidth) / 2
-			}
-		else
-			this.maskOffset = {
-				top: (this.imageSize.height - this.elementSize.height + this.bordersWidth) / 2,
-				left: (this.imageSize.width -  this.elementSize.width + this.bordersWidth) / 2
-			}
 	},
 
 	fitElementSize: function(e) {
@@ -789,25 +372,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		$('#upfront-image-edit').draggable('option', 'containment', this.getContainment());		
 	},
 
-	keyMove: function(e) {
-		switch(e.which){
-			case 40: //down
-				this.maskOffset.top--;
-				this.positionEditorElements();
-				break;
-			case 39: //right
-				this.maskOffset.left--;
-				this.positionEditorElements();
-				break;
-			case 37: //left
-				this.maskOffset.left++;
-				this.positionEditorElements();
-				break;
-			case 38: //up
-				this.maskOffset.top++;
-				this.positionEditorElements();
-		}
-	},
 
 	cancelOverlay: function(e) {
 		if(e.target == e.currentTarget)
@@ -830,11 +394,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			height: 'auto',
 			width: 'auto'
 		});
-
-		if(this.onScrollFunction){
-			$(document).off('scroll', this.onScrollFunction);
-			this.onScrollFunction = false;
-		}
 
 		if(this.reopenSettings){
 			$('#settings').fadeIn();
@@ -880,6 +439,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		placeholder.css(phcss);
 		uploading.css(phcss);
 	},
+
 	openMediaGallery: function(e) {
 		var me = this;
 		e.preventDefault();
@@ -892,9 +452,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				me.imageId = image.get('ID');
 				me.getImageData()
 					.done(function(){
-						me.setRotation(0);
-						me.justUploaded = true;
-						me.openEditor();
+						me.$('img').attr('src', me.sizes.full[0]).load(function(){		
+							me.closeOverlay();
+							me.openEditor(true);						
+						});
 					})
 				;
 
@@ -905,6 +466,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		});
 	},
 	openFileBrowser: function(e){
+		e.preventDefault();
 	    console.log('clicking');
 		$('#upfront-image-file-input').click();
 	},
@@ -914,6 +476,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	uploadImage: function(e){
+		if(e)
+			e.preventDefault();
+
 		var me = this,
 			progress = $('#upfront-progress')
 		;
@@ -934,10 +499,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				console.log(response);
 				me.imageId = response.data[0];
 				me.getImageData()
-					.done(function(){
-						me.setRotation(0);
-						me.justUploaded = true;
-						me.openEditor();
+					.done(function(){		
+						me.$('img').attr('src', me.sizes.full[0]).load(function(){		
+							me.closeOverlay();
+							me.openEditor(true);							
+						});
 					})
 					.error(function(){
 						Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
@@ -957,55 +523,16 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			})
 			.done(function(response){
 				me.sizes = response.data.images[me.imageId];
-				me.selectMode({
-					width: me.sizes.full[1],
-					height: me.sizes.full[2]
-				});
-				me.setImageFullSize();
 			})	
 		;
 	},
 
-	selectMode: function(size, constraints) {
-		var mode = 'small',
-			invertSize = this.invert ? {width: size.height, height: size.width} : size
-		;
-
-		if(invertSize.width >= this.elementSize.width){
-			if(invertSize.height >= this.elementSize.height)
-				mode = 'big';
-			else
-				mode = 'horizontal';
+	property: function(name, value, silent) {
+		if(typeof value != "undefined"){
+			if(typeof silent == "undefined")
+				silent = true;
+			return this.model.set_property(name, value, silent);
 		}
-		else if(invertSize.height > this.elementSize.height)
-				mode = 'vertical';
-
-		this.setMode(mode, constraints);
-	},
-
-	setMode: function(mode, constraints){
-		var editor = $('#upfront-image-edit');
-		editor
-			.removeClass('uimage-mode-big uimage-mode-small uimage-mode-vertical uimage-mode-horizontal')
-			.addClass('uimage-mode-' + mode)
-		;
-		if(constraints){
-			if(mode == 'small'){
-				this.maskOffset = {top: this.bordersWidth / 2, left: this.bordersWidth / 2};
-				editor.resizable('disable');
-				editor.draggable('disable');
-			}
-			else {
-				editor.resizable('enable');
-				editor.draggable('enable');
-			}
-		}
-		this.mode = mode;
-	},
-
-	property: function(name, value) {
-		if(typeof value != "undefined")
-			return this.model.set_property(name, value);
 		return this.model.get_property_value_by_name(name);
 	}	    
 }));
@@ -1126,6 +653,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					new Fields.Radios({
 						model: this.model,
 						property: 'when_clicked',
+						className: 'field-when_clicked upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
 							{
 								label: 'Do nothing', 
@@ -1157,6 +685,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					new Fields.Radios({
 						model: this.model,
 						property: 'caption_position',
+						className: 'field-caption_position upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
 							{
 								label: 'below image',
@@ -1169,7 +698,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						]
 					}),
 					new Fields.Radios({
-						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 						model: this.model,
 						property: 'caption_trigger',
 						values: [
@@ -1184,7 +713,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						]
 					}),
 					new Fields.Radios({
-						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+						className: 'field-caption_alignment upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 						model: this.model,
 						property: 'caption_alignment',
 						values: [
@@ -1264,130 +793,557 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	}
 });
 
-var Field = Upfront.Views.Editor.Settings.Item.extend({
-	initialize: function (data) {
-		_.extend(this, data);
+var ImageEditor = Backbone.View.extend({
+	id: 'upfront-image-edit',
+	rotation: 0,
+	mode: 'big', // big | small | vertical | horizontal
+	invert: false,
+	tpl: _.template($(editorTpl).find('#editor-tpl').html()),
+	src: '#',
+	bordersWidth: 10,
+	response: false,
+	fullSize: {width: 0, height:0},
+	buttons: [],
+
+	events: {
+		'click #image-edit-button-ok': 'imageOk',
+		'click #image-edit-button-reset': 'resetImage',
+		'click #image-edit-button-fit': 'fitImage',
+		'click .image-edit-rotate': 'rotate',
+		'click #upfront-image-edit': 'cancel'
 	},
-	render: function (){
-		this.$el.empty();
-		if(this.trigger_name)
-			if(this.model.get_property_value_by_name(this.trigger_name) != this.trigger_value)				
-				return false;
-		if(this.title){
-			this.wrap({
-				title: this.title,
-				markup: this.get_markup()
+
+	initialize: function(){
+		var me = this;
+		this.$el.on('click', function(){
+			me.cancel();
+		})
+	},
+
+	resetDefaults: function(){
+		this.rotation = 0;
+		this.mode = 'big';
+		this.invert = false;
+		this.src = '#';
+		this.response = false;
+		this.fullSize = {width: 0, height:0};
+		this.setImageInitialSize = false;
+		this.buttons = [
+			{id: 'image-edit-button-fit'},
+			{id: 'image-edit-button-reset'},
+			{id: 'image-edit-button-ok'}
+		];
+	},
+
+	open: function($wrapper, options){
+		var img = $wrapper.find('img'),
+			halfBorder = this.bordersWidth /2,
+			maskOffset = {
+				top: $wrapper.offset().top - halfBorder,
+				left: $wrapper.offset().left - halfBorder
+			},
+			canvasOffset = {
+				top: $wrapper.offset().top + img.position().top - halfBorder,
+				left: $wrapper.offset().left + img.position().left - halfBorder
+			},
+			canvasSize = {
+				width: (this.invert ? img.height() : img.width()) + this.bordersWidth,
+				height: (this.invert ? img.width() : img.height()) + this.bordersWidth
+			},
+			maskSize = {
+				width: $wrapper.width() + this.bordersWidth,
+				height: $wrapper.height() + this.bordersWidth
+			}
+		;
+
+		this.resetDefaults();
+		this.setOptions(options);
+
+		if(this.setImageInitialSize){
+			this.fullSize = this.getImageFullSize(img);
+			canvasSize = this.initialImageSize(200);
+			canvasSize.width += this.bordersWidth;
+			canvasSize.height += this.bordersWidth;
+		}
+
+		this.src = img.attr('src');
+
+		this.response = $.Deferred();
+
+		var tplOptions = {
+			size: canvasSize,
+			offset: canvasOffset,
+			maskOffset: maskOffset,
+			rotation: 'rotate_' + this.rotation,
+			src: this.src,
+			maskSize: maskSize,
+			buttons: this.buttons
+		}
+
+		this.$el.html(this.tpl(tplOptions)).find('div').hide();
+
+		$('body').append(this.$el);
+
+		this.$el.css({
+			height: $(document).height(),
+			width: $(document).width()
+		}).find('div').fadeIn(200);
+
+		this.selectMode(canvasSize);
+		this.startEditorUI();
+		this.selectMode(canvasSize, true);
+
+		this.setImageSize(canvasSize);
+
+		return this.response.promise();		
+	},
+
+	setOptions: function(options) {
+		var me = this;
+		if(typeof options.rotation != 'undefined')
+			this.setRotation(options.rotation);
+		else
+			this.setRotation(0);
+
+		if(typeof options.id == 'undefined'){
+			var img = $('<img href="' + this.src + '">');
+			this.fullSize = {
+				width: img.width(),
+				height: img.height()
+			}
+		}
+
+		if(options.setImageSize)
+			this.setImageInitialSize = true;
+
+		if(options.extraButtons && options.extraButtons.length){
+			_.each(options.extraButtons, function(button){
+				me.buttons.unshift({id: button.id});
+				me.$el.on('click', '#' + button.id, function(e){
+					button.callback(e, me);
+				});
+			});
+		}
+	},
+
+	imageOk: function() {
+		this.response.resolve(this.getEditorResults());
+		this.close();
+	},
+
+	close: function() {
+		var me = this;
+		this.$('div').fadeOut(200, function(){
+			me.$el.detach();
+		})
+	},
+
+	cancel: function(reason){
+		this.response.reject({reason: reason});
+		this.close();
+	},
+
+	getEditorResults: function() {
+		var canvas = this.$('#uimage-canvas'),
+			img = canvas.find('img'),
+			mask = this.$('#uimage-mask'),
+			offset = this.imgOffset({width: img.width(), height: img.height()})
+		;
+		return {
+			imageSize: {width: img.width(), height: img.height()},
+			imageOffset: {
+				top: - mask.offset().top + canvas.offset().top + offset.top,
+				left: - mask.offset().left + canvas.offset().left + offset.left
+			},
+			rotation: this.rotation,
+			src: img.attr('src')
+		}
+	},
+
+	rotate: function(e){
+		var rotation = this.rotation,
+			img = this.$('.uimage-img'),
+			rotationClass = '',
+			size = {width: img.width() + this.bordersWidth, height: img.height() + this.bordersWidth},		
+			canvas = this.$('#uimage-canvas'),
+			handler = this.$('#uimage-drag-handle')
+		;
+
+		if(e){
+			e.preventDefault();
+			e.stopPropagation();
+		}
+
+		rotation = rotation == 270 ? 0 : rotation + 90;
+
+		if(rotation)
+			rotationClass = 'rotate_' + rotation;
+
+		img.removeClass()
+			.addClass('uimage-img ' + rotationClass);
+
+		this.setRotation(rotation);
+
+		if(this.invert){			
+			canvas.css({
+				height: size.width,
+				width: size.height
+			});		
+			handler.css({
+				height: size.width,
+				width: size.height
+			});
+			img.css({
+				height: size.height - this.bordersWidth,
+				width: size.width - this.bordersWidth
 			});
 		}
 		else{
-			this.$el.append('<div id="usetting-' + this.name + '" ><div class="upfront-settings-item"><div class="'+this.name+'-field">' + this.get_markup() + '</div></div></div>');
+			canvas.css(size);		
+			handler.css(size);
+			img.css({
+				height: '100%',
+				width: '100%'
+			})
 		}
-		if(this.afterRender)
-			this.afterRender();
+		img.css(this.imgOffset({width: img.width(), height: img.height()}));
+
+		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+		this.setResizingLimits();
 	},
-	get_name: function() {
-		return this.name;
+
+	setRotation: function(rotation){
+		this.rotation = rotation;
+		this.invert = [90,270].indexOf(rotation) != -1;
 	},
-	get_value: function() {
-		return this.$el.find('[name="' + this.name + '"]').val();
-	}
-});
-var Field_Input = Field.extend({
-	get_markup: function() {
-		var value = this.model.get_property_value_by_name(this.name) || this.value;
-		value = value || '';
-		var data = {
-		   	label:this.label,
-		   	name:this.name,
-		   	value: value,
+
+	imgOffset: function(size) {
+		if(! this.invert)
+			return {top: 0, left: 0};
+		return {
+			top: Math.floor((size.width - size.height) / 2),
+			left: Math.floor((size.height - size.width) / 2)
 		}
-		var template = '<div id="field_{{name}}">{[ if (label) { ]}<label for="{{name}}">{{label}}</label> {[ } ]}<input type="text" name="{{name}}" value="{{value}}" /></div>';
-		var render =  _.template(template, data);	
-		return render;
-	}
-})
-var Field_Textarea = Field.extend({
-	get_markup: function() {
-		var value = this.model.get_property_value_by_name(this.name) || this.value;
-		value = value || '';
-		var data = {
-		   	label:this.label,
-		   	name:this.name,
-		   	value: value,
-		   	icon : this.icon,
-		}
-		var template = '<div id="field_{{name}}">{[ if (label) { ]}<label for="{{name}}">{{label}}</label> {[ } ]}<textarea name="{{name}}">{{value}}</textarea></div>';
-		var render =  _.template(template, data);	
-		return render;
-	}
-})
-var Field_Checkbox = Field.extend({
-	get_markup: function() {
-		var value = this.model.get_property_value_by_name(this.name) ? this.model.get_property_value_by_name(this.name) : 'no';
-		value = value || '';
-		var data = {
-		   	label:this.label,
-		   	name:this.name,
-		   	value: 'yes',
-		   	checked: value == 'yes' ? 'checked' : ''
-		}
-		var template = '<div id="field_{{name}}"><input id="{{name}}" type="checkbox" name="{{name}}" value="1" {{checked}} />{[ if (label) { ]}<label for="{{name}}">{{label}}</label> {[ } ]}</div>';
-		var render =  _.template(template, data);
-		return render;
 	},
-	get_value: function() {
-		var value = this.$el.find('input[name="'+this.name+'"]').is(':checked') ? 'yes' : 'no';
-		return value;
+
+	startEditorUI: function() {
+		var me = this,
+			canvas = this.$('#uimage-canvas')
+		;
+		$('#uimage-drag-handle')
+			.resizable({
+				handles: {se: $('.image-edit-resize i')},
+				autoHide: 0,
+				aspectRatio: true,
+				start: function() {
+				},
+				resize: function(e, ui){
+					canvas.css(ui.size);
+					me.setImageSize(ui.size);
+				},
+				stop: function(e, ui){
+					e.preventDefault();
+					canvas.css(ui.size);
+					me.selectMode(ui.size, true);
+					me.setImageSize(ui.size);
+					$('#uimage-drag-handle').draggable('option', 'containment', me.getContainment());
+				}
+			})
+			.draggable({
+				opacity:1,
+				start: function(e, ui){
+				},
+				drag: function(e, ui){
+					canvas.css({
+						top: ui.position.top,
+						left: ui.position.left
+					});
+				},
+				stop: function(e, ui){
+					canvas.css({
+						top: ui.position.top,
+						left: ui.position.left
+					});
+					me.setResizingLimits();
+				},
+				containment: me.getContainment()
+			})
+		;
+		me.setResizingLimits();
+
+	},
+	selectMode: function(size, constraints) {
+		var mode = 'small',
+			invertSize = this.invert ? {width: size.height, height: size.width} : size,
+			mask = this.$('#uimage-mask'),
+			maskSize = {
+				width: mask.width(),
+				height: mask.height()
+			}
+		;
+
+		if(invertSize.width >= maskSize.width){
+			if(invertSize.height >= maskSize.height)
+				mode = 'big';
+			else
+				mode = 'horizontal';
+		}
+		else if(invertSize.height > maskSize.height)
+				mode = 'vertical';
+
+		this.setMode(mode, constraints);
+		console.log(this.mode);
+	},
+
+	setMode: function(mode, constraints){
+		var editor = $('#uimage-drag-handle');
+		this.$el
+			.removeClass('uimage-mode-big uimage-mode-small uimage-mode-vertical uimage-mode-horizontal')
+			.addClass('uimage-mode-' + mode)
+		;
+		if(false){//constraints){
+			if(mode == 'small'){
+				editor.resizable('disable');
+				editor.draggable('disable');
+			}
+			else {
+				editor.resizable('enable');
+				editor.draggable('enable');
+			}
+		}
+		this.mode = mode;
+	},
+
+	setImageSize: function(size){
+		if(this.invert){
+			var invertSize = {
+				width: size.height - this.bordersWidth,
+				height: size.width - this.bordersWidth
+			};
+
+			this.$('.uimage-img')
+				.css(invertSize)
+				.css(this.imgOffset(invertSize))
+			;
+		}
+	},
+
+	getContainment: function(){
+		var canvas = this.$('#uimage-canvas'),
+			mask = this.$('#uimage-mask'),
+			initPoint = mask.offset()
+		;
+
+		if(this.mode == 'big')
+			return [
+				initPoint.left - canvas.width() + mask.width(),
+				initPoint.top - canvas.height() + mask.height(),
+				initPoint.left,
+				initPoint.top
+			];
+		if(this.mode == 'vertical')
+			return [
+				initPoint.left,
+				initPoint.top - canvas.height() + mask.height(),
+				initPoint.left + mask.width() - canvas.width(),
+				initPoint.top
+			];
+
+		if(this.mode == 'horizontal')
+			return [
+				initPoint.left - canvas.width() + mask.width(),
+				initPoint.top,
+				initPoint.left,
+				initPoint.top - canvas.height() + mask.height()
+			];
+
+		return [
+			initPoint.left,
+			initPoint.top,
+			initPoint.left + mask.width() - canvas.width(),
+			initPoint.top - canvas.height() + mask.height()
+		];
+	},
+
+	setResizingLimits: function() {
+		var canvas = this.$('#uimage-canvas'),
+			mask = this.$('#uimage-mask'),
+			initPoint = mask.offset(),
+			limits = {
+				minWidth: 0,
+				minHeight: 0			
+			}
+		;
+		if(this.mode == 'big'){
+			limits = {
+				minWidth: mask.width() + initPoint.left - canvas.offset().left + this.bordersWidth,
+				minHeight: mask.height() + initPoint.top - canvas.offset().top + this.bordersWidth
+			}
+		}
+
+		$('#uimage-drag-handle').resizable('option', limits);
+	},
+
+	resetImage: function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		this.setRotation(270);
+		this.rotate(); //Set rotation to 0
+		this.setImageFullSize(e, alert);
+	},
+
+	fitImage: function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var size = this.initialImageSize(0, true),
+			canvas = this.$('#uimage-canvas'),
+			mask = this.$('#uimage-mask'),
+			handler = this.$('#uimage-drag-handle')
+		;
+
+		size.height += this.bordersWidth;
+		size.width += this.bordersWidth;
+
+		canvas.css(size);
+		handler.css(size);
+
+		this.setImageSize(size);
+		this.centerImage();
+
+		this.selectMode(size, true);
 	
-	}
-})
-var Field_Radio = Field.extend({
-	get_markup: function() {
-		var value = this.model.get_property_value_by_name(this.name);
-		var render = '<div id="field_'+this.name+'">';
-		var template = '<div class="upfront-radio-item"><input type="radio" name="{{name}}" id="{{name}}" value="{{value}}" {[ if(typeof selected != "undefined" && selected) { ]} checked  {[ } ]}> <span class="radio-button-label">{{icon}} {[ if (label) { ]}<label for="{{name}}">{{label}}</label> {[ } ]}</span></div>';
-		
-		_.each(this.options, function (item) {
-			if(!this.value && item.default == 'true'){ item.selected = true; }
-			else if (value == item.value){ item.selected = true; }
-		
-			render += _.template(template, item);
+		this.setResizingLimits();
+		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+	},
+
+	getImageFullSize: function($img){
+		var img = $img ? $img : this.$('.uimage-img'),
+			initialSize = this.invert ? {width: img.css('width'), height: img.css('height')} : {width: '100%', height: '100%'},
+			full
+		;
+
+		if(!img || !img.length)
+			return this.fullSize;
+
+		img.css({height: 'auto', width: 'auto'});
+		full = {height: img.height(), width: img.width()};
+
+		img.css(initialSize);
+		return full.width ? full : this.fullSize;
+	},
+
+	setImageFullSize: function(e, alert) {
+		if(e)
+			e.preventDefault();
+
+		var img = this.$('.uimage-img'),
+			mask = this.$('#uimage-mask'),
+			canvas = this.$('#uimage-canvas'),
+			handle = this.$('#uimage-drag-handle'),
+			size = false
+		;
+
+		this.fullSize = this.getImageFullSize();
+
+		if(this.fullSize.width < mask.width() + 200 && this.fullSize.height < mask.height() + 200){
+			size = {
+				height: this.fullSize.height + this.bordersWidth,
+				width: this.fullSize.width + this.bordersWidth
+			}
+		}
+		else{
+			if(alert)
+				Upfront.Views.Editor.notify('The image is too big to show it full size.', 'warning');
+
+			size = this.initialImageSize(200);
+			size = {
+				height: size.height + this.bordersWidth,
+				width: size.width + this.bordersWidth
+			}
+
+			this.centerImage();
+		}
+
+		canvas.css(size);
+		handle.css(size);
+
+		img.css({
+			height: '100%',
+			width: '100%'
 		});
-		render += "</div>";
-		return render;
-	},
-	get_value: function() {
-		var value = this.$el.find('input:radio[name='+this.name+']:checked').val();
-		return value != '' ? value : '';
-	}
-})
 
-var Field_Color = Field.extend({
-	get_markup: function(){
-		return '<div id="field_' + this.name + '">' + 
-			'<span>' + this.label + ':</span> ' +
-			'<input type="text" name="' + this.name + '" id="' + this.name + '" value="' + this.value + '">' +
-			'</div>'
-		;
-	},
-	afterRender: function(){
-		var me = this;
-		this.$('#' + this.name).spectrum(this.spectrum);
-	}
-})
+		this.selectMode(size, true);
 
-var Field_Number = Field.extend({
-	min: 0,
-	max: 100,
-	get_markup: function(){
-		return '<div id="field_' + this.name + '">' + 
-			'<span>' + this.label + ':</span> ' +
-			'<input type="number" min="' + this.min + '" max="' + this.max  + '"name="' + this.name + '" id="' + this.name + '" value="' + this.value + '">' +
-			'</div>'
+		this.setResizingLimits();
+		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+	},
+
+	centerImage: function() {
+		var canvas = this.$('#uimage-canvas'),
+			mask = this.$('#uimage-mask'),
+			handle = this.$('#uimage-drag-handle')
+			position = {
+				top: mask.offset().top - ((canvas.height() - mask.height()) / 2),
+				left: mask.offset().left - ((canvas.width() -  mask.width()) / 2)
+			}
 		;
+		canvas.css(position);
+		handle.css(position);
+	},
+
+	initialImageSize: function(overflow, stretch) {
+		var canvas = this.$('#uimage-canvas'),
+			mask = this.$('#uimage-mask'),
+			size = {
+				width: 0,
+				height: 0
+			},
+			maskSize = {
+				width: mask.width(),
+				height: mask.height()
+			},
+			overflow = overflow ? overflow : 0,
+			pivot, factor, invertPivot,
+			stretchImage = !!stretch
+		;
+		
+		this.fullSize = this.getImageFullSize();
+
+		pivot = maskSize.width / maskSize.height < this.fullSize.width / this.fullSize.height ? 'width' : 'height';
+		invertPivot = this.invert ? (pivot == 'width' ? 'height' : 'width') : pivot;
+		factor = this.fullSize[pivot] / (maskSize[invertPivot] + overflow);
+
+		if(!stretchImage && factor < 1)
+			size = this.fullSize;
+		else
+			size = {
+				width: Math.ceil(this.fullSize.width / factor),
+				height: Math.ceil(this.fullSize.height / factor)
+			};
+
+		return size;
+	},
+
+	keyMove: function(e) {
+		switch(e.which){
+			case 40: //down
+				this.maskOffset.top--;
+				this.positionEditorElements();
+				break;
+			case 39: //right
+				this.maskOffset.left--;
+				this.positionEditorElements();
+				break;
+			case 37: //left
+				this.maskOffset.left++;
+				this.positionEditorElements();
+				break;
+			case 38: //up
+				this.maskOffset.top++;
+				this.positionEditorElements();
+		}
 	},
 });
-
 
 Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Model": UimageModel, 
@@ -1396,12 +1352,9 @@ Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Settings": ImageSettings
 });
 
+Upfront.Views.Editor.ImageEditor = new ImageEditor();
 Upfront.Models.UimageModel = UimageModel;
 Upfront.Views.UimageView = UimageView;
-/*
-Upfront.Models.ImageModel = UimageModel;
-Upfront.Views.ImageView = UimageView;
-*/
 
 }); //End require
 

@@ -1,4 +1,4 @@
-<div class="upfront-image-container uimage-<?php echo $caption_position ?>" style="width:<?php echo $element_size['width'] ?>px">
+<div class="upfront-image-container uimage-<?php echo $caption_position ?>" style="width:<?php echo $element_size['width'] ?>px" id="<?php echo $element_id ?>">
 	<?php if($url) { ?>
 	<a href="<?php echo $url ?>">
 	<?php } ?>
@@ -48,11 +48,12 @@
 		}
 
 		.uimage-over_image .uimage-hover_show {
-			opacity:0;
+			opacity:0; /*
 			-moz-transition:opacity .2s;
 		    -webkit-transition:opacity .2s;
 		    -o-transition:opacity .2s;
 		    transition:opacity .2s;
+		    */
 		}
 
 		.uimage-over_image:hover .uimage-hover_show {

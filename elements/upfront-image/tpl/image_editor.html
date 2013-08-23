@@ -30,26 +30,22 @@
 </script>
 
 <script type="text/template" id="editor-tpl">
-	<div id="upfront-image-edit" class="upfront-image-section">
-		<div id="uimage-canvas" style="position:relative; overflow:hidden; top: 0; left: 0">
-			<img class="uimage-img {{ rotation }}" src="{{src}}" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute">
-		</div>
+	<div id="uimage-cover" style="position:absolute; top:{{maskOffset.top}}px; left:{{maskOffset.left}}px; height: {{maskSize.height}}px; width: {{maskSize.width}}px"></div>
+	<div id="uimage-canvas" style="position:absolute; overflow:hidden; top:{{offset.top}}px; left:{{offset.left}}px; height: {{size.height}}px; width: {{size.width}}px">
+		<img class="uimage-img {{ rotation }}" src="{{src}}" style="width:100%; height:100%; position:absolute">
+	</div>
 
-		<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{offset.top}}px; left:{{offset.left}}px"></div>
+	<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{maskOffset.top}}px; left:{{maskOffset.left}}px; height: {{maskSize.height}}px; width: {{maskSize.width}}px"></div>
 
-		<div id="uimage-drag-handle" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute"></div>
-
+	<div id="uimage-drag-handle" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute; top:{{offset.top}}px; left:{{offset.left}}px">
 		<div class="image-edit-resize image-edit-control"><i class="icon-resize-full ui-resizable-handle ui-resizable-handle-se"></i></div>
 		<div class="image-edit-rotate image-edit-control"><i class="icon-repeat"></i></div>
+	</div>
 
-		<div class="image-edit-save-container">
-			<div class="no-shadow">
-				<a class="image-edit-save" href="#"><i class="icon-ok"></i> I like that</a>
-				<a class="image-edit-option image-edit-change" href="#"><i class="icon-upload-alt "></i> upload a different image</a>
-				<a class="image-edit-option image-actual-size" href="#">Reset image size</a>
-				<a class="image-edit-option image-fit-element" href="#">Fit the element</a>
-			</div>
-		</div>
+	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 40}}px; left: {{maskOffset.left}}px;">
+		{[ for (var i = 0; i < buttons.length; i++) { ]}
+		<a class="image-edit-button" id="{{buttons[i].id}}"></a>
+		{[ } ]}
 	</div>
 </script>
 
