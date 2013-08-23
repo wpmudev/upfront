@@ -128,7 +128,7 @@ EOAdminStyle;
 		wp_enqueue_style('wp-jquery-ui-dialog');
 		wp_enqueue_style('thickbox');
 		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic');
-		
+/*		
 		// Color picker dependency - new stuff only works in admin :(
 		//wp_enqueue_script('wp-color-picker');
 		//wp_enqueue_style('wp-color-picker');
@@ -144,7 +144,7 @@ EOAdminStyle;
 			'current' => __( 'Current Color' ),
 		));
 		wp_enqueue_style('wp-color-picker', admin_url('css/color-picker.css'));
-
+*/
 		// Enqueue media uploader dependencies.
 		wp_enqueue_media();
 		

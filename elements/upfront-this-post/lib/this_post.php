@@ -18,8 +18,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$post = get_post($post_id);
 		if ($post->post_password && !is_user_logged_in()) return ''; // Augment this!
 
-		$title = apply_filters('the_title', $post->post_title);
-		$content = apply_filters('the_content', $post->post_content);
+		//$title = apply_filters('the_title', $post->post_title);
+		//$content = apply_filters('the_content', $post->post_content);
 
 		return self::post_template($post);
 	}
