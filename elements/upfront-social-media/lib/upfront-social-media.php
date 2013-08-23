@@ -289,7 +289,8 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
     }
 
     public static function upfront_the_content_filter( $content ) {
-
+            $output = '';
+            $old_content = $content;
             if ( is_single() ):
                 global $post;
                 if ( get_option('upfront_social_media_global_settings') && self::get_value_by_name('post_options') ) :
@@ -371,14 +372,14 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                         "</div>";
 
                     if(self::get_value_by_name("location_top")):
-                        $output = "<div class='upfront-entry-share upfront-entry-share-top' {$location_top} >".
+                        $output .= "<div class='upfront-entry-share upfront-entry-share-top' {$location_top} >".
                             (self::get_value_by_name("is_liked") ? $facebook_icon : '').
                             (self::get_value_by_name("is_tweet") ? $twitter_icon : '').
                             (self::get_value_by_name("is_gplus") ? $gplus_icon : '').
                         "</div>";
                     endif;
 
-                    $output .= $content;
+                    $output .= $old_content;
 
                     if(self::get_value_by_name("location_bottom")):
                         $output .= "<div class='upfront-entry-share upfront-entry-share-bottom' {$location_bottom} >".
@@ -389,10 +390,10 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                     endif;
 
                 else:
-                    $output = $content;
+                    $output = $old_content;
                 endif; // settings end
             else:
-                $output = $content;
+                $output = $old_content;
             endif;
             // Returns the content.
             return $output;
