@@ -1,0 +1,31 @@
+.upfront_login-settings-panel .upfront-settings_panel {
+	width: 290px;
+}
+
+.upfront_login-fields-complex_boolean {
+	width: 48%;
+	float: left;
+}
+.upfront_login-fields-complex_boolean .upfront-field-wrap-radios {
+	float: left;
+}
+.upfront_login-fields-complex_boolean .upfront-field-wrap-text {
+	width: 80%;
+	float: left;
+}
+.upfront_login-fields-complex_boolean.upfront_login-appearance-icon {
+	width: 30%;
+}
+.upfront_login-fields-complex_boolean.upfront_login-appearance-label {
+	width: 70%;
+}
+.upfront_login-fields-complex_boolean.upfront_login-appearance-icon .upfront_login-icon {
+	padding-top: 3px;
+	float: left;
+}
+
+.upfront_login-item-display_behavior .upfront-field-multiple {
+	max-width: 48%;
+	margin-right: 1%;
+	float: left;
+}

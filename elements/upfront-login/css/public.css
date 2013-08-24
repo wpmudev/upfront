@@ -1,20 +1,38 @@
-.upfront_login {
-	width: 100%;
-	height: 5px;
+/* Hover */
+.upfront_login.upfront_login-hover .upfront_login-form {
+	display: none;
+}
+.upfront_login.upfront_login-hover:hover .upfront_login-form {
+	display: block;
+}
+.upfront_login.upfront_login-hover:hover .upfront_login-trigger {
+	display: none;
+}
+
+/* Click */
+.upfront_login.upfront_login-click .upfront_login-form {
+	display: none;
+}
+.upfront_login.upfront_login-click {
+	z-index: 0;
+}
+.upfront_login.upfront_login-click.active {
 	background: rgba(0,0,0,.7);
-	border-top: 2px solid #20ca8b;
-	border-bottom: 2px solid #20ca8b;
-	transition: all 1s;
-	overflow: hidden;
+	position: fixed;
+	top: 0; left: 0;
+	bottom: 0; right: 0;
+	z-index: 9999998;
+	padding-top: 5em;
 }
-.upfront_login:hover {
-	height: 180px;
+.upfront_login.upfront_login-click.active .upfront_login-form {
+	display: block;
+	background: #fff;
+	z-index: 9999999;
+	width: 80%;
+	max-width: 350px;
+	margin: 0 auto;
+	padding: 2em;
 }
-.upfront-login_element-object {
-	min-height: 1em; /* Editor fix */
-}
-.upfront_login form {
-	color: #fff;
-	width: 30%;
-	margin: 5px auto;
+.upfront_login.upfront_login-click.active .upfront_login-trigger {
+	display: none;
 }
