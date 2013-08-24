@@ -96,6 +96,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 
 		// Allow select-edit tiggering
+		/*
 		me.$el.find(".post_content")
 			.off("mouseover.upfront-select_to_edit").on("mouseover.upfront-select_to_edit", function () {
 				me.$el.closest(".upfront-editable_entity").draggable('disable');
@@ -116,6 +117,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				});
 			})
 		;
+		*/
 
 		//Upfront.Application.ContentEditor.stop();
 		this.trigger("rendered", this);
@@ -140,11 +142,13 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		var me = this;
 
 		// Break select-editing trigger
+		/*
 		this.$el
 			.off("mouseover.upfront-select_to_edit")
 			.off("mouseout.upfront-select_to_edit")
 			.off("mousedown.upfront-select_to_edit")
 		;
+		*/
 
 		// Hacky way of closing other instances
 		if ($("#upfront-post-cancel_edit").length) {
@@ -242,6 +246,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 
 		CKEDITOR.inline('upfront-body');
+
 		// Apply buffered selection
 		/*
 		if (this.dom_range) {
@@ -259,16 +264,15 @@ console.log(this.dom_range)
 		}
 		*/
 
-		$body.find('#upfront-body').off('focus')
-			.on('focus', function(){
+		$body.find('#upfront-body').closest(".upfront-editable_entity").off('focus')
+			.on('focus', function (e) {
 				$('#cke_upfront-body').show();
 			})
 			.off('blur')
-			.on('blur', function(){
+			.on('blur', function (e) {
 				$('#cke_upfront-body').hide();
 			})
 		;
-
 		$body
 			.find("#upfront-body").focus().end()
 			.find("#upfront-post-cancel_edit").on("click", function () {

@@ -43,8 +43,8 @@
 	var UpostsView = Upfront.Views.ObjectView.extend({
 		post: false,
 		currentPost: false,
-		titleSelector: 'h1.post_title',
-		contentSelector: '.post_content',
+		titleSelector: Upfront.data.posts_element && Upfront.data.posts_element.title_selector ? Upfront.data.posts_element.title_selector : 'h1.post_title',
+		contentSelector: Upfront.data.posts_element && Upfront.data.posts_element.content_selector ? Upfront.data.posts_element.content_selector : '.post_content',
 		/**
 		 * Element contents markup.
 		 * @return {string} Markup to be shown.
@@ -197,7 +197,6 @@
 			Upfront.Events.on("entity:deactivated", this.stop_editor, this);
 		},
 		updatePost: function() {
-console.log('updating')
 			var $title = this.$(this.titleSelector).find(":text"),
 				$content =  this.$(this.contentSelector).find("#upfront-body"),
 				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
