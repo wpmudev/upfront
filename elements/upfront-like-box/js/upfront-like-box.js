@@ -31,16 +31,17 @@
         initialize: function(){
             var me = this;
             Upfront.Views.ObjectView.prototype.initialize.call(this);
-            Upfront.data.social.panel.model.get("properties").on("change", this.render, this);
-            Upfront.data.social.panel.model.get("properties").on("add", this.render, this);
+            Upfront.data.social.panel.model.get("properties").on("change", this.setUrl, this);
+            Upfront.data.social.panel.model.get("properties").on("add", this.setUrl, this);
             Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
         },
-
+        setUrl: function(){
+            this.property('facebook_url' , Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url'))
+        },
         onElementResize: function(view, model){
             if(this.parent_module_view == view)
                 this.setElementSize();
         },
-
         setElementSize: function(){
             var me = this,
                 parent = this.parent_module_view.$('.upfront-editable_entity:first')
@@ -68,7 +69,6 @@
                 'click a.back_global_settings' : 'backToGlobalSettings'
             });
         },
-
         backToGlobalSettings: function(e){
             e.preventDefault();
             Upfront.data.social.panel.popupFunc();
@@ -80,12 +80,8 @@
         get_content_markup: function () {
             var me = this,
             fbUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url');
-
-            console.log(this.model.get_property_value_by_name('element_size').width)
-            console.log(this.model.get_property_value_by_name('element_size').height)
             if(fbUrl){
                 var pageName = Upfront.data.social.panel.getLastPartOfUrl(fbUrl);
-
                 return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+this.model.get_property_value_by_name('element_size').width+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:'+this.model.get_property_value_by_name('element_size').width+'px; float:left; height:'+this.model.get_property_value_by_name('element_size').height+'px;" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
             }else{
                 return 'Whoops! it looks like you need to update your <a class="back_global_settings" href="#">global settings</a>';
@@ -130,122 +126,45 @@
     // We will first define settings panels, and items for each panel.
     // Then we'll slot in the panels in a settings instance.
 
-    // --- LikeBox settings ---
-
-    /**
-     * LikeBox settings panel.
-     * @type {Upfront.Views.Editor.Settings.Panel}
-     */
-    var likeBoxLayoutStyleSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
-        /**
-         * Initialize the view, and populate the internal
-         * setting items array with Item instances.
-         */
-        initialize: function () {
-            this.settings = _([
-                new likeBoxLayoutStyleSetting_FbPageUrl({model: this.model})
-            ]);
-        },
-        /**
-         * Get the label (what will be shown in the settings overview)
-         * @return {string} Label.
-         */
-        get_label: function () {
-            return "Layout Style";
-        },
-        /**
-         * Get the title (goes into settings title area)
-         * @return {string} Title
-         */
-        get_title: function () {
-            return "Layout Style settings";
-        }
-    });
-
     /**
      * Layout Style settings - Facebook Page URL item
      * @type {Upfront.Views.Editor.Settings.Item}
      */
-    var likeBoxLayoutStyleSetting_FbPageUrl = Upfront.Views.Editor.Settings.Item.extend({
 
-        initialize: function(){
-            Upfront.data.social.panel.model.get("properties").on("change", this.render, this);
-            Upfront.data.social.panel.model.get("properties").on("add", this.render, this);
+    var Field_Text = Upfront.Views.Editor.Field.Text.extend({
+        events:{
+            'change .upfront-field-text': 'updateFacebookPageUrl'
         },
-        /**
-         * Set up setting item Facebook Page Url options.
-         */
-
-        render: function () {
-            var $urlMarkup;
-
-            this.FacebookPageUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url');
-
-            this.$editMarkup = '<span><a target="_blank" href="'+ this.FacebookPageUrl +'" >'+ this.FacebookPageUrl +'</a></span>' +
-                ' <a href="#" class="edit_fb_page_url">Edit</a> ';
-
-            this.$inputMarkup = '<input type="text" placeholder="https://www.facebook.com/YourPage" value="'+ (this.FacebookPageUrl ? this.FacebookPageUrl : '') +'" id="style_layput_type-fb-page-url">' +
-                '<button class="save_fb_url">ok</button>';
-
-            if(this.FacebookPageUrl){
-                $urlMarkup = this.$editMarkup;
-            }
-            else
-            {
-                $urlMarkup = this.$inputMarkup;
-            }
-
-            this.$el.empty();
-            // Wrap method accepts an object, with defined "title" and "markup" properties.
-            // The "markup" one holds the actual Item markup.
-            this.wrap({
-                "title": "Your facebook page URL",
-                "markup": '<div class="likeBox_url_input_box">' +
-                    $urlMarkup +
-                    '</div>'
-            });
-        },
-
-        events: {
-            'click .save_fb_url': 'updateFacebookPageUrl',
-            'click .edit_fb_page_url': 'editFacebookPageUrl'
-        },
-
         updateFacebookPageUrl: function(){
-            var $fbUrlDiv = this.$el.find('.likeBox_url_input_box');
-            var $url = $fbUrlDiv.find('#style_layput_type-fb-page-url').val();
-
-            if($url !== ''){
-                $fbUrlDiv.empty().append(this.$editMarkup).find('span a').text($url);
-            }
-            else{
-                $fbUrlDiv.find('input').focus();
-            }
-
-            var currentData = Upfront.data.social.panel.model.get('properties').toJSON();
-
-            Upfront.data.social.panel.model.set_property('facebook_page_url',$url)
-
+            var url = this.$el.find('input').val(),
+            currentData = Upfront.data.social.panel.model.get('properties').toJSON();
+            Upfront.data.social.panel.model.set_property('facebook_page_url',url)
             var setData = Upfront.data.social.panel.model.get('properties').toJSON();
 
             if(!_.isEqual(currentData, setData)){
-
                 Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
-                    .success(function (ret) {
-                        //console.log(ret.data);
-                    })
                     .error(function (ret) {
                         Upfront.Util.log("Error Saving settings");
                     });
             }
-
-        },
-
-        editFacebookPageUrl: function(e){
-            e.preventDefault();
-            this.$el.find('.likeBox_url_input_box').empty().append(this.$inputMarkup);
         }
+    });
 
+    var Field_Button = Upfront.Views.Editor.Field.Field.extend({
+        events: {
+            'click a': 'buttonClicked'
+        },
+        render: function() {
+            this.$el.html(this.get_field_html());
+        },
+        get_field_html: function() {
+            return '<i class="upfront-field-icon upfront-field-icon-social-back"></i><span class="upfront-back-global-settings-info">' + this.options.info + ' <a href="#">' + this.options.label + '</a></span>';
+        },
+        buttonClicked: function(e) {
+            if(this.options.on_click)
+                this.options.on_click(e);
+        },
+        isProperty: false
     });
 
 // --- Tie the settings together ---
@@ -261,7 +180,42 @@
          */
         initialize: function () {
             this.panels = _([
-                new likeBoxLayoutStyleSettingsPanel({model: this.model})
+                new Upfront.Views.Editor.Settings.Panel({
+                    model: this.model,
+                    label: "Layout Style",
+                    title: "Layout Style settings",
+                    settings: [
+                        new Upfront.Views.Editor.Settings.Item({
+                            className: 'upfront-social-services-item',
+                            model: this.model,
+                            title: "Your Facebook Page URL",
+                            fields: [
+                                new Field_Text({
+                                    model: this.model,
+                                    property: 'facebook_url',
+                                    default_value: Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url'),
+                                    label: "https://www.facebook.com/YourPage",
+                                    compact: true
+                                })
+                            ]
+                        }),
+                        new Upfront.Views.Editor.Settings.Item({
+                            className: 'upfront-social-back',
+                            group: false,
+                            fields: [
+                                new Field_Button({
+                                    model: this.model,
+                                    info: 'Back to your',
+                                    label: 'global settings',
+                                    on_click: function(e){
+                                        e.preventDefault();
+                                        Upfront.data.social.panel.popupFunc();
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                })
             ]);
         },
         /**
