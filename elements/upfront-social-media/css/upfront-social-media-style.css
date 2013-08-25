@@ -1,56 +1,3 @@
-.upfront_social_box
-{
-    font-family: 'Source Sans Pro', sans-serif;
-}
-.upfront_social_tabs
-{
-    float:left;
-}
-#settings .upfront-settings_panel .upfront_social_tabs ul
-{
-    float:left;
-    margin:0;
-    /*height:29px;*/
-    padding:0 10px;
-    /*border-bottom:solid 1px #95b8d9;*/
-}
-#settings .upfront-settings_panel .upfront_social_tabs ul li
-{
-    float:left;
-    list-style:none;
-    margin-right:1px;
-}
-.upfront_social_tabs ul li a
-{
-    float:left;
-    text-decoration:none;
-    font-size:14px;
-    color:#30475e;
-    background:#d9e8f6;
-    padding:0 12px;
-    line-height:28px;
-}
-.upfront_social_tabs a:hover,
-.upfront_social_tabs .act_tabs
-{
-    background:#f2f9ff;
-    border:solid 1px #95b8d9;
-    border-bottom:none;
-    padding:0 11px;
-    margin-top:-3px;
-    margin-bottom:-1px;
-    line-height:31px;
-}
-.upfront_tab_one_box,
-.upfront_tab_two_box,
-.upfront_tab_three_box
-{
-    margin:0;
-    padding:0;
-    float:left;
-    width:412px;
-    display: none;
-}
 #upfront-popup .upfront-social-media-save_settings
 {
     width: auto;
@@ -93,14 +40,6 @@
     position: relative;
     line-height: 18px;
 }
-#settings .upfront-settings_panel .cal_to_action_social_media_services_list li,
-#settings .upfront-settings_panel .fan_social_media_services_list li,
-#settings .upfront-settings_panel .like_social_media_services_list li
-{
-    cursor: move;
-    background: #a2c5e4;
-    padding: 5px 0;
-}
 .alert-url
 {
     color: #fff;
@@ -114,10 +53,6 @@
     text-align: center;
     top: -4px;
     right: -4px;
-}
-.ser_header .toggle
-{
-    cursor: pointer;
 }
 .upfront-global-social-settings
 {
@@ -353,91 +288,90 @@ label {
 {
     display: block;
 }
-.upfront-button-style-0 .upfront-call-to-action
+.upfront-button-style-1 .upfront-call-to-action
 {
     background: url("../images/SM_Sprite_Style_01-01.svg") no-repeat;
 }
-.upfront-button-style-1 .upfront-call-to-action
+.upfront-button-style-2 .upfront-call-to-action
 {
     background: url("../images/SM_Sprite_Style_02-01.svg") no-repeat;
 }
-.upfront-button-style-2 .upfront-call-to-action
+.upfront-button-style-3 .upfront-call-to-action
 {
     background: url("../images/SM_Sprite_Style_11-01.svg") no-repeat;
 }
-.upfront-button-size-0 .upfront-call-to-action
+.upfront-button-size-small .upfront-call-to-action
 {
     width: 16px;
     height: 16px;
     background-size: 40px 280px;
 }
-.upfront-button-size-1 .upfront-call-to-action
+.upfront-button-size-medium .upfront-call-to-action
 {
     width: 24px;
     height: 24px;
     background-size: 60px 420px;
 }
-.upfront-button-size-2 .upfront-call-to-action
+.upfront-button-size-large .upfront-call-to-action
 {
     width: 40px;
     height: 40px;
 }
-
-.upfront-button-size-2 .upfront-call-to-action.facebook-link {
+.upfront-button-size-large .upfront-call-to-action.facebook-link {
     background-position: -30px -30px;
 }
-.upfront-button-size-2 .upfront-call-to-action.twitter-link {
+.upfront-button-size-large .upfront-call-to-action.twitter-link {
     background-position: -30px -130px;
 }
-.upfront-button-size-2 .upfront-call-to-action.gplus-link {
+.upfront-button-size-large .upfront-call-to-action.gplus-link {
     background-position: -30px -230px;
 }
-.upfront-button-size-2 .upfront-call-to-action.linkedin-link {
+.upfront-button-size-large .upfront-call-to-action.linkedin-link {
     background-position: -30px -430px;
 }
-.upfront-button-size-2 .upfront-call-to-action.pinterest-link {
+.upfront-button-size-large .upfront-call-to-action.pinterest-link {
     background-position: -30px -630px;
 }
-.upfront-button-size-2 .upfront-call-to-action.youtube-link {
+.upfront-button-size-large .upfront-call-to-action.youtube-link {
     background-position: -30px -330px;
 }
 
-.upfront-button-size-1 .upfront-call-to-action.facebook-link {
+.upfront-button-size-medium .upfront-call-to-action.facebook-link {
     background-position: -18px -18px;
 }
-.upfront-button-size-1 .upfront-call-to-action.twitter-link {
+.upfront-button-size-medium .upfront-call-to-action.twitter-link {
     background-position: -18px -78px;
 }
-.upfront-button-size-1 .upfront-call-to-action.gplus-link {
+.upfront-button-size-medium .upfront-call-to-action.gplus-link {
     background-position: -18px -138px;
 }
-.upfront-button-size-1 .upfront-call-to-action.linkedin-link {
+.upfront-button-size-medium .upfront-call-to-action.linkedin-link {
     background-position: -18px -258px;
 }
-.upfront-button-size-1 .upfront-call-to-action.pinterest-link {
+.upfront-button-size-medium .upfront-call-to-action.pinterest-link {
     background-position: -18px -378px;
 }
-.upfront-button-size-1 .upfront-call-to-action.youtube-link {
+.upfront-button-size-medium .upfront-call-to-action.youtube-link {
     background-position: -18px -198px;
 }
 
 
-.upfront-button-size-0 .upfront-call-to-action.facebook-link {
+.upfront-button-size-small .upfront-call-to-action.facebook-link {
     background-position: -12px -12px;
 }
-.upfront-button-size-0 .upfront-call-to-action.twitter-link {
+.upfront-button-size-small .upfront-call-to-action.twitter-link {
     background-position: -12px -52px;
 }
-.upfront-button-size-0 .upfront-call-to-action.gplus-link {
+.upfront-button-size-small .upfront-call-to-action.gplus-link {
     background-position: -12px -92px;
 }
-.upfront-button-size-0 .upfront-call-to-action.linkedin-link {
+.upfront-button-size-small .upfront-call-to-action.linkedin-link {
     background-position: -12px -172px;
 }
-.upfront-button-size-0 .upfront-call-to-action.pinterest-link {
+.upfront-button-size-small .upfront-call-to-action.pinterest-link {
     background-position: -12px -252px;
 }
-.upfront-button-size-0 .upfront-call-to-action.youtube-link {
+.upfront-button-size-small .upfront-call-to-action.youtube-link {
     background-position: -12px -132px;
 }
 
@@ -465,4 +399,64 @@ label {
 }
 .upfront-fan-counts.gplus-count {
     background-position: -30px -230px;
+}
+/* New settings*/
+/* TODO: Need to remove this width  */
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab {
+    max-width: 76px !important;
+}
+.upfront-defaut-tabbed .upfront-field-multiple-vertical{
+    min-width: 89px !important;
+}
+.social_media_services_list li{
+    border-top: solid 1px #e3edf6;
+    height: 30px;
+    margin: 0 !important;
+    padding: 2px 0 0 17px !important;
+}
+.social_media_services_list li.ui-sortable-helper{
+    background-color: #e3edf6;
+}
+.social_media_services_list .upfront-field-multiple{
+    margin: 0;
+}
+.social_media_services_list li.upfront-field-multiple input.upfront-field-checkbox{
+    bottom: 9px !important;
+}
+.upfront-field-icon-social-sort {
+    float: right;
+    cursor: move;
+    margin-right: 0 !important;
+    width: 18px;
+}
+#settings .upfront-social-services-item .upfront-settings-item {
+    margin-bottom:0;
+}
+.upfront-social-back .upfront-field-wrap{
+    font-size: 10px;
+    color: #6386a6;
+}
+.upfront-social-back .upfront-field-wrap .upfront-back-global-settings-info{
+    line-height: 22px;
+}
+.upfront-social-back .upfront-field-wrap .upfront-back-global-settings-info a{
+    color: #30475e;
+    text-decoration: underline;
+}
+.upfront-field-icon-social-back {
+    height: 25px;
+}
+.upfront-social-back{
+    margin-top: 4px;
+}
+.social-toggle,
+.social-sort{
+    font-size: 12px;
+    color: #263a4d;
+}
+.social-toggle{
+    cursor: pointer;
+}
+.social-sort{
+    float: right;
 }
