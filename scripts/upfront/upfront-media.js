@@ -1,5 +1,13 @@
 (function ($, undefined) {
 
+
+	var MEDIA_SIZES = {
+		FULL: "full",
+		to_size: function (size) {
+			return size.width + 'x' + size.height;
+		}
+	};
+
 // ----- Models -----
 
 	var MediaCollection_Model = Backbone.Collection.extend({
@@ -28,6 +36,21 @@
 				if (selected_labels.indexOf(label.get("value")) >= 0) shared_labels.push(label);
 			});
 			return shared_labels;
+		},
+		get_additional_sizes: function () {
+			var all_item_sizes = this.invoke("get", "additional_sizes"),
+				item_sizes = []
+			;
+			_(all_item_sizes).each(function (item, idx) {
+				var tmp_sizes = [];
+				if (!idx) item_sizes = _(item).map(function (size) { return MEDIA_SIZES.to_size(size);});
+				_(item).each(function (size) {
+					tmp_sizes.push(MEDIA_SIZES.to_size(size));
+				});
+				item_sizes = _.intersection(item_sizes, tmp_sizes);
+			});
+			item_sizes.push(MEDIA_SIZES.FULL)
+			return item_sizes;
 		},
 		is_used_label: function (label) {
 			return (_(this.get_shared_labels()).invoke("get", "value").indexOf(label.get("value")) >= 0);
@@ -350,11 +373,13 @@
 			templates: {
 				title: _.template('<input type="text" value="{{post_title}}" />'),
 				caption: _.template('<label>{{title}}</label>'),
-				shared_label: _.template('<a href="#remove" data-idx="{{value}}">{{filter}}</a>&nbsp;')
+				shared_label: _.template('<a href="#remove" data-idx="{{value}}">{{filter}}</a>&nbsp;'),
+				additional_size: _.template('<option value="{{size}}">{{size}}</option>')
 			},
 			events: {
 				"change .change_title :text": "change_title",
-				"click .existing_labels a": "drop_label"
+				"click .existing_labels a": "drop_label",
+				"change .additional_sizes select": "select_size"
 			},
 			initialize: function () {
 				this.model.on("change", this.render, this);
@@ -364,10 +389,12 @@
 					.append('<div class="change_title" />')
 					.append('<div class="add_labels" />')
 					.append('<div class="existing_labels" />')
+					.append('<div class="additional_sizes" />')
 				;
 				this.render_title();
 				this.render_labels_adding();
 				this.render_shared_labels();
+				this.render_additional_sizes();
 			},
 			render_title: function () {
 				var $hub = this.$el.find(".change_title");
@@ -402,6 +429,33 @@
 				;
 				_(shared_labels).each(function (label) {
 					$hub.append(me.templates.shared_label(label.toJSON()));
+				});
+			},
+			render_additional_sizes: function () {
+				var me = this,
+					$hub = this.$el.find(".additional_sizes"),
+					additional_sizes = this.model.get_additional_sizes(),
+					title = 'Additional sizes',
+					sizes = ''
+				;
+				$hub.empty();
+				if (!additional_sizes.length) return false;
+				$hub
+					.append(this.templates.caption({title: title}))
+					.append('<br />')
+				;
+				_(additional_sizes).each(function (size) {
+					sizes += me.templates.additional_size({size:size});
+				});
+				$hub.append('<select>' + sizes + '</select>');
+			},
+			select_size: function (e) {
+				e.stopPropagation();
+				var $size = this.$el.find(".additional_sizes select"),
+					size = $size.val() || MEDIA_SIZES.FULL;
+				;
+				this.model.each(function (model) {
+					model.set({selected_size: size}, {silent: true});
 				});
 			},
 			change_title: function (e) {
@@ -1750,9 +1804,19 @@
 		results_html: function (result) {
 			var html = '';
 			if (result && result.each) result.each(function (item) {
+				var data = item.toJSON(),
+					selected_size = item.get("selected_size") || MEDIA_SIZES.FULL,
+					all_sizes = item.get("additional_sizes")
+				;
+				if (selected_size && "full" != selected_size) {
+					_(all_sizes).each(function (size) {
+						if (MEDIA_SIZES.to_size(size) != selected_size) return true;
+						data.image = size;
+					});
+				}
 				html += _.template(
 					((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? Upfront.Media.Templates.embeddable : Upfront.Media.Templates.image),
-					item.toJSON()
+					data
 				);
 			});
 			if (result && result.length && result.length > 1) {

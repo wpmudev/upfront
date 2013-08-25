@@ -227,6 +227,20 @@ class Upfront_MediaItem extends Upfront_Media {
         foreach ($label_objs as $label) {
             $labels[] = $label->term_id;
         }
+        $sizes = array();
+        foreach(get_intermediate_image_sizes() as $info) {
+            $size = is_array($info) && !empty($info['width']) && !empty($info['height'])
+                ? array($info['width'], $info['height'])
+                : $info
+            ;
+            $img = wp_get_attachment_image_src($this->_post->ID, $size);
+            $sizes[] = array(
+                "src" => $img[0],
+                "width" => $img[1],
+                "height" => $img[2],
+                "resized" => $img[3],
+            );
+        }
         $image_data = wp_get_attachment_image_src($this->_post->ID, 'full');
 		return array(
 			'ID' => $this->_post->ID,
@@ -243,6 +257,7 @@ class Upfront_MediaItem extends Upfront_Media {
                 "height" => $image_data[2],
                 "resized" => $image_data[3],
             ),
+            'additional_sizes' => $sizes,
 		);
 	}
 }
