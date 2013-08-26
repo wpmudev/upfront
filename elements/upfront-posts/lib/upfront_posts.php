@@ -33,52 +33,35 @@ class Upfront_UpostsView extends Upfront_Object {
 		$query = new WP_Query($args);
 
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
+		
+		return self::get_template($args, $this->properties_to_array());
+	}
 
-		return "<div class='upfront-output-object upfront-posts' {$element_id}>" .
-			self::get_posts_markup($query, $content_type, $featured_image) .
+	public static function get_template($query_args, $properties) {
+		global $wp_query;
+		$temp_query = clone $wp_query;
+
+		query_posts($query_args);
+
+		$markup = upfront_get_template(
+			'uposts', 
+			array('properties' => $properties), 
+			dirname(dirname(__FILE__)) . '/tpl/uposts.php'
+		);
+
+		$wp_query = $temp_query;
+
+		return "<div class='upfront-output-object upfront-posts' id='" .  $properties['element_id'] . "'>" .
+			$markup .
 		"</div>";
 	}
 
-	// Template function
-	public static function get_posts_markup ($query, $content_type, $featured_image) {
-		$ret = '';
-		foreach ($query->posts as $post) {
-			$content = $title = $thumbnail = $thumb_id = false;
 
-			if (!empty($featured_image) && function_exists('get_post_thumbnail_id')) {
-				$thumb_id = get_post_thumbnail_id($post->ID);
-				$thumbnail = $thumb_id
-					? wp_get_attachment_image_src($thumb_id, 'thumbnail')
-					: ''
-				;
-				if (!empty($thumbnail[0])) {
-					$src = $thumbnail[0];
-					$width = !empty($thumbnail[1]) ? 'width="' . $thumbnail[1] . '"' : '';
-					$height = !empty($thumbnail[2]) ? 'height="' . $thumbnail[2] . '"' : '';
-					$thumbnail = "<img src='{$src}' {$height} {$width} />";
-				}
-			}
-
-			$content = apply_filters('the_content', $post->post_content);
-			if ('excerpt' == $content_type) {
-				$content = ($post->post_excerpt ? $post->post_excerpt : wp_strip_all_tags($content)) . '... read more';
-			}
-
-			$title = apply_filters('the_title', $post->post_title);
-
-			$link = get_permalink($post->ID);
-			
-			$post_classes = apply_filters('upfront_posts_post_classes', array('uposts-post'), $post, $content_type, $featured_image);
-			$post_class = implode(" ", $post_classes);
-
-			$ret .= "<li class='{$post_class} uposts-posts-{$post->ID}' data-post_id='{$post->ID}'>" .
-				apply_filters('upfront_posts_post_markup', 
-					"<span class='uposts-tumbnail_container'>{$thumbnail}</span>" .
-					"<h1 class='post_title'><a href='{$link}'>{$title}</a></h1>" .
-					"<div class='post_content'>{$content}</div>", $post, $content_type, $featured_image) .
-			"</li>";
-		}
-		return "<ul class='uposts-posts'>{$ret}</ul>";
+	private function properties_to_array(){
+		$out = array();
+		foreach($this->_data['properties'] as $prop)
+			$out[$prop['name']] = $prop['value'];
+		return $out;
 	}
 }
 
@@ -148,7 +131,7 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		}
 		$query = new WP_Query($args);
 
-		$this->_out(new Upfront_JsonResponse_Success(Upfront_UpostsView::get_posts_markup($query, $data['content_type'], $data['featured_image'])));
+		$this->_out(new Upfront_JsonResponse_Success(Upfront_UpostsView::get_template($args, $data)));
 	}
 }
 Upfront_UpostsAjax::serve();

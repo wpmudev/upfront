@@ -20,7 +20,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		//$title = apply_filters('the_title', $post->post_title);
 		//$content = apply_filters('the_content', $post->post_content);
-
+		
 		return self::post_template($post);
 	}
 
@@ -33,7 +33,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'ID' => 0,
 			'post_title' => $title,
 			'post_content' => $content,
-			'post_type' => $post_type
+			'post_type' => $post_type,
+			'filter' => 'raw',
+			'post_author' => get_current_user_id()
 		);
 		$post_obj = new stdClass();
 		foreach($post_arr as $key => $value)
@@ -41,15 +43,22 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$post = new WP_Post($post_obj);
 
+		query_posts( 'post_type=' . $post_type . '&posts_per_page=1');
+		if(have_posts())
+			the_post();
+		$post_id = get_the_ID();
+		if($post_id)
+			query_posts('p=' . $post_id);
+
 		return self::post_template($post);
 	}
 
-	public static function post_template($post) {
-		return '<article id="post-' . $post->ID . '" data-post_id="' . $post->ID . '">' . 
-			apply_filters('upfront_this_post_post_markup', 
-				'<h1 class="post_title"><a href="' . get_permalink($post->ID) . '">' . apply_filters('the_title', $post->post_title) . '</a></h1>' .
-				'<div class="post_content">' . apply_filters('the_content', $post->post_content) . '</div>', $post) .
-		'</article>';
+	public static function post_template($this_post) {
+		global $post;
+		$post = $this_post;
+		setup_postdata($post);
+
+		return upfront_get_template('this-post', array('post' => $post), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
 	}
 }
 

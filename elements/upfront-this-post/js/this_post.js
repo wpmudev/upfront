@@ -40,8 +40,12 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		Upfront.Views.ObjectView.prototype.initialize.call(this);
 
 		this.loading = this.get_post_content().done(function(response){
-			me.content = response.data.filtered;
-		});
+				me.content = response.data.filtered;
+			})
+			.fail(function(response){
+				console.log(response);
+			})
+		;
 
 
 		post = new Upfront.Models.Post({id: _upfront_post_data.post_id, post_type: postType});
@@ -77,11 +81,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	get_content_markup: function () {
 		var content = this.content;
 		if(content && this.post){
-			content = $(content)
+			content = $('<div>').html(content)
 				.find(this.titleSelector).html(this.post.get('post_title')).end()
 				.find(this.contentSelector).html(this.post.get('post_content')).end()
 			;
-			return content.clone().wrap('<p/>').parent().html();
+			return content.html();
 		}
 		return 'Hold on please';
 	},
