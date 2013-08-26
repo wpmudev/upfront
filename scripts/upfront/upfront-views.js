@@ -236,7 +236,7 @@ define(_template_files, function () {
 					template = _.template(_Upfront_Templates["object"], model)
 				;
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
-				console.log('---- Object render - ' + this.cid + ' - ' + props.view_class);
+				//console.log('---- Object render - ' + this.cid + ' - ' + props.view_class);
 				this.$el.html(template);
 				
 				// render subview if it exists
@@ -393,7 +393,7 @@ define(_template_files, function () {
 				;
 				Upfront.Events.trigger("entity:module:before_render", this, this.model);
 					
-				console.log('-- Module render ' + this.cid);
+				//console.log('-- Module render ' + this.cid);
 				this.$el.html(template);
 				
 				if ( this.model.get("shadow") ){
@@ -441,7 +441,7 @@ define(_template_files, function () {
 				var $el = this.$el,
 					me = this;
 				this.current_wrapper_id = this.current_wrapper_el = null;
-				console.log('Modules render - ' + this.cid + ' - ' + this.region_view.model.get('name'));
+				//console.log('Modules render - ' + this.cid + ' - ' + this.region_view.model.get('name'));
 				if ( typeof Upfront.data.module_views == 'undefined' )
 					Upfront.data.module_views = {};
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
