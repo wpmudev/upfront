@@ -198,25 +198,26 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 <script>
 (function ($) {
 
-$(window).load(function () {
-	$("body").append("<a class='upfront-edit_layout' />");
-	$(".upfront-edit_layout:first").trigger("click");
-	var c1 = function (view, model) {
-			var objects = model.get("objects"),
-				is_this_post = objects.find(function (obj) { return 'ThisPostView' == obj.get_property_value_by_name('view_class'); })
-			;
-			if (is_this_post) {
-				Upfront.Events.on("elements:this_post:loaded", c2);
-				Upfront.Events.off("entity:module:after_render", c1);
-			}
-		},
-		c2 = function (view) {
-			var el = $("#" + view.model.get_property_value_by_name("element_id"));
-			el.trigger('dblclick');
-			Upfront.Events.off("elements:this_post:loaded", c2);
+var this_post = false;
+
+function loaded_layout_ready () {
+	setTimeout(function () {
+		if ($("#upfront-loading").length) return loaded_layout_ready();
+		else {
+			if (!this_post) return Upfront.Util.log("NO SUCH POST");
+			Upfront.Events.off("upfront:layout:loaded", loaded_layout_ready);
+			$("#" + this_post.model.get_property_value_by_name("element_id")).trigger("dblclick");
 		}
-	;
-	Upfront.Events.on("entity:module:after_render", c1);
+	}, 200);
+}
+
+$(window).load(function () {
+	Upfront.Application.LayoutEditor.dispatch_layout_loading();
+	Upfront.Events.on("upfront:layout:loaded", loaded_layout_ready);
+	Upfront.Events.on("elements:this_post:loaded", function (post) {
+		var el = $("#" + post.model.get_property_value_by_name("element_id")).closest(".upfront-region-shadow");
+		if (!el.length) this_post = post;
+	});
 });
 })(jQuery);
 </script>
