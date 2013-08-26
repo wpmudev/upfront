@@ -568,7 +568,7 @@ function upfront_media_file_upload () {
 	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
 	echo '<script>var _upfront_media_upload="' . admin_url('admin-ajax.php?action=upfront-media-upload') . '";</script>';
 }
-add_action('wp_head', 'upfront_media_file_upload', 1);
+add_action('wp_head', 'upfront_media_file_upload', 99);
 
 
 
