@@ -122,11 +122,11 @@ EOAdminStyle;
 		wp_enqueue_script('jquery-ui-draggable');
 		wp_enqueue_script('jquery-ui-resizable');
 		wp_enqueue_script('jquery-ui-selectable');
-		wp_enqueue_script('thickbox');
+		//wp_enqueue_script('thickbox');
 
 		//wp_enqueue_style('upfront-jquery-ui', 'http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css');
-		wp_enqueue_style('wp-jquery-ui-dialog');
-		wp_enqueue_style('thickbox');
+		//wp_enqueue_style('wp-jquery-ui-dialog');
+		//wp_enqueue_style('thickbox');
 		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic');
 /*		
 		// Color picker dependency - new stuff only works in admin :(
@@ -146,7 +146,7 @@ EOAdminStyle;
 		wp_enqueue_style('wp-color-picker', admin_url('css/color-picker.css'));
 */
 		// Enqueue media uploader dependencies.
-		wp_enqueue_media();
+		//wp_enqueue_media();
 		
 		// Enqueue needed styles
 		wp_enqueue_style('font-awesome', self::get_root_url() . '/styles/font-awesome.min.css');
