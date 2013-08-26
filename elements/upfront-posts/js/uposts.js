@@ -67,15 +67,16 @@
 				limit = this.model.get_property_value_by_name("limit"),
 				content_type = this.model.get_property_value_by_name("content_type"),
 				featured_image = this.model.get_property_value_by_name("featured_image"),
-				data = !!$(document).data("content-" + element_id)
+				data = !!$(document).data("content-" + element_id),
+				is_shadow = !!this.parent_module_view.model.get("shadow")
 			;
-			//Upfront.Util.dbg(raw_settings);
+			if (is_shadow && data) return false;
 			if (settings.length) {
 				settings = _.object(
 					_(settings).pluck("name"),
 					_(settings).pluck("value")
 				);
-			}
+			} else settings = {};
 			if (
 				settings.post_type != post_type
 				||
@@ -98,7 +99,8 @@
 						"term": term,
 						"limit": limit,
 						"content_type": content_type,
-						"featured_image": featured_image
+						"featured_image": featured_image,
+						"element_id": element_id,
 					})
 				}).success(function (response) {
 					$("#" + element_id)
@@ -275,12 +277,15 @@
 		 * setting items array with Item instances.
 		 */
 		initialize: function () {
+			var tax = new UpostsQuerySetting_Taxonomy({model: this.model}),
+				term = new UpostsQuerySetting_Term({model: this.model})
+			;
 			this.settings = _([
 				new UpostsQuerySetting_PostType({model: this.model}),
-				new UpostsQuerySetting_Taxonomy({model: this.model}),
-				new UpostsQuerySetting_Term({model: this.model}),
+				tax, term,
 				new UpostsQuerySetting_Limit({model: this.model})
 			]);
+			tax.on("uposts:taxonomy:changed", term.generate_term_markup, term);
 		},
 		/**
 		 * Get the label (what will be shown in the settings overview)
@@ -303,41 +308,21 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsQuerySetting_PostType = Upfront.Views.Editor.Settings.Item.extend({
-		/**
-		 * Set up setting item appearance.
-		 */
-		render: function () {
-			var post_type = this.model.get_property_value_by_name("post_type"),
-				markup = ''
-			;
-
-			markup = '<select name="post_types">';
-			$.each(_initial.post_types, function (type, label) {
-				var active = post_type == type ? 'selected="selected"' : '';
-				markup += '<option value="' + type + '" ' + active + '>' + label + '</option>';
+		initialize: function () {
+			var pts = [];
+			_(_initial.post_types).each(function (label, type) {
+				pts.push({label: label, value: type});
 			});
-			markup += '</select>';
-
-			// Wrap method accepts an object, with defined "title" and "markup" properties.
-			// The "markup" one holds the actual Item markup.
-			this.wrap({
-				"title": "Post Type",
-				"markup": markup
-			});
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					property: "post_type",
+					values: pts
+				})
+			]);
 		},
-		/**
-		 * Defines under which Property name the value will be saved.
-		 * @return {string} Property name
-		 */
-		get_name: function () {
-			return "post_type";
-		},
-		/**
-		 * Extracts the finalized value from the setting markup.
-		 * @return {mixed} Value.
-		 */
-		get_value: function () {
-			return this.$el.find('select[name="post_types"]').val();
+		get_title: function () {
+			return "Post Type";
 		}
 	});
 
@@ -346,44 +331,33 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsQuerySetting_Taxonomy = Upfront.Views.Editor.Settings.Item.extend({
-		/**
-		 * Set up setting item appearance.
-		 */
-		render: function () {
-			var taxonomy = this.model.get_property_value_by_name("taxonomy"),
-				markup = ''
-			;
-
-			markup = '<select name="taxonomy"><option></option>';
-			$.each(_initial.taxonomies, function (type, label) {
-				var active = taxonomy == type ? 'selected="selected"' : '';
-				markup += '<option value="' + type + '" ' + active + '>' + label + '</option>';
-			});
-			markup += '</select>';
-
-			// Wrap method accepts an object, with defined "title" and "markup" properties.
-			// The "markup" one holds the actual Item markup.
-			this.wrap({
-				"title": "Taxonomy",
-				"markup": markup
-			});
-			this.$el.find('select[name="taxonomy"]').on("change", function () {
-				Upfront.Events.trigger("uposts:taxonomy:change", [$(this).val()]);
-			});
+		events: function () {
+			return _.extend({},
+				Upfront.Views.Editor.Settings.Item.prototype.events,
+				{"click": "register_change"}
+			);
 		},
-		/**
-		 * Defines under which Property name the value will be saved.
-		 * @return {string} Property name
-		 */
-		get_name: function () {
-			return "taxonomy";
+		initialize: function () {
+			var pts = [];
+			_(_initial.taxonomies).each(function (label, type) {
+				pts.push({label: label, value: type});
+			});
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					property: "taxonomy",
+					values: pts
+				})
+			]);
 		},
-		/**
-		 * Extracts the finalized value from the setting markup.
-		 * @return {mixed} Value.
-		 */
-		get_value: function () {
-			return this.$el.find('select[name="taxonomy"]').val();
+		register_change: function () {
+			this.fields.each(function (field) {
+				field.property.set({'value': field.get_value()}, {'silent': false});
+			});
+			this.trigger("uposts:taxonomy:changed");
+		},
+		get_title: function () {
+			return "Taxonomy";
 		}
 	});
 
@@ -392,67 +366,49 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsQuerySetting_Term = Upfront.Views.Editor.Settings.Item.extend({
-		/**
-		 * Set up setting item appearance.
-		 */
-		render: function () {
-			var taxonomy = this.model.get_property_value_by_name("taxonomy"),
-				me = this
-			;
-
-			if (!taxonomy) {
-				taxonomy = this.$el.parents(".upfront-settings_panel").find('select[name="taxonomy"]').val();
-			}
-
-			Upfront.Events.on("uposts:taxonomy:change", function (taxonomy) {
-				me.generate_term_markup(taxonomy);
-			});
-
-			markup = 'Please, select a taxonomy';
-			this.wrap({
-				"title": "Term",
-				"markup": markup
-			});
-			this.generate_term_markup(taxonomy);
+		initialize: function () {
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					property: "term",
+					values: [{label:"Please, select a taxonomy", value:"", disabled: true}]
+				})
+			]);
+			this.generate_term_markup();
 		},
-
-		generate_term_markup: function (taxonomy) {
-			var term = this.model.get_property_value_by_name("term"),
-				markup = '',
-				$content = this.$el.find(".upfront-settings-item-content")
+		get_title: function () {
+			return "Term";
+		},
+		generate_term_markup: function () {
+			var me = this;
+			this.reset_fields(function () {
+				me.$el.empty();
+				me.render();
+			});
+		},
+		reset_fields: function (callback) {
+			var me = this,
+				taxonomy = this.model.get_property_value_by_name("taxonomy")
 			;
 			if (!taxonomy) return false;
 			Upfront.Util.post({
 				"action": "upost_get_taxonomy_terms",
 				"taxonomy": taxonomy}
 			).success(function (terms) {
-				if (!terms.data.length) {
-					$content.html('');
-				}
-				markup = '<select name="term">';
-				$.each(terms.data, function (id, label) {
-					var active = term == id ? 'selected="selected"' : '';
-					markup += '<option value="' + id + '" ' + active + '>' + label + '</option>';
+				var sel = [];
+				_(terms.data).each(function (label, id) {
+					sel.push({label: label, value: id});
 				});
-				markup += '</select>';
-				$content.html(markup);
+				me.fields = _([
+					new Upfront.Views.Editor.Field.Select({
+						model: me.model,
+						property: "term",
+						values: sel
+					})
+				]);
+				if (callback) callback.apply(this);
 			});
 		},
-		/**
-		 * Defines under which Property name the value will be saved.
-		 * @return {string} Property name
-		 */
-		get_name: function () {
-			return "term";
-		},
-		/**
-		 * Extracts the finalized value from the setting markup.
-		 * @return {mixed} Value.
-		 */
-		get_value: function () {
-			var $el = this.$el.find('select[name="term"]');
-			return $el.length ? $el.val() : '';
-		}
 	});
 
 	/**
@@ -460,42 +416,21 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsQuerySetting_Limit = Upfront.Views.Editor.Settings.Item.extend({
-		/**
-		 * Set up setting item appearance.
-		 */
-		render: function () {
-			var limit = this.model.get_property_value_by_name("limit"),
-				range = new Array(20),
-				markup = ''
-			;
-
-			markup = '<select name="limit">';
-			$.each(range, function (idx) {
-				var active = limit == idx ? 'selected="selected"' : '';
-				markup += '<option value="' + idx + '" ' + active + '>' + idx + '</option>';
+		initialize: function () {
+			var pts = [];
+			_(_.range(20)).each(function (idx) {
+				pts.push({label: idx, value: idx});
 			});
-			markup += '</select>';
-
-			// Wrap method accepts an object, with defined "title" and "markup" properties.
-			// The "markup" one holds the actual Item markup.
-			this.wrap({
-				"title": "Limit",
-				"markup": markup
-			});
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					property: "limit",
+					values: pts
+				})
+			]);
 		},
-		/**
-		 * Defines under which Property name the value will be saved.
-		 * @return {string} Property name
-		 */
-		get_name: function () {
-			return "limit";
-		},
-		/**
-		 * Extracts the finalized value from the setting markup.
-		 * @return {mixed} Value.
-		 */
-		get_value: function () {
-			return this.$el.find('select[name="limit"]').val();
+		get_title: function () {
+			return "Limit";
 		}
 	});
 
@@ -538,43 +473,20 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsPostSetting_Content = Upfront.Views.Editor.Settings.Item.extend({
-		/**
-		 * Set up setting item appearance.
-		 */
-		render: function () {
-			var content = this.model.get_property_value_by_name("content_type"),
-				markup = ''
-			;
-
-			markup += '<input type="radio" name="content_type" value="full" ' + ('full' == content ? 'checked="checked"' : '') + ' />' +
-				'&nbsp;' +
-				'<label>Full</label>' +
-			'<br />';
-			markup += '<input type="radio" name="content_type" value="excerpt" ' + ('excerpt' == content ? 'checked="checked"' : '') + ' />' +
-				'&nbsp;' +
-				'<label>Excerpt</label>' +
-			'';
-
-			// Wrap method accepts an object, with defined "title" and "markup" properties.
-			// The "markup" one holds the actual Item markup.
-			this.wrap({
-				"title": "Content",
-				"markup": markup
-			});
+		initialize: function () {
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					property: "content_type",
+					values: [
+						{label: "Full", value: "full"},
+						{label: "Excerpt", value: "excerpt"},
+					]
+				})
+			]);
 		},
-		/**
-		 * Defines under which Property name the value will be saved.
-		 * @return {string} Property name
-		 */
-		get_name: function () {
-			return "content_type";
-		},
-		/**
-		 * Extracts the finalized value from the setting markup.
-		 * @return {mixed} Value.
-		 */
-		get_value: function () {
-			return this.$el.find(':radio[name="content_type"]:checked').val();
+		get_title: function () {
+			return "Content";
 		}
 	});
 
@@ -583,43 +495,21 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsPostSetting_FeaturedImage = Upfront.Views.Editor.Settings.Item.extend({
-		/**
-		 * Set up setting item appearance.
-		 */
-		render: function () {
-			var featured_image = this.model.get_property_value_by_name("featured_image"),
-				markup = ''
-			;
-
-			markup += '<input type="radio" name="featured_image" value="1" ' + (featured_image ? 'checked="checked"' : '') + ' />' +
-				'&nbsp;' +
-				'<label>Yes</label>' +
-			'&nbsp;/&nbsp;';
-			markup += '<input type="radio" name="featured_image" value="0" ' + (!featured_image ? 'checked="checked"' : '') + ' />' +
-				'&nbsp;' +
-				'<label>No</label>' +
-			'';
-
-			// Wrap method accepts an object, with defined "title" and "markup" properties.
-			// The "markup" one holds the actual Item markup.
-			this.wrap({
-				"title": "Show featured image?",
-				"markup": markup
-			});
+		initialize: function () {
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					property: "featured_image",
+					layout: "vertical",
+					values: [
+						{label: "Yes", value: "1"},
+						{label: "No", value: "0"},
+					]
+				})
+			]);
 		},
-		/**
-		 * Defines under which Property name the value will be saved.
-		 * @return {string} Property name
-		 */
-		get_name: function () {
-			return "featured_image";
-		},
-		/**
-		 * Extracts the finalized value from the setting markup.
-		 * @return {mixed} Value.
-		 */
-		get_value: function () {
-			return this.$el.find(':radio[name="featured_image"]:checked').val();
+		get_title: function () {
+			return "Show featured image?";
 		}
 	});
 

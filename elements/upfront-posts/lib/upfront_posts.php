@@ -79,13 +79,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			"</li>";
 		}
 		return "<ul class='uposts-posts'>{$ret}</ul>";
-	}	
-/*
-	// Inject style dependencies
-	public static function add_public_style () {
-		wp_enqueue_style('upfront-posts', upfront_element_url('css/style.css', dirname(__FILE__)));
 	}
-*/
 }
 
 
@@ -147,12 +141,13 @@ class Upfront_UpostsAjax extends Upfront_Server {
 				'taxonomy' => $data['taxonomy'],
 				'terms' => $data['term'],
 			));
+			$args['post_status'] = 'publish'; // This is because the posts list will revert to "any" for taxonomy query - on admin (i.e. AJAX) that means drafts, future etc
 		}
 		if (!empty($data['limit']) && is_numeric($data['limit'])) {
 			$args['posts_per_page'] = $data['limit'];
 		}
 		$query = new WP_Query($args);
-		
+
 		$this->_out(new Upfront_JsonResponse_Success(Upfront_UpostsView::get_posts_markup($query, $data['content_type'], $data['featured_image'])));
 	}
 }
