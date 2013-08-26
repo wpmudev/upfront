@@ -31,19 +31,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 function uslider_initialize () {
 	// Include the backend support stuff
-	require_once (dirname(__FILE__) . '/lib/upfront_slider.php');
+	//require_once (dirname(__FILE__) . '/lib/upfront_slider.php');
 
 	//Add js and css
-	add_action('wp_enqueue_scripts', array('Upfront_UsliderView', 'add_styles_scripts'));
+	//add_action('wp_enqueue_scripts', array('Upfront_UsliderView', 'add_styles_scripts'));
 
 	//Add templates to the backend
-	add_action('wp_head', array('Upfront_UsliderView', 'add_admin_templates'));
+	//add_action('wp_head', array('Upfront_UsliderView', 'add_admin_templates'));
 
 	//i18n
-	load_plugin_textdomain('uslider', false, dirname(__FILE__) .'/languages');
+	//load_plugin_textdomain('uslider', false, dirname(__FILE__) .'/languages');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('upfront_slider', upfront_element_url('js/uslider', __FILE__));
+	//upfront_add_layout_editor_entity('upfront_slider', upfront_element_url('js/uslider', __FILE__));
 }
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'uslider_initialize'); 
@@ -75,10 +75,10 @@ function uslider_ajax_proc() {
 	die();
 } 
 
-add_action('wp_ajax_UpFrontSlider', 'uslider_ajax_proc');
+//add_action('wp_ajax_UpFrontSlider', 'uslider_ajax_proc');
 
 function uslider_add_template() {
 	include(dirname(__FILE__) . '/tpls/frontend.php');
 }
 
-add_action('wp_head', 'uslider_add_template');
+//add_action('wp_head', 'uslider_add_template');
