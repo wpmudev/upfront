@@ -226,6 +226,7 @@
 		 * Set up element appearance that will be displayed on sidebar panel.
 		 */
 		render: function () {
+			this.$el.addClass('upfront-icon-element upfront-icon-element-posts');
 			this.$el.html('Posts');
 		},
 

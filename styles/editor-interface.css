@@ -1876,8 +1876,32 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-icon-element-slider:before {
 	background-position: -39px -346px;
 }
-.upfront-icon-element-multi-image:before { /* @TODO multi image? */
+.upfront-icon-element-accordion:before {
+	background-position: -39px -448px;
+}
+.upfront-icon-element-nav:before {
+	background-position: -39px -482px;
+}
+.upfront-icon-element-likebox:before {
+	background-position: -39px -518px;
+}
+.upfront-icon-element-gallery:before {
 	background-position: -39px -380px;
+}
+.upfront-icon-element-contact:before {
+	background-position: -39px -550px;
+}
+.upfront-icon-element-posts:before {
+	background-position: -39px -584px;
+}
+.upfront-icon-element-login:before {
+	background-position: -39px -414px;
+}
+.upfront-icon-element-widget:before {
+	background-position: -39px -652px;
+}
+.upfront-icon-element-comments:before {
+	background-position: -39px -618px;
 }
 .upfront-icon:before {
 	width: 24px;

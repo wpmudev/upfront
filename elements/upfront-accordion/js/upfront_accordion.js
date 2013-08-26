@@ -44,7 +44,7 @@
     var AccordionElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
         render: function () {
-            this.$el.addClass('upfront-icon-element upfront-accordion');
+            this.$el.addClass('upfront-icon-element upfront-icon-element-accordion');
             this.$el.html('Accordion');
         },
         template: _.template('<div class="accordion"><h3>Section 1</h3><div><p>My awesome stub content goes here</p></div><h3>Section 2</h3><div><p>My awesome stub content goes here</p></div><h3>Section 3</h3><div><p>My awesome stub content goes here</p></div><h3>Section 4</h3><div><p>My awesome stub content goes here</p></div></div>'),

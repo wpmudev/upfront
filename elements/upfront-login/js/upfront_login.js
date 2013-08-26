@@ -225,6 +225,7 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 		priority: 100,
 
 		render: function () {
+			this.$el.addClass('upfront-icon-element upfront-icon-element-login');
 			this.$el.html('Login');
 		},
 

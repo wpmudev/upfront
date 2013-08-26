@@ -186,6 +186,7 @@
         var NavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
             priority: 50,
             render: function () {
+                this.$el.addClass('upfront-icon-element upfront-icon-element-nav');
                 this.$el.html('Navigation');
             },
             add_element: function () {

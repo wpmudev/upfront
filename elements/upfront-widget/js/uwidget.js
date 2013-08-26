@@ -51,7 +51,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 var UwidgetElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	
 	render: function () {
-		//this.$el.addClass('upfront-icon-element upfront-icon-element-widget');
+		this.$el.addClass('upfront-icon-element upfront-icon-element-widget');
 		this.$el.html('Widget');
 	},
 

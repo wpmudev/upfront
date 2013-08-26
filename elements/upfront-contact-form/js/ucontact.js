@@ -104,7 +104,7 @@ var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * @return {null} 
 	 */
 	render: function () {
-		//this.$el.addClass('upfront-icon-element upfront-icon-element-contact');
+		this.$el.addClass('upfront-icon-element upfront-icon-element-contact');
 		this.$el.html('Contact Form');
 	},
 
