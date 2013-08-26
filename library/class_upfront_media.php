@@ -562,12 +562,13 @@ class Upfront_MediaServer extends Upfront_Server {
 Upfront_MediaServer::serve();
 
 function upfront_media_file_upload () {
+    if (!is_user_logged_in()) return false;
 	$base_url = Upfront::get_root_url();
 	wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
 	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
 	echo '<script>var _upfront_media_upload="' . admin_url('admin-ajax.php?action=upfront-media-upload') . '";</script>';
 }
-add_action('wp_head', 'upfront_media_file_upload');
+add_action('wp_head', 'upfront_media_file_upload', 1);
 
 
 
