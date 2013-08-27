@@ -188,7 +188,9 @@
 			// Kill the draggable, so we can work with regular inline editor.
 			this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('disable');
 
-			CKEDITOR.inline('upfront-body');
+			CKEDITOR.inline('upfront-body', {
+				floatSpaceDockedOffsetY: 62 + $title.height()
+			});
 			$body
 				.find("#upfront-body").focus().end()
 				.find("#upfront-post-cancel_edit").click(function () {

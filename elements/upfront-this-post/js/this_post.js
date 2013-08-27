@@ -249,8 +249,9 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if ($parent.is(".ui-draggable")) $parent.draggable('disable');
 
 
-		CKEDITOR.inline('upfront-body');
-
+		CKEDITOR.inline('upfront-body', {
+			floatSpaceDockedOffsetY: 62 + $title.height()
+		});
 		// Apply buffered selection
 		/*
 		if (this.dom_range) {
