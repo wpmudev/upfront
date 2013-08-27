@@ -67,6 +67,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
 
+		if(this.property('image_status') == 'starting'){
+			rendered += '<div class="upfront-image-starting-select">' +
+		'<div>'+
+			'<span class="upfront-image-resizethiselement">Resize this element & Select an Image</span>'+
+			'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
+		'</div>'+
+	'</div>';
+		}
+
 		return rendered;
 	},
 
@@ -1006,6 +1015,7 @@ var ImageEditor = Backbone.View.extend({
 				width: '100%'
 			})
 		}
+
 		img.css(this.imgOffset({width: img.width(), height: img.height()}));
 
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
@@ -1201,8 +1211,16 @@ var ImageEditor = Backbone.View.extend({
 			handler = this.$('#uimage-drag-handle')
 		;
 
-		size.height += this.bordersWidth;
-		size.width += this.bordersWidth;
+		if(this.invert){
+			size = {
+				width: size.height  + this.bordersWidth,
+				height: size.width + this.bordersWidth
+			}
+		}
+		else {
+			size.height += this.bordersWidth;
+			size.width += this.bordersWidth;			
+		}
 
 		canvas.css(size);
 		handler.css(size);
@@ -1311,6 +1329,7 @@ var ImageEditor = Backbone.View.extend({
 
 		pivot = maskSize.width / maskSize.height < this.fullSize.width / this.fullSize.height ? 'width' : 'height';
 		invertPivot = this.invert ? (pivot == 'width' ? 'height' : 'width') : pivot;
+
 		factor = this.fullSize[pivot] / (maskSize[invertPivot] + overflow);
 
 		if(!stretchImage && factor < 1)

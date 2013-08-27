@@ -150,38 +150,58 @@ a.open-media-gallery:hover i {
 	position: absolute;
 	top:0;
 	left: 0;
-	color: #fff;
+	color: #28DC96;
 	font-family: 'Source Sans Pro';
 	font-size:18px;
 	width:100%;
+	height: 100%;
+	background: #ddeeff;
+	text-align: center;
 }
 .upfront-image-starting-select>div{
-	width: 170px;
+	width: 80%;
 	margin: 0 auto;
 	padding-top: 40px;
 }
 
+.upfront-image-resizing-icons {
+	width: 140px;
+	height: 60px;
+	margin: 10px auto;
+}
+
+.upfront-image-resize-icon {
+	display: block;
+	width: 56px;
+	height: 56px;
+	border: 2px solid #F2B530;
+	border-radius: 56px;
+	float: left;
+	margin-right: 10px;
+	background: url(../../../img/uf-core-el-sprite.png) no-repeat -1558px -17px;
+}
+
 .upfront-image-starting-select a.upfront-image-select-button {
-	background: #28DC96;
-	border-radius: 15px;
+	background: #28DC96 url(../../../img/uf-core-el-sprite.png) no-repeat -1659px -30px;
+	border-radius: 60px;
 	color: #fff;
 	font-family: 'Source Sans Pro', sans-serif;
 	border:none;
 	border: 3px solid rgba(255,255,255,0.3);
-	padding: 0.5em 1em;
 	display: block;
-	width: 130px;
 	text-align: center;
 	font-weight: 200;
-	clear: both;
-	margin: 10px 0;
 	-moz-background-clip: padding;
 	-webkit-background-clip: padding;
 	background-clip: padding-box;
+	height: 60px;
+	width: 60px;
+	float:left;
+	margin:0;
 }
 
 .upfront-image-starting-select a.upfront-image-select-button:hover {
-	background: #3ea;
+	background-color: #3ea;
 	-moz-background-clip: padding;
 	-webkit-background-clip: padding;
 	background-clip: padding-box;
@@ -199,10 +219,12 @@ a.open-media-gallery:hover i {
 }
 
 .upfront-image-resizethiselement {
-	width:100px;
-	float:left;
-	line-height: 1.2;
-	margin-left: 20px;
+	line-height: 1.1;
+	text-align: center;
+}
+
+.upfront-image-resize-buttons {
+	width: 120px;
 }
 
 #upfront-image-uploading {
@@ -252,8 +274,6 @@ a.open-media-gallery:hover i {
 	top: 0;
 	left: 0;
 	z-index:10000;
-	height: 100000px;
-	width: 100000px;
 	cursor: pointer;
 }
 
