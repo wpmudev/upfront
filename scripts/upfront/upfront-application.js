@@ -202,19 +202,22 @@ var LayoutEditor = new (Subapplication.extend({
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.sidebar)
 		});
 
-		var elements = [];
+		var _set_up_draggables = function () {
+			var elements = [];
+			_(app.Objects).each(function (obj) {
+				if ( obj.Element )
+					elements.push(new obj.Element({"model": app.layout}));
+				if ( obj.Command )
+					app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
+			});
+			app.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
+				return element.priority;
+			}));
 
-		_(this.Objects).each(function (obj) {
-			if ( obj.Element )
-				elements.push(new obj.Element({"model": app.layout}));
-			if ( obj.Command )
-				app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
-		});
-		app.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
-			return element.priority;
-		}));
-
-		app.sidebar.render();
+			app.sidebar.render();
+		}
+		_set_up_draggables();
+		Upfront.Events.on("elements:requirements:async:added", _set_up_draggables, this);
 
 		// Layouts
 		app.layout_sizes = new Upfront.Views.Editor.Layouts({
