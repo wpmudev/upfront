@@ -190,7 +190,7 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 								property: 'appearance',
 								values: [{label: '', value: 'icon', disabled: disabled}]
 							},
-							subfield: new Login_Fields_FieldAppearance_Icon_Image({model: this.model})
+							subfield: new Login_Fields_FieldAppearance_Icon_Image({model: this.model, property: false})
 						}),
 						new Login_Fields_Complex_BooleanField({
 							model: this.model,
