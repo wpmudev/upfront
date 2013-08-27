@@ -225,7 +225,7 @@
 	 * @type {Upfront.Views.Editor.Sidebar.Element}
 	 */
 	var UpostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
-        priority: 90,
+        priority: 60,
 		/**
 		 * Set up element appearance that will be displayed on sidebar panel.
 		 */

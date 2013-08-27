@@ -49,6 +49,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 });
 
 var UwidgetElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	priority: 120,
 	
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-widget');

@@ -222,7 +222,7 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 
 
 	var LoginElement = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 100,
+		priority: 110,
 
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-login');
