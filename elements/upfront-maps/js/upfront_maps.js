@@ -667,6 +667,8 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 	Upfront.Models.MapModel = MapModel;
 	Upfront.Views.MapView = MapView;
 
+	Upfront.Events.trigger("elements:requirements:async:added");
+
 });
 };
 
