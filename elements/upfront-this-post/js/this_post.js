@@ -249,9 +249,18 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if ($parent.is(".ui-draggable")) $parent.draggable('disable');
 
 
-		CKEDITOR.inline('upfront-body', {
+		var editor = CKEDITOR.inline('upfront-body', {
 			floatSpaceDockedOffsetY: 62 + $title.height()
 		});
+		if (post.get("is_new")) {
+			editor.on("contentDom", function (e) {
+				var editable = e.editor.element,
+					range = e.editor.createRange()
+				;
+				range.selectNodeContents(editable);
+				range.select();
+			});
+		}
 		// Apply buffered selection
 		/*
 		if (this.dom_range) {
