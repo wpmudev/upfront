@@ -37,8 +37,20 @@
 }
 
 .ugallery_addmore { 
-	background: #cee1f2;
+	background: #accae6;
 	cursor: pointer;
+	text-align: center;
+	font-size: 	15px;
+	line-height: 1.2em;
+	color:#fff;
+}
+
+.ugallery_addmore:before{ 
+	display:block;
+	margin: 50px auto 0;
+	content: '+';
+	text-align: center;
+	font-size: 32px;
 }
 
 .ugallery_sorting .ugallery_addmore {
@@ -77,13 +89,46 @@
 	height: 50%;
 	clear:none;
 	float:left;
+	position: relative;
+	text-indent: -30000px;
+	font-size: 1px;
 }
+.ugallery_item_option:before {
+	width:30px;
+	height:30px;
+	content: '';
+	display: block;
+	position: absolute;
+	background: url(../../../img/uf-core-el-sprite.svg) no-repeat;
+	top:35%;
+	left:35%;
+}
+
 .ugallery_item_option:hover{
 	background: rgb(31, 205, 143);
 }
 
 .ugallery_item .ugallery_op_remove:hover {
 	background: rgb(240, 101, 102);
+}
+
+.ugallery_op_details:before {
+	background-position: -1581px -75px;
+}
+
+.ugallery_op_remove:before {
+	background-position: -1581px -105px;
+	
+}
+
+.ugallery_op_link:before {
+	background-position: -1581px -140px;
+	
+}
+
+.ugallery_op_mask:before {
+	background-position: -1581px -170px;
+	
 }
 
 .ugallery_item_removing .ugallery_item_rm_dialog{
@@ -133,12 +178,13 @@
 	background: #288ACA -ms-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
 	background: #288ACA linear-gradient(135deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */	
 }
+
 .ugallery_sort_toggle:hover {
 	opacity: 1;
 }
 
 .ugallery_sort_toggle:before {
-	background-position: -486px -538px;
+	background-position: -1582px -201px;
 }
 
 a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {

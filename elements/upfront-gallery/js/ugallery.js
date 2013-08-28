@@ -96,6 +96,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		props.editing = true;
 
 		rendered = this.tpl(props);
+
+		if(this.property('image_status') == 'starting'){
+			rendered += '<div class="upfront-image-starting-select">' +
+				'<div>'+
+					'<span class="upfront-image-resizethiselement">Resize this element & Select an Image</span>'+
+					'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
+				'</div>'+
+			'</div>';
+		}
+
 		return rendered;
 	},
 
@@ -435,8 +445,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	imageEditMask: function(e) {
+		var me = this;
 		e.preventDefault();
-		console.log('Edit image mask');
+		Upfront.Views.Editor.ImageEditor.open($(e.target).closest('.ugallery_item').find('.ugallery-image-wrapper'), {})
+			.done(function(result){
+				Upfront.Views.Editor.notify('Image edition not available yet for galleries.', 'error');
+			})
+			.fail(function(result){
+				me.render();
+			})
+		;
 	},
 
 	imagesChanged: function() {
