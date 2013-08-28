@@ -125,7 +125,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		;
 
 		me.elementSize = {
-			width: resizer.width() - 30,
+			width: resizer.width() - 32,
 			height: resizer.height()
 		};
 
@@ -328,7 +328,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			.on('resize', function(e){
 				if(e.target == window){
 					me.resizeOverlay();
-					me.positionEditorElements();
 					$('#upfront-image-edit').draggable('option', 'containment', me.getContainment());
 				}
 			})
@@ -821,14 +820,14 @@ var ImageEditor = Backbone.View.extend({
 		'click #image-edit-button-ok': 'imageOk',
 		'click #image-edit-button-reset': 'resetImage',
 		'click #image-edit-button-fit': 'fitImage',
-		'click .image-edit-rotate': 'rotate',
-		'click #upfront-image-edit': 'cancel'
+		'click .image-edit-rotate': 'rotate'
 	},
 
 	initialize: function(){
 		var me = this;
-		this.$el.on('click', function(){
-			me.cancel();
+		this.$el.on('click', function(e){
+			if(e.target == e.currentTarget)
+				me.cancel();
 		})
 	},
 
