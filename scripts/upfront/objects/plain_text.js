@@ -12,17 +12,33 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	model: PlainTxtModel,
-	events: {
-		'editor-change [contenteditable]': 'saveContent'
-	},
 
 	get_content_markup: function () {
-		return ['<div contenteditable="true">',
-					this.model.get_content(), '</div>'].join('');
+		return this.model.get_content();
 	},
-	saveContent: function (event){
-		this.model.set_content($(event.currentTarget).html(), {silent: true});
-		event.stopPropagation(); // Only this view handles 'editor-change' of descendant contenteditables.
+	on_edit: function () {
+		this.$el.html('<div contenteditable>' + this.get_content_markup() + '</div>');
+		var me = this,
+			$el = this.$el.find('div[contenteditable]'),
+			$parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
+			editor = CKEDITOR.inline($el.get(0))
+		;
+		if ($parent.is(".ui-draggable")) $parent.draggable('disable');
+		editor.on('change', function (e) {
+			me.model.set_content(e.editor.getData(), {silent: true});
+		});
+		Upfront.Events.on("entity:deactivated", this.on_cancel, this);
+	},
+	on_cancel: function () {
+		this.$el.html(this.get_content_markup());
+		var $parent = this.parent_module_view.$el.find('.upfront-editable_entity:first');
+		this.undelegateEvents();
+		this.deactivate();
+		// Re-enable the draggable on edit stop
+		if ($parent.is(".ui-draggable")) $parent.draggable('enable');
+		this.delegateEvents();
+		Upfront.Events.off("entity:deactivated", this.on_cancel, this);
+		this.render();
 	}
 });
 
