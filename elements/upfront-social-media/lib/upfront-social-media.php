@@ -273,7 +273,9 @@ class Upfront_SocialMediaView extends Upfront_Object {
     // Inject style dependencies
     public static function add_public_style () {
         wp_enqueue_style('upfront-social-media', upfront_element_url('css/upfront-social-media-style.css', dirname(__FILE__)));
-        wp_enqueue_script(array('jquery-ui-sortable'));
+        if(is_user_logged_in()):
+            wp_enqueue_script(array('jquery-ui-sortable'));
+        endif;
     }
 }
 

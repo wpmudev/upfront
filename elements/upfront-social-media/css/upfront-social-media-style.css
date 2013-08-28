@@ -408,6 +408,9 @@ label {
 .upfront-defaut-tabbed .upfront-field-multiple-vertical{
     min-width: 89px !important;
 }
+.social_media_services_list{
+    padding: 0;
+}
 .social_media_services_list li{
     border-top: solid 1px #e3edf6;
     height: 30px;

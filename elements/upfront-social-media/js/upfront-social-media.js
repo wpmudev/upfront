@@ -701,7 +701,7 @@
      * @type {Upfront.Views.Editor.Sidebar.Element}
      */
     var SocialMediaElement = Upfront.Views.Editor.Sidebar.Element.extend({
-        priority: 80,
+        priority: 60,
         render: function () {
             this.$el.addClass('upfront-icon-element upfront-icon-element-social');
             this.$el.html('Social Media');
