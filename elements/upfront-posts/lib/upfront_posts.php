@@ -7,6 +7,7 @@
 class Upfront_UpostsView extends Upfront_Object {
 
 	public function get_markup () {
+		global $wp_query;
 		$args = array();
 		$element_id = $this->_get_property('element_id');
 
@@ -17,15 +18,20 @@ class Upfront_UpostsView extends Upfront_Object {
 		$content_type = $this->_get_property('content_type');
 		$featured_image = $this->_get_property('featured_image');
 
-		$post_type = !empty($post_type) ? $post_type : 'post';
+		if (empty($post_type) && empty($taxonomy) && empty($term)) { // All empty, use whatever is global
+			$args = $wp_query->query_vars;
+		}
+
+		$post_type = !empty($post_type) ? $post_type : get_query_var('post_type');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
-		
 		$args['post_type'] = $post_type;
 		if (!empty($taxonomy) && !empty($term)) {
 			$args['tax_query'] = array(array(
 				'taxonomy' => $taxonomy,
 				'terms' => $term,
 			));
+		} else if (!empty($wp_query->tax_query->queries)) {
+			$args['tax_query'] = $wp_query->tax_query->queries;
 		}
 		if (!empty($limit) && is_numeric($limit)) {
 			$args['posts_per_page'] = $limit;
@@ -79,6 +85,17 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		add_action('wp_ajax_uposts_list_initial_info', array($this, "load_initial_info"));
 		add_action('wp_ajax_upost_get_taxonomy_terms', array($this, "load_taxonomy_terms"));
 		add_action('wp_ajax_uposts_get_markup', array($this, "load_markup"));
+
+		if (is_user_logged_in()) add_action('wp_footer', array($this, 'pickle_query'), 99);
+	}
+
+	public function pickle_query () {
+		global $wp_query;
+		$request = clone($wp_query);
+		unset($request->post);
+		unset($request->posts);
+		unset($request->request);
+		echo '<script>window._upfront_get_current_query=window._upfront_get_current_query||function () {return' . json_encode($request) . ';};</script>';
 	}
 
 	public function load_initial_info () {
@@ -89,8 +106,8 @@ class Upfront_UpostsAjax extends Upfront_Server {
 			'public' => true,
 		), 'objects');
 		$data = array(
-			"post_types" => array(),
-			"taxonomies" => array(),
+			"post_types" => array('' => __('Default')),
+			"taxonomies" => array('' => __('Default')),
 		);
 		foreach ($raw_post_types as $type => $obj) {
 			$data["post_types"][$type] = $obj->labels->name;
@@ -117,7 +134,12 @@ class Upfront_UpostsAjax extends Upfront_Server {
 	public function load_markup () {
 		$args = array();
 		$data = json_decode(stripslashes($_POST['data']), true);
-		$post_type = !empty($data['post_type']) ? $data['post_type'] : 'post';
+		$post_type = !empty($data['post_type']) ? $data['post_type'] : (!empty($data['query']['post_type']) ? $data['query']['post_type'] : 'post');
+
+		if (empty($data['post_type']) && empty($data['taxonomy']) && empty($data['term'])) { // All empty, use whatever is pickled
+			$args = $data['query']['query_vars'];
+		}
+
 		$args['post_type'] = $post_type;
 		if (!empty($data['taxonomy']) && !empty($data['term'])) {
 			$args['tax_query'] = array(array(
@@ -125,10 +147,14 @@ class Upfront_UpostsAjax extends Upfront_Server {
 				'terms' => $data['term'],
 			));
 			$args['post_status'] = 'publish'; // This is because the posts list will revert to "any" for taxonomy query - on admin (i.e. AJAX) that means drafts, future etc
+		} else if (!empty($data['query']['tax_query']['queries'])) {
+			$args['tax_query'] = $data['query']['tax_query']['queries'];
+			$args['post_status'] = 'publish'; // This is because the posts list will revert to "any" for taxonomy query - on admin (i.e. AJAX) that means drafts, future etc
 		}
 		if (!empty($data['limit']) && is_numeric($data['limit'])) {
 			$args['posts_per_page'] = $data['limit'];
 		}
+
 		$query = new WP_Query($args);
 
 		$this->_out(new Upfront_JsonResponse_Success(Upfront_UpostsView::get_template($args, $data)));

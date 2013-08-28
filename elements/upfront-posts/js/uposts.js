@@ -91,17 +91,20 @@
 				settings.featured_image != featured_image
 				|| !data
 			) {
+				var request_data = {
+					"post_type": post_type,
+					"taxonomy": taxonomy,
+					"term": term,
+					"limit": limit,
+					"content_type": content_type,
+					"featured_image": featured_image,
+					"element_id": element_id,
+				};
+				if (window._upfront_get_current_query) request_data.query = _upfront_get_current_query();
+				else request_data.query = {};
 				Upfront.Util.post({
 					"action": "uposts_get_markup",
-					"data": JSON.stringify({
-						"post_type": post_type,
-						"taxonomy": taxonomy,
-						"term": term,
-						"limit": limit,
-						"content_type": content_type,
-						"featured_image": featured_image,
-						"element_id": element_id,
-					})
+					"data": JSON.stringify(request_data)
 				}).success(function (response) {
 					$("#" + element_id)
 						.find(".upfront-object-content")
