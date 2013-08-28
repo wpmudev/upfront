@@ -16,6 +16,16 @@
     border-top: 0;
     overflow: auto;
 }
-.upfront-accordion {
-    margin: 15px;
+.remove_panel{
+    position: absolute;
+    left: 0;
+    top:0;
+    display: none;
+}
+.add_new_panel {
+    background: #e5f3ff;
+    width: 100%;
+    display: inline-block;
+    line-height: 40px;
+    text-align: center;
 }
