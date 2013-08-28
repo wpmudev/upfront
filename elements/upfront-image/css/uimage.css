@@ -141,10 +141,7 @@ a.open-media-gallery:hover i {
 	position: relative;
 }
 
-.upfront-object-content .upfront-image-container img {
-	max-width: none;
-	max-height: none;
-}
+
 
 .upfront-image-starting-select {
 	position: absolute;

@@ -60,9 +60,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			onclick == 'open_link' ? this.property('image_link') : this.property('srcFull');
 
 		if($.isNumeric(props.size.width))
-			props.size.width += 'px';
+			props.size.width += '%';
 		if($.isNumeric(props.size.height))
-			props.size.height += 'px';
+			props.size.height += '%';
+
+		//Fake wrapper_id only used in php
+		props.wrapper_id = 'hello_up';
 
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
@@ -960,6 +963,7 @@ var ImageEditor = Backbone.View.extend({
 			mask = this.$('#uimage-mask'),
 			offset = this.imgOffset({width: img.width(), height: img.height()})
 		;
+		/*
 		return {
 			imageSize: {width: img.width(), height: img.height()},
 			imageOffset: {
@@ -969,6 +973,26 @@ var ImageEditor = Backbone.View.extend({
 			rotation: this.rotation,
 			src: img.attr('src')
 		}
+		*/
+		
+		//Percentage
+		return {
+			imageSize: {width: this.toPercent(img.width(), 'width'), height: this.toPercent(img.height(), 'height')},
+			imageOffset: {
+				top: this.toPercent( - mask.offset().top + canvas.offset().top + offset.top, 'height'),
+				left: this.toPercent( - mask.offset().left + canvas.offset().left + offset.left, 'width')
+			},
+			rotation: this.rotation,
+			src: img.attr('src')
+		}
+
+	},
+
+	toPercent: function(px, dimension){
+		var mask = this.$('#uimage-mask'),
+			maskSize = dimension == 'width' ? mask.width() : mask.height()
+		;
+		return px / maskSize * 100;
 	},
 
 	rotate: function(e){

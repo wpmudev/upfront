@@ -69,9 +69,11 @@ class Upfront_UimageView extends Upfront_Object {
 		$data['url'] = $url;
 
 		if(is_numeric($data['size']['width']))
-			$data['size']['width'] .= 'px';
+			$data['size']['width'] .= '%';
 		if(is_numeric($data['size']['height']))
-			$data['size']['height'] .= 'px';
+			$data['size']['height'] .= '%';
+
+		$data['wrapper_id'] = str_replace('image-object-', 'wrapper-', $data['element_id']);
 		
 		$markup = upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html');
 

@@ -1,10 +1,10 @@
-<div class="upfront-image-container uimage-<?php echo $caption_position ?>" style="width:<?php echo $element_size['width'] ?>px" id="<?php echo $element_id ?>">
+<div class="upfront-output-object upfront-image-container uimage-<?php echo $caption_position ?>" id="<?php echo $element_id ?>">
 	<?php if($url) { ?>
 	<a href="<?php echo $url ?>">
 	<?php } ?>
-	<div class="uimage-wrapper" style="overflow: hidden; position:relative;min-height:10px;width:<?php echo $element_size['width'] ?>px;height:<?php echo $element_size['height'] ?>px;">
+	<div class="uimage-wrapper" style="overflow: hidden; position:relative;min-height:10px;width:100%;height:<?php echo $element_size['height'] ?>px;">
 		
-		<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width: <?php echo $size['width'] ?>; height: <?php echo $size['height'] ?>; top: <?php echo $position['top'] ?>px; left: <?php echo $position['left'] ?>px; -moz-transform:rotate(<?php echo $rotation ?>deg); -webkit-transform:rotate(<?php echo $rotation ?>deg); -o-transform:rotate(<?php echo $rotation ?>deg); -ie-transform:rotate(<?php echo $rotation ?>deg); transform:rotate(<?php echo $rotation ?>deg); position:absolute;"/>
+		<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width: <?php echo $size['width'] ?>; top: <?php echo $position['top'] ?>%; left: <?php echo $position['left'] ?>%; -moz-transform:rotate(<?php echo $rotation ?>deg); -webkit-transform:rotate(<?php echo $rotation ?>deg); -o-transform:rotate(<?php echo $rotation ?>deg); -ie-transform:rotate(<?php echo $rotation ?>deg); transform:rotate(<?php echo $rotation ?>deg); position:absolute;"/>
 		
 	</div>
 
@@ -50,6 +50,21 @@
 
 		.uimage-over_image:hover .uimage-hover_show {
 			opacity:1;
+		}
+
+		.upfront-output-object .uimage-wrapper img {
+			max-width: none;
+			max-height: none;
+		}
+
+		@media only screen and (max-width: 992px){
+			.upfront-image-container:before{
+				content: 'WPMU is the largest premium WordPress site on the web. More developers, more support staff and more WordPress love than anywhere else';
+				display: block;
+				height:1px;
+				margin-top: -1px;
+				visibility: hidden;
+			}
 		}
 	</style>
 </div>
