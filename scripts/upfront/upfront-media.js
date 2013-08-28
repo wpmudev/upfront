@@ -269,6 +269,8 @@
 			var control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
 			control.render();
 			this.$el.empty().append(control.$el);
+			if ( this.is_search_active ) this.$el.removeClass('upfront-media-controls-search-selected').addClass('upfront-media-controls-search');
+			else this.$el.removeClass('upfront-media-controls-search');
 		},
 		render_media: function (selected) {
 			var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
@@ -278,7 +280,10 @@
 				var control = new MediaManager_SearchFiltersControl();
 				control.render();
 				this.$el.append(control.$el);
+				this.$el.removeClass('upfront-media-controls-search').addClass('upfront-media-controls-search-selected');
 			}
+			else 
+				this.$el.removeClass('upfront-media-controls-search-selected');
 			this.$el.append(item_control.$el);
 		},
 		switch_controls: function (media_collection) {
@@ -304,12 +309,14 @@
 			var selection_control = new MediaManager_SelectionControl({model: this.model});
 			selection_control.render();
 			this.$el.empty().append(selection_control.$el);
+			this.$el.removeClass('upfront-media-aux_controls-has-select');
 		},
 		render_delete: function (selected) {
 			var delete_control = new MediaManager_DeleteControl({model: new MediaCollection_Selection(selected)});
 			delete_control.render();
 			this.render_selection();
 			this.$el.append(delete_control.$el);
+			this.$el.addClass('upfront-media-aux_controls-has-select');
 		},
 		switch_controls: function (media_collection) {
 			var positive = media_collection.where({selected: true});
@@ -370,16 +377,16 @@
 		});
 
 		var MediaManager_ItemControl = Backbone.View.extend({
+			className: "upfront-item-control",
 			templates: {
-				title: _.template('<input type="text" value="{{post_title}}" />'),
-				caption: _.template('<label>{{title}}</label>'),
-				shared_label: _.template('<a href="#remove" data-idx="{{value}}">{{filter}}</a>&nbsp;'),
+				caption: _.template('<label class="upfront-field-label upfront-field-label-block">{{title}}</label>'),
+				shared_label: _.template('<a href="#remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{value}}">{{filter}}</a>'),
 				additional_size: _.template('<option value="{{size}}">{{size}}</option>')
 			},
 			events: {
-				"change .change_title :text": "change_title",
+				//"change .change_title :text": "change_title",
 				"click .existing_labels a": "drop_label",
-				"change .additional_sizes select": "select_size"
+				//"change .additional_sizes select": "select_size"
 			},
 			initialize: function () {
 				this.model.on("change", this.render, this);
@@ -397,15 +404,22 @@
 				this.render_additional_sizes();
 			},
 			render_title: function () {
-				var $hub = this.$el.find(".change_title");
+				var	me = this, 
+					$hub = this.$el.find(".change_title");
 				$hub.empty();
 				if (this.model.length > 1) {
-					$hub.append(this.model.length + ' files selected');
+					$hub.append('<span class="selected_length">' + this.model.length + ' files selected</span>');
 				} else {
-					$hub
-						.append(this.templates.caption({title: "Media Title"}))
-						.append(this.templates.title(this.model.at(0).toJSON()))
-					;
+					this.title_field = new Upfront.Views.Editor.Field.Text({
+						model: this.model.at(0),
+						label: "Media Title",
+						name: 'post_title',
+						change: function(){
+							me.change_title();
+						}
+					});
+					this.title_field.render();
+					$hub.append(this.title_field.$el);
 				}
 			},
 			render_labels_adding: function () {
@@ -425,7 +439,6 @@
 				;
 				$hub.empty()
 					.append(this.templates.caption({title: title}))
-					.append('<br />')
 				;
 				_(shared_labels).each(function (label) {
 					$hub.append(me.templates.shared_label(label.toJSON()));
@@ -436,21 +449,27 @@
 					$hub = this.$el.find(".additional_sizes"),
 					additional_sizes = this.model.get_additional_sizes(),
 					title = 'Additional sizes',
-					sizes = ''
+					sizes = []
 				;
 				$hub.empty();
 				if (!additional_sizes.length) return false;
-				$hub
-					.append(this.templates.caption({title: title}))
-					.append('<br />')
-				;
 				_(additional_sizes).each(function (size) {
-					sizes += me.templates.additional_size({size:size});
+					sizes.push({ label: size, value: size });
 				});
-				$hub.append('<select>' + sizes + '</select>');
+				this.size_field = new Upfront.Views.Editor.Field.Select({
+					model: this.model.at(0),
+					label: title,
+					name: 'selected_size',
+					values: sizes,
+					change: function(){
+						me.select_size();
+					}
+				})
+				this.size_field.render();
+				$hub.append(this.size_field.$el);
 			},
 			select_size: function (e) {
-				e.stopPropagation();
+				//e.stopPropagation();
 				var $size = this.$el.find(".additional_sizes select"),
 					size = $size.val() || MEDIA_SIZES.FULL;
 				;
@@ -459,11 +478,9 @@
 				});
 			},
 			change_title: function (e) {
-				e.stopPropagation();
-				var model = this.model.at(0),
-					$title = this.$el.find(".change_title :text")
-				;
-				model.set({post_title: $title.val()});
+				//e.stopPropagation();
+				var model = this.model.at(0);
+				model.set({post_title: this.title_field.get_value()});
 				var me = this,
 					data = {
 						action: "upfront-media-update_media_item",
@@ -475,6 +492,7 @@
 						model.trigger("change");
 					})
 				;
+				model.trigger("appearance:update");
 			},
 			drop_label: function (e) {
 				e.preventDefault();
@@ -501,7 +519,7 @@
 				render: function () {
 					this.$el.empty()
 						.append('<div class="search_labels" />')
-						.append('<div class="labels_list" />')
+						.append('<div class="labels_list"><ul></ul></div>')
 						.append('<div class="add_labels" />')
 					;
 					this.render_search();
@@ -510,13 +528,14 @@
 				},
 				render_search: function () {
 					var $hub = this.$el.find(".search_labels");
-					$hub.empty().append('<input type="text" value="' + this.selection + '"/>');
+					$hub.empty().append('<input type="text" class="upfront-field upfront-field-text" value="' + this.selection + '"/>');
 				},
 				render_labels: function () {
 					var me = this,
-						$hub = this.$el.find(".labels_list"),
+						$hub = this.$el.find(".labels_list ul"),
 						known_labels = ActiveFilters.get("label"),
-						shared_labels = this.model.get_shared_labels()
+						shared_labels = this.model.get_shared_labels(),
+						has_selection = false
 					;
 					$hub.empty();
 					known_labels.each(function (label) {
@@ -525,14 +544,19 @@
 						item.media_items = me.model;
 						item.selection = me.selection;
 						item.render();
-						$hub.append(item.$el);
+						if ( item.$el.find('input').size() > 0 ){
+							has_selection = true;
+							$hub.append(item.$el);
+						}
 					});
-
+					if ( has_selection ) $hub.removeClass('empty')
+					else $hub.addClass('empty');
 				},
 				render_addition: function () {
 					var $hub = this.$el.find(".add_labels");
 					$hub.empty();
-					if (this.selection) $hub.append('<b>' + this.selection + '</b> <a href="#add">+Add</a>');
+					if (this.selection) $hub.append('<b class="add_value">' + this.selection + '</b> <a class="add_link" href="#add">+Add</a>').removeClass('empty');
+					else $hub.addClass('empty');
 				},
 				update_selection: function (e) {
 					e.preventDefault();
@@ -556,23 +580,27 @@
 			});
 
 				var MediaManager_ItemControl_LabelItem = Backbone.View.extend({
+					tagName: 'li',
 					events: {
 						click: "toggle_label_assignment"
 					},
 					render: function () {
 						var me = this,
 							is_used = this.media_items.is_used_label(this.model),
-							used = _.template('<input type="checkbox" value="{{value}}" checked />'),
-							free = _.template('<input type="checkbox" value="{{value}}" />'),
+							used = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" checked />'),
+							free = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" />'),
+							label = _.template('<label for="{{id}}">{{name}}</label>'),
 							name = this.model.get("filter"),
-							match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false
+							match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false,
+							obj = this.model.toJSON()
 						;
 						this.$el.empty();
 						if (!name.match(match_rx)) return false;
+						obj.id = this.cid;
+						obj.name = name.replace(match_rx, '<span class="selection">$1</span>');
 						this.$el
-							.append(name.replace(match_rx, '<span class="selection">$1</span>'))
-							.append('&nbsp;')
-							.append((is_used ? used : free)(this.model.toJSON()))
+							.append(label(obj))
+							.append((is_used ? used : free)(obj))
 						;
 					},
 					toggle_label_assignment: function (e) {
@@ -583,13 +611,17 @@
 				});
 
 		var MediaManager_SearchFiltersControl = Backbone.View.extend({
+			className: "upfront-search_filter-control",
 			events: {
 				"click a": "clear_search"
 			},
 			render: function () {
-				var search = ActiveFilters.get("search").first();
+				var search = ActiveFilters.get("search").first(),
+					obj = search.toJSON();
+				console.log(ActiveFilters);
+				obj.total = ActiveFilters.get("search").length;
 				this.$el.empty().append(
-					_.template('Showing X results for <b>{{value}}</b> <a href="#clear">Clear search</a>', search.toJSON())
+					_.template('Showing {{total}} results for <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">Clear search</a>', obj)
 				);
 			},
 			clear_search: function (e) {
@@ -603,6 +635,7 @@
 		});
 
 		var MediaManager_FiltersControl = Backbone.View.extend({
+			className: "upfront-filter-control",
 			events: {
 				"click": "stop_prop",
 				"change #media_manager-show_titles": "toggle_titles"
@@ -618,11 +651,11 @@
 				this.$el.empty()
 					.append(this.filter_selection.$el)
 					.append(this.filters_selected.$el)
-					.append(
+					/*.append(
 						"<input type='checkbox' checked id='media_manager-show_titles' />" +
 						'&nbsp;' +
 						'<label for="media_manager-show_titles">Show titles</label>'
-					)
+					)*/
 				;
 			},
 			toggle_titles: function (e) {
@@ -632,6 +665,7 @@
 		});
 
 		var MediaManager_FiltersSelectedControl = Backbone.View.extend({
+			className: "upfront-filter_selected-control",
 			events: {
 				"click a.filter": "drop_filter",
 				"click a.all_filters": "drop_all"
@@ -642,9 +676,9 @@
 			render: function () {
 				this.$el.empty();
 				var me = this,
-					tpl = _.template(' <a href="#" class="filter" data-type="{{type}}" data-filter="{{filter}}">{{filter}}</a>')
+					tpl = _.template(' <a href="#" class="filter upfront-icon upfront-icon-media-label-delete" data-type="{{type}}" data-filter="{{filter}}">{{filter}}</a>')
 				;
-				this.$el.append('<label>Active filters</label>');
+				this.$el.append('<label class="upfront-field-label upfront-field-label-block">Active filters</label>');
 				_(this.model.to_list()).each(function (filters, type) {
 					_(filters).each(function (filter) {
 						me.$el.append(tpl({filter: filter, type: type}));
@@ -688,8 +722,6 @@
 		var MediaManager_FiltersSelectionControl = Backbone.View.extend({
 			className: "upfront-filter_selection-control clearfix",
 			events: {
-				click: "expand_control_selection",
-				"click li a": "select_control"
 			},
 			initialize: function () {
 				this.controls = _([
@@ -702,39 +734,37 @@
 			},
 			render: function () {
 				var me = this,
-					$target = this.$el.empty().append("<ul />").find("ul:first"),
-					tpl = _.template("<li style='display:none'><a href='#' data-idx='{{idx}}'>{{name}}</a></li>")
+					tpl = _.template("<li style='display:none'><a href='#' data-idx='{{idx}}'>{{name}}</a></li>"),
+					values = []
 				;
 				this.controls.each(function (ctl, idx) {
-					$target.append(tpl({idx:idx, name:ctl.get_name()}));
+					values.push({label: ctl.get_name(), value: idx});
 				});
+				
+				this.$el.empty();
+				
 				this.$el.append('<div class="upfront-filter_control" />');
 				this.$control = this.$el.find("div.upfront-filter_control");
-
-				this.$el.find("li:first").show();
+				
+				this.control_field = new Upfront.Views.Editor.Field.Select({
+					label: "Filter",
+					name: "filter-selection",
+					values: values,
+					change: function(){
+						me.select_control(this.get_value());
+					}
+				});
+				this.control_field.render();
+				this.$el.prepend(this.control_field.$el);
 
 				Upfront.Events.on("media_manager:media:filters_updated");
 			},
-			select_control: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				var $el = $(e.target),
-					idx = $el.attr("data-idx"),
-					control = this.controls.toArray()[idx]
+			select_control: function (idx) {
+				var control = this.controls.toArray()[idx]
 				;
-
-				this.$el.find("li").hide();
-				$el.closest("li").show();
-
 				control.render();
 				this.$control.empty().append(control.$el);
 				return false;
-			},
-			expand_control_selection: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				this.$el.find("li").show();
-				this.$control.empty();
 			}
 		});
 
@@ -780,6 +810,7 @@
 		});
 
 		var Media_FilterSelection_AdditiveMultiselection = Media_FilterSelection_Multiselection.extend({
+			tagName: "div",
 			className: "upfront-additive_multiselection",
 			events: {
 				click: "stop_prop",
@@ -792,14 +823,14 @@
 				;
 				this.$el
 					.empty()
-					.append('<input type="text" class="filter" value="' + sel + '" />')
-					.append('<div class="labels_hub" />')
+					.append('<input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" />')
+					.append('<div class="labels_list"><ul></ul></div>')
 				;
 				this.render_items();
 			},
 			render_items: function () {
 				var me = this,
-					$hub = this.$el.find("div.labels_hub")
+					$hub = this.$el.find("div.labels_list ul")
 				;
 				$hub.empty();
 				this.model.each(function (model) {
@@ -872,17 +903,20 @@
 
 			var Media_FilterSelection_AdditiveMultiselection_Item = Media_FilterSelection_Multiselection_Item.extend({
 				render: function () {
-					var checked = _.template('<input type="checkbox" name="{{filter}}" value="{{value}}" checked />'),
-						unchecked = _.template('<input type="checkbox" name="{{filter}}" value="{{value}}" />'),
+					var checked = _.template('<input type="checkbox" for="{{id}}" class="upfront-field-checkbox" name="{{filter}}" value="{{value}}" checked />'),
+						unchecked = _.template('<input type="checkbox" for="{{id}}" class="upfront-field-checkbox" name="{{filter}}" value="{{value}}" />'),
+						label = _.template('<label for="{{id}}">{{name}}</label>'),
 						name = this.model.get("filter"),
-						match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false
+						match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false,
+						obj = this.model.toJSON()
 					;
 					this.$el.empty();
 					if (match_rx && !name.match(match_rx)) return false;
+					obj.id = this.cid;
+					obj.name = name.replace(match_rx, '<span class="selection">$1</span>');
 					this.$el
-						.append(name.replace(match_rx, '<span class="selection">$1</span>'))
-						.append('&nbsp;')
-						.append((this.model.get("state") ? checked : unchecked)(this.model.toJSON()))
+						.append(label(obj))
+						.append((this.model.get("state") ? checked : unchecked)(obj))
 					;
 				}
 			});
@@ -1046,8 +1080,7 @@
 			this.embed_view.model.clear({silent:true});
 			this.library_view.render();
 			this.library_view.$el.css({
-				'max-height': this.popup_data.height,
-				'overflow-y': 'scroll'
+				'height': this.popup_data.height - 88
 			});
 			this.$el.empty().append(this.library_view.$el);
 		},
@@ -1178,7 +1211,8 @@
 			className: "search_container clearfix",
 			events: {
 				"click .search": "do_search",
-				"click .clear": "clear_search"
+				"click .clear": "clear_search",
+				"keyup :text": "on_keyup"
 			},
 			render: function () {
 				var active = ActiveFilters.get("search"),
@@ -1189,9 +1223,13 @@
 					.append('<input type="text" placeholder="Search" value="' + (has_search && search ? search.get("value") : '') + '" />')
 				;
 				if (has_search) {
-					this.$el.append('<a href="#clear" class="clear">x</a>');
+					this.$el.append('<a href="#clear" class="clear upfront-icon upfront-icon-popup-search-clear"></a>');
+					this.$el.addClass("has_search");
 				}
-				this.$el.append('<div class="search" id="upfront-search_action"><i class="icon-search"></i></div>');
+				else {
+					this.$el.removeClass("has_search");
+				}
+				this.$el.append('<div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div>');
 			},
 			do_search: function (e) {
 				e.preventDefault();
@@ -1216,6 +1254,12 @@
 				var $text = this.$el.find(":text");
 				$text.val('');
 				this.do_search(e);
+			},
+			on_keyup: function (e) {
+				if ( e.keyCode == 13 )
+					this.$el.find('.search').trigger('click');
+				else if ( e.keyCode == 27 )
+					this.$el.find('.clear').trigger('click');
 			}
 		});
 
@@ -1391,11 +1435,15 @@
 				.append(media.$el)
 			;
 			this.media_view = media;
+			this.media_view.start_loading();
 		},
 		update: function (collection) {
+			var me = this;
 			this.media_view.model.reset(collection);
-			this.media_view.render();
-		}
+			this.media_view.end_loading(function(){
+				me.media_view.render();
+			});
+		},
 	});
 
 	var MediaCollection_View = Backbone.View.extend({
@@ -1403,7 +1451,8 @@
 		className: 'upfront-media_collection',
 		initialize: function () {
 			this.model.on("add", this.render, this);
-			this.model.on("change", this.render, this);
+			this.model.on("remove", this.render, this);
+			this.model.on("change", this.update, this);
 			this.model.on("change:selected", this.propagate_selection, this);
 		},
 		render: function () {
@@ -1418,6 +1467,24 @@
 					me.$el.append(view.$el);
 				});
 			}
+		},
+		update: function () {
+			if (this.model.length) {
+				this.model.each(function (model) {
+					model.trigger("appearance:update");
+				});
+			}
+		},
+		start_loading: function () {
+			this.loading = new Upfront.Views.Editor.Loading();
+			this.loading.render();
+			this.$el.append(this.loading.$el);
+		},
+		end_loading: function (callback) {
+			if ( this.loading )
+				this.loading.done(callback);
+			else
+				callback();
 		},
 		propagate_selection: function (model) {
 			if (!this.multiple_selection) {
@@ -1439,10 +1506,10 @@
 				click: "toggle_item_selection"
 			},
 			initialize: function () {
-				this.template = _.template("{{thumbnail}} <span class='title'>{{post_title}}</span> <div class='upfront-media_item-editor-container' />");
+				this.template = _.template("<div class='thumbnail'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
 				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
 
-				this.model.on("appearance:update", this.render, this);
+				this.model.on("appearance:update", this.update, this);
 
 				this.model.on("upload:start", this.upload_start, this);
 				this.model.on("upload:progress", this.upload_progress, this);
@@ -1452,12 +1519,21 @@
 				this.$el.empty().append(
 					this.template(this.model.toJSON())
 				);
+				this.update();
+				this.toggle_title();
+			},
+			update: function () {
 				if (this.model.get("parent")) this.$el.addClass("has-parent");
+				else this.$el.removeClass("has-parent");
 				if (this.model.get("selected")) {
 					this.$el.addClass("selected");
-					this.$el.find("img").after('<i class="icon-ok"></i>');
+					this.$el.find(".thumbnail").append('<i class="upfront-icon upfront-icon-media-selected"></i>');
 				}
-				this.toggle_title();
+				else {
+					this.$el.removeClass("selected");
+					this.$el.find(".upfront-icon-media-selected").remove();
+				}
+				this.$el.find(".title").text(this.model.get('post_title'));
 			},
 			toggle_title: function () {
 				var state = ActiveFilters.showing_titles,

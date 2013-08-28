@@ -2540,20 +2540,28 @@ define(_template_files, function () {
 			this.multiple = this.options.multiple ? this.options.multiple : (this.multiple ? this.multiple : false);
 			this.label = this.options.label ? this.options.label : '';
 			this.default_value = this.options.default_value ? this.options.default_value : (this.multiple ? [] : '');
-			this.property = this.model.get_property_by_name(this.options.property);
-			if ( this.property === false ){
-				this.model.init_property(this.options.property, this.default_value);
+			if ( this.options.property ){
 				this.property = this.model.get_property_by_name(this.options.property);
+				if ( this.property === false ){
+					this.model.init_property(this.options.property, this.default_value);
+					this.property = this.model.get_property_by_name(this.options.property);
+				}
 			}
+			else {
+				this.property = false;
+			}
+			this.name = this.options.name ? this.options.name : '';
 			this.selected_state = this.selected_state ? this.selected_state : '';
 			if ( this.init )
 				this.init();
+			if ( this.options.change )
+				this.on('changed', this.options.change)
 		},
 		get_name: function () {
-			return this.property.get('name');
+			return this.property ? this.property.get('name') : this.name;
 		},
 		get_saved_value: function () {
-			return this.property.get('value');
+			return this.property ? this.property.get('value') : (this.model ? this.model.get(this.name) : '');
 		},
 		get_value: function () {
 			var $field = this.get_field();
@@ -2605,7 +2613,9 @@ define(_template_files, function () {
 					if ( me.options.compact )
 						me.$el.addClass('tooltip');
 				}
-			}).trigger('keyup');
+			}).trigger('keyup').change(function(){
+				me.trigger('changed');
+			});
 			this.trigger('rendered');
 		},
 		get_field_html: function () {
@@ -2739,6 +2749,7 @@ define(_template_files, function () {
 					e.stopPropagation();
 					if ( me.options.disabled )
 						return;
+					$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
 					me.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
 				});
 				this.$el.on('click', '.upfront-field-select-option label', function(e){
@@ -2747,7 +2758,7 @@ define(_template_files, function () {
 						return;
 					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
 				});
-				$('#settings').on('click', '.upfront-settings_panel', function(){
+				$('body').on('click', function(){
 					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
 				});
 			}
@@ -2764,6 +2775,7 @@ define(_template_files, function () {
 					else
 						$(this).removeClass('upfront-field-select-option-selected');
 				});
+				me.trigger('changed');
 			});;
 			this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
 			if ( ! this.multiple && ! this.get_saved_value() )
@@ -2829,6 +2841,7 @@ define(_template_files, function () {
 					else
 						$(this).removeClass('upfront-field-multiple-selected');
 				});
+				me.trigger('changed');
 			});
 
 			this.trigger('rendered');
@@ -2905,6 +2918,7 @@ define(_template_files, function () {
 					me.checked_list = _.without(me.checked_list, value);
 				else
 					me.checked_list.push(value);
+				me.trigger('changed');
 			});
 			this.$el.on('click', function (e) {
 				e.stopPropagation();
@@ -3483,6 +3497,35 @@ define(_template_files, function () {
 	});
 
 	var notifier = new NotifierView();
+	
+	
+
+	var Loading = Backbone.View.extend({
+		className: 'upfront-loading',
+		render: function () {
+			this.$el.html('<div class="upfront-loading-ani" />');
+		},
+		done: function (callback) {
+			var me = this;
+			var t = setTimeout(function(){
+				if ( me ){
+					me.remove();
+					callback();
+				} 
+			}, 6000);
+			this.$el.addClass('upfront-loading-done');
+			var ani = 0;
+			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+				if ( ani == 0 ){
+					ani++;
+					return;
+				}
+				me.remove();
+				clearTimeout(t);
+				if ( callback ) callback();
+			});
+		}
+	});
 
 	return {
 		"Editor": {
@@ -3517,7 +3560,8 @@ define(_template_files, function () {
 			},
 			notify : function(message, type){
 				notifier.addMessage(message, type);
-			}
+			},
+			"Loading": Loading
 		},	
 		"ContentEditor": {
 			"Sidebar": ContentEditorSidebar,

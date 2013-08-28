@@ -245,7 +245,7 @@ class Upfront_MediaItem extends Upfront_Media {
 		return array(
 			'ID' => $this->_post->ID,
 			'post_title' => $this->_post->post_title,
-			'thumbnail' => wp_get_attachment_image($this->_post->ID, array(80, 60), true),
+			'thumbnail' => wp_get_attachment_image($this->_post->ID, array(103, 75), true),
             'parent' => $this->_post->post_parent ? get_the_title($this->_post->post_parent) : false,
             'post_content' => $this->_post->post_content ? $this->_post->post_content : false,
             'post_excerpt' => $this->_post->post_excerpt ? $this->_post->post_excerpt : false,

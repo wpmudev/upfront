@@ -183,7 +183,7 @@ var Popup = {
 		if (!$("#upfront-popup").length) {
 			$("#page")
 				.append('<div id="upfront-popup" class="upfront-ui" style="display:none">' +
-					'<div id="upfront-popup-close">X</div>' +
+					'<div id="upfront-popup-close" class="upfront-icon upfront-icon-popup-close"></div>' +
 					'<div class="upfront-popup-meta" id="upfront-popup-top">' +
 					'</div>' +
 					'<div id="upfront-popup-content"></div>' +
@@ -226,11 +226,12 @@ var Popup = {
 			.css({
 				'width': width,
 				'height': height,
-				'left': left_pos
+				'left': sidebarWidth
 			})
 			.show()
 			.find("#upfront-popup-close").on("click", close_func).end()
 		;
+		$('body').addClass('upfront-popup-open');
 
 		$win.off("resize.upfront-popup").on("resize.upfront-popup", function () {
 			var sidebarWidth = $('#sidebar-ui').width();
@@ -269,6 +270,8 @@ var Popup = {
 
 		this.$popup.find("#upfront-popup-top").empty();
 		this.$popup.find("#upfront-popup-bottom").empty();
+		
+		$('body').removeClass('upfront-popup-open');
 
 		this._deferred.resolve(this.$popup, result);
 	}

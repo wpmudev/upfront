@@ -315,6 +315,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		$('body')
 			.append(overlay)
+			.addClass('upfront-image-upload-open')
 		;
 
 
@@ -403,6 +404,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			height: 'auto',
 			width: 'auto'
 		});
+		
+		$('body').removeClass('upfront-image-upload-open');
 
 		if(this.reopenSettings){
 			$('#settings').fadeIn();
