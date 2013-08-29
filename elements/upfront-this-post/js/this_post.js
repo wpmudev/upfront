@@ -66,12 +66,12 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			Upfront.data.posts[post.id] = post;
 
 			Upfront.Events.trigger("data:current_post:change");
-
 			_upfront_post_data.post_id = me.post.id;
 			if (me.post.get("is_new")) {
+				var type = me.post.get("post_type") || 'post';
 				_upfront_post_data.layout = {
-					specificity: "single-post-" + me.post.id,
-					item: "single-post",
+					specificity: "single-" + type + "-" + me.post.id,
+					item: "single-" + type,
 					type: "single"
 				};
 			}
