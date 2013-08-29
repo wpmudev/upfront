@@ -251,6 +251,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				setImageSize: newImage,
 				extraButtons: [{
 					id: 'image-edit-button-swap',
+					text: 'Swap Image',
 					callback: function(e, editor){
 						editor.cancel();
 						me.openImageSelector();
@@ -843,9 +844,9 @@ var ImageEditor = Backbone.View.extend({
 		this.fullSize = {width: 0, height:0};
 		this.setImageInitialSize = false;
 		this.buttons = [
-			{id: 'image-edit-button-fit'},
-			{id: 'image-edit-button-reset'},
-			{id: 'image-edit-button-ok'}
+			{id: 'image-edit-button-fit', text: 'Fit to Element'},
+			{id: 'image-edit-button-reset', text: 'Reset Image'},
+			{id: 'image-edit-button-ok', text: 'Done'}
 		];
 	},
 
@@ -932,7 +933,7 @@ var ImageEditor = Backbone.View.extend({
 
 		if(options.extraButtons && options.extraButtons.length){
 			_.each(options.extraButtons, function(button){
-				me.buttons.unshift({id: button.id});
+				me.buttons.unshift({id: button.id, text: button.text});
 				me.$el.on('click', '#' + button.id, function(e){
 					button.callback(e, me);
 				});

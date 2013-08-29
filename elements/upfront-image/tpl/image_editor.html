@@ -44,22 +44,10 @@
 
 	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 40}}px; left: {{maskOffset.left}}px;">
 		{[ for (var i = 0; i < buttons.length; i++) { ]}
-		<a class="image-edit-button" id="{{buttons[i].id}}"></a>
+		<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].text}}"></a>
 		{[ } ]}
 	</div>
 </script>
-
-<script type="text/template" id="editor-tpl2">
-	<div id="upfront-image-edit" class="upfront-image-section">
-		<div id="uimage-canvas-container" style="position:absolute">
-
-			
-			
-		</div>
-		<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{offset.top}}px; left:{{offset.left}}px"></div>
-	</div>
-</script>
-
 
 <script type="text/template" id="upload-form-tpl">
 <form id="upfront-upload-image" name="upfront-upload-image" enctype="multipart/form-data" method="post" action="{{url}}">
