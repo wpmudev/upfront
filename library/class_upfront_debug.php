@@ -9,6 +9,7 @@ abstract class Upfront_Debug {
 	const MARKUP = 'markup';
 	const RESPONSE = 'response';
 	const JS_TRANSIENTS = 'js_transients';
+	const DEV = 'dev';
 
 	protected $_levels = array();
 

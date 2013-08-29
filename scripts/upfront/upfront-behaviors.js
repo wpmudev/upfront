@@ -88,7 +88,7 @@ var LayoutEditor = {
 var GridEditor = {
 	
 	main: {$el: null, top: 0, left: 0, right: 0},
-	grid_layout: {left: 0, right: 0},
+	grid_layout: {top: 0, left: 0, right: 0},
 	containment: {$el: null, top: 0, left: 0, right: 0, col: 0, grid: {top: 0, left: 0, right: 0}},
 	max_row: 0,
 	col_size: 0,
@@ -111,7 +111,7 @@ var GridEditor = {
 			/*grid_x = Math.round((x-ed.containment.left)/ed.col_size)+1,
 			grid_y = Math.round((y-ed.containment.top)/ed.baseline)+1;*/
 			grid_x = Math.round((x-ed.grid_layout.left)/ed.col_size)+1,
-			grid_y = Math.round((y-ed.main.top)/ed.baseline)+1;
+			grid_y = Math.round((y-ed.grid_layout.top)/ed.baseline)+1;
 		return {x: grid_x, y: grid_y};
 	},
 	
@@ -517,7 +517,7 @@ var GridEditor = {
 			$wraps = $layout.find('.upfront-wrapper'),
 			$regions = $layout.find('.upfront-region:not(.upfront-region-locked)');
 		// Set variables
-		ed.col_size = $('.upfront-grid-layout:first').outerWidth()/ed.grid.size;
+		ed.col_size = $('.upfront-grid-layout:first').innerWidth()/ed.grid.size;
 		ed.main = {
 			$el: $main,
 			top: main_pos.top,
@@ -525,6 +525,7 @@ var GridEditor = {
 			right: main_pos.left + $main.outerWidth()
 		};
 		ed.grid_layout = {
+			top: grid_layout_pos.top,
 			left: grid_layout_pos.left,
 			right: grid_layout_pos.left + $grid_layout.outerWidth()
 		};
@@ -630,6 +631,10 @@ var GridEditor = {
 					region = ed.get_region(me_wrap.$el.closest('.upfront-region'));
 				// Check if there is the wrapper start in new line and that the next droppable is full column
 				if ( $next.size() > 0 && me_wrap.$el.hasClass('clr') && $next.hasClass('upfront-drop-wrap-full') ){
+					var drop_size = $next.data('drop_size');
+					drop_size.row = me_wrap.row;
+					$next.data('drop_size', drop_size);
+					$next.css('height', me_wrap.height);
 					$next.addClass('upfront-drop-me');
 				}
 				// Check if the next droppable is a fixed one
@@ -648,7 +653,7 @@ var GridEditor = {
 						$(drop_wrap_fxd)
 							.addClass('upfront-drop-me')
 							.data('drop_size', { col: next_wrap_el_min.grid.left-me_wrap.grid.left, row: (next_wrap.row > me_wrap.row ? next_wrap.row : me_wrap.row) })
-							.css('width', (next_wrap.grid.left-me_wrap.grid.left)*ed.col_size)
+							.css('width', (next_wrap_el_min.grid.left-me_wrap.grid.left)*ed.col_size)
 							.css('height', me.height)
 					);
 				}
@@ -1089,10 +1094,12 @@ var GridEditor = {
 							area = 0;
 						if ( each.$el.hasClass('upfront-drop-me') )
 							area *= 1.5;
-						else if ( each.$el.hasClass('upfront-drop-fixed') )
+						else if ( each.$el.hasClass('upfront-drop-use') )
+							area *= 1.2;
+						/*else if ( each.$el.hasClass('upfront-drop-fixed') )
 							area *= 1.3;
 						else if ( each.$el.hasClass('upfront-drop-obj') )
-							area *= 1.2;
+							area *= 1.2;*/
 						return {
 							area: area,
 							drop: each
@@ -1138,11 +1145,11 @@ var GridEditor = {
 				if ( !drop.$el.hasClass('upfront-drop-use') ){
 					$('.upfront-drop-use').removeClass('upfront-drop-use');
 					$('.upfront-drop-x').not(drop.$el).stop().animate({width:0}, 500);
-					$('.upfront-drop-y').not(drop.$el).not('.upfront-drop-me.upfront-drop-wrap:not(.upfront-drop-wrap-full)').stop().animate({height:0}, 500);
+					$('.upfront-drop-y').not(drop.$el).not('.upfront-drop-me.upfront-drop-wrap').stop().animate({height:0}, 500);
 					if ( drop.$el.hasClass('upfront-drop-x') ){
-						var ani_w = (drop.right-drop.left+1)*ed.col_size,
+						var ani_w = Math.floor((drop.right-drop.left+1)*ed.col_size),
 							ani_h = (drop.bottom-drop.top)*ed.baseline;
-						drop.$el.addClass('upfront-drop-use').css('width', ani_w).css('height', ani_h);
+						drop.$el.addClass('upfront-drop-use').stop().css('width', ani_w).css('height', ani_h);
 					}
 					else{
 						var ani_h = drop.$el.hasClass('upfront-drop-me') ? (me.outer_grid.bottom-me.outer_grid.top)*ed.baseline : height;
@@ -1250,7 +1257,7 @@ var GridEditor = {
 						preview_top = margin_data.current.top;
 						if ( drop_wrap ){
 							ed.adjust_affected_right(drop_wrap, drop_wrap_aff.right, [me], drop_lmt[0]+col+margin_data.current.left-1);
-							preview_left -= drop_wrap.left-drop_lmt[0];
+							preview_left -= drop_wrap.grid.left-drop_lmt[0];
 						}
 					}
 					else if ( drop.$el.hasClass('upfront-drop-wrap-full') || (drop.$el.hasClass('upfront-drop-wrap') && drop.$el.hasClass('upfront-drop-x')) ){
@@ -1289,6 +1296,7 @@ var GridEditor = {
 				
 				if ( $drop.hasClass('upfront-drop-me') ){
 					$wrap.show();
+					drop_update();
 				}
 				else {
 					dropped = true;
@@ -1322,73 +1330,86 @@ var GridEditor = {
 							$wrap.nextAll('.upfront-wrapper').eq(0).addClass('clr');
 						$wrap.remove();
 					}
-				}
-				$('.upfront-drop').remove();
-				$('.upfront-drop-view').remove();
-				
-				( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
-					ed.update_margin_classes($(this));
-				});
-				
-				ed.update_wrappers(region);
-				$me.show();
-				
-				// Update model value
-				( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
-					var $el = $(this),
-						margin = $el.data('margin');
-					if ( margin && 
-						( margin.original.left != margin.current.left ||
-						margin.original.top != margin.current.top ||
-						margin.original.bottom != margin.current.bottom ||
-						margin.original.right != margin.current.right )
-					){
-						ed.update_model_classes($el, [
-							ed.grid.left_margin_class+margin.current.left,
-							ed.grid.right_margin_class+margin.current.right,
-							ed.grid.top_margin_class+margin.current.top,
-							ed.grid.bottom_margin_class+margin.current.bottom
-						]);
+					var $me_drop_full = $('.upfront-drop-me.upfront-drop-wrap-full');
+					if ( $me_drop_full.size() > 0 && $('.upfront-drop').index($me_drop_full) < $('.upfront-drop').index($drop) ){
+						// animate the previous drop area for smooth transition
+						$('.upfront-region').css('min-height', '');
+						$me_drop_full.stop().animate({height: 0}, 1000, 'swing', function(){
+							drop_update();
+						});
 					}
-				});
-				
-				if ( wrapper_id )
-					model.set_property('wrapper_id', wrapper_id, true);
-				
-				if ( !move_region ){
-					view.resort_bound_collection();
+					else {
+						drop_update();
+					}
 				}
-				else {
-					var modules = region.get('modules'),
-						models = [];
-					model.collection.remove(model, {silent: true});
-					model.unset('shadow', {silent: true});
-					$me.removeAttr('data-shadow');
-					$('.upfront-region-drag-active').find('.upfront-module').each(function(){
-						var element_id = $(this).attr('id'),
-							each_model = modules.get_by_element_id(element_id);
-						if ( !each_model && element_id == $me.attr('id') )
-							models.push(model);
-						else
-							models.push(each_model);
+				function drop_update () {
+					$('.upfront-drop').remove();
+					$('.upfront-drop-view').remove();
+					
+					( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
+						ed.update_margin_classes($(this));
 					});
-					modules.reset(models);
+					
+					ed.update_wrappers(region);
+					$me.show();
+					
+					// Update model value
+					( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
+						var $el = $(this),
+							margin = $el.data('margin');
+						if ( margin && 
+							( margin.original.left != margin.current.left ||
+							margin.original.top != margin.current.top ||
+							margin.original.bottom != margin.current.bottom ||
+							margin.original.right != margin.current.right )
+						){
+							ed.update_model_classes($el, [
+								ed.grid.left_margin_class+margin.current.left,
+								ed.grid.right_margin_class+margin.current.right,
+								ed.grid.top_margin_class+margin.current.top,
+								ed.grid.bottom_margin_class+margin.current.bottom
+							]);
+						}
+					});
+					
+					if ( wrapper_id )
+						model.set_property('wrapper_id', wrapper_id, true);
+					
+					if ( !move_region ){
+						view.resort_bound_collection();
+					}
+					else {
+						var modules = region.get('modules'),
+							models = [];
+						model.collection.remove(model, {silent: true});
+						model.unset('shadow', {silent: true});
+						$me.removeAttr('data-shadow');
+						$('.upfront-region-drag-active').find('.upfront-module').each(function(){
+							var element_id = $(this).attr('id'),
+								each_model = modules.get_by_element_id(element_id);
+							if ( !each_model && element_id == $me.attr('id') )
+								models.push(model);
+							else
+								models.push(each_model);
+						});
+						modules.reset(models);
+					}
+					
+					// Add drop animation
+					$me = view.$el.find('.upfront-editable_entity:first');
+					$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+						$(this).removeClass('upfront-dropped'); 
+						Upfront.Events.trigger("entity:drag_animate_stop", view, view.model);
+					}).addClass('upfront-dropped');
+					
+					$('.upfront-region-drag-active .upfront-module').css('max-height', '');
+					$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
+					$wrap.css('min-height', '');
+					$main.removeClass('upfront-dragging');
+					
+					Upfront.Events.trigger("entity:drag_stop", view, view.model);
+					view.trigger("entity:self:drag_stop");
 				}
-				
-				// Add drop animation
-				$me = view.$el.find('.upfront-editable_entity:first');
-				$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
-					$(this).removeClass('upfront-dropped'); 
-					Upfront.Events.trigger("entity:drag_animate_stop", view, view.model);
-				}).addClass('upfront-dropped');
-				
-				$('.upfront-region-drag-active .upfront-module').css('max-height', '');
-				$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
-				$wrap.css('min-height', '');
-				$main.removeClass('upfront-dragging');
-				
-				Upfront.Events.trigger("entity:drag_stop", view, view.model);
-				view.trigger("entity:self:drag_stop");
 			}
 		});
 	},

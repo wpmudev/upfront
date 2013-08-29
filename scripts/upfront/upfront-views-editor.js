@@ -986,8 +986,11 @@ define(_template_files, function () {
 			this.panels = {
 				posts: new SidebarPanel_Posts({"model": this.model}),
 				elements: new SidebarPanel_DraggableElements({"model": this.model}),
-				settings: new SidebarPanel_Settings({"model": this.model})
+				//settings: new SidebarPanel_Settings({"model": this.model})
 			};
+			// Dev feature only
+			if ( Upfront.Settings.Debug.dev )
+				this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 		},
 		render: function () {
 			var me = this;
@@ -1027,11 +1030,17 @@ define(_template_files, function () {
 				new Command_Undo({"model": this.model}),
 				new Command_Redo({"model": this.model}),
 				new Command_SaveLayout({"model": this.model}),
-				new Command_SaveLayoutAs({"model": this.model}),
+				//new Command_SaveLayoutAs({"model": this.model}),
 				//new Command_LoadLayout({"model": this.model}),
-				new Command_ToggleGrid({"model": this.model}),
-				new Command_ResetEverything({"model": this.model}),
+				//new Command_ToggleGrid({"model": this.model}),
+				//new Command_ResetEverything({"model": this.model}),
 			]);
+			// Dev feature only
+			if ( Upfront.Settings.Debug.dev ){
+				this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
+				this.commands.push(new Command_ToggleGrid({"model": this.model}));
+				this.commands.push(new Command_ResetEverything({"model": this.model}));
+			}
 		}
 	});
 	
@@ -3502,28 +3511,54 @@ define(_template_files, function () {
 
 	var Loading = Backbone.View.extend({
 		className: 'upfront-loading',
-		render: function () {
-			this.$el.html('<div class="upfront-loading-ani" />');
+		is_done: false,
+		done_callback: false,
+		done_timeout: false,
+		initialize: function () {
+			
 		},
-		done: function (callback) {
+		render: function () {
 			var me = this;
-			var t = setTimeout(function(){
+			this.$el.html('<div class="upfront-loading-ani" />');
+			if ( this.options.loading )
+				this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+				var state = me.$el.hasClass('upfront-loading-repeat') ? 'repeat' : (me.$el.hasClass('upfront-loading-done') ? 'done' : 'start');
+				console.log(state);
+				if ( state == 'start' ){
+					if ( me.is_done ){
+						var done = me.done || me.options.done;
+						me.$el.addClass('upfront-loading-done');
+						me.$el.find('.upfront-loading-text').text(done);
+					}
+					else
+						me.$el.addClass('upfront-loading-repeat');
+				}
+				else if ( state == 'repeat' ) {
+					me.$el.removeClass('upfront-loading-repeat');
+				}
+				else if ( state == 'done' ) {
+					me.remove();
+					clearTimeout(me.done_timeout);
+					if ( me.done_callback ) me.done_callback();
+				}
+			});
+		},
+		done: function (callback, done) {
+			var me = this;
+			this.done_timeout = setTimeout(function(){
 				if ( me ){
 					me.remove();
-					callback();
+					me.done_callback();
 				} 
 			}, 6000);
-			this.$el.addClass('upfront-loading-done');
-			var ani = 0;
-			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
-				if ( ani == 0 ){
-					ani++;
-					return;
-				}
-				me.remove();
-				clearTimeout(t);
-				if ( callback ) callback();
-			});
+			this.is_done = true;
+			this.done_callback = callback;
+			this.done = done;
+		},
+		cancel: function (callback, canceled) {
+			this.remove();
+			if ( callback ) callback();
 		}
 	});
 

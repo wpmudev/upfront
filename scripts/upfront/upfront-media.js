@@ -1476,7 +1476,10 @@
 			}
 		},
 		start_loading: function () {
-			this.loading = new Upfront.Views.Editor.Loading();
+			this.loading = new Upfront.Views.Editor.Loading({
+				loading: 'Loading media files...',
+				done: 'Loaded'
+			});
 			this.loading.render();
 			this.$el.append(this.loading.$el);
 		},
@@ -1834,7 +1837,7 @@
 				me.popup_data.$top = $top;
 				me.popup_data.$bottom = $bottom;
 				me.load(multiple_selection);
-			});
+			}, {width: 800});
 
 			pop.always(this.cleanup_active_filters);
 			return pop;

@@ -185,6 +185,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
+			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
 		);
 		$debug = json_encode(
 			apply_filters('upfront-settings-debug', $debug)

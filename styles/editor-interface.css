@@ -3741,15 +3741,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 }
 */
 
-@-webkit-keyframes "upfront-loading" {
-	0% {
-		background-position: 0 0;
-	}
-	100% {
-		background-position: 0 -1512px;
-	}
-}
-@-webkit-keyframes "upfront-loading-done" {
+@-webkit-keyframes "upfront-loading-start" {
 	0% {
 		background-position: 0 0;
 	}
@@ -3757,7 +3749,15 @@ box-shadow: inset 0 2px 0 0 #fff;
 		background-position: 0 -1008px;
 	}
 }
-@-webkit-keyframes "upfront-loading-done-stop" {
+@-webkit-keyframes "upfront-loading-repeat" {
+	0% {
+		background-position: 0 -1008px;
+	}
+	100% {
+		background-position: 0 -1512px;
+	}
+}
+@-webkit-keyframes "upfront-loading-done" {
 	0% {
 		background-position: -72px 0;
 	}
@@ -3772,6 +3772,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	position: absolute;
 	top: 0;
 	left: 0;
+	z-index: 9999;
 }
 .upfront-loading .upfront-loading-ani {
 	background: url("../img/panel-loader-01.svg") no-repeat;
@@ -3783,10 +3784,32 @@ box-shadow: inset 0 2px 0 0 #fff;
 	left: 0;
 	right: 0;
 	margin: auto;
-	-webkit-animation: upfront-loading 2.1s steps(21) infinite;
+	-webkit-animation: upfront-loading-start 1.4s steps(14) 1;
+}
+.upfront-loading-repeat .upfront-loading-ani {
+	-webkit-animation: upfront-loading-repeat 0.7s steps(7) 1;
 }
 .upfront-loading-done .upfront-loading-ani {
-	-webkit-animation: upfront-loading-done 1.4s steps(14) 1, upfront-loading-done-stop 1.2s steps(12) 1.4s 1;
+	-webkit-animation: upfront-loading-done 1.2s steps(12) 1;
+}
+.upfront-loading .upfront-loading-text {
+	position: absolute;
+	width: 200px;
+	height: 72px;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	color: #cbe5ff;
+	font-size: 15px;
+	text-align: center;
+}
+.upfront-loading .upfront-loading-text:before {
+    content: " ";
+    display: block;
+    height: 100%;
+    margin: 0 0 30px;
 }
 
 /* ----- Media manager ----- */

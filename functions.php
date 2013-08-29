@@ -1,6 +1,6 @@
 <?php
 
-define('UPFRONT_DEBUG_LEVELS', 'all');
+defined('UPFRONT_DEBUG_LEVELS') || define('UPFRONT_DEBUG_LEVELS', 'none');
 
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
