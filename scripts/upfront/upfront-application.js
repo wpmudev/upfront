@@ -44,7 +44,7 @@ var LayoutEditor = new (Subapplication.extend({
 				Upfront.Settings.LayoutEditor.Selectors.properties +
 				", " +
 				Upfront.Settings.LayoutEditor.Selectors.layouts
-			).hide("slow", function () {
+			).hide(function () {
 				//app.go("done"); 
 				app.destroy_editor();
 			});
@@ -100,36 +100,34 @@ var LayoutEditor = new (Subapplication.extend({
 				if (!present) app.set_up_event_plumbing_after_render();
 
 				$("html").addClass("upfront-edit-layout");
-
-				// @TODO:remove this
-				$(
-					Upfront.Settings.LayoutEditor.Selectors.sidebar /*+
-					", " +
-					Upfront.Settings.LayoutEditor.Selectors.commands +
-					", " +
-					Upfront.Settings.LayoutEditor.Selectors.properties +
-					", " +
-					Upfront.Settings.LayoutEditor.Selectors.layouts*/
-				).show("slow", function () {
+				
+				app.loading.done(function(){
+					$(
+						Upfront.Settings.LayoutEditor.Selectors.sidebar /*+
+						", " +
+						Upfront.Settings.LayoutEditor.Selectors.commands +
+						", " +
+						Upfront.Settings.LayoutEditor.Selectors.properties +
+						", " +
+						Upfront.Settings.LayoutEditor.Selectors.layouts*/
+					).show();
 					$(".upfront-editable_trigger").hide();
-					$("#upfront-loading").remove();
 					Upfront.Events.trigger("upfront:layout:loaded");
 				});
 			})
 			.error(function (xhr) {
 				Upfront.Util.log("Error loading layout " + layout_ids);
-				// @TODO:remove this
-				$(
-					Upfront.Settings.LayoutEditor.Selectors.sidebar /*+
-					", " +
-					Upfront.Settings.LayoutEditor.Selectors.commands +
-					", " +
-					Upfront.Settings.LayoutEditor.Selectors.properties +
-					", " +
-					Upfront.Settings.LayoutEditor.Selectors.layouts*/
-				).hide("slow", function () {
+				app.loading.cancel(function(){
+					$(
+						Upfront.Settings.LayoutEditor.Selectors.sidebar /*+
+						", " +
+						Upfront.Settings.LayoutEditor.Selectors.commands +
+						", " +
+						Upfront.Settings.LayoutEditor.Selectors.properties +
+						", " +
+						Upfront.Settings.LayoutEditor.Selectors.layouts*/
+					).hide();
 					$(".upfront-editable_trigger").show();
-					$("#upfront-loading").remove();
 					app.go("");
 				});
 			})
@@ -153,8 +151,6 @@ var LayoutEditor = new (Subapplication.extend({
 			app = this
 		;
 
-		// @TODO:remove this
-		$("body").append('<div id="upfront-loading" class="upfront-ui">Loading...</div>');
 		require(Upfront.Settings.LayoutEditor.Requirements.core, function (models, views, editor, behaviors, data) {
 			//The application can use Upfront.data to share data among elements.
 			//Upfront.data = {loading: {}};
@@ -166,7 +162,15 @@ var LayoutEditor = new (Subapplication.extend({
 			_.extend(Upfront, models);
 			_.extend(Upfront, views);
 			_.extend(Upfront.Views, editor);
-			_.extend(Upfront, behaviors);			
+			_.extend(Upfront, behaviors);
+			
+			// Start loading animation
+			app.loading = new Upfront.Views.Editor.Loading({
+				loading: "Loading...",
+				done: "Thank you for waiting"
+			});
+			app.loading.render();
+			$('body').append(app.loading.$el);
 
 			require(Upfront.Settings.LayoutEditor.Requirements.entities, function (objects) {
 				_.extend(Upfront.Objects, objects);
