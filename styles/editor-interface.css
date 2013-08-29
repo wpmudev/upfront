@@ -2276,6 +2276,40 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-field-icon-navigation-open:before {
 	background-position: -920px -72px;
 }
+.upfront-field-icon-navigation-horizontal:before {
+    background-position: -920px -100px;
+    width: 42px;
+}
+.upfront-field-multiple:hover .upfront-field-icon-navigation-horizontal:before {
+    background-position: -1028px -100px;
+}
+.upfront-field-icon-navigation-vertical:before {
+    background-position: -917px -230px;
+}
+.upfront-field-multiple:hover .upfront-field-icon-navigation-vertical:before {
+    background-position: -1025px -230px;
+}
+.upfront-field-icon-navigation-left:before {
+    background-position: -920px -132px;
+    width: 42px;
+}
+.upfront-field-multiple:hover .upfront-field-icon-navigation-left:before {
+    background-position: -1028px -132px;
+}
+.upfront-field-icon-navigation-center:before {
+    background-position: -920px -164px;
+    width: 42px;
+}
+.upfront-field-multiple:hover .upfront-field-icon-navigation-center:before {
+    background-position: -1028px -164px;
+}
+.upfront-field-icon-navigation-right:before {
+    background-position: -920px -196px;
+    width: 42px;
+}
+.upfront-field-multiple:hover .upfront-field-icon-navigation-right:before {
+    background-position: -1028px -196px;
+}
 .upfront-field-icon-contact-above-field:before {
 	background-position: -1140px -40px;
 }
