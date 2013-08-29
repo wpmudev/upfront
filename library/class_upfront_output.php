@@ -370,6 +370,10 @@ class Upfront_Object extends Upfront_Entity {
 	
 	public function get_markup () {
 		$view_class = 'Upfront_' . $this->_get_property("view_class");
+		
+		if(!class_exists($view_class))
+			return $view_class . ' class not found';
+
 		$view = new $view_class($this->_data);
 
 		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
