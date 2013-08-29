@@ -17,7 +17,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		return this.model.get_content();
 	},
 	on_edit: function () {
-		this.$el.html('<div contenteditable>' + this.get_content_markup() + '</div>');
+		this.$el.html('<div contenteditable class="upfront-object">' + this.get_content_markup() + '</div>');
 		var me = this,
 			$el = this.$el.find('div[contenteditable]'),
 			$parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
@@ -28,8 +28,12 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			me.model.set_content(e.editor.getData(), {silent: true});
 		});
 		Upfront.Events.on("entity:deactivated", this.on_cancel, this);
+		$el.on("dblclick", function (e) {e.stopPropagation();}); // Allow double-click word selecting.
+		this.model.set_property("_cke", editor.name, true);
 	},
 	on_cancel: function () {
+		var editor_name = this.model.get_property_value_by_name("_cke");
+		if (editor_name && CKEDITOR.instances[editor_name]) CKEDITOR.instances[editor_name].destroy();
 		this.$el.html(this.get_content_markup());
 		var $parent = this.parent_module_view.$el.find('.upfront-editable_entity:first');
 		this.undelegateEvents();
