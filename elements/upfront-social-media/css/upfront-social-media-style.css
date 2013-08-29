@@ -403,7 +403,7 @@ label {
 /* New settings*/
 /* TODO: Need to remove this width  */
 #settings .upfront-settings-item-tab-radio .upfront-settings-item-tab {
-    max-width: 76px !important;
+    max-width: 75px !important;
 }
 .upfront-defaut-tabbed .upfront-field-multiple-vertical{
     min-width: 89px !important;
