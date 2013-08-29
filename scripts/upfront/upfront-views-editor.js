@@ -3519,6 +3519,8 @@ define(_template_files, function () {
 		},
 		render: function () {
 			var me = this;
+			if ( this.options.fixed )
+				this.$el.addClass('upfront-loading-fixed');
 			this.$el.html('<div class="upfront-loading-ani" />');
 			if ( this.options.loading )
 				this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');

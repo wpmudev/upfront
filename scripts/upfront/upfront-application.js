@@ -167,10 +167,11 @@ var LayoutEditor = new (Subapplication.extend({
 			// Start loading animation
 			app.loading = new Upfront.Views.Editor.Loading({
 				loading: "Loading...",
-				done: "Thank you for waiting"
+				done: "Thank you for waiting",
+				fixed: true
 			});
 			app.loading.render();
-			$('body').append(app.loading.$el);
+			$('body').append(app.loading.$el)
 
 			require(Upfront.Settings.LayoutEditor.Requirements.entities, function (objects) {
 				_.extend(Upfront.Objects, objects);

@@ -385,12 +385,13 @@ var GridEditor = {
 	/**
 	 * Get integer value from class name
 	 * 
-	 * @param {jQuery Object} $el
+	 * @param {jQuery Object|String} from
 	 * @param {String} class_name
 	 */
-	get_class_num: function ($el, class_name){
-		var rx = new RegExp('\\b' + class_name + '(\\d+)')
-			val = $el.attr('class').match(rx);
+	get_class_num: function (from, class_name){
+		var text = _.isString(from) ? from : from.attr('class'),
+			rx = new RegExp('\\b' + class_name + '(\\d+)')
+			val = text.match(rx);
 		return ( val && val[1] ) ? parseInt(val[1]) : 0;
 	},
 	
@@ -1424,6 +1425,28 @@ var GridEditor = {
 			$(this).draggable('option', 'cursorAt', {top: cursor_top});
 		});
 		
+	},
+	
+	normalize_module_remove: function (view, module, modules, wrapper, wrappers) {
+		var app = Upfront.Application.LayoutEditor,
+			ed = Upfront.Behaviors.GridEditor,
+			index = modules.indexOf(module),
+			next_module = modules.at(index+1),
+			next_wrapper = wrappers.get_by_wrapper_id(next_module.get_wrapper_id()),
+			module_class = module.get_property_value_by_name('class'),
+			wrapper_class = wrapper.get_property_value_by_name('class'),
+			wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
+			next_module_class = next_module.get_property_value_by_name('class'),
+			next_module_left = ed.get_class_num(next_module_class, ed.grid.left_margin_class),
+			next_wrapper_class = next_wrapper.get_property_value_by_name('class'),
+			next_wrapper_col = ed.get_class_num(next_wrapper_class, ed.grid.class);
+		if ( next_wrapper_class.match(/clr/g) )
+			return;
+		next_wrapper.replace_class(
+			ed.grid.class + (next_wrapper_col+wrapper_col) +
+			( wrapper_class.match(/clr/g) ? ' clr' : '' )
+		);
+		next_module.replace_class(ed.grid.left_margin_class + (next_module_left+wrapper_col));
 	},
 	
 	

@@ -430,9 +430,19 @@ define(_template_files, function () {
 					me = this;
 				if ( wrapper_id ){
 					var wrappers = this.region_view.model.get('wrappers'),
-						wrapper = wrappers.get_by_wrapper_id(wrapper_id);
-					if ( wrapper )
-						wrappers.remove(wrapper);
+						wrapper = wrappers.get_by_wrapper_id(wrapper_id),
+						wrapper_module = 0;
+					if ( wrapper ){
+						// check if this wrapper has another module
+						this.model.each(function(module){
+							if ( module.get_wrapper_id() == wrapper_id )
+								wrapper_module++;
+						});
+						if ( wrapper_module == 1 ){
+							Upfront.Behaviors.GridEditor.normalize_module_remove(view, view.model, this.model, wrapper, wrappers);
+							wrappers.remove(wrapper);
+						}
+					}
 				}
 				this.model.remove(view.model);
 			},
