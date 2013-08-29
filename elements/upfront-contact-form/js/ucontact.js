@@ -321,17 +321,20 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							values: [
 								{
 									label: 'Above the field',
-									value: 'above'
+									value: 'above',
+									icon: 'contact-above-field'
 								},
 								{
 									label: 'Over the field',
-									value: 'over'
+									value: 'over',
+									icon: 'contact-over-field'
 								},
 								{
 									label: 'Inline with field',
-									value: 'inline'
+									value: 'inline',
+									icon: 'contact-inline-field'
 								}
-								]
+							]
 						})
 					]
 				})

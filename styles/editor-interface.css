@@ -1887,6 +1887,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-icon-element-image:before {
 	background-position: -39px -74px;
 }
+.upfront-icon-element-gallery:before {
+	background-position: -39px -380px;
+}
 .upfront-icon-element-search:before {
 	background-position: -39px -108px;
 }
@@ -4781,4 +4784,8 @@ License: MIT
 .upfront-field-complex_field input[type="number"],
 .upfront-field-labeled_counter_field input[type="number"] {
 	width: 4em;
+}
+
+.align-center {
+	text-align: center;
 }

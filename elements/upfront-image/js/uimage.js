@@ -694,21 +694,47 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				]
 			}),
 			new SettingsItem({
-				className: 'optional-field',
+				className: 'optional-field align-center',
 				title: 'Caption Settings',
 				fields: [
 					new Fields.Radios({
 						model: this.model,
 						property: 'caption_position',
+						layout: "vertical",
 						className: 'field-caption_position upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
 							{
 								label: 'below image',
-								value: 'below_image'
+								value: 'below_image',
+								icon: 'image-caption-below'
 							},
 							{
 								label: 'over image',
-								value: 'over_image'
+								value: 'over_image',
+								icon: 'image-caption-over-bottom'
+							}
+						]
+					}),
+					new Fields.Radios({
+						className: 'field-caption_alignment upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+						model: this.model,
+						property: 'caption_alignment',
+						layout: "vertical",
+						values: [
+							{
+								label: 'Top',
+								value: 'top',
+								icon: 'image-caption-over-top'
+							},
+							{
+								label: 'Bottom',
+								value: 'bottom',
+								icon: 'image-caption-over-bottom'
+							},
+							{
+								label: 'Fill',
+								value: 'fill',
+								icon: 'image-caption-over-fill'
 							}
 						]
 					}),
@@ -716,6 +742,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 						model: this.model,
 						property: 'caption_trigger',
+						layout: "vertical",
 						values: [
 							{
 								label: 'Always show',
@@ -724,25 +751,6 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 							{
 								label: 'Show on hover',
 								value: 'hover_show'
-							}
-						]
-					}),
-					new Fields.Radios({
-						className: 'field-caption_alignment upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
-						model: this.model,
-						property: 'caption_alignment',
-						values: [
-							{
-								label: 'Top',
-								value: 'top'
-							},
-							{
-								label: 'Bottom',
-								value: 'bottom'
-							},
-							{
-								label: 'Fill',
-								value: 'fill'
 							}
 						]
 					})
