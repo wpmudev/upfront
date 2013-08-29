@@ -20,15 +20,15 @@ class Upfront_UgalleryView extends Upfront_Object {
 		'labelFilters' => 0,
 		'urlIcon' => 0,
 		'disableLightbox' => 0,
-		'thumbProportions' => '1_1', // 'theme' | '1_1' | '2_3' | '4_3' | 'free'
+		'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
 		'thumbWidth' => 140,
 		'thumbHeight' => 140,
 		'showTitle' => 0,
 		'showDescription' => 0,
 		'lbTitle' => 1,
 		'lbDescription' => 1,
-		'lbLoop' => 0
-
+		'lbLoop' => 0,
+		'lockThumbProportions' => true
 	);
 
 	public function get_markup () {

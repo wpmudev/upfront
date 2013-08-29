@@ -2361,6 +2361,19 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background-position: -1360px -244px;
 }
 
+.upfront-field-icon-gallery-crop-theme:before {
+	background-position: -1688px -136px;
+}
+.upfront-field-icon-gallery-crop-1_1:before {
+	background-position: -1688px -168px;
+}
+.upfront-field-icon-gallery-crop-2_3:before {
+	background-position: -1688px -198px;
+}
+.upfront-field-icon-gallery-crop-4_3:before {
+	background-position: -1688px -228px;
+}
+
 
 
 /* ContentEditor sidebar */

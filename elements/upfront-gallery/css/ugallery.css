@@ -219,3 +219,29 @@ a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {
 .ugallery_sorting .ui-sortable-helper {
 	box-shadow: 3px 3px 8px rgba(0,0,0,.3) !important;
 }
+
+.ugallery-thumbnail-fields .upfront-field-wrap-number {
+	float: left;
+}
+
+.ugallery-thumbnail-fields .ugallery-proportional {
+	float: left;
+	cursor:pointer;
+	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -1661px -98px;
+	width: 50px;
+	height: 30px;
+	margin-top: 28px;
+	opacity: 1;
+}
+
+.ugallery-thumbnail-fields .ugallery-proportional:hover {
+	opacity: .8;
+}
+
+.ugallery-thumbnail-fields .ugallery-proportional-free {
+	opacity: .2;
+}
+
+.ugallery-thumbnail-fields .upfront-settings-item-content {
+
+}

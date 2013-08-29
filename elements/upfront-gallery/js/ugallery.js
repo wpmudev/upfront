@@ -661,6 +661,23 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				]
 			})
 		]);
+
+		this.on('rendered', function(){
+			var locked = me.property('lockThumbProportions') ? '' : 'ugallery-proportional-free';
+
+			$(me.$('.ugallery-thumbnail-fields')
+				.find('.upfront-field-wrap-number')
+				.get(0))
+				.after('<div class="ugallery-proportional' + locked + '"></div>')
+			;
+
+			me.setEvents([
+				['click', '.ugallery-proportional', 'lockProportions'],
+				['change', 'input[type=number]', 'onThumbChangeSize'],
+				['change', 'input[name=thumbProportions]', 'onThumbChangeProportions']
+			]);
+
+		});
 	},
 
 	get_label: function () {
@@ -668,7 +685,57 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	get_title: function () {
 		return false;
-	}
+	},
+
+	setEvents: function(events){
+		var me = this;
+		_.each(events, function(event){
+			me.$el.on(event[0], event[1], function(e){
+				me[event[2]](e);
+			});
+		});
+	},
+
+	lockProportions: function(e){
+		var proportions = this.property('lockThumbProportions');
+		if(proportions)
+			this.property('lockThumbProportions', false, true);
+		else{
+			var dimensions = this.$('input[type=number]'),
+				width = $(dimensions.get(0)).val(),
+				height = $(dimensions.get(1)).val()
+			;
+			this.property('lockThumbProportions', width / height, true);
+		}
+		this.$('.ugallery-proportional').toggleClass('ugallery-proportional-free');
+	},
+
+	onThumbChangeSize: function(e){
+		var proportions = this.property('lockThumbProportions');
+		if(proportions){
+			var dimensions = this.$('input[type=number]');
+			if(e.target == dimensions.get(0))
+				$(dimensions.get(1)).val(Math.round($(e.target).val() / proportions));
+			else
+				$(dimensions.get(0)).val(Math.round($(e.target).val() * proportions));
+		}
+	},
+
+	onThumbChangeProportions: function() {
+		console.log('Gallery thumbs proportions not implemented yet');
+	},
+	
+	/*
+	Shorcut to set and get model's properties.
+	*/
+	property: function(name, value, silent) {
+		if(typeof value != "undefined"){
+			if(typeof silent == "undefined")
+				silent = true;
+			return this.model.set_property(name, value, silent);
+		}
+		return this.model.get_property_value_by_name(name);
+	}	
 });
 
 
@@ -757,6 +824,7 @@ var Field_Button = Upfront.Views.Editor.Field.Field.extend({
 });
 
 var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
+	className: 'align-center ugallery-thumbnail-fields',
 	initialize: function(){
 		var me = this,
 			fields = Upfront.Views.Editor.Field
@@ -767,22 +835,27 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 				model: this.model,
 				property: 'thumbProportions',
 				label: 'Crop',
+				layout: 'vertical',
 				values: [
 					{
 						label: 'Theme',
-						value: 'theme'
+						value: 'theme',
+						icon: 'gallery-crop-theme'
 					},
 					{
 						label: '1:1',
-						value: '1_1'
+						value: '1_1',
+						icon: 'gallery-crop-1_1'
 					},
 					{
 						label: '2:3',
-						value: '2_3'
+						value: '2_3',
+						icon: 'gallery-crop-2_3'
 					},
 					{
 						label: '4:3',
-						value: '4_3'
+						value: '4_3',
+						icon: 'gallery-crop-4_3'
 					}
 				]
 			}),
@@ -791,7 +864,7 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 				property: 'thumbWidth',
 				min: 50,
 				max: 400,
-				step: 10,
+				step: 1,
 				label: 'width'
 			}),
 			new fields.Number({
@@ -799,7 +872,7 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 				property: 'thumbHeight',
 				min: 50,
 				max: 400,
-				step: 10,
+				step: 1,
 				label: 'height'
 			})
 		]);
