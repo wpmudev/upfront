@@ -179,8 +179,6 @@ define(_template_files, function () {
 			$(".upfront-layout").append('<div id="upfront-loading">Loading...</div>');
 			this.postView = false;
 
-
-
 			Upfront.Application.LayoutEditor.load_layout({item: 'single-' + this.postType, type: 'single', specificity: 'single-' + this.postType + '-1000000'})
 				.done(function(response){
 					var bodyClasses = 'logged-in admin-bar upfront customize-support flex-support';
@@ -197,23 +195,6 @@ define(_template_files, function () {
 					Upfront.Events.on("elements:this_post:loaded", me.on_post_loaded, me);
 				})
 			;
-			/*
-			//Try to get the element from the layout
-			.done(function(response){
-				var layout = new Upfront.Models.Layout(response),
-					region = layout.get('regions').get_by_name('main'),
-					modules = region.get('modules')
-				;
-
-				modules.each(function(module){
-					module.get('objects').each(function(element){
-						if(element.get_property_value_by_name('type') == 'ThisPostModel'){
-							var id = element.id
-						}
-					});
-				});
-
-			});*/
 		},
 		on_post_loaded: function(view) {
 			if(!this.postView){
@@ -2713,7 +2694,6 @@ define(_template_files, function () {
 			showSelectionPalette: true
 		},
 		initialize: function(){
-			debugger;
 			var me = this,
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
 			;
@@ -3046,12 +3026,12 @@ define(_template_files, function () {
 				this.$el.append(
 					'<div class="upfront-settings-item">' +
 						'<div class="upfront-settings-item-title">' + this.get_title() + '</div>' +
-						'<div class="upfront-settings-item-content"></div>' +
+						'<div class="upfront-settings-item-content clearfix"></div>' +
 					'</div>'
 				);
 			}
 			else
-				this.$el.append('<div class="upfront-settings-item-content"></div>');
+				this.$el.append('<div class="upfront-settings-item-content clearfix"></div>');
 
 			$content = this.$el.find('.upfront-settings-item-content');
 			this.fields.each(function(field){
