@@ -95,6 +95,11 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		unset($request->post);
 		unset($request->posts);
 		unset($request->request);
+		if (!empty($request->queried_object)) {
+			unset($request->queried_object->post_title);
+			unset($request->queried_object->post_excerpt);
+			unset($request->queried_object->post_content);
+		}
 		echo '<script>window._upfront_get_current_query=window._upfront_get_current_query||function () {return' . json_encode($request) . ';};</script>';
 	}
 
