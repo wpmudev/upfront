@@ -290,6 +290,7 @@ var LayoutEditor = new (Subapplication.extend({
 				loading = new Upfront.Views.Editor.Loading({
 					loading: "Saving...",
 					done: "All done!",
+					fixed: true
 				});
 				loading.render();
 				$('body').append(loading.$el);
