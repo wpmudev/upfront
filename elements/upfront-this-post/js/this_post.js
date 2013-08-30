@@ -67,14 +67,6 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 			Upfront.Events.trigger("data:current_post:change");
 			_upfront_post_data.post_id = me.post.id;
-			if (me.post.get("is_new")) {
-				var type = me.post.get("post_type") || 'post';
-				_upfront_post_data.layout = {
-					specificity: "single-" + type + "-" + me.post.id,
-					item: "single-" + type,
-					type: "single"
-				};
-			}
 
 			me.render();
 			Upfront.Events.trigger("elements:this_post:loaded", me);
@@ -240,6 +232,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				me.editPost(post,e);
 			})
 		;
+		if (me.post.get("is_new")) {
+			var type = me.post.get("post_type") || 'post';
+			_upfront_post_data.layout = {
+				specificity: "single-" + type + "-" + me.post.id,
+				item: "single-" + type,
+				type: "single"
+			};
+		}
 		$title.html((post.get("is_new")
 			? '<input type="text" id="upfront-title" style="width:100%" value="" placeholder="' + $title.text() + '"/>'
 			: '<input type="text" id="upfront-title" style="width:100%" value="' + $title.text() + '"/>'
