@@ -22,3 +22,7 @@ li.uposts-post h3 a {
 	font-family: serif;
 	color: #009;
 }
+li.uposts-post #upfront-title {
+	outline: none;
+	border: none;
+}
