@@ -10,15 +10,13 @@ class Upfront_NavigationView extends Upfront_Object {
 
         $layout_settings = json_decode($this->_get_property('layout_setting'));
 
-        $menu_style = $layout_settings->style;
-        $menu_aliment = $layout_settings->aliment;
-        $sub_navigation = $layout_settings->subNavigation;
+        $menu_style = isset($layout_settings->style) ? $layout_settings->style : false;
+        $menu_aliment = isset($layout_settings->aliment) ? $layout_settings->aliment : false;
+        $sub_navigation = isset($layout_settings->subNavigation) ? $layout_settings->subNavigation : false;
 
         $menu_style = $menu_style ? "data-style='{$menu_style}'" : '';
         $menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}'" : '';
         $sub_navigation = $sub_navigation ? "data-allow-sub-nav='{$sub_navigation}'" : '';
-
-        $new_page = $layout_settings->newPage;
 
         if ( $menu_id ) :
             $menu = wp_nav_menu(array(
