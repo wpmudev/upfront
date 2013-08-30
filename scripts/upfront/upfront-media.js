@@ -1155,12 +1155,19 @@
 			data = data && data.type ? data : ActiveFilters.to_request_json();
 			data["action"] = "upfront-media-list_media";
 			var me = this;
+			if (this.library_view.media_view && this.library_view.media_view.start_loading) this.library_view.media_view.start_loading();
 			Upfront.Util.post(data)
 				.done(function (response) {
-					me.library_view.update(response.data);
+					//me.library_view.update(response.data);
+					me.library_view.media_view.end_loading(function () {
+						me.library_view.update(response.data);
+					});
 				})
 				.fail(function (response) {
-					me.library_view.update([]);
+					//me.library_view.update([]);
+					me.library_view.media_view.end_loading(function () {
+						me.library_view.update(response.data);
+					});
 				})
 			;
 		},
