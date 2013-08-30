@@ -211,7 +211,7 @@ function loaded_layout_ready () {
 	}, 200);
 }
 
-$(window).load(function () {
+$(document).on("upfront-load", function () {
 	Upfront.Application.LayoutEditor.dispatch_layout_loading();
 	Upfront.Events.on("upfront:layout:loaded", loaded_layout_ready);
 	Upfront.Events.on("elements:this_post:loaded", function (post) {
