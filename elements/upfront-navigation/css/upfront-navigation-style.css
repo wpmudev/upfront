@@ -285,6 +285,10 @@
     display: inline-block;
     width: 100%;
 }
+.upfront-nav-menu-order .upfront-settings-item
+{
+    min-height: 200px;
+}
 .upfront-nav-menu-order ul{
     padding: 0;
 }
