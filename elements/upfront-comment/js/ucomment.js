@@ -491,7 +491,7 @@ var PagedCommentsField = BooleanSubfieldField.extend({
 var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	
 	render: function () {
-		//this.$el.addClass('upfront-icon-element upfront-icon-element-comment');
+		this.$el.addClass('upfront-icon-element upfront-icon-element-comment');
 		this.$el.html('Comment');
 	},
 
