@@ -294,8 +294,8 @@ class Upfront_MediaServer extends Upfront_Server {
             'attachment',
             array(
                 'labels' => array(
-                    'name' => __('Media Labels', UPFRONT_TEXTDOMAIN),
-                    'singular_name' => __('Media Label', UPFRONT_TEXTDOMAIN),
+                    'name' => __('Media Labels', 'upfront'), //UPFRONT_TEXTDOMAIN),
+                    'singular_name' => __('Media Label', 'upfront') //UPFRONT_TEXTDOMAIN),
                 ),
                 'hierarchical' => false,
                 'public' => true,
