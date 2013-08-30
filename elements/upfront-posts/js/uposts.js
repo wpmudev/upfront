@@ -45,6 +45,7 @@
 		currentPost: false,
 		titleSelector: Upfront.data.posts_element && Upfront.data.posts_element.title_selector ? Upfront.data.posts_element.title_selector : 'h1.post_title',
 		contentSelector: Upfront.data.posts_element && Upfront.data.posts_element.content_selector ? Upfront.data.posts_element.content_selector : '.post_content',
+		excerptSelector: Upfront.data.posts_element && Upfront.data.posts_element.excerpt_selector ? Upfront.data.posts_element.excerpt_selector : this.contentSelector,
 		/**
 		 * Element contents markup.
 		 * @return {string} Markup to be shown.
@@ -165,10 +166,11 @@
 		},
 		editPost: function(post){
 			var me = this,
+				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
 				$post = this.$('.uposts-posts-' + post.id),
 				$title = $post.find(this.titleSelector),
-				$body = $post.find(this.contentSelector),
-				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type")
+				body_selector = is_excerpt ? this.excerptSelector : this.contentSelector,
+				$body = $post.find(body_selector)
 			;
 
 			_upfront_post_data._old_post_id = _upfront_post_data.post_id;
@@ -205,8 +207,9 @@
 		},
 		updatePost: function() {
 			var $title = this.$(this.titleSelector).find(":text"),
-				$content =  this.$(this.contentSelector).find("#upfront-body"),
 				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
+				body_selector = is_excerpt ? this.excerptSelector : this.contentSelector,
+				$content =  this.$(body_selector).find("#upfront-body"),
 				element_id = this.model.get_property_value_by_name("element_id")
 			;
 			if($title.length)
