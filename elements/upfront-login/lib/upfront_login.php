@@ -20,7 +20,7 @@ class Upfront_LoginView extends Upfront_Object {
 		return !current_user_can('manage_options')
 			? ''
 			: '<script>' .
-				'(function ($) { $(window).load(function () { Upfront.Application.LayoutEditor.dispatch_layout_loading(); }); })(jQuery);' .
+				'(function ($) { $(document).on("upfront-load", function () { Upfront.Application.LayoutEditor.dispatch_layout_loading(); }); })(jQuery);' .
 			'</script>'
 		;
 	}
