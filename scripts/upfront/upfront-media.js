@@ -467,12 +467,13 @@
 				})
 				this.size_field.render();
 				$hub.append(this.size_field.$el);
+				this.size_field.$el.on("click", function (e) {
+					e.stopPropagation();
+				});
 			},
 			select_size: function (e) {
 				//e.stopPropagation();
-				var $size = this.$el.find(".additional_sizes select"),
-					size = $size.val() || MEDIA_SIZES.FULL;
-				;
+				var size = this.size_field.get_value() || MEDIA_SIZES.FULL;
 				this.model.each(function (model) {
 					model.set({selected_size: size}, {silent: true});
 				});
@@ -1887,6 +1888,7 @@
 					selected_size = item.get("selected_size") || MEDIA_SIZES.FULL,
 					all_sizes = item.get("additional_sizes")
 				;
+Upfront.Util.log("size: " + selected_size)
 				if (selected_size && "full" != selected_size) {
 					_(all_sizes).each(function (size) {
 						if (MEDIA_SIZES.to_size(size) != selected_size) return true;
