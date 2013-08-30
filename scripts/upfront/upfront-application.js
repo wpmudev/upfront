@@ -283,6 +283,24 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("entity:settings:deactivate", this.destroy_settings, this);
 		
 		//Upfront.Events.on("upfront:posts:post:post_updated", this.layout_view.render, this.layout_view);
+
+		// Showing the "busy" overlay on saving.
+		var loading = false,
+			start = function () {
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Saving...",
+					done: "All done!",
+				});
+				loading.render();
+				$('body').append(loading.$el);
+			},
+			stop = function () {
+				loading.done();
+			}
+		;
+		Upfront.Events.on("command:layout:save", start, this);
+		Upfront.Events.on("command:layout:save_success", stop, this);
+		Upfront.Events.on("command:layout:save_error", stop, this);
 	},
 
 	create_properties: function (view, model) {
