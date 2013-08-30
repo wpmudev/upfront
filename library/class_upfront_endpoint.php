@@ -194,6 +194,7 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 	}
 
 	public function start_editor () {
+		echo upfront_boot_editor_trigger();
 		echo <<<EOSEJS
 <script>
 (function ($) {
@@ -212,7 +213,6 @@ function loaded_layout_ready () {
 }
 
 $(document).on("upfront-load", function () {
-	Upfront.Application.LayoutEditor.dispatch_layout_loading();
 	Upfront.Events.on("upfront:layout:loaded", loaded_layout_ready);
 	Upfront.Events.on("elements:this_post:loaded", function (post) {
 		var el = $("#" + post.model.get_property_value_by_name("element_id")).closest(".upfront-region-shadow");

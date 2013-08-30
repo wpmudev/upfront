@@ -54,3 +54,10 @@ function upfront_get_page_template_slug ($layout) {
 }
 
 
+function upfront_boot_editor_trigger () {
+	if (defined("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED")) return false;
+	define("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED", true, true);
+	return '<script>' .
+		'(function ($) { $(document).on("upfront-load", function () { Upfront.Application.LayoutEditor.dispatch_layout_loading(); }); })(jQuery);' .
+	'</script>';
+}
