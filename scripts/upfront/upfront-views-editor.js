@@ -2713,7 +2713,6 @@ define(_template_files, function () {
 			showSelectionPalette: true
 		},
 		initialize: function(){
-			debugger;
 			var me = this,
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
 			;
