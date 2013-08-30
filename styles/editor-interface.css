@@ -2190,16 +2190,16 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	margin: 0 6px 0 0;
 }
 .upfront-icon-undo:before {
-	background-position: -197px -40px;
+	background-position: -197px -42px;
 }
 .upfront-icon-undo:hover:before {
-	background-position: -197px -74px;
+	background-position: -197px -76px;
 }
 .upfront-icon-redo:before {
-	background-position: -196px -108px;
+	background-position: -196px -110px;
 }
 .upfront-icon-redo:hover:before {
-	background-position: -196px -142px;
+	background-position: -196px -144px;
 }
 .upfront-icon-button:before {
 	width: 20px;
