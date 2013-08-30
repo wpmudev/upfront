@@ -1431,7 +1431,10 @@ var GridEditor = {
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			index = modules.indexOf(module),
-			next_module = modules.at(index+1),
+			next_module = modules.at(index+1)
+		;
+		if (!next_module) return false;
+		var
 			next_wrapper = wrappers.get_by_wrapper_id(next_module.get_wrapper_id()),
 			module_class = module.get_property_value_by_name('class'),
 			wrapper_class = wrapper.get_property_value_by_name('class'),
