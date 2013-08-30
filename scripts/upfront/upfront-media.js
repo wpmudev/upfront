@@ -1485,7 +1485,7 @@
 			this.$el.append(this.loading.$el);
 		},
 		end_loading: function (callback) {
-			if ( this.loading )
+			if ( this.loading && this.loading.done )
 				this.loading.done(callback);
 			else
 				callback();
@@ -1888,7 +1888,6 @@
 					selected_size = item.get("selected_size") || MEDIA_SIZES.FULL,
 					all_sizes = item.get("additional_sizes")
 				;
-Upfront.Util.log("size: " + selected_size)
 				if (selected_size && "full" != selected_size) {
 					_(all_sizes).each(function (size) {
 						if (MEDIA_SIZES.to_size(size) != selected_size) return true;
