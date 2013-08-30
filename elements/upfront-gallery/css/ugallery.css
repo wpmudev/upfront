@@ -245,3 +245,7 @@ a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {
 .ugallery-thumbnail-fields .upfront-settings-item-content {
 
 }
+
+.upfront-output-module .ugallery_publish {
+	padding: 15px;
+}
