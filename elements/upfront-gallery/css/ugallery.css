@@ -15,11 +15,6 @@
 	color: #28DC96;
 }
 
-.ugallery .upfront-image-and {
-	background: url('../img/ampersand.png') no-repeat center center;
-	width:50px;
-}
-
 #upfront-image-overlay.ugallery-overlay h2 {
 	margin-bottom:20px;
 }
@@ -242,10 +237,17 @@ a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {
 	opacity: .2;
 }
 
-.ugallery-thumbnail-fields .upfront-settings-item-content {
-
+.ugallery-thumbnail-fields .upfront-settings-item-content:after {
+  content: "";  
+  display: table;  
+  clear: both; 
 }
 
 .upfront-output-module .ugallery_publish {
 	padding: 15px;
+}
+
+.ugallery_item img.ugallery-image {
+	max-width: none;
+	max-height: none;
 }

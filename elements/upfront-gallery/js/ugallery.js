@@ -25,6 +25,7 @@ var UgalleryImage = Backbone.Model.extend({
 	defaults: {
 		id: 0,
 		src: 'http://imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
+		srcFull: 'http://imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
 		sizes: {},
 		size: {width: 0, height: 0},
 		position: {top: 0, left: 0},
@@ -410,15 +411,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	addImages: function(imageData){
-		var images = imageData.images,
+		var me = this,
+			images = imageData.images,
 			newImages = []
 		;
 		_.each(images, function(image, id){
+			var size = image.medium ? image.medium : image.thumbnail ? image.thumbnail : image.full;
 			newImages.push({
 				id: id,
 				sizes: image,
-				size: {width: image.thumbnail[1], height: image.thumbnail[2]},
-				src: image.thumbnail[0]
+				size: {width: size[1], height: size[2]},
+				src: size[0],
+				srcFull: image.full[0],
+				position: me.centeredPosition({width: size[1], height: size[2]})
 			})
 		});
 
@@ -427,6 +432,18 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		if(imageData.given != imageData.returned)
 			Upfront.Views.Editor.notify("Not all images could be added.", "warning");	
 		this.render();
+	},
+
+	centeredPosition: function(imgSize){
+		var wrapperSize = {
+			width: this.property('thumbWidth'),
+			height: this.property('thumbHeight')
+		}
+
+		return {
+			top: ((wrapperSize.height - imgSize.height) / 2) / wrapperSize.height * 100,
+			left: ((wrapperSize.width - imgSize.width) / 2) / wrapperSize.width * 100
+		}
 	},
 
 	imageEditDetails: function(e) {
@@ -445,11 +462,24 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	imageEditMask: function(e) {
-		var me = this;
+		var me = this,
+			item = $(e.target).closest('.ugallery_item'),
+			image = this.images.get(item.attr('rel')),
+			editorOpts = {
+				id: image.get('id'),
+				rotation: image.get('rotation')
+			}
+		;
 		e.preventDefault();
-		Upfront.Views.Editor.ImageEditor.open($(e.target).closest('.ugallery_item').find('.ugallery-image-wrapper'), {})
+		Upfront.Views.Editor.ImageEditor.open(item.find('.ugallery-image-wrapper'), editorOpts)
 			.done(function(result){
-				Upfront.Views.Editor.notify('Image edition not available yet for galleries.', 'error');
+				image.set({
+					src: result.src,
+					srcFull: result.src,
+					size: result.imageSize,
+					position: result.imageOffset,
+					rotation: result.rotation
+				})
 			})
 			.fail(function(result){
 				me.render();
@@ -668,7 +698,7 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			$(me.$('.ugallery-thumbnail-fields')
 				.find('.upfront-field-wrap-number')
 				.get(0))
-				.after('<div class="ugallery-proportional' + locked + '"></div>')
+				.after('<div class="ugallery-proportional ' + locked + '"></div>')
 			;
 
 			me.setEvents([
@@ -721,8 +751,23 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		}
 	},
 
-	onThumbChangeProportions: function() {
-		console.log('Gallery thumbs proportions not implemented yet');
+	onThumbChangeProportions: function(e) {
+		var dimensions = this.$('input[type=number]'),
+			factor = $(e.target).val(),
+			locked = this.property('lockThumbProportions')
+		;
+
+		if(factor == 'theme')
+			factor = 1;
+
+		factor = parseFloat(factor);
+
+		if(!locked)
+			this.lockProportions(e);
+
+		this.property('lockThumbProportions', factor, true);
+
+		$(dimensions.get(0)).val(Math.round($(dimensions.get(1)).val() * factor));
 	},
 	
 	/*
@@ -844,17 +889,17 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 					},
 					{
 						label: '1:1',
-						value: '1_1',
+						value: '1',
 						icon: 'gallery-crop-1_1'
 					},
 					{
 						label: '2:3',
-						value: '2_3',
+						value: '0.66',
 						icon: 'gallery-crop-2_3'
 					},
 					{
 						label: '4:3',
-						value: '4_3',
+						value: '1.33',
 						icon: 'gallery-crop-4_3'
 					}
 				]
