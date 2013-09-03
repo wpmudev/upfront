@@ -1,17 +1,32 @@
 (function ($) {
 
+var DEFAULTS = {
+	OPTIMUM_MAP_HEIGHT: 300,
+	center: [10.722250, 106.730762],
+	zoom: 10,
+	style: 'HYBRID',
+	controls: {
+		pan: false,
+		zoom: false,
+		map_type: false,
+		scale: false,
+		street_view: false,
+		overview_map: false
+	}
+};
+
 function init_map ($el) {
 	var raw = JSON.parse($el.attr('data-map')),
 		props = {
-			center: raw.map_center || [10.722250, 106.730762],
-			zoom: parseInt(raw.use_zoom, 10) ? parseInt(raw.zoom, 10) : 10,
-			type: parseInt(raw.use_style, 10) ? raw.style : 'HYBRID',
-			panControl: parseInt(raw.use_controls, 10) ? raw.controls.indexOf("pan") >= 0 : false,
-			zoomControl: parseInt(raw.use_controls, 10) ? raw.controls.indexOf("zoom") >= 0 : false,
-			mapTypeControl: parseInt(raw.use_controls, 10) ? raw.controls.indexOf("map_type") >= 0 : false,
-			scaleControl: parseInt(raw.use_controls, 10) ? raw.controls.indexOf("scale") >= 0 : false,
-			streetViewControl: parseInt(raw.use_controls, 10) ? raw.controls.indexOf("street_view") >= 0 : false,
-			overviewMapControl: parseInt(raw.use_controls, 10) ? raw.controls.indexOf("overview_map") >= 0 : false,
+			center: raw.map_center || DEFAULTS.center,
+			zoom: parseInt(raw.zoom, 10) || DEFAULTS.zoom,
+			type: raw.style || DEFAULTS.style,
+			panControl: raw.controls.indexOf("pan") >= 0 || DEFAULTS.controls.pan,
+			zoomControl: raw.controls.indexOf("zoom") >= 0 || DEFAULTS.controls.zoom,
+			mapTypeControl: raw.controls.indexOf("map_type") >= 0 || DEFAULTS.controls.map_type,
+			scaleControl: raw.controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
+			streetViewControl: raw.controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
+			overviewMapControl: raw.controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
 		},
 		markers = raw.markers || [],
 		height = $el.closest(".upfront-output-module").height(),

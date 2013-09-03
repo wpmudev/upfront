@@ -5,7 +5,7 @@ class Upfront_MapView extends Upfront_Object{
 		$_id = $this->_get_property('element_id');
 		$element_id = $_id ? "id='{$_id}'" : '';
 		$raw_properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
-		$to_map = array('markers', 'map_center', 'use_zoom', 'zoom', 'use_style', 'style', 'use_controls', 'controls');
+		$to_map = array('markers', 'map_center', 'zoom', 'style', 'controls');
 		
 		$properties = array();
 		foreach ($raw_properties as $prop) {

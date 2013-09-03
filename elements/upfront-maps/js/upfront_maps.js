@@ -8,6 +8,22 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 
 	$("head").append("<style>" + maps_style + "</style>");
 
+
+	var DEFAULTS = {
+		OPTIMUM_MAP_HEIGHT: 300,
+		center: [10.722250, 106.730762],
+		zoom: 10,
+		style: 'HYBRID',
+		controls: {
+			pan: false,
+			zoom: false,
+			map_type: false,
+			scale: false,
+			street_view: false,
+			overview_map: false
+		}
+	};
+
 	var MapModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
 			this.init_property("type", "MapModel");
@@ -19,59 +35,10 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 		}
 	});
 
-	var Map_SettingsItem_ComplexItem = Upfront.Views.Editor.Settings.Item.extend({
-		save_fields: function () {
-			var model = this.model;
-			this.fields.each(function (field) {
-				var data = field.get_value();
-				_(data).each(function (val, idx) {
-					model.set_property(idx, val);
-				});
-			});
-		}
-	});
-
 	var Maps_Fields_Simple_Checkbox = Upfront.Views.Editor.Field.Checkboxes.extend({
 		multiple: false
 	});
 
-
-	var Map_Fields_Complex_BooleanDropdown = Backbone.View.extend({
-		className: "upfront_map-fields-complex_boolean",
-		initialize: function () {
-			var model = this.options.model,
-				boolean_values = this.options.boolean_field.values || []
-			;
-			if (!boolean_values.length) {
-				boolean_values.push({label: "", value: "1"});
-			}
-
-			this.options.field = new Maps_Fields_Simple_Checkbox(_.extend(
-				this.options.boolean_field, {
-					model: model,
-					values: boolean_values
-			}));
-			this.options.subfield = new Upfront.Views.Editor.Field.Select(_.extend(
-				this.options.dropdown_field, {
-					model: model
-			}));
-		},
-		render: function () {
-			this.$el.empty();
-
-			this.options.subfield.render();
-			this.options.field.render();
-
-			this.$el.append(this.options.field.$el)
-			this.$el.append(this.options.subfield.$el)
-		},
-		get_value: function () {
-			var data = {};
-			data[this.options.field.get_name()] = this.options.field.get_value();
-			data[this.options.subfield.get_name()] = this.options.subfield.get_value();
-			return data;
-		}
-	});
 
 	var Map_Fields_Simple_Refresh = Upfront.Views.Editor.Field.Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-refresh',
@@ -126,7 +93,6 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 		get_value: function () { return this.options.field.get_value(); },
 		get_saved_value: function () { return this.options.field.get_saved_value(); },
 		geocode: function () {
-Upfront.Util.log("calling geocode");
 			var location = this.options.field.get_value(),
 				element_id = this.model.get_property_value_by_name("element_id"),
 				old_location = $(document).data(element_id + "-location"),
@@ -137,7 +103,6 @@ Upfront.Util.log("calling geocode");
 			if (this._geocoding_in_progress) return false;
 			this._geocoding_in_progress = true;
 			geocoder.geocode({address: location}, function (results, status) {
-Upfront.Util.log("ACTUALLY GEOCODING");
 				if (status != google.maps.GeocoderStatus.OK) return false;
 				var pos = results[0].geometry.location;
 
@@ -154,7 +119,6 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 	});
 
 	var MapView = Upfront.Views.ObjectView.extend({
-		OPTIMUM_MAP_HEIGHT: 300,
 		map: false,
 
 		on_render: function () {
@@ -164,18 +128,18 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 				height = this.parent_module_view.model.get_property_value_by_name("row"),
 				controls = this.model.get_property_value_by_name("controls") || [],
 				props =	 {
-					center: this.model.get_property_value_by_name("map_center") || [10.722250, 106.730762],
-					zoom: parseInt(this.model.get_property_value_by_name("use_zoom"), 10) ? parseInt(this.model.get_property_value_by_name("zoom"), 10) : 10,
-					type: parseInt(this.model.get_property_value_by_name("use_style"), 10) ? this.model.get_property_value_by_name("style") : 'HYBRID',
-					panControl: parseInt(this.model.get_property_value_by_name("use_controls"), 10) ? controls.indexOf("pan") >= 0 : false,
-					zoomControl: parseInt(this.model.get_property_value_by_name("use_controls"), 10) ? controls.indexOf("zoom") >= 0 : false,
-					mapTypeControl: parseInt(this.model.get_property_value_by_name("use_controls"), 10) ? controls.indexOf("map_type") >= 0 : false,
-					scaleControl: parseInt(this.model.get_property_value_by_name("use_controls"), 10) ? controls.indexOf("scale") >= 0 : false,
-					streetViewControl: parseInt(this.model.get_property_value_by_name("use_controls"), 10) ? controls.indexOf("street_view") >= 0 : false,
-					overviewMapControl: parseInt(this.model.get_property_value_by_name("use_controls"), 10) ? controls.indexOf("overview_map") >= 0 : false,
+					center: this.model.get_property_value_by_name("map_center") || DEFAULTS.center,
+					zoom: parseInt(this.model.get_property_value_by_name("zoom"), 10) || DEFAULTS.zoom,
+					type: this.model.get_property_value_by_name("style") || DEFAULTS.style,
+					panControl: controls.indexOf("pan") >= 0 || DEFAULTS.controls.pan,
+					zoomControl: controls.indexOf("zoom") >= 0 || DEFAULTS.controls.zoom,
+					mapTypeControl: controls.indexOf("map_type") >= 0 || DEFAULTS.controls.map_type,
+					scaleControl: controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
+					streetViewControl: controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
+					overviewMapControl: controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
 				}
 			;
-			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : height = this.OPTIMUM_MAP_HEIGHT;
+			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : height = DEFAULTS.OPTIMUM_MAP_HEIGHT;
 			$el.css({
 				'width': '100%',
 				'height': height + 'px'
@@ -214,22 +178,6 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 
 		update_properties: function () {
 			this.model.trigger("options:location:geocode");
-			/*
-			var location = this.model.get_property_value_by_name("location"),
-				element_id = this.model.get_property_value_by_name("element_id"),
-				old_location = $(document).data(element_id + "-location"),
-				geocoder = new google.maps.Geocoder(),
-				me = this
-			;
-			if (!location || location == old_location) return false;
-			geocoder.geocode({address: location}, function (results, status) {
-				if (status != google.maps.GeocoderStatus.OK) return false;
-				var pos = results[0].geometry.location;
-				me.model.set_property("map_center", [pos.lat(), pos.lng()]);
-				me.map.setCenter(pos);
-				$(document).data(element_id + "-location", location);
-			});
-			*/
 		},
 
 		center_map: function (lat, lng) {
@@ -582,25 +530,20 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 				}
 			});
 
-			var MapSettings_Field_Zoom = Map_SettingsItem_ComplexItem.extend({
+			var MapSettings_Field_Zoom = Upfront.Views.Editor.Settings.Item.extend({
 				initialize: function () {
 					var zooms = [],
 						saved = this.model.get_property_value_by_name("zoom")
 					;
-					if (!saved) this.model.set_property("zoom", 10, true);
+					if (!saved) this.model.set_property("zoom", DEFAULTS.zoom, true);
 					_(_.range(1,19)).each(function (idx) {
 						zooms.push({label: idx, value: idx});
 					});
 					this.fields = _([
-						new Map_Fields_Complex_BooleanDropdown({
+						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-							boolean_field: {
-								property: 'use_zoom',
-							},
-							dropdown_field: {
-								property: 'zoom',
-								values: zooms
-							}
+							property: 'zoom',
+							values: zooms
 						})
 					]);
 				},
@@ -609,24 +552,22 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 				}
 			});
 
-			var MapSettings_Field_Style = Map_SettingsItem_ComplexItem.extend({
+			var MapSettings_Field_Style = Upfront.Views.Editor.Settings.Item.extend({
 				initialize: function () {
-					var styles = [
-						{label: "Roadmap", value: "ROADMAP"},
-						{label: "Satellite", value: "SATELLITE"},
-						{label: "Hybrid", value: "HYBRID"},
-						{label: "Terrain", value: "TERRAIN"},
-					];
+					var saved = this.model.get_property_value_by_name("style")
+						styles = [
+							{label: "Roadmap", value: "ROADMAP"},
+							{label: "Satellite", value: "SATELLITE"},
+							{label: "Hybrid", value: "HYBRID"},
+							{label: "Terrain", value: "TERRAIN"},
+						]
+					;
+					if (!saved) this.model.set_property("style", DEFAULTS.style, true);
 					this.fields = _([
-						new Map_Fields_Complex_BooleanDropdown({
+						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-							boolean_field: {
-								property: 'use_style',
-							},
-							dropdown_field: {
-								property: 'style',
-								values: styles
-							}
+							property: 'style',
+							values: styles
 						})
 					]);
 				},
@@ -635,7 +576,7 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 				}
 			});
 
-			var MapSettings_Field_Controls = Map_SettingsItem_ComplexItem.extend({
+			var MapSettings_Field_Controls = Upfront.Views.Editor.Settings.Item.extend({
 				initialize: function () {
 					var controls = [
 						{label: "Pan", value: "pan"},
@@ -646,16 +587,11 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 						{label: "Overview Map", value: "overview_map"},
 					];
 					this.fields = _([
-						new Map_Fields_Complex_BooleanDropdown({
+						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-							boolean_field: {
-								property: 'use_controls',
-							},
-							dropdown_field: {
-								property: 'controls',
-								multiple: true,
-								values: controls
-							}
+							property: 'controls',
+							multiple: true,
+							values: controls
 						})
 					]);
 				},
