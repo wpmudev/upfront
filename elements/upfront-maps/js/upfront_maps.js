@@ -105,6 +105,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			this.property = this.options.field.property;
 
 			this.options.locate.on("refresh", this.geocode, this);
+			this.model.on("options:location:geocode", this.geocode, this);
 		},
 		wait_for_enter: function (e) {
 			if (13 == e.which) {
@@ -125,6 +126,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 		get_value: function () { return this.options.field.get_value(); },
 		get_saved_value: function () { return this.options.field.get_saved_value(); },
 		geocode: function () {
+Upfront.Util.log("calling geocode");
 			var location = this.options.field.get_value(),
 				element_id = this.model.get_property_value_by_name("element_id"),
 				old_location = $(document).data(element_id + "-location"),
@@ -133,6 +135,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			;
 			if (!location || location == old_location) return false;
 			geocoder.geocode({address: location}, function (results, status) {
+Upfront.Util.log("ACTUALLY GEOCODING");
 				if (status != google.maps.GeocoderStatus.OK) return false;
 				var pos = results[0].geometry.location;
 
@@ -207,6 +210,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 		},
 
 		update_properties: function () {
+			this.model.trigger("options:location:geocode");
 			/*
 			var location = this.model.get_property_value_by_name("location"),
 				element_id = this.model.get_property_value_by_name("element_id"),
