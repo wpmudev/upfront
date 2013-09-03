@@ -4,11 +4,6 @@ if (!window.google) require(['async!https://maps.google.com/maps/api/js?v=3&libr
 else init();
 
 function init () {
-require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'css/edit.css'], function (_ctx, maps_style) {
-
-	$("head").append("<style>" + maps_style + "</style>");
-
-
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
 		center: [10.722250, 106.730762],
@@ -23,6 +18,21 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			overview_map: false
 		}
 	};
+
+	if (navigator && navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(function(position) {
+			DEFAULTS.center = [
+				position.coords.latitude,
+				position.coords.longitude
+			];
+		});
+	}
+
+require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'css/edit.css'], function (_ctx, maps_style) {
+
+	$("head").append("<style>" + maps_style + "</style>");
+
+
 
 	var MapModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
