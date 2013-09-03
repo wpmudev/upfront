@@ -146,6 +146,9 @@ define(_template_files, function () {
 				var contentEditable = this.$el.find('[contenteditable]');
 				if(contentEditable.length > 0){
 					contentEditable[0].focus();
+				} else {
+					// Trigger settings popup
+					Upfront.Events.trigger("entity:settings:activate", this);
 				}
 				return false;
 			}
