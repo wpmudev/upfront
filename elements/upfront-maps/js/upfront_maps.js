@@ -134,6 +134,8 @@ Upfront.Util.log("calling geocode");
 				me = this
 			;
 			if (!location || location == old_location) return false;
+			if (this._geocoding_in_progress) return false;
+			this._geocoding_in_progress = true;
 			geocoder.geocode({address: location}, function (results, status) {
 Upfront.Util.log("ACTUALLY GEOCODING");
 				if (status != google.maps.GeocoderStatus.OK) return false;
@@ -146,6 +148,7 @@ Upfront.Util.log("ACTUALLY GEOCODING");
 				me.model.set_property("map_center", [pos.lat(), pos.lng()], false);
 
 				$(document).data(element_id + "-location", location);
+				me._geocoding_in_progress = false;
 			});
 		}
 	});
