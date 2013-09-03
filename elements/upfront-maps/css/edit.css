@@ -2,12 +2,6 @@
   max-width: none !important;
   max-height: none !important;
 }
-.upfront_map-fields-complex_boolean .upfront-field-wrap-checkboxes {
-	float: left;
-}
-#settings .upfront_map-fields-complex_boolean .upfront-field-select {
-	width: 70%;
-}
 .upfront_map-fields-simple_location .upfront-field-wrap-text {
 	float: left;
 	width: 80%;
