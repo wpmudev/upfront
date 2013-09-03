@@ -18,28 +18,28 @@
 	<?php } ?>		
 
 	<style>
-		.upfront-image-container .wp-caption {
+		#<?php echo $element_id ?> .wp-caption {
 			padding:10px;
 			-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;		
 		}
-		.uimage-over_image {
+		#<?php echo $element_id ?> .uimage-over_image {
 			position:relative;
 		}
-		.uimage-over_image .wp-caption{
+		#<?php echo $element_id ?> .uimage-over_image .wp-caption{
 			position:absolute;
 			width: 100%;
 			top:0;
 			left:0;
 		}
-		.uimage-over_image .uimage-fill{
+		#<?php echo $element_id ?> .uimage-over_image .uimage-fill{
 			height:100%;
 		}
-		.uimage-over_image div.uimage-bottom{
+		#<?php echo $element_id ?> .uimage-over_image div.uimage-bottom{
 			top:auto;
 			bottom:0;
 		}
 
-		.uimage-over_image .uimage-hover_show {
+		#<?php echo $element_id ?> .uimage-over_image .uimage-hover_show {
 			opacity:0; /*
 			-moz-transition:opacity .2s;
 		    -webkit-transition:opacity .2s;
@@ -48,17 +48,17 @@
 		    */
 		}
 
-		.uimage-over_image:hover .uimage-hover_show {
+		#<?php echo $element_id ?> .uimage-over_image:hover .uimage-hover_show {
 			opacity:1;
 		}
 
-		.upfront-output-object .uimage-wrapper img {
+		#<?php echo $element_id ?> .uimage-wrapper img {
 			max-width: none;
 			max-height: none;
 		}
 
 		@media only screen and (max-width: 992px){
-			.upfront-image-container:before{
+			#<?php echo $element_id ?>:before{
 				content: 'WPMU is the largest premium WordPress site on the web. More developers, more support staff and more WordPress love than anywhere else';
 				display: block;
 				height:1px;

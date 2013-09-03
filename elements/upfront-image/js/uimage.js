@@ -129,7 +129,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		me.elementSize = {
 			width: resizer.width() - 32,
-			height: resizer.height()
+			height: resizer.height() - 30 
 		};
 
 		if(this.property('caption_position') == 'below_image')
@@ -864,9 +864,9 @@ var ImageEditor = Backbone.View.extend({
 		this.fullSize = {width: 0, height:0};
 		this.setImageInitialSize = false;
 		this.buttons = [
-			{id: 'image-edit-button-fit', text: 'Fit to Element'},
+			{id: 'image-edit-button-ok', text: 'Done'},
 			{id: 'image-edit-button-reset', text: 'Reset Image'},
-			{id: 'image-edit-button-ok', text: 'Done'}
+			{id: 'image-edit-button-fit', text: 'Fit to Element'}
 		];
 		this.sizes = false;
 		this.promise = false;
@@ -932,6 +932,9 @@ var ImageEditor = Backbone.View.extend({
 
 		this.setImageSize(canvasSize);
 
+		if(this.setImageInitialSize)
+			this.centerImage();
+
 		return this.response.promise();		
 	},
 
@@ -993,7 +996,7 @@ var ImageEditor = Backbone.View.extend({
 
 		if(options.extraButtons && options.extraButtons.length){
 			_.each(options.extraButtons, function(button){
-				me.buttons.unshift({id: button.id, text: button.text});
+				me.buttons.push({id: button.id, text: button.text});
 				me.$el.on('click', '#' + button.id, function(e){
 					button.callback(e, me);
 				});
@@ -1380,8 +1383,6 @@ var ImageEditor = Backbone.View.extend({
 				height: size.height + this.bordersWidth,
 				width: size.width + this.bordersWidth
 			}
-
-			this.centerImage();
 		}
 
 		canvas.css(size);
@@ -1391,6 +1392,8 @@ var ImageEditor = Backbone.View.extend({
 			height: '100%',
 			width: '100%'
 		});
+
+		this.centerImage();
 
 		this.selectMode(size, true);
 

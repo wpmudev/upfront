@@ -42,7 +42,7 @@
 		<div class="image-edit-rotate image-edit-control"><i class="icon-repeat"></i></div>
 	</div>
 
-	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 40}}px; left: {{maskOffset.left}}px;">
+	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 40}}px; left: {{maskOffset.left + maskSize.width - 230}}px;">
 		{[ for (var i = 0; i < buttons.length; i++) { ]}
 		<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].text}}"></a>
 		{[ } ]}

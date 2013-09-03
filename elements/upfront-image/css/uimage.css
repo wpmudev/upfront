@@ -370,6 +370,7 @@ a.open-media-gallery:hover i {
 
 #image-edit-buttons {
 	z-index: 11;
+	width: 230px;
 }
 
 .image-edit-button {
@@ -378,8 +379,8 @@ a.open-media-gallery:hover i {
 	width: 36px;
 	border-radius: 18px;
 	background: rgba(255, 255, 255, .8);
-	float:left;
-	margin-right: 10px;
+	float:right;
+	margin-left: 10px;
 	cursor: pointer;
 }
 
