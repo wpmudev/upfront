@@ -550,6 +550,8 @@
                 Upfront.Events.on("navigation:get:this:menu:items", this.getThisMenuItemsData, this );
             },
             getThisMenuItemsData: function(){
+                if(!currentMenuItemData.get('menu_id'))
+                    return true;
                 Upfront.data.navigation.get_this_menu_items = Upfront.Util.post({"action": "upfront_load_menu_items", "data": currentMenuItemData.get('menu_id')})
                     .success(function (res) {
                         // trigger Get All Items
