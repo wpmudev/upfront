@@ -216,8 +216,8 @@
 .nav_tooltip {
     background: rgba(38,58,77,0.9);
     border: 1px solid #395269;
-    width: 75px;
-    height: 33px;
+    width: 82px;
+    height: 38px;
     -webkit-border-radius: 1px;
     border-radius: 1px;
     position: absolute;
@@ -248,30 +248,22 @@
     left: 50%;
     margin-left: -8px;
 }
-
+.upfront-field-icon.upfront-field-icon-navigation-open,
+.upfront-field-icon.upfront-field-icon-navigation-link {
+    margin-right: 0px;
+}
 .nav_tooltip .edit_url, .nav_tooltip .visit_page
 {
-    margin: 3px 0 0 3px !important;
-    padding: 0 0 0 14px !important;
-    display: block;
-    width: 64px;
+    width: 78px;
     font-family: verdana;
     font-size: 10px !important;
     color: #1fcd8f !important;
-    line-height: 11px !important;
-    height: 11px !important;
+    line-height: 15px !important;
+    height: 15px !important;
     display: block !important;
     text-align: left !important;
     text-decoration: none;
     text-transform:none !important;
-}
-.nav_tooltip .edit_url
-{
-    background: url("../images/edit_link.png") left top no-repeat;
-}
-.nav_tooltip .visit_page
-{
-    background: url("../images/visit_icon.png") left top no-repeat;
 }
 .nav_tooltip a:hover
 {
