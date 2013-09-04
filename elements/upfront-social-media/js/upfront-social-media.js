@@ -345,10 +345,10 @@
                 var setData = this.model.get('properties').toJSON();
 
                 if(!_.isEqual(currentData, setData)){
-
+                    Upfront.Popup.close();
                     Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
                         .success(function (ret) {
-                            //Upfront.Views.Editor.notify('Global Social Settings Updated!')
+                            Upfront.Views.Editor.notify('Global Social Settings Updated!')
                         })
                         .error(function (ret) {
                             Upfront.Util.log("Error Saving settings");
@@ -935,6 +935,7 @@
                                             label: 'global settings',
                                             on_click: function(e){
                                                 e.preventDefault();
+                                                Upfront.Events.trigger("entity:settings:deactivate");
                                                 Upfront.data.social.panel.popupFunc();
                                             }
                                         })
