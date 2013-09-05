@@ -470,7 +470,8 @@ a.open-media-gallery:hover i {
 
 a.uimage_edit_toggle {
 	opacity: .9;
-	border: 1px solid #2582BD;
+	/*border: 1px solid #2582BD;*/
+	box-shadow: inset 0 0 0 1px #2582BD;
 	background: #288ACA -moz-linear-gradient(-45deg, #2C9BE3 0%, #2C9BE3 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
 	background: #288ACA -webkit-gradient(linear, left top, right bottom, color-stop(0%,#2C9BE3), color-stop(50%,#2C9BE3), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
 	background: #288ACA -webkit-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
@@ -484,7 +485,7 @@ a.uimage_edit_toggle:hover {
 }
 
 a.uimage_edit_toggle:before {
-	background-position: -259px -100px;
+	background-position: -260px -100px;
 }
 
 #uimage-canvas{
