@@ -1270,7 +1270,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 
 
 .upfront-active_entity > .upfront-editable_entity {
-	outline: 1px dotted #5c7c9b;
+	/* Commented out as we seem to be doubling up on those dotted lines */
+	/* outline: 1px dotted #5c7c9b; */
 }
 .upfront-editable_entity.ui-resizable-resizing {
 	overflow: hidden;
