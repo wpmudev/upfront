@@ -69,7 +69,10 @@ class Upfront_MenuSetting extends Upfront_Server {
 
     public function load_menu_list () {
         $menus = wp_get_nav_menus();
-        $this->_out(new Upfront_JsonResponse_Success($menus));
+        if ( $menus ){
+            $this->_out(new Upfront_JsonResponse_Success($menus));
+        }
+        $this->_out(new Upfront_JsonResponse_Error('Menu not found'));
     }
 
     public function load_menu_html () {
@@ -310,7 +313,8 @@ class Upfront_MenuSetting extends Upfront_Server {
     }
 
     public function update_auto_add_pages(){
-        $nav_menu_option = isset($_POST['nav_menu_option']) ? $_POST['nav_menu_option'] : false;
+        $nav_menu_option = isset($_POST['nav_menu_option']) ? stripslashes($_POST['nav_menu_option']) : false;
+        $nav_menu_option = json_decode($nav_menu_option, true);
         if ( $nav_menu_option ){
             // Remove nonexistent/deleted menus
             if( isset($nav_menu_option['auto_add']) )

@@ -31,16 +31,17 @@
                 Upfront.Views.ObjectView.prototype.initialize.call(this);
 
                 if(currentMenuItemData.get('model_true')){
+                    // get all menus
+                    this.getMenus();
                     var menu_id = this.model.get_property_value_by_name('menu_id');
                     currentMenuItemData.set({model_true:false, menu_id: menu_id});
                     //check auto add on initialize
                     this.auto_add_pages();
                     //set data on initialize
-                    Upfront.data.navigation.get_this_menu_items = Upfront.Util.post({"action": "upfront_load_menu_items", "data": currentMenuItemData.get('menu_id')});
+                    if(menu_id)
+                        Upfront.data.navigation.get_this_menu_items = Upfront.Util.post({"action": "upfront_load_menu_items", "data": currentMenuItemData.get('menu_id')});
                     Upfront.data.navigation.get_all_pages = Upfront.Util.post({"action": 'upfront_load_all_pages'});
                     Upfront.data.navigation.get_all_categories = Upfront.Util.post({"action": 'upfront_load_all_categories'});
-                    // get all menus
-                    this.getMenus();
                     // re render navigation when this event trigger
                     Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
                     // call this function on Menu id change
@@ -64,24 +65,36 @@
                     allow_new_pages = this.property('allow_new_pages'),
                     nav_menu_option = Upfront.data.navigation.auto_add['auto_add'],
                     key;
+
+                if(!menu_id)
+                  return false;
+
+                menu_id = parseInt(this.model.get_property_value_by_name('menu_id'), 10);
+
                 if ( !nav_menu_option )
                     nav_menu_option = [];
                 if ( allow_new_pages[0] == ['yes'] ) {
-                    if ( nav_menu_option.indexOf(parseInt(menu_id, 10)) == -1 )
-                        nav_menu_option.push(parseInt(menu_id, 10));
+                    if ( nav_menu_option.indexOf(menu_id) == -1 )
+                        nav_menu_option.push(menu_id);
                 } else {
-                    if ( -1 !== ( key = nav_menu_option.indexOf( parseInt(menu_id, 10) ) ) )
+                    if ( -1 !== ( key = nav_menu_option.indexOf(menu_id) ) )
                         nav_menu_option.splice(key, 1);
                 }
-                Upfront.data.navigation.auto_add['auto_add'] = nav_menu_option;
-                Upfront.Util.post({"action": "upfront_update_auto_add_pages", "nav_menu_option": Upfront.data.navigation.auto_add})
+
+                if(!Upfront.data.navigation.auto_add){
+                    Upfront.data.navigation.auto_add = {0:false, auto_add:[]};
+                }else{
+                    Upfront.data.navigation.auto_add['auto_add'] = nav_menu_option;
+                }
+
+                Upfront.Util.post({"action": "upfront_update_auto_add_pages", "nav_menu_option": JSON.stringify(Upfront.data.navigation.auto_add)})
                     .error(function(res){
                         Upfront.Util.log("Cannot update auto add pages!");
                     });
             },
             auto_add_pages: function(){
                 var menu_id =
-                    this.model.get_property_value_by_name('menu_id');
+                    parseInt(this.model.get_property_value_by_name('menu_id'),10);
                 // checking auto add option for current menu
                 if ( !Upfront.data.navigation.auto_add['auto_add']  )
                     this.model.set_property(
@@ -89,7 +102,7 @@
                         ['no'],
                         true
                     );
-                else if ( -1 !== Upfront.data.navigation.auto_add['auto_add'].indexOf(parseInt(menu_id,10)) )
+                else if ( -1 !== Upfront.data.navigation.auto_add['auto_add'].indexOf(menu_id) )
                     this.model.set_property(
                         'allow_new_pages',
                         ['yes'],
@@ -107,7 +120,12 @@
                 // Ajax call for Menu list
                 Upfront.Util.post({"action": "upfront_load_menu_list"})
                     .success(function (ret) {
-                        var values = _.map(ret.data, function (each) {
+                        var values = _.map(ret.data, function (each, index) {
+                            if(ret.data.length && index == 0){
+                                var menu_id = me.property('menu_id');
+                                if(!menu_id)
+                                    me.property('menu_id',each.term_id)
+                            }
                             return  {label: each.name, value: each.term_id};
                         });
                         currentMenuItemData.set({menuList: values});
@@ -649,6 +667,8 @@
             },
             getThisMenuItems: function () {
                 var me = this;
+                if(!currentMenuItemData.get('menu_id'))
+                    return true;
                 Upfront.data.navigation.get_this_menu_items.success(function(res){
                     me.$el.empty();
                     _.each(res.data, function(item){
@@ -1392,6 +1412,8 @@
             tagName: 'li',
             disable_already_existing_page: function(){
                 var me = this;
+                if(!currentMenuItemData.get('menu_id'))
+                    return true;
                 Upfront.data.navigation.get_this_menu_items.success(function(res){
                     me.model.set({disabled: false});
                     _.each(res.data, function(item){
