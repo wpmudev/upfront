@@ -11,8 +11,17 @@
             }
         });
 
-        var CurrentMenuItemData = Backbone.Model.extend();
-        var currentMenuItemData = new CurrentMenuItemData({model_true: true});
+        var CurrentMenuItemData = Backbone.Model.extend({
+            defaults: {
+                'id':  false,
+                'name':  false,
+                'url':  false,
+                'model_true':  true,
+                "menu_id":     false,
+                "menuList":    false
+            }
+        });
+        var currentMenuItemData = new CurrentMenuItemData();
 
         var NavigationView = Upfront.Views.ObjectView.extend({
             model:NavigationModel,
@@ -20,24 +29,78 @@
             initialize:function(){
                 // Call the parent's initialization function
                 Upfront.Views.ObjectView.prototype.initialize.call(this);
+
                 if(currentMenuItemData.get('model_true')){
-                var menu_id = this.model.get_property_value_by_name('menu_id');
+                    var menu_id = this.model.get_property_value_by_name('menu_id');
                     currentMenuItemData.set({model_true:false, menu_id: menu_id});
-                Upfront.data.navigation = {
-                    get_this_menu_items: Upfront.Util.post({"action": "upfront_load_menu_items", "data": currentMenuItemData.get('menu_id')}),
-                    get_all_pages: Upfront.Util.post({"action": 'upfront_load_all_pages'}),
-                    get_all_categories: Upfront.Util.post({"action": 'upfront_load_all_categories'})
+                    //check auto add on initialize
+                    this.auto_add_pages();
+                    //set data on initialize
+                    Upfront.data.navigation.get_this_menu_items = Upfront.Util.post({"action": "upfront_load_menu_items", "data": currentMenuItemData.get('menu_id')});
+                    Upfront.data.navigation.get_all_pages = Upfront.Util.post({"action": 'upfront_load_all_pages'});
+                    Upfront.data.navigation.get_all_categories = Upfront.Util.post({"action": 'upfront_load_all_categories'});
+                    // get all menus
+                    this.getMenus();
+                    // re render navigation when this event trigger
+                    Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
+                    // call this function on Menu id change
+                    this.model.get_property_by_name('menu_id').on('change', this.auto_add_pages, this);
+                    // call this function on allow_new_pages change
+                    this.model.get_property_by_name('allow_new_pages').on('change', this.update_auto_add_pages, this);
+
+                    this.model.get("properties").on('all', this.update_model, this);
+                    this.model.get("properties").on('all', this.getMenus, this);
                 };
-                }
-                this.getMenus();
-                Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
-                this.model.get("properties").on('all', this.update_model, this);
-                this.model.get("properties").on('all', this.getMenus, this);
             },
             update_model: function(){
                 var menu_id = this.model.get_property_value_by_name('menu_id');
+                // set menu id
                 currentMenuItemData.set({menu_id: menu_id});
+                // update all items according to new menu
                 Upfront.Events.trigger("navigation:get:this:menu:items");
+            },
+            update_auto_add_pages: function(){
+                var menu_id = this.model.get_property_value_by_name('menu_id'),
+                    allow_new_pages = this.property('allow_new_pages'),
+                    nav_menu_option = Upfront.data.navigation.auto_add['auto_add'],
+                    key;
+                if ( !nav_menu_option )
+                    nav_menu_option = [];
+                if ( allow_new_pages[0] == ['yes'] ) {
+                    if ( nav_menu_option.indexOf(parseInt(menu_id, 10)) == -1 )
+                        nav_menu_option.push(parseInt(menu_id, 10));
+                } else {
+                    if ( -1 !== ( key = nav_menu_option.indexOf( parseInt(menu_id, 10) ) ) )
+                        nav_menu_option.splice(key, 1);
+                }
+                Upfront.data.navigation.auto_add['auto_add'] = nav_menu_option;
+                Upfront.Util.post({"action": "upfront_update_auto_add_pages", "nav_menu_option": Upfront.data.navigation.auto_add})
+                    .error(function(res){
+                        Upfront.Util.log("Cannot update auto add pages!");
+                    });
+            },
+            auto_add_pages: function(){
+                var menu_id =
+                    this.model.get_property_value_by_name('menu_id');
+                // checking auto add option for current menu
+                if ( !Upfront.data.navigation.auto_add['auto_add']  )
+                    this.model.set_property(
+                        'allow_new_pages',
+                        ['no'],
+                        true
+                    );
+                else if ( -1 !== Upfront.data.navigation.auto_add['auto_add'].indexOf(parseInt(menu_id,10)) )
+                    this.model.set_property(
+                        'allow_new_pages',
+                        ['yes'],
+                        true
+                    );
+                else
+                    this.model.set_property(
+                        'allow_new_pages',
+                        ['no'],
+                        true
+                    );
             },
             getMenus: function(){
                 var me = this;
@@ -48,7 +111,6 @@
                             return  {label: each.name, value: each.term_id};
                         });
                         currentMenuItemData.set({menuList: values});
-                        console.log(values);
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading menu list");
@@ -56,8 +118,7 @@
             },
             events: function(){
                 return _.extend({},Upfront.Views.ObjectView.prototype.events,{
-                    "hover .upfront-object-content .menu-item > a": "onMenuItemHover",
-                    "blur .upfront-object-content .menu-item > a": "changeMenuItemTitle"
+                    "hover .upfront-object-content .menu-item > a": "onMenuItemHover"
                 });
             },
             property: function(name, value) {
@@ -79,6 +140,10 @@
                         }
                         me.$el.find('.upfront-object-content').html(ret.data);
                         me.toolTipAppend();
+                        // add attribute on anchor tag
+                        me.$el.find('.upfront-object-content a').attr('contenteditable',true);
+                        me.changeMenuItemTitle();
+
                     })
                     .error(function (ret) {
                         Upfront.Util.log("Error loading menu");
@@ -112,21 +177,29 @@
             renderTrigger: function(){
               this.render();
             },
-            changeMenuItemTitle: function(e){
-                var $Ele = $(e.target),
-                    $text = $Ele.html(),
-                    parentId = e.target.parentElement.id,
-                    listItemDBID = parentId.replace( /^\D+/g, '');
+            changeMenuItemTitle: function(){
+                var editable = this.$el.find('.upfront-object-content a[contentEditable]');
+                for (var i=0, len = editable.length; i<len; i++){
+                    editable[i].setAttribute('data-orig',editable[i].innerHTML);
 
-                if ( !listItemDBID )
-                    return "Error Item id is missing";
-                Upfront.Util.post({"action": "upfront_change_menu_label", "item_id": listItemDBID, "item_label": $text})
-                    .success(function (ret) {
-                        //console.log(ret.data)
-                    })
-                    .error(function (ret) {
-                        Upfront.Util.log("Error changing menu item label");
-                    });
+                    editable[i].onblur = function(){
+                        if (this.innerHTML !== this.getAttribute('data-orig')) {
+                            // change has happened, store new value
+                            this.setAttribute('data-orig',this.innerHTML);
+                            var id = this.offsetParent.id.replace( /^\D+/g, '');
+                            if ( !id )
+                                return "Error Item id is missing";
+                            Upfront.Util.post({"action": "upfront_change_menu_label", "item_id": id, "item_label": this.innerHTML})
+                                .success(function (ret) {
+                                    Upfront.Events.trigger("navigation:get:this:menu:items");
+                                    Upfront.Views.Editor.notify('Navigation item name updated!');
+                                })
+                                .error(function (ret) {
+                                    Upfront.Util.log("Error changing menu item label");
+                                });
+                        }
+                    };
+                }
             },
             onMenuItemHover: function(e) {
                 var $Ele = $(e.target),
@@ -136,8 +209,6 @@
                     listItemDBID = parentId.replace( /^\D+/g, ''),
                     $toolTip = $('.nav_tooltip');
 
-                // add attribute on anchor tag
-                $Ele.attr('contenteditable',true);
                 // set current item data
                 currentMenuItemData.set({ id: listItemDBID, name: $text, url: $url });
 
@@ -161,13 +232,13 @@
                 else {
                     // hover-out on menu item
                     $toolTip.hide();
-                    $Ele.removeAttr('contenteditable');
                 }
             },
             on_render: function () {
                 var menuStyle = this.property("menu_style"),
                     menuAliment = this.property("menu_alignment"),
-                    allowSubNav = this.property("allow_sub_nav");
+                    allowSubNav = this.property("allow_sub_nav"),
+                    $upfrontObjectContent;
 
                 $upfrontObjectContent = this.$el.find('.upfront-object-content');
                 $upfrontObjectContent.attr('data-aliment',(menuAliment ? menuAliment : 'left'));
@@ -590,7 +661,6 @@
                 });
             },
             deleteMenuItem: function(e){
-                console.log('deleteMenuItem');
                 var me = this;
                 Upfront.Util.post({"action": "upfront_delete_menu_item", "menu_item_id": e.target.id})
                     .success(function (ret) {
@@ -1128,7 +1198,6 @@
                                     new Upfront.Views.Editor.Field.Checkboxes({
                                         model: this.model,
                                         property: 'allow_new_pages',
-                                        default_value: ['yes'],
                                         label: "",
                                         values: [
                                             { label: "Add new Pages to this menu", value: 'yes' }

@@ -51,70 +51,7 @@
     color: #698baa;
     top: -1px;
 }
-.upfront_menu_selected_pages_box
-{
-    margin:19px 0 0 0;
-    padding:0;
-}
-.upfront_menu_selected_pages_box .link, .upfront_menu_selected_pages_box .label
-{
-    float:left;
-    width:100%;
-    font-size:14px;
-    color:#263a4d;
-    line-height:33px;
-    text-align: right;
-}
-.upfront_menu_selected_pages_box input[type="text"]
-{
-    width:199px;
-    height:33px;
-    background:#fcfeff;
-    font-size:14px;
-    color:#263a4d;
-    border:solid 1px #d9edff;
-    float:right;
-    padding:0 13px 0 13px;
-    margin:0 0 15px 5px;
-    outline:none;
-}
-.upfront_menu_selected_pages_box input::-webkit-input-placeholder
-{
-    color:#263a4d;
-}
-
-.upfront_menu_selected_pages_box button
-{
-    width:162px;
-    height:35px;
-    border:solid 2px #a5c3db;
-    background:transparent;
-    color:#6b92b2;
-    font-size:16px;
-    float:right;
-    -webkit-border-radius: 10px;
-    border-radius: 10px;
-}
-.upfront_menu_selected_pages_box button:hover
-{
-    border:solid 2px #8fb4d2;
-}
-.upfront_customlink_area
-{
-    float:left;
-    width:100%;
-    margin-bottom:11px;
-}
-#settings .upfront-settings_panel .upfront_menuorder ul ul
-{
-    float:left;
-    padding:0;
-    margin:0;
-}
 #settings .upfront-settings_panel .menu-item-bar {
-    clear: both;
-    line-height: 1.5em;
-    position: relative;
     margin: 13px 0 0 0;
 }
 #settings .upfront-settings_panel .menu-item-handle
@@ -132,18 +69,12 @@
     word-wrap: break-word;
 }
 #settings .upfront-settings_panel .menu-item-handle .item-title {
-    font-size: 14px;
-    line-height: 31px;
-    display: block;
-    margin-right: 5px;
-    color:#30475e;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 12px;
 }
 #settings .upfront-settings_panel .item-controls {
     font-size: 12px;
     position: absolute;
     right: 15px;
-    top: -1px;
     color: #94a3b1;
 }
 /* Sortables */
@@ -193,24 +124,6 @@
 #settings .upfront-settings_panel .menu-item-depth-9 .menu-item-transport { margin-left: -200px; }
 #settings .upfront-settings_panel .menu-item-depth-10 .menu-item-transport { margin-left: -220px; }
 #settings .upfront-settings_panel .menu-item-depth-11 .menu-item-transport { margin-left: -240px; }
-
-.upfront-save_settings
-{
-    background: #4cd285;
-    color: #ccffe2;
-    width: 74px;
-    height: 29px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    border: none;
-    -webkit-box-shadow: inset 0px 1px 0px 0px #45bf7a;
-    box-shadow: inset 0px 1px 0px 0px #45bf7a;
-}
-.upfront-save_settings i
-{
-    color: #379962;
-}
-
 
 
 .nav_tooltip {

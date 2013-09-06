@@ -63,6 +63,7 @@ class Upfront_MenuSetting extends Upfront_Server {
         add_action('wp_ajax_upfront_delete_menu', array($this, "delete_menu"));
         add_action('wp_ajax_upfront_change_menu_label', array($this, "change_menu_label"));
         add_action('wp_ajax_upfront_update_menu_item', array($this, "update_menu_item"));
+        add_action('wp_ajax_upfront_update_auto_add_pages', array($this, "update_auto_add_pages"));
 
     }
 
@@ -308,6 +309,26 @@ class Upfront_MenuSetting extends Upfront_Server {
 
     }
 
+    public function update_auto_add_pages(){
+        $nav_menu_option = isset($_POST['nav_menu_option']) ? $_POST['nav_menu_option'] : false;
+        if ( $nav_menu_option ){
+            // Remove nonexistent/deleted menus
+            if( isset($nav_menu_option['auto_add']) )
+                $nav_menu_option['auto_add'] = array_intersect( $nav_menu_option['auto_add'], wp_get_nav_menus( array( 'fields' => 'ids' ) ) );
+            $response = update_option( 'nav_menu_options', $nav_menu_option );
+            $this->_out(new Upfront_JsonResponse_Success($response));
+        }
+        $this->_out(new Upfront_JsonResponse_Error('Cannot update auto add pages!'));
+    }
+
 }
 
 Upfront_MenuSetting::serve();
+
+function upfront_navigation ($data) {
+    $data['navigation'] = array(
+        "auto_add" => get_option( 'nav_menu_options' )
+    );
+    return $data;
+}
+add_filter('upfront_data', 'upfront_navigation');
