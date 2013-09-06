@@ -1,13 +1,10 @@
-<div class="upfront-output-object upfront-image-container uimage-<?php echo $caption_position ?>" id="<?php echo $element_id ?>">
+<div class="upfront-output-object upfront-image-container uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>">
 	<?php if($url) { ?>
 	<a href="<?php echo $url ?>">
 	<?php } ?>
-	<div class="uimage-wrapper" style="overflow: hidden; position:relative;min-height:10px;width:100%;height:<?php echo $element_size['height'] ?>px;">
-		
-		<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width: <?php echo $size['width'] ?>; top: <?php echo $position['top'] ?>%; left: <?php echo $position['left'] ?>%; -moz-transform:rotate(<?php echo $rotation ?>deg); -webkit-transform:rotate(<?php echo $rotation ?>deg); -o-transform:rotate(<?php echo $rotation ?>deg); -ie-transform:rotate(<?php echo $rotation ?>deg); transform:rotate(<?php echo $rotation ?>deg); position:absolute;"/>
-		
-	</div>
-
+		<?php if($src){ ?>
+		<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width:<?php echo $imgWidth ?>"/>
+		<?php } ?>
 
 	<?php if($include_image_caption){ ?>
 	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>"><?php echo $image_caption ?></div>
@@ -52,8 +49,8 @@
 			opacity:1;
 		}
 
-		#<?php echo $element_id ?> .uimage-wrapper img {
-			max-width: none;
+		#<?php echo $element_id ?> img {
+			max-width: 100%;
 			max-height: none;
 		}
 

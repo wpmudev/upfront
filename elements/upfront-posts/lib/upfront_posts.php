@@ -33,9 +33,11 @@ class Upfront_UpostsView extends Upfront_Object {
 		} else if (!empty($wp_query->tax_query->queries)) {
 			$args['tax_query'] = $wp_query->tax_query->queries;
 		}
-		if (!empty($limit) && is_numeric($limit)) {
+		if (!empty($limit) && is_numeric($limit))
 			$args['posts_per_page'] = $limit;
-		}
+		else
+			$args['posts_per_page'] = 10;
+
 		$query = new WP_Query($args);
 
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
@@ -56,8 +58,16 @@ class Upfront_UpostsView extends Upfront_Object {
 		);
 
 		$wp_query = $temp_query;
+		$init = '';
+		/*
+		$query = array();
+		foreach ($query_args as $key => $value) {
+			$query[] = $key . '=' . $value;
+		}
+		$init = implode('&', $query);
+		*/
 
-		return "<div class='upfront-output-object upfront-posts' id='" .  $properties['element_id'] . "'>" .
+		return $init . "<div class='upfront-output-object upfront-posts' id='" .  $properties['element_id'] . "'>" .
 			$markup .
 		"</div>";
 	}

@@ -17,6 +17,10 @@
 	cursor: default;
 }
 
+.upfront-image .upfront-object-content{
+	height: 100%;
+}
+
 #upront-image-placeholder, #upfront-image-uploading {
 	width: 80%;
 	margin: 60px auto;
@@ -137,14 +141,18 @@ a.open-media-gallery:hover i {
 	font-weight: 200;
 }
 
+.upfront-image {
+}
+.uimage-status-starting {
+	background: #eeeff0;
+}
+
 .upfront-image-container {
 	position: relative;
 }
 
-
-
 .upfront-image-starting-select {
-	position: absolute;
+	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 	top:0;
 	left: 0;
 	color: #28DC96;
@@ -154,11 +162,7 @@ a.open-media-gallery:hover i {
 	height: 100%;
 	background: #eeeff0;
 	text-align: center;
-}
-.upfront-image-starting-select>div{
-	width: 80%;
-	margin: 0 auto;
-	padding-top: 40px;
+	padding: 40px 10px;
 }
 
 .upfront-image-resizing-icons {
@@ -337,7 +341,8 @@ a.open-media-gallery:hover i {
 .image-edit-control>i {
 	border: 3px solid #DAEDFE;
 	color: #DAEDFE;
-	background: #273A4C;
+	background: #273A4C url(../../../img/uf-core-el-sprite.png) no-repeat;
+	background: #273A4C url(../../../img/uf-core-el-sprite.svg) no-repeat, none;
 	position: relative;
 	z-index:12;
 	width: 40px;
@@ -409,6 +414,15 @@ a.open-media-gallery:hover i {
 #image-edit-button-ok:before{
 	background-position: -801px -160px;	
 }
+#image-edit-button-align.align-left:before{
+	background-position: -693px -225px;	
+}
+#image-edit-button-align.align-center:before{
+	background-position: -693px -257px;	
+}
+#image-edit-button-align.align-right:before{
+	background-position: -693px -289px;	
+}
 
 #image-edit-button-fit:hover:before{
 	background-position: -693px -129px;
@@ -422,9 +436,19 @@ a.open-media-gallery:hover i {
 #image-edit-button-ok:hover:before{
 	background-position: -801px -192px;	
 }
+#image-edit-button-align.align-left:hover:before{
+	background-position: -801px -257px;	
+}
+#image-edit-button-align.align-center:hover:before{
+	background-position: -801px -289px;	
+}
+#image-edit-button-align.align-right:hover:before{
+	background-position: -801px -225px;	
+}
 
 .image-edit-rotate i {
 	border-radius:20px;
+	background-position: -694px -354px;
 }
 
 .image-edit-resize {
@@ -437,11 +461,7 @@ a.open-media-gallery:hover i {
 .image-edit-resize i{
 	border-radius:5px;
 	display: block !important;
-	-webkit-transform: rotate(90deg);
-	-moz-transform: rotate(90deg);
-	-o-transform: rotate(90deg);
-	-ms-transform: rotate(90deg);
-	transform: rotate(90deg);
+	background-position: -694px -322px;	
 }
 
 .rotate_90 {
