@@ -243,7 +243,7 @@
                 $upfrontObjectContent = this.$el.find('.upfront-object-content');
                 $upfrontObjectContent.attr('data-aliment',(menuAliment ? menuAliment : 'left'));
                 $upfrontObjectContent.attr('data-style',(menuStyle ? menuStyle : 'horizontal'));
-                $upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav ? allowSubNav[0] : 'no'));
+                $upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
             }
 
         });
