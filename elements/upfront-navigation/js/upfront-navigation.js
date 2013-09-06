@@ -417,7 +417,7 @@
                     Upfront.Util.post({"action": "upfront_update_menu_item",'menu': menu_id, 'menu-item-id': menuItemId, 'menu-item': menuItems})
                         .success(function (ret) {
                             Upfront.Events.trigger("entity:object:render_navigation");
-                            //Upfront.Events.trigger("navigation:get:this:menu:items");
+                            Upfront.Events.trigger("navigation:get:this:menu:items");
                             Upfront.Events.trigger("navigation:render_menu_order");
                             //Reset custom link fields
                             me.reset_fields();
