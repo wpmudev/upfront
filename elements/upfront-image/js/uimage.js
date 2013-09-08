@@ -31,26 +31,43 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	
 	initialize: function(){
+		var me = this;
 		if(! (this.model instanceof UimageModel)){
 			this.model = new UimageModel({properties: this.model.get('properties')});
 		}
 		 this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
 			'click a.uimage_edit_toggle': 'editRequest',
+			'click .upfront-object-content': 'clickTest',
+			'drop': 'handleDrop'
 		 });
 		 this.delegateEvents();
 		 //Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
 		 this.model.on('uimage:edit', this.editRequest, this);
 
+		$('body').on('dragover', function(e){
+			 	me.handleDragEnter(e);
+			 })
+		 	.on('dragleave', function(e){
+		 		me.handleDragLeave(e);
+		 	})
+		 	.on('drop', function(e){
+		 		e.preventDefault();
+		 		e.stopPropagation();
+		 	})
+	 	;
+
 		// Set the full size current size if we don't have attachment id
 		if(!this.property('image_id'))
 			this.property('srcFull', this.property('src'));
 
-		//this.setImageInfo();
-
 		this.model.get("properties").bind("change", this.render, this);
 		this.model.get("properties").bind("add", this.render, this);
 		this.model.get("properties").bind("remove", this.render, this);
+	},
+
+	clickTest: function(){
+		console.log('Click');
 	},
 
 	setImageInfo: function() {
@@ -161,6 +178,39 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			props[prop.get('name')] = prop.get('value');
 		});
 		return props;
+	},
+
+	handleDragEnter: function(e){
+		if(!$('.uimage-drop-hint').length)
+			this.$('.upfront-image').append('<div class="uimage-drop-hint">Drop the image here<form </div>');
+		if(this.dragTimer){
+			clearTimeout(this.dragTimer);
+			this.dragTimer = false;
+		}
+	},
+
+	handleDragLeave: function(e){
+		var me = this;
+		this.dragTimer = setTimeout(function(){
+				me.$('.uimage-drop-hint').remove();
+				this.dragTimer = false;
+			}, 200);
+		;
+	},
+
+	handleDrop: function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		this.openImageSelector();
+        if(e.originalEvent.dataTransfer){
+        	var files = e.originalEvent.dataTransfer.files,
+        		input = $('#upfront-image-file-input')
+    		;
+            // Only call the handler if 1 or more files was dropped.
+            if (files.length && input.length){
+            	input[0].files = files;
+            }
+        }
 	},
 
 	onElementResize: function(view, model, ui){
@@ -900,7 +950,9 @@ var ImageEditor = Backbone.View.extend({
 		'click #image-edit-button-reset': 'resetImage',
 		'click #image-edit-button-fit': 'fitImage',
 		'click #image-edit-button-align': 'selectAlign',
-		'click .image-edit-rotate': 'rotate'
+		'click .image-edit-rotate': 'rotate',
+		'mouseover a.image-edit-button': 'showTooltip',
+		'mouseout a.image-edit-button': 'hideTooltip'
 	},
 
 	initialize: function(){
@@ -1009,8 +1061,9 @@ var ImageEditor = Backbone.View.extend({
 		if(this.mode == 'big' || this.mode == 'horizontal')
 			alignButton.hide();
 
-		if(this.setImageInitialSize)
-			this.centerImage(true);
+		if(this.setImageInitialSize){
+			this.resetImage(false, false);
+		}
 
 		return this.response.promise();		
 	},
@@ -1021,6 +1074,9 @@ var ImageEditor = Backbone.View.extend({
 			this.setRotation(options.rotation);
 		else
 			this.setRotation(0);
+
+		if(options.setImageSize)
+			this.setImageInitialSize = true;
 
 		if(options.extraButtons && options.extraButtons.length){
 			_.each(options.extraButtons, function(button){
@@ -1368,9 +1424,11 @@ var ImageEditor = Backbone.View.extend({
 		$('#uimage-drag-handle').resizable('option', limits);
 	},
 
-	resetImage: function(e){
-		e.preventDefault();
-		e.stopPropagation();
+	resetImage: function(e, alert){
+		if(e){
+			e.preventDefault();
+			e.stopPropagation();
+		}
 		this.setRotation(270);
 		this.rotate(); //Set rotation to 0
 		this.setImageFullSize(e, alert);
@@ -1572,6 +1630,22 @@ var ImageEditor = Backbone.View.extend({
 			this.centerImage(false);
 			this.$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 		}
+	},
+
+	showTooltip: function(e){
+		var button = $(e.target);
+		this.$('#uimage-tooltip')
+			.text(button.attr('data-tooltip'))
+			.css({
+				top: button.offset().top - 40,
+				left: button.offset().left - 33
+			})
+			.show()
+		;
+	},
+
+	hideTooltip: function(e) {
+		this.$('#uimage-tooltip').hide();
 	},
 
 	keyMove: function(e) {

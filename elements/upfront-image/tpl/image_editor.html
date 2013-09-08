@@ -44,9 +44,10 @@
 
 	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 40}}px; left: {{maskOffset.left + maskSize.width - 230}}px;">
 		{[ for (var i = 0; i < buttons.length; i++) { ]}
-		<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].text}}"></a>
+		<a class="image-edit-button" id="{{buttons[i].id}}" data-tooltip="{{buttons[i].text}}"></a>
 		{[ } ]}
 	</div>
+	<div id="uimage-tooltip" class="nav_tooltip upfront-ui"></div>
 </script>
 
 <script type="text/template" id="upload-form-tpl">

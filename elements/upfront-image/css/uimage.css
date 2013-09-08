@@ -134,11 +134,9 @@ a.open-media-gallery:hover i {
 	left: 12%;
 }
 
-#upfront-image-overlay .icon-picture {
-	color: #C3DCF1;
-	font-size: 17px;
-	margin-right: 5px;
-	font-weight: 200;
+#upfront-image-overlay .icon-picture{
+	background: url(../../../img/uf-core-el-sprite.png) no-repeat -806px -327px;
+	padding: 0 15px;
 }
 
 .upfront-image {
@@ -515,4 +513,30 @@ a.uimage_edit_toggle:before {
 
 .uimage-mode-small .image-edit-resize{
 	display:none;
+}
+
+#uimage-tooltip {
+	display:none;
+	width: 100px;
+	color: #eeeff0;
+	font-size: 12px;
+	text-align: center;
+	height: auto;
+}
+
+.uimage-drop-hint {
+	border:3px dashed #3f5870;
+	color: #3f5870;
+	position:absolute;
+	width: 100%;
+	height: 100%;
+	background: rgba(255,255,255,.7);
+	top:0;
+	bottom:0;
+	font-family: 'Source Sans Pro';
+	text-align: center;
+	font-size: 24px;
+	font-weight: 200;
+	padding:50px 0;
+	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;	
 }
