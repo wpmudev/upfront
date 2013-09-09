@@ -123,6 +123,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"application" => "upfront/upfront-application",
 			"objects" => "upfront/upfront-objects",
 			"media" => "upfront/upfront-media",
+			"content" => "upfront/upfront-content",
 			"spectrum" => "spectrum/spectrum",
 			"responsive" => "responsive"
 		);
@@ -141,7 +142,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		$layout_editor_requirements = array(
-			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'spectrum', 'responsive'),
+			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'content', 'spectrum', 'responsive'),
 			"entities" => array_merge(array('objects'), array_keys($registered)),
 		);
 		$layout_editor_requirements = json_encode(

@@ -3414,7 +3414,7 @@ define(_template_files, function () {
 			this.set_title(this.get_title());
 		}
 	});
-
+/*
 	var ContentEditorUploader = Backbone.View.extend({
 
 		initialize: function () {
@@ -3445,7 +3445,7 @@ define(_template_files, function () {
 			tb_remove();
 		}
 	});
-
+*/
 	var NotifierView = Backbone.View.extend({
 		notices: new Backbone.Collection([]),
 		elId: 'upfront-notice',
@@ -3617,7 +3617,7 @@ define(_template_files, function () {
 		},	
 		"ContentEditor": {
 			"Sidebar": ContentEditorSidebar,
-			"Uploader": new ContentEditorUploader
+			//"Uploader": new ContentEditorUploader
 		}
 	};
 });

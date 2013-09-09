@@ -247,13 +247,13 @@ define(_template_files, function () {
 					this.subview.setElement(this.$('.upfront-object-content')).render();
 				}
 
-				this.init_ckeditor_on_focus();
+				//this.init_ckeditor_on_focus();
 
 				Upfront.Events.trigger("entity:object:after_render", this, this.model);
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 				if ( this.on_render ) this.on_render();
 			},
-
+/*
 			// Create a ckeditor instance when any contenteditable element receives focus for the first time.
 			// Creating the ckeditor instance on focus prevents having to recreate ckeditor instances on each
 			// render, which can happen 10-15 in a row when the user drags and drops modules.
@@ -325,7 +325,7 @@ define(_template_files, function () {
 					}
 				});
 			}
-
+*/
 		}),
 
 		Objects = _Upfront_EditableEntities.extend({

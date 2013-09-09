@@ -122,11 +122,6 @@
 				$post = $(e.target).parents(".uposts-post"),
 				post_id = $post.attr("data-post_id")
 			;
-			// Hacky way of closing other instances
-			if ($("#upfront-post-cancel_edit").length) {
-				$("#upfront-post-cancel_edit").trigger("click");
-			}
-
 			this.post = Upfront.data.posts ? Upfront.data.posts[post_id] : false;
 			if(!this.post){
 				this.post = new Upfront.Models.Post({ID: post_id});
@@ -145,81 +140,45 @@
 				Upfront.Events.trigger("data:current_post:change");
 			}
 		},
-		stop_editor: function () {
-			this.updatePost();
-			this.on_cancel();
-			Upfront.Application.ContentEditor.stop();
-		},
 		on_cancel: function () {
-			_upfront_post_data.post_id = _upfront_post_data._old_post_id;
-			if(_upfront_post_data.post_id && Upfront.data.posts[_upfront_post_data.post_id]){
-				Upfront.data.currentPost = Upfront.data.posts[_upfront_post_data.post_id];
-				Upfront.Events.trigger("data:current_post:change");				
-			}
-			if (CKEDITOR.instances['upfront-body']) CKEDITOR.instances['upfront-body'].destroy(); // Clean up the editor.
-			// Re-enable the draggable on edit stop
-			this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('enable');
-			this.undelegateEvents();
-			this.deactivate();
-			this.delegateEvents();
-			this.render();
+			var editor = Upfront.Content.editors.get(this._editor_id());
+			editor.stop();
 		},
-		editPost: function(post){
-			var me = this,
+		editPost: function () { //post){
+			var 
 				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
-				$post = this.$('.uposts-posts-' + post.id),
-				$title = $post.find(this.titleSelector),
 				body_selector = is_excerpt ? this.excerptSelector : this.contentSelector,
-				$body = $post.find(body_selector)
-			;
-
-			_upfront_post_data._old_post_id = _upfront_post_data.post_id;
-			_upfront_post_data.post_id = post.id;
-
-			if(Upfront.data.currentPost != post){
-				Upfront.data.currentPost = post;
-				Upfront.Events.trigger("data:current_post:change");
-			}
-
-			$title.html('<input type="text" id="upfront-title" style="width:100%" value="' + post.get('post_title') + '"/>');
-			$body.html(
-				'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post.id + '" />' +
-				'<div contenteditable="true" id="upfront-body" rows="8" style="width:100%">' + (is_excerpt ? post.get('post_excerpt') : post.get('post_content')) + '</div>' +
-				'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
-			);
-
-			// Prevent default events, we're in editor mode.
-			this.undelegateEvents();
-			// Kill the draggable, so we can work with regular inline editor.
-			this.parent_module_view.$el.find('.upfront-editable_entity:first').draggable('disable');
-
-			CKEDITOR.inline('upfront-body', {
-				floatSpaceDockedOffsetY: 62 + $title.height()
-			});
-			$body
-				.find("#upfront-body").focus().end()
-				.find("#upfront-post-cancel_edit").click(function () {
-					me.stop_editor();
+				editor = Upfront.Content.editors.add({
+					type: Upfront.Content.TYPES.POST,
+					editor_id: this._editor_id(),
+					view: this,
+					post: this.post,
+					content_mode: (is_excerpt ? 'post_excerpt' : 'post_content'),
+					selectors: {
+						title: '.uposts-posts-' + this.post.id + ' ' + this.titleSelector,
+						body: '.uposts-posts-' + this.post.id + ' ' + body_selector
+					}
 				})
 			;
-			Upfront.Application.ContentEditor.run();
-			Upfront.Events.on("entity:deactivated", this.stop_editor, this);
+			editor.start();
 		},
 		updatePost: function() {
-			var $title = this.$(this.titleSelector).find(":text"),
-				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
-				body_selector = is_excerpt ? this.excerptSelector : this.contentSelector,
-				$content =  this.$(body_selector).find("#upfront-body"),
-				element_id = this.model.get_property_value_by_name("element_id")
+			var editor = Upfront.Content.editors.get(this._editor_id()),
+				title = editor.get_title ? editor.get_title() : false,
+				content = editor.get_content ? editor.get_content() : false
 			;
-			if($title.length)
-				this.post.set('post_title', $title.val());
-			if($content.length) {
-				this.post.set(
-					(is_excerpt ? 'post_excerpt' : 'post_content'), $content.html()
+			if (editor) {
+				this.post.set({is_new: false}, {silent: true});
+				if (title) this.post.set('post_title', title);
+				if (content) this.post.set(
+					(is_excerpt ? 'post_excerpt' : 'post_content'),
+					Upfront.Media.Transformations.apply(content)
 				);
+				editor.stop();
 			}
-			$(document).data("content-" + element_id, false);
+		},
+		_editor_id: function () {
+			return this.model.get_property_value_by_name("element_id") + '-' + this.post.id;
 		}
 
 	});
