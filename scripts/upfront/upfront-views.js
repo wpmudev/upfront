@@ -429,6 +429,7 @@ define(_template_files, function () {
 				this.model.bind('reset', this.on_reset, this);
 			},
 			on_entity_remove: function(e, view) {
+				Upfront.Events.trigger("entity:removed:before");
 				var wrapper_id = view.model.get_wrapper_id(),
 					me = this;
 				if ( wrapper_id ){
@@ -448,6 +449,7 @@ define(_template_files, function () {
 					}
 				}
 				this.model.remove(view.model);
+				Upfront.Events.trigger("entity:removed:after");
 			},
 			render: function () {
 				this.$el.html('');

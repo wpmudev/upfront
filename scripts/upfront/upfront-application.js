@@ -270,6 +270,8 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("entity:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.on("entity:resize_start", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.on("entity:drag_start", Upfront.Behaviors.LayoutEditor.create_undo, this);
+		Upfront.Events.on("entity:removed:before", Upfront.Behaviors.LayoutEditor.create_undo, this);
+		
 		Upfront.Events.on("command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);
 		Upfront.Events.on("command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);
 
