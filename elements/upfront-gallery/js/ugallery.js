@@ -30,7 +30,12 @@ var UgalleryImage = Backbone.Model.extend({
 		size: {width: 0, height: 0},
 		position: {top: 0, left: 0},
 		rotation: 0,
-		link: false
+		link: 'original',
+		url: '',
+		title: '',
+		caption: '',
+		alt: '',
+		tags: []
 	}
 });
 
@@ -55,6 +60,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
 	editorTpl: _.template($(editorTpl).find('#editor-tpl').html()),
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
+	detailsTpl: _.template($(editorTpl).find('#details-tpl').html()),
+	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
 	images: [],
 	sortMode: false,
 
@@ -84,6 +91,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		this.images = new UgalleryImages(this.property('images'));
 		this.images.on('add remove reset change', this.imagesChanged, this);
+
+		$('body').on('click', this.closeTooltip);
+
+		Upfront.Events.on("entity:settings:activate", this.closeTooltip);
+		Upfront.Events.on("entity:activated", this.closeTooltip);
+		Upfront.Events.on("entity:deactivated", this.closeTooltip);		
+		Upfront.Events.on("region:activated", this.closeTooltip);
+		
 
 		this.on('deactivated', this.sortCancel, this);
 	},
@@ -201,6 +216,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				e.stopPropagation();
 			})
 		;
+
 	},
 
 
@@ -448,7 +464,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	imageEditDetails: function(e) {
 		e.preventDefault();
-		console.log('Edit image details');
+		var me = this,
+			item = $(e.target).closest('.ugallery_item'),
+			image = this.images.get(item.attr('rel')),
+			contents = $(this.detailsTpl(image.toJSON()))
+				.on('click', '.upfront-save_settings', function(e){
+					me.saveImageDetails(e);
+				})
+		;
+		this.openTooltip(contents, item);
 	},
 
 	imageEditRemove: function(e) {
@@ -458,7 +482,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	imageEditLink: function(e) {
 		e.preventDefault();
-		console.log('Edit image link');
+		var me = this,
+			item = $(e.target).closest('.ugallery_item'),
+			image = this.images.get(item.attr('rel')),
+			tplOptions = image.toJSON(),
+			contents = ''
+		;
+		tplOptions.checked = 'checked="checked"';
+		contents = $(this.linkTpl(tplOptions))
+			.on('change', 'input[name=ugallery-image-link]', function(e){
+				me.imageLinkChanged(e);
+			})
+			.on('click', 'button.upfront-save_settings', function(e){
+				me.saveImageLink(e);
+			})
+		;
+		this.openTooltip(contents, item);
 	},
 
 	imageEditMask: function(e) {
@@ -490,6 +529,45 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	imagesChanged: function() {
 		this.property('images', this.images.toJSON());
 		this.render();
+	},
+	imageLinkChanged: function(e){
+		var val = $('#ugallery-tooltip').find('input[name=ugallery-image-link]:checked').val();
+		if(val == 'external'){
+			$('#ugallery-image-link-url').show();
+		}
+		else{
+			$('#ugallery-image-link-url').hide();
+			if(val == 'post')
+				console.log('OPEN POST SELECTOR');
+		}
+	},
+
+	saveImageDetails: function(e){
+		var tooltip = $('#ugallery-tooltip'),
+			imageId = tooltip.find('#ugallery-image-id').val()
+		;
+
+		this.images.get(imageId).set({
+			title: tooltip.find('input[name=ugallery-image-title]').val(),
+			caption: tooltip.find('input[name=ugallery-image-caption]').val(),
+			alt: tooltip.find('input[name=ugallery-image-alt]').val()
+		});
+		this.closeTooltip();
+	},
+
+	saveImageLink: function(e){
+		var tooltip = $('#ugallery-tooltip'),
+			linkVal = tooltip.find('input[name=ugallery-image-link]:checked').val(),
+			imageId = tooltip.find('#ugallery-image-id').val(),
+			urlVal = tooltip.find('#ugallery-image-link-url').val()
+		;
+		if(linkVal == 'external' || linkVal == 'post')
+			this.images.get(imageId).set({'link': linkVal, 'url': urlVal});
+		else
+			this.images.get(imageId).set({link: 'original', url: ''});
+
+		return this.closeTooltip();
+		
 	},
 
 	getItemElement: function(e){
@@ -570,6 +648,45 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		});
 	},
 
+	openTooltip: function(content, element){
+		var tooltip = $('#ugallery-tooltip'),
+			elementPosition = element.offset(),
+			tooltipPosition = {
+				top: elementPosition.top,
+				left: elementPosition.left - 280
+			}
+			tooltipClass = 'ugallery-tooltip-left',
+			me = this
+		;
+		if(!tooltip.length){
+			tooltip = $('<div id="ugallery-tooltip" class="upfront-ui"></div>');
+			$('body').append(tooltip);
+		}
+		tooltip.hide().html(content);
+		elementPosition.right = elementPosition.left + element.width();
+		if(elementPosition.left - 280 < 0){
+			tooltipPosition.left = elementPosition.left + element.width() + 20;
+			tooltipClass = 'ugallery-tooltip-right';
+		}
+		tooltip
+			.css(tooltipPosition)
+			.addClass(tooltipClass)
+			.show()
+			.on('click', function(e){
+				e.stopPropagation();
+			})
+			.on('blur', function(e){
+				me.closeTooltip();
+			});
+		;	
+
+		Upfront.Events.trigger("entity:settings:deactivate");	
+	},
+
+	closeTooltip: function(){
+		$('#ugallery-tooltip').remove();
+	},
+
 	/*
 	Returns an object with the properties of the model in the form {name:value}
 	*/
@@ -584,9 +701,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	/*
 	Shorcut to set and get model's properties.
 	*/
-	property: function(name, value) {
-		if(typeof value != "undefined")
-			return this.model.set_property(name, value);
+	property: function(name, value, silent) {
+		if(typeof value != "undefined"){
+			if(typeof silent == "undefined")
+				silent = true;
+			return this.model.set_property(name, value, silent);
+		}
 		return this.model.get_property_value_by_name(name);
 	}
 }));
