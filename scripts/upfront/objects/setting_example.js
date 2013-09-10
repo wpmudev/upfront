@@ -14,7 +14,7 @@ var SettingExampleModel = Upfront.Models.ObjectModel.extend({
 var SettingExampleView = Upfront.Views.ObjectView.extend({
 	
 	get_content_markup: function () {
-		return '<p>Example element to showcase settings</p>';
+		return 'Setting example here :)';
 	}
 	
 });
@@ -410,6 +410,12 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 											{ label: "Options 5", value: 'options5' }
 										]
 									}),
+								]
+							}),
+							new Upfront.Views.Editor.Settings.Item({
+								model: this.model,
+								title: "Example group",
+								fields: [
 									new Upfront.Views.Editor.Field.Number({
 										model: this.model,
 										property: 'field_number2',
@@ -420,6 +426,17 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 										max: 60,
 										step: 5,
 										default_value: 30
+									}),
+									new Upfront.Views.Editor.Field.Radios({
+										model: this.model,
+										property: 'field_radios4_1',
+										label: "",
+										layout: "vertical",
+										values: [
+											{ label: "Options 1", value: 'options1', icon: 'contact-above-field' },
+											{ label: "Options 2", value: 'options2', icon: 'contact-over-field', disabled: true },
+											{ label: "Options 3", value: 'options3', icon: 'contact-inline-field' }
+										]
 									})
 								]
 							}),
@@ -467,6 +484,22 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 						value: 'options1', // value means the value stored to property when this tab is selected
 						is_default: true, // set this tab as default (required)
 						settings: [
+							new Upfront.Views.Editor.Settings.Item({
+								model: this.model,
+								title: "Example group",
+								fields: [
+									new Upfront.Views.Editor.Field.Radios({
+										model: this.model,
+										property: 'field_radios5_1',
+										label: "",
+										layout: "horizontal-inline",
+										values: [
+											{ label: "", value: 'options1', icon: 'social-count-horizontal' },
+											{ label: "", value: 'options2', icon: 'social-count-vertical' }
+										]
+									})
+								]
+							}),
 							new Upfront.Views.Editor.Settings.Item({
 								model: this.model,
 								title: "Example group",

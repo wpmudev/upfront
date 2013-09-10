@@ -2766,7 +2766,10 @@ define(_template_files, function () {
 						return;
 					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
 				});
-				$('body').on('click', function(){
+				this.$el.on('mouseup', '.upfront-field-select', function(e){
+					e.stopPropagation();
+				});
+				$('body').on('mouseup', function(){
 					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
 				});
 			}
@@ -2789,7 +2792,10 @@ define(_template_files, function () {
 			if ( ! this.multiple && ! this.get_saved_value() )
 				this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
 			this.$el.find('.upfront-field-select-option:eq(0) input').trigger('change');
-
+			
+			if ( this.options.width )
+				this.$el.find('.upfront-field-select').css('width', this.options.width);
+			
 			this.trigger('rendered');
 		},
 		get_field_html: function () {
@@ -3541,10 +3547,9 @@ define(_template_files, function () {
 				this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
 			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
 				var state = me.$el.hasClass('upfront-loading-repeat') ? 'repeat' : (me.$el.hasClass('upfront-loading-done') ? 'done' : 'start');
-				console.log(state);
 				if ( state == 'start' ){
 					if ( me.is_done ){
-						var done = me.done || me.options.done;
+						var done = me.done_text || me.options.done;
 						me.$el.addClass('upfront-loading-done');
 						me.$el.find('.upfront-loading-text').text(done);
 					}
@@ -3563,15 +3568,15 @@ define(_template_files, function () {
 		},
 		done: function (callback, done) {
 			var me = this;
+			this.is_done = true;
+			this.done_callback = callback;
 			this.done_timeout = setTimeout(function(){
 				if ( me ){
 					me.remove();
 					me.done_callback();
 				} 
 			}, 6000);
-			this.is_done = true;
-			this.done_callback = callback;
-			this.done = done;
+			this.done_text = done;
 		},
 		cancel: function (callback, canceled) {
 			this.remove();

@@ -191,71 +191,69 @@ a.cke_button_disabled:active
 .cke_button_icon
 {
 	cursor: inherit;
-	background: url('../../../../img/icon_sprite.png') no-repeat;
+	background: url('../../../../img/uf-ui-sprite.png') no-repeat;
 	display: inline-block;
 	height: 100%;
 	width: 100%;
 }
 
 .svg .cke_button_icon {
-	background: url('../../../../img/icon_sprite-toggleables.svg') no-repeat;
+	background: url('../../../../img/uf-ui-sprite.svg') no-repeat;
 }
 
 .cke_button_off .cke_button__kitchensink_icon,
-.cke_button_disabled .cke_button__kitchensink_icon { background-position: -444px -350px; }
-.cke_button_on .cke_button__kitchensink_icon { background-position: -478px -350px; }
+.cke_button_disabled .cke_button__kitchensink_icon { background-position: -510px -350px; }
+.cke_button_on .cke_button__kitchensink_icon { background-position: -554px -350px; }
 
 .cke_button_off .cke_button__image_icon,
-.cke_button_disabled .cke_button__image_icon  { background-position: -444px -316px; }
-.cke_button_on .cke_button__image_icon { background-position: -478px -316px; }
+.cke_button_disabled .cke_button__image_icon  { background-position: -510px -306px; }
+.cke_button_on .cke_button__image_icon { background-position: -554px -306px; }
 
 .cke_button_off .cke_button__blockquote_icon,
-.cke_button_disabled .cke_button__blockquote_icon  { background-position: -444px -282px; }
-.cke_button_on .cke_button__blockquote_icon  { background-position: -478px -282px; }
+.cke_button_disabled .cke_button__blockquote_icon  { background-position: -510px -261px; }
+.cke_button_on .cke_button__blockquote_icon  { background-position: -554px -261px; }
 
 .cke_button_off .cke_button__link_icon,
-.cke_button_disabled .cke_button__link_icon  { background-position: -444px -248px; }
-.cke_button_on .cke_button__link_icon  { background-position: -478px -248px; }
+.cke_button_disabled .cke_button__link_icon  { background-position: -510px -217px; }
+.cke_button_on .cke_button__link_icon  { background-position: -554px -217px; }
 
 .cke_button_off .cke_button__numberedlist_icon,
-.cke_button_disabled .cke_button__numberedlist_icon  { background-position: -444px -214px; }
-.cke_button_on .cke_button__numberedlist_icon  { background-position: -478px -214px; }
+.cke_button_disabled .cke_button__numberedlist_icon  { background-position: -510px -172px; }
+.cke_button_on .cke_button__numberedlist_icon  { background-position: -598px -172px; }
 
 .cke_button_off .cke_button__bulletedlist_icon,
-.cke_button_disabled .cke_button__bulletedlist_icon  { background-position: -444px -180px; }
-.cke_button_on .cke_button__bulletedlist_icon  { background-position: -478px -180px; }
+.cke_button_disabled .cke_button__bulletedlist_icon  { background-position: -510px -172px; }
+.cke_button_on .cke_button__bulletedlist_icon  { background-position: -554px -172px; }
 
 .cke_button_off .cke_button__justifyright_icon,
-.cke_button_disabled .cke_button__justifyright_icon  { background-position: -444px -146px; }
-.cke_button_on .cke_button__justifyright_icon  { background-position: -478px -146px; }
+.cke_button_disabled .cke_button__justifyright_icon  { background-position: -598px -128px; }
+.cke_button_on .cke_button__justifyright_icon  { background-position: -598px -128px; }
 
 .cke_button_off .cke_button__justifycenter_icon,
-.cke_button_disabled .cke_button__justifycenter_icon  { background-position: -444px -112px; }
-.cke_button_on .cke_button__justifycenter_icon  { background-position: -478px -112px; }
+.cke_button_disabled .cke_button__justifycenter_icon  { background-position: -554px -128px; }
+.cke_button_on .cke_button__justifycenter_icon  { background-position: -554px -128px; }
 
 .cke_button_off .cke_button__justifyleft_icon ,
-.cke_button_disabled .cke_button__justifyleft_icon { background-position: -444px -78px; }
-.cke_button_on .cke_button__justifyleft_icon  { background-position: -478px -78px; }
+.cke_button_disabled .cke_button__justifyleft_icon { background-position: -510px -128px; }
+.cke_button_on .cke_button__justifyleft_icon  { background-position: -510px -128px; }
 
 .cke_button_off .cke_button__italic_icon,
-.cke_button_disabled .cke_button__italic_icon  { background-position: -444px -44px; }
-.cke_button_on .cke_button__italic_icon { background-position: -478px -44px; }
+.cke_button_disabled .cke_button__italic_icon  { background-position: -510px -85px; }
+.cke_button_on .cke_button__italic_icon { background-position: -554px -85px; }
 
 .cke_button_off .cke_button__bold_icon,
-.cke_button_disabled .cke_button__bold_icon { background-position: -444px -10px; }
-.cke_button_on .cke_button__bold_icon { background-position: -478px -10px; }
+.cke_button_disabled .cke_button__bold_icon { background-position: -510px -40px; }
+.cke_button_on .cke_button__bold_icon { background-position: -554px -40px; }
 
 .cke_button_off .cke_button__upfront_colorselect_icon,
 .cke_button_disabled .cke_button__upfront_colorselect_icon { 
-	background: url('../../../../img/icon_sprite.png') no-repeat;
-	background-position: -479px -452px;
+	background-position: -554px -482px;
 	position: relative;
 	top: -1px; /* move background and contained SVG up one pixel */
 	left: 1px;
 }
 .cke_button_on .cke_button__upfront_colorselect_icon { 
-	background: url('../../../../img/icon_sprite.png') no-repeat;
-	background-position: -479px -452px;
+	background-position: -554px -482px;
 	position: relative;
 	top: -1px; /* move background and contained SVG up one pixel */
 	left: 1px;
@@ -384,12 +382,12 @@ a.cke_button__upfront_colorselect{
 
 
 .cke_button_off .cke_button__justifyblock_icon,
-.cke_button_disabled .cke_button__justifyblock_icon { background-position: -444px -418px; }
-.cke_button_on .cke_button__justifyblock_icon { background-position: -478px -418px; }
+.cke_button_disabled .cke_button__justifyblock_icon { background-position: -510px -438px; }
+.cke_button_on .cke_button__justifyblock_icon { background-position: -554px -438px; }
 
 .cke_button_off .cke_button__underline_icon,
-.cke_button_disabled .cke_button__underline_icon { background-position: -444px -384px; }
-.cke_button_on .cke_button__underline_icon { background-position: -478px -384px; }
+.cke_button_disabled .cke_button__underline_icon { background-position: -510px -393px; }
+.cke_button_on .cke_button__underline_icon { background-position: -554px -393px; }
 
 
 .set .underline  { background-position: 0 0; }
@@ -618,16 +616,16 @@ a.cke_button__upfront_colorselect{
 .cke_button_disabled .cke_button__listtypetoggle_icon  
 { 
 	/*background-position: -444px -180px; /* bullet */
-	background-position: -407px -551px; /* bullet */
+	background-position: -554px -172px; /* bullet */
 }
 .cke_button_on .cke_button__listtypetoggle_icon,
 .cke_button_on.toggle_state_bullet .cke_button__listtypetoggle_icon { 
 	/*background-position: -478px -180px; /* bullet */
-	background-position: -407px -551px; /* bullet */
+	background-position: -554px -172px; /* bullet */
 }
 .cke_button_on.toggle_state_number .cke_button__listtypetoggle_icon { 
 	/*background-position: -478px -214px; */
-	background-position: -407px -585px; /* number */
+	background-position: -598px -172px; /* number */
 }
 
 /*
@@ -636,27 +634,27 @@ a.cke_button__upfront_colorselect{
 .cke_button_off .cke_button__alignmenttypetoggle_icon ,
 .cke_button_disabled .cke_button__alignmenttypetoggle_icon { 
 	/*background-position: -444px -78px; /* left */
-	background-position: -407px -449px; /* left */
+	background-position: -510px -128px; /* left */
 }
 .cke_button_on .cke_button__alignmenttypetoggle_icon  { 
 	/*background-position: -478px -78px; /* left */
-	background-position: -407px -449px; /* left */
+	background-position: -510px -128px; /* left */
 }
 
 .cke_button_off.toggle_state_center .cke_button__alignmenttypetoggle_icon,
 .cke_button_disabled.toggle_state_center .cke_button__alignmenttypetoggle_icon  { 
-	background-position: -407px -483px; /* center */
+	background-position: -554px -128px; /* center */
 }
 .cke_button_on.toggle_state_center .cke_button__alignmenttypetoggle_icon  { 
-	background-position: -407px -483px; /* center */
+	background-position: -554px -128px; /* center */
 }
 
 .cke_button_off.toggle_state_right .cke_button__alignmenttypetoggle_icon,
 .cke_button_disabled.toggle_state_right .cke_button__alignmenttypetoggle_icon  { 
-	background-position: -407px -517px; /* right */
+	background-position: -598px -128px; /* right */
 }
 .cke_button_on.toggle_state_right .cke_button__alignmenttypetoggle_icon  { 
-	background-position: -407px -517px; /* right */
+	background-position: -598px -128px; /* right */
 }
 
 .upfront-ckeditor-colorselect .sp-texthint {

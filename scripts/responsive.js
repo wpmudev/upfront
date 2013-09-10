@@ -18,11 +18,18 @@
 				apply_binding();
 				Upfront.Events.on("entity:module:after_render", apply_binding);
 				Upfront.Events.on("entity:resize_stop", apply_binding);
+				Upfront.Events.on("upfront:editor:image_on", function(sel){
+					apply_binding(sel);
+				});
+				Upfront.Events.on("upfront:editor:image_align", function(sel, align){
+					apply_binding(sel);
+				});
 			});
 		}
-		function apply_binding () {
+		function apply_binding (sel) {
 			//console.log('--- apply binding -' + r_id);
-			$(bind).each(function(){
+			var $sel = sel ? $(sel) : $('body');
+			$sel.find(bind).each(function(){
 				var id = $(this).attr('id') || 'bind-'+(Math.floor(Math.random()*100000)),
 					width = $(this).outerWidth(),
 					height = $(this).outerHeight(),
@@ -38,7 +45,6 @@
 					( (min_height && height >= min_height) || !min_height ) &&
 					( (max_height && height <= max_height) || !max_height )
 				);
-				//console.log([height, min_height, max_height, matched]);
 				if ( matched && !$(this).find(selector).data('applied') )
 					$(this).find(selector).data('applied', true).html(bind_styles);
 				else if ( !matched )

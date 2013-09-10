@@ -18,13 +18,17 @@ var Plugin = {
 		editor.on("destroy", function (e) {
 			Image.unbind_events(e.editor.name);
 		});
+		editor.on("selectionChange", function (e) {
+			Image.update_selection(e);
+		});
 		Upfront.Media.Transformations.add(Image.cleanup);
 	}
 };
 
 var Image = {
-	selector: "div.upfront-inserted_image-wrapper",
+	selector: ".upfront-inserted_image-wrapper",
 	bind_events: function (cke) {
+		this.instance = cke;
 		this.unbind_events();
 		$(document)
 			.on("mouseenter", this.selector, this, this.hover_on)
@@ -36,48 +40,107 @@ var Image = {
 			.off("mouseenter", this.selector, this.hover_on)
 			.off("mouseleave", this.selector, this.hover_off)
 		;
+		this.remove_dialog();
 	},
 	hover_on: function (e) {
 		var $me = $(e.target),
-			offset = $me.position(),
-			$dialog = $("<div id='upfront-image-details' />")
+			$dialog = $("<div id='upfront-image-details' class='upfront-ui' />")
 		;
-		if ($("#upfront-image-details").length) $("#upfront-image-details").remove();
 		if (!$me.is(e.data.selector)) $me = $me.closest(e.data.selector);
+		if ($me.find("#upfront-image-details").length) return;
+		if (!$me.find('img').length) return;
+		if ($("#upfront-image-details").length) $("#upfront-image-details").remove();
+		$dialog.attr('contenteditable', 'false');
 		$dialog.append(
-			'<div class="orientation">' +
-				'<div class="left"><i class="icon-align-left"></i> Left</div>' +
-				'<div class="center"><i class="icon-align-center"></i> Center</div>' +
-				'<div class="right"><i class="icon-align-right"></i> Right</div>' +
-				'<div class="full"><i class="icon-th-large"></i> Full width</div>' +
+			'<div class="upfront-image-orientation">' +
+				'<div class="upfront-image-align-left upfront-icon upfront-icon-image-left">left</div>' +
+				'<div class="upfront-image-align-center upfront-icon upfront-icon-image-center">center</div>' +
+				'<div class="upfront-image-align-right upfront-icon upfront-icon-image-right">right</div>' +
+				'<div class="upfront-image-align-full upfront-icon upfront-icon-image-full">full width</div>' +
 			'</div>' +
-			'<div class="actions">' +
-				'<div class="change"><span><i class="icon-file"></i> Change Image</span></div>' +
-				'<div class="details"><span><i class="icon-list-alt"></i> Image Details</span></div>' +
+			'<div class="upfront-image-actions">' +
+				'<div class="upfront-image-action-change upfront-icon upfront-icon-image-select">Change Image</div>' +
+				'<div class="upfront-image-action-details upfront-icon upfront-icon-image-detail">Image Details</div>' +
 			'</div>'
 		);
 		$me.append($dialog);
-		$dialog.css({
-			"top": ((offset.top + $me.height()) - $dialog.height()),
-			"width": $me.find("img").width()
-		});
 
 		$dialog
-			.find(".left").on("click", e.data, e.data.Align.left).end()
-			.find(".center").on("click", e.data, e.data.Align.center).end()
-			.find(".right").on("click", e.data, e.data.Align.right).end()
-			.find(".full").on("click", e.data, e.data.Align.full).end()
+			.find(".upfront-image-align-left").on("click", e.data, e.data.Align.left).end()
+			.find(".upfront-image-align-center").on("click", e.data, e.data.Align.center).end()
+			.find(".upfront-image-align-right").on("click", e.data, e.data.Align.right).end()
+			.find(".upfront-image-align-full").on("click", e.data, e.data.Align.full).end()
 
-			.find(".change").on("click", e.data, e.data.change_image).end()
-			.find(".details").on("click", e.data, e.data.Details.toggle).end()
+			.find(".upfront-image-action-change").on("click", e.data, e.data.change_image).end()
+			.find(".upfront-image-action-details").on("click", e.data, e.data.Details.toggle).end()
 		;
+		Upfront.Events.trigger("upfront:editor:image_on", $dialog.closest(e.data.selector).get());
 	},
 	hover_off: function (e) {
-		var $me = $(e.target),
-			$dialog = $("#upfront-image-details"),
+		var $me = $(e.target);
+		e.data.remove_dialog();
+	},
+	remove_dialog: function () {
+		var $dialog = $("#upfront-image-details"),
 			$details = $("#upfront-image-details-image_details")
 		;
 		if (!$details.length) $dialog.remove();
+	},
+	update_selection: function (e) {
+		var editor = e.editor,
+			selection = e.data.selection,
+			elements = e.data.path.elements,
+			last_element = e.data.path.lastElement,
+			element;
+		_.each(elements, function(el){
+			if ( el.hasClass('upfront-inserted_image-wrapper') )
+				element = el;
+		});
+		if ( element ){
+			if ( !$(element.$).find('img').length ){
+				this.remove_dialog();
+				var p = CKEDITOR.dom.element('p');
+				element.removeClass('upfront-inserted_image-wrapper');
+				element.replace(p);
+			}
+			else {
+				// Modify the selection position if clicked within image and the dialog
+				if ( last_element.hasClass('upfront-inserted_image-wrapper') ){
+					// This select a editable text inside image paragraph, don't allow and select next element instead
+					var range = editor.createRange();
+					var next = last_element.getNext();
+					if ( !next || !next.is('p') ){
+						editor.insertHtml('<p></p>')
+						next = last_element.getNext();
+					}
+					if ( next ){
+						range.moveToElementEditablePosition(next);
+						editor.getSelection().selectRanges( [range] );
+					}
+				}
+				else if ( !last_element.is('img') ){
+					// This select elements within dialog, select the image instead
+					function find_child (el, name) {
+						for (var i=0; i < el.getChildCount(); i++){
+							var child = el.getChild(i);
+							if ( child.is && child.is(name) ){
+								return child;
+							}
+						}
+						return false;
+					}
+					var img = find_child(element, 'img');
+					if ( !img ){
+						var a = find_child(element, 'a');
+						if ( a )
+							img = find_child(a, 'img');
+					}
+					if ( img ){
+						editor.getSelection().selectElement(img);
+					}
+				}
+			}
+		}
 	},
 	change_image: function (e) {
 		var $img = $(e.target).closest(e.data.selector);
@@ -100,26 +163,45 @@ var Image = {
 			$img.css(data);
 		},
 		left: function (e) {
-			var $img = $(e.target).closest(e.data.selector);
-			e.data.Align._apply($img, {float: "left"});
+			var $wrap = $(e.target).closest(e.data.selector),
+				$img = $wrap.find('img');
+			e.data.Align._apply($wrap, {float: "left"});
+			e.data.Align._apply($img, {});
+			e.data.remove_dialog();
+			CKEDITOR.instances[e.data.instance].fire('change');
+			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'left');
 			return false;
 		},
 		center: function (e) {
-			var $img = $(e.target).closest(e.data.selector);
-			e.data.Align._apply($img, {
-				"width": "100%",
+			var $wrap = $(e.target).closest(e.data.selector),
+				$img = $wrap.find('img');
+			e.data.Align._apply($wrap, {
 				"text-align": "center"
 			});
+			e.data.Align._apply($img, {});
+			e.data.remove_dialog();
+			CKEDITOR.instances[e.data.instance].fire('change');
+			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'center');
 			return false;
 		},
 		right: function (e) {
-			var $img = $(e.target).closest(e.data.selector);
-			e.data.Align._apply($img, {float: "right"});
+			var $wrap = $(e.target).closest(e.data.selector),
+				$img = $wrap.find('img');
+			e.data.Align._apply($wrap, {float: "right"});
+			e.data.Align._apply($img, {});
+			e.data.remove_dialog();
+			CKEDITOR.instances[e.data.instance].fire('change');
+			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'right');
 			return false;
 		},
 		full: function (e) {
-			var $img = $(e.target).closest(e.data.selector);
-			e.data.Align._apply($img, {float: ""});
+			var $wrap = $(e.target).closest(e.data.selector),
+				$img = $wrap.find('img');
+			e.data.Align._apply($wrap, {});
+			//e.data.Align._apply($img, {width: "100%"});
+			e.data.remove_dialog();
+			CKEDITOR.instances[e.data.instance].fire('change');
+			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'full');
 			return false;
 		}
 	},
@@ -136,6 +218,7 @@ var Image = {
 			var $wrapper = $(e.target).closest(e.data.selector),
 				$img = $wrapper.find("img"),
 				$dialog = $("#upfront-image-details"),
+				$button = $dialog.find('.upfront-image-action-details'),
 				$details = $('<div id="upfront-image-details-image_details" />'),
 			// Gather data for form preset population
 				$link = $wrapper.find("a"),
@@ -145,34 +228,42 @@ var Image = {
 				link_value = $link.length && !!link_link ? $link.attr("href") : ''
 			;
 			$details.append(
-				'<div class="alt">' +
-					'<label>Image Details</label>' +
-					'<input type="text" placeholder="Alt" value="' + $img.attr("alt") + '" />' +
+				'<div class="upfront-image-detail-alt">' +
+					'<label class="upfront-field-label">Image Details:</label>' +
+					'<input class="upfront-field upfront-field-text" type="text" placeholder="Alt" value="' + $img.attr("alt") + '" />' +
 				'</div>' +
-				'<div class="link">' +
-					'<label>Image links to:</label>' +
+				'<div class="upfront-image-detail-link">' +
+					'<label class="upfront-field-label">Image links to:</label>' +
 					'<ul>' +
-						'<li><input type="radio" ' + no_link + ' name="link_to" value="" /> No link</li>' +
-						'<li><input type="radio" ' + popup_link + ' name="link_to" value="popup" /> Larger version (opens in lightbox)</li>' +
-						'<li><input type="radio" ' + link_link + ' name="link_to" value="link" /> <input type="text" placeholder="http://www.google.com" value="' + link_value + '" /></li>' +
-						'<li><input type="radio" name="link_to" value="post" /> Post or page <em>/your-cool-post/</em></li>' +
+						'<li><label><input class="upfront-field-radio" type="radio" ' + no_link + ' name="link_to" value="" /> No link</label></li>' +
+						'<li><label><input class="upfront-field-radio" type="radio" ' + popup_link + ' name="link_to" value="popup" /> Larger version (opens in lightbox)</label></li>' +
+						'<li><label><input class="upfront-field-radio" type="radio" ' + link_link + ' name="link_to" value="link" /> Link <input class="upfront-field upfront-field-text" type="text" placeholder="http://www.google.com" value="' + link_value + '" /></label></li>' +
+						'<li><label><input class="upfront-field-radio" type="radio" name="link_to" value="post" /> Post or page <em>/your-cool-post/</em></label></li>' +
 					'</ul>' +
 				'</div>' +
-				'<button type="button">OK</button>'
+				'<button class="upfront-image-detail-button" type="button">OK</button>'
 			);
+			/*$details.on('focus', '.upfront-image-detail-link li :text', function(e){
+				$(this).siblings(':radio').prop('checked', true);
+			});*/
 			$details.css({
 				position: "absolute",
-				top: $dialog.offset().top + $dialog.height() + 5,
-				left: $dialog.offset().left,
-				"z-index": 99,
-				background: "white"
+				top: $button.offset().top + $button.height(),
+				"z-index": 99
 			});
 			$("body").append($details);
+			$details.css({
+				left: $button.offset().left + 46 - ($details.width()/2),
+			});
+			$button.addClass('upfront-image-action-details-active');
 
 			$details.on("click", "button", e.data, e.data.Details.apply_details);
 		},
 		close: function (e) {
-			var $details = $("#upfront-image-details-image_details");
+			var $dialog = $("#upfront-image-details"),
+				$button = $dialog.find('.upfront-image-action-details'),
+				$details = $("#upfront-image-details-image_details");
+			$button.removeClass('upfront-image-action-details-active');
 			$details.remove();
 		},
 		apply_details: function (e) {
@@ -182,9 +273,9 @@ var Image = {
 				$img = $wrapper.find("img"),
 				$old_link = $wrapper.find("a"),
 			// Data changes to apply
-				alt = $details.find(".alt :text").val(),
-				link_to = $details.find(".link :radio:checked").val(),
-				link_url = $details.find(".link :text").val()
+				alt = $details.find(".upfront-image-detail-alt :text").val(),
+				link_to = $details.find(".upfront-image-detail-link :radio:checked").val(),
+				link_url = $details.find(".upfront-image-detail-link :text").val()
 			;
 
 			$img.attr("alt", alt);
