@@ -132,9 +132,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			};
 		}
 
-		if(position.left < 0)
-			position.left = 0;
-
 		this.imageInfo = {
 			id: this.property('image_id'),
 			src: this.property('src'),
@@ -180,7 +177,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					'<span class="upfront-image-resizethiselement">Resize this element & Select an Image</span>'+
 					'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
 			'</div>';
-
 		}
 
 		return rendered;
@@ -255,19 +251,25 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		var resizer = $('.upfront-resize'),
 			img = this.$('img'),
-			elementSize = {},
+			elementSize = this.property('element_size'),
 			imgSize = this.property('size'),
 			position = this.property('position'),
-			heightLimit = resizer.height() - 30
+			heightLimit = resizer.height() - 30,
+			ratio = 1
 		;
 		/*
 		if(this.parent_module_view == view)
 			this.setElementSize(ui);
 */
-		if(heightLimit < img.height()){
-			var ratio = heightLimit / img.height();
+
+		if(heightLimit < img.height())
+			ratio = heightLimit / elementSize.height;
+		else if(img.width() != elementSize.width)
+			ratio = img.width() / elementSize.width;
+
+		if(ratio != 1){
 			elementSize = {
-				width: Math.round(img.width() * ratio),
+				width: Math.round(elementSize.width * ratio),
 				height: heightLimit
 			};
 			imgSize = {
@@ -283,6 +285,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.property('position', position, true);
 			this.property('stretch', false, true);
 		}
+
+		this.elementSize = {height: resizer.height() - 30};
 	},
 	setElementSize: function(ui){
 		var me = this,
