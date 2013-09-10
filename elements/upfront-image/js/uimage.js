@@ -37,11 +37,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 		 this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
-			'click a.uimage_edit_toggle': 'editRequest',
-			'drop .uimage-drop-hint': 'handleDrop'
+			'click a.uimage_edit_toggle': 'editRequest'
 		 });
 		 this.delegateEvents();
-		 //Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
+		 Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
 		 this.model.on('uimage:edit', this.editRequest, this);
 
 		$('body').on('dragover', function(e){
@@ -74,7 +73,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			starting = this.$('.upfront-image-starting-select'),
 			size = this.property('size'),
 			position = this.property('position'),
-			elementSize = this.property('element_size')
+			elementSize = this.property('element_size'),
+			stretch = this.property('stretch'),
+			img = this.$('img')
 		;
 		if(starting.length){
 			maskSize = {
@@ -95,9 +96,31 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			};
 		}
 
+		var ratio = elementSize.width / img.width();
+		elementSize = {
+			width: Math.round(elementSize.width * ratio),
+			height: Math.round(elementSize.height * ratio)
+		};
+		size = {
+			width: Math.round(size.width * ratio),
+			height: Math.round(size.height * ratio)
+		};
+		if(position){
+			position = {
+				left: Math.round(position.left * ratio),
+				top: Math.round(position.top * ratio)
+			}
+		}
+
+		if(position)
+			position = {
+				left: position.left - img.offset().left + maskOffset.left,
+				top: position.top - img.offset().top + maskOffset.top
+			}
+
 		//Fix for responsive images
 		var img = this.$('img');
-		if(img.length && img.width() != elementSize.width){
+		if(stretch && img.length && img.width() != elementSize.width){
 			var ratio = elementSize.width / img.width();
 			size = {
 				width: Math.round(size.width / ratio),
@@ -147,7 +170,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(props.stretch)
 			props.imgWidth = '100%';
 		else
-			props.imgWidth = '';
+			props.imgWidth = props.element_size.width + 'px';
 
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
@@ -227,27 +250,39 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResize: function(view, model, ui){
+		if(this.parent_module_view != view)
+			return;
+
 		var resizer = $('.upfront-resize'),
-			imageSize = this.property('size'),
-			imageOffset = this.property('position')
+			img = this.$('img'),
+			elementSize = {},
+			imgSize = this.property('size'),
+			position = this.property('position'),
+			heightLimit = resizer.height() - 30
 		;
+		/*
 		if(this.parent_module_view == view)
 			this.setElementSize(ui);
-
-		if(resizer.width() > imageSize.width + imageOffset.left){
-			if(resizer.width() >= imageSize.width)
-				imageOffset.left = 0;
-			else
-				imageOffset.left =  resizer.width() - imageSize.width;
+*/
+		if(heightLimit < img.height()){
+			var ratio = heightLimit / img.height();
+			elementSize = {
+				width: Math.round(img.width() * ratio),
+				height: heightLimit
+			};
+			imgSize = {
+				width: Math.round(imgSize.width * ratio),
+				height: Math.round(imgSize.height * ratio)
+			};
+			position = {
+				left: Math.round(position.left * ratio),
+				top: Math.round(position.top * ratio)
+			};
+			this.property('element_size', elementSize, true);
+			this.property('size', imgSize, true);
+			this.property('position', position, true);
+			this.property('stretch', false, true);
 		}
-
-		if(resizer.height() > imageSize.height + imageOffset.top){
-			if(resizer.height() >= imageSize.height)
-				imageOffset.top = 0;
-			else
-				imageOffset.top =  resizer.height() - imageSize.height;
-		}
-		this.property('position', imageOffset);
 	},
 	setElementSize: function(ui){
 		var me = this,
@@ -1625,7 +1660,7 @@ var ImageEditor = Backbone.View.extend({
 		var mask = this.$('#uimage-mask'),
 			canvas = this.$('#uimage-canvas'),
 			handle = this.$('#uimage-drag-handle'),
-			position = mask.position()
+			position = canvas.position()
 		;
 
 		this.$('#image-edit-button-align').removeClass('align-left align-right align-center').addClass('align-' + direction);
