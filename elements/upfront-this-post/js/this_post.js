@@ -118,6 +118,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	on_edit: function (e) {
 		var me = this;
 
+		console.log('Edit post');
+
 		if(!this.post){
 			this.post = new Upfront.Model.Post({id: _upfront_post_data.post_id});
 			this.post.fetch().done(function(response){
@@ -148,7 +150,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				body: this.contentSelector
 			}
 		});
-		editor.start();
+		editor.start(e);
 	},
 	updatePost: function() {
 		var editor = Upfront.Content.editors.get(this.model.get_property_value_by_name("element_id")),

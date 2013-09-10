@@ -33,7 +33,23 @@
 			Upfront.Events.trigger("data:current_post:change");			
 		}
 
-		var start = function () {
+		var setFocus = function(e){
+			if(!e)
+				view.$('[contenteditable]').focus();
+
+			if($(e.target).is(options.selectors.title) || $(e.target).parents(options.selectors.title).length){
+				var title = view.$(options.selectors.title).find('input').focus(),
+					value = title.val()
+				;
+				setTimeout(function(){
+					title.focus().val(value);
+				}, 500);
+			}
+			else
+				view.$('[contenteditable]').focus();
+		};
+
+		var start = function (event) {
 			/*
 			// Post loading if needed
 			if (!view.content) return view.loading.done(function () {
@@ -95,7 +111,7 @@
 			$body.find("#upfront-post-cancel_edit").on("click", function () {
 				stop();
 			});
-			$editor.focus();
+			setFocus(event);
 			apply_styles($title);
 
 			// We're ready, start editing

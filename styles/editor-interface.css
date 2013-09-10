@@ -1810,13 +1810,14 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 #settings .upfront-settings-item-content {
 	margin: 0;
 }
-#settings .upfront-settings-button_panel {
+.upfront-settings-button_panel {
 	position: absolute;
 	bottom: -37px;
 	right: -1px;
 	margin: 0;
+	z-index:20;
 }
-#settings .upfront-save_settings {
+.upfront-save_settings {
 	height: 36px;
 	width: auto;
 	border: 1px solid rgb(0, 219, 143);
@@ -1829,8 +1830,11 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	border-radius: 0;
 	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
 }
+.upfront-save_settings:hover {
+	background: #3ea;
+}
 /* @TODO still using font awesome icon, need add it to sprite instead */
-#settings .upfront-save_settings i {
+.upfront-save_settings i {
 	color: rgb(25, 166, 116);
 }
 
