@@ -85,8 +85,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			'click .ugallery_op_mask': 'imageEditMask',
 			'click .ugallery_item_rm_yes': 'removeImage',
 			'click .ugallery_item_rm_no': 'cancelRemoving',
-			'click .ugallery_sort_toggle': 'activateSortable',
-			'click .ugallery_order_ok': 'sortOk'
+			'click .ugallery_sort_toggle': 'activateSortable'
 		});
 
 		this.images = new UgalleryImages(this.property('images'));
@@ -127,7 +126,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	get_buttons: function(){
 		if(this.images && this.images.length > 1)
-			return '<a href="#" class="upfront-icon-button ugallery_sort_toggle"></a>';
+			return '<a href="#" class="upfront-icon-button ugallery_sort_toggle" title="Sort Gallery"></a>';
 		return '';
 	},
 
@@ -376,8 +375,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	                    if (files.length && input.length){
 	                    	input[0].files = files;
 	                    }
-                    }
-                    
+                    }                    
                 })
             ;
             me.resizeOverlay();
@@ -589,10 +587,25 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	activateSortable: function(){
-		var parent = this.parent_module_view.$('.upfront-editable_entity:first');
+		var me = this,
+			parent = this.parent_module_view.$('.upfront-editable_entity:first'),
+			info = ''
+
+		;
+		if(!parent.find('.ugallery-sort-info').length)
+			info = $('<div class="ugallery-sort-info"><a class="ugallery_order_ok" href="#">I like this</a>Drag the images to sort the gallery</div>')
+					.on('click', '.ugallery_order_ok', function(e){
+						e.preventDefault();
+						me.sortOk();
+					})
+			;
 
 		this.$('.ugallery').sortable({
-			items: 'div.ugallery_item:not(.ugallery_addmore)'
+			items: 'div.ugallery_item:not(.ugallery_addmore)',
+			//placeholder: "ugallery-sortable-placeholder",
+			start: function(e, ui){
+				console.log('draggin');
+			}
 		});
 		this.$el.addClass('ugallery_sorting');
 
@@ -609,6 +622,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			opacity: '.9'
 		});
 
+		parent.append(info);
 	},
 
 	sortOk: function() {
@@ -646,6 +660,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.parent_module_view.$('.upfront-icon-button').css({
 			opacity: '.9'
 		});
+		this.parent_module_view.$('.ugallery-sort-info').remove();
 	},
 
 	openTooltip: function(content, element){

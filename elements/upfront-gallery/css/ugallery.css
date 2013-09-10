@@ -181,25 +181,24 @@
 .ugallery_sort_toggle:before {
 	background-position: -1582px -201px;
 }
-
+.ugallery-sort-info {
+	text-align: right;
+	font-style: italic;
+}
 a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {
-	display:none;
 	height:30px;
 	line-height: 30px;
 	padding: 0 20px;
 	background: #1fcd8f;
-	position: absolute;
-	right: 0;
-	bottom: -30px;
+	margin-left: 15px;
 	color: #fff;
 	z-index: 1;
+	float:right;
+	font-style: normal;
+	position:relative;
+	z-index: 2000;
 }
-.ugallery_sorting .ugallery_order_ok, 
-.ugallery_sorting .ugallery_order_ok:link,
-.ugallery_sorting .ugallery_order_ok:visited {
-	display:block;
-}
-.ugallery_sorting .ugallery_order_ok:hover {
+a.ugallery_order_ok:hover {
 	background: #3ea;
 }
 
@@ -213,6 +212,17 @@ a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {
 
 .ugallery_sorting .ui-sortable-helper {
 	box-shadow: 3px 3px 8px rgba(0,0,0,.3) !important;
+}
+
+.ugallery_sorting .ugallery_item a{
+	cursor: move;
+}
+
+.ugallery_sorting .ui-sortable-placeholder {
+	background: #888;
+	visibility: visible !important;
+	box-shadow: none;
+	opacity: .2;
 }
 
 .ugallery-thumbnail-fields .upfront-field-wrap-number {
