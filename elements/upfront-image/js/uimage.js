@@ -77,12 +77,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			stretch = this.property('stretch'),
 			img = this.$('img')
 		;
+
 		if(starting.length){
 			maskSize = {
 				width: starting.outerWidth(),
 				height: starting.outerHeight()
 			};
 			maskOffset = starting.offset();
+			position = false;
 		}
 		else {
 			starting = this.$('.upfront-image')
@@ -107,16 +109,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		};
 		if(position){
 			position = {
-				left: Math.round(position.left * ratio),
-				top: Math.round(position.top * ratio)
+				left: Math.round(position.left * ratio) - img.offset().left + maskOffset.left,
+				top: Math.round(position.top * ratio) - img.offset().top + maskOffset.top
 			}
 		}
-
-		if(position)
-			position = {
-				left: position.left - img.offset().left + maskOffset.left,
-				top: position.top - img.offset().top + maskOffset.top
-			}
 
 		//Fix for responsive images
 		var img = this.$('img');
