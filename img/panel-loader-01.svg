@@ -350,5 +350,10 @@
 	<rect x="143" y="1511" opacity="0.01" fill-rule="evenodd" clip-rule="evenodd" fill="#BFE1FF" width="1.008" height="1.008"/>
 </g>
 <g id="Layer_3" display="none">
+	<g display="inline">
+		<rect x="72" opacity="0.3" fill="#FCEE21" width="72" height="5"/>
+		<rect x="72" y="67" opacity="0.3" fill="#FCEE21" width="72" height="5"/>
+		<rect x="72" y="5" opacity="0.3" fill="#ED1C24" width="72" height="62"/>
+	</g>
 </g>
 </svg>
