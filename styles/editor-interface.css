@@ -1786,13 +1786,15 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 #settings .upfront-settings-tab-height {
 	width: 0;
 }
-#settings .upfront-settings-item {
+#settings .upfront-settings-item,
+.upfront-global-social-settings .upfront-settings-item {
 	position: relative;
 	border: 1px solid rgb(195, 216, 236);
 	margin: 9px 0 19px;
 	padding: 15px 15px 10px;
 }
-#settings .upfront-settings-item-title {
+#settings .upfront-settings-item-title,
+.upfront-global-social-settings .upfront-settings-item-title{
 	position: absolute;
 	top: -9px;
 	left: 5px;
@@ -1807,7 +1809,12 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	text-overflow: ellipsis;
 	font-family: 'Source Sans Pro';
 }
-#settings .upfront-settings-item-content {
+.upfront-global-social-settings .upfront-settings-item-title
+{
+    background-color: #e5f3fe;
+}
+#settings .upfront-settings-item-content,
+.upfront-global-social-settings .upfront-settings-item-content{
 	margin: 0;
 }
 .upfront-settings-button_panel {
