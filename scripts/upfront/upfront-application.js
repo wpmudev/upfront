@@ -134,18 +134,6 @@ var LayoutEditor = new (Subapplication.extend({
 		;
 	},
 
-    load_social_global_panel: function(){
-        Upfront.data.social = {
-            loading: false,
-            panel: {},
-            settingsReady: false
-        }
-        Upfront.data.social.loading = Upfront.Util.post({"action": "upfront_get_social_media_global_settings"})
-            .error(function (ret) {
-                Upfront.Util.log("Error loading social settings");
-            });
-    },
-
 	dispatch_layout_loading: function (layout_id) {
 		var layout = layout_id || "1",
 			app = this
@@ -156,9 +144,6 @@ var LayoutEditor = new (Subapplication.extend({
 			//Upfront.data = {loading: {}};
 
 			_.extend(Upfront, data);			
-            // Load Social settings
-            app.load_social_global_panel();
-
 			_.extend(Upfront, models);
 			_.extend(Upfront, views);
 			_.extend(Upfront.Views, editor);
