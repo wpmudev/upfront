@@ -37,6 +37,11 @@
 			// Fade other stuff out
 			$(".upfront-module, #sidebar-ui").css("opacity", .3);
 			options.parent.css("opacity", 1);
+
+			// Make the bar snapping work
+			$(window).on("scroll", function () {
+				reposition_bar();
+			})
 		};
 
 		var stop = function () {
@@ -56,6 +61,31 @@
 				top: $(window).height() - 120,
 				left: options.parent.offset().left + Upfront.Settings.LayoutEditor.Grid.baseline
 			}).show();
+			reposition_bar();
+		};
+
+		var reposition_bar = function () {
+			if (!$bar || !$bar.length) return;
+
+			var parent_pos = options.parent.offset(),
+				parent_height = options.parent.height(),
+				bottom = parent_pos.top + parent_height,
+				min_point = $(window).height() - 120,
+				current_scroll = $(window).scrollTop(),
+				scroll_pos = current_scroll + parent_height,
+				position = "fixed",
+				anchor_point = (current_scroll > min_point ? current_scroll : min_point)
+			;
+			if (bottom > scroll_pos) {
+				//Upfront.Util.log("Over min point: " + JSON.stringify({bt: bottom, cs: current_scroll, sp: scroll_pos}));
+			} else {
+				anchor_point = bottom;
+				position = "absolute";
+			}
+			$bar.css({
+				position: position,
+				top: anchor_point
+			});
 		};
 
 		return {
