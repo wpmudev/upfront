@@ -17,6 +17,7 @@ var ThisPostModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("element_id", Upfront.Util.get_unique_id("this_post-object"));
 		this.init_property("class", "c22 upfront-this_post");
 		this.init_property("has_settings", 1);
+		this.init_property("post_data", ["author", "date", "comments_count"]);
 	}
 });
 
