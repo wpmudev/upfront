@@ -51,7 +51,7 @@
 
 			// Kill the bar snapping
 			$(window).off("scroll", reposition_bar);
-			options.editor.off("change", reposition_bar);
+			options.editor.removeListener("change", reposition_bar);
 		};
 
 		var hide = function () {
