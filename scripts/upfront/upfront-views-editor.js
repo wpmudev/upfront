@@ -626,7 +626,10 @@ define(_template_files, function () {
 			this.reset_modules();
 		},
 		reset_modules: function () {
-			var region = this.model.get("regions").get_by_name('shadow');
+			var regions = this.model.get("regions"),
+				region = regions && regions.get_by_name('shadow')
+			;
+			if (!regions) return false;
 			if ( ! region ){
 				region = new Upfront.Models.Region({
 					"name": "shadow",
