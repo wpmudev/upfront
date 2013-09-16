@@ -5,11 +5,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		global $post;
 		$element_id = $this->_get_property('element_id');
 		return "<div class='upfront-output-object upfront-this_post' id='{$element_id}'>" .
-			self::get_post_markup(get_the_ID(), $post->post_type) .
+			self::get_post_markup(get_the_ID(), $post->post_type, $this->properties_to_array()) .
 		"</div>";
 	}
 
-	public static function get_post_markup ($post_id) {
+	public static function get_post_markup ($post_id, $post_type, $properties=array()) {
 		if($post_id === 0)
 			return self::get_new_post($post_type);
 
@@ -21,10 +21,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 		//$title = apply_filters('the_title', $post->post_title);
 		//$content = apply_filters('the_content', $post->post_content);
 		
-		return self::post_template($post);
+		return self::post_template($post, $properties);
 	}
 
-	public static function get_new_post($post_type = 'post') {
+	public static function get_new_post($post_type = 'post', $properties=array()) {
 
 		$title = sprintf(__('Enter your new %s title here', 'upfront'), $post_type);
 		$content = sprintf(__('Your %s content goes here. Have fun writing :)', 'upfront'), $post_type);
@@ -50,15 +50,22 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if($post_id)
 			query_posts('p=' . $post_id);
 
-		return self::post_template($post);
+		return self::post_template($post, $properties);
 	}
 
-	public static function post_template($this_post) {
+	public static function post_template($this_post, $properties=array()) {
 		global $post;
 		$post = $this_post;
 		setup_postdata($post);
 
-		return upfront_get_template('this-post', array('post' => $post), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
+		return upfront_get_template('this-post', array('post' => $post, 'properties' => $properties), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
+	}
+
+	private function properties_to_array(){
+		$out = array();
+		foreach($this->_data['properties'] as $prop)
+			$out[$prop['name']] = $prop['value'];
+		return $out;
 	}
 }
 
@@ -77,14 +84,13 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 	public function load_markup () {
 		$data = json_decode(stripslashes($_POST['data']), true);
-		
 		if (!is_numeric($data['post_id'])) die('error');
 
 		$content = '';
 		if($data['post_id'])
-			$content = Upfront_ThisPostView::get_post_markup($data['post_id']);
+			$content = Upfront_ThisPostView::get_post_markup($data['post_id'], null, $data['properties']);
 		else if($data['post_type'])
-			$content = Upfront_ThisPostView::get_new_post($data['post_type']);
+			$content = Upfront_ThisPostView::get_new_post($data['post_type'], $data['properties']);
 		else
 			die('error');
 

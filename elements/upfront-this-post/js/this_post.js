@@ -113,7 +113,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			"action": "this_post-get_markup",
 			"data": JSON.stringify({
 				"post_id": postId,
-				"post_type": Upfront.Settings.LayoutEditor.newpostType
+				"post_type": Upfront.Settings.LayoutEditor.newpostType,
+				"properties": {post_data:this.model.get_property_value_by_name("post_data")}
 			})
 		});
 	},
