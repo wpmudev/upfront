@@ -39,9 +39,8 @@
 			options.parent.css("opacity", 1);
 
 			// Make the bar snapping work
-			$(window).on("scroll", function () {
-				reposition_bar();
-			})
+			$(window).on("scroll", reposition_bar);
+			options.editor.on("change", reposition_bar);
 		};
 
 		var stop = function () {
@@ -49,6 +48,10 @@
 
 			// Fade other stuff in
 			$(".upfront-module, #sidebar-ui").css("opacity", 1);
+
+			// Kill the bar snapping
+			$(window).off("scroll", reposition_bar);
+			options.editor.off("change", reposition_bar);
 		};
 
 		var hide = function () {
@@ -72,9 +75,9 @@
 				bottom = parent_pos.top + parent_height,
 				min_point = $(window).height() - 120,
 				current_scroll = $(window).scrollTop(),
-				scroll_pos = current_scroll + parent_height,
+				scroll_pos = current_scroll + min_point,
 				position = "fixed",
-				anchor_point = (current_scroll > min_point ? current_scroll : min_point)
+				anchor_point = min_point
 			;
 			if (bottom > scroll_pos) {
 				//Upfront.Util.log("Over min point: " + JSON.stringify({bt: bottom, cs: current_scroll, sp: scroll_pos}));
@@ -164,11 +167,6 @@
 				$title = $el.find(options.selectors.title),
 				$parent = view.parent_module_view.$el.find('.upfront-editable_entity:first')
 			;
-			editor_bar = new Editor_SupplementalBar({
-				post: post,
-				editor: editor,
-				parent: $parent
-			});
 
 			// Markup conversions
 			$title.html((post.get("is_new")
@@ -193,6 +191,11 @@
 			// If we got this far, we're good to go. Boot up CKE
 			editor = CKEDITOR.inline($editor.get(0), {
 				floatSpaceDockedOffsetY: 62 + $title.height()
+			});
+			editor_bar = new Editor_SupplementalBar({
+				post: post,
+				editor: editor,
+				parent: $parent
 			});
 
 			// Prevent default events, we're in editor mode.
