@@ -1090,7 +1090,7 @@ define(_template_files, function () {
 
 			this.fetch_current_user();
 
-			Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
+			//Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
 		},
 		render: function () {
 			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
@@ -1128,6 +1128,7 @@ define(_template_files, function () {
 			return this.sidebar_commands[commands];
 		},
 		to_content_editor: function () {
+			/*
 			var panel = this.sidebar_panels.panels.posts,
 				post_model = Upfront.data.currentPost
 			;
@@ -1150,15 +1151,20 @@ define(_template_files, function () {
 				panel.show();
 
 			panel.$el.find(".sidebar-panel-title").trigger("click");
+			*/
+			console.log("to_content_editor got called");
 		},
 		from_content_editor: function () {
+			/*
 			var panel = this.sidebar_panels.panels.posts;
 			//panel.commands = _([]);
 			panel.hide();//render();
 			$(".sidebar-panel-title.upfront-icon.upfront-icon-panel-elements").trigger("click");
+			*/
+			console.log("from_content_editor got called")
 		},
 		handle_post_change: function (post) {
-			this.to_content_editor();
+			//this.to_content_editor();
 		},
 		fetch_current_user: function() {
 			var user = Upfront.data.currentUser;
@@ -1587,12 +1593,14 @@ define(_template_files, function () {
 			this.post.on('change', this.onPostChange, this);
 		},
 		handle_status_change: function () {
+			var me = this;
 			Upfront.Util.post({
 				"action": "upfront-post-update_status",
 				"post_id": this.model.get("ID"),
 				"status": ("publish" == this.model.get("post_status") ? "draft" : "publish")
 			}).success(function (resp) {
 				Upfront.Events.trigger("upfront:posts:post:post_updated", resp.data);
+				me.model.set(resp.data);
 			});
 		},
 		onPostChange: function(){
@@ -1745,15 +1753,35 @@ define(_template_files, function () {
 		}
 	});
 
-	var ContentEditorSidebarCommands_Control = Commands.extend({
-		"className": "sidebar-commands sidebar-commands-control",
+	var ContentEditor_SidebarCommands_MetaControl = Commands.extend({
+		"className": "sidebar-commands clearfix sidebar-commands-control-meta",
 		initialize: function () {
 			this.commands = _([
-				new Command_SaveDraft({"model": this.model}),
-				new Command_SavePublish({"model": this.model}),
-				new Command_PopupMeta({"model": this.model}),
-				new Command_PopupTax({"model": this.model}),
-				new Command_PopupSlug({"model": this.model})
+				new Command_PopupTax({model: this.model}),
+				new Command_PopupSlug({model: this.model}),
+			]);
+		}
+	});
+
+	var ContentEditor_SidebarCommands_StatusControl = Commands.extend({
+		"className": "sidebar-commands clearfix sidebar-commands-control-status",
+		initialize: function () {
+			var post_model = Upfront.data.currentPost;
+			this.commands = _([
+				new Command_PopupStatus({model: post_model}),
+				new Command_PopupVisibility({model: post_model}),
+				new Command_PopupSchedule({model: post_model}),
+			]);
+		}
+	});
+
+	var ContentEditor_SidebarCommands_PublishControl = Commands.extend({
+		"className": "sidebar-commands sidebar-commands-control-publish",
+		initialize: function () {
+			this.commands = _([
+				new Command_SaveDraft({model: this.model}),
+				new Command_SavePublish({model: this.model}),
+				new Command_Trash({model: this.model})
 			]);
 		}
 	});
@@ -1762,13 +1790,17 @@ define(_template_files, function () {
 		"tagName": "div",
 		initialize: function () {
 			this.sidebar_commands = {
-				primary: new SidebarCommands_PrimaryPostType({"model": this.model}),
-				additional: new SidebarCommands_AdditionalPostType({"model": this.model}),
-				control: new ContentEditorSidebarCommands_Control({"model": this.model})
+				//primary: new SidebarCommands_PrimaryPostType({"model": this.model}),
+				//additional: new SidebarCommands_AdditionalPostType({"model": this.model}),
+				//control: new ContentEditor_SidebarCommands_Control({"model": this.model}),
+				meta: new ContentEditor_SidebarCommands_MetaControl({"model": this.model}),
+				status: new ContentEditor_SidebarCommands_StatusControl({"model": this.model}),
+				publish: new ContentEditor_SidebarCommands_PublishControl({"model": this.model}),
 			};
 			this.sidebar_panels = new SidebarPanels({"model": this.model});
 		},
 		render: function () {
+			/*
 			// Primary post types
 			this.sidebar_commands.primary.render();
 			this.$el.append(this.sidebar_commands.primary.el);
@@ -1776,11 +1808,19 @@ define(_template_files, function () {
 			this.sidebar_commands.additional.render();
 			this.$el.append(this.sidebar_commands.additional.el);
 			// Sidebar panels
-			//this.sidebar_panels.render();
-			//this.$el.append(this.sidebar_panels.el);
+			this.sidebar_panels.render();
+			this.$el.append(this.sidebar_panels.el);
 			// Control
 			this.sidebar_commands.control.render();
 			this.$el.append(this.sidebar_commands.control.el);
+			*/
+			this.$el.empty();
+			this.sidebar_commands.publish.render();
+			this.$el.append(this.sidebar_commands.publish.el);
+			this.sidebar_commands.meta.render();
+			this.$el.append(this.sidebar_commands.meta.el);
+			this.sidebar_commands.status.render();
+			this.$el.append(this.sidebar_commands.status.el);
 		},
 
 		get_panel: function ( panel ) {
@@ -3619,7 +3659,7 @@ define(_template_files, function () {
 				notifier.addMessage(message, type);
 			},
 			"Loading": Loading
-		},	
+		},
 		"ContentEditor": {
 			"Sidebar": ContentEditorSidebar,
 			//"Uploader": new ContentEditorUploader

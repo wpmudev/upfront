@@ -349,8 +349,8 @@ var LayoutEditor = new (Subapplication.extend({
 }))();
 
 
+/*
 var ContentEditor = new (Subapplication.extend({
-
 	run: function () {
 		var app = this;
 		require(Upfront.Settings.ContentEditor.Requirements.core, function (models, views, editor, behaviors) {
@@ -403,13 +403,13 @@ var ContentEditor = new (Subapplication.extend({
 		$(Upfront.Settings.ContentEditor.Selectors.sidebar).show();
 	}
 
-
 }))();
+*/
 
 
 var Application = new (Backbone.Router.extend({
 	LayoutEditor: LayoutEditor,
-	ContentEditor: ContentEditor,
+	//ContentEditor: ContentEditor,
 
 	run: function () {
 		this.LayoutEditor.run();

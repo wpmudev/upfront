@@ -10,6 +10,62 @@
 		stop: function () {}
 	};
 
+	var Editor_SupplementalBar = function (options) {
+		var OVERLAY_Z_INDEX = 10;
+
+		var _defaults = {
+			editor: false,
+			post: false,
+			parent: false
+		};
+		options = _.extend(_defaults, options); 
+
+		var $bar = false,
+			sidebar = false
+		;
+
+		var start = function () {
+			$("body").append("<div id='upfront-editor_bar' />");
+			$bar = $("#upfront-editor_bar");
+			sidebar = new Upfront.Views.ContentEditor.Sidebar({
+				"model": new Backbone.Model([]),
+				"el": $bar
+			});
+			sidebar.render();
+			$bar.show();
+
+			// Fade other stuff out
+			$(".upfront-module, #sidebar-ui").css("opacity", .3);
+			options.parent.css("opacity", 1);
+		};
+
+		var stop = function () {
+			if ($bar && $bar.length) $bar.remove();
+
+			// Fade other stuff in
+			$(".upfront-module, #sidebar-ui").css("opacity", 1);
+		};
+
+		var hide = function () {
+			if ($bar && $bar.length) $bar.hide();
+		};
+
+		var show = function () {
+			if ($bar && $bar.length) $bar.css({
+				zIndex: OVERLAY_Z_INDEX,
+				top: $(window).height() - 120,
+				left: options.parent.offset().left + Upfront.Settings.LayoutEditor.Grid.baseline
+			}).show();
+		};
+
+		return {
+			start: start,
+			stop: stop,
+			hide: hide,
+			show: show
+		};
+	};
+
 	var Editor_Post = function (options) {
 		var _defaults = {
 			editor_id: false,
@@ -26,7 +82,8 @@
 
 		var view = options.view,
 			post = options.post,
-			editor = false
+			editor = false,
+			editor_bar = false
 		;
 		if (post && Upfront.data.currentPost != post) {
 			Upfront.data.currentPost = post;
@@ -34,19 +91,20 @@
 		}
 
 		var setFocus = function(e){
-			if(!e)
+			if(!e) {
 				view.$('[contenteditable]').focus();
-
-			if($(e.target).is(options.selectors.title) || $(e.target).parents(options.selectors.title).length){
+				editor.focus();
+			} else if($(e.target).is(options.selectors.title) || $(e.target).parents(options.selectors.title).length){
 				var title = view.$(options.selectors.title).find('input').focus(),
 					value = title.val()
 				;
 				setTimeout(function(){
 					title.focus().val(value);
 				}, 500);
-			}
-			else
+			} else {
 				view.$('[contenteditable]').focus();
+				editor.focus();
+			}
 		};
 
 		var start = function (event) {
@@ -76,6 +134,11 @@
 				$title = $el.find(options.selectors.title),
 				$parent = view.parent_module_view.$el.find('.upfront-editable_entity:first')
 			;
+			editor_bar = new Editor_SupplementalBar({
+				post: post,
+				editor: editor,
+				parent: $parent
+			});
 
 			// Markup conversions
 			$title.html((post.get("is_new")
@@ -89,6 +152,15 @@
 			);
 			// Init editor
 			var $editor = $body.find('[contenteditable]');
+			
+			// Detecting the race condition when editor DOM element is not yet ready.
+			if (!$editor.length) {
+				return setTimeout(function () {
+					start(event);
+				}, 100);;
+			}
+
+			// If we got this far, we're good to go. Boot up CKE
 			editor = CKEDITOR.inline($editor.get(0), {
 				floatSpaceDockedOffsetY: 62 + $title.height()
 			});
@@ -99,28 +171,31 @@
 			if ($parent.is(".ui-draggable")) $parent.draggable('disable');
 
 			// Bind misc events
-			$editor.closest(".upfront-editable_entity").off('focus')
-				.on('focus', function (e) {
-					$('#cke_upfront-body').show();
-				})
-				.off('blur')
-				.on('blur', function (e) {
-					$('#cke_upfront-body').hide();
-				})
-			;
+			editor.on("focus", function () {
+				editor_bar.show();
+			});
+			editor.on("blur", function () {
+				editor_bar.hide();
+			});
+			editor.on("instanceReady", function () {
+				// Do this on instanceReady event, as doing it before CKE is fully prepped
+				// causes the focus manager to mis-fire first couple of blur/focus events.
+				setFocus(event);
+			});
+
 			$body.find("#upfront-post-cancel_edit").on("click", function () {
 				stop();
 			});
-			setFocus(event);
 			apply_styles($title);
 
 			// We're ready, start editing
-			Upfront.Application.ContentEditor.run();
+			editor_bar.start();
 			Upfront.Events.on("entity:deactivated", view.on_cancel, view);
 		};
 
 		var stop = function () {
 			if (editor && editor.destroy) editor.destroy();
+			editor_bar.stop();
 			view.$el.html(view.get_content_markup());
 			var $parent = view.parent_module_view.$el.find('.upfront-editable_entity:first');
 			view.undelegateEvents();
@@ -129,7 +204,6 @@
 			if ($parent.is(".ui-draggable")) $parent.draggable('enable');
 			view.delegateEvents();
 			Upfront.Events.off("entity:deactivated", view.on_cancel, view);
-			Upfront.Application.ContentEditor.stop();
 			view.render();
 		};
 

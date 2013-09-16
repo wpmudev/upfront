@@ -4925,3 +4925,99 @@ License: MIT
 .align-center {
 	text-align: center;
 }
+
+
+
+
+/* ----- New Editor bar ----- */
+#upfront-editor_bar {
+	background: rgb(57, 82, 105);
+	position: fixed;
+	width: 800px;
+	height: 80px;
+	font-size: 12px;
+}
+#upfront-editor_bar .sidebar-commands div {
+	border: none;
+}
+#upfront-editor_bar .sidebar-commands-control-meta, 
+#upfront-editor_bar .sidebar-commands-control-status 
+{
+	width: 488px; /* 513 - 25 */
+	padding: 0;
+	padding-left: 25px;
+	margin: 0;
+	float: left;
+}
+
+#upfront-editor_bar .sidebar-commands-control-meta { 
+	background: #405972; 
+	height: 30px;
+	padding-top: 5px;
+}
+#upfront-editor_bar .sidebar-commands-control-status { 
+	background: #33475b; 
+	height: 38px; 
+	padding-top: 7px;
+}
+#upfront-editor_bar .sidebar-commands-control-publish { background: #3e5265; }
+
+#upfront-editor_bar .sidebar-commands-control-status .upfront-post-state {
+	float: left;
+}
+#upfront-editor_bar .sidebar-commands-control-publish {
+	width: 262px; /* 287 - 25 */
+	float: right;
+	padding: 0;
+	padding-left: 25px;
+	padding-top: 22px;
+	margin: 0;
+}
+
+#upfront-editor_bar .upfront-post-state b, 
+#upfront-editor_bar .upfront-post-state a,
+#upfront-editor_bar .upfront-command_inline
+{
+	font-size: inherit;
+}
+#upfront-editor_bar .upfront-post-schedule {
+	margin-bottom: 0;
+}
+#upfront-editor_bar .sidebar-commands a {
+	color: #31b98b;
+	text-decoration: underline;
+}
+
+#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-draft {
+	border-radius: 5px;
+	background: #5d7d98;
+	font-size: 12px;
+	padding: 3px 15px;
+	margin: 0 1em;
+	margin-top: 2px;
+}
+#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-draft a {
+	color: #b9cfe5;
+	text-decoration: none;
+}
+#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-publish {
+	border-radius: 5px;
+	background: #2ecc90;
+	font-size: 12px;
+	padding: 5px 40px;
+}
+#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-publish a {
+	color: #fff;
+	font-weight: bold;
+	text-decoration: none;
+}
+#upfront-editor_bar .sidebar-commands-control-publish .upfront-post-trash {
+	display: block;
+	position: relative;
+	top: 2em;
+	float: right;
+	font-size: 15px;
+}
+#upfront-editor_bar .sidebar-commands-control-publish .upfront-post-trash a {
+	color: #e5575a;
+}

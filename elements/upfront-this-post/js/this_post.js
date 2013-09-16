@@ -16,7 +16,7 @@ var ThisPostModel = Upfront.Models.ObjectModel.extend({
 
 		this.init_property("element_id", Upfront.Util.get_unique_id("this_post-object"));
 		this.init_property("class", "c22 upfront-this_post");
-		this.init_property("has_settings", 0);
+		this.init_property("has_settings", 1);
 	}
 });
 
@@ -96,6 +96,9 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.loading.done(function(response){
 				me.render();
 			});
+
+		// Kill the module removal button
+		this.parent_module_view.$el.find(".upfront-entity-delete_trigger").remove();
 
 		this.trigger("rendered", this);
 	},
@@ -210,13 +213,66 @@ var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	}
 });
 
+var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
+	initialize: function () {
+		var data = [
+			{label: "Post Author", value: "author"},
+			{label: "Post Date", value: "date"},
+			{label: "Categories", value: "categories"},
+			{label: "Tags", value: "tags"},
+			{label: "Comments count", value: "comments_count"}
+		];
+		this.fields = _([
+			new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				label: "Show the following Post Data:",
+				property: "post_data",
+				values: data
+			})
+		]);
+	},
+	get_title: function () {
+		return "Post Data";
+	}
+});
+
+var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
+
+	initialize: function () {
+		this.settings = _([
+			new Settings_PostPanel_PostData({model: this.model})
+		]);
+	},
+
+	get_label: function () {
+		return "This post";
+	},
+
+	get_title: function () {
+		return "Post settings";
+	}
+});
+
+var Settings = Upfront.Views.Editor.Settings.Settings.extend({
+		initialize: function () {
+			this.panels = _([
+				new Settings_PostPanel({model: this.model})
+			]);
+		},
+		
+		get_title: function () {
+			return "Post settings";
+		}
+	});
+
 // ----- Bringing everything together -----
 // The definitions part is over.
 // Now, to tie it all up and expose to the Subapplication.
 Upfront.Application.LayoutEditor.add_object("ThisPost", {
-	"Model": ThisPostModel,
-	"View": ThisPostView,
-	"Element": ThisPostElement
+	Model: ThisPostModel,
+	View: ThisPostView,
+	Element: ThisPostElement,
+	Settings: Settings
 });
 Upfront.Models.ThisPostModel = ThisPostModel;
 Upfront.Views.ThisPostView = ThisPostView;
