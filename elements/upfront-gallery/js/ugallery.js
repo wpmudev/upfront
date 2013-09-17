@@ -545,7 +545,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		}
 		else{
 			$('#ugallery-image-link-url').hide();
-			if(val == 'post' || $(e.target).type != 'change'){
+			if(val == 'post' || e.type != 'change'){
 				var me = this,
 					selectorOptions = {
 						postTypes: this.postTypes()
