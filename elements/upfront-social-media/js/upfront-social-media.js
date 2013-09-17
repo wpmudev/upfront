@@ -1,376 +1,175 @@
 (function ($) {
 
-        // Basic behavior/appearance dataset building block
-        var SocialMediaGlobalProperty = Backbone.Model.extend({
-            "defaults": {
-                "name": "",
-                "value": ""
-            }
-        });
+    var GlobalSocialMediaModel = Upfront.Models.ObjectModel.extend({});
 
-        // Basic behavior/appearance dataset
-        var SocialMediaGlobalProperties = Backbone.Collection.extend({
-            "model": SocialMediaGlobalProperty
-        });
-
-        var SocialMediaGlobalObjectModel = Backbone.Model.extend({
-            loading: false,
-            initialize: function(){
-                var me = this;
-                /*
-                Upfront.data.social.loading.success(function(response){
-                    me.set({"properties": new SocialMediaGlobalProperties(JSON.parse(response.data))})
-                })
-                */
-                Upfront.Util.post({"action": "upfront_get_social_media_global_settings"}).success(function(response) {
-                     me.set({"properties": new SocialMediaGlobalProperties(JSON.parse(response.data))});
-                });
-            },
-
-            "defaults": {
-                "properties":  new SocialMediaGlobalProperties()
-            },
-
-            get_property_by_name: function (name) {
-                var prop = this.get("properties").where({"name": name});
-                return prop.length ? prop[0] : false;
-            },
-            get_property_value_by_name: function (name) {
-                var prop = this.get_property_by_name(name);
-                return prop && prop.get ? prop.get("value") : false;
-            },
-            add_property: function (name, value) {
-                this.get("properties").add(new SocialMediaGlobalProperty({"name": name, "value": value}));
-            },
-            set_property: function (name, value) {
-                if (!name) return false;
-                var prop = this.get_property_by_name(name);
-                if (!prop || !prop.set) return this.add_property(name, value);
-                prop.set({"value": value});
-            }
-        });
-
-        var SocialMediaGlobalSettingsPanel = Backbone.View.extend({
-
-            model: new SocialMediaGlobalObjectModel(),
-
-            locationPreview: function(location, locationAlignment, locationText, selector){
-
-                if(location){
-
-                    switch (locationAlignment)
-                    {
-                        case 0:
-                            selector.text(locationText+' Left');
-                            break;
-                        case 1:
-                            selector.text(locationText+' Center');
-                            break;
-                        case 2:
-                            selector.text(locationText+' Right');
-                            break;
-                    }
-                }
-                else{
-                    selector.text('');
-                }
-
-            },
-
-            $popup : {},
-            popupFunc:function(){
-                var me = this;
-                popup = Upfront.Popup.open(function (data, $top, $bottom) {
-                    var $me = $(this),
-                        $top,
-                        $bottom;
-
-                    $top.empty().append('<ul class="upfront-tabs">' +
-                        '<li class="active upfront-social-popup-hd">Global Social Settings</li>' +
-                        '</ul>');
-
-                    $me.empty()
-                        .append('<p class="upfront-popup-placeholder">No such thing as <q>too many drinks</q>.</p>')
-                    ;
-
-                    me.$popup = {
-                        "top": $top,
-                        "content": $me,
-                        "bottom": $bottom
-                    };
-
-                });
-
-                var postOptions = me.model.get_property_value_by_name('post_options'),
-                    locationTop = me.model.get_property_value_by_name('location_top'),
-                    locationTopAlignment = me.model.get_property_value_by_name('location_top_alignment'),
-                    locationBottom = me.model.get_property_value_by_name('location_bottom'),
-                    locationBottomAlignment = me.model.get_property_value_by_name('location_bottom_alignment'),
-                    counterOptions = me.model.get_property_value_by_name('counter_options'),
-                    facebookPageUrl = me.model.get_property_value_by_name('facebook_page_url'),
-                    twitterPageUrl = me.model.get_property_value_by_name('twitter_page_url'),
-                    googlePageUrl = me.model.get_property_value_by_name('google_page_url'),
-                    linkedinPageUrl = me.model.get_property_value_by_name('linkedin_page_url'),
-                    youtubePageUrl = me.model.get_property_value_by_name('youtube_page_url'),
-                    pintrestPageUrl = me.model.get_property_value_by_name('pintrest_page_url'),
-                    isLiked = me.model.get_property_value_by_name('is_liked'),
-                    isTweet = me.model.get_property_value_by_name('is_tweet'),
-                    isGplus = me.model.get_property_value_by_name('is_gplus');
-
-                me.$popup.content.html(
-                    '<div class="upfront-global-social-settings">' +
-                        '<fieldset>' +
-                        '<legend>Post options:</legend>' +
-                        '<div class="upfront-social-setting-box"> ' +
-                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-post-options" name="post-options" value="1" '+ ( postOptions ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-post-options">Add social buttons to all posts</label>' +
-                        '</div>' +
-                        '<div class="upfront-social-sub-title">Locations</div>' +
-                        '<div class="upfront-social-setting-box location_top_box">' +
-                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-location-top" name="location-top" value="1" '+ ( locationTop ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-location-top">Top</label>' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-top-left" name="location-top-alignment" value="0" ' + (!locationTopAlignment ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-top-left">Left</label>' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-top-center" name="location-top-alignment" value="1" ' + (locationTopAlignment == 1 ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-top-center">Center</label>' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-top-right" name="location-top-alignment" value="2" ' + (locationTopAlignment == 2 ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-top-right">Right</label>' +
-                        '</div>' +
-                        '<div class="upfront-social-setting-box location_bottom_box">' +
-                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-location-bottom" name="location-bottom" value="1" '+ ( locationBottom ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-location-bottom">Bottom</label>' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-bottom-left" name="location-bottom-alignment" value="0" ' + (!locationBottomAlignment ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-bottom-left">Left</label>' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-bottom-center" name="location-bottom-alignment" value="1" ' + (locationBottomAlignment == 1 ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-bottom-center">Center</label>' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-bottom-right" name="location-bottom-alignment" value="2" ' + (locationBottomAlignment == 2 ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-bottom-right">Right</label>' +
-                        '</div>' +
-                        '</fieldset>' +
-                        '<fieldset>' +
-                        '<legend>Button Counter:</legend>' +
-                        '<div class="upfront-social-setting-box button_counter_top_box"> ' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-counter-right" name="counter-options" value="0" ' + (!counterOptions ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-counter-right">Counter right</label>' +
-                            '<input type="radio" class="upfront-radio" id="social_media_global_settings-counter-top" name="counter-options" value="1" ' + (counterOptions == 1 ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-counter-top">Counter top</label>' +
-                        '</div>' +
-                        '<div class="upfront-social-setting-box"> ' +
-                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-is-liked" name="is_liked" value="1" '+ ( isLiked ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-is-liked">Like</label>' +
-                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-is-tweet" name="is_tweet" value="1" '+ ( isTweet ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-is-tweet">Tweet</label>' +
-                            '<input type="checkbox" class="upfront-checkbox" id="social_media_global_settings-is-gplus" name="is_gplus" value="1" '+ ( isGplus ? 'checked="checked"' : '') + ' />' +
-                            '<label for="social_media_global_settings-is-gplus">Google +1</label>' +
-                        '</div>' +
-                        '</fieldset>' +
-
-                        '<fieldset class="social-pages-link-box">' +
-                        '<legend>Global Social Media Pages:</legend>' +
-                        '<div class="upfront-social-setting-box"> ' +
-                        '<div class="social-setting-title">Facebook</div>' +
-                        '<input type="text" id="social_media_global_settings-facebook" name="facebook_page_url" value="' + (facebookPageUrl ? facebookPageUrl : '') + '" placeholder="https://www.facebook.com/yourpage" />' +
-                        '</div> ' +
-                        '<div class="upfront-social-setting-box"> ' +
-                        '<div class="social-setting-title">Twitter</div>' +
-                        '<input type="text" id="social_media_global_settings-twitter" name="twitter_page_url" value="' + (twitterPageUrl ? twitterPageUrl : '') + '" placeholder="https://www.twitter.com/yourpage" /> ' +
-                        '</div> ' +
-                        '<div class="upfront-social-setting-box"> ' +
-                        '<div class="social-setting-title">Google</div>' +
-                        '<input type="text" id="social_media_global_settings-google" name="google_page_url" value="' + (googlePageUrl ? googlePageUrl : '') + '" placeholder="https://www.google.com/yourpage" /> ' +
-                        '</div> ' +
-
-                        (linkedinPageUrl ? '<div class="upfront-social-setting-box"><div class="social-setting-title">LinkedIn</div><input type="text" id="social_media_global_settings-linkedin" name="linkedin_page_url" value="' + linkedinPageUrl + '" placeholder="https://www.linkedin.com/yourpage" /></div>' : '') +
-                        (youtubePageUrl ? '<div class="upfront-social-setting-box"><div class="social-setting-title">Youtube</div><input type="text" id="social_media_global_settings-youtube" name="youtube_page_url" value="' + youtubePageUrl + '" placeholder="https://www.youtube.com/yourpage" /> </div>' : '') +
-                        (pintrestPageUrl ? '<div class="upfront-social-setting-box"><div class="social-setting-title">Pinterest</div><input type="text" id="social_media_global_settings-pintrest" name="pintrest_page_url" value="' + pintrestPageUrl + '" placeholder="https://www.pinterest.com/yourpage" /> </div>' : '') +
-
-                        '<div class="upfront-social-setting-box"> ' +
-                        '<div class="social-setting-title">' +
-                        '<select id="select_page_url" name="select_page_url">' +
-                        '<option value="0">Other</option>' +
-                        '<option id="social_media_global_settings-linkedin" data-name="linkedin_page_url" data-placeholder="https://www.linkedin.com/yourpage">LinkedIn</option>' +
-                        '<option id="social_media_global_settings-pintrest" data-name="pintrest_page_url" data-placeholder="https://www.pintrest.com/yourpage">Pintrest</option>' +
-                        '<option id="social_media_global_settings-youtube" data-name="youtube_page_url" data-placeholder="https://www.youtube.com/yourpage">Youtube</option>' +
-                        '</select>' +
-                        '</div>' +
-                        '<input class="blank_add_page_url_field" placeholder="https://www" type="text" />' +
-                        '<i class="icon-plus-sign add_page_url_button"></i>' +
-
-                        '</div>' +
-                        '</fieldset>' +
-                    '</div>'
-                );
-
-                me.$popup.bottom.html('<button type="button" class="upfront-social-media-save_settings"><i class="icon-ok"></i>OK</button>');
-
-                if(linkedinPageUrl) me.$popup.content.find('#select_page_url option#social_media_global_settings-linkedin').remove();
-                if(youtubePageUrl) me.$popup.content.find('#select_page_url option#social_media_global_settings-youtube').remove();
-                if(pintrestPageUrl) me.$popup.content.find('#select_page_url option#social_media_global_settings-pintrest').remove();
-
-                me.clickOnSaveButton();
-                me.clickOnCheckBoxes();
-                me.clickOnAddPageButton();
-                me.hideAddButton();
-            },
-            clickOnCheckBoxes: function(){
-                this.toggleDisable('social_media_global_settings-location-top');
-                this.toggleDisable('social_media_global_settings-location-bottom');
-            },
-            toggleDisable: function(selectorName){
-                var me = this,
-                    checkbox = this.$popup.content.find('#'+selectorName),
-                    isChecked = checkbox.is(':checked');
-                if(!isChecked)
-                    checkbox.nextAll('input[type="radio"]').prop('disabled', true);
-
-                checkbox.on("click", function () {
-                    var checkbox = me.$popup.content.find('#'+selectorName),
-                        isChecked = checkbox.is(':checked');
-                    if(!isChecked)
-                        checkbox.nextAll('input[type="radio"]').prop('disabled', true);
-                    if(isChecked)
-                        checkbox.nextAll('input[type="radio"]').prop('disabled', false);
-                });
-            },
-            clickOnSaveButton: function(){
-                var me = this;
-                this.$popup.bottom.find('.upfront-social-media-save_settings').on("click", function () {
-                    me.on_save();
-                });
-            },
-
-            clickOnAddPageButton: function(){
-                var me = this,
-                    $input,
-                    $select,
-                    $selectEle;
-
-                me.$popup.content.find('#select_page_url').change(function() {
-
-                    me.$popup.content.find('.blank_add_page_url_field').val('');
-                    if($(this).val() == '0')
-                        return false;
-                });
-
-                this.$popup.content.find('.add_page_url_button').on("click", function () {
-
-                    $input = me.$popup.content.find('.blank_add_page_url_field');
-                    $select = me.$popup.content.find('#select_page_url option:selected');
-                    $selectEle = me.$popup.content.find('#select_page_url').closest('.upfront-social-setting-box');
-
-                    if($select.val() == '0' ){
-                        $input.focus();
-                        return false;
-                    }
-
-                    $selectEle
-                        .before('<div class="upfront-social-setting-box"><div class="social-setting-title">'+$select.val()+'</div><input type="text" id="'+$select.attr('id')+'" name="'+$select.attr('data-name')+'" value="'+$input.val()+'" placeholder="'+$select.attr('data-placeholder')+'" /></div>');
-                    $select.remove();
-                    $input.val('');
-
-                    me.hideAddButton();
-                });
-            },
-
-            hideAddButton: function(){
-                if(this.$popup.content.find('#select_page_url option').length === 1){
-                    this.$popup.content.find('.add_page_url_button').closest('.upfront-social-setting-box').hide();
-                }
-            },
-
-            get_title: 'GLOBAL SOCIAL SETTINGS',
-            get_label: '',
-
-            on_save: function () {
-
-                var currentData = this.model.get('properties').toJSON();
-
-                //TODO: Inject Social buttons to post top and bottom
-                var $PostOptions = this.$popup.content.find(':checkbox[name="post-options"]:checked');
-                $PostOptions = $PostOptions.length ? parseInt($PostOptions.val(), 10) : 0;
-
-                var $LocationTop = this.$popup.content.find(':checkbox[name="location-top"]:checked');
-                $LocationTop = $LocationTop.length ? parseInt($LocationTop.val(), 10) : 0;
-
-                var $LocationTopAlignment = this.$popup.content.find(':radio[name="location-top-alignment"]:checked');
-                $LocationTopAlignment = $LocationTopAlignment.length ? parseInt($LocationTopAlignment.val(), 10) : 0;
-
-                var $LocationBottom = this.$popup.content.find(':checkbox[name="location-bottom"]:checked');
-                $LocationBottom = $LocationBottom.length ? parseInt($LocationBottom.val(), 10) : 0;
-
-                var $LocationBottomAlignment = this.$popup.content.find(':radio[name="location-bottom-alignment"]:checked');
-                $LocationBottomAlignment = $LocationBottomAlignment.length ? parseInt($LocationBottomAlignment.val(), 10) : 0;
-
-                var $CounterOptions = this.$popup.content.find(':radio[name="counter-options"]:checked');
-                $CounterOptions = $CounterOptions.length ? parseInt($CounterOptions.val(), 10) : 0;
-
-                var $FacebookPageUrl = this.$popup.content.find('#social_media_global_settings-facebook');
-                $FacebookPageUrl = $FacebookPageUrl.val() !== '' ? $FacebookPageUrl.val() : 0;
-
-                var $TwitterPageUrl = this.$popup.content.find('#social_media_global_settings-twitter');
-                $TwitterPageUrl = $TwitterPageUrl.val() !== '' ? $TwitterPageUrl.val() : 0;
-
-                var $GooglePageUrl = this.$popup.content.find('#social_media_global_settings-google');
-                $GooglePageUrl = $GooglePageUrl.val() !== '' ? $GooglePageUrl.val() : 0;
-
-                var $LinkedInPageUrl = this.$popup.content.find('input#social_media_global_settings-linkedin');
-                $LinkedInPageUrl = ($LinkedInPageUrl.length ? ($LinkedInPageUrl.val() !== '' ? $LinkedInPageUrl.val() : 0) : 0);
-
-                var $YouTubePageUrl = this.$popup.content.find('input#social_media_global_settings-youtube');
-                $YouTubePageUrl = ($YouTubePageUrl.length ? ($YouTubePageUrl.val() !== '' ? $YouTubePageUrl.val() : 0) : 0);
-
-                var $PintrestPageUrl = this.$popup.content.find('input#social_media_global_settings-pintrest');
-                $PintrestPageUrl = ($PintrestPageUrl.length ? ($PintrestPageUrl.val() !== '' ? $PintrestPageUrl.val() : 0) : 0);
-
-                var $IsLiked = this.$popup.content.find('input#social_media_global_settings-is-liked:checked');
-                $IsLiked = $IsLiked.length ? parseInt($IsLiked.val(), 10) : 0;
-
-                var $IsTweet = this.$popup.content.find('input#social_media_global_settings-is-tweet:checked');
-                $IsTweet = $IsTweet.length ? parseInt($IsTweet.val(), 10) : 0;
-
-                var $IsGoogle = this.$popup.content.find('input#social_media_global_settings-is-gplus:checked');
-                $IsGoogle = $IsGoogle.length ? parseInt($IsGoogle.val(), 10) : 0;
-
-                this.model.set_property('post_options', $PostOptions );
-                this.model.set_property('location_top', $LocationTop );
-                this.model.set_property('location_top_alignment', $LocationTopAlignment );
-                this.model.set_property('location_bottom', $LocationBottom );
-                this.model.set_property('location_bottom_alignment', $LocationBottomAlignment );
-                this.model.set_property('counter_options', $CounterOptions );
-                this.model.set_property('facebook_page_url', $FacebookPageUrl );
-                this.model.set_property('twitter_page_url', $TwitterPageUrl );
-                this.model.set_property('google_page_url', $GooglePageUrl );
-                this.model.set_property('linkedin_page_url', $LinkedInPageUrl );
-                this.model.set_property('youtube_page_url', $YouTubePageUrl );
-                this.model.set_property('pintrest_page_url', $PintrestPageUrl );
-                this.model.set_property('is_liked', $IsLiked );
-                this.model.set_property('is_tweet', $IsTweet );
-                this.model.set_property('is_gplus', $IsGoogle );
-
-                var setData = this.model.get('properties').toJSON();
-
-                if(!_.isEqual(currentData, setData)){
-                    Upfront.Popup.close();
-                    Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
-                        .success(function (ret) {
-                            Upfront.Views.Editor.notify('Global Social Settings Updated!')
+    var SocialMediaGlobalSettingsPanel = Backbone.View.extend({
+        model: new GlobalSocialMediaModel({properties: JSON.parse(Upfront.data.social.settings)}),
+        $popup : {},
+        popupFunc:function(){
+            var me = this;
+            popup = Upfront.Popup.open(function (data, $top, $bottom) {
+                var $me = $(this),
+                    $top,
+                    $bottom;
+                $top.empty().append('<ul class="upfront-tabs">' +
+                    '<li class="active upfront-social-popup-hd">Global Social Settings</li>' +
+                    '</ul>');
+                $me.empty()
+                    .append('<p class="upfront-popup-placeholder">No such thing as <q>too many drinks</q>.</p>')
+                ;
+                me.$popup = {
+                    "top": $top,
+                    "content": $me,
+                    "bottom": $bottom
+                };
+            });
+            me.$popup.content.html(
+                '<div class="upfront-global-social-settings"></div>'
+            );
+            me.settings = _([
+                new Upfront.Views.Editor.Settings.Item({
+                    model: this.model,
+                    title: "Set up your Social accounts",
+                    fields: [
+                        new SocialServicesSorting({
+                            model: this.model,
+                            property: 'global_social_media_services',
+                            label: "",
+                            default_value: ["facebook", "twitter", "google"] ,
+                            sorted_label: 'global_sorted_values' ,
+                            values: this.model.get_property_value_by_name('global_sorted_values') ?
+                                this.model.get_property_value_by_name('global_sorted_values') :
+                                [
+                                    { label: "Facebook", value: 'facebook' },
+                                    { label: "Twitter", value: 'twitter' },
+                                    { label: "Google +", value: 'google' }
+                                ]
                         })
-                        .error(function (ret) {
-                            Upfront.Util.log("Error Saving settings");
-                        });
+                    ]
+                }),
+                new Upfront.Views.Editor.Settings.Item({
+                    model: this.model,
+                    title: "In-post social media",
+                    fields: [
+                        new Upfront.Views.Editor.Field.Checkboxes({
+                            model: this.model,
+                            property: 'add_counter_all_posts',
+                            label: "",
+                            values: [
+                                { label: "Add social media counters to all posts", value: 'yes' }
+                            ]
+                        }),
+                        new Upfront.Views.Editor.Field.Checkboxes({
+                            model: this.model,
+                            property: 'after_post_title',
+                            label: "",
+                            values: [
+                                { label: "After Post Title", value: 'yes' }
+                            ]
+                        }),
+                        new Upfront.Views.Editor.Field.Radios({
+                            model: this.model,
+                            property: 'after_post_title_alignment',
+                            label: "",
+                            layout: "horizontal-inline",
+                            values: [
+                                { label: "", value: 'left' },
+                                { label: "", value: 'center' },
+                                { label: "", value: 'right' }
+                            ]
+                        }),
+                        new Upfront.Views.Editor.Field.Checkboxes({
+                            model: this.model,
+                            property: 'after_post_content',
+                            label: "",
+                            values: [
+                                { label: "After Post Content", value: 'yes' }
+                            ]
+                        }),
+                        new Upfront.Views.Editor.Field.Radios({
+                            model: this.model,
+                            property: 'after_post_content_alignment',
+                            label: "",
+                            layout: "horizontal-inline",
+                            values: [
+                                { label: "", value: 'left' },
+                                { label: "", value: 'center' },
+                                { label: "", value: 'right' }
+                            ]
+                        }),
+                        new Upfront.Views.Editor.Field.Radios({
+                            model: this.model,
+                            property: 'counter_options',
+                            layout: "horizontal-inline",
+                            label: "Social Counter style:",
+                            default_value: 'horizontal',
+                            values: [
+                                { label: "", value: 'horizontal', icon: 'social-count-horizontal' },
+                                { label: "", value: 'vertical', icon: 'social-count-vertical' }
+                            ]
+                        })
+                    ]
+                })
+            ]);
+            me.settings.each(function (setting) {
+                if ( ! setting.panel )
+                    setting.panel = me;
+                setting.render();
+                me.$popup.content.find('.upfront-global-social-settings').append(setting.el)
+            });
+            me.$popup.bottom.html('<button type="button" class="upfront-social-media-save_settings"><i class="icon-ok"></i>OK</button>');
+
+            me.clickOnSaveButton();
+        },
+        clickOnSaveButton: function(){
+            var me = this;
+            this.$popup.bottom.find('.upfront-social-media-save_settings').on("click", function () {
+                me.on_save();
+            });
+        },
+        get_title: 'GLOBAL SOCIAL SETTINGS',
+        get_label: '',
+        on_save: function () {
+            if (!this.settings) return false;
+            var me = this,
+                currentData = this.model.get('properties').toJSON();
+
+            Upfront.Events.trigger("social:sorting:fields:save");
+            this.settings.each(function (setting) {
+                if ( (setting.fields || setting.settings).size() > 0 ) {
+                    setting.save_fields();
                 }
-            },
-            getLastPartOfUrl: function(url){
-                var splitUrlArray = url.split('/'),
-                    lastPart = splitUrlArray.pop();
-                return lastPart;
+                else {
+                    var value = me.model.get_property_value_by_name(setting.get_name());
+                    if ( value != setting.get_value() )
+                        me.model.set_property(
+                            setting.get_name(),
+                            setting.get_value()
+                        );
+                }
+            });
+            var setData = this.model.get('properties').toJSON();
+
+            if(!_.isEqual(currentData, setData)){
+                Upfront.Popup.close();
+                Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
+                    .success(function (ret) {
+                        Upfront.Views.Editor.notify('Global Social Settings Updated!')
+                    })
+                    .error(function (ret) {
+                        Upfront.Util.log("Error Saving settings");
+                    });
             }
+        },
+        getLastPartOfUrl: function(url){
+            var splitUrlArray = url.split('/'),
+                lastPart = splitUrlArray.pop();
+            return lastPart;
+        }
 
-        });
+    });
 
-        Upfront.data = _.extend(Upfront.data, {social:{panel: new SocialMediaGlobalSettingsPanel()}});
-
-
+    Upfront.data.social.panel = new SocialMediaGlobalSettingsPanel();
 
     /**
      * Define the model - initialize properties to their default values.
@@ -437,26 +236,26 @@
         selectSocialButtonType: function(){
             var layoutStyle = this.property("social_radio_tabbed"),
                 $buttonTypeEle =
-                '<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-defaut-tabbed">' +
+                    '<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-defaut-tabbed">' +
                         '<span class="upfront-field-multiple upfront-field-multiple-vertical">' +
-                            '<input type="radio" id="'+this.cid+'-social_radio_tabbed-0" name="social_button_layout_option" value="like_tabbed" class="upfront-field-radio">' +
-                            '<label for="'+this.cid+'-social_radio_tabbed-0"><span class="upfront-field-label-text">Like, Follow, +1</span></label>' +
+                        '<input type="radio" id="'+this.cid+'-social_radio_tabbed-0" name="social_button_layout_option" value="like_tabbed" class="upfront-field-radio">' +
+                        '<label for="'+this.cid+'-social_radio_tabbed-0"><span class="upfront-field-label-text">Like, Follow, +1</span></label>' +
                         '</span>' +
                         '<span class="upfront-field-multiple upfront-field-multiple-vertical">' +
-                            '<input type="radio" id="'+this.cid+'-social_radio_tabbed-1" name="social_button_layout_option" value="count_tabbed" class="upfront-field-radio">' +
-                            '<label for="vi'+this.cid+'-social_radio_tabbed-1"><span class="upfront-field-label-text">Fan, Follower count</span></label>' +
+                        '<input type="radio" id="'+this.cid+'-social_radio_tabbed-1" name="social_button_layout_option" value="count_tabbed" class="upfront-field-radio">' +
+                        '<label for="vi'+this.cid+'-social_radio_tabbed-1"><span class="upfront-field-label-text">Fan, Follower count</span></label>' +
                         '</span>' +
                         '<span class="upfront-field-multiple upfront-field-multiple-vertical">' +
-                            '<input type="radio" id="'+this.cid+'-social_radio_tabbed-2" name="social_button_layout_option" value="call_tabbed" class="upfront-field-radio">' +
-                            '<label for="'+this.cid+'-social_radio_tabbed-2"><span class="upfront-field-label-text">Call to action icon</span></label>' +
+                        '<input type="radio" id="'+this.cid+'-social_radio_tabbed-2" name="social_button_layout_option" value="call_tabbed" class="upfront-field-radio">' +
+                        '<label for="'+this.cid+'-social_radio_tabbed-2"><span class="upfront-field-label-text">Call to action icon</span></label>' +
                         '</span>' +
-                '</div>';
+                        '</div>';
 
             return $buttonTypeEle;
         },
         append_call_icon: function(iconClass,url){
             var buttonStyle = this.property('button_style'),
-            buttonSize = this.property('button_size');
+                buttonSize = this.property('button_size');
             return '<div class="upfront-'+iconClass+'-box upfront-social-icon upfront-'+buttonStyle+' upfront-button-size-'+buttonSize+'"><a class="upfront-call-to-action '+iconClass+'" href="'+ (url  ? url : '#' )+'"></a>'+ (!url ? '<span class="alert-url">!</span>':'' )+'</div>';
         },
         callToAction: function(){
@@ -476,27 +275,27 @@
                     {
                         case 'facebook':
                             iconClass = 'facebook-link';
-                            $icons.append(me.append_call_icon(iconClass,me.global_property('facebook_page_url')));
+                            $icons.append(me.append_call_icon(iconClass,me.property('call_social_media_services-facebook-url')));
                             break;
                         case 'twitter':
                             iconClass = 'twitter-link';
-                            $icons.append(me.append_call_icon(iconClass,me.global_property('twitter_page_url')));
+                            $icons.append(me.append_call_icon(iconClass,me.property('call_social_media_services-twitter-url')));
                             break;
                         case 'google':
                             iconClass = 'gplus-link';
-                            $icons.append(me.append_call_icon(iconClass,me.global_property('google_page_url')));
+                            $icons.append(me.append_call_icon(iconClass,me.property('call_social_media_services-google-url')));
                             break;
                         case 'linked-in':
                             iconClass = 'linkedin-link';
-                            $icons.append(me.append_call_icon(iconClass,me.global_property('linkedin_page_url')));
+                            $icons.append(me.append_call_icon(iconClass,me.property('call_social_media_services-linked-in-url')));
                             break;
                         case 'pinterest':
                             iconClass = 'pinterest-link';
-                            $icons.append(me.append_call_icon(iconClass,me.global_property('pintrest_page_url')));
+                            $icons.append(me.append_call_icon(iconClass,me.property('call_social_media_services-pinterest-url')));
                             break;
                         case 'youtube':
                             iconClass = 'youtube-link';
-                            $icons.append(me.append_call_icon(iconClass,me.global_property('youtube_page_url')));
+                            $icons.append(me.append_call_icon(iconClass,me.property('call_social_media_services-youtube-url')));
                             break;
                     }
                 });
@@ -531,21 +330,21 @@
                     {
                         case 'facebook':
                             iconClass = 'facebook-count';
-                            $fanFollowerCount.append(me.append_count_icon(iconClass,social,me.global_property('facebook_page_url')));
+                            $fanFollowerCount.append(me.append_count_icon(iconClass,social,me.property('count_social_media_services-facebook-url')));
                             break;
                         case 'twitter':
                             iconClass = 'twitter-count';
-                            $fanFollowerCount.append(me.append_count_icon(iconClass,social,me.global_property('twitter_page_url')));
+                            $fanFollowerCount.append(me.append_count_icon(iconClass,social,me.property('count_social_media_services-twitter-url')));
                             break;
                         case 'google':
                             iconClass = 'gplus-count';
-                            $fanFollowerCount.append(me.append_count_icon(iconClass,social,me.global_property('google_page_url')));
+                            $fanFollowerCount.append(me.append_count_icon(iconClass,social,me.property('count_social_media_services-google-url')));
                             break;
                     }
                 });
 
-                if(me.global_property('facebook_page_url')){
-                    var pageName = Upfront.data.social.panel.getLastPartOfUrl(me.global_property('facebook_page_url'));
+                if(me.property('count_social_media_services-facebook-url')){
+                    var pageName = Upfront.data.social.panel.getLastPartOfUrl(me.property('count_social_media_services-facebook-url'));
                     $.getJSON('https://graph.facebook.com/'+pageName)
                         .done(function( data ) {
                             var likes;
@@ -563,7 +362,7 @@
                     me.appendCounts('facebook', countText);
                 }
 
-                if(me.global_property('twitter_page_url')){
+                if(me.property('count_social_media_services-twitter-url')){
                     Upfront.Util.post({"action": "upfront_get_twitter_page_likes"})
                         .success(function (ret) {
                             var countText = '<strong>'+ret.data+'</strong> Followers';
@@ -574,7 +373,7 @@
                         });
                 }
 
-                if(me.global_property('google_page_url')){
+                if(me.property('count_social_media_services-google-url')){
                     Upfront.Util.post({"action": "upfront_get_google_page_subscribers"})
                         .success(function (ret) {
                             var countText = '<strong>'+ret.data+'</strong> Subscribers';
@@ -737,9 +536,9 @@
 
     var SocialServicesItem = Upfront.Views.Editor.Settings.Item.extend({
         events: function(){
-        return _.extend({},SocialServicesItem.prototype.events,{
+            return _.extend({},SocialServicesItem.prototype.events,{
                 "click .social-toggle": "social_toggle"
-        });
+            });
         },
         social_toggle: function(){
             this.fields._wrapped[0].$el.toggle();
@@ -790,17 +589,17 @@
         tagName: 'ul',
         className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes social_media_services_list',
         events: {
-            'click a': 'buttonClicked'
+            'click .upfront-field-icon-social-down': 'showHide'
         },
         type: 'checkbox',
         multiple: true,
-        buttonClicked: function(e) {
-            if(this.options.on_click)
-                this.options.on_click(e);
+        showHide: function(e) {
+            $(e.target).parent().find('.upfront-field-wrap-text').toggle();
         },
         initialize: function(options){
             var me = this;
             SocialServicesSorting.__super__.initialize.apply(this, arguments);
+            Upfront.Events.on("social:sorting:fields:save", this.save_c_fields, this);
         },
         render: function () {
             var me = this;
@@ -818,11 +617,16 @@
             });
             this.$el.sortable({
                 placeholder: "ui-state-highlight",
+                start: function( event, ui ) {
+                    ui.item.parent().find('.ui-state-highlight').height(ui.item.outerHeight());
+                },
+                stop: function( event, ui ) {
+                    ui.item.parent().find('.ui-state-highlight').height('');
+                },
                 update: function(event, ui) {
                     me.update_order();
                 }
             });
-            this.$el.before('<div>sdfsd</div>');
             this.trigger('rendered');
         },
         update_order: function(){
@@ -836,9 +640,21 @@
             this.model.set_property(this.options.sorted_label, set_values);
             this.model.set_property(this.property.id, this.get_value());
         },
+        global_property: function(name, value){
+            if(typeof value != "undefined")
+                return Upfront.data.social.panel.model.set_property(name, value);
+            return Upfront.data.social.panel.model.get_property_value_by_name(name);
+        },
+        set_global_value_by_default: function(field,service){
+            if(this.global_property('global_social_media_services-'+service+'-url')){
+                field.property.set('value',this.global_property('global_social_media_services-'+service+'-url'));
+                field.$el.find('input').val(this.global_property('global_social_media_services-'+service+'-url'));
+            }
+        },
         get_value_html: function (value, index) {
             var id = this.get_field_id() + '-' + index;
             var classes = "upfront-field-multiple";
+            var me = this;
             var attr = {
                 'type': this.type,
                 'id': id,
@@ -846,6 +662,72 @@
                 'value': value.value,
                 'class': 'upfront-field-' + this.type
             };
+            this.c_fields = _([
+                new Text_Field({
+                    model: this.model,
+                    property: me.property.id+'-'+value.value+'-url',
+                    label: 'link address',
+                    compact: true
+                }),
+                new Text_Field({
+                    model: this.model,
+                    property: value.value+'-consumer-key',
+                    label: 'Consumer key',
+                    compact: true
+                }),
+                new Text_Field({
+                    model: this.model,
+                    property: value.value+'-consumer-secret',
+                    label: 'Consumer secret',
+                    compact: true
+                })
+            ]);
+
+            me.c_fields.each(function(field, index, list){
+                if(field.property){
+                    field.render();
+                    field.$el.hide();
+
+                    if(index == 1 || index == 2)
+                        if(me.property.id == 'count_social_media_services' && value.value == 'twitter'){
+                            setTimeout(function(){
+                                me.$el.find('#'+id).closest('li').append(field.el);
+                            },100)
+                        }
+
+                    if(index == 0)
+                        if(me.property.id == 'count_social_media_services' || me.property.id == 'call_social_media_services' || me.property.id == 'global_social_media_services' ){
+                            setTimeout(function(){
+                                me.$el.find('#'+id).closest('li').append(field.el);
+                                if(!field.get_saved_value()){
+                                    switch (field.property.id)
+                                    {
+                                        case 'count_social_media_services-facebook-url':
+                                            me.set_global_value_by_default(field,'facebook');
+                                            break;
+                                        case 'count_social_media_services-twitter-url':
+                                            me.set_global_value_by_default(field,'twitter');
+                                            break;
+                                        case 'count_social_media_services-google-url':
+                                            me.set_global_value_by_default(field,'google');                                            ;
+                                            break;
+                                        case 'call_social_media_services-facebook-url':
+                                            me.set_global_value_by_default(field,'facebook');
+                                            break;
+                                        case 'call_social_media_services-twitter-url':
+                                            me.set_global_value_by_default(field,'twitter');
+                                            break;
+                                        case 'call_social_media_services-google-url':
+                                            me.set_global_value_by_default(field,'google');                                            ;
+                                            break;
+                                    }
+                                }
+                            },100)
+                        }
+                }
+            });
+
+
             var saved_value = this.get_saved_value();
             if ( this.options.layout )
                 classes += ' upfront-field-multiple-'+this.options.layout;
@@ -859,9 +741,41 @@
                 attr.checked = 'checked';
             if ( attr.checked )
                 classes += ' upfront-field-multiple-selected';
-            return '<li class="' + classes + '"><i class="upfront-field-icon upfront-field-icon-social-sort"></i><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '"><span class="upfront-field-label-text">' + value.label + '</span></label></li>';
+            return '<li class="' + classes + '">'+(me.property.id !== 'like_social_media_services' ? '<i class="upfront-field-icon upfront-field-icon-social-sort upfront-field-icon-social-down"></i>':'')+'<i class="upfront-field-icon upfront-field-icon-social-sort"></i><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '"><span class="upfront-field-label-text">' + value.label + '</span></label></li>';
+        },
+        save_c_fields: function () {
+            var changed = _([]);
+            var me = this;
+            this.$el.find('input[type="text"]').each(function(index,data){
+                var property = $(data).attr('name');
+                var value = $(data).val();
+                var saved_value = me.model.get_property_value_by_name(property);
+                if(value !== saved_value){
+                    me.model.set_property(property,value);
+                }
+            });
         }
     });
+
+    var Text_Field =  Upfront.Views.Editor.Field.Text.extend({
+    });
+
+    var Extended_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+        initialize: function(options){
+            Extended_Panel.__super__.initialize.apply(this, arguments);
+            Upfront.Events.on("entity:settings:deactivate", this.close, this);
+            this.on("upfront:settings:panel:saved",this.save_checkboxes, this );
+        },
+        close: function(){
+            this.off("upfront:settings:panel:saved",this.save_checkboxes, this );
+            Upfront.Events.off("entity:settings:deactivate", this.close, this);
+        },
+        save_checkboxes: function(){
+            Upfront.Events.trigger("social:sorting:fields:save");
+        }
+
+    });
+
 
 // --- Tie the settings together ---
 
@@ -877,7 +791,7 @@
         initialize: function () {
             this.panels = _([
                 // Radio tab with icon
-                new Upfront.Views.Editor.Settings.Panel({
+                new Extended_Panel({
                     model: this.model,
                     label: "Layout Style",
                     title: "Layout Style settings",
@@ -922,11 +836,11 @@
                                             sorted_label: 'like_sorted_values' ,
                                             values: this.model.get_property_value_by_name('like_sorted_values') ?
                                                 this.model.get_property_value_by_name('like_sorted_values') :
-                                            [
-                                                { label: "Facebook", value: 'facebook' },
-                                                { label: "Twitter", value: 'twitter' },
-                                                { label: "Google +", value: 'google' }
-                                            ]
+                                                [
+                                                    { label: "Facebook", value: 'facebook' },
+                                                    { label: "Twitter", value: 'twitter' },
+                                                    { label: "Google +", value: 'google' }
+                                                ]
                                         })
                                     ]
                                 }),
@@ -1079,9 +993,9 @@
                                     ]
                                 })
                             ]
-                        }),
+                        })
                     ]
-                }),
+                })
             ]);
         },
         /**

@@ -413,9 +413,9 @@ label {
 }
 .social_media_services_list li{
     border-top: solid 1px #e3edf6;
-    height: 30px;
+    /*height: 30px;*/
     margin: 0 !important;
-    padding: 2px 0 0 17px !important;
+    padding: 0 0 0 0px !important;
 }
 .social_media_services_list li.ui-sortable-helper{
     background-color: #e3edf6;
@@ -423,14 +423,23 @@ label {
 .social_media_services_list .upfront-field-multiple{
     margin: 0;
 }
+.social_media_services_list .upfront-field-multiple label{
+    height: 30px;
+}
 .social_media_services_list li.upfront-field-multiple input.upfront-field-checkbox{
-    bottom: 9px !important;
+    position: static;
+    margin-top: 8px;
+    float: left;
 }
 .upfront-field-icon-social-sort {
     float: right;
     cursor: move;
     margin-right: 0 !important;
+    margin-top: 3px !important;
     width: 18px;
+}
+.upfront-field-icon-social-down{
+    cursor: pointer;
 }
 #settings .upfront-social-services-item .upfront-settings-item {
     margin-bottom:0;
