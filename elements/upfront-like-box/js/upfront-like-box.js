@@ -36,7 +36,7 @@
             Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
         },
         setUrl: function(){
-            this.property('facebook_url' , Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url'))
+            this.property('facebook_url' , Upfront.data.social.panel.model.get_property_value_by_name('global_social_media_services-facebook-url'))
         },
         onElementResize: function(view, model){
             if(this.parent_module_view == view)
@@ -79,7 +79,7 @@
          */
         get_content_markup: function () {
             var me = this,
-            fbUrl = Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url');
+            fbUrl = this.property('facebook_url');
             if(fbUrl){
                 var pageName = Upfront.data.social.panel.getLastPartOfUrl(fbUrl);
                 return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+this.model.get_property_value_by_name('element_size').width+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:'+this.model.get_property_value_by_name('element_size').width+'px; float:left; height:'+this.model.get_property_value_by_name('element_size').height+'px;" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
@@ -131,24 +131,7 @@
      * @type {Upfront.Views.Editor.Settings.Item}
      */
 
-    var Field_Text = Upfront.Views.Editor.Field.Text.extend({
-        events:{
-            'change .upfront-field-text': 'updateFacebookPageUrl'
-        },
-        updateFacebookPageUrl: function(){
-            var url = this.$el.find('input').val(),
-            currentData = Upfront.data.social.panel.model.get('properties').toJSON();
-            Upfront.data.social.panel.model.set_property('facebook_page_url',url)
-            var setData = Upfront.data.social.panel.model.get('properties').toJSON();
-
-            if(!_.isEqual(currentData, setData)){
-                Upfront.Util.post({"action": "upfront_save_social_media_global_settings", "data": JSON.stringify(setData)})
-                    .error(function (ret) {
-                        Upfront.Util.log("Error Saving settings");
-                    });
-            }
-        }
-    });
+    var Field_Text = Upfront.Views.Editor.Field.Text.extend({});
 
     var Field_Button = Upfront.Views.Editor.Field.Field.extend({
         events: {
@@ -193,7 +176,7 @@
                                 new Field_Text({
                                     model: this.model,
                                     property: 'facebook_url',
-                                    default_value: Upfront.data.social.panel.model.get_property_value_by_name('facebook_page_url'),
+                                    default_value: Upfront.data.social.panel.model.get_property_value_by_name('global_social_media_services-facebook-url'),
                                     label: "https://www.facebook.com/YourPage",
                                     compact: true
                                 })
