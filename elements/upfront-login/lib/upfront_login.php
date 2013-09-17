@@ -48,13 +48,15 @@ class Upfront_LoginView extends Upfront_Object {
 
 		return '<div class="upfront_login ' . join(' ', $class) . '">' . 
 			$trigger .
-			'<div class="upfront_login-form">' .
+			'<div class="upfront_login-form-wrapper"><div class="upfront_login-form">' .
 				wp_login_form(array(
 					'echo' => false,
 					'remember' => true,
 				)) . 
-			'</div>' .
-		'</div>';
+			'<p>Lost Password? <a href="' . 
+				wp_lostpassword_url( $redirect ) .
+			'">Click here</a></p></div>' .
+		'</div></div>';
 	}
 
 	private static function _normalize_properties ($raw_properties) {

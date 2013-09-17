@@ -1,15 +1,91 @@
-/* Hover */
-.upfront_login.upfront_login-hover .upfront_login-form {
+/* GENERAL FORM STYLE 
+	 ================== */
+.upfront_login-form form input {
+	height:34px;
+	border:2px solid #c2dbf2;
+	background-color: #fff;
+	padding:0 10px;
+}
+.upfront_login-form form input:hover, .upfront_login-form form input:focus { 
+	border-color: #aec4d8;
+	outline:none;
+}
+.upfront_login-form form input[type="submit"]{
+	border: 2px solid #269a47;
+	background-color: #2cad4a;
+	color: #fff;
+	width: 100%;
+	text-align: center;
+}
+.upfront_login-form form input[type="submit"]:hover {
+	background-color: #269a47;
+}
+.upfront_login-form form label, .upfront_login-form p { color:#6486a6; }
+.upfront_login-form p { margin-bottom: 0; text-align: center; }
+.upfront_login-form p a { color:#39a678; }
+
+
+/* HOVER FORM 
+	 ========== */
+
+.upfront_login.upfront_login-hover { position: relative; }
+.upfront_login.upfront_login-hover .upfront_login-form-wrapper{
+	 display: none; 
+}
+.upfront_login.upfront_login-hover .upfront_login-form-wrapper { 
+	position: absolute;
+	z-index: 1;
+	top:15px;
+	width:210px;
+	left:-50px;
+}
+.upfront_login.upfront_login-hover .upfront_login-form-wrapper {
 	display: none;
 }
-.upfront_login.upfront_login-hover:hover .upfront_login-form {
+.upfront_login.upfront_login-hover:hover .upfront_login-form-wrapper{
 	display: block;
 }
+
+/* login panel styling */
+.upfront_login.upfront_login-hover .upfront_login-form {
+	position: relative;
+	display: block;
+	background-color: #fff;
+	border-radius: 3px;
+	cursor: default;
+	border:2px solid #aec4d8;
+	top:20px;
+	left:0;
+	padding:15px;
+	padding-bottom: 5px;
+}
+
+/* triangular tooltip */
+.upfront_login.upfront_login-hover:hover .upfront_login-form:before {
+	content:'';
+	display:inline-block;
+	width:10px;
+	height:10px;
+	background-color:#fff;
+	transform:rotate(45deg);
+	-webkit-transform:rotate(45deg);
+	border-top:2px solid #aec4d8;
+	border-left:2px solid #aec4d8;
+	position:absolute;
+	top:-7px;
+	left:25%;
+}
+
 .upfront_login.upfront_login-hover:hover .upfront_login-trigger {
-	display: none;
+	display: inline-block;
 }
 
 /* Click */
+.upfront_login.upfront_login-click .upfront_login-form form input[type="submit"]{
+	width: 70%;
+}
+.upfront_login.upfront_login-click .login-username, 
+.upfront_login.upfront_login-click .login-password { margin-bottom: 15px; }
 .upfront_login.upfront_login-click .upfront_login-form {
 	display: none;
 }
@@ -17,17 +93,17 @@
 	z-index: 0;
 }
 .upfront_login.upfront_login-click.active {
-	background: rgba(0,0,0,.7);
+	background: rgba(38,58,77,.8);
 	position: fixed;
 	top: 0; left: 0;
 	bottom: 0; right: 0;
-	z-index: 9999998;
+	z-index: 9;
 	padding-top: 5em;
 }
 .upfront_login.upfront_login-click.active .upfront_login-form {
 	display: block;
 	background: #fff;
-	z-index: 9999999;
+	z-index: 10;
 	width: 80%;
 	max-width: 350px;
 	margin: 0 auto;
@@ -36,3 +112,59 @@
 .upfront_login.upfront_login-click.active .upfront_login-trigger {
 	display: none;
 }
+
+/* css animation */
+.upfront_login.upfront_login-hover .upfront_login-form{-webkit-animation-fill-mode:both;-moz-animation-fill-mode:both;-ms-animation-fill-mode:both;-o-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-duration:0.5s;-moz-animation-duration:0.5s;-ms-animation-duration:0.5s;-o-animation-duration:0.5s;animation-duration:0.5s;}
+@-webkit-keyframes fadeInDown {
+	0% {
+		opacity: 0;
+		-webkit-transform: translateY(-10px);
+	}	100% {
+		opacity: 1;
+		-webkit-transform: translateY(0);
+	}
+}
+
+@-moz-keyframes fadeInDown {
+	0% {
+		opacity: 0;
+		-moz-transform: translateY(-10px);
+	}
+	
+	100% {
+		opacity: 1;
+		-moz-transform: translateY(0);
+	}
+}
+
+@-o-keyframes fadeInDown {
+	0% {
+		opacity: 0;
+		-o-transform: translateY(-10px);
+	}
+	
+	100% {
+		opacity: 1;
+		-o-transform: translateY(0);
+	}
+}
+
+@keyframes fadeInDown {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.fadeInDown, .upfront_login.upfront_login-hover:hover .upfront_login-form {
+	-webkit-animation-name: fadeInDown;
+	-moz-animation-name: fadeInDown;
+	-o-animation-name: fadeInDown;
+	animation-name: fadeInDown;
+}
+
