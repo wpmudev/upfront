@@ -508,6 +508,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($data['withMeta']){
 				$post->meta = $this->parse_single_meta(get_metadata('post', $post->ID));
 			}
+			$post->permalink = get_permalink($posts->ID);
+			
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
 		else if( $data['id'] === '0') { //New post
@@ -557,6 +559,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 				if($data['withMeta']){
 					$posts[$i]->meta = $this->parse_single_meta(get_metadata('post', $posts[$i]->ID));
 				}
+				$posts[$i]->permalink = get_permalink($posts[$i]->ID);
 			}
 		}
 

@@ -97,6 +97,7 @@
 	<div class="upfront-field-wrap">
 		<input type="radio" name="ugallery-image-link" value="post" class="upfront-field-radio" id="ugallery-image-link-2" {{link == 'post' ? checked : ''}}>
 		<label for="ugallery-image-link-2">Link to a post or page</label>
+		<a title="Change link" class="ugallery-change-link-post" style="{{link != 'post' ? 'display:none' : ''}}">{{url}}</a>
 	</div>
 	<div class="upfront-settings-button_panel">
 		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>

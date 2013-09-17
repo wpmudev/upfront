@@ -6,7 +6,8 @@
 }
 
 .ugallery_item {
-	float: left;
+	display: inline-block;
+	vertical-align: top;
 	margin: 0 10px 10px 0;
 	font-family: 'Source Sans Pro', sans-serif;
 }
@@ -38,6 +39,9 @@
 	font-size: 	15px;
 	line-height: 1.2em;
 	color:#fff;
+}
+.ugallery_lb_texts {
+	display: none;
 }
 
 .ugallery_addmore:before{ 
@@ -315,4 +319,17 @@ a.ugallery_order_ok:hover {
 #ugallery-tooltip.ugallery-tooltip-right:before {
 	left: -18px;
 	border-right-color: rgb(99, 134, 166);
+}
+
+h3.upfront-selector-title {
+	font-size:26px;
+	line-height: 40px;
+	font-weight: normal;
+	color: #cee1f2;
+	margin:0;
+}
+
+#upfront-selector-posts {
+	position:relative;
+	min-height: 250px;
 }

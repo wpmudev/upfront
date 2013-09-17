@@ -1,7 +1,6 @@
 (function ($) {
 
 var Util = {
-
 	model_to_json: function (model) {
 		var raw = (model.toJSON ? model.toJSON() : model),
 			data_str = JSON.stringify(raw),

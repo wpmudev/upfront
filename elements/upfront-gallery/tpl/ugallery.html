@@ -1,11 +1,17 @@
 <div class="ugallery ugallery_publish" id="<?php echo $element_id ?>">
-<?php if($imagesLength > 0){ ?>
+<?php if($imagesLength){ ?>
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_item" style="overflow:hidden; position:relative; width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px" rel="<?php echo $images[$i]['id'] ?>">
+		<div class="ugallery_item" style="overflow:hidden; position:relative; width: <?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>">
 			<a class="ugallery_link" href="<?php echo $images[$i]['sizes']['full'][0] ?>">
-			<div class="ugallery-image-wrapper" style="height:<?php echo $thumbHeight ?>px">
-				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="position:absolute; width: <?php echo $images[$i]['size']['width'] ?>%; height: <?php echo $images[$i]['size']['height'] ?>%; top: <?php echo $images[$i]['position']['top'] ?>%; left: <?php echo $images[$i]['position']['left'] ?>%; -moz-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -webkit-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -o-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -ie-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); transform:rotate(<?php echo $images[$i]['rotation'] ?>deg);">			
+			<div class="ugallery-image-wrapper" style="position: relative; overflow:hidden; height:<?php echo $thumbHeight ?>px">
+				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="position:absolute; width: <?php echo $images[$i]['size']['width'] ?>%; height: <?php echo $images[$i]['size']['height'] ?>%; top: <?php echo $images[$i]['position']['top'] ?>%; left: <?php echo $images[$i]['position']['left'] ?>%; -moz-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -webkit-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -o-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -ie-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); transform:rotate(<?php echo $images[$i]['rotation'] ?>deg);">
 			</div>
+			<?php if($showTitle['length']){ ?>
+			<div class="ugallery-thumb-title"><?php echo $images[$i]['title'] ?></div>
+			<?php } ?>
+			<?php if($showDescription['length']){ ?>
+			<div class="ugallery-thumb-description"><?php echo $images[$i]['caption'] ?></div>
+			<?php } ?>
 			</a>
 			<?php if($editing){ ?>
 				<div class="ugallery_item_options" style="width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px">
@@ -26,6 +32,20 @@
 	<?php } ?>
 	<?php if($editing) { ?>
 		<div class="ugallery_item ugallery_addmore" style="width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px" title="Add new images to the Gallery">Add more</div>
+	<?php } ?>
+	<?php if($lbTitle['length'] || $lbDescription['length']){ ?>
+	<div class="ugallery_lb_texts">
+		<?php for($i=0; $i<$imagesLength; $i++) { ?>
+		<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>">
+		<?php if ($lbTitle['length']){ ?>
+			<div class="ugallery_lb_title"><?php echo $images[$i]['title'] ?></div>
+		<?php } ?>
+		<?php if ($lbDescription['length']){ ?>
+			<div class="ugallery_lb_caption"><?php echo $images[$i]['caption'] ?></div>
+		<?php } ?>
+		</div>
+		<?php } ?>
+	</div>
 	<?php } ?>
 <?php } else { ?>
 	<?php if(! $editing) { ?>

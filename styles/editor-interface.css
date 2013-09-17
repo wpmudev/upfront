@@ -1177,6 +1177,38 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 }
 
 
+.upfront-field-slider{
+	height:2px;
+	background: #C2D5E6;
+	position: relative;
+}
+
+.upfront-field-slider .ui-slider-range {
+	background: #263A4D;
+	height:2px;
+}
+.upfront-field-slider .ui-slider-handle {
+	border: 3px solid #263A4D;
+	background: #ADC4D9;
+	width:12px;
+	height:12px;
+	border-radius: 6px;
+	position:absolute;
+	top: -5px;
+}
+
+.upfront-field-wrap-slider .upfront-field-info {
+	margin-bottom: 10px;
+}
+
+.upfront-field-slider-value {
+	margin-top: 5px;
+}
+
+
+
+
+
 #settings {
   position: fixed;
   left: 0;
@@ -4245,6 +4277,17 @@ box-shadow: inset 0 2px 0 0 #fff;
 	height: 50px;
 	line-height: 50px;
 }
+.upfront-popup-meta .use_selection_container:hover {
+	background: #3ea;
+}
+.upfront-popup-meta .use_selection_container.inactive {
+	background: #cee1f2;
+}
+
+.upfront-popup-meta .use_selection_container.inactive a{
+	color: #99b3cc;
+	cursor: default;
+}
 .upfront-popup-meta .use_selection_container a {
 	display: block;
 	padding: 0 32px;
@@ -5027,4 +5070,80 @@ License: MIT
 }
 #upfront-editor_bar .sidebar-commands-control-publish .upfront-post-trash a {
 	color: #e5575a;
+}
+
+.upfront-selector-option {
+	padding:5px;
+}
+
+#upfront-selector-post_type .upfront-field-select {
+	min-width: 200px;
+	margin-left: 10px;
+}
+
+#upfront-selector-post_type .upfront-field-select.open {
+	overflow: visible;
+}
+
+#upfront-selector-post_type .upfront-field-select-options{
+	height: auto;
+	max-height: 250px;
+	margin-top: 2px !important;
+}
+
+#upfront-selector-posts #upfront-list{
+	width: 100%;
+}
+
+#upfront-selector-posts #upfront-list td{
+	float:none;
+	cursor: pointer;
+}
+
+#upfront-selector-posts tr.upfront-list_item:hover td{
+	background: #cee1f2;
+}
+
+#upfront-selector-posts tr.upfront-list_item.selected td{
+	background: #cee1f2;
+}
+
+.upfront-selector-post-checked{
+	width:65px;
+}
+.upfront-selector-post-title{
+	width:70%;
+}
+
+.selected .upfront-selector-post-checked:before{
+	content: '';
+	display: block;
+	background: url('../img/uf-ui-sprite.svg') no-repeat -733px -139px;
+	width: 20px;
+	height: 18px;
+}
+
+#upfront-selector-post_type {
+	padding: 20px 30px 10px;
+	vertical-align: top;
+	border-bottom:1px solid #CAD9E4;
+}
+
+#upfront-selector-posts {
+	max-height: 350px;
+	border-bottom:1px solid #CAD9E4;
+}
+
+.ugallery-change-link-post {
+	color: rgb(99, 134, 166);
+	cursor: pointer;
+	margin-left: 26px;
+}
+.ugallery-change-link-post:hover {
+	color: rgb(31, 205, 143);
+}
+
+.upfront-selector-navigation #upfront-entity_list-pagination{
+	clear:none;
+	padding-top:4px;
 }

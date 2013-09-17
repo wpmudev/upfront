@@ -836,8 +836,11 @@ var _alpha = "alpha",
 		 * @param  {Number} pageNumber The number of the page to fetch.
 		 * @return {jQuery.Deferred} A promise for the fetching. The server response will be passed as arguments for the done function.
 		 */
-		fetchPage: function(pageNumber){
-			if(this.pagination.loaded[pageNumber]){
+		fetchPage: function(pageNumber, options){
+			if(!options)
+				options = {};
+
+			if(!options.flush && this.pagination.loaded[pageNumber]){
 				this.pagination.currentPage = pageNumber;
 				/*
 				//All elements loaded, return them following the current order (sorting without fetch)
@@ -864,8 +867,10 @@ var _alpha = "alpha",
 				this.pagination.currentPage = pageNumber;
 				return jQuery.Deferred().resolve({results: results});
 			}
+
 			
-			return this.fetch(_.extend({page: pageNumber, limit: this.pagination.pageSize}));
+			
+			return this.fetch(_.extend({page: pageNumber, limit: this.pagination.pageSize}, options));
 		},
 
 		/**
@@ -955,7 +960,8 @@ var _alpha = "alpha",
 			menu_order: 0,
 			post_type: 'post',
 			post_mime_type: '',
-			comment_count: 0
+			comment_count: 0,
+			permalink: ''
 		},
 
 

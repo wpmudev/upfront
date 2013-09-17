@@ -287,6 +287,38 @@
 	</div>
 </script>
 
+<script type="text/template" id="selector-post_type-tpl">
+{[if(postTypes.length > 1){ ]}
+<div id="upfront-selector-post_type">
+	Select a post type:
+	<div class="upfront-field-select">
+		<div class="upfront-field-select-value">{{postTypes[0].label}}</div>
+		<ul class="upfront-field-select-options">
+		{[ _.each(postTypes, function(type){ ]}
+			<li class="upfront-field-select-option upfront-selector-option" rel="{{ type.name }}">
+				{{ type.label }}
+			</li>
+		{[ }); ]}
+		</ul>
+	</div>
+</div>
+{[ } ]}
+<div id="upfront-selector-posts" class="upfront-scroll-panel">
+
+</div>
+</script>
+<script type="text/template" id="selector-post-tpl">
+<table id="upfront-list" class="upfront-list-items">
+{[ _.each(posts, function(post){ ]}
+<tr class="upfront-selector-post upfront-list_item" rel="{{post.id}}">
+	<td class="upfront-selector-post-checked upfront-list_item-component"></td>
+	<td class="upfront-selector-post-title upfront-list_item-component upfront-list_item-main">{{post.get('post_title')}}</td>
+	<td class="upfront-selector-post-date upfront-list_item-component">{{ Upfront.Util.format_date(post.get('post_date'), false) }}</td>
+</tr>
+{[ }) ]}
+</table>
+</script>
+
 
 <!-- end of the wrap div -->
 </div>

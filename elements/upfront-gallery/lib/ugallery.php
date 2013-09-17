@@ -17,17 +17,17 @@ class Upfront_UgalleryView extends Upfront_Object {
 		'status' => 'starting',
 		'images' => array(), // Convert to new UgalleryImages() for using
 		'elementSize' => array( 'width' => 0, 'height' => 0),
-		'labelFilters' => 0,
-		'urlIcon' => 0,
-		'disableLightbox' => 0,
+		'labelFilters' => array(), //Since checkboxes fields return an array
+		'urlIcon' => array(), 
+		'disableLightbox' => array(), 
 		'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
 		'thumbWidth' => 140,
 		'thumbHeight' => 140,
-		'showTitle' => 0,
-		'showDescription' => 0,
-		'lbTitle' => 1,
-		'lbDescription' => 1,
-		'lbLoop' => 0,
+		'showTitle' => array(), 
+		'showDescription' =>array(), 
+		'lbTitle' => array(true), //This is a checked checkbox
+		'lbDescription' => array(true),
+		'lbLoop' => array(),
 		'lockThumbProportions' => true
 	);
 
@@ -79,15 +79,20 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 	private function properties_to_array(){
 		$out = array();
-		foreach($this->_data['properties'] as $prop)
+		foreach($this->_data['properties'] as $prop){
 			$out[$prop['name']] = $prop['value'];
+			if(is_array($prop['value']) && $prop['name'] != 'images')
+				$out[$prop['name']]['length'] = sizeof($prop['value']);
+		}
 		return $out;
 	}
 
 	public function add_js_defaults($data){
+		$post_types = get_post_types(array('public' => true), 'objects');
 		$data['ugallery'] = array(
 			'defaults' => $this->defaults,
-			'template' => upfront_get_template_url('ugallery', upfront_element_url('tpl/ugallery.html', dirname(__FILE__)))
+			'template' => upfront_get_template_url('ugallery', upfront_element_url('tpl/ugallery.html', dirname(__FILE__))),
+			'postTypes' => $post_types
 		);
 		return $data;
 	}
