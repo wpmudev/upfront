@@ -1121,9 +1121,12 @@ var ImageEditor = Backbone.View.extend({
 		if(options.extraButtons && options.extraButtons.length){
 			_.each(options.extraButtons, function(button){
 				me.buttons.push({id: button.id, text: button.text});
-				me.$el.on('click', '#' + button.id, function(e){
-					button.callback(e, me);
-				});
+				me.$el
+					.off('click', '#' + button.id)
+					.on('click', '#' + button.id, function(e){
+						button.callback(e, me);
+					})
+				;
 			});
 		}
 	},
