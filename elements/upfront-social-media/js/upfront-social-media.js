@@ -17,9 +17,14 @@
             loading: false,
             initialize: function(){
                 var me = this;
+                /*
                 Upfront.data.social.loading.success(function(response){
                     me.set({"properties": new SocialMediaGlobalProperties(JSON.parse(response.data))})
                 })
+                */
+                Upfront.Util.post({"action": "upfront_get_social_media_global_settings"}).success(function(response) {
+                     me.set({"properties": new SocialMediaGlobalProperties(JSON.parse(response.data))});
+                });
             },
 
             "defaults": {
@@ -363,7 +368,7 @@
 
         });
 
-        Upfront.data.social.panel = new SocialMediaGlobalSettingsPanel();
+        Upfront.data = _.extend(Upfront.data, {social:{panel: new SocialMediaGlobalSettingsPanel()}});
 
 
 
