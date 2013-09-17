@@ -376,9 +376,13 @@
 
     var Extended_Panel = Upfront.Views.Editor.Settings.Panel.extend({
             initialize: function(options){
-                var me = this;
                 Extended_Panel.__super__.initialize.apply(this, arguments);
+                Upfront.Events.on("entity:settings:deactivate", this.close, this);
                 Upfront.Events.on("entity:settings:panel:open",this.openPanel, this );
+            },
+            close: function(){
+                Upfront.Events.off("entity:settings:panel:open",this.openPanel, this );
+                Upfront.Events.off("entity:settings:deactivate", this.close, this);
             },
             openPanel: function(){
                 this.on_toggle();
@@ -479,8 +483,14 @@
              */
             initialize: function () {
                 Extended_Menu_Order_Panel.__super__.initialize.apply(this, arguments);
+                Upfront.Events.on("entity:settings:deactivate", this.close, this);
                 Upfront.Events.on("entity:settings:init:sort",this.showPanel, this );
                 Upfront.Events.on("entity:settings:init:sort:after",this.hidePanel, this );
+            },
+            close: function(){
+                Upfront.Events.off("entity:settings:deactivate", this.close, this);
+                Upfront.Events.off("entity:settings:init:sort",this.showPanel, this );
+                Upfront.Events.off("entity:settings:init:sort:after",this.hidePanel, this );
             },
             showPanel: function(){
                 if(!this.is_active()){
