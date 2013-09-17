@@ -1060,7 +1060,7 @@
 			ActiveFilters.to_defaults();
 
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
-			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text});
+			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
 			this.embed_view = new MediaManager_EmbedMedia({});
 
@@ -1181,7 +1181,7 @@
 			var button_text = this.options.button_text,
 				upload = new MediaManager_BottomCommand_Upload(),
 				search = new MediaManager_BottomCommand_Search(),
-				use = new MediaManager_BottomCommand_UseSelection({button_text: button_text})
+				use = this.options.ck_insert ? new MediaManager_BottomCommand_UseSelection_MultiDialog({button_text: button_text}) : new MediaManager_BottomCommand_UseSelection({button_text: button_text})
 			;
 			upload.render();
 			upload.on("media_manager:switcher:to_upload", this.switch_to_upload, this);
@@ -1291,6 +1291,40 @@
 				Upfront.Popup.close(this.model);
 			}
 		});
+		
+			var MediaManager_BottomCommand_UseSelection_MultiDialog = MediaManager_BottomCommand_UseSelection.extend({
+				use_selection: function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					if ( this.model.length > 1 )
+						this.open_dialog();
+					else
+						Upfront.Popup.close(this.model);
+				},
+				open_dialog: function () {
+					var $dialog = $('<div id="media-manager-multi-dialog" class="upfront-ui" />');
+					$dialog.append('<h3 class="multi-dialog-title">'+'How would you like to insert those images?'+'</h3>');
+					$dialog.append(
+						'<ul class="multi-dialog-choices">' +
+							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-plain" data-choice="plain">' + 'plain images' + '</li>' +
+							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-slider" data-choice="slider">' + 'image slider' + '</li>' +
+							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-gallery" data-choice="gallery">' + 'image gallery' + '</li>' +
+						'</ul>'
+					);
+					Upfront.Popup.$popup.find("#upfront-popup-content").append($dialog);
+					$dialog.on('click', '.multi-dialog-choice', this, this.select_dialog);
+				},
+				select_dialog: function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					var $dialog = $('#media-manager-multi-dialog'),
+						choice = $(this).attr('data-choice') || 'plain',
+						obj = e.data;
+					obj.model.type = choice;
+					$dialog.remove();
+					Upfront.Popup.close(obj.model);
+				}
+			});
 
 	/**
 	 * Embed media from URL
@@ -1830,7 +1864,8 @@
 			options = _.extend({
 				media_type: ["images"],
 				multiple_selection: true,
-				button_text: "Ok"
+				button_text: "Ok",
+				ck_insert: false
 			}, options);
 
 			var me = this,
@@ -1856,7 +1891,8 @@
 		},
 		ck_open: function () {
 			var pop = this.open({
-				button_text: "Insert image"
+				button_text: "Insert image(s)",
+				ck_insert: true
 			});
 			Upfront.Media.Manager.instance = CKEDITOR.currentInstance.name;
 			pop.always(this.on_close);
@@ -1889,7 +1925,7 @@
 			*/
 			var html = Upfront.Media.Manager.results_html(result),
 				editor = CKEDITOR.instances[Upfront.Media.Manager.instance];
-			if ( editor )
+			if ( editor && result )
 				editor.insertHtml(html);
 		},
 		results_html: function (result) {

@@ -10,6 +10,7 @@ var Plugin = {
 		});
 		*/
 		editor.on("focus", function (e) {
+			Image.create_dialog();
 			Image.bind_events(e.editor.name);
 		});
 		editor.on("change", function (e) {
@@ -17,6 +18,7 @@ var Plugin = {
 		});
 		editor.on("destroy", function (e) {
 			Image.unbind_events(e.editor.name);
+			Image.remove_dialog(true, true);
 		});
 		editor.on("selectionChange", function (e) {
 			Image.update_selection(e);
@@ -44,13 +46,22 @@ var Image = {
 	},
 	hover_on: function (e) {
 		var $me = $(e.target),
-			$dialog = $("<div id='upfront-image-details' class='upfront-ui' />")
+			$dialog = $("#upfront-image-details")
 		;
 		if (!$me.is(e.data.selector)) $me = $me.closest(e.data.selector);
-		if ($me.find("#upfront-image-details").length) return;
 		if (!$me.find('img').length) return;
-		if ($("#upfront-image-details").length) $("#upfront-image-details").remove();
-		$dialog.attr('contenteditable', 'false');
+		
+		e.data.show_dialog($me);
+		
+		Upfront.Events.trigger("upfront:editor:image_on", $me.get());
+	},
+	hover_off: function (e) {
+		var $me = $(e.target);
+		//e.data.remove_dialog();
+	},
+	create_dialog: function () {
+		var $dialog = $("<div id='upfront-image-details' class='upfront-ui' />");
+		if ( $("#upfront-image-details").length ) return;
 		$dialog.append(
 			'<div class="upfront-image-orientation">' +
 				'<div class="upfront-image-align-left upfront-icon upfront-icon-image-left">left</div>' +
@@ -63,28 +74,47 @@ var Image = {
 				'<div class="upfront-image-action-details upfront-icon upfront-icon-image-detail">Image Details</div>' +
 			'</div>'
 		);
-		$me.append($dialog);
-
+		$('body').append($dialog);
 		$dialog
-			.find(".upfront-image-align-left").on("click", e.data, e.data.Align.left).end()
-			.find(".upfront-image-align-center").on("click", e.data, e.data.Align.center).end()
-			.find(".upfront-image-align-right").on("click", e.data, e.data.Align.right).end()
-			.find(".upfront-image-align-full").on("click", e.data, e.data.Align.full).end()
+			.find(".upfront-image-align-left").on("click", this, this.Align.left).end()
+			.find(".upfront-image-align-center").on("click", this, this.Align.center).end()
+			.find(".upfront-image-align-right").on("click", this, this.Align.right).end()
+			.find(".upfront-image-align-full").on("click", this, this.Align.full).end()
 
-			.find(".upfront-image-action-change").on("click", e.data, e.data.change_image).end()
-			.find(".upfront-image-action-details").on("click", e.data, e.data.Details.toggle).end()
+			.find(".upfront-image-action-change").on("click", this, this.change_image).end()
+			.find(".upfront-image-action-details").on("click", this, this.Details.toggle).end()
 		;
-		Upfront.Events.trigger("upfront:editor:image_on", $dialog.closest(e.data.selector).get());
+		$dialog.hide();
 	},
-	hover_off: function (e) {
-		var $me = $(e.target);
-		e.data.remove_dialog();
-	},
-	remove_dialog: function () {
+	remove_dialog: function (force, del) {
 		var $dialog = $("#upfront-image-details"),
 			$details = $("#upfront-image-details-image_details")
 		;
-		if (!$details.length) $dialog.remove();
+		if (!$details.length){
+			$dialog.hide();
+		}
+		else if (force) {
+			$details.remove();
+			$dialog.hide();
+		}
+		if (force && del)
+			$dialog.remove();
+	},
+	show_dialog: function ($wrap) {
+		var $dialog = $("#upfront-image-details");
+		$dialog.data('ref', $wrap.get(0));
+		
+		var off = $wrap.offset(),
+			height = $wrap.outerHeight(),
+			width = $wrap.outerWidth(),
+			dialog_height = $dialog.outerHeight();
+		
+		$dialog.css({
+			top: off.top + ( dialog_height > height ? 0 : height-dialog_height ),
+			left: off.left,
+			width: width
+		});
+		$dialog.show();
 	},
 	update_selection: function (e) {
 		var editor = e.editor,
@@ -141,10 +171,16 @@ var Image = {
 				}
 			}
 		}
+		else {
+			this.remove_dialog(true);
+		}
 	},
 	change_image: function (e) {
 		var $img = $(e.target).closest(e.data.selector);
-		Upfront.Media.Manager.open().done(function (popup, result) {
+		Upfront.Media.Manager.open({
+			multiple_selection: false,
+			button_text: "Change image"
+		}).done(function (popup, result) {
 			if (!result) return false;
 			if (!result.length) return false;
 			var html = Upfront.Media.Manager.results_html(result);
@@ -162,8 +198,11 @@ var Image = {
 			}, data);
 			$img.css(data);
 		},
+		_get_target: function (e){
+			return $($(e.target).closest("#upfront-image-details").data('ref'));
+		},
 		left: function (e) {
-			var $wrap = $(e.target).closest(e.data.selector),
+			var $wrap = e.data.Align._get_target(e),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {float: "left"});
 			e.data.Align._apply($img, {});
@@ -173,7 +212,7 @@ var Image = {
 			return false;
 		},
 		center: function (e) {
-			var $wrap = $(e.target).closest(e.data.selector),
+			var $wrap = e.data.Align._get_target(e),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {
 				"text-align": "center"
@@ -185,7 +224,7 @@ var Image = {
 			return false;
 		},
 		right: function (e) {
-			var $wrap = $(e.target).closest(e.data.selector),
+			var $wrap = e.data.Align._get_target(e),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {float: "right"});
 			e.data.Align._apply($img, {});
@@ -195,7 +234,7 @@ var Image = {
 			return false;
 		},
 		full: function (e) {
-			var $wrap = $(e.target).closest(e.data.selector),
+			var $wrap = e.data.Align._get_target(e),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {});
 			//e.data.Align._apply($img, {width: "100%"});

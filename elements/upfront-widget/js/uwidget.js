@@ -75,57 +75,37 @@ var UwidgetElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 // Settings - load widget list first before adding object
+Upfront.data.uwidget = {};
 
-var _widgets;
-Upfront.Util.post({"action": "uwidget_load_widget_list"}).success(function (ret) { _widgets = ret.data; });
-		
-var UwidgetSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
-
-	initialize: function () {
-		this.settings = _([
-			new UwidgetSetting_Widget({model: this.model}),
-		]);
-	},
-
-	get_label: function () {
-		return "Widget";
-	},
-
-	get_title: function () {
-		return "Widget settings";
-	}
-});
-
-
-var UwidgetSetting_Widget = Upfront.Views.Editor.Settings.Item.extend({
-	
-	render: function () {
-		var widget = this.model.get_property_value_by_name("widget"),
-			select_list = _.map(_widgets, function (each) {
-				return '<option value="' + each.class + '" ' + (widget && each.class == widget ? 'selected' : '') + '>' + each.name + '</option>';
-			});
-		
-		this.wrap({
-			"title": "Select Widget",
-			"markup": '<select id="select_widget" name="select_widget">' + select_list.join('') + '</select>'
-		});
-	},
-	
-	get_name: function () {
-		return "widget";
-	},
-	
-	get_value: function () {
-		var widget = this.$el.find('select#select_widget').val();
-		return widget;
-	}
-});
+Upfront.Util.post({"action": "uwidget_load_widget_list"}).success(function (ret) { Upfront.data.uwidget.widgets = ret.data; });
 
 var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	
 	initialize: function () {
+		var widget_values = _.map(Upfront.data.uwidget.widgets, function (each) {
+			return { label: each.name, value: each.class };
+		});
 		this.panels = _([
-			new UwidgetSettingsPanel({model: this.model}),
+			new Upfront.Views.Editor.Settings.Panel({
+				model: this.model,
+				label: "Widget",
+				title: "Widget settings",
+				min_height: '200px',
+				settings: [
+					new Upfront.Views.Editor.Settings.Item({
+						model: this.model,
+						title: "Select Widget",
+						fields: [
+							new Upfront.Views.Editor.Field.Select({
+								model: this.model,
+								property: 'widget',
+								label: "",
+								values: widget_values
+							})
+						]
+					})
+				]
+			})
 		]);
 	},
 

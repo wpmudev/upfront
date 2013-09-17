@@ -3205,9 +3205,10 @@ define(_template_files, function () {
 				}
 			});
 			changed.each(function(field, index, list){
-				console.log([index, list.length]);
-				field.property.set({'value': field.get_value()}, {'silent': (index < list.length-1)});
+				field.property.set({'value': field.get_value()}, {'silent': true});
 			});
+			if ( changed.size() > 0 )
+				this.panel.is_changed = true;
 		},
 		
 		//@TODO remove wrap method below when all elements have changed to use setting fields API
@@ -3260,6 +3261,7 @@ define(_template_files, function () {
 			return property_model ? property_model.get('value') : '';
 		},
 		render: function () {
+			var me = this;
 			this.$el.html('');
 			this.$el.append('<div class="upfront-settings-item-tab" />');
 			this.$el.append('<div class="upfront-settings-item-tab-content" />');
@@ -3284,6 +3286,7 @@ define(_template_files, function () {
 				$tab.text(this.get_title());
 			}
 			this.settings.each(function(setting){
+				setting.panel = me.panel;
 				setting.render();
 				$tab_content.append(setting.el);
 			});
@@ -3309,7 +3312,7 @@ define(_template_files, function () {
 			if ( this.radio && this.$el.find('.upfront-settings-item-tab input:checked').size() > 0 ) {
 				var property_model = this.get_property_model();
 				if ( property_model )
-					property_model.set({'value': this.get_value()});
+					property_model.set({'value': this.get_value()}, {silent: true});
 				else
 					this.model.init_property(this.get_property(), this.get_value());
 			}
@@ -3345,6 +3348,7 @@ define(_template_files, function () {
 		},
 		
 		tabbed: false,
+		is_changed: false,
 
 		render: function () {
 			this.$el.empty().show();
@@ -3362,6 +3366,8 @@ define(_template_files, function () {
 				setting.render();
 				$panel_scroll.append(setting.el)
 			});
+			if ( this.options.min_height )
+				$panel_scroll.css('min-height', this.options.min_height);
 			if ( this.tabbed ) {
 				var first_tab = this.settings.first();
 				if ( !first_tab.radio )
@@ -3433,6 +3439,20 @@ define(_template_files, function () {
         },
         //end
 		on_save: function () {
+			var any_panel_changed = false;
+			this.parent_view.panels.each(function(panel){
+				panel.save_settings();
+				if ( panel.is_changed ){
+					any_panel_changed = true;
+					panel.is_changed = false;
+				}
+			});
+			if ( any_panel_changed )
+				this.parent_view.model.get("properties").trigger('change');
+			this.trigger("upfront:settings:panel:saved", this);
+			Upfront.Events.trigger("entity:settings:deactivate");
+		},
+		save_settings: function () {
 			if (!this.settings) return false;
 
 			var me = this;
@@ -3449,8 +3469,6 @@ define(_template_files, function () {
 						);
 				}
 			});
-			this.trigger("upfront:settings:panel:saved", this);
-			Upfront.Events.trigger("entity:settings:deactivate");
 		},
 		
 		on_cancel: function () {
@@ -3488,6 +3506,7 @@ define(_template_files, function () {
 				panel.on("upfront:settings:panel:toggle", me.toggle_panel, me);
 				panel.on("upfront:settings:panel:close", me.close_panel, me);
 				panel.on("upfront:settings:panel:refresh", me.refresh_panel, me);
+				panel.parent_view = me;
 				me.$el.append(panel.el)
 			});
 			this.toggle_panel(this.panels.first());
@@ -3514,8 +3533,7 @@ define(_template_files, function () {
 		},
 		toggle_panel: function (panel) {
 			this.panels.invoke("conceal");
-            //@Furqan i added this cos its not working
-            panel.$el.find(".upfront-settings_panel").height('');
+			panel.$el.find(".upfront-settings_panel").css('height', '');
 			panel.show();
 			panel.reveal();
 			this.set_title(panel.get_title());

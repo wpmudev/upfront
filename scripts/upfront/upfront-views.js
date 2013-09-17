@@ -612,11 +612,15 @@ define(_template_files, function () {
 				this.model.get("properties").bind("add", this.update, this);
 				this.model.get("properties").bind("remove", this.update, this);
 				this.model.get("modules").bind("change", this.on_module_update, this);
+				this.model.get("modules").bind("add", this.on_module_update, this);
+				this.model.get("modules").bind("remove", this.on_module_update, this);
 				/* @TODO change event binding to listenTo (in WP 3.6)
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
+				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
+				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
 				*/
 			},
 			on_click: function () {
