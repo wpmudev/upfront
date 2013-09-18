@@ -137,8 +137,8 @@ class Upfront_Virtual_Region {
 		return upfront_get_property_value($property, (is_null($data) ? $this->data : $data));
 	}
 	
-	public function start_wrapper ($newline = true) {
-		$wrapper_id = upfront_get_unique_id('wrapper');
+	public function start_wrapper ($wrapper_id = false) {//$newline = true) {
+		$wrapper_id = $wrapper_id ? $wrapper_id : upfront_get_unique_id('wrapper');
 		$this->wrappers[$wrapper_id] = array('name' => '', 'properties' => array());
 		if ( $newline )
 			$this->_set_property('class', 'clr', $this->wrappers[$wrapper_id]);
@@ -155,7 +155,7 @@ class Upfront_Virtual_Region {
 	}
 	
 	public function start_module ($position = array(), $properties = array(), $other_data = array()) {
-		$module_id = upfront_get_unique_id('module');
+		$module_id = !empty($properties['element_id']) ? $properties['element_id'] : upfront_get_unique_id('module');
 		$this->modules[$module_id] = array_merge(array('name' => '', 'properties' => array(), 'objects' => array()), $other_data);
 		$pos_class = '';
 		$total_col = 0;
@@ -187,7 +187,7 @@ class Upfront_Virtual_Region {
 	}
 	
 	public function add_object ($id = 'object', $properties = array(), $other_data = array()) {
-		$object_id = upfront_get_unique_id($id);
+		$object_id = !empty($properties['element_id']) ? $properties['element_id'] : upfront_get_unique_id($id);
 		$object_data = array_merge(array('name' => '', 'properties' => array()), $other_data);
 		$breakpoints = $this->grid->get_breakpoints();
 		$col_class = $breakpoints['desktop']->get_prefix('width') . $breakpoints['desktop']->get_columns();
