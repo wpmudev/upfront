@@ -401,7 +401,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			'upfront-dependencies',
 			'scripts',
 			$raw_cache_key
-		))), array('jquery')); // But let's do pretty instead
+		))), array('jquery', 'underscore')); // But let's do pretty instead
 	}
 
 	function serve_styles () {
