@@ -20,6 +20,12 @@
 .upfront_login-form form input[type="submit"]:hover {
 	background-color: #269a47;
 }
+.upfront_login-form form input[type="checkbox"]{
+	height:20px;
+	margin-bottom:15px;
+	position: relative;
+	top: 3px;
+}
 .upfront_login-form form label, .upfront_login-form p { color:#6486a6; }
 .upfront_login-form p { margin-bottom: 0; text-align: center; }
 .upfront_login-form p a { color:#39a678; }
@@ -75,6 +81,7 @@
 	top:-7px;
 	left:25%;
 }
+.upfront_login.upfront_login-hover .upfront_login-form label { text-align: left; display: block; padding-left: 15px; }
 
 .upfront_login.upfront_login-hover:hover .upfront_login-trigger {
 	display: inline-block;
