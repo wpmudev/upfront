@@ -291,10 +291,10 @@ define(_template_files, function () {
 			else this.deactivate();
 		},
 		activate: function () {
-			this.$el.css("text-decoration", "none");
+			this.$el.css("opacity", 1);
 		},
 		deactivate: function () {
-			this.$el.css("text-decoration", "line-through");
+			this.$el.css("opacity", 0.5);
 		},
 		on_click: function () {
 			this.model.restore_undo_state();
@@ -318,10 +318,10 @@ define(_template_files, function () {
 			else this.deactivate();
 		},
 		activate: function () {
-			this.$el.css("text-decoration", "none");
+			this.$el.css("opacity", 1);
 		},
 		deactivate: function () {
-			this.$el.css("text-decoration", "line-through");
+			this.$el.css("opacity", 0.5);
 		},
 		on_click: function () {
 			this.model.restore_redo_state();
