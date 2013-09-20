@@ -1,10 +1,10 @@
-<div class="ugallery ugallery_publish" id="<?php echo $element_id ?>">
+<div class="ugallery ugallery_publish" id="<?php echo $element_id ?>" style="text-align:center">
 <?php if($imagesLength){ ?>
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_item" style="overflow:hidden; position:relative; width: <?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>">
+		<div class="ugallery_item" style="text-align: left; overflow:hidden; position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>">
 			<a class="ugallery_link" href="<?php echo $images[$i]['sizes']['full'][0] ?>">
-			<div class="ugallery-image-wrapper" style="position: relative; overflow:hidden; height:<?php echo $thumbHeight ?>px">
-				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="position:absolute; width: <?php echo $images[$i]['size']['width'] ?>%; height: <?php echo $images[$i]['size']['height'] ?>%; top: <?php echo $images[$i]['position']['top'] ?>%; left: <?php echo $images[$i]['position']['left'] ?>%; -moz-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -webkit-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -o-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); -ie-transform:rotate(<?php echo $images[$i]['rotation'] ?>deg); transform:rotate(<?php echo $images[$i]['rotation'] ?>deg);">
+			<div class="ugallery-image-wrapper" style="position: relative; overflow:hidden; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
+				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="min-width: 100%; min-height:100%">
 			</div>
 			<?php if($showTitle['length']){ ?>
 			<div class="ugallery-thumb-title"><?php echo $images[$i]['title'] ?></div>
@@ -31,7 +31,20 @@
 		</div>
 	<?php } ?>
 	<?php if($editing) { ?>
-		<div class="ugallery_item ugallery_addmore" style="width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px" title="Add new images to the Gallery">Add more</div>
+		<div class="ugallery_addmore_wrapper ugallery_item upfront-ui"><div class="ugallery_addmore" style="width: <?php echo $thumbWidth ?>px; min-height: <?php echo $thumbHeight ?>px" title="Add new images to the Gallery">Add more</div></div>
+		<style>
+			.ugallery_addmore_wrapper {
+				height: 0px;
+				-moz-transition:height .3s;
+			    -webkit-transition:height .3s;
+			    -o-transition:height .3s;
+			    transition:height .3s;
+				overflow: hidden;
+			}
+			.upfront-active_entity .ugallery_addmore_wrapper {
+				height: <?php echo $thumbHeight ?>px;
+			}
+		</style>
 	<?php } ?>
 	<?php if($lbTitle['length'] || $lbDescription['length']){ ?>
 	<div class="ugallery_lb_texts">

@@ -28,7 +28,8 @@ var UgalleryImage = Backbone.Model.extend({
 		srcFull: 'http://imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
 		sizes: {},
 		size: {width: 0, height: 0},
-		position: {top: 0, left: 0},
+		cropSize: {width: 0, height: 0},
+		cropOffset: {top: 0, left: 0},
 		rotation: 0,
 		link: 'original',
 		url: '',
@@ -67,10 +68,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
 	images: [],
 	sortMode: false,
+	lastThumbnailSize: false,
 
 	reopenSettings: false,
 
 	initialize: function(options){
+		var me = this;
 		console.log('Gallery Element');
 
 		if(! (this.model instanceof UgalleryModel)){
@@ -100,9 +103,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		Upfront.Events.on("entity:activated", this.closeTooltip);
 		Upfront.Events.on("entity:deactivated", this.closeTooltip);		
 		Upfront.Events.on("region:activated", this.closeTooltip);
-		
+
+		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
 		this.on('deactivated', this.sortCancel, this);
+		this.model.on('settings:closed', function(e){
+			me.checkRegenerateThumbs(e);
+		});
 	},
 
 	get_content_markup: function () {
@@ -433,12 +440,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			newImages = []
 		;
 		_.each(images, function(image, id){
-			var size = image.medium ? image.medium : image.thumbnail ? image.thumbnail : image.full;
+			var data = image.thumbnail ? image.thumbnail : image.full,
+				cropSize = {width: data[1], height: data[2]},
+				ratio = Math.round((cropSize.width / cropSize.height) * 100) / 100,
+				fullRatio = Math.round((image.full[1] / image.full[2]) * 100) / 100,
+				cropOffset = {top: 0, left: 0},
+				size = cropSize
+			;
+
+			if(ratio != fullRatio){
+				var crop = me.getCropOffset(size, {width: image.full[1], height: image.full[2]});
+				size = crop.size;
+				cropOffset = crop.offset;
+			}
+			
 			newImages.push({
 				id: id,
 				sizes: image,
-				size: {width: size[1], height: size[2]},
-				src: size[0],
+				size: size,
+				cropSize: cropSize,
+				cropOffset: cropOffset,
+				src: data[0],
 				srcFull: image.full[0],
 				position: me.centeredPosition({width: size[1], height: size[2]})
 			})
@@ -451,6 +473,24 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.render();
 	},
 
+	getCropOffset: function(size, fullSize){
+		var pivot = fullSize.width / size.width > fullSize.height / size.height ? 'height' : 'width',
+			factor = fullSize[pivot] / size[pivot],
+			reducedSize, offset
+		;
+
+		if(factor > 0){
+			reducedSize = {width: Math.floor(fullSize.width / factor), height: Math.floor(fullSize.height / factor)};
+			offset = {left: (reducedSize.width - size.width) / 2, top: (reducedSize.height - size.height) / 2};
+		}
+		else{
+			reducedSize = size;
+			offset = {left:0, top:0};
+		}
+
+		return {size: reducedSize, offset: offset};
+	},
+
 	centeredPosition: function(imgSize){
 		var wrapperSize = {
 			width: this.property('thumbWidth'),
@@ -461,6 +501,92 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			top: ((wrapperSize.height - imgSize.height) / 2) / wrapperSize.height * 100,
 			left: ((wrapperSize.width - imgSize.width) / 2) / wrapperSize.width * 100
 		}
+	},
+
+	checkRegenerateThumbs: function(e){
+		var me = this;
+		if(this.lastThumbnailSize.width != this.property('thumbWidth') || this.lastThumbnailSize.height != this.property('thumbHeight')){
+			if(confirm('The thumbnail size has chaged. Do you want to regenerate the thumbnails?')){
+				var editOptions = {
+						images: this.getRegenerateData(),
+						action: 'upfront-media-image-create-size'
+					},
+					loading = new Upfront.Views.Editor.Loading({
+						loading: "Regenerating images...",
+						done: "Wow, those are cool!",
+						fixed: false
+					})
+				;
+				console.log('sent');
+				console.log(editOptions.images);
+				
+				loading.render();
+				this.parent_module_view.$el.append(loading.$el);
+
+				Upfront.Util.post(editOptions).done(function(response){
+
+					loading.done();
+					var images = response.data.images,
+						models = []
+					;
+
+					console.log('received');
+					console.log(images);
+					_.each(editOptions.images, function(image){
+						var model = me.images.get(image.id),
+							changes = images[image.id]
+						;
+
+						if(!changes.error){
+							model.set({
+								src: changes.url, 
+								srcFull: changes.urlOriginal,
+								size: image.resize,
+								cropPosition: {top: image.crop.top, left: image.crop.left}
+							}, {silent: true});
+						}
+						models.push(model);
+					});
+
+					me.images.set(models);
+					me.imagesChanged();
+					me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
+				});
+
+				
+				console.log('thumbnail regeneration not implemented');
+			}
+		}
+	},
+
+	getRegenerateData: function(){
+		var me = this,
+			widthFactor = this.property('thumbWidth') / this.lastThumbnailSize.width,
+			heightFactor = this.property('thumbHeight') / this.lastThumbnailSize.height,
+			factor = widthFactor > heightFactor ? widthFactor : heightFactor,
+			size = {width: this.property('size').width * factor, height: this.property('size').height * factor},
+			imageData = []
+		;
+
+		this.images.each(function(image){
+			var size = image.get('size'),
+				offset = image.get('cropOffset'),
+				editorOpts = {
+					id: image.id, 
+					rotate:image.get('rotation'),
+					resize: {width: size.width * factor, height: size.height * factor},
+					crop: {
+						top: Math.round(offset.top * factor),
+						left: Math.round(offset.left * factor),
+						width: me.property('thumbWidth'),
+						height: me.property('thumbHeight')
+					}
+				}
+			;
+			imageData.push(editorOpts);
+		});
+
+		return imageData;
 	},
 
 	imageEditDetails: function(e) {
@@ -508,19 +634,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = this.images.get(item.attr('rel')),
-			editorOpts = {
-				id: image.get('id'),
-				rotation: image.get('rotation')
-			}
+			editorOpts = this.getEditorOptions(image)
 		;
 		e.preventDefault();
-		Upfront.Views.Editor.ImageEditor.open(item.find('.ugallery-image-wrapper'), editorOpts)
+		Upfront.Views.Editor.ImageEditor.open(editorOpts)
 			.done(function(result){
 				image.set({
 					src: result.src,
 					srcFull: result.src,
+					cropSize: result.cropSize,
 					size: result.imageSize,
-					position: result.imageOffset,
+					cropOffset: result.imageOffset,
 					rotation: result.rotation
 				})
 			})
@@ -528,6 +652,23 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				me.render();
 			})
 		;
+	},
+
+	getEditorOptions: function(image){
+		var mask = this.$('.ugallery_item[rel=' + image.id + ']').find('.ugallery-image-wrapper'),
+			full = image.get('sizes').full
+		;
+		return {
+			id: image.id,
+			maskSize: {width: mask.width(), height: mask.height()},
+			maskOffset: mask.offset(),
+			position: image.get('cropOffset'),
+			size: image.get('size'),
+			fullSize: {width: full[1], height: full[2]},
+			src: image.get('src'),
+			srcOriginal: full[0],
+			rotation: image.get('rotation')
+		}
 	},
 
 	imagesChanged: function() {
@@ -793,15 +934,23 @@ var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function () {
+		var me = this;
+
 		this.panels = _([
 			new LayoutPanel({model: this.model}),
 			new ThumbnailsPanel({model: this.model}),
 			new LargeImagePanel({model: this.model})
 		]);
+
+		this.on('closed', function(){
+			me.model.trigger('settings:closed');
+		});
 	},
 	get_title: function () {
 		return "Gallery settings";
-	}
+	},
+
+
 });
 
 var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
@@ -917,21 +1066,6 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	*/
 
 	onThumbChangeSize: function(e){
-
-		/*
-		var proportions = this.property('lockThumbProportions');
-		if(proportions){
-			// Lock dimension with number fields
-			var dimensions = this.$('input[type=number]');
-			if(e.target == dimensions.get(0))
-				$(dimensions.get(1)).val(Math.round($(e.target).val() / proportions));
-			else
-				$(dimensions.get(0)).val(Math.round($(e.target).val() * proportions));
-			
-
-			
-		}
-		*/
 		var me = this,
 			factor = this.property('thumbProportions')
 			width = $(e.target).val(),
@@ -945,33 +1079,9 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.property('thumbHeight', height, false);
 
 		return height;
-		/*
-		if(this.changeThumbSizeTimer)
-			clearTimeout(this.changeThumbSizeTimer);
-
-		this.changeThumbSizeTimer = setTimeout(function(){
-			me.render();
-		}, 500)
-*/
 	},
 
 	onThumbChangeProportions: function(e) {
-		/*
-		var dimensions = this.$('input[type=number]'),
-			factor = $(e.target).val(),
-			locked = this.property('lockThumbProportions')
-		;
-
-		if(factor == 'theme')
-			factor = 1;
-
-		factor = parseFloat(factor);
-
-		if(!locked)
-			this.lockProportions(e);
-
-		this.property('lockThumbProportions', factor, true);
-		*/
 		var me = this,
 			factor = $(e.target).val(),
 			input = this.$('input[name=thumbWidth]'),
@@ -988,8 +1098,6 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			.siblings('.upfront-field-slider-value')
 				.text('(' + width +'px x ' + height + 'px)')
 		;
-
-		//$(dimensions.get(0)).val(Math.round($(dimensions.get(1)).val() * factor));
 	},
 	
 	/*

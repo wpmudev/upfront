@@ -318,12 +318,16 @@ var LayoutEditor = new (Subapplication.extend({
 		settings_view.for_view = view;
 		settings_view.render();
 		this.settings_view = settings_view;
+
+		settings_view.trigger('rendered');
 	},
 
 	destroy_settings: function () {
 		if (!this.settings_view) return false;
 		$(Upfront.Settings.LayoutEditor.Selectors.settings).html('').hide();
 		this.settings_view = false;
+		
+		settings_view.trigger('closed');
 	},
 
 	create_post: function(postType){

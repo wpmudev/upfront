@@ -974,6 +974,41 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	}
 });
 
+/**
+ * The image editor needs the image to be uploaded as an attachment to WP in order to work.
+ * The open method must receive the following options in an array:
+ * {
+ * 		id: The image attachment id. It is mandatory for the edition in the server side.
+ * 		maskOffset: and array with the offset of the mask element relative to the top left of the page
+ * 	 	maskSize: an array with the size of the mask
+ * 	 	position: (optional:[{top:0, left:0}]) if the image is cropped is the offset of the crop relative to the original size of the image
+ * 	 	size: the size of the image as shown in the page
+ * 	 	fullSize: the size of the image if it wasn't cropped
+ * 	 	originalSrc: the source url of the original image (the best to edit)
+ * 	 	src: the source url of the image in the page
+ * 	 	rotation: (optional:[0]) The angle of rotation of the image on the page relative to the original
+ * 	 	align: (optional:['left']) alignment of the image (used if the image is smaller than the mask)
+ * 	 	setImageSize: (optional:[false]) Boolean to tell the editor to calculates an initial size for the image. Default false.
+ * 	 	buttons: (optional:[[]]) An array with extra buttons for the editor. Every button is an object with 
+ * 	 		'id': HTML id for the button
+ * 	 		'text': Tooltip text for the button
+ * 	 		'callback': A function to be called when clicked.
+ * }
+ * @return Promise When edition is successful an response object is return as parameter for the promise with the following attributes:
+ * {
+ * 		imageId: The attachment id
+ * 		imageSize: The result image size without cropping
+ * 		imageOffset: The offset of the crop relative to the top-left of the image.
+ * 		maskSize: The size of the mask
+ * 		cropSize: The size of the crop
+ * 		src: The source url of the crop
+ * 		srcFull: The source url of the full version. It may be a rotated version of the original.
+ * 		rotation: Angle of rotation relative to the original image
+ * 		fullSize: the size of the original image
+ * 		align: alignment for the image
+ * 		stretch: Whether the image is wider than the mask. If the image is narrower should be aligned instead of stretched when resizing.
+ * }
+ */
 var ImageEditor = Backbone.View.extend({
 	id: 'upfront-image-edit',
 	rotation: 0,
@@ -1148,10 +1183,16 @@ var ImageEditor = Backbone.View.extend({
 				}
 			)
 			.done(function(result){
-				console.log(result.data);
-				results.src = result.data.url,
-				results.srcFull = result.data.urlOriginal,
-				results.cropSize = result.data.crop,
+				var imageData = result.data.images[results.imageId];
+
+				if(imageData.error){
+					console.error(imageData.msg);
+					return;
+				}
+
+				results.src = imageData.url,
+				results.srcFull = imageData.urlOriginal,
+				results.cropSize = imageData.crop,
 				me.response.resolve(results);
 				me.close();
 			})
@@ -1165,7 +1206,8 @@ var ImageEditor = Backbone.View.extend({
 		var me = this;
 		this.$('div').fadeOut(200, function(){
 			me.$el.detach();
-		})
+		});
+		me.response.reject();
 	},
 
 	cancel: function(reason){
@@ -1616,15 +1658,14 @@ var ImageEditor = Backbone.View.extend({
 		var me = this,
 			opts = {
 				action: 'upfront-media-image-create-size',
-				id: imageId
+				images: [{
+					id: imageId,
+					rotate: rotate,
+					resize: resize,
+					crop: crop
+				}]
 			}
 		;
-		if(rotate)
-			opts.rotate = rotate;
-		if(resize)
-			opts.resize = resize;
-		if(resize)
-			opts.crop = crop;
 
 		return Upfront.Util.post(opts);
 	},

@@ -32,8 +32,10 @@
 	margin-bottom: 10px;
 }
 
-.ugallery_addmore { 
+.ugallery_addmore { 	
+	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 	background: #accae6;
+	padding-top: 35%;
 	cursor: pointer;
 	text-align: center;
 	font-size: 	15px;
@@ -46,7 +48,6 @@
 
 .ugallery_addmore:before{ 
 	display:block;
-	margin: 50px auto 0;
 	content: '+';
 	text-align: center;
 	font-size: 32px;
@@ -60,6 +61,8 @@
 	background: #1fcd8f;
 	color: #fff;
 }
+
+
 
 .ugallery_item_options,
 .ugallery_item_rm_dialog {
@@ -333,3 +336,4 @@ h3.upfront-selector-title {
 	position:relative;
 	min-height: 250px;
 }
+
