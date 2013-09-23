@@ -334,6 +334,7 @@ a.open-media-gallery:hover i {
 	left:0;
 	z-index:10;
 	opacity: 1 !important;
+	border: 3px solid #daedfe;
 }
 
 .image-edit-control>i {
@@ -366,7 +367,7 @@ a.open-media-gallery:hover i {
 	width: 300px;
 	height: 300px;
 	outline: rgba(57,82,105,.7) 20000px solid;
-	border: 5px solid rgba(255,255,255,.5);
+	border: 3px solid rgba(255,255,255,.5);
 	z-index:10;
 	position:absolute;
 }
@@ -507,7 +508,7 @@ a.uimage_edit_toggle:before {
 }
 
 #uimage-canvas{
-	border: 5px solid #DAEDFE;
+	border: 3px solid #DAEDFE;
 	z-index: 10;
 }
 

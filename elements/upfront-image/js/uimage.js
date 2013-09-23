@@ -1016,7 +1016,7 @@ var ImageEditor = Backbone.View.extend({
 	invert: false,
 	tpl: _.template($(editorTpl).find('#editor-tpl').html()),
 	src: '#',
-	bordersWidth: 10,
+	bordersWidth: 6,
 	response: false,
 	fullSize: {width: 0, height:0},
 	buttons: [],
@@ -1330,6 +1330,7 @@ var ImageEditor = Backbone.View.extend({
 					me.setImageSize(ui.size);
 				},
 				stop: function(e, ui){
+					var dragHandle = me.$('#uimage-drag-handle')
 					e.preventDefault();
 					//Recalculate dimensions from the original size
 					var imageSize = {
@@ -1351,6 +1352,7 @@ var ImageEditor = Backbone.View.extend({
 					}
 
 					canvas.css(canvasSize);
+					dragHandle.css(canvasSize);
 					me.selectMode(canvasSize, true);
 					me.setImageSize(canvasSize);
 					if(me.mode == 'small' || me.mode == 'vertical')
