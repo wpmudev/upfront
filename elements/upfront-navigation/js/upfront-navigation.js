@@ -389,7 +389,7 @@
                 this.actCustomLink();
                 this.settings._wrapped[2].reveal();
             },
-            on_save: function(){
+            save_settings: function(){
                 this.settings._wrapped[0].settings._wrapped[0].fields._wrapped[0].createPages();
                 this.settings._wrapped[1].settings._wrapped[0].fields._wrapped[0].createPages();
                 this.addCustomLink(this.settings._wrapped[2].settings._wrapped[0].get_values())
@@ -508,7 +508,7 @@
             /**
              * on save create selected pages
              */
-            on_save: function(){
+            save_settings: function(){
                 this.settings._wrapped[0].fields._wrapped[0].saveAllChanges();
             }
         });
@@ -1064,8 +1064,9 @@
             update_menu_order: function () {
                 var menuItems,
                     me = this;
+
                 menuItems = this.addSelectedToMenu(this.$el);
-                if ( !menuItems )
+                if ( !menuItems || _.isEqual(menuItems, me.old_menuItems) )
                     return false;
                 Upfront.Util.post({"action": "upfront_update_menu_order", "menu_items": menuItems})
                     .success(function (ret) {
@@ -1092,7 +1093,8 @@
                             depths[item.ID] = (depths[item.menu_item_parent] || 0) + 1;
                             $ul.append(me.MenuOrderListTemplate({item: item, depth: depths[item.ID]-1 }));
                         });
-                    })
+                    me.old_menuItems = me.addSelectedToMenu(me.$el);
+                })
                     .done(function(){
                         me.menuList = me.$el;
                         me.targetList = me.menuList;
@@ -1120,8 +1122,8 @@
         });
 
     var Menu_Panel = Upfront.Views.Editor.Settings.Panel.extend({
-        on_save: function(){
-            Menu_Panel.__super__.on_save.apply(this, arguments);
+        save_settings: function(){
+            Menu_Panel.__super__.save_settings.apply(this, arguments);
             this.settings._wrapped[1].fields._wrapped[0].addNewMenu();
         }
     });
