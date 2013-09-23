@@ -22,7 +22,7 @@
                     "content": $me,
                     "bottom": $bottom
                 };
-            });
+            }, {width: 476});
             me.$popup.content.html(
                 '<div class="upfront-global-social-settings"></div>'
             );
@@ -115,11 +115,60 @@
                 if ( ! setting.panel )
                     setting.panel = me;
                 setting.render();
-                me.$popup.content.find('.upfront-global-social-settings').append(setting.el)
+                me.$popup.content.find('.upfront-global-social-settings').append(setting.el);
             });
             me.$popup.bottom.html('<button type="button" class="upfront-social-media-save_settings"><i class="icon-ok"></i>OK</button>');
+            me.$popup.content.find('.upfront-global-social-settings > div:nth-child(2) .upfront-field-wrap:nth-child(1)').after('<div class="social-global-in-post">In-post location:</div>');
+            me.$popup.content.find('.social-global-in-post').nextUntil().addClass('social-add-float-left');
+            var inPostCheckboxes = me.$popup.content.find('input[name="after_post_title"], input[name="after_post_content"]'),
+                inPostRadios = me.$popup.content.find('input[name="after_post_title_alignment"], input[name="after_post_content_alignment"]'),
+                inPostRadiosTitle = me.$popup.content.find('input[name="after_post_title_alignment"]:checked'),
+                inPostRadiosPost = me.$popup.content.find('input[name="after_post_content_alignment"]:checked');
+            inPostCheckboxes.on( "change",{ me: me }, me.disableEnableAlignmentsCall );
+            inPostRadios.on( "change",{ me: me }, me.changeLocation );
 
+            me.checkDisableEnableAlignments(inPostCheckboxes);
+            me.changeLocation(inPostRadiosTitle);
+            me.changeLocation(inPostRadiosPost);
             me.clickOnSaveButton();
+        },
+        changeLocation: function(elements){
+            if(!(elements instanceof $))
+                elements = $(elements.target);
+            if(!elements.is(':disabled'))
+                elements.closest('.upfront-field-wrap').find('.social-alignment-detail').remove().end().append('<span class="social-alignment-detail">aligned '+elements.val()+'</span>');
+        },
+        disableEnableAlignmentsCall: function(e){
+            e.data.me.checkDisableEnableAlignments($(e.target))
+        },
+        checkDisableEnableAlignments: function(elements){
+            var me = this;
+            if(elements[1]){
+                $.each(elements, function(index, element){
+                    me.toggleDisableEnableAlignments($(element));
+                })
+            }else{
+                me.toggleDisableEnableAlignments(elements);
+            }
+        },
+        toggleDisableEnableAlignments: function(element){
+            var radio = element.closest('.upfront-field-wrap').next().find('input[type="radio"]'),
+                property_name = radio.attr('name'),
+                property_val = this.model.get_property_value_by_name(property_name);
+            if(element.is(':checked')){
+                radio.prop('disabled', false).parent().removeClass('upfront-field-multiple-disabled');
+                if(property_val){
+                    radio.each(function(){
+                        if(property_val == $(this).val())
+                            $(this).attr('checked','checked');
+                    });
+                }
+                this.changeLocation(radio.filter(':checked'));
+            }
+            else{
+                radio.prop('disabled', true).removeAttr('checked').parent().addClass('upfront-field-multiple-disabled');
+                element.closest('.upfront-field-wrap').next().find('.social-alignment-detail').remove();
+            }
         },
         clickOnSaveButton: function(){
             var me = this;
@@ -544,6 +593,7 @@
             this.fields._wrapped[0].$el.toggle();
         },
         render: function () {
+            this.$el.empty();
             if(this.group){
                 this.$el.append(
                     '<div class="upfront-settings-item">' +
@@ -558,13 +608,118 @@
             else
                 this.$el.append('<div class="upfront-settings-item-content"></div>');
 
-            $content = this.$el.find('.upfront-settings-item-content');
+            var $content = this.$el.find('.upfront-settings-item-content');
             this.fields.each(function(field){
                 field.render();
                 $content.append(field.el);
             });
+            var me = this;
+            setTimeout(function(){
+                var lis = $content.find('li');
+                if(lis.length > 3){
 
+                    var unsetValues = _.map(lis, function(li, key){
+                        if(key > 2){
+                            var input = $(li).find('input'),
+                                value = input.val(),
+                                label = input.next().find('span').text(),
+                                property = input.attr('name'),
+                                property_value = me.model.get_property_value_by_name(property);
+                            if(!_.contains(property_value, value)){
+                                input.parent().hide();
+                                return { label: label, value: value };
+                            }
+                        }
+                    });
+                    unsetValues = _.without(unsetValues, undefined);
+                    if(!unsetValues.length)
+                        return false;
+                    var Select = new Upfront.Views.Editor.Field.Select({
+                        className: 'upfront-field-wrap upfront-field-wrap-select upfront-field-wrap-select-inline',
+                        model: me.model,
+                        property: 'select',
+                        label: "",
+                        values: unsetValues
+                    });
+                    var checkbox = new Upfront.Views.Editor.Field.Checkboxes({
+                        className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes upfront-field-wrap-checkboxes-float',
+                        model: me.model,
+                        property: 'checkbox',
+                        label: "",
+                        values: [
+                            { label: "", value: 'options1' }
+                        ]
+                    });
+                    var textField = new Upfront.Views.Editor.Field.Text({
+                        className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-text-inline',
+                        model: me.model,
+                        property: 'text',
+                        label: "link address",
+                        compact: true
+                    });
+                    Select.render();
+                    checkbox.render();
+                    textField.render();
+                    $content.append(checkbox.el)
+                        .append(Select.el)
+                            .append(textField.el)
+                                .append('<i class="upfront-field-icon upfront-field-icon-social-add"></i>');
+                    $content.find('.upfront-field-icon-social-add').on('click',{ me: me },me.add_social_network)
+
+                }
+
+            },105);
             this.trigger('rendered');
+        },
+        add_social_network: function(e){
+            var currentEle = $(e.target),
+                selectedOption = currentEle.prev().prev().find('.upfront-field-select-option-selected'),
+                is_checked = currentEle.prev().prev().prev().find('input').is(":checked"),
+                inputValue = currentEle.prev().find('input').val(),
+                    selectedValue = selectedOption.find('input').val(),
+                    $content = e.data.me.$el.find('.upfront-settings-item-content'),
+                    nextTitle = selectedOption.next().find('label span').text();
+                selectedOption.next().addClass('upfront-field-select-option-selected').end().remove();
+                currentEle.prev().prev().find('.upfront-field-select-value').text(nextTitle);
+                $content.find('li input[value="'+selectedValue+'"]').parent().show();
+            if(is_checked){
+                var values = e.data.me.model.get_property_value_by_name('call_social_media_services');
+                values.push(selectedValue);
+                e.data.me.model.set_property('call_social_media_services', values);
+                $content.find('li input[value="'+selectedValue+'"]').attr('checked','checked').parent().addClass('upfront-field-multiple-selected');
+            }
+            if(inputValue){
+                var url_value = e.data.me.model.get_property_value_by_name('call_social_media_services-'+selectedValue+'-url');
+                e.data.me.model.set_property('call_social_media_services-'+selectedValue+'-url',inputValue);
+                $content.find('li input[value="'+selectedValue+'"]').next().next().find('input').val(inputValue);
+                currentEle.prev().find('input').val('');
+            }
+            var lis = currentEle.prev().prev().find('.upfront-field-select-options li');
+            if(lis.length){
+                var unsetValues = _.map(lis, function(li,index){
+                    var label = $(li).find('label span').text(),
+                        value = $(li).find('input').val();
+                    return { label: label, value: value };
+                });
+                var Select = new Upfront.Views.Editor.Field.Select({
+                    className: 'upfront-field-wrap upfront-field-wrap-select upfront-field-wrap-select-inline',
+                    model: e.data.me.model,
+                    property: 'select',
+                    label: "",
+                    values: unsetValues
+                });
+                Select.render();
+                currentEle.prev().prev().replaceWith(Select.el);
+            }
+            if(!lis.length){
+                currentEle.prev().prev().prev().remove();
+                currentEle.prev().prev().remove();
+                currentEle.prev().remove();
+                currentEle.remove();
+            }
+
+            //alert($(e.target).prev().find('input').val());
+            //e.data.me.render();
         }
     });
 

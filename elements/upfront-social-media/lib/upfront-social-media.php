@@ -100,20 +100,20 @@ class Upfront_SocialMediaView extends Upfront_Object {
     }
 
     function get_twitter_page_followers () {
-        $url = $this->_get_property('count_social_media_services-twitter-url');
-        if($url){
-            $page_name = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
-        }
-        else{
-            $page_name = false;
-        }
-        $user_twitter_name = $page_name;
 
+        $url = $this->_get_property('count_social_media_services-twitter-url');
         $consumer_key = $this->_get_property('twitter-consumer-key');
         $consumer_secret = $this->_get_property('twitter-consumer-secret');
 
-        $token = get_option('upfront_twitter_token');
+        if($url && $consumer_key && $consumer_secret){
+            $page_name = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
+        }
+        else{
+            return false;
+        }
 
+        $user_twitter_name = $page_name;
+        $token = get_option('upfront_twitter_token');
         $followers_count = get_transient('upfront_twitter_count');
 
         if (false !== $followers_count) return number_format($followers_count);
@@ -168,7 +168,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
         set_transient('upfront_twitter_count', $followers_count, 60
             * 60 * 24);
 
-        return number_format($followers_count);
+        return ($followers_count);
     }
 
     public function get_google_page_subscriber () {
@@ -178,7 +178,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
             $page_url = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
         }
         else{
-            $page_url = false;
+            return false;
         }
 
         if ($page_url){
