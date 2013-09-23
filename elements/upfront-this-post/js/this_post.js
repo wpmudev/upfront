@@ -31,7 +31,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	loading: false,
 	titleSelector: Upfront.data.this_post && Upfront.data.this_post.title_selector ? Upfront.data.this_post.title_selector : 'h1.post_title',
 	contentSelector: Upfront.data.this_post && Upfront.data.this_post.content_selector ? Upfront.data.this_post.content_selector : '.post_content',
-
+	featuredSelector: Upfront.data.this_post && Upfront.data.this_post.featured_image_selector ? Upfront.data.this_post.featured_image_selector : '.entry-thumbnail',
 
 	initialize: function(){
 		var me = this,
@@ -84,6 +84,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			content = $('<div>').html(content)
 				.find(this.titleSelector).html(this.post.get('post_title')).end()
 				.find(this.contentSelector).html(this.post.get('post_content')).end()
+				.find(this.featuredSelector).append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
 			;
 			return content.html();
 		}

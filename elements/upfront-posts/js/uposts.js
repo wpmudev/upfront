@@ -46,6 +46,7 @@
 		titleSelector: Upfront.data.posts_element && Upfront.data.posts_element.title_selector ? Upfront.data.posts_element.title_selector : 'h1.post_title',
 		contentSelector: Upfront.data.posts_element && Upfront.data.posts_element.content_selector ? Upfront.data.posts_element.content_selector : '.post_content',
 		excerptSelector: Upfront.data.posts_element && Upfront.data.posts_element.excerpt_selector ? Upfront.data.posts_element.excerpt_selector : this.contentSelector,
+		featuredSelector: Upfront.data.this_post && Upfront.data.this_post.featured_image_selector ? Upfront.data.this_post.featured_image_selector : '.entry-thumbnail',
 		/**
 		 * Element contents markup.
 		 * @return {string} Markup to be shown.
@@ -54,11 +55,23 @@
 			var element_id = this.model.get_property_value_by_name("element_id"),
 				data = $(document).data("content-" + element_id)
 			;
+			if(data){
+				console.log('Post');
+				data = $(data);
+				data.find(this.featuredSelector)
+					.css({position:'relative', 'min-height': '60px', 'margin-bottom':'30px'})
+					.append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
+					.find('img').css({'z-index': '2', position: 'relative'})
+				;
+				data = data.html();
+			}
+
 			return data || 'Hold on please';
 		},
 
 		on_render: function () {
 			var 
+				me = this,
 				element_id = this.model.get_property_value_by_name("element_id"),
 				raw_settings = $(document).data('settings-' + element_id),
 				settings = raw_settings || [],
@@ -107,11 +120,11 @@
 					"action": "uposts_get_markup",
 					"data": JSON.stringify(request_data)
 				}).success(function (response) {
+					$(document).data("content-" + element_id, response.data);
 					$("#" + element_id)
 						.find(".upfront-object-content")
-						.html(response.data)
+						.html(me.get_content_markup())
 					;
-					$(document).data("content-" + element_id, response.data);
 				});
 			}
 			$(document).data('settings-' + element_id, this.model.get("properties").toJSON());
@@ -479,10 +492,6 @@
 			return "Show featured image?";
 		}
 	});
-
-
-
-
 
 	// --- Tie the settings together ---
 
