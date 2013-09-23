@@ -69,6 +69,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	images: [],
 	sortMode: false,
 	lastThumbnailSize: false,
+	labels: [],
+	imageLabels: {},
 
 	reopenSettings: false,
 
@@ -106,6 +108,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
+		if(ugalleries && ugalleries[this.property('element_id')]){
+			if(ugalleries[this.property('element_id')].grid['labels'])
+				this.labels = ugalleries[this.property('element_id')].grid['labels'];
+			if(ugalleries[this.property('element_id')].grid['image_labels'])
+			this.imageLabels = ugalleries[this.property('element_id')].grid['image_labels'];
+		}
+
 		this.on('deactivated', this.sortCancel, this);
 		this.model.on('settings:closed', function(e){
 			me.checkRegenerateThumbs(e);
@@ -119,6 +128,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		props.imagesLength = props.images.length;
 		props.editing = true;
+
+		props.labels = this.labels;
+		props.labels_length = this.labels.length;
+		props.image_labels = this.imageLabels;
 
 		rendered = this.tpl(props);
 
@@ -506,56 +519,56 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	checkRegenerateThumbs: function(e){
 		var me = this;
 		if(this.lastThumbnailSize.width != this.property('thumbWidth') || this.lastThumbnailSize.height != this.property('thumbHeight')){
-			if(confirm('The thumbnail size has chaged. Do you want to regenerate the thumbnails?')){
-				var editOptions = {
-						images: this.getRegenerateData(),
-						action: 'upfront-media-image-create-size'
-					},
-					loading = new Upfront.Views.Editor.Loading({
-						loading: "Regenerating images...",
-						done: "Wow, those are cool!",
-						fixed: false
-					})
+			
+			var editOptions = {
+					images: this.getRegenerateData(),
+					action: 'upfront-media-image-create-size'
+				},
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Regenerating images...",
+					done: "Wow, those are cool!",
+					fixed: false
+				})
+			;
+			console.log('sent');
+			console.log(editOptions.images);
+
+			loading.render();
+			this.parent_module_view.$el.append(loading.$el);
+
+			Upfront.Util.post(editOptions).done(function(response){
+
+				loading.done();
+				var images = response.data.images,
+					models = []
 				;
-				console.log('sent');
-				console.log(editOptions.images);
-				
-				loading.render();
-				this.parent_module_view.$el.append(loading.$el);
 
-				Upfront.Util.post(editOptions).done(function(response){
-
-					loading.done();
-					var images = response.data.images,
-						models = []
+				console.log('received');
+				console.log(images);
+				_.each(editOptions.images, function(image){
+					var model = me.images.get(image.id),
+						changes = images[image.id]
 					;
 
-					console.log('received');
-					console.log(images);
-					_.each(editOptions.images, function(image){
-						var model = me.images.get(image.id),
-							changes = images[image.id]
-						;
-
-						if(!changes.error){
-							model.set({
-								src: changes.url, 
-								srcFull: changes.urlOriginal,
-								size: image.resize,
-								cropPosition: {top: image.crop.top, left: image.crop.left}
-							}, {silent: true});
-						}
-						models.push(model);
-					});
-
-					me.images.set(models);
-					me.imagesChanged();
-					me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
+					if(!changes.error){
+						model.set({
+							src: changes.url, 
+							srcFull: changes.urlOriginal,
+							size: image.resize,
+							cropPosition: {top: image.crop.top, left: image.crop.left}
+						}, {silent: true});
+					}
+					models.push(model);
 				});
 
-				
-				console.log('thumbnail regeneration not implemented');
-			}
+				me.images.set(models);
+				me.imagesChanged();
+				me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
+			});
+
+			
+			console.log('thumbnail regeneration not implemented');
+			
 		}
 	},
 

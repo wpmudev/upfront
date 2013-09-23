@@ -1,7 +1,15 @@
-<div class="ugallery ugallery_publish" id="<?php echo $element_id ?>" style="text-align:center">
+<div class="ugallery ugallery_publish" id="<?php echo $element_id ?>">
+<?php if ($labelFilters['length']){ ?>
+	<div class="ugallery_labels">
+	<?php for($i=0; $i<$labels_length; $i++) { ?>
+		<a href="#" class="ugallery_label_filter" rel="label_<?php echo $labels[$i]['id'] ?>"><?php echo $labels[$i]['text'] ?></a>
+	<?php } ?>
+	</div>
+<?php } ?>
 <?php if($imagesLength){ ?>
+	<div class="ugallery_items <?php echo $labelFilters['length'] ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_item" style="text-align: left; overflow:hidden; position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>">
+		<div class="ugallery_item" style="position:relative; overflow:hidden; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 			<a class="ugallery_link" href="<?php echo $images[$i]['sizes']['full'][0] ?>">
 			<div class="ugallery-image-wrapper" style="position: relative; overflow:hidden; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="min-width: 100%; min-height:100%">
@@ -47,19 +55,20 @@
 		</style>
 	<?php } ?>
 	<?php if($lbTitle['length'] || $lbDescription['length']){ ?>
-	<div class="ugallery_lb_texts">
-		<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>">
-		<?php if ($lbTitle['length']){ ?>
-			<div class="ugallery_lb_title"><?php echo $images[$i]['title'] ?></div>
-		<?php } ?>
-		<?php if ($lbDescription['length']){ ?>
-			<div class="ugallery_lb_caption"><?php echo $images[$i]['caption'] ?></div>
-		<?php } ?>
+		<div class="ugallery_lb_texts">
+			<?php for($i=0; $i<$imagesLength; $i++) { ?>
+			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>">
+			<?php if ($lbTitle['length']){ ?>
+				<div class="ugallery_lb_title"><?php echo $images[$i]['title'] ?></div>
+			<?php } ?>
+			<?php if ($lbDescription['length']){ ?>
+				<div class="ugallery_lb_caption"><?php echo $images[$i]['caption'] ?></div>
+			<?php } ?>
+			</div>
+			<?php } ?>
 		</div>
-		<?php } ?>
-	</div>
 	<?php } ?>
+	</div>
 <?php } else { ?>
 	<?php if(! $editing) { ?>
 		No images in this gallery
