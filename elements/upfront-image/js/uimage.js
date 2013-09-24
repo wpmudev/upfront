@@ -152,12 +152,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		props.url = onclick == 'do_nothing' ? false : 
 			onclick == 'open_link' ? this.property('image_link') : this.property('srcFull');
-			/*
-		if($.isNumeric(props.size.width))
-			props.size.width += '%';
-		if($.isNumeric(props.size.height))
-			props.size.height += '%';
-*/
+
 		//Fake wrapper_id only used in php
 		props.wrapper_id = 'hello_up';
 		if(props.stretch)
@@ -306,55 +301,31 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 	openImageSelector: function(e){
 		var me = this;
-
 		if(e)
 			e.preventDefault();
 
-		this.openOverlaySection(this.selectorTpl, {}, function(overlay){
-			if(! $('#upfront-upload-image').length){
-				$('body').append(me.formTpl({url: Upfront.Settings.ajax_url}));
-
-				$('#upfront-image-file-input').on('change', function(e){
-					me.openProgress(function(){
-						me.uploadImage();
-					});
-				});
-			}
-
-            $('#upront-image-placeholder')
-                .on('dragenter', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                })
-                .on('dragleave', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $(this).css('border-color', '#C3DCF1');
-                    $(this).css('background', 'none');
-                })
-                .on('dragover', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $(this).css('border-color', '#1fcd8f');
-                    $(this).css('background', 'rgba(255,255,255,.1)');
-                    $(this).find()
-                })
-                .on('drop', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if(e.originalEvent.dataTransfer){
-                    	var files = e.originalEvent.dataTransfer.files,
-                    		input = $('#upfront-image-file-input')
-                		;
-	                    // Only call the handler if 1 or more files was dropped.
-	                    if (files.length && input.length){
-	                    	input[0].files = files;
-	                    }
-                    }
-                    
-                })
-            ;
-            me.resizeOverlay();
+		Upfront.Views.Editor.ImageSelector.open().done(function(images){
+			var sizes = {};
+			_.each(images, function(image, id){
+				sizes = image;
+				me.imageId = id;
+			});
+			
+			var	imageInfo = {
+					src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+					srcFull: sizes.full[0],
+					srcOriginal: sizes.full[0],
+					fullSize: {width: sizes.full[1], height: sizes.full[2]},
+					size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+					position: false,
+					rotation: 0,
+					id: me.imageId
+				}
+			;
+			$('<img>').attr('src', imageInfo.srcFull).load(function(){
+				Upfront.Views.Editor.ImageSelector.close();
+				me.openEditor(true, imageInfo);					
+			});
 		});
 	},
 
@@ -414,289 +385,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			.fail(function(result){
 				me.render();
 			})
-		;
-	},
-
-	openProgress: function(callback){
-		var me = this;
-		this.openOverlaySection(this.progressTpl, {}, function(){
-            me.resizeOverlay();
-            callback();
-		});
-	},
-
-	openOverlaySection: function(tpl, tplOptions, callback){
-		var me = this,
-			settings = $('#settings'),
-			overlay = $('#upfront-image-overlay'),
-			parent = this.parent_module_view.$('.upfront-editable_entity:first'),
-			bodyOverlay = $('#' + me.property('element_id'))
-		;
-
-		if(!this.elementSize.width)
-			this.setElementSize();
-
-		if(overlay.length){
-			$('.upfront-image-section').fadeOut('fast', function(){
-				var content = $(tpl(tplOptions)).hide();
-				overlay.append(content);
-				content.fadeIn('fast');
-				$(this).remove();
-				if(callback){
-					callback(overlay);
-				}
-			});
-			return;
-		}
-
-		this.bodyOverflow = $('html').css('overflow');
-		$('html')
-			.css({
-				overflow: 'hidden',
-				width: $(window).width() + 'px',
-				height: $(window).height() + 'px'
-			})
-		;
-
-		//Stop draggable
-		if (parent.is(".ui-draggable"))
-			parent.draggable('disable');
-
-		overlay = $('<div id="upfront-image-overlay"></div>').append(tpl(tplOptions)).hide();
-
-		$('body')
-			.append(overlay)
-			.addClass('upfront-image-upload-open')
-		;
-
-
-		this.setOverlayEvents();
-
-		overlay.fadeIn('fast');
-		this.resizeOverlay();
-
-		$(window)
-			.on('resize', function(e){
-				if(e.target == window){
-					me.resizeOverlay();
-				}
-			})
-		;
-
-		if(settings.is(':visible')){
-			settings.fadeOut();
-			this.reopenSettings = true;
-		}
-
-		if(callback)
-			callback(overlay);
-
-		//$('#upfront-image-overlay').fadeIn('fast');
-	},
-
-	setOverlayEvents: function() {
-		var me = this;
-		$('#upfront-image-overlay')
-			.on('click', function(e){
-				me.cancelOverlay(e);
-			})
-			.on('click', 'a.select-files', function(e){
-				me.openFileBrowser(e);
-			})
-			.on('click', '#upfront-image-file-input', function(e){
-				me.checkFileUpdate(e);
-			})
-			.on('click', 'a.image-edit-change', function(e){
-				me.openImageSelector(e);
-			})
-			.on('click', 'a.open-media-gallery', function(e){
-				me.openMediaGallery(e);
-			})
-		/*;
-		$(window)*/
-			.on('keydown', 'a.image-fit-element', function(e){
-				me.keyMove(e);
-			})
-		;
-	},
-
-	cancelOverlay: function(e) {
-		if(e.target == e.currentTarget)
-			this.closeOverlay(e);
-	},
-	closeOverlay: function(e){
-		var me = this;
-		$('#upfront-image-overlay')
-			.off('click')
-			.fadeOut('fast', function(){
-				$(this).remove();
-				$('#upfront-image-overlay').remove();
-				$('#upfront-upload-image').remove();
-				$('#upfront-image-overlay').remove();
-			})
-		;
-			
-		$('html').css({
-			overflow: this.bodyOverflow ? this.bodyOverflow : 'auto',
-			height: 'auto',
-			width: 'auto'
-		});
-		
-		$('body').removeClass('upfront-image-upload-open');
-
-		if(this.reopenSettings){
-			$('#settings').fadeIn();
-			this.reopenSettings = false;
-		}
-
-		//Restart draggable
-		this.parent_module_view.$('.upfront-editable_entity:first').draggable('enable');
-
-		$(window).off('resize', this.resizeOverlay);
-	},
-	resizeOverlay: function(){
-		var overlay = $('#upfront-image-overlay');
-		if(!overlay.length)
-			return;
-		var placeholder = $('#upront-image-placeholder'),
-			uploading = $('#upfront-image-uploading'),
-			phcss = {},
-			left = $('#sidebar-ui').width(),
-			style = {
-				left: left,
-				width: $(window).width() - left,
-				height: $(window).height()
-			},
-			ptop = (style.height / 2 - 220)
-		;
-
-		if(ptop > 0){
-			overlay.removeClass('small_placeholder');
-			ptop += 'px';
-		}
-		else {
-			overlay.addClass('small_placeholder');
-			ptop = (style.height / 2 - 140) + 'px';
-		}
-
-		overlay.css(style);
-		phcss = {
-			height: style.height - 100,
-			'padding-top':  ptop,
-		};
-
-		placeholder.css(phcss);
-		uploading.css(phcss);
-	},
-
-	openMediaGallery: function(e) {
-		var me = this;
-		e.preventDefault();
-		Upfront.Media.Manager.open({
-			multiple_selection: false,
-			media_type:['images']
-		}).done(function(popup, result){
-			if(result && result.length > 0){
-				var image = result.at(0);
-				me.imageId = image.get('ID');
-				Upfront.Views.Editor.ImageEditor.getImageData(me.imageId)
-					.done(function(response){
-						var sizes = response.data.images[me.imageId],
-							imageInfo = {
-								src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-								srcFull: sizes.full[0],
-								srcOriginal: sizes.full[0],
-								fullSize: {width: sizes.full[1], height: sizes.full[2]},
-								size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
-								position: false,
-								rotation: 0,
-								id: me.imageId
-							}
-						;
-						$('<img>').attr('src', imageInfo.srcFull).load(function(){
-							me.closeOverlay();
-							me.openEditor(true, imageInfo);					
-						});
-					})
-				;
-
-				me.openProgress(function(){
-					$('#upfront-image-uploading h2').html('Preparing Image');
-				});
-			}
-		});
-	},
-	openFileBrowser: function(e){
-		e.preventDefault();
-	    console.log('clicking');
-		$('#upfront-image-file-input').click();
-	},
-	checkFileUpdate: function(e){
-	     console.log('here we are');
-	     return true;
-	},
-
-	uploadImage: function(e){
-		if(e)
-			e.preventDefault();
-
-		var me = this,
-			progress = $('#upfront-progress')
-		;
-
-		$('#upfront-upload-image').ajaxSubmit({
-			beforeSend: function() {
-				progress.css('width', '0');
-			},
-			uploadProgress: function(e, position, total, percent) {
-				progress.css('width', percent + '%');
-				console.log(percent);
-			},
-			complete: function() {
-				$('#upfront-image-uploading h2').html('Preparing Image');
-			},
-			success: function(response){
-				progress.css('width', '100%');
-				console.log(response);
-				me.imageId = response.data[0];
-				Upfront.Views.Editor.ImageEditor.getImageData(me.imageId)
-					.done(function(response){
-						var sizes = response.data.images[me.imageId],
-							imageInfo = {
-								src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-								srcFull: sizes.full[0],
-								srcOriginal: sizes.full[0],
-								fullSize: {width: sizes.full[1], height: sizes.full[2]},
-								size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
-								position: false,
-								rotation: 0,
-								id: me.imageId
-							}
-						;
-						$('<img src="' + imageInfo.srcFull + '">').load(function(){		
-							me.closeOverlay();
-							me.openEditor(true, imageInfo);						
-						});
-					})
-					.error(function(){
-						Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
-						me.openImageSelector();
-					})
-				;
-			},
-			dataType: 'json'
-		});
-	},
-
-	getImageData: function() {
-		var me = this;
-		return Upfront.Util.post({
-				action: 'upfront-media-image_sizes',
-				item_id: JSON.stringify([me.imageId])
-			})
-			.done(function(response){
-				me.sizes = response.data.images[me.imageId];
-			})	
 		;
 	},
 
@@ -1647,11 +1335,11 @@ var ImageEditor = Backbone.View.extend({
 		return size;
 	},
 
-	getImageData: function(imageId) {
+	getImageData: function(ids) {
 		var me = this;
 		return Upfront.Util.post({
 				action: 'upfront-media-image_sizes',
-				item_id: JSON.stringify([imageId])
+				item_id: JSON.stringify(ids)
 			})
 		;
 	},
@@ -1765,6 +1453,322 @@ var ImageEditor = Backbone.View.extend({
 	},
 });
 
+var ImageSelector = Backbone.View.extend({
+	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
+	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
+	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
+	deferred: false,
+	defaultOptions: {multiple: false, preparingText: 'Preparing image'},
+	options: {},
+
+	initialize: function(){
+		var me = this;
+		//Set the form up
+		if(! $('#upfront-upload-image').length){
+			$('body').append(me.formTpl({url: Upfront.Settings.ajax_url}));
+
+			$('#upfront-image-file-input').on('change', function(e){
+				me.openProgress(function(){
+					me.uploadImage();
+				});
+			});
+		}
+	},
+
+	open: function(options){
+		var me = this;
+		this.deferred = $.Deferred();
+
+		this.options = _.extend({}, this.defaultOptions, options);
+
+		this.openSelector();
+
+		return this.deferred.promise();
+	},
+
+	openSelector: function(){
+		var me = this;
+		this.openOverlaySection(this.selectorTpl, {}, function(overlay){			
+
+			$('#upront-image-placeholder')
+                .on('dragenter', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                .on('dragleave', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $(this).css('border-color', '#C3DCF1');
+                    $(this).css('background', 'none');
+                })
+                .on('dragover', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $(this).css('border-color', '#1fcd8f');
+                    $(this).css('background', 'rgba(255,255,255,.1)');
+                    $(this).find()
+                })
+                .on('drop', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if(e.originalEvent.dataTransfer){
+                    	var files = e.originalEvent.dataTransfer.files,
+                    		input = $('#upfront-image-file-input')
+                		;
+	                    // Only call the handler if 1 or more files was dropped.
+	                    if (files.length && input.length){
+	                    	input[0].files = files;
+	                    }
+                    }
+                    
+                })
+            ;
+            me.resizeOverlay();
+		});
+	},
+
+	openProgress: function(callback){
+		var me = this;
+		this.openOverlaySection(this.progressTpl, {}, function(){
+            me.resizeOverlay();
+            callback();
+		});
+	},
+
+	resizeOverlay: function(){
+		var overlay = $('#upfront-image-overlay');
+		if(!overlay.length)
+			return;
+
+		var placeholder = $('#upront-image-placeholder'),
+			uploading = $('#upfront-image-uploading'),
+			phcss = {},
+			left = $('#sidebar-ui').width(),
+			style = {
+				left: left,
+				width: $(window).width() - left,
+				height: $(window).height()
+			},
+			ptop = (style.height / 2 - 220)
+		;
+
+		if(ptop > 0){
+			overlay.removeClass('small_placeholder');
+			ptop += 'px';
+		}
+		else {
+			overlay.addClass('small_placeholder');
+			ptop = (style.height / 2 - 140) + 'px';
+		}
+
+		overlay.css(style);
+		phcss = {
+			height: style.height - 100,
+			'padding-top':  ptop,
+		};
+
+		placeholder.css(phcss);
+		uploading.css(phcss);
+	},
+
+	close: function() {
+		this.closeOverlay();
+	},
+
+	cancelOverlay: function(e) {
+		if(e.target == e.currentTarget)
+			this.closeOverlay(e);
+	},
+	closeOverlay: function(e){
+		var me = this;
+		$('#upfront-image-overlay')
+			.off('click')
+			.fadeOut('fast', function(){
+				$(this).remove();
+				$('#upfront-image-overlay').remove();
+			})
+		;
+			
+		$('html').css({
+			overflow: this.bodyOverflow ? this.bodyOverflow : 'auto',
+			height: 'auto',
+			width: 'auto'
+		});
+		
+		$('body').removeClass('upfront-image-upload-open');
+
+		if(this.reopenSettings){
+			$('#settings').fadeIn();
+			this.reopenSettings = false;
+		}
+
+		//Restart draggable
+		//this.parent_module_view.$('.upfront-editable_entity:first').draggable('enable');
+
+		$(window).off('resize', this.resizeOverlay);
+	},
+
+	openOverlaySection: function(tpl, tplOptions, callback){
+		var me = this,
+			settings = $('#settings'),
+			overlay = $('#upfront-image-overlay')
+			//,parent = this.parent_module_view.$('.upfront-editable_entity:first')
+		;
+
+		/*
+		if(!this.elementSize.width)
+			this.setElementSize();
+		*/
+		if(overlay.length){
+			$('.upfront-image-section').fadeOut('fast', function(){
+				var content = $(tpl(tplOptions)).hide();
+				overlay.append(content);
+				content.fadeIn('fast');
+				$(this).remove();
+				if(callback){
+					callback(overlay);
+				}
+			});
+			return;
+		}
+
+		this.bodyOverflow = $('html').css('overflow');
+		$('html')
+			.css({
+				overflow: 'hidden',
+				width: $(window).width() + 'px',
+				height: $(window).height() + 'px'
+			})
+		;
+
+		//Stop draggable
+		/*
+		if (parent.is(".ui-draggable"))
+			parent.draggable('disable');
+		*/
+
+		overlay = $('<div id="upfront-image-overlay"></div>').append(tpl(tplOptions)).hide();
+
+		$('body')
+			.append(overlay)
+			.addClass('upfront-image-upload-open')
+		;
+
+
+		this.setOverlayEvents();
+
+		overlay.fadeIn('fast');
+		this.resizeOverlay();
+
+		$(window)
+			.on('resize', function(e){
+				if(e.target == window){
+					me.resizeOverlay();
+				}
+			})
+		;
+
+		if(settings.is(':visible')){
+			settings.fadeOut();
+			this.reopenSettings = true;
+		}
+
+		if(callback)
+			callback(overlay);
+
+		//$('#upfront-image-overlay').fadeIn('fast');
+	},
+
+	setOverlayEvents: function() {
+		var me = this;
+		$('#upfront-image-overlay')
+			.on('click', function(e){
+				me.cancelOverlay(e);
+			})
+			.on('click', 'a.select-files', function(e){
+				me.openFileBrowser(e);
+			})
+			.on('click', 'a.image-edit-change', function(e){
+				me.openImageSelector(e);
+			})
+			.on('click', 'a.open-media-gallery', function(e){
+				me.openMediaGallery(e);
+			})
+		;
+	},
+
+	openMediaGallery: function(e) {
+		var me = this;
+		e.preventDefault();
+		Upfront.Media.Manager.open({
+			multiple_selection: this.options.multiple,
+			media_type:['images']
+		}).done(function(popup, result){
+			if(result && result.length > 0){
+				var ids = [];
+				result.each(function(image){
+					ids.push(image.get('ID'));
+				});
+				Upfront.Views.Editor.ImageEditor.getImageData(ids)
+					.done(function(response){
+						me.deferred.resolve(response.data.images, response);
+					})
+				;
+
+				me.openProgress(function(){
+					$('#upfront-image-uploading h2').html(this.options.preparingText);
+				});
+			}
+		});
+	},
+	openFileBrowser: function(e){
+		e.preventDefault();
+	    console.log('clicking');
+		$('#upfront-image-file-input').click();
+	},
+	checkFileUpdate: function(e){
+	     console.log('here we are');
+	     return true;
+	},
+
+	uploadImage: function(e){
+		if(e)
+			e.preventDefault();
+
+		var me = this,
+			progress = $('#upfront-progress')
+		;
+
+		$('#upfront-upload-image').ajaxSubmit({
+			beforeSend: function() {
+				progress.css('width', '0');
+			},
+			uploadProgress: function(e, position, total, percent) {
+				progress.css('width', percent + '%');
+				console.log(percent);
+			},
+			complete: function() {
+				$('#upfront-image-uploading h2').html('Preparing Image');
+			},
+			success: function(response){
+				progress.css('width', '100%');
+				console.log(response);
+				Upfront.Views.Editor.ImageEditor.getImageData(response.data)
+					.done(function(response){
+						me.deferred.resolve(response.data.images, response);
+					})
+					.error(function(){
+						Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
+						me.openSelector();
+					})
+				;
+			},
+			dataType: 'json'
+		});
+	},
+
+});
+
 Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Model": UimageModel, 
 	"View": UimageView,
@@ -1773,6 +1777,7 @@ Upfront.Application.LayoutEditor.add_object("Uimage", {
 });
 
 Upfront.Views.Editor.ImageEditor = new ImageEditor();
+Upfront.Views.Editor.ImageSelector = new ImageSelector();
 Upfront.Models.UimageModel = UimageModel;
 Upfront.Views.UimageView = UimageView;
 
