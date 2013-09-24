@@ -107,14 +107,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		Upfront.Events.on("region:activated", this.closeTooltip);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
-
+/*
 		if(ugalleries && ugalleries[this.property('element_id')]){
 			if(ugalleries[this.property('element_id')].grid['labels'])
 				this.labels = ugalleries[this.property('element_id')].grid['labels'];
 			if(ugalleries[this.property('element_id')].grid['image_labels'])
 			this.imageLabels = ugalleries[this.property('element_id')].grid['image_labels'];
 		}
-
+*/
 		this.on('deactivated', this.sortCancel, this);
 		this.model.on('settings:closed', function(e){
 			me.checkRegenerateThumbs(e);
