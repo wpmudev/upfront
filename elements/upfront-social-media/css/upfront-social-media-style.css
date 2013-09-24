@@ -187,7 +187,7 @@
 #settings .upfront-settings-item-tab-radio .upfront-settings-item-tab {
     max-width: 75px !important;
 }
-.upfront-defaut-tabbed .upfront-field-multiple-vertical{
+.upfront-default-tabbed .upfront-field-multiple-vertical{
     min-width: 89px !important;
 }
 .social_media_services_list{
@@ -324,4 +324,10 @@
 .upfront-field-wrap-text-inline{
     display: inline-block;
     width: 190px;
+}
+.upfront-social-icon {
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 5px;
 }

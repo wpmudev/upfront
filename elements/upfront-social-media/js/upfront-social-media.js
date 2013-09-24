@@ -285,7 +285,7 @@
         selectSocialButtonType: function(){
             var layoutStyle = this.property("social_radio_tabbed"),
                 $buttonTypeEle =
-                    '<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-defaut-tabbed">' +
+                    '<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-default-tabbed">' +
                         '<span class="upfront-field-multiple upfront-field-multiple-vertical">' +
                         '<input type="radio" id="'+this.cid+'-social_radio_tabbed-0" name="social_button_layout_option" value="like_tabbed" class="upfront-field-radio">' +
                         '<label for="'+this.cid+'-social_radio_tabbed-0"><span class="upfront-field-label-text">Like, Follow, +1</span></label>' +
