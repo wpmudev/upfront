@@ -47,6 +47,15 @@
 		contentSelector: Upfront.data.posts_element && Upfront.data.posts_element.content_selector ? Upfront.data.posts_element.content_selector : '.post_content',
 		excerptSelector: Upfront.data.posts_element && Upfront.data.posts_element.excerpt_selector ? Upfront.data.posts_element.excerpt_selector : this.contentSelector,
 		featuredSelector: Upfront.data.this_post && Upfront.data.this_post.featured_image_selector ? Upfront.data.this_post.featured_image_selector : '.entry-thumbnail',
+		
+		initialize: function(options){
+
+			this.constructor.__super__.initialize.call(this, [options]);
+			this.events = _.extend({}, this.events, {
+				'click .upost_thumbnail_changer': 'changeFeaturedImage'
+			});
+		},
+
 		/**
 		 * Element contents markup.
 		 * @return {string} Markup to be shown.
@@ -57,7 +66,7 @@
 			;
 			if(data){
 				console.log('Post');
-				data = $(data);
+				data = this.setFeaturedImageSelector($(data));
 				data.find(this.featuredSelector)
 					.css({position:'relative', 'min-height': '60px', 'margin-bottom':'30px'})
 					.append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
@@ -137,14 +146,10 @@
 			;
 			this.post = Upfront.data.posts ? Upfront.data.posts[post_id] : false;
 			if(!this.post){
-				this.post = new Upfront.Models.Post({ID: post_id});
-				this.post.fetch().done(function(response){
-					if(!Upfront.data.posts)
-						Upfront.data.posts = {};
-					Upfront.data.posts[post_id] = me.post;
+				this.fetch(post_id).done(function(response){
 					Upfront.data.currentPost = me.post;
 					Upfront.Events.trigger("data:current_post:change");
-					me.editPost(me.post);
+					me.editPost(me.post);					
 				});
 			}
 			else{
@@ -190,6 +195,72 @@
 				editor.stop();
 			}
 		},
+
+		setFeaturedImageSelector: function($data){
+			return $data;
+		},
+
+		changeFeaturedImage: function(e){
+			var me = this,
+				target = $(e.target),
+				postId = target.closest('.uposts-post').data('post_id')
+				img = target.parent().find('img')
+			;
+
+			if(!img.length){
+				Upfront.Views.Editor.ImageSelector.open().done(function(images){
+					var sizes = {},
+						imageId = 0
+					;
+					_.each(images, function(image, id){
+						sizes = image;
+						me.imageId = id;
+					});
+					var	imageInfo = {
+							src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+							srcFull: sizes.full[0],
+							srcOriginal: sizes.full[0],
+							fullSize: {width: sizes.full[1], height: sizes.full[2]},
+							size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+							position: false,
+							rotation: 0,
+							id: imageId
+						}
+					;
+					$('<img>').attr('src', imageInfo.srcFull).load(function(){
+						Upfront.Views.Editor.ImageSelector.close();
+						me.openImageEditor(true, imageInfo);			
+					});
+				});
+			}
+
+			if(Upfront.data.posts && Upfront.data.posts[postId]){
+				this.fetch(postId).done(function(response){
+
+				});
+			}
+			else{
+
+			}
+
+
+			console.log('Change image not implemented: ' + postId);
+		},
+
+		fetchPost: function(postId){
+			this.post = new Upfront.Models.Post({ID: post_id});
+			return this.post.fetch({withMeta: true}).done(function(response){
+				if(!Upfront.data.posts)
+					Upfront.data.posts = {};
+				Upfront.data.posts[post_id] = me.post;
+			});
+		},
+
+
+		openImageEditor: function(newImage, imageInfo){
+
+		},
+
 		_editor_id: function () {
 			return this.model.get_property_value_by_name("element_id") + '-' + this.post.id;
 		}
