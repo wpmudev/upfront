@@ -27,6 +27,7 @@ class Upfront_UimageView extends Upfront_Object {
 		'image_id' => 0,
 		'align' => 'left',
 		'stretch' => false,
+		'quick_swap' => false,
 
 		'type' => 'UimageModel',
 		'view_class' => 'UimageView',

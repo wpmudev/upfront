@@ -37,7 +37,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 		 this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
-			'click a.uimage_edit_toggle': 'editRequest'
+			'click a.uimage_edit_toggle': 'editRequest',
+			'click div.uimage-quick-swap': 'openImageSelector'
 		 });
 		 this.delegateEvents();
 		 Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
@@ -170,6 +171,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			'</div>';
 		}
 
+		if(this.property('quick_swap')){
+			rendered += '<div class="uimage-quick-swap">Change this image</div>';
+		}
+
 		return rendered;
 	},
 
@@ -248,10 +253,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			heightLimit = resizer.height() - 30,
 			ratio = 1
 		;
-		/*
-		if(this.parent_module_view == view)
-			this.setElementSize(ui);
-*/
 
 		if(heightLimit < img.height())
 			ratio = heightLimit / elementSize.height;
@@ -341,6 +342,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('element_size', result.cropSize, true);
 		this.property('align', result.align, true);
 		this.property('stretch', result.stretch, true);
+		this.property('quick_swap', false, true);
 		if(result.imageId)
 			this.property('image_id', result.imageId, true);
 		this.render();
@@ -1479,6 +1481,9 @@ var ImageSelector = Backbone.View.extend({
 		var me = this;
 		this.deferred = $.Deferred();
 
+		if(! _.isArray(options))
+			options = {};
+
 		this.options = _.extend({}, this.defaultOptions, options);
 
 		this.openSelector();
@@ -1716,7 +1721,7 @@ var ImageSelector = Backbone.View.extend({
 				;
 
 				me.openProgress(function(){
-					$('#upfront-image-uploading h2').html(this.options.preparingText);
+					$('#upfront-image-uploading h2').html(me.options.preparingText);
 				});
 			}
 		});
