@@ -116,7 +116,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
         $token = get_option('upfront_twitter_token');
         $followers_count = get_transient('upfront_twitter_count');
 
-        if (false !== $followers_count) return number_format($followers_count);
+        if (false !== $followers_count && $followers_count) return number_format($followers_count);
 
         // Get new token if there isn't one
         if (!$token) {
@@ -350,7 +350,8 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
             $old_content = $content;
             if ( is_single() ):
                 global $post;
-                if ( get_option('upfront_social_media_global_settings') && self::get_value_by_name('add_counter_all_posts') == 'yes' ) :
+                $add_counter_all_posts = self::get_value_by_name('add_counter_all_posts');
+                if ( get_option('upfront_social_media_global_settings') && $add_counter_all_posts[0] == 'yes' ) :
                     $content = strip_shortcodes(wp_filter_nohtml_kses($post->post_content));
                     $content = substr($content,0,55);
 
@@ -358,16 +359,16 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                     $page_content = (is_home() ? '' : $content.'...');
                     $counter_options = self::get_value_by_name('counter_options');
 
-                    $facebook_button = $counter_options ? "box_count" : "button_count";
-                    $facebook_width = $counter_options ? "65" : "92";
-                    $facebook_height = $counter_options ? "65" : "20";
+                    $facebook_button = $counter_options == 'horizontal' ? 'button_count' : 'box_count';
+                    $facebook_width = $counter_options == 'horizontal' ? "92" : "65";
+                    $facebook_height = $counter_options == 'horizontal' ? "20" : "65";
 
-                    $tweet_button = $counter_options ? "vertical" : "horizontal";
-                    $tweet_width = $counter_options ? "80" : "100";
-                    $tweet_height = $counter_options ? "63" : "20";
+                    $tweet_button = $counter_options == 'horizontal' ? "horizontal" : "vertical";
+                    $tweet_width  = $counter_options == 'horizontal' ? "100" : "80";
+                    $tweet_height = $counter_options == 'horizontal' ? "20" : "63";
 
-                    $google_button = $counter_options ? "tall" : "medium";
-                    $google_width = $counter_options ? "50" : "72";
+                    $google_button = $counter_options == 'horizontal' ? "medium" : "tall";
+                    $google_width = $counter_options == 'horizontal' ? "72" : "50";
 
                     switch (self::get_value_by_name("after_post_title_alignment")) {
                         case 'left':
@@ -392,9 +393,10 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                             $location_bottom_alignment = 'right';
                             break;
                     }
-
-                    $location_top = (self::get_value_by_name("after_post_title") == 'yes' ? "data-alignment='{$location_top_alignment}'" : "");
-                    $location_bottom = (self::get_value_by_name("after_post_content") == 'yes' ? "data-alignment='{$location_bottom_alignment}'" : "");
+                    $after_post_title = self::get_value_by_name("after_post_title");
+                    $after_post_content = self::get_value_by_name("after_post_content");
+                    $location_top = ($after_post_title[0] == 'yes' ? "data-alignment='{$location_top_alignment}'" : "");
+                    $location_bottom = ($after_post_content[0] == 'yes' ? "data-alignment='{$location_bottom_alignment}'" : "");
 
                     $facebook_icon = "<div class='upfront-share-item upfront-share-item-facebook'>".
                         "<iframe src='//www.facebook.com/plugins/like.php?".
@@ -427,23 +429,50 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                     $gplus_icon = "<div class='upfront-share-item upfront-share-item-plusone'>".
                         "<script type='text/javascript' src='https://apis.google.com/js/plusone.js'></script><g:plusone width='".$google_width."' size='{$google_button}'></g:plusone>".
                         "</div>";
-
-                    if(self::get_value_by_name("after_post_title") == 'yes'):
-                        $output .= "<div class='upfront-entry-share upfront-entry-share-top' {$location_top} >".
-                            (self::get_value_by_name("is_liked") ? $facebook_icon : '').
-                            (self::get_value_by_name("is_tweet") ? $twitter_icon : '').
-                            (self::get_value_by_name("is_gplus") ? $gplus_icon : '').
-                        "</div>";
+                    $after_post_title = self::get_value_by_name("after_post_title");
+                    if($after_post_title[0] == 'yes'):
+                        $output .= "<div class='upfront-entry-share upfront-entry-share-top' {$location_top} >";
+                        $services = self::get_value_by_name("global_social_media_services");
+                        if($services):
+                            foreach($services as $service){
+                                switch ($service) {
+                                    case 'facebook':
+                                        $output .=  $facebook_icon;
+                                        break;
+                                    case 'twitter':
+                                        $output .=  $twitter_icon;
+                                        break;
+                                    case 'google':
+                                        $output .=  $gplus_icon;
+                                        break;
+                                }
+                            }
+                        endif;
+                        $output .= "</div>";
                     endif;
 
                     $output .= $old_content;
 
-                    if(self::get_value_by_name("after_post_content") == 'yes'):
-                        $output .= "<div class='upfront-entry-share upfront-entry-share-bottom' {$location_bottom} >".
-                            (self::get_value_by_name("is_liked") ? $facebook_icon : '').
-                            (self::get_value_by_name("is_tweet") ? $twitter_icon : '').
-                            (self::get_value_by_name("is_gplus") ? $gplus_icon : '').
-                        "</div>";
+                    $after_post_content = self::get_value_by_name("after_post_content");
+                    if($after_post_content[0] == 'yes'):
+                        $output .= "<div class='upfront-entry-share upfront-entry-share-bottom' {$location_bottom} >";
+                        $services = self::get_value_by_name("global_social_media_services");
+                        if($services):
+                            foreach($services as $service){
+                                switch ($service) {
+                                    case 'facebook':
+                                        $output .=  $facebook_icon;
+                                        break;
+                                    case 'twitter':
+                                        $output .=  $twitter_icon;
+                                        break;
+                                    case 'google':
+                                        $output .=  $gplus_icon;
+                                        break;
+                                }
+                            }
+                        endif;
+                        $output .= "</div>";
                     endif;
 
                 else:
