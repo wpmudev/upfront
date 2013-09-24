@@ -35,8 +35,14 @@
 			$bar.show();
 
 			// Fade other stuff out
-			$(".upfront-module, #sidebar-ui").css("opacity", .3);
-			options.parent.css("opacity", 1);
+			$(".upfront-module, #sidebar-ui").css({
+				"opacity": .3,
+				"pointer-events": "none"
+			});
+			options.parent.css({
+				"opacity": 1,
+				"pointer-events": "auto"
+			});
 
 			// Make the bar snapping work
 			$(window).on("scroll", reposition_bar);
@@ -47,7 +53,10 @@
 			if ($bar && $bar.length) $bar.remove();
 
 			// Fade other stuff in
-			$(".upfront-module, #sidebar-ui").css("opacity", 1);
+			$(".upfront-module, #sidebar-ui").css({
+				"opacity": 1,
+				"pointer-events": "auto"
+			});
 
 			// Kill the bar snapping
 			$(window).off("scroll", reposition_bar);
@@ -223,7 +232,7 @@
 
 			// We're ready, start editing
 			editor_bar.start();
-			Upfront.Events.on("entity:deactivated", view.on_cancel, view);
+			//Upfront.Events.on("entity:deactivated", view.on_cancel, view);
 		};
 
 		var stop = function () {
