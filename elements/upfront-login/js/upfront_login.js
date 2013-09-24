@@ -53,7 +53,11 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 	var Login_Fields_FieldAppearance_Icon_Image = Upfront.Views.Editor.Field.Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-appearance-icon-image',
 		get_field_html: function () {
-			return '<div class="upfront_login-icon"><img src="' + Upfront.data.upfront_login.root_url + 'img/icon.png" /></div>';
+			return '<div class="upfront_login-icon">' +
+					'<img src="' + Upfront.data.upfront_login.root_url + 'img/icon.png" />' +
+					Upfront.Views.Editor.Field.Text.prototype.get_field_html.call(this) +
+				'</div>'
+			;
 		}
 	});
 
@@ -119,14 +123,17 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 	});
 		var LoginSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
 			initialize: function () {
-				var behavior = new LoginSettings_Field_DisplayBehavior({model: this.model}),
-					appearance = new LoginSettings_Field_DisplayAppearance({model: this.model})
+				var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),
+					behavior = new LoginSettings_Field_DisplayBehavior({model: this.model}),
+					trigger = new LoginSettings_Field_DisplayTrigger({model: this.model})
 				;
 				this.settings = _([
+					appearance,
 					behavior,
-					appearance	
+					trigger
 				]);
-				behavior.on("login:behavior:changed", appearance.update_options, appearance);
+				appearance.on("login:appearance:changed", behavior.update, behavior);
+				appearance.on("login:appearance:changed", trigger.update, trigger);
 			},
 			render: function () {
 				Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
@@ -147,9 +154,10 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 					);
 				},
 				initialize: function () {
+					var style = this.model.get_property_value_by_name("style");
+					var hover_disabled = !style || "popup" == style;
 					var behaviors = [
-						{label: "Always show", value: "always"},
-						{label: "Show on hover", value: "hover"},
+						{label: "Show on hover", value: "hover", disabled: hover_disabled},
 						{label: "Show on click", value: "click"},
 					];
 					this.fields = _([
@@ -157,14 +165,15 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 							model: this.model,
 							property: "behavior",
 							values: behaviors
-						})
+						}),
 					]);
 				},
 				render: function () {
 					Upfront.Views.Editor.Settings.Item.prototype.render.call(this);
 					this.$el
 						.addClass("upfront_login-item-display_behavior")
-						.find(".upfront-settings-item-content").addClass("clearfix")
+						.find(".upfront-settings-item-content").addClass("clearfix").end()
+						.hide()
 					;
 				},
 				get_title: function () {
@@ -175,29 +184,69 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 						field.property.set({'value': field.get_value()}, {'silent': false});
 					});
 					this.trigger("login:behavior:changed");
+				},
+				update: function () {
+					var style = this.model.get_property_value_by_name("style");
+					this.initialize();
+					this.$el.empty();
+					this.render();
+					if ("form" != style) this.$el.show();
 				}
 			});
 			var LoginSettings_Field_DisplayAppearance = Login_SettingsItem_ComplexItem.extend({
+				events: function () {
+					return _.extend({},
+						Upfront.Views.Editor.Settings.Item.prototype.events,
+						{"click": "register_change"}
+					);
+				},
 				initialize: function () {
-					var behavior = this.model.get_property_value_by_name("behavior"),
-						disabled = !behavior || "always" == behavior
-					;
+					var styles = [
+						{label: "Form on page", value: "form"},
+						{label: "Drop down form", value: "dropdown"},
+						{label: "Form in lightbox", value: "popup"},
+					];
+					this.fields = _([
+						new Upfront.Views.Editor.Field.Radios({
+							model: this.model,
+							property: "style",
+							layout: "vertical",
+							values: styles
+						})
+					]);
+				},
+				render: function () {
+					Upfront.Views.Editor.Settings.Item.prototype.render.call(this);
+					this.$el.find(".upfront-settings-item-content").addClass("clearfix");
+				},
+				get_title: function () {
+					return "Display Appearance";
+				},
+				register_change: function () {
+					this.fields.each(function (field) {
+						field.property.set({'value': field.get_value()}, {'silent': false});
+					});
+					this.trigger("login:appearance:changed");
+				}
+			});
+			var LoginSettings_Field_DisplayTrigger = Login_SettingsItem_ComplexItem.extend({
+				initialize: function () {
 					this.fields = _([
 						new Login_Fields_Complex_BooleanField({
 							model: this.model,
 							additional_class: "upfront_login-appearance-icon",
 							boolean_field: {
 								property: 'appearance',
-								values: [{label: '', value: 'icon', disabled: disabled}]
+								values: [{label: '', value: 'icon'}]
 							},
-							subfield: new Login_Fields_FieldAppearance_Icon_Image({model: this.model, property: false})
+							subfield: new Login_Fields_FieldAppearance_Icon_Image({model: this.model, property: 'label_image'})
 						}),
 						new Login_Fields_Complex_BooleanField({
 							model: this.model,
 							additional_class: "upfront_login-appearance-label",
 							boolean_field: {
 								property: 'appearance',
-								values: [{label: '', value: 'label', disabled: disabled}]
+								values: [{label: '', value: 'label'}]
 							},
 							subfield: new Upfront.Views.Editor.Field.Text({
 								model: this.model,
@@ -206,17 +255,22 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 						}),
 					]);
 				},
-				update_options: function () {
+				update: function () {
+					var style = this.model.get_property_value_by_name("style");
 					this.initialize();
 					this.$el.empty();
 					this.render();
+					if ("form" != style) this.$el.show();
 				},
 				render: function () {
 					Upfront.Views.Editor.Settings.Item.prototype.render.call(this);
-					this.$el.find(".upfront-settings-item-content").addClass("clearfix");
+					this.$el
+						.find(".upfront-settings-item-content").addClass("clearfix").end()
+						.hide()
+					;
 				},
 				get_title: function () {
-					return "Display Appearance";
+					return "Trigger";
 				}
 			});
 

@@ -14,14 +14,20 @@
 	float: left;
 }
 .upfront_login-fields-complex_boolean.upfront_login-appearance-icon {
-	width: 30%;
+	width: 60%;
+}
+.upfront_login-fields-complex_boolean.upfront_login-appearance-icon .upfront-field-text {
+	width: 80%;
 }
 .upfront_login-fields-complex_boolean.upfront_login-appearance-label {
-	width: 70%;
+	width: 40%;
 }
 .upfront_login-fields-complex_boolean.upfront_login-appearance-icon .upfront_login-icon {
-	padding-top: 3px;
 	float: left;
+	width: 85%;
+}
+.upfront_login-fields-complex_boolean.upfront_login-appearance-icon .upfront_login-icon input {
+	width: 80%;
 }
 
 .upfront_login-item-display_behavior .upfront-field-multiple {
