@@ -3315,6 +3315,8 @@ define(_template_files, function () {
 					property_model.set({'value': this.get_value()}, {silent: true});
 				else
 					this.model.init_property(this.get_property(), this.get_value());
+				if ( this.get_property_value() != this.get_value() )
+					this.panel.is_changed = true;
 			}
 		}
 	}));
