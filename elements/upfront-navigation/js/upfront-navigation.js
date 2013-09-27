@@ -284,7 +284,7 @@
                         "name": "",
                         "properties": [
                             {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-                            {"name": "class", "value": "c6 upfront-navigation_module"},
+                            {"name": "class", "value": "c22 upfront-navigation_module"},
                             {"name": "has_settings", "value": 0}
                         ],
                         "objects": [
