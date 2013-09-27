@@ -12,7 +12,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		'type' => 'UgalleryModel',
 		'view_class' => 'UgalleryView',
 		'has_settings' => 1,
-		'class' => 'c34 upfront-gallery',
+		'class' => 'c22 upfront-gallery',
 
 		'status' => 'starting',
 		'images' => array(), // Convert to new UgalleryImages() for using

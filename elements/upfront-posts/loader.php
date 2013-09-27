@@ -37,6 +37,8 @@ function uposts_initialize () {
 
 	// Add the public stylesheet
 	//add_action('wp_enqueue_scripts', array('Upfront_UpostsView', 'add_public_style'));
+
+	add_filter('post_thumbnail_html', array('Upfront_UpostsView', 'set_featured_image'), 10 , 2);
 }
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'uposts_initialize'); 

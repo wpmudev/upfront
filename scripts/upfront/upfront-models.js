@@ -980,7 +980,7 @@ var _alpha = "alpha",
 					this.author = new Upfront.Models.User(model['author']);
 
 				if(model['meta'])
-					this.meta = new Upfront.Collections.MetaList(model['meta'], {postId: this.id, metaType: 'post'});
+					this.meta = new Upfront.Collections.MetaList(model['meta'], {objectId: this.id, metaType: 'post'});
 			}
 		},
 
@@ -991,7 +991,7 @@ var _alpha = "alpha",
 					if(response.data.author)
 						me.author = new Upfront.Models.User(response.data.author);
 					if(response.data.meta)
-						me.meta = new Upfront.Collections.MetaList(response.data.meta, {postId: this.id, metaType: 'post'});
+						me.meta = new Upfront.Collections.MetaList(response.data.meta, {objectId: me.id, metaType: 'post'});
 				})
 			;
 		},
@@ -1025,7 +1025,7 @@ var _alpha = "alpha",
 		},
 
 		fetch_author: function() {
-
+			console.log('Fetch author not yet implemented.');
 		},
 
 		fetch_terms: function(type){
@@ -1039,7 +1039,7 @@ var _alpha = "alpha",
 		},
 
 		fetch_meta: function(){
-			this.meta = new Upfront.Collection.MetaList([], {postId: this.id, metaType: 'post'});
+			this.meta = new Upfront.Collection.MetaList([], {objectId: this.id, metaType: 'post'});
 			return this.meta.fetch();
 		}
 	}),

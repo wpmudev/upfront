@@ -45,6 +45,13 @@ class Upfront_UpostsView extends Upfront_Object {
 		return self::get_template($args, $this->properties_to_array());
 	}
 
+	public static function set_featured_image($html, $post_id){
+		$image_data = get_post_meta($post_id, '_thumbnail_data', true);
+		if(isset($image_data['src']))
+			return str_replace($image_data['srcOriginal'], $image_data['src'], $html);
+		return $html;
+	}
+
 	public static function get_template($query_args, $properties) {
 		global $wp_query;
 		$temp_query = clone $wp_query;

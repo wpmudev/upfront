@@ -151,8 +151,6 @@ a.open-media-gallery:hover i {
 
 .upfront-image-starting-select {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-	top:0;
-	left: 0;
 	color: #28DC96;
 	font-family: 'Source Sans Pro';
 	font-size:18px;
@@ -164,7 +162,7 @@ a.open-media-gallery:hover i {
 }
 
 .upfront-image-resizing-icons {
-	width: 140px;
+	width: 340px;
 	height: 60px;
 	margin: 10px auto;
 }
@@ -571,4 +569,8 @@ display:none;
 
 .upfront-image:hover .uimage-quick-swap{
 	display: block;
+}
+
+#upfront-upload-image {
+	display:none;
 }

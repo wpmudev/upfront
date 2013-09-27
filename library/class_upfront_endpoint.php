@@ -578,9 +578,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$parsed = array();
 		foreach($metadata as $key => $val){
 			if(is_array($val) && sizeof($val) == 1)
-				$parsed[] = array('meta_key' => $key, 'meta_value' => $val[0]);
+				$parsed[] = array('meta_key' => $key, 'meta_value' => maybe_unserialize($val[0]));
 			else
-				$parsed[] = array('meta_key' => $key, 'meta_value' => $val);
+				$parsed[] = array('meta_key' => $key, 'meta_value' => maybe_unserialize($val));
 		}
 		return $parsed;
 	}

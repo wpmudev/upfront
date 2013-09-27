@@ -32,7 +32,7 @@ class Upfront_UimageView extends Upfront_Object {
 		'type' => 'UimageModel',
 		'view_class' => 'UimageView',
 		'has_settings' => 1,
-		'class' =>  'c34 upfront-image'
+		'class' =>  'c6 upfront-image'
 	);
 
 	function __construct($data) {
@@ -283,7 +283,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
         $ids = json_decode($item_id);
 
         if(is_null($ids) || !is_array($ids))
-        	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
+        	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID 2"));
 
     	$images = array();
     	$intermediate_sizes = get_intermediate_image_sizes();

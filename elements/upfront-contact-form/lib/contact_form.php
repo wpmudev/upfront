@@ -20,7 +20,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		'type' => "UcontactModel",
 		'view_class' => "UcontactView",
-		"class" => "c34 upfront-contact-form",
+		"class" => "c8 upfront-contact-form",
 		'has_settings' => 1
 	);
 

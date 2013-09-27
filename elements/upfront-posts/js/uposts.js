@@ -146,7 +146,7 @@
 			;
 			this.post = Upfront.data.posts ? Upfront.data.posts[post_id] : false;
 			if(!this.post){
-				this.fetch(post_id).done(function(response){
+				this.fetchPost(post_id).done(function(response){
 					Upfront.data.currentPost = me.post;
 					Upfront.Events.trigger("data:current_post:change");
 					me.editPost(me.post);					
@@ -204,61 +204,167 @@
 			var me = this,
 				target = $(e.target),
 				postId = target.closest('.uposts-post').data('post_id')
-				img = target.parent().find('img')
+				img = target.parent().find('img'),
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Starting image editor ...",
+					done: "Here we are!",
+					fixed: false
+				})
 			;
 
 			if(!img.length){
-				Upfront.Views.Editor.ImageSelector.open().done(function(images){
-					var sizes = {},
+
+				if(!Upfront.data.posts[postId])
+					this.fetchPost(postId);
+
+				me.openImageSelector(postId);
+			}
+			else if(Upfront.data.posts && Upfront.data.posts[postId]){
+				loading.render();
+				target.parent().append(loading.$el);
+				me.getImageInfo(Upfront.data.posts[postId]).done(function(imageInfo){
+					loading.done();
+					loading.$el.remove();
+					me.openImageEditor(false, imageInfo, postId);
+				});
+			}
+			else{
+				loading.render();
+				target.parent().append(loading.$el);
+				this.fetchPost(postId).done(function(response){
+					me.getImageInfo(me.post).done(function(imageInfo){
+						loading.done();
+						loading.$el.remove();
+						me.openImageEditor(false, imageInfo, postId);
+					});
+				});
+			}
+		},
+
+		openImageSelector: function(postId){
+			var me = this;
+			Upfront.Views.Editor.ImageSelector.open().done(function(images){
+				var sizes = {},
+					imageId = 0
+				;
+				_.each(images, function(image, id){
+					sizes = image;
+					imageId = id;
+				});
+				var	imageInfo = {
+						src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+						srcFull: sizes.full[0],
+						srcOriginal: sizes.full[0],
+						fullSize: {width: sizes.full[1], height: sizes.full[2]},
+						size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+						position: false,
+						rotation: 0,
+						id: imageId
+					}
+				;
+				$('<img>').attr('src', imageInfo.srcFull).load(function(){
+					Upfront.Views.Editor.ImageSelector.close();
+					me.openImageEditor(true, imageInfo, postId);			
+				});
+			});
+		},
+
+		fetchPost: function(postId){
+			var me = this;
+			this.post = new Upfront.Models.Post({ID: postId});
+			return this.post.fetch({withMeta: true}).done(function(response){
+				if(!Upfront.data.posts)
+					Upfront.data.posts = {};
+				Upfront.data.posts[postId] = me.post;
+			});
+		},
+
+		getImageInfo: function(post){
+			var me = this,
+				imageData = post.meta.get('_thumbnail_data'),
+				imageId = post.meta.get('_thumbnail_id'),
+				deferred = $.Deferred(),
+				$img = $('.uposts-posts-' + post.id).find(this.featuredSelector).find('img')
+			;
+
+			if(!imageData || !_.isObject(imageData.get('meta_value')) || imageData.get('meta_value').imageId != imageId.get('meta_value')){
+				if(!imageId)
+					return false;
+				Upfront.Views.Editor.ImageEditor.getImageData([imageId.get('meta_value')]).done(function(response){
+					var images = response.data.images,
+						sizes = {},
 						imageId = 0
 					;
 					_.each(images, function(image, id){
 						sizes = image;
-						me.imageId = id;
+						imageId = id;
 					});
-					var	imageInfo = {
-							src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-							srcFull: sizes.full[0],
-							srcOriginal: sizes.full[0],
-							fullSize: {width: sizes.full[1], height: sizes.full[2]},
-							size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
-							position: false,
-							rotation: 0,
-							id: imageId
+
+					deferred.resolve({
+						src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+						srcFull: sizes.full[0],
+						srcOriginal: sizes.full[0],
+						fullSize: {width: sizes.full[1], height: sizes.full[2]},
+						size: {width: $img.width(), height: $img.height()},
+						position: {top: 0, left: 0},
+						rotation: 0,
+						id: imageId
+					});
+				});
+			}
+			else {
+				var data = imageData.get('meta_value'),
+					factor = $img.width() / data.cropSize.width
+				;
+				deferred.resolve({
+					src: data.src,
+					srcFull: data.srcFull,
+					srcOriginal: data.srcOriginal,
+					fullSize: data.fullSize,
+					size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},//data.imageSize,
+					position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},//data.imageOffset,
+					rotation: data.rotation,
+					id: data.imageId
+				});
+			}
+			return deferred.promise();
+		},
+
+		openImageEditor: function(newImage, imageInfo, postId){
+			var me = this,
+				mask = $('.uposts-posts-' + postId).find(this.featuredSelector),
+				maskHeight = Upfront.data && Upfront.data.posts_element && Upfront.data.posts_element.featured_image_height ? Upfront.data.posts_element.featured_image_height : 300
+				editorOptions = _.extend({}, imageInfo, {
+					maskOffset: mask.offset(),
+					maskSize: {width: mask.width(), height: maskHeight},
+					setImageSize: newImage,
+					extraButtons: [
+						{
+							id: 'image-edit-button-swap',
+							text: 'Swap Image',
+							callback: function(e, editor){
+								editor.cancel();
+								me.openImageSelector(postId);
+							}
 						}
-					;
-					$('<img>').attr('src', imageInfo.srcFull).load(function(){
-						Upfront.Views.Editor.ImageSelector.close();
-						me.openImageEditor(true, imageInfo);			
-					});
-				});
-			}
+					]
+				})
+			;
+			Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
+				var post = me.post,
+					img = mask.find('img')
+				;
 
-			if(Upfront.data.posts && Upfront.data.posts[postId]){
-				this.fetch(postId).done(function(response){
+				post.meta.add([
+					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
+					{meta_key: '_thumbnail_data', meta_value: imageData}
+				], {merge: true});
+				post.meta.save();
+				if(!img.length)
+					img = $('<img style="z-index:2;position:relative">').appendTo(mask);
 
-				});
-			}
-			else{
-
-			}
-
-
-			console.log('Change image not implemented: ' + postId);
-		},
-
-		fetchPost: function(postId){
-			this.post = new Upfront.Models.Post({ID: post_id});
-			return this.post.fetch({withMeta: true}).done(function(response){
-				if(!Upfront.data.posts)
-					Upfront.data.posts = {};
-				Upfront.data.posts[post_id] = me.post;
-			});
-		},
-
-
-		openImageEditor: function(newImage, imageInfo){
-
+				img.attr('src', imageData.src);
+			})
 		},
 
 		_editor_id: function () {
@@ -297,7 +403,7 @@
 					"name": "",
 					"properties": [
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-						{"name": "class", "value": "c6 upfront-posts_module"},
+						{"name": "class", "value": "c22 upfront-posts_module"},
 						{"name": "has_settings", "value": 0}
 					],
 					"objects": [

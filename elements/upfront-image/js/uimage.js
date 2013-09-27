@@ -672,9 +672,9 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
  * 		maskOffset: and array with the offset of the mask element relative to the top left of the page
  * 	 	maskSize: an array with the size of the mask
  * 	 	position: (optional:[{top:0, left:0}]) if the image is cropped is the offset of the crop relative to the original size of the image
- * 	 	size: the size of the image as shown in the page
- * 	 	fullSize: the size of the image if it wasn't cropped
- * 	 	originalSrc: the source url of the original image (the best to edit)
+ * 	 	size: the size of the image if it wasn't cropped
+ * 	 	fullSize: the size of the original image
+ * 	 	srcOriginal: the source url of the original image (the best to edit)
  * 	 	src: the source url of the image in the page
  * 	 	rotation: (optional:[0]) The angle of rotation of the image on the page relative to the original
  * 	 	align: (optional:['left']) alignment of the image (used if the image is smaller than the mask)
@@ -760,29 +760,30 @@ var ImageEditor = Backbone.View.extend({
 		this.src = options.src;
 		this.setOptions(options);
 
-		var halfBorder = this.bordersWidth /2;
-
-
-		maskOffset = {
-			top: options.maskOffset.top - halfBorder,
-			left: options.maskOffset.left - halfBorder
-		};
-		maskSize = {
-			width: options.maskSize.width + this.bordersWidth,
-			height: options.maskSize.height + this.bordersWidth			
-		};
+		var halfBorder = this.bordersWidth /2,
+			maskOffset = {
+				top: parseInt(options.maskOffset.top) - halfBorder,
+				left: parseInt(options.maskOffset.left) - halfBorder
+			},
+			maskSize = {
+				width: parseInt(options.maskSize.width) + this.bordersWidth,
+				height: parseInt(options.maskSize.height) + this.bordersWidth			
+			}
+		;
 
 		if(!options.position)
 			options.position = this.centerImageOffset(options.size, maskSize);
 
-		canvasOffset = {
-			top: maskOffset.top - options.position.top,
-			left: maskOffset.left - options.position.left
-		};
-		canvasSize = {
-			width: options.size.width + this.bordersWidth,
-			height: options.size.height + this.bordersWidth
-		};
+		var canvasOffset = {
+				top: parseInt(maskOffset.top) - options.position.top,
+				left: parseInt(maskOffset.left) - options.position.left
+			},
+			canvasSize = {
+				width: parseInt(options.size.width) + this.bordersWidth,
+				height: parseInt(options.size.height) + this.bordersWidth
+			}
+		;
+
 		this.imageId = options.id;
 		this.src = options.srcOriginal;
 
