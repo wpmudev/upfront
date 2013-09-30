@@ -32,7 +32,7 @@ class Upfront_UimageView extends Upfront_Object {
 		'type' => 'UimageModel',
 		'view_class' => 'UimageView',
 		'has_settings' => 1,
-		'class' =>  'c6 upfront-image'
+		'class' =>  'upfront-image'
 	);
 
 	function __construct($data) {
