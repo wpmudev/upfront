@@ -223,7 +223,6 @@
 				loading.render();
 				target.parent().append(loading.$el);
 				me.getImageInfo(Upfront.data.posts[postId]).done(function(imageInfo){
-					loading.done();
 					loading.$el.remove();
 					me.openImageEditor(false, imageInfo, postId);
 				});
@@ -233,7 +232,6 @@
 				target.parent().append(loading.$el);
 				this.fetchPost(postId).done(function(response){
 					me.getImageInfo(me.post).done(function(imageInfo){
-						loading.done();
 						loading.$el.remove();
 						me.openImageEditor(false, imageInfo, postId);
 					});
