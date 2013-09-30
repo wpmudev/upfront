@@ -2,7 +2,7 @@
 <?php if ($labelFilters['length']){ ?>
 	<div class="ugallery_labels">
 	<?php for($i=0; $i<$labels_length; $i++) { ?>
-		<a href="#" class="ugallery_label_filter" rel="label_<?php echo $labels[$i]['id'] ?>"><?php echo $labels[$i]['text'] ?></a>
+		<a href="#" class="ugallery_label_filter <?php echo $i == 0 ? 'filter_selected' : '' ?>" rel="label_<?php echo $labels[$i]['id'] ?>"><?php echo $labels[$i]['text'] ?></a>
 	<?php } ?>
 	</div>
 <?php } ?>

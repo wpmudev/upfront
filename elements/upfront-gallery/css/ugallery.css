@@ -337,3 +337,32 @@ h3.upfront-selector-title {
 	min-height: 250px;
 }
 
+#ugallery-tooltip .existing_labels {
+	border-top:0;
+	padding: 0;
+	margin:3px 0 0;
+}
+
+.existing_labels a.upfront-icon-media-label-delete:hover{
+	background: rgb(240, 101, 102);
+}
+.label_selector {
+	position: relative;
+}
+.label_selector .labels_list {
+	position: absolute;	
+	z-index: 30;
+	width: 100%;
+	box-shadow: 0px 3px 3px rgba(0,0,0,.3);
+}
+
+.labels_list ul li label.selected {
+	background: #cee1f2;
+}
+
+.labels_list ul:hover li label {
+	background: rgb(242, 249, 255);
+}
+.labels_list ul:hover li:hover label {
+	background: #cee1f2;
+}

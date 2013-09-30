@@ -169,12 +169,21 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 	public function add_js_defaults($data){
 		$post_types = get_post_types(array('public' => true), 'objects');
+		$labels = get_terms('media_label', array('hide_empty' => false));
+		$label_names = array();
+		$label_ids = array();
+		foreach($labels as $label){
+			$labels_ids[$label->term_id] = array('id' => $label->term_id, 'text' => $label->name);
+			$labels_names[$label->name] = array('id' => $label->term_id, 'text' => $label->name);
+		}
 
 		$data['ugallery'] = array(
 			'defaults' => $this->defaults,
 			'template' => upfront_get_template_url('ugallery', upfront_element_url('tpl/ugallery.html', dirname(__FILE__))),
 			'postTypes' => $post_types,
-			'grids' => array()
+			'grids' => array(),
+			'label_names' => $labels_names,
+			'label_ids' => $labels_ids
 		);
 		return $data;
 	}

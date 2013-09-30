@@ -10,7 +10,8 @@ jQuery(function($){
 
 		grid.siblings('.ugallery_labels').on('click', '.ugallery_label_filter', function(e){
 			e.preventDefault();
-			var filter = $(e.target).attr('rel');
+			$(e.delegateTarget).find('a.filter_selected').removeClass('filter_selected');
+			var filter = $(e.target).addClass('filter_selected').attr('rel');
 			grid.shuffle('shuffle', filter);
 		})
 	});

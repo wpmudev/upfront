@@ -78,6 +78,18 @@
 		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
 	</div>
 
+	<div class="upfront-field-wrap upfront-additive_multiselection upfront-media-controls ">
+		<label for="ugallery-image-labels">Labels</label>
+		<div class="existing_labels">
+		<a href="#remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="2">Una etiqueta</a>
+		</div>
+		<div class="label_selector">
+			<input type="text" name="ugallery-image-labels" placeholder="Add a new label" class="upfront-field-text">
+			<div class="labels_list">
+			</div>
+		</div>
+	</div>
+
 </div>
 </script>
 
@@ -105,6 +117,18 @@
 </div>
 </script>
 
+<script type="text/template" id="labels-tpl">
+	{[ _.each(labels, function(label){ ]}
+		<a href="#remove" title="Remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{label.id}}">{{label.text}}</a>
+	{[ }) ]}
+</script>
 
+<script type="text/template" id="labels-selection-tpl">
+	<ul {{labels.length ? '' : 'class="empty"'}}>
+	{[ _.each(labels, function(label){ ]}
+		<li><label rel="{{label.id}}">{{label.text}}</label></li>
+	{[ }) ]}
+	</ul>
+</script>
 
 </div>

@@ -66,6 +66,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
 	detailsTpl: _.template($(editorTpl).find('#details-tpl').html()),
 	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
+	labelsTpl: _.template($(editorTpl).find('#labels-tpl').html()),
+	labelSelectorTpl: _.template($(editorTpl).find('#labels-selection-tpl').html()),
 	images: [],
 	sortMode: false,
 	lastThumbnailSize: false,
@@ -155,6 +157,23 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		return '';
 	},
 
+	getLabelSelector: function(imageId){
+		var tpl = $(this.labelsTpl({labels: this.extractImageLabels(imageId)}));
+
+		return tpl;
+	},
+
+	extractImageLabels: function(imageId){
+		var ids = this.imageLabels[imageId].match(/-?\d+/g),
+			labels = []
+		;
+		_.each(this.labels, function(label){
+			if(ids.indexOf(label.id.toString()) != -1 && label.id != 0)
+				labels.push(label);
+		});
+
+		return labels;
+	},
 
 	openImageSelector: function(e){
 		var me = this,
@@ -346,7 +365,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				.on('click', '.upfront-save_settings', function(e){
 					me.saveImageDetails(e);
 				})
+				,
+			labels = this.getLabelSelector(item.attr('rel'))
 		;
+
+		contents.find('.existing_labels').html(labels);
+
+		contents = this.createLabelSelector(contents);
+
 		this.openTooltip(contents, item);
 	},
 
@@ -458,6 +484,274 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				});
 			}
 		}
+	},
+
+	createLabelSelector: function(contents){
+		var me = this,
+			imageId = contents.find('#ugallery-image-id').val()
+		;
+		contents.on('keyup', 'input[name="ugallery-image-labels"]', function(e){
+			if([9, 13, 38, 40].indexOf(e.which) != -1)
+				return;
+
+			var val = $(e.target).val(),
+				allLabels = _.keys(Upfront.data.ugallery.label_names),
+				labels = []
+			;
+
+			if(val.length < 2)
+				return $('.labels_list').html('');
+
+			_.each(allLabels, function(label){
+				var idx = label.indexOf(val);
+				if(idx != -1){
+					var lab = Upfront.data.ugallery.label_names[label],
+						imageLabels = me.imageLabels[imageId]
+					;
+					if(imageLabels.indexOf('"label_' + lab.id + '"') == -1){
+						labels.push({
+							id: lab.id,
+							text: lab.text.replace(val, '<span class="selection">' + val + '</span>')
+						});
+					}
+				}
+			});
+
+			return $('.labels_list').html(me.labelSelectorTpl({labels: labels}));
+		});
+		contents.on('keydown', 'input[name="ugallery-image-labels"]', function(e){
+
+			var goDown = function(labelsLi){
+				var selected = labelsLi.find('label.selected');
+				if(selected.length){
+					selected.removeClass('selected');
+				}
+				var currentIdx = -1,
+					idx = 0
+				;
+				while(idx < labelsLi.length && currentIdx == -1){
+					currentIdx = labelsLi[idx] == selected.parent()[0] ? idx : -1;
+					idx++;
+				}
+
+				if(currentIdx == -1)
+					$(labelsLi[0]).find('label').addClass('selected');
+				else if(currentIdx < labelsLi.length - 1)
+					$(labelsLi[currentIdx + 1]).find('label').addClass('selected');
+
+			};
+
+			var goUp = function(labelsLi){
+				var selected = labelsLi.find('label.selected');
+				if(selected.length){
+					selected.removeClass('selected');
+				}
+				var currentIdx = -1,
+					idx = 0
+				;
+				while(idx < labelsLi.length && currentIdx == -1){
+					currentIdx = labelsLi[idx] == selected.parent()[0] ? idx : -1;
+					idx++;
+				}
+
+				if(currentIdx == -1)
+					$(labelsLi[labelsLi.length -1]).find('label').addClass('selected');
+				else if(currentIdx > 0)
+					$(labelsLi[currentIdx - 1]).find('label').addClass('selected');
+
+			};
+
+			if(e.which == 13){ // Enter
+				e.preventDefault();
+				var selected = contents.find('.labels_list label.selected');
+				if(selected.length){
+					var labelId = selected.attr('rel'),
+						label = Upfront.data.ugallery.label_ids[labelId]
+					;
+
+					$(e.target).val('').siblings('.labels_list').html('');
+					me.addLabel(label.text, imageId);
+				}
+				else{
+					var label = $.trim($(e.target).val());
+					if(label.length){
+						$(e.target).val('').siblings('.labels_list').html('');
+						me.addLabel(label, imageId);
+					}
+				}
+			}
+			else if(e.which == 9 || e.which == 40){ // Tab or down
+				var labelsLi = contents.find('.labels_list li');
+				if(labelsLi.length){
+					e.preventDefault();
+					goDown(labelsLi);
+				}
+			}
+			else if(e.which == 38){ // Up 
+				var labelsLi = contents.find('.labels_list li');
+				if(labelsLi.length){
+					e.preventDefault();
+					goUp(labelsLi);
+				}
+			}
+			else if(e.which == 27){ //Esc
+				e.preventDefault();
+				$(e.target).siblings('.labels_list').html('');
+			}
+		})
+		.on('click', 'label', function(e){
+			var labelId = $(e.target).attr('rel'),
+				label = Upfront.data.ugallery.label_ids[labelId]
+			;
+			me.addLabel(label.text, imageId)
+			contents.find('input[name="ugallery-image-labels"]').val('').siblings('.labels_list').html('');
+		})
+		.on('click', '.existing_labels a', function(e){
+			e.preventDefault();
+			var link = $(e.target),
+				labelId = link.data('idx'),
+				imageLabels = me.imageLabels[imageId].split(', '),
+				deleteLabel = true,
+				data = {
+					action: 'upfront-media-disassociate_label',
+					"term": labelId,
+					"post_id": imageId
+				}
+			;
+			Upfront.Util.post(data)
+				.success(function (response) {
+					console.log(response);
+				})
+			;
+
+			for(var idx in imageLabels){
+				if(imageLabels[idx] && imageLabels[idx] == '"label_' + labelId + '"' )
+					imageLabels.splice(idx, 1);
+			}
+
+			me.imageLabels[imageId] = imageLabels.join(', ');
+
+			me.images.each(function(image){
+				if(image.id != imageId && me.imageLabels[imageId].indexOf('"label_' + labelId + '"') != -1){
+					deleteLabel = false;
+				}
+			});
+
+			if(deleteLabel){
+				for(var idx in me.labels){
+					if(me.labels[idx] && me.labels[idx].id == labelId)
+						me.labels.splice(idx, 1);
+				}
+			}
+
+			$(e.target).fadeOut('fast', function(){
+				$(this).remove();
+			});
+		});
+
+		return contents;
+	},
+
+	addLabel: function(text, imageId){
+		var label = Upfront.data.ugallery.label_names[text];
+		if(label){
+			var labelInGallery = false,
+				i = 0,
+				newImageLabel = false
+			;
+			while(i<this.labels.length && !labelInGallery){
+				labelInGallery = this.labels[i].id == label.id;
+				i++;
+			}
+
+			if(!labelInGallery){
+				this.labels.push({
+					id: label.id,
+					text: label.text
+				});
+
+				this.imageLabels[imageId] = this.imageLabels[imageId] ? this.imageLabels[imageId] + ', "label_' + label.id + '"' : '"label_' + label.id + '"';
+				newImageLabel = true;
+			}
+			else if(this.imageLabels[imageId].indexOf('label_' + label.id) == -1){
+					this.imageLabels[imageId] += ', "label_' + label.id + '"';
+					newImageLabel = true;
+			}
+
+			if(newImageLabel){
+				this.renderLabels(imageId);
+				var data = {
+					"action": "upfront-media-associate_label",
+					"term": label.id,
+					"post_id": imageId
+				}
+				Upfront.Util.post(data)
+					.success(function (response) {
+						console.log(response);
+					})
+				;
+			}			
+		}
+		else{
+			var me = this,
+				tempId = - parseInt(Math.random() * 100, 10),
+				label = {
+					id: tempId,
+					term_id: tempId,
+					text: text
+				},
+				data = {
+					"action": "upfront-media-add_label",
+					"term": text,
+					"post_id": imageId
+				}
+			;
+			Upfront.data.ugallery.label_names[text] = label;
+			Upfront.data.ugallery.label_ids[tempId] = label;
+
+			this.labels.push(label);
+			this.imageLabels[imageId] = this.imageLabels[imageId] ? this.imageLabels[imageId] + ', "label_' + tempId + '"' : '"label_' + tempId + '"';
+
+			$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId)}));
+
+			Upfront.Util.post(data)
+				.success(function (response) {
+					console.log(response);
+					var thisLabels = response.data[imageId],
+						imageLabels = [],
+						newId = 0,
+						newLabel = {}
+					;
+
+					_.each(thisLabels, function(label){
+						imageLabels.push('"label_' + label + '"');
+						if(!Upfront.data.ugallery.label_ids[label])
+							newId = label;
+					});
+
+					imageLabels = imageLabels.join(', ');
+					newLabel = {
+						id: newId,
+						text: text
+					}
+
+					Upfront.data.ugallery.label_names[text] = newLabel;
+					Upfront.data.ugallery.label_ids[newLabel.id] = newLabel;
+					delete(Upfront.data.ugallery.label_ids[tempId]);
+
+					me.imageLabels[imageId] = imageLabels;
+
+					_.each(me.labels, function(label){
+						if(label.text == text)
+							label.id = newLabel.id;
+					});
+				})
+			;
+		}
+	},
+
+	renderLabels: function(imageId){
+		$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId)}));
 	},
 
 	postTypes: function(){
