@@ -215,7 +215,7 @@
 // ----- Bringing everything together -----
 // The definitions part is over.
 // Now, to tie it all up and expose to the Subapplication.
-
+    /*
     Upfront.Application.LayoutEditor.add_object("LikeBox", {
         "Model": LikeBoxModel,
         "View": LikeBoxView,
@@ -225,5 +225,5 @@
 
     Upfront.Models.LikeBoxModel = LikeBoxModel;
     Upfront.Views.LikeBoxView = LikeBoxView;
-
+*/
 })(jQuery);

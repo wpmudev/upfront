@@ -327,6 +327,34 @@ class Upfront_SocialMediaView extends Upfront_Object {
             wp_enqueue_script(array('jquery-ui-sortable'));
         endif;
     }
+
+    //Add properties to Upfront.data
+    public static function add_upfront_data ($data) {
+        $data['usocial'] = array(
+            'defaults' => array(
+                'global_social_media_services' => array(),
+                'add_counter_all_posts' => array('yes'),
+                'after_post_title' => array('yes'),
+                'after_post_title_alignment' => 'left',
+                'after_post_content' => array(),
+                'after_post_content_alignment' => 'left',
+                'counter_options' => 'horizontal',
+                'global_social_media_services-facebook-url' => '',
+                'global_social_media_services-twitter-url' => '',
+                'global_social_media_services-google-url' => ''
+            ),
+            'globals' => self::properties_to_array(json_decode(get_option('upfront_social_media_global_settings', false)))
+        );
+
+        return $data;
+    }
+
+    protected static function properties_to_array($props){
+        $arr = array();
+        foreach($props as $prop)
+            $arr[$prop->name] = $prop->value;
+        return $arr;
+    }
 }
 
 /**
@@ -339,7 +367,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
     }
     const COUNT_ERROR = 'Error';
     private function _add_hooks () {
-        add_action('wp_ajax_upfront_save_social_media_global_settings', array($this, "save_social_media_global_settings"));
+        add_action('wp_ajax_usocial_save_globals', array($this, "save_social_media_global_settings"));
         add_action('wp_ajax_upfront_get_twitter_page_likes', array($this, "get_twitter_page_likes"));
         add_action('wp_ajax_upfront_get_google_page_subscribers', array($this, "get_google_page_subscribers"));
         add_filter('the_content', array($this, "upfront_the_content_filter"));

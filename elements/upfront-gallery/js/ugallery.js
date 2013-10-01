@@ -54,8 +54,6 @@ var UgalleryModel = Upfront.Models.ObjectModel.extend({
 });
 
 
-
-
 /* View */
 var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.FixedObjectInAnonymousModule,*/ {
 	model: UgalleryModel,
