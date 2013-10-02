@@ -1925,8 +1925,21 @@
 			*/
 			var html = Upfront.Media.Manager.results_html(result),
 				editor = CKEDITOR.instances[Upfront.Media.Manager.instance];
-			if ( editor && result )
+			if ( editor && result ){
+				// Check selection
+				var sel = editor.getSelection(),
+					el = sel.getStartElement();
+				if ( CKEDITOR.tools.trim(el.getText()) != '' ){
+					// not empty, move selection
+					var p = new CKEDITOR.dom.element('p'),
+						range = editor.createRange();
+					p.appendHtml('<br/>'); // Add empty <br>
+					p.insertBefore(el);
+					range.moveToElementEditablePosition(p, true);
+					editor.getSelection().selectRanges( [range] );
+				}
 				editor.insertHtml(html);
+			}
 		},
 		results_html: function (result) {
 			var html = '';
@@ -1988,3 +2001,4 @@ Upfront.Media = {
 };
 
 })(jQuery);
+//@ sourceURL=upfront-media.js

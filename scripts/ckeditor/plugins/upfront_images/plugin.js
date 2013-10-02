@@ -129,7 +129,7 @@ var Image = {
 		if ( element ){
 			if ( !$(element.$).find('img').length ){
 				this.remove_dialog();
-				var p = CKEDITOR.dom.element('p');
+				var p = new CKEDITOR.dom.element('p');
 				element.removeClass('upfront-inserted_image-wrapper');
 				element.replace(p);
 			}
