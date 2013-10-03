@@ -1482,7 +1482,7 @@ var ImageSelector = Backbone.View.extend({
 		var me = this;
 		this.deferred = $.Deferred();
 
-		if(! _.isArray(options))
+		if(! _.isObject(options))
 			options = {};
 
 		this.options = _.extend({}, this.defaultOptions, options);
