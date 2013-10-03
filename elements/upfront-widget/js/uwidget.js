@@ -13,6 +13,8 @@ var UwidgetModel = Upfront.Models.ObjectModel.extend({
 
 var UwidgetView = Upfront.Views.ObjectView.extend({
 	
+	loading: null,
+	
 	init: function () {
 		if ( !Upfront.data.uwidget )
 			Upfront.data.uwidget = {};
@@ -23,7 +25,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		 	me = this;
 		if ( !widget )
 			return "Please select widget on settings";
-		var widget_data =  Upfront.data.uwidget[widget] || "Loading";
+		var widget_data =  Upfront.data.uwidget[widget] || "";
 		return widget_data;
 	},
 	
@@ -31,8 +33,15 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		var widget = this.model.get_property_value_by_name('widget');
 		if ( !widget )
 			return;
-		if ( typeof Upfront.data.uwidget[widget] == 'undefined' )
+		if ( typeof Upfront.data.uwidget[widget] == 'undefined' ){
+			this.loading = new Upfront.Views.Editor.Loading({
+				loading: "Loading...",
+				done: "Done!"
+			});
+			this.loading.render();
+			this.$el.append(this.loading.el);
 			this._get_widget_markup(widget);
+		}
 	},
 	
 	_get_widget_markup: function (widget) {
@@ -40,7 +49,9 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		Upfront.Util.post({"action": "uwidget_get_widget_markup", "data": JSON.stringify({"widget": widget})})
 			.success(function (ret) {
 				Upfront.data.uwidget[widget] = ret.data;
-				me.render();
+				me.loading.done(function(){
+					me.render();
+				});
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error loading widget");

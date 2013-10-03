@@ -137,7 +137,7 @@ class Upfront_Virtual_Region {
 		return upfront_get_property_value($property, (is_null($data) ? $this->data : $data));
 	}
 	
-	public function start_wrapper ($wrapper_id = false) {//$newline = true) {
+	public function start_wrapper ($wrapper_id = false, $newline = true) {
 		$wrapper_id = $wrapper_id ? $wrapper_id : upfront_get_unique_id('wrapper');
 		$this->wrappers[$wrapper_id] = array('name' => '', 'properties' => array());
 		if ( $newline )

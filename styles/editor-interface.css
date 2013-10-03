@@ -1332,6 +1332,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	padding: 15px 0;
 	float: left;
 	width: 100%;
+	position: relative;
 }
 .upfront-object {
 	position: relative;
