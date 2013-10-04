@@ -330,6 +330,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
     //Add properties to Upfront.data
     public static function add_upfront_data ($data) {
+        $globals = get_option('upfront_social_media_global_settings', false);
         $data['usocial'] = array(
             'defaults' => array(
                 'global_social_media_services' => array(),
@@ -341,10 +342,27 @@ class Upfront_SocialMediaView extends Upfront_Object {
                 'counter_options' => 'horizontal',
                 'global_social_media_services-facebook-url' => '',
                 'global_social_media_services-twitter-url' => '',
-                'global_social_media_services-google-url' => ''
-            ),
-            'globals' => self::properties_to_array(json_decode(get_option('upfront_social_media_global_settings', false)))
+                'global_social_media_services-google-url' => '',
+                'social_radio_tabbed' => 'like_tabbed',
+
+                'like_social_media_services' => ["facebook", "twitter", "google"],
+                
+                'count_social_media_services' => [],
+
+                'button_size' => 'medium',
+                'button_style' => 'button-style-2',
+                'call_social_media_services' => [],
+                
+
+                'type' => 'SocialMediaModel',
+                'view_class' => 'SocialMediaView',
+                'class' => 'c22 upfront-Social-Media',
+                'has_settings' => 1
+            )
         );
+
+        if($globals)
+            $data['usocial']['globals'] = self::properties_to_array(json_decode($globals));
 
         return $data;
     }

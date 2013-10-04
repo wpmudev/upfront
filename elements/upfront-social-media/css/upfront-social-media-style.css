@@ -35,6 +35,11 @@
     padding: 20px 32px 13px 32px;
 }
 
+.upfront-global-social-settings .upfront-settings-item
+{
+    width: 100%;
+}
+
 .location_top_box, .button_counter_top_box
 {
     margin-bottom:12px ;
@@ -198,6 +203,7 @@
     /*height: 30px;*/
     margin: 0 !important;
     padding: 0 0 0 0px !important;
+    cursor:pointer;
 }
 .social_media_services_list li.ui-sortable-helper{
     background-color: #e3edf6;
@@ -330,4 +336,52 @@
     position: relative;
     margin-right: 10px;
     margin-bottom: 5px;
+}
+
+.usocial-global-triangle {
+    float: right;
+    cursor: pointer;
+}
+
+.usocial-global-triangle:before{
+    content: '▼';
+    margin-top:10px;
+    display: block;
+    text-align: center;
+    width: 30px;
+    font-size: 8px;
+}
+.open .usocial-global-triangle:before{
+    content: '▲';
+}
+
+i.usocial-align-icon {
+    display: block;
+    height: 42px;
+}
+
+.usocial-global-align {
+    clear: both;
+    opacity: 0.8;
+}
+
+.usocial-global-align.align-active{
+    opacity:1;
+}
+
+.usocial-global-add-post {
+    float:left;
+    width: 40%;
+}
+
+.upfront-global-social-settings .upfront-field-label-block {
+    clear: both;
+}
+
+.upfront-global-social-settings .upfront-field-multiple-horizontal-inline {
+    margin-right: 9px;
+}
+
+.upfront-global-social-settings .upfront-field-multiple {
+    opacity: 1;
 }
