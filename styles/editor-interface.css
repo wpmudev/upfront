@@ -2420,6 +2420,16 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	background-position: -1360px -244px;
 }
 
+.upfront-field-icon-social-title-align:before {
+	width: 70px;
+	background-position: -1360px -296px;
+}
+.upfront-field-icon-social-content-align:before {
+	width: 70px;
+	height: 42px;
+	background-position: -1360px -330px;
+}
+
 .upfront-field-icon-gallery-crop-theme:before {
 	background-position: -1688px -136px;
 }
@@ -4532,10 +4542,28 @@ License: MIT
 }
 
 .sp-dragger {
-   border-radius: 7px;
-   height: 7px;
-   width: 7px;
-   border: 3px double #fff;
+   border-radius: 16px;
+   height: 16px;
+   width: 16px;
+	
+	background: url(../img/cp.png) no-repeat center center;
+
+   border: 6px solid;
+   border-top-color: red;
+   border-right-color: red;
+   border-bottom-color: blue;
+   border-left-color: blue;
+
+			transform:	rotate(-45deg);
+		-ms-transform: 	rotate(-45deg); /* IE 9 */
+	-webkit-transform: 	rotate(-45deg); /* Safari and Chrome */
+
+	webkit-box-shadow: 	0px 0px 1px 1px #a2c5e4;
+	  -moz-box-shadow: 	0px 0px 1px 1px #a2c5e4;
+	       box-shadow:  0px 0px 1px 1px #a2c5e4;
+
+   margin: 1px 0 0 1px;
+
    cursor: pointer;
    position:absolute;
    top:0;

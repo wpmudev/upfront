@@ -770,9 +770,20 @@ define(_template_files, function () {
 				},
 				move: function(color) { 
 					me.on_update_color(color);
+					var rgb = color.toHexString();
+					$('.sp-dragger').css({
+						'border-top-color': rgb,
+						'border-right-color': rgb
+					});
 				},
 				hide: function(color) {
 					me.on_update_color(color);					
+				},
+				show: function(color){					
+					var rgb = color.toHexString();
+					$('.sp-dragger').css({
+						'border-color': rgb
+					});
 				}
 			});
 			this.$el.find("#region-bg-image-upload").attr('href', Upfront.Settings.admin_url+'media-upload.php?post_id='+post_id+'&type=image&TB_iframe=1')
@@ -2838,6 +2849,25 @@ define(_template_files, function () {
 			var me = this,
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
 			;
+
+			spectrumOptions.move = function(color){
+				var rgb = color.toHexString();
+				$('.sp-dragger').css({
+					'border-top-color': rgb,
+					'border-right-color': rgb
+				});
+				if(me.options.spectrum && me.options.spectrum.move)
+					me.options.spectrum.move();
+			};
+
+			spectrumOptions.show = function(color){
+				var rgb = color.toHexString();
+				$('.sp-dragger').css({
+					'border-color': rgb
+				});
+				if(me.options.spectrum && me.options.spectrum.show)
+					me.options.spectrum.show();
+			};
 
 			Field_Color.__super__.initialize.apply(this, arguments);
 
