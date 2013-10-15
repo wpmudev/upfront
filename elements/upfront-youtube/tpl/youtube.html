@@ -1,0 +1,14 @@
+<div class="upfront-output-object upfront-youtube-container" id="<?php echo $element_id ?>">
+  <p>YouTube Video Element</p>
+  <?php if ($type == 'single') { ?>
+    <div id="youtube-player-<?php echo $element_id ?>" class="main-video-placeholder" style="width: 480px; height: 360px; background: #ccc;"></div>
+  <?php } ?>
+  <?php if ($type == 'multiple') { ?>
+    <div class="main-video-placeholder" style="width: 300px; height: 200px; background: #ccc; margin-bottom: 15px;"></div>
+    <div class="thumb-video-placeholder" style="width: 200px; height: 150px; background: #ccc; float: left;"></div>
+    <div class="thumb-video-placeholder" style="width: 200px; height: 150px; background: #ccc; margin: 0 0 10px 10px; float: left;"></div>
+    <div class="thumb-video-placeholder" style="width: 200px; height: 150px; background: #ccc; margin: 0 0 10px 10px; float: left;"></div>
+  <?php } ?>
+  <h3><?php echo $title ?></h3>
+  <p><?php echo $description ?></p>
+</div>
