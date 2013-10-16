@@ -7,32 +7,31 @@ class Upfront_SocialMediaView extends Upfront_Object {
     public function get_markup () {
         $element_id = $this->_get_property('element_id');
         $element_id = $element_id ? "id='{$element_id}'" : '';
-        $layout_style = $this->_get_property('social_radio_tabbed');
+        $layout_style = $this->_get_property('social_type');
 
         switch ($layout_style) {
             case '':
                 return "Please select an option from backend";
                 break;
-            case 'like_tabbed':
+            case 'likes':
                 return "<div class='upfront-output-object upfront-social' {$element_id}>" .
-                    self::like_follow_plus_one().
+                    self::likes_type().
                 "</div>";
                 break;
-            case 'count_tabbed':
+            case 'fans':
                 return "<div class='upfront-output-object upfront-social' {$element_id}>" .
-                    self::fan_follower_count().
+                    self::fans_type().
                 "</div>";
                 break;
-            case 'call_tabbed':
+            case 'buttons':
                 return "<div class='upfront-output-object upfront-social' {$element_id}>" .
-                    self::call_to_action().
+                    self::buttons_type().
                 "</div>";
                 break;
         }
-
     }
 
-    public function like_follow_plus_one(){
+    public function likes_type(){
         $counter_options = $this->_get_property('counter_options');
         $like_social_media_services = $this->_get_property('like_social_media_services');
 
@@ -223,7 +222,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
         return 'Facebook page not found';
     }
 
-    public function fan_follower_count(){
+    public function fans_type(){
         $count_social_media_services = $this->_get_property('count_social_media_services');
         $output = '<div class="upfront-fan-follower-count-box">';
 
@@ -277,7 +276,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
         return $output;
     }
 
-    public function call_to_action(){
+    public function buttons_type(){
         $call_social_media_services = $this->_get_property('call_social_media_services');
         $button_style = $this->_get_property('button_style');
         $button_size = $this->_get_property('button_size');
@@ -333,17 +332,8 @@ class Upfront_SocialMediaView extends Upfront_Object {
         $globals = get_option('upfront_social_media_global_settings', false);
         $data['usocial'] = array(
             'defaults' => array(
-                'global_social_media_services' => array(),
-                'add_counter_all_posts' => array('yes'),
-                'after_post_title' => array('yes'),
-                'after_post_title_alignment' => 'left',
-                'after_post_content' => array(),
-                'after_post_content_alignment' => 'left',
-                'counter_options' => 'horizontal',
-                'global_social_media_services-facebook-url' => '',
-                'global_social_media_services-twitter-url' => '',
-                'global_social_media_services-google-url' => '',
-                'social_radio_tabbed' => 'like_tabbed',
+
+                'social_type' => 'likes',
 
                 'like_social_media_services' => ["facebook", "twitter", "google"],
                 
@@ -351,13 +341,27 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
                 'button_size' => 'medium',
                 'button_style' => 'button-style-2',
-                'call_social_media_services' => [],
-                
+                'call_social_media_services' => [],                
 
                 'type' => 'SocialMediaModel',
                 'view_class' => 'SocialMediaView',
                 'class' => 'c22 upfront-Social-Media',
                 'has_settings' => 1
+            ),
+            'services' => array(
+            ),
+            'global_defaults' => array(
+                'services' => array(
+                    'facebook' => array('name' => 'Facebook', 'id' => 'facebook', 'url' => '', 'active' => false),
+                    'twitter' => array('name' => 'Twitter', 'id' => 'twitter', 'url' => '', 'active' => false),
+                    'google' => array('name' => 'Google +', 'id' => 'google', 'url' => '', 'active' => false)
+                ),
+                'inpost' => array('yes'),
+                'after_title' => array('yes'),
+                'after_title_align' => 'left',
+                'after_content' => array(),
+                'after_content_align' => 'left',
+                'counter_style' => 'horizontal'
             )
         );
 
