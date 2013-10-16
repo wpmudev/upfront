@@ -97,9 +97,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			'click .ugallery_item_rm_no': 'cancelRemoving',
 			'click .ugallery_sort_toggle': 'activateSortable'
 		});
-
-		this.images = new UgalleryImages(this.property('images'));
+		var images = this.property('images'),
+			imageIds = []
+		;
+		this.images = new UgalleryImages(images);
 		this.images.on('add remove reset change', this.imagesChanged, this);
+		_.each(images, function(image){
+			imageIds.push(image.id);
+		});
 
 		$('body').on('click', this.closeTooltip);
 
@@ -110,11 +115,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
-		if(typeof ugalleries != 'undefined' && ugalleries[elementId] && ugalleries[elementId].grid){
-			if(ugalleries[elementId].grid['labels'])
-				this.labels = ugalleries[elementId].grid['labels'];
-			if(ugalleries[elementId].grid['image_labels'])
-				this.imageLabels = ugalleries[elementId].grid['image_labels'];
+		if(typeof ugalleries != 'undefined' && ugalleries[elementId]){
+			if(ugalleries[elementId].labels)
+				this.labels = ugalleries[elementId].labels;
+			if(ugalleries[elementId].image_labels)
+				this.imageLabels = ugalleries[elementId].image_labels;
 		}
 
 		this.on('deactivated', this.sortCancel, this);
@@ -206,6 +211,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			newImages = []
 		;
 
+		this.getNewLabels(_.keys(images));
+
 		_.each(images, function(image, id){
 			var data = image.thumbnail ? image.thumbnail : image.full,
 				cropSize = {width: data[1], height: data[2]},
@@ -234,7 +241,52 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		});
 
 		this.images.add(newImages);
-	
+		if(this.property('labelFilters').length)
+			this.render();
+	},
+
+	getNewLabels: function(ids){
+		var data = {
+				action: 'upfront-media_get_image_labels',
+				post_ids: ids
+			},
+			me = this
+		;
+		Upfront.Util.post(data).done(function(results){
+			var images = results.data;
+			console.log(images);
+			_.each(images, function(labels, imageId){
+				var imageLabels = [];
+
+				_.each(labels, function(label){
+					var globals = Upfront.data.ugallery,
+						newLabel = {id: label.term_id, text: label.name}
+					;
+
+					if(!globals.label_names[label.name])
+						globals.label_names[label.name] = newLabel;
+
+					if(!globals.label_ids[label.term_id])
+						globals.label_ids[label.term_id] = newLabel;
+
+
+					var labelInGallery = false,
+						i = 0
+					;
+					while(i<me.labels.length && !labelInGallery){
+						labelInGallery = me.labels[i].id == label.term_id;
+						i++;
+					}
+					if(!labelInGallery)
+						me.labels.push(newLabel);
+
+					imageLabels.push('"label_' + label.term_id + '"');
+				});
+
+				me.imageLabels[imageId] = imageLabels.join(', ');
+			});
+		});
+
 		this.render();
 	},
 

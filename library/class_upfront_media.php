@@ -283,6 +283,7 @@ class Upfront_MediaServer extends Upfront_Server {
         add_action('wp_ajax_upfront-media-add_label', array($this, "add_label"));
         add_action('wp_ajax_upfront-media-associate_label', array($this, "associate_label"));
         add_action('wp_ajax_upfront-media-disassociate_label', array($this, "disassociate_label"));
+        add_action('wp_ajax_upfront-media_get_image_labels', array($this, "get_image_labels"));
 	}
 
     /**
@@ -392,6 +393,25 @@ class Upfront_MediaServer extends Upfront_Server {
             $res[$post_id] = wp_set_object_terms($post_id, $labels, 'media_label');
         }
 
+        $this->_out(new Upfront_JsonResponse_Success($res));
+    }
+
+    public function get_image_labels() {
+        $data = stripslashes_deep($_POST);
+        $post_id = !empty($data['post_id']) ? $data['post_id'] : false;
+        $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
+        if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+
+        if ($post_id) {
+            $post_ids[] = $post_id;
+        }
+
+        $res = array();
+        foreach ($post_ids as $post_id) {
+            $labels = get_the_terms($post_id, 'media_label');
+            $res[$post_id] = !$labels || is_wp_error($labels) ? array() : $labels;            
+        }
+        
         $this->_out(new Upfront_JsonResponse_Success($res));
     }
 

@@ -61,6 +61,20 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
 
+		$markup .= '
+			<script type="text/javascript">
+				if(typeof ugalleries == "undefined")
+					ugalleries = {};
+
+				ugalleries["' . $data['element_id'] . '"] = {
+					labels: ' . json_encode($data['labels']) . ',
+					labels_length: ' . json_encode($data['labels_length']) . ',
+					image_labels: ' . json_encode($data['image_labels']) . ',
+					grid: ' . $data['labelFilters']['length'] . '
+				};
+			</script>
+		';
+
 		if(! $data['disableLightbox']['length']){
 			$magnific_options = array(
 				'type' => 'image',
@@ -71,9 +85,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			);
 			$markup .= '
 				<script type="text/javascript">
-					if(typeof ugalleries == "undefined")
-						ugalleries = {};
-					ugalleries["' . $data['element_id'] . '"] = {magnific: ' . json_encode($magnific_options) . '};
+					ugalleries["' . $data['element_id'] . '"].magnific = ' . json_encode($magnific_options) . ';
 				</script>
 			';
 		}
@@ -81,45 +93,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 			$markup .= '<!-- No lightbox -->';
 		}
 
-		$gridLabels = array(
-			'labels' => $data['labels'],
-			'labels_length' => $data['labels_length'],
-			'image_labels' => $data['image_labels']
-		);
-		if($data['labelFilters']['length']){
-			$markup .= '
-				<script type="text/javascript">
-					if(typeof ugalleries == "undefined")
-						ugalleries = {};
-					if(ugalleries["' . $data['element_id'] . '"])
-						ugalleries["' . $data['element_id'] . '"].grid = ' . json_encode($gridLabels) . ';
-					else
-						ugalleries["' . $data['element_id'] . '"] = {grid: ' . json_encode($gridLabels) . '};
-				</script>
-			';
-		}
-
 		return $markup;
 	}
 
 	private function get_labels($images){
-		/* Dumb labels
-		$this->all_labels = array(
-			array('id' => 1, 'text' => 'Casa'),
-			array('id' => 2, 'text' => 'Perro'),
-			array('id' => 3, 'text' => 'Tecla'),
-			array('id' => 4, 'text' => 'Balon')
-		);
-
-		foreach($images as $image){
-			$this->image_labels[$image['id']] = '"label_0", "label_' . $this->all_labels[rand(0,3)]['id'] . ' ", "label_' .  $this->all_labels[rand(0,3)]['id'] . '"';
-		}
-
-		$this->all_labels[] = array('id' => 0, 'text' => 'All');
-
-		usort($this->all_labels, array($this, 'sort_labels'));
-
-		*/
 		$label_keys = array_keys($this->all_labels);
 		$all_labels = array();
 		foreach($images as $image){
