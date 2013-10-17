@@ -335,13 +335,13 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
                 'social_type' => 'likes',
 
-                'like_social_media_services' => ["facebook", "twitter", "google"],
+                'like_social_media_services' => array("facebook", "twitter", "google"),
                 
-                'count_social_media_services' => [],
+                'count_social_media_services' => array(),
 
                 'button_size' => 'medium',
                 'button_style' => 'button-style-2',
-                'call_social_media_services' => [],                
+                'call_social_media_services' => array(),                
 
                 'type' => 'SocialMediaModel',
                 'view_class' => 'SocialMediaView',
