@@ -28,7 +28,11 @@ li.uposts-post #upfront-title {
 	border: none;
 }
 */
-
+ul.uposts-posts {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
 .upost_thumbnail_changer {
 	border: 2px dashed #3f5870;
 	color: #3f5870;
