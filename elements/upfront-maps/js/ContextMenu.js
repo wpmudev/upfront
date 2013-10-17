@@ -28,7 +28,9 @@ function ContextMenu(map, options){
 	this.pixelOffset=options.pixelOffset || new google.maps.Point(10, -5);
 }
 
-ContextMenu.prototype=new google.maps.OverlayView();
+if ("undefined" !== typeof window.google) {
+	ContextMenu.prototype=new google.maps.OverlayView();
+}
 
 ContextMenu.prototype.draw=function(){
 	if(this.isVisible_){

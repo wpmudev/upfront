@@ -103,6 +103,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 		get_value: function () { return this.options.field.get_value(); },
 		get_saved_value: function () { return this.options.field.get_saved_value(); },
 		geocode: function () {
+			if ("undefined" === typeof window.google) return false;
 			var location = this.options.field.get_value(),
 				element_id = this.model.get_property_value_by_name("element_id"),
 				old_location = $(document).data(element_id + "-location"),
@@ -161,25 +162,29 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 					e.stopPropagation();
 				}
 			});
-			this.map = new google.maps.Map($el.get(0), {
-				center: new google.maps.LatLng(props.center[0], props.center[1]),
-				zoom: props.zoom,
-				mapTypeId: google.maps.MapTypeId[props.type],
-				panControl: props.panControl,
-				zoomControl: props.zoomControl,
-				mapTypeControl: props.mapTypeControl,
-				scaleControl: props.scaleControl,
-				streetViewControl: props.streetViewControl,
-				overviewMapControl: props.overviewMapControl,
-			});
-			// Re-render the map when needed
-			setTimeout(function () {
-				var center = me.map.getCenter();
-				google.maps.event.trigger(me.map, 'resize');
-				me.map.setCenter(center);
-			}, 300);
-			this.add_stored_markers();
-			this.init_rightclick_context_menu();
+			if ("undefined" !== typeof window.google) {
+				this.map = new google.maps.Map($el.get(0), {
+					center: new google.maps.LatLng(props.center[0], props.center[1]),
+					zoom: props.zoom,
+					mapTypeId: google.maps.MapTypeId[props.type],
+					panControl: props.panControl,
+					zoomControl: props.zoomControl,
+					mapTypeControl: props.mapTypeControl,
+					scaleControl: props.scaleControl,
+					streetViewControl: props.streetViewControl,
+					overviewMapControl: props.overviewMapControl,
+				});
+				// Re-render the map when needed
+				setTimeout(function () {
+					var center = me.map.getCenter();
+					google.maps.event.trigger(me.map, 'resize');
+					me.map.setCenter(center);
+				}, 300);
+				this.add_stored_markers();
+				this.init_rightclick_context_menu();
+			} else {
+				$el.text("Please, check your internet connectivity");
+			}
 		},
 
 		get_content_markup: function () {
