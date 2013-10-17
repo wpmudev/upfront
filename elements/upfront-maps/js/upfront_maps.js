@@ -148,6 +148,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 					scaleControl: controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
 					streetViewControl: controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 					overviewMapControl: controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
+					style_overlay: this.model.get_property_value_by_name("styles") || false
 				}
 			;
 			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : height = DEFAULTS.OPTIMUM_MAP_HEIGHT;
@@ -174,6 +175,9 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 					streetViewControl: props.streetViewControl,
 					overviewMapControl: props.overviewMapControl,
 				});
+				if (props.style_overlay) {
+					this.map.setOptions({styles: props.style_overlay});
+				}
 				// Re-render the map when needed
 				setTimeout(function () {
 					var center = me.map.getCenter();

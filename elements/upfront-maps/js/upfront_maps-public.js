@@ -27,6 +27,7 @@ function init_map ($el) {
 			scaleControl: raw.controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
 			streetViewControl: raw.controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 			overviewMapControl: raw.controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
+			style_overlay: raw.styles || false
 		},
 		markers = raw.markers || [],
 		height = $el.closest(".upfront-output-module").height(),
@@ -44,6 +45,9 @@ function init_map ($el) {
 		streetViewControl: props.streetViewControl,
 		overviewMapControl: props.overviewMapControl,
 	});
+	if (props.style_overlay) {
+		map.setOptions({styles: props.style_overlay});
+	}
 	_(markers).each(function (marker) {
 		var mrk = new google.maps.Marker({
 			position: new google.maps.LatLng(marker.lat, marker.lng),
