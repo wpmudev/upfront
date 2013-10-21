@@ -58,6 +58,9 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 					Upfront.Views.Editor.Field.Text.prototype.get_field_html.call(this) +
 				'</div>'
 			;
+		},
+		get_value: function () {
+			return this.$el.find("input").val() || 'icon';
 		}
 	});
 
@@ -113,8 +116,9 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 
 	var LoginSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		initialize: function () {
+			var panel = new LoginSettings_Panel({model: this.model});
 			this.panels = _([
-				new LoginSettings_Panel({model: this.model})
+				panel
 			]);
 		},
 		get_title: function () {
@@ -125,7 +129,8 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 			initialize: function () {
 				var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),
 					behavior = new LoginSettings_Field_DisplayBehavior({model: this.model}),
-					trigger = new LoginSettings_Field_DisplayTrigger({model: this.model})
+					trigger = new LoginSettings_Field_DisplayTrigger({model: this.model}),
+					me = this
 				;
 				this.settings = _([
 					appearance,
@@ -134,10 +139,16 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 				]);
 				appearance.on("login:appearance:changed", behavior.update, behavior);
 				appearance.on("login:appearance:changed", trigger.update, trigger);
+				appearance.on("login:appearance:changed", function () {
+					me.trigger("upfront:settings:panel:refresh", me);
+				})
 			},
 			render: function () {
 				Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
 				this.$el.addClass("upfront_login-settings-panel");
+				this.settings.each(function (setting) {
+					if (setting.update) setting.update();
+				});
 			},
 			get_label: function () {
 				return "Display";

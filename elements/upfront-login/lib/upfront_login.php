@@ -26,14 +26,17 @@ class Upfront_LoginView extends Upfront_Object {
 	public static function get_element_markup ($properties=array()) {
 		$properties = self::_normalize_properties($properties);
 
-		$click = !empty($properties['behavior']) && "click" == $properties['behavior'];
-		$hover = !empty($properties['behavior']) && "hover" == $properties['behavior'];
-		$block = !$click && !$hover;
+		$block = !empty($properties['style']) && 'form' == $properties['style'];
+		$click = !$block && !empty($properties['behavior']) && "click" == $properties['behavior'];
+		$hover = !$block && !empty($properties['behavior']) && "hover" == $properties['behavior'];
 
 		$icon = !empty($properties['appearance']) && "icon" == $properties['appearance'];
-		$label = !empty($properties['label_text']) ? $properties['label_text'] : __('Click to login', 'upfront');
-
+		$label = !empty($properties['label_text']) 
+			? $properties['label_text'] 
+			: (!empty($properties['label_image']) && 'icon' == $properties['appearance'] ? $properties['label_image'] : '')
+		;
 		$class = array();
+
 		if ($click) $class[] = 'upfront_login-click';
 		if ($hover) $class[] = 'upfront_login-hover';
 		if ($block) $class[] = 'upfront_login-block';
@@ -42,7 +45,7 @@ class Upfront_LoginView extends Upfront_Object {
 		if (!$block) {
 			$icon_class = $icon ? 'upfront_login-trigger-icon' : '';
 			$trigger = '<div class="upfront_login-trigger ' . $icon_class . '"><span class="upfront_login-label">' . 
-				($icon ? '<img src="' . upfront_element_url('/img/icon.png', dirname(__FILE__)) . '" />' : esc_html($label)) . 
+				($icon ? '<img src="' . upfront_element_url('/img/icon.png', dirname(__FILE__)) . '" />' : '') . ($label ? '&nbsp;' . esc_html($label) : '') . 
 			'</span></div>';
 		}
 
@@ -60,7 +63,7 @@ class Upfront_LoginView extends Upfront_Object {
 	}
 
 	private static function _normalize_properties ($raw_properties) {
-		$to_map = array('behavior', 'appearance', 'label_text');
+		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'label_image');
 		$properties = array();
 		foreach ($raw_properties as $prop) {
 			if (in_array($prop['name'], $to_map)) $properties[$prop['name']] = $prop['value'];
