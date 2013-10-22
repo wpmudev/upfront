@@ -1,8 +1,7 @@
 (function ($) {
 
   var templates = [
-    'text!' + Upfront.data.uyoutube.template
-  ];
+    'text!' + Upfront.data.uyoutube.template ];
 
   require(templates, function(youtubeTpl) {
     var UyoutubeModel = Upfront.Models.ObjectModel.extend({
@@ -16,13 +15,7 @@
     var UyoutubeView = Upfront.Views.ObjectView.extend({
       model: UyoutubeModel,
       youtubeTpl: Upfront.Util.template(youtubeTpl),
-      sizes: false,
       elementSize: {width: 0, height: 0},
-      youtubeId: 0,
-      youtubeSize: {width: 0, height: 0},
-      youtubeOffset: {top: 0, left: 0},
-      maskOffset: {top: 0, left: 0},
-      youtubeInfo : false,
 
       initialize: function(){
         var me = this;
@@ -35,25 +28,11 @@
         });
         this.delegateEvents();
 
-        $('body').on('dragover', function(e){
-          e.preventDefault();
-          me.handleDragEnter(e);
-        })
-        .on('dragenter', function(e){
-          me.handleDragEnter(e);
-          console.log('enter '  + me.property('element_id'));
-        })
-        .on('dragleave', function(e){
-          me.handleDragLeave(e);
-        })
-        .on('drop', function(e){
-          console.log('drop body');
-        })
-        ;
-
         this.model.get("properties").bind("change", this.render, this);
         this.model.get("properties").bind("add", this.render, this);
         this.model.get("properties").bind("remove", this.render, this);
+
+        Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
       },
 
       setType: function(e) {
@@ -63,56 +42,21 @@
         } else {
           this.property('type', 'multiple', false);
         }
-      },
-
-      showPlayer: function() {
-        var me = this,
-          videoId, tag, firstScriptTag, player
-        ;
-        // asdfg
-        videoId = this.property('single_video_url').match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
-
-        // If YT is defined YouTube IFrame Player init already
-        if (typeof YT === 'undefined') {
-          tag = document.createElement('script');
-          tag.src = "https://www.youtube.com/iframe_api";
-          firstScriptTag = document.getElementsByTagName('script')[0];
-          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-          player;
-          window.onYouTubeIframeAPIReady = function() {
-            player = new YT.Player('youtube-player-' + me.property('element_id'), {
-              height: '390',
-              width: '640',
-              videoId: videoId,
-              events: {
-                // 'onReady': onPlayerReady,
-                // 'onStateChange': onPlayerStateChange
-              }
-            });
-          }
-        } else {
-          player = new YT.Player('youtube-player-' + me.property('element_id'), {
-            height: '390',
-            width: '640',
-            videoId: videoId,
-            events: {
-              // 'onReady': onPlayerReady,
-              // 'onStateChange': onPlayerStateChange
-            }
-          });
-        }
+				Upfront.Events.trigger("entity:settings:activate", this);
       },
 
       get_content_markup: function () {
-        var props = this.extract_properties();
+        var rendered,
+          props = this.extract_properties();
 
-        var rendered = this.youtubeTpl(props);
+        this.model.set_property('description', props.full_description.substring(0, props.description_length));
+        this.model.set_property('title', props.full_title.substring(0, props.title_length));
 
-        if (this.property('type') === 'single' &&
-            this.property('single_video_url')
-        ) {
-          this.showPlayer();
+        if (props.type === 'multiple' && props.display_style === 'list') {
+          this.trimListDescriptions();
         }
+
+        rendered = this.youtubeTpl(this.extract_properties());
 
         if(this.property('youtube_status') === 'starting'){
           rendered += '<div class="upfront-image-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
@@ -127,6 +71,16 @@
         return rendered;
       },
 
+      trimListDescriptions: function() {
+        var me = this;
+        var props = this.extract_properties();
+        $.each(props.multiple_videos, function(index, video) {
+          if (video.original_description) {
+            video.description = video.original_description.substring(0, me.property('multiple_description_length'));
+          }
+        });
+      },
+
       extract_properties: function() {
         var props = {};
         this.model.get('properties').each(function(prop){
@@ -135,19 +89,13 @@
         return props;
       },
 
-      handleDragEnter: function(e){
-        console.log('youtube handleDragEnter');
-      },
-
-      handleDragLeave: function(e){
-        console.log('youtube handleDragLeave');
-      },
-
-      onElementResize: function(view, model, ui){
-        console.log('youtube onElementResize');
-      },
-      setElementSize: function(ui){
-        console.log('youtube setElementSize');
+      onResizeStop: function(view, model, ui) {
+        var width;
+        if(this.property('youtube_status') !== 'starting'){
+          width = this.$el.find('.upfront-object-content').width();
+          this.property('player_height', parseInt(width/1.641, 10));
+          this.property('player_width', width, false);
+        }
       },
 
       property: function(name, value, silent) {
@@ -172,7 +120,7 @@
           "name": "",
           "properties": [
             {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-            {"name": "class", "value": "c6 upfront-youtube_module"},
+            {"name": "class", "value": "c9 upfront-youtube_module"},
             {"name": "has_settings", "value": 0}
           ],
           "objects": [
@@ -186,12 +134,23 @@
 
     var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
       events: {
-        'change [name="video_url"]': 'singleVideo'
+        'change [name="video_url"]': 'singleVideo',
+        'change [name="multiple_source_id"]': 'multipleVideos',
+        'change [name="type"]': 'setType'
       },
+
+      initialize: function () {
+        this.panels = _([
+          new BehaviorPanel({model: this.model})
+        ]);
+      },
+
       actions: {
         'single': 'upfront_youtube_single',
-        'multiple': 'upfront_youtube_multiple'
+        'channel': 'upfront_youtube_channel',
+        'playlist': 'upfront_youtube_playlist'
       },
+
       singleVideo: function(event) {
         var me = this;
         var videoUrl = $(event.currentTarget).val();
@@ -200,8 +159,9 @@
         var data = {'video_id': videoId};
         Upfront.Util.post({"action": this.actions.single, "data": data})
           .success(function (response) {
-            me.for_view.model.set_property('title', response.data.video.title, false);
-            me.for_view.model.set_property('description', response.data.video.description, false);
+            me.for_view.model.set_property('full_title', response.data.video.title, false);
+            me.for_view.model.set_property('full_description', response.data.video.description, false);
+            me.for_view.model.set_property('single_video_id', videoId, false);
             me.for_view.model.set_property('single_video_url', videoUrl);
           })
           .error(function () {
@@ -209,11 +169,39 @@
           })
         ;
       },
-      initialize: function () {
-        this.panels = _([
-          new BehaviorPanel({model: this.model})
-        ]);
+
+      multipleVideos: function(event) {
+        var me = this;
+        var source = $(event.currentTarget).val();
+        var sourceType = this.$el.find('[name="multiple_source"]:checked').val();
+        if (sourceType === 'user_channel') {
+          Upfront.Util.post({"action": this.actions.channel, "data": {channel: source}})
+            .success(function (response) {
+              me.for_view.model.set_property('multiple_videos', response.data.videos);
+            })
+            .error(function () {
+              Upfront.Util.log("error channel video");
+            })
+          ;
+        } else {
+          if (source.match(/^http/)) {
+            source = source.match(/^(https?:\/\/(www\.)?)?youtube\.com\/.*list=([0-9a-zA-Z\-_]+).*/)[3];
+          }
+          Upfront.Util.post({"action": this.actions.playlist, "data": {playlist: source}})
+            .success(function (response) {
+              me.for_view.model.set_property('multiple_videos', response.data.videos);
+            })
+            .error(function () {
+              Upfront.Util.log("error playlist videos");
+            })
+          ;
+        }
       },
+
+      setType: function(event) {
+        this.for_view.model.set_property('type', $(event.currentTarget).val(), false);
+      },
+
       get_title: function () {
         return "YouTube settings";
       }
@@ -294,26 +282,28 @@
                   }),
                   new Fields.Number({
                     model: this.model,
-                    property: 'videos_count',
+                    property: 'multiple_count',
                     label: "Display",
                     label_style: 'inline',
                     suffix: "latest Videos",
                     min: 3,
                     max: 60,
-                    step: 3,
+                    step: 1,
                     default_value: 6
                   }),
                   new Fields.Checkboxes({
                     model: this.model,
-                    property: 'show_title',
-                    label: "",
+                    property: 'multiple_show_title',
                     values: [
-                      { label: "", value: 'show_title' },
+                      {
+                        value: 'multiple_show_title',
+                        label: ""
+                      },
                     ]
                   }),
                   new Fields.Number({
                     model: this.model,
-                    property: 'title_length',
+                    property: 'multiple_title_length',
                     label: "Title",
                     label_style: 'inline',
                     suffix: "characters",
@@ -324,15 +314,14 @@
                   }),
                   new Fields.Checkboxes({
                     model: this.model,
-                    property: 'show_description',
-                    label: "",
+                    property: 'multiple_show_description',
                     values: [
-                      { label: "", value: 'show_description' },
+                      { label: "", value: 'multiple_show_description' },
                     ]
                   }),
                   new Fields.Number({
                     model: this.model,
-                    property: 'description_length',
+                    property: 'multiple_description_length',
                     label: "Description",
                     label_style: 'inline',
                     suffix: "characters",
