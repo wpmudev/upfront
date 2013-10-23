@@ -3,32 +3,37 @@
 class Upfront_LikeBoxView extends Upfront_Object {
 
     public function get_markup () {
+        $element_size = $this->_get_property('element_size');
+        $global_settings = Upfront_SocialMedia_Setting::get_globals();
+
+        if($global_settings){
+            $services = $global_settings['services'];
+            $url = false;
+
+            foreach($services as $s){
+                if($s->id == 'facebook')
+                    $url = $s->url;
+            }
+
+            if(!$url)
+                return $this->wrap('You need to set a Facebook URL in your global social settings.');
+
+            $parts = parse_url($url);
+            $fbname = end(explode('/', $parts['path']));
+
+            return $this->wrap(
+                "<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$element_size['width']}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:{$element_size['width']}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
+            );
+        }
+        else{
+            return $this->wrap('You need to set a Facebook URL in your global social settings 2.');
+        }
+    }
+
+    protected function wrap($content){
         $element_id = $this->_get_property('element_id');
         $element_id = $element_id ? "id='{$element_id}'" : '';
-        $element_size = $this->_get_property('element_size');
-
-        if(get_option('upfront_social_media_global_settings')){
-
-            $global_settings = json_decode(get_option('upfront_social_media_global_settings'));
-
-            foreach ($global_settings as $key => $models) :
-                if ($models->name == "facebook_page_url")  :
-                    $url = $models->value;
-                    $keys = parse_url($url); // parse the url
-                    $path = explode("/", $keys['path']); // splitting the path
-                    $facebook_page_name = end($path); // get the value of the last element
-                    break;
-                endif;
-            endforeach;
-
-            return "<div class='upfront-output-object upfront-like-box ' {$element_id}>" .
-            "<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$facebook_page_name}&amp;width={$element_size['width']}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:{$element_size['width']}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>".
-            "</div>";
-        }else{
-            return "<div class='upfront-output-object upfront-like-box ' {$element_id}>" .
-            "Whoops! it looks like you need to update your settings".
-            "</div>";
-        }
+        return "<div class='upfront-output-object upfront-like-box ' {$element_id}>" . $content . "</div>";
 
     }
 

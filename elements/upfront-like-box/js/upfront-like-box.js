@@ -15,7 +15,7 @@
 
             this.init_property("element_id", Upfront.Util.get_unique_id("Like-box-object"));
             this.init_property("class", "c22 upfront-like-box");
-            this.init_property("has_settings", 1);
+            this.init_property("has_settings", 0);
             this.init_property("element_size", {width: 278, height: 270});
         }
     });
@@ -31,8 +31,8 @@
         initialize: function(){
             var me = this;
             Upfront.Views.ObjectView.prototype.initialize.call(this);
-            Upfront.data.social.panel.model.get("properties").on("change", this.setUrl, this);
-            Upfront.data.social.panel.model.get("properties").on("add", this.setUrl, this);
+            //Upfront.data.social.panel.model.get("properties").on("change", this.setUrl, this);
+            //Upfront.data.social.panel.model.get("properties").on("add", this.setUrl, this);
             Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
         },
         setUrl: function(){
@@ -73,20 +73,36 @@
             e.preventDefault();
             Upfront.data.social.panel.popupFunc();
         },
+
+        getGlobalFBUrl: function(){
+            if(!Upfront.data.usocial.globals)
+                return false;
+            var services = Upfront.data.usocial.globals.services,
+                url = false;
+
+            _(services).each( function( s ) {
+                if(s.id == 'facebook')
+                    url = s.url;
+            });
+
+            return url;
+        },
+
         /**
          * Element contents markup.
          * @return {string} Markup to be shown.
          */
         get_content_markup: function () {
             var me = this,
-            fbUrl = this.property('facebook_url');
+
+            fbUrl = this.getGlobalFBUrl();
+
             if(fbUrl){
-                var pageName = Upfront.data.social.panel.getLastPartOfUrl(fbUrl);
+                var pageName = _.last(fbUrl.split('/'));
                 return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+this.model.get_property_value_by_name('element_size').width+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:'+this.model.get_property_value_by_name('element_size').width+'px; float:left; height:'+this.model.get_property_value_by_name('element_size').height+'px;" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
             }else{
-                return 'Whoops! it looks like you need to update your <a class="back_global_settings" href="#">global settings</a>';
+                return 'You need to set a Facebook URL in your <a class="back_global_settings" href="#">global social settings</a>.';
             }
-
         }
 
     });
@@ -215,7 +231,7 @@
 // ----- Bringing everything together -----
 // The definitions part is over.
 // Now, to tie it all up and expose to the Subapplication.
-    /*
+    
     Upfront.Application.LayoutEditor.add_object("LikeBox", {
         "Model": LikeBoxModel,
         "View": LikeBoxView,
@@ -225,5 +241,5 @@
 
     Upfront.Models.LikeBoxModel = LikeBoxModel;
     Upfront.Views.LikeBoxView = LikeBoxView;
-*/
+
 })(jQuery);

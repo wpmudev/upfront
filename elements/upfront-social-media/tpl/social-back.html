@@ -1,0 +1,173 @@
+<div>
+
+<script type="text/template" id="service-tpl">
+	<li class="upfront-field-multiple">
+		{[ if(expandable){ ]}
+			<i class="usocial-global-triangle"></i>
+		{[ } ]}
+		<i class="upfront-field-icon upfront-field-icon-social-sort"></i>
+		<input type="checkbox" id="service-{{service.id}}" name="" value="{{service.id}}" class="upfront-field-checkbox"{{service.active ? ' checked="checked"' : '' }}>
+		<label for="service-{{service.id}}">
+			<span class="upfront-field-label-text">{{service.name}}</span>
+		</label>
+		{[ if(expandable){ ]}
+		<div class="upfront-field-wrap upfront-field-wrap-text" data-tooltip="link address" style="display:none">
+			<input type="text" class="upfront-field upfront-field-text usocial_text usocial_url" id="service-url-{{service.id}}" name="{{service.id}}_url" value="{{service.url}}" placeholder="{{service.name}} url" data-field="url" data-service="{{service.id}}">
+			{[if(meta){_.each(service.meta, function(meta){ ]}
+			<input type="text" class="upfront-field upfront-field-text usocial_text usocial_{{meta.id}} usocial_service_meta" id="service-{{meta.id}}-{{service.id}}" name="{{meta.id}}" value="{{meta.value}}" placeholder="{{service.name}} {{meta.name}}" data-field="{{meta.id}}" data-service="{{service.id}}">
+			{[ });} ]}
+		</div>
+		{[ } ]}
+	</li>
+</script>
+
+<script type="text/template" id="add-service-tpl">
+	{[ if(services.length){ ]}
+	<div class="upfront-field-wrap upfront-field-wrap-select">
+		<label class="usocial-select-label">Add a new service:</label>
+		<div class="usocial-select upfront-field-select upfront-field-select-single usocial-select-closed" id="">
+			<ul class="usocial-select-list">
+				{[ _.each(services, function(service){  ]}
+				<li class="upfront-field-select-option">
+					<label for="service-{{service.id}}">
+						<span class="upfront-field-label-text">{{service.name}}</span>
+					</label>
+					<input type="radio" id="service-{{service.id}}" name="select" class="upfront-field-radio" value="{{service.id}}"{{services[0].name == service.name ? ' checked="checked"' : ''}} >
+				</li>
+				{[ }) ]}
+			</ul>
+		</div>
+		<i class="upfront-field-icon upfront-field-icon-social-add usocial-add"></i>
+	</div>
+	{[ } ]}
+</script>
+
+<script type="text/template" id="global-tpl">
+	<div class="upfront-global-social-settings">
+		<div class="upfront-settings-item">
+			<div class="upfront-settings-item-title">Set up your Social accounts</div>
+			<div class="upfront-settings-item-content">
+				<ul class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes social_media_services_list ui-sortable">
+					{[ _.each(services, function(service){ ]}
+					<li class="upfront-field-multiple upfront-field-multiple-selected">
+						<i class="usocial-global-triangle"></i>
+						<i class="upfront-field-icon upfront-field-icon-social-sort"></i>
+						<input type="checkbox" id="social_global_{{service.id}}" name="services" value="{{service.id}}" class="upfront-field-checkbox" {{service.active ? 'checked="checked"' : ''}}>
+						<label for="social_global_{{service.id}}">
+							<span class="upfront-field-label-text">{{service.name}}</span>
+						</label>
+						<div class="upfront-field-wrap upfront-field-wrap-text" data-tooltip="link address" style="display:none">
+							<input type="text" class="upfront-field upfront-field-text" id="{{service.id}}-url" name="{{service.id}}-url" value="{{service.url}}" placeholder="{{service.name}} url">
+						</div>
+					</li>
+					{[ }) ]}
+				</ul>
+			</div>
+		</div>
+		<div class="upfront-settings-item">
+			<div class="upfront-settings-item-title">In-post social media</div>
+			<div class="upfront-settings-item-content">
+				<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes">
+					<span class="upfront-field-multiple upfront-field-multiple-selected">
+						<input type="checkbox" id="usocial-global-add_to_post" name="inpost" value="yes" class="upfront-field-checkbox" {{inpost.length ? 'checked="checked"' : ''}}>
+						<label for="usocial-global-add_to_post">
+							<span class="upfront-field-label-text">Add social media counters to all posts</span>
+						</label>
+					</span>
+				</div>				
+			</div>
+			<div class="">
+				<label for="usocial-global_after_title" class="upfront-field-label upfront-field-label-block">In-post location:</label>
+				<div class="usocial-global-add-post">
+					<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes">
+						
+						<span class="upfront-field-multiple {{after_title.length ? 'upfront-field-multiple-selected' : '' }}">
+							<input type="checkbox" id="usocial-global-after_title" name="after_title" value="yes" class="upfront-field-checkbox usocial_post_location" {{after_title.length ? 'checked="checked"' : ''}}>
+							<label for="usocial-global-after_title">
+								<span class="upfront-field-label-text">After Post Title</span>
+							</label>
+						</span>
+					</div>
+
+					<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios">
+						<i class="usocial-align-icon upfront-field-icon upfront-field-icon-social-title-align"></i>
+						<div class="usocial-global-align {{after_title.length ? 'align-active' : ''}}">
+							<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+								<input type="radio" id="usocial-global-align-0" name="after_title_align" value="left" class="upfront-field-radio" {{after_title_align == 'left' ? 'checked="checked"' : ''}} {{after_title.length ? '' : 'disabled="disabled"'}}>
+							</span>
+							<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+								<input type="radio" id="usocial-global-align-1" name="after_title_align" value="center" class="upfront-field-radio" {{after_title_align == 'center' ? 'checked="checked"' : ''}} {{after_title.length ? '' : 'disabled="disabled"'}}>
+							</span>
+							<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+								<input type="radio" id="usocial-global-align-2" name="after_title_align" value="right" class="upfront-field-radio" {{after_title_align == 'right' ? 'checked="checked"' : ''}} {{after_title.length ? '' : 'disabled="disabled"'}}>
+							</span>
+						</div>
+						<label class="usocial-global-align-label" for="after_content_align">Aligned {{after_title_align}}</label>
+					</div>
+				</div>
+				<div class="usocial-global-add-post">
+					<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes">
+						<span class="upfront-field-multiple {{after_content.length ? 'upfront-field-multiple-selected' : '' }}">
+							<input type="checkbox" id="usocial-global-after_content" name="after_content" value="yes" class="upfront-field-checkbox usocial_post_location" {{after_content.length ? 'checked="checked"' : ''}}>
+							<label for="usocial-global-after_content">
+								<span class="upfront-field-label-text">After Post Content</span>
+							</label>
+						</span>
+					</div>
+					<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios">
+						<i class="usocial-align-icon upfront-field-icon upfront-field-icon-social-content-align"></i>
+						<div class="usocial-global-align {{after_content.length ? 'align-active' : ''}}">
+							<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+								<input type="radio" id="usocial-global-align-0" name="after_content_align" value="left" class="upfront-field-radio" {{after_content_align == 'left' ? 'checked="checked"' : ''}} {{after_content.length ? '' : 'disabled="disabled"'}}>
+							</span>
+							<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+								<input type="radio" id="usocial-global-align-1" name="after_content_align" value="center" class="upfront-field-radio" {{after_content_align == 'center' ? 'checked="checked"' : ''}} {{after_content.length ? '' : 'disabled="disabled"'}}>
+							</span>
+							<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+								<input type="radio" id="usocial-global-align-2" name="after_content_align" value="right" class="upfront-field-radio" {{after_content_align == 'right' ? 'checked="checked"' : ''}} {{after_content.length ? '' : 'disabled="disabled"'}}>
+							</span>
+						</div>
+						<label class="usocial-global-align-label" for="after_content_align">Aligned {{after_content_align}}</label>
+					</div>
+				</div>
+			</div>
+			<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios">
+				<label for="usocial-global-counter_style" class="upfront-field-label upfront-field-label-block">Social Counter style:</label>
+				<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+					<input type="radio" id="usocial-global-counter_style-0" name="counter_style" value="horizontal" class="upfront-field-radio" {{counter_style == 'horizontal' ? 'checked="checked"' : ''}}>
+					<label for="usocial-global-counter_style-0">
+						<i class="upfront-field-icon upfront-field-icon-social-count-horizontal"></i>
+						<span class="upfront-field-label-text"></span>
+					</label>
+				</span>
+				<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline upfront-field-multiple-selected">
+					<input type="radio" id="usocial-global-counter_style-1" name="counter_style" value="vertical" class="upfront-field-radio" {{counter_style == 'vertical' ? 'checked="checked"' : ''}}>
+					<label for="usocial-global-counter_style-1">
+						<i class="upfront-field-icon upfront-field-icon-social-count-vertical"></i>
+						<span class="upfront-field-label-text"></span>
+					</label>
+				</span>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="fb_like-tpl">
+<div data-id="upfront-icon-facebook" class="upfront-social-icon">
+	<iframe class="social-frame usocial-fb {{style}} like" src="//www.facebook.com/plugins/like.php?href={{url}}&amp;send=false&amp;layout={{layout}}&amp;width={{width}}px&amp;show_faces=true&amp;font&amp;colorscheme=light&amp;action=like&amp;height={{height}}px" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowTransparency="true"></iframe>
+</div>
+</script>
+<script type="text/template" id="tweet-tpl">
+<div data-id="upfront-icon-twitter" class="upfront-social-icon">
+	<iframe class="social-frame usocial-twitter {{style}} like" allowtransparency="true" frameborder="0" scrolling="no" src="//platform.twitter.com/widgets/tweet_button.html?text={{text}}&amp;url={{url}}&amp;original_referer={{url}}&amp;count={{style}}&amp;size=medium" style=""></iframe>
+</div>
+</script>
+<script type="text/template" id="plusone-tpl">
+<div data-id="upfront-icon-google" class="upfront-social-icon social-frame usocial-google {{style}} like">
+	<script type="text/javascript" src="//apis.google.com/js/plusone.js"></{{'s'}}cript>
+	<div class="g-plusone" data-size="{{size}}"></div>
+</div>
+</script>
+
+
+</div>
