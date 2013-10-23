@@ -50,115 +50,102 @@
     font-size: 24px !important;
     font-weight: 200;
 }
-.upfront-share-item {
-    display: inline-block;
-}
-.upfront-entry-share-top[data-alignment='left']{
-    text-align: left;
-}
-.upfront-entry-share-top[data-alignment='center']{
+.usocial-inpost-center {
     text-align: center;
 }
-.upfront-entry-share-top[data-alignment='right']{
+
+.usocial-inpost-right {
     text-align: right;
 }
-.upfront-entry-share-bottom[data-alignment='left']{
-    text-align: left;
-}
-.upfront-entry-share-bottom[data-alignment='center']{
-    text-align: center;
-}
-.upfront-entry-share-bottom[data-alignment='right']{
-    text-align: right;
-}
-.upfront-call-to-action
+
+.usocial-button
 {
     display: block;
 }
-.upfront-button-style-1 .upfront-call-to-action
+.upfront-button-style-1 .usocial-button
 {
     background: url("../images/SM_Sprite_Style_01-01.svg") no-repeat;
 }
-.upfront-button-style-2 .upfront-call-to-action
+.upfront-button-style-2 .usocial-button
 {
     background: url("../images/SM_Sprite_Style_02-01.svg") no-repeat;
 }
-.upfront-button-style-3 .upfront-call-to-action
+.upfront-button-style-3 .usocial-button
 {
     background: url("../images/SM_Sprite_Style_11-01.svg") no-repeat;
 }
-.upfront-button-size-small .upfront-call-to-action
+.usocial-button-small .usocial-button
 {
     width: 16px;
     height: 16px;
     background-size: 40px 280px;
 }
-.upfront-button-size-medium .upfront-call-to-action
+.usocial-button-medium .usocial-button
 {
     width: 24px;
     height: 24px;
     background-size: 60px 420px;
 }
-.upfront-button-size-large .upfront-call-to-action
+.usocial-button-large .usocial-button
 {
     width: 40px;
     height: 40px;
 }
-.upfront-button-size-large .upfront-call-to-action.facebook-link {
+.usocial-button-large .usocial-button.facebook-link {
     background-position: -30px -30px;
 }
-.upfront-button-size-large .upfront-call-to-action.twitter-link {
+.usocial-button-large .usocial-button.twitter-link {
     background-position: -30px -130px;
 }
-.upfront-button-size-large .upfront-call-to-action.gplus-link {
+.usocial-button-large .usocial-button.google-link {
     background-position: -30px -230px;
 }
-.upfront-button-size-large .upfront-call-to-action.linkedin-link {
+.usocial-button-large .usocial-button.linked-in-link {
     background-position: -30px -430px;
 }
-.upfront-button-size-large .upfront-call-to-action.pinterest-link {
+.usocial-button-large .usocial-button.pinterest-link {
     background-position: -30px -630px;
 }
-.upfront-button-size-large .upfront-call-to-action.youtube-link {
+.usocial-button-large .usocial-button.youtube-link {
     background-position: -30px -330px;
 }
 
-.upfront-button-size-medium .upfront-call-to-action.facebook-link {
+.usocial-button-medium .usocial-button.facebook-link {
     background-position: -18px -18px;
 }
-.upfront-button-size-medium .upfront-call-to-action.twitter-link {
+.usocial-button-medium .usocial-button.twitter-link {
     background-position: -18px -78px;
 }
-.upfront-button-size-medium .upfront-call-to-action.gplus-link {
+.usocial-button-medium .usocial-button.google-link {
     background-position: -18px -138px;
 }
-.upfront-button-size-medium .upfront-call-to-action.linkedin-link {
+.usocial-button-medium .usocial-button.linked-in-link {
     background-position: -18px -258px;
 }
-.upfront-button-size-medium .upfront-call-to-action.pinterest-link {
+.usocial-button-medium .usocial-button.pinterest-link {
     background-position: -18px -378px;
 }
-.upfront-button-size-medium .upfront-call-to-action.youtube-link {
+.usocial-button-medium .usocial-button.youtube-link {
     background-position: -18px -198px;
 }
 
 
-.upfront-button-size-small .upfront-call-to-action.facebook-link {
+.usocial-button-small .usocial-button.facebook-link {
     background-position: -12px -12px;
 }
-.upfront-button-size-small .upfront-call-to-action.twitter-link {
+.usocial-button-small .usocial-button.twitter-link {
     background-position: -12px -52px;
 }
-.upfront-button-size-small .upfront-call-to-action.gplus-link {
+.usocial-button-small .usocial-button.google-link {
     background-position: -12px -92px;
 }
-.upfront-button-size-small .upfront-call-to-action.linkedin-link {
+.usocial-button-small .usocial-button.linked-in-link {
     background-position: -12px -172px;
 }
-.upfront-button-size-small .upfront-call-to-action.pinterest-link {
+.usocial-button-small .usocial-button.pinterest-link {
     background-position: -12px -252px;
 }
-.upfront-button-size-small .upfront-call-to-action.youtube-link {
+.usocial-button-small .usocial-button.youtube-link {
     background-position: -12px -132px;
 }
 
@@ -171,12 +158,15 @@
 }
 .upfront-fan-count
 {
-    padding-left: 48px;
     display: inline-block;
+    vertical-align: middle;
 }
-.upfront-fan-counts .upfront-fan-count strong
-{
-    display: block;
+.upfront-fan-counts {
+    vertical-align: middle;
+    padding-left: 50px;
+    line-height: 40px;
+}
+.upfront-fan-counts .upfront-fan-count strong{
 }
 .upfront-fan-counts.facebook-count {
     background-position: -30px -30px;
@@ -184,7 +174,7 @@
 .upfront-fan-counts.twitter-count {
     background-position: -30px -130px;
 }
-.upfront-fan-counts.gplus-count {
+.upfront-fan-counts.google-count {
     background-position: -30px -230px;
 }
 /* New settings*/
@@ -323,9 +313,9 @@
 .upfront-field-wrap-select-inline{
     display: inline-block;
 }
-.upfront-field-icon-social-add{
+.upfront-social-services-item .upfront-field-icon-social-add{
     cursor: pointer;
-    margin-right: 0 !important;
+    margin: 2px 0 0 190px;
 }
 .upfront-field-wrap-text-inline{
     display: inline-block;
@@ -336,7 +326,10 @@
     position: relative;
     margin-right: 10px;
     margin-bottom: 5px;
+    vertical-align: top;
 }
+
+
 
 .usocial-global-triangle {
     float: right;
@@ -384,4 +377,55 @@ i.usocial-align-icon {
 
 .upfront-global-social-settings .upfront-field-multiple {
     opacity: 1;
+}
+
+.upfront-social-services-item .usocial-select {
+    max-height: none;
+    position: absolute;
+    height:auto;
+}
+.upfront-social-services-item .usocial-select.usocial-select-closed {
+    max-height: 26px;
+}
+.usocial-select-list {
+    margin:0;
+    padding:0;
+    width:180px;
+}
+
+.usocial_service_meta {
+    margin-top: 10px;
+}
+
+.usocial-select-label {
+    display: block;
+}
+
+.social-frame {
+    max-width:100px;
+}
+
+.social-frame.vertical{
+    width:70px;
+}
+.social-frame.horizontal{
+    width:100px;
+    height: 23px;
+}
+.usocial-google.vertical{
+    margin-top: 2px;
+    height: 60px;
+}
+.usocial-fb.vertical{
+    margin-top: 1px;
+    height: 65px;
+}
+.usocial-twitter.vertical{
+    height: 63px;
+}
+.usocial-twitter.horizontal{
+    width: 90px;
+}
+.usocial-google.horizontal{
+    width: 70px;
 }

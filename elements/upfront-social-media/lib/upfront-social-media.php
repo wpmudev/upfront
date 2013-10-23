@@ -4,318 +4,107 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
     const COUNT_ERROR = 'Error';
 
+    public function __construct($data) {
+        parent::__construct($data);
+    }
+
     public function get_markup () {
         $element_id = $this->_get_property('element_id');
         $element_id = $element_id ? "id='{$element_id}'" : '';
         $layout_style = $this->_get_property('social_type');
+        $output = '';
 
         switch ($layout_style) {
             case '':
-                return "Please select an option from backend";
+                $output = "Please select an option from backend";
                 break;
             case 'likes':
-                return "<div class='upfront-output-object upfront-social' {$element_id}>" .
-                    self::likes_type().
+                $output = "<div class='upfront-output-object upfront-social' {$element_id}>" .
+                    self::likes() .
                 "</div>";
                 break;
             case 'fans':
-                return "<div class='upfront-output-object upfront-social' {$element_id}>" .
-                    self::fans_type().
+                $output = "<div class='upfront-output-object upfront-social' {$element_id}>" .
+                    self::fans() .
                 "</div>";
                 break;
             case 'buttons':
-                return "<div class='upfront-output-object upfront-social' {$element_id}>" .
-                    self::buttons_type().
+                $output = "<div class='upfront-output-object upfront-social' {$element_id}>" .
+                    self::buttons() .
                 "</div>";
                 break;
         }
-    }
 
-    public function likes_type(){
-        $counter_options = $this->_get_property('counter_options');
-        $like_social_media_services = $this->_get_property('like_social_media_services');
-
-        global $post;
-
-        $content = strip_shortcodes(wp_filter_nohtml_kses($post->post_content));
-        $content = substr($content,0,55);
-
-        $page_url = (is_home() ? site_url() : $post->guid);
-        $page_content = (is_home() ? '' : $content.'...');
-
-        $output = '<div class="upfront-like-follow-plusone-box">';
-        if(!$like_social_media_services) return;
-        foreach($like_social_media_services as $social) :
-
-            $output .= '<div data-id="upfront-icon-'.$social.'" class="upfront-social-icon">';
-            switch ($social) {
-                case 'facebook':
-                    $facebook_button = $counter_options == 'horizontal' ? 'button_count' : 'box_count';
-                    $facebook_width = $counter_options == 'horizontal' ? "92" : "65";
-                    $facebook_height = $counter_options == 'horizontal' ? "20" : "65";
-
-                    $output .= "<iframe src='//www.facebook.com/plugins/like.php?".
-                    "href=".rawurlencode($page_url)."&amp;".
-                    "send=false&amp;".
-                    "layout={$facebook_button}&amp;".
-                    "width={$facebook_width}&amp;".
-                    "show_faces=true&amp;".
-                    "font&amp;".
-                    "colorscheme=light&amp;".
-                    "action=like&amp;".
-                    "height={$facebook_height}' ".
-                    "scrolling='no' frameborder='0' ".
-                    "style='border:none; overflow:hidden; ".
-                    "max-width:{$facebook_width}px; ".
-                    "height:{$facebook_height}px;' ".
-                    "allowTransparency='true'></iframe>";
-                    break;
-                case 'twitter':
-                    $tweet_button = $counter_options == 'horizontal' ? "horizontal" : "vertical";
-                    $tweet_width  = $counter_options == 'horizontal' ? "100" : "80";
-                    $tweet_height = $counter_options == 'horizontal' ? "20" : "63";
-
-                    $output .= "<iframe allowtransparency='true' frameborder='0' scrolling='no' src='https://platform.twitter.com/widgets/tweet_button.html?".
-                        "url=".rawurlencode($page_url)."&amp;".
-                        "text={$page_content}&amp;".
-                        "count={$tweet_button}&amp;".
-                        "size=medium' ".
-                        "style='width:{$tweet_width}px; ".
-                        "height:{$tweet_height}px;'></iframe>";
-                    break;
-                case 'google':
-                    $google_button = $counter_options == 'horizontal' ? "medium" : "tall";
-                    $google_width = $counter_options == 'horizontal' ? "72" : "50";
-                    $output .= "<script type='text/javascript' src='https://apis.google.com/js/plusone.js'></script><g:plusone width='".$google_width."' size='{$google_button}'></g:plusone>";
-                    break;
-
-            }
-            $output .= '';
-            $output .= '</div>';
-
-        endforeach;
-        $output .= '</div>';
+        $output .= $this->get_fan_counts_script();
         return $output;
     }
 
-    function get_twitter_page_followers () {
+    function get_fan_counts_script(){
+        $services = $this->_get_property('services');
+        $id = $this->_get_property('element_id');
+        $count = array();
+        foreach($services as $s)
+            $count[$s['id']] = Upfront_SocialMedia_Setting::get_count($id, $s);
 
-        $url = $this->_get_property('count_social_media_services-twitter-url');
-        $consumer_key = $this->_get_property('twitter-consumer-key');
-        $consumer_secret = $this->_get_property('twitter-consumer-secret');
+        return '<script>
+            if(typeof usocial == "undefined")
+                usocial = {counts:{}};
+            usocial.counts["' . $id . '"] = ' . json_encode($count) . ';
+        </script>';
+    }
 
-        if($url && $consumer_key && $consumer_secret){
-            $page_name = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
-        }
-        else{
-            return false;
-        }
+    public function likes(){
+        $services = $this->_get_property('services');
+        $style =  $this->_get_property('counter_options');
+        $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 
-        $user_twitter_name = $page_name;
-        $token = get_option('upfront_twitter_token');
-        $followers_count = get_transient('upfront_twitter_count');
+        return Upfront_SocialMedia_Setting:: get_likes_markup($services, $style, $url);        
+    }
 
-        if (false !== $followers_count && $followers_count) return number_format($followers_count);
-
-        // Get new token if there isn't one
-        if (!$token) {
-            $credentials = $consumer_key . ':' . $consumer_secret;
-            $to_send = base64_encode($credentials);
-
-            $args = array(
-                'method' => 'POST',
-                'httpversion' => '1.1',
-                'blocking' => true,
-                'sslverify' => false,
-                'headers' => array(
-                    'Authorization' => 'Basic ' . $to_send,
-                    'Content-Type' =>
-                    'application/x-www-form-urlencoded;charset=UTF-8'
-                ),
-                'body' => array( 'grant_type' => 'client_credentials' )
-            );
-            $response =
-                wp_remote_post('https://api.twitter.com/oauth2/token', $args);
-            if (is_wp_error($response)) return false; // Something went wrong
-
-            $keys = json_decode(wp_remote_retrieve_body($response));
-
-            if ($keys) {
-                update_option('upfront_twitter_token', $keys->access_token);
-                $token = $keys->access_token;
-            }
-        }
-
-        // Do the actual remote call
-        $args = array(
-            'httpversion' => '1.1',
-            'blocking' => true,
-            'sslverify' => false,
-            'headers' => array(
-                'Authorization' => "Bearer {$token}"
-            )
+    public function fans(){
+        $services = $this->_get_property('services');
+        $words = array(
+            'facebook' => 'Fans',
+            'twitter' => 'Followers',
+            'google' => 'Subscribers'
         );
+        $output = '';
+        $tpl = '<div data-id="upfront-icon-%s" class="ufront-%s-count-box upfront-social-icon">
+                    <a class="upfront-fan-counts %s-count" href="%s">
+                    %s
+                    <span class="upfront-fan-count"> <strong>%s</strong> %s</span></a>
+                </div>';
 
-        $api_url = "https://api.twitter.com/1.1/users/show.json?screen_name={$user_twitter_name}";
-        $response = wp_remote_get($api_url, $args);
+        foreach ($services as $s) {
+            if($s['active']){
+                 $count = Upfront_SocialMedia_Setting::get_count($this->_get_property('element_id'), $s, true);
+                 $alert = $s['url'] ? '' : '<span class="alert-url">!</span>';
 
-        if (!is_wp_error($response)) {
-            $followers = json_decode(wp_remote_retrieve_body($response));
-            $followers_count = $followers->followers_count;
-        }
-
-        set_transient('upfront_twitter_count', $followers_count, 60
-            * 60 * 24);
-
-        return ($followers_count);
-    }
-
-    public function get_google_page_subscriber () {
-
-        $url = $this->_get_property('count_social_media_services-google-url');
-        if($url){
-            $page_url = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
-        }
-        else{
-            return false;
-        }
-
-        if ($page_url){
-            $page = wp_remote_get('https://plusone.google.com/_/+1/fastbutton?bsv&annotation=inline&hl=it&url=' . urlencode('https://plus.google.com/' . $page_url), array(
-                'sslverify' => false,
-            ));
-            if (200 == wp_remote_retrieve_response_code($page)) {
-                $body = wp_remote_retrieve_body($page);
-                if (preg_match('/window.__SSR *= *{c: *(\d+)/is', $body, $match) ){
-                    $count = $match[1];
-                   set_transient('upfront_google_count', $count, 60
-                       * 60 * 24);
-                } else $count = self::COUNT_ERROR;
-            } else $count = self::COUNT_ERROR;
-
-            return $count;
-        }
-        return 'Google page not found';
-    }
-
-    public function get_facebook_page_likes () {
-
-        $url = $this->_get_property('count_social_media_services-facebook-url');
-        if($url){
-            $page_url = Upfront_SocialMedia_Setting::get_last_part_of_page_url($url);
-        }
-        else{
-            $page_url = false;
-        }
-
-        if ($page_url){
-            $page = wp_remote_get("https://graph.facebook.com/{$page_url}", array(
-                'sslverify' => false,
-            ));
-            if (200 == wp_remote_retrieve_response_code($page)) {
-                $body = @json_decode(wp_remote_retrieve_body($page), true);
-                $count = !empty($body['likes']) ? (int)$body['likes'] : self::COUNT_ERROR;
-            } else $count = self::COUNT_ERROR;
-
-            return $count;
-        }
-        return 'Facebook page not found';
-    }
-
-    public function fans_type(){
-        $count_social_media_services = $this->_get_property('count_social_media_services');
-        $output = '<div class="upfront-fan-follower-count-box">';
-
-        foreach($count_social_media_services as $social) :
-
-            switch ($social)
-            {
-                case 'facebook':
-                    $iconClass = 'facebook-count';
-                    $url = $this->_get_property('count_social_media_services-facebook-url');
-                    $output .= '<div data-id="upfront-icon-'.$social.'" class="ufront-'.$iconClass.'-box upfront-social-icon">';
-                    $output .= '<a class="upfront-fan-counts '.$iconClass.'" target="_blank" href="'.( $url ? $url : '#' ).'">';
-                    if($url){
-                        $output .= '<span class="upfront-fan-count"><strong>'.self::get_facebook_page_likes().'</strong> Fans</span>';
-                    }else{
-                        $output .= '<span class="alert-url">!</span>';
-                    };
-                    $output .= '</a>';
-                    $output .= '</div>';
-                    break;
-                case 'twitter':
-                    $iconClass = 'twitter-count';
-                    $url = $this->_get_property('count_social_media_services-twitter-url');
-                    $output .= '<div data-id="upfront-icon-'.$social.'" class="ufront-'.$iconClass.'-box upfront-social-icon">';
-                    $output .= '<a class="upfront-fan-counts '.$iconClass.'" target="_blank" href="'.( $url ? $url : '#' ).'">';
-                    if($url){
-                        $output .= '<span class="upfront-fan-count"><strong>'.self::get_twitter_page_followers().'</strong> Followers</span>';
-                    }else{
-                        $output .= '<span class="alert-url">!</span>';
-                    };
-                    $output .= '</a>';
-                    $output .= '</div>';
-                    break;
-                case 'google':
-                    $iconClass = 'gplus-count';
-                    $url = $this->_get_property('count_social_media_services-google-url');
-                    $output .= '<div data-id="upfront-icon-'.$social.'" class="ufront-'.$iconClass.'-box upfront-social-icon">';
-                    $output .= '<a class="upfront-fan-counts '.$iconClass.'" target="_blank" href="'.( $url ? $url : '#' ).'">';
-                    if($url){
-                        $output .= '<span class="upfront-fan-count"><strong>'.self::get_google_page_subscriber().'</strong> Subscribers</span>';
-                    }else{
-                        $output .= '<span class="alert-url">!</span>';
-                    };
-                    $output .= '</a>';
-                    $output .= '</div>';
-                    break;
+                 $output .= sprintf($tpl, $s['id'], $s['id'], $s['id'], $s['url'], $alert, $count, $words[$s['id']]);
             }
+        }
 
-        endforeach;
-        $output .= '</div>';
         return $output;
     }
 
-    public function buttons_type(){
-        $call_social_media_services = $this->_get_property('call_social_media_services');
+    public function buttons(){
+        $services =  $this->_get_property('button_services');
         $button_style = $this->_get_property('button_style');
         $button_size = $this->_get_property('button_size');
 
         $output = '';
-        foreach($call_social_media_services as $social) :
-            switch ($social)
-            {
-                case 'facebook':
-                    $iconClass = 'facebook-link';
-                    $url = $this->_get_property('call_social_media_services-facebook-url');
-                    break;
-                case 'twitter':
-                    $iconClass = 'twitter-link';
-                    $url = $this->_get_property('call_social_media_services-twitter-url');
-                    break;
-                case 'google':
-                    $iconClass = 'gplus-link';
-                    $url = $this->_get_property('call_social_media_services-google-url');
-                    break;
-                case 'linked-in':
-                    $iconClass = 'linkedin-link';
-                    $url = $this->_get_property('call_social_media_services-linked-in-url');
-                    break;
-                case 'pinterest':
-                    $iconClass = 'pinterest-link';
-                    $url = $this->_get_property('call_social_media_services-pinterest-url');
-                    break;
-                case 'youtube':
-                    $iconClass = 'youtube-link';
-                    $url = $this->_get_property('call_social_media_services-youtube-url');
-                    break;
+        foreach($services as $s){
+            if($s['active']){
+                $alert = trim($s->url) ? '<span class="alert-url">!</span>' : '';
+                $output .= '<div class="upfront-' . $s['id'] . '-link-box upfront-social-icon upfront-'.$button_style.' usocial-button-'.$button_size.'">
+                            <a class="usocial-button '. $s['id'] .'-link" href="'. $s['url'] .'"></a>'. $alert . '
+                            </div>';
             }
+        }
 
-            $output .= '<div class="ufront-'.$iconClass.'-box upfront-social-icon upfront-'.$button_style.' upfront-button-size-'.$button_size.'">';
-            $output .= '<a class="upfront-call-to-action '.$iconClass.'" target="_blank" href="'.($url ? $url : '#' ).'"></a>';
-            $output .= (!$url ? '<span class="alert-url">!</span>':'' );
-            $output .= '</div>';
-        endforeach;
+        if(!$output)
+            return 'Please, add some social media services.';
+
         return $output;
     }
 
@@ -348,13 +137,11 @@ class Upfront_SocialMediaView extends Upfront_Object {
                 'class' => 'c22 upfront-Social-Media',
                 'has_settings' => 1
             ),
-            'services' => array(
-            ),
             'global_defaults' => array(
                 'services' => array(
-                    'facebook' => array('name' => 'Facebook', 'id' => 'facebook', 'url' => '', 'active' => false),
-                    'twitter' => array('name' => 'Twitter', 'id' => 'twitter', 'url' => '', 'active' => false),
-                    'google' => array('name' => 'Google +', 'id' => 'google', 'url' => '', 'active' => false)
+                    'facebook' => array('name' => 'Facebook', 'id' => 'facebook', 'url' => '', 'active' => false, 'meta' => array()),
+                    'twitter' => array('name' => 'Twitter', 'id' => 'twitter', 'url' => '', 'active' => false, 'meta' => array(array('id' => 'consumer_key', 'name' => 'Consumer Key', 'value' => ''), array('id' => 'consumer_secret', 'name' => 'Consumer Secret', 'value' => ''))),
+                    'google' => array('name' => 'Google +', 'id' => 'google', 'url' => '', 'active' => false, 'meta' => array())
                 ),
                 'inpost' => array('yes'),
                 'after_title' => array('yes'),
@@ -366,17 +153,12 @@ class Upfront_SocialMediaView extends Upfront_Object {
         );
 
         if($globals)
-            $data['usocial']['globals'] = self::properties_to_array(json_decode($globals));
+            $data['usocial']['globals'] = Upfront_SocialMedia_Setting::properties_to_array(json_decode($globals));
 
         return $data;
-    }
+    }    
 
-    protected static function properties_to_array($props){
-        $arr = array();
-        foreach($props as $prop)
-            $arr[$prop->name] = $prop->value;
-        return $arr;
-    }
+    
 }
 
 /**
@@ -390,149 +172,139 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
     const COUNT_ERROR = 'Error';
     private function _add_hooks () {
         add_action('wp_ajax_usocial_save_globals', array($this, "save_social_media_global_settings"));
-        add_action('wp_ajax_upfront_get_twitter_page_likes', array($this, "get_twitter_page_likes"));
-        add_action('wp_ajax_upfront_get_google_page_subscribers', array($this, "get_google_page_subscribers"));
-        add_filter('the_content', array($this, "upfront_the_content_filter"));
+        add_action('wp_ajax_usocial_get_counts', array($this, 'serve_counts'));
     }
 
-    public static function upfront_the_content_filter( $content ) {
-            $output = '';
-            $old_content = $content;
-            if ( is_single() ):
-                global $post;
-                $add_counter_all_posts = self::get_value_by_name('add_counter_all_posts');
-                if ( get_option('upfront_social_media_global_settings') && $add_counter_all_posts[0] == 'yes' ) :
-                    $content = strip_shortcodes(wp_filter_nohtml_kses($post->post_content));
-                    $content = substr($content,0,55);
+    public function serve_counts(){
+        if(!$_POST['element_id'] || !$_POST['services'])
+            return $this->_out(new Upfront_JsonResponse_Error('No element id'));
 
-                    $page_url = (is_home() ? site_url() : $post->guid);
-                    $page_content = (is_home() ? '' : $content.'...');
-                    $counter_options = self::get_value_by_name('counter_options');
+        $response = array();
+        $element_id = $_POST['element_id'];
+        $services = $_POST['services'];
+        foreach($services as $s){
+            $response[$s['id']] = self::get_count($element_id, $s, true);
+        }
 
-                    $facebook_button = $counter_options == 'horizontal' ? 'button_count' : 'box_count';
-                    $facebook_width = $counter_options == 'horizontal' ? "92" : "65";
-                    $facebook_height = $counter_options == 'horizontal' ? "20" : "65";
+        return $this->_out(new Upfront_JsonResponse_Success($response));
+    }
 
-                    $tweet_button = $counter_options == 'horizontal' ? "horizontal" : "vertical";
-                    $tweet_width  = $counter_options == 'horizontal' ? "100" : "80";
-                    $tweet_height = $counter_options == 'horizontal' ? "20" : "63";
+    public static function add_post_filters(){
+        $glob = self::get_globals();
+        if(!$glob || !sizeof($glob['inpost']))
+            return;
 
-                    $google_button = $counter_options == 'horizontal' ? "medium" : "tall";
-                    $google_width = $counter_options == 'horizontal' ? "72" : "50";
+        if(sizeof($glob['after_title'])){
+            add_filter('the_content', array('Upfront_SocialMedia_Setting', 'social_title'));
+            add_filter('the_excerpt', array('Upfront_SocialMedia_Setting', 'social_title'));
+        }
 
-                    switch (self::get_value_by_name("after_post_title_alignment")) {
-                        case 'left':
-                            $location_top_alignment = 'left';
-                            break;
-                        case 'center':
-                            $location_top_alignment = 'center';
-                            break;
-                        case 'right':
-                            $location_top_alignment = 'right';
-                            break;
-                    }
+        if(sizeof($glob['after_content'])){
+            add_filter('the_content', array('Upfront_SocialMedia_Setting', 'social_content'));
+            add_filter('the_excerpt', array('Upfront_SocialMedia_Setting', 'social_content'));
+        }
+    }
 
-                    switch (self::get_value_by_name("after_post_content_alignment")) {
-                        case 'left':
-                            $location_bottom_alignment = 'left';
-                            break;
-                        case 'center':
-                            $location_bottom_alignment = 'center';
-                            break;
-                        case 'right':
-                            $location_bottom_alignment = 'right';
-                            break;
-                    }
-                    $after_post_title = self::get_value_by_name("after_post_title");
-                    $after_post_content = self::get_value_by_name("after_post_content");
-                    $location_top = ($after_post_title[0] == 'yes' ? "data-alignment='{$location_top_alignment}'" : "");
-                    $location_bottom = ($after_post_content[0] == 'yes' ? "data-alignment='{$location_bottom_alignment}'" : "");
+    public static function social_content($content){
+        $glob = self::get_globals();
+        $align = $glob['after_content_align'];
+        return self::social_filter($align, $glob) . $content;
+    }
 
-                    $facebook_icon = "<div class='upfront-share-item upfront-share-item-facebook'>".
-                        "<iframe src='//www.facebook.com/plugins/like.php?".
-                        "href=".rawurlencode($page_url)."&amp;".
-                        "send=false&amp;".
-                        "layout={$facebook_button}&amp;".
-                        "width={$facebook_width}&amp;".
-                        "show_faces=true&amp;".
-                        "font&amp;".
-                        "colorscheme=light&amp;".
-                        "action=like&amp;".
-                        "height={$facebook_height}' ".
-                        "scrolling='no' frameborder='0' ".
-                        "style='border:none; overflow:hidden; ".
-                        "max-width:{$facebook_width}px; ".
-                        "height:{$facebook_height}px;' ".
-                        "allowTransparency='true'></iframe>".
-                        "</div>";
+    public static function social_title($content){
+        $glob = self::get_globals();
+        $align = $glob['after_title_align'];
+        return $content . self::social_filter($align, $glob);
+    }
 
-                    $twitter_icon = "<div class='upfront-share-item upfront-share-item-twitter'>".
-                        "<iframe allowtransparency='true' frameborder='0' scrolling='no' src='https://platform.twitter.com/widgets/tweet_button.html?".
-                        "url=".rawurlencode($page_url)."&amp;".
-                        "text={$page_content}&amp;".
-                        "count={$tweet_button}&amp;".
-                        "size=medium' ".
-                        "style='width:{$tweet_width}px; ".
-                        "height:{$tweet_height}px;'></iframe>".
-                        "</div>";
+    public static function social_filter($align, $glob){
+        $style = $glob['counter_style'];
+        $services = $glob['services'];
 
-                    $gplus_icon = "<div class='upfront-share-item upfront-share-item-plusone'>".
-                        "<script type='text/javascript' src='https://apis.google.com/js/plusone.js'></script><g:plusone width='".$google_width."' size='{$google_button}'></g:plusone>".
-                        "</div>";
-                    $after_post_title = self::get_value_by_name("after_post_title");
-                    if($after_post_title[0] == 'yes'):
-                        $output .= "<div class='upfront-entry-share upfront-entry-share-top' {$location_top} >";
-                        $services = self::get_value_by_name("global_social_media_services");
-                        if($services):
-                            foreach($services as $service){
-                                switch ($service) {
-                                    case 'facebook':
-                                        $output .=  $facebook_icon;
-                                        break;
-                                    case 'twitter':
-                                        $output .=  $twitter_icon;
-                                        break;
-                                    case 'google':
-                                        $output .=  $gplus_icon;
-                                        break;
-                                }
-                            }
-                        endif;
-                        $output .= "</div>";
-                    endif;
+        return '<div class="usocial-inpost usocial-inpost-' . $align . '">' . self::get_likes_markup($services, $style) . '</div>';
+    }
 
-                    $output .= $old_content;
+    public static function get_likes_markup($services, $style, $url = false){
+        global $post;
 
-                    $after_post_content = self::get_value_by_name("after_post_content");
-                    if($after_post_content[0] == 'yes'):
-                        $output .= "<div class='upfront-entry-share upfront-entry-share-bottom' {$location_bottom} >";
-                        $services = self::get_value_by_name("global_social_media_services");
-                        if($services):
-                            foreach($services as $service){
-                                switch ($service) {
-                                    case 'facebook':
-                                        $output .=  $facebook_icon;
-                                        break;
-                                    case 'twitter':
-                                        $output .=  $twitter_icon;
-                                        break;
-                                    case 'google':
-                                        $output .=  $gplus_icon;
-                                        break;
-                                }
-                            }
-                        endif;
-                        $output .= "</div>";
-                    endif;
+        if($post){
+            $text = $post->post_title;
+            if(!$url)
+                $url = get_permalink($post->id);
+        }
+        else{
+            $text = get_bloginfo('description');
+            if(!$url)
+                $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+        }
 
-                else:
-                    $output = $old_content;
-                endif; // settings end
-            else:
-                $output = $old_content;
-            endif;
-            // Returns the content.
-            return $output;
+        $hor = $style == 'horizontal';
+
+        if(!sizeof($services))
+            return 'Please, select some social services.';
+
+        $data = array(
+            'url' => $url,
+            'style' => $style,
+            'width' => $hor ? 90 : 70,
+            'height' => $hor ? 20 : 60,
+            'size' => $hor ? 'medium' : 'tall',
+            'layout' => $hor ? 'button_count' : 'box_count',
+            'text' => $text
+        );
+
+        $output = '';
+        foreach($services as $s){
+            if(is_object($s)){
+                $active = $s->active;
+                $service_id = $s->id;
+            }
+            else{
+                $active = $s['active'];
+                $service_id = $s['id'];                
+            }
+            $output .= $active ? self::likes_tpl($service_id . '-likes', $data) : '';
+        }
+
+        return $output;
+    }
+
+    protected static function likes_tpl($name, $data){
+        $tpls = array(
+            'facebook-likes' => '<div data-id="upfront-icon-facebook" class="upfront-social-icon">
+                            <iframe class="social-frame usocial-fb {{style}} like" src="//www.facebook.com/plugins/like.php?href={{url}}&amp;send=false&amp;layout={{layout}}&amp;width={{width}}px&amp;show_faces=true&amp;font&amp;colorscheme=light&amp;action=like&amp;height={{height}}px" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowTransparency="true"></iframe>
+                        </div>',
+
+            'twitter-likes' => '<div data-id="upfront-icon-twitter" class="upfront-social-icon">
+                <iframe class="social-frame usocial-twitter {{style}} like" allowtransparency="true" frameborder="0" scrolling="no" src="//platform.twitter.com/widgets/tweet_button.html?text={{text}}&amp;url={{url}}&amp;original_referer={{url}}&amp;count={{style}}&amp;size=medium" style=""></iframe>
+            </div>',
+
+            'google-likes' => '<div data-id="upfront-icon-google" class="upfront-social-icon social-frame usocial-google {{style}} like">
+                <script type="text/javascript" src="//apis.google.com/js/plusone.js"></script>
+                <div class="g-plusone" data-size="{{size}}"></div>
+            </div>'
+        );
+        
+        if(! $tpls[$name])
+            return 'Wrong social template ' . $name;
+        $out = $tpls[$name];
+        foreach($data as $key => $value)
+            $out = str_replace('{{' . $key . '}}', $value, $out);
+        return $out;
+    }
+
+    public static function get_globals(){
+        $glob = get_option('upfront_social_media_global_settings', false);
+        if($glob)
+            return self::properties_to_array(json_decode($glob));
+        return false;
+    }
+
+    public static function properties_to_array($props){
+        $arr = array();
+        foreach($props as $prop)
+            $arr[$prop->name] = $prop->value;
+        return $arr;
     }
 
     public static function array_search_i($str,$array){
@@ -542,12 +314,6 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
             endif;
         }
         return false;
-    }
-
-    public static function get_last_part_of_page_url($url){
-        $keys = parse_url($url); // parse the url
-        $path = explode("/", $keys['path']); // splitting the path
-        return $facebook_page_name = end($path); // get the value of the last element
     }
 
     public static function get_value_by_name($url){
@@ -578,20 +344,178 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
         $this->_out(new Upfront_JsonResponse_Error('Settings not found'));
     }
 
-    public function get_twitter_page_likes () {
-        $followers_count = get_transient('upfront_twitter_count');
-        if (false !== $followers_count){
-            $this->_out(new Upfront_JsonResponse_Success(number_format($followers_count)));
+    public static function get_count($element_id, $service, $fetch = false) {
+        $id = $service['id'];
+        $url = $service['url'];
+        if(!$id || ! $url)
+            return 'Error';
+
+        //From transient
+        $count = self::get_transient_count($element_id, $id, $url);
+        if($count)
+            return $count;
+
+        if(!$fetch)
+            return false;
+
+        $transient_time = 60 * 60 * 6; //6 hours
+        $transient_id = str_replace('SocialMedia-Object-', '', $element_id);
+        $name = self::get_url_last_part($url);
+
+        //Otherwise, fetch it
+        if($id == 'facebook'){
+            if($name){
+                $count = self::COUNT_ERROR;
+                $page = wp_remote_get(
+                    "https://graph.facebook.com/{$name}", 
+                    array('sslverify' => false)
+                );
+                if (200 == wp_remote_retrieve_response_code($page)) {
+                    $body = @json_decode(wp_remote_retrieve_body($page), true);
+                    if(!empty($body['likes'])){
+                        $count = $body['likes'];
+                        set_transient(
+                            'usocial_facebook_' . $transient_id, 
+                            array('count' => $count, 'url' => $url),
+                            $transient_time
+                        );
+                    }
+                }
+
+                return $count;
+            }
+            return 'Not found';
         }
-        $this->_out(new Upfront_JsonResponse_Error('Twitter count not found'));
+
+        else if($id == 'twitter'){
+            $consumer_key = false;
+            $consumer_secret = false;
+            foreach($service['meta'] as $m){
+                if($m['id'] == 'consumer_key')
+                    $consumer_key = $m['value'];
+                else if($m['id'] == 'consumer_secret')
+                    $consumer_secret = $m['value'];
+            }
+
+            if(!$url || !$name || !$consumer_key || !$consumer_secret)
+                return 'No credentials';
+
+            // Get new token if there isn't one
+            $token = self::get_twitter_token($element_id, $consumer_key, $consumer_secret);
+            if (!$token) 
+                return 'No twitter token';
+
+            // Do the actual remote call
+            $args = array(
+                'httpversion' => '1.1',
+                'blocking' => true,
+                'sslverify' => false,
+                'headers' => array(
+                    'Authorization' => "Bearer {$token}"
+                )
+            );
+
+            $api_url = "https://api.twitter.com/1.1/users/show.json?screen_name={$name}";
+            $response = wp_remote_get($api_url, $args);
+
+            if(is_wp_error($response))
+                return 'Error';
+
+            $followers = json_decode(wp_remote_retrieve_body($response));
+            $followers_count = $followers->followers_count;
+
+            set_transient(
+                'usocial_twitter_'. $transient_id, 
+                array('count' => $followers_count, 'url' => $url),
+                $transient_time
+            );
+
+            return $followers_count;
+        }
+
+        else if($id == 'google'){
+            if ($name){
+                $page = wp_remote_get(
+                    'https://plusone.google.com/_/+1/fastbutton?bsv&annotation=inline&hl=it&url=' . urlencode('https://plus.google.com/' . $name), 
+                    array('sslverify' => false)
+                );
+
+                $count = self::COUNT_ERROR;
+                if (200 == wp_remote_retrieve_response_code($page)) {
+                    $body = wp_remote_retrieve_body($page);
+                    if (preg_match('/window.__SSR *= *{c: *(\d+)/is', $body, $match) ){
+                        $count = $match[1];
+                        set_transient(
+                            'usocial_google_' . $transient_id, 
+                            array('count' => $count, 'url' => $url),
+                            $transient_time
+                        );
+                    }
+                }
+
+                return $count;
+            }
+            return 'Google page not found';
+        }
+        return 'Unknow service';
     }
 
-    public function get_google_page_subscribers () {
-        $followers_count = get_transient('upfront_google_count');
-        if (false !== $followers_count){
-            $this->_out(new Upfront_JsonResponse_Success(number_format($followers_count)));
+    protected static function get_transient_count($element_id, $service_id, $url){
+        $element_id = str_replace('SocialMedia-Object-', '', $element_id);
+        $name = 'usocial_' . $service_id . '_' . $element_id;
+        $tran = get_transient($name);
+        if(!$tran)
+            return false;
+        return $tran['url'] == $url ? $tran['count'] : false;
+    }
+
+    protected static function get_twitter_token($element_id, $key, $secret){
+        $option = 'social_twitter_token_' . $element_id;
+        $token = get_option($option);
+
+        //From option
+        if($token && $token['key'] == $key && $token['secret'] == $secret)
+            return $token['token'];
+
+        //Otherwise, fetch it
+        $credentials = $key . ':' . $secret;
+        $to_send = base64_encode($credentials);
+
+        $args = array(
+            'method' => 'POST',
+            'httpversion' => '1.1',
+            'blocking' => true,
+            'sslverify' => false,
+            'headers' => array(
+                'Authorization' => 'Basic ' . $to_send,
+                'Content-Type' =>
+                'application/x-www-form-urlencoded;charset=UTF-8'
+            ),
+            'body' => array( 'grant_type' => 'client_credentials' )
+        );
+
+        $response = wp_remote_post('https://api.twitter.com/oauth2/token', $args);
+        if (is_wp_error($response)) 
+            return false; // Something went wrong
+
+        $keys = json_decode(wp_remote_retrieve_body($response));
+
+        if ($keys) {
+            $option_value = array(
+                'token' => $keys->access_token,
+                'key' => $key,
+                'secret' => $secret
+            );
+            update_option($option, $option_value);
+            return $keys->access_token;
         }
-        $this->_out(new Upfront_JsonResponse_Error('Google count not found'));
+
+        return false;
+    }
+
+    protected static function get_url_last_part($url){
+        $keys = parse_url($url); // parse the url
+        return end(explode("/", $keys['path'])); // splitting the path
     }
 
 }

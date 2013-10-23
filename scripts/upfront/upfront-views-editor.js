@@ -3333,7 +3333,7 @@ define(_template_files, function () {
 			this.panel.settings.invoke('conceal');
 			this.$el.addClass('upfront-settings-item-tab-active');
 			if ( this.radio )
-				this.$el.find('.upfront-settings-item-tab input').prop('checked', true);
+				this.$el.find('.upfront-settings-item-tab input').prop('checked', true).trigger('change');
 		},
 		panel_rendered: function () {
 			if ( this.radio && (this.get_property_value() == this.get_value()) )
