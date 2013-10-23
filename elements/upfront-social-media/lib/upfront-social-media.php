@@ -69,7 +69,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
             'google' => 'Subscribers'
         );
         $output = '';
-        $tpl = '<div data-id="upfront-icon-%s" class="ufront-%s-count-box upfront-social-icon">
+        $tpl = '<div data-id="upfront-icon-%s" class="ufront-%s-count-box upfront-social-icon usocial_count_wrapper">
                     <a class="upfront-fan-counts %s-count" href="%s">
                     %s
                     <span class="upfront-fan-count"> <strong>%s</strong> %s</span></a>

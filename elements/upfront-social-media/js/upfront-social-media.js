@@ -317,7 +317,7 @@
                     count = me.getCount(s)
                 ;
 
-                markup += '<div data-id="upfront-icon-' + s.id + '" class="ufront-' + s.id + '-count-box upfront-social-icon">' +
+                markup += '<div data-id="upfront-icon-' + s.id + '" class="ufront-' + s.id + '-count-box upfront-social-icon usocial_count_wrapper">' +
                             '<a class="upfront-fan-counts ' + s.id + '-count" href="'+ s.url +'">'+ 
                             alert +
                             ' <span class="upfront-fan-count"><strong class="usocial_count">'+ count +'</strong> ' + words[s.id] + '</span></a>' +
