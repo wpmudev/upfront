@@ -44,7 +44,8 @@ define(_template_files, function () {
 
 		_Upfront_SingularEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
 			initialize: function () {
-				this.model.bind("change", this.render, this);
+				// this.model.bind("change", this.render, this);
+				this.listenTo(this.model, "change", this.render);
 				if (this.init) this.init();
 			},
 			update_background: function () {
@@ -157,14 +158,12 @@ define(_template_files, function () {
 
 		_Upfront_PluralEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
 			initialize: function () {
-				this.model.bind("change", this.render, this);
-				this.model.bind("add", this.render, this);
-				this.model.bind("remove", this.render, this);
-				/* @TODO change event binding to listenTo (in WP 3.6)
+				// this.model.bind("change", this.render, this);
+				// this.model.bind("add", this.render, this);
+				// this.model.bind("remove", this.render, this);
 				this.listenTo(this.model, 'change', this.render);
 				this.listenTo(this.model, 'add', this.render);
 				this.listenTo(this.model, 'remove', this.render);
-				*/
 
 				if (this.init) this.init();
 			}
@@ -217,14 +216,12 @@ define(_template_files, function () {
 				"dblclick": "on_edit"
 			},
 			initialize: function () {
-				this.model.get("properties").bind("change", this.render, this);
-				this.model.get("properties").bind("add", this.render, this);
-				this.model.get("properties").bind("remove", this.render, this);
-				/* @TODO change event binding to listenTo (in WP 3.6)
+				// this.model.get("properties").bind("change", this.render, this);
+				// this.model.get("properties").bind("add", this.render, this);
+				// this.model.get("properties").bind("remove", this.render, this);
 				this.listenTo(this.model.get("properties"), 'change', this.render);
 				this.listenTo(this.model.get("properties"), 'add', this.render);
 				this.listenTo(this.model.get("properties"), 'remove', this.render);
-				*/
 				if (this.init) this.init();
 			},
 			render: function () {
@@ -352,7 +349,8 @@ define(_template_files, function () {
 						$el.append(local_view.el);
 						if ( ! Upfront.data.object_views[obj.cid] ){
 							local_view.bind("upfront:entity:activate", me.on_activate, me);
-							local_view.model.bind("remove", me.deactivate, me);
+							//local_view.model.bind("remove", me.deactivate, me);
+							local_view.listenTo(local_view.model, "remove", me.deactivate);
 							Upfront.data.object_views[obj.cid] = local_view;
 						}
 						else {
@@ -372,14 +370,12 @@ define(_template_files, function () {
 			},
 			initialize: function () {
 				var callback = this.update || this.render;
-				this.model.get("properties").bind("change", callback, this);
-				this.model.get("properties").bind("add", callback, this);
-				this.model.get("properties").bind("remove", callback, this);
-				/* @TODO change event binding to listenTo (in WP 3.6)
+				// this.model.get("properties").bind("change", callback, this);
+				// this.model.get("properties").bind("add", callback, this);
+				// this.model.get("properties").bind("remove", callback, this);
 				this.listenTo(this.model.get("properties"), 'change', callback);
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
-				*/
 
 				if (this.on_resize) {
 					this.on("upfront:entity:resize", this.on_resize, this);
@@ -422,11 +418,16 @@ define(_template_files, function () {
 				"class": "upfront-editable_entities_container"
 			},
 			init: function () {
-				this.model.unbind('add', this.render, this);
-				this.model.bind('add', this.on_add, this);
-				this.model.unbind('remove', this.render, this);
-				this.model.bind('remove', this.on_remove, this);
-				this.model.bind('reset', this.on_reset, this);
+				// this.model.unbind('add', this.render, this);
+				// this.model.bind('add', this.on_add, this);
+				// this.model.unbind('remove', this.render, this);
+				// this.model.bind('remove', this.on_remove, this);
+				// this.model.bind('reset', this.on_reset, this);
+				this.stopListening(this.model, 'add', this.render);
+				this.listenTo(this.model, 'add', this.on_add);
+				this.stopListening(this.model, 'remove', this.render);
+				this.listenTo(this.model, 'remove', this.on_remove)
+				this.listenTo(this.model, 'reset', this.on_reset);
 			},
 			on_entity_remove: function(e, view) {
 				Upfront.Events.trigger("entity:removed:before");
@@ -448,6 +449,7 @@ define(_template_files, function () {
 						}
 					}
 				}
+				view.remove();
 				this.model.remove(view.model);
 				Upfront.Events.trigger("entity:removed:after");
 			},
@@ -502,7 +504,8 @@ define(_template_files, function () {
 					}
 					if ( ! Upfront.data.module_views[module.cid] ){
 						local_view.bind("upfront:entity:activate", this.on_activate, this);
-						local_view.model.bind("remove", this.deactivate, this);
+						//local_view.model.bind("remove", this.deactivate, this);
+						local_view.listenTo(local_view.model, 'remove', this.deactivate);
 						Upfront.data.module_views[module.cid] = local_view;
 					}
 					else {
@@ -535,14 +538,12 @@ define(_template_files, function () {
 			},
 			init: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid;
-				this.model.get("properties").bind("change", this.update, this);
-				this.model.get("properties").bind("add", this.update, this);
-				this.model.get("properties").bind("remove", this.update, this);
-				/* @TODO change event binding to listenTo (in WP 3.6)
+				// this.model.get("properties").bind("change", this.update, this);
+				// this.model.get("properties").bind("add", this.update, this);
+				// this.model.get("properties").bind("remove", this.update, this);
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
-				*/
 				this.sub_model = [];
 				this.available_col = grid.size;
 				Upfront.Events.on("layout:render", this.fix_height, this);
@@ -608,20 +609,18 @@ define(_template_files, function () {
 			},
 			init: function () {
 				this.dispatcher.on("plural:propagate_activation", this.on_click, this);
-				this.model.get("properties").bind("change", this.update, this);
-				this.model.get("properties").bind("add", this.update, this);
-				this.model.get("properties").bind("remove", this.update, this);
-				this.model.get("modules").bind("change", this.on_module_update, this);
-				this.model.get("modules").bind("add", this.on_module_update, this);
-				this.model.get("modules").bind("remove", this.on_module_update, this);
-				/* @TODO change event binding to listenTo (in WP 3.6)
+				// this.model.get("properties").bind("change", this.update, this);
+				// this.model.get("properties").bind("add", this.update, this);
+				// this.model.get("properties").bind("remove", this.update, this);
+				// this.model.get("modules").bind("change", this.on_module_update, this);
+				// this.model.get("modules").bind("add", this.on_module_update, this);
+				// this.model.get("modules").bind("remove", this.on_module_update, this);
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
-				*/
 			},
 			on_click: function () {
 				this.trigger("activate_region", this);
@@ -727,10 +726,10 @@ define(_template_files, function () {
 				}
 			},
 			init: function () {
-				this.model.get("properties").bind("change", this.update, this);
-				//this.listenTo(this.model.get("properties"), 'change', this.update);
-				this.model.bind("remove", this.on_remove, this);
-				//this.listenTo(this.model, 'remove', this.on_remove);
+				// this.model.get("properties").bind("change", this.update, this);
+				this.listenTo(this.model.get("properties"), 'change', this.update);
+				// this.model.bind("remove", this.on_remove, this);
+				this.listenTo(this.model, 'remove', this.on_remove);
 			},
 			update: function () {
 				this.$el.attr('class', this.attributes().class);

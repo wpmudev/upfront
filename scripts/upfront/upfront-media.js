@@ -1111,7 +1111,7 @@
 						name = media.name || 'tmp'
 					;
 					new_media.set({post_title: name});
-					me.library_view.media_collection.add(new_media);
+					me.library_view.media_collection.add(new_media, {at: 0});
 					data.submit();
 					new_media.on("upload:abort", function () {
 						data.abort();
@@ -1296,7 +1296,7 @@
 				use_selection: function (e) {
 					e.preventDefault();
 					e.stopPropagation();
-					if ( this.model.length > 1 )
+					if ( this.model && this.model.length > 1 )
 						this.open_dialog();
 					else
 						Upfront.Popup.close(this.model);
@@ -1504,6 +1504,7 @@
 			} else {
 				this.model.each(function (model) {
 					var view = new MediaItem_View({model: model});
+					view.parent_view = me;
 					view.render();
 					me.$el.append(view.$el);
 				});
@@ -1592,19 +1593,25 @@
 				this.model.set({selected: !this.model.get("selected")});
 			},
 			upload_start: function (media) {
-				$(".upfront-media_item-editor").remove();
+				/*$(".upfront-media_item-editor").remove();
 				var editor = new MediaItem_EditorView({
 					model: this.model,
 					media: media
 				});
 				editor.render();
-				this.$el.find(".upfront-media_item-editor-container").append(editor.$el);
+				this.$el.find(".upfront-media_item-editor-container").append(editor.$el);*/
+				this.parent_view.$el.scrollTop(0);
+				this.$el.find('.thumbnail').append('<div class="upfront-media-progress-bar" />');
 			},
 			upload_progress: function (progress) {
 				Upfront.Util.log(_.template("{{post.post_title}} progress changed to {{progress}}", {post:this.model.toJSON(), progress:progress}));
+				this.$el.find('.upfront-media-progress-bar').css('width', progress+'%');
 			},
 			upload_finish: function () {
 				this.$el.find("img").replaceWith(this.model.get("thumbnail"));
+				this.$el.find('.upfront-media-progress-bar').remove();
+				this.model.set({selected: true});
+				Upfront.Events.trigger("media:item:selection_changed", this.model.collection);
 			}
 		});
 
@@ -1954,16 +1961,34 @@
 						data.image = size;
 					});
 				}
-				html += _.template(
+				if ( result.type == 'gallery' )
+					data.link = {
+						href: '#',
+						class: 'popup'
+					};
+				data.type = result.type;
+				/*html += _.template(
 					((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? Upfront.Media.Templates.embeddable : Upfront.Media.Templates.image),
 					data
-				);
+				);*/
+				html += _.template( (data.link ? Upfront.Media.Templates.image_link : Upfront.Media.Templates.image), data);
 			});
 			if (result && result.length && result.length > 1) {
-				html = _.template(
-					Upfront.Media.Templates.multiple,
-					{content: html}
-				);
+				if ( result.type == 'plain' )
+					html = _.template(
+						Upfront.Media.Templates.multiple,
+						{content: html}
+					);
+				else if ( result.type == 'gallery' )
+					html = _.template(
+						Upfront.Media.Templates.gallery,
+						{content: html}
+					);
+				else if ( result.type == 'slider' )
+					html = _.template(
+						Upfront.Media.Templates.slider,
+						{content: html}
+					);
 			}
 			return html;
 		},
@@ -1979,12 +2004,12 @@
 Upfront.Media = {
 	Manager: new ContentEditorUploader(),
 	Templates: {
-		image: '<p class="upfront-inserted_image-wrapper"><img src="{{image.src}}" title="{{post_title}}" alt="{{post_title}}" height="{{image.height}}" width="{{image.width}}" /></p>',
+		image: '<p class="upfront-inserted_image-wrapper upfront-inserted_image-{{type}}"><img src="{{image.src}}" title="{{post_title}}" alt="{{post_title}}" height="{{image.height}}" width="{{image.width}}" /></p>',
+		image_link: '<p class="upfront-inserted_image-wrapper upfront-inserted_image-{{type}}"><a href="{{link.href}}" class="{{link.class}}"><img src="{{image.src}}" title="{{post_title}}" alt="{{post_title}}" height="{{image.height}}" width="{{image.width}}" /></a></p>',
 		embeddable: '<div>{{post_content}}<br />{{post_title}}</div>',
-		//gallery: '<div class="gallery"><h1>Gallery</h1>{{content}}</div>',
 		gallery: '[upfront-gallery]{{content}}[/upfront-gallery]',
-		slider: '<div class="slider"><h1>Slider</h1>{{content}}</div>',
-		multiple: '<div class="upfront-inserted_images-container">{{content}}</div>'
+		slider: '[upfront-slider]{{content}}[/upfront-slider]',
+		multiple: '{{content}}'
 	},
 	Transformations: {
 		_transformations: _([]),

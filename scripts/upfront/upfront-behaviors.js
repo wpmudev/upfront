@@ -7,7 +7,7 @@ var LayoutEditor = {
 		});
 		var app = this,
 			models = [],
-			region = app.layout.get("regions").active_region
+			region = app.layout.get("regions").active_region,
 			collection = (region ? region.get("modules") : false)
 		;
 		if (collection) $(".upfront-region").selectable({
@@ -373,7 +373,7 @@ var GridEditor = {
 	 */
 	get_el: function ($el){
 		var ed = Upfront.Behaviors.GridEditor;
-		return _.find(ed.els, function(each){ return ( $el.get(0) == each.$el.get(0) ); })
+		return _.find(ed.els, function(each){ return ( $el.get(0) == each.$el.get(0) ); });
 	},
 	
 	/**
@@ -383,7 +383,7 @@ var GridEditor = {
 	 */
 	get_wrap: function ($wrap){
 		var ed = Upfront.Behaviors.GridEditor;
-		return _.find(ed.wraps, function(each){ return ( $wrap.get(0) == each.$el.get(0) ); })
+		return _.find(ed.wraps, function(each){ return ( $wrap.get(0) == each.$el.get(0) ); });
 	},
 	
 	/**
@@ -393,7 +393,7 @@ var GridEditor = {
 	 */
 	get_region: function ($region){
 		var ed = Upfront.Behaviors.GridEditor;
-		return _.find(ed.regions, function(each){ return ( $region.get(0) == each.$el.get(0) ); })
+		return _.find(ed.regions, function(each){ return ( $region.get(0) == each.$el.get(0) ); });
 	},
 	
 	/**
@@ -403,7 +403,7 @@ var GridEditor = {
 	 */
 	get_drop: function ($drop){
 		var ed = Upfront.Behaviors.GridEditor;
-		return _.find(ed.drops, function(each){ return ( $drop.get(0) == each.$el.get(0) ); })
+		return _.find(ed.drops, function(each){ return ( $drop.get(0) == each.$el.get(0) ); });
 	},
 	
 	/**
@@ -414,7 +414,7 @@ var GridEditor = {
 	 */
 	get_class_num: function (from, class_name){
 		var text = _.isString(from) ? from : from.attr('class'),
-			rx = new RegExp('\\b' + class_name + '(\\d+)')
+			rx = new RegExp('\\b' + class_name + '(\\d+)'),
 			val = text.match(rx);
 		return ( val && val[1] ) ? parseInt(val[1]) : 0;
 	},
@@ -468,7 +468,7 @@ var GridEditor = {
 					var object_model = module.get('objects').get_by_element_id($el.attr('id'));
 					if ( object_model )
 						model = object_model;
-				})
+				});
 			}
 		});
 		if ( model ){
@@ -602,7 +602,8 @@ var GridEditor = {
 					wrap = ed.get_wrap($wrap),
 					wrap_clr = ( wrap.grid.left == region.grid.left ),
 					is_wrap_me = ( me_wrap && wrap._id == me_wrap._id ),
-					wrap_me_only = ( is_wrap_me && $wrap.find('.upfront-module').size() == 1 ),
+					wrap_only = ( $wrap.find('.upfront-module').size() == 1 ),
+					wrap_me_only = ( is_wrap_me && wrap_only ),
 					$prev_wrap = $wraps[index-1] ? $wraps.eq(index-1) : false,
 					prev_wrap = $prev_wrap ? ed.get_wrap($prev_wrap) : false,
 					prev_wrap_clr = ( prev_wrap && prev_wrap.grid.left == region.grid.left ),
@@ -621,8 +622,8 @@ var GridEditor = {
 					next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false;
 				if ( 
 					( wrap.col >= min_col ) && (
-					( next_wrap && !next_wrap_clr /*&& !is_next_me*/ && ( $next_wrap.find('.upfront-module').size() > 1 || !is_next_me ) ) || 
-					( prev_wrap && !wrap_clr /*&& !is_prev_me*/ && ( $prev_wrap.find('.upfront-module').size() > 1 || !is_prev_me ) ) || 
+					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find('.upfront-module').size() > 1 || !is_next_me ) ) || 
+					( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find('.upfront-module').size() > 1 || !is_prev_me ) ) || 
 					( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) )
 				){
 					var current_el_top = wrap.grid.top;
@@ -727,12 +728,13 @@ var GridEditor = {
 					current_full_top = bottom+1;
 				}
 				// Check to see if the right side on wrapper has enough column to add droppable
-				if ( ( !next_wrap || next_wrap_clr ) && ( ( !is_wrap_me && region.grid.right-wrap.grid.right > min_col ) || ( is_wrap_me && !wrap_clr && wrap_me_only ) ) ){
+				if ( ( !next_wrap || next_wrap_clr ) && ( ( !is_wrap_me && region.grid.right-wrap.grid.right > min_col ) || ( wrap_me_only && !wrap_clr ) || ( prev_me_only && !wrap_clr && wrap_only ) ) ){
+					var is_switch = ( prev_me_only && !wrap_clr && wrap_only );
 					ed.drops.push({
 						_id: ed._new_id(),
 						top: wrap.grid.top,
-						bottom: ( is_wrap_me ? ( next_wrap_el_top ? next_wrap_el_top.grid.top-1 : region.grid.bottom ) : wrap.grid.bottom ),
-						left: ( is_wrap_me ? wrap.grid.left : wrap.grid.right+1 ),
+						bottom: ( is_wrap_me || is_switch ? ( next_wrap_el_top ? next_wrap_el_top.grid.top-1 : region.grid.bottom ) : wrap.grid.bottom ),
+						left: ( is_wrap_me ? wrap.grid.left : ( is_switch ? wrap_el_left.grid.left : wrap.grid.right+1 ) ),
 						right: region.grid.right,
 						priority: null,
 						priority_index: 8,
@@ -742,12 +744,12 @@ var GridEditor = {
 						is_me: is_wrap_me,
 						is_clear: false,
 						is_use: false,
-						is_switch: false
+						is_switch: is_switch
 					});
 				}
 				// Now check the left side, finding spaces between wrapper and inner modules
-				if ( ( wrap_el_left.grid.left-wrap.grid.left >= min_col && (!is_prev_me || prev_wrap_clr) && !is_wrap_me ) || ( is_wrap_me && next_wrap && !next_wrap_clr && wrap_me_only ) || ( is_next_me && !next_wrap_clr && next_me_only ) ){
-					var is_switch = ( is_next_me && !next_wrap_clr && next_me_only ),
+				if ( ( wrap_el_left.grid.left-wrap.grid.left >= min_col && (!is_prev_me || wrap_clr) && !is_wrap_me ) || ( wrap_me_only && next_wrap && !next_wrap_clr ) || ( next_me_only && !next_wrap_clr && wrap_only ) ){
+					var is_switch = ( next_me_only && !next_wrap_clr && wrap_only ),
 						right = wrap_el_left.grid.left > wrap.grid.left+col ? wrap_el_left.grid.left-1 : wrap.grid.left+col-1;
 						bottom = next_clr_el_top ? next_clr_el_top.grid.top-1 : region.grid.bottom;
 					ed.drops.push({
@@ -1034,7 +1036,7 @@ var GridEditor = {
 				return;
 			_.each(ed.drops, function(each){
 				each.is_use = ( each._id == drop._id );
-			})
+			});
 			ed.drop = drop;
 			
 			if ( ed.show_debug_element ){
@@ -1043,7 +1045,7 @@ var GridEditor = {
 			}
 			$('.upfront-drop').removeClass('upfront-drop-use').animate({height: 0}, 300, function(){ $(this).remove(); });
 			_.each(ed.drops, function(each){
-				if ( each.type == 'side-before' && each.is_switch )
+				if ( each.is_switch )
 					each.insert[1].animate({left: 0}, 300);
 			});
 			var $drop = $('<div class="upfront-drop upfront-drop-use"></div>'),
@@ -1059,10 +1061,12 @@ var GridEditor = {
 					drop.insert[1].append($drop);
 					break;
 			}
-			if ( ( drop.type == 'full' || drop.type == 'inside' || drop.type == 'side-after' ) && !drop.is_me )
+			if ( ( drop.type == 'full' || drop.type == 'inside' || ( drop.type == 'side-after' && !drop.is_switch ) ) && !drop.is_me )
 				$drop.css('width', (drop.right-drop.left+1)*ed.col_size).css('max-height', ed.max_row*ed.baseline).animate({height: me.height}, 300);
-			else if ( drop.type == 'side-before' && drop.is_switch )
+			else if (  drop.type == 'side-before' && drop.is_switch )
 				drop.insert[1].animate({left: me.width}, 300);
+			else if (  drop.type == 'side-after' && drop.is_switch )
+				drop.insert[1].animate({left: me.width*-1}, 300);
 			
 		}
 		
@@ -1210,7 +1214,7 @@ var GridEditor = {
 							return {
 								area: area,
 								region: each
-							}
+							};
 						}),
 						max_region = _.max(regions_area, function(each){ return each.area; });
 					
@@ -1234,7 +1238,7 @@ var GridEditor = {
 							return {
 								area: area,
 								drop: each
-							}
+							};
 						}).filter(function(each){
 							if ( each !== false )
 								return true;
@@ -1348,9 +1352,10 @@ var GridEditor = {
 					regions = app.layout.get("regions");
 					region = regions.get_by_name( $('.upfront-region-drag-active').data('name') ),
 					wrappers = region.get('wrappers'),
-					move_region = !($me.closest('.upfront-region').hasClass('upfront-region-drag-active')),
+					move_region = ( me.region != region.get('name') ),
 					region_el = ed.get_region($('.upfront-region-drag-active'));
 				
+				clearTimeout(ed._t); // clear remaining timeout immediately
 				
 				if ( ed.drop.is_me ){
 					update_margin();
@@ -1405,7 +1410,7 @@ var GridEditor = {
 				function update_margin () {
 					var margin_data = $me.data('margin'),
 						aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
-						move_limit = ed.get_move_limit(aff_els, ed.containment)
+						move_limit = ed.get_move_limit(aff_els, ed.containment),
 						recalc_margin_x = false;
 					
 					if ( ed.drop.is_me ){
@@ -1429,7 +1434,7 @@ var GridEditor = {
 						_.each(ed.wraps, function(each){
 							each.$el.data('clear', (each.$el.hasClass('clr') ? 'clear' : 'none'));
 						});
-						if ( wrap )
+						if ( wrap && !ed.drop.is_switch )
 							ed.adjust_affected_right(wrap, aff_els.right, [me], wrap.grid.left-1);
 					//	else
 					//		ed.adjust_els_right(aff_els.right, me.grid.left-1);
@@ -1438,19 +1443,32 @@ var GridEditor = {
 						margin_data.current.right = 0;
 						margin_data.current.bottom = 0;
 						if ( ed.drop.type == 'side-before' ){
-							var adjusted = false;
 							var $nx_wrap = ed.drop.insert[1];
 							if ( $nx_wrap.size() > 0 ){
 								var nx_wrap = ed.get_wrap($nx_wrap),
 									need_adj = _.filter(ed.get_wrap_els(nx_wrap), function(each){
-										return ( me.$el.get(0) != each.$el.get(0) && each.outer_grid.left == nx_wrap.grid.left )
+										return ( me.$el.get(0) != each.$el.get(0) && each.outer_grid.left == nx_wrap.grid.left );
 									}),
 									need_adj_min = ed.get_wrap_el_min(nx_wrap);
-								$nx_wrap.css('left', '');
 								if ( ! $nx_wrap.hasClass('clr') || ed.drop.is_clear ){
 									ed.adjust_els_right(need_adj, nx_wrap.grid.left+drop_col+drop_left-1);
 									$nx_wrap.data('clear', 'none');
 								}
+								if ( ed.drop.is_switch ){
+									ed.adjust_els_right(need_adj, nx_wrap.grid.left+drop_left-1);
+									$nx_wrap.css('left', '');
+								}
+							}
+						}
+						else if ( ed.drop.type == 'side-after' ){
+							var $pv_wrap = ed.drop.insert[1];
+							if ( $pv_wrap.size() > 0 && ed.drop.is_switch ){
+								var pv_wrap = ed.get_wrap($pv_wrap),
+									need_adj = _.filter(ed.get_wrap_els(pv_wrap), function(each){
+										return ( me.$el.get(0) != each.$el.get(0) && each.outer_grid.left == pv_wrap.grid.left );
+									});
+								ed.adjust_els_right(need_adj, pv_wrap.grid.left-(me.grid.left-me.outer_grid.left)-1);
+								$pv_wrap.css('left', '');
 							}
 						}
 						else if ( ed.drop.type == 'inside' ) {
@@ -1525,7 +1543,7 @@ var GridEditor = {
 								each_model = modules.get_by_element_id(element_id);
 							if ( !each_model && element_id == $me.attr('id') )
 								models.push(model);
-							else
+							else if ( each_model )
 								models.push(each_model);
 						});
 						modules.reset(models);
@@ -1567,25 +1585,103 @@ var GridEditor = {
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			index = modules.indexOf(module),
-			next_module = modules.at(index+1)
+			prev_module = modules.at(index-1),
+			next_module = modules.at(index+1),
+			next_module_class, next_module_left,
+			prev_wrapper, prev_wrapper_class,
+			next_wrapper, next_wrapper_class, next_wrapper_col
 		;
-		if (!next_module) return false;
-		var
-			next_wrapper = wrappers.get_by_wrapper_id(next_module.get_wrapper_id()),
-			module_class = module.get_property_value_by_name('class'),
+		if (!next_module && !prev_module) return false;
+		var module_class = module.get_property_value_by_name('class'),
 			wrapper_class = wrapper.get_property_value_by_name('class'),
 			wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
-			next_module_class = next_module.get_property_value_by_name('class'),
-			next_module_left = ed.get_class_num(next_module_class, ed.grid.left_margin_class),
-			next_wrapper_class = next_wrapper.get_property_value_by_name('class'),
+			i = 0,
+			split_prev = false,
+			split_next = false,
+			adjust_next = false,
+			prev_modules = [],
+			next_modules = [];
+		if ( next_module ){
+			next_module_class = next_module.get_property_value_by_name('class');
+			next_module_left = ed.get_class_num(next_module_class, ed.grid.left_margin_class);
+			next_wrapper = wrappers.get_by_wrapper_id(next_module.get_wrapper_id());
+			next_wrapper_class = next_wrapper.get_property_value_by_name('class');
 			next_wrapper_col = ed.get_class_num(next_wrapper_class, ed.grid.class);
-		if ( next_wrapper_class.match(/clr/g) )
-			return;
-		next_wrapper.replace_class(
-			ed.grid.class + (next_wrapper_col+wrapper_col) +
-			( wrapper_class.match(/clr/g) ? ' clr' : '' )
-		);
-		next_module.replace_class(ed.grid.left_margin_class + (next_module_left+wrapper_col));
+			if ( !next_wrapper_class.match(/clr/g) ){
+				next_wrapper.replace_class(
+					ed.grid.class + (next_wrapper_col+wrapper_col) +
+					( wrapper_class.match(/clr/g) ? ' clr' : '' )
+				);
+				adjust_next = true;
+				split_next = true;
+			}
+		}
+		if ( prev_module ) {
+			prev_wrapper = wrappers.get_by_wrapper_id(prev_module.get_wrapper_id());
+			prev_wrapper_class = prev_wrapper.get_property_value_by_name('class');
+			if ( prev_wrapper_class.match(/clr/g) && !split_next )
+				split_prev = true;
+		}
+		while ( modules.at(i) ){
+			var this_module = modules.at(i),
+				this_module_class = this_module.get_property_value_by_name('class'),
+				this_module_left = ed.get_class_num(this_module_class, ed.grid.left_margin_class);
+			if ( prev_wrapper && this_module.get_wrapper_id() == prev_wrapper.get_wrapper_id() ) {
+				prev_modules.push(this_module);
+				i++;
+				continue;
+			}
+			if ( next_wrapper && this_module.get_wrapper_id() == next_wrapper.get_wrapper_id() ) {
+				next_modules.push(this_module);
+				i++;
+				continue;
+			}
+			if ( i > index ) {
+				var this_wrapper = wrappers.get_by_wrapper_id(this_module.get_wrapper_id()),
+					this_wrapper_class = this_wrapper.get_property_value_by_name('class');
+				if ( !this_wrapper_class.match(/clr/g) )
+					split_next = false;
+				break;
+			}
+			i++;
+		}
+		if ( adjust_next ){
+			_.each(next_modules, function (each_module, id) {
+				var each_module_class = each_module.get_property_value_by_name('class'),
+					each_module_left = ed.get_class_num(each_module_class, ed.grid.left_margin_class);
+				each_module.replace_class(ed.grid.left_margin_class + (each_module_left+wrapper_col));
+			});
+		}
+		if ( split_prev || split_next ){
+			var current_wrapper = false;
+			_.each(( split_prev ? prev_modules : next_modules ), function (each_module, id) {
+				var each_module_class = each_module.get_property_value_by_name('class'),
+					each_module_left = ed.get_class_num(each_module_class, ed.grid.left_margin_class),
+					each_module_col = ed.get_class_num(each_module_class, ed.grid.class),
+					each_module_view = Upfront.data.module_views[each_module.cid],
+					each_wrapper = wrappers.get_by_wrapper_id(each_module.get_wrapper_id()),
+					each_wrapper_view = Upfront.data.wrapper_views[each_wrapper.cid],
+					current_wrapper_view = current_wrapper ? Upfront.data.wrapper_views[current_wrapper.cid] : each_wrapper_view;
+				if ( id > 0 ){
+					var wrapper_id = Upfront.Util.get_unique_id("wrapper");
+						wrap_model = new Upfront.Models.Wrapper({
+							"name": "",
+							"properties": [
+								{"name": "wrapper_id", "value": wrapper_id},
+								{"name": "class", "value": ed.grid.class+(each_module_left+each_module_col) + ' clr'}
+							]
+						}),
+						wrap_view = new Upfront.Views.Wrapper({model: wrap_model});
+					wrappers.add(wrap_model);
+					wrap_view.render();
+					wrap_view.$el.append(each_module_view.$el);
+					current_wrapper_view.$el.after(wrap_view.$el);
+					Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
+					each_module.set_property('wrapper_id', wrapper_id, true);
+					current_wrapper = wrap_model;
+				}
+			});
+		}
 	},
 	
 	

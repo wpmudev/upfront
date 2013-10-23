@@ -157,6 +157,9 @@ var LayoutEditor = new (Subapplication.extend({
 			});
 			app.loading.render();
 			$('body').append(app.loading.$el)
+			
+			// Trigger this to indicate that Upfront stuff is now available, useful for theme stuff that want to interact with Upfront
+			$(document).trigger('upfront_ready');
 
 			require(Upfront.Settings.LayoutEditor.Requirements.entities, function (objects) {
 				_.extend(Upfront.Objects, objects);

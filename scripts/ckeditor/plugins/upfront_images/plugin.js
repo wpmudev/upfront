@@ -2,13 +2,14 @@
 
 var Plugin = {
 	init: function (editor) {
-		/*
+		editor.addCommand('upfront_images_gallery_to_html', Gallery.to_html);
 		editor.addCommand('upfront_images_slider_to_html', Slider.to_html);
+		Upfront.Media.Transformations.add(Gallery.from_html);
 		Upfront.Media.Transformations.add(Slider.from_html);
 		editor.on('insertHtml', function (e) {
+			editor.execCommand("upfront_images_gallery_to_html", e);
 			editor.execCommand("upfront_images_slider_to_html", e);
 		});
-		*/
 		editor.on("focus", function (e) {
 			Image.create_dialog();
 			Image.bind_events(e.editor.name);
@@ -17,6 +18,7 @@ var Plugin = {
 			Image.bind_events(e.editor.name);
 		});
 		editor.on("destroy", function (e) {
+			e.editor.fire('change');
 			Image.unbind_events(e.editor.name);
 			Image.remove_dialog(true, true);
 		});
@@ -72,7 +74,8 @@ var Image = {
 			'<div class="upfront-image-actions">' +
 				'<div class="upfront-image-action-change upfront-icon upfront-icon-image-select">Change Image</div>' +
 				'<div class="upfront-image-action-details upfront-icon upfront-icon-image-detail">Image Details</div>' +
-			'</div>'
+			'</div>' + 
+			'<div class="upfront-image-delete upfront-icon-button upfront-icon-button-delete"></div>'
 		);
 		$('body').append($dialog);
 		$dialog
@@ -83,6 +86,8 @@ var Image = {
 
 			.find(".upfront-image-action-change").on("click", this, this.change_image).end()
 			.find(".upfront-image-action-details").on("click", this, this.Details.toggle).end()
+			
+			.find(".upfront-image-delete").on("click", this, this.delete_image).end()
 		;
 		$dialog.hide();
 	},
@@ -103,6 +108,10 @@ var Image = {
 	show_dialog: function ($wrap) {
 		var $dialog = $("#upfront-image-details");
 		$dialog.data('ref', $wrap.get(0));
+		if ( $wrap.hasClass('upfront-inserted_image-slider') || $wrap.hasClass('upfront-inserted_image-gallery') )
+			$dialog.addClass('no-orientation');
+		else
+			$dialog.removeClass('no-orientation');
 		
 		var off = $wrap.offset(),
 			height = $wrap.outerHeight(),
@@ -121,15 +130,23 @@ var Image = {
 			selection = e.data.selection,
 			elements = e.data.path.elements,
 			last_element = e.data.path.lastElement,
-			element;
+			element, wrapper_element;
 		_.each(elements, function(el){
 			if ( el.hasClass('upfront-inserted_image-wrapper') )
 				element = el;
+			if ( el.hasClass('upfront-inline_post-slider') || el.hasClass('upfront-inline_post-gallery') )
+				wrapper_element = el;
 		});
-		if ( element ){
+		if ( wrapper_element ){
+			// Wrapper shouldn't editable, so move selection to next paragraph
+			select_next_p( wrapper_element );
+			if ( !$(wrapper_element.$).find('img').length )
+				wrapper_element.remove();
+		}
+		else if ( element ){
 			if ( !$(element.$).find('img').length ){
 				this.remove_dialog();
-				var p = new CKEDITOR.dom.element('p');
+				var p = CKEDITOR.dom.element.createFromHtml( '<p></p>' );
 				element.removeClass('upfront-inserted_image-wrapper');
 				element.replace(p);
 			}
@@ -137,16 +154,7 @@ var Image = {
 				// Modify the selection position if clicked within image and the dialog
 				if ( last_element.hasClass('upfront-inserted_image-wrapper') ){
 					// This select a editable text inside image paragraph, don't allow and select next element instead
-					var range = editor.createRange();
-					var next = last_element.getNext();
-					if ( !next || !next.is('p') ){
-						editor.insertHtml('<p></p>')
-						next = last_element.getNext();
-					}
-					if ( next ){
-						range.moveToElementEditablePosition(next);
-						editor.getSelection().selectRanges( [range] );
-					}
+					select_next_p( last_element );
 				}
 				else if ( !last_element.is('img') ){
 					// This select elements within dialog, select the image instead
@@ -174,9 +182,28 @@ var Image = {
 		else {
 			this.remove_dialog(true);
 		}
+		
+		function select_next_p (el) {
+			var range = editor.createRange();
+			var next = el.getNext(filter_p);
+			if ( !next ){
+				next = CKEDITOR.dom.element.createFromHtml( '<p></p>' );
+				next.insertAfter(el);
+			}
+			if ( next ){
+				range.moveToElementEditablePosition(next);
+				editor.getSelection().selectRanges( [range] );
+			}
+		}
+		function filter_p (node) {
+			return node.type == CKEDITOR.NODE_ELEMENT && node.is('p');
+		}
+	},
+	get_target: function (target){
+		return $($(target).closest("#upfront-image-details").data('ref'));
 	},
 	change_image: function (e) {
-		var $img = $(e.target).closest(e.data.selector);
+		var $img = e.data.get_target(e.target);
 		Upfront.Media.Manager.open({
 			multiple_selection: false,
 			button_text: "Change image"
@@ -189,6 +216,20 @@ var Image = {
 		});
 		return false;
 	},
+	delete_image: function (e) {
+		var $img = e.data.get_target(e.target);
+		var $wrapper = $img.parent();
+		var editor = CKEDITOR.instances[e.data.instance];
+		if ( ( $wrapper.hasClass('upfront-inline_post-slider') || $wrapper.hasClass('upfront-inline_post-gallery') ) && $wrapper.find('img') == 1 )
+			$wrapper.remove();
+		else
+			$img.remove();
+		if ( $wrapper.hasClass('upfront-inline_post-slider') )
+			Slider.reset_nav($wrapper.get(0));
+		editor.fire('change');
+		editor.focus();
+		return false;
+	},
 	Align: {
 		_apply: function ($img, data) {
 			data = $.extend({
@@ -198,48 +239,41 @@ var Image = {
 			}, data);
 			$img.css(data);
 		},
-		_get_target: function (e){
-			return $($(e.target).closest("#upfront-image-details").data('ref'));
-		},
 		left: function (e) {
-			var $wrap = e.data.Align._get_target(e),
+			var $wrap = e.data.get_target(e.target),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {float: "left"});
 			e.data.Align._apply($img, {});
-			e.data.remove_dialog();
-			CKEDITOR.instances[e.data.instance].fire('change');
+			e.data.show_dialog($wrap);
 			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'left');
 			return false;
 		},
 		center: function (e) {
-			var $wrap = e.data.Align._get_target(e),
+			var $wrap = e.data.get_target(e.target),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {
 				"text-align": "center"
 			});
 			e.data.Align._apply($img, {});
-			e.data.remove_dialog();
-			CKEDITOR.instances[e.data.instance].fire('change');
+			e.data.show_dialog($wrap);
 			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'center');
 			return false;
 		},
 		right: function (e) {
-			var $wrap = e.data.Align._get_target(e),
+			var $wrap = e.data.get_target(e.target),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {float: "right"});
 			e.data.Align._apply($img, {});
-			e.data.remove_dialog();
-			CKEDITOR.instances[e.data.instance].fire('change');
+			e.data.show_dialog($wrap);
 			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'right');
 			return false;
 		},
 		full: function (e) {
-			var $wrap = e.data.Align._get_target(e),
+			var $wrap = e.data.get_target(e.target),
 				$img = $wrap.find('img');
 			e.data.Align._apply($wrap, {});
 			//e.data.Align._apply($img, {width: "100%"});
-			e.data.remove_dialog();
-			CKEDITOR.instances[e.data.instance].fire('change');
+			e.data.show_dialog($wrap);
 			Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'full');
 			return false;
 		}
@@ -254,7 +288,7 @@ var Image = {
 			return false;
 		},
 		open: function (e) {
-			var $wrapper = $(e.target).closest(e.data.selector),
+			var $wrapper = e.data.get_target(e.target),
 				$img = $wrapper.find("img"),
 				$dialog = $("#upfront-image-details"),
 				$button = $dialog.find('.upfront-image-action-details'),
@@ -308,7 +342,7 @@ var Image = {
 		apply_details: function (e) {
 			var $dialog = $("#upfront-image-details"),
 				$details = $("#upfront-image-details-image_details"),
-				$wrapper = $dialog.closest(e.data.selector),
+				$wrapper = $($dialog.data('ref')),
 				$img = $wrapper.find("img"),
 				$old_link = $wrapper.find("a"),
 			// Data changes to apply
@@ -346,13 +380,13 @@ var Image = {
 	}
 };
 
-var Slider = {
+var Gallery = {
 	to_html: {
 		exec: function (editor, e) {
 			var content = e.data.dataValue,
 				edited = content.replace(
 					/\[upfront-gallery\](.*?)\[\/upfront-gallery\]/,
-					'<div class="upfront-inline_post-gallery"><h1>Gallery</h1>$1</div>'
+					'<div class="upfront-inline_post-gallery clearfix">$1</div>'
 				)
 			;
 			e.data.dataValue = edited;
@@ -368,9 +402,53 @@ var Slider = {
 			var $me = $(this),
 				gallery = ''
 			;
-			$me.find("h1").remove();
 			gallery = $me.html();
 			$me.replaceWith('[upfront-gallery]' + gallery + '[/upfront-gallery]');
+		});
+		return $c.html();
+	}
+};
+
+var Slider = {
+	to_html: {
+		exec: function (editor, e) {
+			var content = e.data.dataValue,
+				edited = content.replace(
+					/\[upfront-slider\](.*?)\[\/upfront-slider\]/,
+					'<div class="upfront-inline_post-slider clearfix">$1</div>'
+				)
+			;
+			e.data.dataValue = Slider.reset_nav(edited, true);
+		}
+	},
+	reset_nav: function (slider, ret) {
+		var $slider = $(slider),
+			$items = $slider.find('.upfront-inserted_image-wrapper'),
+			$nav = $('<div class="slider-nav-wrapper" contenteditable="false" />');
+		if ( $slider.hasClass('upfront-inline_post-slider') ){
+			$slider.find('.slider-nav-wrapper').remove();
+			$items.each(function(index){
+				$nav.append('<i href="#" class="slider-nav" data-slider-index="' + index + '">'+index+'</i>');
+			});
+			$slider.append($nav);
+		}
+		if ( ret ){
+			var $c = $("<div />").append($slider);
+			return $c.html();
+		}
+	},
+	from_html: function (content) {
+		var $c = $("<div />").append(content),
+			$repl = $c.find(".upfront-inline_post-slider")
+		;
+		if (!$repl.length) return content;
+
+		$repl.each(function () {
+			var $me = $(this),
+				slider = ''
+			;
+			slider = $me.html();
+			$me.replaceWith('[upfront-slider]' + slider + '[/upfront-slider]');
 		});
 		return $c.html();
 	}

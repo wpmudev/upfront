@@ -3964,6 +3964,14 @@ box-shadow: inset 0 2px 0 0 #fff;
 	margin: auto;
 	max-height: 75px;
 }
+.upfront-media_manager-post_image li.upfront-media_item .upfront-media-progress-bar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	height: 3px;
+	background: rgb(31, 205, 143);
+}
 .upfront-media_manager-post_image li.upfront-media_item .title {
 	display: block;
 	color: #5f7f99;
@@ -4811,9 +4819,6 @@ License: MIT
 }
 
 /* ----- Image Details dialog ----- */
-.upfront-inserted_image-wrapper {
-	display: block;
-}
 #upfront-image-details {
 	position: absolute;
 	background: rgba(22, 44, 64, .85);
@@ -4822,6 +4827,9 @@ License: MIT
 	line-height: 17px;
 	font-family: Verdana, sans-serif;
 	z-index: 9999;
+}
+.no-orientation .upfront-image-orientation {
+	display: none;
 }
 .upfront-image-orientation {
 	float: left;
@@ -4855,6 +4863,12 @@ License: MIT
 	padding: 24px 30px 0 0;
 	text-align: left;
 }
+.no-orientation .upfront-image-actions {
+	width: auto;
+	float: none;
+	padding: 14px 30px 0;
+	text-align: center;
+}
 .upfront-image-action-change,
 .upfront-image-action-details {
 	display: inline-block;
@@ -4883,6 +4897,11 @@ License: MIT
 .upfront-image-actions .upfront-icon:before {
 	margin: 7px 6px 0 0;
 }
+.upfront-image-delete {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
 
 #upfront-image-details-image_details {
 	min-width: 255px;
@@ -4896,6 +4915,7 @@ License: MIT
 	padding: 18px;
 	margin: 10px 0 0;
 	position: relative;
+	z-index: 19999;
 }
 #upfront-image-details-image_details:before,
 #upfront-image-details-image_details:after {

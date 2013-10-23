@@ -593,7 +593,7 @@ define(_template_files, function () {
 			// Add module to shadow region so it's available to add by dragging
 			var region = this.model.get("regions").get_by_name('shadow');
 			this.shadow_id = Upfront.Util.get_unique_id("shadow");
-			module.set("shadow", this.shadow_id);
+			module.set({"shadow": this.shadow_id}, {silent: true});
 			region.get("modules").add(module);
 		}
 	});
@@ -627,7 +627,7 @@ define(_template_files, function () {
 		},
 		reset_modules: function () {
 			var regions = this.model.get("regions"),
-				region = regions && regions.get_by_name('shadow')
+				region = regions ? regions.get_by_name('shadow') : false
 			;
 			if (!regions) return false;
 			if ( ! region ){
@@ -674,15 +674,16 @@ define(_template_files, function () {
 					clone_w = element.$el.outerWidth();
 				$shadow.css({
 					position: "absolute",
-					top: e.pageY-(off.top-pos.top)-(clone_h/2),
-					left: e.pageX-(off.left-pos.left)-(clone_w/2),
+					top: e.pageY-(off.top-pos.top)-(h/2)+(clone_h/2),
+					left: e.pageX-(off.left-pos.left)-(w/2)+(clone_w/2),
 					visibility: "hidden",
 					zIndex: -1
 				})
 				.trigger(e)
 				.on('dragstart', function (e, ui) {
 					element.$el.addClass('element-drag-active');
-					$clone.appendTo('body');
+					$('body').append('<div id="element-drag-wrapper" class="upfront-ui" />')
+					$clone.appendTo('#element-drag-wrapper');
 					$clone.addClass('element-dragging');
 					$clone.css({
 						position: "absolute",
@@ -700,6 +701,7 @@ define(_template_files, function () {
 				.on('dragstop', function (e, ui) {
 					element.$el.removeClass('element-drag-active');
 					$clone.remove();
+					$('#element-drag-wrapper').remove();
 				});
 			});
 		}
