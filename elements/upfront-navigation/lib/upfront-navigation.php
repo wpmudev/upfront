@@ -38,6 +38,27 @@ class Upfront_NavigationView extends Upfront_Object {
             wp_enqueue_script(array('jquery-ui-sortable'));
         endif;
     }
+
+    //Defaults for properties
+    public static function default_properties(){
+        return array(
+            'type' => 'NavigationModel',
+            'view_class' => 'NavigationView',
+            'class' => 'c22 upfront-navigation',
+            'has_settings' => 1,
+
+            'menu_id' => false,
+            'create_menu' => '',
+
+            'menu_style' => 'horizontal', // horizontal | vertical
+            'menu_alignment' => 'left', // left | center | right
+            'allow_sub_nav' => array('no'), // array('no') | array ('yes')
+            'allow_new_pages' => array('no'), // array('no') | array('yes')
+
+            'custom_url' => '',
+            'custom_label' => ''
+        );
+    }
 }
 
 /**
