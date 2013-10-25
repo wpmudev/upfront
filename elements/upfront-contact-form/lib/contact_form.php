@@ -4,28 +4,9 @@
  */
 class Upfront_UcontactView extends Upfront_Object {
 	var $error = false;
-
-	var $defaults = array(
-		'form_add_title' => false,
-		'form_title' => 'Contact form',
-		'form_name_label' => 'Your name:',
-		'form_email_label' => 'Your email:',
-		'show_subject' => false,
-		'form_subject_label' => 'Your subject:',
-		'form_default_subject' => 'Sent from the website',
-		'form_message_label' => 'Your message:',
-		'form_button_text' => 'Send',
-		'form_validate_when' => 'submit',
-		'form_label_position' => 'above',
-
-		'type' => "UcontactModel",
-		'view_class' => "UcontactView",
-		"class" => "c8 upfront-contact-form",
-		'has_settings' => 1
-	);
+	var $defaults = array();
 
 	function __construct($data) {
-		$this->defaults['form_email_to'] = get_option('admin_email');
 		$data['properties'] = $this->merge_default_properties($data);
 		parent::__construct($data);
 	}
@@ -39,7 +20,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		foreach($data['properties'] as $prop)
 			$flat[$prop['name']] = $prop['value'];
 
-		$flat = array_merge($this->defaults, $flat);
+		$flat = array_merge(self::default_properties(), $flat);
 
 		$properties = array();
 		foreach($flat as $name => $value)
@@ -90,10 +71,32 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public function add_js_defaults($data){
 		$data['ucontact'] = array(
-			'defaults' => $this->defaults,
+			'defaults' => self::default_properties(),
 			'template' => upfront_get_template_url('ucontact', upfront_element_url('templates/ucontact.html', dirname(__FILE__)))
 		);
 		return $data;
+	}
+
+	public static function default_properties(){
+		return array(
+			'form_add_title' => false,
+			'form_title' => 'Contact form',
+			'form_name_label' => 'Your name:',
+			'form_email_label' => 'Your email:',
+			'form_email_to' => get_option('admin_email'),
+			'show_subject' => false,
+			'form_subject_label' => 'Your subject:',
+			'form_default_subject' => 'Sent from the website',
+			'form_message_label' => 'Your message:',
+			'form_button_text' => 'Send',
+			'form_validate_when' => 'submit',
+			'form_label_position' => 'above',
+
+			'type' => "UcontactModel",
+			'view_class' => "UcontactView",
+			"class" => "c8 upfront-contact-form",
+			'has_settings' => 1
+		);
 	}
 
 	public static function add_styles_scripts () {
