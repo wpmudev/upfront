@@ -3,37 +3,6 @@
  * Image element for Upfront
  */
 class Upfront_UimageView extends Upfront_Object {
-	var $defaults = array(
-		'src' => false,
-		'srcFull' => false,
-		'srcOriginal' => false,
-		'image_title' => '',
-		'alternative_text' => '',
-		'when_clicked' => 'do_nothing',
-		'image_link' => '',
-		'include_image_caption' => false,
-		'image_caption' => '',
-		'caption_position' => 'below_image',
-		'caption_alignment' => 'top',
-		'caption_trigger' => 'always_show',
-		'image_status' => 'starting',
-		'size' =>  array('width' => '100%', 'height' => 'auto'),
-		'fullSize' => array('width' => 0, 'height' => 0),
-		'position' => array('top' => 0, 'left' => 0),
-		'element_size' => array('width' => '100%', 'height' => 250),
-		'rotation' => 0,
-		'color' => '#ffffff',
-		'background' => '#000000',
-		'image_id' => 0,
-		'align' => 'left',
-		'stretch' => false,
-		'quick_swap' => false,
-
-		'type' => 'UimageModel',
-		'view_class' => 'UimageView',
-		'has_settings' => 1,
-		'class' =>  'upfront-image'
-	);
 
 	function __construct($data) {
 		$data['properties'] = $this->merge_default_properties($data);
@@ -48,7 +17,7 @@ class Upfront_UimageView extends Upfront_Object {
 		foreach($data['properties'] as $prop)
 			$flat[$prop['name']] = $prop['value'];
 
-		$flat = array_merge($this->defaults, $flat);
+		$flat = array_merge(self::default_properties(), $flat);
 
 		$properties = array();
 		foreach($flat as $name => $value)
@@ -114,10 +83,44 @@ class Upfront_UimageView extends Upfront_Object {
 
 	public function add_js_defaults($data){
 		$data['uimage'] = array(
-			'defaults' => $this->defaults,
+			'defaults' => self::default_properties(),
 			'template' => upfront_get_template_url('uimage', upfront_element_url('tpl/image.html', dirname(__FILE__)))
 		);
 		return $data;
+	}
+
+	public static function default_properties(){
+		return array(
+			'src' => false,
+			'srcFull' => false,
+			'srcOriginal' => false,
+			'image_title' => '',
+			'alternative_text' => '',
+			'when_clicked' => 'do_nothing',
+			'image_link' => '',
+			'include_image_caption' => false,
+			'image_caption' => '',
+			'caption_position' => 'below_image',
+			'caption_alignment' => 'top',
+			'caption_trigger' => 'always_show',
+			'image_status' => 'starting',
+			'size' =>  array('width' => '100%', 'height' => 'auto'),
+			'fullSize' => array('width' => 0, 'height' => 0),
+			'position' => array('top' => 0, 'left' => 0),
+			'element_size' => array('width' => '100%', 'height' => 250),
+			'rotation' => 0,
+			'color' => '#ffffff',
+			'background' => '#000000',
+			'image_id' => 0,
+			'align' => 'center',
+			'stretch' => false,
+			'quick_swap' => false,
+
+			'type' => 'UimageModel',
+			'view_class' => 'UimageView',
+			'has_settings' => 1,
+			'class' =>  'upfront-image'
+		);
 	}
 
 	private function properties_to_array(){
