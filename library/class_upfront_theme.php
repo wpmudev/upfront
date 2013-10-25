@@ -91,6 +91,8 @@ class Upfront_Virtual_Region {
 	protected $current_wrapper_col = 0;
 	protected $current_module;
 	protected $grid;
+
+	public $errors = array();
 	
 	public function __construct ($properties = array()) {
 		$this->data = array(
@@ -198,6 +200,60 @@ class Upfront_Virtual_Region {
 		$this->_set_property('element_id', $object_id, $object_data);
 		$this->modules[$this->current_module]['objects'][] = $object_data;
 	}
-	
+
+	public function add_element($options){
+		if(!$options['object_class']){
+			$this->errors[] = "Tried to add an element without object_class";
+			return $this;
+		}
+		$element_defaults = array();
+
+		try{
+			$element_defaults = call_user_func($options['object_class'] . '::default_properties');
+		} catch (Exception $e) {
+			$this->errors[] = "Can't find the class {$options['object_class']} or its method default_properties";
+		}
+
+		$opts = array_merge($this->get_element_defaults($options), $options);
+		$element_opts = array_merge($element_defaults, $opts['options']);
+
+		$this->start_wrapper($opts['wrapper_slug'], $opts['new_line']);
+		$this->start_module(
+			array(
+				'width' => $opts['columns'],
+				'margin-top' => $opts['margin_top'],
+				'margin-left' => $opts['margin_left']
+			),
+			array(
+				'row' => $opts['rows'],
+				'class' => $opts['class'],
+				'element_id' => $opts['module_id']
+			)
+		);
+
+		$this->add_object($opts['object_slug'], $element_opts);
+		
+		$this->end_module();
+		$this->end_wrapper();
+	}
+
+	private function get_element_defaults($options){
+		$type = $options['type'];
+		$id = isset($options['id']) ? $options['id'] : $type . rand(1000, 9999);
+
+		return array(
+			'view_class' => $type . 'View',
+			'wrapper_id' => $id,
+			'module_id' => $id . '-module',
+			'object_id' => $id . '-object',
+
+			'rows' => 6,
+			'columns' => 22,
+			'margin_top' => 0,
+			'margin_left' => 0,
+
+			'new_line' => true
+		);
+	}
 }
 
