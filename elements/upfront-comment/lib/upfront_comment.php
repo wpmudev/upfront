@@ -19,9 +19,11 @@ class Upfront_UcommentView extends Upfront_Object {
 		ob_start();
 		// Load comments
 		$comments = get_comments(array('post_id' => $post->ID));
-		echo '<ol class="upfront-comments">';
-		wp_list_comments(array('callback' => array('Upfront_UcommentView', 'list_comment'), 'style' => 'ol'), $comments);
-		echo '</ol>';
+		if($comments && sizeof($comments)){
+			echo '<ol class="upfront-comments">';
+			wp_list_comments(array('callback' => array('Upfront_UcommentView', 'list_comment'), 'style' => 'ol'), $comments);
+			echo '</ol>';
+		}
 		// Load comment form
 		$args = apply_filters('upfront_comment_form_args', array());
 		comment_form($args, $post->ID);

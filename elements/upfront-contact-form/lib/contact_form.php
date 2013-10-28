@@ -6,29 +6,6 @@ class Upfront_UcontactView extends Upfront_Object {
 	var $error = false;
 	var $defaults = array();
 
-	function __construct($data) {
-		$data['properties'] = $this->merge_default_properties($data);
-		parent::__construct($data);
-	}
-
-	protected function merge_default_properties($data){
-		$flat = array();
-
-		if(!isset($data['properties']))
-			return $flat;
-
-		foreach($data['properties'] as $prop)
-			$flat[$prop['name']] = $prop['value'];
-
-		$flat = array_merge(self::default_properties(), $flat);
-
-		$properties = array();
-		foreach($flat as $name => $value)
-			$properties[] = array('name' => $name, 'value' => $value);
-
-		return $properties;
-	}
-
 	public function get_markup () {
 
 		//Check if the form has been sent

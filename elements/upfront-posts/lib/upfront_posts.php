@@ -79,6 +79,22 @@ class Upfront_UpostsView extends Upfront_Object {
 		"</div>";
 	}
 
+	public static function default_properties(){
+		return array(
+			'type' => 'UpostsModel',
+			'view_class' => 'NewUpostsView',
+			'has_settings' => 1,
+
+
+			'post_type' => 'post',
+			'taxonomy' => '',
+			'term' => '',
+			'limit'	=> 10,
+			'content_type' => 'excerpt', // 'excerpt' | 'full'
+			'featured_image' => 1
+		);
+	}
+
 
 	private function properties_to_array(){
 		$out = array();

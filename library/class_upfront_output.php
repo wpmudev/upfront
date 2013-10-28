@@ -373,8 +373,34 @@ class Upfront_Object extends Upfront_Entity {
 	protected $_type = 'Object';
 
 	public function __construct ($data) {
+		//Make sure all the properties are initialized
+		$data['properties'] = $this->merge_default_properties($data);
 		parent::__construct($data);
 		Upfront_Output::$current_object = $this;
+	}
+
+	protected function merge_default_properties($data){
+
+		if(! method_exists(self, 'default_properties')){
+			if(isset($data['properties']))
+				return $data['properties'];
+			return array();
+		}
+
+		$flat = array();
+		$defaults = self::default_properties();
+
+		if(isset($data['properties']))
+			foreach($data['properties'] as $prop)
+				$flat[$prop['name']] = $prop['value'];		
+
+		$flat = array_merge($defaults, $flat);
+
+		$properties = array();
+		foreach($flat as $name => $value)
+			$properties[] = array('name' => $name, 'value' => $value);
+
+		return $properties;
 	}
 	
 	public function get_markup () {
