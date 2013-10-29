@@ -2,7 +2,8 @@
 
 	var TYPES = {
 		PLAIN: "plain",
-		POST: "post"
+		POST: "post",
+		META: "meta"
 	};
 
 	var IEditor = {
@@ -155,7 +156,7 @@
 			if (!view.content) return view.loading.done(function () {
 				start();
 			});
-*/
+*/			
 			// It's a new post, so hack-override the layout cascade
 			if (post.get("is_new")) {
 				var type = post.get("post_type") || 'post';
@@ -178,10 +179,12 @@
 			;
 
 			// Markup conversions
+			
 			$title.html((post.get("is_new")
 				? '<input type="text" id="upfront-title" style="width:100%" value="" placeholder="' + $.trim($title.text()) + '"/>'
 				: '<input type="text" id="upfront-title" style="width:100%" value="' + $.trim($title.text()) + '"/>'
 			));
+			
 			$body.html(
 				'<input type="hidden" name="post_id" id="upfront-post_id" value="' + post.id + '" />' +
 				'<div contenteditable="true" rows="8" style="width:100%">' + post.get(options.content_mode) + '</div>' +
@@ -228,7 +231,7 @@
 			$body.find("#upfront-post-cancel_edit").on("click", function () {
 				stop();
 			});
-			apply_styles($title);
+			//apply_styles($title);
 
 			// We're ready, start editing
 			editor_bar.start();
@@ -268,6 +271,8 @@
 				'font-weight': styles[camel_case('font-weight', transform)],
 				'font-size': styles[camel_case('font-size', transform)],
 				'font-family': styles[camel_case('font-family', transform)],
+				'text-transform': styles[camel_case('text-transform', transform)],
+				'text-decoration': styles[camel_case('text-decoration', transform)],
 				'color': styles.color,
 				'outline': 0,
 				margin:0,
@@ -334,6 +339,385 @@
 		});
 	};
 
+	var Editor_Meta = Backbone.View.extend({
+		post: false,
+		postId: false,
+		loadingPost: false,
+		isNew: false,
+		mode: 'post_excerpt',
+		view: false,
+
+		events: {
+			'dblclick .ueditor_title': 'editTitle',
+			'dblclick .ueditor_content': 'editContent',
+			'click .upost_thumbnail_changer': 'editThumb'
+		},
+
+		initialize: function(options){
+			this.postId = options.post_id;
+			this.setElement(options.node);
+			this.isNew = !!options.is_new;
+			if(typeof options.content_mode != 'undefined')
+				this.mode = options.content_mode;
+			this.view = options.view;
+			this.Bar = new Editor_SupplementalBar();
+			this.initEditAreas();
+
+		},
+
+		/**
+		 * Update view's element. Useful when updating the markup.
+		 */
+		updateElement: function(node){
+			this.setElement(node);
+			this.initEditAreas();
+		},
+
+		initEditAreas: function(){
+			var me = this,
+				selectors = Upfront.data.post_selectors;
+			_.each(selectors, function(area, selector){
+				if(area == 'content' || area == 'excerpt'){
+					me.prepareContentEditor(selector);
+				}
+				else if(area == 'title'){
+					me.prepareTitleEditor(selector);
+				}
+				else if(area == 'thumbnail'){
+					me.prepareThumbEditor(selector);
+				}
+			});
+		},
+
+		fetchPost: function(){
+			var me = this;
+			this.post = new Upfront.Models.Post({ID: this.postId});
+			this.loadingPost = new $.Deferred();
+			this.post.fetch({withMeta: true}).done(function(response){
+				if(!Upfront.data.posts)
+					Upfront.data.posts = {};
+				Upfront.data.posts[me.postId] = me.post;
+				me.loadingPost.resolve(me.post);
+			});
+			return this.loadingPost.promise();
+		},
+
+		getPost: function(){
+			if(this.post || this.loadingPost)
+				return this.loadingPost.promise();
+
+			return this.fetchPost();
+		},
+
+		prepareContentEditor: function(selector){
+			this.$(selector).addClass('ueditor_content');
+			console.log('Content editor prepared.');
+		},
+
+		prepareTitleEditor: function(selector){
+			this.$(selector).addClass('ueditor_title');
+		},
+
+		prepareThumbEditor: function(selector){
+			this.$(selector)
+				.addClass('ueditor_thumb')
+				.css({position:'relative', 'min-height': '60px', 'margin-bottom':'30px'})
+				.append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
+				.find('img').css({'z-index': '2', position: 'relative'})
+			;
+		},
+
+		editTitle: function(e){
+			e.preventDefault();
+			e.stopPropagation();
+
+			if(this.$('.ueditor_title input').length)
+				return;
+
+			var apply_styles = function($el){
+					var styles = window.getComputedStyle ? window.getComputedStyle($el[0]) : $el[0].currentStyle,
+						transform = !window.getComputedStyle
+					;
+					if (!styles) return false;
+					$el.children().css({
+						background: 'transparent',
+						border: 0,
+						'font-weight': styles[camel_case('font-weight', transform)],
+						'font-size': styles[camel_case('font-size', transform)],
+						'font-family': styles[camel_case('font-family', transform)],
+						'text-transform': styles[camel_case('text-transform', transform)],
+						'text-decoration': styles[camel_case('text-decoration', transform)],
+						'color': styles.color,
+						'outline': 0,
+						margin:0,
+						padding: 0
+					});
+				},
+				camel_case = function(str, transform) {
+					if (!transform) return str;
+					return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+				},
+				$title = this.$('.ueditor_title'),
+				title = $.trim($title.text())
+			;
+
+			//Let's retrieve the post
+			this.getPost();
+
+			$title.html(this.isNew
+				? '<input type="text" id="upfront-title" style="width:100%" value="" placeholder="' + title + '"/>'
+				: '<input type="text" id="upfront-title" style="width:100%" value="' + title + '"/>'
+			);
+			apply_styles($title);
+			$title.find('input').focus().val(title);
+		},
+
+		editThumb: function(e){
+			var me = this,
+				target = $(e.target),
+				postId = target.closest('.uposts-post').data('post_id')
+				img = target.parent().find('img'),
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Starting image editor ...",
+					done: "Here we are!",
+					fixed: false
+				})
+			;
+
+			if(!img.length){
+				if(!Upfront.data.posts[postId])
+					this.fetchPost(postId);
+
+				me.openImageSelector(postId);
+			}
+			else if(Upfront.data.posts && Upfront.data.posts[postId]){
+				loading.render();
+				target.parent().append(loading.$el);
+				me.getImageInfo(Upfront.data.posts[postId]).done(function(imageInfo){
+					loading.$el.remove();
+					me.openImageEditor(false, imageInfo, postId);
+				});
+			}
+			else{
+				loading.render();
+				target.parent().append(loading.$el);
+				this.fetchPost(postId).done(function(response){
+					me.getImageInfo(me.post).done(function(imageInfo){
+						loading.$el.remove();
+						me.openImageEditor(false, imageInfo, postId);
+					});
+				});
+			}
+		},
+
+
+		openImageSelector: function(postId){
+			var me = this;
+			Upfront.Views.Editor.ImageSelector.open().done(function(images){
+				var sizes = {},
+					imageId = 0
+				;
+				_.each(images, function(image, id){
+					sizes = image;
+					imageId = id;
+				});
+				var	imageInfo = {
+						src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+						srcFull: sizes.full[0],
+						srcOriginal: sizes.full[0],
+						fullSize: {width: sizes.full[1], height: sizes.full[2]},
+						size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+						position: false,
+						rotation: 0,
+						id: imageId
+					}
+				;
+				$('<img>').attr('src', imageInfo.srcFull).load(function(){
+					Upfront.Views.Editor.ImageSelector.close();
+					me.openImageEditor(true, imageInfo, postId);			
+				});
+			});
+		},
+
+		getImageInfo: function(post){
+			var me = this,
+				imageData = post.meta.get('_thumbnail_data'),
+				imageId = post.meta.get('_thumbnail_id'),
+				deferred = $.Deferred(),
+				$img = $('.uposts-posts-' + post.id).find('.ueditor_thumb').find('img')
+			;
+
+			if(!imageData || !_.isObject(imageData.get('meta_value')) || imageData.get('meta_value').imageId != imageId.get('meta_value')){
+				if(!imageId)
+					return false;
+				Upfront.Views.Editor.ImageEditor.getImageData([imageId.get('meta_value')]).done(function(response){
+					var images = response.data.images,
+						sizes = {},
+						imageId = 0
+					;
+					_.each(images, function(image, id){
+						sizes = image;
+						imageId = id;
+					});
+
+					deferred.resolve({
+						src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+						srcFull: sizes.full[0],
+						srcOriginal: sizes.full[0],
+						fullSize: {width: sizes.full[1], height: sizes.full[2]},
+						size: {width: $img.width(), height: $img.height()},
+						position: {top: 0, left: 0},
+						rotation: 0,
+						id: imageId
+					});
+				});
+			}
+			else {
+				var data = imageData.get('meta_value'),
+					factor = $img.width() / data.cropSize.width
+				;
+				deferred.resolve({
+					src: data.src,
+					srcFull: data.srcFull,
+					srcOriginal: data.srcOriginal,
+					fullSize: data.fullSize,
+					size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},//data.imageSize,
+					position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},//data.imageOffset,
+					rotation: data.rotation,
+					id: data.imageId
+				});
+			}
+			return deferred.promise();
+		},
+
+		openImageEditor: function(newImage, imageInfo, postId){
+			var me = this,
+				mask = $('.uposts-posts-' + postId).find('.ueditor_thumb'),
+				maskHeight = Upfront.data && Upfront.data.posts_element && Upfront.data.posts_element.featured_image_height ? Upfront.data.posts_element.featured_image_height : 300
+				editorOptions = _.extend({}, imageInfo, {
+					maskOffset: mask.offset(),
+					maskSize: {width: mask.width(), height: maskHeight},
+					setImageSize: newImage,
+					extraButtons: [
+						{
+							id: 'image-edit-button-swap',
+							text: 'Swap Image',
+							callback: function(e, editor){
+								editor.cancel();
+								me.openImageSelector(postId);
+							}
+						}
+					]
+				})
+			;
+			Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
+				var post = me.post,
+					img = mask.find('img')
+				;
+
+				post.meta.add([
+					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
+					{meta_key: '_thumbnail_data', meta_value: imageData}
+				], {merge: true});
+				post.meta.save();
+				if(!img.length)
+					img = $('<img style="z-index:2;position:relative">').appendTo(mask);
+
+				img.attr('src', imageData.src);
+			})
+		},
+
+		editContent: function(e){
+			e.preventDefault();
+			e.stopPropagation();
+			this.editPost('.ueditor_content', 'post_content');
+		},
+		editExcerpt: function(e){
+			e.preventDefault();
+			e.stopPropagation();
+			this.editPost('.ueditor_excerpt', 'post_excerpt');
+		},
+		editPost: function(selector, mode){
+			var me = this;
+			$body = this.$(selector);
+			$body.css('opacity', '.6');
+
+			this.getPost().done(function(post){
+				$body.css('opacity', '1');
+				$body.html(
+					'<input type="hidden" name="post_id" id="upfront-post_id" value="' + me.postId + '" />' +
+					'<div contenteditable="true" rows="8" style="width:100%">' + post.get(me.mode) + '</div>' //+
+					//'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
+				);
+
+				// Init editor
+				var $editor = $body.find('[contenteditable]');
+				// Boot up CKE
+				editor = CKEDITOR.inline($editor.get(0), {
+					floatSpaceDockedOffsetY: 0
+				});
+				// Prevent default events, we're in editor mode.
+				me.view.undelegateEvents();
+
+				// Kill the draggable, so we can work with regular inline editor.
+				var $parent = me.view.parent_module_view.$el.find('.upfront-editable_entity:first')
+				if ($parent.is(".ui-draggable"))
+					$parent.draggable('disable');
+
+
+				editor.on("instanceReady", function () {
+					// Do this on instanceReady event, as doing it before CKE is fully prepped
+					// causes the focus manager to mis-fire first couple of blur/focus events.
+					$editor.focus();
+					editor.focus();
+				});
+
+				$body.find("#upfront-post-cancel_edit").on("click", function () {
+					me.stopEditPost();
+				});
+			});
+		},
+
+		stopEditPost: function(){
+			if (editor && editor.destroy) editor.destroy();
+			//editor_bar.stop();
+			this.view.$el.html(view.get_content_markup());
+			var $parent = view.parent_module_view.$el.find('.upfront-editable_entity:first');
+			view.undelegateEvents();
+			view.deactivate();
+			// Re-enable the draggable on edit stop
+			if ($parent.is(".ui-draggable")) $parent.draggable('enable');
+			view.delegateEvents();
+			Upfront.Events.off("entity:deactivated", view.on_cancel, view);
+			//view.render();
+		},
+
+		openBar: function (){
+			$("body").append("<div id='upfront-editor_bar' />");
+			$bar = $("#upfront-editor_bar");
+			sidebar = new Upfront.Views.ContentEditor.Sidebar({
+				"model": new Backbone.Model([]),
+				"el": $bar
+			});
+			sidebar.render();
+			$bar.show();
+
+			// Fade other stuff out
+			$(".upfront-module, #sidebar-ui").css({
+				"opacity": .3,
+				"pointer-events": "none"
+			});
+			options.parent.css({
+				"opacity": 1,
+				"pointer-events": "auto"
+			});
+
+			// Make the bar snapping work
+			$(window).on("scroll", reposition_bar);
+			options.editor.on("change", reposition_bar);			
+		}
+	});
+
 	var ContentEditors = function () {
 		var _editors = {};
 
@@ -355,6 +739,7 @@
 			if (old) old.stop();
 			if (type == TYPES.PLAIN) return new Editor_Plain(options);
 			if (type == TYPES.POST) return new Editor_Post(options);
+			if (type == TYPES.META) return new Editor_Meta(options);
 			return false;
 		}
 

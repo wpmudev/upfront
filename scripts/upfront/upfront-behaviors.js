@@ -1563,6 +1563,10 @@ var GridEditor = {
 					
 					
 					Upfront.Events.trigger("entity:drag_stop", view, view.model);
+					if(move_region){
+						view.region = region;
+						view.trigger('region:updated');
+					}
 					view.trigger("entity:self:drag_stop");
 				}
 			}

@@ -380,6 +380,8 @@ define(_template_files, function () {
 				if (this.on_resize) {
 					this.on("upfront:entity:resize", this.on_resize, this);
 				}
+
+				this.on('region:updated', this.on_region_update, this);
 			},
 			render: function () {				
 				var props = {},
@@ -410,6 +412,11 @@ define(_template_files, function () {
 					this._objects_view = objects_view;
 				else
 					this._objects_view.delegateEvents();
+			},
+			on_region_update: function(){
+				this._objects_view.model.each(function(view){
+					view.trigger('region:updated');
+				});
 			}
 		}),
 
@@ -479,6 +486,7 @@ define(_template_files, function () {
 					wrapper_view, wrapper_el
 				;
 				if(local_view){
+					local_view.region = this.region_view.model;
 					if ( !wrapper ){
 						local_view.render();
 						$el.append(local_view.el);
