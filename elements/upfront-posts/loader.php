@@ -35,6 +35,9 @@ function uposts_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('uposts', upfront_element_url('js/uposts', __FILE__));
 
+	// Add element defaults to data object
+	add_action('upfront_data', array('Upfront_UpostsView', 'add_js_defaults'));
+
 	// Add the public stylesheet
 	//add_action('wp_enqueue_scripts', array('Upfront_UpostsView', 'add_public_style'));
 

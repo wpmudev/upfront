@@ -16,31 +16,118 @@
 	 */
 	var UpostsModel = Upfront.Models.ObjectModel.extend({
 		/**
-		 * A quasi-constructor, called after actual constructor *and* the built-in `initialize()` method.
-		 * Used for setting up instance defaults, initialization and the like.
+		 * The init function is called after the contructor and Model intialize.
+		 * Here the default values for the model properties are set.
 		 */
 		init: function () {
-			this.init_properties({
-				type: 'UpostsModel',
-				view_class: 'UpostsView',
-				element_id: Upfront.Util.get_unique_id("uposts-object"),
-				has_settings: 1,
-
-				post_type: 'post',
-				taxonomy: '',
-				term: '',
-				limit: 10,
-				content_type: 'full',
-				featured_image: true
-			});
+			var properties = _.clone(Upfront.data.uposts.defaults);
+			properties.element_id = Upfront.Util.get_unique_id("uposts-object");
+			this.init_properties(properties);
 		}
+	});
+
+	var UpostsView = Upfront.Views.ObjectView.extend({
+		changed: false,
+		markup: false,
+		editors: {},
+		initialize: function(options){
+			if(! (this.model instanceof UpostsModel)){
+				this.model = new UpostsModel({properties: this.model.get('properties')});
+			}
+			this.constructor.__super__.initialize.call(this, [options]);
+
+			this.model.on('region:updated', this.refreshMarkup, this);
+		},
+
+		/**
+		 * Element contents markup.
+		 * @return {string} Markup to be shown.
+		 */
+		get_content_markup: function () {
+			if(this.changed || !this.markup){
+				//Is it shadow?
+				if(this.parent_module_view.region.get("name") != 'shadow')
+					this.refreshMarkup();
+				return 'Loading';
+			}
+			return this.markup;
+		},
+
+		on_render: function(){
+			console.log('Posts render');
+		},
+
+		refreshMarkup: function() {
+			var props = this.model.get('properties').toJSON(),
+				data = {},
+				me = this,
+				content_selector = '#' + this.property('element_id')
+			;
+			_.each(props, function(prop){
+				data[prop.name] = prop.value;
+			});
+			
+			if (window._upfront_get_current_query) 
+				data.query = _upfront_get_current_query();
+			else 
+				data.query = {};
+
+			Upfront.Util.post({
+				"action": "uposts_get_markup",
+				"data": JSON.stringify(data)
+			}).success(function (response) {
+				me.markup = response.data;
+				$(content_selector)
+					.find(".upfront-object-content")
+					.html(me.get_content_markup())
+				;
+				me.updateEditors();
+			});
+		},
+
+		updateEditors: function(){
+			var me = this,
+				nodes = $('#' + this.property('element_id')).find('.uposts-post')
+			;
+			nodes.each(function(){
+				var node = $(this),
+					id = node.data('post_id')
+				;
+
+				if(me.editors[id])
+					me.editors[id].updateElement(node);
+				else{
+					me.editors[id] = Upfront.Content.editors.add({
+						type: Upfront.Content.TYPES.META,
+						editor_id: 'uposts_meta_' + id,
+						post_id: id,
+						node: node,
+						content_mode: (me.property('is_excerpt') ? 'post_excerpt' : 'post_content'),
+						view: me
+					});
+				}
+			});
+		},
+
+		/*
+		Shorcut to set and get model's properties.
+		*/
+		property: function(name, value, silent) {
+			if(typeof value != "undefined"){
+				if(typeof silent == "undefined")
+					silent = true;
+				return this.model.set_property(name, value, silent);
+			}
+			return this.model.get_property_value_by_name(name);
+		}
+
 	});
 
 	/**
 	 * View instance - what the element looks like.
 	 * @type {Upfront.Views.ObjectView}
 	 */
-	var UpostsView = Upfront.Views.ObjectView.extend({
+	var OldUpostsView = Upfront.Views.ObjectView.extend({
 		post: false,
 		currentPost: false,
 		titleSelector: Upfront.data.posts_element && Upfront.data.posts_element.title_selector ? Upfront.data.posts_element.title_selector : 'h1.post_title',
@@ -49,7 +136,6 @@
 		featuredSelector: Upfront.data.this_post && Upfront.data.this_post.featured_image_selector ? Upfront.data.this_post.featured_image_selector : '.entry-thumbnail',
 		
 		initialize: function(options){
-
 			this.constructor.__super__.initialize.call(this, [options]);
 			this.events = _.extend({}, this.events, {
 				'click .upost_thumbnail_changer': 'changeFeaturedImage'
@@ -163,8 +249,7 @@
 			editor.stop();
 		},
 		editPost: function () { //post){
-			var 
-				is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
+			var is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
 				body_selector = is_excerpt ? this.excerptSelector : this.contentSelector,
 				editor = Upfront.Content.editors.add({
 					type: Upfront.Content.TYPES.POST,
@@ -405,7 +490,7 @@
 						{"name": "has_settings", "value": 0}
 					],
 					"objects": [
-						object // The anonymous module will contain our search object model
+						object // The anonymous module will contain our posts object model
 					]
 				})
 			;
@@ -707,6 +792,7 @@
 	});
 	Upfront.Models.UpostsModel = UpostsModel;
 	Upfront.Views.UpostsView = UpostsView;
+	Upfront.Views.OldUpostsView = OldUpostsView;
 
 
 

@@ -38,6 +38,8 @@ class Upfront_UpostsView extends Upfront_Object {
 		else
 			$args['posts_per_page'] = 10;
 
+		$args['post_status'] = 'publish'; //Making sure, because ajax call reset this to 'any'
+
 		$query = new WP_Query($args);
 
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
@@ -82,9 +84,9 @@ class Upfront_UpostsView extends Upfront_Object {
 	public static function default_properties(){
 		return array(
 			'type' => 'UpostsModel',
-			'view_class' => 'NewUpostsView',
+			'view_class' => 'UpostsView',
 			'has_settings' => 1,
-
+			'class' => 'c22 uposts-object',
 
 			'post_type' => 'post',
 			'taxonomy' => '',
@@ -93,6 +95,15 @@ class Upfront_UpostsView extends Upfront_Object {
 			'content_type' => 'excerpt', // 'excerpt' | 'full'
 			'featured_image' => 1
 		);
+	}
+
+	public static function add_js_defaults($data){
+		if(!isset($data['uposts']))
+			$data['uposts'] = array();
+
+		$data['uposts']['defaults'] = self::default_properties();
+
+		return $data;
 	}
 
 
@@ -117,7 +128,7 @@ class Upfront_UpostsAjax extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('wp_ajax_uposts_list_initial_info', array($this, "load_initial_info"));
 		add_action('wp_ajax_upost_get_taxonomy_terms', array($this, "load_taxonomy_terms"));
-		add_action('wp_ajax_uposts_get_markup', array($this, "load_markup"));
+		add_action('wp_ajax_uposts_get_markup', array($this, 'new_load_markup'));//"load_markup"));
 
 		if (is_user_logged_in()) add_action('wp_footer', array($this, 'pickle_query'), 99);
 	}
@@ -196,6 +207,18 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		$query = new WP_Query($args);
 
 		$this->_out(new Upfront_JsonResponse_Success(Upfront_UpostsView::get_template($args, $data)));
+	}
+
+	public function new_load_markup () {
+		$args = array();
+		$data = json_decode(stripslashes($_POST['data']), true);
+		$properties = array();
+		foreach($data as $name => $value)
+			$properties[] = array('name' => $name, 'value' => $value);
+
+		$view = new Upfront_UpostsView(array('properties' => $properties));
+
+		$this->_out(new Upfront_JsonResponse_Success($view->get_markup()));
 	}
 }
 Upfront_UpostsAjax::serve();

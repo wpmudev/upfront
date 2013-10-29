@@ -13,7 +13,6 @@ var UcontactModel = Upfront.Models.ObjectModel.extend({
 	/**
 	 * The init function is called after the contructor and Model intialize.
 	 * Here the default values for the model properties are set.
-	 * @return {null}
 	 */
 	init: function () {
 		var properties = _.clone(Upfront.data.ucontact.defaults);
