@@ -301,7 +301,8 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 					"properties": [
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c22 upfront-login_element-module"},
-						{"name": "has_settings", "value": 0}
+						{"name": "has_settings", "value": 0},
+						{"name": "row", "value": 14}
 					],
 					"objects": [object]
 				})

@@ -1422,7 +1422,10 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 	opacity: .1;
 }
 .upfront-region-editing .upfront-region {
-	outline: 1px dotted #858585;
+}
+.upfront-region-editing .upfront-region-active {	
+	border-top: 3px solid #2f3a44;
+	border-bottom: 3px solid #2f3a44;
 }
 .region-resizable-helper {
 	background: rgba(0,0,0,.1);
@@ -2000,62 +2003,66 @@ a:hover > .tooltip:before, a:hover > .tooltip:after {
 .upfront-icon-region-nosidebar-none:before {
 	background-position: -40px -510px;
 }
-.upfront-icon-region-nosidebar-main:before {
-	background-position: -40px -544px;
-}
-.upfront-icon-region-nosidebar-header:before {
-	background-position: -40px -578px;
-}
-.upfront-icon-region-nosidebar-footer:before {
-	background-position: -40px -612px;
-}
 .upfront-icon-region-rightsidebar-none:before {
 	background-position: -164px -510px;
-}
-.upfront-icon-region-rightsidebar-right:before {
-	background-position: -164px -544px;
-}
-.upfront-icon-region-rightsidebar-main:before {
-	background-position: -164px -578px;
-}
-.upfront-icon-region-rightsidebar-header:before {
-	background-position: -164px -612px;
-}
-.upfront-icon-region-rightsidebar-footer:before {
-	background-position: -164px -646px;
 }
 .upfront-icon-region-leftsidebar-none:before {
 	background-position: -288px -510px;
 }
-.upfront-icon-region-leftsidebar-left:before {
-	background-position: -288px -544px;
-}
-.upfront-icon-region-leftsidebar-main:before {
-	background-position: -288px -578px;
-}
-.upfront-icon-region-leftsidebar-header:before {
-	background-position: -288px -612px;
-}
-.upfront-icon-region-leftsidebar-footer:before {
-	background-position: -288px -646px;
-}
 .upfront-icon-region-2sidebar-none:before {
 	background-position: -412px -510px;
 }
-.upfront-icon-region-2sidebar-left:before {
+.upfront-icon-region-color:before {
+	background-position: -40px -544px;
+}
+.upfront-icon-region-color:hover:before,
+.upfront-icon-region-color-active:before {
+	background-position: -164px -544px;
+}
+.upfront-icon-region-image:before {
+	background-position: -288px -544px;
+}
+.upfront-icon-region-image:hover:before,
+.upfront-icon-region-image-active:before {
 	background-position: -412px -544px;
 }
-.upfront-icon-region-2sidebar-right:before {
+.upfront-icon-region-slider:before {
+	background-position: -40px -578px;
+}
+.upfront-icon-region-slider:hover:before,
+.upfront-icon-region-slider-active:before {
+	background-position: -164px -578px;
+}
+.upfront-icon-region-maps:before {
+	background-position: -288px -578px;
+}
+.upfront-icon-region-maps:hover:before,
+.upfront-icon-region-maps-active:before {
 	background-position: -412px -578px;
 }
-.upfront-icon-region-2sidebar-main:before {
+.upfront-icon-region-expand-unlock:before {
+	background-position: -40px -612px;
+}
+.upfront-icon-region-expand-unlock:hover:before {
+	background-position: -164px -612px;
+}
+.upfront-icon-region-expand-lock:before {
+	background-position: -288px -612px;
+}
+.upfront-icon-region-expand-lock:hover:before {
 	background-position: -412px -612px;
 }
-.upfront-icon-region-2sidebar-header:before {
-	background-position: -412px -646px;
+.upfront-icon-region-add:before {
+	background-position: -40px -646px;
 }
-.upfront-icon-region-2sidebar-footer:before {
-	background-position: -412px -680px;
+.upfront-icon-region-add:hover:before {
+	background-position: -164px -646px;
+}
+.upfront-icon-region-delete:before {
+	background-position: -288px -646px;
+}
+.upfront-icon-region-delete:hover:before {
+	background-position: -412px -646px;
 }
 .upfront-icon-popup-close:before {
 	width: 17px;

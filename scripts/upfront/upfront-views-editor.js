@@ -8,7 +8,8 @@ var _template_files = [
 	"text!upfront/templates/sidebar_settings_edit_area.html",
 	"text!upfront/templates/sidebar_settings_lock_area.html",
 	"text!upfront/templates/sidebar_settings_background.html",
-	"text!upfront/templates/popup.html"
+	"text!upfront/templates/popup.html",
+	"text!upfront/templates/region_edit_panel.html"
 ];
 
 define(_template_files, function () {
@@ -603,8 +604,8 @@ define(_template_files, function () {
 		initialize: function () {
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
-			Upfront.Events.on("command:layout:save_success", this.reset_modules, this);
-			Upfront.Events.on("command:layout:save_error", this.reset_modules, this);
+			Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
+			Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
 			Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
 			Upfront.Events.on("layout:render", this.apply_state_binding, this);
 		},
@@ -613,7 +614,8 @@ define(_template_files, function () {
 		},
 		on_save: function () {
 			var regions = this.model.get('regions');
-			regions.remove(regions.get_by_name('shadow'), {silent: true});
+			this._shadow_region = regions.get_by_name('shadow');
+			regions.remove(this._shadow_region, {silent: true});
 		},
 		apply_state_binding: function () {
 			Upfront.Events.on("command:undo", this.reset_modules, this);
@@ -624,6 +626,13 @@ define(_template_files, function () {
 			this.$el.find('.sidebar-panel-title').addClass('upfront-icon upfront-icon-panel-elements');
 			this.elements.each(this.render_element, this);
 			this.reset_modules();
+		},
+		on_save_after: function () {
+			var regions = this.model.get('regions');
+			if ( this._shadow_region )
+				regions.add(this._shadow_region, {silent: true});
+			else
+				this.reset_modules();
 		},
 		reset_modules: function () {
 			var regions = this.model.get("regions"),
@@ -3169,6 +3178,7 @@ define(_template_files, function () {
 			this.update_suggest();
 		}
 	}));
+	
 
 	var SettingsItem = Backbone.View.extend({
 		group: true, 
@@ -3917,6 +3927,138 @@ define(_template_files, function () {
 			if ( callback ) callback();
 		}
 	});
+	
+	
+	
+	
+	var RegionPanelItem = Backbone.View.extend({
+		
+	});
+	
+	var RegionPanelItem_BgCurrent = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-bgcurrent',
+		
+	});
+	
+	var RegionPanelItem_BgColor = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-bgcolor',
+		render: function () {
+			this.$el.html('<i class="upfront-icon upfront-icon-region-color" />');
+		}
+	});
+	
+	var RegionPanelItem_BgImage = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-bgimage',
+		render: function () {
+			this.$el.html('<i class="upfront-icon upfront-icon-region-image" />');
+		}
+	});
+	
+	var RegionPanelItem_BgMaps = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-bgmaps',
+		render: function () {
+			this.$el.html('<i class="upfront-icon upfront-icon-region-maps" />');
+		}
+	});
+	
+	var RegionPanelItem_BgSlider = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-bgslider',
+		render: function () {
+			this.$el.html('<i class="upfront-icon upfront-icon-region-slider" />');
+		}
+	});
+	
+	var RegionPanelItem_ExpandLock = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-expand-lock',
+		render: function () {
+			this.$el.html('<i class="upfront-icon upfront-icon-region-expand-unlock" />');
+		}
+	});
+	
+	var RegionPanelItem_AddRegion = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-add-region',
+		render: function () {
+			this.$el.html('<i class="upfront-icon upfront-icon-region-add" />');
+		}
+	});
+	
+	var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
+		className: 'upfront-region-panel-item upfront-region-panel-item-delete-region',
+		render: function () {
+			this.$el.html('<i class="upfront-icon upfront-icon-region-delete" />');
+		}
+	});
+	
+	var RegionPanel = Backbone.View.extend({
+		get_template: function () {
+			var template = _.template(_Upfront_Templates.region_edit_panel, {});
+			
+		}
+	});
+	
+	var RegionPanel_Edit = RegionPanel.extend({
+		className: 'upfront-region-panel upfront-region-panel-edit',
+		initialize: function () {
+			this.bg_current = new RegionPanelItem_BgCurrent({model: this.model});
+			this.bg_items = {
+				color: new RegionPanelItem_BgColor({model: this.model}),
+				image: new RegionPanelItem_BgImage({model: this.model}),
+				slider: new RegionPanelItem_BgSlider({model: this.model}),
+				maps: new RegionPanelItem_BgMaps({model: this.model})
+			};
+			this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
+			this.add_region = new RegionPanelItem_AddRegion({model: this.model});
+		},
+		render: function() {
+			this.$el.html('');
+			var $bg_items = $('<div class="upfront-region-panel-subitem" />');
+			var bg_type = this.model.get_property_value_by_name('background-type');
+			bg_type = _.contains(['color', 'image', 'slider', 'maps'], bg_type) ? bg_type : 'color';
+			_.each(this.bg_items, function(item, type){
+				item.render();
+				if ( bg_type != type )
+					$bg_items.append(item.el);
+			});
+			$bg_items.append(this.bg_items[bg_type].el);
+			this.bg_current.render();
+			this.bg_current.$el.append($bg_items);
+			this.expand_lock.render();
+			this.add_region.render();
+			this.$el.append(this.bg_current.el);
+			this.$el.append(this.expand_lock.el);
+			this.$el.append(this.add_region.el);
+			
+		}
+	});
+	
+	var RegionPanel_Delete = RegionPanel.extend({
+		className: 'upfront-region-panel upfront-region-panel-delete',
+		initialize: function () {
+			this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
+		},
+		render: function () {
+			this.$el.html('');
+			this.delete_region.render();
+			this.$el.append(this.delete_region.el);
+		}
+	});
+	
+	var RegionPanels = Backbone.View.extend({
+		className: 'upfront-region-panels',
+		initialize: function () {
+			this.panels = _([
+				new RegionPanel_Edit({model: this.model}),
+				new RegionPanel_Delete({model: this.model})
+			]);
+		},
+		render: function () {
+			var me = this;
+			this.panels.each(function(panel){
+				panel.render();
+				me.$el.append(panel.el);
+			});
+		}
+	});
 
 	return {
 		"Editor": {
@@ -3955,7 +4097,8 @@ define(_template_files, function () {
 				notifier.addMessage(message, type);
 			},
 			"Loading": Loading,
-			"PostSelector": new PostSelector()
+			"PostSelector": new PostSelector(),
+			"RegionPanels": RegionPanels
 		},
 		"ContentEditor": {
 			"Sidebar": ContentEditorSidebar,

@@ -1013,7 +1013,8 @@ var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 					{"name": "class", "value": "c22 upfront-ugallery_module"},
-					{"name": "has_settings", "value": 0}
+					{"name": "has_settings", "value": 0},
+					{"name": "row", "value": 16}
 				],
 				"objects": [
 					object

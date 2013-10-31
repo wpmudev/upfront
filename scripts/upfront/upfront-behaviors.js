@@ -1536,7 +1536,10 @@ var GridEditor = {
 						var modules = region.get('modules'),
 							models = [];
 						model.collection.remove(model, {silent: true});
-						model.unset('shadow', {silent: true});
+						if ( model.get('shadow') ){
+							view.trigger('on_layout');
+							model.unset('shadow', {silent: true});
+						}
 						$me.removeAttr('data-shadow');
 						$('.upfront-region-drag-active').find('.upfront-module').each(function(){
 							var element_id = $(this).attr('id'),

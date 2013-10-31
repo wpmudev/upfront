@@ -366,7 +366,7 @@ define(_template_files, function () {
 				"click .upfront-module > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click .upfront-module > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-module > .upfront-entity_meta": "on_meta_click",
-				"click": "on_click",
+				"click": "on_click"
 			},
 			initialize: function () {
 				var callback = this.update || this.render;
@@ -380,7 +380,8 @@ define(_template_files, function () {
 				if (this.on_resize) {
 					this.on("upfront:entity:resize", this.on_resize, this);
 				}
-
+				
+				this.on('on_layout', this.render_object, this);
 				this.on('region:updated', this.on_region_update, this);
 			},
 			render: function () {				
@@ -400,23 +401,29 @@ define(_template_files, function () {
 				if ( this.model.get("shadow") ){
 					this.$el.find('.upfront-editable_entity:first').attr("data-shadow", this.model.get("shadow"));
 				}
-				
+				else {
+					this.render_object();
+				}
+
+				if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
+				Upfront.Events.trigger("entity:module:after_render", this, this.model);
+			},
+			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
 				objects_view.parent_view = this;
 				objects_view.render();
 				this.$(".upfront-objects_container").append(objects_view.el);
-
-				if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
-				Upfront.Events.trigger("entity:module:after_render", this, this.model);
-				if ( ! this.objects_view )
+				if ( ! this._objects_view )
 					this._objects_view = objects_view;
 				else
 					this._objects_view.delegateEvents();
 			},
 			on_region_update: function(){
-				this._objects_view.model.each(function(view){
-					view.trigger('region:updated');
-				});
+				if ( this._objects_view ){
+					this._objects_view.model.each(function(view){
+						view.trigger('region:updated');
+					});
+				}
 			}
 		}),
 
@@ -643,6 +650,9 @@ define(_template_files, function () {
 				local_view.region_view = this;
 				local_view.render();
 				this.$el.append(local_view.el);
+				var region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
+				region_panels.render();
+				//this.$el.append(region_panels.el);
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
 				this.trigger("region_render", this);
 				if ( ! this._modules_view )
