@@ -381,14 +381,14 @@ class Upfront_Object extends Upfront_Entity {
 
 	protected function merge_default_properties($data){
 
-		if(! method_exists(self, 'default_properties')){
+		if(! method_exists(get_class($this), 'default_properties')){
 			if(isset($data['properties']))
 				return $data['properties'];
 			return array();
 		}
 
 		$flat = array();
-		$defaults = self::default_properties();
+		$defaults = call_user_func(array(get_class($this), 'default_properties'));
 
 		if(isset($data['properties']))
 			foreach($data['properties'] as $prop)
