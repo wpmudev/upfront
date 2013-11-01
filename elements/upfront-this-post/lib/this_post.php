@@ -4,9 +4,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public function get_markup () {
 		global $post;
 		$element_id = $this->_get_property('element_id');
-		return "<div class='upfront-output-object upfront-this_post' id='{$element_id}'>" .
-			self::get_post_markup(get_the_ID(), $post->post_type, $this->properties_to_array()) .
-		"</div>";
+		return 
+			'<div class="upfront-output-object upfront-this_post" id="' . $element_id . '">' .
+				self::get_post_markup(get_the_ID(), $post->post_type, $this->properties_to_array()) .
+			'</div>';
 	}
 
 	public static function get_post_markup ($post_id, $post_type, $properties=array()) {
@@ -18,8 +19,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$post = get_post($post_id);
 		if ($post->post_password && !is_user_logged_in()) return ''; // Augment this!
 
-		//$title = apply_filters('the_title', $post->post_title);
-		//$content = apply_filters('the_content', $post->post_content);
+		if(!$properties['post_data'])
+			$properties['post_data'] = array();
+		
+		$properties['featured_image'] = array_search('featured_image', $properties['post_data']) !== FALSE;
 		
 		return self::post_template($post, $properties);
 	}
@@ -59,6 +62,22 @@ class Upfront_ThisPostView extends Upfront_Object {
 		setup_postdata($post);
 
 		return upfront_get_template('this-post', array('post' => $post, 'properties' => $properties), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
+	}
+
+	public static function default_properties(){
+		return array(
+			'type' => 'ThisPostModel',
+			'view_class' => 'ThisPostModel',
+			'class' => 'c22 upfront-this_post',
+			'has_settings' => 1,
+
+			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
+		);
+	}
+
+	public static function add_js_defaults($data){
+		$data['thisPost'] = array('defaults' => self::default_properties());
+		return $data;
 	}
 
 	private function properties_to_array(){

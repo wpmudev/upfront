@@ -5053,96 +5053,144 @@ License: MIT
 
 
 /* ----- New Editor bar ----- */
-#upfront-editor_bar {
-	background: rgb(57, 82, 105);
-	position: fixed;
-	width: 800px;
-	height: 80px;
-	font-size: 12px;
+
+.ueditor-bar {
+	background: #395269;
+	background: rgba(30, 54, 76, 0.9);
+	width: 100%;
+	font-size: 14px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	z-index: 100;
 }
-#upfront-editor_bar .sidebar-commands div {
-	border: none;
-}
-#upfront-editor_bar .sidebar-commands-control-meta, 
-#upfront-editor_bar .sidebar-commands-control-status 
-{
-	width: 488px; /* 513 - 25 */
-	padding: 0;
-	padding-left: 25px;
-	margin: 0;
-	float: left;
+.ueditor-bar:hover {
+	opacity: 1 !important;
 }
 
-#upfront-editor_bar .sidebar-commands-control-meta { 
-	background: #405972; 
-	height: 30px;
-	padding-top: 5px;
+.cke_float {
+	opacity: 0.4;
 }
-#upfront-editor_bar .sidebar-commands-control-status { 
-	background: #33475b; 
-	height: 38px; 
-	padding-top: 7px;
-}
-#upfront-editor_bar .sidebar-commands-control-publish { background: #3e5265; }
-
-#upfront-editor_bar .sidebar-commands-control-status .upfront-post-state {
-	float: left;
-}
-#upfront-editor_bar .sidebar-commands-control-publish {
-	width: 262px; /* 287 - 25 */
-	float: right;
-	padding: 0;
-	padding-left: 25px;
-	padding-top: 22px;
-	margin: 0;
+.cke_float:hover {
+	opacity: 1;
 }
 
-#upfront-editor_bar .upfront-post-state b, 
-#upfront-editor_bar .upfront-post-state a,
-#upfront-editor_bar .upfront-command_inline
-{
-	font-size: inherit;
+
+.ueditable {
+	cursor: text;
 }
-#upfront-editor_bar .upfront-post-schedule {
-	margin-bottom: 0;
+
+.ueditor-bar {
+	cursor: default;
 }
-#upfront-editor_bar .sidebar-commands a {
-	color: #31b98b;
+
+.ueditor-bar:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+
+.ueditor-bar div a, .ueditor-bar a:link{
+	color: #1fcd8f;
+}
+.ueditor-bar a:hover {
 	text-decoration: underline;
 }
 
-#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-draft {
-	border-radius: 5px;
-	background: #5d7d98;
-	font-size: 12px;
-	padding: 3px 15px;
-	margin: 0 1em;
-	margin-top: 2px;
-}
-#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-draft a {
-	color: #b9cfe5;
-	text-decoration: none;
-}
-#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-publish {
-	border-radius: 5px;
-	background: #2ecc90;
-	font-size: 12px;
-	padding: 5px 40px;
-}
-#upfront-editor_bar .sidebar-commands-control-publish .upfront-save_state.upfront-publish a {
-	color: #fff;
-	font-weight: bold;
-	text-decoration: none;
-}
-#upfront-editor_bar .sidebar-commands-control-publish .upfront-post-trash {
-	display: block;
-	position: relative;
-	top: 2em;
+.ueditor-bar-buttons {
 	float: right;
-	font-size: 15px;
+	width: 200px;
 }
-#upfront-editor_bar .sidebar-commands-control-publish .upfront-post-trash a {
-	color: #e5575a;
+
+.ueditor-bar-cancel {
+	float:left;
+	width: 120px;
+	text-align: center;
+	padding: 10px 20px;
+}
+
+.ueditor-bar .ueditor-bar-cancel a{
+	color: #E5575A;
+}
+
+.ueditor-bar-options {
+	margin: 0 200px 0 120px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.ueditor-row {
+	margin-bottom: 1px;
+	background: #405972;
+	padding: 10px 20px;
+}
+
+.ueditor-row-item {
+	display: inline-block;
+	margin-right: 30px;
+}
+
+.ueditor-row-item:last-child {
+	margin-right: 0;
+}
+
+.ueditor-bar-key {
+	color: #7E99B1;
+}
+
+.ueditor-bar-value {
+	color: #CDE6FE;
+	margin: 0 4px;
+}
+
+.ueditor-bar-buttons {
+	text-align: center;
+	padding: 10px 20px;
+}
+
+a.ueditor-action-publish {
+	color: #fff !important;
+	padding: 7px 0px;
+	display: block;
+	border-radius: 5px;
+	background: #1fcd8f;
+	width:80%;
+	margin: 0 auto;
+	font-weight: bold;
+}
+a.ueditor-action-publish:hover {
+	text-decoration: none;
+}
+
+
+.upost_thumbnail_changer {
+	border: 2px dashed #3f5870;
+	color: #3f5870;
+	background: rgba(255, 255, 255, .9);
+	font-family: 'Source Sans Pro';
+	text-align: center;
+	font-size: 24px;
+	font-weight: 200;
+	width: 100%;
+	height: 100%;
+	min-height: 60px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	margin-bottom:30px;
+	z-index: 1;
+	cursor: pointer;
+	padding:10px;
+}
+
+.upost_thumbnail_changer:hover {
+	border-color: #1fcd8f;
+}
+
+.entry-thumbnail:hover .upost_thumbnail_changer {
+	z-index: 3;
 }
 
 .upfront-selector-option {

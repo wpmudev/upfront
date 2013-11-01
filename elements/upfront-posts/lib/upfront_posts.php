@@ -103,9 +103,50 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		$data['uposts']['defaults'] = self::default_properties();
 
+		//Edition bar template
+		ob_start();
+		include dirname(dirname(__FILE__)) . '/tpl/edition_bar.php';		
+		$data['uposts']['barTemplate'] = ob_get_clean();
+
+		//Post excerpt length and read more signs
+		$data['uposts']['excerpt'] = self::excerpt_data();
+
 		return $data;
 	}
 
+	private static function excerpt_data(){
+		$priority = 101;
+		add_filter('excerpt_length', array('Upfront_UpostsView', 'get_excerpt_length'), $priority);
+		add_filter('excerpt_more', array('Upfront_UpostsView', 'get_excerpt_more'), $priority);
+		
+		global $post;
+		$current_post = $post;
+
+		$post = new WP_Post(new stdClass());
+
+		wp_trim_excerpt('');
+
+		$post = $current_post;
+
+		global $excerpt_length, $excerpt_more;
+
+		remove_filter('excerpt_length', array('Upfront_UpostsView', 'get_excerpt_length'), $priority);
+		remove_filter('excerpt_more', array('Upfront_UpostsView', 'get_excerpt_more'), $priority);
+
+		return array('length' => $excerpt_length, 'more' => $excerpt_more);
+	}
+
+	public static function get_excerpt_more($more){
+		global $excerpt_more;
+		$excerpt_more = $more;
+		return $more;
+	}
+
+	public static function get_excerpt_length($length){
+		global $excerpt_length;
+		$excerpt_length = $length;
+		return $length;
+	}
 
 	private function properties_to_array(){
 		$out = array();
@@ -128,7 +169,8 @@ class Upfront_UpostsAjax extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('wp_ajax_uposts_list_initial_info', array($this, "load_initial_info"));
 		add_action('wp_ajax_upost_get_taxonomy_terms', array($this, "load_taxonomy_terms"));
-		add_action('wp_ajax_uposts_get_markup', array($this, 'new_load_markup'));//"load_markup"));
+		add_action('wp_ajax_uposts_get_markup', array($this, 'load_markup'));
+		add_action('wp_ajax_uposts_single_markup', array($this, 'load_single_markup'));
 
 		if (is_user_logged_in()) add_action('wp_footer', array($this, 'pickle_query'), 99);
 	}
@@ -169,7 +211,8 @@ class Upfront_UpostsAjax extends Upfront_Server {
 
 	public function load_taxonomy_terms () {
 		$taxonomy = !empty($_POST['taxonomy']) ? $_POST['taxonomy'] : false;
-		if (!$taxonomy) $this->_out(new Upfront_JsonResponse_Error("Missing taxonomy"));
+		if (!$taxonomy) 
+			$this->_out(new Upfront_JsonResponse_Error("Missing taxonomy"));
 		$raw_terms = get_terms($taxonomy, array(
 			'hide_empty' => false,
 		));
@@ -183,35 +226,6 @@ class Upfront_UpostsAjax extends Upfront_Server {
 	public function load_markup () {
 		$args = array();
 		$data = json_decode(stripslashes($_POST['data']), true);
-		$post_type = !empty($data['post_type']) ? $data['post_type'] : (!empty($data['query']['post_type']) ? $data['query']['post_type'] : 'post');
-
-		if (empty($data['post_type']) && empty($data['taxonomy']) && empty($data['term'])) { // All empty, use whatever is pickled
-			$args = $data['query']['query_vars'];
-		}
-
-		$args['post_type'] = $post_type;
-		if (!empty($data['taxonomy']) && !empty($data['term'])) {
-			$args['tax_query'] = array(array(
-				'taxonomy' => $data['taxonomy'],
-				'terms' => $data['term'],
-			));
-			$args['post_status'] = 'publish'; // This is because the posts list will revert to "any" for taxonomy query - on admin (i.e. AJAX) that means drafts, future etc
-		} else if (!empty($data['query']['tax_query']['queries'])) {
-			$args['tax_query'] = $data['query']['tax_query']['queries'];
-			$args['post_status'] = 'publish'; // This is because the posts list will revert to "any" for taxonomy query - on admin (i.e. AJAX) that means drafts, future etc
-		}
-		if (!empty($data['limit']) && is_numeric($data['limit'])) {
-			$args['posts_per_page'] = $data['limit'];
-		}
-
-		$query = new WP_Query($args);
-
-		$this->_out(new Upfront_JsonResponse_Success(Upfront_UpostsView::get_template($args, $data)));
-	}
-
-	public function new_load_markup () {
-		$args = array();
-		$data = json_decode(stripslashes($_POST['data']), true);
 		$properties = array();
 		foreach($data as $name => $value)
 			$properties[] = array('name' => $name, 'value' => $value);
@@ -219,6 +233,31 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		$view = new Upfront_UpostsView(array('properties' => $properties));
 
 		$this->_out(new Upfront_JsonResponse_Success($view->get_markup()));
+	}
+
+	public function load_single_markup () {		
+		$data = stripslashes_deep($_POST['data']);
+		$post = $data['post'];
+		if(!$post || !$post['ID'])
+			$this->_out(new Upfront_JsonResponse_Error("Missing post."));
+
+		query_posts('p=' . $post['ID']);
+		setup_postdata($post);
+
+		if(have_posts())
+			the_post();
+		else
+			$this->_out(new Upfront_JsonResponse_Error("The post does not exist."));
+
+		$properties = $data['properties'];
+
+		$markup = upfront_get_template(
+			'upost', 
+			array('properties' => $properties), 
+			dirname(dirname(__FILE__)) . '/tpl/upost.php'
+		);
+
+		$this->_out(new Upfront_JsonResponse_Success($markup));		
 	}
 }
 Upfront_UpostsAjax::serve();

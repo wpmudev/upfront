@@ -37,6 +37,8 @@
 			this.constructor.__super__.initialize.call(this, [options]);
 
 			this.model.on('region:updated', this.refreshMarkup, this);
+
+			console.log('Posts element');
 		},
 
 		/**
@@ -54,7 +56,11 @@
 		},
 
 		on_render: function(){
-			console.log('Posts render');
+			var me = this;
+			//Give time to append when dragging.
+			setTimeout(function(){
+				me.updateEditors();
+			}, 100);
 		},
 
 		refreshMarkup: function() {
@@ -69,7 +75,7 @@
 			
 			if (window._upfront_get_current_query) 
 				data.query = _upfront_get_current_query();
-			else 
+			else
 				data.query = {};
 
 			Upfront.Util.post({
@@ -87,7 +93,8 @@
 
 		updateEditors: function(){
 			var me = this,
-				nodes = $('#' + this.property('element_id')).find('.uposts-post')
+				nodes = $('#' + this.property('element_id')).find('.uposts-post'),
+				is_excerpt = this.property('content_type') == 'excerpt'
 			;
 			nodes.each(function(){
 				var node = $(this),
@@ -102,11 +109,50 @@
 						editor_id: 'uposts_meta_' + id,
 						post_id: id,
 						node: node,
-						content_mode: (me.property('is_excerpt') ? 'post_excerpt' : 'post_content'),
-						view: me
+						content_mode: is_excerpt ? 'post_excerpt' : 'post_content',
+						view: me,
+						onUpdated: function(post){
+							me.onPostUpdated(post);
+						}
 					});
 				}
 			});
+		},
+
+		onPostUpdated: function(post){
+			var loading = new Upfront.Views.Editor.Loading({
+					loading: "Refreshing post ...",
+					done: "Here we are!",
+					fixed: false
+				}),
+				wrapper = $('#' + this.property('element_id')).find('[data-post_id=' + post.ID + ']'),
+				me = this
+			;
+
+			if(wrapper.length){
+				loading.render();
+				wrapper.append(loading.$el);
+				var flat = {},
+					properties = this.model.get('properties').toJSON()
+				;
+
+				_.each(properties, function(prop){
+					flat[prop.name] = prop.value;
+				});
+
+				Upfront.Util.post({
+					"action": "uposts_single_markup",
+					"data": {
+						post: post,
+						properties: flat
+					}
+				}).success(function (response) {
+					loading.$el.remove();
+					loading = false;
+					wrapper.html(response.data);
+					me.editors[post.ID].updateElement(wrapper);
+				});
+			}
 		},
 
 		/*
@@ -120,342 +166,7 @@
 			}
 			return this.model.get_property_value_by_name(name);
 		}
-
 	});
-
-	/**
-	 * View instance - what the element looks like.
-	 * @type {Upfront.Views.ObjectView}
-	 */
-	var OldUpostsView = Upfront.Views.ObjectView.extend({
-		post: false,
-		currentPost: false,
-		titleSelector: Upfront.data.posts_element && Upfront.data.posts_element.title_selector ? Upfront.data.posts_element.title_selector : 'h1.post_title',
-		contentSelector: Upfront.data.posts_element && Upfront.data.posts_element.content_selector ? Upfront.data.posts_element.content_selector : '.post_content',
-		excerptSelector: Upfront.data.posts_element && Upfront.data.posts_element.excerpt_selector ? Upfront.data.posts_element.excerpt_selector : this.contentSelector,
-		featuredSelector: Upfront.data.this_post && Upfront.data.this_post.featured_image_selector ? Upfront.data.this_post.featured_image_selector : '.entry-thumbnail',
-		
-		initialize: function(options){
-			this.constructor.__super__.initialize.call(this, [options]);
-			this.events = _.extend({}, this.events, {
-				'click .upost_thumbnail_changer': 'changeFeaturedImage'
-			});
-		},
-
-		/**
-		 * Element contents markup.
-		 * @return {string} Markup to be shown.
-		 */
-		get_content_markup: function () {
-			var element_id = this.model.get_property_value_by_name("element_id"),
-				data = $(document).data("content-" + element_id)
-			;
-			if(data){
-				console.log('Post');
-				data = this.setFeaturedImageSelector($(data));
-				data.find(this.featuredSelector)
-					.css({position:'relative', 'min-height': '60px', 'margin-bottom':'30px'})
-					.append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
-					.find('img').css({'z-index': '2', position: 'relative'})
-				;
-				data = data.html();
-			}
-
-			return data || 'Hold on please';
-		},
-
-		on_render: function () {
-			var 
-				me = this,
-				element_id = this.model.get_property_value_by_name("element_id"),
-				raw_settings = $(document).data('settings-' + element_id),
-				settings = raw_settings || [],
-				post_type = this.model.get_property_value_by_name("post_type"),
-				taxonomy = this.model.get_property_value_by_name("taxonomy"),
-				term = this.model.get_property_value_by_name("term"),
-				limit = this.model.get_property_value_by_name("limit"),
-				content_type = this.model.get_property_value_by_name("content_type"),
-				featured_image = this.model.get_property_value_by_name("featured_image"),
-				data = !!$(document).data("content-" + element_id),
-				is_shadow = !!this.parent_module_view.model.get("shadow")
-			;
-			if (is_shadow && data) return false;
-			if (settings.length) {
-				settings = _.object(
-					_(settings).pluck("name"),
-					_(settings).pluck("value")
-				);
-			} else settings = {};
-			if (
-				settings.post_type != post_type
-				||
-				settings.taxonomy != taxonomy
-				||
-				settings.term != term
-				||
-				settings.limit != limit
-				||
-				settings.content_type != content_type
-				||
-				settings.featured_image != featured_image
-				|| !data
-			) {
-				var request_data = {
-					"post_type": post_type,
-					"taxonomy": taxonomy,
-					"term": term,
-					"limit": limit,
-					"content_type": content_type,
-					"featured_image": featured_image,
-					"element_id": element_id,
-				};
-				if (window._upfront_get_current_query) request_data.query = _upfront_get_current_query();
-				else request_data.query = {};
-				Upfront.Util.post({
-					"action": "uposts_get_markup",
-					"data": JSON.stringify(request_data)
-				}).success(function (response) {
-					$(document).data("content-" + element_id, response.data);
-					$("#" + element_id)
-						.find(".upfront-object-content")
-						.html(me.get_content_markup())
-					;
-				});
-			}
-			$(document).data('settings-' + element_id, this.model.get("properties").toJSON());
-		},
-
-		on_edit: function (e) {
-			var me = this,
-				$post = $(e.target).parents(".uposts-post"),
-				post_id = $post.attr("data-post_id")
-			;
-			this.post = Upfront.data.posts ? Upfront.data.posts[post_id] : false;
-			if(!this.post){
-				this.fetchPost(post_id).done(function(response){
-					Upfront.data.currentPost = me.post;
-					Upfront.Events.trigger("data:current_post:change");
-					me.editPost(me.post);					
-				});
-			}
-			else{
-				this.editPost(this.post);
-				Upfront.data.currentPost = me.post;
-				Upfront.Events.trigger("data:current_post:change");
-			}
-		},
-		on_cancel: function () {
-			var editor = Upfront.Content.editors.get(this._editor_id());
-			editor.stop();
-		},
-		editPost: function () { //post){
-			var is_excerpt = 'excerpt' == this.model.get_property_value_by_name("content_type"),
-				body_selector = is_excerpt ? this.excerptSelector : this.contentSelector,
-				editor = Upfront.Content.editors.add({
-					type: Upfront.Content.TYPES.POST,
-					editor_id: this._editor_id(),
-					view: this,
-					post: this.post,
-					content_mode: (is_excerpt ? 'post_excerpt' : 'post_content'),
-					selectors: {
-						title: '.uposts-posts-' + this.post.id + ' ' + this.titleSelector,
-						body: '.uposts-posts-' + this.post.id + ' ' + body_selector
-					}
-				})
-			;
-			editor.start();
-		},
-		updatePost: function() {
-			var editor = Upfront.Content.editors.get(this._editor_id()),
-				title = editor.get_title ? editor.get_title() : false,
-				content = editor.get_content ? editor.get_content() : false
-			;
-			if (editor) {
-				this.post.set({is_new: false}, {silent: true});
-				if (title) this.post.set('post_title', title);
-				if (content) this.post.set(
-					(is_excerpt ? 'post_excerpt' : 'post_content'),
-					Upfront.Media.Transformations.apply(content)
-				);
-				editor.stop();
-			}
-		},
-
-		setFeaturedImageSelector: function($data){
-			return $data;
-		},
-
-		changeFeaturedImage: function(e){
-			var me = this,
-				target = $(e.target),
-				postId = target.closest('.uposts-post').data('post_id')
-				img = target.parent().find('img'),
-				loading = new Upfront.Views.Editor.Loading({
-					loading: "Starting image editor ...",
-					done: "Here we are!",
-					fixed: false
-				})
-			;
-
-			if(!img.length){
-
-				if(!Upfront.data.posts[postId])
-					this.fetchPost(postId);
-
-				me.openImageSelector(postId);
-			}
-			else if(Upfront.data.posts && Upfront.data.posts[postId]){
-				loading.render();
-				target.parent().append(loading.$el);
-				me.getImageInfo(Upfront.data.posts[postId]).done(function(imageInfo){
-					loading.$el.remove();
-					me.openImageEditor(false, imageInfo, postId);
-				});
-			}
-			else{
-				loading.render();
-				target.parent().append(loading.$el);
-				this.fetchPost(postId).done(function(response){
-					me.getImageInfo(me.post).done(function(imageInfo){
-						loading.$el.remove();
-						me.openImageEditor(false, imageInfo, postId);
-					});
-				});
-			}
-		},
-
-		openImageSelector: function(postId){
-			var me = this;
-			Upfront.Views.Editor.ImageSelector.open().done(function(images){
-				var sizes = {},
-					imageId = 0
-				;
-				_.each(images, function(image, id){
-					sizes = image;
-					imageId = id;
-				});
-				var	imageInfo = {
-						src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-						srcFull: sizes.full[0],
-						srcOriginal: sizes.full[0],
-						fullSize: {width: sizes.full[1], height: sizes.full[2]},
-						size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
-						position: false,
-						rotation: 0,
-						id: imageId
-					}
-				;
-				$('<img>').attr('src', imageInfo.srcFull).load(function(){
-					Upfront.Views.Editor.ImageSelector.close();
-					me.openImageEditor(true, imageInfo, postId);			
-				});
-			});
-		},
-
-		fetchPost: function(postId){
-			var me = this;
-			this.post = new Upfront.Models.Post({ID: postId});
-			return this.post.fetch({withMeta: true}).done(function(response){
-				if(!Upfront.data.posts)
-					Upfront.data.posts = {};
-				Upfront.data.posts[postId] = me.post;
-			});
-		},
-
-		getImageInfo: function(post){
-			var me = this,
-				imageData = post.meta.get('_thumbnail_data'),
-				imageId = post.meta.get('_thumbnail_id'),
-				deferred = $.Deferred(),
-				$img = $('.uposts-posts-' + post.id).find(this.featuredSelector).find('img')
-			;
-
-			if(!imageData || !_.isObject(imageData.get('meta_value')) || imageData.get('meta_value').imageId != imageId.get('meta_value')){
-				if(!imageId)
-					return false;
-				Upfront.Views.Editor.ImageEditor.getImageData([imageId.get('meta_value')]).done(function(response){
-					var images = response.data.images,
-						sizes = {},
-						imageId = 0
-					;
-					_.each(images, function(image, id){
-						sizes = image;
-						imageId = id;
-					});
-
-					deferred.resolve({
-						src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-						srcFull: sizes.full[0],
-						srcOriginal: sizes.full[0],
-						fullSize: {width: sizes.full[1], height: sizes.full[2]},
-						size: {width: $img.width(), height: $img.height()},
-						position: {top: 0, left: 0},
-						rotation: 0,
-						id: imageId
-					});
-				});
-			}
-			else {
-				var data = imageData.get('meta_value'),
-					factor = $img.width() / data.cropSize.width
-				;
-				deferred.resolve({
-					src: data.src,
-					srcFull: data.srcFull,
-					srcOriginal: data.srcOriginal,
-					fullSize: data.fullSize,
-					size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},//data.imageSize,
-					position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},//data.imageOffset,
-					rotation: data.rotation,
-					id: data.imageId
-				});
-			}
-			return deferred.promise();
-		},
-
-		openImageEditor: function(newImage, imageInfo, postId){
-			var me = this,
-				mask = $('.uposts-posts-' + postId).find(this.featuredSelector),
-				maskHeight = Upfront.data && Upfront.data.posts_element && Upfront.data.posts_element.featured_image_height ? Upfront.data.posts_element.featured_image_height : 300
-				editorOptions = _.extend({}, imageInfo, {
-					maskOffset: mask.offset(),
-					maskSize: {width: mask.width(), height: maskHeight},
-					setImageSize: newImage,
-					extraButtons: [
-						{
-							id: 'image-edit-button-swap',
-							text: 'Swap Image',
-							callback: function(e, editor){
-								editor.cancel();
-								me.openImageSelector(postId);
-							}
-						}
-					]
-				})
-			;
-			Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
-				var post = me.post,
-					img = mask.find('img')
-				;
-
-				post.meta.add([
-					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
-					{meta_key: '_thumbnail_data', meta_value: imageData}
-				], {merge: true});
-				post.meta.save();
-				if(!img.length)
-					img = $('<img style="z-index:2;position:relative">').appendTo(mask);
-
-				img.attr('src', imageData.src);
-			})
-		},
-
-		_editor_id: function () {
-			return this.model.get_property_value_by_name("element_id") + '-' + this.post.id;
-		}
-
-	});
-
 
 	/**
 	 * Sidebar element class - this let you inject element into 
@@ -793,7 +504,6 @@
 	});
 	Upfront.Models.UpostsModel = UpostsModel;
 	Upfront.Views.UpostsView = UpostsView;
-	Upfront.Views.OldUpostsView = OldUpostsView;
 
 
 

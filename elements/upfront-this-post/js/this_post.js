@@ -1,77 +1,36 @@
 (function ($) {
-
-
 /**
  * Define the model - initialize properties to their default values.
  * @type {Upfront.Models.ObjectModel}
  */
 var ThisPostModel = Upfront.Models.ObjectModel.extend({
 	/**
-	 * A quasi-constructor, called after actual constructor *and* the built-in `initialize()` method.
-	 * Used for setting up instance defaults, initialization and the like.
+	 * The init function is called after the contructor and Model intialize.
+	 * Here the default values for the model properties are set.
 	 */
 	init: function () {
-		this.init_property("type", "ThisPostModel");
-		this.init_property("view_class", "ThisPostView");
-
-		this.init_property("element_id", Upfront.Util.get_unique_id("this_post-object"));
-		this.init_property("class", "c22 upfront-this_post");
-		this.init_property("has_settings", 1);
-		this.init_property("post_data", ["author", "date", "comments_count"]);
+		var properties = _.clone(Upfront.data.thisPost.defaults);
+		properties.element_id = Upfront.Util.get_unique_id("this_post-object");
+		this.init_properties(properties);
 	}
 });
 
-/**
- * View instance - what the element looks like.
- * @type {Upfront.Views.ObjectView}
- */
 var ThisPostView = Upfront.Views.ObjectView.extend({
-	post: false,
-	content: false,
+	changed: false,
+	markup: false,
 	loading: false,
-	titleSelector: Upfront.data.this_post && Upfront.data.this_post.title_selector ? Upfront.data.this_post.title_selector : 'h1.post_title',
-	contentSelector: Upfront.data.this_post && Upfront.data.this_post.content_selector ? Upfront.data.this_post.content_selector : '.post_content',
-	featuredSelector: Upfront.data.this_post && Upfront.data.this_post.featured_image_selector ? Upfront.data.this_post.featured_image_selector : '.entry-thumbnail',
+	postId: false,
+	editor: false,
 
-	initialize: function(){
-		var me = this,
-			postType = Upfront.Settings.LayoutEditor.newpostType ? Upfront.Settings.LayoutEditor.newpostType : 'post',
-			post = false
-		;
-		Upfront.Views.ObjectView.prototype.initialize.call(this);
+	initialize: function(options){
+		if(! (this.model instanceof ThisPostModel)){
+			this.model = new ThisPostModel({properties: this.model.get('properties')});
+		}
+		this.constructor.__super__.initialize.call(this, [options]);
 
-		this.loading = this.get_post_content().done(function(response){
-				me.content = response.data.filtered;
-			})
-			.fail(function(response){
-				console.log(response);
-			})
-		;
+		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 
-
-		post = new Upfront.Models.Post({id: _upfront_post_data.post_id, post_type: postType});
-		
-		if(!Upfront.data.loading.post)
-			Upfront.data.loading.post = {};
-
-		Upfront.data.loading.post[_upfront_post_data.post_id] = post.fetch({post_type: postType}).done(function(response){
-			me.post = post;
-			/*
-			$(document).data("upfront-post-" + me.post.id, me.post);
-			$(document).data("upfront-post-current", me.post);
-			*/
-
-			Upfront.data.currentPost = post;
-			if(!Upfront.data.posts)
-				Upfront.data.posts = {};
-			Upfront.data.posts[post.id] = post;
-
-			Upfront.Events.trigger("data:current_post:change");
-			_upfront_post_data.post_id = me.post.id;
-
-			me.render();
-			Upfront.Events.trigger("elements:this_post:loaded", me);
-		});
+		console.log('This post element');
 	},
 
 	/**
@@ -79,99 +38,99 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	 * @return {string} Markup to be shown.
 	 */
 	get_content_markup: function () {
-		var content = this.content;
-		if(content && this.post){
-			content = $('<div>').html(content)
-				.find(this.titleSelector).html(this.post.get('post_title')).end()
-				.find(this.contentSelector).html(this.post.get('post_content')).end()
-				.find(this.featuredSelector).append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
-			;
-			return content.html();
+		if(this.changed || !this.markup){
+			this.refreshMarkup();
+			return 'Loading';
 		}
-		return 'Hold on please';
+
+		return this.markup;
 	},
 
-	on_render: function () {
+	on_render: function(){
+		var me = this;
+		//Give time to append when dragging.
+		setTimeout(function(){
+			me.updateEditor($('#' + me.property('element_id')).find(".upfront-object-content"));
+		}, 100);
+	},
+
+	refreshMarkup: function () {
 		var me = this;
 
-		if (!this.content)
-			this.loading.done(function(response){
-				me.render();
-			});
-
-		// Kill the module removal button
-		this.parent_module_view.$el.find(".upfront-entity-delete_trigger").remove();
-
-		this.trigger("rendered", this);
-	},
-
-	get_post_content: function () {
-		var postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-
-		if(postId === false)
+		if(this.postId === false)
 			return new $.Deferred().resolve({data:{filtered: 'Error'}});
 
-		return Upfront.Util.post({
-			"action": "this_post-get_markup",
-			"data": JSON.stringify({
-				"post_id": postId,
-				"post_type": Upfront.Settings.LayoutEditor.newpostType,
-				"properties": {post_data:this.model.get_property_value_by_name("post_data")}
-			})
-		});
-	},
 
-	on_edit: function (e) {
-		var me = this;
+		var node = $('#' + me.property('element_id')).find(".upfront-object-content"),
+			loading = !node.length ? false : new Upfront.Views.Editor.Loading({
+				loading: "Refreshing post ...",
+				done: "Here we are!",
+				fixed: false
+			})			
+		;
 
-		console.log('Edit post');
-
-		if(!this.post){
-			this.post = new Upfront.Model.Post({id: _upfront_post_data.post_id});
-			this.post.fetch().done(function(response){
-				Upfront.data.currentPost = post;
-				Upfront.Events.trigger("data:current_post:change");
-				me.editPost(me.post, e);
-			});
+		if(loading){
+			loading.render();
+			node.append(loading.$el);
 		}
-		else
-			this.editPost(this.post, e);
+
+		return Upfront.Util.post({
+				action: "this_post-get_markup",
+				data: JSON.stringify({
+					post_id: this.postId,
+					post_type: Upfront.Settings.LayoutEditor.newpostType,
+					properties: {post_data: this.property("post_data")}
+				})
+			}).success(function(response){
+				if(loading){
+					loading.$el.remove();
+					loading = false;
+				}
+				var node = node || $('#' + me.property('element_id')).find(".upfront-object-content");
+				me.markup = response.data.filtered;
+				node.html(me.get_content_markup());
+				me.updateEditor(node);
+
+				if(me.editor.post && me.editor.post.is_new){
+					me.editor.editTitle();
+					me.editor.post.is_new = false;
+				}
+			})
+		;
 	},
-	on_save: function () {
-		var editor = Upfront.Content.editors.get(this.model.get_property_value_by_name("element_id"));
-		editor.stop();
-	},
-	on_cancel: function () {
-		var editor = Upfront.Content.editors.get(this.model.get_property_value_by_name("element_id"));
-		editor.stop();
-	},
-	editPost: function (post, e) {
-		var editor = Upfront.Content.editors.add({
-			type: Upfront.Content.TYPES.POST,
-			editor_id: this.model.get_property_value_by_name("element_id"),
-			view: this,
-			post: post,
-			selectors: {
-				title: this.titleSelector,
-				body: this.contentSelector
+
+	updateEditor: function(node){
+		var me = this;
+		
+		if(this.editor)
+			return this.editor.updateElement(node);
+
+		this.editor = Upfront.Content.editors.add({
+			type: Upfront.Content.TYPES.META,
+			editor_id: 'this_post_' + this.postId,
+			post_id: this.postId,
+			preload: true,
+			node: node,
+			content_mode: 'post_content',
+			view: me,
+			onUpdated: function(post){
+				me.refreshMarkup(post);
 			}
 		});
-		editor.start(e);
 	},
-	updatePost: function() {
-		var editor = Upfront.Content.editors.get(this.model.get_property_value_by_name("element_id")),
-			title = editor.get_title ? editor.get_title() : false,
-			content = editor.get_content ? editor.get_content() : false
-		;
-		if (editor) {
-			this.post.set({is_new: false}, {silent: true});
-			if (title) this.post.set('post_title', title);
-			if (content) this.post.set('post_content', Upfront.Media.Transformations.apply(content));
-			editor.stop();
+
+	/*
+	Shorcut to set and get model's properties.
+	*/
+	property: function(name, value, silent) {
+		if(typeof value != "undefined"){
+			if(typeof silent == "undefined")
+				silent = true;
+			return this.model.set_property(name, value, silent);
 		}
+		return this.model.get_property_value_by_name(name);
 	}
 });
-
 
 /**
  * Editor command class - this will be injected into commands
@@ -223,7 +182,8 @@ var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
 			{label: "Post Date", value: "date"},
 			{label: "Categories", value: "categories"},
 			{label: "Tags", value: "tags"},
-			{label: "Comments count", value: "comments_count"}
+			{label: "Comments count", value: "comments_count"},
+			{label: "Featured image", value: "featured_image"}
 		];
 		this.fields = _([
 			new Upfront.Views.Editor.Field.Checkboxes({

@@ -33,6 +33,9 @@ function this_post_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/this_post.php');
 
+	// Add element defaults to data object
+	add_action('upfront_data', array(Upfront_ThisPostView, 'add_js_defaults'));
+
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('this_post', upfront_element_url('js/this_post', __FILE__));
 
