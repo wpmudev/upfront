@@ -170,6 +170,14 @@ define(_template_files, function () {
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
 
+			Upfront.Application.LayoutEditor.new_post(this.postType)
+				.done(function(post){
+					console.log(post);
+				})
+			;
+			
+
+			/*
 			//Set a new post as current
 			_upfront_post_data.post_id = 0;
 			Upfront.Settings.LayoutEditor.newpostType = this.postType;
@@ -179,8 +187,6 @@ define(_template_files, function () {
 
 			$(".upfront-layout").append('<div id="upfront-loading">Loading...</div>');
 			this.postView = false;
-
-
 
 			Upfront.Application.LayoutEditor.load_layout({item: 'single-' + this.postType, type: 'single', specificity: 'single-' + this.postType + '-1000000'})
 				.done(function(response){
@@ -198,6 +204,7 @@ define(_template_files, function () {
 					Upfront.Events.on("elements:this_post:loaded", me.on_post_loaded, me);
 				})
 			;
+			*/
 			/*
 			//Try to get the element from the layout
 			.done(function(response){

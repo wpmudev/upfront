@@ -54,17 +54,29 @@ class Upfront_Ajax extends Upfront_Server {
 	// STUB LOADING
 	function load_layout () {
 		$layout_ids = $_POST['data'];
-		if (empty($layout_ids)) $this->_out(new Upfront_JsonResponse_Error("No such layout"));
+		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
+
+		if (empty($layout_ids)) 
+			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
 
 		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
-		if (!$layout->is_empty()) $this->_out(new Upfront_JsonResponse_Success($layout->to_php()));
-		else {
-			//$this->_out(new Upfront_JsonResponse_Error("Unknown layout: " . $layout_id));
+		if ($layout->is_empty()){
 			// Instead of whining, create a stub layout and load that
-			$layout = Upfront_Layout::create_layout($layout_ids);
-			$this->_out(new Upfront_JsonResponse_Success($layout->to_php()));
+			$layout = Upfront_Layout::create_layout($layout_ids);			
 		}
+
+		if($post_type)
+			$post = Upfront_PostModel::create($post_type);
+		else
+			$post = false;
+
+		$response = array(
+			'post' => $post,
+			'layout' => $layout->to_php()
+		);
+
+		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
 
 	function save_layout () {

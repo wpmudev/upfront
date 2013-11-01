@@ -77,14 +77,70 @@ var LayoutEditor = new (Subapplication.extend({
 		;
 	},
 
-	load_layout: function (layout_ids) {
-		var app = this,
-			present = !!app.layout
+	new_post: function(post_type){
+		var layoutOps = {
+				item: 'single-' + post_type, 
+				type: 'single', 
+				specificity: 'single-' + post_type + '-1000000' //Big number to assure default layout
+			},
+			deferred = new $.Deferred()
 		;
+
+		Upfront.Application.LayoutEditor.load_layout(layoutOps, post_type)
+			.done(function(response){
+				var postData = response.data.post;
+				deferred.resolve(Upfront.data.posts[postData.ID]);
+			})
+		;
+
+		return deferred.promise();
+	},
+
+	new_post_set_up: function(postData){
+		//Create the post with meta
+		postData.meta = [];
+		var post = new Upfront.Models.Post(postData);
+
+		post.is_new = true;
+
+		//Set global variables
+		Upfront.data.posts[post.id] = post;
+		_upfront_post_data.post_id = post.id;
+
+		//Load body classes
+		var bodyClasses = 'logged-in admin-bar upfront customize-support flex-support';
+
+		if(postData.post_type == 'page')
+			bodyClasses += ' page page-id-' + post.id + ' page-template-default';
+		else
+			bodyClasses += ' single single-' + postData.post_type + ' postid-' + post.id;
+
+		$('body')
+			.removeClass()
+			.addClass(bodyClasses)
+		;	
+	},
+
+	load_layout: function (layout_ids, new_post) {
+		var app = this,
+			present = !!app.layout,
+			reqData = {
+				action: this.actions.load,
+				data: layout_ids
+			}
+		;
+		if(new_post)
+			reqData['new_post'] = new_post;
+
 		$("body").removeClass(Upfront.Settings.LayoutEditor.Grid.scope);
-		return Upfront.Util.post({"action": this.actions.load, "data": layout_ids})
+		return Upfront.Util.post(reqData)
 			.success(function (test_data) {
-				app.layout = new Upfront.Models.Layout(test_data.data);
+
+				//Set post data if new post
+				if(test_data.data.post)
+					app.new_post_set_up(test_data.data.post);
+
+				app.layout = new Upfront.Models.Layout(test_data.data.layout);
 
 				if (!present) app.set_up_event_plumbing_before_render();
 

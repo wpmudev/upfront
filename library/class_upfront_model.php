@@ -402,12 +402,18 @@ class Upfront_Layout extends Upfront_JsonModel {
 abstract class  Upfront_PostModel {
 
 	public static function create ($post_type, $title='', $content='') {
-		$post_id = wp_insert_post(apply_filters('upfront-post_model-create-defaults', array(
-			'post_type' => $post_type,
-			'post_status' => 'auto-draft',
-			'post_title' => apply_filters('upfront-post_model-create-default_title', $title, $post_type),
-			'post_content' => apply_filters('upfront-post_model-create-default_content', $content, $post_type),
-		), $post_type));
+		$post_data = apply_filters(
+			'upfront-post_model-create-defaults', 
+			array(
+				'post_type' => $post_type,
+				'post_status' => 'auto-draft',
+				'post_title' => 'Write a title...',
+				'post_content' => 'Your content goes here ;)',
+			), 
+			$post_type
+		);
+		$post_id = wp_insert_post($post_data);
+
 		$post = self::get($post_id);
 		return $post;
 	}

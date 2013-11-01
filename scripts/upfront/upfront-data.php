@@ -4,7 +4,7 @@ if(!current_user_can('edit_posts')){
 	die();
 }
 
-$upfront_data = apply_filters('upfront_data', array('loading' => array()));
+$upfront_data = apply_filters('upfront_data', array('loading' => array(), 'posts' => array()));
 $upfront_data['post_selectors'] = apply_filters('upfront_post_selectors', array(
 	'h2.entry-title' => 'title',
 	'.entry-content' => 'content',
