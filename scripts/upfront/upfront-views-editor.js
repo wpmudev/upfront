@@ -21,8 +21,12 @@ define(_template_files, function () {
 		if (file.match(/text!/)) _Upfront_Templates[file.replace(/text!upfront\/templates\//, '').replace(/\.html/, '')] = _template_args[idx];
 	});
 
+	console.log('refresh');
 
-			console.log('refresh');
+	Upfront.Events.on('data:ready', function(){
+		Upfront.data.tpls = _Upfront_Templates;
+	});
+
 		
 	var Upfront_Scroll_Mixin = {
 		stop_scroll_propagation: function ($el) {
@@ -39,7 +43,7 @@ define(_template_files, function () {
 				ev.preventDefault();
 				ev.returnValue = false;
 				return false;
-			}
+			};
 			
 			if (!up && -delta > scrollHeight - height - scrollTop) {
 				// Scrolling down, but this will take us past the bottom.
@@ -165,13 +169,24 @@ define(_template_files, function () {
 		},
 		on_click: function () {
 			//window.location = Upfront.Settings.Content.create.post;
-			var me = this;
+			var me = this,
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Preparing new " + this.postType + "...",
+					done: "Wow, those are cool!",
+					fixed: true
+				})
+			;
+
+			loading.render();
+			$('#page').append(loading.$el);
 
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
 
 			Upfront.Application.LayoutEditor.new_post(this.postType)
 				.done(function(post){
+					loading.$el.remove();
+					loading = false;
 					console.log(post);
 				})
 			;
