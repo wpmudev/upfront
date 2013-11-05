@@ -964,6 +964,7 @@ var _alpha = "alpha",
 			permalink: ''
 		},
 
+		saveAttributes: ['sticky'],
 
 		author: false,
 		comments: false,
@@ -984,6 +985,31 @@ var _alpha = "alpha",
 			}
 		},
 
+		getVisibility: function(){
+			if(this.get('post_status') == 'private')
+				return 'private';
+			if(this.get('post_password'))
+				return 'password';
+			if(this.sticky)
+				return 'sticky';
+			return 'public';
+		},
+
+		setVisibility: function(visibility){
+			this.sticky = 0;
+			if(visibility == 'password'){
+				this.set('post_status', 'publish');
+			} else {
+				this.set('post_password', '');
+				if(visibility == 'private')
+					this.set('post_status', 'private');
+				else if(visibility == 'sticky')
+					this.sticky = 1;
+				else if(visibility == 'public')
+					this.set('post_status', 'publish');
+			}
+		},
+
 		fetch: function(data) {
 			var me = this;
 			return WPModel.prototype.fetch.call(this, data)
@@ -992,6 +1018,8 @@ var _alpha = "alpha",
 						me.author = new Upfront.Models.User(response.data.author);
 					if(response.data.meta)
 						me.meta = new Upfront.Collections.MetaList(response.data.meta, {objectId: me.id, metaType: 'post'});
+
+					me.sticky = response.data.sticky;
 				})
 			;
 		},

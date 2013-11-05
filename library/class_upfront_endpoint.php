@@ -508,7 +508,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($data['withMeta']){
 				$post->meta = $this->parse_single_meta(get_metadata('post', $post->ID));
 			}
-			$post->permalink = get_permalink($posts->ID);
+
+			$post->permalink = get_permalink($post->ID);
+			$post->sticky = is_sticky($post->ID);
+			$post->is_new = false;
 			
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
@@ -519,7 +522,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($post_type == 'page'){
 				$post->post_content = 'Type your page content here. Feel free to add some elements from the left sidebar.';
 			}
+
 			$post->is_new = true;
+			$post->sticky = false;
+
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
 		
@@ -600,6 +606,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		unset($data['post_modified']);
 		unset($data['post_modified_gmt']);
 
+
+
 		if(!$data['ID']){
 			unset($data['ID']);
 			$id = wp_insert_post($data);
@@ -607,9 +615,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		else {
 			$post = get_post($data['ID']);
 			if($post->post_status == 'trash' && $data['post_status'] != 'trash')
-				$post = wp_untrash_post($post['ID']);
+				$post = wp_untrash_post($data['ID']);
 			else if($post->post_status != 'trash' && $data['post_status'] == 'trash')
-				$post = wp_trash_post($post['ID']);
+				$post = wp_trash_post($data['ID']);
 			
 			// Update if not deleted
 			if($post)
@@ -620,6 +628,29 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		if(is_wp_error($id))
 			$this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
+
+		if(isset($data['sticky'])){
+			$is_sticky = is_sticky($id);
+			if($data['sticky'] && !$is_sticky){				
+				$posts = get_option('sticky_posts');
+				if($posts)
+					$posts[] = $id;
+				else
+					$posts = array($id);
+				add_option('sticky_posts', $posts);	
+			}	
+			else if(!$data['sticky'] && $is_sticky) {
+				$posts = get_option('sticky_posts');
+				$index = array_search($id, $posts);
+				if($index !== FALSE){
+					array_splice($posts, $index, 1);
+					if(!sizeof($posts))
+						delete_option('sticky_posts');
+					else
+						add_option('sticky_posts', $posts);
+				}
+			}
+		}
 
 		$post = get_post($id);
 
