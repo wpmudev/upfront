@@ -356,8 +356,10 @@
 
 		events: {
 			'dblclick .ueditor_title': 'editTitle',
+			'keydown .ueditor_title': 'goToEditor',
 			'dblclick .ueditor_content': 'editContent',
-			'click .upost_thumbnail_changer': 'editThumb'
+			'click .upost_thumbnail_changer': 'editThumb',
+			'click .ueditor_restore': 'restore'
 		},
 
 		/**
@@ -379,8 +381,7 @@
 				this.post = Upfront.data.posts[this.postId];
 				this.loadingPost = new $.Deferred();
 				this.loadingPost.resolve(this.post);
-				this.post.on('editor:cancel', this.cancelChanges, this);
-				this.post.on('editor:publish', this.publish, this);
+				this.bindPostEvents();
 			}
 
 			if(options.preload)
@@ -393,6 +394,13 @@
 			this.initEditAreas();
 
 			this.backup = this.$el.html();
+		},
+
+		bindPostEvents: function(){
+			this.post.on('editor:cancel', this.cancelChanges, this);
+			this.post.on('editor:publish', this.publish, this);
+			this.post.on('editor:draft', this.saveDraft, this);
+			this.post.on('editor:trash', this.trash, this);
 		},
 
 		/**
@@ -430,13 +438,12 @@
 			});
 
 			//Prevent dragging from editable areas
-			var draggable = this.view.parent_module_view.$el.find('.upfront-editable_entity:first');
-			if(draggable.draggable){
-				var cancel = draggable.draggable('option', 'cancel');
-				if(cancel && cancel.indexOf('.ueditable') == -1){
-					draggable.draggable('option', 'cancel', cancel + ',.ueditable');
-					console.log('Editable areas no draggable anymore.');
-				}
+			var draggable = this.$el.closest('.ui-draggable'),
+				cancel = draggable.draggable('option', 'cancel')
+			;
+			if(cancel && cancel.indexOf('.ueditable') == -1){
+				draggable.draggable('option', 'cancel', cancel + ',.ueditable');
+				console.log('Editable areas no draggable anymore.');
 			}
 		},
 
@@ -444,12 +451,10 @@
 			var me = this;
 			this.post = new Upfront.Models.Post({ID: this.postId});
 
-			//Bind events	
-			this.post.on('editor:cancel', this.cancelChanges, this);
-			this.post.on('editor:publish', this.publish, this);
+			this.bindPostEvents();
 
 			this.loadingPost = new $.Deferred();
-			this.post.fetch({withMeta: true}).done(function(response){
+			this.post.fetch({withMeta: true, filterContent: true}).done(function(response){
 				if(!Upfront.data.posts)
 					Upfront.data.posts = {};
 				Upfront.data.posts[me.postId] = me.post;
@@ -523,6 +528,7 @@
 						'font-family': styles[camel_case('font-family', transform)],
 						'text-transform': styles[camel_case('text-transform', transform)],
 						'text-decoration': styles[camel_case('text-decoration', transform)],
+						'text-align': styles[camel_case('text-align', transform)],
 						'color': styles.color,
 						'outline': 0,
 						margin:0,
@@ -541,6 +547,11 @@
 			this.getPost().done(function(post){
 				//We will need the edition bar
 				me.prepareBar();
+
+				//Prepare the editor, because when editing the title, 99% we are going to edit the content
+				if(!me.cke && me.mode == 'post_content')
+					me.editPost('.ueditor_content', 'post_content', false);
+
 			});
 
 			$title.html(this.post && this.post.is_new
@@ -550,6 +561,18 @@
 			
 			apply_styles($title);
 			$title.find('input').focus().val(title);
+		},
+
+		goToEditor: function(e){
+			if(e.which == 9|| e.which == 13){
+				e.preventDefault();
+				if(this.cke){
+					this.cke.focus();
+				}
+				else {
+					this.editPost('.ueditor_content', this.mode, true);
+				}
+			}
 		},
 
 		editThumb: function(e){
@@ -702,7 +725,7 @@
 				img.attr('src', imageData.src);
 
 				me.changed.thumb = true;
-			})
+			});
 		},
 
 		editContent: function(e){
@@ -710,23 +733,33 @@
 				return;
 			e.preventDefault();
 			e.stopPropagation();
-			this.editPost('.ueditor_content', 'post_content');
+			this.editPost('.ueditor_content', this.mode, true);
 		},
 		editExcerpt: function(e){
 			e.preventDefault();
 			e.stopPropagation();
-			this.editPost('.ueditor_excerpt', 'post_excerpt');
+			this.editPost('.ueditor_excerpt', 'post_excerpt', true);
 		},
-		editPost: function(selector, mode){
+		editPost: function(selector, mode, focus){
 			var me = this,
 				$body = this.$(selector)
 			;
+			if(!$body.length)
+				return;
+
+			//Where did the user click?
+			var selection = window.getSelection ? _.clone(window.getSelection()) : false;
+
 			$body.css('opacity', '.6');
 
 			this.getPost().done(function(post){
-				var content = post.get(me.mode),
-					mode = me.mode
-				;
+
+				//We will need the edition bar
+				me.prepareBar();
+
+
+				var content = post.get(mode);
+
 				if(!content && mode == 'post_excerpt'){
 					if(confirm('This post has no excerpt, and what you could see before editing was the first words of the post content. Do you want to convert that words in the excerpt and edit the excerpt? Otherwise you will edit the post contents.')){
 						post.set('post_excerpt', $body.text());
@@ -751,30 +784,61 @@
 				//Set the current mode
 				me.cke.contentType = mode;
 
-				/*
-				// Prevent default events, we're in editor mode.
-				me.view.undelegateEvents();
-
-				// Kill the draggable, so we can work with regular inline editor.
-				var $parent = me.view.parent_module_view.$el.find('.upfront-editable_entity:first')
-				if ($parent.is(".ui-draggable"))
-					$parent.draggable('disable');
-				*/
-
 				me.cke.on("instanceReady", function () {
 					// Do this on instanceReady event, as doing it before CKE is fully prepped
 					// causes the focus manager to mis-fire first couple of blur/focus events.
-					$editor.focus();
-					me.cke.focus();
+					if(focus){
+						$editor.focus();
+						me.cke.focus();
+						//Position the cursor inside the editor
+						if(selection)
+							me.positionEditor(selection);
+					}
+					else{ //This editPost request was made by the editTitle, so return the focus to it
+						setTimeout(function(){
+							me.$('.ueditor_title input').focus();
+						}, 100);
+					}
 					$body.css('opacity', '1');
 					me.changed.content = true;
+					//Recalculate limits of the sidebar
+					me.prepareBar();
 				});
 
-				//We will need the edition bar
-				me.prepareBar();
 			});
 		},
+		positionEditor: function(selection){
+			var range = this.cke.createRange(),
+				domEndNode = selection.focusNode,
+				domEndLabel = domEndNode.nodeName,
+				editorElement = $(this.cke.element.$)
+			;
 
+			while(domEndLabel == '#text'){
+				domEndNode = domEndNode.parentNode;
+				domEndLabel = domEndNode.nodeName;
+			}
+
+			var $node = editorElement.find(domEndLabel + ':contains(' + domEndNode.textContent + ')'),
+				node = false
+			;
+
+			if($node.length)
+				node = $node[0];
+
+
+			//this doesn't work
+			
+			if(node){
+				node = new CKEDITOR.dom.node(node);
+				
+				range.setEnd(node, selection.focusOffset);
+				range.setStart(node, selection.focusOffset);
+				this.cke.getSelection().selectRanges( [ range ] );
+				
+			}
+			
+		},
 		openBar: function (){
 			$("body").append("<div id='upfront-editor_bar' />");
 			$bar = $("#upfront-editor_bar");
@@ -813,13 +877,22 @@
 			this.initEditAreas();
 		},
 
-		publish: function(){
-			var changed = this.changed,
+		save: function(status, loadingMsg, successMsg){
+			var me = this,
+				changed = this.changed,
 				updatePost = changed.title || changed.content || this.post.get('post_status') != 'publish',
 				updateMeta = changed.thumb,
 				postUpdated = !updatePost,
-				metaUpdated = !updateMeta
+				metaUpdated = !updateMeta,
+				loading = new Upfront.Views.Editor.Loading({
+					loading: loadingMsg,
+					done: "Here we are!",
+					fixed: false
+				})
 			;
+
+			loading.render();
+			this.$el.append(loading.$el);
 
 			if(changed.title){
 				this.post.set('post_title', this.$('.ueditor_title input').val());
@@ -829,27 +902,65 @@
 			}
 
 			if(updatePost){
-				this.post.set('post_status', 'publish');
+				this.post.set('post_status', status);
 				this.post.save().done(function(r){
-					if(metaUpdated)
-						Upfront.Views.Editor.notify("Post published");
+					if(metaUpdated){
+						loading.$el.remove();
+						Upfront.Views.Editor.notify(successMsg);
+						if(me.options.onUpdated)
+							me.options.onUpdated(me.post.toJSON());						
+					}
 					postUpdated = true;
 				});
 			}
 			if(updateMeta){
-				this.post.meta.save().done(function(){
-					if(postUpdated)
-						Upfront.Views.Editor.notify("Post published");
+				me.post.meta.save().done(function(){
+					if(postUpdated){
+						loading.$el.remove();
+						Upfront.Views.Editor.notify(successMsg);
+						if(me.options.onUpdated)
+							me.options.onUpdated(me.post.toJSON());	
+					}
 					metaUpdated = true;
 				});
 			}
+		},
 
-			if(this.options.onUpdated)
-				this.options.onUpdated(this.post.toJSON());
+		publish: function(){
+			this.save('publish', 'Publishing ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' published');
 		},
 		saveDraft:function(){
-			var newPost = this.post.clone();
-			
+			this.save('draft', 'Saving ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' saved as a draft');
+		},
+		capitalize: function(str){
+			return str.charAt(0).toUpperCase() + str.slice(1);
+		},
+
+		trash: function(){
+			var me = this,
+				postType = this.post.get('post_type'),
+				loading = new Upfront.Views.Editor.Loading({
+					loading: 'Deleting ' + postType + ' ...',
+					done: "Here we are!",
+					fixed: false
+				})
+			;
+			loading.render();
+			this.$el.append(loading.$el);
+			this.post.set('post_status', 'trash').save().done(function(){
+				loading.$el.remove();
+				Upfront.Views.Editor.notify('The ' + postType + ' has been deleted.');
+				if(me.options.onUpdated)
+					me.options.onUpdated(me.post.toJSON());	
+			});
+		},
+		restore: function(){
+			var me = this;
+			if(confirm('Are you sure to restore this ' + this.post.get('post_type') + '?'))
+				this.post.set('post_status', 'draft').save().done(function(){
+					if(me.options.onUpdated)
+						me.options.onUpdated(me.post.toJSON());	
+				});
 		}
 	});
 
@@ -860,27 +971,123 @@
 		offset: {min:0, max:0},
 		position: {min:0, max:0},
 
+		onScrollFunction: false,
+
+		statusOptions: {
+			future: {value:'future', name:'Scheduled'},
+			publish: {value: 'publish', name: 'Published'},
+			pending: {value: 'pending', name: 'Pending Review'},
+			draft: {value: 'draft', name: 'Draft'},			
+			'private': {value: 'private', name: 'Privately Published'},
+			'auto-draft': {value: 'auto-draft', name:'New'},
+			'trash': {value: 'trash', name: 'Deleted'}
+		},
+
+		visibilityOptions: {
+			'public': {value: 'public', name:'Public'},
+			'sticky': {value: 'sticky', name:'Sticky'},
+			'password': {value: 'password', name: 'Protected'},
+			'private': {value: 'private', name: 'Private'}
+		},
+
+		initialStatus: false,
+
 		events: {
 			'click .ueditor-action-cancel': 'cancel',
-			'click .ueditor-action-publish': 'publish'
+			'click .ueditor-action-publish': 'publish',
+			'click .ueditor-action-draft': 'saveDraft',
+			'click .ueditor-action-trash': 'trash',
+			'click .ueditor-action-url': 'editUrl',
+			'click .ueditor-action-tags': 'editTaxonomies',
+			'click .ueditor-select-value': 'editSelect',
+			'click .ueditor-action-status': 'changeStatus',
+			'click .ueditor-action-visibility': 'changeVisibility',
+			'click .ueditor-pass-ok': 'changePass'
 		},
 
 		initialize: function(options){
 			this.post = options.post;
+			this.initialStatus = this.post.get('post_status');
 			this.tpl = _.template(Upfront.data.uposts.barTemplate);
 		},
 
 		render: function(){
+			this.destroy();
 			var postData = this.post.toJSON();
-			postData.visibility = postData.post_password ? "Password protected" : "Public";
-			postData.schedule = postData.post_status == 'future' ? Upfront.Util.format_date(postData.post_date, true) : 'Immediately';
+
+			postData.status = this.statusOptions[postData.post_status];
+			postData.statusOptions = this.getStatusOptions();			
+
+			postData.visibility = this.visibilityOptions[this.post.getVisibility()];
+			postData.visibilityOptions = this.getVisibilityOptions();
+
+			postData.schedule = {
+				key: 'Publish',
+				value: postData.post_status == 'future' ? Upfront.Util.format_date(postData.post_date, true) : 'Immediately'
+			};
+
+			postData.buttonText = this.getButtonText();
+			postData.draftButton = postData.buttonText == 'Publish';
+
+			postData.cid = this.cid;
+
 			this.$el.html(this.tpl(postData));
+			if($('#' + this.cid).length)
+				this.stick();
+		},
+
+		getStatusOptions: function(postata){
+			var ops = [],
+				status = this.initialStatus
+			;
+
+			if(status == 'publish'){
+				ops.push(this.statusOptions.publish);
+			}
+			else if(status == 'future'){
+				ops.push(this.statusOptions.future);
+			}
+			ops.push(this.statusOptions.pending);
+			ops.push(this.statusOptions.draft);
+
+			if(status == 'private'){
+				ops = [ this.statusOptions.private ];
+			}
+
+			return ops;
+		},
+
+		getVisibilityOptions: function(){
+			var now = this.post.getVisibility(),
+				ops = this.visibilityOptions
+			;
+			if(now == 'password')
+				return [
+					{value: 'password', name: 'Edit password...'},
+					ops.public,
+					ops.sticky,
+					ops.private
+				]
+			;
+			return _.values(ops);
+		},
+
+		getButtonText: function(){
+			var status = this.post.get('post_status');
+
+			if(status == 'future')
+				return 'Schedule';
+
+			return this.initialStatus == 'publish' ? 'Update' : 'Publish';
 		},
 
 		calculateLimits: function(){
 			var ph = this.$('.ueditor-bar-ph'),
 				container = this.$el.parent()
 			;
+
+			//We make sure that we are positing the bar again:
+			ph.css('position', 'static');
 
 			this.offset = {
 				min: container.offset().top + 100,
@@ -891,6 +1098,57 @@
 				min: this.offset.min - container.offset().top,
 				max: ph.position().top
 			};
+		},
+
+		onScroll: function(e, bar){
+			var me = this,
+				now = $(window).scrollTop() + $(window).height(),
+				position = bar.css('position')
+			;
+			if(position == 'fixed'){
+				if (now <= me.offset.min){
+					bar.css({
+							position: 'absolute',
+							bottom: 'auto',
+							top: me.position.min + 'px',
+							left:0,
+							width: '100%',
+							opacity: 1
+						})
+						.removeClass('floating')
+					;
+					me.calculateLimits();
+				}
+				else if( now >= me.offset.max){
+					bar.css({
+							position: 'absolute',
+							bottom: 'auto',
+							top: me.position.max + 'px',
+							left:0,
+							width: '100%',
+							opacity: 1
+						})
+						.removeClass('floating')
+					;
+					me.calculateLimits();
+				}
+			}
+			else if(position == 'absolute'){
+				if(now < me.offset.max && now > me.offset.min){
+					bar.css({
+							position: 'fixed',
+							bottom: '0px',
+							left: bar.offset().left + 'px',
+							top: 'auto',
+							width: bar.outerWidth() + 'px',
+							opacity: 0.4
+						})
+						.addClass('floating')
+					;						
+					me.calculateLimits();
+				}
+			}
+
 		},
 
 		stick: function(){
@@ -913,53 +1171,409 @@
 
 			this.calculateLimits();
 
-			$(window).on('scroll', function(e){
-				var now = $(window).scrollTop() + $(window).height(),
-					position = bar.css('position')
-				;
-				if(position == 'fixed'){
-					if (now <= me.offset.min)
-						bar.css({
-							position: 'absolute',
-							bottom: 'auto',
-							top: me.position.min + 'px',
-							left:0,
-							width: '100%',
-							opacity: 1
-						});
-					else if( now >= me.offset.max)
-						bar.css({
-							position: 'absolute',
-							bottom: 'auto',
-							top: me.position.max + 'px',
-							left:0,
-							width: '100%',
-							opacity: 1
-						});
-				}
-				else if(position == 'absolute'){
-					if(now < me.offset.max && now > me.offset.min)
-						bar.css({
-							position: 'fixed',
-							bottom: '0px',
-							left: bar.offset().left + 'px',
-							top: 'auto',
-							width: bar.outerWidth() + 'px',
-							opacity: 0.4
-						});
-				}
-			});
+			this.onScrollFunction = function(e){
+				me.onScroll(e, bar);
+			};
+
+			$(window).on('scroll', this.onScrollFunction);
+			this.onScroll(null, bar);
+		},
+
+		destroy: function(){
+			$(window).off('scroll', this.onScrollFunction);
+			this.onScrollFunction = false;
 		},
 
 		cancel: function(e){
 			e.preventDefault();
-			if(confirm('Are you sure to discard the changes made to ' + this.post.get('post_title') + '?'))
+			if(confirm('Are you sure to discard the changes made to ' + this.post.get('post_title') + '?')){
+				this.destroy();
 				this.post.trigger('editor:cancel');
+			}
 		},
 
 		publish: function(e){
 			e.preventDefault();
+
+			this.destroy();
 			this.post.trigger('editor:publish');
+		},
+
+		saveDraft: function(e){
+			e.preventDefault();
+
+			this.destroy();
+			this.post.trigger('editor:draft');
+		},
+
+		trash: function(e){
+			e.preventDefault();
+			if(confirm('Are you sure you want to delete this ' + this.post.get('post_type') + '?')){
+				this.destroy();
+				this.post.trigger('editor:trash');				
+			}
+		},
+
+		editUrl: function(e){
+			e.preventDefault();
+			var me = this,
+				$popup = {},
+				popup = Upfront.Popup.open(function (data, $top, $bottom) {
+					var $me = $(this);
+					$me.empty()
+						.append('<p class="upfront-popup-placeholder">No such thing as <q>too many drinks</q>.</p>')
+					;
+					$popup = {
+						"top": $top,
+						"content": $me,
+						"bottom": $bottom
+					};
+				}),
+				update = function(slug){
+					me.post.set('post_name', slug);
+					Upfront.Popup.close();
+				},
+				tpl = _.template($(Upfront.data.tpls.popup).find('#upfront-slug-tpl').html())
+			;			
+
+			$popup.content.html(tpl({
+				rootURL: window.location.origin + '/',
+				slug: me.post.get('post_name')
+			}));
+
+			$popup.content.off('click', '#upfront-post_slug-send')
+				.on('click', '#upfront-post_slug-send', function(){
+					update($('#upfront-post_slug').val());
+				})
+				.off('keydown', '#upfront-post_slug')
+				.on('keydown', '#upfront-post_slug', function(e){
+					if(e.which == 13){
+						e.preventDefault();
+						update($('#upfront-post_slug').attr('disabled', true).val());
+					}
+				})
+			;
+		},
+		editTaxonomies: function(e){
+			if(e)
+				e.preventDefault();
+
+			var me = this,
+				tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
+				$tax = $("#upfront-post_taxonomies"),
+				$popup = {},
+				views = {category: false, post_tag: false},
+				currentView = 'category',
+				terms = {},
+				popup = Upfront.Popup.open(function (data, $top, $bottom) {
+					var $me = $(this);
+					$me.empty()
+						.append('<p class="upfront-popup-placeholder"><q>I enjoy eating cheese.</q></p>')
+						.append($tax)
+					;
+					$popup = {
+						"top": $top,
+						"content": $me,
+						"bottom": $bottom
+					};
+				}),
+				dispatch_taxonomy_call = function (el) {
+					var $el = $(el),
+						tax = $el.attr("data-type"),
+						type = $el.attr('rel'),
+						termsList = terms[tax] ? terms[tax] : false
+					;
+					$popup.top.find('.upfront-tabs li').removeClass('active');
+					$el.addClass('active');
+
+					currentView = tax;
+
+					if(views[tax])
+						return render_panel(views[tax]);
+
+					if(!termsList){
+						termsList = new Upfront.Collections.TermList([], {postId: me.post.id, taxonomy: tax});
+						terms[tax] = termsList;
+					}
+
+					$popup.content.html('<p class="upfront-popup-placeholder"><q>Them frogs chirp really loud today.</q></p>');
+
+					termsList.fetch({allTerms: true}).done(function(response){
+						var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
+							tax_view = new tax_view_constructor({collection: termsList})
+						;
+
+						tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+
+						views[tax] = tax_view;
+						render_panel();
+
+					});
+
+					return false;
+				},
+				render_panel = function(view){
+					var v = views[currentView];
+					v.render();
+					$popup.content.html(v.$el);
+					v.setElement(v.$el);
+				}
+			;
+			
+			$(".upfront-popup-placeholder").remove();
+			$popup.top.html(
+				'<ul class="upfront-tabs">' +
+					'<li data-type="category">Categories</li>' +
+					'<li data-type="post_tag">Tags</li>' +
+				'</ul>' +
+				$popup.top.html()
+			);
+
+			$popup.top.find('.upfront-tabs li').on("click", function () { 
+				dispatch_taxonomy_call(this);
+			});
+
+			$tax.show();
+
+			dispatch_taxonomy_call($popup.top.find('.upfront-tabs li:first'));
+
+			Upfront.Events.on("upfront:post:taxonomy_changed", function () {
+				dispatch_taxonomy_call($popup.top.find('.upfront-tabs li.active'));
+			});
+		},
+
+		editSelect: function(e){
+			var parent = $(e.target).parent(),
+				options = parent.find('.ueditor-select-options').show()
+			;
+			parent.find('.ueditor-select-focus').focus().one('blur', function(){
+				setTimeout(function(){
+					options.hide();
+				}, 300);
+			});
+		},
+
+		changeStatus: function(e){
+			var target = $(e.target);
+			this.post.set('post_status', target.data('id'));
+			this.render();
+		},
+
+		changeVisibility: function(e){
+			var target = $(e.target),
+				visibility = target.data('id')
+			;
+			if(visibility == 'password')
+				this.showPassEditor(target);
+			else{
+				this.post.setVisibility(target.data('id'));
+				this.render();
+			}
+		
+		},
+
+		showPassEditor: function(target){
+			var parent = target.closest('.ueditor-select'),
+				op = this.visibilityOptions.password,
+				me = this
+			;
+
+			parent.find('.ueditor-select-value')
+				.data('id', op.value)
+				.text(op.name)
+			;
+
+			parent.find('.ueditor-select-options').hide();
+
+			parent.find('.ueditor-pass-editor').show()
+				.find('input')
+					.one('blur', function(e){
+						setTimeout(function(){
+							me.render();
+						}, 300);
+					})
+					.off('keydown')
+					.on('keydown', function(e){
+						if(e.which == 13){
+							me.changePass(e);
+						}
+					})
+					.focus()
+			;
+		},
+
+		changePass: function(e){
+			var pass = $(e.target).parent().find('input').val();
+			if(pass){
+				this.post.setVisibility('password');
+				this.post.set('post_password', pass);
+				this.render();
+			}
+		}
+	});
+	
+
+	var ContentEditorTaxonomy_Hierarchical = Backbone.View.extend({
+		className: "upfront-taxonomy-hierarchical",
+		events: {
+			"click #upfront-add_term": "handle_new_term",
+			"keydown #upfront-add_term": "handle_enter_new_term",
+			"change .upfront-taxonomy_item": "handle_terms_update",
+			'keydown #upfront-new_term': 'handle_enter_new_term'
+		},
+		termListTpl: false,
+		termSingleTpl: false,
+		updateTimer: false,
+		allTerms: false,
+		initialize: function(options){
+			//this.collection.on('add remove', this.render, this);
+			this.termListTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-term-list-tpl').html());
+			this.termSingleTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-term-single-tpl').html());
+		},
+
+		render: function() {
+			this.$el.html(
+				this.termListTpl({ 
+					allTerms: this.allTerms,
+					postTerms: this.collection,
+					termTemplate: this.termSingleTpl, 
+					labels: this.collection.taxonomyObject.labels,
+				})
+			);
+		},
+
+		handle_new_term: function() {
+			var me = this,
+				termId = this.$el.find("#upfront-new_term").val(),
+				parentId, term
+			;
+
+			if(!termId)
+				return false;
+
+			if ($("#upfront-taxonomy-parents").length) 
+				parentId = $("#upfront-taxonomy-parents").val();
+
+			term = new Upfront.Models.Term({
+				taxonomy: this.collection.taxonomy,
+				name: termId,
+				parent: parentId
+			});
+
+			term.save().done(function(response){
+				me.allTerms.add(term);
+				me.collection.add(term).save();
+				me.render();
+			});
+		},
+
+		handle_terms_update: function(e){
+			var me = this,
+				$target = $(e.target),
+				termId = $target.val()
+			;
+
+			if(!$target.is(':checked')){
+				this.collection.remove(this.allTerms.get(termId));
+			}
+			else
+				this.collection.add(this.allTerms.get(termId));
+
+			//Delay the current update to let the user add/remove more terms
+			clearTimeout(this.updateTimer);
+			this.updateTimer = setTimeout(function(){
+				me.collection.save();
+			}, 2000);
+		},
+
+		handle_enter_new_term: function (e) {
+			if(e.which == 13){
+				this.handle_new_term(e);
+			}
+		}
+	});
+
+	var ContentEditorTaxonomy_Flat = Backbone.View.extend({
+		"className": "upfront-taxonomy-flat",
+		termListTpl: false,
+		termSingleTpl: false,
+		changed: false,
+		updateTimer: false,
+		events: {
+			"click #upfront-add_term": "handle_new_term",
+			'click .upfront-taxonomy_item-flat': 'handle_term_click',
+			'keydown #upfront-add_term': 'handle_enter_new_term',
+			'keydown #upfront-new_term': 'handle_enter_new_term'
+		},
+		initialize: function(options){
+			this.collection.on('add remove', this.render, this);
+			this.termListTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-flat-term-list-tpl').html());
+			this.termSingleTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-term-flat-single-tpl').html());
+		},
+		render: function () {
+			var	me = this,
+				currentTerms = [],
+				otherTerms = []
+			;
+			this.allTerms.each(function (term, idx) {
+				term.children = [];
+				if(me.collection.get(term.get('term_id')))
+					currentTerms.push(term);
+				else
+					otherTerms.push(term);
+			});
+
+			this.$el.html(this.termListTpl({
+				currentTerms: currentTerms,
+				otherTerms: otherTerms,
+				termTemplate: this.termSingleTpl,
+				labels: this.collection.taxonomyObject.labels
+			}));
+		},
+
+		handle_term_click: function(e){
+			var me = this,
+				$target = $(e.currentTarget),
+				termId = $target.attr('data-term_id');
+
+			if($target.parent().attr('id') == 'upfront-taxonomy-list-current')
+				this.collection.remove(termId);
+			else
+				this.collection.add(this.allTerms.get(termId));
+
+			//Delay the current update to let the user add/remove more terms
+			clearTimeout(this.updateTimer);
+			this.updateTimer = setTimeout(function(){
+				me.collection.save();
+			}, 2000);
+		},
+
+		handle_new_term: function (e) {
+			var me = this,
+				termId = this.$el.find("#upfront-new_term").val(),
+				term
+			;
+
+			e.preventDefault();
+
+			if(! termId)
+				return false;
+
+			term = new Upfront.Models.Term({
+				taxonomy: this.collection.taxonomy,
+				name: termId
+			});
+
+			term.save().done(function(response){
+				me.allTerms.add(term);
+				me.collection.add(term).save();
+			});
+		},
+
+		handle_enter_new_term: function (e) {
+			if(e.which == 13){
+				this.handle_new_term(e);
+			}
 		}
 	});
 

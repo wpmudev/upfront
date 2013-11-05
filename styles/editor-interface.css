@@ -5143,11 +5143,11 @@ License: MIT
 }
 
 .ueditor-bar-buttons {
-	text-align: center;
 	padding: 10px 20px;
 }
 
 a.ueditor-action-publish {
+	text-align: center;
 	color: #fff !important;
 	padding: 7px 0px;
 	display: block;
@@ -5156,11 +5156,109 @@ a.ueditor-action-publish {
 	width:80%;
 	margin: 0 auto;
 	font-weight: bold;
+	margin-bottom:10px;
 }
 a.ueditor-action-publish:hover {
 	text-decoration: none;
 }
 
+.ueditor_deleted_post {
+	border: 1px solid #8fa9bf;
+	padding: 15px;
+	background: #cee1f2;
+	color: #395269;
+	margin-bottom: 15px;
+}
+
+div.ueditor_deleted_post a.ueditor_restore {
+	color: #1fcd8f;
+	cursor: pointer;
+}
+div.ueditor_deleted_post a.ueditor_restore:hover {
+	text-decoration: underline;
+}
+
+.ueditor-bar div a.ueditor-action-trash {
+	display: block;
+	float: right;
+	color: #7E99B1;
+}
+
+.ueditor-bar div a.ueditor-action-trash:hover {
+	color: #E5575A;
+	text-decoration: none;
+}
+
+.ueditor-select {
+	display: inline-block;
+	position:relative;
+	margin-left: 5px;
+}
+.ueditor-select-value {
+	cursor: pointer;
+}
+.ueditor-select-options,
+.ueditor-pass-editor {
+	position:absolute;
+	top: 100%;
+	left: -10px;
+	background: #F2F9FF;
+	border: 1px solid #6386A6;
+	display:none;
+	z-index:10000;
+}
+
+.floating .ueditor-select-options,
+.floating .ueditor-pass-editor {
+	top: auto;
+	bottom: 100%;
+}
+.ueditor-select-option {
+	display:block;
+	padding: 5px 10px;
+	color: #6386A6 !important;
+	cursor: pointer;
+}
+
+.ueditor-select-option:hover {
+	background: #607F99;
+	color: #F2F9FF !important;
+	text-decoration: none !important;
+}
+.ueditor-select input.ueditor-select-focus {
+	position:absolute;
+	background: none;
+	border:0;
+	margin:0;
+	padding:1;
+	height:1px;
+	width:1px;
+	outline: 0;
+	left: -5000px;
+}
+
+.ueditor-pass-editor {
+	width:250px;
+	padding: 5px 10px;
+}
+
+a.ueditor-pass-ok {
+	background: #1fcd8f;
+	color: #fff !important;
+	display: block;
+	float:right;
+	font-size: 14px;
+	padding: 2px 15px;
+	margin-top: 10px;
+}
+a.ueditor-pass-ok:hover {
+	background: #3ea;
+	text-decoration: none;
+}
+
+.ueditor-action-status, .ueditor-action-visibility {
+	width: 140px;
+}
 
 .upost_thumbnail_changer {
 	border: 2px dashed #3f5870;

@@ -17,7 +17,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if (!$post_id || !is_numeric($post_id)) return '';
 		
 		$post = get_post($post_id);
-		if ($post->post_password && !is_user_logged_in()) return ''; // Augment this!
+		if ($post->post_password && !is_user_logged_in() || $post->post_status != 'publish' && !is_user_logged_in()) 
+			return ''; // Augment this!
 
 		if(!$properties['post_data'])
 			$properties['post_data'] = array();
@@ -60,6 +61,13 @@ class Upfront_ThisPostView extends Upfront_Object {
 		global $post;
 		$post = $this_post;
 		setup_postdata($post);
+
+		global $wp_query, $more;
+
+		//Make sure we show the whole post content
+		$more = 1;
+
+		$wp_query->is_single = true;
 
 		return upfront_get_template('this-post', array('post' => $post, 'properties' => $properties), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
 	}
@@ -106,12 +114,21 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		if (!is_numeric($data['post_id'])) die('error');
 
 		$content = '';
-		if($data['post_id'])
-			$content = Upfront_ThisPostView::get_post_markup($data['post_id'], null, $data['properties']);
+
+		if($data['post_id']){
+			$post = get_post($data['post_id']);
+			if(!$post)
+				return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
+
+			if($post->post_status == 'trash')
+				$content = '<div class="ueditor_deleted_post ueditable upfront-ui">This ' . $post->post_type . ' has been deleted. To edit it, <a class="ueditor_restore">restore the ' . $post->post_type . '</a>.</div>';
+			else
+				$content = Upfront_ThisPostView::get_post_markup($data['post_id'], null, $data['properties']);
+		}
 		else if($data['post_type'])
 			$content = Upfront_ThisPostView::get_new_post($data['post_type'], $data['properties']);
 		else
-			die('error');
+			$this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
 
 		
 		$this->_out(new Upfront_JsonResponse_Success(array(

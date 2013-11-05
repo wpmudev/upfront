@@ -237,12 +237,17 @@ class Upfront_UpostsAjax extends Upfront_Server {
 
 	public function load_single_markup () {		
 		$data = stripslashes_deep($_POST['data']);
-		$post = $data['post'];
-		if(!$post || !$post['ID'])
+		if(!isset($data['post']) || !isset($data['post']['ID']))
+			$this->_out(new Upfront_JsonResponse_Error("No post id."));
+
+		$post = get_post($data['post']['ID']);
+		if(!$post)
 			$this->_out(new Upfront_JsonResponse_Error("Missing post."));
 
-		query_posts('p=' . $post['ID']);
-		setup_postdata($post);
+		if($post->post_status == 'trash')
+			$this->_out(new Upfront_JsonResponse_Success('<div class="ueditor_deleted_post ueditable">This ' . $post->post_type . ' has been deleted. To edit it, <a class="ueditor_restore">restore the ' . $post->post_type . '</a>.</div>'));
+
+		query_posts('p=' . $post->ID);
 
 		if(have_posts())
 			the_post();
