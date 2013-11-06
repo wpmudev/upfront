@@ -2,6 +2,7 @@
 
 /**
  * Add region support for the current request
+ * @TODO deprecate this
  */
 function upfront_region_support ($region) {
 	return Upfront_Theme::get_instance()->add_region_support($region);
@@ -9,9 +10,27 @@ function upfront_region_support ($region) {
 
 /**
  * Check region support for current request
+ * @TODO deprecate this
  */
 function upfront_region_supported ($region) {
 	return Upfront_Theme::get_instance()->has_region_support($region);
+}
+
+
+function upfront_add_region ($args) {
+	return Upfront_Theme::get_instance()->add_region($args);
+}
+
+function upfront_add_regions ($regions) {
+	return Upfront_Theme::get_instance()->add_regions($regions);
+}
+
+function upfront_has_region ($name) {
+	return Upfront_Theme::get_instance()->has_region($name);
+}
+
+function upfront_get_regions () {
+	return Upfront_Theme::get_instance()->get_regions();
 }
 
 

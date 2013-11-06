@@ -238,16 +238,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$regions = self::get_regions_data();
 		$data = json_decode( get_option($id, json_encode(array())), true );
 		if ( ! empty($data) ) {
-			foreach ( $regions as $i => $region ) {
-				if ( isset($region['scope']) && $region['scope'] == 'global' )
-					continue;
-				foreach ( $data['regions'] as $region_data ) {
+			foreach ( $data['regions'] as $i => $region ) {
+				foreach ( $regions as $region_data ){
 					if ( $region['name'] != $region_data['name'] )
 						continue;
-					$regions[$i] = $region_data;
+					if ( isset($region['scope']) && $region['scope'] != 'local' )
+						$data['regions'][$i] = $region_data;
 				}
 			}
-			$data['regions'] = $regions;
 			$data['layout'] = self::$cascade;
 		}
 		return self::from_php($data);
@@ -278,7 +276,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static function _get_regions ($all = false) {
 		$regions = array();
 		do_action('upfront_get_regions', self::$cascade);
-		if ( $all || ($arr = upfront_region_supported('header')) )
+		/*if ( $all || ($arr = upfront_region_supported('header')) )
 			$regions[] = array_merge(array(
 				'name' => "header", 
 				'title' => __("Header Area"), 
@@ -309,18 +307,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 			'container' => 'main',
 			'default' => true
 		);
-		// Use this instead of main, so we have some content:
-		/*$regions[] = array(
-			'name' => "main", 
-			'title' => __("Main Area"), 
-			'properties' => array(), 
-			'modules' => json_decode('[{"name":"","objects":[{"name":"","element_id":"","properties":[{"name":"type","value":"ThisPostModel"},{"name":"view_class","value":"ThisPostView"},{"name":"element_id","value":"this_post-object-1368256944132-1598"},{"name":"class","value":"c22"},{"name":"has_settings","value":0}]}],"properties":[{"name":"element_id","value":"module-1368256944133-1595"},{"name":"class","value":"c17 upfront-this_post_module ml2 mr0 mt5 mb0"},{"name":"has_settings","value":0},{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"row","value":7}]}]', true), 
-			'wrappers' => json_decode('[{"name":"","properties":[{"name":"wrapper_id","value":"wrapper-1368256987423-1189"},{"name":"class","value":"c19 clr"}]}]', true), 
-			'scope' => "local", 
-			'container' => 'main',
-			'default' => true
-		);*/
-		
 		if ( $all || ($arr = upfront_region_supported('right-sidebar')) )
 			$regions[] = array_merge(array(
 				'name' => "right-sidebar", 
@@ -341,7 +327,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'modules' => array(), 
 				'wrappers' => array(), 
 				'scope' => "global"
-			), ( is_array($arr) ? $arr : array() ));
+			), ( is_array($arr) ? $arr : array() ));*/
+		$regions = upfront_get_regions();
 		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
 	

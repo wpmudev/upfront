@@ -4,6 +4,7 @@ class Upfront_Theme {
 	
 	protected static $instance;
 	protected $supported_regions = array();
+	protected $regions = array();
 	protected $template_dir = 'templates';
 	
 	public static function get_instance () {
@@ -16,10 +17,11 @@ class Upfront_Theme {
 		
 	}
 	
+	// @TODO deprecate this
 	public function add_region_support ($region, $args = array()) {
 		$this->supported_regions[$region] = $args;
 	}
-	
+	// @TODO deprecate this
 	public function has_region_support ($region) {
 		if ( array_key_exists($region, $this->supported_regions) ) {
 			if ( !empty($this->supported_regions[$region]) )
@@ -27,6 +29,55 @@ class Upfront_Theme {
 			return true;
 		}
 		return false;
+	}
+	
+	public function add_region ($args) {
+		$defaults = array(
+			'name' => "", 
+			'title' => "", 
+			'properties' => array(), 
+			'modules' => array(), 
+			'wrappers' => array(), 
+			'scope' => "local", 
+			'container' => "",
+			'default' => false,
+			'position' => 10
+		);
+		$args = wp_parse_args($args, $defaults);
+		if ( ! empty($args['name']) && ! $this->has_region($args['name']) )
+			$this->regions[] = $args;
+	}
+	
+	public function add_regions ($regions) {
+		foreach ( $regions as $region )
+			$this->add_region($region);
+	}
+	
+	public function get_regions () {
+		// Required main region
+		if ( !$this->has_region('main') )
+			$this->add_region(array(
+				'name' => "main", 
+				'title' => __("Main Area"),
+				'scope' => "local", 
+				'container' => "main",
+				'default' => true,
+				'position' => 10
+			));
+		usort($this->regions, array(self, "_sort_region"));
+		return $this->regions;
+	}
+	
+	public function has_region ($name) {
+		foreach ( $this->regions as $region ){
+			if ( $region['name'] == $name )
+				return true;
+		}
+		return false;
+	}
+	
+	public static function _sort_region ($a, $b) {
+		return ( $a['position'] > $b['position'] ) ? 1 : ( $a['position'] == $b['position'] ? 0 : -1 );
 	}
 	
 	public function set_template_dir ($dir) {

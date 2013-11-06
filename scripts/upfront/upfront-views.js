@@ -536,6 +536,7 @@ define(_template_files, function () {
 				var view = Upfront.data.module_views[model.cid];
 				if ( !view )
 					return;
+				delete Upfront.data.module_views[model.cid];
 				view.unbind();
 				view.remove();
 			},
@@ -571,7 +572,7 @@ define(_template_files, function () {
 				this.update();
 			},
 			update: function () {
-				this.update_background();
+				//this.update_background();
 			},
 			add_sub_model: function (model) {
 				this.sub_model.push(model);
@@ -607,7 +608,8 @@ define(_template_files, function () {
 
 		Region = _Upfront_SingularEditor.extend({
 			events: {
-				"mouseup": "on_click" // Bound on mouseup because "click" prevents bubbling (for module/object activation)
+				//"mouseup": "on_click", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
+				"mouseover": "on_mouse_over"
 			},
 			attributes: function(){
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -618,6 +620,11 @@ define(_template_files, function () {
 				classes.push('upfront-region');
 				classes.push('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
 				classes.push(grid.class + this.col);
+				if ( this.model.collection.active_region == this.model ){
+					classes.push('upfront-region-active');
+					if ( this.$el.hasClass('upfront-region-no-gradient') )
+						classes.push('upfront-region-no-gradient');
+				}
 				return {
 					"class": classes.join(' ')
 				}
@@ -640,19 +647,23 @@ define(_template_files, function () {
 			on_click: function () {
 				this.trigger("activate_region", this);
 			},
+			on_mouse_over: function () {
+				this.trigger("activate_region", this);
+			},
 			render: function () {
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
 				this.$el.html('<div class="upfront-debug-info"/>');
 				this.$el.data('name', this.model.get("name"));
 				this.$el.attr('data-title', this.model.get("title"));
+				this.$el.append('<div class="upfront-region-title">' + this.model.get("title") + '</div>');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this;
 				local_view.render();
 				this.$el.append(local_view.el);
-				var region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
-				region_panels.render();
-				//this.$el.append(region_panels.el);
+				this.region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
+				this.region_panels.render();
+				this.$el.append(this.region_panels.el);
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
 				this.trigger("region_render", this);
 				if ( ! this._modules_view )
@@ -665,10 +676,10 @@ define(_template_files, function () {
 					name = this.model.get("name"),
 					col = this.model.get_property_value_by_name('col'),
 					is_locked = this.model.get_property_value_by_name('is_locked');
-				if ( container && container != name ){
+				//if ( container && container != name ){
 					// This region is inside another region container
 					this.update_background(); // Allow background applied
-				}
+				//}
 				if ( col != this.col )
 					this.region_resize(col);
 				if ( is_locked )
@@ -687,29 +698,51 @@ define(_template_files, function () {
 		}),
 
 		Regions = _Upfront_PluralEditor.extend({
+			allow_edit: false,
+			init: function () {
+				this.stopListening(this.model, 'add', this.render);
+				this.listenTo(this.model, 'add', this.on_add);
+				this.stopListening(this.model, 'remove', this.render);
+				this.listenTo(this.model, 'remove', this.on_remove)
+				this.listenTo(this.model, 'reset', this.on_reset);
+				Upfront.Events.on('command:region:edit_toggle', this.on_edit_toggle, this);
+			},
 			render: function () {
 				this.$el.html('');
-				var me = this,
-					$el = this.$el,
-					container_views = []
-				;
+				var me = this;
+				if ( typeof Upfront.data.region_container_views == 'undefined' )
+					Upfront.data.region_container_views = {};
+				if ( typeof Upfront.data.region_views == 'undefined' )
+					Upfront.data.region_views = {};
 				this.model.each(function (region) {
-					var container = region.get("container"),
-						name = region.get("name");
-					if ( !container || container == name ) {
-						var container_view = new RegionContainer({"model": region});
-						container_view.render();
-						$el.append(container_view.el);
-						container_views.push(container_view);
-					}
+					me.render_container(region);
 				});
 				this.model.each(function (region, index) {
-					var local_view = new Region({"model": region}),
-						container_view = _.find(container_views, function (container) {
-							var name = container.model.get("container") || container.model.get("name");
-							if ( region.get("container") == name || region.get("name") == name )
-								return true;
-						});
+					me.render_region(region);
+				});
+			},
+			render_container: function (region, index) {
+				var container = region.get("container"),
+					name = region.get("name");
+				if ( !container || container == name ) {
+					var container_view = Upfront.data.region_container_views[region.cid] || new RegionContainer({"model": region});
+					container_view.render();
+					if ( index >= 0 )
+						this.$el.find('.upfront-region').eq(index).closest('.upfront-region-container').before(container_view.el);
+					else
+						this.$el.append(container_view.el);
+					if ( !Upfront.data.region_container_views[region.cid] ){
+						Upfront.data.region_container_views[region.cid] = container_view;
+					}
+					else {
+						container_view.delegateEvents();
+					}
+				}
+			},
+			render_region: function (region, before) {
+				var local_view = Upfront.data.region_views[region.cid] || new Region({"model": region}),
+					container_view = this.get_container_view(region);
+				if ( !Upfront.data.region_views[region.cid] ){
 					local_view.bind("region_render", container_view.on_region_render, container_view);
 					local_view.bind("region_update", container_view.on_region_update, container_view);
 					local_view.bind("region_changed", container_view.on_region_changed, container_view);
@@ -718,18 +751,89 @@ define(_template_files, function () {
 					else
 						container_view.add_sub_model(region);
 					local_view.render();
-					local_view.bind("activate_region", me.activate_region, me);
+					local_view.bind("activate_region", this.activate_region, this);
+					Upfront.data.region_views[region.cid] = local_view;
+				}
+				else {
+					local_view.render();
+					local_view.delegateEvents();
+				}
+				if ( before )
+					container_view.$layout.prepend(local_view.el);
+				else
 					container_view.$layout.append(local_view.el);
-					if ( region.get("default") )
-						local_view.trigger("activate_region", local_view);
+				if ( region.get("default") )
+					local_view.trigger("activate_region", local_view);
+			},
+			get_container_view: function (region) {
+				return _.find(Upfront.data.region_container_views, function (container) {
+					var name = container.model.get("container") || container.model.get("name");
+					if ( region.get("container") == name || region.get("name") == name )
+						return true;
 				});
 			},
 			activate_region: function (region) {
-				this.model.active_region = region.model || region;
+				if ( ! this.allow_edit )
+					return;
+				var new_active_region = region.model || region;
+				if ( this.model.active_region == new_active_region )
+					return;
+				this.model.active_region = new_active_region;
 				if ( region.$el ){
 					$('.upfront-region-active').removeClass('upfront-region-active');
 					region.$el.addClass('upfront-region-active');
+					var container = this.get_container_view(region.model);
+					if ( container ){
+						$('.upfront-region-container-active').removeClass('upfront-region-container-active');
+						container.$el.addClass('upfront-region-container-active');
+					}
 					Upfront.Events.trigger("region:activated", region);
+				}
+			},
+			on_edit_toggle: function (edit) {
+				this.allow_edit = edit;
+			},
+			on_add: function (model, collection, options) {
+				var container_view = this.get_container_view(model),
+					index = typeof options.at != 'undefined' ? options.at : -1,
+					is_before = options.is_before ? options.is_before : false;
+				if ( ! container_view ){
+					this.render_container(model, index);
+					this.render_region(model);
+				}
+				else {
+					this.render_region(model, is_before);
+				}
+			},
+			on_remove: function (model) {
+				var view = Upfront.data.region_views[model.cid];
+				if ( !view )
+					return;
+				var container_view = this.get_container_view(model);
+				delete Upfront.data.region_views[model.cid];
+				view.region_panels.unbind();
+				view.region_panels.remove();
+				view.unbind();
+				view.remove();
+				if ( container_view){
+					if ( container_view.sub_model.length == 0 ){
+						delete Upfront.data.region_container_views[container_view.model.cid];
+						container_view.unbind();
+						container_view.remove();
+					}
+					else {
+						var main_view = Upfront.data.region_views[container_view.model.cid];
+						_.each(container_view.sub_model, function(sub, i){
+							if ( sub == model ){
+								container_view.sub_model.splice(i, 1);
+							}
+							else {
+								var sub_view = Upfront.data.region_views[sub.cid];
+								if ( sub_view ) sub_view.update();
+							}
+						});
+						if ( main_view ) main_view.update();
+					}
 				}
 			}
 		}),

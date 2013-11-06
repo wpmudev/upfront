@@ -281,7 +281,7 @@ class Upfront_Region_Container extends Upfront_Container {
 	
 	public function get_css_inline () {
 		$css = '';
-		$css .= $this->_get_background_css();
+		//$css .= $this->_get_background_css();
 		return $css;
 	}
 }
@@ -293,7 +293,7 @@ class Upfront_Region extends Upfront_Container {
 	
 	public function get_css_inline () {
 		$css = '';
-		if ( $this->get_container() != $this->get_name() )
+		//if ( $this->get_container() != $this->get_name() )
 			$css .= $this->_get_background_css();
 		return $css;
 	}

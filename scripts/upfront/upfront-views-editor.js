@@ -27,6 +27,7 @@ define(_template_files, function () {
 		Upfront.data.tpls = _Upfront_Templates;
 	});
 
+			console.log('refresh');
 		
 	var Upfront_Scroll_Mixin = {
 		stop_scroll_propagation: function ($el) {
@@ -607,7 +608,7 @@ define(_template_files, function () {
 	
 	var DraggableElement = Backbone.View.extend({
 		"tagName": "span",
-		"className": "draggable-element",
+		"className": "draggable-element upfront-no-select",
 		"shadow_id": '',
 		"draggable": true,
 		"priority": 10000,
@@ -740,7 +741,7 @@ define(_template_files, function () {
 	
 	var SidebarPanel_Settings_Item = Backbone.View.extend({
 		"tagName": "div",
-		"className": "panel-setting",
+		"className": "panel-setting upfront-no-select",
 		render: function () {
 			if ( this.on_render ) this.on_render();
 		}
@@ -983,7 +984,7 @@ define(_template_files, function () {
 		initialize: function () {
 			this.settings = _([
 				new SidebarPanel_Settings_Item_EditArea({"model": this.model}),
-				new SidebarPanel_Settings_Item_Background({"model": this.model}),
+			//	new SidebarPanel_Settings_Item_Background({"model": this.model}),
 			]);
 		},
 		get_title: function () {
@@ -1010,7 +1011,7 @@ define(_template_files, function () {
 		initialize: function () {
 			this.sections = _([
 				new SidebarPanel_Settings_Section_Structure({"model": this.model}),
-				new SidebarPanel_Settings_Section_Behavior({"model": this.model})
+			//	new SidebarPanel_Settings_Section_Behavior({"model": this.model})
 			]);
 		},
 		get_title: function () {
@@ -3954,131 +3955,479 @@ define(_template_files, function () {
 	
 	
 	var RegionPanelItem = Backbone.View.extend({
-		
-	});
-	
-	var RegionPanelItem_BgCurrent = RegionPanelItem.extend({
-		className: 'upfront-region-panel-item upfront-region-panel-item-bgcurrent',
-		
+		get_icon_html: function (icon) {
+			var icons = icon.split(" "),
+				icons_class = [];
+			_.each(icons, function(each){
+				icons_class.push('upfront-icon-region-' + each);
+			});
+			return '<i class="upfront-icon ' + icons_class.join(' ') + '" />';
+		},
+		render_icon: function () {
+			var icon = typeof this.icon == 'function' ? this.icon() : this.icon,
+				icons = icon.split(" "),
+				icons_class = [],
+				$icon = this.$el.find('.upfront-icon');
+			_.each(icons, function(each){
+				icons_class.push('upfront-icon-region-' + each);
+			});
+			if ( !$icon.length )
+				this.$el.append('<i class="upfront-icon ' + icons_class.join(' ') + '" />');
+			else
+				$icon.attr('class', 'upfront-icon ' + icons_class.join(' '));
+		},
+		render_tooltip: function () {
+			var tooltip = typeof this.tooltip == 'function' ? this.tooltip() : this.tooltip;
+			if ( ! tooltip )
+				return;
+			var tooltip_pos = typeof this.tooltip_pos == 'function' ? this.tooltip_pos() : (this.tooltip_pos ? this.tooltip_pos : 'bottom'),
+				$content = this.$el.find('.tooltip-content');
+			this.$el.removeClass('tooltip-top tooltip-bottom tooltip-left tooltip-right');
+			this.$el.addClass('tooltip-inline tooltip-' + tooltip_pos);
+			if ( !$content.length )
+				this.$el.prepend('<span class="tooltip-content">' + tooltip + '</span>');
+			else
+				$content.html(tooltip);
+		},
+		render: function () {
+			this.render_icon();
+			this.render_tooltip();
+			if ( typeof this.on_render == 'function' )
+				this.on_render();
+		}
 	});
 	
 	var RegionPanelItem_BgColor = RegionPanelItem.extend({
+		events: {
+			'click .upfront-icon': 'open_spectrum'
+		},
 		className: 'upfront-region-panel-item upfront-region-panel-item-bgcolor',
-		render: function () {
-			this.$el.html('<i class="upfront-icon upfront-icon-region-color" />');
+		icon: 'color',
+		tooltip: "Solid Color BG",
+		tooltip_pos: 'right',
+		initialize: function () {
+			this.default_color = this.model.get_property_value_by_name('background_color');
+		},
+		open_spectrum: function () {
+			var me = this,
+				panels_view = this.panel_view.panels_view,
+				$modal = panels_view.$el.find('.upfront-region-modal-color'),
+				$picker;
+			panels_view.hide_gradient();
+			this.parent_view.close_subitem();
+			if ( $modal.length ) {
+				$picker = $modal.find('.upfront-region-color-picker');
+				$picker.spectrum('show');
+			}
+			else {
+				$modal = $('<div class="upfront-region-modal upfront-region-modal-color" />');
+				$picker = $('<span class="upfront-region-color-picker" />');
+				$modal.append($picker);
+				panels_view.$el.append($modal);
+				$picker.spectrum({
+					showAlpha: true,
+					showPalette: true,
+					clickoutFiresChange: true,
+					chooseText: 'Ok',
+					color: this.default_color ? this.default_color : '',
+					change: function(color) {
+						me.update_color(color);
+					},
+					move: function(color) { 
+						me.preview_color(color);
+						var rgb = color.toHexString();
+						$('.sp-dragger').css({
+							'border-top-color': rgb,
+							'border-right-color': rgb
+						});
+					},
+					hide: function(color) {
+						me.reset_color(color);			
+					},
+					show: function(color){					
+						var rgb = color.toHexString();
+						$('.sp-dragger').css({
+							'border-color': rgb
+						});
+					}
+				});
+				$picker.spectrum('show');
+			}
+			return false;
+		},
+		preview_color: function (color) {
+			var rgb = color.toRgb(),
+				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+			this.model.set_property('background_color', rgba_string);
+		},
+		update_color: function (color) {
+			var panels_view = this.panel_view.panels_view;
+			this.preview_color(color);
+			this.default_color = this.model.get_property_value_by_name('background_color');
+			this.parent_view.set_bg_type('color');
+			panels_view.show_gradient();
+		},
+		reset_color: function () {
+			var panels_view = this.panel_view.panels_view;
+			this.model.set_property('background_color', this.default_color);
+			panels_view.show_gradient();
 		}
 	});
 	
 	var RegionPanelItem_BgImage = RegionPanelItem.extend({
 		className: 'upfront-region-panel-item upfront-region-panel-item-bgimage',
-		render: function () {
-			this.$el.html('<i class="upfront-icon upfront-icon-region-image" />');
-		}
+		icon: 'image',
+		tooltip: "Image BG",
+		tooltip_pos: 'right'
 	});
 	
 	var RegionPanelItem_BgMaps = RegionPanelItem.extend({
 		className: 'upfront-region-panel-item upfront-region-panel-item-bgmaps',
-		render: function () {
-			this.$el.html('<i class="upfront-icon upfront-icon-region-maps" />');
-		}
+		icon: 'maps',
+		tooltip: "Maps BG",
+		tooltip_pos: 'right'
 	});
 	
 	var RegionPanelItem_BgSlider = RegionPanelItem.extend({
 		className: 'upfront-region-panel-item upfront-region-panel-item-bgslider',
-		render: function () {
-			this.$el.html('<i class="upfront-icon upfront-icon-region-slider" />');
-		}
+		icon: 'slider',
+		tooltip: "Slider BG",
+		tooltip_pos: 'right'
 	});
 	
-	var RegionPanelItem_ExpandLock = RegionPanelItem.extend({
-		className: 'upfront-region-panel-item upfront-region-panel-item-expand-lock',
-		render: function () {
-			this.$el.html('<i class="upfront-icon upfront-icon-region-expand-unlock" />');
-		}
-	});
-	
-	var RegionPanelItem_AddRegion = RegionPanelItem.extend({
-		className: 'upfront-region-panel-item upfront-region-panel-item-add-region',
-		render: function () {
-			this.$el.html('<i class="upfront-icon upfront-icon-region-add" />');
-		}
-	});
-	
-	var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
-		className: 'upfront-region-panel-item upfront-region-panel-item-delete-region',
-		render: function () {
-			this.$el.html('<i class="upfront-icon upfront-icon-region-delete" />');
-		}
-	});
-	
-	var RegionPanel = Backbone.View.extend({
-		get_template: function () {
-			var template = _.template(_Upfront_Templates.region_edit_panel, {});
-			
-		}
-	});
-	
-	var RegionPanel_Edit = RegionPanel.extend({
-		className: 'upfront-region-panel upfront-region-panel-edit',
+	var RegionPanelItem_Bg = RegionPanelItem.extend({
+		events: {
+			'click >.upfront-icon': 'toggle_subitem'
+		},
+		className: 'upfront-region-panel-item upfront-region-panel-item-bg',
 		initialize: function () {
-			this.bg_current = new RegionPanelItem_BgCurrent({model: this.model});
 			this.bg_items = {
 				color: new RegionPanelItem_BgColor({model: this.model}),
 				image: new RegionPanelItem_BgImage({model: this.model}),
 				slider: new RegionPanelItem_BgSlider({model: this.model}),
 				maps: new RegionPanelItem_BgMaps({model: this.model})
 			};
-			this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
-			this.add_region = new RegionPanelItem_AddRegion({model: this.model});
 		},
-		render: function() {
+		render: function () {
+			var me = this,
+				bg_type = this.model.get_property_value_by_name('background-type'),
+				$bg_items = $('<div class="upfront-region-panel-subitem" />');
 			this.$el.html('');
-			var $bg_items = $('<div class="upfront-region-panel-subitem" />');
-			var bg_type = this.model.get_property_value_by_name('background-type');
 			bg_type = _.contains(['color', 'image', 'slider', 'maps'], bg_type) ? bg_type : 'color';
+			this.icon = bg_type + '-active';
+			this.render_icon();
+			this.render_tooltip();
 			_.each(this.bg_items, function(item, type){
+				item.panel_view = me.panel_view;
+				item.parent_view = me;
 				item.render();
+				item.delegateEvents();
 				if ( bg_type != type )
 					$bg_items.append(item.el);
 			});
 			$bg_items.append(this.bg_items[bg_type].el);
-			this.bg_current.render();
-			this.bg_current.$el.append($bg_items);
-			this.expand_lock.render();
-			this.add_region.render();
-			this.$el.append(this.bg_current.el);
-			this.$el.append(this.expand_lock.el);
-			this.$el.append(this.add_region.el);
-			
+			this.$el.append($bg_items);
+		},
+		toggle_subitem: function () {
+			if ( this.$el.hasClass('upfront-region-panel-subitem-active') )
+				this.close_subitem();
+			else
+				this.open_subitem();
+		},
+		open_subitem: function () {
+			this.$el.addClass('upfront-region-panel-subitem-active');
+		},
+		close_subitem: function () {
+			this.$el.removeClass('upfront-region-panel-subitem-active');
+		},
+		set_bg_type: function (type) {
+			this.model.set_property('background-type', type);
+			this.render();
+		}
+	});
+	
+	var RegionPanelItem_ExpandLock = RegionPanelItem.extend({
+		events: {
+			'click .upfront-icon': 'toggle_lock'
+		},
+		className: 'upfront-region-panel-item upfront-region-panel-item-expand-lock',
+		icon: function () {
+			var locked = this.model.get_property_value_by_name('expand_lock');
+			return locked ? 'expand-lock' : 'expand-unlock';
+		},
+		tooltip: function () {
+			var locked = this.model.get_property_value_by_name('expand_lock'),
+				status = '<span class="' + (locked ? 'expand-lock-active' : 'expand-lock-inactive') + '">' + (locked ? 'OFF' : 'ON') + '</span>';
+			return "Auto-expand to fit <br />elements as they <br />are added " + status;
+		},
+		toggle_lock: function () {
+			var locked = this.model.get_property_value_by_name('expand_lock');
+			this.model.set_property('expand_lock', !locked);
+			this.render_icon();
+			this.render_tooltip();
+		}
+	});
+	
+	var RegionPanelItem_AddRegion = RegionPanelItem.extend({
+		events: {
+			'click .upfront-icon': 'add_region'
+		},
+		className: 'upfront-region-panel-item upfront-region-panel-item-add-region',
+		icon: function () {
+			var to = this.options.to;
+			return 'add ' + 'add-' + to;
+		},
+		tooltip: function () {
+			var to = this.options.to;
+			switch ( to ){
+				case 'bottom':
+					var pos = "below"; break;
+				case 'left':
+					var pos = "before"; break;
+				case 'right':
+					var pos = "after"; break;
+				default:
+					var pos = "above"; break;
+			}
+			return "Insert new region " + pos;
+		},
+		tooltip_pos: function () {
+			var to = this.options.to;
+			switch ( to ){
+				case 'bottom':
+					var pos = 'top'; break;
+				case 'left':
+					var pos = 'right'; break;
+				case 'right':
+					var pos = 'left'; break;
+				default:
+					var pos = 'bottom'; break;
+			}
+			return pos;
+		},
+		initialize: function () {
+			if ( ! this.options.to )
+				this.options.to = 'top';
+		},
+		add_region: function () {
+			var to = this.options.to,
+				collection = this.model.collection,
+				total = collection.size(),
+				index = collection.indexOf(this.model),
+				is_new_container = ( to == 'top' || to == 'bottom' ),
+				is_before = ( to == 'top' || to == 'left' ),
+				title = is_new_container ? 'Region ' + total : this.model.get('name') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
+				name = title.toLowerCase().replace(/\s/, '-'),
+				new_region = new Upfront.Models.Region({
+					"name": name,
+					"container": is_new_container ? name : this.model.get('name'),
+					"title": title
+				});
+			if ( ! is_new_container ) {
+				new_region.set_property('col', 5);
+			}
+			Upfront.Events.once('entity:region:before_render', this.before_animation, this);
+			Upfront.Events.once('entity:region:after_render', this.run_animation, this);
+			collection.add(new_region, {at: is_before ? index : index+1, is_before: is_before});
+		},
+		before_animation: function (view, model) {
+			// prepare to run animation, disable edit
+			Upfront.Events.trigger('command:region:edit_toggle', false);
+		},
+		run_animation: function (view, model) {
+			var to = this.options.to,
+				ani_class = 'upfront-add-region-ani upfront-add-region-ani-' + to,
+				end_t = setTimeout(end, 2000);
+			// add animation class to trigger css animation
+			view.$el.addClass(ani_class);
+			// scroll if needed
+			if ( to == 'top' || to == 'bottom' ){
+				view.$el.one('animationstart webkitAnimationStart MSAnimationStart oAnimationStart', function () {
+					var $container = $(this).closest('.upfront-region-container'),
+						offset = $container.offset(),
+						scroll_top = $(document).scrollTop(),
+						scroll_to = false;
+					if ( to == 'top' && offset.top < scroll_top )
+						scroll_to = offset.top - 50;
+					else if ( to == 'bottom' )
+						scroll_to = $(document).height()-$(window).height();
+					if ( scroll_to !== false )
+						$('html,body').animate( {scrollTop: scroll_to}, 200 );
+				});
+			}
+			view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+				end();
+				clearTimeout(end_t);
+			});
+			function end () {
+				view.$el.removeClass(ani_class);
+				// enable edit and activate the new region
+				Upfront.Events.trigger('command:region:edit_toggle', true);
+				view.trigger("activate_region", view);
+			}
+		}
+	});
+	
+	var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
+		events: {
+			'click .upfront-icon': 'delete_region'
+		},
+		className: 'upfront-region-panel-item upfront-region-panel-item-delete-region',
+		icon: 'delete',
+		//tooltip: "Delete this region",
+		delete_region: function () {
+			this.model.collection.remove(this.model);
+		}
+	});
+	
+	var RegionPanel = Backbone.View.extend({
+		get_items: function () {
+			return _([]);
+		},
+		render: function() {
+			var me = this;
+			this.$el.html('');
+			this.get_items().each(function(item){
+				item.panel_view = me;
+				item.render();
+				item.delegateEvents();
+				me.$el.append(item.el);
+			});
+		}
+	});
+	
+	var RegionPanel_Edit = RegionPanel.extend({
+		className: 'upfront-region-panel upfront-region-panel-edit upfront-no-select',
+		initialize: function () {
+			this.bg = new RegionPanelItem_Bg({model: this.model});
+			var container = this.model.get('container'),
+				name = this.model.get('name');
+			if ( !container || container == name ){
+				this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
+				this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
+			}
+		},
+		get_items: function () {
+			var items = _([]);
+			items.push(this.bg);
+			if ( this.expand_lock )
+				items.push(this.expand_lock);
+			if ( this.add_region )
+				items.push(this.add_region);
+			return items;
+		}
+	});
+	
+	var RegionPanel_Add = RegionPanel.extend({
+		className: function () { 
+			var to = this.options.to;
+			return 'upfront-region-panel upfront-region-panel-add upfront-region-panel-add-' + to + ' upfront-no-select';
+		},
+		initialize: function () {
+			if ( ! this.options.to )
+				this.options.to = 'bottom';
+			var to = this.options.to;
+			this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: to});
+		},
+		get_items: function () {
+			return _([this.add_region]);
 		}
 	});
 	
 	var RegionPanel_Delete = RegionPanel.extend({
-		className: 'upfront-region-panel upfront-region-panel-delete',
+		className: 'upfront-region-panel upfront-region-panel-delete upfront-no-select',
 		initialize: function () {
 			this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
 		},
-		render: function () {
-			this.$el.html('');
-			this.delete_region.render();
-			this.$el.append(this.delete_region.el);
+		get_items: function () {
+			return _([this.delete_region]);
 		}
 	});
 	
 	var RegionPanels = Backbone.View.extend({
-		className: 'upfront-region-panels',
+		className: 'upfront-region-panels upfront-ui',
 		initialize: function () {
-			this.panels = _([
-				new RegionPanel_Edit({model: this.model}),
-				new RegionPanel_Delete({model: this.model})
-			]);
+			var container = this.model.get('container'),
+				name = this.model.get('name');
+			this.listenTo(this.model.collection, 'add', this.render);
+			this.listenTo(this.model.collection, 'remove', this.render);
+			Upfront.Events.on("region:activated", this.update_pos, this);
+			$(window).scroll(this, this.on_scroll);
+			this.edit_panel = new RegionPanel_Edit({model: this.model});
+			this.delete_panel = new RegionPanel_Delete({model: this.model});
+			this.add_panel_top = new RegionPanel_Add({model: this.model, to: 'bottom'});
+			if ( !container || container == name ){
+				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
+				this.add_panel_right = new RegionPanel_Add({model: this.model, to: 'right'})
+			}
+		},
+		get_panels: function () {
+			var panels = _([]),
+				collection = this.model.collection,
+				container = this.model.get('container'),
+				name = this.model.get('name'),
+				index = collection.indexOf(this.model),
+				total = collection.size()-1; // total minus shadow region
+			panels.push( this.edit_panel )
+			if ( index == total-1 ) // last region
+				panels.push( this.add_panel_top );
+			if ( !container || container == name ) {
+				var container = name,
+					prev_model = index > 0 ? collection.at(index-1) : false,
+					next_model = index < total-1 ? collection.at(index+1) : false,
+					has_sidebar = false;
+				if ( prev_model === false || prev_model.get('container') != container )
+					panels.push( this.add_panel_left );
+				else
+					has_sidebar = true;
+				if ( next_model === false || next_model.get('container') != container )
+					panels.push( this.add_panel_right );
+				else
+					has_sidebar = true;
+				if ( ! has_sidebar && ! this.model.get('default') )
+					panels.push( this.delete_panel );
+			}
+			else {
+				panels.push( this.delete_panel );
+			}
+			return panels;
 		},
 		render: function () {
 			var me = this;
-			this.panels.each(function(panel){
+			this.$el.html('');
+			this.get_panels().each(function(panel){
+				panel.panels_view = me;
 				panel.render();
+				panel.delegateEvents();
 				me.$el.append(panel.el);
 			});
+		},
+		update_pos: function () {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				$region = this.$el.closest('.upfront-region');
+			if ( !$main.hasClass('upfront-region-editing') || !$region.hasClass('upfront-region-active') )
+				return;
+			var	offset = $region.offset(),
+				top = offset.top,
+				bottom = top + $region.outerHeight(),
+				scroll_top = $(document).scrollTop(),
+				scroll_bottom = scroll_top + $(window).height();
+			this.$el.css({
+				top: scroll_top > top ? scroll_top-top+25 : 0,
+				bottom: bottom > scroll_bottom ? bottom-scroll_bottom : 0
+			});
+		},
+		on_scroll: function (e) {
+			var me = e.data;
+			me.update_pos();
+		},
+		hide_gradient: function () {
+			var $region = this.$el.closest('.upfront-region');
+			$region.addClass('upfront-region-no-gradient');
+		},
+		show_gradient: function () {
+			var $region = this.$el.closest('.upfront-region');
+			$region.removeClass('upfront-region-no-gradient');
 		}
 	});
 
