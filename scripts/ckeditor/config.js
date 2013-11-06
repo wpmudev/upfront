@@ -24,13 +24,13 @@ CKEDITOR.editorConfig = function( config ) {
 			{
 				name: 'kitchensink',
 				items: [ 
-					'Format', 'Underline', 'Upfront_ColorSelect',
+					'Format', 'Underline', 'Upfront_ColorSelect', 'Upfront_MoreTag',
 					'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'ExtrasSelect','BulletedList', 'NumberedList' // <-- Hidden
 				]
 			}
 	];
 
-	config.extraPlugins = 'onchange,kitchensink,toggled_items,upfront_images,upfront_colorpicker';
+	config.extraPlugins = 'onchange,kitchensink,toggled_items,upfront_images,upfront_colorpicker,upfront_more_tag';
 
 	// use SVG icons for editor buttons if possible
 	if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){
