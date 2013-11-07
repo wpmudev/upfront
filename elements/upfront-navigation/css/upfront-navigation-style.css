@@ -212,3 +212,13 @@
 .upfront-nav-get-menu-items .upfront-field-multiple{
     margin:0;
 }
+
+
+[data-already_floating="yes"] {
+    position: fixed;
+    top: 0px;
+    z-index: 99999999;
+}
+.admin-bar [data-already_floating="yes"] {
+    top: 30px;
+}

@@ -1235,6 +1235,14 @@
                                         values: [
                                             { label: "Add new Pages to this menu", value: 'yes' }
                                         ]
+                                    }),
+                                    new Upfront.Views.Editor.Field.Checkboxes({
+                                        model: this.model,
+                                        property: 'is_floating',
+                                        label: "",
+                                        values: [
+                                            { label: "Allow floating...", value: 'yes' }
+                                        ]
                                     })
                                 ]
                             })

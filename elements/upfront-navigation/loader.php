@@ -12,7 +12,7 @@ function upfront_navigation_initialize(){
     upfront_add_layout_editor_entity('upfront-navigation', upfront_element_url('js/upfront-navigation', __FILE__));
 
     // Add the public stylesheet
-    add_action('wp_enqueue_scripts', array('Upfront_NavigationView', 'add_public_style'));
+    add_action('wp_enqueue_scripts', array('Upfront_NavigationView', 'add_public_dependencies'));
 }
 //Hook it when Upfront is ready
 add_action('upfront-core-initialized', 'upfront_navigation_initialize');

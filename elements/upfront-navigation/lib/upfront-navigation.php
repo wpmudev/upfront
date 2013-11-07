@@ -13,10 +13,18 @@ class Upfront_NavigationView extends Upfront_Object {
         $menu_style = $this->_get_property('menu_style');
         $menu_aliment = $this->_get_property('menu_alignment');
         $sub_navigation = $this->_get_property('allow_sub_nav');
+        $is_floating = $this->_get_property('is_floating');
 
         $menu_style = $menu_style ? "data-style='{$menu_style}'" : "";
         $menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}'" : "";
         $sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
+
+        $float_class = $is_floating ? 'upfront-navigation-float' : '';
+
+        if ($is_floating) {
+            upfront_add_element_style('upfront_navigation', array('css/upfront-navigation-style.css', dirname(__FILE__)));
+            upfront_add_element_script('upfront_navigation', array('js/public.js', dirname(__FILE__)));
+        }
 
         if ( $menu_id ) :
             $menu = wp_nav_menu(array(
@@ -25,15 +33,14 @@ class Upfront_NavigationView extends Upfront_Object {
                 'echo' => false
             ));
         else:
-            return "<div class='upfront-output-object upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
+            return "<div class='upfront-output-object {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
         endif;
 
-        return "<div class='upfront-output-object upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
+        return "<div class='upfront-output-object {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
     }
 
     // Inject style dependencies
-    public static function add_public_style () {
-        wp_enqueue_style('upfront-navigation', upfront_element_url('css/upfront-navigation-style.css', dirname(__FILE__)));
+    public static function add_public_dependencies () {
         if(is_user_logged_in()):
             wp_enqueue_script(array('jquery-ui-sortable'));
         endif;
