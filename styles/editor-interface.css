@@ -1283,6 +1283,92 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 	margin-top: 5px;
 }
 
+.upfront-date_picker {
+	background: #F2F9FF;
+	border: 1px solid #6386A6;
+	z-index:10000;
+	font-size: 14px;
+	display: none;
+	position: absolute;
+	z-index: 10000;
+}
+
+.upfront-date_picker .ui-datepicker-header {
+	padding: 5px 10px;
+	border-bottom: 1px solid #accae6;
+	text-align: center
+}
+
+.upfront-date_picker table{
+	margin: 5px 10px;
+}
+
+.upfront-date_picker thead{
+	color: #395269;
+}
+
+.upfront-date_picker select{
+	font-family: 'Source Sans Pro', sans-serif;
+	margin: 0 2px;
+}
+
+.upfront-date_picker .ui-datepicker-prev,
+.upfront-date_picker .ui-datepicker-next {
+	display: none;
+}
+
+.upfront-date_picker .ui-datepicker-prev {
+	float: left;
+}
+.upfront-date_picker .ui-datepicker-next {
+	float: right;
+}
+
+.upfront-date_picker td,
+.upfront-date_picker th{
+	text-align: center;
+}
+
+div.upfront-date_picker td a{
+	padding: 2px 4px;
+	color: #607F99;
+}
+
+.upfront-date_picker td a:hover{
+	padding: 2px 4px;
+	background: #1fcd8f;
+	color: #fff;
+	text-decoration: none;
+}
+
+.upfront-date_picker a.ui-state-active {
+	background: #607F99;
+	color: #F2F9FF !important;
+}
+
+.upfront-time_picker {
+	padding: 5px 10px;
+	border-top: 1px solid #accae6;
+	text-align: center;
+}
+.ueditor-datepicker-buttons {
+	border-top: 1px solid #accae6;
+	padding: 5px 10px;
+}
+.ueditor-datepicker-buttons:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+
+.ueditor-datepicker-buttons a.button {
+	margin-top: 0 !important;
+}
+a.ueditor-action-pickercancel{
+	line-height: 28px;
+	color: #607F99 !important;
+	cursor: pointer;
+}
 
 
 
@@ -5410,6 +5496,7 @@ License: MIT
 
 .ueditor-bar div a, .ueditor-bar a:link{
 	color: #1fcd8f;
+	cursor:pointer;
 }
 .ueditor-bar a:hover {
 	text-decoration: underline;
@@ -5561,7 +5648,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	padding: 5px 10px;
 }
 
-a.ueditor-pass-ok {
+.ueditor-bar a.small-button {
 	background: #1fcd8f;
 	color: #fff !important;
 	display: block;
@@ -5570,7 +5657,7 @@ a.ueditor-pass-ok {
 	padding: 2px 15px;
 	margin-top: 10px;
 }
-a.ueditor-pass-ok:hover {
+.ueditor-bar a.small-button:hover {
 	background: #3ea;
 	text-decoration: none;
 }

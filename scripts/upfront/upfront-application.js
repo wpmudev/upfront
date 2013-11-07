@@ -12,7 +12,6 @@ var Subapplication = Backbone.Router.extend({
 });
 
 var LayoutEditor = new (Subapplication.extend({
-
 	Objects: {},
 	Commands: {},
 
@@ -139,7 +138,6 @@ var LayoutEditor = new (Subapplication.extend({
 				//Set post data if new post
 				if(test_data.data.post)
 					app.new_post_set_up(test_data.data.post);
-
 				app.layout = new Upfront.Models.Layout(test_data.data.layout);
 
 				if (!present) app.set_up_event_plumbing_before_render();
@@ -394,65 +392,6 @@ var LayoutEditor = new (Subapplication.extend({
 	}
 
 }))();
-
-
-/*
-var ContentEditor = new (Subapplication.extend({
-	run: function () {
-		var app = this;
-		require(Upfront.Settings.ContentEditor.Requirements.core, function (models, views, editor, behaviors) {
-			_.extend(Upfront, models);
-			_.extend(Upfront, views);
-			_.extend(Upfront.Views, editor);
-			_.extend(Upfront, behaviors);
-
-			app.create_editor();
-			return false;
-		});
-	},
-
-	stop: function () {
-		var app = this,
-			sidebar = Upfront.Application.LayoutEditor.sidebar
-		;
-		sidebar.from_content_editor();
-	},
-
-	create_editor: function () {
-		var app = this;
-		app.set_up_event_plumbing();
-		app.set_up_editor_interface();
-
-
-		Upfront.Events.trigger('upfront:application:contenteditor:render');
-	},
-
-	set_up_event_plumbing: function () {},
-
-	set_up_editor_interface: function () {
-		var app = this,
-			sidebar = Upfront.Application.LayoutEditor.sidebar
-		;
-		if (!sidebar) this.create_new_sidebar();
-		else sidebar.to_content_editor();
-
-
-	},
-
-	create_new_sidebar: function () {
-		var app = this;
-		app.sidebar = new Upfront.Views.ContentEditor.Sidebar({
-			"model": new Backbone.Model([]),
-			"el": $(Upfront.Settings.ContentEditor.Selectors.sidebar)
-		});
-		app.sidebar.render();
-		$("body").addClass("upfront-edit-layout");
-		$(Upfront.Settings.ContentEditor.Selectors.sidebar).show();
-	}
-
-}))();
-*/
-
 
 var Application = new (Backbone.Router.extend({
 	LayoutEditor: LayoutEditor,

@@ -40,13 +40,34 @@
 					<div class="ueditor-pass-editor">
 						<span>Password:</span>
 						<input type="text" class="upfront-field-text ueditor-pass" value="{{post_password}}">
-						<a class="button ueditor-pass-ok">Ok</a>
+						<a class="button ueditor-pass-ok small-button">Ok</a>
 					</div>
 				</div>
 			</div>
 			<div class="ueditor-row-item">
 				<span class="ueditor-bar-key">{{schedule.key}}:</span>
-				<a class="ueditor-action-schedule">{{schedule.value}}</a>
+				<a class="ueditor-action-schedule">{{schedule.text}}</a>
+				<div class="upfront-date_picker">
+					<div class="upfront-bar-datepicker">
+					</div>
+					<div class="upfront-time_picker">
+						Time: 
+						<select class="ueditor-hours-select">
+							{[ _.each(hours, function(h){ ]}
+							<option value="{{h}}" selected="{{h == currentHour ? 'selected' : ''}}">{{h}}</option>
+							{[ }); ]}
+						</select>: 
+						<select class="ueditor-minutes-select">
+							{[ _.each(minutes, function(m){ ]}
+							<option value="{{m}}" selected="{{m == currentMinute ? 'selected' : ''}}">{{m}}</option>
+							{[ }); ]}
+						</select>
+					</div>
+					<div class="ueditor-datepicker-buttons">
+						<a class="ueditor-action-pickercancel">Cancel</a>
+						<a class="ueditor-action-pickerok button small-button">Ok</a>
+					</div>
+				</div>
 			</div>	
 		</div>
 	</div>

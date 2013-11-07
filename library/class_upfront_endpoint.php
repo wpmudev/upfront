@@ -618,6 +618,11 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 				$post = wp_untrash_post($data['ID']);
 			else if($post->post_status != 'trash' && $data['post_status'] == 'trash')
 				$post = wp_trash_post($data['ID']);
+
+			//GMT date
+			if($data['post_date']){
+				$data['post_date_gmt'] = get_gmt_from_date($data['post_date']);
+			}
 			
 			// Update if not deleted
 			if($post)

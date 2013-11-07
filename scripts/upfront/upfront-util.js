@@ -47,7 +47,7 @@ var Util = {
 		return $.post(Upfront.Settings.ajax_url, request, function () {}, "json");
 	},
 
-	format_date: function(date, show_time){
+	format_date: function(date, show_time, show_seconds){
 		var output = date.getFullYear() + '/',
 			day = date.getDate(),
 			month = (date.getMonth()+1)
@@ -59,17 +59,35 @@ var Util = {
 
 		output += month + '/' + day;
 		
-		if(show_time)
-			output += ' ' + date.getHours() + ':' + date.getMinutes();
+		if(show_time){
+			var hours = date.getHours(),
+				minutes = date.getMinutes()
+			;
+			output += ' ' + 
+				(hours < 10 ? '0' : '') +
+				hours + ':' +
+				(minutes < 10 ? '0' : '') + 
+				minutes
+			;
+			if(show_seconds){
+				var seconds = date.getSeconds();
+				output += ':' +
+					(seconds < 10 ? '0' : '') +
+					seconds
+				;
+			}
+		}
 		return output;
 	},
 
 	get_avatar: function(obj, size){
 		var protocolParts = window.location.href.split('//'),
 			url = protocolParts[0] + '//www.gravatar.com/avatar/',
-			size = size && parseInt(size) == size ? size : 32,
 			hash = ''
 		;
+
+		size = size && parseInt(size, 10) == size ? size : 32;
+		
 		if(_.isString(obj))
 			hash = obj;
 		else if(obj instanceof Upfront.Models.User || obj instanceof Upfront.Models.Comment)

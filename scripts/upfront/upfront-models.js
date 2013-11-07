@@ -473,7 +473,7 @@ var _alpha = "alpha",
 				for(var attr in key){
 					var value = key[attr];
 					if(val instanceof Date)
-						parsedAttrs[attr] = value.format('yyyy-mm-dd hh:MM:ss');
+						parsedAttrs[attr] = Upfront.Util.format_date(value, true, true).replace(/\//g, '-');
 					else
 						parsedAttrs[attr] = value;
 				}
@@ -481,13 +481,13 @@ var _alpha = "alpha",
 			}
 			else{
 				if(val instanceof Date)
-					newval = val.format('yyyy-mm-dd hh:MM:ss');
+					newval = Upfront.Util.format_date(val, true, true).replace(/\//g, '-');
 
 				Backbone.Model.prototype.set.call(this, key, newval, options);
 			}
 
 			return this;
-		}
+		},
 	}),
 	
 
