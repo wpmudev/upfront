@@ -2,6 +2,20 @@
 
 class Upfront_LoginView extends Upfront_Object {
 
+	public static function default_properties () {
+		return array(
+			'style' => 'form',
+			'behavior' => 'click',
+			'appearance' => 'icon',
+			'label_image' => __('Login', 'upfront'),
+			
+			'type' => "LoginModel",
+			'view_class' => "LoginView",
+			"class" => "c22 upfront-login_element-object",
+			'has_settings' => 1
+		);
+	}
+
 	public function get_markup () {
 		
 		// We're registering the styles as it turns out we'll need them
@@ -35,6 +49,7 @@ class Upfront_LoginView extends Upfront_Object {
 			? $properties['label_text'] 
 			: (!empty($properties['label_image']) && 'icon' == $properties['appearance'] ? $properties['label_image'] : '')
 		;
+		if ('icon' == $label) $label = '';
 		$class = array();
 
 		if ($click) $class[] = 'upfront_login-click';
@@ -91,6 +106,7 @@ Upfront_LoginAjax::serve();
 
 function upfront_login_add_login_local_url ($data) {
 	$data['upfront_login'] = array(
+		"defaults" => Upfront_LoginView::default_properties(),
 		"root_url" => trailingslashit(upfront_element_url('/', dirname(__FILE__)))
 	);
 	return $data;

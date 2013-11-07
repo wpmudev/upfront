@@ -1,17 +1,17 @@
 (function ($) {
-require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!' + Upfront.data.upfront_login.root_url + 'css/public.css'], function (editor_style, public_style) {
+require([
+	'text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 
+	'text!' + Upfront.data.upfront_login.root_url + 'css/public.css'
+], function (editor_style, public_style) {
 
 	$("head").append("<style>" + editor_style + "</style>");
 	$("head").append("<style>" + public_style + "</style>");
 
 	var LoginModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
-			this.init_property("type", "LoginModel");
-			this.init_property("view_class", "LoginView");
-			
-			this.init_property("element_id", Upfront.Util.get_unique_id("upfront-login_element-object"));
-			this.init_property("class", "c22 upfront-login_element-object");
-			this.init_property("has_settings", 1);
+			var properties = _.clone(Upfront.data.upfront_login.defaults);
+			properties.element_id = Upfront.Util.get_unique_id("upfront-login_element-object");
+			this.init_properties(properties);
 		}
 	});
 
@@ -58,6 +58,10 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 					Upfront.Views.Editor.Field.Text.prototype.get_field_html.call(this) +
 				'</div>'
 			;
+		},
+		get_saved_value: function () {
+			var prop = this.property ? this.property.get('value') : (this.model ? this.model.get(this.name) : '');
+			return 'icon' === prop ? '' : prop;
 		},
 		get_value: function () {
 			return this.$el.find("input").val() || 'icon';
@@ -295,16 +299,17 @@ require(['text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 'text!'
 		},
 
 		add_element: function () {
+			
 			var object = new LoginModel(),
 				module = new Upfront.Models.Module({ 
-					"name": "",
-					"properties": [
+					name: "",
+					properties: [
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c22 upfront-login_element-module"},
 						{"name": "has_settings", "value": 0},
 						{"name": "row", "value": 14}
 					],
-					"objects": [object]
+					objects: [object]
 				})
 			;
 			this.add_module(module);
