@@ -259,11 +259,16 @@ class Upfront_Virtual_Region {
 		}
 		$element_defaults = array();
 
-		try{
-			$element_defaults = call_user_func($options['object_class'] . '::default_properties');
-		} catch (Exception $e) {
-			$this->errors[] = "Can't find the class {$options['object_class']} or its method default_properties";
+		if($options['type'] != 'PlainTxt'){
+			try{
+				$element_defaults = call_user_func($options['object_class'] . '::default_properties');
+			} catch (Exception $e) {
+				$element_defaults = array();
+				$this->errors[] = "Can't find the class {$options['object_class']} or its method default_properties";
+			}
 		}
+		else
+			$element_defaults = array('view_class' => 'PlainTxtView');
 
 		$opts = array_merge($this->get_element_defaults($options), $options);
 		$element_opts = array_merge($element_defaults, $opts['options']);
@@ -294,7 +299,7 @@ class Upfront_Virtual_Region {
 
 		return array(
 			'view_class' => $type . 'View',
-			'wrapper_id' => $id,
+			'wrapper_slug' => $id . '-wrapper',
 			'module_id' => $id . '-module',
 			'object_id' => $id . '-object',
 
