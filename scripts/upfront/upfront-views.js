@@ -710,8 +710,8 @@ define(_template_files, function () {
 			render: function () {
 				this.$el.html('');
 				var me = this;
-				if ( typeof Upfront.data.region_container_views == 'undefined' )
-					Upfront.data.region_container_views = {};
+				if ( typeof this.container_views == 'undefined' )
+					this.container_views = {};
 				if ( typeof Upfront.data.region_views == 'undefined' )
 					Upfront.data.region_views = {};
 				this.model.each(function (region) {
@@ -725,14 +725,14 @@ define(_template_files, function () {
 				var container = region.get("container"),
 					name = region.get("name");
 				if ( !container || container == name ) {
-					var container_view = Upfront.data.region_container_views[region.cid] || new RegionContainer({"model": region});
+					var container_view = this.container_views[region.cid] || new RegionContainer({"model": region});
 					container_view.render();
 					if ( index >= 0 )
 						this.$el.find('.upfront-region').eq(index).closest('.upfront-region-container').before(container_view.el);
 					else
 						this.$el.append(container_view.el);
-					if ( !Upfront.data.region_container_views[region.cid] ){
-						Upfront.data.region_container_views[region.cid] = container_view;
+					if ( !this.container_views[region.cid] ){
+						this.container_views[region.cid] = container_view;
 					}
 					else {
 						container_view.delegateEvents();
@@ -766,7 +766,7 @@ define(_template_files, function () {
 					local_view.trigger("activate_region", local_view);
 			},
 			get_container_view: function (region) {
-				return _.find(Upfront.data.region_container_views, function (container) {
+				return _.find(this.container_views, function (container) {
 					var name = container.model.get("container") || container.model.get("name");
 					if ( region.get("container") == name || region.get("name") == name )
 						return true;
@@ -817,7 +817,7 @@ define(_template_files, function () {
 				view.remove();
 				if ( container_view){
 					if ( container_view.sub_model.length == 0 ){
-						delete Upfront.data.region_container_views[container_view.model.cid];
+						delete this.container_views[container_view.model.cid];
 						container_view.unbind();
 						container_view.remove();
 					}

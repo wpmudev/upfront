@@ -928,6 +928,7 @@ define(_template_files, function () {
 			this.$el.append('<div class="panel-section-content" />');
 			this.settings.each(function (setting) {
 				setting.render();
+				setting.delegateEvents();
 				me.$el.find('.panel-section-content').append(setting.el);
 			});
 			if ( this.on_render ) this.on_render();

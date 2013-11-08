@@ -32,6 +32,11 @@
 .upfront-ui {
 	font: 16px/24px 'Source Sans Pro', sans-serif;
 }
+.upfront-ui, .upfront-ui * {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
 
 .upfront-ui h1,
 .upfront-ui h2,
@@ -509,8 +514,8 @@
 }
 #sidebar-ui .panel-setting-switcher .knob {
 	display: block;
-	width: 6px;
-	height: 6px;
+	width: 16px;
+	height: 16px;
 	background: #1fcd8f;
 	border: 5px solid #334b61;
 	border-radius: 8px;
@@ -1876,7 +1881,7 @@ a.ueditor-action-pickercancel{
 }
 .upfront-icon-button {
 	width: 24px;
-	height: 20px;
+	height: 24px;
 	z-index: 2000;
 	cursor:pointer;
 	display:block;
@@ -5472,12 +5477,12 @@ License: MIT
 	opacity: 1 !important;
 }
 
-.cke_float {
+/*.cke_float {
 	opacity: 0.4;
 }
 .cke_float:hover {
 	opacity: 1;
-}
+}*/
 
 
 .ueditable {
