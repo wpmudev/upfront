@@ -45,9 +45,9 @@
                     // re render navigation when this event trigger
                     Upfront.Events.on("entity:object:render_navigation",this.renderTrigger, this );
                     // call this function on Menu id change
-                    this.model.get_property_by_name('menu_id').on('change', this.auto_add_pages, this);
+                    if (!!this.model.get_property_by_name('menu_id')) this.model.get_property_by_name('menu_id').on('change', this.auto_add_pages, this);
                     // call this function on allow_new_pages change
-                    this.model.get_property_by_name('allow_new_pages').on('change', this.update_auto_add_pages, this);
+                    if (!!this.model.get_property_by_name('allow_new_pages')) this.model.get_property_by_name('allow_new_pages').on('change', this.update_auto_add_pages, this);
 
                     this.model.get("properties").on('all', this.update_model, this);
                     this.model.get("properties").on('all', this.getMenus, this);

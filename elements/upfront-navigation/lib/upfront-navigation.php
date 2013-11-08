@@ -22,9 +22,13 @@ class Upfront_NavigationView extends Upfront_Object {
         $float_class = $is_floating ? 'upfront-navigation-float' : '';
 
         upfront_add_element_style('upfront_navigation', array('css/upfront-navigation-style.css', dirname(__FILE__)));
+        if (is_user_logged_in()) {
+            upfront_add_element_style('upfront_navigation_editor', array('css/upfront-navigation-editor.css', dirname(__FILE__)));
+        }
         if ($is_floating) {
             upfront_add_element_script('upfront_navigation', array('js/public.js', dirname(__FILE__)));
         }
+
 
         if ( $menu_id ) :
             $menu = wp_nav_menu(array(
@@ -42,7 +46,6 @@ class Upfront_NavigationView extends Upfront_Object {
     // Inject style dependencies
     public static function add_public_dependencies () {
         if(is_user_logged_in()):
-			wp_enqueue_style('upfront_navigation_editor', upfront_element_url('css/upfront-navigation-editor.css', dirname(__FILE__)));
             wp_enqueue_script(array('jquery-ui-sortable'));
         endif;
     }
