@@ -39,6 +39,22 @@ class Upfront_UcommentView extends Upfront_Object {
 		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) )
 			wp_enqueue_script( 'comment-reply' );
 	}
+
+	public static function add_js_defaults($data){
+		$data['ucomments'] = array(
+			'defaults' => self::default_properties(),
+		);
+		return $data;
+	}
+
+	public static function default_properties(){
+		return array(
+			'type' => "UcommentModel",
+			'view_class' => "UcommentView",
+			"class" => "c22 upfront-comment",
+			'has_settings' => 0
+		);
+	}
 }
 
 class Upfront_UcommentAjax extends Upfront_Server {

@@ -35,6 +35,9 @@ function ucomment_initialize () {
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('ucomment', upfront_element_url('js/ucomment', __FILE__));
+
+	// Add element defaults to data object
+	add_action('upfront_data', array('Upfront_UcommentView', 'add_js_defaults'));
 	
 	add_action('wp_enqueue_scripts', array('Upfront_UcommentView', 'add_public_script'));
 }

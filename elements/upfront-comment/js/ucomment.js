@@ -1,17 +1,26 @@
 (function ($) {
 
 var UcommentModel = Upfront.Models.ObjectModel.extend({
+	/**
+	 * The init function is called after the contructor and Model intialize.
+	 * Here the default values for the model properties are set.
+	 */
 	init: function () {
-		this.init_property("type", "UcommentModel");
-		this.init_property("view_class", "UcommentView");
-		
-		this.init_property("element_id", Upfront.Util.get_unique_id("ucomment-object"));
-		this.init_property("class", "c22 upfront-comment");
-		this.init_property("has_settings", 0);
+		var properties = _.clone(Upfront.data.ucontact.defaults);
+		properties.element_id = Upfront.Util.get_unique_id("ucomment-object");
+		this.init_properties(properties);
 	}
 });
 
 var UcommentView = Upfront.Views.ObjectView.extend({
+	initialize: function(options){
+		if(! (this.model instanceof UcommentModel)){
+			this.model = new UcommentModel({properties: this.model.get('properties')});
+		}
+
+		this.constructor.__super__.initialize.call(this, [options]);
+		Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
+	},
 	
 	get_content_markup: function () {
 		var comment_data = $(document).data('upfront-comment-' + _upfront_post_data.post_id);
