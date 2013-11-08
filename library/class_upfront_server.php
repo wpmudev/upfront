@@ -224,6 +224,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			),
 		));
 
+		$application_modes = json_encode(array(
+			"LAYOUT" => "layout",
+			"CONTENT" => "content",
+			"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
+		));
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -255,6 +261,9 @@ $(function () {
 					"sidebar": "#sidebar-ui",
 				},
 			},
+			"Application": {
+				"MODE": {$application_modes}
+			},
 			"LayoutEditor": {
 				"Requirements": {$layout_editor_requirements},
 				"Selectors": {
@@ -282,7 +291,7 @@ $(function () {
 		Upfront.LoadedObjectsDeferreds = {};
 		Upfront.Events.trigger("application:loaded:layout_editor");
 		
-		if (Upfront.Application && Upfront.Application.run) Upfront.Application.run();
+		if (Upfront.Application && Upfront.Application.boot) Upfront.Application.boot();
 		else Upfront.Util.log('something went wrong');
 	}); // Upfront
 });

@@ -184,7 +184,7 @@ define(_template_files, function () {
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
 
-			Upfront.Application.LayoutEditor.new_post(this.postType)
+			Upfront.Application.new_post(this.postType)
 				.done(function(post){
 					loading.$el.remove();
 					loading = false;
@@ -473,6 +473,23 @@ define(_template_files, function () {
 			;
 		}
 	});
+
+	var Command_ToggleMode = Command.extend({
+		render: function () {
+			this.$el.html(_.template(
+				"<span title='toggle editing mode'>Current mode: {{mode}}</span>", 
+				{mode: Upfront.Application.get_current()}
+			));
+		},
+		on_click: function () {
+			var mode = Upfront.Application.mode && Upfront.Application.mode.current && Upfront.Application.mode.current === Upfront.Application.MODE.LAYOUT
+				? Upfront.Application.MODE.CONTENT
+				: Upfront.Application.MODE.LAYOUT
+			;
+			Upfront.Application.start(mode);
+		}
+	});
+
 
 	var Commands = Backbone.View.extend({
 		"tagName": "ul",
@@ -1043,6 +1060,7 @@ define(_template_files, function () {
 				this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
 				this.commands.push(new Command_ToggleGrid({"model": this.model}));
 				this.commands.push(new Command_ResetEverything({"model": this.model}));
+				this.commands.push(new Command_ToggleMode({"model": this.model}));
 			}
 		}
 	});
@@ -3401,7 +3419,7 @@ define(_template_files, function () {
 	var Loading = Backbone.View.extend({
 		className: 'upfront-loading',
 		is_done: false,
-		done_callback: false,
+		done_callback: [],
 		done_timeout: false,
 		initialize: function () {
 			
@@ -3430,20 +3448,25 @@ define(_template_files, function () {
 				else if ( state == 'done' ) {
 					me.remove();
 					clearTimeout(me.done_timeout);
-					if ( me.done_callback ) me.done_callback();
+					if ( me.done_callback ) _(me.done_callback).each(function(cbk) { if (cbk && cbk.call) cbk.call(me); });
 				}
 			});
+		},
+		on_finish: function (callback) {
+			this.done_callback.push(callback);
 		},
 		done: function (callback, done) {
 			var me = this;
 			this.is_done = true;
-			this.done_callback = callback;
 			this.done_timeout = setTimeout(function(){
 				if ( me ){
 					me.remove();
-					me.done_callback();
+					_(me.done_callback).each(function(cbk) {
+						if (cbk && cbk.call) cbk.call(me);
+					});
 				} 
 			}, 6000);
+			if (callback) callback.call(me);
 			this.done_text = done;
 		},
 		cancel: function (callback, canceled) {
@@ -3451,7 +3474,6 @@ define(_template_files, function () {
 			if ( callback ) callback();
 		}
 	});
-	
 	
 	
 	
@@ -3864,7 +3886,7 @@ define(_template_files, function () {
 		},
 		get_panels: function () {
 			var panels = _([]),
-				collection = this.model.collection,
+				collection = this.model.collection || new Backbone.Collection([]),
 				container = this.model.get('container'),
 				name = this.model.get('name'),
 				index = collection.indexOf(this.model),

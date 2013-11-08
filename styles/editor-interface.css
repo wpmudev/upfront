@@ -5778,3 +5778,8 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	padding-top:4px;
 }
 
+
+.upfront-edit-content .upfront-entity-delete_trigger,
+.upfront-edit-content .upfront-entity-settings_trigger {
+	display: none;
+}
