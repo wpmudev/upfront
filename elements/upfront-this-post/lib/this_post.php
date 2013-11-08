@@ -75,7 +75,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function default_properties(){
 		return array(
 			'type' => 'ThisPostModel',
-			'view_class' => 'ThisPostModel',
+			'view_class' => 'ThisPostView',
 			'class' => 'c22 upfront-this_post',
 			'has_settings' => 1,
 
