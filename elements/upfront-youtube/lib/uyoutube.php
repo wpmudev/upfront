@@ -26,8 +26,8 @@ class Upfront_UyoutubeView extends Upfront_Object {
         'thumbHeight' => 300,
         'single_video_url' => '',
         'single_video_id' => '',
-        'player_width' => 404,
-        'player_height' => 246,
+        'player_width' => 384,
+        'player_height' => 240,
         'youtube_status' => 'starting',
 
         'type' => 'UyoutubeModel',
