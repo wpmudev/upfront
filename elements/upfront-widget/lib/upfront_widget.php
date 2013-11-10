@@ -23,6 +23,21 @@ class Upfront_Uwidget {
 		return ob_get_clean();
 	}
 	
+}
+
+class Upfront_UwidgetView extends Upfront_Object {
+
+	public function get_markup () {
+		$element_id = $this->_get_property('element_id');
+		$element_id = $element_id ? "id='{$element_id}'" : '';
+		$widget = $this->_get_property('widget');
+		
+		return "<div class='upfront-output-object upfront-widget' {$element_id}>" .
+			Upfront_Uwidget::get_widget_markup($widget) .
+		"</div>";
+	}
+
+	
 	public static function add_js_defaults($data){
 		$data['uwidget'] = array(
 			'defaults' => self::default_properties(),
@@ -40,19 +55,6 @@ class Upfront_Uwidget {
 
 			'widget' => false
 		);
-	}
-}
-
-class Upfront_UwidgetView extends Upfront_Object {
-
-	public function get_markup () {
-		$element_id = $this->_get_property('element_id');
-		$element_id = $element_id ? "id='{$element_id}'" : '';
-		$widget = $this->_get_property('widget');
-		
-		return "<div class='upfront-output-object upfront-widget' {$element_id}>" .
-			Upfront_Uwidget::get_widget_markup($widget) .
-		"</div>";
 	}
 	
 }
