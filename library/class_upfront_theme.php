@@ -252,64 +252,101 @@ class Upfront_Virtual_Region {
 		$this->modules[$this->current_module]['objects'][] = $object_data;
 	}
 
-	public function add_element($options){
-		if(!$options['object_class']){
-			$this->errors[] = "Tried to add an element without object_class";
-			return $this;
+	/**
+	 * Shorthand to add a complete element to the region.
+	 * 
+	 * @param String $type The type of the element to add.
+	 * @param array $options Options to add the element, they are
+	 *                       id: 'An id to generate wrapper, module and object ids',
+	 *                       columns: (22) 'Number of columns for the element width',
+	 *                       rows: (5) 'Number of rows for th element height',
+	 *                       margin_left: (0) 'Number of columns for the left margin',
+	 *                       margin_top: (0) 'Number of rows for the top margin',
+	 *                       new_line: (true) 'Whether to add the element to a new line or continue a previous line',
+	 *                       close_wrapper: (true) 'Close the wrapperm or leave it open for the next element',
+	 *                       options: Array with the object options.
+	 */
+	public function add_element($type = false, $options = array()){
+
+		if(!$type){
+			echo 'Bad configuration';
+			return;
 		}
-		$element_defaults = array();
+		$options['type'] = $type;
 
-		if($options['type'] != 'PlainTxt'){
-			try{
-				$element_defaults = call_user_func($options['object_class'] . '::default_properties');
-			} catch (Exception $e) {
-				$element_defaults = array();
-				$this->errors[] = "Can't find the class {$options['object_class']} or its method default_properties";
-			}
+		if(!isset($options['close_wrapper']))
+			$options['close_wrapper'] = true;
+
+		$opts = $this->parse_options($options);
+
+		if(!is_array($opts)){
+			echo $opts;
+			return;
 		}
-		else
-			$element_defaults = array('view_class' => 'PlainTxtView');
 
-		$opts = array_merge($this->get_element_defaults($options), $options);
-		$element_opts = array_merge($element_defaults, $opts['options']);
+		if(!$this->current_wrapper)
+			$this->start_wrapper($opts['wrapper_id'], $opts['new_line']);
 
-		$this->start_wrapper($opts['wrapper_slug'], $opts['new_line']);
-		$this->start_module(
-			array(
-				'width' => $opts['columns'],
-				'margin-top' => $opts['margin_top'],
-				'margin-left' => $opts['margin_left']
-			),
-			array(
-				'row' => $opts['rows'],
-				'class' => $opts['class'],
-				'element_id' => $opts['module_id']
-			)
-		);
-
-		$this->add_object($opts['object_slug'], $element_opts);
-		
+		$this->start_module($opts['position'], $opts['module']);		
+		$this->add_object($opts['object_id'], $opts['object']);		
 		$this->end_module();
-		$this->end_wrapper();
+
+		if($options['close_wrapper'])
+			$this->end_wrapper();
 	}
 
-	private function get_element_defaults($options){
+	private function parse_options($options){
 		$type = $options['type'];
-		$id = isset($options['id']) ? $options['id'] : $type . rand(1000, 9999);
 
-		return array(
-			'view_class' => $type . 'View',
-			'wrapper_slug' => $id . '-wrapper',
-			'module_id' => $id . '-module',
-			'object_id' => $id . '-object',
+		$view_class = 'Upfront_' . $type . 'View';
+		$object_defaults = array();
 
-			'rows' => 6,
+		if($type == 'PlainTxt')
+			$object_defaults = array('view_class' => 'PlainTxtView', 'id_slug' => 'plaintxt');
+		else if(class_exists($view_class))
+			$object_defaults =  call_user_func($view_class . '::default_properties');
+		else
+			return 'Unknown element type: ' . $type;
+
+		$slug = isset($options['id']) ? $options['id'] : (isset($object_defaults['id_slug']) ? $object_defaults['id_slug'] : '');
+
+		$opts = array(
+			'wrapper_id' => isset($options['wrapper_id']) ? $options['wrapper_id'] : $slug . '-wrapper',
+			'new_line' => isset($options['new_line']) ? $options['new_line'] : false
+		);
+
+		$position = array(
 			'columns' => 22,
 			'margin_top' => 0,
-			'margin_left' => 0,
-
-			'new_line' => true
+			'margin_left' => 0
 		);
+		$position = array_merge($position, $options);
+		$opts['position'] = array(
+			'width' => $position['columns'],
+			'margin-top' => $position['margin_top'],
+			'margin-left' => $position['margin_left']
+		);
+
+		$module = array(
+			'rows' => 6,
+			'module_class' => 'c' . $position['columns'] . ' ' . $slug . '-module',
+			'module_id' => $slug . '-module'
+		);
+		$module = array_merge($module, $options);
+		$opts['module'] = array(
+			'row' => $module['rows'],
+			'class' => $module['module_class'],
+			'element_id' => $module['module_id']
+		);
+
+		$opts['object_id'] = isset($options['object_id']) ? $options['object_id'] : $slug . '-object';
+
+		if(!isset($options['options']))
+			$options['options'] = array();
+
+		$opts['object'] = array_merge($object_defaults, $options['options']);
+
+		return $opts;
 	}
 }
 
