@@ -120,23 +120,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
     public static function add_upfront_data ($data) {
         $globals = get_option('upfront_social_media_global_settings', false);
         $data['usocial'] = array(
-            'defaults' => array(
-
-                'social_type' => 'likes',
-
-                'like_social_media_services' => array("facebook", "twitter", "google"),
-                
-                'count_social_media_services' => array(),
-
-                'button_size' => 'medium',
-                'button_style' => 'button-style-2',
-                'call_social_media_services' => array(),                
-
-                'type' => 'SocialMediaModel',
-                'view_class' => 'SocialMediaView',
-                'class' => 'c22 upfront-Social-Media',
-                'has_settings' => 1
-            ),
+            'defaults' => self::default_properties(),
             'global_defaults' => array(
                 'services' => array(
                     'facebook' => array('name' => 'Facebook', 'id' => 'facebook', 'url' => '', 'active' => false, 'meta' => array()),
@@ -158,6 +142,25 @@ class Upfront_SocialMediaView extends Upfront_Object {
         return $data;
     }    
 
+    public static function default_properties(){
+        return array(
+            'social_type' => 'likes',
+
+            'like_social_media_services' => array("facebook", "twitter", "google"),
+            
+            'count_social_media_services' => array(),
+
+            'button_size' => 'medium',
+            'button_style' => 'button-style-2',
+            'call_social_media_services' => array(),                
+
+            'id_slug' => 'SocialMedia',
+            'type' => 'SocialMediaModel',
+            'view_class' => 'SocialMediaView',
+            'class' => 'c22 upfront-Social-Media',
+            'has_settings' => 1
+        );
+    }
     
 }
 

@@ -8,6 +8,10 @@ function upfront_navigation_initialize(){
     // Include the backend support stuff
     require_once( ABSPATH . 'wp-admin/includes/nav-menu.php' );
 
+    // Add element defaults to data object
+	$ucontact = new Upfront_UcontactView(array());
+	add_action('upfront_data', array('Upfront_NavigationView', 'add_js_defaults'));
+
     // Expose our JavaScript definitions to the Upfront API
     upfront_add_layout_editor_entity('upfront-navigation', upfront_element_url('js/upfront-navigation', __FILE__));
 

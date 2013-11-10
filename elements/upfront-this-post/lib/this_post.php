@@ -78,6 +78,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'view_class' => 'ThisPostView',
 			'class' => 'c22 upfront-this_post',
 			'has_settings' => 1,
+			'id_slug' => 'this_post',
 
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
 		);

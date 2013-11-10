@@ -10,7 +10,7 @@ require([
 	var LoginModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
 			var properties = _.clone(Upfront.data.upfront_login.defaults);
-			properties.element_id = Upfront.Util.get_unique_id("upfront-login_element-object");
+			properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
 			this.init_properties(properties);
 		}
 	});
@@ -19,6 +19,9 @@ require([
 		markup: false,
 
 		initialize: function () {
+			if(! (this.model instanceof LoginModel)){
+				this.model = new LoginModel({properties: this.model.get('properties')});
+			}
 			Upfront.Views.ObjectView.prototype.initialize.call(this);
 			var me = this;
 			this.model.get("properties").on("change", function (model) {

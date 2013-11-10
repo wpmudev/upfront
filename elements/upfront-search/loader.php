@@ -33,6 +33,9 @@ function usearch_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_search.php');
 
+	// Add element defaults to data object
+	add_action('upfront_data', array('Upfront_UsearchView', 'add_js_defaults'));
+
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('usearch', upfront_element_url('js/usearch', __FILE__));
 }

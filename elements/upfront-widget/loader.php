@@ -33,6 +33,9 @@ function uwidget_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_widget.php');
 
+	// Add element defaults to data object
+	add_action('upfront_data', array('Upfront_Uwidget', 'add_js_defaults'));
+
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('uwidget', upfront_element_url('js/uwidget', __FILE__));
 }

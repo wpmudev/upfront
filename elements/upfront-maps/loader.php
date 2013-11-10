@@ -92,6 +92,9 @@ function upfront_maps_init () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_maps.php');
 
+	// Add element defaults to data object
+	add_action('upfront_data', array('Upfront_MapView', 'add_js_defaults'));
+
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('upfront_maps', upfront_element_url('js/upfront_maps', __FILE__));
 }

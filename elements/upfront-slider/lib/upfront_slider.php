@@ -69,4 +69,35 @@ class Upfront_UsliderView extends Upfront_Object {
 	public static function add_admin_templates(){
 		include dirname(dirname(__FILE__)) . '/tpls/backend.php';
 	}
+
+	public static function add_js_defaults($data){
+		$data['uslider'] = array(
+			'defaults' => self::default_properties(),
+		);
+		return $data;
+	}
+
+	public static function default_properties(){
+		return array(
+			'id_slug' => 'uslider',
+			'type' => "USliderModel",
+			'view_class' => "USliderView",
+			"class" => "c22 upfront-uslider",
+			'has_settings' => 1,
+
+			'style' => 'right', // right, group, tabbed, text
+			'slide_text' => 'no', // no, yes
+			'text_layout' => 'right', // right, tabbed => [right, left, bottom, split, over], group => [block, individual], text => [text]
+			'behaviour' => array(
+				'autoStart' => true,
+				'hover' => true,
+				'interval' => 5,
+				'speed' => 1
+			),
+			'slide_transition' => 'scrollLeft', // scrollLeft, scrollRight, scrollDown, scrollUp, shuffle, fade
+			'controls_type' => 'arrows-simple', // arrows-simple, dots, thumbnails, arrows-stacked, none
+			'controls_position' => 'inside', // a-simple => [ins+, outs+], dots => [b-out, b-in, top-out, ...], thumbnails => [b+,l+,r+,t+], t-stacked => [left-top, left-bottom, top-left, ...]
+			'slides' => array(), // Convert to Uslider_Slides to use, and to Object to store
+		);
+	}
 }

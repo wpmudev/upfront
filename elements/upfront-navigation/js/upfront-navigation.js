@@ -2,12 +2,9 @@
 
         var NavigationModel = Upfront.Models.ObjectModel.extend({
             init: function () {
-                this.init_property("type", "NavigationModel");
-                this.init_property("view_class", "NavigationView");
-
-                this.init_property("element_id", Upfront.Util.get_unique_id("nav"));
-                this.init_property("class", "c22 upfront-navigation");
-                this.init_property("has_settings", 1);
+                var properties = _.clone(Upfront.data.unavigation.defaults);
+                properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
+                this.init_properties(properties);
             }
         });
 
@@ -27,6 +24,10 @@
             model:NavigationModel,
             toolTip : _.template('<div class="nav_tooltip upfront-ui" style="display: none;"><a class="edit_url" href="#"><i class="upfront-field-icon upfront-field-icon-navigation-link"></i>edit URL</a><a class="visit_page" href="#"><i class="upfront-field-icon upfront-field-icon-navigation-open"></i>visit page</a></div>'),
             initialize:function(){
+                
+                if(! (this.model instanceof NavigationModel)){
+                    this.model = new NavigationModel({properties: this.model.get('properties')});
+                }
                 // Call the parent's initialization function
                 Upfront.Views.ObjectView.prototype.initialize.call(this);
 

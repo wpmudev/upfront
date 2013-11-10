@@ -10,12 +10,9 @@ var UsearchModel = Upfront.Models.ObjectModel.extend({
 	 * Used for setting up instance defaults, initialization and the like.
 	 */
 	init: function () {
-		this.init_property("type", "UsearchModel");
-		this.init_property("view_class", "UsearchView");
-		
-		this.init_property("element_id", Upfront.Util.get_unique_id("usearch-object"));
-		this.init_property("class", "c22 upfront-search");
-		this.init_property("has_settings", 1);
+		var properties = _.clone(Upfront.data.usearch.defaults);
+		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
+		this.init_properties(properties);
 	}
 });
 
@@ -24,6 +21,14 @@ var UsearchModel = Upfront.Models.ObjectModel.extend({
  * @type {Upfront.Views.ObjectView}
  */
 var UsearchView = Upfront.Views.ObjectView.extend({
+
+	initialize: function(options){
+		if(! (this.model instanceof UsearchModel)){
+			this.model = new UsearchModel({properties: this.model.get('properties')});
+		}
+
+		this.constructor.__super__.initialize.call(this, [options]);
+	},
 	/**
 	 * Element contents markup.
 	 * @return {string} Markup to be shown.

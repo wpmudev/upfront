@@ -2,17 +2,19 @@
 
 
     var AccordionModel = Upfront.Models.ObjectModel.extend({
+        /**
+         * A quasi-constructor, called after actual constructor *and* the built-in `initialize()` method.
+         * Used for setting up instance defaults, initialization and the like.
+         */
         init: function () {
-            this.init_property("type", "AccordionModel");
-            this.init_property("view_class", "AccordionView");
-
-            this.init_property("element_id", Upfront.Util.get_unique_id("upfront-accordion_element-object"));
-            this.init_property("class", "c22 upfront-accordion_element-object");
-            this.init_property("has_settings", 0);
+            var properties = _.clone(Upfront.data.uaccordion.defaults);
+            properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
+            this.init_properties(properties);
         }
     });
 
     var AccordionView = Upfront.Views.ObjectView.extend({
+
         events: {
             'editor-change [contenteditable]': 'saveContent',
             'click .ui-accordion-header'  : 'edit_panels',
@@ -21,6 +23,15 @@
             'hover .accordion h3'  : 'hover_panel',
             'hover .remove_panel'  : 'show_this'
         },
+
+        initialize: function(options){
+            if(! (this.model instanceof AccordionModel)){
+                this.model = new AccordionModel({properties: this.model.get('properties')});
+            }
+
+            this.constructor.__super__.initialize.call(this, [options]);
+        },
+
         edit_panels: function(e){
             $(e.target).parent().find('div.ui-accordion-content').not($(e.target).next('div.ui-accordion-content')).slideUp();
             $(e.target).next('div.ui-accordion-content').slideDown();
@@ -38,13 +49,13 @@
             e.preventDefault();
             var index = this.$el.find('.accordion h3').length + 1;
             this.$el.find('.accordion').accordion();
-            var new_panel = '<h3>Section '+index+'</h3><div><p>My awesome stub content goes here</p></div>'
+            var new_panel = '<h3>Section '+index+'</h3><div><p>My awesome stub content goes here</p></div>';
             this.$el.find('.accordion').append(new_panel).accordion('destroy').accordion();
             this.$el.find('.upfront-object-content').append('<a href="#" data-id="'+(index-1)+'" class="remove_panel">x Remove</a>');
         },
         show_this: function(e){
             if (e.type == "mouseenter") {
-                $(e.target).show()
+                $(e.target).show();
             }
             else {
                 $(e.target).hide();

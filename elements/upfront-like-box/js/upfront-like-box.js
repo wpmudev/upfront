@@ -10,13 +10,9 @@
          * Used for setting up instance defaults, initialization and the like.
          */
         init: function () {
-            this.init_property("type", "LikeBox");
-            this.init_property("view_class", "LikeBoxView");
-
-            this.init_property("element_id", Upfront.Util.get_unique_id("Like-box-object"));
-            this.init_property("class", "c22 upfront-like-box");
-            this.init_property("has_settings", 0);
-            this.init_property("element_size", {width: 278, height: 270});
+            var properties = _.clone(Upfront.data.ulikebox.defaults);
+            properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
+            this.init_properties(properties);
         }
     });
 
@@ -28,15 +24,18 @@
 
         model: LikeBoxModel,
         elementSize: {width: 0, height: 0},
-        initialize: function(){
-            var me = this;
-            Upfront.Views.ObjectView.prototype.initialize.call(this);
-            //Upfront.data.social.panel.model.get("properties").on("change", this.setUrl, this);
-            //Upfront.data.social.panel.model.get("properties").on("add", this.setUrl, this);
+
+        initialize: function(options){
+            if(! (this.model instanceof LikeBoxModel)){
+                this.model = new LikeBoxModel({properties: this.model.get('properties')});
+            }
+
+            this.constructor.__super__.initialize.call(this, [options]);
             Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
         },
+
         setUrl: function(){
-            this.property('facebook_url' , Upfront.data.social.panel.model.get_property_value_by_name('global_social_media_services-facebook-url'))
+            this.property('facebook_url' , Upfront.data.social.panel.model.get_property_value_by_name('global_social_media_services-facebook-url'));
         },
         onElementResize: function(view, model){
             if(this.parent_module_view == view)

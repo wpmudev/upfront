@@ -22,6 +22,29 @@ class Upfront_MapView extends Upfront_Object{
 		return "<div class='upfront_map-public' {$element_id} {$map}>This is where the map comes in.</div>";
 	}
 
+	public static function add_js_defaults($data){
+        $data['umaps'] = array(
+            'defaults' => self::default_properties(),
+         );
+        return $data;
+    }
+
+    public static function default_properties(){
+        return array(
+            'type' => "MapModel",
+            'view_class' => "MapView",
+            "class" => "c22 upfront-map_element-object",
+            'has_settings' => 1,
+            'id_slug' => 'upfront-map_element',
+
+            'controls' => array(),
+            'map_center' => array(10.72250, 106.730762),
+            'zoom' => 10,
+            'style' => 'HYBRID',
+            'styles' => false
+        );
+    }
+
 }
 
 function upfront_maps_add_context_menu ($paths) {

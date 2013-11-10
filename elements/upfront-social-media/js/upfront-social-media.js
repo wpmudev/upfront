@@ -201,7 +201,7 @@
          */
         init: function () {
             var properties = _.clone(this.getDefaults());//Upfront.data.usocial.defaults);
-            properties.element_id = Upfront.Util.get_unique_id("SocialMedia-Object");
+            properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
             this.init_properties(properties);
         },
 
@@ -210,7 +210,7 @@
          */
         getDefaults: function() {
             var globals = Upfront.data.usocial.globals,
-                defaults = Upfront.data.usocial.defaults
+                defaults = Upfront.data.usocial.defaults,
                 order = [],
                 active = [],
                 urls = {}
@@ -226,7 +226,7 @@
                     active.push(service.id);
 
                 urls[service.id] = service.url;
-            })
+            });
 
             //Button type services
             var bs = _.clone(globals.services);
@@ -249,10 +249,11 @@
      */
     var SocialMediaView = Upfront.Views.ObjectView.extend({
         settings: false,
-        model:SocialMediaModel,
         counts: false,
         initialize: function(){
-            var me = this;
+            if(! (this.model instanceof SocialMediaModel)){
+                this.model = new SocialMediaModel({properties: this.model.get('properties')});
+            }
             Upfront.Views.ObjectView.prototype.initialize.call(this);
             Upfront.Events.on("entity:drag_stop", this.dragStop, this);
         },
@@ -264,7 +265,7 @@
                     var defaults = me.model.getDefaults();
                     _.each(defaults, function(value, key){
                         me.model.set_property(key, value, true);
-                    })
+                    });
                     me.model.trigger('change');
                 });
                 console.log('No globals');

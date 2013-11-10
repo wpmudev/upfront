@@ -8,6 +8,9 @@ function upfront_like_box_initialize(){
     // Expose our JavaScript definitions to the Upfront API
     upfront_add_layout_editor_entity('upfront-like-box', upfront_element_url('js/upfront-like-box', __FILE__));
 
+    //Add defaults
+    add_action('upfront_data', array('Upfront_LikeBoxView', 'add_js_defaults'));
+
     // Add the public stylesheet
     add_action('wp_enqueue_scripts', array('Upfront_LikeBoxView', 'add_public_style'));
 }

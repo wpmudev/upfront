@@ -36,12 +36,9 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 
 	var MapModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
-			this.init_property("type", "MapModel");
-			this.init_property("view_class", "MapView");
-			
-			this.init_property("element_id", Upfront.Util.get_unique_id("upfront-map_element-object"));
-			this.init_property("class", "c22 upfront-map_element-object");
-			this.init_property("has_settings", 1);
+			var properties = _.clone(Upfront.data.umaps.defaults);
+			properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
+			this.init_properties(properties);
 		}
 	});
 
@@ -75,7 +72,12 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			keypress: "wait_for_enter"
 		},
 		initialize: function () {
+			if(! (this.model instanceof MapModel)){
+				this.model = new MapModel({properties: this.model.get('properties')});
+			}
+			
 			var options = _.extend({}, this.options);
+
 			this.options.field = new Upfront.Views.Editor.Field.Text(options);
 			this.options.locate = new Map_Fields_Simple_Refresh(options);
 

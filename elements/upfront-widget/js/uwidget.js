@@ -2,12 +2,9 @@
 
 var UwidgetModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		this.init_property("type", "UwidgetModel");
-		this.init_property("view_class", "UwidgetView");
-		
-		this.init_property("element_id", Upfront.Util.get_unique_id("uwidget-object"));
-		this.init_property("class", "c22 upfront-widget");
-		this.init_property("has_settings", 1);
+		var properties = _.clone(Upfront.data.uwidget.defaults);
+		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
+		this.init_properties(properties);
 	}
 });
 
@@ -15,10 +12,18 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 	
 	loading: null,
 	content_loaded: false,
+
+	initialize: function(options){
+		if(! (this.model instanceof UwidgetModel)){
+			this.model = new UwidgetModel({properties: this.model.get('properties')});
+		}
+
+		this.constructor.__super__.initialize.call(this, [options]);
+	},
 	
 	init: function () {
-		if ( !Upfront.data.uwidget )
-			Upfront.data.uwidget = {};
+		if ( !Upfront.data.uwidget.widgets )
+			Upfront.data.uwidget.widgets = {};
 	},
 	
 	get_content_markup: function () {
@@ -26,7 +31,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		 	me = this;
 		if ( !widget )
 			return "Please select widget on settings";
-		var widget_data =  Upfront.data.uwidget[widget] || "";
+		var widget_data =  Upfront.data.uwidget.widgets[widget] || "";
 		if ( widget_data )
 			this.content_loaded = true;
 		return widget_data;
@@ -36,7 +41,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		var widget = this.model.get_property_value_by_name('widget');
 		if ( !widget )
 			return;
-		if ( typeof Upfront.data.uwidget[widget] == 'undefined' ){
+		if ( typeof Upfront.data.uwidget.widgets[widget] == 'undefined' ){
 			if ( this.content_loaded ){ // only display loading if there's already content
 				this.loading = new Upfront.Views.Editor.Loading({
 					loading: "Loading...",
@@ -53,7 +58,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		Upfront.Util.post({"action": "uwidget_get_widget_markup", "data": JSON.stringify({"widget": widget})})
 			.success(function (ret) {
-				Upfront.data.uwidget[widget] = ret.data;
+				Upfront.data.uwidget.widgets[widget] = ret.data;
 				if ( me.loading ){
 					me.loading.done(function(){
 						me.render();

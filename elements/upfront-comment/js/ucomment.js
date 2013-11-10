@@ -6,8 +6,8 @@ var UcommentModel = Upfront.Models.ObjectModel.extend({
 	 * Here the default values for the model properties are set.
 	 */
 	init: function () {
-		var properties = _.clone(Upfront.data.ucontact.defaults);
-		properties.element_id = Upfront.Util.get_unique_id("ucomment-object");
+		var properties = _.clone(Upfront.data.ucomments.defaults);
+		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
 		this.init_properties(properties);
 	}
 });
@@ -19,7 +19,6 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.constructor.__super__.initialize.call(this, [options]);
-		Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
 	},
 	
 	get_content_markup: function () {

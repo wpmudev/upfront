@@ -30,4 +30,27 @@ class Upfront_UsearchView extends Upfront_Object {
 			'</form>' .
 		"</div>";
 	}
+
+	public static function add_js_defaults($data){
+        $data['usearch'] = array(
+            'defaults' => self::default_properties(),
+         );
+        return $data;
+    }
+
+    //Defaults for properties
+    public static function default_properties(){
+        return array(
+            'type' => 'UsearchModel',
+            'view_class' => 'UsearchView',
+            'class' => 'c22 upfront-search',
+            'has_settings' => 1,
+            'id_slug' => 'usearch',
+
+            'placeholder' => 'Search',
+            'label' => 'Custom text',
+            'is_rounded' => 0,
+            'color' => ''
+        );
+    }
 }

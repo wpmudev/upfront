@@ -49,6 +49,7 @@ class Upfront_UcommentView extends Upfront_Object {
 
 	public static function default_properties(){
 		return array(
+			'id_slug' => 'ucomment',
 			'type' => "UcommentModel",
 			'view_class' => "UcommentView",
 			"class" => "c22 upfront-comment",

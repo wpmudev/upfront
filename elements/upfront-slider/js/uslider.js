@@ -32,27 +32,9 @@ var USliderModel = Upfront.Models.ObjectModel.extend({
 	 * Used for setting up instance defaults, initialization and the like.
 	 */
 	init: function () {
-		this.init_properties({
-			type: 'USliderModel',
-			view_class: 'USliderView',
-			element_id: Upfront.Util.get_unique_id("uslider-object"),
-			'class': "upfront-uslider",
-			has_settings: 1,
-
-			style: 'right', // right, group, tabbed, text
-			slide_text: 'no', // no, yes
-			text_layout: 'right', // right, tabbed: [right, left, bottom, split, over], group: [block, individual], text: [text]
-			behaviour: { 
-				autoStart: true,
-				hover: true,
-				interval: 5,
-				speed: 1
-			},
-			slide_transition: 'scrollLeft', // scrollLeft, scrollRight, scrollDown, scrollUp, shuffle, fade
-			controls_type: 'arrows-simple', // arrows-simple, dots, thumbnails, arrows-stacked, none
-			controls_position: 'inside', // a-simple: [ins+, outs+], dots: [b-out, b-in, top-out, ...], thumbnails: [b+,l+,r+,t+], t-stacked: [left-top, left-bottom, top-left, ...]
-			slides: [], // Convert to Uslider_Slides to use, and to Object to store
-		});
+		var properties = _.clone(Upfront.data.islider.defaults);
+		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
+		this.init_properties(properties);
 	}
 });
 
@@ -64,6 +46,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	self: {},
 	module_settings: {},
 	template: _.template($('#uslider-template').html()),
+
+	initialize: function(options){
+		if(! (this.model instanceof USliderModel)){
+			this.model = new USliderModel({properties: this.model.get('properties')});
+		}
+
+		this.constructor.__super__.initialize.call(this, [options]);
+	},
 
 	get_content_markup: function () {
 		var self = this,

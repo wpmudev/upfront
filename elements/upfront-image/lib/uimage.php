@@ -97,7 +97,8 @@ class Upfront_UimageView extends Upfront_Object {
 			'type' => 'UimageModel',
 			'view_class' => 'UimageView',
 			'has_settings' => 1,
-			'class' =>  'upfront-image'
+			'class' =>  'upfront-image',
+			'id_slug' => 'image'
 		);
 	}
 

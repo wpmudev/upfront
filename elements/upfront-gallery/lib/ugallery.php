@@ -8,28 +8,6 @@
 */
 
 class Upfront_UgalleryView extends Upfront_Object {
-	var $defaults = array(
-		'type' => 'UgalleryModel',
-		'view_class' => 'UgalleryView',
-		'has_settings' => 1,
-		'class' => 'c22 upfront-gallery',
-
-		'status' => 'starting',
-		'images' => array(), // Convert to new UgalleryImages() for using
-		'elementSize' => array( 'width' => 0, 'height' => 0),
-		'labelFilters' => array(), //Since checkboxes fields return an array
-		'urlIcon' => array(), 
-		'disableLightbox' => array(), 
-		'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
-		'thumbWidth' => 140,
-		'thumbHeight' => 140,
-		'showTitle' => array(), 
-		'showDescription' =>array(), 
-		'lbTitle' => array(true), //This is a checked checkbox
-		'lbDescription' => array(true),
-		'lbLoop' => array(),
-		'lockThumbProportions' => true
-	);
 
 	var $image_labels = array();
 	var $all_labels = array();
@@ -155,7 +133,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		}
 
 		$data['ugallery'] = array(
-			'defaults' => $this->defaults,
+			'defaults' => self::default_properties(),
 			'template' => upfront_get_template_url('ugallery', upfront_element_url('tpl/ugallery.html', dirname(__FILE__))),
 			'postTypes' => $post_types,
 			'grids' => array(),
@@ -164,6 +142,33 @@ class Upfront_UgalleryView extends Upfront_Object {
 		);
 		return $data;
 	}
+
+	//Defaults for properties
+    public static function default_properties(){
+        return array(
+			'type' => 'UgalleryModel',
+			'view_class' => 'UgalleryView',
+			'has_settings' => 1,
+			'class' => 'c22 upfront-gallery',
+			'id_slug' => 'ugallery',
+
+			'status' => 'starting',
+			'images' => array(), // Convert to new UgalleryImages() for using
+			'elementSize' => array( 'width' => 0, 'height' => 0),
+			'labelFilters' => array(), //Since checkboxes fields return an array
+			'urlIcon' => array(), 
+			'disableLightbox' => array(), 
+			'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
+			'thumbWidth' => 140,
+			'thumbHeight' => 140,
+			'showTitle' => array(), 
+			'showDescription' =>array(), 
+			'lbTitle' => array(true), //This is a checked checkbox
+			'lbDescription' => array(true),
+			'lbLoop' => array(),
+			'lockThumbProportions' => true
+        );
+    }
 
 	public static function add_styles_scripts () {
 		wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));

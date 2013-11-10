@@ -50,6 +50,13 @@ class Upfront_NavigationView extends Upfront_Object {
         endif;
     }
 
+    public static function add_js_defaults($data){
+        $data['unavigation'] = array(
+            'defaults' => self::default_properties(),
+         );
+        return $data;
+    }
+
     //Defaults for properties
     public static function default_properties(){
         return array(
@@ -57,6 +64,7 @@ class Upfront_NavigationView extends Upfront_Object {
             'view_class' => 'NavigationView',
             'class' => 'c22 upfront-navigation',
             'has_settings' => 1,
+            'id_slug' => 'nav',
 
             'menu_id' => false,
             'create_menu' => '',

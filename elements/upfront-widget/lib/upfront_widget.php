@@ -23,6 +23,24 @@ class Upfront_Uwidget {
 		return ob_get_clean();
 	}
 	
+	public static function add_js_defaults($data){
+		$data['uwidget'] = array(
+			'defaults' => self::default_properties(),
+		);
+		return $data;
+	}
+
+	public static function default_properties(){
+		return array(
+			'id_slug' => 'uwidget',
+			'type' => "UwidgetModel",
+			'view_class' => "UwidgetView",
+			"class" => "c22 upfront-widget",
+			'has_settings' => 1,
+
+			'widget' => false
+		);
+	}
 }
 
 class Upfront_UwidgetView extends Upfront_Object {
