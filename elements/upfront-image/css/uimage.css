@@ -364,6 +364,9 @@ a.open-media-gallery:hover i {
 .image-edit-mask {
 	width: 300px;
 	height: 300px;
+	border-collapse: separate;
+	-moz-box-shadow: 0 0 0 20000px rgba(57,82,105,.7);
+	-webkit-box-shadow: 0 0 0 20000px rgba(57,82,105,.7);
 	box-shadow: 0 0 0 20000px rgba(57,82,105,.7);
 	border: 3px solid rgba(255,255,255,.5);
 	z-index:10;
