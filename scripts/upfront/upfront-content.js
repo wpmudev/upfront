@@ -613,7 +613,7 @@
 		},
 
 		publish: function(){
-			this.save(this.post.get('post_status'), 'Publishing ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' published');
+			this.save('publish', 'Publishing ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' published');
 		},
 		saveDraft:function(){
 			this.save('draft', 'Saving ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' saved as a draft');
