@@ -5,7 +5,7 @@ jQuery(function($){
 		grid.shuffle({
 			itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
 			sizer: $(this).find('.ugallery_item').first().outerWidth(),
-			gutterWidth: 15
+			gutterWidth: 30
 		});
 
 		grid.siblings('.ugallery_labels').on('click', '.ugallery_label_filter', function(e){
@@ -13,7 +13,7 @@ jQuery(function($){
 			$(e.delegateTarget).find('a.filter_selected').removeClass('filter_selected');
 			var filter = $(e.target).addClass('filter_selected').attr('rel');
 			grid.shuffle('shuffle', filter);
-		})
+		});
 	});
 
 
@@ -31,7 +31,7 @@ jQuery(function($){
 							return text.html();
 						return '';
 					}
-				}
+				};
 
 			gallery.magnificPopup(ugalleries[galleryId].magnific);
 		}
