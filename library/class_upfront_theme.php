@@ -257,14 +257,14 @@ class Upfront_Virtual_Region {
 	 * 
 	 * @param String $type The type of the element to add.
 	 * @param array $options Options to add the element, they are
-	 *                       id: 'An id to generate wrapper, module and object ids',
-	 *                       columns: (22) 'Number of columns for the element width',
-	 *                       rows: (5) 'Number of rows for th element height',
-	 *                       margin_left: (0) 'Number of columns for the left margin',
-	 *                       margin_top: (0) 'Number of rows for the top margin',
-	 *                       new_line: (true) 'Whether to add the element to a new line or continue a previous line',
-	 *                       close_wrapper: (true) 'Close the wrapperm or leave it open for the next element',
-	 *                       options: Array with the object options.
+	 *           id: 			'An id to generate wrapper, module and object ids',
+	 *           columns: 		(22) 'Number of columns for the element width',
+	 *           rows: 			(5) 'Number of rows for th element height',
+	 *           margin_left: 	(0) 'Number of columns for the left margin',
+	 *           margin_top: 	(0) 'Number of rows for the top margin',
+	 *           new_line: 		(true) 'Whether to add the element to a new line or continue a previous line',
+	 *           close_wrapper: (true) 'Close the wrapper or leave it open for the next element',
+	 *           options: 		Array with the object options.
 	 */
 	public function add_element($type = false, $options = array()){
 
