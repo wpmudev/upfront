@@ -3187,6 +3187,10 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 			e.stopPropagation();
 			me.check_value.apply(me);
 		});
+
+		setTimeout(function () {
+			me.trigger("anchor:updated");
+		}, 50);
 	},
 	field_toggle: function () {
 		if (this.$el.find(":checkbox").is(":checked")) {
