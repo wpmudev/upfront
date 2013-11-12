@@ -236,7 +236,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				cropOffset: cropOffset,
 				src: data[0],
 				srcFull: image.full[0],
-				position: me.centeredPosition({width: size[1], height: size[2]})
+				position: me.centeredPosition({width: size[1], height: size[2]}),
+				status: 'ok'
 			});
 		});
 
@@ -459,6 +460,30 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			image = this.images.get(item.attr('rel')),
 			editorOpts = this.getEditorOptions(image)
 		;
+
+		if(image.get('status') != 'ok'){
+			var selectorOptions = {
+				multiple: false,
+				preparingText: 'Preparing images'
+			};
+			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){			
+				me.addImages(images);
+
+				var index = me.images.indexOf(image);
+
+				me.images.remove(image, {silent:true});
+
+				var newImage = me.images.at(me.images.length -1);
+
+				me.images.remove(newImage, {silent:true});
+
+				me.images.add(newImage, {at: index});
+
+				Upfront.Views.Editor.ImageSelector.close();
+			});
+		}
+		
+		editorOpts = this.getEditorOptions(image);
 		e.preventDefault();
 		Upfront.Views.Editor.ImageEditor.open(editorOpts)
 			.done(function(result){
