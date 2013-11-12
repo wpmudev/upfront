@@ -5778,6 +5778,34 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	padding-top:4px;
 }
 
+#settings .upfront-settings-item-anchor .upfront-settings-item {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+.upfront-field-complex_field-boolean_toggleable_text label,
+.upfront-field-complex_field-boolean_toggleable_text .upfront-embedded_toggleable-notice
+{
+	font-size: 11px;
+}
+.upfront-field-complex_field-boolean_toggleable_text .upfront-embedded_toggleable-notice {
+	margin-top: 2px;
+}
+#settings .upfront-embedded_toggleable.error .upfront-embedded_toggleable-notice {
+	background-color: #edafaf;
+}
+#settings .upfront-embedded_toggleable.error input {
+	border: 1px solid #dc6060;
+	background-image: url('../img/uf-ui-sprite.svg?v=20130909');
+	background-repeat: no-repeat;
+	background-position: 170px -310px;
+}
+#settings .upfront-embedded_toggleable.ok input {
+	background-image: url('../img/uf-ui-sprite.svg?v=20130909');
+	background-repeat: no-repeat;
+	background-position: 170px -345px;
+}
+
 
 .upfront-edit-content .upfront-entity-delete_trigger,
 .upfront-edit-content .upfront-entity-settings_trigger {

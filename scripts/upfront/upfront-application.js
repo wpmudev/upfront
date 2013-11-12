@@ -109,7 +109,7 @@ var LayoutEditor = new (Subapplication.extend({
 	},
 
 	add_object: function (name, data) {
-		this.Objects[name] = data;
+		this.Objects[name] = _.extend({}, Upfront.Mixins.Anchorable, data);
 	},
 
 
@@ -196,6 +196,7 @@ var LayoutEditor = new (Subapplication.extend({
 			current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings)
 			settings_view = new current_object.Settings({
 				model: view.model,
+				anchor: current_object.anchor,
 				el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
 			})
 		;

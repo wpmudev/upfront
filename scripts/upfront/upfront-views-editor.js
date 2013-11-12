@@ -2720,7 +2720,7 @@ define(_template_files, function () {
 			this.update_suggest();
 		}
 	}));
-	
+
 
 	var SettingsItem = Backbone.View.extend({
 		group: true, 
@@ -3072,7 +3072,8 @@ define(_template_files, function () {
 			var me = this,
 				$view = me.for_view.$el.find(".upfront-editable_entity"),
 				view_pos = $view.offset(),
-				view_pos_right = view_pos.left + $view.outerWidth(),
+				view_outer_width = $view.outerWidth(),
+				view_pos_right = view_pos.left + view_outer_width,
 				$button = me.for_view.$el.find(".upfront-entity-settings_trigger"),
 				button_pos = $button.offset(),
 				button_pos_right = button_pos.left + $button.outerWidth(),
@@ -3087,6 +3088,18 @@ define(_template_files, function () {
 					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
 				)
 			;
+
+			// Adding trigger
+			if (this.options.anchor && this.options.anchor.is_target) {
+				var item = new _Settings_AnchorSetting({model: this.for_view.model}),
+					first = this.panels.first()
+				;
+				first.settings.push(item);
+				item.on("anchor:item:updated", function () {
+					this.toggle_panel(first);
+				}, this);
+			}
+
 			me.panels.each(function (panel) {
 				panel.render();
 				panel.on("upfront:settings:panel:toggle", me.toggle_panel, me);
@@ -3107,7 +3120,7 @@ define(_template_files, function () {
 				})
 				.offset({
 					"top": view_pos.top /*+ $view.height() + 16*/,
-					"left": view_pos.left + $view.outerWidth() - ((view_pos_right+label_width+panel_width > main_pos_right) ? label_width+panel_width+(view_pos_right-button_pos.left)+5 : 0)
+					"left": view_pos.left + view_outer_width - ((view_pos_right+label_width+panel_width > main_pos_right) ? label_width+panel_width+(view_pos_right-button_pos.left)+5 : 0)
 				})
 				.addClass('upfront-ui')
 			;
@@ -3147,6 +3160,85 @@ define(_template_files, function () {
 			this.set_title(this.get_title());
 		}
 	});
+
+var Field_Complex_Toggleable_Text_Field = Field.extend({
+	className: "upfront-field-complex_field-boolean_toggleable_text",
+	tpl: '<input type="checkbox" /> <label>{{element_label}}</label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">Please, use ID that contains letters only, eg. <b>myProductSlider</b><br />No spaces or special characters.</div></div>',
+	initialize: function () {
+		this.options.field = new Field_Text(this.options);
+		Field.prototype.initialize.call(this);
+	},
+	render: function () {
+		var me = this;
+		this.$el.empty();
+		this.$el.append(this.get_field_html());
+		
+		this.$el.on("click", ':checkbox', function (e) {
+			e.stopPropagation();
+			me.field_toggle.apply(me);
+		});
+		if (this.model.get_property_value_by_name(this.options.field.get_name())) {
+			this.$el.find(':checkbox').attr("checked", true);
+			this.check_value();
+			this.field_toggle();
+		}
+
+		this.$el.on("keyup", '[name="' + this.options.field.get_name() + '"]', function (e) {
+			e.stopPropagation();
+			me.check_value.apply(me);
+		});
+	},
+	field_toggle: function () {
+		if (this.$el.find(":checkbox").is(":checked")) {
+			this.$el.find(".upfront-embedded_toggleable").show();
+		} else this.$el.find(".upfront-embedded_toggleable").hide();
+		this.trigger("anchor:updated");
+	},
+	check_value: function () {
+		var $field = this.$el.find('[name="' + this.options.field.get_name() + '"]'),
+			$root = this.$el.find(".upfront-embedded_toggleable"),
+			val = $field.length && $field.val ? $field.val() : ''
+		;
+		$root.removeClass("error").removeClass("ok");
+		if (val.length && !val.match(/^[a-zA-Z]+$/)) {
+			$root.addClass("error");
+		} else if (val.length) {
+			$root.addClass("ok");
+		}
+	},
+	get_field_html: function () {
+		this.options.field.render();
+		var $input = this.options.field.$el;
+		return _.template(this.tpl, _.extend({}, this.options, {field: $input.html()}));
+	},
+	get_value: function () {
+		var data = {}
+			$field = this.$el.find(":checkbox"),
+			$subfield = this.$el.find('[name="' + this.options.field.get_name() + '"]'),
+			value = $subfield.val().replace(/[^a-zA-Z]/g, '')
+		;
+		return $field.is(":checked") && value ? value : false;
+	}
+});
+
+var _Settings_AnchorSetting = SettingsItem.extend({
+	className: "upfront-settings-item-anchor",
+	group: false,
+	initialize: function () {
+		SettingsItem.prototype.initialize.call(this, this.options);
+		var item = new Field_Complex_Toggleable_Text_Field({
+			element_label: "Make this element an anchor",
+			model: this.model,
+			property: 'anchor'
+		});
+		item.on("anchor:updated", function () {
+			this.trigger("anchor:item:updated")
+		}, this);
+		this.fields = _([item]);
+	}
+});
+
+
 /*
 	var ContentEditorUploader = Backbone.View.extend({
 

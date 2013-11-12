@@ -40,6 +40,13 @@ define(_template_files, function () {
 			}
 		},
 
+		Anchorable_Mixin = {
+			anchor: {
+				is_target: true,
+				is_trigger: false
+			}
+		},
+
 	/* ----- Core views ----- */
 
 		_Upfront_SingularEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
@@ -901,7 +908,8 @@ define(_template_files, function () {
 		},
 		"Mixins": {
 			"FixedObject": FixedObject_Mixin,
-			"FixedObjectInAnonymousModule": FixedObjectInAnonymousModule_Mixin
+			"FixedObjectInAnonymousModule": FixedObjectInAnonymousModule_Mixin,
+			Anchorable: Anchorable_Mixin,
 		}
 	};
 });
