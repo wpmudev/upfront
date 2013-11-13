@@ -1699,38 +1699,61 @@ var GridEditor = {
 	 * @param {Object} model
 	 */
 	create_region_resizable: function(view, model){
+		if ( !model.get("container") || model.get("container") == model.get("name") )
+			return;
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
 			$me = view.$el,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-			$layout = $main.find('.upfront-layout')
+			$layout = $main.find('.upfront-layout'),
+			collection = model.collection,
+			index = collection.indexOf(model),
+			total = collection.size()-1, // total minus shadow region
+			next_model = index < total-1 ? collection.at(index+1) : false,
+			is_left = false,
+			container = model.get('container')
 		;
-		if ( !model.get("container") || model.get("container") == model.get("name") )
-			return;
+		if ( next_model !== false && (next_model.get('container') == container || next_model.get('name') == container) )
+			is_left = true;
 		$me.resizable({
-			"containment": "parent",
+			"containment": 'parent',
 			//handles: "n, e, s, w",
-			handles: "e, w",
+			handles: is_left ? 'e' : 'w',
 			helper: "region-resizable-helper",
 			disabled: true,
+			zIndex: 9999999,
 			start: function(e, ui){
 				var col = ed.get_class_num($me, ed.grid.class);
 				ed.col_size = $('.upfront-grid-layout:first').outerWidth()/ed.grid.size;
-				
+				$(this).resizable('option', 'minWidth', ed.col_size*3);
+				$(this).resizable('option', 'maxWidth', ed.col_size*10);
 				Upfront.Events.trigger("entity:region:resize_start", view, view.model);
 			},
 			resize: function(e, ui){
+				// @TODO Suppppperrrr annoying bug happen on resizable 1.10.3, fix only for this version and make sure to recheck in future update on this lib!
+				// Normalize the ui.size
+				var that = $(this).data('ui-resizable'),
+					woset = Math.abs( that.offset.left ) + that.sizeDiff.width,
+					isParent = that.containerElement.get(0) === that.element.parent().get(0),
+					isOffsetRelative = /relative|absolute/.test(that.containerElement.css("position"));
+					if(isParent && isOffsetRelative) {
+						woset -= that.parentData.left;
+					};
+					if ( woset + that.size.width >= that.parentData.width )
+						ui.size.width += that.parentData.left;
+				// End this fix
 				var $helper = ui.helper;
 					col = ed.get_class_num($me, ed.grid.class),
 					prev_col = $me.prev('.upfront-region').size() > 0 ? ed.get_class_num($me.prev('.upfront-region'), ed.grid.class) : 0,
 					next_col = $me.next('.upfront-region').size() > 0 ? ed.get_class_num($me.next('.upfront-region'), ed.grid.class) : 0,
 					max_col = col + ( next_col > prev_col ? next_col : prev_col ),
-					current_col = Math.ceil(ui.size.width/ed.col_size),
+					current_col = Math.abs(Math.ceil(ui.size.width/ed.col_size)),
 					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
 					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
 					rsz_col = ( current_col > max_col ? max_col : current_col ),
 					rsz_row = Math.ceil(h/ed.baseline)
 				;
+				console.log(ui.size.width);
 				if ( Math.abs($(window).height()-e.clientY) < 50 ){
 					h += (ed.baseline*10);
 					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
@@ -1777,7 +1800,7 @@ var GridEditor = {
 	 */
 	toggle_region_resizable: function(enable){
 		$('.upfront-region').each(function(){		
-			if ( !$(this).data('resizable') )
+			if ( !$(this).hasClass('ui-resizable') )
 				return;
 			$(this).resizable('option', 'disabled', (!enable));
 		});

@@ -56,39 +56,42 @@ define(_template_files, function () {
 				if (this.init) this.init();
 			},
 			update_background: function () {
-				var color = this.model.get_property_value_by_name('background_color'),
+				var type = this.model.get_property_value_by_name('background_type'),
+					color = this.model.get_property_value_by_name('background_color'),
 					image = this.model.get_property_value_by_name('background_image'),
 					repeat = this.model.get_property_value_by_name('background_repeat'),
 					position = this.model.get_property_value_by_name('background_position'),
 					fill = this.model.get_property_value_by_name('background_fill');
-				if ( color )
-					this.$el.css('background-color', color);
-				else
-					this.$el.css('background-color', '');
-				if ( image ){
-					this.$el.css('background-image', "url(" + image + ")");
-					if ( fill == 'fill' ){
-						this.$el.css({
-							backgroundSize: "100% 100%",
-							backgroundRepeat: "no-repeat",
-							backgroundPosition: "0 0"
-						});
+				if ( !type || type == 'color' || type == 'image' ){
+					if ( color )
+						this.$el.css('background-color', color);
+					else
+						this.$el.css('background-color', '');
+					if ( image ){
+						this.$el.css('background-image', "url('" + image + "')");
+						if ( fill == 'fill' ){
+							this.$el.css({
+								backgroundSize: "100% 100%",
+								backgroundRepeat: "no-repeat",
+								backgroundPosition: "0 0"
+							});
+						}
+						else {
+							this.$el.css({
+								backgroundSize: "auto auto",
+								backgroundRepeat: repeat,
+								backgroundPosition: position
+							});
+						}
 					}
 					else {
 						this.$el.css({
-							backgroundSize: "auto auto",
-							backgroundRepeat: repeat,
-							backgroundPosition: position
+							backgroundImage: "none",
+							backgroundSize: "",
+							backgroundRepeat: "",
+							backgroundPosition: ""
 						});
 					}
-				}
-				else {
-					this.$el.css({
-						backgroundImage: "",
-						backgroundSize: "",
-						backgroundRepeat: "",
-						backgroundPosition: ""
-					});
 				}
 			}
 		})),
@@ -579,7 +582,7 @@ define(_template_files, function () {
 				this.update();
 			},
 			update: function () {
-				//this.update_background();
+				this.update_background();
 			},
 			add_sub_model: function (model) {
 				this.sub_model.push(model);
@@ -683,11 +686,11 @@ define(_template_files, function () {
 					name = this.model.get("name"),
 					col = this.model.get_property_value_by_name('col'),
 					is_locked = this.model.get_property_value_by_name('is_locked');
-				//if ( container && container != name ){
+				if ( container && container != name ){
 					// This region is inside another region container
 					this.update_background(); // Allow background applied
-				//}
-				if ( col != this.col )
+				}
+				if ( col && col != this.col )
 					this.region_resize(col);
 				if ( is_locked )
 					this.$el.addClass('upfront-region-locked');
@@ -713,6 +716,8 @@ define(_template_files, function () {
 				this.listenTo(this.model, 'remove', this.on_remove)
 				this.listenTo(this.model, 'reset', this.on_reset);
 				Upfront.Events.on('command:region:edit_toggle', this.on_edit_toggle, this);
+				Upfront.Events.on('entity:region:resize_start', this.pause_edit, this);
+				Upfront.Events.on('entity:region:resize_stop', this.resume_edit, this);
 			},
 			render: function () {
 				this.$el.html('');
@@ -796,6 +801,12 @@ define(_template_files, function () {
 					}
 					Upfront.Events.trigger("region:activated", region);
 				}
+			},
+			pause_edit: function () {
+				this.allow_edit = false;
+			},
+			resume_edit: function () {
+				this.allow_edit = true;
 			},
 			on_edit_toggle: function (edit) {
 				this.allow_edit = edit;

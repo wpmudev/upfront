@@ -125,7 +125,7 @@ EOAdminStyle;
 		//wp_enqueue_script('thickbox');
 
 		//wp_enqueue_style('upfront-jquery-ui', 'http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css');
-		//wp_enqueue_style('wp-jquery-ui-dialog');
+		wp_enqueue_style('wp-jquery-ui-dialog');
 		//wp_enqueue_style('thickbox');
 		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic');
 /*		

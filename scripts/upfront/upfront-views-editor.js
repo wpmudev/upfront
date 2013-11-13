@@ -750,188 +750,6 @@ define(_template_files, function () {
 		}
 	});
 	
-	var SidebarPanel_Settings_Item_Background = SidebarPanel_Settings_Item.extend({
-		events: {
-			'click .background-image-delete': 'delete_image',
-			'click .position-select': 'update_position',
-			'click .tile-select': 'update_tile'
-		},
-		initialize: function () {
-			Upfront.Events.on("region:activated", this.on_region_activate, this);
-			Upfront.Events.on("uploader:image:selected", this.on_image_selected, this);
-		},
-		on_render: function () {
-			var template = _.template(_Upfront_Templates.sidebar_settings_background, {}),
-				post_id = _upfront_post_data.post_id || '',
-				me = this
-			;
-			this.$el.html(template);
-			this.$("#region-bg-color").spectrum({
-				showAlpha: true,
-				clickoutFiresChange: true,
-				chooseText: 'Ok',
-				change: function(color) {
-					me.on_update_color(color);
-				},
-				move: function(color) { 
-					me.on_update_color(color);
-					var rgb = color.toHexString();
-					$('.sp-dragger').css({
-						'border-top-color': rgb,
-						'border-right-color': rgb
-					});
-				},
-				hide: function(color) {
-					me.on_update_color(color);					
-				},
-				show: function(color){					
-					var rgb = color.toHexString();
-					$('.sp-dragger').css({
-						'border-color': rgb
-					});
-				}
-			});
-			this.$el.find("#region-bg-image-upload").attr('href', Upfront.Settings.admin_url+'media-upload.php?post_id='+post_id+'&type=image&TB_iframe=1')
-		},
-		on_region_activate: function (region) {
-			var name = region.model.get('title'),
-				color = region.model.get_property_value_by_name('background_color')
-			;
-			if(!color)
-				color = 'transparent';
-			this.$("#region-bg-color")
-				.attr('value', color)
-				.spectrum('set', color)
-			;
-			this.toggle_image(region.model);
-		},
-		on_image_selected: function (id, url) {
-			var app = Upfront.Application.LayoutEditor.layout,
-				region = app.get('regions').active_region;
-			region.set_property('background_image', url);
-			region.set_property('background_image_id', id);
-			region.set_property('background_repeat', 'repeat-x');
-			region.set_property('background_position', 'center');
-			region.set_property('background_fill', '');
-			this.toggle_image(region);
-		},
-		toggle_image: function (model) {
-			var	image = model.get_property_value_by_name('background_image'),
-				image_file = image ? image.split('/').reverse()[0] : '',
-				repeat = model.get_property_value_by_name('background_repeat'),
-				position = model.get_property_value_by_name('background_position'),
-				fill = model.get_property_value_by_name('background_fill');
-			if ( image ) {
-				this.$el.find('.panel-setting-background-more').addClass('expanded');
-				this.$el.find('.background-image-wrap').html(
-					'<div class="panel-setting-dialog panel-setting-dialog-image">' + 
-						'<img src="' + image + '" />' + image_file + 
-						'<a href="#" class="background-image-delete upfront-icon upfront-icon-delete"><span class="tooltip" data-tooltip="delete image"></span></a>' + 
-					'</div>'
-				);
-				this.$el.find('.position-select, .tile-select').prop('checked', false);
-				this.$el.find('.position-select[value="' + position + '"]').prop('checked', true);
-				if ( repeat == 'repeat' || repeat == 'repeat-x' )
-					this.$el.find('.tile-select[value=repeat-x]').prop('checked', true);
-				if ( repeat == 'repeat' || repeat == 'repeat-y' )
-					this.$el.find('.tile-select[value=repeat-y]').prop('checked', true);
-				if ( fill == 'fill' )
-					this.$el.find('.tile-select[value=fill]').prop('checked', true);
-				this.$el.find('#region-bg-image-upload').hide();
-				this.$el.find('#region-bg-image-edit').show();
-			}
-			else {
-				this.$el.find('.panel-setting-background-more').removeClass('expanded');
-				this.$el.find('#region-bg-image-edit').hide();
-				this.$el.find('#region-bg-image-upload').show();
-			}
-		},
-		delete_image: function () {
-			var app = Upfront.Application.LayoutEditor.layout,
-				region = app.get('regions').active_region;
-			region.set_property('background_image', '');
-			region.set_property('background_image_id', '');
-			region.set_property('background_repeat', '');
-			region.set_property('background_position', '');
-			region.set_property('background_fill', '');
-			this.toggle_image(region);
-		},
-		update_position: function () {
-			var app = Upfront.Application.LayoutEditor.layout,
-				region = app.get('regions').active_region,
-				position = region.get_property_value_by_name('background_position'),
-				new_position = this.$el.find('.position-select:checked').val();
-			if ( position != new_position )
-				region.set_property('background_position', new_position);
-		},
-		update_tile: function () {
-			var app = Upfront.Application.LayoutEditor.layout,
-				region = app.get('regions').active_region,
-				repeat = region.get_property_value_by_name('background_repeat'),
-				fill = region.get_property_value_by_name('background_fill'),
-				is_repeat_x = this.$el.find('.tile-select[value=repeat-x]').is(':checked'),
-				is_repeat_y = this.$el.find('.tile-select[value=repeat-y]').is(':checked'),
-				is_fill = this.$el.find('.tile-select[value=fill]').is(':checked');
-			if ( is_repeat_x && is_repeat_y )
-				region.set_property('background_repeat', 'repeat');
-			else if ( is_repeat_x )
-				region.set_property('background_repeat', 'repeat-x');
-			else if ( is_repeat_y )
-				region.set_property('background_repeat', 'repeat-y');
-			else
-				region.set_property('background_repeat', 'no-repeat');
-			if ( is_fill )
-				region.set_property('background_fill', 'fill');
-			else
-				region.set_property('background_fill', '');
-		},
-		on_update_color: function (color) {
-			var app = Upfront.Application.LayoutEditor.layout,
-				region = app.get('regions').active_region
-			;
-			if ( color )
-				region.set_property('background_color', color.toRgbString());
-			else
-				region.set_property('background_color', '');
-		}
-	});
-	
-	var SidebarPanel_Settings_Item_LockArea = SidebarPanel_Settings_Item.extend({
-		events: {
-			"click .region-lock-switch": "on_switch"
-		},
-		initialize: function () {
-		},
-		on_render: function () {
-			var app = Upfront.Application.LayoutEditor.layout,
-				regions = app.get('regions'),
-				header = regions.get_by_name('header'),
-				footer = regions.get_by_name('footer'),
-				is_locked = false,//header.get_property_value_by_name('is_locked') || footer.get_property_value_by_name('is_locked'),
-				template = _.template(_Upfront_Templates.sidebar_settings_lock_area, { lock_class: (is_locked ? 'locked' : '') })
-			this.$el.html(template);
-		},
-		on_switch: function () {
-			var app = Upfront.Application.LayoutEditor.layout,
-				regions = app.get('regions'),
-				header = regions.get_by_name('header'),
-				footer = regions.get_by_name('footer');
-			if ( this.$el.find('.region-lock-switch').hasClass('locked') ) {
-				// Unlock header/footer region
-				header.set_property('is_locked', 0);
-				footer.set_property('is_locked', 0);
-				this.$el.find('.region-lock-switch').removeClass('locked');
-			}
-			else {
-				// Lock header/footer region
-				header.set_property('is_locked', 1);
-				footer.set_property('is_locked', 1);
-				this.$el.find('.region-lock-switch').addClass('locked');
-			}
-			
-		}
-	});
-	
 	var SidebarPanel_Settings_Section = Backbone.View.extend({
 		"tagName": "div",
 		"className": "panel-section",
@@ -955,8 +773,7 @@ define(_template_files, function () {
 	var SidebarPanel_Settings_Section_Structure = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
-				new SidebarPanel_Settings_Item_EditArea({"model": this.model}),
-			//	new SidebarPanel_Settings_Item_Background({"model": this.model}),
+				new SidebarPanel_Settings_Item_EditArea({"model": this.model})
 			]);
 		},
 		get_title: function () {
@@ -966,24 +783,10 @@ define(_template_files, function () {
 		}
 	});
 	
-	var SidebarPanel_Settings_Section_Behavior = SidebarPanel_Settings_Section.extend({
-		initialize: function () {
-			this.settings = _([
-				new SidebarPanel_Settings_Item_LockArea({"model": this.model}),
-			]);
-		},
-		get_title: function () {
-			return "Behavior";
-		},
-		on_render: function () {
-		}
-	});
-	
 	var SidebarPanel_Settings = SidebarPanel.extend({
 		initialize: function () {
 			this.sections = _([
-				new SidebarPanel_Settings_Section_Structure({"model": this.model}),
-			//	new SidebarPanel_Settings_Section_Behavior({"model": this.model})
+				new SidebarPanel_Settings_Section_Structure({"model": this.model})
 			]);
 		},
 		get_title: function () {
@@ -2166,18 +1969,25 @@ define(_template_files, function () {
 			else {
 				this.property = false;
 			}
-			this.name = this.options.name ? this.options.name : '';
+			this.name = this.options.name ? this.options.name : this.cid;
 			this.selected_state = this.selected_state ? this.selected_state : '';
 			if ( this.init )
 				this.init();
 			if ( this.options.change )
-				this.on('changed', this.options.change)
+				this.on('changed', this.options.change, this)
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
 		},
 		get_saved_value: function () {
-			return this.property ? this.property.get('value') : (this.model ? this.model.get(this.name) : '');
+			if ( this.property ){
+				return this.property.get('value');
+			}
+			else if ( this.model ){
+				var value = this.model.get(this.name);
+				return value ? value : this.default_value;
+			}
+			return this.default_value;
 		},
 		get_value: function () {
 			var $field = this.get_field();
@@ -2218,7 +2028,7 @@ define(_template_files, function () {
 				this.$el.append(this.get_label_html());
 			this.$el.append(this.get_field_html());
 			var me = this;
-			this.$el.find('.upfront-field').keyup(function(){
+			this.get_field().keyup(function(){
 				if ( $(this).val() == '' ){
 					$(this).addClass('upfront-field-empty');
 					if ( me.options.compact )
@@ -2324,6 +2134,7 @@ define(_template_files, function () {
 					min: this.getOption('min', 0),
 					max: this.getOption('max', 0),
 					step: this.getOption('step', 1),
+					orientation: this.getOption('orientation', 'horizontal'),
 					value: this.get_saved_value()
 				}
 			;
@@ -2351,7 +2162,11 @@ define(_template_files, function () {
 			}
 
 			this.on('rendered', function(){
-				me.$('#' + me.get_field_id()).slider(options);
+				var $field = me.$('#' + me.get_field_id());
+				if ( options.orientation == 'vertical' ){
+					$field.addClass('upfront-field-slider-vertical');
+				}
+				$field.slider(options);
 			});
 		},
 		get_field_html: function () {
@@ -2720,7 +2535,7 @@ define(_template_files, function () {
 			this.update_suggest();
 		}
 	}));
-
+	
 
 	var SettingsItem = Backbone.View.extend({
 		group: true, 
@@ -3072,8 +2887,7 @@ define(_template_files, function () {
 			var me = this,
 				$view = me.for_view.$el.find(".upfront-editable_entity"),
 				view_pos = $view.offset(),
-				view_outer_width = $view.outerWidth(),
-				view_pos_right = view_pos.left + view_outer_width,
+				view_pos_right = view_pos.left + $view.outerWidth(),
 				$button = me.for_view.$el.find(".upfront-entity-settings_trigger"),
 				button_pos = $button.offset(),
 				button_pos_right = button_pos.left + $button.outerWidth(),
@@ -3088,7 +2902,7 @@ define(_template_files, function () {
 					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
 				)
 			;
-
+			
 			// Adding trigger
 			if (this.options.anchor && this.options.anchor.is_target) {
 				var item = new _Settings_AnchorSetting({model: this.for_view.model}),
@@ -3160,7 +2974,7 @@ define(_template_files, function () {
 			this.set_title(this.get_title());
 		}
 	});
-
+	
 var Field_Complex_Toggleable_Text_Field = Field.extend({
 	className: "upfront-field-complex_field-boolean_toggleable_text",
 	tpl: '<input type="checkbox" /> <label>{{element_label}}</label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">Please, use ID that contains letters only, eg. <b>myProductSlider</b><br />No spaces or special characters.</div></div>',
@@ -3627,16 +3441,8 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 	});
 	
 	
-	
-	var RegionPanelItem = Backbone.View.extend({
-		get_icon_html: function (icon) {
-			var icons = icon.split(" "),
-				icons_class = [];
-			_.each(icons, function(each){
-				icons_class.push('upfront-icon-region-' + each);
-			});
-			return '<i class="upfront-icon ' + icons_class.join(' ') + '" />';
-		},
+	var InlinePanelItem = Backbone.View.extend({
+		className: 'upfront-inline-panel-item',
 		render_icon: function () {
 			var icon = typeof this.icon == 'function' ? this.icon() : this.icon,
 				icons = icon.split(" "),
@@ -3668,14 +3474,120 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 			this.render_tooltip();
 			if ( typeof this.on_render == 'function' )
 				this.on_render();
+		},
+		open_modal: function (render_callback, button) {
+			var me = this,
+				panels_view = this.panel_view.panels_view,
+				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid),
+				$content;
+			this.modal_deferred = $.Deferred();
+			panels_view.hide_gradient();
+			if ( $modal.length ) {
+				$content = $modal.find('.upfront-inline-modal-content');
+				$modal.show();
+				render_callback.apply(this, [$content, $modal]);
+			}
+			else {
+				$modal = $('<div class="upfront-inline-modal" id="upfront-inline-modal-' + this.cid + '" />');
+				$wrap = $('<div class="upfront-inline-modal-wrap" />');
+				$content = $('<div class="upfront-inline-modal-content" />');
+				$wrap.append($content);
+				$modal.append($wrap);
+				panels_view.$el.append($modal);
+				render_callback.apply(this, [$content, $modal]);
+				if ( button ){
+					$wrap.append('<button type="button" class="upfront-inline-modal-save">Ok</button>');
+					$modal.on('click', function () {
+						me.close_modal(false);
+					});
+					$modal.on('click', '.upfront-inline-modal-content', function (e) {
+						e.stopPropagation();
+					});
+					$modal.on('click', '.upfront-inline-modal-save', function () {
+						me.close_modal(true);
+					});
+				}
+			}
+			return this.modal_deferred.promise();
+		},
+		close_modal: function (save) {
+			var panels_view = this.panel_view.panels_view,
+				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid);
+			$modal.hide();
+			panels_view.show_gradient();
+			if ( save )
+				this.modal_deferred.resolve();
+			else
+				this.modal_deferred.reject();
 		}
 	});
 	
-	var RegionPanelItem_BgColor = RegionPanelItem.extend({
+	var InlinePanelItemMulti = InlinePanelItem.extend({
+		events: {
+			'click >.upfront-icon': 'toggle_subitem'
+		},
+		initialize: function () {
+			this.sub_items = {};
+			Upfront.Events.on('region:activated', this.on_region_change, this);
+		},
+		get_selected_item: function () {
+			
+		},
+		get_default_item: function () {
+			
+		},
+		get_selected_icon: function (selected) {
+			return selected + '-active';
+		},
+		set_selected_item: function (selected) {
+			
+		},
+		select_item: function (selected) {
+			this.set_selected_item(selected);
+			this.render();
+		},
+		render: function () {
+			var me = this,
+				selected = this.get_selected_item() || this.get_default_item(),
+				$sub_items = $('<div class="upfront-inline-panel-subitem" />');
+			this.$el.html('');
+			this.icon = this.get_selected_icon(selected);
+			this.render_icon();
+			this.render_tooltip();
+			_.each(this.sub_items, function(item, id){
+				item.panel_view = me.panel_view;
+				item.parent_view = me;
+				item.render();
+				item.delegateEvents();
+				if ( selected != id )
+					$sub_items.append(item.el);
+			});
+			$sub_items.append(this.sub_items[selected].el);
+			this.$el.append($sub_items);
+		},
+		toggle_subitem: function () {
+			if ( this.$el.hasClass('upfront-inline-panel-subitem-active') )
+				this.close_subitem();
+			else
+				this.open_subitem();
+		},
+		open_subitem: function () {
+			this.$el.addClass('upfront-inline-panel-subitem-active');
+		},
+		close_subitem: function () {
+			this.$el.removeClass('upfront-inline-panel-subitem-active');
+		},
+		on_region_change: function (region) {
+			if ( region.model != this.model )
+				this.close_subitem();
+		}
+	});
+	
+	var RegionPanelItem_BgColor = InlinePanelItem.extend({
 		events: {
 			'click .upfront-icon': 'open_spectrum'
 		},
-		className: 'upfront-region-panel-item upfront-region-panel-item-bgcolor',
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bgcolor',
 		icon: 'color',
 		tooltip: "Solid Color BG",
 		tooltip_pos: 'right',
@@ -3683,21 +3595,22 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 			this.default_color = this.model.get_property_value_by_name('background_color');
 		},
 		open_spectrum: function () {
-			var me = this,
-				panels_view = this.panel_view.panels_view,
-				$modal = panels_view.$el.find('.upfront-region-modal-color'),
-				$picker;
-			panels_view.hide_gradient();
 			this.parent_view.close_subitem();
-			if ( $modal.length ) {
-				$picker = $modal.find('.upfront-region-color-picker');
+			this.parent_view.select_item('color');
+			this.model.set_property('background_image', '');
+			this.open_modal(this.render_modal);
+			return false;
+		},
+		render_modal: function ($content, $modal) {
+			var me = this,
+				$picker = $content.find('.upfront-region-color-picker');
+			$modal.addClass('upfront-region-modal-color');
+			if ( $picker.length ) {
 				$picker.spectrum('show');
 			}
 			else {
-				$modal = $('<div class="upfront-region-modal upfront-region-modal-color" />');
 				$picker = $('<span class="upfront-region-color-picker" />');
-				$modal.append($picker);
-				panels_view.$el.append($modal);
+				$content.append($picker);
 				$picker.spectrum({
 					showAlpha: true,
 					showPalette: true,
@@ -3727,7 +3640,6 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 				});
 				$picker.spectrum('show');
 			}
-			return false;
 		},
 		preview_color: function (color) {
 			var rgb = color.toRgb(),
@@ -3738,93 +3650,250 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 			var panels_view = this.panel_view.panels_view;
 			this.preview_color(color);
 			this.default_color = this.model.get_property_value_by_name('background_color');
-			this.parent_view.set_bg_type('color');
-			panels_view.show_gradient();
+			this.close_modal(true);
 		},
 		reset_color: function () {
 			var panels_view = this.panel_view.panels_view;
 			this.model.set_property('background_color', this.default_color);
-			panels_view.show_gradient();
+			this.close_modal(false);
 		}
 	});
 	
-	var RegionPanelItem_BgImage = RegionPanelItem.extend({
-		className: 'upfront-region-panel-item upfront-region-panel-item-bgimage',
+	var RegionPanelItem_BgImage = InlinePanelItem.extend({
+		events: {
+			'click .upfront-icon': 'open_image_upload'
+		},
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bgimage',
 		icon: 'image',
 		tooltip: "Image BG",
-		tooltip_pos: 'right'
+		tooltip_pos: 'right',
+		open_image_upload: function () {
+			var me = this;
+			this.parent_view.close_subitem();
+			this.parent_view.select_item('image');
+			Upfront.Views.Editor.ImageSelector.open().done(function(images){
+				var sizes = {},
+					image_id;
+				_.each(images, function(image, id){
+					sizes = image;
+					image_id = id;
+				});
+				$('<img>').attr('src', sizes.full[0]).load(function(){
+					Upfront.Views.Editor.ImageSelector.close();
+					me.model.set_property('background_image', sizes.full[0]);
+					me.open_modal(me.render_modal, true);
+				});
+			});
+		},
+		render_modal: function ($content, $modal) {
+			var me = this,
+				$tile = $('<div class="upfront-region-bg-image-tile" />'),
+				$fixed = $('<div class="upfront-region-bg-image-fixed clearfix" />'),
+				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-image-label">Image Position:</div></div>'),
+				$fixed_pos_num = $('<div class="upfront-region-bg-image-fixed-pos-num" />'),
+				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-image-label">Background Color:</div></div>'),
+				pos_option = {
+					default_value: 50,
+					min: 0,
+					max: 100,
+					step: 1
+				};
+			$content.html('');
+			this.fields = {
+				bg_style: new Field_Radios({
+					model: this.model,
+					layout: 'vertical',
+					default_value: 'full',
+					values: [
+						{ label: "Full Width", value: 'full' },
+						{ label: "Tiled / Pattern", value: 'tile' },
+						{ label: "Fixed Position", value: 'fixed' }
+					],
+					change: function () {
+						var value = this.get_value();
+						if ( value == 'tile' ){
+							$tile.show();
+							$fixed.hide();
+						}
+						else if ( value == 'fixed' ){
+							$fixed.show();
+							$tile.hide();
+						}
+						else {
+							$fixed.hide();
+							$tile.hide();
+						}
+						me.update_image();
+					}
+				}),
+				bg_tile: new Field_Checkboxes({
+					model: this.model,
+					layout: 'horizontal-inline',
+					default_value: ['y', 'x'],
+					values: [
+						{ label: "Tile Vertically", value: 'y' },
+						{ label: "Tile Horizontally", value: 'x' }
+					],
+					change: function () {
+						me.update_image();
+					}
+				}),
+				bg_color: new Field_Color({
+					model: this.model,
+					property: 'background_color',
+					default_value: '#ffffff',
+					change: function () {
+						me.update_image();
+					}
+				}),
+				bg_position_y: new Field_Slider(_.extend({
+					model: this.model,
+					orientation: 'vertical',
+					range: false,
+					change: function () {
+						var value = this.get_value();
+						me.fields.bg_position_y_num.get_field().val(value);
+						me.update_image();
+					}
+				}, pos_option)),
+				bg_position_x: new Field_Slider(_.extend({
+					model: this.model,
+					range: false,
+					change: function () {
+						var value = this.get_value();
+						me.fields.bg_position_x_num.get_field().val(value);
+						me.update_image();
+					}
+				}, pos_option)),
+				bg_position_y_num: new Field_Number(_.extend({
+					model: this.model,
+					label: "Y:",
+					label_style: 'inline',
+					suffix: '%',
+					change: function () {
+						var value = this.get_value(),
+							s = me.fields.bg_position_y;
+						s.$el.find('#'+s.get_field_id()).slider('value', value);
+						me.update_image();
+					}
+				}, pos_option)),
+				bg_position_x_num: new Field_Number(_.extend({
+					model: this.model,
+					label: "X:",
+					label_style: 'inline',
+					suffix: '%',
+					change: function () {
+						var value = this.get_value(),
+							s = me.fields.bg_position_x;
+						s.$el.find('#'+s.get_field_id()).slider('value', value);
+						me.update_image();
+					}
+				}, pos_option))
+			};
+			$modal.addClass('upfront-region-modal-image');
+			_.each(this.fields, function (field) {
+				field.render();
+			});
+			$content.append(this.fields.bg_style.$el);
+			$tile.append(this.fields.bg_tile.$el);
+			$content.append($tile);
+			$fixed_pos_num.append(this.fields.bg_position_y_num.$el);
+			$fixed_pos_num.append(this.fields.bg_position_x_num.$el);
+			$fixed_pos.append($fixed_pos_num);
+			$fixed_pos.append(this.fields.bg_position_y.$el);
+			$fixed_pos.append(this.fields.bg_position_x.$el);
+			$fixed_color.append(this.fields.bg_color.$el);
+			$fixed.append($fixed_pos);
+			$fixed.append($fixed_color);
+			$content.append($fixed);
+			this.fields.bg_style.trigger('changed');
+		},
+		update_image: function () {
+			var style = this.fields.bg_style.get_value(),
+				tile = this.fields.bg_tile.get_value(),
+				is_repeat_y = _.contains(tile, 'y'),
+				is_repeat_x = _.contains(tile, 'x'),
+				pos_y = this.fields.bg_position_y.get_value(),
+				pos_x = this.fields.bg_position_x.get_value(),
+				color = this.fields.bg_color.get_value();
+			if ( color != this.fields.bg_color.get_saved_value() )
+				this.model.set_property('background_color', color);
+			if ( style == 'full' ) {
+				this.model.set_property('background_fill', 'fill');
+			}
+			else {
+				this.model.set_property('background_fill', '');
+				if ( style == 'tile' ){
+					if ( is_repeat_x && is_repeat_y )
+						this.model.set_property('background_repeat', 'repeat');
+					else if ( is_repeat_y )
+						this.model.set_property('background_repeat', 'repeat-y');
+					else if ( is_repeat_x )
+						this.model.set_property('background_repeat', 'repeat-x');
+					else
+						this.model.set_property('background_repeat', 'no-repeat');
+				}
+				else if ( style == 'fixed' ){
+					this.model.set_property('background_repeat', 'no-repeat');
+					this.model.set_property('background_position', pos_x + '% ' + pos_y + '%');
+				}
+			}
+		}
 	});
 	
-	var RegionPanelItem_BgMaps = RegionPanelItem.extend({
-		className: 'upfront-region-panel-item upfront-region-panel-item-bgmaps',
+	var RegionPanelItem_BgMaps = InlinePanelItem.extend({
+		events: {
+			'click .upfront-icon': 'open_maps_setting'
+		},
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bgmaps',
 		icon: 'maps',
 		tooltip: "Maps BG",
-		tooltip_pos: 'right'
+		tooltip_pos: 'right',
+		open_maps_setting: function () {
+			this.parent_view.select_item('maps');
+		}
 	});
 	
-	var RegionPanelItem_BgSlider = RegionPanelItem.extend({
-		className: 'upfront-region-panel-item upfront-region-panel-item-bgslider',
+	var RegionPanelItem_BgSlider = InlinePanelItem.extend({
+		events: {
+			'click .upfront-icon': 'open_slider_setting'
+		},
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bgslider',
 		icon: 'slider',
 		tooltip: "Slider BG",
-		tooltip_pos: 'right'
+		tooltip_pos: 'right',
+		open_slider_setting: function () {
+			this.parent_view.select_item('slider');
+		}
 	});
 	
-	var RegionPanelItem_Bg = RegionPanelItem.extend({
-		events: {
-			'click >.upfront-icon': 'toggle_subitem'
-		},
-		className: 'upfront-region-panel-item upfront-region-panel-item-bg',
+	var RegionPanelItem_Bg = InlinePanelItemMulti.extend({
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bg',
 		initialize: function () {
-			this.bg_items = {
+			this.sub_items = {
 				color: new RegionPanelItem_BgColor({model: this.model}),
 				image: new RegionPanelItem_BgImage({model: this.model}),
 				slider: new RegionPanelItem_BgSlider({model: this.model}),
 				maps: new RegionPanelItem_BgMaps({model: this.model})
 			};
+			Upfront.Events.on('region:activated', this.on_region_change, this);
 		},
-		render: function () {
-			var me = this,
-				bg_type = this.model.get_property_value_by_name('background-type'),
-				$bg_items = $('<div class="upfront-region-panel-subitem" />');
-			this.$el.html('');
-			bg_type = _.contains(['color', 'image', 'slider', 'maps'], bg_type) ? bg_type : 'color';
-			this.icon = bg_type + '-active';
-			this.render_icon();
-			this.render_tooltip();
-			_.each(this.bg_items, function(item, type){
-				item.panel_view = me.panel_view;
-				item.parent_view = me;
-				item.render();
-				item.delegateEvents();
-				if ( bg_type != type )
-					$bg_items.append(item.el);
-			});
-			$bg_items.append(this.bg_items[bg_type].el);
-			this.$el.append($bg_items);
+		get_selected_item: function () {
+			return this.model.get_property_value_by_name('background_type');
 		},
-		toggle_subitem: function () {
-			if ( this.$el.hasClass('upfront-region-panel-subitem-active') )
-				this.close_subitem();
-			else
-				this.open_subitem();
+		get_default_item: function () {
+			return 'color';
 		},
-		open_subitem: function () {
-			this.$el.addClass('upfront-region-panel-subitem-active');
-		},
-		close_subitem: function () {
-			this.$el.removeClass('upfront-region-panel-subitem-active');
-		},
-		set_bg_type: function (type) {
-			this.model.set_property('background-type', type);
-			this.render();
+		set_selected_item: function (selected) {
+			this.model.set_property('background_type', selected);
 		}
 	});
 	
-	var RegionPanelItem_ExpandLock = RegionPanelItem.extend({
+	var RegionPanelItem_ExpandLock = InlinePanelItem.extend({
 		events: {
 			'click .upfront-icon': 'toggle_lock'
 		},
-		className: 'upfront-region-panel-item upfront-region-panel-item-expand-lock',
+		className: 'upfront-inline-panel-item upfront-region-panel-item-expand-lock',
 		icon: function () {
 			var locked = this.model.get_property_value_by_name('expand_lock');
 			return locked ? 'expand-lock' : 'expand-unlock';
@@ -3842,11 +3911,11 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 		}
 	});
 	
-	var RegionPanelItem_AddRegion = RegionPanelItem.extend({
+	var RegionPanelItem_AddRegion = InlinePanelItem.extend({
 		events: {
 			'click .upfront-icon': 'add_region'
 		},
-		className: 'upfront-region-panel-item upfront-region-panel-item-add-region',
+		className: 'upfront-inline-panel-item upfront-region-panel-item-add-region',
 		icon: function () {
 			var to = this.options.to;
 			return 'add ' + 'add-' + to;
@@ -3942,11 +4011,11 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 		}
 	});
 	
-	var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
+	var RegionPanelItem_DeleteRegion = InlinePanelItem.extend({
 		events: {
 			'click .upfront-icon': 'delete_region'
 		},
-		className: 'upfront-region-panel-item upfront-region-panel-item-delete-region',
+		className: 'upfront-inline-panel-item upfront-region-panel-item-delete-region',
 		icon: 'delete',
 		//tooltip: "Delete this region",
 		delete_region: function () {
@@ -3954,24 +4023,34 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 		}
 	});
 	
-	var RegionPanel = Backbone.View.extend({
-		get_items: function () {
-			return _([]);
+	var InlinePanel = Backbone.View.extend({
+		className: 'upfront-inline-panel upfront-no-select',
+		position_v: 'top',
+		position_h: 'center',
+		initialize: function () {
+			this.items = _([]);
 		},
 		render: function() {
-			var me = this;
+			var me = this,
+				items = typeof this.items == 'function' ? this.items() : this.items,
+				classes = [ 
+					'upfront-inline-panel-'+this.position_v,
+					'upfront-inline-panel-'+this.position_v+'-'+this.position_h,
+					'upfront-inline-panel-size-'+items.size() 
+				];
 			this.$el.html('');
-			this.get_items().each(function(item){
+			items.each(function(item){
 				item.panel_view = me;
 				item.render();
 				item.delegateEvents();
 				me.$el.append(item.el);
 			});
+			this.$el.attr('class', this.className + ' ' + classes.join(' '));
 		}
 	});
 	
-	var RegionPanel_Edit = RegionPanel.extend({
-		className: 'upfront-region-panel upfront-region-panel-edit upfront-no-select',
+	var RegionPanel_Edit = InlinePanel.extend({
+		className: 'upfront-inline-panel upfront-region-panel-edit upfront-no-select',
 		initialize: function () {
 			this.bg = new RegionPanelItem_Bg({model: this.model});
 			var container = this.model.get('container'),
@@ -3981,7 +4060,7 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 				this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
 			}
 		},
-		get_items: function () {
+		items: function () {
 			var items = _([]);
 			items.push(this.bg);
 			if ( this.expand_lock )
@@ -3992,50 +4071,75 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 		}
 	});
 	
-	var RegionPanel_Add = RegionPanel.extend({
-		className: function () { 
-			var to = this.options.to;
-			return 'upfront-region-panel upfront-region-panel-add upfront-region-panel-add-' + to + ' upfront-no-select';
-		},
+	var RegionPanel_Add = InlinePanel.extend({
 		initialize: function () {
 			if ( ! this.options.to )
 				this.options.to = 'bottom';
 			var to = this.options.to;
-			this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: to});
+			this.items = _( [ new RegionPanelItem_AddRegion({model: this.model, to: to}) ] );
+			if ( to == 'bottom' ){
+				this.position_v = 'bottom';
+			}
+			else if ( to == 'left' || to == 'right' ) {
+				this.position_v = 'center';
+				this.position_h = to;
+			}
 		},
-		get_items: function () {
-			return _([this.add_region]);
+		items: function () {
+			return _([ this.add_region ]);
 		}
 	});
 	
-	var RegionPanel_Delete = RegionPanel.extend({
-		className: 'upfront-region-panel upfront-region-panel-delete upfront-no-select',
+	var RegionPanel_Delete = InlinePanel.extend({
+		position_h: 'right',
 		initialize: function () {
-			this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
-		},
-		get_items: function () {
-			return _([this.delete_region]);
+			this.items = _( [ new RegionPanelItem_DeleteRegion({model: this.model}) ] );
 		}
 	});
 	
-	var RegionPanels = Backbone.View.extend({
-		className: 'upfront-region-panels upfront-ui',
+	var InlinePanels = Backbone.View.extend({
+		className: 'upfront-inline-panels upfront-ui',
+		initialize: function () {
+			this.panels = _([]);
+		},
+		render: function () {
+			var me = this,
+				panels = typeof this.panels == 'function' ? this.panels() : this.panels,
+				$wrap = $('<div class="upfront-inline-panels-wrap" />');
+			this.$el.html('');
+			panels.each(function(panel){
+				panel.panels_view = me;
+				panel.render();
+				panel.delegateEvents();
+				$wrap.append(panel.el);
+			});
+			this.$el.append($wrap);
+			if ( typeof this.on_render == 'function' )
+				this.on_render();
+		},
+		on_active: function () {
+			$('.upfront-inline-panels-active').removeClass('upfront-inline-panels-active');
+			this.$el.addClass('upfront-inline-panels-active');
+		}
+	});
+	
+	var RegionPanels = InlinePanels.extend({
 		initialize: function () {
 			var container = this.model.get('container'),
 				name = this.model.get('name');
 			this.listenTo(this.model.collection, 'add', this.render);
 			this.listenTo(this.model.collection, 'remove', this.render);
-			Upfront.Events.on("region:activated", this.update_pos, this);
+			Upfront.Events.on("region:activated", this.on_region_active, this);
 			$(window).scroll(this, this.on_scroll);
 			this.edit_panel = new RegionPanel_Edit({model: this.model});
 			this.delete_panel = new RegionPanel_Delete({model: this.model});
-			this.add_panel_top = new RegionPanel_Add({model: this.model, to: 'bottom'});
+			this.add_panel_bottom = new RegionPanel_Add({model: this.model, to: 'bottom'});
 			if ( !container || container == name ){
 				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
 				this.add_panel_right = new RegionPanel_Add({model: this.model, to: 'right'})
 			}
 		},
-		get_panels: function () {
+		panels: function () {
 			var panels = _([]),
 				collection = this.model.collection || new Backbone.Collection([]),
 				container = this.model.get('container'),
@@ -4044,7 +4148,7 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 				total = collection.size()-1; // total minus shadow region
 			panels.push( this.edit_panel )
 			if ( index == total-1 ) // last region
-				panels.push( this.add_panel_top );
+				panels.push( this.add_panel_bottom );
 			if ( !container || container == name ) {
 				var container = name,
 					prev_model = index > 0 ? collection.at(index-1) : false,
@@ -4066,15 +4170,15 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 			}
 			return panels;
 		},
-		render: function () {
-			var me = this;
-			this.$el.html('');
-			this.get_panels().each(function(panel){
-				panel.panels_view = me;
-				panel.render();
-				panel.delegateEvents();
-				me.$el.append(panel.el);
-			});
+		on_scroll: function (e) {
+			var me = e.data;
+			me.update_pos();
+		},
+		on_region_active: function (region) {
+			if ( region.model != this.model )
+				return;
+			this.on_active();
+			this.update_pos();
 		},
 		update_pos: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -4090,10 +4194,6 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 				top: scroll_top > top ? scroll_top-top+25 : 0,
 				bottom: bottom > scroll_bottom ? bottom-scroll_bottom : 0
 			});
-		},
-		on_scroll: function (e) {
-			var me = e.data;
-			me.update_pos();
 		},
 		hide_gradient: function () {
 			var $region = this.$el.closest('.upfront-region');
@@ -4147,6 +4247,12 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 			},
 			"Loading": Loading,
 			"PostSelector": new PostSelector(),
+			"InlinePanels": {
+				"Panels": InlinePanels,
+				"Panel": InlinePanel,
+				"ItemMulti": InlinePanelItemMulti,
+				"Item": InlinePanelItem
+			},
 			"RegionPanels": RegionPanels
 		}
 	};
