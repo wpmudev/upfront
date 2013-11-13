@@ -2887,7 +2887,8 @@ define(_template_files, function () {
 			var me = this,
 				$view = me.for_view.$el.find(".upfront-editable_entity"),
 				view_pos = $view.offset(),
-				view_pos_right = view_pos.left + $view.outerWidth(),
+				view_outer_width = $view.outerWidth(),
+				view_pos_right = view_pos.left + view_outer_width,
 				$button = me.for_view.$el.find(".upfront-entity-settings_trigger"),
 				button_pos = $button.offset(),
 				button_pos_right = button_pos.left + $button.outerWidth(),
@@ -2902,7 +2903,7 @@ define(_template_files, function () {
 					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
 				)
 			;
-			
+
 			// Adding trigger
 			if (this.options.anchor && this.options.anchor.is_target) {
 				var item = new _Settings_AnchorSetting({model: this.for_view.model}),
