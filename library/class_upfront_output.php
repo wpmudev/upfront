@@ -217,6 +217,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 			if ( !isset($wrapper) || !$wrapper )
 				$html .= $child_view->get_markup();
 		}
+
 		// Have wrapper, append the last one
 		if ( isset($wrapper) && $wrapper )
 			$html .= $this->_wrapper->wrap($wrap);
@@ -366,6 +367,16 @@ class Upfront_Module extends Upfront_Container {
 	public function __construct ($data) {
 		parent::__construct($data);
 		Upfront_Output::$current_module = $this;
+	}
+
+	public function get_markup () {
+		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
+		$pre = '';
+		if (!empty($children)) foreach ($children as $child) {
+			$anchor = upfront_get_property_value('anchor', $child);
+			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '"></a>';
+		}
+		return $pre . parent::get_markup();
 	}
 }
 

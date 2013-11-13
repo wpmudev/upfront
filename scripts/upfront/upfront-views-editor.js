@@ -3242,6 +3242,61 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 	}
 });
 
+var Settings_AnchorTrigger = SettingsItem.extend({
+	initialize: function () {
+		var anchors = [],
+			raw = this.get_anchors()
+		;
+		_(raw).each(function (idx) {
+			anchors.push({label: idx, value: idx});
+		});
+		this.options.fields = _([
+			new Field_Select({
+				model: this.model,
+				property: 'anchor_target',
+				values: anchors
+			})
+		]);
+		SettingsItem.prototype.initialize.call(this, this.options);
+	},
+	get_anchors: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			anchors = ['']
+		;
+		regions.each(function (r) {
+			r.get("modules").each(function (module) {
+				module.get("objects").each(function (object) {
+					var anchor = object.get_property_value_by_name("anchor");
+					if (anchor && anchor.length) anchors.push(anchor);
+				});
+			});
+		});
+		return anchors;
+	},
+	get_values: function () {
+        return this.fields._wrapped[0].get_value();
+    }
+});
+
+var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
+	initialize: function () {
+		Settings_AnchorTrigger.prototype.initialize.call(this, this.options);
+		this.options.fields.push(
+			new Field_Text({
+				model: this.model,
+				property: 'anchor_label',
+				label: 'Label'
+			})
+		);
+	},
+	get_values: function () {
+		return {
+			anchor: this.fields._wrapped[0].get_value(),
+			label: this.fields._wrapped[1].get_value()
+		}
+	}
+});
+
 
 /*
 	var ContentEditorUploader = Backbone.View.extend({
@@ -4063,6 +4118,10 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 				"Panel": SettingsPanel,
 				"Item": SettingsItem,
 				"ItemTabbed": SettingsItemTabbed,
+				"Anchor": {
+					"Trigger": Settings_AnchorTrigger,
+					"LabeledTrigger": Settings_LabeledAnchorTrigger
+				}
 			},
 			"Field": {
 				"Field": Field,

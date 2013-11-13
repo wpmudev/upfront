@@ -395,6 +395,14 @@
                 this.settings._wrapped[0].settings._wrapped[0].fields._wrapped[0].createPages();
                 this.settings._wrapped[1].settings._wrapped[0].fields._wrapped[0].createPages();
                 this.addCustomLink(this.settings._wrapped[2].settings._wrapped[0].get_values())
+
+                var anchor_data = this.settings._wrapped[2].settings._wrapped[2].get_values();
+                if (anchor_data && anchor_data.anchor) {
+                    this.addCustomLink([
+                        '#' + anchor_data.anchor,
+                        anchor_data.label
+                    ]);
+                }
             },
             reset_fields: function(data){
                 this.settings._wrapped[2].settings._wrapped[0].reset_fields(data);
@@ -1341,7 +1349,11 @@
                                                 model: this.model
                                             })
                                         ]
-                                    })
+                                    }),
+                                    new Upfront.Views.Editor.Settings.Anchor.LabeledTrigger({
+                                        model: this.model,
+                                        title: "Anchor link"
+                                    }),
 
                                 ]
                             })
