@@ -200,7 +200,7 @@ var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
 });
 
 var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
-
+	label: "This post",
 	initialize: function () {
 		this.settings = _([
 			new Settings_PostPanel_PostData({model: this.model})
@@ -208,7 +208,7 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	get_label: function () {
-		return "This post";
+		return this.label;
 	},
 
 	get_title: function () {
@@ -239,5 +239,7 @@ Upfront.Application.LayoutEditor.add_object("ThisPost", {
 });
 Upfront.Models.ThisPostModel = ThisPostModel;
 Upfront.Views.ThisPostView = ThisPostView;
+
+Upfront.data.thisPost.PostDataPanel = Settings_PostPanel;
 	
 })(jQuery);

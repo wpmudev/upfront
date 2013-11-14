@@ -94,7 +94,9 @@ class Upfront_UpostsView extends Upfront_Object {
 			'term' => '',
 			'limit'	=> 10,
 			'content_type' => 'excerpt', // 'excerpt' | 'full'
-			'featured_image' => 1
+			'featured_image' => 1,
+			
+			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
 		);
 	}
 

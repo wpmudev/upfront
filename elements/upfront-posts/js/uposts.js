@@ -34,9 +34,12 @@
 			if(! (this.model instanceof UpostsModel)){
 				this.model = new UpostsModel({properties: this.model.get('properties')});
 			}
-			this.constructor.__super__.initialize.call(this, [options]);
+			//this.constructor.__super__.initialize.call(this, [options]);
 
 			this.model.on('region:updated', this.refreshMarkup, this);
+			this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
+			//this.listenTo(this.model.get("properties"), 'add', this.refreshMarkup);
+			//this.listenTo(this.model.get("properties"), 'remove', this.refreshMarkup);
 
 			console.log('Posts element');
 		},
@@ -67,11 +70,21 @@
 			var props = this.model.get('properties').toJSON(),
 				data = {},
 				me = this,
-				content_selector = '#' + this.property('element_id')
+				content_selector = '#' + this.property('element_id'),
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Refreshing ...",
+					done: "Here we are!",
+					fixed: true
+				})
 			;
+				
 			_.each(props, function(prop){
 				data[prop.name] = prop.value;
 			});
+
+
+			loading.render();
+			$('#page').append(loading.$el);
 			
 			if (window._upfront_get_current_query) 
 				data.query = _upfront_get_current_query();
@@ -87,6 +100,7 @@
 					.find(".upfront-object-content")
 					.html(me.get_content_markup())
 				;
+				loading.$el.remove();
 				me.updateEditors();
 			});
 		},
@@ -401,7 +415,7 @@
 		initialize: function () {
 			this.settings = _([
 				new UpostsPostSetting_Content({model: this.model}),
-				new UpostsPostSetting_FeaturedImage({model: this.model})
+				//new UpostsPostSetting_FeaturedImage({model: this.model})
 			]);
 		},
 		/**
@@ -477,9 +491,12 @@
 		 * panels array with the panel instances we'll be showing.
 		 */
 		initialize: function () {
+			var postPanel = new Upfront.data.thisPost.PostDataPanel({model: this.model});
+			postPanel.label = "Elements";
 			this.panels = _([
 				new UpostsQuerySettingsPanel({model: this.model}),
-				new UpostsPostSettingsPanel({model: this.model})
+				new UpostsPostSettingsPanel({model: this.model}),
+				postPanel
 			]);
 		},
 		/**
