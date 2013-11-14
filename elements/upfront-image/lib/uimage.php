@@ -74,7 +74,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'srcOriginal' => false,
 			'image_title' => '',
 			'alternative_text' => '',
-			'when_clicked' => 'do_nothing',
+			'when_clicked' => 'do_nothing', // do_nothing | open_click | show_larger_image
 			'image_link' => '',
 			'include_image_caption' => false,
 			'image_caption' => '',
@@ -85,6 +85,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'size' =>  array('width' => '100%', 'height' => 'auto'),
 			'fullSize' => array('width' => 0, 'height' => 0),
 			'position' => array('top' => 0, 'left' => 0),
+			'marginTop' => 0,
 			'element_size' => array('width' => '100%', 'height' => 250),
 			'rotation' => 0,
 			'color' => '#ffffff',

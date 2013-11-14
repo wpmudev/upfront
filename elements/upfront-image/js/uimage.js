@@ -88,18 +88,18 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			position = false;
 		}
 		else {
-			starting = this.$('.upfront-image')
+			starting = this.$('.upfront-image-container');
 			maskSize = {
 				width: starting.width(),
 				height: starting.height()
 			};
 			maskOffset = {
 				top: starting.offset().top,
-				left: starting.offset().left + 15,
+				left: starting.offset().left,
 			};
 		}
 
-		var ratio = elementSize.width / img.width();
+		var ratio = this.stretch ? elementSize.width / img.width() : 1;
 		elementSize = {
 			width: Math.round(elementSize.width * ratio),
 			height: Math.round(elementSize.height * ratio)
@@ -111,12 +111,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(position){
 			position = {
 				left: Math.round(position.left * ratio) - img.offset().left + maskOffset.left,
-				top: Math.round(position.top * ratio) - img.offset().top + maskOffset.top
-			}
+				top: position.top < 0 ? position.top : Math.round(position.top * ratio) - img.offset().top + maskOffset.top
+			};
 		}
 
 		//Fix for responsive images
-		var img = this.$('img');
 		if(stretch && img.length && img.width() != elementSize.width){
 			var ratio = elementSize.width / img.width();
 			size = {
@@ -141,7 +140,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			align: this.property('align'),
 			maskSize: maskSize,
 			maskOffset: maskOffset
-		}
+		};
 	},
 
 	get_content_markup: function () {
@@ -159,7 +158,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(props.stretch)
 			props.imgWidth = '100%';
 		else
-			props.imgWidth = props.element_size.width + 'px';
+			props.imgWidth = props.size.width + 'px';
 
 		var rendered = this.imageTpl(props);
 		console.log('Image element');
@@ -172,10 +171,21 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 
 		if(this.property('quick_swap')){
-			rendered += '<div class="uimage-quick-swap">Change this image</div>';
+			var size = this.property('element_size'),
+				smallSwap = size.width < 150 || size.height < 90 ? 'uimage-quick-swap-small' : '';
+
+			rendered += '<div class="uimage-quick-swap ' + smallSwap + '">Change this image</div>';
 		}
 
 		return rendered;
+	},
+
+	on_render: function(){
+		if(this.property('status') != 'ok')
+			return;
+
+		this.setImageSize();
+		var size = this.property('element_size');
 	},
 
 	get_buttons: function() {
@@ -237,7 +247,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.dragTimer = setTimeout(function(){
 				me.$('.uimage-drop-hint').remove();
 				this.dragTimer = false;
-			}, 200);
+			}, 200)
 		;
 	},
 
@@ -278,8 +288,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.property('stretch', false, true);
 		}
 
-		this.elementSize = {height: resizer.height() - 30};
+		this.setElementSize();
 	},
+
 	setElementSize: function(ui){
 		var me = this,
 			parent = this.parent_module_view.$('.upfront-editable_entity:first'),
@@ -294,11 +305,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(this.property('caption_position') == 'below_image')
 			this.elementSize.height -= parent.find('.wp-caption').outerHeight();
 
-		if(this.property('image_status') == 'starting'){
+		if(this.property('image_status') == 'starting')
 			this.$('.upfront-object-content').height(me.elementSize.height);
-		}
+		else
+			this.$('.upfront-image-container').height(me.elementSize.height);
 
-		me.property('element_size', me.elementSize);
+		//me.property('element_size', me.elementSize);
 	},
 	openImageSelector: function(e){
 		var me = this;
@@ -337,6 +349,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('srcOriginal', result.srcOriginal, true);
 		this.property('size', result.imageSize, true);
 		this.property('position', result.imageOffset, true);
+		var marginTop = result.mode == 'horizontal' || result.mode == 'small' ? result.imageOffset.top * -1 : 0;
+		this.property('marginTop', marginTop, true);
 		this.property('rotation', result.rotation, true);
 		this.property('fullSize', result.fullSize, true);
 		this.property('element_size', result.cropSize, true);
@@ -373,6 +387,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			}
 		;
 
+		this.setElementSize();
 		this.setImageInfo();
 
 		if(imageInfo)
@@ -397,7 +412,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
-	}	    
+	}    
 }));
 
 var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
@@ -929,7 +944,8 @@ var ImageEditor = Backbone.View.extend({
 			fullSize: this.fullSize,
 			srcOriginal: src,
 			align: this.align,
-			stretch : this.mode == 'big' || this.mode == 'horizontal'
+			stretch : this.mode == 'big' || this.mode == 'horizontal',
+			mode: this.mode
 		}
 	},
 
@@ -1107,16 +1123,6 @@ var ImageEditor = Backbone.View.extend({
 			.removeClass('uimage-mode-big uimage-mode-small uimage-mode-vertical uimage-mode-horizontal')
 			.addClass('uimage-mode-' + mode)
 		;
-		if(false){//constraints){
-			if(mode == 'small'){
-				editor.resizable('disable');
-				editor.draggable('disable');
-			}
-			else {
-				editor.resizable('enable');
-				editor.draggable('enable');
-			}
-		}
 
 		this.mode = mode;
 
@@ -1158,7 +1164,7 @@ var ImageEditor = Backbone.View.extend({
 				initPoint.left - canvas.width() + mask.width(),
 				initPoint.top,
 				initPoint.left,
-				initPoint.top
+				initPoint.top - canvas.height() + mask.height()
 			];
 
 		var left = this.align == 'left' ? initPoint.left : (this.align == 'right' ? initPoint.left + mask.width() - canvas.width() : initPoint.left + (mask.width() - canvas.width()) / 2);
@@ -1173,9 +1179,9 @@ var ImageEditor = Backbone.View.extend({
 
 		return [
 			left,
-			canvas.offset().top,
+			initPoint.top,
 			left,
-			canvas.offset().top
+			initPoint.top - canvas.height() + mask.height()
 		];
 	},
 
@@ -1235,6 +1241,8 @@ var ImageEditor = Backbone.View.extend({
 		this.centerImage(true);
 
 		this.selectMode(size, true);
+
+		this.centerImage(true);
 	
 		this.setResizingLimits();
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
@@ -1291,9 +1299,11 @@ var ImageEditor = Backbone.View.extend({
 			mask = this.$('#uimage-mask'),
 			handle = this.$('#uimage-drag-handle'),
 			position = {
-				top: vertical ? canvas.height() < mask.height() ? mask.offset().top : mask.offset().top - ((canvas.height() - mask.height()) / 2) : canvas.offset().top,
+				top: canvas.offset().top,
 			}
 		;
+		if(vertical)
+			position.top = mask.offset().top - ((canvas.height() - mask.height()) / 2);
 
 		if((this.mode != 'vertical' && this.mode != 'small') || this.align == 'center')
 			position.left = mask.offset().left - ((canvas.width() -  mask.width()) / 2);

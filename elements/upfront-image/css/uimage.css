@@ -572,6 +572,11 @@ padding: 10px;
 display:none;
 }
 
+
+.uimage-quick-swap.uimage-quick-swap-small {
+	font-size: 18px;
+}
+
 .upfront-image:hover .uimage-quick-swap{
 	display: block;
 }
