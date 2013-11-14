@@ -23,7 +23,10 @@
 		;
 
 		var start = function () {
-			view.$el.html('<div contenteditable class="upfront-object">' + view.get_content_markup() + '</div>');
+			var content = view.get_content_markup();
+			if(content == '<p>My awesome stub content goes here</p>')
+				content = '';
+			view.$el.html('<div contenteditable class="upfront-object">' + content + '</div>');
 			var $el = view.$el.find('div[contenteditable]'),
 				$parent = view.parent_module_view.$el.find('.upfront-editable_entity:first')
 			;
@@ -34,6 +37,8 @@
 				view.model.set_content(e.editor.getData(), {silent: true});
 			});
 			$el.focus();
+			if($el.html() == '<p>My awesome stub content goes here</p> ')
+				editor.getSelection().
 			Upfront.Events.on("entity:deactivated", view.on_cancel, view);
 			$el.on("dblclick", function (e) {e.stopPropagation();}); // Allow double-click word selecting.
 		};
