@@ -146,7 +146,9 @@
 		initEditAreas: function(){
 			var me = this,
 				selectors = Upfront.data.post_selectors;
-			_.each(selectors, function(area, selector){
+			_.each(selectors, function(s){
+                var area = s.type;
+                var selector = s.selector;
 				if(area == 'content' || area == 'excerpt'){
 					me.prepareContentEditor(selector);
 				}
