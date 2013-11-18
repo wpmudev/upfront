@@ -6,9 +6,10 @@ class Upfront_Uwidget {
 		global $wp_widget_factory, $wp_registered_widgets;
 		$data = array();
 		foreach ( $wp_widget_factory->widgets as $widget ){
+			$class = get_class($widget);
 			$data[] = array(
 				'name' => $widget->name,
-				'class' => get_class($widget)
+				'class' => $class
 			);
 		}
 		return $data;
@@ -39,9 +40,10 @@ class Upfront_UwidgetView extends Upfront_Object {
 
 	
 	public static function add_js_defaults($data){
-		$data['uwidget'] = array(
+		$self = !empty($data['uwidget']) ? $data['uwidget'] : array();
+		$data['uwidget'] = array_merge($self, array(
 			'defaults' => self::default_properties(),
-		);
+		));
 		return $data;
 	}
 
@@ -85,9 +87,10 @@ Upfront_UwidgetAjax::serve();
 
 
 function upfront_widget_data ($data) {
-	$data['uwidget'] = array(
+	$self = !empty($data['uwidget']) ? $data['uwidget'] : array();
+	$data['uwidget'] = array_merge($self, array(
 		'widgets' => Upfront_Uwidget::get_widget_list()
-	);
+	));
 	return $data;
 }
 add_filter('upfront_data', 'upfront_widget_data');
