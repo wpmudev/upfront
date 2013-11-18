@@ -910,14 +910,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		//Stop element draggable
 		if (parent.is(".ui-draggable"))
 			parent.draggable('disable');
-
-		this.parent_module_view.$('.upfront-icon-button').css({
-			opacity: '.3'
-		});
-		this.$('.ugallery_sort_toggle').css({
-			opacity: '.9'
-		});
-
+	
 		parent.append(info);
 	},
 
@@ -952,10 +945,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		parent.draggable('enable');
 		this.render();
 
-
-		this.parent_module_view.$('.upfront-icon-button').css({
-			opacity: '.9'
-		});
 		this.parent_module_view.$('.ugallery-sort-info').remove();
 	},
 
