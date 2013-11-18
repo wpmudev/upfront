@@ -1311,6 +1311,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 	display: none;
 	position: absolute;
 	z-index: 10000;
+	text-transform: none !important;
+	text-decoration: none !important;
 }
 
 .upfront-date_picker .ui-datepicker-header {
@@ -1357,7 +1359,7 @@ div.upfront-date_picker td a{
 .upfront-date_picker td a:hover{
 	padding: 2px 4px;
 	background: #1fcd8f;
-	color: #fff;
+	color: #fff !important;
 	text-decoration: none;
 }
 
@@ -5731,7 +5733,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 
 .ueditor-select-wrapper {
 	display: inline-block;
-	position:relative;
+	position: relative;
 }
 
 .ueditor-select {
@@ -5740,6 +5742,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	display:none;
 	font-size: 13px;
 	text-align: left;
+	display: none;
 }
 .ueditor-select-value {
 	cursor: pointer;
@@ -5764,6 +5767,9 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	padding: 3px 10px;
 	color: #6386A6 !important;
 	cursor: pointer;
+	text-transform: none;
+	text-decoration: none;
+	font-weight: normal !important;
 }
 
 .ueditor-select-option:hover {

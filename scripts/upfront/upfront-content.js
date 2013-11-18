@@ -244,7 +244,16 @@
 					.datepicker({
 						changeMonth: true,
 						changeYear: true,
-						dateFormat: 'yy-mm-dd'
+						dateFormat: 'yy-mm-dd',
+						onChangeMonthYear: function(year, month){
+							var picker = me.$('.upfront-bar-datepicker'),
+								day = picker.datepicker('getDate').getDate()
+							;
+							day = day < 10 ? '0' + day : day;
+							month = month < 10 ? '0' + month : month;
+
+							me.$('.upfront-bar-datepicker').datepicker('setDate', year + '-' + month + '-' + day);
+						}
 					})
 			;
 
@@ -623,6 +632,9 @@
 		},
 
 		editDate: function(e){
+			if(e.currentTarget != e.target)
+				return;
+
 			this.$('.upfront-date_picker').hide();
 
 			var me = this,
@@ -949,7 +961,8 @@
 
 		render: function(){
 			this.destroy();
-			var postData = this.post.toJSON(),
+			var me = this,
+				postData = this.post.toJSON(),
 				date = this.post.get('post_date'),
 				datepickerData = {}
 			;
@@ -977,7 +990,16 @@
 			this.$('.upfront-bar-datepicker').datepicker({
 				changeMonth: true,
 				changeYear: true,
-				dateFormat: 'yy-mm-dd'
+				dateFormat: 'yy-mm-dd',
+				onChangeMonthYear: function(month, year){
+					var picker = me.$('.upfront-bar-datepicker'),
+						day = picker.datepicker('getDate').getDate()
+					;
+					day = day < 10 ? '0' + day : day;
+					month = month < 10 ? '0' + month : month;
+
+					me.$('.upfront-bar-datepicker').datepicker('setDate', year + '-' + month + '-' + day);
+				}
 			});
 
 			this.prepareSelectBoxes();
@@ -1612,7 +1634,7 @@
 
 	var MicroSelect = Backbone.View.extend({
 		tpl: false,
-		className: 'ueditor-select ueditor-popup',
+		className: 'ueditor-select ueditor-popup upfront-ui',
 		events: {
 			'blur input': 'close',
 			'click .ueditor-select-option': 'select'
@@ -1626,7 +1648,7 @@
 			this.$el.html(this.tpl({options: this.opts}));
 		},
 		open: function(){
-			this.$el.show();
+			this.$el.css('display', 'inline-block');
 			this.delegateEvents();
 			this.$('input').focus();
 		},

@@ -20,7 +20,7 @@ $upfront_data['ueditor'] = array(
 		__('June'),
 		__('July'),
 		__('August'),
-		__('Septembber'),
+		__('September'),
 		__('October'),
 		__('November'),
 		__('December')
