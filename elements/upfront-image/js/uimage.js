@@ -543,6 +543,10 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 								value: 'open_link'
 							},
 							{
+								label: 'Scroll to anchor', 
+								value: 'scroll_to_anchor'
+							},
+							{
 								label: 'Show larger image', 
 								value: 'show_larger_image'
 							}
@@ -554,7 +558,12 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						label: 'Image link URL',
 						className: 'upfront-field-wrap upfront-field-wrap-text image-link-field'	
 					}),
-
+					new Fields.Anchor({
+						model: this.model,
+						property: 'anchor_target',
+						label: "Anchor",
+						className: "upfront-field-wrap upfront-field-wrap-select image-anchor-field"
+					})
 				]
 			}),
 			new SettingsItem({
@@ -658,11 +667,18 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		return false;
 	},
 	toggleLink: function(){
-		if(this.$('input[name=when_clicked]:checked').val() == 'open_link'){
+		var link_value = this.$('input[name=when_clicked]:checked').val();
+		if('open_link' == link_value){
 			this.$('.image-link-field').show();
 		}
 		else{
 			this.$('.image-link-field').hide();
+		}
+
+		if ('scroll_to_anchor' == link_value) {
+			this.$('.image-anchor-field').show();
+		} else {
+			this.$('.image-anchor-field').hide();
 		}
 		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);		
 	},

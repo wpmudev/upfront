@@ -17,6 +17,8 @@ class Upfront_UimageView extends Upfront_Object {
 			$url = $data['image_link'];
 		else if($data['when_clicked'] == 'show_larger_image')
 			$url = $data['srcFull'];
+		else if ('scroll_to_anchor' == $data['when_clicked'] && !empty($data['anchor_target']))
+			$url = '#' . $data['anchor_target'];
 		$data['url'] = $url;
 
 		if(is_numeric($data['size']['width']))
