@@ -320,5 +320,39 @@
 </script>
 
 
+<script type="text/template" id="datepicker-tpl">
+<div class="upfront-date_picker upfront-ui">
+	<div class="upfront-bar-datepicker">
+	</div>
+	<div class="upfront-time_picker">
+		Time: 
+		<select class="ueditor-hours-select">
+			{[ _.each(hours, function(h){ ]}
+			<option value="{{h}}" selected="{{h == currentHour ? 'selected' : ''}}">{{h}}</option>
+			{[ }); ]}
+		</select>: 
+		<select class="ueditor-minutes-select">
+			{[ _.each(minutes, function(m){ ]}
+			<option value="{{m}}" selected="{{m == currentMinute ? 'selected' : ''}}">{{m}}</option>
+			{[ }); ]}
+		</select>
+	</div>
+	<div class="ueditor-datepicker-buttons">
+		<a class="ueditor-action-pickercancel">Cancel</a>
+		<a class="ueditor-action-pickerok button small-button">Ok</a>
+	</div>
+</div>
+</script>
+
+<script type="text/template" id="microselect-tpl">
+		<div class="ueditor-select-options">
+			{[ _.each(options, function(option){ ]}
+				<a class="ueditor-select-option ueditor-action-status" data-id="{{option.value}}">{{option.name}}</a>
+			{[ }); ]}
+		</div>
+		<input type="text" class="ueditor-select-focus">
+</script>
+
+
 <!-- end of the wrap div -->
 </div>

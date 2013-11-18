@@ -1374,6 +1374,7 @@ div.upfront-date_picker td a{
 .ueditor-datepicker-buttons {
 	border-top: 1px solid #accae6;
 	padding: 5px 10px;
+	text-align:left;
 }
 .ueditor-datepicker-buttons:after {
 	content: '';
@@ -1390,8 +1391,10 @@ a.ueditor-action-pickercancel{
 	cursor: pointer;
 }
 
-
-
+.ueditor_author,
+.ueditor_date {
+	cursor: pointer !important;
+}
 
 #settings {
   position: fixed;
@@ -5726,10 +5729,17 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	text-decoration: none;
 }
 
-.ueditor-select {
+.ueditor-select-wrapper {
 	display: inline-block;
 	position:relative;
+}
+
+.ueditor-select {
+	position:relative;
 	margin-left: 5px;
+	display:none;
+	font-size: 13px;
+	text-align: left;
 }
 .ueditor-select-value {
 	cursor: pointer;
@@ -5741,7 +5751,6 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	left: -10px;
 	background: #F2F9FF;
 	border: 1px solid #6386A6;
-	display:none;
 	z-index:10000;
 }
 
@@ -5752,7 +5761,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 }
 .ueditor-select-option {
 	display:block;
-	padding: 5px 10px;
+	padding: 3px 10px;
 	color: #6386A6 !important;
 	cursor: pointer;
 }
@@ -5777,8 +5786,9 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 .ueditor-pass-editor {
 	width:250px;
 	padding: 5px 10px;
+	display: none;
 }
-
+.upfront-date_picker a.small-button,
 .ueditor-bar a.small-button {
 	background: #1fcd8f;
 	color: #fff !important;
@@ -5788,6 +5798,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	padding: 2px 15px;
 	margin-top: 10px;
 }
+.upfront-date_picker a.small-button:hover,
 .ueditor-bar a.small-button:hover {
 	background: #3ea;
 	text-decoration: none;

@@ -5,7 +5,38 @@ if(!current_user_can('edit_posts')){
 }
 
 $upfront_data = apply_filters('upfront_data', array('loading' => array(), 'posts' => array()));
-$upfront_data['post_selectors'] = apply_filters('upfront_post_selectors', array());
+$upfront_data['ueditor'] = array(
+	'selectors' => apply_filters('upfront_post_selectors', array()),
+	'filters' => array(
+		'date' => apply_filters('upfront_post_date', '%date%'),
+		'author' => apply_filters('upfront_post_author', '%display_name%')
+	),
+	'months' => array(
+		__('January'),
+		__('February'),
+		__('March'),
+		__('April'),
+		__('May'),
+		__('June'),
+		__('July'),
+		__('August'),
+		__('Septembber'),
+		__('October'),
+		__('November'),
+		__('December')
+	),
+	'days' => array(
+		__('Monday'),
+		__('Tuesday'),
+		__('Wednesday'),
+		__('Thursday'),
+		__('Friday'),
+		__('Saturday'),
+		__('Sunday'),
+	),
+	'authors' => $this->get_authors() //$this references to Upfront_JavascriptMain
+);
+
 
 ?>
 
