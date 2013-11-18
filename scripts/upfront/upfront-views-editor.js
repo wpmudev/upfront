@@ -3058,6 +3058,7 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 });
 
 var Settings_AnchorTrigger = SettingsItem.extend({
+	className: "upfront-settings-item upfront-settings-item-anchor",
 	initialize: function () {
 		var anchors = [],
 			raw = this.get_anchors()
@@ -3094,6 +3095,7 @@ var Settings_AnchorTrigger = SettingsItem.extend({
 });
 
 var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
+	className: "upfront-settings-item upfront-settings-item-anchor",
 	initialize: function () {
 		Settings_AnchorTrigger.prototype.initialize.call(this, this.options);
 		this.options.fields.push(
@@ -3110,6 +3112,22 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 			label: this.fields._wrapped[1].get_value()
 		}
 	}
+});
+
+var Field_Anchor = Field_Select.extend({
+	initialize: function () {
+		Field_Select.prototype.initialize.call(this);
+		this.options.values = this.get_anchors();
+	},
+	get_anchors: function () {
+		var raw = Settings_AnchorTrigger.prototype.get_anchors.call(this),
+			anchors = []
+		;
+		_(raw).each(function (idx) {
+			anchors.push({label: idx, value: idx});
+		});
+		return anchors;
+	},
 });
 
 
@@ -4236,7 +4254,8 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 				"Select": Field_Select,
 				"Radios": Field_Radios,
 				"Checkboxes": Field_Checkboxes,
-				"Hidden": Field_Hidden
+				"Hidden": Field_Hidden,
+				"Anchor": Field_Anchor
 			},
 			"Sidebar": {
 				"Sidebar": Sidebar,
