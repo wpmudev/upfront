@@ -4,7 +4,7 @@
  */
 class Upfront_UyoutubeView extends Upfront_Object {
     var $defaults = array(
-        'type' => false,
+        'videoType' => false,
         'display_style' => 'gallery',
         'multiple_source' => 'user_channel',
         'multiple_source_id' => '',
@@ -23,13 +23,13 @@ class Upfront_UyoutubeView extends Upfront_Object {
         'show_description' => array('show_description'),
         'description_length' => 100,
         'thumbWidth' => 200,
-        'thumbHeight' => 300,
+        'thumbHeight' => 111,
+        'thumbOffset' => 8,
         'single_video_url' => '',
         'single_video_id' => '',
         'player_width' => 384,
         'player_height' => 240,
         'youtube_status' => 'starting',
-
         'type' => 'UyoutubeModel',
         'view_class' => 'UyoutubeView',
         'has_settings' => 1,
@@ -66,6 +66,9 @@ class Upfront_UyoutubeView extends Upfront_Object {
 
         $markup = upfront_get_template('uyoutube', $data, dirname(dirname(__FILE__)) . '/tpl/youtube.html');
 
+        upfront_add_element_style('upfront_youtube', array('css/uyoutube.css', dirname(__FILE__)));
+        upfront_add_element_script('upfront_youtube', array('js/uyoutube-front.js', dirname(__FILE__)));
+
         return $markup;
     }
 
@@ -84,13 +87,9 @@ class Upfront_UyoutubeView extends Upfront_Object {
         return $out;
     }
 
-    public static function add_styles_scripts () {
-        wp_deregister_script('jquery-form');
-        wp_register_script('jquery-form', upfront_element_url('js/jquery.form.min.js', dirname(__FILE__)), array('jquery'), '3.36.0');
-        wp_enqueue_script('jquery-form');
-
-        wp_enqueue_style('uyoutube-style', upfront_element_url('css/uyoutube.css', dirname(__FILE__)));
+    public function add_styles_scripts() {
     }
+
 }
 
 class Upfront_Uyoutube_Server extends Upfront_Server {
@@ -200,3 +199,11 @@ class Upfront_Uyoutube_Server extends Upfront_Server {
   }
 }
 Upfront_Uyoutube_Server::serve();
+
+function upfront_youtube_add_youtube_local_url ($data) {
+	$data['upfront_youtube'] = array(
+		"root_url" => trailingslashit(upfront_element_url('/', dirname(__FILE__)))
+	);
+	return $data;
+}
+add_filter('upfront_data', 'upfront_youtube_add_youtube_local_url');

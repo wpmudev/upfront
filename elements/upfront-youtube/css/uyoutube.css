@@ -6,16 +6,20 @@
     margin-bottom: 10px;
 }
 
+.uyoutube-main-video iframe {
+    background: black;
+    border: 0 none;
+}
+
 .uyoutube-gallery-item {
     overflow:hidden;
     margin: 0 7px 10px;
-    width: 190px;/* remove, make dynamic */
-    float: left;
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
 }
 
 .uyoutube-gallery-item .uyoutube-thumb-mask {
-    width: 190px;/* remove, make dynamic */
-    height: 105px;/* remove, make dynamic */
     overflow: hidden;
     background: #ccc;
 }
@@ -38,16 +42,15 @@
     width: 100%;
     overflow:hidden;
     margin: 0 0 10px;
+    cursor: pointer;
 }
 
 .uyoutube-list-item .uyoutube-thumb-holder {
     display: table-cell;
-    width: 90px;
+    padding-right: 10px;
 }
 
 .uyoutube-list-item .uyoutube-thumb-mask {
-    width: 80px;
-    height: 45px;
     overflow: hidden;
     background: #ccc;
 }
@@ -84,4 +87,12 @@
 .uyoutube-list-item .uyoutube-fake-description {
     height: 12px;
     background: #ccc;
+}
+
+.upfront-field-wrap-disabled {
+	color: rgb(171, 177, 184);
+}
+
+.uyoutube-settings .upfront-field-number[type=number] {
+  width: 60px;
 }

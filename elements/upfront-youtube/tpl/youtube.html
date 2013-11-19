@@ -1,5 +1,5 @@
 <div class="upfront-output-object upfront-youtube-container" id="<?php echo $element_id ?>">
-  <?php if ($type == 'single') { ?>
+  <?php if ($videoType == 'single') { ?>
     <?php if ($single_video_url) { ?>
       <iframe src="http://www.youtube.com/embed/<?php echo $single_video_id ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
       <?php if($show_title[0]){ ?>
@@ -12,7 +12,7 @@
       <div class="uyoutube-player" style="width: <?php echo $player_width ?>px; height: <?php echo $player_height ?>px;"></div>
     <?php } ?>
   <?php } ?>
-  <?php if ($type == 'multiple') { ?>
+  <?php if ($videoType == 'multiple') { ?>
     <div class="uyoutube-main-video">
       <?php if ($multiple_videos[0]) { ?>
         <iframe src="http://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
@@ -23,34 +23,30 @@
     <?php if ($display_style == 'gallery') { ?>
       <?php if ($multiple_videos) { ?>
         <?php for ($i = 0; $i < $multiple_count; $i++) { ?>
-          <div class="uyoutube-gallery-item">
-            <div class="uyoutube-thumb-mask"><!-- add width height dynamicly -->
-              <img class="uyoutube-thumb" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" width="190">
+          <div class="uyoutube-gallery-item" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>" style="width:<?php echo $thumbWidth ?>px;">
+            <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px"><!-- add width height dynamicly -->
+              <img class="uyoutube-thumb" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px;">
             </div>
+            <?php if($multiple_show_title[0]){ ?>
             <h4 class="uyoutube-title"><?php echo $multiple_videos[$i]['title'] ?></h4>
+            <?php } ?>
           </div>
-          <?php if (($i+1) % 3 == 0) { ?>
-            <br style="clear:both">
-          <?php } ?>
         <?php } ?>
       <?php } else { ?>
         <?php for ($i = 0; $i < $multiple_count; $i++) { ?>
-          <div class="uyoutube-gallery-item">
-            <div class="uyoutube-thumb-mask"></div><!-- add width height dynamicly -->
+          <div class="uyoutube-gallery-item" style="width:<?php echo $thumbWidth ?>px;">
+            <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px"></div><!-- add width height dynamicly -->
           </div>
-          <?php if (($i+1) % 3 == 0) { ?>
-          <br style="clear:both">
-          <?php } ?>
         <?php } ?>
       <?php } ?>
     <?php } ?>
     <?php if ($display_style == 'list') { ?>
       <?php if ($multiple_videos) { ?>
         <?php for ($i = 0; $i < $multiple_count; $i++) { ?>
-          <div class="uyoutube-list-item">
-            <div class="uyoutube-thumb-holder">
-              <div class="uyoutube-thumb-mask">
-                <img class="uyoutube-thumb" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" width="80">
+        <div class="uyoutube-list-item" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>">
+            <div class="uyoutube-thumb-holder" style="width:<?php echo $thumbWidth ?>px;">
+              <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px">
+                <img class="uyoutube-thumb" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" width="80">
               </div>
             </div>
             <div class="uyoutube-content-holder">
@@ -66,8 +62,8 @@
       <?php } else { ?>
         <?php for ($i = 0; $i < $multiple_count; $i++) { ?>
           <div class="uyoutube-list-item">
-            <div class="uyoutube-thumb-holder">
-              <div class="uyoutube-thumb-mask"></div>
+            <div class="uyoutube-thumb-holder" style="width:<?php echo $thumbWidth ?>px;">
+              <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px"></div>
             </div>
             <div class="uyoutube-content-holder">
               <h4 class="uyoutube-title uyoutube-fake-title"></h4>
