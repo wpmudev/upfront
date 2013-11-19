@@ -807,12 +807,12 @@ var ImageEditor = Backbone.View.extend({
 			options.position = this.centerImageOffset(options.size, maskSize);
 
 		var canvasOffset = {
-				top: parseInt(maskOffset.top) - options.position.top,
-				left: parseInt(maskOffset.left) - options.position.left
+				top: parseInt(maskOffset.top) - options.position.top + halfBorder,
+				left: parseInt(maskOffset.left) - options.position.left + halfBorder
 			},
 			canvasSize = {
-				width: parseInt(options.size.width) + this.bordersWidth,
-				height: parseInt(options.size.height) + this.bordersWidth
+				width: parseInt(options.size.width),
+				height: parseInt(options.size.height)
 			}
 		;
 
@@ -826,8 +826,8 @@ var ImageEditor = Backbone.View.extend({
 
 		if(this.setImageInitialSize){
 			canvasSize = this.initialImageSize(200, false, maskSize);
-			canvasSize.width += this.bordersWidth;
-			canvasSize.height += this.bordersWidth;
+			//canvasSize.width += this.bordersWidth;
+			//canvasSize.height += this.bordersWidth;
 		}
 		this.response = $.Deferred();
 
@@ -844,6 +844,8 @@ var ImageEditor = Backbone.View.extend({
 		this.$el.html(this.tpl(tplOptions)).find('div').hide();
 
 		$('body').append(this.$el);
+
+		this.addGridLines(maskOffset.top, maskSize.height);
 
 		this.$el.css({
 			height: $(document).height(),
@@ -942,14 +944,15 @@ var ImageEditor = Backbone.View.extend({
 		var canvas = this.$('#uimage-canvas'),
 			img = canvas.find('img'),
 			mask = this.$('#uimage-mask'),
-			src = img.attr('src')
+			src = img.attr('src'),
+			halfBorder = this.bordersWidth / 2
 		;
 
 		return {
 			imageSize: {width: Math.round(this.invert ? img.height() : img.width()), height: Math.round(this.invert ? img.width() : img.height())},
 			imageOffset: {
-				top: mask.offset().top - canvas.offset().top,
-				left: mask.offset().left - canvas.offset().left
+				top: mask.offset().top - canvas.offset().top + halfBorder,
+				left: mask.offset().left - canvas.offset().left + halfBorder
 			},
 			maskSize: {
 				width: mask.width(),
@@ -969,7 +972,7 @@ var ImageEditor = Backbone.View.extend({
 		var rotation = this.rotation,
 			img = this.$('.uimage-img'),
 			rotationClass = '',
-			size = {width: img.width() + this.bordersWidth, height: img.height() + this.bordersWidth},		
+			size = {width: img.width(), height: img.height()},		
 			canvas = this.$('#uimage-canvas'),
 			handler = this.$('#uimage-drag-handle')
 		;
@@ -999,8 +1002,8 @@ var ImageEditor = Backbone.View.extend({
 				width: size.height
 			});
 			img.css({
-				height: size.height - this.bordersWidth,
-				width: size.width - this.bordersWidth
+				height: size.height,
+				width: size.width
 			});
 			//$('#uimage-drag-handle').resizable('option', 'aspectRatio', size.height / size.width);
 		}
@@ -1058,11 +1061,10 @@ var ImageEditor = Backbone.View.extend({
 					e.preventDefault();
 					//Recalculate dimensions from the original size
 					var imageSize = {
-							width: (me.invert ? ui.size.height : ui.size.width) - me.bordersWidth,
-							height: (me.invert ? ui.size.width : ui.size.height) - me.bordersWidth
+							width: (me.invert ? ui.size.height : ui.size.width),
+							height: (me.invert ? ui.size.width : ui.size.height)
 						},
-						factor = me.fullSize.width / Math.floor(imageSize.width),
-						canvasSize
+						factor = me.fullSize.width / Math.floor(imageSize.width)
 					;
 
 					imageSize = {
@@ -1071,8 +1073,8 @@ var ImageEditor = Backbone.View.extend({
 					}
 
 					canvasSize = {
-						width: (me.invert ? imageSize.height : imageSize.width) + me.bordersWidth,
-						height: (me.invert ? imageSize.width : imageSize.height) + me.bordersWidth
+						width: (me.invert ? imageSize.height : imageSize.width),
+						height: (me.invert ? imageSize.width : imageSize.height)
 					}
 
 					canvas.css(canvasSize);
@@ -1088,12 +1090,14 @@ var ImageEditor = Backbone.View.extend({
 			.draggable({
 				opacity:1,
 				start: function(e, ui){
+					console.log('start draggin');
 				},
 				drag: function(e, ui){
 					canvas.css({
 						top: ui.position.top,
 						left: ui.position.left
 					});
+					console.log('dragging');
 				},
 				stop: function(e, ui){
 					canvas.css({
@@ -1101,12 +1105,25 @@ var ImageEditor = Backbone.View.extend({
 						left: ui.position.left
 					});
 					me.setResizingLimits();
+					console.log('stop draggin');
 				},
 				containment: me.getContainment()
 			})
 		;
 		me.setResizingLimits();
 
+	},
+
+	addGridLines: function(initialPoint, maskHeight){
+		var step = 15,			
+			height = maskHeight - this.bordersWidth,
+			current = this.bordersWidth / 2
+		;
+
+		while(current <= height + step){
+			this.$el.append('<div class="gridline" style="position: absolute;width: 100%; height: 0; top:' + (initialPoint + current) + 'px"></div>');
+			current = current + step;
+		}
 	},
 
 	selectMode: function(size, constraints) {
@@ -1141,6 +1158,12 @@ var ImageEditor = Backbone.View.extend({
 		;
 
 		this.mode = mode;
+		if(constraints){		
+			if(this.mode == 'horizontal' || this.mode == 'small')
+				$('#uimage-drag-handle').draggable('option', {snap: '.gridline', snapMode: 'outer', snapTolerance: 6});
+			else
+				$('#uimage-drag-handle').draggable('option', {snap: false});
+		}
 
 		if(centerImage){
 			this.centerImage(false);
@@ -1150,8 +1173,8 @@ var ImageEditor = Backbone.View.extend({
 	setImageSize: function(size){
 		if(this.invert){
 			var invertSize = {
-				width: size.height - this.bordersWidth,
-				height: size.width - this.bordersWidth
+				width: size.height,
+				height: size.width
 			};
 
 			this.$('.uimage-img')
@@ -1164,22 +1187,23 @@ var ImageEditor = Backbone.View.extend({
 	getContainment: function(){
 		var canvas = this.$('#uimage-canvas'),
 			mask = this.$('#uimage-mask'),
-			initPoint = mask.offset()
+			initPoint = mask.offset(),
+			halfBorder = this.bordersWidth / 2
 		;
 
 
 		if(this.mode == 'big')
 			return [
-				initPoint.left - canvas.width() + mask.width(),
-				initPoint.top - canvas.height() + mask.height(),
-				initPoint.left,
-				initPoint.top
+				initPoint.left - canvas.width() + mask.width() + halfBorder,
+				initPoint.top - canvas.height() + mask.height() + halfBorder,
+				initPoint.left + halfBorder,
+				initPoint.top + halfBorder
 			];
 		if(this.mode == 'horizontal')
 			return [
-				initPoint.left - canvas.width() + mask.width(),
+				initPoint.left - canvas.width() + mask.width() + halfBorder,
 				initPoint.top,
-				initPoint.left,
+				initPoint.left + halfBorder,
 				initPoint.top - canvas.height() + mask.height()
 			];
 
@@ -1188,9 +1212,9 @@ var ImageEditor = Backbone.View.extend({
 		if(this.mode == 'vertical')
 			return [
 				left,
-				initPoint.top - canvas.height() + mask.height(),
+				initPoint.top - canvas.height() + mask.height() + halfBorder,
 				left,
-				initPoint.top
+				initPoint.top + halfBorder
 			];
 
 		return [
@@ -1241,13 +1265,9 @@ var ImageEditor = Backbone.View.extend({
 
 		if(this.invert){
 			size = {
-				width: size.height  + this.bordersWidth,
-				height: size.width + this.bordersWidth
+				width: size.height,
+				height: size.width
 			}
-		}
-		else {
-			size.height += this.bordersWidth;
-			size.width += this.bordersWidth;			
 		}
 
 		canvas.css(size);
@@ -1439,6 +1459,8 @@ var ImageEditor = Backbone.View.extend({
 			position.left = mask.offset().left;
 		else
 			position.left = mask.offset().left + mask.width() - canvas.width();
+
+		position.left += this.bordersWidth / 2;
 
 		canvas.css(position);
 		handle.css(position);

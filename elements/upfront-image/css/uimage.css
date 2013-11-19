@@ -334,7 +334,7 @@ a.open-media-gallery:hover i {
 	left:0;
 	z-index:10;
 	opacity: 1 !important;
-	border: 3px solid #daedfe;
+	outline: 3px solid #daedfe;
 }
 
 .image-edit-control>i {
@@ -511,7 +511,6 @@ a.uimage_edit_toggle:before {
 }
 
 #uimage-canvas{
-	border: 3px solid #DAEDFE;
 	z-index: 10;
 }
 

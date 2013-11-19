@@ -5754,10 +5754,8 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	display: inline-block;
 	position: relative;
 }
-
 .ueditor-select {
 	position:relative;
-	margin-left: 5px;
 	display:none;
 	font-size: 13px;
 	text-align: left;
