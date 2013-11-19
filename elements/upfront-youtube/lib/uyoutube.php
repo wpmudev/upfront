@@ -3,93 +3,95 @@
  * YouTube element for Upfront
  */
 class Upfront_UyoutubeView extends Upfront_Object {
-    var $defaults = array(
-        'videoType' => false,
-        'display_style' => 'gallery',
-        'multiple_source' => 'user_channel',
-        'multiple_source_id' => '',
-        'multiple_videos' => false,
-        'multiple_count' => 6,
-        'multiple_description_length' => 100,
-        'multiple_show_description' => array('multiple_show_description'),
-        'multiple_title_length' => 100,
-        'multiple_show_title' => array('multiple_show_title'),
-        'title' => '',
-        'full_title' => '',
-        'show_title' => array('show_title'),
-        'title_length' => 100,
-        'description' => '',
-        'full_description' => '',
-        'show_description' => array('show_description'),
-        'description_length' => 100,
-        'thumbWidth' => 200,
-        'thumbHeight' => 111,
-        'thumbOffset' => 8,
-        'single_video_url' => '',
-        'single_video_id' => '',
-        'player_width' => 384,
-        'player_height' => 240,
-        'youtube_status' => 'starting',
-        'type' => 'UyoutubeModel',
-        'view_class' => 'UyoutubeView',
-        'has_settings' => 1,
-        'class' =>  'upfront-youtube'
+  public static function default_properties(){
+    return array(
+      'type' => 'UyoutubeModel',
+      'view_class' => 'UyoutubeView',
+      'has_settings' => 1,
+      'class' =>  'upfront-youtube',
+
+      'videoType' => false,
+      'display_style' => 'gallery',
+      'multiple_source' => 'user_channel',
+      'multiple_source_id' => '',
+      'multiple_videos' => false,
+      'multiple_count' => 6,
+      'multiple_description_length' => 100,
+      'multiple_show_description' => array('multiple_show_description'),
+      'multiple_title_length' => 100,
+      'multiple_show_title' => array('multiple_show_title'),
+      'title' => '',
+      'full_title' => '',
+      'show_title' => array('show_title'),
+      'title_length' => 100,
+      'description' => '',
+      'full_description' => '',
+      'show_description' => array('show_description'),
+      'description_length' => 100,
+      'thumbWidth' => 200,
+      'thumbHeight' => 111,
+      'thumbOffset' => 8,
+      'single_video_url' => '',
+      'single_video_id' => '',
+      'player_width' => 384,
+      'player_height' => 240,
+      'youtube_status' => 'starting'
     );
+  }
 
-    function __construct($data) {
-        $data['properties'] = $this->merge_default_properties($data);
-        parent::__construct($data);
-    }
+  function __construct($data) {
+      $data['properties'] = $this->merge_default_properties($data);
+      parent::__construct($data);
+  }
 
-    protected function merge_default_properties($data){
-        $flat = array();
-        if(!isset($data['properties']))
-            return $flat;
+  protected function merge_default_properties($data){
+      $flat = array();
+      if(!isset($data['properties']))
+          return $flat;
 
-        foreach($data['properties'] as $prop)
-            $flat[$prop['name']] = $prop['value'];
+      foreach($data['properties'] as $prop)
+          $flat[$prop['name']] = $prop['value'];
 
-        $flat = array_merge($this->defaults, $flat);
+      $flat = array_merge(self::default_properties(), $flat);
 
-        $properties = array();
-        foreach($flat as $name => $value)
-            $properties[] = array('name' => $name, 'value' => $value);
+      $properties = array();
+      foreach($flat as $name => $value)
+          $properties[] = array('name' => $name, 'value' => $value);
 
-        return $properties;
-    }
+      return $properties;
+  }
 
-    public function get_markup () {
-    // This data is passed on to the template to precompile template
-        $data = $this->properties_to_array();
+  public function get_markup () {
+  // This data is passed on to the template to precompile template
+      $data = $this->properties_to_array();
 
-        $data['wrapper_id'] = str_replace('youtube-object-', 'wrapper-', $data['element_id']);
+      $data['wrapper_id'] = str_replace('youtube-object-', 'wrapper-', $data['element_id']);
 
-        $markup = upfront_get_template('uyoutube', $data, dirname(dirname(__FILE__)) . '/tpl/youtube.html');
+      $markup = upfront_get_template('uyoutube', $data, dirname(dirname(__FILE__)) . '/tpl/youtube.html');
 
-        upfront_add_element_style('upfront_youtube', array('css/uyoutube.css', dirname(__FILE__)));
-        upfront_add_element_script('upfront_youtube', array('js/uyoutube-front.js', dirname(__FILE__)));
+      upfront_add_element_style('upfront_youtube', array('css/uyoutube.css', dirname(__FILE__)));
+      upfront_add_element_script('upfront_youtube', array('js/uyoutube-front.js', dirname(__FILE__)));
 
-        return $markup;
-    }
+      return $markup;
+  }
 
-    public function add_js_defaults($data){
-        $data['uyoutube'] = array(
-            'defaults' => $this->defaults,
-            'template' => upfront_get_template_url('uyoutube', upfront_element_url('tpl/youtube.html', dirname(__FILE__)))
-        );
-        return $data;
-    }
+  public function add_js_defaults($data){
+      $data['uyoutube'] = array(
+          'defaults' => self::default_properties(),
+          'template' => upfront_get_template_url('uyoutube', upfront_element_url('tpl/youtube.html', dirname(__FILE__)))
+      );
+      return $data;
+  }
 
-    private function properties_to_array(){
-        $out = array();
-        foreach($this->_data['properties'] as $prop)
-            $out[$prop['name']] = $prop['value'];
-        return $out;
-    }
+  private function properties_to_array(){
+      $out = array();
+      foreach($this->_data['properties'] as $prop)
+          $out[$prop['name']] = $prop['value'];
+      return $out;
+  }
 
-    public function add_styles_scripts() {
-    }
-
+  public function add_styles_scripts() {
+  }
 }
 
 class Upfront_Uyoutube_Server extends Upfront_Server {
