@@ -946,6 +946,7 @@
 			'click .ueditor-select-value': 'editSelect',
 			'click .ueditor-pass-ok': 'changePass',
 			'click .ueditor-action-schedule': 'openDatepicker',
+			'click .ueditor-bar-show_advanced': 'toggleAdvanced'
 		},
 
 		initialize: function(options){
@@ -1215,6 +1216,7 @@
 							opacity: 0.4
 						})
 						.addClass('floating')
+						.removeClass('show-advanced')
 					;						
 					me.calculateLimits();
 				}
@@ -1463,6 +1465,11 @@
 				this.render();
 			}
 		},
+
+		toggleAdvanced: function(e){
+			e.preventDefault();
+			$(e.target).closest('.ueditor-bar').toggleClass('show-advanced');
+		}
 
 
 	});

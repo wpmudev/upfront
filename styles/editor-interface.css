@@ -5596,25 +5596,13 @@ License: MIT
 /* ----- New Editor bar ----- */
 
 .ueditor-bar {
-	background: #395269;
-	background: rgba(30, 54, 76, 0.9);
-	width: 100%;
 	font-size: 14px;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
 	z-index: 100;
+	right: 0;
 }
 .ueditor-bar:hover {
 	opacity: 1 !important;
 }
-
-/*.cke_float {
-	opacity: 0.4;
-}
-.cke_float:hover {
-	opacity: 1;
-}*/
-
 
 .ueditable {
 	cursor: text;
@@ -5622,6 +5610,10 @@ License: MIT
 
 .ueditor-bar {
 	cursor: default;
+}
+
+.ueditor-bar>div {
+	padding: 10px;
 }
 
 .ueditor-bar:after {
@@ -5640,7 +5632,59 @@ License: MIT
 
 .ueditor-bar-buttons {
 	float: right;
-	width: 200px;
+	clear: right;
+	background: #DADEE2;
+	padding: 10px;
+	font-size: 16px;
+	position:relative;
+}
+
+.show-advanced .ueditor-bar-buttons:after{
+	position: absolute;
+	content: '';
+	border:7px solid transparent;
+	left: 20px;
+	top: 100%;
+	border-top-color: #DADEE2;
+}
+
+.ueditor-bar-buttons a {
+	display: inline-block;
+	margin: 0 10px 0 0;
+}
+
+.ueditor-bar-buttons a:last-child {
+	margin-right: 0;
+}
+
+.ueditor-bar div a.ueditor-action-draft {
+	border: 2px solid #9BADBC;
+	color: #9BADBC;
+	padding: 2px 15px;
+	text-decoration: none;
+}
+
+a.ueditor-action-publish {
+	text-align: center;
+	color: #fff !important;
+	padding: 7px 20px;
+	background: #1fcd8f;
+	margin: 0 auto;
+	font-weight: bold;
+}
+a.ueditor-action-publish:hover {
+	text-decoration: none;
+}
+
+.ueditor-bar-advanced {
+	float: right;
+	background: #E9EEF3;
+	clear:right;
+	display:none;
+}
+
+.show-advanced .ueditor-bar-advanced {
+	display: block;
 }
 
 .ueditor-bar-cancel {
@@ -5658,12 +5702,6 @@ License: MIT
 	margin: 0 200px 0 120px;
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
-}
-
-.ueditor-row {
-	margin-bottom: 1px;
-	background: #405972;
-	padding: 10px 20px;
 }
 
 .ueditor-row-item {
@@ -5684,25 +5722,6 @@ License: MIT
 	margin: 0 4px;
 }
 
-.ueditor-bar-buttons {
-	padding: 10px 20px;
-}
-
-a.ueditor-action-publish {
-	text-align: center;
-	color: #fff !important;
-	padding: 7px 0px;
-	display: block;
-	border-radius: 5px;
-	background: #1fcd8f;
-	width:80%;
-	margin: 0 auto;
-	font-weight: bold;
-	margin-bottom:10px;
-}
-a.ueditor-action-publish:hover {
-	text-decoration: none;
-}
 
 .ueditor_deleted_post {
 	border: 1px solid #8fa9bf;
