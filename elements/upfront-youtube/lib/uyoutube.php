@@ -69,7 +69,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
 
       $markup = upfront_get_template('uyoutube', $data, dirname(dirname(__FILE__)) . '/tpl/youtube.html');
 
-      upfront_add_element_style('upfront_youtube', array('css/uyoutube.css', dirname(__FILE__)));
+      // upfront_add_element_style('upfront_youtube', array('css/uyoutube.css', dirname(__FILE__)));
       upfront_add_element_script('upfront_youtube', array('js/uyoutube-front.js', dirname(__FILE__)));
 
       return $markup;
@@ -91,6 +91,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
   }
 
   public function add_styles_scripts() {
+      wp_enqueue_style('uyoutube-style', upfront_element_url('css/uyoutube.css', dirname(__FILE__)));
   }
 }
 
