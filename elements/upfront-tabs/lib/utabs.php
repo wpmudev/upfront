@@ -3,13 +3,25 @@
  * Tabbed element for Upfront
  */
 class Upfront_UtabsView extends Upfront_Object {
-  public static function default_properties(){
+  public static function default_properties() {
+    $defaultTab = new StdClass();
+    $defaultTab->title = 'Tab 1';
+    $defaultTab->content = 'Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.';
     return array(
       'type' => 'UtabsModel',
       'view_class' => 'UtabsView',
       'has_settings' => 1,
       'class' =>  'upfront-tabs',
-      'tabs' => array()
+      'tabs' => array($defaultTab),
+      'tabs_count' => 1,
+
+      'style_type' => 'theme_defined',
+      'theme_style' => 'tabbed',
+      'custom_style' => 'tabbed',
+      'active_tab_color' => '',
+      'active_tab_text_color' => '',
+      'inactive_tab_color' => '',
+      'inactive_tab_text_color' => ''
     );
   }
 

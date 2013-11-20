@@ -1,3 +1,13 @@
 <div class="upfront-output-object upfront-youtube-container" id="<?php echo $element_id ?>">
-  <p>Welcome to Upfront tabbed element.</p>
+  <div class="tabs-menu">
+    <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
+    <div class="tabs-tab <?php if($i === 0) { ?>tabs-tab-active<?php } ?>" data-content-id="<?php echo $element_id ?>-<?php echo $i ?>"><?php echo $tabs[$i]['title'] ?></div>
+    <?php } ?>
+    <div class="add-tab">[+]</div>
+  </div>
+  <div class="tabs-content" >
+    <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
+    <div id="<?php echo $element_id ?>-<?php echo $i ?>" class="tab-content <?php if($i === 0) { ?>tab-content-active<?php } ?>"><?php echo $tabs[$i]['content'] ?></div>
+    <?php } ?>
+  </div>
 </div>

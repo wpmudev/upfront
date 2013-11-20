@@ -16,11 +16,45 @@
   width: 117px;
 }
 
-.utabs-settings-panel .inline-checkbox {
+.utabs-settings-panel .inline-radios {
   float: left;
-  margin-top: 2px;
+  margin-top: 3px;
+}
+
+.utabs-settings-panel .inline-radios .upfront-field-multiple {
+  margin-bottom: 0;
+}
+
+.utabs-settings-panel .inline-radios .upfront-field-multiple:first-child {
+  margin-bottom: 10px;
 }
 
 .utabs-settings-panel .upfront-field-select .upfront-field-select-value {
   padding-right: 20px;
+}
+
+.upfront-tabs .add-tab {
+  display: inline-block;
+}
+
+.upfront-tabs .tabs-tab {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.upfront-tabs .tabs-tab-active {
+  text-decoration: underline;
+}
+
+.upfront-tabs .tabs-tab[contenteditable=true] {
+  text-decoration: none;
+  background: #ddd;
+}
+
+.upfront-tabs .tab-content {
+  display: none;
+}
+
+.upfront-tabs .tab-content-active {
+  display: block;
 }

@@ -23,8 +23,9 @@
           this.model = new UtabsModel({properties: this.model.get('properties')});
         }
         this.events = _.extend({}, this.events, {
-          'click .single-video': 'setType',
-          'click .multiple-videos': 'setType'
+          'click .add-tab': 'addTab',
+          'click .tabs-tab': 'onTabClick',
+          'keydown .tabs-tab[contenteditable=true]': 'onKeydown'
         });
         this.delegateEvents();
 
@@ -33,6 +34,42 @@
         this.model.get("properties").bind("remove", this.render, this);
 
         Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
+      },
+
+      addTab: function() {
+        this.property('tabs').push({
+          title: 'Tab ' + (1 + this.property('tabs_count')),
+          content: 'Content ' + (1 + this.property('tabs_count'))
+        });
+        this.property('tabs_count', this.property('tabs').length, false);
+      },
+
+      onTabClick: function(event) {
+        var $tab = $(event.currentTarget);
+        var contentId;
+
+        if ($tab.hasClass('tabs-tab-active')) {
+          $tab.attr('contenteditable', true);
+          $tab.focus();
+          return;
+        }
+
+        $tab.addClass('tabs-tab-active');
+        $tab.siblings().removeClass('tabs-tab-active').removeAttr('contenteditable');
+
+        contentId = $tab.data('content-id');
+        $('.tab-content').removeClass('tab-content-active');
+        $('#' + contentId).addClass('tab-content-active');
+      },
+
+      onKeydown: function(event) {
+        var id;
+        if (event.keyCode === 13) {
+          $(event.currentTarget).removeAttr('contenteditable');
+          id = $(event.currentTarget).data('content-id').split('-').pop();
+          this.property('tabs')[id].title = $(event.currentTarget).text();
+          event.preventDefault();
+        }
       },
 
       get_content_markup: function () {
@@ -98,87 +135,15 @@
     });
 
     var TabsSettings = Upfront.Views.Editor.Settings.Settings.extend({
-      initialize: function () {
-        this.panels = _([
-          new Upfront.Views.Editor.Settings.Panel({
-            className: 'utabs-settings-panel',
-            model: this.model,
-            label: "Appearance",
-            title: "Select settings",
-            settings: [
-              new Upfront.Views.Editor.Settings.Item({
-                model: this.model,
-                title: "Display style",
-                fields: [
-                  new Upfront.Views.Editor.Field.Checkboxes({
-                    className: 'inline-checkbox',
-                    model: this.model,
-                    property: 'check_theme_style',
-                    label: "",
-                    values: [
-                      { label: "", value: 'check_theme_style' },
-                    ]
-                  }),
-                  new Upfront.Views.Editor.Field.Select({
-                    model: this.model,
-                    property: 'theme_style',
-                    label: "Theme Styles",
-                    values: [
-                      { label: "Tabbed", value: 'options1' },
-                      { label: "Simple text", value: 'options2' },
-                      { label: "Button Tabs", value: 'options3' },
-                    ]
-                  }),
-                  new Upfront.Views.Editor.Field.Checkboxes({
-                    className: 'inline-checkbox',
-                    model: this.model,
-                    property: 'check_custom_style',
-                    label: "",
-                    values: [
-                      { label: "", value: 'check_custom_style' },
-                    ]
-                  }),
-                  new Upfront.Views.Editor.Field.Select({
-                    model: this.model,
-                    property: 'custom_style',
-                    label: "Custom",
-                    values: [
-                      { label: "Tabbed", value: 'options1' },
-                      { label: "Simple text", value: 'options2' },
-                      { label: "Button Tabs", value: 'options3' },
-                    ]
-                  }),
-                  new Upfront.Views.Editor.Field.Color({
-                    model: this.model,
-                    property: 'active_tab_color',
-                    label: 'Active tab:'
-                  }),
-                  new Upfront.Views.Editor.Field.Color({
-                    model: this.model,
-                    property: 'active_tab_text_color',
-                    label: 'Active tab text:'
-                  }),
-                  new Upfront.Views.Editor.Field.Color({
-                    model: this.model,
-                    property: 'inactive_tab_color',
-                    label: 'Inactive tab:'
-                  }),
-                  new Upfront.Views.Editor.Field.Color({
-                    model: this.model,
-                    property: 'inactive_tab_text_color',
-                    label: 'Inactive tab text:'
-                  })
-                ]
-              })
-            ]
-          })
-        ]);
-      },
       // initialize: function () {
         // this.panels = _([
-          // new AppearancePanel({model: this.model})
         // ]);
       // },
+      initialize: function () {
+        this.panels = _([
+          new AppearancePanel({model: this.model})
+        ]);
+      },
 
       get_title: function () {
         return "Tabs settings";
@@ -186,54 +151,111 @@
     });
 
     var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
-      className: 'utabs-settings',
+      className: 'utabs-settings-panel',
       initialize: function () {
-        var render_all = function(){
-            this.settings.invoke('render');
-          },
-          me = this,
-          SettingsItem =  Upfront.Views.Editor.Settings.Item,
-          Fields = Upfront.Views.Editor.Field
-        ;
+        var render_all,
+          me = this;
+
+        render_all = function(){
+          this.settings.invoke('render');
+        }; 
 
         this.model.on('doit', render_all, this);
 
         this.settings = _([
-          new SettingsItem({
-            className: 'optional-field align-center',
-            title: 'Display Style',
+          new Upfront.Views.Editor.Settings.Item({
+            model: this.model,
+            title: "Display style",
             fields: [
-              new Fields.Radios({
-              model: this.model,
-              property: 'display_style',
-              layout: "horizontal",
-              className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
-              values: [
-                  {
-                  label: 'Gallery',
-                  value: 'gallery',
-                  icon: 'display-style-gallery'
-                },
-                {
-                  label: 'List',
-                  value: 'list',
-                  icon: 'display-style-list'
-                }
+              new Upfront.Views.Editor.Field.Radios({
+                className: 'inline-radios',
+                model: this.model,
+                property: 'style_type',
+                label: "",
+                values: [
+                  { label: "", value: 'theme_defined' },
+                  { label: "", value: 'custom' }
                 ]
               }),
+              new Upfront.Views.Editor.Field.Select({
+                model: this.model,
+                property: 'theme_style',
+                label: "Theme Styles",
+                values: [
+                  { label: "Tabbed", value: 'tabbed' },
+                  { label: "Simple text", value: 'simple_text' },
+                  { label: "Button Tabs", value: 'button_tabs' },
+                ]
+              }),
+              new Upfront.Views.Editor.Field.Select({
+                model: this.model,
+                property: 'custom_style',
+                label: "Custom",
+                values: [
+                  { label: "Tabbed", value: 'tabbed' },
+                  { label: "Simple text", value: 'simple_text' },
+                  { label: "Button Tabs", value: 'button_tabs' },
+                ]
+              }),
+              new Upfront.Views.Editor.Field.Color({
+                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
+                model: this.model,
+                property: 'active_tab_color',
+                label: 'Active tab:'
+              }),
+              new Upfront.Views.Editor.Field.Color({
+                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
+                model: this.model,
+                property: 'active_tab_text_color',
+                label: 'Active tab text:'
+              }),
+              new Upfront.Views.Editor.Field.Color({
+                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
+                model: this.model,
+                property: 'inactive_tab_color',
+                label: 'Inactive tab:'
+              }),
+              new Upfront.Views.Editor.Field.Color({
+                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
+                model: this.model,
+                property: 'inactive_tab_text_color',
+                label: 'Inactive tab text:'
+              })
             ]
           })
         ]);
 
-        this.$el
-          .on('change', 'input[name=display_style]', function(e){
-            me.changeDisplayStyle(e);
-          })
-          .on('change', 'input[name=thumbWidth]', function(e) {
-            me.onThumbChangeSize(e);
-          })
-        ;
-        this.on('concealed', this.setFieldEvents, this);
+        this.$el .on('change', 'input[name=style_type]', function(e){
+          me.onStyleTypeChange(e);
+        });
+        this.$el .on('change', 'input[name=custom_style]', function(e){
+          me.onCustomStyleChange(e);
+        });
+      },
+
+      onStyleTypeChange: function(event) {
+        this.property('style_type', $(event.currentTarget).val());
+        this.setColorChooserVisibility();
+      },
+
+      onCustomStyleChange: function(event) {
+        this.property('custom_style', $(event.currentTarget).val());
+        this.setColorChooserVisibility();
+      },
+
+      setColorChooserVisibility: function() {
+        $('.upfront-field-wrap-color').css('visibility', 'hidden');
+
+        if (this.property('style_type') === 'theme_defined') {
+          return;
+        }
+
+        if (this.property('custom_style') === 'simple_text') {
+          $('.text-color').css('visibility', 'visible');
+          return;
+        }
+
+        $('.upfront-field-wrap-color').css('visibility', 'visible');
       },
 
       get_label: function () {
@@ -251,9 +273,15 @@
           return this.model.set_property(name, value, silent);
         }
         return this.model.get_property_value_by_name(name);
+      },
+
+      render: function() {
+        AppearancePanel.__super__.render.apply(this, arguments);
+        _.delay(function(self) {
+          self.setColorChooserVisibility();
+        }, 1, this);
       }
     });
-
 
     Upfront.Application.LayoutEditor.add_object("Utabs", {
       "Model": UtabsModel,
