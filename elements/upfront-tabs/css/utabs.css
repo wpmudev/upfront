@@ -1,0 +1,26 @@
+#settings .utabs-settings-panel .upfront-settings_panel_scroll {
+  min-width: 280px;
+}
+.utabs-settings-panel .upfront-field-wrap-select .upfront-field-label {
+  display: inline-block;
+  vertical-align: middle;
+  width: 87px;
+}
+
+.utabs-settings-panel .upfront-field-wrap .upfront-field-label {
+  font-size: 12px;
+}
+
+.utabs-settings-panel .upfront-field-select {
+  vertical-align: middle;
+  width: 117px;
+}
+
+.utabs-settings-panel .inline-checkbox {
+  float: left;
+  margin-top: 2px;
+}
+
+.utabs-settings-panel .upfront-field-select .upfront-field-select-value {
+  padding-right: 20px;
+}
