@@ -2,6 +2,7 @@
 
 	var TYPES = {
 		PLAIN: "plain",
+		SIMPLE: "simple",
 		META: "meta"
 	};
 
@@ -9,6 +10,96 @@
 		start: function () {},
 		stop: function () {}
 	};
+
+	var SimpleEditor = Backbone.View.extend({
+
+		element: false,
+		editor: false,
+
+		initialize: function(options){
+			this.element = this.findElement();
+		},
+
+		findElement: function(){
+			var el = false,
+				element = this.options.element
+			;
+
+			if(!element)
+				return false;
+
+			if(element instanceof jQuery)
+				return element;
+			if(element instanceof HTMLElement)
+				return $(element);
+
+			if(_.isString(element)){
+				el = $(element);
+				if(!el.length)
+					return false;
+				return el.first();
+			}
+			return false;
+		},
+
+		start: function() {
+			var me = this,
+				el = this.findElement()
+			;
+
+			if(!el)
+				return console.log('No valid editor element.');
+
+			if(el.attr('contenteditable'))
+				return;
+
+			var editorNode = el.attr('contenteditable', true).addClass('ueditable').get(0);
+			
+			//Start CKE
+			this.editor = CKEDITOR.inline(editorNode, {
+				floatSpaceDockedOffsetY: 0
+			});
+
+			//Prevent dragging from editable areas
+			var draggable = el.closest('.ui-draggable'),
+				cancel = draggable.draggable('option', 'cancel')
+			;
+			if(_.isString(cancel) && cancel.indexOf('.ueditable') == -1){
+				draggable.draggable('option', 'cancel', cancel + ',.ueditable');
+				console.log('Editable areas no draggable anymore.');
+			}
+
+			this.editor.on('blur', function(){
+				me.trigger('blur');
+			});
+
+			this.editor.on('focus', function(){
+				me.trigger('focus');
+			});
+
+			this.editor.on("instanceReady", function () {
+				el.focus();
+				me.editor.focus();
+				me.trigger('ready');
+			});
+		},
+
+		stop: function(){
+			var el = this.findElement();			
+			if (this.editor && this.editor.destroy)
+				this.editor.destroy();
+			el.removeAttr('contenteditable').removeClass('ueditable');			
+		},
+
+		getContents: function(){
+			if(this.editor)
+				return this.editor.getData();
+			var el = findElement();
+			if(el)
+				return el.html();
+			return false;
+		}
+	});
 
 	var Editor_Plain = function (options) {
 		var _defaults = {
@@ -598,7 +689,6 @@
 					//Recalculate limits of the sidebar
 					me.prepareBar();
 				});
-
 			});
 		},
 		positionEditor: function(selection){
@@ -1694,6 +1784,7 @@
 			if (old) old.stop();
 			if (type == TYPES.PLAIN) return new Editor_Plain(options);
 			if (type == TYPES.META) return new Editor_Meta(options);
+			if (type == TYPES.SIMPLE) return new SimpleEditor(options);
 			return false;
 		};
 
