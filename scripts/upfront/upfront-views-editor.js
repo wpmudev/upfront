@@ -2921,8 +2921,9 @@ define(_template_files, function () {
 				panel.on("upfront:settings:panel:close", me.close_panel, me);
 				panel.on("upfront:settings:panel:refresh", me.refresh_panel, me);
 				panel.parent_view = me;
-				me.$el.append(panel.el)
+				me.$el.append(panel.el);
 			});
+
 			this.toggle_panel(this.panels.first());
 			
 			var label_width = this.panels.first().$el.find('.upfront-settings_label').outerWidth(),
@@ -2939,6 +2940,8 @@ define(_template_files, function () {
 				})
 				.addClass('upfront-ui')
 			;
+
+			this.trigger('open');
 		},
 
 		set_title: function (title) {
