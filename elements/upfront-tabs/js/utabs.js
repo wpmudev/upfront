@@ -25,7 +25,8 @@
         this.events = _.extend({}, this.events, {
           'click .add-tab': 'addTab',
           'click .tabs-tab': 'onTabClick',
-          'keydown .tabs-tab[contenteditable=true]': 'onKeydown'
+          'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
+          'dblclick .tab-content-active': 'onContentDblclick'
         });
         this.delegateEvents();
 
@@ -34,6 +35,7 @@
         this.model.get("properties").bind("remove", this.render, this);
 
         Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
+        this.on('deactivated', this.stopEdit, this);
       },
 
       addTab: function() {
@@ -57,12 +59,40 @@
         $tab.addClass('tabs-tab-active');
         $tab.siblings().removeClass('tabs-tab-active').removeAttr('contenteditable');
 
+        // If active content is edited save edits & destroy editor.
+        if (this.$el.find('.tab-content-active').attr('contenteditable') === true) {
+          this.stopEdit();
+        }
         contentId = $tab.data('content-id');
         $('.tab-content').removeClass('tab-content-active');
         $('#' + contentId).addClass('tab-content-active');
       },
 
-      onKeydown: function(event) {
+      onContentDblclick: function(event) {
+        var $content = $(event.currentTarget);
+
+        if ($content.attr('contenteditable') === true) return;
+
+        $content.attr('contenteditable', true)
+          .addClass('upfront-object');
+
+        this.editor = CKEDITOR.inline($content[0]);
+        $content.focus();
+        this.$el.parent().parent().parent().draggable('disable');
+      },
+
+      stopEdit: function() {
+        var $content = this.$el.find('.tab-content-active');
+        var tabId = $content.attr('id').split('-').pop();
+        this.property('tabs')[tabId].content = $content.html();
+        $content.removeAttr('contenteditable').
+          removeClass('upfront-object');
+        if (this.editor && this.editor.destroy) this.editor.destroy();
+        this.$el.parent().parent().parent().draggable('enable');
+        this.delegateEvents();
+      },
+
+      onTabKeydown: function(event) {
         var id;
         if (event.keyCode === 13) {
           $(event.currentTarget).removeAttr('contenteditable');
