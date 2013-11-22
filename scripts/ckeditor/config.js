@@ -124,6 +124,9 @@ CKEDITOR.on("instanceReady", function (e) {
 	}
 	editor.on("key", attach_image_insertion_bits);
 	editor.on("insertHtml", attach_image_insertion_bits);
+	editor.on("destroy", function () {
+		$(".upfront-image-attachment-bits").remove();
+	});
 	//setInterval(attach_image_insertion_bits, 1000);
 	attach_image_insertion_bits();
 	
