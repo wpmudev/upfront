@@ -37,6 +37,10 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 	var MapModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
 			var properties = _.clone(Upfront.data.umaps.defaults);
+
+			DEFAULTS.center = properties.map_center; // Keep the center position as set on PHP side
+			if (navigator && navigator.geolocation) delete(properties.map_center); // ... but do NOT initialize it as a model property
+			
 			properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
 			this.init_properties(properties);
 		}
