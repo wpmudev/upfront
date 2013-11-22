@@ -1500,7 +1500,7 @@
 			var me = this;
 			this.$el.empty();
 			if (!this.model.length) {
-				this.$el.append('<p>Nothing here, move on</p>');
+				this.$el.append('&nbsp;');
 			} else {
 				this.model.each(function (model) {
 					var view = new MediaItem_View({model: model});

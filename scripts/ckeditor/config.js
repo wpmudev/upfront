@@ -17,7 +17,7 @@ CKEDITOR.editorConfig = function( config ) {
 				name: 'basicstyles',
 				items: [ 
 					'Bold', 'Italic', 'AlignmentTypeToggle',
-					'ListTypeToggle', 'Link', 'Blockquote', 'Image', 'KitchenSink'
+					'ListTypeToggle', 'Link', 'Blockquote', 'KitchenSink'
 				] 
 			},
 			'/',
@@ -25,7 +25,7 @@ CKEDITOR.editorConfig = function( config ) {
 				name: 'kitchensink',
 				items: [ 
 					'Format', 'Underline', 'Upfront_ColorSelect', 'Upfront_MoreTag',
-					'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'ExtrasSelect','BulletedList', 'NumberedList' // <-- Hidden
+					'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'ExtrasSelect', 'BulletedList', 'Image', 'NumberedList' // <-- Hidden
 				]
 			}
 	];
@@ -67,4 +67,75 @@ CKEDITOR.on('instanceReady', function(e){
 	var diff = height - $editor.outerHeight();
 	$editor.css('top', (parseInt(top) + parseInt(diff)).toString() + 'px' );
 
+
+	// Toggle editor toolbar show/hide
+	e.editor.on("selectionCheck", function (e) { // Undocumented event
+		if (e.data.getSelectedText && e.data.getSelectedText().length) $contain.show();
+		else $contain.hide();
+	});
+	/*
+	e.editor.on("afterCommandExec", function (e) {
+		if (e.data && e.data.name && "showhideKitchenSink" === e.data.name) return false;
+		$contain.hide();
+	});
+	*/
+	e.editor.on("key", function (e) {
+		$contain.hide();
+	});
+	$contain.hide();
+
 });
+
+// Image insertion blocks yay
+(function ($) {
+CKEDITOR.on("instanceReady", function (e) {
+	var editor = e.editor,
+		selection = editor.getSelection(),
+		ranges = []
+	;
+	function attach_image_insertion_bits () {
+		var $root = $(editor.container.$),
+			root_offset = $root.offset(),
+			$body = $("body"),
+			$blocks = $root.find("p:not(.upfront-inserted_image-wrapper),div,ul,ol")
+		;
+		ranges = [];
+		$(".upfront-image-attachment-bits").remove();
+		$blocks.each(function (idx) {
+			var $block = $(this),
+				block_offset = $block.offset(),
+				range = editor.createRange(),
+				element = new CKEDITOR.dom.element(this)
+			;
+			range.moveToElementEditablePosition(element, true);
+			ranges[idx] = range;
+
+			$body.append(
+				"<div data-idx='" + idx + "' class='upfront-image-attachment-bits' style='top:" + (block_offset.top-14) + "px;left:" + (root_offset.left-18) + "px;' />"
+			);
+			$block
+				.on("mouseenter", function () {
+					$('.upfront-image-attachment-bits').hide();
+					var $handle = $('.upfront-image-attachment-bits[data-idx="' + idx + '"]');
+					if ($handle.length) $handle.show();
+				})
+			;
+		});
+	}
+	editor.on("key", attach_image_insertion_bits);
+	editor.on("insertHtml", attach_image_insertion_bits);
+	//setInterval(attach_image_insertion_bits, 1000);
+	attach_image_insertion_bits();
+	
+	$(document).on("click", ".upfront-image-attachment-bits", function (e) {
+		var $me = $(this),
+			idx = $me.attr("data-idx"),
+			range = ranges[idx] || false
+		;
+		editor.focus();
+		if (range) selection.selectRanges([range]);
+		editor.execCommand('image');
+		return false;
+	});
+});
+})(jQuery);

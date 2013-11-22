@@ -5971,3 +5971,15 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 .upfront-edit-content .upfront-entity-settings_trigger {
 	display: none;
 }
+
+
+.upfront-image-attachment-bits {
+	display: none;
+	position: absolute;
+	background-image: url('../img/uf-ui-sprite.svg?v=20130909');
+	background-repeat: no-repeat;
+	background-position: -516px -535px;
+	height: 24px;
+	width: 24px;
+	z-index: 1;
+}

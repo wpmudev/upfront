@@ -603,7 +603,7 @@ a.cke_button__upfront_colorselect{
 ----- Toggle states for multiple-state items -----
 */
 .cke_button__bulletedlist, .cke_button__numberedlist,
-.cke_button__justifyleft, .cke_button__justifyright, .cke_button__justifycenter 
+.cke_button__justifyleft, .cke_button__justifyright, .cke_button__justifycenter, .cke_button__image 
 {
 	/* We're adding the commands to kitchensink, but hiding them in favor of toggleables. */
 	display: none !important; 
