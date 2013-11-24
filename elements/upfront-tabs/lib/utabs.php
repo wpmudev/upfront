@@ -14,6 +14,7 @@ class Upfront_UtabsView extends Upfront_Object {
       'class' =>  'upfront-tabs',
       'tabs' => array($defaultTab),
       'tabs_count' => 1,
+      'tabs_fixed_width' => 'auto',
 
       'style_type' => 'theme_defined',
       'theme_style' => 'tabbed',

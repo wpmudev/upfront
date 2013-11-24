@@ -1,9 +1,17 @@
-<div class="upfront-output-object upfront-youtube-container" id="<?php echo $element_id ?>">
-  <div class="tabs-menu">
-    <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
-    <div class="tabs-tab <?php if($i === 0) { ?>tabs-tab-active<?php } ?>" data-content-id="<?php echo $element_id ?>-<?php echo $i ?>"><?php echo $tabs[$i]['title'] ?></div>
-    <?php } ?>
-    <div class="add-tab">[+]</div>
+<div class="upfront-output-object upfront-tabs-container  <?php if($style_type === 'theme_defined') { ?><?php echo $theme_style ?><?php } ?>" id="<?php echo $element_id ?>">
+  <div class="tabs-menu-wrapper">
+    <div class="tabs-menu">
+      <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
+      <div class="tabs-tab <?php if($i === 0) { ?>tabs-tab-active<?php } ?>" data-content-id="<?php echo $element_id ?>-<?php echo $i ?>">
+        <div class="inner-box">
+              <span style="width: <?php echo $tabs_fixed_width ?>"><?php echo $tabs[$i]['title'] ?></span>
+        </div>
+      </div>
+      <?php } ?>
+      <?php if ($show_add) { ?>
+      <div class="add-tab">+</div>
+      <?php } ?>
+    </div>
   </div>
   <div class="tabs-content" >
     <?php for ($i = 0; $i < $tabs_count; $i++) { ?>

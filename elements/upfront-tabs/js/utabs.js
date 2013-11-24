@@ -46,6 +46,34 @@
         this.property('tabs_count', this.property('tabs').length, false);
       },
 
+      fixTabWidth: function() {
+        // Space for tabs is equal to: whole el width - add tab button - padding
+        var tabSpace = this.$el.width() - 36 - 30;
+        var tabsWidth = 0;
+        var tabWidth = 'auto';
+        var spanWidth;
+        var padding = 36;
+        if (this.property('theme_style') === 'simple_text') padding = 26;
+        if (this.property('theme_style') === 'button_tabs') {
+          padding = 47;
+          tabSpace = tabSpace + 5;
+        }
+        this.$el.find('.tabs-menu span').css('width', 'auto');
+        this.$el.find('.tabs-tab').each(function() {
+          tabsWidth += $(this).outerWidth();
+        });
+
+        if (tabsWidth > tabSpace) {
+          tabWidth = (tabSpace - 10) / this.property('tabs_count');
+          spanWidth = Math.floor(tabWidth) - padding + 'px';
+          this.property('tabs_fixed_width', spanWidth);
+          this.$el.find('.tabs-menu span').css('width', spanWidth);
+        } else {
+          this.property('tabs_fixed_width', 'auto');
+          this.$el.find('.tabs-menu span').css('width', 'auto');
+        }
+      },
+
       onTabClick: function(event) {
         var $tab = $(event.currentTarget);
         var contentId;
@@ -95,10 +123,11 @@
       onTabKeydown: function(event) {
         var id;
         if (event.keyCode === 13) {
+          event.preventDefault();
           $(event.currentTarget).removeAttr('contenteditable');
           id = $(event.currentTarget).data('content-id').split('-').pop();
           this.property('tabs')[id].title = $(event.currentTarget).text();
-          event.preventDefault();
+          this.fixTabWidth();
         }
       },
 
@@ -106,7 +135,7 @@
         var rendered,
           props = this.extract_properties();
 
-        rendered = this.tabsTpl(this.extract_properties());
+        rendered = this.tabsTpl(_.extend(this.extract_properties(), {show_add: true}));
 
         return rendered;
       },
@@ -120,13 +149,13 @@
       },
 
       onResizeStop: function(view, model, ui) {
-        var width;
-        //TODO allow adding more tabs depending on width of element
-        if(this.property('youtube_status') !== 'starting'){
-          width = this.$el.find('.upfront-object-content').width();
-          this.property('player_height', parseInt(width/1.641, 10));
-          this.property('player_width', width, false);
-        }
+        this.fixTabWidth();
+      },
+
+      on_render: function() {
+        _.delay(function(self) {
+          self.fixTabWidth()
+        }, 10, this);
       },
 
       property: function(name, value, silent) {
@@ -258,6 +287,9 @@
         this.$el .on('change', 'input[name=style_type]', function(e){
           me.onStyleTypeChange(e);
         });
+        this.$el .on('change', 'input[name=theme_style]', function(e){
+          me.onThemeStyleChange(e);
+        });
         this.$el .on('change', 'input[name=custom_style]', function(e){
           me.onCustomStyleChange(e);
         });
@@ -271,6 +303,10 @@
       onCustomStyleChange: function(event) {
         this.property('custom_style', $(event.currentTarget).val());
         this.setColorChooserVisibility();
+      },
+
+      onThemeStyleChange: function(event) {
+        this.property('theme_style', $(event.currentTarget).val(), false);
       },
 
       setColorChooserVisibility: function() {
