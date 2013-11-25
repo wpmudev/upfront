@@ -46,6 +46,28 @@
 .upfront-tabs-container .tabs-tab {
   float: left;
   cursor: pointer;
+  position: relative;
+}
+
+.upfront-tabs-container .tabs-tab i {
+  display: block;
+  width: 14px;
+  height: 14px;
+  color: white;
+  background: red;
+  border-radius: 20px;
+  font-style: normal;
+  line-height: 14px;
+  text-align: center;
+  font-weight: bold;
+  position: absolute;
+  right: -5px;
+  top: 0px;
+  visibility: hidden;
+}
+
+.upfront-tabs-container .tabs-tab-active:hover i {
+  visibility: visible;
 }
 
 .upfront-tabs-container .tabs-tab-active {
@@ -66,6 +88,8 @@
 
 .upfront-tabs-container .tabs-tab .inner-box {
   padding: 0 15px;
+  height: 30px;
+  line-height: 30px;
 }
 
 .upfront-tabs-container .tabs-tab {

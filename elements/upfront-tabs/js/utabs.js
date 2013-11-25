@@ -26,7 +26,8 @@
           'click .add-tab': 'addTab',
           'click .tabs-tab': 'onTabClick',
           'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
-          'dblclick .tab-content-active': 'onContentDblclick'
+          'dblclick .tab-content-active': 'onContentDblclick',
+          'click i': 'deleteTab'
         });
         this.delegateEvents();
 
@@ -44,6 +45,14 @@
           content: 'Content ' + (1 + this.property('tabs_count'))
         });
         this.property('tabs_count', this.property('tabs').length, false);
+      },
+
+      deleteTab: function(event) {
+        var element = $(event.currentTarget);
+        var tab = element.parents('.tabs-tab');
+        var id = $(tab).data('content-id').split('-').pop();
+        this.property('tabs').splice(id, 1);
+        this.property('tabs_count', this.property('tabs_count') - 1, false);
       },
 
       fixTabWidth: function() {
@@ -80,6 +89,7 @@
 
         if ($tab.hasClass('tabs-tab-active')) {
           $tab.attr('contenteditable', true);
+          $tab.find('span').css('width', 'auto');
           $tab.focus();
           return;
         }
@@ -128,16 +138,23 @@
           id = $(event.currentTarget).data('content-id').split('-').pop();
           this.property('tabs')[id].title = $(event.currentTarget).text();
           this.fixTabWidth();
+          this.addTooltips();
+          if ($(event.currentTarget).find('i').size() < 1) {
+            $(event.currentTarget).append('<i>x</i>');
+          }
         }
       },
 
       get_content_markup: function () {
-        var rendered,
-          props = this.extract_properties();
-
-        rendered = this.tabsTpl(_.extend(this.extract_properties(), {show_add: true}));
-
-        return rendered;
+        return this.tabsTpl(
+          _.extend(
+            this.extract_properties(),
+            {
+              show_add: true,
+              show_remove: this.property('tabs_count') > 1 ? true : false
+            }
+          )
+        );
       },
 
       extract_properties: function() {
@@ -153,9 +170,20 @@
       },
 
       on_render: function() {
+        // Tabs won't be rendered in time if you do not delay.
         _.delay(function(self) {
-          self.fixTabWidth()
+          self.fixTabWidth();
+          self.addTooltips();
         }, 10, this);
+      },
+
+      addTooltips: function() {
+        $('.tabs-tab').each(function() {
+          var span = $(this).find('span')[0];
+          if (span.offsetWidth < span.scrollWidth) {
+            $(this).attr('title', $(span).text().trim());
+          }
+        });
       },
 
       property: function(name, value, silent) {
@@ -194,10 +222,6 @@
     });
 
     var TabsSettings = Upfront.Views.Editor.Settings.Settings.extend({
-      // initialize: function () {
-        // this.panels = _([
-        // ]);
-      // },
       initialize: function () {
         this.panels = _([
           new AppearancePanel({model: this.model})
@@ -218,6 +242,7 @@
         render_all = function(){
           this.settings.invoke('render');
         }; 
+        _.bindAll(this, 'onActiveTabColorChange', 'onInactiveTabColorChange', 'onActiveTabTextColorChange', 'onInactiveTabTextColorChange');
 
         this.model.on('doit', render_all, this);
 
@@ -260,25 +285,41 @@
                 className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
                 model: this.model,
                 property: 'active_tab_color',
-                label: 'Active tab:'
+                label: 'Active tab:',
+                spectrum: {
+                  preferredFormat: "hsl",
+                  change: this.onActiveTabColorChange
+                }
               }),
               new Upfront.Views.Editor.Field.Color({
                 className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
                 model: this.model,
                 property: 'active_tab_text_color',
-                label: 'Active tab text:'
+                label: 'Active tab text:',
+                spectrum: {
+                  preferredFormat: "hsl",
+                  change: this.onActiveTabTextColorChange
+                }
               }),
               new Upfront.Views.Editor.Field.Color({
                 className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
                 model: this.model,
                 property: 'inactive_tab_color',
-                label: 'Inactive tab:'
+                label: 'Inactive tab:',
+                spectrum: {
+                  preferredFormat: "hsl",
+                  change: this.onInactiveTabColorChange
+                }
               }),
               new Upfront.Views.Editor.Field.Color({
                 className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
                 model: this.model,
                 property: 'inactive_tab_text_color',
-                label: 'Inactive tab text:'
+                label: 'Inactive tab text:',
+                spectrum: {
+                  preferredFormat: "hsl",
+                  change: this.onInactiveTabTextColorChange
+                }
               })
             ]
           })
@@ -296,12 +337,12 @@
       },
 
       onStyleTypeChange: function(event) {
-        this.property('style_type', $(event.currentTarget).val());
+        this.property('style_type', $(event.currentTarget).val(), false);
         this.setColorChooserVisibility();
       },
 
       onCustomStyleChange: function(event) {
-        this.property('custom_style', $(event.currentTarget).val());
+        this.property('custom_style', $(event.currentTarget).val(), false);
         this.setColorChooserVisibility();
       },
 
@@ -309,7 +350,24 @@
         this.property('theme_style', $(event.currentTarget).val(), false);
       },
 
+      onActiveTabColorChange: function(event) {
+        this.property('active_tab_color', event.toHslString(), false);
+      },
+
+      onActiveTabTextColorChange: function(event) {
+        this.property('active_tab_text_color', event.toHslString(), false);
+      },
+
+      onInactiveTabColorChange: function(event) {
+        this.property('inactive_tab_color', event.toHslString(), false);
+      },
+
+      onInactiveTabTextColorChange: function(event) {
+        this.property('inactive_tab_text_color', event.toHslString(), false);
+      },
+
       setColorChooserVisibility: function() {
+        // Use visibility so that settings box will not resize.
         $('.upfront-field-wrap-color').css('visibility', 'hidden');
 
         if (this.property('style_type') === 'theme_defined') {
