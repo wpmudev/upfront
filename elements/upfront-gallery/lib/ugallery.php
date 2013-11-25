@@ -58,7 +58,13 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'type' => 'image',
 				'delegate' => 'a',
 				'gallery' => array(
-					'enabled' => 'true'
+					'enabled' => 'true',
+					'tCounter' => '<span class="mfp-counter">%curr% / %total%</span>'
+				),
+				'image' => array(
+					'markup' => upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/lightbox.html'),
+					'titleSrc' => 'title',
+					'verticalFit' => true
 				)
 			);
 			$markup .= '
@@ -135,6 +141,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['ugallery'] = array(
 			'defaults' => self::default_properties(),
 			'template' => upfront_get_template_url('ugallery', upfront_element_url('tpl/ugallery.html', dirname(__FILE__))),
+			'lightboxTpl' => upfront_get_template('lightbox', array(), dirname(dirname(__FILE__)) . '/tpl/lightbox.html'),
 			'postTypes' => $post_types,
 			'grids' => array(),
 			'label_names' => $labels_names,
@@ -161,12 +168,12 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
 			'thumbWidth' => 140,
 			'thumbHeight' => 140,
-			'showTitle' => array(), 
-			'showDescription' =>array(), 
-			'lbTitle' => array(true), //This is a checked checkbox
-			'lbDescription' => array(true),
+			'captionPosition' => 'above', // 'above' | 'over' | 'nocaption'
+			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
+			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'lbLoop' => array(),
-			'lockThumbProportions' => true
+			'lockThumbProportions' => true,
+			'linkTo' => 'image' // 'url' | 'image'
         );
     }
 

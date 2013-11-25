@@ -141,6 +141,15 @@ a.open-media-gallery:hover i {
 	padding: 0 15px;
 }
 
+#settings div.upfront-settings-item-content {
+	padding-bottom: 10px;
+}
+
+#settings .field-caption_trigger {
+	text-align: center;
+	margin:0;
+}
+
 .upfront-image {
 }
 .uimage-status-starting {
@@ -490,26 +499,6 @@ a.open-media-gallery:hover i {
 	transform: rotate(270deg) !important;	
 }
 
-a.uimage_edit_toggle {
-	opacity: .9;
-	/*border: 1px solid #2582BD;*/
-	box-shadow: inset 0 0 0 1px #2582BD;
-	background: #288ACA -moz-linear-gradient(-45deg, #2C9BE3 0%, #2C9BE3 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
-	background: #288ACA -webkit-gradient(linear, left top, right bottom, color-stop(0%,#2C9BE3), color-stop(50%,#2C9BE3), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
-	background: #288ACA -webkit-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
-	background: #288ACA -o-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
-	background: #288ACA -ms-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
-	background: #288ACA linear-gradient(135deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
-}
-
-a.uimage_edit_toggle:hover {
-	opacity: 1;
-}
-
-a.uimage_edit_toggle:before {
-	background-position: -260px -100px;
-}
-
 #uimage-canvas{
 	z-index: 10;
 }
@@ -583,3 +572,80 @@ display:none;
 #upfront-upload-image {
 	display:none;
 }
+
+
+.uimage-controls {
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.ui-resizable-autohide .upfront-active_entity .uimage-controls .upfront-inline-panel-top,
+.uimage-controls .upfront-inline-panel-top {
+	-webkit-transform: translate(0,0);
+	display: block;
+}
+
+.uimage-controls .upfront-inline-panel-subitem .upfront-inline-panel-item {
+	-webkit-transform: translate(0,0);
+	display: none;
+}
+
+.uimage-controls .upfront-inline-panel-subitem-active .upfront-inline-panel-subitem .upfront-inline-panel-item {
+	display: block;
+}
+
+.ui-resizable-autohide .uimage-controls .upfront-inline-panel-top {
+	display: none;
+}
+
+
+div.uckeditor-textformat {
+	position: absolute;
+	top: 38px;
+	left: 170px;
+	background: #577c9e!important;
+	-webkit-border-radius: 2px;
+	-webkit-border-top-left-radius: 0;
+	-moz-border-radius: 2px;
+	-moz-border-radius-topleft: 0;
+	border-radius: 2px;
+	border-top-left-radius: 0;
+	padding: 10px 5px 5px;
+	color:#fff;
+	width: 170px;
+	display: none;
+}
+
+.uckeditor-textformat>div {
+	padding: 0 5px;
+}
+
+.uckeditor-textformat span{
+	color: #cee1f2;
+	line-height: 1.8em;
+}
+
+div.uckeditor-textcolor {
+	margin-bottom: 5px;
+}
+
+div.sp-preview {
+	border: 1px solid #335b80;
+	border-radius:2px;
+	width: 20px !important;
+}
+
+a.uckeditor-select,
+a.sp-replacer {
+	color: #cee1f2;
+	float: right;
+	width: 80px;
+	text-align: right;
+}
+a.uckeditor-select:hover,
+a.sp-replacer:hover .sp-texthint{
+	color: #1fcd8f;
+}
+

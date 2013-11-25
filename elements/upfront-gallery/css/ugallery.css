@@ -9,7 +9,7 @@
 	display: inline-block;
 	vertical-align: top;
 	margin: 0 10px 10px 0;
-	font-family: 'Source Sans Pro', sans-serif;
+	overflow: visible;
 }
 
 .ugallery .upfront-image-resizethiselement {
@@ -32,15 +32,18 @@
 	margin-bottom: 10px;
 }
 
-.ugallery_addmore { 	
-	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-	background: #accae6;
-	padding-top: 35%;
-	cursor: pointer;
+.ugallery_addmore {
 	text-align: center;
 	font-size: 	15px;
 	line-height: 1.2em;
 	color:#fff;
+	position: absolute;
+	top: 0;
+	left:0;
+	bottom:0;
+	right:0;
+	margin: auto;
+	height: 40px;
 }
 .ugallery_lb_texts {
 	display: none;
@@ -51,18 +54,31 @@
 	content: '+';
 	text-align: center;
 	font-size: 32px;
+	cursor: pointer;
 }
 
 .ugallery_sorting .ugallery_addmore {
 	display:none;
 }
 
-.ugallery_addmore:hover{
+.ugallery_addmore_wrapper:hover{
 	background: #1fcd8f;
 	color: #fff;
 }
 
-.ugallery_addmore_wrapper,
+.ui-resizable-autohide .ugallery_addmore_wrapper{	
+	height: 0px !important;
+}
+.ugallery_addmore_wrapper {
+	display: inline-block;
+	background: #accae6;
+	position:relative;
+	cursor: pointer;
+	min-height: 0px !important;
+	transition: height 0.5s;
+	-webkit-transition: height 0.5s;
+}
+.ugallery_addmore_wrapper:after,
 .ugallery_items:after {
 	display: table;
 	clear:both;
@@ -176,28 +192,6 @@
 	color: rgb(240, 101, 102);
 }
 
-.ugallery_sort_toggle {
-	opacity: .9;
-	border: 1px solid #2582BD;
-	background: #288ACA -moz-linear-gradient(-45deg, #2C9BE3 0%, #2C9BE3 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
-	background: #288ACA -webkit-gradient(linear, left top, right bottom, color-stop(0%,#2C9BE3), color-stop(50%,#2C9BE3), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
-	background: #288ACA -webkit-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
-	background: #288ACA -o-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
-	background: #288ACA -ms-linear-gradient(-45deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
-	background: #288ACA linear-gradient(135deg, #2C9BE3 0%,#2C9BE3 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */	
-}
-
-.ugallery_sort_toggle:hover {
-	opacity: 1;
-}
-
-.ugallery_sort_toggle:before {
-	background-position: -1582px -201px;
-}
-.ugallery-sort-info {
-	text-align: right;
-	font-style: italic;
-}
 a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {
 	height:30px;
 	line-height: 30px;
@@ -330,6 +324,18 @@ a.ugallery_order_ok:hover {
 	border-right-color: rgb(99, 134, 166);
 }
 
+#ugallery-tooltip.ugallery-tooltip-bottom:after {
+	top: -16px;
+	left: 113px;
+	border-bottom-color: rgb(242, 249, 255);
+}
+
+#ugallery-tooltip.ugallery-tooltip-bottom:before {
+	top: -18px;
+	left: 112px;
+	border-bottom-color: rgb(99, 134, 166);
+}
+
 h3.upfront-selector-title {
 	font-size:26px;
 	line-height: 40px;
@@ -371,4 +377,73 @@ h3.upfront-selector-title {
 }
 .labels_list ul:hover li:hover label {
 	background: #cee1f2;
+}
+
+.ugallery-controls {
+	display: none;
+}
+
+.ugallery_selected .ugallery-controls {
+	display: block;
+}
+
+
+
+.ui-resizable-autohide .ugallery-controls .upfront-inline-panel-top,
+.ugallery-controls .upfront-inline-panel-top {
+	-webkit-transform: translate(0,0);
+	display: block;
+}
+
+.ugallery-controls .upfront-inline-panel-subitem .upfront-inline-panel-item {
+	-webkit-transform: translate(0,0);
+	display: block;
+}
+
+.ugallery_selected .ugallery-controls .upfront-inline-panel-subitem{
+	display: none;
+}
+
+.ugallery_selected .ugallery-controls .upfront-inline-panel-subitem-active .upfront-inline-panel-subitem{
+	display: block;
+}
+
+.ugallery-onclick {
+	background: rgba(57,82,105,0.9);
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top:0;
+	left:0;
+	text-align: center;
+}
+
+.ugallery-onclick a,
+.ugallery-onclick a:link{
+	color: #4F6477 !important;
+	display: inline-block;
+	width: 80px;
+	margin: 10px;
+}
+.ugallery-onclick a:hover{
+	color: #1fcd8f !important;
+}
+.ugallery-onclick a:before {
+	display: block;
+	width: 50px;
+	height: 50px;
+	margin: auto;
+	content: '';
+}
+.ugallery-onclick-dialog {
+	background: rgb(242, 249, 255);
+	width: 300px;
+	margin: 10px auto;
+	padding: 20px;
+	top:0;
+	left:0;
+	right: 0;
+	color: #4F6477;
+	box-shadow: 0 0 20px #000;
+	border-radius: 10px;
 }

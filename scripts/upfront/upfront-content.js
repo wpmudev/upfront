@@ -11,13 +11,22 @@
 		stop: function () {}
 	};
 
+	var toolbars = {
+		short: {
+			enterMode: CKEDITOR.ENTER_BR,
+			floatSpaceDockedOffsetY: 0,
+			toolbar:[{name:'short', items: ['Bold', 'Italic', 'AlignmentTypeToggle', 'Link', 'Textformat']}]
+		}
+	};
+
 	var SimpleEditor = Backbone.View.extend({
 
 		element: false,
 		editor: false,
+		editTimeout: false,
+		contentTimeout: false,
 
 		initialize: function(options){
-			this.element = this.findElement();
 		},
 
 		findElement: function(){
@@ -47,18 +56,21 @@
 				el = this.findElement()
 			;
 
-			if(!el)
-				return console.log('No valid editor element.');
+			if(!el){
+				console.log('No valid editor element.');
+				return this;
+			}
 
-			if(el.attr('contenteditable'))
-				return;
+			if(this.editor)
+				return this;
 
 			var editorNode = el.attr('contenteditable', true).addClass('ueditable').get(0);
 			
 			//Start CKE
-			this.editor = CKEDITOR.inline(editorNode, {
-				floatSpaceDockedOffsetY: 0
-			});
+			this.editor = CKEDITOR.inline(editorNode, toolbars.short);
+			this.editor.ueditor = this;
+			
+			//{floatSpaceDockedOffsetY: 0});
 
 			//Prevent dragging from editable areas
 			var draggable = el.closest('.ui-draggable'),
@@ -79,22 +91,34 @@
 
 			this.editor.on("instanceReady", function () {
 				el.focus();
-				me.editor.focus();
 				me.trigger('ready');
 			});
+
+			el.on('keyup', function() {
+				if(me.editTimeout)
+					clearTimeout(me.editTimeout);
+				me.contentTimeout = me.getContents();
+				me.editTimeout = setTimeout(function(){
+					me.trigger('change', me.contentTimeout);
+					clearTimeout(me.contentTimeout);
+					me.contentTimeout = false;
+				}, 1500);
+			});
+
+			return this;
 		},
 
 		stop: function(){
 			var el = this.findElement();			
 			if (this.editor && this.editor.destroy)
 				this.editor.destroy();
-			el.removeAttr('contenteditable').removeClass('ueditable');			
+			this.editor = false;
+			el.removeAttr('contenteditable').removeClass('ueditable');	
+			return this;		
 		},
 
 		getContents: function(){
-			if(this.editor)
-				return this.editor.getData();
-			var el = findElement();
+			var el = this.findElement();
 			if(el)
 				return el.html();
 			return false;
@@ -1799,7 +1823,9 @@
 
 	Upfront.Content = {
 		TYPES: TYPES,
-		editors: new ContentEditors()
+		editors: new ContentEditors(),
+		microselect: MicroSelect
+
 	};
 
 

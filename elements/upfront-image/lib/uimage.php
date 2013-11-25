@@ -35,8 +35,10 @@ class Upfront_UimageView extends Upfront_Object {
 			$data['imgWidth'] = '100%';
 		else
 			$data['imgWidth'] = '';
+
+		$data['cover_caption'] = array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
 		
-		$markup = upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html');
+		$markup = '<div id="' . $data['element_id'] . '">' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($data['when_clicked'] == 'show_larger_image'){
 			//Lightbox
@@ -79,7 +81,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'when_clicked' => 'do_nothing', // do_nothing | open_click | show_larger_image
 			'image_link' => '',
 			'include_image_caption' => false,
-			'image_caption' => '',
+			'image_caption' => 'My awesome image caption',
 			'caption_position' => 'below_image',
 			'caption_alignment' => 'top',
 			'caption_trigger' => 'always_show',

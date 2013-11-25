@@ -30,7 +30,7 @@ CKEDITOR.editorConfig = function( config ) {
 			}
 	];
 
-	config.extraPlugins = 'onchange,kitchensink,toggled_items,upfront_images,upfront_colorpicker,upfront_more_tag';
+	config.extraPlugins = 'onchange,kitchensink,toggled_items,upfront_images,upfront_colorpicker,upfront_more_tag,textformat';
 
 	// use SVG icons for editor buttons if possible
 	if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){

@@ -1,4 +1,4 @@
-<div class="upfront-output-object upfront-image-container uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>">
+<div class="upfront-output-object upfront-image-container uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?>" style="text-align: <?php echo $align ?>" id="<?php echo $element_id ?>">
 	<?php if($url) { ?>
 	<a href="<?php echo $url ?>">
 	<?php } ?>
@@ -7,7 +7,15 @@
 		<?php } ?>
 
 	<?php if($include_image_caption){ ?>
-	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>"><?php echo $image_caption ?></div>
+	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>">
+		<?php if($cover_caption) { ?>
+			<div class="uimage-caption-cover">
+		<?php } ?>
+				<?php echo $image_caption ?>
+		<?php if($cover_caption) { ?>
+			</div>
+		<?php } ?>
+	</div>
 	<?php } ?>
 	
 	<?php if($url) { ?>
@@ -28,8 +36,25 @@
 			top:0;
 			left:0;
 		}
-		#<?php echo $element_id ?> .uimage-over_image .uimage-fill{
+		#<?php echo $element_id ?> .uimage-over_image .uimage-fill,
+		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_middle,
+		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_bottom{
 			height:100%;
+		}
+		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_bottom .uimage-caption-cover{
+			position:absolute;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+		}
+		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_middle .uimage-caption-cover{
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 20px;
+			margin: auto;
 		}
 		#<?php echo $element_id ?> .uimage-over_image div.uimage-bottom{
 			top:auto;
@@ -52,16 +77,6 @@
 		#<?php echo $element_id ?> img {
 			max-width: 100%;
 			max-height: none;
-		}
-
-		@media only screen and (max-width: 992px){
-			#<?php echo $element_id ?>:before{
-				content: 'WPMU is the largest premium WordPress site on the web. More developers, more support staff and more WordPress love than anywhere else';
-				display: block;
-				height:1px;
-				margin-top: -1px;
-				visibility: hidden;
-			}
 		}
 	</style>
 </div>

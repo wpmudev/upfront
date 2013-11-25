@@ -2,11 +2,12 @@
 
 var	templates = [
 		'text!' + Upfront.data.uimage.template, 
-		'text!../elements/upfront-image/tpl/image_editor.html'
+		'text!../elements/upfront-image/tpl/image_editor.html',
+		'text!../elements/upfront-gallery/tpl/ugallery_editor.html'
 	]
 ;
 
-require(templates, function(imageTpl, editorTpl) {
+require(templates, function(imageTpl, editorTpl, galleryTpl) {
 var UimageModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.uimage.defaults);
@@ -20,6 +21,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	imageTpl: Upfront.Util.template(imageTpl),
 	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
 	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
+	linkTpl: _.template($(galleryTpl).find('#link-tpl').html()),
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
 	sizes: false,
 	elementSize: {width: 0, height: 0},
@@ -28,6 +30,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	imageOffset: {top: 0, left: 0},
 	maskOffset: {top: 0, left: 0},
 	imageInfo : false,
+	controls: false,
+	editor: false,
 
 	
 	initialize: function(){
@@ -35,30 +39,30 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(! (this.model instanceof UimageModel)){
 			this.model = new UimageModel({properties: this.model.get('properties')});
 		}
-		 this.events = _.extend({}, this.events, {
+		this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
-			'click a.uimage_edit_toggle': 'editRequest',
-			'click div.uimage-quick-swap': 'openImageSelector'
-		 });
-		 this.delegateEvents();
-		 Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
-		 this.model.on('uimage:edit', this.editRequest, this);
+			'click div.uimage-quick-swap': 'openImageSelector',
+			'dblclick .wp-caption': 'editCaption'
+		});
+		this.delegateEvents();
+		Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
+		this.model.on('uimage:edit', this.editRequest, this);
 
 		$('body').on('dragover', function(e){
 				e.preventDefault();
-			 	me.handleDragEnter(e);
+				me.handleDragEnter(e);
 			})
 			.on('dragenter', function(e){
-			 	me.handleDragEnter(e);
-		 		console.log('enter '  + me.property('element_id'));
+				me.handleDragEnter(e);
+					console.log('enter '  + me.property('element_id'));
 			})
-		 	.on('dragleave', function(e){
-		 		me.handleDragLeave(e);
-		 	})
-		 	.on('drop', function(e){
-		 		console.log('drop body');
-		 	})
-	 	;
+			.on('dragleave', function(e){
+				me.handleDragLeave(e);
+			})
+			.on('drop', function(e){
+				console.log('drop body');
+			})
+		;
 
 		// Set the full size current size if we don't have attachment id
 		if(!this.property('image_id'))
@@ -67,6 +71,159 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.model.get("properties").bind("change", this.render, this);
 		this.model.get("properties").bind("add", this.render, this);
 		this.model.get("properties").bind("remove", this.render, this);
+
+		var inlinePanels = Upfront.Views.Editor.InlinePanels,
+			controls =  new inlinePanels.Panels(),
+			panel = new inlinePanels.Panel(),
+			item = new Control(),
+			item2 = new Control()
+		;
+
+		item.icon = 'prueba';
+		item.tooltip = 'Tooltip de prueba';
+		item.on_render = function(){console.log('Panel item rendered');};
+		item.on('click', function(e){
+			console.log(e);
+		});
+
+		item2.icon = 'prueba2';
+		item2.tooltip = 'Tooltip de prueba2';
+		item2.on_render = function(){console.log('Panel item2 rendered');};
+
+		panel.items = _([item, item2]);
+
+		controls.panels = _([panel]);
+
+		this.controls = this.createControls();
+
+		if(this.property('image_status') != 'ok')
+			this.property('has_settings', 0);
+	},
+
+	createControls: function() {
+		var me = this,		
+			panel = new Upfront.Views.Editor.InlinePanels.Panel(),
+			multi = new MultiControl()
+		;
+		multi.sub_items = {
+			topOver: this.createControl('topOver', 'Over image, top'),
+			bottomOver: this.createControl('bottomOver', 'Over image, bottom'),
+			topCover: this.createControl('topCover', 'Covers image, top', 'log'),
+			middleCover: this.createControl('middleCover', 'Covers image, middle'),
+			bottomCover: this.createControl('bottomCover', 'Covers image, bottom'),
+			below: this.createControl('below', 'Below the image'),
+			noCaption: this.createControl('nocaption', 'No caption')
+		};
+
+		multi.icon = 'caption';
+		multi.tooltip = '';
+		multi.selected = 'noCaption';
+		multi.on('select', function(item){
+			switch(item){
+				case 'topOver':
+					me.property('include_image_caption', [1]);
+					me.property('caption_position', 'over_image');
+					me.property('caption_alignment', 'top');
+					break;
+				case 'bottomOver':
+					me.property('include_image_caption', [1]);
+					me.property('caption_position', 'over_image');
+					me.property('caption_alignment', 'bottom');
+					break;
+				case 'topCover':
+					me.property('include_image_caption', [1]);
+					me.property('caption_position', 'over_image');
+					me.property('caption_alignment', 'fill');
+					break;
+				case 'middleCover':
+					me.property('include_image_caption', [1]);
+					me.property('caption_position', 'over_image');
+					me.property('caption_alignment', 'fill_middle');
+					break;
+				case 'bottomCover':
+					me.property('include_image_caption', [1]);
+					me.property('caption_position', 'over_image');
+					me.property('caption_alignment', 'fill_bottom');
+					break;
+				case 'below':
+					me.property('include_image_caption', [1]);
+					me.property('caption_position', 'below_image');
+					break;
+				case 'noCaption':
+					me.property('include_image_caption', false);
+			}
+			me.render();
+		});
+
+		panel.items = _([
+			this.createControl('crop', 'Edit image', 'editRequest'),
+			this.createControl('link', 'Link image', 'openLinkEditor'),
+			multi
+		]);
+
+		return panel;
+	},
+
+	openLinkEditor: function(e) {
+		$('#' + this.property('element_id')).find('.upfront-entity-settings_trigger').click();		
+	},
+
+	editCaption: function(e){
+		var me = this,
+			captionEl = $('#' + this.property('element_id')).find('.wp-caption')
+		;
+
+		e.preventDefault();
+
+		if(this.editor)
+			this.editor.stop();
+
+		this.editor = Upfront.Content.editors.add({
+			type: Upfront.Content.TYPES.SIMPLE,
+			editor_id: this.model.get_property_value_by_name("element_id"),
+			element: captionEl
+		});
+
+		this.editor.textColor = this.property('color');
+		this.editor.panelColor = this.property('background');
+
+		this.editor.on('textcolor:change', function(color){
+			var value = color.toRgbString();
+			me.property('color', value);
+			this.editor.textColor = value;
+			captionEl.css('color', value);
+		});
+		this.editor.on('panelcolor:change', function(color){
+			var value = color.toRgbString();
+			me.property('background', value);
+			this.editor.panelColor = value;
+			captionEl.css('background-color', value);
+		});
+
+		this.editor.start();
+
+		this.editor.on('blur', function(){
+			me.property('image_caption', me.editor.getContents());
+			me.editor.stop();
+		});
+	},
+
+	log: function(e){
+		console.log(e);
+	},
+
+	createControl: function(icon, tooltip, click){
+		var me = this,
+			item = new Control();
+		item.icon = icon;
+		item.tooltip = tooltip;
+		if(click){
+			item.on('click', function(e){
+				me[click](e);
+			});
+		}
+
+		return item;
 	},
 
 	setImageInfo: function() {
@@ -147,7 +304,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var props = this.extract_properties(),
 			onclick = this.property('when_clicked')
 		;
-		if(this.property('element_size').width == 0)
+		if(!this.property('element_size').width)
 			this.setElementSize();
 
 		props.url = onclick == 'do_nothing' ? false : 
@@ -160,7 +317,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		else
 			props.imgWidth = props.size.width + 'px';
 
+		props.cover_caption = ['fill', 'fill_bottom', 'fill_middle'].indexOf(props.caption_alignment) != -1;
+
 		var rendered = this.imageTpl(props);
+
+		this.controls.render();
+		//rendered += this.controls.$el.html();
+
 		console.log('Image element');
 
 		if(this.property('image_status') == 'starting'){
@@ -177,23 +340,20 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			rendered += '<div class="uimage-quick-swap ' + smallSwap + '">Change this image</div>';
 		}
 
+
+
 		return rendered;
 	},
 
 	on_render: function(){
-		if(this.property('status') != 'ok')
+		var me = this;
+		if(this.property('image_status') != 'ok')
 			return;
-
-		this.setImageSize();
-		var size = this.property('element_size');
-	},
-
-	get_buttons: function() {
-		var buttons = '';
-		if(this.property('image_status') == 'ok'){
-			buttons = '<a href="#" class="upfront-icon-button uimage_edit_toggle"></a>';
-		}
-		return buttons;
+		setTimeout(function(){
+			me.controls.render();
+			$('#' + me.property('element_id')).find('.upfront-image-container').append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
+			me.controls.delegateEvents();
+		}, 300);
 	},
 
 	extract_properties: function() {
@@ -213,13 +373,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					e.stopPropagation();
 					me.openImageSelector();
 					$('.uimage-drop-hint').remove();
-			        if(e.originalEvent.dataTransfer){
-			        	var files = e.originalEvent.dataTransfer.files,
-			        		input = $('#upfront-image-file-input')
-			    		;
-			            // Only call the handler if 1 or more files was dropped.
-			            if (files.length && input.length){
-			            	input[0].files = files;
+					if(e.originalEvent.dataTransfer){
+						var files = e.originalEvent.dataTransfer.files,
+							input = $('#upfront-image-file-input')
+						;
+						// Only call the handler if 1 or more files was dropped.
+						if (files.length && input.length){
+							input[0].files = files;
 			            }
 			        }					
 				})
@@ -344,6 +504,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	handleEditorResult: function(result){
 		this.property('image_status', 'ok', true);
+		this.property('has_settings', 1);
 		this.property('src', result.src, true);
 		this.property('srcFull', result.srcFull, true);
 		this.property('srcOriginal', result.srcOriginal, true);
@@ -441,10 +602,15 @@ var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function () {
+		var me = this;
 		this.panels = _([
 			new DescriptionPanel({model: this.model}),
-			new BehaviorPanel({model: this.model})
+			//new BehaviorPanel({model: this.model})
 		]);
+
+		this.on('open', function(){
+			me.model.trigger('settings:open', me);
+		});
 	},
 	get_title: function () {
 		return "Image settings";
@@ -460,58 +626,111 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.settings = _([
 			new SettingsItem({
-				title: 'Image info',
+
+				title: 'alternative_text',
+				group: false,
 				fields: [
 					new Fields.Text({
 						model: this.model,
-						property: 'image_title',
-						label: 'Image Title'
-					}),
-					new Fields.Text({
-						model: this.model,
 						property: 'alternative_text',
-						label: 'Alternative text'						
-					}),
-					new Fields.Checkboxes({
+						label: 'Alternative text'
+					})
+				]
+			}),
+			
+			new SettingsItem({
+				title: 'When Clicked:',	
+				fields: [			
+					new Fields.Radios({
 						model: this.model,
-						property: 'include_image_caption',
+						property: 'when_clicked',
+						className: 'field-when_clicked upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
 							{
-								label: 'Include image caption',
-								value: 'true'
+								label: 'Do nothing', 
+								value: 'do_nothing'
+							},
+							{
+								label: 'Open link', 
+								value: 'open_link'
+							},
+							{
+								label: 'Scroll to anchor', 
+								value: 'scroll_to_anchor'
+							},
+							{
+								label: 'Show larger image', 
+								value: 'show_larger_image'
 							}
 						]
 					}),
 					new Fields.Text({
 						model: this.model,
-						property: 'image_caption',
-						label: 'Image Caption',
-						className: 'upfront-field-wrap upfront-field-wrap-text optional-field'					
+						property: 'image_link',
+						label: 'Image link URL',
+						className: 'upfront-field-wrap upfront-field-wrap-text image-link-field'	
+					}),
+					new Fields.Anchor({
+						model: this.model,
+						property: 'anchor_target',
+						label: "Anchor",
+						className: "upfront-field-wrap upfront-field-wrap-select image-anchor-field"
+					})
+				]
+			}),
+			
+			new SettingsItem({
+				title: 'Show Caption:',
+				fields: [
+					new Fields.Radios({
+						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+						model: this.model,
+						property: 'caption_trigger',
+						layout: "vertical",
+						values: [
+							{
+								label: 'Always show',
+								value: 'always_show'
+							},
+							{
+								label: 'Show on hover',
+								value: 'hover_show'
+							}
+						]
 					})
 				]
 			})
 		]);
 
-		this.$el.on('change', 'input[name=include_image_caption]', function(){
-			me.toggleCaption();
-		})
-		this.on('concealed', this.toggleCaption, this);
+		this.$el
+			.on('change', 'input[name=when_clicked]', function(e){
+				me.toggleLink();
+			})
+		;
+
+		this.on('concealed', this.toggleLink, this);
 	},
 	get_label: function () {
-		return 'Description';
+		return 'Settings';
 	},
 	get_title: function () {
 		return false;
 	},
-	toggleCaption: function (){
-		var include = this.$
-		if(this.$('input[name=include_image_caption]').is(':checked')){
-			$('#settings').find('.optional-field').show();
+	toggleLink: function(){
+		var link_value = this.$('input[name=when_clicked]:checked').val();
+		if('open_link' == link_value){
+			this.$('.image-link-field').show();
 		}
 		else{
-			$('#settings').find('.optional-field').hide();		
+			this.$('.image-link-field').hide();
 		}
-		$('#settings').height(this.$('.upfront-settings_panel').outerHeight());	
+
+		if ('scroll_to_anchor' == link_value) {
+			this.$('.image-anchor-field').show();
+		} else {
+			this.$('.image-anchor-field').hide();
+		}
+		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);		
 	}
 });
 
@@ -1823,6 +2042,87 @@ var ImageSelector = Backbone.View.extend({
 	},
 
 });
+
+var Control = Upfront.Views.Editor.InlinePanels.Item.extend({
+	events: {
+		'click': 'clicked'
+	},
+	clicked: function(e){
+		e.preventDefault();
+		this.$el
+			.siblings('.upfront-inline-panel-subitem-active')
+			.removeClass('upfront-inline-panel-subitem-active')
+		;
+		this.trigger('click', e);
+	},
+
+	openTooltip: function(content, element){
+		var tooltip = $('#ugallery-tooltip'),
+			elementPosition = element.offset(),
+			tooltipPosition = {
+				top: elementPosition.top + element.height(),
+				left: elementPosition.left - 125
+			},
+			me = this
+		;
+		if(!tooltip.length){
+			tooltip = $('<div id="ugallery-tooltip ugallery-tooltip-bottom" class="upfront-ui"></div>');
+			$('body').append(tooltip);
+		}
+		tooltip
+			.hide()
+			.html(content)
+			.css(tooltipPosition)
+			.addClass(tooltipClass)
+			.show()
+			.on('click', function(e){
+				e.stopPropagation();
+			})
+			.on('blur', function(e){
+				me.closeTooltip();
+			});
+		;	
+
+		Upfront.Events.trigger("entity:settings:deactivate");	
+	},
+
+	closeTooltip: function(){
+		$('#ugallery-tooltip').remove();
+	},
+});
+
+var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
+	events: {
+		'click': 'clicked',
+		'click .upfront-inline-panel-item': 'selectItem'
+	},
+	clicked: function(e){
+		this.trigger('click', e);
+		this.toggle_subitem();
+	},
+	get_selected_item: function () {
+		return this.selected;
+	},
+	selectItem: function(e){
+		var found = false,
+			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
+		;
+		_.each(this.sub_items, function(item, key){
+			if(target.hasClass('upfront-icon-region-' + item.icon))
+				found = key;
+		});
+
+		if(found){
+			this.selected = found;
+			this.render();
+			this.trigger('select', found);
+		}
+	}
+
+});
+
+Upfront.Views.Editor.InlinePanels.MultiControl = MultiControl;
+Upfront.Views.Editor.InlinePanels.Control = Control;
 
 Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Model": UimageModel, 

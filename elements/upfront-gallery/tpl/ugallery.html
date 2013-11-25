@@ -9,37 +9,20 @@
 <?php if($imagesLength){ ?>
 	<div class="ugallery_items <?php echo $labelFilters['length'] ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_item" style="position:relative; overflow:hidden; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
-			<a class="ugallery_link" href="<?php echo $images[$i]['sizes']['full'][0] ?>">
-			<div class="ugallery-image-wrapper" style="position: relative; overflow:hidden; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
+		<div class="ugallery_item" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+			<a class="ugallery_link" href="<?php echo $images[$i]['sizes']['full'][0] ?>" title="<?php echo $images[$i]['caption'] ?>">
+			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="min-width: 100%; min-height:100%">
 			</div>
 			<?php if($showTitle['length']){ ?>
-			<div class="ugallery-thumb-title"><?php echo $images[$i]['title'] ?></div>
-			<?php } ?>
-			<?php if($showDescription['length']){ ?>
-			<div class="ugallery-thumb-description"><?php echo $images[$i]['caption'] ?></div>
+			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionPosition ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			</a>
-			<?php if($editing){ ?>
-				<div class="ugallery_item_options" style="width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px">
-					<div class="ugallery_item_option ugallery_op_details" title="Edit details">details</div>
-					<div class="ugallery_item_option ugallery_op_remove" title="Remove image">remove</div>
-					<div class="ugallery_item_option ugallery_op_link" title="Edit image link">link</div>
-					<div class="ugallery_item_option ugallery_op_mask" title="Edit image">mask</div> 
-				</div>
-				<div class="ugallery_item_rm_dialog" style="width: <?php echo $thumbWidth ?>px; height: <?php echo $thumbHeight ?>px">
-					<div>Remove from gallery?</div>
-					<div class="ugallery_item_rm_buttons clearfix clear cf">
-						<a href="#" class="ugallery_item_rm_yes">Yes</a>
-						<a href="#" class="ugallery_item_rm_no">No</a>
-					</div>
-				</div>
-			<?php } ?>
 		</div>
 	<?php } ?>
 	<?php if($editing) { ?>
-		<div class="ugallery_addmore_wrapper ugallery_item upfront-ui"><div class="ugallery_addmore" style="width: <?php echo $thumbWidth ?>px; min-height: <?php echo $thumbHeight ?>px" title="Add new images to the Gallery">Add more</div></div>
+		<div class="ugallery_addmore_wrapper upfront-ui" style="width: <?php echo $thumbWidth ?>px; min-height: <?php echo $thumbHeight ?>px">
+			<div class="ugallery_addmore"  title="Add new images to the Gallery">Add more</div></div>
 		<style>
 			.ugallery_addmore_wrapper {
 				height: 0px;
@@ -53,20 +36,6 @@
 				height: <?php echo $thumbHeight ?>px;
 			}
 		</style>
-	<?php } ?>
-	<?php if($lbTitle['length'] || $lbDescription['length']){ ?>
-		<div class="ugallery_lb_texts">
-			<?php for($i=0; $i<$imagesLength; $i++) { ?>
-			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>">
-			<?php if ($lbTitle['length']){ ?>
-				<div class="ugallery_lb_title"><?php echo $images[$i]['title'] ?></div>
-			<?php } ?>
-			<?php if ($lbDescription['length']){ ?>
-				<div class="ugallery_lb_caption"><?php echo $images[$i]['caption'] ?></div>
-			<?php } ?>
-			</div>
-			<?php } ?>
-		</div>
 	<?php } ?>
 	</div>
 <?php } else { ?>
@@ -87,3 +56,25 @@
 	<?php } ?>
 <?php } ?>
 </div>
+
+<style>	
+	#<?php echo $element_id ?> .ugallery-thumb-title {
+		color: <?php echo $captionColor ?>;
+		background: <?php echo $captionBackground ?>;
+	}
+
+	#<?php echo $element_id ?> .ugallery-caption-above {
+		display: block;
+	}
+
+	#<?php echo $element_id ?> .ugallery-caption-over {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		bottom: 0;
+	}
+
+	#<?php echo $element_id ?> .ugallery-caption-nocaption {
+		display: none;
+	}
+</style>

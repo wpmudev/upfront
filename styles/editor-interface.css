@@ -1870,6 +1870,14 @@ a.ueditor-action-pickercancel{
 	-webkit-transform: translate(0, -600%);
 	-webkit-transition-delay: 0.6s;
 }
+.upfront-inline-panel-subitem .upfront-inline-panel-item:nth-child(6) {
+	-webkit-transform: translate(0, -700%);
+	-webkit-transition-delay: 0.7s;
+}
+.upfront-inline-panel-subitem .upfront-inline-panel-item:nth-child(7) {
+	-webkit-transform: translate(0, -800%);
+	-webkit-transition-delay: 0.8s;
+}
 .upfront-inline-panel-subitem-active .upfront-inline-panel-item {
 	-webkit-transform: translate(0, 0) !important;
 }
@@ -5417,7 +5425,7 @@ License: MIT
     float:left;
     font-size:10px;
 }
-.sp-preview
+div.sp-preview
 {
     position:relative;
     width:25px;
@@ -5926,7 +5934,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	display: inline-block;
 	position: relative;
 }
-.ueditor-select {
+div.ueditor-select {
 	position:relative;
 	display:none;
 	font-size: 13px;
@@ -5936,7 +5944,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 .ueditor-select-value {
 	cursor: pointer;
 }
-.ueditor-select-options,
+div.ueditor-select-options,
 .ueditor-pass-editor {
 	position:absolute;
 	top: 100%;
@@ -5951,7 +5959,8 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	top: auto;
 	bottom: 100%;
 }
-.ueditor-select-option {
+
+a.ueditor-select-option {
 	display:block;
 	padding: 3px 10px;
 	color: #6386A6 !important;
@@ -5961,7 +5970,7 @@ div.ueditor_deleted_post a.ueditor_restore:hover {
 	font-weight: normal !important;
 }
 
-.ueditor-select-option:hover {
+a.ueditor-select-option:hover {
 	background: #607F99;
 	color: #F2F9FF !important;
 	text-decoration: none !important;
