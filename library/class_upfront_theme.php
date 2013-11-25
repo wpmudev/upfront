@@ -345,6 +345,8 @@ class Upfront_Virtual_Region {
 			$options['options'] = array();
 
 		$opts['object'] = array_merge($object_defaults, $options['options']);
+		if(!isset($opts['object']['element_id']))
+			$opts['object']['element_id'] = $opts['object_id'];
 
 		return $opts;
 	}
