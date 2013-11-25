@@ -28,8 +28,6 @@
 				$nav = $('<div class="' + data.classname.nav + '" />'), 
 				$prev = $('<div class="' + data.classname.prev + '" />'), 
 				$next = $('<div class="' + data.classname.next + '" />'),
-				height = $slider.outerHeight(),
-				width = $slider.outerWidth(),
 				max_height = 0,
 				slider_index = 0,
 				slider_pause = false,
@@ -79,6 +77,8 @@
 				else { // Adjust slides to available space
 					adjust_slide_size();
 					function adjust_slide_size () {
+						var height = $slider.outerHeight(),
+							width = $slider.outerWidth();
 						$items.each(function(){
 							var $img = $(this).find('img'),
 								img_h = $img.height(),
@@ -89,6 +89,7 @@
 								$img.css({ height: 'auto', width: '100%' });
 						});
 					}
+					$(window).on('load', adjust_slide_size);
 					$(window).on('resize', adjust_slide_size);
 				}
 			}

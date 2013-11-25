@@ -3786,8 +3786,10 @@ var Field_Anchor = Field_Select.extend({
 					model: this.model,
 					property: 'background_color',
 					default_value: '#ffffff',
-					change: function () {
-						me.update_image();
+					spectrum: {
+						change: function () {
+							me.update_image();
+						}
 					}
 				}),
 				bg_position_y: new Field_Slider(_.extend({
@@ -3818,6 +3820,7 @@ var Field_Anchor = Field_Select.extend({
 						var value = this.get_value(),
 							s = me.fields.bg_position_y;
 						s.$el.find('#'+s.get_field_id()).slider('value', value);
+						s.get_field().val(value);
 						me.update_image();
 					}
 				}, pos_option)),
@@ -3830,6 +3833,7 @@ var Field_Anchor = Field_Select.extend({
 						var value = this.get_value(),
 							s = me.fields.bg_position_x;
 						s.$el.find('#'+s.get_field_id()).slider('value', value);
+						s.get_field().val(value);
 						me.update_image();
 					}
 				}, pos_option))
