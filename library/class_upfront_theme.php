@@ -329,7 +329,7 @@ class Upfront_Virtual_Region {
 
 		$module = array(
 			'rows' => 6,
-			'module_class' => 'c' . $position['columns'] . ' ' . $slug . '-module',
+			'module_class' => $slug . '-module',
 			'module_id' => $slug . '-module'
 		);
 		$module = array_merge($module, $options);
