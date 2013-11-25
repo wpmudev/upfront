@@ -26,6 +26,7 @@
           'click .add-tab': 'addTab',
           'click .tabs-tab': 'onTabClick',
           'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
+          'keydown .tab-content-active': 'onContentKeydown',
           'dblclick .tab-content-active': 'onContentDblclick',
           'click i': 'deleteTab'
         });
@@ -37,6 +38,8 @@
 
         Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
         this.on('deactivated', this.stopEdit, this);
+
+        this.debouncedSave = _.debounce(this.saveTabContent, 1000);
       },
 
       addTab: function() {
@@ -119,12 +122,21 @@
         this.$el.parent().parent().parent().draggable('disable');
       },
 
-      stopEdit: function() {
+      onContentKeydown: function(event) {
+        this.debouncedSave();
+      },
+
+      saveTabContent: function() {
         var $content = this.$el.find('.tab-content-active');
         var tabId = $content.attr('id').split('-').pop();
         this.property('tabs')[tabId].content = $content.html();
-        $content.removeAttr('contenteditable').
-          removeClass('upfront-object');
+      },
+
+      stopEdit: function() {
+        this.saveTabContent();
+        this.$el.find('.tab-content-active')
+          .removeAttr('contenteditable')
+          .removeClass('upfront-object');
         if (this.editor && this.editor.destroy) this.editor.destroy();
         this.$el.parent().parent().parent().draggable('enable');
         this.delegateEvents();
