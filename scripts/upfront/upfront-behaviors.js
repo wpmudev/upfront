@@ -94,7 +94,7 @@ var GridEditor = {
 	max_row: 0,
 	compare_col: 5,
 	compare_row: 10,
-	timeout: 100, // in ms
+	timeout: 67, // in ms
 	_t: null, // timeout resource
 	col_size: 0,
 	baseline: 0,
@@ -1742,7 +1742,7 @@ var GridEditor = {
 					if ( woset + that.size.width >= that.parentData.width )
 						ui.size.width += that.parentData.left;
 				// End this fix
-				var $helper = ui.helper;
+				var $helper = ui.helper,
 					col = ed.get_class_num($me, ed.grid.class),
 					prev_col = $me.prev('.upfront-region').size() > 0 ? ed.get_class_num($me.prev('.upfront-region'), ed.grid.class) : 0,
 					next_col = $me.next('.upfront-region').size() > 0 ? ed.get_class_num($me.next('.upfront-region'), ed.grid.class) : 0,
@@ -1753,11 +1753,6 @@ var GridEditor = {
 					rsz_col = ( current_col > max_col ? max_col : current_col ),
 					rsz_row = Math.ceil(h/ed.baseline)
 				;
-				console.log(ui.size.width);
-				if ( Math.abs($(window).height()-e.clientY) < 50 ){
-					h += (ed.baseline*10);
-					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
-				}
 				$helper.css({
 					height: h,
 					width: w,
@@ -1794,12 +1789,82 @@ var GridEditor = {
 		});
 	},
 	
+	
+	/**
+	 * Create region resizable
+	 * 
+	 * @param {Object} view
+	 * @param {Object} model
+	 */
+	create_region_container_resizable: function(view, model){
+		var app = this,
+			ed = Upfront.Behaviors.GridEditor,
+			$me = view.$el,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			$layout = $main.find('.upfront-layout')
+		;
+		$me.resizable({
+			"containment": 'parent',
+			//handles: "n, e, s, w",
+			handles: 's',
+			helper: "region-resizable-helper",
+			disabled: true,
+			zIndex: 9999999,
+			start: function(e, ui){
+				Upfront.Events.trigger("entity:region_container:resize_start", view, view.model);
+			},
+			resize: function(e, ui){
+				// @TODO Suppppperrrr annoying bug happen on resizable 1.10.3, fix only for this version and make sure to recheck in future update on this lib!
+				// Normalize the ui.size
+				/*var that = $(this).data('ui-resizable'),
+					woset = Math.abs( that.offset.left ) + that.sizeDiff.width,
+					isParent = that.containerElement.get(0) === that.element.parent().get(0),
+					isOffsetRelative = /relative|absolute/.test(that.containerElement.css("position"));
+					if(isParent && isOffsetRelative) {
+						woset -= that.parentData.left;
+					};
+					if ( woset + that.size.width >= that.parentData.width )
+						ui.size.width += that.parentData.left;*/
+				// End this fix
+				var $helper = ui.helper,
+					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
+					rsz_row = Math.ceil(h/ed.baseline)
+				;
+				if ( Math.abs($(window).height()-e.clientY) < 50 ){
+					h += (ed.baseline*10);
+					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
+				}
+				$helper.css({
+					width: '100%',
+					height: h
+				});
+				$me.data('resize-row', rsz_row);
+			},
+			stop: function(e, ui){
+				var rsz_row = $me.data('resize-row');
+				
+				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
+				$me.css({
+					width: '',
+					minHeight: '',
+					height: '',
+					maxHeight: '',
+					position: '',
+					top: '',
+					left: ''
+				});
+				model.set_property('row', rsz_row);
+				Upfront.Events.trigger("entity:region_container:resize_stop", view, view.model);
+			}
+		});
+	},
+	
 	/**
 	 * Toggle region resizable
 	 * 
 	 */
 	toggle_region_resizable: function(enable){
-		$('.upfront-region').each(function(){		
+		$('.upfront-region, .upfront-region-container').each(function(){		
 			if ( !$(this).hasClass('ui-resizable') )
 				return;
 			$(this).resizable('option', 'disabled', (!enable));

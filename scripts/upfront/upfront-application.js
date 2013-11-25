@@ -35,6 +35,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 	$(this).draggable("disable")
 })
 		Upfront.Events.off("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
+		Upfront.Events.off("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
 		
 		Upfront.Events.off("entity:activated", this.create_properties, this);
 		Upfront.Events.off("entity:deactivated", this.destroy_properties, this);
@@ -126,6 +127,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 	$(this).draggable("enable")
 })
 		Upfront.Events.on("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
+		Upfront.Events.on("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
 		Upfront.Events.on("layout:render", Upfront.Behaviors.GridEditor.refresh_draggables, this);
 	},
 

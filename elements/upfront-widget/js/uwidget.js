@@ -22,8 +22,8 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 	},
 	
 	init: function () {
-		if ( !Upfront.data.uwidget.widgets )
-			Upfront.data.uwidget.widgets = {};
+		if ( !Upfront.data.uwidget.widgets_cache )
+			Upfront.data.uwidget.widgets_cache = {};
 	},
 	
 	get_content_markup: function () {
@@ -31,7 +31,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		 	me = this;
 		if ( !widget )
 			return "Please select widget on settings";
-		var widget_data =  Upfront.data.uwidget.widgets[widget] || "";
+		var widget_data =  Upfront.data.uwidget.widgets_cache[widget] || "";
 		if ( widget_data )
 			this.content_loaded = true;
 		return widget_data;
@@ -41,7 +41,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		var widget = this.model.get_property_value_by_name('widget');
 		if ( !widget )
 			return;
-		if ( typeof Upfront.data.uwidget.widgets[widget] == 'undefined' ){
+		if ( typeof Upfront.data.uwidget.widgets_cache[widget] == 'undefined' ){
 			if ( this.content_loaded ){ // only display loading if there's already content
 				this.loading = new Upfront.Views.Editor.Loading({
 					loading: "Loading...",
@@ -58,7 +58,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		Upfront.Util.post({"action": "uwidget_get_widget_markup", "data": JSON.stringify({"widget": widget})})
 			.success(function (ret) {
-				Upfront.data.uwidget.widgets[widget] = ret.data;
+				Upfront.data.uwidget.widgets_cache[widget] = ret.data;
 				if ( me.loading ){
 					me.loading.done(function(){
 						me.render();

@@ -55,10 +55,13 @@ class Upfront_Grid {
 				$container = isset($region['container']) ? $region['container'] : $region['name'];
 				$region_col = upfront_get_property_value('col', $region);
 				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions'], $point->get_columns());
+				$region_row = upfront_get_property_value('row', $region);
 				$region_view = new Upfront_Region($region);
 				$name = strtolower(str_replace(" ", "-", $region_view->get_name()));
 				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
+				if ( $region_row )
+					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
 				foreach ($region['modules'] as $module) {
 					// Particular overrides
 					$class = upfront_get_property_value('class', $module);
@@ -252,6 +255,14 @@ abstract class Upfront_GridBreakpoint {
 			'.' . ltrim($scope, '. '), 
 			$selector,
 			"{$rule}: {$size};"
+		) . "\n";
+	}
+
+	public function apply_row ($row, $entity, $scope=false, $selector='') {
+		return sprintf('%s %s {%s}', 
+			'.' . ltrim($scope, '. '), 
+			$selector,
+			$this->_row_to_style($row)
 		) . "\n";
 	}
 

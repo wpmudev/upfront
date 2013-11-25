@@ -13,6 +13,7 @@ var Plugin = {
 		editor.on("focus", function (e) {
 			Image.create_dialog();
 			Image.bind_events(e.editor.name);
+			Slider.init_sliders_edit(editor);
 		});
 		editor.on("change", function (e) {
 			Image.bind_events(e.editor.name);
@@ -97,6 +98,7 @@ var Image = {
 		;
 		if (!$details.length){
 			$dialog.hide();
+			$('#upfront-inline-slider-nav').hide();
 		}
 		else if (force) {
 			$details.remove();
@@ -217,15 +219,17 @@ var Image = {
 		return false;
 	},
 	delete_image: function (e) {
-		var $img = e.data.get_target(e.target);
-		var $wrapper = $img.parent();
-		var editor = CKEDITOR.instances[e.data.instance];
-		if ( ( $wrapper.hasClass('upfront-inline_post-slider') || $wrapper.hasClass('upfront-inline_post-gallery') ) && $wrapper.find('img') == 1 )
+		var $img = e.data.get_target(e.target),
+			$wrapper = $img.parent(),
+			editor = CKEDITOR.instances[e.data.instance],
+			is_on_slider = $wrapper.hasClass('upfront-inline_post-slider'),
+			is_on_gallery = $wrapper.hasClass('upfront-inline_post-gallery');
+		if ( ( is_on_slider || is_on_gallery ) && $wrapper.find('img') == 1 )
 			$wrapper.remove();
 		else
 			$img.remove();
-		if ( $wrapper.hasClass('upfront-inline_post-slider') )
-			Slider.reset_nav($wrapper.get(0));
+		if ( is_on_slider )
+			Slider.reset_nav($wrapper);
 		editor.fire('change');
 		editor.focus();
 		return false;
@@ -418,24 +422,75 @@ var Slider = {
 					'<div class="upfront-inline_post-slider clearfix">$1</div>'
 				)
 			;
-			e.data.dataValue = Slider.reset_nav(edited, true);
+			e.data.dataValue = edited;
 		}
 	},
-	reset_nav: function (slider, ret) {
-		var $slider = $(slider),
-			$items = $slider.find('.upfront-inserted_image-wrapper'),
-			$nav = $('<div class="slider-nav-wrapper" contenteditable="false" />');
-		if ( $slider.hasClass('upfront-inline_post-slider') ){
-			$slider.find('.slider-nav-wrapper').remove();
-			$items.each(function(index){
-				$nav.append('<i href="#" class="slider-nav" data-slider-index="' + index + '">'+index+'</i>');
-			});
-			$slider.append($nav);
-		}
-		if ( ret ){
-			var $c = $("<div />").append($slider);
-			return $c.html();
-		}
+	init_sliders_edit: function (editor) {
+		var $sliders = $(editor.element.$).find('.upfront-inline_post-slider'),
+			$slider_nav = $('<div id="upfront-inline-slider-nav" class="upfront-default-slider-nav upfront-ui" />');
+		$('body').append($slider_nav);
+		$sliders.each(function(){
+			var $slider = $(this),
+				$items = $slider.find('.upfront-inserted_image-wrapper'),
+				max_height = 0;
+			calc_height();
+			$slider.find('img').on('load', calc_height);
+			function calc_height () {
+				$slider.css('height', 9999);
+				$items.each(function(index){
+					var $img = $(this).find('img'),
+						img_h = $img.height();
+					max_height = max_height > img_h ? max_height : img_h;
+				});
+				$slider.css('height', Math.ceil(max_height/15)*15);
+			}
+		});
+		$(document)
+			.on('mouseenter', '.upfront-inline_post-slider', this, this.hover_on)
+			.on('mouseleave', '.upfront-inline_post-slider', this, this.hover_off)
+		;
+		$slider_nav.on('click', '.upfront-default-slider-nav-item', this, this.slide_switch);
+	},
+	hover_on: function (e) {
+		var $slider = $(this),
+			$slider_nav = $('#upfront-inline-slider-nav'),
+			off = $slider.offset(),
+			height = $slider.outerHeight(),
+			width = $slider.outerWidth(),
+			me = e.data;
+		$slider_nav.css({
+			top: off.top + height,
+			left: off.left,
+			width: width
+		});
+		$slider_nav.show();
+		if ( me.$current_slider && me.$current_slider.get(0) == $slider.get(0) )
+			return;
+		me.$current_slider = $slider;
+		me.reset_nav($slider);
+	},
+	hover_off: function (e) {
+		
+	},
+	slide_switch: function (e) {
+		var $nav_item = $(this),
+			nav_index = $nav_item.attr('data-slider-index'),
+			$slider_nav  = $('#upfront-inline-slider-nav'),
+			me = e.data;
+		me.$current_slider.find('.slide-edit-active').removeClass('slide-edit-active');
+		me.$current_slider.find('.upfront-inserted_image-wrapper').eq(nav_index).addClass('slide-edit-active');
+		$slider_nav.find('.upfront-default-slider-nav-item-selected').removeClass('upfront-default-slider-nav-item-selected');
+		$nav_item.addClass('upfront-default-slider-nav-item-selected');
+		Image.remove_dialog();
+		$slider_nav.show();
+	},
+	reset_nav: function ($slider) {
+		var $slider_nav  = $('#upfront-inline-slider-nav');
+		$slider_nav.html('');
+		$slider.find('.upfront-inserted_image-wrapper').each(function(index){
+			$slider_nav.append('<i class="upfront-default-slider-nav-item" data-slider-index="' + index + '">' + index + '</i>');
+		});
+		$slider_nav.find('.upfront-default-slider-nav-item:first').trigger('click');
 	},
 	from_html: function (content) {
 		var $c = $("<div />").append(content),

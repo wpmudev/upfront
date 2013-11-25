@@ -32,30 +32,35 @@ define(_template_files, function () {
 	var Upfront_Scroll_Mixin = {
 		stop_scroll_propagation: function ($el) {
 			$el.on('DOMMouseScroll mousewheel', function(ev) {
-			var $this = $(this),
-				scrollTop = this.scrollTop,
-				scrollHeight = this.scrollHeight,
-				height = $this.height(),
-				delta = ev.originalEvent.wheelDelta,
-				up = delta > 0;
-		
-			var prevent = function() {
+				var $this = $(this),
+					scrollTop = this.scrollTop,
+					scrollHeight = this.scrollHeight,
+					height = $this.outerHeight(),
+					delta = ev.originalEvent.wheelDelta,
+					up = delta > 0,
+					scroll = scrollHeight > height;
+					
+				if ( !scroll )
+					return;
+					
 				ev.stopPropagation();
-				ev.preventDefault();
-				ev.returnValue = false;
-				return false;
-			};
 			
-			if (!up && -delta > scrollHeight - height - scrollTop) {
-				// Scrolling down, but this will take us past the bottom.
-				$this.scrollTop(scrollHeight);
-				return prevent();
-			} else if (up && delta > scrollTop) {
-				// Scrolling up, but this will take us past the top.
-				$this.scrollTop(0);
-		 		return prevent();
-			}
-		});
+				var prevent = function() {
+					ev.preventDefault();
+					ev.returnValue = false;
+					return false;
+				};
+				
+				if (!up && -delta > scrollHeight - height - scrollTop) {
+					// Scrolling down, but this will take us past the bottom.
+					$this.scrollTop(scrollHeight);
+					return prevent();
+				} else if (up && delta > scrollTop) {
+					// Scrolling up, but this will take us past the top.
+					$this.scrollTop(0);
+			 		return prevent();
+				}
+			});
 		}
 	};
 
@@ -812,7 +817,7 @@ define(_template_files, function () {
 				//settings: new SidebarPanel_Settings({"model": this.model})
 			};
 			// Dev feature only
-			if ( Upfront.Settings.Debug.dev )
+			//if ( Upfront.Settings.Debug.dev )
 				this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 		},
 		render: function () {
@@ -2321,7 +2326,7 @@ define(_template_files, function () {
 		},
 		get_field_html: function () {
 			var attr = {
-				'class': 'upfront-field-select',
+				'class': 'upfront-field-select upfront-no-select',
 				'id': this.get_field_id()
 			};
 			attr.class += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
@@ -2441,7 +2446,7 @@ define(_template_files, function () {
 			this.$el.append('<div class="upfront-suggest-wrap" />');
 			var $wrap = this.$el.find('.upfront-suggest-wrap')
 			$wrap.append(this.get_field_html());
-			$wrap.append('<div class="upfront-suggest-list-wrap" />');
+			$wrap.append('<div class="upfront-suggest-list-wrap upfront-no-select" />');
 			this.checked_list = this.get_saved_value();
 			var $list_wrap = this.$el.find('.upfront-suggest-list-wrap');
 			$list_wrap.append('<ul class="upfront-suggest-lists">' + this.get_suggest_list_html() + '</ul>');
@@ -3530,6 +3535,7 @@ var Field_Anchor = Field_Select.extend({
 					});
 				}
 			}
+			this.trigger('modal:open');
 			return this.modal_deferred.promise();
 		},
 		close_modal: function (save) {
@@ -3537,6 +3543,7 @@ var Field_Anchor = Field_Select.extend({
 				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid);
 			$modal.hide();
 			panels_view.show_gradient();
+			this.trigger('modal:close');
 			if ( save )
 				this.modal_deferred.resolve();
 			else
@@ -3605,7 +3612,22 @@ var Field_Anchor = Field_Select.extend({
 		}
 	});
 	
-	var RegionPanelItem_BgColor = InlinePanelItem.extend({
+	var RegionPanelItem = InlinePanelItem.extend({
+		initialize: function () {
+			this.on('modal:open', this.on_modal_open, this);
+			this.on('modal:close', this.on_modal_close, this);
+		},
+		on_modal_open: function () {
+			// Disable region changing
+			Upfront.Events.trigger('command:region:edit_toggle', false);
+		},
+		on_modal_close: function () {
+			// Re-enable region changing
+			Upfront.Events.trigger('command:region:edit_toggle', true);
+		}
+	});
+	
+	var RegionPanelItem_BgColor = RegionPanelItem.extend({
 		events: {
 			'click .upfront-icon': 'open_spectrum'
 		},
@@ -3613,12 +3635,10 @@ var Field_Anchor = Field_Select.extend({
 		icon: 'color',
 		tooltip: "Solid Color BG",
 		tooltip_pos: 'right',
-		initialize: function () {
-			this.default_color = this.model.get_property_value_by_name('background_color');
-		},
 		open_spectrum: function () {
 			this.parent_view.close_subitem();
 			this.parent_view.select_item('color');
+			this.default_color = this.model.get_property_value_by_name('background_color');
 			this.model.set_property('background_image', '');
 			this.open_modal(this.render_modal);
 			return false;
@@ -3681,7 +3701,7 @@ var Field_Anchor = Field_Select.extend({
 		}
 	});
 	
-	var RegionPanelItem_BgImage = InlinePanelItem.extend({
+	var RegionPanelItem_BgImage = RegionPanelItem.extend({
 		events: {
 			'click .upfront-icon': 'open_image_upload'
 		},
@@ -3703,6 +3723,7 @@ var Field_Anchor = Field_Select.extend({
 				$('<img>').attr('src', sizes.full[0]).load(function(){
 					Upfront.Views.Editor.ImageSelector.close();
 					me.model.set_property('background_image', sizes.full[0]);
+					me.model.set_property('background_image_ratio', Math.round(sizes.full[2]/sizes.full[1]*100)/100);
 					me.open_modal(me.render_modal, true);
 				});
 			});
@@ -3724,6 +3745,7 @@ var Field_Anchor = Field_Select.extend({
 			this.fields = {
 				bg_style: new Field_Radios({
 					model: this.model,
+					property: 'background_style',
 					layout: 'vertical',
 					default_value: 'full',
 					values: [
@@ -3841,11 +3863,11 @@ var Field_Anchor = Field_Select.extend({
 			if ( color != this.fields.bg_color.get_saved_value() )
 				this.model.set_property('background_color', color);
 			if ( style == 'full' ) {
-				this.model.set_property('background_fill', 'fill');
+				this.model.set_property('background_style', 'full');
 			}
 			else {
-				this.model.set_property('background_fill', '');
 				if ( style == 'tile' ){
+					this.model.set_property('background_style', 'tile');
 					if ( is_repeat_x && is_repeat_y )
 						this.model.set_property('background_repeat', 'repeat');
 					else if ( is_repeat_y )
@@ -3856,6 +3878,7 @@ var Field_Anchor = Field_Select.extend({
 						this.model.set_property('background_repeat', 'no-repeat');
 				}
 				else if ( style == 'fixed' ){
+					this.model.set_property('background_style', 'fixed');
 					this.model.set_property('background_repeat', 'no-repeat');
 					this.model.set_property('background_position', pos_x + '% ' + pos_y + '%');
 				}
@@ -3863,20 +3886,124 @@ var Field_Anchor = Field_Select.extend({
 		}
 	});
 	
-	var RegionPanelItem_BgMaps = InlinePanelItem.extend({
+	var RegionPanelItem_BgMap = RegionPanelItem.extend({
 		events: {
-			'click .upfront-icon': 'open_maps_setting'
+			'click .upfront-icon': 'open_map_setting'
 		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-bgmaps',
-		icon: 'maps',
-		tooltip: "Maps BG",
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bgmap',
+		icon: 'map',
+		tooltip: "Map BG",
 		tooltip_pos: 'right',
-		open_maps_setting: function () {
-			this.parent_view.select_item('maps');
+		open_map_setting: function () {
+			var me = this,
+				map_center;
+			this.parent_view.close_subitem();
+			map_center = this.model.get_property_value_by_name('background_map_center');
+			if ( ! map_center ){
+				this.model.init_property('background_map_center', [10.722250, 106.730762]);
+				this.model.init_property('background_map_zoom', 10);
+				this.model.init_property('background_map_style', "ROADMAP");
+				this.model.init_property('background_map_controls', "");
+			}
+			this.parent_view.select_item('map');
+			this.open_modal(this.render_modal, true).done(function(){
+				me.geocode_location();
+			});
+		},
+		render_modal: function ($content, $modal) {
+			$content.html('');
+			var me = this,
+				$location = $('<div class="upfront-region-bg-map-location clearfix" />'),
+				$style_control = $('<div class="upfront-region-bg-map-style-control clearfix" />'),
+				set_value = function () {
+					var value = this.get_value();
+					this.property.set({value: value});
+				};
+			this.fields = {
+				location: new Field_Text({
+					model: this.model,
+					label: "Location:",
+					property: 'background_map_location',
+					placeholder: "e.g 123 Nice St",
+					change: function () {
+						var value = this.get_value();
+						this.property.set({value: value}, {silent: true});
+						me._location_changed = true;
+					}
+				}),
+				zoom: new Field_Slider({
+					model: this.model,
+					label: "Zoom:",
+					property: 'background_map_zoom',
+					default_value: 8,
+					min: 1,
+					max: 19,
+					step: 1,
+					change: set_value
+				}),
+				style: new Field_Select({
+					model: this.model,
+					label: "Map Style:",
+					property: 'background_map_style',
+					values: [
+						{ label: "Roadmap", value: 'ROADMAP' },
+						{ label: "Satellite", value: 'SATELLITE' },
+						{ label: "Hybrid", value: 'HYBRID' },
+						{ label: "Terrain", value: 'TERRAIN' }
+					],
+					change: set_value
+				}),
+				controls: new Field_Select({
+					model: this.model,
+					label: "Controls:",
+					property: 'background_map_controls',
+					multiple: true,
+					default_value: ['pan'],
+					values: [
+						{ label: "Pan", value: "pan" },
+						{ label: "Zoom", value: "zoom" },
+						{ label: "Map Type", value: "map_type" },
+						{ label: "Scale", value: "scale" },
+						{ label: "Street View", value: "street_view" },
+						{ label: "Overview Map", value: "overview_map" }
+					],
+					change: set_value
+				})
+			};
+			$modal.addClass('upfront-region-modal-map');
+			_.each(this.fields, function (field) {
+				field.render();
+			});
+			$location.append(this.fields.location.$el);
+			$location.append('<i class="upfront-field-icon upfront-field-icon-refresh-2 upfront-refresh-map" />');
+			$location.on('click', '.upfront-refresh-map', function () {
+				me.geocode_location();
+			});
+			$content.append($location);
+			$content.append(this.fields.zoom.$el);
+			$style_control.append(this.fields.style.$el);
+			$style_control.append(this.fields.controls.$el);
+			$content.append($style_control);
+		},
+		geocode_location: function () {
+			if ( this._geocoding == true || !this._location_changed )
+				return;
+			var me = this,
+				location = this.fields.location,
+				geocoder = new google.maps.Geocoder();
+			this._geocoding = true;
+			geocoder.geocode({address: location.get_value()}, function (results, status) {
+				if (status != google.maps.GeocoderStatus.OK) return false;
+				var pos = results[0].geometry.location;
+
+				me.model.set_property("background_map_center", [pos.lat(), pos.lng()]);
+				me._geocoding = false;
+				me._location_changed = false;
+			});
 		}
 	});
 	
-	var RegionPanelItem_BgSlider = InlinePanelItem.extend({
+	var RegionPanelItem_BgSlider = RegionPanelItem.extend({
 		events: {
 			'click .upfront-icon': 'open_slider_setting'
 		},
@@ -3885,7 +4012,165 @@ var Field_Anchor = Field_Select.extend({
 		tooltip: "Slider BG",
 		tooltip_pos: 'right',
 		open_slider_setting: function () {
+			var me = this,
+				slide_images;
+			this.parent_view.close_subitem();
 			this.parent_view.select_item('slider');
+			slide_images = this.model.get_property_value_by_name('background_slider_images');
+			if ( slide_images ){
+				me.open_modal(me.render_modal, true);
+			}
+			else {
+				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
+					var image_ids = [];
+					_.each(images, function(image, id){
+						image_ids.push(id);
+					});
+					me.model.set_property('background_slider_images', image_ids);
+					Upfront.Views.Editor.ImageSelector.close();
+					me.open_modal(me.render_modal, true);
+				});
+			}
+		},
+		render_modal: function ($content, $modal) {
+			var me = this,
+				$rotate = $('<div class="upfront-region-bg-slider-rotate clearfix" />'),
+				$transition = $('<div class="upfront-region-bg-slider-transition upfront-settings-item"><div class="upfront-settings-item-title" /><div class="upfront-settings-item-content" /></div>'),
+				$transition_title = $transition.find('.upfront-settings-item-title'),
+				$transition_content = $transition.find('.upfront-settings-item-content'),
+				$slides = $('<div class="upfront-region-bg-slider-slides upfront-settings-item"><div class="upfront-settings-item-title" /><div class="upfront-settings-item-content upfront-no-select clearfix" /></div>'),
+				$slides_title = $slides.find('.upfront-settings-item-title'),
+				$slides_content = $slides.find('.upfront-settings-item-content'),
+				set_value = function () {
+					var value = this.get_value();
+					this.property.set({value: value});
+				};
+			this.fields = {
+				rotate: new Field_Checkboxes({
+					model: this.model,
+					property: 'background_slider_rotate',
+					layout: 'horizontal-inline',
+					default_value: ['rotate'],
+					values: [ { label: "Rotate automatically every ", value: 'rotate' } ],
+					change: set_value
+				}),
+				rotate_time: new Field_Number({
+					model: this.model,
+					property: 'background_slider_rotate_time',
+					default_value: 5,
+					min: 1,
+					max: 60,
+					step: 1,
+					suffix: 'sec',
+					change: set_value
+				}),
+				control: new Field_Radios({
+					model: this.model,
+					property: 'background_slider_control',
+					default_value: 'always',
+					layout: 'horizontal-inline',
+					values: [
+						{ label: "Always show slider controls", value: 'always' },
+						{ label: "Show slider controls on hover", value: 'hover' }
+					],
+					change: set_value
+				}),
+				transition: new Field_Radios({
+					model: this.model,
+					property: 'background_slider_transition',
+					default_value: 'crossfade',
+					layout: 'horizontal-inline',
+					values: [
+						{ label: "Slide Down", value: 'slide-down', icon: '' },
+						{ label: "Slide Up", value: 'slide-up', icon: '' },
+						{ label: "Slide Left", value: 'slide-left', icon: '' },
+						{ label: "Slide Right", value: 'slide-right', icon: '' },
+						{ label: "Crossfade", value: 'crossfade', icon: '' }
+					],
+					change: set_value
+				})
+			};
+			$content.html('');
+			$modal.addClass('upfront-region-modal-slider');
+			_.each(this.fields, function (field) {
+				field.render();
+			});
+			$rotate.append(this.fields.rotate.$el);
+			$rotate.append(this.fields.rotate_time.$el);
+			$content.append($rotate);
+			$content.append(this.fields.control.$el);
+			$transition_title.text("Slide transitions:");
+			$transition_content.append(this.fields.transition.$el);
+			$content.append($transition);
+			$slides_title.text("Slides Order:");
+			$content.append($slides);
+			me.update_slider_slides($slides_content);
+			$slides_content.on('click', '.upfront-region-bg-slider-add-image', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
+					var slide_images = _.clone(me.model.get_property_value_by_name('background_slider_images'));
+					_.each(images, function(image, id){
+						slide_images.push(id);
+					});
+					me.model.set_property('background_slider_images', slide_images);
+					Upfront.Views.Editor.ImageSelector.close();
+					me.update_slider_slides($slides_content);
+				});
+			});
+			$slides_content.on('click', '.upfront-region-bg-slider-delete-image', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				var $image = $(this).closest('.upfront-region-bg-slider-image'),
+					image_id = $image.data('image-id'),
+					slide_images = me.model.get_property_value_by_name('background_slider_images');
+				slide_images = _.without(slide_images, image_id);
+				me.model.set_property('background_slider_images', slide_images);
+				$image.remove();
+			});
+		},
+		update_slider_slides: function ($wrap) {
+			var me = this,
+				slide_images = me.model.get_property_value_by_name('background_slider_images'),
+				$add = $('<div class="upfront-region-bg-slider-add-image">Add Slide</div>');
+			$wrap.html('');
+			
+			if ( slide_images ) {
+				Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
+					var images = response.data.images;
+					_.each(slide_images, function (id) {
+						var image = images[id],
+							$image = $('<div class="upfront-region-bg-slider-image" />');
+						$image.data('image-id', id);
+						//$image.append('<img src="' + image.thumbnail[0] + '" alt="" />');
+						$image.css({
+							background: 'url("' + image.thumbnail[0] + '") no-repeat 50% 50%',
+							backgroundSize: '100% auto'
+						});
+						$image.append('<span href="#" class="upfront-region-bg-slider-delete-image">&times;</span>');
+						$wrap.append($image);
+					});
+					if ( $wrap.hasClass('ui-sortable') )
+						$wrap.sortable('refresh');
+					else
+						$wrap.sortable({
+							items: '>  .upfront-region-bg-slider-image',
+							update: function () {
+								var slide_images = [];
+								$wrap.find('.upfront-region-bg-slider-image').each(function(){
+									var id = $(this).data('image-id');
+									if ( id )
+										slide_images.push(id);
+								});
+								me.model.set_property('background_slider_images', slide_images);
+							}
+						});
+					$wrap.append($add);
+				});
+			}
+			else {
+				$wrap.append($add);
+			}
 		}
 	});
 	
@@ -3896,7 +4181,7 @@ var Field_Anchor = Field_Select.extend({
 				color: new RegionPanelItem_BgColor({model: this.model}),
 				image: new RegionPanelItem_BgImage({model: this.model}),
 				slider: new RegionPanelItem_BgSlider({model: this.model}),
-				maps: new RegionPanelItem_BgMaps({model: this.model})
+				map: new RegionPanelItem_BgMap({model: this.model})
 			};
 			Upfront.Events.on('region:activated', this.on_region_change, this);
 		},
@@ -3977,8 +4262,10 @@ var Field_Anchor = Field_Select.extend({
 		add_region: function () {
 			var to = this.options.to,
 				collection = this.model.collection,
-				total = collection.size(),
+				total = collection.size()-1, // total minus shadow region
 				index = collection.indexOf(this.model),
+				prev_model = index > 0 ? collection.at(index-1) : false,
+				next_model = index < total-1 ? collection.at(index+1) : false,
 				is_new_container = ( to == 'top' || to == 'bottom' ),
 				is_before = ( to == 'top' || to == 'left' ),
 				title = is_new_container ? 'Region ' + total : this.model.get('name') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
@@ -3990,6 +4277,12 @@ var Field_Anchor = Field_Select.extend({
 				});
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
+			}
+			else {
+				if ( to == 'top' && prev_model && ( prev_model.get('container') && prev_model.get('container') != prev_model.get('name') ) )
+					index--;
+				else if ( to == 'bottom' && next_model && ( next_model.get('container') && next_model.get('container') != next_model.get('name') ) )
+					index++;
 			}
 			Upfront.Events.once('entity:region:before_render', this.before_animation, this);
 			Upfront.Events.once('entity:region:after_render', this.run_animation, this);
@@ -4025,6 +4318,9 @@ var Field_Anchor = Field_Select.extend({
 				clearTimeout(end_t);
 			});
 			function end () {
+				var baseline = Upfront.Settings.LayoutEditor.Grid.baseline,
+					height = view.$el.outerHeight();
+				model.set_property('row', Math.ceil(height/baseline), true);
 				view.$el.removeClass(ani_class);
 				// enable edit and activate the new region
 				Upfront.Events.trigger('command:region:edit_toggle', true);

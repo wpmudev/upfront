@@ -29,9 +29,9 @@ function upfront_get_class_num ($classname, $classes) {
 
 function upfront_element_relative_path ($relpath, $filepath) {
 	$templatepath = str_replace('|/+|','/',str_replace('\\','/',get_template_directory())); // normalize slashes
-	$filepath = str_replace('|/+|','/',str_replace('\\','/',dirname($filepath))); // normalize slashes
+	$filepath = trailingslashit(str_replace('|/+|','/',str_replace('\\','/',dirname($filepath)))); // normalize slashes
 	$element_path = preg_replace('/' . preg_quote(trailingslashit($templatepath), '/') . '/i', '', $filepath);
-	$relpath = trim($element_path, '/') . '/' . trim($relpath, '/');
+	$relpath = ($element_path ? trim($element_path, '/') . '/' : '') . trim($relpath, '/');
 	return $relpath;
 }
 
