@@ -2552,9 +2552,6 @@ a.ueditor-action-pickercancel{
 .upfront-icon-element-image:before {
 	background-position: -39px -74px;
 }
-.upfront-icon-element-gallery:before {
-	background-position: -39px -380px;
-}
 .upfront-icon-element-search:before {
 	background-position: -39px -108px;
 }
@@ -2605,6 +2602,9 @@ a.ueditor-action-pickercancel{
 }
 .upfront-icon-element-comment:before {
 	background-position: -39px -618px;
+}
+.upfront-icon-element-youtube:before {
+	background-position: -39px -687px;
 }
 .upfront-icon:before {
 	width: 24px;
@@ -3119,6 +3119,21 @@ a.ueditor-action-pickercancel{
 }
 .upfront-field-icon-refresh-2:before {
 	background-position: -480px -72px;
+}
+.upfront-field-icon-video-multiple:before {
+	background-position: -1801px -104px;
+}
+
+.upfront-field-icon-video-single:before {
+	background-position: -1908px -104px;
+}
+
+.upfront-field-icon-display-style-gallery:before {
+	background-position: -1800px -136px;
+}
+
+.upfront-field-icon-display-style-list:before {
+	background-position: -1908px -136px;
 }
 
 

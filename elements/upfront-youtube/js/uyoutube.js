@@ -59,11 +59,11 @@
         rendered = this.youtubeTpl(this.extract_properties());
 
         if(this.property('youtube_status') === 'starting'){
-          rendered += '<div class="upfront-image-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
-            '<span class="upfront-image-resizethiselement">Video List or Single Video</span>'+
-            '<div class="upfront-image-resizing-icons">' +
-            '<a class="upfront-image-select-button button single-video" href="#">S</a>' +
-            '<a class="upfront-image-select-button button multiple-videos" href="#">M</a>' +
+          rendered += '<div class="upfront-youtube-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
+            '<span class="upfront-youtube-starting-title">Video List or Single Video?</span>'+
+            '<div class="upfront-youtube-resizing-icons">' +
+            '<a class="upfront-youtube-select-button button multiple-videos" href="#"><span class="yticon"></span><span class="ytdesc">Multiple Videos</span></a>' +
+            '<a class="upfront-youtube-select-button button single-video" href="#"><span class="yticon"></span><span class="ytdesc">Single Video</span></a>' +
             '</div>'+
             '</div>';
         }
@@ -120,7 +120,7 @@
           "name": "",
           "properties": [
             {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-            {"name": "class", "value": "c9 upfront-youtube_module"},
+            {"name": "class", "value": "c7 upfront-youtube_module"},
             {"name": "has_settings", "value": 0},
             {"name": "row", "value": 15}
           ],
@@ -253,7 +253,7 @@
             title: 'Multiple Videos',
             radio: true,
             is_default: true,
-            icon: 'contact-above-field',
+            icon: 'video-multiple',
             property: 'videoType',
             value: 'multiple',
             settings: [
@@ -382,7 +382,7 @@
             title: 'Single Video',
             radio: true,
             is_default: false,
-            icon: 'contact-above-field',
+            icon: 'video-single',
             property: 'videoType',
             value: 'single',
             settings: [

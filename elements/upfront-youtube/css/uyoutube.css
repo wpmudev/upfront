@@ -96,3 +96,71 @@
 .uyoutube-settings .upfront-field-number[type=number] {
   width: 60px;
 }
+
+/* Starting */
+.upfront-youtube-starting-select {
+	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+	color: #28DC96;
+	font-family: 'Source Sans Pro';
+	font-size:18px;
+	width: 385px;
+	height: 228px;
+	background: #eeeff0;
+	text-align: center;
+	padding: 40px 10px 0;
+}
+
+.upfront-youtube-resizing-icons {
+	width: 200px;
+    margin: 20px auto 0;
+}
+
+.upfront-youtube-starting-select a.upfront-youtube-select-button {
+	color: #fff;
+	font-family: 'Source Sans Pro', sans-serif;
+	text-align: center;
+	font-weight: 200;
+	display: inline-block;
+	margin: 0;
+    width: 100px;
+    line-height: 15px;
+}
+
+.upfront-youtube-starting-select a.upfront-youtube-select-button .yticon {
+	background: #28DC96 url(../../../img/uf-core-el-sprite.png) no-repeat -1790px -30px;
+	border-radius: 60px;
+	border: none;
+	border: 3px solid rgba(255,255,255,0.3);
+	display: inline-block;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding;
+	background-clip: padding-box;
+	height: 60px;
+	width: 60px;
+}
+
+.upfront-youtube-starting-select a.single-video .yticon {
+    background-position: -1881px -30px;
+}
+
+.upfront-youtube-starting-select a.upfront-youtube-select-button:hover .yticon {
+	background-color: #3ea;
+}
+
+.upfront-youtube-starting-select a.upfront-youtube-select-button .ytdesc {
+	color: #28DC96;
+    font-size: 13px;
+    font-weight: bolder;
+    white-space: nowrap;
+}
+
+.upfront-youtube-starting-select a.upfront-youtube-select-button:hover .ytdesc {
+	color: #3ea;
+}
+
+.upfront-youtube-starting-title {
+	line-height: 1.1;
+	text-align: center;
+    color: #9097ac;
+    font-size: 25px;
+}
