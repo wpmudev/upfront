@@ -80,3 +80,22 @@ function upfront_boot_editor_trigger () {
 		'(function ($) { $(document).on("upfront-load", function () { Upfront.Application.start(); }); })(jQuery);' .
 	'</script>';
 }
+
+function upfront_locate_template ($template_names) {
+	if (!(defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF)) return locate_template($template_names); // Not a grandchild theme!
+	$located = '';
+	foreach ((array)$template_names as $template_name) {
+		if (!$template_name) continue;
+		if (file_exists(STYLESHEETPATH . '/' . $template_name)) {
+			$located = STYLESHEETPATH . '/' . $template_name;
+			break;
+		} else if (file_exists(UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/' . $template_name)) {
+			$located = UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/' . $template_name;
+			break;
+		} else if (file_exists(TEMPLATEPATH . '/' . $template_name)) {
+			$located = TEMPLATEPATH . '/' . $template_name;
+			break;
+		}
+	}
+	return $located;
+}

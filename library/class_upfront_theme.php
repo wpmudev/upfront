@@ -96,16 +96,20 @@ class Upfront_Theme {
 	public function get_template_uri($slugs, $default, $url = false){
 		$template_files = array();
 		foreach ( (array)$slugs as $file ) {
-			$template_files[] = array('child', get_stylesheet_directory(), $this->template_dir . '/' . $file . '.php');
-			$template_files[] = array('child', get_stylesheet_directory(), $this->template_dir . '/' . $file . '.html');
-			$template_files[] = array('parent', get_template_directory(), $this->template_dir . '/' . $file . '.php');
-			$template_files[] = array('parent', get_template_directory(), $this->template_dir . '/' . $file . '.html');
+			$template_files[] = array('stylesheet', get_stylesheet_directory(), $this->template_dir . '/' . $file . '.php');
+			$template_files[] = array('stylesheet', get_stylesheet_directory(), $this->template_dir . '/' . $file . '.html');
+			$template_files[] = array('template', get_template_directory(), $this->template_dir . '/' . $file . '.php');
+			$template_files[] = array('template', get_template_directory(), $this->template_dir . '/' . $file . '.html');
+			if (defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF) {
+				$template_files[] = array('upfront_parent', UPFRONT_GRANDCHILD_THEME_PARENT_PATH, $this->template_dir . '/' . $file . '.php');
+				$template_files[] = array('upfront_parent', UPFRONT_GRANDCHILD_THEME_PARENT_PATH, $this->template_dir . '/' . $file . '.html');
+			}
 		}
 		foreach ( $template_files as $template ) {
 			if ( file_exists($template[1] . '/' .  $template[2]) ){
 				if($url){
-					if($template[0] == 'child')
-						return get_stylesheet_directory_uri() . '/' . $template[2];
+					if ($template[0] == 'stylesheet') return get_stylesheet_directory_uri() . '/' . $template[2];
+					else if ('upfront_parent' == $template[0]) return UPFRONT_GRANDCHILD_THEME_PARENT_URL . '/' . $template[2];
 					return get_template_directory_uri() . '/' . $template[2] ;
 				}
 				return $template[1] . '/' .  $template[2];
@@ -121,6 +125,10 @@ class Upfront_Theme {
 			$template_files[] = get_stylesheet_directory() . '/' . $this->template_dir . '/' . $file . '.html';
 			$template_files[] = get_template_directory() . '/' . $this->template_dir . '/' . $file . '.php';
 			$template_files[] = get_template_directory() . '/' . $this->template_dir . '/' . $file . '.html';
+			if (defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF) {
+				$template_files[] = UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/' . $this->template_dir . '/' . $file . '.php';
+				$template_files[] = UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/' . $this->template_dir . '/' . $file . '.html';
+			}
 		}
 		foreach ( $template_files as $template_file ) {
 			if ( file_exists($template_file) )
@@ -352,3 +360,55 @@ class Upfront_Virtual_Region {
 	}
 }
 
+
+
+class Upfront_GrandchildTheme_Server implements IUpfront_Server {
+
+	const RELATIONSHIP_FLAG = 'UpfrontParent';
+
+	private function __clone () {}
+	private function __construct () {}
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		add_filter('extra_theme_headers', array($this, 'child_relationship_headers'));
+		add_action('after_setup_theme', array($this, 'check_theme_relationship'), 0);
+	}
+
+	public function child_relationship_headers ($headers) {
+		$headers = is_array($headers) ? $headers : array();
+		$headers[] = self::RELATIONSHIP_FLAG;
+		return $headers;
+	}
+
+	public function check_theme_relationship () {
+		if (defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF) return false; // Already a grandchild theme!
+		$data = wp_get_theme();
+		$theme = !empty($data) ? $data->get(self::RELATIONSHIP_FLAG) : false;
+		if (empty($theme)) return false;
+		define('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF', $theme);
+		$this->_initialize_grandchild_relationship();
+	}
+
+	private function _initialize_grandchild_relationship () {
+		if (!(defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF)) return $template; // Not a grandchild theme!
+
+		define('UPFRONT_GRANDCHILD_THEME_PARENT_PATH', realpath(trailingslashit(dirname(get_stylesheet_directory())) . UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF));
+		define('UPFRONT_GRANDCHILD_THEME_PARENT_URL', trailingslashit(dirname(get_stylesheet_directory_uri())) . UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF);
+
+		include UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/functions.php';
+
+		add_action('wp_enqueue_scripts', array($this, 'enqueue_parent_style'), 1);
+	}
+
+	public function enqueue_parent_style () {
+		if (!(defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF)) return false; // Not a grandchild theme!
+		wp_enqueue_style(UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF, UPFRONT_GRANDCHILD_THEME_PARENT_URL . '/style.css', array(), null);
+	}
+
+}
+Upfront_GrandchildTheme_Server::serve();
