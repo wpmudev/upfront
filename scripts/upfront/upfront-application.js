@@ -70,6 +70,12 @@ $(".upfront-layout .ui-draggable").each(function () {
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
 		data = JSON.stringify(data, undefined, 2);
+
+		if (Upfront.Settings.Application.NO_SAVE) {
+			Upfront.Events.trigger("command:layout:save_success");
+			return false;
+		}
+
 		Upfront.Util.post({"action": Upfront.Application.actions.save, "data": data})
 			.success(function () {
 				Upfront.Util.log("layout saved");

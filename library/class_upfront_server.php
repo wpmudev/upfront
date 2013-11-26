@@ -230,6 +230,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
 		));
 
+		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -262,7 +264,8 @@ $(function () {
 				},
 			},
 			"Application": {
-				"MODE": {$application_modes}
+				"MODE": {$application_modes},
+				"NO_SAVE": {$read_only},
 			},
 			"LayoutEditor": {
 				"Requirements": {$layout_editor_requirements},

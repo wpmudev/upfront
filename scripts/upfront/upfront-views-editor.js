@@ -857,17 +857,20 @@ define(_template_files, function () {
 			this.commands = _([
 				new Command_Undo({"model": this.model}),
 				new Command_Redo({"model": this.model}),
-				new Command_SaveLayout({"model": this.model}),
+				//new Command_SaveLayout({"model": this.model}),
 				//new Command_SaveLayoutAs({"model": this.model}),
 				//new Command_LoadLayout({"model": this.model}),
 				//new Command_ToggleGrid({"model": this.model}),
 				//new Command_ResetEverything({"model": this.model}),
 			]);
+			if (!Upfront.Settings.Application.NO_SAVE) {
+				this.commands.push(new Command_SaveLayout({"model": this.model}));
+			}
 			// Dev feature only
 			if ( Upfront.Settings.Debug.dev ){
-				this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
+				if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
 				this.commands.push(new Command_ToggleGrid({"model": this.model}));
-				this.commands.push(new Command_ResetEverything({"model": this.model}));
+				if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_ResetEverything({"model": this.model}));
 				this.commands.push(new Command_ToggleMode({"model": this.model}));
 			}
 		}
