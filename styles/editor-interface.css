@@ -5844,6 +5844,15 @@ div.sp-preview
 	text-decoration: none;
 }
 
+.ueditor-bar-icon:before {
+	content: '';
+	display: inline-block;
+	background: transparent url(../img/uf-ui-sprite.svg);
+	width: 30px;
+	height: 30px;
+	margin-right: 10px;
+}
+
 a.ueditor-action-publish {
 	text-align: center;
 	color: #fff !important;
@@ -5851,6 +5860,10 @@ a.ueditor-action-publish {
 	background: #1fcd8f;
 	margin: 0 auto;
 	font-weight: bold;
+}
+
+a.ueditor-action-publish:before {
+	content
 }
 a.ueditor-action-publish:hover {
 	text-decoration: none;

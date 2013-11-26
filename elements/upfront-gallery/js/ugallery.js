@@ -160,7 +160,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		multi.icon = 'caption';
 		multi.tooltip = '';
-		multi.selected = 'nocaption';
+		multi.selected = this.property('captionPosition');
 		multi.on('select', function(item){
 			me.property('captionPosition', item, false);
 		});
@@ -271,8 +271,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						panels = me.$('.ugallery-thumb-title')
 					;
 
-					editor.textColor = me.property('captionColor');
-					editor.panelColor = me.property('captionBackground');
 
 					editor.on('change', function(content){
 						image.set('title', content);
@@ -295,7 +293,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						panels.css('background-color', value);
 					});
 
-					title.on('dblclick', function(e){				
+					title.on('dblclick', function(e){	
+						editor.textColor = me.property('captionColor');
+						editor.panelColor = me.property('captionBackground');			
 						editor.start();
 					});
 				}
@@ -1112,8 +1112,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var tooltip = $('#ugallery-tooltip'),
 			elementPosition = element.offset(),
 			tooltipPosition = {
-				top: elementPosition.top + element.height(),
-				left: elementPosition.left - 125
+				top: elementPosition.top + element.outerHeight(),
+				left: elementPosition.left - 125 + Math.floor(element.outerWidth() / 2)
 			},
 			tooltipClass = 'ugallery-tooltip-bottom',
 			me = this

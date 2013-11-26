@@ -1,11 +1,11 @@
 <div class="ueditor-bar ueditable" id="{{cid}}">
 	<div class="ueditor-bar-buttons">
 		<a href="#" class="ueditor-bar-show_advanced">Advanced</a>
-		<a class="ueditor-action-cancel" href="#">Cancel</a>
+		<a class="ueditor-action-cancel ueditor-bar-icon" href="#">Cancel</a>
 		{[ if(draftButton){ ]}
 		<a class="ueditor-action-draft" href="#">Save draft</a>
 		{[ } ]}
-		<a class="ueditor-action-publish" href="#">{{buttonText}}</a>
+		<a class="ueditor-action-publish ueditor-bar-icon" href="#">{{buttonText}}</a>
 	</div>
 	<div class="ueditor-bar-advanced">
 		<div class="ueditor-row-item">

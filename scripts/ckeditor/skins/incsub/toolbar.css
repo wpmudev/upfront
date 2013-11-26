@@ -660,3 +660,138 @@ a.cke_button__upfront_colorselect{
 .upfront-ckeditor-colorselect .sp-texthint {
 	display: none;
 }
+
+.cke_button__textformat:before {
+	display:block;
+	content: '';
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	border-radius: 2px;
+	
+	background-color: #aeb6be;
+	background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), 
+	linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+
+	background-repeat: repeat;
+
+	-webkit-background-size:8px 8px;
+	-moz-background-size:8px 8px;
+	background-size:8px 8px;
+
+	background-position:0 0, 4px 4px;
+}
+
+
+.cke_button__textformat .cke_button_icon {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	border-radius: 2px;
+
+	color:#fff;
+	background-color: rgba(12,123,211,.5);
+}
+
+.cke_button__textformat .cke_button_icon:after {
+	content: 'T';
+	font-family: Georgia;
+	font-weight: bold;
+	font-size: 20px;
+	text-align: center;
+	width: 24px;
+	position: absolute;
+	left: 0;
+}
+
+.cke_button__textformat.textformat-open {
+	background: #1E2F3F;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+div.uckeditor-textformat {
+	position: absolute;
+	top: 40px;
+	left: 170px;
+	background: #1E2F3F !important;
+	-webkit-border-radius: 2px;
+	-webkit-border-top-left-radius: 0;
+	-moz-border-radius: 2px;
+	-moz-border-radius-topleft: 0;
+	border-radius: 2px;
+	border-top-left-radius: 0;
+	padding: 10px 5px 5px;
+	color:#fff;
+	width: 170px;
+	display: none;
+}
+
+.uckeditor-textformat>div {
+	padding: 0 5px;
+	margin-bottom: 5px;
+}
+
+.uckeditor-textformat span{
+	color: #cee1f2;
+	line-height: 1.8em;
+}
+
+.uckeditor-textformat span.uckeditor-color_label {
+	color: #7C97B2;	
+}
+
+div.uckeditor-textcolor {
+	margin-bottom: 5px;
+}
+
+.uckeditor-textformat div.sp-preview {
+	border: 1px solid #335b80;
+	border-radius:2px;
+	width: 16px;
+	height: 16px;
+
+	margin: 1px 0;
+	
+	background-color: #aeb6be;
+	background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), 
+	linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+
+	background-repeat: repeat;
+
+	-webkit-background-size:8px 8px;
+	-moz-background-size:8px 8px;
+	background-size:8px 8px;
+
+	background-position:0 0, 4px 4px;
+}
+
+a.uckeditor-select,
+a.sp-replacer {
+	float: right;
+	width: 80px;
+	text-align: right;
+	text-transform: uppercase;
+	color: #cee1f2;
+}
+a.uckeditor-select:hover,
+a.sp-replacer:hover .sp-texthint{
+	color: #1fcd8f;
+}
+
+a.uckeditor-select{
+	line-height: 1.8em;
+	position:relative;
+}

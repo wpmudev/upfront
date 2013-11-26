@@ -98,10 +98,6 @@
 	<input type="hidden" id="ugallery-image-id" value="{{id}}">
 	<h3>Edit image link</h3>
 	<div class="upfront-field-wrap">
-		<input type="radio" name="ugallery-image-link" value="original" class="upfront-field-radio" id="ugallery-image-link-0" {{link == 'original' ? checked : ''}}>
-		<label for="ugallery-image-link-0">Link to the original image</label>
-	</div>
-	<div class="upfront-field-wrap">
 		<input type="radio" name="ugallery-image-link" value="external" class="upfront-field-radio" id="ugallery-image-link-1" {{link == 'external' ? checked : ''}}>
 		<label for="ugallery-image-link-1">External link</label>
 		<input type="text" value="{{url}}" id="ugallery-image-link-url" placeholder="Type link URL" style="{{link != 'external' ? 'display:none' : ''}}" class="upfront-field-text">

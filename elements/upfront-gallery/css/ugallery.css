@@ -408,6 +408,66 @@ h3.upfront-selector-title {
 	display: block;
 }
 
+.ugallery-controls {
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.ugallery-controls div.upfront-inline-panel-subitem div.upfront-inline-panel-item:last-child {
+	display: none;
+}
+
+div.ugallery-controls i.upfront-icon:before {
+	background-image: url(../../../img/uf-core-el-sprite.svg);
+}
+
+.upfront-icon-region-over:before {
+	background-position: -699px -486px;
+}
+.upfront-icon-region-over:hover:before {
+	background-position: -807px -486px;
+}
+.upfront-icon-region-over-active:before {
+	background-position: -699px -486px;
+}
+.upfront-icon-region-over-active:hover:before {
+	background-position: -807px -486px;
+}
+
+.upfront-icon-region-fullscreen:before {
+	background-position: -699px -774px;
+}
+.upfront-icon-region-fullscreen:hover:before {
+	background-position: -807px -774px;
+}
+.upfront-icon-region-fullscreen-active:before {
+	background-position: -699px -774px;
+}
+.upfront-icon-region-fullscreen-active:hover:before {
+	background-position: -807px -774px;
+}
+
+div.ugallery-controls i.upfront-icon.upfront-icon-region-remove:before {
+	background-image: url(../../../img/uf-ui-sprite.svg);	
+}
+
+.upfront-icon-region-remove:before {
+	background-position: -288px -643px;
+}
+.upfront-icon-region-remove:hover:before {
+	background-position: -412px -643px;
+}
+.upfront-icon-region-remove-active:before {
+	background-position: -288px -643px;
+}
+.upfront-icon-region-remove-active:hover:before {
+	background-position: -412px -643px;
+}
+
+
+
 .ugallery-onclick {
 	background: rgba(57,82,105,0.9);
 	position: absolute;

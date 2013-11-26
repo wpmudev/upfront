@@ -7,10 +7,13 @@ CKEDITOR.plugins.add('textformat', {
 				var modal = $('.' + editor.id + ' .uckeditor-textformat');
 
 				if(!modal.is(':visible')){
+					var button = $('.' + editor.id).find('.cke_button__textformat');
 					modal.show();
+					button.addClass('textformat-open');
 					setTimeout(function(){
 						$('body').one('click', function(e){
 							modal.hide();
+							button.removeClass('textformat-open');
 						});
 					}, 100);
 				}
@@ -25,8 +28,10 @@ CKEDITOR.plugins.add('textformat', {
 });
 
 CKEDITOR.on('instanceReady', function(e){
-	var modal = $('<div class="uckeditor-textformat"></div>'),
-		select = $('<div class="uckeditor-textformat-selector"><span class="">Text format:</span> <a class="uckeditor-select">Normal</a></div>'),
+	var editorEl = $("." + e.editor.id),
+		buttonEl = editorEl.find('.cke_button__textformat_icon'),
+		modal = $('<div class="uckeditor-textformat"></div>'),
+		select = $('<div class="uckeditor-textformat-selector"><span class="uckeditor-color_label">Text format:</span> <span><a class="uckeditor-select">Normal</a></span></div>'),
 		options = [
 			{ value: 'p', name: 'Normal'},
 			{ value: 'h1', name: 'Heading 1'},
@@ -43,6 +48,10 @@ CKEDITOR.on('instanceReady', function(e){
 			{id:'textcolor', label: 'Text Color', textValue: textColor, value: textColor},
 			{id: 'panelcolor', label: 'Panel Color', textValue: panelColor, value: panelColor}
 		],
+		cssKeys = {
+			textcolor: 'color',
+			panelcolor: 'background-color'
+		},
 		spectrumOptions = {
 			clickoutFiresChange: true,
 			chooseText: 'OK',
@@ -50,14 +59,15 @@ CKEDITOR.on('instanceReady', function(e){
 			showSelectionPalette: true,
 			move: function(color){
 				var rgb = color.toHexString(),
-					ev = $(this).data('ev') + ':change'
+					ev = $(this).data('ev')
 				;
 				$('.sp-dragger').css({
 					'border-top-color': rgb,
 					'border-right-color': rgb
 				});
 
-				e.editor.ueditor.trigger(ev, color);
+				e.editor.ueditor.trigger(ev + ':change', color);
+				buttonEl.css(cssKeys[ev], color.toRgbString());
 			},
 			show: function(color){
 				var rgb = color.toHexString();
@@ -67,25 +77,22 @@ CKEDITOR.on('instanceReady', function(e){
 
 			},
 			change: function(color){
-				var ev = $(this).data('ev') + ':change';
-				e.editor.ueditor.trigger(ev, color);
+				var ev = $(this).data('ev');
+				e.editor.ueditor.trigger(ev + ':change', color);
+				buttonEl.css(cssKeys[ev], color.toRgbString());
 			},
 			hide: function(color) {
-				var ev = $(this).data('ev') + ':change';
-				e.editor.ueditor.trigger(ev, color);				
+				var ev = $(this).data('ev');
+				e.editor.ueditor.trigger(ev + ':change', color);
+				buttonEl.css(cssKeys[ev], color.toRgbString());			
 			}
 		}
 	;
-	/*
-	_.each(options, function(text, value){
-		select.append('<option value="' + value + '">' + text + '</option>');
+
+	buttonEl.css({
+		color: textColor,
+		'background-color': panelColor
 	});
-	select.on('click', function(e){
-		e.stopPropagation();
-		console.log('open');
-	});
-	modal.append(select);
-	*/
 
 	select.on('click', function(){
 		selectOptions.open();
@@ -98,7 +105,8 @@ CKEDITOR.on('instanceReady', function(e){
 		})
 		.render();
 
-	modal.append(select).append(selectOptions.$el);
+	modal.append(select);
+	select.find('a').append(selectOptions.$el);
 
 	modal.on('click', function(e){
 		e.stopPropagation();
@@ -119,7 +127,7 @@ CKEDITOR.on('instanceReady', function(e){
 	spectrumOptions.showAlpha = true;
 	modal.find('.uckeditor-panelcolor input').spectrum(spectrumOptions);
 
-	$("." + e.editor.id).append(modal);
+	editorEl.append(modal);
 });
 
 })(jQuery);

@@ -168,7 +168,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
 			'thumbWidth' => 140,
 			'thumbHeight' => 140,
-			'captionPosition' => 'above', // 'above' | 'over' | 'nocaption'
+			'captionPosition' => 'below', // 'above' | 'over' | 'nocaption'
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'lbLoop' => array(),

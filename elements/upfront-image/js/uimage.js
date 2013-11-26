@@ -100,6 +100,30 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.property('has_settings', 0);
 	},
 
+	getSelectedAlignment: function(){
+		if(!this.property('include_image_caption'))
+			return 'nocaption';
+		if(this.property('caption_position') == 'below_image')
+			return 'below';
+
+		var align = this.property('caption_alignment');
+
+		switch(align){
+			case 'top':
+				return 'topOver';
+			case 'bottom':
+				return 'topBottom';
+			case 'fill':
+				return 'topCover';
+			case 'fill_middle':
+				return 'middleCover';
+			case 'fill_bottom':
+				return 'bottomCover';
+		}
+
+		return 'nocaption';
+	},
+
 	createControls: function() {
 		var me = this,		
 			panel = new Upfront.Views.Editor.InlinePanels.Panel(),
@@ -112,12 +136,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			middleCover: this.createControl('middleCover', 'Covers image, middle'),
 			bottomCover: this.createControl('bottomCover', 'Covers image, bottom'),
 			below: this.createControl('below', 'Below the image'),
-			noCaption: this.createControl('nocaption', 'No caption')
+			nocaption: this.createControl('nocaption', 'No caption')
 		};
 
 		multi.icon = 'caption';
 		multi.tooltip = '';
-		multi.selected = 'noCaption';
+		multi.selected = this.getSelectedAlignment();
 		multi.on('select', function(item){
 			switch(item){
 				case 'topOver':
@@ -149,7 +173,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					me.property('include_image_caption', [1]);
 					me.property('caption_position', 'below_image');
 					break;
-				case 'noCaption':
+				case 'nocaption':
 					me.property('include_image_caption', false);
 			}
 			me.render();
