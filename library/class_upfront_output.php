@@ -265,7 +265,9 @@ abstract class Upfront_Entity {
 			$effect = $this->_get_property('background_slider_transition');
 			$slide_attr = "data-slider-show-control='{$show_control}' data-slider-effect='{$effect}'";
 			if ( $auto )
-				$slide_attr .= " data-slider-interval='{$interval}'";
+				$slide_attr .= " data-slider-auto='1' data-slider-interval='{$interval}'";
+			else
+				$slide_attr .= " data-slider-auto='0'";
 	    	foreach ( $images as $image ){
 	    		$src = wp_get_attachment_image($image, 'full');
 				$slides[] = "<div class='upfront-default-slider-item'>{$src}</div>";

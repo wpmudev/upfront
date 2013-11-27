@@ -44,8 +44,10 @@
 				$slider.removeClass(data.classname.slider + '-control-' + slider_control);
 				$slider.removeClass(data.classname.slider + '-control-' + slider_show_control);
 				slider_auto = $slider.attr('data-slider-auto');
-				if ( slider_auto !== 0 && slider_auto !== 1 )
+				if ( typeof slider_auto != 'string' )
 					slider_auto = data.auto;
+				else
+					slider_auto = slider_auto == '0' ? false : true;
 				slider_interval = $slider.attr('data-slider-interval') || data.interval;
 				slider_effect = $slider.attr('data-slider-effect') || data.effect;
 				slider_control = $slider.attr('data-slider-control') || data.control;
