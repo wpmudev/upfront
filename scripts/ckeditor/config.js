@@ -111,7 +111,7 @@ CKEDITOR.on("instanceReady", function (e) {
 			ranges[idx] = range;
 
 			$body.append(
-				"<div data-idx='" + idx + "' class='upfront-image-attachment-bits' style='top:" + (block_offset.top-14) + "px;left:" + (root_offset.left-18) + "px;' />"
+				"<div data-idx='" + idx + "' class='upfront-image-attachment-bits' style='top:" + (block_offset.top-20) + "px;left:" + (root_offset.left-18) + "px;' />"
 			);
 			$block
 				.on("mouseenter", function () {
