@@ -773,12 +773,20 @@ define(_template_files, function () {
 				this.trigger("activate_region", this);
 			},
 			render: function () {
+				var container = this.model.get("container"),
+					name = this.model.get("name");
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
 				this.$el.html('<div class="upfront-debug-info"/>');
-				this.$el.data('name', this.model.get("name"));
+				this.$el.data('name', name);
 				this.$el.attr('data-title', this.model.get("title"));
 				this.$el.append('<div class="upfront-region-title">' + this.model.get("title") + '</div>');
 				this.update();
+				if ( container && container != name ){
+					var index = this.model.collection.indexOf(this.model),
+						next = this.model.collection.at(index+1),
+						is_left = next && ( next.get('name') == container || next.get('container') == container);
+					this.$el.addClass('upfront-region-side ' + ( is_left ? 'upfront-region-side-left' : 'upfront-region-side-right' ));
+				}
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this;
 				local_view.render();

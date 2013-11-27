@@ -45,6 +45,7 @@ class Upfront {
 
 	private function _add_hooks () {
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
+		add_filter('wp_title', array($this, 'filter_wp_title'), 10, 2);
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
@@ -72,6 +73,16 @@ class Upfront {
 	
 	public static function get_root_dir () {
 		return get_template_directory();
+	}
+	
+	function filter_wp_title ( $title, $sep ) {
+		global $paged, $page;
+		if ( is_feed() )
+			return $title;
+		$title .= get_bloginfo('name');
+		if ( $paged >= 2 || $page >= 2 )
+			$title = "$title $sep " . sprintf(__('Page %s'), max($paged, $page));
+		return $title;
 	}
 
 	/**

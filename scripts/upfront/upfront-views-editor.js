@@ -1943,7 +1943,7 @@ define(_template_files, function () {
 	
 	
 	var Upfront_Icon_Mixin = {
-		get_icon_html: function (src) {
+		get_icon_html: function (src, classname) {
 			if ( ! src )
 				return '';
 			if ( src.match(/^https?:\/\//) ) {
@@ -1955,7 +1955,15 @@ define(_template_files, function () {
 				return '<img ' + this.get_field_attr_html(attr) + ' />';
 			}
 			else {
-				return '<i class="upfront-field-icon upfront-field-icon-' + src + '"></i>';
+				var classes = ['upfront-field-icon'];
+				if ( ! classname ){
+					classes.push('upfront-field-icon-' + src);
+				}
+				else{
+					classes.push(classname);
+					classes.push(classname + '-' + src);
+				}
+				return '<i class="' + classes.join(' ') + '"></i>';
 			}
 		}
 	};
@@ -2355,6 +2363,7 @@ define(_template_files, function () {
 				attr.disabled = 'disabled';
 				classes += ' upfront-field-select-option-disabled';
 			}
+			var icon_class = this.options.icon_class ? this.options.icon_class : null;
 			if ( this.multiple && _.contains(saved_value, value.value) )
 				attr.checked = 'checked';
 			else if ( ! this.multiple && saved_value == value.value )
@@ -2364,7 +2373,7 @@ define(_template_files, function () {
 			classes += ' upfront-field-select-option-' + ( index%2 == 0 ? 'odd' : 'even' );
 			//return '<option ' + this.get_field_attr_html(attr) + '>' + value.label + '</option>';
 			var input = '<input ' + this.get_field_attr_html(attr) + ' />';
-			return '<li class="' + classes + '">' + '<label for="' + id + '">' + this.get_icon_html(value.icon) + '<span class="upfront-field-label-text">' + value.label + '</span></label>' + input + '</li>';
+			return '<li class="' + classes + '">' + '<label for="' + id + '">' + this.get_icon_html(value.icon, icon_class) + '<span class="upfront-field-label-text">' + value.label + '</span></label>' + input + '</li>';
 		}
 	}));
 	
@@ -2403,6 +2412,7 @@ define(_template_files, function () {
 				'class': 'upfront-field-' + this.type
 			};
 			var saved_value = this.get_saved_value();
+			var icon_class = this.options.icon_class ? this.options.icon_class : null;
 			if ( this.options.layout )
 				classes += ' upfront-field-multiple-'+this.options.layout;
 			if ( value.disabled ){
@@ -2415,7 +2425,7 @@ define(_template_files, function () {
 				attr.checked = 'checked';
 			if ( attr.checked )
 				classes += ' upfront-field-multiple-selected';
-			return '<span class="' + classes + '"><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '">' + this.get_icon_html(value.icon) + '<span class="upfront-field-label-text">' + value.label + '</span></label></span>';
+			return '<span class="' + classes + '"><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '">' + this.get_icon_html(value.icon, icon_class) + '<span class="upfront-field-label-text">' + value.label + '</span></label></span>';
 		}
 	});
 	
@@ -3751,10 +3761,11 @@ var Field_Anchor = Field_Select.extend({
 					property: 'background_style',
 					layout: 'vertical',
 					default_value: 'full',
+					icon_class: 'upfront-region-field-icon',
 					values: [
-						{ label: "Full Width", value: 'full' },
-						{ label: "Tiled / Pattern", value: 'tile' },
-						{ label: "Fixed Position", value: 'fixed' }
+						{ label: "Full Width", value: 'full', icon: 'bg-image-full' },
+						{ label: "Tiled / Pattern", value: 'tile', icon: 'bg-image-tile' },
+						{ label: "Fixed Position", value: 'fixed', icon: 'bg-image-fixed' }
 					],
 					change: function () {
 						var value = this.get_value();
@@ -4087,12 +4098,13 @@ var Field_Anchor = Field_Select.extend({
 					property: 'background_slider_transition',
 					default_value: 'crossfade',
 					layout: 'horizontal-inline',
+					icon_class: 'upfront-region-field-icon',
 					values: [
-						{ label: "Slide Down", value: 'slide-down', icon: '' },
-						{ label: "Slide Up", value: 'slide-up', icon: '' },
-						{ label: "Slide Left", value: 'slide-left', icon: '' },
-						{ label: "Slide Right", value: 'slide-right', icon: '' },
-						{ label: "Crossfade", value: 'crossfade', icon: '' }
+						{ label: "Slide Down", value: 'slide-down', icon: 'bg-slider-slide-down' },
+						{ label: "Slide Up", value: 'slide-up', icon: 'bg-slider-slide-up' },
+						{ label: "Slide Left", value: 'slide-left', icon: 'bg-slider-slide-left' },
+						{ label: "Slide Right", value: 'slide-right', icon: 'bg-slider-slide-right' },
+						{ label: "Crossfade", value: 'crossfade', icon: 'bg-slider-crossfade' }
 					],
 					change: set_value
 				})
@@ -4139,7 +4151,7 @@ var Field_Anchor = Field_Select.extend({
 		update_slider_slides: function ($wrap) {
 			var me = this,
 				slide_images = me.model.get_property_value_by_name('background_slider_images'),
-				$add = $('<div class="upfront-region-bg-slider-add-image">Add Slide</div>');
+				$add = $('<div class="upfront-region-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">Add Slide</div>');
 			$wrap.html('');
 			
 			if ( slide_images ) {

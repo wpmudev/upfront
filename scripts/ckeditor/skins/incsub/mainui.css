@@ -98,10 +98,18 @@ Special outer level classes used in this file:
 
 .cke_top
 {
-	padding: 6px;
-
 	/* Allow breaking toolbars when in a narrow editor. (#9947) */
 	white-space: normal;
+}
+
+.cke_float .cke_top
+{
+
+}
+
+.cke_toolbox {
+	display: inline-block;
+	padding: 6px;
 
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -121,11 +129,6 @@ Special outer level classes used in this file:
 	-moz-box-shadow: inset 0 1px 0 #162b3f;
 	-webkit-box-shadow: inset 0 1px 0 #162b3f;
 	box-shadow: inset 0 1px 0 #162b3f;
-}
-
-.cke_float .cke_top
-{
-
 }
 
 .cke_bottom

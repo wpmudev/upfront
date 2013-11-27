@@ -19,6 +19,11 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
 }
 .upfront-inline_post-slider {
 	height: 450px;

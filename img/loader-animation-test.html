@@ -1,0 +1,135 @@
+<html>
+	<head>
+		<title>Animation test</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			.upfront-loading-frame {
+				width: 72px;
+				height: 72px;
+				float: left;
+				background: url("panel-loader-01.svg") no-repeat;
+			}
+			.frame-done-1 {
+				background-position: -72px 0;
+			}
+			.frame-done-2 {
+				background-position: -72px -72px;
+			}
+			.frame-done-3 {
+				background-position: -72px -144px;
+			}
+			.frame-done-4 {
+				background-position: -72px -216px;
+			}
+			.frame-done-5 {
+				background-position: -72px -288px;
+			}
+			.frame-done-6 {
+				background-position: -72px -360px;
+			}
+			.frame-done-7 {
+				background-position: -72px -432px;
+			}
+			.frame-done-8 {
+				background-position: -72px -504px;
+			}
+			.frame-done-9 {
+				background-position: -72px -576px;
+			}
+			.frame-done-10 {
+				background-position: -72px -648px;
+			}
+			.frame-done-11 {
+				background-position: -72px -720px;
+			}
+			.frame-done-12 {
+				background-position: -72px -792px;
+			}
+			.frame-v {
+				float: none;
+			}
+			
+			.line-h {
+				width: 100%;
+				height: 0;
+				border-bottom: 1px solid #ccc;
+				position: absolute;
+				top: 4px;
+			}
+			.line-v {
+				width: 0;
+				height: 100%;
+				border-right: 1px solid #ccc;
+				position: absolute;
+				left: 4px;
+			}
+			
+			
+			@-webkit-keyframes "upfront-loading-done" {
+				0% {
+					background-position: -72px 0;
+				}
+				100% {
+					background-position: -72px -864px;
+				}
+			}
+			@-webkit-keyframes "upfront-loading-done-1" {
+				0% {
+					background-position: -72px 0;
+				}
+				100% {
+					background-position: -72px -865px;
+				}
+			}
+			.upfront-loading-done {
+				clear: both;
+				width: 72px;
+				height: 72px;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				margin: auto;
+				background: url("panel-loader-01.svg") no-repeat;
+				-webkit-animation: upfront-loading-done 9s steps(12) infinite;
+			}
+			.upfront-loading-done-shifted {
+				-webkit-animation: upfront-loading-done-1 9s steps(12) infinite;
+				top: 200px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="line-h"></div>
+		<div class="line-v"></div>
+		<div class="upfront-loading-frame frame-done-1"></div>
+		<div class="upfront-loading-frame frame-done-2"></div>
+		<div class="upfront-loading-frame frame-done-3"></div>
+		<div class="upfront-loading-frame frame-done-4"></div>
+		<div class="upfront-loading-frame frame-done-5"></div>
+		<div class="upfront-loading-frame frame-done-6"></div>
+		<div class="upfront-loading-frame frame-done-7"></div>
+		<div class="upfront-loading-frame frame-done-8"></div>
+		<div class="upfront-loading-frame frame-done-9"></div>
+		<div class="upfront-loading-frame frame-done-10"></div>
+		<div class="upfront-loading-frame frame-done-11"></div>
+		<div class="upfront-loading-frame frame-done-12"></div>
+		<div class="upfront-loading-frame frame-v frame-done-2"></div>
+		<div class="upfront-loading-frame frame-v frame-done-3"></div>
+		<div class="upfront-loading-frame frame-v frame-done-4"></div>
+		<div class="upfront-loading-frame frame-v frame-done-5"></div>
+		<div class="upfront-loading-frame frame-v frame-done-6"></div>
+		<div class="upfront-loading-frame frame-v frame-done-7"></div>
+		<div class="upfront-loading-frame frame-v frame-done-8"></div>
+		<div class="upfront-loading-frame frame-v frame-done-9"></div>
+		<div class="upfront-loading-frame frame-v frame-done-10"></div>
+		<div class="upfront-loading-frame frame-v frame-done-11"></div>
+		<div class="upfront-loading-frame frame-v frame-done-12"></div>
+		<div class="upfront-loading-done"></div>
+		<div class="upfront-loading-done upfront-loading-done-shifted"></div>
+	</body>
+</html>

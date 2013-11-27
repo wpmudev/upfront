@@ -1910,6 +1910,16 @@ a.ueditor-action-pickercancel{
 	border-bottom: 1px solid rgba(27,45,63,.5);
 	position: relative;
 }
+.upfront-region-side-right .upfront-inline-modal-wrap {
+	left: 50%;
+	right: auto;
+	-webkit-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-o-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+.upfront-inline-modal-wrap
 .upfront-inline-modal-content {
 	padding: 24px;
 }
@@ -1924,6 +1934,7 @@ a.ueditor-action-pickercancel{
 	line-height: 34px;
 	padding: 0 36px;
 	background: #2ecb90;
+	border: none;
 	border-bottom: 1px solid rgba(27,45,63,.5);
 }
 .upfront-region-modal-color {
@@ -1980,7 +1991,7 @@ a.ueditor-action-pickercancel{
 	font-family: "Verdana";
 	font-size: 11px;
 }
-.upfront-region-modal-map {
+.upfront-region-modal-map .upfront-inline-modal-wrap {
 	min-width: 420px;
 }
 .upfront-region-bg-map-location .upfront-field-wrap {
@@ -2006,7 +2017,7 @@ a.ueditor-action-pickercancel{
 	width: 40%;
 	float: right;
 }
-.upfront-region-modal-slider {
+.upfront-region-modal-slider .upfront-inline-modal-wrap {
 	min-width: 420px;
 }
 .upfront-region-bg-slider-rotate .upfront-field-wrap {
@@ -2048,13 +2059,8 @@ a.ueditor-action-pickercancel{
 	cursor: pointer;
 }
 .upfront-region-bg-slider-add-image:before {
-	content: "+";
-	display: block;
-	font-size: 28px;
-	line-height: 18px;
-	font-weight: bold;
-	color: #2ecb90;
-	margin: 0 0 3px;
+	display: inline-block;
+	float: none;
 }
 .upfront-region-bg-slider-image img {
 	width: 100%;
@@ -2532,7 +2538,7 @@ a.ueditor-action-pickercancel{
 .upfront-icon-control:before,
 .upfront-ui .upfront-field-icon:before {
 	content: " ";
-	background-image: url('../img/uf-core-el-sprite.svg?v=20130909');
+	background-image: url('../img/uf-core-el-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	float: left;
 	display: block;
@@ -2542,9 +2548,10 @@ a.ueditor-action-pickercancel{
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
-.upfront-field-select-single .upfront-field-select-option-selected label:before {
+.upfront-field-select-single .upfront-field-select-option-selected label:before,
+.upfront-ui .upfront-region-field-icon:before {
 	content: " ";
-	background-image: url('../img/uf-ui-sprite.svg?v=20130909');
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	float: left;
 	display: block;
@@ -2613,6 +2620,9 @@ a.ueditor-action-pickercancel{
 }
 .upfront-icon-element-youtube:before {
 	background-position: -39px -687px;
+}
+.upfront-icon-element-tabs:before {
+	background-position: -39px -720px;
 }
 .upfront-icon:before {
 	width: 24px;
@@ -2735,6 +2745,9 @@ a.ueditor-action-pickercancel{
 }
 .upfront-icon-region-delete:hover:before {
 	background-position: -412px -646px;
+}
+.upfront-icon-region-add-slide:before {
+	background-position: -164px -712px;
 }
 .upfront-icon-popup-close:before {
 	width: 17px;
@@ -3142,6 +3155,34 @@ a.ueditor-action-pickercancel{
 
 .upfront-field-icon-display-style-list:before {
 	background-position: -1908px -136px;
+}
+
+.upfront-region-field-icon-bg-image-full:before {
+	background-position: -40px -780px;
+	width: 28px;
+}
+.upfront-region-field-icon-bg-image-tile:before {
+	background-position: -164px -780px;
+	width: 28px;
+}
+.upfront-region-field-icon-bg-image-fixed:before {
+	background-position: -288px -780px;
+	width: 28px;
+}
+.upfront-region-field-icon-bg-slider-slide-down:before {
+	background-position: -40px -678px;
+}
+.upfront-region-field-icon-bg-slider-slide-up:before {
+	background-position: -164px -678px;
+}
+.upfront-region-field-icon-bg-slider-slide-left:before {
+	background-position: -288px -678px;
+}
+.upfront-region-field-icon-bg-slider-slide-right:before {
+	background-position: -412px -678px;
+}
+.upfront-region-field-icon-bg-slider-crossfade:before {
+	background-position: -40px -712px;
 }
 
 
@@ -6150,12 +6191,12 @@ a.ueditor-select-option:hover {
 }
 #settings .upfront-embedded_toggleable.error input {
 	border: 1px solid #dc6060;
-	background-image: url('../img/uf-ui-sprite.svg?v=20130909');
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	background-position: 170px -310px;
 }
 #settings .upfront-embedded_toggleable.ok input {
-	background-image: url('../img/uf-ui-sprite.svg?v=20130909');
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	background-position: 170px -345px;
 }
@@ -6170,7 +6211,7 @@ a.ueditor-select-option:hover {
 .upfront-image-attachment-bits {
 	display: none;
 	position: absolute;
-	background-image: url('../img/uf-ui-sprite.svg?v=20130909');
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	background-position: -516px -535px;
 	height: 24px;
