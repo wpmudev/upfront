@@ -1538,6 +1538,7 @@
 		},
 
 		editSelect: function(e){
+			e.preventDefault();
 			var type = $(e.target).data('id');
 			this[type + 'Select'].open();
 		},
@@ -1761,14 +1762,18 @@
 			'click .ueditor-select-option': 'select'
 		},
 		initialize: function(options){
-			this.tpl = _.template($(Upfront.data.tpls.popup).find('#microselect-tpl').html());
-			this.opts = options.options;
+			this.opts = options.options;			
 			this.render();
 		},
 		render: function() {
-			this.$el.html(this.tpl({options: this.opts}));
+			if(!this.tpl)
+				this.tpl = this.getTpl();
+			if(this.tpl)
+				this.$el.html(this.tpl({options: this.opts}));
 		},
 		open: function(){
+			if(!this.tpl)
+				this.render();
 			this.$el.css('display', 'inline-block');
 			this.delegateEvents();
 			this.$('input').focus();
@@ -1784,6 +1789,14 @@
 			this.trigger('select', value);
 			this.$('input').val('value');
 			this.$el.hide();
+		},
+		getTpl: function(){
+			if(this.tpl)
+				return this.tpl;
+
+			if(Upfront.data && Upfront.data.tpls)
+				return _.template($(Upfront.data.tpls.popup).find('#microselect-tpl').html());
+			return false;
 		}
 	});
 

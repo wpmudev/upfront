@@ -666,11 +666,11 @@ a.cke_button__upfront_colorselect{
 .cke_button__textformat:before {
 	display:block;
 	content: '';
-	width: 24px;
-	height: 24px;
+	width: 25px;
+	height: 25px;
 	position: absolute;
-	top: 5px;
-	left: 5px;
+	top: 6px;
+	left: 6px;
 	border-radius: 2px;
 	
 	background-color: #aeb6be;
@@ -692,11 +692,11 @@ a.cke_button__upfront_colorselect{
 
 
 .cke_button__textformat .cke_button_icon {
-	width: 24px;
-	height: 24px;
+	width: 25px;
+	height: 25px;
 	position: absolute;
-	top: 5px;
-	left: 5px;
+	top: 6px;
+	left: 6px;
 	border-radius: 2px;
 
 	color:#fff;

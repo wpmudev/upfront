@@ -2448,6 +2448,7 @@ a.ueditor-action-pickercancel{
 #settings .upfront-settings-tab-height {
 	width: 0;
 }
+
 .upfront-settings-item,
 .upfront-global-social-settings .upfront-settings-item {
 	position: relative;
@@ -5864,7 +5865,7 @@ div.sp-preview
 	position: absolute;
 	content: '';
 	border:7px solid transparent;
-	left: 20px;
+	left: 15px;
 	top: 100%;
 	border-top-color: #DADEE2;
 }
@@ -5885,13 +5886,32 @@ div.sp-preview
 	text-decoration: none;
 }
 
+.ueditor-bar div a.ueditor-action-draft:hover {
+	border-color: #1fcd8f;
+}
+
+.ueditor-bar-icon {
+}
+
 .ueditor-bar-icon:before {
 	content: '';
-	display: inline-block;
 	background: transparent url(../img/uf-ui-sprite.svg);
-	width: 30px;
-	height: 30px;
-	margin-right: 10px;
+	padding: 3px 12px;
+	margin-right: 5px;
+}
+
+a.ueditor-bar-icon-only:before {
+	margin-right: 0;
+}
+
+.ueditor-bar-advanced .ueditor-bar-icon-only:hover {
+	background: rgba(255, 255, 255, .5);
+}
+
+.ueditor-bar-icon-selectable:after {
+	content: '▾';
+	display: inline-block;
+	margin-left: 5px;
 }
 
 a.ueditor-action-publish {
@@ -5904,10 +5924,64 @@ a.ueditor-action-publish {
 }
 
 a.ueditor-action-publish:before {
-	content
+	background-position: -650px -425px;
+	padding: 2px 6px;
 }
 a.ueditor-action-publish:hover {
 	text-decoration: none;
+	background: #3ea;
+}
+
+a.ueditor-action-cancel {
+	color: #A3B9CC !important;
+}
+
+a.ueditor-action-cancel:before {
+	background-position: -1233px -153px;
+	padding: 2px 6px;
+}
+
+a.ueditor-action-cancel:hover {
+	text-decoration: none;
+}
+
+a.ueditor-action-cancel:hover:before {
+	background-position: -735px -230px;
+}
+
+.ueditor-bar-show_advanced:hover{
+	background: #E9EEF3;	
+}
+
+.ueditor-bar-show_advanced:before {
+	background-position: -517px -382px;
+	margin-right: 0;
+}
+
+.ueditor-action-tags:before{
+	background-position: -517px -425px;
+}
+
+.ueditor-action-url:before{
+	background-position: -559px -425px;
+}
+
+.ueditor-action-trash:before{
+	background-position: -601px -425px;
+}
+
+.ueditor-select-status a:before {
+	background-position: -559px -383px;
+
+}
+
+.ueditor-select-visibility a:before {
+	background-position: -601px -383px;
+	
+}
+
+.ueditor-action-schedule:before {
+	background-position: -642px -383px;
 }
 
 .ueditor-bar-advanced {
@@ -5940,7 +6014,7 @@ a.ueditor-action-publish:hover {
 
 .ueditor-row-item {
 	display: inline-block;
-	margin-right: 30px;
+	margin-right: 20px;
 }
 
 .ueditor-row-item:last-child {
@@ -5971,12 +6045,6 @@ div.ueditor_deleted_post a.ueditor_restore {
 }
 div.ueditor_deleted_post a.ueditor_restore:hover {
 	text-decoration: underline;
-}
-
-.ueditor-bar div a.ueditor-action-trash {
-	display: block;
-	float: right;
-	color: #7E99B1;
 }
 
 .ueditor-bar div a.ueditor-action-trash:hover {

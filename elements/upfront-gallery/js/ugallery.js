@@ -89,12 +89,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.events = _.extend({}, this.events, {
 			'click a.ugallery-select-images': 'openImageSelector',
 			'click .ugallery_addmore_wrapper': 'openImageSelector',
-			'click .ugallery_op_details': 'imageEditDetails',
-			'click .ugallery_op_remove': 'imageEditRemove',
 			'click .ugallery_op_link': 'imageEditLink',
 			'click .ugallery_op_mask': 'imageEditMask',
 			'click .ugallery_item_rm_yes': 'removeImage',
-			'click .ugallery_item_rm_no': 'cancelRemoving',
 			'click .ugallery-image-wrapper': 'selectItem'
 		});
 		var images = this.property('images'),
@@ -575,39 +572,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		return imageData;
 	},
 
-	imageEditDetails: function(e) {
-		e.preventDefault();
-		var me = this,
-			item = $(e.target).closest('.ugallery_item'),
-			image = this.images.get(item.attr('rel')),
-			contents = $(this.detailsTpl(image.toJSON()))
-				.on('click', '.upfront-save_settings', function(e){
-					me.saveImageDetails(e);
-				}),
-			labels = this.getLabelSelector(item.attr('rel'))
-		;
-
-		contents.find('.existing_labels').html(labels);
-
-		contents = this.createLabelSelector(contents);
-
-		this.openTooltip(contents, item);
-	},
-
-	imageEditRemove: function(e) {
-		e.preventDefault();
-		$(e.target).closest('.ugallery_item').addClass('ugallery_item_removing');
-	},
-
 	imageEditLink: function(e) {
 		e.preventDefault();
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = this.images.get(item.attr('rel')),
 			tplOptions = image.toJSON(),
-			contents = ''
+			contents = '',
+			labels = this.getLabelSelector(item.attr('rel'))
 		;
 		tplOptions.checked = 'checked="checked"';
+
 		contents = $(this.linkTpl(tplOptions))
 			.on('change', 'input[name=ugallery-image-link]', function(e){
 				me.imageLinkChanged(e);
@@ -619,6 +594,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				me.imageLinkChanged(e);				
 			})
 		;
+
+		contents.find('.existing_labels').html(labels);
+		contents = this.createLabelSelector(contents);
 
 		this.openTooltip(contents, $(e.target));
 	},
@@ -842,11 +820,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			}
 		})
 		.on('click', 'label', function(e){
-			var labelId = $(e.target).attr('rel'),
-				label = Upfront.data.ugallery.label_ids[labelId]
-			;
-			me.addLabel(label.text, imageId)
-			contents.find('input[name="ugallery-image-labels"]').val('').siblings('.labels_list').html('');
+			var labelId = $(e.target).attr('rel');
+			if(labelId){
+				var label = Upfront.data.ugallery.label_ids[labelId];
+				me.addLabel(label.text, imageId);
+				contents.find('input[name="ugallery-image-labels"]').val('').siblings('.labels_list').html('');
+			}
 		})
 		.on('click', '.existing_labels a', function(e){
 			e.preventDefault();
@@ -1005,19 +984,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		return types;
 	},
 
-	saveImageDetails: function(e){
-		var tooltip = $('#ugallery-tooltip'),
-			imageId = tooltip.find('#ugallery-image-id').val()
-		;
-
-		this.images.get(imageId).set({
-			title: tooltip.find('input[name=ugallery-image-title]').val(),
-			caption: tooltip.find('input[name=ugallery-image-caption]').val(),
-			alt: tooltip.find('input[name=ugallery-image-alt]').val()
-		});
-		this.closeTooltip();
-	},
-
 	saveImageLink: function(e){
 		var tooltip = $('#ugallery-tooltip'),
 			linkVal = tooltip.find('input[name=ugallery-image-link]:checked').val(),
@@ -1029,7 +995,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		else
 			this.images.get(imageId).set({link: 'original', url: ''});
 
-		return this.closeTooltip();
+		this.closeTooltip();
+		return this.render();
 		
 	},
 
@@ -1044,11 +1011,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		item.fadeOut('fast', function(){
 			me.images.remove(item.attr('rel'));
 		});
-	},
-
-	cancelRemoving: function(e){
-		e.preventDefault();
-		this.getItemElement(e).removeClass('ugallery_item_removing');
 	},
 
 	activateSortable: function(){
@@ -1203,8 +1165,7 @@ var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 		this.panels = _([
 			new LayoutPanel({model: this.model}),
-			new ThumbnailsPanel({model: this.model}),
-			new LargeImagePanel({model: this.model})
+			new ThumbnailsPanel({model: this.model})
 		]);
 
 		this.on('closed', function(){
@@ -1220,8 +1181,47 @@ var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function () {
+		var fields = Upfront.Views.Editor.Field;
+
 		this.settings = _([
-			new GalleryConfigFields({model: this.model}),
+			new Upfront.Views.Editor.Settings.Item({
+				title: 'Show Caption',
+				fields: [
+					new fields.Radios({
+						model: this.model,
+						property: 'captionWhen',
+						values: [
+							{value: 'always', label: 'Always'},
+							{value: 'hover', label: 'On hover'}
+						]
+					})
+				]
+			}),
+			new Upfront.Views.Editor.Settings.Item({
+				group: false,
+				fields: [
+					new fields.Checkboxes({
+						model: this.model,
+						property: 'labelFilters',
+						values: [
+							{
+								value: 'true',
+								label: 'Enable label sorting'
+							}
+						]
+					}),
+					new fields.Checkboxes({
+						model: this.model,
+						property: 'lbLoop',
+						values: [
+							{
+								value: 'true',
+								label: 'Loop images in lightbox'
+							}
+						]
+					})
+				]
+			}),
 			new Upfront.Views.Editor.Settings.Item({
 				group: false,
 				fields: [
@@ -1253,41 +1253,14 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			fields = Upfront.Views.Editor.Field
 		;
 		this.settings = _([
-			new ThumbnailFields({model: this.model}),
-			new Upfront.Views.Editor.Settings.Item({
-				group: false,
-				fields: [
-					new fields.Checkboxes({
-						model: this.model,
-						property: 'showTitle',
-						values: [
-							{
-								value: 'true',
-								label: 'Show Image Title'
-							}
-						]
-					}),
-					new fields.Checkboxes({
-						model: this.model,
-						property: 'showDescription',
-						values: [
-							{
-								value: 'true',
-								label: 'Show Image Description'
-							}
-						]
-					})
-				]
-			})
+			new ThumbnailFields({model: this.model})
 		]);
 
 		this.on('rendered', function(){
-			var locked = me.property('lockThumbProportions') ? '' : 'ugallery-proportional-free';
-
 			$(me.$('.ugallery-thumbnail-fields')
 				.find('.upfront-field-wrap-number')
 				.get(0))
-				.after('<div class="ugallery-proportional ' + locked + '"></div>')
+				.after('<div class="ugallery-proportional"></div>')
 			;
 
 			me.setEvents([
@@ -1314,25 +1287,10 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			});
 		});
 	},
-	/*
-	lockProportions: function(e){
-		var proportions = this.property('lockThumbProportions');
-		if(proportions)
-			this.property('lockThumbProportions', false, true);
-		else{
-			var dimensions = this.$('input[type=number]'),
-				width = $(dimensions.get(0)).val(),
-				height = $(dimensions.get(1)).val()
-			;
-			this.property('lockThumbProportions', width / height, true);
-		}
-		this.$('.ugallery-proportional').toggleClass('ugallery-proportional-free');
-	},
-	*/
 
 	onThumbChangeSize: function(e){
 		var me = this,
-			factor = this.property('thumbProportions')
+			factor = this.property('thumbProportions'),
 			width = $(e.target).val(),
 			height = Math.round($(e.target).val() / factor)
 		;
@@ -1378,71 +1336,6 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	}	
 });
 
-
-var LargeImagePanel = Upfront.Views.Editor.Settings.Panel.extend({
-	initialize: function () {
-		var me = this,
-			render_all = function(){
-				this.settings.invoke('render');
-			}
-		;
-		this.settings = _([
-			new LightboxFields({model: this.model})
-		]);
-	},
-
-	get_label: function () {
-		return 'Large Image';
-	},
-	get_title: function () {
-		return false;
-	}
-});
-
-var GalleryConfigFields = Upfront.Views.Editor.Settings.Item.extend({
-	initialize: function(){
-		var me = this,
-			fields = Upfront.Views.Editor.Field
-		;
-
-		this.fields = _([
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'labelFilters',
-				values: [
-					{
-						label: 'Show Label Filters',
-						value: 'true'
-					}
-				]
-			}),
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'urlIcon',
-				values: [
-					{
-						label: 'Show URL icon on RollOver',
-						value: 'true'
-					}
-				]
-			}),
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'disableLightbox',
-				values: [
-					{
-						label: 'Disable lightbox',
-						value: 'true'
-					}
-				]
-			})
-		]);
-	},
-	get_title: function(){
-		return "Gallery Configuration";
-	}
-});
-
 var Field_Button = Upfront.Views.Editor.Field.Field.extend({
 	init: function() {
 		console.log('Button!!');
@@ -1454,7 +1347,7 @@ var Field_Button = Upfront.Views.Editor.Field.Field.extend({
 		this.$el.html(this.get_field_html());
 	},
 	get_field_html: function() {
-		return '<p class="upfront-field-button-info">' + this.options.info + '</p><button class="upfront-field-button">' + this.options.label + '</button>';
+		return '<p class="upfront-field-button-info">' + this.options.info + '</p><button class="upfront-field-button ugallery-reset-button">' + this.options.label + '</button>';
 	},
 	buttonClicked: function(e) {
 		if(this.options.on_click)
@@ -1498,23 +1391,8 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 						icon: 'gallery-crop-4_3'
 					}
 				]
-			}), /*
-			new fields.Number({
-				model: this.model,
-				property: 'thumbWidth',
-				min: 50,
-				max: 400,
-				step: 1,
-				label: 'width'
-			}),
-			new fields.Number({
-				model: this.model,
-				property: 'thumbHeight',
-				min: 50,
-				max: 400,
-				step: 1,
-				label: 'height'
-			}), */
+			}), 
+
 			new fields.Slider({
 				model: this.model,
 				property: 'thumbWidth',

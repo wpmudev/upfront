@@ -155,43 +155,6 @@
 	
 }
 
-.ugallery_item_removing .ugallery_item_rm_dialog{
-	display: block;
-	background: rgba(240, 101, 102, 0.8);
-	cursor: pointer;
-	text-align: center;
-	padding-top: 25%;
-}
-
-.upfront-gallery .ugallery_publish .ugallery_item_removing .ugallery_item_options {
-	display:none;
-}
-
-.ugallery_item_rm_buttons{
-	width:70px;
-	margin: 5px auto;
-}
-
-.ugallery_item_rm_buttons a,
-.ugallery_item_rm_buttons a:link, 
-.ugallery_item_rm_buttons a:visited {
-	border-radius: 2px;
-	display:block;
-	float:left;
-	color: #fff;
-	width: 30px;
-	text-align: center;
-}
-
-.ugallery_item_rm_buttons a.ugallery_item_rm_yes{
-	margin-right:10px;
-}
-
-.ugallery_item_rm_buttons a:hover{
-	background: #fff;
-	color: rgb(240, 101, 102);
-}
-
 a.ugallery_order_ok, a.ugallery_order_ok:link, a.ugallery_order_ok:visited {
 	height:30px;
 	line-height: 30px;
@@ -258,6 +221,16 @@ a.ugallery_order_ok:hover {
   content: "";  
   display: table;  
   clear: both; 
+}
+
+button.ugallery-reset-button {
+	background: rgb(31, 205, 143);
+	color: #fff;
+	padding: 2px 10px;
+}
+
+button.ugallery-reset-button:hover {
+	background: #3ea;
 }
 
 .upfront-output-module .ugallery_publish {
@@ -347,6 +320,10 @@ h3.upfront-selector-title {
 #upfront-selector-posts {
 	position:relative;
 	min-height: 250px;
+}
+
+div.ugallery-label-selector {
+	margin-top: 20px;
 }
 
 #ugallery-tooltip .existing_labels {
@@ -484,17 +461,37 @@ div.ugallery-controls i.upfront-icon.upfront-icon-region-remove:before {
 	display: inline-block;
 	width: 80px;
 	margin: 10px;
+	font-size: 14px;
+	line-height: 1.2em;
 }
 .ugallery-onclick a:hover{
 	color: #1fcd8f !important;
 }
 .ugallery-onclick a:before {
+	background: transparent url(../../../img/uf-core-el-sprite.svg) no-repeat;
 	display: block;
 	width: 50px;
 	height: 50px;
 	margin: auto;
 	content: '';
 }
+
+a.ugallery-lager_image:before {
+	background-position: -1579px -270px;	
+}
+
+a.ugallery-linked_page:before {
+	background-position: -1573px -340px;
+}
+
+a.ugallery-lager_image:hover:before {
+	background-position: -1687px -270px;	
+}
+
+a.ugallery-linked_page:hover:before {
+	background-position: -1681px -340px;
+}
+
 .ugallery-onclick-dialog {
 	background: rgb(242, 249, 255);
 	width: 300px;

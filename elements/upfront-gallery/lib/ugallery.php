@@ -163,16 +163,14 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'images' => array(), // Convert to new UgalleryImages() for using
 			'elementSize' => array( 'width' => 0, 'height' => 0),
 			'labelFilters' => array(), //Since checkboxes fields return an array
-			'urlIcon' => array(), 
-			'disableLightbox' => array(), 
 			'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
 			'thumbWidth' => 140,
 			'thumbHeight' => 140,
 			'captionPosition' => 'below', // 'above' | 'over' | 'nocaption'
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
+			'captionWhen' => 'always', // 'always' | 'hover'
 			'lbLoop' => array(),
-			'lockThumbProportions' => true,
 			'linkTo' => 'image' // 'url' | 'image'
         );
     }

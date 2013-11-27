@@ -1,6 +1,6 @@
 <div class="ueditor-bar ueditable" id="{{cid}}">
 	<div class="ueditor-bar-buttons">
-		<a href="#" class="ueditor-bar-show_advanced">Advanced</a>
+		<a href="#" class="ueditor-bar-show_advanced ueditor-bar-icon ueditor-bar-icon-only" title="Advanced tools"></a>
 		<a class="ueditor-action-cancel ueditor-bar-icon" href="#">Cancel</a>
 		{[ if(draftButton){ ]}
 		<a class="ueditor-action-draft" href="#">Save draft</a>
@@ -11,13 +11,13 @@
 		<div class="ueditor-row-item">
 			<span class="ueditor-bar-key"></span>
 			<div class="ueditor-select-wrapper ueditor-select-status">
-				<a class="ueditor-select-value" data-id="status">{{status.name}}</a>
+				<a class="ueditor-select-value ueditor-bar-icon ueditor-bar-icon-selectable" data-id="status">{{status.name}}</a>
 			</div>
 		</div>
 		<div class="ueditor-row-item">
 			<span class="ueditor-bar-key"></span>
 			<div class="ueditor-select-wrapper ueditor-select-visibility">
-				<a class="ueditor-select-value" data-id="visibility">{{visibility.name}}</a>
+				<a class="ueditor-select-value ueditor-bar-icon ueditor-bar-icon-selectable" data-id="visibility">{{visibility.name}}</a>
 				<div class="ueditor-pass-editor">
 					<span>Password:</span>
 					<input type="text" class="upfront-field-text ueditor-pass" value="{{post_password}}">
@@ -27,12 +27,12 @@
 		</div>
 		<div class="ueditor-row-item">
 			<span class="ueditor-bar-key"></span>
-			<a class="ueditor-action-schedule">{{schedule.text}}</a>
+			<a class="ueditor-action-schedule ueditor-bar-icon ueditor-bar-icon-selectable">{{schedule.text}}</a>
 			{{datepicker}}
 		</div>	
-		<div class="ueditor-row-item"><a href="#" class="ueditor-action-tags">Edit Categories/Tags</a></div>
-		<div class="ueditor-row-item"><a href="#" class="ueditor-action-url">Edit URL</a></div>		
-		<div class="ueditor-row-item"><a href="#" class="ueditor-action-trash">Trash</a></div>
+		<div class="ueditor-row-item"><a href="#" class="ueditor-action-tags ueditor-bar-icon ueditor-bar-icon-only" title="Edit Categories and Tags"></a></div>
+		<div class="ueditor-row-item"><a href="#" class="ueditor-action-url ueditor-bar-icon ueditor-bar-icon-only" title="Edit URL"></a></div>		
+		<div class="ueditor-row-item"><a href="#" class="ueditor-action-trash ueditor-bar-icon ueditor-bar-icon-only" title="Trash"></a></div>
 		
 	</div>
 </div>

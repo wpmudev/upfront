@@ -96,7 +96,7 @@
 <script type="text/template" id="link-tpl">
 <div class="upfront-settings-panel">
 	<input type="hidden" id="ugallery-image-id" value="{{id}}">
-	<h3>Edit image link</h3>
+	<h3>Image links to:</h3>
 	<div class="upfront-field-wrap">
 		<input type="radio" name="ugallery-image-link" value="external" class="upfront-field-radio" id="ugallery-image-link-1" {{link == 'external' ? checked : ''}}>
 		<label for="ugallery-image-link-1">External link</label>
@@ -109,6 +109,18 @@
 	</div>
 	<div class="upfront-settings-button_panel">
 		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
+	</div>
+
+	<div class="upfront-field-wrap upfront-additive_multiselection upfront-media-controls ugallery-label-selector">
+		<h3>Image labels:</h3>
+		<div class="existing_labels">
+		<a href="#remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="2">Una etiqueta</a>
+		</div>
+		<div class="label_selector">
+			<input type="text" name="ugallery-image-labels" placeholder="Add a new label" class="upfront-field-text">
+			<div class="labels_list">
+			</div>
+		</div>
 	</div>
 </div>
 </script>

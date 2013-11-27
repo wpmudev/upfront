@@ -64,8 +64,6 @@
 				$slider_wrap.append($items);
 				$items.addClass(data.classname.item);
 				if ( data.auto_height ){ // Auto height adjustment to the highest slide
-					calc_height();
-					$slider.find('img').on('load', calc_height);
 					function calc_height () {
 						$slider.css('height', 9999);
 						$items.each(function(index){
@@ -75,9 +73,10 @@
 						});
 						$slider.css('height', Math.ceil(max_height/15)*15);
 					}
+					calc_height();
+					$slider.find('img').on('load', calc_height);
 				}
 				else { // Adjust slides to available space
-					adjust_slide_size();
 					function adjust_slide_size () {
 						var height = $slider.outerHeight(),
 							width = $slider.outerWidth();
@@ -91,6 +90,7 @@
 								$img.css({ height: 'auto', width: '100%' });
 						});
 					}
+					adjust_slide_size();
 					$(window).on('load', adjust_slide_size);
 					$(window).on('resize', adjust_slide_size);
 				}
