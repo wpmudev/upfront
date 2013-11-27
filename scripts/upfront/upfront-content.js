@@ -1830,3 +1830,17 @@
 
 
 })(jQuery);
+
+// CKE preloader hack
+// Just init and destroy, so we pull all the info back.
+(function ($) {
+$(function () {
+	$("body").append('<div id="upfront-cke-preloader" contenteditable />');
+	var $preloader = $("#upfront-cke-preloader"),
+		ed = CKEDITOR.inline($preloader.get(0))
+	;
+	setTimeout(function () {
+		$preloader.remove();
+	}, 500);
+});
+})(jQuery);
