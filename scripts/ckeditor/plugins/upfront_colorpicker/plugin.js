@@ -38,6 +38,19 @@ var Picker = {
 					};
 					editor.applyStyle(new CKEDITOR.style(colorStyle, {color: color}));
 					editor.execCommand("Upfront_ColorSelect");
+				},
+				move: function (color) {
+					var rgb = color.toHexString();
+					$('.sp-dragger').css({
+						'border-top-color': rgb,
+						'border-right-color': rgb
+					});
+				},
+				show: function(color){					
+					var rgb = color.toHexString();
+					$('.sp-dragger').css({
+						'border-color': rgb
+					});
 				}
 			}));
 			setTimeout(function () {
