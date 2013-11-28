@@ -100,6 +100,7 @@ CKEDITOR.on("instanceReady", function (e) {
 			$blocks = $root.find("p:not(.upfront-inserted_image-wrapper),div,ul,ol")
 		;
 		ranges = [];
+		$(document).off("click", ".upfront-image-attachment-bits");
 		$(".upfront-image-attachment-bits").remove();
 		$blocks.each(function (idx) {
 			var $block = $(this),
