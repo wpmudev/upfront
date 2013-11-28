@@ -44,6 +44,7 @@ function init_map ($el) {
 		scaleControl: props.scaleControl,
 		streetViewControl: props.streetViewControl,
 		overviewMapControl: props.overviewMapControl,
+		scrollwheel: false
 	});
 	if (props.style_overlay) {
 		map.setOptions({styles: props.style_overlay});

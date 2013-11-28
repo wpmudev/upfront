@@ -180,6 +180,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 					scaleControl: props.scaleControl,
 					streetViewControl: props.streetViewControl,
 					overviewMapControl: props.overviewMapControl,
+					scrollwheel: false
 				});
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});

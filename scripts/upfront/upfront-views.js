@@ -148,7 +148,8 @@ define(_template_files, function () {
 						mapTypeControl: (controls.indexOf("map_type") >= 0),
 						scaleControl: (controls.indexOf("scale") >= 0),
 						streetViewControl: (controls.indexOf("street_view") >= 0),
-						overviewMapControl: (controls.indexOf("overview_map") >= 0)
+						overviewMapControl: (controls.indexOf("overview_map") >= 0),
+						scrollwheel: false
 					};
 				if ( !this.bg_map ){
 					this.bg_map = new google.maps.Map($type.get(0), options);

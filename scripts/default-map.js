@@ -12,7 +12,8 @@ jQuery(document).ready(function($){
 				mapTypeControl: (data.controls.indexOf("map_type") >= 0),
 				scaleControl: (data.controls.indexOf("scale") >= 0),
 				streetViewControl: (data.controls.indexOf("street_view") >= 0),
-				overviewMapControl: (data.controls.indexOf("overview_map") >= 0)
+				overviewMapControl: (data.controls.indexOf("overview_map") >= 0),
+				scrollwheel: false
 			},
 			map = new google.maps.Map($el.get(0), options);
 	}
