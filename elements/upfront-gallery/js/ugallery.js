@@ -239,6 +239,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		props.labels_length = this.labels.length;
 		props.image_labels = this.imageLabels;
 
+		props.showTitle = !!("always" == props.captionWhen); // @Javi: this is just a temp fix for the Beta, so the template stops erroring out.
+
 		rendered = this.tpl(props);
 
 		return rendered;
