@@ -97,14 +97,14 @@ var UcontactView = Upfront.Views.ObjectView.extend({
  * @type {Upfront.Views.Editor.Sidebar.Element}
  */
 var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
-    priority: 130,
+    priority: 140,
 	/**
 	 * Print the draggable element into the sidebar panel.
 	 * @return {null} 
 	 */
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-contact');
-		this.$el.html('Contact Form');
+		this.$el.html('Contact');
 	},
 
 	/**

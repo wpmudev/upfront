@@ -271,7 +271,7 @@
             priority: 50,
             render: function () {
                 this.$el.addClass('upfront-icon-element upfront-icon-element-nav');
-                this.$el.html('Navigation');
+                this.$el.html('Menus');
             },
             add_element: function () {
                 var object = new NavigationModel({

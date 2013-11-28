@@ -454,7 +454,7 @@
         priority: 60,
         render: function () {
             this.$el.addClass('upfront-icon-element upfront-icon-element-social');
-            this.$el.html('Social Media');
+            this.$el.html('Social');
         },
         add_element: function () {
             var object = new SocialMediaModel(),

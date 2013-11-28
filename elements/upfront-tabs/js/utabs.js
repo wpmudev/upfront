@@ -209,7 +209,7 @@
     });
 
     var TabsElement = Upfront.Views.Editor.Sidebar.Element.extend({
-      priority: 200,
+      priority: 100,
       render: function () {
         this.$el.addClass('upfront-icon-element upfront-icon-element-tabs');
         this.$el.html('Tabs');
