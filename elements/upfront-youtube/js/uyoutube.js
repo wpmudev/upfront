@@ -120,7 +120,7 @@
           "name": "",
           "properties": [
             {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-            {"name": "class", "value": "c7 upfront-youtube_module"},
+            {"name": "class", "value": "c11 upfront-youtube_module"},
             {"name": "has_settings", "value": 0},
             {"name": "row", "value": 15}
           ],
