@@ -511,4 +511,12 @@ var Slider = {
 
 CKEDITOR.plugins.add('upfront_images', Plugin);
 
+Upfront.Events.on("upfront:editor:image_align", function (el, align) {
+	var margin = false;
+	if ("left" === align) margin = "margin-right";
+	else if ("right" === align) margin = "margin-left";
+	if (!margin) return false;
+	$(el).css(margin, "15px");
+});
+
 })(jQuery);
