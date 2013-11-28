@@ -1196,7 +1196,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			var data = this.post.toJSON().post_date,
 				date = data ? data.split(' ')[0] : false
 			;
-			this.$('.upfront-date_picker').show();
+			this.$('.upfront-date_picker').toggle();
 
 			if(date){
 				this.$('.upfront-bar-datepicker').datepicker('setDate', date);
