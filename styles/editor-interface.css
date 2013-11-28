@@ -5855,7 +5855,7 @@ div.sp-preview
 .ueditor-bar-buttons {
 	float: right;
 	clear: right;
-	background: #DADEE2;
+	background:rgba( 206, 212, 217, .85 );
 	padding: 10px;
 	font-size: 16px;
 	position:relative;
@@ -5891,6 +5891,11 @@ div.sp-preview
 }
 
 .ueditor-bar-icon {
+	opacity: 0.8;
+}
+
+.ueditor-bar-icon:hover {
+	opacity: 1;
 }
 
 .ueditor-bar-icon:before {
@@ -5902,10 +5907,6 @@ div.sp-preview
 
 a.ueditor-bar-icon-only:before {
 	margin-right: 0;
-}
-
-.ueditor-bar-advanced .ueditor-bar-icon-only:hover {
-	background: rgba(255, 255, 255, .5);
 }
 
 .ueditor-bar-icon-selectable:after {
@@ -5920,7 +5921,6 @@ a.ueditor-action-publish {
 	padding: 7px 20px;
 	background: #1fcd8f;
 	margin: 0 auto;
-	font-weight: bold;
 }
 
 a.ueditor-action-publish:before {
@@ -5950,7 +5950,8 @@ a.ueditor-action-cancel:hover:before {
 }
 
 .ueditor-bar-show_advanced:hover{
-	background: #E9EEF3;	
+	/*background: #E9EEF3;*/	
+	opacity:1;
 }
 
 .ueditor-bar-show_advanced:before {
@@ -5986,7 +5987,7 @@ a.ueditor-action-cancel:hover:before {
 
 .ueditor-bar-advanced {
 	float: right;
-	background: #E9EEF3;
+	background: rgba( 230, 236, 242, .85 );
 	clear:right;
 	display:none;
 }
