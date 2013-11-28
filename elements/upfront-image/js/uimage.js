@@ -47,7 +47,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.delegateEvents();
 		Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
 		this.model.on('uimage:edit', this.editRequest, this);
-
+// Let's not do this for now
+/*
 		$('body').on('dragover', function(e){
 				e.preventDefault();
 				me.handleDragEnter(e);
@@ -63,7 +64,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				console.log('drop body');
 			})
 		;
-
+*/
 		// Set the full size current size if we don't have attachment id
 		if(!this.property('image_id'))
 			this.property('srcFull', this.property('src'));
