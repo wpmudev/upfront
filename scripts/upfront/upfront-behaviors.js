@@ -44,6 +44,10 @@ var LayoutEditor = {
 		this.layout.store_undo_state();
 	},
 	apply_history_change: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			region = regions ? regions.get_by_name('shadow') : false
+		;
+		if (regions && region) { regions.remove(region); region = false; }
 		Upfront.Application.layout_view.render();
 	},
 
