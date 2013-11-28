@@ -5,7 +5,7 @@ var _template_files = [
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
 	"text!upfront/templates/overlay_grid.html",
-	"text!upfront/templates/sidebar_settings_edit_area.html",
+	"text!upfront/templates/edit_background_area.html",
 	"text!upfront/templates/sidebar_settings_lock_area.html",
 	"text!upfront/templates/sidebar_settings_background.html",
 	"text!upfront/templates/popup.html",
@@ -494,6 +494,34 @@ define(_template_files, function () {
 			Upfront.Application.start(mode);
 		}
 	});
+	
+	
+	
+	var Command_EditBackgroundArea = Command.extend({
+		"className": "command-edit-background-area",
+		events: {
+			"click .switch": "on_switch"
+		},
+		render: function () {
+			var template = _.template(_Upfront_Templates.edit_background_area, {})
+			this.$el.html(template);
+		},
+		on_switch: function () {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+			if ( this.$el.find('.switch-on').hasClass('active') ){ // Switch off
+				this.$el.find('.switch-off').addClass('active');
+				this.$el.find('.switch-on').removeClass('active');
+				$main.removeClass('upfront-region-editing');
+				Upfront.Events.trigger("command:region:edit_toggle", false);
+			}
+			else { // Switch on
+				this.$el.find('.switch-off').removeClass('active');
+				this.$el.find('.switch-on').addClass('active');
+				$main.addClass('upfront-region-editing');
+				Upfront.Events.trigger("command:region:edit_toggle", true);
+			}
+		}
+	});
 
 
 	var Commands = Backbone.View.extend({
@@ -818,7 +846,7 @@ define(_template_files, function () {
 			};
 			// Dev feature only
 			//if ( Upfront.Settings.Debug.dev )
-				this.panels.settings = new SidebarPanel_Settings({"model": this.model});
+			//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 		},
 		render: function () {
 			var me = this;
@@ -855,6 +883,7 @@ define(_template_files, function () {
 		"className": "sidebar-commands sidebar-commands-control",
 		initialize: function () {
 			this.commands = _([
+				new Command_EditBackgroundArea({"model": this.model}),
 				new Command_Undo({"model": this.model}),
 				new Command_Redo({"model": this.model}),
 				//new Command_SaveLayout({"model": this.model}),

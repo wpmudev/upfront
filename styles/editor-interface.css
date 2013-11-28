@@ -285,6 +285,9 @@
 #sidebar-ui .sidebar-commands-control .command-save:hover {
 	border-color: #1fcd8f;
 }
+#sidebar-ui .sidebar-commands-control .command-edit-background-area {
+	margin-bottom: 15px;
+}
 #sidebar-ui .sidebar-panels {
 	color: #395773;
 }
@@ -485,7 +488,8 @@
 #sidebar-ui .panel-setting-label {
 	color: #263a4d;
 }
-#sidebar-ui .panel-setting-switcher {
+#sidebar-ui .panel-setting-switcher,
+#sidebar-ui .command-edit-switcher {
 	margin: -12px 0 0 158px;
 	width: 66px;
 	height: 10px;
@@ -493,7 +497,11 @@
 	border-radius: 5px;
 	position: relative;
 }
-#sidebar-ui .panel-setting-switcher .switch {
+#sidebar-ui .command-edit-switcher {
+	margin-left: 180px;
+}
+#sidebar-ui .panel-setting-switcher .switch,
+#sidebar-ui .command-edit-switcher .switch {
 	display: block;
 	font-size: 13px;
 	line-height: 13px;
@@ -507,13 +515,16 @@
 	z-index: 10;
 	cursor: pointer;
 }
-#sidebar-ui .panel-setting-switcher .switch.active {
+#sidebar-ui .panel-setting-switcher .switch.active,
+#sidebar-ui .command-edit-switcher .switch.active {
 	color: #13bf82;
 }
-#sidebar-ui .panel-setting-switcher .switch-on {
+#sidebar-ui .panel-setting-switcher .switch-on,
+#sidebar-ui .command-edit-switcher .switch-on {
 	text-align: right;
 }
-#sidebar-ui .panel-setting-switcher .knob {
+#sidebar-ui .panel-setting-switcher .knob,
+#sidebar-ui .command-edit-switcher .knob {
 	display: block;
 	width: 16px;
 	height: 16px;
@@ -525,7 +536,8 @@
 	left: 0;
 	-webkit-transition: left .3s;
 }
-#sidebar-ui .panel-setting-switcher .switch-on.active + .knob {
+#sidebar-ui .panel-setting-switcher .switch-on.active + .knob,
+#sidebar-ui .command-edit-switcher .switch-on.active + .knob {
 	left: 50px;
 }
 #sidebar-ui .panel-setting-dialog {
