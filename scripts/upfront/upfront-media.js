@@ -462,6 +462,7 @@
 					name: 'selected_size',
 					width: '100%',
 					values: sizes,
+					default_value: MEDIA_SIZES.FULL,
 					change: function(){
 						me.select_size();
 					}
