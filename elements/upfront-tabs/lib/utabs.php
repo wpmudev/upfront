@@ -7,13 +7,16 @@ class Upfront_UtabsView extends Upfront_Object {
     $defaultTab = new StdClass();
     $defaultTab->title = 'Tab 1';
     $defaultTab->content = 'Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.';
+    $secondTab = new StdClass();
+    $secondTab->title = 'Tab 2';
+    $secondTab->content = 'Have fun with tabs.';
     return array(
       'type' => 'UtabsModel',
       'view_class' => 'UtabsView',
       'has_settings' => 1,
       'class' =>  'upfront-tabs',
-      'tabs' => array($defaultTab),
-      'tabs_count' => 1,
+      'tabs' => array($defaultTab, $secondTab),
+      'tabs_count' => 2,
       'tabs_fixed_width' => 'auto',
 
       'style_type' => 'theme_defined',
