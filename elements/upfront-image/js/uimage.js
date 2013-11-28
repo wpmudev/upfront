@@ -373,6 +373,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var me = this;
 		if(this.property('image_status') != 'ok')
 			return;
+		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
 		setTimeout(function(){
 			me.controls.render();
 			$('#' + me.property('element_id')).find('.upfront-image-container').append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
