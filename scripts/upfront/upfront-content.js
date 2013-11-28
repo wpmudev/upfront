@@ -65,7 +65,7 @@
 				return this;
 
 			var editorNode = el.attr('contenteditable', true).addClass('ueditable').get(0);
-			
+
 			//Start CKE
 			this.editor = CKEDITOR.inline(editorNode, toolbars.short);
 			this.editor.ueditor = this;
@@ -145,6 +145,7 @@
 			var $el = view.$el.find('div[contenteditable]'),
 				$parent = view.parent_module_view.$el.find('.upfront-editable_entity:first')
 			;
+
 			editor = CKEDITOR.inline($el.get(0));
 			if ($parent.is(".ui-draggable")) 
 				$parent.draggable('disable');
@@ -688,7 +689,7 @@
 $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 				// Boot up CKE
 				me.cke = CKEDITOR.inline($editor.get(0), {
-					floatSpaceDockedOffsetY: 0
+					//floatSpaceDockedOffsetY: 0 // If we leave it like this, the toolbar will hover over text :(
 				});
 
 				//Set the current mode
