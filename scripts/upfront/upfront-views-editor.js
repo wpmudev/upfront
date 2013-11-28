@@ -429,7 +429,7 @@ define(_template_files, function () {
 		},
 		create_grid: function () {
 			this.update_grid();
-			this.attach_event();
+			//this.attach_event();
 		},
 		toggle_grid: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);

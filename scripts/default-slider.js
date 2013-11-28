@@ -64,38 +64,43 @@
 				$slider_wrap.append($items);
 				$items.addClass(data.classname.item);
 				if ( data.auto_height ){ // Auto height adjustment to the highest slide
-					function calc_height () {
-						$slider.css('height', 9999);
-						$items.each(function(index){
-							var $img = $(this).find('img'),
-								img_h = $img.height();
-							max_height = max_height > img_h ? max_height : img_h;
-						});
-						$slider.css('height', Math.ceil(max_height/15)*15);
-					}
 					calc_height();
-					$slider.find('img').on('load', calc_height);
+					$slider.find('img').one('load', calc_height);
 				}
 				else { // Adjust slides to available space
-					function adjust_slide_size () {
-						var height = $slider.outerHeight(),
-							width = $slider.outerWidth();
-						$items.each(function(){
-							var $img = $(this).find('img'),
-								img_h = $img.height(),
-								img_w = $img.width();
-							if ( height/width > img_h/img_w )
-								$img.css({ height: '100%', width: 'auto' });
-							else
-								$img.css({ height: 'auto', width: '100%' });
-						});
-					}
 					adjust_slide_size();
-					$(window).on('load', adjust_slide_size);
-					$(window).on('resize', adjust_slide_size);
 				}
 			}
 			
+			function calc_height () {
+				$slider.css('height', 9999);
+				$items.each(function(index){
+					var $img = $(this).find('img'),
+						img_h = $img.height();
+					max_height = max_height > img_h ? max_height : img_h;
+				});
+				$slider.css('height', Math.ceil(max_height/15)*15);
+			}
+			
+			function adjust_slide_size () {
+				var height = $slider.outerHeight(),
+					width = $slider.outerWidth();
+				$items.each(function(){
+					var $img = $(this).find('img'),
+						img_h = $img.height(),
+						img_w = $img.width();
+					if ( height/width > img_h/img_w )
+						$img.css({ height: '100%', width: 'auto' });
+					else
+						$img.css({ height: 'auto', width: '100%' });
+				});
+			}
+			
+			if ( !data.auto_height ){
+				$(window).on('load', adjust_slide_size);
+				$(window).on('resize', adjust_slide_size);
+			}
+					
 			// Add navigation
 			update_nav();
 			$slider.append($nav);
@@ -174,6 +179,10 @@
 					update_nav();
 					if ( new_length != length )
 						slider_switch(0);
+				}
+				if ( !data.auto_height ){
+					adjust_slide_size();
+					$items.find('img').one('load', adjust_slide_size);
 				}
 			});
 			

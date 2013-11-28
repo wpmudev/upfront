@@ -1062,12 +1062,14 @@ var GridEditor = {
 					break;
 			}
 			if ( ( drop.type == 'full' || drop.type == 'inside' || ( drop.type == 'side-after' && !drop.is_switch ) ) && !drop.is_me )
-				$drop.css('width', (drop.right-drop.left+1)*ed.col_size).css('max-height', ed.max_row*ed.baseline).animate({height: me.height}, 300);
+				$drop.css('width', (drop.right-drop.left+1)*ed.col_size).css('max-height', ed.max_row*ed.baseline).animate({height: me.height}, 300, 'swing', drop_change);
 			else if (  drop.type == 'side-before' && drop.is_switch )
-				drop.insert[1].animate({left: me.width}, 300);
+				drop.insert[1].animate({left: me.width}, 300, 'swing', drop_change);
 			else if (  drop.type == 'side-after' && drop.is_switch )
-				drop.insert[1].animate({left: me.width*-1}, 300);
-			
+				drop.insert[1].animate({left: me.width*-1}, 300, 'swing', drop_change);
+			function drop_change () {
+				Upfront.Events.trigger("entity:drag:drop_change", view, view.model);
+			}
 		}
 		
 		$me.draggable({

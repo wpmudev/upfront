@@ -194,8 +194,13 @@ define(_template_files, function () {
 				}
 			},
 			refresh_background: function () {
-				if ( this.bg_map )
+				var type = this.model.get_property_value_by_name('background_type');
+				if ( type == 'map' && this.bg_map ){
 					google.maps.event.trigger(this.bg_map, 'resize');
+				}
+				else if ( type == 'slider' ) {
+					this.$el.find('.upfront-region-bg-' + type).trigger('refresh');
+				}
 			}
 		})),
 
@@ -678,6 +683,7 @@ define(_template_files, function () {
 				Upfront.Events.on("layout:render", this.fix_height, this);
 				Upfront.Events.on("entity:resize_stop", this.fix_height, this);
 				Upfront.Events.on("entity:drag_stop", this.fix_height, this);
+				Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
 			},
 			render: function () {
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
@@ -750,6 +756,8 @@ define(_template_files, function () {
 				}
 			},
 			init: function () {
+				var container = this.model.get("container"),
+					name = this.model.get("name");
 				this.dispatcher.on("plural:propagate_activation", this.on_click, this);
 				// this.model.get("properties").bind("change", this.update, this);
 				// this.model.get("properties").bind("add", this.update, this);
@@ -763,8 +771,11 @@ define(_template_files, function () {
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
-				Upfront.Events.on("entity:resize_stop", this.refresh_background, this);
-				Upfront.Events.on("entity:drag_stop", this.refresh_background, this);
+				if ( container && container != name ){
+					Upfront.Events.on("entity:resize_stop", this.refresh_background, this);
+					Upfront.Events.on("entity:drag_stop", this.refresh_background, this);
+					Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
+				}
 			},
 			on_click: function () {
 				this.trigger("activate_region", this);
