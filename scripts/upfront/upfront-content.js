@@ -685,6 +685,7 @@
 
 				// Init editor
 				var $editor = $body.find('[contenteditable]');
+$editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 				// Boot up CKE
 				me.cke = CKEDITOR.inline($editor.get(0), {
 					floatSpaceDockedOffsetY: 0
