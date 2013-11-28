@@ -122,6 +122,16 @@ CKEDITOR.on("instanceReady", function (e) {
 				})
 			;
 		});
+		$(document).on("click", ".upfront-image-attachment-bits", function (e) {
+			var $me = $(this),
+				idx = $me.attr("data-idx"),
+				range = ranges[idx] || false
+			;
+			editor.focus();
+			if (range) selection.selectRanges([range]);
+			editor.execCommand('image');
+			return false;
+		});
 	}
 	editor.on("key", attach_image_insertion_bits);
 	editor.on("insertHtml", attach_image_insertion_bits);
@@ -131,15 +141,5 @@ CKEDITOR.on("instanceReady", function (e) {
 	//setInterval(attach_image_insertion_bits, 1000);
 	attach_image_insertion_bits();
 	
-	$(document).on("click", ".upfront-image-attachment-bits", function (e) {
-		var $me = $(this),
-			idx = $me.attr("data-idx"),
-			range = ranges[idx] || false
-		;
-		editor.focus();
-		if (range) selection.selectRanges([range]);
-		editor.execCommand('image');
-		return false;
-	});
 });
 })(jQuery);
