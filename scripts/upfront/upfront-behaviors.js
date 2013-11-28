@@ -44,7 +44,7 @@ var LayoutEditor = {
 		this.layout.store_undo_state();
 	},
 	apply_history_change: function () {
-		this.layout_view.render();
+		Upfront.Application.layout_view.render();
 	},
 
 	save_dialog: function (on_complete, context) {

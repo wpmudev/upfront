@@ -1820,7 +1820,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			var type = options.type || TYPES.PLAIN,
 				old = get(options.editor_id)
 			;
-			if (old) old.stop();
+			if (old && old.stop) old.stop();
 			if (type == TYPES.PLAIN) return new Editor_Plain(options);
 			if (type == TYPES.META) return new Editor_Meta(options);
 			if (type == TYPES.SIMPLE) return new SimpleEditor(options);
