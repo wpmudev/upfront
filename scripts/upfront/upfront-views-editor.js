@@ -3229,7 +3229,8 @@ var Field_Anchor = Field_Select.extend({
 			this.setElement($('#' + this.elId));
 
 			// Hey admin bar!
-			if($('#wpadminbar').length)
+			var $bar = $('#wpadminbar'); // We'll use it a couple of times, so cache
+			if($bar.length && $bar.is(":visible")) // Check existence *and* visibility
 				$('#upfront-notifier').css({top: 28});
 		},
 		addMessage: function(message, type){
