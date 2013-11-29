@@ -218,6 +218,7 @@ var DiscussionSettings_ActionView = Backbone.View.extend({
 		var me = this;
 		this.populate_sections();
 		this.$el.empty();
+    this.$el.addClass('discussion-settings-wrapper');
 
 		this.sections.each(function (section) {
 			if (section.label) me.$el.append(_.template(me.templates.section_label, {label: section.label}));
