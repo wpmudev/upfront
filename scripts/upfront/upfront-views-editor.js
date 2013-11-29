@@ -170,6 +170,7 @@ define(_template_files, function () {
 		postView: false,
 		postType: 'post',
 		render: function () {
+      Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
 			this.$el.html("New post");
 		},
@@ -223,6 +224,7 @@ define(_template_files, function () {
 		"className": "command-new-page",
 		postType: 'page',
 		render: function () {
+      Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
 			this.$el.html("New page");
 		}
@@ -502,6 +504,10 @@ define(_template_files, function () {
 		events: {
 			"click .switch": "on_switch"
 		},
+    initialize: function() {
+      Upfront.Events.on("command:newpage:start", this.switchOff, this);
+      Upfront.Events.on("command:newpost:start", this.switchOff, this);
+    },
 		render: function () {
 			var template = _.template(_Upfront_Templates.edit_background_area, {})
 			this.$el.html(template);
@@ -509,10 +515,7 @@ define(_template_files, function () {
 		on_switch: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			if ( this.$el.find('.switch-on').hasClass('active') ){ // Switch off
-				this.$el.find('.switch-off').addClass('active');
-				this.$el.find('.switch-on').removeClass('active');
-				$main.removeClass('upfront-region-editing');
-				Upfront.Events.trigger("command:region:edit_toggle", false);
+        this.switchOff();
 			}
 			else { // Switch on
 				this.$el.find('.switch-off').removeClass('active');
@@ -520,7 +523,14 @@ define(_template_files, function () {
 				$main.addClass('upfront-region-editing');
 				Upfront.Events.trigger("command:region:edit_toggle", true);
 			}
-		}
+		},
+    switchOff: function() {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+      this.$el.find('.switch-off').addClass('active');
+      this.$el.find('.switch-on').removeClass('active');
+      $main.removeClass('upfront-region-editing');
+      Upfront.Events.trigger("command:region:edit_toggle", false);
+    }
 	});
 
 
