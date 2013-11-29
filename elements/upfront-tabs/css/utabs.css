@@ -1,5 +1,6 @@
 #settings .utabs-settings-panel .upfront-settings_panel_scroll {
-  min-width: 280px;
+  min-width: 287px;
+  overflow-y: auto;
 }
 .utabs-settings-panel .upfront-field-wrap-select .upfront-field-label {
   display: inline-block;
@@ -11,9 +12,17 @@
   font-size: 12px;
 }
 
+.utabs-settings-panel a.sp-replacer {
+  width: 90px;
+}
+
 .utabs-settings-panel .upfront-field-select {
   vertical-align: middle;
-  width: 117px;
+  width: 130px;
+}
+
+.utabs-settings-panel .upfront-field-select ul {
+  overflow: hidden;
 }
 
 .utabs-settings-panel .inline-radios {
