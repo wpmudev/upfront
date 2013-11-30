@@ -1995,6 +1995,9 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 				offset: offset
 			}));
 			editor.editable().on("click", _check);
+			editor.on("destroy", function () {
+				$("#upfront-cke-link_editor").remove();
+			});
 			Link_DispatchManager.instance = CKEDITOR.currentInstance.name;
 			return false;
 		},

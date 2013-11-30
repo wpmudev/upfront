@@ -3118,7 +3118,7 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 });
 
 var Settings_AnchorTrigger = SettingsItem.extend({
-	className: "upfront-settings-item upfront-settings-item-anchor",
+	//className: "upfront-settings-item upfront-settings-item-anchor",
 	initialize: function () {
 		var anchors = [],
 			raw = this.get_anchors()
@@ -3155,7 +3155,7 @@ var Settings_AnchorTrigger = SettingsItem.extend({
 });
 
 var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
-	className: "upfront-settings-item upfront-settings-item-anchor",
+	//className: "upfront-settings-item upfront-settings-item-anchor",
 	initialize: function () {
 		Settings_AnchorTrigger.prototype.initialize.call(this, this.options);
 		this.options.fields.push(
