@@ -1177,7 +1177,7 @@ define(_template_files, function () {
 
 			//Already loaded?
 			if(me.views[panel]){
-				if(panel != 'comments' || me.views[panel].view.collection.postId == Upfront.data.currentPost.id)
+				if(panel != 'comments' || (Upfront.data.currentPost && Upfront.data.currentPost.id && me.views[panel].view.collection.postId == Upfront.data.currentPost.id))
 			 		return this.render_panel(me.views[panel]);
 			}
 
@@ -1191,7 +1191,11 @@ define(_template_files, function () {
 				fetchOptions = {limit: -1}
 			}
 			else{
-				collection = new Upfront.Collections.CommentList([], {postId: Upfront.data.currentPost.id});
+				var post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
+					? Upfront.data.currentPost.id
+					: _upfront_post_data.post_id
+				;
+				collection = new Upfront.Collections.CommentList([], {postId: post_id});
 				collection.orderby = 'comment_date';
 			}
 
