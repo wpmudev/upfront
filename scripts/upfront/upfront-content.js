@@ -1894,6 +1894,8 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 					property: "url",
 					default_value: url,
 				});
+				this.url_field.render();
+				$type.append(this.url_field.$el);
 			} else if (this.TYPES.internal === current) {
 				var me = this;
 				Upfront.Views.Editor.PostSelector.open({
@@ -1905,16 +1907,30 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 					me.trigger("link:set", post.get("permalink"), me.TYPES.internal);
 				});
 			} else if (this.TYPES.anchor === current) {
+				var $field = this.$el.find(".upfront-field-multiple.upfront-field-multiple-horizontal-inline.upfront-field-multiple-selected"),
+					$select = $field.find(".upfront-field-wrap.upfront-field-wrap-select")
+				;
+				if ($select.length) $select.remove();
 				this.url_field = new Upfront.Views.Editor.Field.Anchor({
 					model: this.model,
 					property: "url",
 					default_value: url,
 				});
-			}
-
-			if (this.url_field) {
 				this.url_field.render();
-				$type.append(this.url_field.$el);
+				$field.append(this.url_field.$el);
+				$field
+					.find(".upfront-field-wrap.upfront-field-wrap-select").on("change", function (e) {
+						e.stopPropagation();
+					}).end()
+					.find("label").css({
+						"float": "left",
+						"padding-top": "1.4em"
+					}).end()
+					.find(".upfront-field-wrap.upfront-field-wrap-select").css({
+						"float": "right",
+						"margin-left": 10
+					})
+				;
 			}
 			return false;
 		},
