@@ -1836,6 +1836,204 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 		};
 	};
 
+	var Link_CkeDialog = Backbone.View.extend({
+		TYPES: {
+			external: "external",
+			internal: "internal",
+			anchor: "anchor"
+		},
+		events: {
+			"change .upfront-field-wrap-radios :radio": "swap_selection",
+			"click .upfront-save_settings": "apply_linkage"
+		},
+		initialize: function () {
+			if (this.options.href) {
+				var type = this.options.href.match(/^#/) ? this.TYPES.anchor : this.TYPES.external,
+					href = this.options.href.match(/^#/) ? this.options.href.replace(/#/, '') : this.options.href
+				;
+				this.model.set_property("type", type);
+				this.model.set_property("url", href);
+			}
+			this.model.init_property("type", this.TYPES.anchor);
+			this.settings = new Upfront.Views.Editor.Field.Radios({
+				model: this.model,
+				property: "type",
+				layout: 'horizontal-inline',
+				values: [
+					{label: "External URL", value: this.TYPES.external},
+					{label: "Post/Page", value: this.TYPES.internal},
+					{label: "Anchor", value: this.TYPES.anchor}
+				]
+			});
+			this.url_field = false;
+		},
+		render: function () {
+			this.$el.empty().append('<div class="wrap" />');
+			var $el = this.$el.find(".wrap");
+			$el.empty();
+			this.settings.render();
+			$el.append(this.settings.$el);
+			$el.append("<div id='upfront-cke-link_editor-link_type' />");
+			this.$el.append("<button type='button' class='upfront-save_settings'>Ok</button>");
+
+			this.$el.offset(this.options.offset);
+			
+			this.swap_selection();
+		},
+		swap_selection: function (e) {
+			var $type = this.$el.find("#upfront-cke-link_editor-link_type"),
+				current = this.settings.get_value(),
+				url = this.model.get_property_value_by_name("url")
+			;
+			$type.empty();
+			if (!current) return false;
+
+			if (this.TYPES.external === current) {
+				this.url_field = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: "url",
+					default_value: url,
+				});
+			} else if (this.TYPES.internal === current) {
+				var me = this;
+				Upfront.Views.Editor.PostSelector.open({
+					// Additional options here yay
+				}).done(function(post){
+					if (!post || !post.get) {
+						return false;
+					}
+					me.trigger("link:set", post.get("permalink"), me.TYPES.internal);
+				});
+			} else if (this.TYPES.anchor === current) {
+				this.url_field = new Upfront.Views.Editor.Field.Anchor({
+					model: this.model,
+					property: "url",
+					default_value: url,
+				});
+			}
+
+			if (this.url_field) {
+				this.url_field.render();
+				$type.append(this.url_field.$el);
+			}
+			return false;
+		},
+		apply_linkage: function () {
+			var url = this.url_field.get_value() || this.model.get_property_value_by_name("url"),
+				type = this.settings.get_value()
+			;
+			this.trigger("link:set", url, type);
+		}
+	});
+
+	var Link_DispatchManager = new (Backbone.View.extend({
+
+		initialize: function () {
+			Upfront.Events.on("upfront:editor:init", this.rebind_ckeditor_link, this);
+		},
+
+		rebind_ckeditor_link: function () {
+			var me = this;
+			_(CKEDITOR.instances).each(function (editor) {
+				var link = editor.getCommand('link');
+				if (link && link.on) link.on("exec", me.ck_open, me);
+
+				editor.on('doubleclick', function (evt) {
+					if (evt.data && evt.data.dialog && ('link' === evt.data.dialog || 'anchor' === evt.data.dialog)) evt.data.dialog = false;
+					var element = CKEDITOR.plugins.link.getSelectedLink(editor) || evt.data.element;
+
+					if (!element.isReadOnly() && element.is('a')) {
+						editor.getSelection().selectElement(element);
+						me.ck_open({
+							href: element.getAttribute('href')
+						});
+					}
+				});
+			});
+		},
+
+		ck_open: function (data) {
+			var me = this,
+				editor = CKEDITOR.currentInstance,
+				selection = editor.getSelection(),
+				bookmarks = selection.createBookmarks(),
+				$el = $(bookmarks[0].startNode.$).parent(),
+				offset = false,
+				_check = function () {
+					if (selection.getRanges()[0].endOffset === editor.getSelection().getRanges()[0].endOffset) return false;
+					$("#upfront-cke-link_editor").remove();
+				}
+			;
+			if ($el.is("span")) {
+				$el = $el.find('[data-cke-bookmark]').first();
+				var tmp = $el.show().offset();
+				offset = {
+					top: tmp.top ? tmp.top + $el.height() : tmp.top,
+					left: tmp.left
+				}
+				$el.hide();
+			}
+			selection.selectBookmarks(bookmarks);
+			this.open(_.extend(data, {
+				el: $el,
+				offset: offset
+			}));
+			editor.editable().on("click", _check);
+			Link_DispatchManager.instance = CKEDITOR.currentInstance.name;
+			return false;
+		},
+
+		on_close: function (href, type) {
+			var editor = CKEDITOR.instances[Link_DispatchManager.instance],
+				text = false,
+				link = new CKEDITOR.dom.element('a'),
+				link_href = Link_CkeDialog.prototype.TYPES.anchor === type
+					? '#' + href.replace(/#/, '')
+					: href.match(/^https?\:\/\//) ? href : window.location.protocol + '//' + href
+			;
+			editor.focus();
+			text = editor.getSelection().getSelectedText();
+			link.setAttributes({href: link_href});
+			link.setText(text);
+			editor.insertElement(link);
+		},
+
+		open: function (options) {
+			options = options || {};
+			var $root = false,
+				offset = {
+					top: 0,
+					left: 0
+				}
+			;
+			if ($("#upfront-cke-link_editor").length) $("#upfront-cke-link_editor").remove();
+			$("body").append("<div id='upfront-cke-link_editor' />");
+			$root = $("#upfront-cke-link_editor");
+			if (options.el && options.el.length && !options.offset) {
+				var tmp = options.el.offset();
+				offset = {
+					top: (tmp.top ? tmp.top + options.el.height() : tmp.top),
+					left: tmp.left
+				};
+			} else if (options.offset) {
+				offset = options.offset;
+			}
+			var me = this,
+				dialog = new Link_CkeDialog(_.extend({}, options, {
+					model: new Upfront.Models.ObjectModel(),
+					el: $root,
+					offset: offset
+				}))
+			;
+			dialog.render();
+			dialog.on("link:set", function (link, type) {
+				dialog.remove();
+				me.on_close(link, type);
+			});
+		}
+
+	}))();
+
 	Upfront.Content = {
 		TYPES: TYPES,
 		editors: new ContentEditors(),

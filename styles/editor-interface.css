@@ -6305,3 +6305,23 @@ a.ueditor-select-option:hover {
 	width: 36px;
 	z-index: 1;
 }
+
+
+/* ----- CKE link selection ------ */
+#upfront-cke-link_editor {
+	position: absolute;
+	z-index: 999;
+	top: 0;
+	right: 110px;
+	width: 235px;
+}
+
+#upfront-cke-link_editor .wrap {
+	border: 1px solid rgb(99, 134, 166);
+	background: rgb(242, 249, 255);
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+	padding: 10px;
+}
+#upfront-cke-link_editor .upfront-save_settings {
+	float: right;
+}
