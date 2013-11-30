@@ -275,9 +275,11 @@
 </script>
 
 <script type="text/template" id="upfront-search-tpl">
-	<div id="upfront-search_action"><i class="icon-search"></i></div>
-	<div id="upfront-search_container" style="display:{{ query ? 'block' : 'none' }}">
-		<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" />
+	<div class="search_container clearfix">
+		<div id="upfront-search_action" class="search upfront-icon upfront-icon-popup-search"></div>
+		<div id="upfront-search_container" style="display:{{ query ? 'block' : 'none' }}">
+			<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" />
+		</div>
 	</div>
 </script>
 
