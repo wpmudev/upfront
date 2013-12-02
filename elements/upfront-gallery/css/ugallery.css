@@ -364,6 +364,11 @@ div.ugallery-label-selector {
 	display: block;
 }
 
+.ugallery-controls .upfront-inline-panel {
+	opacity: 1;
+	visibility: visible;
+}
+
 
 
 .ui-resizable-autohide .ugallery-controls .upfront-inline-panel-top,
