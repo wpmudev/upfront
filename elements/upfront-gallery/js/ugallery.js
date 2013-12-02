@@ -146,7 +146,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	createControls: function(image){
 		var me = this,		
-			panel = new Upfront.Views.Editor.InlinePanels.Panel(),
+			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			multi = new Upfront.Views.Editor.InlinePanels.MultiControl()
 		;
 		multi.sub_items = {
@@ -258,6 +258,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					title = item.find('.ugallery-thumb-title')
 				;
 
+				controls.setWidth(item.width());
 				controls.render();
 				item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 		
@@ -536,11 +537,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				me.images.set(models);
 				me.imagesChanged();
 				me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
-			});
-
-			
-			console.log('thumbnail regeneration not implemented');
-			
+			});			
 		}
 	},
 
@@ -1183,7 +1180,9 @@ var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function () {
-		var fields = Upfront.Views.Editor.Field;
+		var me = this,
+			fields = Upfront.Views.Editor.Field
+		;
 
 		this.settings = _([
 			new Upfront.Views.Editor.Settings.Item({
@@ -1211,16 +1210,6 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 								label: 'Enable label sorting'
 							}
 						]
-					}),
-					new fields.Checkboxes({
-						model: this.model,
-						property: 'lbLoop',
-						values: [
-							{
-								value: 'true',
-								label: 'Loop images in lightbox'
-							}
-						]
 					})
 				]
 			}),
@@ -1231,13 +1220,35 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						info: 'Reset gallery settings to the default theme',
 						label: 'Reset',
-						on_click: function(){
-							alert('Button clicked');
+						on_click: function(e){
+							me.resetSettings(e);
 						}
 					})
 				]
 			})
 		]);
+	},
+
+	resetSettings: function(e) {
+		e.preventDefault();
+
+		if(confirm('Are you sure that you want to reset this gallery to the theme\'s default settings?')){
+			var me = this,
+				defaults = Upfront.data.ugallery.defaults,
+				themeDefaults = Upfront.data.ugallery.themeDefaults,
+				settings = _.extend({}, defaults, themeDefaults),
+				images = me.model.get_property_value_by_name('images')
+			;
+
+			_.each(settings, function(value, key){
+				me.model.set_property(key, value, true);
+			});
+
+			me.model.set_property('images', images, true);
+			me.model.set_property('status', 'ok');
+
+			Upfront.Events.trigger("entity:settings:deactivate");
+		}
 	},
 
 	get_label: function () {
@@ -1417,51 +1428,6 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 		return "Thumbnails Settings";
 	}
 });
-
-var LightboxFields = Upfront.Views.Editor.Settings.Item.extend({
-	initialize: function(){
-		var me = this,
-			fields = Upfront.Views.Editor.Field
-		;
-
-		this.fields = _([
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'lbTitle',
-				values: [
-					{
-						label: 'Show Image Title',
-						value: 'true'
-					}
-				]
-			}),
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'lbDescription',
-				values: [
-					{
-						label: 'Show Image Description',
-						value: 'true'
-					}
-				]
-			}),
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'lbLoop',
-				values: [
-					{
-						label: 'Loop Images When Viewing',
-						value: 'true'
-					}
-				]
-			})
-		]);
-	},
-	get_title: function(){
-		return "Lightbox Image Settings";
-	}
-});
-
 
 //Make the element parts available
 Upfront.Application.LayoutEditor.add_object("Ugallery", {

@@ -145,7 +145,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'postTypes' => $post_types,
 			'grids' => array(),
 			'label_names' => $labels_names,
-			'label_ids' => $labels_ids
+			'label_ids' => $labels_ids,
+			'themeDefaults' => apply_filters('upfront_gallery_defaults', array())
 		);
 		return $data;
 	}
@@ -170,7 +171,6 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'captionWhen' => 'always', // 'always' | 'hover'
-			'lbLoop' => array(),
 			'linkTo' => 'image' // 'url' | 'image'
         );
     }
