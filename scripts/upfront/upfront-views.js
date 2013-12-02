@@ -725,6 +725,7 @@ define(_template_files, function () {
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$layout = $('<div class="upfront-grid-layout" />');
 				this.$layout.appendTo(this.$el);
+				this.$layout.append('<div class="upfront-grid-layout-gutter"><div class="upfront-grid-layout-gutter-left" /><div class="upfront-grid-layout-gutter-right" /></div>');
 				this.update();
 				Upfront.Events.trigger("entity:region_container:after_render", this, this.model);
 			},

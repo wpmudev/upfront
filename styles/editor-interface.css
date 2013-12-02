@@ -24,6 +24,37 @@
 	zoom: 1; 
 }
 
+.upfront-grid-layout-gutter {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 0;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition: opacity 1s;
+}
+.upfront-grid-layout-gutter-left,
+.upfront-grid-layout-gutter-right {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	bottom: 0;
+	background: rgba( 38, 58, 77, .3 );
+}
+.upfront-grid-layout-gutter-left {
+	right: 100%;
+}
+.upfront-grid-layout-gutter-right {
+	left: 100%;
+}
+.upfront-dragging .upfront-grid-layout-gutter {
+	visibility: visible;
+	opacity: 1;
+	z-index: 1;
+}
+
 [contenteditable="true"] {
 	outline: none;
 }
@@ -462,6 +493,10 @@
 .draggable-element:hover, .draggable-element.element-dragging {
 	border: 1px solid #537ea6;
 	box-shadow: 0 1px 0 #537ea6, inset 0 1px 0px #fff;
+}
+.draggable-element.element-dragging-no-drop {
+	cursor: no-drop;
+	cursor: not-allowed;
 }
 #sidebar-ui .panel-section {
 	font-size: 15px;
@@ -1489,17 +1524,18 @@ a.ueditor-action-pickercancel{
 .upfront-layout {
 	position: relative;
 	z-index: 1;
+	overflow: hidden;
 }
 
 /* Transition */
 .upfront-region-container,
 .upfront-region,
 .upfront-module {
-	-webkit-transition: background .3s, opacity .3s;
-	-moz-transition: background .3s, opacity .3s;
-	-ms-transition: background .3s, opacity .3s;
-	-o-transition: background .3s, opacity .3s;
-	transition: background .3s, opacity .3s;
+	-webkit-transition: background .6s, opacity .6s;
+	-moz-transition: background .6s, opacity .6s;
+	-ms-transition: background .6s, opacity .6s;
+	-o-transition: background .6s, opacity .6s;
+	transition: background .6s, opacity .6s;
 }
 
 
@@ -1585,7 +1621,7 @@ a.ueditor-action-pickercancel{
   float: left;
   /*width: 100%;*/
   position: relative;
-  min-height: 300px;
+  min-height: 90px;
   /*z-index: 1;*/
 }
 .upfront-region-bg-overlay,
