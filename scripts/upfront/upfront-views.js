@@ -131,6 +131,13 @@ define(_template_files, function () {
 					else if ( type == 'slider' ){
 						this.update_background_slider($type, $overlay);
 					}
+					this.$el.css({
+						backgroundColor: "",
+						backgroundImage: "none",
+						backgroundSize: "",
+						backgroundRepeat: "",
+						backgroundPosition: ""
+					});
 				}
 				Upfront.Events.trigger("entity:background:update", this, this.model);
 			},
@@ -195,12 +202,36 @@ define(_template_files, function () {
 				}
 			},
 			refresh_background: function () {
-				var type = this.model.get_property_value_by_name('background_type');
+				var type = this.model.get_property_value_by_name('background_type'),
+					color = this.model.get_property_value_by_name('background_color'),
+					image = this.model.get_property_value_by_name('background_image');
 				if ( type == 'map' && this.bg_map ){
 					google.maps.event.trigger(this.bg_map, 'resize');
 				}
 				else if ( type == 'slider' ) {
 					this.$el.find('.upfront-region-bg-' + type).trigger('refresh');
+				}
+				else if ( ( !type || type == 'image' ) && image ) {
+					var style = this.model.get_property_value_by_name('background_style'),
+						ratio = this.model.get_property_value_by_name('background_image_ratio'),
+						width = this.$el.outerWidth(),
+						height = this.$el.outerHeight();	
+					if ( style == 'full' ){
+						if ( Math.round(height/width*100)/100 > ratio ){
+							this.$el.css({
+								backgroundSize: "auto 100%",
+								backgroundRepeat: "no-repeat",
+								backgroundPosition: "50% 50%"
+							});
+						}
+						else {
+							this.$el.css({
+								backgroundSize: "100% auto",
+								backgroundRepeat: "no-repeat",
+								backgroundPosition: "50% 50%"
+							});
+						}
+					}
 				}
 			}
 		})),
@@ -683,8 +714,12 @@ define(_template_files, function () {
 				this.available_col = grid.size;
 				Upfront.Events.on("layout:render", this.fix_height, this);
 				Upfront.Events.on("entity:resize_stop", this.fix_height, this);
+				Upfront.Events.on("entity:region:resize_stop", this.fix_height, this);
+				Upfront.Events.on("entity:region_container:resize_stop", this.fix_height, this);
 				Upfront.Events.on("entity:drag_stop", this.fix_height, this);
 				Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
+				Upfront.Events.on("entity:region:added", this.fix_height, this);
+				Upfront.Events.on("entity:region:removed", this.fix_height, this);
 			},
 			render: function () {
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
@@ -774,6 +809,8 @@ define(_template_files, function () {
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
 				if ( container && container != name ){
 					Upfront.Events.on("entity:resize_stop", this.refresh_background, this);
+					Upfront.Events.on("entity:region:resize_stop", this.refresh_background, this);
+					Upfront.Events.on("entity:region_container:resize_stop", this.refresh_background, this);
 					Upfront.Events.on("entity:drag_stop", this.refresh_background, this);
 					Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
 				}
@@ -819,7 +856,7 @@ define(_template_files, function () {
 					col = this.model.get_property_value_by_name('col'),
 					row = this.model.get_property_value_by_name('row'),
 					height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
-					is_locked = this.model.get_property_value_by_name('is_locked');
+					expand_lock = this.model.get_property_value_by_name('expand_lock');
 				if ( container && container != name ){
 					// This region is inside another region container
 					this.update_background(); // Allow background applied
@@ -828,10 +865,10 @@ define(_template_files, function () {
 					this.region_resize(col);
 				if ( height )
 					this.$el.css('min-height', height + 'px');
-				if ( is_locked )
-					this.$el.addClass('upfront-region-locked');
+				if ( expand_lock )
+					this.$el.addClass('upfront-region-expand-lock');
 				else
-					this.$el.removeClass('upfront-region-locked')
+					this.$el.removeClass('upfront-region-expand-lock')
 				this.trigger("region_update", this);
 			},
 			region_resize: function (col) {
@@ -958,6 +995,7 @@ define(_template_files, function () {
 				else {
 					this.render_region(model, is_before);
 				}
+				Upfront.Events.trigger("entity:region:added", this, this.model);
 			},
 			on_remove: function (model) {
 				var view = Upfront.data.region_views[model.cid];
@@ -989,6 +1027,7 @@ define(_template_files, function () {
 						if ( main_view ) main_view.update();
 					}
 				}
+				Upfront.Events.trigger("entity:region:removed", this, this.model);
 			}
 		}),
 		

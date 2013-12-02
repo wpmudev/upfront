@@ -3659,8 +3659,10 @@ var Field_Anchor = Field_Select.extend({
 		},
 		open_subitem: function () {
 			this.$el.addClass('upfront-inline-panel-subitem-active');
+			this.$el.removeClass('upfront-inline-panel-subitem-inactive');
 		},
 		close_subitem: function () {
+			this.$el.addClass('upfront-inline-panel-subitem-inactive');
 			this.$el.removeClass('upfront-inline-panel-subitem-active');
 		},
 		on_region_change: function (region) {
@@ -4239,6 +4241,7 @@ var Field_Anchor = Field_Select.extend({
 	
 	var RegionPanelItem_Bg = InlinePanelItemMulti.extend({
 		className: 'upfront-inline-panel-item upfront-region-panel-item-bg',
+		tooltip: "Change background",
 		initialize: function () {
 			this.sub_items = {
 				color: new RegionPanelItem_BgColor({model: this.model}),
@@ -4338,6 +4341,7 @@ var Field_Anchor = Field_Select.extend({
 					"container": is_new_container ? name : this.model.get('name'),
 					"title": title
 				});
+			new_region.set_property('row', 20); // default to 20 rows
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
 			}
@@ -4383,7 +4387,7 @@ var Field_Anchor = Field_Select.extend({
 			function end () {
 				var baseline = Upfront.Settings.LayoutEditor.Grid.baseline,
 					height = view.$el.outerHeight();
-				model.set_property('row', Math.ceil(height/baseline), true);
+				//model.set_property('row', Math.ceil(height/baseline), true);
 				view.$el.removeClass(ani_class);
 				// enable edit and activate the new region
 				Upfront.Events.trigger('command:region:edit_toggle', true);
