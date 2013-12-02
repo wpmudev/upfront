@@ -581,6 +581,11 @@ display:none;
 	left: 0;
 }
 
+.uimage-controls .upfront-inline-panel {
+	opacity: 1;
+	visibility: visible;
+}
+
 .uimage-controls div.upfront-inline-panel-subitem div.upfront-inline-panel-item:last-child {
 	display: none;
 }

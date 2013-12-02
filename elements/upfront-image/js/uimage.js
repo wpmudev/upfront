@@ -1035,6 +1035,9 @@ var ImageEditor = Backbone.View.extend({
 	open: function(options){
 		this.resetDefaults();
 		this.src = options.src;
+
+		options.maskOffset.top += this.fixImageTop(options.maskOffset);
+
 		this.setOptions(options);
 
 		var halfBorder = this.bordersWidth /2,
@@ -1174,6 +1177,7 @@ var ImageEditor = Backbone.View.extend({
 
 	close: function() {
 		var me = this;
+		this.unfixImageTop();
 		this.$('div').fadeOut(200, function(){
 			me.$el.detach();
 		});
@@ -1654,26 +1658,6 @@ var ImageEditor = Backbone.View.extend({
 
 		return Upfront.Util.post(opts);
 	},
-	/*
-	selectBestImage: function(){
-		var img = this.$('img.uimage-img'),
-			proportions = Math.round(100 * img.width() / img.height()) / 100,
-			selected = 'full',
-			selectedWidth = this.sizes.full[1]
-		;
-
-		_.each(this.sizes, function(size, key){
-			if(key != 'full' && Math.round(size[1] / size[2] * 100) / 100 == proportions){
-				if(size[1] < selectedWidth && size[1] >= img.width()){
-					selected = key;
-					selectedWidth = size[1];
-				}
-			}
-		});
-
-		return this.sizes[selected][0];
-	},
-	*/
 	selectAlign: function(){
 		if(this.align == 'left')
 			this.setAlign('center');
@@ -1748,6 +1732,32 @@ var ImageEditor = Backbone.View.extend({
 				this.positionEditorElements();
 		}
 	},
+
+	fixImageTop: function(offset){
+		if(offset && typeof offset.top != 'undefined'){
+			if(offset.top < 120){
+				var margin = $('body').css('marginTop');
+				margin = parseInt(margin.replace('px', ''), 10);
+				if(!isNaN(margin)){
+					this.fixTop = 120 - offset.top;
+					$('body').css(('marginTop'), margin + this.fixTop);
+					return this.fixTop;
+				}
+			}
+		}
+		return 0;
+	},
+
+	unfixImageTop: function(){
+		if(this.fixTop){
+			var margin = $('body').css('marginTop');
+			margin = parseInt(margin.replace('px', ''), 10);
+			if(!isNaN(margin)){
+				$('body').css(('marginTop'), margin - this.fixTop);
+			}
+			this.fixTop = 0;
+		}
+	}
 });
 
 var ImageSelector = Backbone.View.extend({
@@ -2065,7 +2075,8 @@ var ImageSelector = Backbone.View.extend({
 			},
 			dataType: 'json'
 		});
-	},
+	}
+
 
 });
 
