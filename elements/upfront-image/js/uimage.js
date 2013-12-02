@@ -73,28 +73,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.model.get("properties").bind("add", this.render, this);
 		this.model.get("properties").bind("remove", this.render, this);
 
-		var inlinePanels = Upfront.Views.Editor.InlinePanels,
-			controls =  new inlinePanels.Panels(),
-			panel = new inlinePanels.Panel(),
-			item = new Control(),
-			item2 = new Control()
-		;
-
-		item.icon = 'prueba';
-		item.tooltip = 'Tooltip de prueba';
-		item.on_render = function(){console.log('Panel item rendered');};
-		item.on('click', function(e){
-			console.log(e);
-		});
-
-		item2.icon = 'prueba2';
-		item2.tooltip = 'Tooltip de prueba2';
-		item2.on_render = function(){console.log('Panel item2 rendered');};
-
-		panel.items = _([item, item2]);
-
-		controls.panels = _([panel]);
-
 		this.controls = this.createControls();
 
 		if(this.property('image_status') != 'ok')
@@ -113,7 +91,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			case 'top':
 				return 'topOver';
 			case 'bottom':
-				return 'topBottom';
+				return 'bottomOver';
 			case 'fill':
 				return 'topCover';
 			case 'fill_middle':
@@ -127,7 +105,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	createControls: function() {
 		var me = this,		
-			panel = new Upfront.Views.Editor.InlinePanels.Panel(),
+			panel = new ControlPanel(),
 			multi = new MultiControl()
 		;
 		multi.sub_items = {
@@ -376,8 +354,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			return;
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
 		setTimeout(function(){
+			var container = $('#' + me.property('element_id')).find('.upfront-image-container');
+			me.controls.setWidth(container.width());
 			me.controls.render();
-			$('#' + me.property('element_id')).find('.upfront-image-container').append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
+			container.append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
 			me.controls.delegateEvents();
 		}, 300);
 	},
@@ -2158,8 +2138,64 @@ var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 
 });
 
+var CollapsedMultiControl = MultiControl.extend({
+	collapsed: true,
+	render: function(){
+		if(!this.sub_items['collapsedControl']){
+			var control = new Control();
+			control.icon = 'collapsedControl';
+			control.tooltip = 'More tools';
+			this.sub_items['collapsedControl'] = control;
+		}
+		this.selected = 'collapsedControl';
+		this.constructor.__super__.render.call(this, arguments);		
+	}
+
+});
+
+var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
+	setWidth: function(width){
+		var itemWidth = 40,
+			items = this.items._wrapped,
+			collapsed = !!items.collapsed
+		;
+
+		if(!collapsed && items.length > 3 && width < items.length * itemWidth){
+			var collapsableItems = items.slice(1, items.length -1),
+				collapsedControl = new CollapsedMultiControl()
+			;
+
+			_.each(collapsableItems, function(item){
+				collapsedControl.sub_items[item.icon] = item;
+			});
+
+			collapsedControl.icon = 'collapsedControl';
+			collapsedControl.tooltip = 'More tools';
+			
+			this.items = _([items[0], collapsedControl, items[items.length - 1]]);
+			return;
+		}
+		if(collapsed) {
+			var total = 2 + items[1].sub_items.length;
+			if(total * itemWidth <= width) {
+				var newitems = [items[0]],
+					subitems = items[1].subitems
+				;
+				_.each(subitems, function(it){
+					newitems.push(it);
+				});
+				newitems.push(items[2]);
+
+				this.items = newitems;
+			}
+		}
+
+	}
+});
+
 Upfront.Views.Editor.InlinePanels.MultiControl = MultiControl;
 Upfront.Views.Editor.InlinePanels.Control = Control;
+Upfront.Views.Editor.InlinePanels.ControlPanel = ControlPanel;
 
 Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Model": UimageModel, 

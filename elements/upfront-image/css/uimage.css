@@ -720,3 +720,16 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-icon-region-below-active:hover:before {
 	background-position: -807px -646px;
 }
+
+.upfront-icon-region-collapsedControl:before {
+	background-position: -699px -710px;
+}
+.upfront-icon-region-collapsedControl:hover:before {
+	background-position: -807px -710px;
+}
+.upfront-icon-region-collapsedControl-active:before {
+	background-position: -699px -710px;
+}
+.upfront-icon-region-collapsedControl-active:hover:before {
+	background-position: -807px -710px;
+}
