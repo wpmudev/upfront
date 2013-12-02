@@ -938,7 +938,7 @@ var GridEditor = {
 			return false;
 		$me.append('<span class="upfront-icon-control upfront-icon-control-resize upfront-resize-handle ui-resizable-handle ui-resizable-se"></span>');
 		$me.resizable({
-			"containment": $layout,
+			containment: "document",
 			autoHide: true,
 			delay: 100,
 			handles: {
@@ -1829,7 +1829,7 @@ var GridEditor = {
 		if ( next_model !== false && (next_model.get('container') == container || next_model.get('name') == container) )
 			is_left = true;
 		$me.resizable({
-			"containment": 'parent',
+			containment: "document",
 			//handles: "n, e, s, w",
 			handles: is_left ? 'e' : 'w',
 			helper: "region-resizable-helper",
@@ -1845,7 +1845,7 @@ var GridEditor = {
 			resize: function(e, ui){
 				// @TODO Suppppperrrr annoying bug happen on resizable 1.10.3, fix only for this version and make sure to recheck in future update on this lib!
 				// Normalize the ui.size
-				var that = $(this).data('ui-resizable'),
+				/*var that = $(this).data('ui-resizable'),
 					woset = Math.abs( that.offset.left ) + that.sizeDiff.width,
 					isParent = that.containerElement.get(0) === that.element.parent().get(0),
 					isOffsetRelative = /relative|absolute/.test(that.containerElement.css("position"));
@@ -1853,7 +1853,7 @@ var GridEditor = {
 						woset -= that.parentData.left;
 					};
 					if ( woset + that.size.width >= that.parentData.width )
-						ui.size.width += that.parentData.left;
+						ui.size.width += that.parentData.left;*/
 				// End this fix
 				var $helper = ui.helper,
 					col = ed.get_class_num($me, ed.grid.class),
@@ -1906,7 +1906,7 @@ var GridEditor = {
 			$layout = $main.find('.upfront-layout')
 		;
 		$me.resizable({
-			"containment": 'parent',
+			containment: "document",
 			//handles: "n, e, s, w",
 			handles: 's',
 			helper: "region-resizable-helper",
