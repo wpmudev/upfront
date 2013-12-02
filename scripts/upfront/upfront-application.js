@@ -46,6 +46,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		Upfront.Events.off("entity:resize_start", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.off("entity:drag_start", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.off("entity:removed:before", Upfront.Behaviors.LayoutEditor.create_undo, this);
+		Upfront.Events.off("region:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.off("command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);
 		Upfront.Events.off("command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);
 		Upfront.Events.off("command:select", Upfront.Behaviors.LayoutEditor.create_mergeable, this);
@@ -156,6 +157,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		Upfront.Events.on("entity:resize_start", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.on("entity:drag_start", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.on("entity:removed:before", Upfront.Behaviors.LayoutEditor.create_undo, this);
+		Upfront.Events.on("region:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		
 		Upfront.Events.on("command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);
 		Upfront.Events.on("command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change, this);

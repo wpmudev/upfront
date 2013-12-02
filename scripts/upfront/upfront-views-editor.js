@@ -282,9 +282,27 @@ define(_template_files, function () {
 			this.$el.css("opacity", 0.5);
 		},
 		on_click: function () {
+			var me = this,
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Undoing...",
+					done: "Thank you for waiting",
+					fixed: true
+				})
+			;
+			loading.render();
+			$('body').append(loading.$el);
+			loading.done(function () {
+				setTimeout(function () {
+					me.model.restore_undo_state();
+					Upfront.Events.trigger("command:undo")
+					me.render();
+				}, 100); // Need the timeout to start loading first
+			});
+			/*
 			this.model.restore_undo_state();
 			Upfront.Events.trigger("command:undo")
 			this.render();
+			*/
 		}
 	});
 
@@ -309,9 +327,27 @@ define(_template_files, function () {
 			this.$el.css("opacity", 0.5);
 		},
 		on_click: function () {
+			var me = this,
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Redoing...",
+					done: "Thank you for waiting",
+					fixed: true
+				})
+			;
+			loading.render();
+			$('body').append(loading.$el);
+			loading.done(function () {
+				setTimeout(function () {
+					me.model.restore_redo_state();
+					Upfront.Events.trigger("command:redo")
+					me.render();
+				}, 100); // Need the timeout to start loading first
+			});
+			/*
 			this.model.restore_redo_state();
 			Upfront.Events.trigger("command:redo")
 			this.render();
+			*/
 		}
 	});
 
