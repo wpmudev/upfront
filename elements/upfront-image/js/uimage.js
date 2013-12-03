@@ -119,7 +119,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		};
 
 		multi.icon = 'caption';
-		multi.tooltip = '';
+		multi.tooltip = 'Caption position';
 		multi.selected = this.getSelectedAlignment();
 		multi.on('select', function(item){
 			switch(item){
@@ -2148,8 +2148,42 @@ var CollapsedMultiControl = MultiControl.extend({
 			this.sub_items['collapsedControl'] = control;
 		}
 		this.selected = 'collapsedControl';
-		this.constructor.__super__.render.call(this, arguments);		
-	}
+
+		this.constructor.__super__.render.call(this, arguments);	
+	},
+
+	selectItem: function(e){
+		var found = false,
+			foundKey = false,
+			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
+		;
+
+		_.each(this.sub_items, function(item, key){
+			if(target.hasClass('upfront-icon-region-' + item.icon)){
+				found = item;
+				foundKey = key;
+			}
+		});
+
+		if(found){
+			if(found instanceof MultiControl){
+				return false;
+			}
+			else {
+				this.render();
+				this.trigger('select', foundKey);				
+			}
+		}
+	},
+
+	open_subitem: function () {
+		_.each(this.sub_items, function(item, key){
+			if(item instanceof MultiControl){
+				item.close_subitem();
+			}
+		});
+		this.constructor.__super__.open_subitem.call(this, arguments);
+	},
 
 });
 
@@ -2171,6 +2205,7 @@ var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
 
 			collapsedControl.icon = 'collapsedControl';
 			collapsedControl.tooltip = 'More tools';
+			collapsedControl.position = 'left';
 			
 			this.items = _([items[0], collapsedControl, items[items.length - 1]]);
 			return;

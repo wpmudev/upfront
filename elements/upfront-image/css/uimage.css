@@ -733,3 +733,49 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-icon-region-collapsedControl-active:hover:before {
 	background-position: -807px -710px;
 }
+
+.upfront-inline-panel-subitem .upfront-inline-panel-subitem {
+	position: absolute;
+	top:0;
+	left:0;
+	z-index: 10;
+}
+
+.upfront-inline-panel-subitem .upfront-inline-panel-subitem .upfront-inline-panel-item {
+	position:absolute;
+}
+
+
+.ugallery-controls .upfront-inline-panel-subitem .upfront-inline-panel-item:hover{
+	box-shadow: none;
+}
+.ugallery-controls .upfront-inline-panel-subitem  i:hover {
+	box-shadow: 0 0 0 2px rgba(219,236,252,.9);
+	z-index: 20;
+	position: relative;
+}
+
+.ugallery-controls .upfront-inline-panel-subitem .upfront-inline-panel-subitem-inactive .upfront-inline-panel-subitem {
+	display: none;
+}
+
+.upfront-inline-panel-subitem .upfront-inline-panel-subitem .upfront-inline-panel-item:first-child {
+	left: 40px;
+}
+
+.upfront-inline-panel-subitem .upfront-inline-panel-subitem .upfront-inline-panel-item:nth-child(2){
+	left: -40px;
+}
+
+.upfront-inline-panel-subitem .upfront-inline-panel-subitem .upfront-inline-panel-item:nth-child(3){
+	left: 80px;
+}
+
+.upfront-inline-panel-subitem .upfront-inline-panel-subitem .upfront-inline-panel-item:nth-child(4){
+	left: -80px;
+}
+
+.upfront-inline-panel-subitem .upfront-inline-panel-subitem .upfront-inline-panel-item:last-child {
+	left: 0;
+}
+
