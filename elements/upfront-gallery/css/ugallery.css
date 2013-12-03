@@ -360,6 +360,10 @@ div.ugallery-label-selector {
 	display: none;
 }
 
+.ugallery_selected {
+	z-index:20;
+}
+
 .ugallery_selected .ugallery-controls {
 	display: block;
 }
@@ -367,6 +371,14 @@ div.ugallery-label-selector {
 .ugallery-controls .upfront-inline-panel {
 	opacity: 1;
 	visibility: visible;
+}
+
+.ugallery-controls .upfront-inline-panel-item:hover{
+	z-index: 51;
+}
+
+.ugallery-controls .upfront-inline-panel-subitem-active:after {
+	display: none !important;
 }
 
 

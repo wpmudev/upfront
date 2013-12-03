@@ -14,7 +14,7 @@
 			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="min-width: 100%; min-height:100%">
 			</div>
-			<?php if($showTitle['length']){ ?>
+			<?php if($captionPosition != 'nocaption'){ ?>
 			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionPosition ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			</a>

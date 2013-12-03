@@ -156,7 +156,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		};
 
 		multi.icon = 'caption';
-		multi.tooltip = '';
+		multi.tooltip = 'Caption position';
 		multi.selected = this.property('captionPosition');
 		multi.on('select', function(item){
 			me.property('captionPosition', item, false);
@@ -211,7 +211,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						editor = Upfront.Content.editors.add({
 							type: Upfront.Content.TYPES.SIMPLE,
 							editor_id: 'caption-' + image.get('id'),
-							element: title
+							element: title,
+							toolbar: ['Bold', 'Italic']
 						});
 						title.on('dblclick', function(e){				
 							editor.start();
@@ -239,8 +240,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		props.labels_length = this.labels.length;
 		props.image_labels = this.imageLabels;
 
-		props.showTitle = !!("always" == props.captionWhen); // @Javi: this is just a temp fix for the Beta, so the template stops erroring out.
-
 		rendered = this.tpl(props);
 
 		return rendered;
@@ -262,7 +261,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				controls.render();
 				item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 		
-				if(me.property('showTitle').length && title.length){
+				if(me.property('captionPosition') != 'nocaption'){
 					var editor = Upfront.Content.editors.add({
 							type: Upfront.Content.TYPES.SIMPLE,
 							editor_id: 'title-' + image.get('id'),
