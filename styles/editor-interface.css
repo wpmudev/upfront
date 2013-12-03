@@ -3569,6 +3569,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	border: 2px solid transparent;
 	padding: 0 5px;
 }
+
 .upfront-pagination_item:hover {
 	color: #fff;
 }
@@ -3577,6 +3578,22 @@ box-shadow: inset 0 2px 0 0 #fff;
 	border: 2px solid #2ecc90;
 	font-weight: bold;
 }
+
+.upfront-pagination_item i{
+	display: block;
+	width: 16px;
+	height: 20px;
+	background-image: url(../img/uf-ui-sprite.svg);
+}
+
+.upfront-pagination_item i.icon-angle-left {
+	background-position: -1234px -83px;
+}
+
+.upfront-pagination_item i.icon-angle-right {
+	background-position: -1340px -83px;
+}
+
 
 /* Search */
 #upfront-entity_list-search {
@@ -3678,8 +3695,33 @@ box-shadow: inset 0 2px 0 0 #fff;
 .upfront-taxonomy-list-panel i {
 	margin: 2px 5px 0 0;
 	display: block;
+	background-image: url(../img/uf-ui-sprite.svg);
+	height: 20px;
+	width: 16px;
 	float: left;
 }
+
+.upfront-taxonomy_item .icon-remove-circle {
+	background-position: -1336px -191px;
+}
+
+.upfront-taxonomy_item:hover .icon-remove-circle {
+	background-position: -1441px -191px;
+}
+
+.upfront-taxonomy_item .icon-plus {
+	background-position: -1438px -155px;
+}
+
+.upfront-taxonomy_item:hover .icon-plus {
+	background-position: -1228px -191px;
+}
+
+#upfront-taxonomy-list-current .icon-plus,
+#upfront-taxonomy-list-all .icon-remove-circle {
+	display: none;
+}
+
 
 .upfront-taxonomy-list-title {
 	font-size: 18px;
@@ -3706,26 +3748,6 @@ box-shadow: inset 0 2px 0 0 #fff;
 	float: left;
 	margin: 0 2% 10px 0;
 	cursor: pointer;
-}
-
-.upfront-taxonomy-flat .upfront-taxonomy_item:hover {
-	color: #476d8a;
-}
-
-.upfront-taxonomy-flat .upfront-taxonomy_item:hover i.icon-plus{
-	color: #2FCC90;
-}
-
-.upfront-taxonomy-flat .upfront-taxonomy_item:hover i.icon-remove-circle{
-	color: #DB474B;
-}
-
-#upfront-taxonomy-list-current i.icon-plus {
-	display: none;
-}
-
-#upfront-taxonomy-list-all i.icon-remove-circle {
-	display: none;
 }
 
 /* Entities(Posts) list */
@@ -3994,6 +4016,10 @@ box-shadow: inset 0 2px 0 0 #fff;
 	padding-left: 160px;
 }
 
+.upfront-no-results {
+	padding: 15px 20px;
+}
+
 
 /* Comments-specific additions to Entities list */
 .upfront-comment-approved {
@@ -4125,6 +4151,38 @@ box-shadow: inset 0 2px 0 0 #fff;
 	height: 15px;
 	padding: 4px;
 	color: #a4b9cb;
+	background-image: url(../img/uf-ui-sprite.svg);
+}
+
+.upfront-list-comments .icon-reply {
+	background-position: -1226px -122px;
+}
+
+.upfront-list-comments .icon-pencil {
+	background-position: -1335px -158px;
+}
+
+.upfront-list-comments .icon-circle-blank {
+	background-position: -1321px -193px;
+}
+
+.upfront-list-comments .icon-ban-circle {
+	background-position: -1332px -123px;
+}
+
+.upfront-list-comments .icon-ok {
+	background-position: -1432px -123px;	
+}
+
+.upfront-list-comments .icon-remove {
+	background-position: -1332px -157px;
+}
+
+.upfront-comment-approved .icon-circle-blank {
+	width:30px;
+	height: 30px;
+	display: block;
+	background: transparent url(../img/uf-ui-sprite.svg) no-repeat -1430px -75px;	
 }
 
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a:hover i {
