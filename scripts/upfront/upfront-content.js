@@ -11,22 +11,33 @@
 		stop: function () {}
 	};
 
-	var toolbars = {
-		short: {
-			enterMode: CKEDITOR.ENTER_BR,
-			floatSpaceDockedOffsetY: 0,
-			toolbar:[{name:'short', items: ['Bold', 'Italic', 'AlignmentTypeToggle', 'Link', 'Textformat']}]
-		}
-	};
-
 	var SimpleEditor = Backbone.View.extend({
 
 		element: false,
 		editor: false,
 		editTimeout: false,
 		contentTimeout: false,
+		toolbar: {
+			enterMode: CKEDITOR.ENTER_BR,
+			floatSpaceDockedOffsetY: 0,
+			toolbar:[{name:'short', items: ['Bold', 'Italic', 'AlignmentTypeToggle', 'Link', 'Textformat']}]
+		},	
 
 		initialize: function(options){
+			if(options.toolbar){
+				this.toolbar.toolbar = [{name: 'custom', items: options.toolbar}];
+			}
+
+			if(options.mode){
+				var modes = {
+					br: CKEDITOR.ENTER_BR,
+					p: CKEDITOR.ENTER_P,
+					div: CKEDITOR.ENTER_DIV
+				}
+				
+				if(modes[options.mode])
+					this.toolbar.enterMode = modes[options.mode];
+			}
 		},
 
 		findElement: function(){
@@ -67,7 +78,7 @@
 			var editorNode = el.attr('contenteditable', true).addClass('ueditable').get(0);
 
 			//Start CKE
-			this.editor = CKEDITOR.inline(editorNode, toolbars.short);
+			this.editor = CKEDITOR.inline(editorNode, this.toolbar);
 			this.editor.ueditor = this;
 			
 			//{floatSpaceDockedOffsetY: 0});
