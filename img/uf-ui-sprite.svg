@@ -1515,6 +1515,30 @@
 				c0-1.289,1.045-2.333,2.332-2.333c1.289,0,2.334,1.044,2.334,2.333C832.333,84.288,831.288,85.333,829.999,85.333z"/>
 		</g>
 	</g>
+	<g>
+		<g>
+			<rect x="413" y="712" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" width="30" height="30"/>
+			<rect x="436" y="712" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="7"/>
+			<rect x="436" y="726" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="7"/>
+			<rect x="436" y="740" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="2"/>
+			<rect x="429" y="733" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="7"/>
+			<rect x="429" y="719" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="7"/>
+			<rect x="422" y="726" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="7"/>
+			<rect x="422" y="712" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="7"/>
+			<rect x="413" y="712" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="2" height="7"/>
+			<rect x="415" y="719" fill-rule="evenodd" clip-rule="evenodd" fill="#CCCCCC" width="7" height="7"/>
+			<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#2E465C" points="413,712 443,742 413,742 			"/>
+		</g>
+		<g>
+			<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#C2DBF2" points="416,739 418,739 416,737 			"/>
+			
+				<rect x="418.586" y="732.172" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 197.2614 1551.7083)" fill-rule="evenodd" clip-rule="evenodd" fill="#C2DBF2" width="2.828" height="5.657"/>
+			
+				<rect x="422.793" y="730.086" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -393.2083 513.7111)" fill-rule="evenodd" clip-rule="evenodd" fill="#C2DBF2" width="1.414" height="2.828"/>
+		</g>
+		<polygon opacity="0.3" fill-rule="evenodd" clip-rule="evenodd" fill="#2E465C" points="413,742 413,712 412,712 412,742 443,773 
+			443,742 		"/>
+	</g>
 </g>
 <g id="area-markers">
 	<rect x="40" fill="#263A4D" width="450" height="16"/>
@@ -2065,45 +2089,5 @@
 	</g>
 	<rect opacity="0.05" fill="#BDCCD4" width="1" height="1"/>
 	<rect x="1481" y="829" opacity="0.05" fill="#BDCCD4" width="1" height="1"/>
-	<g>
-		<g>
-			<rect x="412" y="712" fill="#FFFFFF" width="49" height="49"/>
-			<rect x="412" y="712" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="426" y="712" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="440" y="712" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="454" y="712" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="412" y="726" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="419" y="719" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="419" y="733" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="419" y="747" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="433" y="719" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="433" y="733" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="433" y="747" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="447" y="719" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="447" y="733" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="447" y="747" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="426" y="726" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="440" y="726" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="454" y="726" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="412" y="740" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="426" y="740" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="440" y="740" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="454" y="740" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="412" y="754" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="426" y="754" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="440" y="754" fill="#CCCCCC" width="7" height="7"/>
-			<rect x="454" y="754" fill="#CCCCCC" width="7" height="7"/>
-		</g>
-		<polygon fill="#2E465C" points="461,712 412,761 461,761 		"/>
-		<polygon opacity="0.3" fill="#2E465C" points="461,712 461,761 412,761 412,811 462,761 462,712 		"/>
-		<g>
-			<path fill="#FFFFFF" d="M454.043,751l1.008,2c0,0-0.289,0.001-0.648,0.109c0.645,0.411,0.648,1.891,0.648,1.891
-				s-1.536,0-1.926-0.666c-0.057,0.192-0.09,0.412-0.09,0.666l-2.016-1c0,0,0-1,1.008-2S454.043,751,454.043,751z"/>
-			<path fill="#FFFFFF" d="M442.957,743c1.008-1,2.016-1,2.016-1l1.008,1c0,0-1.008,0-2.016,1s-1.008,2-1.008,2l-1.008-1
-				C441.949,745,441.949,744,442.957,743z"/>
-			<path fill="#FFFFFF" d="M446.988,744l6.047,6c0,0-1.008,0-2.016,1s-1.008,2-1.008,2l-6.047-6c0,0,0-1,1.008-2
-				S446.988,744,446.988,744z"/>
-		</g>
-	</g>
 </g>
 </svg>
