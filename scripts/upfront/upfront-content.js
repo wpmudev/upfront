@@ -20,7 +20,8 @@
 		toolbar: {
 			enterMode: CKEDITOR.ENTER_BR,
 			floatSpaceDockedOffsetY: 0,
-			toolbar:[{name:'short', items: ['Bold', 'Italic', 'AlignmentTypeToggle', 'Link', 'Textformat']}]
+			toolbar:[{name:'short', items: ['Bold', 'Italic', 'AlignmentTypeToggle', 'Link', 'Textformat', 
+				/* Hidden items */ 'JustifyLeft', 'JustifyCenter', 'JustifyRight']}]
 		},	
 
 		initialize: function(options){
