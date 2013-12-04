@@ -9,7 +9,7 @@
 <?php if($imagesLength){ ?>
 	<div class="ugallery_items <?php echo $labelFilters['length'] ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_item" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+		<div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 			<a class="ugallery_link" href="<?php echo $images[$i]['sizes']['full'][0] ?>" title="<?php echo $images[$i]['caption'] ?>">
 			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="min-width: 100%; min-height:100%">
@@ -77,4 +77,13 @@
 	#<?php echo $element_id ?> .ugallery-caption-nocaption {
 		display: none;
 	}
+
+	#<?php echo $element_id ?> .ugallery_caption_hover .ugallery-caption-over {
+		display: none;
+	}
+
+	#<?php echo $element_id ?> .ugallery_caption_hover:hover .ugallery-caption-over {
+		display: block;
+	}
+
 </style>
