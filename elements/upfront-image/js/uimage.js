@@ -172,6 +172,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	editCaption: function(e){
+
+		if(this.editor && this.editor.isActive())
+			return;
+
+		
 		var me = this,
 			captionEl = $('#' + this.property('element_id')).find('.wp-caption')
 		;

@@ -134,6 +134,10 @@
 			if(el)
 				return el.html();
 			return false;
+		},
+
+		isActive: function(){
+			return this.editor == CKEDITOR.currentInstance;
 		}
 	});
 
@@ -1786,17 +1790,20 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 				this.$el.html(this.tpl({options: this.opts}));
 		},
 		open: function(){
+			var me = this;
 			if(!this.tpl)
 				this.render();
 			this.$el.css('display', 'inline-block');
 			this.delegateEvents();
-			this.$('input').focus();
+			$(document).one('click', function(){
+				me.close();
+			});
 		},
 		close: function(e){
 			var me = this;
 			setTimeout(function(){
 				me.$el.hide();
-			}, 300);
+			}, 200);
 		},
 		select: function(e){
 			var value = $(e.target).data('id');

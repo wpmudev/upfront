@@ -41,6 +41,7 @@ CKEDITOR.on('instanceReady', function(e){
 			{ value: 'h5', name: 'Heading 5'},
 			{ value: 'pre', name: 'Preformatted'}
 		],
+		styles = {},
 		textColor = e.editor.ueditor && e.editor.ueditor.textColor ? e.editor.ueditor.textColor : '#ffffff',
 		panelColor = e.editor.ueditor && e.editor.ueditor.panelColor ? e.editor.ueditor.panelColor: '#1fcd8f',
 		selectOptions = new Upfront.Content.microselect({options: options}),
@@ -86,22 +87,76 @@ CKEDITOR.on('instanceReady', function(e){
 				e.editor.ueditor.trigger(ev + ':change', color);
 				buttonEl.css(cssKeys[ev], color.toRgbString());			
 			}
+		},
+		getLabel = function(tag){
+			var label = '';
+			_.each(options, function(op){
+				if(op.value == tag)
+					label = op.name;
+			});
+			return label;
 		}
 	;
+
+	_.each(options, function(op){
+		styles[op.value] = new CKEDITOR.style( e.editor.config['format_' + op.value]);
+	});
+
+
+	e.editor.on( 'selectionChange', function( ev ) {
+		if(!ev.data.selection.getSelectedText()){
+			$('.' + editor.id).find('.cke_button__textformat').removeClass('textformat-open');
+			return modal.hide();
+		}
+
+		var currentTag = selectOptions.$('input').val(),
+			elementPath = ev.data.path,
+			isEnabled = !editor.readOnly && elementPath.isContextFor( 'p' );
+
+		if ( isEnabled ) {
+			for ( var tag in styles ) {
+				if ( styles[ tag ].checkActive( elementPath ) ) {
+					if ( tag != currentTag ){
+						selectOptions.$('input').val(tag);
+						modal.find('.uckeditor-select').text(getLabel(tag)).append(selectOptions.$el);	
+						selectOptions.delegateEvents();					
+					}
+					return;
+				}
+			}
+		}
+	});
 
 	buttonEl.css({
 		color: textColor,
 		'background-color': panelColor
 	});
 
-	select.on('click', function(){
-		selectOptions.open();
+	select.on('click', function(ev){
+		if($(ev.target).hasClass('uckeditor-select')){
+			selectOptions.open();
+			e.editor.focus();		
+		}
 	});
 
 	selectOptions
 		.on('select', function(value){
+			var ed = e.editor,
+				style = styles[value],
+				path = ed.elementPath()
+				label = false
+			;
+
+			ed.focus();
+			ed.fire('saveSnapshot');
+
+			ed[ style.checkActive( path ) ? 'removeStyle' : 'applyStyle' ]( style );
+
+			label = getLabel(value);
+
 			console.log('something selected: ' + value);
-			modal.find('.uckeditor-select').text(value);
+			modal.find('.uckeditor-select').text(label).append(selectOptions.$el.hide());
+			selectOptions.delegateEvents();
 		})
 		.render();
 
