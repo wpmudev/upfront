@@ -1017,7 +1017,10 @@
         "Model": SocialMediaModel,
         "View": SocialMediaView,
         "Element": SocialMediaElement,
-        "Settings": SocialSettings
+        "Settings": SocialSettings,
+        'anchor': {
+          is_target: false
+        }
     });
 
     Upfront.Models.SocialMediaModel = SocialMediaModel;
