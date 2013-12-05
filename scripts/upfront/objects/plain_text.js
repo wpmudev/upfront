@@ -14,7 +14,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 	model: PlainTxtModel,
 
 	get_content_markup: function () {
-		return this.model.get_content();
+		return this.model.get_content() + '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>';
 	},
 	on_edit: function () {
 		var editor = Upfront.Content.editors.add({

@@ -41,7 +41,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 		this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select-button': 'openImageSelector',
-			'click div.uimage-quick-swap': 'openImageSelector',
+			'click div.upfront-quick-swap': 'openImageSelector',
 			'dblclick .wp-caption': 'editCaption'
 		});
 		this.delegateEvents();
@@ -345,7 +345,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			var size = this.property('element_size'),
 				smallSwap = size.width < 150 || size.height < 90 ? 'uimage-quick-swap-small' : '';
 
-			rendered += '<div class="uimage-quick-swap ' + smallSwap + '">Change this image</div>';
+			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
 		}
 
 

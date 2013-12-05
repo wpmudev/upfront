@@ -6461,3 +6461,44 @@ a.ueditor-select-option:hover {
 #upfront-cke-link_editor .upfront-save_settings {
 	float: right;
 }
+
+
+.upfront-quick-swap{
+	color: #3f5870;
+	background: rgba(255, 255, 255, .9);
+	font-family: 'Source Sans Pro';
+	text-align: center;
+	font-size: 18px;
+	font-weight: 200;
+	width: 100%;
+	height: 100%;
+	min-height: 60px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	z-index: 1;
+	cursor: pointer;
+	padding: 10px;	
+	display:none;
+}
+
+.upfront-quick-swap p {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	height: 1.6em;
+}
+
+.upfront-object-content:hover .upfront-quick-swap{
+	display:block;
+};
+
+.upfront-object-content .cke_editable:hover .upfront-quick-swap{
+	display: none;
+};
