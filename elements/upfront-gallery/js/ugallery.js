@@ -246,7 +246,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	on_render: function(){
-		var me = this;
+		var me = this,
+			skipMargin = me.$el.closest('body').length ? this.calculateMargins() : false
+		;
+
 
 		setTimeout(function(){
 			var items = me.$('.ugallery_item');
@@ -256,6 +259,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					controls = me.createControls(image),
 					title = item.find('.ugallery-thumb-title')
 				;
+
+				if(!skipMargin)
+					me.calculateMargins();
 
 				controls.setWidth(item.width());
 				controls.render();
@@ -304,9 +310,28 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.activateSortable();		
 	},
 
-	getLabelSelector: function(imageId){
-		var tpl = $(this.labelsTpl({labels: this.extractImageLabels(imageId)}));
+	calculateMargins: function() {
+		var container = this.$('.ugallery_items').width(),
+			items = this.$('.ugallery_item'),
+			itemWidth = items.outerWidth(),
+			minMargin = 30,
+			columns = Math.floor(container / itemWidth)
+		;
 
+		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
+			columns--;
+
+		var margin = Math.floor( (container - (columns * itemWidth)) / (columns - 1) ) - 2 * columns;
+
+		_.each(items, function(it, idx){
+			$(it).css('margin-right', (idx + 1) % columns ? margin : 0);
+		});
+
+		return 1;
+	},
+
+	getLabelSelector: function(imageId){
+		var tpl = $($.trim(this.labelsTpl({labels: this.extractImageLabels(imageId)})));
 		return tpl;
 	},
 
@@ -314,10 +339,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var ids = this.imageLabels[imageId].match(/-?\d+/g),
 			labels = []
 		;
-		_.each(this.labels, function(label){
-			if(ids.indexOf(label.id.toString()) != -1 && label.id != 0)
-				labels.push(label);
-		});
+
+		if(ids){
+			_.each(this.labels, function(label){
+				if(ids.indexOf(label.id.toString()) != -1 && label.id != 0)
+					labels.push(label);
+			});
+		}
 
 		return labels;
 	},
@@ -666,6 +694,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	imagesChanged: function() {
 		this.property('images', this.images.toJSON());
 		this.render();
+		this.calculateMargins();
 	},
 
 	imageLinkChanged: function(e){

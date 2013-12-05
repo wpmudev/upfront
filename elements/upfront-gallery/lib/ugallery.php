@@ -13,12 +13,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 	var $all_labels = array();
 
 	public function get_markup () {
-		//Lightbox
-		wp_enqueue_style('magnific');
-		wp_enqueue_script('magnific');
 
-		//Front script
-		upfront_add_element_script('ugallery', array('js/ugallery-front.js', dirname(__FILE__)));
 
 		$data = $this->properties_to_array();
 		$data['imagesLength'] = sizeof($data['images']);
@@ -29,13 +24,6 @@ class Upfront_UgalleryView extends Upfront_Object {
 		array_unshift($data['labels'], array('id' => '0', 'text' => 'All'));
 		$data['labels_length'] = sizeof($data['labels']);
 		$data['image_labels'] = $this->image_labels;
-
-		if($data['labelFilters']['length']){
-			if(SCRIPT_DEBUG)
-				upfront_add_element_script('jquery-shuffle', array('js/jquery.shuffle.js', dirname(__FILE__)));
-			else
-				upfront_add_element_script('jquery-shuffle', array('js/jquery.shuffle.min.js', dirname(__FILE__)));
-		}
 
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
 
@@ -177,5 +165,26 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 	public static function add_styles_scripts () {
 		wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
+
+
+		//Lightbox
+		wp_register_script(
+			'magnific', 
+			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js', 
+			array('jquery')
+		);
+		wp_register_style(
+			'magnific', 
+			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.css'
+		);
+		wp_enqueue_style('magnific');
+		wp_enqueue_script('magnific');
+
+
+		wp_enqueue_script('jquery-shuffle', upfront_element_url('js/jquery.shuffle.js', dirname(__FILE__)), array('jquery'));
+
+		//Front script
+		wp_enqueue_script('ugallery', upfront_element_url('js/ugallery-front.js', dirname(__FILE__)), array('magnific', 'jquery-shuffle'));
+
 	}
 }
