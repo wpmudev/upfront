@@ -2362,8 +2362,7 @@ a.ueditor-action-pickercancel{
 	opacity: 0;
 	margin: 0 0 4px;
 }
-.upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button,
-.upfront-active_entity .upfront-entity_meta .upfront-icon-button {
+.upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button{
     opacity: 1;
 }
 .upfront-icon-button-delete {

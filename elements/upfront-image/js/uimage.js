@@ -75,7 +75,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		this.controls = this.createControls();
 
-		if(this.property('image_status') != 'ok')
+		if(this.property('image_status') != 'ok' || this.property('quick_swap'))
 			this.property('has_settings', 0);
 	},
 
@@ -347,8 +347,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
 		}
-
-
 
 		return rendered;
 	},

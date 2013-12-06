@@ -582,7 +582,7 @@ a.open-media-gallery:hover i {
 	display: block;
 }
 
-.ui-resizable-autohide .uimage-controls .upfront-inline-panel-top {
+.ui-resizable-autohide .uimage-controls {
 	display: none;
 }
 
