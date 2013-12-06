@@ -362,6 +362,270 @@ class Upfront_Virtual_Region {
 
 
 
+abstract class Upfront_ChildTheme implements IUpfront_Server {
+
+	private $_version = false;
+	private $_required_pages = array();
+
+	protected function __construct () {
+		$this->version = wp_get_theme()->version;
+		$this->initialize();
+	}
+
+	abstract public function get_prefix ();
+	abstract public function initialize ();
+
+	/**
+	 * Resolves the layout cascade to a layout name.
+	 * @param array $cascade Upfront layout cascade to resolve
+	 * @return string Layout name on successful resolution, empty string otherwise
+	 */
+	protected function _get_page_default_layout ($cascade) {
+		$id = false;
+		if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+			$id = get_the_ID();
+		} else if (!empty($cascade['specificity'])) {
+			$id = intval(preg_replace('/^.*?(\d+)$/is', '\\1', $cascade['specificity']));
+		}
+		if (!$id) {
+			return !empty($cascade['item']) && 'single-404_page' == $cascade['item']
+				? 'single-404_page'
+				: ''
+			;
+		}
+		if (!empty($cascade['item']) && 'single-page' == $cascade['item']) {
+			foreach ($this->get_required_pages() as $page) {
+				if ($page->get_id() == $id) return $page->get_layout_name();
+			}
+		} else if (!empty($cascade['item']) && 'single-post' == $cascade['item']) {
+			return 'single-post';
+		}
+		return '';
+	}
+
+	protected function _import_images ($path) {
+		$key = $this->get_prefix() . '-imported_images';
+		$imported_attachments = get_option($key);
+		if (!empty($imported_attachments)) return $imported_attachments;
+
+		$imported_attachments = array();
+		$images = glob(get_stylesheet_directory() . trailingslashit($path) . '*');
+		$wp_upload_dir = wp_upload_dir();
+		$pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
+		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+		foreach ($images as $filepath) {
+			$filename =  $this->get_prefix() . '-' . basename($filepath);
+			while (file_exists("{$pfx}{$filename}")) {
+	            $filename = rand() . $filename;
+	        }
+	        if (!copy($filepath, "{$pfx}{$filename}")) continue;
+
+			$wp_filetype = wp_check_filetype(basename($filename), null);
+	        $attachment = array(
+	            'guid' => $wp_upload_dir['url'] . '/' . basename($filename), 
+	            'post_mime_type' => $wp_filetype['type'],
+	            'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+	            'post_content' => '',
+	            'post_status' => 'inherit'
+	        );
+	        $attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
+	        $attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
+	        wp_update_attachment_metadata( $attach_id, $attach_data );
+
+	        $imported_attachments[] = $attach_id;
+	    }
+	    if (!empty($imported_attachments)) {
+	    	update_option($key, $imported_attachments);
+	    }
+	    return $imported_attachments;
+	}
+
+	protected function _insert_posts ($limit, $thumbnail_images=array()) {
+		$key = $this->get_prefix() . '-posts_created';
+		$posts_created = get_option($key, array());
+		if (!empty($posts_created)) return $posts_created;
+
+		if (!is_array($thumbnail_images)) $thumbnail_images = array();
+
+		$POSTS_LIMIT = (int)$limit ? (int)$limit : 3;
+		$theme_posts = array();
+		$lorem_ipsum = array(
+			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus id risus felis. Proin elit nulla, elementum sit amet diam rutrum, mollis venenatis felis. Nullam dapibus lacus justo, eget ullamcorper justo cursus ac. Aliquam lorem nulla, blandit id erat id, eleifend fermentum lorem. Suspendisse vitae nulla in dolor ultricies commodo eu congue arcu. Pellentesque et tincidunt tellus. Fusce commodo feugiat dictum. In hac habitasse platea dictumst. Morbi dignissim pellentesque ipsum, sed sollicitudin nulla ultricies in. Praesent eu mi sed massa sollicitudin bibendum in nec orci.',
+			'Morbi ornare consectetur mattis. Integer nibh mi, condimentum sit amet diam vitae, fermentum posuere elit. Ut vel ligula tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc tincidunt rhoncus viverra. Nullam facilisis iaculis nulla. Nam tincidunt adipiscing augue congue molestie. Cras mollis enim ut sagittis congue. Ut sed quam consequat, pellentesque urna sit amet, aliquet elit. Nullam euismod, nisl in sagittis fringilla, metus turpis ornare magna, vel porta sapien tellus at turpis. Nullam quis nisl accumsan, aliquam quam at, pulvinar nunc. Etiam elementum massa id dolor viverra, ut ultrices mi sodales. Donec sollicitudin tempus aliquet. Integer porttitor arcu ac tellus vehicula placerat at quis felis.',
+		);
+		$lorem_ipsum_title = array(
+			'Lorem ipsum',
+			'Lorem ipsum dolor',
+			'Lorem ipsum dolor sit amet',
+		);
+		shuffle($lorem_ipsum_title);
+
+		// Do the posts count
+		$args = array(
+			'post_type' => 'post',
+			'post_status' => 'publish',
+			'posts_per_page' => $POSTS_LIMIT
+		);
+		if (!empty($thumbnail_images)) {
+			$args['meta_key'] = '_thumbnail_id'; // Limit to ones with featured images only if we have have thumbs to add
+		}
+		$posts = get_posts();
+		$create_posts = $POSTS_LIMIT - count($posts);
+		if ($create_posts) {
+			for ($i=0; $i < $create_posts; $i++) {
+				$post_id = wp_insert_post(array(
+					'post_title' => $lorem_ipsum_title[$i],
+					'post_status' => 'publish',
+					'post_type' => 'post',
+					'post_content' => '<p>' . join('</p><p>', $lorem_ipsum) . '</p>',
+					'post_excerpt' => join(' ', preg_split("/[\n\r\t ]+/", $lorem_ipsum[0], 36, PREG_SPLIT_NO_EMPTY )),
+				));
+				if (!empty($thumbnail_images[$i])) set_post_thumbnail($post_id, $thumbnail_images[$i]);
+				$theme_posts[] = $post_id;
+			}
+			update_option($key, $theme_posts);
+		}
+		return get_option($key, array());
+	}
+
+/* --- Public interface --- */
+
+	/**
+	 * Gets cached theme version.
+	 * @return string theme version
+	 */
+	public function get_version () {
+		return $this->_version;
+	}
+
+	/**
+	 * Fetches an array of pages required by the theme.
+	 * @return array List of required pages.
+	 */
+	public function get_required_pages () {
+		return !empty($this->_required_pages) && is_array($this->_required_pages)
+			? $this->_required_pages
+			: array()
+		;
+	}
+
+	/**
+	 * Fetch a single required page object.
+	 * @param string $key A key under which to look for
+	 * @return mixed Upfront_Themes_RequiredPage instance on success, false on failure.
+	 */
+	public function get_required_page ($key) {
+		return !empty($this->_required_pages) && !empty($this->_required_pages[$key])
+			? $this->_required_pages[$key]
+			: false
+		;
+	}
+
+	/**
+	 * Fetch the ID from a single required page object.
+	 * @param string $key A key under which to look for
+	 * @return mixed Page ID on success, false on failure.
+	 */
+	public function get_required_page_id ($key) {
+		$page = $this->get_required_page($key);
+		return $page
+			? $page->get_id()
+			: false
+		;
+	}
+
+	/**
+	 * Adds a page and a layout to a list of theme-required pages.
+	 * @param string $key The key under which the page will be stored
+	 * @param string $layout_name The layout name for the required page
+	 * @param array $page_data Page data that'll eventualy be passed to `wp_insert_post`
+	 * @param array $wp_template_file Optional WP template to assign to the page
+	 */
+	public function add_required_page ($key, $layout_name, $page_data, $wp_template_file) {
+		$this->_required_pages[$key] = new Upfront_Themes_RequiredPage($this->get_prefix(), $page_data, $layout_name, $wp_template_file);
+	}
+
+	/**
+	 * Imports images from the relative path fragment into WP Media.
+	 * It only actually happens once, otherwise gets cached IDs.
+	 * @param string $path_fragment Relative path fragment that contains the images to be imported.
+	 * @return mixed Array of images if successful, false on failure
+	 */
+	public function add_required_images ($path_fragment) {
+		return $this->_import_images($path_fragment);
+	}
+
+	/**
+	 * Creates the padding posts, with thumbnail images optionally.
+	 * Only happens once, otherwise gets cached IDs.
+	 * @param int $limit An upper bound of how many posts to create.
+	 * @param array $thumbnails Optional array of thumbnail images to assign to posts. Accepts self::add_required_images(...) output
+	 * @return array Array of created post IDs (could be empty)
+	 */
+	public function add_required_posts ($limit, $thumbnails=array()) {
+		return $this->_insert_posts($limit, $thumbnails);
+	}
+}
+
+
+class Upfront_Themes_RequiredPage {
+
+	private $_prefix;
+	private $_page_data;
+	private $_layout_name;
+	private $_wp_template;
+	private $_key;
+
+	public function __construct ($prefix, $page_data, $layout_name, $wp_template = false) {
+		$this->_prefix = $prefix;
+		$this->_page_data = $page_data;
+		$this->_layout_name = $layout_name;
+		$this->_wp_template = $wp_template;
+
+		$slug = end(explode('-', $layout_name));
+		$slug = !empty($slug) ? $slug : $layout_name;
+
+		$this->_key = "{$this->_prefix}_page_{$slug}";
+
+		if (!$this->exists()) $this->_create_page();
+	}
+
+	/**
+	 * Is the page already there?
+	 * @return mixed Page ID if it does, false otherwise
+	 */
+	public function exists () {
+		if (empty($this->_key)) return false;
+		return get_option($this->_key, false);
+	}
+
+	/**
+	 * Get the page ID, if it exists.
+	 * Thin wrapper around self::exists()
+	 */
+	public function get_id () { return $this->exists(); }
+
+	/**
+	 * Get the page layout name.
+	 * @return mixed Layout name (string) if page exists and has layout name set, (bool)false otherwise.
+	 */
+	public function get_layout_name () {
+		if (!$this->exists() || empty($this->_layout_name)) return false;
+		return $this->_layout_name;
+	}
+
+	protected function _create_page () {
+		$post_id = wp_insert_post(wp_parse_args($args, array(
+			'post_status' => 'publish',
+			'post_type' => 'page'
+		)));
+		if (!empty($this->_wp_template)) update_post_meta($post_id, '_wp_page_template', $this->_wp_template);
+		update_option($this->_key, $post_id);
+	}
+}
+
+
 class Upfront_GrandchildTheme_Server implements IUpfront_Server {
 
 	const RELATIONSHIP_FLAG = 'UpfrontParent';
