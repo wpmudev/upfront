@@ -1758,9 +1758,20 @@ var ImageSelector = Backbone.View.extend({
 			$('body').append(me.formTpl({url: Upfront.Settings.ajax_url}));
 
 			$('#upfront-image-file-input').on('change', function(e){
-				me.openProgress(function(){
-					me.uploadImage();
-				});
+				if(this.files.length){
+					var size = this.files[0].size;
+					if(size > 2048000){
+						if(confirm('You are trying to upload a file bigger than 2MB. It will take long time. Are you sure?')){
+							me.openProgress(function(){
+								me.uploadImage();
+							});
+						}
+					}
+					else						
+						me.openProgress(function(){
+							me.uploadImage();
+						});
+				}
 			});
 		}
 	},
@@ -2055,6 +2066,10 @@ var ImageSelector = Backbone.View.extend({
 						me.openSelector();
 					})
 				;
+			},
+			error: function(response){
+				Upfront.Views.Editor.notify(response.responseJSON.error, 'error');
+				me.openSelector();
 			},
 			dataType: 'json'
 		});
