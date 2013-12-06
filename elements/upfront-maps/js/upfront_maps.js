@@ -18,7 +18,7 @@ function init () {
 			overview_map: false
 		}
 	};
-
+/*
 	if (navigator && navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			DEFAULTS.center = [
@@ -27,7 +27,7 @@ function init () {
 			];
 		});
 	}
-
+*/
 require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'css/edit.css'], function (_ctx, maps_style) {
 
 	$("head").append("<style>" + maps_style + "</style>");
