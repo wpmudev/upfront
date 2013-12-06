@@ -1294,9 +1294,11 @@ var GridEditor = {
 					
 					region = max_region.area > 0 ? max_region.region : ed.get_region($me.closest('.upfront-region'));
 					
-					_.each(regions_area, function(r){
-						r.region.$el.find('>.upfront-debug-info').text(r.area);
-					});
+					if ( ed.show_debug_element ){
+						_.each(regions_area, function(r){
+							r.region.$el.find('>.upfront-debug-info').text(r.area);
+						});
+					}
 					
 					if ( !region.$el.hasClass('upfront-region-drag-active') ){				
 						$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
@@ -1419,8 +1421,9 @@ var GridEditor = {
 				
 				update_drop_position();
 				
-				
-				//$helper.find(".upfront-debug-info").text('grid: '+grid.x+','+grid.y+' | current: ('+current_grid_left+','+current_grid_top+'),('+current_grid_right+','+current_grid_bottom+') | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
+				if ( ed.show_debug_element ){
+					$helper.find(".upfront-debug-info").text('grid: '+grid.x+','+grid.y+' | current: ('+current_grid_left+','+current_grid_top+'),('+current_grid_right+','+current_grid_bottom+') | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
+				}
 				
 			},
 			stop: function(e, ui){

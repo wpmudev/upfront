@@ -470,26 +470,31 @@ define(_template_files, function () {
 			//this.attach_event();
 		},
 		toggle_grid: function () {
+			if (!this._active)
+				this.show_grid();
+			else
+				this.hide_grid();
+		},
+		show_grid: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-			if (!this._active){
-				$main.addClass('show-debug');
-				$('.upfront-overlay-grid').show();
-				this._active = true;
-			}
-			else {
-				$main.removeClass('show-debug');
-				$('.upfront-overlay-grid').hide();
-				this._active = false;
-			}
+			$main.addClass('show-debug');
+			$('.upfront-overlay-grid').addClass('upfront-overlay-grid-show');
+			this._active = true;
+		},
+		hide_grid: function () {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+			$main.removeClass('show-debug');
+			$('.upfront-overlay-grid').removeClass('upfront-overlay-grid-show');
+			this._active = false;
 		},
 		update_grid: function (size) {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 				columns = Upfront.Settings.LayoutEditor.Grid.size,
 				size_class = Upfront.Settings.LayoutEditor.Grid.class,
-				template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: size_class});
+				template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: size_class, style: 'simple'});
 			$('.upfront-overlay-grid').remove();
 			$('.upfront-grid-layout').prepend(template);
-			!this._active || $('.upfront-overlay-grid').show();
+			!this._active || this.show_grid();
 		},
 		attach_event: function () {
 			var me = this;
@@ -814,38 +819,6 @@ define(_template_files, function () {
 		}
 	});
 	
-	var SidebarPanel_Settings_Item_EditArea = SidebarPanel_Settings_Item.extend({
-		events: {
-			"click .switch": "on_switch"
-		},
-		initialize: function () {
-			Upfront.Events.on("region:activated", this.on_region_activate, this);
-		},
-		on_render: function () {
-			var template = _.template(_Upfront_Templates.sidebar_settings_edit_area, {})
-			this.$el.html(template);
-		},
-		on_region_activate: function (region) {
-			var name = region.model.get('title');
-			this.$el.find('.panel-setting-dialog').text(name);
-		},
-		on_switch: function () {
-			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-			if ( this.$el.find('.switch-on').hasClass('active') ){ // Switch off
-				this.$el.find('.switch-off').addClass('active');
-				this.$el.find('.switch-on').removeClass('active');
-				$main.removeClass('upfront-region-editing');
-				Upfront.Events.trigger("command:region:edit_toggle", false);
-			}
-			else { // Switch on
-				this.$el.find('.switch-off').removeClass('active');
-				this.$el.find('.switch-on').addClass('active');
-				$main.addClass('upfront-region-editing');
-				Upfront.Events.trigger("command:region:edit_toggle", true);
-			}
-		}
-	});
-	
 	var SidebarPanel_Settings_Section = Backbone.View.extend({
 		"tagName": "div",
 		"className": "panel-section",
@@ -869,7 +842,6 @@ define(_template_files, function () {
 	var SidebarPanel_Settings_Section_Structure = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
-				new SidebarPanel_Settings_Item_EditArea({"model": this.model})
 			]);
 		},
 		get_title: function () {
@@ -946,7 +918,7 @@ define(_template_files, function () {
 		"className": "sidebar-commands sidebar-commands-control",
 		initialize: function () {
 			this.commands = _([
-				new Command_EditBackgroundArea({"model": this.model}),
+				//new Command_EditBackgroundArea({"model": this.model}),
 				new Command_Undo({"model": this.model}),
 				new Command_Redo({"model": this.model}),
 				//new Command_SaveLayout({"model": this.model}),
@@ -2337,7 +2309,7 @@ define(_template_files, function () {
 					'border-right-color': rgb
 				});
 				if(me.options.spectrum && me.options.spectrum.move)
-					me.options.spectrum.move();
+					me.options.spectrum.move(color);
 			};
 
 			spectrumOptions.show = function(color){
@@ -2346,7 +2318,7 @@ define(_template_files, function () {
 					'border-color': rgb
 				});
 				if(me.options.spectrum && me.options.spectrum.show)
-					me.options.spectrum.show();
+					me.options.spectrum.show(color);
 			};
 
 			Field_Color.__super__.initialize.apply(this, arguments);
@@ -2409,10 +2381,22 @@ define(_template_files, function () {
 			this.$el.on('change', '.upfront-field-select-option input', function(){
 				var $select_value = me.$el.find('.upfront-field-select-value');
 				var $checked = me.$el.find('.upfront-field-select-option input:checked');
-				if ( $checked.size() == 1 && !this.multiple )
-					$select_value.text($checked.closest('.upfront-field-select-option').text());
-				else
-					$select_value.text( select_label ? select_label : me.$el.find('.upfront-field-select-option:eq(0)').text() );
+				if ( $checked.size() == 1 && !this.multiple ){
+					var $option = $checked.closest('.upfront-field-select-option'),
+						select_text = $option.text(),
+						$select_icon = $option.find('.upfront-field-icon').clone();
+					$select_value.html('');
+					if ( $select_icon )
+						$select_value.append($select_icon);
+					$select_value.append('<span>'+select_text+'</span>');
+				}
+				else{
+					var select_texts = [];
+					$checked.each(function(){
+						select_texts.push( $(this).closest('.upfront-field-select-option').text() );
+					});
+					$select_value.text( $checked.size() == 0 ? select_label : select_texts.join(', ') );
+				}
 				me.$el.find('.upfront-field-select-option').each(function(){
 					if ( $(this).find('input:checked').size() > 0 )
 						$(this).addClass('upfront-field-select-option-selected');
@@ -3580,9 +3564,13 @@ var Field_Anchor = Field_Select.extend({
 	
 	var InlinePanelItem = Backbone.View.extend({
 		className: 'upfront-inline-panel-item',
+		width: 40,
+		height: 40,
 		render_icon: function () {
-			var icon = typeof this.icon == 'function' ? this.icon() : this.icon,
-				icons = icon.split(" "),
+			var icon = typeof this.icon == 'function' ? this.icon() : this.icon;
+			if ( !icon )
+				return;
+			var icons = icon.split(" "),
 				icons_class = [],
 				$icon = this.$el.find('.upfront-icon');
 			_.each(icons, function(each){
@@ -3592,6 +3580,16 @@ var Field_Anchor = Field_Select.extend({
 				this.$el.append('<i class="upfront-icon ' + icons_class.join(' ') + '" />');
 			else
 				$icon.attr('class', 'upfront-icon ' + icons_class.join(' '));
+		},
+		render_label: function () {
+			var label = typeof this.label == 'function' ? this.label() : this.label;
+			if ( !label )
+				return;
+			var $label = this.$el.find('.upfront-inline-panel-item-label');
+			if ( !$label.length )
+				this.$el.append('<span class="upfront-inline-panel-item-label">' + label + '</span>');
+			else
+				$label.html(label);
 		},
 		render_tooltip: function () {
 			var tooltip = typeof this.tooltip == 'function' ? this.tooltip() : this.tooltip;
@@ -3608,7 +3606,12 @@ var Field_Anchor = Field_Select.extend({
 		},
 		render: function () {
 			this.render_icon();
+			this.render_label();
 			this.render_tooltip();
+			this.$el.css({
+				width: this.width,
+				height: this.height
+			});
 			if ( typeof this.on_render == 'function' )
 				this.on_render();
 		},
@@ -3645,6 +3648,8 @@ var Field_Anchor = Field_Select.extend({
 					});
 				}
 			}
+			this.update_modal_pos();
+			$(window).on('scroll', this, this.on_scroll);
 			this.trigger('modal:open');
 			return this.modal_deferred.promise();
 		},
@@ -3653,11 +3658,49 @@ var Field_Anchor = Field_Select.extend({
 				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid);
 			$modal.hide();
 			panels_view.show_gradient();
+			$(window).off('scroll', this.on_scroll);
 			this.trigger('modal:close');
 			if ( save )
 				this.modal_deferred.resolve();
 			else
 				this.modal_deferred.reject();
+		},
+		on_scroll: function (e) {
+			var me = e.data;
+			me.update_modal_pos();
+		},
+		update_modal_pos: function () {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				panels_view = this.panel_view.panels_view,
+				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid);
+			if ( !$modal.length || $modal.css('display') == 'none' )
+				return;
+			var	$region = $modal.closest('.upfront-region'),
+				offset = $region.offset(),
+				top = offset.top,
+				bottom = top + $region.outerHeight(),
+				scroll_top = $(document).scrollTop(),
+				scroll_bottom = scroll_top + $(window).height(),
+				rel_top = $main.offset().top,
+				modal_offset = $modal.offset(),
+				modal_right = modal_offset.left+$modal.width();
+			if ( scroll_top > top-rel_top ) {
+				if ( $modal.css('position') != 'fixed' )
+					$modal.css({
+						position: 'fixed',
+						top: rel_top,
+						left: modal_offset.left,
+						right: $(window).width()-modal_right
+					});
+			}
+			else {
+				$modal.css({
+					position: '',
+					top: '',
+					left: '',
+					right: ''
+				});
+			}
 		}
 	});
 	
@@ -3739,61 +3782,109 @@ var Field_Anchor = Field_Select.extend({
 		}
 	});
 	
-	var RegionPanelItem_BgColor = RegionPanelItem.extend({
+	var RegionPanelItem_BgSetting = RegionPanelItem.extend({
 		events: {
-			'click .upfront-icon': 'open_spectrum'
+			'click .upfront-icon': 'open_bg_setting'
 		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-bgcolor',
-		icon: 'color',
-		tooltip: "Solid Color BG",
-		tooltip_pos: 'right',
-		open_spectrum: function () {
-			this.parent_view.close_subitem();
-			this.parent_view.select_item('color');
-			this.default_color = this.model.get_property_value_by_name('background_color');
-			this.model.set_property('background_image', '');
-			this.open_modal(this.render_modal);
-			return false;
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bg',
+		icon: 'bg-setting',
+		tooltip: "Change Background",
+		open_bg_setting: function () {
+			var type = this.model.get_property_value_by_name('background_type');
+			if ( !type ){
+				if ( this.model.get_property_value_by_name('background_image') )
+					this.model.set_property('background_type', 'image');
+			}
+			this.open_modal(this.render_modal, true).always(this.on_close_modal);
 		},
 		render_modal: function ($content, $modal) {
 			var me = this,
-				$picker = $content.find('.upfront-region-color-picker');
-			$modal.addClass('upfront-region-modal-color');
-			if ( $picker.length ) {
-				$picker.spectrum('show');
-			}
-			else {
-				$picker = $('<span class="upfront-region-color-picker" />');
-				$content.append($picker);
-				$picker.spectrum({
-					showAlpha: true,
-					showPalette: true,
-					clickoutFiresChange: true,
-					chooseText: 'Ok',
-					color: this.default_color ? this.default_color : '',
-					change: function(color) {
-						me.update_color(color);
-					},
-					move: function(color) { 
-						me.preview_color(color);
-						var rgb = color.toHexString();
-						$('.sp-dragger').css({
-							'border-top-color': rgb,
-							'border-right-color': rgb
-						});
-					},
-					hide: function(color) {
-						me.reset_color(color);			
-					},
-					show: function(color){					
-						var rgb = color.toHexString();
-						$('.sp-dragger').css({
-							'border-color': rgb
-						});
+				$template = $(_Upfront_Templates.region_edit_panel),
+				setting = $template.find('#upfront-region-bg-setting').html(),
+				type = new Field_Radios({
+					model: this.model,
+					property: 'background_type',
+					layout: 'vertical',
+					default_value: 'color',
+					icon_class: 'upfront-region-field-icon',
+					values: [
+						{ label: "Solid color background", value: 'color', icon: 'color' },
+						{ label: "Image background", value: 'image', icon: 'image' },
+						{ label: "Image slider background", value: 'slider', icon: 'slider' },
+						{ label: "Map background", value: 'map', icon: 'map' }
+					],
+					change: function () {
+						var value = this.get_value();
+						$content.find('.upfront-region-bg-setting-tab').not('.upfront-region-bg-setting-tab-'+value).hide();
+						$content.find('.upfront-region-bg-setting-tab-'+value).show();
+						me.render_modal_tab(value, $content.find('.upfront-region-bg-setting-tab-'+value), $content);
+						this.property.set({value: value});
 					}
 				});
-				$picker.spectrum('show');
+			$('.upfront-region-finish-edit').hide(); // hide finish edit button
+			$content.html(setting);
+			$modal.addClass('upfront-region-modal-bg');
+			type.render();
+			$content.find('.upfront-region-bg-setting-type').append(type.$el);
+			$content.find('.upfront-region-bg-setting-change-image').on('click', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				me.upload_image();
+			});
+			$content.find('.upfront-region-bg-setting-auto-resize').on('click', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				me.trigger_expand_lock($(this));
+			});
+			this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
+			type.trigger('changed');
+		},
+		on_close_modal: function () {
+			$('.upfront-region-finish-edit').show(); // show finish edit button
+		},
+		render_modal_tab: function (tab, $tab, $content) {
+			var $change_image = $content.find('.upfront-region-bg-setting-change-image');
+			$change_image.hide();
+			switch (tab){
+				case 'color':
+					this.render_modal_tab_color($tab);
+					break;
+				case 'image':
+					$change_image.show();
+					this.render_modal_tab_image($tab);
+					break;
+				case 'slider':
+					this.render_modal_tab_slider($tab);
+					break;
+				case 'map':
+					this.render_modal_tab_map($tab);
+					break;
 			}
+		},
+		// Color tab
+		render_modal_tab_color: function ($tab) {
+			var me = this,
+				picker = new Field_Color({
+					model: this.model,
+					property: 'background_color',
+					default_value: '#ffffff',
+					spectrum: {
+						move: function (color) {
+							me.preview_color(color);
+						},
+						change: function (color) {
+							me.update_color(color);
+						},
+						hide: function (color) {
+							me.reset_color();
+						}
+					}
+				});
+			this._default_color = this.model.get_property_value_by_name('background_color');
+			picker.render();
+			$tab.html('');
+			$tab.append('<div class="upfront-region-bg-setting-label">Background Color:</div>');
+			$tab.append(picker.$el);
 		},
 		preview_color: function (color) {
 			var rgb = color.toRgb(),
@@ -3803,28 +3894,170 @@ var Field_Anchor = Field_Select.extend({
 		update_color: function (color) {
 			var panels_view = this.panel_view.panels_view;
 			this.preview_color(color);
-			this.default_color = this.model.get_property_value_by_name('background_color');
-			this.close_modal(true);
+			this._default_color = this.model.get_property_value_by_name('background_color');
 		},
 		reset_color: function () {
 			var panels_view = this.panel_view.panels_view;
-			this.model.set_property('background_color', this.default_color);
-			this.close_modal(false);
-		}
-	});
-	
-	var RegionPanelItem_BgImage = RegionPanelItem.extend({
-		events: {
-			'click .upfront-icon': 'open_image_upload'
+			this.model.set_property('background_color', this._default_color);
 		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-bgimage',
-		icon: 'image',
-		tooltip: "Image BG",
-		tooltip_pos: 'right',
-		open_image_upload: function () {
+		// Image tab
+		render_modal_tab_image: function ($tab) {
+			var me = this,
+				image = this.model.get_property_value_by_name('background_image'),
+				$style = $('<div class="upfront-region-bg-image-style"><div class="upfront-region-bg-setting-label">Type of background</div></div>'),
+				$tile = $('<div class="upfront-region-bg-image-tile" />'),
+				$fixed = $('<div class="upfront-region-bg-image-fixed clearfix" />'),
+				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-setting-label">Image Position:</div></div>'),
+				$fixed_pos_num = $('<div class="upfront-region-bg-image-fixed-pos-num" />'),
+				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-setting-label">Background Color:</div></div>');
+			if ( !image ) {
+				this.upload_image();
+			}
+			var pos_option = {
+					default_value: 50,
+					min: 0,
+					max: 100,
+					step: 1
+				},
+				fields = {
+					bg_style: new Field_Select({
+						model: this.model,
+						property: 'background_style',
+						default_value: 'full',
+						icon_class: 'upfront-region-field-icon',
+						values: [
+							{ label: "Full Width", value: 'full', icon: 'bg-image-full' },
+							{ label: "Tiled / Pattern", value: 'tile', icon: 'bg-image-tile' },
+							{ label: "Fixed Position", value: 'fixed', icon: 'bg-image-fixed' }
+						],
+						change: function () {
+							var value = this.get_value();
+							if ( value == 'tile' ){
+								$tile.show();
+								$fixed.hide();
+							}
+							else if ( value == 'fixed' ){
+								$fixed.show();
+								$tile.hide();
+							}
+							else {
+								$fixed.hide();
+								$tile.hide();
+							}
+							me._bg_style = value;
+							me.update_image();
+						}
+					}),
+					bg_tile: new Field_Checkboxes({
+						model: this.model,
+						layout: 'horizontal-inline',
+						default_value: ['y', 'x'],
+						values: [
+							{ label: "Tile Vertically", value: 'y' },
+							{ label: "Tile Horizontally", value: 'x' }
+						],
+						change: function () {
+							var value = this.get_value();
+							me._bg_tile = value;
+							me.update_image();
+						}
+					}),
+					bg_color: new Field_Color({
+						model: this.model,
+						property: 'background_color',
+						default_value: '#ffffff',
+						spectrum: {
+							move: function (color) {
+								me.preview_color(color);
+							},
+							change: function (color) {
+								me.update_color(color);
+							},
+							hide: function (color) {
+								me.reset_color();
+							}
+						}
+					}),
+					bg_position_y: new Field_Slider(_.extend({
+						model: this.model,
+						orientation: 'vertical',
+						property: 'background_position_y',
+						range: false,
+						change: function () {
+							var value = this.get_value();
+							fields.bg_position_y_num.get_field().val(value);
+							me._bg_position_y = value;
+							this.property.set({value: value});
+							me.update_image();
+						}
+					}, pos_option)),
+					bg_position_x: new Field_Slider(_.extend({
+						model: this.model,
+						property: 'background_position_x',
+						range: false,
+						change: function () {
+							var value = this.get_value();
+							fields.bg_position_x_num.get_field().val(value);
+							me._bg_position_x = value;
+							this.property.set({value: value});
+							me.update_image();
+						}
+					}, pos_option)),
+					bg_position_y_num: new Field_Number(_.extend({
+						model: this.model,
+						label: "Y:",
+						label_style: 'inline',
+						suffix: '%',
+						change: function () {
+							var value = this.get_value(),
+								s = fields.bg_position_y;
+							s.$el.find('#'+s.get_field_id()).slider('value', value);
+							s.get_field().val(value);
+							s.trigger('changed');
+						}
+					}, pos_option)),
+					bg_position_x_num: new Field_Number(_.extend({
+						model: this.model,
+						label: "X:",
+						label_style: 'inline',
+						suffix: '%',
+						change: function () {
+							var value = this.get_value(),
+								s = fields.bg_position_x;
+							s.$el.find('#'+s.get_field_id()).slider('value', value);
+							s.get_field().val(value);
+							s.trigger('changed');
+						}
+					}, pos_option))
+				};
+			$tab.html('');
+			_.each(fields, function (field) {
+				field.render();
+			});
+			$style.append(fields.bg_style.$el);
+			$tab.append($style);
+			$tile.append(fields.bg_tile.$el);
+			$tab.append($tile);
+			$fixed_pos_num.append(fields.bg_position_y_num.$el);
+			$fixed_pos_num.append(fields.bg_position_x_num.$el);
+			$fixed_pos.append($fixed_pos_num);
+			$fixed_pos.append(fields.bg_position_y.$el);
+			$fixed_pos.append(fields.bg_position_x.$el);
+			//$fixed_color.append(fields.bg_color.$el);
+			$fixed.append($fixed_pos);
+			//$fixed.append($fixed_color);
+			$tab.append($fixed);
+			this._bg_style = fields.bg_style.get_value();
+			this._bg_tile = fields.bg_tile.get_value();
+			this._bg_position_y = fields.bg_position_y.get_value();
+			fields.bg_position_y.trigger('changed');
+			this._bg_position_x = fields.bg_position_x.get_value();
+			fields.bg_position_x.trigger('changed');
+			//this._default_color = fields.bg_color.get_value();
+			fields.bg_style.trigger('changed');
+		},
+		upload_image: function () {
 			var me = this;
-			this.parent_view.close_subitem();
-			this.parent_view.select_item('image');
 			Upfront.Views.Editor.ImageSelector.open().done(function(images){
 				var sizes = {},
 					image_id;
@@ -3836,149 +4069,16 @@ var Field_Anchor = Field_Select.extend({
 					Upfront.Views.Editor.ImageSelector.close();
 					me.model.set_property('background_image', sizes.full[0]);
 					me.model.set_property('background_image_ratio', Math.round(sizes.full[2]/sizes.full[1]*100)/100);
-					me.open_modal(me.render_modal, true);
 				});
 			});
 		},
-		render_modal: function ($content, $modal) {
-			var me = this,
-				$tile = $('<div class="upfront-region-bg-image-tile" />'),
-				$fixed = $('<div class="upfront-region-bg-image-fixed clearfix" />'),
-				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-image-label">Image Position:</div></div>'),
-				$fixed_pos_num = $('<div class="upfront-region-bg-image-fixed-pos-num" />'),
-				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-image-label">Background Color:</div></div>'),
-				pos_option = {
-					default_value: 50,
-					min: 0,
-					max: 100,
-					step: 1
-				};
-			$content.html('');
-			this.fields = {
-				bg_style: new Field_Radios({
-					model: this.model,
-					property: 'background_style',
-					layout: 'vertical',
-					default_value: 'full',
-					icon_class: 'upfront-region-field-icon',
-					values: [
-						{ label: "Full Width", value: 'full', icon: 'bg-image-full' },
-						{ label: "Tiled / Pattern", value: 'tile', icon: 'bg-image-tile' },
-						{ label: "Fixed Position", value: 'fixed', icon: 'bg-image-fixed' }
-					],
-					change: function () {
-						var value = this.get_value();
-						if ( value == 'tile' ){
-							$tile.show();
-							$fixed.hide();
-						}
-						else if ( value == 'fixed' ){
-							$fixed.show();
-							$tile.hide();
-						}
-						else {
-							$fixed.hide();
-							$tile.hide();
-						}
-						me.update_image();
-					}
-				}),
-				bg_tile: new Field_Checkboxes({
-					model: this.model,
-					layout: 'horizontal-inline',
-					default_value: ['y', 'x'],
-					values: [
-						{ label: "Tile Vertically", value: 'y' },
-						{ label: "Tile Horizontally", value: 'x' }
-					],
-					change: function () {
-						me.update_image();
-					}
-				}),
-				bg_color: new Field_Color({
-					model: this.model,
-					property: 'background_color',
-					default_value: '#ffffff',
-					spectrum: {
-						change: function () {
-							me.update_image();
-						}
-					}
-				}),
-				bg_position_y: new Field_Slider(_.extend({
-					model: this.model,
-					orientation: 'vertical',
-					range: false,
-					change: function () {
-						var value = this.get_value();
-						me.fields.bg_position_y_num.get_field().val(value);
-						me.update_image();
-					}
-				}, pos_option)),
-				bg_position_x: new Field_Slider(_.extend({
-					model: this.model,
-					range: false,
-					change: function () {
-						var value = this.get_value();
-						me.fields.bg_position_x_num.get_field().val(value);
-						me.update_image();
-					}
-				}, pos_option)),
-				bg_position_y_num: new Field_Number(_.extend({
-					model: this.model,
-					label: "Y:",
-					label_style: 'inline',
-					suffix: '%',
-					change: function () {
-						var value = this.get_value(),
-							s = me.fields.bg_position_y;
-						s.$el.find('#'+s.get_field_id()).slider('value', value);
-						s.get_field().val(value);
-						me.update_image();
-					}
-				}, pos_option)),
-				bg_position_x_num: new Field_Number(_.extend({
-					model: this.model,
-					label: "X:",
-					label_style: 'inline',
-					suffix: '%',
-					change: function () {
-						var value = this.get_value(),
-							s = me.fields.bg_position_x;
-						s.$el.find('#'+s.get_field_id()).slider('value', value);
-						s.get_field().val(value);
-						me.update_image();
-					}
-				}, pos_option))
-			};
-			$modal.addClass('upfront-region-modal-image');
-			_.each(this.fields, function (field) {
-				field.render();
-			});
-			$content.append(this.fields.bg_style.$el);
-			$tile.append(this.fields.bg_tile.$el);
-			$content.append($tile);
-			$fixed_pos_num.append(this.fields.bg_position_y_num.$el);
-			$fixed_pos_num.append(this.fields.bg_position_x_num.$el);
-			$fixed_pos.append($fixed_pos_num);
-			$fixed_pos.append(this.fields.bg_position_y.$el);
-			$fixed_pos.append(this.fields.bg_position_x.$el);
-			$fixed_color.append(this.fields.bg_color.$el);
-			$fixed.append($fixed_pos);
-			$fixed.append($fixed_color);
-			$content.append($fixed);
-			this.fields.bg_style.trigger('changed');
-		},
 		update_image: function () {
-			var style = this.fields.bg_style.get_value(),
-				tile = this.fields.bg_tile.get_value(),
+			var style = this._bg_style,
+				tile = this._bg_tile,
 				is_repeat_y = _.contains(tile, 'y'),
 				is_repeat_x = _.contains(tile, 'x'),
-				pos_y = this.fields.bg_position_y.get_value(),
-				pos_x = this.fields.bg_position_x.get_value(),
-				color = this.fields.bg_color.get_value();
-			if ( color != this.fields.bg_color.get_saved_value() )
-				this.model.set_property('background_color', color);
+				pos_y = this._bg_position_y,
+				pos_x = this._bg_position_x;
 			if ( style == 'full' ) {
 				this.model.set_property('background_style', 'full');
 			}
@@ -4000,157 +4100,11 @@ var Field_Anchor = Field_Select.extend({
 					this.model.set_property('background_position', pos_x + '% ' + pos_y + '%');
 				}
 			}
-		}
-	});
-	
-	var RegionPanelItem_BgMap = RegionPanelItem.extend({
-		events: {
-			'click .upfront-icon': 'open_map_setting'
 		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-bgmap',
-		icon: 'map',
-		tooltip: "Map BG",
-		tooltip_pos: 'right',
-		open_map_setting: function () {
+		// Slider tab
+		render_modal_tab_slider: function ($tab) {
 			var me = this,
-				map_center;
-			this.parent_view.close_subitem();
-			map_center = this.model.get_property_value_by_name('background_map_center');
-			if ( ! map_center ){
-				this.model.init_property('background_map_center', [10.722250, 106.730762]);
-				this.model.init_property('background_map_zoom', 10);
-				this.model.init_property('background_map_style', "ROADMAP");
-				this.model.init_property('background_map_controls', "");
-			}
-			this.parent_view.select_item('map');
-			this.open_modal(this.render_modal, true).done(function(){
-				me.geocode_location();
-			});
-		},
-		render_modal: function ($content, $modal) {
-			$content.html('');
-			var me = this,
-				$location = $('<div class="upfront-region-bg-map-location clearfix" />'),
-				$style_control = $('<div class="upfront-region-bg-map-style-control clearfix" />'),
-				set_value = function () {
-					var value = this.get_value();
-					this.property.set({value: value});
-				};
-			this.fields = {
-				location: new Field_Text({
-					model: this.model,
-					label: "Location:",
-					property: 'background_map_location',
-					placeholder: "e.g 123 Nice St",
-					change: function () {
-						var value = this.get_value();
-						this.property.set({value: value}, {silent: true});
-						me._location_changed = true;
-					}
-				}),
-				zoom: new Field_Slider({
-					model: this.model,
-					label: "Zoom:",
-					property: 'background_map_zoom',
-					default_value: 8,
-					min: 1,
-					max: 19,
-					step: 1,
-					change: set_value
-				}),
-				style: new Field_Select({
-					model: this.model,
-					label: "Map Style:",
-					property: 'background_map_style',
-					values: [
-						{ label: "Roadmap", value: 'ROADMAP' },
-						{ label: "Satellite", value: 'SATELLITE' },
-						{ label: "Hybrid", value: 'HYBRID' },
-						{ label: "Terrain", value: 'TERRAIN' }
-					],
-					change: set_value
-				}),
-				controls: new Field_Select({
-					model: this.model,
-					label: "Controls:",
-					property: 'background_map_controls',
-					multiple: true,
-					default_value: ['pan'],
-					values: [
-						{ label: "Pan", value: "pan" },
-						{ label: "Zoom", value: "zoom" },
-						{ label: "Map Type", value: "map_type" },
-						{ label: "Scale", value: "scale" },
-						{ label: "Street View", value: "street_view" },
-						{ label: "Overview Map", value: "overview_map" }
-					],
-					change: set_value
-				})
-			};
-			$modal.addClass('upfront-region-modal-map');
-			_.each(this.fields, function (field) {
-				field.render();
-			});
-			$location.append(this.fields.location.$el);
-			$location.append('<i class="upfront-field-icon upfront-field-icon-refresh-2 upfront-refresh-map" />');
-			$location.on('click', '.upfront-refresh-map', function () {
-				me.geocode_location();
-			});
-			$content.append($location);
-			$content.append(this.fields.zoom.$el);
-			$style_control.append(this.fields.style.$el);
-			$style_control.append(this.fields.controls.$el);
-			$content.append($style_control);
-		},
-		geocode_location: function () {
-			if ( this._geocoding == true || !this._location_changed )
-				return;
-			var me = this,
-				location = this.fields.location,
-				geocoder = new google.maps.Geocoder();
-			this._geocoding = true;
-			geocoder.geocode({address: location.get_value()}, function (results, status) {
-				if (status != google.maps.GeocoderStatus.OK) return false;
-				var pos = results[0].geometry.location;
-
-				me.model.set_property("background_map_center", [pos.lat(), pos.lng()]);
-				me._geocoding = false;
-				me._location_changed = false;
-			});
-		}
-	});
-	
-	var RegionPanelItem_BgSlider = RegionPanelItem.extend({
-		events: {
-			'click .upfront-icon': 'open_slider_setting'
-		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-bgslider',
-		icon: 'slider',
-		tooltip: "Slider BG",
-		tooltip_pos: 'right',
-		open_slider_setting: function () {
-			var me = this,
-				slide_images;
-			this.parent_view.close_subitem();
-			this.parent_view.select_item('slider');
-			slide_images = this.model.get_property_value_by_name('background_slider_images');
-			if ( slide_images ){
-				me.open_modal(me.render_modal, true);
-			}
-			else {
-				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
-					var image_ids = [];
-					_.each(images, function(image, id){
-						image_ids.push(id);
-					});
-					me.model.set_property('background_slider_images', image_ids);
-					Upfront.Views.Editor.ImageSelector.close();
-					me.open_modal(me.render_modal, true);
-				});
-			}
-		},
-		render_modal: function ($content, $modal) {
-			var me = this,
+				slide_images = this.model.get_property_value_by_name('background_slider_images'),
 				$rotate = $('<div class="upfront-region-bg-slider-rotate clearfix" />'),
 				$transition = $('<div class="upfront-region-bg-slider-transition upfront-settings-item"><div class="upfront-settings-item-title" /><div class="upfront-settings-item-content" /></div>'),
 				$transition_title = $transition.find('.upfront-settings-item-title'),
@@ -4162,72 +4116,82 @@ var Field_Anchor = Field_Select.extend({
 					var value = this.get_value();
 					this.property.set({value: value});
 				};
-			this.fields = {
-				rotate: new Field_Checkboxes({
-					model: this.model,
-					property: 'background_slider_rotate',
-					layout: 'horizontal-inline',
-					default_value: ['rotate'],
-					values: [ { label: "Rotate automatically every ", value: 'rotate' } ],
-					change: set_value
-				}),
-				rotate_time: new Field_Number({
-					model: this.model,
-					property: 'background_slider_rotate_time',
-					default_value: 5,
-					min: 1,
-					max: 60,
-					step: 1,
-					suffix: 'sec',
-					change: set_value
-				}),
-				control: new Field_Radios({
-					model: this.model,
-					property: 'background_slider_control',
-					default_value: 'always',
-					layout: 'horizontal-inline',
-					values: [
-						{ label: "Always show slider controls", value: 'always' },
-						{ label: "Show slider controls on hover", value: 'hover' }
-					],
-					change: set_value
-				}),
-				transition: new Field_Radios({
-					model: this.model,
-					property: 'background_slider_transition',
-					default_value: 'crossfade',
-					layout: 'horizontal-inline',
-					icon_class: 'upfront-region-field-icon',
-					values: [
-						{ label: "Slide Down", value: 'slide-down', icon: 'bg-slider-slide-down' },
-						{ label: "Slide Up", value: 'slide-up', icon: 'bg-slider-slide-up' },
-						{ label: "Slide Left", value: 'slide-left', icon: 'bg-slider-slide-left' },
-						{ label: "Slide Right", value: 'slide-right', icon: 'bg-slider-slide-right' },
-						{ label: "Crossfade", value: 'crossfade', icon: 'bg-slider-crossfade' }
-					],
-					change: set_value
-				})
-			};
-			$content.html('');
-			$modal.addClass('upfront-region-modal-slider');
-			_.each(this.fields, function (field) {
+			if ( !slide_images ){
+				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
+					var image_ids = [];
+					_.each(images, function(image, id){
+						image_ids.push(id);
+					});
+					me.model.set_property('background_slider_images', image_ids);
+					me.update_slider_slides($slides_content);
+					Upfront.Views.Editor.ImageSelector.close();
+				});
+			}
+			var fields = {
+					rotate: new Field_Checkboxes({
+						model: this.model,
+						property: 'background_slider_rotate',
+						layout: 'horizontal-inline',
+						default_value: ['rotate'],
+						values: [ { label: "Rotate automatically every ", value: 'rotate' } ],
+						change: set_value
+					}),
+					rotate_time: new Field_Number({
+						model: this.model,
+						property: 'background_slider_rotate_time',
+						default_value: 5,
+						min: 1,
+						max: 60,
+						step: 1,
+						suffix: 'sec',
+						change: set_value
+					}),
+					control: new Field_Radios({
+						model: this.model,
+						property: 'background_slider_control',
+						default_value: 'always',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Always show slider controls", value: 'always' },
+							{ label: "Show slider controls on hover", value: 'hover' }
+						],
+						change: set_value
+					}),
+					transition: new Field_Radios({
+						model: this.model,
+						property: 'background_slider_transition',
+						default_value: 'crossfade',
+						layout: 'horizontal-inline',
+						icon_class: 'upfront-region-field-icon',
+						values: [
+							{ label: "Slide Down", value: 'slide-down', icon: 'bg-slider-slide-down' },
+							{ label: "Slide Up", value: 'slide-up', icon: 'bg-slider-slide-up' },
+							{ label: "Slide Left", value: 'slide-left', icon: 'bg-slider-slide-left' },
+							{ label: "Slide Right", value: 'slide-right', icon: 'bg-slider-slide-right' },
+							{ label: "Crossfade", value: 'crossfade', icon: 'bg-slider-crossfade' }
+						],
+						change: set_value
+					})
+				};
+			$tab.html('');
+			_.each(fields, function (field) {
 				field.render();
 			});
-			$rotate.append(this.fields.rotate.$el);
-			$rotate.append(this.fields.rotate_time.$el);
-			$content.append($rotate);
-			$content.append(this.fields.control.$el);
+			$rotate.append(fields.rotate.$el);
+			$rotate.append(fields.rotate_time.$el);
+			$tab.append($rotate);
+			$tab.append(fields.control.$el);
 			$transition_title.text("Slide transitions:");
-			$transition_content.append(this.fields.transition.$el);
-			$content.append($transition);
+			$transition_content.append(fields.transition.$el);
+			$tab.append($transition);
 			$slides_title.text("Slides Order:");
-			$content.append($slides);
+			$tab.append($slides);
 			me.update_slider_slides($slides_content);
 			$slides_content.on('click', '.upfront-region-bg-slider-add-image', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
 				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
-					var slide_images = _.clone(me.model.get_property_value_by_name('background_slider_images'));
+					var slide_images = _.clone(me.model.get_property_value_by_name('background_slider_images') || []);
 					_.each(images, function(image, id){
 						slide_images.push(id);
 					});
@@ -4289,29 +4253,132 @@ var Field_Anchor = Field_Select.extend({
 			else {
 				$wrap.append($add);
 			}
-		}
-	});
-	
-	var RegionPanelItem_Bg = InlinePanelItemMulti.extend({
-		className: 'upfront-inline-panel-item upfront-region-panel-item-bg',
-		tooltip: "Change background",
-		initialize: function () {
-			this.sub_items = {
-				color: new RegionPanelItem_BgColor({model: this.model}),
-				image: new RegionPanelItem_BgImage({model: this.model}),
-				slider: new RegionPanelItem_BgSlider({model: this.model}),
-				map: new RegionPanelItem_BgMap({model: this.model})
-			};
-			Upfront.Events.on('region:activated', this.on_region_change, this);
 		},
-		get_selected_item: function () {
-			return this.model.get_property_value_by_name('background_type');
+		// Map tab
+		render_modal_tab_map: function ($tab) {
+			var me = this,
+				map_center = this.model.get_property_value_by_name('background_map_center'),
+				$location = $('<div class="upfront-region-bg-map-location clearfix" />'),
+				$style_control = $('<div class="upfront-region-bg-map-style-control clearfix" />'),
+				set_value = function () {
+					var value = this.get_value();
+					this.property.set({value: value});
+				};
+			if ( ! map_center ){
+				this.model.init_property('background_map_center', [10.722250, 106.730762]);
+				this.model.init_property('background_map_zoom', 10);
+				this.model.init_property('background_map_style', "ROADMAP");
+				this.model.init_property('background_map_controls', "");
+			}
+			this.once('modal:close', function(){
+				me.geocode_location();
+			});
+			var fields = {
+					location: new Field_Text({
+						model: this.model,
+						label: "Location:",
+						property: 'background_map_location',
+						placeholder: "e.g 123 Nice St",
+						change: function () {
+							var value = this.get_value();
+							this.property.set({value: value}, {silent: true});
+							me._location = value;
+							me._location_changed = true;
+						}
+					}),
+					zoom: new Field_Slider({
+						model: this.model,
+						label: "Zoom:",
+						property: 'background_map_zoom',
+						default_value: 8,
+						min: 1,
+						max: 19,
+						step: 1,
+						change: set_value
+					}),
+					style: new Field_Select({
+						model: this.model,
+						label: "Map Style:",
+						property: 'background_map_style',
+						values: [
+							{ label: "Roadmap", value: 'ROADMAP' },
+							{ label: "Satellite", value: 'SATELLITE' },
+							{ label: "Hybrid", value: 'HYBRID' },
+							{ label: "Terrain", value: 'TERRAIN' }
+						],
+						change: set_value
+					}),
+					controls: new Field_Select({
+						model: this.model,
+						label: "Controls:",
+						property: 'background_map_controls',
+						multiple: true,
+						default_value: ["pan"],
+						values: [
+							{ label: "Pan", value: "pan" },
+							{ label: "Zoom", value: "zoom" },
+							{ label: "Map Type", value: "map_type" },
+							{ label: "Scale", value: "scale" },
+							{ label: "Street View", value: "street_view" },
+							{ label: "Overview Map", value: "overview_map" }
+						],
+						change: set_value
+					})
+				};
+			_.each(fields, function (field) {
+				field.render();
+			});
+			$tab.html('');
+			this._location = fields.location.get_value();
+			$location.append(fields.location.$el);
+			$location.append('<i class="upfront-field-icon upfront-field-icon-refresh-2 upfront-refresh-map" />');
+			$location.on('click', '.upfront-refresh-map', function () {
+				me.geocode_location();
+			});
+			$tab.append($location);
+			$tab.append(fields.zoom.$el);
+			$style_control.append(fields.style.$el);
+			$style_control.append(fields.controls.$el);
+			$tab.append($style_control);
 		},
-		get_default_item: function () {
-			return 'color';
+		geocode_location: function () {
+			if ( this._geocoding == true || !this._location_changed )
+				return;
+			var me = this,
+				location = this._location,
+				geocoder = new google.maps.Geocoder();
+			this._geocoding = true;
+			geocoder.geocode({address: location}, function (results, status) {
+				if (status != google.maps.GeocoderStatus.OK) return false;
+				var pos = results[0].geometry.location;
+
+				me.model.set_property("background_map_center", [pos.lat(), pos.lng()]);
+				me._geocoding = false;
+				me._location_changed = false;
+			});
 		},
-		set_selected_item: function (selected) {
-			this.model.set_property('background_type', selected);
+		// Expand lock trigger
+		render_expand_lock: function ($el) {
+			var locked = this.model.get_property_value_by_name('expand_lock'),
+				$icon = $('<i class="upfront-field-icon upfront-region-field-icon" />'),
+				$status = $('<span />');
+			if ( locked ){
+				$icon.addClass('upfront-region-field-icon-expand-lock');
+				$status.addClass('auto-resize-off').text('OFF');
+			}
+			else {
+				$icon.addClass('upfront-region-field-icon-expand-unlock');
+				$status.addClass('auto-resize-on').text('ON');
+			}
+			$el.html('');
+			$el.append($icon);
+			$el.append('<span>Auto-resize is </span>');
+			$el.append($status);
+		},
+		trigger_expand_lock: function ($el) {
+			var locked = this.model.get_property_value_by_name('expand_lock');
+			this.model.set_property('expand_lock', !locked);
+			this.render_expand_lock($el);
 		}
 	});
 	
@@ -4455,9 +4522,11 @@ var Field_Anchor = Field_Select.extend({
 		},
 		className: 'upfront-inline-panel-item upfront-region-panel-item-delete-region',
 		icon: 'delete',
-		//tooltip: "Delete this region",
+		tooltip: "Delete this section",
+		//label: "Delete this section",
 		delete_region: function () {
-			this.model.collection.remove(this.model);
+			if ( confirm("Are you sure you want to delete this section?") )
+				this.model.collection.remove(this.model);
 		}
 	});
 	
@@ -4473,15 +4542,56 @@ var Field_Anchor = Field_Select.extend({
 				items = typeof this.items == 'function' ? this.items() : this.items,
 				classes = [ 
 					'upfront-inline-panel-'+this.position_v,
-					'upfront-inline-panel-'+this.position_v+'-'+this.position_h,
-					'upfront-inline-panel-size-'+items.size() 
-				];
+					'upfront-inline-panel-'+this.position_v+'-'+this.position_h
+				],
+				width = 0,
+				height = 0;
 			this.$el.html('');
 			items.each(function(item){
 				item.panel_view = me;
 				item.render();
 				item.delegateEvents();
 				me.$el.append(item.el);
+				if ( me.position_v == 'center' ) {
+					width = item.width > width ? item.width : width;
+					height += item.height;
+				}
+				else {
+					width += item.width;
+					height = item.height > height ? item.height : height;
+				}
+			});
+			this.$el.attr('class', this.className + ' ' + classes.join(' '));
+			this.$el.css({
+				width: width,
+				height: height
+			});
+		}
+	});
+	
+	var RegionPanel = InlinePanel.extend({
+		initialize: function () {
+			this.items = _([]);
+		},
+		render: function() {
+			var me = this,
+				items = typeof this.items == 'function' ? this.items() : this.items,
+				classes = [ 
+					'upfront-inline-panel-'+this.position_v,
+					'upfront-inline-panel-'+this.position_v+'-'+this.position_h
+				],
+				width = 0,
+				height = 0;
+			this.$el.html('');
+			items.each(function(item){
+				item.panel_view = me;
+				item.render();
+				item.delegateEvents();
+				me.$el.append(item.el);
+				if ( me.position_v == 'center' )
+					height += item.$el.height();
+				else
+					width += item.$el.width();
 			});
 			this.$el.attr('class', this.className + ' ' + classes.join(' '));
 		}
@@ -4490,19 +4600,19 @@ var Field_Anchor = Field_Select.extend({
 	var RegionPanel_Edit = InlinePanel.extend({
 		className: 'upfront-inline-panel upfront-region-panel-edit upfront-no-select',
 		initialize: function () {
-			this.bg = new RegionPanelItem_Bg({model: this.model});
+			this.bg = new RegionPanelItem_BgSetting({model: this.model});
 			var container = this.model.get('container'),
 				name = this.model.get('name');
 			if ( !container || container == name ){
-				this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
+				//this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
 				this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
 			}
 		},
 		items: function () {
 			var items = _([]);
 			items.push(this.bg);
-			if ( this.expand_lock )
-				items.push(this.expand_lock);
+			//if ( this.expand_lock )
+			//	items.push(this.expand_lock);
 			if ( this.add_region )
 				items.push(this.add_region);
 			return items;
@@ -4568,7 +4678,8 @@ var Field_Anchor = Field_Select.extend({
 			this.listenTo(this.model.collection, 'add', this.render);
 			this.listenTo(this.model.collection, 'remove', this.render);
 			Upfront.Events.on("region:activated", this.on_region_active, this);
-			$(window).scroll(this, this.on_scroll);
+			Upfront.Events.on("command:region:edit_toggle", this.update_pos, this);
+			$(window).on('scroll', this, this.on_scroll);
 			this.edit_panel = new RegionPanel_Edit({model: this.model});
 			this.delete_panel = new RegionPanel_Delete({model: this.model});
 			this.add_panel_bottom = new RegionPanel_Add({model: this.model, to: 'bottom'});
@@ -4606,6 +4717,7 @@ var Field_Anchor = Field_Select.extend({
 			else {
 				panels.push( this.delete_panel );
 			}
+			this._panels = panels;
 			return panels;
 		},
 		on_scroll: function (e) {
@@ -4627,10 +4739,60 @@ var Field_Anchor = Field_Select.extend({
 				top = offset.top,
 				bottom = top + $region.outerHeight(),
 				scroll_top = $(document).scrollTop(),
-				scroll_bottom = scroll_top + $(window).height();
-			this.$el.css({
+				scroll_bottom = scroll_top + $(window).height(),
+				rel_top = $main.offset().top;
+			/*this.$el.css({
 				top: scroll_top > top ? scroll_top-top+25 : 0,
 				bottom: bottom > scroll_bottom ? bottom-scroll_bottom : 0
+			});*/
+			this._panels.each(function (panel) {
+				var panel_offset = panel.$el.offset();
+				if ( panel.position_v == 'top' && scroll_top > top-rel_top ){
+					if ( panel.$el.css('position') != 'fixed' )
+						panel.$el.css({
+							position: 'fixed',
+							top: rel_top,
+							left: panel_offset.left,
+							right: 'auto'
+						});
+				}
+				else if ( panel.position_v == 'bottom' && bottom > scroll_bottom ){
+					if ( panel.$el.css('position') != 'fixed' )
+						panel.$el.css({
+							position: 'fixed',
+							bottom: 0,
+							left: panel_offset.left,
+							right: 'auto'
+						});
+				}
+				else if ( panel.position_v == 'center' && ( scroll_top > top-rel_top || bottom > scroll_bottom ) ){
+					var panel_top = scroll_top > top-rel_top ? rel_top : top-scroll_top,
+						panel_bottom = bottom > scroll_bottom ? 0 : scroll_bottom-bottom,
+						panel_left = panel.position_h == 'left' ? panel_offset.left : 'auto',
+						panel_right = panel.position_h == 'right' ? $(window).width()-(offset.left+$region.width()) : 'auto';
+					if ( panel.$el.css('position') != 'fixed' )
+						panel.$el.css({
+							position: 'fixed',
+							top: panel_top,
+							bottom: panel_bottom,
+							left: panel_left,
+							right: panel_right
+						});
+					else
+						panel.$el.css({
+							top: panel_top,
+							bottom: panel_bottom
+						});
+				}
+				else {
+					panel.$el.css({
+						position: '',
+						top: '',
+						bottom: '',
+						left: '',
+						right: ''
+					});
+				}
 			});
 		},
 		hide_gradient: function () {

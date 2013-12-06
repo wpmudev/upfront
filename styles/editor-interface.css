@@ -123,7 +123,7 @@
   display: none !important;
 }
 .show-debug ~ #properties {
-	display: block !important;
+	/*display: block !important;*/
 }
 #properties:hover {
 	right: 0;
@@ -998,6 +998,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 	padding: 1px 30px 1px 10px;
 	height: 24px;
 	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .upfront-field-select-options {
 	list-style: none;
@@ -1073,6 +1076,10 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 }
 .upfront-field-radio {
 	border-radius: 6px;
+}
+.upfront-field-radio:focus {
+	border-width: 3px;
+	outline: none;
 }
 .upfront-field-radio:checked {
 	border-width: 3px;
@@ -1490,16 +1497,24 @@ a.ueditor-action-pickercancel{
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	right: 0;
+	bottom: 0;
 	z-index: 0;
-	display: none;
-	background: -webkit-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
-	background: -moz-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
-	background: -ms-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
-	background: -o-linear-gradient(bottom, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
-	background: linear-gradient(to top, rgba(127,184,221,0.5) 1px, transparent 1px, transparent);
+	visibility: hidden;
+	opacity: 0;
+	background: -webkit-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: -moz-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: -ms-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: -o-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: linear-gradient(to top, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
 	background-size: 100% 15px;
+	border-left: 1px solid #3bffff;
+	border-right: 1px solid #3bffff;
+	-webkit-transition: opacity 0.6s;
+}
+.upfront-overlay-grid-show {
+	visibility: visible;
+	opacity: 1;
 }
 .upfront-overlay-grid .c1 {
 	height: 100%;
@@ -1515,6 +1530,9 @@ a.ueditor-action-pickercancel{
 	background: linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 0 0, linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 100% 0;
 	background-size: 15px 100%;
 	border-right: 1px solid #3bffff;
+}
+.upfront-overlay-grid-simple .upfront-grid-border {
+	background: none;
 }
 .upfront-grid-border:last-child {
 	border-right: none;
@@ -1547,13 +1565,21 @@ a.ueditor-action-pickercancel{
 	overflow: hidden;
 	padding-bottom:15px;
 }
+.upfront-wrapper {
+	float: left;
+	position: relative;
+}
+.show-debug .upfront-wrapper {
+	/*background: rgba(0,0,0,.04);
+	outline: 1px dashed #aaa;*/
+}
 .upfront-module {
 	position: relative;
 	z-index: 1;
 }
 .show-debug .upfront-module {
-	border: 1px solid #b3da11;
-	background: rgba(242, 255, 186, 0.4);
+	/*border: 1px solid #b3da11;*/
+	background: rgba(44, 62, 80, 0.3)
 }
 .upfront-module:hover {
 	outline: 1px dotted #7f7f7f;
@@ -1578,8 +1604,8 @@ a.ueditor-action-pickercancel{
 	/*z-index: 10;*/
 }
 .show-debug .upfront-object {
-	border: 1px solid #bada55;
-	background: rgba(255, 255, 255, 0.4);
+	/*border: 1px solid #bada55;
+	background: rgba(255, 255, 255, 0.4);*/
 }
 .upfront-drag-handle {
 	position: absolute;
@@ -1634,6 +1660,49 @@ a.ueditor-action-pickercancel{
 }
 .upfront-region-bg-map {
 	position: absolute !important;
+}
+.upfront-region-edit-trigger {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 30px;
+	cursor: pointer;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition: opacity 0.6s;
+}
+.upfront-region-container:hover .upfront-region-edit-trigger {
+	visibility: visible;
+	opacity: 1;
+}
+.upfront-region-editing .upfront-region-container .upfront-region-edit-trigger {
+	visibility: hidden;
+	opacity: 0;
+}
+.upfront-region-finish-edit {
+	position: absolute;
+	bottom: 3px;
+	right: 0;
+	color: #fdfdfd;
+	font-size: 17px;
+	line-height: 24px;
+	background: #1fcd8f;
+	-moz-box-shadow: 0 1px 0 #162433;
+	-webkit-box-shadow: 0 1px 0 #162433;
+	box-shadow: 0 1px 0 #162433;
+	padding: 14px 22px 12px;
+	z-index: 1999999;
+	cursor: pointer;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition: opacity 0.6s;
+}
+.upfront-region-finish-edit .upfront-field-icon {
+	margin: 0 7px 0 0;
+}
+.upfront-region-editing .upfront-region-container-active .upfront-region-finish-edit {
+	visibility: visible;
+	opacity: 1;
 }
 .upfront-region-title {
 	position: absolute;
@@ -1794,9 +1863,9 @@ a.ueditor-action-pickercancel{
 }
 .upfront-inline-panel {
 	position: absolute;
-	margin: auto;
 	width: 40px;
 	height: 40px;
+	margin: auto;
 	visibility: hidden;
 	opacity: 0;
 	-webkit-transition: visibility 0s linear 0.6s, -webkit-transform 0.6s, opacity 0.6s;
@@ -1882,11 +1951,11 @@ a.ueditor-action-pickercancel{
 .upfront-inline-panel-size-9 {
 	width: 360px;
 }
-.expand-lock-active {
-	color: #ff7676;
+.auto-resize-off {
+	color: #c81111;
 }
-.expand-lock-inactive {
-	color: #21d998;
+.auto-resize-on {
+	color: #26c090;
 }
 .upfront-inline-panel-item {
 	width: 40px;
@@ -1989,15 +2058,18 @@ a.ueditor-action-pickercancel{
 	z-index: 999999;
 }
 .upfront-inline-modal {
-	background: rgba(39, 59, 77, 0.55);
+	/*background: rgba(39, 59, 77, 0.55);*/
 }
 .upfront-inline-modal-wrap {
 	top: 60px;
 	bottom: auto;
 	margin: auto;
 	width: 50%;
-	background: #e5f3fd;
-	border-bottom: 1px solid rgba(27,45,63,.5);
+	border: 1px solid #fff;
+	background: #e5f3ff;
+	-moz-box-shadow: 0 0 20px rgba(39,58,76,.8);
+	-webkit-box-shadow: 0 0 20px rgba(39,58,76,.8);
+	box-shadow: 0 0 20px rgba(39,58,76,.8);
 	position: relative;
 }
 .upfront-region-side-right .upfront-inline-modal-wrap {
@@ -2016,7 +2088,7 @@ a.ueditor-action-pickercancel{
 .upfront-inline-modal-save,
 .upfront-inline-modal-save:hover {
 	position: absolute;
-	top: 100%;
+	bottom: -35px;
 	right: 0;
 	color: #f1f8ff;
 	font-size: 18px;
@@ -2042,24 +2114,75 @@ a.ueditor-action-pickercancel{
 	width: 120px;
 	margin: 0 auto;
 }
-.upfront-region-modal-image .upfront-inline-modal-wrap {
-	width: 340px;
+.upfront-region-modal-bg .upfront-inline-modal-wrap {
+	width: 384px;
 }
-.upfront-region-modal-image .upfront-field-wrap-radios {
-	text-align: center;
+.upfront-region-bg-setting-type {
+	border-bottom: 1px solid #96b9d8;
+	margin: 0 -12px;
+	padding: 0 12px;
+}
+.upfront-region-bg-setting-type .upfront-field-multiple-selected {
+	position: relative;
+}
+.upfront-region-bg-setting-type .upfront-field-multiple-selected:after {
+	content: ' ';
+	position: absolute;
+	bottom: -15px;
+	left: 50%;
+	margin-left: -3px;
+	width: 0;
+	height: 0;
+	display: block;
+	border-bottom: 3px solid #96b9d8;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+}
+.upfront-region-bg-setting-tab {
+	padding: 10px 0;
+}
+.upfront-region-bg-setting-tab .sp-replacer {
+	float: none;
+	width: auto;
+}
+.upfront-region-bg-setting-footer {
+	color: #1f2f3f;
+	font-family: "Verdana";
+	font-size: 11px;
+	padding: 10px 24px;
+	background: #cee1f2;
 	margin: 0 -24px;
+	position: relative;
+	top: 24px;
+	clear: both;
 }
-.upfront-region-modal-image .upfront-field-multiple-vertical {
-	width: 96px;
-	max-width: 96px;
-	margin: 0 5px 10px;
+.upfront-region-bg-setting-auto-resize,
+.upfront-region-bg-setting-change-image {
+	cursor: pointer;
+	float: left;
+	white-space: nowrap;
+}
+.upfront-region-bg-setting-change-image {
+	float: right;
+}
+.upfront-region-bg-setting-label {
+	color: #2f475d;
+	font-family: "Verdana";
+	font-size: 11px;
+}
+.upfront-region-bg-image-style {
+	float: left;
+}
+.upfront-region-bg-image-tile {
+	clear: both;
+	padding: 5px 0 0;
 }
 .upfront-region-bg-image-fixed {
-	padding: 12px 0 0;
+	float: right;
+	width: 36%;
+	margin: 0 12px 0 0;
 }
 .upfront-region-bg-image-fixed-pos {
-	float: left;
-	width: 41%;
 	position: relative;
 }
 .upfront-region-bg-image-fixed-pos-num {
@@ -2073,16 +2196,6 @@ a.ueditor-action-pickercancel{
 	display: none;
 }
 .upfront-region-bg-image-fixed-color {
-	float: right;
-	width: 41%;
-}
-.upfront-region-bg-image-label {
-	color: #2f475d;
-	font-family: "Verdana";
-	font-size: 11px;
-}
-.upfront-region-modal-map .upfront-inline-modal-wrap {
-	min-width: 420px;
 }
 .upfront-region-bg-map-location .upfront-field-wrap {
 	float: left;
@@ -2106,9 +2219,6 @@ a.ueditor-action-pickercancel{
 .upfront-region-bg-map-style-control .upfront-field-wrap:last-child {
 	width: 40%;
 	float: right;
-}
-.upfront-region-modal-slider .upfront-inline-modal-wrap {
-	min-width: 420px;
 }
 .upfront-region-bg-slider-rotate .upfront-field-wrap {
 	display: inline-block;
@@ -2148,9 +2258,10 @@ a.ueditor-action-pickercancel{
 	margin: 0 0 15px;
 	cursor: pointer;
 }
-.upfront-region-bg-slider-add-image:before {
-	display: inline-block;
-	float: none;
+.upfront-region-bg-slider-add-image.upfront-icon:before {
+	float: none !important;
+	display: block;
+	margin: 0 auto;
 }
 .upfront-region-bg-slider-image img {
 	width: 100%;
@@ -2285,14 +2396,6 @@ a.ueditor-action-pickercancel{
 
 .upfront-resize {
 	background: rgba(0,0,0,.1);
-}
-.upfront-wrapper {
-	float: left;
-	position: relative;
-}
-.show-debug .upfront-wrapper {
-	background: rgba(0,0,0,.04);
-	outline: 1px dashed #aaa;
 }
 
 .upfront-drop {
@@ -2562,7 +2665,7 @@ a.ueditor-action-pickercancel{
 	text-overflow: ellipsis;
 	font-family: 'Source Sans Pro';
 }
-.upfront-region-modal-slider .upfront-settings-item-title,
+.upfront-region-modal-bg .upfront-settings-item-title,
 .upfront-global-social-settings .upfront-settings-item-title
 {
     background-color: #e5f3fe;
@@ -2794,6 +2897,9 @@ a.ueditor-action-pickercancel{
 .upfront-icon-region-map-active:before {
 	background-position: -412px -578px;
 }
+.upfront-icon-region-bg-setting:before {
+	background-position: -819px -71px; /* @TODO need bigger icon? */
+}
 .upfront-icon-region-expand-unlock:before {
 	background-position: -40px -612px;
 }
@@ -2841,6 +2947,11 @@ a.ueditor-action-pickercancel{
 }
 .upfront-icon-region-add-slide:before {
 	background-position: -164px -712px;
+}
+.upfront-icon-region-edit:before {
+	background-position: -412px -712px;
+	width: 31px;
+	height: 61px;
 }
 .upfront-icon-popup-close:before {
 	width: 17px;
@@ -3105,6 +3216,9 @@ a.ueditor-action-pickercancel{
 	width: 22px;
 	height: 22px;
 }
+.upfront-field-icon-tick:before {
+	background-position: -808px -200px;
+}
 .upfront-field-icon-image-caption-below:before {
 	background-position: -700px -40px;
 }
@@ -3250,17 +3364,53 @@ a.ueditor-action-pickercancel{
 	background-position: -1908px -136px;
 }
 
+.upfront-region-field-icon-color:before {
+	background-position: -40px -544px;
+}
+.upfront-region-field-icon-color:hover:before,
+.upfront-region-field-icon-color-active:before {
+	background-position: -164px -544px;
+}
+.upfront-region-field-icon-image:before {
+	background-position: -288px -544px;
+}
+.upfront-region-field-icon-image:hover:before,
+.upfront-region-field-icon-image-active:before {
+	background-position: -412px -544px;
+}
+.upfront-region-field-icon-slider:before {
+	background-position: -40px -578px;
+}
+.upfront-region-field-icon-slider:hover:before,
+.upfront-region-field-icon-slider-active:before {
+	background-position: -164px -578px;
+}
+.upfront-region-field-icon-map:before {
+	background-position: -288px -578px;
+}
+.upfront-region-field-icon-map:hover:before,
+.upfront-region-field-icon-map-active:before {
+	background-position: -412px -578px;
+}
+.upfront-region-field-icon-expand-unlock:before {
+	/*background-position: -40px -612px;*/
+	background-position: -164px -612px;
+}
+.upfront-region-field-icon-expand-lock:before {
+	/*background-position: -288px -612px;*/
+	background-position: -412px -612px;
+}
 .upfront-region-field-icon-bg-image-full:before {
 	background-position: -40px -780px;
-	width: 28px;
 }
 .upfront-region-field-icon-bg-image-tile:before {
 	background-position: -164px -780px;
-	width: 28px;
 }
 .upfront-region-field-icon-bg-image-fixed:before {
 	background-position: -288px -780px;
-	width: 28px;
+}
+.upfront-region-field-icon-bg-image-change:before {
+	background-position: -412px -780px;
 }
 .upfront-region-field-icon-bg-slider-slide-down:before {
 	background-position: -40px -678px;
