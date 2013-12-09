@@ -152,3 +152,41 @@ border-width: 11px;
 	height: auto;
 	width: auto;
 }
+
+/* initial experience layout */
+
+#upfront_map-location_overlay-wrapper, #upfront_map-location_overlay {
+	background:rgb(227, 227, 220);
+	color:#fff;
+	margin: auto;
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0;
+	text-align:center;
+	font-size:24px;
+	line-height: 80%;
+	font-weight: 300;
+}
+
+#upfront_map-location_overlay {
+	height: 160px;
+	padding:15px;
+}
+#upfront_map-location_overlay-location {
+	background:rgb(201,201,195);
+	font-size: 0.7em;
+	width:80%;
+}
+#upfront_map-location_overlay-use_location {
+	width:20%;
+	background: transparent;
+}
+
+#upfront_map-location_overlay-location , #upfront_map-location_overlay-use_location {
+	display: inline-block;
+	margin:0;
+}
+
+
+#upfront_map-location_overlay-address {
+
+}

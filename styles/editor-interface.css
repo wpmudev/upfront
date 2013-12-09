@@ -3427,6 +3427,12 @@ a.ueditor-action-pickercancel{
 	background-position: -40px -712px;
 }
 
+/* maps default layout */
+
+.upfront-icon-map-refresh:before {
+	content: ' ';
+	background-position: -480px -40px;
+}
 
 /* ContentEditor sidebar */
 
