@@ -8,7 +8,7 @@ function init () {
 		OPTIMUM_MAP_HEIGHT: 300,
 		center: [10.722250, 106.730762],
 		zoom: 10,
-		style: 'HYBRID',
+		style: 'ROADMAP',
 		controls: {
 			pan: false,
 			zoom: false,
@@ -185,6 +185,9 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});
 				}
+				if (!this.model.get_property_value_by_name("map_center")) {
+					this.add_location_overlay();
+				}
 				// Re-render the map when needed
 				setTimeout(function () {
 					var center = me.map.getCenter();
@@ -196,6 +199,57 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			} else {
 				$el.text("Please, check your internet connectivity");
 			}
+		},
+
+		add_location_overlay: function () {
+			var me = this,
+				$location = this.$el.find("#upfront_map-location_overlay-wrapper")
+			;
+			if (!$location.length) {
+				this.$el.append(
+					'<div id="upfront_map-location_overlay-wrapper">' +
+						'<div id="upfront_map-location_overlay">' +
+							'<input type="text" id="upfront_map-location_overlay-location" placeholder="" />' +
+							'<button type="button" id="upfront_map-location_overlay-use_location">Set location</button>' +
+							'<button type="button" id="upfront_map-location_overlay-use_current">Use my current location</button>' +
+						'</div>' +
+					'</div>'
+				);
+				$location = this.$el.find("#upfront_map-location_overlay-wrapper");
+			}
+			$location
+				.off("click").on("click", "#upfront_map-location_overlay-use_location", function () {
+					var $address = me.$el.find("#upfront_map-location_overlay-wrapper #upfront_map-location_overlay-location"),
+						geocoder = new google.maps.Geocoder(),
+						element_id = me.model.get_property_value_by_name("element_id"),
+						add = $address.length ? $address.val() : ''
+					;
+					if (!add) return false;
+
+					geocoder.geocode({address: add}, function (results, status) {
+						if (status != google.maps.GeocoderStatus.OK) return false;
+						var pos = results[0].geometry.location;
+
+						var markers = me.model.get_property_value_by_name("markers") || [];
+						markers.push({lat:pos.lat(), lng:pos.lng()});
+						me.model.set_property("markers", markers, true);
+
+						me.model.set_property("map_center", [pos.lat(), pos.lng()], false);
+
+						$(document).data(element_id + "-location", location);
+					});
+				}).end()
+				.off("click").on("click", "#upfront_map-location_overlay-use_current", function () {
+					if (!(navigator && navigator.geolocation)) return false;
+					var markers = me.model.get_property_value_by_name("markers") || [];
+					navigator.geolocation.getCurrentPosition(function(position) {
+						markers.push({lat:position.coords.latitude, lng:position.coords.longitude});
+						me.model.set_property("markers", markers, true);
+						me.model.set_property("map_center", [position.coords.latitude, position.coords.longitude], false);
+					});
+				}).end()
+			;
+			this.$el.find(".upfront-entity_meta").hide();
 		},
 
 		get_content_markup: function () {

@@ -40,7 +40,7 @@ class Upfront_MapView extends Upfront_Object{
             'controls' => array(),
             'map_center' => array(10.72250, 106.730762),
             'zoom' => 10,
-            'style' => 'HYBRID',
+            'style' => 'ROADMAP',
             'styles' => false
         );
     }
