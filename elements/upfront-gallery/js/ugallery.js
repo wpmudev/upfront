@@ -221,8 +221,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				},
 				beforeClose: function() {
 					console.log('Magnific closed');
-					if(editor)
-						image.set('caption', editor.getContents());
+					if(editor){
+						var caption = image.get('caption'),
+							newCaption = editor.getContents()
+						;
+						if(caption != newCaption){
+							image.set('caption', newCaption);
+							Upfront.Views.Editor.notify("Image caption has been successfully updated.");
+						}
+					}
 				}
 			}
 		});
