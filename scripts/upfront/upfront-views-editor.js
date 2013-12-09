@@ -2058,9 +2058,9 @@ define(_template_files, function () {
 	var Field = Backbone.View.extend({
 		className: 'upfront-field-wrap',
 		initialize: function () {
-			this.multiple = this.options.multiple ? this.options.multiple : (this.multiple ? this.multiple : false);
-			this.label = this.options.label ? this.options.label : '';
-			this.default_value = this.options.default_value ? this.options.default_value : (this.multiple ? [] : '');
+			this.multiple = typeof this.options.multiple != 'undefined' ? this.options.multiple : (typeof this.multiple != 'undefined' ? this.multiple : false);
+			this.label = typeof this.options.label != 'undefined' ? this.options.label : '';
+			this.default_value = typeof this.options.default_value != 'undefined' ? this.options.default_value : (this.multiple ? [] : '');
 			if ( this.options.property ){
 				this.property = this.model.get_property_by_name(this.options.property);
 				if ( this.property === false ){
@@ -3639,7 +3639,6 @@ var Field_Anchor = Field_Select.extend({
 				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid),
 				$content;
 			this.modal_deferred = $.Deferred();
-			panels_view.hide_gradient();
 			if ( $modal.length ) {
 				$content = $modal.find('.upfront-inline-modal-content');
 				$modal.show();
@@ -3665,6 +3664,9 @@ var Field_Anchor = Field_Select.extend({
 						me.close_modal(true);
 					});
 				}
+				Upfront.Events.on("entity:region:deactivated", function(){
+					this.close_modal(false);
+				}, this);
 			}
 			this.update_modal_pos();
 			$(window).on('scroll', this, this.on_scroll);
@@ -3675,7 +3677,6 @@ var Field_Anchor = Field_Select.extend({
 			var panels_view = this.panel_view.panels_view,
 				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid);
 			$modal.hide();
-			panels_view.show_gradient();
 			$(window).off('scroll', this.on_scroll);
 			this.trigger('modal:close');
 			if ( save )
@@ -3728,7 +3729,7 @@ var Field_Anchor = Field_Select.extend({
 		},
 		initialize: function () {
 			this.sub_items = {};
-			Upfront.Events.on('region:activated', this.on_region_change, this);
+			Upfront.Events.on('entity:region:activated', this.on_region_change, this);
 		},
 		get_selected_item: function () {
 			
@@ -3813,7 +3814,7 @@ var Field_Anchor = Field_Select.extend({
 				if ( this.model.get_property_value_by_name('background_image') )
 					this.model.set_property('background_type', 'image');
 			}
-			this.open_modal(this.render_modal, true).always(this.on_close_modal);
+			this.open_modal(this.render_modal, true).always(this.on_close_modal).fail(this.notify);
 		},
 		render_modal: function ($content, $modal) {
 			var me = this,
@@ -3859,6 +3860,9 @@ var Field_Anchor = Field_Select.extend({
 		},
 		on_close_modal: function () {
 			$('.upfront-region-finish-edit').show(); // show finish edit button
+		},
+		notify: function () {
+			Upfront.Views.Editor.notify("Background settings have been updated");
 		},
 		render_modal_tab: function (tab, $tab, $content) {
 			var $change_image = $content.find('.upfront-region-bg-setting-change-image');
@@ -4150,9 +4154,12 @@ var Field_Anchor = Field_Select.extend({
 						model: this.model,
 						property: 'background_slider_rotate',
 						layout: 'horizontal-inline',
-						default_value: ['rotate'],
-						values: [ { label: "Rotate automatically every ", value: 'rotate' } ],
-						change: set_value
+						multiple: false,
+						values: [ { label: "Rotate automatically every ", value: true } ],
+						change: function () {
+							var value = this.get_value();
+							this.property.set({value: value ? true : false});
+						}
 					}),
 					rotate_time: new Field_Number({
 						model: this.model,
@@ -4695,13 +4702,13 @@ var Field_Anchor = Field_Select.extend({
 				name = this.model.get('name');
 			this.listenTo(this.model.collection, 'add', this.render);
 			this.listenTo(this.model.collection, 'remove', this.render);
-			Upfront.Events.on("region:activated", this.on_region_active, this);
+			Upfront.Events.on("entity:region:activated", this.on_region_active, this);
 			Upfront.Events.on("command:region:edit_toggle", this.update_pos, this);
 			$(window).on('scroll', this, this.on_scroll);
 			this.edit_panel = new RegionPanel_Edit({model: this.model});
 			this.delete_panel = new RegionPanel_Delete({model: this.model});
 			this.add_panel_bottom = new RegionPanel_Add({model: this.model, to: 'bottom'});
-			if ( !container || container == name ){
+			if ( ( !container || container == name ) && this.model.get('allow_sidebar') ){
 				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
 				this.add_panel_right = new RegionPanel_Add({model: this.model, to: 'right'})
 			}
@@ -4721,15 +4728,17 @@ var Field_Anchor = Field_Select.extend({
 					prev_model = index > 0 ? collection.at(index-1) : false,
 					next_model = index < total-1 ? collection.at(index+1) : false,
 					has_sidebar = false;
-				if ( prev_model === false || prev_model.get('container') != container )
-					panels.push( this.add_panel_left );
-				else
-					has_sidebar = true;
-				if ( next_model === false || next_model.get('container') != container )
-					panels.push( this.add_panel_right );
-				else
-					has_sidebar = true;
-				if ( ! has_sidebar && ! this.model.get('default') )
+				if ( this.model.get('allow_sidebar') ){
+					if ( prev_model === false || prev_model.get('container') != container )
+						panels.push( this.add_panel_left );
+					else
+						has_sidebar = true;
+					if ( next_model === false || next_model.get('container') != container )
+						panels.push( this.add_panel_right );
+					else
+						has_sidebar = true;
+				}
+				if ( ! has_sidebar && ! this.model.get('default') && this.model.get('scope') != 'global' )
 					panels.push( this.delete_panel );
 			}
 			else {
@@ -4765,7 +4774,7 @@ var Field_Anchor = Field_Select.extend({
 			});*/
 			this._panels.each(function (panel) {
 				var panel_offset = panel.$el.offset();
-				if ( panel.position_v == 'top' && scroll_top > top-rel_top ){
+				if ( panel.position_v == 'top' && scroll_top > top-rel_top && scroll_top < bottom-rel_top ){
 					if ( panel.$el.css('position') != 'fixed' )
 						panel.$el.css({
 							position: 'fixed',
@@ -4774,7 +4783,7 @@ var Field_Anchor = Field_Select.extend({
 							right: 'auto'
 						});
 				}
-				else if ( panel.position_v == 'bottom' && bottom > scroll_bottom ){
+				else if ( panel.position_v == 'bottom' && bottom > scroll_bottom && top < scroll_bottom ){
 					if ( panel.$el.css('position') != 'fixed' )
 						panel.$el.css({
 							position: 'fixed',
@@ -4812,14 +4821,6 @@ var Field_Anchor = Field_Select.extend({
 					});
 				}
 			});
-		},
-		hide_gradient: function () {
-			var $region = this.$el.closest('.upfront-region');
-			$region.addClass('upfront-region-no-gradient');
-		},
-		show_gradient: function () {
-			var $region = this.$el.closest('.upfront-region');
-			$region.removeClass('upfront-region-no-gradient');
 		}
 	});
 

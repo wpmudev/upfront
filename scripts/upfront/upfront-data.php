@@ -36,7 +36,7 @@ $upfront_data['ueditor'] = array(
 	),
 	'authors' => $this->get_authors() //$this references to Upfront_JavascriptMain
 );
-
+$upfront_data['region_default_args'] = upfront_get_region_default_args();
 
 ?>
 

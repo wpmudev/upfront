@@ -16,6 +16,13 @@ function upfront_region_supported ($region) {
 	return Upfront_Theme::get_instance()->has_region_support($region);
 }
 
+function upfront_set_region_default_args ($args) {
+	return Upfront_Theme::get_instance()->set_region_default_args($args);
+}
+
+function upfront_get_region_default_args () {
+	return Upfront_Theme::get_instance()->get_region_default_args();
+}
 
 function upfront_add_region ($args) {
 	return Upfront_Theme::get_instance()->add_region($args);

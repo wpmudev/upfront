@@ -6,6 +6,19 @@ class Upfront_Theme {
 	protected $supported_regions = array();
 	protected $regions = array();
 	protected $template_dir = 'templates';
+	protected $region_default_args = array(
+		'name' => "", 
+		'title' => "", 
+		'properties' => array(), 
+		'modules' => array(), 
+		'wrappers' => array(), 
+		'scope' => "local", // scope of region, accept local or global
+		'container' => "",
+		'default' => false, // default region can't deleted by user, accept true or false 
+		'position' => 10,
+		'allow_sidebar' => false, // allow sidebar region? accept true or false
+		'clip' => false // clip to grid or 100% width, accept true or false
+	);
 	
 	public static function get_instance () {
 		if ( ! is_a(self::$instance, __CLASS__) )
@@ -31,19 +44,17 @@ class Upfront_Theme {
 		return false;
 	}
 	
+	public function set_region_default_args ($args) {
+		$this->region_default_args = wp_parse_args($args, $this->region_default_args);
+		return true;
+	}
+	
+	public function get_region_default_args () {
+		return $this->region_default_args;
+	}
+	
 	public function add_region ($args) {
-		$defaults = array(
-			'name' => "", 
-			'title' => "", 
-			'properties' => array(), 
-			'modules' => array(), 
-			'wrappers' => array(), 
-			'scope' => "local", 
-			'container' => "",
-			'default' => false,
-			'position' => 10
-		);
-		$args = wp_parse_args($args, $defaults);
+		$args = wp_parse_args($args, $this->region_default_args);
 		if ( ! empty($args['name']) && ! $this->has_region($args['name']) )
 			$this->regions[] = $args;
 	}
@@ -138,9 +149,6 @@ class Upfront_Theme {
 	}
 }
 
-// @TODO API to get module/object
-// @TODO API to create module/object
-
 class Upfront_Virtual_Region {
 	
 	protected $data = array();
@@ -155,9 +163,9 @@ class Upfront_Virtual_Region {
 	
 	public function __construct ($properties = array()) {
 		$this->data = array(
-			'properties' => array(),
-			'wrappers' => array(),
-			'modules' => array()
+			'properties' => array(), 
+			'modules' => array(), 
+			'wrappers' => array()
 		);
 		foreach ( $properties as $prop => $value ){
 			$this->set_property($prop, $value);

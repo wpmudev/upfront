@@ -108,7 +108,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		Upfront.Events.on("entity:settings:activate", this.closeTooltip);
 		Upfront.Events.on("entity:activated", this.closeTooltip);
 		Upfront.Events.on("entity:deactivated", this.closeTooltip);		
-		Upfront.Events.on("region:activated", this.closeTooltip);
+		Upfront.Events.on("entity:region:activated", this.closeTooltip);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 

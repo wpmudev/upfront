@@ -729,7 +729,8 @@ define(_template_files, function () {
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
 				this.sub_model = [];
 				this.available_col = grid.size;
-				Upfront.Events.on("region:activated", this.update_pos, this);
+				Upfront.Events.on("entity:region:activated", this.update_pos, this);
+				Upfront.Events.on("entity:region:deactivated", this.close_edit, this);
 				$(window).on('scroll', this, this.on_scroll);
 				Upfront.Events.on("layout:render", this.fix_height, this);
 				Upfront.Events.on("entity:resize_stop", this.fix_height, this);
@@ -739,12 +740,15 @@ define(_template_files, function () {
 				Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
 				Upfront.Events.on("entity:region:added", this.fix_height, this);
 				Upfront.Events.on("entity:region:removed", this.fix_height, this);
+				Upfront.Events.on("entity:region:removed", this.close_edit, this);
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates["region_container"], this.model.toJSON());
+				var template = _.template(_Upfront_Templates["region_container"], this.model.toJSON()),
+					$edit = $('<div class="upfront-region-edit-trigger tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$layout = this.$el.find('.upfront-grid-layout');
+				$edit.appendTo( this.model.get('clip') ? this.$layout : this.$el );
 				this.update();
 				Upfront.Events.trigger("entity:region_container:after_render", this, this.model);
 			},
@@ -752,13 +756,14 @@ define(_template_files, function () {
 				var expand_lock = this.model.get_property_value_by_name('expand_lock');
 				this.update_background();
 			},
-			trigger_edit: function () {
+			trigger_edit: function (e) {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-region-editing');
 				Upfront.Events.trigger("command:region:edit_toggle", true);
 				this.trigger("activate_region", this);
 				Upfront.Events.on("command:newpage:start", this.close_edit, this);
 				Upfront.Events.on("command:newpost:start", this.close_edit, this);
+				e.stopPropagation();
 			},
 			close_edit: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
@@ -816,7 +821,7 @@ define(_template_files, function () {
 					rel_top = $main.offset().top,
 					$trig = this.$el.find('.upfront-region-edit-trigger'),
 					trig_offset = $trig.offset();
-				if ( scroll_top > top-rel_top ) {
+				if ( scroll_top > top-rel_top && scroll_top < bottom-rel_top ) {
 					if ( $trig.css('position') != 'fixed' )
 						$trig.css({
 							position: 'fixed',
@@ -836,7 +841,7 @@ define(_template_files, function () {
 				if ( $main.hasClass('upfront-region-editing') && this.$el.hasClass('upfront-region-container-active') ){
 					var $fin = this.$el.find('.upfront-region-finish-edit'),
 						fin_offset = $fin.offset();
-					if ( bottom > scroll_bottom ){
+					if ( bottom > scroll_bottom && top < scroll_bottom ){
 						if ( $fin.css('position') != 'fixed' )
 							$fin.css({
 								position: 'fixed',
@@ -859,8 +864,9 @@ define(_template_files, function () {
 
 		Region = _Upfront_SingularEditor.extend({
 			events: {
-				//"mouseup": "on_click", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
-				"mouseover": "on_mouse_over"
+				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
+				//"mouseover": "on_mouse_over"
+				"click": "on_click"
 			},
 			attributes: function(){
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -873,8 +879,6 @@ define(_template_files, function () {
 				classes.push(grid.class + this.col);
 				if ( this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-active');
-					if ( this.$el.hasClass('upfront-region-no-gradient') )
-						classes.push('upfront-region-no-gradient');
 				}
 				return {
 					"class": classes.join(' ')
@@ -883,7 +887,7 @@ define(_template_files, function () {
 			init: function () {
 				var container = this.model.get("container"),
 					name = this.model.get("name");
-				this.dispatcher.on("plural:propagate_activation", this.on_click, this);
+				this.dispatcher.on("plural:propagate_activation", this.on_mouse_up, this);
 				// this.model.get("properties").bind("change", this.update, this);
 				// this.model.get("properties").bind("add", this.update, this);
 				// this.model.get("properties").bind("remove", this.update, this);
@@ -904,7 +908,11 @@ define(_template_files, function () {
 					Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
 				}
 			},
-			on_click: function () {
+			on_click: function (e) {
+				if ( this.$el.hasClass('upfront-region-active') )
+					e.stopPropagation();
+			},
+			on_mouse_up: function () {
 				this.trigger("activate_region", this);
 			},
 			on_mouse_over: function () {
@@ -980,6 +988,7 @@ define(_template_files, function () {
 				Upfront.Events.on('command:region:edit_toggle', this.on_edit_toggle, this);
 				Upfront.Events.on('entity:region:resize_start', this.pause_edit, this);
 				Upfront.Events.on('entity:region:resize_stop', this.resume_edit, this);
+				Upfront.Events.on("entity:region:deactivated", this.deactivate_region, this);
 			},
 			render: function () {
 				this.$el.html('');
@@ -1062,8 +1071,15 @@ define(_template_files, function () {
 						$('.upfront-region-container-active').removeClass('upfront-region-container-active');
 						container.$el.addClass('upfront-region-container-active');
 					}
-					Upfront.Events.trigger("region:activated", region);
+					Upfront.Events.trigger("entity:region:activated", region);
 				}
+			},
+			deactivate_region: function () {
+				if ( ! this.allow_edit || ! this.model.active_region )
+					return;
+				$('.upfront-region-active').removeClass('upfront-region-active');
+				$('.upfront-region-container-active').removeClass('upfront-region-container-active');
+				this.model.active_region = null;
 			},
 			activate_region_container: function (container) {
 				var region_view = Upfront.data.region_views[container.model.cid];
@@ -1176,6 +1192,8 @@ define(_template_files, function () {
 					Upfront.data.currentEntity = false;
 				}
 				Upfront.Events.trigger("entity:deactivated");
+				// Close region editing on click anywhere
+				Upfront.Events.trigger("entity:region:deactivated");
 			}
 		})
 	;

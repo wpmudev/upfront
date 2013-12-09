@@ -1148,7 +1148,7 @@ var GridEditor = {
 			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
-			delay: 100,
+			delay: 300,
 			appendTo: $main,
 			start: function(e, ui){
 				$main.addClass('upfront-dragging');

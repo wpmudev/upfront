@@ -52,7 +52,7 @@ class Upfront_Grid {
 			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
-				$container = isset($region['container']) ? $region['container'] : $region['name'];
+				$container = !empty($region['container']) ? $region['container'] : $region['name'];
 				$region_col = upfront_get_property_value('col', $region);
 				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions'], $point->get_columns());
 				$region_row = upfront_get_property_value('row', $region);
