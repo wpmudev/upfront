@@ -1787,6 +1787,8 @@ var ImageSelector = Backbone.View.extend({
 
 		this.openSelector();
 
+    Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
+
 		return this.deferred.promise();
 	},
 
@@ -1882,6 +1884,7 @@ var ImageSelector = Backbone.View.extend({
 	cancelOverlay: function(e) {
 		if(e.target == e.currentTarget)
 			this.closeOverlay(e);
+    Upfront.Events.trigger('upfront:element:edit:stop');
 	},
 	closeOverlay: function(e){
 		var me = this;

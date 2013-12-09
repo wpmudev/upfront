@@ -987,7 +987,20 @@ define(_template_files, function () {
 			this.fetch_current_user();
 
 			//Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
+      Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
+      Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
 		},
+    preventUsage: function(type) {
+      var tooltipText = 'Not available when<br>editing text.';
+      if (type === 'media-upload') {
+        tooltipText = 'Not available when<br>uploading media.';
+      }
+      $('#preventUsageOverlay span').html(tooltipText);
+      $('#preventUsageOverlay').show();
+    },
+    allowUsage: function() {
+      $('#preventUsageOverlay').hide();
+    },
 		render: function () {
 			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
 			output.append('<div class="upfront-logo" />');
@@ -1007,6 +1020,7 @@ define(_template_files, function () {
 			// Control
 			this.sidebar_commands.control.render();
 			output.append(this.sidebar_commands.control.el);
+      output.append('<div id="preventUsageOverlay"><span></span></div>');
 
 			this.$el.html(output);
 
