@@ -143,6 +143,9 @@ define(_template_files, function () {
 				Upfront.Events.trigger("entity:background:update", this, this.model);
 			},
 			update_background_map: function ($type, $overlay) {
+				try {
+					window.google.maps.Map;
+				} catch (e) { return false; }
 				var center = this.model.get_property_value_by_name('background_map_center'),
 					zoom = this.model.get_property_value_by_name('background_map_zoom'),
 					style = this.model.get_property_value_by_name('background_map_style'),

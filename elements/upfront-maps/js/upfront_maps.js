@@ -9,6 +9,7 @@ try {
 }
 
 function init () {
+	$(document).trigger("upfront-google_maps-loaded");
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
 		center: [10.722250, 106.730762],

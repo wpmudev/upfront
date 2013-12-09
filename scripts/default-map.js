@@ -1,6 +1,5 @@
 jQuery(document).ready(function($){
 	
-	
 	function init_map ($el) {
 		var data = JSON.parse($el.attr('data-bg-map')),
 			options = {
