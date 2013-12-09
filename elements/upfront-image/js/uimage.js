@@ -2040,10 +2040,12 @@ var ImageSelector = Backbone.View.extend({
 			e.preventDefault();
 
 		var me = this,
-			progress = $('#upfront-progress')
+			progress = $('#upfront-progress'),
+			fileInput = $('#upfront-image-file-input'),
+			form = $('#upfront-upload-image')
 		;
 
-		$('#upfront-upload-image').ajaxSubmit({
+		form.ajaxSubmit({
 			beforeSend: function() {
 				progress.css('width', '0');
 			},
@@ -2066,10 +2068,12 @@ var ImageSelector = Backbone.View.extend({
 						me.openSelector();
 					})
 				;
+				form[0].reset();
 			},
 			error: function(response){
 				Upfront.Views.Editor.notify(response.responseJSON.error, 'error');
 				me.openSelector();
+				form[0].reset();
 			},
 			dataType: 'json'
 		});
