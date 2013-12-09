@@ -67,6 +67,7 @@ function init_map ($el) {
 
 
 function load_google_maps () {
+	if ($(document).data("upfront-auto_start")) return false;
 	if (typeof google === 'object' && typeof google.maps === 'object') return upfront_maps_public_init();
 	var protocol = '',
 		script = document.createElement("script")

@@ -77,7 +77,7 @@ function upfront_boot_editor_trigger () {
 	if (defined("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED")) return false;
 	define("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED", true, true);
 	return '<script>' .
-		'(function ($) { $(document).on("upfront-load", function () { Upfront.Application.start(); }); })(jQuery);' .
+		'(function ($) { $(document).data("upfront-auto_start", true); $(document).on("upfront-load", function () { Upfront.Application.start(); }); })(jQuery);' .
 	'</script>';
 }
 
