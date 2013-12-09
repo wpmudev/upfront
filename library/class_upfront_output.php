@@ -377,13 +377,15 @@ class Upfront_Region_Container extends Upfront_Container {
 	
 	public function get_css_inline () {
 		$css = '';
-		$css .= $this->_get_background_css();
+		if ( ! $this->_data['clip'] )
+			$css .= $this->_get_background_css();
 		return $css;
 	}
 	
 	public function get_attr () {
 		$attr = '';
-		$attr .= $this->_get_background_attr();
+		if ( ! $this->_data['clip'] )
+			$attr .= $this->_get_background_attr();
 		return $attr;
 	}
 }
@@ -400,14 +402,14 @@ class Upfront_Region extends Upfront_Container {
 	
 	public function get_css_inline () {
 		$css = '';
-		if ( $this->get_container() != $this->get_name() )
+		if ( $this->_data['clip'] || ( $this->get_container() != $this->get_name() ) )
 			$css .= $this->_get_background_css();
 		return $css;
 	}
 	
 	public function get_attr () {
 		$attr = '';
-		if ( $this->get_container() != $this->get_name() )
+		if ( $this->_data['clip'] || ( $this->get_container() != $this->get_name() ) )
 			$attr .= $this->_get_background_attr();
 		return $attr;
 	}
