@@ -30,10 +30,13 @@ jQuery(document).ready(function($){
 	}
 	
 	window.upfront_bg_map_init = function () {
+		$(document).trigger("upfront-google_maps-loaded");
+	};
+	$(document).on("upfront-google_maps-loaded", function () {
 		$("[data-bg-map]").each(function () {
 			init_map($(this));
-		})
-	};
+		});
+	});
 	
 	$(load_google_maps);
 	

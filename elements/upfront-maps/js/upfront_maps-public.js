@@ -79,10 +79,14 @@ function load_google_maps () {
 }
 
 window.upfront_maps_public_init = function () {
+	$(document).trigger("upfront-google_maps-loaded");
+};
+
+$(document).on("upfront-google_maps-loaded", function () {
 	$(".upfront_map-public").each(function () {
 		init_map($(this));
-	})
-};
+	});
+});
 
 $(load_google_maps);
 

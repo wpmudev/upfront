@@ -1,7 +1,12 @@
 (function ($) {
 
-if (!window.google) require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], init);
-else init();
+//if (!window.google) require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], init);
+//else init();
+try {
+	if (window.google.maps.Map) init();
+} catch (e) {
+	require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], init);
+}
 
 function init () {
 	var DEFAULTS = {
