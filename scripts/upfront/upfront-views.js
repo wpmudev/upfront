@@ -754,7 +754,8 @@ define(_template_files, function () {
 			},
 			update: function () {
 				var expand_lock = this.model.get_property_value_by_name('expand_lock');
-				this.update_background();
+				if ( ! this.model.get('clip') )
+					this.update_background();
 			},
 			trigger_edit: function (e) {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
@@ -865,7 +866,7 @@ define(_template_files, function () {
 		Region = _Upfront_SingularEditor.extend({
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
-				//"mouseover": "on_mouse_over"
+				"mouseover": "on_mouse_over",
 				"click": "on_click"
 			},
 			attributes: function(){
@@ -916,7 +917,9 @@ define(_template_files, function () {
 				this.trigger("activate_region", this);
 			},
 			on_mouse_over: function () {
-				this.trigger("activate_region", this);
+				var container = this.parent_view.get_container_view(this.model);
+				if ( container && container.$el.hasClass('upfront-region-container-active') )
+					this.trigger("activate_region", this);
 			},
 			render: function () {
 				var container = this.model.get("container"),
@@ -954,7 +957,7 @@ define(_template_files, function () {
 					row = this.model.get_property_value_by_name('row'),
 					height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					expand_lock = this.model.get_property_value_by_name('expand_lock');
-				if ( container && container != name ){
+				if ( this.model.get('clip') || ( container && container != name ) ){
 					// This region is inside another region container
 					this.update_background(); // Allow background applied
 				}
@@ -1009,6 +1012,7 @@ define(_template_files, function () {
 					name = region.get("name");
 				if ( !container || container == name ) {
 					var container_view = this.container_views[region.cid] || new RegionContainer({"model": region});
+					container_view.parent_view = this;
 					container_view.render();
 					container_view.bind("activate_region", this.activate_region_container, this);
 					if ( index >= 0 )
@@ -1027,6 +1031,7 @@ define(_template_files, function () {
 				var local_view = Upfront.data.region_views[region.cid] || new Region({"model": region}),
 					container_view = this.get_container_view(region);
 				if ( !Upfront.data.region_views[region.cid] ){
+					local_view.parent_view = this;
 					local_view.bind("region_render", container_view.on_region_render, container_view);
 					local_view.bind("region_update", container_view.on_region_update, container_view);
 					local_view.bind("region_changed", container_view.on_region_changed, container_view);
@@ -1059,7 +1064,8 @@ define(_template_files, function () {
 			activate_region: function (region) {
 				if ( ! this.allow_edit )
 					return;
-				var new_active_region = region.model || region;
+				var new_active_region = region.model || region,
+					container = this.get_container_view(new_active_region);
 				if ( this.model.active_region == new_active_region )
 					return;
 				this.model.active_region = new_active_region;

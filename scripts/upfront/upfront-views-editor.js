@@ -4481,11 +4481,11 @@ var Field_Anchor = Field_Select.extend({
 				is_before = ( to == 'top' || to == 'left' ),
 				title = is_new_container ? 'Region ' + total : this.model.get('name') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
 				name = title.toLowerCase().replace(/\s/, '-'),
-				new_region = new Upfront.Models.Region({
+				new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 					"name": name,
 					"container": is_new_container ? name : this.model.get('name'),
 					"title": title
-				});
+				}));
 			new_region.set_property('row', 20); // default to 20 rows
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
