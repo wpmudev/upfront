@@ -4496,8 +4496,14 @@ var Field_Anchor = Field_Select.extend({
 				else if ( to == 'bottom' && next_model && ( next_model.get('container') && next_model.get('container') != next_model.get('name') ) )
 					index++;
 			}
-			Upfront.Events.once('entity:region:before_render', this.before_animation, this);
-			Upfront.Events.once('entity:region:after_render', this.run_animation, this);
+			if ( new_region.get('clip') ){
+				Upfront.Events.once('entity:region:before_render', this.before_animation, this);
+				Upfront.Events.once('entity:region:after_render', this.run_animation, this);
+			}
+			else {
+				Upfront.Events.once('entity:region_container:before_render', this.before_animation, this);
+				Upfront.Events.once('entity:region_container:after_render', this.run_animation, this);
+			}
 			collection.add(new_region, {at: is_before ? index : index+1, is_before: is_before});
 		},
 		before_animation: function (view, model) {
@@ -4513,7 +4519,7 @@ var Field_Anchor = Field_Select.extend({
 			// scroll if needed
 			if ( to == 'top' || to == 'bottom' ){
 				view.$el.one('animationstart webkitAnimationStart MSAnimationStart oAnimationStart', function () {
-					var $container = $(this).closest('.upfront-region-container'),
+					var $container = $(this).hasClass('upfront-region-container') ? $(this) : $(this).closest('.upfront-region-container'),
 						offset = $container.offset(),
 						scroll_top = $(document).scrollTop(),
 						scroll_to = false;

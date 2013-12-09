@@ -1671,6 +1671,9 @@ a.ueditor-action-pickercancel{
 	opacity: 0;
 	-webkit-transition: opacity 0.6s;
 }
+.upfront-region-edit-trigger .upfront-icon:before {
+	margin: 0;
+}
 .upfront-region-container:hover .upfront-region-edit-trigger {
 	visibility: visible;
 	opacity: 1;
@@ -1750,7 +1753,9 @@ a.ueditor-action-pickercancel{
 .upfront-region-editing .upfront-region .upfront-editable_entities_container {
 	opacity: 0.5;
 }
-.upfront-region-editing .upfront-region:after,
+.upfront-region-editing .upfront-region-container-full:after,
+.upfront-region-editing .upfront-region-clip:after,
+.upfront-region-editing .upfront-region-side:after,
 .upfront-inline-panels,
 .upfront-inline-panels-wrap,
 .upfront-add-region-ani:after {
@@ -1765,9 +1770,14 @@ a.ueditor-action-pickercancel{
 .upfront-region-editing .upfront-region-active {
 	opacity: 1;
 	-webkit-transition: opacity 0.6s;
-	z-index: 2;
+	z-index: 999981;
 }
-.upfront-region-editing .upfront-region-container-active .upfront-region:after,
+.upfront-region-editing .upfront-region-container-full .upfront-grid-layout {
+	z-index: 999981;
+}
+.upfront-region-editing .upfront-region-container-full.upfront-region-container-active:after,
+.upfront-region-editing .upfront-region-clip.upfront-region-active:after,
+.upfront-region-editing .upfront-region-side.upfront-region-active:after,
 .upfront-add-region-ani:after {
 	border-top: 3px solid #2f3a44;
 	border-bottom: 3px solid #2f3a44;

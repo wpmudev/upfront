@@ -714,9 +714,16 @@ define(_template_files, function () {
 				"mouseover": "update_pos"
 			},
 			attributes: function(){
-				var name = this.model.get("container") || this.model.get("name");
+				var name = this.model.get("container") || this.model.get("name"),
+					classes = [];
+				classes.push('upfront-region-container');
+				classes.push('upfront-region-container-' + name.toLowerCase().replace(/ /, "-"));
+				classes.push('upfront-region-container-' + ( this.model.get('clip') ? 'clip' : 'full' ) );
+				if ( this.model.collection.active_region == this.model ){
+					classes.push('upfront-region-container-active');
+				}
 				return {
-					"class": 'upfront-region-container' + ( ' upfront-region-container-' + name.toLowerCase().replace(/ /, "-") )
+					"class": classes.join(' ')
 				}
 			},
 			init: function () {
@@ -878,6 +885,8 @@ define(_template_files, function () {
 				classes.push('upfront-region');
 				classes.push('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
 				classes.push(grid.class + this.col);
+				if ( this.model.get('clip') )
+					classes.push('upfront-region-clip');
 				if ( this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-active');
 				}
