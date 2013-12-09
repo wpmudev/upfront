@@ -547,7 +547,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				extraButtons: [
 					{
 						id: 'image-edit-button-swap',
-						text: 'Swap Image',
+						text: 'Replace Image',
 						callback: function(e, editor){
 							editor.cancel();
 							me.openImageSelector();
