@@ -142,10 +142,18 @@ define(_template_files, function () {
 				}
 				Upfront.Events.trigger("entity:background:update", this, this.model);
 			},
+			postpone_map_init: function ($type, $overlay) {
+				var me = this;
+				$(document).one("upfront-google_maps-loaded", function () {
+					me.update_background_map($type, $overlay);
+				});
+			},
 			update_background_map: function ($type, $overlay) {
 				try {
-					window.google.maps.Map;
-				} catch (e) { return false; }
+					if (!window.google.maps.Map) return this.postpone_map_init($type, $overlay);
+				} catch (e) {
+					return this.postpone_map_init($type, $overlay);
+				}
 				var center = this.model.get_property_value_by_name('background_map_center'),
 					zoom = this.model.get_property_value_by_name('background_map_zoom'),
 					style = this.model.get_property_value_by_name('background_map_style'),

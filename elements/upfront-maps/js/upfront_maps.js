@@ -4,12 +4,14 @@
 //else init();
 try {
 	if (window.google.maps.Map) init();
+	else throw new Object;
 } catch (e) {
 	require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], init);
 }
 
 function init () {
 	$(document).trigger("upfront-google_maps-loaded");
+
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
 		center: [10.722250, 106.730762],
@@ -37,7 +39,6 @@ function init () {
 require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'css/edit.css'], function (_ctx, maps_style) {
 
 	$("head").append("<style>" + maps_style + "</style>");
-
 
 
 	var MapModel = Upfront.Models.ObjectModel.extend({
