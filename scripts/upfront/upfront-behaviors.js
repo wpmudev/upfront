@@ -912,6 +912,11 @@ var GridEditor = {
 				wrap_model.add_class('clr');
 			else
 				wrap_model.remove_class('clr');
+			$wrap.stop().css({
+				position: '',
+				left: '',
+				right: ''
+			});
 		});
 		wraps.each(function(wrap){
 			if ( $('#'+wrap.get_wrapper_id()).size() == 0 )
