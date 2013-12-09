@@ -218,7 +218,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 				$location = this.$el.find("#upfront_map-location_overlay-wrapper");
 			}
 			$location
-				.off("click").on("click", "#upfront_map-location_overlay-use_location", function () {
+				.find("#upfront_map-location_overlay-use_location").off("click").on("click", function () {
 					var $address = me.$el.find("#upfront_map-location_overlay-wrapper #upfront_map-location_overlay-location"),
 						geocoder = new google.maps.Geocoder(),
 						element_id = me.model.get_property_value_by_name("element_id"),
@@ -239,7 +239,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 						$(document).data(element_id + "-location", location);
 					});
 				}).end()
-				.off("click").on("click", "#upfront_map-location_overlay-use_current", function () {
+				.find("#upfront_map-location_overlay-use_current").off("click").on("click", function () {
 					if (!(navigator && navigator.geolocation)) return false;
 					var markers = me.model.get_property_value_by_name("markers") || [];
 					navigator.geolocation.getCurrentPosition(function(position) {
