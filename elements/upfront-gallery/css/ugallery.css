@@ -357,7 +357,7 @@ div.ugallery-label-selector {
 }
 
 .ugallery-controls,
-.ui-resizable-autohide .ugallery_selected .ugallery-controls {
+.ui-resizable-autohide .ugallery_item:hover .ugallery-controls {
 	display: none;
 }
 
@@ -365,7 +365,7 @@ div.ugallery-label-selector {
 	z-index:20;
 }
 
-.ugallery_selected .ugallery-controls {
+.ugallery_item:hover .ugallery-controls {
 	display: block;
 }
 

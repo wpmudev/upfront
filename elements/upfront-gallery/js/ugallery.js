@@ -272,7 +272,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 				controls.setWidth(item.width());
 				controls.render();
-				item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+				item.find('.ugallery-image-wrapper').append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 		
 				if(me.property('captionPosition') != 'nocaption'){
 					var editor = Upfront.Content.editors.add({
