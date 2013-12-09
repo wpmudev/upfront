@@ -1607,10 +1607,11 @@ define(_template_files, function () {
 		pagePreviewTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-preview-tpl').html()),
 		allTemplates: [],
 		render: function () {
+			var pages = this.collection.where({'post_parent': 0});
 			// Render
 			this.$el.html(
 				this.pageListTpl({
-					pages: this.collection.where({'post_parent': 0}), 
+					pages: pages,
 					pageItemTemplate: this.pageListItemTpl
 				})
 			);
@@ -1624,6 +1625,9 @@ define(_template_files, function () {
 				template: page.template ? page.template : 'Default',
 				allTemplates: this.allTemplates ? this.allTemplates : []
 			}));
+			this.$el.find("#upfront-page_preview-edit button").one("click", function () {
+				window.location = Upfront.Settings.Content.edit.post + page.get('ID');
+			});
 		},
 
 		handle_page_activate: function (e) {
