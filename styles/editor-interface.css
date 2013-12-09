@@ -1753,9 +1753,7 @@ a.ueditor-action-pickercancel{
 .upfront-region-editing .upfront-region .upfront-editable_entities_container {
 	opacity: 0.5;
 }
-.upfront-region-editing .upfront-region-container-full:after,
-.upfront-region-editing .upfront-region-clip:after,
-.upfront-region-editing .upfront-region-side:after,
+.upfront-region-editing .upfront-region-active-overlay,
 .upfront-inline-panels,
 .upfront-inline-panels-wrap,
 .upfront-add-region-ani:after {
@@ -1772,17 +1770,15 @@ a.ueditor-action-pickercancel{
 	-webkit-transition: opacity 0.6s;
 	z-index: 999981;
 }
-.upfront-region-editing .upfront-region-container-full .upfront-grid-layout {
+.upfront-region-editing .upfront-region-container-active,
+.upfront-region-editing .upfront-region-container-full.upfront-region-container-active .upfront-grid-layout {
 	z-index: 999981;
 }
-.upfront-region-editing .upfront-region-container-full.upfront-region-container-active:after,
-.upfront-region-editing .upfront-region-clip.upfront-region-active:after,
-.upfront-region-editing .upfront-region-side.upfront-region-active:after,
+.upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,
+.upfront-region-editing .upfront-region-active .upfront-region-active-overlay,
 .upfront-add-region-ani:after {
 	border-top: 3px solid #2f3a44;
 	border-bottom: 3px solid #2f3a44;
-}
-.upfront-region-editing .upfront-region-active:after {	
 }
 .upfront-region-editing .upfront-region-active .upfront-region-title {
 	top: 0;

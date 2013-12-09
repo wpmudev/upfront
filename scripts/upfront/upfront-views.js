@@ -757,6 +757,8 @@ define(_template_files, function () {
 				this.$layout = this.$el.find('.upfront-grid-layout');
 				$edit.appendTo( this.model.get('clip') ? this.$layout : this.$el );
 				this.update();
+				if ( !this.model.get('clip') )
+					this.$el.append('<div class="upfront-region-active-overlay" />');
 				Upfront.Events.trigger("entity:region_container:after_render", this, this.model);
 			},
 			update: function () {
@@ -952,6 +954,8 @@ define(_template_files, function () {
 				this.region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
 				this.region_panels.render();
 				this.$el.append(this.region_panels.el);
+				if ( this.model.get('clip') || ( container && container != name  ) )
+					this.$el.append('<div class="upfront-region-active-overlay" />');
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
 				this.trigger("region_render", this);
 				if ( ! this._modules_view )
