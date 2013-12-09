@@ -435,7 +435,7 @@
 				var me = this,
 					$hub = this.$el.find(".existing_labels"),
 					shared_labels = this.model.get_shared_labels(),
-					title = (this.model.length > 1 ? 'Shared Label(s)' : 'Current Label(s)')
+					title = (shared_labels.length > 1 ? 'Current Label(s)' : '')
 				;
 				$hub.empty()
 					.append(this.templates.caption({title: title}))
