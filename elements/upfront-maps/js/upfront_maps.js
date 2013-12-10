@@ -259,6 +259,10 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 						me.model.set_property("map_center", [position.coords.latitude, position.coords.longitude], false);
 					});
 				}).end()
+				.off("dblclick").on("dblclick", function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+				})
 			;
 			this.$el.find(".upfront-entity_meta").hide();
 		},
