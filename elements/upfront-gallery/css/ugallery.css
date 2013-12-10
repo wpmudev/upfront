@@ -523,3 +523,7 @@ a.ugallery-linked_page:hover:before {
 	box-shadow: 0 0 20px #000;
 	border-radius: 10px;
 }
+
+.upfront-gallery:hover .upfront-quick-swap {
+	display: block;
+}
