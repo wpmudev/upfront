@@ -1892,6 +1892,9 @@
 			}, {width: 800});
 
 			pop.always(this.cleanup_active_filters);
+
+      Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
+
 			return pop;
 		},
 		cleanup_active_filters: function () {
@@ -1948,6 +1951,7 @@
 				}
 				editor.insertHtml(html);
 			}
+      Upfront.Events.trigger('upfront:element:edit:stop');
 		},
 		results_html: function (result) {
 			var html = '';

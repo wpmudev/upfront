@@ -995,10 +995,20 @@ define(_template_files, function () {
       if (type === 'media-upload') {
         tooltipText = 'Not available when<br>uploading media.';
       }
+      if (type === 'write') {
+        this.writingIsOn = true;
+        tooltipText = 'Please publish your content<br>before modifying the layout.';
+      }
       $('#preventUsageOverlay span').html(tooltipText);
       $('#preventUsageOverlay').show();
     },
-    allowUsage: function() {
+    allowUsage: function(type) {
+      if (this.writingIsOn && type !== 'write') {
+        this.preventUsage('write');
+        return;
+      }
+
+      this.writingIsOn = false;
       $('#preventUsageOverlay').hide();
     },
 		render: function () {

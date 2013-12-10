@@ -1090,6 +1090,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 				this.initialDate = this.initialDate.getTime();
 			this.tpl = _.template(Upfront.data.uposts.barTemplate);
 			this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());			
+      Upfront.Events.trigger('upfront:element:edit:start', 'write');
 		},
 
 		render: function(){
@@ -1394,6 +1395,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			if(confirm('Are you sure to discard the changes made to ' + this.post.get('post_title') + '?')){
 				this.destroy();
 				this.post.trigger('editor:cancel');
+        Upfront.Events.trigger('upfront:element:edit:stop', 'write');
 			}
 		},
 
@@ -1406,6 +1408,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			this.initialDate = this.post.get('post_date').getTime();
 
 			this.post.trigger('editor:publish');
+      Upfront.Events.trigger('upfront:element:edit:stop', 'write');
 		},
 
 		saveDraft: function(e){
@@ -1417,6 +1420,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			this.initialDate = this.post.get('post_date').getTime();
 
 			this.post.trigger('editor:draft');
+      Upfront.Events.trigger('upfront:element:edit:stop', 'write');
 		},
 
 		trash: function(e){
@@ -1424,6 +1428,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			if(confirm('Are you sure you want to delete this ' + this.post.get('post_type') + '?')){
 				this.destroy();
 				this.post.trigger('editor:trash');				
+        Upfront.Events.trigger('upfront:element:edit:stop', 'write');
 			}
 		},
 
