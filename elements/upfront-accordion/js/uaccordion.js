@@ -95,14 +95,22 @@
 			editor.on( 'textcolor:change', function(color) {
 				var value = color.toRgbString();
 				$panelTitle.css('color', value);
+				self.saveTitle($panelTitle);
 			});
 			
 			editor.on( 'panelcolor:change', function(color) {
 				var value = color.toRgbString();
 				$panelTitle.css('background-color', value);
+				self.saveTitle($panelTitle);
 			});
-		
-					  
+			
+			editor.on('change', function (e) {
+				self.saveTitle($panelTitle);
+				console.log("something is changed");
+			});
+			deditor.on('saveSnapshot', function (e) {
+				self.saveTitle($panelTitle);
+			});
 		  
           $panelTitle.focus();
 		  this.$el.parent().parent().parent().draggable('disable');
@@ -122,6 +130,7 @@
 				
 			var target = $('#'+currentEditItem);
 			if(target.hasClass('accordion-panel-title')) {
+				target.removeAttr('contenteditable');
 				this.saveTitle(target);
 				var editor = Upfront.Content.editors.get(currentEditItem);
 				editor.stop();
@@ -165,7 +174,7 @@
       },
 	  
 		saveTitle: function(target) {
-			target.removeAttr('contenteditable');
+			
 			id = target.parent().index()-1;
 			this.property('accordion')[id].title = target.html();
 			this.property('accordion')[id].title_color = target.css('color');
@@ -191,7 +200,7 @@
         this.$el.parent().parent().parent().draggable('enable');
         this.delegateEvents();
       },
-
+/*
       onTitleKeydown: function(event) {
         var id;
         if (event.keyCode === 13) {
@@ -206,7 +215,7 @@
           }
         }
       },
-
+*/
       get_content_markup: function () {
         return this.accordionTpl(
           _.extend(
