@@ -13,10 +13,14 @@ class Upfront_UgalleryView extends Upfront_Object {
 	var $all_labels = array();
 
 	public function get_markup () {
-
-
 		$data = $this->properties_to_array();
-		$data['imagesLength'] = sizeof($data['images']);
+		$images = array();
+		foreach($data['images'] as $im){
+			$images[] = array_merge(self::image_defaults(), $im);
+		}
+		$data['images'] = $images;
+
+		$data['imagesLength'] = sizeof($images);
 		$data['editing'] = false;
 
 		$this->get_labels($data['images']);
@@ -41,7 +45,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			</script>
 		';
 
-		if(! $data['disableLightbox']['length']){
+		if( $data['linkTo'] == 'image' ){
 			$magnific_options = array(
 				'type' => 'image',
 				'delegate' => 'a',
@@ -62,7 +66,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			';
 		}
 		else {
-			$markup .= '<!-- No lightbox -->';
+			$markup .= '<!-- No lightbox ' . $data['linkTo'] . ' -->';
 		}
 
 		return $markup;
@@ -128,6 +132,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 		$data['ugallery'] = array(
 			'defaults' => self::default_properties(),
+			'imageDefaults' => self::image_defaults(),
 			'template' => upfront_get_template_url('ugallery', upfront_element_url('tpl/ugallery.html', dirname(__FILE__))),
 			'lightboxTpl' => upfront_get_template('lightbox', array(), dirname(dirname(__FILE__)) . '/tpl/lightbox.html'),
 			'postTypes' => $post_types,
@@ -137,6 +142,26 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'themeDefaults' => apply_filters('upfront_gallery_defaults', array())
 		);
 		return $data;
+	}
+
+	public static function image_defaults(){
+		return array(			
+			'id' => 0,
+			'src' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
+			'srcFull' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
+			'sizes' => array(),
+			'size' => array('width' => 0, 'height' => 0),
+			'cropSize' => array('width' => 0, 'height' => 0),
+			'cropOffset' => array('top' => 0, 'left' => 0),
+			'rotation' => 0,
+			'link' => 'original',
+			'url' => '',
+			'title' => '',
+			'caption' => '',
+			'alt' => '',
+			'tags' => array(),
+			'margin' => array('left' => 0, 'top' => 0)
+		);
 	}
 
 	//Defaults for properties

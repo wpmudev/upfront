@@ -23,7 +23,6 @@ jQuery(function($){
 		grid.shuffle({
 			itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
 			gutterWidth: function(containerWidth){
-				console.log('Retrieving margin');
 				var container = containerWidth,
 					minGutter = 30,
 					width = $(this.$items[0]).width(),

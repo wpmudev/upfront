@@ -22,22 +22,7 @@ var templates = [
 
 require(templates, function(galleryTpl, editorTpl) {
 var UgalleryImage = Backbone.Model.extend({
-	defaults: {
-		id: 0,
-		src: 'http://imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
-		srcFull: 'http://imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
-		sizes: {},
-		size: {width: 0, height: 0},
-		cropSize: {width: 0, height: 0},
-		cropOffset: {top: 0, left: 0},
-		rotation: 0,
-		link: 'original',
-		url: '',
-		title: '',
-		caption: '',
-		alt: '',
-		tags: []
-	}
+	defaults: Upfront.data.ugallery.imageDefaults
 });
 
 var UgalleryImages = Backbone.Collection.extend({
@@ -95,14 +80,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			'click .ugallery-image-wrapper': 'selectItem',
 			'click .upfront-quick-swap': 'openImageSelector'
 		});
-		var images = this.property('images'),
-			imageIds = []
-		;
+		var images = this.property('images');
+
 		this.images = new UgalleryImages(images);
 		this.images.on('add remove reset change', this.imagesChanged, this);
-		_.each(images, function(image){
-			imageIds.push(image.id);
-		});
+		this.property('images', this.images.toJSON()); // Hack to add image defaults;
 
 		$('body').on('click', this.closeTooltip);
 
@@ -126,7 +108,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		});
 
 		this.model.on('thumbChange', function(e){
-			me.$('.ugallery-image-wrapper').css('overflow', 'hidden');
+			me.$('.ugallery-image-wrapper').css('overflow', 'hidden')
+				.find('img').css({
+					'min-width': '100%',
+					'min-height': '100%',
+					'margin': '0'
+				});
 		});
 
 		this.createControls();
@@ -448,13 +435,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		}
 		me.render();
 
-
+		_.each(models, function(image){
+			me.$('.ugallery_item[rel="' + image.id  + '"]')
+				.find('.ugallery-image-wrapper').append('<p class="ugallery-image-loading">Loading...</p>');
+		});
 
 		Upfront.Util.post(editOptions).done(function(response){
 			var newImages = me.handleResizing(models, response);
 
 			_.each(newImages, function(image){
-				me.$('.ugallery_item[rel="' + image.id  + '"]').find('img').attr('src', image.get('src'));
+				me.$('.ugallery_item[rel="' + image.id  + '"]').find('img').attr('src', image.get('src')).show().siblings('p').remove();
 			});
 
 			me.images.set(newImages, {remove: false, silent: true});
@@ -741,6 +731,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					cropSize: result.cropSize,
 					size: result.imageSize,
 					cropOffset: result.imageOffset,
+					margin: {left: Math.max(0-result.imageOffset.left, 0), top: Math.max(0-result.imageOffset.top, 0)},
 					rotation: result.rotation
 				});
 				me.render();

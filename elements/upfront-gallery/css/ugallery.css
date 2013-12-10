@@ -527,3 +527,8 @@ a.ugallery-linked_page:hover:before {
 .upfront-gallery:hover .upfront-quick-swap {
 	display: block;
 }
+
+.ugallery-image-loading {
+	padding-top: 50px;
+	text-align: center;
+}
