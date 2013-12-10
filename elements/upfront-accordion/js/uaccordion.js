@@ -86,12 +86,7 @@
 		   editor.start();
 		   var deditor = CKEDITOR.instances[currentEditItem];
 		   var self = this;
-			deditor.on( 'key', function(key) {
-				if(key.data['keyCode'] == 13) {
-					self.onDeactivate();
-					return false;
-				}
-			});
+		   
 			editor.on( 'textcolor:change', function(color) {
 				var value = color.toRgbString();
 				$panelTitle.css('color', value);
@@ -106,12 +101,22 @@
 			
 			editor.on('change', function (e) {
 				self.saveTitle($panelTitle);
-				console.log("something is changed");
+			});
+			
+			deditor.on( 'key', function(key) {
+				if(key.data['keyCode'] == 13) {
+					self.onDeactivate();
+					return false;
+				}
 			});
 			deditor.on('saveSnapshot', function (e) {
 				self.saveTitle($panelTitle);
 			});
-		  
+			
+			deditor.on('afterCommandExec', function (e) {
+				self.saveTitle($panelTitle);
+			});
+			
           $panelTitle.focus();
 		  this.$el.parent().parent().parent().draggable('disable');
           return;
@@ -163,6 +168,17 @@
         this.editor = CKEDITOR.inline($content[0]);
         currentEditItem = $content.attr('id');
 
+		self = this;
+		
+		this.editor.on('saveSnapshot', function (e) {
+			self.savePanelContent();
+			console.log("savesnapshot fired");
+		});
+		
+		this.editor.on('afterCommandExec', function (e) {
+			self.savePanelContent();
+			console.log("afterCommandExec fired");
+		});
 		
 		$content.focus();
 
@@ -200,22 +216,7 @@
         this.$el.parent().parent().parent().draggable('enable');
         this.delegateEvents();
       },
-/*
-      onTitleKeydown: function(event) {
-        var id;
-        if (event.keyCode === 13) {
-          event.preventDefault();
-          $(event.currentTarget).removeAttr('contenteditable');
-          id = $(event.currentTarget).parent().index()-1;
-          this.property('accordion')[id].title = $(event.currentTarget).text();
 
-          this.addTooltips();
-          if ($(event.currentTarget).find('i').size() < 1) {
-            $(event.currentTarget).append('<i>x</i>');
-          }
-        }
-      },
-*/
       get_content_markup: function () {
         return this.accordionTpl(
           _.extend(
