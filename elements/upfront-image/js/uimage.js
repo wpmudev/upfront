@@ -1377,7 +1377,6 @@ var ImageEditor = Backbone.View.extend({
 				mode = 'vertical';
 
 		this.setMode(mode, constraints);
-		console.log(this.mode);
 	},
 
 	setMode: function(mode, constraints){
