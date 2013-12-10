@@ -54,6 +54,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		Upfront.Events.off("command:merge", Upfront.Behaviors.LayoutEditor.destroy_mergeable, this);
 		Upfront.Events.off("entity:settings:activate", this.create_settings, this);
 		Upfront.Events.off("entity:settings:deactivate", this.destroy_settings, this);
+		Upfront.Events.off("entity:removed:after", this.destroy_settings, this);
 		
 		Upfront.Events.off("layout:render", Upfront.Behaviors.GridEditor.refresh_draggables, this);
 	},
@@ -170,6 +171,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		// Set up entity settings (modules, for now)
 		Upfront.Events.on("entity:settings:activate", this.create_settings, this);
 		Upfront.Events.on("entity:settings:deactivate", this.destroy_settings, this);
+		Upfront.Events.on("entity:removed:after", this.destroy_settings, this);
 		
 		//Upfront.Events.on("upfront:posts:post:post_updated", this.layout_view.render, this.layout_view);
 
