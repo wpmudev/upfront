@@ -156,7 +156,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'rotation' => 0,
 			'link' => 'original',
 			'url' => '',
-			'title' => '',
+			'title' => 'Image caption',
 			'caption' => '',
 			'alt' => '',
 			'tags' => array(),
