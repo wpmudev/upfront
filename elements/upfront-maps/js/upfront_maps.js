@@ -218,11 +218,12 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			if (!$location.length) {
 				this.$el.append(
 					'<div id="upfront_map-location_overlay-wrapper">' +
-						'<div id="upfront_map-location_overlay">' +
+						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay">' +
 							'<p id="upfront_map-location_overlay-instruction">Please enter address for us to generate a map from:</p>' +
-							'<div id="upfront_map-location_overlay-address" class="upfront-ui"><input type="text" id="upfront_map-location_overlay-location" placeholder="Street, city, country" />' +
+							'<div id="upfront_map-location_overlay-address" class="upfront-ui uf-address">' +
+								'<input type="text" id="upfront_map-location_overlay-location" placeholder="Street, city, country" />' +
 								'<button type="button" id="upfront_map-location_overlay-use_location" class="upfront-field-icon upfront-icon-map-refresh"></button></div>' +
-								'<span>or </span><button type="button" id="upfront_map-location_overlay-use_current">Use my current location</button>' +
+								'<span class="uf-current-location">or <a id="upfront_map-location_overlay-use_current">Use my current location</a></span>' +
 						'</div>' +
 					'</div>'
 				);

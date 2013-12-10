@@ -156,47 +156,65 @@ border-width: 11px;
 
 /* initial experience layout */
 
-#upfront_map-location_overlay-wrapper, #upfront_map-location_overlay {
+#upfront_map-location_overlay-wrapper, 
+.uf_el_map_initial-overlay {
 	background:rgb(227, 227, 220);
 	color:#fff;
 	margin: auto;
 	position: absolute;
 	top: 0; left: 0; bottom: 0; right: 0;
 	text-align:center;
-	font-size:24px;
 	line-height: 80%;
 	font-weight: 300;
+	font-size:20px;
 }
 
-#upfront_map-location_overlay {
-	height: 160px;
+.uf_el_map_initial-overlay {
+	height: 150px;
 	padding:15px;
 }
-#upfront_map-location_overlay-location {
+
+/* address input */
+.uf_el_map_initial-overlay input[type="text"] {
 	background:rgb(201,201,195);
-	font-size: 0.8em;
-	width:80%;
-}
-#upfront_map-location_overlay-use_location {
-	width:10%;
-	background-color: transparent;
+	font-size: 1em;
+	width:100%;
 }
 
-#upfront_map-location_overlay-location , #upfront_map-location_overlay-use_location {
-	display: inline-block;
+/* refresh button */
+.uf_el_map_initial-overlay button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: transparent;
+	padding: 10px;
+}
+
+.uf_el_map_initial-overlay button , 
+.uf_el_map_initial-overlay .uf-current-location {
 	margin:0;
 }
 
-#upfront_map-location_overlay-address {
+.uf_el_map_initial-overlay .uf-address  {
 	margin:0 auto;
-	max-width:400px;
+	max-width:500px;
+	position: relative;
+	margin-bottom: 10px;
 }
 
-#upfront_map-location_overlay-use_current {
+.uf-current-location {
+	font-size: 0.8em;
+	margin-top:10px;
+}
+/* Use My Location */
+.uf-current-location a {
 	background:transparent;
 	color:#395269;
 	text-decoration: underline;
-	font-size: 0.8em;
 	padding:0;
 	margin:0;
 }
+.uf-current-location a:hover { cursor: pointer; }
+
+.uf_el_map_initial-overlay  button,
+.uf_el_map_initial-overlay  input { outline:none; }
