@@ -152,7 +152,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			this.update_properties();
 			var me = this,
 				$el = this.$el.find('.ufm-gmap-container:first'),
-				height = this.parent_module_view.model.get_property_value_by_name("row"),
+				height = (this.model.get_property_value_by_name("row") ? this.model.get_property_value_by_name("row") : this.parent_module_view.model.get_property_value_by_name("row")),
 				controls = this.model.get_property_value_by_name("controls") || [],
 				props =	 {
 					center: this.model.get_property_value_by_name("map_center") || DEFAULTS.center,
@@ -167,7 +167,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 					style_overlay: this.model.get_property_value_by_name("styles") || false
 				}
 			;
-			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : height = DEFAULTS.OPTIMUM_MAP_HEIGHT;
+			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : DEFAULTS.OPTIMUM_MAP_HEIGHT;
 			$el.css({
 				'width': '100%',
 				'height': height + 'px'
