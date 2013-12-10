@@ -3,17 +3,17 @@
 //if (!window.google) require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], init);
 //else init();
 try {
-	if (window.google.maps.Map) init();
+	if (window.google.maps.Map) init(false);
 	else if ($(document).data("upfront-google_maps-loading")) return $(document).on("upfront-google_maps-loaded", init);
 	else throw new Object;
 } catch (e) {
 	require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], function () {
 		$(document).trigger("upfront-google_maps-loaded");
-		init();
+		init(true);
 	});
 }
 
-function init () {
+function init (postponed) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
@@ -702,7 +702,13 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 	Upfront.Models.MapModel = MapModel;
 	Upfront.Views.MapView = MapView;
 
-	Upfront.Events.trigger("elements:requirements:async:added");
+	if (!!postponed) {
+		Upfront.Events.trigger("elements:requirements:async:added");
+		Upfront.Application.layout_view = new Upfront.Views.Layout({
+			"model": Upfront.Application.layout,
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
+		});
+	}
 
 });
 };
