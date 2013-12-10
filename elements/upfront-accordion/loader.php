@@ -1,15 +1,14 @@
 <?php
 /*
-Plugin Name: Upfront Accordion element
+Plugin Name: Uaccordion module
 Plugin URI: http://premium.wpmudev.org/project/upfront
-Description: Accordion element
+Description: Complex Upfront module for adding and editing panelbed items.
 Version: 0.1
-Text Domain: upfront-accordion
-Author: Ve Bailovity (Incsub)
+Text Domain: uaccordion
+Author: Incsub
 Author URI: http://premium.wpmudev.org
-WDP ID: XXX
 
-Copyright 2009-2011 Incsub (http://incsub.com)
+Copyright 2009-2013 Incsub (http://incsub.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -25,22 +24,24 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 /**
- * This is the entity entry point, where we inform Upfront of our existence.
+ * Registers the element in Upfront
  */
-function upfront_accordion_initialize () {
-    // Include the backend support stuff
-    require_once(dirname(__FILE__) . '/lib/upfront_accordion.php');
+function uaccordion_initialize () {
+	// Include the backend support stuff
+	require_once (dirname(__FILE__) . '/lib/uaccordion.php');
 
-    // Expose our JavaScript definitions to the Upfront API
-    upfront_add_layout_editor_entity('upfront_accordion', upfront_element_url('js/upfront_accordion', __FILE__));
-    
+	// Expose our JavaScript definitions to the Upfront API
+	upfront_add_layout_editor_entity('uaccordion', upfront_element_url('js/uaccordion', __FILE__));
+
+
 	// Add element defaults to data object
-	add_action('upfront_data', array('Upfront_AccordionView', 'add_js_defaults'));
+	$uaccordion = new Upfront_UaccordionView(array());
+	add_action('upfront_data', array($uaccordion, 'add_js_defaults'));
 
-    // Add the public stylesheet
-    add_action('wp_enqueue_scripts', array('Upfront_AccordionView', 'add_public_style'));
+	// Add the public stylesheet
+	add_action('wp_enqueue_scripts', array('Upfront_UaccordionView', 'add_styles_scripts'));
 }
-// Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'upfront_accordion_initialize'); 
+
+//Hook it when Upfront is ready
+add_action('upfront-core-initialized', 'uaccordion_initialize');
