@@ -98,7 +98,16 @@ background-position: -260px -70px;
 }
 
 .uaccordion-settings-panel .upfront-field-wrap .upfront-field-label {
-	font-size: 12px;
+	font-size: 11px;
+}
+
+.uaccordion-settings-panel span.upfront-field-label-text {
+	font-size: 11px;
+	color:rgb(124, 158, 191);
+}
+
+.uaccordion-settings-panel a.sp-replacer {
+  width: 92px;
 }
 
 .uaccordion-settings-panel .upfront-field-wrap-select .upfront-field-label {
