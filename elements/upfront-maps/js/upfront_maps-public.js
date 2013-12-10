@@ -67,7 +67,6 @@ function init_map ($el) {
 
 
 function load_google_maps () {
-	//if ($(document).data("upfront-auto_start")) return false;
 	if ($(document).data("upfront-google_maps-loading")) return false;
 	if (typeof google === 'object' && typeof google.maps === 'object' && typeof google.maps.Map === 'object') return upfront_maps_public_init();
 	var protocol = '',
@@ -86,12 +85,13 @@ function upfront_maps_public_init () {
 }
 $(document).on("upfront-google_maps-loaded", upfront_maps_public_init);
 
-window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
-	$(document).trigger("upfront-google_maps-loaded");
-	$(document).data("upfront-google_maps-loading", false);
-};
-
-
-$(load_google_maps);
+if (!window.upfront_maps_loaded) {
+	window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
+		$(document).trigger("upfront-google_maps-loaded");
+		$(document).data("upfront-google_maps-loading", false);
+	};
+	$(document).data("upfront-google_maps-loading", true);
+	$(load_google_maps);
+}
 
 })(jQuery);

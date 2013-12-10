@@ -35,12 +35,13 @@ jQuery(document).ready(function($){
 		});
 	}
 	
-	window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
-		$(document).trigger("upfront-google_maps-loaded");
-		$(document).data("upfront-google_maps-loading", false);
-	};
-	$(document).on("upfront-google_maps-loaded", upfront_bg_map_init);
-	
-	$(load_google_maps);
+	if (!window.upfront_maps_loaded) {
+		window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
+			$(document).trigger("upfront-google_maps-loaded");
+			$(document).data("upfront-google_maps-loading", false);
+		};
+		$(document).data("upfront-google_maps-loading", true);
+		$(load_google_maps);
+	}
 	
 });
