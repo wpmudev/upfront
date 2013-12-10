@@ -250,6 +250,9 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 						$(document).data(element_id + "-location", location);
 					});
 				}).end()
+				.find("#upfront_map-location_overlay-location").off("keypress").on("keypress", function (e) {
+					if (13 === e.which) $location.find("#upfront_map-location_overlay-use_location").click();
+				}).end()
 				.find("#upfront_map-location_overlay-use_current").off("click").on("click", function () {
 					if (!(navigator && navigator.geolocation)) return false;
 					var markers = me.model.get_property_value_by_name("markers") || [];
