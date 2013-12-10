@@ -639,10 +639,19 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 						zooms.push({label: idx, value: idx});
 					});
 					this.fields = _([
+						/*
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
 							property: 'zoom',
 							values: zooms
+						})
+						*/
+						new Upfront.Views.Editor.Field.Slider({
+							model: this.model,
+							property: 'zoom',
+							min: 1,
+							max: 19,
+							change: function () { this.property.set({value: this.get_value()}); }
 						})
 					]);
 				},
@@ -666,7 +675,8 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
 							property: 'style',
-							values: styles
+							values: styles,
+							change: function () { this.property.set({value: this.get_value()}); }
 						})
 					]);
 				},
@@ -690,7 +700,8 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 							model: this.model,
 							property: 'controls',
 							multiple: true,
-							values: controls
+							values: controls,
+							change: function () { this.property.set({value: this.get_value()}); }
 						})
 					]);
 				},
