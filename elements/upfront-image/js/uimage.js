@@ -1489,10 +1489,11 @@ var ImageEditor = Backbone.View.extend({
 	fitImage: function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var size = this.initialImageSize(0, true),
-			canvas = this.$('#uimage-canvas'),
+
+		var canvas = this.$('#uimage-canvas'),
 			mask = this.$('#uimage-mask'),
-			handler = this.$('#uimage-drag-handle')
+			handler = this.$('#uimage-drag-handle'),
+			size = this.getResizeImageDimensions(this.fullSize, {width: mask.width(), height: mask.height()}, 'inner', 0)
 		;
 
 		if(this.invert){
@@ -1566,12 +1567,13 @@ var ImageEditor = Backbone.View.extend({
 		var canvas = this.$('#uimage-canvas'),
 			mask = this.$('#uimage-mask'),
 			handle = this.$('#uimage-drag-handle'),
+			border = this.bordersWidth / 2,
 			position = {
 				top: canvas.offset().top,
 			}
 		;
 		if(vertical)
-			position.top = mask.offset().top - ((canvas.height() - mask.height()) / 2);
+			position.top = mask.offset().top - ((canvas.height() - mask.height()) / 2) + border;
 
 		if((this.mode != 'vertical' && this.mode != 'small') || this.align == 'center')
 			position.left = mask.offset().left - ((canvas.width() -  mask.width()) / 2);
@@ -1579,6 +1581,8 @@ var ImageEditor = Backbone.View.extend({
 			position.left = mask.offset().left;
 		else
 			position.left = mask.offset().left + mask.width() - canvas.width();
+
+		position.left += border;
 
 		canvas.css(position);
 		handle.css(position);
@@ -1615,6 +1619,23 @@ var ImageEditor = Backbone.View.extend({
 			};
 
 		return size;
+	},
+
+	getResizeImageDimensions: function(imageDim, wrapperDim, fittingType, overflow){
+		var imageFactor = imageDim.width / imageDim.height,
+			wrapperFactor = wrapperDim.width / wrapperDim.height,
+			type = fittingType && fittingType == 'outer' ? 'outer' : 'inner',
+			pivot = type == 'inner'  ? (imageFactor > wrapperFactor ? 'width' : 'height') : (imageFactor > wrapperFactor ? 'height' : 'width'),
+			padding = overflow || 0,
+			targetDim = wrapperDim[pivot] + padding
+		;
+
+		if(imageDim[pivot] <= targetDim)
+			return imageDim;
+
+		var factor = targetDim / imageDim[pivot];
+
+		return {width: Math.round(imageDim.width * factor), height: Math.round(imageDim.height * factor)};
 	},
 
 	getImageData: function(ids) {
