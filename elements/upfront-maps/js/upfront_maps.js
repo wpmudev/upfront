@@ -217,10 +217,9 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 					'<div id="upfront_map-location_overlay-wrapper">' +
 						'<div id="upfront_map-location_overlay">' +
 							'<p id="upfront_map-location_overlay-instruction">Please enter address for us to generate a map from:</p>' +
-							'<div #upfront_map-location_overlay-address><input type="text" id="upfront_map-location_overlay-location" placeholder="Street, city, country" />' +
-							'<button type="button" id="upfront_map-location_overlay-use_location" class="upfront-field-icon upfront-icon-map-refresh"></button></div>' +
-							'<p>or</p>' +
-							'<button type="button" id="upfront_map-location_overlay-use_current">Use my current location</button>' +
+							'<div id="upfront_map-location_overlay-address" class="upfront-ui"><input type="text" id="upfront_map-location_overlay-location" placeholder="Street, city, country" />' +
+								'<button type="button" id="upfront_map-location_overlay-use_location" class="upfront-field-icon upfront-icon-map-refresh"></button></div>' +
+								'<span>or </span><button type="button" id="upfront_map-location_overlay-use_current">Use my current location</button>' +
 						'</div>' +
 					'</div>'
 				);

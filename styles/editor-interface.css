@@ -321,6 +321,7 @@
 }
 #sidebar-ui .sidebar-panels {
 	color: #395773;
+	border-right: 1px solid #324253;
 }
 #sidebar-ui .sidebar-panel {
 	background: #cee1f2;

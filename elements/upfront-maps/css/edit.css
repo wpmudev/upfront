@@ -173,12 +173,12 @@ border-width: 11px;
 }
 #upfront_map-location_overlay-location {
 	background:rgb(201,201,195);
-	font-size: 0.7em;
+	font-size: 0.8em;
 	width:80%;
 }
 #upfront_map-location_overlay-use_location {
-	width:20%;
-	background: transparent;
+	width:10%;
+	background-color: transparent;
 }
 
 #upfront_map-location_overlay-location , #upfront_map-location_overlay-use_location {
@@ -186,7 +186,16 @@ border-width: 11px;
 	margin:0;
 }
 
-
 #upfront_map-location_overlay-address {
+	margin:0 auto;
+	max-width:400px;
+}
 
+#upfront_map-location_overlay-use_current {
+	background:transparent;
+	color:#395269;
+	text-decoration: underline;
+	font-size: 0.8em;
+	padding:0;
+	margin:0;
 }
