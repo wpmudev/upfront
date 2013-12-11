@@ -139,4 +139,32 @@
 	</ul>
 </script>
 
+<script type="text/template" id="magnific-labels-tpl">
+	<div class="ugallery-magnific-labels upfront-ui">
+		<div class="ugallery-magnific-panel closed upfront-media-controls">
+			<div class="ugallery-magnific-info">Turn on 'Label Sorting' in the settings to display gallery labels.</div>
+			<div class="ugallery-magnific-wrapper existing_labels">
+				{{labels}}
+				<div class="ugallery-magnific-add">
+					
+					<div class="ugallery-magnific-addform label_selector">
+						<input type="hidden" id="ugallery-image-id" value="{{imageId}}">
+						<input type="text" id="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="Add label">
+						<div class="labels_list"></div>
+					</div>
+					<div class="ugallery-magnific-addbutton">Add label</div>
+				</div>
+			</div>
+		</div>
+		<div class="ugallery-magnific-toggle"></div>
+	</div>
+	
+</script>
+
+<!--
+{[ _.each(labels, function(label){ ]}
+					<div><label rel="{{label.id}}">{{label.text}}</label></div>
+					{[ }) ]}
+					-->
+
 </div>

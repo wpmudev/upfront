@@ -51,6 +51,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
 	labelsTpl: _.template($(editorTpl).find('#labels-tpl').html()),
 	labelSelectorTpl: _.template($(editorTpl).find('#labels-selection-tpl').html()),
+	magnificLabelTpl: _.template($(editorTpl).find('#magnific-labels-tpl').html()),
 	images: [],
 	sortMode: false,
 	lastThumbnailSize: false,
@@ -78,7 +79,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			'click .ugallery_op_mask': 'imageEditMask',
 			'click .ugallery_item_rm_yes': 'removeImage',
 			'click .ugallery-image-wrapper': 'selectItem',
-			'click .upfront-quick-swap': 'openImageSelector'
+			'click .upfront-quick-swap': 'openImageSelector',
+			'click .ugallery-nolabels-alert': 'openLightboxLabels'
 		});
 		var images = this.property('images');
 
@@ -178,7 +180,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		return item;
 	},
 
-	openLightbox: function(e){
+	openLightbox: function(e, labels){
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = me.images.get(item.attr('rel')),
@@ -198,7 +200,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			},
 			callbacks: {
 				imageLoadComplete: function() {
-					var title = $(this.container).find('.mfp-title');
+					var title = $(this.container).find('.mfp-title'),
+						wrapper = $(this.container).find('figure'),
+						labelsTpl = $.trim(me.labelsTpl({labels: me.extractImageLabels(image.id)}))
+						//labelsTpl = me.getLabelSelector(image.id)
+					;
 					if(title.length){
 						editor = Upfront.Content.editors.add({
 							type: Upfront.Content.TYPES.SIMPLE,
@@ -206,9 +212,45 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 							element: title,
 							toolbar: ['Bold', 'Italic']
 						});
-						title.on('dblclick', function(e){				
+						title.on('dblclick', function(e){
 							editor.start();
 						});
+
+						wrapper.append(me.magnificLabelTpl({labels: labelsTpl, imageId: image.id}));
+
+						var panel = wrapper.find('.ugallery-magnific-panel'),
+							reveal = function(){
+								panel.removeClass('closed');
+								setTimeout(function(){
+									panel.css('overflow', 'visible');
+								}, 500);								
+							}
+						;
+
+						if(labels)
+							setTimeout(function(){
+								reveal();
+							}, 300);
+
+						wrapper
+							.on('click', '.ugallery-magnific-toggle', function(e){
+								var panel = wrapper.find('.ugallery-magnific-panel');
+								if(panel.hasClass('closed')){
+									reveal();
+								}
+								else{
+									panel.css('overflow', 'hidden').addClass('closed');
+								}
+							})
+							.on('click', '.ugallery-magnific-addbutton', function(e){
+								wrapper.find('.ugallery-magnific-addbutton').hide();
+								wrapper.find('.ugallery-magnific-addform').show()
+									.find('#ugallery-addlabels').focus()
+								;
+							})
+						;
+
+						me.createLabelSelector(wrapper);
 					}
 				},
 				beforeClose: function() {
@@ -225,6 +267,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				}
 			}
 		});
+	},
+
+	openLightboxLabels: function(e){
+		this.openLightbox(e, true);
 	},
 
 	get_content_markup: function () {
@@ -303,6 +349,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						editor.start();
 					});
 				}
+
+				if(
+					me.imageLabels[image.id] &&
+					me.property('labelFilters').length && 
+					me.imageLabels[image.id].split(',').length < 2
+				){
+					item.find('.ugallery-image-wrapper').append('<div class="ugallery-nolabels-alert" title="This image has no labels"></div>');
+				}
+
 			});
 
 			if(me.property('status') != 'ok')
@@ -1017,9 +1072,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						console.log(response);
 					})
 				;
-			}			
+			}
 		}
 		else{
+			//Push a label with a temp id
 			var me = this,
 				tempId = - parseInt(Math.random() * 100, 10),
 				label = {
@@ -1044,6 +1100,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			Upfront.Util.post(data)
 				.success(function (response) {
 					console.log(response);
+
+					//Replace the temp label
 					var thisLabels = response.data[imageId],
 						imageLabels = [],
 						newId = 0,
@@ -1072,13 +1130,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						if(label.text == text)
 							label.id = newLabel.id;
 					});
-				})
+				});
+
+				this.renderLightboxLabels(imageId);
 			;
 		}
+
+		this.renderLightboxLabels(imageId);
+		this.render();
+
 	},
 
 	renderLabels: function(imageId){
 		$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId)}));
+	},
+
+	renderLightboxLabels: function(imageId) {
+		var lightboxLabels = $('.ugallery-magnific-wrapper');
+		if(lightboxLabels.length){
+			lightboxLabels.find('a').remove();
+			lightboxLabels.prepend($.trim(this.labelsTpl({labels: this.extractImageLabels(imageId)})));
+		}
 	},
 
 	postTypes: function(){
