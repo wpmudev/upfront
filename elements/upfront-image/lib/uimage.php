@@ -236,7 +236,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 			$urlOriginal = wp_get_attachment_image_src($imageData['id'], 'full');
 			$urlOriginal = $urlOriginal[0];
-			$url  = str_replace($path_parts['filename'], $filename, $urlOriginal);
+			$url  = str_replace($path_parts['basename'], $saved['file'], $urlOriginal);
 
 			if($rotate){
 				//We must do a rotated version of the full size image
@@ -246,9 +246,9 @@ class Upfront_Uimage_Server extends Upfront_Server {
 					$full = wp_get_image_editor( _load_image_to_edit_path( $imageData['id'] ) );
 					$full->rotate(-$rotate);
 					$full->set_quality(90);
-					$full->save($fullsizepath);
+					$savedfull = $full->save($fullsizepath);
 				}
-				$urlOriginal = str_replace($path_parts['filename'], $fullsizename, $urlOriginal);
+				$urlOriginal = str_replace($path_parts['basename'], $savedfull['file'], $urlOriginal);
 			}
 			$images[$imageData['id']] = array(
 				'error' => false,
