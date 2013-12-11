@@ -94,11 +94,14 @@
         get_content_markup: function () {
             var me = this,
 
-            fbUrl = this.getGlobalFBUrl();
+			fbUrl = this.model.get_property_value_by_name('facebook_url');
+		
+			if(!fbUrl || fbUrl=='')
+            	fbUrl = this.getGlobalFBUrl();
 
             if(fbUrl){
                 var pageName = _.last(fbUrl.split('/'));
-                return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+this.model.get_property_value_by_name('element_size').width+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:'+this.model.get_property_value_by_name('element_size').width+'px; float:left; height:'+this.model.get_property_value_by_name('element_size').height+'px;" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+                return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+this.model.get_property_value_by_name('element_size').width+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; height:'+this.model.get_property_value_by_name('element_size').height+'px;" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
             }else{
                 return 'You need to set a Facebook URL in your <a class="back_global_settings" href="#">global social settings</a>.';
             }
@@ -177,9 +180,23 @@
          * Bootstrap the object - populate the internal
          * panels array with the panel instances we'll be showing.
          */
+		 getGlobalFBUrl: function(){
+            if(!Upfront.data.usocial.globals)
+                return false;
+            var services = Upfront.data.usocial.globals.services,
+                url = false;
+
+            _(services).each( function( s ) {
+                if(s.id == 'facebook')
+                    url = s.url;
+            });
+
+            return url;
+        },
+
         initialize: function () {
-            this.panels = _([
-                new Upfront.Views.Editor.Settings.Panel({
+            this.panel = new Upfront.Views.Editor.Settings.Panel({
+					
                     model: this.model,
                     label: "Layout Style",
                     title: "Layout Style settings",
@@ -192,7 +209,7 @@
                                 new Field_Text({
                                     model: this.model,
                                     property: 'facebook_url',
-                                    default_value: Upfront.data.social.panel.model.get_property_value_by_name('global_social_media_services-facebook-url'),
+                                    default_value: this.getGlobalFBUrl(),
                                     label: "https://www.facebook.com/YourPage",
                                     compact: true
                                 })
@@ -212,10 +229,11 @@
                                     }
                                 })
                             ]
-                        })
+                        }),
+
                     ]
-                })
-            ]);
+                });
+			this.panels = _([this.panel]);
         },
         /**
          * Get the title (goes into settings title area)

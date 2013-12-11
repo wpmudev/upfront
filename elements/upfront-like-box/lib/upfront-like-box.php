@@ -4,9 +4,10 @@ class Upfront_LikeBoxView extends Upfront_Object {
 
     public function get_markup () {
         $element_size = $this->_get_property('element_size');
+		$url = $this->_get_property('facebook_url');
         $global_settings = Upfront_SocialMedia_Setting::get_globals();
 
-        if($global_settings){
+		if($url=='' && $global_settings){
             $services = $global_settings['services'];
             $url = false;
 
@@ -17,12 +18,13 @@ class Upfront_LikeBoxView extends Upfront_Object {
 
             if(!$url)
                 return $this->wrap('You need to set a Facebook URL in your global social settings.');
-
-            $parts = parse_url($url);
+		}
+        if($url) {
+			$parts = parse_url($url);
             $fbname = end(explode('/', $parts['path']));
 
             return $this->wrap(
-                "<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$element_size['width']}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:{$element_size['width']}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
+                "<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$element_size['width']}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
             );
         }
         else{
@@ -54,7 +56,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
             'type' => "LikeBox",
             'view_class' => "LikeBoxView",
             "class" => "c22 upfront-like-box",
-            'has_settings' => 0,
+            'has_settings' => 1,
             'element_size' => array(
                 'width' => 278,
                 'height' => 270
