@@ -6694,3 +6694,8 @@ a.ueditor-select-option:hover {
 #preventUsageOverlay:hover span {
   visibility: visible;
 }
+
+.upfront-region-container-shadow .upfront-region-edit-trigger {
+  /* This is very important fix for anchor linking to element cuts off top of page. */
+  display: none;
+}
