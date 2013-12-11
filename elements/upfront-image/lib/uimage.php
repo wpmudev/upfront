@@ -144,6 +144,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 		if(! $data['images'])
 			return $this->_out(new Upfront_JsonResponse_Error("No images sent"));
+		
+		@ini_set( 'memory_limit', apply_filters( 'upfront_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 
 		$images = array();
 
