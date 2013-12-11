@@ -2785,7 +2785,7 @@ a.ueditor-action-pickercancel{
 	background-position: -39px -346px;
 }
 /* hiding accordion until it's finished */
-.upfront-icon-element-accordion { display:none; }
+
 .upfront-icon-element-accordion:before {
 	background-position: -39px -448px;
 }
