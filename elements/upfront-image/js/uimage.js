@@ -1904,7 +1904,6 @@ var ImageSelector = Backbone.View.extend({
 	cancelOverlay: function(e) {
 		if(e.target == e.currentTarget)
 			this.closeOverlay(e);
-    Upfront.Events.trigger('upfront:element:edit:stop');
 	},
 	closeOverlay: function(e){
 		var me = this;
@@ -1933,6 +1932,7 @@ var ImageSelector = Backbone.View.extend({
 		//this.parent_module_view.$('.upfront-editable_entity:first').draggable('enable');
 
 		$(window).off('resize', this.resizeOverlay);
+    Upfront.Events.trigger('upfront:element:edit:stop');
 	},
 
 	openOverlaySection: function(tpl, tplOptions, callback){
