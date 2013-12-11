@@ -1037,14 +1037,6 @@
 			c0-0.001,0-0.001,0-0.002v-1.275c-0.596-0.346-1-0.984-1-1.723c0-1.104,0.895-2,2-2c1.104,0,2,0.896,2,2
 			C422,622.738,421.595,623.376,421,623.722z"/>
 	</g>
-	<g>
-		<path fill-rule="evenodd" clip-rule="evenodd" fill="#4C6781" d="M45,656v4h5v5h4v-5h5v-4h-6v-5h-3v5H45z"/>
-		<path fill-rule="evenodd" clip-rule="evenodd" fill="#97B7DA" d="M54,655h2v-5h3l-4-4l-4,4h3V655z"/>
-	</g>
-	<g>
-		<path fill-rule="evenodd" clip-rule="evenodd" fill="#26C090" d="M169,656v4h5v5h4v-5h5v-4h-6v-5h-3v5H169z"/>
-		<path fill-rule="evenodd" clip-rule="evenodd" fill="#DBECFC" d="M178,655h2v-5h3l-4-4l-4,4h3V655z"/>
-	</g>
 	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#DD4547" points="745,237 741,241 737,237 735,239 739,243 735,247 
 		737,249 741,245 745,249 747,247 743,243 747,239 	"/>
 	<g>
@@ -1538,6 +1530,30 @@
 		<circle fill="#4C6781" cx="169" cy="597" r="1"/>
 		<circle fill="#4C6781" cx="179" cy="597" r="1"/>
 		<circle fill="#4C6781" cx="183" cy="597" r="1"/>
+	</g>
+	<g>
+		<rect x="282" y="719" fill="#EDC01E" width="35" height="9"/>
+		<rect x="294" y="721" fill="#CE9F12" width="11" height="1"/>
+		<rect x="294" y="723" fill="#CE9F12" width="11" height="1"/>
+		<rect x="294" y="725" fill="#CE9F12" width="11" height="1"/>
+	</g>
+	<g>
+		<g>
+			<polygon fill="#4C6781" points="58,657 59,657 59,656 45,656 45,657 46,657 			"/>
+			<polygon fill="#4C6781" points="58,651 59,651 59,650 45,650 45,651 46,651 			"/>
+			<polygon fill="#4C6781" points="58,664 46,664 45,664 45,665 59,665 59,664 			"/>
+		</g>
+		<polygon fill="#97B7DA" points="50,655 54,655 52,652 		"/>
+		<rect x="45" y="657" fill-rule="evenodd" clip-rule="evenodd" fill="#97B7DA" width="14" height="7"/>
+	</g>
+	<g>
+		<g>
+			<polygon fill="#26C090" points="182,657 183,657 183,656 169,656 169,657 170,657 			"/>
+			<polygon fill="#26C090" points="182,651 183,651 183,650 169,650 169,651 170,651 			"/>
+			<polygon fill="#26C090" points="182,664 170,664 169,664 169,665 183,665 183,664 			"/>
+		</g>
+		<polygon fill="#DBECFC" points="174,655 178,655 176,652 		"/>
+		<rect x="169" y="657" fill-rule="evenodd" clip-rule="evenodd" fill="#DBECFC" width="14" height="7"/>
 	</g>
 </g>
 <g id="area-markers">
@@ -2089,5 +2105,35 @@
 	</g>
 	<rect opacity="0.05" fill="#BDCCD4" width="1" height="1"/>
 	<rect x="1481" y="829" opacity="0.05" fill="#BDCCD4" width="1" height="1"/>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
 </g>
 </svg>
