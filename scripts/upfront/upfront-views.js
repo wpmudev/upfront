@@ -375,7 +375,7 @@ define(_template_files, function () {
 				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
-				"dblclick": "on_edit"
+				"dblclick": "on_edit",
 			},
 			initialize: function () {
 				// this.model.get("properties").bind("change", this.render, this);
@@ -384,7 +384,12 @@ define(_template_files, function () {
 				this.listenTo(this.model.get("properties"), 'change', this.render);
 				this.listenTo(this.model.get("properties"), 'add', this.render);
 				this.listenTo(this.model.get("properties"), 'remove', this.render);
+				Upfront.Events.on('entity:resize_start', this.close_settings, this);
+				Upfront.Events.on('entity:drag_start', this.close_settings, this);
 				if (this.init) this.init();
+			},
+			close_settings: function () {
+				Upfront.Events.trigger("entity:settings:deactivate");
 			},
 			render: function () {
 				var props = {},
