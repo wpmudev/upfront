@@ -209,8 +209,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						editor = Upfront.Content.editors.add({
 							type: Upfront.Content.TYPES.SIMPLE,
 							editor_id: 'caption-' + image.get('id'),
-							element: title,
-							toolbar: ['Bold', 'Italic']
+							element: title
 						});
 						title.on('dblclick', function(e){
 							editor.start();
@@ -261,7 +260,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						;
 						if(caption != newCaption){
 							image.set('caption', newCaption);
-							Upfront.Views.Editor.notify("Image caption has been successfully updated.");
+							Upfront.Views.Editor.notify("Image description has been successfully updated.");
 						}
 					}
 				}
