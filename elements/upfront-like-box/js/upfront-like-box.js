@@ -31,12 +31,18 @@
             }
 
             this.constructor.__super__.initialize.call(this, [options]);
+			Upfront.Events.on('entity:resize_start', this.hideFrame, this);
+			//Upfront.Events.on('entity:drag_start', this.hideFrame, this);
             Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
+
         },
 
         setUrl: function(){
             this.property('facebook_url' , Upfront.data.social.panel.model.get_property_value_by_name('global_social_media_services-facebook-url'));
         },
+		hideFrame: function(view, model) {
+			this.$el.find('iframe').css('display', 'none');
+		},
         onElementResize: function(view, model){
             if(this.parent_module_view == view)
                 this.setElementSize();
@@ -52,7 +58,7 @@
                     if(me.elementSize.width != 0){
                         me.property('element_size', {
                             width: me.elementSize.width,
-                            height: me.elementSize.height
+                            height: parseInt(parent.css('min-height')),
                         });
                     }
                 }, 1000);
