@@ -2878,9 +2878,9 @@ define(_template_files, function () {
 		is_changed: false,
 
 		render: function () {
-			this.$el.empty().show();
+			this.$el.empty();
 			this.$el.append('<div class="upfront-settings_label" />');
-			this.$el.append('<div class="upfront-settings_panel" style="display:none"><div class="upfront-settings_panel_scroll" /></div>');
+			this.$el.append('<div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" /></div>');
 			var $label = this.$el.find(".upfront-settings_label"),
 				$panel = this.$el.find(".upfront-settings_panel"),
 				$panel_scroll = this.$el.find(".upfront-settings_panel_scroll"),
@@ -2908,6 +2908,7 @@ define(_template_files, function () {
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
 				'</div>'
 			);
+			this.$el.fadeIn('fast');
 			this.trigger('rendered');
 		},
 
