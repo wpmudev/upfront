@@ -53,7 +53,7 @@
                 ;
             if(parent.length && parent.height()){
                 this.elementSize.height = parent.height();
-                setTimeout(function(){
+                //setTimeout(function(){
                     me.elementSize.width = parent.find('.upfront-object-content').width();
                     if(me.elementSize.width != 0){
                         me.property('element_size', {
@@ -61,7 +61,7 @@
                             height: parseInt(parent.css('min-height')),
                         });
                     }
-                }, 1000);
+                //}, 1000);
             }
         },
         property: function(name, value) {
@@ -231,7 +231,8 @@
                                     label: 'global settings',
                                     on_click: function(e){
                                         e.preventDefault();
-                                        Upfront.data.social.panel.popupFunc();
+			                            Upfront.Events.trigger("entity:settings:deactivate");
+										Upfront.data.social.panel.popupFunc();
                                     }
                                 })
                             ]
