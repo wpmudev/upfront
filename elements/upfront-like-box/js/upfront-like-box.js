@@ -32,7 +32,6 @@
 
             this.constructor.__super__.initialize.call(this, [options]);
 			Upfront.Events.on('entity:resize_start', this.hideFrame, this);
-			//Upfront.Events.on('entity:drag_start', this.hideFrame, this);
             Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
 
         },
