@@ -4171,6 +4171,7 @@ var Field_Anchor = Field_Select.extend({
 					rotate: new Field_Checkboxes({
 						model: this.model,
 						property: 'background_slider_rotate',
+						default_value: true,
 						layout: 'horizontal-inline',
 						multiple: false,
 						values: [ { label: "Rotate automatically every ", value: true } ],
