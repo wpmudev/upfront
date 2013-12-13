@@ -563,7 +563,8 @@ a.open-media-gallery:hover i {
 	visibility: visible;
 }
 
-.uimage-controls div.upfront-inline-panel-subitem div.upfront-inline-panel-item:last-child {
+.uimage-controls div.upfront-inline-panel-subitem div.upfront-inline-panel-item:last-child,
+.upfront-editing .uimage-controls {
 	display: none;
 }
 

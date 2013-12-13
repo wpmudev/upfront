@@ -129,7 +129,8 @@
 			if (this.editor && this.editor.destroy)
 				this.editor.destroy();
 			this.editor = false;
-			el.removeAttr('contenteditable').removeClass('ueditable');	
+			el.removeAttr('contenteditable').removeClass('ueditable');
+			this.trigger('stop', this);
 			return this;		
 		},
 

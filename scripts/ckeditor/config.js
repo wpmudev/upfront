@@ -44,6 +44,8 @@ CKEDITOR.editorConfig = function( config ) {
 };
 
 CKEDITOR.on('instanceReady', function(e){
+	e.editor.element.$.title = "";
+
 	/*
 	On load show only the first row of buttons.
 	Use CSS class selectors for IE<9 compatibility (jQuery supports pseudo selectors in IE<9):

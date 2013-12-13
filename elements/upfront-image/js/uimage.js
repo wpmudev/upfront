@@ -186,11 +186,20 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(this.editor)
 			this.editor.stop();
 
+
+		this.$el.addClass('upfront-editing');
+
+
+
 		this.editor = Upfront.Content.editors.add({
 			type: Upfront.Content.TYPES.SIMPLE,
 			editor_id: this.model.get_property_value_by_name("element_id"),
 			element: captionEl,
 			removeImageSupport: true
+		});
+
+		this.editor.on('focus', function(){
+			me.$el.addClass('upfront-editing');
 		});
 
 		this.editor.textColor = this.property('color');
@@ -211,7 +220,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		this.editor.start();
 
+		this.editor.on('stop', function(){
+			me.$el.removeClass('upfront-editing');
+		});
+
 		this.editor.on('blur', function(){
+			me.$el.removeClass('upfront-editing');
+		});
+
+		$(document).on('click', function(){
 			me.property('image_caption', me.editor.getContents());
 			me.editor.stop();
 		});
@@ -362,7 +379,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.controls.setWidth(container.width());
 			me.controls.render();
 			container.append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
-			me.controls.delegateEvents();
+			me.controls.delegateEvents();			
+			me.$el.removeClass('upfront-editing');
 		}, 300);
 	},
 
