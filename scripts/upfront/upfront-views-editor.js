@@ -2908,7 +2908,15 @@ define(_template_files, function () {
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
 				'</div>'
 			);
-			this.$el.fadeIn('fast');
+			this.$el.fadeIn('fast', function() {
+				// Scroll the window if settings box clips vertically
+				var elementbottom = $(this).parent().offset().top+$(this).parent().height();
+				var winheight = jQuery(window).height();
+				
+				if( (elementbottom +60) > (winheight+jQuery('body').scrollTop()))
+					jQuery('body').animate({scrollTop:(elementbottom - winheight + 60)}, 'slow');
+			
+			});
 			this.trigger('rendered');
 		},
 
