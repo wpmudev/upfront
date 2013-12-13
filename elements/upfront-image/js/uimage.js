@@ -189,7 +189,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.editor = Upfront.Content.editors.add({
 			type: Upfront.Content.TYPES.SIMPLE,
 			editor_id: this.model.get_property_value_by_name("element_id"),
-			element: captionEl
+			element: captionEl,
+			removeImageSupport: true
 		});
 
 		this.editor.textColor = this.property('color');
@@ -1638,12 +1639,17 @@ var ImageEditor = Backbone.View.extend({
 	},
 
 	getImageData: function(ids) {
-		var me = this;
-		return Upfront.Util.post({
+		var me = this,
+			options = {
 				action: 'upfront-media-image_sizes',
 				item_id: JSON.stringify(ids)
-			})
+			}
 		;
+
+		if(this.options.customImageSize)
+			options.customSize = this.options.customImageSize;
+
+		return Upfront.Util.post(options);
 	},
 
 	saveImageEdition: function(imageId, rotate, resize, crop){

@@ -97,6 +97,10 @@ CKEDITOR.on("instanceReady", function (e) {
 			$body = $("body"),
 			$blocks = $root.find("p:not(.upfront-inserted_image-wrapper),div,ul,ol")
 		;
+
+		if($root.hasClass('ueditor-noimage'))
+			return;
+
 		ranges = [];
 		$(document).off("click", ".upfront-image-attachment-bits");
 		$(".upfront-image-attachment-bits").remove();

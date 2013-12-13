@@ -78,6 +78,10 @@
 
 			var editorNode = el.attr('contenteditable', true).addClass('ueditable').get(0);
 
+
+			if(this.options.removeImageSupport)
+				el.addClass('ueditor-noimage');
+
 			//Start CKE
 			this.editor = CKEDITOR.inline(editorNode, this.toolbar);
 			this.editor.ueditor = this;
@@ -165,9 +169,11 @@
 			editor = CKEDITOR.inline($el.get(0));
 			if ($parent.is(".ui-draggable")) 
 				$parent.draggable('disable');
+
 			editor.on('change', function (e) {
 				view.model.set_content(e.editor.getData(), {silent: true});
 			});
+
 			$el.focus();
 
 			Upfront.Events.on("entity:deactivated", view.on_cancel, view);
