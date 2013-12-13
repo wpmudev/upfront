@@ -263,16 +263,18 @@
             model: this.model,
             title: "Display style",
             fields: [
-              new Upfront.Views.Editor.Field.Radios({
-                className: 'inline-radios',
-                model: this.model,
-                property: 'style_type',
-                label: "",
-                values: [
-                  { label: "", value: 'theme_defined' },
-                  { label: "", value: 'custom' }
-                ]
-              }),
+              /*
+               * new Upfront.Views.Editor.Field.Radios({
+               *   className: 'inline-radios',
+               *   model: this.model,
+               *   property: 'style_type',
+               *   label: "",
+               *   values: [
+               *     { label: "", value: 'theme_defined' },
+               *     { label: "", value: 'custom' }
+               *   ]
+               * }),
+               */
               new Upfront.Views.Editor.Field.Select({
                 model: this.model,
                 property: 'theme_style',
@@ -283,56 +285,58 @@
                   { label: "Button Tabs", value: 'button_tabs' },
                 ]
               }),
-              new Upfront.Views.Editor.Field.Select({
-                model: this.model,
-                property: 'custom_style',
-                label: "Custom",
-                values: [
-                  { label: "Tabbed", value: 'tabbed' },
-                  { label: "Simple text", value: 'simple_text' },
-                  { label: "Button Tabs", value: 'button_tabs' },
-                ]
-              }),
-              new Upfront.Views.Editor.Field.Color({
-                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
-                model: this.model,
-                property: 'active_tab_color',
-                label: 'Active tab:',
-                spectrum: {
-                  preferredFormat: "hsl",
-                  change: this.onActiveTabColorChange
-                }
-              }),
-              new Upfront.Views.Editor.Field.Color({
-                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
-                model: this.model,
-                property: 'active_tab_text_color',
-                label: 'Active tab text:',
-                spectrum: {
-                  preferredFormat: "hsl",
-                  change: this.onActiveTabTextColorChange
-                }
-              }),
-              new Upfront.Views.Editor.Field.Color({
-                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
-                model: this.model,
-                property: 'inactive_tab_color',
-                label: 'Inactive tab:',
-                spectrum: {
-                  preferredFormat: "hsl",
-                  change: this.onInactiveTabColorChange
-                }
-              }),
-              new Upfront.Views.Editor.Field.Color({
-                className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
-                model: this.model,
-                property: 'inactive_tab_text_color',
-                label: 'Inactive tab text:',
-                spectrum: {
-                  preferredFormat: "hsl",
-                  change: this.onInactiveTabTextColorChange
-                }
-              })
+              /*
+               * new Upfront.Views.Editor.Field.Select({
+               *   model: this.model,
+               *   property: 'custom_style',
+               *   label: "Custom",
+               *   values: [
+               *     { label: "Tabbed", value: 'tabbed' },
+               *     { label: "Simple text", value: 'simple_text' },
+               *     { label: "Button Tabs", value: 'button_tabs' },
+               *   ]
+               * }),
+               * new Upfront.Views.Editor.Field.Color({
+               *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
+               *   model: this.model,
+               *   property: 'active_tab_color',
+               *   label: 'Active tab:',
+               *   spectrum: {
+               *     preferredFormat: "hsl",
+               *     change: this.onActiveTabColorChange
+               *   }
+               * }),
+               * new Upfront.Views.Editor.Field.Color({
+               *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
+               *   model: this.model,
+               *   property: 'active_tab_text_color',
+               *   label: 'Active tab text:',
+               *   spectrum: {
+               *     preferredFormat: "hsl",
+               *     change: this.onActiveTabTextColorChange
+               *   }
+               * }),
+               * new Upfront.Views.Editor.Field.Color({
+               *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
+               *   model: this.model,
+               *   property: 'inactive_tab_color',
+               *   label: 'Inactive tab:',
+               *   spectrum: {
+               *     preferredFormat: "hsl",
+               *     change: this.onInactiveTabColorChange
+               *   }
+               * }),
+               * new Upfront.Views.Editor.Field.Color({
+               *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
+               *   model: this.model,
+               *   property: 'inactive_tab_text_color',
+               *   label: 'Inactive tab text:',
+               *   spectrum: {
+               *     preferredFormat: "hsl",
+               *     change: this.onInactiveTabTextColorChange
+               *   }
+               * })
+               */
             ]
           })
         ]);

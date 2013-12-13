@@ -50,6 +50,11 @@
   padding: 0 7px;
   line-height: 32px;
   margin-left: 5px;
+  visibility: hidden;
+}
+
+.upfront-tabs-container:hover .add-tab {
+  visibility: visible;
 }
 
 .upfront-tabs-container .tabs-tab {
