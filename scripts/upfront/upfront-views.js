@@ -729,7 +729,7 @@ define(_template_files, function () {
 				}
 				return {
 					"class": classes.join(' ')
-				}
+				};
 			},
 			init: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid;
@@ -756,11 +756,13 @@ define(_template_files, function () {
 			},
 			render: function () {
 				var template = _.template(_Upfront_Templates["region_container"], this.model.toJSON()),
-					$edit = $('<div class="upfront-region-edit-trigger tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
+					$edit = $('<div class="upfront-region-edit-trigger tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> Finish editing background</div>');
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$layout = this.$el.find('.upfront-grid-layout');
 				$edit.appendTo( this.model.get('clip') ? this.$layout : this.$el );
+				$finish.appendTo( this.model.get('clip') ? this.$layout : this.$el ); 
 				this.update();
 				if ( !this.model.get('clip') )
 					this.$el.append('<div class="upfront-region-active-overlay" />');
@@ -856,7 +858,7 @@ define(_template_files, function () {
 				if ( $main.hasClass('upfront-region-editing') && this.$el.hasClass('upfront-region-container-active') ){
 					var $fin = this.$el.find('.upfront-region-finish-edit'),
 						fin_offset = $fin.offset();
-					if ( bottom > scroll_bottom && top < scroll_bottom ){
+					if ( bottom+$fin.outerHeight() > scroll_bottom && top < scroll_bottom ){
 						if ( $fin.css('position') != 'fixed' )
 							$fin.css({
 								position: 'fixed',
@@ -899,7 +901,7 @@ define(_template_files, function () {
 				}
 				return {
 					"class": classes.join(' ')
-				}
+				};
 			},
 			init: function () {
 				var container = this.model.get("container"),
@@ -917,7 +919,7 @@ define(_template_files, function () {
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
-				if ( container && container != name ){
+				if ( this.model.get('clip') || ! this.model.is_main() ){
 					Upfront.Events.on("entity:resize_stop", this.refresh_background, this);
 					Upfront.Events.on("entity:region:resize_stop", this.refresh_background, this);
 					Upfront.Events.on("entity:region_container:resize_stop", this.refresh_background, this);
@@ -946,7 +948,7 @@ define(_template_files, function () {
 				this.$el.attr('data-title', this.model.get("title"));
 				this.$el.append('<div class="upfront-region-title">' + this.model.get("title") + '</div>');
 				this.update();
-				if ( container && container != name ){
+				if ( ! this.model.is_main() ){
 					var index = this.model.collection.indexOf(this.model),
 						next = this.model.collection.at(index+1),
 						is_left = next && ( next.get('name') == container || next.get('container') == container);
@@ -959,7 +961,7 @@ define(_template_files, function () {
 				this.region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
 				this.region_panels.render();
 				this.$el.append(this.region_panels.el);
-				if ( this.model.get('clip') || ( container && container != name  ) )
+				if ( this.model.get('clip') || ! this.model.is_main() )
 					this.$el.append('<div class="upfront-region-active-overlay" />');
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
 				this.trigger("region_render", this);
@@ -975,7 +977,7 @@ define(_template_files, function () {
 					row = this.model.get_property_value_by_name('row'),
 					height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					expand_lock = this.model.get_property_value_by_name('expand_lock');
-				if ( this.model.get('clip') || ( container && container != name ) ){
+				if ( this.model.get('clip') || ! this.model.is_main() ){
 					// This region is inside another region container
 					this.update_background(); // Allow background applied
 				}
@@ -1028,7 +1030,7 @@ define(_template_files, function () {
 			render_container: function (region, index) {
 				var container = region.get("container"),
 					name = region.get("name");
-				if ( !container || container == name ) {
+				if ( region.is_main() ) {
 					var container_view = this.container_views[region.cid] || new RegionContainer({"model": region});
 					container_view.parent_view = this;
 					container_view.render();

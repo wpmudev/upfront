@@ -252,6 +252,24 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0].properties);
 			} else this.set("properties", new Properties([]));
+		},
+		is_main: function () {
+			var container = this.get('container'),
+				name = this.get('name');
+			return ( !container || container == name );
+		},
+		get_side_region: function (right) {
+			var collection = this.collection,
+				index = collection.indexOf(this.model),
+				total = collection.size()-1, // total minus shadow region
+				container = this.get('container') || this.get('name'),
+				ref_model = !right && index > 0 ? collection.at(index-1) : ( right && index < total-1 ? collection.at(index+1) : false );
+			if ( ref_model && ref_model.get('container') == container )
+				return ref_model;
+			return false;
+		},
+		has_side_region: function () {
+			return ( this.get_side_region() || this.get_side_region(true) );
 		}
 	}),
 

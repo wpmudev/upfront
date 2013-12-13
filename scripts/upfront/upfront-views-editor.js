@@ -3654,8 +3654,8 @@ var Field_Anchor = Field_Select.extend({
 		},
 		open_modal: function (render_callback, button) {
 			var me = this,
-				panels_view = this.panel_view.panels_view,
-				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid),
+				$region_container = this.$el.closest('.upfront-region-container'),
+				$modal = $region_container.find('#upfront-inline-modal-' + this.cid),
 				$content;
 			this.modal_deferred = $.Deferred();
 			if ( $modal.length ) {
@@ -3664,12 +3664,12 @@ var Field_Anchor = Field_Select.extend({
 				render_callback.apply(this, [$content, $modal]);
 			}
 			else {
-				$modal = $('<div class="upfront-inline-modal" id="upfront-inline-modal-' + this.cid + '" />');
+				$modal = $('<div class="upfront-inline-modal upfront-ui upfront-no-select" id="upfront-inline-modal-' + this.cid + '" />');
 				$wrap = $('<div class="upfront-inline-modal-wrap" />');
 				$content = $('<div class="upfront-inline-modal-content" />');
 				$wrap.append($content);
 				$modal.append($wrap);
-				panels_view.$el.append($modal);
+				$region_container.append($modal);
 				render_callback.apply(this, [$content, $modal]);
 				if ( button ){
 					$wrap.append('<button type="button" class="upfront-inline-modal-save">Ok</button>');
@@ -3693,8 +3693,8 @@ var Field_Anchor = Field_Select.extend({
 			return this.modal_deferred.promise();
 		},
 		close_modal: function (save) {
-			var panels_view = this.panel_view.panels_view,
-				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid);
+			var $region_container = this.$el.closest('.upfront-region-container'),
+				$modal = $region_container.find('#upfront-inline-modal-' + this.cid);
 			$modal.hide();
 			$(window).off('scroll', this.on_scroll);
 			this.trigger('modal:close');
@@ -3709,14 +3709,13 @@ var Field_Anchor = Field_Select.extend({
 		},
 		update_modal_pos: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-				panels_view = this.panel_view.panels_view,
-				$modal = panels_view.$el.find('#upfront-inline-modal-' + this.cid);
+				$region_container = this.$el.closest('.upfront-region-container'),
+				$modal = $region_container.find('#upfront-inline-modal-' + this.cid);
 			if ( !$modal.length || $modal.css('display') == 'none' )
 				return;
-			var	$region = $modal.closest('.upfront-region'),
-				offset = $region.offset(),
+			var	offset = $region_container.offset(),
 				top = offset.top,
-				bottom = top + $region.outerHeight(),
+				bottom = top + $region_container.outerHeight(),
 				scroll_top = $(document).scrollTop(),
 				scroll_bottom = scroll_top + $(window).height(),
 				rel_top = $main.offset().top,
@@ -4651,12 +4650,11 @@ var Field_Anchor = Field_Select.extend({
 		className: 'upfront-inline-panel upfront-region-panel-edit upfront-no-select',
 		initialize: function () {
 			this.bg = new RegionPanelItem_BgSetting({model: this.model});
-			var container = this.model.get('container'),
-				name = this.model.get('name');
-			if ( !container || container == name ){
+			if ( this.model.is_main() ){
 				//this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
 				this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
 			}
+			this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
 		},
 		items: function () {
 			var items = _([]);
@@ -4665,6 +4663,13 @@ var Field_Anchor = Field_Select.extend({
 			//	items.push(this.expand_lock);
 			if ( this.add_region )
 				items.push(this.add_region);
+			if ( this.model.is_main() ) {
+				if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
+					items.push( this.delete_region );
+			}
+			else {
+				items.push( this.delete_region );
+			}
 			return items;
 		}
 	});
@@ -4733,7 +4738,7 @@ var Field_Anchor = Field_Select.extend({
 			this.edit_panel = new RegionPanel_Edit({model: this.model});
 			this.delete_panel = new RegionPanel_Delete({model: this.model});
 			this.add_panel_bottom = new RegionPanel_Add({model: this.model, to: 'bottom'});
-			if ( ( !container || container == name ) && this.model.get('allow_sidebar') ){
+			if ( this.model.is_main() && this.model.get('allow_sidebar') ){
 				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
 				this.add_panel_right = new RegionPanel_Add({model: this.model, to: 'right'})
 			}
@@ -4741,33 +4746,21 @@ var Field_Anchor = Field_Select.extend({
 		panels: function () {
 			var panels = _([]),
 				collection = this.model.collection || new Backbone.Collection([]),
-				container = this.model.get('container'),
-				name = this.model.get('name'),
+				container = this.model.get('container') || this.model.get('name'),
 				index = collection.indexOf(this.model),
 				total = collection.size()-1; // total minus shadow region
 			panels.push( this.edit_panel )
 			if ( index == total-1 ) // last region
 				panels.push( this.add_panel_bottom );
-			if ( !container || container == name ) {
-				var container = name,
-					prev_model = index > 0 ? collection.at(index-1) : false,
-					next_model = index < total-1 ? collection.at(index+1) : false,
-					has_sidebar = false;
+			if ( this.model.is_main() ) {
+				var prev_model = this.model.get_side_region(),
+					next_model = this.model.get_side_region(true);
 				if ( this.model.get('allow_sidebar') ){
 					if ( prev_model === false || prev_model.get('container') != container )
 						panels.push( this.add_panel_left );
-					else
-						has_sidebar = true;
 					if ( next_model === false || next_model.get('container') != container )
 						panels.push( this.add_panel_right );
-					else
-						has_sidebar = true;
 				}
-				if ( ! has_sidebar && ! this.model.get('default') && this.model.get('scope') != 'global' )
-					panels.push( this.delete_panel );
-			}
-			else {
-				panels.push( this.delete_panel );
 			}
 			this._panels = panels;
 			return panels;

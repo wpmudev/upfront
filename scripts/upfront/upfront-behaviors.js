@@ -1913,10 +1913,15 @@ var GridEditor = {
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout')
 		;
+		if ( $me.hasClass('ui-resizable') )
+			return false;
+		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-region-resize-handle ui-resizable-handle ui-resizable-s"></div>');
 		$me.resizable({
 			containment: "document",
 			//handles: "n, e, s, w",
-			handles: 's',
+			handles: {
+				s: '.upfront-region-resize-handle'
+			},
 			helper: "region-resizable-helper",
 			disabled: true,
 			zIndex: 9999999,

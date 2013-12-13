@@ -1679,24 +1679,23 @@ a.ueditor-action-pickercancel{
 	visibility: visible;
 	opacity: 1;
 }
-.upfront-region-editing .upfront-region-container-active .upfront-region-edit-trigger {
+.upfront-region-editing .upfront-region-container .upfront-region-edit-trigger {
 	visibility: hidden;
 	opacity: 0;
 }
 .upfront-region-finish-edit {
 	position: absolute;
-	bottom: 3px;
+	bottom: -51px;
 	right: 0;
 	color: #fdfdfd;
 	font-size: 17px;
 	line-height: 24px;
 	background: #1fcd8f;
-	-moz-box-shadow: 0 1px 0 #162433;
-	-webkit-box-shadow: 0 1px 0 #162433;
-	box-shadow: 0 1px 0 #162433;
 	padding: 14px 22px 12px;
+	border-bottom: none;
 	z-index: 1999999;
 	cursor: pointer;
+	white-space: nowrap;
 	visibility: hidden;
 	opacity: 0;
 	-webkit-transition: opacity 0.6s;
@@ -1746,13 +1745,24 @@ a.ueditor-action-pickercancel{
 }
 .upfront-region-editing .upfront-module {
 }
-.upfront-region-editing .upfront-region {
+.upfront-region-editing .upfront-region-container {
 	opacity: 0.5;
 	min-height: 90px;
 	z-index: 1;
 }
-.upfront-region-editing .upfront-region .upfront-editable_entities_container {
-	opacity: 0.5;
+.upfront-region-resize-handle {
+	position: absolute;
+	bottom: -11px;
+	left: 0;
+	right: 0;
+	height: auto;
+	z-index: 999999;
+	cursor: s-resize;
+	display: block;
+	visibility: hidden;
+}
+.upfront-region-editing .upfront-region-container-active .upfront-region-resize-handle {
+	visibility: visible;
 }
 .upfront-region-editing .upfront-region-active-overlay,
 .upfront-inline-panels,
@@ -1766,12 +1776,12 @@ a.ueditor-action-pickercancel{
 	bottom: 0;
 	z-index: 999980;
 }
-.upfront-region-editing .upfront-region-active {
+.upfront-region-editing .upfront-region-container-active {
 	opacity: 1;
 	-webkit-transition: opacity 0.6s;
 	z-index: 999981;
 }
-.upfront-region-editing .upfront-region-container-active,
+.upfront-region-editing .upfront-region-active,
 .upfront-region-editing .upfront-region-container-full.upfront-region-container-active .upfront-grid-layout {
 	z-index: 999981;
 }
@@ -2738,6 +2748,7 @@ a.ueditor-action-pickercancel{
 }
 .upfront-ui .upfront-icon:before,
 .region-lock-switch:before,
+.upfront-icon-control-region:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
@@ -3183,7 +3194,8 @@ a.ueditor-action-pickercancel{
 .upfront-icon-button-move:before {
 	background-position: -260px -280px;
 }
-.upfront-icon-control:before {
+.upfront-icon-control:before,
+.upfront-icon-control-region:before {
 	margin: 0 auto;
 	float: none;
 	display: block;
@@ -3192,6 +3204,11 @@ a.ueditor-action-pickercancel{
 	width: 12px;
 	height: 12px;
 	background-position: -294px -44px;
+}
+.upfront-icon-control-region-resize:before {
+	width: 35px;
+	height: 24px;
+	background-position: -282px -712px;
 }
 .upfront-icon-control-expand:before,
 .upfront-icon-control-collapse:before {
