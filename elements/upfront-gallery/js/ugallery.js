@@ -118,6 +118,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				});
 		});
 
+		if(this.property('status') != 'ok' || !this.images.length)
+			this.property('has_settings', 0);
+
 		this.createControls();
 
 		$('body').on('click', function(e){
@@ -125,9 +128,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			if(!e.gallerySelected && gallery.length)
 				gallery.find('.ugallery_selected').removeClass('ugallery_selected');
 		});
-
-		if(!this.images.length)
-			this.property('has_settings', 0);
 	},
 
 	selectItem: function(e){
@@ -294,6 +294,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			skipMargin = me.$el.closest('body').length ? this.calculateMargins() : false
 		;
 
+		this.images.each(function(image){
+			if(image.get('loading')){
+				me.$('.ugallery_item[rel="' + image.id  + '"]')
+					.find('.ugallery-image-wrapper').append('<p class="ugallery-image-loading">Loading...</p>');
+			}
+		});
+
+		if(me.property('status') != 'ok') {
+			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>Click to personalize this gallery</p></div>');
+		}
 
 		setTimeout(function(){
 			var items = me.$('.ugallery_item');
@@ -359,8 +369,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			});
 
-			if(me.property('status') != 'ok')
-				me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>Click to personalize this gallery</p></div>');
+			
 		}, 300);
 
 		this.activateSortable();		
@@ -476,6 +485,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		if(me.property('status') != 'ok'){
 			me.images.set(models);
 			me.property('status', 'ok');
+			this.property('has_settings', 1);
+			this.labels = [{id: 'label_0', text: 'All'}];
+			this.imagesLabels = {};
 		}
 		else if(replaceId){
 			var item = me.images.get(replaceId),
@@ -489,10 +501,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		}
 		me.render();
 
-		_.each(models, function(image){
-			me.$('.ugallery_item[rel="' + image.id  + '"]')
-				.find('.ugallery-image-wrapper').append('<p class="ugallery-image-loading">Loading...</p>');
-		});
 
 		Upfront.Util.post(editOptions).done(function(response){
 			var newImages = me.handleResizing(models, response);
@@ -542,6 +550,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			setTimeout(function(){
 				selector.fadeOut('fast', function(){
 					selector.remove();
+					me.render();
 				});
 			}, 100);
 		});
@@ -563,6 +572,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			_.each(images, function(labels, imageId){
 				var imageLabels = [];
 
+				imageLabels.push('"label_0"');
+
 				_.each(labels, function(label){
 					var globals = Upfront.data.ugallery,
 						newLabel = {id: label.term_id, text: label.name}
@@ -574,15 +585,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					if(!globals.label_ids[label.term_id])
 						globals.label_ids[label.term_id] = newLabel;
 
-
-					var labelInGallery = false,
-						i = 0
-					;
-					while(i<me.labels.length && !labelInGallery){
-						labelInGallery = me.labels[i].id == label.term_id;
-						i++;
-					}
-					if(!labelInGallery)
+					if(!me.isLabelInGallery(newLabel))
 						me.labels.push(newLabel);
 
 					imageLabels.push('"label_' + label.term_id + '"');
@@ -591,8 +594,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				me.imageLabels[imageId] = imageLabels.join(', ');
 			});
 		});
+	},
 
-		this.render();
+	isLabelInGallery: function(label){
+		var me = this,
+			labelInGallery = false,
+			i = 0
+		;
+		while(i<me.labels.length && !labelInGallery){
+			labelInGallery = me.labels[i].id == label.id;
+			i++;
+		}
+
+		return labelInGallery;
 	},
 
 	getCropOffset: function(size, fullSize){
@@ -1011,18 +1025,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			me.imageLabels[imageId] = imageLabels.join(', ');
 
-			me.images.each(function(image){
-				if(image.id != imageId && me.imageLabels[imageId].indexOf('"label_' + labelId + '"') != -1){
-					deleteLabel = false;
-				}
-			});
-
-			if(deleteLabel){
-				for(var idx in me.labels){
-					if(me.labels[idx] && me.labels[idx].id == labelId)
-						me.labels.splice(idx, 1);
-				}
-			}
+			me.deleteLabel(labelId, imageId);		
 
 			$(e.target).fadeOut('fast', function(){
 				$(this).remove();
@@ -1031,6 +1034,30 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		});
 
 		return contents;
+	},
+
+	/**
+	 * Delete a label from the gallery if no other image has the label
+	 * @param  {int} labelId Label id
+	 * @param  {int} imageId Image id
+	 * @return {null} 
+	 */
+	deleteLabel: function(labelId, imageId) {
+		var me = this,
+			deleteLabel = true;
+
+		me.images.each(function(image){
+			if(image.id != imageId && me.imageLabels[image.id].indexOf('"label_' + labelId + '"') != -1){
+				deleteLabel = false;
+			}
+		});
+
+		if(deleteLabel){
+			for(var idx in me.labels){
+				if(me.labels[idx] && me.labels[idx].id == labelId)
+					me.labels.splice(idx, 1);
+			}
+		}
 	},
 
 	addLabel: function(text, imageId){
@@ -1186,8 +1213,20 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			item = this.getItemElement(e);
 		e.preventDefault();
 		item.fadeOut('fast', function(){
-			me.images.remove(item.attr('rel'));
+			var imageId = item.attr('rel');
+			me.images.remove(imageId);
 			me.imagesChanged();
+			if(!me.images.length)
+				me.property('has_settings', 0);
+
+			//Remove labels
+			var labels = me.imageLabels[imageId].split(',');
+			_.each(labels, function(label){
+				var labelId = $.trim(label.replace('"label_', '').replace('"', ''));
+				me.deleteLabel(labelId, imageId);
+			});
+			me.imageLabels[imageId] = '';
+
 			me.render();
 		});
 	},
