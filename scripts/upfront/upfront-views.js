@@ -742,12 +742,14 @@ define(_template_files, function () {
 				this.sub_model = [];
 				this.available_col = grid.size;
 				Upfront.Events.on("entity:region:activated", this.update_pos, this);
+				Upfront.Events.on("entity:region:activated", this.update_overlay, this);
 				Upfront.Events.on("entity:region:deactivated", this.close_edit, this);
 				$(window).on('scroll', this, this.on_scroll);
 				Upfront.Events.on("layout:render", this.fix_height, this);
 				Upfront.Events.on("entity:resize_stop", this.fix_height, this);
 				Upfront.Events.on("entity:region:resize_stop", this.fix_height, this);
 				Upfront.Events.on("entity:region_container:resize_stop", this.fix_height, this);
+				Upfront.Events.on("entity:region_container:resize_stop", this.update_overlay, this);
 				Upfront.Events.on("entity:drag_stop", this.fix_height, this);
 				Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
 				Upfront.Events.on("entity:region:added", this.fix_height, this);
@@ -774,20 +776,9 @@ define(_template_files, function () {
 					this.update_background();
 			},
 			trigger_edit: function (e) {
-				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-					pos = this.$el.position(),
-					$before_overlay = $('<div class="upfront-region-editing-overlay" />'),
-					$after_overlay = $('<div class="upfront-region-editing-overlay" />');
+				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-region-editing');
-				this.$el.before($before_overlay);
-				$before_overlay.css({
-					bottom: 'auto',
-					height: pos.top
-				});
-				this.$el.after($after_overlay);
-				$after_overlay.css({
-					top: pos.top + this.$el.height()
-				});
+				this.update_overlay();
 				Upfront.Events.trigger("command:region:edit_toggle", true);
 				this.trigger("activate_region", this);
 				Upfront.Events.on("command:newpage:start", this.close_edit, this);
@@ -801,6 +792,26 @@ define(_template_files, function () {
 				Upfront.Events.trigger("command:region:edit_toggle", false);
 				Upfront.Events.off("command:newpage:start", this.close_edit, this);
 				Upfront.Events.off("command:newpost:start", this.close_edit, this);
+			},
+			update_overlay: function () {
+				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+					pos = this.$el.position(),
+					$before_overlay = $('<div class="upfront-region-editing-overlay" />'),
+					$after_overlay = $('<div class="upfront-region-editing-overlay" />');
+				if ( ! $main.hasClass('upfront-region-editing') )
+					return;
+				if ( this.parent_view.model.active_region != this.model )
+					return;
+				this.$el.siblings('.upfront-region-editing-overlay').remove();
+				this.$el.before($before_overlay);
+				$before_overlay.css({
+					bottom: 'auto',
+					height: pos.top
+				});
+				this.$el.after($after_overlay);
+				$after_overlay.css({
+					top: pos.top + this.$el.height()
+				});
 			},
 			add_sub_model: function (model) {
 				this.sub_model.push(model);
