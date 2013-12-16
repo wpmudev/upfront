@@ -2179,8 +2179,15 @@ var Control = Upfront.Views.Editor.InlinePanels.Item.extend({
 
 var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 	events: {
-		'click': 'clicked',
+		//'click': 'clicked',
 		'click .upfront-inline-panel-item': 'selectItem'
+	},
+	render: function(){
+		Upfront.Views.Editor.InlinePanels.ItemMulti.prototype.render.call(this, arguments);
+		this.$el
+			.removeClass('upfront-inline-panel-subitem-inactive')
+			.addClass('upfront-inline-panel-subitem-active')
+		;
 	},
 	clicked: function(e){
 		this.trigger('click', e);

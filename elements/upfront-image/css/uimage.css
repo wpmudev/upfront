@@ -576,10 +576,13 @@ a.open-media-gallery:hover i {
 
 .uimage-controls .upfront-inline-panel-subitem .upfront-inline-panel-item {
 	-webkit-transform: translate(0,0);
+}
+
+.uimage-controls .upfront-inline-panel-subitem {
 	display: none;
 }
 
-.uimage-controls .upfront-inline-panel-subitem-active .upfront-inline-panel-subitem .upfront-inline-panel-item {
+.uimage-controls .upfront-inline-panel-subitem-active:hover>.upfront-inline-panel-subitem {
 	display: block;
 }
 

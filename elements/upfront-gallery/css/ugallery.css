@@ -393,11 +393,18 @@ div.ugallery-label-selector {
 
 .ugallery-controls .upfront-inline-panel-subitem .upfront-inline-panel-item {
 	-webkit-transform: translate(0,0);
-	display: block;
 }
 
 .ugallery_selected .ugallery-controls .upfront-inline-panel-subitem{
 	display: none;
+}
+
+.ugallery-controls .upfront-inline-panel-subitem {
+	display: none;
+}
+
+.ugallery-controls .upfront-inline-panel-subitem-active:hover>.upfront-inline-panel-subitem {
+	display: block;
 }
 
 .ugallery_selected .ugallery-controls .upfront-inline-panel-subitem-active .upfront-inline-panel-subitem{
@@ -539,7 +546,7 @@ a.ugallery-linked_page:hover:before {
 	bottom: 0;
 	right: 0;
 	background: rgba(31, 48, 63, 0.8) url(../../../img/uf-core-el-sprite.svg) no-repeat -475px -197px;
-	z-index: 10;
+	z-index: 1;
 	width: 30px;
 	height: 30px;
 	cursor: pointer;
