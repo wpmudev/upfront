@@ -1697,15 +1697,12 @@ a.ueditor-action-pickercancel{
 	cursor: pointer;
 	white-space: nowrap;
 	visibility: hidden;
-	opacity: 0;
-	-webkit-transition: opacity 0.6s;
 }
 .upfront-region-finish-edit .upfront-field-icon {
 	margin: 0 7px 0 0;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-finish-edit {
 	visibility: visible;
-	opacity: 1;
 }
 .upfront-region-title {
 	position: absolute;
@@ -1770,7 +1767,8 @@ a.ueditor-action-pickercancel{
 .upfront-region-editing .upfront-region-active-overlay,
 .upfront-inline-panels,
 .upfront-inline-panels-wrap,
-.upfront-add-region-ani:after {
+.upfront-add-region-ani:after,
+.upfront-region-editing .upfront-region-editing-overlay {
 	content: " ";
 	position: absolute;
 	top: 0;
@@ -1798,6 +1796,10 @@ a.ueditor-action-pickercancel{
 	top: 0;
 	bottom: auto;
 	/*display: block;*/
+}
+.upfront-region-editing .upfront-region-editing-overlay {
+	z-index: 10;
+	background: rgba(31, 48, 63, 0.8);
 }
 /* Experimental animation */
 @-webkit-keyframes "upfront-add-region-top" {
