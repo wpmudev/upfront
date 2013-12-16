@@ -1750,6 +1750,9 @@ a.ueditor-action-pickercancel{
 	min-height: 90px;
 	z-index: 1;
 }
+.upfront-region-editing .upfront-region-container-active .upfront-module {
+	opacity: 0.5;
+}
 .upfront-region-resize-handle {
 	position: absolute;
 	bottom: -11px;
@@ -1863,7 +1866,6 @@ a.ueditor-action-pickercancel{
 .upfront-region-editing .upfront-inline-panels {
 	display: block;
 	z-index: 999990;
-	-webkit-transition: top 0.6s, bottom 0.6s, left 0.6s, right 0.6s;
 }
 .upfront-region-editing .upfront-inline-panels-active {
 	z-index: 999991;
