@@ -6716,7 +6716,14 @@ a.ueditor-select-option:hover {
   visibility: visible;
 }
 
-.upfront-region-container-shadow .upfront-region-edit-trigger {
-  /* This is very important fix for anchor linking to element cuts off top of page. */
-  display: none;
+/* This is very important fix for anchor linking to element cuts off top of page. */
+.upfront-region-container-shadow .upfront-region-edit-trigger,
+.upfront-region-container-shadow .upfront-entity_meta,
+.upfront-region-container-shadow .ui-resizable-handle.ui-resizable-s {
+  display: none!important;
 }
+.upfront-region-container-postfooter .upfront-region-finish-edit,
+.upfront-region-container-shadow .upfront-region-finish-edit {
+    bottom: 0px !important;
+}
+/* End of very important fix */
