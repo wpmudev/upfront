@@ -23,8 +23,7 @@
 	<?php } ?>		
 
 	<style>
-		#<?php echo $element_id ?> .wp-caption {
-			padding:10px;
+		#<?php echo $element_id ?> .wp-caption *{
 			-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;		
 		}
 		#<?php echo $element_id ?> .uimage-over_image {
@@ -53,7 +52,7 @@
 			left: 0;
 			right: 0;
 			bottom: 0;
-			height: 20px;
+			height: 60px;
 			margin: auto;
 		}
 		#<?php echo $element_id ?> .uimage-over_image div.uimage-bottom{
@@ -62,17 +61,17 @@
 		}
 
 		#<?php echo $element_id ?> .uimage-over_image .uimage-hover_show {
-			opacity:0; /*
-			-moz-transition:opacity .2s;
-		    -webkit-transition:opacity .2s;
-		    -o-transition:opacity .2s;
-		    transition:opacity .2s;
-		    */
+			opacity:0; 
 		}
 
 		#<?php echo $element_id ?> .uimage-over_image:hover .uimage-hover_show {
 			opacity:1;
 		}
+
+		#<?php echo $element_id ?> .uimage-caption-cover {
+			padding: 15px;
+		}
+
 
 		#<?php echo $element_id ?> img {
 			max-width: 100%;

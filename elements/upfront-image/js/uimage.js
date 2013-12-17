@@ -181,6 +181,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			captionEl = $('#' + this.property('element_id')).find('.wp-caption')
 		;
 
+		if(captionEl.find('.uimage-caption-cover').length)
+			captionEl = captionEl.find('.uimage-caption-cover');
+
 		e.preventDefault();
 
 		if(this.editor)
@@ -188,8 +191,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 
 		this.$el.addClass('upfront-editing');
-
-
 
 		this.editor = Upfront.Content.editors.add({
 			type: Upfront.Content.TYPES.SIMPLE,
