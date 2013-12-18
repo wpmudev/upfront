@@ -39,22 +39,32 @@
 		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_middle,
 		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_bottom{
 			height:100%;
+			text-align: left;
 		}
-		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_bottom .uimage-caption-cover{
-			position:absolute;
-			left: 0;
-			bottom: 0;
-			width: 100%;
+
+		#<?php echo $element_id ?> .uimage-fill_bottom:before,
+		#<?php echo $element_id ?> .uimage-fill_middle:before,
+		#<?php echo $element_id ?> .uimage-fill:before{
+			content: ' ';
+			display: inline-block;
+			vertical-align: middle;
+			width: 1px;
+			margin-right: -0.25em;
+			height: 100%;
 		}
-		#<?php echo $element_id ?> .uimage-over_image .uimage-fill_middle .uimage-caption-cover{
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			height: 60px;
-			margin: auto;
+
+		#<?php echo $element_id ?> .uimage-caption-cover{
+			display: inline-block;
+			vertical-align: top;
+			width:99%;
 		}
+		#<?php echo $element_id ?> .uimage-fill_middle .uimage-caption-cover{
+			vertical-align: middle;
+		}
+		#<?php echo $element_id ?> .uimage-fill_bottom .uimage-caption-cover{
+			vertical-align: bottom;
+		}
+
 		#<?php echo $element_id ?> .uimage-over_image div.uimage-bottom{
 			top:auto;
 			bottom:0;
