@@ -11,6 +11,7 @@ var UwidgetModel = Upfront.Models.ObjectModel.extend({
 var UwidgetView = Upfront.Views.ObjectView.extend({
 	
 	loading: null,
+	
 	content_loaded: false,
 	initialize: function(options){
 		if(! (this.model instanceof UwidgetModel)){
@@ -65,7 +66,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 				this.$el.append(this.loading.el);
 			}
 			this._get_widget_markup(widget);
-			this.get_widget_settings(widget);
+			//this.get_widget_settings(widget);
 		}
 		
 	},
@@ -103,16 +104,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		});
 	},
 	
-	get_widget_settings: function (widget) {
-		var self = this;
-		Upfront.Util.post({"action": "uwidget_get_widget_admin_form", "data": JSON.stringify({"widget": widget})})
-		.success(function (ret) {
-			self.model.set_property('widget_specific_fields', ret.data);
-		}).error(function (ret) {
-			console.log("error receiving widget specific settings");
-		});
-		
-	}
+
 	
 });
 
@@ -148,27 +140,51 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 	/**
 	 * Set up setting item appearance.
 	 */
-
+	parent_panel: ' hi there ',
 	get_title: function(){
 		for(i in Upfront.data.uwidget.widgets) {
-			if(Upfront.data.uwidget.widgets[i].class == this.model.get_property_value_by_name('widget'))
+			if(Upfront.data.uwidget.widgets[i].class == this.model.get_property_value_by_name('selected_widget'))
 				return Upfront.data.uwidget.widgets[i].name
 		}
 		return this.model.get_property_value_by_name('widget');
 	},
+	update_settings: function(widget, parent) {
+
+		var self = this;
+		Upfront.Util.post({"action": "uwidget_get_widget_admin_form", "data": JSON.stringify({"widget": widget})})
+		.success(function (ret) {
+			self.model.set_property('widget_specific_fields', ret.data);
+			self.$el.html('');
+			self.model.set_property('selected_widget', widget);
+			self.model.set_property('widget', widget);
+			self.udpate_fields();
+			
+			self.render();
+			parent.$el.parent().parent().parent().parent().parent().parent().parent().height(parent.$el.parent().parent().parent().parent().height()+22);
+		}).error(function (ret) {
+			console.log("error receiving widget specific settings");
+		});
 		
+
+	},
 	initialize: function() {
+		this.model.set_property('selected_widget', this.model.get_property_value_by_name('widget'));
+		this.udpate_fields();	
+		console.log(this.parent_panel);
+	},
+	udpate_fields: function() {
 		this.fields=_([]);
-		console.log();
 		var specific_fields = this.model.get_property_value_by_name('widget_specific_fields');
-		
+
 		for( key in specific_fields) {
 			if(specific_fields[key]['type'] == 'select') {
 					this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Select({
 								model: this.model,
 								property: specific_fields[key]['name'],
 								label: specific_fields[key]['label'],
-								values: _.map(specific_fields[key]['options'], function(option, key){ return { label: option, value: key }; })
+								values: _.map(specific_fields[key]['options'], function(option, key){ return { label: option, value: key }; }),
+								change: function() { console.log(this.parent_panel)}
+								
 							});
 			}
 			else if(specific_fields[key]['type'] == 'text') {
@@ -205,27 +221,29 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 							
 			}
 		}
-	},
+	}
 
 });
 
 
 var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
-
-	initialize: function () {
 		
+		initialize: function () {
+	
 		var widget_values = _.map(Upfront.data.uwidget.widgets, function (each) {
 			return { label: each.name, value: each.class };
 		});
-		
-		this.panels = _([
-			new Upfront.Views.Editor.Settings.Panel({
+
+		var panel = new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
 				label: "Widget",
 				title: "Widget settings",
 				min_height: '200px',
-				settings: [
-					new Upfront.Views.Editor.Settings.Item({
+			});
+		
+		var dynamic_settings = new UwidgetSpecific_Settings({model: this.model, parent_panel: panel});
+	
+		var settings_item1 = new Upfront.Views.Editor.Settings.Item({
 						model: this.model,
 						title: "Select Widget",
 						fields: [
@@ -233,15 +251,20 @@ var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								model: this.model,
 								property: 'widget',
 								label: "",
-								values: widget_values
+								values: widget_values,
+								change: function() {
+
+									var $checked = this.$el.find('.upfront-field-select-option input:checked');
+									if(this.model.get_property_value_by_name('selected_widget') != $checked.val())
+										dynamic_settings.update_settings($checked.val(), this);
+									}
 							})
 						]
-					}),
-					new UwidgetSpecific_Settings({model: this.model})
-				]
-			})
-			
-		]);
+					});
+		
+		panel.settings = _([settings_item1, dynamic_settings]);
+		
+		this.panels = _([panel]);
 	},
 
 	get_title: function () {
