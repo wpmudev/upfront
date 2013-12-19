@@ -452,7 +452,7 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -807px -774px;
 }
 
-div.ugallery-controls i.upfront-icon.upfront-icon-region-remove:before {
+.upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
 	background-image: url(../../../img/uf-ui-sprite.svg);	
 }
 
