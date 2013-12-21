@@ -19,6 +19,9 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.constructor.__super__.initialize.call(this, [options]);
+		
+
+		
 	},
 	
 	init: function () {
@@ -35,18 +38,20 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 	},
 	
 	get_content_markup: function () {
-		var widget = this.model.get_property_value_by_name('widget'),
+
+		var widget = this.model.get_property_value_by_name('widget');
 		 	me = this;
-		if ( !widget )
-			return "Please select widget on settings";
 
-		var widget_data =  Upfront.data.uwidget.widgets_cache[widget+this.cid] || "";
-
-		if ( widget_data ) {
-			this.content_loaded = true;
-		}
+			if ( !widget )
+				return "Please select widget on settings";
 		
-		return widget_data;
+			var widget_data =  Upfront.data.uwidget.widgets_cache[widget+this.cid] || "";
+		
+			if ( widget_data ) {
+				this.content_loaded = true;
+			}
+			
+			return widget_data;
 	},
 	
 	on_render: function () {
@@ -55,8 +60,8 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		if ( !widget )
 			return;
 
-				
 		if ( typeof Upfront.data.uwidget.widgets_cache[widget+this.cid] == 'undefined' || Upfront.data.uwidget.widgets_cache[widget+this.cid] == null){
+
 			if ( this.content_loaded ){ // only display loading if there's already content
 				this.loading = new Upfront.Views.Editor.Loading({
 					loading: "Loading...",
@@ -70,10 +75,8 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		}
 		
 	},
-	
 	_get_widget_markup: function (widget) {
 		var me = this;
-		
 		//prepare instance
 
 		var specific_fields = this.model.get_property_value_by_name('widget_specific_fields')
@@ -140,7 +143,7 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 	/**
 	 * Set up setting item appearance.
 	 */
-	parent_panel: ' hi there ',
+
 	get_title: function(){
 		for(i in Upfront.data.uwidget.widgets) {
 			if(Upfront.data.uwidget.widgets[i].class == this.model.get_property_value_by_name('selected_widget'))
@@ -168,11 +171,13 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 
 	},
 	initialize: function() {
+
 		this.model.set_property('selected_widget', this.model.get_property_value_by_name('widget'));
 		this.udpate_fields();	
-		console.log(this.parent_panel);
+		
 	},
 	udpate_fields: function() {
+		var self = this;
 		this.fields=_([]);
 		var specific_fields = this.model.get_property_value_by_name('widget_specific_fields');
 
@@ -183,7 +188,7 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 								property: specific_fields[key]['name'],
 								label: specific_fields[key]['label'],
 								values: _.map(specific_fields[key]['options'], function(option, key){ return { label: option, value: key }; }),
-								change: function() { console.log(this.parent_panel)}
+								change: this.clear_cache
 								
 							});
 			}
@@ -192,7 +197,8 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 								model: this.model,
 								property: specific_fields[key]['name'],
 								label: specific_fields[key]['label'],
-								value: specific_fields[key]['value']
+								value: specific_fields[key]['value'],
+								change: this.clear_cache
 							});
 			}
 			else if(specific_fields[key]['type'] == 'textarea') {
@@ -200,7 +206,8 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 								model: this.model,
 								property: specific_fields[key]['name'],
 								label: specific_fields[key]['label'],
-								value: specific_fields[key]['value']
+								value: specific_fields[key]['value'],
+								change: this.clear_cache
 							});
 			}
 			else if(specific_fields[key]['type'] == 'checkbox') {
@@ -208,7 +215,8 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 								model: this.model,
 								property: specific_fields[key]['name'],
 								label: '',
-								values: [{ label: specific_fields[key]['label'], value: specific_fields[key]['value'] }]
+								values: [{ label: specific_fields[key]['label'], value: specific_fields[key]['value'] }],
+								change: this.clear_cache
 							});
 			}
 			else if(specific_fields[key]['type'] == 'radio') {
@@ -216,18 +224,19 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 								model: this.model,
 								property: specific_fields[key]['name'],
 								label: '',
-								values: [{ label: specific_fields[key]['label'], value: specific_fields[key]['value'] }]
+								values: [{ label: specific_fields[key]['label'], value: specific_fields[key]['value'] }],
+								change: this.clear_cache
 							});
 							
 			}
 		}
-	}
-
+	},
+	clear_cache: function() { Upfront.data.uwidget.widgets_cache = {}; }
 });
 
 
 var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		
+
 		initialize: function () {
 	
 		var widget_values = _.map(Upfront.data.uwidget.widgets, function (each) {
@@ -235,38 +244,37 @@ var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		});
 
 		var panel = new Upfront.Views.Editor.Settings.Panel({
-				model: this.model,
-				label: "Widget",
-				title: "Widget settings",
-				min_height: '200px',
-			});
-		
-		var dynamic_settings = new UwidgetSpecific_Settings({model: this.model, parent_panel: panel});
+			model: this.model,
+			label: "Widget",
+			title: "Widget settings",
+			min_height: '200px'
+		});
+	
+		var dynamic_settings = new UwidgetSpecific_Settings({model: this.model});
 	
 		var settings_item1 = new Upfront.Views.Editor.Settings.Item({
-						model: this.model,
-						title: "Select Widget",
-						fields: [
-							new Upfront.Views.Editor.Field.Select({
-								model: this.model,
-								property: 'widget',
-								label: "",
-								values: widget_values,
-								change: function() {
+			model: this.model,
+			title: "Select Widget",
+			fields: [
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					property: 'widget',
+					label: "",
+					values: widget_values,
+					change: function() {
 
-									var $checked = this.$el.find('.upfront-field-select-option input:checked');
-									if(this.model.get_property_value_by_name('selected_widget') != $checked.val())
-										dynamic_settings.update_settings($checked.val(), this);
-									}
-							})
-						]
-					});
+						var $checked = this.$el.find('.upfront-field-select-option input:checked');
+						if(this.model.get_property_value_by_name('selected_widget') != $checked.val())
+							dynamic_settings.update_settings($checked.val(), this);
+						}
+				})
+			]
+		});
 		
 		panel.settings = _([settings_item1, dynamic_settings]);
 		
 		this.panels = _([panel]);
 	},
-
 	get_title: function () {
 		return "Widget settings";
 	}
