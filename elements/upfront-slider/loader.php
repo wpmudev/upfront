@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * This is the entity entry point, where we inform Upfront of our existence.
  */
 function uslider_initialize () {
-	/*
+	
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_slider.php');
 
@@ -48,8 +48,6 @@ function uslider_initialize () {
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('upfront_slider', upfront_element_url('js/uslider', __FILE__));
-
-	*/
 }
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'uslider_initialize'); 

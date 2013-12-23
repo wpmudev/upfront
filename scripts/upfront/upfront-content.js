@@ -1,204 +1,17 @@
 ;(function ($, undefined) {
-
-	var TYPES = {
-		PLAIN: "plain",
-		SIMPLE: "simple",
-		META: "meta"
-	};
-
-	var IEditor = {
-		start: function () {},
-		stop: function () {}
-	};
-
 	var SimpleEditor = Backbone.View.extend({
-
-		element: false,
-		editor: false,
-		editTimeout: false,
-		contentTimeout: false,
-		toolbar: {
-			enterMode: CKEDITOR.ENTER_BR,
-			floatSpaceDockedOffsetY: 0,
-			toolbar:[{name:'short', items: ['Bold', 'Italic', 'AlignmentTypeToggle', 'Link', 'Textformat', 
-				/* Hidden items */ 'JustifyLeft', 'JustifyCenter', 'JustifyRight']}]
-		},	
-
 		initialize: function(options){
-			if(options.toolbar){
-				this.toolbar.toolbar = [{name: 'custom', items: options.toolbar}];
-			}
-
-			if(options.mode){
-				var modes = {
-					br: CKEDITOR.ENTER_BR,
-					p: CKEDITOR.ENTER_P,
-					div: CKEDITOR.ENTER_DIV
-				}
-				
-				if(modes[options.mode])
-					this.toolbar.enterMode = modes[options.mode];
-			}
-		},
-
-		findElement: function(){
-			var el = false,
-				element = this.options.element
-			;
-
-			if(!element)
-				return false;
-
-			if(element instanceof jQuery)
-				return element;
-			if(element instanceof HTMLElement)
-				return $(element);
-
-			if(_.isString(element)){
-				el = $(element);
-				if(!el.length)
-					return false;
-				return el.first();
-			}
-			return false;
+			console.log('SimpleEditor Deprecated');
 		},
 
 		start: function() {
-			var me = this,
-				el = this.findElement()
-			;
-
-			if(!el){
-				console.log('No valid editor element.');
-				return this;
-			}
-
-			if(this.editor)
-				return this;
-
-			var editorNode = el.attr('contenteditable', true).addClass('ueditable').get(0);
-
-
-			if(this.options.removeImageSupport)
-				el.addClass('ueditor-noimage');
-
-			//Start CKE
-			this.editor = CKEDITOR.inline(editorNode, this.toolbar);
-			this.editor.ueditor = this;
-			
-			//{floatSpaceDockedOffsetY: 0});
-
-			//Prevent dragging from editable areas
-			var draggable = el.closest('.ui-draggable'),
-				cancel = draggable.draggable('option', 'cancel')
-			;
-			if(_.isString(cancel) && cancel.indexOf('.ueditable') == -1){
-				draggable.draggable('option', 'cancel', cancel + ',.ueditable');
-				console.log('Editable areas no draggable anymore.');
-			}
-
-			this.editor.on('blur', function(){
-				me.trigger('blur');
-			});
-
-			this.editor.on('focus', function(){
-				me.trigger('focus');
-			});
-
-			this.editor.on("instanceReady", function () {
-				el.focus();
-				me.trigger('ready');
-			});
-
-			el.on('keyup', function() {
-				if(me.editTimeout)
-					clearTimeout(me.editTimeout);
-				me.contentTimeout = me.getContents();
-				me.editTimeout = setTimeout(function(){
-					me.trigger('change', me.contentTimeout);
-					clearTimeout(me.contentTimeout);
-					me.contentTimeout = false;
-				}, 1500);
-			});
-
-			return this;
+			console.log('SimpleEditor Deprecated');
 		},
 
-		stop: function(){
-			var el = this.findElement();			
-			if (this.editor && this.editor.destroy)
-				this.editor.destroy();
-			this.editor = false;
-			el.removeAttr('contenteditable').removeClass('ueditable');
-			this.trigger('stop', this);
-			return this;		
-		},
-
-		getContents: function(){
-			var el = this.findElement();
-			if(el)
-				return el.html();
-			return false;
-		},
-
-		isActive: function(){
-			return this.editor == CKEDITOR.currentInstance;
+		stop: function(){	
+			console.log('SimpleEditor Deprecated');
 		}
 	});
-
-	var Editor_Plain = function (options) {
-		var _defaults = {
-			editor_id: false,
-			view: false,
-			type: TYPES.PLAIN
-		};
-		options = _.extend(_defaults, options);
-
-		var view = options.view,
-			editor = false
-		;
-
-		var start = function () {
-			var content = view.get_content_markup();
-			if(content == '<p>My awesome stub content goes here</p>')
-				content = '';
-			view.$el.html('<div contenteditable class="upfront-object">' + content + '</div>');
-			var $el = view.$el.find('div[contenteditable]'),
-				$parent = view.parent_module_view.$el.find('.upfront-editable_entity:first')
-			;
-
-			editor = CKEDITOR.inline($el.get(0));
-			if ($parent.is(".ui-draggable")) 
-				$parent.draggable('disable');
-
-			editor.on('change', function (e) {
-				view.model.set_content(e.editor.getData(), {silent: true});
-			});
-
-			$el.focus();
-
-			Upfront.Events.on("entity:deactivated", view.on_cancel, view);
-			$el.on("dblclick", function (e) {e.stopPropagation();}); // Allow double-click word selecting.
-		};
-
-		var stop = function () {
-			if (editor && editor.destroy) editor.destroy();
-			view.$el.html(view.get_content_markup());
-			var $parent = view.parent_module_view.$el.find('.upfront-editable_entity:first');
-			view.undelegateEvents();
-			view.deactivate();
-			// Re-enable the draggable on edit stop
-			if ($parent.is(".ui-draggable")) $parent.draggable('enable');
-			view.delegateEvents();
-			Upfront.Events.off("entity:deactivated", view.on_cancel, view);
-			view.render();
-		};
-
-		return _.extend(IEditor, {
-			start: start,
-			stop: stop
-		});
-	};
 
 	var Editor_Meta = Backbone.View.extend({
 		post: false,
@@ -216,7 +29,6 @@
 		},
 
 		events: {
-			'dblclick .ueditor_title': 'editTitle',
 			'keydown .ueditor_title': 'goToEditor',
 			'dblclick .ueditor_content': 'editContent',
 			'click .upost_thumbnail_changer': 'editThumb',
@@ -349,7 +161,28 @@
 		},
 
 		prepareTitleEditor: function(selector){
-			this.$(selector).addClass('ueditor_title ueditable');
+			var me = this,
+				element = this.$(selector)
+			;
+			element
+				.on('start', function(){
+					me.changed.title = element;
+					me.getPost().done(function(post){
+						//We will need the edition bar
+						me.prepareBar();
+					});
+					setTimeout(function(){
+						element.ueditor('selectionAll');
+					}, 200);
+				})
+				.ueditor({
+					airButtons: {},
+					observeLinks: false,
+					autostart: false,
+					tabFocus: false,
+					placeholder: 'Write a title...'
+				})
+			;
 		},
 
 		prepareThumbEditor: function(selector){
@@ -436,13 +269,6 @@
 		},
 
 		editTitle: function(e){
-			if(e){
-				e.preventDefault();
-				e.stopPropagation();
-			}
-
-			if(this.$('.ueditor_title input').length)
-				return;
 
 			//Mark title as edited
 			this.changed.title = true;
@@ -662,8 +488,6 @@
 		},
 
 		editContent: function(e){
-			if(this.cke)
-				return;
 			e.preventDefault();
 			e.stopPropagation();
 			this.editPost('.ueditor_content', this.mode, true);
@@ -677,7 +501,7 @@
 			var me = this,
 				$body = this.$(selector)
 			;
-			if(!$body.length)
+			if(!$body.length || $body.data('ueditor'))
 				return;
 
 			//Where did the user click?
@@ -701,43 +525,22 @@
 						mode = 'post_content';
 					}
 				}
-				$body.html(
-					'<input type="hidden" name="post_id" id="upfront-post_id" value="' + me.postId + '" />' +
-					'<div contenteditable="true" rows="8" style="width:100%">' + post.get(mode) + '</div>' //+
-					//'<button type="button" id="upfront-post-cancel_edit">Cancel</button>'
-				);
 
-				// Init editor
-				var $editor = $body.find('[contenteditable]');
-$editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
-				// Boot up CKE
-				me.cke = CKEDITOR.inline($editor.get(0), {
-					//floatSpaceDockedOffsetY: 0 // If we leave it like this, the toolbar will hover over text :(
-				});
-
-				//Set the current mode
-				me.cke.contentType = mode;
-
-				me.cke.on("instanceReady", function () {
-					// Do this on instanceReady event, as doing it before CKE is fully prepped
-					// causes the focus manager to mis-fire first couple of blur/focus events.
-					if(focus){
-						$editor.focus();
-						me.cke.focus();
-						//Position the cursor inside the editor
-						if(selection)
-							me.positionEditor(selection);
-					}
-					else{ //This editPost request was made by the editTitle, so return the focus to it
-						setTimeout(function(){
-							me.$('.ueditor_title input').focus();
-						}, 100);
-					}
-					$body.css('opacity', '1');
-					me.changed.content = true;
-					//Recalculate limits of the sidebar
-					me.prepareBar();
-				});
+				//Init editor
+				$body.html(post.get(mode))
+					.on('start', function(){
+						console.log(selection);
+						$body.css('opacity', '1');
+						$body.mode = mode;
+						me.changed.content = $body;
+						//Recalculate limits of the sidebar
+						me.prepareBar();
+					})
+					.ueditor({
+						linebreaks: false,
+						placeholder: 'Your content goes here ;)'
+					})
+				;
 			});
 		},
 		positionEditor: function(selection){
@@ -757,17 +560,7 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			;
 
 			if($node.length)
-				node = $node[0];
-			
-			if(node){
-				node = new CKEDITOR.dom.node(node);
-				
-				range.setEnd(node, selection.focusOffset);
-				range.setStart(node, selection.focusOffset);
-				this.cke.getSelection().selectRanges( [ range ] );
-				
-			}
-			
+				node = $node[0];			
 		},
 
 		editDate: function(e){
@@ -976,10 +769,10 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 			this.$el.append(loading.$el);
 
 			if(changed.title){
-				this.post.set('post_title', this.$('.ueditor_title input').val());
+				this.post.set('post_title', $.trim(changed.title.text()));
 			}
 			if(changed.content){
-				this.post.set(this.cke.contentType, this.cke.getData());
+				this.post.set(changed.content.mode, changed.content.html());
 			}
 
 			this.post.set('post_status', status);
@@ -1837,33 +1630,12 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 		var _editors = {};
 
 		var add = function (options) {
-			var editor = /*_editors[options.editor_id] ||*/ spawn_content_editor(options);
-			if (!editor) return false;
-			_editors[options.editor_id] = editor;
-			return editor;
-		};
-
-		var get = function (editor_id) {
-			return (_editors[editor_id] || false);
-		};
-
-		var spawn_content_editor = function (options) {
-			var type = options.type || TYPES.PLAIN,
-				old = get(options.editor_id)
-			;
-			if (old && old.stop) old.stop();
-			if (type == TYPES.PLAIN) return new Editor_Plain(options);
-			if (type == TYPES.META) return new Editor_Meta(options);
-			if (type == TYPES.SIMPLE) return new SimpleEditor(options);
-			return false;
+			console.log('Simple editor deprecated. Use the new Ueditor');
+			return {on: function(){}}
 		};
 
 		return {
-			add: add,
-			get: get,
-			_list: function () {
-				return _editors;
-			}
+			add: add
 		};
 	};
 
@@ -2085,25 +1857,11 @@ $editor.find(".usocial-inpost").remove(); // SOCIAL ELEMENTS REMOVAL HACK
 	}))();
 
 	Upfront.Content = {
-		TYPES: TYPES,
+		TYPES: {'SIMPLE': 'simple'},
+		editor: Editor_Meta,
 		editors: new ContentEditors(),
-		microselect: MicroSelect
-
+		microselect: MicroSelect,
+		Link_CkeDialog: Link_CkeDialog
 	};
 
-
-})(jQuery);
-
-// CKE preloader hack
-// Just init and destroy, so we pull all the info back.
-(function ($) {
-$(function () {
-	$("body").append('<div id="upfront-cke-preloader" contenteditable />');
-	var $preloader = $("#upfront-cke-preloader"),
-		ed = CKEDITOR.inline($preloader.get(0))
-	;
-	setTimeout(function () {
-		$preloader.remove();
-	}, 500);
-});
 })(jQuery);

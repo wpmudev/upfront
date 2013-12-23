@@ -1,0 +1,1190 @@
+;(function($){
+
+var hackedRedactor = false, 
+	templates = ['text!' + Upfront.Settings.root_url + '/scripts/redactor/ueditor-templates.html']
+;
+
+require(templates, function(tpl){
+
+var UeditorEvents = _.extend({}, Backbone.Events);
+
+$.fn.ueditor = function(options){
+	var isMethod = false,
+		elements = this
+	;
+
+	//Modify redactor to work as we need
+	if(!hackedRedactor)
+		hackRedactor();
+
+
+	if (typeof options === 'string'){
+		isMethod = true;
+	}		
+
+	this.each(function(){
+		var $el = $(this),
+			ueditor = $el.data('ueditor')
+		;
+
+		if(ueditor){
+			if(isMethod)
+				ueditor.callMethod(options);
+			else
+				$.error('Ueditor is already instantiated');
+		}
+		else{
+			if(isMethod)
+				$.error('Can\'t call the ueditor method ' + options + '. Ueditor not initialized');
+			else { 
+				// Initialize editor					
+				$el.data('ueditor', new Ueditor($el, options));
+				Ueditor.prototype.redactorInitialized = true;
+			}
+		}
+	});
+
+	return this;
+};
+
+var hackRedactor = function(){
+	//Prevent Redactor code cleanup on init and early start of plugins
+	$.Redactor.prototype.buildEnable = function(){
+		// Start plugins here, before options are handled so we can modify them
+		if(!this.pluginsBuilt){
+			var me = this;
+			if (!this.opts.plugins )
+				this.opts.plugins = [];
+
+			this.pluginsBuilt = [];
+
+			$.each(this.opts.plugins, function(idx, name){
+				var plugin = RedactorPlugins[name];
+				if(plugin){
+					me.pluginsBuilt.push(plugin);
+					$.extend(me, plugin);
+					if($.isFunction(plugin.beforeInit))
+						me.beforeInit();
+				}
+			});
+		}
+
+		//Redactor.buildEnable
+		this.$editor.addClass('redactor_editor').attr({ 'contenteditable': true, 'dir': this.opts.direction });
+		this.$source.attr('dir', this.opts.direction).hide();
+
+		// set strip to false to prevent code cleaning
+		this.set(this.content, false, false);
+	};
+
+	// We already have all the plugins' methods in redactor, just call init
+	$.Redactor.prototype.buildPlugins = function() {
+		var me = this;
+
+		$.each(this.pluginsBuilt, function(idx, plugin){
+			if($.isFunction(plugin.init)){
+				var init = $.proxy(plugin.init, me);
+				init();
+			}
+		});
+	};
+
+	hackedRedactor = true;
+
+	$.Redactor.prototype.events = UeditorEvents;
+};
+
+var Ueditor = function($el, options) {
+	this.$el = $el;
+	this.options = $.extend({
+			// Ueditor options
+			autostart: true, //If false ueditor start on dblclick and stops on blur
+			stateButtons: {},
+
+// Redactor options
+air:true,
+linebreaks: true,
+placeholder: 'Your text here...',
+focus: true,
+cleanup: false,
+plugins: ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages'],
+airButtons: ['link', '|',  'bold', 'italic', '|', 'upfrontLink', '|', 'stateLists', '|', 'stateAlign', '|', 'upfrontColor'],
+buttonsCustom: {},
+observeLinks: false,
+		}, options)
+	;
+
+	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
+
+	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
+	this.options.enterCallback = function () { UeditorEvents.trigger("ueditor:enter", this); };
+	this.options.changeCallback = function () { UeditorEvents.trigger("ueditor:change", this); };
+	this.options.pasteBeforeCallback = function () { UeditorEvents.trigger("ueditor:paste:before", this); };
+	this.options.pasteAfterCallback = function () { UeditorEvents.trigger("ueditor:paste:after", this); };
+	this.options.focusCallback = function () { UeditorEvents.trigger("ueditor:focus", this); };
+	this.options.blurCallback = function () { UeditorEvents.trigger("ueditor:blur", this); };
+	this.options.keyupCallback = function () { UeditorEvents.trigger("ueditor:key:up", this); };
+	this.options.keydownCallback = function () { UeditorEvents.trigger("ueditor:key:down", this); };
+	this.options.textareaKeydownCallback = function () { UeditorEvents.trigger("ueditor:key:down:textarea", this); };
+	this.options.syncBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:sync:before", this, html); return html; }; // <-- OOOH this one is different
+	this.options.syncAfterCallback = function (html) { UeditorEvents.trigger("ueditor:sync:after", this, html); };
+	this.options.autosaveCallback = function () { UeditorEvents.trigger("ueditor:autosave", this); };
+	//this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, ref.redactor, param); }; // Do we need this?
+	// Also available ueditor events (not redactor callbacks:
+		// ueditor:start
+		// ueditor:stop
+		// ueditor:method:<method>
+
+	if(this.options.autostart)
+		this.redactor = this.start();
+	else
+		this.bindStartEvents();
+};
+
+Ueditor.prototype = {
+	disableStop: false,
+
+	start: function(e){
+		this.$el.addClass('ueditable')
+			.removeClass('ueditable-inactive')
+			.attr('title', '')
+			.redactor(this.options)
+		;
+		this.$el.trigger('start');
+		this.redactor = this.$el.data('redactor');
+		this.redactor.ueditor = this;
+		this.preventDraggable();
+		UeditorEvents.trigger("ueditor:start", this.redactor);
+	},
+	stop: function(){
+		if(this.redactor){
+			UeditorEvents.trigger("ueditor:stop", this.redactor);
+			this.$el.removeClass('ueditable')
+				.redactor('destroy')
+			;
+			this.$el.trigger('stop');
+			this.redactor = false;
+			this.restoreDraggable();
+		}
+	},
+	bindStartEvents: function() {
+		var me = this,
+			checkInnerClick = function(e){
+			//Check if the click has been inner, or inthe popup, otherwise stop the editor
+			if(!me.options.autostart && me.redactor){
+				var $target = $(e.target);
+				if(!me.disableStop && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
+					me.stop();
+					me.bindStartEvents();
+				}
+			}
+		};
+
+		me.$el.addClass('ueditable-inactive')
+			.attr('title', 'Double click to edit the text')
+			.one('dblclick', function(e){
+				if(!me.redactor){
+					me.start(e);
+					$(document).on('click', checkInnerClick);
+				}
+			})
+		;
+	},
+	callMethod: function(method){
+		this.$el.redactor(method);
+		UeditorEvets.trigger("ueditor:method:" + method, this.$el.redactor);
+	},
+	preventDraggable: function(){
+		//Prevent dragging from editable areas
+		var draggable = this.$el.closest('.ui-draggable'),
+			cancel = draggable.draggable('option', 'cancel')
+		;
+		if(_.isString(cancel) && cancel.indexOf('.ueditable') == -1){
+			draggable.draggable('option', 'cancel', cancel + ',.ueditable');
+		}
+	},
+	restoreDraggable: function(){
+		var draggable = this.$el.closest('.ui-draggable'),
+			cancel = draggable.draggable('option', 'cancel')
+		;
+		if(_.isString(cancel) && cancel.indexOf('.ueditable') != -1){
+			draggable.draggable('option', 'cancel', cancel.replace(/,\.ueditable/g, ''));
+		}			
+	}
+}
+
+
+
+/*-----------------------------
+	PLUGINS
+-------------------------------*/
+
+if (!RedactorPlugins) var RedactorPlugins = {};
+
+/*
+	STATE BUTTONS PLUGIN
+ */
+RedactorPlugins.stateButtons = {
+	beforeInit: function(){
+		this.addStateButtons();
+		this.startStateObserver();
+	},
+
+	addStateButtons: function(){
+		if(this.stateButtons)
+			return;
+
+		var me = this;
+
+		this.stateButtons = {};
+		$.each(this.opts.stateButtons, function(id, data){
+			var button = new me.StateButton(id, data);
+			me.stateButtons[id] = button;
+			me.opts.buttonsCustom[id] = button;
+		});
+	},
+
+	startStateObserver: function(){
+		var observer = $.proxy(this.stateObserver, this);
+		this.$element.on('mouseup.redactor keyup.redactor', observer);
+	},
+
+	stateObserver: function(){
+		var me = this;
+		$.each(this.stateButtons, function(id, button){
+			button.guessState(me);
+		});
+	},
+
+	StateButton: function(id, data){
+		var me = this,
+			nextStates = {},
+			previousState = false;
+			firstState = false;
+		;
+
+		me.id = id;
+		me.currentState = data.defaultState;
+		me.states = data.states;
+		me.iconClasses = '';
+		me.defaultState = data.defaultState;
+
+		$.each(me.states, function(id, state){
+			if(previousState){
+				nextStates[previousState] = id;
+			}
+			else
+				firstState = id;
+			me.iconClasses += ' ' + state.iconClass;
+			previousState = id;
+		});
+		nextStates[previousState] = firstState;
+
+		me.nextStates = nextStates;
+
+		me.nextState = function(el){
+			this.setState(me.nextStates[this.currentState], el);
+		};
+		me.setState = function(id, el){
+			this.currentState = id;
+
+			el.removeClass(this.iconClasses)
+				.addClass(this.states[this.currentState].iconClass)
+			;
+		};
+		me.triggerState = function(redactor, name, el, button){
+			var callback = $.proxy(this.states[this.currentState].callback, redactor);
+			callback(name, el, button);
+		};
+		me.guessState = function(redactor) {
+			var found = false;
+			$.each(this.states, function(id, state){
+				found = state.isActive(redactor) ? id : found;
+			});
+			if(!found)
+				found = this.defaultState;
+
+
+			this.setState(found, this.getElement(redactor));
+		};
+
+		me.getElement = function(redactor){
+			return redactor.$toolbar.find('.redactor_btn_' + this.id);
+		};
+
+		return {
+			id: id,
+			title: data.title,
+			callback: function(name, el, button) {
+				button.nextState(el);
+				button.triggerState(this, name, el, button);
+			},
+			nextState: $.proxy(me.nextState, me),
+			setState: $.proxy(me.setState, me),
+			triggerState: $.proxy(me.triggerState, me),
+			guessState: $.proxy(me.guessState, me)
+		}
+	}
+}
+
+
+
+/*--------------------
+	ALIGMENT BUTTON
+--------------------- */
+RedactorPlugins.stateAlignment = {
+	beforeInit: function(){
+		this.opts.stateButtons.stateAlign = {
+			title: 'Text alignment',
+			defaultState: 'left',
+			states: {
+				left: {
+					iconClass: 'ueditor-left',
+					isActive: function(redactor){
+						var $parent = $(redactor.getParent());
+						return $parent.length && $parent.css('text-align') == 'left';
+					},
+					callback: function(name, el , button){
+						this.alignmentLeft();
+					}
+				},
+				center: {
+					iconClass: 'ueditor-center',
+					isActive: function(redactor){
+						var $parent = $(redactor.getParent());
+						return $parent.length && $parent.css('text-align') == 'center';
+					},
+					callback: function(name, el , button){
+						this.alignmentCenter();
+					}
+				},
+				right: {
+					iconClass: 'ueditor-right',
+					isActive: function(redactor){
+						var $parent = $(redactor.getParent());
+						return $parent.length && $parent.css('text-align') == 'right';
+					},
+					callback: function(name, el , button){
+						this.alignmentRight();
+					}
+				},
+				justify: {
+					iconClass: 'ueditor-justify',
+					isActive: function(redactor){
+						var $parent = $(redactor.getParent());
+						return $parent.length && $parent.css('text-align') == 'justify';
+					},
+					callback: function(name, el , button){
+						this.alignmentJustify();
+					}
+				}
+			}
+		}
+	}
+}
+
+RedactorPlugins.stateLists = {
+	beforeInit: function(){
+		this.opts.stateButtons.stateLists = {
+			title: 'List style',
+			defaultState: 'none',
+			states: {
+				none: {
+					iconClass: 'ueditor-justify',
+					isActive: function(redactor){
+						var $parent = $(redactor.getParent());
+						return $parent.length && $parent.css('text-align') == 'left';
+					},
+					callback: function(name, el , button){
+						this.execLists('insertorderedlist', 'orderedlist');
+					}
+				},
+				unordered: {
+					iconClass: 'ueditor-unorderedlist',
+					isActive: function(redactor){
+						var $parent = $(redactor.getParent());
+						if($parent.length){
+							var list = $parent.closest('ul');
+							if(list.length)
+								return list.closest('.ueditable').length;
+						}
+						return false;
+					},
+					callback: function(name, el , button){
+						this.execLists('insertunorderedlist', 'unorderedlist');
+					}
+				},
+				ordered: {
+					iconClass: 'ueditor-orderedlist',
+					isActive: function(redactor){
+						var $parent = $(redactor.getParent());
+						if($parent.length){
+							var list = $parent.closest('ol');
+							if(list.length)
+								return list.closest('.ueditable').length;
+						}
+						return false;
+					},
+					callback: function(name, el , button){
+						this.execLists('insertorderedlist', 'orderedlist');
+					}
+				}
+			}
+		}
+	}
+}
+
+/*-------------------
+	Panel Buttons
+ -------------------*/
+
+RedactorPlugins.panelButtons = {
+	init: function(){
+		var me = this;
+		$.each(this.opts.buttonsCustom, function(id, b){
+			if(b.panel){
+				var $panel = $('<div class="redactor_dropdown ueditor_panel redactor_dropdown_box_' + id + '" style="display: none;">'),
+					$button = me.$toolbar.find('.redactor_btn_' + id)
+				;
+				b.panel = new b.panel({redactor: me, button: $button, panel: $panel});
+				$panel.html(b.panel.$el);
+				$panel.appendTo(me.$toolbar);
+				b.dropdown = true;
+
+				$button.on('click', function(){
+					if($button.hasClass('dropact')){
+						me.selectionRemoveMarkers();
+						me.selectionSave();
+						me.selectionRemoveMarkers();
+						b.panel.trigger('open', me);
+					}
+					else{
+						b.panel.trigger('closed', me);
+					}
+				});
+				me.$editor.on('mouseup.redactor keyup.redactor', function(){
+					if($button.hasClass('dropact')){ //It's open, so we close it
+						me.dropdownHideAll();
+						b.panel.trigger('closed', me);
+					}
+				});
+
+				$panel
+					.on('click keydown keyup', function(e){
+						e.stopPropagation();
+					})
+				;
+			}
+		});
+	}
+}
+
+/* Panel helper
+------------------------------*/
+
+var UeditorPanel = Backbone.View.extend({
+	initialize: function(options){
+		var me = this;
+
+		me.redactor = options.redactor;
+		me.button = options.button;
+		me.panel = options.panel;
+
+		this.on('open', function(redactor){
+			console.log('Panel open');
+			me.$el.trigger('open', redactor);
+		});
+		this.on('closed', function(redactor){
+			console.log('Panel closed');
+			me.$el.trigger('closed', redactor);
+		});
+
+		this.render();
+	},
+
+	openToolbar: function(openPanel){
+		var me = this;
+		me.redactor.$air.show();
+		me.redactor.airBindHide();
+		if(openPanel){
+			setTimeout(function(){
+				if(!me.panel.is(':visible'))
+					me.button.click();
+			}, 300);
+		}
+	},
+
+	closeToolbar: function(){
+		this.redactor.$air.fadeOut(100);
+	},
+
+	closePanel: function(){
+		if(this.panel.is(':visible'))
+			this.button.click();
+	},
+
+	disableEditorStop: function(){
+		this.redactor.ueditor.disableStop = true;
+	},
+
+	enableEditorStop: function(){
+		var me = this;
+		setTimeout(function(){
+			me.redactor.ueditor.disableStop = false;
+		}, 300);
+	},
+	appendOkButton: function(text){
+		var me = this;
+		if(!me.$el.siblings('.ueditor-ok').length){
+			text = text || 'Ok';
+			var button = $('<a class="ueditor-ok">' + text + '</a>').on('click', function(e){
+				me.$el.trigger('ok');
+			});
+			button.insertAfter(me.$el);
+		}
+	}
+});
+
+
+/*--------------------
+	Upfront link panel button
+-----------------------*/
+
+RedactorPlugins.upfrontLink = {
+	beforeInit: function(){
+		this.opts.buttonsCustom.upfrontLink = {
+			title: 'Link',
+			panel: this.panel
+		};
+	},
+	panel: UeditorPanel.extend({
+		tpl: _.template($(tpl).find('#link-tpl').html()),
+		events:{
+			'click .ueditor-unlink': 'unlink',
+			'change .upfront-field-radio': 'updateLinkType',
+			'click .ueditor-change-link-post': 'selectPost',
+			'open': 'open',
+			'close': 'close',
+			'ok': 'prepareLink'
+		},
+		render: function(options){
+			options = options || {};
+			this.$el.html(this.tpl({
+				url: options.url,
+				link: options.link,
+				anchors: this.getAnchors()
+			}));
+			this.appendOkButton();
+		},
+		open: function(e, redactor){
+			this.redactor = redactor;
+
+			var link = redactor.currentOrParentIs('A');
+
+			if(link){
+				this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+			}
+			else
+				this.render();
+		},
+		close: function(e, redactor){
+			this.redactor.selectionRemoveMarkers();
+		},
+		unlink: function(e){
+			e.preventDefault();
+			this.redactor.execCommand('unlink');
+			this.closeToolbar();
+		},
+		link: function(url, type){
+			if(url){
+				this.redactor.selectionRestore(true, false);
+
+				var text = this.redactor.getSelection().toString();
+				this.redactor.exec('insertHTML', '<a href="' + url + '" rel="' + type + '">' + text + '</a>');
+			}
+		},
+		prepareLink: function(e){
+			var link = this.$('input[name="ueditor-link"]:checked').val(),
+				url = ''
+			;
+			if(link){
+				if(link == 'external')
+					url = this.$('#ueditor-link-url').val();
+				else if(link == 'post')
+					url = this.$('.ueditor-change-link-post').text();
+				else if(link == 'anchor')
+					url = this.$('.ueditor-anchor-selector').val();
+			}
+			this.link(url, link);
+			this.closeToolbar();
+		},
+		updateLinkType: function(e){
+			var value = this.$('input[name="ueditor-link"]:checked').val();
+			this.$('.ueditor-link-hidden').hide();
+
+			if(value == 'external')
+				this.$('#ueditor-link-url').show();
+			else if(value == 'post')
+				this.selectPost();
+			else if(value == 'anchor')
+				this.$('.ueditor-anchor').show();
+		},
+		selectPost: function(){
+			var me = this,
+				options = {},
+				types = []
+			;
+			_.each(Upfront.data.ugallery.postTypes, function(type){
+				if(type.name != 'attachment')
+					types.push({name: type.name, label: type.label});
+			});
+
+			options.postTypes = types;
+
+			this.disableEditorStop();
+
+			Upfront.Views.Editor.PostSelector.open(options).done(function(post){
+				me.link(post.get('permalink'), 'post');
+			});
+		},
+		getAnchors: function(){
+			var regions = Upfront.Application.layout.get("regions"),
+				anchors = ['']
+			;
+			regions.each(function (r) {
+				r.get("modules").each(function (module) {
+					module.get("objects").each(function (object) {
+						var anchor = object.get_property_value_by_name("anchor");
+						if (anchor && anchor.length) anchors.push(anchor);
+					});
+				});
+			});
+			return anchors;
+		}
+	})
+}
+
+RedactorPlugins.upfrontColor = {
+	beforeInit: function(){
+		this.opts.buttonsCustom.upfrontColor = {
+			title: 'Color',
+			panel: this.panel
+		};
+	},
+	panel: UeditorPanel.extend({
+		render: function(){
+			var input = $('<input type="text">');
+			this.$el.html(input);
+			this.$('input').spectrum({
+				flat: true
+			});
+		}
+	})
+}
+
+
+RedactorPlugins.upfrontMedia = {
+	beforeInit: function () {
+		this.events.on("ueditor:init", this.reinsert_handlers_callback);
+		this.events.on("ueditor:enter", this.reinsert_handlers_callback);
+		this.events.on("ueditor:insert:media", this.reinsert_handlers_callback);
+		this.events.on("ueditor:stop", function () {
+			$(".upfront-image-attachment-bits").remove();
+		});
+	},
+	reinsert_handlers_callback: function (redactor) {
+		var	$root = redactor.$editor,
+			root_offset = $root.offset(),
+			$body = $("body"),
+			$blocks = $root.find("p:not(.upfront-inserted_image-wrapper),div,ul,ol")
+		;
+		$(document).off("click", ".upfront-image-attachment-bits");
+		$(".upfront-image-attachment-bits").remove();
+		$blocks.each(function (idx) {
+			var $block = $(this),
+				block_offset = $block.offset()
+			;
+			$body.append(
+				"<div data-idx='" + idx + "' class='upfront-image-attachment-bits' style='top:" + (block_offset.top-20) + "px;left:" + (root_offset.left-18) + "px;' />"
+			);
+			$block
+				.on("mouseenter", function () {
+					$('.upfront-image-attachment-bits').hide();
+					var $handle = $('.upfront-image-attachment-bits[data-idx="' + idx + '"]');
+					if ($handle.length) $handle.show();
+				})
+			;
+		});
+		$(document).on("click", ".upfront-image-attachment-bits", function (e) {
+			var $me = $(this),
+				idx = $me.attr("data-idx")
+			;
+			Upfront.Media.Manager
+				.open({ck_insert: true})
+				.done(function (popup, result) {
+					var html = Upfront.Media.Manager.results_html(result),
+						$el = $($blocks[idx])
+					;
+					$el.before("<div id='upfront-insert-media-insertion_point'>upfront:insert:media:insertion_point</div>");
+					$el = $("#upfront-insert-media-insertion_point");
+					var $point = redactor.$editor.find("#upfront-insert-media-insertion_point");
+					$point.replaceWith(html);
+					redactor.sync();
+					redactor.events.trigger("ueditor:insert:media", redactor, html);
+				})
+			;
+			return false;
+		});
+	}
+	// No panel, we're better than that YAY!
+};
+
+var ImagesHelper = {
+	Image: {
+		redactor: false,
+		selector: ".upfront-inserted_image-wrapper",
+		bind_events: function () {
+			this.unbind_events();
+			this.redactor.$editor
+				.on("mouseover", this.selector, this, this.hover_on)
+				.on("mouseout", this.selector, this, this.hover_off)
+
+				.on("mouseenter", ":not(" + this.selector + ")", this, this.hover_off)
+			;
+		},
+		unbind_events: function () {
+			this.redactor.$editor
+				.off("mouseover", this.selector, this.hover_on)
+				.off("mouseout", this.selector, this.hover_off)
+
+				.off("mouseenter", ":not(" + this.selector + ")", this, this.hover_off)
+			;
+			this.remove_dialog();
+		},
+		hover_on: function (e) {
+			var $me = $(e.target),
+				$dialog = $("#upfront-image-details")
+			;
+			if (!$me.is(e.data.selector)) $me = $me.closest(e.data.selector);
+			if (!$me.find('img').length) return;
+			
+			e.data.show_dialog($me);
+			
+			Upfront.Events.trigger("upfront:editor:image_on", $me.get());
+		},
+		hover_off: function (e) {
+			var $me = $(e.target);
+				$isParent = $(e.toElement).closest("#upfront-image-details")
+			;
+			if (!$isParent.length) e.data.remove_dialog();
+		},
+		create_dialog: function () {
+			if ( $("#upfront-image-details").length ) return;
+			var $dialog = $("<div id='upfront-image-details' class='upfront-ui' />");
+			$dialog.append(
+				'<div class="upfront-image-orientation">' +
+					'<div class="upfront-image-align-left upfront-icon upfront-icon-image-left">left</div>' +
+					'<div class="upfront-image-align-center upfront-icon upfront-icon-image-center">center</div>' +
+					'<div class="upfront-image-align-right upfront-icon upfront-icon-image-right">right</div>' +
+					'<div class="upfront-image-align-full upfront-icon upfront-icon-image-full">full width</div>' +
+				'</div>' +
+				'<div class="upfront-image-actions">' +
+					'<div class="upfront-image-action-change upfront-icon upfront-icon-image-select">Change Image</div>' +
+					'<div class="upfront-image-action-details upfront-icon upfront-icon-image-detail">Image Details</div>' +
+				'</div>' + 
+				'<div class="upfront-image-delete upfront-icon-button upfront-icon-button-delete"></div>'
+			);
+			$('body').append($dialog);
+			$dialog
+				.find(".upfront-image-align-left").on("click", this, this.Align.left).end()
+				.find(".upfront-image-align-center").on("click", this, this.Align.center).end()
+				.find(".upfront-image-align-right").on("click", this, this.Align.right).end()
+				.find(".upfront-image-align-full").on("click", this, this.Align.full).end()
+
+				.find(".upfront-image-action-change").on("click", this, this.change_image).end()
+				.find(".upfront-image-action-details").on("click", this, this.Details.toggle).end()
+				
+				.find(".upfront-image-delete").on("click", this, this.delete_image).end()
+			;
+			$dialog.hide();
+		},
+		remove_dialog: function (force, del) {
+			var $dialog = $("#upfront-image-details"),
+				$details = $("#upfront-image-details-image_details")
+			;
+			if (!$details.length){
+				$dialog.hide();
+				$('#upfront-inline-slider-nav').hide();
+			}
+			else if (force) {
+				$details.remove();
+				$dialog.hide();
+			}
+			if (force && del)
+				$dialog.remove();
+		},
+		show_dialog: function ($wrap) {
+			var $dialog = $("#upfront-image-details");
+			$dialog.data('ref', $wrap.get(0));
+			if ( $wrap.hasClass('upfront-inserted_image-slider') || $wrap.hasClass('upfront-inserted_image-gallery') )
+				$dialog.addClass('no-orientation');
+			else
+				$dialog.removeClass('no-orientation');
+			
+			var off = $wrap.offset(),
+				height = $wrap.outerHeight(),
+				width = $wrap.outerWidth(),
+				dialog_height = $dialog.outerHeight();
+			
+			$dialog.css({
+				top: off.top + ( dialog_height > height ? 0 : height-dialog_height ),
+				left: off.left,
+				width: width
+			});
+			$dialog.show();
+		},
+		get_target: function (target){
+			return $($(target).closest("#upfront-image-details").data('ref'));
+		},
+		change_image: function (e) {
+			var $img = e.data.get_target(e.target);
+			Upfront.Media.Manager.open({
+				multiple_selection: false,
+				button_text: "Change image"
+			}).done(function (popup, result) {
+				if (!result) return false;
+				if (!result.length) return false;
+				var html = Upfront.Media.Manager.results_html(result);
+				$img.replaceWith(html);
+				e.data.redactor.sync();
+				e.data.bind_events();
+			});
+			return false;
+		},
+		delete_image: function (e) {
+			var $img = e.data.get_target(e.target),
+				$wrapper = $img.parent(),
+				is_on_slider = $wrapper.hasClass('upfront-inline_post-slider'),
+				is_on_gallery = $wrapper.hasClass('upfront-inline_post-gallery');
+			if ( ( is_on_slider || is_on_gallery ) && $wrapper.find('img') == 1 )
+				$wrapper.remove();
+			else
+				$img.remove();
+			if ( is_on_slider )
+				Slider.reset_nav($wrapper);
+			e.data.redactor.sync();
+			e.data.redactor.focus();
+			return false;
+		},
+		Align: {
+			_apply: function ($img, data) {
+				data = $.extend({
+					float: "",
+					"text-align": "",
+					"width": ""
+				}, data);
+				$img.css(data);
+			},
+			left: function (e) {
+				var $wrap = e.data.get_target(e.target),
+					$img = $wrap.find('img');
+				e.data.Align._apply($wrap, {float: "left"});
+				e.data.Align._apply($img, {});
+				e.data.show_dialog($wrap);
+				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'left');
+				e.data.redactor.sync();
+				return false;
+			},
+			center: function (e) {
+				var $wrap = e.data.get_target(e.target),
+					$img = $wrap.find('img');
+				e.data.Align._apply($wrap, {
+					"text-align": "center"
+				});
+				e.data.Align._apply($img, {});
+				e.data.show_dialog($wrap);
+				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'center');
+				e.data.redactor.sync();
+				return false;
+			},
+			right: function (e) {
+				var $wrap = e.data.get_target(e.target),
+					$img = $wrap.find('img');
+				e.data.Align._apply($wrap, {float: "right"});
+				e.data.Align._apply($img, {});
+				e.data.show_dialog($wrap);
+				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'right');
+				e.data.redactor.sync();
+				return false;
+			},
+			full: function (e) {
+				var $wrap = e.data.get_target(e.target),
+					$img = $wrap.find('img');
+				e.data.Align._apply($wrap, {});
+				//e.data.Align._apply($img, {width: "100%"});
+				e.data.show_dialog($wrap);
+				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'full');
+				e.data.redactor.sync();
+				return false;
+			}
+		},
+		Details: {
+			toggle: function (e) {
+				var $dialog = $("#upfront-image-details"),
+					$details = $("#upfront-image-details-image_details")
+				;
+				if ($details.length) e.data.Details.close(e);
+				else e.data.Details.open(e);
+				return false;
+			},
+			open: function (e) {
+				var $wrapper = e.data.get_target(e.target),
+					$img = $wrapper.find("img"),
+					$dialog = $("#upfront-image-details"),
+					$button = $dialog.find('.upfront-image-action-details'),
+					$details = $('<div id="upfront-image-details-image_details" />'),
+				// Gather data for form preset population
+					$link = $wrapper.find("a"),
+					no_link = !$link.length ? 'checked="checked"' : '',
+					popup_link = $link.length && $link.is(".popup") ? 'checked="checked"' : '',
+					link_link = $link.length && $link.attr("href").match(/^[^#]+/) ? 'checked="checked"' : '',
+					link_value = $link.length && !!link_link ? $link.attr("href") : ''
+				;
+				$details.append(
+					'<div class="upfront-image-detail-alt">' +
+						'<label class="upfront-field-label">Image Details:</label>' +
+						'<input class="upfront-field upfront-field-text" type="text" placeholder="Alt" value="' + $img.attr("alt") + '" />' +
+					'</div>' +
+					'<div class="upfront-image-detail-link">' +
+						'<label class="upfront-field-label">Image links to:</label>' +
+						'<ul>' +
+							'<li><label><input class="upfront-field-radio" type="radio" ' + no_link + ' name="link_to" value="" /> No link</label></li>' +
+							'<li><label><input class="upfront-field-radio" type="radio" ' + popup_link + ' name="link_to" value="popup" /> Larger version (opens in lightbox)</label></li>' +
+							'<li><label><input class="upfront-field-radio" type="radio" ' + link_link + ' name="link_to" value="link" /> Link <input class="upfront-field upfront-field-text" type="text" placeholder="http://www.google.com" value="' + link_value + '" /></label></li>' +
+							'<li><label><input class="upfront-field-radio" type="radio" name="link_to" value="post" /> Post or page <em>/your-cool-post/</em></label></li>' +
+						'</ul>' +
+					'</div>' +
+					'<button class="upfront-image-detail-button" type="button">OK</button>'
+				);
+				/*$details.on('focus', '.upfront-image-detail-link li :text', function(e){
+					$(this).siblings(':radio').prop('checked', true);
+				});*/
+				$details.css({
+					position: "absolute",
+					top: $button.offset().top + $button.height(),
+					"z-index": 99
+				});
+				$("body").append($details);
+				$details.css({
+					left: $button.offset().left + 46 - ($details.width()/2),
+				});
+				$button.addClass('upfront-image-action-details-active');
+
+				$details.on("click", "button", e.data, e.data.Details.apply_details);
+			},
+			close: function (e) {
+				var $dialog = $("#upfront-image-details"),
+					$button = $dialog.find('.upfront-image-action-details'),
+					$details = $("#upfront-image-details-image_details");
+				$button.removeClass('upfront-image-action-details-active');
+				$details.remove();
+			},
+			apply_details: function (e) {
+				var $dialog = $("#upfront-image-details"),
+					$details = $("#upfront-image-details-image_details"),
+					$wrapper = $($dialog.data('ref')),
+					$img = $wrapper.find("img"),
+					$old_link = $wrapper.find("a"),
+				// Data changes to apply
+					alt = $details.find(".upfront-image-detail-alt :text").val(),
+					link_to = $details.find(".upfront-image-detail-link :radio:checked").val(),
+					link_url = $details.find(".upfront-image-detail-link :text").val()
+				;
+
+				$img.attr("alt", alt);
+
+				if (link_to) {
+					var $link = $old_link.length ? $old_link : $('<a href="#" />');
+					switch (link_to) {
+						case "popup":
+							$link.addClass("popup");
+							break;
+						case "link":
+							$link.attr("href", link_url);
+							break;
+						case "post":
+							$link.attr("href", 'http://localhost/upfront/edit/post/8');
+							break;
+					}
+					if (!$old_link.length) $img.wrapAll($link);
+				} else if ($old_link.length) {
+					$old_link.replaceWith($img);
+				}
+				e.data.redactor.sync();
+				return e.data.Details.close(e);
+			}
+		},
+		cleanup: function (content) {
+			var $cnt = $("<div />").append(content);
+			$cnt.find("#upfront-image-details").remove();
+			return $cnt.html();
+		}
+	},
+	Gallery: {
+		to_html: function (redactor) {
+			var content = redactor.$editor.html(),
+				edited = content.replace(
+					/\[upfront-gallery\](.*?)\[\/upfront-gallery\]/,
+					'<div class="upfront-inline_post-gallery clearfix">$1</div>'
+				)
+			;
+			redactor.$editor.html(edited);
+			redactor.sync();
+		},
+		from_html: function (content) {
+			var $c = $("<div />").append(content),
+				$repl = $c.find(".upfront-inline_post-gallery")
+			;
+			if (!$repl.length) return content;
+
+			$repl.each(function () {
+				var $me = $(this),
+					gallery = ''
+				;
+				gallery = $me.html();
+				$me.replaceWith('[upfront-gallery]' + gallery + '[/upfront-gallery]');
+			});
+			return $c.html();
+		}
+	},
+	Slider: {
+		to_html: function (redactor) {
+			var content = redactor.$editor.html(),
+				edited = content.replace(
+					/\[upfront-slider\](.*?)\[\/upfront-slider\]/,
+					'<div class="upfront-inline_post-slider clearfix">$1</div>'
+				)
+			;
+			redactor.$editor.html(edited);
+			redactor.sync();
+			this.init_sliders_edit(redactor);
+		},
+		init_sliders_edit: function (redactor) {
+			var $sliders = redactor.$editor.find('.upfront-inline_post-slider'),
+				$slider_nav = $('<div id="upfront-inline-slider-nav" class="upfront-default-slider-nav upfront-ui" />');
+			$('body').append($slider_nav);
+			$sliders.each(function(){
+				var $slider = $(this),
+					$items = $slider.find('.upfront-inserted_image-wrapper'),
+					max_height = 0;
+				calc_height();
+				$slider.find('img').on('load', calc_height);
+				function calc_height () {
+					$slider.css('height', 9999);
+					$items.each(function(index){
+						var $img = $(this).find('img'),
+							img_h = $img.height();
+						max_height = max_height > img_h ? max_height : img_h;
+					});
+					$slider.css('height', Math.ceil(max_height/15)*15);
+					redactor.sync();
+				}
+			});
+			$(document)
+				.on('mouseenter', '.upfront-inline_post-slider', this, this.hover_on)
+				.on('mouseleave', '.upfront-inline_post-slider', this, this.hover_off)
+			;
+			$slider_nav.on('click', '.upfront-default-slider-nav-item', this, this.slide_switch);
+		},
+		hover_on: function (e) {
+			var $slider = $(this),
+				$slider_nav = $('#upfront-inline-slider-nav'),
+				off = $slider.offset(),
+				height = $slider.outerHeight(),
+				width = $slider.outerWidth(),
+				me = e.data;
+			$slider_nav.css({
+				top: off.top + height,
+				left: off.left,
+				width: width
+			});
+			$slider_nav.show();
+			if ( me.$current_slider && me.$current_slider.get(0) == $slider.get(0) )
+				return;
+			me.$current_slider = $slider;
+			me.reset_nav($slider);
+		},
+		hover_off: function (e) {
+			
+		},
+		slide_switch: function (e) {
+			var $nav_item = $(this),
+				nav_index = $nav_item.attr('data-slider-index'),
+				$slider_nav  = $('#upfront-inline-slider-nav'),
+				me = e.data;
+			me.$current_slider.find('.slide-edit-active').removeClass('slide-edit-active');
+			me.$current_slider.find('.upfront-inserted_image-wrapper').eq(nav_index).addClass('slide-edit-active');
+			$slider_nav.find('.upfront-default-slider-nav-item-selected').removeClass('upfront-default-slider-nav-item-selected');
+			$nav_item.addClass('upfront-default-slider-nav-item-selected');
+			ImagesHelper.Image.remove_dialog();
+			$slider_nav.show();
+		},
+		reset_nav: function ($slider) {
+			var $slider_nav  = $('#upfront-inline-slider-nav');
+			$slider_nav.html('');
+			$slider.find('.upfront-inserted_image-wrapper').each(function(index){
+				$slider_nav.append('<i class="upfront-default-slider-nav-item" data-slider-index="' + index + '">' + index + '</i>');
+			});
+			$slider_nav.find('.upfront-default-slider-nav-item:first').trigger('click');
+		},
+		from_html: function (content) {
+			var $c = $("<div />").append(content),
+				$repl = $c.find(".upfront-inline_post-slider")
+			;
+			if (!$repl.length) return content;
+
+			$repl.each(function () {
+				var $me = $(this),
+					slider = ''
+				;
+				slider = $me.html();
+				$me.replaceWith('[upfront-slider]' + slider + '[/upfront-slider]');
+			});
+			return $c.html();
+		}
+	}
+};
+
+
+RedactorPlugins.upfrontImages = {
+
+	beforeInit: function () {
+		var redactor = this;
+		redactor.events.on("ueditor:stop", function () {
+			ImagesHelper.Image.unbind_events();
+		});
+		redactor.events.on("ueditor:insert:media", function () {
+			ImagesHelper.Gallery.to_html(redactor);
+			ImagesHelper.Slider.to_html(redactor);
+		});
+		ImagesHelper.Image.redactor = redactor;
+		ImagesHelper.Image.create_dialog();
+		ImagesHelper.Image.bind_events();
+		
+		Upfront.Media.Transformations.add(ImagesHelper.Image.cleanup);
+		Upfront.Media.Transformations.add(ImagesHelper.Gallery.from_html);
+		Upfront.Media.Transformations.add(ImagesHelper.Slider.from_html);
+
+		Upfront.Events.on("upfront:editor:image_align", function (el, align) { // Can we refactor upfront:editor:* events?
+			var margin = false;
+			if ("left" === align) margin = "margin-right";
+			else if ("right" === align) margin = "margin-left";
+			if (!margin) return false;
+			$(el).css(margin, "15px");
+		});
+	},
+};
+
+}); //End require
+
+}(jQuery));

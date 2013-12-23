@@ -228,7 +228,7 @@
 					else
 						$s.upfront_default_slider(bg_slider);
 				}
-			}),
+			})/*,
 			CKEDITOR.on('currentInstance', function(){
 				editor = CKEDITOR.currentInstance;
 				//$('.upfront-inline_post-slider').upfront_default_slider(inline_slider);
@@ -237,7 +237,7 @@
 				editor.on('insertHtml', function(){
 				//	$('.upfront-inline_post-slider').upfront_default_slider(inline_slider);
 				});
-			});
+			}); */
 		});
 		
 	});

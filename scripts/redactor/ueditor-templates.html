@@ -1,0 +1,44 @@
+<div> 
+<!-- 
+	Wrap everything in a div to convert this file's content in a jquery element 
+	so it is possible to use $.find.
+-->
+
+<script type="text/template" id="link-tpl">	
+	<input type="hidden" id="ueditor-link" value="{{url}}">
+	<h3>Link to:</h3>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ueditor-link" value="external" class="upfront-field-radio"  {{link == 'external' ? 'checked="checked"' : ''}} id="ueditor-link-external">
+		<label for="ueditor-link-external">External URL</label>
+		<input type="text" value="{{url}}" id="ueditor-link-url" placeholder="Type link URL" style="{{link != 'external' ? 'display:none' : ''}}" class="upfront-field-text ueditor-link-hidden">
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ueditor-link" value="post" class="upfront-field-radio" {{link == 'post' ? 'checked="checked"' : ''}} id="ueditor-link-post">
+		<label for="ueditor-link-post">Post or page</label>
+		<a title="Change link" href="#" class="ueditor-change-link-post ueditor-link-hidden" style="{{link != 'post' ? 'display:none' : ''}}">{{url}}</a>
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ueditor-link" value="anchor" class="upfront-field-radio" {{link == 'anchor' ? 'checked="checked"' : ''}} id="ueditor-link-anchor">
+		<label for="ueditor-link-anchor">Anchor</label>
+		<div class="ueditor-anchor ueditor-link-hidden" style="{{link != 'anchor' ? 'display:none' : ''}}">
+			{[if(anchors.length < 2) { ]}
+				<p>No anchors in this page</p>
+			{[ } else { ]}
+				<select class="ueditor-anchor-selector">
+				{[ _.each(anchors, function(anchor){ ]}
+					<option value="#{{ anchor }}" {{ url == '#' + anchor ? 'selected="selected"' : '' }}>{{anchor}}</option>
+				{[ }); ]}
+				</select>
+			{[ } ]}
+		</div>
+	</div>	
+
+	{[if(url) { ]}
+	<div class="upfront-field-wrap">
+		<a href="#" class="ueditor-unlink">Unlink</a>
+	</div>
+	{[ } ]}
+</script>
+
+
+</div>

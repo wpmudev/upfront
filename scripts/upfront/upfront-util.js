@@ -104,8 +104,8 @@ var Util = {
 			tpl = false;
 
 		_.templateSettings = {
-		    interpolate : /<\?php echo (.+?) \?>/g,
-		    evaluate: /<\?php (.+?) \?>/g		
+			interpolate : /<\?php echo (.+?) \?>/g,
+			evaluate: /<\?php (.+?) \?>/g		
 		};
 
 		tpl = _.template(markup);
@@ -115,10 +115,10 @@ var Util = {
 		return function(data){
 			_.each(data, function(value, key){
 				data['$' + key] = value;
-			})
+			});
 
 			return tpl(data);
-		}
+		};
 	},
 
 	Transient: {

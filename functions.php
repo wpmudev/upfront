@@ -190,7 +190,6 @@ EOAdminStyle;
   <div id="settings" style="display:none"></div>
 EOAdditivemarkup;
 
-		echo '<script src="' . $url . '/scripts/ckeditor/ckeditor.js" type="text/javascript"></script>';
 		
 		do_action('upfront-core-inject_dependencies');
 	}

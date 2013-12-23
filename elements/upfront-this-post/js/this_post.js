@@ -105,8 +105,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if(this.editor)
 			return this.editor.updateElement(node);
 
-		this.editor = Upfront.Content.editors.add({
-			type: Upfront.Content.TYPES.META,
+		this.editor = new Upfront.Content.editor({
 			editor_id: 'this_post_' + this.postId,
 			post_id: this.postId,
 			preload: true,

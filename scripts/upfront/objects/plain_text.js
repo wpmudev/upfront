@@ -11,24 +11,25 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 });
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
-	model: PlainTxtModel,
-
 	get_content_markup: function () {
-		return this.model.get_content() + '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>';
+		return this.model.get_content();
 	},
-	on_edit: function () {
-		var editor = Upfront.Content.editors.add({
-			type: Upfront.Content.TYPES.PLAIN,
-			editor_id: this.model.get_property_value_by_name("element_id"),
-			view: this
-		});
-		editor.start();
-    Upfront.Events.trigger('upfront:element:edit:start', 'text');
-	},
-	on_cancel: function () {
-		var editor = Upfront.Content.editors.get(this.model.get_property_value_by_name("element_id"));
-		editor.stop();
-    Upfront.Events.trigger('upfront:element:edit:stop');
+
+	on_render: function() {
+		console.log('Text');
+		var blurTimeout = false;
+
+		this.$el.find('.upfront-object-content').ueditor({
+				linebreaks: false,
+				autostart: false
+			})
+			.on('start', function(){				
+    			Upfront.Events.trigger('upfront:element:edit:start', 'text');
+			})
+			.on('stop', function(){
+    			Upfront.Events.trigger('upfront:element:edit:stop');
+			})
+		;
 	}
 });
 

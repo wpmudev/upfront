@@ -118,8 +118,7 @@
 				if(me.editors[id])
 					me.editors[id].updateElement(node);
 				else{
-					me.editors[id] = Upfront.Content.editors.add({
-						type: Upfront.Content.TYPES.META,
+					me.editors[id] = new Upfront.Content.editor({
 						editor_id: 'uposts_meta_' + id,
 						post_id: id,
 						node: node,

@@ -21,7 +21,7 @@ var SettingExampleView = Upfront.Views.ObjectView.extend({
 
 var SettingExampleElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	
-	draggable: false,
+	draggable: true,
 	render: function () {
 		this.$el.html('Setting Example');
 	},
