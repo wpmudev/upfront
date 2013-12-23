@@ -1,29 +1,54 @@
-<div class="uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?>">
+<div class="uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?>" id="uslider-<?php echo $element_id ?>">
 	<?php if($slidesLength){ ?>
-	<div class="uslides">
+	<div class="uslides" style="width: <?php echo $imageWidth ?>;">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
-		<div class="uslide">
+		<div class="uslide" rel="<?php echo $slides[$i]['id'] ?>">
 			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link">
 				<div class="uslide-image">
 					<img src="<?php echo $slides[$i]['src'] ?>">		
 				</div>
-				<?php if($style != 'notext'){ ?>
-				<div class="uslide-text">
-					<img src="<?php echo $slides[$i]['text'] ?>">	
-				</div>
-				<?php } ?>
 			</a>
-		</div>
-		<?php } ?>
-
-		<?php if ($controls == 'dots' || $controls == 'both'){ ?>
-			
-		<?php } ?>
-		<?php if ($controls == 'arrows' || $controls == 'both'){ ?>
-			
+		</div>	
 		<?php } ?>
 	</div>
+	<?php if($style != 'nocaption'){ ?>
+	<div class="uslider-texts" style="width: <?php echo $textWidth ?>; margin-left: <?php echo $imageWidth ?>">
+		<?php for($i=0; $i<$slidesLength; $i++) { ?>
+		<div class="uslide-text" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo $slides[$i]['captionBackground'] ?>;color:<?php echo $slides[$i]['captionColor'] ?>">
+			<div class="uslide-editable-text">
+				<?php echo $slides[$i]['text'] ?>				
+			</div>
+		</div>
+		<?php } ?>
+	</div>
+	<?php } ?>
 	<?php } else { ?>
 	<!-- No images in this slider -->
 	<?php } ?>
 </div>
+<script>
+jQuery(function($){
+	var slider = $('#uslider-<?php echo $element_id ?>');
+	slider.find('.uslides')
+		.upfront_default_slider({
+			item: '.uslide',
+			auto: <?php echo $rotate ?>,
+			effect: '<?php echo $transition ?>',
+			interval: <?php echo $rotateTime * 1000 ?>,
+			show_control: '<?php echo $controlsWhen ?>',
+			control_num: <?php echo $dots ?>,
+			control_next_prev: <?php echo $arrows ?>
+		})
+	;
+	if(<?php echo $style != 'nocaption' ?>){
+		if(<?php echo $style == 'above' ? 1 : 0  ?>){
+			var texts = slider.find('.uslider-texts').detach();
+			slider.prepend(texts);
+		}
+		else if(<?php echo ($style != 'below' && $style != 'right') ? 1 : 0 ?>) {			
+			var texts = slider.find('.uslider-texts').detach();
+			slider.find('.uslides').prepend(texts);
+		}
+	}
+});
+</script>

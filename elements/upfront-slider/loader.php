@@ -36,53 +36,12 @@ function uslider_initialize () {
 
 	//Add js and css
 	add_action('wp_enqueue_scripts', array('Upfront_UsliderView', 'add_styles_scripts'));
-
-	//Add templates to the backend
-	add_action('wp_head', array('Upfront_UsliderView', 'add_admin_templates'));
 	
 	//// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UsliderView', 'add_js_defaults'));
-
-	//i18n
-	//load_plugin_textdomain('uslider', false, dirname(__FILE__) .'/languages');
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('upfront_slider', upfront_element_url('js/uslider', __FILE__));
 }
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'uslider_initialize'); 
-
-/**
-AJAX handler function to load the images from the list of ids stored in UpFront meta. We don't store the details in UpFront because they can change within WP.
-*/
-
-function uslider_ajax_proc() {
-	
-	if (!isset($_POST['function'])) die();
-	echo "_POST<pre>"; print_r($_POST); echo "</pre>";
-	
-	switch(esc_attr($_POST['function'])) {
-		case 'test_slides':
-			$fp = fopen(ABSPATH.'/uslider_slides_html.php', 'w+');
-			fwrite($fp, stripslashes($_POST['slides_html']));
-			fclose($fp);			
-
-			$fp = fopen(ABSPATH.'/uslider_slides_html.js', 'w+');
-			fwrite($fp, stripslashes($_POST['slides_js']));
-			fclose($fp);			
-
-			break;
-		
-		default:
-			die();
-	}
-	die();
-} 
-
-//add_action('wp_ajax_UpFrontSlider', 'uslider_ajax_proc');
-
-function uslider_add_template() {
-	include(dirname(__FILE__) . '/tpls/frontend.php');
-}
-
-//add_action('wp_head', 'uslider_add_template');
