@@ -1,0 +1,29 @@
+<div class="uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?>">
+	<?php if($slidesLength){ ?>
+	<div class="uslides">
+		<?php for($i=0; $i<$slidesLength; $i++) { ?>
+		<div class="uslide">
+			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link">
+				<div class="uslide-image">
+					<img src="<?php echo $slides[$i]['src'] ?>">		
+				</div>
+				<?php if($style != 'notext'){ ?>
+				<div class="uslide-text">
+					<img src="<?php echo $slides[$i]['text'] ?>">	
+				</div>
+				<?php } ?>
+			</a>
+		</div>
+		<?php } ?>
+
+		<?php if ($controls == 'dots' || $controls == 'both'){ ?>
+			
+		<?php } ?>
+		<?php if ($controls == 'arrows' || $controls == 'both'){ ?>
+			
+		<?php } ?>
+	</div>
+	<?php } else { ?>
+	<!-- No images in this slider -->
+	<?php } ?>
+</div>
