@@ -88,12 +88,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.images.on('add remove reset change', this.imagesChanged, this);
 		this.property('images', this.images.toJSON()); // Hack to add image defaults;
 
-		$('body').on('click', this.closeTooltip);
+		var closeTooltipFunction = $.proxy(this.closeTooltip, this);
+		$('body').on('click', closeTooltipFunction);
 
-		Upfront.Events.on("entity:settings:activate", this.closeTooltip);
-		Upfront.Events.on("entity:activated", this.closeTooltip);
-		Upfront.Events.on("entity:deactivated", this.closeTooltip);		
-		Upfront.Events.on("entity:region:activated", this.closeTooltip);
+		Upfront.Events.on("entity:settings:activate", closeTooltipFunction);
+		Upfront.Events.on("entity:activated", closeTooltipFunction);
+		Upfront.Events.on("entity:deactivated", closeTooltipFunction);		
+		Upfront.Events.on("entity:region:activated", closeTooltipFunction);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
@@ -1318,13 +1319,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			.on('blur', function(e){
 				me.closeTooltip();
 			})
+			.on('closed', function(e){
+				element.closest('.ugallery_item').removeClass('tooltip-open');
+			})
 		;
+
+		element.closest('.ugallery_item').addClass('tooltip-open');
 
 		Upfront.Events.trigger("entity:settings:deactivate");	
 	},
 
 	closeTooltip: function(){
-		$('#ugallery-tooltip').remove();
+		var tooltip = $('#ugallery-tooltip');
+		tooltip.hide().trigger('closed');
+		setTimeout(function(){
+			tooltip.remove();
+		}, 100);		
 	},
 
 	/*

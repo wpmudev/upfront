@@ -366,6 +366,7 @@ div.ugallery-label-selector {
 	z-index:20;
 }
 
+.tooltip-open .ugallery-controls,
 .ugallery_item:hover .ugallery-controls {
 	display: block;
 }
