@@ -89,6 +89,59 @@ var hackRedactor = function(){
 		});
 	};
 
+	//Change the position of the air toolbar
+	$.Redactor.prototype.airShow = function (e, keyboard)
+		{
+			if (!this.opts.air) return;
+
+			$('.redactor_air').hide();
+
+			this.selectionRemoveMarkers();
+			this.selectionSave();
+
+			var width = this.airWidth || this.$air.width(),
+				m1 = this.$editor.find('#selection-marker-1').offset(),
+				m2 = this.$editor.find('#selection-marker-2').offset(),
+				bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
+				atRight = false,
+				$win = $(window),
+				winRight = $win.width() + $win.scrollLeft(),
+				center, parent
+			;
+
+			if(!this.airWidth){
+				this.airWidth = width;
+				this.$air.width(width);
+			}
+
+			if(bounds.right < bounds.left || bounds.right > winRight){
+				var parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
+				bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
+			}
+
+			center = Math.floor((bounds.right + bounds.left + 1) / 2);
+
+			if(center + width / 2 > winRight){
+				this.$air.addClass('at-right');
+				if(center > winRight)
+					center = winRight - 5;
+				bounds.left = center - width;
+			}
+			else {
+				this.$air.removeClass('at-right');
+				bounds.left = center - Math.floor((width + 1) / 2);
+			}
+
+			this.selectionRemoveMarkers();
+
+			this.$air.css({
+				left: bounds.left  + 'px',
+				top: bounds.top + 'px'
+			}).show();
+
+			this.airBindHide();
+		},
+
 	hackedRedactor = true;
 
 	$.Redactor.prototype.events = UeditorEvents;
@@ -403,7 +456,7 @@ RedactorPlugins.stateLists = {
 			defaultState: 'none',
 			states: {
 				none: {
-					iconClass: 'ueditor-justify',
+					iconClass: 'ueditor-nolist',
 					isActive: function(redactor){
 						var $parent = $(redactor.getParent());
 						return $parent.length && $parent.css('text-align') == 'left';
