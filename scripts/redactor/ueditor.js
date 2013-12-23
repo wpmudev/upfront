@@ -95,22 +95,25 @@ var hackRedactor = function(){
 };
 
 var Ueditor = function($el, options) {
+	//Allow user disable plugins
+	var plugins = this.pluginList(options);
+
 	this.$el = $el;
 	this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
 			stateButtons: {},
 
-// Redactor options
-air:true,
-linebreaks: true,
-placeholder: 'Your text here...',
-focus: true,
-cleanup: false,
-plugins: ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages'],
-airButtons: ['link', '|',  'bold', 'italic', '|', 'upfrontLink', '|', 'stateLists', '|', 'stateAlign', '|', 'upfrontColor'],
-buttonsCustom: {},
-observeLinks: false,
+			// Redactor options
+			air:true,
+			linebreaks: true,
+			placeholder: 'Your text here...',
+			focus: true,
+			cleanup: false,
+			plugins: plugins,
+			airButtons: ['link', '|',  'bold', 'italic', '|', 'upfrontLink', '|', 'stateLists', '|', 'stateAlign', '|', 'upfrontColor'],
+			buttonsCustom: {},
+			observeLinks: false
 		}, options)
 	;
 
@@ -127,7 +130,7 @@ observeLinks: false,
 	this.options.keydownCallback = function () { UeditorEvents.trigger("ueditor:key:down", this); };
 	this.options.textareaKeydownCallback = function () { UeditorEvents.trigger("ueditor:key:down:textarea", this); };
 	this.options.syncBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:sync:before", this, html); return html; }; // <-- OOOH this one is different
-	this.options.syncAfterCallback = function (html) { UeditorEvents.trigger("ueditor:sync:after", this, html); };
+	this.options.syncAfterCallback = function (html) { UeditorEvents.trigger("ueditor:sync:after", this, html); $el.trigger('syncAfter', html); }; //Added syncAfter for east saving.
 	this.options.autosaveCallback = function () { UeditorEvents.trigger("ueditor:autosave", this); };
 	//this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, ref.redactor, param); }; // Do we need this?
 	// Also available ueditor events (not redactor callbacks:
@@ -159,12 +162,12 @@ Ueditor.prototype = {
 	stop: function(){
 		if(this.redactor){
 			UeditorEvents.trigger("ueditor:stop", this.redactor);
-			this.$el.removeClass('ueditable')
-				.redactor('destroy')
-			;
 			this.$el.trigger('stop');
 			this.redactor = false;
 			this.restoreDraggable();
+			this.$el.removeClass('ueditable')
+				.redactor('destroy')
+			;
 		}
 	},
 	bindStartEvents: function() {
@@ -210,6 +213,16 @@ Ueditor.prototype = {
 		if(_.isString(cancel) && cancel.indexOf('.ueditable') != -1){
 			draggable.draggable('option', 'cancel', cancel.replace(/,\.ueditable/g, ''));
 		}			
+	},
+	pluginList: function(options){
+		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages'],
+			pluginList = []
+		;
+		$.each(allPlugins, function(i, name){
+			if(typeof options[name] == 'undefined' || options[name])
+				pluginList.push(name);
+		});
+		return pluginList;
 	}
 }
 
