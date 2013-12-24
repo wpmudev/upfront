@@ -250,6 +250,17 @@ define(_template_files, function () {
 		}
 
 	});
+	var Command_PreviewLayout = Command.extend({
+		"className": "command-preview",
+		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-save');
+			this.$el.html("Preview");
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:preview");
+		}
+
+	});
 
 	var Command_LoadLayout = Command.extend({
 		render: function () {
@@ -682,6 +693,7 @@ define(_template_files, function () {
 		initialize: function () {
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
+			Upfront.Events.on("command:layout:preview", this.on_preview, this);
 			Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
 			Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
 			Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
@@ -695,6 +707,7 @@ define(_template_files, function () {
 			this._shadow_region = regions.get_by_name('shadow');
 			regions.remove(this._shadow_region, {silent: true});
 		},
+		on_preview: function () { return this.on_save(); },
 		apply_state_binding: function () {
 			Upfront.Events.on("command:undo", this.reset_modules, this);
 			Upfront.Events.on("command:redo", this.reset_modules, this);
@@ -929,6 +942,8 @@ define(_template_files, function () {
 			]);
 			if (!Upfront.Settings.Application.NO_SAVE) {
 				this.commands.push(new Command_SaveLayout({"model": this.model}));
+			} else {
+				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}
 			// Dev feature only
 			if ( Upfront.Settings.Debug.dev ){

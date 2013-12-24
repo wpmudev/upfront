@@ -41,6 +41,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		Upfront.Events.off("entity:deactivated", this.destroy_properties, this);
 		Upfront.Events.off("command:layout:save", this.save_layout, this);
 		Upfront.Events.off("command:layout:save_as", this.save_layout_as, this);
+		Upfront.Events.off("command:layout:preview", this.preview_layout, this);
 		Upfront.Events.off("command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable, this);
 		Upfront.Events.off("entity:activated", Upfront.Behaviors.LayoutEditor.create_undo, this);
 		Upfront.Events.off("entity:resize_start", Upfront.Behaviors.LayoutEditor.create_undo, this);
@@ -86,6 +87,35 @@ $(".upfront-layout .ui-draggable").each(function () {
 			.error(function () {
 				Upfront.Util.log("error saving layout");
 				Upfront.Events.trigger("command:layout:save_error");
+			})
+		;
+	},
+
+	preview_layout: function () {
+		var data = Upfront.Util.model_to_json(this.layout),
+			preview = false
+		;
+		data.layout = _upfront_post_data.layout;
+		data.preferred_layout = this.layout.get("current_layout");
+		data = JSON.stringify(data, undefined, 2);
+
+		preview = window.open("", "", "height=600,width=800,scrollbars=1,location=no,menubar=no,resizable=1,status=no,toolbar=no");
+		preview.document.write("Building preview, please wait... ");
+
+		Upfront.Util.post({action: "upfront_build_preview", "data": data})
+			.success(function (response) {
+				var data = response.data || {};
+				if ("html" in data && data.html) {
+					preview.document.open();
+					preview.document.write(data.html);
+				} else {
+					Upfront.Util.log("Invalid response");
+					preview.close();
+				}
+			})
+			.error(function () {
+				Upfront.Util.log("error building layout preview");
+				preview.close();
 			})
 		;
 	},
@@ -147,6 +177,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		// Layout manipulation
 		Upfront.Events.on("command:layout:save", this.save_layout, this);
 		Upfront.Events.on("command:layout:save_as", this.save_layout_as, this);
+		Upfront.Events.on("command:layout:preview", this.preview_layout, this);
 
 		Upfront.Behaviors.GridEditor.init();
 		

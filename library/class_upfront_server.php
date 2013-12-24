@@ -49,6 +49,7 @@ class Upfront_Ajax extends Upfront_Server {
 		add_action('wp_ajax_upfront_load_layout', array($this, "load_layout"));
 		add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
 		add_action('wp_ajax_upfront_reset_layout', array($this, "reset_layout"));
+		add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
 	}
 
 	// STUB LOADING
@@ -77,6 +78,33 @@ class Upfront_Ajax extends Upfront_Server {
 		);
 
 		$this->_out(new Upfront_JsonResponse_Success($response));
+	}
+
+	function build_preview () {
+		global $post;
+
+		$data = stripslashes_deep($_POST);
+		$current_url = !empty($data['current_url']) ? $data['current_url'] : site_url();
+		$layout = Upfront_Layout::from_json($data['data']);
+		$json = $layout->to_php();
+
+		// Save temporary layout
+		$sfx = md5(serialize($json));
+		$key = Upfront_PreviewListener::HOOK . "-{$sfx}";
+		set_transient($key, $json, HOUR_IN_SECONDS);
+
+		$preview_url = add_query_arg(array(
+			Upfront_PreviewListener::HOOK => $sfx,
+		), $current_url);
+		$request = wp_remote_get($preview_url, array(
+			'sslverify' => false,
+		));
+		if (200 != wp_remote_retrieve_response_code($request)) $this->_out(new Upfront_JsonResponse_Error("Couldn't connect to preview"));
+		$body = wp_remote_retrieve_body($request);
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'html' => $body
+		)));
 	}
 
 	function save_layout () {
@@ -472,3 +500,47 @@ class Upfront_ElementStyles extends Upfront_Server {
 		return md5(serialize($stuff));
 	}
 }
+
+
+class Upfront_PreviewListener implements IUpfront_Server {
+
+	const HOOK = 'uf-preview';
+
+	private function __construct () {
+
+	}
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	public static function is_preview () {
+		return !empty($_GET[self::HOOK]);
+	}
+
+	private function _add_hooks () {
+		if (is_admin()) return false;
+		if (!self::is_preview()) return false;
+		// Apply default regions
+		add_filter('upfront_regions', array($this, 'intercept_layout_loading'), 999, 2);
+	}
+
+	public function intercept_layout_loading ($layout, $cascade) {
+		if (!self::is_preview()) return $layout;
+		$sfx = $_GET[self::HOOK];
+		$key = self::HOOK . "-{$sfx}";
+		$raw = get_transient($key);
+
+		if (!empty($raw)) {
+			$new_layout = Upfront_Layout::from_php($raw);
+		}
+
+		return empty($raw["regions"])
+			? $layout
+			: $raw["regions"]
+		;
+	}
+
+}
+Upfront_PreviewListener::serve();
