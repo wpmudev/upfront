@@ -397,7 +397,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			selectorOptions = {
 				multiple: true,
-				preparingText: 'Preparing images'
+				preparingText: 'Preparing images',
+				customImageSize: {width: this.property('thumbWidth'), height: this.property('thumbHeight')}
 			}
 		;
 
@@ -414,60 +415,30 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		});
 
 	},
-
 	addImages: function(images, replaceId){
 		var me = this,
-			thumbSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')},
-			thumbRatio = thumbSize.width / thumbSize.height,
-			imageData = [],
-			editOptions = {action: 'upfront-media-image-create-size'},
 			models = []
 		;
 
 		this.getNewLabels(_.keys(images));
 
 		_.each(images, function(image, id){
-			var full = {width: image.full[1], height: image.full[2]},
-				cropSize = {width: Math.min(thumbSize.width, full.width), height: Math.min(thumbSize.height, full.height)},
-				needsResizing = thumbSize.width < full.width && thumbSize.height < full.height,
-				imageRatio = full.width / full.height,
-				pivot = imageRatio > thumbRatio ? 'height' : 'width',
-				factor = thumbSize[pivot] / full[pivot],
-				resize = needsResizing ? {width: Math.round(full.width * factor), height: Math.round(full.height * factor)} : false,
-				editorOpts = {
+			models.push(
+				new UgalleryImage({
 					id: id,
-					rotate: 0,
-					resize: resize,
-					crop: {
-						top: resize ? Math.floor((resize.height - cropSize.height) / 2) : (cropSize.height > thumbSize.height ? Math.floor(cropSize.height - thumbSize.height / 2) : 0),
-						left: resize ? Math.floor((resize.width - cropSize.width) / 2) : (cropSize.width > thumbSize.width ? Math.floor(cropSize.width - thumbSize.width / 2) : 0),
-						width: cropSize.width,
-						height: cropSize.height
-					}
-				}
-			;
-			models.push(new UgalleryImage({
-				id: id,
-				srcFull: full[0],
-				sizes: image,
-				size: resize || cropSize,
-				cropSize: cropSize,
-				cropOffset: {left: editorOpts.crop.left, top: editorOpts.crop.top},
-				src: '#',
-				loading: true
-			}));
-			imageData.push(editorOpts);
+					srcFull: image.full[0],
+					sizes: image,
+					size: image.custom.editdata.resize,
+					cropSize: image.custom.crop,
+					cropOffset: image.custom.editdata.crop,
+					src: image.custom.url,
+					loading: false,
+					status: 'ok'
+				})
+			);
 		});
 
-		editOptions.images = imageData;
-		if(me.property('status') != 'ok'){
-			me.images.set(models);
-			me.property('status', 'ok');
-			this.property('has_settings', 1);
-			this.labels = [{id: 'label_0', text: 'All'}];
-			this.imagesLabels = {};
-		}
-		else if(replaceId){
+		if(replaceId){
 			var item = me.images.get(replaceId),
 				idx = me.images.indexOf(item);
 
@@ -477,44 +448,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		else{
 			me.images.add(models);
 		}
+
 		me.render();
-
-
-		Upfront.Util.post(editOptions).done(function(response){
-			var newImages = me.handleResizing(models, response);
-
-			_.each(newImages, function(image){
-				me.$('.ugallery_item[rel="' + image.id  + '"]').find('img').attr('src', image.get('src')).show().siblings('p').remove();
-			});
-
-			me.images.set(newImages, {remove: false, silent: true});
-			me.imagesChanged();
-
-			me.$('.ugallery-image-wrapper').css('overflow', '');
-		});
-
-		me.selectOnClick();
-	},
-
-	handleResizing: function(models, response){
-		var images = response.data.images;
-
-		_.each(models, function(model){
-			var id = model.get('id'),
-				changes = images[id]
-			;
-
-			if(changes && !changes.error){
-				model.set({
-					src: changes.url,
-					srcFull: changes.urlOriginal,
-					status: 'ok',
-					loading: false
-				}, {silent: true});
-			}
-		});
-
-		return models;
 	},
 
 	selectOnClick: function(){
