@@ -102,7 +102,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		preview = window.open("", "", "height=600,width=800,scrollbars=1,location=no,menubar=no,resizable=1,status=no,toolbar=no");
 		preview.document.write("Building preview, please wait... ");
 
-		Upfront.Util.post({action: "upfront_build_preview", "data": data})
+		Upfront.Util.post({action: "upfront_build_preview", "data": data, "current_url": window.location.href})
 			.success(function (response) {
 				var data = response.data || {};
 				if ("html" in data && data.html) {

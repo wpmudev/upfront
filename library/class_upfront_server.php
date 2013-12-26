@@ -83,9 +83,14 @@ class Upfront_Ajax extends Upfront_Server {
 	function build_preview () {
 		global $post;
 
-		$data = stripslashes_deep($_POST);
-		$current_url = !empty($data['current_url']) ? $data['current_url'] : site_url();
-		$layout = Upfront_Layout::from_json($data['data']);
+		$raw_data = stripslashes_deep($_POST);
+		$data = !empty($raw_data['data']) ? $raw_data['data'] : '';
+		
+		$current_url = !empty($raw_data['current_url']) ? $raw_data['current_url'] : home_url();
+		$current_url = wp_validate_redirect(wp_sanitize_redirect($current_url), false);
+		$current_url = $current_url ? $current_url : home_url();
+		
+		$layout = Upfront_Layout::from_json($data);
 		$json = $layout->to_php();
 
 		// Save temporary layout
