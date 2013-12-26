@@ -122,3 +122,7 @@ div.uslide-text-current {
 .tooltip-open .uimage-controls{
 	display: block !important;
 }
+
+div.uslide-image img {
+	position: static;
+}

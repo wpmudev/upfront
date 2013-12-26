@@ -1,4 +1,4 @@
-// See uslide_configurations.js for options/setup and I18N. 
+
 (function ($) {
 
 var templates = [ 
@@ -105,7 +105,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			controls.render();
 
 			me.$('.uslides').append(
-				$('<div class="uimage-controls upfront-ui"></div>').append(controls.$el)
+				$('<div class="uimage-controls upfront-ui" rel="' + me.slides.at(0).id + '"></div>').append(controls.$el)
 			);
 			me.bindSlidesText();
 
@@ -249,7 +249,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			selectorOptions = {
 				multiple: true,
-				preparingText: 'Preparing images'
+				preparingText: 'Preparing images',				
+				customImageSize: {
+					width: this.$('.uslider').width(), 
+					height: this.slides.length ? this.$('.uslider').height() : this.$('.upfront-uslider').height()
+				}
 			}
 		;
 
@@ -264,14 +268,20 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	addSlides: function(images){
 		var slides = [];
+		console.log(images);
 		_.each(images, function(image, id){
-			slides.push(new Uslider_Slide({
-				id: id,
-				src: image.full[0],
-				srcFull: image.full[0],
-				sizes: image,
-				size: {width: image.full[1], height: image.full[2]}
-			}));
+			var data = {sizes: image, id: id, srcFull: image.full[0], status: 'ok'};
+			if(image.custom && !image.custom.error){
+				data.src = image.custom.url;
+				data.size = image.custom.editdata.resize;
+				data.cropSize = image.custom.crop;
+				data.cropOffset = image.custom.editdata.crop;
+			}
+			else{
+				data.src = image.full[0];
+				data.size = {width: image.full[1], height: image.full[2]};
+			}
+			slides.push(data);
 		});
 
 		this.slides.add(slides);
@@ -281,6 +291,87 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(this.parent_module_view != view)
 			return;
 		this.property('rightWidth', this.getElementColumns());
+	},
+
+	imageEditMask: function(e) {
+		var me = this,
+			item = $(e.target).closest('.uimage-controls'),
+			slide = this.slides.get(item.attr('rel')),
+			editorOpts = this.getEditorOptions(slide)
+		;
+
+		if(slide.get('status') != 'ok'){
+			var selectorOptions = {
+				multiple: false,
+				preparingText: 'Preparing slides'
+			};
+			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){			
+				me.addSlides(images);
+
+				var index = me.slides.indexOf(slide);
+				me.slides.remove(slide, {silent:true});
+
+				var newSlide = me.slides.at(me.slides.length -1);
+				me.slides.remove(newSlide, {silent:true});
+				me.slides.add(newSlide, {at: index});
+
+				Upfront.Views.Editor.ImageSelector.close();
+			});
+		}
+		
+		editorOpts = this.getEditorOptions(slide);
+		e.preventDefault();
+		Upfront.Views.Editor.ImageEditor.open(editorOpts)
+			.done(function(result){
+				slide.set({
+					src: result.src,
+					srcFull: result.src,
+					cropSize: result.cropSize,
+					size: result.imageSize,
+					cropOffset: result.imageOffset,
+					margin: {left: Math.max(0-result.imageOffset.left, 0), top: Math.max(0-result.imageOffset.top, 0)},
+					rotation: result.rotation
+				});
+				me.render();
+			})
+		;
+	},
+
+	getEditorOptions: function(image){
+		var me = this,
+			mask = this.$('.uslide[rel=' + image.id + ']').find('.uslide-image'),
+			full = image.get('sizes').full,
+			cropSize = image.get('cropSize'),
+			size = image.get('size'),
+			position = image.get('cropOffset'),
+			ratio = mask.width() ? mask.width() / cropSize.width : 1
+		;
+
+		if(ratio !== 1){
+			size = {width: Math.round(size.width * ratio), height: Math.round(size.height * ratio)};
+			position = {left: Math.round(position.left * ratio), top: Math.round(position.top * ratio)};
+		}
+		return {
+			id: image.id,
+			maskSize: {width: mask.width(), height: mask.height()},
+			maskOffset: mask.offset(),
+			position: position,
+			size: size,
+			fullSize: {width: full[1], height: full[2]},
+			src: image.get('src'),
+			srcOriginal: full[0],
+			rotation: image.get('rotation'),
+			extraButtons: [
+				{
+					id: 'image-edit-button-swap',
+					text: 'Replace Image',
+					callback: function(e, editor){
+						editor.cancel();
+						me.openImageSelector(null, image.id);
+					}
+				}
+			]
+		};
 	},
 
 	slideEditLink: function(e) {
