@@ -14,9 +14,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if($post_id === 0)
 			return self::get_new_post($post_type);
 
-		if (!$post_id || !is_numeric($post_id)) return '';
-		
-		$post = get_post($post_id);
+		if (!$post_id || !is_numeric($post_id)) {
+			$post = self::get_new_post($post_type, array(), false);
+		} else {
+			$post = get_post($post_id);
+		}
 		if ($post->post_password && !is_user_logged_in() || $post->post_status != 'publish' && !is_user_logged_in()) 
 			return ''; // Augment this!
 
@@ -28,7 +30,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return self::post_template($post, $properties);
 	}
 
-	public static function get_new_post($post_type = 'post', $properties=array()) {
+	public static function get_new_post($post_type = 'post', $properties=array(), $query_override=true) {
 
 		$title = sprintf(__('Enter your new %s title here', 'upfront'), $post_type);
 		$content = sprintf(__('Your %s content goes here. Have fun writing :)', 'upfront'), $post_type);
@@ -47,12 +49,14 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$post = new WP_Post($post_obj);
 
-		query_posts( 'post_type=' . $post_type . '&posts_per_page=1');
-		if(have_posts())
-			the_post();
-		$post_id = get_the_ID();
-		if($post_id)
-			query_posts('p=' . $post_id);
+		if ($query_override) {
+			query_posts( 'post_type=' . $post_type . '&posts_per_page=1');
+			if(have_posts())
+				the_post();
+			$post_id = get_the_ID();
+			if($post_id)
+				query_posts('p=' . $post_id);
+		}
 
 		return self::post_template($post, $properties);
 	}
@@ -64,12 +68,17 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		global $wp_query, $more;
 
+		$in_the_loop = $wp_query->in_the_loop;
+
 		//Make sure we show the whole post content
 		$more = 1;
 
 		$wp_query->is_single = true;
+		$wp_query->in_the_loop = true;
+		$data = upfront_get_template('this-post', array('post' => $post, 'properties' => $properties), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
+		$wp_query->in_the_loop = $in_the_loop;
 
-		return upfront_get_template('this-post', array('post' => $post, 'properties' => $properties), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
+		return $data;
 	}
 
 	public static function default_properties(){
