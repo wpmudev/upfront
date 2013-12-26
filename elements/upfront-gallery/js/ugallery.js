@@ -185,7 +185,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = me.images.get(item.attr('rel')),
-			editor = false
+			titleUpdated = false
 		;
 
 		$.magnificPopup.open({
@@ -204,66 +204,62 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					var title = $(this.container).find('.mfp-title'),
 						wrapper = $(this.container).find('figure'),
 						labelsTpl = $.trim(me.labelsTpl({labels: me.extractImageLabels(image.id)}))
-						//labelsTpl = me.getLabelSelector(image.id)
 					;
 					if(title.length){
-						editor = Upfront.Content.editors.add({
-							type: Upfront.Content.TYPES.SIMPLE,
-							editor_id: 'caption-' + image.get('id'),
-							element: title
-						});
-						title.on('dblclick', function(e){
-							editor.start();
-						});
-
-						wrapper.append(me.magnificLabelTpl({labels: labelsTpl, imageId: image.id}));
-
-						var panel = wrapper.find('.ugallery-magnific-panel'),
-							reveal = function(){
-								panel.removeClass('closed');
-								setTimeout(function(){
-									panel.css('overflow', 'visible');
-								}, 500);								
-							}
-						;
-
-						if(labels)
-							setTimeout(function(){
-								reveal();
-							}, 300);
-
-						wrapper
-							.on('click', '.ugallery-magnific-toggle', function(e){
-								var panel = wrapper.find('.ugallery-magnific-panel');
-								if(panel.hasClass('closed')){
-									reveal();
-								}
-								else{
-									panel.css('overflow', 'hidden').addClass('closed');
-								}
+						title.ueditor({
+								linebreaks: false,
+								autostart: false,
+								upfrontMedia: false,
+								upfrontImages: false
 							})
-							.on('click', '.ugallery-magnific-addbutton', function(e){
-								wrapper.find('.ugallery-magnific-addbutton').hide();
-								wrapper.find('.ugallery-magnific-addform').show()
-									.find('#ugallery-addlabels').focus()
-								;
+							.on('start', function(){
+								titleUpdated = true;
+							})
+							.on('syncAfter', function(){
+								image.set('caption', title.html());
 							})
 						;
-
-						me.createLabelSelector(wrapper);
 					}
+
+					wrapper.append(me.magnificLabelTpl({labels: labelsTpl, imageId: image.id}));
+
+					var panel = wrapper.find('.ugallery-magnific-panel'),
+						reveal = function(){
+							panel.removeClass('closed');
+							setTimeout(function(){
+								panel.css('overflow', 'visible');
+							}, 500);								
+						}
+					;
+
+					if(labels)
+						setTimeout(function(){
+							reveal();
+						}, 300);
+
+					wrapper
+						.on('click', '.ugallery-magnific-toggle', function(e){
+							var panel = wrapper.find('.ugallery-magnific-panel');
+							if(panel.hasClass('closed')){
+								reveal();
+							}
+							else{
+								panel.css('overflow', 'hidden').addClass('closed');
+							}
+						})
+						.on('click', '.ugallery-magnific-addbutton', function(e){
+							wrapper.find('.ugallery-magnific-addbutton').hide();
+							wrapper.find('.ugallery-magnific-addform').show()
+								.find('#ugallery-addlabels').focus()
+							;
+						})
+					;
+
+					me.createLabelSelector(wrapper);
 				},
 				beforeClose: function() {
-					console.log('Magnific closed');
-					if(editor){
-						var caption = image.get('caption'),
-							newCaption = editor.getContents()
-						;
-						if(caption != newCaption){
-							image.set('caption', newCaption);
-							Upfront.Views.Editor.notify("Image description has been successfully updated.");
-						}
-					}
+					if(titleUpdated)
+						Upfront.Views.Editor.notify("Image description has been successfully updated.");
 				}
 			}
 		});
@@ -322,42 +318,23 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				controls.render();
 				item.find('.ugallery-image-wrapper').append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 		
-				if(me.property('captionPosition') != 'nocaption'){
-					var editor = Upfront.Content.editors.add({
-							type: Upfront.Content.TYPES.SIMPLE,
-							editor_id: 'title-' + image.get('id'),
-							element: title
-						}),
-						panels = me.$('.ugallery-thumb-title')
+				if(me.property('captionPosition') != 'nocaption' && !title.data('ueditor')){
+					title.ueditor({
+							linebreaks: false,
+							autostart: false,
+							upfrontMedia: false,
+							upfrontImages: false
+						})
+						.on('start', function(){
+							me.$el.addClass('upfront-editing');
+						})
+						.on('stop', function(){
+							me.$el.removeClass('upfront-editing');
+						})
+						.on('syncAfter', function(){
+							image.set('title', title.html());
+						})
 					;
-
-
-					editor.on('change', function(content){
-						image.set('title', content);
-					});
-					editor.on('blur', function(){
-						editor.stop();
-					});
-
-					editor.on('textcolor:change', function(color){
-						var value = color.toRgbString();
-						me.property('captionColor', value);
-						this.editor.textColor = value;
-						panels.css('color', value);
-					});
-
-					editor.on('panelcolor:change', function(color){
-						var value = color.toRgbString();
-						me.property('captionBackground', value);
-						this.editor.panelColor = value;
-						panels.css('background-color', value);
-					});
-
-					title.on('dblclick', function(e){	
-						editor.textColor = me.property('captionColor');
-						editor.panelColor = me.property('captionBackground');			
-						editor.start();
-					});
 				}
 
 				if(
@@ -1201,8 +1178,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			this.images.get(imageId).set({link: 'original', url: ''});
 
 		this.closeTooltip();
-		return this.render();
-		
+		return this.render();		
 	},
 
 	getItemElement: function(e){

@@ -111,7 +111,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		multi.sub_items = {
 			topOver: this.createControl('topOver', 'Over image, top'),
 			bottomOver: this.createControl('bottomOver', 'Over image, bottom'),
-			topCover: this.createControl('topCover', 'Covers image, top', 'log'),
+			topCover: this.createControl('topCover', 'Covers image, top'),
 			middleCover: this.createControl('middleCover', 'Covers image, middle'),
 			bottomCover: this.createControl('bottomCover', 'Covers image, bottom'),
 			below: this.createControl('below', 'Below the image'),
@@ -171,38 +171,35 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		$('#' + this.property('element_id')).find('.upfront-entity-settings_trigger').click();		
 	},
 
-	editCaption: function(e){
-
-		if(this.editor && this.editor.isActive())
-			return;
-
-		
+	editCaption: function(e){		
 		var me = this,
 			captionEl = $('#' + this.property('element_id')).find('.wp-caption')
 		;
 
+
 		if(captionEl.find('.uimage-caption-cover').length)
 			captionEl = captionEl.find('.uimage-caption-cover');
 
-		e.preventDefault();
+		if(captionEl.data('ueditor') || ! captionEl.length) //Already instantiated
+			return;
 
-		if(this.editor)
-			this.editor.stop();
+		captionEl.ueditor({
+				autostart: false,
+				upfrontMedia: false,
+				upfrontImages: false
+			})
+			.on('start', function(){
+				me.$el.addClass('upfront-editing');
+			})
+			.on('stop', function(){
+				me.$el.removeClass('upfront-editing');
+			})
+			.on('syncAfter', function(){
+				me.property('image_caption', captionEl.html());
+			})
+		;
 
-
-		this.$el.addClass('upfront-editing');
-
-		this.editor = Upfront.Content.editors.add({
-			type: Upfront.Content.TYPES.SIMPLE,
-			editor_id: this.model.get_property_value_by_name("element_id"),
-			element: captionEl,
-			removeImageSupport: true
-		});
-
-		this.editor.on('focus', function(){
-			me.$el.addClass('upfront-editing');
-		});
-
+		/*
 		this.editor.textColor = this.property('color');
 		this.editor.panelColor = this.property('background');
 
@@ -218,25 +215,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.editor.panelColor = value;
 			captionEl.css('background-color', value);
 		});
-
-		this.editor.start();
-
-		this.editor.on('stop', function(){
-			me.$el.removeClass('upfront-editing');
-		});
-
-		this.editor.on('blur', function(){
-			me.$el.removeClass('upfront-editing');
-		});
-
-		$(document).on('click', function(){
-			me.property('image_caption', me.editor.getContents());
-			me.editor.stop();
-		});
-	},
-
-	log: function(e){
-		console.log(e);
+		*/
 	},
 
 	createControl: function(icon, tooltip, click){
@@ -382,6 +361,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			container.append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
 			me.controls.delegateEvents();			
 			me.$el.removeClass('upfront-editing');
+
+			me.editCaption();
+
 		}, 300);
 	},
 
@@ -1657,7 +1639,7 @@ var ImageEditor = Backbone.View.extend({
 		return {width: Math.round(imageDim.width * factor), height: Math.round(imageDim.height * factor)};
 	},
 
-	getImageData: function(ids) {
+	getImageData: function(ids, customImageSize) {
 		var me = this,
 			options = {
 				action: 'upfront-media-image_sizes',
@@ -1665,8 +1647,8 @@ var ImageEditor = Backbone.View.extend({
 			}
 		;
 
-		if(this.options.customImageSize)
-			options.customSize = this.options.customImageSize;
+		if(customImageSize)
+			options.customSize = customImageSize;
 
 		return Upfront.Util.post(options);
 	},
@@ -2061,7 +2043,7 @@ var ImageSelector = Backbone.View.extend({
 				result.each(function(image){
 					ids.push(image.get('ID'));
 				});
-				Upfront.Views.Editor.ImageEditor.getImageData(ids)
+				Upfront.Views.Editor.ImageEditor.getImageData(ids, me.options.customImageSize)
 					.done(function(response){
 						me.deferred.resolve(response.data.images, response);
 					})
@@ -2107,7 +2089,7 @@ var ImageSelector = Backbone.View.extend({
 			success: function(response){
 				progress.css('width', '100%');
 				console.log(response);
-				Upfront.Views.Editor.ImageEditor.getImageData(response.data)
+				Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
 					.done(function(response){
 						me.deferred.resolve(response.data.images, response);
 					})

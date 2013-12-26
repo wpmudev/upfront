@@ -182,9 +182,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
         if(is_null($ids) || !is_array($ids))
         	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID 2"));
 
-        if(isset($data['customSize']) && is_array($data['customSize'])){
-        	$this->calculate_image_resize_data($ids[0]);
-        }
+        $custom_size = isset($data['customSize']) && is_array($data['customSize']);
 
     	$images = array();
     	$intermediate_sizes = get_intermediate_image_sizes();
@@ -196,6 +194,16 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				if($image)
 					$sizes[$size] = $image;
 			}
+
+			if($custom_size){
+				$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
+				$image_custom_size['id'] = $id;
+				$sizes['custom'] = $this->resize_image($image_custom_size);
+				$sizes['custom']['editdata'] =$image_custom_size;
+			}
+			else
+				$sizes['custom'] = $data['customSize'];
+
 			if(sizeof($sizes) != 0)
 				$images[$id] = $sizes;
     	}
@@ -299,12 +307,44 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		);
 	}
 
-	function calculate_image_resize_data($imageId) {
-		$meta = wp_get_attachment_metadata($imageId, true);
-		if(!$meta)
-			return false;
-		$sizes = $meta['sizes'];
-		var_dump($sizes);
+	function calculate_image_resize_data($custom, $full) {
+		$image_factor = $full['width'] / $full['height'];
+		$custom_factor =  $custom['width'] / $custom['height'];
+
+		$pivot = $image_factor > $custom_factor ? 'height' : 'width';
+		$factor = $custom[$pivot] / $full[$pivot];
+
+		$transformations = array(
+			'rotate' => 0
+		);
+
+		if($factor <= 1){
+			//resize
+			$resize = array(
+				'width' => round($full['width'] * $factor),
+				'height' => round($full['height'] * $factor)
+			);
+			$crop = $custom;
+
+			$crop['left'] = $resize['width'] > $crop['width'] ? floor(($resize['width'] - $crop['width']) / 2) : 0;
+			$crop['top'] = $resize['height'] > $crop['height'] ? floor(($resize['height'] - $crop['height']) / 2) : 0;
+
+			$transformations['crop'] = $crop;
+			$transformations['resize'] = $resize;
+		}
+		else {
+			$transformations['resize'] = false;
+			$crop = array(
+				'width' => min($custom['width'], $full['width']),
+				'height' => min($custom['height'], $full['height'])
+			);
+
+			$crop['left'] = $full['width'] > $crop['width'] ? floor(($full['width'] - $crop['width']) / 2) : 0;
+			$crop['top'] = $full['height'] > $crop['height'] ? floor(($full['height'] - $crop['height']) / 2) : 0;			
+
+			$transformations['crop'] = $crop;
+		}
+		return $transformations;
 	}
 }
 Upfront_Uimage_Server::serve();

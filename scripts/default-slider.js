@@ -139,17 +139,22 @@
 			function slider_switch (index, is_auto, effect) {
 				var $n = $nav.find('.'+data.classname.nav_item).eq(index),
 					$item = $items.eq(index),
-					effect = effect ? effect : slider_effect;
+					effect = effect ? effect : slider_effect,
+					current = $slider.find('.'+data.classname.item+'-current')
+				;
 				if ( !$item.hasClass(data.classname.item+'-current') && !(is_auto && slider_pause) ){
-					$slider.find('.'+data.classname.item+'-current').removeClass(data.classname.item+'-current');
+					$slider.trigger('slideout', current);
+					current.removeClass(data.classname.item+'-current');
 					$item.addClass(data.classname.item+'-current');
 					$nav.find('.'+data.classname.nav_item+'-selected').removeClass(data.classname.nav_item+'-selected');
 					$n.addClass(data.classname.nav_item+'-selected');
 					slider_index = index;
 					// Animation effect
 					$item.addClass(data.classname.item+'-effect-'+effect);
-					$item.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+					$item.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function () {
 						$(this).removeClass(data.classname.item+'-effect-'+effect);
+						if($item.hasClass(data.classname.item+'-current'))
+							$slider.trigger('slidein', $item);
 					});
 				}
 				slider_pause = false;

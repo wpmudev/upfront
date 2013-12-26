@@ -689,6 +689,19 @@ div.uimage-controls i.upfront-icon:before {
 	background-position: -807px -615px;
 }
 
+.upfront-icon-region-above:before {
+	background-position: -699px -680px;
+}
+.upfront-icon-region-above:hover:before {
+	background-position: -807px -680px;
+}
+.upfront-icon-region-above-active:before {
+	background-position: -699px -680px;
+}
+.upfront-icon-region-above-active:hover:before {
+	background-position: -807px -680px;
+}
+
 .upfront-icon-region-below:before {
 	background-position: -699px -646px;
 }
@@ -758,5 +771,21 @@ div.uimage-controls i.upfront-icon:before {
 
 .upfront-inline-panel-subitem .upfront-inline-panel-subitem .upfront-inline-panel-item:last-child {
 	left: 0;
+}
+
+.uimage-fill .redactor_box,
+.uimage-fill_middle .redactor_box,
+.uimage-fill_bottom .redactor_box{
+	display: inline-block;
+	width:99%;
+}
+.uimage-fill .redactor_box {
+	vertical-align: top;
+}
+.uimage-fill_middle .redactor_box{
+	vertical-align: middle;
+}
+.uimage-fill_bottom .redactor_box{
+	vertical-align: bottom;
 }
 
