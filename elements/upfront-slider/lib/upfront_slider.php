@@ -59,7 +59,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			"class" => "c22 upfront-uslider",
 			'has_settings' => 1,
 
-			'style' => 'below', // nocaption, below, above, right, bottomOver, topOver, bottomCover, middleCover, topCover
+			'style' => 'bottomOver', // nocaption, below, above, right, bottomOver, topOver, bottomCover, middleCover, topCover
 
 			'controls' => 'both', // both, arrows, dots, none
 			'controlsWhen' => 'always', // always, hover
@@ -88,7 +88,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'rotation' => 0,
 			'url' => '',
 			'urlType' => '',
-			'text' => 'Swag adipisicing deep v slow-carb mumblecore Neutra. Labore Marfa American Apparel flannel 8-bit. Kogi 3 wolf moon fugiat, exercitation master cleanse proident dreamcatcher. Brunch do keytar nulla. 90s banjo ethnic ugh, nesciunt fugiat fashion axe shabby chic.',
+			'text' => 'Slider description.',
 			'margin' => array('left' => 0, 'top' => 0),
 			'captionColor' => apply_filters('upfront_slider_caption_color', '#ffffff'),
 			'captionBackground' => apply_filters('upfront_slider_caption_background', '#000000')

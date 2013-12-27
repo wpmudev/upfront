@@ -48,6 +48,10 @@ div.uslide-text-current {
 	z-index:1;	
 }
 
+.uslide-text {
+	width: 100%;
+}
+
 .upfront-default-slider-nav,
 .upfront-default-slider-nav-prev,
 .upfront-default-slider-nav-next {
@@ -125,4 +129,29 @@ div.uslide-text-current {
 
 div.uslide-image img {
 	position: static;
+}
+
+.uslider .ui-resizable-handle {
+	display: none;
+}
+
+.uslider .ui-resizable-handle.ui-resizable-e {
+	background: #3f5870;
+	border: 1px solid #A1C5E6;
+	height: 30px;
+	width: 30px;
+	border-radius: 15px;
+	margin: auto;
+	top: 0;
+	bottom: 0;
+	right: -16px;
+	opacity: .9;
+}
+
+.uslider .ui-resizable-handle.ui-resizable-e:hover {
+	opacity: 1;
+}
+
+.uslides.ui-resizable {
+	border-right: 1px solid #3f5870;
 }

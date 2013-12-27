@@ -55,7 +55,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 
 		this.events = _.extend({}, this.events, {
-			'click .uslider-add': 'openImageSelector'
+			'click .upfront-image-select-button': 'openImageSelector'
 		});
 
 		var slides = this.property('slides');
@@ -65,6 +65,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		this.model.on('addRequest', this.openImageSelector, this);
 
+		Upfront.Events.on('entity:resize_start', this.calculateColumnWidth, this);
 		Upfront.Events.on('entity:pre_resize_stop', this.onElementResize, this);
 	},
 
@@ -72,6 +73,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var props = this.extract_properties()
 			rendered = {}
 		;
+
+
+		if(!this.slides.length){
+			this.startingHeight = this.startingHeight || 150;
+			return '<div class="upfront-image-starting-select" style="min-height:' + this.startingHeight + 'px">' +
+					'<span class="upfront-image-resizethiselement">Resize the slider & add images</span>'+
+					'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
+			'</div>';
+		}
 
 		//Stop autorotate
 		props.rotate = false;
@@ -93,12 +103,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	on_render: function() {
 		var me = this;
+
 		if(!this.slides.length)
-			return this.$('.uslider').html('<a class="uslider-add">Add images to the slider</a>');
+			return;
 
 		setTimeout(function(){
 			var wrapper = me.$('.uslide-image'),
-				controls = me.createControls()
+				controls = me.createControls(),
+				text = me.$('.uslide-editable-text')
 			;
 
 			controls.setWidth(wrapper.width());
@@ -109,34 +121,84 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			);
 			me.bindSlidesText();
 
-			me.$('.uslide-editable-text').ueditor({
-					autostart: false,
-					upfrontMedia: false,
-					upfrontImages: false 
-				})
-				.on('start', function(){
-					var $this = $(this),
-						id = $this.closest('.uslide-text').attr('rel'),
-						slide = me.slides.get(id)
-					;
+			if(text.length && !text.data('ueditor')){
+				me.$('.uslide-editable-text').ueditor({
+						autostart: false,
+						upfrontMedia: false,
+						upfrontImages: false 
+					})
+					.on('start', function(){
+						var $this = $(this),
+							id = $this.closest('.uslide-text').attr('rel'),
+							slide = me.slides.get(id)
+						;
 
-					me.$el.addClass('upfront-editing');
+						me.$el.addClass('upfront-editing');
 
-					$this.on('syncAfter', function(){
-							slide.set('text', $this.html(), {silent: true});
-						})
-						.on('stop', function(){
-							slide.set('text', $this.html());
-							me.property('slides', me.slides.toJSON());
-							me.$el.removeClass('upfront-editing');
-						})
-					;
-				})
-			;
+						$this.on('syncAfter', function(){
+								slide.set('text', $this.html(), {silent: true});
+							})
+							.on('stop', function(){
+								slide.set('text', $this.html());
+								me.property('slides', me.slides.toJSON());
+								me.$el.removeClass('upfront-editing');
+							})
+						;
+					})
+				;
+			}
 
 			me.property('rightWidth', me.getElementColumns());
 
+			if(me.property('style') == 'right'){
+				me.setImageResizable();
+			}
+
 		}, 400);
+	},
+
+	setImageResizable: function(){
+		var me = this,
+			slides = this.$('.uslides'),
+			elementWidth = me.$('.upfront-object').outerWidth(),
+			elementCols = me.property('rightWidth'),
+			colWidth = Math.floor(elementWidth / elementCols),
+			text = me.$('.uslider-texts')
+		;
+
+		slides.resizable({
+			maxHeight: slides.height(),
+			minHeight: slides.height(),
+			start: function(e, ui){
+				elementWidth = me.$('.upfront-object').outerWidth();
+				elementCols = me.property('rightWidth');
+				colWidth = Math.floor(elementWidth / elementCols);
+				text = me.$('.uslider-texts');
+
+				slides.resizable('option', {
+					minWidth: colWidth * 3,
+					maxWidth: (elementCols - 3) * colWidth,
+					grid: [colWidth, 100], //Second number is never used (fixed height)
+					handles: 'e',
+					helper: '.uslider-resize-handler'
+				});
+			},
+			resize: function(e, ui){
+				var imageWidth = ui.element.width(),
+					textWidth = elementWidth - imageWidth
+				;
+				text.css({
+					width: textWidth + 'px',
+					'margin-left': imageWidth + 'px'
+				});
+			},
+			stop: function(e, ui){
+				var imageWidth = ui.element.width(),
+					imageCols = Math.round(imageWidth / colWidth)
+				;
+				me.property('rightImageWidth', imageCols, false);
+			}
+		});
 	},
 
 	bindSlidesText: function(){
@@ -229,9 +291,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	getElementColumns: function(){
 		var module = this.$el.closest('.upfront-module'),
-			classes = module.attr('class').split(' '),
+			classes,
 			found = false
 		;
+
+		if(!module.length)
+			return -1;
+
+		classes = module.attr('class').split(' ');
 
 		_.each(classes, function(c){
 			if(c.match(/^c\d+$/))
@@ -247,12 +314,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	openImageSelector: function(e){
 		var me = this,
+			sizer = this.slides.length ? this.$('.uslider') : this.$('.upfront-object-content'),
 			selectorOptions = {
 				multiple: true,
 				preparingText: 'Preparing images',				
 				customImageSize: {
-					width: this.$('.uslider').width(), 
-					height: this.slides.length ? this.$('.uslider').height() : this.$('.upfront-uslider').height()
+					width: sizer.width(), 
+					height: sizer.height()
 				}
 			}
 		;
@@ -287,10 +355,29 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.slides.add(slides);
 	},
 
+	calculateColumnWidth: function(view, model){
+		if(this.parent_module_view != view)
+			return;
+
+		var columns = this.getElementColumns(),
+			elementWidth = this.$('.upfront-object').outerWidth()
+		;
+
+		this.colWidth = Math.floor(elementWidth / columns);
+	},
+
 	onElementResize: function(view, model, ui){
 		if(this.parent_module_view != view)
 			return;
-		this.property('rightWidth', this.getElementColumns());
+
+		var columns = Math.round(ui.element.width() / this.colWidth);
+		this.property('rightWidth', columns);
+
+		var starting = this.$('.upfront-image-starting-select');
+
+		if(starting.length){
+			this.startingHeight = $('.upfront-resize').height() - 30;
+		}
 	},
 
 	imageEditMask: function(e) {
@@ -617,7 +704,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
  * @type {Upfront.Views.Editor.Command}
  */
 var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	draggable: false,
+	draggable: true,
 	/**
 	 * Set up command appearance.
 	 */
