@@ -31,9 +31,10 @@
 	right: 0;
 	bottom: 0;
 	z-index: 0;
-	visibility: hidden;
-	opacity: 0;
-	-webkit-transition: opacity 1s;
+	display: none;
+	/*visibility: hidden;
+	opacity: 0;*/
+	/*-webkit-transition: opacity 1s;*/
 }
 .upfront-grid-layout-gutter-left,
 .upfront-grid-layout-gutter-right {
@@ -50,8 +51,9 @@
 	left: 100%;
 }
 .upfront-dragging .upfront-grid-layout-gutter {
-	visibility: visible;
-	opacity: 1;
+	/*visibility: visible;
+	opacity: 1;*/
+	display: block;
 	z-index: 1;
 }
 
@@ -1608,6 +1610,9 @@ a.ueditor-action-pickercancel{
 	/*border: 1px solid #bada55;
 	background: rgba(255, 255, 255, 0.4);*/
 }
+.upfront-object-content {
+	min-height: 30px;
+}
 .upfront-drag-handle {
 	position: absolute;
 	top: 0;
@@ -1696,13 +1701,13 @@ a.ueditor-action-pickercancel{
 	z-index: 1999999;
 	cursor: pointer;
 	white-space: nowrap;
-	visibility: hidden;
+	display: none;
 }
 .upfront-region-finish-edit .upfront-field-icon {
 	margin: 0 7px 0 0;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-finish-edit {
-	visibility: visible;
+	display: block;
 }
 .upfront-region-title {
 	position: absolute;
@@ -2912,7 +2917,11 @@ a.ueditor-action-pickercancel{
 	background-position: -412px -578px;
 }
 .upfront-icon-region-bg-setting:before {
-	background-position: -819px -71px; /* @TODO need bigger icon? */
+	background-position: -819px -39px;
+}
+.upfront-icon-region-bg-setting:hover:before,
+.upfront-icon-region-bg-setting-active:before {
+	background-position: -819px -71px;
 }
 .upfront-icon-region-expand-unlock:before {
 	background-position: -40px -612px;

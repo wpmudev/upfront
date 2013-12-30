@@ -11,22 +11,39 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 });
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
+	
 	get_content_markup: function () {
-		return this.model.get_content();
+		var content = this.model.get_content();
+		return content + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
+	},
+	
+	is_edited: function () {
+		var is_edited = this.model.get_property_value_by_name('is_edited');
+		return is_edited ? true : false;
 	},
 
 	on_render: function() {
 		console.log('Text');
-		var blurTimeout = false;
+		var me = this,
+			blurTimeout = false;
 
 		this.$el.find('.upfront-object-content').ueditor({
 				linebreaks: false,
 				autostart: false
 			})
-			.on('start', function(){				
+			.on('start', function(){
+				var $swap = $(this).find('.upfront-quick-swap');
+				if ( $swap.length ){
+					$swap.remove();
+					$(this).ueditor('sync');
+				}
+				me.model.set_property('is_edited', true, true);
     			Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
+				var content = $(this).ueditor('get');
+				me.model.set_content(content, {silent: true});
+				me.model.trigger('change');
     			Upfront.Events.trigger('upfront:element:edit:stop');
 			})
 		;

@@ -10,7 +10,8 @@ var UeditorEvents = _.extend({}, Backbone.Events);
 
 $.fn.ueditor = function(options){
 	var isMethod = false,
-		elements = this
+		elements = this,
+		result
 	;
 
 	//Modify redactor to work as we need
@@ -29,7 +30,7 @@ $.fn.ueditor = function(options){
 
 		if(ueditor){
 			if(isMethod)
-				ueditor.callMethod(options);
+				result = ueditor.callMethod(options);
 			else
 				$.error('Ueditor is already instantiated');
 		}
@@ -43,7 +44,9 @@ $.fn.ueditor = function(options){
 			}
 		}
 	});
-
+	
+	if ( this.length == 1 && typeof result != 'undefined' )
+		return result;
 	return this;
 };
 
@@ -247,8 +250,9 @@ Ueditor.prototype = {
 		;
 	},
 	callMethod: function(method){
-		this.$el.redactor(method);
-		UeditorEvets.trigger("ueditor:method:" + method, this.$el.redactor);
+		var result = this.$el.redactor(method);
+		UeditorEvents.trigger("ueditor:method:" + method, this.$el.redactor);
+		return result;
 	},
 	preventDraggable: function(){
 		//Prevent dragging from editable areas

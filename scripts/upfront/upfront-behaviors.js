@@ -148,16 +148,20 @@ var GridEditor = {
 	get_position: function(el){
 		var ed = Upfront.Behaviors.GridEditor,
 			$el = $(el),
+			width = $el.outerWidth(),
+			height = $el.outerHeight(),
 			top = $el.offset().top,
 			left = $el.offset().left,
+			outer_width = $el.outerWidth(true),
+			outer_height = $el.outerHeight(true),
 			outer_top = top-parseFloat($el.css('margin-top')),
 			outer_left = left-parseFloat($el.css('margin-left')),
 			grid = ed.get_grid(left, top),
 			outer_grid = ed.get_grid(outer_left, outer_top),
-			col = Math.round($el.outerWidth()/ed.col_size),
-			outer_col = Math.round($el.outerWidth(true)/ed.col_size),
-			row = Math.round($el.outerHeight()/ed.baseline),
-			outer_row = Math.round($el.outerHeight(true)/ed.baseline),
+			col = Math.round(width/ed.col_size),
+			outer_col = Math.round(outer_width/ed.col_size),
+			row = Math.round(height/ed.baseline),
+			outer_row = Math.round(outer_height/ed.baseline),
 			$region = $el.closest('.upfront-region'),
 			region = $region.data('name');
 		return {
@@ -166,20 +170,20 @@ var GridEditor = {
 			position: {
 				top: top,
 				left: left,
-				bottom: top+$el.outerHeight(),
-				right: left+$el.outerWidth()
+				bottom: top+height,
+				right: left+width
 			},
 			outer_position: {
 				top: Math.round(outer_top),
 				left: Math.round(outer_left),
-				bottom: Math.round(outer_top+$el.outerHeight(true)),
-				right: Math.round(outer_left+$el.outerWidth(true))
+				bottom: Math.round(outer_top+outer_height),
+				right: Math.round(outer_left+outer_width)
 			},
 			width: $el.outerWidth(),
 			height: $el.outerHeight(),
 			center: {
-				y: Math.round(top+($el.outerHeight()/2)),
-				x: Math.round(left+($el.outerWidth()/2))
+				y: Math.round(top+(height/2)),
+				x: Math.round(left+(width/2))
 			},
 			col: col,
 			row: row,
@@ -446,6 +450,7 @@ var GridEditor = {
 	 * @param {jQuery Object} $el
 	 */
 	update_margin_classes: function ($el) {
+		this.time_start('fn update_margin_classes');
 		var el_margin = $el.data('margin'),
 			ed = Upfront.Behaviors.GridEditor;
 		if ( el_margin.current != el_margin.original ){
@@ -454,33 +459,44 @@ var GridEditor = {
 			ed.update_class($el, ed.grid.top_margin_class, el_margin.current.top);
 			ed.update_class($el, ed.grid.bottom_margin_class, el_margin.current.bottom);
 		}
+		this.time_end('fn update_margin_classes');
 	},
 	
 	update_model_classes: function ($el, classes) {
+		this.time_start('fn update_model_classes');
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			regions = app.layout.get('regions'),
 			model;
-		regions.forEach(function(region){
+		regions.find(function(region){
 			var modules = region.get('modules'),
 				module_model = modules.get_by_element_id($el.attr('id'));
 			if ( module_model ){
 				model = module_model;
+				return true;
 			}
 			else {
-				modules.forEach(function(module){
+				modules.find(function(module){
 					var object_model = module.get('objects').get_by_element_id($el.attr('id'));
-					if ( object_model )
+					if ( object_model ){
 						model = object_model;
+						return true;
+					}
+					return false;
 				});
+				if ( model )
+					return true;
 			}
+			return false;
 		});
 		if ( model ){
 			model.replace_class(classes.join(' '));
 		}
+		this.time_end('fn update_model_classes');
 	},
 	
 	adjust_els_right: function( adj_els, cmp_right, update_class ){
+		this.time_start('fn adjust_els_right');
 		var	ed = Upfront.Behaviors.GridEditor;
 		_.each(adj_els, function(each){
 			var each_margin = each.$el.data('margin'),
@@ -492,9 +508,11 @@ var GridEditor = {
 				each.$el.data('margin', each_margin);
 			}
 		});
+		this.time_end('fn adjust_els_right');
 	},
 	
 	adjust_affected_right: function( adj_wrap, adj_wrap_aff_right, ignore, cmp_right, update_class ){
+		this.time_start('fn adjust_affected_right');
 		var	ed = Upfront.Behaviors.GridEditor,
 			wrap_el_max = ed.get_wrap_el_max(adj_wrap, ignore),
 			wrap_right = wrap_el_max ? ( cmp_right && cmp_right > wrap_el_max.grid.right ? cmp_right : wrap_el_max.grid.right ) : ( cmp_right ? cmp_right : adj_wrap.grid.left-1 );
@@ -502,9 +520,11 @@ var GridEditor = {
 		if ( cmp_right+1 == ed.containment.grid.left && ed.get_wrap_els(adj_wrap).length == 0 ) {
 			adj_wrap.$el.nextAll('.upfront-wrapper:eq(0)').data('clear', 'clear');
 		}
+		this.time_end('fn adjust_affected_right');
 	},
 	
 	adjust_els_bottom: function ( adj_els, cmp_bottom, update_class ) {
+		this.time_start('fn adjust_els_bottom');
 		var	ed = Upfront.Behaviors.GridEditor;
 		_.each(adj_els, function(each){
 			var each_margin = each.$el.data('margin'),
@@ -516,13 +536,16 @@ var GridEditor = {
 				each.$el.data('margin', each_margin);
 			}
 		});
+		this.time_end('fn adjust_els_bottom');
 	},
 	
 	adjust_affected_bottom: function ( adj_wrap, adj_wrap_aff_bottom, ignore, cmp_bottom, update_class ) {
+		this.time_start('fn adjust_affected_bottom');
 		var	ed = Upfront.Behaviors.GridEditor,
 			wrap_el_max = ed.get_wrap_el_max(adj_wrap, ignore, true),
 			wrap_bottom = wrap_el_max ? ( cmp_bottom && cmp_bottom > wrap_el_max.grid.bottom ? cmp_bottom : wrap_el_max.grid.bottom ) : ( cmp_bottom ? cmp_bottom : adj_wrap.grid.bottom-1 );
 		ed.adjust_els_bottom(adj_wrap_aff_bottom, wrap_bottom, update_class);
+		this.time_end('fn adjust_affected_bottom');
 	},
 	
 	/**
@@ -540,11 +563,20 @@ var GridEditor = {
 	 */
 	init: function(){
 		var app = Upfront.Application.LayoutEditor,
-			ed = Upfront.Behaviors.GridEditor;
+			ed = Upfront.Behaviors.GridEditor,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			main_pos = $main.offset();
 		ed.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		ed.grid = Upfront.Settings.LayoutEditor.Grid;
 		
 		ed.max_row = Math.floor(($(window).height()*.5)/ed.baseline);
+		ed.main = {
+			$el: $main,
+			top: main_pos.top,
+			bottom: main_pos.top + $main.outerHeight(),
+			left: main_pos.left,
+			right: main_pos.left + $main.outerWidth()
+		};
 	},
 	
 	/**
@@ -554,44 +586,43 @@ var GridEditor = {
 	 * @param {Object} model
 	 */
 	start: function(view, model, $cont){
+		this.time_start('fn start');
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
-			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-			main_pos = $main.offset(),
-			$layout = $main.find('.upfront-layout'),
-			$grid_layout = $main.find('.upfront-grid-layout:first'),
+			main_pos = ed.main.$el.offset(),	
+			$layout = ed.main.$el.find('.upfront-layout'),
+			$grid_layout = $layout.find('.upfront-grid-layout').eq(0),
 			grid_layout_pos = $grid_layout.offset(),
-			is_object = view.$el.find(".upfront-editable_entity:first").is(".upfront-object"),
-			$containment = $cont || view.$el.parents(".upfront-editable_entities_container:first"),
+			is_object = view.$el.find(".upfront-editable_entity").eq(0).is(".upfront-object"),
+			$containment = $cont || view.$el.parents(".upfront-editable_entities_container").eq(0),
 			containment_pos = $containment.offset(),
 			$els = is_object ? $containment.find('.upfront-object') : $layout.find('.upfront-module'),
 			$wraps = $layout.find('.upfront-wrapper'),
-			$regions = $layout.find('.upfront-region:not(.upfront-region-locked)');
+			$regions = $layout.find('.upfront-region').not('.upfront-region-locked');
 		// Set variables
-		ed.col_size = $('.upfront-grid-layout:first').innerWidth()/ed.grid.size;
+		ed.col_size = $grid_layout.outerWidth()/ed.grid.size;
 		ed.el_selector = is_object ? '.upfront-object' : '.upfront-module';
-		ed.main = {
-			$el: $main,
-			top: main_pos.top,
-			bottom: main_pos.bottom,
-			left: main_pos.left,
-			right: main_pos.left + $main.outerWidth()
-		};
+		ed.main.top = main_pos.top;
+		ed.main.bottom = main_pos.top + ed.main.$el.outerHeight();
+		ed.main.left = main_pos.left;
+		ed.main.right = main_pos.left + ed.main.$el.outerWidth();
 		ed.grid_layout = {
 			top: grid_layout_pos.top,
-			bottom: grid_layout_pos.bottom,
+			bottom: grid_layout_pos.top + $grid_layout.outerHeight(),
 			left: grid_layout_pos.left,
 			right: grid_layout_pos.left + $grid_layout.outerWidth()
 		};
-		var containment_col = Math.round($containment.outerWidth()/ed.col_size),
-			containment_row = Math.round($containment.outerHeight()/ed.baseline),
+		var containment_width = $containment.outerWidth(),
+			containment_height = $containment.outerHeight(),
+			containment_col = Math.round(containment_width/ed.col_size),
+			containment_row = Math.round(containment_height/ed.baseline),
 			containment_grid = ed.get_grid(containment_pos.left, containment_pos.top);
 		ed.containment = {
 			$el: $containment,
 			top: containment_pos.top,
-			bottom: containment_pos.bottom,
+			bottom: containment_pos.top + containment_height,
 			left: containment_pos.left,
-			right: containment_pos.left + $containment.outerWidth(),
+			right: containment_pos.left + containment_width,
 			col: containment_col,
 			grid: { 
 				top: containment_grid.y,
@@ -604,12 +635,14 @@ var GridEditor = {
 		$els.each(function(){ ed.init_margin(this); }); // Generate margin data
 		ed.wraps = _.map($wraps, ed.get_position ); // Generate wrappers position data
 		ed.regions = _.map($regions, ed.get_position ); // Generate regions position data
+		this.time_end('fn start');
 	},
 	
 	/**
 	 * Create droppable points 
 	 */
 	create_drop_point: function (me, me_wrap) {
+		this.time_start('fn create_drop_point');
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			margin = me.$el.data('margin'),
@@ -871,12 +904,14 @@ var GridEditor = {
 				}
 			}
 		});
+		this.time_end('fn create_drop_point');
 	},
 	
 	/**
 	 * Update wrappers
 	 */
 	update_wrappers: function (region) {
+		this.time_start('fn update_wrappers');
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -922,6 +957,7 @@ var GridEditor = {
 			if ( $('#'+wrap.get_wrapper_id()).size() == 0 )
 				wraps.remove(wrap);
 		});
+		this.time_end('fn update_wrappers');
 	},
 	
 	
@@ -1108,6 +1144,7 @@ var GridEditor = {
 			return false;
 		
 		function select_drop (drop) {
+			ed.time_start('fn select_drop');
 			if ( drop.is_use )
 				return;
 			_.each(ed.drops, function(each){
@@ -1146,6 +1183,7 @@ var GridEditor = {
 				drop.insert[1].animate({left: me.width}, 300, 'swing', drop_change);
 			else if (  drop.type == 'side-after' && drop.is_switch )
 				drop.insert[1].animate({left: me.width*-1}, 300, 'swing', drop_change);
+			ed.time_end('fn select_drop');
 		}
 		
 		$me.draggable({
@@ -1156,6 +1194,7 @@ var GridEditor = {
 			delay: 300,
 			appendTo: $main,
 			start: function(e, ui){
+				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');
 				
 				ed.start(view, model);
@@ -1221,9 +1260,13 @@ var GridEditor = {
 				select_drop( _.find(ed.drops, function(each){ return each.is_me; }) );
 				$region.addClass('upfront-region-drag-active');
 				
+				ed.time_end('drag start');
+				ed.time_start('drag start - trigger');
 				Upfront.Events.trigger("entity:drag_start", view, view.model);
+				ed.time_end('drag start');
 			},
 			drag: function(e, ui){
+				//ed.time_start('dragging');
 				var $helper = $('.ui-draggable-dragging'),
 					$wrap = $me.closest('.upfront-wrapper'),
 					me = ed.get_el($me),
@@ -1427,11 +1470,13 @@ var GridEditor = {
 				update_drop_position();
 				
 				if ( ed.show_debug_element ){
-					$helper.find(".upfront-debug-info").text('grid: '+grid.x+','+grid.y+' | current: ('+current_grid_left+','+current_grid_top+'),('+current_grid_right+','+current_grid_bottom+') | margin size: '+margin_data.current.top+'/'+margin_data.current.left+','+margin_data.current.right);
+					$helper.find(".upfront-debug-info").text('grid: '+grid.x+','+grid.y+' | current: ('+current_grid_left+','+current_grid_top+'),('+current_grid_right+','+current_grid_bottom+') | margin size: '+drop_top+'/'+drop_left);
 				}
 				
+				//ed.time_end('dragging');
 			},
 			stop: function(e, ui){
+				ed.time_start('drag stop');
 				var $wrap = $me.closest('.upfront-wrapper'),
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap),
@@ -1498,6 +1543,7 @@ var GridEditor = {
 				}
 				
 				function update_margin () {
+				ed.time_start('fn update_margin');
 					var margin_data = $me.data('margin'),
 						aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 						move_limit = ed.get_move_limit(aff_els, ed.containment),
@@ -1602,9 +1648,11 @@ var GridEditor = {
 						}
 						$me.data('margin', margin_data);
 					}
+				ed.time_end('fn update_margin');
 				}
 				
 				function drop_update () {
+				ed.time_start('fn drop_update');
 					$('.upfront-drop').remove();
 					$('.upfront-drop-view').remove();
 					$('#upfront-drop-preview').remove();
@@ -1692,7 +1740,10 @@ var GridEditor = {
 						view.trigger('region:updated');
 					}
 					view.trigger("entity:self:drag_stop");
+				ed.time_end('fn drop_update');
 				}
+				
+				ed.time_end('drag stop');
 			}
 		});
 	},
@@ -1994,6 +2045,14 @@ var GridEditor = {
 	/**
 	 * Debug stuff 
 	 */
+	time_start: function (id) {
+		if ( this.show_debug_element )
+			console.time(id);
+	},
+	time_end: function (id) {
+		if ( this.show_debug_element )
+			console.timeEnd(id);
+	},
 	set_timeout: function(timeout){
 		this.timeout = timeout;
 	},
@@ -2003,6 +2062,79 @@ var GridEditor = {
 	},
 	toggle_debug: function(){
 		this.show_debug_element = !this.show_debug_element;
+		if ( this.show_debug_element )
+			this.render_debug();
+		else
+			this.delete_debug();
+	},
+	render_debug: function () {
+		var me = this,
+			$modal = $('<div id="behavior-debug" class="upfront-inline-modal"></div>'),
+			$wrap = $('<div class="upfront-inline-modal-wrap"></div>'),
+			field_delay = new Upfront.Views.Editor.Field.Number({
+				name: 'delay',
+				label: 'Delay before drag:',
+				label_style: 'inline',
+				min: 0,
+				max: 2000,
+				step: 1,
+				default_value: 300,
+				change: function () {
+					$('.upfront-module.ui-draggable').draggable('option', 'delay', this.get_value());
+				}
+			}),
+			field_timeout = new Upfront.Views.Editor.Field.Number({
+				name: 'timeout',
+				label: 'Delay before changing position:',
+				label_style: 'inline',
+				min: 0,
+				max: 2000,
+				step: 1,
+				default_value: 66,
+				change: function () {
+					me.timeout = parseInt(this.get_value());
+				}
+			}),
+			field_debug = new Upfront.Views.Editor.Field.Checkboxes({
+				name: 'debug',
+				multiple: false,
+				default_value: true,
+				values: [
+					{ label: "Show debugging info/outline", value: true }
+				],
+				change: function () {
+					me.show_debug_element = this.get_value() ? true : false;
+				}
+			}),
+			$close = $('<a href="#" class="upfront-close-debug">Close</a>');
+		field_delay.render();
+		$wrap.append(field_delay.$el);
+		field_timeout.render();
+		$wrap.append(field_timeout.$el);
+		field_debug.render();
+		$wrap.append(field_debug.$el);
+		$wrap.append($close);
+		$modal.append($wrap);
+		$('body').append($modal);
+		$modal.css({
+			top: 'auto',
+			left: 'auto',
+			bottom: 0,
+			right: 0,
+			position: 'fixed'
+		});
+		$wrap.css({
+			width: 360,
+			top: 0,
+			padding: '10px'
+		});
+		$close.on('click', function () {
+			me.show_debug_element = false;
+			me.delete_debug();
+		});
+	},
+	delete_debug: function () {
+		$('#behavior-debug').remove();
 	}
 	
 };

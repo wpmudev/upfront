@@ -551,7 +551,7 @@ define(_template_files, function () {
 				this.on('on_layout', this.render_object, this);
 				this.on('region:updated', this.on_region_update, this);
 			},
-			render: function () {				
+			render: function () {
 				var props = {},
 					run = this.model.get("properties").each(function (prop) {
 						props[prop.get("name")] = prop.get("value");

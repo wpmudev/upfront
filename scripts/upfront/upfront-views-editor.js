@@ -3714,9 +3714,9 @@ var Field_Anchor = Field_Select.extend({
 			$(window).off('scroll', this.on_scroll);
 			this.trigger('modal:close');
 			if ( save )
-				this.modal_deferred.resolve();
+				this.modal_deferred.resolve(this);
 			else
-				this.modal_deferred.reject();
+				this.modal_deferred.reject(this);
 		},
 		on_scroll: function (e) {
 			var me = e.data;
@@ -3839,14 +3839,19 @@ var Field_Anchor = Field_Select.extend({
 			'click .upfront-icon': 'open_bg_setting'
 		},
 		className: 'upfront-inline-panel-item upfront-region-panel-item-bg',
-		icon: 'bg-setting',
+		icon: function(){
+			return this._active ? 'bg-setting-active' : 'bg-setting';
+		},
 		tooltip: "Change Background",
+		_active: false,
 		open_bg_setting: function () {
 			var type = this.model.get_property_value_by_name('background_type');
 			if ( !type ){
 				if ( this.model.get_property_value_by_name('background_image') )
 					this.model.set_property('background_type', 'image');
 			}
+			this._active = true;
+			this.render_icon();
 			this.open_modal(this.render_modal, true).always(this.on_close_modal).fail(this.notify);
 		},
 		render_modal: function ($content, $modal) {
@@ -3873,7 +3878,7 @@ var Field_Anchor = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				});
-			$('.upfront-region-finish-edit').hide(); // hide finish edit button
+			$modal.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
 			type.render();
@@ -3891,8 +3896,10 @@ var Field_Anchor = Field_Select.extend({
 			this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
 			type.trigger('changed');
 		},
-		on_close_modal: function () {
-			$('.upfront-region-finish-edit').show(); // show finish edit button
+		on_close_modal: function (me) {
+			me.$el.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', '') // reset hide finish edit button
+			me._active = false;
+			me.render_icon();
 		},
 		notify: function () {
 			Upfront.Views.Editor.notify("Background settings have been updated");
