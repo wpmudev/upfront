@@ -269,7 +269,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.createControl('crop', 'Edit image', 'imageEditMask'),
 			this.createControl('link', 'Link slide', 'slideEditLink'),
 			multi,
-			this.createControl('remove', 'Remove slide', 'removeImage')
+			this.createControl('remove', 'Remove slide', 'removeSlide')
 		]);
 
 		return panel;
@@ -378,6 +378,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(starting.length){
 			this.startingHeight = $('.upfront-resize').height() - 30;
 		}
+	},
+
+	removeSlide: function(e) {
+		var item = $(e.target).closest('.uimage-controls');
+		this.startingHeight = this.$('.upfront-slider').height();
+		if(confirm('Are you sure to delete this slide?'))
+			this.slides.remove(item.attr('rel'));
 	},
 
 	imageEditMask: function(e) {
