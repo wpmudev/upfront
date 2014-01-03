@@ -295,14 +295,14 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				$full->set_quality(90);
 				$savedfull = $full->save($fullsizepath);
 			}
-			$urlOriginal = str_replace($path_parts['basename'], $savedfull['file'], $urlOriginal);
+			$urlOriginal = str_replace($path_parts['basename'], $fullsizename . '.' . $path_parts['extension'], $urlOriginal);
 		}
 
 		return array(
 			'error' => false,
 			'url' => $url, 
 			'urlOriginal' => $urlOriginal, 
-			'full' => $full_size, 
+			'full' => $full_size,
 			'crop' => $img->get_size()
 		);
 	}
@@ -345,6 +345,10 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			$transformations['crop'] = $crop;
 		}
 		return $transformations;
+	}
+
+	function save_resizing() {
+
 	}
 }
 Upfront_Uimage_Server::serve();
