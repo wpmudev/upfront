@@ -1147,6 +1147,7 @@ var GridEditor = {
 			ed.time_start('fn select_drop');
 			if ( drop.is_use )
 				return;
+			var drop_move = typeof ed.drop == 'object' && !drop.is_me ? true : false;
 			_.each(ed.drops, function(each){
 				each.is_use = ( each._id == drop._id );
 			});
@@ -1183,6 +1184,8 @@ var GridEditor = {
 				drop.insert[1].animate({left: me.width}, 300, 'swing', drop_change);
 			else if (  drop.type == 'side-after' && drop.is_switch )
 				drop.insert[1].animate({left: me.width*-1}, 300, 'swing', drop_change);
+			else if ( drop_move )
+				drop_change();
 			ed.time_end('fn select_drop');
 		}
 		
@@ -1219,7 +1222,6 @@ var GridEditor = {
 				$('.upfront-drop-me').css('height', (me.outer_grid.bottom-me.outer_grid.top)*ed.baseline);
 				
 				$layout.append( '<div id="upfront-drop-preview" style="top:' + me_offset.top + 'px; left: ' + me_offset.left + 'px;"></div>' );
-				$('#upfront-drop-preview').addClass('upfront-drop-transition');
 				
 				/* */
 				if ( ed.show_debug_element ){
@@ -1448,6 +1450,9 @@ var GridEditor = {
 						drop_top = drop_row - me.row;
 					if ( drop_row >= drop_top+me.row )
 						adjust_bottom = true;
+						
+					if ( view.model.get('shadow') && ed.drop.is_me )
+						$('#upfront-drop-preview').removeClass('upfront-drop-transition');
 					
 					$('#upfront-drop-preview').css({
 						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
@@ -1455,6 +1460,9 @@ var GridEditor = {
 						width: drop_col*ed.col_size,
 						height: height
 					});
+					
+					if ( ( !view.model.get('shadow') || !ed.drop.is_me ) && !$('#upfront-drop-preview').hasClass('upfront-drop-transition') )
+						setTimeout(function(){ $('#upfront-drop-preview').addClass('upfront-drop-transition'); }, 100);
 					
 					if ( ed.show_debug_element ){
 						$('#upfront-compare-area').css({
@@ -1742,6 +1750,9 @@ var GridEditor = {
 					view.trigger("entity:self:drag_stop");
 				ed.time_end('fn drop_update');
 				}
+				
+				// reset drop
+				ed.drop = null;
 				
 				ed.time_end('drag stop');
 			}
