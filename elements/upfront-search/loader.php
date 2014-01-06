@@ -37,7 +37,7 @@ function usearch_initialize () {
 	add_action('upfront_data', array('Upfront_UsearchView', 'add_js_defaults'));
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('usearch', upfront_element_url('js/usearch', __FILE__));
+	upfront_add_layout_editor_entity('usearch', upfront_relative_element_url('js/usearch', __FILE__));
 }
 // Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'usearch_initialize'); 
+add_action('upfront-core-initialized', 'usearch_initialize');

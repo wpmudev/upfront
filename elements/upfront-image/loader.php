@@ -32,7 +32,7 @@ function uimage_initialize () {
 	require_once (dirname(__FILE__) . '/lib/uimage.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('uimage', upfront_element_url('js/uimage', __FILE__));
+	upfront_add_layout_editor_entity('uimage', upfront_relative_element_url('js/uimage', __FILE__));
 
 
 	// Add element defaults to data object

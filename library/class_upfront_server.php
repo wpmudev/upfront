@@ -57,14 +57,14 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout_ids = $_POST['data'];
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
 
-		if (empty($layout_ids)) 
+		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
 
 		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
 		if ($layout->is_empty()){
 			// Instead of whining, create a stub layout and load that
-			$layout = Upfront_Layout::create_layout($layout_ids);			
+			$layout = Upfront_Layout::create_layout($layout_ids);
 		}
 
 		if($post_type)
@@ -85,11 +85,11 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$raw_data = stripslashes_deep($_POST);
 		$data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-		
+
 		$current_url = !empty($raw_data['current_url']) ? $raw_data['current_url'] : home_url();
 		$current_url = wp_validate_redirect(wp_sanitize_redirect($current_url), false);
 		$current_url = $current_url ? $current_url : home_url();
-		
+
 		$layout = Upfront_Layout::from_json($data);
 		$json = $layout->to_php();
 
@@ -160,26 +160,29 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$registered = $entities->get_all();
 
 		$paths = array(
-			"models" => "upfront/upfront-models",
-			"views" => "upfront/upfront-views",
-			"editor_views" => "upfront/upfront-views-editor",
-			"util" => "upfront/upfront-util",
-			"behaviors" => "upfront/upfront-behaviors",
-			"application" => "upfront/upfront-application",
-			"objects" => "upfront/upfront-objects",
-			"media" => "upfront/upfront-media",
-			"content" => "upfront/upfront-content",
-			"spectrum" => "spectrum/spectrum",
-			"responsive" => "responsive",
-			"jquerySlider" => includes_url() . 'js/jquery/ui/jquery.ui.slider.min',
-			"jqueryDatepicker" => includes_url() . 'js/jquery/ui/jquery.ui.datepicker.min',
-			"redactor" => 'redactor/redactor',
-			"ueditor" => 'redactor/ueditor'
+      "text" => 'scripts/text',
+      "async" => "scripts/async",
+      "upfront" => "scripts/upfront",
+			"models" => "scripts/upfront/upfront-models",
+			"views" => "scripts/upfront/upfront-views",
+			"editor_views" => "scripts/upfront/upfront-views-editor",
+			"util" => "scripts/upfront/upfront-util",
+			"behaviors" => "scripts/upfront/upfront-behaviors",
+			"application" => "scripts/upfront/upfront-application",
+			"objects" => "scripts/upfront/upfront-objects",
+			"media" => "scripts/upfront/upfront-media",
+			"content" => "scripts/upfront/upfront-content",
+			"spectrum" => "scripts/spectrum/spectrum",
+			"responsive" => "scripts/responsive",
+			"jquerySlider" => 'scripts/jquery/jquery.ui.slider.min',
+			"jqueryDatepicker" => 'scripts/jquery/jquery.ui.datepicker.min',
+			"redactor" => 'scripts/redactor/redactor',
+      "ueditor" => 'scripts/redactor/ueditor'
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
 		$require_config = array(
-			'baseUrl' => "{$root}/scripts",
+			'baseUrl' => "{$root}",
 			'paths' => $paths,
 			'waitSeconds' => 60, // allow longer wait period to prevent timeout
 		);
@@ -187,7 +190,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$require_config['urlArgs'] = "nocache=" + microtime(true);
 		}
 		$require_config = json_encode(
-			apply_filters('upfront-settings-require_js_config', $require_config)
+      apply_filters('upfront-settings-require_js_config', $require_config),
+      JSON_PRETTY_PRINT
 		);
 
 		$layout_editor_requirements = array(
@@ -215,7 +219,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'class' => '',
 			'left_margin_class' => '',
 			'right_margin_class' => '',
-			
+
 			'baseline' => '',
 			'top_margin_class' => '',
 			'bottom_margin_class' => '',
@@ -324,11 +328,11 @@ $(function () {
 		_.extend(Upfront, application);
 		_.extend(Upfront, util);
 		Upfront.Util.Transient.initialize();
-		
+
 		// Set up deferreds
 		Upfront.LoadedObjectsDeferreds = {};
 		Upfront.Events.trigger("application:loaded:layout_editor");
-		
+
 		if (Upfront.Application && Upfront.Application.boot) Upfront.Application.boot();
 		else Upfront.Util.log('something went wrong');
 	}); // Upfront
@@ -475,7 +479,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			}
 			set_transient($cache_key, $cache);
 		}
-		
+
 		//wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery')); // It'll also work as an AJAX request
 		wp_enqueue_script('upfront-element-scripts', Upfront_VirtualPage::get_url(join('/', array(
 			'upfront-dependencies',

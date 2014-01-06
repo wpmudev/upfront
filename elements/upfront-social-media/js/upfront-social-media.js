@@ -1,7 +1,7 @@
 (function ($) {
 
     var templates = [
-            'text!../elements/upfront-social-media/tpl/social-back.html'
+            'text!elements/upfront-social-media/tpl/social-back.html'
         ]
     ;
     require(templates, function(backTpl) {
@@ -291,7 +291,7 @@
             _.each(services, function(s){
                 var alert = s.url ? '' : '<span class="alert-url">!</span>';
                 if(s.active)
-                    markup += '<div class="upfront-' + s.id + '-link-box upfront-social-icon upfront-'+buttonStyle+' usocial-button-'+buttonSize+'">' + 
+                    markup += '<div class="upfront-' + s.id + '-link-box upfront-social-icon upfront-'+buttonStyle+' usocial-button-'+buttonSize+'">' +
                             '<a class="usocial-button '+ s.id +'-link" href="'+ s.url +'"></a>'+ alert +
                             '</div>';
             });
@@ -319,7 +319,7 @@
                 ;
 
                 markup += '<div data-id="upfront-icon-' + s.id + '" class="ufront-' + s.id + '-count-box upfront-social-icon usocial_count_wrapper">' +
-                            '<a class="upfront-fan-counts ' + s.id + '-count" href="'+ s.url +'">'+ 
+                            '<a class="upfront-fan-counts ' + s.id + '-count" href="'+ s.url +'">'+
                             alert +
                             ' <span class="upfront-fan-count"><strong class="usocial_count">'+ count +'</strong> ' + words[s.id] + '</span></a>' +
                             '</div>';
@@ -348,7 +348,7 @@
             if(!fetchCount)
                 return usocial.counts[id][service.id];
 
-            if(!this.counts)                
+            if(!this.counts)
                 this.refreshCount();
             else
                 this.counts.done(function(response){
@@ -362,7 +362,7 @@
         refreshCount: function(){
             var me = this;
             this.counts = Upfront.Util.post({
-                    action: "usocial_get_counts", 
+                    action: "usocial_get_counts",
                     element_id: this.property('element_id'),
                     services: me.property('services')
                 })
@@ -422,7 +422,7 @@
         get_content_markup: function () {
             if(!Upfront.data.usocial.globals)
                 return 'There is no global settings for the social media. Please configure them pressing the settings button.'
-            
+
             var me = this,
                 layoutStyle = this.property("social_type"),
                 markup = ''
@@ -639,7 +639,7 @@
             this.$('.social_media_services_list').append($service);
             $service.slideDown('fast').find('input[type=text]').focus();
 
-            this.$('.usocial-select-list').find('li').first().remove();           
+            this.$('.usocial-select-list').find('li').first().remove();
         },
 
         changeService: function(e){
@@ -712,7 +712,7 @@
         /*
         Called when the save button is pressed and the SocialSorter is visible
          */
-        save: function(onlyOrder){            
+        save: function(onlyOrder){
             var me = this,
                 services = this.prop(this.options.prop),
                 hash = {},
@@ -729,7 +729,7 @@
 
             order.each(function(idx, input){
                 var $input = $(input),
-                    service = hash[$input.val()]                    
+                    service = hash[$input.val()]
                 ;
                 if(service){
                     if(!onlyOrder){
@@ -850,7 +850,7 @@
                 model: this.model,
                 prop: 'services',
                 expandable: false
-            });            
+            });
 
             this.servicesItems.push(services);
 
@@ -877,7 +877,7 @@
                     title: "Social Media Services",
                     fields: [services]
                 }),
-                this.getGlobalsButton()                
+                this.getGlobalsButton()
             ];
         },
         getFansSettings: function(){
@@ -895,7 +895,7 @@
                     model: this.model,
                     title: "Social Media Services",
                     fields: [services]
-                }), 
+                }),
                 this.getGlobalsButton()
             ];
         },
@@ -995,7 +995,7 @@
                     })
                     me.model.trigger('change');
                 });
-            else                
+            else
                 this.constructor.__super__.render.call(this);
         },
 

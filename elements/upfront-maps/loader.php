@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/upfront
 Description: Upfront Module for map and captions
 Version: 0.1
 Text Domain: umap
-Author: 
+Author:
 Author URI: http://premium.wpmudev.org
 WDP ID: XXX
 
@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	two maps share the same options.
 		- if two modules are both added via the command action, they share the same model.
-	
+
 	wp localize script, if it is called with the same named variable, it outputs it multiple times for each revision.
 
 	issue with search module. e.g click on map, then search command and it always adds a map. also vice versa
@@ -96,6 +96,6 @@ function upfront_maps_init () {
 	add_action('upfront_data', array('Upfront_MapView', 'add_js_defaults'));
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('upfront_maps', upfront_element_url('js/upfront_maps', __FILE__));
+	upfront_add_layout_editor_entity('upfront_maps', upfront_relative_element_url('js/upfront_maps', __FILE__));
 }
 add_action('upfront-core-initialized', 'upfront_maps_init');

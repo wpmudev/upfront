@@ -37,7 +37,7 @@ function uwidget_initialize () {
 	add_action('upfront_data', array('Upfront_UwidgetView', 'add_js_defaults'));
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('uwidget', upfront_element_url('js/uwidget', __FILE__));
+	upfront_add_layout_editor_entity('uwidget', upfront_relative_element_url('js/uwidget', __FILE__));
 }
 // Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'uwidget_initialize'); 
+add_action('upfront-core-initialized', 'uwidget_initialize');

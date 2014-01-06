@@ -40,6 +40,10 @@ function upfront_element_url ($relpath, $filepath) {
 	return trailingslashit(Upfront::get_root_url()) . $relpath;
 }
 
+function upfront_relative_element_url ($relpath, $filepath) {
+	return upfront_element_relative_path($relpath, $filepath);
+}
+
 function upfront_element_dir ($relpath, $filepath) {
 	$relpath = upfront_element_relative_path($relpath, $filepath);
 	return trailingslashit(Upfront::get_root_dir()) . $relpath;
@@ -110,19 +114,19 @@ function upfront_register_vendor_scripts() {
 	//Magnific lightbox
 	if(SCRIPT_DEBUG)
 		wp_register_script(
-			'magnific', 
-			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js', 
+			'magnific',
+			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js',
 			array('jquery')
 		);
 	else
 		wp_register_script(
-			'magnific', 
-			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.min.js', 
+			'magnific',
+			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.min.js',
 			array('jquery')
 		);
 
 	wp_register_style(
-		'magnific', 
+		'magnific',
 		Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.css'
 	);
 }
@@ -162,8 +166,8 @@ function upfront_add_element_script ($slug, $path_info) {
 	if (count($path_info) != 2) return false;
 
 	if (
-		current_theme_supports("upfront-element_scripts") 
-		&& 
+		current_theme_supports("upfront-element_scripts")
+		&&
 		current_theme_supports("{$slug}-script")
 	) return true; // Current theme supports element scripts, and this script in particular
 

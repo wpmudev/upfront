@@ -6,7 +6,7 @@ class Upfront_MapView extends Upfront_Object{
 		$element_id = $_id ? "id='{$_id}'" : '';
 		$raw_properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
 		$to_map = array('markers', 'map_center', 'zoom', 'style', 'controls', 'styles');
-		
+
 		$properties = array();
 		foreach ($raw_properties as $prop) {
 			if (in_array($prop['name'], $to_map)) $properties[$prop['name']] = $prop['value'];
@@ -48,7 +48,7 @@ class Upfront_MapView extends Upfront_Object{
 }
 
 function upfront_maps_add_context_menu ($paths) {
-	$paths['maps_context_menu'] = upfront_element_url('js/ContextMenu', dirname(__FILE__));
+	$paths['maps_context_menu'] = upfront_relative_element_url('js/ContextMenu', dirname(__FILE__));
 	return $paths;
 }
 add_filter('upfront-settings-requirement_paths', 'upfront_maps_add_context_menu');

@@ -16,7 +16,7 @@
 
 var templates = [
 		'text!' + Upfront.data.ugallery.template, // Front
-		'text!../elements/upfront-gallery/tpl/ugallery_editor.html'
+		'text!elements/upfront-gallery/tpl/ugallery_editor.html'
 	]
 ;
 
@@ -93,7 +93,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		Upfront.Events.on("entity:settings:activate", closeTooltipFunction);
 		Upfront.Events.on("entity:activated", closeTooltipFunction);
-		Upfront.Events.on("entity:deactivated", closeTooltipFunction);		
+		Upfront.Events.on("entity:deactivated", closeTooltipFunction);
 		Upfront.Events.on("entity:region:activated", closeTooltipFunction);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
@@ -140,7 +140,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	createControls: function(image){
-		var me = this,		
+		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			multi = new Upfront.Views.Editor.InlinePanels.MultiControl()
 		;
@@ -228,7 +228,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 							panel.removeClass('closed');
 							setTimeout(function(){
 								panel.css('overflow', 'visible');
-							}, 500);								
+							}, 500);
 						}
 					;
 
@@ -317,7 +317,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				controls.setWidth(item.width());
 				controls.render();
 				item.find('.ugallery-image-wrapper').append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
-		
+
 				if(me.property('captionPosition') != 'nocaption' && !title.data('ueditor')){
 					title.ueditor({
 							linebreaks: false,
@@ -339,7 +339,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 				if(
 					me.imageLabels[image.id] &&
-					me.property('labelFilters').length && 
+					me.property('labelFilters').length &&
 					me.imageLabels[image.id].split(',').length < 2
 				){
 					item.find('.ugallery-image-wrapper').append('<div class="ugallery-nolabels-alert" title="This image has no labels"></div>');
@@ -347,10 +347,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			});
 
-			
+
 		}, 300);
 
-		this.activateSortable();		
+		this.activateSortable();
 	},
 
 	calculateMargins: function() {
@@ -405,7 +405,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		if(e)
 			e.preventDefault();
 
-		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){			
+		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 			me.addImages(images, replaceId);
 
 			if(response.given != response.returned)
@@ -555,7 +555,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	checkRegenerateThumbs: function(e, imageIds){
 		var me = this;
 		if(imageIds || this.lastThumbnailSize.width != this.property('thumbWidth') || this.lastThumbnailSize.height != this.property('thumbHeight')){
-			
+
 			var editOptions = {
 					images: this.getRegenerateData(imageIds),
 					action: 'upfront-media-image-create-size'
@@ -587,7 +587,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 					if(!changes.error){
 						model.set({
-							src: changes.url, 
+							src: changes.url,
 							srcFull: changes.urlOriginal,
 							size: image.resize,
 							cropPosition: {top: image.crop.top, left: image.crop.left}
@@ -600,7 +600,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				me.imagesChanged();
 				me.render();
 				me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
-			});			
+			});
 		}
 	},
 
@@ -627,7 +627,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			var size = image.get('size'),
 				offset = image.get('cropOffset'),
 				editorOpts = {
-					id: image.id, 
+					id: image.id,
 					rotate:image.get('rotation'),
 					resize: {width: size.width * factor, height: size.height * factor},
 					crop: {
@@ -663,7 +663,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				me.saveImageLink(e);
 			})
 			.on('click', '.ugallery-change-link-post', function(e){
-				me.imageLinkChanged(e);				
+				me.imageLinkChanged(e);
 			})
 		;
 
@@ -685,7 +685,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				multiple: false,
 				preparingText: 'Preparing images'
 			};
-			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){			
+			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 				me.addImages(images);
 
 				var index = me.images.indexOf(image);
@@ -701,7 +701,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				Upfront.Views.Editor.ImageSelector.close();
 			});
 		}
-		
+
 		editorOpts = this.getEditorOptions(image);
 		e.preventDefault();
 		Upfront.Views.Editor.ImageEditor.open(editorOpts)
@@ -758,7 +758,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	imageLinkChanged: function(e){
 		var val = $('#ugallery-tooltip').find('input[name=ugallery-image-link]:checked').val(),
-			imageId = $('#ugallery-tooltip').find('#ugallery-image-id').val() 
+			imageId = $('#ugallery-tooltip').find('#ugallery-image-id').val()
 		;
 
 		if(val == 'external'){
@@ -893,7 +893,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					goDown(labelsLi);
 				}
 			}
-			else if(e.which == 38){ // Up 
+			else if(e.which == 38){ // Up
 				var labelsLi = contents.find('.labels_list li');
 				if(labelsLi.length){
 					e.preventDefault();
@@ -938,7 +938,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			me.imageLabels[imageId] = imageLabels.join(', ');
 
-			me.deleteLabel(labelId, imageId);		
+			me.deleteLabel(labelId, imageId);
 
 			$(e.target).fadeOut('fast', function(){
 				$(this).remove();
@@ -953,7 +953,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	 * Delete a label from the gallery if no other image has the label
 	 * @param  {int} labelId Label id
 	 * @param  {int} imageId Image id
-	 * @return {null} 
+	 * @return {null}
 	 */
 	deleteLabel: function(labelId, imageId) {
 		var me = this,
@@ -1113,7 +1113,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			this.images.get(imageId).set({link: 'original', url: ''});
 
 		this.closeTooltip();
-		return this.render();		
+		return this.render();
 	},
 
 	getItemElement: function(e){
@@ -1237,7 +1237,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		element.closest('.ugallery_item').addClass('tooltip-open');
 
-		Upfront.Events.trigger("entity:settings:deactivate");	
+		Upfront.Events.trigger("entity:settings:deactivate");
 	},
 
 	closeTooltip: function(){
@@ -1245,7 +1245,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		tooltip.hide().trigger('closed');
 		setTimeout(function(){
 			tooltip.remove();
-		}, 100);		
+		}, 100);
 	},
 
 	/*
@@ -1471,7 +1471,7 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.property('thumbProportions', factor);
 		var height = this.onThumbChangeSize({target: input[0]});
-		
+
 		this.$('input[name=thumbWidth]')
 			.siblings('.upfront-field-slider-value')
 				.text('(' + width +'px x ' + height + 'px)')
@@ -1479,7 +1479,7 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.model.trigger('thumbChange');
 	},
-	
+
 	/*
 	Shorcut to set and get model's properties.
 	*/
@@ -1490,7 +1490,7 @@ var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
-	}	
+	}
 });
 
 var Field_Button = Upfront.Views.Editor.Field.Field.extend({
@@ -1548,7 +1548,7 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 						icon: 'gallery-crop-4_3'
 					}
 				]
-			}), 
+			}),
 
 			new fields.Slider({
 				model: this.model,
@@ -1575,7 +1575,7 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 
 //Make the element parts available
 Upfront.Application.LayoutEditor.add_object("Ugallery", {
-	"Model": UgalleryModel, 
+	"Model": UgalleryModel,
 	"View": UgalleryView,
 	"Element": UgalleryElement,
 	"Settings": UgallerySettings

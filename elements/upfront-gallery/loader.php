@@ -34,7 +34,7 @@ function ugallery_initialize () {
 	require_once (dirname(__FILE__) . '/lib/' . $domain . '.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('' . $domain . '', upfront_element_url('js/' . $domain . '', __FILE__));
+	upfront_add_layout_editor_entity('' . $domain . '', upfront_relative_element_url('js/' . $domain . '', __FILE__));
 
 
 	// Add element defaults to data object

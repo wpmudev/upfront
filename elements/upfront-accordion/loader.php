@@ -32,7 +32,7 @@ function uaccordion_initialize () {
 	require_once (dirname(__FILE__) . '/lib/uaccordion.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('uaccordion', upfront_element_url('js/uaccordion', __FILE__));
+	upfront_add_layout_editor_entity('uaccordion', upfront_relative_element_url('js/uaccordion', __FILE__));
 
 
 	// Add element defaults to data object

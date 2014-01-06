@@ -33,7 +33,7 @@ function uposts_initialize () {
 	require_once (dirname(__FILE__) . '/lib/upfront_posts.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('uposts', upfront_element_url('js/uposts', __FILE__));
+	upfront_add_layout_editor_entity('uposts', upfront_relative_element_url('js/uposts', __FILE__));
 
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UpostsView', 'add_js_defaults'));
@@ -44,4 +44,4 @@ function uposts_initialize () {
 	add_filter('post_thumbnail_html', array('Upfront_UpostsView', 'set_featured_image'), 10 , 2);
 }
 // Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'uposts_initialize'); 
+add_action('upfront-core-initialized', 'uposts_initialize');

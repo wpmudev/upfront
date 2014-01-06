@@ -33,7 +33,7 @@ function ucontact_initialize () {
 	require_once (dirname(__FILE__) . '/lib/contact_form.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('ucontact', upfront_element_url('js/ucontact', __FILE__));
+	upfront_add_layout_editor_entity('ucontact', upfront_relative_element_url('js/ucontact', __FILE__));
 
 	// Add element defaults to data object
 	$ucontact = new Upfront_UcontactView(array());

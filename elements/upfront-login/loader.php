@@ -34,7 +34,7 @@ function upfront_login_initialize () {
 	require_once (dirname(__FILE__) . '/lib/upfront_login.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('upfront_login', upfront_element_url('js/upfront_login', __FILE__));
+	upfront_add_layout_editor_entity('upfront_login', upfront_relative_element_url('js/upfront_login', __FILE__));
 }
 // Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'upfront_login_initialize'); 
+add_action('upfront-core-initialized', 'upfront_login_initialize');

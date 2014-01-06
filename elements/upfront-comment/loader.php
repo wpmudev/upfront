@@ -34,12 +34,12 @@ function ucomment_initialize () {
 	require_once (dirname(__FILE__) . '/lib/upfront_comment.php');
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('ucomment', upfront_element_url('js/ucomment', __FILE__));
+	upfront_add_layout_editor_entity('ucomment', upfront_relative_element_url('js/ucomment', __FILE__));
 
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UcommentView', 'add_js_defaults'));
-	
+
 	add_action('wp_enqueue_scripts', array('Upfront_UcommentView', 'add_public_script'));
 }
 // Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'ucomment_initialize'); 
+add_action('upfront-core-initialized', 'ucomment_initialize');

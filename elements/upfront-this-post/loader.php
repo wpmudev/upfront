@@ -37,8 +37,8 @@ function this_post_initialize () {
 	add_action('upfront_data', array(Upfront_ThisPostView, 'add_js_defaults'));
 
 	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('this_post', upfront_element_url('js/this_post', __FILE__));
+	upfront_add_layout_editor_entity('this_post', upfront_relative_element_url('js/this_post', __FILE__));
 
 }
 // Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'this_post_initialize'); 
+add_action('upfront-core-initialized', 'this_post_initialize');

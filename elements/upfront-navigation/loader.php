@@ -13,7 +13,7 @@ function upfront_navigation_initialize(){
 	add_action('upfront_data', array('Upfront_NavigationView', 'add_js_defaults'));
 
     // Expose our JavaScript definitions to the Upfront API
-    upfront_add_layout_editor_entity('upfront-navigation', upfront_element_url('js/upfront-navigation', __FILE__));
+    upfront_add_layout_editor_entity('upfront-navigation', upfront_relative_element_url('js/upfront-navigation', __FILE__));
 
     // Add the public stylesheet
     add_action('wp_enqueue_scripts', array('Upfront_NavigationView', 'add_public_dependencies'));
