@@ -137,6 +137,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 	private function _add_hooks() {
 		add_action('wp_ajax_upfront-media-image_sizes', array($this, "get_image_sizes"));
 		add_action('wp_ajax_upfront-media-image-create-size', array($this, "create_image_size"));
+		add_action('wp_ajax_upfront-media-save-images', array($this, "save_resizing"));
 	}
 
 	function create_image_size(){
@@ -348,7 +349,9 @@ class Upfront_Uimage_Server extends Upfront_Server {
 	}
 
 	function save_resizing() {
-
+		$data = stripslashes_deep($_POST);
+		$layout = Upfront_Layout::from_entity_ids($data['layout']);
+		return $this->_out(new Upfront_JsonResponse_Success($layout->get_element_data('uslider-object-1388746230599-1180')));
 	}
 }
 Upfront_Uimage_Server::serve();

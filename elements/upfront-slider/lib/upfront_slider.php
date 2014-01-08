@@ -23,6 +23,9 @@ class Upfront_UsliderView extends Upfront_Object {
 		$data['imageWidth'] = $data['style'] == 'right' ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '';
 		$data['textWidth'] = $data['style'] == 'right' ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '';
 
+		$data['production'] = true;
+		$data['startingSlide'] = 0;
+
 		$markup = upfront_get_template('uslider', $data, dirname(dirname(__FILE__)) . '/tpls/uslider.html');
 		
 		return $markup;
