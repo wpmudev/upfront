@@ -381,6 +381,105 @@ class Upfront_Layout extends Upfront_JsonModel {
 			$this->delete_region($region['name']);
 		}
 	}
+
+	public function get_element_data($id) {
+		return self::get_element($id, $this->_data, 'layout');
+	}
+
+	/*
+	Update an element that is already in the layout
+	 */
+	public function set_element_data($data, $path = false){
+		$element_id = self::get_element_id($data);
+		if(!$element_id)
+			return false;
+
+		if($path){
+			$element = $this->get_element_by_path($path);
+			if($element){
+				if(self::get_element_id($element) == $element_id)
+					return $this->set_element_by_path($path, $data);
+				// else wrong path, we need the correct one
+			}
+		}
+
+		$current = $this->get_element($element_id, $this->_data, 'layout');
+		if(!$current)
+			return false; // The element is not in the layout
+
+		return $this->set_element_by_path($current['path'], $data);
+	}
+	/*
+	The path is an array with the position of the element inside the data array (region, module, object)
+	 */
+	private function get_element_by_path($path){
+		$path_size = sizeof($path);
+		if($path_size != 2 && $path_size != 3)
+			return false;
+		$next = array('regions', 'modules', 'objects');
+		$i = 0;
+		$current = $this->_data;
+		while($found && $i < $path_size){
+			if(!isset($current[$next[$i]]) || !isset($current[$next[$i]][$path[$i]]))
+				return false;
+			$current = $current[$next[$i]][$path[$i]];
+		}
+		return $current;
+	}
+
+	private function set_element_by_path($path, $data){
+		if(sizeof($path) == 3)
+			$this->_data['regions'][$path[0]]['modules'][$path[1]]['objects'][$path[2]] = $data;
+		else if(sizeof($path) == 2)
+			$this->_data['regions'][$path[0]]['modules'][$path[1]] = $data;
+		else
+			return false;
+		return $path;
+	}
+
+	private static function get_element($id, $data, $curr){
+		$property_found = false;
+		$i = 0;
+		$value = self::get_element_id($data);
+
+		if($value == $id)
+			return array('data' => $data, 'path' => array());
+
+		$next = false;
+		if($curr == 'layout')
+			$next = 'regions';
+		else if($curr == 'regions')
+			$next = 'modules';
+		else if($curr = 'modules')
+			$next = 'objects';
+
+		if(!$next)
+			return false;
+
+		$i = 0;
+		$found = false;
+		while(!$found && $i < sizeof($data[$next])){
+			$found = self::get_element($id, $data[$next][$i], $next);
+			if($found)
+				array_unshift($found['path'], $i);
+
+			$i++;
+		}
+		return $found;
+	}
+
+	private static function get_element_id($element){
+		$property_found = false;
+		$value = false;
+		$i = 0;
+		while(!$property_found && $i < sizeof($element['properties'])){
+			if($element['properties'][$i]['name'] == 'element_id'){
+				return $element['properties'][$i]['value'];
+			}
+			$i++;
+		}
+		return $value;
+	}
 }
 
 

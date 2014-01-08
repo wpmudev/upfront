@@ -50,6 +50,7 @@ class Upfront_Ajax extends Upfront_Server {
 		add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
 		add_action('wp_ajax_upfront_reset_layout', array($this, "reset_layout"));
 		add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
+		add_action('wp_ajax_upfront_update_layout_element', array($this, "update_layout_element"));
 	}
 
 	// STUB LOADING
@@ -127,6 +128,30 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout->delete();
 		$layout->delete_regions();
 		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
+	}
+
+	function update_layout_element() {
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+
+		if(!$data)
+			return $this->_out(new Upfront_JsonResponse_Error("No data"));
+		if(empty($data['layout']))
+			return $this->_out(new Upfront_JsonResponse_Error("No layout id given"));
+		if(empty($data['element']))
+			return $this->_out(new Upfront_JsonResponse_Error("No element data given"));
+
+		$element = json_decode($data['element'], true);
+
+		$layout = Upfront_Layout::from_entity_ids($data['layout']);
+		if(empty($layout))
+			return $this->_out(new Upfront_JsonResponse_Error("Unkown layout"));
+
+		$updated = $layout->set_element_data($element);
+		if(!$updated)
+			return $this->_out(new Upfront_JsonResponse_Error("Error updating the layout"));
+
+		$layout->save();
+		$this->_out(new Upfront_JsonResponse_Success("Layout updated"));
 	}
 
 }
