@@ -137,7 +137,7 @@ a.open-media-gallery:hover i {
 }
 
 #upfront-image-overlay .icon-picture{
-	background: url(../../../img/uf-core-el-sprite.png) no-repeat -806px -327px;
+	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -806px -327px;
 	padding: 0 15px;
 }
 
@@ -186,11 +186,11 @@ a.open-media-gallery:hover i {
 	border-radius: 56px;
 	float: left;
 	margin-right: 10px;
-	background: url(../../../img/uf-core-el-sprite.png) no-repeat -1558px -17px;
+	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -1558px -17px;
 }
 
 .upfront-image-starting-select a.upfront-image-select-button {
-	background: #28DC96 url(../../../img/uf-core-el-sprite.png) no-repeat -1659px -30px;
+	background: #28DC96 url(../../../img/uf-core-el-sprite.svg) no-repeat -1659px -30px;
 	border-radius: 60px;
 	color: #fff;
 	font-family: 'Source Sans Pro', sans-serif;
@@ -349,8 +349,7 @@ a.open-media-gallery:hover i {
 .image-edit-control>i {
 	border: 3px solid #DAEDFE;
 	color: #DAEDFE;
-	background: #273A4C url(../../../img/uf-core-el-sprite.png) no-repeat;
-	background: #273A4C url(../../../img/uf-core-el-sprite.svg) no-repeat, none;
+	background: #273A4C url(../../../img/uf-core-el-sprite.svg) no-repeat;
 	position: relative;
 	z-index:12;
 	width: 40px;

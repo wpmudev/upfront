@@ -382,6 +382,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	on_render: function(){
 		var me = this;
+		//Bind resizing events
+		if(!me.parent_module_view.$el.data('resizeHandling')){
+			me.parent_module_view.$el
+				.on('resize', $.proxy(me.onElementResizing, me))
+				.on('resizestop', $.proxy(me.onElementResize, me))
+				.data('resizeHandling', true)
+			;
+		}
 		if(this.property('image_status') != 'ok')
 			return;
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
@@ -398,16 +406,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.$el.removeClass('upfront-editing');
 
 			me.editCaption();
-
-			//Bind resizing events
-			if(!me.parent_module_view.$el.data('resizeHandling')){
-				me.parent_module_view.$el
-					.on('resize', $.proxy(me.onElementResizing, me))
-					.on('resizestop', $.proxy(me.onElementResize, me))
-					.data('resizeHandling', true)
-				;
-			}
-
 		}, 300);
 	},
 
@@ -467,6 +465,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResize: function(e, ui){
+		var starting = this.$('.upfront-image-starting-select');
+		if(starting.length){
+			this.elementSize.height = $('.upfront-resize').height() - 30;
+			return;
+		}
+
 		var resizer = $('.upfront-resize'),
 			img = this.$('img'),
 			container = this.$('.upfront-image-container'),
@@ -488,6 +492,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResizing: function(e, ui){
+		var starting = this.$('.upfront-image-starting-select');
+		if(starting.length)
+			return starting.outerHeight($('.upfront-resize').height() - 30);
+
 		var resizer = $('.upfront-resize'),
 			text = this.property('caption_position') == 'below_image' ? this.$('.wp-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
@@ -503,6 +511,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			width: newElementSize.width,
 			height: newElementSize.height
 		});
+
+		this.$('.upfront-image-starting-select').height(newElementSize.height);
 
 		if(stretch){
 			if(newElementSize.width > imgSize.width || newElementSize.height > imgSize.height){
