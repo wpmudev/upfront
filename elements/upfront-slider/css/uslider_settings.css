@@ -20,9 +20,6 @@
 	padding: 5px 15px 0;
 }
 
-
-
-
 .uslider_content_slide {
 	border:2px solid transparent;
 	cursor: pointer;
@@ -81,4 +78,28 @@
 
 .uslider-right .uslides {
 	float:left;
+}
+
+.upfront-entity_meta a.upfront-icon-button-nav {
+	margin-bottom: 6px;
+	box-shadow: inset 0 0 0 1px #145064;
+	background: #145064 -moz-linear-gradient(-45deg, rgba(51, 91, 128,1) 0%, rgba(51, 91, 128,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+	background: #145064 -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(51, 91, 128,1)), color-stop(50%,rgba(51, 91, 128,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+	background: #145064 -webkit-linear-gradient(-45deg, rgba(51, 91, 128,1) 0%,rgba(51, 91, 128,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: #145064 -o-linear-gradient(-45deg, rgba(51, 91, 128,1) 0%,rgba(51, 91, 128,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+	background: #145064 -ms-linear-gradient(-45deg, rgba(51, 91, 128,1) 0%,rgba(51, 91, 128,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
+	background: #145064 linear-gradient(135deg, rgba(51, 91, 128,1) 0%,rgba(51, 91, 128,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
+}
+
+.upfront-icon-region-right:before {
+	background-position: -699px -39px;
+}
+.upfront-icon-region-right:hover:before {
+	background-position: -807px -39px;
+}
+.upfront-icon-region-right-active:before {
+	background-position: -699px -39px;
+}
+.upfront-icon-region-right-active:hover:before {
+	background-position: -807px -39px;
 }

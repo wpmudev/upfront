@@ -137,16 +137,16 @@ div.uslide-image img {
 }
 
 .uslider .ui-resizable-handle.ui-resizable-e {
-	background: #3f5870;
-	border: 1px solid #A1C5E6;
+	background: #3f5870 url(../../../img/uf-core-el-sprite.svg) no-repeat -697px -70px;
+	border: 2px solid #A1C5E6;
 	height: 30px;
-	width: 30px;
+	width: 31px;
 	border-radius: 15px;
 	margin: auto;
 	top: 0;
 	bottom: 0;
 	right: -16px;
-	opacity: .9;
+	opacity: .95;
 }
 
 .uslider .ui-resizable-handle.ui-resizable-e:hover {

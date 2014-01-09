@@ -63,7 +63,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		this.events = _.extend({}, this.events, {
-			'click .upfront-image-select-button': 'openImageSelector'
+			'click .upfront-image-select-button': 'openImageSelector',
+			'click .upfront-icon-next': 'nextSlide',
+			'click .upfront-icon-prev': 'prevSlide'			
 		});
 
 		var slides = this.property('slides');
@@ -85,7 +87,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 
 		if(!this.slides.length){
-			this.startingHeight = this.startingHeight || 150;
+			this.startingHeight = this.startingHeight || 225;
 			return '<div class="upfront-image-starting-select" style="min-height:' + this.startingHeight + 'px">' +
 					'<span class="upfront-image-resizethiselement">Resize the slider & add images</span>'+
 					'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
@@ -150,6 +152,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this;
 
+		//Bind resizing events
+		if(!me.parent_module_view.$el.data('resizeHandling')){
+			me.parent_module_view.$el
+				.on('resizestart', $.proxy(me.onElementResizeStart, me))
+				.on('resize', $.proxy(me.onElementResizing, me))
+				.on('resizestop', $.proxy(me.onElementResize, me))
+				.data('resizeHandling', true)
+			;
+		}
+
 		if(!this.slides.length)
 			return;
 
@@ -210,21 +222,23 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.setImageResizable();
 		}
 
-		//Bind resizing events
-		if(!me.parent_module_view.$el.data('resizeHandling')){
-			me.parent_module_view.$el
-				.on('resizestart', $.proxy(me.onElementResizeStart, me))
-				.on('resize', $.proxy(me.onElementResizing, me))
-				.on('resizestop', $.proxy(me.onElementResize, me))
-				.data('resizeHandling', true)
-			;
-		}
-
 		//Adapt slider height to the image crop
-		var textHeight = _.indexOf(['above', 'below'], me.property('style')) != -1 ? me.$('.uslider-texts').outerHeight() : 0;
+		var textHeight = 0; //_.indexOf(['above', 'below'], me.property('style')) != -1 ? me.$('.uslider-texts').outerHeight() : 0;
 		me.$('.uslides').height(wrapper.height() + textHeight);
 
 		me.showCaption();
+	},
+
+	get_buttons: function(){
+		return this.property('slides').length ? '<a href="" class="upfront-icon-button upfront-icon-button-nav upfront-icon-next"></a><a href="" class="upfront-icon-button upfront-icon-button-nav upfront-icon-prev"></a>' : '';
+	},
+
+	nextSlide: function(){
+		this.$('.uslides').upfront_default_slider('next');
+	},
+
+	prevSlide: function(){
+		this.$('.uslides').upfront_default_slider('prev');
 	},
 
 	setImageResizable: function(){
@@ -488,12 +502,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	onElementResizeStart: function(e, ui){
-		if(ui.element.hasClass('uslides'))
+		if(ui.element.hasClass('uslides') || this.$('.upfront-image-starting-select').length)
 			return;
+		var style = this.property('style');
 		this.calculateColumnWidth();
-		if(_.indexOf(['bottomCover', 'middleCover', 'topCover'], this.property('style')) != -1)
+		if(_.indexOf(['nocaption', 'below', 'above', 'right'], style) == -1)
 			this.$('.uslider-texts').fadeOut('fast');
-		else if(this.property('style') == 'right'){
+		else if(style == 'right'){
 			this.$('.uslides').width(this.$('.uslides').width());
 		}
 	},
@@ -509,6 +524,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	onElementResize: function(e, ui){
 		if(ui.element.hasClass('uslides'))
 			return;
+
+		var starting = this.$('.upfront-image-starting-select');
+		if(starting.length){
+			this.startingHeight = $('.upfront-resize').height() - 30;
+			return;
+		}
+
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
 			cropSize = {width: mask.width(), height: mask.height()}
@@ -528,6 +550,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	onElementResizing: function(e, ui){
 		if(ui.element.hasClass('uslides'))
 			return;
+
+		var starting = this.$('.upfront-image-starting-select');
+		if(starting.length)
+			return starting.outerHeight($('.upfront-resize').height() - 30);
+
 		var style = this.property('style');
 
 		var resizer = $('.upfront-resize'),
@@ -575,7 +602,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		else
 			img.css({top: 0 - position.top, bottom: 'auto'});
 
-		img.closest('.uslide-image').css(wrapperSize);
+		img.closest('.uslide-image').css(wrapperSize)
+			.closest('.uslides').height(wrapperSize.height);
 
 		return {
 			size: {width: img.width(), height: img.height()},
@@ -994,7 +1022,8 @@ var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 					{"name": "class", "value": "c10 upfront-slider_module"},
-					{"name": "has_settings", "value": 0}
+					{"name": "has_settings", "value": 0},
+					{"name": "row", "value": 17}
 				],
 				"objects": [
 					object 

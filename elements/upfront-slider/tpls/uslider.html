@@ -37,8 +37,8 @@ jQuery(function($){
 			effect: '<?php echo $transition ?>',
 			interval: <?php echo $rotateTime * 1000 ?>,
 			show_control: '<?php echo $controlsWhen ?>',
-			control_num: <?php echo $dots ?>,
-			control_next_prev: <?php echo $arrows ?>,
+			control_num: <?php echo $dots && $production ?>,
+			control_next_prev: <?php echo $arrows && $production ?>,
 			starting_slide: <?php echo $startingSlide ?>
 		}
 	;
