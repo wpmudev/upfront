@@ -1203,50 +1203,6 @@
 	</g>
 	<rect x="2000" fill="#BDCCD4" width="20" height="16"/>
 	<g>
-		<rect x="702" y="54" fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" width="17" height="1"/>
-		<rect x="702" y="56" fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" width="17" height="1"/>
-		<rect x="702" y="58" fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" width="12" height="1"/>
-		<path fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" d="M702,42v11h17V42H702z M718,52h-15v-9h15V52z"/>
-		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" points="709,46 704,51 714,51 		"/>
-		<circle fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" cx="715.5" cy="45.5" r="1.5"/>
-	</g>
-	<g>
-		<g>
-			<path fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" d="M810,44v15h17V44H810z M826,58h-15V45h15V58z"/>
-			<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" points="818,49 812,57 823,57 			"/>
-			<circle fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" cx="823.5" cy="47.5" r="1.5"/>
-		</g>
-		<rect x="811" y="52" opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" width="15" height="6"/>
-		<g>
-			<rect x="812" y="54" fill-rule="evenodd" clip-rule="evenodd" fill="#F2F9FF" width="13" height="1"/>
-			<rect x="812" y="56" fill-rule="evenodd" clip-rule="evenodd" fill="#F2F9FF" width="8" height="1"/>
-		</g>
-	</g>
-	<g>
-		<g>
-			<path fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" d="M702,76v15h17V76H702z M718,90h-15V77h15V90z"/>
-			<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" points="710,81 704,89 715,89 			"/>
-			<circle fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" cx="715.5" cy="79.5" r="1.5"/>
-		</g>
-		<rect x="703" y="77" opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" width="15" height="6"/>
-		<g>
-			<rect x="704" y="79" fill-rule="evenodd" clip-rule="evenodd" fill="#F2F9FF" width="13" height="1"/>
-			<rect x="704" y="81" fill-rule="evenodd" clip-rule="evenodd" fill="#F2F9FF" width="8" height="1"/>
-		</g>
-	</g>
-	<g>
-		<g>
-			<path fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" d="M810,76v15h17V76H810z M826,90h-15V77h15V90z"/>
-			<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" points="818,81 812,89 823,89 			"/>
-			<circle fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" cx="823.5" cy="79.5" r="1.5"/>
-		</g>
-		<rect x="811" y="77" opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" fill="#7AA5CC" width="15" height="13"/>
-		<g>
-			<rect x="812" y="82" fill-rule="evenodd" clip-rule="evenodd" fill="#F2F9FF" width="13" height="1"/>
-			<rect x="812" y="84" fill-rule="evenodd" clip-rule="evenodd" fill="#F2F9FF" width="8" height="1"/>
-		</g>
-	</g>
-	<g>
 		<rect x="1141" y="54" fill="#7AA5CC" width="20" height="5"/>
 		<rect x="1142" y="52" opacity="0.7" fill="#7AA5CC" width="11" height="1"/>
 		<rect x="1141" y="45" fill="#7AA5CC" width="20" height="5"/>
@@ -2130,5 +2086,69 @@
 	<path fill="#97B7D9" d="M498.25,244.125c-1-1-7-7.125-7-7.125H485v6.25c0,0,6.125,6,7.125,7s2.062,1,3.062,0
 		s2.031-2.062,3.031-3.062S499.25,245.125,498.25,244.125z M488.75,242.25c-0.828,0-1.5-0.671-1.5-1.5s0.672-1.5,1.5-1.5
 		s1.5,0.671,1.5,1.5S489.578,242.25,488.75,242.25z"/>
+	<g>
+		<path fill-rule="evenodd" clip-rule="evenodd" fill="#8FA7BF" d="M702,42v18h12V42H702z M713,59h-10V43h10V59z"/>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#8FA7BF" points="711,58 712,58 712,54 710,51 708.104,53.655 705,49 
+			704,51 704,58 705,58 		"/>
+		<circle fill-rule="evenodd" clip-rule="evenodd" fill="#8FA7BF" cx="710" cy="46" r="2"/>
+	</g>
+	<g>
+		<path fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" d="M715,46h0.5c0-1.328,1.5-1.203,1.5-1.203S717,46,717,47
+			c0,1.547-1,1.5-1,1.5V49h3v-0.5c0,0-1,0.062-1-1.5c0-1,0-2.203,0-2.203s1.5-0.156,1.5,1.203h0.5v-2h-5V46z"/>
+		<rect x="715" y="51" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="5" height="1"/>
+		<rect x="715" y="53" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="5" height="1"/>
+		<rect x="715" y="55" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="5" height="1"/>
+		<rect x="715" y="57" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="3" height="1"/>
+	</g>
+	<g>
+		<path fill-rule="evenodd" clip-rule="evenodd" fill="#1FCD8F" d="M810,42v18h12V42H810z M821,59h-10V43h10V59z"/>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#1FCD8F" points="819,58 820,58 820,54 818,51 816.104,53.655 813,49 
+			812,51 812,58 813,58 		"/>
+		<circle fill-rule="evenodd" clip-rule="evenodd" fill="#1FCD8F" cx="818" cy="46" r="2"/>
+	</g>
+	<g>
+		<path fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" d="M823,46h0.5c0-1.328,1.5-1.203,1.5-1.203S825,46,825,47
+			c0,1.547-1,1.5-1,1.5V49h3v-0.5c0,0-1,0.062-1-1.5c0-1,0-2.203,0-2.203s1.5-0.156,1.5,1.203h0.5v-2h-5V46z"/>
+		<rect x="823" y="51" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="5" height="1"/>
+		<rect x="823" y="53" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="5" height="1"/>
+		<rect x="823" y="55" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="5" height="1"/>
+		<rect x="823" y="57" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="3" height="1"/>
+	</g>
+	<g>
+		<rect x="709" y="76" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="1" height="14"/>
+		<rect x="711" y="76" fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" width="1" height="14"/>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" points="714,80.001 714,86 717,83 		"/>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" points="707,86 707,80.001 704,83 		"/>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
+	<g>
+	</g>
 </g>
 </svg>
