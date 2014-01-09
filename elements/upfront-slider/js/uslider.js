@@ -635,7 +635,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		editOptions.images = imagesData;
 
-		Upfront.Util.post(editOptions).done(function(response){
+		return Upfront.Util.post(editOptions).done(function(response){
 			var images = response.data.images;
 			console.log(images);
 			_.each(images, function(data, id){
@@ -650,8 +650,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					cropOffset: {left: imageData.crop.left, top: imageData.crop.top}
 				}, {silent: true});
 			});
+			me.imageProps = {};
+			me.slidesChange();
 		});
-		me.imageProps = {};
 	},
 
 	saveResizing: function(){
@@ -1073,7 +1074,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 						property: 'rotate',
 						layout: 'horizontal-inline',
 						multiple: true,
-						values: [ { label: "Rotate every ", value: true } ]
+						values: [ { label: "Rotate every ", value: 'true' } ]
 					}),
 					new Fields.Number({
 						model: this.model,
