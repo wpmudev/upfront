@@ -743,10 +743,65 @@ RedactorPlugins.upfrontColor = {
 	},
 	panel: UeditorPanel.extend({
 		render: function(){
-			var input = $('<input type="text">');
-			this.$el.html(input);
-			this.$('input').spectrum({
-				flat: true
+			var tablist = $('<ul class="tablist">').append($('<li id="tabforeground" class="active">').html('Text Color')).append($('<li id="tabbackground">').html('Text Background'));
+			var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
+
+
+			tablist.children('li').on('click', function() {
+				tablist.children('li').removeClass('active');
+				$(this).addClass('active');
+				tabs.children('li').removeClass('active');
+				tabs.children('li#'+$(this).attr('id')+'-content').addClass('active');
+			});
+
+
+			this.$el.html(tablist).append(tabs);
+			
+			var redac = this.redactor;
+			this.$('input.foreground').spectrum({
+				flat: true,
+				showAlpha: true,
+				showPalette: true,
+				palette: ['fff', '000', 'f00'],
+				maxSelectionSize: 8,
+				preferredFormat: "rgb",
+				showInput: true,
+			    allowEmpty:true,
+				change: function(color) {
+						redac.inlineRemoveStyle('color');
+						redac.inlineSetStyle('color', color.toHexString());
+						$(this).parent().find('.sp-dragger').css('border-bottom-color', color.toHexString());
+						$(this).parent().find('.sp-dragger').css('border-left-color', color.toHexString());	
+						redac.sync();					
+					},
+				move: function(color) {
+					$(this).parent().find('.sp-dragger').css('border-top-color', color.toHexString());
+					$(this).parent().find('.sp-dragger').css('border-right-color', color.toHexString());
+				}
+			});
+
+			this.$('input.background').spectrum({
+				flat: true,
+				showAlpha: true,
+				showPalette: true,
+				palette: ['fff', '000', '0f0'],
+				maxSelectionSize: 8,
+				preferredFormat: "rgb",
+				showInput: true,
+			    allowEmpty:true,
+				change: function(color) {
+						redac.inlineRemoveStyle('background-color');
+						redac.inlineSetStyle('background-color', color.toHexString());
+						$(this).parent().find('.sp-dragger').css('border-bottom-color', color.toHexString());
+						$(this).parent().find('.sp-dragger').css('border-left-color', color.toHexString());	
+						redac.sync();					
+					},
+				move: function(color) {
+
+					$(this).parent().find('.sp-dragger').css('border-top-color', color.toHexString());
+					$(this).parent().find('.sp-dragger').css('border-right-color', color.toHexString());
+					//console.log($(this).find('.sp-dragger').css('border-top'));
+				}
 			});
 		}
 	})

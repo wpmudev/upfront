@@ -151,8 +151,10 @@
             dragHelperHeight = 0,
             slideHeight = 0,
             slideWidth = 0,
-            alphaWidth = 0,
-            alphaSlideHelperWidth = 0,
+            //alphaWidth = 0,
+            alphaHeight = 0,
+            //alphaSlideHelperWidth = 0,
+            alphaSlideHelperHeight = 0,
             slideHelperHeight = 0,
             currentHue = 0,
             currentSaturation = 0,
@@ -292,7 +294,6 @@
             chooseButton.bind("click.spectrum", function (e) {
                 e.stopPropagation();
                 e.preventDefault();
-
                 if (isValid()) {
                     updateOriginalInput(true);
                     hide();
@@ -300,7 +301,8 @@
             });
 
             draggable(alphaSlider, function (dragX, dragY, e) {
-                currentAlpha = (dragX / alphaWidth);
+                //currentAlpha = (dragX / alphaWidth);
+                currentAlpha = (dragY / alphaHeight);
                 if (e.shiftKey) {
                     currentAlpha = Math.round(currentAlpha * 10) / 10;
                 }
@@ -632,7 +634,7 @@
                 var rgb = realColor.toRgb();
                 rgb.a = 0;
                 var realAlpha = tinycolor(rgb).toRgbString();
-                var gradient = "linear-gradient(left, " + realAlpha + ", " + realHex + ")";
+                var gradient = "linear-gradient(top, " + realAlpha + ", " + realHex + ")";
 
                 if (IE) {
                     alphaSliderInner.css("filter", tinycolor(realAlpha).toFilter({ gradientType: 1 }, realHex));
@@ -681,9 +683,11 @@
                 "left": dragX
             });
 
-            var alphaX = currentAlpha * alphaWidth;
+            //var alphaX = currentAlpha * alphaWidth;
+			var alphaY = currentAlpha * alphaHeight;
             alphaSlideHelper.css({
-                "left": alphaX - (alphaSlideHelperWidth / 2)
+                //"left": alphaX - (alphaSlideHelperWidth / 2)
+				"top": alphaY - (alphaSlideHelperHeight / 2)
             });
 
             // Where to show the bar that displays your current selected hue
@@ -721,8 +725,10 @@
             slideWidth = slider.width();
             slideHeight = slider.height();
             slideHelperHeight = slideHelper.height();
-            alphaWidth = alphaSlider.width();
-            alphaSlideHelperWidth = alphaSlideHelper.width();
+            //alphaWidth = alphaSlider.width();
+			alphaHeight = alphaSlider.height();
+            //alphaSlideHelperWidth = alphaSlideHelper.width();
+			alphaSlideHelperHeight = alphaSlideHelper.height();
 
             if (!flat) {
                 container.css("position", "absolute");
