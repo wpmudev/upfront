@@ -103,3 +103,12 @@
 .upfront-icon-region-right-active:hover:before {
 	background-position: -807px -39px;
 }
+
+.upfront-icon-prev:before {
+	background-position: -291px -130px;
+}
+
+.upfront-icon-next:before {
+	background-position: -290px -100px;
+}
+

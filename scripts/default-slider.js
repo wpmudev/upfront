@@ -228,8 +228,9 @@
 				effect = data.effect;
 
 			if ( !$item.hasClass(data.classname.item+'-current') && !(is_auto && this.pause) ){
-				$slider.trigger('slideout', current);
-				current.removeClass(data.classname.item+'-current');
+				$slider.trigger('slideout', current)
+					.find('div.slide-previous').removeClass('slide-previous');
+				current.removeClass(data.classname.item+'-current').addClass('slide-previous');
 				$item.addClass(data.classname.item+'-current');
 				$nav.find('.'+data.classname.nav_item+'-selected').removeClass(data.classname.nav_item+'-selected');
 				$n.addClass(data.classname.nav_item+'-selected');
