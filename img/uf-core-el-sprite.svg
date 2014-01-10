@@ -2120,35 +2120,9 @@
 		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" points="714,80.001 714,86 717,83 		"/>
 		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#97B8DA" points="707,86 707,80.001 704,83 		"/>
 	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" points="307,110.002 300,106 300,109 293,109 293,111 300,111 
+		300,114 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" points="293,139.998 300,144 300,141 307,141 307,139 300,139 
+		300,136 	"/>
 </g>
 </svg>
