@@ -401,7 +401,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			;
 			me.controls.setWidth(container.width());
 			me.controls.render();
-			container.append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
+			container.parent().append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
 			me.controls.delegateEvents();			
 			me.$el.removeClass('upfront-editing');
 
