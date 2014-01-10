@@ -7132,6 +7132,13 @@ ul.redactor_toolbar li a.redactor_btn_upfrontLink{
 	background-position: -510px -167px;
 }
 
+ul.redactor_toolbar li a.redactor_btn_upfrontSink{
+	background-position: -594px -167px;
+}
+ul.redactor_toolbar.ueditor-sink-open li a.redactor_btn_upfrontSink{
+	background-position: -636px -167px;
+}
+
 body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-position: -552px -167px; }
 
 /*
@@ -7184,7 +7191,7 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	z-index: 2004;
 	padding: 10px;
 	width: 200px;
-	background-color: #fff; 
+	background-color: #1e364c;
 	/*background-color: rgba(30, 47, 63, .95);*/
 	/* box-shadow: 0 1px 5px #bbb; */
 	font-size: 13px;
@@ -7208,11 +7215,40 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	padding: 3px 5px;
 	color: #000;
 	text-decoration: none;
+	cursor: pointer;
 }
 .redactor_dropdown a:hover {
-	background-color: #dde4ef;
-	color: #444 !important;
+	background-color: #1E2F3F;
 	text-decoration: none;
+	color: #46a8fc;
+}
+
+.redactor_dropdown_box_upfrontFormatting {
+	width: auto;
+	font-family: Georgia, serif;
+	font-size: 20px;
+	text-align: center;
+	padding: 0;
+}
+
+a.ueditor-format-option {
+	color: #97b8da;
+	width: 38px;
+	line-height: 30px;
+}
+
+a.ueditor-format-pre{
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.redactor_toolbar li a.redactor_btn_upfrontFormatting {
+	text-indent: 0;
+	font-family: Georgia, serif;
+	color: #97b8da;
+	font-size: 21px;
+	line-height: 36px;
+	text-align: center;
 }
 
 /* MODAL */
@@ -7499,8 +7535,46 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA6lpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFRTE5QjlCQTlDMkQxMUUwOUFFQ0M4MEYwM0YzNUE2RCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowNkRFQUIzNjlDMkUxMUUwOUFFQ0M4MEYwM0YzNUE2RCI+IDxkYzp0aXRsZT4gPHJkZjpBbHQ+IDxyZGY6bGkgeG1sOmxhbmc9IngtZGVmYXVsdCI+Z3JhZGllbnQ8L3JkZjpsaT4gPC9yZGY6QWx0PiA8L2RjOnRpdGxlPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFRTE5QjlCODlDMkQxMUUwOUFFQ0M4MEYwM0YzNUE2RCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFRTE5QjlCOTlDMkQxMUUwOUFFQ0M4MEYwM0YzNUE2RCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pq477Q0AAAD2SURBVHjaxFIxDsIwDLRF/1AmRp7AM9iYWHkD76AP6h9Qi1SGfqAMqGJg6XA4jts0RUwZiKLEsZ3L+Rwmoi0lDC6Ky4rAMuGO5DY5iuWH93oDegMuK8QA7JIYCMDpvwDDMBzNHCGtONYq2enjHKYLMObCp7dtu/+FDppDgyJpTemsrm/9l7L2ku4aUy4BTEmKR1hmVXV9OjfsqlqC7irAhBKxDnmOQdPc+ynKMXdenEELAFmzrnu8RoK6jpRhHkGJmFgdXmsByNf5Wx+fJPbigEI3OKrB77Bfy2VZzppqC0IfAtlIAusC9CNtUn/iIRXgnALwEWAA/+5+ZNOapmcAAAAASUVORK5CYII=');
 }
 
+.ueditor-sink {
+	min-height: 0px;
+	overflow: hidden;
+	-webkit-transition: min-height .5s;
+    transition: min-height .5s;
+    display:none;
+    clear: both;
+}
 
+.ueditor-sink-open .ueditor-sink {
+	min-height: 38px;
+	display:block;
+}
 
+a.ueditor-ok {
+	position: absolute;
+	right: 0;
+	bottom: -30px;
+	background: #1FCD8F;
+	height: 30px;
+	line-height: 25px;
+	color: #fff !important;
+	width: 50px;
+	text-align: center
+}
+
+a.ueditor-ok:hover {
+	background: #3ea;
+}
+
+a.ueditor-unlink {
+	position: absolute;
+	bottom: -30px;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 15px;
+	right: 60px;
+	background: #246;
+	color: #97b8da !important;
+}
 
 
 /* New Color Picker CSS override */
