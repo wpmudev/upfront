@@ -345,7 +345,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				;
 				if(!slider.hasClass('uslider-nocaption')){
 					var text = slider.find('.uslide-text[rel="' + id + '"]');
-					//text.closest('.uslider-texts').height(text.height());
+					if(_.indexOf(['bottomCover', 'middleCover', 'topCover'], me.property('style')) == -1)
+						text.closest('.uslider-texts').height(text.height());
 					text.removeClass('uslide-text-current');
 				}
 			}

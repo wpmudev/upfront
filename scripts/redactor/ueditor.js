@@ -167,9 +167,10 @@ var Ueditor = function($el, options) {
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
-			airButtons: ['link', '|',  'bold', 'italic', '|', 'upfrontLink', '|', 'stateLists', '|', 'stateAlign', '|', 'upfrontColor'],
+			airButtons: ['formatting', 'bold', 'italic', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontFormatting'],
 			buttonsCustom: {},
-			observeLinks: false
+			observeLinks: false,
+			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre']
 		}, options)
 	;
 
@@ -272,7 +273,7 @@ Ueditor.prototype = {
 		}			
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -807,6 +808,19 @@ RedactorPlugins.upfrontColor = {
 	})
 }
 
+RedactorPlugins.upfrontFormatting = {
+	beforeInit: function(){
+		this.opts.buttonsCustom.upfrontFormatting = {
+			title: 'Formatting',
+			panel: this.panel
+		};
+	},
+	panel: UeditorPanel.extend({
+		render: function(){
+			this.$el.html('un panel cualquiera');
+		}
+	})
+}
 
 RedactorPlugins.upfrontMedia = {
 	beforeInit: function () {
