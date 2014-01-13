@@ -1,9 +1,6 @@
 (function ($) {
 
-  var templates = [
-    'text!' + Upfront.data.uaccordion.template ];
-
-  require(templates, function(accordionTpl) {
+  define(['text!elements/upfront-accordion/tpl/uaccordion.html'], function(accordionTpl) {
     var UaccordionModel = Upfront.Models.ObjectModel.extend({
       init: function () {
         var properties = _.clone(Upfront.data.uaccordion.defaults);
@@ -57,23 +54,23 @@
         this.property('accordion_count', this.property('accordion_count') - 1, false);
       },
 
-     
+
 
       onPanelTitleClick: function(event) {
 
         var $panelTitle = $(event.currentTarget);
-		
+
 		if((typeof currentEditItem != 'undefined') && currentEditItem != '' && currentEditItem != $panelTitle.attr('id')) {
 
 			this.onDeactivate();
 		}
-		
+
 		if ($panelTitle.parent().hasClass('accordion-panel-active') &&  $panelTitle.attr('contenteditable') == 'true')
 		return;
-		
 
 
-		
+
+
         if ($panelTitle.parent().hasClass('accordion-panel-active')) {
           $panelTitle.attr('contenteditable', true);
 		   var editor = Upfront.Content.editors.add({
@@ -86,23 +83,23 @@
 		   editor.start();
 		   var deditor = CKEDITOR.instances[currentEditItem];
 		   var self = this;
-		   
+
 			editor.on( 'textcolor:change', function(color) {
 				var value = color.toRgbString();
 				$panelTitle.css('color', value);
 				self.saveTitle($panelTitle);
 			});
-			
+
 			editor.on( 'panelcolor:change', function(color) {
 				var value = color.toRgbString();
 				$panelTitle.css('background-color', value);
 				self.saveTitle($panelTitle);
 			});
-			
+
 			editor.on('change', function (e) {
 				self.saveTitle($panelTitle);
 			});
-			
+
 			deditor.on( 'key', function(key) {
 				if(key.data['keyCode'] == 13) {
 					self.onDeactivate();
@@ -112,11 +109,11 @@
 			deditor.on('saveSnapshot', function (e) {
 				self.saveTitle($panelTitle);
 			});
-			
+
 			deditor.on('afterCommandExec', function (e) {
 				self.saveTitle($panelTitle);
 			});
-			
+
           $panelTitle.focus();
 		  this.$el.parent().parent().parent().draggable('disable');
           return;
@@ -125,14 +122,14 @@
         $panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').show('normal');
         $panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').hide('normal');
 		$panelTitle.removeAttr('contenteditable');
-		
+
 
 
       },
 
 		onDeactivate: function() {
 
-				
+
 			var target = $('#'+currentEditItem);
 			if(target.hasClass('accordion-panel-title')) {
 				target.removeAttr('contenteditable');
@@ -145,9 +142,9 @@
 			else if(target.hasClass('accordion-panel-content')) {
 				this.stopEdit();
 			}
-			
-			
-			
+
+
+
 			$('#'+currentEditItem).removeAttr('contenteditable');
 			currentEditItem = '';
 		},
@@ -155,13 +152,13 @@
       onContentDblclick: function(event) {
 
 		var $content = $(event.currentTarget);
-		
+
 		if((typeof currentEditItem != 'undefined') && currentEditItem != '' && currentEditItem != $content.attr('id')) {
 			this.onDeactivate();
 		}
 
-        
-		
+
+
         if ($content.attr('contenteditable') === 'true') return;
 
         $content.attr('contenteditable', true).addClass('upfront-object');
@@ -169,17 +166,17 @@
         currentEditItem = $content.attr('id');
 
 		self = this;
-		
+
 		this.editor.on('saveSnapshot', function (e) {
 			self.savePanelContent();
 			console.log("savesnapshot fired");
 		});
-		
+
 		this.editor.on('afterCommandExec', function (e) {
 			self.savePanelContent();
 			console.log("afterCommandExec fired");
 		});
-		
+
 		$content.focus();
 
         this.$el.parent().parent().parent().draggable('disable');
@@ -188,23 +185,23 @@
       onContentKeydown: function(event) {
         this.debouncedSave();
       },
-	  
+
 		saveTitle: function(target) {
-			
+
 			id = target.parent().index()-1;
 			this.property('accordion')[id].title = target.html();
 			this.property('accordion')[id].title_color = target.css('color');
 			this.property('accordion')[id].title_bgcolor = target.css('background-color');
 		},
-		
+
       savePanelContent: function() {
         var panel = this.$el.find('.accordion-panel-active');
 		var $content = panel.find('.accordion-panel-content');
         var panelId = panel.index()-1;
         this.property('accordion')[panelId].content = $content.html();
-		
+
       },
-	  
+
       stopEdit: function() {
 
         this.savePanelContent();
@@ -243,7 +240,7 @@
        _.delay(function(self) {
 
           self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
-	
+
         }, 10, this);
       },
 
@@ -311,7 +308,7 @@
 
         render_all = function(){
           this.settings.invoke('render');
-        }; 
+        };
         _.bindAll(this, 'onHeaderBorderChange', 'onHeaderBgChange', 'onPanelBgChange');
 
         this.model.on('doit', render_all, this);

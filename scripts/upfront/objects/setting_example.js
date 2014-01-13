@@ -1,10 +1,11 @@
 (function ($) {
 
+define(function() {
 var SettingExampleModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		this.init_property("type", "SettingExampleModel");
 		this.init_property("view_class", "SettingExampleView");
-		
+
 		this.init_property("element_id", Upfront.Util.get_unique_id("settingexample-object"));
 		this.init_property("class", "c22");
 		this.init_property("has_settings", 1);
@@ -12,15 +13,15 @@ var SettingExampleModel = Upfront.Models.ObjectModel.extend({
 });
 
 var SettingExampleView = Upfront.Views.ObjectView.extend({
-	
+
 	get_content_markup: function () {
 		return 'Setting example here :)';
 	}
-	
+
 });
 
 var SettingExampleElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	
+
 	draggable: true,
 	render: function () {
 		this.$el.html('Setting Example');
@@ -28,7 +29,7 @@ var SettingExampleElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	add_element: function () {
 		var object = new SettingExampleModel(),
-			module = new Upfront.Models.Module({ 
+			module = new Upfront.Models.Module({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
@@ -46,10 +47,10 @@ var SettingExampleElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 
 var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
-	
+
 	initialize: function () {
 		this.panels = _([
-			
+
 			// Text and textarea
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -88,7 +89,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// Selects
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -195,7 +196,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// Radio and checkbox 1
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -237,7 +238,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// Radio and checkbox 2
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -321,7 +322,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// Number
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -347,7 +348,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// Suggest list
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -377,7 +378,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// Tabbed
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -467,7 +468,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// Radio tab with icon
 			new Upfront.Views.Editor.Settings.Panel({
 				model: this.model,
@@ -546,7 +547,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					}),
 				]
 			}),
-			
+
 			// end Panels array
 		]);
 	},
@@ -560,7 +561,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 
 Upfront.Application.LayoutEditor.add_object("SettingExample", {
-	"Model": SettingExampleModel, 
+	"Model": SettingExampleModel,
 	"View": SettingExampleView,
 	"Element": SettingExampleElement,
 	"Settings": SettingExampleSettings
@@ -569,4 +570,5 @@ Upfront.Models.SettingExampleModel = SettingExampleModel;
 Upfront.Views.SettingExampleView = SettingExampleView;
 
 
+});
 })(jQuery);

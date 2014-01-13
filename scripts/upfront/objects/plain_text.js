@@ -1,5 +1,7 @@
 (function ($) {
 
+define(function() {
+
 var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		this.init_property("type", "PlainTxtModel");
@@ -11,12 +13,12 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 });
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
-	
+
 	get_content_markup: function () {
 		var content = this.model.get_content();
 		return content + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
 	},
-	
+
 	is_edited: function () {
 		var is_edited = this.model.get_property_value_by_name('is_edited');
 		return is_edited ? true : false;
@@ -89,4 +91,5 @@ Upfront.Application.LayoutEditor.add_object("PlainTxt", {
 Upfront.Models.PlainTxtModel = PlainTxtModel;
 Upfront.Views.PlainTxtView = PlainTxtView;
 
+});
 })(jQuery);

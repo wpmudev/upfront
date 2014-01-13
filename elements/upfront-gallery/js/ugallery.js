@@ -14,13 +14,10 @@
 
 (function ($) {
 
-var templates = [
-		'text!' + Upfront.data.ugallery.template, // Front
+define([
+		'text!elements/upfront-gallery/tpl/ugallery.html', // Front
 		'text!elements/upfront-gallery/tpl/ugallery_editor.html'
-	]
-;
-
-require(templates, function(galleryTpl, editorTpl) {
+	], function(galleryTpl, editorTpl) {
 var UgalleryImage = Backbone.Model.extend({
 	defaults: Upfront.data.ugallery.imageDefaults
 });

@@ -1,5 +1,7 @@
 (function ($) {
 
+define(function() {
+
 /**
  * Define the model - initialize properties to their default values.
  * @type {Upfront.Models.ObjectModel}
@@ -39,10 +41,10 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 			label = this.model.get_property_value_by_name("label"),
 			image = '<i class="icon-search"></i>'
 		;
-		return 	'<input type="search" name="s" class="search-field" value="" placeholder="'+(placeholder ? placeholder_text : "")+'" />' + 
+		return 	'<input type="search" name="s" class="search-field" value="" placeholder="'+(placeholder ? placeholder_text : "")+'" />' +
 				'<button class="search-button">' + (label == '__image__' || !label ? image : label) + '</button>';
 	},
-	
+
 	on_render: function () {
 		var rounded = this.model.get_property_value_by_name("is_rounded"),
 			color = this.model.get_property_value_by_name("color"),
@@ -59,7 +61,7 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 });
 
 /**
- * Sidebar element class - this let you inject element into 
+ * Sidebar element class - this let you inject element into
  * sidebar elements panel and allow drag and drop element adding
  * @type {Upfront.Views.Editor.Sidebar.Element}
  */
@@ -81,9 +83,9 @@ var UsearchElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		var object = new UsearchModel(), // Instantiate the model
 			// Since search entity is an object,
 			// we don't need a specific module instance -
-			// we're wrapping the search entity in 
+			// we're wrapping the search entity in
 			// an anonymous general-purpose module
-			module = new Upfront.Models.Module({ 
+			module = new Upfront.Models.Module({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
@@ -114,7 +116,7 @@ var UsearchElement = Upfront.Views.Editor.Sidebar.Element.extend({
  */
 var UsearchSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	/**
-	 * Initialize the view, and populate the internal 
+	 * Initialize the view, and populate the internal
 	 * setting items array with Item instances.
 	 */
 	initialize: function () {
@@ -269,4 +271,5 @@ Upfront.Models.UsearchModel = UsearchModel;
 Upfront.Views.UsearchView = UsearchView;
 
 
+});
 })(jQuery);

@@ -1,5 +1,7 @@
 (function ($) {
 
+define(function() {
+
 var LoadingModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		this.init_property("type", "LoadingModel");
@@ -23,4 +25,5 @@ var LoadingView = Upfront.Views.ObjectView.extend({
 Upfront.Models.LoadingModel = LoadingModel;
 Upfront.Views.LoadingView = LoadingView;
 
+});
 })(jQuery);

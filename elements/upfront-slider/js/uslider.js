@@ -1,12 +1,10 @@
 
 (function ($) {
 
-var templates = [ 
-	'text!' + Upfront.data.uslider.template,
-	'text!' + Upfront.Settings.root_url + '/elements/upfront-slider/tpls/backend.html'
-];
-
-require(templates, function(sliderTpl, editorTpl){
+define([
+	'text!elements/upfront-slider/tpls/uslider.html',
+	'text!elements/upfront-slider/tpls/backend.html'
+], function(sliderTpl, editorTpl){
 
 //Slide Model
 var Uslider_Slide = Backbone.Model.extend({
@@ -65,7 +63,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.events = _.extend({}, this.events, {
 			'click .upfront-image-select-button': 'openImageSelector',
 			'click .upfront-icon-next': 'nextSlide',
-			'click .upfront-icon-prev': 'prevSlide'			
+			'click .upfront-icon-prev': 'prevSlide'
 		});
 
 		var slides = this.property('slides');
@@ -74,7 +72,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.slides.on('add remove reset change', this.slidesChange, this);
 
 		this.model.on('addRequest', this.openImageSelector, this);
-		
+
 		Upfront.Events.on('command:layout:save', this.saveResizing, this);
 		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
 	},
@@ -143,7 +141,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					height: me.cropHeight || slide.get('cropSize').height,
 					overflow: 'hidden'
 				})
-			;	
+			;
 		});
 
 		return $rendered.html();
@@ -171,10 +169,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			setTimeout(function(){
 				me.on_render();
 			}, 100);
-		}		
+		}
 	},
 
-	prepareSlider: function(){	
+	prepareSlider: function(){
 		var me = this,
 			wrapper = me.$('.uslide-image'),
 			controls = me.createControls(),
@@ -193,7 +191,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.$('.uslide-editable-text').ueditor({
 					autostart: false,
 					upfrontMedia: false,
-					upfrontImages: false 
+					upfrontImages: false
 				})
 				.on('start', function(){
 					var $this = $(this),
@@ -304,7 +302,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 				me.property('rightImageWidth', imageCols, false);
 
-				me.setTimer();				
+				me.setTimer();
 			}
 		});
 	},
@@ -362,7 +360,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	createControls: function() {
-		var me = this,		
+		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			multi = new Upfront.Views.Editor.InlinePanels.MultiControl()
 		;
@@ -371,7 +369,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			bottomOver: this.createControl('bottomOver', 'Over image, bottom'),
 			topCover: this.createControl('topCover', 'Covers image, top'),
 			middleCover: this.createControl('middleCover', 'Covers image, middle'),
-			bottomCover: this.createControl('bottomCover', 'Covers image, bottom'),	
+			bottomCover: this.createControl('bottomCover', 'Covers image, bottom'),
 			above: this.createControl('above', 'Above the image'),
 			below: this.createControl('below', 'Below the image'),
 			right: this.createControl('right', 'At the right'),
@@ -464,9 +462,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			sizer = this.slides.length ? this.$('.uslider') : this.$('.upfront-object-content'),
 			selectorOptions = {
 				multiple: true,
-				preparingText: 'Preparing images',				
+				preparingText: 'Preparing images',
 				customImageSize: {
-					width: sizer.width(), 
+					width: sizer.width(),
 					height: sizer.height()
 				}
 			}
@@ -475,7 +473,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(e)
 			e.preventDefault();
 
-		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){			
+		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 			me.addSlides(images);
 			Upfront.Views.Editor.ImageSelector.close();
 		});
@@ -587,12 +585,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				img.css({'width': wrapperSize.width, 'height': 'auto'}); // Changed
 			else
 				img.css({'height': wrapperSize.height, 'width': 'auto'});
-			
+
 		}
 		else{
 			img.css({height: imgSize.height, width: imgSize.width});
 		}
-		
+
 		if(wrapperSize.width > imgSize.width - position.left)
 			img.css({left:'auto', right: 0});
 		else
@@ -693,7 +691,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				multiple: false,
 				preparingText: 'Preparing slides'
 			};
-			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){			
+			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 				me.addSlides(images);
 
 				var index = me.slides.indexOf(slide);
@@ -706,7 +704,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				Upfront.Views.Editor.ImageSelector.close();
 			});
 		}
-		
+
 		e.preventDefault();
 		Upfront.Views.Editor.ImageEditor.open(editorOpts)
 			.done(function(result){
@@ -780,7 +778,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.saveSlideLink(e);
 			})
 			.on('click', '.ugallery-change-link-post', function(ev){
-				me.slideLinkChanged(e);				
+				me.slideLinkChanged(e);
 			})
 		;
 
@@ -790,7 +788,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	slideLinkChanged: function(e){
 		var me = this,
 			val = $('#ugallery-tooltip').find('input[name=ugallery-image-link]:checked').val(),
-			slideId = $('#ugallery-tooltip').find('#uslider-slide-id').val() 
+			slideId = $('#ugallery-tooltip').find('#uslider-slide-id').val()
 		;
 
 		if(val == 'external'){
@@ -837,7 +835,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.slides.get(slideId).set({urlType: 'original', url: ''});
 
 		this.closeTooltip();
-		return this.render();		
+		return this.render();
 	},
 
 	openTooltip: function(content, element){
@@ -877,7 +875,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		this.$el.addClass('tooltip-open');
 
-		Upfront.Events.trigger("entity:settings:deactivate");	
+		Upfront.Events.trigger("entity:settings:deactivate");
 	},
 
 	closeTooltip: function(){
@@ -885,7 +883,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		tooltip.hide().trigger('closed');
 		setTimeout(function(){
 			tooltip.remove();
-		}, 100);	
+		}, 100);
 	},
 
 
@@ -901,7 +899,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 		return props;
 	},
-	
+
 	/*
 	Shorcut to set and get model's properties.
 	*/
@@ -954,7 +952,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 				ui.item.addClass('uslider-is-dragged');
 			},
 			stop: function(event, ui) {
-				// When the drag stops we record the list of IDs into our array for use later. 
+				// When the drag stops we record the list of IDs into our array for use later.
 				var slideId = ui.item.attr('rel'),
 					newPosition = me.getSlidePosition(slideId),
 					slide = false,
@@ -964,7 +962,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 					slides.remove(slideId, {silent:true});
 					me.slides.add(slide, {at: newPosition});
 				}
-			}			
+			}
 		});
 	},
 
@@ -1018,8 +1016,8 @@ var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * We're instantiating a module with slider entity (object), and add it to the workspace.
 	 */
 	add_element: function () {
-		var object = new USliderModel(), 
-			module = new Upfront.Models.Module({ 
+		var object = new USliderModel(),
+			module = new Upfront.Models.Module({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
@@ -1028,7 +1026,7 @@ var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{"name": "row", "value": 17}
 				],
 				"objects": [
-					object 
+					object
 				]
 			})
 		;
@@ -1037,7 +1035,7 @@ var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	}
 });
 
-var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({	
+var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	/**
 	 * Bootstrap the object - populate the internal
 	 * panels array with the panel instances we'll be showing.
@@ -1178,7 +1176,7 @@ var SlidesPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 // Now, to tie it all up and expose to the Subapplication.
 
 Upfront.Application.LayoutEditor.add_object("USlider", {
-	"Model": USliderModel, 
+	"Model": USliderModel,
 	"View": USliderView,
 	"Element": USliderElement,
 	"Settings": USliderSettings

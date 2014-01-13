@@ -1,5 +1,7 @@
 (function ($) {
 
+define(function() {
+
 var UcommentModel = Upfront.Models.ObjectModel.extend({
 	/**
 	 * The init function is called after the contructor and Model intialize.
@@ -20,12 +22,12 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 
 		this.constructor.__super__.initialize.call(this, [options]);
 	},
-	
+
 	get_content_markup: function () {
 		var comment_data = $(document).data('upfront-comment-' + _upfront_post_data.post_id);
 		return comment_data ? comment_data : 'Loading';
 	},
-	
+
 	on_render: function () {
 		if ( !$(document).data('upfront-comment-' + _upfront_post_data.post_id) )
 			this._get_comment_markup();
@@ -33,7 +35,7 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 		discussion_settings.render();
 		this.$el.append(discussion_settings.$el);
 	},
-	
+
 	_get_comment_markup: function () {
 		var me = this;
 		Upfront.Util.post({"action": "ucomment_get_comment_markup", "data": JSON.stringify({"post_id": _upfront_post_data.post_id})})
@@ -498,7 +500,7 @@ var PagedCommentsField = BooleanSubfieldField.extend({
 });
 
 var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	
+
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-comment');
 		this.$el.html('Comment');
@@ -506,7 +508,7 @@ var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	add_element: function () {
 		var object = new UcommentModel(),
-			module = new Upfront.Models.Module({ 
+			module = new Upfront.Models.Module({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
@@ -526,7 +528,7 @@ var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 if (_upfront_post_data.post_id) {
 	Upfront.Application.LayoutEditor.add_object("Ucomment", {
-		"Model": UcommentModel, 
+		"Model": UcommentModel,
 		"View": UcommentView,
 		"Element": UcommentElement
 	});
@@ -535,4 +537,5 @@ if (_upfront_post_data.post_id) {
 Upfront.Models.UcommentModel = UcommentModel;
 Upfront.Views.UcommentView = UcommentView;
 
+});
 })(jQuery);

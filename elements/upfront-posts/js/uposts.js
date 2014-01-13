@@ -1,5 +1,7 @@
 (function ($) {
 
+define(function() {
+
 	var _initial = {};
 
 
@@ -77,7 +79,7 @@
 					fixed: true
 				})
 			;
-				
+
 			_.each(props, function(prop){
 				data[prop.name] = prop.value;
 			});
@@ -85,8 +87,8 @@
 
 			loading.render();
 			$('#page').append(loading.$el);
-			
-			if (window._upfront_get_current_query) 
+
+			if (window._upfront_get_current_query)
 				data.query = _upfront_get_current_query();
 			else
 				data.query = {};
@@ -182,7 +184,7 @@
 	});
 
 	/**
-	 * Sidebar element class - this let you inject element into 
+	 * Sidebar element class - this let you inject element into
 	 * sidebar elements panel and allow drag and drop element adding
 	 * @type {Upfront.Views.Editor.Sidebar.Element}
 	 */
@@ -204,7 +206,7 @@
 			var object = new UpostsModel(), // Instantiate the model
 				// Since search entity is an object,
 				// we don't need a specific module instance -
-				// we're wrapping the search entity in 
+				// we're wrapping the search entity in
 				// an anonymous general-purpose module
 				module = new Upfront.Models.Module({
 					"name": "",
@@ -238,7 +240,7 @@
 	 */
 	var UpostsQuerySettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		/**
-		 * Initialize the view, and populate the internal 
+		 * Initialize the view, and populate the internal
 		 * setting items array with Item instances.
 		 */
 		initialize: function () {
@@ -408,7 +410,7 @@
 	 */
 	var UpostsPostSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		/**
-		 * Initialize the view, and populate the internal 
+		 * Initialize the view, and populate the internal
 		 * setting items array with Item instances.
 		 */
 		initialize: function () {
@@ -523,4 +525,5 @@
 
 
 
+});
 })(jQuery);

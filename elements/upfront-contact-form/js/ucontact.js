@@ -1,8 +1,6 @@
 (function($) {
 
-var templates = [ 'text!' + Upfront.data.ucontact.template ];
-
-require(templates, function(tpl){
+define(['text!elements/upfront-contact-form/templates/ucontact.html'], function(tpl){
 
 /**
  * Define the model for Upfront Contact form, initializing the properities
@@ -100,7 +98,7 @@ var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
     priority: 140,
 	/**
 	 * Print the draggable element into the sidebar panel.
-	 * @return {null} 
+	 * @return {null}
 	 */
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-contact');
@@ -158,8 +156,8 @@ var OptionalField = Upfront.Views.Editor.Field.Checkboxes.extend({
 			related.show();
 		else
 			related.hide();
-		console.log(related);		
-		$('#settings').height(this.panel.$('.upfront-settings_panel').outerHeight());	
+		console.log(related);
+		$('#settings').height(this.panel.$('.upfront-settings_panel').outerHeight());
 	}
 });
 
@@ -192,7 +190,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 				new SettingsItem({
 					title: 'General setup',
 					model: this.model,
-					fields: [					
+					fields: [
 						new Fields.Email({
 							model: this.model,
 							property: 'form_email_to',
@@ -209,7 +207,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								}
 							]
 						}),
-						new Fields.Text({									
+						new Fields.Text({
 							model: this.model,
 							property: 'form_title',
 							label: 'Contact form title:'
@@ -225,11 +223,11 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							property: 'form_validate_when',
 							values: [
 								{
-									label: 'Each field is filled out', 
+									label: 'Each field is filled out',
 									value: 'field'
 								},
 								{
-									label: 'Once send field button is clicked', 
+									label: 'Once send field button is clicked',
 									value: 'submit'
 								}
 							]
@@ -291,12 +289,12 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								console.log(related);
 							}
 						}),
-						new Fields.Text({									
+						new Fields.Text({
 							model: this.model,
 							property: 'form_subject_label',
 							label: 'Subject Field text:'
 						}),
-						new Fields.Text({									
+						new Fields.Text({
 							model: this.model,
 							property: 'form_default_subject',
 							label: 'Default subject:'
@@ -357,7 +355,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 // Now, to tie it all up and expose to the Subapplication.
 
 Upfront.Application.LayoutEditor.add_object("Ucontact", {
-	"Model": UcontactModel, 
+	"Model": UcontactModel,
 	"View": UcontactView,
 	"Element": UcontactElement,
 	"Settings": UcontactSettings

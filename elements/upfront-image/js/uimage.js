@@ -1,13 +1,10 @@
 (function ($) {
 
-var	templates = [
-		'text!' + Upfront.data.uimage.template, 
+define([
+		'text!elements/upfront-image/tpl/image.html',
 		'text!elements/upfront-image/tpl/image_editor.html',
 		'text!elements/upfront-gallery/tpl/ugallery_editor.html'
-	]
-;
-
-require(templates, function(imageTpl, editorTpl, galleryTpl) {
+	], function(imageTpl, editorTpl, galleryTpl) {
 var UimageModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.uimage.defaults);
@@ -41,7 +38,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	cropTimer: false,
 	cropTimeAfterResize: 10000,
 
-	
+
 	initialize: function(){
 		var me = this;
 		if(! (this.model instanceof UimageModel)){
@@ -114,7 +111,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	createControls: function() {
-		var me = this,		
+		var me = this,
 			panel = new ControlPanel(),
 			multi = new MultiControl()
 		;
@@ -300,7 +297,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		return types;
 	},
 
-	editCaption: function(e){		
+	editCaption: function(e){
 		var me = this,
 			captionEl = $('#' + this.property('element_id')).find('.wp-caption')
 		;
@@ -458,10 +455,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			;
 			// Let's load the full image to improve resizing
 			render.find('.upfront-image-container').css({
-				overflow: 'hidden', 
+				overflow: 'hidden',
 				position: 'relative',
 				width: '100%',
-				height: elementSize.height 
+				height: elementSize.height
 			});
 
 			if(this.property('stretch')){
@@ -484,7 +481,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					})
 				;
 			}
-			
+
 			rendered = render.html();
 		}
 
@@ -520,7 +517,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.controls.setWidth(container.width());
 			me.controls.render();
 			container.parent().append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
-			me.controls.delegateEvents();			
+			me.controls.delegateEvents();
 			me.$el.removeClass('upfront-editing');
 
 			me.editCaption();
@@ -552,7 +549,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 						if (files.length && input.length){
 							input[0].files = files;
 			            }
-			        }					
+			        }
 				})
 				.on('dragenter', function(e){
 					e.preventDefault();
@@ -562,7 +559,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				.on('dragleave', function(e){
 					e.preventDefault();
 					e.stopPropagation();
-					$(this).removeClass('uimage-dragenter');					
+					$(this).removeClass('uimage-dragenter');
 				})
 			;
 			this.$('.upfront-image').append(dropOverlay);
@@ -641,12 +638,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					img.css({'width': newElementSize.width, 'height': 'auto'}); // Changed
 				else
 					img.css({'height': newElementSize.height, 'width': 'auto'});
-				
+
 			}
 			else{
 				img.css({height: imgSize.height, width: imgSize.width});
 			}
-			
+
 			if(newElementSize.width > imgSize.width - position.left)
 				img.css({left:'auto', right: 0});
 			else
@@ -674,7 +671,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.property('rotation'),
 			me.temporaryProps.size,
 			crop
-		).done(function(results){				
+		).done(function(results){
 			var imageData = results.data.images[imageId];
 
 			if(imageData.error){
@@ -719,7 +716,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		me.elementSize = {
 			width: resizer.width() - 32,
-			height: resizer.height() - 30 
+			height: resizer.height() - 30
 		};
 
 		if(this.property('caption_position') == 'below_image')
@@ -745,7 +742,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				sizes = image;
 				me.imageId = id;
 			});
-			
+
 			var	imageInfo = {
 					src: sizes.medium ? sizes.medium[0] : sizes.full[0],
 					srcFull: sizes.full[0],
@@ -759,7 +756,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			;
 			$('<img>').attr('src', imageInfo.srcFull).load(function(){
 				Upfront.Views.Editor.ImageSelector.close();
-				me.openEditor(true, imageInfo);					
+				me.openEditor(true, imageInfo);
 			});
 		});
 	},
@@ -789,7 +786,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var me = this;
 		if(this.property('image_status') == 'ok' && this.property('image_id'))
 			return this.openEditor();
-		
+
 		Upfront.Views.Editor.notify('Image editing it is only suitable for images uploaded to WordPress', 'error');
 	},
 
@@ -832,7 +829,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
-	}    
+	}
 }));
 
 var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
@@ -896,7 +893,7 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					})
 				]
 			}),
-			
+
 			new SettingsItem({
 				title: 'Show Caption:',
 				fields: [
@@ -935,7 +932,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			},
 			me = this,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
-			Fields = Upfront.Views.Editor.Field		
+			Fields = Upfront.Views.Editor.Field
 		;
 		this.model.on('doit', render_all, this);
 		this.settings = _([
@@ -948,19 +945,19 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						className: 'field-when_clicked upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
 							{
-								label: 'Do nothing', 
+								label: 'Do nothing',
 								value: 'do_nothing'
 							},
 							{
-								label: 'Open link', 
+								label: 'Open link',
 								value: 'open_link'
 							},
 							{
-								label: 'Scroll to anchor', 
+								label: 'Scroll to anchor',
 								value: 'scroll_to_anchor'
 							},
 							{
-								label: 'Show larger image', 
+								label: 'Show larger image',
 								value: 'show_larger_image'
 							}
 						]
@@ -969,7 +966,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						property: 'image_link',
 						label: 'Image link URL',
-						className: 'upfront-field-wrap upfront-field-wrap-text image-link-field'	
+						className: 'upfront-field-wrap upfront-field-wrap-text image-link-field'
 					}),
 					new Fields.Anchor({
 						model: this.model,
@@ -1093,7 +1090,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		} else {
 			this.$('.image-anchor-field').hide();
 		}
-		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);		
+		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);
 	},
 	toggleCaptionSettings: function(){
 		if(this.$('input[name=caption_position]:checked').val() == 'over_image')
@@ -1101,7 +1098,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		else
 			this.$('.over_image_field').hide();
 
-		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);	
+		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);
 	},
 	setFieldEvents: function() {
 		this.toggleLink();
@@ -1124,7 +1121,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
  * 	 	rotation: (optional:[0]) The angle of rotation of the image on the page relative to the original
  * 	 	align: (optional:['left']) alignment of the image (used if the image is smaller than the mask)
  * 	 	setImageSize: (optional:[false]) Boolean to tell the editor to calculates an initial size for the image. Default false.
- * 	 	buttons: (optional:[[]]) An array with extra buttons for the editor. Every button is an object with 
+ * 	 	buttons: (optional:[[]]) An array with extra buttons for the editor. Every button is an object with
  * 	 		'id': HTML id for the button
  * 	 		'text': Tooltip text for the button
  * 	 		'callback': A function to be called when clicked.
@@ -1215,7 +1212,7 @@ var ImageEditor = Backbone.View.extend({
 			},
 			maskSize = {
 				width: parseInt(options.maskSize.width) + this.bordersWidth,
-				height: parseInt(options.maskSize.height) + this.bordersWidth			
+				height: parseInt(options.maskSize.height) + this.bordersWidth
 			}
 		;
 
@@ -1281,7 +1278,7 @@ var ImageEditor = Backbone.View.extend({
 			this.resetImage(false, false);
 		}
 
-		return this.response.promise();		
+		return this.response.promise();
 	},
 
 	setOptions: function(options) {
@@ -1313,9 +1310,9 @@ var ImageEditor = Backbone.View.extend({
 		;
 		if(results.imageId){
 			this.saveImageEdition(
-				results.imageId, 
-				results.rotation, 
-				results.imageSize, 
+				results.imageId,
+				results.rotation,
+				results.imageSize,
 				{
 					top: results.imageOffset.top,
 					left: results.imageOffset.left,
@@ -1389,7 +1386,7 @@ var ImageEditor = Backbone.View.extend({
 		var rotation = this.rotation,
 			img = this.$('.uimage-img'),
 			rotationClass = '',
-			size = {width: img.width(), height: img.height()},		
+			size = {width: img.width(), height: img.height()},
 			canvas = this.$('#uimage-canvas'),
 			handler = this.$('#uimage-drag-handle')
 		;
@@ -1409,11 +1406,11 @@ var ImageEditor = Backbone.View.extend({
 
 		this.setRotation(rotation);
 
-		if(this.invert){			
+		if(this.invert){
 			canvas.css({
 				height: size.width,
 				width: size.height
-			});		
+			});
 			handler.css({
 				height: size.width,
 				width: size.height
@@ -1425,7 +1422,7 @@ var ImageEditor = Backbone.View.extend({
 			//$('#uimage-drag-handle').resizable('option', 'aspectRatio', size.height / size.width);
 		}
 		else{
-			canvas.css(size);		
+			canvas.css(size);
 			handler.css(size);
 			img.css({
 				height: '100%',
@@ -1529,7 +1526,7 @@ var ImageEditor = Backbone.View.extend({
 	},
 
 	addGridLines: function(initialPoint, maskHeight){
-		var step = 15,			
+		var step = 15,
 			height = maskHeight - this.bordersWidth,
 			current = this.bordersWidth / 2
 		;
@@ -1571,7 +1568,7 @@ var ImageEditor = Backbone.View.extend({
 		;
 
 		this.mode = mode;
-		if(constraints){		
+		if(constraints){
 			if(this.mode == 'horizontal' || this.mode == 'small')
 				$('#uimage-drag-handle').draggable('option', {snap: '.gridline', snapMode: 'outer', snapTolerance: 6});
 			else
@@ -1644,7 +1641,7 @@ var ImageEditor = Backbone.View.extend({
 			initPoint = mask.offset(),
 			limits = {
 				minWidth: 0,
-				minHeight: 0			
+				minHeight: 0
 			}
 		;
 		if(this.mode == 'big'){
@@ -1693,7 +1690,7 @@ var ImageEditor = Backbone.View.extend({
 		this.selectMode(size, true);
 
 		this.centerImage(true);
-	
+
 		this.setResizingLimits();
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 	},
@@ -1783,7 +1780,7 @@ var ImageEditor = Backbone.View.extend({
 			pivot, factor, invertPivot,
 			stretchImage = !!stretch
 		;
-		
+
 		//this.fullSize = this.getImageFullSize();
 
 		pivot = maskSize.width / maskSize.height < this.fullSize.width / this.fullSize.height ? 'width' : 'height';
@@ -1867,7 +1864,7 @@ var ImageEditor = Backbone.View.extend({
 		;
 
 		this.$('#image-edit-button-align').removeClass('align-left align-right align-center').addClass('align-' + direction);
-		
+
 		if(direction != 'left' && direction != 'center' && direction != 'right')
 			return false;
 		this.align = direction;
@@ -1974,7 +1971,7 @@ var ImageSelector = Backbone.View.extend({
 							});
 						}
 					}
-					else						
+					else
 						me.openProgress(function(){
 							me.uploadImage();
 						});
@@ -2001,7 +1998,7 @@ var ImageSelector = Backbone.View.extend({
 
 	openSelector: function(){
 		var me = this;
-		this.openOverlaySection(this.selectorTpl, {}, function(overlay){			
+		this.openOverlaySection(this.selectorTpl, {}, function(overlay){
 
 			$('#upront-image-placeholder')
                 .on('dragenter', function(e){
@@ -2033,7 +2030,7 @@ var ImageSelector = Backbone.View.extend({
 	                    	input[0].files = files;
 	                    }
                     }
-                    
+
                 })
             ;
             me.resizeOverlay();
@@ -2101,13 +2098,13 @@ var ImageSelector = Backbone.View.extend({
 				$('#upfront-image-overlay').remove();
 			})
 		;
-			
+
 		$('html').css({
 			overflow: this.bodyOverflow ? this.bodyOverflow : 'auto',
 			height: 'auto',
 			width: 'auto'
 		});
-		
+
 		$('body').removeClass('upfront-image-upload-open');
 
 		if(this.reopenSettings){
@@ -2355,7 +2352,7 @@ var CollapsedMultiControl = MultiControl.extend({
 		}
 		this.selected = 'collapsedControl';
 
-		this.constructor.__super__.render.call(this, arguments);	
+		this.constructor.__super__.render.call(this, arguments);
 	},
 
 	selectItem: function(e){
@@ -2377,7 +2374,7 @@ var CollapsedMultiControl = MultiControl.extend({
 			}
 			else {
 				this.render();
-				this.trigger('select', foundKey);				
+				this.trigger('select', foundKey);
 			}
 		}
 	},
@@ -2412,7 +2409,7 @@ var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
 			collapsedControl.icon = 'collapsedControl';
 			collapsedControl.tooltip = 'More tools';
 			collapsedControl.position = 'left';
-			
+
 			this.items = _([items[0], collapsedControl, items[items.length - 1]]);
 			return;
 		}
@@ -2439,7 +2436,7 @@ Upfront.Views.Editor.InlinePanels.Control = Control;
 Upfront.Views.Editor.InlinePanels.ControlPanel = ControlPanel;
 
 Upfront.Application.LayoutEditor.add_object("Uimage", {
-	"Model": UimageModel, 
+	"Model": UimageModel,
 	"View": UimageView,
 	"Element": ImageElement,
 	"Settings": ImageSettings

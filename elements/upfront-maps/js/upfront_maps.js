@@ -39,7 +39,7 @@ function init (postponed) {
 		});
 	}
 */
-require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'css/edit.css'], function (_ctx, maps_style) {
+define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], function (_ctx, maps_style) {
 
 	$("head").append("<style>" + maps_style + "</style>");
 
@@ -50,7 +50,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 
 			DEFAULTS.center = properties.map_center; // Keep the center position as set on PHP side
 			if (navigator && navigator.geolocation) delete(properties.map_center); // ... but do NOT initialize it as a model property
-			
+
 			properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
 			this.init_properties(properties);
 		}
@@ -89,7 +89,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			if(! (this.model instanceof MapModel)){
 				this.model = new MapModel({properties: this.model.get('properties')});
 			}
-			
+
 			var options = _.extend({}, this.options);
 
 			this.options.field = new Upfront.Views.Editor.Field.Text(options);
@@ -289,7 +289,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			//	create the ContextMenuOptions object
 			var contextMenuOptions = {};
 			contextMenuOptions.classNames={menu:'ufm-context-menu', menuSeparator:'context_menu_separator'};
-			
+
 			//	create an array of ContextMenuItem objects
 			var menuItems=[];
 			menuItems.push({className:'ufm-context-menu-item', eventName:'center_map', label:'Center Map Here'});
@@ -303,7 +303,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 			google.maps.event.addListener(this.map, 'rightclick', function (mouseEvent) {
 				contextMenu.show(mouseEvent.latLng);
 			});
-			
+
 			//	listen for the ContextMenu 'menu_item_selected' event
 			var me = this;
 			google.maps.event.addListener(contextMenu, 'menu_item_selected', function(latLng, eventName){
@@ -323,13 +323,13 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 		init_marker_context_menu: function (marker) {
 			var contextMenuOptions={};
 			contextMenuOptions.classNames={menu:'ufm-context-menu', menuSeparator:'context_menu_separator'};
-			
+
 			//	create an array of ContextMenuItem objects
 			var menuItems=[];
 			menuItems.push({className:'ufm-context-menu-item', eventName:'remove_marker', label:'Remove Marker'});
 			menuItems.push({className:'ufm-context-menu-item', eventName:'change_icon', label:'Change Icon'});
 			contextMenuOptions.menuItems=menuItems;
-			
+
 			// create next context menu based on marker state
 			var contextMenu = new ContextMenu(this.map, contextMenuOptions);
 
@@ -463,21 +463,21 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 				});
 
 				$('.marker-imgs', t).html(all_imgs);
-				
+
 				// on image click set icon img src
 				$('.marker-imgs img', t).on('click dblclick', function(){
 					var contain = $(this).parent(),
-						v = contain.hasClass('ufm-current') ? 
+						v = contain.hasClass('ufm-current') ?
 								'' :
 								$(this).attr('src');
 
 					$('div', contain.parent()).removeClass('ufm-current');
-					
+
 					if(v!==''){
 						contain.addClass('ufm-current');
 					}
 					url_textarea.val(v).trigger('change');
-					
+
 				});
 
 				// close window on icon dbl click, or OK btn click
@@ -489,7 +489,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 				});
 
 				var url_textarea = $('.marker-url [name="marker-url"]', t);
-				
+
 				var a = this.marker.getIcon(),
 					src = typeof a === 'string' ? a : '';
 
@@ -497,7 +497,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 				url_textarea.val(src);
 
 				url_textarea.click(function(){this.focus();});
-				
+
 				url_textarea.on('input propertychange change', function(){
 					var url = $(this).val(),
 						url = url === '' ? null : url;
@@ -569,7 +569,7 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 
 		add_element: function () {
 			var object = new MapModel(),
-				module = new Upfront.Models.Module({ 
+				module = new Upfront.Models.Module({
 					"name": "",
 					"properties": [
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
@@ -723,10 +723,10 @@ require(['maps_context_menu', 'text!' + Upfront.data.upfront_maps.root_url + 'cs
 
 	if (!!postponed) {
 		Upfront.Events.trigger("elements:requirements:async:added");
-		Upfront.Application.layout_view = new Upfront.Views.Layout({
-			"model": Upfront.Application.layout,
-			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
-		});
+		// Upfront.Application.layout_view = new Upfront.Views.Layout({
+			// "model": Upfront.Application.layout,
+			// "el": $(Upfront.Settings.LayoutEditor.Selectors.main)
+		// });
 	}
 
 });

@@ -1,9 +1,8 @@
 (function ($) {
 
-  var templates = [
-    'text!' + Upfront.data.uyoutube.template ];
-
-  require(templates, function(youtubeTpl) {
+  define([
+    'text!elements/upfront-youtube/tpl/youtube.html'
+    ], function(youtubeTpl) {
     var UyoutubeModel = Upfront.Models.ObjectModel.extend({
       init: function () {
         var properties = _.clone(Upfront.data.uyoutube.defaults);

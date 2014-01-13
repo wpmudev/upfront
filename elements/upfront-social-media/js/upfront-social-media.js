@@ -1,10 +1,8 @@
 (function ($) {
 
-    var templates = [
+    define([
             'text!elements/upfront-social-media/tpl/social-back.html'
-        ]
-    ;
-    require(templates, function(backTpl) {
+        ], function(backTpl) {
 
     var GlobalSettingsPanel = Backbone.View.extend({
         popup: false,

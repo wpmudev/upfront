@@ -1,10 +1,7 @@
 ;(function($){
 
-var hackedRedactor = false,
-	templates = ['text!scripts/redactor/ueditor-templates.html']
-;
-
-require(templates, function(tpl){
+define(['text!scripts/redactor/ueditor-templates.html'], function(tpl){
+var hackedRedactor = false;
 
 var UeditorEvents = _.extend({}, Backbone.Events);
 

@@ -1,4 +1,6 @@
 (function ($) {
+define(function() {
+
 
         var NavigationModel = Upfront.Models.ObjectModel.extend({
             init: function () {
@@ -24,7 +26,7 @@
             model:NavigationModel,
             toolTip : _.template('<div class="nav_tooltip upfront-ui" style="display: none;"><a class="edit_url" href="#"><i class="upfront-field-icon upfront-field-icon-navigation-link"></i>edit URL</a><a class="visit_page" href="#"><i class="upfront-field-icon upfront-field-icon-navigation-open"></i>visit page</a></div>'),
             initialize:function(){
-                
+
                 if(! (this.model instanceof NavigationModel)){
                     this.model = new NavigationModel({properties: this.model.get('properties')});
                 }
@@ -1482,4 +1484,5 @@
         Upfront.Models.NavigationModel = NavigationModel;
         Upfront.Views.NavigationView = NavigationView;
 
+});
 })(jQuery);

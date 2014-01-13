@@ -1,7 +1,7 @@
 (function ($) {
-require([
-	'text!' + Upfront.data.upfront_login.root_url + 'css/edit.css', 
-	'text!' + Upfront.data.upfront_login.root_url + 'css/public.css'
+define([
+	'text!elements/upfront-login/css/edit.css',
+	'text!elements/upfront-login/css/public.css'
 ], function (editor_style, public_style) {
 
 	$("head").append("<style>" + editor_style + "</style>");
@@ -43,7 +43,7 @@ require([
 					properties: options.properties
 				}).done(function (response) {
 					me.markup = response.data;
-					Upfront.Views.ObjectView.prototype.render.call(me); 
+					Upfront.Views.ObjectView.prototype.render.call(me);
 				});
 			}
 			Upfront.Views.ObjectView.prototype.render.call(this);
@@ -302,9 +302,9 @@ require([
 		},
 
 		add_element: function () {
-			
+
 			var object = new LoginModel(),
-				module = new Upfront.Models.Module({ 
+				module = new Upfront.Models.Module({
 					name: "",
 					properties: [
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},

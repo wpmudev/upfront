@@ -1,4 +1,5 @@
 (function ($) {
+  define(function() {
     /**
      * Define the model - initialize properties to their default values.
      * @type {Upfront.Models.ObjectModel}
@@ -100,7 +101,7 @@
             var me = this,
 
 			fbUrl = this.model.get_property_value_by_name('facebook_url');
-		
+
 			if(!fbUrl || fbUrl=='')
             	fbUrl = this.getGlobalFBUrl();
 
@@ -201,7 +202,7 @@
 
         initialize: function () {
             this.panel = new Upfront.Views.Editor.Settings.Panel({
-					
+
                     model: this.model,
                     label: "Layout Style",
                     title: "Layout Style settings",
@@ -255,7 +256,7 @@
 // ----- Bringing everything together -----
 // The definitions part is over.
 // Now, to tie it all up and expose to the Subapplication.
-    
+
     Upfront.Application.LayoutEditor.add_object("LikeBox", {
         "Model": LikeBoxModel,
         "View": LikeBoxView,
@@ -265,5 +266,7 @@
 
     Upfront.Models.LikeBoxModel = LikeBoxModel;
     Upfront.Views.LikeBoxView = LikeBoxView;
+
+  });
 
 })(jQuery);

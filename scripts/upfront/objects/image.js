@@ -1,7 +1,8 @@
 (function ($) {
+define(function() {
 var ImageModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-	
+
 		this.init_property("type", "ImageModel");
 		this.init_property("view_class", "ImageView");
 		this.init_property("element_id", Upfront.Util.get_unique_id("image-object"));
@@ -102,11 +103,11 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				label: 'Include image caption',
 				value: this.model.get_property_value_by_name('include_image_caption'),
 				events:
-					{ 
+					{
 					  'click #include_image_caption': 'do',
 					}
 				,
-				do: function () { 
+				do: function () {
 					var value = this.$el.find('#include_image_caption').is(':checked') ? 'yes' : 'no';
 					if(value == 'yes'){
 						$('#field_image_caption').show();
@@ -175,11 +176,11 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					}
 				],
 				events:
-					{ 
+					{
 					  'click input:radio[name=when_clicked]': 'do',
 					}
 				,
-				do: function () { 
+				do: function () {
 					var value = this.$el.find('input:radio[name=when_clicked]:checked').val();
 					//console.log(value);
 					if(value == 'open_link'){
@@ -259,7 +260,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					  'icon': '<i class="icon-th-large"></i>',
 					  'default': 'false'
 					}]
-				
+
 			})
 		]);
 	},
@@ -291,7 +292,7 @@ var Field = Upfront.Views.Editor.Settings.Item.extend({
 	render: function (){
 		this.$el.empty();
 		if(this.trigger_name)
-			if(this.model.get_property_value_by_name(this.trigger_name) != this.trigger_value)				
+			if(this.model.get_property_value_by_name(this.trigger_name) != this.trigger_value)
 				return false;
 		if(this.title){
 			this.wrap({
@@ -320,7 +321,7 @@ var Field_Input = Field.extend({
 		   	value: value,
 		}
 		var template = '<div id="field_{{name}}">{[ if (label) { ]}<label for="{{name}}">{{label}}</label> {[ } ]}<input type="text" name="{{name}}" value="{{value}}" /></div>';
-		var render =  _.template(template, data);	
+		var render =  _.template(template, data);
 		return render;
 	}
 })
@@ -335,7 +336,7 @@ var Field_Textarea = Field.extend({
 		   	icon : this.icon,
 		}
 		var template = '<div id="field_{{name}}">{[ if (label) { ]}<label for="{{name}}">{{label}}</label> {[ } ]}<textarea name="{{name}}">{{value}}</textarea></div>';
-		var render =  _.template(template, data);	
+		var render =  _.template(template, data);
 		return render;
 	}
 })
@@ -356,7 +357,7 @@ var Field_Checkbox = Field.extend({
 	get_value: function() {
 		var value = this.$el.find('input[name="'+this.name+'"]').is(':checked') ? 'yes' : 'no';
 		return value;
-	
+
 	}
 })
 var Field_Radio = Field.extend({
@@ -364,11 +365,11 @@ var Field_Radio = Field.extend({
 		var value = this.model.get_property_value_by_name(this.name);
 		var render = '<div id="field_'+this.name+'">';
 		var template = '<input type="radio" name="{{name}}" id="{{name}}" value="{{value}}" {[ if(typeof selected != "undefined" && selected) { ]} checked  {[ } ]}> <span class="radio-button-label">{{icon}} {[ if (label) { ]}<label for="{{name}}">{{label}}</label> {[ } ]}</span>';
-		
+
 		_.each(this.options, function (item) {
 			if(!this.value && item.default == 'true'){ item.selected = true; }
 			else if (value == item.value){ item.selected = true; }
-		
+
 			render += _.template(template, item);
 		});
 		render += "</div>";
@@ -385,7 +386,7 @@ var Field_Radio = Field.extend({
 
 
 Upfront.Application.LayoutEditor.add_object("Image", {
-	"Model": ImageModel, 
+	"Model": ImageModel,
 	"View": ImageView,
 	"Element": ImageElement,
 	"Settings": ImageSettings
@@ -396,4 +397,5 @@ Upfront.Views.ImageView = ImageView;
 
 
 
+});
 })(jQuery);

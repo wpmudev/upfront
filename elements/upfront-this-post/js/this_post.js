@@ -1,4 +1,5 @@
 (function ($) {
+define(function() {
 /**
  * Define the model - initialize properties to their default values.
  * @type {Upfront.Models.ObjectModel}
@@ -66,7 +67,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				loading: "Refreshing post ...",
 				done: "Here we are!",
 				fixed: false
-			})			
+			})
 		;
 
 		if(loading){
@@ -101,7 +102,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 	updateEditor: function(node){
 		var me = this;
-		
+
 		if(this.editor)
 			return this.editor.updateElement(node);
 
@@ -155,7 +156,7 @@ var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		var object = new ThisPostModel(), // Instantiate the model
 			// Since search entity is an object,
 			// we don't need a specific module instance -
-			// we're wrapping the search entity in 
+			// we're wrapping the search entity in
 			// an anonymous general-purpose module
 			module = new Upfront.Models.Module({
 				"name": "",
@@ -221,7 +222,7 @@ var Settings = Upfront.Views.Editor.Settings.Settings.extend({
 				new Settings_PostPanel({model: this.model})
 			]);
 		},
-		
+
 		get_title: function () {
 			return "Post settings";
 		}
@@ -240,5 +241,7 @@ Upfront.Models.ThisPostModel = ThisPostModel;
 Upfront.Views.ThisPostView = ThisPostView;
 
 Upfront.data.thisPost.PostDataPanel = Settings_PostPanel;
-	
+
+
+});
 })(jQuery);

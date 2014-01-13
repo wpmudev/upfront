@@ -3,6 +3,8 @@
     appDir: ".",
     dir: "../build",
     paths: {
+        "scripts": '.',
+        "elements": "../elements",
         "upfront-data": "empty:", // Makes builder ignore this i.e. it will not try to include it into optimization.
         "models": "upfront/upfront-models",
         "views": "upfront/upfront-views",
@@ -33,15 +35,13 @@
         "uyoutube": "../elements/upfront-youtube/js/uyoutube",
         "maps_context_menu": "../elements/upfront-maps/js/ContextMenu",
         "redactor": "redactor/redactor",
-        "ueditor": "redactor/ueditor"
+        "ueditor": "redactor/ueditor",
+        "upfront_slider": "../elements/upfront-slider/js/uslider"
     },
-    // shim: {
-      // "main": {
-        // "deps": ["util"]
-      // }
-    // },
-    optimize: "none",
-    fileExclusionRegExp: /ckeditor/,
+    // optimize: "none", // in case you want to debug something uncomment this for unoptimized output.
+    fileExclusionRegExp: /ckeditor/, // exclude ckeeditor from build
+    removeCombined: true, // this affects build dir, it makes clearer what is in built main
+    findNestedDependencies: true, // we need this since we have nested require calls
     modules: [
       {
         name: "main"

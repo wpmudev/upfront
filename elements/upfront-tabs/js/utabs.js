@@ -1,9 +1,8 @@
 (function ($) {
 
-  var templates = [
-    'text!' + Upfront.data.utabs.template ];
-
-  require(templates, function(tabsTpl) {
+  define([
+    'text!elements/upfront-tabs/tpl/utabs.html'
+  ], function(tabsTpl) {
     var UtabsModel = Upfront.Models.ObjectModel.extend({
       init: function () {
         var properties = _.clone(Upfront.data.utabs.defaults);
@@ -253,7 +252,7 @@
 
         render_all = function(){
           this.settings.invoke('render');
-        }; 
+        };
         _.bindAll(this, 'onActiveTabColorChange', 'onInactiveTabColorChange', 'onActiveTabTextColorChange', 'onInactiveTabTextColorChange');
 
         this.model.on('doit', render_all, this);

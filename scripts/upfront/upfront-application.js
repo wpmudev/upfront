@@ -1,6 +1,12 @@
 (function ($) {
 
-define(function() {
+define(['models', 'views', 'editor_views', 'behaviors', 'upfront-data'], function (models, views, editor, behaviors, data) {
+  _.extend(Upfront, data);
+  Upfront.Events.trigger('data:ready');
+  _.extend(Upfront, models);
+  _.extend(Upfront, views);
+  _.extend(Upfront.Views, editor);
+  _.extend(Upfront, behaviors);
 
 var Subapplication = Backbone.Router.extend({
 	start: function () {
@@ -365,14 +371,6 @@ var Application = new (Backbone.Router.extend({
 		}
 
 		var app = this;
-		require(['models', 'views', 'editor_views', 'behaviors', 'upfront-data', 'media', 'content', 'spectrum', 'responsive', 'redactor', 'ueditor'], function (models, views, editor, behaviors, data) {
-			_.extend(Upfront, data);
-			Upfront.Events.trigger('data:ready');
-			_.extend(Upfront, models);
-			_.extend(Upfront, views);
-			_.extend(Upfront.Views, editor);
-			_.extend(Upfront, behaviors);
-
 			// Start loading animation
 			app.loading = new Upfront.Views.Editor.Loading({
 				loading: "Loading...",
@@ -388,11 +386,11 @@ var Application = new (Backbone.Router.extend({
 
 			app.create_sidebar();
 
-			require(Upfront.Settings.LayoutEditor.Requirements.entities, function (objects) {
+      require(["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "upfront-navigation", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "uwidget", "uyoutube"],
+        function(objects) {
 				_.extend(Upfront.Objects, objects);
 				app.load_layout(_upfront_post_data.layout);
 			});
-		});
 	},
 
 	stop: function () {

@@ -1,7 +1,6 @@
 (function ($) {
 
 define([
-    "application",
     "text!upfront/templates/property.html",
     "text!upfront/templates/properties.html",
     "text!upfront/templates/property_edit.html",
