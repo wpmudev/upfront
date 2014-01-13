@@ -287,8 +287,10 @@ Ueditor.prototype = {
 	},
 	listenForMouseUp: function(){
 		var me = this;
+		if(!me.redactor)
+			me.redactor = me.$el.data('redactor');
 		$(document).one('mouseup', function(e){
-			if(me.redactor.getSelectionText()){
+			if(me.redactor && me.redactor.getSelectionText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
