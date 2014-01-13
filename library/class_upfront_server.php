@@ -215,8 +215,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$require_config['urlArgs'] = "nocache=" + microtime(true);
 		}
 		$require_config = json_encode(
-      apply_filters('upfront-settings-require_js_config', $require_config),
-      JSON_PRETTY_PRINT
+			apply_filters('upfront-settings-require_js_config', $require_config), 
+			(defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 0)
 		);
 
 		$layout_editor_requirements = array(
