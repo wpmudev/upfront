@@ -50,12 +50,12 @@ class Upfront {
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
-		
+
 		if (is_admin()) {
 			add_action('init', array($this, 'init_admin_behaviors'));
 		}
 	}
-	
+
 	private function _add_supports () {
 		add_theme_support('post-thumbnails');
 		register_nav_menu('default', _('Default'));
@@ -70,11 +70,11 @@ class Upfront {
 	public static function get_root_url () {
 		return get_template_directory_uri();
 	}
-	
+
 	public static function get_root_dir () {
 		return get_template_directory();
 	}
-	
+
 	function filter_wp_title ( $title, $sep ) {
 		global $paged, $page;
 		if ( is_feed() )
@@ -133,17 +133,19 @@ EOAdminStyle;
 		wp_enqueue_script('jquery-ui-draggable');
 		wp_enqueue_script('jquery-ui-resizable');
 		wp_enqueue_script('jquery-ui-selectable');
+		wp_enqueue_script('jquery-ui-slider');
+		wp_enqueue_script('jquery-ui-datepicker');
 		//wp_enqueue_script('thickbox');
 
 		//wp_enqueue_style('upfront-jquery-ui', 'http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css');
 		wp_enqueue_style('wp-jquery-ui-dialog');
 		//wp_enqueue_style('thickbox');
 		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic');
-/*		
+/*
 		// Color picker dependency - new stuff only works in admin :(
 		//wp_enqueue_script('wp-color-picker');
 		//wp_enqueue_style('wp-color-picker');
-		
+
 		// Won't gonna stop us!
 		wp_enqueue_script('jquery-ui-slider'); // Required by Iris picker
 		wp_enqueue_script('iris', admin_url('js/iris.min.js'), array('jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch'));
@@ -158,21 +160,28 @@ EOAdminStyle;
 */
 		// Enqueue media uploader dependencies.
 		//wp_enqueue_media();
-		
+
 		// Enqueue needed styles
 		//wp_enqueue_style('font-awesome', self::get_root_url() . '/styles/font-awesome.min.css'); // No mo font awesome
 		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css');
 		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
 		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
-		
+
 		add_action('wp_footer', array($this, 'add_responsive_css'));
 	}
 
 	function inject_upfront_dependencies () {
 		if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		$url = self::get_root_url();
-		echo '<script src="' . $url . '/scripts/require.js"></script>';
-		echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+    if (isset($_GET['dev'])) {
+      echo '<script src="' . $url . '/scripts/require.js"></script>';
+      echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+      echo '<script src="' . $url . '/scripts/main.js"></script>';
+    } else {
+      echo '<script src="' . $url . '/build/require.js"></script>';
+      echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+      echo '<script src="' . $url . '/build/main.js"></script>';
+    }
 		echo '<script type="text/javascript">var _upfront_post_data=' . json_encode(array(
 			'layout' => Upfront_EntityResolver::get_entity_ids(),
 			'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false),
@@ -190,18 +199,18 @@ EOAdminStyle;
   <div id="settings" style="display:none"></div>
 EOAdditivemarkup;
 
-		
+
 		do_action('upfront-core-inject_dependencies');
 	}
 
 	function add_responsive_css () {
 		include(self::get_root_dir().'/styles/editor-interface-responsive.html');
 	}
-	
+
 	function add_edit_menu ( $wp_admin_bar ) {
 		global $post, $tag, $wp_the_query;
 		$current_object = $wp_the_query->get_queried_object();
-		
+
 		$wp_admin_bar->add_menu( array(
 			'id' => 'upfront-edit_layout',
 			'title' => __('Edit Layout'),
@@ -209,7 +218,7 @@ EOAdditivemarkup;
 			'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
 		) );
 	}
-	
+
 	function attachment_fields_to_edit ( $form_fields, $post ) {
 		$image_src = wp_get_attachment_image_src($post->ID, 'full');
 		$form_fields['use_image'] = array(

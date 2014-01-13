@@ -185,6 +185,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$registered = $entities->get_all();
 
 		$paths = array(
+      "upfront-data" => $upfront_data_url,
       "text" => 'scripts/text',
       "async" => "scripts/async",
       "upfront" => "scripts/upfront",
@@ -199,8 +200,6 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"content" => "scripts/upfront/upfront-content",
 			"spectrum" => "scripts/spectrum/spectrum",
 			"responsive" => "scripts/responsive",
-			"jquerySlider" => 'scripts/jquery/jquery.ui.slider.min',
-			"jqueryDatepicker" => 'scripts/jquery/jquery.ui.datepicker.min',
 			"redactor" => 'scripts/redactor/redactor',
       "ueditor" => 'scripts/redactor/ueditor'
 		);
@@ -220,7 +219,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		;
 
 		$layout_editor_requirements = array(
-			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'content', 'spectrum', 'responsive', 'jquerySlider', 'jqueryDatepicker', 'redactor', 'ueditor' ),
+			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'content', 'spectrum', 'responsive', 'redactor', 'ueditor' ),
 			"entities" => array_merge(array('objects'), array_keys($registered)),
 		);
 		$layout_editor_requirements = json_encode(
@@ -299,72 +298,20 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
-
-(function () {
-
-require.config($require_config);
-
-(function ($) {
-$(function () {
-	// Fix Underscore templating to Mustache style
-	_.templateSettings = {
-		evaluate : /\{\[([\s\S]+?)\]\}/g,
-		interpolate : /\{\{([\s\S]+?)\}\}/g
-	};
-
-	require(['application', 'util'], function (application, util) {
-		// Shims and stubs
-		Upfront.Events = {}
-		Upfront.Settings = {
-			"root_url": "{$root}",
-			"ajax_url": "{$ajax}",
-			"admin_url": "{$admin}",
-			"site_url": "{$site}",
-			"Debug": {$debug},
-			"ContentEditor": {
-				"Requirements": {$layout_editor_requirements},
-				"Selectors": {
-					"sidebar": "#sidebar-ui",
-				},
-			},
-			"Application": {
-				"MODE": {$application_modes},
-				"NO_SAVE": {$read_only},
-			},
-			"LayoutEditor": {
-				"Requirements": {$layout_editor_requirements},
-				"Selectors": {
-					"sidebar": "#sidebar-ui",
-					"commands": "#commands",
-					"properties": "#properties",
-					"layouts": "#layouts",
-					"settings": "#settings",
-					//"main": "#upfront-output"
-					"main": "#page"
-				},
-				"Specificity": {$specificity},
-				"Grid": {$grid_info},
-			},
-			"Content": {$content},
-		};
-
-		// Populate basics
-		_.extend(Upfront.Events, Backbone.Events);
-		_.extend(Upfront, application);
-		_.extend(Upfront, util);
-		Upfront.Util.Transient.initialize();
-
-		// Set up deferreds
-		Upfront.LoadedObjectsDeferreds = {};
-		Upfront.Events.trigger("application:loaded:layout_editor");
-
-		if (Upfront.Application && Upfront.Application.boot) Upfront.Application.boot();
-		else Upfront.Util.log('something went wrong');
-	}); // Upfront
-});
-})(jQuery);
-
-})();
+Upfront.mainData = {
+  requireConfig: $require_config,
+  root: '{$root}',
+  ajax: '{$ajax}',
+  admin: '{$admin}',
+  site: '{$site}',
+  debug: {$debug},
+  layoutEditorRequirements: {$layout_editor_requirements},
+  applicationModes: {$application_modes},
+  readOnly: {$read_only},
+  specificity: {$specificity},
+  gridInfo: {$grid_info},
+  content: {$content}
+};
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));
 	}

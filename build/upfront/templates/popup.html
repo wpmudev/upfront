@@ -1,0 +1,360 @@
+<div> 
+<!-- 
+	Wrap everything in a div to convert this file's content in a jquery element 
+	so it is possible to use $.find.
+-->
+<script type="text/template" id="upfront-post-list-tpl">
+<div id="upfront-list">
+	<div id="upfront-list-meta" class="upfront-list_item clearfix">
+		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">Date <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Post Title <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+	</div>
+	<div class="upfront-list-items upfront-scroll-panel">
+	{[ if(!posts.length){ ]}
+		<p class="upfront-no-results">No posts found</p>
+	{[ } else { ]}
+	{[ _.each(posts, function (post, idx){ ]} 
+		<div class="upfront-list_item-post upfront-list_item clearfix" data-post_id="{{ post.get("ID") }}">
+			<div class="upfront-list_item-component upfront-date">{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
+			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
+			<div class="upfront-list_item-component upfront-author">{{ post.author.get('data').display_name }}</div>
+		</div>
+	{[ }); } ]}
+	</div>
+</div>
+</script>
+
+<script type="text/template" type="text/template" id="upfront-post-single-tpl">
+<div id="upfront-list-page" style="display:none">
+	<div id="upfront-list-page-path">
+		<a href="#" class="upfront-path-back">Posts</a> &nbsp;&raquo;&nbsp; 
+		<a href="#" class="last">{{ post.get('post_title') }}</a>
+	</div>
+	<div id="upfront-list-page-preview">
+		<div id="upfront-page_preview-wrapper">
+			<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
+				<h4>Featured Image: </h4>
+				<div class="upfront-thumbnailinfo">Loading...</div>
+				<img src="{{post.featuredImage }}" style="{{post.featuredImage ? '' : 'display:none'}}" />
+			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
+			</div>
+			<div class="upfront-page_preview-bottom" id="upfront-page_preview-edit">
+				<button type="button"><i class="icon-pencil"></i> Edit post</button>
+			</div>
+		</div>
+	</div>
+	<div id="upfront-list-page-tree" class="upfront-scroll-panel">
+		<div class="upfront-post_content-wrapper">
+			<div class="upfront-post_content">
+				<h3>{{ post.get('post_title') }}</h3>
+				{{ post.get('post_content') }}
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<script type="text/template" id="upfront-page-list-tpl">
+<div id="upfront-list-page" class="bordered-bottom clearfix">
+	<div id="upfront-list-page-path"></div>
+	<div id="upfront-list-page-preview">
+		<div id="upfront-page_preview-wrapper">
+			<h4>Please select Page</h4>
+		</div>
+	</div>
+	<div id="upfront-list-page-tree" class="upfront-list-items upfront-scroll-panel">
+	{[ _.each(pages, function (page){ ]}
+		{{ pageItemTemplate({page: page, pageItemTemplate: pageItemTemplate}) }}
+	{[ }); ]}
+	</div>
+</div>
+</script>
+
+<script type="text/template"  id="upfront-page-list-item-tpl">
+	<div class="upfront-list-page_item {{ page.children.length ? 'has_children closed' : '' }}" id="upfront-list-page_item-{{ page.get("ID") }}" data-post_id="{{ page.get("ID") }}">
+		{[if(page.children.length){ ]}
+		<i class="icon-caret-right"></i>
+		<i class="icon-caret-down"></i>
+		{[ } ]}
+		{{ page.get("post_title") }} 		
+		{[if(page.children.length){ page.children.each(function(child, idx) { ]}
+			{{ pageItemTemplate({page: child, pageItemTemplate: pageItemTemplate}) }}
+		{[ })}; ]}
+	</div>
+</script>
+
+<script type="text/template" id="upfront-page-preview-tpl">
+	<div id="upfront-page_preview-wrapper" class="upfront-scroll-panel">
+		<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
+			<h4>Featured Image: </h4>
+			<div class="upfront-thumbnailinfo" style="{{page.thumbnail ? 'display:none' : ''}}">Loading...</div>
+			<img src="{{page.thumbnail }}" style="{{page.thumbnail ? '' : 'display:none'}}" />
+			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
+		</div>
+		<div id="upfront-page_preview-template" class="upfront-page_preview-item">
+			<h4>Template: </h4>
+			<select id="upfront-page_template-select">				
+				<option value="0">Default</option>
+				{[ _.each(allTemplates, function(tpl, name){ var selected = tpl == template ? 'selected="selected"' : ""; ]}
+				<option value="{{tpl}}" {{selected}}>{{name}}</option>
+				{[ }) ]}
+			</select>
+		</div>
+		<div id="upfront-page_preview-edit">
+			<button type="button"><i class="icon-pencil"></i> Edit page</button>
+		</div>
+	</div>
+</script>
+
+<script type="text/template"  id="upfront-comments-tpl">
+<div id="upfront-list" class="upfront-list-comments clearfix bordered-bottom">
+	{[ if(!comments.length){ ]}
+		<p class="upfront-no-results">This post or page has no comments.</p>
+	{[ } else { ]}
+	<div id="upfront-list-meta" class="upfront-list_item">
+		<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">Author <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">Date <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">Comment <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+	</div>
+	<div class="upfront-list-items upfront-list-comment-items upfront-scroll-panel">
+
+		{[ _.each(comments, function(comment){ ]}
+		<div class="upfront-list_item-comment upfront-list_item clearfix" id="upfront-list_item-comment-{{ comment.get("comment_ID") }}" data-comment_id="{{ comment.get("comment_ID") }}">
+				{{ commentTpl({comment:comment, excerptLength: excerptLength}) }}
+		</div>
+		{[ }) ]}
+	</div>
+	{[ } ]}
+</div>
+</script>
+
+<script type="text/template"  id="upfront-comment-single-tpl">
+	{[ var excerpt = jQuery('<div></div>').html(comment.get('comment_content')).text(); ]}
+		<div class="upfront-comment-approved">
+			{[ if(comment.get("comment_approved") === '0'){ ]}
+			<i class="upfront-comments-approve icon-circle-blank" data-comment_id="{{ comment.get("comment_ID") }}"></i>
+			{[ } ]}
+		</div>
+		<div class="upfront-list_item-component upfront-comment_author">
+			<img src="{{ Upfront.Util.get_avatar(comment) }}" title="{{comment.get("comment_author")}}" class="avatar" /> {{comment.get("comment_author")}}</div>
+		<div class="upfront-list_item-component upfront-date">{{ Upfront.Util.format_date(comment.get("comment_date")) }}</div>
+		<div class="upfront-list_item-component upfront-comment_content upfront-comment_excerpt upfront-list_item-main upfront-post_content">{{ excerpt.length > excerptLength ? excerpt.substring(0, excerptLength) + ' [...]' : excerpt }}</div>
+		<div class="upfront-list_item-component upfront-comment_content upfront-comment_content-full-wrapper upfront-list_item-main upfront-post_content  upfront-scroll-panel">
+			<div class="upfront-comment_content-full upfront-comment_togglable">{{ comment.get("comment_content") }}</div>
+			<div class="upfront-comment_edit upfront-comment_togglable" data-comment_id="{{ comment.get('comment_ID') }}">
+				<textarea class="comment-edit-box" class="edit" rows="16">{{ comment.get("comment_content") }}</textarea>
+				<button type="button" class="comment-edit-ok">OK</button>
+				<button type="button" class="comment-edit-cancel">Cancel</button>
+			</div>
+			<div class="upfront-comment_reply upfront-comment_togglable" data-comment_id="{{ comment.get('comment_ID') }}">
+				<textarea class="comment-edit-box" class="edit" rows="16" placeholder="Reply here..."></textarea>
+				<button type="button" class="comment-reply-ok">OK</button>
+				<button type="button" class="comment-reply-cancel">Cancel</button>
+			</div>
+		</div>
+		<div class="upfront-comment_actions-wrapper">
+			{[ if(comment.get("comment_approved") !== 'trash'){ ]}
+			<a href="#reply" class="reply"><i class="icon-reply"></i> Reply</a>
+			{[ } ]}
+			<a href="#edit" class="edit"><i class="icon-pencil"></i> Edit</a>
+			{[ if(comment.get("comment_approved") === '0'){ ]}
+			<a href="#approve" class="approve"><i class="icon-ok"></i> Approve</a>
+			{[ } else if(comment.get("comment_approved") === '1'){ ]}
+			<a href="#unapprove" class="unapprove"><i class="icon-circle-blank"></i> Unapprove</a>
+			{[ } if(comment.get("comment_approved") === 'spam'){ ]}
+			<a href="#unspam" class="unspam"><i class="icon-comment-alt"></i> Unspam</a>
+			{[ } else if(comment.get("comment_approved") !== 'trash') { ]}
+			<a href="#spam" class="spam"><i class="icon-ban-circle"></i> Spam</a>
+			{[ } if(comment.get("comment_approved") === 'trash'){ ]}
+			<a href="#unthrash" class="unthrash"><i class="icon-comment"></i> Untrash</a>
+			{[ } else { ]}
+			<a href="#thrash" class="thrash"><i class="icon-remove"></i> Trash</a>
+			{[ } ]}
+		</div>
+</script>
+
+<script type="text/template" id="upfront-slug-tpl">
+<div class="upfront-slug_editor">
+	<div class="upfront-slug_editor-title">Edit the <b>URL</b> for this post</div>
+	<p class="upfront-slug_editor-info">By default, your URL is determined by a post's or page's title. You can change it here.<br/>It is a good idea to keep them short and memorable.</p>
+	<p class="upfront-slug_editor-url">
+		{{ rootURL }}
+		<input type="text" id="upfront-post_slug" value	="{{ slug }}" />
+		<button id="upfront-post_slug-send" value="OK"><i class="icon-ok"></i> OK</button>
+	</p>
+</div>
+</script>
+
+<script type="text/template" id="upfront-term-list-tpl">
+<div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+	{[ _.each(allTerms.where({'parent': '0'}), function(term, idx){ ]}
+	{{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+	{[ }); ]}
+</div>
+<div id="upfront-taxonomy-add">
+	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
+	<select id="upfront-taxonomy-parents">
+		<option value="0">-- Parent Category --</option>
+		{[ allTerms.each(function(term, idx) { ]}
+		<option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
+		{[ }) ]}
+	</select>
+	<button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
+</div>
+</script>
+
+<script type="text/template" id="upfront-term-single-tpl">
+	<div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
+		<label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
+			<input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ postTerms.get(termId) ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
+		</label>
+		{[ term.children.each(function(child, idx){ ]}
+		{{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
+		{[ }) ]}
+	</div>
+</script>
+
+
+
+<script type="text/template" id="upfront-flat-term-list-tpl">
+<div id="upfront-taxonomy-list" class="clearfix">
+	<div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-current">
+		<div class="upfront-taxonomy-list-title">{{ labels.name }} applied to this post</div>
+		{[ _.each(currentTerms, function(term, idx){ ]}
+		{{ termTemplate({ term: term }) }}
+		{[ }); ]}
+	</div>
+	<div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-all">
+		<div class="upfront-scroll-panel upfront-inner-scroll-panel">
+			<div class="upfront-taxonomy-list-title">Previously used {{ labels.name }}</div>
+			{[ _.each(otherTerms, function(term, idx){ ]}
+			{{ termTemplate({ term: term }) }}
+			{[ }); ]}
+		</div>
+	</div>
+</div>
+<div id="upfront-taxonomy-add">
+	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
+	<button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
+</div>
+</script>
+
+<script type="text/template" id="upfront-term-flat-single-tpl">
+	<div class="upfront-taxonomy_item upfront-taxonomy_item-flat" id="upfront-term_item-{{ term.get('term_id') }}" data-term_id="{{ term.get('term_id') }}">
+		<i class="icon-plus"></i>
+		<i class="icon-remove-circle"></i>
+		{{ term.get('name') }}
+	</div>
+</script>
+
+<script type="text/template" id="upfront-pagination-tpl">
+<div id="upfront-entity_list-pagination" data-total="{{ pages }}" data-page_size="{{pageSize}}">
+	{[ if(pages > 1) { ]}
+	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev">
+		<i class="icon-angle-left"></i>
+	</div>
+	
+	{[ _.each(_.range(pages), function(i){ ]}
+	<div class="upfront-pagination_item upfront-pagination_page-item {{ i == currentPage ? 'current' : '' }}" data-page_idx="{{ i }}">{{ i + 1}}</div>
+	{[ }) ]}
+
+	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next">
+		<i class="icon-angle-right"></i>
+	</div>
+	{[ } ]}
+</div>
+</script>
+
+<script type="text/template" id="upfront-tabs-tpl">
+<ul class="upfront-tabs">
+	{[ _.each(tabs, function(tab){ ]}
+	<li data-type="{{tab.id}}" class="{{ tab.id == active ? 'active' : '' }}">{{tab.text}}</li>
+	{[ }); ]}
+</ul>
+</script>
+
+<script type="text/template" id="upfront-search-tpl">
+	<div class="search_container clearfix">
+		<div id="upfront-search_action" class="search upfront-icon upfront-icon-popup-search"></div>
+		<div id="upfront-search_container" style="display:{{ query ? 'block' : 'none' }}">
+			<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" />
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="upfront-notifier-tpl">
+	<div id="upfront-notifier">
+   		<div id="upfront-notice"></div>
+	</div>
+</script>
+
+<script type="text/template" id="selector-post_type-tpl">
+{[if(postTypes.length > 1){ ]}
+<div id="upfront-selector-post_type">
+	Select a post type:
+	<div class="upfront-field-select">
+		<div class="upfront-field-select-value">{{postTypes[0].label}}</div>
+		<ul class="upfront-field-select-options">
+		{[ _.each(postTypes, function(type){ ]}
+			<li class="upfront-field-select-option upfront-selector-option" rel="{{ type.name }}">
+				{{ type.label }}
+			</li>
+		{[ }); ]}
+		</ul>
+	</div>
+</div>
+{[ } ]}
+<div id="upfront-selector-posts" class="upfront-scroll-panel">
+
+</div>
+</script>
+<script type="text/template" id="selector-post-tpl">
+<table id="upfront-list" class="upfront-list-items">
+{[ _.each(posts, function(post){ ]}
+<tr class="upfront-selector-post upfront-list_item" rel="{{post.id}}">
+	<td class="upfront-selector-post-checked upfront-list_item-component"></td>
+	<td class="upfront-selector-post-title upfront-list_item-component upfront-list_item-main">{{post.get('post_title')}}</td>
+	<td class="upfront-selector-post-date upfront-list_item-component">{{ Upfront.Util.format_date(post.get('post_date'), false) }}</td>
+</tr>
+{[ }) ]}
+</table>
+</script>
+
+
+<script type="text/template" id="datepicker-tpl">
+<div class="upfront-date_picker upfront-ui">
+	<div class="upfront-bar-datepicker">
+	</div>
+	<div class="upfront-time_picker">
+		Time: 
+		<select class="ueditor-hours-select">
+			{[ _.each(hours, function(h){ ]}
+			<option value="{{h}}" selected="{{h == currentHour ? 'selected' : ''}}">{{h}}</option>
+			{[ }); ]}
+		</select>: 
+		<select class="ueditor-minutes-select">
+			{[ _.each(minutes, function(m){ ]}
+			<option value="{{m}}" selected="{{m == currentMinute ? 'selected' : ''}}">{{m}}</option>
+			{[ }); ]}
+		</select>
+	</div>
+	<div class="ueditor-datepicker-buttons">
+		<a class="ueditor-action-pickercancel">Cancel</a>
+		<a class="ueditor-action-pickerok button small-button">Ok</a>
+	</div>
+</div>
+</script>
+
+<script type="text/template" id="microselect-tpl">
+		<div class="ueditor-select-options">
+			{[ _.each(options, function(option){ ]}
+				<a class="ueditor-select-option ueditor-action-status" data-id="{{option.value}}">{{option.name}}</a>
+			{[ }); ]}
+		</div>
+		<input type="text" class="ueditor-select-focus">
+</script>
+
+
+<!-- end of the wrap div -->
+</div>
