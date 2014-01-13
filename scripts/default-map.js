@@ -1,5 +1,5 @@
 jQuery(document).ready(function($){
-	
+
 	function init_map ($el) {
 		var data = JSON.parse($el.attr('data-bg-map')),
 			options = {
@@ -16,9 +16,10 @@ jQuery(document).ready(function($){
 			},
 			map = new google.maps.Map($el.get(0), options);
 	}
-	
+
 	function load_google_maps () {
 		if ($(document).data("upfront-google_maps-loading")) return false;
+		$(document).data("upfront-google_maps-loading", true);
 		if (typeof google === 'object' && typeof google.maps === 'object' && typeof google.maps.Map === 'object') return upfront_bg_map_init();
 		var protocol = '',
 			script = document.createElement("script")
@@ -27,21 +28,21 @@ jQuery(document).ready(function($){
 		script.type = "text/javascript";
 		script.src = protocol + "//maps.google.com/maps/api/js?v=3&libraries=places&sensor=false&callback=upfront_maps_loaded";
 		document.body.appendChild(script);
-		$(document).data("upfront-google_maps-loading", true);
 	}
+
 	function upfront_bg_map_init () {
 		$("[data-bg-map]").each(function () {
 			init_map($(this));
 		});
 	}
-	
+
 	if (!window.upfront_maps_loaded) {
 		window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
 			$(document).trigger("upfront-google_maps-loaded");
 			$(document).data("upfront-google_maps-loading", false);
+      upfront_bg_map_init();
 		};
-		$(document).data("upfront-google_maps-loading", true);
 		$(load_google_maps);
 	}
-	
+
 });

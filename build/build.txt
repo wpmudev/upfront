@@ -53,9 +53,6 @@ text!elements/upfront-image/tpl/image_editor.html
 text!elements/upfront-login/css/edit.css
 text!elements/upfront-login/css/public.css
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
-async.js
-async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false
-/var/www/upfront/wp-content/themes/upfront/elements/upfront-maps/js/ContextMenu.js
 text!elements/upfront-maps/css/edit.css
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-navigation/js/upfront-navigation.js

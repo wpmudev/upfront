@@ -3,9 +3,10 @@
     appDir: ".",
     dir: "../build",
     paths: {
-        "scripts": '.',
+        "scripts": '.',// needed to tell optimizer that this directory is scripts
         "elements": "../elements",
         "upfront-data": "empty:", // Makes builder ignore this i.e. it will not try to include it into optimization.
+        "maps_context_menu": "empty:",// Leave out maps context menu or it will not initialize properly
         "backbone": "../../../../wp-includes/js/backbone.min", // this assumes standard wp directory arrangement.
         "underscore": "../../../../wp-includes/js/underscore.min",
         "models": "upfront/upfront-models",
@@ -35,7 +36,6 @@
         "this_post": "../elements/upfront-this-post/js/this_post",
         "uwidget": "../elements/upfront-widget/js/uwidget",
         "uyoutube": "../elements/upfront-youtube/js/uyoutube",
-        "maps_context_menu": "../elements/upfront-maps/js/ContextMenu",
         "redactor": "redactor/redactor",
         "ueditor": "redactor/ueditor",
         "upfront_slider": "../elements/upfront-slider/js/uslider"

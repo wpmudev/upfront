@@ -1,45 +1,23 @@
 (function ($) {
 
-//if (!window.google) require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], init);
-//else init();
-try {
-	if (window.google.maps.Map) init(false);
-	else if ($(document).data("upfront-google_maps-loading")) return $(document).on("upfront-google_maps-loaded", init);
-	else throw new Object;
-} catch (e) {
-	require(['async!https://maps.google.com/maps/api/js?v=3&libraries=places&sensor=false'], function () {
-		$(document).trigger("upfront-google_maps-loaded");
-		init(true);
-	});
-}
-
-function init (postponed) {
-
-	var DEFAULTS = {
-		OPTIMUM_MAP_HEIGHT: 300,
-		center: [10.722250, 106.730762],
-		zoom: 10,
-		style: 'ROADMAP',
-		controls: {
-			pan: false,
-			zoom: false,
-			map_type: false,
-			scale: false,
-			street_view: false,
-			overview_map: false
-		}
-	};
-/*
-	if (navigator && navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(function(position) {
-			DEFAULTS.center = [
-				position.coords.latitude,
-				position.coords.longitude
-			];
-		});
-	}
-*/
+// I have removed logic that checks if google maps are loaded. In current
+// app setup maps will always we loaded before this script.
 define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], function (_ctx, maps_style) {
+
+  var DEFAULTS = {
+    OPTIMUM_MAP_HEIGHT: 300,
+    center: [10.722250, 106.730762],
+    zoom: 10,
+    style: 'ROADMAP',
+    controls: {
+      pan: false,
+      zoom: false,
+      map_type: false,
+      scale: false,
+      street_view: false,
+      overview_map: false
+    }
+  };
 
 	$("head").append("<style>" + maps_style + "</style>");
 
@@ -720,16 +698,6 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	});
 	Upfront.Models.MapModel = MapModel;
 	Upfront.Views.MapView = MapView;
-
-	if (!!postponed) {
-		Upfront.Events.trigger("elements:requirements:async:added");
-		// Upfront.Application.layout_view = new Upfront.Views.Layout({
-			// "model": Upfront.Application.layout,
-			// "el": $(Upfront.Settings.LayoutEditor.Selectors.main)
-		// });
-	}
-
 });
-};
 
 })(jQuery);
