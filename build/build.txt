@@ -5,6 +5,8 @@ magnific-popup/magnific-popup.css
 
 main.js
 ----------------
+/var/www/upfront/wp-includes/js/underscore.min.js
+/var/www/upfront/wp-includes/js/backbone.min.js
 upfront/upfront-models.js
 text.js
 text!upfront/templates/object.html

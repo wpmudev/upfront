@@ -6,6 +6,8 @@
         "scripts": '.',
         "elements": "../elements",
         "upfront-data": "empty:", // Makes builder ignore this i.e. it will not try to include it into optimization.
+        "backbone": "../../../../wp-includes/js/backbone.min", // this assumes standard wp directory arrangement.
+        "underscore": "../../../../wp-includes/js/underscore.min",
         "models": "upfront/upfront-models",
         "views": "upfront/upfront-views",
         "editor_views": "upfront/upfront-views-editor",
@@ -37,6 +39,15 @@
         "redactor": "redactor/redactor",
         "ueditor": "redactor/ueditor",
         "upfront_slider": "../elements/upfront-slider/js/uslider"
+    },
+    shim: {
+      'underscore': {
+        exports: '_'
+      },
+      'backbone': {
+        deps: ['underscore'],
+        exports: 'Backbone'
+      }
     },
     // optimize: "none", // in case you want to debug something uncomment this for unoptimized output.
     fileExclusionRegExp: /ckeditor/, // exclude ckeeditor from build

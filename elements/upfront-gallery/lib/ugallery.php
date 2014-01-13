@@ -145,7 +145,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 	}
 
 	public static function image_defaults(){
-		return array(			
+		return array(
 			'id' => 0,
 			'src' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
 			'srcFull' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
@@ -194,12 +194,12 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 		//Lightbox
 		wp_register_script(
-			'magnific', 
-			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js', 
+			'magnific',
+			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js',
 			array('jquery')
 		);
 		wp_register_style(
-			'magnific', 
+			'magnific',
 			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.css'
 		);
 		wp_enqueue_style('magnific');

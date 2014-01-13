@@ -2,17 +2,17 @@
 var Upfront = window.Upfront || {};
 Upfront.mainData = Upfront.mainData || {};
 Upfront.Events = {};
-_.extend(Upfront.Events, Backbone.Events);
 require.config(Upfront.mainData.requireConfig);
 
-  // Fix Underscore templating to Mustache style
-  _.templateSettings = {
-    evaluate : /\{\[([\s\S]+?)\]\}/g,
-    interpolate : /\{\{([\s\S]+?)\}\}/g
-  };
 
-  require(['application', 'util'], function (application, util) {
+  require(['backbone', 'application', 'util'], function (Backbone, application, util) {
+    // Fix Underscore templating to Mustache style
+    _.templateSettings = {
+      evaluate : /\{\[([\s\S]+?)\]\}/g,
+      interpolate : /\{\{([\s\S]+?)\}\}/g
+    };
     // Shims and stubs
+    _.extend(Upfront.Events, Backbone.Events);
     Upfront.Settings = {
       "root_url": Upfront.mainData.root,
       "ajax_url": Upfront.mainData.ajax,

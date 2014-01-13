@@ -1,7 +1,8 @@
 // (function () {
 
-define(function() {
+define(['backbone'], function(Backbone) {
 
+Upfront.Events = _.isEmpty(Upfront.Events) ? _.extend(Upfront.Events, Backbone.Events) : Upfront.Events;
 var _alpha = "alpha",
 
 /* ----- Logic mixins ----- */

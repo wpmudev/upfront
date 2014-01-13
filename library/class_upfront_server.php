@@ -185,6 +185,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$registered = $entities->get_all();
 
 		$paths = array(
+      "backbone" => includes_url() . "js/backbone.min",
+      "underscore" => includes_url() . "js/underscore.min",
       "upfront-data" => $upfront_data_url,
       "text" => 'scripts/text',
       "async" => "scripts/async",
@@ -205,9 +207,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
+    $shim = array(
+      'underscore' => array('exports' => '_'),
+      'backbone' => array( 'deps' => array('underscore'), 'exports' => 'Backbone')
+    );
+
 		$require_config = array(
 			'baseUrl' => "{$root}",
 			'paths' => $paths,
+      'shim' => $shim,
 			'waitSeconds' => 60, // allow longer wait period to prevent timeout
 		);
 		if ($this->_debugger->is_active(Upfront_Debug::CACHED_RESPONSE)) {
@@ -457,7 +465,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			'upfront-dependencies',
 			'scripts',
 			$raw_cache_key
-		))), array('jquery', 'underscore')); // But let's do pretty instead
+		))), array('jquery'));
 	}
 
 	function serve_styles () {

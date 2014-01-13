@@ -125,8 +125,6 @@ EOAdminStyle;
 	function inject_global_dependencies () {
 		if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		wp_enqueue_script('jquery');
-		wp_enqueue_script('underscore');
-		wp_enqueue_script('backbone');
 		wp_enqueue_script('jquery-ui');
 		wp_enqueue_script('jquery-effects-core');
 		wp_enqueue_script('jquery-effects-slide');

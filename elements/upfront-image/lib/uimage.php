@@ -23,14 +23,14 @@ class Upfront_UimageView extends Upfront_Object {
 
 
 		$data['wrapper_id'] = 'hello_up';
-		
+
 		if($data['stretch'])
 			$data['imgWidth'] = '100%';
 		else
 			$data['imgWidth'] = '';
 
 		$data['cover_caption'] = array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
-		
+
 		$markup = '<div id="' . $data['element_id'] . '">' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($data['when_clicked'] == 'show_larger_image'){
@@ -106,7 +106,7 @@ class Upfront_UimageView extends Upfront_Object {
 			$out[$prop['name']] = $prop['value'];
 		return $out;
 	}
-	
+
 	public static function add_styles_scripts () {
 		wp_deregister_script('jquery-form');
 		wp_register_script('jquery-form', upfront_element_url('js/jquery.form.min.js', dirname(__FILE__)), array('jquery'), '3.36.0');
@@ -115,7 +115,7 @@ class Upfront_UimageView extends Upfront_Object {
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
 		wp_enqueue_script('wp-color-picker');
-		
+
 		//Lightbox
 		//wp_enqueue_style('magnific');
 		//wp_enqueue_script('magnific');
@@ -138,7 +138,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 		if(! $data['images'])
 			return $this->_out(new Upfront_JsonResponse_Error("No images sent"));
-		
+
 		@ini_set( 'memory_limit', apply_filters( 'upfront_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 
 		$images = array();
@@ -166,9 +166,9 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 	function get_image_sizes() {
         $data = stripslashes_deep($_POST);
-        
+
         $item_id = !empty($data['item_id']) ? $data['item_id'] : false;
-        if (!$item_id) 
+        if (!$item_id)
         	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
 
         $ids = json_decode($item_id);
@@ -226,8 +226,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 	    if ( is_wp_error( $img ) )
 			return array('error' => true, 'msg' => 'Image id not valid');
-	 
-		
+
+
 		if($rotate && !$img->rotate(-$rotate))
 			return array('error' => true, 'msg' => 'There was an error editing the image');
 
@@ -237,11 +237,11 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			return array('error' => true, 'msg' => 'There was an error editing the image');
 
 		//$cropped = array(round($crop['left']), round($crop['top']), round($crop['width']), round($crop['height']));
-		
+
 		//Don't let the crop be bigger than the size
 		$size = $img->get_size();
 		$crop = array('top' => round($crop['top']), 'left' => round($crop['left']), 'width' => round($crop['width']), 'height' => round($crop['height']));
-		
+
 		if($crop['top'] < 0){
 			$crop['height'] -= $crop['top'];
 			$crop['top'] = 0;
@@ -260,7 +260,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		if($crop && !$img->crop($crop['left'], $crop['top'], $crop['width'], $crop['height']))
 		//if($crop && !$img->crop($cropped[0], $cropped[1], $cropped[2], $cropped[3]))
 			return $this->_out(new Upfront_JsonResponse_Error("There was an error editing the image."));
-		
+
 
 		// generate new filename
 		$path = get_attached_file($imageData['id']);
@@ -294,8 +294,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 		return array(
 			'error' => false,
-			'url' => $url, 
-			'urlOriginal' => $urlOriginal, 
+			'url' => $url,
+			'urlOriginal' => $urlOriginal,
 			'full' => $full_size,
 			'crop' => $img->get_size()
 		);
@@ -334,7 +334,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			);
 
 			$crop['left'] = $full['width'] > $crop['width'] ? floor(($full['width'] - $crop['width']) / 2) : 0;
-			$crop['top'] = $full['height'] > $crop['height'] ? floor(($full['height'] - $crop['height']) / 2) : 0;			
+			$crop['top'] = $full['height'] > $crop['height'] ? floor(($full['height'] - $crop['height']) / 2) : 0;
 
 			$transformations['crop'] = $crop;
 		}

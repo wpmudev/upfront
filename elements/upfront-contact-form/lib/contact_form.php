@@ -265,7 +265,7 @@ class Upfront_UcontactView extends Upfront_Object {
 										if($prop['name'] == 'element_id' && $prop['value'] == $_POST['contactformid'])
 											return $object;
 									}
-								} 
+								}
 							}
 						}
 					}
