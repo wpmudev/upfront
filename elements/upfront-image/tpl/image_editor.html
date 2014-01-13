@@ -59,4 +59,29 @@
 </form>
 </script>
 
+<script type="text/template" id="link-tpl">
+	<h3>Links to:</h3>	
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ugallery-image-link" value="do_nothing" class="upfront-field-radio" id="ugallery-image-link-1" {{when_clicked == 'do_nothing' ? checked : ''}}>
+		<label for="ugallery-image-link-1">No link</label>
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ugallery-image-link" value="external" class="upfront-field-radio" id="ugallery-image-link-2" {{when_clicked == 'external' ? checked : ''}}>
+		<label for="ugallery-image-link-2">External link</label>
+		<input type="text" value="{{image_link}}" id="ugallery-image-link-url" placeholder="Type link URL" style="{{when_clicked != 'external' ? 'display:none' : ''}}" class="upfront-field-text">
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ugallery-image-link" value="post" class="upfront-field-radio" id="ugallery-image-link-3" {{when_clicked == 'post' ? checked : ''}}>
+		<label for="ugallery-image-link-3">Link to a post or page</label>
+		<a title="Change link" class="ugallery-change-link-post" style="{{when_clicked != 'post' ? 'display:none' : ''}}">{{image_link}}</a>
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ugallery-image-link" value="show_larger_image" class="upfront-field-radio" id="ugallery-image-link-4" {{when_clicked == 'show_larger_image' ? checked : ''}}>
+		<label for="ugallery-image-link-4">Show larger image</label>
+	</div>
+	<div class="upfront-settings-button_panel">
+		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
+	</div>
+</script>
+
 </div>

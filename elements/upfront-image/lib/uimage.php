@@ -12,14 +12,7 @@ class Upfront_UimageView extends Upfront_Object {
 			wp_enqueue_script('magnific');
 		}
 		
-		$url = false;
-		if($data['when_clicked'] == 'open_link')
-			$url = $data['image_link'];
-		else if($data['when_clicked'] == 'show_larger_image')
-			$url = $data['srcFull'];
-		else if ('scroll_to_anchor' == $data['when_clicked'] && !empty($data['anchor_target']))
-			$url = '#' . $data['anchor_target'];
-		$data['url'] = $url;
+		$data['url'] = $data['when_clicked'] == 'do_nothing' ? false : $data['image_link'];
 
 		if(is_numeric($data['size']['width']))
 			$data['size']['width'] .= '%';
@@ -78,7 +71,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'srcOriginal' => false,
 			'image_title' => '',
 			'alternative_text' => '',
-			'when_clicked' => 'do_nothing', // do_nothing | open_click | show_larger_image
+			'when_clicked' => 'do_nothing', // do_nothing | external | post | anchor | show_larger_image
 			'image_link' => '',
 			'include_image_caption' => false,
 			'image_caption' => 'My awesome image caption',
