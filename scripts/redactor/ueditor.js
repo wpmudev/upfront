@@ -143,6 +143,7 @@ var hackRedactor = function(){
 			}).show();
 
 			this.airBindHide();
+			this.$air.trigger('show');
 		},
 
 	hackedRedactor = true;
@@ -167,9 +168,10 @@ var Ueditor = function($el, options) {
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
-			airButtons: ['link', '|',  'bold', 'italic', '|', 'upfrontLink', '|', 'stateLists', '|', 'stateAlign', '|', 'upfrontColor'],
+			airButtons: ['upfrontFormatting', 'bold', 'italic', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor'],
 			buttonsCustom: {},
-			observeLinks: false
+			observeLinks: false,
+			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre']
 		}, options)
 	;
 
@@ -202,6 +204,7 @@ var Ueditor = function($el, options) {
 
 Ueditor.prototype = {
 	disableStop: false,
+	mouseupListener: false,
 
 	start: function(e){
 		this.$el.addClass('ueditable')
@@ -213,11 +216,15 @@ Ueditor.prototype = {
 		this.redactor = this.$el.data('redactor');
 		this.redactor.ueditor = this;
 		this.preventDraggable();
-		UeditorEvents.trigger("ueditor:start", this.redactor);
+		UeditorEvents.trigger('ueditor:start', this.redactor);
+
+		//Open the toolbar when releasing selection outside the element
+		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
+		this.$el.on('mousedown', this.mouseupListener);
 	},
 	stop: function(){
 		if(this.redactor){
-			UeditorEvents.trigger("ueditor:stop", this.redactor);
+			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
 			this.redactor = false;
 			this.restoreDraggable();
@@ -272,7 +279,7 @@ Ueditor.prototype = {
 		}			
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -280,6 +287,13 @@ Ueditor.prototype = {
 				pluginList.push(name);
 		});
 		return pluginList;
+	},
+	listenForMouseUp: function(){
+		var me = this;
+		$(document).one('mouseup', function(e){
+			if(me.redactor.getSelectionText())
+				me.redactor.airShow(e);
+		});
 	}
 }
 
@@ -868,6 +882,51 @@ RedactorPlugins.upfrontColor = {
 }
 
 
+RedactorPlugins.upfrontFormatting = {
+	beforeInit: function(){
+		this.opts.buttonsCustom.upfrontFormatting = {
+			title: 'Formatting',
+			panel: this.panel
+		};
+	},
+	panel: UeditorPanel.extend({
+		tags: {
+			p: 'P',
+			h1: 'H1',
+			h2: 'H2',
+			h3: 'H3',
+			h4: 'H4',
+			h5: 'H5',
+			pre: '&lt;/&gt;',
+			blockquote: '"'
+		},
+		events: {
+			'click .ueditor-format-option': 'applyTag',
+			'open': 'selectionSave'
+		},
+		render: function(){
+			var me = this,
+				out = ''
+			;
+			_.each(this.redactor.opts.formattingTags, function(tag){
+				out += '<a class="ueditor-format-option ueditor-format-' + tag + '" data-value="' + tag + '">' + me.tags[tag] + '</a>';
+			});
+
+			this.button.html('&para;');
+			this.$el.html(out);
+		},
+		applyTag: function(e){
+			var tag = $(e.target).data('value');
+			this.redactor.selectionRestore();
+			this.redactor.formatBlocks(tag);
+			this.closePanel();
+		},
+		selectionSave: function(e){
+			this.redactor.selectionSave();
+		}
+	})
+};
+
 RedactorPlugins.upfrontMedia = {
 	beforeInit: function () {
 		this.events.on("ueditor:init", this.reinsert_handlers_callback);
@@ -1368,6 +1427,66 @@ RedactorPlugins.upfrontImages = {
 			$(el).css(margin, "15px");
 		});
 	},
+};
+
+
+RedactorPlugins.upfrontSink = {
+	beforeInit: function(){
+		var me = this;
+		if(!Upfront.data.ueditor)
+			Upfront.data.ueditor = {sink: false};
+		this.opts.buttonsCustom.upfrontSink = {
+			title: 'More tools'
+		};
+	},
+	init: function(){
+		var me = this,
+			$button = this.$toolbar.find('.redactor_btn_upfrontSink').parent().addClass('upfront-sink-button'),
+			sinkElements = this.$toolbar.find('.upfront-sink-button ~ li'),
+			sink = $('<div class="ueditor-sink"></div>')
+		;
+
+		$button.on('click', function(){
+			if(Upfront.data.ueditor.sink){
+				me.closeSink();
+			}
+			else{
+				me.openSink();
+			}
+		});
+
+		sinkElements.detach().appendTo(sink);
+		this.$toolbar.append(sink);
+		if(Upfront.data.ueditor.sink)
+			this.$toolbar.addClass('ueditor-sink-open');
+
+		sinkElements.each(function(){
+			var link = $(this).find('a').attr('class').match(/redactor_btn_[^\s]*/g),
+				id = false,
+				box = false
+			;
+			if(link.length)
+				id = link[0].replace('redactor_btn_', '');
+
+			box = me.$toolbar.find('.redactor_dropdown_box_' + id);
+			if(box.length)
+				box.css({'margin-top': '40px'});
+		});
+		this.$air.on('show', function(){
+			if(Upfront.data.ueditor.sink)
+				me.$air.css({top: me.$air.offset().top - 40});
+		});
+	},
+	openSink: function(){
+		Upfront.data.ueditor.sink = true;
+		this.$toolbar.addClass('ueditor-sink-open');
+		this.$air.css({top: this.$air.offset().top - 40});
+	},
+	closeSink: function(){
+		Upfront.data.ueditor.sink = false;
+		this.$toolbar.removeClass('ueditor-sink-open');
+		this.$air.css({top: this.$air.offset().top + 40});
+	}
 };
 
 }); //End require
