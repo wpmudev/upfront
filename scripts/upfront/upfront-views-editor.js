@@ -2338,7 +2338,14 @@ define(_template_files, function () {
 			clickoutFiresChange: true,
 			chooseText: 'OK',
 			showPalette: true,
-			showSelectionPalette: true
+			showSelectionPalette: true,
+			showAlpha: true,
+			showPalette: true,
+			palette: ['fff', '000', 'f00'],
+			maxSelectionSize: 10,
+			preferredFormat: "hex",
+			showInput: true,
+			allowEmpty:true
 		},
 		initialize: function(){
 			var me = this,
