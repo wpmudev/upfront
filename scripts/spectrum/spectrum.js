@@ -302,7 +302,7 @@
 
             draggable(alphaSlider, function (dragX, dragY, e) {
                 //currentAlpha = (dragX / alphaWidth);
-                currentAlpha = (dragY / alphaHeight);
+                currentAlpha = 1-(dragY / alphaHeight);
                 if (e.shiftKey) {
                     currentAlpha = Math.round(currentAlpha * 10) / 10;
                 }
@@ -634,7 +634,7 @@
                 var rgb = realColor.toRgb();
                 rgb.a = 0;
                 var realAlpha = tinycolor(rgb).toRgbString();
-                var gradient = "linear-gradient(top, " + realAlpha + ", " + realHex + ")";
+                var gradient = "linear-gradient(bottom, " + realAlpha + ", " + realHex + ")";
 
                 if (IE) {
                     alphaSliderInner.css("filter", tinycolor(realAlpha).toFilter({ gradientType: 1 }, realHex));
@@ -687,7 +687,7 @@
 			var alphaY = currentAlpha * alphaHeight;
             alphaSlideHelper.css({
                 //"left": alphaX - (alphaSlideHelperWidth / 2)
-				"top": alphaY - (alphaSlideHelperHeight / 2)
+				"top": alphaSliderInner.height()-(alphaY - (alphaSlideHelperHeight / 2))-4
             });
 
             // Where to show the bar that displays your current selected hue

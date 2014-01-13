@@ -846,7 +846,7 @@ RedactorPlugins.upfrontColor = {
 				showAlpha: true,
 				showPalette: true,
 				palette: ['fff', '000', '0f0'],
-				selectionPalette:  Upfront.data.ueditor.recent_bgs,
+				selectionPalette:  Upfront.data.ueditor.recent_bgs.concat(['transparent']),
 				maxSelectionSize: 9,
 				preferredFormat: "hex",
 				chooseText: "Ok",
