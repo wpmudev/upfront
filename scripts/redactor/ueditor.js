@@ -226,11 +226,11 @@ Ueditor.prototype = {
 		if(this.redactor){
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
-			this.redactor = false;
 			this.restoreDraggable();
 			this.$el.removeClass('ueditable')
 				.redactor('destroy')
 			;
+			this.redactor = false;
 		}
 	},
 	bindStartEvents: function() {
@@ -291,11 +291,13 @@ Ueditor.prototype = {
 	listenForMouseUp: function(){
 		var me = this;
 		$(document).one('mouseup', function(e){
-			if(me.redactor.getSelectionText())
+			if(me.redactor.getSelectionText()){
 				me.redactor.airShow(e);
+				me.redactor.$element.trigger('mouseup.redactor');
+			}
 		});
 	}
-}
+};
 
 
 

@@ -6763,17 +6763,15 @@ body .redactor_air {
 	/* background: rgba(30, 47, 63, .95); */
 	border-radius: 2px;
 
-	opacity: .95;
-
 	-moz-background-clip: padding;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	background-color: #1e364c;
 	box-shadow: 0 -1px 0 #192d3f, inset 0 -1px 0 #395772;
-	background-image: -moz-linear-gradient(top, #31475d 0%, #15293f 100%);
-	background-image: -o-linear-gradient(top, #31475d 0%, #15293f 100%);
-	background-image: -webkit-linear-gradient(top, #31475d 0%, #15293f 100%);
-	background-image: linear-gradient(top, #31475d 0%, #15293f 100%);
+	background-image: -moz-linear-gradient(top, rgba(49, 71, 93, .95) 0%, rgba(21, 41, 63, .95) 100%);
+	background-image: -o-linear-gradient(top, rgba(49, 71, 93, .95) 0%, rgba(21, 41, 63, .95) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(49, 71, 93, .95) 0%, rgba(21, 41, 63, .95) 100%);
+	background-image: linear-gradient(top, rgba(49, 71, 93, .95) 0%, rgba(21, 41, 63, .95) 100%);
 
 }
 
@@ -7190,7 +7188,7 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	left: 0;
 	z-index: 2004;
 	padding: 10px;
-	width: 200px;
+	min-width: 200px;
 	background-color: #1e364c;
 	/*background-color: rgba(30, 47, 63, .95);*/
 	/* box-shadow: 0 1px 5px #bbb; */
@@ -7204,16 +7202,24 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	color: #97b8da;
 }
 
+.redactor_dropdown .upfront-field-radio {
+	border: 2px solid #546372;
+	background: #ddd;
+}
+
+.redactor_dropdown .upfront-field-radio:checked {
+	background: #1FCD8F;
+}
+
 .redactor_separator_drop {
 	padding: 0 !important;
 	border-top: 1px solid #ddd;
 	font-size: 0;
 	line-height: 0;
 }
-.redactor_dropdown a {
-	display: block;
-	padding: 3px 5px;
-	color: #000;
+.redactor_dropdown a,
+.redactor_dropdown a:link {
+	color: #1FCD8F !important;	
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -7224,7 +7230,7 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 }
 
 .redactor_dropdown_box_upfrontFormatting {
-	width: auto;
+	min-width: 0;
 	font-family: Georgia, serif;
 	font-size: 20px;
 	text-align: center;
@@ -7232,9 +7238,11 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 }
 
 a.ueditor-format-option {
-	color: #97b8da;
+	color: #97b8da !important;
 	width: 38px;
 	line-height: 30px;
+	padding: 2px 0;
+	display: block;
 }
 
 a.ueditor-format-pre{
@@ -7555,7 +7563,7 @@ a.ueditor-ok {
 	bottom: -30px;
 	background: #1FCD8F;
 	height: 30px;
-	line-height: 25px;
+	line-height: 30px;
 	color: #fff !important;
 	width: 50px;
 	text-align: center
@@ -7575,7 +7583,6 @@ a.ueditor-unlink {
 	background: #246;
 	color: #97b8da !important;
 }
-
 
 /* New Color Picker CSS override */
 
