@@ -143,7 +143,6 @@ var hackRedactor = function(){
 			}).show();
 
 			this.airBindHide();
-			this.$air.trigger('show');
 		},
 
 	hackedRedactor = true;
@@ -168,10 +167,9 @@ var Ueditor = function($el, options) {
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
-			airButtons: ['upfrontFormatting', 'bold', 'italic', 'upfrontLink', 'stateLists', 'upfrontSink', 'stateAlign', 'upfrontColor'],
+			airButtons: ['link', '|',  'bold', 'italic', '|', 'upfrontLink', '|', 'stateLists', '|', 'stateAlign', '|', 'upfrontColor'],
 			buttonsCustom: {},
-			observeLinks: false,
-			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre']
+			observeLinks: false
 		}, options)
 	;
 
@@ -274,7 +272,7 @@ Ueditor.prototype = {
 		}			
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -563,9 +561,11 @@ var UeditorPanel = Backbone.View.extend({
 		me.panel = options.panel;
 
 		this.on('open', function(redactor){
+			console.log('Panel open');
 			me.$el.trigger('open', redactor);
 		});
 		this.on('closed', function(redactor){
+			console.log('Panel closed');
 			me.$el.trigger('closed', redactor);
 		});
 
@@ -740,13 +740,48 @@ RedactorPlugins.upfrontColor = {
 			title: 'Color',
 			panel: this.panel
 		};
+		
+		if ( !Upfront.data.ueditor.recent_colors )
+			Upfront.data.ueditor.recent_colors = new Array();
+			
+		if ( !Upfront.data.ueditor.recent_bgs )
+			Upfront.data.ueditor.recent_bgs = new Array();
 	},
 	panel: UeditorPanel.extend({
 		render: function(){
+
 			var tablist = $('<ul class="tablist">').append($('<li id="tabforeground" class="active">').html('Text Color')).append($('<li id="tabbackground">').html('Text Background'));
+
 			var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
 
+			var redac = this.redactor;
+			var self = this;
 
+			var updateIcon = function () {
+					var rgb_a = $(redac.getCurrent()).css('background-color').split(',');
+					console.log(redac.getCurrent());
+					if($(redac.getCurrent()).prop('tagName')=='INLINE' && (rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)) {
+						redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').removeClass('transparent').css('border-color', $(redac.getCurrent()).css('background-color'));
+	
+					}
+					else {
+						redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').addClass('transparent');
+						
+					}
+					
+					redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('color', $(redac.getCurrent()).css('color'));	
+			};
+
+			redac.bufferAirBindHide = this.redactor.airBindHide;
+			
+			redac.airBindHide = function() {
+				
+				updateIcon();
+				
+				redac.bufferAirBindHide();
+			};
+			
+			
 			tablist.children('li').on('click', function() {
 				tablist.children('li').removeClass('active');
 				$(this).addClass('active');
@@ -757,26 +792,38 @@ RedactorPlugins.upfrontColor = {
 
 			this.$el.html(tablist).append(tabs);
 			
-			var redac = this.redactor;
+			
 			this.$('input.foreground').spectrum({
 				flat: true,
 				showAlpha: true,
 				showPalette: true,
 				palette: ['fff', '000', 'f00'],
-				maxSelectionSize: 8,
-				preferredFormat: "rgb",
+				selectionPalette:  Upfront.data.ueditor.recent_colors,
+				maxSelectionSize: 10,
+				preferredFormat: "hex",
+				chooseText: "Ok",
 				showInput: true,
 			    allowEmpty:true,
 				change: function(color) {
+						redac.selectionRestore(true, false);
 						redac.inlineRemoveStyle('color');
-						redac.inlineSetStyle('color', color.toHexString());
-						$(this).parent().find('.sp-dragger').css('border-bottom-color', color.toHexString());
-						$(this).parent().find('.sp-dragger').css('border-left-color', color.toHexString());	
-						redac.sync();					
+						redac.inlineSetStyle('color', color.toRgbString());
+						Upfront.data.ueditor.recent_colors[Upfront.data.ueditor.recent_colors.length] = color.toRgbString();
+						if(Upfront.data.ueditor.recent_colors.length > 11)
+							Upfront.data.ueditor.recent_colors.shift();
+							
+						$(this).parent().find('.sp-dragger').css('border-bottom-color', color.toRgbString());
+						$(this).parent().find('.sp-dragger').css('border-left-color', color.toRgbString());	
+
+						updateIcon();
+						redac.selectionRemove();
+						redac.sync();
+						self.closePanel();				
 					},
 				move: function(color) {
-					$(this).parent().find('.sp-dragger').css('border-top-color', color.toHexString());
-					$(this).parent().find('.sp-dragger').css('border-right-color', color.toHexString());
+					redac.selectionRestore(true, false);
+					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
+					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
 				}
 			});
 
@@ -785,72 +832,41 @@ RedactorPlugins.upfrontColor = {
 				showAlpha: true,
 				showPalette: true,
 				palette: ['fff', '000', '0f0'],
-				maxSelectionSize: 8,
-				preferredFormat: "rgb",
+				selectionPalette:  Upfront.data.ueditor.recent_bgs,
+				maxSelectionSize: 9,
+				preferredFormat: "hex",
+				chooseText: "Ok",
 				showInput: true,
 			    allowEmpty:true,
 				change: function(color) {
+						redac.selectionRestore(true, false);
 						redac.inlineRemoveStyle('background-color');
-						redac.inlineSetStyle('background-color', color.toHexString());
-						$(this).parent().find('.sp-dragger').css('border-bottom-color', color.toHexString());
-						$(this).parent().find('.sp-dragger').css('border-left-color', color.toHexString());	
-						redac.sync();					
+						redac.inlineSetStyle('background-color', color.toRgbString());
+						Upfront.data.ueditor.recent_bgs[Upfront.data.ueditor.recent_bgs.length] = color.toRgbString();
+
+						if(Upfront.data.ueditor.recent_bgs.length > 10)
+							Upfront.data.ueditor.recent_bgs.shift();
+							
+						$(this).parent().find('.sp-dragger').css('border-bottom-color', color.toRgbString());
+						$(this).parent().find('.sp-dragger').css('border-left-color', color.toRgbString());
+
+						updateIcon();
+						redac.selectionRemove();
+						redac.sync();
+						self.closePanel();
 					},
 				move: function(color) {
-
-					$(this).parent().find('.sp-dragger').css('border-top-color', color.toHexString());
-					$(this).parent().find('.sp-dragger').css('border-right-color', color.toHexString());
-					//console.log($(this).find('.sp-dragger').css('border-top'));
+					redac.selectionRestore(true, false);
+					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
+					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
 				}
 			});
+			
+			redac.selectionSave();
 		}
 	})
-};
+}
 
-RedactorPlugins.upfrontFormatting = {
-	beforeInit: function(){
-		this.opts.buttonsCustom.upfrontFormatting = {
-			title: 'Formatting',
-			panel: this.panel
-		};
-	},
-	panel: UeditorPanel.extend({
-		tags: {
-			p: 'P',
-			h1: 'H1',
-			h2: 'H2',
-			h3: 'H3',
-			h4: 'H4',
-			h5: 'H5',
-			pre: '&lt;/&gt;',
-			blockquote: '"'
-		},
-		events: {
-			'click .ueditor-format-option': 'applyTag',
-			'open': 'selectionSave'
-		},
-		render: function(){
-			var me = this,
-				out = ''
-			;
-			_.each(this.redactor.opts.formattingTags, function(tag){
-				out += '<a class="ueditor-format-option ueditor-format-' + tag + '" data-value="' + tag + '">' + me.tags[tag] + '</a>';
-			});
-
-			this.button.html('&para;');
-			this.$el.html(out);
-		},
-		applyTag: function(e){
-			var tag = $(e.target).data('value');
-			this.redactor.selectionRestore();
-			this.redactor.formatBlocks(tag);
-			this.closePanel();
-		},
-		selectionSave: function(e){
-			this.redactor.selectionSave();
-		}
-	})
-};
 
 RedactorPlugins.upfrontMedia = {
 	beforeInit: function () {
@@ -1352,65 +1368,6 @@ RedactorPlugins.upfrontImages = {
 			$(el).css(margin, "15px");
 		});
 	},
-};
-
-RedactorPlugins.upfrontSink = {
-	beforeInit: function(){
-		var me = this;
-		if(!Upfront.data.ueditor)
-			Upfront.data.ueditor = {sink: false};
-		this.opts.buttonsCustom.upfrontSink = {
-			title: 'More tools'
-		};
-	},
-	init: function(){
-		var me = this,
-			$button = this.$toolbar.find('.redactor_btn_upfrontSink').parent().addClass('upfront-sink-button'),
-			sinkElements = this.$toolbar.find('.upfront-sink-button ~ li'),
-			sink = $('<div class="ueditor-sink"></div>')
-		;
-
-		$button.on('click', function(){
-			if(Upfront.data.ueditor.sink){
-				me.closeSink();
-			}
-			else{
-				me.openSink();
-			}
-		});
-
-		sinkElements.detach().appendTo(sink);
-		this.$toolbar.append(sink);
-		if(Upfront.data.ueditor.sink)
-			this.$toolbar.addClass('ueditor-sink-open');
-
-		sinkElements.each(function(){
-			var link = $(this).find('a').attr('class').match(/redactor_btn_[^\s]*/g),
-				id = false,
-				box = false
-			;
-			if(link.length)
-				id = link[0].replace('redactor_btn_', '');
-
-			box = me.$toolbar.find('.redactor_dropdown_box_' + id);
-			if(box.length)
-				box.css({'margin-top': '40px'});
-		});
-		this.$air.on('show', function(){
-			if(Upfront.data.ueditor.sink)
-				me.$air.css({top: me.$air.offset().top - 40});
-		});
-	},
-	openSink: function(){
-		Upfront.data.ueditor.sink = true;
-		this.$toolbar.addClass('ueditor-sink-open');
-		this.$air.css({top: this.$air.offset().top - 40});
-	},
-	closeSink: function(){
-		Upfront.data.ueditor.sink = false;
-		this.$toolbar.removeClass('ueditor-sink-open');
-		this.$air.css({top: this.$air.offset().top + 40});
-	}
 };
 
 }); //End require

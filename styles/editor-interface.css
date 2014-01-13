@@ -7582,14 +7582,19 @@ a.ueditor-unlink {
 .sp-container.sp-flat {
 	background-color: #2b3c4b;
 	width: 350px;
-	height: 184px;
+	height: 178px;
 	overflow: visible;
+	padding-top: 4px;
 }
 
 .sp-input-container {
 	position:absolute;
 	right: 150px;
 	width:110px !important;
+}
+
+.sp-button-container {
+	margin-top: -9px;
 }
 
 .sp-hue {
@@ -7635,6 +7640,8 @@ a.ueditor-unlink {
 	width:auto;
 	background-color: transparent;
 	box-shadow: none;
+	top: -164px !important;
+	left: -30px !important;
 }
 
 .sp-picker-container
@@ -7643,11 +7650,12 @@ a.ueditor-unlink {
 }
 
 .sp-palette-container {
-	width: 124px;	
+	width: 124px;
+	left:4px;
 }
 
 .sp-hue {
-	margin-left: 8px;
+	margin-left: 4px;
 }
 
 .sp-palette.sp-cf {
@@ -7672,8 +7680,8 @@ input[type=text].sp-input {
 
 .sp-input-container {
 	position: absolute;
-	top: 14px;
-	left: -118px;
+	top: 6px;
+	left: -110px;
 }
 
 .sp-palette-container {
@@ -7683,7 +7691,7 @@ input[type=text].sp-input {
 }
 
 .sp-palette-container {
-	top: 64px;
+	top: 50px;
 }
 
 .sp-palette-container:before {
@@ -7693,30 +7701,26 @@ input[type=text].sp-input {
 }
 
 .sp-palette.sp-cf {
-	margin-top:8px;
+	margin-top:4px;
 }
 
 
 .sp-palette-row.sp-palette-row-selection {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .sp-palette-row.sp-palette-row-selection:before {
 	content: "Recent colors:";
 	color:#97b8da;
 	font-size:12px;
-	margin-bottom: 8px;
+	margin-bottom: 4px;
 }
 
-.sp-palette-row.sp-palette-row-selection {
-  margin-top: 8px;
-}
-
-.sp-palette-row.sp-palette-row-selection:before {
-	content: "Recent colors:";
-	color:#97b8da;
-	font-size:12px;
-	margin-bottom: 8px;
+.sp-palette .sp-thumb-el {
+	width: 15px;
+	height: 15px;
+	margin: 2px 2px;
+	border: none;	
 }
 
 .sp-picker-container .sp-cancel {
@@ -7796,4 +7800,56 @@ border:none;
 	border-bottom: 3px solid transparent;
 	position: absolute;
 	right: -7px;
+}
+
+.sp-dragger{ display: none;}
+
+div.sp-val:active .sp-dragger { display:block;}
+
+.redactor_btn.redactor_btn_upfrontColor {
+	text-indent: 0;
+	position:relative;
+	border-radius: 3px;
+	color: #000;
+}
+
+.redactor_btn.redactor_btn_upfrontColor:after {
+	content: 'T';
+	color: inherit;
+	display: block;
+	height:0;
+	width:0;
+	border: 12px solid;
+	border-color: inherit;
+	font-size: 20px;
+	top: 6px;
+	left: 8px;
+	position: absolute;
+	text-indent: -6px;
+	font-family:georgia;
+	border-radius: 3px;
+		
+
+}
+
+.redactor_btn.redactor_btn_upfrontColor.transparent:after {
+	border: none;
+	height: 24px;
+	width: 24px;
+	line-height: 24px;
+	background-color: #aeb6be;
+	text-align:center;
+	text-indent: 0;
+	background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+	background-image: linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), 
+	linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+
+  -webkit-background-size:8px 8px;
+  -moz-background-size:8px 8px;
+  background-size:8px 8px;
+  
+  background-position:0 0, 4px 4px;	
 }
