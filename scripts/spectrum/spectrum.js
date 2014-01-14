@@ -31,6 +31,7 @@
         preferredFormat: false,
         className: "",
         showAlpha: false,
+		allowEmpty: false,
         theme: "sp-light",
         palette: ['fff', '000'],
         selectionPalette: [],
@@ -384,7 +385,7 @@
             }
 
             var paletteEvent = IE ? "mousedown.spectrum" : "click.spectrum touchstart.spectrum";
-            paletteContainer.delegate(".sp-thumb-el", paletteEvent, palletElementClick);
+            paletteContainer.delegate(".sp-thumb-el", paletteEvent, { ignore: true }, palletElementClick);
             initialColorContainer.delegate(".sp-thumb-el:nth-child(1)", paletteEvent, { ignore: true }, palletElementClick);
         }
 
@@ -421,7 +422,9 @@
                         paletteLookup[rgb] = true;
                     }
                 }
-
+				
+				
+					
                 for (i = 0; i < p.length; i++) {
                     rgb = tinycolor(p[i]).toRgbString();
 
@@ -431,8 +434,11 @@
                     }
                 }
             }
-
-            return unique.reverse().slice(0, opts.maxSelectionSize);
+			unique = unique.reverse().slice(0, opts.maxSelectionSize)
+			
+			if(opts.allowEmpty)
+					unique = unique.concat(['transparent']);
+            return unique
         }
 
         function drawPalette() {

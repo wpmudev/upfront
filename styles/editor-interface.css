@@ -5824,6 +5824,7 @@ License: MIT
    position:absolute;
    top:0;
    left: 0;
+   z-index:2;
 }
 
 .sp-dragger:before {
@@ -5850,6 +5851,7 @@ License: MIT
 	border-left-color:inherit;
 	left: -28px;
 	top: -28px;
+	display:none;
 }
 
 .sp-slider {
@@ -7982,9 +7984,8 @@ border:none;
 	right: -7px;
 }
 
-.sp-dragger{ display: none;}
 
-div.sp-val:active .sp-dragger { display:block;}
+div.sp-val:active .sp-dragger:after { display:block;}
 
 .redactor_btn.redactor_btn_upfrontColor {
 	text-indent: 0;
