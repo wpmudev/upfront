@@ -420,8 +420,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			props = this.extract_properties(),
 			onclick = this.property('when_clicked')
 		;
-		if(!this.property('element_size').width)
+		if(!this.property('element_size').width || (!this.property('quick_swap') && !_.isNumber(this.property('element_size').height))){
 			this.setElementSize();
+			this.property('element_size', this.elementSize);
+		}
 
 		props.url = onclick == 'do_nothing' ? false : this.property('image_link');
 
@@ -479,6 +481,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 						'max-height': 'none',
 						'max-width': 'none'
 					})
+					.parent()
 				;
 			}
 
@@ -794,6 +797,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var me = this,
 			options = {
 				setImageSize: newImage,
+				saveOnClose: newImage,
 				extraButtons: [
 					{
 						id: 'image-edit-button-swap',
@@ -1167,8 +1171,12 @@ var ImageEditor = Backbone.View.extend({
 	initialize: function(){
 		var me = this;
 		this.$el.on('click', function(e){
-			if(e.target == e.currentTarget)
-				me.cancel();
+			if(e.target == e.currentTarget){
+				if(me.saveOnClose)
+					me.imageOk();
+				else
+					me.cancel();
+			}
 		})
 	},
 
@@ -1188,6 +1196,7 @@ var ImageEditor = Backbone.View.extend({
 		this.sizes = false;
 		this.promise = false;
 		this.align = 'left';
+		this.saveOnClose = false;
 	},
 
 	centerImageOffset: function(imageSize, maskSize){
@@ -1200,6 +1209,7 @@ var ImageEditor = Backbone.View.extend({
 	open: function(options){
 		this.resetDefaults();
 		this.src = options.src;
+		this.saveOnClose = options.saveOnClose;
 
 		options.maskOffset.top += this.fixImageTop(options.maskOffset);
 
