@@ -763,11 +763,11 @@ RedactorPlugins.upfrontColor = {
 			'open': 'open',
 		},
 		setCurrentColors: function() {
-			if(this.redactor.getCurrent()) {
+			if(this.redactor.getCurrent() && $(this.redactor.getCurrent()).prop('tagName')=='INLINE') {
 				var rgb_a = $(this.redactor.getCurrent()).css('background-color').split(',');
 				this.current_color = $(this.redactor.getCurrent()).css('color');
 				
-				if($(this.redactor.getCurrent()).prop('tagName')=='INLINE' && (rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0))
+				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
 					this.current_bg = $(this.redactor.getCurrent()).css('background-color');
 			}
 		},
@@ -865,7 +865,7 @@ RedactorPlugins.upfrontColor = {
 				showPalette: true,
 				palette: ['fff', '000', 'f00'],
 				localStorageKey: "spectrum.recent_colors",
-				maxSelectionSize: 11,
+				maxSelectionSize: 10,
 				preferredFormat: "hex",
 				chooseText: "Ok",
 				showInput: true,
