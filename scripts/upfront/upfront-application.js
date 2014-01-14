@@ -99,7 +99,7 @@ var LayoutEditor = new (Subapplication.extend({
 			})
 		;
 	},
-	
+
 	preview_layout: function () {
 		var data = Upfront.Util.model_to_json(this.layout),
 			preview = false
@@ -172,7 +172,7 @@ var LayoutEditor = new (Subapplication.extend({
 		// Enable resizables and draggables
 		Upfront.Behaviors.GridEditor.toggle_resizables(true);
 		Upfront.Behaviors.GridEditor.toggle_draggables(true);
-		
+
 		Upfront.Events.on("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
 		Upfront.Events.on("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
 		Upfront.Events.on("layout:render", Upfront.Behaviors.GridEditor.refresh_draggables, this);
@@ -232,6 +232,7 @@ var LayoutEditor = new (Subapplication.extend({
 			}
 		;
 		Upfront.Events.on("command:layout:save", start, this);
+		Upfront.Events.on("command:layout:save_as", start, this);
 		Upfront.Events.on("command:layout:save_success", stop, this);
 		Upfront.Events.on("command:layout:save_error", stop, this);
 	},
