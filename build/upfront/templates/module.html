@@ -2,7 +2,7 @@
 	<b class="upfront-entity_meta">
 		{{name}} 
 		{[ if (parseInt(properties.has_settings, 10)) { ]} <a href="#" class="upfront-icon-button upfront-icon-button-setting upfront-entity-settings_trigger"></a> {[ } ]}
-		<a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-entity-delete_trigger"></a>
+		{[ if (!properties.sticky) { ]} <a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-entity-delete_trigger"></a> {[ } ]}
 	</b>
 	<div class="upfront-objects_container"></div>
 </div>

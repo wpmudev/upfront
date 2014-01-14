@@ -63,25 +63,28 @@ var LayoutEditor = {
 			.width($(window).width())
 			.height($(document).height())
 		;
+		html += '<p>Do you wish to save layout just for this post or apply it to all posts?</p>';
 		$.each(_upfront_post_data.layout, function (idx, el) {
-			var checked = el == current ? "checked='checked'" : '';
-			html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
-			html += '&nbsp;<label for="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</label><br />';
+			//var checked = el == current ? "checked='checked'" : '';
+			//html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
+			//html += '&nbsp;<label for="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</label><br />';
+			html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</span>';
 		});
-		html += '<button type="button" id="upfront-save_as">Save</button>';
-		html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
+		//html += '<button type="button" id="upfront-save_as">Save</button>';
+		//html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
 		$dialog
 			.html(html)
 		;
-		$("#upfront-save-dialog").on("click", "#upfront-save_as", function () {
-			var $check = $dialog.find(":radio:checked"),
+		$("#upfront-save-dialog").on("click", ".upfront-save-button", function () {
+			/*var $check = $dialog.find(":radio:checked"),
 				selected = $check.length ? $check.val() : false
-			;
+			;*/
+			var selected = $(this).attr('data-save-as');
 			$bg.remove(); $dialog.remove();
 			on_complete.apply(context, [selected]);
 			return false;
 		});
-		$("#upfront-save-dialog").on("click", "#upfront-cancel_save", function () {
+		$("#upfront-save-dialog-background").on("click", function () {
 			$bg.remove(); $dialog.remove();
 			return false;
 		});
@@ -975,8 +978,12 @@ var GridEditor = {
 			$layout = $main.find('.upfront-layout'),
 			$resize, $resize_placeholder
 		;
-		if ( $me.hasClass('ui-resizable') )
+		if ( model.get_property_value_by_name('disable_resize') === 1 )
 			return false;
+		if ( $me.hasClass('ui-resizable') ){
+			$me.resizable('option', 'disabled', false);
+			return false;
+		}
 		$me.append('<span class="upfront-icon-control upfront-icon-control-resize upfront-resize-handle ui-resizable-handle ui-resizable-se"></span>');
 		$me.resizable({
 			containment: "document",
@@ -1122,7 +1129,11 @@ var GridEditor = {
 			}
 		});
 	},
-
+	
+	toggle_resizables: function (enable) {
+		$('.upfront-editable_entity.ui-resizable').resizable('option', 'disabled', (!enable));
+	},
+	
 	/**
 	 * Create draggable
 	 *
@@ -1140,9 +1151,11 @@ var GridEditor = {
 		;
 		if ( model.get_property_value_by_name('disable_drag') === 1 )
 			return false;
-		if ( $me.hasClass('ui-draggable') )
+		if ( $me.hasClass('ui-draggable') ){
+			$me.draggable('option', 'disabled', false);
 			return false;
-
+		}
+		
 		function select_drop (drop) {
 			ed.time_start('fn select_drop');
 			if ( drop.is_use )
@@ -1758,7 +1771,11 @@ var GridEditor = {
 			}
 		});
 	},
-
+	
+	toggle_draggables: function (enable) {
+		$('.upfront-editable_entity.ui-draggable').draggable('option', 'disabled', (!enable));
+	},
+	
 	refresh_draggables: function(){
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
@@ -2157,3 +2174,4 @@ define({
 	}
 });
 })(jQuery);
+//@ sourceURL=upfront-behavior.js

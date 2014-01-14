@@ -38,15 +38,16 @@ var LayoutEditor = new (Subapplication.extend({
 	stop: function () {
 		Upfront.Events.off("entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable, this);
 		Upfront.Events.off("entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable, this);
-// Hack
-$(".upfront-layout .ui-draggable").each(function () {
-	$(this).draggable("disable")
-})
+		// Disable resizables and draggables
+		Upfront.Behaviors.GridEditor.toggle_resizables(false);
+		Upfront.Behaviors.GridEditor.toggle_draggables(false);
+
 		Upfront.Events.off("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
 		Upfront.Events.off("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
 
 		Upfront.Events.off("entity:activated", this.create_properties, this);
 		Upfront.Events.off("entity:deactivated", this.destroy_properties, this);
+		Upfront.Events.off("command:exit", this.destroy_editor, this);
 		Upfront.Events.off("command:layout:save", this.save_layout, this);
 		Upfront.Events.off("command:layout:save_as", this.save_layout_as, this);
 		Upfront.Events.off("command:layout:preview", this.preview_layout, this);
@@ -98,7 +99,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 			})
 		;
 	},
-
+	
 	preview_layout: function () {
 		var data = Upfront.Util.model_to_json(this.layout),
 			preview = false
@@ -168,10 +169,10 @@ $(".upfront-layout .ui-draggable").each(function () {
 		// Set up behavior
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable, this);
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable, this);
-// Hack
-$(".upfront-layout .ui-draggable").each(function () {
-	$(this).draggable("enable")
-})
+		// Enable resizables and draggables
+		Upfront.Behaviors.GridEditor.toggle_resizables(true);
+		Upfront.Behaviors.GridEditor.toggle_draggables(true);
+		
 		Upfront.Events.on("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
 		Upfront.Events.on("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
 		Upfront.Events.on("layout:render", Upfront.Behaviors.GridEditor.refresh_draggables, this);
@@ -183,6 +184,7 @@ $(".upfront-layout .ui-draggable").each(function () {
 		Upfront.Events.on("entity:deactivated", this.destroy_properties, this);
 
 		// Layout manipulation
+		Upfront.Events.on("command:exit", this.destroy_editor, this);
 		Upfront.Events.on("command:layout:save", this.save_layout, this);
 		Upfront.Events.on("command:layout:save_as", this.save_layout_as, this);
 		Upfront.Events.on("command:layout:preview", this.preview_layout, this);
@@ -289,13 +291,6 @@ var ContentEditor = new (Subapplication.extend({
 
 	start: function () {
 		Upfront.Util.log("Starting the content edit mode");
-
-		// Null out draggables
-		Upfront.Application.sidebar.get_panel("elements").elements = _([]);
-		Upfront.Application.sidebar.render();
-		if (Upfront.Application.sidebar.get_panel("settings")) {
-			Upfront.Application.sidebar.get_panel("settings").$el.empty(); // This is UGLY, refactor
-		}
 
 		$("html").removeClass("upfront-edit-layout").addClass("upfront-edit-content");
 	},

@@ -391,6 +391,8 @@ define([
 				this.listenTo(this.model.get("properties"), 'remove', this.render);
 				Upfront.Events.on('entity:resize_start', this.close_settings, this);
 				Upfront.Events.on('entity:drag_start', this.close_settings, this);
+				Upfront.Events.on('upfront:element:edit:start', this.on_element_edit_start, this);
+				Upfront.Events.on('upfront:element:edit:stop', this.on_element_edit_stop, this);
 				if (this.init) this.init();
 			},
 			close_settings: function () {
@@ -421,6 +423,13 @@ define([
 				Upfront.Events.trigger("entity:object:after_render", this, this.model);
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 				if ( this.on_render ) this.on_render();
+			},
+			on_element_edit_start: function (edit, post) {
+				if ( edit == 'write' )
+					this.parent_module_view.disable();
+			},
+			on_element_edit_stop: function (edit, post) {
+				this.parent_module_view.enable();
 			},
 /*
 			// Create a ckeditor instance when any contenteditable element receives focus for the first time.
@@ -589,6 +598,12 @@ define([
 					this._objects_view = objects_view;
 				else
 					this._objects_view.delegateEvents();
+			},
+			disable: function () {
+				this.$el.find('.upfront-editable_entity:first').addClass('upfront-module-disabled');
+			},
+			enable: function () {
+				this.$el.find('.upfront-editable_entity:first').removeClass('upfront-module-disabled');
 			},
 			on_region_update: function(){
 				if ( this._objects_view ){
@@ -781,6 +796,8 @@ define([
 					this.update_background();
 			},
 			trigger_edit: function (e) {
+				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.LAYOUT )
+					return false;
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-region-editing');
 				this.update_overlay();

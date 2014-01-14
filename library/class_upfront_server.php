@@ -299,6 +299,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"LAYOUT" => "layout",
 			"CONTENT" => "content",
 			"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
+			"ALLOW" => (current_user_can("manage_options") ? "layout,content" : "content")
 		));
 
 		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);

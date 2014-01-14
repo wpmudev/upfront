@@ -173,6 +173,27 @@ define([
 			Upfront.Events.trigger("entity:module:added", module, region);
 		}
 	});
+	
+	var Command_Logo = Command.extend({
+		className: "command-logo",
+		render: function () {
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+				this.$el.html('<div class="upfront-logo"></div>');
+			else
+				this.$el.html('<div class="upfront-logo upfront-logo-small"></div>');
+		},
+		on_click: function () {
+		}
+	});
+	
+	var Command_Exit = Command.extend({
+		className: "command-exit upfront-icon upfront-icon-exit",
+		render: function () {
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:exit");
+		}
+	});
 
 
 	var Command_NewPost = Command.extend({
@@ -180,9 +201,12 @@ define([
 		postView: false,
 		postType: 'post',
 		render: function () {
-      Upfront.Events.trigger("command:newpost:start", true);
+			Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
-			this.$el.html("New post");
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New post");
+			else
+				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New post</span>');
 		},
 		on_click: function () {
 			//window.location = Upfront.Settings.Content.create.post;
@@ -195,16 +219,16 @@ define([
 			;
 
 			loading.render();
-			$('#page').append(loading.$el);
+			$('body').append(loading.$el);
 
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
 
+			Upfront.Application.set_current(Upfront.Settings.Application.MODE.CONTENT);
 			Upfront.Application.new_post(this.postType)
 				.done(function(post){
-					loading.$el.remove();
+					loading.done();
 					loading = false;
-					console.log(post);
 				})
 			;
 
@@ -234,9 +258,12 @@ define([
 		"className": "command-new-page",
 		postType: 'page',
 		render: function () {
-      Upfront.Events.trigger("command:newpage:start", true);
+			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
-			this.$el.html("New page");
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New page");
+			else
+				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New page</span>');
 		}
 	});
 
@@ -247,7 +274,8 @@ define([
 			this.$el.html("Save");
 		},
 		on_click: function () {
-			Upfront.Events.trigger("command:layout:save");
+			//Upfront.Events.trigger("command:layout:save");
+			Upfront.Events.trigger("command:layout:save_as");
 		}
 
 	});
@@ -544,23 +572,49 @@ define([
 	});
 
 	var Command_ToggleMode = Command.extend({
+		enabled: true,
+		initialize: function () {
+			Upfront.Events.on('upfront:element:edit:start', this.disable_toggle, this);
+			Upfront.Events.on('upfront:element:edit:stop', this.enable_toggle, this);
+		},
 		render: function () {
 			this.$el.html(_.template(
-				"<span title='toggle editing mode'>Current mode: {{mode}}</span>",
+				"<span title='toggle editing mode'>Current mode: {{mode}}</span>", 
 				{mode: Upfront.Application.get_current()}
 			));
 		},
 		on_click: function () {
+			if ( !this.enabled )
+				return false;
 			var mode = Upfront.Application.mode && Upfront.Application.mode.current && Upfront.Application.mode.current === Upfront.Application.MODE.LAYOUT
 				? Upfront.Application.MODE.CONTENT
 				: Upfront.Application.MODE.LAYOUT
 			;
 			Upfront.Application.start(mode);
+		},
+		disable_toggle: function () {
+			this.$el.css('opacity', 0.5);
+			this.enabled = false;
+		},
+		enable_toggle: function () {
+			this.$el.css('opacity', 1);
+			this.enabled = true;
 		}
 	});
 
-
-
+	var Command_ToggleMode_Small = Command_ToggleMode.extend({
+		className: 'command-toggle-mode upfront-icon',
+		current_mode: false,
+		render: function () {
+			if ( this.current_mode )
+				this.$el.removeClass('command-toggle-mode-' + this.current_mode + ' upfront-icon-collapse upfront-icon-expand');
+			this.current_mode = Upfront.Application.get_current();
+			var icon = ( this.current_mode == Upfront.Application.MODE.LAYOUT ) ? 'upfront-icon-collapse' : 'upfront-icon-expand';
+			this.$el.addClass('command-toggle-mode-' + this.current_mode + ' ' + icon);
+		}
+	});
+	
+	
 	var Command_EditBackgroundArea = Command.extend({
 		"className": "command-edit-background-area",
 		events: {
@@ -919,10 +973,12 @@ define([
 		"className": "sidebar-commands sidebar-commands-primary",
 		initialize: function () {
 			this.commands = _([
-				new Command_NewPage({"model": this.model}),
 				new Command_NewPost({"model": this.model}),
+				new Command_NewPage({"model": this.model}),
 				new Command_PopupList({"model": this.model}),
 			]);
+			if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) != -1 )
+				this.commands.push( new Command_ToggleMode_Small({"model": this.model}) );
 		}
 	});
 
@@ -957,14 +1013,46 @@ define([
 			}
 			// Dev feature only
 			if ( Upfront.Settings.Debug.dev ){
-				if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
+				//if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
 				this.commands.push(new Command_ToggleGrid({"model": this.model}));
 				if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_ResetEverything({"model": this.model}));
 				this.commands.push(new Command_ToggleMode({"model": this.model}));
 			}
 		}
 	});
-
+	
+	var SidebarCommands_Header = Commands.extend({
+		className: "sidebar-commands sidebar-commands-header",
+		initialize: function () {
+			this.commands = _([
+				new Command_Logo({"model": this.model}),
+			]);
+			if ( !Upfront.Settings.Application.NO_SAVE )
+				this.commands.push(new Command_Exit({"model": this.model}));
+		}
+	});
+	
+	var SidebarProfile = Backbone.View.extend({
+		className: "sidebar-profile",
+		render: function () {
+			var user = Upfront.data.currentUser;
+			if ( !user ) return;
+			var data = user.get('data'),
+				roles = user.get('roles');
+			this.$el.html(_.template(
+				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' + 
+				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' + 
+				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" href="{{edit_url}}">edit profile</a></div>',
+				{
+					gravatar: data.gravatar,
+					name: data.display_name,
+					role: roles[0],
+					edit_url: Upfront.Settings.admin_url + 'profile.php'
+				}
+			));
+		}
+	});
+	
 	/*var SidebarEditorMode = Backbone.View.extend({
 		"className": "sidebar-editor-mode",
 		events: {
@@ -1002,7 +1090,9 @@ define([
 		},
 		initialize: function () {
 			//this.editor_mode = new SidebarEditorMode({"model": this.model});
+			this.sidebar_profile = new SidebarProfile({"model": this.model});
 			this.sidebar_commands = {
+				header: new SidebarCommands_Header({"model": this.model}),
 				primary: new SidebarCommands_PrimaryPostType({"model": this.model}),
 				additional: new SidebarCommands_AdditionalPostType({"model": this.model}),
 				control: new SidebarCommands_Control({"model": this.model})
@@ -1012,33 +1102,44 @@ define([
 			this.fetch_current_user();
 
 			//Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
-      Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
-      Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT ){
+				Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
+				Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
+			}
+			Upfront.Events.on("application:mode:after_switch", this.render, this);
 		},
-    preventUsage: function(type) {
-      var tooltipText = 'Not available when<br>editing text.';
-      if (type === 'media-upload') {
-        tooltipText = 'Not available when<br>uploading media.';
-      }
-      if (type === 'write') {
-        this.writingIsOn = true;
-        tooltipText = 'Please publish your content<br>before modifying the layout.';
-      }
-      $('#preventUsageOverlay span').html(tooltipText);
-      $('#preventUsageOverlay').show();
-    },
-    allowUsage: function(type) {
-      if (this.writingIsOn && type !== 'write') {
-        this.preventUsage('write');
-        return;
-      }
-
-      this.writingIsOn = false;
-      $('#preventUsageOverlay').hide();
-    },
+		preventUsage: function(type) {
+			var tooltipText = 'Not available when<br>editing text.';
+			if (type === 'media-upload') {
+				tooltipText = 'Not available when<br>uploading media.';
+			}
+	 		if (type === 'write') {
+				this.writingIsOn = true;
+				tooltipText = 'Please publish your content<br>before modifying the layout.';
+			}
+			$('#preventUsageOverlay span').html(tooltipText);
+			$('#preventUsageOverlay').show();
+		},
+		allowUsage: function(type) {
+			if (this.writingIsOn && type !== 'write') {
+			this.preventUsage('write');
+				return;
+			}
+	
+			this.writingIsOn = false;
+			$('#preventUsageOverlay').hide();
+		},
 		render: function () {
 			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
-			output.append('<div class="upfront-logo" />');
+			
+			// Header
+			this.sidebar_commands.header.render();
+			output.append(this.sidebar_commands.header.el);
+			
+			// Profile
+			this.sidebar_profile.render();
+			output.append(this.sidebar_profile.el);
+			
 			// Editor Mode
 			//this.editor_mode.render();
 			//this.$el.append(this.editor_mode.el);
@@ -1049,18 +1150,25 @@ define([
 			// Additional post types
 			this.sidebar_commands.additional.render();
 			output.append(this.sidebar_commands.additional.el);
-			// Sidebar panels
-			this.sidebar_panels.render();
-			output.append(this.sidebar_panels.el);
-			// Control
-			this.sidebar_commands.control.render();
-			output.append(this.sidebar_commands.control.el);
-      output.append('<div id="preventUsageOverlay"><span></span></div>');
+			
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT ){
+				// Sidebar panels
+				this.sidebar_panels.render();
+				output.append(this.sidebar_panels.el);
+				// Control
+				this.sidebar_commands.control.render();
+				output.append(this.sidebar_commands.control.el);
+				
+				output.append('<div id="preventUsageOverlay"><span></span></div>');
 
-			this.$el.html(output);
-
-			//Collapsible
-			this.addCollapsibleEvents();
+				this.$el.html(output);
+	
+				//Collapsible
+				this.addCollapsibleEvents();
+			}
+			else {
+				this.$el.html(output);
+			}
 		},
 		get_panel: function ( panel ) {
 			if ( ! this.sidebar_panels.panels[panel] )
@@ -1193,11 +1301,17 @@ define([
 	});
 
 	var Command_PopupList = ContentEditor_SidebarCommand.extend({
+		tagName: 'li',
+		className: 'command-popup-list',
 		$popup: {},
 		views: {},
 		currentPanel: false,
 		render: function () {
-			this.$el.addClass("upfront-entity_list").html('<i class="icon-reorder"></i><a href="#">Browse Posts / Pages / Comments</a>');
+			this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");		
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+				this.$el.html('Browse Posts / Pages / Comments');
+			else
+				this.$el.html('Posts / Pages');
 		},
 		on_click: function () {
 			var me = this,

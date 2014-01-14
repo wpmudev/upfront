@@ -180,7 +180,7 @@ define(function() {
 				.ueditor({
 					airButtons: {},
 					observeLinks: false,
-					autostart: false,
+					autostart: true,
 					tabFocus: false,
 					placeholder: 'Write a title...'
 				})
@@ -273,7 +273,7 @@ define(function() {
 		editTitle: function(e){
 
 			//Mark title as edited
-			this.changed.title = true;
+			//this.changed.title = true;
 
 			var me = this,
 				apply_styles = function($el){
@@ -322,6 +322,12 @@ define(function() {
 
 			apply_styles($title);
 			$title.find('input').focus().val(title);
+			
+			//@TODO Hack to focus title
+			if ( this.post && this.post.is_new ){
+				var selector = _.find(Upfront.data.ueditor.selectors, function(s){ return s.type == 'title'; }).selector;
+				this.$el.find(selector).ueditor('focus');
+			}
 		},
 
 		goToEditor: function(e){
@@ -540,7 +546,8 @@ define(function() {
 					})
 					.ueditor({
 						linebreaks: false,
-						placeholder: 'Your content goes here ;)'
+						placeholder: 'Your content goes here ;)',
+						focus: focus
 					})
 				;
 			});
@@ -791,7 +798,7 @@ define(function() {
 			if(updateMeta){
 				me.post.meta.save().done(function(){
 					if(postUpdated){
-						loading.$el.remove();
+						loading.done();
 						Upfront.Views.Editor.notify(successMsg);
 						if(me.options.onUpdated)
 							me.options.onUpdated(me.post.toJSON());
@@ -892,7 +899,7 @@ define(function() {
 				this.initialDate = this.initialDate.getTime();
 			this.tpl = _.template(Upfront.data.uposts.barTemplate);
 			this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
-      Upfront.Events.trigger('upfront:element:edit:start', 'write');
+			Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 		},
 
 		render: function(){
@@ -1197,7 +1204,7 @@ define(function() {
 			if(confirm('Are you sure to discard the changes made to ' + this.post.get('post_title') + '?')){
 				this.destroy();
 				this.post.trigger('editor:cancel');
-        Upfront.Events.trigger('upfront:element:edit:stop', 'write');
+				 Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 			}
 		},
 
@@ -1210,7 +1217,7 @@ define(function() {
 			this.initialDate = this.post.get('post_date').getTime();
 
 			this.post.trigger('editor:publish');
-      Upfront.Events.trigger('upfront:element:edit:stop', 'write');
+			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 		},
 
 		saveDraft: function(e){
@@ -1222,7 +1229,7 @@ define(function() {
 			this.initialDate = this.post.get('post_date').getTime();
 
 			this.post.trigger('editor:draft');
-      Upfront.Events.trigger('upfront:element:edit:stop', 'write');
+			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 		},
 
 		trash: function(e){
@@ -1230,7 +1237,7 @@ define(function() {
 			if(confirm('Are you sure you want to delete this ' + this.post.get('post_type') + '?')){
 				this.destroy();
 				this.post.trigger('editor:trash');
-        Upfront.Events.trigger('upfront:element:edit:stop', 'write');
+				Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 			}
 		},
 

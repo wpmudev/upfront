@@ -9,6 +9,12 @@
   	margin: 0 0 0 300px;
   	width: auto;
 }
+.upfront-edit-content #page {
+	position: relative;
+	min-height: 100%;
+	margin: 0 0 0 139px;
+	width: auto;
+}
 .upfront-grid-layout {
 	position: relative;
 	margin: 0 auto;
@@ -167,9 +173,9 @@
 	bottom: 0;
 	left: 0;
 	width: 300px;
-	background: #395269;
-	color: #a1c5e6;
-	border-right: 1px solid #324253;
+	background: #3d5266;
+	border-right: 1px solid #1a2d40;
+	color: #adc3d8;
 	display: none;
 	font: 16px/24px 'Source Sans Pro', sans-serif;
 	z-index:1;
@@ -185,6 +191,14 @@
 	width:300px;
 }
 
+.upfront-edit-content #sidebar-ui {
+	bottom: auto;
+	width: 139px;
+}
+.upfront-edit-content #sidebar-ui-wrapper {
+	width: 139px;
+}
+
 #sidebar-ui.collapsed #sidebar-ui-wrapper {
 	display:none;
 }
@@ -198,10 +212,25 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
-#sidebar-ui .upfront-logo {
-	background: #607f99 url('../img/upfront-logo.png') no-repeat 20px 50%;
-	height: 50px;
-	border-bottom: 1px solid #31485e;
+#sidebar-ui .sidebar-commands-header {
+	background: #2c3e50;
+	border-bottom: 1px solid #1a2d40;
+	-webkit-box-shadow: 0 1px 0 #3f5a73;
+	-moz-box-shadow: 0 1px 0 #3f5a73;
+	box-shadow: 0 1px 0 #3f5a73;
+	overflow: hidden;
+}
+#sidebar-ui .command-logo {
+	padding: 18px 15px;
+	float: left;
+}
+#sidebar-ui .command-exit {
+	width: 68px;
+	height: 68px;
+	padding: 22px;
+	background: #233140;
+	border-left: 1px solid #1a2d40;
+	float: right;
 }
 #sidebar-ui .sidebar-editor-mode {
 	border-top: 1px solid #3f5870;
@@ -274,34 +303,111 @@
 	vertical-align: top;
 }
 #sidebar-ui .sidebar-commands-primary {
-	padding: 20px 10px 10px;
-	border-top: 1px solid #3f5870;
+	padding: 20px 15px 0;
+	overflow: hidden;
 }
-#sidebar-ui .sidebar-commands-primary li {
-	height: 39px;
+#sidebar-ui .sidebar-commands-primary .command-new-page,
+#sidebar-ui .sidebar-commands-primary .command-new-post {
+	height: 40px;
 	line-height: 24px;
-	padding: 5px 15px 0;
-	margin: 0 10px 10px;
-	border: 2px solid #2f465b;
-	border-radius: 10px;
+	padding: 7px 15px 0 10px;
+	margin: 0 0 10px;
+	border: 2px solid #25394d;
 }
-#sidebar-ui .sidebar-commands-primary li.upfront-icon {
-	padding-left: 4px;
+.upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-page,
+.upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-post {
+	padding-right: 5px;
 }
-#sidebar-ui .sidebar-commands-primary li:hover {
+#sidebar-ui .sidebar-commands-primary .command-new-post {
+	float: left;
+}
+#sidebar-ui .sidebar-commands-primary .command-new-page {
+	float: right;
+}
+#sidebar-ui .sidebar-commands-primary .command-new-page:hover,
+#sidebar-ui .sidebar-commands-primary .command-new-post:hover {
 	border-color: #1fcd8f;
-	color: #cce6ff;
+	color: #cbe5ff;
+}
+#sidebar-ui .sidebar-commands-primary .command-popup-list {
+	clear: both;
+	display: block;
+	font-size: 15px;
+	color: #1fcc8f;
+	text-decoration: underline;
+	margin: 0 0 20px;
+}
+#sidebar-ui .sidebar-commands-primary .command-toggle-mode {
+	margin: -23px -15px 0 0;
+	width: 23px;
+	height: 25px;
+	padding: 6px 5px;
+	background: #1a2d40;
+	float: right;
+}
+.upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-toggle-mode {
+	margin-top: -18px;
+	width: 20px;
+	height: 20px;
+	padding: 4px;
+}
+#sidebar-ui .sidebar-profile {
+	padding: 20px 15px 0;
+	font: 13px/16px Verdana, sans-serif;
+}
+#sidebar-ui .sidebar-profile-avatar {
+	float: left;
+	border: 2px solid #273b4e;
+	margin: 2px 0 0;
+}
+#sidebar-ui .sidebar-profile-avatar img {
+	display: block;
+}
+#sidebar-ui .sidebar-profile-detail {
+	margin: 0 0 0 45px;
+	max-width: 135px;
+}
+#sidebar-ui .sidebar-profile-name,
+#sidebar-ui .sidebar-profile-role {
+	display: block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+#sidebar-ui .sidebar-profile-name {
+	color: #dae6f2;
+}
+#sidebar-ui .sidebar-profile-role {
+	color: #7c9dbf;
+}
+#sidebar-ui .sidebar-profile-edit {
+	float: right;
+	margin: -27px 0 0;
+	font-size: 11px;
+	line-height: 24px;
+	text-align: right;
+}
+.upfront-edit-content #sidebar-ui .sidebar-profile-edit {
+	display: none;
+}
+#sidebar-ui .sidebar-profile-edit a {
+	margin: 0;
+	text-decoration: underline;
+}
+#sidebar-ui .sidebar-profile-edit .upfront-icon:before {
+	float: right;
+	margin: 0;
+	padding: 0 0 0 10px;
 }
 #sidebar-ui .sidebar-commands-control {
-	border-top: 3px solid #335b80;
-	padding: 10px 10px 0;
+	padding: 15px 3px 0;
 }
 #sidebar-ui .sidebar-commands-control li {
-	height: 39px;
-	line-height: 27px;
-	padding: 7px 0 0;
-	margin: 0 10px 10px;
-	color: #85aacc;
+	height: 40px;
+	line-height: 24px;
+	padding: 8px 0 0;
+	margin: 0 12px 10px;
+	color: #85a9cb;
 }
 #sidebar-ui .sidebar-commands-control .command-undo,
 #sidebar-ui .sidebar-commands-control .command-redo {
@@ -309,11 +415,14 @@
 	line-height: 18px;
 }
 #sidebar-ui .sidebar-commands-control .command-save {
-	padding: 5px 15px 0 10px;
-	border: 2px solid #abc4db;
-	border-radius: 10px;
-	color: #abc4db;
-	font-weight: bold;
+	background: #1fcd8f;
+	-moz-box-shadow: 0 1px 0 #192d3f;
+	-webkit-box-shadow: 0 1px 0 #192d3f;
+	box-shadow: 0 1px 0 #192d3f;
+	padding: 8px 30px 0 20px;
+	color: #f1f8ff;
+	font-size: 18px;
+	float: right;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
 	border-color: #1fcd8f;
@@ -335,9 +444,9 @@
 	font-weight: normal;
 	line-height: 27px;
 	height: 45px;
-	background: #accae6;
-	border-top: 3px solid #bfe1ff;
-	border-bottom: 1px solid #8fa9bf;
+	background: #d9edff;
+	border-top: 2px solid #f2f9ff;
+	border-bottom: 1px solid #a3bfd9;
 	color: #395773;
 	padding: 8px 0 0 18px;
 	margin: 0;
@@ -357,6 +466,9 @@
 	border-right: 5px solid transparent;
 	border-left: 5px solid transparent
 }
+#sidebar-ui .sidebar-panel.expanded .sidebar-panel-title {
+	border-bottom: none;
+}
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-title:after {
 	margin-top: 7px;
 	border-right: none;
@@ -365,7 +477,7 @@
 	border-bottom: 5px solid transparent;
 }
 #sidebar-ui .sidebar-panel-content {
-	background: #cee1f2;
+	background: #e5f3ff;
 	-webkit-transition: all .3s;
 	height: 0;
 	opacity: 0;
@@ -375,6 +487,8 @@
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
 	height: 280px;
 	padding: 15px 0;
+	border-top: 1px solid #accae6;
+	border-bottom: 1px solid #accae6;
 	opacity: 1;
 	overflow-x: hidden;
 	overflow-y: scroll;
@@ -470,8 +584,8 @@
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
-	border: 1px solid #a2bed8;
-	box-shadow: 0 1px 0 #a2bed8, inset 0 1px 0px #fff;
+	border: 1px solid #a3bfd9;
+	box-shadow: 0 1px 0 #a3bfd9, inset 0 1px 0px #fff;
 	color: #395269;
 	cursor: move;
 	cursor: -moz-grab;
@@ -759,7 +873,7 @@
 .upfront-item-control::-webkit-scrollbar,
 .upfront-filter-control::-webkit-scrollbar {
 	background: none;
-	width: 6px;
+	width: 5px;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-track,
 .upfront-scroll-panel::-webkit-scrollbar-track,
@@ -781,8 +895,7 @@
 .upfront-media_collection::-webkit-scrollbar-thumb,
 .upfront-item-control::-webkit-scrollbar-thumb,
 .upfront-filter-control::-webkit-scrollbar-thumb {
-	border-right: 3px solid #1fcd8f;
-	width: 6px;
+	border-right: 5px solid #1fcd8f;
 }
 
 /* Tooltip */
@@ -1580,6 +1693,18 @@ a.ueditor-action-pickercancel{
 	position: relative;
 	z-index: 1;
 }
+.upfront-module-disabled {
+	opacity: 0.5;
+}
+.upfront-module-disabled:after {
+	content: " ";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 9999;
+}
 .show-debug .upfront-module {
 	/*border: 1px solid #b3da11;*/
 	background: rgba(44, 62, 80, 0.3)
@@ -1680,7 +1805,7 @@ a.ueditor-action-pickercancel{
 .upfront-region-edit-trigger .upfront-icon:before {
 	margin: 0;
 }
-.upfront-region-container:hover .upfront-region-edit-trigger {
+.upfront-edit-layout .upfront-region-container:hover .upfront-region-edit-trigger {
 	visibility: visible;
 	opacity: 1;
 }
@@ -2724,8 +2849,7 @@ a.ueditor-action-pickercancel{
 /* ----- Save As dialog ----- */
 
 #upfront-save-dialog-background {
-  background: #333;
-  opacity: .5;
+  background: rgba(31, 48, 63, 0.8);
   position: fixed;
   top: 0;
   left: 0;
@@ -2733,14 +2857,33 @@ a.ueditor-action-pickercancel{
 }
 
 #upfront-save-dialog {
-  background: #eee;
+  border: 1px solid #fff;
+  background: #e5f3ff;
+  -moz-box-shadow: 0 0 20px rgba(39,58,76,.8);
+  -webkit-box-shadow: 0 0 20px rgba(39,58,76,.8);
+  box-shadow: 0 0 20px rgba(39,58,76,.8);
   position: fixed;
-  top: 10%;
-  left: 40%;
-  width: 20%;
+  top: 20%;
+  left: 50%;
+  width: 400px;
+  margin-left: -200px;
   z-index: 999999;
-  box-shadow: 1px 1px 5px #333;
-  padding: 2em;
+  padding: 20px;
+  text-align: center;
+}
+
+.upfront-save-button {
+	display: inline-block;
+	font-size: 14px;
+	font-family: 'Source Sans Pro';
+	border: 1px solid #a3bfd9;
+	color: #395269;
+	margin: 0 10px 10px;
+	padding: 0 20px;
+	cursor: pointer;
+}
+.upfront-save-button:hover {
+	border-color: #537ea6;
 }
 
 
@@ -2755,6 +2898,7 @@ a.ueditor-action-pickercancel{
 	float: left;
 	display: block;
 }
+.upfront-logo,
 .upfront-ui .upfront-icon:before,
 .region-lock-switch:before,
 .upfront-icon-control-region:before,
@@ -2768,6 +2912,16 @@ a.ueditor-action-pickercancel{
 	background-repeat: no-repeat;
 	float: left;
 	display: block;
+}
+.upfront-logo {
+	background-position: -190px -405px;
+	width: 98px;
+	height: 32px;
+	overflow: hidden;
+}
+.upfront-logo-small {
+	background-position: -340px -405px;
+	width: 32px;
 }
 .upfront-icon-element:before {
 	width: 24px;
@@ -2844,11 +2998,30 @@ a.ueditor-action-pickercancel{
 	height: 24px;
 	margin: 0 3px 0 0;
 }
+.upfront-icon-exit:before {
+	background-position: -188px -380px;
+	margin: 0;
+}
 .upfront-icon-page:before {
 	background-position: -41px -177px;
 }
 .upfront-icon-post:before {
 	background-position: -41px -210px;
+}
+.upfront-icon-browse:before {
+	width: 10px;
+	margin-right: 8px;
+	background-position: -736px -70px;
+}
+.upfront-icon-collapse:before,
+.upfront-icon-expand:before {
+	width: 12px;
+	height: 12px;
+	background-position: -190px -312px;
+	margin: 0;
+}
+.upfront-icon-expand:before {
+	background-position: -190px -346px;
 }
 .upfront-icon-panel-post:before {
 	background-position: -729px -40px;
@@ -2860,10 +3033,10 @@ a.ueditor-action-pickercancel{
 	background-position: -41px -415px;
 }
 .upfront-icon-save:before {
-	background-position: -190px -176px;
+	background-position: -340px -380px;
 }
 .upfront-icon-edit:before {
-	background-position: -341px -41px;
+	background-position: -340px -346px;
 }
 .upfront-icon-delete:before {
 	width: 18px;

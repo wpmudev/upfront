@@ -346,13 +346,15 @@ class Upfront_Virtual_Region {
 		$module = array(
 			'rows' => 6,
 			'module_class' => $slug . '-module',
-			'module_id' => $slug . '-module'
+			'module_id' => $slug . '-module',
+			'sticky' => false
 		);
 		$module = array_merge($module, $options);
 		$opts['module'] = array(
 			'row' => $module['rows'],
 			'class' => $module['module_class'],
-			'element_id' => $module['module_id']
+			'element_id' => $module['module_id'],
+			'sticky' => $module['sticky']
 		);
 
 		$opts['object_id'] = isset($options['object_id']) ? $options['object_id'] : $slug . '-object';

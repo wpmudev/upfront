@@ -262,6 +262,8 @@ var _alpha = "alpha",
 			return ( !container || container == name );
 		},
 		get_side_region: function (right) {
+			if ( ! this.collection )
+				return false;
 			var collection = this.collection,
 				index = collection.indexOf(this.model),
 				total = collection.size()-1, // total minus shadow region

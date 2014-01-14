@@ -84,7 +84,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				})
 			}).success(function(response){
 				if(loading){
-					loading.$el.remove();
+					loading.done();
 					loading = false;
 				}
 				var node = node || $('#' + me.property('element_id')).find(".upfront-object-content");
@@ -95,6 +95,13 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				if(me.editor.post && me.editor.post.is_new){
 					me.editor.editTitle();
 					me.editor.post.is_new = false;
+					me.editor.post.on('editor:publish', function () {
+						window.location = Upfront.Settings.Content.edit.post + me.editor.post.id;
+					});
+					me.editor.post.on('editor:cancel', function () {
+						if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) == -1 || confirm("Do you want to re-load in layout mode?") )
+							window.location = Upfront.Settings.Content.edit.post + me.editor.post.id;
+					});
 				}
 			})
 		;
@@ -117,6 +124,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				me.refreshMarkup(post);
 			}
 		});
+	},
+	
+	on_element_edit_start: function (edit, post) {
+		if ( edit == 'write' && post.id != this.postId )
+			this.parent_module_view.disable();
 	},
 
 	/*
