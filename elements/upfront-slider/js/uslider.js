@@ -77,6 +77,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
 	},
 
+	on_edit: function(e){
+		return false;
+	},
+
 	get_content_markup: function() {
 		var me = this,
 			props = this.extract_properties(),
