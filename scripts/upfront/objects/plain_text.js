@@ -37,16 +37,16 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				var $swap = $(this).find('.upfront-quick-swap');
 				if ( $swap.length ){
 					$swap.remove();
-					$(this).ueditor('sync');
 				}
 				me.model.set_property('is_edited', true, true);
-    			Upfront.Events.trigger('upfront:element:edit:start', 'text');
+				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
-				var content = $(this).ueditor('get');
-				me.model.set_content(content, {silent: true});
 				me.model.trigger('change');
-    			Upfront.Events.trigger('upfront:element:edit:stop');
+				Upfront.Events.trigger('upfront:element:edit:stop');
+			})
+			.on('syncAfter', function(){
+				me.model.set_content($(this).html(), {silent: true});
 			})
 		;
 	}
