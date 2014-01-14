@@ -757,6 +757,7 @@ define([
 		initialize: function () {
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
+			Upfront.Events.on("command:layout:save_as", this.on_save, this);
 			Upfront.Events.on("command:layout:preview", this.on_preview, this);
 			Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
 			Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
