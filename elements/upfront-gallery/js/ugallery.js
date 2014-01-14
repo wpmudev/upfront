@@ -435,7 +435,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			);
 		});
 
-		if(replaceId){
+		if(me.property('status') != 'ok'){
+			me.images.reset(models);
+			me.property('status', 'ok');
+		}
+		else if(replaceId){
 			var item = me.images.get(replaceId),
 				idx = me.images.indexOf(item);
 
