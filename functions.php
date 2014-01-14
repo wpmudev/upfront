@@ -29,8 +29,10 @@ class Upfront {
 		'stylesheet_editor',
 		'element_styles',
 	);
+	private $_debugger;
 
 	private function __construct () {
+		$this->_debugger = Upfront_Debug::get_debugger();
 		$servers = apply_filters('upfront-servers', $this->_servers);
 		foreach ($servers as $component) $this->_run_server($component);
 		Upfront_ModuleLoader::serve();
@@ -171,15 +173,15 @@ EOAdminStyle;
 	function inject_upfront_dependencies () {
 		if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		$url = self::get_root_url();
-    if (isset($_GET['dev'])) {
-      echo '<script src="' . $url . '/scripts/require.js"></script>';
-      echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
-      echo '<script src="' . $url . '/scripts/main.js"></script>';
-    } else {
-      echo '<script src="' . $url . '/build/require.js"></script>';
-      echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
-      echo '<script src="' . $url . '/build/main.js"></script>';
-    }
+		if (isset($_GET['dev']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
+		  echo '<script src="' . $url . '/scripts/require.js"></script>';
+		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+		  echo '<script src="' . $url . '/scripts/main.js"></script>';
+		} else {
+		  echo '<script src="' . $url . '/build/require.js"></script>';
+		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+		  echo '<script src="' . $url . '/build/main.js"></script>';
+		}
 		echo '<script type="text/javascript">var _upfront_post_data=' . json_encode(array(
 			'layout' => Upfront_EntityResolver::get_entity_ids(),
 			'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false),

@@ -3469,7 +3469,6 @@ var Field_Anchor = Field_Select.extend({
 				}
 			});
 
-
 			this.setElement($('#upfront-popup'));
 
 			this.$('#upfront-popup-top').html('<h3 class="upfront-selector-title">' + options.title +'</h3>');
