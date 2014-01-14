@@ -42,7 +42,6 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
-				me.model.trigger('change');
 				Upfront.Events.trigger('upfront:element:edit:stop');
 			})
 			.on('syncAfter', function(){
