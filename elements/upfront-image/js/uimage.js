@@ -527,6 +527,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}, 300);
 	},
 
+	on_edit: function(){
+		return false;
+	},
+
 	extract_properties: function() {
 		var props = {};
 		this.model.get('properties').each(function(prop){
@@ -585,7 +589,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	onElementResize: function(e, ui){
 		var starting = this.$('.upfront-image-starting-select');
 		if(starting.length){
-			this.elementSize.height = $('.upfront-resize').height() - 30;
+			this.elementSize = {
+				height: $('.upfront-resize').height() - 30,
+				width: $('.upfront-resize').width() - 30
+			};
+			this.property('element_size', this.elementSize);
 			return;
 		}
 

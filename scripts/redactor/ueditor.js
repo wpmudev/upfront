@@ -297,6 +297,8 @@ Ueditor.prototype = {
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
 			.one('dblclick', function(e){
+				//e.preventDefault();
+				//e.stopPropagation();
 				if(!me.redactor){
 					me.start(e);
 					$(document).on('click', checkInnerClick);
@@ -340,8 +342,10 @@ Ueditor.prototype = {
 		var me = this;
 		if(!me.redactor)
 			me.redactor = me.$el.data('redactor');
+		if(me.redactor)
+			me.redactor.waitForMouseUp = true;
 		$(document).one('mouseup', function(e){
-			if(me.redactor && me.redactor.getSelectionText()){
+			if(me.redactor && me.redactor.waitForMouseUp && me.redactor.getSelectionText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
@@ -390,6 +394,7 @@ RedactorPlugins.stateButtons = {
 		$.each(this.stateButtons, function(id, button){
 			button.guessState(me);
 		});
+		me.waitForMouseUp = false; //Prevent handler bound to document.mouseup
 	},
 
 	StateButton: function(id, data){
@@ -477,7 +482,9 @@ RedactorPlugins.stateAlignment = {
 				left: {
 					iconClass: 'ueditor-left',
 					isActive: function(redactor){
-						var $parent = $(redactor.getParent());
+						var $parent = $(redactor.getSelection().baseNode);
+						if($parent.length && $parent[0].nodeType == 3)
+							$parent = $parent.parent();
 						return $parent.length && $parent.css('text-align') == 'left';
 					},
 					callback: function(name, el , button){
@@ -487,7 +494,9 @@ RedactorPlugins.stateAlignment = {
 				center: {
 					iconClass: 'ueditor-center',
 					isActive: function(redactor){
-						var $parent = $(redactor.getParent());
+						var $parent = $(redactor.getSelection().baseNode);
+						if($parent.length && $parent[0].nodeType == 3)
+							$parent = $parent.parent();
 						return $parent.length && $parent.css('text-align') == 'center';
 					},
 					callback: function(name, el , button){
@@ -497,7 +506,9 @@ RedactorPlugins.stateAlignment = {
 				right: {
 					iconClass: 'ueditor-right',
 					isActive: function(redactor){
-						var $parent = $(redactor.getParent());
+						var $parent = $(redactor.getSelection().baseNode);
+						if($parent.length && $parent[0].nodeType == 3)
+							$parent = $parent.parent();
 						return $parent.length && $parent.css('text-align') == 'right';
 					},
 					callback: function(name, el , button){
@@ -507,7 +518,9 @@ RedactorPlugins.stateAlignment = {
 				justify: {
 					iconClass: 'ueditor-justify',
 					isActive: function(redactor){
-						var $parent = $(redactor.getParent());
+						var $parent = $(redactor.getSelection().baseNode);
+						if($parent.length && $parent[0].nodeType == 3)
+							$parent = $parent.parent();
 						return $parent.length && $parent.css('text-align') == 'justify';
 					},
 					callback: function(name, el , button){

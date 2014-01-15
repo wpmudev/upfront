@@ -2861,6 +2861,7 @@
 			{
 				// one element
 				this.exec('formatBlock', 'blockquote');
+				this.selectionRestore();
 				var newblock = this.getBlock();
 				var block = $('<div data-tagblock="">').html($(newblock).html());
 				$(newblock).replaceWith(block);

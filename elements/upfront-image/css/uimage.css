@@ -788,3 +788,9 @@ div.uimage-controls i.upfront-icon:before {
 	vertical-align: bottom;
 }
 
+.uimage-caption-over_image-bottom .redactor_box {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
