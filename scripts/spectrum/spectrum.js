@@ -12,7 +12,7 @@
         change: noop,
         show: noop,
         hide: noop,
-
+		
         // Options
         color: false,
         flat: false,
@@ -744,6 +744,12 @@
             updateHelperLocations();
         }
 
+		function resetUI() {
+			drawPalette();
+			set(opts.color)
+			updateUI();
+		}
+
         function destroy() {
             boundElement.show();
             offsetElement.unbind("click.spectrum touchstart.spectrum");
@@ -784,6 +790,7 @@
             hide: hide,
             toggle: toggle,
             reflow: reflow,
+			resetUI: resetUI,
             option: option,
             enable: enable,
             disable: disable,

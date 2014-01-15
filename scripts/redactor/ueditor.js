@@ -822,6 +822,9 @@ RedactorPlugins.upfrontColor = {
 				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
 					this.current_bg = $(this.redactor.getCurrent()).css('background-color');
 			}
+			else {
+				this.current_color = this.current_bg = false;
+			}
 		},
 		open: function(e, redactor){
 			this.setCurrentColors();
@@ -829,13 +832,18 @@ RedactorPlugins.upfrontColor = {
 			if(this.current_color) {
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-bottom-color', this.current_color);
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-left-color', this.current_color);
-				//console.log(this.$('li#tabforeground-content').find('.sp-dragger').css('border-bottom-color'));
+				this.$('input.foreground').spectrum('option', 'color', this.current_color);
 			}
 
 			if(this.current_bg) {
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-bottom-color', this.current_bg);
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-left-color', this.current_bg);
+				this.$('input.background').spectrum('option', 'color', this.current_bg);
 			}
+			
+			
+			this.$('input.foreground').spectrum('resetUI');
+			this.$('input.background').spectrum('resetUI');
 
 		},
 		render: function(){
@@ -905,6 +913,11 @@ RedactorPlugins.upfrontColor = {
 				$(this).addClass('active');
 				tabs.children('li').removeClass('active');
 				tabs.children('li#'+$(this).attr('id')+'-content').addClass('active');
+
+				self.$('input.foreground').spectrum('option', 'color', typeof(self.current_color) == 'object' ? self.current_color.toRgbString() : self.current_color);				
+				self.$('input.foreground').spectrum('resetUI');
+				self.$('input.background').spectrum('option', 'color',  typeof(self.current_bg) == 'object' ? self.current_bg.toRgbString() : self.current_bg);
+				self.$('input.background').spectrum('resetUI');
 			});
 
 
