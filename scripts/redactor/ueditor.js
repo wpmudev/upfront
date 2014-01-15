@@ -780,6 +780,7 @@ RedactorPlugins.upfrontLink = {
 			this.disableEditorStop();
 
 			Upfront.Views.Editor.PostSelector.open(options).done(function(post){
+        me.enableEditorStop();
 				me.link(post.get('permalink'), 'post');
 			});
 		},
@@ -817,20 +818,20 @@ RedactorPlugins.upfrontColor = {
 			if(this.redactor.getCurrent() && $(this.redactor.getCurrent()).prop('tagName')=='INLINE') {
 				var rgb_a = $(this.redactor.getCurrent()).css('background-color').split(',');
 				this.current_color = $(this.redactor.getCurrent()).css('color');
-				
+
 				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
 					this.current_bg = $(this.redactor.getCurrent()).css('background-color');
 			}
 		},
 		open: function(e, redactor){
 			this.setCurrentColors();
-			
+
 			if(this.current_color) {
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-bottom-color', this.current_color);
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-left-color', this.current_color);
 				//console.log(this.$('li#tabforeground-content').find('.sp-dragger').css('border-bottom-color'));
 			}
-			
+
 			if(this.current_bg) {
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-bottom-color', this.current_bg);
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-left-color', this.current_bg);
@@ -838,7 +839,7 @@ RedactorPlugins.upfrontColor = {
 
 		},
 		render: function(){
-			
+
 			var tabforeground = $('<li id="tabforeground" class="active">').html('Text Color');
 			var tabbackground = $('<li id="tabbackground">').html('Text Background');
 			var tablist = $('<ul class="tablist">').append(tabforeground).append(tabbackground);
@@ -850,10 +851,10 @@ RedactorPlugins.upfrontColor = {
 
 			var updateIcon = function () {
 				self.setCurrentColors();
-				
+
 				if(self.current_bg)
 					redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').removeClass('transparent').css('border-color', self.current_bg);
-				
+
 				else
 					redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').addClass('transparent').css('border-color', '');
 
@@ -953,7 +954,7 @@ RedactorPlugins.upfrontColor = {
 				}
 			});
 
-			redac.selectionSave();	
+			redac.selectionSave();
 		}
 	})
 }
