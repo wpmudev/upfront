@@ -43,20 +43,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	tpl: Upfront.Util.template(sliderTpl),
 	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
 
-	//Temporary props for image resizing and cropping
-	imageProps: {},
-	cropHeight: false,
-	cropTimer: false,
-	cropTimeAfterResize: 10000,
-
-	//Current Slide index
-	currentSlide: 0,
-
 	initialize: function(options){
 		console.log('Uslider');
 		if(! (this.model instanceof USliderModel)){
 			this.model = new USliderModel({properties: this.model.get('properties')});
 		}
+
+
 
 		this.constructor.__super__.initialize.call(this, [options]);
 
@@ -75,9 +68,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Events.on('command:layout:save', this.saveResizing, this);
 		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
+
+		//Temporary props for image resizing and cropping
+		this.imageProps = {};
+		this.cropHeight =  false;
+		this.cropTimer =  false;
+		this.cropTimeAfterResize =  10000;
+
+		//Current Slide index
+		this.currentSlide =  0;
 	},
 
-	on_edit: function(e){
+	on_edit: function(){
 		return false;
 	},
 

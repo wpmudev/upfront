@@ -312,7 +312,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			'rotate' => 0
 		);
 
-		if($factor <= 1){
+		// Allow to make the images bigger
+		//if($factor <= 1){
 			//resize
 			$resize = array(
 				'width' => round($full['width'] * $factor),
@@ -325,7 +326,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 			$transformations['crop'] = $crop;
 			$transformations['resize'] = $resize;
-		}
+		/*}
 		else {
 			$transformations['resize'] = false;
 			$crop = array(
@@ -337,8 +338,9 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			$crop['top'] = $full['height'] > $crop['height'] ? floor(($full['height'] - $crop['height']) / 2) : 0;
 
 			$transformations['crop'] = $crop;
-		}
+		}*/
 		return $transformations;
+		
 	}
 
 	function save_resizing() {
