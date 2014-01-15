@@ -1109,6 +1109,7 @@ define(function() {
 			var ph = this.$('.ueditor-bar-ph'),
 				container = this.$el.parent()
 			;
+			if (!container.length) return false;
 
 			//We make sure that we are positing the bar again:
 			ph.css('position', 'static');
