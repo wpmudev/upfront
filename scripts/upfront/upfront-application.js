@@ -337,7 +337,9 @@ var Application = new (Backbone.Router.extend({
 		this.MODE = Upfront.Settings.Application.MODE;
 		var me = this;
 		$("body").on("click", ".upfront-edit_layout", function () {
-			$(".upfront-editable_trigger").hide();
+			//$(".upfront-editable_trigger").hide();
+			$('#wpadminbar').hide();
+			$('html').attr('style', 'margin-top: 0 !important;');
 			//app.go("layout");
 			me.start();
 			return false;
@@ -438,7 +440,9 @@ var Application = new (Backbone.Router.extend({
 				Upfront.Util.log("Error loading layout " + layout_ids);
 				app.loading.cancel(function(){
 					$(Upfront.Settings.LayoutEditor.Selectors.sidebar).hide();
-					$(".upfront-editable_trigger").show();
+					//$(".upfront-editable_trigger").show();
+					$('#wpadminbar').show();
+					$('html').removeAttr('style');
 					app.go("");
 				});
 			})
