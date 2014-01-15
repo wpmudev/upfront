@@ -68,6 +68,8 @@ var LayoutEditor = {
 			//var checked = el == current ? "checked='checked'" : '';
 			//html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
 			//html += '&nbsp;<label for="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</label><br />';
+			if ( idx == 'type' )
+				return;
 			html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</span>';
 		});
 		//html += '<button type="button" id="upfront-save_as">Save</button>';
@@ -101,7 +103,7 @@ var GridEditor = {
 	max_row: 0,
 	compare_col: 5,
 	compare_row: 10,
-	timeout: 67, // in ms
+	timeout: 0, // in ms
 	_t: null, // timeout resource
 	col_size: 0,
 	baseline: 0,
@@ -1207,7 +1209,7 @@ var GridEditor = {
 			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
-			delay: 300,
+			delay: 0,
 			appendTo: $main,
 			start: function(e, ui){
 				ed.time_start('drag start');
@@ -1233,8 +1235,9 @@ var GridEditor = {
 				$wrap.css('min-height', '1px');
 
 				$('.upfront-drop-me').css('height', (me.outer_grid.bottom-me.outer_grid.top)*ed.baseline);
-
-				$layout.append( '<div id="upfront-drop-preview" style="top:' + me_offset.top + 'px; left: ' + me_offset.left + 'px;"></div>' );
+			
+				if ( model.get('shadow') )
+					$layout.append( '<div id="upfront-drop-preview" style="top:' + me_offset.top + 'px; left: ' + me_offset.left + 'px;"></div>' );
 
 				/* */
 				if ( ed.show_debug_element ){
@@ -1464,18 +1467,20 @@ var GridEditor = {
 					if ( drop_row >= drop_top+me.row )
 						adjust_bottom = true;
 
-					if ( view.model.get('shadow') && ed.drop.is_me )
+					if ( model.get('shadow') && ed.drop.is_me )
 						$('#upfront-drop-preview').removeClass('upfront-drop-transition');
+					
+					if ( model.get('shadow') ){
+						$('#upfront-drop-preview').css({
+							top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
+							left: (ed.drop.left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.main.left),
+							width: drop_col*ed.col_size,
+							height: height
+						});
 
-					$('#upfront-drop-preview').css({
-						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
-						left: (ed.drop.left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.main.left),
-						width: drop_col*ed.col_size,
-						height: height
-					});
-
-					if ( ( !view.model.get('shadow') || !ed.drop.is_me ) && !$('#upfront-drop-preview').hasClass('upfront-drop-transition') )
-						setTimeout(function(){ $('#upfront-drop-preview').addClass('upfront-drop-transition'); }, 100);
+						if ( !ed.drop.is_me && !$('#upfront-drop-preview').hasClass('upfront-drop-transition') )
+							setTimeout(function(){ $('#upfront-drop-preview').addClass('upfront-drop-transition'); }, 100);
+					}
 
 					if ( ed.show_debug_element ){
 						$('#upfront-compare-area').css({

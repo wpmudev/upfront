@@ -82,6 +82,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(this.property('image_status') != 'ok' || this.property('quick_swap'))
 			this.property('has_settings', 0);
 
+		Upfront.Events.on('upfront:element:edit:start', this.on_element_edit_start, this);
+		Upfront.Events.on('upfront:element:edit:stop', this.on_element_edit_stop, this);
+		
 		Upfront.Events.on('command:layout:save', this.saveResizing, this);
 		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
 	},

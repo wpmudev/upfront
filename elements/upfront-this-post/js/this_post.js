@@ -95,14 +95,21 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				//me.updateEditor(node); // This is where the edit mode autorun happens, don't run this.
 
 // Whatever is down here is a dead code now
-				if(me.editor.post && me.editor.post.is_new){
+				var post = Upfront.data.posts[me.postId];
+				if(post && post.is_new){
+					// Remove post title and content on new post so that the ueditor placeholder can kick in
+					// @TODO not working :/
+					/*_.each(Upfront.data.ueditor.selectors, function (s) {
+						if ( s.type == 'title' || s.type == 'content' )
+							node.find(s.selector).html('');
+					});*/
 					me.updateEditor(node); // Only for the new posts.
 					me.editor.editTitle();
 					me.editor.post.is_new = false;
 					me.editor.post.on('editor:publish', function () {
 						window.location = Upfront.Settings.Content.edit.post + me.editor.post.id;
 					});
-					me.editor.post.on('editor:cancel', function () {
+					me.editor.post.on('editor:draft', function () {
 						if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) == -1 || confirm("Do you want to re-load in layout mode?") )
 							window.location = Upfront.Settings.Content.edit.post + me.editor.post.id;
 					});
@@ -132,8 +139,17 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 	
 	on_element_edit_start: function (edit, post) {
-		if ( edit == 'write' && post.id != this.postId )
-			this.parent_module_view.disable();
+		if ( edit == 'write' ){
+			if ( post.id != this.postId )
+				this.parent_module_view.disable();
+			else
+				this.parent_module_view.$el.find('.upfront-module').addClass('upfront-module-editing');
+		}
+	},
+	
+	on_element_edit_stop: function (edit, post) {
+		this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing');
+		this.parent_module_view.enable();
 	},
 
 	/*

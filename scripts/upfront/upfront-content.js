@@ -927,6 +927,7 @@ define(function() {
 
 			postData.buttonText = this.getButtonText();
 			postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
+			postData.cancelButton = !(this.post.is_new);
 
 			postData.cid = this.cid;
 

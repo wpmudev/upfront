@@ -1,7 +1,9 @@
 <div class="ueditor-bar ueditable" id="{{cid}}">
 	<div class="ueditor-bar-buttons">
 		<a href="#" class="ueditor-bar-show_advanced ueditor-bar-icon ueditor-bar-icon-only" title="Advanced tools"></a>
+		{[ if(cancelButton){ ]}
 		<a class="ueditor-action-cancel ueditor-bar-icon" href="#">Cancel</a>
+		{[ } ]}
 		{[ if(draftButton){ ]}
 		<a class="ueditor-action-draft" href="#">Save draft</a>
 		{[ } ]}

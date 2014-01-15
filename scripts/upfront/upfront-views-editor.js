@@ -276,8 +276,10 @@ define([
 			this.$el.html("Save");
 		},
 		on_click: function () {
-			//Upfront.Events.trigger("command:layout:save");
-			Upfront.Events.trigger("command:layout:save_as");
+			if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item )
+				Upfront.Events.trigger("command:layout:save_as");
+			else
+				Upfront.Events.trigger("command:layout:save");
 		}
 
 	});
