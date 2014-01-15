@@ -103,12 +103,42 @@ var hackRedactor = function(){
 				offset.height = $focusElem.height();
 				this.airShow(offset, true);
 			}
-			// Addintional ctrl/cmd stuffs
+			// Additional ctrl/cmd stuffs
 			if ('keyup' === e.type && e.ctrlKey && '' != text) this.airShow(e); // Ctrl
 			if ('keyup' === e.type && _cmd_keys.indexOf(e.which) > 0 && '' != text) this.airShow(e); // Cmd (?)
 
 		}, this));
 	};
+
+	// Make click consistent
+	$.Redactor.prototype.airBindHide = function () {
+		if (!this.opts.air) return;
+
+
+		var hideHandler = $.proxy(function(doc) {
+			$(doc).on('mousedown.redactor', $.proxy(function (e) {
+				if ($(e.target).closest(this.$toolbar).length === 0) {
+					if (!this.getSelectionText()) {
+						this.$air.fadeOut(100);
+						this.selectionRemove();
+						$(doc).off(e);
+					}
+				}
+			}, this)).on('keydown.redactor', $.proxy(function (e) {
+				if (e.which === this.keyCode.ESC) {
+					this.getSelection().collapseToStart();
+				}
+
+				this.$air.fadeOut(100);
+				$(doc).off(e);
+
+			}, this));
+		}, this);
+
+		// Hide the toolbar at events in all documents (iframe)
+		hideHandler(document);
+		if (this.opts.iframe) hideHandler(this.document);
+	},
 
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
