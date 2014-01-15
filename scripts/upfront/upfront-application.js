@@ -82,6 +82,8 @@ var LayoutEditor = new (Subapplication.extend({
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
 		data = JSON.stringify(data, undefined, 2);
+		
+		Upfront.Events.trigger("command:layout:save_start");
 
 		if (Upfront.Settings.Application.NO_SAVE) {
 			Upfront.Events.trigger("command:layout:save_success");
@@ -231,8 +233,7 @@ var LayoutEditor = new (Subapplication.extend({
 				loading.done();
 			}
 		;
-		Upfront.Events.on("command:layout:save", start, this);
-		Upfront.Events.on("command:layout:save_as", start, this);
+		Upfront.Events.on("command:layout:save_start", start, this);
 		Upfront.Events.on("command:layout:save_success", stop, this);
 		Upfront.Events.on("command:layout:save_error", stop, this);
 	},

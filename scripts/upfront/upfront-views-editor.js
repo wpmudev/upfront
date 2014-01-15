@@ -1165,7 +1165,7 @@ define([
 				this.$el.html(output);
 	
 				//Collapsible
-				this.addCollapsibleEvents();
+				//this.addCollapsibleEvents();
 			}
 			else {
 				this.$el.html(output);
