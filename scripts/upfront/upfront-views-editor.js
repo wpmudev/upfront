@@ -173,7 +173,7 @@ define([
 			Upfront.Events.trigger("entity:module:added", module, region);
 		}
 	});
-	
+
 	var Command_Logo = Command.extend({
 		className: "command-logo",
 		render: function () {
@@ -183,15 +183,17 @@ define([
 				this.$el.html('<div class="upfront-logo upfront-logo-small"></div>');
 		},
 		on_click: function () {
+      window.location.href = Upfront.mainData.site;
 		}
 	});
-	
+
 	var Command_Exit = Command.extend({
 		className: "command-exit upfront-icon upfront-icon-exit",
 		render: function () {
 		},
 		on_click: function () {
-			Upfront.Events.trigger("command:exit");
+			// Upfront.Events.trigger("command:exit");
+      window.location.href = Upfront.mainData.admin;
 		}
 	});
 
@@ -579,7 +581,7 @@ define([
 		},
 		render: function () {
 			this.$el.html(_.template(
-				"<span title='toggle editing mode'>Current mode: {{mode}}</span>", 
+				"<span title='toggle editing mode'>Current mode: {{mode}}</span>",
 				{mode: Upfront.Application.get_current()}
 			));
 		},
@@ -613,8 +615,8 @@ define([
 			this.$el.addClass('command-toggle-mode-' + this.current_mode + ' ' + icon);
 		}
 	});
-	
-	
+
+
 	var Command_EditBackgroundArea = Command.extend({
 		"className": "command-edit-background-area",
 		events: {
@@ -1021,7 +1023,7 @@ define([
 			}
 		}
 	});
-	
+
 	var SidebarCommands_Header = Commands.extend({
 		className: "sidebar-commands sidebar-commands-header",
 		initialize: function () {
@@ -1032,7 +1034,7 @@ define([
 				this.commands.push(new Command_Exit({"model": this.model}));
 		}
 	});
-	
+
 	var SidebarProfile = Backbone.View.extend({
 		className: "sidebar-profile",
 		render: function () {
@@ -1041,8 +1043,8 @@ define([
 			var data = user.get('data'),
 				roles = user.get('roles');
 			this.$el.html(_.template(
-				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' + 
-				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' + 
+				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' +
+				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
 				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" href="{{edit_url}}">edit profile</a></div>',
 				{
 					gravatar: data.gravatar,
@@ -1053,7 +1055,7 @@ define([
 			));
 		}
 	});
-	
+
 	/*var SidebarEditorMode = Backbone.View.extend({
 		"className": "sidebar-editor-mode",
 		events: {
@@ -1126,21 +1128,21 @@ define([
 			this.preventUsage('write');
 				return;
 			}
-	
+
 			this.writingIsOn = false;
 			$('#preventUsageOverlay').hide();
 		},
 		render: function () {
 			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
-			
+
 			// Header
 			this.sidebar_commands.header.render();
 			output.append(this.sidebar_commands.header.el);
-			
+
 			// Profile
 			this.sidebar_profile.render();
 			output.append(this.sidebar_profile.el);
-			
+
 			// Editor Mode
 			//this.editor_mode.render();
 			//this.$el.append(this.editor_mode.el);
@@ -1151,7 +1153,7 @@ define([
 			// Additional post types
 			this.sidebar_commands.additional.render();
 			output.append(this.sidebar_commands.additional.el);
-			
+
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT ){
 				// Sidebar panels
 				this.sidebar_panels.render();
@@ -1159,11 +1161,11 @@ define([
 				// Control
 				this.sidebar_commands.control.render();
 				output.append(this.sidebar_commands.control.el);
-				
+
 				output.append('<div id="preventUsageOverlay"><span></span></div>');
 
 				this.$el.html(output);
-	
+
 				//Collapsible
 				//this.addCollapsibleEvents();
 			}
@@ -1308,7 +1310,7 @@ define([
 		views: {},
 		currentPanel: false,
 		render: function () {
-			this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");		
+			this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
 				this.$el.html('Browse Posts / Pages / Comments');
 			else
