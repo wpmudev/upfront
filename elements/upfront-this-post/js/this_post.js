@@ -30,8 +30,6 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-
-		console.log('This post element');
 	},
 
 	/**
@@ -46,13 +44,17 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 		return this.markup;
 	},
-
+/*
 	on_render: function(){
 		var me = this;
 		//Give time to append when dragging.
 		setTimeout(function(){
 			me.updateEditor($('#' + me.property('element_id')).find(".upfront-object-content"));
 		}, 100);
+	},
+*/
+	on_edit: function () {
+		this.updateEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
 	},
 
 	refreshMarkup: function () {
@@ -90,9 +92,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				var node = node || $('#' + me.property('element_id')).find(".upfront-object-content");
 				me.markup = response.data.filtered;
 				node.html(me.get_content_markup());
-				me.updateEditor(node);
+				//me.updateEditor(node); // This is where the edit mode autorun happens, don't run this.
 
+// Whatever is down here is a dead code now
 				if(me.editor.post && me.editor.post.is_new){
+					me.updateEditor(node); // Only for the new posts.
 					me.editor.editTitle();
 					me.editor.post.is_new = false;
 					me.editor.post.on('editor:publish', function () {
@@ -110,8 +114,9 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	updateEditor: function(node){
 		var me = this;
 
-		if(this.editor)
+		if(this.editor) {
 			return this.editor.updateElement(node);
+		}
 
 		this.editor = new Upfront.Content.editor({
 			editor_id: 'this_post_' + this.postId,

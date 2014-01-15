@@ -758,8 +758,18 @@ define(function() {
 				this.cke.destroy();
 				this.cke = false;
 			}
-
-			this.initEditAreas();
+			//this.initEditAreas(); // Don't auto-boot editing again, we have just closed that!!!!
+			if (this.post && this.post.get) {
+				if (this.post.get("post_status") == "auto-draft") window.location.reload();
+				else {
+					if (Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) == -1) {
+						if (!confirm("Do you want to re-load in layout mode?") ) window.location = Upfront.Settings.Content.edit.post + this.post.id;
+					} else {
+						// Revert to old post.... lalala
+						Upfront.Application.start(Upfront.Settings.Application.MODE.LAYOUT);
+					}
+				}
+			}
 		},
 
 		save: function(status, loadingMsg, successMsg){
@@ -1204,7 +1214,7 @@ define(function() {
 			if(confirm('Are you sure to discard the changes made to ' + this.post.get('post_title') + '?')){
 				this.destroy();
 				this.post.trigger('editor:cancel');
-				 Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+				Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 			}
 		},
 

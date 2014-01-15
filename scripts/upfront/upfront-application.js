@@ -348,6 +348,7 @@ var Application = new (Backbone.Router.extend({
 	start: function (mode) {
 		if (!mode) mode = this.MODE.DEFAULT;
 		if (this.mode.current == mode) return false;
+
 		this.set_current(mode);
 		if (!(this.current_subapplication && this.current_subapplication.start)) {
 			Upfront.Util.log("Can't boot invalid subapplication");
