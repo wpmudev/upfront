@@ -89,6 +89,27 @@ var hackRedactor = function(){
 		});
 	};
 
+	// Let Ctrl/Cmd+A (yeah...) work normally
+	$.Redactor.prototype.airEnable = function () {
+		if (!this.opts.air) return;
+		var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
+
+		this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
+			var text = this.getSelectionText();
+
+			if (e.type === 'mouseup' && text != '') this.airShow(e);
+			if (e.type === 'keyup' && e.shiftKey && text != '') {
+				var $focusElem = $(this.getElement(this.getSelection().focusNode)), offset = $focusElem.offset();
+				offset.height = $focusElem.height();
+				this.airShow(offset, true);
+			}
+			// Addintional ctrl/cmd stuffs
+			if ('keyup' === e.type && e.ctrlKey && '' != text) this.airShow(e); // Ctrl
+			if ('keyup' === e.type && _cmd_keys.indexOf(e.which) > 0 && '' != text) this.airShow(e); // Cmd (?)
+
+		}, this));
+	};
+
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
 		{
