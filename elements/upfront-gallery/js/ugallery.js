@@ -414,7 +414,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 	addImages: function(images, replaceId){
 		var me = this,
-			models = []
+			models = [],
+			selectType = false
 		;
 
 		this.getNewLabels(_.keys(images));
@@ -436,8 +437,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		});
 
 		if(me.property('status') != 'ok'){
-			me.images.reset(models);
 			me.property('status', 'ok');
+			me.property('has_settings', 1);
+			me.images.reset(models);
+			selectType = true;
+
 		}
 		else if(replaceId){
 			var item = me.images.get(replaceId),
@@ -451,6 +455,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		}
 
 		me.render();
+		if(selectType)
+			this.selectOnClick();
+
 	},
 
 	selectOnClick: function(){
