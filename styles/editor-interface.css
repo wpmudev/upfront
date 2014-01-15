@@ -18,6 +18,7 @@
 .upfront-grid-layout {
 	position: relative;
 	margin: 0 auto;
+	z-index: 10;
 }
 .upfront-grid-layout:before, .upfront-grid-layout:after {
 	content: "";
