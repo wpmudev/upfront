@@ -102,6 +102,10 @@ class Upfront_Ajax extends Upfront_Server {
 		$preview_url = add_query_arg(array(
 			Upfront_PreviewListener::HOOK => $sfx,
 		), $current_url);
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'html' => $preview_url,
+		)));
+		/*
 		$request = wp_remote_get($preview_url, array(
 			'sslverify' => false,
 		));
@@ -109,8 +113,9 @@ class Upfront_Ajax extends Upfront_Server {
 		$body = wp_remote_retrieve_body($request);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'html' => $body
+			'html' => $body,
 		)));
+		*/
 	}
 
 	function save_layout () {

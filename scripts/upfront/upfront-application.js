@@ -117,8 +117,7 @@ var LayoutEditor = new (Subapplication.extend({
 			.success(function (response) {
 				var data = response.data || {};
 				if ("html" in data && data.html) {
-					preview.document.open();
-					preview.document.write(data.html);
+					preview.location = data.html;
 				} else {
 					Upfront.Util.log("Invalid response");
 					preview.close();
