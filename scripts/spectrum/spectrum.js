@@ -659,7 +659,7 @@
 
             // Update the text entry input as it changes happen
             if (opts.showInput) {
-                textInput.val(realColor.toString(format));
+                textInput.val(realColor.toString('hex'));
             }
 
             if (opts.showPalette) {
@@ -718,8 +718,10 @@
 
             // Update the selection palette with the current color
             addColorToSelectionPalette(color);
-            if (fireCallback && hasChanged) {
+           // if (hasChanged) {
                 callbacks.change(color);
+            //}
+            if (fireCallback) {
                 boundElement.trigger('change.spectrum', [ color ]);
             }
         }

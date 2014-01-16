@@ -835,6 +835,10 @@ RedactorPlugins.upfrontColor = {
 				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
 					this.current_bg = $(this.redactor.getCurrent()).css('background-color');
 			}
+			else if(this.redactor.getCurrent()) {
+				this.current_color = $(this.redactor.getCurrent()).css('color');
+				this.current_bg = $(this.redactor.getCurrent()).css('background-color');
+			}
 			else {
 				this.current_color = this.current_bg = false;
 			}
@@ -845,14 +849,20 @@ RedactorPlugins.upfrontColor = {
 			if(this.current_color) {
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-bottom-color', this.current_color);
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-left-color', this.current_color);
+				this.$('li#tabforeground-content').find('.sp-input').css('border-left-color', this.current_color);
 				this.$('input.foreground').spectrum('option', 'color', this.current_color);
 			}
+			else
+				this.$('input.foreground').spectrum('option', 'color', "#000");
 
 			if(this.current_bg) {
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-bottom-color', this.current_bg);
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-left-color', this.current_bg);
+				this.$('li#tabbackground-content').find('.sp-input').css('border-left-color', this.current_bg);
 				this.$('input.background').spectrum('option', 'color', this.current_bg);
 			}
+			else
+				this.$('input.background').spectrum('option', 'color', "#000");
 			
 			
 			this.$('input.foreground').spectrum('resetUI');
@@ -953,6 +963,7 @@ RedactorPlugins.upfrontColor = {
 				move: function(color) {
 					redac.selectionRestore(true, false);
 					self.current_color = color;
+					$(this).parent().find('.sp-input').css('border-left-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
 				}
@@ -975,6 +986,7 @@ RedactorPlugins.upfrontColor = {
 				move: function(color) {
 					redac.selectionRestore(true, false);
 					self.current_bg = color;
+					$(this).parent().find('.sp-input').css('border-left-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
 				}

@@ -7859,7 +7859,7 @@ input[type=text].sp-input {
 	width: 100px;
 	padding: 6px;
 	border: none;
-	border-left: 10px #384766 solid;
+	border-left: 10px #000 solid;
 	background-color: #1c2733;
 }
 

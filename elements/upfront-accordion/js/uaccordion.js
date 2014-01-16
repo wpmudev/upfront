@@ -1,6 +1,9 @@
 (function ($) {
 
-  define(['text!elements/upfront-accordion/tpl/uaccordion.html'], function(accordionTpl) {
+  var templates = [
+    'text!' + Upfront.data.uaccordion.template ];
+
+  require(templates, function(accordionTpl) {
     var UaccordionModel = Upfront.Models.ObjectModel.extend({
       init: function () {
         var properties = _.clone(Upfront.data.uaccordion.defaults);
@@ -23,7 +26,7 @@
           'click .accordion-add-panel': 'addPanel',
           'click .accordion-panel-title': 'onPanelTitleClick',
           'keydown .accordion-panel-active .accordion-panel-content': 'onContentKeydown',
-          //'dblclick .accordion-panel-active .accordion-panel-content': 'onContentDblclick',
+          'dblclick .accordion-panel-active .accordion-panel-content': 'onContentDblclick',
           'click i': 'deletePanel'
         });
         this.delegateEvents();
@@ -33,7 +36,7 @@
         this.model.get("properties").bind("remove", this.render, this);
 
 
-        //this.on('deactivated', this.onDeactivate, this);
+        this.on('deactivated', this.onDeactivate, this);
 
         this.debouncedSave = _.debounce(this.savePanelContent, 1000);
       },
@@ -54,52 +57,71 @@
         this.property('accordion_count', this.property('accordion_count') - 1, false);
       },
 
-
+     
 
       onPanelTitleClick: function(event) {
 
         var $panelTitle = $(event.currentTarget);
-
-		/*if((typeof currentEditItem != 'undefined') && currentEditItem != '' && currentEditItem != $panelTitle.attr('id')) {
+		
+		if((typeof currentEditItem != 'undefined') && currentEditItem != '' && currentEditItem != $panelTitle.attr('id')) {
 
 			this.onDeactivate();
-		}*/
-
-		if ($panelTitle.parent().hasClass('accordion-panel-active'))// &&  $panelTitle.attr('contenteditable') == 'true')
+		}
+		
+		if ($panelTitle.parent().hasClass('accordion-panel-active') &&  $panelTitle.attr('contenteditable') == 'true')
 		return;
+		
 
 
-
-
-       /* if ($panelTitle.parent().hasClass('accordion-panel-active')) {
+		
+        if ($panelTitle.parent().hasClass('accordion-panel-active')) {
           $panelTitle.attr('contenteditable', true);
-		   var editor = Upfront.Content.editors.add({
+
+			/*var editor = Upfront.Content.editors.add({
 			type: Upfront.Content.TYPES.SIMPLE,
 			editor_id: $panelTitle.attr('id'),
 			element: '#'+$panelTitle.attr('id'),
-			});
+			});*/
+			
+			if(!$('#'+$panelTitle.attr('id')).data('ueditor')) {
+
+			
+			var editor = $('#'+$panelTitle.attr('id')).ueditor({
+					autostart: false,
+					upfrontMedia: false,
+					upfrontImages: false
+				});
+			editor.on('syncAfter', function(){
+					console.log('syncing after');
+					self.saveTitle($panelTitle);
+					self.$el.parent().parent().parent().draggable('enable');
+					editor.stop();
+				})
+			}
 			currentEditItem = $panelTitle.attr('id');
 
-		   editor.start();
-		   var deditor = CKEDITOR.instances[currentEditItem];
+		   //editor.start();
+		   
+		  // var deditor = CKEDITOR.instances[currentEditItem];
+		   
 		   var self = this;
-
-			editor.on( 'textcolor:change', function(color) {
+		   
+			/*editor.on( 'textcolor:change', function(color) {
 				var value = color.toRgbString();
 				$panelTitle.css('color', value);
 				self.saveTitle($panelTitle);
 			});
-
+			
 			editor.on( 'panelcolor:change', function(color) {
 				var value = color.toRgbString();
 				$panelTitle.css('background-color', value);
 				self.saveTitle($panelTitle);
 			});
-
+			
 			editor.on('change', function (e) {
 				self.saveTitle($panelTitle);
 			});
-
+			
 			deditor.on( 'key', function(key) {
 				if(key.data['keyCode'] == 13) {
 					self.onDeactivate();
@@ -109,74 +131,91 @@
 			deditor.on('saveSnapshot', function (e) {
 				self.saveTitle($panelTitle);
 			});
-
+			
 			deditor.on('afterCommandExec', function (e) {
 				self.saveTitle($panelTitle);
 			});
-
+			*/
+			
           $panelTitle.focus();
 		  this.$el.parent().parent().parent().draggable('disable');
           return;
-        }*/
+        }
 
         $panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').show('normal');
         $panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').hide('normal');
-		//$panelTitle.removeAttr('contenteditable');
-
+		$panelTitle.removeAttr('contenteditable');
+		
 
 
       },
 
-	/*	onDeactivate: function() {
+		onDeactivate: function() {
 
-
+				
 			var target = $('#'+currentEditItem);
 			if(target.hasClass('accordion-panel-title')) {
 				target.removeAttr('contenteditable');
 				this.saveTitle(target);
-				var editor = Upfront.Content.editors.get(currentEditItem);
-				editor.stop();
+				//var editor = Upfront.Content.editors.get(currentEditItem);
+				//editor.stop();
 				console.log('saved title content');
 		        this.$el.parent().parent().parent().draggable('enable');
 			}
 			else if(target.hasClass('accordion-panel-content')) {
 				this.stopEdit();
 			}
-
-
-
+			
+			
+			
 			$('#'+currentEditItem).removeAttr('contenteditable');
 			currentEditItem = '';
 		},
-*/
+
       onContentDblclick: function(event) {
 
 		var $content = $(event.currentTarget);
-
-		/*if((typeof currentEditItem != 'undefined') && currentEditItem != '' && currentEditItem != $content.attr('id')) {
+		
+		if((typeof currentEditItem != 'undefined') && currentEditItem != '' && currentEditItem != $content.attr('id')) {
 			this.onDeactivate();
-		}*/
+		}
 
-
-
+        
+		
         if ($content.attr('contenteditable') === 'true') return;
 
         $content.attr('contenteditable', true).addClass('upfront-object');
-        this.editor = CKEDITOR.inline($content[0]);
-        currentEditItem = $content.attr('id');
+        
+		
+		//this.editor = CKEDITOR.inline($content[0]);
+		if(!$content.data('ueditor')) {
+
+		
+			var editor = $content.ueditor({
+				autostart: false,
+			});
+			editor.on('syncAfter', function(){
+				console.log('syncing after');
+				self.savePanelContent();
+				self.stopEdit();
+				editor.stop();
+			})
+		}
+		
+		currentEditItem = $content.attr('id');
 
 		self = this;
-
-		this.editor.on('saveSnapshot', function (e) {
+		
+		/*this.editor.on('saveSnapshot', function (e) {
 			self.savePanelContent();
 			console.log("savesnapshot fired");
 		});
-
+		
 		this.editor.on('afterCommandExec', function (e) {
 			self.savePanelContent();
 			console.log("afterCommandExec fired");
 		});
-
+		*/
 		$content.focus();
 
         this.$el.parent().parent().parent().draggable('disable');
@@ -185,30 +224,30 @@
       onContentKeydown: function(event) {
         this.debouncedSave();
       },
-
+	  
 		saveTitle: function(target) {
-
+			
 			id = target.parent().index()-1;
 			this.property('accordion')[id].title = target.html();
 			this.property('accordion')[id].title_color = target.css('color');
 			this.property('accordion')[id].title_bgcolor = target.css('background-color');
 		},
-
+		
       savePanelContent: function() {
         var panel = this.$el.find('.accordion-panel-active');
 		var $content = panel.find('.accordion-panel-content');
         var panelId = panel.index()-1;
         this.property('accordion')[panelId].content = $content.html();
-
+		
       },
-
+	  
       stopEdit: function() {
 
         this.savePanelContent();
         this.$el.find('.accordion-panel-active .accordion-panel-content')
           .removeAttr('contenteditable')
           .removeClass('upfront-object');
-        if (this.editor && this.editor.destroy) this.editor.destroy();
+       // if (this.editor && this.editor.destroy) this.editor.destroy();
 		console.log('saved content');
         this.$el.parent().parent().parent().draggable('enable');
         this.delegateEvents();
@@ -240,17 +279,8 @@
        _.delay(function(self) {
 
           self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
-
+	
         }, 10, this);
-		
-		this.$el.find('.accordion-panel-content').ueditor({
-				linebreaks: false,
-				autostart: false
-			});
-		this.$el.find('.accordion-panel-title').ueditor({
-				deniedTags: ['p', 'br'],
-				autostart: false
-			})
       },
 
       addTooltips: function() {
@@ -317,7 +347,7 @@
 
         render_all = function(){
           this.settings.invoke('render');
-        };
+        }; 
         _.bindAll(this, 'onHeaderBorderChange', 'onHeaderBgChange', 'onPanelBgChange');
 
         this.model.on('doit', render_all, this);
