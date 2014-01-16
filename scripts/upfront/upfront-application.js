@@ -39,8 +39,8 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.off("entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable, this);
 		Upfront.Events.off("entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable, this);
 		// Disable resizables and draggables
-		Upfront.Behaviors.GridEditor.toggle_resizables(false);
-		Upfront.Behaviors.GridEditor.toggle_draggables(false);
+		//Upfront.Behaviors.GridEditor.toggle_resizables(false);
+		//Upfront.Behaviors.GridEditor.toggle_draggables(false);
 
 		Upfront.Events.off("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
 		Upfront.Events.off("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
@@ -172,8 +172,8 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable, this);
 		Upfront.Events.on("entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable, this);
 		// Enable resizables and draggables
-		Upfront.Behaviors.GridEditor.toggle_resizables(true);
-		Upfront.Behaviors.GridEditor.toggle_draggables(true);
+		//Upfront.Behaviors.GridEditor.toggle_resizables(true);
+		//Upfront.Behaviors.GridEditor.toggle_draggables(true);
 
 		Upfront.Events.on("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
 		Upfront.Events.on("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
