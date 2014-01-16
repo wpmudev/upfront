@@ -5,7 +5,7 @@ define([
 	'upfront/objects/loading',
 	'upfront/objects/image',
 	'upfront/objects/plain_text',
-	'upfront/objects/setting_example'
+	//'upfront/objects/setting_example'
 ], function () {
   if (!Upfront || !Upfront.Application.LayoutEditor || !Upfront.Application.LayoutEditor.add_object) {
     Upfront.Util.log("Unable to add object");
