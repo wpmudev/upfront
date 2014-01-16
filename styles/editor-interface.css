@@ -6811,12 +6811,6 @@ a.ueditor-select-option:hover {
 }
 
 
-.upfront-edit-content .upfront-entity-delete_trigger,
-.upfront-edit-content .upfront-entity-settings_trigger {
-	display: none;
-}
-
-
 .upfront-image-attachment-bits {
 	display: none;
 	position: absolute;
