@@ -828,16 +828,12 @@ RedactorPlugins.upfrontColor = {
 			'open': 'open',
 		},
 		setCurrentColors: function() {
-			if(this.redactor.getCurrent() && $(this.redactor.getCurrent()).prop('tagName')=='INLINE') {
+			if(this.redactor.getCurrent() || (this.redactor.getCurrent() && $(this.redactor.getCurrent()).prop('tagName')=='INLINE')) {
 				var rgb_a = $(this.redactor.getCurrent()).css('background-color').split(',');
 				this.current_color = $(this.redactor.getCurrent()).css('color');
 
 				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
 					this.current_bg = $(this.redactor.getCurrent()).css('background-color');
-			}
-			else if(this.redactor.getCurrent()) {
-				this.current_color = $(this.redactor.getCurrent()).css('color');
-				this.current_bg = $(this.redactor.getCurrent()).css('background-color');
 			}
 			else {
 				this.current_color = this.current_bg = false;
