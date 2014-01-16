@@ -148,6 +148,10 @@ div.uslide-image img {
 	display: none;
 }
 
+.ui-resizable-autohide .uslider .ui-resizable-handle.ui-resizable-e {
+	display:none !important;
+}
+
 .uslider .ui-resizable-handle.ui-resizable-e {
 	background: #3f5870 url(../../../img/uf-core-el-sprite.svg) no-repeat -697px -70px;
 	border: 2px solid #A1C5E6;
@@ -167,4 +171,7 @@ div.uslide-image img {
 
 .uslides.ui-resizable {
 	border-right: 1px solid #3f5870;
+}
+.ui-resizable-autohide .uslides.ui-resizable {
+	border-right: 0;
 }
