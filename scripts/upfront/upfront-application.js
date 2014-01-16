@@ -110,12 +110,14 @@ var LayoutEditor = new (Subapplication.extend({
 		data.preferred_layout = this.layout.get("current_layout");
 		data = JSON.stringify(data, undefined, 2);
 
-		preview = window.open("", "", "height=600,width=800,scrollbars=1,location=no,menubar=no,resizable=1,status=no,toolbar=no");
-		preview.document.write("Building preview, please wait... ");
+		//preview = window.open("", "", "height=600,width=800,scrollbars=1,location=no,menubar=no,resizable=1,status=no,toolbar=no");
+		preview = window.open("text/html", "_blank");
+		preview.document.write("<p>Saving your temporary changes, please wait...</p>");
 
 		Upfront.Util.post({action: "upfront_build_preview", "data": data, "current_url": window.location.href})
 			.success(function (response) {
 				var data = response.data || {};
+				preview.document.write("<p>Changes saved, building preview</p>");
 				if ("html" in data && data.html) {
 					preview.location = data.html;
 				} else {
