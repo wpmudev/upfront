@@ -1718,6 +1718,10 @@ a.ueditor-action-pickercancel{
 .upfront-module-editing:hover {
 	outline: none;
 }
+.upfront-module-disabled .upfront-entity_meta,
+.upfront-module-editing .upfront-entity_meta {
+	display: none;
+}
 .upfront-dragging .upfront-module {
 	outline: 1px dotted #7f7f7f;
 	overflow: hidden;
