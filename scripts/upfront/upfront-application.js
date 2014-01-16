@@ -103,15 +103,22 @@ var LayoutEditor = new (Subapplication.extend({
 	},
 
 	preview_layout: function () {
-		var data = Upfront.Util.model_to_json(this.layout),
-			preview = false
+		var //data = Upfront.Util.model_to_json(this.layout),
+			preview = false,
+			url = false
 		;
+		url = Upfront.PreviewUpdate.preview_url();
+		if (!url) {
+			Upfront.Views.Editor.notify("Your preview is not ready yet");
+			return false;
+		}
+		preview = window.open(url, "_blank");
+		/*
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = this.layout.get("current_layout");
 		data = JSON.stringify(data, undefined, 2);
 
 		//preview = window.open("", "", "height=600,width=800,scrollbars=1,location=no,menubar=no,resizable=1,status=no,toolbar=no");
-		preview = window.open("text/html", "_blank");
 		preview.document.write("<p>Saving your temporary changes, please wait...</p>");
 
 		Upfront.Util.post({action: "upfront_build_preview", "data": data, "current_url": window.location.href})
@@ -130,6 +137,7 @@ var LayoutEditor = new (Subapplication.extend({
 				preview.close();
 			})
 		;
+		*/
 	},
 
 	destroy_editor: function () {
@@ -433,6 +441,8 @@ var Application = new (Backbone.Router.extend({
 					});
 					Upfront.Events.trigger("layout:render", app.current_subapplication);
 					//}
+
+					Upfront.PreviewUpdate.run(app.layout);
 
 					Upfront.Events.trigger("application:mode:after_switch");
 				});

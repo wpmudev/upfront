@@ -293,14 +293,26 @@ define([
 
 	});
 	var Command_PreviewLayout = Command.extend({
-		"className": "command-preview",
+		className: "command-preview",
+		can_preview: false,
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html("Preview");
+			//this.$el.html("Preview");
+			this.preview_built();
+			Upfront.Events.on("preview:build:start", this.building_preview, this);
+			Upfront.Events.on("preview:build:stop", this.preview_built, this);
 		},
 		on_click: function () {
-			Upfront.Events.trigger("command:layout:preview");
-		}
+			if (this.can_preview) Upfront.Events.trigger("command:layout:preview");
+		},
+		building_preview: function () {
+			this.$el.html("Building...");
+			this.can_preview = false;
+		},
+		preview_built: function () {
+			this.$el.html("Preview");
+			this.can_preview = true;
+		},
 
 	});
 
