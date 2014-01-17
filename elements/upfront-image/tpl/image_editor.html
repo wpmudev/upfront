@@ -47,7 +47,12 @@
 		<a class="image-edit-button" id="{{buttons[i].id}}" data-tooltip="{{buttons[i].text}}"></a>
 		{[ } ]}
 	</div>
-	<a class="image-edit-button" id="image-edit-button-align" data-tooltip="Align image" style="z-index: 11; position: absolute; top:{{maskOffset.top + maskSize.height + 5}}px; left:{{maskOffset.left + maskSize.width / 2 - 26}}px"></a>
+	<div id="image-edit-buttons-bottom" style="z-index: 11; position: absolute; top:{{maskOffset.top + maskSize.height + 5}}px; left:{{maskOffset.left}}px; width: 200px">
+		{[ if(fitMask){ ]}
+		<a class="image-fit-element-button">Fit mask to image</a>
+		{[ } ]}
+		<a class="image-edit-button" id="image-edit-button-align" data-tooltip="Align image" ></a>
+		</div>
 	<div id="uimage-tooltip" class="nav_tooltip upfront-ui"></div>
 </script>
 

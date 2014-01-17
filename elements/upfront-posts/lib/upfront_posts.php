@@ -114,6 +114,8 @@ class Upfront_UpostsView extends Upfront_Object {
 		//Post excerpt length and read more signs
 		$data['uposts']['excerpt'] = self::excerpt_data();
 
+		$data['uposts']['featured_image_height'] = apply_filters('upfront_featured_image_height', 300);
+
 		return $data;
 	}
 

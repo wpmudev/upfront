@@ -403,6 +403,20 @@ a.open-media-gallery:hover i {
 	background: #28DC96;
 }
 
+.image-fit-element-button {
+	background: rgba(255, 255, 255, .8);
+	color:#2B3B4A;
+	display: inline-block;
+	line-height: 36px;
+	padding: 0 10px;
+	vertical-align: top;
+}
+
+.image-fit-element-button:hover {
+	background: #28DC96;
+	color: #fff;
+}
+
 .image-edit-button:before {
 	content: ' ';
 	display: block;
@@ -423,6 +437,11 @@ a.open-media-gallery:hover i {
 }
 #image-edit-button-ok:before{
 	background-position: -801px -160px;	
+}
+
+#image-edit-button-align{
+	float: none;
+	display: inline-block;
 }
 #image-edit-button-align.align-left:before{
 	background-position: -693px -225px;	

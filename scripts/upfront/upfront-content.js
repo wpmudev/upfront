@@ -458,7 +458,7 @@ define(function() {
 		openImageEditor: function(newImage, imageInfo, postId){
 			var me = this,
 				mask = this.$('.ueditor_thumb'),
-				maskHeight = Upfront.data && Upfront.data.posts_element && Upfront.data.posts_element.featured_image_height ? Upfront.data.posts_element.featured_image_height : 300,
+				maskHeight = Upfront.data && Upfront.data.uposts && Upfront.data.uposts.featured_image_height ? Upfront.data.uposts.featured_image_height : 300,
 				editorOptions = _.extend({}, imageInfo, {
 					maskOffset: mask.offset(),
 					maskSize: {width: mask.width(), height: maskHeight},
@@ -781,7 +781,8 @@ define(function() {
 					loading: loadingMsg,
 					done: "Here we are!",
 					fixed: false
-				})
+				}),
+				postUpdated = false
 			;
 
 			loading.render();
@@ -795,7 +796,7 @@ define(function() {
 			}
 
 			this.post.set('post_status', status);
-			this.post.save().done(function(r){
+			this.post.save().done(function(){
 				if(metaUpdated){
 					loading.$el.remove();
 					Upfront.Views.Editor.notify(successMsg);
