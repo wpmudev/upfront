@@ -1,9 +1,9 @@
 (function ($) {
 
-  var templates = [
-    'text!' + Upfront.data.uaccordion.template ];
+  /*var templates = [
+    'text!' + Upfront.data.uaccordion.template ];*/
 
-  require(templates, function(accordionTpl) {
+  define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(accordionTpl) {
     var UaccordionModel = Upfront.Models.ObjectModel.extend({
       init: function () {
         var properties = _.clone(Upfront.data.uaccordion.defaults);
@@ -226,7 +226,7 @@
       },
 	  
 		saveTitle: function(target) {
-			
+			return;			
 			id = target.parent().index()-1;
 			this.property('accordion')[id].title = target.html();
 			this.property('accordion')[id].title_color = target.css('color');
