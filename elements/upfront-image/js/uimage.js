@@ -510,15 +510,17 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				.data('resizeHandling', true)
 			;
 		}
-		if(this.property('image_status') != 'ok')
+		if(this.property('image_status') != 'ok'){
+			if(!this.elementSize.height){
+				this.setElementSize();
+				this.$('.upfront-image-starting-select').height(this.elementSize.height);
+			}
 			return;
+		}
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
 		setTimeout(function(){
-			var container = $('#' + me.property('element_id')).find('.upfront-image-container'),
-				size = me.property('size'),
-				position = me.property('position'),
-				elementSize = me.property('element_size')
-			;
+			var container = $('#' + me.property('element_id')).find('.upfront-image-container');
+
 			me.controls.setWidth(container.width());
 			me.controls.render();
 			container.parent().append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
@@ -810,6 +812,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			moduleModel.set_property('class', classes.join(' '), true);
 		}
 
+		this.property('row', 1);
 		this.parent_module_view.model.set_property('row', 1);
 	},
 
@@ -867,6 +870,23 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		else
 			_.extend(options, this.imageInfo);
 
+		//Shrink the mask if the image is smaller
+		if(newImage && options.fullSize.height <= options.maskSize.height && options.fullSize.width <= options.maskSize.width){
+			var columnWidth = Math.round((options.maskSize.width + 30) / options.fitMaskColumns),
+				rowHeight = 15,
+				elementColumns = Math.ceil((options.fullSize.width + 30) / columnWidth)
+			;
+			options.maskSize = {
+				width: elementColumns * columnWidth - 30,
+				height: Math.ceil(options.fullSize.height / rowHeight) * rowHeight
+			};
+
+			options.position = {top: 0, left: 0};
+			options.align = 'left';
+			options.setImageSize = false;
+			options.elementColumns = elementColumns;
+		}
+
 		Upfront.Views.Editor.ImageEditor.open(options)
 			.done(function(result){
 				me.handleEditorResult(result);
@@ -896,7 +916,7 @@ var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c6 upfront-image_module"},
+					{"name": "class", "value": "c22 upfront-image_module"},
 					{"name": "has_settings", "value": 0},
 					{"name": "row", "value": 17}
 				],
@@ -1642,10 +1662,10 @@ var ImageEditor = Backbone.View.extend({
 		if(centerImage){
 			this.centerImage(false);
 		}
-
+		/* //Button not necessary anymore, remove it in the future.
 		if(mode == 'small' && fitMask.length)
 			fitMask.show();
-		else if(fitMask.length)
+		else if(fitMask.length) */ 
 			fitMask.hide();
 	},
 
@@ -1764,7 +1784,7 @@ var ImageEditor = Backbone.View.extend({
 		this.setResizingLimits();
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 	},
-
+	//TODO: remove this. This method is deprecated, since the fit mask button is not used anymore
 	fitMask: function(){
 		var canvas = $('#uimage-canvas'),
 			mask = $('#uimage-mask'),
