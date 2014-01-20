@@ -57,9 +57,17 @@ class Upfront_Ajax extends Upfront_Server {
 	function load_layout () {
 		$layout_ids = $_POST['data'];
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
+		$parsed = false;
+		$string = '';
 
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
+
+		if(is_string($layout_ids)){
+			$string = $layout_ids;
+			$layout_ids = Upfront_EntityResolver::ids_from_url($layout_ids);
+			$parsed = true;
+		}
 
 		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
@@ -75,7 +83,8 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$response = array(
 			'post' => $post,
-			'layout' => $layout->to_php()
+			'layout' => $layout->to_php(),
+			'cascade' => $layout_ids
 		);
 
 		$this->_out(new Upfront_JsonResponse_Success($response));

@@ -21,6 +21,7 @@ abstract class Upfront_EntityResolver {
 		if (!empty($cascade['type'])) {
 			$ids['type'] = $cascade['type'];
 		}
+
 		return $ids;
 	}
 
@@ -97,6 +98,42 @@ abstract class Upfront_EntityResolver {
 		return $wp_entity;
 	}
 
+	public static function ids_from_url($url) {
+		$wp = new WP();
+
+		//We need to cheat telling WP we are not in admin area to parse the URL properly
+		$current_uri = $_SERVER['REQUEST_URI'];
+		$self = $_SERVER['PHP_SELF'];
+		global $current_screen;
+		if($current_screen){
+			$stored_current_screen = $current_screen->id;
+		}
+		else {
+			require_once(ABSPATH . '/wp-admin/includes/screen.php');
+			$current_screen = WP_Screen::get('front');
+		}
+
+		$_SERVER['REQUEST_URI'] = $url;
+		$_SERVER['PHP_SELF'] = 'foo';
+
+		$wp->parse_request();
+
+
+		$query = new WP_Query($wp->query_vars);
+		$query->parse_query();
+
+		
+		$_SERVER['REQUEST_URI'] = $current_uri;
+		$_SERVER['PHP_SELF'] = $self;
+
+		if(isset($stored_current_screen))
+			$current_screen = $current_screen::get($stored_current_screen);
+
+		$cascade = self::get_entity_ids(self::get_entity_cascade($query));
+
+		return $cascade;
+	}
+
 	
 	private static function _get_query ($query) {
 		if (!$query || !($query instanceof WP_Query)) {
@@ -111,7 +148,7 @@ abstract class Upfront_EntityResolver {
 		$specificity = is_array($specificity) ? join('_', $specificity) : $specificity;
 		return array(
 			'item' => $item,
-			'specificity' => $specificity,
+			'specificity' => $specificity
 		);
 	}
 
