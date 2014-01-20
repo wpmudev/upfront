@@ -300,6 +300,7 @@ define(function() {
 	var _layout_data = false,
 		_layout = false,
 		_saving_flag = false,
+		_is_dirty = false,
 		_preview_url = false,
 		run = function (layout) {
 			_layout = layout;
@@ -319,6 +320,11 @@ define(function() {
 			Upfront.Events.on("entity:drag_stop", save, this);
 			Upfront.Events.on("entity:module:after_render", save, this);
 			Upfront.Events.on("upfront:element:edit:stop", save, this);
+
+			// Bind beforeunload event listener
+			window.onbeforeunload = warn;
+			Upfront.Events.off("command:layout:save_success", clear);
+			Upfront.Events.on("command:layout:save_success", clear);
 		},
 		set_data = function () {
 			_layout_data = Upfront.Util.model_to_json(_layout);
@@ -332,6 +338,7 @@ define(function() {
 			if (_saving_flag) return false;
 
 			_saving_flag = true;
+			_is_dirty = true;
 			set_data();
 
 			Upfront.Events.trigger("preview:build:start");
@@ -353,6 +360,17 @@ define(function() {
 			;
 
 			run(_layout);
+		},
+		clear = function () {
+			_is_dirty = false; // Clear dirty flag, we just saved changes
+		},
+		warn = function (e) {
+			var e = e || window.event,
+				going = "You have unsaved changes you're about to lose by navigating off this page."
+			;
+			if (!_saving_flag && !_is_dirty) return; // No changes
+			if (e) e.returnValue = going;
+			return going;
 		},
 		get_preview_url = function () {
 			return _preview_url;
