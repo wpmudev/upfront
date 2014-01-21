@@ -7779,9 +7779,13 @@ a.ueditor-unlink {
 }
 
 .sp-button-container {
-	margin-top: -9px;
+	margin-top: -12px;
+	margin-right: 1px;
 }
-
+.redactor_dropdown_box_upfrontColor .sp-button-container {
+	margin-top: -9px;
+	margin-right: 0;
+}
 .sp-hue {
 	width: 10px;
 }
@@ -8036,4 +8040,40 @@ div.sp-val:active .sp-dragger:after { display:block;}
   background-size:8px 8px;
   
   background-position:0 0, 4px 4px;	
+}
+
+/* Plain Text Element */
+.plaintxt_padding {
+ 	padding: 15px;
+}
+
+div.inline-radios > span {
+	margin-right:16px;
+}
+
+div.inline-radios > span, div.inline-checkboxes, div.inline-number, div.inline-color {
+  display:inline-block;
+}
+
+div.inline-number {
+  margin-left:12px;
+}
+
+div.inline-number > input {
+  width:50px !important;
+  font-size:11px;
+}
+
+div.inline-color {
+  float:right;
+}
+
+div.plaintext-settings {
+  line-height:3;
+  vertical-align:middle
+}
+
+div.inline-color, div.inline-number input {
+position: relative;
+top: -4px;
 }

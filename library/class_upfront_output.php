@@ -558,59 +558,40 @@ class Upfront_PlainTxtView extends Upfront_Object {
       'class' =>  'c22 upfront-plain_txt'
     );
   }
-
-  protected function merge_default_properties($data){
-      $flat = array();
-      if(!isset($data['properties']))
-          return $flat;
-
-      foreach($data['properties'] as $prop)
-          $flat[$prop['name']] = $prop['value'];
-
-      $flat = array_merge(self::default_properties(), $flat);
-
-      $properties = array();
-      foreach($flat as $name => $value)
-          $properties[] = array('name' => $name, 'value' => $value);
-
-      return $properties;
-  }
-
-  function __construct($data) {
-      $data['properties'] = $this->merge_default_properties($data);
-      parent::__construct($data);
-  }
-
-  public function add_js_defaults($data){
-	  $newdata = array(
-          'defaults' => self::default_properties(),
-         // 'template' => upfront_get_template_url('uaccordion', upfront_element_url('tpl/uaccordion.html', dirname(__FILE__)))
-      );
-	  
-      if(isset($data['plaintxt'])) {
-		if(isset($data['plaintxt']['defaults'])) {
-			$merged_defaults = array_merge($data['plaintxt']['defaults'], $newdata['defaults']);
-			$data['plaintxt']['defaults'] = $merged_defaults;
-		}
-		else {
-			$data['plaintxt']['defaults'] = $newdata['defaults'];	
-	  	}
-	  	//$data['plaintxt']['template'] = $newdata['template'];
-	  }
-	  else
-	  	$data['plaintxt'] = $newdata;
-		
-      return $data;
-  }
+	public function add_js_defaults($data){
+		$data['plaintxt'] = array(
+			'defaults' => self::default_properties(),
+		);
+		return $data;
+	}
 
 
 	public function get_markup () {
+		
 		$element_id = $this->_get_property('element_id');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
-		return "<div class='upfront-output-object upfront-plain_txt' style='background-color:".$this->_get_property('background_color')."; border: ".$this->_get_property('border')."' {$element_id}>" . $this->_get_property('content') . '</div>';
+
+		$content = $this->_get_property('content');
+
+		$matches = array();
+		$regex = '/<div class="plaintxt_padding([^>]*)>(.+?)<\/div>/s';
+		preg_match($regex, $content, $matches);
+	
+		if(sizeof($matches) > 1)
+			$content = $matches[2];
+
+		$style = array();
+		if($this->_get_property('background_color') && $this->_get_property('background_color')!='')
+			$style[] = 'background-color: '.$this->_get_property('background_color');
+			
+		if($this->_get_property('border') && $this->_get_property('border')!='')
+			$style[] = 'border: '.$this->_get_property('border');
+
+		return "<div class='upfront-output-object upfront-plain_txt' {$element_id}>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
 	}
 }
 
+add_action('upfront_data', array('Upfront_PlainTxtView', 'add_js_defaults'));
 
 class Upfront_ImageView extends Upfront_Object {
 

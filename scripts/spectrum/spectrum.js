@@ -53,7 +53,6 @@
     replaceInput = [
         "<a class='sp-replacer' title='Click to pick a color' href='#'>",
             "<div class='sp-preview'><div class='sp-preview-inner'></div></div>",
-            '<span class="sp-texthint"></span>',
         "</a>"
     ].join(''),
     markup = (function () {
@@ -599,6 +598,7 @@
         }
 
         function move() {
+			
             updateUI();
 
             callbacks.move(get());
@@ -614,7 +614,7 @@
             // Update dragger background color (gradients take care of saturation and value).
             var flatColor = tinycolor.fromRatio({ h: currentHue, s: 1, v: 1 });
             dragger.css("background-color", flatColor.toHexString());
-
+			container.find('.sp-input').css('border-left-color', get().toRgbString());
             // Get a format that alpha will be included in (hex and names ignore alpha)
             var format = currentPreferredFormat;
             if (currentAlpha < 1) {

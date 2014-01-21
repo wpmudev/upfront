@@ -845,7 +845,6 @@ RedactorPlugins.upfrontColor = {
 			if(this.current_color) {
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-bottom-color', this.current_color);
 				this.$('li#tabforeground-content').find('.sp-dragger').css('border-left-color', this.current_color);
-				this.$('li#tabforeground-content').find('.sp-input').css('border-left-color', this.current_color);
 				this.$('input.foreground').spectrum('option', 'color', this.current_color);
 			}
 			else
@@ -854,7 +853,6 @@ RedactorPlugins.upfrontColor = {
 			if(this.current_bg) {
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-bottom-color', this.current_bg);
 				this.$('li#tabbackground-content').find('.sp-dragger').css('border-left-color', this.current_bg);
-				this.$('li#tabbackground-content').find('.sp-input').css('border-left-color', this.current_bg);
 				this.$('input.background').spectrum('option', 'color', this.current_bg);
 			}
 			else
@@ -959,7 +957,6 @@ RedactorPlugins.upfrontColor = {
 				move: function(color) {
 					redac.selectionRestore(true, false);
 					self.current_color = color;
-					$(this).parent().find('.sp-input').css('border-left-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
 				}
@@ -982,7 +979,6 @@ RedactorPlugins.upfrontColor = {
 				move: function(color) {
 					redac.selectionRestore(true, false);
 					self.current_bg = color;
-					$(this).parent().find('.sp-input').css('border-left-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
 				}
