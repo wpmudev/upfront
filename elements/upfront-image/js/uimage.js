@@ -528,6 +528,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.$el.removeClass('upfront-editing');
 
 			me.editCaption();
+
+			//me.get_resizing_limits();
 		}, 300);
 	},
 
@@ -871,6 +873,39 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			_.extend(options, this.imageInfo);
 
 		//Shrink the mask if the image is smaller
+		if(false && newImage){
+			var rowHeight = 15,
+				elementColumns = this.getColumns(),
+				columnWidth = Math.round(options.maskSize.width + 30) / elementColumns,
+				maxColumns = this.maxColumns(),
+				maxRows = this.maxRows(),
+				resizeThreshold = 1.2
+			;
+
+			if(options.fullSize.height <= (maxRows * rowHeight * resizeThreshold) && options.fullSize.width <= (maxColumns * columnWidth * resizeThreshold)){
+				var colsNeeded = Math.ceil(options.fullSize.width  + 30 / columnWidth),
+					rowsNeeded = Math.ceil(options.fullSize.height / rowHeight) + 2 // Added margin top and bottom
+				;
+
+				if(rowsNeeded > maxRows)
+					rowsNeeded = maxRows;
+				if(colsNeeded > maxColumns)
+					colsNeeded = maxColumns;
+
+				this.setElementDimensions(rowsNeeded, colsNeeded);
+
+				options.maskSize = {
+					width: colsNeeded * columnWidth - 30,
+					height: rowsNeeded * rowHeight - 2 * rowHeight
+				};
+
+				options.position = {top: 0, left: 0};
+				options.align = 'left';
+				options.setImageSize = false;
+				options.imageFit = true;
+			}
+
+		}
 		if(newImage && options.fullSize.height <= options.maskSize.height && options.fullSize.width <= options.maskSize.width){
 			var columnWidth = Math.round((options.maskSize.width + 30) / options.fitMaskColumns),
 				rowHeight = 15,
@@ -1319,8 +1354,9 @@ var ImageEditor = Backbone.View.extend({
 
 		if(this.setImageInitialSize){
 			canvasSize = this.initialImageSize(200, false, maskSize);
-			//canvasSize.width += this.bordersWidth;
-			//canvasSize.height += this.bordersWidth;
+		}
+		else if(options.imageFit){
+			canvasSize = this.initialImageSize(0, false, maskSize);
 		}
 
 		var tplOptions = {
@@ -1894,10 +1930,12 @@ var ImageEditor = Backbone.View.extend({
 				width: mask.width(),
 				height: mask.height()
 			},
-			overflow = overflow ? overflow : 0,
 			pivot, factor, invertPivot,
 			stretchImage = !!stretch
 		;
+
+		//prevent strange behaviors
+		overflow = overflow ? overflow : 0;
 
 		//this.fullSize = this.getImageFullSize();
 

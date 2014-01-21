@@ -54,6 +54,8 @@ define(function() {
 			this.postId = options.post_id;
 			this.setElement(options.node);
 
+			this.autostart = options.autostart || false;
+
 			//If the post is in the cache, prepare it!
 			if(Upfront.data.posts[this.postId]){
 				this.post = Upfront.data.posts[this.postId];
@@ -180,7 +182,7 @@ define(function() {
 				.ueditor({
 					airButtons: {},
 					observeLinks: false,
-					autostart: true,
+					autostart: this.autostart,
 					tabFocus: false,
 					placeholder: 'Write a title...'
 				})
@@ -527,7 +529,7 @@ define(function() {
 
 				if(!content && mode == 'post_excerpt'){
 					if(confirm('This post has no excerpt, and what you could see before editing was the first words of the post content. Do you want to convert that words in the excerpt and edit the excerpt? Otherwise you will edit the post contents.')){
-						post.set('post_excerpt', $body.text());
+						post.set('post_excerpt', $body.html());
 					}
 					else {
 						mode = 'post_content';
@@ -547,7 +549,9 @@ define(function() {
 					.ueditor({
 						linebreaks: false,
 						placeholder: 'Your content goes here ;)',
-						focus: focus
+						focus: focus,
+						upfrontMedia: mode == 'post_content',
+						upfrontImages: mode == 'post_content'
 					})
 				;
 			});
@@ -573,7 +577,7 @@ define(function() {
 		},
 
 		editDate: function(e){
-			if(e.currentTarget != e.target)
+			if(this.$('.upfront-date_picker').is(':visible'))
 				return;
 
 			this.$('.upfront-date_picker').hide();

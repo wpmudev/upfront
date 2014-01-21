@@ -36,6 +36,13 @@ define(function() {
 			if(! (this.model instanceof UpostsModel)){
 				this.model = new UpostsModel({properties: this.model.get('properties')});
 			}
+
+
+			this.events = _.extend({}, this.events, {
+				'click .uposts-pagination>a': 'paginate'
+			});
+
+			this.page = 1;
 			//this.constructor.__super__.initialize.call(this, [options]);
 
 			this.model.on('region:updated', this.refreshMarkup, this);
@@ -68,7 +75,7 @@ define(function() {
 			}, 100);
 		},
 
-		refreshMarkup: function() {
+		refreshMarkup: function(page) {
 			var props = this.model.get('properties').toJSON(),
 				data = {},
 				me = this,
@@ -79,6 +86,10 @@ define(function() {
 					fixed: true
 				})
 			;
+
+			if(!page)
+				page = 1;
+			data.page = page;
 
 			_.each(props, function(prop){
 				data[prop.name] = prop.value;
@@ -128,7 +139,8 @@ define(function() {
 						view: me,
 						onUpdated: function(post){
 							me.onPostUpdated(post);
-						}
+						},
+						autostart: false
 					});
 				}
 			});
@@ -168,6 +180,13 @@ define(function() {
 					me.editors[post.ID].updateElement(wrapper);
 				});
 			}
+		},
+
+		paginate: function(e){
+			console.log('Paginating!' + e.target.search);
+			var search = e.target.search;
+			if(search && search.match(/^\?paged=\d+$/))
+				this.refreshMarkup(search.replace('?paged=', ''));
 		},
 
 		/*
@@ -245,12 +264,37 @@ define(function() {
 		 */
 		initialize: function () {
 			var tax = new UpostsQuerySetting_Taxonomy({model: this.model}),
-				term = new UpostsQuerySetting_Term({model: this.model})
+				term = new UpostsQuerySetting_Term({model: this.model}),
+				SettingsItem =  Upfront.Views.Editor.Settings.Item,
+				Fields = Upfront.Views.Editor.Field
 			;
 			this.settings = _([
 				new UpostsQuerySetting_PostType({model: this.model}),
 				tax, term,
-				new UpostsQuerySetting_Limit({model: this.model})
+				new UpostsQuerySetting_Limit({model: this.model}),
+				new SettingsItem({
+					title: 'Pagination',
+					fields: [
+						new Fields.Radios({
+							model: this.model,
+							property: 'pagination',
+							values: [
+								{
+									label: 'No pagination',
+									value: 0
+								},
+								{
+									label: 'Previous/next page',
+									value: 'prevnext'
+								},
+								{
+									label: 'Numeric',
+									value: 'numeric'
+								}
+							]
+						})
+					]
+				})
 			]);
 			tax.on("uposts:taxonomy:changed", term.generate_term_markup, term);
 		},

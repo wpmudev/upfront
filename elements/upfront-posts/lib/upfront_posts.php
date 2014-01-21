@@ -6,7 +6,7 @@
  */
 class Upfront_UpostsView extends Upfront_Object {
 
-	public function get_markup () {
+	public function get_markup ($page = false) {
 		global $wp_query;
 		$args = array();
 		$element_id = $this->_get_property('element_id');
@@ -33,10 +33,9 @@ class Upfront_UpostsView extends Upfront_Object {
 		} else if (!empty($wp_query->tax_query->queries)) {
 			$args['tax_query'] = $wp_query->tax_query->queries;
 		}
-		if (!empty($limit) && is_numeric($limit))
-			$args['posts_per_page'] = $limit;
-		else
-			$args['posts_per_page'] = 10;
+
+		$args['posts_per_page'] = !empty($limit) && is_numeric($limit) ?  $limit : 10;
+		$args['paged'] = $page ? $page : get_query_var('paged');
 
 		$args['post_status'] = 'publish'; //Making sure, because ajax call reset this to 'any'
 
@@ -44,7 +43,10 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
 		
-		return self::get_template($args, $this->properties_to_array());
+
+		$properties = $this->properties_to_array();
+		$properties['editing'] = $editing;
+		return self::get_template($args, $properties);
 	}
 
 	public static function set_featured_image($html, $post_id){
@@ -95,6 +97,10 @@ class Upfront_UpostsView extends Upfront_Object {
 			'limit'	=> 10,
 			'content_type' => 'excerpt', // 'excerpt' | 'full'
 			'featured_image' => 1,
+
+			'pagination' => 0,
+			'prev' => 'Next Page »',
+			'next' => '',
 			
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
 		);
@@ -232,12 +238,14 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		$args = array();
 		$data = json_decode(stripslashes($_POST['data']), true);
 		$properties = array();
-		foreach($data as $name => $value)
-			$properties[] = array('name' => $name, 'value' => $value);
+		foreach($data as $name => $value){
+			if($name != 'page')
+				$properties[] = array('name' => $name, 'value' => $value);
+		}
 
 		$view = new Upfront_UpostsView(array('properties' => $properties));
 
-		$this->_out(new Upfront_JsonResponse_Success($view->get_markup()));
+		$this->_out(new Upfront_JsonResponse_Success($view->get_markup($data['page'])));
 	}
 
 	public function load_single_markup () {		

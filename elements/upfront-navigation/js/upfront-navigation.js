@@ -185,10 +185,13 @@ define(function() {
                     $(this).hide();
 
                 });
+                console.log('navigation');
+                /*
                 $body.find('.nav_tooltip').find('.visit_page').click(function(e){
                     e.preventDefault();
                     window.location = e.target.href;
                 });
+*/
                 $body.find('.nav_tooltip').find('.edit_url').click(function(e){
                     e.preventDefault();
                     Upfront.Events.trigger("entity:settings:activate", me);

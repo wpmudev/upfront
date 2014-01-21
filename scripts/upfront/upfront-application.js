@@ -397,9 +397,11 @@ var Application = new (Backbone.Router.extend({
 
       require(["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "upfront-navigation", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "uwidget", "uyoutube"],
         function(objects) {
-				_.extend(Upfront.Objects, objects);
-				app.load_layout(_upfront_post_data.layout);
-			});
+			_.extend(Upfront.Objects, objects);
+-			app.load_layout(_upfront_post_data.layout);
+			//app.load_layout(window.location.pathname + window.location.search);
+			//app.start_navigation();
+		});
 	},
 
 	stop: function () {
@@ -547,6 +549,22 @@ var Application = new (Backbone.Router.extend({
 			});
 		}
 		this.layout_sizes.render();
+	},
+
+	start_navigation: function(){
+		var me = this;
+		console.log('Starting router history');
+		Backbone.history.start({pushState: true});
+		$('#page').on('click', 'a', function(e){
+			var href = e.target.getAttribute('href'),
+				a = e.target,
+				now = window.location
+			;
+			if(href == '#' || a.origin != now.origin || (a.pathname == now.pathname && a.search == now.search))
+				return;
+
+			me.navigate(a.pathname + a.search);
+		});
 	}
 
 }))();
