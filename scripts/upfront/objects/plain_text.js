@@ -19,11 +19,7 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 
-	/*initialize: function(){
-        this.events = _.extend({}, this.events, {
-		   "click .upfront-module > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click"
-        });
-	},*/
+
 	get_content_markup: function () {
 					var content = this.model.get_content();
 					
@@ -41,17 +37,14 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 					rendered = _.template(template, data);
 					return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
 
-		
-		/*var content = this.model.get_content();
-		return content + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');*/
 	},
 	is_edited: function () {
 		var is_edited = this.model.get_property_value_by_name('is_edited');
 		return is_edited ? true : false;
-	},
+	},/*
 	close_settings: function() {
 		 Upfront.Events.trigger('upfront:element:edit:stop');
-	},
+	},*/
 	on_render: function() {
 		var me = this,
 		blurTimeout = false;
@@ -75,7 +68,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				me.model.set_content($(this).html(), {silent: true});
 			})
 		;
-		Upfront.Events.on('entity:settings:deactivate', this.close_settings, this);
+		//Upfront.Events.on('entity:settings:deactivate', this.close_settings, this);
 	},
 });
 

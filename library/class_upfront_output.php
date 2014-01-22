@@ -549,23 +549,6 @@ class Upfront_Object extends Upfront_Entity {
 
 class Upfront_PlainTxtView extends Upfront_Object {
 
- public static function default_properties() {
-
-    return array(
-      'type' => 'PlainTxtModel',
-      'view_class' => 'PlainTxtView',
-      'has_settings' => 1,
-      'class' =>  'c22 upfront-plain_txt'
-    );
-  }
-	public function add_js_defaults($data){
-		$data['plaintxt'] = array(
-			'defaults' => self::default_properties(),
-		);
-		return $data;
-	}
-
-
 	public function get_markup () {
 		
 		$element_id = $this->_get_property('element_id');
@@ -591,7 +574,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 	}
 }
 
-add_action('upfront_data', array('Upfront_PlainTxtView', 'add_js_defaults'));
+
 
 class Upfront_ImageView extends Upfront_Object {
 
