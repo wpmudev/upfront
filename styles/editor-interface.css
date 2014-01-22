@@ -2915,12 +2915,27 @@ a.ueditor-action-pickercancel{
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
 .upfront-field-select-single .upfront-field-select-option-selected label:before,
-.upfront-ui .upfront-region-field-icon:before {
+.upfront-ui .upfront-region-field-icon:before,
+.sp-preview {
 	content: " ";
 	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	float: left;
 	display: block;
+}
+.sp-preview{
+	background-position: -817px -105px;
+	width: 27px !important;
+	height: 24px !important;
+	background-color:#e5f3ff !important;
+	border: 1px #a3bfd9 solid !important;
+	border-radius: 3px;
+    position:relative;
+    margin-right: 5px;
+    float:left;
+}
+.sp-preview-inner {
+	display: none !important;
 }
 .upfront-logo {
 	background-position: -190px -405px;
@@ -6011,15 +6026,7 @@ License: MIT
     float:left;
     font-size:10px;
 }
-div.sp-preview
-{
-    position:relative;
-    width:25px;
-    height: 20px;
-    margin-right: 5px;
-    float:left;
-    z-index: 0;
-}
+
 
 .sp-palette
 {
@@ -6075,7 +6082,7 @@ div.sp-preview
     border-color: #000;
 }
 
-.sp-preview, .sp-alpha, .sp-thumb-el
+.sp-alpha, .sp-thumb-el
 {
     position:relative;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
@@ -8071,8 +8078,8 @@ div.sp-val:active .sp-dragger:after { display:block;}
  	padding: 15px;
 }
 
-div.inline-radios > span {
-	margin-right:16px;
+div.inline-radios.plaintext-settings > span {
+	margin-right:6px;
 }
 
 div.inline-radios > span, div.inline-checkboxes, div.inline-number, div.inline-color {
@@ -8087,17 +8094,27 @@ div.inline-number > input {
   width:50px !important;
   font-size:11px;
 }
-
+div.inline-number.plaintext-settings {
+	width: 36px;
+}
 div.inline-color {
   float:right;
 }
 
 div.plaintext-settings {
   line-height:3;
-  vertical-align:middle
+  vertical-align:middle;
 }
-
+div.inline-radios.plaintext-settings {
+	clear:both;	
+	line-height:1 !important;
+}
 div.inline-color, div.inline-number input {
 position: relative;
-top: -4px;
+top: -6px;
+}
+
+#settings .plaintxt-settings-panel .upfront-settings_panel_scroll {
+	min-width: 238px;
+	max-height: 155px !important
 }

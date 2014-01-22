@@ -143,7 +143,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					}
 				  }),
 				  new Upfront.Views.Editor.Field.Checkboxes({
-					className: 'inline-checkboxes plaintext-settings',
+					className: 'inline-checkboxes plaintext-settings border-enabled',
 					model: this.model,
 					property: 'border_enabled',
 					label: "",
@@ -154,6 +154,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				  new Upfront.Views.Editor.Field.Number({
 					className: 'inline-number plaintext-settings',
 					model: this.model,
+					min: 1,
 					property: 'border_width',
 					label: "",
 					values: [
@@ -254,6 +255,18 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			// Render as usual
 			this.constructor.__super__.render.apply(this, arguments);
 			// Remove panel tabs
+			var me = this;
+			
+			if(!this.$el.find('.border-enabled input').prop('checked'))
+				me.$el.find('.upfront-field-number').prop('disabled', true);
+			
+			this.$el.find('.border-enabled input').bind('change', function() {
+				if($(this).prop('checked'))
+					me.$el.find('.upfront-field-number').prop('disabled', false);
+				else
+					me.$el.find('.upfront-field-number').prop('disabled', true);
+			});
+				
 			this.$el.find('.upfront-settings_label').remove();
 			this.$el.find('.upfront-settings_panel').css('left', 0);
 	  }
