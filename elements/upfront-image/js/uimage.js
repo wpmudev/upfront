@@ -5,6 +5,9 @@ define([
 		'text!elements/upfront-image/tpl/image_editor.html',
 		'text!elements/upfront-gallery/tpl/ugallery_editor.html'
 	], function(imageTpl, editorTpl, galleryTpl) {
+
+var $editorTpl = $(editorTpl);
+
 var UimageModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.uimage.defaults);
@@ -16,10 +19,11 @@ var UimageModel = Upfront.Models.ObjectModel.extend({
 var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.FixedObjectInAnonymousModule,*/ {
 	model: UimageModel,
 	imageTpl: Upfront.Util.template(imageTpl),
-	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
-	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
-	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
-	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
+	selectorTpl: _.template($editorTpl.find('#selector-tpl').html()),
+	progressTpl: _.template($editorTpl.find('#progress-tpl').html()),
+	linkTpl: _.template($editorTpl.find('#link-tpl').html()),
+	formTpl: _.template($editorTpl.find('#upload-form-tpl').html()),
+	sizehintTpl: _.template($editorTpl.find('#sizehint-tpl').html()),
 	sizes: false,
 	elementSize: {width: 0, height: 0},
 	imageId: 0,
@@ -446,7 +450,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		console.log('Image element');
 
 		if(this.property('image_status') == 'starting'){
-			rendered += '<div class="upfront-image-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
+			rendered += '<div class="upfront-image-starting-select upfront-ui" style="height:' + this.elementSize.height + 'px">' +
 					'<span class="upfront-image-resizethiselement">Resize this element & Select an Image</span>'+
 					'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
 			'</div>';
@@ -511,10 +515,19 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			;
 		}
 		if(this.property('image_status') != 'ok'){
+			var starting = this.$('.upfront-image-starting-select');
 			if(!this.elementSize.height){
 				this.setElementSize();
-				this.$('.upfront-image-starting-select').height(this.elementSize.height);
+				starting.height(this.elementSize.height);
 			}
+
+			me.$el.append(
+				$('<div>').addClass('uimage-resize-hint upfront-ui').html(me.sizehintTpl({
+					width: me.elementSize.width,
+					height: me.elementSize.height
+				}))
+			);
+
 			return;
 		}
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
@@ -528,6 +541,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.$el.removeClass('upfront-editing');
 
 			me.editCaption();
+
 
 			//me.get_resizing_limits();
 		}, 300);
@@ -624,12 +638,22 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResizing: function(e, ui){
-		var starting = this.$('.upfront-image-starting-select');
-		if(starting.length)
-			return starting.outerHeight($('.upfront-resize').height() - 30);
+		var starting = this.$('.upfront-image-starting-select'),
+			resizer = $('html').find('.upfront-resize')
+		;
+		if(starting.length){
+			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
+					width: resizer.width() - 30,
+					height: resizer.height() - 30
+				})
+			).css({
+				bottom: 'auto',
+				top: resizer.height() - 39
+			});
+			return starting.outerHeight(resizer.height() - 30);
+		}
 
-		var resizer = $('.upfront-resize'),
-			text = this.property('caption_position') == 'below_image' ? this.$('.wp-caption') : [],
+		var text = this.property('caption_position') == 'below_image' ? this.$('.wp-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
 			img = this.$('img'),
@@ -802,7 +826,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('quick_swap', false, true);
 		if(result.imageId)
 			this.property('image_id', result.imageId, true);
-		//this.render();
+		
 
 		var moduleModel = this.parent_module_view.model;
 		if(result.elementColumns){
@@ -810,8 +834,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			_.each(classes, function(className, idx){
 				if(className.match(/^c\d+$/))
 					classes[idx] = 'c' + result.elementColumns;
-			});	
+			});
 			moduleModel.set_property('class', classes.join(' '), true);
+		}
+		else {
+			this.render();
 		}
 
 		this.property('row', 1);
@@ -852,7 +879,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				extraButtons: [
 					{
 						id: 'image-edit-button-swap',
-						text: 'Replace Image',
+						text: 'Use different image',
 						callback: function(e, editor){
 							editor.cancel();
 							me.openImageSelector();
@@ -904,7 +931,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				options.setImageSize = false;
 				options.imageFit = true;
 			}
-
 		}
 		if(newImage && options.fullSize.height <= options.maskSize.height && options.fullSize.width <= options.maskSize.width){
 			var columnWidth = Math.round((options.maskSize.width + 30) / options.fitMaskColumns),
@@ -1293,9 +1319,9 @@ var ImageEditor = Backbone.View.extend({
 		this.fullSize = {width: 0, height:0};
 		this.setImageInitialSize = false;
 		this.buttons = [
-			{id: 'image-edit-button-ok', text: 'Done'},
-			{id: 'image-edit-button-reset', text: 'Reset Image'},
-			{id: 'image-edit-button-fit', text: 'Fit to Element'}
+			{id: 'image-edit-button-ok', text: 'Ok', tooltip: 'None'},
+			{id: 'image-edit-button-reset', text: 'IMG 100%', tooltip: 'None'},
+			{id: 'image-edit-button-fit', text: 'Fit to Element', tooltip: 'None'}
 		];
 		this.sizes = false;
 		//this.promise = false;
@@ -1305,8 +1331,8 @@ var ImageEditor = Backbone.View.extend({
 
 	centerImageOffset: function(imageSize, maskSize){
 		return {
-			top: (imageSize.height - maskSize.height) / 2,
-			left: (imageSize.width - maskSize.width) / 2
+			top: - (imageSize.height - maskSize.height) / 2,
+			left: - (imageSize.width - maskSize.width) / 2
 		}
 	},
 
@@ -1353,7 +1379,9 @@ var ImageEditor = Backbone.View.extend({
 
 
 		if(this.setImageInitialSize){
-			canvasSize = this.initialImageSize(200, false, maskSize);
+			var fullImageProps = this.getFullWidthImage();
+			canvasSize = fullImageProps.size;
+			canvasOffset.left = fullImageProps.left;
 		}
 		else if(options.imageFit){
 			canvasSize = this.initialImageSize(0, false, maskSize);
@@ -1450,6 +1478,7 @@ var ImageEditor = Backbone.View.extend({
 				results.srcFull = imageData.urlOriginal;
 				results.cropSize = imageData.crop;
 				results.elementColumns = me.options.elementColumns;
+				results.elementRows = me.options.elementRows;
 				me.response.resolve(results);
 				me.close();
 			})
@@ -1554,7 +1583,7 @@ var ImageEditor = Backbone.View.extend({
 
 		this.selectMode({width: canvas.width(), height: canvas.height()});
 
-		this.centerImage(true);
+		//this.centerImage(true);
 
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 		this.setResizingLimits();
@@ -1679,8 +1708,7 @@ var ImageEditor = Backbone.View.extend({
 
 	setMode: function(mode, constraints){
 		var editor = $('#uimage-drag-handle'),
-			centerImage = (mode == 'small' || mode == 'vertical') && mode != this.mode,
-			fitMask = $('#image-edit-buttons-bottom').find('.image-fit-element-button')
+			centerImage = (mode == 'small' || mode == 'vertical') && mode != this.mode
 		;
 		this.$el
 			.removeClass('uimage-mode-big uimage-mode-small uimage-mode-vertical uimage-mode-horizontal')
@@ -1690,19 +1718,15 @@ var ImageEditor = Backbone.View.extend({
 		this.mode = mode;
 		if(constraints){
 			if(this.mode == 'horizontal' || this.mode == 'small')
-				$('#uimage-drag-handle').draggable('option', {snap: '.gridline', snapMode: 'outer', snapTolerance: 6});
+				editor.draggable('option', {snap: '.gridline', snapMode: 'outer', snapTolerance: 6});
 			else
-				$('#uimage-drag-handle').draggable('option', {snap: false});
+				editor.draggable('option', {snap: false});
 		}
 
 		if(centerImage){
 			this.centerImage(false);
 		}
-		/* //Button not necessary anymore, remove it in the future.
-		if(mode == 'small' && fitMask.length)
-			fitMask.show();
-		else if(fitMask.length) */ 
-			fitMask.hide();
+
 	},
 
 	setImageSize: function(size){
@@ -1788,6 +1812,7 @@ var ImageEditor = Backbone.View.extend({
 		this.setRotation(270);
 		this.rotate(); //Set rotation to 0
 		this.setImageFullSize(e, alert);
+		this.centerImage(true);
 	},
 
 	fitImage: function(e){
@@ -1819,6 +1844,8 @@ var ImageEditor = Backbone.View.extend({
 
 		this.setResizingLimits();
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+
+		this.fitMask();
 	},
 	//TODO: remove this. This method is deprecated, since the fit mask button is not used anymore
 	fitMask: function(){
@@ -1857,27 +1884,8 @@ var ImageEditor = Backbone.View.extend({
 			mask = this.$('#uimage-mask'),
 			canvas = this.$('#uimage-canvas'),
 			handle = this.$('#uimage-drag-handle'),
-			size = false
+			size = this.getFullWidthImage().size
 		;
-
-		//this.fullSize = this.getImageFullSize();
-
-		if(this.fullSize.width < mask.width() + 200 && this.fullSize.height < mask.height() + 200){
-			size = {
-				height: this.fullSize.height + this.bordersWidth,
-				width: this.fullSize.width + this.bordersWidth
-			}
-		}
-		else{
-			if(alert)
-				Upfront.Views.Editor.notify('The image is too big to show it full size.', 'warning');
-
-			size = this.initialImageSize(200);
-			size = {
-				height: size.height + this.bordersWidth,
-				width: size.width + this.bordersWidth
-			}
-		}
 
 		canvas.css(size);
 		handle.css(size);
@@ -1886,8 +1894,6 @@ var ImageEditor = Backbone.View.extend({
 			height: '100%',
 			width: '100%'
 		});
-
-		this.centerImage(true);
 
 		this.selectMode(size, true);
 
@@ -1918,6 +1924,23 @@ var ImageEditor = Backbone.View.extend({
 
 		canvas.css(position);
 		handle.css(position);
+	},
+
+	getFullWidthImage: function() {
+		var grid = $(document.querySelector('.upfront-grid-layout')),
+			gridWidth = grid.width() - 30,
+			gridMaxWidth = grid.css('max-width'),
+			size = this.fullSize
+		;
+
+		if(size.width > gridWidth)
+			size = {width: gridWidth, height: Math.round(size.height / (size.width / gridWidth))};
+
+
+		return {
+			size: size,
+			left: grid.offset().left + 15
+		}; 
 	},
 
 	initialImageSize: function(overflow, stretch, maskDimensions) {
