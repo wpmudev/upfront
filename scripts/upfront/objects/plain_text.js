@@ -19,7 +19,10 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 
-
+	initialize: function() {
+		this.constructor.__super__.initialize.apply(this, arguments);
+		this.on('deactivated', function() {Upfront.Events.trigger('upfront:element:edit:stop');}, this);
+	},
 	get_content_markup: function () {
 					var content = this.model.get_content();
 					
