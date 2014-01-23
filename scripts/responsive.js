@@ -1,6 +1,5 @@
 (function($){
-	
-	$('[type="text/responsive_css"]').each(function(){
+	$.fn.responsiveElement = function(){
 		var r_id = 'responsive-'+(Math.floor(Math.random()*100000)),
 			bind = $(this).attr('data-bind'),
 			min_width = normalize_size($(this).attr('data-min-width')),
@@ -12,6 +11,8 @@
 		$(window).on('resize', function(e){
 			if ( e.target == this )
 				apply_binding_all();
+			else
+				apply_binding($(e.target), true);
 		});
 		if ( typeof Upfront.Events != 'undefined' ){
 			Upfront.Events.on("upfront:layout:loaded", function(){
@@ -33,13 +34,14 @@
 		function apply_binding_view (view) {
 			return apply_binding(view.$el.parent());
 		}
-		function apply_binding ($sel) {
+		function apply_binding ($sel, single) {
 			var styles_all = [],
 				$style = $('#'+r_id);
 			$sel.find(bind).each(function(){
-				var id = $(this).attr('id') || 'bind-'+(Math.floor(Math.random()*100000)),
-					width = $(this).outerWidth(),
-					height = $(this).outerHeight(),
+				var $el = single ? $(this).closest('.upfront-module') : $(this)
+					id = $(this).attr('id') || 'bind-'+(Math.floor(Math.random()*100000)),
+					width = $el.outerWidth(),
+					height = $el.outerHeight(),
 					bind_styles = styles.replace(/\( ?this ?\)/igm, '#'+id);
 				if ( ! $(this).attr('id') )
 					$(this).attr('id', id);
@@ -69,6 +71,8 @@
 			if ( size.match(px_regex) ) // px
 				return size.match(px_regex)[1];
 		}
-	});
+	};
+	
+	//$('[type="text/responsive_css"]').responsiveElement();
 	
 })(jQuery);

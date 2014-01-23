@@ -70,7 +70,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.constructor.__super__.initialize.call(this, [options]);
 		//Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
 		this.events = _.extend({}, this.events, {
-			'click a.ugallery-select-images': 'openImageSelector',
+			'click a.upfront-image-select': 'openImageSelector',
 			'click .ugallery_addmore_wrapper': 'openImageSelector',
 			'click .ugallery_op_link': 'imageEditLink',
 			'click .ugallery_op_mask': 'imageEditMask',
@@ -295,7 +295,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			}
 		});
 
-		if(me.property('status') != 'ok') {
+		if(_.indexOf(['ok', 'starting'], me.property('status')) == -1) {
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>Click to personalize this gallery</p></div>');
 		}
 

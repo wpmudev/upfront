@@ -162,15 +162,21 @@ a.open-media-gallery:hover i {
 
 .upfront-image-starting-select {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-	color: #28DC96;
+	color: #273A4C;
 	font-family: 'Source Sans Pro';
 	font-size:18px;
 	width:100%;
 	background: #eeeff0;
 	text-align: center;
-	padding: 40px 10px;
+	padding: 0;
+	position: relative;
+	overflow: hidden;
+	border: 1px solid #ddd;
 }
 
+/**********************************
+OLD STYLE
+******************/
 .upfront-image-resizing-icons {
 	width: 138px;
 	height: 60px;
@@ -229,6 +235,70 @@ a.open-media-gallery:hover i {
 	line-height: 1.1;
 	text-align: center;
 }
+
+/******** end OLD STYLE */
+
+.uimage-centered {	
+	position: absolute;
+	width: 100px;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	height: 90px;
+}
+
+.upfront-image-select.button {
+	border: 2px solid #B5BBC1;
+	color: #B5BBC1;
+	display: block;
+	width: 40px;
+	height: 40px;
+	border-radius: 20px;
+	margin: 0 auto;
+	background: none;
+	font-size: 31px;
+	line-height: 35px;
+	padding: 0;
+
+}
+
+.upfront-image-select.button:hover {
+	border: 2px solid #3ea;
+	color: #3ea;
+	background: none;
+}
+
+.uimage-small .uimage-centered,
+.uimage-narrow .uimage-centered {	
+	position: absolute;
+	width: 40px;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	height: 40px;
+}
+
+.upfront-image-resizethiselement {
+	font-size: 20px;
+	margin-bottom: 10px;
+}
+
+.uimage-small .upfront-image-resizethiselement,
+.uimage-narrow .upfront-image-resizethiselement {	
+	display: none;
+}
+
+.uimage-tiny .upfront-image-select.button {
+	border:0;
+	width: 10px;
+	font-size: 14px;
+	margin-left: -1px;
+}
+
 
 .upfront-image-resize-buttons {
 	width: 120px;
@@ -840,4 +910,94 @@ div.uimage-controls i.upfront-icon:before {
 	color: #ADC3D8;
 	font-size: 14px !important;
 	padding: 0 5px;
+}
+
+.ui-resizable-autohide .uimage-resize-hint {
+	display: none;
+}
+
+.uimage-small .uimage-resize-hint,
+.uimage-narrow .uimage-resize-hint {
+	font-size: 12px !important;
+	padding: 0;
+	line-height: 14px;
+	bottom: -15px;
+	left: 0;
+	width:45px;
+	text-align: center;
+}
+
+.uimage-small .uimage-resize-hint .uimage-sizehint-big,
+.uimage-narrow .uimage-resize-hint .uimage-sizehint-big {
+	display: none;
+}
+
+.uimage-sizehint-small {
+	display: none;
+}
+
+.uimage-small .uimage-resize-hint .uimage-sizehint-small,
+.uimage-narrow .uimage-resize-hint .uimage-sizehint-small {
+	display: inline;
+}
+
+.uimage-controls-toggle {
+	width: 100%;
+	height: 10px;
+	background: rgba(31, 48, 63, 0.8);
+	border-bottom: 1px solid #162433;
+	color: #ADC3D8;
+	display: none;
+	cursor: default;
+}
+
+.uimage-controls-toggle:before {
+	content: '▼';
+	display: block;
+	text-align: center;
+	font-size: 8px;
+	line-height: 8px;
+}
+
+.uimage-small .uimage-controls {
+	top: auto;
+	margin-top: -10px;
+}
+
+.uimage-small .upfront-inline-panel-item {
+	display: none;
+}
+
+.uimage-small .uimage-controls:hover .upfront-inline-panel-item {
+	display: block;
+}
+
+.uimage-small .uimage-controls-toggle {
+	display: block;
+}
+
+.uimage-small .uimage-controls:hover .uimage-controls-toggle:before {
+	content: '▲';
+}
+
+.uimage-narrow .uimage-controls {
+	width: 60px;
+	height: 30px;
+	margin-left: 20px
+}
+.uimage-narrow .upfront-inline-panel-subitem-active {
+	display: none !important;
+}
+
+.uimage-narrow .uimage-controls .upfront-inline-panel-item {
+	height: 30px !important;
+	width: 30px !important;
+}
+
+.uimage-narrow .upfront-inline-panel-item .upfront-icon {
+	padding: 4px;
+}
+
+.uimage-narrow .upfront-inline-panel {
+	width: 60px !important;
 }

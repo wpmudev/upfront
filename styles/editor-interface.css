@@ -1692,7 +1692,7 @@ a.ueditor-action-pickercancel{
 }
 .upfront-module {
 	position: relative;
-	z-index: 1;
+	z-index: 2;
 }
 .upfront-module-disabled {
 	opacity: 0.5;
@@ -1745,7 +1745,7 @@ a.ueditor-action-pickercancel{
 	background: rgba(255, 255, 255, 0.4);*/
 }
 .upfront-object-content {
-	min-height: 30px;
+	min-height: 15px;
 }
 .upfront-drag-handle {
 	position: absolute;
@@ -2486,6 +2486,8 @@ a.ueditor-action-pickercancel{
 	right: 5px;
 }
 
+
+
 .upfront-resize-handle {
 	position: absolute;
 	bottom: 0;
@@ -2500,6 +2502,11 @@ a.ueditor-action-pickercancel{
 .ui-resizable-resizing .upfront-entity_meta {
 	display: none !important;
 }
+
+.upfront-module.ui-resizable-autohide {
+	z-index: 1;
+}
+
 .upfront-icon-button {
 	width: 24px;
 	height: 24px;
@@ -3377,32 +3384,57 @@ a.ueditor-action-pickercancel{
 	background-position: -196px -144px;
 }
 .upfront-icon-button:before {
-	width: 20px;
-	height: 20px;
+	width: 19px;
+	height: 19px;
 	margin: 0 auto;
 	float: none;
 	display: block;
 }
+.upfront-module-small .upfront-icon-button {
+	width: 18px;
+	height: 18px;
+}
+.upfront-module-small .upfront-icon-button:before {
+	width: 16px;
+	height: 16px;
+}
+.upfront-module-small .upfront-object > .upfront-entity_meta{
+	top: 8px;
+	right: 0;
+}
+
 .upfront-icon-button-delete:before {
-	background-position: -260px -40px;
+	background-position: -261px -40px;
 }
 .upfront-icon-button-setting:before {
-	background-position: -260px -70px;
+	background-position: -261px -70px;
 }
 .upfront-icon-button-crop:before {
-	background-position: -260px -100px;
+	background-position: -261px -100px;
 }
 .upfront-icon-button-align-left:before {
-	background-position: -260px -130px;
+	background-position: -261px -130px;
 }
 .upfront-icon-button-align-center:before {
-	background-position: -260px -160px;
+	background-position: -261px -160px;
 }
 .upfront-icon-button-align-right:before {
-	background-position: -260px -190px;
+	background-position: -261px -190px;
 }
 .upfront-icon-button-move:before {
-	background-position: -260px -280px;
+	background-position: -261px -280px;
+}
+
+.upfront-module-small .upfront-icon-button-delete:before {
+	background-position: -262px -43px;
+}
+.upfront-module-small .upfront-icon-button-setting:before {
+	background-position: -262px -73px;
+}
+
+.upfront-module-small .upfront-module > .upfront-entity_meta {
+	top: 0;
+	right: 0;
 }
 .upfront-icon-control:before,
 .upfront-icon-control-region:before {

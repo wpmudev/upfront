@@ -3,6 +3,24 @@
 	width: 100%;
 	height: 100%;
 	position: relative;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	color: #273A4C;
+	font-family: 'Source Sans Pro';
+	font-size: 18px;
+	width: 100%;
+	background: #eeeff0;
+	text-align: center;
+	padding: 0;
+	position: relative;
+	overflow: hidden;
+	border: 1px solid #ddd;
+}
+
+.ugallery-starting-wrapper .upfront-image-starting-select {
+	width: 100%;
+	height: 100%;
 }
 
 .ugallery_item {
@@ -13,7 +31,6 @@
 }
 
 .ugallery .upfront-image-resizethiselement {
-	color: #28DC96;
 }
 
 #upfront-image-overlay.ugallery-overlay h2 {

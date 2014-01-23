@@ -49,7 +49,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.model = new UimageModel({properties: this.model.get('properties')});
 		}
 		this.events = _.extend({}, this.events, {
-			'click a.upfront-image-select-button': 'openImageSelector',
+			'click a.upfront-image-select': 'openImageSelector',
 			'click div.upfront-quick-swap': 'openImageSelector',
 			'dblclick .wp-caption': 'editCaption'
 		});
@@ -91,6 +91,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		
 		Upfront.Events.on('command:layout:save', this.saveResizing, this);
 		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
+
+		this.sizeClasses = {
+			narrow: false,
+			small: false,
+			tiny: false
+		}
 	},
 
 	getSelectedAlignment: function(){
@@ -445,15 +451,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		var rendered = this.imageTpl(props);
 
-		this.controls.render();
-
 		console.log('Image element');
 
 		if(this.property('image_status') == 'starting'){
-			rendered += '<div class="upfront-image-starting-select upfront-ui" style="height:' + this.elementSize.height + 'px">' +
-					'<span class="upfront-image-resizethiselement">Resize this element & Select an Image</span>'+
-					'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
-			'</div>';
+			rendered += '<div class="upfront-image-starting-select upfront-ui" style="height:' + this.elementSize.height + 'px"><div class="uimage-centered">' +
+					'<span class="upfront-image-resizethiselement">Add Image</span><div class=""><a class="upfront-image-select button" href="#" title="Add Image">+</a></div>'+
+			'</div></div>';
 		}
 		else {
 			var render = $('<div></div>').append(rendered),
@@ -514,6 +517,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				.data('resizeHandling', true)
 			;
 		}
+		this.setSizeClasses();
+
 		if(this.property('image_status') != 'ok'){
 			var starting = this.$('.upfront-image-starting-select');
 			if(!this.elementSize.height){
@@ -530,21 +535,47 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 			return;
 		}
+
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
 		setTimeout(function(){
 			var container = $('#' + me.property('element_id')).find('.upfront-image-container');
 
 			me.controls.setWidth(container.width());
 			me.controls.render();
+			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
+
 			container.parent().append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
 			me.controls.delegateEvents();
 			me.$el.removeClass('upfront-editing');
 
 			me.editCaption();
-
-
+			
 			//me.get_resizing_limits();
 		}, 300);
+	},
+
+	setSizeClasses: function(){
+		var me = this;
+
+		if(me.sizeClasses.small)
+			this.parent_module_view.$el.addClass('uimage-small');
+		else
+			this.parent_module_view.$el.removeClass('uimage-small');
+
+		if(me.sizeClasses.tiny)
+			this.parent_module_view.$el.addClass('uimage-tiny uimage-narrow');
+		else {
+			this.parent_module_view.$el.removeClass('uimage-tiny');
+			if(me.sizeClasses.narrow)
+				this.parent_module_view.$el.addClass('uimage-narrow');
+			else
+				this.parent_module_view.$el.removeClass('uimage-narrow');
+		}
+
+		if(me.sizeClasses.small || me.sizeClasses.narrow)
+			this.parent_module_view.$el.addClass('upfront-module-small');
+		else
+			this.parent_module_view.$el.removeClass('upfront-module-small');
 	},
 
 	on_edit: function(){
@@ -635,12 +666,46 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.saveTemporaryResizing();
 			console.log('resizingTimer');
 		}, this.cropTimeAfterResize);
+
+
+		this.setSizeClasses();
 	},
 
 	onElementResizing: function(e, ui){
 		var starting = this.$('.upfront-image-starting-select'),
-			resizer = $('html').find('.upfront-resize')
+			resizer = $('html').find('.upfront-resize'),
+			rWidth = resizer.width(),
+			rHeight = resizer.height()
 		;
+
+		if(rWidth < 131 && !this.sizeClasses.narrow){
+			this.sizeClasses.narrow = true;
+			this.parent_module_view.$el.addClass('uimage-narrow');
+		}
+		else if(rWidth > 130 && this.sizeClasses.narrow){
+			this.sizeClasses.narrow = false;
+			this.parent_module_view.$el.removeClass('uimage-narrow');
+		}
+
+		if(rHeight < 120 && !this.sizeClasses.small){
+			this.sizeClasses.small = true;
+			this.parent_module_view.$el.addClass('uimage-small');
+		}
+		else if(rHeight > 119 && this.sizeClasses.small){
+			this.sizeClasses.small = false;
+			this.parent_module_view.$el.removeClass('uimage-small');
+		}
+
+		if(rWidth < 50 && !this.sizeClasses.tiny){
+			this.sizeClasses.tiny = true;
+			this.parent_module_view.$el.addClass('uimage-tiny');
+		}
+		else if(rWidth > 49 && this.sizeClasses.tiny){
+			this.sizeClasses.tiny = false;
+			this.parent_module_view.$el.removeClass('uimage-tiny');
+		}
+
+
 		if(starting.length){
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: resizer.width() - 30,

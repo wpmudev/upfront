@@ -54,7 +54,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		this.events = _.extend({}, this.events, {
-			'click .upfront-image-select-button': 'openImageSelector',
+			'click .upfront-image-select': 'openImageSelector',
 			'click .upfront-icon-next': 'nextSlide',
 			'click .upfront-icon-prev': 'prevSlide'
 		});
@@ -92,10 +92,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		if(!this.slides.length){
 			this.startingHeight = this.startingHeight || 225;
-			return '<div class="upfront-image-starting-select" style="min-height:' + this.startingHeight + 'px">' +
-					'<span class="upfront-image-resizethiselement">Resize the slider & add images</span>'+
-					'<div class="upfront-image-resizing-icons"><span class="upfront-image-resize-icon"></span><a class="upfront-image-select-button button" href="#"></a></div>'+
-			'</div>';
+			return '<div class="upfront-image-starting-select" style="min-height:' + this.startingHeight + 'px"><div class="uimage-centered">' +
+					'<span class="upfront-image-resizethiselement">Add Images</span><div class=""><a class="upfront-image-select button" href="#" title="Add Images to the Slider">+</a></div>'+
+			'</div></div>';
 		}
 
 		//Stop autorotate
