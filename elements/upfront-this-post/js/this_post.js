@@ -55,6 +55,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 */
 	on_edit: function () {
 		this.updateEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
+		this.editor.editTitle();
 	},
 
 	refreshMarkup: function () {
@@ -97,25 +98,34 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 // Whatever is down here is a dead code now
 				var post = Upfront.data.posts[me.postId];
 				if(post && post.is_new){
-					// Remove post title and content on new post so that the ueditor placeholder can kick in
+					// Remove post title on new post so that the ueditor placeholder can kick in
 					// @TODO not working :/
-					/*_.each(Upfront.data.ueditor.selectors, function (s) {
-						if ( s.type == 'title' || s.type == 'content' )
+					_.each(Upfront.data.ueditor.selectors, function (s) {
+						if ( s.type == 'title' )
 							node.find(s.selector).html('');
-					});*/
+					});
 					me.updateEditor(node); // Only for the new posts.
 					me.editor.editTitle();
 					me.editor.post.is_new = false;
 					me.editor.post.on('editor:publish', function () {
-						window.location = Upfront.Settings.Content.edit.post + me.editor.post.id;
+						me.redirectPostEdit(me.editor.post);
 					});
 					me.editor.post.on('editor:draft', function () {
 						if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) == -1 || confirm("Do you want to re-load in layout mode?") )
-							window.location = Upfront.Settings.Content.edit.post + me.editor.post.id;
+							me.redirectPostEdit(me.editor.post);
 					});
 				}
 			})
 		;
+	},
+	
+	redirectPostEdit: function (post) {
+		//window.location = Upfront.Settings.Content.edit.post + post.id;
+		var path = '/edit/' + post.get('post_type') + '/' + post.id;
+		Upfront.Application.load_layout(path);
+		Upfront.Application.navigate(path);
+		if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) != -1 )
+			Upfront.Application.set_current(Upfront.Settings.Application.MODE.LAYOUT);
 	},
 
 	updateEditor: function(node){
@@ -132,6 +142,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			node: node,
 			content_mode: 'post_content',
 			view: me,
+			autostart: true,
 			onUpdated: function(post){
 				me.refreshMarkup(post);
 			}

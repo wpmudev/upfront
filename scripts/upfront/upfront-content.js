@@ -328,7 +328,7 @@ define(function() {
 			//@TODO Hack to focus title
 			if ( this.post && this.post.is_new ){
 				var selector = _.find(Upfront.data.ueditor.selectors, function(s){ return s.type == 'title'; }).selector;
-				this.$el.find(selector).ueditor('focus');
+				this.$el.find(selector+'.ueditable').ueditor('focus');
 			}
 		},
 

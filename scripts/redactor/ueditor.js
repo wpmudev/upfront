@@ -329,7 +329,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -1596,6 +1596,44 @@ RedactorPlugins.upfrontSink = {
 		this.$air.css({top: this.$air.offset().top + 40});
 	}
 };
+
+
+RedactorPlugins.upfrontPlaceholder = {
+	init: function () {
+		var placeholder = this.opts.placeholder;
+		if (this.$element.attr('placeholder')) placeholder = this.$element.attr('placeholder');
+		if (placeholder === '') placeholder = false;
+		if (placeholder !== false)
+		{
+			this.placeholderRemove();
+			this.$placeholder = this.$editor.clone(false);
+			this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html( this.opts.linebreaks ? placeholder : this.cleanParagraphy(placeholder) );
+			this.$editor.after(this.$placeholder);
+			if ( this.$editor.css('position') == 'static' )
+				this.$editor.css('position', 'relative');
+			this.$editor.css('z-index', 1);
+			var editor_pos = this.$editor.position();
+			this.$placeholder.css({
+				'position': 'absolute',
+				'z-index': '0',
+				'top': editor_pos.top,
+				'left': editor_pos.left
+			});
+			this.opts.placeholder = placeholder;
+			this.$editor.on('focus keyup', $.proxy(this.placeholderUpdate, this));
+			this.placeholderUpdate();
+		}
+	},
+	placeholderUpdate: function () {
+		this.sync(); // sync first before get
+		var html = this.get();
+		if ( html == '' )
+			this.$placeholder.show();
+		else
+			this.$placeholder.hide();
+	}
+};
+
 
 }); //End require
 

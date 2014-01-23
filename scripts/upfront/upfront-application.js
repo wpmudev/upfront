@@ -347,8 +347,6 @@ var Application = new (Backbone.Router.extend({
 		var me = this;
 		$("body").on("click", ".upfront-edit_layout", function () {
 			//$(".upfront-editable_trigger").hide();
-			$('#wpadminbar').hide();
-			$('html').attr('style', 'margin-top: 0 !important;');
 			//app.go("layout");
 			me.start();
 			return false;
@@ -359,6 +357,9 @@ var Application = new (Backbone.Router.extend({
 	start: function (mode) {
 		if (!mode) mode = this.MODE.DEFAULT;
 		if (this.mode.current == mode) return false;
+		
+		$('#wpadminbar').hide();
+		$('html').attr('style', 'margin-top: 0 !important;');
 
 		this.set_current(mode);
 		if (!(this.current_subapplication && this.current_subapplication.start)) {
@@ -552,9 +553,11 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	start_navigation: function(){
-		var me = this;
+		var me = this,
+			site_url =  document.createElement('a');
 		console.log('Starting router history');
-		Backbone.history.start({pushState: true});
+		site_url.href = Upfront.Settings.site_url;
+		Backbone.history.start({pushState: true, root: site_url.pathname});
 		$('#page').on('click', 'a', function(e){
 			var href = e.target.getAttribute('href'),
 				a = e.target,

@@ -6364,6 +6364,9 @@ License: MIT
 }
 
 
+.ueditor-placeholder {
+	opacity: 0.5;
+}
 
 
 /* ----- New Editor bar ----- */

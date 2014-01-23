@@ -531,7 +531,7 @@ abstract class  Upfront_PostModel {
 				'post_type' => $post_type,
 				'post_status' => 'auto-draft',
 				'post_title' => 'Write a title...',
-				'post_content' => 'Your content goes here ;)',
+				'post_content' => '',
 			), 
 			$post_type
 		);
