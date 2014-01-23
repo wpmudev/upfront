@@ -18,36 +18,52 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 });
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
-
 	initialize: function() {
+		var rev_background_color = this.model.get_property_value_by_name("background_color");
+		var rev_border = this.model.get_property_value_by_name("border");
+		var rev_bg_color_enabled = this.model.get_property_value_by_name("bg_color_enabled");
+		var rev_bg_color = this.model.get_property_value_by_name("bg_color");
+		var rev_border_enabled = this.model.get_property_value_by_name("border_enabled");
+		var rev_border_width = this.model.get_property_value_by_name("border_width");
+		var rev_border_color = this.model.get_property_value_by_name("border_color");
+		var rev_border_style = this.model.get_property_value_by_name("border_style");
+		
 		this.constructor.__super__.initialize.apply(this, arguments);
-		this.on('deactivated', function() {Upfront.Events.trigger('upfront:element:edit:stop');}, this);
+		
+		this.on('deactivated', function() {
+			this.model.set_property("background_color", rev_background_color, false);
+			this.model.set_property("border", rev_border, false);
+			this.model.set_property("bg_color_enabled", rev_bg_color_enabled, false);
+			this.model.set_property("bg_color", rev_bg_color, false);
+			this.model.set_property("border_enabled", rev_border_enabled, false);
+			this.model.set_property("border_width", rev_border_width, false);
+			this.model.set_property("border_color", rev_border_color, false);
+			this.model.set_property("border_style", rev_border_style, false);
+			Upfront.Events.trigger('upfront:element:edit:stop');
+		}, this);
 	},
 	get_content_markup: function () {
-					var content = this.model.get_content();
-					
-					if($(content).hasClass('plaintxt_padding')) {
-						content = $(content).html();
-					}
-					
-					$(content).find('div.plaintxt_padding')
-					var data = {
-					  	"content" : content,
-					  	"background_color" : this.model.get_property_value_by_name("background_color"),
-					  	"border" : this.model.get_property_value_by_name("border")
-					}
-					var rendered = '';
-					rendered = _.template(template, data);
-					return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
+		var content = this.model.get_content();
+		
+		if($(content).hasClass('plaintxt_padding')) {
+			content = $(content).html();
+		}
+		
+		$(content).find('div.plaintxt_padding')
+		var data = {
+			"content" : content,
+			"background_color" : this.model.get_property_value_by_name("background_color"),
+			"border" : this.model.get_property_value_by_name("border")
+		}
+		var rendered = '';
+		rendered = _.template(template, data);
+		return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
 
 	},
 	is_edited: function () {
 		var is_edited = this.model.get_property_value_by_name('is_edited');
 		return is_edited ? true : false;
-	},/*
-	close_settings: function() {
-		 Upfront.Events.trigger('upfront:element:edit:stop');
-	},*/
+	},
 	on_render: function() {
 		var me = this,
 		blurTimeout = false;
@@ -71,7 +87,6 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				me.model.set_content($(this).html(), {silent: true});
 			})
 		;
-		//Upfront.Events.on('entity:settings:deactivate', this.close_settings, this);
 	},
 });
 
@@ -139,7 +154,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					label: '',
 					spectrum: {
 					  preferredFormat: "hex",
-					  change: this.onBgColor
+					  change: this.onBgColor,
+					  move: this.onBgColor,
 					}
 				  }),
 				  new Upfront.Views.Editor.Field.Checkboxes({
@@ -157,6 +173,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					min: 1,
 					property: 'border_width',
 					label: "",
+					default_value: "1",
 					values: [
 					  { label: "", value: '1' }
 					]
@@ -168,7 +185,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					label: '',
 					spectrum: {
 					  preferredFormat: "hex",
-					  change: this.onBorderColor
+					  change: this.onBorderColor,
+					  move: this.onBorderColor
 					}
 				  }),
 				  new Upfront.Views.Editor.Field.Radios({
@@ -176,6 +194,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					model: this.model,
 					property: 'border_style',
 					label: "",
+					default_value: "solid",
 					values: [
 					  { label: "Solid", value: 'solid' },
 					  { label: "Dashed", value: 'dashed' },
@@ -204,8 +223,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
         this.property('bg_color_enabled', $(event.currentTarget).prop('checked'), false);	
 		this.processBg();	
 	},
-	onBgColor: function(event) {
-        this.property('bg_color', event.toRgbString(), false);
+	onBgColor: function(color) {
+        this.property('bg_color', color.toRgbString(), false);
 		this.processBg();	
 	},
 	onBorderEnabled: function(event) {
@@ -216,8 +235,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
         this.property('border_width', $(event.currentTarget).val(), false);
 		this.processBorder();
 	},
-	onBorderColor: function(event) {
-        this.property('border_color',  event.toRgbString(), false);
+	onBorderColor: function(color) {
+        this.property('border_color',  color.toRgbString(), false);
 		this.processBorder();
 	},
 	onBorderStyle: function(event) {
