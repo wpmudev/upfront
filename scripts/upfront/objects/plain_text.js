@@ -19,26 +19,10 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	initialize: function() {
-		var rev_background_color = this.model.get_property_value_by_name("background_color");
-		var rev_border = this.model.get_property_value_by_name("border");
-		var rev_bg_color_enabled = this.model.get_property_value_by_name("bg_color_enabled");
-		var rev_bg_color = this.model.get_property_value_by_name("bg_color");
-		var rev_border_enabled = this.model.get_property_value_by_name("border_enabled");
-		var rev_border_width = this.model.get_property_value_by_name("border_width");
-		var rev_border_color = this.model.get_property_value_by_name("border_color");
-		var rev_border_style = this.model.get_property_value_by_name("border_style");
 		
 		this.constructor.__super__.initialize.apply(this, arguments);
 		
 		this.on('deactivated', function() {
-			this.model.set_property("background_color", rev_background_color, false);
-			this.model.set_property("border", rev_border, false);
-			this.model.set_property("bg_color_enabled", rev_bg_color_enabled, false);
-			this.model.set_property("bg_color", rev_bg_color, false);
-			this.model.set_property("border_enabled", rev_border_enabled, false);
-			this.model.set_property("border_width", rev_border_width, false);
-			this.model.set_property("border_color", rev_border_color, false);
-			this.model.set_property("border_style", rev_border_style, false);
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 	},
@@ -139,7 +123,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				title: "Textbox Appearance",
 				fields: [
 				  new Upfront.Views.Editor.Field.Checkboxes({
-					className: 'inline-checkboxes plaintext-settings',
+					className: 'inline-checkboxes plaintext-settings bg-color-enabled',
 					model: this.model,
 					property: 'bg_color_enabled',
 					label: "",
@@ -275,7 +259,18 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			this.constructor.__super__.render.apply(this, arguments);
 			// Remove panel tabs
 			var me = this;
-			
+
+			if(this.property('bg_color_enabled') === true) {
+				this.$el.find('.bg-color-enabled input').attr('checked', true);
+			}
+			else
+				this.$el.find('.bg-color-enabled input').removeAttr('checked');
+
+			if(this.property('border_enabled') === true)
+				this.$el.find('.border-enabled input').attr('checked', true);
+			else
+				this.$el.find('.border-enabled input').removeAttr('checked');
+
 			if(!this.$el.find('.border-enabled input').prop('checked'))
 				me.$el.find('.upfront-field-number').prop('disabled', true);
 			
