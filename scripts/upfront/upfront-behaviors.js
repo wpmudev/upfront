@@ -346,6 +346,21 @@ var GridEditor = {
 		});
 		return move_limit;
 	},
+	
+	get_max_size: function (el, els, region) {
+		var ed = Upfront.Behaviors.GridEditor,
+			col = ed.get_class_num(el.$el, ed.grid.class),
+			aff_els = ed.get_affected_els(el, els, [], true),
+			move_limit = ed.get_move_limit(aff_els, ed.containment),
+			max_col = col + (move_limit[1]-el.grid.right),
+			expand_lock = region.$el.hasClass('upfront-region-expand-lock'),
+			top_aff_el = aff_els.bottom.length ? _.min(aff_els.bottom, function(each){ return each.grid.top; }) : false,
+			max_row = top_aff_el ? top_aff_el.grid.top-el.grid.top : region.grid.bottom-el.grid.top;
+		return {
+			col: max_col,
+			row: expand_lock ? max_row : false
+		};
+	},
 
 
 	get_wrap_els: function( use_wrap ){
@@ -499,6 +514,31 @@ var GridEditor = {
 		}
 		this.time_end('fn update_model_classes');
 	},
+	
+	update_model_margin_classes: function ($els, more_classes) {
+		var ed = Upfront.Behaviors.GridEditor;
+		$els.each(function(){
+			var $el = $(this),
+				margin = $el.data('margin'),
+				classes;
+			if ( margin &&
+				( margin.original.left != margin.current.left ||
+				margin.original.top != margin.current.top ||
+				margin.original.bottom != margin.current.bottom ||
+				margin.original.right != margin.current.right )
+			){
+				classes = [
+					ed.grid.left_margin_class+margin.current.left,
+					ed.grid.right_margin_class+margin.current.right,
+					ed.grid.top_margin_class+margin.current.top,
+					ed.grid.bottom_margin_class+margin.current.bottom
+				];
+				if ( more_classes )
+					classes = _.union(classes, more_classes);
+				ed.update_model_classes($el, classes);
+			}
+		});
+	},
 
 	adjust_els_right: function( adj_els, cmp_right, update_class ){
 		this.time_start('fn adjust_els_right');
@@ -570,9 +610,12 @@ var GridEditor = {
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-			main_pos = $main.offset();
+			main_pos = $main.offset(),
+			$layout = $main.find('.upfront-layout'),
+			$grid_layout = $layout.find('.upfront-grid-layout').eq(0);
 		ed.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		ed.grid = Upfront.Settings.LayoutEditor.Grid;
+		ed.col_size = $grid_layout.outerWidth()/ed.grid.size;
 
 		ed.max_row = Math.floor(($(window).height()*.5)/ed.baseline);
 		ed.main = {
@@ -585,10 +628,9 @@ var GridEditor = {
 	},
 
 	/**
-	 * Start event, to set all required variables
+	 * Start editor, to set all required variables
 	 *
 	 * @param {Object} view
-	 * @param {Object} model
 	 */
 	start: function(view, model, $cont){
 		this.time_start('fn start');
@@ -1127,6 +1169,8 @@ var GridEditor = {
 					});
 				}
 				model.replace_class(ed.grid.class+rsz_col);
+				// Update model value
+				ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
 			}
 		});
@@ -1134,6 +1178,66 @@ var GridEditor = {
 	
 	toggle_resizables: function (enable) {
 		$('.upfront-editable_entity.ui-resizable').resizable('option', 'disabled', (!enable));
+	},
+	
+	/**
+	 * Resize element
+	 * 
+	 * @param (object) view
+	 * @param (object) model
+	 * @param (integer) col
+	 * @param {integer} row 
+	 */
+	resize: function (view, model, col, row) {
+		var app = Upfront.Application.LayoutEditor,
+			ed = Upfront.Behaviors.GridEditor,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			$layout = $main.find('.upfront-layout');
+			
+		ed.start(view, model);
+		
+		var $me = view.$el.find('.upfront-editable_entity:first'),
+			$wrap = $me.closest('.upfront-wrapper'),
+			$region = $me.closest('.upfront-region'),
+			me = ed.get_el($me),
+			wrap = ed.get_wrap($wrap),
+			region = ed.get_region($region),
+			expand_lock = $region.hasClass('upfront-region-expand-lock'),
+			aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
+			max = ed.get_max_size(me, ed.els, region),
+			regions = app.layout.get('regions'),
+			region_model,
+			col = col ? ( col > max.col ? max.col : col ) : me.col,
+			row = row ? ( max.row && row > max.row ? max.row : row ) : me.row
+		;
+		
+		if ( col < 1 || row < 1 )
+			return false;
+
+		regions.each(function(reg){
+			if ( reg.get('modules') == model.collection )
+				region_model = reg;
+		});
+		ed.normalize(ed.els, ed.wraps);
+		ed.update_class($me, ed.grid.class, col);
+		if ( wrap ){
+			ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+col-1, true);
+			if ( expand_lock )
+				ed.adjust_affected_bottom(wrap, aff_els.bottom, [me], me.grid.top+row-1, true);
+		}
+		ed.update_wrappers(region_model);
+		model.set_property('row', row);
+		// Also resize containing object if it's only one object
+		var objects = model.get('objects');
+		if ( objects && objects.length == 1 ){
+			objects.each(function(object){
+				object.set_property('row', row-2);
+			});
+		}
+		model.replace_class(ed.grid.class+col);
+		// Update model value
+		ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
+		return true;
 	},
 	
 	/**
@@ -1699,27 +1803,8 @@ var GridEditor = {
 					});
 
 					// Update model value
-					( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
-						var $el = $(this),
-							margin = $el.data('margin'),
-							classes;
-						if ( margin &&
-							( margin.original.left != margin.current.left ||
-							margin.original.top != margin.current.top ||
-							margin.original.bottom != margin.current.bottom ||
-							margin.original.right != margin.current.right )
-						){
-							classes = [
-								ed.grid.left_margin_class+margin.current.left,
-								ed.grid.right_margin_class+margin.current.right,
-								ed.grid.top_margin_class+margin.current.top,
-								ed.grid.bottom_margin_class+margin.current.bottom
-							];
-							if ( $me.get(0) == $el.get(0) )
-								classes.push( ed.grid.class + drop_col );
-							ed.update_model_classes($el, classes);
-						}
-					});
+					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).not($me) );
+					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 
 					if ( wrapper_id )
 						model.set_property('wrapper_id', wrapper_id, true);

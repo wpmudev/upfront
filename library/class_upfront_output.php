@@ -593,3 +593,10 @@ class Upfront_SettingExampleView extends Upfront_Object {
 		return "<div class='upfront-output-object upfront-settingexample' {$element_id}></div>";
 	}
 }
+
+class Upfront_TestResizeView extends Upfront_Object {
+
+	public function get_markup () {
+		return "";
+	}
+}

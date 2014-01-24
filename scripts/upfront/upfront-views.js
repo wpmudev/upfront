@@ -393,6 +393,7 @@ define([
 				Upfront.Events.on('entity:drag_start', this.close_settings, this);
 				Upfront.Events.on('upfront:element:edit:start', this.on_element_edit_start, this);
 				Upfront.Events.on('upfront:element:edit:stop', this.on_element_edit_stop, this);
+				Upfront.Events.on('layout:after_render', this.on_after_layout_render, this);
 				if (this.init) this.init();
 			},
 			close_settings: function () {
@@ -431,6 +432,54 @@ define([
 			on_element_edit_stop: function (edit, post) {
 				this.parent_module_view.enable();
 			},
+			on_after_layout_render: function () {
+				
+			},
+			
+			/* Getting dimension and resize element */
+			get_element_size: function () {
+				var element = Upfront.Behaviors.GridEditor.get_position( this.parent_module_view.$el.find('.upfront-module') );
+				return {
+					col: element.col,
+					row: element.row
+				};
+			},
+			get_element_columns: function () {
+				return this.get_element_size().col;
+			},
+			get_element_rows: function () {
+				return this.get_element_size().row;
+			},
+			get_element_max_size: function () {
+				var ed = Upfront.Behaviors.GridEditor,
+					$el = this.parent_module_view.$el.find('.upfront-module'),
+					$region = this.$el.closest('.upfront-region'); //this.parent_module_view.region_view.$el; // @TODO parent_module_view.region_view didn't updated when changing region
+				ed.start(this.parent_module_view, this.parent_module_view.model);
+				return ed.get_max_size( ed.get_el($el), ed.els, ed.get_region($region) );
+			},
+			get_element_max_columns: function () {
+				return this.get_element_max_size().col;
+			},
+			get_element_max_rows: function () {
+				return this.get_element_max_size().row;
+			},
+			get_element_max_size_px: function () {
+				var ed = Upfront.Behaviors.GridEditor,
+					max = this.get_element_max_size();
+				return {
+					col: max.col * ed.col_size,
+					row: max.row * ed.baseline
+				};
+			},
+			get_element_max_columns_px: function () {
+				return this.get_element_max_size_px().col;
+			},
+			get_element_max_rows_px: function () {
+				return this.get_element_max_size_px().row;
+			},
+			set_element_size: function (col, row) {
+				return Upfront.Behaviors.GridEditor.resize(this.parent_module_view, this.parent_module_view.model, col, row);
+			}
 /*
 			// Create a ckeditor instance when any contenteditable element receives focus for the first time.
 			// Creating the ckeditor instance on focus prevents having to recreate ckeditor instances on each
@@ -680,6 +729,7 @@ define([
 					wrapper_view, wrapper_el
 				;
 				if(local_view){
+					local_view.region_view = this.region_view;
 					local_view.region = this.region_view.model;
 					if ( !wrapper ){
 						local_view.render();
@@ -1253,6 +1303,7 @@ define([
 				var local_view = new Regions({"model": this.model.get("regions")});
 				local_view.render();
 				this.$("section").append(local_view.el);
+				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function () {
 				// Deactivate settings on clicking anywhere in layout

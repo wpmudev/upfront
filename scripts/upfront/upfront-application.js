@@ -187,6 +187,7 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable, this);
 		Upfront.Events.on("entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable, this);
 		Upfront.Events.on("layout:render", Upfront.Behaviors.GridEditor.refresh_draggables, this);
+		Upfront.Events.on("layout:after_render", Upfront.Behaviors.GridEditor.init, this);
 	},
 
 	set_up_event_plumbing_after_render: function () {
@@ -199,8 +200,6 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("command:layout:save", this.save_layout, this);
 		Upfront.Events.on("command:layout:save_as", this.save_layout_as, this);
 		Upfront.Events.on("command:layout:preview", this.preview_layout, this);
-
-		Upfront.Behaviors.GridEditor.init();
 
 		// Region
 		Upfront.Events.on("command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable, this);
