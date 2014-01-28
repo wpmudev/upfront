@@ -1,0 +1,10 @@
+{
+  "wpUsername": "username",
+  "wpPassword": "password",
+  "wpSiteroot": "http://upfront-test.dev",
+  "wpAdminurl": "http://upfront-test.dev/wp-admin",
+  "firefoxEditorLoad": 7000,
+  "editorLoad": 3000,
+  "devThemesDirectory": "/path/to/dev/installation/wp-content/themes",
+  "testThemesDirectory": "/path/to/test/installation/wp-content/themes"
+}

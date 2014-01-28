@@ -1,0 +1,14 @@
+{
+  "name": "upfront-testing",
+  "description": "Test suite for Upfront",
+  "scripts": {
+    "test": "node_modules/.bin/mocha -t 60000 -b --reporter spec test.js"
+  },
+  "dependencies": {
+    "mocha": "~1.17.1",
+    "chai": "~1.8.1",
+    "webdriverjs": "~1.3.0",
+    "phantomjs": "~1.9.2-6",
+    "wrench": "~1.5.6"
+  }
+}
