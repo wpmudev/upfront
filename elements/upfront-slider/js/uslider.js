@@ -728,6 +728,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				};
 				me.render();
 			})
+			.fail(function(data){
+				if(data && data.reason == 'changeImage')
+					me.openImageSelector(null, data.id);
+			})
 		;
 	},
 
@@ -749,17 +753,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			fullSize: {width: full[1], height: full[2]},
 			src: image.get('src'),
 			srcOriginal: full[0],
-			rotation: image.get('rotation'),
-			extraButtons: [
-				{
-					id: 'image-edit-button-swap',
-					text: 'Replace Image',
-					callback: function(e, editor){
-						editor.cancel();
-						me.openImageSelector(null, image.id);
-					}
-				}
-			]
+			rotation: image.get('rotation')
 		};
 	},
 

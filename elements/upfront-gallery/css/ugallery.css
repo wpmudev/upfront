@@ -444,6 +444,7 @@ div.ugallery-controls i.upfront-icon:before {
 	background-image: url(../../../img/uf-core-el-sprite.svg);
 }
 
+.upfront-field-icon-over:before,
 .upfront-icon-region-over:before {
 	background-position: -699px -486px;
 }
@@ -455,6 +456,10 @@ div.ugallery-controls i.upfront-icon:before {
 }
 .upfront-icon-region-over-active:hover:before {
 	background-position: -807px -486px;
+}
+
+.upfront-field-icon-below:before {
+	background-position: -699px -646px;
 }
 
 .upfront-icon-region-fullscreen:before {
@@ -714,4 +719,12 @@ input#ugallery-addlabels:focus {
 }
 
 
-
+.ugallery-settings .upfront-settings-item{
+	padding-bottom: 0;
+}
+.ugallery-settings .upfront-field-wrap-radios .upfront-field-multiple-horizontal-inline {
+	margin-right: 15px;
+}
+.ugallery-settings .upfront-field-wrap-radios .upfront-field-multiple-horizontal-inline:last-child {
+	margin-right: 0;
+}

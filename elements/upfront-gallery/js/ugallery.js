@@ -1,17 +1,3 @@
-/*
-	Replacing these identifiers in the following order for yours should make the element work.
-
-	dir: upfront-gallery
-	model: UgalleryModel
-	view: UgalleryView
-	element: UgalleryElement
-	settings: UgallerySettings
-
-	domain: ugallery
-	uppercase: Gallery
-	name: gallery
-*/
-
 (function ($) {
 
 define([
@@ -136,29 +122,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		e.gallerySelected = true;
 	},
 
-	createControls: function(image){
-		var me = this,
-			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-			multi = new Upfront.Views.Editor.InlinePanels.MultiControl()
-		;
-		multi.sub_items = {
-			over: this.createControl('over', 'Over image, bottom'),
-			below: this.createControl('below', 'Below the image'),
-			nocaption: this.createControl('nocaption', 'No caption')
-		};
-
-		multi.icon = 'caption';
-		multi.tooltip = 'Caption position';
-		multi.selected = this.property('captionPosition');
-		multi.on('select', function(item){
-			me.property('captionPosition', item, false);
-		});
+	createControls: function(){
+		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
 		var linkControl = this.property('linkTo') == 'url' ? this.createControl('link', 'Link image', 'imageEditLink') : this.createControl('fullscreen', 'Show image', 'openLightbox');
 		panel.items = _([
 			this.createControl('crop', 'Edit image', 'imageEditMask'),
 			linkControl,
-			multi,
 			this.createControl('remove', 'Remove image', 'removeImage')
 		]);
 		return panel;
@@ -724,8 +694,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					rotation: result.rotation
 				});
 				me.render();
-			}).fail(function(result){
-				me.render();
+			}).fail(function(data){
+				if(data && data.reason == 'changeImage')
+					me.openImageSelector(false, data.id);
+				else
+					me.render();
 			})
 		;
 	},
@@ -744,17 +717,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			fullSize: {width: full[1], height: full[2]},
 			src: image.get('src'),
 			srcOriginal: full[0],
-			rotation: image.get('rotation'),
-			extraButtons: [
-				{
-					id: 'image-edit-button-swap',
-					text: 'Replace Image',
-					callback: function(e, editor){
-						editor.cancel();
-						me.openImageSelector(null, image.id);
-					}
-				}
-			]
+			rotation: image.get('rotation')
 		};
 	},
 
@@ -1327,6 +1290,7 @@ var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 });
 
 var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
+	className: 'upfront-settings_panel_wrap ugallery-settings',
 	initialize: function () {
 		var me = this,
 			fields = Upfront.Views.Editor.Field
@@ -1339,9 +1303,20 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					new fields.Radios({
 						model: this.model,
 						property: 'captionWhen',
+						layout: "horizontal-inline",
 						values: [
-							{value: 'always', label: 'Always'},
-							{value: 'hover', label: 'On hover'}
+							{value: 'never', label: 'never'},
+							{value: 'hover', label: 'on hover'},
+							{value: 'always', label: 'always'}
+						]
+					}),
+					new fields.Radios({
+						model: this.model,
+						property: 'captionPosition',
+						layout: "horizontal-inline",
+						values: [
+							{value: 'over', label: 'over img', icon: 'over'},
+							{value: 'below', label: 'under img',icon: 'below'}
 						]
 					})
 				]

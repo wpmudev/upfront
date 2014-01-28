@@ -14,8 +14,8 @@
 			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">				
 			</div>
-			<?php if($captionPosition != 'nocaption'){ ?>
-			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionPosition ?>"><?php echo $images[$i]['title'] ?></div>
+			<?php if($captionWhen != 'never'){ ?>
+			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			</a>
 		</div>
@@ -69,7 +69,7 @@
 		bottom: 0;
 	}
 
-	#<?php echo $element_id ?> .ugallery-caption-nocaption {
+	#<?php echo $element_id ?> .ugallery-caption-never {
 		display: none;
 	}
 

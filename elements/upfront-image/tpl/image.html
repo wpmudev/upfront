@@ -1,4 +1,4 @@
-<div class="upfront-output-object upfront-image-container uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?>" id="<?php echo $element_id ?>">
+<div class="upfront-output-object upfront-image-container uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>">
 	<?php if($url) { ?>
 	<a href="<?php echo $url ?>">
 	<?php } ?>
@@ -94,7 +94,10 @@
 	}
 
 	#<?php echo $element_id ?> img {
+		<?php if($size['width'] > 30 || $size['height'] > 30){ ?>
 		max-width: 100%;
+		<?php } ?>
 		max-height: none;
+		vertical-align: top;
 	}
 </style>
