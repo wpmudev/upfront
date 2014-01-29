@@ -1017,7 +1017,7 @@ div.uimage-controls i.upfront-icon:before {
 	width: 60px;
 	height: 30px;
 }
-.uimage-narrow .upfront-inline-panel-subitem-active {
+.uimage-narrow .uimage-control-tooltip-item {
 	display: none !important;
 }
 

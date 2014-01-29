@@ -30,12 +30,12 @@ var client = require('webdriverjs').remote({
     // NOTE: only one can be uncommented at a time!
 
     // browserName: 'phantomjs'
-    // browserName: 'firefox'
+    browserName: 'firefox'
 
     // For chrome you need ChromeDriver
     // https://code.google.com/p/selenium/wiki/ChromeDriver
     // download here http://chromedriver.storage.googleapis.com/index.html?path=2.8/
-    browserName: 'chrome'
+    // browserName: 'chrome'
 
   },
   // webdriverjs has a lot of output which is generally useless

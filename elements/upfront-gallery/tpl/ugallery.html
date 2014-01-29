@@ -15,7 +15,7 @@
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">				
 			</div>
 			<?php if($captionWhen != 'never'){ ?>
-			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?>"><?php echo $images[$i]['title'] ?></div>
+			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?> ugallery-caption-<?php echo $captionPosition ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			</a>
 		</div>
@@ -55,7 +55,7 @@
 <style>	
 	#<?php echo $element_id ?> .ugallery-thumb-title {
 		color: <?php echo $captionColor ?>;
-		background: <?php echo $captionBackground ?>;
+		background: <?php echo $captionUseBackground != "0" ? $captionBackground : 'transparent' ?>;
 	}
 
 	#<?php echo $element_id ?> .ugallery-caption-above {

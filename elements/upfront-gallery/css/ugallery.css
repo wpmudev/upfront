@@ -728,3 +728,7 @@ input#ugallery-addlabels:focus {
 .ugallery-settings .upfront-field-wrap-radios .upfront-field-multiple-horizontal-inline:last-child {
 	margin-right: 0;
 }
+
+.ugallery-settings .sp-replacer {
+	vertical-align: top;
+}

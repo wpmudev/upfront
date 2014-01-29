@@ -182,6 +182,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbHeight' => 140,
 			'captionPosition' => 'below', // 'above' | 'over' | 'nocaption'
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
+			'captionUseBackground' => '0',
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'captionWhen' => 'always', // 'always' | 'hover'
 			'linkTo' => 'image' // 'url' | 'image'

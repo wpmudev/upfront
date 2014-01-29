@@ -488,7 +488,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					this.temporaryProps = {
 						size: size,
 						position: position
-					}
+					};
 				}
 				render.find('img')
 					.attr('src', me.property('srcFull'))
@@ -496,7 +496,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 						width: this.temporaryProps.size.width,
 						height: this.temporaryProps.size.height,
 						position: 'absolute',
-						top: 0-this.temporaryProps.position.top,
+						top: Math.min(0, 0-this.temporaryProps.position.top),
 						left: 0-this.temporaryProps.position.left,
 						'max-height': 'none',
 						'max-width': 'none'
@@ -1459,7 +1459,7 @@ var ImageEditor = Backbone.View.extend({
 			return this.open(options);
 		}
 
-		if(!this.resizeElement)
+		if(!this.options.editElement)
 			this.buttons = [{id: 'image-edit-button-ok', text: 'Ok', tooltip: 'Save image'}];
 
 		var halfBorder = this.bordersWidth /2,
@@ -1542,7 +1542,7 @@ var ImageEditor = Backbone.View.extend({
 
 		var button = this.$('#image-edit-button-reset');
 		if(this.elementSize && this.elementSize.columns != 22){
-			if(this.fullSize.width == this.$('#uimage-canvas').width())
+			if(this.fullSize.width < this.$('#uimage-mask').width())
 				button.hide();
 			if(this.elementSize.maxColumns == this.elementSize.columns)
 				button.addClass('deactivated').attr('data-tooltip', 'Can\'t expand the image');
@@ -1608,19 +1608,30 @@ var ImageEditor = Backbone.View.extend({
 		if(!options.setImageSize)
 			return false;
 
-		var fullImage = this.getFullWidthImage(options.fullSize).size,
-			neededSize = this.getCurrentImageRowsCols(fullImage.width, fullImage.height)
+		var fullGrid = this.getFullWidthImage(options.fullSize).size,
+			current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
+			maskSize = {
+				width: current.columns * this.elementSize.columnWidth - 30,
+				height: (current.rows - 2) * this.elementSize.rowHeight
+			}
 		;
 
-		if(neededSize.columns >= elementSize.maxColumns && neededSize.rows >= elementSize.maxRows)
+		if(current.columns >= elementSize.maxColumns && current.rows >= elementSize.maxRows)
 			return false;
 
+		if(this.elementSize.maxColumns < current.columns){
+			var ratio = fullGrid.height / fullGrid.width,
+				maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - 30
+			;
+			maskSize = {
+				width:  maskWidth,
+				height: fullGrid.height
+			};
+		}
+
 		return {
-			maskSize: {
-				width: Math.min(neededSize.columns, elementSize.maxColumns) * elementSize.columnWidth - 30,
-				height: (Math.min(neededSize.rows, elementSize.maxRows) - 2) * 15
-			},
-			imageSize: fullImage
+			maskSize: maskSize,
+			imageSize: fullGrid
 		};
 	},
 
@@ -2019,7 +2030,7 @@ var ImageEditor = Backbone.View.extend({
 		if(this.elementSize.maxColumns < current.columns){
 			var ratio = fullGrid.height / fullGrid.width,
 				maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - 30,
-				maskHeight = maskWidth * ratio
+				maskHeight = fullGrid.height
 			;
 			maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
 		}

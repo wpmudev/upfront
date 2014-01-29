@@ -50,7 +50,7 @@
       }
     },
     // optimize: "none", // in case you want to debug something uncomment this for unoptimized output.
-    fileExclusionRegExp: /ckeditor/, // exclude ckeeditor from build
+    fileExclusionRegExp: /test/, // exclude ckeeditor from build
     removeCombined: true, // this affects build dir, it makes clearer what is in built main
     findNestedDependencies: true, // we need this since we have nested require calls
     modules: [
