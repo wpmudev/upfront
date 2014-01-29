@@ -2,7 +2,7 @@
   "name": "upfront-testing",
   "description": "Test suite for Upfront",
   "scripts": {
-    "test": "node_modules/.bin/mocha -t 60000 -b --reporter spec test.js"
+    "test": "mocha -t 60000 -b -s 1000 --reporter spec test.js"
   },
   "dependencies": {
     "mocha": "~1.17.1",

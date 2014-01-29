@@ -13,8 +13,8 @@ wrench.copyDirSyncRecursive(
   }
 );
 wrench.copyDirSyncRecursive(
-  path.join(config.devThemesDirectory, 'upfront-parlour'),
-  path.join(config.testThemesDirectory, 'upfront-parlour'),
+  path.join(config.devThemesDirectory, config.parlourDirectoryName),
+  path.join(config.testThemesDirectory, config.parlourDirectoryName),
   {
     forceDelete: true,
     exclude: /(svn|git|node_modules)/
@@ -24,7 +24,7 @@ wrench.copyDirSyncRecursive(
 // Use webdriverjs to create a Selenium Client
 var client = require('webdriverjs').remote({
   desiredCapabilities: {
-    'phantomjs.binary.path': __dirname + '/node_modules/.bin/phantomjs',
+    'phantomjs.binary.path': path.join(__dirname, 'node_modules', '.bin', 'phantomjs'),
 
     // Choose browser by uncommenting.
     // NOTE: only one can be uncommented at a time!
