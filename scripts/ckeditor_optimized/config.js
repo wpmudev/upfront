@@ -1,6 +1,0 @@
-﻿/*
- Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
- For licensing, see LICENSE.html or http://ckeditor.com/license
-*/
-CKEDITOR.editorConfig=function(a){a.toolbar=[{name:"basicstyles",items:"Bold Italic JustifyLeft JustifyCenter JustifyRight BulletedList NumberedList Link Blockquote Image KitchenSink".split(" ")},"/",{name:"kitchensink",items:["Format","Underline","JustifyBlock","ColorSelect","ExtrasSelect"]}];a.extraPlugins="onchange,kitchensink,colorselect";document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure","1.1")&&jQuery(document.documentElement).addClass("svg");a.floatSpaceDockedOffsetY=
-2};CKEDITOR.on("instanceReady",function(a){a.editor.element.$.title="Click to edit.";var a=jQuery("."+a.editor.id),b=jQuery(".cke_toolbox",a),c=a.css("top").replace("px");height=a.outerHeight();b.addClass("rows-only-first");jQuery(".cke_toolbar:not(:first-child)",b).addClass("row-not-first");b=height-a.outerHeight();a.css("top",(parseInt(c)+parseInt(b)).toString()+"px")});
