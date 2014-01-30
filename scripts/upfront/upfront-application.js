@@ -82,7 +82,7 @@ var LayoutEditor = new (Subapplication.extend({
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
 		data = JSON.stringify(data, undefined, 2);
-		
+
 		Upfront.Events.trigger("command:layout:save_start");
 
 		if (Upfront.Settings.Application.NO_SAVE) {
@@ -101,6 +101,12 @@ var LayoutEditor = new (Subapplication.extend({
 			})
 		;
 	},
+
+  get_layout_data: function() {
+		var data = Upfront.Util.model_to_json(this.layout);
+		data.layout = _upfront_post_data.layout;
+    return data;
+  },
 
 	preview_layout: function () {
 		var //data = Upfront.Util.model_to_json(this.layout),
@@ -356,7 +362,7 @@ var Application = new (Backbone.Router.extend({
 	start: function (mode) {
 		if (!mode) mode = this.MODE.DEFAULT;
 		if (this.mode.current == mode) return false;
-		
+
 		$('#wpadminbar').hide();
 		$('html').attr('style', 'margin-top: 0 !important;');
 
