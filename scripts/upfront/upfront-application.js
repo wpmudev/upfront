@@ -64,6 +64,8 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.off("command:merge", Upfront.Behaviors.LayoutEditor.destroy_mergeable, this);
 		Upfront.Events.off("entity:settings:activate", this.create_settings, this);
 		Upfront.Events.off("entity:settings:deactivate", this.destroy_settings, this);
+		Upfront.Events.off("entity:contextmenu:activate", this.create_menu, this);
+		Upfront.Events.off("entity:contextmenu:deactivate", this.destroy_menu, this);
 		Upfront.Events.off("entity:removed:after", this.destroy_settings, this);
 
 		Upfront.Events.off("layout:render", Upfront.Behaviors.GridEditor.refresh_draggables, this);
@@ -229,6 +231,11 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Events.on("entity:settings:activate", this.create_settings, this);
 		Upfront.Events.on("entity:settings:deactivate", this.destroy_settings, this);
 		Upfront.Events.on("entity:removed:after", this.destroy_settings, this);
+		
+		// Set up entity context menu
+		Upfront.Events.on("entity:contextmenu:activate", this.create_menu, this);
+		Upfront.Events.on("entity:contextmenu:deactivate", this.destroy_menu, this);
+		//Upfront.Events.on("entity:removed:after", this.destroy_settings, this);
 
 		//Upfront.Events.on("upfront:posts:post:post_updated", this.layout_view.render, this.layout_view);
 
@@ -263,7 +270,34 @@ var LayoutEditor = new (Subapplication.extend({
 	destroy_properties: function () {
 		$(Upfront.Settings.LayoutEditor.Selectors.properties).html('');
 	},
+	create_menu: function( view ) {
+				
+		var current_object = _(this.Objects).reduce(function (obj, current) {
+				return (view instanceof current.View) ? current : obj;
+			}, false),
+			current_object = (current_object && current_object.ContextMenu ? current_object : Upfront.Views.ContextMenu);
+			if(!current_object.ContextMenu)
+				return false;
+				
+			context_menu_view = new current_object.ContextMenu({
+				model: view.model,
+				anchor: current_object.anchor,
+				el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
+			})
+		;
+		
+		context_menu_view.for_view = view;
+		context_menu_view.render();
+		this.context_menu_view = context_menu_view;
+		
+	},
+	destroy_menu: function () {
+		if (!this.context_menu_view) return false;
+		$(Upfront.Settings.LayoutEditor.Selectors.contextmenu).html('').hide();
+		this.context_menu_view = false;
 
+		context_menu_view.trigger('closed');
+	},
 	create_settings: function (view) {
 		if (this.settings_view) return this.destroy_settings();
 		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
@@ -514,6 +548,12 @@ var Application = new (Backbone.Router.extend({
 			.removeClass()
 			.addClass(bodyClasses)
 		;
+	},
+	set_gridstate: function( state ) {
+		this.gridstate = state;
+	},
+	get_gridstate: function() {
+		return this.gridstate;
 	},
 
 	get_current: function () {

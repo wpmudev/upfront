@@ -38,6 +38,7 @@ require(['backbone'], function (Backbone) {
 				"properties": "#properties",
 				"layouts": "#layouts",
 				"settings": "#settings",
+				"contextmenu": "#contextmenu",
 				//"main": "#upfront-output"
 				"main": "#page"
 			},

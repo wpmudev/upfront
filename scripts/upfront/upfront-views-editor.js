@@ -517,12 +517,7 @@ define([
 	})
 
 	var Command_ToggleGrid = Command.extend({
-		defaults: {
-			_active: false
-		},
-		initialize: function () {
-			this._active = false;
-		},
+		
 		render: function () {
 			this.$el.html('Toggle grid');
 		},
@@ -535,7 +530,7 @@ define([
 			//this.attach_event();
 		},
 		toggle_grid: function () {
-			if (!this._active)
+			if(!Upfront.Application.get_gridstate())
 				this.show_grid();
 			else
 				this.hide_grid();
@@ -544,13 +539,13 @@ define([
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			$main.addClass('show-debug');
 			$('.upfront-overlay-grid').addClass('upfront-overlay-grid-show');
-			this._active = true;
+			Upfront.Application.set_gridstate(true);
 		},
 		hide_grid: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			$main.removeClass('show-debug');
 			$('.upfront-overlay-grid').removeClass('upfront-overlay-grid-show');
-			this._active = false;
+			Upfront.Application.set_gridstate(false)
 		},
 		update_grid: function (size) {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -559,7 +554,7 @@ define([
 				template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: size_class, style: 'simple'});
 			$('.upfront-overlay-grid').remove();
 			$('.upfront-grid-layout').prepend(template);
-			!this._active || this.show_grid();
+			!Upfront.Application.get_gridstate() || this.show_grid();
 		},
 		attach_event: function () {
 			var me = this;
@@ -1020,7 +1015,7 @@ define([
 				//new Command_SaveLayout({"model": this.model}),
 				//new Command_SaveLayoutAs({"model": this.model}),
 				//new Command_LoadLayout({"model": this.model}),
-				//new Command_ToggleGrid({"model": this.model}),
+				new Command_ToggleGrid({"model": this.model}),
 				//new Command_ResetEverything({"model": this.model}),
 			]);
 			if (!Upfront.Settings.Application.NO_SAVE) {
@@ -5019,6 +5014,9 @@ var Field_Anchor = Field_Select.extend({
 			"Properties": Properties,
 			"Commands": Commands,
 			"Command": Command,
+			"Command_SaveLayout": Command_SaveLayout,
+			"Command_Undo": Command_Undo,
+			"Command_ToggleGrid": Command_ToggleGrid,
 			"Command_Merge": Command_Merge,
 			"Layouts": LayoutSizes,
 			"Settings": {

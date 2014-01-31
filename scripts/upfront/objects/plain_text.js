@@ -4,10 +4,6 @@ define(['text!upfront/templates/objects/plain_text/plain_text.html'], function(t
 
 var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		/*	var properties = _.clone(Upfront.data.plaintxt.defaults);
-        properties.element_id = Upfront.Util.get_unique_id("text-object");
-        this.init_properties(properties);
-		*/
 		this.init_property("type", "PlainTxtModel");
 		this.init_property("view_class", "PlainTxtView");
 		this.init_property("element_id", Upfront.Util.get_unique_id("text-object"));
@@ -16,6 +12,7 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 	}
 });
+
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	initialize: function() {
@@ -299,11 +296,40 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
       }
     });
 
+
+var PlainTxtMenuList = Upfront.Views.ContextMenuList.extend({
+	initialize: function() {
+		var me = this;
+		this.menuitems = _([
+          new Upfront.Views.ContextMenuItem({
+			  get_label: function() {
+				  return 'Edit Text';
+			  },
+			  action: function() {
+				  me.for_view.$el.find('div.upfront-object-content').trigger('dblclick');
+				  //me.for_view.trigger('dblclick');
+				  //console.log(me.for_view.$el.find('div.upfront-object-content'));
+			  }
+		  })
+        ]);		
+	}
+});
+
+var PlainTxtMenu = Upfront.Views.ContextMenu.extend({
+	initialize: function() {
+		this.menulists = _([
+          new PlainTxtMenuList()
+        ]);	
+	}
+});
+
+
 Upfront.Application.LayoutEditor.add_object("PlainTxt", {
 	"Model": PlainTxtModel,
 	"View": PlainTxtView,
 	"Element": PlainTxtElement,
 	"Settings": PlainTxtSettings,
+	"ContextMenu": PlainTxtMenu
 });
 Upfront.Models.PlainTxtModel = PlainTxtModel;
 Upfront.Views.PlainTxtView = PlainTxtView;

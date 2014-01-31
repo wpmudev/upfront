@@ -268,6 +268,7 @@ define([
 			},
 			on_click: function () {
 				this.activate();
+				Upfront.Events.trigger("entity:contextmenu:deactivate", this);
 				return false;
 			},
 			deactivate: function () {
@@ -295,6 +296,11 @@ define([
 			on_delete_click: function () {
 				this.$el.trigger("upfront:entity:remove", [this]);
 				return false; // Stop propagation in order not to cause error with missing sortables etc
+			},
+			on_context_menu: function(e) {
+				e.preventDefault();
+				this.event = e;
+				Upfront.Events.trigger("entity:contextmenu:activate", this);
 			},
 			on_settings_click: function () {
 				Upfront.Events.trigger("entity:settings:activate", this);
@@ -355,7 +361,6 @@ define([
 				this.model.reset(models);
 				return false; // Don't bubble up
 			},
-
 			on_entity_remove: function (e,view) {
 				view.remove();
 				this.model.remove(view.model);
@@ -373,7 +378,123 @@ define([
 				this.trigger('deactivated');
 			}
 		}),
+		
+		ContextMenuItem = Backbone.View.extend({
+			tagName: 'li',
+			initialize: function(){
+				this.label = this.options.get_label;
+				this.action = this.options.action;
+			},
+			render: function () {
+				var me = this;
+				this.$el.empty();
+				this.$el.append(this.label);
+				this.$el.bind('click', function() {
+					me.action();
+					Upfront.Events.trigger("entity:contextmenu:deactivate", this);
+				});
+			}
+		}),
 
+		ContextMenuList = Backbone.View.extend({
+			tagName: 'ul',
+			initialize: function (opts) {
+				var me = this;
+				this.menuitems = opts.menuitems ? _(opts.menuitems) : _([]);
+				this.menuitems.each(function(menuitem){
+					menuitem.menulist = me;
+				});
+
+			},
+			
+			render: function () {
+				var me = this;
+				this.$el.empty();
+				this.menuitems.each(function(menuitem) {
+					if ( ! menuitem.menulist )
+						menuitem.menulist = me;
+					menuitem.for_view = me.for_view;
+					menuitem.render();
+					menuitem.parent_view = me;
+					me.$el.append(menuitem.el);
+				});
+			}
+			
+		}),
+		DefaultMenuList = ContextMenuList.extend({
+			initialize: function() {
+				
+				  this.menuitems = _([
+				  new Upfront.Views.ContextMenuItem({
+					  get_label: function() {
+						  return 'Save';
+					  },
+					  action: function() {
+						var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
+						savelayout.on_click();  
+					  }
+				  }),
+				  new Upfront.Views.ContextMenuItem({
+					  model: this.model,
+					  get_label: function() {
+						  return 'Undo';
+					  },
+					  action: function() {
+						var undo = new Upfront.Views.Editor.Command_Undo();
+						undo.on_click();  
+					  }
+				  }),
+				  new Upfront.Views.ContextMenuItem({
+					  get_label: function() {
+						  return Upfront.Application.get_gridstate() ? 'Hide Grid': 'Show Grid';
+					  },
+					  action: function() {
+						var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
+						togglegrid.on_click();
+					  }
+				  })				  
+				]);	
+			}
+			
+		}),
+		ContextMenu = Backbone.View.extend({
+			render: function () {
+				var me = this;
+
+				this.$el
+					.empty()
+					.show()
+				;
+				
+				this.menulists.each(function (menulist) {
+					menulist.for_view = me.for_view;
+					menulist.render();
+					menulist.parent_view = me;
+					me.$el.append(menulist.el);
+				});
+				
+				var defaultmenulist = new DefaultMenuList();
+				defaultmenulist.render();
+				defaultmenulist.parent_view = me;
+				me.$el.append(defaultmenulist.el);
+
+				this.$el
+				.css({
+					"position": "absolute",
+					"z-index": 10000000
+				})
+				.offset({
+					"top":me.for_view.event.pageY,
+					"left": me.for_view.event.pageX
+				})
+				.addClass('uf-context-menu')
+				;
+				
+			},
+	
+			
+		});
+		
 		ObjectView = _Upfront_EditableContentEntity.extend({
 			events: {
 				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
@@ -381,6 +502,7 @@ define([
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
 				"dblclick": "on_edit",
+				"contextmenu .upfront-object": "on_context_menu"
 			},
 			initialize: function () {
 				// this.model.get("properties").bind("change", this.render, this);
@@ -1308,6 +1430,7 @@ define([
 			on_click: function () {
 				// Deactivate settings on clicking anywhere in layout
 				Upfront.Events.trigger("entity:settings:deactivate");
+				Upfront.Events.trigger("entity:contextmenu:deactivate");
 				// Deactivate element
 				$(".upfront-active_entity").removeClass("upfront-active_entity");
 				if(Upfront.data.currentEntity){
@@ -1326,7 +1449,10 @@ define([
 			"ObjectView": ObjectView,
 			"Module": Module,
 			"Wrapper": Wrapper,
-			"Layout": Layout
+			"Layout": Layout,
+			"ContextMenu": ContextMenu,
+			"ContextMenuList": ContextMenuList,
+			"ContextMenuItem": ContextMenuItem,
 		},
 		"Mixins": {
 			"FixedObject": FixedObject_Mixin,

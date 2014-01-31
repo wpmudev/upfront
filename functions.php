@@ -197,6 +197,7 @@ EOAdminStyle;
   </div>
   <div id="sidebar-ui"></div>
   <div id="settings" style="display:none"></div>
+  <div id="contextmenu" style="display:none"></div>
 EOAdditivemarkup;
 
 
