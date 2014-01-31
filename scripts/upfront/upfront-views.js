@@ -389,8 +389,9 @@ define([
 				var me = this;
 				this.$el.empty();
 				this.$el.append(this.label);
+
 				this.$el.bind('click', function() {
-					me.action();
+					me.action(this.for_view);
 					Upfront.Events.trigger("entity:contextmenu:deactivate", this);
 				});
 			}
@@ -423,7 +424,6 @@ define([
 		}),
 		DefaultMenuList = ContextMenuList.extend({
 			initialize: function() {
-				
 				  this.menuitems = _([
 				  new Upfront.Views.ContextMenuItem({
 					  get_label: function() {
@@ -435,12 +435,11 @@ define([
 					  }
 				  }),
 				  new Upfront.Views.ContextMenuItem({
-					  model: this.model,
 					  get_label: function() {
 						  return 'Undo';
 					  },
-					  action: function() {
-						var undo = new Upfront.Views.Editor.Command_Undo();
+					  action: function(for_view) {
+						var undo = new Upfront.Views.Editor.Command_Undo({"model": this.for_view.model});
 						undo.on_click();  
 					  }
 				  }),
@@ -474,6 +473,7 @@ define([
 				});
 				
 				var defaultmenulist = new DefaultMenuList();
+				defaultmenulist.for_view = me.for_view;
 				defaultmenulist.render();
 				defaultmenulist.parent_view = me;
 				me.$el.append(defaultmenulist.el);

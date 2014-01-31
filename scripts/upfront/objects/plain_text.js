@@ -68,6 +68,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				me.model.set_content($(this).html(), {silent: true});
 			})
 		;
+
 	},
 });
 
@@ -306,9 +307,19 @@ var PlainTxtMenuList = Upfront.Views.ContextMenuList.extend({
 				  return 'Edit Text';
 			  },
 			  action: function() {
-				  me.for_view.$el.find('div.upfront-object-content').trigger('dblclick');
-				  //me.for_view.trigger('dblclick');
-				  //console.log(me.for_view.$el.find('div.upfront-object-content'));
+				  	var editor = me.for_view.$el.find('div.upfront-object-content').data('ueditor');
+					if(!me.for_view.$el.find('div.upfront-object-content').data('redactor')){
+						editor.start();
+						$(document).on('click', function(e){
+							//Check if the click has been inner, or inthe popup, or the context menu, otherwise stop the editor
+							if(!editor.options.autostart && editor.redactor){
+								var $target = $(e.target);
+								if(!editor.disableStop && !$target.closest('li').length && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
+									editor.stop();
+								}
+							}
+						});
+					}
 			  }
 		  })
         ]);		
