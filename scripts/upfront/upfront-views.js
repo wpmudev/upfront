@@ -439,7 +439,8 @@ define([
 						  return 'Undo';
 					  },
 					  action: function(for_view) {
-						var undo = new Upfront.Views.Editor.Command_Undo({"model": this.for_view.model});
+						//console.log(Upfront.Application.layout);
+						var undo = new Upfront.Views.Editor.Command_Undo({"model": Upfront.Application.layout});
 						undo.on_click();  
 					  }
 				  }),
