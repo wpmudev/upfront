@@ -40,6 +40,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		position: false
 	},
 	cropTimer: false,
+	stoppedTimer : false,
 	cropTimeAfterResize: 10000,
 
 
@@ -335,24 +336,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				me.property('image_caption', captionEl.html());
 			})
 		;
-
-		/*
-		this.editor.textColor = this.property('color');
-		this.editor.panelColor = this.property('background');
-
-		this.editor.on('textcolor:change', function(color){
-			var value = color.toRgbString();
-			me.property('color', value);
-			this.editor.textColor = value;
-			captionEl.css('color', value);
-		});
-		this.editor.on('panelcolor:change', function(color){
-			var value = color.toRgbString();
-			me.property('background', value);
-			this.editor.panelColor = value;
-			captionEl.css('background-color', value);
-		});
-		*/
 	},
 
 	createControl: function(icon, tooltip, click){
@@ -400,27 +383,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		//Fix for responsive images
 		if(img.length){
-			if(!stretch){
-				var factor = img.width() / size.width;
-				size = {
-					width: img.width(),
-					height: Math.round(size.height * factor)
-				};
-				position = {
-					left: Math.round(position.left * factor),
-					top: Math.round(position.top * factor)
-				};
+			size = {
+				width: img.width(),
+				height: img.height()
+			},
+			position = {
+				top: -img.position().top,
+				left: -img.position().left
 			}
-			else {
-				size = {
-					width: img.width(),
-					height: img.height()
-				};
-				position = {
-					top: starting.offset().top - img.offset().top,
-					left: starting.offset().left - img.offset().left
-				};
-			}
+			
 		}
 
 		this.imageInfo = {
@@ -451,14 +422,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		props.url = onclick == 'do_nothing' ? false : this.property('image_link');
 
-		//Fake wrapper_id only used in php
-		props.wrapper_id = 'hello_up';
+		props.cover_caption = ['fill', 'fill_bottom', 'fill_middle'].indexOf(props.caption_alignment) != -1;
+
 		if(props.stretch)
 			props.imgWidth = '100%';
 		else
 			props.imgWidth = props.size.width + 'px';
-
-		props.cover_caption = ['fill', 'fill_bottom', 'fill_middle'].indexOf(props.caption_alignment) != -1;
 
 		var rendered = this.imageTpl(props);
 
@@ -473,7 +442,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			var render = $('<div></div>').append(rendered),
 				elementSize = this.property('element_size'),
 				size = this.property('size'),
-				position = this.property('position')
+				position = this.property('position'),
+				img = render.find('img')
 			;
 			// Let's load the full image to improve resizing
 			render.find('.upfront-image-container').css({
@@ -483,26 +453,38 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				height: elementSize.height
 			});
 
-			if(this.property('stretch')){
-				if(!this.cropTimer){
-					this.temporaryProps = {
-						size: size,
-						position: position
-					};
-				}
-				render.find('img')
-					.attr('src', me.property('srcFull'))
+			if(!this.temporaryProps || !this.temporaryProps.size)
+				this.temporaryProps = {
+					size: size,
+					position: position
+				};
+
+			if(position.top > 0 || position.left > 0 || size.width > elementSize.width || size.height > elementSize.height){
+				img.attr('src', me.property('srcFull'))
 					.css({
 						width: this.temporaryProps.size.width,
-						height: this.temporaryProps.size.height,
-						position: 'absolute',
-						top: Math.min(0, 0-this.temporaryProps.position.top),
-						left: 0-this.temporaryProps.position.left,
-						'max-height': 'none',
-						'max-width': 'none'
+						height: this.temporaryProps.size.height
 					})
-					.parent()
 				;
+			}
+
+			img.css({
+				position: 'absolute',
+				top: 0-this.temporaryProps.position.top,
+				'margin-top': 0,
+				left: 0-this.temporaryProps.position.left,
+				'max-height': 'none',
+				'max-width': 'none'
+			});
+
+			if(!this.property('stretch')){
+				var align = this.property('align');
+				if(align == 'left')
+					img.css({left: 0});
+				else if(align == 'center')
+					img.css({left: Math.max(0, (elementSize.width - img.width()) / 2)});
+				else
+					img.css({left: 'auto', right: 0});
 			}
 
 			rendered = render.html();
@@ -694,13 +676,20 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			img = this.$('img'),
 			container = this.$('.upfront-image-container'),
 			imgSize = this.property('size'),
-			me = this
+			imgPosition = this.property('position'),
+			me = this,
+			imgOffset = img.offset(),
+			containerOffset = img.offset(),
+			newPosition = {top: containerOffset.top - imgOffset.top, left: containerOffset.left - imgOffset.left}
 		;
 
 		this.property('element_size', {width: container.width(), height: container.height()});
-		if(imgSize.height != img.height() || imgSize.width != img.width()){
-			this.temporaryProps.size = {width: img.width(), height: img.height()};
-			this.temporaryProps.position = {top: container.offset().top - img.offset().top, left: container.offset().left - img.offset().left};
+		if(imgSize.height != img.height() || imgSize.width != img.width() ||  newPosition.top != imgPosition.top || newPosition.left != imgPosition.left ){
+			this.temporaryProps = {
+				size: {width: img.width(), height: img.height()},
+				position: {top: container.offset().top - img.offset().top, left: container.offset().left - img.offset().left}
+			};
+			
 			if(this.cropTimer){
 				clearTimeout(this.cropTimer);
 				this.cropTimer = false;
@@ -715,6 +704,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.setSizeHTMLClasses();
 	},
 
+
 	onElementResizing: function(e, ui){
 		var starting = this.$('.upfront-image-starting-select'),
 			resizer = $('html').find('.upfront-resize'),
@@ -723,9 +713,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		;
 
 		this.setSizeClasses(rWidth, rHeight);
-
-		
-
 
 		if(starting.length){
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
@@ -742,10 +729,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var text = this.property('caption_position') == 'below_image' ? this.$('.wp-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
+			elementSize = this.property('element_size'),
 			img = this.$('img'),
 			position = this.property('position'),
 			imgSize = this.property('size'),
-			scale = false,
 			stretch = this.property('stretch')
 		;
 
@@ -756,33 +743,46 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		this.$('.upfront-image-starting-select').height(newElementSize.height);
 
-		if(stretch){
-			if(newElementSize.width > imgSize.width || newElementSize.height > imgSize.height){
-				var imgRatio = imgSize.width / imgSize.height,
-					elementRatio = newElementSize.width / newElementSize.height
-				;
-				if(imgRatio < elementRatio)
-					img.css({'width': newElementSize.width, 'height': 'auto'}); // Changed
-				else
-					img.css({'height': newElementSize.height, 'width': 'auto'});
-
+		var widthChanged = false;
+		if(position.left >= 0 && stretch){
+			if(newElementSize.width > imgSize.width){
+				img.css({
+					left: 0,
+					width: newElementSize.width,
+					height: 'auto'
+				});
+				widthChanged = true;
 			}
-			else{
-				img.css({height: imgSize.height, width: imgSize.width});
-			}
-
-			if(newElementSize.width > imgSize.width - position.left)
-				img.css({left:'auto', right: 0});
 			else
-				img.css({left: 0 - position.left, right: 'auto'});
+				img.css({
+					left: Math.max(-position.left, newElementSize.width - imgSize.width)
+				});
+		}
+		else {
+			if(this.property('align') == 'center')
+				img.css('left', Math.max(0, (newElementSize.width - imgSize.width) / 2));
+		}
 
-			if(newElementSize.height > imgSize.height - position.top)
-				img.css({top:'auto', bottom: 0});
+		if(position.top > 0 || position.top === 0 && img.height() >= elementSize.height){
+			var imgHeight = widthChanged ? img.height() : imgSize.height; // Reduce img height with element height
+			if(newElementSize.height > imgHeight)
+				img.css({
+					top:0,
+					height: newElementSize.height,
+					width: 'auto'
+				});
 			else
-				img.css({top: 0 - position.top, bottom: 'auto'});
+				img.css({
+					top: Math.min(0, Math.max(-position.top, newElementSize.height - img.height()))
+				});
+		}
+		else {
+			img.css({
+				top: Math.max(0, Math.min(-position.top, newElementSize.height - img.height()))
+			});
 		}
 	},
-
+	
 	saveTemporaryResizing: function(){
 		var me = this,
 			crop = me.property('element_size'),
@@ -790,28 +790,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			resize = me.temporaryProps.size,
 			position = me.temporaryProps.position
 		;
-
-		if(!this.property('stretch')){
-			var intialSize = this.property('size'),
-				factor = resize.width / intialSize.width,
-				fullSize = this.property('fullSize')
-			;
-
-			position = this.property('position');
-
-			crop = {
-				width: resize.width,
-				height: resize.height
-			};
-			resize = {
-				width: Math.round(fullSize.width * factor),
-				height: Math.round(fullSize.height * factor)
-			};
-			position = {
-				top: Math.round(position.top * factor),
-				left: Math.round(position.left * factor)
-			};
-		}
 
 
 		crop.top = position.top;
@@ -834,6 +812,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.property('position', position);
 			me.property('src', imageData.url);
 			me.property('srcFull', imageData.urlOriginal, false);
+			me.property('stretch', resize.width - crop.left > crop.width);
 			clearTimeout(me.cropTimer);
 			me.cropTimer = false;
 		});
@@ -875,12 +854,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		if(this.property('image_status') == 'starting')
 			this.$('.upfront-object-content').height(me.elementSize.height);
-		/*
-		else
-			this.$('.upfront-image-container').height(me.elementSize.height);
-		*/
 
-		//me.property('element_size', me.elementSize);
 	},
 	openImageSelector: function(e){
 		var me = this;
@@ -943,9 +917,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			console.log(result.elementSize);
 			this.set_element_size(result.elementSize.columns, result.elementSize.rows);
 		}
-		else {
-			this.render();
-		}
+
+		this.temporaryProps = false;
+		this.render();		
 	},
 
 	editRequest: function () {
@@ -983,7 +957,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			}
 		;
 
-
 		this.setElementSize();
 		this.setImageInfo();
 
@@ -991,63 +964,25 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			_.extend(options, this.imageInfo, imageInfo);
 		else
 			_.extend(options, this.imageInfo);
-/*
-		//Shrink the mask if the image is smaller
-		if(false && newImage){
-			var rowHeight = 15,
-				elementColumns = this.getColumns(),
-				columnWidth = Math.round(options.maskSize.width + 30) / elementColumns,
-				maxColumns = this.maxColumns(),
-				maxRows = this.maxRows(),
-				resizeThreshold = 1.2
-			;
 
-			if(options.fullSize.height <= (maxRows * rowHeight * resizeThreshold) && options.fullSize.width <= (maxColumns * columnWidth * resizeThreshold)){
-				var colsNeeded = Math.ceil(options.fullSize.width  + 30 / columnWidth),
-					rowsNeeded = Math.ceil(options.fullSize.height / rowHeight) + 2 // Added margin top and bottom
-				;
-
-				if(rowsNeeded > maxRows)
-					rowsNeeded = maxRows;
-				if(colsNeeded > maxColumns)
-					colsNeeded = maxColumns;
-
-				this.setElementDimensions(rowsNeeded, colsNeeded);
-
-				options.maskSize = {
-					width: colsNeeded * columnWidth - 30,
-					height: rowsNeeded * rowHeight - 2 * rowHeight
-				};
-
-				options.position = {top: 0, left: 0};
-				options.align = 'left';
-				options.setImageSize = false;
-				options.imageFit = true;
-			}
+		if(this.cropTimer){
+			this.stoppedTimer = true;
+			clearTimeout(this.cropTimer);
+			this.cropTimer = false;
 		}
-		if(newImage && options.fullSize.height <= options.maskSize.height && options.fullSize.width <= options.maskSize.width){
-			var columnWidth = Math.round((options.maskSize.width + 30) / options.fitMaskColumns),
-				rowHeight = 15,
-				elementColumns = Math.ceil((options.fullSize.width + 30) / columnWidth)
-			;
-			options.maskSize = {
-				width: elementColumns * columnWidth - 30,
-				height: Math.ceil(options.fullSize.height / rowHeight) * rowHeight
-			};
-
-			options.position = {top: 0, left: 0};
-			options.align = 'left';
-			options.setImageSize = false;
-			options.elementColumns = elementColumns;
-		}*/
 
 		Upfront.Views.Editor.ImageEditor.open(options)
 			.done(function(result){
 				me.handleEditorResult(result);
+				this.stoppedTimer = false;
 			})
 			.fail(function(data){
 				if(data && data.reason == 'changeImage')
 					me.openImageSelector();
+				else if(me.stoppedTimer) {
+					me.saveTemporaryResizing();
+					me.stoppedTimer = false;
+				}
 			})
 		;
 	},
@@ -1428,6 +1363,7 @@ var ImageEditor = Backbone.View.extend({
 		this.align = 'left';
 		this.saveOnClose = false;
 		this.elementSize = false;
+		this.fitImageButton = true;
 	},
 
 	centerImageOffset: function(imageSize, maskSize){
@@ -1540,15 +1476,9 @@ var ImageEditor = Backbone.View.extend({
 			this.resetImage(false, false);
 		}
 
-		var button = this.$('#image-edit-button-reset');
-		if(this.elementSize && this.elementSize.columns != 22){
-			if(this.fullSize.width < this.$('#uimage-mask').width())
-				button.hide();
-			if(this.elementSize.maxColumns == this.elementSize.columns)
-				button.addClass('deactivated').attr('data-tooltip', 'Can\'t expand the image');
+		if(options.editElement){
+			this.check100ButtonActivation();
 		}
-		else
-			button.hide();
 
 		return this.response.promise();
 	},
@@ -1576,13 +1506,24 @@ var ImageEditor = Backbone.View.extend({
 		}
 	},
 
+	check100ButtonActivation: function(){
+		var full = this.getFullWidthImage(this.options.fullSize).size,
+			fullColsRows = this.getCurrentImageRowsCols(full.width, full.height),
+			button = this.$('#image-edit-button-reset')
+		;
+		if(this.elementSize.columns == fullColsRows.columns && this.elementSize.rows == fullColsRows.rows)
+			button.addClass('deactivated expanded').attr('data-tooltip', 'The image is completely expanded');
+		else if(this.elementSize.columns == this.elementSize.maxColumns && this.elementSize.columns < fullColsRows.columns && this.elementSize.rows == fullColsRows.rows)
+			button.addClass('deactivated').attr('data-tooltip', 'Can\'t expand the image');
+	},
+
 	/**
 	 * Return the new mask size if the element could be resized in order to fit the current image.
 	 * Also it iset the elementSize property.
 	 * @param  {Object} options
 	 * @return {Mixed} False if the current size is ok or the {width, height} hash if it can be improved
 	 */
-	maybeResizeElement: function(options){
+	maybeResizeElement: function(options, stretch){
 		if(!options.editElement)
 			return false;
 
@@ -1619,7 +1560,13 @@ var ImageEditor = Backbone.View.extend({
 		if(current.columns >= elementSize.maxColumns && current.rows >= elementSize.maxRows)
 			return false;
 
-		if(this.elementSize.maxColumns < current.columns){
+		if(!stretch){
+			maskSize = {
+				width: Math.min(current.columns, elementSize.columns) * elementSize.columnWidth - 30,
+				height: (Math.min(current.rows, elementSize.rows) - 2) * 15
+			};
+		}
+		else if(this.elementSize.maxColumns < current.columns){
 			var ratio = fullGrid.height / fullGrid.width,
 				maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - 30
 			;
@@ -1674,7 +1621,7 @@ var ImageEditor = Backbone.View.extend({
 				results.srcFull = imageData.urlOriginal;
 				results.cropSize = imageData.crop;
 				if(me.options.resizedElement)
-					results.elementSize = me.getCurrentImageRowsCols();
+					results.elementSize = me.getCurrentMaskRowsCols();
 				me.response.resolve(results);
 				me.close();
 			})
@@ -2019,8 +1966,11 @@ var ImageEditor = Backbone.View.extend({
 	},
 
 	image100: function(e){
-		if($(e.target).hasClass('deactivated'))
+		if($(e.target).hasClass('deactivated')){
+			if($(e.target).hasClass('expanded'))
+				return;
 			return this.showExpandAlert();
+		}
 
 		var fullGrid = this.getFullWidthImage().size,
 			current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
@@ -2034,10 +1984,17 @@ var ImageEditor = Backbone.View.extend({
 			;
 			maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
 		}
+		if(maskSize.columns != this.elementSize.columns || maskSize.rows != this.elementSize.rows)
+			this.resizeMask(maskSize.columns, maskSize.rows);
+		else{
+			var maskOffset = this.$('#uimage-mask').offset();
+			fullGrid.top = maskOffset.top;
+			fullGrid.left = maskOffset.left;
+			this.$('#uimage-canvas').css(fullGrid);
+			this.$('#uimage-drag-handle').css(fullGrid);
+		}
 
-		this.resizeMask(maskSize.columns, maskSize.rows);
-
-		if(maskSize.columns != 22 && this.fullSize.width != this.options.size.width)
+		if(maskSize.columns != 22 && current.columns > maskSize.columns)
 			this.showExpandAlert();
 	},
 
@@ -2050,7 +2007,12 @@ var ImageEditor = Backbone.View.extend({
 		return {
 			rows: Math.ceil(imgHeight / this.elementSize.rowHeight) + 2,
 			columns: Math.ceil((imgWidth + 30)/ this.elementSize.columnWidth)
-		}
+		};
+	},
+
+	getCurrentMaskRowsCols: function(){
+		var mask = this.$('#uimage-mask');
+		return this.getCurrentImageRowsCols(mask.width(), mask.height());
 	},
 
 	showExpandAlert: function(){
@@ -2079,7 +2041,7 @@ var ImageEditor = Backbone.View.extend({
 
 		options.size = this.getFullWidthImage().size;
 		options.position = {left: 0, top: 0};
-
+		options.setImageSize = false;
 		options.resizedElement = true;
 
 		this.open(options);
@@ -2088,6 +2050,14 @@ var ImageEditor = Backbone.View.extend({
 	fitImage: function(e){
 		e.preventDefault();
 		e.stopPropagation();
+
+		if(!this.fitImageButton){			
+			var button = $('#image-edit-button-fit');
+			button.text('Fit to Element');
+			this.fitImageButton = true;
+
+			return this.resetImage();
+		}
 
 		var canvas = this.$('#uimage-canvas'),
 			mask = this.$('#uimage-mask'),
@@ -2114,6 +2084,11 @@ var ImageEditor = Backbone.View.extend({
 
 		this.setResizingLimits();
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+
+		var button = $('#image-edit-button-fit');
+		button.text('Reset image size');
+		this.fitImageButton = false;
+
 	},
 	//TODO: remove this. This method is deprecated, since the fit mask button is not used anymore
 	fitMask: function(){
@@ -2152,7 +2127,7 @@ var ImageEditor = Backbone.View.extend({
 			mask = this.$('#uimage-mask'),
 			canvas = this.$('#uimage-canvas'),
 			handle = this.$('#uimage-drag-handle'),
-			size = this.getFullWidthImage().size
+			size = this.initialImageSize(100, false, {width: mask.width(), height: mask.height()})
 		;
 
 		canvas.css(size);
@@ -2230,7 +2205,7 @@ var ImageEditor = Backbone.View.extend({
 
 		//this.fullSize = this.getImageFullSize();
 
-		pivot = maskSize.width / maskSize.height < this.fullSize.width / this.fullSize.height ? 'width' : 'height';
+		pivot = maskSize.width / maskSize.height < this.fullSize.width / this.fullSize.height ? 'height' : 'width';
 		invertPivot = this.invert ? (pivot == 'width' ? 'height' : 'width') : pivot;
 
 		factor = this.fullSize[pivot] / (maskSize[invertPivot] + overflow);
@@ -2254,10 +2229,10 @@ var ImageEditor = Backbone.View.extend({
 			padding = overflow || 0,
 			targetDim = wrapperDim[pivot] + padding
 		;
-
+/*
 		if(imageDim[pivot] <= targetDim)
 			return imageDim;
-
+*/
 		var factor = targetDim / imageDim[pivot];
 
 		return {width: Math.round(imageDim.width * factor), height: Math.round(imageDim.height * factor)};

@@ -112,3 +112,28 @@
 	background-position: -290px -100px;
 }
 
+.uslider-settings .upfront-settings-item{
+	padding-bottom: 0;
+}
+.uslider-settings .upfront-field-wrap-radios .upfront-field-multiple-horizontal-inline {
+	margin-right: 10px;
+}
+.uslider-settings .upfront-field-wrap-radios .upfront-field-multiple-horizontal-inline:nth-child(2n) {
+	margin-right: 0;
+}
+
+.upfront-field-icon-below:before {
+background-position: -699px -646px;
+}
+.upfront-field-icon-bottomOver:before {
+background-position: -699px -489px;
+}
+.upfront-field-icon-nocaption:before {
+background-position: -699px -455px;
+}
+.upfront-field-icon-right:before {
+background-position: -699px -808px;
+}
+.upfront-field-icon-textonly:before {
+background-position: -699px -646px;
+}

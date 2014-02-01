@@ -62,6 +62,8 @@ class Upfront_UsliderView extends Upfront_Object {
 			"class" => "c22 upfront-uslider",
 			'has_settings' => 1,
 
+			'primaryStyle' => 'notext', // notext, below, over, side, onlytext
+
 			'style' => 'bottomOver', // nocaption, below, above, right, bottomOver, topOver, bottomCover, middleCover, topCover
 
 			'controls' => 'both', // both, arrows, dots, none

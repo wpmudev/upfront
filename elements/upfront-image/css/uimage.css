@@ -444,9 +444,9 @@ OLD STYLE
 	width: 300px;
 	height: 300px;
 	border-collapse: separate;
-	-moz-box-shadow: 0 0 0 20000px rgba(57,82,105,.7);
-	-webkit-box-shadow: 0 0 0 20000px rgba(57,82,105,.7);
-	box-shadow: 0 0 0 20000px rgba(57,82,105,.7);
+	-moz-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
+	-webkit-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
+	box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
 	z-index:10;
 	position:absolute;
 }

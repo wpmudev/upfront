@@ -367,60 +367,86 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	createControls: function() {
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-			multi = new Upfront.Views.Editor.InlinePanels.MultiControl()
+			multiBelow = {
+				above: ['above', 'Above the image'],
+				below: ['below', 'Below the image'],
+				nocaption: ['nocaption', 'No text']
+			},
+			multiOver = {
+				topOver: ['topOver', 'Over image, top'],
+				bottomOver: ['bottomOver', 'Over image, bottom'],
+				topCover: ['topCover', 'Covers image, top'],
+				middleCover: ['middleCover', 'Covers image, middle'],
+				bottomCover: ['bottomCover', 'Covers image, bottom'],
+				nocaption: ['nocaption', 'No text']
+			},
+			multiSide = {
+				right: ['right', 'At the right'],
+				left: ['left', 'At the left'],
+				nocaption: ['nocaption', 'No text']
+			},
+			primaryStyle = this.property('primaryStyle'),
+			multiControls = {},
+			multi = new Upfront.Views.Editor.InlinePanels.MultiControl(),
+			panelItems = []
 		;
-		multi.sub_items = {
-			topOver: this.createControl('topOver', 'Over image, top'),
-			bottomOver: this.createControl('bottomOver', 'Over image, bottom'),
-			topCover: this.createControl('topCover', 'Covers image, top'),
-			middleCover: this.createControl('middleCover', 'Covers image, middle'),
-			bottomCover: this.createControl('bottomCover', 'Covers image, bottom'),
-			above: this.createControl('above', 'Above the image'),
-			below: this.createControl('below', 'Below the image'),
-			right: this.createControl('right', 'At the right'),
-			nocaption: this.createControl('nocaption', 'No text')
-		};
 
-		multi.icon = 'caption';
-		multi.tooltip = 'Caption position';
-		multi.selected = this.property('style');
-		multi.on('select', function(item){
-			var previous = me.property('style'),
-				slider = me.$('.uslides'),
-				maskSize = {width: me.$('.upfront-uslider').width(), height: slider.height()}
-			;
-			if(item == 'right' && me.getElementColumns() < 6){
-				var controls = this.createControls(),
-					wrapper = me.$('.uslide-image')
-				;
-
-				controls.setWidth(wrapper.width());
-				controls.render();
-
-				me.$('.uimage-controls').html(controls.$el);
-
-				Upfront.Views.Editor.notify("The slider needs to be wider to have the text at the right.", "error");
-			}
-
-			if(item == 'right'){ //Resize the mask
-				var imagePercentWidth = me.property('rightImageWidth') / me.property('rightWidth');
-				maskSize.width = Math.floor(maskSize.width * imagePercentWidth);
-			}
-
-			me.slides.each(function(slide){
-				me.imageProps[slide.id] = me.calculateImageResize(maskSize, slide);
+		multi.sub_items = {};
+		if(primaryStyle == 'below')
+			multiControls = multiBelow;
+		else if(primaryStyle == 'over')
+			multiControls = multiOver;
+		else if(primaryStyle == 'side')
+			multiControls = multiSide;
+		else
+			multiControls = false;
+		if(multiControls){
+			_.each(multiControls, function(opts, key){
+				multi.sub_items[key] = me.createControl(opts[0], opts[1]);
 			});
 
-			me.setTimer();
-			me.property('style', item, false);
-		});
+			multi.icon = 'caption';
+			multi.tooltip = 'Caption position';
+			multi.selected = multiControls[this.property('style')] ? this.property('style') : 'nocaption';
+			multi.on('select', function(item){
+				var previous = me.property('style'),
+					slider = me.$('.uslides'),
+					maskSize = {width: me.$('.upfront-uslider').width(), height: slider.height()}
+				;
+				if(item == 'right' && me.getElementColumns() < 6){
+					var controls = this.createControls(),
+						wrapper = me.$('.uslide-image')
+					;
 
-		panel.items = _([
-			this.createControl('crop', 'Edit image', 'imageEditMask'),
-			this.createControl('link', 'Link slide', 'slideEditLink'),
-			multi,
-			this.createControl('remove', 'Remove slide', 'removeSlide')
-		]);
+					controls.setWidth(wrapper.width());
+					controls.render();
+
+					me.$('.uimage-controls').html(controls.$el);
+
+					Upfront.Views.Editor.notify("The slider needs to be wider to have the text at the right.", "error");
+				}
+
+				if(item == 'right'){ //Resize the mask
+					var imagePercentWidth = me.property('rightImageWidth') / me.property('rightWidth');
+					maskSize.width = Math.floor(maskSize.width * imagePercentWidth);
+				}
+
+				me.slides.each(function(slide){
+					me.imageProps[slide.id] = me.calculateImageResize(maskSize, slide);
+				});
+
+				me.setTimer();
+				me.property('style', item, false);
+			});
+		}
+
+		panelItems.push(this.createControl('crop', 'Edit image', 'imageEditMask'));
+		panelItems.push(this.createControl('link', 'Link slide', 'slideEditLink'));
+		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
+			panelItems.push(multi);
+		panelItems.push(this.createControl('remove', 'Remove slide', 'removeSlide'));
+
+		panel.items = _(panelItems);
 
 		return panel;
 	},
@@ -1056,12 +1082,31 @@ var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({
 });
 
 var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
+	className: 'upfront-settings_panel_wrap uslider-settings',
 	initialize: function() {
 		var me = this,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
 			Fields = Upfront.Views.Editor.Field
 		;
 		this.settings = _([
+			new SettingsItem({
+				title: 'Slider styles',
+				className: 'uslider-style-setting',
+				fields: [
+					new Fields.Radios({
+						model: this.model,
+						property: 'primaryStyle',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "no txt", value: 'notext', icon: 'nocaption' },
+							{ label: "txt below", value: 'below', icon: 'below' },
+							{ label: "txt over", value: 'over', icon: 'bottomOver' },
+							{ label: "txt on side", value: 'side', icon: 'right' },
+							{ label: "txt / widget only", value: 'onlytext', icon: 'textonly' }
+						]
+					})
+				]
+			}),
 			new SettingsItem({
 				title: '',
 				group: false,
@@ -1086,6 +1131,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 			}),
 			new SettingsItem({
 				title: 'Transitions',
+				className: 'uslider-transition-setting',
 				fields: [
 					new Fields.Radios({
 						model: this.model,
