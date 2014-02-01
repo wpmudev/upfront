@@ -44,6 +44,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
 
 	initialize: function(options){
+		var me = this;
 		console.log('Uslider');
 		if(! (this.model instanceof USliderModel)){
 			this.model = new USliderModel({properties: this.model.get('properties')});
@@ -65,6 +66,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.slides.on('add remove reset change', this.slidesChange, this);
 
 		this.model.on('addRequest', this.openImageSelector, this);
+
+		this.model.get('properties').on('change', function(){
+			me.checkStyles();
+		});
 
 		Upfront.Events.on('command:layout:save', this.saveResizing, this);
 		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
@@ -242,6 +247,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	prevSlide: function(){
 		this.$('.uslides').upfront_default_slider('prev');
+	},
+
+	checkStyles: function() {
+		var primary = this.property('primaryStyle'),
+			style = this.property('style')
+		;
+		if(primary == 'below' && _.indexOf(['below', 'above'], style) == -1 ||
+			primary == 'over' && _.indexOf(['topOver', 'bottomOver', 'topCover', 'middleCover', 'bottomCover'], style) == -1 ||
+			primary == 'side' && _.indexOf(['right', 'left']) == -1)
+				this.property('style', 'nocaption', false);
 	},
 
 	setImageResizable: function(){

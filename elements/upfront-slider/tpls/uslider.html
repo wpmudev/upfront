@@ -11,7 +11,7 @@
 		</div>	
 		<?php } ?>
 	</div>
-	<?php if($style != 'nocaption'){ ?>
+	<?php if($style != 'nocaption' && $primaryStyle != 'notext'){ ?>
 	<div class="uslider-texts" style="width: <?php echo $textWidth ?>; margin-left: <?php echo $imageWidth ?>">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
 		<div class="uslide-text" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo $slides[$i]['captionBackground'] ?>;color:<?php echo $slides[$i]['captionColor'] ?>">

@@ -391,7 +391,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				top: -img.position().top,
 				left: -img.position().left
 			}
-			
+
 		}
 
 		this.imageInfo = {
@@ -1342,7 +1342,7 @@ var ImageEditor = Backbone.View.extend({
 				else
 					me.cancel();
 			}
-		})
+		});
 	},
 
 	resetDefaults: function(){
