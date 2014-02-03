@@ -42,6 +42,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	module_settings: {},
 	tpl: Upfront.Util.template(sliderTpl),
 	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
+	startingTpl: _.template($(editorTpl).find('#startingTpl').html()),
 
 	initialize: function(options){
 		var me = this;
@@ -55,9 +56,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		this.events = _.extend({}, this.events, {
-			'click .upfront-image-select': 'openImageSelector',
+			'click .upfront-image-select': 'firstImageSelection',
 			'click .upfront-icon-next': 'nextSlide',
-			'click .upfront-icon-prev': 'prevSlide'
+			'click .upfront-icon-prev': 'prevSlide',
+			'click .uslider-starting-options': 'checkStartingInputClick'
 		});
 
 		var slides = this.property('slides');
@@ -97,9 +99,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		if(!this.slides.length){
 			this.startingHeight = this.startingHeight || 225;
-			return '<div class="upfront-image-starting-select" style="min-height:' + this.startingHeight + 'px"><div class="uimage-centered">' +
-					'<span class="upfront-image-resizethiselement">Add Images</span><div class=""><a class="upfront-image-select button" href="#" title="Add Images to the Slider">+</a></div>'+
-			'</div></div>';
+			return this.startingTpl({startingHeight: this.startingHeight});
 		}
 
 		//Stop autorotate
@@ -120,7 +120,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		rendered = this.tpl(props);
 
-		$rendered = $('<div></div>').append(rendered);
+		var $rendered = $('<div></div>').append(rendered);
 
 		this.slides.each(function(slide){
 			if(!me.imageProps[slide.id]){
@@ -255,10 +255,30 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		;
 		if(primary == 'below' && _.indexOf(['below', 'above'], style) == -1 ||
 			primary == 'over' && _.indexOf(['topOver', 'bottomOver', 'topCover', 'middleCover', 'bottomCover'], style) == -1 ||
-			primary == 'side' && _.indexOf(['right', 'left']) == -1)
+			primary == 'side' && _.indexOf(['right', 'left'], style) == -1)
 				this.property('style', 'nocaption', false);
 	},
+	checkStartingInputClick: function(e){
+		//Hack to make the radio buttons work in the starting layout
+		e.stopPropagation(); //This is not a good practice
+	},
+	firstImageSelection: function(e){
+		e.preventDefault();
+		var primaryStyle = this.$el.find('input:checked').val(),
+			style = 'nocaption'
+		;
+		if(primaryStyle == 'over')
+			style = 'bottomOver';
+		else if(primaryStyle == 'below')
+			style = 'below';
+		else if(primaryStyle == 'side')
+			style = 'right';
 
+		this.property('primaryStyle', primaryStyle);
+		this.property('style', style);
+
+		return this.openImageSelector();
+	},
 	setImageResizable: function(){
 		var me = this,
 			slides = this.$('.uslides'),
@@ -1116,8 +1136,8 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 							{ label: "no txt", value: 'notext', icon: 'nocaption' },
 							{ label: "txt below", value: 'below', icon: 'below' },
 							{ label: "txt over", value: 'over', icon: 'bottomOver' },
-							{ label: "txt on side", value: 'side', icon: 'right' },
-							{ label: "txt / widget only", value: 'onlytext', icon: 'textonly' }
+							{ label: "txt on side", value: 'side', icon: 'right' }/*,
+							{ label: "txt / widget only", value: 'onlytext', icon: 'textonly' }*/
 						]
 					})
 				]

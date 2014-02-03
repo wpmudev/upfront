@@ -137,3 +137,38 @@ background-position: -699px -808px;
 .upfront-field-icon-textonly:before {
 background-position: -699px -646px;
 }
+
+.uslider-starting-title {
+	font-size: 20px
+}
+
+.uslider-starting-info {
+	font-size: 13px;
+	color: #889;
+	line-height: 13px;
+	margin-bottom: 15px;
+}
+
+.uslider-starting-options  label {
+	font-family: verdana;
+	font-size: 11px;
+}
+
+.uslider-starting-options  .upfront-field-multiple{
+	margin: 0 5px;
+}
+
+.uslider-starting-centered {
+	margin: 15px;
+}
+
+.uslider-starting-centered .upfront-image-select{
+	font-size: 16px;
+	border-radius: 0;
+	width: 150px;
+	height: auto;
+	line-height: 30px;
+	display: inline-block;
+	margin-top: 10px;
+	color: #666;
+}
