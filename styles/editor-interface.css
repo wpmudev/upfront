@@ -2488,12 +2488,22 @@ a.ueditor-action-pickercancel{
 
 
 
-.upfront-resize-handle {
+.upfront-resize-handle-nw,
+.upfront-resize-handle-se {
 	position: absolute;
-	bottom: 0;
-	right: 0;
+	width: 12px;
+	height: 12px;
 	z-index: 2000;
 	overflow: hidden;
+}
+.upfront-resize-handle-nw {
+	top: 0;
+	left: 0;
+	cursor: nw-resize;
+}
+.upfront-resize-handle-se {
+	bottom: 0;
+	right: 0;
 	cursor: se-resize;
 }
 
@@ -3442,7 +3452,12 @@ a.ueditor-action-pickercancel{
 	float: none;
 	display: block;
 }
-.upfront-icon-control-resize:before {
+.upfront-icon-control-resize-nw:before {
+	width: 12px;
+	height: 12px;
+	background-position: -294px -74px;
+}
+.upfront-icon-control-resize-se:before {
 	width: 12px;
 	height: 12px;
 	background-position: -294px -44px;

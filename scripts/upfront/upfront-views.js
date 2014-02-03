@@ -573,35 +573,35 @@ define([
 			get_element_rows: function () {
 				return this.get_element_size().row;
 			},
-			get_element_max_size: function () {
+			get_element_max_size: function ( axis ) {
 				var ed = Upfront.Behaviors.GridEditor,
 					$el = this.parent_module_view.$el.find('.upfront-module'),
 					$region = this.$el.closest('.upfront-region'); //this.parent_module_view.region_view.$el; // @TODO parent_module_view.region_view didn't updated when changing region
 				ed.start(this.parent_module_view, this.parent_module_view.model);
-				return ed.get_max_size( ed.get_el($el), ed.els, ed.get_region($region) );
+				return ed.get_max_size(ed.get_el($el), ed.els, ed.get_region($region), axis);
 			},
-			get_element_max_columns: function () {
-				return this.get_element_max_size().col;
+			get_element_max_columns: function ( axis ) {
+				return this.get_element_max_size(axis).col;
 			},
-			get_element_max_rows: function () {
-				return this.get_element_max_size().row;
+			get_element_max_rows: function ( axis ) {
+				return this.get_element_max_size(axis).row;
 			},
-			get_element_max_size_px: function () {
+			get_element_max_size_px: function ( axis ) {
 				var ed = Upfront.Behaviors.GridEditor,
-					max = this.get_element_max_size();
+					max = this.get_element_max_size(axis);
 				return {
 					col: max.col * ed.col_size,
 					row: max.row * ed.baseline
 				};
 			},
-			get_element_max_columns_px: function () {
-				return this.get_element_max_size_px().col;
+			get_element_max_columns_px: function ( axis ) {
+				return this.get_element_max_size_px(axis).col;
 			},
-			get_element_max_rows_px: function () {
-				return this.get_element_max_size_px().row;
+			get_element_max_rows_px: function ( axis ) {
+				return this.get_element_max_size_px(axis).row;
 			},
-			set_element_size: function (col, row) {
-				return Upfront.Behaviors.GridEditor.resize(this.parent_module_view, this.parent_module_view.model, col, row);
+			set_element_size: function (col, row, axis) {
+				return Upfront.Behaviors.GridEditor.resize(this.parent_module_view, this.parent_module_view.model, col, row, axis);
 			}
 /*
 			// Create a ckeditor instance when any contenteditable element receives focus for the first time.

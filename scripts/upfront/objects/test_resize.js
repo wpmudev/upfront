@@ -18,38 +18,45 @@ var TestResizeView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		this.$el.on('click', '.get-max', function (e) {
 			e.preventDefault();
-			var max = me.get_element_max_size(),
-				max_px = me.get_element_max_size_px();
+			var axis = $(this).attr('data-axis'),
+				max = me.get_element_max_size(axis),
+				max_px = me.get_element_max_size_px(axis);
 			me.$el.find('.max-dimension').text( 'col: ' + max.col + '(' + max_px.col + 'px) row: ' + max.row + '(' + max_px.row + 'px)' );
 		});
 		this.$el.on('click', '.resize-shrink-col', function (e) {
 			e.preventDefault();
-			var col = me.get_element_columns();
-			me.set_element_size(col-1);
+			var axis = $(this).attr('data-axis'),
+				col = me.get_element_columns();
+			me.set_element_size(col-1, false, axis);
 		});
 		this.$el.on('click', '.resize-expand-col', function (e) {
 			e.preventDefault();
-			var col = me.get_element_columns();
-			me.set_element_size(col+1);
+			var axis = $(this).attr('data-axis'),
+				col = me.get_element_columns();
+			me.set_element_size(col+1, false, axis);
 		});
 		this.$el.on('click', '.resize-shrink-row', function (e) {
 			e.preventDefault();
-			var row = me.get_element_rows();
-			me.set_element_size(false, row-1);
+			var axis = $(this).attr('data-axis'),
+				row = me.get_element_rows();
+			me.set_element_size(false, row-1, axis);
 		});
 		this.$el.on('click', '.resize-expand-row', function (e) {
 			e.preventDefault();
-			var row = me.get_element_rows();
-			me.set_element_size(false, row+1);
+			var axis = $(this).attr('data-axis'),
+				row = me.get_element_rows();
+			me.set_element_size(false, row+1, axis);
 		});
 		this.$el.on('click', '.resize-1', function (e) {
 			e.preventDefault();
-			me.set_element_size(6, 20);
+			var axis = $(this).attr('data-axis');
+			me.set_element_size(8, 20, axis);
 		});
 		this.$el.on('click', '.resize-max', function (e) {
 			e.preventDefault();
-			var max = me.get_element_max_size();
-			me.set_element_size(max.col, max.row);
+			var axis = $(this).attr('data-axis'),
+				max = me.get_element_max_size(axis);
+			me.set_element_size(max.col, max.row, axis);
 		});
 	},
 	
@@ -60,13 +67,23 @@ var TestResizeView = Upfront.Views.ObjectView.extend({
 
 	get_content_markup: function () {
 		var size = this.get_element_size();
-		return '<span class="dimension">col: ' + size.col + ', row:' + size.row + '</span><br />' +
-			'<a href="#" class="get-max">Get max data</a><br />' + 
+		return '<span style="font-size:10px;line-height:15px;"><span class="dimension">col: ' + size.col + ', row:' + size.row + '</span><br />' +
+			'<a href="#" class="get-max" data-axis="all">Get max (all)</a> | ' + 
+			'<a href="#" class="get-max" data-axis="se">Get max (se)</a> | ' + 
+			'<a href="#" class="get-max" data-axis="nw">Get max (nw)</a><br />' + 
 			'<span class="max-dimension"></span><br />' + 
-			'<a href="#" class="resize-shrink-col">-1 col</a> | <a href="#" class="resize-expand-col">+1 col</a><br />' + 
-			'<a href="#" class="resize-shrink-row">-1 row</a> | <a href="#" class="resize-expand-row">+1 row</a><br />' + 
-			'<a href="#" class="resize-1">Resize to 6x20</a><br />' + 
-			'<a href="#" class="resize-max">Resize to max</a>'
+			'<a href="#" class="resize-shrink-col" data-axis="all">-1 col (all)</a> | <a href="#" class="resize-expand-col" data-axis="all">+1 col (all)</a> | ' + 
+			'<a href="#" class="resize-shrink-row" data-axis="all">-1 row (all)</a> | <a href="#" class="resize-expand-row" data-axis="all">+1 row (all)</a><br />' + 
+			'<a href="#" class="resize-shrink-col" data-axis="se">-1 col (se)</a> | <a href="#" class="resize-expand-col" data-axis="se">+1 col (se)</a> | ' + 
+			'<a href="#" class="resize-shrink-row" data-axis="se">-1 row (se)</a> | <a href="#" class="resize-expand-row" data-axis="se">+1 row (se)</a><br />' + 
+			'<a href="#" class="resize-shrink-col" data-axis="nw">-1 col (nw)</a> | <a href="#" class="resize-expand-col" data-axis="nw">+1 col (nw)</a> | ' + 
+			'<a href="#" class="resize-shrink-row" data-axis="nw">-1 row (nw)</a> | <a href="#" class="resize-expand-row" data-axis="nw">+1 row (nw)</a><br />' + 
+			'<a href="#" class="resize-1" data-axis="all">Resize to 8x20 (all)</a> | ' + 
+			'<a href="#" class="resize-1" data-axis="se">Resize to 8x20 (se)</a> | ' + 
+			'<a href="#" class="resize-1" data-axis="nw">Resize to 8x20 (nw)</a><br />' + 
+			'<a href="#" class="resize-max" data-axis="all">Resize to max (all)</a> | ' + 
+			'<a href="#" class="resize-max" data-axis="se">Resize to max (se)</a> | ' + 
+			'<a href="#" class="resize-max" data-axis="nw">Resize to max (nw)</a></span>'
 		;
 	}
 
