@@ -700,12 +700,13 @@ var GridEditor = {
 	 * Create droppable points
 	 */
 	create_drop_point: function (me, me_wrap) {
+		console.log('Drop point');
 		this.time_start('fn create_drop_point');
 		var app = Upfront.Application.LayoutEditor,
 			ed = Upfront.Behaviors.GridEditor,
 			margin = me.$el.data('margin'),
 			col = me.col,
-			min_col = col > ed.min_col ? ed.min_col : col,
+			min_col = me.$el.hasClass('upfront-image_module') ? 1 : (col > ed.min_col ? ed.min_col : col),
 			row = me.row > ed.max_row ? ed.max_row : me.row;
 		ed.drops = [];
 
@@ -852,7 +853,7 @@ var GridEditor = {
 					}
 				}
 				// Check to see if the right side on wrapper has enough column to add droppable
-				if ( ( !next_wrap || next_wrap_clr ) && ( ( !is_wrap_me && region.grid.right-wrap.grid.right > min_col ) || ( wrap_me_only && !wrap_clr ) || ( prev_me_only && !wrap_clr && wrap_only ) ) ){
+				if ( ( !next_wrap || next_wrap_clr ) && ( ( !is_wrap_me && region.grid.right-wrap.grid.right >= min_col ) || ( wrap_me_only && !wrap_clr ) || ( prev_me_only && !wrap_clr && wrap_only ) ) ){
 					var is_switch = ( prev_me_only && !wrap_clr && wrap_only ),
 						bottom = next_wrap_el_top ? next_wrap_el_top.grid.top-1 : region.grid.bottom;
 					if ( can_drop(wrap.grid.top, bottom) ){
