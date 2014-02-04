@@ -299,6 +299,7 @@ define([
 			},
 			on_context_menu: function(e) {
 				e.preventDefault();
+				e.stopPropagation();
 				this.event = e;
 				Upfront.Events.trigger("entity:contextmenu:activate", this);
 			},
@@ -904,11 +905,12 @@ define([
 
 			}
 		}),
-
 		RegionContainer = _Upfront_SingularEditor.extend({
 			events: {
 				"click .upfront-region-edit-trigger": "trigger_edit",
 				"click .upfront-region-finish-edit": "close_edit" ,
+				"contextmenu": "on_context_menu",
+				"click": "remove_context_menu",
 				"mouseover": "update_pos"
 			},
 			attributes: function(){
@@ -924,7 +926,62 @@ define([
 					"class": classes.join(' ')
 				};
 			},
+			remove_context_menu: function(e) {
+				if (!this.context_menu_view) return false;
+				$(Upfront.Settings.LayoutEditor.Selectors.contextmenu).html('').hide();
+				this.context_menu_view = false;
+				
+			},
+			on_context_menu: function(e) {
+				e.preventDefault();
+				this.event = e;
+				//Upfront.Events.trigger("entity:contextmenu:activate", this);
+				context_menu_view = new this.ContextMenu({
+						model: this.model,
+						el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
+					})
+				;
+				
+				context_menu_view.for_view = this;
+				this.context_menu_view = context_menu_view;
+				context_menu_view.render();
+			},
 			init: function () {
+				var me = this;
+				var ContextMenuList = Upfront.Views.ContextMenuList.extend({
+					initialize: function() {
+						
+						this.menuitems = _([
+						  new Upfront.Views.ContextMenuItem({
+							  get_label: function() {
+								  var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				 				  if($main.hasClass('upfront-region-editing'))
+								  	return 'Finish Editing';
+								  else
+								  	return 'Edit Background';
+							  },
+							  action: function() {
+							  		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				 				  if($main.hasClass('upfront-region-editing'))
+								  	me.close_edit();
+								  else
+								  	me.trigger_edit(me.event);
+								  
+							  }
+						  })
+						]);		
+					}
+				});	
+				
+				this.ContextMenu = Upfront.Views.ContextMenu.extend({
+					initialize: function() {
+						this.menulists = _([
+						  new ContextMenuList()
+						]);	
+					}
+				});
+
+				
 				var grid = Upfront.Settings.LayoutEditor.Grid;
 				// this.model.get("properties").bind("change", this.update, this);
 				// this.model.get("properties").bind("add", this.update, this);
@@ -948,6 +1005,8 @@ define([
 				Upfront.Events.on("entity:region:added", this.fix_height, this);
 				Upfront.Events.on("entity:region:removed", this.fix_height, this);
 				Upfront.Events.on("entity:region:removed", this.close_edit, this);
+				
+				Upfront.Events.on("entity:contextmenu:deactivate", this.remove_context_menu, this);
 			},
 			render: function () {
 				var template = _.template(_Upfront_Templates["region_container"], this.model.toJSON()),
