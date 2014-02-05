@@ -73,6 +73,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.checkStyles();
 		});
 
+		this.model.on('background', function(rgba){
+			me.slides.each(function(slide){
+				slide.set('captionBackground', rgba);
+			});
+		});
+
 		Upfront.Events.on('command:layout:save', this.saveResizing, this);
 		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
 
@@ -112,8 +118,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		props.slidesLength = props.slides.length;
 
-		props.imageWidth = props.style == 'right' ?  Math.floor(props.rightImageWidth / props.rightWidth * 100) + '%' : '';
-		props.textWidth = props.style == 'right' ? Math.floor((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100) + '%' : '';
+		props.imageWidth = _.indexOf(['left', 'right'], props.style) != -1 ?  Math.round(props.rightImageWidth / props.rightWidth * 100) + '%' : '';
+		props.textWidth =  _.indexOf(['left', 'right'], props.style) != -1 ? Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100) + '%' : '';
+
+		props.imageHeight = props.slides.length ? props.slides[0].cropSize.height : 0;
 
 		props.production = false;
 		props.startingSlide = this.currentSlide;
@@ -226,7 +234,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		//me.property('rightWidth', me.getElementColumns());
 
-		if(me.property('style') == 'right'){
+		if(_.indexOf(['right', 'left'], me.property('style')) != -1){
 			me.setImageResizable();
 		}
 
@@ -283,31 +291,35 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			slides = this.$('.uslides'),
 			elementWidth = me.$('.upfront-object').outerWidth(),
-			elementCols = me.property('rightWidth'),
-			colWidth = Math.floor(elementWidth / elementCols),
+			elementCols, colWidth,
 			text = me.$('.uslider-texts'),
 			current = this.$('.upfront-default-slider-item-current'),
 			id = current.attr('rel'),
 			slide = this.slides.get(id),
-			height = false
+			height = false,
+			style = me.property('style')
 		;
 
 		slides.resizable({
+			handles: me.property('style') == 'right' ? 'e' : 'w',
+			helper: 'uslider-resize-handler',
 			start: function(e, ui){
 				if(!ui.element.hasClass('uslides'))
 					return;
 				elementWidth = me.$('.upfront-object').outerWidth();
-				elementCols = me.property('rightWidth');
-				colWidth = Math.floor(elementWidth / elementCols);
+				elementCols = me.get_element_columns(),
+				colWidth = me.get_element_max_columns_px() / me.get_element_max_columns(),
 				height = slides.height();
 				text = me.$('.uslider-texts');
+
+				ui.element.parent().closest('.ui-resizable').resizable('disable');
 
 				slides.resizable('option', {
 					minWidth: colWidth * 3,
 					maxWidth: (elementCols - 3) * colWidth,
 					grid: [colWidth, 100], //Second number is never used (fixed height)
-					handles: 'e',
-					helper: '.uslider-resize-handler',
+					handles: style == 'right' ? 'e' : 'w',
+					helper: 'uslider-resize-handler',
 					minHeigth: height,
 					maxHeight: height
 				});
@@ -315,19 +327,25 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			resize: function(e, ui){
 				if(!ui.element.hasClass('uslides'))
 					return;
-				var imageWidth = ui.element.width(),
-					textWidth = elementWidth - imageWidth
+				var imageWidth = ui.helper.width(),
+					textWidth = elementWidth - imageWidth - 30,
+					textCss = {width: textWidth},
+					imgCss = {width: imageWidth}
 				;
 				me.calculateImageResize({width: imageWidth, height: ui.element.height()}, slide);
-				text.css({
-					width: textWidth + 'px',
-					'margin-left': imageWidth + 'px'
-				});
+
+				if(style == 'right')
+					textCss['margin-left'] = imageWidth;
+				else
+					imgCss['margin-left'] = textWidth;
+
+				text.css(textCss);
+				slides.css(imgCss);
 			},
 			stop: function(e, ui){
 				if(!ui.element.hasClass('uslides'))
 					return;
-				var imageWidth = ui.element.width(),
+				var imageWidth = ui.helper.width(),
 					imageCols = Math.round((imageWidth - (colWidth - 15))/ colWidth) + 1,
 					percentage = Math.floor(imageCols / elementCols * 100)
 				;
@@ -343,6 +361,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.property('rightImageWidth', imageCols, false);
 
 				me.setTimer();
+				me.parent_module_view.$el.children('.upfront-module').resizable('enable');
 			}
 		});
 	},
@@ -448,6 +467,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					slider = me.$('.uslides'),
 					maskSize = {width: me.$('.upfront-uslider').width(), height: slider.height()}
 				;
+				_.indexOf(['right', 'left'])
 				if(item == 'right' && me.getElementColumns() < 6){
 					var controls = this.createControls(),
 						wrapper = me.$('.uslide-image')
@@ -569,11 +589,19 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	onElementResizeStart: function(e, ui){
 		if(ui.element.hasClass('uslides') || this.$('.upfront-image-starting-select').length)
 			return;
-		var style = this.property('style');
+
+		var style = this.property('style'),
+			me = this
+		;
+
 		this.calculateColumnWidth();
+
 		if(_.indexOf(['nocaption', 'below', 'above', 'right'], style) == -1)
 			this.$('.uslider-texts').fadeOut('fast');
-		else if(style == 'right'){
+		else if(style == 'right' || style == 'left'){
+			ui.element.resizable('option', {
+				minWidth: me.colWidth * 6
+			});
 			this.$('.uslides').width(this.$('.uslides').width());
 		}
 	},
@@ -607,7 +635,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		me.cropHeight = cropSize.height;
 
-		this.property('rightWidth', Math.round($('.upfront-resize').width() / this.colWidth));
+		this.property('rightWidth', this.get_element_columns());
 
 		me.setTimer();
 	},
@@ -1061,7 +1089,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
  * @type {Upfront.Views.Editor.Command}
  */
 var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	draggable: true,
+	draggable: false,
 	/**
 	 * Set up command appearance.
 	 */
@@ -1142,6 +1170,20 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 					})
 				]
 			}),
+			new ColorPickerField({
+				title: 'Caption Background',
+				fields: [
+					new Fields.Radios({
+						model: this.model,
+						property: 'captionUseBackground',
+						layout: "horizontal-inline",
+						values: [
+							{value: '0', label: 'None'},
+							{value: '1', label: 'Pick color'}
+						]
+					}),
+				]
+			}),
 			new SettingsItem({
 				title: '',
 				group: false,
@@ -1209,6 +1251,77 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 				]
 			})
 		]);
+
+		this.on('rendered', function(){
+			me.toggleColorSetting();
+			var spectrum = false,
+				currentColor = me.model.get_property_value_by_name('captionBackground'),
+				input = $('<input type="text" value="' + currentColor + '">'),
+				setting = me.$('.ugallery-colorpicker-setting')
+			;
+
+			setting.find('.upfront-field-wrap').append(input);
+			setting.find('input[name="captionUseBackground"]').on('change', function(){
+				me.toggleColorPicker();
+			});
+
+			input.spectrum({
+				showAlpha: true,
+				showPalette: true,
+				palette: ['fff', '000', '0f0'],
+				maxSelectionSize: 9,
+				localStorageKey: "spectrum.recent_bgs",
+				preferredFormat: "hex",
+				chooseText: "Ok",
+				showInput: true,
+			    allowEmpty:true,
+			    show: function(){
+					spectrum = $('.sp-container:visible');
+			    },
+				change: function(color) {
+					var rgba = color.toRgbString();
+					me.model.set_property('captionBackground', rgba, true);
+					currentColor = rgba;
+					me.model.trigger('background', rgba);
+				},
+				move: function(color) {
+					var rgba = color.toRgbString();
+					spectrum.find('.sp-dragger').css('border-top-color', rgba);
+					spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+					me.parent_view.for_view.$el.find('.uslide-text').css('background-color', rgba);
+				},
+				hide: function(){
+					me.parent_view.for_view.$el.find('.uslide-text').css('background-color', currentColor);
+				}
+			});
+			setting.find('.sp-replacer').css('display', 'inline-block');
+			me.toggleColorPicker();
+		});
+
+		this.$el.on('change', 'input[name="primaryStyle"]', function(e){
+			me.toggleColorSetting();
+		});
+	},
+
+	toggleColorSetting: function(){
+		var style = this.$('.uslider-style-setting').find('input:checked').val();
+		if(style == 'notext')
+			this.$('.ugallery-colorpicker-setting').hide();
+		else
+			this.$('.ugallery-colorpicker-setting').show();
+	},
+
+	toggleColorPicker: function(){
+		var setting = this.$('.ugallery-colorpicker-setting'),
+			color = setting.find('input:checked').val(),
+			picker = setting.find('.sp-replacer')
+		;
+		if(color == "1"){
+			picker.show();
+		}
+		else{
+			picker.hide();
+		}
 	},
 
 	get_label: function(){
@@ -1247,6 +1360,11 @@ var SlidesPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 	get_title: function(){
 		return false;
 	}
+});
+
+
+var ColorPickerField = Upfront.Views.Editor.Settings.Item.extend({
+	className: 'ugallery-colorpicker-setting'
 });
 
 

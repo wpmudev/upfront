@@ -32,6 +32,7 @@
 
 
 	var JQueryUslider = function($slider, args){
+		//debugger;
 		var me = this,
 			data = $.extend({
 				auto: true,

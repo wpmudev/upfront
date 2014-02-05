@@ -433,7 +433,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		console.log('Image element');
 
-		if(this.property('image_status') == 'starting'){
+
+		if(this.property('quick_swap')){
+			var size = this.property('element_size'),
+				smallSwap = size.width < 150 || size.height < 90 ? 'uimage-quick-swap-small' : '';
+
+			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
+		}
+		else if(this.property('image_status') == 'starting'){
 			rendered += '<div class="upfront-image-starting-select upfront-ui" style="height:' + this.elementSize.height + 'px"><div class="uimage-centered">' +
 					'<span class="upfront-image-resizethiselement">Add Image</span><div class=""><a class="upfront-image-select button" href="#" title="Add Image">+</a></div>'+
 			'</div></div>';
@@ -490,12 +497,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			rendered = render.html();
 		}
 
-		if(this.property('quick_swap')){
-			var size = this.property('element_size'),
-				smallSwap = size.width < 150 || size.height < 90 ? 'uimage-quick-swap-small' : '';
-
-			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
-		}
 
 		return rendered;
 	},
@@ -671,6 +672,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.property('element_size', this.elementSize);
 			return;
 		}
+		else if(this.property('quick_swap'))
+			return;
 
 		var resizer = $('.upfront-resize'),
 			img = this.$('img'),
@@ -1557,7 +1560,7 @@ var ImageEditor = Backbone.View.extend({
 			}
 		;
 
-		if(current.columns >= elementSize.maxColumns && current.rows >= elementSize.maxRows)
+		if(current.columns > elementSize.columns || current.rows > elementSize.rows)
 			return false;
 
 		if(!stretch){
@@ -1760,6 +1763,10 @@ var ImageEditor = Backbone.View.extend({
 				autoHide: 0,
 				aspectRatio: true, //(me.fullSize.width + me.bordersWidth) / (me.fullSize.height + me.bordersWidth),
 				start: function() {
+					me.$('#image-edit-button-reset')
+						.attr('class', 'image-edit-button')
+						.attr('data-tooltip', 'Expand image')
+					;
 				},
 				resize: function(e, ui){
 					canvas.css(ui.size);
@@ -2085,8 +2092,14 @@ var ImageEditor = Backbone.View.extend({
 		this.setResizingLimits();
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
-		var button = $('#image-edit-button-fit');
-		button.text('Reset image size');
+		$('#image-edit-button-fit')
+			.attr('data-tooltip', 'Restore image size')
+			.text('Reset image size')
+		;
+		$('#image-edit-button-reset')
+			.attr('class', 'image-edit-button')
+			.attr('data-tooltip', 'Expand image')
+		;
 		this.fitImageButton = false;
 
 	},

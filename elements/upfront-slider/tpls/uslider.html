@@ -1,8 +1,8 @@
 <div class="uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?>" id="uslider-<?php echo $element_id ?>">
 	<?php if($slidesLength){ ?>
-	<div class="uslides" style="width: <?php echo $imageWidth ?>;">
+	<div class="uslides">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
-		<div class="uslide" rel="<?php echo $slides[$i]['id'] ?>">
+		<div class="uslide" rel="<?php echo $slides[$i]['id'] ?>" style="">
 			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link">
 				<div class="uslide-image">
 					<img src="<?php echo $slides[$i]['src'] ?>" style="width:100%">
@@ -12,7 +12,7 @@
 		<?php } ?>
 	</div>
 	<?php if($style != 'nocaption' && $primaryStyle != 'notext'){ ?>
-	<div class="uslider-texts" style="width: <?php echo $textWidth ?>; margin-left: <?php echo $imageWidth ?>">
+	<div class="uslider-texts">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
 		<div class="uslide-text" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo $slides[$i]['captionBackground'] ?>;color:<?php echo $slides[$i]['captionColor'] ?>">
 			<div class="uslide-editable-text">
@@ -33,7 +33,7 @@ jQuery(function($){
 			item: '.uslide',
 			auto: <?php echo $rotate ?>,
 			auto_height: <?php echo $production ?>,
-			adjust_slide_size: <?php echo $production ?>,
+			adjust_slide_size:  <?php echo $production ?>,
 			effect: '<?php echo $transition ?>',
 			interval: <?php echo $rotateTime * 1000 ?>,
 			show_control: '<?php echo $controlsWhen ?>',
@@ -44,14 +44,49 @@ jQuery(function($){
 	;
 	slider.find('.uslides').upfront_default_slider(options);
 	if(<?php echo $style != 'nocaption' ?>){
+		var texts = slider.find('.uslider-texts');
 		if(<?php echo $style == 'above' ? 1 : 0  ?>){
-			var texts = slider.find('.uslider-texts').detach();
+			texts.detach();
 			slider.prepend(texts);
 		}
-		else if(<?php echo ($style != 'below' && $style != 'right') ? 1 : 0 ?>) {			
-			var texts = slider.find('.uslider-texts').detach();
+		else if(<?php echo ($style != 'below' && $style != 'right' && $style != 'left') ? 1 : 0 ?>) {
+			texts.detach();
 			slider.find('.uslides').prepend(texts);
+		}
+		else if(<?php echo $style == 'left' ? 1 : 0 ?>){
+			texts.detach();
+			slider.prepend(texts);
 		}
 	}
 });
 </script>
+
+<style type="text/css">
+	#uslider-<?php echo $element_id ?> .uslides {
+		width: <?php echo $imageWidth ?>		
+	}
+
+	#uslider-<?php echo $element_id ?> .uslider-texts {
+		width: <?php echo $textWidth ?>;
+	}
+
+	#uslider-<?php echo $element_id ?>.uslider-right .uslider-texts {
+		margin-left: <?php echo $imageWidth ?>;
+	}
+
+	#uslider-<?php echo $element_id ?>.uslider-right .uslides {
+		float: left;
+	}
+
+	#uslider-<?php echo $element_id ?>.uslider-left .uslider-texts {
+		float: left;
+	}
+
+	#uslider-<?php echo $element_id ?>.uslider-left .uslides {
+		margin-left: <?php echo $textWidth ?>
+	}
+	#uslider-<?php echo $element_id ?>.uslider-left .uslide-text,
+	#uslider-<?php echo $element_id ?>.uslider-right .uslide-text {
+		height: <?php echo $imageHeight ?>px;
+	}
+</style>

@@ -22,6 +22,8 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['imageWidth'] = $data['style'] == 'right' ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '';
 		$data['textWidth'] = $data['style'] == 'right' ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '';
+		
+		$data['imageHeight'] = sizeof($slides) ? $slides[0]['cropSize']['height'] : 0;
 
 		$data['production'] = true;
 		$data['startingSlide'] = 0;
@@ -74,6 +76,8 @@ class Upfront_UsliderView extends Upfront_Object {
 
 			'transition' => 'crossfade', // crossfade, slide-left, slide-right, slide-bottom, slide-top
 			'slides' => array(), // Convert to Uslider_Slides to use, and to Object to store
+
+			'captionUseBackground' => '0',
 
 			'rightImageWidth' => 3,
 			'rightWidth' => 6,

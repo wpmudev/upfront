@@ -148,10 +148,11 @@ div.uslide-image img {
 	display: none;
 }
 
+.ui-resizable-autohide .uslider .ui-resizable-handle.ui-resizable-w,
 .ui-resizable-autohide .uslider .ui-resizable-handle.ui-resizable-e {
 	display:none !important;
 }
-
+.uslider .ui-resizable-handle.ui-resizable-w,
 .uslider .ui-resizable-handle.ui-resizable-e {
 	background: #3f5870 url(../../../img/uf-core-el-sprite.svg) no-repeat -697px -70px;
 	border: 2px solid #A1C5E6;
@@ -161,17 +162,47 @@ div.uslide-image img {
 	margin: auto;
 	top: 0;
 	bottom: 0;
-	right: -16px;
 	opacity: .95;
+}
+
+.uslider .ui-resizable-handle.ui-resizable-e {
+	right: -16px;
+}
+
+.uslider .ui-resizable-handle.ui-resizable-w {
+	left: -16px;
 }
 
 .uslider .ui-resizable-handle.ui-resizable-e:hover {
 	opacity: 1;
 }
 
-.uslides.ui-resizable {
+.uslider-right .uslides.ui-resizable {
 	border-right: 1px solid #3f5870;
 }
-.ui-resizable-autohide .uslides.ui-resizable {
-	border-right: 0;
+.ui-resizable-autohide .uslider-right .uslides.ui-resizable {
+	border-right: 1px solid transparent;
+}
+
+.uslider-left .uslides.ui-resizable {
+	border-left: 1px solid #3f5870;
+}
+.ui-resizable-autohide .uslider-left .uslides.ui-resizable {
+	border-left: 1px solid transparent;
+}
+
+.uslider-left .upfront-default-slider-wrap {
+	margin-left: -1px;	
+}
+.uslider-right .upfront-default-slider-wrap {
+	margin-right: -1px;
+}
+
+.uslider-settings .sp-replacer {
+	vertical-align: top;
+	margin-left: 10px;
+}
+
+.uslider-resize-handler {
+	z-index: -10;
 }
