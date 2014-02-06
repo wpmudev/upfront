@@ -365,7 +365,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'wrappers' => array(), 
 				'scope' => "global"
 			), ( is_array($arr) ? $arr : array() ));*/
-		$regions = upfront_get_regions();
+		//$regions = upfront_get_regions();
+		$regions = upfront_get_default_layout(self::$cascade);
 		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
 	
