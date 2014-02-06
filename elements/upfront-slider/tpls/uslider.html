@@ -1,4 +1,4 @@
-<div class="uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?>" id="uslider-<?php echo $element_id ?>">
+<div class="upfront-output-object uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?>" id="uslider-<?php echo $element_id ?>">
 	<?php if($slidesLength){ ?>
 	<div class="uslides">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
@@ -33,7 +33,7 @@ jQuery(function($){
 			item: '.uslide',
 			auto: <?php echo $rotate ?>,
 			auto_height: <?php echo $production ?>,
-			adjust_slide_size:  <?php echo $production ?>,
+			adjust_slide_size: <?php echo $production ?>,
 			effect: '<?php echo $transition ?>',
 			interval: <?php echo $rotateTime * 1000 ?>,
 			show_control: '<?php echo $controlsWhen ?>',
@@ -88,5 +88,10 @@ jQuery(function($){
 	#uslider-<?php echo $element_id ?>.uslider-left .uslide-text,
 	#uslider-<?php echo $element_id ?>.uslider-right .uslide-text {
 		height: <?php echo $imageHeight ?>px;
+	}
+
+	#uslider-<?php echo $element_id ?> .uslide {
+		height: <?php echo $imageHeight ?>px;
+		overflow: hidden;
 	}
 </style>

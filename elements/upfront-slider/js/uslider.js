@@ -236,6 +236,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		if(_.indexOf(['right', 'left'], me.property('style')) != -1){
 			me.setImageResizable();
+			me.$('.uslide-text').css({height: wrapper.height()});
 		}
 
 		//Adapt slider height to the image crop
@@ -596,22 +597,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		this.calculateColumnWidth();
 
-		if(_.indexOf(['nocaption', 'below', 'above', 'right'], style) == -1)
+		if(_.indexOf(['nocaption', 'below', 'above', 'right', 'left'], style) == -1)
 			this.$('.uslider-texts').fadeOut('fast');
 		else if(style == 'right' || style == 'left'){
 			ui.element.resizable('option', {
 				minWidth: me.colWidth * 6
 			});
-			this.$('.uslides').width(this.$('.uslides').width());
+			this.$('.uslides').css({height: 'auto'});
 		}
 	},
 
 	calculateColumnWidth: function(){
-		var columns = this.getElementColumns(),
-			elementWidth = this.$('.upfront-object').outerWidth()
-		;
-
-		this.colWidth = Math.floor(elementWidth / columns);
+		return (this.colWidth = this.get_element_max_columns_px() / this.get_element_max_columns());
 	},
 
 	onElementResize: function(e, ui){
@@ -626,7 +623,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
-			cropSize = {width: mask.width(), height: mask.height()}
+			cropSize = {width: mask.width(), height: mask.height()},
+			style = this.property('style')
 		;
 
 		this.slides.each(function(slide){
@@ -635,6 +633,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		me.cropHeight = cropSize.height;
 
+		if(style == 'left' || style == 'right')
+			this.property('rightImageWidth', Math.max(3, Math.round(cropSize.width / this.colWidth)));
 		this.property('rightWidth', this.get_element_columns());
 
 		me.setTimer();
@@ -648,7 +648,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(starting.length)
 			return starting.outerHeight($('.upfront-resize').height() - 30);
 
-		var style = this.property('style');
+		
 
 		var resizer = $('.upfront-resize'),
 			text = _.indexOf(['below', 'above'], this.property('style'))  != -1 ? this.$('.uslider-texts') : [],
@@ -656,16 +656,53 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
 			current = this.$('.upfront-default-slider-item-current'),
 			id = current.attr('rel'),
-			slide = this.slides.get(id)
+			slide = this.slides.get(id),
+			imageWrapper= current.find('.uslide-image')
 		;
 
-		if(style == 'right')
-			newElementSize.width = current.width();
+		var style = this.property('style');
+		if(style == 'right' || style == "left"){
+			imageWrapper.height(newElementSize.height);
+			this.$('.uslide-text-current').height(newElementSize.height);
+			this.$('.uslides').height(newElementSize.height);
+		}
 
-		this.calculateImageResize(newElementSize, slide);
+		newElementSize.width = current.width();
+
+		this.calculateImageResize({width: imageWrapper.width(), height: imageWrapper.height()}, slide);
 	},
 
 	calculateImageResize: function(wrapperSize, slide){
+		var img = this.$('.uslide[rel=' + slide.id + ']').find('img'),
+			currentPosition = img.position(),
+			imgSize = slide.get('size'),
+			imgMargins = slide.get('cropOffset'),
+			imgPosition = {top: - imgMargins.top, left: - imgMargins.left},
+			imgRatio = imgSize.width / imgSize.height,
+			wrapperRatio = wrapperSize.width / wrapperSize.height,
+			pivot = imgSize.width / imgSize.height > wrapperSize.width / wrapperSize.height ? 'height' : 'width',
+			other = pivot == 'height' ? 'width' : 'height'
+		;
+
+		if(pivot == 'height' && wrapperSize.height > imgSize.height)
+			img.css({width: 'auto', height: '100%', top: 0});
+		else if(pivot == 'width' && wrapperSize.width > imgSize.width)
+			img.css({width: '100%',	height: 'auto',	left: 0});
+		else
+			img.css({
+				height: imgSize.height,
+				width: imgSize.width,
+				top: Math.max(imgPosition.top, currentPosition.top),
+				left: Math.max(imgPosition.left, currentPosition.left)
+			});
+
+		return {
+			size: {width: img.width(), height: img.height()},
+			cropOffset: {left: 0-img.position().left, top: 0-img.position().top}
+		};
+	},
+
+	calculateImageResizeOld: function(wrapperSize, slide){
 		var img = this.$('.uslide[rel=' + slide.id + ']').find('img'),
 			imgSize = slide.get('size'),
 			position = slide.get('cropOffset')

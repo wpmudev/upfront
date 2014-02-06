@@ -20,8 +20,10 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['slidesLength'] = sizeof($slides);
 
-		$data['imageWidth'] = $data['style'] == 'right' ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '';
-		$data['textWidth'] = $data['style'] == 'right' ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '';
+		$side_style = $data['style'] == 'right' || $data['style'] == 'left';
+
+		$data['imageWidth'] = $side_style ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '';
+		$data['textWidth'] =  $side_style ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '';
 		
 		$data['imageHeight'] = sizeof($slides) ? $slides[0]['cropSize']['height'] : 0;
 
