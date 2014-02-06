@@ -918,7 +918,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var moduleModel = this.parent_module_view.model;
 		if(result.elementSize){
 			console.log(result.elementSize);
-			this.set_element_size(result.elementSize.columns, result.elementSize.rows);
+			this.set_element_size(result.elementSize.columns, result.elementSize.rows, 'all', true);
 		}
 
 		this.temporaryProps = false;

@@ -601,8 +601,8 @@ define([
 			get_element_max_rows_px: function ( axis ) {
 				return this.get_element_max_size_px(axis).row;
 			},
-			set_element_size: function (col, row, axis) {
-				return Upfront.Behaviors.GridEditor.resize(this.parent_module_view, this.parent_module_view.model, col, row, axis);
+			set_element_size: function (col, row, axis, force) {
+				return Upfront.Behaviors.GridEditor.resize(this.parent_module_view, this.parent_module_view.model, col, row, axis, force);
 			}
 /*
 			// Create a ckeditor instance when any contenteditable element receives focus for the first time.
