@@ -2920,6 +2920,68 @@ var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
 	}
 });
 
+// Context Menu for the Image element
+var ImageMenuList = Upfront.Views.ContextMenuList.extend({
+	initialize: function() {
+		this.constructor.__super__.initialize.call(this, arguments);
+		var me = this;
+		var menuitemsarray = [
+          new Upfront.Views.ContextMenuItem({
+			  get_label: function() {
+				  if(me.for_view.$el.find('div.upfront-image-container > img').length > 0)
+				  	return 'Edit Image';
+				  else
+				  	return 'Add Image';
+			  },
+			  action: function() {
+				   if(me.for_view.$el.find('div.upfront-image-container > img').length > 0)
+				  		me.for_view.editRequest();
+				   else
+						me.for_view.openImageSelector();
+					
+			  }
+		  })		  
+        ];
+		
+		if(this.for_view.$el.find('div.upfront-image-container > img').length > 0) {
+			menuitemsarray.push( new Upfront.Views.ContextMenuItem({
+				  get_label: function() {
+					  if(me.for_view.$el.find('div.upfront-image-container div.wp-caption').length > 0)
+						return 'Edit Caption';
+					  else
+					  	return 'Add Caption';
+				  },
+				  action: function() {
+					  if(me.for_view.$el.find('div.upfront-image-container > div.wp-caption').length > 0)
+						  me.for_view.$el.find('div.upfront-image-container > div.wp-caption').data("ueditor").start();
+					  else {
+						 me.for_view.controls.items.value()[2].selected='topOver';
+						 me.for_view.controls.items.value()[2].trigger('select');
+						
+						 me.for_view.property('include_image_caption', [1]);
+						 me.for_view.property('caption_position', 'over_image');
+						 me.for_view.property('caption_alignment', 'top');
+						 me.for_view.render(); 
+						
+					  }
+						
+				  }
+			  }));
+		}
+		 
+		this.menuitems = _(menuitemsarray);
+	}
+});
+
+var ImageMenu = Upfront.Views.ContextMenu.extend({
+	initialize: function() {
+		this.constructor.__super__.initialize.call(this, arguments);
+		this.menulists = _([
+          new ImageMenuList({for_view: this.for_view})
+        ]);	
+	}
+});
+
 Upfront.Views.Editor.InlinePanels.MultiControl = MultiControl;
 Upfront.Views.Editor.InlinePanels.Control = Control;
 Upfront.Views.Editor.InlinePanels.ControlPanel = ControlPanel;
@@ -2928,7 +2990,8 @@ Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Model": UimageModel,
 	"View": UimageView,
 	"Element": ImageElement,
-	"Settings": ImageSettings
+	"Settings": ImageSettings,
+	"ContextMenu": ImageMenu
 });
 
 Upfront.Views.Editor.ImageEditor = new ImageEditor();

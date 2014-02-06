@@ -281,7 +281,7 @@ var LayoutEditor = new (Subapplication.extend({
 				
 			context_menu_view = new current_object.ContextMenu({
 				model: view.model,
-				anchor: current_object.anchor,
+				for_view: view,
 				el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
 			})
 		;

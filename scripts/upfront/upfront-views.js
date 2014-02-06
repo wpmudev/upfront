@@ -400,25 +400,21 @@ define([
 
 		ContextMenuList = Backbone.View.extend({
 			tagName: 'ul',
-			initialize: function (opts) {
-				var me = this;
-				this.menuitems = opts.menuitems ? _(opts.menuitems) : _([]);
-				this.menuitems.each(function(menuitem){
-					menuitem.menulist = me;
-				});
-
+			initialize: function () {
+				this.for_view = this.options.for_view;
 			},
 			
 			render: function () {
 				var me = this;
 				this.$el.empty();
 				this.menuitems.each(function(menuitem) {
-					if ( ! menuitem.menulist )
-						menuitem.menulist = me;
-					menuitem.for_view = me.for_view;
-					menuitem.render();
-					menuitem.parent_view = me;
-					me.$el.append(menuitem.el);
+
+						if ( ! menuitem.menulist )
+							menuitem.menulist = me;
+						menuitem.for_view = me.for_view;
+						menuitem.render();
+						menuitem.parent_view = me;
+						me.$el.append(menuitem.el);
 				});
 			}
 			
@@ -459,6 +455,9 @@ define([
 			
 		}),
 		ContextMenu = Backbone.View.extend({
+			initialize: function() {
+				this.for_view = this.options.for_view;
+			},
 			render: function () {
 				var me = this;
 
@@ -504,7 +503,7 @@ define([
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
 				"dblclick": "on_edit",
-				"contextmenu .upfront-object": "on_context_menu"
+				"contextmenu": "on_context_menu"
 			},
 			initialize: function () {
 				// this.model.get("properties").bind("change", this.render, this);

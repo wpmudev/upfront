@@ -389,7 +389,7 @@ Upfront.Application.LayoutEditor.add_object("Image", {
 	"Model": ImageModel,
 	"View": ImageView,
 	"Element": ImageElement,
-	"Settings": ImageSettings
+	"Settings": ImageSettings,
 });
 Upfront.Models.ImageModel = ImageModel;
 Upfront.Views.ImageView = ImageView;
