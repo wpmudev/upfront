@@ -1098,7 +1098,10 @@ define([
 					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					height = 0;
 				$regions.each(function(){
-					$(this).css('min-height', min_height);
+					if ( min_height > 0 )
+						$(this).css('min-height', min_height);
+					else
+						$(this).css('min-height', '');
 					var h = $(this).outerHeight();
 					height = h > height ? h : height;
 				});
@@ -1261,8 +1264,10 @@ define([
 				}
 				if ( col && col != this.col )
 					this.region_resize(col);
-				if ( height )
+				if ( height > 0 )
 					this.$el.css('min-height', height + 'px');
+				else
+					this.$el.css('min-height', '');
 				if ( expand_lock )
 					this.$el.addClass('upfront-region-expand-lock');
 				else
