@@ -90,43 +90,6 @@ class Upfront_Ajax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
 
-	function build_preview () {
-		global $post;
-
-		$raw_data = stripslashes_deep($_POST);
-		$data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-
-		$current_url = !empty($raw_data['current_url']) ? $raw_data['current_url'] : home_url();
-		$current_url = wp_validate_redirect(wp_sanitize_redirect($current_url), false);
-		$current_url = $current_url ? $current_url : home_url();
-
-		$layout = Upfront_Layout::from_json($data);
-		$json = $layout->to_php();
-
-		// Save temporary layout
-		$sfx = md5(serialize($json));
-		$key = Upfront_PreviewListener::HOOK . "-{$sfx}";
-		set_transient($key, $json, HOUR_IN_SECONDS);
-
-		$preview_url = add_query_arg(array(
-			Upfront_PreviewListener::HOOK => $sfx,
-		), $current_url);
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			'html' => $preview_url,
-		)));
-		/*
-		$request = wp_remote_get($preview_url, array(
-			'sslverify' => false,
-		));
-		if (200 != wp_remote_retrieve_response_code($request)) $this->_out(new Upfront_JsonResponse_Error("Couldn't connect to preview"));
-		$body = wp_remote_retrieve_body($request);
-
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			'html' => $body,
-		)));
-		*/
-	}
-
 	function save_layout () {
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
@@ -506,36 +469,75 @@ class Upfront_ElementStyles extends Upfront_Server {
 }
 
 
-class Upfront_PreviewListener implements IUpfront_Server {
+/**
+ * Layout revisions handling controller.
+ * For actual data/storage mapping, @see Upfront_LayoutRevisions
+ */
+class Upfront_Server_LayoutRevisions extends Upfront_Server {
 
 	const HOOK = 'uf-preview';
 
-	private function __construct () {
-
-	}
+	private $_data;
 
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
 	}
 
-	public static function is_preview () {
-		return !empty($_GET[self::HOOK]);
-	}
-
 	private function _add_hooks () {
+		add_action('init', array($this, 'register_requirements'));
+
+		// Layout revisions AJAX handers
+		add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
+		add_action('wp_ajax_upfront_list_revisions', array($this, "list_revisions"));
+
+		// Cron request handlers
+		add_action('upfront_hourly_schedule', array($this, 'clean_up_deprecated_revisions'));
+
+		// Preview listener setup
 		if (is_admin()) return false;
 		if (!self::is_preview()) return false;
 		// Apply default regions
 		add_filter('upfront_regions', array($this, 'intercept_layout_loading'), 999, 2);
 	}
 
+	/**
+	 * Registering model requirements. Should probably refactor.
+	 */
+	public function register_requirements () {
+		register_post_type(Upfront_LayoutRevisions::REVISION_TYPE, array(
+			"public" => false,
+			"supports" => false,
+			"has_archive" => false,
+			"rewrite" => false,
+		));
+		$this->_data = new Upfront_LayoutRevisions;
+	}
+
+	public function clean_up_deprecated_revisions () {
+		$revisions = $this->_data->get_all_deprecated_revisions();
+		if (empty($revisions)) return false;
+
+		foreach ($revisions as $revision) {
+			$this->_data->drop_revision($revision->ID);
+		}
+	}
+
+	/**
+	 * Are we serving a preview request?
+	 * @return bool
+	 */
+	public static function is_preview () {
+		return !empty($_GET[self::HOOK]);
+	}
+
+	/**
+	 * Intercepts layout loading and overrides with revision data.
+	 */
 	public function intercept_layout_loading ($layout, $cascade) {
 		if (!self::is_preview()) return $layout;
-		$sfx = $_GET[self::HOOK];
-		$key = self::HOOK . "-{$sfx}";
-		$raw = get_transient($key);
-
+		$key = $_GET[self::HOOK];
+		$raw = $this->_data->get_revision($key);
 		if (!empty($raw)) {
 			$new_layout = Upfront_Layout::from_php($raw);
 		}
@@ -546,5 +548,88 @@ class Upfront_PreviewListener implements IUpfront_Server {
 		;
 	}
 
+	/**
+	 * Outputs revisions JSON data, or JSON error.
+	 */
+	public function list_revisions () {
+		$data = stripslashes_deep($_POST);
+		$cascade = !empty($data['cascade']) ? $data['cascade'] : false;
+		if (empty($cascade)) $this->_out(new Upfront_JsonResponse_Error("No data received"));
+
+		$current_url = !empty($data['current_url']) ? $data['current_url'] : home_url();
+		$current_url = wp_validate_redirect(wp_sanitize_redirect($current_url), false);
+		$current_url = $current_url ? $current_url : home_url();
+
+		$revisions = $this->_data->get_entity_revisions($cascade);
+		if (empty($revisions)) $this->_out(new Upfront_JsonResponse_Error("No revisions for this entity"));
+
+		$out = array();
+		$datetime = get_option("date_format") . "@" . get_option("time_format");
+		foreach ($revisions as $revision) {
+			$display_name = '';
+			if (!empty($revision->post_author)) {
+				$user = get_user_by('id', $revision->post_author);
+				if (!empty($user->display_name)) $display_name = $user->display_name;
+			}
+			$out[] = array(
+				'date_created' => mysql2date($datetime, $revision->post_date),
+				'preview_url' => add_query_arg(array(
+					self::HOOK => $revision->post_name,
+				), $current_url),
+				'created_by' => array(
+					'user_id' => $revision->post_author,
+					'display_name' => $display_name,
+				),
+			);
+		}
+		$this->_out(new Upfront_JsonResponse_Success($out));
+	}
+
+	/**
+	 * Builds preview layout model and dispatches save.
+	 */
+	public function build_preview () {
+		global $post;
+
+		$raw_data = stripslashes_deep($_POST);
+		$data = !empty($raw_data['data']) ? $raw_data['data'] : '';
+
+		$current_url = !empty($raw_data['current_url']) ? $raw_data['current_url'] : home_url();
+		$current_url = wp_validate_redirect(wp_sanitize_redirect($current_url), false);
+		$current_url = $current_url ? $current_url : home_url();
+
+		$layout = Upfront_Layout::from_json($data);
+		$layout_id_key = $this->_data->save_revision($layout);
+
+		$preview_url = add_query_arg(array(
+			self::HOOK => $layout_id_key,
+		), $current_url);
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'html' => $preview_url,
+		)));
+	}
+
 }
-Upfront_PreviewListener::serve();
+Upfront_Server_LayoutRevisions::serve();
+
+
+/**
+ * Dictates scheduled (web cron) runs.
+ */
+class Upfront_Server_Schedule implements IUpfront_Server {
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		// Debug line
+		//add_action('init', create_function('', "do_action('upfront_hourly_schedule');"), 999); return false;
+		// Sets up hourly schedule
+		if (!wp_next_scheduled('upfront_hourly_schedule')) {
+			wp_schedule_event(time(), 'hourly', 'upfront_hourly_schedule');
+		}
+	}
+}
+Upfront_Server_Schedule::serve();

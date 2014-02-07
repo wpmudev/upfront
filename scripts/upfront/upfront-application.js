@@ -111,8 +111,7 @@ var LayoutEditor = new (Subapplication.extend({
   },
 
 	preview_layout: function () {
-		var //data = Upfront.Util.model_to_json(this.layout),
-			preview = false,
+		var preview = false,
 			url = false
 		;
 		url = Upfront.PreviewUpdate.preview_url();
@@ -121,31 +120,29 @@ var LayoutEditor = new (Subapplication.extend({
 			return false;
 		}
 		preview = window.open(url, "_blank");
-		/*
-		data.layout = _upfront_post_data.layout;
-		data.preferred_layout = this.layout.get("current_layout");
-		data = JSON.stringify(data, undefined, 2);
+	},
 
-		//preview = window.open("", "", "height=600,width=800,scrollbars=1,location=no,menubar=no,resizable=1,status=no,toolbar=no");
-		preview.document.write("<p>Saving your temporary changes, please wait...</p>");
-
-		Upfront.Util.post({action: "upfront_build_preview", "data": data, "current_url": window.location.href})
-			.success(function (response) {
-				var data = response.data || {};
-				preview.document.write("<p>Changes saved, building preview</p>");
-				if ("html" in data && data.html) {
-					preview.location = data.html;
-				} else {
-					Upfront.Util.log("Invalid response");
-					preview.close();
-				}
+	list_revisions: function () {
+		var data = {
+			action: "upfront_list_revisions",
+			cascade:  _upfront_post_data.layout,
+			current_url: window.location.href
+		};
+		Upfront.Util.post(data)
+			.done(function (resp) {
+				Upfront.Popup.open(function () {
+					var tpl = _.template(
+						'<h3>Revisions</h3><ul>{[ _.each(data, function (item) { ]}' +
+							'<li><a target="_blank" href="{{item.preview_url}}">{{item.date_created}}</a><br /><small>created by {{item.created_by.display_name}}</small></li>' +
+						'{[ }); ]}</ul>'
+					);
+					$(this).html(tpl(resp));
+				});
 			})
-			.error(function () {
-				Upfront.Util.log("error building layout preview");
-				preview.close();
+			.error(function (resp) {
+				console.log(resp);
 			})
 		;
-		*/
 	},
 
 	destroy_editor: function () {
@@ -174,7 +171,7 @@ var LayoutEditor = new (Subapplication.extend({
 			}));
 
 			Upfront.Application.sidebar.render();
-		}
+		};
 		_set_up_draggables();
 		Upfront.Events.on("elements:requirements:async:added", _set_up_draggables, this);
 	},
