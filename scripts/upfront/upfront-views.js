@@ -909,7 +909,6 @@ define([
 				"click .upfront-region-edit-trigger": "trigger_edit",
 				"click .upfront-region-finish-edit": "close_edit" ,
 				"contextmenu": "on_context_menu",
-				"click": "remove_context_menu",
 				"mouseover": "update_pos"
 			},
 			attributes: function(){
