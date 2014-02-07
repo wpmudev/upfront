@@ -1,11 +1,11 @@
-<div class="upfront-output-object uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?>" id="uslider-<?php echo $element_id ?>">
+<div class="upfront-output-object uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?> <?php echo $captionUseBackground == '1' ? 'uslider-caption-background' : '' ?>" id="uslider-<?php echo $element_id ?>">
 	<?php if($slidesLength){ ?>
 	<div class="uslides">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
 		<div class="uslide" rel="<?php echo $slides[$i]['id'] ?>" style="">
 			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link">
 				<div class="uslide-image">
-					<img src="<?php echo $slides[$i]['src'] ?>" style="width:100%">
+					<img src="<?php echo $slides[$i]['src'] ?>" style="min-width:100%, min-height:100%">
 				</div>
 			</a>
 		</div>	
@@ -14,7 +14,7 @@
 	<?php if($style != 'nocaption' && $primaryStyle != 'notext'){ ?>
 	<div class="uslider-texts">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
-		<div class="uslide-text" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo $slides[$i]['captionBackground'] ?>;color:<?php echo $slides[$i]['captionColor'] ?>">
+		<div class="uslide-text" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo $captionUseBackground == '1' ? $slides[$i]['captionBackground'] : 'transparent' ?>;color:<?php echo $slides[$i]['captionColor'] ?>">
 			<div class="uslide-editable-text">
 				<?php echo $slides[$i]['text'] ?>				
 			</div>
@@ -65,7 +65,9 @@ jQuery(function($){
 	#uslider-<?php echo $element_id ?> .uslides {
 		width: <?php echo $imageWidth ?>		
 	}
-
+	#uslider-<?php echo $element_id ?>.uslider-caption-background .uslide-text {
+		padding: 15px;
+	}
 	#uslider-<?php echo $element_id ?> .uslider-texts {
 		width: <?php echo $textWidth ?>;
 	}
