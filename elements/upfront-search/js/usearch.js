@@ -42,7 +42,7 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 			image = '<i class="icon-search"></i>'
 		;
 		return 	'<input type="search" name="s" class="search-field" value="" placeholder="'+(placeholder ? placeholder_text : "")+'" />' +
-				'<button class="search-button">' + (label == '__image__' || !label ? image : label) + '</button>';
+				((label != '')?'<button class="search-button' + (label == '__image__' || !label ? ' image' : '') + '">' + (label == '__image__' || !label ? image : label) + '</button>':'');
 	},
 
 	on_render: function () {
@@ -150,6 +150,7 @@ var UsearchFieldSetting_Placeholder = Upfront.Views.Editor.Settings.Item.extend(
 	 * Set up setting item appearance.
 	 */
 	render: function () {
+		var me = this;
 		var placeholder = this.model.get_property_value_by_name("placeholder"),
 			placeholder_text = placeholder || 'Search'
 		;
@@ -160,11 +161,27 @@ var UsearchFieldSetting_Placeholder = Upfront.Views.Editor.Settings.Item.extend(
 			"markup": '<input type="radio" id="search-placeholder-none" name="search_placeholder" value="" ' + (!placeholder ? 'checked="checked"' : '') + ' /> None' +
 				'<br />' +
 				'<input type="radio" id="search-placeholder-normal" name="search_placeholder" value="' + placeholder_text + '" ' + (placeholder ? 'checked="checked"' : '') + ' /> ' +
-					'<span class="search-search_placeholder" contenteditable="true">' + placeholder_text + '</span>'
+					'<span class="search-search_placeholder'+(placeholder ? ' active' : '')+'" contenteditable="true">' + placeholder_text + '</span>'
 		});
+		
+		
+		this.$el.find(".search-search_placeholder").on('click', function() {
+			$(this).trigger('input');
+		});
+		
 		this.$el.find(".search-search_placeholder").on("input", function () {
 			$("#search-placeholder-normal").val($(this).text()).attr("checked", true);
+			$(this).addClass('active');
 		});
+		
+		this.$el.on("change", '#search-placeholder-normal, #search-placeholder-none', function() {
+				
+			if($(this).attr('id') == 'search-placeholder-normal' && $(this).prop('checked'))
+				me.$el.find(".search-search_placeholder").addClass('active');
+			else
+				me.$el.find(".search-search_placeholder").removeClass('active');
+		});
+
 	},
 	/**
 	 * Defines under which Property name the value will be saved.
@@ -195,10 +212,11 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
 	 * Set up setting item appearance.
 	 */
 	render: function () {
+		var me = this;
 		var value = this.model.get_property_value_by_name("label"),
-			value_text = '__image__' == value || !value ? 'Custom text' : value,
+			value_text = '__image__' == value || '' == value || !value ? 'Custom text' : value,
 			image = '<label for="search_type-image"><i class="icon-search"></i> Image</label>',
-			text = '<span class="search-search_text" contenteditable="true">' + value_text + '</span>'
+			text = '<span class="search-search_text' + ((value !='' && value != '__image__') ? ' active' : '') + '" contenteditable="true">' + value_text + '</span>'
 		;
 		// Wrap method accepts an object, with defined "title" and "markup" properties.
 		// The "markup" one holds the actual Item markup.
@@ -206,11 +224,28 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
 			"title": "Button content",
 			"markup": '<input type="radio" id="search_type-image" name="search_type" value="__image__" ' + (value == '__image__' ? 'checked="checked"' : '') + ' /> ' + image +
 				'<br />' +
-				'<input type="radio" id="search_type-text" name="search_type" value="' + value_text + '" ' + (value != '__image__' ? 'checked="checked"' : '') + ' /> ' + text
+				'<input type="radio" id="search_type-text" name="search_type" value="' + value_text + '" ' + ((value !='' && value != '__image__') ? 'checked="checked"' : '') + ' /> ' + text +
+				'<br />' +
+				'<input type="radio" id="search_type-none" name="search_type" value="" ' + (value == '' ? 'checked="checked"' : '') + ' /> <span>No Button</span>'
 		});
+		
+		this.$el.find(".search-search_placeholder").on('click', function() {
+			$(this).trigger('input');
+		});
+		
 		this.$el.find(".search-search_text").on("input", function () {
 			$("#search_type-text").val($(this).text()).attr("checked", true);
+			$(this).addClass('active');
 		});
+		
+		this.$el.on("change", '#search_type-image, #search_type-text, #search_type-none', function() {
+				
+			if($(this).attr('id') == 'search_type-text' && $(this).prop('checked'))
+				me.$el.find(".search-search_text").addClass('active');
+			else
+				me.$el.find(".search-search_text").removeClass('active');
+		});
+		
 	},
 	/**
 	 * Defines under which Property name the value will be saved.

@@ -4061,6 +4061,28 @@ box-shadow: inset 0 2px 0 0 #fff;
 	color: #fff;
 }
 
+span.search-search_placeholder.active, span.search-search_text.active {
+	font-size: 0.8em;
+	background-color: #fff;
+	padding: 0 6px;
+	border: 1px solid rgb(195, 216, 236);
+}
+i.icon-search {
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	background-position: -1182px -82px;
+	vertical-align:middle;
+}
+
+button.search-button.image {
+	padding: 0;
+	vertical-align: middle;
+	display: inline-block;
+	margin-top: -7px;
+}
+
 /* Tax */
 .upfront-taxonomy-hierarchical #upfront-taxonomy-list {
 	padding: 30px;
