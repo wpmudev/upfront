@@ -1497,7 +1497,7 @@ var GridEditor = {
 			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
-			delay: 0,
+			delay: 300,
 			appendTo: $main,
 			start: function(e, ui){
 				ed.time_start('drag start');

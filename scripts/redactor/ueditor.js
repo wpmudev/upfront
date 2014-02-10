@@ -116,7 +116,7 @@ var hackRedactor = function(){
 
 
 		var hideHandler = $.proxy(function(doc) {
-			$(doc).on('mousedown.redactor', $.proxy(function (e) {
+			$(doc).on('mouseup.redactor', $.proxy(function (e) {
 				if ($(e.target).closest(this.$toolbar).length === 0) {
 					if (!this.getSelectionText()) {
 						this.$air.fadeOut(100);

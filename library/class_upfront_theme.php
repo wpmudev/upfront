@@ -351,7 +351,8 @@ class Upfront_Virtual_Region {
 	}
 
 	public function add_side_region(Upfront_Virtual_Region $r, $left = true) {
-		$r->container = $this->name;
+		$r->container = $this;
+		$r->data['container'] = $this->data['name'];
 		$r->data['position'] = $left ? -1 : 1;
 		$this->side_regions[] = $r;
 	}
@@ -438,7 +439,7 @@ class Upfront_Layout_Maker {
 				$region['position'] = $post_main ? 20 : 1;
 
 			$regions[] = $region;
-
+			
 			foreach($r->side_regions as $sr){
 				$sidedata = $sr->get_data();
 				$sidedata['position'] += $region['position'];

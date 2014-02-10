@@ -269,7 +269,7 @@ define([
 			on_click: function () {
 				this.activate();
 				Upfront.Events.trigger("entity:contextmenu:deactivate", this);
-				return false;
+				//return false;
 			},
 			deactivate: function () {
 				this.$el.removeClass("upfront-active_entity");
@@ -277,17 +277,23 @@ define([
 				this.trigger("upfront:entity:deactivate", this);
 			},
 			activate: function () {
-				var currentEntity = Upfront.data.currentEntity;
+				var me= this,
+					currentEntity = Upfront.data.currentEntity
+				;
 				if (this.activate_condition && !this.activate_condition()) return false;
 				if(currentEntity && currentEntity != this){
+					//If the current entity is my child we are ok
+					if(Upfront.data.currentEntity.$el.closest(me.$el).length)
+						return;
 					Upfront.data.currentEntity.trigger('deactivated');
+					Upfront.data.currentEntity.$el.removeClass('upfront-active_entity');
 				}
-				else {
-					if(this instanceof ObjectView)
-					    Upfront.data.currentEntity = this;
-					this.trigger("activated", this);
-				}
-				$(".upfront-active_entity").removeClass("upfront-active_entity");
+
+				if(this instanceof ObjectView)
+					Upfront.data.currentEntity = this;
+				this.trigger("activated", this);
+
+				//$(".upfront-active_entity").removeClass("upfront-active_entity");
 				this.$el.addClass("upfront-active_entity");
 				//return false;
 			},
@@ -303,7 +309,8 @@ define([
 				this.event = e;
 				Upfront.Events.trigger("entity:contextmenu:activate", this);
 			},
-			on_settings_click: function () {
+			on_settings_click: function (e) {
+				e.preventDefault();
 				Upfront.Events.trigger("entity:settings:activate", this);
 			},
 			check_deactivated: function (){
@@ -1035,7 +1042,7 @@ define([
 				this.trigger("activate_region", this);
 				Upfront.Events.on("command:newpage:start", this.close_edit, this);
 				Upfront.Events.on("command:newpost:start", this.close_edit, this);
-				e.stopPropagation();
+				//e.stopPropagation();
 			},
 			close_edit: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
@@ -1207,8 +1214,7 @@ define([
 				}
 			},
 			on_click: function (e) {
-				if ( this.$el.hasClass('upfront-region-active') )
-					e.stopPropagation();
+
 			},
 			on_mouse_up: function () {
 				this.trigger("activate_region", this);
@@ -1490,19 +1496,24 @@ define([
 				this.$("section").append(local_view.el);
 				Upfront.Events.trigger("layout:after_render");
 			},
-			on_click: function () {
-				// Deactivate settings on clicking anywhere in layout
-				Upfront.Events.trigger("entity:settings:deactivate");
+			on_click: function (e) {
+				var currentEntity = Upfront.data.currentEntity;
+				// Deactivate settings on clicking anywhere in layout, but the settings button
+				if(!$(e.target).closest('.upfront-entity_meta').length)
+					Upfront.Events.trigger("entity:settings:deactivate");
 				Upfront.Events.trigger("entity:contextmenu:deactivate");
-				// Deactivate element
-				$(".upfront-active_entity").removeClass("upfront-active_entity");
-				if(Upfront.data.currentEntity){
-					Upfront.data.currentEntity.trigger('deactivated');
-					Upfront.data.currentEntity = false;
+				if(currentEntity){
+					//If the click has been made outside the currentEntity, deactivate it
+					if(!$(e.target).closest(currentEntity.el).length){
+						currentEntity.trigger('deactivated');
+						currentEntity.$el.removeClass("upfront-active_entity");
+						Upfront.Events.trigger("entity:deactivated");
+						Upfront.data.currentEntity = false;
+					}
 				}
-				Upfront.Events.trigger("entity:deactivated");
-				// Close region editing on click anywhere
-				Upfront.Events.trigger("entity:region:deactivated");
+				// Close region editing on click anywhere out the region
+				if(!$(e.target).closest('.upfront-region-container-active').length || !$(e.target).closest('.upfront-inline-panels'))
+					Upfront.Events.trigger("entity:region:deactivated");
 			}
 		})
 	;
