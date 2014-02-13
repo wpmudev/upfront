@@ -304,7 +304,14 @@ define(function() {
 		_preview_url = false,
 		run = function (layout) {
 			_layout = layout;
+			_is_dirty = false;
 
+			rebind_events();
+
+			// Bind beforeunload event listener
+			window.onbeforeunload = warn;
+		},
+		rebind_events = function(){
 			Upfront.Events.off("entity:region:deactivated", save);
 			Upfront.Events.off("entity:settings:deactivate", save);
 			Upfront.Events.off("entity:removed:after", save);
@@ -321,8 +328,6 @@ define(function() {
 			Upfront.Events.on("entity:module:after_render", save, this);
 			Upfront.Events.on("upfront:element:edit:stop", save, this);
 
-			// Bind beforeunload event listener
-			window.onbeforeunload = warn;
 			Upfront.Events.off("command:layout:save_success", clear);
 			Upfront.Events.on("command:layout:save_success", clear);
 		},
@@ -378,7 +383,8 @@ define(function() {
 	;
 	return {
 	  run: run,
-	  preview_url: get_preview_url
+	  preview_url: get_preview_url,
+	  rebind_events: rebind_events
 	}
 
   };

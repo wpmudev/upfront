@@ -2,7 +2,7 @@
 
 
 abstract class Upfront_EntityResolver {
-	
+
 	/**
 	 * Dispatches resolving the specified Upfront ID cascade into searchable ID array.
 	 * @param array Common Upfront ID cascade
@@ -26,7 +26,7 @@ abstract class Upfront_EntityResolver {
 	}
 
 	/**
-	 * Dispatches resolving the current specific WordPress entity 
+	 * Dispatches resolving the current specific WordPress entity
 	 * into a common Upfront ID cascade.
 	 * @return array Common Upfront ID cascade
 	 */
@@ -42,18 +42,18 @@ abstract class Upfront_EntityResolver {
 	 */
 	public static function resolve_singular_entity ($query=false) {
 		$query = self::_get_query($query);
-		
+
 		$wp_entity = array();
 		$wp_object = $query->get_queried_object();
 		$wp_id = $query->get_queried_object_id();
-		
+
 		if (!$wp_id && $query->is_404) {
 			$wp_entity = self::_to_entity('404_page');
 		} else {
 			$post_type = !empty($wp_object->post_type) ? $wp_object->post_type : 'post';
 			$wp_entity = self::_to_entity($post_type, $wp_id);
 		}
-		
+
 		$wp_entity['type'] = 'single';
 		return $wp_entity;
 	}
@@ -74,16 +74,16 @@ abstract class Upfront_EntityResolver {
 				$term = !empty($query['terms']) ? $query['terms'] : false;
 			}
 			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
-		
+
 		} else if (!empty($query->is_archive) && !empty($query->is_date)) {
 			// Next, date queries
 			$date = $query->get('m');
 			$wp_entity = self::_to_entity('date', $date);
-		
+
 		} else if (!empty($query->is_search)) {
 			// Next, search page
 			$wp_entity = self::_to_entity('search', $query->get('s'));
-		
+
 		} else if (!empty($query->is_archive) && !empty($query->is_author)) {
 			// Next, author archives
 			$wp_entity = self::_to_entity('author', $query->get('author'));
@@ -104,6 +104,7 @@ abstract class Upfront_EntityResolver {
 		//We need to cheat telling WP we are not in admin area to parse the URL properly
 		$current_uri = $_SERVER['REQUEST_URI'];
 		$self = $_SERVER['PHP_SELF'];
+		$get = $_GET;
 		global $current_screen;
 		if($current_screen){
 			$stored_current_screen = $current_screen->id;
@@ -116,15 +117,30 @@ abstract class Upfront_EntityResolver {
 		$_SERVER['REQUEST_URI'] = $url;
 		$_SERVER['PHP_SELF'] = 'foo';
 
+		$urlParts = explode('?', $url);
+
+		if($urlParts > 1){
+			parse_str($urlParts[1], $_GET);
+		}
+
+
 		$wp->parse_request();
 
 
 		$query = new WP_Query($wp->query_vars);
 		$query->parse_query();
 
-		
+		//Set the global post in case that no-one is set and we have a single query
+		global $post;
+		if(!$post && $query->have_posts() && $query->is_singular()){
+			$post = $query->next_post();
+			setup_postdata($post);
+		}
+
+
 		$_SERVER['REQUEST_URI'] = $current_uri;
 		$_SERVER['PHP_SELF'] = $self;
+		$_GET = $get;
 
 		if(isset($stored_current_screen))
 			$current_screen = $current_screen::get($stored_current_screen);
@@ -134,7 +150,7 @@ abstract class Upfront_EntityResolver {
 		return $cascade;
 	}
 
-	
+
 	private static function _get_query ($query) {
 		if (!$query || !($query instanceof WP_Query)) {
 			global $wp_query;
@@ -162,7 +178,7 @@ abstract class Upfront_Model {
 
 	protected $_name;
 	protected $_data;
-	
+
 	abstract public function initialize ();
 	abstract public function save ();
 	abstract public function delete ();
@@ -216,7 +232,7 @@ abstract class Upfront_JsonModel extends Upfront_Model {
 		$this->initialize();
 		self::$instance = $this;
 	}
-	
+
 	public function get_instance () {
 		return self::$instance;
 	}
@@ -243,9 +259,9 @@ abstract class Upfront_JsonModel extends Upfront_Model {
 
 
 class Upfront_Layout extends Upfront_JsonModel {
-	
+
 	protected static $cascade;
-	
+
 	public static function from_entity_ids ($cascade) {
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
@@ -287,7 +303,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		return self::from_php($data);
 	}
-	
+
 	public static function get_regions_data () {
 		$regions = self::_get_regions();
 		foreach ( $regions as $i => $region ) {
@@ -309,73 +325,73 @@ class Upfront_Layout extends Upfront_JsonModel {
 		);
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
-	
+
 	protected static function _get_regions ($all = false) {
 		$regions = array();
 		do_action('upfront_get_regions', self::$cascade);
 		/*if ( $all || ($arr = upfront_region_supported('header')) )
 			$regions[] = array_merge(array(
-				'name' => "header", 
-				'title' => __("Header Area"), 
-				'properties' => array(), 
-				'modules' => array(), 
-				'wrappers' => array(), 
+				'name' => "header",
+				'title' => __("Header Area"),
+				'properties' => array(),
+				'modules' => array(),
+				'wrappers' => array(),
 				'scope' => "global"
 			), ( is_array($arr) ? $arr : array() ));
 		if ( $all || ($arr = upfront_region_supported('left-sidebar')) )
 			$regions[] = array_merge(array(
-				'name' => "left-sidebar", 
-				'title' => __("Left Sidebar Area"), 
+				'name' => "left-sidebar",
+				'title' => __("Left Sidebar Area"),
 				'properties' => array(
 					array( 'name' => 'col', 'value' => '5' )
-				), 
-				'modules' => array(), 
-				'wrappers' => array(), 
+				),
+				'modules' => array(),
+				'wrappers' => array(),
 				'scope' => "global",
 				'container' => 'main'
 			), ( is_array($arr) ? $arr : array() ));
 		$regions[] = array(
-			'name' => "main", 
-			'title' => __("Main Area"), 
-			'properties' => array(), 
-			'modules' => array(), 
-			'wrappers' => array(), 
-			'scope' => "local", 
+			'name' => "main",
+			'title' => __("Main Area"),
+			'properties' => array(),
+			'modules' => array(),
+			'wrappers' => array(),
+			'scope' => "local",
 			'container' => 'main',
 			'default' => true
 		);
 		if ( $all || ($arr = upfront_region_supported('right-sidebar')) )
 			$regions[] = array_merge(array(
-				'name' => "right-sidebar", 
-				'title' => __("Right Sidebar Area"), 
+				'name' => "right-sidebar",
+				'title' => __("Right Sidebar Area"),
 				'properties' => array(
 					array( 'name' => 'col', 'value' => '5' )
-				), 
-				'modules' => array(), 
-				'wrappers' => array(), 
+				),
+				'modules' => array(),
+				'wrappers' => array(),
 				'scope' => "global",
 				'container' => 'main'
 			), ( is_array($arr) ? $arr : array() ));
 		if ( $all || ($arr = upfront_region_supported('footer')) )
 			$regions[] = array_merge(array(
-				'name' => "footer", 
-				'title' => __("Footer Area"), 
-				'properties' => array(), 
-				'modules' => array(), 
-				'wrappers' => array(), 
+				'name' => "footer",
+				'title' => __("Footer Area"),
+				'properties' => array(),
+				'modules' => array(),
+				'wrappers' => array(),
 				'scope' => "global"
 			), ( is_array($arr) ? $arr : array() ));*/
 		//$regions = upfront_get_regions();
 		$regions = upfront_get_default_layout(self::$cascade);
 		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
-	
+
 	protected static function _get_region_id ($region_name, $scope = '') {
 		$region_id = preg_replace('/[^-_a-z0-9]/', '-', strtolower($region_name));
 		return self::STORAGE_KEY . '-' . $region_id . ( !empty($scope) ? '-' . $scope : '' );
 	}
-	
-	
+
+
 	public function get_cascade () {
 		if (!empty(self::$cascade)) return self::$cascade;
 		return !($this->is_empty())
@@ -383,12 +399,12 @@ class Upfront_Layout extends Upfront_JsonModel {
 			: false
 		;
 	}
-	
+
 	public function initialize () {
 		parent::initialize();
 		do_action('upfront_layout_init', $this);
 	}
-	
+
 	public function get_region_data ($region_name) {
 		$found = array();
 		foreach ( $this->_data['regions'] as $region ){
@@ -397,7 +413,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		return $found;
 	}
-	
+
 	public function region_to_json ($region_name) {
 		//return json_encode($this->get_region_data($region_name), true);
 		return json_encode($this->get_region_data($region_name));
@@ -416,11 +432,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public function delete () {
 		return delete_option($this->get_id());
 	}
-	
+
 	public function delete_region ($region_name) {
 		return delete_option(self::_get_region_id($region_name));
 	}
-	
+
 	public function delete_regions () {
 		foreach ( self::_get_regions() as $i => $region ) {
 			$this->delete_region($region['name']);
@@ -534,13 +550,13 @@ abstract class  Upfront_PostModel {
 
 	public static function create ($post_type, $title='', $content='') {
 		$post_data = apply_filters(
-			'upfront-post_model-create-defaults', 
+			'upfront-post_model-create-defaults',
 			array(
 				'post_type' => $post_type,
 				'post_status' => 'auto-draft',
 				'post_title' => 'Write a title...',
 				'post_content' => '',
-			), 
+			),
 			$post_type
 		);
 		$post_id = wp_insert_post($post_data);
@@ -589,7 +605,7 @@ class Upfront_LayoutRevisions {
 		$cascade = $layout->get_cascade();
 		$store = $layout->to_php();
 		$layout_id_key = self::to_hash($store);
-		
+
 		$existing_revision = $this->get_revision($layout_id_key);
 		if (!empty($existing_revision)) return $layout_id_key;
 

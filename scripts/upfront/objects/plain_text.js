@@ -16,20 +16,20 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	initialize: function() {
-		
+
 		this.constructor.__super__.initialize.apply(this, arguments);
-		
+
 		this.on('deactivated', function() {
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 	},
 	get_content_markup: function () {
 		var content = this.model.get_content();
-		
+
 		if($(content).hasClass('plaintxt_padding')) {
 			content = $(content).html();
 		}
-		
+
 		$(content).find('div.plaintxt_padding')
 		var data = {
 			"content" : content,
@@ -186,7 +186,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				]
 			  })
 			]);
-			
+
 
         this.$el.on('change', 'input[name=bg_color_enabled]', function(e){
           me.onBgColorEnabled(e);
@@ -202,16 +202,16 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
         });
 	},
 	onBgColorEnabled: function(event) {
-        this.property('bg_color_enabled', $(event.currentTarget).prop('checked'), false);	
-		this.processBg();	
+        this.property('bg_color_enabled', $(event.currentTarget).prop('checked'), false);
+		this.processBg();
 	},
 	onBgColor: function(color) {
         this.property('bg_color', color.toRgbString(), false);
-		this.processBg();	
+		this.processBg();
 	},
 	onBorderEnabled: function(event) {
         this.property('border_enabled', $(event.currentTarget).prop('checked'), false);
-		this.processBorder();		
+		this.processBorder();
 	},
 	onBorderWidth: function(event) {
         this.property('border_width', $(event.currentTarget).val(), false);
@@ -230,7 +230,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			this.property('background_color', this.property('bg_color'), false);
 		}
 		else {
-			this.property('background_color', '', false);	
+			this.property('background_color', '', false);
 		}
 	},
 	processBorder: function() {
@@ -238,7 +238,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			this.property('border', this.property('border_width')+'px '+this.property('border_color')+' '+this.property('border_style'), false);
 		}
 		else {
-			this.property('border', '', false);	
+			this.property('border', '', false);
 		}
 	},
 	property: function(name, value, silent) {
@@ -271,14 +271,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 			if(!this.$el.find('.border-enabled input').prop('checked'))
 				me.$el.find('.upfront-field-number').prop('disabled', true);
-			
+
 			this.$el.find('.border-enabled input').bind('change', function() {
 				if($(this).prop('checked'))
 					me.$el.find('.upfront-field-number').prop('disabled', false);
 				else
 					me.$el.find('.upfront-field-number').prop('disabled', true);
 			});
-				
+
 			this.$el.find('.upfront-settings_label').remove();
 			this.$el.find('.upfront-settings_panel').css('left', 0);
 	  }
@@ -322,7 +322,7 @@ var PlainTxtMenuList = Upfront.Views.ContextMenuList.extend({
 					}
 			  }
 		  })
-        ]);		
+        ]);
 	}
 });
 
@@ -330,7 +330,7 @@ var PlainTxtMenu = Upfront.Views.ContextMenu.extend({
 	initialize: function() {
 		this.menulists = _([
           new PlainTxtMenuList()
-        ]);	
+        ]);
 	}
 });
 

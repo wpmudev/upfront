@@ -55,47 +55,55 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			'dblclick .wp-caption': 'editCaption'
 		});
 		this.delegateEvents();
-		this.model.on('uimage:edit', this.editRequest, this);
 
-		$('body').on('dragover', function(e){
+		this.bodyEventHandlers = {
+			dragover: function(e){
 				e.preventDefault();
 				me.handleDragEnter(e);
-			})
-			.on('dragenter', function(e){
+			},
+			dragenter: function(e){
 				me.handleDragEnter(e);
-					console.log('enter '  + me.property('element_id'));
-			})
-			.on('dragleave', function(e){
+			},
+			dragleave: function(e){
 				me.handleDragLeave(e);
-			})
-			.on('drop', function(e){
+			},
+			drop: function(e){
 				console.log('drop body');
-			})
+			}
+		}
+
+		$('body').on('dragover', this.bodyEventHandlers.dragover)
+			.on('dragenter', this.bodyEventHandlers.dragenter)
+			.on('dragleave', this.bodyEventHandlers.dragleave)
+			.on('drop', this.bodyEventHandlers.drop)
 		;
+
 		// Set the full size current size if we don't have attachment id
 		if(!this.property('image_id'))
 			this.property('srcFull', this.property('src'));
 
-		this.model.get("properties").bind("change", this.render, this);
-		this.model.get("properties").bind("add", this.render, this);
-		this.model.get("properties").bind("remove", this.render, this);
+		this.listenTo(this.model.get("properties"), 'change', this.render);
+		this.listenTo(this.model.get("properties"), 'add', this.render);
+		this.listenTo(this.model.get("properties"), 'remove', this.render);
+
+		this.listenTo(this.model, 'uimage:edit', this.editRequest);
 
 		this.controls = this.createControls();
 
 		if(this.property('image_status') != 'ok' || this.property('quick_swap'))
 			this.property('has_settings', 0);
 
-		Upfront.Events.on('upfront:element:edit:start', this.on_element_edit_start, this);
-		Upfront.Events.on('upfront:element:edit:stop', this.on_element_edit_stop, this);
-		
-		Upfront.Events.on('command:layout:save', this.saveResizing, this);
-		Upfront.Events.on('command:layout:save_as', this.saveResizing, this);
+		this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
+		this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
+
+		this.listenTo(Upfront.Events, 'command:layout:save', this.saveResizing);
+		this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveResizing);
 
 		this.sizeClasses = {
 			narrow: false,
 			small: false,
 			tiny: false
-		}
+		};
 	},
 
 	getSelectedAlignment: function(){
@@ -140,7 +148,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		multi.icon = 'caption';
 		multi.tooltip = 'Caption position';
 		multi.selected = this.getSelectedAlignment();
-		multi.on('select', function(item){
+
+		this.listenTo(multi, 'select', function(item){
 			switch(item){
 				case 'topOver':
 					me.property('include_image_caption', [1]);
@@ -344,7 +353,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		item.icon = icon;
 		item.tooltip = tooltip;
 		if(click){
-			item.on('click', function(e){
+			this.listenTo(item, 'click', function(e){
 				me[click](e);
 			});
 		}
@@ -545,7 +554,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 			me.setSizeClasses(container.width(), container.height());
 			me.setSizeHTMLClasses();
-			
+
 			//me.get_resizing_limits();
 		}, 300);
 	},
@@ -692,7 +701,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				size: {width: img.width(), height: img.height()},
 				position: {top: container.offset().top - img.offset().top, left: container.offset().left - img.offset().left}
 			};
-			
+
 			if(this.cropTimer){
 				clearTimeout(this.cropTimer);
 				this.cropTimer = false;
@@ -785,7 +794,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			});
 		}
 	},
-	
+
 	saveTemporaryResizing: function(){
 		var me = this,
 			crop = me.property('element_size'),
@@ -913,7 +922,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('quick_swap', false, true);
 		if(result.imageId)
 			this.property('image_id', result.imageId, true);
-		
+
 
 		var moduleModel = this.parent_module_view.model;
 		if(result.elementSize){
@@ -922,7 +931,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 
 		this.temporaryProps = false;
-		this.render();		
+		this.render();
 	},
 
 	editRequest: function () {
@@ -988,6 +997,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				}
 			})
 		;
+	},
+
+	cleanup: function(){
+		this.controls.remove();
+		if(this.bodyEventHandlers){
+			_.each(this.bodyEventHandlers, function(f, ev){
+				$('body').off(ev, f);
+			});
+		}
 	},
 
 	property: function(name, value, silent) {
@@ -1294,7 +1312,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
  * 	 		'text': Tooltip text for the button
  * 	 		'callback': A function to be called when clicked.
  * 	 	resizeElement: (ObjectView): An element to resize when the image is smaller than the element or it is expanded to 100%
- * 	 	
+ *
  * }
  * @return Promise When edition is successful an response object is return as parameter for the promise with the following attributes:
  * {
@@ -1640,6 +1658,7 @@ var ImageEditor = Backbone.View.extend({
 		this.$('div').fadeOut(200, function(){
 			me.$el.detach();
 		});
+		this.options = false;
 		me.response.reject({reason: reason, id: this.imageId});
 	},
 
@@ -2058,7 +2077,7 @@ var ImageEditor = Backbone.View.extend({
 		e.preventDefault();
 		e.stopPropagation();
 
-		if(!this.fitImageButton){			
+		if(!this.fitImageButton){
 			var button = $('#image-edit-button-fit');
 			button.text('Fit to Element');
 			this.fitImageButton = true;
@@ -2196,7 +2215,7 @@ var ImageEditor = Backbone.View.extend({
 		return {
 			size: size,
 			left: grid.offset().left + 15
-		}; 
+		};
 	},
 
 	initialImageSize: function(overflow, stretch, maskDimensions) {
@@ -2938,11 +2957,11 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 				  		me.for_view.editRequest();
 				   else
 						me.for_view.openImageSelector();
-					
+
 			  }
-		  })		  
+		  })
         ];
-		
+
 		if(this.for_view.$el.find('div.upfront-image-container > img').length > 0) {
 			menuitemsarray.push( new Upfront.Views.ContextMenuItem({
 				  get_label: function() {
@@ -2957,18 +2976,18 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 					  else {
 						 me.for_view.controls.items.value()[2].selected='topOver';
 						 me.for_view.controls.items.value()[2].trigger('select');
-						
+
 						 me.for_view.property('include_image_caption', [1]);
 						 me.for_view.property('caption_position', 'over_image');
 						 me.for_view.property('caption_alignment', 'top');
-						 me.for_view.render(); 
-						
+						 me.for_view.render();
+
 					  }
-						
+
 				  }
 			  }));
 		}
-		 
+
 		this.menuitems = _(menuitemsarray);
 	}
 });
@@ -2978,7 +2997,7 @@ var ImageMenu = Upfront.Views.ContextMenu.extend({
 		this.constructor.__super__.initialize.call(this, arguments);
 		this.menulists = _([
           new ImageMenuList({for_view: this.for_view})
-        ]);	
+        ]);
 	}
 });
 

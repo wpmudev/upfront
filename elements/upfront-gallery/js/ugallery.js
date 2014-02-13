@@ -35,10 +35,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	labelsTpl: _.template($(editorTpl).find('#labels-tpl').html()),
 	labelSelectorTpl: _.template($(editorTpl).find('#labels-selection-tpl').html()),
 	magnificLabelTpl: _.template($(editorTpl).find('#magnific-labels-tpl').html()),
-	images: [],
 	sortMode: false,
 	lastThumbnailSize: false,
-	labels: [],
 	imageLabels: {},
 
 	reopenSettings: false,
@@ -68,16 +66,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var images = this.property('images');
 
 		this.images = new UgalleryImages(images);
-		this.images.on('add remove reset change', this.imagesChanged, this);
+		this.listenTo(this.images, 'add remove reset change', this.imagesChanged);
 		this.property('images', this.images.toJSON()); // Hack to add image defaults;
 
-		var closeTooltipFunction = $.proxy(this.closeTooltip, this);
-		$('body').on('click', closeTooltipFunction);
+		$('body').on('click', this.closeTooltip);
 
-		Upfront.Events.on("entity:settings:activate", closeTooltipFunction);
-		Upfront.Events.on("entity:activated", closeTooltipFunction);
-		Upfront.Events.on("entity:deactivated", closeTooltipFunction);
-		Upfront.Events.on("entity:region:activated", closeTooltipFunction);
+		this.listenTo(Upfront.Events, "entity:settings:activate", this.closeTooltip);
+		this.listenTo(Upfront.Events, "entity:activated", this.closeTooltip);
+		this.listenTo(Upfront.Events, "entity:deactivated", this.closeTooltip);
+		this.listenTo(Upfront.Events, "entity:region:activated", this.closeTooltip);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
@@ -89,11 +86,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		}
 
 		this.on('deactivated', this.sortCancel, this);
-		this.model.on('settings:closed', function(e){
+
+		this.listenTo(this.model, 'settings:closed', function(e){
 			me.checkRegenerateThumbs(e);
 		});
 
-		this.model.on('thumbChange', function(e){
+		this.listenTo(this.model, 'thumbChange', function(e){
 			me.$('.ugallery-image-wrapper').css('overflow', 'hidden')
 				.find('img').css({
 					'min-width': '100%',
@@ -104,14 +102,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		if(this.property('status') != 'ok' || !this.images.length)
 			this.property('has_settings', 0);
-
-		this.createControls();
-
+		/*
 		$('body').on('click', function(e){
 			var gallery = $('#' + me.property('element_id'));
 			if(!e.gallerySelected && gallery.length)
 				gallery.find('.ugallery_selected').removeClass('ugallery_selected');
 		});
+		*/
 	},
 
 	selectItem: function(e){
@@ -140,7 +137,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		item.icon = icon;
 		item.tooltip = tooltip;
 		if(click){
-			item.on('click', function(e){
+			this.listenTo(item, 'click', function(e){
 				me[click](e);
 			});
 		}
@@ -312,6 +309,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					item.find('.ugallery-image-wrapper').append('<div class="ugallery-nolabels-alert" title="This image has no labels"></div>');
 				}
 
+				if(image.controls)
+					image.controls.remove();
+				image.controls = controls;
 			});
 
 
@@ -1217,6 +1217,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		setTimeout(function(){
 			tooltip.remove();
 		}, 100);
+	},
+
+	cleanup: function(){
+		this.images.each(function(image){
+			if(image.controls)
+				image.controls.remove();
+		});
+		$('body').off('click', this.closeTooltip);
 	},
 
 	/*

@@ -244,6 +244,8 @@ var Ueditor = function($el, options) {
 		// ueditor:stop
 		// ueditor:method:<method>
 
+	this.id = 'ueditor' + (Math.random() * 10000);
+
 	if(this.options.autostart)
 		this.redactor = this.start();
 	else
@@ -266,6 +268,10 @@ Ueditor.prototype = {
 		this.preventDraggable();
 		UeditorEvents.trigger('ueditor:start', this.redactor);
 
+		if(!Upfront.data.Ueditor)
+			Upfront.data.Ueditor = {instances: {}};
+		Upfront.data.Ueditor.instances[this.id] = this;
+
 		//Open the toolbar when releasing selection outside the element
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
@@ -280,6 +286,7 @@ Ueditor.prototype = {
 			;
 			this.redactor = false;
 		}
+		delete Upfront.data.Ueditor.instances[this.id];
 	},
 	bindStartEvents: function() {
 		var me = this,
@@ -857,8 +864,8 @@ RedactorPlugins.upfrontColor = {
 			}
 			else
 				this.$('input.background').spectrum('option', 'color', "#000");
-			
-			
+
+
 			this.$('input.foreground').spectrum('resetUI');
 			this.$('input.background').spectrum('resetUI');
 
@@ -931,7 +938,7 @@ RedactorPlugins.upfrontColor = {
 				tabs.children('li').removeClass('active');
 				tabs.children('li#'+$(this).attr('id')+'-content').addClass('active');
 
-				self.$('input.foreground').spectrum('option', 'color', typeof(self.current_color) == 'object' ? self.current_color.toRgbString() : self.current_color);				
+				self.$('input.foreground').spectrum('option', 'color', typeof(self.current_color) == 'object' ? self.current_color.toRgbString() : self.current_color);
 				self.$('input.foreground').spectrum('resetUI');
 				self.$('input.background').spectrum('option', 'color',  typeof(self.current_bg) == 'object' ? self.current_bg.toRgbString() : self.current_bg);
 				self.$('input.background').spectrum('resetUI');

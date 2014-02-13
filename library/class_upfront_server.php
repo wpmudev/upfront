@@ -76,10 +76,12 @@ class Upfront_Ajax extends Upfront_Server {
 			$layout = Upfront_Layout::create_layout($layout_ids);
 		}
 
+		global $post;
+
 		if($post_type)
 			$post = Upfront_PostModel::create($post_type);
 		else
-			$post = false;
+			$post = $post;
 
 		$response = array(
 			'post' => $post,

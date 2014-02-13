@@ -386,7 +386,7 @@ define([
 				this.trigger('deactivated');
 			}
 		}),
-		
+
 		ContextMenuItem = Backbone.View.extend({
 			tagName: 'li',
 			initialize: function(){
@@ -402,6 +402,11 @@ define([
 					me.action(this.for_view);
 					Upfront.Events.trigger("entity:contextmenu:deactivate", this);
 				});
+			},
+			remove: function(){
+				this.parent_view = false;
+				this.for_view = false;
+				Backbone.View.prototype.remove.call(this);
 			}
 		}),
 
@@ -410,7 +415,7 @@ define([
 			initialize: function () {
 				this.for_view = this.options.for_view;
 			},
-			
+
 			render: function () {
 				var me = this;
 				this.$el.empty();
@@ -423,8 +428,18 @@ define([
 						menuitem.parent_view = me;
 						me.$el.append(menuitem.el);
 				});
+			},
+			remove: function(){
+				if(this.menuitems)
+					this.menuitems.each(function(itemView){
+						itemView.remove();
+					});
+				this.for_view = false;
+				this.parent_view = false;
+				this.options = false;
+				Backbone.View.prototype.remove.call(this);
 			}
-			
+
 		}),
 		DefaultMenuList = ContextMenuList.extend({
 			initialize: function() {
@@ -435,7 +450,7 @@ define([
 					  },
 					  action: function() {
 						var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
-						savelayout.on_click();  
+						savelayout.on_click();
 					  }
 				  }),
 				  new Upfront.Views.ContextMenuItem({
@@ -445,7 +460,7 @@ define([
 					  action: function(for_view) {
 						//console.log(Upfront.Application.layout);
 						var undo = new Upfront.Views.Editor.Command_Undo({"model": Upfront.Application.layout});
-						undo.on_click();  
+						undo.on_click();
 					  }
 				  }),
 				  new Upfront.Views.ContextMenuItem({
@@ -456,10 +471,10 @@ define([
 						var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
 						togglegrid.on_click();
 					  }
-				  })				  
-				]);	
+				  })
+				]);
 			}
-			
+
 		}),
 		ContextMenu = Backbone.View.extend({
 			initialize: function() {
@@ -472,14 +487,14 @@ define([
 					.empty()
 					.show()
 				;
-				
+
 				this.menulists.each(function (menulist) {
 					menulist.for_view = me.for_view;
 					menulist.render();
 					menulist.parent_view = me;
 					me.$el.append(menulist.el);
 				});
-				
+
 				var defaultmenulist = new DefaultMenuList();
 				defaultmenulist.for_view = me.for_view;
 				defaultmenulist.render();
@@ -497,12 +512,21 @@ define([
 				})
 				.addClass('uf-context-menu')
 				;
-				
+
 			},
-	
-			
+
+			remove: function(){
+				if(this.menulists)
+					this.menulists.each(function(list){
+						list.remove();
+					});
+				Backbone.View.prototype.remove.call(this);
+				if(!$('#contextmenu').length)
+					$('body').append('<div id="contextmenu">');
+			}
+
 		});
-		
+
 		ObjectView = _Upfront_EditableContentEntity.extend({
 			events: {
 				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
@@ -519,11 +543,13 @@ define([
 				this.listenTo(this.model.get("properties"), 'change', this.render);
 				this.listenTo(this.model.get("properties"), 'add', this.render);
 				this.listenTo(this.model.get("properties"), 'remove', this.render);
-				Upfront.Events.on('entity:resize_start', this.close_settings, this);
-				Upfront.Events.on('entity:drag_start', this.close_settings, this);
-				Upfront.Events.on('upfront:element:edit:start', this.on_element_edit_start, this);
-				Upfront.Events.on('upfront:element:edit:stop', this.on_element_edit_stop, this);
-				Upfront.Events.on('layout:after_render', this.on_after_layout_render, this);
+
+				this.listenTo(Upfront.Events, 'entity:resize_start', this.close_settings);
+				this.listenTo(Upfront.Events, 'entity:drag_start', this.close_settings);
+				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
+				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
+
 				if (this.init) this.init();
 			},
 			close_settings: function () {
@@ -563,9 +589,9 @@ define([
 				if (this.parent_module_view && this.parent_module_view.enable) this.parent_module_view.enable();
 			},
 			on_after_layout_render: function () {
-				
+
 			},
-			
+
 			/* Getting dimension and resize element */
 			get_element_size: function () {
 				var element = Upfront.Behaviors.GridEditor.get_position( this.parent_module_view.$el.find('.upfront-module') );
@@ -609,80 +635,18 @@ define([
 			},
 			set_element_size: function (col, row, axis, force) {
 				return Upfront.Behaviors.GridEditor.resize(this.parent_module_view, this.parent_module_view.model, col, row, axis, force);
-			}
-/*
-			// Create a ckeditor instance when any contenteditable element receives focus for the first time.
-			// Creating the ckeditor instance on focus prevents having to recreate ckeditor instances on each
-			// render, which can happen 10-15 in a row when the user drags and drops modules.
-			init_ckeditor_on_focus: function(){
-				this.preload_ckeditor();
-				this.remove_unused_editors();
-
-				var self = this,
-					contenteditables = this.$el.find('[contenteditable]');
-
-				contenteditables.one('focus', function(){
-					var $self = $(this);
-						editor = CKEDITOR.inline(this);
-
-					editor.model_cid = self.model.cid;
-
-					editor.on('change', function(){
-						$self.trigger('editor-change');
-
-						// Dynamically change the height of the module container when the user
-						// inserts height-changing content.
-						$self.trigger('descendant_change.height');
-					});
-
-					editor.on('change', function(){
-						$self.trigger('editor-change');
-					});
-
-					editor.on('selectionChange', function(event){
-						// TODO: Hover editor over selected text node.
-					});
-
-					// TODO: when the upfront module is removed by the user: "editor.destroy();editor=null;"
-				});
-
-				// Disable drag and drop behaviour whilst user is editing text to allow text selection.
-				contenteditables.on('mousedown', function(event){
-					event.stopPropagation();
-				});
 			},
 
-			// The first inline editor on page takes 2 seconds to load,
-			// any editors initialised afterwards are instant.
-			preload_ckeditor: function(){
-				if(typeof window.preload_ckeditor == 'undefined'){
-					var focusEl = document.activeElement;
-
-					var $el = $('<div contenteditable="true"></div>');
-
-					var editor = CKEDITOR.inline($el[0]);
-					$el.focus();
-
-					$(focusEl).focus();
-					window.preload_ckeditor = true;
-				}
+			cleanup: function(){
+				//Override this method to clean any subview on remove
 			},
 
-			// When a view is re-rendered the contenteditable elements are recreated.
-			// Destroy the ckeditor instances for the old views.
-			remove_unused_editors: function(){
-				var self = this;
-
-				$.each(CKEDITOR.instances, function(k, editor){
-					if(	editor.model_cid == self.model.cid &&
-						!$.contains(self.$el.find('.upfront-object-content')[0], editor.element) ){
-
-						editor.destroy();
-						editor = null;
-					}
-				});
+			remove: function(){
+				this.cleanup();
+				this.parent_view = false;
+				this.parent_module_view = false;
+				Backbone.View.prototype.remove.call(this);
 			}
-*/
 		}),
 
 		Objects = _Upfront_EditableEntities.extend({
@@ -708,9 +672,11 @@ define([
 						local_view.render();
 						$el.append(local_view.el);
 						if ( ! Upfront.data.object_views[obj.cid] ){
-							local_view.bind("upfront:entity:activate", me.on_activate, me);
+							me.listenTo(local_view, 'upfront:entity:activate', me.on_activate);
+							me.listenTo(local_view.model, 'remove', me.deactivate);
+							//local_view.bind("upfront:entity:activate", me.on_activate, me);
 							//local_view.model.bind("remove", me.deactivate, me);
-							local_view.listenTo(local_view.model, "remove", me.deactivate);
+							//local_view.listenTo(local_view.model, "remove", me.deactivate);
 							Upfront.data.object_views[obj.cid] = local_view;
 						}
 						else {
@@ -718,6 +684,19 @@ define([
 						}
 					}
 				});
+			},
+			remove: function() {
+				this.model.each(function(model){
+					var view = Upfront.data.object_views[model.cid];
+					if(	view ){
+						view.remove();
+						delete Upfront.data.object_views[model.cid];
+					}
+				});
+				this.parent_view = false;
+				Backbone.View.prototype.remove.call(this);
+				this.model.reset({silent:true});
+				this.model = false;
 			}
 		}),
 
@@ -790,6 +769,11 @@ define([
 						view.trigger('region:updated');
 					});
 				}
+			},
+			remove: function(){
+				if(this._objects_view)
+					this._objects_view.remove();
+				Backbone.View.prototype.remove.call(this);
 			}
 		}),
 
@@ -885,9 +869,12 @@ define([
 						}
 					}
 					if ( ! Upfront.data.module_views[module.cid] ){
-						local_view.bind("upfront:entity:activate", this.on_activate, this);
+						//local_view.bind("upfront:entity:activate", this.on_activate, this);
 						//local_view.model.bind("remove", this.deactivate, this);
-						local_view.listenTo(local_view.model, 'remove', this.deactivate);
+						//local_view.listenTo(local_view.model, 'remove', this.deactivate);
+
+						this.listenTo(local_view, 'upfront:entity:activate', this.on_activate);
+						this.listenTo(local_view.model, 'remove', this.deactivate);
 						Upfront.data.module_views[module.cid] = local_view;
 					}
 					else {
@@ -903,12 +890,21 @@ define([
 				var view = Upfront.data.module_views[model.cid];
 				if ( !view )
 					return;
-				delete Upfront.data.module_views[model.cid];
 				view.unbind();
 				view.remove();
+				delete Upfront.data.module_views[model.cid];
 			},
 			on_reset: function () {
 
+			},
+			remove: function() {
+				var me = this;
+				this.model.each(function(model){
+					me.on_remove(model);
+				});
+				Backbone.View.prototype.remove.call(this);
+				this.model.reset({silent:true});
+				this.model = false;
 			}
 		}),
 		RegionContainer = _Upfront_SingularEditor.extend({
@@ -935,18 +931,21 @@ define([
 				if (!this.context_menu_view) return false;
 				$(Upfront.Settings.LayoutEditor.Selectors.contextmenu).html('').hide();
 				this.context_menu_view = false;
-				
+
 			},
 			on_context_menu: function(e) {
 				e.preventDefault();
 				this.event = e;
 				//Upfront.Events.trigger("entity:contextmenu:activate", this);
-				context_menu_view = new this.ContextMenu({
+				if(this.context_menu_view)
+					return this.context_menu_view.render();
+
+				var context_menu_view = new this.ContextMenu({
 						model: this.model,
 						el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
 					})
 				;
-				
+
 				context_menu_view.for_view = this;
 				this.context_menu_view = context_menu_view;
 				context_menu_view.render();
@@ -955,7 +954,7 @@ define([
 				var me = this;
 				var ContextMenuList = Upfront.Views.ContextMenuList.extend({
 					initialize: function() {
-						
+
 						this.menuitems = _([
 						  new Upfront.Views.ContextMenuItem({
 							  get_label: function() {
@@ -971,22 +970,22 @@ define([
 								  	me.close_edit();
 								  else
 								  	me.trigger_edit(me.event);
-								  
+
 							  }
 						  })
-						]);		
+						]);
 					}
-				});	
-				
+				});
+
 				this.ContextMenu = Upfront.Views.ContextMenu.extend({
 					initialize: function() {
 						this.menulists = _([
 						  new ContextMenuList()
-						]);	
+						]);
 					}
 				});
 
-				
+
 				var grid = Upfront.Settings.LayoutEditor.Grid;
 				// this.model.get("properties").bind("change", this.update, this);
 				// this.model.get("properties").bind("add", this.update, this);
@@ -996,22 +995,22 @@ define([
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
 				this.sub_model = [];
 				this.available_col = grid.size;
-				Upfront.Events.on("entity:region:activated", this.update_pos, this);
-				Upfront.Events.on("entity:region:activated", this.update_overlay, this);
-				Upfront.Events.on("entity:region:deactivated", this.close_edit, this);
+				this.listenTo(Upfront.Events, "entity:region:activated", this.update_pos);
+				this.listenTo(Upfront.Events, "entity:region:activated", this.update_overlay);
+				this.listenTo(Upfront.Events, "entity:region:deactivated", this.close_edit);
 				$(window).on('scroll', this, this.on_scroll);
-				Upfront.Events.on("layout:render", this.fix_height, this);
-				Upfront.Events.on("entity:resize_stop", this.fix_height, this);
-				Upfront.Events.on("entity:region:resize_stop", this.fix_height, this);
-				Upfront.Events.on("entity:region_container:resize_stop", this.fix_height, this);
-				Upfront.Events.on("entity:region_container:resize_stop", this.update_overlay, this);
-				Upfront.Events.on("entity:drag_stop", this.fix_height, this);
-				Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
-				Upfront.Events.on("entity:region:added", this.fix_height, this);
-				Upfront.Events.on("entity:region:removed", this.fix_height, this);
-				Upfront.Events.on("entity:region:removed", this.close_edit, this);
-				
-				Upfront.Events.on("entity:contextmenu:deactivate", this.remove_context_menu, this);
+				this.listenTo(Upfront.Events, "layout:render", this.fix_height);
+				this.listenTo(Upfront.Events, "entity:resize_stop", this.fix_height);
+				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.fix_height);
+				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.fix_height);
+				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.update_overlay);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.fix_height);
+				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:region:added", this.fix_height);
+				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
+				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
+
+				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
 			},
 			render: function () {
 				var template = _.template(_Upfront_Templates["region_container"], this.model.toJSON()),
@@ -1040,8 +1039,8 @@ define([
 				this.update_overlay();
 				Upfront.Events.trigger("command:region:edit_toggle", true);
 				this.trigger("activate_region", this);
-				Upfront.Events.on("command:newpage:start", this.close_edit, this);
-				Upfront.Events.on("command:newpost:start", this.close_edit, this);
+				this.listenTo(Upfront.Events, "command:newpage:start", this.close_edit);
+				this.listenTo(Upfront.Events, "command:newpost:start", this.close_edit);
 				//e.stopPropagation();
 			},
 			close_edit: function () {
@@ -1162,6 +1161,16 @@ define([
 						});
 					}
 				}
+			},
+			remove: function(){
+				$(window).off('scroll', this, this.on_scroll);
+
+				if(this.context_menu_view){
+					this.context_menu_view.remove();
+				}
+				this.parent_view = false;
+				this.event = false;
+				Backbone.View.prototype.remove.call(this);
 			}
 		}),
 
@@ -1192,7 +1201,8 @@ define([
 			init: function () {
 				var container = this.model.get("container"),
 					name = this.model.get("name");
-				this.dispatcher.on("plural:propagate_activation", this.on_mouse_up, this);
+				this.listenTo(this.dispatcher, 'plural:propagate_activation', this.on_mouse_up);
+				//this.dispatcher.on("plural:propagate_activation", this.on_mouse_up, this);
 				// this.model.get("properties").bind("change", this.update, this);
 				// this.model.get("properties").bind("add", this.update, this);
 				// this.model.get("properties").bind("remove", this.update, this);
@@ -1206,11 +1216,11 @@ define([
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
 				if ( this.model.get('clip') || ! this.model.is_main() ){
-					Upfront.Events.on("entity:resize_stop", this.refresh_background, this);
-					Upfront.Events.on("entity:region:resize_stop", this.refresh_background, this);
-					Upfront.Events.on("entity:region_container:resize_stop", this.refresh_background, this);
-					Upfront.Events.on("entity:drag_stop", this.refresh_background, this);
-					Upfront.Events.on("entity:drag:drop_change", this.refresh_background, this);
+					this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
+					this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
+					this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
+					this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
+					this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 				}
 			},
 			on_click: function (e) {
@@ -1239,6 +1249,7 @@ define([
 						is_left = next && ( next.get('name') == container || next.get('container') == container);
 					this.$el.addClass('upfront-region-side ' + ( is_left ? 'upfront-region-side-left' : 'upfront-region-side-right' ));
 				}
+
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this;
 				local_view.render();
@@ -1275,7 +1286,7 @@ define([
 				if ( expand_lock )
 					this.$el.addClass('upfront-region-expand-lock');
 				else
-					this.$el.removeClass('upfront-region-expand-lock')
+					this.$el.removeClass('upfront-region-expand-lock');
 				this.trigger("region_update", this);
 			},
 			region_resize: function (col) {
@@ -1284,6 +1295,23 @@ define([
 			},
 			on_module_update: function () {
 				this.trigger("region_changed", this);
+			},
+			remove: function() {
+				if(this._modules_view)
+					this._modules_view.remove();
+				var wrappers = this.model.get('wrappers');
+				if(wrappers)
+					wrappers.each(function(wrapper){
+						var wrapperView = Upfront.data.wrapper_views[wrapper.cid];
+						if(wrapperView){
+							wrapperView.remove();
+							delete Upfront.data.wrapper_views[wrapper.cid];
+						}
+					});
+				this.parent_view = false;
+				Backbone.View.prototype.remove.call(this);
+				this.model.get('wrappers').reset({silent:true});
+				this.model = false;
 			}
 		}),
 
@@ -1293,12 +1321,12 @@ define([
 				this.stopListening(this.model, 'add', this.render);
 				this.listenTo(this.model, 'add', this.on_add);
 				this.stopListening(this.model, 'remove', this.render);
-				this.listenTo(this.model, 'remove', this.on_remove)
+				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
-				Upfront.Events.on('command:region:edit_toggle', this.on_edit_toggle, this);
-				Upfront.Events.on('entity:region:resize_start', this.pause_edit, this);
-				Upfront.Events.on('entity:region:resize_stop', this.resume_edit, this);
-				Upfront.Events.on("entity:region:deactivated", this.deactivate_region, this);
+				this.listenTo(Upfront.Events, 'command:region:edit_toggle', this.on_edit_toggle);
+				this.listenTo(Upfront.Events, 'entity:region:resize_start', this.pause_edit);
+				this.listenTo(Upfront.Events, 'entity:region:resize_stop', this.resume_edit);
+				this.listenTo(Upfront.Events, "entity:region:deactivated", this.deactivate_region);
 			},
 			render: function () {
 				this.$el.html('');
@@ -1321,7 +1349,8 @@ define([
 					var container_view = this.container_views[region.cid] || new RegionContainer({"model": region});
 					container_view.parent_view = this;
 					container_view.render();
-					container_view.bind("activate_region", this.activate_region_container, this);
+					//container_view.bind("activate_region", this.activate_region_container, this);
+					this.listenTo(container_view, "activate_region", this.activate_region_container);
 					if ( index >= 0 )
 						this.$el.find('.upfront-region').eq(index).closest('.upfront-region-container').before(container_view.el);
 					else
@@ -1339,15 +1368,22 @@ define([
 					container_view = this.get_container_view(region);
 				if ( !Upfront.data.region_views[region.cid] ){
 					local_view.parent_view = this;
+					container_view.listenTo(local_view, "region_render", container_view.on_region_render);
+					container_view.listenTo(local_view, "region_update", container_view.on_region_update);
+					container_view.listenTo(local_view, "region_changed", container_view.on_region_changed);
+/*
 					local_view.bind("region_render", container_view.on_region_render, container_view);
 					local_view.bind("region_update", container_view.on_region_update, container_view);
 					local_view.bind("region_changed", container_view.on_region_changed, container_view);
+					*/
 					if ( !region.get("container") || region.get("container") == region.get("name") )
-						container_view.bind("region_resize", local_view.region_resize, local_view);
+						//container_view.bind("region_resize", local_view.region_resize, local_view);
+						local_view.listenTo(container_view, 'region_resize', local_view.region_resize);
 					else
 						container_view.add_sub_model(region);
 					local_view.render();
-					local_view.bind("activate_region", this.activate_region, this);
+					//local_view.bind("activate_region", this.activate_region, this);
+					this.listenTo(local_view, 'activate_region', this.activate_region);
 					Upfront.data.region_views[region.cid] = local_view;
 				}
 				else {
@@ -1452,6 +1488,17 @@ define([
 					}
 				}
 				Upfront.Events.trigger("entity:region:removed", this, this.model);
+			},
+			remove: function(){
+				var me = this;
+				this.model.each(function(model){
+					me.on_remove(model);
+				});
+				Backbone.View.prototype.remove.call(this);
+				this.container_views = false;
+				this.model.reset({silent:true});
+				this.model = false;
+				this.options = false;
 			}
 		}),
 
@@ -1482,6 +1529,7 @@ define([
 		}),
 
 		Layout = _Upfront_PluralEditor.extend({
+			tpl: _.template(_Upfront_Templates.layout),
 			events: {
 				"click": "on_click"
 			},
@@ -1489,11 +1537,13 @@ define([
 				this.render();
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates.layout, this.model.toJSON());
-				this.$el.html(template);
-				var local_view = new Regions({"model": this.model.get("regions")});
-				local_view.render();
-				this.$("section").append(local_view.el);
+				this.$el.html(this.tpl(this.model.toJSON()));
+				if(!this.local_view)
+					this.local_view = new Regions({"model": this.model.get("regions")});
+
+				this.local_view.render();
+
+				this.$("section").append(this.local_view.el);
 				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function (e) {
@@ -1514,6 +1564,15 @@ define([
 				// Close region editing on click anywhere out the region
 				if(!$(e.target).closest('.upfront-region-container-active').length || !$(e.target).closest('.upfront-inline-panels'))
 					Upfront.Events.trigger("entity:region:deactivated");
+			},
+			remove: function(){
+				if(this.local_view)
+					this.local_view.remove();
+				this.local_view = null;
+
+				Backbone.View.prototype.remove.call(this);
+				this.model = false;
+				this.options = false;
 			}
 		})
 	;

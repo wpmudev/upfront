@@ -112,9 +112,15 @@ define([
 			"click #done-adding-property": "add_new_property",
 		},
 		initialize: function () {
+/*
 			this.model.get("properties").bind("change", this.render, this);
 			this.model.get("properties").bind("add", this.render, this);
 			this.model.get("properties").bind("remove", this.render, this);
+			*/
+
+			this.listenTo(this.model.get("properties"), 'change', this.render);
+			this.listenTo(this.model.get("properties"), 'add', this.render);
+			this.listenTo(this.model.get("properties"), 'remove', this.render);
 		},
 		render: function () {
 			var template = _.template(_Upfront_Templates.properties, this.model.toJSON()),
@@ -210,7 +216,14 @@ define([
 			else
 				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New post</span>');
 		},
-		on_click: function () {
+		on_click: function (e) {
+			e.preventDefault();
+
+			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
+				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
+
+			return Upfront.Application.navigate('/create_new/post', {trigger: true});
+
 			//window.location = Upfront.Settings.Content.create.post;
 			var me = this,
 				loading = new Upfront.Views.Editor.Loading({
@@ -266,6 +279,10 @@ define([
 				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New page");
 			else
 				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New page</span>');
+		},
+		on_click: function(e){
+			e.preventDefault();
+			Upfront.Application.navigate('/create_new/page', {trigger: true});
 		}
 	});
 
@@ -517,7 +534,7 @@ define([
 	})
 
 	var Command_ToggleGrid = Command.extend({
-		
+
 		render: function () {
 			this.$el.html('Toggle grid');
 		},
@@ -2906,6 +2923,14 @@ define([
 					'<div class="upfront-settings-item-content">' + markup + '</div>' +
 				'</div>'
 			);
+		},
+
+		remove: function(){
+			if(this.fields)
+				this.fields.each(function(field){
+					field.remove();
+				});
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
@@ -2973,7 +2998,8 @@ define([
 				setting.render();
 				$tab_content.append(setting.el);
 			});
-			this.panel.on('rendered', this.panel_rendered, this);
+			//this.panel.on('rendered', this.panel_rendered, this);
+			this.listenTo(this.panel, 'rendered', this.panel_rendered);
 
 			this.trigger('rendered');
 		},
@@ -3001,6 +3027,13 @@ define([
 				if ( this.get_property_value() != this.get_value() )
 					this.panel.is_changed = true;
 			}
+		},
+		remove: function(){
+			if(this.settings)
+				this.settings.each(function(setting){
+					setting.remove();
+				});
+			Backbone.View.prototype.remove.call(this);
 		}
 	}));
 
@@ -3167,6 +3200,14 @@ define([
 
 		on_cancel: function () {
 			this.trigger("upfront:settings:panel:close", this);
+		},
+		remove: function(){
+			if(this.settings)
+				this.settings.each(function(setting){
+					setting.remove();
+				});
+			this.$el.off();
+			Backbone.View.prototype.remove.call(this);
 		}
 
 	}));
@@ -3203,16 +3244,23 @@ define([
 					first = this.panels.first()
 				;
 				first.settings.push(item);
+				this.listenTo(item, "anchor:item:updated", function () {
+					this.toggle_panel(first);
+				});
+				/*
 				item.on("anchor:item:updated", function () {
 					this.toggle_panel(first);
 				}, this);
+				*/
 			}
 
 			me.panels.each(function (panel) {
 				panel.render();
-				panel.on("upfront:settings:panel:toggle", me.toggle_panel, me);
-				panel.on("upfront:settings:panel:close", me.close_panel, me);
-				panel.on("upfront:settings:panel:refresh", me.refresh_panel, me);
+
+				me.listenTo(panel, "upfront:settings:panel:toggle", me.toggle_panel);
+				me.listenTo(panel, "upfront:settings:panel:close", me.close_panel);
+				me.listenTo(panel, "upfront:settings:panel:refresh", me.refresh_panel);
+
 				panel.parent_view = me;
 				me.$el.append(panel.el);
 			});
@@ -3269,6 +3317,13 @@ define([
 			this.panels.invoke("conceal");
 			this.panels.invoke("show");
 			this.set_title(this.get_title());
+		},
+		remove: function(){
+			if(this.panels)
+				this.panels.each(function(panel){
+					panel.remove();
+				});
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
@@ -3841,9 +3896,9 @@ var Field_Anchor = Field_Select.extend({
 						me.close_modal(true);
 					});
 				}
-				Upfront.Events.on("entity:region:deactivated", function(){
+				this.listenTo(Upfront.Events, "entity:region:deactivated", function(){
 					this.close_modal(false);
-				}, this);
+				});
 			}
 			this.update_modal_pos();
 			$(window).on('scroll', this, this.on_scroll);
@@ -3896,6 +3951,9 @@ var Field_Anchor = Field_Select.extend({
 					right: ''
 				});
 			}
+		},
+		remove: function(){
+			this.panel_view = false;
 		}
 	});
 
@@ -3905,7 +3963,7 @@ var Field_Anchor = Field_Select.extend({
 		},
 		initialize: function () {
 			this.sub_items = {};
-			Upfront.Events.on('entity:region:activated', this.on_region_change, this);
+			this.listenTo(Upfront.Events, 'entity:region:activated', this.on_region_change);
 		},
 		get_selected_item: function () {
 
@@ -3959,6 +4017,14 @@ var Field_Anchor = Field_Select.extend({
 		on_region_change: function (region) {
 			if ( region.model != this.model )
 				this.close_subitem();
+		},
+		remove: function(){
+			if(this.sub_items)
+				_.each(this.sub_items, function(item){
+					item.remove();
+				});
+			this.panel_view = false;
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
@@ -4781,6 +4847,15 @@ var Field_Anchor = Field_Select.extend({
 				width: width,
 				height: height
 			});
+		},
+		remove: function() {
+			var items = typeof this.items == 'function' ? this.items() : this.items;
+
+			if(items)
+				items.each(function(item){
+					item.remove();
+				})
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
@@ -4809,6 +4884,15 @@ var Field_Anchor = Field_Select.extend({
 					width += item.$el.width();
 			});
 			this.$el.attr('class', this.className + ' ' + classes.join(' '));
+		},
+		remove: function() {
+			var items = typeof this.items == 'function' ? this.items() : this.items;
+
+			if(items)
+				items.each(function(item){
+					item.remove();
+				})
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
@@ -4889,6 +4973,14 @@ var Field_Anchor = Field_Select.extend({
 		on_active: function () {
 			$('.upfront-inline-panels-active').removeClass('upfront-inline-panels-active');
 			this.$el.addClass('upfront-inline-panels-active');
+		},
+		remove: function() {
+			var panels = typeof this.panels == 'function' ? this.panels() : this.panels;
+			if(panels)
+				panels.each(function(panel){
+					panel.remove();
+				});
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
@@ -4898,8 +4990,8 @@ var Field_Anchor = Field_Select.extend({
 				name = this.model.get('name');
 			this.listenTo(this.model.collection, 'add', this.render);
 			this.listenTo(this.model.collection, 'remove', this.render);
-			Upfront.Events.on("entity:region:activated", this.on_region_active, this);
-			Upfront.Events.on("command:region:edit_toggle", this.update_pos, this);
+			this.listenTo(Upfront.Events, "entity:region:activated", this.on_region_active);
+			this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_pos);
 			$(window).on('scroll', this, this.on_scroll);
 			this.edit_panel = new RegionPanel_Edit({model: this.model});
 			this.delete_panel = new RegionPanel_Delete({model: this.model});
@@ -5005,6 +5097,22 @@ var Field_Anchor = Field_Select.extend({
 					});
 				}
 			});
+		},
+		remove: function() {
+			this.edit_panel.remove();
+			this.delete_panel.remove();
+			this.add_panel_bottom.remove();
+			this.edit_panel = false;
+			this.delete_panel = false;
+			this.add_panel_bottom = false;
+			if ( this.model.is_main() && this.model.get('allow_sidebar') ){
+				this.add_panel_left.remove();
+				this.add_panel_right.remove();
+				this.add_panel_left = false;
+				this.add_panel_right = false;
+			}
+			$(window).off('scroll', this, this.on_scroll);
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
