@@ -560,7 +560,7 @@ define([
 					this.parent_module_view.disable();
 			},
 			on_element_edit_stop: function (edit, post) {
-				this.parent_module_view.enable();
+				if (this.parent_module_view && this.parent_module_view.enable) this.parent_module_view.enable();
 			},
 			on_after_layout_render: function () {
 				

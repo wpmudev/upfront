@@ -1,0 +1,69 @@
+/* Common */
+.upfront_code-editor button {
+	background: #2ecc90;
+	color: white;
+	float: right;
+}
+.upfront_code-editor {
+	position: absolute;
+	width: 100%;
+	cursor: auto;
+}
+.upfront-icon-button.re-edit:before {
+	/*
+	background-position: -701px -710px;
+	*/
+	display: none;
+}
+.upfront-icon-button.re-edit {
+	background: #515b65; /* Old browsers */
+	background: -moz-linear-gradient(-45deg,  #515b65 47%, #454e56 49%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(47%,#515b65), color-stop(49%,#454e56)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg,  #515b65 47%,#454e56 49%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg,  #515b65 47%,#454e56 49%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg,  #515b65 47%,#454e56 49%); /* IE10+ */
+	background: linear-gradient(135deg,  #515b65 47%,#454e56 49%); /* W3C */
+
+	color: #97b8da;
+	font-size: 14px;
+	line-height: 20px;
+	text-align: center;
+}
+
+/* Simple */
+.upfront_code-editor.upfront_code-editor-simple {
+	padding: 10px;
+}
+.upfront_code-editor.upfront_code-editor-simple h3 {
+	margin: 0;
+	text-transform: none;
+}
+
+/* Complex */
+.upfront_code-editor.upfront_code-editor-complex textarea {
+	color: white;
+	background: #454e58;
+	border: none;
+	outline: none;
+}
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper {
+	background: #95a3b0;
+	padding: 10px;
+}
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-switch {
+	display: inline-block;
+	margin: 0 10px;
+	padding: 0 5px;
+	cursor: pointer;
+	color: #444d56;
+}
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-switch.active {
+	color: white;
+	background: #454e58;
+}
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-editor-section {
+	display: none;
+}
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-editor-section.active {
+	display: block;
+}

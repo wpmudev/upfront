@@ -38,6 +38,7 @@
         "uyoutube": "../elements/upfront-youtube/js/uyoutube",
         "redactor": "redactor/redactor",
         "ueditor": "redactor/ueditor",
+        "upfront_code": "../elements/upfront-code/js/upfront_code", 
         "upfront_slider": "../elements/upfront-slider/js/uslider"
     },
     shim: {

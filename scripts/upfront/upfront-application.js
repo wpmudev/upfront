@@ -428,14 +428,14 @@ var Application = new (Backbone.Router.extend({
 				$(".upfront-editable_trigger").hide();
 			});
 			app.loading.render();
-			$('body').append(app.loading.$el)
+			$('body').append(app.loading.$el);
 
 			app.create_sidebar();
 
-      require(["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "upfront-navigation", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "uwidget", "uyoutube"],
+      require(["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "upfront-navigation", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "uwidget", "uyoutube", "upfront_code"],
         function(objects) {
 			_.extend(Upfront.Objects, objects);
--			app.load_layout(_upfront_post_data.layout);
+			app.load_layout(_upfront_post_data.layout);
 			//app.load_layout(window.location.pathname + window.location.search);
 			//app.start_navigation();
 		});
