@@ -58,7 +58,7 @@ var Views = {
 			});
 			return '<section class="upfront_code-element clearfix">' + markup +
 				'<style>' + style + '</style>' +
-				'<script>;(function ($) {' + script + '})(jQuery);</script>' + '</section>'
+				'<script>;(function ($) {' + script + "\n" + '})(jQuery);</script>' + '</section>'
 			;
 		},
 
