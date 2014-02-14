@@ -139,6 +139,7 @@ var Views = {
 			update_position();
 			// Disable the draggable
 			$draggable.draggable('disable');
+			Upfront.Behaviors.GridEditor.toggle_resizables(false);
 			this.$el
 				.find(".upfront_code-editor-section>div").each(function () {
 					var $me = $(this),
@@ -158,8 +159,10 @@ var Views = {
 					editor.getSession().setUseWorker(false);
 					editor.setTheme("ace/theme/monokai");
 					editor.getSession().setMode("ace/mode/" + syntax);
-					if ("markup" === type && code.length) {
-						editor.getSession().setValue(code);
+					if ("markup" === type) {
+						if (code.length) editor.getSession().setValue(code);
+						// Okay, so let's do Emmet too, why not
+						//editor.setOption("enableEmmet", true); // Because it wieghs 360kb, that's why not :)
 					}
 					editors[type] = editor;
 				}).end()
@@ -198,6 +201,7 @@ var Views = {
 					;
 					me.is_editing = false;
 					$draggable.draggable('enable');
+					Upfront.Behaviors.GridEditor.toggle_resizables(true);
 					me.trigger("code:model:updated");
 				})
 			;
