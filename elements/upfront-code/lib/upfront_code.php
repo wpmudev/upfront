@@ -41,7 +41,7 @@ class Upfront_CodeView extends Upfront_Object {
 
     private function _to_scoped_script ($raw) {
         return !empty($raw)
-            ? "<script>;(function ($) { {$raw}\n })(jQuery);</script>"
+            ? "<script>;try { (function ($) { {$raw}\n })(jQuery); } catch(e) {}</script>"
             : ''
         ;
     }

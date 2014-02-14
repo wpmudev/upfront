@@ -50,12 +50,18 @@
 	background: #95a3b0;
 	padding: 10px;
 }
-.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-switch {
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-switch, 
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .error.javascript
+{
 	display: inline-block;
 	margin: 0 10px;
 	padding: 0 5px;
 	cursor: pointer;
 	color: #444d56;
+}
+.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .error.javascript .upfront-icon-button:before {
+	background-position: -480px -205px;
+	margin-top: 7px;
 }
 .upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-switch.active {
 	color: white;
@@ -66,4 +72,10 @@
 }
 .upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-editor-section.active {
 	display: block;
+}
+.upfront_code-editor.upfront_code-editor-complex .handle.ui-resizable-handle.ui-resizable-s {
+	text-align: center;
+	font-size: 18px;
+	line-height: 7px;
+	bottom: 5px;
 }
