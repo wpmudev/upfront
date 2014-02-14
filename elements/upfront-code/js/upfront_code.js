@@ -22,6 +22,7 @@ var Views = {
 			"click .create": "create_code"
 		},
 		render: function () {
+			/*
 			var me = this;
 
 			this.$el.empty().append('Loading...');
@@ -29,14 +30,15 @@ var Views = {
 			require([
 				'//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'
 			], function () {
-				me.$el.empty()
-					.append(
-						'<p style="text-align:center"><button type="button" class="embed">Embed 3rd Party code</button>' +
-						'&nbsp;or&nbsp;' +
-						'<button type="button" class="create">Write Custom Code</button></p>'
-					)
-				;
 			});
+*/
+			this.$el.empty()
+				.append(
+					'<p style="text-align:center"><button type="button" class="embed">Embed 3rd Party code</button>' +
+					'&nbsp;or&nbsp;' +
+					'<button type="button" class="create">Write Custom Code</button></p>'
+				)
+			;
 		},
 		embed_code: function () {
 			this.model.set_property("code_selection_type", "Embed", true);
@@ -279,9 +281,16 @@ var Views = {
 var CodeView = Upfront.Views.ObjectView.extend({
 
 	on_render: function () {
-		var type = this.model.get_property_value_by_name("code_selection_type");
-		if (!type) this.render_initial_view();
-		else this.render_code_view();
+		var type = this.model.get_property_value_by_name("code_selection_type"),
+			me = this
+		;
+		this.$el.empty().append("Loading...");
+		require([
+			'//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'
+		], function () {
+			if (!type) me.render_initial_view();
+			else me.render_code_view();
+		});
 	},
 
 	render_initial_view: function () {
