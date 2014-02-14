@@ -686,17 +686,20 @@ define([
 				});
 			},
 			remove: function() {
-				this.model.each(function(model){
-					var view = Upfront.data.object_views[model.cid];
-					if(	view ){
-						view.remove();
-						delete Upfront.data.object_views[model.cid];
-					}
-				});
+				if(this.model)
+					this.model.each(function(model){
+						var view = Upfront.data.object_views[model.cid];
+						if(	view ){
+							view.remove();
+							delete Upfront.data.object_views[model.cid];
+						}
+					});
 				this.parent_view = false;
 				Backbone.View.prototype.remove.call(this);
-				this.model.reset({silent:true});
-				this.model = false;
+				if(this.model){
+					this.model.reset({silent:true});
+					this.model = false;
+				}
 			}
 		}),
 

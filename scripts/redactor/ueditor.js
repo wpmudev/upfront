@@ -757,6 +757,7 @@ RedactorPlugins.upfrontLink = {
 
 				var text = this.redactor.getSelection().toString();
 				this.redactor.exec('insertHTML', '<a href="' + url + '" rel="' + type + '">' + text + '</a>');
+				this.redactor.selectionRemoveMarkers();
 			}
 		},
 		prepareLink: function(e){
