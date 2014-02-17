@@ -100,6 +100,15 @@ var Views = {
 			this.$el.find(".upfront-entity_meta .re-edit").on("click", function () {
 				me.on_edit();
 			});
+			if (
+				!this.model.get_property_value_by_name('markup') &&
+				!this.model.get_property_value_by_name('style') &&
+				!this.model.get_property_value_by_name('script')
+			) {
+				setTimeout(function () {
+					me.on_edit();
+				}, 10); // Start in edit mode
+			}
 		},
 
 		on_edit: function () {
@@ -245,6 +254,11 @@ var Views = {
 			this.$el.find(".upfront-entity_meta .re-edit").on("click", function () {
 				me.on_edit();
 			});
+			if (!this.model.get_property_value_by_name('markup')) {
+				setTimeout(function () {
+					me.on_edit();
+				}, 10); // Start in edit mode
+			}
 		},
 
 		on_edit: function () {
