@@ -54,11 +54,11 @@
             if(parent.length && parent.height()){
                 this.elementSize.height = parent.height();
                 //setTimeout(function(){
-                    me.elementSize.width = parent.find('.upfront-object-content').width();
-                    if(me.elementSize.width != 0){
+                    var size = me.get_element_size_px(false);
+                    if(size.col != 0){
                         me.property('element_size', {
-                            width: me.elementSize.width,
-                            height: parseInt(parent.css('min-height')),
+                            width: size.col,
+                            height: size.row,
                         });
                     }
                 //}, 1000);

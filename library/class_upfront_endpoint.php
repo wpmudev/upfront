@@ -16,8 +16,10 @@ abstract class Upfront_Endpoint extends Upfront_Server {
 abstract class Upfront_VirtualPage extends Upfront_Server {
 
 	protected $_subpages = array();
+	protected $_subpage;
 
 	abstract public function get_slug ();
+	abstract public function parse ($request);
 	abstract public function render ($request);
 	
 	protected function _add_hooks () {
@@ -28,9 +30,14 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	protected function _add_subpages () {}
 
 	public function intercept_page () {
-		if (!$this->_parse_request()) return false;
+		if (!$this->_parse_request(true)) return false;
 		//if ($this->get_slug() != get_query_var('name')) return false;
 		$this->render();
+	}
+	
+	public function parse_page () {
+		if (!$this->_parse_request(false)) return false;
+		return true;
 	}
 
 	public static function redirect ($request) {
@@ -42,7 +49,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 		die;
 	}
 
-	private function _parse_request () {
+	private function _parse_request ($render = true) {
 		$raw_request = get_option('permalink_structure')
 			? $this->_parse_pretty_permalink_request()
 			: $this->_parse_default_request()
@@ -56,13 +63,21 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 			foreach($this->_subpages as $subpage) {
 				if ($subpage->get_slug() !== $request[1]) continue;
 				status_header(200);
-				$subpage->render($request);
+				if ($render)
+					$subpage->render($request);
+				else
+					$subpage->parse($request);
+				$this->_subpage = $subpage;
 				break;
 			}
 		} else {
 			status_header(200);
-			$this->render($request);
+			if ($render)
+				$this->render($request);
+			else
+				$this->parse($request);
 		}
+		return true;
 	}
 
 	public static function get_url ($request) {
@@ -93,6 +108,7 @@ abstract class Virtual_Content_Page extends Upfront_VirtualPage {
 
 abstract class Upfront_VirtualSubpage {
 	abstract public function get_slug ();
+	abstract public function parse ($request);
 	abstract public function render ($request);
 }
 
@@ -156,12 +172,19 @@ class Upfront_EditPage_VirtualSubpage extends Upfront_VirtualSubpage {
 	public function get_slug () {
 		return 'page';
 	}
+	
+	public function parse ($request) {
+		$post_id = end($request);
+		global $post, $wp_query;
+		$wp_query = new WP_Query(array(
+			'page_id' => $post_id,
+		));
+		add_filter('upfront-data-post_id', create_function('', "return $post_id;"));
+	}
 
 	public function render ($request) {
-		$post_id = end($request);
-		$post = Upfront_PostModel::get($post_id);
-		add_filter('wp_title', array($this, 'get_title'));
-		require_once('templates/edit.php');
+		$this->parse($request);
+		load_template(get_single_template());
 		die;
 	}
 
@@ -176,15 +199,19 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 		return 'post';
 	}
 
-	public function render ($request) {
+	public function parse ($request) {
 		$post_id = end($request);
 		global $post, $wp_query;
 		$wp_query = new WP_Query(array(
 			'p' => $post_id,
 		));
+		add_filter('upfront-data-post_id', create_function('', "return $post_id;"));
+	}
+
+	public function render ($request) {
+		$this->parse($request);
 		//add_filter('wp_title', array($this, 'get_title'));
 		add_action('wp_footer', array($this, 'start_editor'), 999);
-		add_filter('upfront-data-post_id', create_function('', "return $post_id;"));
 		load_template(get_single_template());
 		die;
 	}
@@ -230,6 +257,7 @@ class Upfront_ContentEditor_VirtualPage extends Virtual_Content_Page {
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
+		return $me;
 	}
 
 	protected function _add_subpages () {
@@ -243,6 +271,7 @@ class Upfront_ContentEditor_VirtualPage extends Virtual_Content_Page {
 		return 'edit';
 	}
 
+	public function parse ($request) {}
 	public function render ($request) {}
 
 }
@@ -884,6 +913,8 @@ class Upfront_ElementDependiecies_Styles_VirtualSubpage extends Upfront_VirtualS
 
 	public function get_slug () { return 'styles'; }
 
+	public function parse ($request) {}
+
 	public function render ($request) {
 		if (empty($request)) return false;
 		if (empty($request[2])) return false;
@@ -897,6 +928,8 @@ class Upfront_ElementDependiecies_Styles_VirtualSubpage extends Upfront_VirtualS
 class Upfront_ElementDependiecies_Scripts_VirtualSubpage extends Upfront_VirtualSubpage {
 
 	public function get_slug () { return 'scripts'; }
+
+	public function parse ($request) {}
 
 	public function render ($request) {
 		if (empty($request)) return false;
@@ -924,6 +957,7 @@ class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
 	
 	public function get_slug () { return 'upfront-dependencies'; }
 
+	public function parse ($request) { }
 	public function render ($request) { die; }
 
 }

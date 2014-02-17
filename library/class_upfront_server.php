@@ -78,10 +78,20 @@ class Upfront_Ajax extends Upfront_Server {
 
 		global $post;
 
-		if($post_type)
+		if($post_type){
 			$post = Upfront_PostModel::create($post_type);
-		else
+			// set new layout IDS based on the created post ID
+			$cascade = array(
+				'type' => 'single',
+				'item'=> $post_type,
+				'specificity' => $post->ID
+			);
+			$layout_ids = Upfront_EntityResolver::get_entity_ids($cascade);
+		}
+		else {
 			$post = $post;
+			$layout_ids = Upfront_EntityResolver::get_entity_ids();
+		}
 
 		$response = array(
 			'post' => $post,

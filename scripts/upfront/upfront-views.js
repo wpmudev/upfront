@@ -591,13 +591,16 @@ define([
 			on_after_layout_render: function () {
 
 			},
-
+			
 			/* Getting dimension and resize element */
-			get_element_size: function () {
-				var element = Upfront.Behaviors.GridEditor.get_position( this.parent_module_view.$el.find('.upfront-module') );
+			get_element_size: function (real) {
+				var ed = Upfront.Behaviors.GridEditor,
+					real = typeof real == 'undefined' ? true : real;
+				ed.start(this.parent_module_view, this.parent_module_view.model);
+				var element = ed.get_position( this.parent_module_view.$el.find('.upfront-module') );
 				return {
 					col: element.col,
-					row: element.row
+					row: real ? element.row : this.model.get_property_value_by_name('row')
 				};
 			},
 			get_element_columns: function () {
@@ -605,6 +608,21 @@ define([
 			},
 			get_element_rows: function () {
 				return this.get_element_size().row;
+			},
+			get_element_size_px: function (real) {
+				var ed = Upfront.Behaviors.GridEditor,
+					real = typeof real == 'undefined' ? true : real,
+					size = this.get_element_size(real);
+				return {
+					col: size.col * ed.col_size,
+					row: size.row * ed.baseline
+				};
+			},
+			get_element_columns_px: function () {
+				return this.get_element_size_px().col;
+			},
+			get_element_rows_px: function () {
+				return this.get_element_size_px().row;
 			},
 			get_element_max_size: function ( axis ) {
 				var ed = Upfront.Behaviors.GridEditor,

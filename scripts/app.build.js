@@ -34,6 +34,7 @@
         "upfront-social_media": "../elements/upfront-social-media/js/upfront-social-media",
         "utabs": "../elements/upfront-tabs/js/utabs",
         "this_post": "../elements/upfront-this-post/js/this_post",
+        "this_page": "../elements/upfront-this-page/js/this_page",
         "uwidget": "../elements/upfront-widget/js/uwidget",
         "uyoutube": "../elements/upfront-youtube/js/uyoutube",
         "redactor": "redactor/redactor",

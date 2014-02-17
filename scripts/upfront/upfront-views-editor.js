@@ -208,6 +208,10 @@ define([
 		"className": "command-new-post",
 		postView: false,
 		postType: 'post',
+		setMode: false,
+		initialize: function () {
+			this.setMode = Upfront.Application.MODE.CONTENT;
+		},
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
@@ -238,8 +242,9 @@ define([
 
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
-
-			Upfront.Application.set_current(Upfront.Settings.Application.MODE.CONTENT);
+				
+			if (this.setMode !== false && Upfront.Application.mode.current != this.setMode)
+				Upfront.Application.set_current(Upfront.Settings.Application.MODE.CONTENT);
 			Upfront.Application.new_post(this.postType)
 				.done(function(post){
 					loading.done();
@@ -272,6 +277,9 @@ define([
 	var Command_NewPage = Command_NewPost.extend({
 		"className": "command-new-page",
 		postType: 'page',
+		initialize: function () { 
+			this.setMode = Upfront.Application.MODE.LAYOUT; 
+		},
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
@@ -1765,7 +1773,10 @@ define([
 			$("#upfront-list-page").show('slide', { direction: "right"}, 'fast');
 			this.$el.find("#upfront-list").hide();
 			$("#upfront-page_preview-edit button").one("click", function () {
-				window.location = Upfront.Settings.Content.edit.post + post.id;
+				//window.location = Upfront.Settings.Content.edit.post + post.id;
+				var path = '/edit/post/' + post.id;
+				Upfront.Popup.close();
+				Upfront.Application.navigate(path, {trigger: true});
 			});
 
 			this.bottomContent = $('#upfront-popup-bottom').html();
@@ -1818,7 +1829,10 @@ define([
 				allTemplates: this.allTemplates ? this.allTemplates : []
 			}));
 			this.$el.find("#upfront-page_preview-edit button").one("click", function () {
-				window.location = Upfront.Settings.Content.edit.post + page.get('ID');
+				//window.location = Upfront.Settings.Content.edit.page + page.get('ID');
+				var path = '/edit/page/' + page.get('ID');
+				Upfront.Popup.close();
+				Upfront.Application.navigate(path, {trigger: true});
 			});
 		},
 

@@ -99,6 +99,7 @@ abstract class Upfront_EntityResolver {
 	}
 
 	public static function ids_from_url($url) {
+		global $wp;
 		$wp = new WP();
 
 		//We need to cheat telling WP we are not in admin area to parse the URL properly
@@ -134,6 +135,15 @@ abstract class Upfront_EntityResolver {
 		global $post;
 		if(!$post && $query->have_posts() && $query->is_singular()){
 			$post = $query->next_post();
+			setup_postdata($post);
+		}
+		
+		// Intercept /edit/(post|page)/id
+		$editor = Upfront_ContentEditor_VirtualPage::serve();
+		if($editor->parse_page()){
+			global $wp_query;
+			$query = $wp_query;
+			$post = $wp_query->next_post();
 			setup_postdata($post);
 		}
 

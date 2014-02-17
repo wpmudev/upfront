@@ -49,7 +49,7 @@ function init_map ($el) {
 	if (props.style_overlay) {
 		map.setOptions({styles: props.style_overlay});
 	}
-	_(markers).each(function (marker) {
+	$.each(markers, function(index, marker) {
 		var mrk = new google.maps.Marker({
 			position: new google.maps.LatLng(marker.lat, marker.lng),
 			draggable: false,
@@ -68,6 +68,7 @@ function init_map ($el) {
 
 function load_google_maps () {
 	if ($(document).data("upfront-google_maps-loading")) return false;
+	$(document).data("upfront-google_maps-loading", true);
 	if (typeof google === 'object' && typeof google.maps === 'object' && typeof google.maps.Map === 'object') return upfront_maps_public_init();
 	var protocol = '',
 		script = document.createElement("script")
@@ -76,7 +77,6 @@ function load_google_maps () {
 	script.type = "text/javascript";
 	script.src = protocol + "//maps.google.com/maps/api/js?v=3&libraries=places&sensor=false&callback=upfront_maps_loaded";
 	document.body.appendChild(script);
-	$(document).data("upfront-google_maps-loading", true);
 }
 function upfront_maps_public_init () {
 	$(".upfront_map-public").each(function () {
@@ -90,7 +90,6 @@ if (!window.upfront_maps_loaded) {
 		$(document).trigger("upfront-google_maps-loaded");
 		$(document).data("upfront-google_maps-loading", false);
 	};
-	$(document).data("upfront-google_maps-loading", true);
 	$(load_google_maps);
 }
 

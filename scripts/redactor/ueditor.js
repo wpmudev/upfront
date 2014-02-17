@@ -193,6 +193,15 @@ var hackRedactor = function(){
 			this.airBindHide();
 			this.$air.trigger('show');
 		},
+		
+	// Add possiblity to disable linebreak (for one line title)
+	$.Redactor.prototype.doInsertLineBreak = $.Redactor.prototype.insertLineBreak;
+	$.Redactor.prototype.insertLineBreak = function()
+	{
+		if ( !this.opts.disableLineBreak )
+			return this.doInsertLineBreak();
+		return false;
+	};
 
 	hackedRedactor = true;
 
@@ -212,6 +221,7 @@ var Ueditor = function($el, options) {
 			// Redactor options
 			air:true,
 			linebreaks: true,
+			disableLineBreak: false,
 			placeholder: 'Your text here...',
 			focus: true,
 			cleanup: false,
@@ -232,8 +242,8 @@ var Ueditor = function($el, options) {
 	this.options.pasteAfterCallback = function () { UeditorEvents.trigger("ueditor:paste:after", this); };
 	this.options.focusCallback = function () { UeditorEvents.trigger("ueditor:focus", this); };
 	this.options.blurCallback = function () { UeditorEvents.trigger("ueditor:blur", this); };
-	this.options.keyupCallback = function () { UeditorEvents.trigger("ueditor:key:up", this); };
-	this.options.keydownCallback = function () { UeditorEvents.trigger("ueditor:key:down", this); };
+	this.options.keyupCallback = function (e) { UeditorEvents.trigger("ueditor:key:up", this); };
+	this.options.keydownCallback = function (e) { UeditorEvents.trigger("ueditor:key:down", this); };
 	this.options.textareaKeydownCallback = function () { UeditorEvents.trigger("ueditor:key:down:textarea", this); };
 	this.options.syncBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:sync:before", this, html); return html; }; // <-- OOOH this one is different
 	this.options.syncAfterCallback = function (html) { UeditorEvents.trigger("ueditor:sync:after", this, html); $el.trigger('syncAfter', html); }; //Added syncAfter for east saving.
@@ -250,6 +260,8 @@ var Ueditor = function($el, options) {
 		this.redactor = this.start();
 	else
 		this.bindStartEvents();
+	
+	this.startPlaceholder();
 };
 
 Ueditor.prototype = {
@@ -257,6 +269,7 @@ Ueditor.prototype = {
 	mouseupListener: false,
 
 	start: function(e){
+		this.stopPlaceholder();
 		this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
 			.attr('title', '')
@@ -317,6 +330,36 @@ Ueditor.prototype = {
 		var result = this.$el.redactor(method);
 		UeditorEvents.trigger("ueditor:method:" + method, this.$el.redactor);
 		return result;
+	},
+	startPlaceholder: function(){
+		var placeholder = this.options.placeholder;
+		if (this.$el.attr('placeholder')) placeholder = this.$el.attr('placeholder');
+		if (placeholder === '') placeholder = false;
+		if (placeholder !== false && this.$el.text().length == 0)
+		{
+			this.$placeholder = this.$el.clone(false);
+			this.$placeholder.attr('contenteditable', false).addClass('ueditor-placeholder').html(placeholder);
+			this.$el.after(this.$placeholder);
+			var $parent = this.$el.parent();
+			if ($parent.css('position') == 'static')
+				$parent.css('position', 'relative');
+			if (this.$el.css('position') == 'static' )
+				this.$el.css('position', 'relative');
+			this.$el.css('z-index', 1);
+			var pos = this.$el.position();
+			this.$placeholder.css({
+				'position': 'absolute',
+				'z-index': '0',
+				'top': pos.top,
+				'left': pos.left,
+				'right': $parent.outerWidth() - (pos.left + this.$el.outerWidth())
+			});
+			this.options.placeholder = placeholder;
+		}
+	},
+	stopPlaceholder: function() {
+		if (this.$placeholder)
+			this.$placeholder.remove();
 	},
 	preventDraggable: function(){
 		//Prevent dragging from editable areas
@@ -1625,7 +1668,8 @@ RedactorPlugins.upfrontPlaceholder = {
 				'position': 'absolute',
 				'z-index': '0',
 				'top': editor_pos.top,
-				'left': editor_pos.left
+				'left': editor_pos.left,
+				'right': this.$box.outerWidth() - (editor_pos.left + this.$editor.outerWidth())
 			});
 			this.opts.placeholder = placeholder;
 			this.$editor.on('focus keyup', $.proxy(this.placeholderUpdate, this));
