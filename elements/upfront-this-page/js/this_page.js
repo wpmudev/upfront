@@ -19,7 +19,6 @@ var ThisPageModel = Upfront.Models.ObjectModel.extend({
 var ThisPageView = (function(){
 	// static variables
 	var page_id = false,
-		page = false,
 		changed = false,
 		requesting = false,
 		saving = false,
@@ -36,6 +35,7 @@ var ThisPageView = (function(){
 		is_started: false,
 	
 		initialize: function(options){
+			var me = this;
 			if(! (this.model instanceof ThisPageModel)){
 				this.model = new ThisPageModel({properties: this.model.get('properties')});
 			}
@@ -43,17 +43,7 @@ var ThisPageView = (function(){
 			this.display = this.model.get_property_value_by_name('display');
 			instances.push(this);
 			page_id = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-			if ( Upfront.data.posts[page_id] ){
-				page = Upfront.data.posts[page_id];
-			}
-			else {
-				page = new Upfront.Models.Post({ID: page_id});
-				page.fetch({withMeta: true, filterContent: true}).done(function(response){
-					if(!Upfront.data.posts)
-						Upfront.data.posts = {};
-					Upfront.data.posts[page_id] = page;
-				});
-			}
+			
 			this.listenTo(Upfront.Events, "command:layout:save_start", this.on_save);
 		},
 	
@@ -127,19 +117,50 @@ var ThisPageView = (function(){
 					ins.is_new = page && page.is_new;
 					ins.deferred.resolve(markups[ins.display]);
 				});
-				page.is_new = false;
+				if (page)
+					page.is_new = false;
 			}).done(function(){
 				requesting = false;
 			});
 			;
 			return me.deferred.promise();
 		},
+		
+		get_page: function () {
+			var page,
+				_deferred = new $.Deferred();
+			if ( Upfront.data.posts[page_id] ){
+				page = Upfront.data.posts[page_id];
+				return _deferred.resolve(page);
+			}
+			else {
+				page = new Upfront.Models.Post({ID: page_id});
+				page.fetch({withMeta: true, filterContent: true}).done(function(response){
+					if(!Upfront.data.posts)
+						Upfront.data.posts = {};
+					Upfront.data.posts[page_id] = page;
+					_deferred.resolve(page);
+				});
+			}
+			return _deferred.promise();
+		},
+		
 	
 		refresh_markup: function (markup) {
-			var node = this.$el.find(".upfront-object-content");
-			this.markup = markup;
-			node.html(markup);
-			this.update_editor(node);
+			var me= this,
+				node = this.$el.find(".upfront-object-content"),
+				selector = _.findWhere(Upfront.data.ueditor.selectors, {type: this.display}).selector,
+				content = '';
+			this.get_page().done(function(page){
+				node.html(markup);
+				if ( me.display == 'title' )
+					content = page.get('post_title');
+				else if ( me.display == 'content' )
+					content = page.get('post_content');
+				node.find(selector).html(content);
+				me.markup = node.html();
+				me.update_editor(node);
+			});
 		},
 		
 		update_editor: function (node, start, focus) {
@@ -155,7 +176,7 @@ var ThisPageView = (function(){
 					element.trigger('dblclick');
 				return;
 			}
-			if ( me.display == 'title' )
+			if ( me.display == 'title' ){
 				params = {
 					airButtons: {},
 					observeLinks: false,
@@ -163,26 +184,30 @@ var ThisPageView = (function(){
 					disableLineBreak: true,
 					pastePlainText: true,
 					autostart: start === true,
-					placeholder: 'Write a title...'
+					placeholder: 'Write a title...',
+					focus: focus
 				};
-			else if ( me.display == 'content' )
+			}
+			else if ( me.display == 'content' ) {
 				params = {
 					linebreaks: false,
 					autostart: start === true,
 					placeholder: 'Your content goes here ;)',
+					focus: focus,
 					upfrontMedia: true,
 					upfrontImages: true
 				};
+			}
 			element
 				.on('start', function(){
 					edit_started = true;
 					me.is_started = true;
-					console.log(instances);
 					_.each(instances, function(ins){
 						if ( ins == me )
 							return;
 						ins.update_editor(ins.$el.find(".upfront-object-content"), true, false);
 					});
+					setTimeout(function(){element.ueditor('focus');}, 100);
 					Upfront.Events.trigger('upfront:element:edit:start', 'text');	
 				})
 				.on('stop', function(){
@@ -205,16 +230,18 @@ var ThisPageView = (function(){
 				return;
 			saving = true;
 			var me = this;
-			page.set('post_status', 'publish');
-			page.set('post_title', queues['title']);
-			page.set('post_content', queues['content']);
-			page.save().done(function(){
-				if ( !me.is_new )
-					return;
-				var path = '/edit/page/' + page_id;
-				//Upfront.Application.load_layout(path);
-				Upfront.Application.navigate(path);
-				saving = false;
+			this.get_page().done(function(page){
+				page.set('post_status', 'publish');
+				page.set('post_title', queues['title']);
+				page.set('post_content', queues['content']);
+				page.save().done(function(){
+					if ( !me.is_new )
+						return;
+					var path = '/edit/page/' + page_id;
+					//Upfront.Application.load_layout(path);
+					Upfront.Application.navigate(path);
+					saving = false;
+				});
 			});
 		},
 		
