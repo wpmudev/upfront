@@ -242,8 +242,10 @@ var LayoutEditor = new (Subapplication.extend({
 				return (view instanceof current.View) ? current : obj;
 			}, false),
 			current_object = (current_object && current_object.ContextMenu ? current_object : Upfront.Views.ContextMenu);
-			if(!current_object.ContextMenu)
+			if(current_object.ContextMenu === false)
 				return false;
+			else if (typeof current_object.ContextMenu == 'undefined')
+				current_object.ContextMenu = Upfront.Views.ContextMenu;
 
 			context_menu_view = new current_object.ContextMenu({
 				model: view.model,

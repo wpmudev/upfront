@@ -392,6 +392,8 @@ define([
 			initialize: function(){
 				this.label = this.options.get_label;
 				this.action = this.options.action;
+				if ( typeof this.options.in_context == 'function' )
+					this.in_context = this.options.in_context;
 			},
 			render: function () {
 				var me = this;
@@ -407,6 +409,10 @@ define([
 				this.parent_view = false;
 				this.for_view = false;
 				Backbone.View.prototype.remove.call(this);
+			},
+			in_context: function(){
+				// Allow additional context for individual menuitem
+				return true;
 			}
 		}),
 
@@ -424,6 +430,8 @@ define([
 						if ( ! menuitem.menulist )
 							menuitem.menulist = me;
 						menuitem.for_view = me.for_view;
+						if ( !menuitem.in_context() ) // Don't render if the item is not in context
+							return;
 						menuitem.render();
 						menuitem.parent_view = me;
 						me.$el.append(menuitem.el);
@@ -471,6 +479,38 @@ define([
 						var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
 						togglegrid.on_click();
 					  }
+				  }),
+				  new Upfront.Views.ContextMenuItem({
+					  get_label: function() {
+						  return 'Clone';
+					  },
+					  in_context: function() {
+					  	// Only show this menu on ObjectView instance
+					  	return this.for_view instanceof Upfront.Views.ObjectView;
+					  },
+					  action: function() {
+						var module_view = this.for_view.parent_module_view,
+							module = module_view.model,
+							modules = module_view.region.get('modules'),
+							wrappers = module_view.region.get('wrappers'),
+							wrap_model = wrappers.get_by_wrapper_id(module.get_property_value_by_name('wrapper_id')),
+							data = Upfront.Util.model_to_json(module),
+							new_model = new Upfront.Models.Module(data),
+							wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+							wrap_data = Upfront.Util.model_to_json(wrap_model),
+							new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
+							index = modules.indexOf(module),
+							models = [];
+						new_wrap_model.set_property('wrapper_id', wrapper_id);
+						new_model.set_property('wrapper_id', wrapper_id);
+						wrappers.add(new_wrap_model);
+						modules.each(function(each, i){
+							models.push(each);
+							if ( i == index )
+								models.push(new_model);
+						});
+						modules.reset(models, {call_render: [new_model]});
+					  }
 				  })
 				]);
 			}
@@ -479,6 +519,7 @@ define([
 		ContextMenu = Backbone.View.extend({
 			initialize: function() {
 				this.for_view = this.options.for_view;
+				this.menulists = _([]);
 			},
 			render: function () {
 				var me = this;
@@ -852,8 +893,9 @@ define([
 					me.render_module(module);
 				});
 			},
-			render_module: function (module) {
+			render_module: function (module, options) {
 				var $el = this.$el,
+					index = options && typeof options.index != 'undefined' ? options.index-1 : -2,
 					view_class_prop = module.get("properties").where({"name": "view_class"}),
 					view_class = view_class_prop.length ? view_class_prop[0].get("value") : "Module",
 					//view_class = Upfront.Views[view_class] ? view_class : "Module",
@@ -868,7 +910,12 @@ define([
 					local_view.region = this.region_view.model;
 					if ( !wrapper ){
 						local_view.render();
-						$el.append(local_view.el);
+						if ( index === -2 )
+							$el.append(local_view.el);
+						else if ( index === -1 )
+							$el.prepend(local_view.el);
+						else
+							$el.find('.upfront-module').eq(index).parent().after(local_view.el);
 					}
 					else {
 						if ( this.current_wrapper_id == wrapper_id ){
@@ -884,7 +931,12 @@ define([
 						local_view.render();
 						$(wrapper_el).append(local_view.el);
 						if ( wrapper_view ){
-							$el.append(wrapper_el);
+							if ( index === -2 )
+								$el.append(wrapper_el);
+							else if ( index === -1 )
+								$el.prepend(wrapper_el);
+							else
+								$el.find('.upfront-module').eq(index).closest('.upfront-wrapper').after(wrapper_el);
 							if ( ! Upfront.data.wrapper_views[wrapper.cid] )
 								Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
 						}
@@ -903,9 +955,9 @@ define([
 					}
 				}
 			},
-			on_add: function (model) {
+			on_add: function (model, collection, options) {
 				this.current_wrapper_id = this.current_wrapper_el = null;
-				this.render_module(model);
+				this.render_module(model, options);
 			},
 			on_remove: function (model) {
 				var view = Upfront.data.module_views[model.cid];
@@ -915,8 +967,14 @@ define([
 				view.remove();
 				delete Upfront.data.module_views[model.cid];
 			},
-			on_reset: function () {
-
+			on_reset: function (collection, options) {
+				var me = this;
+				if ( options && options.call_render ){
+					_.each(options.call_render, function(module){
+						var index = collection.indexOf(module);
+						me.render_module(module, {index: index});
+					});
+				}
 			},
 			remove: function() {
 				var me = this;

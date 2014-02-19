@@ -90,7 +90,8 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		else {
 			$post = $post;
-			$layout_ids = Upfront_EntityResolver::get_entity_ids();
+			if ($post && is_singular())
+				$layout_ids = Upfront_EntityResolver::get_entity_ids();
 		}
 
 		$response = array(
