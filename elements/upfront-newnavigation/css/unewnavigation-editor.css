@@ -1,0 +1,89 @@
+div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item {
+	display: none;	
+	z-index:1;
+	cursor: pointer !important;
+}
+div.upfront-navigation.upfront-editable_entity ul li > i.navigation-add-item {
+	display:block;
+	position: absolute;
+	right: -20px;
+	top: 30%;
+}
+div.upfront-navigation.upfront-editable_entity i.navigation-add-item:before {
+	content:'';
+	display:block;
+	width: 16px;
+	height: 16px;
+	background-position: -1363px -171px;
+	background-image: url('wp-content/themes/upfront/img/uf-core-el-sprite.svg');
+	cursor: pointer;
+	overflow: hidden;
+	line-height: 3em;	
+}
+div.upfront-navigation.upfront-editable_entity ul.sub-menu {
+	padding-bottom:30px;	
+}
+div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-add-item {
+	left: 0;
+	bottom: -28px !important;
+	position: absolute;
+	top: inherit;		
+}
+div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-add-item:before {
+	display:inline-block !important;
+	vertical-align:middle;
+}
+
+div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-add-item:after {
+	content: 'Add Item';
+	display:inline-block;
+	padding-left:4px;
+	text-transform: Capitalize;
+	font-size:0.8em;
+	position:relative;
+}
+
+div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
+	width: 16px;
+	height: 16px;
+	background-position: -483px -171px;
+	background-image: url('wp-content/themes/upfront/img/uf-core-el-sprite.svg');
+	position: absolute;
+	right: -8px;
+	top: -8px;
+	cursor: pointer;
+	overflow: hidden;
+	line-height: 3em;	
+}
+div.upfront-navigation.upfront-editable_entity ul.menu li:hover {
+	cursor: move;	
+}
+div.upfront-navigation.upfront-editable_entity ul.menu:not(.edit_mode) li:hover:before {
+	content:'';
+	display:block;
+	position:absolute;
+	height:100%;
+	width:100%;
+	padding: 0 10px;
+	top:0;
+	left:0;
+	border:1px #ddd dotted;
+
+}
+div.upfront-navigation.upfront-editable_entity ul.menu:not(.edit_mode) li:hover > i.delete_menu_item {
+	display:block;
+}
+
+div.upfront-navigation.upfront-editable_entity ul.time_being_display {
+	display:block;	
+}
+
+div.upfront-navigation.upfront-editable_entity a.menu_item.new_menu_item {
+	opacity: 0.4;	
+}
+
+/* to be removed after the dev phase is over */
+.upfront-navigation .sub-menu {
+	top: 61px !important;
+}
+

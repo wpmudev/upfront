@@ -426,7 +426,6 @@ define([
 				var me = this;
 				this.$el.empty();
 				this.menuitems.each(function(menuitem) {
-
 						if ( ! menuitem.menulist )
 							menuitem.menulist = me;
 						menuitem.for_view = me.for_view;

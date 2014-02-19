@@ -2357,6 +2357,36 @@ define([
 		}
 	});
 
+	var Field_Button = Field.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-button',
+		render: function () {
+			this.$el.html('');
+			if ( !this.options.compact )
+				this.$el.append(this.get_label_html());
+			this.$el.append(this.get_field_html());
+			var me = this;
+		
+			this.trigger('rendered');
+		},
+		get_field_html: function () {
+			var attr = {
+				'type': 'button',
+				'class': 'upfront-field upfront-field-button',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.label
+			};
+			if ( this.options.compact ) {
+				attr.placeholder = this.label;
+				this.$el.attr('data-tooltip', this.label);
+			}
+			else if ( this.options.placeholder ) {
+				attr.value = this.options.placeholder;
+			}
+			return '<input ' + this.get_field_attr_html(attr) + ' />';
+		}
+	});
+
 	var Field_Email = Field_Text.extend({
 		get_field_html: function () {
 			var attr = {
@@ -5154,6 +5184,7 @@ var Field_Anchor = Field_Select.extend({
 			"Field": {
 				"Field": Field,
 				"Text": Field_Text,
+				"Button": Field_Button,
 				"Email": Field_Email,
 				"Textarea": Field_Textarea,
 				"Color": Field_Color,

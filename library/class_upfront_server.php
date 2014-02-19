@@ -205,7 +205,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$require_config = array(
 			'baseUrl' => "{$root}",
 			'paths' => $paths,
-      'shim' => $shim,
+			'shim' => $shim,
 			'waitSeconds' => 60, // allow longer wait period to prevent timeout
 		);
 		if ($this->_debugger->is_active(Upfront_Debug::CACHED_RESPONSE)) {

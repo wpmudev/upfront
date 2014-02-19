@@ -1,0 +1,21 @@
+<div> 
+<script type="text/template" id="link-tpl">
+	Type of link:	
+	<div class="upfront-field-wrap">
+		<input type="radio" name="unavigation-link-type" value="custom" class="upfront-field-radio" id="unavigation-link-type-1" {{menu_item_type == 'custom' ? 'checked = "checked"' : ''}} >
+		<label for="unavigation-link-type-1">URL</label>
+		<input type="text" name="unavigation-link-url" placeholder="http://www.example.com" class="upfront-field-text" id="unavigation-link-url" value="{{ menu_item_url }}" >
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="unavigation-link-type" value="post" class="upfront-field-radio" id="unavigation-link-type-2" {{menu_item_type == 'post' ? 'checked = "checked"' : ''}} >
+		<label for="unavigation-link-type-2">Page or post</label> 
+		
+		<input type="radio" name="unavigation-link-type" value="anchor" class="upfront-field-radio" id="unavigation-link-type-3" {{menu_item_type == 'anchor' ? 'checked = "checked"' : ''}} >
+		<label for="unavigation-link-type-3">Anchor</label>
+	</div>
+	
+	<div class="upfront-settings-button_panel">
+		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
+	</div>
+</script>
+</div>
