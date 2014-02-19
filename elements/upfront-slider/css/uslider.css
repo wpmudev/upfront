@@ -1,18 +1,5 @@
 .uslider-texts {
-	position: relative;
-}
-
-.uslide-text {
-	position: absolute;
-	top: 0;
-	left: 0;
-	opacity: 0;
-	z-index: -1;
-	-webkit-transition: opacity 500ms ease;
-	-moz-transition: opacity 500ms ease;
-	-ms-transition: opacity 500ms ease;
-	-o-transition: opacity 500ms ease;
-	transition: opacity 500ms ease;
+	display: none;
 }
 
 .uslider .uslide{
@@ -41,28 +28,20 @@ div.uslide-text-current {
 	overflow: hidden;
 }
 
-.uslider-topOver .uslider-texts,
-.uslider-bottomOver .uslider-texts,
-.uslider-bottomCover .uslider-texts,
-.uslider-middleCover .uslider-texts,
-.uslider-topCover .uslider-texts {
+.uslide-topOver .uslide-caption,
+.uslide-bottomOver .uslide-caption,
+.uslide-bottomCover .uslide-caption,
+.uslide-middleCover .uslide-caption,
+.uslide-topCover .uslide-caption {
 	position:absolute;
 	width: 100%;
 	z-index:1;
+	padding: 15px;
+	top: 0;
 }
 
 .uslider .uimage-controls {
 	z-index: 4;
-}
-
-.uslides .uslider-texts {
-	position:absolute;
-	width: 100%;
-	z-index: 2;	
-}
-
-.uslide-text {
-	width: 100%;
 }
 
 .upfront-default-slider-nav,
@@ -81,26 +60,20 @@ div.uslide-text-current {
 	padding: 15px;
 }
 
-.uslider-bottomOver .uslider-texts,
-.uslider-bottomOver .uslide-text {
+.uslide-bottomOver .uslide-caption{
 	bottom: 0;
 	top: auto;
 }
 
-.uslider-bottomCover .uslider-texts,
-.uslider-middleCover .uslider-texts,
-.uslider-topCover .uslider-texts {
+.uslide-bottomCover .uslide-caption,
+.uslide-middleCover .uslide-caption,
+.uslide-topCover .uslide-caption{
 	height: 100%;
 }
 
-.uslider-bottomCover .uslide-text,
-.uslider-middleCover .uslide-text,
-.uslider-topCover .uslide-text {
-	height: 100%;
-}
-.uslider-bottomCover .uslide-text:before,
-.uslider-middleCover .uslide-text:before,
-.uslider-topCover .uslide-text:before {
+.uslide-bottomCover .uslide-caption:before,
+.uslide-middleCover .uslide-caption:before,
+.uslide-topCover .uslide-caption:before {
 	height: 100%;
 	content: ' ';
 	width: 1px;
@@ -109,30 +82,30 @@ div.uslide-text-current {
 	vertical-align: middle
 }
 
-.uslider-bottomCover .uslide-editable-text,
-.uslider-middleCover .uslide-editable-text,
-.uslider-topCover .uslide-editable-text,
-.uslider-bottomCover .redactor_box,
-.uslider-middleCover .redactor_box,
-.uslider-topCover .redactor_box {
+.uslide-bottomCover .uslide-editable-text,
+.uslide-middleCover .uslide-editable-text,
+.uslide-topCover .uslide-editable-text,
+.uslide-bottomCover .redactor_box,
+.uslide-middleCover .redactor_box,
+.uslide-topCover .redactor_box {
 	width:99%;
 	display: inline-block;
 }
 
-.uslider-bottomCover .uslide-editable-text,
-.uslider-bottomCover .redactor_box {
+.uslide-bottomCover .uslide-editable-text,
+.uslide-bottomCover .redactor_box {
 	vertical-align: bottom;
 }
-.uslider-middleCover .uslide-editable-text,
-.uslider-middleCover .redactor_box {
+.uslide-middleCover .uslide-editable-text,
+.uslide-middleCover .redactor_box {
 	vertical-align: middle;
 }
-.uslider-topCover .uslide-editable-text,
-.uslider-topCover .redactor_box {
+.uslide-topCover .uslide-editable-text,
+.uslide-topCover .redactor_box {
 	vertical-align: top;
 }
 
-.uslider-right .uslide-text {
+.uslide-right .uslide-caption {
 	padding-left: 15px;
 }
 
@@ -140,8 +113,12 @@ div.uslide-text-current {
 	display: block !important;
 }
 
+.uslide-image {
+	display:block;
+}
+
 div.uslide-image img {
-	position: static;
+	margin: 0;
 }
 
 .uslider .ui-resizable-handle {
@@ -177,24 +154,24 @@ div.uslide-image img {
 	opacity: 1;
 }
 
-.uslider-right .uslides.ui-resizable {
+.uslide-right .uslides.ui-resizable {
 	border-right: 1px solid #3f5870;
 }
-.ui-resizable-autohide .uslider-right .uslides.ui-resizable {
+.ui-resizable-autohide .uslide-right .uslides.ui-resizable {
 	border-right: 1px solid transparent;
 }
 
-.uslider-left .uslides.ui-resizable {
+.uslide-left .uslides.ui-resizable {
 	border-left: 1px solid #3f5870;
 }
-.ui-resizable-autohide .uslider-left .uslides.ui-resizable {
+.ui-resizable-autohide .uslide-left .uslides.ui-resizable {
 	border-left: 1px solid transparent;
 }
 
-.uslider-left .upfront-default-slider-wrap {
-	margin-left: -1px;	
+.uslide-left .upfront-default-slider-wrap {
+	margin-left: -1px;
 }
-.uslider-right .upfront-default-slider-wrap {
+.uslide-right .upfront-default-slider-wrap {
 	margin-right: -1px;
 }
 

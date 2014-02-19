@@ -1211,7 +1211,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		Upfront.Events.trigger("entity:settings:deactivate");
 	},
 
-	closeTooltip: function(){
+	closeTooltip: function(e){
+		if(e){
+			if($(e.target).closest('#ugallery-tooltip').length || $(e.target).hasClass('upfront-icon-region-link'))
+				return;
+		}
+
 		var tooltip = $('#ugallery-tooltip');
 		tooltip.hide().trigger('closed');
 		setTimeout(function(){

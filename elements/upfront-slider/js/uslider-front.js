@@ -6,7 +6,7 @@ jQuery(function($){
 		});
 		texts.height(max);
 	};
-
+/*
 	$('.uslides')
 		.on('slidein', function(e, slide){
 			if(slide){
@@ -31,6 +31,7 @@ jQuery(function($){
 			}
 		})
 	;
+	*/
 	setTimeout(function(){
 		$('.uslider-below').each(function(){
 			setHeight($(this).find('.uslider-texts'));

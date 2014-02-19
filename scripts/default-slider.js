@@ -17,9 +17,9 @@
 			}
 			else{
 				if(isMethod)
-					$.error('Can\'t call the ueditor method ' + args + '. Ueditor not initialized');
-				else { 
-					// Initialize slider					
+					$.error('Can\'t call the ueditor method ' + args + '. The slider is not initialized');
+				else {
+					// Initialize slider
 					$slider.data('uslider', new JQueryUslider($slider, args));
 				}
 			}
@@ -53,7 +53,7 @@
 					next: 'upfront-default-slider-nav-next'
 				},
 				adjust_slide_size: true,
-				starting_slide: 0			
+				starting_slide: 0
 			}, args),
 			$items = data.item ? $slider.find('>'+data.item) : $slider.find('>.'+data.classname.item)
 		;
@@ -97,7 +97,7 @@
 		},
 
 		update_configs: function(){
-			var $slider = this.$slider,			
+			var $slider = this.$slider,
 				slider_auto = $slider.attr('data-slider-auto'),
 				data = this.opts
 			;
@@ -113,7 +113,7 @@
 			data.control = $slider.attr('data-slider-control') || data.control;
 			data.show_control = $slider.attr('data-slider-show-control') || data.show_control;
 			$slider.addClass(data.classname.slider + '-control-' + data.control);
-			$slider.addClass(data.classname.slider + '-control-' + data.show_control);			
+			$slider.addClass(data.classname.slider + '-control-' + data.show_control);
 		},
 
 		update_items: function($new_items){
@@ -127,6 +127,27 @@
 				.append(this.items)
 			;
 
+			//add texts
+			this.items.each(function(idx, item){
+				var slide = $(item),
+					captionSelector = slide.data('caption-selector'),
+					caption = slide.data('caption'),
+					text = slide.find('.uslide-caption')
+				;
+				if(captionSelector || caption){
+					if(!text.length){
+						text = $('<div class="uslide-caption" />');
+						slide.append(text);
+					}
+					if(captionSelector)
+						text.html($(captionSelector).html());
+					else
+						text.html(caption);
+				}
+				else if(text.length)
+					text.remove();
+			});
+
 			this.items.addClass(data.classname.item);
 			if ( data.auto_height ){ // Auto height adjustment to the highest slide
 				this.calc_height();
@@ -134,22 +155,23 @@
 			}
 			else if(data.adjust_slide_size){ // Adjust slides to available space
 				this.adjust_slide_size();
-			}			
+			}
 		},
 
 		calc_height: function(){
 			var max_height;
 			this.$slider.css('height', 9999);
-			this.items.each(function(index){
+			this.items.each(function(){
 				var $img = $(this).find('img'),
-					img_h = $img.height()
+					$text = $(this).find('.uslide-caption'),
+					img_h = $img.height() + $text.outerHeight()
 				;
 				max_height = max_height > img_h ? max_height : img_h;
 			});
-			this.$slider.css('height', Math.ceil(max_height/15)*15);			
+			this.$slider.css('height', Math.ceil(max_height/15)*15);
 		},
 
-		adjust_slide_size: function(){			
+		adjust_slide_size: function(){
 			var height = this.$slider.outerHeight(),
 				width = this.$slider.outerWidth()
 			;
@@ -182,7 +204,7 @@
 					me.slider_switch(index);
 					me.pause = true;
 				});
-			}			
+			}
 		},
 
 		prev_next_navigation: function(){
@@ -198,7 +220,7 @@
 					e.preventDefault();
 					me.next();
 				})
-			;			
+			;
 		},
 
 		next: function(){
@@ -244,7 +266,7 @@
 						$slider.trigger('slidein', [$item, index]);
 				});
 			}
-			this.pause = false;			
+			this.pause = false;
 		},
 
 		update_auto_slide: function() {
@@ -257,14 +279,14 @@
 				this.timer = setInterval(function(){
 					me.slider_switch( me.index+1 >= me.items.length ? 0 : me.index+1, true );
 				}, data.interval);
-			}			
+			}
 		},
 
 		bind_events: function(){
 			var me = this,
 				$slider = me.$slider,
 				data = me.opts
-			;	
+			;
 			$slider.on('refresh', function(){
 				var $new_items = data.item ? $slider.find('>'+data.item) : $slider.find('>.'+data.classname.item),
 					new_length = $new_items.length,
@@ -288,10 +310,10 @@
 			})
 			.on('resume', function(){
 				me.update_auto_slide();
-			});			
+			});
 		}
-	};	
-	
+	};
+
 	$(document).ready(function(){
 		// Inline post slider setup
 		var inline_slider = {
@@ -299,14 +321,14 @@
 			control_next_prev: false
 		};
 		$('.upfront-inline_post-slider').upfront_default_slider(inline_slider);
-		
+
 		// Bg slider
 		var bg_slider = {
 			auto_height: false,
 			control: 'inside'
 		};
 		$('.upfront-bg-slider').upfront_default_slider(bg_slider);
-		
+
 		// Integration with Upfront editor
 		$(document).on('upfront-load', function(){
 			Upfront.Events.on('application:mode:after_switch', function(){
@@ -332,7 +354,7 @@
 			editor.on('insertHtml', function(){
 			//	$('.upfront-inline_post-slider').upfront_default_slider(inline_slider);
 			});
-		}); */		
+		}); */
 	});
- 
+
 }( jQuery ));

@@ -5,7 +5,7 @@
  * A fairly simple implementation, with applied settings.
  */
 class Upfront_UsliderView extends Upfront_Object {
-	
+
 	public function get_markup () {
 		$data = $this->properties_to_array();
 		$slides = array();
@@ -20,18 +20,18 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['slidesLength'] = sizeof($slides);
 
-		$side_style = $data['style'] == 'right' || $data['style'] == 'left';
+		$side_style = $data['primaryStyle'] == 'side';
 
-		$data['imageWidth'] = $side_style ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '';
-		$data['textWidth'] =  $side_style ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '';
-		
+		$data['imageWidth'] = $side_style ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '100%';
+		$data['textWidth'] =  $side_style ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '100%';
+
 		$data['imageHeight'] = sizeof($slides) ? $slides[0]['cropSize']['height'] : 0;
 
 		$data['production'] = true;
 		$data['startingSlide'] = 0;
 
 		$markup = upfront_get_template('uslider', $data, dirname(dirname(__FILE__)) . '/tpls/uslider.html');
-		
+
 		return $markup;
 	}
 
@@ -40,7 +40,7 @@ class Upfront_UsliderView extends Upfront_Object {
 		wp_enqueue_style( 'uslider_settings_css', upfront_element_url('css/uslider_settings.css', dirname(__FILE__)), array(), "0.1" );
 		wp_enqueue_script('uslider-front', upfront_element_url('js/uslider-front.js', dirname(__FILE__)), array('jquery'));
 	}
-	
+
 	public static function add_js_defaults($data){
 		$data['uslider'] = array(
 			'defaults' => self::default_properties(),
@@ -68,6 +68,7 @@ class Upfront_UsliderView extends Upfront_Object {
 
 			'primaryStyle' => 'notext', // notext, below, over, side, onlytext
 
+			/* TO BE DEPRECATED, it is moved inside the slide */
 			'style' => 'bottomOver', // nocaption, below, above, right, bottomOver, topOver, bottomCover, middleCover, topCover
 
 			'controls' => 'both', // both, arrows, dots, none
@@ -80,7 +81,9 @@ class Upfront_UsliderView extends Upfront_Object {
 			'slides' => array(), // Convert to Uslider_Slides to use, and to Object to store
 
 			'captionUseBackground' => '0',
+			'captionBackground' => apply_filters('upfront_slider_caption_background', 'transparent'),
 
+			/* TO BE DEPRECATED, it is moved inside the slide */
 			'rightImageWidth' => 3,
 			'rightWidth' => 6,
 		);
@@ -102,7 +105,12 @@ class Upfront_UsliderView extends Upfront_Object {
 			'text' => 'Slider description.',
 			'margin' => array('left' => 0, 'top' => 0),
 			'captionColor' => apply_filters('upfront_slider_caption_color', '#ffffff'),
-			'captionBackground' => apply_filters('upfront_slider_caption_background', '#000000')
+			'captionBackground' => apply_filters('upfront_slider_caption_background', '#000000'),
+
+
+			'style' => 'bottomOver', // nocaption, below, above, right, bottomOver, topOver, bottomCover, middleCover, topCover
+			'rightImageWidth' => 3,
+			'rightWidth' => 6
 		);
 	}
 }

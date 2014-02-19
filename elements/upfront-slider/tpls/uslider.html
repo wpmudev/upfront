@@ -2,21 +2,33 @@
 	<?php if($slidesLength){ ?>
 	<div class="uslides">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
-		<div class="uslide" rel="<?php echo $slides[$i]['id'] ?>" style="">
-			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link">
-				<div class="uslide-image">
-					<img src="<?php echo $slides[$i]['src'] ?>" style="min-width:100%, min-height:100%">
-				</div>
+		<div class="uslide uslide-<?php echo $slides[$i]['style'] ?>"
+			<?php if($primaryStyle != 'notext'){ ?>
+				data-caption-selector="#uslider-<?php echo $element_id ?> .caption-<?php echo $slides[$i]['id'] ?>"
+			<?php } ?>
+			rel="<?php echo $slides[$i]['id'] ?>">
+
+			<?php if($slides[$i]['url']){ ?>
+			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link uslide-image">
+			<?php } else { ?>
+			<div class="uslide-image">
+			<?php } ?>
+				<img src="<?php echo $slides[$i]['src'] ?>" style="min-width:100%, min-height:100%">
+			<?php if($slides[$i]['url']){ ?>
 			</a>
-		</div>	
+			<?php } else { ?>
+			</div>
+			<?php } ?>
+
+		</div>
 		<?php } ?>
 	</div>
 	<?php if($style != 'nocaption' && $primaryStyle != 'notext'){ ?>
 	<div class="uslider-texts">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
-		<div class="uslide-text" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo $captionUseBackground == '1' ? $slides[$i]['captionBackground'] : 'transparent' ?>;color:<?php echo $slides[$i]['captionColor'] ?>">
+		<div class="uslide-text caption-<?php echo $slides[$i]['id'] ?>" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo $captionUseBackground == '1' ? $slides[$i]['captionBackground'] : 'transparent' ?>;color:<?php echo $slides[$i]['captionColor'] ?>">
 			<div class="uslide-editable-text">
-				<?php echo $slides[$i]['text'] ?>				
+				<?php echo $slides[$i]['text'] ?>
 			</div>
 		</div>
 		<?php } ?>
@@ -26,6 +38,44 @@
 	<!-- No images in this slider -->
 	<?php } ?>
 </div>
+
+<style type="text/css">
+	#uslider-<?php echo $element_id ?> .uslide-caption {
+		width: <?php echo $textWidth ?>;
+		<?php echo $captionUseBackground ? 'padding: 15px;' : '' ?>
+	}
+
+	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
+		margin-left: <?php echo $imageWidth ?>;
+	}
+
+	#uslider-<?php echo $element_id ?> .uslide-right .uslide-image {
+		float: left;
+	}
+
+	#uslider-<?php echo $element_id ?> .uslide-left .uslide-caption {
+		float: left;
+	}
+
+	#uslider-<?php echo $element_id ?> .uslide-left .uslide-image {
+		margin-left: <?php echo $textWidth ?>
+	}
+	#uslider-<?php echo $element_id ?> .uslide-left .uslide-caption,
+	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
+		height: <?php echo $imageHeight ?>px;
+	}
+
+	#uslider-<?php echo $element_id ?> .uslide-image {
+		height: <?php echo $imageHeight ?>px;
+		width: <?php echo $imageWidth ?>;
+		position: relative;
+		overflow: hidden;
+	}
+	#uslider-<?php echo $element_id ?> .uslide-caption {
+		background-color:<?php echo $captionUseBackground == '1' ? $captionBackground : 'transparent' ?>;
+	}
+</style>
+
 <script>
 jQuery(function($){
 	var slider = $('#uslider-<?php echo $element_id ?>'),
@@ -43,57 +93,14 @@ jQuery(function($){
 		}
 	;
 	slider.find('.uslides').upfront_default_slider(options);
-	if(<?php echo $style != 'nocaption' ?>){
-		var texts = slider.find('.uslider-texts');
-		if(<?php echo $style == 'above' ? 1 : 0  ?>){
-			texts.detach();
-			slider.prepend(texts);
-		}
-		else if(<?php echo ($style != 'below' && $style != 'right' && $style != 'left') ? 1 : 0 ?>) {
-			texts.detach();
-			slider.find('.uslides').prepend(texts);
-		}
-		else if(<?php echo $style == 'left' ? 1 : 0 ?>){
-			texts.detach();
-			slider.prepend(texts);
-		}
-	}
+
+	slider.find('.uslide-above').each(function(){
+		var slide = $(this);
+		slide.find('.uslide-caption').remove().prependTo(slide);
+	});
+	slider.find('.uslide-left').each(function(){
+		var slide = $(this);
+		slide.find('.uslide-caption').remove().prependTo(slide);
+	});
 });
 </script>
-
-<style type="text/css">
-	#uslider-<?php echo $element_id ?> .uslides {
-		width: <?php echo $imageWidth ?>		
-	}
-	#uslider-<?php echo $element_id ?>.uslider-caption-background .uslide-text {
-		padding: 15px;
-	}
-	#uslider-<?php echo $element_id ?> .uslider-texts {
-		width: <?php echo $textWidth ?>;
-	}
-
-	#uslider-<?php echo $element_id ?>.uslider-right .uslider-texts {
-		margin-left: <?php echo $imageWidth ?>;
-	}
-
-	#uslider-<?php echo $element_id ?>.uslider-right .uslides {
-		float: left;
-	}
-
-	#uslider-<?php echo $element_id ?>.uslider-left .uslider-texts {
-		float: left;
-	}
-
-	#uslider-<?php echo $element_id ?>.uslider-left .uslides {
-		margin-left: <?php echo $textWidth ?>
-	}
-	#uslider-<?php echo $element_id ?>.uslider-left .uslide-text,
-	#uslider-<?php echo $element_id ?>.uslider-right .uslide-text {
-		height: <?php echo $imageHeight ?>px;
-	}
-
-	#uslider-<?php echo $element_id ?> .uslide {
-		height: <?php echo $imageHeight ?>px;
-		overflow: hidden;
-	}
-</style>
