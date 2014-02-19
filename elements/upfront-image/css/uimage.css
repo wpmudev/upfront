@@ -1,5 +1,5 @@
 #upfront-image-overlay * {
-	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;	
+	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 }
 #upfront-image-overlay {
 	position:fixed;
@@ -238,7 +238,7 @@ OLD STYLE
 
 /******** end OLD STYLE */
 
-.uimage-centered {	
+.uimage-centered {
 	position: absolute;
 	width: 100px;
 	top: 0;
@@ -271,7 +271,7 @@ OLD STYLE
 }
 
 .uimage-small .uimage-centered,
-.uimage-narrow .uimage-centered {	
+.uimage-narrow .uimage-centered {
 	position: absolute;
 	width: 40px;
 	top: 0;
@@ -288,7 +288,7 @@ OLD STYLE
 }
 
 .uimage-small .upfront-image-resizethiselement,
-.uimage-narrow .upfront-image-resizethiselement {	
+.uimage-narrow .upfront-image-resizethiselement {
 	display: none;
 }
 
@@ -340,7 +340,7 @@ OLD STYLE
 
 .image-edit-save-container .no-shadow {
 	width: 200px;
-	background: #DAEDFE;	
+	background: #DAEDFE;
 	position:relative;
 	z-index:11;
 	padding:15px;
@@ -527,10 +527,10 @@ a.image-edit-button.deactivated:hover {
 	margin-top: -3px;
 }
 #image-edit-button-swap:before{
-	background-position: -693px -162px;	
+	background-position: -693px -162px;
 }
 #image-edit-button-ok:before{
-	background-position: -801px -160px;	
+	background-position: -801px -160px;
 }
 
 #image-edit-button-ok {
@@ -552,13 +552,13 @@ a.image-edit-button.deactivated:hover {
 	width: 17px;
 }
 #image-edit-button-align.align-left:before{
-	background-position: -703px -231px;	
+	background-position: -703px -231px;
 }
 #image-edit-button-align.align-center:before{
-	background-position: -703px -263px;	
+	background-position: -703px -263px;
 }
 #image-edit-button-align.align-right:before{
-	background-position: -703px -295px;	
+	background-position: -703px -295px;
 }
 
 #image-edit-button-fit:hover:before{
@@ -568,19 +568,19 @@ a.image-edit-button.deactivated:hover {
 	/*background-position: -801px -130px;	*/
 }
 #image-edit-button-swap:hover:before{
-	background-position: -693px -194px;	
+	background-position: -693px -194px;
 }
 #image-edit-button-ok:hover:before{
-	background-position: -801px -192px;	
+	background-position: -801px -192px;
 }
 #image-edit-button-align.align-left:hover:before{
 	background-position: -810px -263px;
 }
 #image-edit-button-align.align-center:hover:before{
-	background-position: -810px -295px;	
+	background-position: -810px -295px;
 }
 #image-edit-button-align.align-right:hover:before{
-	background-position: -810px -231px;	
+	background-position: -810px -231px;
 }
 
 .image-edit-rotate i {
@@ -617,7 +617,7 @@ a.image-edit-button.deactivated:hover {
 	-moz-transform: rotate(180deg) !important;
 	-o-transform: rotate(180deg) !important;
 	-ms-transform: rotate(180deg) !important;
-	transform: rotate(180deg) !important;	
+	transform: rotate(180deg) !important;
 }
 
 .rotate_270 {
@@ -625,7 +625,7 @@ a.image-edit-button.deactivated:hover {
 	-moz-transform: rotate(270deg) !important;
 	-o-transform: rotate(270deg) !important;
 	-ms-transform: rotate(270deg) !important;
-	transform: rotate(270deg) !important;	
+	transform: rotate(270deg) !important;
 }
 
 #uimage-canvas{
@@ -670,7 +670,7 @@ a.image-edit-button.deactivated:hover {
 	font-size: 24px;
 	font-weight: 200;
 	padding:50px 0;
-	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;	
+	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 }
 
 .uimage-drop-hint.uimage-dragenter {
@@ -1110,3 +1110,11 @@ div.uimage-controls i.upfront-icon:before {
 	margin: 100% 0 0;
 }
 
+.uimage-settings .upfront-settings-item{
+	padding-bottom: 0;
+}
+
+
+.uimage-settings .sp-replacer {
+	vertical-align: top;
+}

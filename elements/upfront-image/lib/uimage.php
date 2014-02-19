@@ -11,7 +11,7 @@ class Upfront_UimageView extends Upfront_Object {
 			wp_enqueue_style('magnific');
 			wp_enqueue_script('magnific');
 		}
-		
+
 		$data['url'] = $data['when_clicked'] == 'do_nothing' ? false : $data['image_link'];
 
 		if(is_numeric($data['size']['width']))
@@ -87,6 +87,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'rotation' => 0,
 			'color' => apply_filters('upfront_image_caption_color', '#ffffff'),
 			'background' => apply_filters('upfront_image_caption_background', '#000000'),
+			'captionBackground' => '0',
 			'image_id' => 0,
 			'align' => 'center',
 			'stretch' => false,
@@ -340,7 +341,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			$transformations['crop'] = $crop;
 		}*/
 		return $transformations;
-		
+
 	}
 
 	function save_resizing() {

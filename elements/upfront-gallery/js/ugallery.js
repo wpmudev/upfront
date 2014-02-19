@@ -436,6 +436,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		;
 
 		selector.on('click', 'a', function(e){
+			e.preventDefault();
 			var value = $(e.target).attr('rel');
 			me.property('linkTo', value, false);
 			setTimeout(function(){
@@ -1380,6 +1381,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			*/
 		]);
 		this.on('rendered', function(){
+			me.toggleColorSetting();
 			var spectrum = false,
 				currentColor = me.model.get_property_value_by_name('captionBackground'),
 				input = $('<input type="text" value="' + currentColor + '">'),
@@ -1422,29 +1424,12 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			setting.find('.sp-replacer').css('display', 'inline-block');
 			me.toggleColorPicker();
 		});
+
+
+		this.$el.on('change', 'input[name=captionWhen]', function(e){
+			me.toggleColorSetting();
+		});
 	},
-	/*
-	resetSettings: function(e) {
-		e.preventDefault();
-
-		if(confirm('Are you sure that you want to reset this gallery to the theme\'s default settings?')){
-			var me = this,
-				defaults = Upfront.data.ugallery.defaults,
-				themeDefaults = Upfront.data.ugallery.themeDefaults,
-				settings = _.extend({}, defaults, themeDefaults),
-				images = me.model.get_property_value_by_name('images')
-			;
-
-			_.each(settings, function(value, key){
-				me.model.set_property(key, value, true);
-			});
-
-			me.model.set_property('images', images, true);
-			me.model.set_property('status', 'ok');
-
-			Upfront.Events.trigger("entity:settings:deactivate");
-		}
-	}, */
 
 	toggleColorPicker: function(){
 		var setting = this.$('.ugallery-colorpicker-setting'),
@@ -1453,10 +1438,24 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		;
 		if(color == "1"){
 			picker.show();
+			if(this.parent_view)
+				this.parent_view.for_view.$el.find('.ugallery-thumb-title').css('background-color', this.model.get_property_value_by_name('captionBackground'));
 		}
 		else{
 			picker.hide();
+			if(this.parent_view)
+				this.parent_view.for_view.$el.find('.ugallery-thumb-title').css('background-color', 'transparent');
 		}
+	},
+	toggleColorSetting: function(){
+		var style = this.$('input[name=captionWhen]:checked').val();
+		if(style == 'never')
+			this.$('.ugallery-colorpicker-setting').hide();
+		else
+			this.$('.ugallery-colorpicker-setting').show();
+
+			var settings = $('#settings');
+			settings.height(settings.find('.upfront-settings_panel:visible').outerHeight());
 	},
 	get_label: function () {
 		return 'Layout';

@@ -1046,8 +1046,7 @@ var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function () {
 		var me = this;
 		this.panels = _([
-			new DescriptionPanel({model: this.model}),
-			//new BehaviorPanel({model: this.model})
+			new DescriptionPanel({model: this.model})
 		]);
 
 		this.on('open', function(){
@@ -1060,6 +1059,7 @@ var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
 });
 
 var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
+	className: 'upfront-settings_panel_wrap uimage-settings',
 	initialize: function () {
 		var me = this,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
@@ -1087,14 +1087,14 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 						model: this.model,
 						property: 'caption_trigger',
-						layout: "vertical",
+						layout: "horizontal-inline",
 						values: [
 							{
-								label: 'Always show',
+								label: 'always',
 								value: 'always_show'
 							},
 							{
-								label: 'Show on hover',
+								label: 'on hover',
 								value: 'hover_show'
 							}
 						]
@@ -1102,6 +1102,91 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				]
 			})
 		]);
+
+		if(this.model.get_property_value_by_name('include_image_caption'))
+			this.addCaptionBackgroundPicker();
+	},
+
+	addCaptionBackgroundPicker: function(){
+		var me = this,
+			fields = Upfront.Views.Editor.Field
+		;
+
+		this.settings.push(new ColorPickerField({
+			title: 'Caption Background',
+			fields: [
+				new fields.Radios({
+					model: this.model,
+					property: 'captionBackground',
+					layout: "horizontal-inline",
+					values: [
+						{value: '0', label: 'None'},
+						{value: '1', label: 'Pick color'}
+					]
+				}),
+			]
+		}));
+
+		this.on('rendered', function(){
+			var spectrum = false,
+				currentColor = me.model.get_property_value_by_name('background'),
+				input = $('<input type="text" value="' + currentColor + '">'),
+				setting = me.$('.ugallery-colorpicker-setting')
+			;
+
+			setting.find('.upfront-field-wrap').append(input);
+			setting.find('input[name="captionBackground"]').on('change', function(){
+				me.toggleColorPicker();
+			});
+
+			input.spectrum({
+				showAlpha: true,
+				showPalette: true,
+				palette: ['fff', '000', '0f0'],
+				maxSelectionSize: 9,
+				localStorageKey: "spectrum.recent_bgs",
+				preferredFormat: "hex",
+				chooseText: "Ok",
+				showInput: true,
+				allowEmpty:true,
+				show: function(){
+					spectrum = $('.sp-container:visible');
+				},
+				change: function(color) {
+					var rgba = color.toRgbString();
+					me.model.set_property('background', rgba, true);
+					currentColor = rgba;
+				},
+				move: function(color) {
+					var rgba = color.toRgbString();
+					spectrum.find('.sp-dragger').css('border-top-color', rgba);
+					spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+					me.parent_view.for_view.$el.find('.wp-caption').css('background-color', rgba);
+				},
+				hide: function(){
+					me.parent_view.for_view.$el.find('.wp-caption').css('background-color', currentColor);
+				}
+			});
+			setting.find('.sp-replacer').css('display', 'inline-block');
+			me.toggleColorPicker();
+		});
+	},
+	toggleColorPicker: function(){
+		var setting = this.$('.ugallery-colorpicker-setting'),
+			color = setting.find('input:checked').val(),
+			picker = setting.find('.sp-replacer')
+		;
+		if(color == "1"){
+			picker.show();
+			if(this.parent_view)
+				this.parent_view.for_view.$el.find('.wp-caption').css('background-color', this.model.get_property_value_by_name('background'));
+		}
+		else{
+			picker.hide();
+
+			if(this.parent_view)
+			this.parent_view.for_view.$el.find('.wp-caption').css('background-color', 'transparent');
+		}
 	},
 	get_label: function () {
 		return 'Settings';
@@ -1111,185 +1196,8 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	}
 });
 
-var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	initialize: function () {
-		var render_all = function(){
-				this.settings.invoke('render');
-			},
-			me = this,
-			SettingsItem =  Upfront.Views.Editor.Settings.Item,
-			Fields = Upfront.Views.Editor.Field
-		;
-		this.model.on('doit', render_all, this);
-		this.settings = _([
-			new SettingsItem({
-				title: 'When Clicked',
-				fields: [
-					new Fields.Radios({
-						model: this.model,
-						property: 'when_clicked',
-						className: 'field-when_clicked upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
-						values: [
-							{
-								label: 'Do nothing',
-								value: 'do_nothing'
-							},
-							{
-								label: 'Open link',
-								value: 'open_link'
-							},
-							{
-								label: 'Scroll to anchor',
-								value: 'scroll_to_anchor'
-							},
-							{
-								label: 'Show larger image',
-								value: 'show_larger_image'
-							}
-						]
-					}),
-					new Fields.Text({
-						model: this.model,
-						property: 'image_link',
-						label: 'Image link URL',
-						className: 'upfront-field-wrap upfront-field-wrap-text image-link-field'
-					}),
-					new Fields.Anchor({
-						model: this.model,
-						property: 'anchor_target',
-						label: "Anchor",
-						className: "upfront-field-wrap upfront-field-wrap-select image-anchor-field"
-					})
-				]
-			}),
-			new SettingsItem({
-				className: 'optional-field align-center',
-				title: 'Caption Settings',
-				fields: [
-					new Fields.Radios({
-						model: this.model,
-						property: 'caption_position',
-						layout: "vertical",
-						className: 'field-caption_position upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
-						values: [
-							{
-								label: 'below image',
-								value: 'below_image',
-								icon: 'image-caption-below'
-							},
-							{
-								label: 'over image',
-								value: 'over_image',
-								icon: 'image-caption-over-bottom'
-							}
-						]
-					}),
-					new Fields.Radios({
-						className: 'field-caption_alignment upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
-						model: this.model,
-						property: 'caption_alignment',
-						layout: "vertical",
-						values: [
-							{
-								label: 'Top',
-								value: 'top',
-								icon: 'image-caption-over-top'
-							},
-							{
-								label: 'Bottom',
-								value: 'bottom',
-								icon: 'image-caption-over-bottom'
-							},
-							{
-								label: 'Fill',
-								value: 'fill',
-								icon: 'image-caption-over-fill'
-							}
-						]
-					}),
-					new Fields.Radios({
-						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
-						model: this.model,
-						property: 'caption_trigger',
-						layout: "vertical",
-						values: [
-							{
-								label: 'Always show',
-								value: 'always_show'
-							},
-							{
-								label: 'Show on hover',
-								value: 'hover_show'
-							}
-						]
-					})
-				]
-			}),
-			new SettingsItem({
-				className: 'optional-field',
-				title: 'Caption Style',
-				fields: [
-					new Fields.Color({
-						model: this.model,
-						property: 'color',
-						label: 'Color:'
-					}),
-					new Fields.Color({
-						model: this.model,
-						property: 'background',
-						label: 'Background:',
-						spectrum: {
-							showAlpha: true
-						}
-					})
-				]
-			})
-		]);
-
-		this.$el
-			.on('change', 'input[name=when_clicked]', function(e){
-				me.toggleLink();
-			})
-			.on('change', 'input[name=caption_position]', function(e){
-				me.toggleCaptionSettings();
-			})
-		;
-		this.on('concealed', this.setFieldEvents, this);
-	},
-	get_label: function () {
-		return 'Behavior';
-	},
-	get_title: function () {
-		return false;
-	},
-	toggleLink: function(){
-		var link_value = this.$('input[name=when_clicked]:checked').val();
-		if('open_link' == link_value){
-			this.$('.image-link-field').show();
-		}
-		else{
-			this.$('.image-link-field').hide();
-		}
-
-		if ('scroll_to_anchor' == link_value) {
-			this.$('.image-anchor-field').show();
-		} else {
-			this.$('.image-anchor-field').hide();
-		}
-		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);
-	},
-	toggleCaptionSettings: function(){
-		if(this.$('input[name=caption_position]:checked').val() == 'over_image')
-			this.$('.over_image_field').show();
-		else
-			this.$('.over_image_field').hide();
-
-		$('#settings').height(this.$('.upfront-settings_panel').outerHeight() - 2);
-	},
-	setFieldEvents: function() {
-		this.toggleLink();
-		this.toggleCaptionSettings();
-	}
+var ColorPickerField = Upfront.Views.Editor.Settings.Item.extend({
+	className: 'ugallery-colorpicker-setting'
 });
 
 /**

@@ -7,7 +7,7 @@
 		<?php } ?>
 
 	<?php if($include_image_caption && $caption_position != 'below_image'){ ?>
-	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>">
+	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $captionBackground ? $background : '' ?>">
 		<?php if($cover_caption) { ?>
 			<div class="uimage-caption-cover">
 		<?php } ?>
@@ -17,11 +17,11 @@
 		<?php } ?>
 	</div>
 	<?php } ?>
-	
+
 	<?php if($url) { ?>
 	</a>
 	<?php } ?>
-	
+
 </div>
 <?php if($include_image_caption && $caption_position == 'below_image'){ ?>
 <div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>">
@@ -31,7 +31,7 @@
 
 <style>
 	#<?php echo $element_id ?> .wp-caption *{
-		-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;		
+		-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 	}
 	#<?php echo $element_id ?> .uimage-over_image {
 		position:relative;
@@ -78,15 +78,11 @@
 	}
 
 	#<?php echo $element_id ?> .uimage-over_image .uimage-hover_show {
-		opacity:0; 
+		opacity:0;
 	}
 
 	#<?php echo $element_id ?> .uimage-over_image:hover .uimage-hover_show {
 		opacity:1;
-	}
-
-	#<?php echo $element_id ?> .uimage-caption-cover {
-		padding: 15px;
 	}
 
 	#<?php echo $element_id ?> .uimage-over_image .wp-caption{
