@@ -102,7 +102,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'rotation' => 0,
 			'url' => '',
 			'urlType' => '',
-			'text' => 'Slider description.',
+			'text' => '',
 			'margin' => array('left' => 0, 'top' => 0),
 			'captionColor' => apply_filters('upfront_slider_caption_color', '#ffffff'),
 			'captionBackground' => apply_filters('upfront_slider_caption_background', '#000000'),

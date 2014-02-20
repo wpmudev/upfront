@@ -164,7 +164,8 @@
 			this.items.each(function(){
 				var $img = $(this).find('img'),
 					$text = $(this).find('.uslide-caption'),
-					img_h = $img.height() + $text.outerHeight()
+					textHeight = $text.css('position') == 'static' ? $text.outerHeight() : 0,
+					img_h = $img.height() + textHeight
 				;
 				max_height = max_height > img_h ? max_height : img_h;
 			});

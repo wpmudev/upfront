@@ -193,7 +193,7 @@ var hackRedactor = function(){
 			this.airBindHide();
 			this.$air.trigger('show');
 		},
-		
+
 	// Add possiblity to disable linebreak (for one line title)
 	$.Redactor.prototype.doInsertLineBreak = $.Redactor.prototype.insertLineBreak;
 	$.Redactor.prototype.insertLineBreak = function()
@@ -260,7 +260,7 @@ var Ueditor = function($el, options) {
 		this.redactor = this.start();
 	else
 		this.bindStartEvents();
-	
+
 	this.startPlaceholder();
 };
 
@@ -268,7 +268,7 @@ Ueditor.prototype = {
 	disableStop: false,
 	mouseupListener: false,
 
-	start: function(e){
+	start: function(){
 		this.stopPlaceholder();
 		this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
@@ -279,6 +279,7 @@ Ueditor.prototype = {
 		this.redactor = this.$el.data('redactor');
 		this.redactor.ueditor = this;
 		this.preventDraggable();
+		this.redactor.selectionRemoveMarkers();
 		UeditorEvents.trigger('ueditor:start', this.redactor);
 
 		if(!Upfront.data.Ueditor)
@@ -294,12 +295,12 @@ Ueditor.prototype = {
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
 			this.restoreDraggable();
-			this.$el.removeClass('ueditable')
-				.redactor('destroy')
-			;
+			this.$el.removeClass('ueditable');
+			this.redactor.destroy();
 			this.redactor = false;
 		}
 		delete Upfront.data.Ueditor.instances[this.id];
+		this.startPlaceholder();
 	},
 	bindStartEvents: function() {
 		var me = this,
@@ -335,7 +336,7 @@ Ueditor.prototype = {
 		var placeholder = this.options.placeholder;
 		if (this.$el.attr('placeholder')) placeholder = this.$el.attr('placeholder');
 		if (placeholder === '') placeholder = false;
-		if (placeholder !== false && this.$el.text().length == 0)
+		if (placeholder !== false && $.trim(this.$el.text()).length === 0)
 		{
 			this.$placeholder = this.$el.clone(false);
 			this.$placeholder.attr('contenteditable', false).addClass('ueditor-placeholder').html(placeholder);
@@ -354,12 +355,17 @@ Ueditor.prototype = {
 				'left': pos.left,
 				'right': $parent.outerWidth() - (pos.left + this.$el.outerWidth())
 			});
+
+			//Make sure that the editor has one line of text
+			this.$el.html('&nbsp;');
 			this.options.placeholder = placeholder;
 		}
 	},
 	stopPlaceholder: function() {
 		if (this.$placeholder)
 			this.$placeholder.remove();
+		if(this.$el.html() == '&nbsp;')
+			this.$el.html('');
 	},
 	preventDraggable: function(){
 		//Prevent dragging from editable areas

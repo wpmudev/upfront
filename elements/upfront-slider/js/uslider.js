@@ -199,16 +199,17 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			wrapper = me.$('.uslide-image'),
 			controls = me.createControls(),
-			text = me.$('.uslide-editable-text')
+			text = me.$('.uslide-editable-text'),
+			currentSlide = me.slides.at(me.currentSlide)
 		;
 
 		controls.setWidth(wrapper.width());
 		controls.render();
 
 		me.$('.uslides').append(
-			$('<div class="uimage-controls upfront-ui" rel="' + me.slides.at(0).id + '"></div>').append(controls.$el)
+			$('<div class="uimage-controls upfront-ui" rel="' + currentSlide.id + '"></div>').append(controls.$el)
 		);
-		me.bindSlidesText();
+		me.onSlideShow();
 
 		this.controls = controls;
 
@@ -216,49 +217,49 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 
 		//Enable text editors
-		me.$('.uslide-editable-text').ueditor({
-				autostart: false,
-				upfrontMedia: false,
-				upfrontImages: false
-			})
-			.on('start', function(){
-				var $this = $(this),
-					id = $this.closest('.uslide').attr('rel'),
-					slide = me.slides.get(id)
-				;
+		if(!me.$('.uslide-editable-text').data('ueditor'))
+			me.$('.uslide-editable-text').ueditor({
+					autostart: false,
+					upfrontMedia: false,
+					upfrontImages: false,
+					placeholder: 'Slide description'
+				})
+				.on('start', function(){
+					var $this = $(this),
+						id = $this.closest('.uslide').attr('rel'),
+						slide = me.slides.get(id)
+					;
 
-				me.$el.addClass('upfront-editing');
+					me.$el.addClass('upfront-editing');
 
-				$this.on('syncAfter', function(){
-						slide.set('text', $this.html(), {silent: true});
-					})
-					.on('stop', function(){
-						slide.set('text', $this.html());
-						me.property('slides', me.slides.toJSON());
-						me.$el.removeClass('upfront-editing');
-					})
-				;
-			})
-		;
+					$this.on('syncAfter', function(){
+							slide.set('text', $this.html(), {silent: true});
+						})
+						.on('stop', function(){
+							slide.set('text', $this.html());
+							me.property('slides', me.slides.toJSON());
+							me.$el.removeClass('upfront-editing');
+						})
+					;
+				})
+			;
 
 		if(me.property('primaryStyle') == 'side'){
 			me.setImageResizable();
 		}
 
 		//Adapt slider height to the image crop
-		var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide-caption').outerHeight() : 0;
+		var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
 		me.$('.uslides').height(wrapper.height() + textHeight);
 	},
 
 	updateControls: function(){
-		var controls = this.createControls();
-
 		this.controls.remove();
 
-		controls = this.createControls();
+		var controls = this.createControls();
 		controls.render();
 
-		this.$('.uimage-controls').append(controls.$el);
+		this.$('.uimage-controls').append(controls.$el).attr('rel', this.slides.at(this.currentSlide).id);
 
 		this.controls = controls;
 	},
@@ -389,7 +390,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			stop: function(e, ui){
 				if(!ui.element.hasClass('uslide-image'))
 					return;
-				var imageWidth = ui.helper.width(),
+				var helperWidth = ui.helper.width(),
+					imageWidth = helperWidth > (elementCols - 3) * colWidth ? (elementCols - 3) * colWidth : (helperWidth < 3 * colWidth ? 3 * colWidth : helperWidth),
 					imageCols = Math.round((imageWidth - (colWidth - 15))/ colWidth) + 1,
 					percentage = Math.floor(imageCols / elementCols * 100)
 				;
@@ -402,6 +404,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 				me.cropHeight = ui.element.height();
 
+				me.property('rightWidth', elementCols, true);
 				me.property('rightImageWidth', imageCols, false);
 
 				me.setTimer();
@@ -417,12 +420,23 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.cropTimer = false;
 		}
 		me.cropTimer = setTimeout(function(){
-			me.saveTemporaryResizing();
-			console.log('resizingTimer');
+			var slide = me.slides.at(me.currentSlide),
+				editor = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-editable-text')
+			;
+			if(editor.length && editor.data('ueditor')){
+				editor.on('stop', function(){
+					me.saveTemporaryResizing();
+					console.log('delayedResizingTimer');
+				});
+			}
+			else {
+				me.saveTemporaryResizing();
+				console.log('resizingTimer');
+			}
 		}, me.cropTimeAfterResize);
 	},
 
-	bindSlidesText: function(){
+	onSlideShow: function(){
 		var me = this;
 		this.$('.uslides').on('slidein', function(e, slide, index){
 			if(slide){
@@ -431,6 +445,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
 				if(me.property('primaryStyle') == 'side')
 					me.setImageResizable();
+
+				if(me.property('primaryStyle') == 'below'){
+					//Adapt the height to take care of the caption
+					me.$('.uslides').height(slide.find('.uslide-image').outerHeight() + slide.find('.uslide-caption').outerHeight());
+				}
 			}
 		});
 	},
@@ -458,7 +477,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			},
 			primaryStyle = this.property('primaryStyle'),
 			multiControls = {},
-			multi = new Upfront.Views.Editor.InlinePanels.MultiControl(),
+			multi = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
 			panelItems = [],
 			slide = this.slides.at(this.currentSlide)
 		;
@@ -480,8 +499,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			multi.icon = 'caption';
 			multi.tooltip = 'Caption position';
 			multi.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
-			multi.on('select', function(item){
-				slide.set('style', item, false);
+			this.listenTo(multi, 'select', function(item){
+				slide.set('style', item);
+				me.slidesChange();
 			});
 		}
 

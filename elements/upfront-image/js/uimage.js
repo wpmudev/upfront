@@ -2912,6 +2912,7 @@ var ImageMenu = Upfront.Views.ContextMenu.extend({
 Upfront.Views.Editor.InlinePanels.MultiControl = MultiControl;
 Upfront.Views.Editor.InlinePanels.Control = Control;
 Upfront.Views.Editor.InlinePanels.ControlPanel = ControlPanel;
+Upfront.Views.Editor.InlinePanels.TooltipControl = TooltipControl;
 
 Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Model": UimageModel,

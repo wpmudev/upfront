@@ -105,8 +105,9 @@ div.uslide-text-current {
 	vertical-align: top;
 }
 
-.uslide-right .uslide-caption {
-	padding-left: 15px;
+.uslide-right .uslide-caption,
+.uslide-left .uslide-caption {
+	padding: 0 15px;
 }
 
 .tooltip-open .uimage-controls{
