@@ -29,6 +29,7 @@
         "upfront_login": "../elements/upfront-login/js/upfront_login",
         "upfront_maps": "../elements/upfront-maps/js/upfront_maps",
         "upfront-navigation": "../elements/upfront-navigation/js/upfront-navigation",
+        "unewnavigation": "../elements/upfront-newnavigation/js/unewnavigation",
         "uposts": "../elements/upfront-posts/js/uposts",
         "usearch": "../elements/upfront-search/js/usearch",
         "upfront-social_media": "../elements/upfront-social-media/js/upfront-social-media",
