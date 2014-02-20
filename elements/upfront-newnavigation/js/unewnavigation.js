@@ -542,13 +542,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
-			change: function() {
+			/*change: function() {
 				if(!me.property('initialized'))	{
-					me.property('initialized', true, true);
+					//me.property('initialized', true, true);
 				}
 				else
 					me.property('menu_id', this.get_value());
-			},
+			},*/
 			values: currentMenuItemData.get('menuList')
 		})
 
@@ -570,9 +570,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 									label: "New Menu Name",
 									className: "new_menu_name",
 									compact: true
-								})
+								});
 							
 		newMenuName.render();
+		
 		me.$el.find('div.upfront-object-content').append(newMenuName.el);	
 		
 		var newMenuButton =  new Upfront.Views.Editor.Field.Button({
@@ -580,7 +581,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 									label: "Create New",
 									className: "new_menu_button",
 									compact: true
-								})
+								});
 							
 		newMenuButton.render();
 		me.$el.find('div.upfront-object-content').append(newMenuButton.el);
@@ -594,9 +595,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			me.$el.parent().parent().parent().draggable('enable');
 		});	
 		
-		me.$el.find('div.upfront-object-content > div.new_menu_button').on('click', function() {
+		me.$el.find('div.upfront-object-content > div.new_menu_button > input').on('click', function() {
 			if(me.$el.find('div.upfront-object-content > div.new_menu_name input').val()!='')
 				me.create_new_menu(me.$el.find('div.upfront-object-content > div.new_menu_name input').val());
+		});	
+		
+		me.$el.find('div.upfront-object-content > div.existing_menu_list input').on('change', function() {
+			if(!me.property('initialized'))
+					me.property('initialized', true, true);
+
+			me.property('menu_id', me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val());
 		});	
 
 	},
