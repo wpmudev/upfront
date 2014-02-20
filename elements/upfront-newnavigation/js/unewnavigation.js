@@ -51,7 +51,10 @@ var MenuItemView = Backbone.View.extend({
 						 return "Visit URL";
 					  },
 					  action: function() {
-							console.log('actioned');
+						  if(me.model['menu-item-type'] == 'custom')
+							  window.open(me.model['menu-item-url']);
+						  else
+							  window.location.href(me.model['menu-item-url']);
 						  
 					  }
 				  }),
@@ -60,7 +63,9 @@ var MenuItemView = Backbone.View.extend({
 						 return "Edit URL";
 					  },
 					  action: function() {
-						 me.editMenuItem(me.event);  
+						 me.parent_view.editModeOn(me.event);
+						 me.$el.trigger('click');
+						 //me.editMenuItem(me.event);  
 					  }
 				  }),
 				  new Upfront.Views.ContextMenuItem({
@@ -78,10 +83,11 @@ var MenuItemView = Backbone.View.extend({
 		
 		this.ContextMenu = Upfront.Views.ContextMenu.extend({
 			initialize: function() {
-				console.log('wtf');
+				this.constructor.__super__.initialize.apply(this, arguments);
 				this.menulists = _([
 				  new ContextMenuList()
 				]);	
+				
 			}
 		});
 		
@@ -89,6 +95,8 @@ var MenuItemView = Backbone.View.extend({
 		
 	},
 	on_context_menu: function(e) {
+		
+		e.stopPropagation();
 		if(this.parent_view.$el.find('ul.menu').hasClass('edit_mode'))
 			return;
 			
@@ -105,6 +113,7 @@ var MenuItemView = Backbone.View.extend({
 		context_menu_view.for_view = this;
 		this.context_menu_view = context_menu_view;
 		context_menu_view.render();
+
 	},
 	remove_context_menu: function(e) {
 		if (!this.context_menu_view) return false;
@@ -433,6 +442,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	onDeactivate: function() {
 		this.editModeOff();
+		this.$el.find('.time_being_display').removeClass('time_being_display');		
 	},
 	property: function(name, value, silent) {
 		if(typeof value != "undefined")
