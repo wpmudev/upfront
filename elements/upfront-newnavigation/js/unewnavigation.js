@@ -189,6 +189,8 @@ var MenuItemView = Backbone.View.extend({
 				me.linkChanged(ev);
 			})
 			.on('click', 'button.upfront-save_settings', function(e){
+				me.model['menu-item-type'] =  $('#ugallery-tooltip').find('input[name=unavigation-link-type]:checked').val();
+				me.model['menu-item-url'] = $('#ugallery-tooltip').find('input[name=unavigation-link-url]').val();
 				me.saveLink(e);
 				me.closeTooltip();
 			})
@@ -215,9 +217,15 @@ var MenuItemView = Backbone.View.extend({
 					}
 				;
 
-
+	
 				Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
-					$('#ugallery-tooltip').find('input[name=unavigation-link-url]').val(post.get('permalink'));
+					var permalink = post.get('permalink');
+					me.model['menu-item-type'] =  'post';
+					
+					me.model['menu-item-url'] = permalink;
+					
+					$('#ugallery-tooltip').find('input[name=unavigation-link-url]').val(permalink);
+					me.saveLink();
 					
 				});
 			}
@@ -230,10 +238,6 @@ var MenuItemView = Backbone.View.extend({
 	saveLink: function(e) {
 	
 		var me = this;
-		
-		me.model['menu-item-type'] =  $('#ugallery-tooltip').find('input[name=unavigation-link-type]:checked').val();
-		me.model['menu-item-url'] = $('#ugallery-tooltip').find('input[name=unavigation-link-url]').val();
-
 		
 		me.$el.find('a.new_menu_item').removeClass('new_menu_item').removeAttr('contenteditable');
 		me.parent_view.editModeOff();
@@ -295,7 +299,8 @@ var MenuItemView = Backbone.View.extend({
 				e.stopPropagation();
 			})
 			.on('blur', function(e){
-				me.closeTooltip();
+				console.log(e);
+				//me.closeTooltip();
 			})
 			.on('closed', function(e){
 				me.$el.removeClass('tooltip-open');
