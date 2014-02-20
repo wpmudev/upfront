@@ -25,13 +25,13 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
         $float_class = $is_floating ? 'upfront-navigation-float' : '';
 
-        upfront_add_element_style('unewnavigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
-        if (is_user_logged_in()) {
-            upfront_add_element_style('unewnavigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
-        }
-        if ($is_floating) {
-            upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
-        }
+      //  upfront_add_element_style('unewnavigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
+    //    if (is_user_logged_in()) {
+      //      upfront_add_element_style('unewnavigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
+      //  }
+        //if ($is_floating) {
+         //   upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
+       // }
 
 
         if ( $menu_id ) :
@@ -66,6 +66,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'menu_items' => array(),
         );
     }
+	
+  public function add_styles_scripts() {
+      wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));
+  }
 }
 
 

@@ -39,7 +39,7 @@ function unewnavigation_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('unewnavigation', upfront_relative_element_url('js/unewnavigation', __FILE__));
 
-
+	add_action('wp_enqueue_scripts', array('Upfront_UnewnavigationView', 'add_styles_scripts'));
     // Add the public stylesheet
 //    add_action('wp_enqueue_scripts', array('Upfront_UnewnavigationView', 'add_public_dependencies'));	
 }

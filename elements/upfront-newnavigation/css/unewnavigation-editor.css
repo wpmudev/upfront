@@ -15,7 +15,7 @@ div.upfront-navigation.upfront-editable_entity i.navigation-add-item:before {
 	width: 16px;
 	height: 16px;
 	background-position: -1363px -171px;
-	background-image: url('wp-content/themes/upfront/img/uf-core-el-sprite.svg');
+	background-image: url('../../../img/uf-core-el-sprite.svg');
 	cursor: pointer;
 	overflow: hidden;
 	line-height: 3em;	
@@ -47,7 +47,7 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
 	width: 16px;
 	height: 16px;
 	background-position: -483px -171px;
-	background-image: url('wp-content/themes/upfront/img/uf-core-el-sprite.svg');
+	background-image: url('../../../img/uf-core-el-sprite.svg');
 	position: absolute;
 	right: -8px;
 	top: -8px;
