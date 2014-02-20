@@ -119,7 +119,7 @@ var MenuItemView = Backbone.View.extend({
 		if(me.newitem)
 			content = content + ' new_menu_item';
 			
-		content = content+'" href="'+this.model['menu-item-url']+'">'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i>';
+		content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i>';
 		$(this.el).html(content);
 //		$(this.el).data('id', this.model['menu-item-db-id']);
 //		$(this.el).data('parent', this.model['menu-item-parent-id']);
@@ -163,7 +163,7 @@ var MenuItemView = Backbone.View.extend({
 	editMenuItem: function(e) {
 		//if(!this.parent_view.editmode)
 			//return;
-		e.preventDefault();
+		//e.preventDefault();
 
 
 
@@ -188,6 +188,7 @@ var MenuItemView = Backbone.View.extend({
 			})
 		;
 		//contents=$('<div/>').append('<div>Hello World</div>');
+		console.log('reached here');
 		this.openTooltip(contents, $(e.target));
 
 		//Upfront.Events.trigger("entity:contextmenu:deactivate", this);
@@ -343,15 +344,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.events = _.extend({}, this.events, {
-		  'click ul.menu.drag_mode a.menu_item' : 'editMenuItem',
+		  //'click ul.menu.drag_mode a.menu_item' : 'editMenuItem',
 		  'click ul.menu.edit_mode a.menu_item' : 'editMenuItem',
 		  //'click ul.menu.edit_mode a.menu_item.edit_disable' : 'dbleditMenuItem',		  
-		  'dblclick ul.menu.drag_mode a.menu_item': 'editMenuItem',
+		  //'dblclick ul.menu.drag_mode a.menu_item': 'editMenuItem',
 		  'dblclick ul.menu.edit_mode a.menu_item': 'editMenuItem',
 		  
           //'click ul.i.navigation-add-item': 'addMenuItem',
 		  
-		  'dblclick ul.menu.drag_mode a.menu_item': 'editModeOn'
+		  'dblclick ul.menu.drag_mode a.menu_item': 'editModeOn',
+		  'click ul.menu.drag_mode a.menu_item': 'preventClick'
 		});
 
 		this.constructor.__super__.initialize.call(this, [options]);
@@ -387,18 +389,36 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		}
 		this.on('deactivated', this.onDeactivate, this)
+		
+		
+	},
+	preventClick: function(e) {
+		e.preventDefault();
 	},
 	editMenuItem: function(e) {
-		e.preventDefault();
-		this.$el.find('a.menu_item').removeAttr('contenteditable');
-		$(e.target).attr('contenteditable', true);
-		$(e.target).parent('li').data('backboneview').editMenuItem(e);
+		//e.preventDefault();
+
+		if(typeof $(e.target).attr('contenteditable') == 'undefined') {
+			this.$el.find('a.menu_item').removeAttr('contenteditable');
+			$(e.target).attr('contenteditable', true);
+			$(e.target).trigger('click');
+		}
+		else {
+					e.preventDefault();
+			e.stopPropagation();
+			_.delay(function(self) {
+	
+			  $(e.target).parent('li').data('backboneview').editMenuItem(e);
+		
+			}, 10, this);
+		}
+		
 	},
 	editModeOn: function(e) {
 		if(!this.editmode) {
 			this.editmode = true;
 			this.$el.find('ul.menu').addClass('edit_mode').removeClass('drag_mode');
-			//this.$el.find('.upfront-object-content ul').sortable('disable');
+			this.$el.find('.upfront-object-content ul').sortable('disable');
 		}
 		this.editMenuItem(e);
 	},
@@ -408,7 +428,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.$el.find('ul.menu').removeClass('edit_mode').addClass('drag_mode');
 			this.$el.find('.upfront-object-content a').removeAttr('contenteditable');
 			//this.makeSortable();
-			//this.$el.find('.upfront-object-content ul').sortable('enable');
+			this.$el.find('.upfront-object-content ul').sortable('enable');
 		}
 	},
 	onDeactivate: function() {
@@ -658,7 +678,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		//me.changeMenuItemTitle();
 	},
 	makeSortable: function() {
-
+//return;
 		console.log('making sortable');
 		var me = this;
 		this.$el.find('.upfront-object-content ul').sortable({
@@ -668,7 +688,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				//if(ui.sender != null) 
 					//ui.sender.children('li:last').append(ui.item.find('i.navigation-add-item'));
 				//else
-					ui.item.parent('ul').children('li:last').append(ui.item.parent('ul').find('i.navigation-add-item'));
+					ui.item.parent('ul').children('li:last').append(ui.item.parent('ul').children('li').children('i.navigation-add-item'));
 					
 				me.saveMenuOrder();
 			}

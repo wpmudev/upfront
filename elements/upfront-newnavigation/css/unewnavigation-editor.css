@@ -82,6 +82,10 @@ div.upfront-navigation.upfront-editable_entity a.menu_item.new_menu_item {
 	opacity: 0.4;	
 }
 
+div.upfront-navigation.upfront-editable_entity ul.edit_mode a.menu_item {
+	cursor:text;	
+}
+
 /* to be removed after the dev phase is over */
 .upfront-navigation .sub-menu {
 	top: 61px !important;
