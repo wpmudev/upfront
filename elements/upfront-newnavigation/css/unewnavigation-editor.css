@@ -86,6 +86,34 @@ div.upfront-navigation.upfront-editable_entity ul.edit_mode a.menu_item {
 	cursor:text;	
 }
 
+
+div.upfront-navigation div.existing_menu_list,  div.upfront-navigation div.new_menu_name, div.upfront-navigation div.new_menu_button {
+	display: inline-block;
+	vertical-align:middle;
+}
+
+ div.upfront-navigation div.existing_menu_list {
+	 margin-top: 10px;
+	 margin-right:10px;
+}
+div.upfront-navigation div.new_menu_name {
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+
+div.upfront-navigation div.new_menu_name input {
+	height:26px !important;
+}
+
+div.upfront-navigation div.new_menu_button input {
+  background: transparent;
+  border:2px #818d96 solid;
+  font-size:12px;
+	padding:3px 16px;
+}
+
+
 /* to be removed after the dev phase is over */
 .upfront-navigation .sub-menu {
 	top: 61px !important;

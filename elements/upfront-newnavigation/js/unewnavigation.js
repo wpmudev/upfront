@@ -347,6 +347,7 @@ var currentMenuItemData = new CurrentMenuItemData();
  * @type {Upfront.Views.ObjectView}
  */
 var UnewnavigationView = Upfront.Views.ObjectView.extend({
+	elementSize: {width: 0, height: 0},
 	initialize: function(options){
 		var me = this;
 
@@ -356,6 +357,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(! (this.model instanceof UnewnavigationModel)){
 			this.model = new UnewnavigationModel({properties: this.model.get('properties')});
 		}
+        Upfront.Views.ObjectView.prototype.initialize.call(this);
 
 		this.events = _.extend({}, this.events, {
 		  //'click ul.menu.drag_mode a.menu_item' : 'editMenuItem',
@@ -370,7 +372,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		  'click ul.menu.drag_mode a.menu_item': 'preventClick'
 		});
 
-		this.constructor.__super__.initialize.call(this, [options]);
+//		this.constructor.__super__.initialize.call(this, [options]);
 
 
 
@@ -554,7 +556,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		menuItems.render();
 		
-		me.$el.find('div.upfront-object-content').append(menuItems.el);
+		me.$el.find('div.upfront-object-content').append(menuItems.el).append('<span> or </span>');
 		
 		
 		me.$el.find('div.upfront-object-content').on('mouseover', function() {
@@ -624,6 +626,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	get_content_markup: function () {
 
+		/*if(!this.property('element_size')) {
+			this.setElementSize();
+			this.property('element_size', this.elementSize);
+		}*/
+
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			me = this;
 
@@ -648,15 +655,29 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		
 		return 'Loading';
 	},
+	/*setElementSize: function(ui){
+		var me = this,
+			parent = this.parent_module_view.$('.upfront-editable_entity:first'),
+			resizer = ui ? $('.upfront-resize') : parent
+		;
+
+		me.elementSize = {
+			width: resizer.width() - 32,
+			height: resizer.height() - 30
+		};
+
+	},*/
 	on_render: function() {
-		if(!this.property('initialized')) {
+		if(!this.property('menu_id')) {
 			this.display_menu_list();	
 		}
 		else {
 			
 			if(this.property('menu_items'))
-				this.generate_menu();	
+				this.generate_menu();
 		}
+
+
 		
 		
 		var menuStyle = this.property("menu_style"),
@@ -878,7 +899,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c6 upfront-newnavigation_module"},
+					{"name": "class", "value": "c22 upfront-newnavigation_module"},
 					{"name": "has_settings", "value": 0},
 					{"name": "row", "value": 5}
 				],

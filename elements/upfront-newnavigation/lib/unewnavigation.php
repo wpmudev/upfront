@@ -64,6 +64,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
             'id_slug' => 'unewnavigation',
 			
 			'menu_items' => array(),
+			
+            'menu_style' => 'horizontal', // horizontal | vertical
+            'menu_alignment' => 'left', // left | center | right
+            'allow_sub_nav' => array('no'), // array('no') | array ('yes')
+            'allow_new_pages' => array('no'), // array('no') | array('yes')
         );
     }
 	

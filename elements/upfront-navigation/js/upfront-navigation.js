@@ -273,7 +273,7 @@ define(function() {
         });
 
         var NavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
-            priority: 50,
+            priority: 200,
             render: function () {
                 this.$el.addClass('upfront-icon-element upfront-icon-element-nav');
                 this.$el.html('Menus');
