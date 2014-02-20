@@ -500,15 +500,21 @@ define([
 							new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
 							index = modules.indexOf(module),
 							models = [];
+						// Make sure new model element ids and wrapper id is unique
 						new_wrap_model.set_property('wrapper_id', wrapper_id);
 						new_model.set_property('wrapper_id', wrapper_id);
+						new_model.set_property('element_id', Upfront.Util.get_unique_id('module'));
+						new_model.get('objects').each(function(obj){
+							obj.set_property('element_id', Upfront.Util.get_unique_id('object'));
+						});
+						// Add to layout now
 						wrappers.add(new_wrap_model);
 						modules.each(function(each, i){
 							models.push(each);
 							if ( i == index )
 								models.push(new_model);
 						});
-						modules.reset(models, {call_render: [new_model]});
+						modules.reset(models, {call_render: [new_model]}); // selectively render the clone model only
 					  }
 				  })
 				]);
@@ -607,6 +613,12 @@ define([
 					template = _.template(_Upfront_Templates["object"], model)
 				;
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
+				// Listen to module resize and drop event
+				this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
+				this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
+				this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
+				this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
+				
 				//console.log('---- Object render - ' + this.cid + ' - ' + props.view_class);
 				this.$el.html(template);
 
@@ -627,6 +639,12 @@ define([
 			},
 			on_element_edit_stop: function (edit, post) {
 				if (this.parent_module_view && this.parent_module_view.enable) this.parent_module_view.enable();
+			},
+			on_element_resize: function (attr) {
+				
+			},
+			on_element_drop: function (attr) {
+				
 			},
 			on_after_layout_render: function () {
 
@@ -726,6 +744,7 @@ define([
 					;
 					if(local_view) {
 						local_view.parent_view = me;
+						local_view._previous_parent_module_view = local_view.parent_module_view;
 						local_view.parent_module_view = me.parent_view;
 						local_view.render();
 						$el.append(local_view.el);
@@ -777,11 +796,9 @@ define([
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
 
-				if (this.on_resize) {
-					this.on("upfront:entity:resize", this.on_resize, this);
-				}
-
 				this.on('on_layout', this.render_object, this);
+				//this.on('entity:resize', this.on_resize, this);
+				//this.on('entity:drop', this.on_drop, this);
 				this.on('region:updated', this.on_region_update, this);
 			},
 			render: function () {
@@ -808,6 +825,28 @@ define([
 				if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 				Upfront.Events.trigger("entity:module:after_render", this, this.model);
 			},
+			update: function (prop, options) {
+				var prev_value = prop._previousAttributes.value,
+					value = prop.get('value'),
+					$me = this.$el.find('.upfront-editable_entity:first'),
+					grid = Upfront.Settings.LayoutEditor.Grid
+				;
+				if ( prop.id == 'row' ){
+					// row change
+					var height = value * grid.baseline;
+					$me.css('min-height', height).attr('data-row', value);
+				}
+				else if ( prop.id == 'class' ){
+					// column and margin changes
+					var classes = $me.attr('class');
+					_.each([grid.class, grid.left_margin_class, grid.top_margin_class, grid.bottom_margin_class, grid.right_margin_class], function(class_name){
+						var rx = new RegExp('\\b' + class_name + '(\\d+)'),
+							val = value.match(rx);
+						if ( val && val[1] )
+							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
+					});
+				}
+			},
 			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
 				objects_view.parent_view = this;
@@ -823,6 +862,12 @@ define([
 			},
 			enable: function () {
 				this.$el.find('.upfront-editable_entity:first').removeClass('upfront-module-disabled');
+			},
+			on_resize: function (attr) {
+				// on resize
+			},
+			on_drop: function (attr) {
+				// on drop
 			},
 			on_region_update: function(){
 				if ( this._objects_view ){

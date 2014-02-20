@@ -1243,13 +1243,8 @@ var GridEditor = {
 					rsz_row = $me.data('resize-row'),
 
 					regions = app.layout.get('regions'),
-					region
+					region = regions.get_by_name($region.data('name'))
 				;
-
-				regions.each(function(reg){
-					if ( reg.get('modules') == model.collection )
-						region = reg;
-				});
 
 				$resize_placeholder.remove();
 				$resize.remove();
@@ -1305,6 +1300,8 @@ var GridEditor = {
 					model.replace_class(ed.grid.class+rsz_col);
 					ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
 				}
+				
+				view.trigger('entity:resize', {row: rsz_row, col: rsz_col}, view, view.model);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
 				Upfront.Events.trigger("entity:resized", view, view.model);
 			}
@@ -1420,6 +1417,8 @@ var GridEditor = {
 			model.replace_class(ed.grid.class+col);
 			ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
 		}
+		
+		view.trigger('entity:resize', {row: row, col: col}, view, view.model);
 		Upfront.Events.trigger("entity:resized", view, view.model);
 		return true;
 	},
@@ -2035,6 +2034,7 @@ var GridEditor = {
 						view.region = region;
 						view.trigger('region:updated');
 					}
+					view.trigger("entity:drop", {col: drop_col, left: drop_left, top: drop_top}, view, view.model);
 					view.trigger("entity:self:drag_stop");
 					ed.time_end('fn drop_update');
 				}
