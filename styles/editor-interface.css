@@ -1810,6 +1810,9 @@ a.ueditor-action-pickercancel{
 	visibility: hidden;
 	opacity: 0;
 	-webkit-transition: opacity 0.6s;
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility:    hidden;
+	-ms-backface-visibility:     hidden;
 }
 .upfront-region-edit-trigger .upfront-icon:before {
 	margin: 0;
