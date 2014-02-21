@@ -570,7 +570,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	openImageSelector: function(e, replaceId){
 		var me = this,
-			sizer = this.slides.length ? this.$('.uslider') : this.$('.upfront-object-content'),
+			sizer = this.slides.length ? this.$('.upfront-default-slider-item-current').find('.uslide-image') : this.$('.upfront-object-content'),
 			selectorOptions = {
 				multiple: true,
 				preparingText: 'Preparing images',
@@ -610,6 +610,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		if(replaceId){
 			this.slides.get(replaceId).set(slides[0]);
+			this.slidesChange();
 		}
 		else
 			this.slides.add(slides);
