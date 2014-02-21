@@ -614,10 +614,12 @@ define([
 				;
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
 				// Listen to module resize and drop event
-				this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
-				this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
-				this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
-				this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
+				if ( this.parent_module_view ){
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
+					this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
+					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
+				}
 				
 				//console.log('---- Object render - ' + this.cid + ' - ' + props.view_class);
 				this.$el.html(template);
