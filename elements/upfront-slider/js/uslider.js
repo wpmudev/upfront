@@ -994,8 +994,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	cleanup: function(){
-		this.controls.remove();
-		this.controls = false;
+		if(this.controls){
+			this.controls.remove();
+			this.controls = false;
+		}
 	},
 
 	/*

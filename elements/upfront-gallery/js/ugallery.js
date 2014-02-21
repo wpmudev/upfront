@@ -84,6 +84,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			if(ugalleries[elementId].image_labels)
 				this.imageLabels = ugalleries[elementId].image_labels;
 		}
+		else{
+			if(!ugalleries)
+				ugalleries = {};
+
+			ugalleries[elementId] = {};
+
+			this.labels = [];
+			this.imageLabels = {};
+
+			ugalleries[elementId].labels = this.labels;
+			ugalleries[elementId].imageLabels = this.imageLabels;
+		}
+
 
 		this.on('deactivated', this.sortCancel, this);
 
