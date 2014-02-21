@@ -141,7 +141,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			if(!me.imageProps[slide.id]){
 				me.imageProps[slide.id] = {
 					size: slide.get('size'),
-					cropOffset: slide.get('cropOffset')
+					cropOffset: slide.get('cropOffset'),
+					cropSize: slide.get('cropSize')
 				};
 			}
 
@@ -346,8 +347,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		//Stop any other resizable slide
 		this.$('.ui-resizable').resizable('destroy');
 
+		if(style == 'nocaption')
+			return;
+
 		$slide.resizable({
-			handles: slide.get('style') == 'right' ? 'e' : 'w',
+			handles: style == 'right' ? 'e' : 'w',
 			helper: 'uslider-resize-handler',
 			start: function(e, ui){
 				if(!ui.element.hasClass('uslide-image'))
@@ -399,7 +403,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				$slide.css({width: percentage + '%'});
 
 				me.slides.each(function(slide){
-					me.imageProps[slide.id] = me.calculateImageResize({width: $slide.width(), height: ui.element.height()}, slide);
+					if(slide.get('style') != 'nocaption')
+						me.imageProps[slide.id] = me.calculateImageResize({width: $slide.width(), height: ui.element.height()}, slide);
 				});
 
 				me.cropHeight = ui.element.height();
@@ -423,7 +428,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			var slide = me.slides.at(me.currentSlide),
 				editor = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-editable-text')
 			;
-			if(editor.length && editor.data('ueditor')){
+			if(editor.length && editor.data('redactor')){
 				editor.on('stop', function(){
 					me.saveTemporaryResizing();
 					console.log('delayedResizingTimer');
@@ -500,8 +505,17 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			multi.tooltip = 'Caption position';
 			multi.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
 			this.listenTo(multi, 'select', function(item){
+				var previousStyle = slide.get('style');
 				slide.set('style', item);
 				me.slidesChange();
+				if(primaryStyle == 'side' && previousStyle == 'nocaption' || item == 'nocaption'){
+					//give time to the element to render
+					setTimeout(function(){
+						var wrap = me.$('.upfront-default-slider-item-current').find('.uslide-image');
+						me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height: wrap.height()}, slide);
+						me.setTimer();
+					}, 100);
+				}
 			});
 		}
 
@@ -637,22 +651,28 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
+			currentSlide = this.slides.at(this.currentSlide),
 			style = this.property('primaryStyle'),
 			resizer = $('.upfront-resize'),
-			text = this.property('primaryStyle') == 'below' ? this.$('.uslide-caption') : [],
+			text = style == 'below' ? this.$('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
-			newElementSize = {width: style == 'side' ? mask.width() : resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight}
+			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
+			elementColumns = this.get_element_columns(),
+			imageColumns = Math.max(3, Math.round(this.property('rightImageWidth') * elementColumns / this.property('rightWidth'))),
+			sideImageWidth = imageColumns * this.calculateColumnWidth()
 		;
 
 		this.slides.each(function(slide){
-			me.imageProps[slide.id] = me.calculateImageResize(newElementSize, slide);
+			var imageSize = {height: newElementSize.height};
+			imageSize.width = style == 'side' && slide.get('style') != 'nocaption' ? sideImageWidth : newElementSize.width;
+			me.imageProps[slide.id] = me.calculateImageResize(imageSize, slide);
 		});
 
 		me.cropHeight = newElementSize.height;
 
 		if(style == 'side')
-			this.property('rightImageWidth', Math.max(3, Math.round(newElementSize.width / this.colWidth)));
-		this.property('rightWidth', this.get_element_columns());
+			this.property('rightImageWidth', imageColumns);
+		this.property('rightWidth', elementColumns);
 
 		me.setTimer();
 	},
@@ -718,26 +738,29 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		return {
 			size: {width: img.width(), height: img.height()},
-			cropOffset: {left: 0-img.position().left, top: 0-img.position().top}
+			cropOffset: {left: 0-img.position().left, top: 0-img.position().top},
+			cropSize: wrapperSize
 		};
 	},
 
 	saveTemporaryResizing: function(){
 		var me = this,
 			imagesData = [],
-			mask = this.$('.uslide-image'),
-			cropSize = {width: mask.width(), height: mask.height()},
 			editOptions = {action: 'upfront-media-image-create-size'},
 			sentData = {}
 		;
 		this.slides.each(function(slide){
-			var crop = me.imageProps[slide.id].cropOffset, data;
-			crop.width = cropSize.width;
-			crop.height = cropSize.height;
+			var imageProps =  me.imageProps[slide.id],
+				crop = imageProps.cropOffset,
+				data
+			;
+			crop.width = imageProps.cropSize.width;
+			crop.height = imageProps.cropSize.height;
+
 			data = {
 				id: slide.id,
 				rotate: slide.get('rotation'),
-				resize: me.imageProps[slide.id].size,
+				resize: imageProps.size,
 				crop: crop
 			};
 			imagesData.push(data);
@@ -761,6 +784,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					cropOffset: {left: imageData.crop.left, top: imageData.crop.top}
 				}, {silent: true});
 			});
+
+			//Clear the timeout
+			clearTimeout(me.cropTimer);
+			me.cropTimer = false;
+
 			me.imageProps = {};
 			me.slidesChange();
 		});
@@ -769,8 +797,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	saveResizing: function(){
 		var me = this;
 		if(this.cropTimer){
-			clearTimeout(this.cropTimer);
-			this.cropTimer = false;
 
 			this.saveTemporaryResizing().done(function(){
 				var saveData = {
@@ -832,7 +858,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				});
 				me.imageProps[slide.id] = {
 					cropOffset: result.imageOffset,
-					size: result.imageSize
+					size: result.imageSize,
+					cropSize: result.cropSize
 				};
 				me.render();
 			})

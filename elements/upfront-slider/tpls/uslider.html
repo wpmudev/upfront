@@ -65,12 +65,17 @@
 		height: <?php echo $imageHeight ?>px;
 	}
 
+	#uslider-<?php echo $element_id ?> .uslide-left .uslide-image,
+	#uslider-<?php echo $element_id ?> .uslide-right .uslide-image {
+		width: <?php echo $imageWidth ?>;
+	}
+
 	#uslider-<?php echo $element_id ?> .uslide-image {
 		height: <?php echo $imageHeight ?>px;
-		width: <?php echo $imageWidth ?>;
 		position: relative;
 		overflow: hidden;
 	}
+
 	#uslider-<?php echo $element_id ?> .uslide-caption {
 		background-color:<?php echo $captionUseBackground == '1' ? $captionBackground : 'transparent' ?>;
 	}
@@ -89,7 +94,8 @@ jQuery(function($){
 			show_control: '<?php echo $controlsWhen ?>',
 			control_num: <?php echo $dots && $production ?>,
 			control_next_prev: <?php echo $arrows && $production ?>,
-			starting_slide: <?php echo $startingSlide ?>
+			starting_slide: <?php echo $startingSlide ?>,
+			caption_height: <?php echo $primaryStyle == 'below' ? 1 : 0 ?>
 		}
 	;
 	slider.find('.uslides').upfront_default_slider(options);

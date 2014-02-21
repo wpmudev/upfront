@@ -53,7 +53,8 @@
 					next: 'upfront-default-slider-nav-next'
 				},
 				adjust_slide_size: true,
-				starting_slide: 0
+				starting_slide: 0,
+				caption_height: false
 			}, args),
 			$items = data.item ? $slider.find('>'+data.item) : $slider.find('>.'+data.classname.item)
 		;
@@ -159,12 +160,14 @@
 		},
 
 		calc_height: function(){
-			var max_height;
+			var me = this,
+				max_height
+			;
 			this.$slider.css('height', 9999);
 			this.items.each(function(){
 				var $img = $(this).find('img'),
 					$text = $(this).find('.uslide-caption'),
-					textHeight = $text.css('position') == 'static' ? $text.outerHeight() : 0,
+					textHeight = me.opts.caption_height ? $text.outerHeight() : 0,
 					img_h = $img.height() + textHeight
 				;
 				max_height = max_height > img_h ? max_height : img_h;

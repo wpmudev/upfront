@@ -60,6 +60,10 @@ div.uslide-text-current {
 	padding: 15px;
 }
 
+.uslide-nocaption .uslide-caption {
+	display: none;
+}
+
 .uslide-bottomOver .uslide-caption{
 	bottom: 0;
 	top: auto;
