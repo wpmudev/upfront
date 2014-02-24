@@ -188,12 +188,15 @@ class Upfront_MenuSetting extends Upfront_Server {
 	}
 	
 	function recursive_processMenuItem($e, $children_elements) {
+
 		$this_menu_item = array(
 			'menu-item-db-id' => $e->ID,
 			'menu-item-parent-id' => $e->menu_item_parent,
 			'menu-item-type' => $e->type,
 			'menu-item-title' => apply_filters( 'the_title', $e->title, $e->ID ),
 			'menu-item-url' => $e->url,
+			'menu-item-object' => $e->object,
+			'menu-item-object-id' => $e->object_id,
 			'menu-item-target' => $e->target,
 			'menu-item-position' => $e->menu_order
 			);
