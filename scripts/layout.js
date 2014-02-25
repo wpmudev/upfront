@@ -27,9 +27,9 @@ jQuery(document).ready(function($){
 				height = $(this).outerHeight(),
 				ratio = parseFloat($(this).attr('data-bg-image-ratio'));
 			if ( Math.round(height/width*100)/100 > ratio )
-				$(this).css('background-size', "auto 100%");
+				$(this).css('background-size', (height/ratio) + "px " + height + "px" /*"auto 100%"*/);
 			else
-				$(this).css('background-size', "100% auto");
+				$(this).css('background-size', width + "px " + (width*ratio) + "px" /*"100% auto"*/);
 		});
 	}
 	fix_full_bg();
