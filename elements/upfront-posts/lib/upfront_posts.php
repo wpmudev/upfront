@@ -42,7 +42,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		$query = new WP_Query($args);
 
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
-		
+
 
 		$properties = $this->properties_to_array();
 		$properties['editing'] = $editing;
@@ -63,8 +63,8 @@ class Upfront_UpostsView extends Upfront_Object {
 		query_posts($query_args);
 
 		$markup = upfront_get_template(
-			'uposts', 
-			array('properties' => $properties), 
+			'uposts',
+			array('properties' => $properties),
 			dirname(dirname(__FILE__)) . '/tpl/uposts.php'
 		);
 
@@ -78,7 +78,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		$init = implode('&', $query);
 		*/
 
-		return $init . "<div class='upfront-output-object upfront-posts' id='" .  $properties['element_id'] . "'>" .
+		return $init . "<div class=' upfront-posts' id='" .  $properties['element_id'] . "'>" .
 			$markup .
 		"</div>";
 	}
@@ -101,7 +101,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			'pagination' => 0,
 			'prev' => 'Next Page »',
 			'next' => '',
-			
+
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
 		);
 	}
@@ -114,7 +114,7 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		//Edition bar template
 		ob_start();
-		include dirname(dirname(__FILE__)) . '/tpl/edition_bar.php';		
+		include dirname(dirname(__FILE__)) . '/tpl/edition_bar.php';
 		$data['uposts']['barTemplate'] = ob_get_clean();
 
 		//Post excerpt length and read more signs
@@ -129,7 +129,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		$priority = 101;
 		add_filter('excerpt_length', array('Upfront_UpostsView', 'get_excerpt_length'), $priority);
 		add_filter('excerpt_more', array('Upfront_UpostsView', 'get_excerpt_more'), $priority);
-		
+
 		global $post;
 		$current_post = $post;
 
@@ -222,7 +222,7 @@ class Upfront_UpostsAjax extends Upfront_Server {
 
 	public function load_taxonomy_terms () {
 		$taxonomy = !empty($_POST['taxonomy']) ? $_POST['taxonomy'] : false;
-		if (!$taxonomy) 
+		if (!$taxonomy)
 			$this->_out(new Upfront_JsonResponse_Error("Missing taxonomy"));
 		$raw_terms = get_terms($taxonomy, array(
 			'hide_empty' => false,
@@ -248,7 +248,7 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($view->get_markup($data['page'])));
 	}
 
-	public function load_single_markup () {		
+	public function load_single_markup () {
 		$data = stripslashes_deep($_POST['data']);
 		if(!isset($data['post']) || !isset($data['post']['ID']))
 			$this->_out(new Upfront_JsonResponse_Error("No post id."));
@@ -270,12 +270,12 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		$properties = $data['properties'];
 
 		$markup = upfront_get_template(
-			'upost', 
-			array('properties' => $properties), 
+			'upost',
+			array('properties' => $properties),
 			dirname(dirname(__FILE__)) . '/tpl/upost.php'
 		);
 
-		$this->_out(new Upfront_JsonResponse_Success($markup));		
+		$this->_out(new Upfront_JsonResponse_Success($markup));
 	}
 }
 Upfront_UpostsAjax::serve();

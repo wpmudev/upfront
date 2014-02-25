@@ -354,6 +354,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	private function _add_hooks () {
 		upfront_add_ajax('upfront_load_styles', array($this, "load_styles"));
 		upfront_add_ajax_nopriv('upfront_load_styles', array($this, "load_styles"));
+
+		upfront_add_ajax('upfront_save_styles', array($this, "save_styles"));
+		upfront_add_ajax('upfront_theme_styles', array($this, "theme_styles"));
 	}
 
 	function load_styles () {
@@ -362,8 +365,59 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$style = $preprocessor->process();
+
+		//Add theme styles
+		$style .= $this->prepare_theme_styles();
+
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
+
+	function save_styles(){
+		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
+		$styles = wp_kses($_POST['styles'], array());
+		$db_option = 'upfront_' . get_stylesheet() . '_styles';
+		$current_styles = get_option($db_option);
+		if(!$current_styles)
+			$current_styles = array();
+		/*
+		if(isset($current_styles[$name]) && !$_POST['override'])
+			$this->_out(new Upfront_JsonResponse_Error("Already exists"));
+*/
+		$current_styles[$name] = $styles;
+		global $wpdb;
+		update_option($db_option, $current_styles);
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'name' => $name,
+			'styles' => $styles
+		)));
+	}
+
+	function theme_styles(){
+		$separately = $_POST['separately'];
+		$styles = get_option('upfront_' . get_stylesheet() . '_styles');
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'styles' => $styles
+		)));
+	}
+
+	function prepare_theme_styles(){
+		$styles = get_option('upfront_' . get_stylesheet() . '_styles');
+		if(!$styles)
+			return '';
+
+		$out = '';
+
+		foreach($styles as $name => $content){
+			$selector = '.upfront-output-object.' . $name;
+			$rules = explode('}', $content);
+			array_pop($rules);
+			$out .= $selector . ' ' . implode("}\n" . $selector . ' ', $rules) . "} \n";
+		}
+
+		return $out;
+	}
+
 }
 
 

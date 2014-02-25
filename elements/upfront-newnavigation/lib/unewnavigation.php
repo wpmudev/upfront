@@ -41,10 +41,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
                 'echo' => false
             ));
         else:
-            return "<div class='upfront-output-object {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
+            return "<div class=' {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
         endif;
 
-        return "<div class='upfront-output-object {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
+        return "<div class=' {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
 	}
 
 	public static function add_js_defaults($data){
@@ -62,16 +62,16 @@ class Upfront_UnewnavigationView extends Upfront_Object {
             'class' => 'c22 upfront-navigation',
             'has_settings' => 1,
             'id_slug' => 'unewnavigation',
-			
+
 			'menu_items' => array(),
-			
+
             'menu_style' => 'horizontal', // horizontal | vertical
             'menu_alignment' => 'left', // left | center | right
             'allow_sub_nav' => array('no'), // array('no') | array ('yes')
             'allow_new_pages' => array('no'), // array('no') | array('yes')
         );
     }
-	
+
   public function add_styles_scripts() {
       wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));
   }

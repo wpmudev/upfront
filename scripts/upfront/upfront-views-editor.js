@@ -242,7 +242,7 @@ define([
 
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
-				
+
 			if (this.setMode !== false && Upfront.Application.mode.current != this.setMode)
 				Upfront.Application.set_current(Upfront.Settings.Application.MODE.CONTENT);
 			Upfront.Application.new_post(this.postType)
@@ -277,8 +277,8 @@ define([
 	var Command_NewPage = Command_NewPost.extend({
 		"className": "command-new-page",
 		postType: 'page',
-		initialize: function () { 
-			this.setMode = Upfront.Application.MODE.LAYOUT; 
+		initialize: function () {
+			this.setMode = Upfront.Application.MODE.LAYOUT;
 		},
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
@@ -2365,7 +2365,7 @@ define([
 				this.$el.append(this.get_label_html());
 			this.$el.append(this.get_field_html());
 			var me = this;
-		
+
 			this.trigger('rendered');
 		},
 		get_field_html: function () {
@@ -3282,21 +3282,7 @@ define([
 				)
 			;
 
-			// Adding trigger
-			if (this.options.anchor && this.options.anchor.is_target) {
-				var item = new _Settings_AnchorSetting({model: this.for_view.model}),
-					first = this.panels.first()
-				;
-				first.settings.push(item);
-				this.listenTo(item, "anchor:item:updated", function () {
-					this.toggle_panel(first);
-				});
-				/*
-				item.on("anchor:item:updated", function () {
-					this.toggle_panel(first);
-				}, this);
-				*/
-			}
+			this.add_common_items();
 
 			me.panels.each(function (panel) {
 				panel.render();
@@ -3327,6 +3313,28 @@ define([
 			;
 
 			this.trigger('open');
+		},
+
+		add_common_items: function(){
+			var first = this.panels.first();
+
+			//Adding CSS item
+			first.settings.push(new _Settings_CSS({
+				model: this.model,
+				title: ' Element Styles:'
+			}));
+
+			// Adding anchor trigger
+			if (this.options.anchor && this.options.anchor.is_target) {
+				var item = new _Settings_AnchorSetting({model: this.for_view.model});
+
+				first.settings.push(item);
+				this.listenTo(item, "anchor:item:updated", function () {
+					this.toggle_panel(first);
+				});
+			}
+
+
 		},
 
 		set_title: function (title) {
@@ -3426,12 +3434,222 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 		return _.template(this.tpl, _.extend({}, this.options, {field: $input.html()}));
 	},
 	get_value: function () {
-		var data = {}
+		var data = {},
 			$field = this.$el.find(":checkbox"),
 			$subfield = this.$el.find('[name="' + this.options.field.get_name() + '"]'),
 			value = $subfield.val().replace(/[^a-zA-Z]/g, '')
 		;
 		return $field.is(":checked") && value ? value : false;
+	}
+});
+
+var _Settings_CSS = SettingsItem.extend({
+	className: 'upfront-settings-css',
+	events: {
+		'click a': 'openEditor'
+	},
+	initialize: function(options) {
+		SettingsItem.prototype.initialize.call(this, options);
+		var values = [{label: 'None', value: ''}];
+		if(Upfront.data.styles)
+			_.each(Upfront.data.styles, function(styleName){
+				values.push({label: styleName, value: styleName});
+			});
+
+		this.fields = _([
+			new _Settings_CSS_Field({
+				model: this.model,
+				property: 'theme_style',
+				values: values
+			})
+		]);
+	},
+	openEditor: function(e){
+		e.preventDefault();
+		Upfront.Application.cssEditor.init({
+			model: this.model,
+			name: this.fields._wrapped[0].get_value()
+		});
+
+		$('#settings').find('.upfront-save_settings').click();
+	}
+});
+
+var _Settings_CSS_Field = Field_Select.extend({
+	render: function(){
+		Field_Select.prototype.render.call(this);
+		this.$el.append('<p><a href="#">add new style</a></p>');
+		return this;
+	},
+	remove: function(){
+		Field.prototype.remove.call(this);
+	}
+});
+
+var CSSEditor = Backbone.View.extend({
+	className: 'upfront-ui',
+	id: 'upfront-csseditor',
+	tpl: _.template($(_Upfront_Templates.popup).find('#csseditor-tpl').html()),
+	prepareAce: false,
+	ace: false,
+	events: {
+		'click .upfront-css-save-ok': 'save',
+		'click .upfront-css-close': 'close'
+	},
+	initialize: function(){
+		if(!$('#' + this.id).length)
+			$('body').append(this.el);
+	},
+	init: function(options){
+		this.model = options.model;
+
+		var me = this,
+			deferred = $.Deferred()
+		;
+
+		this.name = options.name || '';
+
+		console.log('Ace starting');
+
+		this.prepareAce = deferred.promise();
+		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+			deferred.resolve();
+		});
+
+		this.resizeHandler = this.resizeHandler || function(){
+			me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
+		};
+
+		$(window).on('resize', this.resizeHandler);
+
+		this.element_id = this.model.get_property_value_by_name('element_id');
+		if(!$('#' + this.element_id + '-styles').length){
+			$('#' + this.element_id).after('<style id="' + this.element_id + '-style"></style');
+		}
+
+		this.$style = $('#' + this.element_id + '-style');
+		this.render();
+	},
+	close: function(e){
+		e.preventDefault();
+		$(window).off('resize', this.resizeHandler);
+		this.$style.remove();
+		this.$style = false;
+		if(this.editor)
+			this.editor.destroy();
+		this.$el.hide();
+	},
+	render: function(){
+		var me = this;
+		if(!$('#' + this.id).length)
+			$('#page').append(this.$el);
+		this.$el.html(this.tpl({name: this.name}));
+		this.resizeHandler();
+
+		var bodyHeight = this.$el.height() - this.$('.upfront-css-top').outerHeight();
+		this.$('.upfront-css-body').height(bodyHeight);
+
+		this.prepareAce.done(function(){
+			me.startAce();
+		});
+
+		this.$el.show();
+	},
+	startAce: function(){
+		var me = this,
+			editor = ace.edit(this.$('.upfront-css-ace')[0]),
+			session = editor.getSession()
+		;
+
+		session.setUseWorker(false);
+		editor.setShowPrintMargin(false);
+
+		session.setMode("ace/mode/css");
+		editor.setTheme('ace/theme/monokai');
+
+		editor.on('change', function(e){
+			if(me.timer)
+				clearTimeout(me.timer);
+			me.timer = setTimeout(function(){
+				me.updateStyles(editor.getValue());
+			},1000);
+		});
+		if(this.name){
+			var styles = $('#upfront-style-' + this.name).html().replace('.upfront-object.' + this.name + ' ', '');
+			editor.setValue($.trim(styles), -1);
+		}
+		editor.focus();
+		this.editor = editor;
+	},
+	remove: function(){
+		Backbone.View.prototype.remove.call(this);
+		$(window).off('resize', this.resizeHandler);
+	},
+
+	updateStyles: function(contents){
+		this.$style.html(this.stylesAddSelector(contents, '#' + this.element_id));
+	},
+
+	stylesAddSelector: function(contents, selector){
+		var rules = contents.split('}'),
+			separator = '\n ' + selector + ' ',
+			styles
+		;
+
+		rules.pop();
+
+		return separator + rules.join('}' + separator) + '}';
+	},
+
+	save: function(e){
+		e.preventDefault();
+		var me = this,
+			styleName = $.trim(this.$('.upfront-css-save-name').val()),
+			styles = $.trim(this.editor.getValue())
+		;
+
+		if(!styleName)
+			return notifier.addMessage('You need to set a name for the style.', 'error');
+		if(!styles)
+			return notifier.addMessage('The slylesheet is empty.', 'error');
+
+
+		var postData = {
+			name: styleName,
+			styles: styles,
+			action: 'upfront_save_styles'
+		};
+
+		Upfront.Util.post(postData)
+			.success(function(response){
+				var data = response.data;
+				$('#upfront-style-' + data.name)
+					.html(me.stylesAddSelector(data.styles, '.upfront-object.' + data.name));
+
+				if(Upfront.data.styles.indexOf(data.name) == -1)
+					Upfront.data.styles.push(data.name);
+
+				me.model.set_property('theme_style', data.name);
+				return notifier.addMessage('Styles saved as ' + data.name);
+			})
+			.error(function(response){
+				return notifier.addMessage('There was an error.');
+			});
+	},
+
+	fetchThemeStyles: function(separately){
+		var fetchData = {
+				action:'upfront_theme_styles',
+				separately: separately
+			},
+			deferred = $.Deferred()
+		;
+
+		Upfront.Util.post(fetchData)
+			.success(function(response){
+				deferred.resolve(response.data.styles);
+			});
+		return deferred.promise();
 	}
 });
 
@@ -3446,7 +3664,7 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 			property: 'anchor'
 		});
 		item.on("anchor:updated", function () {
-			this.trigger("anchor:item:updated")
+			this.trigger("anchor:item:updated");
 		}, this);
 		this.fields = _([item]);
 	}
@@ -3463,8 +3681,7 @@ var Settings_AnchorTrigger = SettingsItem.extend({
 		});
 		this.options.fields = _([
 			new Field_Select({
-				model: this.model,
-				property: 'anchor_target',
+				model: this.model, property: 'anchor_target',
 				values: anchors
 			})
 		]);
@@ -3572,11 +3789,12 @@ var Field_Anchor = Field_Select.extend({
 			$('body').append(this.tpl({}));
 
 			this.setElement($('#' + this.elId));
-
+			/*
 			// Hey admin bar!
 			var $bar = $('#wpadminbar'); // We'll use it a couple of times, so cache
 			if($bar.length && $bar.is(":visible")) // Check existence *and* visibility
 				$('#upfront-notifier').css({top: 28});
+			*/
 		},
 		addMessage: function(message, type){
 			var notice = {
@@ -5213,7 +5431,8 @@ var Field_Anchor = Field_Select.extend({
 				"ItemMulti": InlinePanelItemMulti,
 				"Item": InlinePanelItem
 			},
-			"RegionPanels": RegionPanels
+			"RegionPanels": RegionPanels,
+			"CSSEditor": CSSEditor
 		}
 	};
 });

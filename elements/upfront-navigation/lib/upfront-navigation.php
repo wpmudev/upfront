@@ -37,10 +37,10 @@ class Upfront_NavigationView extends Upfront_Object {
                 'echo' => false
             ));
         else:
-            return "<div class='upfront-output-object {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
+            return "<div class=' {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
         endif;
 
-        return "<div class='upfront-output-object {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
+        return "<div class=' {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
     }
 
     // Inject style dependencies
@@ -73,7 +73,7 @@ class Upfront_NavigationView extends Upfront_Object {
             'menu_alignment' => 'left', // left | center | right
             'allow_sub_nav' => array('no'), // array('no') | array ('yes')
             'allow_new_pages' => array('no'), // array('no') | array('yes')
-			
+
 
 
             'custom_url' => '',
@@ -132,21 +132,21 @@ class Upfront_MenuSetting extends Upfront_Server {
         }
         $this->_out(new Upfront_JsonResponse_Error('Menu not found'));
     }
-	
+
 	function load_menu_array() {
-	
+
 		if(isset($_POST['data']) && is_numeric($_POST['data'])) {
-	
+
 			$menu = wp_get_nav_menu_object( intval($_POST['data']) );
-	
+
 			if ( $menu )
 				$menu_items = wp_get_nav_menu_items( $menu->term_id, array( 'update_post_term_cache' => false ) );
-			
+
 			$sorted_menu_items = array();
 			foreach ( (array) $menu_items as $key => $menu_item )
 				$sorted_menu_items[$menu_item->menu_order] = $menu_item;
-	
-			
+
+
 			$top_level_elements = array();
 			$children_elements  = array();
 			foreach ( $sorted_menu_items as $e) {
@@ -155,12 +155,12 @@ class Upfront_MenuSetting extends Upfront_Server {
 				else
 					$children_elements[ $e->menu_item_parent ][] = $e;
 			}
-			
+
 			if ( empty($top_level_elements) ) {
-	
+
 				$first = array_slice( $elements, 0, 1 );
 				$root = $first[0];
-	
+
 				$top_level_elements = array();
 				$children_elements  = array();
 				foreach ( $elements as $e) {
@@ -170,23 +170,23 @@ class Upfront_MenuSetting extends Upfront_Server {
 						$children_elements[ $e->menu_item_parent ][] = $e;
 				}
 			}
-	
-	
+
+
 			$output = array();
-			
+
 			foreach ( $top_level_elements as $e ) {
 				$output[] = $this->recursive_processMenuItem($e, $children_elements);
 			}
-	
+
 			$this->_out(new Upfront_JsonResponse_Success($output));
-	
+
 		}
 		else {
 			$this->_out(new Upfront_JsonResponse_Error('Menu not found'));
 		}
-	
+
 	}
-	
+
 	function recursive_processMenuItem($e, $children_elements) {
 
 		$this_menu_item = array(
@@ -206,7 +206,7 @@ class Upfront_MenuSetting extends Upfront_Server {
 		}
 		return $this_menu_item;
 	}
-	
+
 
     public function load_menu_items () {
         $menu_id = isset($_POST['data']) ? intval($_POST['data']) : false;
@@ -311,11 +311,11 @@ class Upfront_MenuSetting extends Upfront_Server {
         $menu_item = isset($_POST['menu-item']) ? $_POST['menu-item'] : false;
 
         $menu_item_id = isset($_POST['menu-item-id']) ? intval($_POST['menu-item-id']) : false ;
-		
+
 		if(!$menu_item_id) {
 			$menu_item_ids = $this->add_menu_item($menu_id, array($menu_item));
 			$menu_item_id = $menu_item_ids[0];
-			
+
 		}
 
         $items_saved = array();

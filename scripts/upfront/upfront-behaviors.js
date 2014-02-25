@@ -346,10 +346,10 @@ var GridEditor = {
 		});
 		return move_limit;
 	},
-	
+
 	/**
 	 * Get maximum size available to resize
-	 *  
+	 *
 	 * @param (object) el
 	 * @param (array) els
 	 * @param (object) region
@@ -457,7 +457,7 @@ var GridEditor = {
 			val = text.match(rx);
 		return ( val && val[1] ) ? parseInt(val[1]) : 0;
 	},
-	
+
 	/**
 	 * Get element model
 	 *
@@ -535,7 +535,7 @@ var GridEditor = {
 		}
 		this.time_end('fn update_model_classes');
 	},
-	
+
 	update_model_margin_classes: function ($els, more_classes) {
 		var ed = Upfront.Behaviors.GridEditor;
 		$els.each(function(){
@@ -690,6 +690,22 @@ var GridEditor = {
 			left: main_pos.left,
 			right: main_pos.left + $main.outerWidth()
 		};
+
+		// Prevents quick scroll when resizing
+		var doScroll = 0;
+		$(document).on('scroll', function(e){
+			if(ed.resizing === false)
+				return;
+
+			console.log('preventing scroll');
+/*
+				if($(document).scrollTop() > ed.resizing)
+					ed.resizing -= 2;
+				else
+					ed.resizing += 2;
+
+				$(document).scrollTop(ed.resizing); */
+		});
 	},
 
 	/**
@@ -743,7 +759,7 @@ var GridEditor = {
 		ed.update_position_data();
 		this.time_end('fn start');
 	},
-	
+
 	/**
 	 * Update position data
 	 */
@@ -1122,6 +1138,9 @@ var GridEditor = {
 			start: function(e, ui){
 				ed.start(view, model);
 
+				// Prevents quick scroll when resizing
+				ed.resizing = $(document).scrollTop();
+
 				var col = ed.get_class_num($me, ed.grid.class),
 					cls = ed.grid.class+col,
 					me = ed.get_el($me),
@@ -1246,6 +1265,9 @@ var GridEditor = {
 					region = regions.get_by_name($region.data('name'))
 				;
 
+				// Prevents quick scroll when resizing
+				ed.resizing = false;
+
 				$resize_placeholder.remove();
 				$resize.remove();
 
@@ -1285,7 +1307,7 @@ var GridEditor = {
 						object.set_property('row', rsz_row-2);
 					});
 				}
-				
+
 				// Update model value
 				if ( axis == 'nw' ){
 					model.replace_class([
@@ -1300,25 +1322,25 @@ var GridEditor = {
 					model.replace_class(ed.grid.class+rsz_col);
 					ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
 				}
-				
+
 				view.trigger('entity:resize', {row: rsz_row, col: rsz_col}, view, view.model);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
 				Upfront.Events.trigger("entity:resized", view, view.model);
 			}
 		});
 	},
-	
+
 	toggle_resizables: function (enable) {
 		$('.upfront-editable_entity.ui-resizable').resizable('option', 'disabled', (!enable));
 	},
-	
+
 	/**
 	 * Resize element
-	 * 
+	 *
 	 * @param (object) view
 	 * @param (object) model
 	 * @param (integer) col
-	 * @param (integer) row 
+	 * @param (integer) row
 	 * @param (string) axis nw|se|all
 	 * @param (bool) force
 	 */
@@ -1328,9 +1350,9 @@ var GridEditor = {
 			axis = /all|nw|se/.test(axis) ? axis : 'all',
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout');
-			
+
 		ed.start(view, model);
-		
+
 		var $me = view.$el.find('.upfront-editable_entity:first'),
 			$object = $me.find('.upfront-editable_entity'),
 			$wrap = $me.closest('.upfront-wrapper'),
@@ -1347,10 +1369,10 @@ var GridEditor = {
 			col = col ? ( col > max.col ? max.col : col ) : me.col,
 			row = row ? ( max.row && row > max.row ? max.row : row ) : me.row
 		;
-		
+
 		if ( col < 1 || row < 1 )
 			return false;
-		
+
 		if ( !force ){
 			$me.css('min-height', '');
 			$object.css('min-height', '');
@@ -1359,7 +1381,7 @@ var GridEditor = {
 			$me.css('min-height', row*ed.baseline);
 			$object.css('min-height', (row-2)*ed.baseline);
 		}
-		
+
 
 		regions.each(function(reg){
 			if ( reg.get('modules') == model.collection )
@@ -1417,12 +1439,12 @@ var GridEditor = {
 			model.replace_class(ed.grid.class+col);
 			ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
 		}
-		
+
 		view.trigger('entity:resize', {row: row, col: col}, view, view.model);
 		Upfront.Events.trigger("entity:resized", view, view.model);
 		return true;
 	},
-	
+
 	/**
 	 * Create draggable
 	 *
@@ -1444,7 +1466,7 @@ var GridEditor = {
 			$me.draggable('option', 'disabled', false);
 			return false;
 		}
-		
+
 		function select_drop (drop) {
 			ed.time_start('fn select_drop');
 			if ( drop.is_use )
@@ -1523,7 +1545,7 @@ var GridEditor = {
 				$wrap.css('min-height', '1px');
 
 				$('.upfront-drop-me').css('height', (me.outer_grid.bottom-me.outer_grid.top)*ed.baseline);
-			
+
 				if ( model.get('shadow') )
 					$layout.append( '<div id="upfront-drop-preview" style="top:' + me_offset.top + 'px; left: ' + me_offset.left + 'px;"></div>' );
 
@@ -1757,7 +1779,7 @@ var GridEditor = {
 
 					if ( model.get('shadow') && ed.drop.is_me )
 						$('#upfront-drop-preview').removeClass('upfront-drop-transition');
-					
+
 					if ( model.get('shadow') ){
 						$('#upfront-drop-preview').css({
 							top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
@@ -2046,11 +2068,11 @@ var GridEditor = {
 			}
 		});
 	},
-	
+
 	toggle_draggables: function (enable) {
 		$('.upfront-editable_entity.ui-draggable').draggable('option', 'disabled', (!enable));
 	},
-	
+
 	refresh_draggables: function(){
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
@@ -2199,6 +2221,10 @@ var GridEditor = {
 			zIndex: 9999999,
 			start: function(e, ui){
 				var col = ed.get_class_num($me, ed.grid.class);
+
+				// Prevents quick scroll when resizing
+				ed.resizing = $(document).scrollTop();
+
 				ed.col_size = $('.upfront-grid-layout:first').outerWidth()/ed.grid.size;
 				$(this).resizable('option', 'minWidth', ed.col_size*3);
 				$(this).resizable('option', 'maxWidth', ed.col_size*10);
@@ -2236,6 +2262,9 @@ var GridEditor = {
 			},
 			stop: function(e, ui){
 				var rsz_col = $me.data('resize-col');
+
+				// Prevents quick scroll when resizing
+				ed.resizing = false;
 
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				$me.css({
@@ -2283,6 +2312,9 @@ var GridEditor = {
 				Upfront.Events.trigger("entity:region_container:resize_start", view, view.model);
 				// Disable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', false);
+
+				// Prevents quick scroll when resizing
+				ed.resizing = $(document).scrollTop();
 			},
 			resize: function(e, ui){
 				// @TODO Suppppperrrr annoying bug happen on resizable 1.10.3, fix only for this version and make sure to recheck in future update on this lib!
@@ -2328,6 +2360,10 @@ var GridEditor = {
 				Upfront.Events.trigger("entity:region_container:resize_stop", view, view.model);
 				// Re-enable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', true);
+
+
+				// Prevents quick scroll when resizing
+				ed.resizing = false;
 			}
 		});
 	},

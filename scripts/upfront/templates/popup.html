@@ -1,6 +1,6 @@
-<div> 
-<!-- 
-	Wrap everything in a div to convert this file's content in a jquery element 
+<div>
+<!--
+	Wrap everything in a div to convert this file's content in a jquery element
 	so it is possible to use $.find.
 -->
 <script type="text/template" id="upfront-post-list-tpl">
@@ -14,7 +14,7 @@
 	{[ if(!posts.length){ ]}
 		<p class="upfront-no-results">No posts found</p>
 	{[ } else { ]}
-	{[ _.each(posts, function (post, idx){ ]} 
+	{[ _.each(posts, function (post, idx){ ]}
 		<div class="upfront-list_item-post upfront-list_item clearfix" data-post_id="{{ post.get("ID") }}">
 			<div class="upfront-list_item-component upfront-date">{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
@@ -28,7 +28,7 @@
 <script type="text/template" type="text/template" id="upfront-post-single-tpl">
 <div id="upfront-list-page" style="display:none">
 	<div id="upfront-list-page-path">
-		<a href="#" class="upfront-path-back">Posts</a> &nbsp;&raquo;&nbsp; 
+		<a href="#" class="upfront-path-back">Posts</a> &nbsp;&raquo;&nbsp;
 		<a href="#" class="last">{{ post.get('post_title') }}</a>
 	</div>
 	<div id="upfront-list-page-preview">
@@ -77,7 +77,7 @@
 		<i class="icon-caret-right"></i>
 		<i class="icon-caret-down"></i>
 		{[ } ]}
-		{{ page.get("post_title") }} 		
+		{{ page.get("post_title") }}
 		{[if(page.children.length){ page.children.each(function(child, idx) { ]}
 			{{ pageItemTemplate({page: child, pageItemTemplate: pageItemTemplate}) }}
 		{[ })}; ]}
@@ -94,7 +94,7 @@
 		</div>
 		<div id="upfront-page_preview-template" class="upfront-page_preview-item">
 			<h4>Template: </h4>
-			<select id="upfront-page_template-select">				
+			<select id="upfront-page_template-select">
 				<option value="0">Default</option>
 				{[ _.each(allTemplates, function(tpl, name){ var selected = tpl == template ? 'selected="selected"' : ""; ]}
 				<option value="{{tpl}}" {{selected}}>{{name}}</option>
@@ -193,7 +193,7 @@
 	{[ }); ]}
 </div>
 <div id="upfront-taxonomy-add">
-	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
+	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
 	<select id="upfront-taxonomy-parents">
 		<option value="0">-- Parent Category --</option>
 		{[ allTerms.each(function(term, idx) { ]}
@@ -235,7 +235,7 @@
 	</div>
 </div>
 <div id="upfront-taxonomy-add">
-	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" /> 
+	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
 	<button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
 </div>
 </script>
@@ -254,7 +254,7 @@
 	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev">
 		<i class="icon-angle-left"></i>
 	</div>
-	
+
 	{[ _.each(_.range(pages), function(i){ ]}
 	<div class="upfront-pagination_item upfront-pagination_page-item {{ i == currentPage ? 'current' : '' }}" data-page_idx="{{ i }}">{{ i + 1}}</div>
 	{[ }) ]}
@@ -327,12 +327,12 @@
 	<div class="upfront-bar-datepicker">
 	</div>
 	<div class="upfront-time_picker">
-		Time: 
+		Time:
 		<select class="ueditor-hours-select">
 			{[ _.each(hours, function(h){ ]}
 			<option value="{{h}}" selected="{{h == currentHour ? 'selected' : ''}}">{{h}}</option>
 			{[ }); ]}
-		</select>: 
+		</select>:
 		<select class="ueditor-minutes-select">
 			{[ _.each(minutes, function(m){ ]}
 			<option value="{{m}}" selected="{{m == currentMinute ? 'selected' : ''}}">{{m}}</option>
@@ -353,6 +353,21 @@
 			{[ }); ]}
 		</div>
 		<input type="text" class="ueditor-select-focus">
+</script>
+
+<script id="csseditor-tpl" type="text/template">
+	<div class="upfront-css-top">
+		<a class="upfront-css-close" href="#">close</a>
+	</div>
+	<div class="upfront-css-body">
+		<div class="upfront-css-ace"></div>
+		<div class="upfront-css-sidebar">
+			<div class="upfront-css-save-form">
+				<p>Style name</p>
+				<input type="text" class="upfront-css-save-name" value="{{ name }}"><button class="upfront-css-save-ok">Save</button>
+			</div>
+		</div>
+	</div>
 </script>
 
 

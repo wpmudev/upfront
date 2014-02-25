@@ -4,8 +4,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public function get_markup () {
 		global $post;
 		$element_id = $this->_get_property('element_id');
-		return 
-			'<div class="upfront-output-object upfront-this_post" id="' . $element_id . '">' .
+		return
+			'<div class=" upfront-this_post" id="' . $element_id . '">' .
 				self::get_post_markup(get_the_ID(), $post->post_type, $this->properties_to_array()) .
 			'</div>';
 	}
@@ -19,14 +19,14 @@ class Upfront_ThisPostView extends Upfront_Object {
 		} else {
 			$post = get_post($post_id);
 		}
-		if ($post->post_password && !is_user_logged_in() || $post->post_status != 'publish' && !is_user_logged_in()) 
+		if ($post->post_password && !is_user_logged_in() || $post->post_status != 'publish' && !is_user_logged_in())
 			return ''; // Augment this!
 
 		if(!$properties['post_data'])
 			$properties['post_data'] = array();
-		
+
 		$properties['featured_image'] = array_search('featured_image', $properties['post_data']) !== FALSE;
-		
+
 		return self::post_template($post, $properties);
 	}
 
@@ -140,7 +140,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		else
 			$this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
 
-		
+
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			"filtered" => $content
 		)));

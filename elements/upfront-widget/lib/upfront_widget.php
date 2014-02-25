@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Uwidget {
-	
+
 	public static function get_widget_list () {
 		global $wp_widget_factory, $wp_registered_widgets;
 		$data = array();
@@ -14,33 +14,33 @@ class Upfront_Uwidget {
 		}
 		return $data;
 	}
-	
+
 	public static function get_widget_markup ($widget, $instance = array()) {
 		$args = apply_filters('upfront_widget_widget_args', array());
-		
+
 		ob_start();
 		the_widget($widget, (!empty($instance) ? $instance : array()), $args);
-		
+
 		return ob_get_clean();
 	}
-	
+
 	public static function get_widget_admin_fields($widget) {
-		
+
 		$rc = new ReflectionClass($widget);
 		$dwidget = $rc->newInstance();
-		
+
 		ob_start();
 		$dwidget->form();
 		$markup =  ob_get_clean();
 
 		$form = new DOMDocument();
 		$form->loadHTML($markup);
-		
+
 		$xpath = new DOMXPath($form);
 		$nodes = $xpath->query('/html/body//label | /html/body//input | /html/body//select | /html/body//textarea');
 
 		$fields = array();
-		
+
 		foreach($nodes as $node) {
 			if(strtolower($node->nodeName) == 'label') {
 				if(isset($fields[$node->getAttribute('for')]))
@@ -49,14 +49,14 @@ class Upfront_Uwidget {
 					$fields[$node->getAttribute('for')] = array('label' => $node->nodeValue);
 			}
 			else {
-				
+
 				$exp_name = explode('[', $node->getAttribute('name'));
 				$fieldname = str_replace(']', '', array_pop($exp_name));
 				if(isset($fields[$node->getAttribute('id')]))
-					$fields[$node->getAttribute('id')]['name'] = $fieldname;	
+					$fields[$node->getAttribute('id')]['name'] = $fieldname;
 				else
 					$fields[$node->getAttribute('id')] = array('name' =>$fieldname);
-				
+
 				if(strtolower($node->nodeName) == 'select') {
 					$fields[$node->getAttribute('id')]['type'] = $node->nodeName;
 					$fields[$node->getAttribute('id')]['options'] = array();
@@ -74,13 +74,13 @@ class Upfront_Uwidget {
 
 				}
 			}
-			
+
 		}
-		
+
 		return $fields;
 
-	} 
-	
+	}
+
 }
 
 class Upfront_UwidgetView extends Upfront_Object {
@@ -88,24 +88,24 @@ class Upfront_UwidgetView extends Upfront_Object {
 	public function get_markup () {
 		$element_id = $this->_get_property('element_id');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
-		
+
 		$widget = $this->_get_property('widget');
-		
+
 		$fields = Upfront_Uwidget::get_widget_admin_fields($widget);
-		
+
 		$instance = array();
-		
+
 		foreach($fields as $field) {
 			$instance[$field['name']] = 	$this->_get_property($field['name']);
 		}
-		
-		
-		return "<div class='upfront-output-object upfront-widget' {$element_id}>" .
+
+
+		return "<div class=' upfront-widget' {$element_id}>" .
 			Upfront_Uwidget::get_widget_markup($widget, $instance) .
 		"</div>";
 	}
 
-	
+
 	public static function add_js_defaults($data){
 		$self = !empty($data['uwidget']) ? $data['uwidget'] : array();
 		$data['uwidget'] = array_merge($self, array(
@@ -125,7 +125,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			'widget' => false
 		);
 	}
-	
+
 }
 
 class Upfront_UwidgetAjax extends Upfront_Server {
@@ -147,10 +147,10 @@ class Upfront_UwidgetAjax extends Upfront_Server {
 	public function load_markup () {
 		$args = array();
 		$data = json_decode(stripslashes($_POST['data']), true);
-		
+
 		$this->_out(new Upfront_JsonResponse_Success(Upfront_Uwidget::get_widget_markup($data['widget'], $data['instance'])));
 	}
-	
+
 	public function load_admin_form () {
 		$data = json_decode(stripslashes($_POST['data']), true);
 		$this->_out(new Upfront_JsonResponse_Success(Upfront_Uwidget::get_widget_admin_fields($data['widget'])));

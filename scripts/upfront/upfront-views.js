@@ -603,15 +603,22 @@ define([
 			},
 			render: function () {
 				var props = {},
-					run = this.model.get("properties").each(function (prop) {
-						props[prop.get("name")] = prop.get("value");
-					}),
 					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
-					model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height}),
-					template = _.template(_Upfront_Templates["object"], model)
+					model, template
 				;
+
+				this.model.get("properties").each(function (prop) {
+					props[prop.get("name")] = prop.get("value");
+				});
+
+				if(props.theme_style)
+					props.class += ' ' + props.theme_style;
+
+				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height});
+				template = _.template(_Upfront_Templates["object"], model);
+
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
 				// Listen to module resize and drop event
 				if ( this.parent_module_view ){
@@ -620,7 +627,7 @@ define([
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
 				}
-				
+
 				//console.log('---- Object render - ' + this.cid + ' - ' + props.view_class);
 				this.$el.html(template);
 
@@ -643,15 +650,15 @@ define([
 				if (this.parent_module_view && this.parent_module_view.enable) this.parent_module_view.enable();
 			},
 			on_element_resize: function (attr) {
-				
+
 			},
 			on_element_drop: function (attr) {
-				
+
 			},
 			on_after_layout_render: function () {
 
 			},
-			
+
 			/* Getting dimension and resize element */
 			get_element_size: function (real) {
 				var ed = Upfront.Behaviors.GridEditor,
@@ -1674,7 +1681,7 @@ define([
 			on_click: function (e) {
 				var currentEntity = Upfront.data.currentEntity;
 				// Deactivate settings on clicking anywhere in layout, but the settings button
-				if(!$(e.target).closest('.upfront-entity_meta').length)
+				if(!$(e.target).closest('.upfront-entity_meta').length && !$(e.target).closest('#upfront-csseditor').length)
 					Upfront.Events.trigger("entity:settings:deactivate");
 				Upfront.Events.trigger("entity:contextmenu:deactivate");
 				if(currentEntity){

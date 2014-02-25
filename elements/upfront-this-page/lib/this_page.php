@@ -2,15 +2,15 @@
 class Upfront_ThisPageView extends Upfront_Object {
 	public function get_markup () {
 		global $post;
-		
+
 		$element_id = $this->_get_property('element_id');
 		$display = $this->_get_property('display');
-		return 
-			'<div class="upfront-output-object upfront-this_page" id="' . $element_id . '">' .
+		return
+			'<div class=" upfront-this_page" id="' . $element_id . '">' .
 				self::get_page_markup($display, get_the_ID()) .
 			'</div>';
 	}
-	
+
 	public static function get_page_markup ($display = 'title', $post_id = 0) {
 		global $post;
 		$post = get_post($post_id);
@@ -20,7 +20,7 @@ class Upfront_ThisPageView extends Upfront_Object {
 		return $data;
 	}
 	public static function get_new_page ($display) {
-		
+
 	}
 
 	public static function default_properties(){
@@ -54,11 +54,11 @@ class Upfront_ThisPageAjax extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('wp_ajax_this_page-get_markup', array($this, "load_markup"));
 	}
-	
+
 	public function load_title_markup () {
 		return $this->load_markup('title');
 	}
-	
+
 	public function load_content_markup () {
 		return $this->load_markup('content');
 	}
@@ -92,7 +92,7 @@ class Upfront_ThisPageAjax extends Upfront_Server {
 		else
 			$this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
 
-		
+
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			"filtered" => $return
 		)));

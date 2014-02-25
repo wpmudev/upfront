@@ -19,17 +19,17 @@ class Upfront_SocialMediaView extends Upfront_Object {
                 $output = "Please select an option from backend";
                 break;
             case 'likes':
-                $output = "<div class='upfront-output-object upfront-social' {$element_id}>" .
+                $output = "<div class=' upfront-social' {$element_id}>" .
                     self::likes() .
                 "</div>";
                 break;
             case 'fans':
-                $output = "<div class='upfront-output-object upfront-social' {$element_id}>" .
+                $output = "<div class=' upfront-social' {$element_id}>" .
                     self::fans() .
                 "</div>";
                 break;
             case 'buttons':
-                $output = "<div class='upfront-output-object upfront-social' {$element_id}>" .
+                $output = "<div class=' upfront-social' {$element_id}>" .
                     self::buttons() .
                 "</div>";
                 break;
@@ -58,7 +58,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
         $style =  $this->_get_property('counter_options');
         $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 
-        return Upfront_SocialMedia_Setting:: get_likes_markup($services, $style, $url);        
+        return Upfront_SocialMedia_Setting:: get_likes_markup($services, $style, $url);
     }
 
     public function fans(){
@@ -140,19 +140,19 @@ class Upfront_SocialMediaView extends Upfront_Object {
             $data['usocial']['globals'] = Upfront_SocialMedia_Setting::properties_to_array(json_decode($globals));
 
         return $data;
-    }    
+    }
 
     public static function default_properties(){
         return array(
             'social_type' => 'likes',
 
             'like_social_media_services' => array("facebook", "twitter", "google"),
-            
+
             'count_social_media_services' => array(),
 
             'button_size' => 'medium',
             'button_style' => 'button-style-2',
-            'call_social_media_services' => array(),                
+            'call_social_media_services' => array(),
 
             'id_slug' => 'SocialMedia',
             'type' => 'SocialMediaModel',
@@ -161,7 +161,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
             'has_settings' => 1
         );
     }
-    
+
 }
 
 /**
@@ -264,7 +264,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
             }
             else{
                 $active = $s['active'];
-                $service_id = $s['id'];                
+                $service_id = $s['id'];
             }
             $output .= $active ? self::likes_tpl($service_id . '-likes', $data) : '';
         }
@@ -287,7 +287,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                 <div class="g-plusone" data-size="{{size}}"></div>
             </div>'
         );
-        
+
         if(! $tpls[$name])
             return 'Wrong social template ' . $name;
         $out = $tpls[$name];
@@ -370,7 +370,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
             if($name){
                 $count = self::COUNT_ERROR;
                 $page = wp_remote_get(
-                    "https://graph.facebook.com/{$name}", 
+                    "https://graph.facebook.com/{$name}",
                     array('sslverify' => false)
                 );
                 if (200 == wp_remote_retrieve_response_code($page)) {
@@ -378,7 +378,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                     if(!empty($body['likes'])){
                         $count = $body['likes'];
                         set_transient(
-                            'usocial_facebook_' . $transient_id, 
+                            'usocial_facebook_' . $transient_id,
                             array('count' => $count, 'url' => $url),
                             $transient_time
                         );
@@ -405,7 +405,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 
             // Get new token if there isn't one
             $token = self::get_twitter_token($element_id, $consumer_key, $consumer_secret);
-            if (!$token) 
+            if (!$token)
                 return 'No twitter token';
 
             // Do the actual remote call
@@ -428,7 +428,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
             $followers_count = $followers->followers_count;
 
             set_transient(
-                'usocial_twitter_'. $transient_id, 
+                'usocial_twitter_'. $transient_id,
                 array('count' => $followers_count, 'url' => $url),
                 $transient_time
             );
@@ -439,7 +439,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
         else if($id == 'google'){
             if ($name){
                 $page = wp_remote_get(
-                    'https://plusone.google.com/_/+1/fastbutton?bsv&annotation=inline&hl=it&url=' . urlencode('https://plus.google.com/' . $name), 
+                    'https://plusone.google.com/_/+1/fastbutton?bsv&annotation=inline&hl=it&url=' . urlencode('https://plus.google.com/' . $name),
                     array('sslverify' => false)
                 );
 
@@ -449,7 +449,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
                     if (preg_match('/window.__SSR *= *{c: *(\d+)/is', $body, $match) ){
                         $count = $match[1];
                         set_transient(
-                            'usocial_google_' . $transient_id, 
+                            'usocial_google_' . $transient_id,
                             array('count' => $count, 'url' => $url),
                             $transient_time
                         );
@@ -498,7 +498,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
         );
 
         $response = wp_remote_post('https://api.twitter.com/oauth2/token', $args);
-        if (is_wp_error($response)) 
+        if (is_wp_error($response))
             return false; // Something went wrong
 
         $keys = json_decode(wp_remote_retrieve_body($response));

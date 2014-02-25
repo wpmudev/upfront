@@ -35,7 +35,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
     protected function wrap($content){
         $element_id = $this->_get_property('element_id');
         $element_id = $element_id ? "id='{$element_id}'" : '';
-        return "<div class='upfront-output-object upfront-like-box ' {$element_id}>" . $content . "</div>";
+        return "<div class=' upfront-like-box ' {$element_id}>" . $content . "</div>";
 
     }
 

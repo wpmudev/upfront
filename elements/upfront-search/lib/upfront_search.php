@@ -24,7 +24,7 @@ class Upfront_UsearchView extends Upfront_Object {
 		$color = $this->_get_property("color");
 		$color = $color ? "style='background-color:{$color};'" : '';
 
-		return "<div class='upfront-output-object upfront-search {$rounded}' {$color} {$element_id}>" .
+		return "<div class=' upfront-search {$rounded}' {$color} {$element_id}>" .
 			"<form action='" . esc_url( home_url( '/' ) ) . "' method='GET'>" .
 			"<input type='search' class='search-field' name='s' value=''  />".(!empty($label)?"<button class='search-button".($label == '<i class="icon-search"></i>'?" image":"") ."'>{$label}</button>":"") .
 			'</form>' .
