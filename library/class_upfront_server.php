@@ -716,7 +716,7 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 
 	private function _add_hooks () {
 		//add_action('upfront_hourly_schedule', array($this, 'media_cleanup'));
-		add_action('wp', array($this, 'media_cleanup'));
+		//add_action('wp', array($this, 'media_cleanup'));
 	}
 
 	public function media_cleanup () {
@@ -807,5 +807,5 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 		update_post_meta($item->ID, 'upfront_media_cleanup_time', time());
 	}
 }
-Upfront_Server_MediaCleanup::serve();
+//Upfront_Server_MediaCleanup::serve();
 
