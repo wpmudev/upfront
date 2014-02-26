@@ -210,7 +210,7 @@ abstract class Upfront_Entity {
 			$background_style = $this->_get_property('background_style');
 			if ( $background_color )
 				$css[] = 'background-color: ' . $background_color;
-			if ( $background_image ){
+			if ( $type == 'image' && $background_image ){
 				$css[] = 'background-image: url("' . $background_image . '")';
 				if ( $background_style == 'full' ){
 					$css[] = 'background-size: 100% auto';
