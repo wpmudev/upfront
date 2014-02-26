@@ -256,12 +256,13 @@ var Ueditor = function($el, options) {
 
 	this.id = 'ueditor' + (Math.random() * 10000);
 
-	if(this.options.autostart)
+	if(this.options.autostart){
 		this.redactor = this.start();
-	else
+	}
+	else {
 		this.bindStartEvents();
-
-	this.startPlaceholder();
+		this.startPlaceholder();
+	}
 };
 
 Ueditor.prototype = {
@@ -333,13 +334,14 @@ Ueditor.prototype = {
 		return result;
 	},
 	startPlaceholder: function(){
+		console.log('start placeholder');
 		var placeholder = this.options.placeholder;
 		if (this.$el.attr('placeholder')) placeholder = this.$el.attr('placeholder');
 		if (placeholder === '') placeholder = false;
 		if (placeholder !== false && $.trim(this.$el.text()).length === 0)
 		{
 			this.$placeholder = this.$el.clone(false);
-			this.$placeholder.attr('contenteditable', false).addClass('ueditor-placeholder').html(placeholder);
+			this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html(placeholder);
 			this.$el.after(this.$placeholder);
 			var $parent = this.$el.parent();
 			if ($parent.css('position') == 'static')
@@ -362,6 +364,7 @@ Ueditor.prototype = {
 		}
 	},
 	stopPlaceholder: function() {
+		console.log('stop placeholder');
 		if (this.$placeholder)
 			this.$placeholder.remove();
 		if(this.$el.html() == '&nbsp;')
