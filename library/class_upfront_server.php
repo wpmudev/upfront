@@ -740,7 +740,7 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 				),
 				array(
 					'key' => 'upfront_media_cleanup_time',
-					'value' => $yesterday,
+					'value' => $yesterday, // @see https://core.trac.wordpress.org/ticket/23268
 					'compare' => 'NOT EXISTS',
 				)
 			),
@@ -770,15 +770,27 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 
 	private function _cleanup_item_remnants ($item) {
 		$used = array();
+
+		// Used by Upfront image-ish elements (image, gallery, slider)
 		$sizes = get_post_meta($item->ID, 'upfront_used_image_sizes', true);
 		if (!empty($sizes)) foreach ($sizes as $size) {
 			$used[] = $size['path'];
 		}
 
+		// Root file
 		$path = get_attached_file($item->ID);
 		if (empty($path)) return false;
-
 		$used[] = $path;
+
+		// Default thumbnails
+		$meta = wp_get_attachment_metadata($item->ID);
+		if (!empty($meta['sizes'])) foreach ($meta['sizes'] as $thumb) {
+			if (empty($thumb['file'])) continue;
+			$metapath = trailingslashit(pathinfo($path, PATHINFO_DIRNAME)) . $thumb['file'];
+			if (file_exists($metapath)) $used[] = $metapath;
+		}
+
+		// Cleanup if duplicates crept in somehow
 		$used = array_unique($used);
 		
 		$glob_expression = preg_replace('/(' . preg_quote(pathinfo($path, PATHINFO_FILENAME), '/') . ')\.(jpg|jpeg|gif|png)$/i', '$1*.$2', $path);
@@ -786,9 +798,14 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 		
 		foreach ($all_files as $file) {
 			if (in_array($file, $used)) continue;
-			localhost_dbg('FOUND UNUSED FILE RIPE FOR DROPPING: ' . $file);
+			// Alright, this could be ripe for removal - EXCEPT, it might also be rotated image...
+			if (preg_match('/-r\d+$/', pathinfo($file, PATHINFO_FILENAME))) continue; // Is it?
+			
+			// ACTUALLY REMOVE THE IMAGE HERE!!!
+			//@unlink($file);
 		}
+		update_post_meta($item->ID, 'upfront_media_cleanup_time', time());
 	}
 }
-//Upfront_Server_MediaCleanup::serve();
+Upfront_Server_MediaCleanup::serve();
 
