@@ -378,7 +378,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			selectorOptions = {
 				multiple: true,
 				preparingText: 'Preparing images',
-				customImageSize: {width: this.property('thumbWidth'), height: this.property('thumbHeight')}
+				customImageSize: {width: this.property('thumbWidth'), height: this.property('thumbHeight')},
+				element_id: this.model.get_property_value_by_name("element_id")
 			}
 		;
 
@@ -398,7 +399,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	addImages: function(images, replaceId){
 		var me = this,
 			models = [],
-			selectType = false
+			selectType = false,
+			element_id = this.model.get_property_value_by_name("element_id")
 		;
 
 		this.getNewLabels(_.keys(images));
@@ -414,7 +416,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					cropOffset: image.custom.editdata.crop,
 					src: image.custom.url,
 					loading: false,
-					status: 'ok'
+					status: 'ok',
+					element_id: element_id
 				})
 			);
 		});
@@ -551,7 +554,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			var editOptions = {
 					images: this.getRegenerateData(imageIds),
 					action: 'upfront-media-image-create-size'
-				}
+				},
 				loading = new Upfront.Views.Editor.Loading({
 					loading: "Regenerating images...",
 					done: "Wow, those are cool!",
@@ -603,7 +606,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			factor = widthFactor > heightFactor ? widthFactor : heightFactor,
 			size = {width: this.property('size').width * factor, height: this.property('size').height * factor},
 			imageData = [],
-			images = this.images
+			images = this.images,
+			element_id = this.model.get_property_value_by_name("element_id")
 		;
 
 		if(imageIds){
@@ -627,7 +631,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						left: Math.round(offset.left * factor),
 						width: me.property('thumbWidth'),
 						height: me.property('thumbHeight')
-					}
+					},
+					element_id: element_id
 				}
 			;
 			imageData.push(editorOpts);
@@ -671,11 +676,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			image = this.images.get(item.attr('rel')),
 			editorOpts = this.getEditorOptions(image)
 		;
-
 		if(image.get('status') != 'ok'){
 			var selectorOptions = {
 				multiple: false,
-				preparingText: 'Preparing images'
+				preparingText: 'Preparing images',
+				element_id: this.model.get_property_value_by_name("element_id")
 			};
 			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 				me.addImages(images);
@@ -731,7 +736,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			fullSize: {width: full[1], height: full[2]},
 			src: image.get('src'),
 			srcOriginal: full[0],
-			rotation: image.get('rotation')
+			rotation: image.get('rotation'),
+			element_id: this.model.get_property_value_by_name("element_id"),
 		};
 	},
 

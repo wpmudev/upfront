@@ -700,3 +700,95 @@ class Upfront_Server_Schedule implements IUpfront_Server {
 	}
 }
 Upfront_Server_Schedule::serve();
+
+
+
+
+/**
+ * Periodically boots up to clean up the unused crops, if any are left around.
+ */
+class Upfront_Server_MediaCleanup implements IUpfront_Server {
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		//add_action('upfront_hourly_schedule', array($this, 'media_cleanup'));
+		add_action('wp', array($this, 'media_cleanup'));
+	}
+
+	public function media_cleanup () {
+		$media = $this->_get_cleanup_chunk();
+		if (empty($media)) return false;
+
+		foreach ($media as $item) $this->_cleanup_item_remnants($item);
+	}
+
+	private function _get_cleanup_chunk () {
+		$yesterday = strtotime("yesterday");
+		$never_cleaned = new WP_Query(array(
+			'post_type' => 'attachment',
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => 'upfront_used_image_sizes',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key' => 'upfront_media_cleanup_time',
+					'value' => $yesterday,
+					'compare' => 'NOT EXISTS',
+				)
+			),
+		));
+		$old_cleaned = new WP_Query(array(
+			'post_type' => 'attachment',
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => 'upfront_used_image_sizes',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key' => 'upfront_media_cleanup_time',
+					'value' => $yesterday,
+					'compare' => '<',
+				)
+			),
+		));
+		return array_merge(
+			$never_cleaned->posts,
+			$old_cleaned->posts
+		);
+	}
+
+	private function _cleanup_item_remnants ($item) {
+		$used = array();
+		$sizes = get_post_meta($item->ID, 'upfront_used_image_sizes', true);
+		if (!empty($sizes)) foreach ($sizes as $size) {
+			$used[] = $size['path'];
+		}
+
+		$path = get_attached_file($item->ID);
+		if (empty($path)) return false;
+
+		$used[] = $path;
+		$used = array_unique($used);
+		
+		$glob_expression = preg_replace('/(' . preg_quote(pathinfo($path, PATHINFO_FILENAME), '/') . ')\.(jpg|jpeg|gif|png)$/i', '$1*.$2', $path);
+		$all_files = glob($glob_expression);
+		
+		foreach ($all_files as $file) {
+			if (in_array($file, $used)) continue;
+			localhost_dbg('FOUND UNUSED FILE RIPE FOR DROPPING: ' . $file);
+		}
+	}
+}
+//Upfront_Server_MediaCleanup::serve();
+

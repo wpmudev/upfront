@@ -574,6 +574,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			selectorOptions = {
 				multiple: true,
 				preparingText: 'Preparing images',
+				element_id: this.model.get_property_value_by_name("element_id"),
 				customImageSize: {
 					width: sizer.width(),
 					height: sizer.height()
@@ -748,7 +749,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			imagesData = [],
 			editOptions = {action: 'upfront-media-image-create-size'},
-			sentData = {}
+			sentData = {},
+			element_id = this.model.get_property_value_by_name("element_id")
 		;
 		this.slides.each(function(slide){
 			var imageProps =  me.imageProps[slide.id],
@@ -760,6 +762,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 			data = {
 				id: slide.id,
+				element_id: element_id,
 				rotate: slide.get('rotation'),
 				resize: imageProps.size,
 				crop: crop
@@ -828,7 +831,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(slide.get('status') != 'ok'){
 			var selectorOptions = {
 				multiple: false,
-				preparingText: 'Preparing slides'
+				preparingText: 'Preparing slides',
+				element_id: me.model.get_property_value_by_name("element_id")
 			};
 			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 				me.addSlides(images);
@@ -877,11 +881,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			img = mask.find('img'),
 			full = image.get('sizes').full,
 			size = {width: img.width(), height: img.height()},
-			position = {left: 0 - img.position().left, top: 0 - img.position().top}
+			position = {left: 0 - img.position().left, top: 0 - img.position().top},
+			element_id = this.model.get_property_value_by_name("element_id")
 		;
 
 		return {
 			id: image.id,
+			element_id: element_id,
 			maskSize: {width: mask.width(), height: mask.height()},
 			maskOffset: mask.offset(),
 			position: position,

@@ -159,9 +159,9 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
 			$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
-			$images[$imageData['id']] = $this->resize_image($imageData);
-		}
 
+			$images[$imageData['id']] = $this->resize_image($imageData);			
+		}
 		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images)));
 	}
 
@@ -193,6 +193,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			if($custom_size){
 				$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
 				$image_custom_size['id'] = $id;
+				if (!empty($data['element_id'])) $image_custom_size['element_id'] = $data['element_id'];
 				$sizes['custom'] = $this->resize_image($image_custom_size);
 				$sizes['custom']['editdata'] =$image_custom_size;
 			}
@@ -291,7 +292,20 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				$savedfull = $full->save($fullsizepath);
 			}
 			$urlOriginal = str_replace($path_parts['basename'], $fullsizename . '.' . $path_parts['extension'], $urlOriginal);
+		} // We won't be cleaning up the rotated fullsize images
+
+
+// *** ALright, so this is the magic cleanup part
+		// Drop the old resized image for this element, if any
+		$used = get_post_meta($imageData['id'], 'upfront_used_image_sizes', true);
+		$element_id = !empty($imageData['element_id']) ? $imageData['element_id'] : 0;
+		if (!empty($used[$element_id]['path']) && file_exists($used[$element_id]['path'])) {
+			// OOOH, so we have a previos crop!
+			@unlink($used[$element_id]['path']); // Drop the old one, we have new stuffs to replace it
 		}
+		$used[$element_id] = $saved; // Keep track of used elements per element ID
+		update_post_meta($imageData['id'], 'upfront_used_image_sizes', $used);
+// *** Flags updated, files clear. Moving on
 
 		return array(
 			'error' => false,

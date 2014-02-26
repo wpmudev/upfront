@@ -983,6 +983,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.cropTimer = false;
 		}
 
+		options.element_id = me.model.get_property_value_by_name("element_id");
+
 		Upfront.Views.Editor.ImageEditor.open(options)
 			.done(function(result){
 				me.handleEditorResult(result);
@@ -1433,6 +1435,7 @@ var ImageEditor = Backbone.View.extend({
 				;
 			});
 		}
+		this.element_id = options.element_id || false;
 	},
 
 	check100ButtonActivation: function(){
@@ -2178,11 +2181,12 @@ var ImageEditor = Backbone.View.extend({
 		return {width: Math.round(imageDim.width * factor), height: Math.round(imageDim.height * factor)};
 	},
 
-	getImageData: function(ids, customImageSize) {
+	getImageData: function(ids, customImageSize, element_id) {
 		var me = this,
 			options = {
 				action: 'upfront-media-image_sizes',
-				item_id: JSON.stringify(ids)
+				item_id: JSON.stringify(ids),
+				element_id: element_id,
 			}
 		;
 
@@ -2197,6 +2201,7 @@ var ImageEditor = Backbone.View.extend({
 			opts = {
 				action: 'upfront-media-image-create-size',
 				images: [{
+					element_id: this.element_id,
 					id: imageId,
 					rotate: rotate,
 					resize: resize,
@@ -2583,7 +2588,8 @@ var ImageSelector = Backbone.View.extend({
 				result.each(function(image){
 					ids.push(image.get('ID'));
 				});
-				Upfront.Views.Editor.ImageEditor.getImageData(ids, me.options.customImageSize)
+				// We really should be having the element_id in our context by now...
+				Upfront.Views.Editor.ImageEditor.getImageData(ids, me.options.customImageSize, me.options.element_id)
 					.done(function(response){
 						me.deferred.resolve(response.data.images, response);
 					})
