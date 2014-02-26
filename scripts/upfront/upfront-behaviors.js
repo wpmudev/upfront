@@ -1546,8 +1546,7 @@ var GridEditor = {
 
 				$('.upfront-drop-me').css('height', (me.outer_grid.bottom-me.outer_grid.top)*ed.baseline);
 
-				if ( model.get('shadow') )
-					$layout.append( '<div id="upfront-drop-preview" style="top:' + me_offset.top + 'px; left: ' + me_offset.left + 'px;"></div>' );
+				$layout.append( '<div id="upfront-drop-preview" style="top:' + me_offset.top + 'px; left: ' + me_offset.left + 'px;"></div>' );
 
 				/* */
 				if ( ed.show_debug_element ){
@@ -1777,20 +1776,12 @@ var GridEditor = {
 					if ( drop_row >= drop_top+me.row )
 						adjust_bottom = true;
 
-					if ( model.get('shadow') && ed.drop.is_me )
-						$('#upfront-drop-preview').removeClass('upfront-drop-transition');
-
-					if ( model.get('shadow') ){
-						$('#upfront-drop-preview').css({
-							top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
-							left: (ed.drop.left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.main.left),
-							width: drop_col*ed.col_size,
-							height: height
-						});
-
-						if ( !ed.drop.is_me && !$('#upfront-drop-preview').hasClass('upfront-drop-transition') )
-							setTimeout(function(){ $('#upfront-drop-preview').addClass('upfront-drop-transition'); }, 100);
-					}
+					$('#upfront-drop-preview').css({
+						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
+						left: (ed.drop.left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.main.left),
+						width: drop_col*ed.col_size,
+						height: height
+					});
 
 					if ( ed.show_debug_element ){
 						$('#upfront-compare-area').css({
