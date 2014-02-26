@@ -64,7 +64,7 @@ var MenuItemView = Backbone.View.extend({
 					  },
 					  action: function() {
 						 $(me.event.target).addClass('new_menu_item');
-						 me.parent_view.editModeOn(me.$el.find('a.new_menu_item'));
+						 me.parent_view.editMenuItem(me.$el.find('a.new_menu_item'));
 						 //$(me.event.target).trigger('click');
 						 //me.editMenuItem(me.event);  
 					  }
@@ -205,11 +205,20 @@ var MenuItemView = Backbone.View.extend({
 				me.linkChanged(ev);
 			})
 			.on('click', 'button.upfront-save_settings', function(e){
+
 				me.model['menu-item-type'] =  $('#unewnavigation-tooltip').find('input[name=unavigation-link-type]:checked').val();
 				me.model['menu-item-url'] = $('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val();
-				if(me.$el.children('div').find('a.menu_item').text() == '')
-					return;	
-				me.parent_view.editModeOff(e);
+
+
+				if(me.$el.children('div').length > 0) {
+					if(me.$el.children('div').children('a.menu_item').data('redactor')) {
+						me.$el.children('div').children('a.menu_item').removeClass('ueditable').data('redactor').destroy();
+					}
+				}
+
+
+				me.parent_view.editModeOff();
+
 				me.saveLink(e);
 				me.closeTooltip();
 			})
@@ -274,7 +283,7 @@ var MenuItemView = Backbone.View.extend({
 		if(me.$el.parent('ul').hasClass('time_being_display'))
 			me.$el.parent('ul').removeClass('time_being_display')
 			
-		this.model['menu-item-title'] = $(this.el).children('div').find('a.menu_item').text();
+		this.model['menu-item-title'] = $(this.el).children('a.menu_item').text();
 
 
 
@@ -394,15 +403,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 		  //'click ul.menu.drag_mode a.menu_item' : 'editMenuItem',
-		  'click ul.menu.edit_mode a.menu_item' : 'editMenuItem',
+		  'click a.menu_item' : 'exitEditMode',
+		  'dblclick a.menu_item' : 'editMenuItem',
 		  //'click ul.menu.edit_mode a.menu_item.edit_disable' : 'dbleditMenuItem',		  
 		  //'dblclick ul.menu.drag_mode a.menu_item': 'editMenuItem',
 		 // 'dblclick ul.menu.edit_mode a.menu_item': 'editMenuItem',
 		  
           //'click ul.i.navigation-add-item': 'addMenuItem',
 		  
-		  'dblclick ul.menu.drag_mode a.menu_item': 'editModeOn',
-		  'click ul.menu.drag_mode a.menu_item': 'preventClick'
+		  //'dblclick ul.menu.drag_mode a.menu_item': 'editModeOn',
+		  //'click ul.menu.drag_mode a.menu_item': 'preventClick'
 		});
 
 //		this.constructor.__super__.initialize.call(this, [options]);
@@ -444,9 +454,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	preventClick: function(e) {
 		e.preventDefault();
 	},
+	exitEditMode: function(e) {
+		if(!$(e.target).hasClass('ueditable'))
+		this.$el.find('a.ueditable').data('ueditor').stop();
+	},
 	editMenuItem: function(e) {
 		//e.preventDefault();
-
+		this.editModeOn(e);
 		var me = this;
 		var target;
 		if(typeof e.target == 'undefined' || e.target.trim == '')
@@ -463,17 +477,19 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			if(typeof $(this).data('redactor') != 'undefined')
 				$(this).data('ueditor').stop();
 		});*/
-
+		$(target).closest('li').addClass('edit_mode');
 		if(!$(target).data('ueditor'))
 			$(target).ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
-				autostart: true,
+				//autostart: true,
 				focus: true,
 				tabFocus: false,
 				airButtons: false,
-				placeholder: false,
-				allowedTags: ['h5']
+				allowedTags: ['h5'],
+				placeholder: 'Link Name'
+			}).on('start', function(e) {
+				$(target).focus();
 			}).on('keydown', function(e){
 				
 				if (e.which == 9) {
@@ -490,13 +506,18 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					//e.preventDefault();
 					//return;	
 					}
-					
-				$(target).removeClass('menu_item_placeholder');
+				if($(target).text().trim() != '')	
+					$(target).removeClass('menu_item_placeholder');
+				else
+					$(target).addClass('menu_item_placeholder');
 			}).on('blur', function() {
-				//$(target).data('ueditor').stop();
+				$(target).data('ueditor').stop();
+				$(target).closest('li').removeClass('edit_mode');
 				//console.log('blurred');
 				if(!$(target).hasClass('new_menu_item'))	
 					$(target).closest('li').data('backboneview').saveLink();
+			}).on('stop', function() {
+				me.editModeOff();
 			});
 		else {
 			$(target).data('ueditor').start();
@@ -540,32 +561,32 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	editModeOn: function(e) {
 
-		if(!this.editmode || !this.$el.find('ul.menu').hasClass('edit_mode')) {
-			this.editmode = true;
-			this.$el.find('ul.menu').addClass('edit_mode').removeClass('drag_mode');
-			this.$el.find('ul.menu a.menu_item').attr('contenteditable', true);
+		//if(!this.editmode || !this.$el.find('ul.menu').hasClass('edit_mode')) {
+		//	this.editmode = true;
+		//	this.$el.find('ul.menu').addClass('edit_mode').removeClass('drag_mode');
+//			this.$el.find('ul.menu a.menu_item').attr('contenteditable', true);
 			this.$el.find('.upfront-object-content ul').each(function() {
 				if($(this).hasClass('ui-sortable'))
 					$(this).sortable('disable');
 			});
-		}
+		//}
 		
-		var target;
-		if(typeof e.target == 'undefined')
-			target = e;
-		else
-			target = e.target;
+	//	var target;
+	//	if(typeof e.target == 'undefined')
+		//	target = e;
+		//else
+		//	target = e.target;
 
-		this.editMenuItem(target);
+		//this.editMenuItem(target);
 	},
 	editModeOff: function() {
-		if(this.editmode) {
-			this.editmode = false;
-			this.$el.find('ul.menu').removeClass('edit_mode').addClass('drag_mode');
-			this.$el.find('ul.menu a.menu_item').removeAttr('contenteditable');
+		//if(this.editmode) {
+		//	this.editmode = false;
+			//this.$el.find('ul.menu').removeClass('edit_mode').addClass('drag_mode');
+			//this.$el.find('ul.menu a.menu_item').removeAttr('contenteditable');
 			if(this.$el.find('.upfront-object-content ul.menu').hasClass('ui-sortable'))
 				this.$el.find('.upfront-object-content ul').sortable('enable');
-		}
+		//}
 	},
 	onDeactivate: function() {
 		this.editModeOff();
@@ -671,21 +692,22 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				else
 					me.property('menu_id', this.get_value());
 			},*/
-			values: currentMenuItemData.get('menuList')
+			values: [{label:'Choose existing menu', value: 0}].concat(currentMenuItemData.get('menuList'))
 		})
 
 		menuItems.render();
 		
 		me.$el.find('div.upfront-object-content').append(menuItems.el).append('<span> or </span>');
-		
+		/*
 		
 		me.$el.find('div.upfront-object-content').on('mouseover', function() {
-			me.$el.parent().parent().parent().draggable('disable');
+			//me.$el.parent().parent().parent().draggable('disable');
 		});
 		
 		me.$el.find('div.upfront-object-content').on('mouseout', function() {
-			me.$el.parent().parent().parent().draggable('enable');
+			//me.$el.parent().parent().parent().draggable('enable');
 		});
+		*/
 		
 		var newMenuName =  new Upfront.Views.Editor.Field.Text({
 									model: me.model,
@@ -708,12 +730,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		newMenuButton.render();
 		me.$el.find('div.upfront-object-content').append(newMenuButton.el);
 		
+
 		
-		me.$el.find('div.upfront-object-content > div.existing_menu_list, div.upfront-object-content > div.new_menu_name, div.upfront-object-content > div.new_menu_button').on('mouseover', function() {
+		
+		me.$el.find('div.upfront-object-content > div.existing_menu_list').on('mouseover', function() {
 			me.$el.parent().parent().parent().draggable('disable');
 		});
 		
-		me.$el.find('div.upfront-object-content > div.existing_menu_list, div.upfront-object-content > div.new_menu_name, div.upfront-object-content > div.new_menu_button').on('mouseout', function() {
+		me.$el.find('div.upfront-object-content > div.existing_menu_list').on('mouseout', function() {
 			me.$el.parent().parent().parent().draggable('enable');
 		});	
 		
@@ -721,12 +745,20 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			if(me.$el.find('div.upfront-object-content > div.new_menu_name input').val()!='')
 				me.create_new_menu(me.$el.find('div.upfront-object-content > div.new_menu_name input').val());
 		});	
+
+
 		
 		me.$el.find('div.upfront-object-content > div.existing_menu_list input').on('change', function() {
-			if(!me.property('initialized'))
-					me.property('initialized', true, true);
-
-			me.property('menu_id', me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val());
+			
+			me.$el.parent().parent().parent().draggable('enable');
+			
+			
+			if(me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val() != 0) {
+				if(!me.property('initialized'))
+						me.property('initialized', true, true);
+	
+						me.property('menu_id', me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val());
+			}
 		});	
 
 	},
@@ -827,7 +859,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.$el.find('.upfront-object-content').append(this.renderMenu([me.menuItemTemplate()], 'menu'));
 			me.$el.find('ul.menu li.menu-item').addClass('new_menu_item').find('a.menu_item').addClass('new_menu_item').addClass('menu_item_placeholder')
 
-			me.editModeOn(this.$el.find('a.new_menu_item'));
+			me.editMenuItem(this.$el.find('a.new_menu_item'));
 
 		}
 		
@@ -957,7 +989,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		//this.makeSortable();
 	
 		
-   		  me.editModeOn(me.$el.find('a.new_menu_item'));	
+   		  me.editMenuItem(me.$el.find('a.new_menu_item'));	
 		//_.delay(function(self) {
 	//console.log(me.$el.find('a.new_menu_item'));
 	      //me.editMenuItem(me.$el.find('a.new_menu_item'));

@@ -63,7 +63,12 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
 div.upfront-navigation.upfront-editable_entity ul.menu li:hover {
 	cursor: move;	
 }
-div.upfront-navigation.upfront-editable_entity ul.menu:not(.edit_mode) li:hover:before {
+
+div.upfront-navigation.upfront-editable_entity ul.menu li.edit_mode:hover {
+	cursor: text;	
+}
+
+div.upfront-navigation.upfront-editable_entity ul li:not(.edit_mode):hover:before {
 	content:'';
 	display:block;
 	position:absolute;
@@ -75,7 +80,7 @@ div.upfront-navigation.upfront-editable_entity ul.menu:not(.edit_mode) li:hover:
 	border:1px #ddd dotted;
 
 }
-div.upfront-navigation.upfront-editable_entity ul.menu:not(.edit_mode) li:hover > i.delete_menu_item {
+div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.delete_menu_item {
 	display:block;
 }
 
@@ -86,21 +91,18 @@ div.upfront-navigation.upfront-editable_entity ul.time_being_display {
 div.upfront-navigation.upfront-editable_entity a.menu_item.menu_item_placeholder {
 	min-width: 92px;	
 }
-
+/*
 div.upfront-navigation.upfront-editable_entity a.menu_item.menu_item_placeholder:before {
 	content: 'Link Name';
 	opacity: 0.4;
 	position: absolute;
 	min-width: 92px;
 }
-
-div.upfront-navigation.upfront-editable_entity ul.edit_mode a.menu_item {
-	cursor:text;	
+*/
+div.upfront-navigation.upfront-editable_entity  div.existing_menu_list ul li:before, div.upfront-navigation.upfront-editable_entity  div.existing_menu_list li label:before {
+	display: none !important;
 }
 
-div.upfront-navigation.upfront-editable_entity ul.drag_mode a.menu_item {
-	cursor:move !important;	
-}
 
 div.upfront-navigation div.existing_menu_list,  div.upfront-navigation div.new_menu_name, div.upfront-navigation div.new_menu_button {
 	display: inline-block;
@@ -129,11 +131,10 @@ div.upfront-navigation div.new_menu_button input {
 }
 
 
-/* to be removed after the dev phase is over */
-.upfront-navigation .sub-menu {
-	top: 61px !important;
+div.upfront-navigation [data-style="vertical"] .menu li {
+	width: 100%;
+	float: left;
 }
-
 
 
 #unewnavigation-tooltip {
