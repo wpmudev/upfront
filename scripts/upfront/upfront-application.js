@@ -677,14 +677,16 @@ var Application = new (Backbone.Router.extend({
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
 			$('#upfront-theme-styles').remove();
-			_.each(styles, function(style, name){
-				var styleNode = $('#upfront-style-' + name);
-				if(!styleNode.length){
-					styleNode = $('<style id="upfront-style-' + name + '"></style>');
-					$('body').append(styleNode);
-				}
+			_.each(styles, function(elementStyles, elementType){
+				_.each(elementStyles, function(style, name){
+					var styleNode = $('#upfront-style-' + name);
+					if(!styleNode.length){
+						styleNode = $('<style id="upfront-style-' + name + '"></style>');
+						$('body').append(styleNode);
+					}
 
-				styleNode.append(cssEditor.stylesAddSelector(style, '.upfront-object.' + name));
+					styleNode.append(cssEditor.stylesAddSelector(style, '.upfront-object.' + name));
+				});
 			});
 		});
 

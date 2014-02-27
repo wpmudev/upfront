@@ -4824,7 +4824,7 @@ button.search-button.image {
 	left: 0;
 	background-color: transparent;
 	height: 1px;
-	z-index:30000;
+	z-index:100000;
 }
 #upfront-notice {
 	width: 500px;
@@ -8255,8 +8255,10 @@ top: -6px;
 }
 
 .upfront-css-top{
-	text-align: right;
 	border-bottom: 1px solid #26333F;
+	color: #dae6f2;
+	font-size: 14px;
+	height:32px;
 }
 
 .upfront-css-ace{
@@ -8270,6 +8272,45 @@ top: -6px;
 	width: 25%;
 	height: 100%;
 	float:right;
+}
+
+.upfront-css-type {
+	float:left;
+	display: block;
+	background-color: #2E3D4C;
+	padding: 0px 5px;
+	margin: 4px;
+	height: 24px;
+}
+
+a.upfront-css-image {
+	float:left;
+	display: block;
+	border: 2px solid #2E3D4C;
+	padding: 0px 5px;
+	margin: 4px;
+	height: 24px;
+	color: #dae6f2 !important;
+	line-height: 20px;
+}
+
+a.upfront-css-image:hover {
+	border-color: #3ea;
+}
+
+.upfront-css-close {
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -1230px -155px;
+	opacity: .8;
+	width:24px;
+	height:24px;
+	text-indent: -9999px;
+	display: inline-block;
+	float:right;
+	margin: 5px 2px;
+}
+.upfront-css-close:hover {
+	opacity:1;
 }
 
 div.ace_content {

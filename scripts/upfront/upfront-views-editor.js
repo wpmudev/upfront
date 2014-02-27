@@ -3450,10 +3450,14 @@ var _Settings_CSS = SettingsItem.extend({
 	},
 	initialize: function(options) {
 		SettingsItem.prototype.initialize.call(this, options);
-		var values = [{label: 'None', value: ''}];
-		if(Upfront.data.styles)
-			_.each(Upfront.data.styles, function(styleName){
-				values.push({label: styleName, value: styleName});
+
+		var styleType = Upfront.Application.cssEditor.elementTypes[this.model.get_property_value_by_name('type')],
+			values = [{label: 'Default', value: ''}],
+			prefix = new RegExp('^' + styleType.id + '-')
+		;
+		if(Upfront.data.styles[styleType.id])
+			_.each(Upfront.data.styles[styleType.id], function(styleName){
+				values.push({label: styleName.replace(prefix, ''), value: styleName});
 			});
 
 		this.fields = _([
@@ -3494,7 +3498,28 @@ var CSSEditor = Backbone.View.extend({
 	ace: false,
 	events: {
 		'click .upfront-css-save-ok': 'save',
-		'click .upfront-css-close': 'close'
+		'click .upfront-css-close': 'close',
+		'click .upfront-css-image': 'openImagePicker'
+	},
+	elementTypes: {
+		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
+		UcommentModel: {label: 'Comments', id: 'ucomment'},
+		UcontactModel: {label: 'Contact Form', id: 'ucontact'},
+		UgalleryModel: {label: 'Gallery', id: 'ugallery'},
+		UimageModel: {label: 'Image', id: 'uimage'},
+		LoginModel: {label: 'Login', id: 'ulogin'},
+		LikeBox: {label: 'Like Box', id: 'ulikebox'},
+		MapModel: {label: 'Map', id: 'umap'},
+		UnewnavigationModel: {label: 'Navigation', id: 'unavigation'},
+		UpostsModel: {label: 'Posts', id: 'uposts'},
+		UsearchModel: {label: 'Search', id: 'usearch'},
+		USliderModel: {label: 'Slider', id: 'uslider'},
+		SocialMediaModel: {label: 'Social', id: 'usocial'},
+		UtabsModel: {label: 'Tabs', id: 'utabs'},
+		ThisPageModel: {label: 'Page', id: 'upage'},
+		ThisPostModel: {label: 'Post', id: 'upost'},
+		UwidgetModel: {label: 'Widget', id: 'uwidget'},
+		UyoutubeModel: {label: 'YoutTube', id: 'utube'}
 	},
 	initialize: function(){
 		if(!$('#' + this.id).length)
@@ -3504,10 +3529,17 @@ var CSSEditor = Backbone.View.extend({
 		this.model = options.model;
 
 		var me = this,
-			deferred = $.Deferred()
+			deferred = $.Deferred(),
+			elementType = this.elementTypes[me.model.get_property_value_by_name('type')]
 		;
 
-		this.name = options.name || '';
+		this.selector = options.name || '';
+		if(this.selector)
+			this.name = this.selector.replace(new RegExp('^' + elementType.id + '-'), '');
+		else
+			this.name = '';
+
+		this.elementType = elementType || {label: 'Unknown', id: 'unknown'};
 
 		console.log('Ace starting');
 
@@ -3524,7 +3556,7 @@ var CSSEditor = Backbone.View.extend({
 
 		this.element_id = this.model.get_property_value_by_name('element_id');
 		if(!$('#' + this.element_id + '-styles').length){
-			$('#' + this.element_id).after('<style id="' + this.element_id + '-style"></style');
+			$('body').append('<style id="' + this.element_id + '-style"></style');
 		}
 
 		this.$style = $('#' + this.element_id + '-style');
@@ -3541,9 +3573,17 @@ var CSSEditor = Backbone.View.extend({
 	},
 	render: function(){
 		var me = this;
+
 		if(!$('#' + this.id).length)
 			$('#page').append(this.$el);
-		this.$el.html(this.tpl({name: this.name}));
+
+
+
+		this.$el.html(this.tpl({
+			name: this.name,
+			elementType: this.elementType.label
+		}));
+
 		this.resizeHandler();
 
 		var bodyHeight = this.$el.height() - this.$('.upfront-css-top').outerHeight();
@@ -3575,7 +3615,7 @@ var CSSEditor = Backbone.View.extend({
 			},1000);
 		});
 		if(this.name){
-			var styles = $('#upfront-style-' + this.name).html().replace('.upfront-object.' + this.name + ' ', '');
+			var styles = $('#upfront-style-' + this.selector).html().replace('.upfront-object.' + this.selector + ' ', '');
 			editor.setValue($.trim(styles), -1);
 		}
 		editor.focus();
@@ -3587,6 +3627,8 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	updateStyles: function(contents){
+		if(!this.$style.parent().length)
+			$('body').append(this.$style);
 		this.$style.html(this.stylesAddSelector(contents, '#' + this.element_id));
 	},
 
@@ -3617,19 +3659,31 @@ var CSSEditor = Backbone.View.extend({
 		var postData = {
 			name: styleName,
 			styles: styles,
-			action: 'upfront_save_styles'
+			action: 'upfront_save_styles',
+			elementType: this.elementType.id
 		};
 
 		Upfront.Util.post(postData)
 			.success(function(response){
-				var data = response.data;
-				$('#upfront-style-' + data.name)
-					.html(me.stylesAddSelector(data.styles, '.upfront-object.' + data.name));
+				var data = response.data,
+					elementType = me.elementType.id,
+					selector = elementType + '-' + data.name,
+					$style = $('#upfront-style-' + selector)
+				;
+				if(!$style.length){
+					$style = $('<style id="upfront-style-' + selector + '"></style>');
+					$('body').append($style);
+				}
 
-				if(Upfront.data.styles.indexOf(data.name) == -1)
-					Upfront.data.styles.push(data.name);
+				$style.html(me.stylesAddSelector(data.styles, '.upfront-object.' + selector));
 
-				me.model.set_property('theme_style', data.name);
+				if(!Upfront.data.styles[elementType])
+					Upfront.data.styles[elementType] = [];
+
+				if(Upfront.data.styles[elementType].indexOf(selector) == -1)
+					Upfront.data.styles[elementType].push(selector);
+
+				me.model.set_property('theme_style', elementType + '-' + data.name);
 				return notifier.addMessage('Styles saved as ' + data.name);
 			})
 			.error(function(response){
@@ -3637,6 +3691,7 @@ var CSSEditor = Backbone.View.extend({
 			});
 	},
 
+	/* Used by upfront application */
 	fetchThemeStyles: function(separately){
 		var fetchData = {
 				action:'upfront_theme_styles',
@@ -3650,6 +3705,23 @@ var CSSEditor = Backbone.View.extend({
 				deferred.resolve(response.data.styles);
 			});
 		return deferred.promise();
+	},
+
+	openImagePicker: function(){
+		var me = this;
+		console.log('picker');
+		Upfront.Media.Manager.open({
+			themeImages: true
+		}).done(function(popup, result){
+			Upfront.Events.trigger('upfront:element:edit:stop');
+			if(!result)
+				return;
+
+			var url = result.models[0].get('original_url').replace(document.location.origin, '');
+			me.editor.insert('url("' + url + '")');
+			me.editor.focus();
+			Upfront.Events.trigger('upfront:element:edit:stop');
+		});
 	}
 });
 

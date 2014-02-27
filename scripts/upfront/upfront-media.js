@@ -183,6 +183,8 @@ define(function() {
 
 			this.set({"search": new MediaFilter_Collection([])}, {silent: true});
 
+			this.themeImages =false;
+
 			this.set_labels_to_defaults();
 		},
 		toggle_titles: function () {
@@ -1068,6 +1070,11 @@ define(function() {
 
 			this.library_view.multiple_selection = multiple_selection;
 
+			if(data.themeImages){
+				ActiveFilters.themeImages = true;
+				this.library_view.multiple_selection = false;
+			}
+
 			Upfront.Events.on("media_manager:media:list", this.switch_media_type, this);
 		},
 		render: function () {
@@ -1102,10 +1109,11 @@ define(function() {
 		render_upload: function () {
 			if (!this.library_view.$el.is(":visible")) this.render_library();
 			var me = this,
-				new_media = new MediaItem_Model({progress: 0})
+				new_media = new MediaItem_Model({progress: 0}),
+				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload + '-theme-image' : _upfront_media_upload
 			;
 
-			this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + _upfront_media_upload + '">');
+			this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '">');
 			$("#fileupload").fileupload({
 				dataType: 'json',
 				add: function (e, data) {
@@ -1136,9 +1144,15 @@ define(function() {
 					new_media.trigger("upload:progress", progress);
 				},
 				done: function (e, data) {
+					if(ActiveFilters.themeImages){
+						new_media.set(data.result.data, {silent: true});
+						return new_media.trigger("upload:finish");
+					}
+
 					var result = data.result.data || [],
 						uploaded_id = result[0]
 					;
+
 					new_media.set({ID: uploaded_id}, {silent:true});
 					Upfront.Util.post({
 						action: "upfront-media-get_item",
@@ -1150,15 +1164,15 @@ define(function() {
 						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 					});
 				},
-				fail: function (data) {
-					alert('error uploading file');
+				fail: function (e, data) {
+					Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
 					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 				}
 			}).trigger("click");
 		},
 		load: function (data) {
 			data = data && data.type ? data : ActiveFilters.to_request_json();
-			data["action"] = "upfront-media-list_media";
+			data.action = ActiveFilters.themeImages ? 'upfront-media-list_theme_images' : "upfront-media-list_media";
 			var me = this;
 			if (this.library_view.media_view && this.library_view.media_view.start_loading) this.library_view.media_view.start_loading();
 			Upfront.Util.post(data)

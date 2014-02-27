@@ -375,6 +375,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	function save_styles(){
 		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
 		$styles = wp_kses($_POST['styles'], array());
+		$element_type = isset($_POST['elementType']) ? sanitize_key($_POST['elementType']) : 'unknown';
 		$db_option = 'upfront_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option);
 		if(!$current_styles)
@@ -383,7 +384,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if(isset($current_styles[$name]) && !$_POST['override'])
 			$this->_out(new Upfront_JsonResponse_Error("Already exists"));
 */
-		$current_styles[$name] = $styles;
+
+		if(!isset($current_styles[$element_type]))
+			$current_styles[$element_type] = array();
+
+		$current_styles[$element_type][$element_type . '-' . $name] = $styles;
+
 		global $wpdb;
 		update_option($db_option, $current_styles);
 
@@ -408,11 +414,13 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$out = '';
 
-		foreach($styles as $name => $content){
-			$selector = '.upfront-output-object.' . $name;
-			$rules = explode('}', $content);
-			array_pop($rules);
-			$out .= $selector . ' ' . implode("}\n" . $selector . ' ', $rules) . "} \n";
+		foreach($styles as $elements){
+			foreach($elements as $name => $content){
+				$selector = '.upfront-output-object.' . $name;
+				$rules = explode('}', $content);
+				array_pop($rules);
+				$out .= $selector . ' ' . implode("}\n" . $selector . ' ', $rules) . "} \n";
+			}
 		}
 
 		return $out;
@@ -792,15 +800,15 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 
 		// Cleanup if duplicates crept in somehow
 		$used = array_unique($used);
-		
+
 		$glob_expression = preg_replace('/(' . preg_quote(pathinfo($path, PATHINFO_FILENAME), '/') . ')\.(jpg|jpeg|gif|png)$/i', '$1*.$2', $path);
 		$all_files = glob($glob_expression);
-		
+
 		foreach ($all_files as $file) {
 			if (in_array($file, $used)) continue;
 			// Alright, this could be ripe for removal - EXCEPT, it might also be rotated image...
 			if (preg_match('/-r\d+$/', pathinfo($file, PATHINFO_FILENAME))) continue; // Is it?
-			
+
 			// ACTUALLY REMOVE THE IMAGE HERE!!!
 			//@unlink($file);
 		}

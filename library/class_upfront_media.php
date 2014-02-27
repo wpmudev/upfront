@@ -1,7 +1,7 @@
 <?php
 
 abstract class Upfront_Media {
-	
+
 	const MIME_TYPE_IMAGES = 'image/jpeg,image/png,image/gif';
 	const MIME_TYPE_AUDIOS = 'audio/mpeg';
 	const MIME_TYPE_VIDEOS = 'video/mp4';
@@ -48,7 +48,7 @@ class Upfront_Oembed {
             }
         }
         // Done nabbing
-        
+
         if (!$provider) $provider = $this->_wp_oembed->discover($this->_url);
         if (!$provider) return false;
         return $this->_wp_oembed->fetch($provider, $this->_url, array('discover' => true));
@@ -125,7 +125,7 @@ class Upfront_MediaCollection extends Upfront_Media {
     public static function apply_filters ($filters) {
         $args = array();
         $collection = new self;
-        
+
         if (!empty($filters['type'])) $collection->_set_type_arguments($filters['type']);
 
         $order = $orderby = false;
@@ -135,7 +135,7 @@ class Upfront_MediaCollection extends Upfront_Media {
             $collection->_args['orderby'] = $orderby;
             $collection->_args['order'] = strtoupper($order);
         }
-        
+
         if (!empty($filters['recent'])) {
             $recent = end($filters['recent']);
             $time = date('Y-m-d', strtotime("-{$recent} days"));
@@ -278,7 +278,10 @@ class Upfront_MediaServer extends Upfront_Server {
 		add_action('wp_ajax_upfront-media-update_media_item', array($this, "update_media_item"));
         add_action('wp_ajax_upfront-media-upload', array($this, "upload_media"));
         add_action('wp_ajax_upfront-media-embed', array($this, "embed_media"));
-		
+
+        add_action('wp_ajax_upfront-media-list_theme_images', array($this, "list_theme_images"));
+        add_action('wp_ajax_upfront-media-upload-theme-image', array($this, "upload_theme_image"));
+
         add_action('wp_ajax_upfront-media-get_labels', array($this, "list_labels"));
         add_action('wp_ajax_upfront-media-add_label', array($this, "add_label"));
         add_action('wp_ajax_upfront-media-associate_label', array($this, "associate_label"));
@@ -291,7 +294,7 @@ class Upfront_MediaServer extends Upfront_Server {
      */
     public function augment_attachments () {
         register_taxonomy(
-            'media_label', 
+            'media_label',
             'attachment',
             array(
                 'labels' => array(
@@ -317,7 +320,7 @@ class Upfront_MediaServer extends Upfront_Server {
         if ($post_id) {
             $post_ids[] = $post_id;
         }
-        
+
         $term = !empty($data['term']) ? $data['term'] : false;
         if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
@@ -343,7 +346,7 @@ class Upfront_MediaServer extends Upfront_Server {
 
     public function associate_label () {
         $data = stripslashes_deep($_POST);
-        
+
         $post_id = !empty($data['post_id']) ? $data['post_id'] : false;
         $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
         if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
@@ -351,7 +354,7 @@ class Upfront_MediaServer extends Upfront_Server {
         if ($post_id) {
             $post_ids[] = $post_id;
         }
-        
+
         $term = !empty($data['term']) ? $data['term'] : false;
         if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
@@ -371,7 +374,7 @@ class Upfront_MediaServer extends Upfront_Server {
 
     public function disassociate_label () {
         $data = stripslashes_deep($_POST);
-        
+
         $post_id = !empty($data['post_id']) ? $data['post_id'] : false;
         $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
         if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
@@ -379,7 +382,7 @@ class Upfront_MediaServer extends Upfront_Server {
         if ($post_id) {
             $post_ids[] = $post_id;
         }
-        
+
         $term = !empty($data['term']) ? $data['term'] : false;
         if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
@@ -409,9 +412,9 @@ class Upfront_MediaServer extends Upfront_Server {
         $res = array();
         foreach ($post_ids as $post_id) {
             $labels = get_the_terms($post_id, 'media_label');
-            $res[$post_id] = !$labels || is_wp_error($labels) ? array() : $labels;            
+            $res[$post_id] = !$labels || is_wp_error($labels) ? array() : $labels;
         }
-        
+
         $this->_out(new Upfront_JsonResponse_Success($res));
     }
 
@@ -442,12 +445,12 @@ class Upfront_MediaServer extends Upfront_Server {
         if (empty($data['mime']) || !preg_match('/^image\//i', $data['mime'])) {
             @unlink("{$pfx}{$filename}");
             $this->_out(new Upfront_JsonResponse_Error("Not an image"));
-        }           
+        }
 
         if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
         $wp_filetype = wp_check_filetype(basename($filename), null);
         $attachment = array(
-            'guid' => $wp_upload_dir['url'] . '/' . basename($filename), 
+            'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
             'post_mime_type' => $wp_filetype['type'],
             'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
             'post_content' => '',
@@ -505,9 +508,60 @@ class Upfront_MediaServer extends Upfront_Server {
 		else $this->_out(new Upfront_JsonResponse_Error("No items"));
 	}
 
+    public function list_theme_images () {
+        $images = array();
+        $dirPath = get_stylesheet_directory() . '/img';
+        $dirUrl = get_stylesheet_directory_uri() . '/img/';
+        $i = 0;
+        if($dir = opendir($dirPath)) {
+            while (false !== ($file = readdir($dir))) {
+                if(is_dir($dirPath . '/' . $file))
+                    continue;
+
+                if(preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $file))
+                    $images[] = array(
+                        'ID' => $i++,
+                        'thumbnail' => '<img style="max-height: 75px; max-width: 75px" src="' . $dirUrl . $file . '">',
+                        'post_title' => $file,
+                        'labels' => array(),
+                        'original_url' => $dirUrl . $file
+                    );
+            }
+        }
+        if (sizeof($images))
+            $this->_out(new Upfront_JsonResponse_Success($images));
+        else
+            $this->_out(new Upfront_JsonResponse_Error("No items"));
+    }
+
+    public function upload_theme_image () {
+        if(!isset($_FILES['media']))
+            $this->_out(new Upfront_JsonResponse_Error("No file to upload"));
+
+        $file = $_FILES['media'];
+        $filename = $file['name'];
+
+        if(!preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $filename))
+            $this->_out(new Upfront_JsonResponse_Error("The file is not an image."));
+
+        $dirPath = get_stylesheet_directory() . '/img/';
+        $dirUrl = get_stylesheet_directory_uri() . '/img/';
+
+        move_uploaded_file($file["tmp_name"], $dirPath . $filename);
+
+
+        $this->_out(new Upfront_JsonResponse_Success(array(
+            'ID' => rand(1111,9999), //Whatever high number is ok
+            'original_url' => $dirUrl . $filename,
+            'thumbnail' => '<img style="max-height: 75px; max-width: 75px" src="' . $dirUrl . $filename . '">',
+            'post_title' => $filename,
+            'labels' => array()
+        )));
+    }
+
     public function get_item () {
         $data = stripslashes_deep($_POST);
-        
+
         $item_id = !empty($data['item_id']) ? $data['item_id'] : false;
         if (!$item_id) $this->_out(new Upfront_JsonResponse_Error("Invalid item ID"));
 
@@ -517,7 +571,7 @@ class Upfront_MediaServer extends Upfront_Server {
 
     public function remove_item () {
         $data = stripslashes_deep($_POST);
-        
+
         $post_id = !empty($data['item_id']) ? $data['item_id'] : false;
         $post_ids = !empty($data['post_ids']) ? array_map('intval', $data['post_ids']) : array();
         if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
@@ -551,7 +605,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$upload = new Upfront_UploadHandler;
         $result = $upload->handle();
         if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
-        
+
         if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
         $wp_upload_dir = wp_upload_dir();
         $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
@@ -565,7 +619,7 @@ class Upfront_MediaServer extends Upfront_Server {
             $filename = $media->name;
             $wp_filetype = wp_check_filetype(basename($filename), null);
             $attachment = array(
-                'guid' => $wp_upload_dir['url'] . '/' . basename($filename), 
+                'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
                 'post_mime_type' => $wp_filetype['type'],
                 'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
                 'post_content' => '',
@@ -1331,13 +1385,13 @@ class UploadHandler
         $file_size = $this->get_file_size($file_path);
         $chunk_size = $this->options['readfile_chunk_size'];
         if ($chunk_size && $file_size > $chunk_size) {
-            $handle = fopen($file_path, 'rb'); 
-            while (!feof($handle)) { 
-                echo fread($handle, $chunk_size); 
-                ob_flush(); 
-                flush(); 
-            } 
-            fclose($handle); 
+            $handle = fopen($file_path, 'rb');
+            while (!feof($handle)) {
+                echo fread($handle, $chunk_size);
+                ob_flush();
+                flush();
+            }
+            fclose($handle);
             return $file_size;
         }
         return readfile($file_path);
@@ -1346,7 +1400,7 @@ class UploadHandler
     protected function body($str) {
         echo $str;
     }
-    
+
     protected function header($str) {
         header($str);
     }
