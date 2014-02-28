@@ -3499,7 +3499,9 @@ var CSSEditor = Backbone.View.extend({
 	events: {
 		'click .upfront-css-save-ok': 'save',
 		'click .upfront-css-close': 'close',
-		'click .upfront-css-image': 'openImagePicker'
+		'click .upfront-css-image': 'openImagePicker',
+		'click .upfront-css-selector': 'addSelector',
+		'click .upfront-css-type' : 'scrollToElement'
 	},
 	elementTypes: {
 		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
@@ -3519,7 +3521,8 @@ var CSSEditor = Backbone.View.extend({
 		ThisPageModel: {label: 'Page', id: 'upage'},
 		ThisPostModel: {label: 'Post', id: 'upost'},
 		UwidgetModel: {label: 'Widget', id: 'uwidget'},
-		UyoutubeModel: {label: 'YoutTube', id: 'utube'}
+		UyoutubeModel: {label: 'YoutTube', id: 'utube'},
+		PlainTxtModel: {label: 'Text', id:'plaintext'}
 	},
 	initialize: function(){
 		if(!$('#' + this.id).length)
@@ -3530,7 +3533,8 @@ var CSSEditor = Backbone.View.extend({
 
 		var me = this,
 			deferred = $.Deferred(),
-			elementType = this.elementTypes[me.model.get_property_value_by_name('type')]
+			modelType = me.model.get_property_value_by_name('type'),
+			elementType = this.elementTypes[modelType]
 		;
 
 		this.selector = options.name || '';
@@ -3540,6 +3544,7 @@ var CSSEditor = Backbone.View.extend({
 			this.name = '';
 
 		this.elementType = elementType || {label: 'Unknown', id: 'unknown'};
+		this.selectors = this.elementSelectors[modelType] || {};
 
 		console.log('Ace starting');
 
@@ -3561,6 +3566,8 @@ var CSSEditor = Backbone.View.extend({
 
 		this.$style = $('#' + this.element_id + '-style');
 		this.render();
+
+		this.startResizable();
 	},
 	close: function(e){
 		e.preventDefault();
@@ -3577,14 +3584,13 @@ var CSSEditor = Backbone.View.extend({
 		if(!$('#' + this.id).length)
 			$('#page').append(this.$el);
 
-
-
 		this.$el.html(this.tpl({
 			name: this.name,
-			elementType: this.elementType.label
+			elementType: this.elementType.label,
+			selectors: this.selectors
 		}));
 
-		this.resizeHandler();
+		this.resizeHandler('.');
 
 		var bodyHeight = this.$el.height() - this.$('.upfront-css-top').outerHeight();
 		this.$('.upfront-css-body').height(bodyHeight);
@@ -3592,6 +3598,8 @@ var CSSEditor = Backbone.View.extend({
 		this.prepareAce.done(function(){
 			me.startAce();
 		});
+
+		this.prepareSpectrum();
 
 		this.$el.show();
 	},
@@ -3621,6 +3629,85 @@ var CSSEditor = Backbone.View.extend({
 		editor.focus();
 		this.editor = editor;
 	},
+	prepareSpectrum: function(){
+		var me = this;
+
+		me.$('.upfront-css-color').spectrum({
+			showAlpha: true,
+			showPalette: true,
+			palette: ['fff', '000', '0f0'],
+			maxSelectionSize: 9,
+			localStorageKey: "spectrum.recent_bgs",
+			preferredFormat: "hex",
+			chooseText: "Ok",
+			showInput: true,
+			allowEmpty:true,
+			show: function(){
+				spectrum = $('.sp-container:visible');
+			},
+			change: function(color) {
+				var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+				me.editor.insert(colorString);
+				me.editor.focus();
+			},
+			move: function(color) {
+				var rgba = color.toRgbString();
+				spectrum.find('.sp-dragger').css('border-top-color', rgba);
+				spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+			},
+		});
+	},
+	startResizable: function(){
+		// Save the fetching inside the resize
+		var me = this,
+			$cssbody = me.$('.upfront-css-body'),
+			topHeight = me.$('.upfront-css-top').outerHeight(),
+			$selectors = me.$('.upfront-css-selectors'),
+			$saveform = me.$('.upfront-css-save-form'),
+			onResize = function(e, ui){
+				var bodyHeight = ui ? ui.size.height - topHeight : me.$('.upfront-css-resizable').height() - topHeight;
+				$cssbody.height(bodyHeight);
+				if(me.editor)
+					me.editor.resize();
+				$selectors.height(bodyHeight - $saveform.outerHeight());
+			}
+		;
+		onResize();
+		this.$('.upfront-css-resizable').resizable({
+			handles: {n: '.upfront-css-top'},
+			resize: onResize,
+			minHeight: 200,
+			delay: 100
+		});
+	},
+	scrollToElement: function(){
+		var $element = $('#' + this.element_id);
+		if(!$element.length)
+			return;
+
+		var offset = $element.offset().top - 50;
+		$(document).scrollTop(offset > 0 ? offset : 0);
+
+		this.blink($element, 4);
+	},
+
+	blink: function(element, times) {
+
+		var me = this;
+		element.css('outline', '3px solid #3ea');
+		setTimeout(function(){
+			element.css('outline', 'none');
+
+			times--;
+			if(times > 0){
+				setTimeout(function(){
+					me.blink(element, times - 1);
+				}, 100);
+			}
+
+		}, 100);
+	},
+
 	remove: function(){
 		Backbone.View.prototype.remove.call(this);
 		$(window).off('resize', this.resizeHandler);
@@ -3707,6 +3794,23 @@ var CSSEditor = Backbone.View.extend({
 		return deferred.promise();
 	},
 
+	createSelectors: function(objects){
+		var me = this,
+			selectors = {}
+		;
+
+		_.each(objects, function(object){
+			var model = new object.Model(),
+				view = new object.View({model: model}),
+				id = model.get_property_value_by_name('type')
+			;
+
+			selectors[id] = view.cssSelectors || {};
+		});
+
+		me.elementSelectors = selectors;
+	},
+
 	openImagePicker: function(){
 		var me = this;
 		console.log('picker');
@@ -3722,6 +3826,12 @@ var CSSEditor = Backbone.View.extend({
 			me.editor.focus();
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		});
+	},
+
+	addSelector: function(e){
+		var selector = $(e.target).data('selector');
+		this.editor.insert(selector);
+		this.editor.focus();
 	}
 });
 

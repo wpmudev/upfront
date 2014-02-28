@@ -410,7 +410,6 @@ var Application = new (Backbone.Router.extend({
 		$('body').append(app.loading.$el);
 
 		app.create_sidebar();
-		app.create_cssEditor();
 
 		require(["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "upfront-navigation", "unewnavigation", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
 	        function(objects) {
@@ -421,6 +420,8 @@ var Application = new (Backbone.Router.extend({
 				app.load_layout(_upfront_post_data.layout);
 				//app.load_layout(window.location.pathname + window.location.search);
 				app.start_navigation();
+
+				app.create_cssEditor();
 			}
 		);
 	},
@@ -689,6 +690,8 @@ var Application = new (Backbone.Router.extend({
 				});
 			});
 		});
+
+		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
 
 		this.cssEditor = cssEditor;
 	},

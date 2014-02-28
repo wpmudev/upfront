@@ -356,17 +356,27 @@
 </script>
 
 <script id="csseditor-tpl" type="text/template">
-	<div class="upfront-css-top">
-		<span class="upfront-css-type">{{ elementType }} Element</span>
-		<a class="upfront-css-image" href="#">Link theme image</a>
-		<a class="upfront-css-close" href="#">close</a>
-	</div>
-	<div class="upfront-css-body">
-		<div class="upfront-css-ace"></div>
-		<div class="upfront-css-sidebar">
-			<div class="upfront-css-save-form">
-				<p>Style name</p>
-				<input type="text" class="upfront-css-save-name" value="{{ name }}"><button class="upfront-css-save-ok">Save</button>
+	<div class="upfront-css-resizable">
+		<div class="upfront-css-top ui-resizable-handle ui-resizable-n">
+			<span class="upfront-css-type">{{ elementType }} Element</span>
+			<a class="upfront-css-image" href="#">Link theme image</a>
+			<input class="upfront-css-color" type="text">
+			<a class="upfront-css-close" href="#">close</a>
+		</div>
+		<div class="upfront-css-body">
+			<div class="upfront-css-ace"></div>
+			<div class="upfront-css-sidebar">
+				<div class="upfront-css-selectors">
+					<p>Available element selectors:</p>
+					{[ _.each(selectors, function(data, s){ ]}
+					<span class="upfront-css-selector" title="{{ data.info }}" data-selector="{{ s }}">{{data.label}}</span>
+					{[ }); ]}
+					{{ _.size(selectors) ? '' : 'No selectors available for the ' + elementType.toLowerCase() + ' element.'}}
+				</div>
+				<div class="upfront-css-save-form">
+					<p>Style name</p>
+					<input type="text" class="upfront-css-save-name" value="{{ name }}"><button class="upfront-css-save-ok">Save</button>
+				</div>
 			</div>
 		</div>
 	</div>

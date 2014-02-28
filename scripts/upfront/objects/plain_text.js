@@ -9,15 +9,17 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("element_id", Upfront.Util.get_unique_id("text-object"));
 		this.init_property("class", "c22 upfront-plain_txt");
 		this.init_property("has_settings", 1);
-
 	}
 });
 
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	initialize: function() {
-
 		this.constructor.__super__.initialize.apply(this, arguments);
+
+		if(! (this.model instanceof PlainTxtModel)){
+			this.model = new PlainTxtModel({properties: this.model.get('properties')});
+		}
 
 		this.on('deactivated', function() {
 			Upfront.Events.trigger('upfront:element:edit:stop');

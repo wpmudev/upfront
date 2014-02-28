@@ -118,7 +118,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			})
 		;
 	},
-	
+
 	redirectPostEdit: function (post) {
 		//window.location = Upfront.Settings.Content.edit.post + post.id;
 		var path = '/edit/' + post.get('post_type') + '/' + post.id;
@@ -147,7 +147,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			}
 		});
 	},
-	
+
 	on_element_edit_start: function (edit, post) {
 		if ( edit == 'write' ){
 			if ( post.id != this.postId )
@@ -156,10 +156,12 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				this.parent_module_view.$el.find('.upfront-module').addClass('upfront-module-editing');
 		}
 	},
-	
+
 	on_element_edit_stop: function (edit, post) {
-		this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing');
-		this.parent_module_view.enable();
+		if(this.parent_module_view){
+			this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing');
+			this.parent_module_view.enable();
+		}
 	},
 
 	/*

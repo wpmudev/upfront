@@ -43,6 +43,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	stoppedTimer : false,
 	cropTimeAfterResize: 10000,
 
+	cssSelectors: {
+		'.upfront-image': {label: 'Image element', info: 'The whole image element'},
+		'.wp-caption': {label: 'Caption panel', info: 'Caption layer'},
+		'.upfront-image-container': {label: 'Image wrapper', info: 'Image container'}
+	},
 
 	initialize: function(){
 		var me = this;

@@ -8243,8 +8243,7 @@ top: -6px;
 
 /* CSS EDITOR */
 #upfront-csseditor {
-	height: 200px;
-	background: #3d5266;
+	min-height: 200px;
 	position: fixed;
 	bottom: 0;
 	right: 0;
@@ -8253,11 +8252,21 @@ top: -6px;
 	display: none;
 }
 
+.upfront-css-resizable {
+	background: #3d5266;
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	min-height: 200px;
+}
+
 .upfront-css-top{
 	border-bottom: 1px solid #26333F;
 	color: #dae6f2;
 	font-size: 14px;
 	height:32px;
+	position: static;
 }
 
 .upfront-css-ace{
@@ -8271,6 +8280,7 @@ top: -6px;
 	width: 25%;
 	height: 100%;
 	float:right;
+	position: relative;
 }
 
 .upfront-css-type {
@@ -8280,6 +8290,7 @@ top: -6px;
 	padding: 0px 5px;
 	margin: 4px;
 	height: 24px;
+	cursor: pointer;
 }
 
 a.upfront-css-image {
@@ -8291,6 +8302,22 @@ a.upfront-css-image {
 	height: 24px;
 	color: #dae6f2 !important;
 	line-height: 20px;
+}
+
+input[type=text].upfront-css-color {
+	float:left;
+	width: auto;
+}
+
+.upfront-css-top .sp-replacer {
+	margin: 4px;
+	height: 24px;
+	overflow: hidden;
+}
+
+.upfront-css-top .sp-preview {
+	border-radius: 0;
+	margin: 0;
 }
 
 a.upfront-css-image:hover {
@@ -8332,13 +8359,35 @@ div.ace_editor .ace_fold {
 }
 
 .upfront-css-save-form {
-	padding: 2px 15px 5px;
+	padding: 2px 15px 15px;
 	background: #465D72;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
 }
-.upfront-css-save-form p{
+.upfront-css-sidebar p{
 	color: #dae6f2;
 	font-size:13px;
 	margin-bottom: 0;
+}
+
+.upfront-css-selectors {
+	padding: 2px 15px;
+	color: #cbe5ff;
+	font-size: 13px;
+	line-height: 20px;
+}
+
+.upfront-css-selector {
+	border: 1px solid #2E3D4C;
+	display: inline-block;
+	padding: 1px 5px;
+	cursor: pointer;
+	margin: 5px 5px 0 0;
+}
+
+.upfront-css-selector:hover {
+	background: #2E3D4C;
 }
 
 .upfront-css-save-form input.upfront-css-save-name,
