@@ -41,7 +41,7 @@ $upfront_data['region_default_args'] = upfront_get_region_default_args();
 
 //Upfront styles
 $styles = get_option('upfront_' . get_stylesheet() . '_styles');
-$elementTypes = array('unknown' => []);
+$elementTypes = array('unknown' => array());
 if($styles){
 	foreach($styles as $type => $rules){
 		if(!is_array($rules))

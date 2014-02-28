@@ -121,6 +121,8 @@ var GridEditor = {
 
 	show_debug_element: false,
 
+	resizing: false,
+
 	/**
 	 * Return a new incremented internal counter
 	 */
@@ -692,19 +694,17 @@ var GridEditor = {
 		};
 
 		// Prevents quick scroll when resizing
-		var doScroll = 0;
+		var scrollStep = 15;
 		$(document).on('scroll', function(e){
-			if(ed.resizing === false)
+			if(ed.resizing === false || ed.resizing == window.scrollY)
 				return;
 
-			console.log('preventing scroll');
-/*
-				if($(document).scrollTop() > ed.resizing)
-					ed.resizing -= 2;
-				else
-					ed.resizing += 2;
+			if(window.scrollY > ed.resizing)
+				ed.resizing += scrollStep;
+			else
+				ed.resizing -= scrollStep;
 
-				$(document).scrollTop(ed.resizing); */
+			window.scrollTo(window.scrollX, ed.resizing);
 		});
 	},
 
@@ -1139,7 +1139,7 @@ var GridEditor = {
 				ed.start(view, model);
 
 				// Prevents quick scroll when resizing
-				ed.resizing = $(document).scrollTop();
+				ed.resizing = window.scrollY;
 
 				var col = ed.get_class_num($me, ed.grid.class),
 					cls = ed.grid.class+col,
@@ -2214,7 +2214,7 @@ var GridEditor = {
 				var col = ed.get_class_num($me, ed.grid.class);
 
 				// Prevents quick scroll when resizing
-				ed.resizing = $(document).scrollTop();
+				ed.resizing = window.scrollY;
 
 				ed.col_size = $('.upfront-grid-layout:first').outerWidth()/ed.grid.size;
 				$(this).resizable('option', 'minWidth', ed.col_size*3);
@@ -2305,7 +2305,7 @@ var GridEditor = {
 				Upfront.Events.trigger('command:region:edit_toggle', false);
 
 				// Prevents quick scroll when resizing
-				ed.resizing = $(document).scrollTop();
+				ed.resizing = window.scrollY;
 			},
 			resize: function(e, ui){
 				// @TODO Suppppperrrr annoying bug happen on resizable 1.10.3, fix only for this version and make sure to recheck in future update on this lib!
