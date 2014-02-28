@@ -147,13 +147,17 @@ abstract class Upfront_Entity {
 	}
 
 	public function get_css_class () {
+		$type = strtolower(str_replace("_", "-", $this->_type));
 		$classes = array(
-			"upfront-output-" . strtolower(str_replace("_", "-", $this->_type)),
+			"upfront-output-" . $type,
 			$this->get_front_context()
 		);
 		$name = $this->get_name();
 		if ( $name != 'anonymous' )
-			$classes[] = "upfront-" . strtolower(str_replace("_", "-", $this->_type)) . "-" . strtolower(str_replace(" ", "-", $name));
+			$classes[] = "upfront-" . $type . "-" . strtolower(str_replace(" ", "-", $name));
+		$entity_type = $this->get_entity_type();
+		if ( $entity_type )
+			$classes[] = "upfront-" . $type . "-" . $entity_type;
 
 		return join(' ', $classes);
 	}
@@ -173,6 +177,11 @@ abstract class Upfront_Entity {
 	public function get_name () {
 		if (!empty($this->_data['name'])) return $this->_data['name'];
 		return 'anonymous';
+	}
+	
+	public function get_entity_type () {
+		if (!empty($this->_data['type'])) return $this->_data['type'];
+		return '';
 	}
 
 	public function get_container () {
@@ -276,6 +285,16 @@ abstract class Upfront_Entity {
 			$slides_markup = join('', $slides);
 			$markup = "<div class='upfront-bg-slider' {$slide_attr}>{$slides_markup}</div>";
 		}
+		else if ( $type == 'video' ){
+			$video = $this->_get_property('background_video');
+			$embed = $this->_get_property('background_video_embed');
+			$width = $this->_get_property('background_video_width');
+			$height = $this->_get_property('background_video_height');
+			if ( $video && $embed ){
+				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '"';
+				$markup = $embed;
+			}
+		}
 		return "<div class='{$classes}' {$attr}>{$markup}</div>";
 	}
 }
@@ -377,21 +396,25 @@ abstract class Upfront_Container extends Upfront_Entity {
 class Upfront_Region_Container extends Upfront_Container {
 	protected $_type = 'Region_Container';
 
+	protected function _is_background () {
+		return ( $this->_data['type'] != 'clip' || ( !$this->_data['type'] && !$this->_data['clip'] ) );
+	}
+	
 	public function wrap ($out) {
-		$overlay = $this->_get_background_overlay();
+		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
 		return parent::wrap("<div class='upfront-grid-layout'>{$out}</div> {$overlay}");
 	}
 
 	public function get_css_inline () {
 		$css = '';
-		if ( ! $this->_data['clip'] )
+		if ( $this->_is_background() )
 			$css .= $this->_get_background_css();
 		return $css;
 	}
 
 	public function get_attr () {
 		$attr = '';
-		if ( ! $this->_data['clip'] )
+		if ( $this->_is_background() )
 			$attr .= $this->_get_background_attr();
 		return $attr;
 	}
@@ -401,22 +424,26 @@ class Upfront_Region extends Upfront_Container {
 	protected $_type = 'Region';
 	protected $_children = 'modules';
 	protected $_child_view_class = 'Upfront_Module';
+	
+	protected function _is_background () {
+		return ( ( $this->_data['type'] == 'clip'  || ( !$this->_data['type'] && $this->_data['clip'] ) ) || ( $this->get_container() != $this->get_name() ) );
+	}
 
 	public function wrap ($out) {
-		$overlay = $this->get_container() != $this->get_name() ? $this->_get_background_overlay() : "";
+		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
 		return parent::wrap( "{$out} {$overlay}" );
 	}
 
 	public function get_css_inline () {
 		$css = '';
-		if ( $this->_data['clip'] || ( $this->get_container() != $this->get_name() ) )
+		if ( $this->_is_background() )
 			$css .= $this->_get_background_css();
 		return $css;
 	}
 
 	public function get_attr () {
 		$attr = '';
-		if ( $this->_data['clip'] || ( $this->get_container() != $this->get_name() ) )
+		if ( $this->_is_background() )
 			$attr .= $this->_get_background_attr();
 		return $attr;
 	}

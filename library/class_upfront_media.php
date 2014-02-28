@@ -51,7 +51,7 @@ class Upfront_Oembed {
 
         if (!$provider) $provider = $this->_wp_oembed->discover($this->_url);
         if (!$provider) return false;
-        return $this->_wp_oembed->fetch($provider, $this->_url, array('discover' => true));
+        return $this->_wp_oembed->fetch($provider, $this->_url, array('discover' => true, 'width' => 10000, 'height' => 10000));
     }
 
     public function get_embed_code () {
@@ -278,10 +278,8 @@ class Upfront_MediaServer extends Upfront_Server {
 		add_action('wp_ajax_upfront-media-update_media_item', array($this, "update_media_item"));
         add_action('wp_ajax_upfront-media-upload', array($this, "upload_media"));
         add_action('wp_ajax_upfront-media-embed', array($this, "embed_media"));
-
-        add_action('wp_ajax_upfront-media-list_theme_images', array($this, "list_theme_images"));
-        add_action('wp_ajax_upfront-media-upload-theme-image', array($this, "upload_theme_image"));
-
+        add_action('wp_ajax_upfront-media-get_embed_raw', array($this, "get_embed_raw"));
+		
         add_action('wp_ajax_upfront-media-get_labels', array($this, "list_labels"));
         add_action('wp_ajax_upfront-media-add_label', array($this, "add_label"));
         add_action('wp_ajax_upfront-media-associate_label', array($this, "associate_label"));
@@ -499,6 +497,19 @@ class Upfront_MediaServer extends Upfront_Server {
             } else $this->_out(new Upfront_JsonResponse_Error("Not an image file or embeddable item"));
         }
     }
+
+	public function get_embed_raw () {
+        $data = stripslashes_deep($_POST);
+        $media = !empty($data['media']) ? $data['media'] : false;
+        if (!$media) $this->_out(new Upfront_JsonResponse_Error("Invalid media"));
+		
+		$oembed = new Upfront_Oembed($media);
+		$oembed_data = $oembed->get_info();
+	    if (!empty($oembed_data)) {
+	        $this->_out(new Upfront_JsonResponse_Success($oembed_data));
+	    } else $this->_out(new Upfront_JsonResponse_Error("Not an image file or embeddable item"));
+		
+	}
 
 	public function list_media () {
         $data = stripslashes_deep($_POST);

@@ -1894,7 +1894,7 @@ a.ueditor-action-pickercancel{
 }
 .upfront-region-resize-handle {
 	position: absolute;
-	bottom: -11px;
+	bottom: -14px;
 	left: 0;
 	right: 0;
 	height: auto;
@@ -1905,6 +1905,9 @@ a.ueditor-action-pickercancel{
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-resize-handle {
 	visibility: visible;
+}
+.upfront-region-editing .upfront-region-container-full .upfront-region-resize-handle {
+	visibility: hidden;
 }
 .upfront-region-editing .upfront-region-active-overlay,
 .upfront-inline-panels,
@@ -1925,7 +1928,7 @@ a.ueditor-action-pickercancel{
 	z-index: 999981;
 }
 .upfront-region-editing .upfront-region-active,
-.upfront-region-editing .upfront-region-container-full.upfront-region-container-active .upfront-grid-layout {
+.upfront-region-editing .upfront-region-container-active .upfront-grid-layout {
 	z-index: 999981;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,
@@ -1933,6 +1936,8 @@ a.ueditor-action-pickercancel{
 .upfront-add-region-ani:after {
 	border-top: 3px solid #2f3a44;
 	border-bottom: 3px solid #2f3a44;
+	top: -3px;
+	bottom: -3px;
 }
 .upfront-region-editing .upfront-region-active .upfront-region-title {
 	top: 0;
@@ -2237,9 +2242,8 @@ a.ueditor-action-pickercancel{
 	-o-transform: translateX(-50%);
 	transform: translateX(-50%);
 }
-.upfront-inline-modal-wrap
-.upfront-inline-modal-content {
-	padding: 24px;
+.upfront-inline-modal-wrap .upfront-inline-modal-content {
+	padding: 16px;
 }
 .upfront-inline-modal-save,
 .upfront-inline-modal-save:hover {
@@ -2274,28 +2278,10 @@ a.ueditor-action-pickercancel{
 	width: 384px;
 }
 .upfront-region-bg-setting-type {
-	border-bottom: 1px solid #96b9d8;
-	margin: 0 -12px;
-	padding: 0 12px;
-}
-.upfront-region-bg-setting-type .upfront-field-multiple-selected {
-	position: relative;
-}
-.upfront-region-bg-setting-type .upfront-field-multiple-selected:after {
-	content: ' ';
-	position: absolute;
-	bottom: -15px;
-	left: 50%;
-	margin-left: -3px;
-	width: 0;
-	height: 0;
-	display: block;
-	border-bottom: 3px solid #96b9d8;
-	border-left: 3px solid transparent;
-	border-right: 3px solid transparent;
+	width: 50%;
+	float: left;
 }
 .upfront-region-bg-setting-tab {
-	padding: 10px 0;
 }
 .upfront-region-bg-setting-tab .sp-replacer {
 	float: none;
@@ -2307,9 +2293,9 @@ a.ueditor-action-pickercancel{
 	font-size: 11px;
 	padding: 10px 24px;
 	background: #cee1f2;
-	margin: 0 -24px;
+	margin: 0 -16px;
 	position: relative;
-	top: 24px;
+	top: 16px;
 	clear: both;
 }
 .upfront-region-bg-setting-auto-resize,
@@ -2321,7 +2307,19 @@ a.ueditor-action-pickercancel{
 .upfront-region-bg-setting-change-image {
 	float: right;
 }
+.upfront-region-bg-setting-tab-primary {
+	width: 50%;
+	float: right;
+}
+.upfront-region-bg-setting-tab-secondary {
+	padding: 10px 0 0;
+	clear: both;
+}
 .upfront-region-bg-setting-label {
+	color: #3f617f;
+	font-size: 17px;
+}
+.upfront-region-bg-setting-tab-secondary .upfront-region-bg-setting-label {
 	color: #2f475d;
 	font-family: "Verdana";
 	font-size: 11px;
@@ -2334,11 +2332,10 @@ a.ueditor-action-pickercancel{
 	padding: 5px 0 0;
 }
 .upfront-region-bg-image-fixed {
-	float: right;
-	width: 36%;
-	margin: 0 12px 0 0;
 }
 .upfront-region-bg-image-fixed-pos {
+	float: left;
+	width: 36%;
 	position: relative;
 }
 .upfront-region-bg-image-fixed-pos-num {
@@ -2352,6 +2349,8 @@ a.ueditor-action-pickercancel{
 	display: none;
 }
 .upfront-region-bg-image-fixed-color {
+	float: right;
+	width: 50%;
 }
 .upfront-region-bg-map-location .upfront-field-wrap {
 	float: left;

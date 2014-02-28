@@ -2371,7 +2371,6 @@ var GridEditor = {
 		});
 	},
 
-
 	/**
 	 * Debug stuff
 	 */

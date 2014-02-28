@@ -18,7 +18,7 @@ class Upfront_Theme {
 		'default' => false, // default region can't deleted by user, accept true or false 
 		'position' => 10,
 		'allow_sidebar' => false, // allow sidebar region? accept true or false
-		'clip' => false // clip to grid or 100% width, accept true or false
+		'type' => 'wide', // type of region, accept full|wide|clip (either full screen | 100% wide | clipped)
 	);
 	
 	public static function get_instance () {
@@ -203,7 +203,7 @@ class Upfront_Virtual_Region {
 				'default' => false,
 				'position' => 11,
 				'allow_sidebar' => false,
-				'clip' => false
+				'type' => 'wide'
 			), $args);
 
 		foreach ( $properties as $prop => $value ){

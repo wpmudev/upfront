@@ -182,9 +182,11 @@
 
 			this.items.each(function(){
 				var $img = $(this).find('img'),
-					img_h = $img.height(),
-					img_w = $img.width()
+					img_h, img_w
 				;
+				$img.css({ height: "", width: "" });
+				img_h = $img.height();
+				img_w = $img.width();
 				if ( height/width > img_h/img_w )
 					$img.css({ height: '100%', width: 'auto' });
 				else
@@ -332,6 +334,14 @@
 			control: 'inside'
 		};
 		$('.upfront-bg-slider').upfront_default_slider(bg_slider);
+		
+		// Refresh size on window.load and window.resize
+		$(window).on('load', function(){
+			$('.upfront-inline_post-slider, .upfront-bg-slider').trigger('refresh');
+		});
+		$(window).on('resize', function(){
+			$('.upfront-inline_post-slider, .upfront-bg-slider').trigger('refresh');
+		});
 
 		// Integration with Upfront editor
 		$(document).on('upfront-load', function(){
@@ -341,10 +351,12 @@
 			Upfront.Events.on('entity:background:update', function(view, model){
 				var $s = view.$el.find('.upfront-region-bg-slider');
 				if ( $s.length ){
-					if ( $s.data('slider-applied') )
-						$s.trigger('refresh');
-					else
-						$s.upfront_default_slider(bg_slider);
+					$s.each(function(){
+						if ( $(this).data('slider-applied') )
+							$(this).trigger('refresh');
+						else
+							$(this).upfront_default_slider(bg_slider);
+					});
 				}
 			});
 		});

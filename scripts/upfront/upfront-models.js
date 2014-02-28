@@ -265,7 +265,7 @@ var _alpha = "alpha",
 			if ( ! this.collection )
 				return false;
 			var collection = this.collection,
-				index = collection.indexOf(this.model),
+				index = collection.indexOf(this),
 				total = collection.size()-1, // total minus shadow region
 				container = this.get('container') || this.get('name'),
 				ref_model = !right && index > 0 ? collection.at(index-1) : ( right && index < total-1 ? collection.at(index+1) : false );

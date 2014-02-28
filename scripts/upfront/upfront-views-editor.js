@@ -4401,17 +4401,33 @@ var Field_Anchor = Field_Select.extend({
 			var me = this,
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
-				type = new Field_Radios({
+				region_type = new Field_Radios({
+					model: this.model,
+					property: 'type',
+					default_value: 'wide',
+					layout: 'horizontal-inline',
+					values: [
+						{ label: "Full Screen", value: 'full' },
+						{ label: "100% wide", value: 'wide' },
+						{ label: "Contained", value: 'clip' }
+					],
+					change: function () {
+						var value = this.get_value();
+						this.model.set({type: value}, {silent: true});
+						this.property.set({value: value});
+					}
+				}),
+				bg_type = new Field_Select({
 					model: this.model,
 					property: 'background_type',
-					layout: 'vertical',
 					default_value: 'color',
 					icon_class: 'upfront-region-field-icon',
 					values: [
-						{ label: "Solid color background", value: 'color', icon: 'color' },
-						{ label: "Image background", value: 'image', icon: 'image' },
-						{ label: "Image slider background", value: 'slider', icon: 'slider' },
-						{ label: "Map background", value: 'map', icon: 'map' }
+						{ label: "Solid color", value: 'color', icon: 'color' },
+						{ label: "Image", value: 'image', icon: 'image' },
+						{ label: "Image slider", value: 'slider', icon: 'slider' },
+						{ label: "Map", value: 'map', icon: 'map' },
+						{ label: "Video", value: 'video', icon: 'video' }
 					],
 					change: function () {
 						var value = this.get_value();
@@ -4424,8 +4440,10 @@ var Field_Anchor = Field_Select.extend({
 			$modal.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
-			type.render();
-			$content.find('.upfront-region-bg-setting-type').append(type.$el);
+			region_type.render();
+			bg_type.render();
+			$content.find('.upfront-region-bg-setting-region-type').append(region_type.$el);
+			$content.find('.upfront-region-bg-setting-type').append(bg_type.$el);
 			$content.find('.upfront-region-bg-setting-change-image').on('click', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -4437,10 +4455,10 @@ var Field_Anchor = Field_Select.extend({
 				me.trigger_expand_lock($(this));
 			});
 			this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
-			type.trigger('changed');
+			bg_type.trigger('changed');
 		},
 		on_close_modal: function (me) {
-			me.$el.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', '') // reset hide finish edit button
+			me.$el.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 			me._active = false;
 			me.render_icon();
 		},
@@ -4464,7 +4482,18 @@ var Field_Anchor = Field_Select.extend({
 				case 'map':
 					this.render_modal_tab_map($tab);
 					break;
+				case 'video':
+					this.render_modal_tab_video($tab);
+					break;
 			}
+		},
+		_render_tab_template: function($target, primary, secondary, template){
+			var $template = $(_Upfront_Templates.region_edit_panel),
+				$tab = $('<div>'+$template.find( template ? '#upfront-region-bg-setting-tab-'+template : '#upfront-region-bg-setting-tab').html()+'</div>');
+			$tab.find('.upfront-region-bg-setting-tab-primary').append(primary);
+			if ( secondary )
+				$tab.find('.upfront-region-bg-setting-tab-secondary').append(secondary);
+			$target.append($tab);
 		},
 		// Color tab
 		render_modal_tab_color: function ($tab) {
@@ -4488,8 +4517,7 @@ var Field_Anchor = Field_Select.extend({
 			this._default_color = this.model.get_property_value_by_name('background_color');
 			picker.render();
 			$tab.html('');
-			$tab.append('<div class="upfront-region-bg-setting-label">Background Color:</div>');
-			$tab.append(picker.$el);
+			this._render_tab_template($tab, picker.$el, '', 'color');
 		},
 		preview_color: function (color) {
 			var rgb = color.toRgb(),
@@ -4509,7 +4537,7 @@ var Field_Anchor = Field_Select.extend({
 		render_modal_tab_image: function ($tab) {
 			var me = this,
 				image = this.model.get_property_value_by_name('background_image'),
-				$style = $('<div class="upfront-region-bg-image-style"><div class="upfront-region-bg-setting-label">Type of background</div></div>'),
+				$style = $('<div class="upfront-region-bg-image-style"></div>'),
 				$tile = $('<div class="upfront-region-bg-image-tile" />'),
 				$fixed = $('<div class="upfront-region-bg-image-fixed clearfix" />'),
 				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-setting-label">Image Position:</div></div>'),
@@ -4640,18 +4668,16 @@ var Field_Anchor = Field_Select.extend({
 				field.render();
 			});
 			$style.append(fields.bg_style.$el);
-			$tab.append($style);
 			$tile.append(fields.bg_tile.$el);
-			$tab.append($tile);
 			$fixed_pos_num.append(fields.bg_position_y_num.$el);
 			$fixed_pos_num.append(fields.bg_position_x_num.$el);
 			$fixed_pos.append($fixed_pos_num);
 			$fixed_pos.append(fields.bg_position_y.$el);
 			$fixed_pos.append(fields.bg_position_x.$el);
-			//$fixed_color.append(fields.bg_color.$el);
+			$fixed_color.append(fields.bg_color.$el);
 			$fixed.append($fixed_pos);
-			//$fixed.append($fixed_color);
-			$tab.append($fixed);
+			$fixed.append($fixed_color);
+			this._render_tab_template($tab, $style, [$tile, $fixed], 'image');
 			this._bg_style = fields.bg_style.get_value();
 			this._bg_tile = fields.bg_tile.get_value();
 			this._bg_position_y = fields.bg_position_y.get_value();
@@ -4762,15 +4788,14 @@ var Field_Anchor = Field_Select.extend({
 						layout: 'horizontal-inline',
 						values: [
 							{ label: "Always show slider controls", value: 'always' },
-							{ label: "Show slider controls on hover", value: 'hover' }
+							{ label: "Show controls on hover", value: 'hover' }
 						],
 						change: set_value
 					}),
-					transition: new Field_Radios({
+					transition: new Field_Select({
 						model: this.model,
 						property: 'background_slider_transition',
 						default_value: 'crossfade',
-						layout: 'horizontal-inline',
 						icon_class: 'upfront-region-field-icon',
 						values: [
 							{ label: "Slide Down", value: 'slide-down', icon: 'bg-slider-slide-down' },
@@ -4788,13 +4813,8 @@ var Field_Anchor = Field_Select.extend({
 			});
 			$rotate.append(fields.rotate.$el);
 			$rotate.append(fields.rotate_time.$el);
-			$tab.append($rotate);
-			$tab.append(fields.control.$el);
-			$transition_title.text("Slide transitions:");
-			$transition_content.append(fields.transition.$el);
-			$tab.append($transition);
 			$slides_title.text("Slides Order:");
-			$tab.append($slides);
+			this._render_tab_template($tab, fields.transition.$el, [$rotate, fields.control.$el, $slides], 'slider');
 			me.update_slider_slides($slides_content);
 			$slides_content.on('click', '.upfront-region-bg-slider-add-image', function (e) {
 				e.preventDefault();
@@ -4944,11 +4964,9 @@ var Field_Anchor = Field_Select.extend({
 			$location.on('click', '.upfront-refresh-map', function () {
 				me.geocode_location();
 			});
-			$tab.append($location);
-			$tab.append(fields.zoom.$el);
 			$style_control.append(fields.style.$el);
 			$style_control.append(fields.controls.$el);
-			$tab.append($style_control);
+			this._render_tab_template($tab, '', [$location, fields.zoom.$el, $style_control]);
 		},
 		geocode_location: function () {
 			if ( this._geocoding == true || !this._location_changed )
@@ -4964,6 +4982,77 @@ var Field_Anchor = Field_Select.extend({
 				me.model.set_property("background_map_center", [pos.lat(), pos.lng()]);
 				me._geocoding = false;
 				me._location_changed = false;
+			});
+		},
+		// Video tab
+		render_modal_tab_video: function ($tab) {
+			var me = this,
+				pos_option = {
+					min: 0,
+					max: 9999,
+					step: 1
+				},
+				fields = {
+					bg_video: new Field_Text({
+						model: this.model,
+						property: 'background_video',
+						label: "Video URL:",
+						default_value: '',
+						change: function () {
+							var value = this.get_value();
+							if ( value ){
+								me.get_video_embed(value).done(function(response){
+									console.log(response);
+									if ( !response.data || !response.data.width || !response.data.height )
+										return;
+									var width = fields.bg_video_width,
+										height = fields.bg_video_height;
+									width.get_field().val(response.data.width);
+									width.trigger('changed');
+									height.get_field().val(response.data.height);
+									height.trigger('changed');
+									me.model.set_property('background_video_embed', response.data.html);
+									console.log(me.model)
+								});
+							}
+							this.property.set({value: value});
+						}
+					}),
+					bg_video_width: new Field_Number(_.extend({
+						model: this.model,
+						property: 'background_video_width',
+						label: "Width:",
+						label_style: 'inline',
+						suffix: 'px',
+						default_value: 640,
+						change: function () {
+							var value = this.get_value();
+							this.property.set({value: value});
+						}
+					}, pos_option)),
+					bg_video_height: new Field_Number(_.extend({
+						model: this.model,
+						property: 'background_video_height',
+						label: "Height:",
+						label_style: 'inline',
+						suffix: 'px',
+						default_value: 360,
+						change: function () {
+							var value = this.get_value();
+							this.property.set({value: value});
+						}
+					}, pos_option))
+				};
+			$tab.html('');
+			_.each(fields, function (field) {
+				field.render();
+			});
+			this._render_tab_template($tab, '', [fields.bg_video.$el, fields.bg_video_width.$el, fields.bg_video_height.$el]);
+		},
+		get_video_embed: function (url) {
+			return Upfront.Util.post({
+				action: "upfront-media-get_embed_raw",
+				media: url
 			});
 		},
 		// Expand lock trigger
@@ -5088,6 +5177,7 @@ var Field_Anchor = Field_Select.extend({
 				Upfront.Events.once('entity:region_container:before_render', this.before_animation, this);
 				Upfront.Events.once('entity:region_container:after_render', this.run_animation, this);
 			}
+			// @TODO need to refactor this? More test needed
 			collection.add(new_region, {at: is_before ? index : index+1, is_before: is_before});
 		},
 		before_animation: function (view, model) {

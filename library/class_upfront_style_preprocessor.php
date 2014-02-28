@@ -98,7 +98,7 @@ class Upfront_StylePreprocessor {
 						'}' .
 					'';
 			}
-			for ($i=1; $i<=100; $i++) {
+			for ($i=1; $i<=1000; $i++) {
 				$rules[] = ".{$margin_top}{$i}" . 
 					'{' . 
 						sprintf('margin-top: %dpx;', $i*$baseline_grid) .

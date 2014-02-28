@@ -65,13 +65,14 @@ define([
 				var type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
 					image = this.model.get_property_value_by_name('background_image'),
-					ratio = this.model.get_property_value_by_name('background_image_ratio'),
+					ratio = parseFloat(this.model.get_property_value_by_name('background_image_ratio')),
 					repeat = this.model.get_property_value_by_name('background_repeat'),
 					position = this.model.get_property_value_by_name('background_position'),
 					style = this.model.get_property_value_by_name('background_style'),
 					width = this.$el.outerWidth(),
 					height = this.$el.outerHeight(),
-					$overlay = this.$el.find('.upfront-region-bg-overlay');
+					$overlay = this.$el.children('.upfront-region-bg-overlay');
+				console.log([width, height])
 				if ( !type || type == 'color' || type == 'image' ){
 					if ( color )
 						this.$el.css('background-color', color);
@@ -82,14 +83,14 @@ define([
 						if ( style == 'full' ){
 							if ( Math.round(height/width*100)/100 > ratio ){
 								this.$el.css({
-									backgroundSize: "auto 100%",
+									backgroundSize: (height/ratio) + "px " + height + "px", // "auto 100%",
 									backgroundRepeat: "no-repeat",
 									backgroundPosition: "50% 50%"
 								});
 							}
 							else {
 								this.$el.css({
-									backgroundSize: "100% auto",
+									backgroundSize: width + "px " + (width*ratio) + "px", // "100% auto",
 									backgroundRepeat: "no-repeat",
 									backgroundPosition: "50% 50%"
 								});
@@ -115,7 +116,6 @@ define([
 						$overlay.hide();
 				}
 				else {
-					var $type = this.$el.find('.upfront-region-bg-'+type);
 					if ( ! $overlay.length ){
 						$overlay = $('<div class="upfront-region-bg-overlay" />');
 						this.$el.append($overlay);
@@ -123,6 +123,7 @@ define([
 					else {
 						$overlay.show();
 					}
+					var $type = $overlay.find('.upfront-region-bg-'+type);
 					if ( ! $type.length ) {
 						$type = $('<div class="upfront-region-bg upfront-region-bg-' + type + '" />');
 						$overlay.append($type);
@@ -233,23 +234,36 @@ define([
 						ratio = this.model.get_property_value_by_name('background_image_ratio'),
 						width = this.$el.outerWidth(),
 						height = this.$el.outerHeight();
+				console.log([width, height])
 					if ( style == 'full' ){
 						if ( Math.round(height/width*100)/100 > ratio ){
 							this.$el.css({
-								backgroundSize: "auto 100%",
+								backgroundSize: (height/ratio) + "px " + height + "px", // "auto 100%",
 								backgroundRepeat: "no-repeat",
 								backgroundPosition: "50% 50%"
 							});
 						}
 						else {
 							this.$el.css({
-								backgroundSize: "100% auto",
+								backgroundSize: width + "px " + (width*ratio) + "px", // "100% auto",
 								backgroundRepeat: "no-repeat",
 								backgroundPosition: "50% 50%"
 							});
 						}
 					}
 				}
+			},
+			remove_background: function () {
+				var $overlay = this.$el.find('.upfront-region-bg-overlay');
+				if ( $overlay.length )
+					$overlay.hide();
+				this.$el.css({
+					backgroundColor: "",
+					backgroundImage: "none",
+					backgroundSize: "",
+					backgroundRepeat: "",
+					backgroundPosition: ""
+				});
 			}
 		})),
 
@@ -905,7 +919,7 @@ define([
 				this.stopListening(this.model, 'add', this.render);
 				this.listenTo(this.model, 'add', this.on_add);
 				this.stopListening(this.model, 'remove', this.render);
-				this.listenTo(this.model, 'remove', this.on_remove)
+				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
 			},
 			on_entity_remove: function(e, view) {
@@ -1051,13 +1065,19 @@ define([
 					classes = [];
 				classes.push('upfront-region-container');
 				classes.push('upfront-region-container-' + name.toLowerCase().replace(/ /, "-"));
-				classes.push('upfront-region-container-' + ( this.model.get('clip') ? 'clip' : 'full' ) );
+				classes.push('upfront-region-container-' + this._get_region_type() );
 				if ( this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-container-active');
 				}
 				return {
 					"class": classes.join(' ')
 				};
+			},
+			_get_region_type: function () {
+				return this.model.get('type') || ( this.model.get('clip') ? 'clip' : 'wide' );
+			},
+			_get_previous_region_type: function () {
+				return this.model.previous('type') || ( this.model.previous('clip') ? 'clip' : 'wide' );
 			},
 			remove_context_menu: function(e) {
 				if (!this.context_menu_view) return false;
@@ -1145,23 +1165,29 @@ define([
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates["region_container"], this.model.toJSON()),
+				var type = this._get_region_type(),
+					template = _.template(_Upfront_Templates["region_container"], this.model.toJSON()),
 					$edit = $('<div class="upfront-region-edit-trigger tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
 					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> Finish editing background</div>');
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$layout = this.$el.find('.upfront-grid-layout');
-				$edit.appendTo( this.model.get('clip') ? this.$layout : this.$el );
-				$finish.appendTo( this.model.get('clip') ? this.$layout : this.$el );
+				$edit.appendTo( /*type == 'clip' ? this.$layout :*/ this.$el);
+				$finish.appendTo( /*type == 'clip' ? this.$layout :*/ this.$el );
 				this.update();
-				if ( !this.model.get('clip') )
+				//if ( type != 'clip' )
 					this.$el.append('<div class="upfront-region-active-overlay" />');
 				Upfront.Events.trigger("entity:region_container:after_render", this, this.model);
 			},
 			update: function () {
-				var expand_lock = this.model.get_property_value_by_name('expand_lock');
-				if ( ! this.model.get('clip') )
+				var expand_lock = this.model.get_property_value_by_name('expand_lock'),
+					type = this._get_region_type();
+				if ( type != 'clip' )
 					this.update_background();
+				else
+					this.remove_background();
+				this.$el.removeClass('upfront-region-container-' + this._get_previous_region_type());
+				this.$el.addClass('upfront-region-container-' + type);
 			},
 			trigger_edit: function (e) {
 				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.LAYOUT )
@@ -1231,18 +1257,32 @@ define([
 			fix_height: function () {
 				var $regions = this.$el.find('.upfront-region'),
 					row = this.model.get_property_value_by_name('row'),
+					is_full_screen = ( this._get_region_type() == 'full' ),
 					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					height = 0;
-				$regions.each(function(){
-					if ( min_height > 0 )
-						$(this).css('min-height', min_height);
-					else
-						$(this).css('min-height', '');
-					var h = $(this).outerHeight();
-					height = h > height ? h : height;
-				});
-				height = height > min_height ? height : min_height;
-				$regions.css('min-height', height);
+				if ( is_full_screen ){
+					height = $(window).height();
+					$regions.css({
+						minHeight: height,
+						height: height,
+						maxHeight: height
+					});
+				}
+				else{
+					$regions.css({
+						minHeight: "",
+						height: "",
+						maxHeight: ""
+					});
+					$regions.each(function(){
+						if ( min_height > 0 )
+							$(this).css('min-height', min_height);
+						var h = $(this).outerHeight();
+						height = h > height ? h : height;
+					});
+					height = height > min_height ? height : min_height;
+					$regions.css('min-height', height);
+				}
 				this.refresh_background();
 			},
 			update_pos: function () {
@@ -1321,7 +1361,7 @@ define([
 				classes.push('upfront-region');
 				classes.push('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
 				classes.push(grid.class + this.col);
-				if ( this.model.get('clip') )
+				if ( this.model.get('type') == 'clip' )
 					classes.push('upfront-region-clip');
 				if ( this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-active');
@@ -1347,13 +1387,12 @@ define([
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
-				if ( this.model.get('clip') || ! this.model.is_main() ){
-					this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
-					this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
-					this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
-					this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
-					this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
-				}
+				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 			},
 			on_click: function (e) {
 
@@ -1365,6 +1404,10 @@ define([
 				var container = this.parent_view.get_container_view(this.model);
 				if ( container && container.$el.hasClass('upfront-region-container-active') )
 					this.trigger("activate_region", this);
+			},
+			_is_clipped: function () {
+				var type = this.model.get('type');
+				return ( type == 'clip' || !type && this.model.get('clip') ) || ! this.model.is_main();
 			},
 			render: function () {
 				var container = this.model.get("container"),
@@ -1389,8 +1432,8 @@ define([
 				this.region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
 				this.region_panels.render();
 				this.$el.append(this.region_panels.el);
-				if ( this.model.get('clip') || ! this.model.is_main() )
-					this.$el.append('<div class="upfront-region-active-overlay" />');
+				//if ( this._is_clipped() )
+				//	this.$el.append('<div class="upfront-region-active-overlay" />');
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
 				this.trigger("region_render", this);
 				if ( ! this._modules_view )
@@ -1405,10 +1448,6 @@ define([
 					row = this.model.get_property_value_by_name('row'),
 					height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					expand_lock = this.model.get_property_value_by_name('expand_lock');
-				if ( this.model.get('clip') || ! this.model.is_main() ){
-					// This region is inside another region container
-					this.update_background(); // Allow background applied
-				}
 				if ( col && col != this.col )
 					this.region_resize(col);
 				if ( height > 0 )
@@ -1419,6 +1458,13 @@ define([
 					this.$el.addClass('upfront-region-expand-lock');
 				else
 					this.$el.removeClass('upfront-region-expand-lock');
+				if ( this._is_clipped() ){
+					// This region is inside another region container
+					this.update_background(); // Allow background applied
+				}
+				else {
+					this.remove_background();
+				}
 				this.trigger("region_update", this);
 			},
 			region_resize: function (col) {
