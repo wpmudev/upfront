@@ -8270,6 +8270,7 @@ top: -6px;
 	font-size: 14px;
 	height:32px;
 	position: static;
+	overflow: hidden;
 }
 
 .upfront-css-ace{

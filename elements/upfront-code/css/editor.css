@@ -1,13 +1,20 @@
 /* Common */
 .upfront_code-editor button {
 	background: #2ecc90;
-	color: white;
-	float: right;
+	color: #fff;
+	position: absolute;
+	bottom: 20px;
+	right: 40px;
 }
 .upfront_code-editor {
-	position: absolute;
+	position: fixed;
 	width: 100%;
 	cursor: auto;
+	right: 0;
+	bottom: 0;
+	z-index: 100;
+	min-height: 200px;
+	display: none
 }
 .upfront-icon-button.re-edit:before {
 	/*
@@ -46,27 +53,55 @@
 	border: none;
 	outline: none;
 }
-.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper {
-	background: #95a3b0;
-	padding: 10px;
+.upfront_code-editor .upfront_code-editor-complex-wrapper {
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	background: #3d5266;
+	min-height: 200px;
 }
-.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-switch, 
-.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .error.javascript
-{
-	display: inline-block;
-	margin: 0 10px;
-	padding: 0 5px;
+
+
+.upfront_code-switch {
+	color: #cbe5ff;
+	float: left;
+	padding: 2px 5px;
+	margin: 2px 5px 0 0;
 	cursor: pointer;
-	color: #444d56;
 }
-.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .error.javascript .upfront-icon-button:before {
+
+.upfront_code-switch:first-child {
+	margin-left: 50px;
+}
+
+.upfront_code-switch:hover {
+	color: #dae6f2;
+	background: #2E3D4C;
+}
+
+.upfront_code-switch.active {
+	background: #26333F ;
+}
+
+.upfront_code-jsalert {
+	display: inline-block;
+	margin: 0 5px 0;
+	padding: 0 5px;
+	color: #444d56;
+	display: none;
+	float: left;
+}
+
+.upfront_code-jsalert .upfront-icon-button:before {
 	background-position: -480px -205px;
 	margin-top: 7px;
 }
-.upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-switch.active {
-	color: white;
-	background: #454e58;
+
+.upfront_code-editor-section {
+	height: 100%;
 }
+
 .upfront_code-editor.upfront_code-editor-complex .upfront_code-editor-complex-wrapper .upfront_code-editor-section {
 	display: none;
 }
@@ -79,3 +114,9 @@
 	line-height: 7px;
 	bottom: 5px;
 }
+
+.ace_editor.upfront_code-ace {
+	height: 100%;
+	width: 100%;
+}
+

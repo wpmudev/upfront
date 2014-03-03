@@ -7,7 +7,7 @@
 		<?php } ?>
 
 	<?php if($include_image_caption && $caption_position != 'below_image'){ ?>
-	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $captionBackground ? $background : '' ?>">
+	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>">
 		<?php if($cover_caption) { ?>
 			<div class="uimage-caption-cover">
 		<?php } ?>
@@ -24,7 +24,7 @@
 
 </div>
 <?php if($include_image_caption && $caption_position == 'below_image'){ ?>
-<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="color:<?php echo $color ?>; background:<?php echo $background ?>">
+<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>">
 	<?php echo $image_caption ?>
 </div>
 <?php } ?>

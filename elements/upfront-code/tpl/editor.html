@@ -1,0 +1,29 @@
+<div>
+<!-- Div to select elements inside -->
+
+<div id="editorTpl">
+		<div class="upfront_code-editor-complex-wrapper">
+			<div class="upfront-css-top ui-resizable-handle ui-resizable-n">
+				<span class="upfront-css-type">Code Element</span>
+				<div class="upfront_code-switch active" data-for="markup">HTML</div>
+				<div class="upfront_code-switch" data-for="style">CSS</div>
+				<div class="upfront_code-switch" data-for="script">JS</div>
+				<div class="upfront_code-jsalert error javascript"><i class="upfront-icon-button" title="There is an error in your JS code"></i></div>
+				<a class="upfront-css-close" href="#">close</a>
+			</div>
+			<div class="upfront-css-body">
+				<div class="upfront_code-editor-section upfront_code-markup active">
+					<div class="upfront_code-ace" data-type="markup" >{{markup}}</div>
+				</div>
+				<div class="upfront_code-editor-section upfront_code-style">
+					<div class="upfront_code-ace" data-type="style" >{{style}}</div>
+				</div>
+				<div class="upfront_code-editor-section upfront_code-script">
+					<div class="upfront_code-ace" data-type="script" >{{script}}</div>
+				</div>
+				<button>ok</button>
+			</div>
+		</div>
+</div>
+
+</div>

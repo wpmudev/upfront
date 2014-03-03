@@ -1,9 +1,12 @@
 ;(function ($, undefined) {
 define([
-	'text!elements/upfront-code/css/editor.css'
-], function (style) {
+	'text!elements/upfront-code/css/editor.css',
+	'text!elements/upfront-code/tpl/editor.html'
+], function (style, tplSource) {
 
 $("head").append('<style>' + style + '</style>');
+
+var tpls = $(tplSource);
 
 var CodeModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
@@ -51,7 +54,7 @@ var Views = {
 	}),
 
 	Create: Upfront.Views.ObjectView.extend({
-		
+
 		is_editing: false,
 		script_error: false,
 
@@ -61,32 +64,30 @@ var Views = {
 			"script": "javascript"
 		},
 
-		MIN_HEIGHT: 50,
+		MIN_HEIGHT: 200,
+
+		editorTpl: _.template(tpls.find('#editorTpl').html()),
+
+		initialize: function() {
+			var script = this.fallback('script');
+			this.checkJS(script);
+		},
 
 		get_content_markup: function () {
-			var markup = this.model.get_property_value_by_name('markup') || Upfront.data.upfront_code.defaults.fallbacks.markup,
-				raw_style = this.model.get_property_value_by_name('style') || Upfront.data.upfront_code.defaults.fallbacks.style,
-				script = this.model.get_property_value_by_name('script') || Upfront.data.upfront_code.defaults.fallbacks.script,
-				element_id = this.model.get_property_value_by_name('element_id'),
+			var markup = this.fallback('markup'),
+				raw_style = this.fallback('style'),
+				script = this.script_error ? '' : '(function($){' + this.fallback('script') + '})(jQuery)',
+				element_id = this.property('element_id'),
 				style = ''
 			;
+
+			console.log('CODE');
+
 			// Scope the styles!
 			if (raw_style) _(raw_style.split("}")).each(function (el, idx) {
 				if (!el.length) return true;
 				style += '#' + element_id + ' .upfront_code-element ' + el + '}';
 			});
-
-			// Validate script before adding it in
-			// DOWNSIDE! Executing twice.
-			script = ';try { (function ($) {' + script + "\n" + '})(jQuery); } catch(e) {}';
-			// Set up flag
-			this.script_error = false;
-			try {
-				eval(script);
-			} catch (e) {
-				script = '';
-				this.script_error = true;
-			}
 
 			return '<section class="upfront_code-element clearfix">' + markup +
 				'<style>' + style + '</style>' +
@@ -101,9 +102,9 @@ var Views = {
 				me.on_edit();
 			});
 			if (
-				!this.model.get_property_value_by_name('markup') &&
-				!this.model.get_property_value_by_name('style') &&
-				!this.model.get_property_value_by_name('script')
+				!this.property('markup') &&
+				!this.property('style') &&
+				!this.property('script')
 			) {
 				setTimeout(function () {
 					me.on_edit();
@@ -111,126 +112,158 @@ var Views = {
 			}
 		},
 
-		on_edit: function () {
+		on_edit: function(){
 			if (this.is_editing) return false;
 			this.is_editing = true;
-			var me = this,
-				$draggable = this.$el.closest('.ui-draggable'),
-				update_position = function () {
-					var $output = me.$el.find("section.upfront_code-element"),
-						$editor = me.$el.find("section.upfront_code-editor"),
-						top = $output.height() + $output.offset().top
-					;
-					$editor.offset({top: top});
-				},
-				editors = {}
-			;
-			this.$el.append(
-				'<section class="upfront_code-editor upfront_code-editor-complex">' +
-					'<div class="upfront_code-editor-complex-wrapper">' +
-						'<div class="upfront_code-switch active" data-for="markup">HTML</div>' +
-						'<div class="upfront_code-switch" data-for="style">CSS</div>' +
-						'<div class="upfront_code-switch" data-for="script">JS</div>' +
-						'<div class="upfront_code-editor-section upfront_code-markup active">' +
-							'<div data-type="markup" >' + (this.model.get_property_value_by_name('markup') || Upfront.data.upfront_code.defaults.fallbacks.markup)  + '</div>' +
-						'</div>' +
-						'<div class="upfront_code-editor-section upfront_code-style">' +
-							'<div data-type="style" >' + (this.model.get_property_value_by_name('style') || Upfront.data.upfront_code.defaults.fallbacks.style) + '</div>' +
-						'</div>' +
-						'<div class="upfront_code-editor-section upfront_code-script">' +
-							'<div data-type="script" >' + (this.model.get_property_value_by_name('script') || Upfront.data.upfront_code.defaults.fallbacks.script) + '</div>' +
-						'</div>' +
-						'<div class="handle ui-resizable-handle ui-resizable-s">&hellip;</div>' +
-					'</div>' +
-					'<button>ok</button>' +
-				'</section>'
-			);
-			update_position();
-			// Disable the draggable
-			$draggable.draggable('disable');
-			Upfront.Behaviors.GridEditor.toggle_resizables(false);
-			this.$el
-				.find(".upfront_code-editor-section>div").each(function () {
-					var $me = $(this),
-						type = $me.attr("data-type") || "markup",
-						code = "markup" === type ? $me.html() : '',
-						editor = ace.edit(this),
-						syntax = me.SYNTAX_TYPES[type],
-					// Height settings
-						$parent = me.$el.closest(".upfront-module"),
-						$out = me.$el.find("section.upfront_code-element"),
-						$button = me.$el.find("section button"),
-						height = ($parent.height() - ($out.outerHeight() + $button.outerHeight())) - 4*Upfront.Settings.LayoutEditor.Grid.baseline
-					;
-					$me.height(
-						(height < me.MIN_HEIGHT ? me.MIN_HEIGHT : height)
-					);
-					editor.getSession().setUseWorker(false);
-					editor.setTheme("ace/theme/monokai");
-					editor.getSession().setMode("ace/mode/" + syntax);
-					if ("markup" === type) {
-						if (code.length) editor.getSession().setValue(code);
-						// Okay, so let's do Emmet too, why not
-						//editor.setOption("enableEmmet", true); // Because it wieghs 360kb, that's why not :)
-					}
-					editors[type] = editor;
-				}).end()
-				.find(".upfront_code-switch")
-					.on("click", function () {
-						var $me = $(this),
-							tgt = $me.attr("data-for"),
-							$target = $me.siblings(".upfront_code-editor-section.upfront_code-" + tgt)
-						;
-						$(".upfront_code-switch,.upfront_code-editor-section").removeClass("active");
-						$me.addClass("active");
-						$target.addClass("active");
-					})
-				.end()
-				.find(".upfront_code-editor-complex-wrapper")
-					.resizable({
-						handles: {
-							s: ".handle"
-						}
-					})
-					.on("resizestop", function (e, ui) {
-						var $editors = me.$el.find(".upfront_code-editor-section>div"),
-							diff = ui.size.height - me.$el.find(".upfront_code-switch").height(),
-							pads = ui.element.outerHeight() - ui.element.height()
-						;
-						$editors.height(diff-pads);
-						_(editors).invoke("resize");
-				}).end()
-				.find("button").on("click", function () {
-					_(editors).each(function (editor, type) {
-						me.model.set_property(type, editor.getValue(), true);
-					});
-					me.$el
-						.find("section.upfront_code-element").replaceWith(me.get_content_markup()).end()
-						.find("section.upfront_code-editor").remove()
-					;
-					me.is_editing = false;
-					$draggable.draggable('enable');
-					Upfront.Behaviors.GridEditor.toggle_resizables(true);
-					me.trigger("code:model:updated");
-				})
-			;
-			_(editors).each(function (editor, type) {
-				editor.on("change", function () {
-					me.model.set_property(type, editor.getValue(), true);
-					me.$el.find("section.upfront_code-element").replaceWith(me.get_content_markup());
-					if (me.script_error) {
-						if (!me.$el.find(".error.javascript").length) me.$el.find(".upfront_code-switch:last").after('<div class="error javascript"><i class="upfront-icon-button" title="There is an error in your JS code"></i></div>');
-					} else {
-						me.$el.find(".error.javascript").remove();
-					}
-					update_position();
+
+			var $editor = $('#upfront_code-editor')
+
+			if(!$editor.length){
+				$editor = $('<section id="upfront_code-editor" class="upfront_code-editor upfront_code-editor-complex"></section>');
+				$('body').append($editor);
+			}
+
+			this.createEditor($editor);
+		},
+
+		createEditor: function($editor){
+			var me = this;
+			$editor.html(this.editorTpl({
+				markup: this.fallback('markup'),
+				style: this.fallback('style'),
+				script: this.fallback('script')
+			}));
+
+			$editor.show();
+
+			console.log('create editor');
+
+			this.resizeHandler = this.resizeHandler || function(){
+				$editor.width($(window).width() - $('#sidebar-ui').width() -1);
+			};
+			$(window).on('resize', this.resizeHandler);
+			this.resizeHandler();
+
+			//Start the editors
+			this.editors = {};
+			this.timers = {};
+			$editor.find('.upfront_code-ace').each(function(){
+				var $this = $(this),
+					html = $this.html(),
+					editor = ace.edit(this),
+					syntax = $this.data('type')
+				;
+
+				editor.getSession().setUseWorker(false);
+				editor.setTheme("ace/theme/monokai");
+				editor.getSession().setMode("ace/mode/" + me.SYNTAX_TYPES[syntax]);
+				editor.setShowPrintMargin(false);
+
+				if ("markup" === syntax && html)
+						editor.getSession().setValue(html);
+
+				// Live update
+				editor.on('change', function(){
+					if(me.timers[syntax])
+						clearTimeout(me.timers[syntax]);
+					me.timers[syntax] = setTimeout(function(){
+						var value = editor.getValue();
+
+						if(syntax == 'script')
+							me.checkJS(value);
+
+						if(me.script_error)
+							$editor.find('.upfront_code-jsalert').show().find('i').attr('title', 'JS error: ' + me.script_error);
+						else
+							$editor.find('.upfront_code-jsalert').hide();
+
+						me.property(syntax, value, false);
+					}, 1000);
 				});
+
+				me.editors[syntax] = editor;
 			});
+
+			var editorTop = $editor.find('.upfront-css-top'),
+				editorBody = $editor.find('.upfront-css-body')
+			;
+
+			//Start resizable
+			editorBody.height(this.MIN_HEIGHT - editorTop.outerHeight());
+			$editor.find(".upfront_code-editor-complex-wrapper").resizable({
+				handles: {
+					n: ".upfront-css-top"
+				},
+				resize: function(e, ui){
+					editorBody.height(ui.size.height - editorTop.outerHeight());
+					_.each(me.editors, function(editor){
+						editor.resize();
+					});
+				},
+				minHeight: me.MIN_HEIGHT,
+				delay:  100
+			});
+
+			//switch tabs
+			$editor.find(".upfront_code-switch").on('click', function(e){
+				var tab = $(e.target),
+					syntax = tab.data('for')
+				;
+				$editor.find('.active').removeClass('active');
+				tab.addClass('active');
+				$editor.find('.upfront_code-' + syntax).addClass('active');
+				me.editors[syntax].resize();
+			});
+
+			//save edition
+			$editor.find('button').on('click', function(e){
+				_.each(me.editors, function(editor, type){
+					me.property(type, editor.getValue());
+				});
+
+				me.$("section.upfront_code-element").replaceWith(me.get_content_markup()).end();
+				me.is_editing = false;
+				me.destroyEditor();
+			});
+		},
+
+		destroyEditor: function(){
+			var me = this;
+			if(this.editors && this.editors.length){
+				_.each(this.editors, function(ed){
+					ed.destroy();
+				});
+				me.editors = false;
+			}
+			$('#upfront_code-editor').html('').hide();
+			$(window).off('resize', this.resizeHandler);
+		},
+
+		checkJS: function(script){
+			this.script_error = false;
+			try {
+				eval(script);
+			} catch (e) {
+				this.script_error = e.message;
+			}
+		},
+
+		fallback: function(attribute){
+			return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
+		},
+
+		property: function(name, value, silent) {
+			if(typeof value != "undefined"){
+				if(typeof silent == "undefined")
+					silent = true;
+				return this.model.set_property(name, value, silent);
+			}
+			return this.model.get_property_value_by_name(name);
 		}
 	}),
 
 	Embed: Upfront.Views.ObjectView.extend({
-		
+
 		is_editing: false,
 
 		get_content_markup: function () {

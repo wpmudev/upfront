@@ -73,6 +73,7 @@ C:/workspace/webs/wordpress/wp-content/themes/upfront/elements/upfront-widget/js
 text!elements/upfront-youtube/tpl/youtube.html
 C:/workspace/webs/wordpress/wp-content/themes/upfront/elements/upfront-youtube/js/uyoutube.js
 text!elements/upfront-code/css/editor.css
+text!elements/upfront-code/tpl/editor.html
 C:/workspace/webs/wordpress/wp-content/themes/upfront/elements/upfront-code/js/upfront_code.js
 upfront/upfront-application.js
 upfront/upfront-util.js
