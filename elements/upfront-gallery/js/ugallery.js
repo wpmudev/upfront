@@ -85,8 +85,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				this.imageLabels = ugalleries[elementId].image_labels;
 		}
 		else{
+			/*
 			if(!ugalleries)
 				ugalleries = {};
+			*/
+			if ('undefined' === typeof ugalleries || !ugalleries) ugalleries = {};
 
 			ugalleries[elementId] = {};
 
