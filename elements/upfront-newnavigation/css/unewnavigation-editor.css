@@ -74,7 +74,6 @@ div.upfront-navigation.upfront-editable_entity ul li:not(.edit_mode):hover:befor
 	position:absolute;
 	height:100%;
 	width:100%;
-	padding: 0 10px;
 	top:0;
 	left:0;
 	border:1px #ddd dotted;
@@ -203,3 +202,25 @@ div.upfront-navigation [data-style="vertical"] .menu li {
 	left: 112px;
 	border-bottom-color: rgb(99, 134, 166);
 }
+
+
+
+
+/* DEFAULT STYLING */
+
+div.upfront-navigation.upfront-editable_entity ul.menu > li {
+	display: inline-block;
+	margin: 0 8px;
+	position: relative;
+    text-transform: uppercase;
+
+}
+
+/*
+div.upfront-navigation.upfront-editable_entity ul.menu li > a.menu_item {
+	  padding: 4px 10px;
+	  color:#888;
+	  font-size:1.2em;
+}
+
+*/
