@@ -374,7 +374,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 	function save_styles(){
 		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
-		$styles = wp_kses($_POST['styles'], array());
+		$styles = wp_kses(stripslashes($_POST['styles']), array());
 		$element_type = isset($_POST['elementType']) ? sanitize_key($_POST['elementType']) : 'unknown';
 		$db_option = 'upfront_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option);

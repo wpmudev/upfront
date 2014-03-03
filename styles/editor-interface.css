@@ -8424,3 +8424,7 @@ div.ace_editor .ace_fold {
 .upfront-css-save-form button:hover{
 	background: #3ea;
 }
+
+.upfront-css-hilite {
+	outline: 3px solid #3ea !important;
+}

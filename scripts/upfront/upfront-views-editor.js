@@ -3502,7 +3502,9 @@ var CSSEditor = Backbone.View.extend({
 		'click .upfront-css-close': 'close',
 		'click .upfront-css-image': 'openImagePicker',
 		'click .upfront-css-selector': 'addSelector',
-		'click .upfront-css-type' : 'scrollToElement'
+		'click .upfront-css-type' : 'scrollToElement',
+		'mouseenter .upfront-css-selector': 'hiliteElement',
+		'mouseleave .upfront-css-selector': 'unhiliteElement'
 	},
 	elementTypes: {
 		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
@@ -3624,7 +3626,9 @@ var CSSEditor = Backbone.View.extend({
 			},1000);
 		});
 		if(this.name){
-			var styles = $('#upfront-style-' + this.selector).html().replace('.upfront-object.' + this.selector + ' ', '');
+			var scope = new RegExp('.upfront-object.' + this.selector + '\s*', 'g'),
+				styles = $('#upfront-style-' + this.selector).html().replace(scope, '')
+			;
 			editor.setValue($.trim(styles), -1);
 		}
 		editor.focus();
@@ -3693,7 +3697,6 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	blink: function(element, times) {
-
 		var me = this;
 		element.css('outline', '3px solid #3ea');
 		setTimeout(function(){
@@ -3709,6 +3712,22 @@ var CSSEditor = Backbone.View.extend({
 		}, 100);
 	},
 
+	hiliteElement: function(e){
+		var selector = $(e.target).data('selector');
+		if(!selector.length)
+			return;
+		var element = $('#' + this.element_id).parent();
+		element.find(selector).addClass('upfront-css-hilite');
+	},
+
+	unhiliteElement: function(e){
+		var selector = $(e.target).data('selector');
+		if(!selector.length)
+			return;
+		var element = $('#' + this.element_id).parent();
+		element.find(selector).removeClass('upfront-css-hilite');
+	},
+
 	remove: function(){
 		Backbone.View.prototype.remove.call(this);
 		$(window).off('resize', this.resizeHandler);
@@ -3722,13 +3741,15 @@ var CSSEditor = Backbone.View.extend({
 
 	stylesAddSelector: function(contents, selector){
 		var rules = contents.split('}'),
-			separator = '\n ' + selector + ' ',
+			separator = '\n\n' + selector + ' ',
 			styles
 		;
 
+		rules = _.map(rules, function(rule){return $.trim(rule);});
+
 		rules.pop();
 
-		return separator + rules.join('}' + separator) + '}';
+		return separator + rules.join('\n}' + separator) + '\n}';
 	},
 
 	save: function(e){
