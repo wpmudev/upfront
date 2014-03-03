@@ -677,6 +677,7 @@ var Application = new (Backbone.Router.extend({
 		var cssEditor = new Upfront.Views.Editor.CSSEditor();
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
+
 			$('#upfront-theme-styles').remove();
 			_.each(styles, function(elementStyles, elementType){
 				_.each(elementStyles, function(style, name){

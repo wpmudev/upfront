@@ -3450,6 +3450,7 @@ var _Settings_CSS = SettingsItem.extend({
 	},
 	initialize: function(options) {
 		SettingsItem.prototype.initialize.call(this, options);
+		if (!Upfront.Application.cssEditor) return false;
 
 		var styleType = Upfront.Application.cssEditor.elementTypes[this.model.get_property_value_by_name('type')],
 			values = [{label: 'Default', value: ''}],
