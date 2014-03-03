@@ -210,8 +210,8 @@ abstract class Upfront_Entity {
 	protected function _get_background_css () {
 		$type = $this->get_background_type();
 		$css = array();
+		$background_color = $this->_get_property('background_color');
 		if ( !$type || $type == 'image' || $type == 'color' ){
-			$background_color = $this->_get_property('background_color');
 			$background_image = $this->_get_property('background_image');
 			$background_repeat = $this->_get_property('background_repeat');
 			$background_fill = $this->_get_property('background_fill');
@@ -232,6 +232,11 @@ abstract class Upfront_Entity {
 					$css[] = 'background-position: ' . $background_position;
 				}
 			}
+		}
+		else if ( $type == 'video' ){
+			$background_video_style = $this->_get_property('background_video_style');
+			if ( $background_video_style == 'inside' && $background_color )
+				$css[] = 'background-color: ' . $background_color;
 		}
 		return implode('; ', $css);
 	}
@@ -290,9 +295,15 @@ abstract class Upfront_Entity {
 			$embed = $this->_get_property('background_video_embed');
 			$width = $this->_get_property('background_video_width');
 			$height = $this->_get_property('background_video_height');
+			$style = $this->_get_property('background_video_style');
 			if ( $video && $embed ){
-				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '"';
-				$markup = $embed;
+				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
+				$attr .= 'data-bg-video-style="' . $style . '" ';
+				// hack autoplay
+				if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"].*$)/i', $embed, $match) )
+					$markup = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&' : '?' ) . 'autoplay=1' . $match[3];
+				else
+					$markup = $embed;
 			}
 		}
 		return "<div class='{$classes}' {$attr}>{$markup}</div>";

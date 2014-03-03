@@ -61,6 +61,30 @@ define([
 				this.listenTo(this.model, "change", this.render);
 				if (this.init) this.init();
 			},
+			_get_full_size: function ($wrap, ratio, inside) {
+				var width = $wrap.width(),
+					height = $wrap.height();
+				if ( !inside ){
+					if ( Math.round(height/width*100)/100 > ratio ){
+						var w = (height/ratio);
+						return [ w, height, (width-w)/2, 0 ];
+					}
+					else {
+						var h = (width*ratio);
+						return [ width, h, 0, (height-h)/2 ];
+					}
+				}
+				else {
+					if ( Math.round(height/width*100)/100 < ratio ){
+						var w = (height/ratio);
+						return [ w, height, (width-w)/2, 0 ];
+					}
+					else {
+						var h = (width*ratio);
+						return [ width, h, 0, (height-h)/2 ];
+					}
+				}
+			},
 			update_background: function () {
 				var type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
@@ -81,20 +105,12 @@ define([
 					if ( type != 'color' && image ){
 						this.$el.css('background-image', "url('" + image + "')");
 						if ( style == 'full' ){
-							if ( Math.round(height/width*100)/100 > ratio ){
-								this.$el.css({
-									backgroundSize: (height/ratio) + "px " + height + "px", // "auto 100%",
-									backgroundRepeat: "no-repeat",
-									backgroundPosition: "50% 50%"
-								});
-							}
-							else {
-								this.$el.css({
-									backgroundSize: width + "px " + (width*ratio) + "px", // "100% auto",
-									backgroundRepeat: "no-repeat",
-									backgroundPosition: "50% 50%"
-								});
-							}
+							var size = this._get_full_size(this.$el, ratio, false);
+							this.$el.css({
+								backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
+								backgroundRepeat: "no-repeat",
+								backgroundPosition: "50% 50%"
+							});
 						}
 						else {
 							this.$el.css({
@@ -132,12 +148,6 @@ define([
 						$type.show();
 					}
 					$overlay.find('.upfront-region-bg').not($type).hide();
-					if ( type == 'map' ){
-						this.update_background_map($type, $overlay);
-					}
-					else if ( type == 'slider' ){
-						this.update_background_slider($type, $overlay);
-					}
 					this.$el.css({
 						backgroundColor: "",
 						backgroundImage: "none",
@@ -145,6 +155,15 @@ define([
 						backgroundRepeat: "",
 						backgroundPosition: ""
 					});
+					if ( type == 'map' ){
+						this.update_background_map($type, $overlay);
+					}
+					else if ( type == 'slider' ){
+						this.update_background_slider($type, $overlay);
+					}
+					else if ( type == 'video' ){
+						this.update_background_video($type, $overlay);
+					}
 				}
 				Upfront.Events.trigger("entity:background:update", this, this.model);
 			},
@@ -219,6 +238,46 @@ define([
 					}
 				}
 			},
+			update_background_video: function ($type, $overlay) {
+				var me = this,
+					color = this.model.get_property_value_by_name('background_color'),
+					video = this.model.get_property_value_by_name('background_video'),
+					embed = this.model.get_property_value_by_name('background_video_embed'),
+					width = this.model.get_property_value_by_name('background_video_width'),
+					height = this.model.get_property_value_by_name('background_video_height'),
+					style = this.model.get_property_value_by_name('background_video_style') || 'crop',
+					ratio, $embed;
+				if ( style == 'inside' && color )
+					this.$el.css('background-color', color);
+				else
+					this.$el.css('background-color', '');
+				if ( video && embed && ( this._prev_video && this._prev_video != video || !this._prev_video ) ){
+					ratio = height/width;
+					$embed = $(embed);
+					$embed.css('position', 'absolute').appendTo($type);
+					if ( style == 'crop' || style == 'inside' ){
+						var size = this._get_full_size($type, ratio, (style == 'inside'));
+						$embed.css({
+							width: size[0],
+							height: size[1],
+							left: size[2],
+							top: size[3]
+						});
+					}
+					else if ( style == 'full' ){
+						$embed.css({
+							width: $type.width(),
+							height: $type.height(),
+							left: 0,
+							top: 0
+						});
+					}
+					this._prev_video = video;
+				}
+				else {
+					this.refresh_background();
+				}
+			},
 			refresh_background: function () {
 				var type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
@@ -229,27 +288,49 @@ define([
 				else if ( type == 'slider' ) {
 					this.$el.find('.upfront-region-bg-' + type).trigger('refresh');
 				}
+				else if ( type == 'video' ) {
+					var video = this.model.get_property_value_by_name('background_video'),
+						embed = this.model.get_property_value_by_name('background_video_embed'),
+						width = this.model.get_property_value_by_name('background_video_width'),
+						height = this.model.get_property_value_by_name('background_video_height'),
+						style = this.model.get_property_value_by_name('background_video_style') || 'crop',
+						ratio,
+						$type = this.$el.find('.upfront-region-bg-' + type),
+						$embed = $type.children('iframe');
+					if ( video && embed ){
+						ratio = height/width;
+						if ( style == 'crop' || style == 'inside' ){
+							var size = this._get_full_size($type, ratio, (style == 'inside'));
+							$embed.css({
+								width: size[0],
+								height: size[1],
+								left: size[2],
+								top: size[3]
+							});
+						}
+						else if ( style == 'full' ){
+							$embed.css({
+								width: $type.width(),
+								height: $type.height(),
+								left: 0,
+								top: 0
+							});
+						}
+					}
+					
+				}
 				else if ( ( !type || type == 'image' ) && image ) {
 					var style = this.model.get_property_value_by_name('background_style'),
 						ratio = this.model.get_property_value_by_name('background_image_ratio'),
 						width = this.$el.outerWidth(),
 						height = this.$el.outerHeight();
-				console.log([width, height])
 					if ( style == 'full' ){
-						if ( Math.round(height/width*100)/100 > ratio ){
-							this.$el.css({
-								backgroundSize: (height/ratio) + "px " + height + "px", // "auto 100%",
-								backgroundRepeat: "no-repeat",
-								backgroundPosition: "50% 50%"
-							});
-						}
-						else {
-							this.$el.css({
-								backgroundSize: width + "px " + (width*ratio) + "px", // "100% auto",
-								backgroundRepeat: "no-repeat",
-								backgroundPosition: "50% 50%"
-							});
-						}
+						var size = this._get_full_size(this.$el, ratio, false);
+						this.$el.css({
+							backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
+							backgroundRepeat: "no-repeat",
+							backgroundPosition: "50% 50%"
+						});
 					}
 				}
 			},

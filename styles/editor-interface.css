@@ -1801,6 +1801,9 @@ a.ueditor-action-pickercancel{
 .upfront-region-bg-map {
 	position: absolute !important;
 }
+.upfront-region-bg-video {
+	overflow: hidden;
+}
 .upfront-region-edit-trigger {
 	position: absolute;
 	top: 0;

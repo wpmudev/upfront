@@ -5104,7 +5104,7 @@ var Field_Anchor = Field_Select.extend({
 					step: 1
 				},
 				fields = {
-					bg_video: new Field_Text({
+					video: new Field_Text({
 						model: this.model,
 						property: 'background_video',
 						label: "Video URL:",
@@ -5112,24 +5112,24 @@ var Field_Anchor = Field_Select.extend({
 						change: function () {
 							var value = this.get_value();
 							if ( value ){
+								me.model.set_property('background_video_embed', "");
 								me.get_video_embed(value).done(function(response){
 									console.log(response);
 									if ( !response.data || !response.data.width || !response.data.height )
 										return;
-									var width = fields.bg_video_width,
-										height = fields.bg_video_height;
+									var width = fields.width,
+										height = fields.height;
 									width.get_field().val(response.data.width);
 									width.trigger('changed');
 									height.get_field().val(response.data.height);
 									height.trigger('changed');
 									me.model.set_property('background_video_embed', response.data.html);
-									console.log(me.model)
 								});
 							}
 							this.property.set({value: value});
 						}
 					}),
-					bg_video_width: new Field_Number(_.extend({
+					width: new Field_Number(_.extend({
 						model: this.model,
 						property: 'background_video_width',
 						label: "Width:",
@@ -5141,7 +5141,7 @@ var Field_Anchor = Field_Select.extend({
 							this.property.set({value: value});
 						}
 					}, pos_option)),
-					bg_video_height: new Field_Number(_.extend({
+					height: new Field_Number(_.extend({
 						model: this.model,
 						property: 'background_video_height',
 						label: "Height:",
@@ -5152,13 +5152,50 @@ var Field_Anchor = Field_Select.extend({
 							var value = this.get_value();
 							this.property.set({value: value});
 						}
-					}, pos_option))
+					}, pos_option)),
+					style: new Field_Select({
+						model: this.model,
+						label: "Style:",
+						property: 'background_video_style',
+						default_value: ["crop"],
+						values: [
+							{ label: "Cropped", value: "crop" },
+							{ label: "Full", value: "full" },
+							{ label: "Inside", value: "inside" }
+						],
+						change: function () {
+							var value = this.get_value();
+							if ( value == 'inside' )
+								fields.color.$el.show();
+							else
+								fields.color.$el.hide();
+							this.property.set({value: value});
+						}
+					}),
+					color: new Field_Color({
+						model: this.model,
+						label: "Background Color:",
+						property: 'background_color',
+						default_value: '#ffffff',
+						spectrum: {
+							move: function (color) {
+								me.preview_color(color);
+							},
+							change: function (color) {
+								me.update_color(color);
+							},
+							hide: function (color) {
+								me.reset_color();
+							}
+						}
+					}),
 				};
 			$tab.html('');
 			_.each(fields, function (field) {
 				field.render();
 			});
-			this._render_tab_template($tab, '', [fields.bg_video.$el, fields.bg_video_width.$el, fields.bg_video_height.$el]);
+			this._render_tab_template($tab, '', [fields.video.$el, fields.width.$el, fields.height.$el, fields.style.$el, fields.color.$el]);
+			fields.style.trigger('changed');
 		},
 		get_video_embed: function (url) {
 			return Upfront.Util.post({

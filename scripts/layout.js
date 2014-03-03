@@ -49,14 +49,13 @@ jQuery(document).ready(function($){
 			var width = $(this).outerWidth(),
 				height = $(this).outerHeight(),
 				ratio = parseFloat($(this).attr('data-bg-video-ratio')),
+				style = $(this).attr('data-bg-video-style') || 'crop',
 				$embed = $(this).children('iframe');
 			$(this).css('overflow', 'hidden');
 			$embed.css({
 				position: 'absolute'
 			});
-			if ( typeof upfront_video_embed == 'undefined' )
-				upfront_video_embed = 'crop';
-			if ( upfront_video_embed == 'crop' ){
+			if ( style == 'crop' ){
 				if ( Math.round(height/width*100)/100 > ratio ){
 					var embed_w = (height/ratio);
 					$embed.css({
@@ -76,7 +75,7 @@ jQuery(document).ready(function($){
 					});
 				}
 			}
-			else if ( upfront_video_embed == 'full' ) {
+			else if ( style == 'full' ) {
 				$embed.css({
 					top: 0,
 					left: 0,
@@ -84,7 +83,7 @@ jQuery(document).ready(function($){
 					height: height
 				});
 			}
-			else if ( upfront_video_embed == 'inside' ) {
+			else if ( style == 'inside' ) {
 				if ( Math.round(height/width*100)/100 < ratio ){
 					var embed_w = (height/ratio);
 					$embed.css({
