@@ -872,9 +872,15 @@
 .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar,
 .upfront-media_collection::-webkit-scrollbar,
 .upfront-item-control::-webkit-scrollbar,
-.upfront-filter-control::-webkit-scrollbar {
+.upfront-filter-control::-webkit-scrollbar,
+#upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
+#upfront-csseditor .ace_scrollbar::-webkit-scrollbar  {
 	background: none;
 	width: 5px;
+}
+/* overwriting Ace editor scrollbar */
+#upfront-csseditor .ace_scrollbar {
+	width: 5px! important;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-track,
 .upfront-scroll-panel::-webkit-scrollbar-track,
@@ -884,7 +890,9 @@
 .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar-track,
 .upfront-media_collection::-webkit-scrollbar-track,
 .upfront-item-control::-webkit-scrollbar-track,
-.upfront-filter-control::-webkit-scrollbar-track {
+.upfront-filter-control::-webkit-scrollbar-track,
+#upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-track,
+#upfront-csseditor .ace_scrollbar::-webkit-scrollbar-track {
 }
 
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-thumb,
@@ -895,7 +903,9 @@
 .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar-thumb,
 .upfront-media_collection::-webkit-scrollbar-thumb,
 .upfront-item-control::-webkit-scrollbar-thumb,
-.upfront-filter-control::-webkit-scrollbar-thumb {
+.upfront-filter-control::-webkit-scrollbar-thumb,
+#upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb,
+#upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb {
 	border-right: 5px solid #1fcd8f;
 }
 
@@ -8266,9 +8276,10 @@ top: -6px;
 
 .upfront-css-top{
 	border-bottom: 1px solid #26333F;
+	border-top: 1px solid #26333F;
 	color: #dae6f2;
 	font-size: 14px;
-	height:32px;
+	height:34px;
 	position: static;
 	overflow: hidden;
 }
@@ -8285,16 +8296,20 @@ top: -6px;
 	height: 100%;
 	float:right;
 	position: relative;
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
 }
 
 .upfront-css-type {
 	float:left;
 	display: block;
 	background-color: #2E3D4C;
-	padding: 0px 5px;
+	padding: 0px 10px;
 	margin: 4px;
 	height: 24px;
 	cursor: pointer;
+	border-radius:3px;
+	font-weight:300;
 }
 
 a.upfront-css-image {
@@ -8306,6 +8321,8 @@ a.upfront-css-image {
 	height: 24px;
 	color: #dae6f2 !important;
 	line-height: 20px;
+	font-size:11px;
+	font-family: verdana, sans-serif;
 }
 
 input[type=text].upfront-css-color {
@@ -8320,8 +8337,12 @@ input[type=text].upfront-css-color {
 }
 
 .upfront-css-top .sp-preview {
-	border-radius: 0;
+	border-radius: 3px;
 	margin: 0;
+	border:1px solid rgb(54,72,89) !important;
+  -webkit-background-clip: padding-box; 
+  -moz-background-clip:    padding; 
+  background-clip:         padding-box;
 }
 
 a.upfront-css-image:hover {
@@ -8363,7 +8384,7 @@ div.ace_editor .ace_fold {
 }
 
 .upfront-css-save-form {
-	padding: 2px 15px 15px;
+	padding: 8px 15px 15px;
 	background: #465D72;
 	position: absolute;
 	bottom: 0;
@@ -8371,23 +8392,24 @@ div.ace_editor .ace_fold {
 }
 .upfront-css-sidebar p{
 	color: #dae6f2;
-	font-size:13px;
 	margin-bottom: 0;
 }
 
 .upfront-css-selectors {
-	padding: 2px 15px;
+	padding: 10px 15px;
 	color: #cbe5ff;
-	font-size: 13px;
 	line-height: 20px;
 }
 
 .upfront-css-selector {
-	border: 1px solid #2E3D4C;
+	border: 1px solid rgb(46, 61, 76);
 	display: inline-block;
-	padding: 1px 5px;
+	padding: 2px 5px;
 	cursor: pointer;
 	margin: 5px 5px 0 0;
+	border-radius: 4px;
+	line-height: 14px;
+	color: rgb(170, 191, 210);
 }
 
 .upfront-css-selector:hover {
@@ -8405,7 +8427,10 @@ div.ace_editor .ace_fold {
 	font-size: 14px;
 	color: #85a9cb;
 }
-
+.upfront-css-save-form input.upfront-css-save-name:active,
+.upfront-css-save-form input.upfront-css-save-name:focus{
+	outline:1px solid rgba(31,205,143,.5);
+}
 .upfront-css-save-form input.upfront-css-save-name:focus{
 	color: #cbe5ff;
 }
