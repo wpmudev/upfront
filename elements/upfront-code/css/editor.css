@@ -1,11 +1,5 @@
 /* Common */
-.upfront_code-editor button {
-	background: #2ecc90;
-	color: #fff;
-	position: absolute;
-	bottom: 20px;
-	right: 40px;
-}
+
 .upfront_code-editor {
 	position: fixed;
 	width: 100%;
@@ -16,6 +10,21 @@
 	min-height: 200px;
 	display: none
 }
+
+.upfront_code-editor button {
+	background: #2ecc90;
+	color: #fff;
+	position: absolute;
+	bottom: 10px;
+	right: 25px;
+	padding: 5px 10px;
+	border-radius: 0;
+	font-size: 14px;
+}
+.upfront_code-editor button:hover {
+	background: #3ea;
+}
+
 .upfront-icon-button.re-edit:before {
 	/*
 	background-position: -701px -710px;
@@ -46,6 +55,10 @@
 	text-transform: none;
 }
 
+.upfront_code-editor-simple textarea {
+	min-height: 80px;
+}
+
 /* Complex */
 .upfront_code-editor.upfront_code-editor-complex textarea {
 	color: white;
@@ -62,17 +75,18 @@
 	min-height: 200px;
 }
 
+.upfront_code-switches {
+	margin: 2px 15px 0 20px;
+	float: left;
+}
+
 
 .upfront_code-switch {
 	color: #cbe5ff;
 	float: left;
-	padding: 2px 5px;
+	padding: 2px 10px;
 	margin: 2px 5px 0 0;
 	cursor: pointer;
-}
-
-.upfront_code-switch:first-child {
-	margin-left: 50px;
 }
 
 .upfront_code-switch:hover {

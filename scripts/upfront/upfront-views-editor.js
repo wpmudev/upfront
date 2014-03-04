@@ -3835,7 +3835,6 @@ var CSSEditor = Backbone.View.extend({
 
 	openImagePicker: function(){
 		var me = this;
-		console.log('picker');
 		Upfront.Media.Manager.open({
 			themeImages: true
 		}).done(function(popup, result){
@@ -3846,7 +3845,6 @@ var CSSEditor = Backbone.View.extend({
 			var url = result.models[0].get('original_url').replace(document.location.origin, '');
 			me.editor.insert('url("' + url + '")');
 			me.editor.focus();
-			Upfront.Events.trigger('upfront:element:edit:stop');
 		});
 	},
 

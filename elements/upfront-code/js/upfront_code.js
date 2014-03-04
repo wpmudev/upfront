@@ -98,7 +98,8 @@ var Views = {
 		on_render: function () {
 			this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 			var me = this;
-			this.$el.find(".upfront-entity_meta .re-edit").on("click", function () {
+			this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
+				e.preventDefault();
 				me.on_edit();
 			});
 			if (
@@ -113,13 +114,15 @@ var Views = {
 		},
 
 		on_edit: function(){
-			if (this.is_editing) return false;
+			if (this.is_editing)
+				return false;
+
 			this.is_editing = true;
 
 			var $editor = $('#upfront_code-editor')
 
 			if(!$editor.length){
-				$editor = $('<section id="upfront_code-editor" class="upfront_code-editor upfront_code-editor-complex"></section>');
+				$editor = $('<section id="upfront_code-editor" class="upfront-ui upfront_code-editor upfront_code-editor-complex"></section>');
 				$('body').append($editor);
 			}
 
@@ -184,6 +187,8 @@ var Views = {
 				me.editors[syntax] = editor;
 			});
 
+			this.currentEditor = this.editors['markup'];
+
 			var editorTop = $editor.find('.upfront-css-top'),
 				editorBody = $editor.find('.upfront-css-body')
 			;
@@ -213,6 +218,13 @@ var Views = {
 				tab.addClass('active');
 				$editor.find('.upfront_code-' + syntax).addClass('active');
 				me.editors[syntax].resize();
+				me.currentEditor = me.editors[syntax];
+
+				if(syntax == 'script')
+					$editor.find('upfront-css-image').hide();
+				else
+					$editor.find('upfront-css-image').show();
+
 			});
 
 			//save edition
@@ -225,6 +237,93 @@ var Views = {
 				me.is_editing = false;
 				me.destroyEditor();
 			});
+
+			//Highlight element
+			$editor
+				.on('click', '.upfront-css-type', function(e){
+					me.hiliteElement(e);
+				}) // Close editor
+				.on('click', '.upfront-css-close', function(e){
+					e.preventDefault();
+					me.destroyEditor();
+				})
+			;
+
+			this.prepareSpectrum($editor);
+
+			//Prepare image picker
+			$editor.on('click', '.upfront-css-image', function(){
+				me.openImagePicker();
+			});
+		},
+
+		prepareSpectrum: function($editor){
+			var me = this;
+
+			$editor.find('.upfront-css-color').spectrum({
+				showAlpha: true,
+				showPalette: true,
+				palette: ['fff', '000', '0f0'],
+				maxSelectionSize: 9,
+				localStorageKey: "spectrum.recent_bgs",
+				preferredFormat: "hex",
+				chooseText: "Ok",
+				showInput: true,
+				allowEmpty:true,
+				show: function(){
+					spectrum = $('.sp-container:visible');
+				},
+				change: function(color) {
+					var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+					me.currentEditor.insert(colorString);
+					me.currentEditor.focus();
+				},
+				move: function(color) {
+					var rgba = color.toRgbString();
+					spectrum.find('.sp-dragger').css('border-top-color', rgba);
+					spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+				}
+			});
+		},
+
+		openImagePicker: function(){
+			var me = this,
+				currentSyntax = $('#upfront_code-editor').find('.upfront_code-switch.active').data('for'),
+				themeImages =  currentSyntax == 'style'
+			;
+
+			Upfront.Media.Manager.open({
+				themeImages: themeImages,
+				multiple_selection: false,
+				media_type:['images']
+			}).done(function(popup, result){
+				Upfront.Events.trigger('upfront:element:edit:stop');
+				if(!result)
+					return;
+
+				var imageModel = result.models[0],
+					url = themeImages ? imageModel.get('original_url') : imageModel.get('image').src
+				;
+
+				url = url.replace(document.location.origin, '');
+
+				if(currentSyntax == 'style')
+					me.currentEditor.insert('url("' + url + '")');
+				else {
+					//Add the selected size
+					var urlParts = url.split('.'),
+						ext = urlParts[urlParts.length - 1],
+						size = imageModel.get('selected_size')
+					;
+					if(size != 'full')
+						url = url.replace(new RegExp('.' + ext + '$'), '-' + size + '.' + ext);
+
+					me.currentEditor.insert('<img src="' + url + '" >');
+				}
+
+				me.currentEditor.focus();
+			});
+
 		},
 
 		destroyEditor: function(){
@@ -235,8 +334,34 @@ var Views = {
 				});
 				me.editors = false;
 			}
+			this.currentEditor = false;
 			$('#upfront_code-editor').html('').hide();
 			$(window).off('resize', this.resizeHandler);
+			this.is_editing = false;
+		},
+
+		hiliteElement: function(e){
+			e.preventDefault();
+			var element = this.$el.find('.upfront-object-content');
+			var offset = element.offset().top - 50;
+			$(document).scrollTop(offset > 0 ? offset : 0);
+			this.blink(element, 4);
+		},
+
+		blink: function(element, times) {
+			var me = this;
+			element.css('outline', '3px solid #3ea');
+			setTimeout(function(){
+				element.css('outline', 'none');
+
+				times--;
+				if(times > 0){
+					setTimeout(function(){
+						me.blink(element, times - 1);
+					}, 100);
+				}
+
+			}, 100);
 		},
 
 		checkJS: function(script){
@@ -265,9 +390,10 @@ var Views = {
 	Embed: Upfront.Views.ObjectView.extend({
 
 		is_editing: false,
+		tpl: _.template(tpls.find('#embedTpl').html()),
 
 		get_content_markup: function () {
-			var markup = this.model.get_property_value_by_name('markup') || Upfront.data.upfront_code.defaults.fallbacks.markup,
+			var markup = this.fallback('markup'),
 				element_id = this.model.get_property_value_by_name('element_id')
 			;
 			return '<section class="upfront_code-element clearfix">' + markup + '</section>';
@@ -284,7 +410,8 @@ var Views = {
 		on_render: function () {
 			this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 			var me = this;
-			this.$el.find(".upfront-entity_meta .re-edit").on("click", function () {
+			this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
+				e.preventDefault();
 				me.on_edit();
 			});
 			if (!this.model.get_property_value_by_name('markup')) {
@@ -295,18 +422,17 @@ var Views = {
 		},
 
 		on_edit: function () {
-			if (this.is_editing) return false;
+			if (this.is_editing)
+				return false;
+
 			this.is_editing = true;
+
 			var me = this;
 			this.$el
 				.find("section.upfront_code-element").hide().end()
-				.append(
-				'<section class="upfront_code-editor upfront_code-editor-simple">' +
-					'<h3>Paste your embed code below</h3>' +
-					'<textarea class="upfront_code-markup" data-type="markup" >' + (this.model.get_property_value_by_name('markup') || Upfront.data.upfront_code.defaults.fallbacks.markup)  + '</textarea>' +
-					'<button>ok</button>' +
-				'</section>'
-			);
+				.append(this.tpl({markup: this.fallback('markup')}))
+			;
+
 			this.$el
 				.find("textarea")
 					.on("keyup change", function () {
@@ -319,13 +445,16 @@ var Views = {
 					});
 					me.$el
 						.find("section.upfront_code-element").replaceWith(me.get_content_markup()).end()
-						.find("section.upfront_code-editor").remove()
+						.find("section.upfront_code-editor-simple").remove()
 					;
 					me.is_editing = false;
 					me.trigger("code:model:updated");
 				})
 			;
-		}
+		},
+		fallback: function(attribute){
+			return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
+		},
 	})
 };
 
