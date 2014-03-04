@@ -89,7 +89,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 				}
 			}
       // Add tags from layouts
-      if (!empty($image_tags = $image['tags'])) {
+      $image_tags = $image['tags'];
+      if (!empty($image_tags)) {
         foreach($image['tags'] as $tag) {
 					$image_labels .= ', "label_' . $tag . '"';
           if (!in_array($tag, $label_keys)) {
