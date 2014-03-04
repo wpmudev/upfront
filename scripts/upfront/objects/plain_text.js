@@ -14,6 +14,10 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
+	className: 'upfront-plain_txt',
+	cssSelectors: {
+		'.upfront-plain_txt': {label: 'Text container', info: 'The layer that contains all the text of the element.'}
+	},
 	initialize: function() {
 		this.constructor.__super__.initialize.apply(this, arguments);
 
@@ -51,7 +55,9 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		var me = this,
 		blurTimeout = false;
 
-		this.$el.find('.upfront-object-content').ueditor({
+		this.$el.find('.upfront-object-content')
+			.addClass('upfront-plain_txt')
+			.ueditor({
 				linebreaks: false,
 				autostart: false
 			})
