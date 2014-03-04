@@ -182,6 +182,7 @@ define([
 				var center = this.model.get_property_value_by_name('background_map_center'),
 					zoom = this.model.get_property_value_by_name('background_map_zoom'),
 					style = this.model.get_property_value_by_name('background_map_style'),
+					styles = this.model.get_property_value_by_name('background_map_styles'),
 					controls = this.model.get_property_value_by_name('background_map_controls'),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
@@ -193,7 +194,8 @@ define([
 						scaleControl: (controls.indexOf("scale") >= 0),
 						streetViewControl: (controls.indexOf("street_view") >= 0),
 						overviewMapControl: (controls.indexOf("overview_map") >= 0),
-						scrollwheel: false
+						scrollwheel: false,
+            styles: styles
 					};
 				if ( !this.bg_map ){
 					this.bg_map = new google.maps.Map($type.get(0), options);
