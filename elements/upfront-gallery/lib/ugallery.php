@@ -78,6 +78,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		foreach($images as $image){
 			$image_labels = '"label_0"';
 			$terms = get_the_terms($image['id'], 'media_label');
+      // Add tags from uploaded images
 			if(is_array($terms)){
 				foreach($terms as $label){
 					$image_labels .= ', "label_' . $label->term_id . '"';
@@ -87,6 +88,16 @@ class Upfront_UgalleryView extends Upfront_Object {
 					}
 				}
 			}
+      // Add tags from layouts
+      if (!empty($image_tags = $image['tags'])) {
+        foreach($image['tags'] as $tag) {
+					$image_labels .= ', "label_' . $tag . '"';
+          if (!in_array($tag, $label_keys)) {
+            $label_keys[] = $tag;
+            $all_labels[] = array('id' => $tag, 'text' => $tag);
+          }
+        }
+      }
 			$this->image_labels[$image['id']] = $image_labels;
 		}
 		usort($all_labels, array($this, 'sort_labels'));
