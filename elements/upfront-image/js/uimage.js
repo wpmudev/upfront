@@ -520,6 +520,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		//Bind resizing events
 		if(!me.parent_module_view.$el.data('resizeHandling')){
 			me.parent_module_view.$el
+				.on('resizestart', $.proxy(me.onElementResizeStart, me))
 				.on('resize', $.proxy(me.onElementResizing, me))
 				.on('resizestop', $.proxy(me.onElementResize, me))
 				.data('resizeHandling', true)
@@ -719,8 +720,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 
 		this.setSizeHTMLClasses();
+
+		this.$('.wp-caption').fadeIn('fast');
 	},
 
+	onElementResizeStart: function(e, ui){
+		this.$('.wp-caption').fadeOut('fast');
+	},
 
 	onElementResizing: function(e, ui){
 		var starting = this.$('.upfront-image-starting-select'),
@@ -1275,9 +1281,10 @@ var ImageEditor = Backbone.View.extend({
 			if(e.target == e.currentTarget){
 				if(me.saveOnClose)
 					me.imageOk();
-				else
+				else if(!me.isResizing)
 					me.cancel();
 			}
+			me.isResizing = false;
 		});
 	},
 
@@ -1702,6 +1709,8 @@ var ImageEditor = Backbone.View.extend({
 						.attr('class', 'image-edit-button')
 						.attr('data-tooltip', 'Expand image')
 					;
+					//Prevent editor closing after resizing. It is set to false by the initialize method.
+					me.isResizing = true;
 				},
 				resize: function(e, ui){
 					canvas.css(ui.size);

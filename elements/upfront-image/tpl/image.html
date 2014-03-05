@@ -1,12 +1,14 @@
-<div class=" upfront-image-container uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>">
+<div class="uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>">
 	<?php if($url) { ?>
 	<a href="<?php echo $url ?>">
 	<?php } ?>
 		<?php if($src){ ?>
-		<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width:<?php echo $imgWidth ?>; margin-top:<?php echo $marginTop ?>px"/>
+		<div class="upfront-image-container">
+			<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width:<?php echo $imgWidth ?>; margin-top:<?php echo $marginTop ?>px"/>
+		</div>
 		<?php } ?>
 
-	<?php if($include_image_caption && $caption_position != 'below_image'){ ?>
+	<?php if(true){//$include_image_caption && $caption_position != 'below_image'){ ?>
 	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>">
 		<?php if($cover_caption) { ?>
 			<div class="uimage-caption-cover">
@@ -23,7 +25,7 @@
 	<?php } ?>
 
 </div>
-<?php if($include_image_caption && $caption_position == 'below_image'){ ?>
+<?php if(false){//$include_image_caption && $caption_position == 'below_image'){ ?>
 <div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>">
 	<?php echo $image_caption ?>
 </div>
