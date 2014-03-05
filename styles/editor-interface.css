@@ -8340,8 +8340,8 @@ input[type=text].upfront-css-color {
 	border-radius: 3px;
 	margin: 0;
 	border:1px solid rgb(54,72,89) !important;
-  -webkit-background-clip: padding-box; 
-  -moz-background-clip:    padding; 
+  -webkit-background-clip: padding-box;
+  -moz-background-clip:    padding;
   background-clip:         padding-box;
 }
 
@@ -8454,3 +8454,31 @@ div.ace_editor .ace_fold {
 .upfront-css-hilite {
 	outline: 3px solid #3ea !important;
 }
+
+.upfront-settings-css .upfront-field-select {
+	margin-bottom: 5px;
+}
+
+.upfront-css-new {
+	line-height: 14px;
+	margin: 0;
+}
+
+.upfront-css-new a {
+	color: #30475E !important;
+	vertical-align: bottom;
+}
+
+.upfront-css-new a:hover {
+	color: #1fcd8f !important;
+}
+
+.upfront-css-new span.codeicon {
+	color: #1fcd8f;
+	background: #30475E;
+	font-family: tahoma, sans-serif;
+	font-size: 10px;
+	padding: 0px 2px 2px;
+	border-radius: 2px;
+}
+

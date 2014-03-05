@@ -3446,7 +3446,8 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 var _Settings_CSS = SettingsItem.extend({
 	className: 'upfront-settings-css',
 	events: {
-		'click a': 'openEditor'
+		'click a': 'openEditor',
+		'change input[name=theme_style]': 'stylesChanged'
 	},
 	initialize: function(options) {
 		SettingsItem.prototype.initialize.call(this, options);
@@ -3469,6 +3470,16 @@ var _Settings_CSS = SettingsItem.extend({
 			})
 		]);
 	},
+	stylesChanged: function(e) {
+		var style = this.$('input[name=theme_style]:checked').val(),
+			$text = this.$('.upfront-css-new-text')
+		;
+		if(!style)
+			$text.text('add new style');
+		else
+			$text.text('edit style');
+		this.model.set_property('theme_style', style);
+	},
 	openEditor: function(e){
 		e.preventDefault();
 		Upfront.Application.cssEditor.init({
@@ -3483,7 +3494,8 @@ var _Settings_CSS = SettingsItem.extend({
 var _Settings_CSS_Field = Field_Select.extend({
 	render: function(){
 		Field_Select.prototype.render.call(this);
-		this.$el.append('<p><a href="#">add new style</a></p>');
+		var text = this.model.get_property_value_by_name('theme_style') ? 'edit style' : 'add new style';
+		this.$el.append('<p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span> <span class="upfront-css-new-text">' + text + '</span></a></p>');
 		return this;
 	},
 	remove: function(){
