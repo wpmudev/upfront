@@ -3643,6 +3643,11 @@ var CSSEditor = Backbone.View.extend({
 			;
 			editor.setValue($.trim(styles), -1);
 		}
+
+		// Set up the proper vscroller width to go along with new change.
+		editor.renderer.scrollBar.width = 5;
+		editor.renderer.scroller.style.right = "5px";
+
 		editor.focus();
 		this.editor = editor;
 	},
