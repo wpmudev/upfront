@@ -37,8 +37,6 @@ define([
 		Upfront.data.tpls = _Upfront_Templates;
 	});
 
-			console.log('refresh');
-
 	var Upfront_Scroll_Mixin = {
 		stop_scroll_propagation: function ($el) {
 			$el.on('DOMMouseScroll mousewheel', function(ev) {
@@ -3515,8 +3513,10 @@ var CSSEditor = Backbone.View.extend({
 		'click .upfront-css-image': 'openImagePicker',
 		'click .upfront-css-selector': 'addSelector',
 		'click .upfront-css-type' : 'scrollToElement',
+		'click .upfront-css-delete': 'deleteStyle',
 		'mouseenter .upfront-css-selector': 'hiliteElement',
-		'mouseleave .upfront-css-selector': 'unhiliteElement'
+		'mouseleave .upfront-css-selector': 'unhiliteElement',
+		'keyup .upfront-css-save-name': 'checkDeleteToggle'
 	},
 	elementTypes: {
 		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
@@ -3615,6 +3615,8 @@ var CSSEditor = Backbone.View.extend({
 		});
 
 		this.prepareSpectrum();
+
+		this.checkDeleteToggle(this.name);
 
 		this.$el.show();
 	},
@@ -3810,11 +3812,73 @@ var CSSEditor = Backbone.View.extend({
 					Upfront.data.styles[elementType].push(selector);
 
 				me.model.set_property('theme_style', elementType + '-' + data.name);
+
+				me.checkDeleteToggle(data.name);
+
 				return notifier.addMessage('Styles saved as ' + data.name);
 			})
 			.error(function(response){
 				return notifier.addMessage('There was an error.');
 			});
+	},
+
+	checkDeleteToggle: function(e){
+		if(!this.deleteToggle)
+			this.deleteToggle = $('<a href="#" class="upfront-css-delete">Delete this style</a>');
+
+		var value = _.isString(e) ? e : e.target.value,
+			elementType = this.elementType.id,
+			styles = Upfront.data.styles[elementType],
+			showdelete = styles && styles.indexOf(elementType + '-' + value) != -1,
+			inDom = this.deleteToggle.parent().length
+		;
+
+		if(showdelete && !inDom)
+			this.$('.upfront-css-save-form').append(this.deleteToggle);
+		else if(!showdelete && inDom)
+			this.deleteToggle.detach();
+	},
+
+	deleteStyle: function(e){
+		e.preventDefault();
+		var me = this,
+			elementType = this.elementType.id,
+			styleName = elementType + '-' + this.$('.upfront-css-save-name').val()
+		;
+
+		if(!confirm('If you delete the "' + styleName + '" style, all the elements with it will get unstyled. Are you sure?'))
+			return;
+
+		var deleteData = {
+			elementType: elementType,
+			styleName: styleName,
+			action: 'upfront_delete_styles'
+		};
+
+		Upfront.Util.post(deleteData)
+			.done(function(){
+				var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
+				notifier.addMessage('The style "' + styleName + '" was deleted.');
+
+				//Clean the editor up
+				me.$('.upfront-css-save-name').val('');
+				me.editor.setValue('');
+
+				//Remove the styles from the available styles
+				if(styleIndex != -1)
+					Upfront.data.styles[elementType].splice(styleIndex, 1);
+
+				//Remove the styles from the dom
+				$('#upfront-style-' + styleName).remove();
+
+				//Unset the styles of the element if they are the same as the deleted ones.
+				if(me.model.get_property_value_by_name('theme_style') == styleName)
+					me.model.set_property('theme_style', '');
+
+				//Remove the delete link
+				me.deleteToggle.detach();
+			});
+		;
 	},
 
 	/* Used by upfront application */

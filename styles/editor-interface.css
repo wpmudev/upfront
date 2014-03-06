@@ -875,7 +875,7 @@
 .upfront-filter-control::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar,
-.upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,  
+.upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar
 {
 	background: none;
@@ -915,7 +915,7 @@
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
-.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb 
+.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb
 {
 	border-right: 5px solid #1fcd8f;
 }
@@ -8491,5 +8491,19 @@ div.ace_editor .ace_fold {
 	font-size: 10px;
 	padding: 0px 2px 2px;
 	border-radius: 2px;
+}
+
+a.upfront-css-delete {
+	color: #dae6f2 !important;
+}
+a.upfront-css-delete:hover {
+	color: #F44C4F !important;
+}
+
+a.upfront-css-delete:before {
+	content: '';
+	display: inline-block;
+	margin-right: 5px;
+	background-image: url('../img/uf-core-el-sprite.svg');
 }
 

@@ -357,6 +357,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		upfront_add_ajax('upfront_save_styles', array($this, "save_styles"));
 		upfront_add_ajax('upfront_theme_styles', array($this, "theme_styles"));
+		upfront_add_ajax('upfront_delete_styles', array($this, "delete_styles"));
 	}
 
 	function load_styles () {
@@ -397,6 +398,27 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			'name' => $name,
 			'styles' => $styles
 		)));
+	}
+
+	function delete_styles(){
+
+		$elementType = isset($_POST['elementType']) ? $_POST['elementType'] : false;
+		$styleName = isset($_POST['styleName']) ? $_POST['styleName'] : false;
+
+		if(!$elementType || !$styleName)
+			$this->_out(new Upfront_JsonResponse_Error('No element type or style to delete.'));
+
+		$db_option = 'upfront_' . get_stylesheet() . '_styles';
+		$current_styles = get_option($db_option);
+
+		if(!$current_styles || !isset($current_styles[$elementType]) || !isset($current_styles[$elementType][$styleName]))
+			$this->_out(new Upfront_JsonResponse_Error("The style doesn\'t exist."));
+
+		unset($current_styles[$elementType][$styleName]);
+
+		update_option($db_option, $current_styles);
+
+		$this->_out(new Upfront_JsonResponse_Success(array()));
 	}
 
 	function theme_styles(){
