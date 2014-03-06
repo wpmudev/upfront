@@ -319,7 +319,7 @@ define([
 							});
 						}
 					}
-					
+
 				}
 				else if ( ( !type || type == 'image' ) && image ) {
 					var style = this.model.get_property_value_by_name('background_style'),
@@ -740,11 +740,12 @@ define([
 				if ( this.on_render ) this.on_render();
 			},
 			on_element_edit_start: function (edit, post) {
-				if ( edit == 'write' )
+				if ( edit == 'write' && this.parent_module_view )
 					this.parent_module_view.disable();
 			},
 			on_element_edit_stop: function (edit, post) {
-				if (this.parent_module_view && this.parent_module_view.enable) this.parent_module_view.enable();
+				if (this.parent_module_view && this.parent_module_view.enable)
+					this.parent_module_view.enable();
 			},
 			on_element_resize: function (attr) {
 

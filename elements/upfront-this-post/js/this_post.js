@@ -54,6 +54,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 */
 	on_edit: function () {
+		console.log('Start editing');
 		this.updateEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
 		this.editor.editTitle();
 	},
@@ -149,7 +150,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_element_edit_start: function (edit, post) {
-		if ( edit == 'write' ){
+		if ( edit == 'write' && this.parent_module_view){
 			if ( post.id != this.postId )
 				this.parent_module_view.disable();
 			else
