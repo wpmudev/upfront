@@ -874,12 +874,17 @@
 .upfront-item-control::-webkit-scrollbar,
 .upfront-filter-control::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
-#upfront-csseditor .ace_scrollbar::-webkit-scrollbar  {
+#upfront-csseditor .ace_scrollbar::-webkit-scrollbar,
+.upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,  
+.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar
+{
 	background: none;
 	width: 5px;
 }
 /* overwriting Ace editor scrollbar */
-#upfront-csseditor .ace_scrollbar {
+#upfront-csseditor .ace_scrollbar,
+.upfront_code-editor-complex-wrapper .ace_scrollbar
+{
 	width: 5px! important;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-track,
@@ -892,7 +897,10 @@
 .upfront-item-control::-webkit-scrollbar-track,
 .upfront-filter-control::-webkit-scrollbar-track,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-track,
-#upfront-csseditor .ace_scrollbar::-webkit-scrollbar-track {
+#upfront-csseditor .ace_scrollbar::-webkit-scrollbar-track,
+.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-track,
+.upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track
+{
 }
 
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar-thumb,
@@ -905,7 +913,10 @@
 .upfront-item-control::-webkit-scrollbar-thumb,
 .upfront-filter-control::-webkit-scrollbar-thumb,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb,
-#upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb {
+#upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
+.upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
+.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb 
+{
 	border-right: 5px solid #1fcd8f;
 }
 
