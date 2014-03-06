@@ -119,7 +119,7 @@ var Views = {
 
 			this.is_editing = true;
 
-			var $editor = $('#upfront_code-editor')
+			var $editor = $('#upfront_code-editor');
 
 			if(!$editor.length){
 				$editor = $('<section id="upfront_code-editor" class="upfront-ui upfront_code-editor upfront_code-editor-complex"></section>');
