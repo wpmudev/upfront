@@ -3444,7 +3444,8 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 var _Settings_CSS = SettingsItem.extend({
 	className: 'upfront-settings-css',
 	events: {
-		'click a': 'openEditor',
+		'click a.upfront-css-edit': 'openEditor',
+		'click .upfront-css-new>a': 'openNewEditor',
 		'change input[name=theme_style]': 'stylesChanged'
 	},
 	initialize: function(options) {
@@ -3472,12 +3473,15 @@ var _Settings_CSS = SettingsItem.extend({
 		var style = this.$('input[name=theme_style]:checked').val(),
 			$text = this.$('.upfront-css-new-text')
 		;
+		/*
 		if(!style)
 			$text.text('add new style');
 		else
 			$text.text('edit style');
+		*/
 		this.model.set_property('theme_style', style);
 	},
+
 	openEditor: function(e){
 		e.preventDefault();
 		Upfront.Application.cssEditor.init({
@@ -3485,15 +3489,29 @@ var _Settings_CSS = SettingsItem.extend({
 			name: this.fields._wrapped[0].get_value()
 		});
 
-		$('#settings').find('.upfront-save_settings').click();
+		Upfront.Events.trigger("entity:settings:deactivate");
+
+		//$('#settings').find('.upfront-save_settings').click();
+	},
+	openNewEditor: function(e){
+		e.preventDefault();
+		Upfront.Application.cssEditor.init({
+			model: this.model,
+			name: ''
+		});
+
+		this.model.set_property('theme_style', '');
+
+		Upfront.Events.trigger("entity:settings:deactivate");
+		//$('#settings').find('.upfront-save_settings').click();
 	}
 });
 
 var _Settings_CSS_Field = Field_Select.extend({
 	render: function(){
 		Field_Select.prototype.render.call(this);
-		var text = this.model.get_property_value_by_name('theme_style') ? 'edit style' : 'add new style';
-		this.$el.append('<p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span> <span class="upfront-css-new-text">' + text + '</span></a></p>');
+		var text = 'add new style'; //this.model.get_property_value_by_name('theme_style') ? 'edit style' : 'add new style';
+		this.$el.append('<a href="#" title="Edit style" class="upfront-css-edit"></a><p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span> <span class="upfront-css-new-text">' + text + '</span></a></p>');
 		return this;
 	},
 	remove: function(){
@@ -3544,6 +3562,8 @@ var CSSEditor = Backbone.View.extend({
 			$('body').append(this.el);
 	},
 	init: function(options){
+		if(this.editor)
+			this.close();
 		this.model = options.model;
 
 		var me = this,
@@ -3585,8 +3605,10 @@ var CSSEditor = Backbone.View.extend({
 		this.startResizable();
 	},
 	close: function(e){
-		e.preventDefault();
+		if(e)
+			e.preventDefault();
 		$(window).off('resize', this.resizeHandler);
+
 		this.$style.remove();
 		this.$style = false;
 		if(this.editor)
