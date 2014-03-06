@@ -150,6 +150,7 @@ var Views = {
 			//Start the editors
 			this.editors = {};
 			this.timers = {};
+__editors = []
 			$editor.find('.upfront_code-ace').each(function(){
 				var $this = $(this),
 					html = $this.html(),
@@ -184,9 +185,12 @@ var Views = {
 					}, 1000);
 				});
 
+				// Set up the proper vscroller width to go along with new change.
+				editor.renderer.scrollBar.width = 5;
+				editor.renderer.scroller.style.right = "5px";
+
 				me.editors[syntax] = editor;
 			});
-
 			this.currentEditor = this.editors['markup'];
 
 			var editorTop = $editor.find('.upfront-css-top'),
