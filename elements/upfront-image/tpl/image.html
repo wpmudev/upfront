@@ -9,7 +9,7 @@
 		<?php } ?>
 
 	<?php if($include_image_caption){// && $caption_position != 'below_image'){ ?>
-	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>">
+	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>; ">
 		<?php if($cover_caption) { ?>
 			<div class="uimage-caption-cover">
 		<?php } ?>
@@ -35,15 +35,28 @@
 	}
 	#<?php echo $element_id ?> .uimage-over_image .wp-caption{
 		position:absolute;
-		width: 100%;
-		top:0;
-		left:0;
 	}
 	#<?php echo $element_id ?> .uimage-over_image .uimage-fill,
 	#<?php echo $element_id ?> .uimage-over_image .uimage-fill_middle,
 	#<?php echo $element_id ?> .uimage-over_image .uimage-fill_bottom{
-		height:100%;
 		text-align: left;
+		width: <?php echo $captionData['width'] ?>;
+		height: <?php echo $captionData['height'] ?>;
+		left: <?php echo $captionData['left'] ?>;
+		top: <?php echo $captionData['top'] ?>;
+	}
+
+	#<?php echo $element_id ?> .uimage-caption-over_image-top .wp-caption{
+		width: <?php echo $captionData['width'] ?>;
+		left: <?php echo $captionData['left'] ?>;
+		top: <?php echo $captionData['top'] ?>;
+	}
+
+	#<?php echo $element_id ?> .uimage-caption-over_image-bottom .wp-caption{
+		width: <?php echo $captionData['width'] ?>;
+		left: <?php echo $captionData['left'] ?>;
+		top: auto;
+		bottom: <?php echo $captionData['bottom'] ?>;
 	}
 
 	#<?php echo $element_id ?> .uimage-fill_bottom:before,
@@ -71,7 +84,6 @@
 
 	#<?php echo $element_id ?> .uimage-over_image div.uimage-bottom{
 		top:auto;
-		bottom:0;
 	}
 
 	#<?php echo $element_id ?> .uimage-over_image .uimage-hover_show {

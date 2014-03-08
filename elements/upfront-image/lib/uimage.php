@@ -14,11 +14,12 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['url'] = $data['when_clicked'] == 'do_nothing' ? false : $data['image_link'];
 
+		/*
 		if(is_numeric($data['size']['width']))
 			$data['size']['width'] .= '%';
 		if(is_numeric($data['size']['height']))
 			$data['size']['height'] .= '%';
-
+	*/
 		$data['wrapper_id'] = str_replace('image-object-', 'wrapper-', $data['element_id']);
 
 
@@ -29,7 +30,19 @@ class Upfront_UimageView extends Upfront_Object {
 		else
 			$data['imgWidth'] = '';
 
-		$data['cover_caption'] = array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
+		if($data['vstretch'])
+			$data['marginTop'] = 0;
+
+		//Don't let the caption be bigger than the image
+		$data['captionData'] = array(
+			'top' => $data['vstretch'] ? 0 : (-$data['position']['top']) . 'px',
+			'left'=> $data['stretch'] ? 0 : (-$data['position']['left']) . 'px',
+			'width'=> $data['stretch'] ? '100%' : $data['size']['width'] . 'px',
+			'height'=> $data['vstretch'] ? '100%' : $data['size']['height'] . 'px',
+			'bottom' => $data['vstretch'] ? '100%' : ($data['element_size']['height'] + $data['position']['top'] - $data['size']['height']) . 'px'
+		);
+
+		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
 
 		$markup = '<div id="' . $data['element_id'] . '">' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
@@ -91,6 +104,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'image_id' => 0,
 			'align' => 'center',
 			'stretch' => false,
+			'vstretch' => false,
 			'quick_swap' => false,
 
 			'type' => 'UimageModel',
@@ -160,7 +174,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
 
-			$images[$imageData['id']] = $this->resize_image($imageData);			
+			$images[$imageData['id']] = $this->resize_image($imageData);
 		}
 		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images)));
 	}

@@ -8484,6 +8484,10 @@ div.ace_editor .ace_fold {
 	color: #1fcd8f !important;
 }
 
+span.upfront-css-new-text {
+	border-bottom: 1px solid  #1fcd8f;
+}
+
 .upfront-css-new span.codeicon {
 	color: #1fcd8f;
 	background: #30475E;
@@ -8506,4 +8510,26 @@ a.upfront-css-delete:before {
 	margin-right: 5px;
 	background-image: url('../img/uf-core-el-sprite.svg');
 }
+
+a.upfront-css-edit {
+	vertical-align: top;
+	margin: 4px 0 0 5px;
+	display: inline-block;
+	opacity: .8;
+}
+
+a.upfront-css-edit:hover {
+	opacity: 1;
+}
+
+a.upfront-css-edit:before{
+	display: inline-block;
+	content: '';
+	width: 20px;
+	height: 20px;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -560px -385px;
+	vertical-align: top;
+}
+
 

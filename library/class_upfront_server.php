@@ -381,10 +381,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$current_styles = get_option($db_option);
 		if(!$current_styles)
 			$current_styles = array();
-		/*
-		if(isset($current_styles[$name]) && !$_POST['override'])
-			$this->_out(new Upfront_JsonResponse_Error("Already exists"));
-*/
 
 		if(!isset($current_styles[$element_type]))
 			$current_styles[$element_type] = array();
