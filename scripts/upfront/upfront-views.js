@@ -96,7 +96,6 @@ define([
 					width = this.$el.outerWidth(),
 					height = this.$el.outerHeight(),
 					$overlay = this.$el.children('.upfront-region-bg-overlay');
-				console.log([width, height])
 				if ( !type || type == 'color' || type == 'image' ){
 					if ( color )
 						this.$el.css('background-color', color);
@@ -276,6 +275,9 @@ define([
 					}
 					this._prev_video = video;
 				}
+				else if ( !video || !embed ) {
+					this.remove_background();
+				}
 				else {
 					this.refresh_background();
 				}
@@ -319,7 +321,7 @@ define([
 							});
 						}
 					}
-
+					
 				}
 				else if ( ( !type || type == 'image' ) && image ) {
 					var style = this.model.get_property_value_by_name('background_style'),
@@ -606,12 +608,7 @@ define([
 						});
 						// Add to layout now
 						wrappers.add(new_wrap_model);
-						modules.each(function(each, i){
-							models.push(each);
-							if ( i == index )
-								models.push(new_model);
-						});
-						modules.reset(models, {call_render: [new_model]}); // selectively render the clone model only
+						new_model.add_to(modules, index+1);
 					  }
 				  })
 				]);
@@ -881,7 +878,7 @@ define([
 				this.parent_view = false;
 				Backbone.View.prototype.remove.call(this);
 				if(this.model){
-					this.model.reset({silent:true});
+					this.model.reset([], {silent:true});
 					this.model = false;
 				}
 			}
@@ -1133,10 +1130,11 @@ define([
 					me.on_remove(model);
 				});
 				Backbone.View.prototype.remove.call(this);
-				this.model.reset({silent:true});
+				this.model.reset([], {silent:true});
 				this.model = false;
 			}
 		}),
+		
 		RegionContainer = _Upfront_SingularEditor.extend({
 			events: {
 				"click .upfront-region-edit-trigger": "trigger_edit",
@@ -1265,13 +1263,18 @@ define([
 			},
 			update: function () {
 				var expand_lock = this.model.get_property_value_by_name('expand_lock'),
-					type = this._get_region_type();
+					type = this._get_region_type(),
+					previous_type = this._get_previous_region_type();
 				if ( type != 'clip' )
 					this.update_background();
 				else
 					this.remove_background();
-				this.$el.removeClass('upfront-region-container-' + this._get_previous_region_type());
+				this.$el.removeClass('upfront-region-container-' + previous_type);
 				this.$el.addClass('upfront-region-container-' + type);
+				if ( previous_type != type ){
+					this.fix_height();
+					this.update_overlay();
+				}
 			},
 			trigger_edit: function (e) {
 				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.LAYOUT )
@@ -1334,6 +1337,7 @@ define([
 					this.available_col = col;
 				}
 				this.fix_height();
+				this.update_overlay();
 			},
 			on_region_changed: function () {
 				this.fix_height();
@@ -1343,21 +1347,33 @@ define([
 					row = this.model.get_property_value_by_name('row'),
 					is_full_screen = ( this._get_region_type() == 'full' ),
 					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
-					height = 0;
+					height = 0,
+					exclude = [];
+				$regions.css({
+					minHeight: "",
+					height: "",
+					maxHeight: ""
+				});
 				if ( is_full_screen ){
 					height = $(window).height();
-					$regions.css({
-						minHeight: height,
-						height: height,
-						maxHeight: height
+					$regions.each(function(){
+						if ( $(this).closest('.upfront-region-sub-container').length ){
+							if ( min_height > 0 )
+								$(this).css('min-height', min_height);
+							height -= $(this).outerHeight();
+							exclude.push(this);
+						}
+					});
+					$regions.each(function(){
+						if ( _.indexOf(exclude, this) === -1 )
+							$(this).css({
+								minHeight: height,
+								height: height,
+								maxHeight: height
+							});
 					});
 				}
 				else{
-					$regions.css({
-						minHeight: "",
-						height: "",
-						maxHeight: ""
-					});
 					$regions.each(function(){
 						if ( min_height > 0 )
 							$(this).css('min-height', min_height);
@@ -1430,6 +1446,52 @@ define([
 			}
 		}),
 
+		RegionSubContainer = _Upfront_SingularEditor.extend({
+			attributes: function () {
+				var name = this.model.get("container") || this.model.get("name"),
+					classes = [];
+				classes.push('upfront-region-sub-container');
+				classes.push('upfront-region-sub-container-' + name.toLowerCase().replace(/ /, "-"));
+				return {
+					"class": classes.join(' ')
+				};
+			},
+			init: function () {
+				this.listenTo(this.model.get("properties"), 'change', this.update);
+				this.listenTo(this.model.get("properties"), 'add', this.update);
+				this.listenTo(this.model.get("properties"), 'remove', this.update);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
+			},
+			_get_region_type: function () {
+				return this.model.get('type') || ( this.model.get('clip') ? 'clip' : 'wide' );
+			},
+			render: function () {
+				var template = _.template(_Upfront_Templates["region_container"], this.model.toJSON());
+				this.$el.html(template);
+				this.$layout = this.$el.find('.upfront-grid-layout');
+				this.update();
+			},
+			update: function () {
+				var container_view = this.parent_view.get_container_view(this.model);
+				if ( container_view && container_view._get_region_type() == 'full' ){
+					this.update_background();
+					this.$el.show();
+				}
+				else{
+					this.$el.hide();
+				}
+			},
+			remove: function () {
+				this.event = false;
+				Backbone.View.prototype.remove.call(this);
+			}
+		});
+		
 		Region = _Upfront_SingularEditor.extend({
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
@@ -1490,8 +1552,9 @@ define([
 					this.trigger("activate_region", this);
 			},
 			_is_clipped: function () {
-				var type = this.model.get('type');
-				return ( type == 'clip' || !type && this.model.get('clip') ) || ! this.model.is_main();
+				var type = this.model.get('type'),
+					sub = this.model.get('sub');
+				return ( type == 'clip' || !type && this.model.get('clip') ) || ( !this.model.is_main() && ( !sub || (sub != 'top' && sub != 'bottom') ) );
 			},
 			render: function () {
 				var container = this.model.get("container"),
@@ -1504,9 +1567,10 @@ define([
 				this.update();
 				if ( ! this.model.is_main() ){
 					var index = this.model.collection.indexOf(this.model),
+						sub = this.model.get('sub'),
 						next = this.model.collection.at(index+1),
-						is_left = next && ( next.get('name') == container || next.get('container') == container);
-					this.$el.addClass('upfront-region-side ' + ( is_left ? 'upfront-region-side-left' : 'upfront-region-side-right' ));
+						is_left = ( next && ( next.get('name') == container || next.get('container') == container) );
+					this.$el.addClass('upfront-region-side ' + ( 'upfront-region-side-' + ( sub ? sub : (is_left ? 'left' : 'right') ) ));
 				}
 
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
@@ -1572,7 +1636,7 @@ define([
 					});
 				this.parent_view = false;
 				Backbone.View.prototype.remove.call(this);
-				this.model.get('wrappers').reset({silent:true});
+				this.model.get('wrappers').reset([], {silent:true});
 				this.model = false;
 			}
 		}),
@@ -1595,6 +1659,8 @@ define([
 				var me = this;
 				if ( typeof this.container_views == 'undefined' )
 					this.container_views = {};
+				if ( typeof this.sub_container_views == 'undefined' )
+					this.sub_container_views = {};
 				if ( typeof Upfront.data.region_views == 'undefined' )
 					Upfront.data.region_views = {};
 				this.model.each(function (region) {
@@ -1625,9 +1691,11 @@ define([
 					}
 				}
 			},
-			render_region: function (region, before) {
+			render_region: function (region, sub) {
 				var local_view = Upfront.data.region_views[region.cid] || new Region({"model": region}),
-					container_view = this.get_container_view(region);
+					container_view = this.get_container_view(region),
+					sub = sub ? sub : region.get('sub'),
+					sub_container_view;
 				if ( !Upfront.data.region_views[region.cid] ){
 					local_view.parent_view = this;
 					container_view.listenTo(local_view, "region_render", container_view.on_region_render);
@@ -1652,10 +1720,27 @@ define([
 					local_view.render();
 					local_view.delegateEvents();
 				}
-				if ( before )
+				if ( !sub || sub == 'left' )
 					container_view.$layout.prepend(local_view.el);
-				else
+				else if ( sub == 'right' )
 					container_view.$layout.append(local_view.el);
+				else if ( sub == 'top' || sub == 'bottom' ){
+					sub_container_view = this.sub_container_views[region.cid] || new RegionSubContainer({"model": region});
+					sub_container_view.parent_view = this;
+					sub_container_view.listenTo(container_view.model.get('properties'), 'change', sub_container_view.update);
+					sub_container_view.render();
+					sub_container_view.$layout.append(local_view.el);
+					if ( sub == 'top' )
+						container_view.$layout.before(sub_container_view.el);
+					else
+						container_view.$layout.after(sub_container_view.el);
+					if ( !this.sub_container_views[region.cid] ){
+						this.sub_container_views[region.cid] = sub_container_view;
+					}
+					else {
+						sub_container_view.delegateEvents();
+					}
+				}
 				if ( region.get("default") )
 					local_view.trigger("activate_region", local_view);
 			},
@@ -1708,14 +1793,14 @@ define([
 			},
 			on_add: function (model, collection, options) {
 				var container_view = this.get_container_view(model),
-					index = typeof options.at != 'undefined' ? options.at : -1,
-					is_before = options.is_before ? options.is_before : false;
+					index = typeof options.index != 'undefined' ? options.index : -1,
+					sub = options.sub ? options.sub : false;
 				if ( ! container_view ){
 					this.render_container(model, index);
 					this.render_region(model);
 				}
 				else {
-					this.render_region(model, is_before);
+					this.render_region(model, sub);
 				}
 				Upfront.Events.trigger("entity:region:added", this, this.model);
 			},
@@ -1758,7 +1843,7 @@ define([
 				});
 				Backbone.View.prototype.remove.call(this);
 				this.container_views = false;
-				this.model.reset({silent:true});
+				this.model.reset([], {silent:true});
 				this.model = false;
 				this.options = false;
 			}

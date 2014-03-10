@@ -67,25 +67,40 @@ class Upfront_Output {
 			$html .= "<!-- Layout Name: {$layout['name']} -->\n";
 		}
 		$region_markups = array();
+		$region_markups_before = array();
+		$region_markups_after = array();
 		$container_views = array();
 		foreach ($layout['regions'] as $region) {
 			$region_view = new Upfront_Region($region);
 			$region_bg = $region_view->get_background_type();
+			$region_sub = $region_view->get_sub();
 			if ( $region_bg == 'map' )
 				$has_map = true;
 			else if ( $region_bg == 'slider' )
 				$has_slider = true;
+			$markup = $region_view->get_markup();
 			$container = $region_view->get_container();
-			if ( !isset($region_markups[$container]) )
-				$region_markups[$container] = $region_view->get_markup();
-			else
-				$region_markups[$container] .= $region_view->get_markup();
+			if ( $region_sub == 'top' || $region_sub == 'bottom' ){
+				$sub_container = new Upfront_Region_Sub_Container($region);
+				$markup = $sub_container->wrap( $markup );
+				if ( $region_sub == 'top' )
+					$region_markups_before[$container] = $markup;
+				else
+					$region_markups_after[$container] = $markup;
+			}
+			else{
+				if ( !isset($region_markups[$container]) )
+					$region_markups[$container] = $markup;
+				else
+					$region_markups[$container] .= $markup;
+			}
 			if ( $region_view->get_name() == $container ) {
 				$container_views[$container] = new Upfront_Region_Container($region);
 			}
 		}
 		foreach ($container_views as $container => $container_view) {
-			$html .= $container_view->wrap( $region_markups[$container] );
+			$type = $container_view->get_entity_type();
+			$html .= $container_view->wrap( $region_markups[$container], ($type == 'full' ? $region_markups_before[$container] : ''), ($type == 'full' ? $region_markups_after[$container] : '') );
 		}
 		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
 			$html .= "<!-- Upfront layout end -->\n";
@@ -296,14 +311,35 @@ abstract class Upfront_Entity {
 			$width = $this->_get_property('background_video_width');
 			$height = $this->_get_property('background_video_height');
 			$style = $this->_get_property('background_video_style');
+			$mute = $this->_get_property('background_video_mute');
 			if ( $video && $embed ){
 				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
 				$attr .= 'data-bg-video-style="' . $style . '" ';
-				// hack autoplay
-				if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"].*$)/i', $embed, $match) )
-					$markup = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&' : '?' ) . 'autoplay=1' . $match[3];
-				else
+				// hack additional attributes
+				$vid_attrs = array(
+					'.*?vimeo\.' => 'autoplay=1&amp;loop=1',
+					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' => 'autoplay=1&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;loop=1&amp;playlist=$3',
+					'.*?wistia\.' => 'autoplay=1'
+				);
+				$vid_attr = '';
+				$embed_attr = '';
+				if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"])(.*$)/is', $embed, $match) ){
+					foreach ( $vid_attrs as $vid => $a ){
+						if ( preg_match( '/^(https?:|)\/\/' . $vid . '/i', $match[2], $vid_match ) ){
+							foreach ( $vid_match as $i => $m ){
+								if ( $i == 0 )
+									continue;
+								$a = str_replace('$'.$i, $m, $a);
+							}
+							$vid_attr = $a;
+							break;
+						}
+					}
+					$markup = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
+				}
+				else{
 					$markup = $embed;
+				}
 			}
 		}
 		return "<div class='{$classes}' {$attr}>{$markup}</div>";
@@ -411,9 +447,9 @@ class Upfront_Region_Container extends Upfront_Container {
 		return ( $this->_data['type'] != 'clip' || ( !$this->_data['type'] && !$this->_data['clip'] ) );
 	}
 	
-	public function wrap ($out) {
+	public function wrap ($out, $before = '', $after = '') {
 		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
-		return parent::wrap("<div class='upfront-grid-layout'>{$out}</div> {$overlay}");
+		return parent::wrap("{$before}<div class='upfront-grid-layout'>{$out}</div>{$after} {$overlay}");
 	}
 
 	public function get_css_inline () {
@@ -431,13 +467,21 @@ class Upfront_Region_Container extends Upfront_Container {
 	}
 }
 
+class Upfront_Region_Sub_Container extends Upfront_Region_Container {
+	protected $_type = 'Region_Sub_Container';
+	
+	public function wrap ($out) {
+		return parent::wrap($out, '', '');
+	}
+}
+
 class Upfront_Region extends Upfront_Container {
 	protected $_type = 'Region';
 	protected $_children = 'modules';
 	protected $_child_view_class = 'Upfront_Module';
 	
 	protected function _is_background () {
-		return ( ( $this->_data['type'] == 'clip'  || ( !$this->_data['type'] && $this->_data['clip'] ) ) || ( $this->get_container() != $this->get_name() ) );
+		return ( ( $this->_data['type'] == 'clip'  || ( !$this->_data['type'] && $this->_data['clip'] ) ) || ( $this->get_container() != $this->get_name() && ( !$this->_data['sub'] || ( $this->_data['sub'] != 'top' && $this->_data['sub'] != 'bottom' ) ) ) );
 	}
 
 	public function wrap ($out) {
@@ -457,6 +501,10 @@ class Upfront_Region extends Upfront_Container {
 		if ( $this->_is_background() )
 			$attr .= $this->_get_background_attr();
 		return $attr;
+	}
+	
+	public function get_sub () {
+		return $this->_data['sub'] ? $this->_data['sub'] : false;
 	}
 }
 

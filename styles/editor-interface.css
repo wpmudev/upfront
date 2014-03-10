@@ -1260,7 +1260,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 .upfront-field-multiple-horizontal-inline {
 	display: inline-block;
 	vertical-align: baseline;
-	margin: 0 20px 0 0;
+	margin: 0 15px 0 0;
 }
 .upfront-field-multiple:hover,
 .upfront-field-multiple-selected {
@@ -1379,6 +1379,9 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 	font-weight: normal;
 	font-family: verdana, sans-serif;
 	margin: 0 0 5px;
+}
+.upfront-field-wrap-multiple {
+	margin-right: -15px;
 }
 .upfront-suggest-add-wrap,
 .upfront-additive_multiselection .add_labels {
@@ -1800,6 +1803,9 @@ a.ueditor-action-pickercancel{
 }
 
 .upfront-region-container {
+	position: relative;
+}
+.upfront-region-sub-container {
 	position: relative;
 }
 .upfront-region {
@@ -2343,7 +2349,7 @@ a.ueditor-action-pickercancel{
 	color: #3f617f;
 	font-size: 17px;
 }
-.upfront-region-bg-setting-tab-secondary .upfront-region-bg-setting-label {
+.upfront-region-bg-setting-label-alt {
 	color: #2f475d;
 	font-family: "Verdana";
 	font-size: 11px;

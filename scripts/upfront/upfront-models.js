@@ -137,6 +137,26 @@ var _alpha = "alpha",
 		},
 		is_visible: function () {
 			return this.get_property_value_by_name("visibility");
+		},
+		add_to: function (collection, index, options) {
+			var me = this,
+				models = [],
+				added = false,
+				options = _.isObject(options) ? options : {};
+			collection.each(function(each, i){
+				if ( i == index ){
+					models.push(me);
+					added = true;
+				}
+				models.push(each);
+			});
+			if ( added ){
+				collection.reset(models, {silent: true});
+				collection.trigger('add', this, collection, _.extend(options, {index: index}));
+			}
+			else {
+				collection.add(this, _.extend(options, {index: index}));
+			}
 		}
 	}),
 
@@ -261,20 +281,57 @@ var _alpha = "alpha",
 				name = this.get('name');
 			return ( !container || container == name );
 		},
-		get_side_region: function (right) {
+		get_sub_regions: function () {
 			if ( ! this.collection )
 				return false;
 			var collection = this.collection,
 				index = collection.indexOf(this),
 				total = collection.size()-1, // total minus shadow region
 				container = this.get('container') || this.get('name'),
-				ref_model = !right && index > 0 ? collection.at(index-1) : ( right && index < total-1 ? collection.at(index+1) : false );
-			if ( ref_model && ref_model.get('container') == container )
-				return ref_model;
-			return false;
+				ref_models = [],
+				top = left = right = bottom = false;
+			if ( index > 0 ){
+				left = collection.at(index-1);
+				if ( left.get('sub') != 'top' ){
+					if ( index > 1 )
+						top = collection.at(index-2);
+				}
+				else {
+					top = left;
+					left = false;
+				};
+			}
+			if ( index < total-1 ){
+				right = collection.at(index+1);
+				if ( right.get('sub') != 'bottom' ){
+					if ( index < total-2 )
+						bottom = collection.at(index+2);
+				}
+				else {
+					bottom = right;
+					right = false;
+				}
+			}
+			return {
+				top: top && top.get('container') == container && top.get('sub') == 'top' ? top : false,
+				left: left && left.get('container') == container ? left : false,
+				right: right && right.get('container') == container ? right : false,
+				bottom: bottom && bottom.get('container') == container && bottom.get('sub') == 'bottom' ? bottom : false
+			};
+			
+		},
+		get_sub_region: function (sub) {
+			return this.get_sub_regions()[sub];
+		},
+		has_sub_region: function () {
+			return _.find( this.get_sub_regions(), function(each){ return ( each !== false ); } );
+		},
+		get_side_region: function (right) {
+			return this.get_sub_region( right ? 'right' : 'left' );
 		},
 		has_side_region: function () {
-			return ( this.get_side_region() || this.get_side_region(true) );
+			var sub = this.get_sub_regions();
+			return ( sub.left || sub.right );
 		}
 	}),
 
@@ -288,6 +345,27 @@ var _alpha = "alpha",
 				if (model.get("name").toLowerCase() == name) found = model;
 			});
 			return found;
+		},
+		
+		at_container: function (index) {
+			var i = 0;
+			return this.find(function(m){
+				if ( m.is_main() ){
+					if ( i == index )
+						return true;
+					else
+						i++;
+				}
+				return false;
+			});
+		},
+		
+		index_container: function (model) {
+			var collection = this.filter(function(m){
+					return m.is_main();
+				}),
+				index = collection.indexOf(model);
+			return index;
 		}
 	}),
 

@@ -3,26 +3,43 @@ jQuery(document).ready(function($){
 	// Making sure sidebar region height is fixed
 	function fix_region_height () {
 		$('.upfront-output-region-container').each(function(){
-			var $region = $(this).find('.upfront-output-region'),
+			var $regions = $(this).find('.upfront-output-region'),
 				is_full_screen = $(this).hasClass('upfront-region-container-full'),
-				min_height = height = 0;
+				min_height = height = 0,
+				exclude = [];
 			if ( is_full_screen ){
-				var height = $(window).height();
-				$region.css({
-					minHeight: height,
-					height: height,
-					maxHeight: height
+				height = $(window).height();
+				$regions.each(function(){
+					if ( $(this).closest('.upfront-output-region-sub-container').length ){
+						height -= $(this).outerHeight();
+						exclude.push(this);
+					}
+				});
+				$regions.each(function(){
+					var found = false,
+						me = this;
+					$.each(exclude, function(i, node){
+						if ( node == me )
+							found = true;
+					});
+					if ( !found ){
+						$(this).css({
+							minHeight: height,
+							height: height,
+							maxHeight: height
+						});
+					}
 				});
 			}
-			else if ( $region.length > 1 ){
-				$region.each(function(){
+			else if ( $regions.length > 1 ){
+				$regions.each(function(){
 					var min = parseInt($(this).css('min-height')),
 						h = $(this).outerHeight();
 					if ( min )
 						min_height = min > min_height ? min : min_height;
 					height = h > height ? h : height;
 				});
-				$region.css({
+				$regions.css({
 					minHeight: height,
 					height: "",
 					maxHeight: ""
@@ -107,4 +124,6 @@ jQuery(document).ready(function($){
 	}
 	fix_full_bg();
 	$(window).on('resize', fix_full_bg);
+	
+	
 });

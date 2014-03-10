@@ -4632,21 +4632,91 @@ var Field_Anchor = Field_Select.extend({
 		},
 		render_modal: function ($content, $modal) {
 			var me = this,
+				collection = this.model.collection,
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
+				index = collection.indexOf(this.model),
+				index_container = collection.index_container(this.model),
 				region_type = new Field_Radios({
 					model: this.model,
 					property: 'type',
 					default_value: 'wide',
 					layout: 'horizontal-inline',
 					values: [
-						{ label: "Full Screen", value: 'full' },
+						{ label: "Full Screen", value: 'full', disabled: index_container > 0 },
 						{ label: "100% wide", value: 'wide' },
 						{ label: "Contained", value: 'clip' }
 					],
 					change: function () {
 						var value = this.get_value();
 						this.model.set({type: value}, {silent: true});
+						this.property.set({value: value});
+						if ( value == 'full' )
+							$region_nav.show();
+						else
+							$region_nav.hide();
+					}
+				}),
+				region_nav = new Field_Radios({
+					model: this.model,
+					property: 'nav_region',
+					default_value: '',
+					layout: 'horizontal-inline',
+					values: [
+						{ label: "No nav", value: '' },
+						{ label: "Bottom nav", value: 'bottom' },
+						{ label: "Full screen, top", value: 'top' }
+					],
+					change: function () {
+						var value = this.get_value(),
+							sub_regions = me.model.get_sub_regions(),
+							add_region = false,
+							copy_data = false,
+							copy_region = false;
+						index = collection.indexOf(me.model);
+						if ( value == '' ){
+							if ( sub_regions.top )
+								collection.remove(sub_regions.top);
+							else if ( sub_regions.bottom )
+								collection.remove(sub_regions.bottom);
+						}
+						else {
+							if ( value == 'bottom' ){
+								if ( sub_regions.top ){
+									copy_data = Upfront.Util.model_to_json(sub_regions.top);
+									copy_region = new Upfront.Models.Region(copy_data);
+									collection.remove(sub_regions.top);
+									copy_region.set({sub: value}, {silent:true});
+									copy_region.add_to(collection, index, {sub: value});
+								}
+								else if ( !sub_regions.bottom ){
+									add_region = sub_regions.right ? index+2 : index+1;
+								}
+							}
+							else {
+								if ( sub_regions.bottom ){
+									copy_data = Upfront.Util.model_to_json(sub_regions.bottom);
+									copy_region = new Upfront.Models.Region(copy_data);
+									collection.remove(sub_regions.bottom);
+									copy_region.set({sub: value}, {silent:true});
+									copy_region.add_to(collection, index, {sub: value});
+								}
+								else if ( !sub_regions.top ){
+									add_region = sub_regions.left ? index-1 : index;
+								}
+							}
+							if ( add_region !== false ){
+								var name = me.model.get('name') + '_nav',
+									title = me.model.get('title') + ' Nav',
+									new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+										"name": name,
+										"title": title,
+										"container": me.model.get('name'),
+										"sub": value
+									}));
+								new_region.add_to(collection, add_region, {sub: value});
+							}
+						}
 						this.property.set({value: value});
 					}
 				}),
@@ -4669,13 +4739,25 @@ var Field_Anchor = Field_Select.extend({
 						me.render_modal_tab(value, $content.find('.upfront-region-bg-setting-tab-'+value), $content);
 						this.property.set({value: value});
 					}
-				});
+				}),
+				$region_type, $region_nav
+			;
 			$modal.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
-			region_type.render();
+			$region_type = $content.find('.upfront-region-bg-setting-region-type');
+			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
+			if ( this.model.is_main() ){
+				region_type.render();
+				$region_type.append(region_type.$el);
+				region_nav.render();
+				$region_nav.append(region_nav.$el);
+			}
+			else {
+				$region_type.hide();
+				$region_nav.hide();
+			}
 			bg_type.render();
-			$content.find('.upfront-region-bg-setting-region-type').append(region_type.$el);
 			$content.find('.upfront-region-bg-setting-type').append(bg_type.$el);
 			$content.find('.upfront-region-bg-setting-change-image').on('click', function (e) {
 				e.preventDefault();
@@ -4688,6 +4770,7 @@ var Field_Anchor = Field_Select.extend({
 				me.trigger_expand_lock($(this));
 			});
 			this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
+			region_type.trigger('changed');
 			bg_type.trigger('changed');
 		},
 		on_close_modal: function (me) {
@@ -4773,9 +4856,9 @@ var Field_Anchor = Field_Select.extend({
 				$style = $('<div class="upfront-region-bg-image-style"></div>'),
 				$tile = $('<div class="upfront-region-bg-image-tile" />'),
 				$fixed = $('<div class="upfront-region-bg-image-fixed clearfix" />'),
-				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-setting-label">Image Position:</div></div>'),
+				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-setting-label-alt">Image Position:</div></div>'),
 				$fixed_pos_num = $('<div class="upfront-region-bg-image-fixed-pos-num" />'),
-				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-setting-label">Background Color:</div></div>');
+				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-setting-label-alt">Background Color:</div></div>');
 			if ( !image ) {
 				this.upload_image();
 			}
@@ -5220,17 +5303,27 @@ var Field_Anchor = Field_Select.extend({
 		// Video tab
 		render_modal_tab_video: function ($tab) {
 			var me = this,
-				pos_option = {
-					min: 0,
-					max: 9999,
-					step: 1
-				},
+				label_html = '<div class="upfront-region-bg-setting-label"></div>',
+				$style_label = $(label_html).text("Video background behavior"),
+				$video_label = $(label_html).text("Video URL"),
 				fields = {
+					mute: new Field_Checkboxes({
+						model: this.model,
+						property: 'background_video_mute',
+						default_value: true,
+						layout: 'horizontal-inline',
+						multiple: false,
+						values: [ { label: "Mute video on play?", value: true } ],
+						change: function () {
+							var value = this.get_value();
+							this.property.set({value: value ? true : false});
+						}
+					}),
 					video: new Field_Text({
 						model: this.model,
 						property: 'background_video',
-						label: "Video URL:",
 						default_value: '',
+						placeholder: 'Video URL (YouTube, Vimeo or Wistia)',
 						change: function () {
 							var value = this.get_value();
 							if ( value ){
@@ -5239,51 +5332,23 @@ var Field_Anchor = Field_Select.extend({
 									console.log(response);
 									if ( !response.data || !response.data.width || !response.data.height )
 										return;
-									var width = fields.width,
-										height = fields.height;
-									width.get_field().val(response.data.width);
-									width.trigger('changed');
-									height.get_field().val(response.data.height);
-									height.trigger('changed');
+									me.model.set_property('background_video_width', response.data.width);
+									me.model.set_property('background_video_height', response.data.height);
 									me.model.set_property('background_video_embed', response.data.html);
 								});
 							}
 							this.property.set({value: value});
 						}
 					}),
-					width: new Field_Number(_.extend({
+					style: new Field_Radios({
 						model: this.model,
-						property: 'background_video_width',
-						label: "Width:",
-						label_style: 'inline',
-						suffix: 'px',
-						default_value: 640,
-						change: function () {
-							var value = this.get_value();
-							this.property.set({value: value});
-						}
-					}, pos_option)),
-					height: new Field_Number(_.extend({
-						model: this.model,
-						property: 'background_video_height',
-						label: "Height:",
-						label_style: 'inline',
-						suffix: 'px',
-						default_value: 360,
-						change: function () {
-							var value = this.get_value();
-							this.property.set({value: value});
-						}
-					}, pos_option)),
-					style: new Field_Select({
-						model: this.model,
-						label: "Style:",
 						property: 'background_video_style',
+						layout: 'horizontal-inline',
 						default_value: ["crop"],
 						values: [
-							{ label: "Cropped", value: "crop" },
-							{ label: "Full", value: "full" },
-							{ label: "Inside", value: "inside" }
+							{ label: "Scale & crop", value: "crop" },
+							{ label: "No crop embed", value: "full" },
+							{ label: "No crop + bg color", value: "inside" }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -5296,7 +5361,8 @@ var Field_Anchor = Field_Select.extend({
 					}),
 					color: new Field_Color({
 						model: this.model,
-						label: "Background Color:",
+						label: "Area BG Color:",
+						label_style: 'inline',
 						property: 'background_color',
 						default_value: '#ffffff',
 						spectrum: {
@@ -5316,7 +5382,7 @@ var Field_Anchor = Field_Select.extend({
 			_.each(fields, function (field) {
 				field.render();
 			});
-			this._render_tab_template($tab, '', [fields.video.$el, fields.width.$el, fields.height.$el, fields.style.$el, fields.color.$el]);
+			this._render_tab_template($tab, /*fields.mute.$el*/ '', [$style_label, fields.style.$el, fields.color.$el, $video_label, fields.video.$el], 'video');
 			fields.style.trigger('changed');
 		},
 		get_video_embed: function (url) {
@@ -5447,8 +5513,7 @@ var Field_Anchor = Field_Select.extend({
 				Upfront.Events.once('entity:region_container:before_render', this.before_animation, this);
 				Upfront.Events.once('entity:region_container:after_render', this.run_animation, this);
 			}
-			// @TODO need to refactor this? More test needed
-			collection.add(new_region, {at: is_before ? index : index+1, is_before: is_before});
+			new_region.add_to(collection, (is_before ? index : index+1), {sub: is_before ? 'left' : 'right'});
 		},
 		before_animation: function (view, model) {
 			// prepare to run animation, disable edit
@@ -5601,18 +5666,21 @@ var Field_Anchor = Field_Select.extend({
 			this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
 		},
 		items: function () {
-			var items = _([]);
+			var items = _([]),
+				type = this.model.get_property_value_by_name('background_type'),
+				sub = this.model.get('sub');
 			items.push(this.bg);
 			//if ( this.expand_lock )
 			//	items.push(this.expand_lock);
-			if ( this.add_region )
+			if ( this.add_region && type != 'full' )
 				items.push(this.add_region);
 			if ( this.model.is_main() ) {
 				if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
 					items.push( this.delete_region );
 			}
 			else {
-				items.push( this.delete_region );
+				if ( sub != 'top' && sub != 'bottom' )
+					items.push( this.delete_region );
 			}
 			return items;
 		}
@@ -5655,6 +5723,8 @@ var Field_Anchor = Field_Select.extend({
 				$wrap = $('<div class="upfront-inline-panels-wrap" />');
 			this.$el.html('');
 			panels.each(function(panel){
+				if ( !panel )
+					return;
 				panel.panels_view = me;
 				panel.render();
 				panel.delegateEvents();
@@ -5701,16 +5771,15 @@ var Field_Anchor = Field_Select.extend({
 				container = this.model.get('container') || this.model.get('name'),
 				index = collection.indexOf(this.model),
 				total = collection.size()-1; // total minus shadow region
-			panels.push( this.edit_panel )
+			panels.push( this.edit_panel );
 			if ( index == total-1 ) // last region
 				panels.push( this.add_panel_bottom );
 			if ( this.model.is_main() ) {
-				var prev_model = this.model.get_side_region(),
-					next_model = this.model.get_side_region(true);
+				var sub_models = this.model.get_sub_regions();
 				if ( this.model.get('allow_sidebar') ){
-					if ( prev_model === false || prev_model.get('container') != container )
+					if ( sub_models.left === false )
 						panels.push( this.add_panel_left );
-					if ( next_model === false || next_model.get('container') != container )
+					if ( sub_models.right === false )
 						panels.push( this.add_panel_right );
 				}
 			}
