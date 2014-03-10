@@ -1809,6 +1809,11 @@ define([
 				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function (e) {
+				//Check we are not selecting text
+				var selection = document.getSelection ? document.getSelection() : document.selection;
+				if(selection && selection.type == 'Range')
+					return;
+
 				var currentEntity = Upfront.data.currentEntity;
 				// Deactivate settings on clicking anywhere in layout, but the settings button
 				if(!$(e.target).closest('.upfront-entity_meta').length && !$(e.target).closest('#upfront-csseditor').length)
