@@ -138,7 +138,33 @@ var hackRedactor = function(){
 		// Hide the toolbar at events in all documents (iframe)
 		hideHandler(document);
 		if (this.opts.iframe) hideHandler(this.document);
-	},
+	};
+
+	//Create redactor markers without modifying the selection.
+	$.Redactor.prototype.selectionSet = function(orgn, orgo, focn, foco) {
+		if (focn === null) focn = orgn;
+		if (foco === null) foco = orgo;
+
+		var sel = this.getSelection();
+		if (!sel) return;
+
+		var range = this.getRange();
+
+		if(focn != orgn && orgn.id == 'selection-marker-1'){
+			orgn = orgn.nextSibling;
+			orgo = 0;
+			focn = focn.previousSibling;
+			foco = typeof focn.length != 'undefined' ? focn.length : focn.innerText.length;
+		}
+		range.setStart(orgn, orgo);
+		range.setEnd(focn, foco );
+
+		try {
+			sel.removeAllRanges();
+		} catch (e) {}
+
+		sel.addRange(range);
+	};
 
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
@@ -226,8 +252,9 @@ var Ueditor = function($el, options) {
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
-			airButtons: ['upfrontFormatting', 'bold', 'italic', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor'],
+			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor'],
 			buttonsCustom: {},
+			activeButtonsAdd: {},
 			observeLinks: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre']
 		}, options)
@@ -393,7 +420,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'blockquote'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -893,12 +920,15 @@ RedactorPlugins.upfrontColor = {
 			'open': 'open',
 		},
 		setCurrentColors: function() {
-			if(this.redactor.getCurrent() || (this.redactor.getCurrent() && $(this.redactor.getCurrent()).prop('tagName')=='INLINE')) {
-				var rgb_a = $(this.redactor.getCurrent()).css('background-color').split(',');
-				this.current_color = $(this.redactor.getCurrent()).css('color');
+			var parent = this.redactor.getParent();
+			if(parent || (parent && $(parent).prop('tagName')=='INLINE')) {
+
+				var rgb_a = $(parent).css('background-color').split(',');
+				this.current_color = $(parent).css('color');
 
 				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
-					this.current_bg = $(this.redactor.getCurrent()).css('background-color');
+					this.current_bg = $(parent).css('background-color');
+
 			}
 			else {
 				this.current_color = this.current_bg = false;
@@ -1098,6 +1128,19 @@ RedactorPlugins.upfrontFormatting = {
 			this.redactor.selectionSave();
 		}
 	})
+};
+
+RedactorPlugins.blockquote = {
+	beforeInit: function() {
+		this.opts.buttonsCustom.blockquote = {
+			title: 'Blockquote',
+			callback: function(){this.setQuote();}
+		};
+		this.opts.activeButtonsAdd.blockquote = 'blockquote';
+	},
+	setQuote: function() {
+		this.formatQuote('blockquote');
+	}
 };
 
 RedactorPlugins.upfrontMedia = {
