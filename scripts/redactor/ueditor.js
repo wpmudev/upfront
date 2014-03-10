@@ -306,6 +306,11 @@ Ueditor.prototype = {
 	bindStartEvents: function() {
 		var me = this,
 			checkInnerClick = function(e){
+			//Check we are not selecting text
+			var selection = document.getSelection ? document.getSelection() : document.selection;
+			if(selection && selection.type == 'Range')
+				return;
+
 			//Check if the click has been inner, or inthe popup, otherwise stop the editor
 			if(!me.options.autostart && me.redactor){
 				var $target = $(e.target);
