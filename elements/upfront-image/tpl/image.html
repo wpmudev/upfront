@@ -1,62 +1,64 @@
-<div class="uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>">
-	<?php if($url) { ?>
-	<a href="<?php echo $url ?>">
-	<?php } ?>
-		<?php if($src){ ?>
-		<div class="upfront-image-container">
-			<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width:<?php echo $imgWidth ?>; margin-top:<?php echo $marginTop ?>px"/>
+<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>; min-height: <?php echo $element_size['height'] ?>px;">
+	<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">
+		<?php if($url) { ?>
+		<a href="<?php echo $url ?>">
+		<?php } ?>
+			<?php if($src){ ?>
+			<div class="upfront-image-container">
+				<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" style="width:<?php echo $imgWidth ?>;"/>
+			</div>
+			<?php } ?>
+
+		<?php if($include_image_caption){// && $caption_position != 'below_image'){ ?>
+		<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>; ">
+			<?php if($cover_caption) { ?>
+				<div class="uimage-caption-cover">
+			<?php } ?>
+					<?php echo $image_caption ?>
+			<?php if($cover_caption) { ?>
+				</div>
+			<?php } ?>
 		</div>
 		<?php } ?>
 
-	<?php if($include_image_caption){// && $caption_position != 'below_image'){ ?>
-	<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>; ">
-		<?php if($cover_caption) { ?>
-			<div class="uimage-caption-cover">
-		<?php } ?>
-				<?php echo $image_caption ?>
-		<?php if($cover_caption) { ?>
-			</div>
+		<?php if($url) { ?>
+		</a>
 		<?php } ?>
 	</div>
-	<?php } ?>
-
-	<?php if($url) { ?>
-	</a>
-	<?php } ?>
-
 </div>
 
 <style>
+	#<?php echo $element_id ?> .uimage {
+		line-height: 0;
+	}
 	#<?php echo $element_id ?> .wp-caption *{
 		-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+	}
+	#<?php echo $element_id ?> .wp-caption {
+		line-height: initial;
 	}
 	#<?php echo $element_id ?> .uimage-over_image {
 		position:relative;
 	}
 	#<?php echo $element_id ?> .uimage-over_image .wp-caption{
 		position:absolute;
+		width: 100%;
+		left: 0;
+		top: 0;
 	}
 	#<?php echo $element_id ?> .uimage-over_image .uimage-fill,
 	#<?php echo $element_id ?> .uimage-over_image .uimage-fill_middle,
 	#<?php echo $element_id ?> .uimage-over_image .uimage-fill_bottom{
 		text-align: left;
-		width: <?php echo $captionData['width'] ?>;
-		height: <?php echo $captionData['height'] ?>;
-		left: <?php echo $captionData['left'] ?>;
-		top: <?php echo $captionData['top'] ?>;
+		height: 100%;
 	}
 
 	#<?php echo $element_id ?> .uimage-caption-over_image-top .wp-caption{
-		width: <?php echo $captionData['width'] ?>;
-		left: <?php echo $captionData['left'] ?>;
-		top: <?php echo $captionData['top'] ?>;
 	}
 
 	#<?php echo $element_id ?> .uimage-caption-over_image-bottom .wp-caption{
-		width: <?php echo $captionData['width'] ?>;
-		left: <?php echo $captionData['left'] ?>;
 		top: auto;
-		bottom: <?php echo $captionData['bottom'] ?>;
+		bottom: 0;
 	}
 
 	#<?php echo $element_id ?> .uimage-fill_bottom:before,

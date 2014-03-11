@@ -1117,3 +1117,8 @@ div.uimage-controls i.upfront-icon:before {
 .uimage-settings .sp-replacer {
 	vertical-align: top;
 }
+
+.upfront-image-caption-container {
+	position: relative;
+	display: inline-block;
+}
