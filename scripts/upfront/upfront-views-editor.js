@@ -3562,8 +3562,9 @@ var CSSEditor = Backbone.View.extend({
 			$('body').append(this.el);
 	},
 	init: function(options){
-		if(this.editor)
+		if(this.$style)
 			this.close();
+
 		this.model = options.model;
 
 		var me = this,
@@ -3596,10 +3597,12 @@ var CSSEditor = Backbone.View.extend({
 
 		this.element_id = this.model.get_property_value_by_name('element_id');
 		if(!$('#' + this.element_id + '-styles').length){
-			$('body').append('<style id="' + this.element_id + '-style"></style');
+			this.$style = $('<style id="' + this.element_id + '-style"></style');
+			$('body').append(this.$style);
 		}
+		else
+			this.$style = $('#' + this.element_id + '-style');
 
-		this.$style = $('#' + this.element_id + '-style');
 		this.render();
 
 		this.startResizable();

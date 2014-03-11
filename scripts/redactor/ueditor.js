@@ -140,7 +140,7 @@ var hackRedactor = function(){
 		if (this.opts.iframe) hideHandler(this.document);
 	};
 
-	//Create redactor markers without modifying the selection.
+	//Fix the selection, making the temporary markers not interfere with the style selection for the buttons.
 	$.Redactor.prototype.selectionSet = function(orgn, orgo, focn, foco) {
 		if (focn === null) focn = orgn;
 		if (foco === null) foco = orgo;
