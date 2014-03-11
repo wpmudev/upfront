@@ -210,6 +210,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			contents
 		;
 		tplOptions.checked = 'checked="checked"';
+		tplOptions.anchors = this.getAnchors();
 		contents = $('<div/>').append(this.linkTpl(tplOptions))
 			.on('change', 'input[name=ugallery-image-link]', function(ev){
 				me.linkChanged(ev);
@@ -224,6 +225,21 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.openTooltip(contents, $(e.target));
 	},
 
+	getAnchors: function(){
+		var regions = Upfront.Application.layout.get("regions"),
+			anchors = ['']
+		;
+		regions.each(function (r) {
+			r.get("modules").each(function (module) {
+				module.get("objects").each(function (object) {
+					var anchor = object.get_property_value_by_name("anchor");
+					if (anchor && anchor.length) anchors.push(anchor);
+				});
+			});
+		});
+		return anchors;
+	},
+
 	linkChanged: function(e){
 		var me = this,
 			val = $('#ugallery-tooltip').find('input[name=ugallery-image-link]:checked').val()
@@ -231,9 +247,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		if(val == 'external'){
 			$('#ugallery-image-link-url').show();
+			$('#ugallery-image-anchor-select').hide();
+		}
+		else if(val == 'anchor'){
+			$('#ugallery-image-anchor-select').show();
+			$('#ugallery-image-link-url').hide();
 		}
 		else{
 			$('#ugallery-image-link-url').hide();
+			$('#ugallery-image-anchor-select').hide();
 			if(val == 'post' || e.type != 'change'){
 				var selectorOptions = {
 						postTypes: this.postTypes()
@@ -261,6 +283,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 		else if(linkVal == 'show_larger_image') {
 			this.property('image_link', this.property('srcFull'));
+		}
+		else if(linkVal == 'anchor'){
+			this.property('image_link', $('#ugallery-image-anchor-select').find('select').val());
 		}
 		else{
 			this.property('image_link', '');

@@ -1,6 +1,6 @@
-<div> 
-<!-- 
-	Wrap everything in a div to convert this file's content in a jquery element 
+<div>
+<!--
+	Wrap everything in a div to convert this file's content in a jquery element
 	so it is possible to use $.find.
 -->
 
@@ -14,9 +14,9 @@
 			<div class="upfront-image-media-container">
 			<i class="icon-picture"></i> <a class="open-media-gallery" href="#">media gallery</a>
 			</div>
-			<span class="dragimagehand"></span>	
+			<span class="dragimagehand"></span>
 		</div>
-	</div>	
+	</div>
 </div>
 </script>
 
@@ -63,7 +63,7 @@
 </script>
 
 <script type="text/template" id="link-tpl">
-	<h3>Links to:</h3>	
+	<h3>Links to:</h3>
 	<div class="upfront-field-wrap">
 		<input type="radio" name="ugallery-image-link" value="do_nothing" class="upfront-field-radio" id="ugallery-image-link-1" {{when_clicked == 'do_nothing' ? checked : ''}}>
 		<label for="ugallery-image-link-1">No link</label>
@@ -82,6 +82,19 @@
 		<input type="radio" name="ugallery-image-link" value="show_larger_image" class="upfront-field-radio" id="ugallery-image-link-4" {{when_clicked == 'show_larger_image' ? checked : ''}}>
 		<label for="ugallery-image-link-4">Show larger image</label>
 	</div>
+	{[if(anchors.length > 1) { ]}
+	<div class="upfront-field-wrap">
+		<input type="radio" name="ugallery-image-link" value="anchor" class="upfront-field-radio" {{when_clicked == 'anchor' ? checked : ''}} id="ugallery-image-link-anchor">
+		<label for="ugallery-image-link-anchor">Anchor</label>
+		<div id="ugallery-image-anchor-select" style="{{when_clicked != 'anchor' ? 'display:none' : ''}}">
+			<select class="ueditor-anchor-selector">
+			{[ _.each(anchors, function(anchor){ ]}
+				<option value="#{{ anchor }}" {{ image_link == '#' + anchor ? 'selected="selected"' : '' }}>{{anchor}}</option>
+			{[ }); ]}
+			</select>
+		</div>
+	</div>
+	{[ } ]}
 	<div class="upfront-settings-button_panel">
 		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
 	</div>
@@ -102,7 +115,7 @@
 			<div class="uimage-fullwidth-info uimage-fullwidth-info-3"></div>
 		</div>
 		<div style="margin-top:10px">
-			<input class="upfront-field-checkbox" type="checkbox" id="uimage-fullwidth-noalert" value="1"> 
+			<input class="upfront-field-checkbox" type="checkbox" id="uimage-fullwidth-noalert" value="1">
 			<label for="uimage-fullwidth-noalert">Don't show this message again</label>
 		</div>
 	</div>
