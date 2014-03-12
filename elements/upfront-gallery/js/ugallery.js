@@ -165,7 +165,18 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = me.images.get(item.attr('rel')),
-			titleUpdated = false
+			titleUpdated = false,
+			resizeWithText = function() {
+				var caption = this.content.find('figcaption'),
+					maxHeight = this.wH - 120 - caption.outerHeight(),
+					maxWidth = $(window).width() - 200
+				;
+
+				this.content.find('img').css({
+					'max-width': maxWidth,
+					'max-height': maxHeight
+				});
+			}
 		;
 
 		$.magnificPopup.open({
@@ -240,7 +251,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				beforeClose: function() {
 					if(titleUpdated)
 						Upfront.Views.Editor.notify("Image description has been successfully updated.");
-				}
+				},
+				resize: resizeWithText,
+				afterChange: resizeWithText
 			}
 		});
 	},

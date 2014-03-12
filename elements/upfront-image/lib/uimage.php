@@ -14,14 +14,7 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['url'] = $data['when_clicked'] == 'do_nothing' ? false : $data['image_link'];
 
-		/*
-		if(is_numeric($data['size']['width']))
-			$data['size']['width'] .= '%';
-		if(is_numeric($data['size']['height']))
-			$data['size']['height'] .= '%';
-	*/
 		$data['wrapper_id'] = str_replace('image-object-', 'wrapper-', $data['element_id']);
-
 
 		$data['wrapper_id'] = 'hello_up';
 

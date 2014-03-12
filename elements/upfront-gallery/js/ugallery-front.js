@@ -58,15 +58,31 @@ jQuery(function($){
 			return '';
 		};
 
+		var resizeWithText = function() {
+			console.log('Resizing!!');
+			var caption = this.content.find('figcaption'),
+				maxHeight = this.wH - 120 - caption.outerHeight(),
+				maxWidth = $(window).width() - 200
+			;
+
+			this.content.find('img').css({
+				'max-width': maxWidth,
+				'max-height': maxHeight
+			});
+		};
+
 		for(var galleryId in ugalleries){
-			var gallery = $('#' + galleryId).find('.ugallery_item');
+			var gallery = $('#' + galleryId).find('.ugallery_item'),
+				magOptions = ugalleries[galleryId].magnific
+			;
 
 			if(gallery.find('.ugallery_lb_texts').length)
-				ugalleries[galleryId].magnific.image = {
+				magOptions.image = {
 					titleSrc: titleSrc
 				};
 
-			gallery.magnificPopup(ugalleries[galleryId].magnific);
+			magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText};
+			gallery.magnificPopup(magOptions);
 		}
 
 		setTimeout(function(){
