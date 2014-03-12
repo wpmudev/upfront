@@ -2514,6 +2514,15 @@ var ImageSelector = Backbone.View.extend({
 	openSelector: function(){
 		var me = this;
 		this.openOverlaySection(this.selectorTpl, {}, function(overlay){
+			var input = $('#upfront-image-file-input');
+			if(me.options.multiple){
+				input.attr('multiple','multiple');
+				input.attr('name', 'media[]');
+			}
+			else{
+				input.attr('multiple', false);
+				input.attr('name', 'media');
+			}
 
 			$('#upront-image-placeholder')
                 .on('dragenter', function(e){
@@ -2531,18 +2540,18 @@ var ImageSelector = Backbone.View.extend({
                     e.stopPropagation();
                     $(this).css('border-color', '#1fcd8f');
                     $(this).css('background', 'rgba(255,255,255,.1)');
-                    $(this).find()
+                    $(this).find();
                 })
                 .on('drop', function(e){
                     e.preventDefault();
                     e.stopPropagation();
                     if(e.originalEvent.dataTransfer){
-                    	var files = e.originalEvent.dataTransfer.files,
-                    		input = $('#upfront-image-file-input')
-                		;
+						var files = e.originalEvent.dataTransfer.files,
+							input = $('#upfront-image-file-input')
+						;
 	                    // Only call the handler if 1 or more files was dropped.
 	                    if (files.length && input.length){
-	                    	input[0].files = files;
+							input[0].files = files;
 	                    }
                     }
 

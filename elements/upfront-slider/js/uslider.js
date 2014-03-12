@@ -46,7 +46,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	initialize: function(options){
 		var me = this;
-		console.log('Uslider');
 		if(! (this.model instanceof USliderModel)){
 			this.model = new USliderModel({properties: this.model.get('properties')});
 		}
@@ -65,7 +64,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var slides = this.property('slides');
 		this.slides = new Uslider_Slides(slides);
 
+		this.model.slides = this.slides;
+
 		this.listenTo(this.slides, 'add remove reset change', this.slidesChange);
+		this.listenTo(this.model, 'change', this.onModelChange);
 
 		this.listenTo(this.model, 'addRequest', this.openImageSelector);
 
@@ -113,7 +115,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.dots = _.indexOf(['dots', 'both'], props.controls) != -1;
 		props.arrows = _.indexOf(['arrows', 'both'], props.controls) != -1;
 
-		this.slides = new Uslider_Slides(this.property('slides'));
 		props.slides = this.slides.toJSON();
 
 		props.slidesLength = props.slides.length;
@@ -565,7 +566,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	slidesChange: function(){
 		this.property('slides', this.slides.toJSON(), false);
-		this.model.trigger('slidesChanged');
+		//this.model.trigger('slidesChanged');
+	},
+
+	onModelChange: function(){
+		this.stopListeningTo(this.slides);
+		this.slides = new Uslider_Slides(this.property('slides'));
+		this.listenTo(this.slides, 'add remove reset change', this.slidesChange);
+		this.render();
 	},
 
 	openImageSelector: function(e, replaceId){
@@ -1067,25 +1075,9 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 		'click .uslider-add' : 'addSlides',
 	},
 	initialize: function(){
-		this.slides = new Uslider_Slides(this.model.get_property_value_by_name('slides'));
+		this.slides = this.model.slides;
 
-		this.listenTo(this.slides, 'add remove sort reset', this.updateSlides);
-		this.listenTo(this.model, 'slidesChanged', this.slidesChanged);
-	},
-
-	updateSlides: function(){
-		this.model.set_property('slides', this.slides.toJSON());
-	},
-
-	slidesChanged: function(){
-		this.slides = new Uslider_Slides(this.model.get_property_value_by_name('slides'));
-
-		this.listenTo(this.slides, 'add remove sort reset', this.updateSlides);
-		this.render();
-		setTimeout(function(){
-			var settings = $('#settings');
-			settings.height(settings.find('.upfront-settings_panel:visible').outerHeight());
-		},100);
+		this.listenTo(this.slides, 'add remove sort reset', this.render);
 	},
 
 	render: function() {
@@ -1111,11 +1103,18 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 				}
 			}
 		});
+
+		setTimeout(function(){
+			var settings = $('#settings');
+			settings.height(settings.find('.upfront-settings_panel:visible').outerHeight());
+		},100)
+
 	},
 
 	addSlides: function(){
 		this.model.trigger('addRequest');
 	},
+
 	getSlidePosition: function(slideId){
 		var i = 0,
 			found = false;
