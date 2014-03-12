@@ -7383,10 +7383,12 @@ body .redactor_toolbar li a.redactor_btn_h1			 		{ background-position: -775px; 
 body .redactor_toolbar li a.redactor_btn_h2			 		{ background-position: -800px; }
 body .redactor_toolbar li a.redactor_btn_h3			 		{ background-position: -825px; }
 
-body .redactor_toolbar li a.redactor_btn_blockquote,
+body .redactor_toolbar li a.ueditor-noquote,
 body .redactor_toolbar li a.redactor_btn_quote		 		{ background-position: -510px -208px; }
-body .redactor_toolbar li a.redactor_btn_blockquote.redactor_act,
+body .redactor_toolbar li a.ueditor-quote,
 body .redactor_toolbar li a.redactor_btn_quote.redactor_act { background-position: -552px -208px; }
+body .redactor_toolbar li a.ueditor-quote-alternative		{ background-position: -594px -208px; }
+
 body .redactor_toolbar li a.redactor_btn_pre		 		{ background-position: -875px; }
 
 

@@ -420,7 +420,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'blockquote'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -1132,14 +1132,51 @@ RedactorPlugins.upfrontFormatting = {
 
 RedactorPlugins.blockquote = {
 	beforeInit: function() {
-		this.opts.buttonsCustom.blockquote = {
-			title: 'Blockquote',
-			callback: function(){this.setQuote();}
+		var me = this;
+		this.opts.stateButtons.blockquote = {
+			title: 'Set a quote',
+			defaultState: 'noquote',
+			states: {
+				noquote: {
+					iconClass: 'ueditor-noquote',
+					isActive: function(redactor){
+						var quote = me.getQuote();
+						return !quote;
+					},
+					callback: function(name, el , button){
+						me.formatQuote('blockquote');
+					}
+				},
+				quote:{
+					iconClass: 'ueditor-quote',
+					isActive: function(redactor){
+						var quote = me.getQuote();
+						return quote && !$(quote).hasClass('upfront-quote-alternative');
+					},
+					callback: function(name, el , button){
+						me.formatQuote('blockquote');
+					}
+				},
+				alternative: {
+					iconClass: 'ueditor-quote-alternative',
+					isActive: function(redactor){
+						var quote = me.getQuote();
+						return quote && $(quote).hasClass('upfront-quote-alternative');
+					},
+					callback: function(name, el , button){
+						me.getQuote().addClass('upfront-quote-alternative');
+					}
+				}
+			}
 		};
-		this.opts.activeButtonsAdd.blockquote = 'blockquote';
+
 	},
-	setQuote: function() {
-		this.formatQuote('blockquote');
+	getQuote: function() {
+		var quote = $(this.getParent());
+		if(quote.prop('tagName') == 'BLOCKQUOTE')
+			return quote;
+		quote = quote.closest('blockquote');
+		return quote.closest('.redactor_box').length ? quote : false;
 	}
 };
 
