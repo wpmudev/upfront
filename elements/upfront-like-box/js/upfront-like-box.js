@@ -32,8 +32,9 @@
             }
 
             this.constructor.__super__.initialize.call(this, [options]);
-			Upfront.Events.on('entity:resize_start', this.hideFrame, this);
-            Upfront.Events.on('entity:resize_stop', this.onElementResize, this);
+
+            this.listenTo(Upfront.Events, 'entity:resize_start', this.hideFrame);
+            this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
 
         },
 
@@ -111,6 +112,21 @@
             }else{
                 return 'You need to set a Facebook URL in your <a class="back_global_settings" href="#">global social settings</a>.';
             }
+        },
+
+        on_render: function(){
+            var parent = this.parent_module_view;
+
+            //Prevent iframe hijacking of events when dragging
+            if(!parent.$el.data('dragHandler')){
+                parent.$el.on('dragstart', this.coverIframe);
+                parent.$el.data('dragHandler', true);
+            }
+        },
+
+        //Prevent iframe hijacking of events when dragging
+        coverIframe: function(e, ui){
+            ui.helper.append('<div class="upfront-iframe-draggable" style="width:100%;height:100%;position:absolute;top:0;left:0:z-index:1"></div>');
         }
 
     });
