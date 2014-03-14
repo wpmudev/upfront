@@ -193,7 +193,7 @@ abstract class Upfront_Entity {
 		if (!empty($this->_data['name'])) return $this->_data['name'];
 		return 'anonymous';
 	}
-	
+
 	public function get_entity_type () {
 		if (!empty($this->_data['type'])) return $this->_data['type'];
 		return '';
@@ -377,7 +377,8 @@ abstract class Upfront_Container extends Upfront_Entity {
 			if ( !isset($wrapper) || !$wrapper ){
 				if($this->_child_view_class == 'Upfront_Object'){
 					$theme_style = upfront_get_property_value('theme_style', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style .'">' . $child_view->get_markup() . '</div>';
+					$slug = upfront_get_property_value('id_slug', $child);
+					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . '">' . $child_view->get_markup() . '</div>';
 				}
 				else
 					$html .= $child_view->get_markup();
@@ -446,7 +447,7 @@ class Upfront_Region_Container extends Upfront_Container {
 	protected function _is_background () {
 		return ( $this->_data['type'] != 'clip' || ( !$this->_data['type'] && !$this->_data['clip'] ) );
 	}
-	
+
 	public function wrap ($out, $before = '', $after = '') {
 		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
 		return parent::wrap("{$before}<div class='upfront-grid-layout'>{$out}</div>{$after} {$overlay}");
@@ -469,7 +470,7 @@ class Upfront_Region_Container extends Upfront_Container {
 
 class Upfront_Region_Sub_Container extends Upfront_Region_Container {
 	protected $_type = 'Region_Sub_Container';
-	
+
 	public function wrap ($out) {
 		return parent::wrap($out, '', '');
 	}
@@ -479,7 +480,7 @@ class Upfront_Region extends Upfront_Container {
 	protected $_type = 'Region';
 	protected $_children = 'modules';
 	protected $_child_view_class = 'Upfront_Module';
-	
+
 	protected function _is_background () {
 		return ( ( $this->_data['type'] == 'clip'  || ( !$this->_data['type'] && $this->_data['clip'] ) ) || ( $this->get_container() != $this->get_name() && ( !$this->_data['sub'] || ( $this->_data['sub'] != 'top' && $this->_data['sub'] != 'bottom' ) ) ) );
 	}
@@ -502,7 +503,7 @@ class Upfront_Region extends Upfront_Container {
 			$attr .= $this->_get_background_attr();
 		return $attr;
 	}
-	
+
 	public function get_sub () {
 		return $this->_data['sub'] ? $this->_data['sub'] : false;
 	}

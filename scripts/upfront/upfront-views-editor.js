@@ -3473,12 +3473,6 @@ var _Settings_CSS = SettingsItem.extend({
 		var style = this.$('input[name=theme_style]:checked').val(),
 			$text = this.$('.upfront-css-new-text')
 		;
-		/*
-		if(!style)
-			$text.text('add new style');
-		else
-			$text.text('edit style');
-		*/
 		this.model.set_property('theme_style', style);
 	},
 
@@ -3536,23 +3530,26 @@ var CSSEditor = Backbone.View.extend({
 		'mouseleave .upfront-css-selector': 'unhiliteElement',
 		'keyup .upfront-css-save-name': 'checkDeleteToggle'
 	},
+
+	//elemenTypes' element id matches model's 'id_slug' attribute
 	elementTypes: {
 		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
 		UcommentModel: {label: 'Comments', id: 'ucomment'},
 		UcontactModel: {label: 'Contact Form', id: 'ucontact'},
 		UgalleryModel: {label: 'Gallery', id: 'ugallery'},
-		UimageModel: {label: 'Image', id: 'uimage'},
-		LoginModel: {label: 'Login', id: 'ulogin'},
-		LikeBox: {label: 'Like Box', id: 'ulikebox'},
-		MapModel: {label: 'Map', id: 'umap'},
-		UnewnavigationModel: {label: 'Navigation', id: 'unavigation'},
+		UimageModel: {label: 'Image', id: 'image'},
+		LoginModel: {label: 'Login', id: 'upfront-login_element'},
+		LikeBox: {label: 'Like Box', id: 'Like-box-object'},
+		MapModel: {label: 'Map', id: 'upfront-map_element'},
+		NavigationModel: {label: 'Navigation', id: 'nav'},
+		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
 		UpostsModel: {label: 'Posts', id: 'uposts'},
 		UsearchModel: {label: 'Search', id: 'usearch'},
 		USliderModel: {label: 'Slider', id: 'uslider'},
-		SocialMediaModel: {label: 'Social', id: 'usocial'},
+		SocialMediaModel: {label: 'Social', id: 'SocialMedia'},
 		UtabsModel: {label: 'Tabs', id: 'utabs'},
-		ThisPageModel: {label: 'Page', id: 'upage'},
-		ThisPostModel: {label: 'Post', id: 'upost'},
+		ThisPageModel: {label: 'Page', id: 'this_page'},
+		ThisPostModel: {label: 'Post', id: 'this_post'},
 		UwidgetModel: {label: 'Widget', id: 'uwidget'},
 		UyoutubeModel: {label: 'YoutTube', id: 'utube'},
 		PlainTxtModel: {label: 'Text', id:'plaintext'}

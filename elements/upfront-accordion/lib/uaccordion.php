@@ -15,6 +15,7 @@ class Upfront_UaccordionView extends Upfront_Object {
       'accordion' => array($defaultPanel),
       'accordion_count' => 1,
       'accordion_fixed_width' => 'auto',
+      'id_slug' => 'uaccordion',
 
       'style_type' => 'theme_defined',
       'theme_style' => 'style1',
@@ -65,20 +66,20 @@ class Upfront_UaccordionView extends Upfront_Object {
           'defaults' => self::default_properties(),
           'template' => upfront_get_template_url('uaccordion', upfront_element_url('tpl/uaccordion.html', dirname(__FILE__)))
       );
-	  
+
       if(isset($data['uaccordion'])) {
 		if(isset($data['uaccordion']['defaults'])) {
 			$merged_defaults = array_merge($data['uaccordion']['defaults'], $newdata['defaults']);
 			$data['uaccordion']['defaults'] = $merged_defaults;
 		}
 		else {
-			$data['uaccordion']['defaults'] = $newdata['defaults'];	
+			$data['uaccordion']['defaults'] = $newdata['defaults'];
 	  	}
 	  	$data['uaccordion']['template'] = $newdata['template'];
 	  }
 	  else
 	  	$data['uaccordion'] = $newdata;
-		
+
       return $data;
   }
 

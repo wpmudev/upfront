@@ -382,6 +382,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if(!$current_styles)
 			$current_styles = array();
 
+		$styles = apply_filters('upfront-save_styles', $styles, $name, $element_type);
+
 		if(!isset($current_styles[$element_type]))
 			$current_styles[$element_type] = array();
 
