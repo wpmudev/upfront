@@ -422,6 +422,8 @@ var Application = new (Backbone.Router.extend({
 				app.start_navigation();
 
 				app.create_cssEditor();
+
+				Upfront.Events.trigger('Upfront:loaded');
 			}
 		);
 	},
