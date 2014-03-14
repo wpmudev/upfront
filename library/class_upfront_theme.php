@@ -706,7 +706,7 @@ class Upfront_Themes_RequiredPage {
 	}
 
 	protected function _create_page () {
-		$post_id = wp_insert_post(wp_parse_args($args, array(
+		$post_id = wp_insert_post(wp_parse_args($this->_page_data, array(
 			'post_status' => 'publish',
 			'post_type' => 'page'
 		)));
