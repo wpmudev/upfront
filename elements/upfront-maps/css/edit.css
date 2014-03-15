@@ -216,5 +216,16 @@ border-width: 11px;
 }
 .uf-current-location a:hover { cursor: pointer; }
 
-.uf_el_map_initial-overlay  button,
-.uf_el_map_initial-overlay  input { outline:none; }
+.uf_el_map_initial-overlay button,
+.uf_el_map_initial-overlay input { outline:none; }
+
+/* Missing default styles */
+.uf_el_map_initial-overlay input {
+	padding: 10px;
+	border: 1px solid #d0d0d0;
+}
+.uf_el_map_initial-overlay button {
+	border: 0;
+	border-radius: 2px;
+	cursor: pointer;
+}

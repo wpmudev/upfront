@@ -134,3 +134,17 @@
 	width: 100%;
 }
 
+
+/* Missing defaults */
+.upfront-code_element-module button.embed, 
+.upfront-code_element-module button.create,
+.upfront_code-editor-simple button 
+{
+	border: 0;
+	border-radius: 2px;
+	padding: 10px 30px;
+	cursor: pointer;
+}
+.upfront_code-editor-simple textarea {
+	width: 98%;
+}
