@@ -69,14 +69,18 @@ class Upfront_ThisPostView extends Upfront_Object {
 		global $wp_query, $more;
 
 		$in_the_loop = $wp_query->in_the_loop;
+		// This below with post query rewrite is an inline fix for WP not sanity checking before iteration: https://core.trac.wordpress.org/ticket/26321
+		$old_query_posts = $wp_query->posts;
 
 		//Make sure we show the whole post content
 		$more = 1;
 
 		$wp_query->is_single = true;
 		$wp_query->in_the_loop = true;
+		$wp_query->posts = array();
 		$data = upfront_get_template('this-post', array('post' => $post, 'properties' => $properties), dirname(dirname(__FILE__)) . '/tpl/this-post.php');
 		$wp_query->in_the_loop = $in_the_loop;
+		$wp_query->posts = $old_query_posts;
 
 		return $data;
 	}
@@ -96,6 +100,48 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function add_js_defaults($data){
 		$data['thisPost'] = array('defaults' => self::default_properties());
 		return $data;
+	}
+
+	/**
+	 * Checks the editor selectors presence and injects defaults
+	 * if nothing better is found.
+	 */
+	public static function add_fallback_selectors ($selectors) {
+		$selectors = !empty($selectors) ? $selectors : array();
+		$types = wp_list_pluck($selectors, 'type');
+
+		if (!in_array('title', $types)) {
+			$selectors[] = array(
+				'type' => 'title',
+				'selector' => 'h1.post_title',
+			);
+		}
+		if (!in_array('content', $types)) {
+			$selectors[] = array(
+				'type' => 'content',
+				'selector' => 'div.post_content.post_content-full',
+			);
+		}
+		if (!in_array('thumbnail', $types)) {
+			$selectors[] = array(
+				'type' => 'thumbnail',
+				'selector' => '.post_thumbnail',
+			);
+		}
+		if (!in_array('date', $types)) {
+			$selectors[] = array(
+				'type' => 'date',
+				'selector' => 'post_date',
+			);
+		}
+		if (!in_array('author', $types)) {
+			$selectors[] = array(
+				'type' => 'author',
+				'selector' => '.post_author',
+			);
+		}
+
+		return $selectors;
 	}
 
 	private function properties_to_array(){
