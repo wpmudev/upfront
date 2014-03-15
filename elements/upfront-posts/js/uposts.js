@@ -492,6 +492,7 @@ define(function() {
 					values: [
 						{label: "Full", value: "full"},
 						{label: "Excerpt", value: "excerpt"},
+						{label: "None", value: "none"},
 					]
 				})
 			]);
