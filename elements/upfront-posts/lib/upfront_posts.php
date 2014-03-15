@@ -18,8 +18,14 @@ class Upfront_UpostsView extends Upfront_Object {
 		$content_type = $this->_get_property('content_type');
 		$featured_image = $this->_get_property('featured_image');
 
+		$data = is_admin() && !empty($_POST['data'])
+			? json_decode(stripslashes_deep($_POST['data']), true) 
+			: array()
+		;
+
 		if (empty($post_type) && empty($taxonomy) && empty($term)) { // All empty, use whatever is global
-			$args = $wp_query->query_vars;
+			if (empty($data['query'])) $args = $wp_query->query_vars;
+			else  $args = $data['query']['query_vars'];
 		}
 
 		$post_type = !empty($post_type) ? $post_type : get_query_var('post_type');
@@ -32,6 +38,8 @@ class Upfront_UpostsView extends Upfront_Object {
 			));
 		} else if (!empty($wp_query->tax_query->queries)) {
 			$args['tax_query'] = $wp_query->tax_query->queries;
+		} else if (is_admin() && !empty($data['query']['tax_query']['queries'])) {
+			$args['tax_query'] = $data['query']['tax_query']['queries'];
 		}
 
 		$args['posts_per_page'] = !empty($limit) && is_numeric($limit) ?  $limit : 10;
@@ -43,9 +51,9 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
 
-
 		$properties = $this->properties_to_array();
 		$properties['editing'] = $editing;
+
 		return self::get_template($args, $properties);
 	}
 
@@ -95,7 +103,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			'taxonomy' => '',
 			'term' => '',
 			'limit'	=> 10,
-			'content_type' => 'excerpt', // 'excerpt' | 'full'
+			'content_type' => 'excerpt', // 'excerpt' | 'full' | 'none'
 			'featured_image' => 1,
 
 			'pagination' => 0,
