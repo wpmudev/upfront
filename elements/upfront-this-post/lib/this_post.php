@@ -119,7 +119,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if (!in_array('content', $types)) {
 			$selectors[] = array(
 				'type' => 'content',
-				'selector' => 'div.post_content.post_content-full',
+				'selector' => 'div.post_content',
 			);
 		}
 		if (!in_array('thumbnail', $types)) {
