@@ -454,10 +454,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	get_content_markup: function () {
+		/*
 		if(!this.property('element_size').width || (!this.property('quick_swap') && !_.isNumber(this.property('element_size').height))){
 			this.setElementSize();
 			this.property('element_size', this.elementSize);
 		}
+		*/
 
 		var me = this,
 			props = this.extract_properties(),
@@ -493,7 +495,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
 		}
 		else if(this.property('image_status') == 'starting'){
-			rendered += '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
+			rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
 					'<span class="upfront-image-resizethiselement">Add Image</span><div class=""><a class="upfront-image-select button" href="#" title="Add Image">+</a></div>'+
 			'</div></div>';
 		}
