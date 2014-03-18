@@ -3037,6 +3037,12 @@ a.ueditor-action-pickercancel{
 }
 /* hiding accordion until it's finished */
 
+.upfront-icon-element-gallery:before {
+	background-position: -39px -380px;
+}
+.upfront-icon-element-login:before {
+	background-position: -39px -414px;
+}
 .upfront-icon-element-accordion:before {
 	background-position: -39px -448px;
 }
@@ -3046,29 +3052,26 @@ a.ueditor-action-pickercancel{
 .upfront-icon-element-likebox:before {
 	background-position: -39px -518px;
 }
-.upfront-icon-element-gallery:before {
-	background-position: -39px -380px;
-}
 .upfront-icon-element-contact:before {
 	background-position: -39px -550px;
 }
 .upfront-icon-element-posts:before {
 	background-position: -39px -584px;
 }
-.upfront-icon-element-login:before {
-	background-position: -39px -414px;
+.upfront-icon-element-comment:before {
+	background-position: -39px -618px;
 }
 .upfront-icon-element-widget:before {
 	background-position: -39px -652px;
-}
-.upfront-icon-element-comment:before {
-	background-position: -39px -618px;
 }
 .upfront-icon-element-youtube:before {
 	background-position: -39px -687px;
 }
 .upfront-icon-element-tabs:before {
 	background-position: -39px -720px;
+}
+.upfront-icon-element-code:before {
+	background-position: -39px -755px;
 }
 .upfront-icon:before {
 	width: 24px;
