@@ -1,36 +1,36 @@
 <?php
 
 class Upfront_Theme {
-	
+
 	protected static $instance;
 	protected $supported_regions = array();
 	protected $regions = array();
 	protected $template_dir = 'templates';
 	protected $layout_dir = 'templates';
 	protected $region_default_args = array(
-		'name' => "", 
-		'title' => "", 
-		'properties' => array(), 
-		'modules' => array(), 
-		'wrappers' => array(), 
+		'name' => "",
+		'title' => "",
+		'properties' => array(),
+		'modules' => array(),
+		'wrappers' => array(),
 		'scope' => "local", // scope of region, accept local or global
 		'container' => "",
-		'default' => false, // default region can't deleted by user, accept true or false 
+		'default' => false, // default region can't deleted by user, accept true or false
 		'position' => 10,
 		'allow_sidebar' => false, // allow sidebar region? accept true or false
 		'type' => 'wide', // type of region, accept full|wide|clip (either full screen | 100% wide | clipped)
 	);
-	
+
 	public static function get_instance () {
 		if ( ! is_a(self::$instance, __CLASS__) )
 			self::$instance = new self;
 		return self::$instance;
 	}
-	
+
 	public function __construct () {
-		
+
 	}
-	
+
 	// @TODO deprecate this
 	public function add_region_support ($region, $args = array()) {
 		$this->supported_regions[$region] = $args;
@@ -44,34 +44,34 @@ class Upfront_Theme {
 		}
 		return false;
 	}
-	
+
 	public function set_region_default_args ($args) {
 		$this->region_default_args = wp_parse_args($args, $this->region_default_args);
 		return true;
 	}
-	
+
 	public function get_region_default_args () {
 		return $this->region_default_args;
 	}
-	
+
 	public function add_region ($args) {
 		$args = wp_parse_args($args, $this->region_default_args);
 		if ( ! empty($args['name']) && ! $this->has_region($args['name']) )
 			$this->regions[] = $args;
 	}
-	
+
 	public function add_regions ($regions) {
 		foreach ( $regions as $region )
 			$this->add_region($region);
 	}
-	
+
 	public function get_regions () {
 		// Required main region
 		if ( !$this->has_region('main') )
 			$this->add_region(array(
-				'name' => "main", 
+				'name' => "main",
 				'title' => __("Main Area"),
-				'scope' => "local", 
+				'scope' => "local",
 				'container' => "main",
 				'default' => true,
 				'position' => 10
@@ -94,19 +94,19 @@ class Upfront_Theme {
 
 	protected function find_default_layout($cascade) {
 		$filenames = array();
-		$order = array('specificity', 'item', 'type');
+		$order = array('theme_defined', 'specificity', 'item', 'type');
 		foreach($order as $o){
 			if(isset($cascade[$o]))
 				$filenames[] =  'layouts/' . $cascade[$o] . '.php';
 		}
 		$filenames[] = 'layouts/index.php';
 
-		return function_exists('upfront_locate_template') 
+		return function_exists('upfront_locate_template')
 			? upfront_locate_template($filenames)
 			: locate_template($filenames)
 		;
 	}
-	
+
 	public function has_region ($name) {
 		foreach ( $this->regions as $region ){
 			if ( $region['name'] == $name )
@@ -114,21 +114,21 @@ class Upfront_Theme {
 		}
 		return false;
 	}
-	
+
 	public static function _sort_region ($a, $b) {
 		return ( $a['position'] > $b['position'] ) ? 1 : ( $a['position'] == $b['position'] ? 0 : -1 );
 	}
-	
+
 	public function set_template_dir ($dir) {
 		$this->template_dir = $dir;
 	}
-	
+
 	public function get_template($slugs, $args = array(), $default_file = '') {
 		$template_file = $this->get_template_path($slugs, $default_file);
 
 		extract($args);
 		ob_start();
-		include $template_file;		
+		include $template_file;
 		return ob_get_clean();
 	}
 
@@ -178,7 +178,7 @@ class Upfront_Theme {
 }
 
 class Upfront_Virtual_Region {
-	
+
 	protected $data = array();
 	protected $wrappers = array();
 	protected $modules = array();
@@ -189,12 +189,12 @@ class Upfront_Virtual_Region {
 	public $side_regions = array();
 
 	public $errors = array();
-	
+
 	public function __construct ($args, $properties = array()) {
 		$this->data = array_merge(
 			array(
-				'properties' => array(), 
-				'modules' => array(), 
+				'properties' => array(),
+				'modules' => array(),
 				'wrappers' => array(),
 				'name' => '',
 				'title' => '',
@@ -211,22 +211,22 @@ class Upfront_Virtual_Region {
 		}
 		$this->grid = Upfront_Grid::get_grid();
 	}
-	
+
 	public function get_data () {
 		return array_merge(
-			$this->data, 
+			$this->data,
 			array(
-				'wrappers' => array_values($this->wrappers), 
+				'wrappers' => array_values($this->wrappers),
 				'modules' => array_values($this->modules)
 			)
 		);
 	}
-	
+
 	public function set_property ($property, $value) {
 		$arr = array( 'name' => $property, 'value' => $value );
 		$this->_set_property($property, $value, $this->data);
 	}
-	
+
 	protected function _set_property ($property, $value, &$data) {
 		$arr = array( 'name' => $property, 'value' => $value );
 		$found = false;
@@ -240,11 +240,11 @@ class Upfront_Virtual_Region {
 		if ( ! $found )
 			$data['properties'][] = $arr;
 	}
-	
+
 	public function get_property ($property, $data = null) {
 		return upfront_get_property_value($property, (is_null($data) ? $this->data : $data));
 	}
-	
+
 	public function start_wrapper ($wrapper_id = false, $newline = true) {
 		$wrapper_id = $wrapper_id ? $wrapper_id : upfront_get_unique_id('wrapper');
 		$this->wrappers[$wrapper_id] = array('name' => '', 'properties' => array());
@@ -253,7 +253,7 @@ class Upfront_Virtual_Region {
 		$this->_set_property('wrapper_id', $wrapper_id, $this->wrappers[$wrapper_id]);
 		$this->current_wrapper = $wrapper_id;
 	}
-	
+
 	public function end_wrapper () {
 		$class = $this->get_property('class', $this->wrappers[$this->current_wrapper]);
 		$breakpoints = $this->grid->get_breakpoints();
@@ -261,7 +261,7 @@ class Upfront_Virtual_Region {
 		$this->current_wrapper = null;
 		$this->current_wrapper_col = 0;
 	}
-	
+
 	public function start_module ($position = array(), $properties = array(), $other_data = array()) {
 		$module_id = !empty($properties['element_id']) ? $properties['element_id'] : upfront_get_unique_id('module');
 		$this->modules[$module_id] = array_merge(array('name' => '', 'properties' => array(), 'objects' => array()), $other_data);
@@ -289,11 +289,11 @@ class Upfront_Virtual_Region {
 		$this->_set_property('wrapper_id', $this->current_wrapper, $this->modules[$module_id]);
 		$this->current_module = $module_id;
 	}
-	
+
 	public function end_module () {
 		$this->current_module = null;
 	}
-	
+
 	public function add_object ($id = 'object', $properties = array(), $other_data = array()) {
 		$object_id = !empty($properties['element_id']) ? $properties['element_id'] : upfront_get_unique_id($id);
 		$object_data = array_merge(array('name' => '', 'properties' => array()), $other_data);
@@ -309,7 +309,7 @@ class Upfront_Virtual_Region {
 
 	/**
 	 * Shorthand to add a complete element to the region.
-	 * 
+	 *
 	 * @param String $type The type of the element to add.
 	 * @param array $options Options to add the element, they are
 	 *           id: 			'An id to generate wrapper, module and object ids',
@@ -342,8 +342,8 @@ class Upfront_Virtual_Region {
 		if(!$this->current_wrapper)
 			$this->start_wrapper($opts['wrapper_id'], $opts['new_line']);
 
-		$this->start_module($opts['position'], $opts['module']);		
-		$this->add_object($opts['object_id'], $opts['object']);		
+		$this->start_module($opts['position'], $opts['module']);
+		$this->add_object($opts['object_id'], $opts['object']);
 		$this->end_module();
 
 		if($options['close_wrapper'])
@@ -441,7 +441,7 @@ class Upfront_Layout_Maker {
 				$region['position'] = $post_main ? 20 : 1;
 
 			$regions[] = $region;
-			
+
 			foreach($r->side_regions as $sr){
 				$sidedata = $sr->get_data();
 				$sidedata['position'] += $region['position'];
@@ -460,6 +460,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	protected function __construct () {
 		$this->version = wp_get_theme()->version;
 		$this->initialize();
+		add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3);
 	}
 
 	abstract public function get_prefix ();
@@ -493,6 +494,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return '';
 	}
 
+	public function load_page_regions($data, $ids, $cascade){
+		$layoutId = $this->_get_page_default_layout($ids);
+		if($layoutId){
+			$theme = Upfront_Theme::get_instance();
+			$ids['theme_defined'] = $layoutId;
+			$data['regions'] = $theme->get_default_layout($ids);
+		}
+		return $data;
+	}
+
 	protected function _import_images ($path) {
 		$key = $this->get_prefix() . '-imported_images';
 		$imported_attachments = get_option($key);
@@ -513,7 +524,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 			$wp_filetype = wp_check_filetype(basename($filename), null);
 	        $attachment = array(
-	            'guid' => $wp_upload_dir['url'] . '/' . basename($filename), 
+	            'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
 	            'post_mime_type' => $wp_filetype['type'],
 	            'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
 	            'post_content' => '',

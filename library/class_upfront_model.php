@@ -22,7 +22,7 @@ abstract class Upfront_EntityResolver {
 			$ids['type'] = $cascade['type'];
 		}
 
-		return $ids;
+		return apply_filters('upfront_get_entity_ids', $ids);
 	}
 
 	/**
@@ -137,7 +137,7 @@ abstract class Upfront_EntityResolver {
 			$post = $query->next_post();
 			setup_postdata($post);
 		}
-		
+
 		// Intercept /edit/(post|page)/id
 		$editor = Upfront_ContentEditor_VirtualPage::serve();
 		if($editor->parse_page()){
