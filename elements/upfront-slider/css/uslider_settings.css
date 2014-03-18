@@ -56,7 +56,7 @@
 .uslider-slides-setting:before,
 .uslider-slides-setting:after {
     content: " ";
-    display: table; 
+    display: table;
 }
 
 .uslider-slides-setting:after {
@@ -102,6 +102,19 @@
 }
 .upfront-icon-region-right-active:hover:before {
 	background-position: -807px -39px;
+}
+
+.upfront-icon-region-left:before {
+	background-position: -698px -807px;
+}
+.upfront-icon-region-left:hover:before {
+	background-position: -806px -807px;
+}
+.upfront-icon-region-left-active:before {
+	background-position: -698px -807px;
+}
+.upfront-icon-region-left-active:hover:before {
+	background-position: -806px -807px;
 }
 
 .upfront-icon-prev:before {

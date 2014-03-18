@@ -8529,8 +8529,12 @@ a.upfront-css-delete:hover {
 a.upfront-css-delete:before {
 	content: '';
 	display: inline-block;
+	width: 10px;
+	height: 14px;
 	margin-right: 5px;
 	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -664px -78px;
+	vertical-align: middle;
 }
 
 a.upfront-css-edit {
