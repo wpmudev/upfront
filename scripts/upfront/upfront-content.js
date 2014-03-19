@@ -186,13 +186,14 @@ define(function() {
 					tabFocus: false,
 					placeholder: 'Write a title...'
 				})
+				.on('click', function(e){e.preventDefault();})
 			;
 		},
 
 		prepareThumbEditor: function(selector){
 			this.$(selector)
 				.addClass('ueditor_thumb ueditable')
-				.css({position:'relative', 'min-height': '60px', 'margin-bottom':'30px'})
+				.css({position:'relative', 'min-height': '60px'})
 				.append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
 				.find('img').css({'z-index': '2', position: 'relative'})
 			;
@@ -277,6 +278,8 @@ define(function() {
 			//Mark title as edited
 			//this.changed.title = true;
 
+			e.preventDefault();
+
 			var me = this,
 				apply_styles = function($el){
 					var styles = window.getComputedStyle ? window.getComputedStyle($el[0]) : $el[0].currentStyle,
@@ -345,6 +348,7 @@ define(function() {
 		},
 
 		editThumb: function(e){
+			e.preventDefault();
 			var me = this,
 				target = $(e.target),
 				postId = this.postId,

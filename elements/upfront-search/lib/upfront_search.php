@@ -11,10 +11,12 @@ class Upfront_UsearchView extends Upfront_Object {
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 
 		$label = $this->_get_property("label");
+		$iconClass = ($label == '__image__' || !$label) ? ' search-icon' : ' search-text';
 		$label = !empty($label) && '__image__' != $label
 			? $label
 			: '<i class="icon-search"></i>'
 		;
+
 
 		$placeholder = $this->_get_property("placeholder");
 		$placeholder = $placeholder ? "placeholder='{$placeholder}'" : '';
@@ -26,7 +28,7 @@ class Upfront_UsearchView extends Upfront_Object {
 
 		return "<div class=' upfront-search {$rounded}' {$color} {$element_id}>" .
 			"<form action='" . esc_url( home_url( '/' ) ) . "' method='GET'>" .
-			"<input type='search' class='search-field' name='s' value=''  />".(!empty($label)?"<button class='search-button".($label == '<i class="icon-search"></i>'?" image":"") ."'>{$label}</button>":"") .
+			"<input type='search' class='search-field{$iconClass}' name='s' value=''  />".(!empty($label)?"<button class='search-button{$iconClass}".($label == '<i class="icon-search"></i>'?" image":"") ."'>{$label}</button>":"") .
 			'</form>' .
 		"</div>";
 	}

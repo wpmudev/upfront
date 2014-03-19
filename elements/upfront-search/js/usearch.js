@@ -24,6 +24,11 @@ var UsearchModel = Upfront.Models.ObjectModel.extend({
  */
 var UsearchView = Upfront.Views.ObjectView.extend({
 
+	cssSelectors: {
+		'input.search-field': {label: 'Search field', info: 'The search input field'},
+		'button.search-button': {label: 'Search button', info: 'The search button'}
+	},
+
 	initialize: function(options){
 		if(! (this.model instanceof UsearchModel)){
 			this.model = new UsearchModel({properties: this.model.get('properties')});
@@ -39,10 +44,11 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 		var placeholder = this.model.get_property_value_by_name("placeholder"),
 			placeholder_text = placeholder || 'Search',
 			label = this.model.get_property_value_by_name("label"),
+			iconClass = label == '__image__' || !label ? ' search-icon' : ' search-text',
 			image = '<i class="icon-search"></i>'
 		;
-		return 	'<input type="search" name="s" class="search-field" value="" placeholder="'+(placeholder ? placeholder_text : "")+'" />' +
-				((label != '')?'<button class="search-button' + (label == '__image__' || !label ? ' image' : '') + '">' + (label == '__image__' || !label ? image : label) + '</button>':'');
+		return 	'<input type="search" name="s" class="search-field' + iconClass + '" value="" placeholder="'+(placeholder ? placeholder_text : "")+'" />' +
+				((label != '')?'<button class="search-button' + (label == '__image__' || !label ? ' image' : '') + iconClass + '">' + (label == '__image__' || !label ? image : label) + '</button>':'');
 	},
 
 	on_render: function () {
@@ -163,19 +169,19 @@ var UsearchFieldSetting_Placeholder = Upfront.Views.Editor.Settings.Item.extend(
 				'<input type="radio" id="search-placeholder-normal" name="search_placeholder" value="' + placeholder_text + '" ' + (placeholder ? 'checked="checked"' : '') + ' /> ' +
 					'<span class="search-search_placeholder'+(placeholder ? ' active' : '')+'" contenteditable="true">' + placeholder_text + '</span>'
 		});
-		
-		
+
+
 		this.$el.find(".search-search_placeholder").on('click', function() {
 			$(this).trigger('input');
 		});
-		
+
 		this.$el.find(".search-search_placeholder").on("input", function () {
 			$("#search-placeholder-normal").val($(this).text()).attr("checked", true);
 			$(this).addClass('active');
 		});
-		
+
 		this.$el.on("change", '#search-placeholder-normal, #search-placeholder-none', function() {
-				
+
 			if($(this).attr('id') == 'search-placeholder-normal' && $(this).prop('checked'))
 				me.$el.find(".search-search_placeholder").addClass('active');
 			else
@@ -228,24 +234,24 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
 				'<br />' +
 				'<input type="radio" id="search_type-none" name="search_type" value="" ' + (value == '' ? 'checked="checked"' : '') + ' /> <span>No Button</span>'
 		});
-		
+
 		this.$el.find(".search-search_placeholder").on('click', function() {
 			$(this).trigger('input');
 		});
-		
+
 		this.$el.find(".search-search_text").on("input", function () {
 			$("#search_type-text").val($(this).text()).attr("checked", true);
 			$(this).addClass('active');
 		});
-		
+
 		this.$el.on("change", '#search_type-image, #search_type-text, #search_type-none', function() {
-				
+
 			if($(this).attr('id') == 'search_type-text' && $(this).prop('checked'))
 				me.$el.find(".search-search_text").addClass('active');
 			else
 				me.$el.find(".search-search_text").removeClass('active');
 		});
-		
+
 	},
 	/**
 	 * Defines under which Property name the value will be saved.
