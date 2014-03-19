@@ -324,7 +324,7 @@ define(function() {
 
 			apply_styles($title);
 			$title.find('input').focus().val(title);
-			
+
 			//@TODO Hack to focus title
 			if ( this.post && this.post.is_new ){
 				var selector = _.find(Upfront.data.ueditor.selectors, function(s){ return s.type == 'title'; }).selector;
@@ -480,7 +480,8 @@ define(function() {
 
 			Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
 				var post = me.post,
-					img = mask.find('img')
+					img = mask.find('img'),
+					newimg = $('<img style="z-index:2;position:relative">')
 				;
 
 				me.post.meta.add([
@@ -489,7 +490,11 @@ define(function() {
 				], {merge: true});
 				//post.meta.save();
 				if(!img.length)
-					img = $('<img style="z-index:2;position:relative">').appendTo(mask);
+					img = newimg.appendTo(mask);
+				else{
+					img.replaceWith(newimg);
+					img = newimg;
+				}
 
 				img.attr('src', imageData.src);
 
@@ -1626,8 +1631,12 @@ define(function() {
 				this.render();
 			this.$el.css('display', 'inline-block');
 			this.delegateEvents();
-			$(document).one('click', function(){
-				me.close();
+			$(document).one('click', function(e){
+				var parent = me.$el.parent().length ? me.$el.parent() : me.$el,
+					$target = $(e.target)
+				;
+				if(!$target.is(parent[0]) && !$target.closest(parent[0]).length)
+					me.close();
 			});
 		},
 		close: function(e){
@@ -1637,6 +1646,7 @@ define(function() {
 			}, 200);
 		},
 		select: function(e){
+			e.preventDefault();
 			var value = $(e.target).data('id');
 			this.trigger('select', value);
 			this.$('input').val('value');

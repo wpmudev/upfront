@@ -131,7 +131,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if (!in_array('date', $types)) {
 			$selectors[] = array(
 				'type' => 'date',
-				'selector' => 'post_date',
+				'selector' => '.post_date',
 			);
 		}
 		if (!in_array('author', $types)) {

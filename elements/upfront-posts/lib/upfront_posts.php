@@ -19,7 +19,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		$featured_image = $this->_get_property('featured_image');
 
 		$data = is_admin() && !empty($_POST['data'])
-			? json_decode(stripslashes_deep($_POST['data']), true) 
+			? json_decode(stripslashes_deep($_POST['data']), true)
 			: array()
 		;
 
@@ -59,8 +59,13 @@ class Upfront_UpostsView extends Upfront_Object {
 
 	public static function set_featured_image($html, $post_id){
 		$image_data = get_post_meta($post_id, '_thumbnail_data', true);
-		if(isset($image_data['src']))
-			return str_replace($image_data['srcOriginal'], $image_data['src'], $html);
+		if($image_data && isset($image_data['src'])){
+			$newhtml = str_replace($image_data['srcOriginal'], $image_data['src'], $html);
+			$newhtml = preg_replace('/width=".*?"/', 'width="' . $image_data['cropSize']['width'] . '"', $newhtml);
+			$newhtml = preg_replace('/height=".*?"/', 'height="' . $image_data['cropSize']['height'] . '"', $newhtml);
+
+			return $newhtml;
+		}
 		return $html;
 	}
 

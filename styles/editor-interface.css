@@ -6824,7 +6824,7 @@ a.ueditor-select-option:hover {
 	border-color: #1fcd8f;
 }
 
-.entry-thumbnail:hover .upost_thumbnail_changer {
+.ueditor_thumb:hover .upost_thumbnail_changer {
 	z-index: 3;
 }
 

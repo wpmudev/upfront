@@ -745,6 +745,9 @@ var Application = new (Backbone.Router.extend({
 		site_url.href = Upfront.Settings.site_url;
 		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true});
 		$(document).on('click', 'a', function(e){
+			if(e.isDefaultPrevented())
+				return;
+
 			var href = e.target.getAttribute('href'),
 				a = e.target,
 				now = window.location
