@@ -156,10 +156,11 @@ var hackRedactor = function(){
 			focn = focn.previousSibling;
 			foco = typeof focn.length != 'undefined' ? focn.length : focn.innerText.length - 1;
 		}
-		range.setStart(orgn, orgo);
-		range.setEnd(focn, foco );
+
 
 		try {
+			range.setStart(orgn, orgo);
+			range.setEnd(focn, foco );
 			sel.removeAllRanges();
 		} catch (e) {}
 

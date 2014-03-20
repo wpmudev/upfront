@@ -1,0 +1,7 @@
+div.upfront-navigation[data-aliment="center"] ul.menu {
+	text-align: center;
+}
+
+div.upfront-navigation[data-aliment="right"] ul.menu {
+	text-align: right;
+}

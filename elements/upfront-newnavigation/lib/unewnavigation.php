@@ -73,7 +73,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
     }
 
   public function add_styles_scripts() {
-      wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));
+	  wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
+
+        if (is_user_logged_in()) {
+			 wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));	  
+		}
   }
 }
 
