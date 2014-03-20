@@ -19,26 +19,7 @@ var Subapplication = Backbone.Router.extend({
 	}
 });
 
-var LayoutEditor = new (Subapplication.extend({
-
-	Objects: {},
-
-	boot: function () {
-
-	},
-
-	start: function () {
-		this.stop();
-		this.set_up_event_plumbing_before_render();
-		this.set_up_editor_interface();
-
-		this.set_up_event_plumbing_after_render();
-		$("html").removeClass("upfront-edit-content").addClass("upfront-edit-layout");
-	},
-
-	stop: function () {
-		return this.stopListening(Upfront.Events);
-	},
+var LayoutEditorSubapplication = Subapplication.extend({
 
 	save_layout_as: function () {
 		Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this);
@@ -174,6 +155,7 @@ var LayoutEditor = new (Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
+		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
 
 		// Region
 		this.listenTo(Upfront.Events, "command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
@@ -302,6 +284,29 @@ var LayoutEditor = new (Subapplication.extend({
 		Upfront.Settings.LayoutEditor.newpostType = postType;
 		this.load_layout({item: 'single-' + postType, type: 'single'});
 	}
+});
+
+var LayoutEditor = new (LayoutEditorSubapplication.extend({
+
+	Objects: {},
+
+	boot: function () {
+
+	},
+
+	start: function () {
+		this.stop();
+		this.set_up_event_plumbing_before_render();
+		this.set_up_editor_interface();
+
+		this.set_up_event_plumbing_after_render();
+		$("html").removeClass("upfront-edit-content upfront-edit-theme").addClass("upfront-edit-layout");
+	},
+
+	stop: function () {
+		return this.stopListening(Upfront.Events);
+	},
+
 
 }))();
 
@@ -314,7 +319,7 @@ var ContentEditor = new (Subapplication.extend({
 	start: function () {
 		Upfront.Util.log("Starting the content edit mode");
 
-		$("html").removeClass("upfront-edit-layout").addClass("upfront-edit-content");
+		$("html").removeClass("upfront-edit-layout upfront-edit-theme").addClass("upfront-edit-content");
 	},
 
 	stop: function () {
@@ -323,10 +328,37 @@ var ContentEditor = new (Subapplication.extend({
 
 }))();
 
+var ThemeEditor = new (LayoutEditorSubapplication.extend({
+	boot: function () {
+
+	},
+
+	start: function () {
+		this.stop();
+		this.set_up_event_plumbing_before_render();
+		// @TODO hack to implement LayoutEditor objects
+		this.Objects = Upfront.Application.LayoutEditor.Objects;
+		this.set_up_editor_interface();
+
+		this.set_up_event_plumbing_after_render();
+		$("html").removeClass("upfront-edit-layout upfront-edit-content").addClass("upfront-edit-theme");
+		if ( _upfront_new_theme )
+			this.listenToOnce(Upfront.Events, 'layout:render', function(){
+				Upfront.Events.trigger("command:layout:edit_structure");
+			});
+	},
+
+	stop: function () {
+		return this.stopListening(Upfront.Events);
+	},
+	
+}))();
+
 
 var Application = new (Backbone.Router.extend({
 	LayoutEditor: LayoutEditor,
 	ContentEditor: ContentEditor,
+	ThemeEditor: ThemeEditor,
 
 	actions: {
 		"save": "upfront_save_layout",
@@ -342,7 +374,8 @@ var Application = new (Backbone.Router.extend({
 
 	MODE: {
 		CONTENT: "content",
-		LAYOUT: "layout"
+		LAYOUT: "layout",
+		THEME: "theme"
 	},
 
 	mode: {
@@ -437,15 +470,15 @@ var Application = new (Backbone.Router.extend({
 		this.start(last);
 	},
 
-	load_layout: function (layout_ids, new_post) {
+	load_layout: function (layout_ids, additional) {
 		var app = this,
 			request_data = {
 				action: this.actions.load,
-				data: layout_ids
+				data: layout_ids,
 			}
 		;
-		if (new_post)
-			request_data['new_post'] = new_post;
+		if (additional)
+			request_data = _.extend(request_data, additional);
 
 		$("body").removeClass(Upfront.Settings.LayoutEditor.Grid.scope);
 
@@ -593,7 +626,7 @@ var Application = new (Backbone.Router.extend({
 			this.current_subapplication.stop();
 		}
 
-		this.load_layout(layoutOps, post_type).done(function(response){
+		this.load_layout(layoutOps, {new_post: post_type}).done(function(response){
 			Upfront.Settings.LayoutEditor.newpostType = post_type;
 			postData = response.data.post;
 			deferred.resolve(Upfront.data.posts[postData.ID]);
@@ -650,6 +683,9 @@ var Application = new (Backbone.Router.extend({
 		if (mode && this.MODE.CONTENT == mode) {
 			this.mode.current = this.MODE.CONTENT;
 			this.current_subapplication = this.ContentEditor;
+		} else if(mode && this.MODE.THEME == mode) {
+			this.mode.current = this.MODE.THEME;
+			this.current_subapplication = this.ThemeEditor;
 		} else {
 			this.mode.current = this.MODE.LAYOUT;
 			this.current_subapplication = this.LayoutEditor;

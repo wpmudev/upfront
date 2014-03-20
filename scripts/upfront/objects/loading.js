@@ -8,7 +8,7 @@ var LoadingModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("view_class", "LoadingView");
 		this.init_property("element_id", Upfront.Util.get_unique_id("please_wait"));
 		this.init_property("content", 'Please, wait...');
-		this.init_property("class", 'c22');
+		this.init_property("class", 'c24');
 	}
 });
 

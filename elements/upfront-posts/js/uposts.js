@@ -231,9 +231,9 @@ define(function() {
 					"name": "",
 					"properties": [
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-						{"name": "class", "value": "c22 upfront-posts_module"},
+						{"name": "class", "value": "c24 upfront-posts_module"},
 						{"name": "has_settings", "value": 0},
-						{"name": "row", "value": 25}
+						{"name": "row", "value": Upfront.Util.height_to_row(375)}
 					],
 					"objects": [
 						object // The anonymous module will contain our posts object model

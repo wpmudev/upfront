@@ -290,9 +290,9 @@ define(function() {
                         "name": "",
                         "properties": [
                             {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-                            {"name": "class", "value": "c22 upfront-navigation_module"},
+                            {"name": "class", "value": "c24 upfront-navigation_module"},
                             {"name": "has_settings", "value": 0},
-							{"name": "row", "value": 4}
+							{"name": "row", "value": Upfront.Util.height_to_row(60)}
                         ],
                         "objects": [
                             object

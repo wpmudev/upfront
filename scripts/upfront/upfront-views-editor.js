@@ -168,7 +168,7 @@ define([
 					"name": "",
 					"properties": [
 						{"name": "wrapper_id", "value": wrapper_id},
-						{"name": "class", "value": "c22 clr"}
+						{"name": "class", "value": "c24 clr"}
 					]
 				});
 			module.set_property('wrapper_id', wrapper_id);
@@ -181,7 +181,7 @@ define([
 	var Command_Logo = Command.extend({
 		className: "command-logo",
 		render: function () {
-			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
 				this.$el.html('<div class="upfront-logo"></div>');
 			else
 				this.$el.html('<div class="upfront-logo upfront-logo-small"></div>');
@@ -213,7 +213,7 @@ define([
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
-			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
 				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New post");
 			else
 				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New post</span>');
@@ -281,7 +281,7 @@ define([
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
-			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
 				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New page");
 			else
 				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New page</span>');
@@ -474,7 +474,7 @@ define([
 				"name": "Merged module",
 				"properties": [
 					{"name": "element_id", "value": module_id},
-					{"name": "class", "value": "c22"}
+					{"name": "class", "value": "c24"}
 				],
 				"objects": objects
 			});
@@ -542,7 +542,9 @@ define([
 	var Command_ToggleGrid = Command.extend({
 
 		render: function () {
-			this.$el.html('Toggle grid');
+			this.$el.addClass('upfront-icon upfront-icon-grid');
+			//this.$el.html('Toggle grid');
+			
 		},
 		on_click: function () {
 			$('.upfront-overlay-grid').size() || this.create_grid();
@@ -561,12 +563,14 @@ define([
 		show_grid: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			$main.addClass('show-debug');
+			this.$el.addClass('upfront-icon-grid-active');
 			$('.upfront-overlay-grid').addClass('upfront-overlay-grid-show');
 			Upfront.Application.set_gridstate(true);
 		},
 		hide_grid: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			$main.removeClass('show-debug');
+			this.$el.removeClass('upfront-icon-grid-active');
 			$('.upfront-overlay-grid').removeClass('upfront-overlay-grid-show');
 			Upfront.Application.set_gridstate(false)
 		},
@@ -581,7 +585,7 @@ define([
 		},
 		attach_event: function () {
 			var me = this;
-			Upfront.Application.LayoutEditor.layout_sizes.sizes.each(function (layout_size) {
+			Upfront.Application.layout_sizes.sizes.each(function (layout_size) {
 				layout_size.bind("upfront:layout_size:change_size", me.update_grid, me);
 			});
 		}
@@ -620,9 +624,9 @@ define([
 		on_click: function () {
 			if ( !this.enabled )
 				return false;
-			var mode = Upfront.Application.mode && Upfront.Application.mode.current && Upfront.Application.mode.current === Upfront.Application.MODE.LAYOUT
+			var mode = Upfront.Application.mode && Upfront.Application.mode.current && Upfront.Application.mode.current != Upfront.Application.MODE.CONTENT
 				? Upfront.Application.MODE.CONTENT
-				: Upfront.Application.MODE.LAYOUT
+				: Upfront.Application.mode.last
 			;
 			Upfront.Application.start(mode);
 		},
@@ -643,7 +647,7 @@ define([
 			if ( this.current_mode )
 				this.$el.removeClass('command-toggle-mode-' + this.current_mode + ' upfront-icon-collapse upfront-icon-expand');
 			this.current_mode = Upfront.Application.get_current();
-			var icon = ( this.current_mode == Upfront.Application.MODE.LAYOUT ) ? 'upfront-icon-collapse' : 'upfront-icon-expand';
+			var icon = ( this.current_mode != Upfront.Application.MODE.CONTENT ) ? 'upfront-icon-collapse' : 'upfront-icon-expand';
 			this.$el.addClass('command-toggle-mode-' + this.current_mode + ' ' + icon);
 		}
 	});
@@ -681,6 +685,36 @@ define([
       $main.removeClass('upfront-region-editing');
       Upfront.Events.trigger("command:region:edit_toggle", false);
     }
+	});
+	
+	var Command_NewLayout = Command.extend({
+		className: "command-new-layout",
+		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-layout');
+			this.$el.html('New Layout');
+		},
+		on_click: function () {
+			
+		}
+	});
+	
+	var Command_BrowseLayout = Command.extend({
+		className: "command-browse-layout",
+		render: function () {
+			this.$el.html('Browse Layout');
+		},
+		on_click: function () {
+			
+		}
+	});
+	
+	var Command_EditStructure = Command.extend({
+		render: function (){
+			this.$el.html('Edit Structure/Grid');
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:edit_structure");
+		}
 	});
 
 
@@ -812,10 +846,11 @@ define([
 			Upfront.Events.on("command:redo", this.reset_modules, this);
 		},
 		on_render: function () {
-			this.$el.addClass('expanded');
 			this.$el.find('.sidebar-panel-title').addClass('upfront-icon upfront-icon-panel-elements');
 			this.elements.each(this.render_element, this);
 			this.reset_modules();
+			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
+				this.$el.find('.sidebar-panel-title').trigger('click');
 		},
 		on_save_after: function () {
 			var regions = this.model.get('regions');
@@ -950,27 +985,302 @@ define([
 			if ( this.on_render ) this.on_render();
 		}
 	});
+	
+	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
+	    fields: {},
+	    current_element: '',
+	    typefaces_list: [
+	        { name: "Arial", family:'sans-serif' },
+            { name: "Arial Black", family:'sans-serif' },
+            { name: "Arial Narrow", family:'sans-serif' },
+            { name: "Arial Rounded MT Bold", family:'sans-serif' },
+            { name: "Avant Garde", family:'sans-serif' },
+            { name: "Calibri", family:'sans-serif' },
+            { name: "Candara", family:'sans-serif' },
+            { name: "Century Gothic", family:'sans-serif' },
+            { name: "Franklin Gothic Medium", family:'sans-serif' },
+            { name: "Futura", family:'sans-serif' },
+            { name: "Geneva", family:'sans-serif' },
+            { name: "Gill Sans", family:'sans-serif' },
+            { name: "Helvetica", family:'sans-serif' },
+            { name: "Impact", family:'sans-serif' },
+            { name: "Lucida Grande", family:'sans-serif' },
+            { name: "Optima", family:'sans-serif' },
+            { name: "Segoe UI", family:'sans-serif' },
+            { name: "Tahoma", family:'sans-serif' },
+            { name: "Trebuchet MS", family:'sans-serif' },
+            { name: "Verdana", family:'sans-serif' },
+            { name: "Baskerville", family:'serif' },
+            { name: "Big Caslon", family:'serif' },
+            { name: "Bodoni MT", family:'serif' },
+            { name: "Book Antiqua", family:'serif' },
+            { name: "Calisto MT", family:'serif' },
+            { name: "Cambria", family:'serif' },
+            { name: "Didot", family:'serif' },
+            { name: "Garamond", family:'serif' },
+            { name: "Georgia", family:'serif' },
+            { name: "Goudy Old Style", family:'serif' },
+            { name: "Hoefler Text", family:'serif' },
+            { name: "Lucida Bright", family:'serif' },
+            { name: "Palatino", family:'serif' },
+            { name: "Perpetua", family:'serif' },
+            { name: "Rockwell", family:'serif' },
+            { name: "Rockwell Extra Bold", family:'serif' },
+            { name: "Times New Roman", family:'serif' },
+            { name: "Andale Mono", family:'monospace' },
+            { name: "Consolas", family:'monospace' },
+            { name: "Courier New", family:'monospace' },
+            { name: "Lucida Console", family:'monospace' },
+            { name: "Lucida Sans Typewriter", family:'monospace' },
+            { name: "Monaco", family:'monospace' },
+	    ],
+	    typefaces: {
+            "h1": 'Arial',
+            "h2": 'Arial',
+            "h3": 'Arial',
+            "h4": 'Arial',
+            "h5": 'Arial',
+            "h6": 'Arial',
+            "p": 'Arial',
+            "a": 'Arial',
+            "ul": 'Arial',
+            "ol": 'Arial',
+            "blockquote": 'Times New Roman'
+	    },
+	    styles: {
+	        "h1": "600 normal",
+	        "h2": "600 normal",
+            "h3": "600 normal",
+            "h4": "600 normal",
+            "h5": "600 normal",
+            "h6": "600 normal",
+            "p": "400 normal",
+            "a": "400 normal",
+            "ul": "400 normal",
+            "ol": "400 normal",
+            "blockquote": "400 italic"
+	    },
+	    sizes: {
+            "h1": 36,
+            "h2": 24,
+            "h3": 18,
+            "h4": 16,
+            "h5": 14,
+            "h6": 12,
+            "p": 12,
+            "a": 12,
+            "ul": 12,
+            "ol": 12,
+            "blockquote": 16
+	    },
+	    colors: {
+            "h1": "#000",
+            "h2": "#000",
+            "h3": "#000",
+            "h4": "#000",
+            "h5": "#000",
+            "h6": "#000",
+            "p": "#000",
+            "a": "#1963ec",
+            "ul": "#000",
+            "ol": "#000",
+            "blockquote": "#000"
+	    },
+	    line_heights: {
+            "h1": 1.5,
+            "h2": 1.5,
+            "h3": 1.5,
+            "h4": 1.5,
+            "h5": 1.5,
+            "h6": 1.5,
+            "p": 1.5,
+            "a": 1.5,
+            "ul": 1.5,
+            "ol": 1.5,
+            "blockquote": 1.5
+	    },
+		on_render: function () {
+		    var me = this,
+		        typefaces_list = (function(){
+		            var lists = [];
+		            _.each(me.typefaces_list, function(typeface){
+		                lists.push({ label: typeface.name, value: typeface.name });
+		            });
+		            return lists;
+		        })(),
+    		    styles_list = (function(){
+					var lists = [];
+					_.each(['normal', 'italic', 'oblique'], function(style){
+						_.each(_.range(100, 900, 100), function(weight){
+							lists.push({ label: weight+' '+style, value: weight+' '+style });
+						});
+					});
+  return lists;
+    		    })();
+	       if ( !this.fields.length ){  
+    	       this.fields = {
+    				element: new Upfront.Views.Editor.Field.Select({
+    					label: "Typographic Element",
+    					default_value: 'h1',
+    					values: [
+    						{ label: "Main Heading (H1)", value: "h1" },
+                            { label: "Sub Heading (H2)", value: "h2" },
+                            { label: "Sub Heading (H3)", value: "h3" },
+                            { label: "Sub Heading (H4)", value: "h4" },
+                            { label: "Sub Heading (H5)", value: "h5" },
+                            { label: "Sub Heading (H6)", value: "h6" },
+                            { label: "Paragraph (P)", value: "p" },
+                            { label: "Anchor Link (A)", value: "a" },
+                            { label: "Unordered List (UL)", value: "ul" },
+                            { label: "Ordered List (OL)", value: "ol" },
+                            { label: "Blockquote (BLOCKQUOTE)", value: "blockquote" },
+    					],
+    					change: function () {
+    					    var value = this.get_value();
+    					    me.current_element = value;
+    					    me.fields.typeface.set_value( me.typefaces[value] );
+                            me.fields.style.set_value( me.styles[value] );
+                            me.fields.size.set_value( me.sizes[value] );
+                            me.fields.line_height.set_value( me.line_heights[value] );
+                            me.fields.color.set_value( me.colors[value] );
+    					}
+    				}),
+    				typeface: new Upfront.Views.Editor.Field.Select({
+    				    label: "Typeface",
+                        values: typefaces_list,
+                        default_value: me.typefaces['h1'],
+                        change: function () {
+                        	var value = this.get_value(),
+                        		element = me.current_element;
+                        	if ( me.typefaces[element] != value ){
+                        		me.typefaces[element] = value;
+                        		me.update_typography();
+                        	}
+                        }
+                    }),
+                    style: new Upfront.Views.Editor.Field.Select({
+                        label: "Weight / Style",
+                        values: styles_list,
+                        default_value: me.styles['h1'],
+                        change: function () {
+                        	var value = this.get_value(),
+                        		element = me.current_element;
+                        	if ( me.styles[element] != value ){
+                        		me.styles[element] = value;
+                        		me.update_typography();
+                        	}
+                        }
+                    }),
+                    color: new Upfront.Views.Editor.Field.Color({
+                        label: "Color",
+                        spectrum: {
+                            move: function (color) {
+                                var rgb = color.toRgb(),
+                               		rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
+                               		element = me.current_element;
+                               	if ( me.colors[element] != rgba_string ){
+                               		me.colors[element] = rgba_string;
+                               		me.update_typography();
+                               	}
+                            }
+                        }
+                    }),
+                    size: new Upfront.Views.Editor.Field.Number({
+                        label: "Size",
+                        min: 0,
+                        max: 100,
+                        default_value: me.sizes['h1'],
+                        change: function () {
+                        	var value = this.get_value(),
+                        		element = me.current_element;
+                        	if ( me.sizes[element] != value ){
+                        		me.sizes[element] = value;
+                        		me.update_typography();
+                        	}
+                        }
+                    }),
+                    line_height: new Upfront.Views.Editor.Field.Number({
+                        label: "Line Height",
+                        min: 0,
+                        max: 10,
+                        step: .1,
+                        default_value: me.line_heights['h1'],
+                        change: function () {
+                        	var value = this.get_value(),
+                        		element = me.current_element;
+                        	if ( me.line_heights[element] != value ){
+                        		me.line_heights[element] = value;
+                        		me.update_typography();
+                        	}
+                        }
+                    }),
+				};
+			};
+			this.$el.html('');
+			_.each( this.fields, function(field){
+			    field.render();
+			    field.delegateEvents();
+			    me.$el.append(field.el);
+			} );
+			this.fields.element.trigger('changed');
+		},
+		update_typography: function () {
+			var me = this,
+				css = [];
+			_.each(this.typefaces, function(typeface, element){
+				var rules = [],
+					face = _.findWhere(me.typefaces_list, {name: typeface});
+				rules.push('font: ' + me.styles[element] + ' ' + me.sizes[element] + 'px/' + me.line_heights[element] + ' "' + face.name + '",' + face.family );
+				rules.push('color: ' + me.colors[element]);
+				css.push(
+					element + '{ ' + rules.join("; ") + '; }'
+				);
+			});
+			if ( $('#upfront-default-typography-inline').length )
+				$('#upfront-default-typography-inline').html( css.join("\n") );
+			else
+				$('body').append('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>');
+		}
+	});
 
-	var SidebarPanel_Settings_Section_Structure = SidebarPanel_Settings_Section.extend({
+	var SidebarPanel_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
+			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
 		},
 		get_title: function () {
-			return "Structure";
+			return "Typography and Colors";
 		},
 		on_render: function () {
+			
+		}
+	});
+
+	var SidebarPanel_Settings_Section_Structure = SidebarPanel_Settings_Section.extend({
+		initialize: function () {
+			this.settings = _([]);
+			this.edit_command = new Command_EditStructure({"model": this.model});
+		},
+		get_title: function () {
+			return "";
+		},
+		on_render: function () {
+			this.edit_command.render();
+			this.edit_command.delegateEvents();
+			this.$el.find('.panel-section-content').append(this.edit_command.el);
 		}
 	});
 
 	var SidebarPanel_Settings = SidebarPanel.extend({
 		initialize: function () {
 			this.sections = _([
+				new SidebarPanel_Settings_Section_Typography({"model": this.model}),
 				new SidebarPanel_Settings_Section_Structure({"model": this.model})
 			]);
 		},
 		get_title: function () {
-			return "Settings";
+			return "Theme Settings";
 		},
 		on_render: function () {
 			var me = this;
@@ -979,6 +1289,8 @@ define([
 				section.render();
 				me.$el.find('.sidebar-panel-content').append(section.el);
 			});
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME )
+				this.$el.find('.sidebar-panel-title').trigger('click');
 		}
 	});
 
@@ -989,7 +1301,7 @@ define([
 			this.panels = {
 				posts: new SidebarPanel_Posts({"model": this.model}),
 				elements: new SidebarPanel_DraggableElements({"model": this.model}),
-				//settings: new SidebarPanel_Settings({"model": this.model})
+				settings: new SidebarPanel_Settings({"model": this.model})
 			};
 			// Dev feature only
 			//if ( Upfront.Settings.Debug.dev )
@@ -998,6 +1310,8 @@ define([
 		render: function () {
 			var me = this;
 			_.each(this.panels, function(panel, key){
+				if ( key == 'settings' && Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
+					return;
 				panel.render();
 				me.$el.append(panel.el);
 			});
@@ -1011,6 +1325,18 @@ define([
 				new Command_NewPost({"model": this.model}),
 				new Command_NewPage({"model": this.model}),
 				new Command_PopupList({"model": this.model}),
+			]);
+			if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) != -1 )
+				this.commands.push( new Command_ToggleMode_Small({"model": this.model}) );
+		}
+	});
+
+	var SidebarCommands_PrimaryLayout = Commands.extend({
+		"className": "sidebar-commands sidebar-commands-primary",
+		initialize: function () {
+			this.commands = _([
+				new Command_NewLayout({"model": this.model}),
+				new Command_BrowseLayout({"model": this.model}),
 			]);
 			if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) != -1 )
 				this.commands.push( new Command_ToggleMode_Small({"model": this.model}) );
@@ -1049,7 +1375,6 @@ define([
 			// Dev feature only
 			if ( Upfront.Settings.Debug.dev ){
 				//if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
-				this.commands.push(new Command_ToggleGrid({"model": this.model}));
 				if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_ResetEverything({"model": this.model}));
 				this.commands.push(new Command_ToggleMode({"model": this.model}));
 			}
@@ -1124,12 +1449,13 @@ define([
 			'click #sidebar-ui-toggler-handle': 'toggleSidebar'
 		},
 		initialize: function () {
+			var is_theme = ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME );
 			//this.editor_mode = new SidebarEditorMode({"model": this.model});
 			this.sidebar_profile = new SidebarProfile({"model": this.model});
 			this.sidebar_commands = {
 				header: new SidebarCommands_Header({"model": this.model}),
-				primary: new SidebarCommands_PrimaryPostType({"model": this.model}),
-				additional: new SidebarCommands_AdditionalPostType({"model": this.model}),
+				primary: is_theme ? new SidebarCommands_PrimaryLayout({"model": this.model}) : new SidebarCommands_PrimaryPostType({"model": this.model}),
+				additional: is_theme ? false : new SidebarCommands_AdditionalPostType({"model": this.model}),
 				control: new SidebarCommands_Control({"model": this.model})
 			};
 			this.sidebar_panels = new SidebarPanels({"model": this.model});
@@ -1137,7 +1463,7 @@ define([
 			this.fetch_current_user();
 
 			//Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
-			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT ){
+			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT ){
 				Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
 				Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
 			}
@@ -1171,22 +1497,27 @@ define([
 			this.sidebar_commands.header.render();
 			output.append(this.sidebar_commands.header.el);
 
-			// Profile
-			this.sidebar_profile.render();
-			output.append(this.sidebar_profile.el);
-
 			// Editor Mode
 			//this.editor_mode.render();
 			//this.$el.append(this.editor_mode.el);
+			
+			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ){
+				// Profile
+				this.sidebar_profile.render();
+				output.append(this.sidebar_profile.el);
+			}
 
-			// Primary post types
+			// Primary commands
 			this.sidebar_commands.primary.render();
 			output.append(this.sidebar_commands.primary.el);
-			// Additional post types
-			this.sidebar_commands.additional.render();
-			output.append(this.sidebar_commands.additional.el);
+			
+			if ( this.sidebar_commands.additional ){
+				// Additional commands
+				this.sidebar_commands.additional.render();
+				output.append(this.sidebar_commands.additional.el);
+			}
 
-			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT ){
+			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT ){
 				// Sidebar panels
 				this.sidebar_panels.render();
 				output.append(this.sidebar_panels.el);
@@ -2207,8 +2538,12 @@ define([
 			});
 			$main.addClass(new_size);
 
+			Upfront.Settings.LayoutEditor.Grid.size_name = new_size;
 			Upfront.Settings.LayoutEditor.Grid.size = Upfront.Settings.LayoutEditor.Grid.breakpoint_columns[new_size];
-			Upfront.Settings.LayoutEditor.Grid.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
+			Upfront.Settings.LayoutEditor.Grid.column_width = Upfront.Settings.LayoutEditor.Grid.column_widths[new_size];
+			Upfront.Settings.LayoutEditor.Grid.column_padding = Upfront.Settings.LayoutEditor.Grid.column_paddings[new_size];
+			Upfront.Settings.LayoutEditor.Grid.type_padding = Upfront.Settings.LayoutEditor.Grid.type_paddings[new_size];
+			Upfront.Settings.LayoutEditor.Grid.baseline = Upfront.Settings.LayoutEditor.Grid.baselines[new_size];
 			Upfront.Settings.LayoutEditor.Grid.class = Upfront.Settings.LayoutEditor.Grid.size_classes[new_size];
 			Upfront.Settings.LayoutEditor.Grid.left_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_left_classes[new_size];
 			Upfront.Settings.LayoutEditor.Grid.right_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_right_classes[new_size];
@@ -2288,6 +2623,9 @@ define([
 			else
 				return _.map($field, function (el) { return $(el).val(); });
 			return false;
+		},
+		set_value: function (value) {
+		    this.get_field().val(value);
 		},
 		get_field_id: function () {
 			return this.cid + '-' + this.get_name();
@@ -2589,6 +2927,9 @@ define([
 	var Field_Multiple = Field.extend(_.extend({}, Upfront_Icon_Mixin, {
 		get_values_html: function () {
 			return _.map(this.options.values, this.get_value_html, this).join('');
+		},
+		set_value: function (value) {
+		    this.$el.find('[value="'+value+'"]').trigger('click');
 		}
 	}));
 
@@ -2649,7 +2990,7 @@ define([
 						$(this).removeClass('upfront-field-select-option-selected');
 				});
 				me.trigger('changed');
-			});;
+			});
 			this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
 			if ( ! this.multiple && ! this.get_saved_value() )
 				this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
@@ -4377,6 +4718,118 @@ var Field_Anchor = Field_Select.extend({
 			if ( callback ) callback();
 		}
 	});
+	
+	var Modal = Backbone.View.extend({
+		attributes: function () {
+			return {
+				class: "upfront-inline-modal upfront-ui upfront-no-select",
+				id: "upfront-inline-modal-"+this.cid
+			};
+		},
+		initialize: function () {
+			this.$to = this.options.to;
+			this.button_text = this.options.button_text ? this.options.button_text : "Ok";
+			this.button = typeof this.options.button != 'undefined' ? this.options.button : true;
+			this.width = typeof this.options.width != 'undefined' ? this.options.width : '50%';
+			this.top = typeof this.options.top != 'undefined' ? this.options.top : -1;
+		},
+		events: {
+			"click": "on_click",
+			"click .upfront-inline-modal-content": "on_click_content",
+			"click .upfront-inline-modal-save": "on_click_save"
+		},
+		render: function () {
+			this.$el.html(
+				'<div class="upfront-inline-modal-wrap">' +
+					'<div class="upfront-inline-modal-content"></div>' +
+				'</div>'
+			);
+			this.$el.hide();
+		},
+		open: function (render_callback, context, button) {
+			var me = this,
+				$wrap = this.$el.find('.upfront-inline-modal-wrap'),
+				$content = this.$el.find('.upfront-inline-modal-content'),
+				$button = $('<button type="button" class="upfront-inline-modal-save">' + this.button_text + '</button>'),
+				top = this.top,
+				height, parent_height;
+			this._deferred = $.Deferred();
+			this.$el.show();
+			render_callback.apply(context, [$content, this.$el]);
+			button = typeof button != 'undefined' ? button : this.button;
+			if ( button )
+				$button.appendTo($content);
+			// this.listenTo(Upfront.Events, "entity:region:deactivated", function(){
+				// me.close(false);
+			// });
+			if ( top == -1 ){
+				parent_height = this.$el.height() > $(window).height() ? $(window).height() : this.$el.height();
+				height = $content.outerHeight();
+				top = parent_height-height > 0 ? (parent_height-height)/2 : 0;
+			}
+			$wrap.css({
+				top: top,
+				bottom: 'auto',
+				width: this.width
+			});
+			this.update_pos();
+			$(window).on('scroll', this, this.on_scroll);
+			this.trigger('modal:open');
+			return this._deferred.promise();
+		},
+		close: function (save) {
+			this.$el.hide();
+			$(window).off('scroll', this.on_scroll);
+			this.trigger('modal:close');
+			if ( save )
+				this._deferred.resolve(this);
+			else
+				this._deferred.reject(this);
+		},
+		on_scroll: function (e) {
+			var me = e.data;
+			me.update_pos();
+		},
+		on_click: function () {
+			this.close(false);
+		},
+		on_click_content: function (e) {
+			e.stopPropagation();
+		},
+		on_click_save: function () {
+			this.close(true);
+		},
+		update_pos: function () {
+			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+			if ( this.$el.css('display') == 'none' )
+				return;
+			var	offset = this.$to.offset(),
+				top = offset.top,
+				bottom = top + this.$to.outerHeight(),
+				scroll_top = $(document).scrollTop(),
+				scroll_bottom = scroll_top + $(window).height(),
+				rel_top = $main.offset().top,
+				modal_offset = this.$el.offset(),
+				modal_right = modal_offset.left+this.$el.width();
+			if ( scroll_top > top-rel_top ) {
+				if ( this.$el.css('position') != 'fixed' )
+					this.$el.css({
+						position: 'fixed',
+						top: rel_top,
+						left: modal_offset.left,
+						right: $(window).width()-modal_right
+					});
+			}
+			else {
+				this.$el.css({
+					position: '',
+					top: '',
+					left: '',
+					right: ''
+				});
+			}
+		},
+	});
 
 
 	var InlinePanelItem = Backbone.View.extend({
@@ -4433,91 +4886,20 @@ var Field_Anchor = Field_Select.extend({
 				this.on_render();
 		},
 		open_modal: function (render_callback, button) {
-			var me = this,
-				$region_container = this.$el.closest('.upfront-region-container'),
-				$modal = $region_container.find('#upfront-inline-modal-' + this.cid),
-				$content;
-			this.modal_deferred = $.Deferred();
-			if ( $modal.length ) {
-				$content = $modal.find('.upfront-inline-modal-content');
-				$modal.show();
-				render_callback.apply(this, [$content, $modal]);
+			if ( ! this.modal ){
+				var me = this;
+				var $region_container = this.$el.closest('.upfront-region-container');
+				this.modal = new Upfront.Views.Editor.Modal({ to: $region_container, top: 60 });
+				this.modal.render();
+				$region_container.append(this.modal.$el);
 			}
-			else {
-				$modal = $('<div class="upfront-inline-modal upfront-ui upfront-no-select" id="upfront-inline-modal-' + this.cid + '" />');
-				$wrap = $('<div class="upfront-inline-modal-wrap" />');
-				$content = $('<div class="upfront-inline-modal-content" />');
-				$wrap.append($content);
-				$modal.append($wrap);
-				$region_container.append($modal);
-				render_callback.apply(this, [$content, $modal]);
-				if ( button ){
-					$wrap.append('<button type="button" class="upfront-inline-modal-save">Ok</button>');
-					$modal.on('click', function () {
-						me.close_modal(false);
-					});
-					$modal.on('click', '.upfront-inline-modal-content', function (e) {
-						e.stopPropagation();
-					});
-					$modal.on('click', '.upfront-inline-modal-save', function () {
-						me.close_modal(true);
-					});
-				}
-				this.listenTo(Upfront.Events, "entity:region:deactivated", function(){
-					this.close_modal(false);
-				});
-			}
-			this.update_modal_pos();
-			$(window).on('scroll', this, this.on_scroll);
-			this.trigger('modal:open');
-			return this.modal_deferred.promise();
+			this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(){
+				 me.close_modal(false);
+			});
+			return this.modal.open(render_callback, this, button);
 		},
 		close_modal: function (save) {
-			var $region_container = this.$el.closest('.upfront-region-container'),
-				$modal = $region_container.find('#upfront-inline-modal-' + this.cid);
-			$modal.hide();
-			$(window).off('scroll', this.on_scroll);
-			this.trigger('modal:close');
-			if ( save )
-				this.modal_deferred.resolve(this);
-			else
-				this.modal_deferred.reject(this);
-		},
-		on_scroll: function (e) {
-			var me = e.data;
-			me.update_modal_pos();
-		},
-		update_modal_pos: function () {
-			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-				$region_container = this.$el.closest('.upfront-region-container'),
-				$modal = $region_container.find('#upfront-inline-modal-' + this.cid);
-			if ( !$modal.length || $modal.css('display') == 'none' )
-				return;
-			var	offset = $region_container.offset(),
-				top = offset.top,
-				bottom = top + $region_container.outerHeight(),
-				scroll_top = $(document).scrollTop(),
-				scroll_bottom = scroll_top + $(window).height(),
-				rel_top = $main.offset().top,
-				modal_offset = $modal.offset(),
-				modal_right = modal_offset.left+$modal.width();
-			if ( scroll_top > top-rel_top ) {
-				if ( $modal.css('position') != 'fixed' )
-					$modal.css({
-						position: 'fixed',
-						top: rel_top,
-						left: modal_offset.left,
-						right: $(window).width()-modal_right
-					});
-			}
-			else {
-				$modal.css({
-					position: '',
-					top: '',
-					left: '',
-					right: ''
-				});
-			}
+			return this.modal.close(save);
 		},
 		remove: function(){
 			this.panel_view = false;
@@ -4628,7 +5010,7 @@ var Field_Anchor = Field_Select.extend({
 			}
 			this._active = true;
 			this.render_icon();
-			this.open_modal(this.render_modal, true).always(this.on_close_modal).fail(this.notify);
+			this.open_modal(this.render_modal, true).always($.proxy(this.on_close_modal, this)).fail($.proxy(this.notify, this));
 		},
 		render_modal: function ($content, $modal) {
 			var me = this,
@@ -4640,7 +5022,7 @@ var Field_Anchor = Field_Select.extend({
 				region_type = new Field_Radios({
 					model: this.model,
 					property: 'type',
-					default_value: 'wide',
+					default_value: this.model.get('type') || 'wide',
 					layout: 'horizontal-inline',
 					values: [
 						{ label: "Full Screen", value: 'full', disabled: index_container > 0 },
@@ -4773,7 +5155,8 @@ var Field_Anchor = Field_Select.extend({
 			region_type.trigger('changed');
 			bg_type.trigger('changed');
 		},
-		on_close_modal: function (me) {
+		on_close_modal: function () {
+			var me = this;
 			me.$el.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 			me._active = false;
 			me.render_icon();
@@ -5495,7 +5878,7 @@ var Field_Anchor = Field_Select.extend({
 					"container": is_new_container ? name : this.model.get('name'),
 					"title": title
 				}));
-			new_region.set_property('row', 20); // default to 20 rows
+			new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
 			}
@@ -5925,6 +6308,7 @@ var Field_Anchor = Field_Select.extend({
 				notifier.addMessage(message, type);
 			},
 			"Loading": Loading,
+			"Modal": Modal,
 			"PostSelector": new PostSelector(),
 			"InlinePanels": {
 				"Panels": InlinePanels,

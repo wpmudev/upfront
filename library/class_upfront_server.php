@@ -56,12 +56,17 @@ class Upfront_Ajax extends Upfront_Server {
 	// STUB LOADING
 	function load_layout () {
 		$layout_ids = $_POST['data'];
+		$storage_key = $_POST['storage_key'];
+		$stylesheet = $_POST['stylesheet'];
+		$layout_slug = $_POST['layout_slug'];
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
 		$parsed = false;
 		$string = '';
 
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
+		
+		upfront_switch_stylesheet($stylesheet);
 
 		if(is_string($layout_ids)){
 			$string = $layout_ids;
@@ -69,11 +74,11 @@ class Upfront_Ajax extends Upfront_Server {
 			$parsed = true;
 		}
 
-		$layout = Upfront_Layout::from_entity_ids($layout_ids);
+		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key);
 
 		if ($layout->is_empty()){
 			// Instead of whining, create a stub layout and load that
-			$layout = Upfront_Layout::create_layout($layout_ids);
+			$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 		}
 
 		global $post;
@@ -106,15 +111,17 @@ class Upfront_Ajax extends Upfront_Server {
 	function save_layout () {
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
+		$storage_key = $_POST['storage_key'];
 
-		$layout = Upfront_Layout::from_php($data);
+		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$key = $layout->save();
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
 
 	function reset_layout () {
 		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
-		$layout = Upfront_Layout::from_php($data);
+		$storage_key = $_POST['storage_key'];
+		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$layout->delete();
 		$layout->delete_regions();
 		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
@@ -132,7 +139,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$element = json_decode($data['element'], true);
 
-		$layout = Upfront_Layout::from_entity_ids($data['layout']);
+		$layout = Upfront_Layout::from_entity_ids($data['layout'], $data['storage_key']);
 		if(empty($layout))
 			return $this->_out(new Upfront_JsonResponse_Error("Unkown layout"));
 
@@ -243,12 +250,19 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'right_margin_class' => '',
 
 			'baseline' => '',
+			'column_width' => '',
+			'column_padding' => '',
+			'type_padding' => '',
 			'top_margin_class' => '',
 			'bottom_margin_class' => '',
+			'size_name' => ''
 		);
 		foreach ($breakpoints as $context => $breakpoint) {
 			$grid_info['breakpoint_columns'][$context] = $breakpoint->get_columns();
-			$grid_info['baseline'] = $breakpoint->get_baseline();
+			$grid_info['column_widths'][$context] = $breakpoint->get_column_width();
+			$grid_info['column_paddings'][$context] = $breakpoint->get_column_padding();
+			$grid_info['type_paddings'][$context] = $breakpoint->get_type_padding();
+			$grid_info['baselines'][$context] = $breakpoint->get_baseline();
 			$grid_info['size_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			$grid_info['margin_left_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
 			$grid_info['margin_right_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
@@ -288,8 +302,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$application_modes = json_encode(array(
 			"LAYOUT" => "layout",
 			"CONTENT" => "content",
+			"THEME" => "theme",
 			"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
-			"ALLOW" => (current_user_can("manage_options") ? "layout,content" : "content")
+			"ALLOW" => (current_user_can("manage_options") ? "layout,content,theme" : "content")
 		));
 
 		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);

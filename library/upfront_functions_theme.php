@@ -40,8 +40,8 @@ function upfront_get_regions () {
 	return Upfront_Theme::get_instance()->get_regions();
 }
 
-function upfront_get_default_layout($cascade){
-	return Upfront_Theme::get_instance()->get_default_layout($cascade);
+function upfront_get_default_layout($cascade, $layout_slug = ''){
+	return Upfront_Theme::get_instance()->get_default_layout($cascade, $layout_slug);
 }
 
 function upfront_create_region($args, $region_properties = array()){
@@ -88,27 +88,27 @@ function upfront_get_page_template_slug ($layout) {
 }
 
 
-function upfront_boot_editor_trigger () {
+function upfront_boot_editor_trigger ($mode = '') {
 	if (defined("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED")) return false;
 	define("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED", true, true);
 	return '<script>' .
-		'(function ($) { $(document).data("upfront-auto_start", true); $(document).on("upfront-load", function () { Upfront.Application.start(); }); })(jQuery);' .
+		'(function ($) { $(document).data("upfront-auto_start", true); $(document).on("upfront-load", function () { Upfront.Application.start(' . ( $mode ? '"'.$mode.'"' : '' ) . '); }); })(jQuery);' .
 	'</script>';
 }
 
 function upfront_locate_template ($template_names) {
-	if (!(defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF)) return locate_template($template_names); // Not a grandchild theme!
+	//if (!(defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF)) return locate_template($template_names); // Not a grandchild theme!
 	$located = '';
 	foreach ((array)$template_names as $template_name) {
 		if (!$template_name) continue;
-		if (file_exists(STYLESHEETPATH . '/' . $template_name)) {
-			$located = STYLESHEETPATH . '/' . $template_name;
+		if (file_exists(get_stylesheet_directory() . '/' . $template_name)) {
+			$located = get_stylesheet_directory() . '/' . $template_name;
 			break;
-		} else if (file_exists(UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/' . $template_name)) {
+		} else if (defined('UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF') && UPFRONT_GRANDCHILD_THEME_IS_DESCENDANT_OF && file_exists(UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/' . $template_name)) {
 			$located = UPFRONT_GRANDCHILD_THEME_PARENT_PATH . '/' . $template_name;
 			break;
-		} else if (file_exists(TEMPLATEPATH . '/' . $template_name)) {
-			$located = TEMPLATEPATH . '/' . $template_name;
+		} else if (file_exists(get_template_directory() . '/' . $template_name)) {
+			$located = get_template_directory() . '/' . $template_name;
 			break;
 		}
 	}

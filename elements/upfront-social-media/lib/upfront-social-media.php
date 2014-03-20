@@ -157,7 +157,7 @@ class Upfront_SocialMediaView extends Upfront_Object {
             'id_slug' => 'SocialMedia',
             'type' => 'SocialMediaModel',
             'view_class' => 'SocialMediaView',
-            'class' => 'c22 upfront-Social-Media',
+            'class' => 'c24 upfront-Social-Media',
             'has_settings' => 1
         );
     }

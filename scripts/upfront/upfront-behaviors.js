@@ -56,7 +56,7 @@ var LayoutEditor = {
 		$("body").append("<div id='upfront-save-dialog' />");
 		var $dialog = $("#upfront-save-dialog"),
 			$bg = $("#upfront-save-dialog-background"),
-			current = Upfront.Application.LayoutEditor.layout.get("current_layout"),
+			current = Upfront.Application.layout.get("current_layout"),
 			html = ''
 		;
 		$bg
@@ -466,7 +466,7 @@ var GridEditor = {
 	 * @param {jQuery Object} $el
 	 */
 	get_el_model: function ($el) {
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			regions = app.layout.get('regions'),
 			model;
@@ -620,7 +620,7 @@ var GridEditor = {
 	 * Normalize elements and wrappers
 	 */
 	normalize: function (els, wraps) {
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			regions = app.layout.get("regions"),
 			regions_need_update = [];
@@ -674,7 +674,7 @@ var GridEditor = {
 	 * Init the GridEditor object
 	 */
 	init: function(){
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			main_pos = $main.offset(),
@@ -715,7 +715,7 @@ var GridEditor = {
 	 */
 	start: function(view, model, $cont){
 		this.time_start('fn start');
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			main_pos = ed.main.$el.offset(),
 			$layout = ed.main.$el.find('.upfront-layout'),
@@ -765,7 +765,7 @@ var GridEditor = {
 	 */
 	update_position_data: function () {
 		this.time_start('fn update_position_data');
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			$layout = ed.main.$el.find('.upfront-layout'),
 			is_object = ( ed.el_selector == '.upfront-object' ),
@@ -785,7 +785,7 @@ var GridEditor = {
 	create_drop_point: function (me, me_wrap) {
 		console.log('Drop point');
 		this.time_start('fn create_drop_point');
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			margin = me.$el.data('margin'),
 			col = me.col,
@@ -1055,7 +1055,7 @@ var GridEditor = {
 	 */
 	update_wrappers: function (region) {
 		this.time_start('fn update_wrappers');
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
@@ -1345,7 +1345,7 @@ var GridEditor = {
 	 * @param (bool) force
 	 */
 	resize: function (view, model, col, row, axis, force) {
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			axis = /all|nw|se/.test(axis) ? axis : 'all',
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -2077,7 +2077,7 @@ var GridEditor = {
 	},
 
 	normalize_module_remove: function (view, module, modules, wrapper, wrappers) {
-		var app = Upfront.Application.LayoutEditor,
+		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			index = modules.indexOf(module),
 			prev_module = modules.at(index-1),
@@ -2369,6 +2369,223 @@ var GridEditor = {
 				return;
 			$(this).resizable('option', 'disabled', (!enable));
 		});
+	},
+	
+	/**
+	 * Edit structure/grid 
+	 */
+	edit_structure: function () {
+		var ed = Upfront.Behaviors.GridEditor,
+			app = Upfront.Application,
+			grid = Upfront.Settings.LayoutEditor.Grid,
+			$grid_wrap = $('<div class="upfront-edit-grid-wrap clearfix" />'),
+			$recommended = $('<div class="upfront-edit-grid upfront-edit-grid-recommended" />'),
+			$custom = $('<div class="upfront-edit-grid upfront-edit-grid-custom" />'),
+			$color_wrap = $('<div class="upfront-edit-page-color" />'),
+			$grid_width = $('<div class="upfront-grid-width-preview">Grid width: <span class="upfront-grid-width" /></div>'),
+			$grid_width2 = $('<div class="upfront-grid-width-preview">( Grid width: <span class="upfront-grid-width" /> )</div>'),
+			is_grid_custom = ( grid.column_width != grid.column_widths[grid.size_name] || grid.column_padding != grid.column_paddings[grid.size_name] || grid.baseline != grid.baselines[grid.size_name] ),
+			update_grid_data = function() {
+				var custom = fields.grid.get_value() == 'custom',
+					new_grid = {
+						column_width: custom ? fields.custom_width.get_value() : grid.column_widths[grid.size_name],
+						column_padding: custom ? fields.custom_padding.get_value() : fields.recommended_padding.get_value(),
+						baseline: custom ? fields.custom_baseline.get_value() : grid.baselines[grid.size_name],
+						type_padding: custom ? fields.custom_type_padding.get_value() : grid.type_paddings[grid.size_name]
+					},
+					width = new_grid.column_width * grid.size;
+				$grid_width.find('.upfront-grid-width').text(width + 'px');
+				$grid_width2.find('.upfront-grid-width').text(width + 'px');
+				ed.update_grid(new_grid);
+			},
+			fields = {
+				structure: new Upfront.Views.Editor.Field.Radios({
+					label: "Structure",
+					layout: "vertical",
+					default_value: app.layout.get('layout_slug') || "blank",
+					icon_class: 'upfront-structure-field-icon',
+					values: [
+						{label: "", value: "blank", icon: "blank"},
+						{label: "", value: "wide", icon: "wide-no-sidebar"},
+						{label: "", value: "wide-right-sidebar", icon: "wide-right-sidebar"},
+						{label: "", value: "wide-left-sidebar", icon: "wide-left-sidebar"},
+						{label: "", value: "clip", icon: "clip-no-sidebar"},
+						{label: "", value: "clip-right-sidebar", icon: "clip-right-sidebar"},
+						{label: "", value: "clip-left-sidebar", icon: "clip-left-sidebar"},
+						{label: "", value: "full", icon: "full"},
+						{label: "", value: "full-extended", icon: "full-extended"},
+					]
+				}),
+				grid: new Upfront.Views.Editor.Field.Radios({
+					label: "Grid Settings",
+					layout: "horizontal-inline",
+					default_value: is_grid_custom ? "custom" : "recommended",
+					values: [
+						{label: "Recommended Settings", value: "recommended"},
+						{label: "Custom Settings", value: "custom"}
+					],
+					change: function () {
+						var value = this.get_value();
+						if ( value == 'custom' ){
+							$custom.show();
+							$recommended.hide();
+						}
+						else {
+							$recommended.show();
+							$custom.hide();
+						}
+						update_grid_data();
+					}
+				}),
+				recommended_padding: new Upfront.Views.Editor.Field.Select({
+					default_value: grid.column_padding,
+					values: [
+						{label: "15px column padding", value: "15"},
+						{label: "10px column padding", value: "10"},
+						{label: "5px column padding", value: "5"},
+						{label: "no column padding", value: "0"}
+					],
+					change: update_grid_data
+				}),
+				bg_color: new Upfront.Views.Editor.Field.Color({
+					model: app.layout,
+					label: "Page Background Color",
+					label_style: "inline",
+					property: 'background_color',
+					spectrum: {
+						move: function (color) {
+							var rgb = color.toRgb(),
+							rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+							app.layout.set_property('background_color', rgba_string);
+						}
+					}
+				}),
+				custom_width: new Upfront.Views.Editor.Field.Number({
+					label: "Column Width",
+					label_style: "inline",
+					min: 40,
+					max: 100,
+					default_value: grid.column_width,
+					change: update_grid_data
+				}),
+				custom_padding: new Upfront.Views.Editor.Field.Number({
+					label: "Column Padding",
+					label_style: "inline",
+					min: 0,
+					max: 100,
+					default_value: grid.column_padding,
+					change: update_grid_data
+				}),
+				custom_baseline: new Upfront.Views.Editor.Field.Number({
+					label: "Baseline Grid",
+					label_style: "inline",
+					min: 5,
+					max: 100,
+					default_value: grid.baseline,
+					change: update_grid_data
+				}),
+				custom_type_padding: new Upfront.Views.Editor.Field.Number({
+					label: "Additional Type Padding",
+					label_style: "inline",
+					min: 0,
+					max: 100,
+					default_value: grid.type_padding,
+					change: update_grid_data
+				}),
+				floated: new Upfront.Views.Editor.Field.Checkboxes({
+					multiple: false,
+					default_value: true,
+					values: [
+						{label: "Allow floated areas outside main grid", value: true}
+					]
+				})
+			},
+			togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
+
+		if ( !ed.structure_modal ){
+			ed.structure_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
+			ed.structure_modal.render();
+			$('body').append(ed.structure_modal.el);
+		}
+		// Toggle grid on
+		if ( !Upfront.Application.get_gridstate() )
+			togglegrid.on_click();
+			
+		ed.structure_modal.open(function($content, $modal){
+			_.each(fields, function(field){
+				field.render();
+				field.delegateEvents();
+			});
+			$content.html('');
+			if ( _upfront_new_theme ){
+				$content.append(fields.structure.el);
+			}
+			$content.append(fields.grid.el);
+			$recommended.append(fields.recommended_padding.el);
+			$recommended.append($grid_width);
+			$grid_wrap.append($recommended);
+			$custom.append(fields.custom_width.el);
+			$custom.append($grid_width2);
+			$custom.append(fields.custom_padding.el);
+			$custom.append(fields.custom_baseline.el);
+			$custom.append(fields.custom_type_padding.el);
+			$color_wrap.append(fields.bg_color.el);
+			$grid_wrap.append($custom);
+			$grid_wrap.append($color_wrap);
+			$content.append($grid_wrap);
+			$content.append(fields.floated.el);
+			fields.grid.trigger('changed');
+		}, ed)
+		.always(function(){
+			if ( _upfront_new_theme ){
+				var structure = fields.structure.get_value(),
+					layout_slug = app.layout.get('layout_slug');
+				if ( (layout_slug && layout_slug != structure) || ( !layout_slug && structure != 'blank' ) ){
+					app.layout.set('layout_slug', structure);
+					togglegrid.on_click();
+					app.load_layout(_upfront_post_data.layout, {layout_slug: structure});
+				}
+			}
+		});
+	},
+	
+	/**
+	 * Update grid value and appearance 
+	 */
+	update_grid: function (grid_data) {
+		var styles = [],
+			grid = Upfront.Settings.LayoutEditor.Grid,
+			selector = '#page.' + grid.size_name;
+		if ( grid_data.column_width )
+			styles.push(selector + ' .upfront-grid-layout { width: ' + grid_data.column_width*grid.size + 'px; }');
+		if ( grid_data.column_padding )
+			styles.push(selector + ' .upfront-object { padding: ' + grid_data.column_padding + 'px; }');
+		if ( grid_data.baseline ){
+			styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid_data.baseline + 'px; }');
+			if ( grid_data.baseline != grid.baseline ){
+				// to prevent css loading at every change, we timeout to 1000ms before decide to load it
+				clearTimeout(this._load_editor_css);
+				this._load_editor_css = setTimeout(function(){
+					Upfront.Util.post({
+						action: 'upfront_load_editor_grid',
+						baseline: grid_data.baseline
+					}, 'text').success(function(data){
+						if ( $('#upfront-editor-grid-inline').length )
+							$('#upfront-editor-grid-inline').html( data );
+						else
+							$('head').append('<style id="upfront-editor-grid-inline">' + data + '</style>'); // add it to head to prevent it override other custom CSS below
+					});
+				}, 1000);
+			}
+		}
+		if ( grid_data.type_padding )
+			styles.push(selector + ' .plaintxt_padding {padding: ' + grid_data.type_padding + 'px; }');
+		if ( $('#upfront-grid-style-inline').length )
+			$('#upfront-grid-style-inline').html( styles.join("\n") );
+		else
+			$('body').append('<style id="upfront-grid-style-inline">' + styles.join("\n") + '</style>');
+		Upfront.Settings.LayoutEditor.Grid = _.extend(grid, grid_data);
+		this.init(); // re-init to update grid values
 	},
 
 	/**

@@ -11,7 +11,7 @@ class Upfront_LoginView extends Upfront_Object {
 			
 			'type' => "LoginModel",
 			'view_class' => "LoginView",
-			"class" => "c22 upfront-login_element-object",
+			"class" => "c24 upfront-login_element-object",
 			'has_settings' => 1,
 			'id_slug' => 'upfront-login_element'
 		);

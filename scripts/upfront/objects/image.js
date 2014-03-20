@@ -6,7 +6,7 @@ var ImageModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("type", "ImageModel");
 		this.init_property("view_class", "ImageView");
 		this.init_property("element_id", Upfront.Util.get_unique_id("image-object"));
-		this.init_property("class", "c22");
+		this.init_property("class", "c24");
 		this.init_property("has_settings", 1);
 	}
 });

@@ -1,8 +1,10 @@
-.upfront-edit-layout, .upfront-edit-layout body {
+.upfront-edit-layout, .upfront-edit-layout body,
+.upfront-edit-theme, .upfront-edit-theme body {
   	height: 100%;
 }
 
-.upfront-edit-layout #page {
+.upfront-edit-layout #page,
+.upfront-edit-theme #page {
   	position: relative;
   	min-height: 100%;
   	/*margin: 22px 20px 0 320px;*/
@@ -312,7 +314,8 @@
 	overflow: hidden;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page,
-#sidebar-ui .sidebar-commands-primary .command-new-post {
+#sidebar-ui .sidebar-commands-primary .command-new-post,
+#sidebar-ui .sidebar-commands-primary .command-new-layout{
 	height: 40px;
 	line-height: 24px;
 	padding: 7px 15px 0 10px;
@@ -320,27 +323,36 @@
 	border: 2px solid #25394d;
 }
 .upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-page,
-.upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-post {
+.upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-post,
+.upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-layout {
 	padding-right: 5px;
 }
-#sidebar-ui .sidebar-commands-primary .command-new-post {
+#sidebar-ui .sidebar-commands-primary .command-new-post,
+#sidebar-ui .sidebar-commands-primary .command-new-layout {
 	float: left;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page {
 	float: right;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
-#sidebar-ui .sidebar-commands-primary .command-new-post:hover {
+#sidebar-ui .sidebar-commands-primary .command-new-post:hover,
+#sidebar-ui .sidebar-commands-primary .command-new-layout:hover {
 	border-color: #1fcd8f;
 	color: #cbe5ff;
 }
-#sidebar-ui .sidebar-commands-primary .command-popup-list {
-	clear: both;
+#sidebar-ui .sidebar-commands-primary .command-popup-list,
+#sidebar-ui .sidebar-commands-primary .command-browse-layout {
 	display: block;
 	font-size: 15px;
 	color: #1fcc8f;
 	text-decoration: underline;
 	margin: 0 0 20px;
+}
+#sidebar-ui .sidebar-commands-primary .command-popup-list {
+	clear: both;
+}
+#sidebar-ui .sidebar-commands-primary .command-browse-layout {
+	margin: 8px 0 28px 145px;
 }
 #sidebar-ui .sidebar-commands-primary .command-toggle-mode {
 	margin: -23px -15px 0 0;
@@ -1759,7 +1771,7 @@ a.ueditor-action-pickercancel{
 	/*z-index: 40;*/
 }
 .upfront-objects_container {
-	padding: 15px 0;
+	/*padding: 15px 0;*/
 	float: left;
 	width: 100%;
 	position: relative;
@@ -1851,7 +1863,8 @@ a.ueditor-action-pickercancel{
 .upfront-region-edit-trigger .upfront-icon:before {
 	margin: 0;
 }
-.upfront-edit-layout .upfront-region-container:hover .upfront-region-edit-trigger {
+.upfront-edit-layout .upfront-region-container:hover .upfront-region-edit-trigger,
+.upfront-edit-theme .upfront-region-container:hover .upfront-region-edit-trigger {
 	visibility: visible;
 	opacity: 1;
 }
@@ -2256,8 +2269,8 @@ a.ueditor-action-pickercancel{
 	/*background: rgba(39, 59, 77, 0.55);*/
 }
 .upfront-inline-modal-wrap {
-	top: 60px;
-	bottom: auto;
+	/*top: 60px;
+	bottom: auto;*/
 	margin: auto;
 	width: 50%;
 	border: 1px solid #fff;
@@ -2483,6 +2496,18 @@ a.ueditor-action-pickercancel{
 	display: block;
 }
 
+.upfront-edit-grid {
+	width: 300px;
+	float: left;
+}
+.upfront-edit-page-color {
+	float: left;
+}
+.upfront-grid-width-preview {
+	color: #85a9cb;
+	font-family: "Verdana";
+	font-size: 11px;
+}
 
 .region-resizable-helper {
 	background: rgba(0,0,0,.1);
@@ -2514,12 +2539,12 @@ a.ueditor-action-pickercancel{
 	right: 5px;
 }
 .upfront-object > .upfront-entity_meta {
-	top: 19px;
+	top: 34px;
 	right: 5px;
 }
 .upfront-object > .upfront-entity_meta_extra {
-	top: 48px;
-	right: 5px;
+	top: 63px;
+	right:5px;
 }
 
 
@@ -2953,7 +2978,8 @@ a.ueditor-action-pickercancel{
 .upfront-ui .upfront-icon-element:before,
 .upfront-icon-button:before,
 .upfront-icon-control:before,
-.upfront-ui .upfront-field-icon:before {
+.upfront-ui .upfront-field-icon:before,
+.upfront-ui .upfront-structure-field-icon:before {
 	content: " ";
 	background-image: url('../img/uf-core-el-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
@@ -3087,6 +3113,9 @@ a.ueditor-action-pickercancel{
 }
 .upfront-icon-post:before {
 	background-position: -41px -210px;
+}
+.upfront-icon-layout:before {
+	background-position: -41px -39px;
 }
 .upfront-icon-browse:before {
 	width: 10px;
@@ -3432,6 +3461,12 @@ a.ueditor-action-pickercancel{
 .upfront-icon-redo:hover:before {
 	background-position: -196px -144px;
 }
+.upfront-icon-grid:before {
+	background-position: -338px -144px;
+}
+.upfront-icon-grid:hover:before, .upfront-icon-grid-active:before {
+	background-position: -338px -177px;
+}
 .upfront-icon-button:before {
 	width: 19px;
 	height: 19px;
@@ -3738,6 +3773,38 @@ a.ueditor-action-pickercancel{
 }
 .upfront-region-field-icon-bg-slider-crossfade:before {
 	background-position: -40px -712px;
+}
+
+.upfront-structure-field-icon:before {
+	width: 22px;
+	height:26px;
+}
+.upfront-structure-field-icon-blank:before {
+	background-position: -658px -392px;
+}
+.upfront-structure-field-icon-wide-no-sidebar:before {
+	background-position: -480px -329px;
+}
+.upfront-structure-field-icon-wide-right-sidebar:before {
+	background-position: -569px -329px;
+}
+.upfront-structure-field-icon-wide-left-sidebar:before {
+	background-position: -658px -329px;
+}
+.upfront-structure-field-icon-clip-no-sidebar:before {
+	background-position: -480px -361px;
+}
+.upfront-structure-field-icon-clip-right-sidebar:before {
+	background-position: -569px -361px;
+}
+.upfront-structure-field-icon-clip-left-sidebar:before {
+	background-position: -658px -361px;
+}
+.upfront-structure-field-icon-full:before {
+	background-position: -480px -393px;
+}
+.upfront-structure-field-icon-full-extended:before {
+	background-position: -569px -393px;
 }
 
 /* maps default layout */
@@ -6007,7 +6074,7 @@ License: MIT
     padding: 0;
     box-shadow: 0 2px 7px rgba(0,0,0,.3);
 }
-.sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue
+.sp-container,.sp-palette-container, .sp-picker-container, .sp-container button, .sp-container input, .sp-color, .sp-hue
 {
     font: normal 14px 'Source Sans Pro', sans-serif;
     -webkit-box-sizing: border-box;

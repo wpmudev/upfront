@@ -55,7 +55,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
             'id_slug' => 'Like-box-object',
             'type' => "LikeBox",
             'view_class' => "LikeBoxView",
-            "class" => "c22 upfront-like-box",
+            "class" => "c24 upfront-like-box",
             'has_settings' => 1,
             'element_size' => array(
                 'width' => 278,

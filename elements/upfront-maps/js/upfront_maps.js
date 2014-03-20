@@ -553,7 +553,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c12 upfront-map_element-module"},
 						{"name": "has_settings", "value": 0},
-						{"name": "row", "value": 22}
+						{"name": "row", "value": Upfront.Util.height_to_row(330)}
 					],
 					"objects": [object]
 				})

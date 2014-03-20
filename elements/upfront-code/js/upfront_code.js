@@ -520,9 +520,9 @@ var CodeElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				name: "",
 				properties: [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c22 upfront-code_element-module"},
+					{"name": "class", "value": "c24 upfront-code_element-module"},
 					{"name": "has_settings", "value": 0},
-					{"name": "row", "value": 14}
+					{"name": "row", "value": Upfront.Util.height_to_row(210)}
 				],
 				objects: [object]
 			})

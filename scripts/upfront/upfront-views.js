@@ -1277,7 +1277,7 @@ define([
 				}
 			},
 			trigger_edit: function (e) {
-				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.LAYOUT )
+				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
 					return false;
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-region-editing');
@@ -1875,13 +1875,19 @@ define([
 			}
 		}),
 
-		Layout = _Upfront_PluralEditor.extend({
+		Layout = _Upfront_SingularEditor.extend({
 			tpl: _.template(_Upfront_Templates.layout),
 			events: {
 				"click": "on_click"
 			},
 			initialize: function () {
+				this.listenTo(this.model.get("properties"), 'change', this.update);
+				this.listenTo(this.model.get("properties"), 'add', this.update);
+				this.listenTo(this.model.get("properties"), 'remove', this.update);
 				this.render();
+			},
+			update: function () {
+				this.update_background();
 			},
 			render: function () {
 				this.$el.html(this.tpl(this.model.toJSON()));
@@ -1891,6 +1897,7 @@ define([
 				this.local_view.render();
 
 				this.$("section").append(this.local_view.el);
+				this.update();
 				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function (e) {

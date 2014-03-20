@@ -117,7 +117,7 @@ var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 					{"name": "class", "value": "c12 upfront-contact_form_module"},
 					{"name": "has_settings", "value": 0},
-					{"name": "row", "value": 29}
+					{"name": "row", "value": Upfront.Util.height_to_row(435)}
 				],
 				"objects": [
 					object // The anonymous module will contain our contact form object model

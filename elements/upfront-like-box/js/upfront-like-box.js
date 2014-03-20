@@ -150,7 +150,7 @@
                         {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
                         {"name": "class", "value": "c7 upfront-like-box_module"},
                         {"name": "has_settings", "value": 0},
-						{"name": "row", "value": 6}
+						{"name": "row", "value": Upfront.Util.height_to_row(90)}
                     ],
                     "objects": [
                         object // The anonymous module will contain our search object model

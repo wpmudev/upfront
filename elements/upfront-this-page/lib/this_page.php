@@ -27,7 +27,7 @@ class Upfront_ThisPageView extends Upfront_Object {
 		return array(
 			'type' => 'ThisPageModel',
 			'view_class' => 'ThisPageView',
-			'class' => 'c22 upfront-this_page',
+			'class' => 'c24 upfront-this_page',
 			'display' => 'title',
 			'has_settings' => 0,
 			'id_slug' => 'this_page',

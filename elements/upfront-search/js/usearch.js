@@ -97,7 +97,7 @@ var UsearchElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 					{"name": "class", "value": "c6 upfront-search_module"},
 					{"name": "has_settings", "value": 0},
-					{"name": "row", "value": 5}
+					{"name": "row", "value": Upfront.Util.height_to_row(75)}
 				],
 				"objects": [
 					object // The anonymous module will contain our search object model

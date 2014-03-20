@@ -398,7 +398,7 @@ var _alpha = "alpha",
 		}
 	}),
 
-	Layout = Backbone.Model.extend({
+	Layout = ObjectModel.extend({
 		"defaults": {
 			"name": "",
 			"properties": new Properties(),

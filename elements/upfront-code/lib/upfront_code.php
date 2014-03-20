@@ -50,7 +50,7 @@ class Upfront_CodeView extends Upfront_Object {
         return array(
             'type' => "CodeModel",
             'view_class' => "CodeView",
-            "class" => "c22 upfront-code_element-object",
+            "class" => "c24 upfront-code_element-object",
             'has_settings' => 0,
             'id_slug' => 'upfront-code_element',
 

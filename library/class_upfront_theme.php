@@ -80,10 +80,10 @@ class Upfront_Theme {
 		return $this->regions;
 	}
 
-	public function get_default_layout($cascade) {
+	public function get_default_layout($cascade, $layout_slug = "") {
 		$regions = new Upfront_Layout_Maker();
 
-		$template_path = $this->find_default_layout($cascade);
+		$template_path = $this->find_default_layout($cascade, $layout_slug);
 
 		require $template_path;
 
@@ -92,16 +92,21 @@ class Upfront_Theme {
 		return $layout;
 	}
 
-	protected function find_default_layout($cascade) {
+	protected function find_default_layout($cascade, $layout_slug = "") {
 		$filenames = array();
-		$order = array('theme_defined', 'specificity', 'item', 'type');
+		$order = array('specificity', 'item', 'type');
 		foreach($order as $o){
-			if(isset($cascade[$o]))
+			if(isset($cascade[$o])){
+				if (!empty($layout_slug))
+					$filenames[] =  'layouts/' . $cascade[$o] . '-' . $layout_slug . '.php';
 				$filenames[] =  'layouts/' . $cascade[$o] . '.php';
+			}
 		}
+		if (!empty($layout_slug))
+			$filenames[] = 'layouts/index-' . $layout_slug . '.php';
 		$filenames[] = 'layouts/index.php';
 
-		return function_exists('upfront_locate_template')
+		return function_exists('upfront_locate_template') 
 			? upfront_locate_template($filenames)
 			: locate_template($filenames)
 		;

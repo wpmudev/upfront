@@ -1177,9 +1177,9 @@ var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"name": "",
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c22 upfront-image_module"},
+					{"name": "class", "value": "c24 upfront-image_module"},
 					{"name": "has_settings", "value": 0},
-					{"name": "row", "value": 17}
+					{"name": "row", "value": Upfront.Util.height_to_row(255)}
 				],
 				"objects": [
 					object

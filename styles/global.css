@@ -103,11 +103,11 @@
 }
 
 .upfront-grid-layout {
-  max-width: 1232px;
+  /*max-width: 1232px;*/
   margin:0 auto;
 }
 
-.c1, .c2, .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11, .c12, .c13, .c14, .c15, .c16, .c17, .c18, .c19, .c20, .c21, .c22 {
+.c1, .c2, .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11, .c12, .c13, .c14, .c15, .c16, .c17, .c18, .c19, .c20, .c21, .c22, .c23, .c24 {
   float: left;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -123,7 +123,7 @@
 
 .upfront-output-wrapper { float: left; }
 .upfront-module { }
-.upfront-object { padding: 0 15px; }
+.upfront-object { }
 
 .redactor-selection-marker {
   font-family: Arial, sans-serif !important;

@@ -128,7 +128,7 @@ var UwidgetElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 					{"name": "class", "value": "c6 upfront-widget_module"},
 					{"name": "has_settings", "value": 0},
-					{"name": "row", "value": 10}
+					{"name": "row", "value": Upfront.Util.height_to_row(150)}
 				],
 				"objects": [
 					object

@@ -22,7 +22,7 @@ abstract class Upfront_EntityResolver {
 			$ids['type'] = $cascade['type'];
 		}
 
-		return apply_filters('upfront_get_entity_ids', $ids);
+		return $ids;
 	}
 
 	/**
@@ -185,6 +185,7 @@ abstract class Upfront_EntityResolver {
 abstract class Upfront_Model {
 
 	const STORAGE_KEY = 'upfront';
+	protected static $storage_key = self::STORAGE_KEY;
 
 	protected $_name;
 	protected $_data;
@@ -211,11 +212,22 @@ abstract class Upfront_Model {
 				: $this->_name_to_id()
 			;
 		}
-		return self::STORAGE_KEY . '-' . $id;
+		$storage_key = self::get_storage_key();
+		return $storage_key . '-' . $id;
 	}
 
 	public static function id_to_type ($id) {
-		return preg_replace('/^' . preg_quote(self::STORAGE_KEY, '/') . '-/', '', $id);
+		$storage_key = self::get_storage_key();
+		return preg_replace('/^' . preg_quote($storage_key, '/') . '-/', '', $id);
+	}
+	
+	public static function set_storage_key($storage_key) {
+		if (!empty($storage_key))
+			self::$storage_key = $storage_key;
+	}
+	
+	public static function get_storage_key() {
+		return apply_filters('upfront-storage-key', self::$storage_key);
 	}
 
 	public function set ($key, $value) {
@@ -271,13 +283,16 @@ abstract class Upfront_JsonModel extends Upfront_Model {
 class Upfront_Layout extends Upfront_JsonModel {
 
 	protected static $cascade;
+	protected static $layout_slug;
 
-	public static function from_entity_ids ($cascade) {
+	public static function from_entity_ids ($cascade, $storage_key = '') {
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
 		self::$cascade = $cascade;
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
 		foreach ($cascade as $id_part) {
-			$id = self::STORAGE_KEY . '-' . $id_part;
+			$id = $storage_key . '-' . $id_part;
 			$layout = self::from_id($id);
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
@@ -287,13 +302,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $layout;
 	}
 
-	public static function from_php ($data) {
+	public static function from_php ($data, $storage_key = '') {
 		if ( isset($data['layout']) )
 			self::$cascade = $data['layout'];
+		self::set_storage_key($storage_key);
 		return new self($data);
 	}
 
-	public static function from_json ($json) {
+	public static function from_json ($json, $storage_key = '') {
+		self::set_storage_key($storage_key);
 		return self::from_php(json_decode($json, true));
 	}
 
@@ -327,78 +344,28 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $regions;
 	}
 
-	public static function create_layout ($layout_ids = array()) {
+	public static function create_layout ($layout_ids = array(), $layout_slug = '') {
+		self::$layout_slug = $layout_slug;
 		$data = array(
 			"name" => "Default Layout",
 			"properties" => array(),
-			"regions" => self::get_regions_data()
+			"regions" => self::get_regions_data(),
+			"layout_slug" => self::$layout_slug
 		);
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
 
-	protected static function _get_regions ($all = false) {
+	protected static function _get_regions () {
 		$regions = array();
 		do_action('upfront_get_regions', self::$cascade);
-		/*if ( $all || ($arr = upfront_region_supported('header')) )
-			$regions[] = array_merge(array(
-				'name' => "header",
-				'title' => __("Header Area"),
-				'properties' => array(),
-				'modules' => array(),
-				'wrappers' => array(),
-				'scope' => "global"
-			), ( is_array($arr) ? $arr : array() ));
-		if ( $all || ($arr = upfront_region_supported('left-sidebar')) )
-			$regions[] = array_merge(array(
-				'name' => "left-sidebar",
-				'title' => __("Left Sidebar Area"),
-				'properties' => array(
-					array( 'name' => 'col', 'value' => '5' )
-				),
-				'modules' => array(),
-				'wrappers' => array(),
-				'scope' => "global",
-				'container' => 'main'
-			), ( is_array($arr) ? $arr : array() ));
-		$regions[] = array(
-			'name' => "main",
-			'title' => __("Main Area"),
-			'properties' => array(),
-			'modules' => array(),
-			'wrappers' => array(),
-			'scope' => "local",
-			'container' => 'main',
-			'default' => true
-		);
-		if ( $all || ($arr = upfront_region_supported('right-sidebar')) )
-			$regions[] = array_merge(array(
-				'name' => "right-sidebar",
-				'title' => __("Right Sidebar Area"),
-				'properties' => array(
-					array( 'name' => 'col', 'value' => '5' )
-				),
-				'modules' => array(),
-				'wrappers' => array(),
-				'scope' => "global",
-				'container' => 'main'
-			), ( is_array($arr) ? $arr : array() ));
-		if ( $all || ($arr = upfront_region_supported('footer')) )
-			$regions[] = array_merge(array(
-				'name' => "footer",
-				'title' => __("Footer Area"),
-				'properties' => array(),
-				'modules' => array(),
-				'wrappers' => array(),
-				'scope' => "global"
-			), ( is_array($arr) ? $arr : array() ));*/
-		//$regions = upfront_get_regions();
-		$regions = upfront_get_default_layout(self::$cascade);
+		$regions = upfront_get_default_layout(self::$cascade, self::$layout_slug);
 		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
 
 	protected static function _get_region_id ($region_name, $scope = '') {
 		$region_id = preg_replace('/[^-_a-z0-9]/', '-', strtolower($region_name));
-		return self::STORAGE_KEY . '-' . $region_id . ( !empty($scope) ? '-' . $scope : '' );
+		$storage_key = self::get_storage_key();
+		return $storage_key . '-' . $region_id . ( !empty($scope) ? '-' . $scope : '' );
 	}
 
 
@@ -443,13 +410,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return delete_option($this->get_id());
 	}
 
-	public function delete_region ($region_name) {
-		return delete_option(self::_get_region_id($region_name));
+	public function delete_region ($region_name, $scope) {
+		return delete_option(self::_get_region_id($region_name, $scope));
 	}
 
 	public function delete_regions () {
 		foreach ( self::_get_regions() as $i => $region ) {
-			$this->delete_region($region['name']);
+			$this->delete_region($region['name'], $region['scope']);
 		}
 	}
 

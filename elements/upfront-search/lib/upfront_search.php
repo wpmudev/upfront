@@ -45,7 +45,7 @@ class Upfront_UsearchView extends Upfront_Object {
         return array(
             'type' => 'UsearchModel',
             'view_class' => 'UsearchView',
-            'class' => 'c22 upfront-search',
+            'class' => 'c24 upfront-search',
             'has_settings' => 1,
             'id_slug' => 'usearch',
 

@@ -35,17 +35,19 @@ define(function() {
 	  Upfront.Util.log(JSON.stringify(arguments[0]));
 	},
 
-	post: function (data) {
+	post: function (data, data_type) {
 	  var request = (_.isObject(data) && data.action)
 		? data
 		: {"action": "upfront_request", "data": data}
 	  ;
 	  // @TODO need a better way to attach upfront layout data on request?
-	  if ( Upfront.Application.LayoutEditor.layout ) {
-		//request.upfront_layout = Upfront.Application.LayoutEditor.layout.get('layout');
-		request.layout = Upfront.Application.LayoutEditor.layout.get('layout');
+	  if ( Upfront.Application.layout ) {
+		//request.upfront_layout = Upfront.Application.layout.get('layout');
+		request.layout = Upfront.Application.layout.get('layout');
 	  }
-	  return $.post(Upfront.Settings.ajax_url, request, function () {}, "json");
+	  request.storage_key = _upfront_storage_key;
+	  request.stylesheet = _upfront_stylesheet;
+	  return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
 	},
 
 	format_date: function(date, show_time, show_seconds){
@@ -97,6 +99,11 @@ define(function() {
 		return false;
 
 	  return url + hash + '?d=mm&s=' + size;
+	},
+	
+	height_to_row: function (height) {
+		var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
+		return Math.ceil(height/baseline);
 	},
 
 	/* JS - PHP compatible templates */

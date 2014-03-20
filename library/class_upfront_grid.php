@@ -44,11 +44,12 @@ class Upfront_Grid {
 
 	public function apply_breakpoints ($layout) {
 		$css = '';
+		$breakpoints = $this->get_breakpoints();
 		
-		foreach ($this->get_breakpoints() as $name => $point) {
+		foreach ($breakpoints as $name => $point) {
 			$point_css = '';
 			$line_height = $point->get_line_height();
-			$point_css .= "body {line-height: {$line_height}px;}" . "\n";
+			$point_css .= $point->get_frontend_rule();
 			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
@@ -90,7 +91,7 @@ class Upfront_Grid {
 			if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$point_css .= $point->get_debug_rule($this->get_grid_scope());
 			}
-			$css .= $point->wrap($point_css, $this->get_grid_scope());
+			$css .= $point->wrap($point_css, $breakpoints, $this->get_grid_scope());
 		}
 		return $css;
 	}
@@ -117,10 +118,14 @@ abstract class Upfront_GridBreakpoint {
 	const PREFIX_MARGIN_TOP = 'margin-top';
 	const PREFIX_MARGIN_BOTTOM = 'margin-bottom';
 
-	protected $_columns = 22;
-	protected $_baseline = 15;
-	protected $_line_height = 2; // Multiplier to $this->_baseline
-	protected $_rule = 'min-width:1024px';
+	protected $_media = 'only screen';
+	protected $_columns = 24;
+	protected $_column_width = 45;
+	protected $_column_padding = 15;
+	protected $_type_padding = 10;
+	protected $_baseline = 5;
+	protected $_line_height = 30;
+	protected $_rule = 'min-width:1080px';
 	protected $_prefixes = array(
 		'width' => 'c',
 		'margin-left' => 'ml',
@@ -139,21 +144,92 @@ abstract class Upfront_GridBreakpoint {
 	public function get_debug_rule ($scope) {
 		//return ".{$scope} * {color:{$this->_color}!important;}\n";
 	}
+	
+	protected function get_closest_breakpoints ($breakpoints) {
+		$prev = $next = false;
+		$prev_width = $next_width = 0;
+		$width = $this->get_width();
+		foreach ( $breakpoints as $name => $point ){
+			$point_width = $point->get_width();
+			if ( $point_width > $width && ( $point_width < $next_width || $next_width == 0) ){
+				$next = $point;
+				$next_width = $point_width;
+			}
+			else if ( $point_width < $width && ( $point_width > $prev_width || $prev_width == 0 ) ){
+				$prev = $point;
+				$prev_width = $point_width;
+			}
+		}
+		return array(
+			'prev' => $prev,
+			'next' => $next
+		);
+	}
 
 	/**
 	 * @TODO: destubify this!!!!
 	 * @return string Root CSS rule for editor grid server auto-generation
 	 */
-	public function get_editor_root_rule ($scope) {
+	public function get_editor_root_rule ($scope, $breakpoints) {
 		$line_height = $this->get_line_height();
+		$baseline = $this->get_baseline();
+		$column_padding = $this->get_column_padding();
+		$type_padding = $this->get_type_padding();
+		$width_rule = '';
+		$min_width = $max_width = 0;
+		$width = $this->get_width();
+		$closest = $this->get_closest_breakpoints($breakpoints);
+		if ( $closest['prev'] ){
+			$min_width = $width;
+		}
+		if ( $closest['next'] ){
+			$max_width = $closest['next']->get_width() - 1;
+		}
+		if ( $min_width > 0 )
+			$width_rule .= "min-width: {$min_width}px; ";
+		if ( $max_width > 0 )
+			$width_rule .= "max-width: {$max_width}px; ";
 		return '' .
-			"#page {line-height: {$line_height}px;}" .
-			"#page .upfront-overlay-grid {background-size: 100% {$this->_baseline}px}" . 
+			"#page.{$scope} {line-height: {$line_height}px;}" . "\n" .
+			"#page.{$scope} .upfront-grid-layout {width: {$width}px;}" . "\n" .
+			"#page.{$scope} .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
+			( $width_rule != "" ? "#page.{$scope} { {$width_rule} }" . "\n" : "" ) .
+			"#page.{$scope} .upfront-object {padding: {$column_padding}px;}" . "\n" .
+			"#page.{$scope} .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 		'';
+	}
+	
+	public function get_frontend_rule () {
+		$line_height = $this->get_line_height();
+		$width = $this->get_width();
+		$column_padding = $this->get_column_padding();
+		$type_padding = $this->get_type_padding();
+		return '' .
+			"body {line-height: {$line_height}px;}" . "\n" .
+			".upfront-grid-layout {width: {$width}px;}" . "\n" .
+			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
+			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
+		'';
+	}
+	
+	public function get_media () {
+		return $this->_media;
 	}
 
 	public function get_columns () {
 		return $this->_columns;
+	}
+
+	public function get_column_width () {
+		return $this->_column_width;
+	}
+
+	public function get_column_padding () {
+		return $this->_column_padding;
+	}
+
+	public function get_type_padding () {
+		return $this->_type_padding;
 	}
 	
 	public function get_baseline () {
@@ -161,7 +237,11 @@ abstract class Upfront_GridBreakpoint {
 	}
 	
 	public function get_line_height () {
-		return $this->_baseline * $this->_line_height;
+		return $this->_line_height;
+	}
+	
+	public function get_width () {
+		return $this->get_columns() * $this->get_column_width();
 	}
 
 	public function get_prefix ($pfx) {
@@ -200,18 +280,34 @@ abstract class Upfront_GridBreakpoint {
 		return $this->_columns_to_size($columns);
 	}
 
-	public function get_breakpoint_rule () {
-		return $this->_rule;
+	public function get_breakpoint_rule ($breakpoints) {
+		//return $this->_rule;
+		$rule = '';
+		$min_width = $max_width = 0;
+		$width = $this->get_width();
+		$closest = $this->get_closest_breakpoints($breakpoints);
+		if ( $closest['prev'] ){
+			$min_width = $width;
+		}
+		if ( $closest['next'] ){
+			$max_width = $closest['next']->get_width() - 1;
+		}
+		$rule .= $this->get_media();
+		if ( $min_width > 0 )
+			$rule .= " and (min-width:{$min_width}px)";
+		if ( $max_width > 0 )
+			$rule .= " and (max-width:{$max_width}px)";
+		return $rule;
 	}
 
-	public function wrap ($style) {
+	public function wrap ($style, $breakpoints) {
 		$media = '';
 		if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
 			$class_name = get_class($this);
 			$columns = $this->get_columns();
 			$media .= "/* Breakpoint {$class_name}: {$columns} columns */\n";
 		}
-		$media .= "@media {$this->_rule}";
+		$media .= "@media " . $this->get_breakpoint_rule($breakpoints);
 		$rules = "{\n{$style} }\n\n";
 		return "{$media}{$rules}";
 	}
@@ -316,8 +412,8 @@ abstract class Upfront_GridBreakpoint {
 }
 
 class Upfront_GridBreakpoint_Desktop extends Upfront_GridBreakpoint {
-	protected $_columns = 22;
-	protected $_rule = 'only screen and (min-width: 993px)';
+	protected $_columns = 24;
+	//protected $_rule = 'only screen and (min-width: 993px)';
 	protected $_prefixes = array(
 		'width' => 'c',
 		'margin-left' => 'ml',
@@ -326,17 +422,10 @@ class Upfront_GridBreakpoint_Desktop extends Upfront_GridBreakpoint {
 		'margin-bottom' => 'mb',
 	);
 	protected $_color = "red";
-	public function get_editor_root_rule ($scope) {
-		$parent_rule = parent::get_editor_root_rule($scope);
-		return '' .
-			$parent_rule.
-			"#page.{$scope} {min-width: 968px;}" .
-		'';
-	}
 }
 class Upfront_GridBreakpoint_Tablet extends Upfront_GridBreakpoint {
 	protected $_columns = 12;
-	protected $_rule = 'only screen and (min-width: 577px) and (max-width: 992px)';
+	//protected $_rule = 'only screen and (min-width: 577px) and (max-width: 992px)';
 	protected $_prefixes = array(
 		'width' => 't',
 		'margin-left' => 'tml',
@@ -345,17 +434,10 @@ class Upfront_GridBreakpoint_Tablet extends Upfront_GridBreakpoint {
 		'margin-bottom' => 'tmb',
 	);
 	protected $_color = "green";
-	public function get_editor_root_rule ($scope) {
-		$parent_rule = parent::get_editor_root_rule($scope);
-		return '' .
-			$parent_rule.
-			"#page.{$scope} {min-width: 552px; max-width: 960px;}" .
-		'';
-	}
 }
 class Upfront_GridBreakpoint_Mobile extends Upfront_GridBreakpoint {
 	protected $_columns = 3;
-	protected $_rule = 'only screen and (max-width: 576px)';
+	//protected $_rule = 'only screen and (max-width: 576px)';
 	protected $_prefixes = array(
 		'width' => 'm',
 		'margin-left' => 'mml',
@@ -364,13 +446,6 @@ class Upfront_GridBreakpoint_Mobile extends Upfront_GridBreakpoint {
 		'margin-bottom' => 'mmb',
 	);
 	protected $_color = "blue";
-	public function get_editor_root_rule ($scope) {
-		$parent_rule = parent::get_editor_root_rule($scope);
-		return '' .
-			$parent_rule .
-			"#page.{$scope} {min-width: 210px; max-width: 576px;}" .
-		'';
-	}
 }
 
 

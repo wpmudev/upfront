@@ -59,7 +59,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
         return array(
             'type' => 'UnewnavigationModel',
             'view_class' => 'UnewnavigationView',
-            'class' => 'c22 upfront-navigation',
+            'class' => 'c24 upfront-navigation',
             'has_settings' => 1,
             'id_slug' => 'unewnavigation',
 

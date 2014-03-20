@@ -182,7 +182,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'type' => 'UgalleryModel',
 			'view_class' => 'UgalleryView',
 			'has_settings' => 1,
-			'class' => 'c22 upfront-gallery',
+			'class' => 'c24 upfront-gallery',
 			'id_slug' => 'ugallery',
 
 			'status' => 'starting',

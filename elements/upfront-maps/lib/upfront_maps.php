@@ -33,7 +33,7 @@ class Upfront_MapView extends Upfront_Object{
         return array(
             'type' => "MapModel",
             'view_class' => "MapView",
-            "class" => "c22 upfront-map_element-object",
+            "class" => "c24 upfront-map_element-object",
             'has_settings' => 1,
             'id_slug' => 'upfront-map_element',
 

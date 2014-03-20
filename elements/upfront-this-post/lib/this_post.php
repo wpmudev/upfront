@@ -89,7 +89,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return array(
 			'type' => 'ThisPostModel',
 			'view_class' => 'ThisPostView',
-			'class' => 'c22 upfront-this_post',
+			'class' => 'c24 upfront-this_post',
 			'has_settings' => 1,
 			'id_slug' => 'this_post',
 

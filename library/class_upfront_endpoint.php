@@ -962,3 +962,74 @@ class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
 
 }
 Upfront_ElementDependencies_VirtualPage::serve();
+
+/**
+ * Create new endpoint
+ */
+ 
+class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
+	
+	public function get_slug () { return 'theme'; }
+
+	public function parse ($request) {
+		upfront_switch_stylesheet('upfront');
+		add_filter('upfront-storage-key', array($this, 'storage_key_filter'));
+		add_filter('upfront-data-storage-key', array($this, 'storage_key_filter'));
+		query_posts('');
+	}
+
+	public function render ($request) {
+		$this->parse($request);
+		//add_filter('wp_title', array($this, 'get_title'));
+		add_action('wp_footer', array($this, 'start_editor'), 999);
+		load_template(get_home_template());
+		die;
+	}
+
+	public function get_title () {
+		return 'Create New Theme';
+	}
+	
+	public function storage_key_filter ($key) {
+		return $key . '_new';
+	}
+	
+	public function template_filter () {
+		return 'upfront';
+	}
+	
+	public function stylesheet_filter () {
+		return 'upfront';
+	}
+	
+	public function start_editor () {
+		$layout = Upfront_Layout::from_entity_ids(Upfront_EntityResolver::get_entity_ids());
+		$new_theme = $layout->is_empty() ? 'true' : 'false';
+		echo upfront_boot_editor_trigger('theme');
+		echo <<<EOSEJS
+<script>
+var _upfront_new_theme = $new_theme;
+</script>
+EOSEJS;
+	}
+}
+
+class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	protected function _add_subpages () {
+		$this->_subpages = array(
+			new Upfront_CreateNew_Theme_VirtualSubpage(),
+		);
+	}
+	
+	public function get_slug () { return 'create_new'; }
+
+	public function parse ($request) { }
+	public function render ($request) { die; }
+	
+}
+Upfront_CreateNew_VirtualPage::serve();

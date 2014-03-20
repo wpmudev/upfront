@@ -63,7 +63,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'id_slug' => 'uslider',
 			'type' => "USliderModel",
 			'view_class' => "USliderView",
-			"class" => "c22 upfront-uslider",
+			"class" => "c24 upfront-uslider",
 			'has_settings' => 1,
 
 			'primaryStyle' => 'notext', // notext, below, over, side, onlytext

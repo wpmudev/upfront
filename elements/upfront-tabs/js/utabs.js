@@ -221,7 +221,7 @@
             {"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
             {"name": "class", "value": "c9 upfront-tabs_module"},
             {"name": "has_settings", "value": 0},
-            {"name": "row", "value": 15}
+            {"name": "row", "value": Upfront.Util.height_to_row(225)}
           ],
           "objects": [
             object

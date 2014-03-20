@@ -7,7 +7,7 @@ var SettingExampleModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("view_class", "SettingExampleView");
 
 		this.init_property("element_id", Upfront.Util.get_unique_id("settingexample-object"));
-		this.init_property("class", "c22");
+		this.init_property("class", "c24");
 		this.init_property("has_settings", 1);
 	}
 });

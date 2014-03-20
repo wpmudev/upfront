@@ -71,7 +71,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 			'type' => "UcontactModel",
 			'view_class' => "UcontactView",
-			"class" => "c22 upfront-contact-form",
+			"class" => "c24 upfront-contact-form",
 			'has_settings' => 1,
 			'id_slug' => 'ucontact'
 		);

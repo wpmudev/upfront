@@ -20,12 +20,13 @@ class Upfront_StylePreprocessor {
 	}
 
 	public function get_editor_grid () {
+		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval($_POST['baseline']) : intval($_GET['baseline']);
 		$breakpoints = $this->_grid->get_breakpoints();
 		$style = '';
 		foreach ($breakpoints as $scope => $breakpoint_class) {
 			$breakpoint = new $breakpoint_class;
 			$columns = $breakpoint->get_columns();
-			$baseline_grid = $breakpoint->get_baseline();
+			$baseline_grid = $override_baseline > 0 ? $override_baseline : $breakpoint->get_baseline();
 			$width = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			$margin_left = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
 			$margin_right = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
@@ -110,8 +111,8 @@ class Upfront_StylePreprocessor {
 					'}' .
 				'';
 			}
-			$style .= $breakpoint->get_editor_root_rule($scope) . "\n";
-			$style .= join("\n", $rules);
+			$style .= $breakpoint->get_editor_root_rule($scope, $breakpoints) . "\n";
+			$style .= join("\n", $rules) . "\n\n";
 		}
 		return $style;
 	}

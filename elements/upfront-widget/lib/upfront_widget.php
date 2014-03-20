@@ -119,7 +119,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			'id_slug' => 'uwidget',
 			'type' => "UwidgetModel",
 			'view_class' => "UwidgetView",
-			"class" => "c22 upfront-widget",
+			"class" => "c24 upfront-widget",
 			'has_settings' => 1,
 
 			'widget' => false

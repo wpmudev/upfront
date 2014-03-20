@@ -182,10 +182,14 @@ EOAdminStyle;
 		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
 		  echo '<script src="' . $url . '/build/main.js"></script>';
 		}
-		echo '<script type="text/javascript">var _upfront_post_data=' . json_encode(array(
-			'layout' => Upfront_EntityResolver::get_entity_ids(),
-			'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false),
-)) . ';</script>';
+		echo '<script type="text/javascript">
+			var _upfront_post_data=' . json_encode(array(
+				'layout' => Upfront_EntityResolver::get_entity_ids(),
+				'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false)
+			)) . ';
+			var _upfront_storage_key = "' . apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY) . '";
+			var _upfront_stylesheet = "' . get_stylesheet() . '";
+		</script>';
 		echo <<<EOAdditivemarkup
 <div id="layouts" style="display:none"></div>
 <div id="properties" style="display:none">
@@ -211,13 +215,22 @@ EOAdditivemarkup;
 	function add_edit_menu ( $wp_admin_bar ) {
 		global $post, $tag, $wp_the_query;
 		$current_object = $wp_the_query->get_queried_object();
-
+		
 		$wp_admin_bar->add_menu( array(
-			'id' => 'upfront-edit_layout',
-			'title' => __('Edit Layout'),
-			'href' => '#',
-			'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
+			'id' => 'upfront-create-theme',
+			'title' => __('Create New Theme'),
+			'href' => site_url('/create_new/theme'),
+			'meta' => array( 'class' => 'upfront-create_theme' )
 		) );
+		
+		if ( !is_admin() ){
+			$wp_admin_bar->add_menu( array(
+				'id' => 'upfront-edit_layout',
+				'title' => __('Edit Layout'),
+				'href' => '#',
+				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
+			) );
+		}
 	}
 
 	function attachment_fields_to_edit ( $form_fields, $post ) {

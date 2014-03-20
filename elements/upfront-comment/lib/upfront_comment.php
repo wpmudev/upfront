@@ -52,7 +52,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			'id_slug' => 'ucomment',
 			'type' => "UcommentModel",
 			'view_class' => "UcommentView",
-			"class" => "c22 upfront-comment",
+			"class" => "c24 upfront-comment",
 			'has_settings' => 0
 		);
 	}

@@ -62,7 +62,7 @@ class Upfront_NavigationView extends Upfront_Object {
         return array(
             'type' => 'NavigationModel',
             'view_class' => 'NavigationView',
-            'class' => 'c22 upfront-navigation',
+            'class' => 'c24 upfront-navigation',
             'has_settings' => 1,
             'id_slug' => 'nav',
 

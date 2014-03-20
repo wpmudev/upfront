@@ -7,7 +7,7 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 		this.init_property("type", "PlainTxtModel");
 		this.init_property("view_class", "PlainTxtView");
 		this.init_property("element_id", Upfront.Util.get_unique_id("text-object"));
-		this.init_property("class", "c22 upfront-plain_txt");
+		this.init_property("class", "c24 upfront-plain_txt");
 		this.init_property("has_settings", 1);
 		this.init_property("id_slug", "plain_text");
 	}
@@ -100,7 +100,7 @@ var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 					{"name": "class", "value": "c11"},
-					{"name": "row", "value": "5"},
+					{"name": "row", "value": Upfront.Util.height_to_row(75)},
 					{"name": "has_settings", "value": 0}
 				],
 				"objects": [
