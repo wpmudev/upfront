@@ -68,6 +68,8 @@ var Views = {
 
 		editorTpl: _.template(tpls.find('#editorTpl').html()),
 
+		content_editable_selector: ".editable",
+
 		initialize: function() {
 			var script = this.fallback('script');
 			this.checkJS(script);
@@ -80,8 +82,6 @@ var Views = {
 				element_id = this.property('element_id'),
 				style = ''
 			;
-
-			console.log('CODE');
 
 			// Scope the styles!
 			if (raw_style) _(raw_style.split("}")).each(function (el, idx) {
@@ -100,7 +100,7 @@ var Views = {
 			var me = this;
 			this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
 				e.preventDefault();
-				me.on_edit();
+				me.start_markup_editor();
 			});
 			if (
 				!this.property('markup') &&
@@ -108,17 +108,15 @@ var Views = {
 				!this.property('script')
 			) {
 				setTimeout(function () {
-					me.on_edit();
+					me.start_markup_editor();
 				}, 10); // Start in edit mode
 			}
 		},
 
-		on_edit: function(){
-			if (this.is_editing)
-				return false;
+		start_markup_editor: function () {
+			if (this.is_editing) return false;
 
 			this.is_editing = true;
-
 			var $editor = $('#upfront_code-editor');
 
 			if(!$editor.length){
@@ -127,6 +125,61 @@ var Views = {
 			}
 
 			this.createEditor($editor);
+		},
+
+		on_edit: function(){
+			if (this.is_editing) return false;
+
+			// Since we're doing double duty here, let's first check if content editing mode is to boot
+			var $contenteditables = this.$el.find('.upfront_code-element ' + this.content_editable_selector);
+			if ($contenteditables.length) {
+				// Yes? go for it
+				return this.bootContentEditors($contenteditables);
+			}
+			// Oh well, let's just go ahead and boot code editing mode.
+			this.is_editing = true;
+			var $editor = $('#upfront_code-editor');
+
+			if(!$editor.length){
+				$editor = $('<section id="upfront_code-editor" class="upfront-ui upfront_code-editor upfront_code-editor-complex"></section>');
+				$('body').append($editor);
+			}
+
+			this.createEditor($editor);
+		},
+
+		bootContentEditors: function ($editables) {
+			if (!$editables || !$editables.length) return false;
+			var $markup = $(this.fallback("markup")),
+				me = this
+			;
+			$editables.each(function (idx) {
+				var $me = $(this),
+					start = idx <= 0
+				;
+				if ($me.data('ueditor')) return true;
+				$me
+					.ueditor({
+						autostart: start,
+						linebreaks: false
+					})
+					.on("start", function () {
+						me.is_editing = true;
+					})
+					.on("stop", function () {
+						me.is_editing = false;
+					})
+					.on('syncAfter', function(){
+						var $existing = $($markup.find(me.content_editable_selector)[idx]);
+						if (!$existing.length) return false;
+						$existing.html($me.html());
+						me.property(
+							"markup",
+							$("<div />").append($markup).html()
+						);
+					})
+				;
+			});
 		},
 
 		createEditor: function($editor){
@@ -139,8 +192,6 @@ var Views = {
 
 			$editor.show();
 
-			console.log('create editor');
-
 			this.resizeHandler = this.resizeHandler || function(){
 				$editor.width($(window).width() - $('#sidebar-ui').width() -1);
 			};
@@ -150,7 +201,7 @@ var Views = {
 			//Start the editors
 			this.editors = {};
 			this.timers = {};
-__editors = []
+
 			$editor.find('.upfront_code-ace').each(function(){
 				var $this = $(this),
 					html = $this.html(),
