@@ -161,7 +161,8 @@ var Views = {
 				$me
 					.ueditor({
 						autostart: start,
-						linebreaks: false
+						placeholder: "",
+						disableLineBreak: true
 					})
 					.on("start", function () {
 						me.is_editing = true;
