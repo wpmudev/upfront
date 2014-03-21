@@ -867,18 +867,29 @@ var GridEditor = {
 						});
 						current_el_top = bottom+1;
 					});
-					if ( next_wrap_clr ){
+					var $prev_clr = $wrap.prevAll('.upfront-wrapper.clr:first'),
+						$row_wraps_next = $prev_clr.size() > 0 ? $prev_clr.nextUntil('.clr', '.upfront-wrapper') : $wrap.nextUntil('.clr', '.upfront-wrapper'),
+						row_wraps = _.union( [ $prev_clr.size() > 0 ? ed.get_wrap($prev_clr) : ed.get_wrap($wrap) ],
+						$row_wraps_next.map(function(){ return ed.get_wrap($(this)); }).get() ),
+						max_row_wrap = _.max(row_wraps, function(row_wrap){ return row_wrap.grid.bottom; }),
+						min_wrap_bottom = current_el_top + row,
+						wrap_bottom = min_wrap_bottom > max_row_wrap.grid.bottom ? min_wrap_bottom : max_row_wrap.grid.bottom;
+					/*if ( next_wrap_clr ){
 						var wrap_bottom = next_wrap.grid.top-1;
 					}
 					else {
 						if ( next_clr )
 							var wrap_bottom = next_clr_el_top.grid.top-1;
-						else
-							var wrap_bottom = region.grid.bottom;
-					}
+						else {
+							var wrap_bottom = min_wrap_bottom > max_row_wrap.grid.bottom ? min_wrap_bottom : max_row_wrap.grid.bottom;
+						}
+					}*/
 					var $last = $els.last(),
 						last = $last.size() > 0 ? ed.get_el($last) : false,
 						last_me = ( last && last._id == me._id );
+					// Don't add dropping below the most bottom wrap in a row
+					if ( !last_me && max_row_wrap && max_row_wrap == wrap )
+						return;
 					ed.drops.push({
 						_id: ed._new_id(),
 						top: current_el_top,

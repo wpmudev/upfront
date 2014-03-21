@@ -609,6 +609,10 @@ define([
 						// Add to layout now
 						wrappers.add(new_wrap_model);
 						new_model.add_to(modules, index+1);
+						// Normalize layout
+						var ed = Upfront.Behaviors.GridEditor;
+						ed.start(Upfront.data.module_views[new_model.cid], new_model);
+						ed.normalize(ed.els, ed.wraps);
 					  }
 				  })
 				]);
