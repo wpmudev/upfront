@@ -17,7 +17,7 @@ class Upfront_Theme {
 		'container' => "",
 		'default' => false, // default region can't deleted by user, accept true or false
 		'position' => 10,
-		'allow_sidebar' => false, // allow sidebar region? accept true or false
+		'allow_sidebar' => true, // allow sidebar region? accept true or false
 		'type' => 'wide', // type of region, accept full|wide|clip (either full screen | 100% wide | clipped)
 	);
 
@@ -207,7 +207,7 @@ class Upfront_Virtual_Region {
 				'container' => '',
 				'default' => false,
 				'position' => 11,
-				'allow_sidebar' => false,
+				'allow_sidebar' => true,
 				'type' => 'wide'
 			), $args);
 
