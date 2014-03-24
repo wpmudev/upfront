@@ -8588,6 +8588,7 @@ span.upfront-css-new-text {
 
 a.upfront-css-delete {
 	color: #dae6f2 !important;
+	display: inline-block;
 }
 a.upfront-css-delete:hover {
 	color: #F44C4F !important;
