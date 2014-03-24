@@ -110,6 +110,13 @@ var Views = {
 				setTimeout(function () {
 					me.start_markup_editor();
 				}, 10); // Start in edit mode
+			} else {
+			// Boot all image editables
+				var $editables = this.$el.find('.upfront_code-element ' + this.content_editable_selector);
+				if ($editables.length) $editables.each(function (idx) {
+					var $me = $(this);
+					if ($me.is("img")) me.bootImageEditable($me, idx);
+				});
 			}
 		},
 
@@ -157,6 +164,11 @@ var Views = {
 				var $me = $(this),
 					start = idx <= 0
 				;
+				// The editable is an image editable. Deal with that
+				if ($me.is("img")) {
+					//me.bootImageEditable($me, idx);
+					return true;
+				}
 				if ($me.data('ueditor')) return true;
 				$me
 					.ueditor({
@@ -181,6 +193,65 @@ var Views = {
 					})
 				;
 			});
+		},
+
+		bootImageEditable: function ($img, idx) {
+			var src = $img.attr("src"),
+				me = this,
+				$markup = $(this.fallback("markup")),
+				id_prefix = this.model.get_property_value_by_name("element_id"),
+				id = "upfront-editable-" + id_prefix + "-" + idx,
+				$root = $('#' + id),
+				$all
+			;
+			if ($root.length) {
+				$root.remove();
+			}
+
+			$("body").append("<div class='upfront-code-editable-image' id='" + id + "'>Click to change</div>");
+			$root = $('#' + id);
+
+			$all = $img.add($root);
+			$all
+				.on("mouseenter", function () {
+					var offset = $img.offset(),
+						width = $img.width(),
+						height = $img.height()
+					;
+					$root
+						.width(width)
+						.height(height)
+						.css({
+							top: offset.top,
+							left: offset.left,
+							"line-height": height + "px"
+						})
+						.show()
+					;
+				})
+				.on("mouseleave", function (e) {
+					if (!$(this).is("img")) $root.hide();
+				})
+				.on("click", function () {
+					$root.hide();
+					Upfront.Media.Manager.open({
+						multiple_selection: false,
+					}).done(function (popup, results) {
+						if (results && results.at) {
+							var selected = results.at(0).get("image").src,
+								$existing = $($markup.find(me.content_editable_selector)[idx])
+							;
+							$img.attr("src", selected);
+							$existing.attr("src", selected);
+							me.property(
+								"markup",
+								$("<div />").append($markup).html()
+							);
+							Upfront.Events.trigger("upfront:element:edit:stop");
+						}
+					});
+				})
+			;
 		},
 
 		createEditor: function($editor){

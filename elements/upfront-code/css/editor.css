@@ -148,3 +148,13 @@
 .upfront_code-editor-simple textarea {
 	width: 98%;
 }
+
+/* Image editable */
+.upfront-code-editable-image {
+	position: absolute; 
+	display: none;
+	background: white;
+	z-index: 999999999999999;
+	opacity: 0.75;
+	text-align: center;
+}
