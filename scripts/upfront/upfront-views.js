@@ -1336,10 +1336,10 @@ define([
 				_.each(this.sub_model, function (sub) {
 					col -= sub.get_property_value_by_name('col');
 				});
-				if ( this.available_col != col ) {
+				//if ( this.available_col != col ) {
 					this.trigger("region_resize", col);
 					this.available_col = col;
-				}
+				//}
 				this.fix_height();
 				this.update_overlay();
 			},
@@ -1710,7 +1710,7 @@ define([
 					local_view.bind("region_update", container_view.on_region_update, container_view);
 					local_view.bind("region_changed", container_view.on_region_changed, container_view);
 					*/
-					if ( !region.get("container") || region.get("container") == region.get("name") )
+					if ( region.is_main() )
 						//container_view.bind("region_resize", local_view.region_resize, local_view);
 						local_view.listenTo(container_view, 'region_resize', local_view.region_resize);
 					else
@@ -1724,11 +1724,7 @@ define([
 					local_view.render();
 					local_view.delegateEvents();
 				}
-				if ( !sub || sub == 'left' )
-					container_view.$layout.prepend(local_view.el);
-				else if ( sub == 'right' )
-					container_view.$layout.append(local_view.el);
-				else if ( sub == 'top' || sub == 'bottom' ){
+				if ( sub == 'top' || sub == 'bottom' ){
 					sub_container_view = this.sub_container_views[region.cid] || new RegionSubContainer({"model": region});
 					sub_container_view.parent_view = this;
 					sub_container_view.listenTo(container_view.model.get('properties'), 'change', sub_container_view.update);
@@ -1744,6 +1740,12 @@ define([
 					else {
 						sub_container_view.delegateEvents();
 					}
+				}
+				else if ( sub == 'left' ) {
+					container_view.$layout.prepend(local_view.el);
+				}
+				else {
+					container_view.$layout.append(local_view.el);
 				}
 				if ( region.get("default") )
 					local_view.trigger("activate_region", local_view);

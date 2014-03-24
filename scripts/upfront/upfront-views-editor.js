@@ -5867,6 +5867,7 @@ var Field_Anchor = Field_Select.extend({
 				collection = this.model.collection,
 				total = collection.size()-1, // total minus shadow region
 				index = collection.indexOf(this.model),
+				position = this.model.get('position'),
 				prev_model = index > 0 ? collection.at(index-1) : false,
 				next_model = index < total-1 ? collection.at(index+1) : false,
 				is_new_container = ( to == 'top' || to == 'bottom' ),
@@ -5881,6 +5882,8 @@ var Field_Anchor = Field_Select.extend({
 			new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
+				new_region.set_property('sub', is_before ? 'left' : 'right');
+				new_region.set_property('position', is_before ? position-1 : position+1 );
 			}
 			else {
 				if ( to == 'top' && prev_model && ( prev_model.get('container') && prev_model.get('container') != prev_model.get('name') ) )
