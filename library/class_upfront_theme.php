@@ -503,8 +503,9 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$layoutId = $this->_get_page_default_layout($ids);
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
-			$ids['theme_defined'] = $layoutId;
-			$data['regions'] = $theme->get_default_layout($ids);
+			//$ids['theme_defined'] = $layoutId;
+			//$data['regions'] = $theme->get_default_layout($ids);
+			$data['regions'] = $theme->get_default_layout(array(), $layoutId);
 		}
 		return $data;
 	}
