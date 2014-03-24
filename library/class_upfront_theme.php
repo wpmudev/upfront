@@ -102,8 +102,10 @@ class Upfront_Theme {
 				$filenames[] =  'layouts/' . $cascade[$o] . '.php';
 			}
 		}
-		if (!empty($layout_slug))
+		if (!empty($layout_slug)) {
 			$filenames[] = 'layouts/index-' . $layout_slug . '.php';
+			$filenames[] = 'layouts/' . $layout_slug . '.php'; // Allowing the layout slug to be used directly
+		}
 		$filenames[] = 'layouts/index.php';
 
 		return function_exists('upfront_locate_template') 
