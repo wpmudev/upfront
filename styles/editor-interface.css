@@ -7370,7 +7370,8 @@ body .redactor_air .redactor_toolbar {
 }
 .redactor_toolbar li a {
 	display: block;
-	background: url('../img/uf-ui-sprite.png?v=20131127') no-repeat;
+	background-image: url('../img/uf-ui-sprite.png');
+	background-image: url('../img/uf-ui-sprite.svg'), none;
 	background-position: 0;
 	background-repeat: no-repeat;
 	text-indent: -9999px;
