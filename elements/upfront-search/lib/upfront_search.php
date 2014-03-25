@@ -29,7 +29,7 @@ class Upfront_UsearchView extends Upfront_Object {
 
     $markup = "<div class=' upfront-search {$rounded}' {$color} {$element_id}>" .
 			"<form action='" . esc_url( home_url( '/' ) ) . "' method='GET'>" .
-			"<input type='search' class='search-field{$iconClass}' name='s' value=''  />";
+			"<input type='search' class='search-field{$iconClass}' name='s' value='' $placeholder  />";
     if ($show_button !== false) {
       $markup .= !empty($label)?"<button class='search-button{$iconClass}".($label == '<i class="icon-search"></i>'?" image":"") ."'>{$label}</button>":"";
     }

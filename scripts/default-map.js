@@ -12,7 +12,8 @@
 				scaleControl: (data.controls.indexOf("scale") >= 0),
 				streetViewControl: (data.controls.indexOf("street_view") >= 0),
 				overviewMapControl: (data.controls.indexOf("overview_map") >= 0),
-				scrollwheel: false
+				scrollwheel: false,
+				styles: data.styles
 			},
 			map = new google.maps.Map($el.get(0), options);
 	}
@@ -35,7 +36,7 @@
 			init_map($(this));
 		});
 	}
-	
+
 	$(document).on('upfront-google_maps-loaded', upfront_bg_map_init);
 
 	if (!window.upfront_maps_loaded) {

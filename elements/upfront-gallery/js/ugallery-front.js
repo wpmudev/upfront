@@ -5,13 +5,14 @@ jQuery(function($){
 			items = gallery.find('.ugallery_item'),
 			itemWidth = items.outerWidth(),
 			minMargin = 30,
-			columns = Math.floor(container / itemWidth)
+			columns = Math.floor(container / itemWidth),
+      margin
 		;
 
 		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
 			columns--;
 
-		var margin = Math.floor( (container - (columns * itemWidth)) / (columns - 1) ) - 2 * columns;
+		margin = Math.floor( (container - (columns * itemWidth)) / (columns - 1) ) - 2 * columns;
 
 		items.each(function(idx){
 			$(this).css('margin-right', (idx + 1) % columns ? margin : 0);

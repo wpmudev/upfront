@@ -282,7 +282,8 @@ abstract class Upfront_Entity {
 				'center' => $this->_get_property('background_map_center'),
 				'zoom' => $this->_get_property('background_map_zoom'),
 				'style' => $this->_get_property('background_map_style'),
-				'controls' => $this->_get_property('background_map_controls')
+        'controls' => $this->_get_property('background_map_controls'),
+        'styles' => $this->_get_property('background_map_styles')
 			);
 			$attr .= 'data-bg-map="' . esc_attr( json_encode($data) ) . '"';
 		}
