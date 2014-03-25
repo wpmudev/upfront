@@ -16,6 +16,7 @@ class Upfront_UsearchView extends Upfront_Object {
 			? $label
 			: '<i class="icon-search"></i>'
 		;
+    $show_button = $this->_get_property('search_type');
 
 
 		$placeholder = $this->_get_property("placeholder");
@@ -26,11 +27,16 @@ class Upfront_UsearchView extends Upfront_Object {
 		$color = $this->_get_property("color");
 		$color = $color ? "style='background-color:{$color};'" : '';
 
-		return "<div class=' upfront-search {$rounded}' {$color} {$element_id}>" .
+    $markup = "<div class=' upfront-search {$rounded}' {$color} {$element_id}>" .
 			"<form action='" . esc_url( home_url( '/' ) ) . "' method='GET'>" .
-			"<input type='search' class='search-field{$iconClass}' name='s' value=''  />".(!empty($label)?"<button class='search-button{$iconClass}".($label == '<i class="icon-search"></i>'?" image":"") ."'>{$label}</button>":"") .
-			'</form>' .
+			"<input type='search' class='search-field{$iconClass}' name='s' value=''  />";
+    if ($show_button !== false) {
+      $markup .= !empty($label)?"<button class='search-button{$iconClass}".($label == '<i class="icon-search"></i>'?" image":"") ."'>{$label}</button>":"";
+    }
+    $markup .= '</form>' .
 		"</div>";
+
+    return $markup;
 	}
 
 	public static function add_js_defaults($data){
