@@ -94,21 +94,25 @@ class Upfront_Theme {
 
 	protected function find_default_layout($cascade, $layout_slug = "") {
 		$filenames = array();
-		$order = array('specificity', 'item', 'type');
+		$order = array('theme_defined', 'specificity', 'item', 'type');
 		foreach($order as $o){
 			if(isset($cascade[$o])){
+				/*
 				if (!empty($layout_slug))
 					$filenames[] =  'layouts/' . $cascade[$o] . '-' . $layout_slug . '.php';
+				*/
 				$filenames[] =  'layouts/' . $cascade[$o] . '.php';
 			}
 		}
+		/*
 		if (!empty($layout_slug)) {
 			$filenames[] = 'layouts/index-' . $layout_slug . '.php';
 			$filenames[] = 'layouts/' . $layout_slug . '.php'; // Allowing the layout slug to be used directly
 		}
+		*/
 		$filenames[] = 'layouts/index.php';
 
-		return function_exists('upfront_locate_template') 
+		return function_exists('upfront_locate_template')
 			? upfront_locate_template($filenames)
 			: locate_template($filenames)
 		;
@@ -485,6 +489,13 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		} else if (!empty($cascade['specificity'])) {
 			$id = intval(preg_replace('/^.*?(\d+)$/is', '\\1', $cascade['specificity']));
 		}
+		if($id){
+			foreach ($this->get_required_pages() as $page) {
+				if ($page->get_id() == $id) return $page->get_layout_name();
+			}
+		}
+		return '';
+		/*
 		if (!$id) {
 			return !empty($cascade['item']) && 'single-404_page' == $cascade['item']
 				? 'single-404_page'
@@ -499,15 +510,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			return 'single-post';
 		}
 		return '';
+		*/
 	}
 
 	public function load_page_regions($data, $ids, $cascade){
 		$layoutId = $this->_get_page_default_layout($ids);
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
-			//$ids['theme_defined'] = $layoutId;
-			//$data['regions'] = $theme->get_default_layout($ids);
-			$data['regions'] = $theme->get_default_layout(array(), $layoutId);
+			$ids['theme_defined'] = $layoutId;
+			$data['regions'] = $theme->get_default_layout($ids);
+			//$data['regions'] = $theme->get_default_layout(array(), $layoutId);
 		}
 		return $data;
 	}
