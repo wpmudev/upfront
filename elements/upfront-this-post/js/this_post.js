@@ -53,10 +53,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}, 100);
 	},
 */
-	on_edit: function () {
+	on_edit: function (e) {
 		console.log('Start editing');
 		this.updateEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
-		this.editor.editTitle();
+		this.editor.editTitle(e);
 	},
 
 	refreshMarkup: function () {

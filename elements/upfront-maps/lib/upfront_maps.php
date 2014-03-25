@@ -1,5 +1,5 @@
 <?php
-class Upfront_MapView extends Upfront_Object{
+class Upfront_UmapView extends Upfront_Object{
 
 	public function get_markup(){
 		$_id = $this->_get_property('element_id');
@@ -32,7 +32,7 @@ class Upfront_MapView extends Upfront_Object{
     public static function default_properties(){
         return array(
             'type' => "MapModel",
-            'view_class' => "MapView",
+            'view_class' => "UmapView",
             "class" => "c24 upfront-map_element-object",
             'has_settings' => 1,
             'id_slug' => 'upfront-map_element',

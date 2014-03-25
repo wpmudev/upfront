@@ -123,7 +123,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		}
 	});
 
-	var MapView = Upfront.Views.ObjectView.extend({
+	var UmapView = Upfront.Views.ObjectView.extend({
 		map: false,
 
 		on_render: function () {
@@ -692,12 +692,12 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 
 	Upfront.Application.LayoutEditor.add_object("Map", {
 		"Model": MapModel,
-		"View": MapView,
+		"View": UmapView,
 		"Element": MapElement,
 		"Settings": MapSettings
 	});
 	Upfront.Models.MapModel = MapModel;
-	Upfront.Views.MapView = MapView;
+	Upfront.Views.UmapView = UmapView;
 });
 
 })(jQuery);
