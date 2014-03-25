@@ -359,6 +359,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$wrap='';
 		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
 			$child_view = $this->instantiate_child($child, $idx);
+
 			if ($child_view instanceof Upfront_Container){
 				// Have wrapper? If so, then add wrappers
 				$wrapper = $child_view->get_wrapper();
@@ -667,7 +668,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		if($this->_get_property('border') && $this->_get_property('border')!='')
 			$style[] = 'border: '.$this->_get_property('border');
 
-		return "<div class='upfront-output-object upfront-plain_txt' {$element_id}>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
+		return "<div {$element_id}>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
 	}
 }
 
