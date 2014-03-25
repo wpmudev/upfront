@@ -65,7 +65,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
-		
+
 		upfront_switch_stylesheet($stylesheet);
 
 		if(is_string($layout_ids)){
@@ -81,7 +81,10 @@ class Upfront_Ajax extends Upfront_Server {
 			$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 		}
 
-		global $post;
+		global $post, $upfront_ajax_query;
+
+		if(!$upfront_ajax_query)
+			$upfront_ajax_query = false;
 
 		if($post_type){
 			$post = Upfront_PostModel::create($post_type);
@@ -102,7 +105,8 @@ class Upfront_Ajax extends Upfront_Server {
 		$response = array(
 			'post' => $post,
 			'layout' => $layout->to_php(),
-			'cascade' => $layout_ids
+			'cascade' => $layout_ids,
+			'query' => $upfront_ajax_query
 		);
 
 		$this->_out(new Upfront_JsonResponse_Success($response));

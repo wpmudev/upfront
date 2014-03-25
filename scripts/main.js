@@ -5,7 +5,7 @@ Upfront.Events = {};
 require.config(Upfront.mainData.requireConfig);
 
 
-require(['backbone'], function (Backbone) { 
+require(['backbone'], function (Backbone) {
 	// Fix Underscore templating to Mustache style
 	_.templateSettings = {
 		evaluate : /\{\[([\s\S]+?)\]\}/g,

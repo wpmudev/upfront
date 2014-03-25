@@ -351,7 +351,7 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 	stop: function () {
 		return this.stopListening(Upfront.Events);
 	},
-	
+
 }))();
 
 
@@ -518,11 +518,15 @@ var Application = new (Backbone.Router.extend({
 		if (layoutData.data.post)
 			this.post_set_up(layoutData.data.post);
 
-		if(this.layout)
-			this.unset_layout();
+		//Set the query for the posts
+		var query = layoutData.data.query || {};
 
-		//Uncomment this debbugger to check how the layout has been cleaned up
-		//debugger;
+		if(this.layout){
+			this.unset_layout();
+			//We only set the query if there is already a layout.
+			//In the first loading, upfront does it for us
+			window._upfront_get_current_query = function(){ return query; };
+		}
 
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
@@ -532,9 +536,7 @@ var Application = new (Backbone.Router.extend({
 		if(shadow)
 			this.layout.get('regions').remove(shadow);
 
-		if(this.layout.get('regions'))
-
-		_upfront_post_data.layout = layoutData.data.cascade;
+		window._upfront_post_data.layout = layoutData.data.cascade;
 
 		Upfront.Application.loading.done(function () {
 			Upfront.Events.trigger("upfront:layout:loaded");
@@ -646,6 +648,7 @@ var Application = new (Backbone.Router.extend({
 		//Set global variables
 		Upfront.data.posts[post.id] = post;
 		_upfront_post_data.post_id = post.id;
+
 
 		//Load body classes
 		var bodyClasses = 'logged-in admin-bar upfront customize-support flex-support';

@@ -138,6 +138,10 @@ abstract class Upfront_EntityResolver {
 			setup_postdata($post);
 		}
 
+		//Make the query accessible to add it to the response
+		global $upfront_ajax_query;
+		$upfront_ajax_query = clone($query);
+
 		// Intercept /edit/(post|page)/id
 		$editor = Upfront_ContentEditor_VirtualPage::serve();
 		if($editor->parse_page()){
@@ -220,12 +224,12 @@ abstract class Upfront_Model {
 		$storage_key = self::get_storage_key();
 		return preg_replace('/^' . preg_quote($storage_key, '/') . '-/', '', $id);
 	}
-	
+
 	public static function set_storage_key($storage_key) {
 		if (!empty($storage_key))
 			self::$storage_key = $storage_key;
 	}
-	
+
 	public static function get_storage_key() {
 		return apply_filters('upfront-storage-key', self::$storage_key);
 	}
