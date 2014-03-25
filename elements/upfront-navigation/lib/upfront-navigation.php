@@ -158,12 +158,12 @@ class Upfront_MenuSetting extends Upfront_Server {
 
 			if ( empty($top_level_elements) ) {
 
-				$first = array_slice( $elements, 0, 1 );
+				$first = array_slice( $sorted_menu_items, 0, 1 );
 				$root = $first[0];
 
 				$top_level_elements = array();
 				$children_elements  = array();
-				foreach ( $elements as $e) {
+				foreach ( $sorted_menu_items as $e) {
 					if ( $root->menu_item_parent == $e->menu_item_parent )
 						$top_level_elements[] = $e;
 					else
