@@ -4,12 +4,14 @@ define([
 	"text!upfront/templates/object.html",
 	"text!upfront/templates/module.html",
 	"text!upfront/templates/region_container.html",
+	"text!upfront/templates/region.html",
 	"text!upfront/templates/layout.html",
 ], function () {
   var _template_files = [
     "text!upfront/templates/object.html",
     "text!upfront/templates/module.html",
     "text!upfront/templates/region_container.html",
+    "text!upfront/templates/region.html",
     "text!upfront/templates/layout.html",
   ];
 
@@ -1500,7 +1502,9 @@ define([
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
 				"mouseover": "on_mouse_over",
-				"click": "on_click"
+				"click": "on_click",
+				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
+				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click"
 			},
 			attributes: function(){
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -1562,12 +1566,13 @@ define([
 			},
 			render: function () {
 				var container = this.model.get("container"),
-					name = this.model.get("name");
+					name = this.model.get("name"),
+					template = _.template(_Upfront_Templates["region"], this.model.toJSON());
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
-				this.$el.html('<div class="upfront-debug-info"/>');
+				this.$el.html(template);
+				this.$el.append('<div class="upfront-debug-info"/>');
 				this.$el.data('name', name);
 				this.$el.attr('data-title', this.model.get("title"));
-				this.$el.append('<div class="upfront-region-title">' + this.model.get("title") + '</div>');
 				this.update();
 				if ( ! this.model.is_main() ){
 					var index = this.model.collection.indexOf(this.model),
@@ -1580,10 +1585,14 @@ define([
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this;
 				local_view.render();
-				this.$el.append(local_view.el);
+				this.$el.find('.upfront-modules_container').append(local_view.el);
 				this.region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
 				this.region_panels.render();
 				this.$el.append(this.region_panels.el);
+				var container_view = this.parent_view.get_container_view(this.model);
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: container_view.$el, width: 384});
+				this.bg_setting.render();
+				container_view.$el.append(this.bg_setting.el);
 				//if ( this._is_clipped() )
 				//	this.$el.append('<div class="upfront-region-active-overlay" />');
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
@@ -1642,6 +1651,23 @@ define([
 				Backbone.View.prototype.remove.call(this);
 				this.model.get('wrappers').reset([], {silent:true});
 				this.model = false;
+			},
+			on_delete_click: function (e) {
+				e.preventDefault();
+				if ( confirm("Are you sure you want to delete this section?") )
+					this.model.collection.remove(this.model);
+			},
+			on_settings_click: function (e) {
+				e.preventDefault();
+				var me = this,
+					container_view = this.parent_view.get_container_view(this.model);
+				this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(){
+					 me.bg_setting.close(false);
+				});
+				container_view.$el.addClass('upfront-region-bg-setting-open');
+				this.bg_setting.open().always(function(){
+					container_view.$el.removeClass('upfront-region-bg-setting-open');
+				});
 			}
 		}),
 

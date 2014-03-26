@@ -4834,187 +4834,10 @@ var Field_Anchor = Field_Select.extend({
 			}
 		},
 	});
-
-
-	var InlinePanelItem = Backbone.View.extend({
-		className: 'upfront-inline-panel-item',
-		width: 40,
-		height: 40,
-		render_icon: function () {
-			var icon = typeof this.icon == 'function' ? this.icon() : this.icon;
-			if ( !icon )
-				return;
-			var icons = icon.split(" "),
-				icons_class = [],
-				$icon = this.$el.find('.upfront-icon');
-			_.each(icons, function(each){
-				icons_class.push('upfront-icon-region-' + each);
-			});
-			if ( !$icon.length )
-				this.$el.append('<i class="upfront-icon ' + icons_class.join(' ') + '" />');
-			else
-				$icon.attr('class', 'upfront-icon ' + icons_class.join(' '));
-		},
-		render_label: function () {
-			var label = typeof this.label == 'function' ? this.label() : this.label;
-			if ( !label )
-				return;
-			var $label = this.$el.find('.upfront-inline-panel-item-label');
-			if ( !$label.length )
-				this.$el.append('<span class="upfront-inline-panel-item-label">' + label + '</span>');
-			else
-				$label.html(label);
-		},
-		render_tooltip: function () {
-			var tooltip = typeof this.tooltip == 'function' ? this.tooltip() : this.tooltip;
-			if ( ! tooltip )
-				return;
-			var tooltip_pos = typeof this.tooltip_pos == 'function' ? this.tooltip_pos() : (this.tooltip_pos ? this.tooltip_pos : 'bottom'),
-				$content = this.$el.find('.tooltip-content');
-			this.$el.removeClass('tooltip-top tooltip-bottom tooltip-left tooltip-right');
-			this.$el.addClass('tooltip-inline tooltip-' + tooltip_pos);
-			if ( !$content.length )
-				this.$el.prepend('<span class="tooltip-content">' + tooltip + '</span>');
-			else
-				$content.html(tooltip);
-		},
-		render: function () {
-			this.render_icon();
-			this.render_label();
-			this.render_tooltip();
-			this.$el.css({
-				width: this.width,
-				height: this.height
-			});
-			if ( typeof this.on_render == 'function' )
-				this.on_render();
-		},
-		open_modal: function (render_callback, button) {
-			if ( ! this.modal ){
-				var me = this;
-				var $region_container = this.$el.closest('.upfront-region-container');
-				this.modal = new Upfront.Views.Editor.Modal({ to: $region_container, top: 60 });
-				this.modal.render();
-				$region_container.append(this.modal.$el);
-			}
-			this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(){
-				 me.close_modal(false);
-			});
-			return this.modal.open(render_callback, this, button);
-		},
-		close_modal: function (save) {
-			return this.modal.close(save);
-		},
-		remove: function(){
-			this.panel_view = false;
-		}
-	});
-
-	var InlinePanelItemMulti = InlinePanelItem.extend({
-		events: {
-			'click >.upfront-icon': 'toggle_subitem'
-		},
-		initialize: function () {
-			this.sub_items = {};
-			this.listenTo(Upfront.Events, 'entity:region:activated', this.on_region_change);
-		},
-		get_selected_item: function () {
-
-		},
-		get_default_item: function () {
-
-		},
-		get_selected_icon: function (selected) {
-			return selected + '-active';
-		},
-		set_selected_item: function (selected) {
-
-		},
-		select_item: function (selected) {
-			this.set_selected_item(selected);
-			this.render();
-		},
-		render: function () {
-			var me = this,
-				selected = this.get_selected_item() || this.get_default_item(),
-				$sub_items = $('<div class="upfront-inline-panel-subitem" />');
-			this.$el.html('');
-			this.icon = this.get_selected_icon(selected);
-			this.render_icon();
-			this.render_tooltip();
-			_.each(this.sub_items, function(item, id){
-				item.panel_view = me.panel_view;
-				item.parent_view = me;
-				item.render();
-				item.delegateEvents();
-				if ( selected != id )
-					$sub_items.append(item.el);
-			});
-			$sub_items.append(this.sub_items[selected].el);
-			this.$el.append($sub_items);
-		},
-		toggle_subitem: function () {
-			if ( this.$el.hasClass('upfront-inline-panel-subitem-active') )
-				this.close_subitem();
-			else
-				this.open_subitem();
-		},
-		open_subitem: function () {
-			this.$el.addClass('upfront-inline-panel-subitem-active');
-			this.$el.removeClass('upfront-inline-panel-subitem-inactive');
-		},
-		close_subitem: function () {
-			this.$el.addClass('upfront-inline-panel-subitem-inactive');
-			this.$el.removeClass('upfront-inline-panel-subitem-active');
-		},
-		on_region_change: function (region) {
-			if ( region.model != this.model )
-				this.close_subitem();
-		},
-		remove: function(){
-			if(this.sub_items)
-				_.each(this.sub_items, function(item){
-					item.remove();
-				});
-			this.panel_view = false;
-			Backbone.View.prototype.remove.call(this);
-		}
-	});
-
-	var RegionPanelItem = InlinePanelItem.extend({
-		initialize: function () {
-			this.on('modal:open', this.on_modal_open, this);
-			this.on('modal:close', this.on_modal_close, this);
-		},
-		on_modal_open: function () {
-			// Disable region changing
-			Upfront.Events.trigger('command:region:edit_toggle', false);
-		},
-		on_modal_close: function () {
-			// Re-enable region changing
-			Upfront.Events.trigger('command:region:edit_toggle', true);
-		}
-	});
-
-	var RegionPanelItem_BgSetting = RegionPanelItem.extend({
-		events: {
-			'click .upfront-icon': 'open_bg_setting'
-		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-bg',
-		icon: function(){
-			return this._active ? 'bg-setting-active' : 'bg-setting';
-		},
-		tooltip: "Change Background",
-		_active: false,
-		open_bg_setting: function () {
-			var type = this.model.get_property_value_by_name('background_type');
-			if ( !type ){
-				if ( this.model.get_property_value_by_name('background_image') )
-					this.model.set_property('background_type', 'image');
-			}
-			this._active = true;
-			this.render_icon();
-			this.open_modal(this.render_modal, true).always($.proxy(this.on_close_modal, this)).fail($.proxy(this.notify, this));
+	
+	var ModalBgSetting = Modal.extend({
+		open: function () {
+			return this.constructor.__super__.open.call(this, this.render_modal, this, true);
 		},
 		render_modal: function ($content, $modal) {
 			var me = this,
@@ -5228,12 +5051,10 @@ var Field_Anchor = Field_Select.extend({
 			this.model.set_property('background_color', rgba_string);
 		},
 		update_color: function (color) {
-			var panels_view = this.panel_view.panels_view;
 			this.preview_color(color);
 			this._default_color = this.model.get_property_value_by_name('background_color');
 		},
 		reset_color: function () {
-			var panels_view = this.panel_view.panels_view;
 			this.model.set_property('background_color', this._default_color);
 		},
 		// Image tab
@@ -5803,6 +5624,189 @@ var Field_Anchor = Field_Select.extend({
 		}
 	});
 
+
+	var InlinePanelItem = Backbone.View.extend({
+		className: 'upfront-inline-panel-item',
+		width: 40,
+		height: 40,
+		render_icon: function () {
+			var icon = typeof this.icon == 'function' ? this.icon() : this.icon;
+			if ( !icon )
+				return;
+			var icons = icon.split(" "),
+				icons_class = [],
+				$icon = this.$el.find('.upfront-icon');
+			_.each(icons, function(each){
+				icons_class.push('upfront-icon-region-' + each);
+			});
+			if ( !$icon.length )
+				this.$el.append('<i class="upfront-icon ' + icons_class.join(' ') + '" />');
+			else
+				$icon.attr('class', 'upfront-icon ' + icons_class.join(' '));
+		},
+		render_label: function () {
+			var label = typeof this.label == 'function' ? this.label() : this.label;
+			if ( !label )
+				return;
+			var $label = this.$el.find('.upfront-inline-panel-item-label');
+			if ( !$label.length )
+				this.$el.append('<span class="upfront-inline-panel-item-label">' + label + '</span>');
+			else
+				$label.html(label);
+		},
+		render_tooltip: function () {
+			var tooltip = typeof this.tooltip == 'function' ? this.tooltip() : this.tooltip;
+			if ( ! tooltip )
+				return;
+			var tooltip_pos = typeof this.tooltip_pos == 'function' ? this.tooltip_pos() : (this.tooltip_pos ? this.tooltip_pos : 'bottom'),
+				$content = this.$el.find('.tooltip-content');
+			this.$el.removeClass('tooltip-top tooltip-bottom tooltip-left tooltip-right');
+			this.$el.addClass('tooltip-inline tooltip-' + tooltip_pos);
+			if ( !$content.length )
+				this.$el.prepend('<span class="tooltip-content">' + tooltip + '</span>');
+			else
+				$content.html(tooltip);
+		},
+		render: function () {
+			this.render_icon();
+			this.render_label();
+			this.render_tooltip();
+			this.$el.css({
+				width: this.width,
+				height: this.height
+			});
+			if ( typeof this.on_render == 'function' )
+				this.on_render();
+		},
+		open_modal: function (render_callback, button) {
+			if ( ! this.modal ){
+				var me = this;
+				var $region_container = this.$el.closest('.upfront-region-container');
+				this.modal = new Upfront.Views.Editor.Modal({ to: $region_container, top: 60 });
+				this.modal.render();
+				$region_container.append(this.modal.$el);
+			}
+			this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(){
+				 me.close_modal(false);
+			});
+			return this.modal.open(render_callback, this, button);
+		},
+		close_modal: function (save) {
+			return this.modal.close(save);
+		},
+		remove: function(){
+			this.panel_view = false;
+		}
+	});
+
+	var InlinePanelItemMulti = InlinePanelItem.extend({
+		events: {
+			'click >.upfront-icon': 'toggle_subitem'
+		},
+		initialize: function () {
+			this.sub_items = {};
+			this.listenTo(Upfront.Events, 'entity:region:activated', this.on_region_change);
+		},
+		get_selected_item: function () {
+
+		},
+		get_default_item: function () {
+
+		},
+		get_selected_icon: function (selected) {
+			return selected + '-active';
+		},
+		set_selected_item: function (selected) {
+
+		},
+		select_item: function (selected) {
+			this.set_selected_item(selected);
+			this.render();
+		},
+		render: function () {
+			var me = this,
+				selected = this.get_selected_item() || this.get_default_item(),
+				$sub_items = $('<div class="upfront-inline-panel-subitem" />');
+			this.$el.html('');
+			this.icon = this.get_selected_icon(selected);
+			this.render_icon();
+			this.render_tooltip();
+			_.each(this.sub_items, function(item, id){
+				item.panel_view = me.panel_view;
+				item.parent_view = me;
+				item.render();
+				item.delegateEvents();
+				if ( selected != id )
+					$sub_items.append(item.el);
+			});
+			$sub_items.append(this.sub_items[selected].el);
+			this.$el.append($sub_items);
+		},
+		toggle_subitem: function () {
+			if ( this.$el.hasClass('upfront-inline-panel-subitem-active') )
+				this.close_subitem();
+			else
+				this.open_subitem();
+		},
+		open_subitem: function () {
+			this.$el.addClass('upfront-inline-panel-subitem-active');
+			this.$el.removeClass('upfront-inline-panel-subitem-inactive');
+		},
+		close_subitem: function () {
+			this.$el.addClass('upfront-inline-panel-subitem-inactive');
+			this.$el.removeClass('upfront-inline-panel-subitem-active');
+		},
+		on_region_change: function (region) {
+			if ( region.model != this.model )
+				this.close_subitem();
+		},
+		remove: function(){
+			if(this.sub_items)
+				_.each(this.sub_items, function(item){
+					item.remove();
+				});
+			this.panel_view = false;
+			Backbone.View.prototype.remove.call(this);
+		}
+	});
+
+	var RegionPanelItem = InlinePanelItem.extend({
+		initialize: function () {
+			this.on('modal:open', this.on_modal_open, this);
+			this.on('modal:close', this.on_modal_close, this);
+		},
+		on_modal_open: function () {
+			// Disable region changing
+			Upfront.Events.trigger('command:region:edit_toggle', false);
+		},
+		on_modal_close: function () {
+			// Re-enable region changing
+			Upfront.Events.trigger('command:region:edit_toggle', true);
+		}
+	});
+
+	var RegionPanelItem_BgSetting = RegionPanelItem.extend({
+		events: {
+			'click .upfront-icon': 'open_bg_setting'
+		},
+		className: 'upfront-inline-panel-item upfront-region-panel-item-bg',
+		icon: function(){
+			return this._active ? 'bg-setting-active' : 'bg-setting';
+		},
+		tooltip: "Change Background",
+		_active: false,
+		open_bg_setting: function () {
+			var type = this.model.get_property_value_by_name('background_type');
+			if ( !type ){
+				if ( this.model.get_property_value_by_name('background_image') )
+					this.model.set_property('background_type', 'image');
+			}
+			this._active = true;
+			this.render_icon();
+			this.open_modal(this.render_modal, true).always($.proxy(this.on_close_modal, this)).fail($.proxy(this.notify, this));
+		},
+	});
+
 	var RegionPanelItem_ExpandLock = InlinePanelItem.extend({
 		events: {
 			'click .upfront-icon': 'toggle_lock'
@@ -5866,6 +5870,13 @@ var Field_Anchor = Field_Select.extend({
 			if ( ! this.options.to )
 				this.options.to = 'top';
 		},
+		get_new_title: function (start) {
+			var title = 'Region ' + start,
+				name = title.toLowerCase().replace(/\s/, '-');
+			if ( this.model.collection.get_by_name(name) )
+				return this.get_new_title(start+1);
+			return title;
+		},
 		add_region: function () {
 			var to = this.options.to,
 				collection = this.model.collection,
@@ -5876,7 +5887,7 @@ var Field_Anchor = Field_Select.extend({
 				next_model = index < total-1 ? collection.at(index+1) : false,
 				is_new_container = ( to == 'top' || to == 'bottom' ),
 				is_before = ( to == 'top' || to == 'left' ),
-				title = is_new_container ? 'Region ' + total : this.model.get('name') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
+				title = is_new_container ? this.get_new_title(total) : this.model.get('name') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
 				name = title.toLowerCase().replace(/\s/, '-'),
 				new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 					"name": name,
@@ -5895,7 +5906,7 @@ var Field_Anchor = Field_Select.extend({
 				else if ( to == 'bottom' && next_model && ( next_model.get('container') && next_model.get('container') != next_model.get('name') ) )
 					index++;
 			}
-			if ( new_region.get('clip') ){
+			if ( new_region.get('clip') || !is_new_container ){
 				Upfront.Events.once('entity:region:before_render', this.before_animation, this);
 				Upfront.Events.once('entity:region:after_render', this.run_animation, this);
 			}
@@ -6048,29 +6059,29 @@ var Field_Anchor = Field_Select.extend({
 	var RegionPanel_Edit = InlinePanel.extend({
 		className: 'upfront-inline-panel upfront-region-panel-edit upfront-no-select',
 		initialize: function () {
-			this.bg = new RegionPanelItem_BgSetting({model: this.model});
+			//this.bg = new RegionPanelItem_BgSetting({model: this.model});
 			if ( this.model.is_main() ){
 				//this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
 				this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
 			}
-			this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
+			//this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
 		},
 		items: function () {
 			var items = _([]),
 				type = this.model.get_property_value_by_name('background_type'),
 				sub = this.model.get('sub');
-			items.push(this.bg);
+			//items.push(this.bg);
 			//if ( this.expand_lock )
 			//	items.push(this.expand_lock);
 			if ( this.add_region && type != 'full' )
 				items.push(this.add_region);
 			if ( this.model.is_main() ) {
-				if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
-					items.push( this.delete_region );
+				// if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
+					// items.push( this.delete_region );
 			}
 			else {
-				if ( sub != 'top' && sub != 'bottom' )
-					items.push( this.delete_region );
+				// if ( sub != 'top' && sub != 'bottom' )
+					// items.push( this.delete_region );
 			}
 			return items;
 		}
@@ -6148,7 +6159,7 @@ var Field_Anchor = Field_Select.extend({
 			this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_pos);
 			$(window).on('scroll', this, this.on_scroll);
 			this.edit_panel = new RegionPanel_Edit({model: this.model});
-			this.delete_panel = new RegionPanel_Delete({model: this.model});
+			//this.delete_panel = new RegionPanel_Delete({model: this.model});
 			this.add_panel_bottom = new RegionPanel_Add({model: this.model, to: 'bottom'});
 			if ( this.model.is_main() && this.model.get('allow_sidebar') ){
 				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
@@ -6253,7 +6264,7 @@ var Field_Anchor = Field_Select.extend({
 		},
 		remove: function() {
 			this.edit_panel.remove();
-			this.delete_panel.remove();
+			//this.delete_panel.remove();
 			this.add_panel_bottom.remove();
 			this.edit_panel = false;
 			this.delete_panel = false;
@@ -6316,6 +6327,7 @@ var Field_Anchor = Field_Select.extend({
 			},
 			"Loading": Loading,
 			"Modal": Modal,
+			"ModalBgSetting": ModalBgSetting,
 			"PostSelector": new PostSelector(),
 			"InlinePanels": {
 				"Panels": InlinePanels,

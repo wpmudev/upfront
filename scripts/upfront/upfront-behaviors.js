@@ -2210,14 +2210,24 @@ var GridEditor = {
 			total = collection.size()-1, // total minus shadow region
 			next_model = index < total-1 ? collection.at(index+1) : false,
 			is_left = false,
-			container = model.get('container')
+			container = model.get('container'),
+			direction, handles
 		;
 		if ( next_model !== false && (next_model.get('container') == container || next_model.get('name') == container) )
 			is_left = true;
+		if ( is_left ){
+			direction = 'e';
+			handles = { e: '.upfront-region-resize-handle-e' };
+		}
+		else {
+			direction = 'w';
+			handles = { w: '.upfront-region-resize-handle-w' };
+		}
+		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-' + direction + ' upfront-region-resize-handle upfront-region-resize-handle-' + direction + ' ui-resizable-handle ui-resizable-' + direction + '"></div>');
 		$me.resizable({
 			containment: "document",
 			//handles: "n, e, s, w",
-			handles: is_left ? 'e' : 'w',
+			handles: handles,
 			helper: "region-resizable-helper",
 			disabled: true,
 			zIndex: 9999999,
@@ -2247,8 +2257,10 @@ var GridEditor = {
 				// End this fix
 				var $helper = ui.helper,
 					col = ed.get_class_num($me, ed.grid.class),
-					prev_col = $me.prev('.upfront-region').size() > 0 ? ed.get_class_num($me.prev('.upfront-region'), ed.grid.class) : 0,
-					next_col = $me.next('.upfront-region').size() > 0 ? ed.get_class_num($me.next('.upfront-region'), ed.grid.class) : 0,
+					$prev = $me.prevAll('.upfront-region:first'),
+					$next = $me.nextAll('.upfront-region:first'),
+					prev_col = $prev.size() > 0 ? ed.get_class_num($prev, ed.grid.class) : 0,
+					next_col = $next.size() > 0 ? ed.get_class_num($next, ed.grid.class) : 0,
 					max_col = col + ( next_col > prev_col ? next_col : prev_col ),
 					current_col = Math.abs(Math.ceil(ui.size.width/ed.col_size)),
 					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
@@ -2300,12 +2312,12 @@ var GridEditor = {
 		;
 		if ( $me.hasClass('ui-resizable') )
 			return false;
-		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-region-resize-handle ui-resizable-handle ui-resizable-s"></div>');
+		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-s upfront-region-resize-handle upfront-region-resize-handle-s ui-resizable-handle ui-resizable-s"></div>');
 		$me.resizable({
 			containment: "document",
 			//handles: "n, e, s, w",
 			handles: {
-				s: '.upfront-region-resize-handle'
+				s: '.upfront-region-resize-handle-s'
 			},
 			helper: "region-resizable-helper",
 			disabled: true,
