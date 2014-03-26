@@ -633,6 +633,12 @@ var Application = new (Backbone.Router.extend({
 			postData = response.data.post;
 			deferred.resolve(Upfront.data.posts[postData.ID]);
 			loading.done();
+
+			Upfront.Events.once('post:initialized', function(postView){
+				postView.once('rendered', function(){
+					postView.on_edit();
+				});
+			});
 		});
 
 		return deferred.promise();
@@ -757,6 +763,7 @@ var Application = new (Backbone.Router.extend({
 		if(this.urlCache[fullPath]){
 			//Wait a bit to let the loading screen render
 			setTimeout(function(){
+				Upfront.Settings.LayoutEditor.newpostType = false;
 				me.set_layout_up(me.urlCache[fullPath]);
 				me.currentUrl = fullPath;
 				loading.done();
@@ -764,6 +771,7 @@ var Application = new (Backbone.Router.extend({
 		}
 		else{
 			this.load_layout(fullPath).done(function(response){
+				Upfront.Settings.LayoutEditor.newpostType = false;
 				loading.done();
 				Upfront.Settings.LayoutEditor.newpostType = false;
 				me.urlCache[fullPath] = response;

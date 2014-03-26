@@ -110,7 +110,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			geocoder.geocode({address: location}, function (results, status) {
 				if (status != google.maps.GeocoderStatus.OK) return false;
 				var pos = results[0].geometry.location;
-
+				debugger;
 				var markers = me.model.get_property_value_by_name("markers") || [];
 				markers.push({lat:pos.lat(), lng:pos.lng()});
 				me.model.set_property("markers", markers, true);

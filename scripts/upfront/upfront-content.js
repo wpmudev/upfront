@@ -54,6 +54,8 @@ define(function() {
 			this.postId = options.post_id;
 			this.setElement(options.node);
 
+			console.log('Content editor init');
+
 			this.autostart = options.autostart || false;
 
 			//If the post is in the cache, prepare it!
@@ -61,11 +63,13 @@ define(function() {
 				this.post = Upfront.data.posts[this.postId];
 				this.loadingPost = new $.Deferred();
 				this.loadingPost.resolve(this.post);
-				this.bindPostEvents();
+				//this.bindPostEvents();
 			}
 
 			if(options.preload)
 				this.getPost();
+
+			this.backup = this.$el.html();
 
 			if(typeof options.content_mode != 'undefined')
 				this.mode = options.content_mode;
@@ -73,21 +77,22 @@ define(function() {
 			this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
 			this.initEditAreas();
 
-			this.backup = this.$el.html();
 
 		},
 
 		bindPostEvents: function(){
-			this.post.on('editor:cancel', this.cancelChanges, this);
-			this.post.on('editor:publish', this.publish, this);
-			this.post.on('editor:draft', this.saveDraft, this);
-			this.post.on('editor:trash', this.trash, this);
+			this.bar.on('editor:cancel', this.cancelChanges, this);
+			this.bar.on('editor:publish', this.publish, this);
+			this.bar.on('editor:draft', this.saveDraft, this);
+			this.bar.on('editor:trash', this.trash, this);
 		},
 
 		/**
 		 * Update view's element. Useful when updating the markup.
 		 */
 		updateElement: function(node){
+			if(this.el == node[0])
+				return;
 			this.setElement(node);
 			this.initEditAreas();
 
@@ -140,7 +145,7 @@ define(function() {
 			var me = this;
 			this.post = new Upfront.Models.Post({ID: this.postId});
 
-			this.bindPostEvents();
+			//this.bindPostEvents();
 
 			this.loadingPost = new $.Deferred();
 			this.post.fetch({withMeta: true, filterContent: true}).done(function(response){
@@ -160,7 +165,13 @@ define(function() {
 		},
 
 		prepareContentEditor: function(selector){
-			this.$(selector).addClass('ueditor_content ueditable');
+			var element = this.$(selector);
+			if(!element.length)
+				return;
+
+			element.addClass('ueditor_content ueditable');
+			this.editPost('.ueditor_content', this.mode, true);
+
 			console.log('Content editor prepared.');
 		},
 
@@ -168,7 +179,11 @@ define(function() {
 			var me = this,
 				element = this.$(selector)
 			;
+			if(!element.length)
+				return;
+
 			element
+				.addClass('ueditor_title ueditable')
 				.on('start', function(){
 					me.changed.title = element;
 					me.getPost().done(function(post){
@@ -178,6 +193,13 @@ define(function() {
 					setTimeout(function(){
 						element.ueditor('selectionAll');
 					}, 200);
+				})
+				.on('keydown', function(e){
+					if(e.which == 9){ //tab
+						e.preventDefault();
+						me.$('.ueditor_content').focus();
+						me.$('.ueditor_excerpt').focus();
+					}
 				})
 				.ueditor({
 					airButtons: {},
@@ -266,6 +288,7 @@ define(function() {
 			}
 
 			this.bar = new EditionBar({post: this.post});
+			this.bindPostEvents();
 			this.bar.render();
 			this.$el.append(this.bar.$el);
 			this.bar.stick();
@@ -274,65 +297,12 @@ define(function() {
 		},
 
 		editTitle: function(e){
-
 			//Mark title as edited
 			//this.changed.title = true;
+			if(e)
+				e.preventDefault();
 
-			e.preventDefault();
-
-			var me = this,
-				apply_styles = function($el){
-					var styles = window.getComputedStyle ? window.getComputedStyle($el[0]) : $el[0].currentStyle,
-						transform = !window.getComputedStyle
-					;
-					if (!styles) return false;
-					$el.children().css({
-						background: 'transparent',
-						border: 0,
-						'font-weight': styles[camel_case('font-weight', transform)],
-						'font-size': styles[camel_case('font-size', transform)],
-						'font-family': styles[camel_case('font-family', transform)],
-						'text-transform': styles[camel_case('text-transform', transform)],
-						'text-decoration': styles[camel_case('text-decoration', transform)],
-						'text-align': styles[camel_case('text-align', transform)],
-						'color': styles.color,
-						'outline': 0,
-						margin:0,
-						padding: 0
-					});
-				},
-				camel_case = function(str, transform) {
-					if (!transform) return str;
-					return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
-				},
-				$title = this.$('.ueditor_title'),
-				title = $.trim($title.text())
-			;
-
-			//Let's retrieve the post
-			this.getPost().done(function(post){
-				//We will need the edition bar
-				me.prepareBar();
-
-				//Prepare the editor, because when editing the title, 99% we are going to edit the content
-				if(!me.cke && me.mode == 'post_content')
-					me.editPost('.ueditor_content', 'post_content', false);
-
-			});
-
-			$title.html(this.post && this.post.is_new
-				? '<input type="text" id="upfront-title" style="width:100%" value="" placeholder="' + title + '"/>'
-				: '<input type="text" id="upfront-title" style="width:100%" value="' + title + '"/>'
-			);
-
-			apply_styles($title);
-			$title.find('input').focus().val(title);
-
-			//@TODO Hack to focus title
-			if ( this.post && this.post.is_new ){
-				var selector = _.find(Upfront.data.ueditor.selectors, function(s){ return s.type == 'title'; }).selector;
-				this.$el.find(selector+'.ueditable').ueditor('focus');
-			}
+			this.$('.ueditor_title').focus();
 		},
 
 		goToEditor: function(e){
@@ -558,6 +528,7 @@ define(function() {
 					.ueditor({
 						linebreaks: false,
 						placeholder: 'Your content goes here ;)',
+						autostart: me.autostart,
 						focus: focus,
 						upfrontMedia: mode == 'post_content',
 						upfrontImages: mode == 'post_content'
@@ -783,6 +754,7 @@ define(function() {
 					}
 				}
 			}
+			this.trigger('editor:cancel');
 		},
 
 		save: function(status, loadingMsg, successMsg){
@@ -1230,6 +1202,7 @@ define(function() {
 			if(confirm('Are you sure to discard the changes made to ' + this.post.get('post_title') + '?')){
 				this.destroy();
 				this.post.trigger('editor:cancel');
+				this.trigger('editor:cancel');
 				Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 			}
 		},
@@ -1243,6 +1216,7 @@ define(function() {
 			this.initialDate = this.post.get('post_date').getTime();
 
 			this.post.trigger('editor:publish');
+			this.trigger('editor:publish');
 			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 		},
 
@@ -1255,6 +1229,7 @@ define(function() {
 			this.initialDate = this.post.get('post_date').getTime();
 
 			this.post.trigger('editor:draft');
+			this.trigger('editor:publish');
 			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 		},
 

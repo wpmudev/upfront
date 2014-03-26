@@ -24,12 +24,15 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	editor: false,
 
 	initialize: function(options){
+		console.log('This post');
 		if(! (this.model instanceof ThisPostModel)){
 			this.model = new ThisPostModel({properties: this.model.get('properties')});
 		}
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+
+		Upfront.Events.trigger('post:initialized', this);
 	},
 
 	/**
@@ -42,21 +45,20 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			return 'Loading';
 		}
 
+		//Wait to trigger rendered only when the content is loaded
+		var me = this;
+		setTimeout(function(){
+			me.trigger('rendered');
+		}, 50);
+
 		return this.markup;
 	},
-/*
-	on_render: function(){
-		var me = this;
-		//Give time to append when dragging.
-		setTimeout(function(){
-			me.updateEditor($('#' + me.property('element_id')).find(".upfront-object-content"));
-		}, 100);
-	},
-*/
+
 	on_edit: function (e) {
+		var newEditor = !this.editor;
 		console.log('Start editing');
-		this.updateEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
-		this.editor.editTitle(e);
+
+		this.createEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
 	},
 
 	refreshMarkup: function () {
@@ -128,12 +130,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			Upfront.Application.set_current(Upfront.Settings.Application.MODE.LAYOUT);
 	},
 
-	updateEditor: function(node){
+	createEditor: function(node){
 		var me = this;
 
-		if(this.editor) {
-			return this.editor.updateElement(node);
-		}
+		if(this.editor)
+			return;
 
 		this.editor = new Upfront.Content.editor({
 			editor_id: 'this_post_' + this.postId,
@@ -145,8 +146,22 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			autostart: true,
 			onUpdated: function(post){
 				me.refreshMarkup(post);
+				me.editor = false;
 			}
 		});
+
+		this.editor.once('editor:cancel', function(){
+			me.editor = false;
+		});
+	},
+
+	updateEditor: function(node){
+		var me = this;
+
+		if(this.editor)
+			return this.editor.updateElement(node);
+
+		this.createEditor(node);
 	},
 
 	on_element_edit_start: function (edit, post) {

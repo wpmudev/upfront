@@ -544,7 +544,7 @@ define([
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-grid');
 			//this.$el.html('Toggle grid');
-			
+
 		},
 		on_click: function () {
 			$('.upfront-overlay-grid').size() || this.create_grid();
@@ -686,7 +686,7 @@ define([
       Upfront.Events.trigger("command:region:edit_toggle", false);
     }
 	});
-	
+
 	var Command_NewLayout = Command.extend({
 		className: "command-new-layout",
 		render: function () {
@@ -694,20 +694,20 @@ define([
 			this.$el.html('New Layout');
 		},
 		on_click: function () {
-			
+
 		}
 	});
-	
+
 	var Command_BrowseLayout = Command.extend({
 		className: "command-browse-layout",
 		render: function () {
 			this.$el.html('Browse Layout');
 		},
 		on_click: function () {
-			
+
 		}
 	});
-	
+
 	var Command_EditStructure = Command.extend({
 		render: function (){
 			this.$el.html('Edit Structure/Grid');
@@ -985,7 +985,7 @@ define([
 			if ( this.on_render ) this.on_render();
 		}
 	});
-	
+
 	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
 	    fields: {},
 	    current_element: '',
@@ -1117,7 +1117,7 @@ define([
 					});
   return lists;
     		    })();
-	       if ( !this.fields.length ){  
+	       if ( !this.fields.length ){
     	       this.fields = {
     				element: new Upfront.Views.Editor.Field.Select({
     					label: "Typographic Element",
@@ -1253,7 +1253,7 @@ define([
 			return "Typography and Colors";
 		},
 		on_render: function () {
-			
+
 		}
 	});
 
@@ -1500,7 +1500,7 @@ define([
 			// Editor Mode
 			//this.editor_mode.render();
 			//this.$el.append(this.editor_mode.el);
-			
+
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ){
 				// Profile
 				this.sidebar_profile.render();
@@ -1510,7 +1510,7 @@ define([
 			// Primary commands
 			this.sidebar_commands.primary.render();
 			output.append(this.sidebar_commands.primary.el);
-			
+
 			if ( this.sidebar_commands.additional ){
 				// Additional commands
 				this.sidebar_commands.additional.render();
@@ -3954,6 +3954,8 @@ var CSSEditor = Backbone.View.extend({
 		this.$style = false;
 		if(this.editor)
 			this.editor.destroy();
+
+		$('#page').css('padding-bottom', 0);
 		this.$el.hide();
 	},
 	render: function(){
@@ -4052,11 +4054,13 @@ var CSSEditor = Backbone.View.extend({
 			$selectors = me.$('.upfront-css-selectors'),
 			$saveform = me.$('.upfront-css-save-form'),
 			onResize = function(e, ui){
-				var bodyHeight = ui ? ui.size.height - topHeight : me.$('.upfront-css-resizable').height() - topHeight;
+				var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
+					bodyHeight = height  - topHeight;
 				$cssbody.height(bodyHeight);
 				if(me.editor)
 					me.editor.resize();
 				$selectors.height(bodyHeight - $saveform.outerHeight());
+				$('#page').css('padding-bottom', height);
 			}
 		;
 		onResize();
@@ -4718,7 +4722,7 @@ var Field_Anchor = Field_Select.extend({
 			if ( callback ) callback();
 		}
 	});
-	
+
 	var Modal = Backbone.View.extend({
 		attributes: function () {
 			return {
