@@ -170,7 +170,7 @@ define(function() {
 				return;
 
 			element.addClass('ueditor_content ueditable');
-			this.editPost('.ueditor_content', this.mode, true);
+			//this.editPost('.ueditor_content', this.mode, true); // Do NOT auto-boot this on content preparation
 
 			console.log('Content editor prepared.');
 		},
