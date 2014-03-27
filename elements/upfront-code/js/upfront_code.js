@@ -415,12 +415,10 @@ var Views = {
 
 		openImagePicker: function(){
 			var me = this,
-				currentSyntax = $('#upfront_code-editor').find('.upfront_code-switch.active').data('for'),
-				themeImages =  currentSyntax == 'style'
+				currentSyntax = $('#upfront_code-editor').find('.upfront_code-switch.active').data('for')
 			;
 
 			Upfront.Media.Manager.open({
-				themeImages: themeImages,
 				multiple_selection: false,
 				media_type:['images']
 			}).done(function(popup, result){
@@ -429,7 +427,7 @@ var Views = {
 					return;
 
 				var imageModel = result.models[0],
-					url = themeImages ? imageModel.get('original_url') : imageModel.get('image').src
+					url = imageModel.get('image').src
 				;
 
 				url = url.replace(document.location.origin, '');

@@ -560,8 +560,9 @@ class Upfront_MediaServer extends Upfront_Server {
                     );
             }
         }
+        $meta = array('max_pages' => 1);
         if (sizeof($images))
-            $this->_out(new Upfront_JsonResponse_Success($images));
+            $this->_out(new Upfront_JsonResponse_Success(array('items' => $images, 'meta' => $meta)));
         else
             $this->_out(new Upfront_JsonResponse_Error("No items"));
     }

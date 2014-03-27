@@ -4283,14 +4283,12 @@ var CSSEditor = Backbone.View.extend({
 
 	openImagePicker: function(){
 		var me = this;
-		Upfront.Media.Manager.open({
-			themeImages: true
-		}).done(function(popup, result){
+		Upfront.Media.Manager.open({}).done(function(popup, result){
 			Upfront.Events.trigger('upfront:element:edit:stop');
 			if(!result)
 				return;
 
-			var url = result.models[0].get('original_url').replace(document.location.origin, '');
+			var url = result.models[0].get('image').src.replace(document.location.origin, '');
 			me.editor.insert('url("' + url + '")');
 			me.editor.focus();
 		});
@@ -4834,7 +4832,7 @@ var Field_Anchor = Field_Select.extend({
 			}
 		},
 	});
-	
+
 	var ModalBgSetting = Modal.extend({
 		open: function () {
 			return this.constructor.__super__.open.call(this, this.render_modal, this, true);
