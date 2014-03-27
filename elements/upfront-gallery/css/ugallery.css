@@ -250,10 +250,6 @@ button.ugallery-reset-button:hover {
 	background: #3ea;
 }
 
-.upfront-output-module .ugallery_publish {
-	padding: 15px;
-}
-
 .ugallery_item img.ugallery-image {
 	max-width: none;
 	max-height: none;
