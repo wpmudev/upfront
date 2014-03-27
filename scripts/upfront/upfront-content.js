@@ -311,12 +311,16 @@ define(function() {
 		},
 
 		editTitle: function(e){
-			//Mark title as edited
-			//this.changed.title = true;
+			var me = this;
+
 			if(e)
 				e.preventDefault();
 
-			this.prepareBar();
+			//Fetch the post
+			this.getPost().done(function(post){
+				//We will need the edition bar
+				me.prepareBar();
+			});
 
 			this.$('.ueditor_title').focus();
 		},
