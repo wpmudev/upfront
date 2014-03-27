@@ -190,7 +190,7 @@ define(function() {
 
 			element
 				.addClass('ueditor_title ueditable')
-				.on('start', function(){
+				.on('start', function(editor){
 					me.changed.title = element;
 					me.getPost().done(function(post){
 						//We will need the edition bar
@@ -201,8 +201,7 @@ define(function() {
 					}, 200);
 
 					//Once started, don't disable when click out
-					me.titleEditor.disableStop = true;
-
+					editor.disableStop = true;
 				})
 				.on('keydown', function(e){
 					if(e.which == 9 || e.which == 13){ // tab or enter

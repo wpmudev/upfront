@@ -311,7 +311,7 @@ Ueditor.prototype = {
 			.attr('title', '')
 			.redactor(this.options)
 		;
-		this.$el.trigger('start');
+		this.$el.trigger('start', this);
 		this.redactor = this.$el.data('redactor');
 		this.redactor.ueditor = this;
 		this.preventDraggable();
