@@ -16,29 +16,16 @@ define(function() {
 	});
 
 	var Editor_Meta = Backbone.View.extend({
-		post: false,
-		postId: false,
-		loadingPost: false,
-		isNew: false,
-		mode: 'post_excerpt',
-		view: false,
-		bar: false,
-		backup: false,
-		changed: {
-			title: false,
-			thumb: false,
-			content: false
-		},
-
 		events: {
-			'keydown .ueditor_title': 'goToEditor',
 			'dblclick .ueditor_content': 'editContent',
 			'click .upost_thumbnail_changer': 'editThumb',
+			'click .ueditor_title': 'editTitle',
 			'click .ueditor_restore': 'restore',
 			'click .ueditor_date': 'editDate',
 			'click .ueditor-action-pickercancel': 'cancelDatepicker',
 			'click .ueditor-action-pickerok': 'changeDate',
-			'click .ueditor_author': 'editAuthor'
+			'click .ueditor_author': 'editAuthor',
+			'click .ueditor_content': 'activateEditor'
 		},
 
 		/**
@@ -51,6 +38,8 @@ define(function() {
 		 * @return {[type]}         [description]
 		 */
 		initialize: function(options){
+			this.setDefaults();
+
 			this.postId = options.post_id;
 			this.setElement(options.node);
 
@@ -78,6 +67,22 @@ define(function() {
 			this.initEditAreas();
 
 
+		},
+
+		setDefaults: function(){
+			this.post = false;
+			this.postId = false;
+			this.loadingPost = false;
+			this.isNew = false;
+			this.mode = 'post_excerpt';
+			this.view = false;
+			this.bar = false;
+			this.backup = false;
+			this.changed = {
+				title: false,
+				thumb: false,
+				content: false
+			}
 		},
 
 		bindPostEvents: function(){
@@ -194,9 +199,13 @@ define(function() {
 					setTimeout(function(){
 						element.ueditor('selectionAll');
 					}, 200);
+
+					//Once started, don't disable when click out
+					me.titleEditor.disableStop = true;
+
 				})
 				.on('keydown', function(e){
-					if(e.which == 9){ //tab
+					if(e.which == 9 || e.which == 13){ // tab or enter
 						e.preventDefault();
 						me.$('.ueditor_content').focus();
 						me.$('.ueditor_excerpt').focus();
@@ -211,6 +220,8 @@ define(function() {
 				})
 				.on('click', function(e){e.preventDefault();})
 			;
+
+			this.titleEditor = element.data('ueditor');
 		},
 
 		prepareThumbEditor: function(selector){
@@ -306,19 +317,9 @@ define(function() {
 			if(e)
 				e.preventDefault();
 
-			this.$('.ueditor_title').focus();
-		},
+			this.prepareBar();
 
-		goToEditor: function(e){
-			if(e.which == 9|| e.which == 13){
-				e.preventDefault();
-				if(this.cke){
-					this.cke.focus();
-				}
-				else {
-					this.editPost('.ueditor_content', this.mode, true);
-				}
-			}
+			this.$('.ueditor_title').focus();
 		},
 
 		editThumb: function(e){
@@ -494,11 +495,15 @@ define(function() {
 			var me = this,
 				$body = this.$(selector)
 			;
-			if(!$body.length || $body.data('ueditor'))
+
+			if(!$body.length || $body.data('ueditor')){
+				me.prepareBar();
 				return;
+			}
 
 			//Where did the user click?
 			var selection = window.getSelection ? _.clone(window.getSelection()) : false;
+
 
 			$body.css('opacity', '.6');
 
@@ -532,14 +537,15 @@ define(function() {
 					.ueditor({
 						linebreaks: false,
 						placeholder: 'Your content goes here ;)',
-						autostart: me.autostart,
+						autostart: true,
 						focus: focus,
 						upfrontMedia: mode == 'post_content',
 						upfrontImages: mode == 'post_content'
 					})
 				;
+				me.contentEditor = $body.data('ueditor');
 				if(focus)
-					$body.data('ueditor').start();
+					me.contentEditor.start();
 			});
 		},
 		positionEditor: function(selection){
@@ -560,6 +566,10 @@ define(function() {
 
 			if($node.length)
 				node = $node[0];
+		},
+
+		activateEditor: function(e){
+			e.preventDefault();
 		},
 
 		editDate: function(e){
@@ -743,10 +753,7 @@ define(function() {
 			this.fetchPost();
 			this.$el.html(this.backup);
 
-			if(this.bar){
-				this.bar.remove();
-				this.bar = false;
-			}
+			this.closeEditor();
 
 			if (this.post && this.post.get) {
 				if (this.post.get("post_status") == "auto-draft") window.location.reload();
@@ -807,6 +814,8 @@ define(function() {
 					metaUpdated = true;
 				});
 			}
+
+			this.closeEditor();
 		},
 
 		publish: function(){
@@ -836,6 +845,20 @@ define(function() {
 				if(me.options.onUpdated)
 					me.options.onUpdated(me.post.toJSON());
 			});
+		},
+		closeEditor: function(){
+			if(this.bar){
+				this.bar.remove();
+				this.bar = false;
+			}
+			if(this.titleEditor){
+				this.titleEditor.stop();
+				this.titleEditor = false;
+			}
+			if(this.contentEditor){
+				this.contentEditor.stop();
+				this.contentEditor = false;
+			}
 		},
 		restore: function(){
 			var me = this;
@@ -1234,7 +1257,7 @@ define(function() {
 			this.initialDate = this.post.get('post_date').getTime();
 
 			this.post.trigger('editor:draft');
-			this.trigger('editor:publish');
+			this.trigger('editor:draft');
 			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 		},
 

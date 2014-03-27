@@ -325,6 +325,11 @@ Ueditor.prototype = {
 		//Open the toolbar when releasing selection outside the element
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
+
+		//Listen for outer clicks to stop the editor if necessary
+		if(!this.options.autostart)
+			this.listenToOuterClick();
+
 	},
 	stop: function(){
 		if(this.redactor){
@@ -337,37 +342,45 @@ Ueditor.prototype = {
 		}
 		delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
+		$(document).off('click', this.checkInnerClick);
 	},
-	bindStartEvents: function() {
-		var me = this,
-			checkInnerClick = function(e){
-			//Check we are not selecting text
-			var selection = document.getSelection ? document.getSelection() : document.selection;
-			if(selection && selection.type == 'Range')
-				return;
 
-			//Check if the click has been inner, or inthe popup, otherwise stop the editor
-			if(!me.options.autostart && me.redactor){
-				var $target = $(e.target);
-				if(!me.disableStop && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
-					me.stop();
-					me.bindStartEvents();
-				}
-			}
-		};
+	bindStartEvents: function() {
+		var me = this;
 
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
 			.one('dblclick', function(e){
 				//e.preventDefault();
 				//e.stopPropagation();
-				if(!me.redactor){
+				if(!me.redactor)
 					me.start(e);
-					$(document).on('click', checkInnerClick);
-				}
 			})
 		;
 	},
+
+	listenToOuterClick: function(){
+		var me = this;
+		if(!this.checkInnerClick){
+			this.checkInnerClick = function(e){
+				//Check we are not selecting text
+				var selection = document.getSelection ? document.getSelection() : document.selection;
+				if(selection && selection.type == 'Range')
+					return;
+
+				//Check if the click has been inner, or inthe popup, otherwise stop the editor
+				if(!me.options.autostart && me.redactor){
+					var $target = $(e.target);
+					if(!me.disableStop && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
+						me.stop();
+						me.bindStartEvents();
+					}
+				}
+			};
+		}
+		$(document).on('click', this.checkInnerClick);
+	},
+
 	callMethod: function(method){
 		var result = this.$el.redactor(method);
 		UeditorEvents.trigger("ueditor:method:" + method, this.$el.redactor);
