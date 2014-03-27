@@ -32,6 +32,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 
+		// Autostart will start the editor once rendered.
+		// It will be set to true by the Upfront.Application when creating a new entry
+		this.autostart = false;
+
 		Upfront.Events.trigger('post:initialized', this);
 	},
 
@@ -55,10 +59,9 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_edit: function (e) {
-		var newEditor = !this.editor;
-		console.log('Start editing');
-
-		this.createEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
+		if(!this.editor){
+			this.createEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
+		}
 	},
 
 	refreshMarkup: function () {
@@ -96,28 +99,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				var node = node || $('#' + me.property('element_id')).find(".upfront-object-content");
 				me.markup = response.data.filtered;
 				node.html(me.get_content_markup());
-				//me.updateEditor(node); // This is where the edit mode autorun happens, don't run this.
+				if(!me.editor)
+					me.createEditor(node);
+				else
+					me.editor.initEditAreas();
 
-// Whatever is down here is a dead code now
-				var post = Upfront.data.posts[me.postId];
-				if(post && post.is_new){
-					// Remove post title on new post so that the ueditor placeholder can kick in
-					// @TODO not working :/
-					_.each(Upfront.data.ueditor.selectors, function (s) {
-						if ( s.type == 'title' )
-							node.find(s.selector).html('');
-					});
-					me.updateEditor(node); // Only for the new posts.
-					me.editor.editTitle();
-					me.editor.post.is_new = false;
-					me.editor.post.on('editor:publish', function () {
-						me.redirectPostEdit(me.editor.post);
-					});
-					me.editor.post.on('editor:draft', function () {
-						if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) == -1 || confirm("Do you want to re-load in layout mode?") )
-							me.redirectPostEdit(me.editor.post);
-					});
-				}
 			})
 		;
 	},
@@ -143,25 +129,18 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			node: node,
 			content_mode: 'post_content',
 			view: me,
-			autostart: true,
+			autostart: this.autostart,
 			onUpdated: function(post){
+				me.autostart = false;
 				me.refreshMarkup(post);
-				me.editor = false;
+				me.trigger('post:updated', post);
 			}
 		});
 
-		this.editor.once('editor:cancel', function(){
-			me.editor = false;
+		this.listenTo(this.editor, 'editor:cancel', function(){
+			me.editor.autostart = false;
+			me.editor.initEditAreas();
 		});
-	},
-
-	updateEditor: function(node){
-		var me = this;
-
-		if(this.editor)
-			return this.editor.updateElement(node);
-
-		this.createEditor(node);
 	},
 
 	on_element_edit_start: function (edit, post) {
@@ -190,6 +169,13 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
+	},
+
+	cleanup: function(){
+		if(this.editor){
+			this.editor.remove();
+			this.editor = false;
+		}
 	}
 });
 

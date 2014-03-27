@@ -166,11 +166,12 @@ define(function() {
 
 		prepareContentEditor: function(selector){
 			var element = this.$(selector);
-			if(!element.length)
+			if(!element.length || element.data('ueditor'))
 				return;
 
 			element.addClass('ueditor_content ueditable');
-			//this.editPost('.ueditor_content', this.mode, true); // Do NOT auto-boot this on content preparation
+			if(this.autostart)
+				this.editPost('.ueditor_content', this.mode, true);
 
 			console.log('Content editor prepared.');
 		},
@@ -179,7 +180,7 @@ define(function() {
 			var me = this,
 				element = this.$(selector)
 			;
-			if(!element.length)
+			if(!element.length || element.data('ueditor'))
 				return;
 
 			element
@@ -213,8 +214,11 @@ define(function() {
 		},
 
 		prepareThumbEditor: function(selector){
-			this.$(selector)
-				.addClass('ueditor_thumb ueditable')
+			var selector = this.$(selector);
+			if(!selector.length || selector.hasClass('ueditable'))
+				return;
+
+			selector.addClass('ueditor_thumb ueditable')
 				.css({position:'relative', 'min-height': '60px'})
 				.append('<div class="upost_thumbnail_changer">Click to edit the post\'s featured image</div>')
 				.find('img').css({'z-index': '2', position: 'relative'})
@@ -534,6 +538,8 @@ define(function() {
 						upfrontImages: mode == 'post_content'
 					})
 				;
+				if(focus)
+					$body.data('ueditor').start();
 			});
 		},
 		positionEditor: function(selection){
@@ -737,12 +743,11 @@ define(function() {
 			this.fetchPost();
 			this.$el.html(this.backup);
 
-			this.bar = false;
-			if (this.cke && this.cke.destroy){
-				this.cke.destroy();
-				this.cke = false;
+			if(this.bar){
+				this.bar.remove();
+				this.bar = false;
 			}
-			//this.initEditAreas(); // Don't auto-boot editing again, we have just closed that!!!!
+
 			if (this.post && this.post.get) {
 				if (this.post.get("post_status") == "auto-draft") window.location.reload();
 				else {
@@ -754,7 +759,7 @@ define(function() {
 					}
 				}
 			}
-			this.trigger('editor:cancel');
+			this.trigger('editor:cancel', this);
 		},
 
 		save: function(status, loadingMsg, successMsg){

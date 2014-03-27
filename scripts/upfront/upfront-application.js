@@ -628,17 +628,24 @@ var Application = new (Backbone.Router.extend({
 			this.current_subapplication.stop();
 		}
 
+		//Set some listener for the new post view
+		Upfront.Events.once('post:initialized', function(postView){
+			postView.autostart = true; //Auto start
+			postView
+				.once('post:updated', function(post){
+					//Update the url on save
+					Upfront.Settings.LayoutEditor.newpostType = false;
+					me.navigate('/edit/' + post.post_type + '/' + post.ID, {trigger: false, replace: true});
+				})
+			;
+		});
+
+		//Load the new layout
 		this.load_layout(layoutOps, {new_post: post_type}).done(function(response){
 			Upfront.Settings.LayoutEditor.newpostType = post_type;
 			postData = response.data.post;
 			deferred.resolve(Upfront.data.posts[postData.ID]);
 			loading.done();
-
-			Upfront.Events.once('post:initialized', function(postView){
-				postView.once('rendered', function(){
-					postView.on_edit();
-				});
-			});
 		});
 
 		return deferred.promise();

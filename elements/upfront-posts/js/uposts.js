@@ -120,8 +120,7 @@ define(function() {
 
 		updateEditors: function(){
 			var me = this,
-				nodes = $('#' + this.property('element_id')).find('.uposts-post'),
-				is_excerpt = this.property('content_type') == 'excerpt'
+				nodes = $('#' + this.property('element_id')).find('.uposts-post')
 			;
 			nodes.each(function(){
 				var node = $(this),
@@ -130,20 +129,35 @@ define(function() {
 
 				if(me.editors[id])
 					me.editors[id].updateElement(node);
-				else{
-					me.editors[id] = new Upfront.Content.editor({
-						editor_id: 'uposts_meta_' + id,
-						post_id: id,
-						node: node,
-						content_mode: is_excerpt ? 'post_excerpt' : 'post_content',
-						view: me,
-						onUpdated: function(post){
-							me.onPostUpdated(post);
-						},
-						autostart: false
-					});
-				}
+				else
+					me.createEditor(id, node);
 			});
+		},
+
+		createEditor: function(id, node){
+			if(this.editors[id])
+				return;
+
+			var me = this,
+				is_excerpt = this.property('content_type') == 'excerpt',
+				editor = new Upfront.Content.editor({
+					editor_id: 'uposts_meta_' + id,
+					post_id: id,
+					node: node,
+					content_mode: is_excerpt ? 'post_excerpt' : 'post_content',
+					view: me,
+					onUpdated: function(post){
+						me.onPostUpdated(post);
+					},
+					autostart: false
+				})
+			;
+
+			editor.on('editor:cancel', function(){
+				editor.initEditAreas();
+			});
+
+			me.editors[id] = editor ;
 		},
 
 		onPostUpdated: function(post){
@@ -177,7 +191,7 @@ define(function() {
 					loading.$el.remove();
 					loading = false;
 					wrapper.html(response.data);
-					me.editors[post.ID].updateElement(wrapper);
+					me.editors[post.ID].initEditAreas();
 				});
 			}
 		},
