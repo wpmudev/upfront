@@ -418,7 +418,7 @@ var Application = new (Backbone.Router.extend({
 			var regions = this.layout.get("regions"),
 				region = regions.get_by_name("shadow")
 			;
-			if (regions && region) regions.remove(region, {silent: true});
+			if (regions && region) regions.remove(region);
 			this.create_sidebar();
 			this.current_subapplication.layout = this.layout;
 			if (this.current_subapplication && this.current_subapplication.start) this.current_subapplication.start();
