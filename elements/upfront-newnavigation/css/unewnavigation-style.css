@@ -5,3 +5,7 @@ div.upfront-navigation[data-aliment="center"] ul.menu {
 div.upfront-navigation[data-aliment="right"] ul.menu {
 	text-align: right;
 }
+
+div.upfront-navigation ul.menu li a {
+	position: relative;	
+}

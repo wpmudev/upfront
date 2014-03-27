@@ -459,6 +459,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.$el.find('a.ueditable').data('ueditor').stop();
 	},
 	editMenuItem: function(e) {
+
 		//e.preventDefault();
 		this.editModeOn(e);
 		var me = this;
