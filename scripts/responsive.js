@@ -16,21 +16,23 @@
 				else
 					apply_binding($(e.target), true);
 			});
-			if ( typeof Upfront.Events != 'undefined' ){
-				Upfront.Events.on("layout:after_render", function(){
-					apply_binding_all();
-				});
-				Upfront.Events.on("entity:module:after_render", apply_binding_view);
-				Upfront.Events.on("entity:region:after_render", apply_binding_view);
-				Upfront.Events.on("entity:resize_stop", apply_binding_view);
-				Upfront.Events.on("entity:region_container:resize_stop", apply_binding_view);
-				Upfront.Events.on("upfront:editor:image_on", function(sel){
-					apply_binding_all();
-				});
-				Upfront.Events.on("upfront:editor:image_align", function(sel, align){
-					apply_binding_all();
-				});
-			}
+			$(document).on('upfront-load', function(){
+				if ( typeof Upfront.Events != 'undefined' ){
+					Upfront.Events.on("layout:after_render", function(){
+						apply_binding_all();
+					});
+					Upfront.Events.on("entity:module:after_render", apply_binding_view);
+					Upfront.Events.on("entity:region:after_render", apply_binding_view);
+					Upfront.Events.on("entity:resize_stop", apply_binding_view);
+					Upfront.Events.on("entity:region_container:resize_stop", apply_binding_view);
+					Upfront.Events.on("upfront:editor:image_on", function(sel){
+						apply_binding_all();
+					});
+					Upfront.Events.on("upfront:editor:image_align", function(sel, align){
+						apply_binding_all();
+					});
+				}
+			});
 			function apply_binding_all (sel) {
 				var $sel = _.isString(sel) ? $(sel) :  $('body');
 				return apply_binding($sel);
