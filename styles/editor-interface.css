@@ -5648,10 +5648,9 @@ button.search-button.image {
 	font-weight: bold;
 }
 .upfront-media-aux_controls .select_control_container {
-	float: right;
+	float: left;
 }
 .upfront-media-aux_controls-has-select .select_control_container {
-	float: left;
 }
 .upfront-media-aux_controls .delete_control_container {
 	float: right;
