@@ -66,7 +66,7 @@ class Upfront_MediaCollection extends Upfront_Media {
 	private $_args = array(
 		'post_type' => 'attachment',
 		'post_status' => 'any', // Required for attachment
-		'posts_per_page' => -1,
+		'posts_per_page' => 10, // Paginate at most LIMIT items
 	);
 	private $_query = array();
 
@@ -93,7 +93,13 @@ class Upfront_MediaCollection extends Upfront_Media {
 		foreach ($collection as $item) {
 			$ret[] = $item->to_php();
 		}
-		return $ret;
+        $meta = array(
+            "max_pages" => $this->_query->max_num_pages,
+        );
+		return array(
+            'items' => $ret,
+            'meta' => $meta,
+        );
 	}
 
 	public function is_empty () {
@@ -155,6 +161,10 @@ class Upfront_MediaCollection extends Upfront_Media {
             $collection->_args['s'] = $filters['search'][0];
         }
 
+        if (!empty($filters['page']) && is_numeric($filters['page'])) {
+            $collection->_args['paged'] = (int)$filters['page'];
+        }
+
         $collection->_spawn();
 
         if (!empty($filters['recent']) && !empty($recent_callback)) {
@@ -179,11 +189,15 @@ class Upfront_MediaCollection extends Upfront_Media {
             if (!empty($filters['search'])) {
                 $video_oembed->_args['s'] = $filters['search'][0];
             }
+            if (!empty($filters['page']) && is_numeric($filters['page'])) {
+                $video_oembed->_args['paged'] = (int)$filters['page'];
+            }
             $video_oembed->_spawn();
             $collection->_query->posts = array_merge(
                 $collection->_query->posts,
                 $video_oembed->_query->posts
             );
+            if ($video_oembed->_query->max_num_pages > $collection->_query->max_num_pages) $collection->_query->max_num_pages = $video_oembed->_query->max_num_pages;
         }
         if ($collection->_oembed_audio_filter) {
             $audio_oembed = new self;
@@ -203,11 +217,15 @@ class Upfront_MediaCollection extends Upfront_Media {
             if (!empty($filters['search'])) {
                 $audio_oembed->_args['s'] = $filters['search'][0];
             }
+            if (!empty($filters['page']) && is_numeric($filters['page'])) {
+                $audio_oembed->_args['paged'] = (int)$filters['page'];
+            }
             $audio_oembed->_spawn();
             $collection->_query->posts = array_merge(
                 $collection->_query->posts,
                 $audio_oembed->_query->posts
             );
+            if ($audio_oembed->_query->max_num_pages > $collection->_query->max_num_pages) $collection->_query->max_num_pages = $audio_oembed->_query->max_num_pages;
         }
         return $collection;
     }

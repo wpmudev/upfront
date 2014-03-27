@@ -143,6 +143,8 @@ define(function() {
 		default_media_types: ['images', 'videos', 'audios'],
 		allowed_media_types: [],
 		showing_titles: true,
+		current_page: 1,
+		max_pages: 1,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
@@ -184,8 +186,27 @@ define(function() {
 			this.set({"search": new MediaFilter_Collection([])}, {silent: true});
 
 			this.themeImages =false;
+			this.current_page = 1;
 
 			this.set_labels_to_defaults();
+		},
+		set_max_pages: function (max) {
+			this.max_pages = max || 1;
+			Upfront.Util.log("max pages " + this.max_pages);
+		},
+		prev_page: function () {
+			if (this.current_page > 1) return this.set_page(this.current_page-1);
+		},
+		next_page: function () {
+			if (this.current_page < this.max_pages) return this.set_page(this.current_page+1);
+		},
+		set_page: function (page) {
+			if (!page) return false;
+			if (page >= 1 && page < this.max_pages) {
+				if (page == this.current_page) return false; // Already here.
+				this.current_page = page;
+				return true;
+			} else return false;
 		},
 		toggle_titles: function () {
 			this.showing_titles = !this.showing_titles;
@@ -239,6 +260,7 @@ define(function() {
 				var active = me.get(idx).where({state:true});
 				data[idx] = _(active).invoke("get", "value");
 			});
+			data.page = this.current_page;
 			return data;
 		},
 		to_list: function () {
@@ -1010,10 +1032,11 @@ define(function() {
 	var MediaManager_Switcher = Backbone.View.extend({
 		events: {
 			"click .library": "switch_to_library",
-			"click .embed": "switch_to_embed"
+			"click .embed": "switch_to_embed",
+			"click .upload": "switch_to_upload"
 		},
 		template: _.template(
-			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul>'
+			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul> <button type="button" class="upload">Upload new media</button>'
 		),
 		render: function () {
 			this.$el.empty().append(
@@ -1041,6 +1064,11 @@ define(function() {
 				.filter(".embed").addClass("active")
 			;
 			this.trigger("media_manager:switcher:to_embed");
+		},
+		switch_to_upload: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.trigger("media_manager:switcher:to_upload");
 		}
 	});
 
@@ -1082,9 +1110,10 @@ define(function() {
 
 			this.switcher_view.on("media_manager:switcher:to_library", this.render_library, this);
 			this.switcher_view.on("media_manager:switcher:to_embed", this.render_embed, this);
+			this.switcher_view.on("media_manager:switcher:to_upload", this.render_upload, this);
 
 			this.command_view.render();
-			this.command_view.on("media_manager:switcher:to_upload", this.render_upload, this);
+			//this.command_view.on("media_manager:switcher:to_upload", this.render_upload, this);
 
 			this.render_library();
 		},
@@ -1177,10 +1206,13 @@ define(function() {
 			if (this.library_view.media_view && this.library_view.media_view.start_loading) this.library_view.media_view.start_loading();
 			Upfront.Util.post(data)
 				.done(function (response) {
-					me.library_view.update(response.data);
+					ActiveFilters.set_max_pages(response.data.meta.max_pages);
+					me.library_view.update(response.data.items);
+					me.command_view.render();
 				})
 				.fail(function (response) {
 					me.library_view.update([]);
+					me.command_view.render();
 				})
 			;
 		},
@@ -1195,16 +1227,15 @@ define(function() {
 	var MediaManager_BottomCommand = Backbone.View.extend({
 		render: function () {
 			var button_text = this.options.button_text,
-				upload = new MediaManager_BottomCommand_Upload(),
+				pagination = new MediaManager_Pagination(),
 				search = new MediaManager_BottomCommand_Search(),
 				use = this.options.ck_insert ? new MediaManager_BottomCommand_UseSelection_MultiDialog({button_text: button_text}) : new MediaManager_BottomCommand_UseSelection({button_text: button_text})
 			;
-			upload.render();
-			upload.on("media_manager:switcher:to_upload", this.switch_to_upload, this);
+			pagination.render();
 			search.render();
 			use.render();
 			this.$el.empty()
-				.append(upload.$el)
+				.append(pagination.$el)
 				.append(use.$el)
 				.append(search.$el)
 			;
@@ -1214,19 +1245,41 @@ define(function() {
 		}
 	});
 
-		var MediaManager_BottomCommand_Upload = Backbone.View.extend({
-			className: "upload_media_container",
+		var MediaManager_Pagination = Backbone.View.extend({
 			events: {
-				"click .upload": "switch_to_upload"
+				"click .upfront-pagination_item-prev": "prev_page",
+				"click .upfront-pagination_item-next": "next_page",
+				"click .upfront-pagination_page-item": "set_page"
 			},
 			render: function () {
-				this.$el.empty().append('<button type="button" class="upload">Upload new media</button>');
+				var markup = '';
+				markup += '<div id="upfront-entity_list-pagination">';
+				if (ActiveFilters.max_pages > 1) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></div>';
+
+				_.each(_.range(1, ActiveFilters.max_pages), function (idx) {
+					var cls = idx == ActiveFilters.current_page ? 'current' : '';
+					markup += '<div class="upfront-pagination_item upfront-pagination_page-item ' + cls + '" data-idx="' + idx + '">' + idx + '</div>';
+				});
+
+				if (ActiveFilters.max_pages > 1) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"><i class="icon-angle-right"></i></div>';
+				markup += '</div>';
+				this.$el.empty().append(markup);
 			},
-			switch_to_upload: function (e) {
+			prev_page: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				this.trigger("media_manager:switcher:to_upload");
-			}
+				if (ActiveFilters.prev_page()) Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+			},
+			next_page: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				if (ActiveFilters.next_page()) Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+			},
+			set_page: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				if (ActiveFilters.set_page($(e.target).data("idx"))) Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+			},
 		});
 
 		var MediaManager_BottomCommand_Search = Backbone.View.extend({
@@ -1908,7 +1961,7 @@ define(function() {
 
 			pop.always(this.cleanup_active_filters);
 
-      Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
+			Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
 
 			return pop;
 		},
