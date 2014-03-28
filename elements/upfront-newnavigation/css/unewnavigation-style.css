@@ -1,3 +1,68 @@
+
+.upfront-navigation ul.menu, .upfront-navigation ul.menu ul {
+	list-style-type:none;	
+}
+.upfront-navigation ul.menu li {
+	position:relative;	
+}
+.upfront-navigation ul.menu > li {
+	display: inline-block;
+}
+.upfront-navigation ul.menu > li li {
+	display:block;
+}
+.upfront-navigation ul.menu > li > ul {
+	display:none;
+	position:absolute;
+	left:0;
+	top: 1em;
+	padding:0;
+}
+
+.upfront-navigation ul.menu li:hover > ul {
+	display:block;
+}
+
+.upfront-navigation ul.menu > li {
+	margin: 0 2px;
+}
+
+.upfront-navigation ul.menu  li > a {
+	display:block;
+	font-size: 16px;
+	text-decoration: none;
+	line-height: 1.2;
+
+}
+
+.upfront-navigation ul.menu  li > a, .upfront-navigation ul.menu  li > div > a {
+	padding: 4px 6px;
+}
+
+.upfront-navigation ul.sub-menu {
+	background-color:#ebeff2;	
+}
+
+.upfront-navigation ul.menu li li > a, .upfront-navigation ul.menu li li > div > a {
+
+	padding: 6px 6px;
+}
+.upfront-navigation ul.menu li a {
+	color: #333;	
+}
+.upfront-navigation ul.menu > li li {
+	min-width: 176px;	
+}
+
+.upfront-navigation ul.menu > li > ul.sub-menu > li > ul {
+  top: -1em !important;
+  left: 176px !important;
+}
+
+
+
+
+
 div.upfront-navigation[data-aliment="center"] ul.menu, div.upfront-output-unewnavigation[data-aliment="center"] ul.menu {
 	text-align: center;
 }
@@ -5,6 +70,11 @@ div.upfront-navigation[data-aliment="center"] ul.menu, div.upfront-output-unewna
 div.upfront-navigation[data-aliment="right"] ul.menu, div.upfront-output-unewnavigation[data-aliment="right"] ul.menu  {
 	text-align: right;
 }
+
+ul.sub-menu {
+	text-align: left;	
+}
+
 div.upfront-navigation ul.menu {
 	margin: 0;
 	padding: 0;	
@@ -18,3 +88,4 @@ div.upfront-navigation ul.menu > li:last-child {
 div.upfront-navigation ul.menu li a {
 	position: relative;	
 }
+

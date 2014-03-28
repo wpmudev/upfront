@@ -46,6 +46,8 @@ div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-a
 	text-transform: Capitalize;
 	font-size:0.8em;
 	position:relative;
+	font-style:normal;
+	font-size: 12px;
 }
 
 div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
