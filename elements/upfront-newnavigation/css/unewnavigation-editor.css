@@ -221,6 +221,11 @@ input#unavigation-link-type-3 {
 	margin-left: 20px;	
 }
 
+
+.ui-sortable-placeholder {
+	vertical-align: top;
+}
+
 /* DEFAULT STYLING */
 
 div.upfront-navigation.upfront-editable_entity ul.menu > li {
