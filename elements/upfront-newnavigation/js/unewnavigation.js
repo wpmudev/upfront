@@ -1,6 +1,6 @@
 (function ($) {
 
-define([
+	define([
 		'text!elements/upfront-newnavigation/tpl/link_editor.html'
 	], function(editorTpl) {
 
@@ -207,6 +207,11 @@ var MenuItemView = Backbone.View.extend({
 			.on('click', 'button.upfront-save_settings', function(e){
 
 				me.model['menu-item-type'] =  $('#unewnavigation-tooltip').find('input[name=unavigation-link-type]:checked').val();
+				
+				if(me.model['menu-item-type'] == 'anchor')
+					me.model['menu-item-type'] = 'custom';
+					
+				
 				me.model['menu-item-url'] = $('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val();
 
 
@@ -216,7 +221,7 @@ var MenuItemView = Backbone.View.extend({
 					}
 				}
 
-
+				me.parent_view.makeSortable();
 				me.parent_view.editModeOff();
 
 				me.saveLink(e);
@@ -238,7 +243,7 @@ var MenuItemView = Backbone.View.extend({
 		;
 
 		if(val == 'post_type'){
-		
+			this.removeAnchorsselect();
 			if(val == 'post_type' || e.type != 'change'){
 				var selectorOptions = {
 						postTypes: this.postTypes()
@@ -261,13 +266,39 @@ var MenuItemView = Backbone.View.extend({
 			}
 		}
 		else if( val == 'custom' ) {
+				this.removeAnchorsselect();
 				me.model['menu-item-type'] =  'custom';
 				me.model['menu-item-url'] = $('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val();
+		}
+		else if( val == 'anchor' ) {
+				this.addAnchorsselect();
 		}
 
 		
 
 
+	},
+	addAnchorsselect: function() {
+		var anchorsselect = new Upfront.Views.Editor.Settings.Anchor.LabeledTrigger({
+                                        model: this.parent_view.model,
+                                        title: "Anchor link"
+                                    });
+		anchorsselect.render();
+		
+		anchorsselect.$el.find('div.upfront-field-wrap-select').insertAfter($('input#unavigation-link-type-3').next('label'));	
+		$('<br /><label id="label-anchors-select">Select Anchor </label>').insertBefore($('div.upfront-field-wrap-select'));
+		
+		$('div.upfront-field-wrap-select input').on('change', function() {
+			$('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val('#'+$(this).val());
+					me.model['menu-item-type'] =  'custom';
+					me.model['menu-item-url'] = '#'+$(this).val();
+			
+		});
+	},
+	removeAnchorsselect: function() {
+		$('label#label-anchors-select').prev('br').remove();
+		$('label#label-anchors-select').remove();
+		$('div.upfront-field-wrap-select').remove();
 	},
 	saveLink: function(e) {
 
@@ -278,6 +309,7 @@ var MenuItemView = Backbone.View.extend({
 			
 		me.$el.find('a.new_menu_item').removeClass('new_menu_item');
 		me.$el.removeClass('new_menu_item');
+
 
 		//me.parent_view.editModeOff();
 		if(me.$el.parent('ul').hasClass('time_being_display'))
@@ -350,6 +382,11 @@ var MenuItemView = Backbone.View.extend({
 		;
 
 		this.$el.addClass('tooltip-open');
+
+		val = $('#unewnavigation-tooltip').find('input[name=unavigation-link-type]:checked').val();
+		if( val == 'anchor') {
+			this.addAnchorsselect();	
+		}
 
 		Upfront.Events.trigger("entity:settings:deactivate");
 	},
@@ -884,7 +921,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		this.$el.find('.upfront-object-content ul').sortable({
 			//connectWith:'ul',
+			start: function ( event, ui ) {
+				ui.item.find('i.navigation-add-item').css('display', 'none');
+			},
 			stop: function( event, ui ) {
+				ui.item.find('i.navigation-add-item').css('display', 'block');
 				//if(ui.item.find('i.navigation-add-item').length > 0)
 				//if(ui.sender != null) 
 					//ui.sender.children('li:last').append(ui.item.find('i.navigation-add-item'));

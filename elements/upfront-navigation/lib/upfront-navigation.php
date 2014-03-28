@@ -319,6 +319,7 @@ class Upfront_MenuSetting extends Upfront_Server {
 		}
 
         $items_saved = array();
+		
         if ( $menu_id && is_nav_menu($menu_id) ){
 
            /* $args = array(
@@ -326,7 +327,7 @@ class Upfront_MenuSetting extends Upfront_Server {
                 'menu-item-type' => 'custom',
                 'menu-item-title' => ( isset( $menu_item['menu-item-title'] ) ? $menu_item['menu-item-title'] : 'Custom menu' ),
                 'menu-item-url' => ( isset( $menu_item['menu-item-url'] ) ? $menu_item['menu-item-url'] : '' ),
-            );*/
+            ); */
 
             $items_updated[] = wp_update_nav_menu_item( $menu_id, $menu_item_id, $menu_item );
 
