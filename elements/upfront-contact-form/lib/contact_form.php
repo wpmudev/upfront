@@ -30,6 +30,9 @@ class Upfront_UcontactView extends Upfront_Object {
 			)
 		));
 
+		$args['show_subject'] = $args['show_subject'] && sizeof($args['show_subject']);
+		$args['form_add_title'] = $args['form_add_title'] && sizeof($args['form_add_title']);
+
 		$markup =  $this->get_template('ucontact', $args);
 
 		return $markup . '
@@ -56,12 +59,12 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public static function default_properties(){
 		return array(
-			'form_add_title' => false,
+			'form_add_title' => array(),
 			'form_title' => 'Contact form',
 			'form_name_label' => 'Your name:',
 			'form_email_label' => 'Your email:',
 			'form_email_to' => get_option('admin_email'),
-			'show_subject' => false,
+			'show_subject' => array(),
 			'form_subject_label' => 'Your subject:',
 			'form_default_subject' => 'Sent from the website',
 			'form_message_label' => 'Your message:',

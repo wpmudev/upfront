@@ -50,6 +50,9 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 			values: {}
 		});
 
+		args.show_subject = args.show_subject && args.show_subject.length;
+		args.form_add_title = args.form_add_title && args.form_add_title.length;
+
 		return this.tpl(args);
 	},
 	/**
