@@ -3027,7 +3027,8 @@ a.ueditor-action-pickercancel{
 .upfront-field-checkbox:checked,
 .upfront-field-select-single .upfront-field-select-option-selected label:before,
 .upfront-ui .upfront-region-field-icon:before,
-.sp-preview {
+.sp-preview,
+#upfront-popup-top.upfront-popup-meta .upload:before {
 	content: " ";
 	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
@@ -5829,6 +5830,22 @@ button.search-button.image {
 	float: left;
 	margin-left: 280px;
 	width: auto;
+	text-transform: none;
+	font-family: Verdana;
+	font-size:11px;
+	border:0;
+	background-color: rgb(182,214,242);
+	color: rgb(38,58,77);
+	border-radius: 3px;
+	padding:3px 6px 3px 6px;
+	margin-top: 8px;
+}
+
+#upfront-popup-top.upfront-popup-meta .upload:before {
+	width: 24px;
+	height: 14px;
+	background-position: -516px -535px;
+	opacity: .7;
 }
 
 /* --- Make text editing look better --- */
