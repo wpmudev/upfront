@@ -191,13 +191,17 @@ var MenuItemView = Backbone.View.extend({
 			contents
 		;
 		
-
-		
-
-		
 		//tplOptions.checked = 'checked="checked"';
+		
+		
+		var is_anchor = false;
+		
+		if(me.model['menu-item-url'].indexOf('#') == 0) {
+				is_anchor = true;
+		}
+		
 
-		contents = $('<div/>').append(this.linkTpl({'menu_item_type': me.model['menu-item-type'], 'menu_item_url': me.model['menu-item-url']}))
+		contents = $('<div/>').append(this.linkTpl({'menu_item_type': me.model['menu-item-type'], 'menu_item_url': me.model['menu-item-url'], 'is_anchor': is_anchor}))
 			.on('change', 'input[name=unavigation-link-type]', function(ev){
 				me.linkChanged(ev);
 			})
@@ -212,7 +216,7 @@ var MenuItemView = Backbone.View.extend({
 					me.model['menu-item-type'] = 'custom';
 					
 				
-				me.model['menu-item-url'] = $('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val();
+				//me.model['menu-item-url'] = $('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val();
 
 
 				if(me.$el.children('div').length > 0) {
@@ -279,17 +283,24 @@ var MenuItemView = Backbone.View.extend({
 
 	},
 	addAnchorsselect: function() {
+		var me = this;
 		var anchorsselect = new Upfront.Views.Editor.Settings.Anchor.LabeledTrigger({
                                         model: this.parent_view.model,
                                         title: "Anchor link"
                                     });
 		anchorsselect.render();
 		
-		anchorsselect.$el.find('div.upfront-field-wrap-select').insertAfter($('input#unavigation-link-type-3').next('label'));	
+		if(me.model['menu-item-url'].indexOf('#') == 0) {
+			anchorsselect.$el.find('div.upfront-field-wrap-select div.upfront-field-select-value span').html(me.model['menu-item-url'].replace('#', ''));
+			anchorsselect.$el.find('div.upfront-field-wrap-select input[value="'+me.model['menu-item-url'].replace('#', '')+'"]').parent().addClass('upfront-field-select-option-selected');
+		}
+		
+		anchorsselect.$el.find('div.upfront-field-wrap-select').insertAfter($('input#unavigation-link-type-3').next('label'));
+		
 		$('<br /><label id="label-anchors-select">Select Anchor </label>').insertBefore($('div.upfront-field-wrap-select'));
 		
 		$('div.upfront-field-wrap-select input').on('change', function() {
-			$('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val('#'+$(this).val());
+			//$('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val('#'+$(this).val());
 					me.model['menu-item-type'] =  'custom';
 					me.model['menu-item-url'] = '#'+$(this).val();
 			
@@ -341,7 +352,7 @@ var MenuItemView = Backbone.View.extend({
 			.error(function (ret) {
 				Upfront.Util.log("Error updating menu item");
 			});
-		
+
 	},
 	openTooltip: function(content, element){
 

@@ -85,7 +85,7 @@ div.upfront-navigation ul.menu > li:first-child {
 div.upfront-navigation ul.menu > li:last-child {
 	margin-right: 0 !important;
 }
-div.upfront-navigation ul.menu li a {
+div.upfront-navigation ul.menu li a, div.upfront-navigation ul.menu li {
 	position: relative;	
 }
 
