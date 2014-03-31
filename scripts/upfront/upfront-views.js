@@ -1555,9 +1555,14 @@ define([
 				this.trigger("activate_region", this);
 			},
 			on_mouse_over: function () {
-				var container = this.parent_view.get_container_view(this.model);
+				var container = this.parent_view.get_container_view(this.model),
+					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger');
 				if ( container && container.$el.hasClass('upfront-region-container-active') )
 					this.trigger("activate_region", this);
+				if ( this.model.is_main() && this.model.has_side_region() )
+					$delete_trigger.hide();
+				else
+					$delete_trigger.show();
 			},
 			_is_clipped: function () {
 				var type = this.model.get('type'),

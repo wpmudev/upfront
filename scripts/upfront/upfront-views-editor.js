@@ -6062,6 +6062,7 @@ var Field_Anchor = Field_Select.extend({
 	});
 
 	var RegionPanel = InlinePanel.extend({
+		className: 'upfront-inline-panel upfront-region-panel upfront-no-select',
 		initialize: function () {
 			this.items = _([]);
 		},
@@ -6099,7 +6100,6 @@ var Field_Anchor = Field_Select.extend({
 	});
 
 	var RegionPanel_Edit = InlinePanel.extend({
-		className: 'upfront-inline-panel upfront-region-panel-edit upfront-no-select',
 		initialize: function () {
 			//this.bg = new RegionPanelItem_BgSetting({model: this.model});
 			if ( this.model.is_main() ){
@@ -6192,6 +6192,7 @@ var Field_Anchor = Field_Select.extend({
 	});
 
 	var RegionPanels = InlinePanels.extend({
+		className: 'upfront-inline-panels upfront-region-panels upfront-ui',
 		initialize: function () {
 			var container = this.model.get('container'),
 				name = this.model.get('name');
