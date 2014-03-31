@@ -4811,13 +4811,28 @@ var Field_Anchor = Field_Select.extend({
 				scroll_top = $(document).scrollTop(),
 				scroll_bottom = scroll_top + $(window).height(),
 				rel_top = $main.offset().top,
+				rel_bottom = 50,
 				modal_offset = this.$el.offset(),
-				modal_right = modal_offset.left+this.$el.width();
+				modal_right = modal_offset.left+this.$el.width(),
+				modal_height = this.$el.find('.upfront-inline-modal-wrap').outerHeight(),
+				modal_bottom = top + modal_height
+				;
 			if ( scroll_top > top-rel_top ) {
 				if ( this.$el.css('position') != 'fixed' )
 					this.$el.css({
 						position: 'fixed',
 						top: rel_top,
+						bottom: 'auto',
+						left: modal_offset.left,
+						right: $(window).width()-modal_right
+					});
+			}
+			else if ( ( bottom > modal_bottom ? bottom : modal_bottom )+rel_bottom > scroll_bottom ) {
+				if ( this.$el.css('position') != 'fixed' )
+					this.$el.css({
+						position: 'fixed',
+						top: bottom > modal_bottom ? $(window).height()-(bottom-top)-rel_bottom : $(window).height()-modal_height-rel_bottom,
+						bottom: 'auto',
 						left: modal_offset.left,
 						right: $(window).width()-modal_right
 					});
@@ -4826,6 +4841,7 @@ var Field_Anchor = Field_Select.extend({
 				this.$el.css({
 					position: '',
 					top: '',
+					bottom: '',
 					left: '',
 					right: ''
 				});
@@ -4844,10 +4860,30 @@ var Field_Anchor = Field_Select.extend({
 				setting = $template.find('#upfront-region-bg-setting').html(),
 				index = collection.indexOf(this.model),
 				index_container = collection.index_container(this.model),
+				total_container = collection.total_container(),
+				is_top = index_container == 0,
+				is_bottom = index_container == total_container-2, // don't include shadow region
+				region_global = new Field_Checkboxes({
+					model: this.model,
+					name: 'scope',
+					multiple: false,
+					values: [
+						{ label: "Use this area as a global theme " + ( is_top ? 'header' : ( is_bottom ? 'footer' : '' ) ), value: 'global' }
+					],
+					change: function(){
+						var value = this.get_value(),
+							sub_regions = this.model.get_sub_regions();
+						_.each(sub_regions, function(each){
+							if ( each )
+								each.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
+						});
+						this.model.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
+					}
+				}),
 				region_type = new Field_Radios({
 					model: this.model,
-					property: 'type',
-					default_value: this.model.get('type') || 'wide',
+					name: 'type',
+					default_value: 'wide',
 					layout: 'horizontal-inline',
 					values: [
 						{ label: "Full Screen", value: 'full', disabled: index_container > 0 },
@@ -4857,11 +4893,11 @@ var Field_Anchor = Field_Select.extend({
 					change: function () {
 						var value = this.get_value();
 						this.model.set({type: value}, {silent: true});
-						this.property.set({value: value});
 						if ( value == 'full' )
 							$region_nav.show();
 						else
 							$region_nav.hide();
+						this.model.get('properties').trigger('change');
 					}
 				}),
 				region_nav = new Field_Radios({
@@ -4947,20 +4983,26 @@ var Field_Anchor = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				}),
-				$region_type, $region_nav
+				$region_global, $region_type, $region_nav
 			;
 			$modal.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
+			$region_global = $content.find('.upfront-region-bg-setting-region-global');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
 			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
 			if ( this.model.is_main() ){
+				if ( is_top || is_bottom ){
+					region_global.render();
+					$region_global.append(region_global.$el);
+				}
 				region_type.render();
 				$region_type.append(region_type.$el);
 				region_nav.render();
 				$region_nav.append(region_nav.$el);
 			}
 			else {
+				$region_global.hide();
 				$region_type.hide();
 				$region_nav.hide();
 			}
@@ -5875,7 +5917,7 @@ var Field_Anchor = Field_Select.extend({
 				return this.get_new_title(start+1);
 			return title;
 		},
-		add_region: function () {
+		add_region: function (e) {
 			var to = this.options.to,
 				collection = this.model.collection,
 				total = collection.size()-1, // total minus shadow region
@@ -5892,13 +5934,14 @@ var Field_Anchor = Field_Select.extend({
 					"container": is_new_container ? name : this.model.get('name'),
 					"title": title
 				}));
-			new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
 				new_region.set_property('sub', is_before ? 'left' : 'right');
 				new_region.set_property('position', is_before ? position-1 : position+1 );
+				new_region.set({scope: this.model.get('scope')});
 			}
 			else {
+				new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
 				if ( to == 'top' && prev_model && ( prev_model.get('container') && prev_model.get('container') != prev_model.get('name') ) )
 					index--;
 				else if ( to == 'bottom' && next_model && ( next_model.get('container') && next_model.get('container') != next_model.get('name') ) )
@@ -5906,13 +5949,14 @@ var Field_Anchor = Field_Select.extend({
 			}
 			if ( new_region.get('clip') || !is_new_container ){
 				Upfront.Events.once('entity:region:before_render', this.before_animation, this);
-				Upfront.Events.once('entity:region:after_render', this.run_animation, this);
+				Upfront.Events.once('entity:region:added', this.run_animation, this);
 			}
 			else {
 				Upfront.Events.once('entity:region_container:before_render', this.before_animation, this);
-				Upfront.Events.once('entity:region_container:after_render', this.run_animation, this);
+				Upfront.Events.once('entity:region:added', this.run_animation, this);
 			}
 			new_region.add_to(collection, (is_before ? index : index+1), {sub: is_before ? 'left' : 'right'});
+			e.stopPropagation();
 		},
 		before_animation: function (view, model) {
 			// prepare to run animation, disable edit
@@ -5926,18 +5970,18 @@ var Field_Anchor = Field_Select.extend({
 			view.$el.addClass(ani_class);
 			// scroll if needed
 			if ( to == 'top' || to == 'bottom' ){
-				view.$el.one('animationstart webkitAnimationStart MSAnimationStart oAnimationStart', function () {
-					var $container = $(this).hasClass('upfront-region-container') ? $(this) : $(this).closest('.upfront-region-container'),
-						offset = $container.offset(),
-						scroll_top = $(document).scrollTop(),
-						scroll_to = false;
-					if ( to == 'top' && offset.top < scroll_top )
-						scroll_to = offset.top - 50;
-					else if ( to == 'bottom' )
-						scroll_to = $(document).height()-$(window).height();
-					if ( scroll_to !== false )
-						$('html,body').animate( {scrollTop: scroll_to}, 200 );
-				});
+				var $container = view.$el.hasClass('upfront-region-container') ? view.$el : view.$el.closest('.upfront-region-container'),
+					offset = $container.offset(),
+					scroll_top = $(document).scrollTop(),
+					scroll_to = false,
+					height = $container.height(),
+					w_height = $(window).height();
+				if ( to == 'top' && offset.top < scroll_top )
+					scroll_to = offset.top - 50;
+				else if ( to == 'bottom' && offset.top+height > scroll_top+w_height )
+					scroll_to = offset.top+height-w_height;
+				if ( scroll_to !== false )
+					$('html,body').animate( {scrollTop: scroll_to}, 600 );
 			}
 			view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
 				end();
@@ -6171,8 +6215,8 @@ var Field_Anchor = Field_Select.extend({
 				index = collection.indexOf(this.model),
 				total = collection.size()-1; // total minus shadow region
 			panels.push( this.edit_panel );
-			if ( index == total-1 ) // last region
-				panels.push( this.add_panel_bottom );
+			//if ( index == total-1 ) // last region
+			//	panels.push( this.add_panel_bottom );
 			if ( this.model.is_main() ) {
 				var sub_models = this.model.get_sub_regions();
 				if ( this.model.get('allow_sidebar') ){
@@ -6181,6 +6225,7 @@ var Field_Anchor = Field_Select.extend({
 					if ( sub_models.right === false )
 						panels.push( this.add_panel_right );
 				}
+				panels.push( this.add_panel_bottom );
 			}
 			this._panels = panels;
 			return panels;

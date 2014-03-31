@@ -1868,7 +1868,8 @@ a.ueditor-action-pickercancel{
 	visibility: visible;
 	opacity: 1;
 }
-.upfront-region-editing .upfront-region-container .upfront-region-edit-trigger {
+.upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
+.upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger {
 	visibility: hidden;
 	opacity: 0;
 }
@@ -2012,6 +2013,9 @@ a.ueditor-action-pickercancel{
 .upfront-region-editing .upfront-region-editing-overlay {
 	z-index: 10;
 	background: rgba(31, 48, 63, 0.8);
+}
+.upfront-region-editing .upfront-region-container-active .upfront-region-side {
+	background: rgba(175, 185, 195, 0.5);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left {
 	border-right: 1px dotted #7f7f7f;
@@ -2620,13 +2624,16 @@ a.ueditor-action-pickercancel{
 }
 .upfront-entity_meta .upfront-icon-button {
 	opacity: 0;
+	visibility: hidden;
 	margin: 0 0 4px;
 }
 .upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button{
     opacity: 1;
+	visibility: visible;
 }
 .upfront-region-editing .upfront-region-active > .upfront-entity_meta .upfront-icon-button {
 	opacity: 1;
+	visibility: visible;
 }
 .upfront-icon-button-delete {
 	box-shadow: inset 0 0 0 1px #cc423d;

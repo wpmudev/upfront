@@ -319,31 +319,51 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function from_id ($id) {
-		$regions = self::get_regions_data();
+		$regions_data = self::get_regions_data();
 		$data = json_decode( get_option($id, json_encode(array())), true );
 		if ( ! empty($data) ) {
+			$regions = array();
+			$regions_added = array();
 			foreach ( $data['regions'] as $i => $region ) {
-				foreach ( $regions as $region_data ){
-					if ( $region['name'] != $region_data['name'] )
+				foreach ( $regions_data as $region_data ){
+					if ( $region_data['name'] != $region['name'] && $region_data['container'] != $region['name'] )
 						continue;
-					if ( isset($region['scope']) && $region['scope'] != 'local' )
-						$data['regions'][$i] = $region_data;
+					if ( isset($region['scope']) && $region['scope'] == $region_data['scope'] && !in_array($region_data['name'], $regions_added) ){
+						$regions[] = $region_data;
+						$regions_added[] = $region_data['name'];
+						continue 2;
+					}
 				}
+				$regions[] = $region;
 			}
+			$data['regions'] = $regions;
 			$data['layout'] = self::$cascade;
 		}
 		return self::from_php($data);
 	}
 
 	public static function get_regions_data () {
-		$regions = self::_get_regions();
-		foreach ( $regions as $i => $region ) {
+		$regions_data = self::_get_regions();
+		$scopes = array();
+		$regions_added = array();
+		$regions = array();
+		foreach ( $regions_data as $i => $region ) {
 			if ( $region['scope'] != 'local' ){
-				$region_data = json_decode( get_option(self::_get_region_id($region['name'], $region['scope']), json_encode(array())), true );
-				if ( empty($region_data) )
+				if ( !$scopes[$region['scope']] )
+					$scopes[$region['scope']] = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+				if ( empty($scopes[$region['scope']]) ){
+					$regions[] = $region;
 					continue;
-				$regions[$i] = $region_data;
+				}
+				foreach ( $scopes[$region['scope']] as $scope => $data ) {
+					if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) && !in_array($data['name'], $regions_added) ){
+						$regions[] = $data;
+						$regions_added[] = $data['name'];
+					}
+				}
+				continue;
 			}
+			$regions[] = $region;
 		}
 		return $regions;
 	}
@@ -372,6 +392,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $storage_key . '-' . $region_id . ( !empty($scope) ? '-' . $scope : '' );
 	}
 
+	protected static function _get_scope_id ($scope) {
+		$storage_key = self::get_storage_key();
+		return $storage_key . '-regions-' . $scope;
+	}
+
 
 	public function get_cascade () {
 		if (!empty(self::$cascade)) return self::$cascade;
@@ -396,16 +421,22 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public function region_to_json ($region_name) {
-		//return json_encode($this->get_region_data($region_name), true);
 		return json_encode($this->get_region_data($region_name));
 	}
 
 	public function save () {
 		$key = $this->get_id();
-		foreach ( self::_get_regions() as $region ){
-			if ( $region['scope'] != 'local' )
-				update_option(self::_get_region_id($region['name'], $region['scope']), $this->region_to_json($region['name']));
+		$scopes = array();
+		var_dump($this->_data['regions']);
+		foreach ( $this->_data['regions'] as $region ){
+			if ( $region['scope'] != 'local' ){
+				if ( !is_array($scopes[$region['scope']]) )
+					$scopes[$region['scope']] = array();
+				$scopes[$region['scope']][] = $region;
+			}
 		}
+		foreach ( $scopes as $scope => $data )
+			update_option(self::_get_scope_id($scope), json_encode($data));
 		update_option($key, $this->to_json());
 		return $key;
 	}
@@ -413,14 +444,18 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public function delete () {
 		return delete_option($this->get_id());
 	}
-
-	public function delete_region ($region_name, $scope) {
-		return delete_option(self::_get_region_id($region_name, $scope));
+	
+	public function delete_scope ($scope) {
+		return delete_option(self::_get_scope_id($scope));
 	}
 
 	public function delete_regions () {
+		$deleted = array();
 		foreach ( self::_get_regions() as $i => $region ) {
-			$this->delete_region($region['name'], $region['scope']);
+			if ( !in_array($region['scope'], $deleted) ){
+				$this->delete_scope($region['scope']);
+				$deleted[] = $region['scope'];
+			}
 		}
 	}
 

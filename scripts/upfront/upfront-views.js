@@ -1653,9 +1653,19 @@ define([
 				this.model = false;
 			},
 			on_delete_click: function (e) {
+				var main, main_view;
 				e.preventDefault();
-				if ( confirm("Are you sure you want to delete this section?") )
+				if ( confirm("Are you sure you want to delete this section?") ){
+					// if ( this.model.get('container') ){
+						// main = this.model.collection.get_by_name(this.model.get('container'));
+						// main_view = Upfront.data.region_views[main.cid];
+					// }
 					this.model.collection.remove(this.model);
+					// if ( main_view ){
+						// Upfront.Events.trigger('command:region:edit_toggle', true);
+						// main_view.trigger('activate_region', main_view);
+					// }
+				}
 			},
 			on_settings_click: function (e) {
 				e.preventDefault();
@@ -1719,6 +1729,7 @@ define([
 					else {
 						container_view.delegateEvents();
 					}
+					return container_view;
 				}
 			},
 			render_region: function (region, sub) {
@@ -1775,6 +1786,7 @@ define([
 				}
 				if ( region.get("default") )
 					local_view.trigger("activate_region", local_view);
+				return local_view;
 			},
 			get_container_view: function (region) {
 				return _.find(this.container_views, function (container) {
@@ -1826,15 +1838,16 @@ define([
 			on_add: function (model, collection, options) {
 				var container_view = this.get_container_view(model),
 					index = typeof options.index != 'undefined' ? options.index : -1,
-					sub = options.sub ? options.sub : false;
+					sub = options.sub ? options.sub : false,
+					region_view;
 				if ( ! container_view ){
 					this.render_container(model, index);
-					this.render_region(model);
+					region_view  = this.render_region(model);
 				}
 				else {
-					this.render_region(model, sub);
+					region_view = this.render_region(model, sub);
 				}
-				Upfront.Events.trigger("entity:region:added", this, this.model);
+				Upfront.Events.trigger("entity:region:added", region_view, region_view.model);
 			},
 			on_remove: function (model) {
 				var view = Upfront.data.region_views[model.cid];

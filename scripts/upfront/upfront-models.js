@@ -366,6 +366,13 @@ var _alpha = "alpha",
 				}),
 				index = collection.indexOf(model);
 			return index;
+		},
+		
+		total_container: function () {
+			var collection = this.filter(function(m){
+					return m.is_main();
+			});
+			return collection.length;
 		}
 	}),
 
