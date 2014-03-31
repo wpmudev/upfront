@@ -297,7 +297,7 @@ var MenuItemView = Backbone.View.extend({
 		
 		anchorsselect.$el.find('div.upfront-field-wrap-select').insertAfter($('input#unavigation-link-type-3').next('label'));
 		
-		$('<br /><label id="label-anchors-select">Select Anchor </label>').insertBefore($('div.upfront-field-wrap-select'));
+		//$('<br /><label id="label-anchors-select">Select Anchor </label>').insertBefore($('div.upfront-field-wrap-select'));
 		
 		$('div.upfront-field-wrap-select input').on('change', function() {
 			//$('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val('#'+$(this).val());
@@ -307,8 +307,8 @@ var MenuItemView = Backbone.View.extend({
 		});
 	},
 	removeAnchorsselect: function() {
-		$('label#label-anchors-select').prev('br').remove();
-		$('label#label-anchors-select').remove();
+//		$('label#label-anchors-select').prev('br').remove();
+	//	$('label#label-anchors-select').remove();
 		$('div.upfront-field-wrap-select').remove();
 	},
 	saveLink: function(e) {
@@ -360,7 +360,7 @@ var MenuItemView = Backbone.View.extend({
 			elementPosition = element.offset(),
 			tooltipPosition = {
 				top: elementPosition.top + element.outerHeight(),
-				left: elementPosition.left - 125 + Math.floor(element.outerWidth() / 2)
+				left: elementPosition.left - 98 + Math.floor(element.outerWidth() / 2)
 			},
 			tooltipClass = 'unewnavigation-tooltip-bottom',
 			me = this
