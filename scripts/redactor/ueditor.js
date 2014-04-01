@@ -237,7 +237,7 @@ var hackRedactor = function(){
 	// This method is only triggered via keyboard shortcuts, so override this
 	// rather than overriding and re-implementing the shortcut dispatch.
 	$.Redactor.prototype.shortcutsLoadFormat = function (e, cmd) {
-		e.preventDefault();
+		//e.preventDefault();
 		Upfront.Util.log("Block styles keyboard shortcuts have been disabled");
 	};
 };
