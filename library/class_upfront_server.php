@@ -611,8 +611,11 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		// Preview listener setup
 		if (is_admin()) return false;
 		if (!self::is_preview()) return false;
+		
 		// Apply default regions
-		add_filter('upfront_regions', array($this, 'intercept_layout_loading'), 999, 2);
+		//add_filter('upfront_regions', array($this, 'intercept_regions_loading'), 999, 2);
+		
+		add_filter('upfront_layout_from_id', array($this, 'intercept_layout_loading'), 999, 3);
 	}
 
 	/**
@@ -647,8 +650,28 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 
 	/**
 	 * Intercepts layout loading and overrides with revision data.
+	 * @deprecated
 	 */
-	public function intercept_layout_loading ($layout, $cascade) {
+	public function intercept_regions_loading ($layout, $cascade) {
+		if (!self::is_preview()) return $layout;
+		$key = $_GET[self::HOOK];
+		$raw = $this->_data->get_revision($key);
+		/*
+		if (!empty($raw)) {
+			$new_layout = Upfront_Layout::from_php($raw);
+		}
+		*/
+
+		return empty($raw["regions"])
+			? $layout
+			: $raw["regions"]
+		;
+	}
+
+	/**
+	 * Intercepts layout loading and overrides with revision data.
+	 */
+	public function intercept_layout_loading ($layout, $type, $cascade) {
 		if (!self::is_preview()) return $layout;
 		$key = $_GET[self::HOOK];
 		$raw = $this->_data->get_revision($key);
@@ -656,9 +679,9 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 			$new_layout = Upfront_Layout::from_php($raw);
 		}
 
-		return empty($raw["regions"])
-			? $layout
-			: $raw["regions"]
+		return !empty($new_layout) && !$new_layout->is_empty()
+			? $new_layout
+			: $layout
 		;
 	}
 
