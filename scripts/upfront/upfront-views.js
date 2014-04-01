@@ -1941,7 +1941,7 @@ define([
 			},
 			render: function () {
 				this.$el.html(this.tpl(this.model.toJSON()));
-				if(!this.local_view)
+				//if(!this.local_view)
 					this.local_view = new Regions({"model": this.model.get("regions")});
 
 				this.local_view.render();
