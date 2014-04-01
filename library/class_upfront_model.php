@@ -437,7 +437,26 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 		}
 		foreach ( $scopes as $scope => $data ) {
-			update_option(self::_get_scope_id($scope), json_encode($data));
+			$current_scope = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+			$scope_data = array();
+			if ( $current_scope ){ // merge with current scope if it's exist
+				foreach ( $data as $region ){
+					$replaced = false;
+					foreach ( $current_scope as $i => $current_region ){
+						if ( $region['name'] == $current_region['name'] ){
+							$current_scope[$i] = $region;
+							$replaced = true;
+							break;
+						}
+					}
+					if ( ! $replaced )
+						$current_scope[] = $region;
+				}
+			}
+			else {
+				$current_scope = $data;
+			}
+			update_option(self::_get_scope_id($scope), json_encode($current_scope));
 		}
 		update_option($key, $this->to_json());
 		return $key;
