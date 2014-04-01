@@ -199,7 +199,7 @@ EOAdminStyle;
     <h3>Actions</h3>
     <button class="upfront-finish_layout_editing">Finish editing</button>
   </div>
-  <div id="sidebar-ui"></div>
+  <div id="sidebar-ui" class="upfront-ui"></div>
   <div id="settings" style="display:none"></div>
   <div id="contextmenu" style="display:none"></div>
 EOAdditivemarkup;
@@ -215,14 +215,14 @@ EOAdditivemarkup;
 	function add_edit_menu ( $wp_admin_bar ) {
 		global $post, $tag, $wp_the_query;
 		$current_object = $wp_the_query->get_queried_object();
-		
+
 		$wp_admin_bar->add_menu( array(
 			'id' => 'upfront-create-theme',
 			'title' => __('Create New Theme'),
 			'href' => site_url('/create_new/theme'),
 			'meta' => array( 'class' => 'upfront-create_theme' )
 		) );
-		
+
 		if ( !is_admin() ){
 			$wp_admin_bar->add_menu( array(
 				'id' => 'upfront-edit_layout',

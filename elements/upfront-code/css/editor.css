@@ -18,6 +18,7 @@
 	bottom: 10px;
 	right: 25px;
 	padding: 5px 10px;
+	border: 0;
 	border-radius: 0;
 	font-size: 14px;
 }
@@ -136,9 +137,9 @@
 
 
 /* Missing defaults */
-.upfront-code_element-module button.embed, 
+.upfront-code_element-module button.embed,
 .upfront-code_element-module button.create,
-.upfront_code-editor-simple button 
+.upfront_code-editor-simple button
 {
 	border: 0;
 	border-radius: 2px;
@@ -151,7 +152,7 @@
 
 /* Image editable */
 .upfront-code-editable-image {
-	position: absolute; 
+	position: absolute;
 	display: none;
 	background: white;
 	z-index: 999999999999999;

@@ -496,7 +496,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 		else if(this.property('image_status') == 'starting'){
 			rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
-					'<span class="upfront-image-resizethiselement">Add Image</span><div class=""><a class="upfront-image-select button" href="#" title="Add Image">+</a></div>'+
+					'<span class="upfront-image-resizethiselement">Add Image</span><div class=""><a class="upfront-image-select" href="#" title="Add Image">+</a></div>'+
 			'</div></div>';
 		}
 		else {
@@ -572,7 +572,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.controls.render();
 			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
 
-			me.$el.append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
+			me.parent_module_view.$('.upfront-module').append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
 			me.controls.delegateEvents();
 			me.$el.removeClass('upfront-editing');
 
@@ -2686,7 +2686,7 @@ var ImageSelector = Backbone.View.extend({
 			parent.draggable('disable');
 		*/
 
-		overlay = $('<div id="upfront-image-overlay"></div>').append(tpl(tplOptions)).hide();
+		overlay = $('<div id="upfront-image-overlay" class="upfront-ui"></div>').append(tpl(tplOptions)).hide();
 
 		$('body')
 			.append(overlay)

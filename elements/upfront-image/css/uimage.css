@@ -49,6 +49,11 @@
 	font-weight: 200;
 }
 
+#upfront-image-overlay h2:before,
+#upfront-image-overlay h2:after {
+	display: none;
+}
+
 .small_placeholder #upront-image-placeholder h2 {
 	font-size: 24px;
 	margin-bottom: 10px;
@@ -249,7 +254,8 @@ OLD STYLE
 	height: 90px;
 }
 
-.upfront-image-select.button {
+a.upfront-image-select,
+a.upfront-image-select:visited {
 	border: 2px solid #B5BBC1;
 	color: #B5BBC1;
 	display: block;
@@ -261,10 +267,9 @@ OLD STYLE
 	font-size: 31px;
 	line-height: 35px;
 	padding: 0;
-
 }
 
-.upfront-image-select.button:hover {
+a.upfront-image-select:hover {
 	border: 2px solid #3ea;
 	color: #3ea;
 	background: none;
@@ -453,7 +458,7 @@ OLD STYLE
 
 #image-edit-buttons {
 	z-index: 11;
-	width: 150px;
+	width: 160px;
 }
 
 a.image-edit-button,
@@ -992,8 +997,8 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .uimage-small .uimage-controls {
-	top: auto;
-	bottom: 10px;
+	top: 100%;
+	margin-top: -10px;
 }
 
 .uimage-small .upfront-inline-panel-item {

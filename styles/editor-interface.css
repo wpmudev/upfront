@@ -3854,6 +3854,46 @@ a.ueditor-action-pickercancel{
 	background-position: -480px -40px;
 }
 
+/* Tooltips */
+
+.nav_tooltip {
+    background: rgba(38,58,77,0.9);
+    border: 1px solid #395269;
+    width: 82px;
+    height: 38px;
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    position: absolute;
+    z-index: 999999;
+    top: 0px;
+}
+
+.nav_tooltip:after, .nav_tooltip:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.nav_tooltip:after {
+    border-color: rgba(57, 82, 105, 0);
+    border-top-color: rgba(38,58,77,0.9);
+    border-width: 7px;
+    left: 50%;
+    margin-left: -7px;
+}
+
+.nav_tooltip:before {
+    border-color: rgba(57, 82, 105, 0);
+    border-top-color: #395269;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+
 /* ContentEditor sidebar */
 
 .upfront-sidebar-content_editor-sidebar_command{
@@ -7100,7 +7140,6 @@ a.ueditor-select-option:hover {
 	font-family: 'Source Sans Pro';
 	text-align: center;
 	font-size: 18px;
-	font-weight: 200;
 	width: 100%;
 	height: 100%;
 	min-height: 60px;
@@ -7201,6 +7240,7 @@ body .redactor_air {
 }
 
 body .redactor_air:after {
+	box-sizing: border-box;
 	height:14px;
 	width:14px;
 	border: 7px solid transparent;
@@ -8637,7 +8677,8 @@ div.ace_editor .ace_fold {
 }
 
 span.upfront-css-new-text {
-	border-bottom: 1px solid  #1fcd8f;
+	border-bottom: 1px solid #1fcd8f;
+	font-size: 11px;
 }
 
 .upfront-css-new span.codeicon {
