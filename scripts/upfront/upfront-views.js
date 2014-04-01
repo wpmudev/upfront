@@ -551,72 +551,72 @@ define([
 		}),
 		DefaultMenuList = ContextMenuList.extend({
 			initialize: function() {
-				  this.menuitems = _([
-				  new Upfront.Views.ContextMenuItem({
-					  get_label: function() {
-						  return 'Save';
-					  },
-					  action: function() {
-						var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
-						savelayout.on_click();
-					  }
-				  }),
-				  new Upfront.Views.ContextMenuItem({
-					  get_label: function() {
-						  return 'Undo';
-					  },
-					  action: function(for_view) {
-						//console.log(Upfront.Application.layout);
-						var undo = new Upfront.Views.Editor.Command_Undo({"model": Upfront.Application.layout});
-						undo.on_click();
-					  }
-				  }),
-				  new Upfront.Views.ContextMenuItem({
-					  get_label: function() {
-						  return Upfront.Application.get_gridstate() ? 'Hide Grid': 'Show Grid';
-					  },
-					  action: function() {
-						var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
-						togglegrid.on_click();
-					  }
-				  }),
-				  new Upfront.Views.ContextMenuItem({
-					  get_label: function() {
-						  return 'Clone';
-					  },
-					  in_context: function() {
-					  	// Only show this menu on ObjectView instance
-					  	return this.for_view instanceof Upfront.Views.ObjectView;
-					  },
-					  action: function() {
-						var module_view = this.for_view.parent_module_view,
-							module = module_view.model,
-							modules = module_view.region.get('modules'),
-							wrappers = module_view.region.get('wrappers'),
-							wrap_model = wrappers.get_by_wrapper_id(module.get_property_value_by_name('wrapper_id')),
-							data = Upfront.Util.model_to_json(module),
-							new_model = new Upfront.Models.Module(data),
-							wrapper_id = Upfront.Util.get_unique_id("wrapper"),
-							wrap_data = Upfront.Util.model_to_json(wrap_model),
-							new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
-							index = modules.indexOf(module),
-							models = [];
-						// Make sure new model element ids and wrapper id is unique
-						new_wrap_model.set_property('wrapper_id', wrapper_id);
-						new_model.set_property('wrapper_id', wrapper_id);
-						new_model.set_property('element_id', Upfront.Util.get_unique_id('module'));
-						new_model.get('objects').each(function(obj){
-							obj.set_property('element_id', Upfront.Util.get_unique_id('object'));
-						});
-						// Add to layout now
-						wrappers.add(new_wrap_model);
-						new_model.add_to(modules, index+1);
-						// Normalize layout
-						var ed = Upfront.Behaviors.GridEditor;
-						ed.start(Upfront.data.module_views[new_model.cid], new_model);
-						ed.normalize(ed.els, ed.wraps);
-					  }
-				  })
+					this.menuitems = _([
+					new Upfront.Views.ContextMenuItem({
+						get_label: function() {
+							return 'Save';
+						},
+						action: function() {
+							var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
+							savelayout.on_click();
+						}
+					}),
+					new Upfront.Views.ContextMenuItem({
+						get_label: function() {
+							return 'Undo';
+						},
+						action: function(for_view) {
+							//console.log(Upfront.Application.layout);
+							var undo = new Upfront.Views.Editor.Command_Undo({"model": Upfront.Application.layout});
+							undo.on_click();
+						}
+					}),
+					new Upfront.Views.ContextMenuItem({
+						get_label: function() {
+							return Upfront.Application.get_gridstate() ? 'Hide Grid': 'Show Grid';
+						},
+						action: function() {
+							var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
+							togglegrid.on_click();
+						}
+					}),
+					new Upfront.Views.ContextMenuItem({
+						get_label: function() {
+							return 'Clone';
+						},
+						in_context: function() {
+							// Only show this menu on ObjectView instance
+							return this.for_view instanceof Upfront.Views.ObjectView;
+						},
+						action: function() {
+							var module_view = this.for_view.parent_module_view,
+								module = module_view.model,
+								modules = module_view.region.get('modules'),
+								wrappers = module_view.region.get('wrappers'),
+								wrap_model = wrappers.get_by_wrapper_id(module.get_property_value_by_name('wrapper_id')),
+								data = Upfront.Util.model_to_json(module),
+								new_model = new Upfront.Models.Module(data),
+								wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+								wrap_data = Upfront.Util.model_to_json(wrap_model),
+								new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
+								index = modules.indexOf(module),
+								models = [];
+							// Make sure new model element ids and wrapper id is unique
+							new_wrap_model.set_property('wrapper_id', wrapper_id);
+							new_model.set_property('wrapper_id', wrapper_id);
+							new_model.set_property('element_id', Upfront.Util.get_unique_id('module'));
+							new_model.get('objects').each(function(obj){
+								obj.set_property('element_id', Upfront.Util.get_unique_id('object'));
+							});
+							// Add to layout now
+							wrappers.add(new_wrap_model);
+							new_model.add_to(modules, index+1);
+							// Normalize layout
+							var ed = Upfront.Behaviors.GridEditor;
+							ed.start(Upfront.data.module_views[new_model.cid], new_model);
+							ed.normalize(ed.els, ed.wraps);
+						}
+					})
 				]);
 			}
 
