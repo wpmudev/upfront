@@ -2811,7 +2811,7 @@ a.ueditor-action-pickercancel{
 	position: relative;
 	padding: 10px;
 	min-width: 270px;
-	max-height: 350px;
+	max-height: 400px;
 	height: 100%;
 	overflow-x: hidden;
 	overflow-y: scroll;
@@ -8402,7 +8402,7 @@ top: -6px;
 
 #settings .plaintxt-settings-panel .upfront-settings_panel_scroll {
 	min-width: 238px;
-	max-height: 155px !important
+	max-height: 400px !important
 }
 
 
