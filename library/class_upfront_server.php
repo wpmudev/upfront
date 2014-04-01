@@ -394,7 +394,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 	function save_styles(){
 		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
-		$styles = wp_kses(stripslashes($_POST['styles']), array());
+		$styles = trim(stripslashes($_POST['styles']));
 		$element_type = isset($_POST['elementType']) ? sanitize_key($_POST['elementType']) : 'unknown';
 		$db_option = 'upfront_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option);
@@ -611,10 +611,10 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		// Preview listener setup
 		if (is_admin()) return false;
 		if (!self::is_preview()) return false;
-		
+
 		// Apply default regions
 		//add_filter('upfront_regions', array($this, 'intercept_regions_loading'), 999, 2);
-		
+
 		add_filter('upfront_layout_from_id', array($this, 'intercept_layout_loading'), 999, 3);
 	}
 
