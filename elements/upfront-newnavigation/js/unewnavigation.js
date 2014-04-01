@@ -871,7 +871,32 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		};
 
 	},*/
+	onElementResize: function() {
+
+		if($('.upfront-resize').width() < 360) {
+			this.property('menu_style', 'vertical');
+		}
+		else if($('.upfront-resize').width() > 460) {
+			this.property('menu_style', 'horizontal');
+		}
+	},
 	on_render: function() {
+
+
+		var me = this;
+		//Bind resizing events
+		if(typeof(me.parent_module_view) != 'undefined') {
+			if(!me.parent_module_view.$el.data('resizeHandling')){
+				me.parent_module_view.$el
+					//.on('resizestart', $.proxy(me.onElementResizeStart, me))
+					//.on('resize', $.proxy(me.onElementResizing, me))
+					.on('resizestop', $.proxy(me.onElementResize, me))
+					.data('resizeHandling', true)
+				;
+			}
+		}
+
+		
 		if(!this.property('menu_id')) {
 			this.display_menu_list();	
 		}

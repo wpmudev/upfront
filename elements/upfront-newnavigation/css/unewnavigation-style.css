@@ -63,11 +63,11 @@
 
 
 
-div.upfront-navigation[data-aliment="center"] ul.menu, div.upfront-output-unewnavigation[data-aliment="center"] ul.menu {
+div.upfront-navigation[data-aliment="center"] ul.menu {
 	text-align: center;
 }
 
-div.upfront-navigation[data-aliment="right"] ul.menu, div.upfront-output-unewnavigation[data-aliment="right"] ul.menu  {
+div.upfront-navigation[data-aliment="right"] ul.menu {
 	text-align: right;
 }
 
@@ -79,12 +79,26 @@ div.upfront-navigation ul.menu {
 	margin: 0;
 	padding: 0;	
 }
+
+div.upfront-navigation[data-style="vertical"] ul.menu > li {
+	margin-left: 0 !important;
+	margin-right: 0 !important;	
+}
+
+div.upfront-navigation[data-style="vertical"] ul.menu > li li {
+	width: auto;
+}
+
 div.upfront-navigation ul.menu > li:first-child {
 	margin-left: 0 !important;
 }
+
 div.upfront-navigation ul.menu > li:last-child {
 	margin-right: 0 !important;
 }
+
+
+
 div.upfront-navigation ul.menu li a, div.upfront-navigation ul.menu li {
 	position: relative;	
 }
