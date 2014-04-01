@@ -91,7 +91,7 @@ var hackRedactor = function(){
 
 	// Let Ctrl/Cmd+A (yeah...) work normally
 	$.Redactor.prototype.airEnable = function () {
-		if (!this.opts.air) return;
+		if (!this.opts.air || !this.opts.airButtons) return;
 		var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
 
 		this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
