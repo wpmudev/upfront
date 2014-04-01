@@ -328,11 +328,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 				foreach ( $regions_data as $region_data ){
 					if ( $region_data['name'] != $region['name'] && $region_data['container'] != $region['name'] )
 						continue;
+					/*
 					if ( isset($region['scope']) && $region['scope'] == $region_data['scope'] && !in_array($region_data['name'], $regions_added) ){
 						$regions[] = $region_data;
 						$regions_added[] = $region_data['name'];
 						continue 2;
 					}
+					*/
 				}
 				$regions[] = $region;
 			}
@@ -427,7 +429,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public function save () {
 		$key = $this->get_id();
 		$scopes = array();
-		var_dump($this->_data['regions']);
 		foreach ( $this->_data['regions'] as $region ){
 			if ( $region['scope'] != 'local' ){
 				if ( !is_array($scopes[$region['scope']]) )
@@ -435,8 +436,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$scopes[$region['scope']][] = $region;
 			}
 		}
-		foreach ( $scopes as $scope => $data )
+		foreach ( $scopes as $scope => $data ) {
 			update_option(self::_get_scope_id($scope), json_encode($data));
+		}
 		update_option($key, $this->to_json());
 		return $key;
 	}
