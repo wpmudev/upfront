@@ -1517,7 +1517,7 @@ define([
 				classes.push(grid.class + this.col);
 				if ( this.model.get('type') == 'clip' )
 					classes.push('upfront-region-clip');
-				if ( this.model.collection.active_region == this.model ){
+				if ( this.model.collection && this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-active');
 				}
 				return {
