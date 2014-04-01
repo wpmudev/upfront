@@ -325,16 +325,16 @@ class Upfront_Layout extends Upfront_JsonModel {
 			$regions = array();
 			$regions_added = array();
 			foreach ( $data['regions'] as $i => $region ) {
-				foreach ( $regions_data as $region_data ){
-					if ( $region_data['name'] != $region['name'] && $region_data['container'] != $region['name'] )
-						continue;
-					/*
-					if ( isset($region['scope']) && $region['scope'] == $region_data['scope'] && !in_array($region_data['name'], $regions_added) ){
-						$regions[] = $region_data;
-						$regions_added[] = $region_data['name'];
-						continue 2;
+				if ( isset($region['scope']) && $region['scope'] != 'local' ){
+					foreach ( $regions_data as $region_data ){
+						if ( $region['name'] != $region_data['name'] && $region['container'] != $region_data['name'] && $region['name'] != $region_data['container'] )
+							continue;
+						if ( isset($region['scope']) && $region['scope'] == $region_data['scope'] && !in_array($region_data['name'], $regions_added) ){
+							$regions[] = $region_data;
+							$regions_added[] = $region_data['name'];
+						}
 					}
-					*/
+					continue;
 				}
 				$regions[] = $region;
 			}
