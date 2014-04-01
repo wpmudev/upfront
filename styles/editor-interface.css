@@ -1722,6 +1722,7 @@ a.ueditor-action-pickercancel{
 	overflow: hidden;
 	padding-bottom:15px;
 }
+
 .upfront-wrapper {
 	float: left;
 	position: relative;
@@ -2670,7 +2671,8 @@ a.ueditor-action-pickercancel{
 }
 
 .upfront-resize {
-	background: rgba(0,0,0,.1);
+	background: rgba(100,100,100,.2);
+	z-index:1;
 }
 
 .upfront-drop {
