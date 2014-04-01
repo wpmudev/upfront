@@ -211,8 +211,14 @@ define(function() {
 					}
 				})
 				.ueditor({
-					airButtons: {},
+					airButtons: [],
+					stateAlignment: false,
+					stateLists: false,
+					blockquote: false,
+					stateButtons: false,
+					panelButtons: false,
 					observeLinks: false,
+					upfrontSink: false,
 					autostart: this.autostart,
 					tabFocus: false,
 					placeholder: 'Write a title...'
@@ -1791,6 +1797,7 @@ define(function() {
 		}
 	});
 
+	/* // Not used anymore?
 	var Link_DispatchManager = new (Backbone.View.extend({
 
 		initialize: function () {
@@ -1902,12 +1909,14 @@ define(function() {
 
 	}))();
 
+	*/
+
 	Upfront.Content = {
 		TYPES: {'SIMPLE': 'simple'},
 		editor: Editor_Meta,
 		editors: new ContentEditors(),
-		microselect: MicroSelect,
-		Link_CkeDialog: Link_CkeDialog
+		microselect: MicroSelect
+		//Link_CkeDialog: Link_CkeDialog
 	};
 
 });

@@ -170,7 +170,7 @@ var hackRedactor = function(){
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
 		{
-			if (!this.opts.air) return;
+			if (!this.opts.air || !this.opts.airButtons.length) return;
 
 			$('.redactor_air').hide();
 
