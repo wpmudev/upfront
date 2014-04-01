@@ -566,22 +566,21 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
 		setTimeout(function(){
-			var container = $('#' + me.property('element_id')).find('.upfront-image-container');
+			var elementSize = me.property('element_size');
 
-			me.controls.setWidth(container.width());
+			me.controls.setWidth(elementSize.width);
 			me.controls.render();
 			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
 
-			container.parent().append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
+			me.$el.append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
 			me.controls.delegateEvents();
 			me.$el.removeClass('upfront-editing');
 
 			me.editCaption();
 
-			me.setSizeClasses(container.width(), container.height());
+			me.setSizeClasses(elementSize.width, elementSize.height);
 			me.setSizeHTMLClasses();
 
-			//me.get_resizing_limits();
 		}, 300);
 	},
 
@@ -595,11 +594,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.parent_module_view.$el.removeClass('uimage-narrow');
 		}
 
-		if(height < 120 && !this.sizeClasses.small){
+		if(height < 60 && !this.sizeClasses.small){
 			this.sizeClasses.small = true;
 			this.parent_module_view.$el.addClass('uimage-small');
 		}
-		else if(height > 119 && this.sizeClasses.small){
+		else if(height > 59 && this.sizeClasses.small){
 			this.sizeClasses.small = false;
 			this.parent_module_view.$el.removeClass('uimage-small');
 		}
@@ -760,6 +759,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			img: this.$('img'),
 			setTextHeight: this.property('caption_position') == 'below_image'
 		};
+
+		//console.log('Stretching hor: ' + resizingData.data.stretch + ', ver: ' + resizingData.data.vstretch);
 
 		if(this.cropTimer){
 			clearTimeout(this.cropTimer);
@@ -941,7 +942,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	saveTemporaryResizing: function(){
 		var me = this,
-			crop = me.property('element_size'),
+			elementSize = me.property('element_size'),
+			crop = {},
 			imageId = me.property('image_id'),
 			resize = me.temporaryProps.size,
 			position = me.temporaryProps.position
@@ -951,8 +953,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		crop.top = Math.min(0, position.top);
 		crop.left = Math.min(0, position.left);
 
-		crop.width = Math.min(crop.width, resize.width);
-		crop.height = Math.min(crop.height, resize.height);
+		crop.width = Math.min(elementSize.width, resize.width);
+		crop.height = Math.min(elementSize.height, resize.height);
 
 		var promise = Upfront.Views.Editor.ImageEditor.saveImageEdition(
 			imageId,
@@ -971,8 +973,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.property('position', position);
 			me.property('src', imageData.url);
 			me.property('srcFull', imageData.urlOriginal, false);
-			me.property('stretch', resize.width >= crop.width);
-			me.property('vstretch', resize.height >= crop.height);
+			me.property('stretch', resize.width >= elementSize.width);
+			me.property('vstretch', resize.height >= elementSize.height);
 			clearTimeout(me.cropTimer);
 			me.cropTimer = false;
 		});

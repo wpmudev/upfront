@@ -993,7 +993,7 @@ div.uimage-controls i.upfront-icon:before {
 
 .uimage-small .uimage-controls {
 	top: auto;
-	margin-top: 15px;
+	bottom: 10px;
 }
 
 .uimage-small .upfront-inline-panel-item {
