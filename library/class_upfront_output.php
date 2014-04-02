@@ -103,6 +103,8 @@ class Upfront_Output {
 			$html .= "<!-- Upfront layout end -->\n";
 		}
 
+		do_action('upfront-layout-applied', $layout);
+
 		return $html;
 	}
 

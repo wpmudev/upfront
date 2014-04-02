@@ -501,8 +501,8 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_enqueue_scripts', array($this, 'load_styles'));
-		add_action('wp_enqueue_scripts', array($this, 'load_scripts'));
+		add_action('upfront-layout-applied', array($this, 'load_styles'));
+		add_action('upfront-layout-applied', array($this, 'load_scripts'));
 
 		add_action('wp_ajax_upfront-element-styles', array($this, 'serve_styles'));
 		add_action('wp_ajax_nopriv_upfront-element-styles', array($this, 'serve_styles'));
