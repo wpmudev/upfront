@@ -888,30 +888,30 @@ var GridEditor = {
 						last = $last.size() > 0 ? ed.get_el($last) : false,
 						last_me = ( last && last._id == me._id );
 					// Don't add dropping below the most bottom wrap in a row
-					if ( !last_me && max_row_wrap && max_row_wrap == wrap )
-						return;
-					ed.drops.push({
-						_id: ed._new_id(),
-						top: current_el_top,
-						bottom: wrap_bottom,
-						left: wrap.grid.left,
-						right: wrap.grid.right,
-						priority: {
-							top: ( last_me ? last.outer_grid.top : wrap.grid.bottom ),
+					if ( last_me || !max_row_wrap || max_row_wrap != wrap ){
+						ed.drops.push({
+							_id: ed._new_id(),
+							top: current_el_top,
 							bottom: wrap_bottom,
 							left: wrap.grid.left,
 							right: wrap.grid.right,
-							index: 5
-						},
-						priority_index: 5,
-						type: 'inside',
-						insert: ['append', wrap.$el],
-						region: region,
-						is_me: last_me,
-						is_clear: false,
-						is_use: false,
-						is_switch: false
-					});
+							priority: {
+								top: ( last_me ? last.outer_grid.top : wrap.grid.bottom ),
+								bottom: wrap_bottom,
+								left: wrap.grid.left,
+								right: wrap.grid.right,
+								index: 5
+							},
+							priority_index: 5,
+							type: 'inside',
+							insert: ['append', wrap.$el],
+							region: region,
+							is_me: last_me,
+							is_clear: false,
+							is_use: false,
+							is_switch: false
+						});
+					}
 				}
 				// Add droppable before each wrapper that start in new line
 				if ( wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
