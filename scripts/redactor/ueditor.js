@@ -120,7 +120,7 @@ var hackRedactor = function(){
 				if ($(e.target).closest(this.$toolbar).length === 0) {
 					if (!this.getSelectionText()) {
 						this.$air.fadeOut(100);
-						this.selectionRemove();
+						//this.selectionRemove();
 						$(doc).off(e);
 					}
 				}
