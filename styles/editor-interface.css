@@ -3069,6 +3069,7 @@ a.ueditor-action-pickercancel{
 	width: 98px;
 	height: 32px;
 	overflow: hidden;
+	display:block;
 }
 .upfront-logo-small {
 	background-position: -340px -405px;

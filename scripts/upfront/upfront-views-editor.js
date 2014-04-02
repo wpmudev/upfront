@@ -182,12 +182,16 @@ define([
 		className: "command-logo",
 		render: function () {
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.html('<div class="upfront-logo"></div>');
+				this.$el.html('<a class="upfront-logo" href="' + Upfront.Settings.site_url + '"></a>');
 			else
-				this.$el.html('<div class="upfront-logo upfront-logo-small"></div>');
+				this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + Upfront.Settings.site_url + '"></a>');
 		},
 		on_click: function () {
-      window.location.href = Upfront.mainData.site;
+			/*var root = Upfront.Settings.site_url;
+			root = root[root.length - 1] == '/' ? root : root + '/';
+
+			if(window.location.origin + window.location.pathname != root)
+				Upfront.Application.navigate('/' + root.replace(window.location.origin, '') + window.location.search, {trigger: true});*/
 		}
 	});
 
@@ -197,7 +201,23 @@ define([
 		},
 		on_click: function () {
 			// Upfront.Events.trigger("command:exit");
-      window.location.href = Upfront.mainData.admin;
+			var url = window.location.pathname,
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Exiting upfront...",
+					done: "Wow, those are cool!",
+					fixed: true
+				})
+			;
+
+			loading.render();
+			$('body').append(loading.$el);
+
+			if(url.indexOf('/create_new/') !== -1)
+				return (window.location.href = Upfront.Settings.site_url);
+			if(url.indexOf('/edit/') !== -1 && _upfront_post_data && _upfront_post_data.post_id)
+				return (window.location.href = Upfront.Settings.site_url + '/?p=' + _upfront_post_data.post_id);
+
+			window.location.reload(true);
 		}
 	});
 
