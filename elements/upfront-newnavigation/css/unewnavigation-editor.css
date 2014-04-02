@@ -280,7 +280,10 @@ div.upfront-output-unewnavigation[data-style="vertical"] ul.menu > li {
 div.upfront-output-unewnavigation[data-style="vertical"] ul.menu > li li {
 	width: auto;
 }
-
+div.upfront-output-unewnavigation[data-style="vertical"] ul.sub-menu {
+	left: 100%;
+	top: 0;	
+}
 div.upfront-output-unewnavigation ul.menu > li:first-child {
 	margin-left: 0 !important;
 }

@@ -51,8 +51,13 @@ var MenuItemView = Backbone.View.extend({
 						 return "Visit URL";
 					  },
 					  action: function() {
-						  if(me.model['menu-item-type'] == 'custom')
-							  window.open(me.model['menu-item-url']);
+						  if(me.model['menu-item-type'] == 'custom') {
+		  						if(me.model['menu-item-url'].indexOf('#') == 0) {
+									window.location.href = window.location.href.replace(me.model['menu-item-url'], '')+me.model['menu-item-url'];
+								}
+								else
+								  window.open(me.model['menu-item-url']);
+						  }
 						  else
 							  window.location.href = me.model['menu-item-url'];
 						  
@@ -155,8 +160,16 @@ var MenuItemView = Backbone.View.extend({
 		var me = this;
 		var parentlist = me.$el.parent('ul');
 		var newitemicon = me.$el.parent('ul').find('i.navigation-add-item');
+		var removeparent = false;
 
+		if(me.$el.siblings().length < 1) {
+			removeparent = true;
+		}
+			
 		me.$el.remove();
+	
+		if(removeparent)
+			parentlist.remove();
 
 		parentlist.children('li:last').append(newitemicon);
 
@@ -436,6 +449,7 @@ var currentMenuItemData = new CurrentMenuItemData();
  * View instance - what the element looks like.
  * @type {Upfront.Views.ObjectView}
  */
+var singleclickcount = 0;
 var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	elementSize: {width: 0, height: 0},
 	initialize: function(options){
@@ -499,14 +513,53 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		
 		
 	},
-	preventClick: function(e) {
-		e.preventDefault();
+	get_anchors: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			anchors = [];
+		;
+		regions.each(function (r) {
+			r.get("modules").each(function (module) {
+				module.get("objects").each(function (object) {
+					var anchor = object.get_property_value_by_name("anchor");
+					if (anchor && anchor.length) 
+						anchors[anchor] = object;
+				});
+			});
+		});
+		return anchors;
 	},
 	exitEditMode: function(e) {
+		var me = this;
+		var thelink = $(e.target).closest('li').data('backboneview');
+		
 		if(!$(e.target).hasClass('ueditable'))
 			this.$el.find('a.ueditable').each(function() {
 				$(this).data('ueditor').stop();
 			});
+		
+		singleclickcount++;
+		if(singleclickcount == 1) {
+			setTimeout(function(){
+			  if(singleclickcount == 1) {
+				  console.log(me.get_anchors());
+					if(thelink.model['menu-item-type'] == 'custom') {
+						if(thelink.model['menu-item-url'].indexOf('#') == 0) {
+							//console.log($(thelink.model['menu-item-url']).length);
+							var anchors = me.get_anchors();
+							$('html,body').animate({scrollTop: $(thelink.model['menu-item-url']).offset().top},'slow');
+						}
+						else
+							window.open(thelink.model['menu-item-url']);
+					}
+					else
+						window.location.href = thelink.model['menu-item-url'];
+			  }
+			  singleclickcount = 0;
+			}, 300);	
+			
+		}
+		
+		
 	},
 	editMenuItem: function(e) {
 
@@ -1225,7 +1278,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                             }),
                             new Upfront.Views.Editor.Settings.Item({
                                 model: this.model,
-                                title: "Select Menu",
+                                title: "Use different menu",
                                 fields: [
                                     new Upfront.Views.Editor.Field.Select({
                                         model: this.model,

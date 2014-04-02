@@ -708,7 +708,11 @@ define([
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
 					model, template
 				;
-
+				// Id the element by anchor, if anchor is defined
+				var the_anchor = this.model.get_property_value_by_name("anchor");
+				if (the_anchor && the_anchor.length) 
+					this.el.id = the_anchor;
+				
 				this.model.get("properties").each(function (prop) {
 					props[prop.get("name")] = prop.get("value");
 				});
