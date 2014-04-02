@@ -1598,6 +1598,8 @@ define([
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: container_view.$el, width: 384});
 				this.bg_setting.render();
 				container_view.$el.append(this.bg_setting.el);
+				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
+				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 				//if ( this._is_clipped() )
 				//	this.$el.append('<div class="upfront-region-active-overlay" />');
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
@@ -1683,6 +1685,14 @@ define([
 				this.bg_setting.open().always(function(){
 					container_view.$el.removeClass('upfront-region-bg-setting-open');
 				});
+			},
+			on_modal_open: function () {
+				var container_view = this.parent_view.get_container_view(this.model);
+				container_view.$el.find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
+			},
+			on_modal_close: function () {
+				var container_view = this.parent_view.get_container_view(this.model);
+				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 			}
 		}),
 

@@ -4985,7 +4985,6 @@ var Field_Anchor = Field_Select.extend({
 				}),
 				$region_global, $region_type, $region_nav
 			;
-			$modal.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
@@ -5024,7 +5023,6 @@ var Field_Anchor = Field_Select.extend({
 		},
 		on_close_modal: function () {
 			var me = this;
-			me.$el.closest('.upfront-region-container').find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 			me._active = false;
 			me.render_icon();
 		},
