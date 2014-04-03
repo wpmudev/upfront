@@ -405,8 +405,12 @@ define([
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
 			on_context_menu: function(e) {
-				e.preventDefault();
 				e.stopPropagation();
+				// disable context menu if the element is in text edit mode, in order to enable spell check
+				if($(e.target).closest('.redactor_box').length > 0)
+					return;
+				e.preventDefault();
+
 				this.event = e;
 				Upfront.Events.trigger("entity:contextmenu:activate", this);
 			},
