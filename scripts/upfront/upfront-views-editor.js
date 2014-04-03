@@ -181,10 +181,14 @@ define([
 	var Command_Logo = Command.extend({
 		className: "command-logo",
 		render: function () {
+			var url = Upfront.Settings.site_url;
+			if(url[url.length - 1] != '/')
+				url += '/';
+
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.html('<a class="upfront-logo" href="' + Upfront.Settings.site_url + '"></a>');
+				this.$el.html('<a class="upfront-logo" href="' + url + '"></a>');
 			else
-				this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + Upfront.Settings.site_url + '"></a>');
+				this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '"></a>');
 		},
 		on_click: function () {
 			/*var root = Upfront.Settings.site_url;
