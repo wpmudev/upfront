@@ -132,6 +132,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			autostart: this.autostart,
 			onUpdated: function(post){
 				me.autostart = false;
+				me.editor.autostart = false;
 				me.refreshMarkup(post);
 				me.trigger('post:updated', post);
 			}
