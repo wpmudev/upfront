@@ -8738,7 +8738,8 @@ a.upfront-css-edit:before{
 
 /* Fix for the 1px element movement glitch */
 
-.upfront-region-container-slider {
+.upfront-region-container-slider,
+.upfront-overlay-grid {
 	-webkit-backface-visibility: hidden;
 }
 
