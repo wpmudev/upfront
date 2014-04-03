@@ -798,25 +798,34 @@ var Application = new (Backbone.Router.extend({
 		site_url.href = Upfront.Settings.site_url;
 		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true});
 		$(document).on('click', 'a', function(e){
-			if(e.isDefaultPrevented())
-				return;
+				if(e.isDefaultPrevented())
+					return;
 
-			var href = e.target.getAttribute('href'),
-				a = e.target,
-				now = window.location
-			;
-			if(href == '#' || a.origin != now.origin || (a.pathname == now.pathname && a.search == now.search))
-				return;
+				var href = e.target.getAttribute('href'),
+					a = e.target,
+					now = window.location
+				;
+				if(href == '#' || a.origin != now.origin || (a.pathname == now.pathname && a.search == now.search))
+					return;
 
-			//If we are editing text, don't follow the link
-			if($(e.target).closest('.redactor_box').length)
-				return;
+				//If we are editing text, don't follow the link
+				if($(e.target).closest('.redactor_box').length)
+					return;
 
 
-			e.preventDefault();
-			if(!Upfront.PreviewUpdate._is_dirty || confirm("You have unsaved changes you're about to lose by navigating off this page. Do you really want to leave this page?"))
-				me.navigate(a.pathname + a.search, {trigger: true});
-		});
+				e.preventDefault();
+				if(!Upfront.PreviewUpdate._is_dirty || confirm("You have unsaved changes you're about to lose by navigating off this page. Do you really want to leave this page?"))
+					me.navigate(a.pathname + a.search, {trigger: true});
+			})
+			.on('keydown', function(e){
+				//Don't let the backspace go back in history
+				if(e.which == 8){
+					var tag = e.target.tagName.toUpperCase();
+					if(tag != 'INPUT' && tag != 'TEXTAREA' && !$(e.target).closest('.redactor_box').length)
+						e.preventDefault();
+				}
+			})
+		;
 	},
 
 	set_loading: function(message, done){
