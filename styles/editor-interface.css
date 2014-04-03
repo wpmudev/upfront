@@ -8733,4 +8733,10 @@ a.upfront-css-edit:before{
 	vertical-align: top;
 }
 
+/* Fix for the 1px element movement glitch */
+
+.upfront-region-container-slider {
+	-webkit-backface-visibility: hidden;
+}
+
 
