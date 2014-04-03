@@ -1303,7 +1303,7 @@ var GridEditor = {
 				var objects = model.get('objects');
 				if ( objects && objects.length == 1 ){
 					objects.each(function(object){
-						object.set_property('row', rsz_row-2);
+						object.set_property('row', rsz_row - Upfront.Util.height_to_row(ed.grid.column_padding*2));
 					});
 				}
 
@@ -1421,7 +1421,7 @@ var GridEditor = {
 		var objects = model.get('objects');
 		if ( objects && objects.length == 1 ){
 			objects.each(function(object){
-				object.set_property('row', row-2);
+				object.set_property('row', row - Upfront.Util.height_to_row(ed.grid.column_padding*2));
 			});
 		}
 		// Update model value
