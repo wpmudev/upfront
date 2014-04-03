@@ -824,7 +824,11 @@ var GridEditor = {
 					wrap_el_left = ed.get_wrap_el_min(wrap),
 					next_wrap_el_top = next_wrap ? ed.get_wrap_el_min(next_wrap, false, true) : false,
 					next_wrap_el_left = next_wrap ? ed.get_wrap_el_min(next_wrap) : false,
-					next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false;
+					next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false,
+					$row_wrap_first = !wrap_clr ? $wrap.prevAll('.upfront-wrapper.clr:first') : $wrap,
+					$row_wraps_next = $row_wrap_first.nextUntil('.clr', '.upfront-wrapper'),
+					row_wraps = _.union( [ ed.get_wrap($row_wrap_first) ], $row_wraps_next.map(function(){ return ed.get_wrap($(this)); }).get() ),
+					max_row_wrap = _.max(row_wraps, function(row_wrap){ return row_wrap.grid.bottom; });
 				if (
 					( wrap.col >= min_col ) && (
 					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find('.upfront-module').size() > 1 || !is_next_me ) ) ||
@@ -867,26 +871,10 @@ var GridEditor = {
 						});
 						current_el_top = bottom+1;
 					});
-					var $prev_clr = $wrap.prevAll('.upfront-wrapper.clr:first'),
-						$row_wraps_next = $prev_clr.size() > 0 ? $prev_clr.nextUntil('.clr', '.upfront-wrapper') : $wrap.nextUntil('.clr', '.upfront-wrapper'),
-						row_wraps = _.union( [ $prev_clr.size() > 0 ? ed.get_wrap($prev_clr) : ed.get_wrap($wrap) ],
-						$row_wraps_next.map(function(){ return ed.get_wrap($(this)); }).get() ),
-						max_row_wrap = _.max(row_wraps, function(row_wrap){ return row_wrap.grid.bottom; }),
-						min_wrap_bottom = current_el_top + row,
-						wrap_bottom = min_wrap_bottom > max_row_wrap.grid.bottom ? min_wrap_bottom : max_row_wrap.grid.bottom;
-					/*if ( next_wrap_clr ){
-						var wrap_bottom = next_wrap.grid.top-1;
-					}
-					else {
-						if ( next_clr )
-							var wrap_bottom = next_clr_el_top.grid.top-1;
-						else {
-							var wrap_bottom = min_wrap_bottom > max_row_wrap.grid.bottom ? min_wrap_bottom : max_row_wrap.grid.bottom;
-						}
-					}*/
 					var $last = $els.last(),
 						last = $last.size() > 0 ? ed.get_el($last) : false,
-						last_me = ( last && last._id == me._id );
+						last_me = ( last && last._id == me._id ),
+						wrap_bottom = max_row_wrap.grid.bottom;
 					// Don't add dropping below the most bottom wrap in a row
 					if ( last_me || !max_row_wrap || max_row_wrap != wrap ){
 						ed.drops.push({
@@ -949,7 +937,7 @@ var GridEditor = {
 				// Check to see if the right side on wrapper has enough column to add droppable
 				if ( ( !next_wrap || next_wrap_clr ) && ( ( !is_wrap_me && region.grid.right-wrap.grid.right >= min_col ) || ( wrap_me_only && !wrap_clr ) || ( prev_me_only && !wrap_clr && wrap_only ) ) ){
 					var is_switch = ( prev_me_only && !wrap_clr && wrap_only ),
-						bottom = next_wrap_el_top ? next_wrap_el_top.grid.top-1 : region.grid.bottom;
+						bottom = max_row_wrap.grid.bottom;
 					if ( can_drop(wrap.grid.top, bottom) ){
 						ed.drops.push({
 							_id: ed._new_id(),
@@ -974,7 +962,7 @@ var GridEditor = {
 					var is_switch = ( next_me_only && !next_wrap_clr && wrap_only ),
 						//right = wrap_el_left.grid.left > wrap.grid.left+col ? wrap_el_left.grid.left-1 : wrap.grid.left+col-1,
 						right = wrap_el_left.grid.left-1,
-						bottom = next_clr_el_top ? next_clr_el_top.grid.top-1 : region.grid.bottom;
+						bottom = max_row_wrap.grid.bottom;
 					if ( can_drop(wrap.grid.top, bottom) ){
 						ed.drops.push({
 							_id: ed._new_id(),
