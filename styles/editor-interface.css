@@ -231,6 +231,9 @@
 	padding: 18px 15px;
 	float: left;
 }
+#sidebar-ui .upfront-logo {
+	margin: 0;
+}
 #sidebar-ui .command-exit {
 	width: 68px;
 	height: 68px;
