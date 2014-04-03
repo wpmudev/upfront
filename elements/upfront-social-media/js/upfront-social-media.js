@@ -839,7 +839,15 @@
                     })
                 ]
             });
-            this.panels = _([this.panel]);
+            this.panels = _([
+				new Upfront.Views.Editor.Settings.Panel({
+                        model: this.model,
+                        label: "General",
+                        title: "General settings",
+                        settings: []
+						}), 
+				this.panel
+			]);
             this.panel.on('upfront:settings:panel:saved', this.saveServices, this);
         },
 
@@ -1015,10 +1023,11 @@
         "Model": SocialMediaModel,
         "View": SocialMediaView,
         "Element": SocialMediaElement,
-        "Settings": SocialSettings,
+        "Settings": SocialSettings
+		/*,
         'anchor': {
           is_target: false
-        }
+        }*/
     });
 
     Upfront.Models.SocialMediaModel = SocialMediaModel;

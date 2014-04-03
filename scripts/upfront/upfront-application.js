@@ -264,7 +264,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		settings_view.for_view = view;
 		settings_view.render();
 		this.settings_view = settings_view;
-
 		settings_view.trigger('rendered');
 	},
 
