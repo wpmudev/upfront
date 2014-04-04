@@ -7090,14 +7090,13 @@ a.ueditor-select-option:hover {
 	font-size: 11px;
 }
 .upfront-field-complex_field-boolean_toggleable_text .upfront-embedded_toggleable-notice {
-	margin-top: 2px;
+	margin-top: 3px;
+	font:11px/13px Verdana, sans-serif;
+	color:#26394d;
+	padding:5px;
 }
 #settings .upfront-embedded_toggleable.error .upfront-embedded_toggleable-notice {
 	background-color: #edafaf;
-	padding:5px;
-	margin-top:3px;
-	font:11px/13px Verdana, sans-serif;
-	color:#26394d;
 }
 #settings .upfront-embedded_toggleable.error input {
 	border: 1px solid #dc6060;
