@@ -315,7 +315,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 
     public static function properties_to_array($props){
         $arr = array();
-        foreach($props as $prop)
+        if (is_array($props)) foreach($props as $prop)
             $arr[$prop->name] = $prop->value;
         return $arr;
     }
