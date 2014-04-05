@@ -3029,7 +3029,8 @@ a.ueditor-action-pickercancel{
 .upfront-icon-button:before,
 .upfront-icon-control:before,
 .upfront-ui .upfront-field-icon:before,
-.upfront-ui .upfront-structure-field-icon:before {
+.upfront-ui .upfront-structure-field-icon:before,
+.upfront-util-icon:before {
 	content: " ";
 	background-image: url('../img/uf-core-el-sprite.svg?v=20131127');
 	background-repeat: no-repeat;

@@ -185,7 +185,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				this.add_stored_markers();
 				this.init_rightclick_context_menu();
 			} else {
-				$el.text("Please, check your internet connectivity");
+				$el.html("<p class='upfront-util-icon'>Please, check your internet connectivity</p>");
 			}
 		},
 

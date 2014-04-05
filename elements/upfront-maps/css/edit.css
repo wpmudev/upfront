@@ -229,3 +229,27 @@ border-width: 11px;
 	border-radius: 2px;
 	cursor: pointer;
 }
+
+/* Check your internet connection message */
+
+.ufm-gmap-container {
+	background-color: rgb(227, 227, 220);
+	display:table;
+}
+
+.ufm-gmap-container p {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.ufm-gmap-container .upfront-util-icon:before {
+	content: " ";
+	width:40px;
+	height:40px;
+	background-position: -472px -193px;
+	background-color: rgb(255, 255, 255);
+	position: absolute;
+	top:15px;
+	left:15px;
+};
