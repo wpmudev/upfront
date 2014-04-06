@@ -51,6 +51,21 @@ var MenuItemView = Backbone.View.extend({
 						 return "Visit URL";
 					  },
 					  action: function() {
+						  
+						  
+						if(me.model['menu-item-url'].indexOf('#') > -1 && me.getCleanurl(me.model['menu-item-url']) == me.getCleanurl()) {
+							//console.log($(thelink.model['menu-item-url']).length);
+							//if(thelink.getCleanurl(thelink.model['menu-item-url']) == thelink.getCleanurl()) {
+							var anchors = me.parent_view.get_anchors();
+							$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(me.model['menu-item-url'])).offset().top},'slow');
+						}
+						else if(me.model['menu-item-target'] == '')
+							window.location.href = me.model['menu-item-url'];
+						else
+							window.open(me.model['menu-item-url']);
+						  
+						  /*
+						  
 						  if(me.model['menu-item-type'] == 'custom') {
 		  						if(me.model['menu-item-url'].indexOf('#') == 0) {
 									window.location.href = window.location.href.replace(me.model['menu-item-url'], '')+me.model['menu-item-url'];
@@ -60,7 +75,7 @@ var MenuItemView = Backbone.View.extend({
 						  }
 						  else
 							  window.location.href = me.model['menu-item-url'];
-						  
+						  */
 					  }
 				  }),
 				  new Upfront.Views.ContextMenuItem({
@@ -209,7 +224,7 @@ var MenuItemView = Backbone.View.extend({
 		
 		var is_anchor = false;
 		
-		if(me.model['menu-item-url'].indexOf('#') == 0) {
+		if(me.model['menu-item-url'].indexOf('#') > -1 && me.getCleanurl(me.model['menu-item-url']) == me.getCleanurl()) {
 				is_anchor = true;
 		}
 		
@@ -275,7 +290,7 @@ var MenuItemView = Backbone.View.extend({
 					me.model['menu-item-object'] =  post.get('post_type');
 					me.model['menu-item-object-id'] =  post.get('ID');
 					me.model['menu-item-url'] = permalink;
-					
+					me.model['menu-item-target'] = '';
 					$('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val(permalink);
 					//me.saveLink();
 					
@@ -285,6 +300,7 @@ var MenuItemView = Backbone.View.extend({
 		else if( val == 'custom' ) {
 				this.removeAnchorsselect();
 				me.model['menu-item-type'] =  'custom';
+				me.model['menu-item-target'] = '_blank';
 				me.model['menu-item-url'] = $('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val();
 		}
 		else if( val == 'anchor' ) {
@@ -303,9 +319,11 @@ var MenuItemView = Backbone.View.extend({
                                     });
 		anchorsselect.render();
 		
-		if(me.model['menu-item-url'].indexOf('#') == 0) {
-			anchorsselect.$el.find('div.upfront-field-wrap-select div.upfront-field-select-value span').html(me.model['menu-item-url'].replace('#', ''));
-			anchorsselect.$el.find('div.upfront-field-wrap-select input[value="'+me.model['menu-item-url'].replace('#', '')+'"]').parent().addClass('upfront-field-select-option-selected');
+		if(me.model['menu-item-url'].indexOf('#') > -1) {
+			
+			anchorsselect.$el.find('li.upfront-field-select-option').removeClass('upfront-field-select-option-selected');
+			anchorsselect.$el.find('div.upfront-field-wrap-select div.upfront-field-select-value span').html(me.getUrlanchor(me.model['menu-item-url']));
+			anchorsselect.$el.find('div.upfront-field-wrap-select input[value="'+me.getUrlanchor(me.model['menu-item-url'])+'"]').parent().addClass('upfront-field-select-option-selected');
 		}
 		
 		anchorsselect.$el.find('div.upfront-field-wrap-select').insertAfter($('input#unavigation-link-type-3').next('label'));
@@ -314,10 +332,38 @@ var MenuItemView = Backbone.View.extend({
 		
 		$('div.upfront-field-wrap-select input').on('change', function() {
 			//$('#unewnavigation-tooltip').find('input[name=unavigation-link-url]').val('#'+$(this).val());
-					me.model['menu-item-type'] =  'custom';
-					me.model['menu-item-url'] = '#'+$(this).val();
+			me.model['menu-item-type'] =  'custom';
+			me.model['menu-item-target'] = '';
+			me.model['menu-item-url'] = me.getCleanurl()+'#'+$(this).val();
 			
 		});
+	},
+	getCleanurl: function(url) {
+		//this one removes any existing # anchor postfix from the url
+
+		if(typeof(url) == 'undefined')
+			var url = $(location).attr('href');
+		
+		if(url.indexOf('#') >=0) {
+			var tempurl = url.split('#');
+			return tempurl[0];
+		}
+		else
+			return url;
+		
+	},
+	getUrlanchor: function(url) {
+		// this does almost the opposite of the above function
+		
+		if(typeof(url) == 'undefined')
+			var url = $(location).attr('href');
+		
+		if(url.indexOf('#') >=0) {
+			var tempurl = url.split('#');
+			return tempurl[1];
+		}
+		else
+			return false;
 	},
 	removeAnchorsselect: function() {
 //		$('label#label-anchors-select').prev('br').remove();
@@ -340,7 +386,7 @@ var MenuItemView = Backbone.View.extend({
 			me.$el.parent('ul').removeClass('time_being_display')
 			
 		this.model['menu-item-title'] = $(this.el).children('a.menu_item').text();
-
+		
 
 
 		var postdata = {"action": "upfront_update_menu_item",'menu': me.parent_view.model.get_property_value_by_name('menu_id') , 'menu-item': this.model}
@@ -531,28 +577,30 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	exitEditMode: function(e) {
 		var me = this;
 		var thelink = $(e.target).closest('li').data('backboneview');
-		
 		if(!$(e.target).hasClass('ueditable'))
 			this.$el.find('a.ueditable').each(function() {
 				$(this).data('ueditor').stop();
 			});
-		
+		console.log(thelink.model['menu-item-target']);
 		singleclickcount++;
 		if(singleclickcount == 1) {
 			setTimeout(function(){
 			  if(singleclickcount == 1) {
-				  console.log(me.get_anchors());
-					if(thelink.model['menu-item-type'] == 'custom') {
-						if(thelink.model['menu-item-url'].indexOf('#') == 0) {
+				  
+					//if(thelink.model['menu-item-type'] == 'custom') {
+						if(thelink.model['menu-item-url'].indexOf('#') > -1 && thelink.getCleanurl(thelink.model['menu-item-url']) == thelink.getCleanurl()) {
 							//console.log($(thelink.model['menu-item-url']).length);
+							//if(thelink.getCleanurl(thelink.model['menu-item-url']) == thelink.getCleanurl()) {
 							var anchors = me.get_anchors();
-							$('html,body').animate({scrollTop: $(thelink.model['menu-item-url']).offset().top},'slow');
+							$('html,body').animate({scrollTop: $('#'+thelink.getUrlanchor(thelink.model['menu-item-url'])).offset().top},'slow');
 						}
+						else if(thelink.model['menu-item-target'] == '')
+							window.location.href = thelink.model['menu-item-url'];
 						else
 							window.open(thelink.model['menu-item-url']);
-					}
-					else
-						window.location.href = thelink.model['menu-item-url'];
+					//}
+					//else
+						//window.location.href = thelink.model['menu-item-url'];
 			  }
 			  singleclickcount = 0;
 			}, 300);	
