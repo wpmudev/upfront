@@ -498,6 +498,13 @@ var currentMenuItemData = new CurrentMenuItemData();
 var singleclickcount = 0;
 var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	elementSize: {width: 0, height: 0},
+	cssSelectors: {
+		'ul.menu > li.menu-item > a': {label: 'Menu Item', info: 'Top level Menu item'},
+		'ul.menu > li.menu-item:hover > a': {label: 'Menu Item hover', info: 'Hover state for Top level Menu item'},
+		'ul.sub-menu > li.menu-item > a': {label: 'Sub Menu Item', info: 'Sub level Menu item'},
+		'ul.sub-menu > li.menu-item:hover > a': {label: 'Sub Menu Item hover', info: 'Hover state for Sub level Menu item'}
+	},
+	
 	initialize: function(options){
 		var me = this;
 
