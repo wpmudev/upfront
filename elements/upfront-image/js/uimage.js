@@ -664,7 +664,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 						;
 						// Only call the handler if 1 or more files was dropped.
 						if (files.length && input.length){
-							input[0].files = files;
+							Upfront.Views.Editor.ImageSelector.uploadImage(files);
 			            }
 			        }
 				})
@@ -2480,20 +2480,57 @@ var ImageSelector = Backbone.View.extend({
 		if(! $('#upfront-upload-image').length){
 			$('body').append(me.formTpl({url: Upfront.Settings.ajax_url}));
 
-			$('#upfront-image-file-input').on('change', function(e){
+			var progress = $('#upfront-progress'),
+				fileInput = $('#upfront-image-file-input'),
+				form = $('#upfront-upload-image')
+			;
+
+			form.fileupload({
+					formData: {action: 'upfront-media-upload'}
+				})
+				.bind('fileuploadstart', function (e) {
+					progress.css('width', '0');
+				})
+				.bind('fileuploadprogressall', function (e, data) {
+					var percent = parseInt(data.loaded / data.total * 100, 10);
+					progress.css('width', percent + '%');
+					console.log(percent);
+				})
+			    .bind('fileuploaddone', function (e, data) {
+			    	var response = data.result;
+					progress.css('width', '100%');
+					$('#upfront-image-uploading h2').html('Preparing Image');
+					console.log(response);
+					Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
+						.done(function(response){
+							me.deferred.resolve(response.data.images, response);
+						})
+						.error(function(){
+							Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
+							me.openSelector();
+						})
+					;
+					form[0].reset();
+
+			    })
+			    .bind('fileuploadfail', function (e, response) {
+					var error = response.jqXHR.responseJSON.error;
+					Upfront.Views.Editor.notify(error, 'error');
+					me.openSelector();
+					form[0].reset();
+			    })
+			;
+
+			fileInput.on('change', function(e){
 				if(this.files.length){
-					var size = this.files[0].size;
-					if(size > 2048000){
-						if(confirm('You are trying to upload a file bigger than 2MB. It will take long time. Are you sure?')){
-							me.openProgress(function(){
-								me.uploadImage();
-							});
-						}
-					}
+					if(XMLHttpRequest && (new XMLHttpRequest()).upload) //XHR uploads!
+						me.uploadImage(this.files);
 					else
 						me.openProgress(function(){
-							me.uploadImage();
-						});
+							form.fileupload('add', {
+								fileInput: fileInput
+							});
+						})
 				}
 			});
 		}
@@ -2510,7 +2547,7 @@ var ImageSelector = Backbone.View.extend({
 
 		this.openSelector();
 
-    Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
+    	Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
 
 		return this.deferred.promise();
 	},
@@ -2553,9 +2590,11 @@ var ImageSelector = Backbone.View.extend({
 						var files = e.originalEvent.dataTransfer.files,
 							input = $('#upfront-image-file-input')
 						;
+
 	                    // Only call the handler if 1 or more files was dropped.
 	                    if (files.length && input.length){
-							input[0].files = files;
+							//input[0].files = files;
+							me.uploadImage(files);
 	                    }
                     }
 
@@ -2771,48 +2810,19 @@ var ImageSelector = Backbone.View.extend({
 	     return true;
 	},
 
-	uploadImage: function(e){
-		if(e)
-			e.preventDefault();
-
+	uploadImage: function(files){
 		var me = this,
 			progress = $('#upfront-progress'),
 			fileInput = $('#upfront-image-file-input'),
 			form = $('#upfront-upload-image')
 		;
 
-		form.ajaxSubmit({
-			beforeSend: function() {
-				progress.css('width', '0');
-			},
-			uploadProgress: function(e, position, total, percent) {
-				progress.css('width', percent + '%');
-				console.log(percent);
-			},
-			complete: function() {
-				$('#upfront-image-uploading h2').html('Preparing Image');
-			},
-			success: function(response){
-				progress.css('width', '100%');
-				console.log(response);
-				Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
-					.done(function(response){
-						me.deferred.resolve(response.data.images, response);
-					})
-					.error(function(){
-						Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
-						me.openSelector();
-					})
-				;
-				form[0].reset();
-			},
-			error: function(response){
-				Upfront.Views.Editor.notify(response.responseJSON.error, 'error');
-				me.openSelector();
-				form[0].reset();
-			},
-			dataType: 'json'
+
+		me.openProgress(function(){
+			form.fileupload('send', {files: files});
 		});
+
+		return;
 	}
 
 
