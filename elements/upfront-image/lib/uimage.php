@@ -26,6 +26,10 @@ class Upfront_UimageView extends Upfront_Object {
 		if($data['vstretch'])
 			$data['marginTop'] = 0;
 
+		$data['gifImage'] = isset($data['gifImage']) && $data['gifImage'] ? ' uimage-gif' : '';
+		$data['gifLeft'] = $data['gifImage'] && $data['position']['left'] > 0 ? (-$data['position']['left']) . 'px' : 0;
+		$data['gifTop'] = (-$data['position']['top']) . 'px';
+
 		//Don't let the caption be bigger than the image
 		$data['captionData'] = array(
 			'top' => $data['vstretch'] ? 0 : (-$data['position']['top']) . 'px',
@@ -99,6 +103,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'stretch' => false,
 			'vstretch' => false,
 			'quick_swap' => false,
+			'gifImage' => 0,
 
 			'type' => 'UimageModel',
 			'view_class' => 'UimageView',
@@ -154,14 +159,31 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				//wp_die( -1 );
 			}
 
-			$rotate = isset($imageData['rotate']) && is_numeric($imageData['rotate']) ? $imageData['rotate'] : false;
-			$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
-			$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
+			$image = get_post($imageData['id']);
+			if($image->post_mime_type == 'image/gif'){ //Gif are not really resized/croped to preserve animations
+				$imageAttrs = wp_get_attachment_image_src( $imageData['id'], 'full' );
+				$images[$imageData['id']] = $this->get_resized_gif_data($imageData, $imageAttrs);
+			}
+			else {
+				$rotate = isset($imageData['rotate']) && is_numeric($imageData['rotate']) ? $imageData['rotate'] : false;
+				$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
+				$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
-
-			$images[$imageData['id']] = $this->resize_image($imageData);
+				$images[$imageData['id']] = $this->resize_image($imageData);
+			}
 		}
 		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images)));
+	}
+
+	function get_resized_gif_data($resizeData, $imageAttrs){
+		return array(
+			'error' => 0,
+			'url' => $imageAttrs[0],
+			'urlOriginal' => $imageAttrs[0],
+			'full' => $resizeData['resize'],
+			'crop' => array('width' => $resizeData['crop']['width'], 'height' => $resizeData['crop']['height']),
+			'gif' => 1
+		);
 	}
 
 	function get_image_sizes() {
@@ -326,33 +348,18 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			'rotate' => 0
 		);
 
-		// Allow to make the images bigger
-		//if($factor <= 1){
-			//resize
-			$resize = array(
-				'width' => round($full['width'] * $factor),
-				'height' => round($full['height'] * $factor)
-			);
-			$crop = $custom;
+		$resize = array(
+			'width' => round($full['width'] * $factor),
+			'height' => round($full['height'] * $factor)
+		);
+		$crop = $custom;
 
-			$crop['left'] = $resize['width'] > $crop['width'] ? floor(($resize['width'] - $crop['width']) / 2) : 0;
-			$crop['top'] = $resize['height'] > $crop['height'] ? floor(($resize['height'] - $crop['height']) / 2) : 0;
+		$crop['left'] = $resize['width'] > $crop['width'] ? floor(($resize['width'] - $crop['width']) / 2) : 0;
+		$crop['top'] = $resize['height'] > $crop['height'] ? floor(($resize['height'] - $crop['height']) / 2) : 0;
 
-			$transformations['crop'] = $crop;
-			$transformations['resize'] = $resize;
-		/*}
-		else {
-			$transformations['resize'] = false;
-			$crop = array(
-				'width' => min($custom['width'], $full['width']),
-				'height' => min($custom['height'], $full['height'])
-			);
+		$transformations['crop'] = $crop;
+		$transformations['resize'] = $resize;
 
-			$crop['left'] = $full['width'] > $crop['width'] ? floor(($full['width'] - $crop['width']) / 2) : 0;
-			$crop['top'] = $full['height'] > $crop['height'] ? floor(($full['height'] - $crop['height']) / 2) : 0;
-
-			$transformations['crop'] = $crop;
-		}*/
 		return $transformations;
 
 	}

@@ -1,4 +1,4 @@
-<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>; min-height: <?php echo $element_size['height'] ?>px;">
+<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?><?php echo $gifImage ?>" id="<?php echo $element_id ?>" style="text-align: <?php echo $align ?>; min-height: <?php echo $element_size['height'] ?>px;">
 	<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">
 		<?php if($url) { ?>
 		<a href="<?php echo $url ?>">
@@ -40,6 +40,20 @@
 	#<?php echo $element_id ?> .upfront-image-container {
 		overflow: hidden;
 	}
+	#<?php echo $element_id ?>.uimage-gif .upfront-image-container {
+		height: <?php echo $element_size['height'] ?>px;
+		width: <?php echo $element_size['width'] ?>px;
+		position: relative;
+	}
+
+	#<?php echo $element_id ?>.uimage-gif img {
+		height: <?php echo $size['height'] ?>px;
+		width: <?php echo $size['width'] ?>px !important;
+		margin-top: <?php echo $gifTop ?>;
+		margin-left: -<?php echo $gifLeft ?>;
+		max-width: none;
+	}
+
 	#<?php echo $element_id ?> .uimage-over_image {
 		position:relative;
 	}
@@ -57,6 +71,7 @@
 	}
 
 	#<?php echo $element_id ?> .uimage-caption-over_image-top .wp-caption{
+
 	}
 
 	#<?php echo $element_id ?> .uimage-caption-over_image-bottom .wp-caption{

@@ -484,6 +484,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		else
 			props.imgWidth = props.size.width + 'px';
 
+		//Gif image handled as normal ones in the backend
+		props.gifImage = '';
+		props.gifLeft = 0;
+		props.gifTop = 0;
+
 		var rendered = this.imageTpl(props);
 
 		console.log('Image element');
@@ -975,6 +980,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.property('srcFull', imageData.urlOriginal, false);
 			me.property('stretch', resize.width >= elementSize.width);
 			me.property('vstretch', resize.height >= elementSize.height);
+			me.property('gifImage', imageData.gif);
 			clearTimeout(me.cropTimer);
 			me.cropTimer = false;
 		});
@@ -1069,6 +1075,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('quick_swap', false, true);
 		if(result.imageId)
 			this.property('image_id', result.imageId, true);
+
+		this.property('gifImage', result.gif);
 
 
 		var moduleModel = this.parent_module_view.model;
@@ -1700,6 +1708,7 @@ var ImageEditor = Backbone.View.extend({
 				results.src = imageData.url;
 				results.srcFull = imageData.urlOriginal;
 				results.cropSize = imageData.crop;
+				results.gif = imageData.gif || 0;
 				if(me.options.resizedElement)
 					results.elementSize = me.getCurrentMaskRowsCols();
 				me.response.resolve(results);
