@@ -569,9 +569,16 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			return;
 		}
 
+		var elementSize = me.property('element_size');
+		me.$el.append(
+			$('<div>').addClass('uimage-resize-hint upfront-ui').html(me.sizehintTpl({
+				width: elementSize.width,
+				height: elementSize.height
+			}))
+		);
+
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
 		setTimeout(function(){
-			var elementSize = me.property('element_size');
 
 			me.controls.setWidth(elementSize.width);
 			me.controls.render();
@@ -801,15 +808,16 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		this.setSizeClasses(resizer.width(), resizer.height());
 
+		this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
+				width: data.elementSize.width,
+				height: data.elementSize.height
+			})
+		).css({
+			bottom: 'auto',
+			top: resizer.height() - 39
+		});
+
 		if(starting.length){
-			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
-					width: data.elementSize.width,
-					height: data.elementSize.height
-				})
-			).css({
-				bottom: 'auto',
-				top: resizer.height() - 39
-			});
 			return starting.outerHeight(data.elementSize.height);
 		}
 
