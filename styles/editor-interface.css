@@ -8171,52 +8171,45 @@ div.sp-val:active .sp-dragger:after { display:block;}
 }
 
 /* Plain Text Element */
-.plaintxt_padding {
- 	padding: 15px;
+div.plaintext-settings.inline-radios > span.upfront-field-multiple {
+  display: inline-block !important;
+  margin-right:6px
 }
 
-div.inline-radios.plaintext-settings > span {
-	margin-right:6px;
-}
-
-div.inline-radios > span, div.inline-checkboxes, div.inline-number, div.inline-color {
-  display:inline-block;
-}
-
-div.inline-number {
-  margin-left:12px;
-}
-
-div.inline-number > input {
-  width:50px !important;
-  font-size:11px;
-}
-div.inline-number.plaintext-settings {
-	width: 36px;
-}
-div.inline-color {
-  float:right;
-}
-
-div.plaintext-settings {
-  line-height:3;
-  vertical-align:middle;
-}
-div.inline-radios.plaintext-settings {
-	clear:both;
-	line-height:1 !important;
-}
-div.inline-color, div.inline-number input {
-position: relative;
-top: -6px;
-}
 
 #settings .plaintxt-settings-panel .upfront-settings_panel_scroll {
-	min-width: 238px;
+	min-width: 287px;
 	max-height: 400px !important
 }
 
+div.plaintext-settings {
+  display: inline-block;
+}
 
+
+
+div.inline-number.plaintext-settings label, div.inline-color.plaintext-settings.border-color label {
+  display: inline;
+  font-size: 11px;
+  color:#131313;
+}
+
+
+
+div.inline-color.plaintext-settings.border-color {
+  min-width: 100px;
+}
+div.inline-color.plaintext-settings.bg-color {
+  min-width: 220px;
+}
+div.inline-number.plaintext-settings {
+  margin-right: 20px;
+}
+
+div.inline-number.plaintext-settings input {
+  width: 50px
+}
+}
 
 /* Context Menu */
 .uf-context-menu * {
