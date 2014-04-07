@@ -12,7 +12,7 @@
 		<div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 			<a class="ugallery_link" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
 			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
-				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">				
+				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">
 			</div>
 			<?php if($captionWhen != 'never'){ ?>
 			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?> ugallery-caption-<?php echo $captionPosition ?>"><?php echo $images[$i]['title'] ?></div>
@@ -52,10 +52,10 @@
 <?php } ?>
 </div>
 
-<style>	
+<style>
 	#<?php echo $element_id ?> .ugallery-thumb-title {
 		color: <?php echo $captionColor ?>;
-		background: <?php echo $captionUseBackground != "0" ? $captionBackground : 'transparent' ?>;
+		background: <?php echo  $captionBackground ?>;
 	}
 
 	#<?php echo $element_id ?> .ugallery-caption-above {

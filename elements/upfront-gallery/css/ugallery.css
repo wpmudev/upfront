@@ -728,3 +728,36 @@ input#ugallery-addlabels:focus {
 .ugallery-settings .sp-replacer {
 	vertical-align: top;
 }
+
+.ugallery-settings .upfront-field-wrap-color label {
+	color: rgb(48, 71, 94);
+	font-size: 11px;
+	font-weight: normal;
+	font-family: verdana, sans-serif;
+}
+
+.upfront-field-info {
+	display: inline-block;
+	position: absolute;
+	top: 3px;
+	left: 135px;
+	width: 20px;
+	height: 20px;
+	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -481px -138px;
+	opacity: .8;
+}
+
+.upfront-field-info:hover{
+	opacity: 1;
+}
+
+.ugallery-field-tooltip {
+	position: absolute;
+	width: 200px;
+	top: 120%;
+	background: #3d5266;
+	color: #dae6f2;
+	padding: 5px 2px;
+	text-align:center;
+	z-index: 10;
+}
