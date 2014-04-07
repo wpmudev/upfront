@@ -251,9 +251,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		//if(this.property('border_enabled')) {
 		if(this.property('border_style') != 'none') {
 			this.property('border', this.property('border_width')+'px '+this.property('border_color')+' '+this.property('border_style'), false);
+			this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
 		}
 		else {
 			this.property('border', '', false);
+			this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
 		}
 	},
 	property: function(name, value, silent) {
@@ -272,6 +274,16 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			this.constructor.__super__.render.apply(this, arguments);
 			// Remove panel tabs
 			var me = this;
+			
+			if(this.property('border_style') != 'none') {
+
+						this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
+					}
+					else {
+
+						this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
+					}
+			
 /*
 			if(this.property('bg_color_enabled') === true) {
 				this.$el.find('.bg-color-enabled input').attr('checked', true);
