@@ -3743,8 +3743,8 @@ define([
 	});
 
 var Field_Complex_Toggleable_Text_Field = Field.extend({
-	className: "upfront-field-complex_field-boolean_toggleable_text",
-	tpl: '<input type="checkbox" /> <label>{{element_label}}</label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">Please, use ID that contains letters only, eg. <b>myProductSlider</b><br />No spaces or special characters.</div></div>',
+	className: "upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple",
+	tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">Please, use ID that contains letters only, eg. <b>myProductSlider</b><br />No spaces or special characters.</div></div>',
 	initialize: function () {
 		this.options.field = new Field_Text(this.options);
 		Field.prototype.initialize.call(this);

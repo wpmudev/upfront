@@ -1295,6 +1295,13 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 	bottom: 6px;
 	left: 0;
 }
+.upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text input.upfront-field-checkbox {
+	bottom: none;
+	top: 6px;	
+}
+.upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text label.upfront-field-label {
+	display: none;
+}
 .upfront-field-multiple-vertical input.upfront-field-checkbox,
 .upfront-field-multiple-vertical input.upfront-field-radio {
 	position: absolute;
