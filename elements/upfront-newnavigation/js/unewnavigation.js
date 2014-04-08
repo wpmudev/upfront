@@ -158,6 +158,10 @@ var MenuItemView = Backbone.View.extend({
 			$(this.el).addClass('new_menu_item');
 
 		
+		if(this.model['menu-item-title'].trim() == '') {
+			this.deleteMenuItem();
+		}
+		
 		return this;
 	},
 	createDropDown: function(e) {
