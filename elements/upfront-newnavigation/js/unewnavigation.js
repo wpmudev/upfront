@@ -1262,7 +1262,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			save_settings: function(){
 				Menu_Panel.__super__.save_settings.apply(this, arguments);
 				this.model.set_property('menu_items', false, true);
-				//this.settings._wrapped[0].fields._wrapped[0].renameMenu();
+				this.settings._wrapped[0].fields._wrapped[0].renameMenu();
 			}
 		});
 
@@ -1278,8 +1278,12 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			renameMenu: function() {
 				var $input = this.$el.find('input');
                 var me = this;
+				console.log(currentMenuItemData.get('name'));
                 // Ajax call for creating menu
-                var renameMenu = Upfront.Util.post({"action": "upfront_rename_menu", "new_menu_name": $input.val(), "menu_id": currentMenuItemData.get('menu_id')})
+				if($input.val().trim() == '' || $input.val().trim == currentMenuItemData.get('name'))
+					return;
+					
+                var renameMenu = Upfront.Util.post({"action": "upfront_rename_menu", "new_menu_name": $input.val(), "menu_id": me.model.get_property_value_by_name('menu_id')})
                     .success(function (ret) {
 						me.getMenus();
                         //me.model.set_property('create_menu','',true)
@@ -1321,13 +1325,13 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                         settings: [
 							new Upfront.Views.Editor.Settings.Item({
                                 model: this.model,
-                                title: "This Menu",
+                                title: "Rename Menu",
                                 fields: [
                                     new Text_Field({
                                         model: this.model,
                                         property: 'menu_name',
                                         label: "Menu Name",
-										value: "Menu dfdf Name",
+										value: "",
                                         compact: true
                                     })
                                 ]
@@ -1354,7 +1358,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                         label: "Layout",
                         title: "Layout settings",
                         settings: [
-							new Upfront.Views.Editor.Settings.Item({
+							/*new Upfront.Views.Editor.Settings.Item({
                                 model: this.model,
                                 title: "Menu Style",
                                 fields: [
@@ -1370,10 +1374,10 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                                         ]
                                     })
                                 ]
-                            }),
+                            }),*/
                             new Upfront.Views.Editor.Settings.Item({
                                 model: this.model,
-                                title: "Menu Alignment",
+                                title: "Alignment",
                                 fields: [
                                     new Upfront.Views.Editor.Field.Radios({
                                         model: this.model,
@@ -1391,12 +1395,12 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                             }),
                             new Upfront.Views.Editor.Settings.Item({
                                 model: this.model,
-                                title: "Misc. Settings",
+                                title: "Menu Options",
                                 fields: [
                                     new Upfront.Views.Editor.Field.Checkboxes({
                                         model: this.model,
                                         property: 'allow_sub_nav',
-                                        label: "",
+                                        label: "Show sub-nav",
                                         default_value: ['no'],
                                         values: [
                                             { label: "Allow subnavigation on hover", value: 'yes' }
@@ -1407,7 +1411,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                                         property: 'allow_new_pages',
                                         label: "",
                                         values: [
-                                            { label: "Add new Pages to this menu", value: 'yes' }
+                                            { label: "Add new Pages automatically", value: 'yes' }
                                         ]
                                     }),
                                     new Upfront.Views.Editor.Field.Checkboxes({
@@ -1415,7 +1419,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                                         property: 'is_floating',
                                         label: "",
                                         values: [
-                                            { label: "Allow floating...", value: 'yes' }
+                                            { label: "Float this menu", value: 'yes' }
                                         ]
                                     })
                                 ]
