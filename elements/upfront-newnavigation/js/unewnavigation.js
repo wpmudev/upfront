@@ -156,11 +156,6 @@ var MenuItemView = Backbone.View.extend({
 		$(this.el).data('backboneview', me).addClass('menu-item');
 		if(me.newitem)
 			$(this.el).addClass('new_menu_item');
-
-		
-		if(this.model['menu-item-title'].trim() == '') {
-			this.deleteMenuItem();
-		}
 		
 		return this;
 	},
