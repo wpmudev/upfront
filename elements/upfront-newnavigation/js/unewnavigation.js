@@ -587,7 +587,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.$el.find('a.ueditable').each(function() {
 				$(this).data('ueditor').stop();
 			});
-		console.log(thelink.model['menu-item-target']);
+		if($(e.target).closest('.redactor_box').length > 0)
+			return;
+
 		singleclickcount++;
 		if(singleclickcount == 1) {
 			setTimeout(function(){
