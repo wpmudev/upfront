@@ -8,8 +8,7 @@
 <?php } ?>
 <?php if($imagesLength){ ?>
 	<div class="ugallery_items <?php echo $labelFilters['length'] ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
-	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-		<div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+	<?php for($i=0; $i<$imagesLength; $i++) { ?><div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 			<a class="ugallery_link" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
 			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">
@@ -18,8 +17,7 @@
 			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?> ugallery-caption-<?php echo $captionPosition ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			</a>
-		</div>
-	<?php } ?>
+		</div><?php } ?>
 	<?php if($editing) { ?>
 		<div class="ugallery_addmore_wrapper upfront-ui" style="width: <?php echo $thumbWidth ?>px; min-height: <?php echo $thumbHeight ?>px">
 			<div class="ugallery_addmore"  title="Add new images to the Gallery">Add more</div></div>

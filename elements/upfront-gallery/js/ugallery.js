@@ -289,8 +289,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	on_render: function(){
 		var me = this,
-			skipMargin = me.$el.closest('body').length ? this.calculateMargins() : false
+			resizingFunction,
+			skipMargins = me.$el.closest('body').length ? me.calculateMargins() : 0
 		;
+
+		//Bind resizing events
+		if(!me.parent_module_view.$el.data('resizeHandling')){
+			resizingFunction = $.proxy(me.onElementResizing, me);
+			me.parent_module_view.$el
+				.on('resize', resizingFunction)
+				.on('resizestop', $.proxy(me.onElementResizeStop, me))
+				.data('resizeHandling', true)
+			;
+		}
 
 		this.images.each(function(image){
 			if(image.get('loading')){
@@ -303,7 +314,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>Click to personalize this gallery</p></div>');
 		}
 
+		//Calculate margins now if it is possible
+		if(me.$el.closest('body').length)
+			me.calculateMargins();
+
 		setTimeout(function(){
+			//And now too
+			me.calculateMargins();
+
 			var items = me.$('.ugallery_item');
 			_.each(items, function(i){
 				var item = $(i),
@@ -312,8 +330,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					title = item.find('.ugallery-thumb-title')
 				;
 
-				if(!skipMargin)
-					me.calculateMargins();
 
 				controls.setWidth(item.width());
 				controls.render();
@@ -357,21 +373,36 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.activateSortable();
 	},
 
+	onElementResizing: function(){
+		this.$('.ugallery_items').width($('html').find('.upfront-resize').width() - 30);
+		this.calculateMargins();
+	},
+
+	onElementResizeStop: function(){
+		this.render();
+	},
+
 	calculateMargins: function() {
 		var container = this.$('.ugallery_items').width(),
 			items = this.$('.ugallery_item'),
 			itemWidth = items.outerWidth(),
 			minMargin = 30,
-			columns = Math.floor(container / itemWidth)
+			columns = Math.floor(container / itemWidth),
+			margin, totalMargin, remaining
 		;
 
 		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
 			columns--;
 
-		var margin = Math.floor( (container - (columns * itemWidth)) / (columns - 1) ) - 2 * columns;
+		totalMargin = container - (columns * itemWidth);
+		margin = Math.floor(totalMargin / (columns-1));
+		remaining = container - (columns * itemWidth + margin * (columns-1));
 
 		_.each(items, function(it, idx){
-			$(it).css('margin-right', (idx + 1) % columns ? margin : 0);
+			var safetyPixel = idx % columns == 0 ? 1 : 0, //This pixel asure we are not exceding container width
+				extra = columns - (idx % columns) < remaining ? 1 : 0
+			;
+			$(it).css('margin-right', (idx + 1) % columns ? margin + extra - safetyPixel : 0);
 		});
 
 		return 1;

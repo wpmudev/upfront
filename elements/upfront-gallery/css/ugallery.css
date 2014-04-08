@@ -714,6 +714,10 @@ input#ugallery-addlabels:focus {
 	font-weight: bold;
 }
 
+button.mfp-close {
+	width: 20px !important;
+}
+
 
 .ugallery-settings .upfront-settings-item{
 	padding-bottom: 0;

@@ -1,26 +1,49 @@
 jQuery(function($){
 
-	var calculateMargins =  function(gallery) {
+	var calculateMargins =  function(gallery, absolute) {
 		var container = gallery.find('.ugallery_items').width(),
 			items = gallery.find('.ugallery_item'),
 			itemWidth = items.outerWidth(),
 			minMargin = 30,
 			columns = Math.floor(container / itemWidth),
-      margin
+			margin, totalMargin, remaining, grid
 		;
 
 		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
 			columns--;
 
-		margin = Math.floor( (container - (columns * itemWidth)) / (columns - 1) ) - 2 * columns;
+		totalMargin = container - (columns * itemWidth);
+		margin = Math.floor(totalMargin / (columns-1));
+		grid = margin + itemWidth;
+		remaining = container - (columns * itemWidth + margin * (columns-1));
 
 		items.each(function(idx){
-			$(this).css('margin-right', (idx + 1) % columns ? margin : 0);
+			var $this = $(this),
+				extra
+			;
+			if(absolute){
+				var left = $this.position().left,
+					col = Math.round(left / grid)
+				;
+				extra = col < remaining ? col : 0;
+				$this.css('left', col*grid + extra);
+			}
+			else{
+				extra = columns - (idx % columns) < remaining ? 1 : 0;
+				$this.css('margin-right', (idx + 1) % columns ? margin + extra : 0);
+			}
 		});
 	};
 
 	$('.ugallery_grid').each(function(){
 		var grid = $(this);
+
+		grid.on('layout.shuffle', function(){
+			setTimeout(function(){
+				calculateMargins(grid.parent(), true);
+			}, 20);
+		});
+
 		grid.shuffle({
 			itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
 			gutterWidth: function(containerWidth){
@@ -37,7 +60,8 @@ jQuery(function($){
 				;
 
 				return gutter - 2 * columns;
-			}
+			},
+			supported: false
 		});
 
 		grid.siblings('.ugallery_labels').on('click', '.ugallery_label_filter', function(e){
