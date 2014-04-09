@@ -165,7 +165,6 @@ var MenuItemView = Backbone.View.extend({
 		this.parent_view.addMenuItem(placeholder)	
 	},
 	addMenuItem: function(e) {
-
 		e.preventDefault();
 		e.stopPropagation();
 		this.parent_view.addMenuItem(e);
@@ -519,6 +518,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		  //'click ul.menu.drag_mode a.menu_item' : 'editMenuItem',
 		  'click a.menu_item' : 'exitEditMode',
 		  'dblclick a.menu_item' : 'editMenuItem',
+		  'click a.newnavigation-add-item': 'addPrimaryMenuItem',
 		  //'click ul.menu.edit_mode a.menu_item.edit_disable' : 'dbleditMenuItem',		  
 		  //'dblclick ul.menu.drag_mode a.menu_item': 'editMenuItem',
 		 // 'dblclick ul.menu.edit_mode a.menu_item': 'editMenuItem',
@@ -1024,9 +1024,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		$upfrontObjectContent;
 
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
+		if(this.$el.find('a.newnavigation-add-item').length < 1)
+			$('<b class="upfront-entity_meta newnavigation_add"><a href="#" class="upfront-icon-button newnavigation-add-item"></a></b>').insertBefore($upfrontObjectContent);
+		
 		$upfrontObjectContent.attr('data-aliment',(menuAliment ? menuAliment : 'left'));
 		$upfrontObjectContent.attr('data-style',(menuStyle ? menuStyle : 'horizontal'));
 		$upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
+		
+
 		
 	},
 	generate_menu: function() {
@@ -1148,12 +1153,21 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 							"menu-item-url": "http://#"
                         };
 	},
-	addMenuItem : function(e){
+	addPrimaryMenuItem : function(e) {
+		e.preventDefault();
+		this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
+		//this.addMenuItem(this.$el.find('ul.menu > li > i.navigation-add-item'));
+	},
+	addMenuItem : function(e) {
 
 		var me = this;
+		
 		var menuItemId = false;
+		
 		var menu_id = this.model.get_property_value_by_name('menu_id');
+		
 		me.$el.find('a.new_menu_item').removeClass('new_menu_item');
+		
 		var menu_item = this.menuItemTemplate();
 		
 		var newmenuitem;
@@ -1162,11 +1176,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			menu_item["menu-item-parent-id"] = e.parent('li').data('backboneview').model["menu-item-db-id"];
 			e.append(this.renderMenuItem(menu_item, true));
 			e.children('li:last').append('<i class="navigation-add-item"></i>');
-			
 		}
-			
 		else {
-			 if($(e.target).parent('li').parent('ul').parent('li').length > 0) {
+			if($(e.target).parent('li').parent('ul').parent('li').length > 0) {
 				menu_item["menu-item-parent-id"] = $(e.target).parent('li').parent('ul').parent('li').data('backboneview').model["menu-item-db-id"];
 				$(e.target).parent('li').parent('ul').addClass('time_being_display');
 			}
