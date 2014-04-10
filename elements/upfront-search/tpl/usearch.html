@@ -1,0 +1,12 @@
+<div class="upfront-search" id="<?php echo $element_id ?>">
+	<form action="<?php echo $action ?>" method="GET">
+		<input type="search" class="search-field search-<?php echo $iconClass ?>" name="s" value="" placeholder="<?php echo $placeholder ?>"/>
+		<?php if($label == '__image__') { ?>
+			<i class="icon-search"></i>
+		<?php } ?>
+		<?php if($label && $label != '__image__') { ?>
+			<button class="search-button search-<?php echo $iconClass ?>"><?php echo $label ?></button>
+		<?php } ?>
+    </form>
+
+</div>
