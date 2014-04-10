@@ -1297,7 +1297,7 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 }
 .upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text input.upfront-field-checkbox {
 	bottom: none;
-	top: 6px;	
+	top: 6px;
 }
 .upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text label.upfront-field-label {
 	display: none;
@@ -1782,8 +1782,6 @@ a.ueditor-action-pickercancel{
 	/*z-index: 40;*/
 }
 .upfront-objects_container {
-	/*padding: 15px 0;*/
-	float: left;
 	width: 100%;
 	position: relative;
 }
