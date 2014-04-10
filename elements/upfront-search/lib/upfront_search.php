@@ -5,39 +5,20 @@
  * A fairly simple implementation, with applied settings.
  */
 class Upfront_UsearchView extends Upfront_Object {
+    public function get_markup(){
+        $data = $this->properties_to_array();
+        $data['action'] = home_url('/');
+        $data['iconClass'] = $data['label'] == '__image__' ? 'icon' : 'text';
 
-	public function get_markup () {
-		$element_id = $this->_get_property('element_id');
-		$element_id = $element_id ? "id='{$element_id}'" : '';
-
-		$label = $this->_get_property("label");
-		$iconClass = ($label == '__image__' || !$label) ? ' search-icon' : ' search-text';
-		$label = !empty($label) && '__image__' != $label
-			? $label
-			: '<i class="icon-search"></i>'
-		;
-    $show_button = $this->_get_property('search_type');
-
-
-		$placeholder = $this->_get_property("placeholder");
-		$placeholder = $placeholder ? "placeholder='{$placeholder}'" : '';
-
-		$rounded = $this->_get_property("is_rounded") ? 'rounded' : '';
-
-		$color = $this->_get_property("color");
-		$color = $color ? "style='background-color:{$color};'" : '';
-
-    $markup = "<div class=' upfront-search {$rounded}' {$color} {$element_id}>" .
-			"<form action='" . esc_url( home_url( '/' ) ) . "' method='GET'>" .
-			"<input type='search' class='search-field{$iconClass}' name='s' value='' $placeholder  />";
-    if ($show_button !== false) {
-      $markup .= !empty($label)?"<button class='search-button{$iconClass}".($label == '<i class="icon-search"></i>'?" image":"") ."'>{$label}</button>":"";
+        return upfront_get_template('usearch', $data, dirname(dirname(__FILE__)) . '/tpl/usearch.html');
     }
-    $markup .= '</form>' .
-		"</div>";
 
-    return $markup;
-	}
+    private function properties_to_array(){
+        $out = array();
+        foreach($this->_data['properties'] as $prop)
+            $out[$prop['name']] = $prop['value'];
+        return $out;
+    }
 
 	public static function add_js_defaults($data){
         $data['usearch'] = array(

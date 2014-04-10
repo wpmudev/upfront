@@ -1,6 +1,6 @@
 (function ($) {
 
-define(function() {
+define(['text!elements/upfront-search/tpl/usearch.html'], function(tplSource) {
 
 /**
  * Define the model - initialize properties to their default values.
@@ -24,6 +24,7 @@ var UsearchModel = Upfront.Models.ObjectModel.extend({
  */
 var UsearchView = Upfront.Views.ObjectView.extend({
 
+	tpl: Upfront.Util.template(tplSource),
 	cssSelectors: {
 		'input.search-field': {label: 'Search field', info: 'The search input field'},
 		'button.search-button': {label: 'Search button', info: 'The search button'}
@@ -40,15 +41,18 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 	 * Element contents markup.
 	 * @return {string} Markup to be shown.
 	 */
-	get_content_markup: function () {
-		var placeholder = this.model.get_property_value_by_name("placeholder"),
-			placeholder_text = placeholder || 'Search',
-			label = this.model.get_property_value_by_name("label"),
-			iconClass = label == '__image__' || !label ? ' search-icon' : ' search-text',
-			image = '<i class="icon-search"></i>'
+	get_content_markup: function() {
+		var label = this.model.get_property_value_by_name("label"),
+			data = {
+				placeholder: this.model.get_property_value_by_name("placeholder"),
+				label: label,
+				action: '/',
+				iconClass: label == '__image__' ? 'icon' : 'text',
+				element_id: this.model.get_property_value_by_name("element_id")
+			}
 		;
-		return 	'<input type="search" name="s" class="search-field' + iconClass + '" value="" placeholder="'+(placeholder ? placeholder_text : "")+'" />' +
-				((label != '')?'<button class="search-button' + (label == '__image__' || !label ? ' image' : '') + iconClass + '">' + (label == '__image__' || !label ? image : label) + '</button>':'');
+
+		return this.tpl(data);
 	},
 
 	on_render: function () {
