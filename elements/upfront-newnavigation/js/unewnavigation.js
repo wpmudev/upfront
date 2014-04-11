@@ -386,6 +386,11 @@ var MenuItemView = Backbone.View.extend({
 		this.model['menu-item-title'] = $(this.el).children('a.menu_item').text();
 		
 
+		if( me.model['menu-item-title'].trim() == '' ) {
+			me.deleteMenuItem();
+			return;
+		}
+
 
 		var postdata = {"action": "upfront_update_menu_item",'menu': me.parent_view.model.get_property_value_by_name('menu_id') , 'menu-item': this.model}
 
@@ -1126,6 +1131,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(classname=='menu')
 			$dom.addClass('drag_mode');
 		list.forEach( function(model){
+			if(model['menu-item-title'].trim() == '')
+				model['menu-item-title'] = 'Link Name';
+				
 			$dom.append(this.renderMenuItem(model));
 			if(!(typeof model.sub === 'undefined')) {
 				$dom.find(':last').parent().addClass('parent').append(this.renderMenu(model.sub, 'sub-menu'));
