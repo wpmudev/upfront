@@ -1,6 +1,6 @@
 (function ($) {
 
-define(['text!upfront/templates/objects/plain_text/plain_text.html'], function(template) {
+define(['text!elements/upfront-text/tpl/utext.html'], function(template) {
 
 var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
@@ -182,8 +182,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					  move: this.onBorderColor
 					}
 				  }),
-				  
-				  
+
+
 				  new Upfront.Views.Editor.Field.Color({
 					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color',
 					model: this.model,
@@ -277,7 +277,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			this.constructor.__super__.render.apply(this, arguments);
 			// Remove panel tabs
 			var me = this;
-			
+
 			if(this.property('border_style') != 'none') {
 
 						this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
@@ -286,7 +286,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 						this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
 					}
-			
+
 /*
 			if(this.property('bg_color_enabled') === true) {
 				this.$el.find('.bg-color-enabled input').attr('checked', true);

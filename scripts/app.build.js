@@ -30,6 +30,7 @@
         "upfront_maps": "../elements/upfront-maps/js/upfront_maps",
         "upfront-navigation": "../elements/upfront-navigation/js/upfront-navigation",
         "unewnavigation": "../elements/upfront-newnavigation/js/unewnavigation",
+        "utext": "../elements/upfront-text/js/utext",
         "uposts": "../elements/upfront-posts/js/uposts",
         "usearch": "../elements/upfront-search/js/usearch",
         "upfront-social_media": "../elements/upfront-social-media/js/upfront-social-media",
@@ -40,7 +41,7 @@
         "uyoutube": "../elements/upfront-youtube/js/uyoutube",
         "redactor": "redactor/redactor",
         "ueditor": "redactor/ueditor",
-        "upfront_code": "../elements/upfront-code/js/upfront_code", 
+        "upfront_code": "../elements/upfront-code/js/upfront_code",
         "upfront_slider": "../elements/upfront-slider/js/uslider"
     },
     shim: {

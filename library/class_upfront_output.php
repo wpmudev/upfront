@@ -111,13 +111,13 @@ class Upfront_Output {
 	function add_styles () {
 		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), 0.1, 'all');
 	}
-	
+
 	function add_scripts () {
 		upfront_add_element_script('upfront-layout', array('scripts/layout.js', dirname(__FILE__)));
 		upfront_add_element_script('upfront-default-map', array('scripts/default-map.js', dirname(__FILE__)));
 		upfront_add_element_script('upfront-default-slider', array('scripts/default-slider.js', dirname(__FILE__)));
 		upfront_add_element_style('upfront-default-slider', array('styles/default-slider.css', dirname(__FILE__)));
-		
+
 	}
 }
 
@@ -639,7 +639,7 @@ class Upfront_Object extends Upfront_Entity {
 		return $pre . $view->get_markup() . $post;
 	}
 }
-
+/*
 class Upfront_PlainTxtView extends Upfront_Object {
 
 	public function get_markup () {
@@ -677,7 +677,7 @@ class Upfront_ImageView extends Upfront_Object {
 		return "<div class='upfront-output-object upfront-output-image' {$element_id}><img src='" . esc_attr($this->_get_property('content')) . "' /></div>";
 	}
 }
-
+*/
 class Upfront_SettingExampleView extends Upfront_Object {
 
 	public function get_markup () {

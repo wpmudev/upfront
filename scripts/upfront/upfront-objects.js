@@ -2,9 +2,9 @@
 
 // These will be filterable!
 define([
-	'upfront/objects/loading',
-	'upfront/objects/image',
-	'upfront/objects/plain_text',
+	'upfront/objects/loading'
+	//'upfront/objects/image',
+	//'upfront/objects/plain_text',
 	//'upfront/objects/setting_example',
 	//'upfront/objects/test_resize'
 ], function () {

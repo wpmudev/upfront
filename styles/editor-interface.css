@@ -1700,6 +1700,7 @@ a.ueditor-action-pickercancel{
 }
 .upfront-overlay-grid-simple .upfront-grid-border {
 	background: none;
+	float:left;
 }
 .upfront-grid-border:last-child {
 	border-right: none;

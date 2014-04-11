@@ -88,8 +88,24 @@ h2, h3 { page-break-after: avoid; }
 }
 
 .upfront-output-wrapper { float: left; }
+
 .upfront-module {}
-.upfront-object {}
+
+/* Clearfix for object container */
+.upfront-output-module:after,
+.upfront-editable_entities_container>div:after {
+	content: " ";
+	display: table;
+}
+
+/* Object */
+.upfront-object,
+.upfront-output-object {
+	float:left;
+	width:100%;
+}
+
+
 
 
 
