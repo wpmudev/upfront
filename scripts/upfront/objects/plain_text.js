@@ -241,7 +241,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	processBg: function() {
 		//if(this.property('bg_color_enabled')) {
-			this.property('background_color', this.property('bg_color'), false);
+			if(this.property('bg_color') == 'rgba(0, 0, 0, 0)')
+				this.property('background_color', '', false);
+			else
+				this.property('background_color', this.property('bg_color'), false);
 		/*}
 		else {
 			this.property('background_color', '', false);
