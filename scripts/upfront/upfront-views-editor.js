@@ -3906,7 +3906,7 @@ var CSSEditor = Backbone.View.extend({
 		LoginModel: {label: 'Login', id: 'upfront-login_element'},
 		LikeBox: {label: 'Like Box', id: 'Like-box-object'},
 		MapModel: {label: 'Map', id: 'upfront-map_element'},
-		NavigationModel: {label: 'Navigation', id: 'nav'},
+		//NavigationModel: {label: 'Navigation', id: 'nav'},
 		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
 		UpostsModel: {label: 'Posts', id: 'uposts'},
 		UsearchModel: {label: 'Search', id: 'usearch'},

@@ -56,7 +56,6 @@ text!elements/upfront-login/css/public.css
 d:/htdocs/incsub/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
 text!elements/upfront-maps/css/edit.css
 d:/htdocs/incsub/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
-d:/htdocs/incsub/wp-content/themes/upfront/elements/upfront-navigation/js/upfront-navigation.js
 text!elements/upfront-newnavigation/tpl/link_editor.html
 d:/htdocs/incsub/wp-content/themes/upfront/elements/upfront-newnavigation/js/unewnavigation.js
 d:/htdocs/incsub/wp-content/themes/upfront/elements/upfront-posts/js/uposts.js

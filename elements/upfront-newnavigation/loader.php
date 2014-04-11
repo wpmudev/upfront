@@ -33,6 +33,9 @@ function unewnavigation_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/unewnavigation.php');
 
+    // Include the backend support stuff
+    require_once( ABSPATH . 'wp-admin/includes/nav-menu.php' );
+
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UnewnavigationView', 'add_js_defaults'));
 

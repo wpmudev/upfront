@@ -187,7 +187,7 @@ var MenuItemView = Backbone.View.extend({
 		parentlist.children('li:last').append(newitemicon);
 
 		if(typeof me.model['menu-item-db-id'] != 'undefined') {		
-			Upfront.Util.post({"action": "upfront_delete_menu_item", "menu_item_id": me.model['menu-item-db-id'], "new_menu_order" : me.parent_view.new_menu_order()})
+			Upfront.Util.post({"action": "upfront_new_delete_menu_item", "menu_item_id": me.model['menu-item-db-id'], "new_menu_order" : me.parent_view.new_menu_order()})
 				.success(function (ret) {
 					//Upfront.Events.trigger("navigation:get:this:menu:items");
 					//Upfront.Events.trigger("entity:object:render_navigation");
@@ -392,7 +392,7 @@ var MenuItemView = Backbone.View.extend({
 		}
 
 
-		var postdata = {"action": "upfront_update_menu_item",'menu': me.parent_view.model.get_property_value_by_name('menu_id') , 'menu-item': this.model}
+		var postdata = {"action": "upfront_new_update_menu_item",'menu': me.parent_view.model.get_property_value_by_name('menu_id') , 'menu-item': this.model}
 
 		
 		if(typeof this.model['menu-item-db-id'] != 'undefined'){
@@ -548,7 +548,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			//this.auto_add_pages();
 			//set data on initialize
 			if(menu_id)
-				Upfront.data.navigation.get_this_menu_items = Upfront.Util.post({"action": "upfront_load_menu_items", "data": currentMenuItemData.get('menu_id')});
+				Upfront.data.navigation.get_this_menu_items = Upfront.Util.post({"action": "upfront_new_load_menu_items", "data": currentMenuItemData.get('menu_id')});
 			//Upfront.data.navigation.get_all_pages = Upfront.Util.post({"action": 'upfront_load_all_pages'});
 			//Upfront.data.navigation.get_all_categories = Upfront.Util.post({"action": 'upfront_load_all_categories'});
 			// re render navigation when this event trigger
@@ -556,7 +556,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			// call this function on Menu id change
 			//if (!!this.model.get_property_by_name('menu_id')) this.model.get_property_by_name('menu_id').on('change', this.auto_add_pages, this);
 			// call this function on allow_new_pages change
-			//if (!!this.model.get_property_by_name('allow_new_pages')) this.model.get_property_by_name('allow_new_pages').on('change', this.update_auto_add_pages, this);
+			if (!!this.model.get_property_by_name('allow_new_pages')) this.model.get_property_by_name('allow_new_pages').on('change', this.update_auto_add_pages, this);
 
 			this.property('menu_items', false);
 			
@@ -762,7 +762,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			return this.model.set_property(name, value, silent);
 		return this.model.get_property_value_by_name(name);
 	},
-	/*update_auto_add_pages: function(){
+	update_auto_add_pages: function(){
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			allow_new_pages = this.property('allow_new_pages'),
 			nav_menu_option = Upfront.data.navigation.auto_add['auto_add'],
@@ -789,7 +789,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			Upfront.data.navigation.auto_add['auto_add'] = nav_menu_option;
 		}
 
-		Upfront.Util.post({"action": "upfront_update_auto_add_pages", "nav_menu_option": JSON.stringify(Upfront.data.navigation.auto_add)})
+		Upfront.Util.post({"action": "upfront_new_update_auto_add_pages", "nav_menu_option": JSON.stringify(Upfront.data.navigation.auto_add)})
 			.error(function(res){
 				Upfront.Util.log("Cannot update auto add pages!");
 			});
@@ -816,12 +816,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				['no'],
 				true
 			);
-	},*/
+	},
 	getMenus: function(){
 		var me = this;
 
 		// Ajax call for Menu list
-		Upfront.Util.post({"action": "upfront_load_menu_list"})
+		Upfront.Util.post({"action": "upfront_new_load_menu_list"})
 			.success(function (ret) {
 				var values = _.map(ret.data, function (each, index) {
 					/*if(ret.data.length && index == 0){
@@ -931,7 +931,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		var me = this;
 		// Ajax call for creating menu
-		var newMenu = Upfront.Util.post({"action": "upfront_create_menu", "menu_name": MenuName})
+		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": MenuName})
 			.success(function (ret) {
 				me.property('menu_id', ret.data);
 				me.getMenus();
@@ -955,7 +955,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			return "";
 
 		//if(!this.property('menu_items') || this.property('menu_items').length == 0) {
-			Upfront.Util.post({"action": "upfront_load_menu_array", "data": menu_id})
+			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": menu_id})
 				.success(function (ret) {
 					
 					if(!ret.data){
@@ -1097,7 +1097,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		
 		
-		Upfront.Util.post({"action": "upfront_update_menu_order", "menu_items": me.new_menu_order()})
+		Upfront.Util.post({"action": "upfront_new_update_menu_order", "menu_items": me.new_menu_order()})
 			.success(function (ret) {
 				//console.log('cool');
 //				me.property('menu_items', false);
@@ -1246,8 +1246,8 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * Set up element appearance that will be displayed on sidebar panel.
 	 */
 	render: function () {
-		this.$el.addClass('upfront-icon-element upfront-icon-element-newnavigation');
-		this.$el.html('New Navigation');
+		this.$el.addClass('upfront-icon-element upfront-icon-element-nav');
+		this.$el.html('Menu');
 	},
 
 	/**
@@ -1303,7 +1303,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				if($input.val().trim() == '' || $input.val().trim == currentMenuItemData.get('name'))
 					return;
 					
-                var renameMenu = Upfront.Util.post({"action": "upfront_rename_menu", "new_menu_name": $input.val(), "menu_id": me.model.get_property_value_by_name('menu_id')})
+                var renameMenu = Upfront.Util.post({"action": "upfront_new_rename_menu", "new_menu_name": $input.val(), "menu_id": me.model.get_property_value_by_name('menu_id')})
                     .success(function (ret) {
 						me.getMenus();
                         //me.model.set_property('create_menu','',true)
@@ -1316,7 +1316,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
             getMenus: function(){
                 var me = this;
                 // Ajax call for Menu list
-                Upfront.Util.post({"action": "upfront_load_menu_list"})
+                Upfront.Util.post({"action": "upfront_new_load_menu_list"})
                     .success(function (ret) {
                         var values = _.map(ret.data, function (each) {
                             return  {label: each.name, value: each.term_id};
