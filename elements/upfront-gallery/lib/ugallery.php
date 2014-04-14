@@ -40,7 +40,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 					labels: ' . json_encode($data['labels']) . ',
 					labels_length: ' . json_encode($data['labels_length']) . ',
 					image_labels: ' . json_encode($data['image_labels']) . ',
-					grid: ' . $data['labelFilters']['length'] . '
+					grid: ' . $data['labelFilters']['length'] . ',
+					useLightbox: '. ($data['linkTo'] == 'image' ? '1' : '0') . '
 				};
 			</script>
 		';
@@ -194,7 +195,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbHeight' => 140,
 			'captionPosition' => 'below', // 'above' | 'over' | 'nocaption'
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
-			'captionUseBackground' => '0',
+			'captionUseBackground' => 0,
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'captionWhen' => 'always', // 'always' | 'hover'
 			'linkTo' => 'image' // 'url' | 'image'

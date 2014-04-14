@@ -95,19 +95,21 @@ jQuery(function($){
 				'max-height': maxHeight
 			});
 		};
-
+		var gallery, magOptions;
 		for(var galleryId in ugalleries){
-			var gallery = $('#' + galleryId).find('.ugallery_item'),
+			var gallery = false,
 				magOptions = ugalleries[galleryId].magnific
 			;
+			if(magOptions){
+				gallery = $('#' + galleryId).find('.ugallery_item');
+				if(ugalleries[galleryId].useLightbox)
+					magOptions.image = {
+						titleSrc: titleSrc
+					};
 
-			if(gallery.find('.ugallery_lb_texts').length)
-				magOptions.image = {
-					titleSrc: titleSrc
-				};
-
-			magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText};
-			gallery.magnificPopup(magOptions);
+				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText};
+				gallery.magnificPopup(magOptions);
+			}
 		}
 
 		setTimeout(function(){
