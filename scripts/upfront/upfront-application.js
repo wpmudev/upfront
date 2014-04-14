@@ -801,6 +801,10 @@ var Application = new (Backbone.Router.extend({
 				if(e.isDefaultPrevented())
 					return;
 
+				var bypass = $(e.target).data('bypass');
+				if(bypass)
+					return;
+					
 				var href = e.target.getAttribute('href'),
 					a = e.target,
 					now = window.location

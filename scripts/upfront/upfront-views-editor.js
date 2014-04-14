@@ -1426,7 +1426,7 @@ define([
 			this.$el.html(_.template(
 				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
-				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" href="{{edit_url}}">edit profile</a></div>',
+				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" href="{{edit_url}}">edit profile</a></div>',
 				{
 					gravatar: data.gravatar,
 					name: data.display_name,
