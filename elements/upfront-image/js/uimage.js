@@ -541,7 +541,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	on_render: function(){
-		var me = this;
+		var me = this,
+			onTop = ['bottom', 'fill_bottom'].indexOf(me.property('caption_alignment')) != -1 || me.property('caption_position') == 'below_image' ? ' sizehint-top' : ''
+		;
 		//Bind resizing events
 		if(!me.parent_module_view.$el.data('resizeHandling')){
 			me.parent_module_view.$el
@@ -552,30 +554,31 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			;
 		}
 
+		var elementSize = me.property('element_size');
+		me.$el.append(
+			$('<div>').addClass('uimage-resize-hint upfront-ui' + onTop).html(me.sizehintTpl({
+				width: elementSize.width,
+				height: elementSize.height
+			}))
+		);
+
 		if(this.property('image_status') != 'ok'){
 			var starting = this.$('.upfront-image-starting-select');
 			if(!this.elementSize.height){
 				this.setElementSize();
 				starting.height(this.elementSize.height);
 			}
-
+/*
 			me.$el.append(
 				$('<div>').addClass('uimage-resize-hint upfront-ui').html(me.sizehintTpl({
 					width: me.elementSize.width,
 					height: me.elementSize.height
 				}))
 			);
-
+*/
 			return;
 		}
 
-		var elementSize = me.property('element_size');
-		me.$el.append(
-			$('<div>').addClass('uimage-resize-hint upfront-ui').html(me.sizehintTpl({
-				width: elementSize.width,
-				height: elementSize.height
-			}))
-		);
 
 		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
 		setTimeout(function(){

@@ -1436,6 +1436,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						    },
 							change: function(color) {
 								var rgba = color.toRgbString();
+								me.model.set_property('captionUseBackground', !!color.alpha);
 								me.model.set_property('captionBackground', rgba, true);
 								currentColor = rgba;
 							},

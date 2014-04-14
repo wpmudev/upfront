@@ -10,7 +10,7 @@
 			<?php } ?>
 
 		<?php if($include_image_caption){// && $caption_position != 'below_image'){ ?>
-		<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>; ">
+		<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?><?php echo $captionBackground == '1' ? ' uimage-padded-caption' : '' ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>; ">
 			<?php if($cover_caption) { ?>
 				<div class="uimage-caption-cover">
 			<?php } ?>
@@ -79,9 +79,9 @@
 		bottom: 0;
 	}
 
-	#<?php echo $element_id ?> .uimage-fill_bottom:before,
-	#<?php echo $element_id ?> .uimage-fill_middle:before,
-	#<?php echo $element_id ?> .uimage-fill:before{
+	#<?php echo $element_id ?>.uimage-over_image .uimage-fill_bottom:before,
+	#<?php echo $element_id ?>.uimage-over_image .uimage-fill_middle:before,
+	#<?php echo $element_id ?>.uimage-over_image .uimage-fill:before{
 		content: ' ';
 		display: inline-block;
 		vertical-align: middle;
@@ -114,7 +114,8 @@
 		opacity:1;
 	}
 
-	#<?php echo $element_id ?> .uimage-over_image .wp-caption{
+	#<?php echo $element_id ?> .uimage-over_image .wp-caption,
+	#<?php echo $element_id ?> .uimage-padded-caption {
 		padding: 5px 15px;
 	}
 

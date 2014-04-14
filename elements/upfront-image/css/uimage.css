@@ -678,6 +678,7 @@ a.image-edit-button.deactivated:hover {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 }
 
+
 .uimage-drop-hint.uimage-dragenter {
 	border:3px dashed #1fcd8f;
 }
@@ -947,6 +948,10 @@ div.uimage-controls i.upfront-icon:before {
 	color: #ADC3D8;
 	font-size: 14px !important;
 	padding: 0 5px;
+}
+.uimage-resize-hint.sizehint-top {
+	bottom: auto;
+	top: 15px;
 }
 
 .ui-resizable-autohide .uimage-resize-hint {

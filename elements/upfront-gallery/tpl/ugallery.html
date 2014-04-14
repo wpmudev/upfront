@@ -14,7 +14,7 @@
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">
 			</div>
 			<?php if($captionWhen != 'never'){ ?>
-			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?> ugallery-caption-<?php echo $captionPosition ?>"><?php echo $images[$i]['title'] ?></div>
+			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?> ugallery-caption-<?php echo $captionPosition ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			</a>
 		</div><?php } ?>
@@ -77,6 +77,11 @@
 
 	#<?php echo $element_id ?> .ugallery_caption_hover:hover .ugallery-caption-over {
 		display: block;
+	}
+
+	#<?php echo $element_id ?> .ugallery-caption-over,
+	#<?php echo $element_id ?> .ugallery-padded-caption {
+		padding:5px;
 	}
 
 </style>
