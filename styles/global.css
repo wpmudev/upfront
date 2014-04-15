@@ -103,6 +103,7 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-object {
 	float:left;
 	width:100%;
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
 
