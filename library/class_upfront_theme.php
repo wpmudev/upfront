@@ -610,6 +610,35 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return get_option($key, array());
 	}
 
+	protected function _insert_element_styles($force = false){
+		$theme = get_stylesheet();
+		$styles = get_option('upfront_' . $theme . '_styles');
+		if($styles && !$force)
+			return;
+
+		$stylesheet = file_get_contents(get_stylesheet_directory() . '/alternativeElementStyles.css');
+		if(!$stylesheet)
+			return;
+
+		//Let's parse the stylesheet
+		$styles = array();
+      	preg_match_all("/\/\* start ([^\s]+?) \*\/(.*?)\/\* end/s", $stylesheet, $matches);
+
+      	foreach($matches[1] as $i => $element){
+      		//The styles should be in the form element.style
+      		$parts = explode('.', $element);
+      		if(sizeof($parts) != 2)
+      			continue;
+
+      		if(!isset($styles[$parts[0]]))
+      			$styles[$parts[0]] = array();
+
+      		$styles[$parts[0]][$parts[1]] = $matches[2][$i];
+      	}
+
+      	update_option('upfront_' . $theme . '_styles', $styles);
+	}
+
 /* --- Public interface --- */
 
 	/**
@@ -618,6 +647,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 */
 	public function get_version () {
 		return $this->_version;
+	}
+
+	public function import_element_styles($force = false){
+		$this->_insert_element_styles($force);
 	}
 
 	/**

@@ -373,6 +373,8 @@ abstract class Upfront_Container extends Upfront_Entity {
 			if ( !isset($wrapper) || !$wrapper ){
 				if($this->_child_view_class == 'Upfront_Object'){
 					$theme_style = upfront_get_property_value('theme_style', $child);
+					if($theme_style)
+						$theme_style = strtolower($theme_style);
 					$slug = upfront_get_property_value('id_slug', $child);
 					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . '">' . $child_view->get_markup() . '</div>';
 				}
