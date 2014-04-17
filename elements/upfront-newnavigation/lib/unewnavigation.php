@@ -92,19 +92,15 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
     private function _add_hooks () {
         add_action('wp_ajax_upfront_new_load_menu_list', array($this, "load_menu_list"));
-//        add_action('wp_ajax_upfront_load_menu_html', array($this, "load_menu_html"));
+
         add_action('wp_ajax_upfront_new_load_menu_array', array($this, "load_menu_array"));
         add_action('wp_ajax_upfront_new_load_menu_items', array($this, "load_menu_items"));
-//        add_action('wp_ajax_upfront_load_all_pages', array($this, "load_all_pages"));
-//        add_action('wp_ajax_upfront_load_all_categories', array($this, "load_all_categories"));
-//        add_action('wp_ajax_upfront_add_menu_item', array($this, "add_menu_item"));
-//        add_action('wp_ajax_upfront_update_post_status', array($this, "update_post_status"));
+
         add_action('wp_ajax_upfront_new_delete_menu_item', array($this, "delete_menu_item"));
         add_action('wp_ajax_upfront_new_update_menu_order', array($this, "update_menu_order"));
         add_action('wp_ajax_upfront_new_create_menu', array($this, "create_menu"));
         add_action('wp_ajax_upfront_new_rename_menu', array($this, "rename_menu"));
-//        add_action('wp_ajax_upfront_delete_menu', array($this, "delete_menu"));
-//        add_action('wp_ajax_upfront_change_menu_label', array($this, "change_menu_label"));
+
         add_action('wp_ajax_upfront_new_update_menu_item', array($this, "update_menu_item"));
         add_action('wp_ajax_upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
 

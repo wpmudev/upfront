@@ -698,6 +698,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 */
 	public function add_required_page ($key, $layout_name, $page_data, $wp_template_file) {
 		$this->_required_pages[$key] = new Upfront_Themes_RequiredPage($this->get_prefix(), $page_data, $layout_name, $wp_template_file);
+		return $this->_required_pages[$key]->get_post_id();
 	}
 
 	/**
@@ -730,6 +731,7 @@ class Upfront_Themes_RequiredPage {
 	private $_layout_name;
 	private $_wp_template;
 	private $_key;
+	private $_post_id;
 
 	public function __construct ($prefix, $page_data, $layout_name, $wp_template = false) {
 		$this->_prefix = $prefix;
@@ -776,6 +778,13 @@ class Upfront_Themes_RequiredPage {
 		)));
 		if (!empty($this->_wp_template)) update_post_meta($post_id, '_wp_page_template', $this->_wp_template);
 		update_option($this->_key, $post_id);
+		$this->_post_id = $post_id;
+	}
+	public function get_post_id() {
+		if(isset($this->_post_id))
+			return $this->_post_id;	
+		else
+			return false;
 	}
 }
 
