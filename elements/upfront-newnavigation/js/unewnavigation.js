@@ -951,8 +951,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			me = this;
 
-		if ( !menu_id )
+		var menu_name =  this.model.get_property_value_by_name('menu_name');
+
+				
+		if ( !menu_id ) {
+			if(typeof(menu_name != 'undefined') && menu_name != '')
+				this.set_menu_id_from_slug(menu_name);
 			return "";
+		}
 
 		//if(!this.property('menu_items') || this.property('menu_items').length == 0) {
 			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": menu_id})
@@ -972,6 +978,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		//}
 		
 		return 'Loading';
+	},
+	set_menu_id_from_slug: function(slug) {
+		var me = this;
+			Upfront.Util.post({"action": "upfront_new_menu_from_slug", "data": slug})
+			.success(function (ret) {
+				me.property('menu_id', ret.data);
+			})
+			.error(function (ret) {
+				Upfront.Util.log("Error loading menu from slug");
+			});
 	},
 	/*setElementSize: function(ui){
 		var me = this,

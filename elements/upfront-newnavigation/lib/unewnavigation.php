@@ -11,6 +11,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
         $element_id = $element_id ? "id='{$element_id}'" : '';
 
         $menu_id = $this->_get_property('menu_id');
+        $menu_name = $this->_get_property('menu_name');
 
         $layout_settings = json_decode($this->_get_property('layout_setting'));
 
@@ -32,7 +33,12 @@ class Upfront_UnewnavigationView extends Upfront_Object {
         //if ($is_floating) {
          //   upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
        // }
-
+	   
+		if($menu_name) {
+			$menu = wp_get_nav_menu_object($menu_name);	
+			if($menu)
+				$menu_id = $menu->term_id;
+		}
 
         if ( $menu_id ) :
             $menu = wp_nav_menu(array(
@@ -95,7 +101,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
         add_action('wp_ajax_upfront_new_load_menu_array', array($this, "load_menu_array"));
         add_action('wp_ajax_upfront_new_load_menu_items', array($this, "load_menu_items"));
-
+		add_action('wp_ajax_upfront_new_menu_from_slug', array($this, "menu_from_slug"));
         add_action('wp_ajax_upfront_new_delete_menu_item', array($this, "delete_menu_item"));
         add_action('wp_ajax_upfront_new_update_menu_order', array($this, "update_menu_order"));
         add_action('wp_ajax_upfront_new_create_menu', array($this, "create_menu"));
@@ -118,7 +124,9 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
 		if(isset($_POST['data']) && is_numeric($_POST['data'])) {
 
-			$menu = wp_get_nav_menu_object( intval($_POST['data']) );
+			$menu_id = intval($_POST['data']);		
+
+			$menu = wp_get_nav_menu_object( $menu_id > 0 ? $menu_id : $_POST['alternate'] );
 
 			if ( $menu )
 				$menu_items = wp_get_nav_menu_items( $menu->term_id, array( 'update_post_term_cache' => false ) );
@@ -317,6 +325,17 @@ class Upfront_newMenuSetting extends Upfront_Server {
         }
         $this->_out(new Upfront_JsonResponse_Error('Cannot update menu!'));
     }
+
+	 public function menu_from_slug () {
+	
+			$menu_slug = isset($_POST['data']) ? $_POST['data'] : 0;
+			$menu = wp_get_nav_menu_object($menu_slug);
+			$menu_item_id = 0;
+			if($menu)
+				$menu_item_id = $menu->term_id;
+			$this->_out(new Upfront_JsonResponse_Success($menu_item_id));
+		
+		}
 
     public function update_auto_add_pages(){
         $nav_menu_option = isset($_POST['nav_menu_option']) ? stripslashes($_POST['nav_menu_option']) : false;
