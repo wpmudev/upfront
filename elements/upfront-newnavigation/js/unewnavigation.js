@@ -59,8 +59,10 @@ var MenuItemView = Backbone.View.extend({
 							var anchors = me.parent_view.get_anchors();
 							$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(me.model['menu-item-url'])).offset().top},'slow');
 						}
-						else if(me.model['menu-item-target'] == '')
-							window.location.href = me.model['menu-item-url'];
+						else if(me.model['menu-item-target'] == '') {
+							
+							window.location.href = me.model['menu-item-url']+(me.model['menu-item-url'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
+						}
 						else
 							window.open(me.model['menu-item-url']);
 						  
@@ -608,7 +610,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 							$('html,body').animate({scrollTop: $('#'+thelink.getUrlanchor(thelink.model['menu-item-url'])).offset().top},'slow');
 						}
 						else if(thelink.model['menu-item-target'] == '')
-							window.location.href = thelink.model['menu-item-url'];
+							window.location.href = thelink.model['menu-item-url']+(thelink.model['menu-item-url'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
 						else
 							window.open(thelink.model['menu-item-url']);
 					//}

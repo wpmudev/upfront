@@ -59,5 +59,6 @@ require(['backbone'], function (Backbone) {
 
 		if (Upfront.Application && Upfront.Application.boot) Upfront.Application.boot();
 		else Upfront.Util.log('something went wrong');
+
 	}); // Upfront
 });

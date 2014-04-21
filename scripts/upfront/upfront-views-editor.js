@@ -186,9 +186,9 @@ define([
 				url += '/';
 
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.html('<a class="upfront-logo" href="' + url + '"></a>');
+				this.$el.html('<a class="upfront-logo" href="' + url + '?editmode=true"></a>');
 			else
-				this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '"></a>');
+				this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '?editmode=true"></a>');
 		},
 		on_click: function () {
 			/*var root = Upfront.Settings.site_url;

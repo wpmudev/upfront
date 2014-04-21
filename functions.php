@@ -175,6 +175,10 @@ EOAdminStyle;
 	function inject_upfront_dependencies () {
 		if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		$url = self::get_root_url();
+		//Boot Edit Mode if the querystring contains the editmode param
+		if (isset($_GET['editmode']))
+			echo upfront_boot_editor_trigger();
+		
 		if (isset($_GET['dev']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
 		  echo '<script src="' . $url . '/scripts/require.js"></script>';
 		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
