@@ -63,12 +63,13 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		events: {
 			keypress: "wait_for_enter"
 		},
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			if(! (this.model instanceof MapModel)){
 				this.model = new MapModel({properties: this.model.get('properties')});
 			}
 
-			var options = _.extend({}, this.options);
+			var options = _.extend({}, opts);
 
 			this.options.field = new Upfront.Views.Editor.Field.Text(options);
 			this.options.locate = new Map_Fields_Simple_Refresh(options);

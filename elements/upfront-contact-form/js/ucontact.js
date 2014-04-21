@@ -141,6 +141,8 @@ var OptionalField = Upfront.Views.Editor.Field.Checkboxes.extend({
 		var me = this;
 		OptionalField.__super__.initialize.apply(this, arguments);
 
+		this.options = opts;
+
 		this.on('panel:set', function(){
 			this.panel.on('rendered', function(){
 				me.onChange();

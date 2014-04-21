@@ -58,8 +58,9 @@ define([
 	/* ----- Core views ----- */
 
 		_Upfront_SingularEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
-			initialize: function () {
+			initialize: function (opts) {
 				// this.model.bind("change", this.render, this);
+				this.options = opts;
 				this.listenTo(this.model, "change", this.render);
 				if (this.init) this.init();
 			},
@@ -323,7 +324,7 @@ define([
 							});
 						}
 					}
-					
+
 				}
 				else if ( ( !type || type == 'image' ) && image ) {
 					var style = this.model.get_property_value_by_name('background_style'),
@@ -494,7 +495,8 @@ define([
 
 		ContextMenuItem = Backbone.View.extend({
 			tagName: 'li',
-			initialize: function(){
+			initialize: function(opts){
+				this.options = opts;
 				this.label = this.options.get_label;
 				this.action = this.options.action;
 				if ( typeof this.options.in_context == 'function' )
@@ -523,7 +525,8 @@ define([
 
 		ContextMenuList = Backbone.View.extend({
 			tagName: 'ul',
-			initialize: function () {
+			initialize: function (opts) {
+				this.options = opts;
 				this.for_view = this.options.for_view;
 			},
 
@@ -714,9 +717,9 @@ define([
 				;
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
-				if (the_anchor && the_anchor.length) 
+				if (the_anchor && the_anchor.length)
 					this.el.id = the_anchor;
-				
+
 				this.model.get("properties").each(function (prop) {
 					props[prop.get("name")] = prop.get("value");
 				});
@@ -1148,7 +1151,7 @@ define([
 				this.model = false;
 			}
 		}),
-		
+
 		RegionContainer = _Upfront_SingularEditor.extend({
 			events: {
 				"click .upfront-region-edit-trigger": "trigger_edit",
@@ -1508,7 +1511,7 @@ define([
 				Backbone.View.prototype.remove.call(this);
 			}
 		});
-		
+
 		Region = _Upfront_SingularEditor.extend({
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
@@ -1951,7 +1954,7 @@ define([
 			events: {
 				"click": "on_click"
 			},
-			initialize: function () {
+			initialize: function (opts) {
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);

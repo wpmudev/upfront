@@ -4,6 +4,11 @@ Upfront.mainData = Upfront.mainData || {};
 Upfront.Events = {};
 require.config(Upfront.mainData.requireConfig);
 
+// Fix to use the already loaded jquery as dependency
+define('jquery', [], function(){
+	return jQuery;
+});
+
 
 require(['backbone'], function (Backbone) {
 	// Fix Underscore templating to Mustache style

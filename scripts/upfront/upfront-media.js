@@ -1225,6 +1225,9 @@ define(function() {
 	 * Bottom commands view (search etc)
 	 */
 	var MediaManager_BottomCommand = Backbone.View.extend({
+		initialize: function(opts){
+			this.options = opts;
+		},
 		render: function () {
 			var button_text = this.options.button_text,
 				pagination = new MediaManager_Pagination(),

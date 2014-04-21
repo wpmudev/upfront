@@ -27,23 +27,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	linkTpl: _.template($editorTpl.find('#link-tpl').html()),
 	formTpl: _.template($editorTpl.find('#upload-form-tpl').html()),
 	sizehintTpl: _.template($editorTpl.find('#sizehint-tpl').html()),
-	sizes: false,
-	elementSize: {width: 0, height: 0},
-	imageId: 0,
-	imageSize: {width: 0, height: 0},
-	imageOffset: {top: 0, left: 0},
-	maskOffset: {top: 0, left: 0},
-	imageInfo : false,
-	controls: false,
-	editor: false,
-
-	//Temporary props for element resizing and cropping
-	temporaryProps: {
-		size: false,
-		position: false
-	},
-	cropTimer: false,
-	stoppedTimer : false,
 	cropTimeAfterResize: 10000,
 
 	cssSelectors: {
@@ -54,6 +37,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	initialize: function(){
 		var me = this;
+		this.setDefaults();
+
 		if(! (this.model instanceof UimageModel)){
 			this.model = new UimageModel({properties: this.model.get('properties')});
 		}
@@ -112,6 +97,26 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			small: false,
 			tiny: false
 		};
+	},
+
+	setDefaults: function(){
+		this.sizes = false;
+		this.elementSize = {width: 0, height: 0};
+		this.imageId = 0;
+		this.imageSize = {width: 0, height: 0};
+		this.imageOffset = {top: 0, left: 0};
+		this.maskOffset = {top: 0, left: 0};
+		this.imageInfo  = false;
+		this.controls = false;
+		this.editor = false;
+
+		//Temporary props for element resizing and cropping
+		this.temporaryProps = {
+			size: false,
+			position: false
+		};
+		this.cropTimer = false;
+		this.stoppedTimer  = false;
 	},
 
 	getSelectedAlignment: function(){

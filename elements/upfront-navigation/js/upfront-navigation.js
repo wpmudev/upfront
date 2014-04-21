@@ -786,7 +786,8 @@ define(function() {
                     '</div>' +
                     '<ul class="menu-item-transport"></ul>' +
                 '</li>'),
-            initialize: function(){
+            initialize: function(opts){
+                this.options = opts;
                 Menu_Order.__super__.initialize.apply(this, arguments);
                 this.jQueryExtensions();
                 Upfront.Events.on("navigation:save:re:ordered:menu", this.saveAllChanges, this );

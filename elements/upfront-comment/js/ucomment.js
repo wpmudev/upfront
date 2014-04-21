@@ -422,6 +422,9 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 
 var BooleanSubfieldField = Backbone.View.extend({
 	className: "upfront-field-complex_field",
+	initialize: function(opts){
+		this.options = opts;
+	},
 	render: function () {
 		this.$el.empty();
 		this.$el.append(this.get_field_html());

@@ -208,6 +208,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$paths = array(
       "backbone" => includes_url() . "js/backbone.min",
       "underscore" => includes_url() . "js/underscore.min",
+      //"jquery" => includes_url() . "js/jquery/jquery",
       "upfront-data" => $upfront_data_url,
       "text" => 'scripts/text',
       "async" => "scripts/async",
@@ -229,8 +230,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
     $shim = array(
-      'underscore' => array('exports' => '_'),
-      'backbone' => array( 'deps' => array('underscore'), 'exports' => 'Backbone')
+      'underscore' => array('exports' => '_')
     );
 
 		$require_config = array(

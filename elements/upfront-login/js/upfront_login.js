@@ -86,16 +86,17 @@ define([
 
 	var Login_Fields_Complex_BooleanField = Backbone.View.extend({
 		className: "upfront_login-fields-complex_boolean clearfix",
-		initialize: function () {
-			var model = this.options.model,
-				boolean_values = this.options.boolean_field.values || []
+		initialize: function (opts) {
+			this.options = opts;
+			var model = opts.model,
+				boolean_values = opts.boolean_field.values || []
 			;
 			if (!boolean_values.length) {
 				boolean_values.push({label: "", value: "1"});
 			}
 
 			this.options.field = new Upfront.Views.Editor.Field.Radios(_.extend(
-				this.options.boolean_field, {
+				opts.boolean_field, {
 					model: model,
 					mutiple: false,
 					values: boolean_values

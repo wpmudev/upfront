@@ -1945,6 +1945,9 @@ define([
 			"click .upfront-pagination_item-next": "handle_next",
 			"click .upfront-pagination_item-prev": "handle_prev"
 		},
+		initialize: function(opts){
+			this.options = opts;
+		},
 		render: function () {
 			this.$el.html(this.paginationTpl(this.collection.pagination));
 		},
@@ -2680,7 +2683,8 @@ define([
 
 	var Field = Backbone.View.extend({
 		className: 'upfront-field-wrap',
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			this.multiple = typeof this.options.multiple != 'undefined' ? this.options.multiple : (typeof this.multiple != 'undefined' ? this.multiple : false);
 			this.label = typeof this.options.label != 'undefined' ? this.options.label : '';
 			this.default_value = typeof this.options.default_value != 'undefined' ? this.options.default_value : (this.multiple ? [] : '');
@@ -2882,8 +2886,8 @@ define([
 
 	var Field_Slider = Field_Text.extend(_.extend({}, Upfront_Icon_Mixin, {
 		className: 'upfront-field-wrap upfront-field-wrap-slider',
-		initialize: function() {
-
+		initialize: function(opts) {
+			this.options = opts;
 			Field_Slider.__super__.initialize.apply(this, arguments);
 
 			var me = this,
@@ -2978,7 +2982,8 @@ define([
 			showInput: true,
 			allowEmpty:true
 		},
-		initialize: function(){
+		initialize: function(opts){
+			this.options = opts;
 			var me = this,
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
 			;
@@ -3340,6 +3345,7 @@ define([
 
 		initialize: function (opts) {
 			var me = this;
+			me.options = opts;
 			this.fields = opts.fields ? _(opts.fields) : _([]);
 			this.group = typeof opts.group != 'undefined' ? opts.group : true;
 			this.on('panel:set', function(){
@@ -3423,6 +3429,7 @@ define([
 			"click .upfront-settings-item-tab": "reveal"
 		},
 		initialize: function (opts) {
+			this.options = opts;
 			this.settings = opts.settings ? _(opts.settings) : _([]);
 			this.radio = ( typeof opts.radio != 'undefined' ) ? opts.radio : this.radio;
 			this.is_default = ( typeof opts.is_default != 'undefined' ) ? opts.is_default : this.is_default;
@@ -3538,6 +3545,7 @@ define([
 
 		initialize: function (opts) {
 			var me = this;
+			me.options = opts;
 			this.settings = opts.settings ? _(opts.settings) : _([]);
 			this.settings.each(function(setting){
 				setting.panel = me;
@@ -3694,6 +3702,9 @@ define([
 	}));
 
 	var Settings = Backbone.View.extend({
+		initialize: function(opts) {
+			this.options = opts;
+		},
 		get_title: function () {
 			return "Settings";
 		},
@@ -3819,9 +3830,9 @@ define([
 var Field_Complex_Toggleable_Text_Field = Field.extend({
 	className: "upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple",
 	tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">Please, use ID that contains letters only, eg. <b>myProductSlider</b><br />No spaces or special characters.</div></div>',
-	initialize: function () {
+	initialize: function (opts) {
+		Field.prototype.initialize.call(this, opts);
 		this.options.field = new Field_Text(this.options);
-		Field.prototype.initialize.call(this);
 	},
 	render: function () {
 		var me = this;
@@ -4434,7 +4445,8 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 
 var Settings_AnchorTrigger = SettingsItem.extend({
 	//className: "upfront-settings-item upfront-settings-item-anchor",
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		var anchors = [],
 			raw = this.get_anchors()
 		;
@@ -4470,7 +4482,8 @@ var Settings_AnchorTrigger = SettingsItem.extend({
 
 var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 	//className: "upfront-settings-item upfront-settings-item-anchor",
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		Settings_AnchorTrigger.prototype.initialize.call(this, this.options);
 		this.options.fields.push(
 			new Field_Text({
@@ -4489,8 +4502,8 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 });
 
 var Field_Anchor = Field_Select.extend({
-	initialize: function () {
-		Field_Select.prototype.initialize.call(this);
+	initialize: function (opts) {
+		Field_Select.prototype.initialize.call(this, opts);
 		this.options.values = this.get_anchors();
 	},
 	get_anchors: function () {
@@ -4501,7 +4514,7 @@ var Field_Anchor = Field_Select.extend({
 			anchors.push({label: idx, value: idx});
 		});
 		return anchors;
-	},
+	}
 });
 
 
@@ -4781,8 +4794,8 @@ var Field_Anchor = Field_Select.extend({
 		is_done: false,
 		done_callback: [],
 		done_timeout: false,
-		initialize: function () {
-
+		initialize: function (opts) {
+			this.options = opts;
 		},
 		render: function () {
 			var me = this;
@@ -4845,12 +4858,13 @@ var Field_Anchor = Field_Select.extend({
 				id: "upfront-inline-modal-"+this.cid
 			};
 		},
-		initialize: function () {
-			this.$to = this.options.to;
-			this.button_text = this.options.button_text ? this.options.button_text : "Ok";
-			this.button = typeof this.options.button != 'undefined' ? this.options.button : true;
-			this.width = typeof this.options.width != 'undefined' ? this.options.width : '50%';
-			this.top = typeof this.options.top != 'undefined' ? this.options.top : -1;
+		initialize: function (opts) {
+			this.options = opts;
+			this.$to = opts.to;
+			this.button_text = opts.button_text ? opts.button_text : "Ok";
+			this.button = typeof opts.button != 'undefined' ? opts.button : true;
+			this.width = typeof opts.width != 'undefined' ? opts.width : '50%';
+			this.top = typeof opts.top != 'undefined' ? opts.top : -1;
 		},
 		events: {
 			"click": "on_click",
@@ -6040,7 +6054,8 @@ var Field_Anchor = Field_Select.extend({
 			}
 			return pos;
 		},
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			if ( ! this.options.to )
 				this.options.to = 'top';
 		},
@@ -6264,7 +6279,8 @@ var Field_Anchor = Field_Select.extend({
 	});
 
 	var RegionPanel_Add = InlinePanel.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			if ( ! this.options.to )
 				this.options.to = 'bottom';
 			var to = this.options.to;

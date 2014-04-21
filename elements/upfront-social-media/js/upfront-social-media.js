@@ -547,6 +547,7 @@
 
         initialize: function(options){
             var me = this;
+            me.options = options;
             SocialSorter.__super__.initialize.apply(this, arguments);
             //Upfront.Events.on("social:sorting:fields:save", this.save_c_fields, this);
             this.$el.on('click', function(e){
@@ -845,7 +846,7 @@
                         label: "General",
                         title: "General settings",
                         settings: []
-						}), 
+						}),
 				this.panel
 			]);
             this.panel.on('upfront:settings:panel:saved', this.saveServices, this);

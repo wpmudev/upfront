@@ -1701,7 +1701,8 @@ define(function() {
 			"change .upfront-field-wrap-radios :radio": "swap_selection",
 			"click .upfront-save_settings": "apply_linkage"
 		},
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			if (this.options.href) {
 				var type = this.options.href.match(/^#/) ? this.TYPES.anchor : this.TYPES.external,
 					href = this.options.href.match(/^#/) ? this.options.href.replace(/#/, '') : this.options.href
