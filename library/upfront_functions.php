@@ -55,7 +55,7 @@ function upfront_get_unique_id ($pfx = '') {
 
 function upfront_switch_stylesheet ($stylesheet) {
 	global $upfront_stylesheet;
-	if ( get_stylesheet() != $stylesheet ){
+	if ( $stylesheet && get_stylesheet() != $stylesheet ){
 		$upfront_stylesheet = $stylesheet;
 		add_filter('stylesheet', '_upfront_stylesheet');
 		// Prevent theme mods to current theme being used on theme being previewed
@@ -100,7 +100,7 @@ function upfront_add_ajax_nopriv ($action, $callback) {
  */
 function upfront_ajax_init () {
 	// Automatically instantiate Upfront_Layout object
-	if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['layout']) ){
+	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
 		$layout_ids = $_POST['layout'];
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'];
@@ -110,9 +110,9 @@ function upfront_ajax_init () {
 		$storage_key = $_GET['storage_key'];
 		$stylesheet = $_GET['stylesheet'];
 	}
+	upfront_switch_stylesheet($stylesheet);
 	if ( !is_array($layout_ids) )
 		return;
-	upfront_switch_stylesheet($stylesheet);
 	$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key);
 	if ( $layout->is_empty() )
 		$layout = Upfront_Layout::create_layout($layout_ids);

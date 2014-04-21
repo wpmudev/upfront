@@ -17,14 +17,39 @@ $main = upfront_create_region(array(
 	'background_color' => '#c5d0db'
 ));
 
-$main->add_element('Uposts', array(	
-	'id' => 'default-posts',
-	'columns' => 24,
+$main->add_element('Uimage', array(	
+	'id' => 'default-image',
+	'columns' => 8,
 	'rows' => 20,
+	'margin_top' => 6,
+	'margin_left' => 1,
+	'new_line' => true,
 	'options' => array(
-		'content_type' => 'excerpt',
-		'featured_image' => '1',
-		'post_data' => array('date')
+	)
+));
+
+$main->add_element('PlainTxt', array(	
+	'id' => 'default-text',
+	'columns' => 6,
+	'rows' => 10,
+	'margin_top' => 6,
+	'margin_left' => 1,
+	'new_line' => false,
+	'options' => array(
+		'content' => "<p>Text element with no background color applied<p>"
+	)
+));
+
+$main->add_element('PlainTxt', array(	
+	'id' => 'default-text-bg',
+	'columns' => 6,
+	'rows' => 10,
+	'margin_top' => 6,
+	'margin_left' => 1,
+	'new_line' => false,
+	'options' => array(
+		'content' => "<p>Text element with background color applied gets additional padding to prevent text running into sides</p>",
+		'background_color' => '#ffffff'
 	)
 ));
 

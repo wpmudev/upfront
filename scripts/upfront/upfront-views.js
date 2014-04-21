@@ -1305,7 +1305,7 @@ define([
 			close_edit: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.removeClass('upfront-region-editing');
-				this.$el.siblings('.upfront-region-editing-overlay').remove();
+				this.remove_overlay();
 				Upfront.Events.trigger("command:region:edit_toggle", false);
 				Upfront.Events.off("command:newpage:start", this.close_edit, this);
 				Upfront.Events.off("command:newpost:start", this.close_edit, this);
@@ -1329,6 +1329,9 @@ define([
 				$after_overlay.css({
 					top: pos.top + this.$el.height()
 				});
+			},
+			remove_overlay: function () {
+				this.$el.siblings('.upfront-region-editing-overlay').remove();
 			},
 			add_sub_model: function (model) {
 				this.sub_model.push(model);
@@ -1952,6 +1955,7 @@ define([
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
+				this.listenTo(Upfront.Events, "command:layout:edit_background", this.open_edit_background);
 				this.render();
 			},
 			update: function () {
@@ -1966,6 +1970,11 @@ define([
 
 				this.$("section").append(this.local_view.el);
 				this.update();
+				
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 384});
+				this.bg_setting.render();
+				this.$el.append(this.bg_setting.el);
+				
 				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function (e) {
@@ -2000,6 +2009,11 @@ define([
 				Backbone.View.prototype.remove.call(this);
 				this.model = false;
 				this.options = false;
+			},
+			open_edit_background: function () {
+				this.bg_setting.open().always(function(){
+					console.log('layout background updated')
+				});
 			}
 		})
 	;

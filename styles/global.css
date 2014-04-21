@@ -86,6 +86,9 @@ h2, h3 { page-break-after: avoid; }
   -webkit-box-sizing: border-box;
   max-width: 100%;
 }
+.clr {
+	clear: both;
+}
 
 .upfront-output-wrapper { float: left; }
 

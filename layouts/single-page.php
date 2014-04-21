@@ -21,24 +21,32 @@ $main = upfront_create_region(array(
 ));
 
 
-$main->add_element('ThisPost', array(
-	'id' => 'default-post',
+$main->add_element('ThisPage', array(	
+	'id' => 'default-page-title',
 	'columns' => 24,
-	'rows' => 20,
-	'margin_top' => 1,
+	'rows' => 3,
+	'margin_top' => 3,
 	'options' => array(
-		'post_data' => array('date'),
+		'display' => 'title',
 		'disable_resize' => false,
 		'disable_drag' => false
 	),
 	'sticky' => true
 ));
 
-$main->add_element('Ucomment', array(
-	'id' => 'default-comment',
+$main->add_element('ThisPage', array(	
+	'id' => 'default-page-content',
 	'columns' => 24,
-	'rows' => 10
+	'rows' => 20,
+	'margin_top' => 3,
+	'options' => array(
+		'display' => 'content',
+		'disable_resize' => false,
+		'disable_drag' => false
+	),
+	'sticky' => true
 ));
+
 
 if ( $left_sidebar ){
 	$left = upfront_create_region(array(

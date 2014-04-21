@@ -155,7 +155,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
-		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
 
 		// Region
 		this.listenTo(Upfront.Events, "command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
@@ -198,13 +197,16 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				loading.render();
 				$('body').append(loading.$el);
 			},
-			stop = function () {
+			stop = function (success) {
+				loading.on_finish(function(){
+					Upfront.Events.trigger("command:layout:save_done", success);
+				});
 				loading.done();
 			}
 		;
 		this.listenTo(Upfront.Events, "command:layout:save_start", start);
-		this.listenTo(Upfront.Events, "command:layout:save_success", stop);
-		this.listenTo(Upfront.Events, "command:layout:save_error", stop);
+		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
+		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
 	},
 
 	create_properties: function (view, model) {
@@ -328,6 +330,7 @@ var ContentEditor = new (Subapplication.extend({
 }))();
 
 var ThemeEditor = new (LayoutEditorSubapplication.extend({
+	_first_start: true,
 	boot: function () {
 
 	},
@@ -341,10 +344,18 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 
 		this.set_up_event_plumbing_after_render();
 		$("html").removeClass("upfront-edit-layout upfront-edit-content").addClass("upfront-edit-theme");
-		if ( _upfront_new_theme )
+		if ( _upfront_new_theme && this._first_start ){
 			this.listenToOnce(Upfront.Events, 'layout:render', function(){
 				Upfront.Events.trigger("command:layout:edit_structure");
 			});
+			this._first_start = false;
+		}
+		this.listenToOnce(Upfront.Events, 'layout:render', Upfront.Behaviors.GridEditor.apply_grid);
+		this.listenToOnce(Upfront.Events, 'command:layout:save_done', Upfront.Behaviors.LayoutEditor.first_save_dialog);
+		this.listenTo(Upfront.Events, "command:layout:create", Upfront.Behaviors.LayoutEditor.create_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
+		this.listenTo(Upfront.Events, "command:layout:export_theme", Upfront.Behaviors.LayoutEditor.export_dialog);
 	},
 
 	stop: function () {
@@ -740,7 +751,7 @@ var Application = new (Backbone.Router.extend({
 						$('body').append(styleNode);
 					}
 
-					styleNode.append(cssEditor.stylesAddSelector(style, '.upfront-object.' + name));
+					styleNode.append(cssEditor.stylesAddSelector(style, (elementType == 'layout' ? '' : '.upfront-object.' + name)));
 				});
 			});
 		});

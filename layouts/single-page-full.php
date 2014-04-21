@@ -17,15 +17,31 @@ $main = upfront_create_region(array(
 	'background_color' => '#c5d0db'
 ));
 
-$main->add_element('Uposts', array(	
-	'id' => 'default-posts',
+
+$main->add_element('ThisPage', array(	
+	'id' => 'default-page-title',
+	'columns' => 24,
+	'rows' => 3,
+	'margin_top' => 3,
+	'options' => array(
+		'display' => 'title',
+		'disable_resize' => false,
+		'disable_drag' => false
+	),
+	'sticky' => true
+));
+
+$main->add_element('ThisPage', array(	
+	'id' => 'default-page-content',
 	'columns' => 24,
 	'rows' => 20,
+	'margin_top' => 3,
 	'options' => array(
-		'content_type' => 'excerpt',
-		'featured_image' => '1',
-		'post_data' => array('date')
-	)
+		'display' => 'content',
+		'disable_resize' => false,
+		'disable_drag' => false
+	),
+	'sticky' => true
 ));
 
 if ( $extended ){
@@ -65,17 +81,6 @@ if ( $extended ){
 		'row' => 80,
 		'background_type' => 'color',
 		'background_color' => '#c5d0db'
-	));
-	
-	$content->add_element('PlainTxt', array(	
-		'id' => 'default-content-text',
-		'columns' => 24,
-		'rows' => 2,
-		'margin_top' => 6,
-		'options' => array(
-	    'has_settings' => 1,
-			'content' => '<p style="text-align:center;">Text element in content</p>'
-		)
 	));
 	
 	$regions->add($content);

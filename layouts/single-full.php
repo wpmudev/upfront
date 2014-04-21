@@ -17,15 +17,18 @@ $main = upfront_create_region(array(
 	'background_color' => '#c5d0db'
 ));
 
-$main->add_element('Uposts', array(	
-	'id' => 'default-posts',
-	'columns' => 24,
+
+$main->add_element('ThisPost', array(
+	'id' => 'default-post',
+	'columns' => 22,
 	'rows' => 20,
+	'margin_top' => 1,
 	'options' => array(
-		'content_type' => 'excerpt',
-		'featured_image' => '1',
-		'post_data' => array('date')
-	)
+		'post_data' => array('date'),
+		'disable_resize' => false,
+		'disable_drag' => false
+	),
+	'sticky' => true
 ));
 
 if ( $extended ){
@@ -66,16 +69,11 @@ if ( $extended ){
 		'background_type' => 'color',
 		'background_color' => '#c5d0db'
 	));
-	
-	$content->add_element('PlainTxt', array(	
-		'id' => 'default-content-text',
-		'columns' => 24,
-		'rows' => 2,
-		'margin_top' => 6,
-		'options' => array(
-	    'has_settings' => 1,
-			'content' => '<p style="text-align:center;">Text element in content</p>'
-		)
+
+	$main->add_element('Ucomment', array(
+		'id' => 'default-comment',
+		'columns' => 22,
+		'rows' => 10
 	));
 	
 	$regions->add($content);

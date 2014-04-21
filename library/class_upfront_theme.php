@@ -97,19 +97,15 @@ class Upfront_Theme {
 		$order = array('theme_defined', 'specificity', 'item', 'type');
 		foreach($order as $o){
 			if(isset($cascade[$o])){
-				/*
 				if (!empty($layout_slug))
 					$filenames[] =  'layouts/' . $cascade[$o] . '-' . $layout_slug . '.php';
-				*/
 				$filenames[] =  'layouts/' . $cascade[$o] . '.php';
 			}
 		}
-		/*
 		if (!empty($layout_slug)) {
 			$filenames[] = 'layouts/index-' . $layout_slug . '.php';
 			$filenames[] = 'layouts/' . $layout_slug . '.php'; // Allowing the layout slug to be used directly
 		}
-		*/
 		$filenames[] = 'layouts/index.php';
 
 		return function_exists('upfront_locate_template')

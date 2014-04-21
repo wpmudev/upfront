@@ -48,6 +48,8 @@ class Upfront_Ajax extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('wp_ajax_upfront_load_layout', array($this, "load_layout"));
 		add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
+		add_action('wp_ajax_upfront_list_available_layout', array($this, "list_available_layout"));
+		add_action('wp_ajax_upfront_list_saved_layout', array($this, "list_saved_layout"));
 		add_action('wp_ajax_upfront_reset_layout', array($this, "reset_layout"));
 		add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
 		add_action('wp_ajax_upfront_update_layout_element', array($this, "update_layout_element"));
@@ -116,18 +118,36 @@ class Upfront_Ajax extends Upfront_Server {
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$storage_key = $_POST['storage_key'];
+		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
+		
+		upfront_switch_stylesheet($stylesheet);
 
 		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$key = $layout->save();
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
+	
+	function list_available_layout () {
+		$layouts = Upfront_Layout::list_available_layout();
+		$this->_out(new Upfront_JsonResponse_Success($layouts));
+	}
+	
+	function list_saved_layout () {
+		$storage_key = $_POST['storage_key'];
+		$layouts = Upfront_Layout::list_saved_layout($storage_key);
+		$this->_out(new Upfront_JsonResponse_Success($layouts));
+	}
 
 	function reset_layout () {
 		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
 		$storage_key = $_POST['storage_key'];
+		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
+		
+		upfront_switch_stylesheet($stylesheet);
+		
 		$layout = Upfront_Layout::from_php($data, $storage_key);
-		$layout->delete();
-		$layout->delete_regions();
+		$layout->delete(true);
+		delete_option('upfront_' . $stylesheet . '_styles');
 		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
 	}
 
@@ -388,6 +408,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		//Add theme styles
 		$style .= $this->prepare_theme_styles();
+		
+		//Add typography styles
+		$style .= $this->prepare_typography_styles($layout);
 
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
@@ -453,15 +476,34 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$out = '';
 
-		foreach($styles as $elements){
+		foreach($styles as $type => $elements){
 			foreach($elements as $name => $content){
-				$selector = '.upfront-output-object.' . $name;
+				$selector = $type == 'layout' ? '' : '.upfront-output-object.' . $name;
 				$rules = explode('}', $content);
 				array_pop($rules);
 				$out .= $selector . ' ' . implode("}\n" . $selector . ' ', $rules) . "} \n";
 			}
 		}
 
+		return $out;
+	}
+	
+	function prepare_typography_styles ($layout) {
+		$options = $layout->get_property_value('typography');
+		if (!$options)
+			return '';
+		$out = '';
+		foreach ( $options as $element => $option ){
+			$font = $option['font_face'] ? "{$option['font_face']}, {$option['face_family']}" : "inherit";
+			$out .= ".upfront-output-object $element {\n" .
+					"font-family: {$font};\n" .
+					"font-weight: {$option['weight']};\n" .
+					"font-style: {$option['style']};\n" .
+					"font-size: {$option['size']}px;\n" .
+					"line-height: {$option['line_height']}em;\n" .
+					"color: {$option['color']};\n" .
+					"}\n";
+		}
 		return $out;
 	}
 

@@ -164,6 +164,47 @@ abstract class Upfront_EntityResolver {
 		return $cascade;
 	}
 
+	public static function layout_to_name ($layout_ids) {
+		$type = $layout_ids['type'];
+		$item = $layout_ids['item'] ? preg_replace("/^{$type}-/", "", $layout_ids['item']) : "";
+		$specificity = $layout_ids['specificity'] ? preg_replace("/^{$type}-{$item}-/", "", $layout_ids['specificity']) : "";
+		if ( $type == 'single' ){
+			$post_type = get_post_type_object($item ? $item : 'post');
+			$name = is_object($post_type->labels) ? $post_type->labels->singular_name : $post_type->labels['singular_name'];
+			if ( $specificity )
+				return sprintf("Single %s: %s", $name, $specificity);
+			return sprintf("Single %s", $name);
+		}
+		else if ( $type == 'archive' ){
+			if ( $item == 'home' ){
+				return __("Home Page");
+			}
+			else if ( $item == 'date' || empty($item) ){
+				if ( $specificity )
+					return sprintf("Archive: %s", jdmonthname($specificity, CAL_MONTH_GREGORIAN_LONG));
+				return __("Archive");
+			}
+			else if ( $item == 'search' ){
+				if ( $specificity )
+					return sprintf("Search term: %s", $specificity);
+				return __("Search");
+			}
+			else if ( $item == 'author' ){
+				if ( $specificity )
+					return sprintf("Author: %s", $specificity);
+				return __("Author");
+			}
+			else {
+				// means this is taxonomy
+				$taxonomy = get_taxonomy($item);
+				$name = is_object($taxonomy->labels) ? $taxonomy->labels->singular_name : $taxonomy->labels['singular_name'];
+				if ( $specificity )
+					return sprintf("%s: %s", $name, $specificity);
+				return $name;
+			}
+		}
+	}
+
 
 	private static function _get_query ($query) {
 		if (!$query || !($query instanceof WP_Query)) {
@@ -208,7 +249,10 @@ abstract class Upfront_Model {
 	}
 
 	public function get_id () {
-		if (!empty($this->_data['preferred_layout'])) {
+		if (!empty($this->_data['current_layout'])) {
+			$id = $this->_data['current_layout'];
+		}
+		else if (!empty($this->_data['preferred_layout'])) {
 			$id = $this->_data['preferred_layout'];
 		} else {
 			$id = !empty($this->_data['layout']['item'])
@@ -240,6 +284,10 @@ abstract class Upfront_Model {
 
 	public function get ($key) {
 		return isset($this->_data[$key]) ? $this->_data[$key] : false;
+	}
+	
+	public function get_property_value ($prop) {
+		return upfront_get_property_value($prop, $this->_data);
 	}
 
 	public function is_empty () {
@@ -288,6 +336,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	protected static $cascade;
 	protected static $layout_slug;
+	protected static $scope_data = array();
 
 	public static function from_entity_ids ($cascade, $storage_key = '') {
 		$layout = array();
@@ -295,8 +344,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		self::$cascade = $cascade;
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
-		foreach ($cascade as $id_part) {
-			$id = $storage_key . '-' . $id_part;
+		$order = array('specificity', 'item', 'type');
+		foreach ($order as $o) {
+			$id = $storage_key . '-' . $cascade[$o];
 			$layout = self::from_id($id);
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
@@ -334,11 +384,21 @@ class Upfront_Layout extends Upfront_JsonModel {
 							$regions_added[] = $region_data['name'];
 						}
 					}
+					if ( !in_array($region['name'], $regions_added) ){
+						$applied_scope = self::_apply_scoped_region($region);
+						foreach ( $applied_scope as $applied_data ) {
+							if ( !in_array($applied_data['name'], $regions_added) ){
+								$regions[] = $applied_data;
+								$regions_added[] = $applied_data['name'];
+							}
+						}
+					}
 					continue;
 				}
 				$regions[] = $region;
 			}
 			$data['regions'] = $regions;
+			$data['properties'] = self::get_layout_properties();
 			$data['layout'] = self::$cascade;
 		}
 		return self::from_php($data);
@@ -346,21 +406,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public static function get_regions_data () {
 		$regions_data = self::_get_regions();
-		$scopes = array();
 		$regions_added = array();
 		$regions = array();
 		foreach ( $regions_data as $i => $region ) {
 			if ( $region['scope'] != 'local' ){
-				if ( !$scopes[$region['scope']] )
-					$scopes[$region['scope']] = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
-				if ( empty($scopes[$region['scope']]) ){
-					$regions[] = $region;
-					continue;
-				}
-				foreach ( $scopes[$region['scope']] as $scope => $data ) {
-					if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) && !in_array($data['name'], $regions_added) ){
-						$regions[] = $data;
-						$regions_added[] = $data['name'];
+				$applied_scope = self::_apply_scoped_region($region);
+				foreach ( $applied_scope as $applied_data ) {
+					if ( !in_array($applied_data['name'], $regions_added) ){
+						$regions[] = $applied_data;
+						$regions_added[] = $applied_data['name'];
 					}
 				}
 				continue;
@@ -370,15 +424,128 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $regions;
 	}
 
+	public static function get_layout_properties () {
+		return json_decode( get_option(self::_get_layout_properties_id(), json_encode(array())), true );
+	}
+	
+	protected static function _apply_scoped_region ($region) {
+		$regions = array();
+		if ( $region['scope'] != 'local' ){
+			if ( !self::$scope_data[$region['scope']] )
+				self::$scope_data[$region['scope']] = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+			if ( empty(self::$scope_data[$region['scope']]) ){
+				$regions[] = $region;
+				return $regions;
+			}
+			foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
+				if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) ){
+					$regions[] = $data;
+				}
+			}
+		}
+		return $regions;
+		
+	}
+
 	public static function create_layout ($layout_ids = array(), $layout_slug = '') {
 		self::$layout_slug = $layout_slug;
 		$data = array(
 			"name" => "Default Layout",
-			"properties" => array(),
+			"properties" => self::get_layout_properties(),
 			"regions" => self::get_regions_data(),
 			"layout_slug" => self::$layout_slug
 		);
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
+	}
+
+	public static function list_available_layout () {
+		$saved = self::list_saved_layout();
+		$saved_keys = array_keys($saved);
+		$list = array(
+			'archive-home' => array(
+				'layout' => array(
+					'item' => 'archive-home',
+					'type' => 'archive'
+				)
+			),
+			'archive' => array(
+				'layout' => array(
+					'type' => 'archive'
+				)
+			)
+		);
+		// add singular post type
+		foreach ( get_post_types(array('public' => true, 'show_ui' => true), 'objects') as $post_type ){
+			$query = new WP_Query(array(
+				'post_type' => $post_type->name,
+				'post_status' => 'publish'
+			));
+			$query->parse_query();
+			$post = $query->next_post();
+			
+			if ( $post_type->name == 'post' )
+				$list['single'] = array(
+					'layout' => array(
+						'type' => 'single'
+					),
+					'latest_post' => $post->ID
+				);
+			else
+				$list['single-' . $post_type->name] = array(
+					'layout' => array(
+						'item' => 'single-' . $post_type->name,
+						'type' => 'single'
+					),
+					'latest_post' => $post->ID
+				);
+		}
+		// add taxonomy archive
+		foreach ( get_taxonomies(array('public' => true, 'show_ui' => true), 'objects') as $taxonomy ){
+			$list['archive-' . $taxonomy->name] = array(
+				'layout' => array(
+					'item' => 'archive-' . $taxonomy->name,
+					'type' => 'archive'
+				)
+			);
+		}
+		foreach ( $list as $i => $li ){
+			$list[$i]['label'] = Upfront_EntityResolver::layout_to_name($li['layout']);
+			$list[$i]['saved'] = in_array($i, $saved_keys);
+		}
+		return $list;
+	}
+
+	public static function list_saved_layout ($storage_key = '') {
+		global $wpdb;
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
+		$layouts = $wpdb->get_results("SELECT * FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
+		$return = array();
+		foreach ( $layouts as $layout ){
+			if ( preg_match("/^{$storage_key}-([^-]+)(-([^-]+)|)(-([^-]+)|)$/", $layout->option_name, $match) ){
+				$ids = array();
+				if ( $match[3] && $match[5] )
+					$ids['specificity'] = $match[1] . '-' . $match[3] . '-' . $match[5];
+				if ( $match[3] )
+					$ids['item'] = $match[1] . '-' . $match[3];
+				$ids['type'] = $match[1];
+				$layout_id = ( $ids['specificity'] ? $ids['specificity'] : ( $ids['item'] ? $ids['item'] : $ids['type'] ) );
+				$return[$layout_id] = array(
+					'layout' => $ids,
+					'label' => Upfront_EntityResolver::layout_to_name($ids)
+				);
+				if ( $ids['type'] == 'single' ){
+					$query = new WP_Query(array(
+						'post_type' => $post_type->name,
+						'post_status' => 'publish'
+					));
+					$query->parse_query();
+					$post = $query->next_post();
+					$return[$layout_id]['latest_post'] = $post->ID;
+				}
+			}
+		}
+		return $return;
 	}
 
 	protected static function _get_regions () {
@@ -388,15 +555,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
 
-	protected static function _get_region_id ($region_name, $scope = '') {
-		$region_id = preg_replace('/[^-_a-z0-9]/', '-', strtolower($region_name));
-		$storage_key = self::get_storage_key();
-		return $storage_key . '-' . $region_id . ( !empty($scope) ? '-' . $scope : '' );
-	}
-
 	protected static function _get_scope_id ($scope) {
 		$storage_key = self::get_storage_key();
 		return $storage_key . '-regions-' . $scope;
+	}
+
+	protected static function _get_layout_properties_id () {
+		$storage_key = self::get_storage_key();
+		return $storage_key . '-' . get_stylesheet() . '-layout-properties';
 	}
 
 
@@ -454,26 +620,25 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 			update_option(self::_get_scope_id($scope), json_encode($scope_data));
 		}
+		if ( $this->_data['properties'] )
+			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
 		update_option($key, $this->to_json());
 		return $key;
 	}
 
-	public function delete () {
-		return delete_option($this->get_id());
-	}
-	
-	public function delete_scope ($scope) {
-		return delete_option(self::_get_scope_id($scope));
-	}
-
-	public function delete_regions () {
-		$deleted = array();
-		foreach ( self::_get_regions() as $i => $region ) {
-			if ( !in_array($region['scope'], $deleted) ){
-				$this->delete_scope($region['scope']);
-				$deleted[] = $region['scope'];
+	public function delete ($all = false) {
+		if ( $all ){
+			$scopes = array();
+			foreach ( $this->_data['regions'] as $region ){
+				if ( $region['scope'] != 'local' && !in_array($region['scope'], $scopes) ){
+					$scopes[] = $region['scope'];
+				}
 			}
+			foreach ( $scopes as $scope )
+				delete_option(self::_get_scope_id($scope));
+			delete_option(self::_get_layout_properties_id());
 		}
+		return delete_option($this->get_id());
 	}
 
 	public function get_element_data($id) {

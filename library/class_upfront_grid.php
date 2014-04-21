@@ -190,7 +190,6 @@ abstract class Upfront_GridBreakpoint {
 		if ( $max_width > 0 )
 			$width_rule .= "max-width: {$max_width}px; ";
 		return '' .
-			"#page.{$scope} {line-height: {$line_height}px;}" . "\n" .
 			"#page.{$scope} .upfront-grid-layout {width: {$width}px;}" . "\n" .
 			"#page.{$scope} .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
 			( $width_rule != "" ? "#page.{$scope} { {$width_rule} }" . "\n" : "" ) .
@@ -205,7 +204,6 @@ abstract class Upfront_GridBreakpoint {
 		$column_padding = $this->get_column_padding();
 		$type_padding = $this->get_type_padding();
 		return '' .
-			"body {line-height: {$line_height}px;}" . "\n" .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
 			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
 			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .

@@ -186,9 +186,9 @@ define([
 				url += '/';
 
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.html('<a class="upfront-logo" href="' + url + '?editmode=true"></a>');
+				this.$el.html('<a class="upfront-logo" href="' + url + '"></a>');
 			else
-				this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '?editmode=true"></a>');
+				this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '"></a>');
 		},
 		on_click: function () {
 			/*var root = Upfront.Settings.site_url;
@@ -564,7 +564,7 @@ define([
 	})
 
 	var Command_ToggleGrid = Command.extend({
-
+		className: "command-grid",
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-grid');
 			//this.$el.html('Toggle grid');
@@ -718,26 +718,81 @@ define([
 			this.$el.html('New Layout');
 		},
 		on_click: function () {
-
+			Upfront.Events.trigger("command:layout:create");
 		}
 	});
 
 	var Command_BrowseLayout = Command.extend({
 		className: "command-browse-layout",
 		render: function () {
-			this.$el.html('Browse Layout');
+			this.$el.html('Browse Layouts');
 		},
 		on_click: function () {
-
+			Upfront.Events.trigger("command:layout:browse");
 		}
 	});
 
 	var Command_EditStructure = Command.extend({
+		tagName: 'div',
+		className: "command-link command-edit-structure",
 		render: function (){
-			this.$el.html('Edit Structure/Grid');
+			this.$el.html('Edit Grid');
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_structure");
+		}
+	});
+
+	var Command_EditLayoutBackground = Command.extend({
+		tagName: 'div',
+		className: "command-link command-edit-bg",
+		render: function (){
+			this.$el.text('Edit <body> BG');
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:edit_background");
+		}
+	});
+
+	var Command_EditCustomCSS = Command.extend({
+		tagName: 'div',
+		className: "command-edit-css",
+		render: function (){
+			this.$el.text('Add Custom CSS Styling');
+		},
+		on_click: function () {
+			var editor = Upfront.Application.cssEditor,
+				name = '_upfront-body_global',
+				selector = editor.elementTypes.Layout.id + '-' + name,
+				styleId = 'upfront-style-' + selector,
+				save_t;
+	        if(!$('#' + styleId).length)
+	          $('body').append('<style id="' + styleId + '"></style>');
+			editor.init({
+				model: this.model,
+				name: selector,
+				type: "Layout",
+				sidebar: false,
+				elementSelector: '',
+				element_id: 'layout',
+				global: true,
+				change: function(ed){
+					clearTimeout(save_t);
+					save_t = setTimeout(function(){
+						editor.$el.find('.upfront-css-save-ok').click();
+					}, 1000);
+				}
+			});
+		}
+	});
+
+	var Command_ExportLayout = Command.extend({
+		className: "command-export",
+		render: function (){
+			this.$el.text('Export');
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:export_theme");
 		}
 	});
 
@@ -1011,9 +1066,11 @@ define([
 	});
 
 	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
+		_loaded: false,
 	    fields: {},
 	    current_element: '',
 	    typefaces_list: [
+	    	{ name: "Default", value: '', family:'sans-serif' },
 	        { name: "Arial", family:'sans-serif' },
             { name: "Arial Black", family:'sans-serif' },
             { name: "Arial Narrow", family:'sans-serif' },
@@ -1058,77 +1115,19 @@ define([
             { name: "Lucida Sans Typewriter", family:'monospace' },
             { name: "Monaco", family:'monospace' },
 	    ],
-	    typefaces: {
-            "h1": 'Arial',
-            "h2": 'Arial',
-            "h3": 'Arial',
-            "h4": 'Arial',
-            "h5": 'Arial',
-            "h6": 'Arial',
-            "p": 'Arial',
-            "a": 'Arial',
-            "ul": 'Arial',
-            "ol": 'Arial',
-            "blockquote": 'Times New Roman'
-	    },
-	    styles: {
-	        "h1": "600 normal",
-	        "h2": "600 normal",
-            "h3": "600 normal",
-            "h4": "600 normal",
-            "h5": "600 normal",
-            "h6": "600 normal",
-            "p": "400 normal",
-            "a": "400 normal",
-            "ul": "400 normal",
-            "ol": "400 normal",
-            "blockquote": "400 italic"
-	    },
-	    sizes: {
-            "h1": 36,
-            "h2": 24,
-            "h3": 18,
-            "h4": 16,
-            "h5": 14,
-            "h6": 12,
-            "p": 12,
-            "a": 12,
-            "ul": 12,
-            "ol": 12,
-            "blockquote": 16
-	    },
-	    colors: {
-            "h1": "#000",
-            "h2": "#000",
-            "h3": "#000",
-            "h4": "#000",
-            "h5": "#000",
-            "h6": "#000",
-            "p": "#000",
-            "a": "#1963ec",
-            "ul": "#000",
-            "ol": "#000",
-            "blockquote": "#000"
-	    },
-	    line_heights: {
-            "h1": 1.5,
-            "h2": 1.5,
-            "h3": 1.5,
-            "h4": 1.5,
-            "h5": 1.5,
-            "h6": 1.5,
-            "p": 1.5,
-            "a": 1.5,
-            "ul": 1.5,
-            "ol": 1.5,
-            "blockquote": 1.5
-	    },
+	    elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "ul", "ol", "blockquote"],
+	    typefaces: {},
+	    styles: {},
+	    sizes: {},
+	    colors: {},
+	    line_heights: {},
 		on_render: function () {
 		    var me = this,
 		        typefaces_list = (function(){
 		            var lists = [];
 		            _.each(me.typefaces_list, function(typeface){
-		                lists.push({ label: typeface.name, value: typeface.name });
+		            	var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.name;
+		                lists.push({ label: typeface.name, value: value });
 		            });
 		            return lists;
 		        })(),
@@ -1140,8 +1139,36 @@ define([
 						});
 					});
   return lists;
-    		    })();
-	       if ( !this.fields.length ){
+    		    })(),
+    		    options = this.model.get_property_value_by_name('typography'),
+    		    $wrap_left = $('<div class="upfront-typography-fields-left" />'),
+    		    $wrap_right = $('<div class="upfront-typography-fields-right" />');
+			_.each(this.elements, function(element){
+				var el = document.createElement(element);
+				$('body').append(el);
+				var styles = window.getComputedStyle(el),
+					style = styles.fontStyle,
+					weight = me._normalize_weight(styles.fontWeight),
+					size = parseInt(styles.fontSize),
+					line_height = parseInt(styles.lineHeight),
+					color = styles.color;
+				me.typefaces[element] = '';
+				me.styles[element] = weight + ' ' + style;
+				me.colors[element] = color;
+				me.sizes[element] = size;
+				me.line_heights[element] = Math.round(line_height/size*10)/10;
+				$(el).remove();
+			});
+		  	if ( options ){
+    			_.each(options, function (values, element) {
+    				me.typefaces[element] = values.font_face;
+    				me.styles[element] = values.weight + ' ' + values.style;
+    				me.colors[element] = values.color;
+    				me.sizes[element] = values.size;
+    				me.line_heights[element] = values.line_height;
+    			});
+		   	}
+	       	if ( !this.fields.length ){
     	       this.fields = {
     				element: new Upfront.Views.Editor.Field.Select({
     					label: "Typographic Element",
@@ -1197,6 +1224,7 @@ define([
                     }),
                     color: new Upfront.Views.Editor.Field.Color({
                         label: "Color",
+                        default_value: me.colors['h1'],
                         spectrum: {
                             move: function (color) {
                                 var rgb = color.toRgb(),
@@ -1213,6 +1241,7 @@ define([
                         label: "Size",
                         min: 0,
                         max: 100,
+                        suffix: 'px',
                         default_value: me.sizes['h1'],
                         change: function () {
                         	var value = this.get_value(),
@@ -1244,26 +1273,60 @@ define([
 			_.each( this.fields, function(field){
 			    field.render();
 			    field.delegateEvents();
-			    me.$el.append(field.el);
 			} );
+			this.$el.append([this.fields.element.el, this.fields.typeface.el]);
+			$wrap_left.append([this.fields.style.el, this.fields.size.el]);
+			this.$el.append($wrap_left);
+			$wrap_right.append([this.fields.color.el, this.fields.line_height.el]);
+			this.$el.append($wrap_right);
 			this.fields.element.trigger('changed');
+			this.update_typography();
 		},
 		update_typography: function () {
 			var me = this,
-				css = [];
-			_.each(this.typefaces, function(typeface, element){
+				css = [],
+				options = {};
+			_.each(this.elements, function(element){
 				var rules = [],
-					face = _.findWhere(me.typefaces_list, {name: typeface});
-				rules.push('font: ' + me.styles[element] + ' ' + me.sizes[element] + 'px/' + me.line_heights[element] + ' "' + face.name + '",' + face.family );
+					typeface = me.typefaces[element],
+					face = _.findWhere(me.typefaces_list, {value: typeface}) || _.findWhere(me.typefaces_list, {name: typeface}),
+					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.name + '",' + face.family,
+					style = me.styles[element].match(/^(\d+) +(\S+)/);
+				rules.push('font-family: ' + font);
+				rules.push('font-weight: ' + style[1]);
+				rules.push('font-style: ' + style[2]);
+				rules.push('font-size: ' + me.sizes[element] + 'px');
+				rules.push('line-height: ' + me.line_heights[element] + 'em');
 				rules.push('color: ' + me.colors[element]);
 				css.push(
-					element + '{ ' + rules.join("; ") + '; }'
+					'.upfront-object-content ' + element + '{ ' + rules.join("; ") + '; }'
 				);
+				options[element] = {
+					weight: style[1],
+					style: style[2],
+					size: me.sizes[element],
+					line_height: me.line_heights[element],
+					font_face: typeof face.value != 'undefined' ? face.value : face.name,
+					font_family: face.family,
+					color: me.colors[element]
+				};
 			});
+			this.model.set_property('typography', options);
 			if ( $('#upfront-default-typography-inline').length )
 				$('#upfront-default-typography-inline').html( css.join("\n") );
 			else
 				$('body').append('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>');
+		},
+		_normalize_weight: function (weight) {
+			if ( weight == 'normal' )
+				return 400;
+			else if ( weight == 'bold' )
+				return 700;
+			else if ( weight == 'bolder' )
+				return 900; // either 800-900 depend to the available weight
+			else if ( weight == 'lighter' )
+				return 100; // either 100-300 depend to the available weight
+			return weight;
 		}
 	});
 
@@ -1272,31 +1335,41 @@ define([
 			this.settings = _([
 			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
+			this.edit_css = new Command_EditCustomCSS({"model": this.model});
 		},
 		get_title: function () {
 			return "Typography and Colors";
 		},
 		on_render: function () {
-
+			this.edit_css.render();
+			this.edit_css.delegateEvents();
+			this.$el.find('.panel-section-content').append(this.edit_css.el);
 		}
 	});
 
 	var SidebarPanel_Settings_Section_Structure = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([]);
-			this.edit_command = new Command_EditStructure({"model": this.model});
+			this.edit_structure = new Command_EditStructure({"model": this.model});
+			this.edit_background = new Command_EditLayoutBackground({"model": this.model});
 		},
 		get_title: function () {
 			return "";
 		},
 		on_render: function () {
-			this.edit_command.render();
-			this.edit_command.delegateEvents();
-			this.$el.find('.panel-section-content').append(this.edit_command.el);
+			this.edit_background.render();
+			this.edit_background.delegateEvents();
+			this.$el.find('.panel-section-content').append(this.edit_background.el);
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME ){
+				this.edit_structure.render();
+				this.edit_structure.delegateEvents();
+				this.$el.find('.panel-section-content').append(this.edit_structure.el);
+			}
 		}
 	});
 
 	var SidebarPanel_Settings = SidebarPanel.extend({
+		"className": "sidebar-panel sidebar-panel-settings",
 		initialize: function () {
 			this.sections = _([
 				new SidebarPanel_Settings_Section_Typography({"model": this.model}),
@@ -1334,8 +1407,6 @@ define([
 		render: function () {
 			var me = this;
 			_.each(this.panels, function(panel, key){
-				if ( key == 'settings' && Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
-					return;
 				panel.render();
 				me.$el.append(panel.el);
 			});
@@ -1391,6 +1462,9 @@ define([
 				new Command_ToggleGrid({"model": this.model}),
 				//new Command_ResetEverything({"model": this.model}),
 			]);
+			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME ) {
+				this.commands.push(new Command_ExportLayout({"model": this.model}));
+			}
 			if (!Upfront.Settings.Application.NO_SAVE) {
 				this.commands.push(new Command_SaveLayout({"model": this.model}));
 			} else {
@@ -3917,7 +3991,8 @@ var CSSEditor = Backbone.View.extend({
 		ThisPostModel: {label: 'Post', id: 'this_post'},
 		UwidgetModel: {label: 'Widget', id: 'uwidget'},
 		UyoutubeModel: {label: 'YoutTube', id: 'utube'},
-		PlainTxtModel: {label: 'Text', id:'plaintext'}
+		PlainTxtModel: {label: 'Text', id:'plaintext'},
+		Layout: {label: 'Body', id: 'layout'}
 	},
 	initialize: function(){
 		if(!$('#' + this.id).length)
@@ -3928,10 +4003,13 @@ var CSSEditor = Backbone.View.extend({
 			this.close();
 
 		this.model = options.model;
+		this.elementSelector = typeof options.elementSelector == 'string' ? options.elementSelector : '.upfront-object';
+		this.sidebar = ( options.sidebar !== false );
+		this.global = ( options.global === true );
 
 		var me = this,
 			deferred = $.Deferred(),
-			modelType = me.model.get_property_value_by_name('type'),
+			modelType = options.type ? options.type : me.model.get_property_value_by_name('type'),
 			elementType = this.elementTypes[modelType]
 		;
 
@@ -3957,13 +4035,17 @@ var CSSEditor = Backbone.View.extend({
 
 		$(window).on('resize', this.resizeHandler);
 
-		this.element_id = this.model.get_property_value_by_name('element_id');
+		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 		if(!$('#' + this.element_id + '-styles').length){
 			this.$style = $('<style id="' + this.element_id + '-style"></style');
 			$('body').append(this.$style);
 		}
 		else
 			this.$style = $('#' + this.element_id + '-style');
+		
+		
+		if ( typeof options.change == 'function' )
+			this.on('change', options.change);
 
 		this.render();
 
@@ -3973,6 +4055,7 @@ var CSSEditor = Backbone.View.extend({
 		if(e)
 			e.preventDefault();
 		$(window).off('resize', this.resizeHandler);
+		this.off('change');
 
 		this.$style.remove();
 		this.$style = false;
@@ -3987,6 +4070,11 @@ var CSSEditor = Backbone.View.extend({
 
 		if(!$('#' + this.id).length)
 			$('#page').append(this.$el);
+			
+		if (!this.sidebar)
+			this.$el.addClass('upfront-css-no-sidebar');
+		else
+			this.$el.removeClass('upfront-css-no-sidebar');
 
 		this.$el.html(this.tpl({
 			name: this.name,
@@ -4027,9 +4115,10 @@ var CSSEditor = Backbone.View.extend({
 			me.timer = setTimeout(function(){
 				me.updateStyles(editor.getValue());
 			},1000);
+			me.trigger('change', editor);
 		});
 		if(this.name){
-			var scope = new RegExp('.upfront-object.' + this.selector + '\s*', 'g'),
+			var scope = new RegExp(this.elementSelector+'.' + this.selector + '\s*', 'g'),
 				styles = $('#upfront-style-' + this.selector).html().replace(scope, '')
 			;
 			editor.setValue($.trim(styles), -1);
@@ -4146,7 +4235,7 @@ var CSSEditor = Backbone.View.extend({
 	updateStyles: function(contents){
 		if(!this.$style.parent().length)
 			$('body').append(this.$style);
-		this.$style.html(this.stylesAddSelector(contents, '#' + this.element_id));
+		this.$style.html(this.stylesAddSelector(contents, this.global ? '' : '#' + this.element_id));
 	},
 
 	stylesAddSelector: function(contents, selector){
@@ -4179,7 +4268,8 @@ var CSSEditor = Backbone.View.extend({
 			name: styleName,
 			styles: styles,
 			action: 'upfront_save_styles',
-			elementType: this.elementType.id
+			elementType: this.elementType.id,
+			global: this.global
 		};
 
 		Upfront.Util.post(postData)
@@ -4194,7 +4284,7 @@ var CSSEditor = Backbone.View.extend({
 					$('body').append($style);
 				}
 
-				$style.html(me.stylesAddSelector(data.styles, '.upfront-object.' + selector));
+				$style.html(me.stylesAddSelector(data.styles, me.elementSelector + '.' + selector));
 
 				if(!Upfront.data.styles[elementType])
 					Upfront.data.styles[elementType] = [];
@@ -4722,6 +4812,9 @@ var Field_Anchor = Field_Select.extend({
 				}
 			});
 		},
+		update_loading_text: function (loading) {
+			this.$el.find('.upfront-loading-text').text(loading);
+		},
 		on_finish: function (callback) {
 			this.done_callback.push(callback);
 		},
@@ -4791,10 +4884,10 @@ var Field_Anchor = Field_Select.extend({
 			if ( top == -1 ){
 				parent_height = this.$el.height() > $(window).height() ? $(window).height() : this.$el.height();
 				height = $content.outerHeight();
-				top = parent_height-height > 0 ? (parent_height-height)/2 : 0;
+				this.top = parent_height-height > 0 ? (parent_height-height)/2 : 0;
 			}
 			$wrap.css({
-				top: top,
+				top: this.top,
 				bottom: 'auto',
 				width: this.width
 			});
@@ -4829,7 +4922,8 @@ var Field_Anchor = Field_Select.extend({
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			if ( this.$el.css('display') == 'none' )
 				return;
-			var	offset = this.$to.offset(),
+			var	$wrap = this.$el.find('.upfront-inline-modal-wrap'),
+				offset = this.$to.offset(),
 				top = offset.top,
 				bottom = top + this.$to.outerHeight(),
 				scroll_top = $(document).scrollTop(),
@@ -4840,26 +4934,34 @@ var Field_Anchor = Field_Select.extend({
 				modal_right = modal_offset.left+this.$el.width(),
 				modal_height = this.$el.find('.upfront-inline-modal-wrap').outerHeight(),
 				modal_bottom = top + modal_height
-				;
-			if ( scroll_top > top-rel_top ) {
-				if ( this.$el.css('position') != 'fixed' )
+			;
+			if ( scroll_top >= top-rel_top ) {
+				if ( this.$el.css('position') != 'fixed' ){
 					this.$el.css({
 						position: 'fixed',
-						top: rel_top,
-						bottom: 'auto',
+						top: 0,
+						bottom: 0,
 						left: modal_offset.left,
 						right: $(window).width()-modal_right
 					});
+					$wrap.css({
+						top: rel_top + this.top
+					});
+				}
 			}
 			else if ( ( bottom > modal_bottom ? bottom : modal_bottom )+rel_bottom > scroll_bottom ) {
-				if ( this.$el.css('position') != 'fixed' )
+				if ( this.$el.css('position') != 'fixed' ){
 					this.$el.css({
 						position: 'fixed',
-						top: bottom > modal_bottom ? $(window).height()-(bottom-top)-rel_bottom : $(window).height()-modal_height-rel_bottom,
-						bottom: 'auto',
+						top: 0,
+						bottom: 0,
 						left: modal_offset.left,
 						right: $(window).width()-modal_right
 					});
+					$wrap.css({
+						top: ( bottom > modal_bottom ? $(window).height()-(bottom-top)-rel_bottom : $(window).height()-modal_height-rel_bottom ) + this.top
+					});
+				}
 			}
 			else {
 				this.$el.css({
@@ -4868,6 +4970,9 @@ var Field_Anchor = Field_Select.extend({
 					bottom: '',
 					left: '',
 					right: ''
+				});
+				$wrap.css({
+					top: this.top
 				});
 			}
 		},
@@ -4879,114 +4984,9 @@ var Field_Anchor = Field_Select.extend({
 		},
 		render_modal: function ($content, $modal) {
 			var me = this,
-				collection = this.model.collection,
+				is_region = ( this.model instanceof Upfront.Models.Region ),
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
-				index = collection.indexOf(this.model),
-				index_container = collection.index_container(this.model),
-				total_container = collection.total_container(),
-				is_top = index_container == 0,
-				is_bottom = index_container == total_container-2, // don't include shadow region
-				region_global = new Field_Checkboxes({
-					model: this.model,
-					name: 'scope',
-					multiple: false,
-					values: [
-						{ label: "Use this area as a global theme " + ( is_top ? 'header' : ( is_bottom ? 'footer' : '' ) ), value: 'global' }
-					],
-					change: function(){
-						var value = this.get_value(),
-							sub_regions = this.model.get_sub_regions();
-						_.each(sub_regions, function(each){
-							if ( each )
-								each.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
-						});
-						this.model.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
-					}
-				}),
-				region_type = new Field_Radios({
-					model: this.model,
-					name: 'type',
-					default_value: 'wide',
-					layout: 'horizontal-inline',
-					values: [
-						{ label: "Full Screen", value: 'full', disabled: index_container > 0 },
-						{ label: "100% wide", value: 'wide' },
-						{ label: "Contained", value: 'clip' }
-					],
-					change: function () {
-						var value = this.get_value();
-						this.model.set({type: value}, {silent: true});
-						if ( value == 'full' )
-							$region_nav.show();
-						else
-							$region_nav.hide();
-						this.model.get('properties').trigger('change');
-					}
-				}),
-				region_nav = new Field_Radios({
-					model: this.model,
-					property: 'nav_region',
-					default_value: '',
-					layout: 'horizontal-inline',
-					values: [
-						{ label: "No nav", value: '' },
-						{ label: "Bottom nav", value: 'bottom' },
-						{ label: "Full screen, top", value: 'top' }
-					],
-					change: function () {
-						var value = this.get_value(),
-							sub_regions = me.model.get_sub_regions(),
-							add_region = false,
-							copy_data = false,
-							copy_region = false;
-						index = collection.indexOf(me.model);
-						if ( value == '' ){
-							if ( sub_regions.top )
-								collection.remove(sub_regions.top);
-							else if ( sub_regions.bottom )
-								collection.remove(sub_regions.bottom);
-						}
-						else {
-							if ( value == 'bottom' ){
-								if ( sub_regions.top ){
-									copy_data = Upfront.Util.model_to_json(sub_regions.top);
-									copy_region = new Upfront.Models.Region(copy_data);
-									collection.remove(sub_regions.top);
-									copy_region.set({sub: value}, {silent:true});
-									copy_region.add_to(collection, index, {sub: value});
-								}
-								else if ( !sub_regions.bottom ){
-									add_region = sub_regions.right ? index+2 : index+1;
-								}
-							}
-							else {
-								if ( sub_regions.bottom ){
-									copy_data = Upfront.Util.model_to_json(sub_regions.bottom);
-									copy_region = new Upfront.Models.Region(copy_data);
-									collection.remove(sub_regions.bottom);
-									copy_region.set({sub: value}, {silent:true});
-									copy_region.add_to(collection, index, {sub: value});
-								}
-								else if ( !sub_regions.top ){
-									add_region = sub_regions.left ? index-1 : index;
-								}
-							}
-							if ( add_region !== false ){
-								var name = me.model.get('name') + '_nav',
-									title = me.model.get('title') + ' Nav',
-									new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
-										"name": name,
-										"title": title,
-										"container": me.model.get('name'),
-										"sub": value
-									}));
-								new_region.add_to(collection, add_region, {sub: value});
-							}
-						}
-						this.property.set({value: value});
-					}
-				}),
 				bg_type = new Field_Select({
 					model: this.model,
 					property: 'background_type',
@@ -5007,14 +5007,121 @@ var Field_Anchor = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				}),
-				$region_global, $region_type, $region_nav
-			;
+				$region_global, $region_type, $region_nav;
+			if ( is_region ){
+				var collection = this.model.collection,
+					index = collection.indexOf(this.model),
+					index_container = collection.index_container(this.model),
+					total_container = collection.total_container(),
+					is_top = index_container == 0,
+					is_bottom = index_container == total_container-2, // don't include shadow region
+					region_global = new Field_Checkboxes({
+						model: this.model,
+						name: 'scope',
+						multiple: false,
+						values: [
+							{ label: "Use this area as a global theme " + ( is_top ? 'header' : ( is_bottom ? 'footer' : '' ) ), value: 'global' }
+						],
+						change: function(){
+							var value = this.get_value(),
+								sub_regions = this.model.get_sub_regions();
+							_.each(sub_regions, function(each){
+								if ( each )
+									each.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
+							});
+							this.model.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
+						}
+					}),
+					region_type = new Field_Radios({
+						model: this.model,
+						name: 'type',
+						default_value: 'wide',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Full Screen", value: 'full', disabled: index_container > 0 },
+							{ label: "100% wide", value: 'wide' },
+							{ label: "Contained", value: 'clip' }
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set({type: value}, {silent: true});
+							if ( value == 'full' )
+								$region_nav.show();
+							else
+								$region_nav.hide();
+							this.model.get('properties').trigger('change');
+						}
+					}),
+					region_nav = new Field_Radios({
+						model: this.model,
+						property: 'nav_region',
+						default_value: '',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "No nav", value: '' },
+							{ label: "Bottom nav", value: 'bottom' },
+							{ label: "Full screen, top", value: 'top' }
+						],
+						change: function () {
+							var value = this.get_value(),
+								sub_regions = me.model.get_sub_regions(),
+								add_region = false,
+								copy_data = false,
+								copy_region = false;
+							index = collection.indexOf(me.model);
+							if ( value == '' ){
+								if ( sub_regions.top )
+									collection.remove(sub_regions.top);
+								else if ( sub_regions.bottom )
+									collection.remove(sub_regions.bottom);
+							}
+							else {
+								if ( value == 'bottom' ){
+									if ( sub_regions.top ){
+										copy_data = Upfront.Util.model_to_json(sub_regions.top);
+										copy_region = new Upfront.Models.Region(copy_data);
+										collection.remove(sub_regions.top);
+										copy_region.set({sub: value}, {silent:true});
+										copy_region.add_to(collection, index, {sub: value});
+									}
+									else if ( !sub_regions.bottom ){
+										add_region = sub_regions.right ? index+2 : index+1;
+									}
+								}
+								else {
+									if ( sub_regions.bottom ){
+										copy_data = Upfront.Util.model_to_json(sub_regions.bottom);
+										copy_region = new Upfront.Models.Region(copy_data);
+										collection.remove(sub_regions.bottom);
+										copy_region.set({sub: value}, {silent:true});
+										copy_region.add_to(collection, index, {sub: value});
+									}
+									else if ( !sub_regions.top ){
+										add_region = sub_regions.left ? index-1 : index;
+									}
+								}
+								if ( add_region !== false ){
+									var name = me.model.get('name') + '_nav',
+										title = me.model.get('title') + ' Nav',
+										new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+											"name": name,
+											"title": title,
+											"container": me.model.get('name'),
+											"sub": value
+										}));
+									new_region.add_to(collection, add_region, {sub: value});
+								}
+							}
+							this.property.set({value: value});
+						}
+					});
+			}
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
 			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
-			if ( this.model.is_main() ){
+			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					region_global.render();
 					$region_global.append(region_global.$el);
@@ -5036,13 +5143,18 @@ var Field_Anchor = Field_Select.extend({
 				e.stopPropagation();
 				me.upload_image();
 			});
-			$content.find('.upfront-region-bg-setting-auto-resize').on('click', function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				me.trigger_expand_lock($(this));
-			});
-			this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
-			region_type.trigger('changed');
+			if ( is_region ){
+				$content.find('.upfront-region-bg-setting-auto-resize').on('click', function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					me.trigger_expand_lock($(this));
+				});
+				this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
+				region_type.trigger('changed');
+			}
+			else {
+				$content.find('.upfront-region-bg-setting-auto-resize').hide();
+			}
 			bg_type.trigger('changed');
 		},
 		on_close_modal: function () {
@@ -5945,8 +6057,7 @@ var Field_Anchor = Field_Select.extend({
 				total = collection.size()-1, // total minus shadow region
 				index = collection.indexOf(this.model),
 				position = this.model.get('position'),
-				prev_model = index > 0 ? collection.at(index-1) : false,
-				next_model = index < total-1 ? collection.at(index+1) : false,
+				sub_model = this.model.get_sub_regions(),
 				is_new_container = ( to == 'top' || to == 'bottom' ),
 				is_before = ( to == 'top' || to == 'left' ),
 				title = is_new_container ? this.get_new_title(total) : this.model.get('name') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
@@ -5964,9 +6075,9 @@ var Field_Anchor = Field_Select.extend({
 			}
 			else {
 				new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
-				if ( to == 'top' && prev_model && ( prev_model.get('container') && prev_model.get('container') != prev_model.get('name') ) )
+				if ( to == 'top' && sub_model.left )
 					index--;
-				else if ( to == 'bottom' && next_model && ( next_model.get('container') && next_model.get('container') != next_model.get('name') ) )
+				else if ( to == 'bottom' && sub_model.right )
 					index++;
 			}
 			if ( new_region.get('clip') || !is_new_container ){
@@ -5977,6 +6088,7 @@ var Field_Anchor = Field_Select.extend({
 				Upfront.Events.once('entity:region_container:before_render', this.before_animation, this);
 				Upfront.Events.once('entity:region:added', this.run_animation, this);
 			}
+			console.log(index);
 			new_region.add_to(collection, (is_before ? index : index+1), {sub: is_before ? 'left' : 'right'});
 			e.stopPropagation();
 		},
