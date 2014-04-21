@@ -469,7 +469,7 @@ var GridEditor = {
 	max_row: 0,
 	compare_col: 3,
 	compare_row: 5,
-	timeout: 0, // in ms
+	timeout: 30, // in ms
 	_t: null, // timeout resource
 	col_size: 0,
 	baseline: 0,
@@ -1883,7 +1883,7 @@ var GridEditor = {
 			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
-			delay: 300,
+			delay: 15,
 			appendTo: $main,
 			start: function(e, ui){
 				ed.time_start('drag start');
