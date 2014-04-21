@@ -384,7 +384,8 @@
                 label: 'Header Border:',
                 spectrum: {
                   preferredFormat: "hsl",
-                  change: this.onHeaderBorderChange
+                  change: this.onHeaderBorderChange,
+				  move: this.onHeaderBorderChange
                 }
               }),
               new Upfront.Views.Editor.Field.Color({
@@ -394,7 +395,8 @@
                 label: 'Header Background:',
                 spectrum: {
                   preferredFormat: "hsl",
-                  change: this.onHeaderBgChange
+                  change: this.onHeaderBgChange,
+				  move: this.onHeaderBgChange
                 }
               }),
               new Upfront.Views.Editor.Field.Color({
@@ -404,7 +406,8 @@
                 label: 'Section Background:',
                 spectrum: {
                   preferredFormat: "hsl",
-                  change: this.onPanelBgChange
+                  change: this.onPanelBgChange,
+				  move: this.onPanelBgChange
                 }
               })
             ]
