@@ -89,10 +89,10 @@ var Views = {
 				style += '#' + element_id + ' .upfront_code-element ' + el + '}';
 			});
 
-			return '<section class="upfront_code-element clearfix">' + markup +
+			return '<div class="upfront_code-element clearfix">' + markup +
 				'<style>' + style + '</style>' +
 				'<script>' + script + '</script>' +
-			'</section>';
+			'</div>';
 		},
 
 		on_render: function () {
@@ -612,7 +612,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 			model: this.model
 		});
 		view.render();
-		
+
 		view.parent_view = this.parent_view;
 		view.parent_module_view = this.parent_module_view;
 
@@ -634,7 +634,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 
 		view.parent_view = this.parent_view;
 		view.parent_module_view = this.parent_module_view;
-		
+
 		view.on("code:model:updated", this.propagate_model_update, this);
 		this.$el.empty().append(view.$el);
 		return view;

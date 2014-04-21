@@ -1,23 +1,23 @@
 <?php if ($style_type === 'custom') { ?>
     <style>
 
-	#<?php echo $element_id ?>.upfront-accordion-container .accordion-panel-title {
+	#<?php echo $element_id ?> .upfront-accordion-container .accordion-panel-title {
 		border-top: 2px <?php echo $header_border_color ?> solid;
 	}
 
-	#<?php echo $element_id ?>.upfront-accordion-container .accordion-panel-title:after {
+	#<?php echo $element_id ?> .upfront-accordion-container .accordion-panel-title:after {
 		border-top-color: <?php echo $header_border_color ?>;
 	}
 
-	#<?php echo $element_id ?>.upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
+	#<?php echo $element_id ?> .upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
 		border-left-color: <?php echo $header_border_color ?>;
 	}
 
-	#<?php echo $element_id ?>.upfront-accordion-container .accordion-panel-title {
+	#<?php echo $element_id ?> .upfront-accordion-container .accordion-panel-title {
 		background-color: <?php echo $header_bg_color ?>;
 	}
 
-	#<?php echo $element_id ?>.upfront-accordion-container .accordion-panel {
+	#<?php echo $element_id ?> .upfront-accordion-container .accordion-panel {
 		background-color: <?php echo $panel_bg_color ?>;
 	}
 
@@ -26,7 +26,7 @@
 	}
     </style>
 <?php } ?>
-<div class=" upfront-accordion-container <?php if($style_type === 'theme_defined') { ?><?php echo $theme_style ?><?php } ?>" id="<?php echo $element_id ?>">
+<div class=" upfront-accordion-container <?php if($style_type === 'theme_defined') { ?><?php echo $theme_style ?><?php } ?>">
 	<div class="upfront-accordion-wrap">
         <b class="upfront-entity_meta">
             <a href="#" class="upfront-icon-button upfront-icon-button-accordion-add-panel accordion-add-panel"></a>

@@ -12,11 +12,10 @@ define(function() {
 // ----- Models -----
 
 	var MediaCollection_Model = Backbone.Collection.extend({
-		/*
-		comparator: function (item) {
-			return item.get("post_title");
+		defaults:{
+			thumbnail: '',
+			title: ''
 		}
-		*/
 	});
 	var MediaCollection_Selection = Backbone.Collection.extend({
 		model: MediaItem_Model,
@@ -1346,7 +1345,8 @@ define(function() {
 			events: {
 				"click a": "use_selection"
 			},
-			initialize: function () {
+			initialize: function (opts) {
+				this.options = opts;
 				Upfront.Events.on("media:item:selection_changed", this.update_model, this);
 			},
 			render: function () {
@@ -1527,11 +1527,16 @@ define(function() {
 	var MediaManager_PostImage_View = MediaManager_View.extend({
 		className: "upfront-media_manager upfront-media_manager-post_image clearfix",
 		initialize: function (collection) {
+
 			var data = data || {};
-			collection = new MediaCollection_Model(collection);
+			if(collection.models)
+				collection = new MediaCollection_Model(collection);
+			else
+				collection = new MediaCollection_Model();
 			this.media_collection = collection;
 		},
 		render: function () {
+
 			var media = new MediaCollection_View({model: this.media_collection}),
 				aux = new MediaManager_AuxControls_View({model: this.media_collection}),
 				controls = new MediaManager_Controls_View({model: this.media_collection})
@@ -1623,6 +1628,7 @@ define(function() {
 				click: "toggle_item_selection"
 			},
 			initialize: function () {
+
 				this.template = _.template("<div class='thumbnail'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
 				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
 
@@ -1936,7 +1942,8 @@ define(function() {
 // ----- Interface -----
 
 	var ContentEditorUploader = Backbone.View.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			Upfront.Events.on("upfront:editor:init", this.rebind_ckeditor_image, this);
 		},
 		open: function (options) {

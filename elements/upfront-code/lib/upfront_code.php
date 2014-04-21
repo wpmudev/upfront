@@ -3,8 +3,6 @@
 class Upfront_CodeView extends Upfront_Object {
 
 	public function get_markup () {
-        $_id = $this->_get_property('element_id');
-        $element_id = $_id ? "id='{$_id}'" : '';
         $properties = array();
         foreach ($this->_data['properties'] as $prop) {
             $properties[$prop['name']] = $prop['value'];
@@ -22,7 +20,7 @@ class Upfront_CodeView extends Upfront_Object {
             ? $this->_to_scoped_script($properties['script'])
             : ''
         ;
-        return "<div class='upfront_code-public' {$element_id}>" . $properties['markup'] . $style . $script . "</div>";
+        return '<div class="upfront_code-element clearfix">' . $properties['markup'] . $style . $script . "</div>";
 	}
 
     private function _to_scoped_style ($raw, $id) {

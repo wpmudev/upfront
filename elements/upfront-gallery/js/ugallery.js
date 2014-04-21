@@ -523,7 +523,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			}, 100);
 		});
 
-		$('#' + this.property('element_id')).append(selector.hide());
+		this.$('.ugallery').append(selector.hide());
 		selector.fadeIn();
 	},
 

@@ -379,7 +379,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 					if($theme_style)
 						$theme_style = strtolower($theme_style);
 					$slug = upfront_get_property_value('id_slug', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . '">' . $child_view->get_markup() . '</div>';
+					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . '" id="' . upfront_get_property_value('element_id', $child) . '">' . $child_view->get_markup() . '</div>';
 				}
 				else
 					$html .= $child_view->get_markup();
@@ -443,7 +443,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 
 class Upfront_Layout_View extends Upfront_Container {
 	protected $_type = 'Layout';
-	
+
 	public function wrap ($out, $before = '', $after = '') {
 		$overlay = $this->_get_background_overlay();
 		return parent::wrap("{$before}{$out}{$after} {$overlay}");
@@ -458,7 +458,7 @@ class Upfront_Layout_View extends Upfront_Container {
 		$attr = $this->_get_background_attr();
 		return $attr;
 	}
-	
+
 }
 
 
