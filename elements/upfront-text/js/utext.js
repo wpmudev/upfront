@@ -63,6 +63,11 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				autostart: false
 			})
 			.on('start', function(){
+				var $swap = $(this).find('.upfront-quick-swap');
+				if ( $swap.length ){
+					$swap.remove();
+				}
+				me.model.set_property('is_edited', true, true);
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
