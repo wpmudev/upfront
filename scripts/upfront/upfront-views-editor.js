@@ -3773,14 +3773,14 @@ define([
 			}));
 
 			// Adding anchor trigger
-			if (this.options.anchor && this.options.anchor.is_target) {
+			/*if (this.options.anchor && this.options.anchor.is_target) {
 				var item = new _Settings_AnchorSetting({model: this.for_view.model});
 
 				first.settings.push(item);
 				this.listenTo(item, "anchor:item:updated", function () {
 					this.toggle_panel(first);
 				});
-			}
+			}*/
 
 
 		},

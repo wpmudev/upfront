@@ -1363,7 +1363,8 @@ var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		var me = this;
 
 		this.panels = _([
@@ -1384,7 +1385,8 @@ var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	className: 'upfront-settings_panel_wrap ugallery-settings',
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		var me = this,
 			fields = Upfront.Views.Editor.Field
 		;
@@ -1513,7 +1515,8 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 
 var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		var me = this,
 			fields = Upfront.Views.Editor.Field
 		;

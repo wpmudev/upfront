@@ -163,7 +163,8 @@
         'change [name="videoType"]': 'setType'
       },
 
-      initialize: function () {
+      initialize: function (opts) {
+		this.options = opts;
         this.panels = _([
           new BehaviorPanel({model: this.model})
         ]);
@@ -234,7 +235,8 @@
     var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
       className: 'uyoutube-settings',
       tabbed: true,
-      initialize: function () {
+      initialize: function (opts) {
+		this.options = opts;
         var render_all = function(){
             this.settings.invoke('render');
           },

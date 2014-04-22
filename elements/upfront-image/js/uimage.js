@@ -1216,7 +1216,8 @@ var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	}
 });
 var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		var me = this;
 		this.panels = _([
 			new DescriptionPanel({model: this.model})
@@ -1233,7 +1234,8 @@ var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	className: 'upfront-settings_panel_wrap uimage-settings',
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		var me = this,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
 			Fields = Upfront.Views.Editor.Field

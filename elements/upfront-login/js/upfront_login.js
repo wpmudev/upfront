@@ -123,7 +123,8 @@ define([
 
 
 	var LoginSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			var panel = new LoginSettings_Panel({model: this.model});
 			this.panels = _([
 				panel
@@ -134,7 +135,8 @@ define([
 		}
 	});
 		var LoginSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
-			initialize: function () {
+			initialize: function (opts) {
+				this.options = opts;
 				var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),
 					behavior = new LoginSettings_Field_DisplayBehavior({model: this.model}),
 					trigger = new LoginSettings_Field_DisplayTrigger({model: this.model}),

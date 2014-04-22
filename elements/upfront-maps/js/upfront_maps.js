@@ -564,7 +564,8 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	});
 
 	var MapSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			this.panels = _([
 				new MapSettings_Panel({model: this.model})
 			]);
@@ -574,7 +575,8 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		}
 	});
 		var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
-			initialize: function () {
+			initialize: function (opts) {
+			this.options = opts;
 				this.settings = _([
 					new MapSettings_Field_Location({model: this.model}),
 					new MapSettings_Field_Zoom({model: this.model}),

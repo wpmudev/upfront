@@ -276,7 +276,8 @@ define(function() {
 		 * Initialize the view, and populate the internal
 		 * setting items array with Item instances.
 		 */
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			var tax = new UpostsQuerySetting_Taxonomy({model: this.model}),
 				term = new UpostsQuerySetting_Term({model: this.model}),
 				SettingsItem =  Upfront.Views.Editor.Settings.Item,
@@ -333,7 +334,8 @@ define(function() {
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsQuerySetting_PostType = Upfront.Views.Editor.Settings.Item.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			var pts = [];
 			_(_initial.post_types).each(function (label, type) {
 				pts.push({label: label, value: type});
@@ -362,7 +364,8 @@ define(function() {
 				{"click": "register_change"}
 			);
 		},
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			var pts = [];
 			_(_initial.taxonomies).each(function (label, type) {
 				pts.push({label: label, value: type});
@@ -391,7 +394,8 @@ define(function() {
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsQuerySetting_Term = Upfront.Views.Editor.Settings.Item.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
@@ -441,7 +445,8 @@ define(function() {
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsQuerySetting_Limit = Upfront.Views.Editor.Settings.Item.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			var pts = [];
 			_(_.range(20)).each(function (idx) {
 				pts.push({label: idx, value: idx});
@@ -471,7 +476,8 @@ define(function() {
 		 * Initialize the view, and populate the internal
 		 * setting items array with Item instances.
 		 */
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			this.settings = _([
 				new UpostsPostSetting_Content({model: this.model}),
 				//new UpostsPostSetting_FeaturedImage({model: this.model})
@@ -498,7 +504,8 @@ define(function() {
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsPostSetting_Content = Upfront.Views.Editor.Settings.Item.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Radios({
 					model: this.model,
@@ -521,7 +528,8 @@ define(function() {
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 	var UpostsPostSetting_FeaturedImage = Upfront.Views.Editor.Settings.Item.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Radios({
 					model: this.model,
@@ -550,7 +558,8 @@ define(function() {
 		 * Bootstrap the object - populate the internal
 		 * panels array with the panel instances we'll be showing.
 		 */
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			var postPanel = new Upfront.data.thisPost.PostDataPanel({model: this.model});
 			postPanel.label = "Elements";
 			this.panels = _([

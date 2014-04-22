@@ -129,7 +129,8 @@ var UsearchSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	 * Initialize the view, and populate the internal
 	 * setting items array with Item instances.
 	 */
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		this.settings = _([
 			new UsearchFieldSetting_Placeholder({model: this.model}),
 			new UsearchButtonSetting_Label({model: this.model})
@@ -286,7 +287,8 @@ var UsearchSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 * Bootstrap the object - populate the internal
 	 * panels array with the panel instances we'll be showing.
 	 */
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		this.panels = _([
 			new UsearchSettingsPanel({model: this.model})
 		]);

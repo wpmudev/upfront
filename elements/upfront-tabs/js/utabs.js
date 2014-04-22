@@ -233,7 +233,8 @@
     });
 
     var TabsSettings = Upfront.Views.Editor.Settings.Settings.extend({
-      initialize: function () {
+      initialize: function (opts) {
+		this.options = opts;
         this.panels = _([
           new AppearancePanel({model: this.model})
         ]);
@@ -246,7 +247,8 @@
 
     var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
       className: 'utabs-settings-panel',
-      initialize: function () {
+      initialize: function (opts) {
+		this.options = opts;
         var render_all,
           me = this;
 

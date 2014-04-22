@@ -63,11 +63,6 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				autostart: false
 			})
 			.on('start', function(){
-				var $swap = $(this).find('.upfront-quick-swap');
-				if ( $swap.length ){
-					$swap.remove();
-				}
-				me.model.set_property('is_edited', true, true);
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
@@ -114,7 +109,8 @@ var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
   className: 'plaintxt-settings-panel',
-  initialize: function () {
+  initialize: function (opts) {
+	  this.options = opts;
 	var render_all,
 	  me = this;
 
@@ -316,7 +312,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 
  var PlainTxtSettings = Upfront.Views.Editor.Settings.Settings.extend({
-      initialize: function () {
+      initialize: function (opts) {
+		  this.options = opts;
         this.panels = _([
           new AppearancePanel({model: this.model})
         ]);

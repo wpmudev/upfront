@@ -224,7 +224,8 @@ var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		var data = [
 			{label: "Post Author", value: "author"},
 			{label: "Post Date", value: "date"},
@@ -249,7 +250,8 @@ var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
 
 var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	label: "This post",
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		this.settings = _([
 			new Settings_PostPanel_PostData({model: this.model})
 		]);
@@ -265,7 +267,8 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 });
 
 var Settings = Upfront.Views.Editor.Settings.Settings.extend({
-		initialize: function () {
+		initialize: function (opts) {
+			this.options = opts;
 			this.panels = _([
 				new Settings_PostPanel({model: this.model})
 			]);

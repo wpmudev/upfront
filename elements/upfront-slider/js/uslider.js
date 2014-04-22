@@ -1186,7 +1186,8 @@ var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 * Bootstrap the object - populate the internal
 	 * panels array with the panel instances we'll be showing.
 	 */
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		this.panels = _([
 			new LayoutPanel({model: this.model}),
 			new SlidesPanel({model: this.model})
@@ -1204,7 +1205,8 @@ var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 	className: 'upfront-settings_panel_wrap uslider-settings',
-	initialize: function() {
+	initialize: function(opts) {
+		this.options = opts;
 		var me = this,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
 			Fields = Upfront.Views.Editor.Field
@@ -1393,7 +1395,8 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 
 
 var SlidesPanel =  Upfront.Views.Editor.Settings.Panel.extend({
-	initialize: function() {
+	initialize: function(opts) {
+		this.options = opts;
 		var me = this,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
 			Fields = Upfront.Views.Editor.Field
