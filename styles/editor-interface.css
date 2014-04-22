@@ -845,12 +845,12 @@
 
 #sidebar-ui .upfront-typography-fields-left {
 	float: left;
-	width: 40%;
+	width: 60%;
 	margin: 0 0 10px;
 }
 #sidebar-ui .upfront-typography-fields-right {
 	float: right;
-	width: 50%;
+	width: 40%;
 	margin: 0 0 10px;
 }
 #sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number] {

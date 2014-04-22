@@ -494,13 +494,13 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			return '';
 		$out = '';
 		foreach ( $options as $element => $option ){
-			$font = $option['font_face'] ? "{$option['font_face']}, {$option['face_family']}" : "inherit";
+			$font = $option['font_face'] ? "{$option['font_face']}, {$option['font_family']}" : "inherit";
 			$out .= ".upfront-output-object $element {\n" .
 					"font-family: {$font};\n" .
-					"font-weight: {$option['weight']};\n" .
-					"font-style: {$option['style']};\n" .
-					"font-size: {$option['size']}px;\n" .
-					"line-height: {$option['line_height']}em;\n" .
+					( $option['weight'] ? "font-weight: {$option['weight']};\n" : "" ) .
+					( $option['style'] ? "font-style: {$option['style']};\n" : "" ) .
+					( $option['size'] ? "font-size: {$option['size']}px;\n" : "" ) .
+					( $option['line_height'] ? "line-height: {$option['line_height']}em;\n" : "" ) .
 					"color: {$option['color']};\n" .
 					"}\n";
 		}

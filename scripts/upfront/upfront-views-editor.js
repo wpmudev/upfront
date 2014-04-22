@@ -1115,7 +1115,8 @@ define([
             { name: "Lucida Sans Typewriter", family:'monospace' },
             { name: "Monaco", family:'monospace' },
 	    ],
-	    elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "ul", "ol", "blockquote"],
+	    elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
+	    inline_elements: ["a", "a:hover"],
 	    typefaces: {},
 	    styles: {},
 	    sizes: {},
@@ -1132,7 +1133,7 @@ define([
 		            return lists;
 		        })(),
     		    styles_list = (function(){
-					var lists = [];
+					var lists = [{ label: "Default", value: "" }];
 					_.each(['normal', 'italic', 'oblique'], function(style){
 						_.each(_.range(100, 900, 100), function(weight){
 							lists.push({ label: weight+' '+style, value: weight+' '+style });
@@ -1144,28 +1145,34 @@ define([
     		    $wrap_left = $('<div class="upfront-typography-fields-left" />'),
     		    $wrap_right = $('<div class="upfront-typography-fields-right" />');
 			_.each(this.elements, function(element){
-				var el = document.createElement(element);
+				var el = document.createElement(element.replace(/:.+?$/, ''));
 				$('body').append(el);
-				var styles = window.getComputedStyle(el),
+				var is_inline = _.contains(me.inline_elements, element),
+					styles = window.getComputedStyle(el),
 					style = styles.fontStyle,
 					weight = me._normalize_weight(styles.fontWeight),
 					size = parseInt(styles.fontSize),
 					line_height = parseInt(styles.lineHeight),
 					color = styles.color;
 				me.typefaces[element] = '';
-				me.styles[element] = weight + ' ' + style;
 				me.colors[element] = color;
-				me.sizes[element] = size;
-				me.line_heights[element] = Math.round(line_height/size*10)/10;
+				if ( !is_inline ){
+					me.styles[element] = weight + ' ' + style;
+					me.sizes[element] = size;
+					me.line_heights[element] = Math.round(line_height/size*10)/10;
+				}
 				$(el).remove();
 			});
 		  	if ( options ){
     			_.each(options, function (values, element) {
     				me.typefaces[element] = values.font_face;
-    				me.styles[element] = values.weight + ' ' + values.style;
     				me.colors[element] = values.color;
-    				me.sizes[element] = values.size;
-    				me.line_heights[element] = values.line_height;
+    				if ( values.weight && values.style )
+	    				me.styles[element] = values.weight + ' ' + values.style;
+    				if ( values.size )
+	    				me.sizes[element] = values.size;
+	    			if ( values.line_height )
+	    				me.line_heights[element] = values.line_height;
     			});
 		   	}
 	       	if ( !this.fields.length ){
@@ -1182,17 +1189,25 @@ define([
                             { label: "Sub Heading (H6)", value: "h6" },
                             { label: "Paragraph (P)", value: "p" },
                             { label: "Anchor Link (A)", value: "a" },
+                            { label: "Anchor Link Hover (A:HOVER)", value: "a:hover" },
                             { label: "Unordered List (UL)", value: "ul" },
                             { label: "Ordered List (OL)", value: "ol" },
                             { label: "Blockquote (BLOCKQUOTE)", value: "blockquote" },
     					],
     					change: function () {
-    					    var value = this.get_value();
+    					    var value = this.get_value(),
+    					    	is_inline = _.contains(me.inline_elements, value);
     					    me.current_element = value;
     					    me.fields.typeface.set_value( me.typefaces[value] );
-                            me.fields.style.set_value( me.styles[value] );
-                            me.fields.size.set_value( me.sizes[value] );
-                            me.fields.line_height.set_value( me.line_heights[value] );
+                            me.fields.style.set_value( me.styles[value] ? me.styles[value] : "" );
+                            if ( is_inline ){
+                            	$([me.fields.size.el, me.fields.line_height.el]).hide();
+                            }
+                            else {
+                            	$([me.fields.size.el, me.fields.line_height.el]).show();
+	                            me.fields.size.set_value( me.sizes[value] );
+	                            me.fields.line_height.set_value( me.line_heights[value] );
+                            }
                             me.fields.color.set_value( me.colors[value] );
     					}
     				}),
@@ -1288,15 +1303,18 @@ define([
 				options = {};
 			_.each(this.elements, function(element){
 				var rules = [],
+					is_inline = _.contains(me.inline_elements, element),
 					typeface = me.typefaces[element],
 					face = _.findWhere(me.typefaces_list, {value: typeface}) || _.findWhere(me.typefaces_list, {name: typeface}),
 					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.name + '",' + face.family,
-					style = me.styles[element].match(/^(\d+) +(\S+)/);
+					style = me.styles[element] ? me.styles[element].match(/^(\d+) +(\S+)/) : [false,false];
 				rules.push('font-family: ' + font);
 				rules.push('font-weight: ' + style[1]);
 				rules.push('font-style: ' + style[2]);
-				rules.push('font-size: ' + me.sizes[element] + 'px');
-				rules.push('line-height: ' + me.line_heights[element] + 'em');
+				if ( !is_inline ){
+					rules.push('font-size: ' + me.sizes[element] + 'px');
+					rules.push('line-height: ' + me.line_heights[element] + 'em');
+				}
 				rules.push('color: ' + me.colors[element]);
 				css.push(
 					'.upfront-object-content ' + element + '{ ' + rules.join("; ") + '; }'
@@ -1304,8 +1322,8 @@ define([
 				options[element] = {
 					weight: style[1],
 					style: style[2],
-					size: me.sizes[element],
-					line_height: me.line_heights[element],
+					size: !is_inline ? me.sizes[element] : false,
+					line_height: !is_inline ? me.line_heights[element] : false,
 					font_face: typeof face.value != 'undefined' ? face.value : face.name,
 					font_family: face.family,
 					color: me.colors[element]
