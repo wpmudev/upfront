@@ -180,6 +180,10 @@ border-width: 11px;
 	font-size: 1em;
 	width:100%;
 }
+.uf_el_map_initial-overlay input[type="text"]:focus {
+	background:rgb(255,255,255);
+	color:rgb(100,100,100);
+}
 
 /* refresh button */
 .uf_el_map_initial-overlay button {
