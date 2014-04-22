@@ -133,10 +133,11 @@
     });
 
     var Disablable_Field_Number = Upfront.Views.Editor.Field.Text.extend({
-      className: function() {
+      on_render: function(){
         var className = 'upfront-field-wrap upfront-field-wrap-number';
-        if (!this.options.disabled) return className;
-        return className + ' upfront-field-wrap-disabled';
+        if (!this.options.disabled)
+          className += ' upfront-field-wrap-disabled';
+        this.el.className = className;
       },
 
       get_field_html: function () {
@@ -164,7 +165,7 @@
       },
 
       initialize: function (opts) {
-		this.options = opts;
+		    this.options = opts;
         this.panels = _([
           new BehaviorPanel({model: this.model})
         ]);
@@ -236,7 +237,7 @@
       className: 'uyoutube-settings',
       tabbed: true,
       initialize: function (opts) {
-		this.options = opts;
+		    this.options = opts;
         var render_all = function(){
             this.settings.invoke('render');
           },
@@ -378,7 +379,7 @@
               })
             ]
           }),
-          new Upfront.Views.Editor.Settings.ItemTabbed({
+          new SettingsItemTabbed({
             model: this.model,
             title: 'Single Video',
             radio: true,

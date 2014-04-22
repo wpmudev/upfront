@@ -1155,7 +1155,8 @@ define(function() {
              * Bootstrap the object - populate the internal
              * panels array with the panel instances we'll be showing.
              */
-            initialize: function () {
+            initialize: function (opts) {
+                this.options = opts;
                 this.panels = _([
                     // Menu
                     new Menu_Panel({

@@ -7,9 +7,6 @@
 class Upfront_UnewnavigationView extends Upfront_Object {
 
 	public function get_markup () {
-        $element_id = $this->_get_property('element_id');
-        $element_id = $element_id ? "id='{$element_id}'" : '';
-
         $menu_id = $this->_get_property('menu_id');
         $menu_name = $this->_get_property('menu_name');
 
@@ -33,9 +30,9 @@ class Upfront_UnewnavigationView extends Upfront_Object {
         //if ($is_floating) {
          //   upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
        // }
-	   
+
 		if($menu_name) {
-			$menu = wp_get_nav_menu_object($menu_name);	
+			$menu = wp_get_nav_menu_object($menu_name);
 			if($menu)
 				$menu_id = $menu->term_id;
 		}
@@ -47,10 +44,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
                 'echo' => false
             ));
         else:
-            return "<div class=' {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
+            return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
         endif;
 
-        return "<div class=' {$float_class} upfront-navigation' {$element_id} {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
+        return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
 	}
 
 	public static function add_js_defaults($data){
@@ -82,7 +79,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 	  wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
 
         if (is_user_logged_in()) {
-			 wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));	  
+			 wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));
 		}
   }
 }
@@ -111,7 +108,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
         add_action('wp_ajax_upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
 
     }
-	
+
     public function load_menu_list () {
         $menus = wp_get_nav_menus();
         if ( $menus ){
@@ -119,12 +116,12 @@ class Upfront_newMenuSetting extends Upfront_Server {
         }
         $this->_out(new Upfront_JsonResponse_Error('Menu not found'));
     }
-	
+
 	function load_menu_array() {
 
 		if(isset($_POST['data']) && is_numeric($_POST['data'])) {
 
-			$menu_id = intval($_POST['data']);		
+			$menu_id = intval($_POST['data']);
 
 			$menu = wp_get_nav_menu_object( $menu_id > 0 ? $menu_id : $_POST['alternate'] );
 
@@ -195,7 +192,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		}
 		return $this_menu_item;
 	}
-	
+
     public function load_menu_items () {
         $menu_id = isset($_POST['data']) ? intval($_POST['data']) : false;
         if ( $menu_id ){
@@ -309,7 +306,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		}
 
         $items_saved = array();
-		
+
         if ( $menu_id && is_nav_menu($menu_id) ){
 
            /* $args = array(
@@ -327,14 +324,14 @@ class Upfront_newMenuSetting extends Upfront_Server {
     }
 
 	 public function menu_from_slug () {
-	
+
 			$menu_slug = isset($_POST['data']) ? $_POST['data'] : 0;
 			$menu = wp_get_nav_menu_object($menu_slug);
 			$menu_item_id = 0;
 			if($menu)
 				$menu_item_id = $menu->term_id;
 			$this->_out(new Upfront_JsonResponse_Success($menu_item_id));
-		
+
 		}
 
     public function update_auto_add_pages(){
@@ -349,7 +346,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
         }
         $this->_out(new Upfront_JsonResponse_Error('Cannot update auto add pages!'));
     }
-	
+
 }
 
 Upfront_newMenuSetting::serve();

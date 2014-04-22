@@ -9,8 +9,6 @@ class Upfront_SocialMediaView extends Upfront_Object {
     }
 
     public function get_markup () {
-        $element_id = $this->_get_property('element_id');
-        $element_id = $element_id ? "id='{$element_id}'" : '';
         $layout_style = $this->_get_property('social_type');
         $output = '';
 
@@ -19,17 +17,17 @@ class Upfront_SocialMediaView extends Upfront_Object {
                 $output = "Please select an option from backend";
                 break;
             case 'likes':
-                $output = "<div class=' upfront-social' {$element_id}>" .
+                $output = "<div class='upfront-social'>" .
                     self::likes() .
                 "</div>";
                 break;
             case 'fans':
-                $output = "<div class=' upfront-social' {$element_id}>" .
+                $output = "<div class='upfront-social'>" .
                     self::fans() .
                 "</div>";
                 break;
             case 'buttons':
-                $output = "<div class=' upfront-social' {$element_id}>" .
+                $output = "<div class='upfront-social'>" .
                     self::buttons() .
                 "</div>";
                 break;
@@ -119,16 +117,16 @@ class Upfront_SocialMediaView extends Upfront_Object {
     //Add properties to Upfront.data
     public static function add_upfront_data ($data) {
         $globals = get_option('upfront_social_media_global_settings', false);
-		
-		
+
+
 		// if by any chance the global data in the database is corrupt, then reset
 		$globals_array = Upfront_SocialMedia_Setting::properties_to_array(json_decode($globals));
-		
+
 		if(!isset($globals_array['services']) || sizeof($globals_array['services']) < 1) {
 			delete_option('upfront_social_media_global_settings');
-			$globals = false;	
+			$globals = false;
 		}
-		
+
         $data['usocial'] = array(
             'defaults' => self::default_properties(),
             'global_defaults' => array(

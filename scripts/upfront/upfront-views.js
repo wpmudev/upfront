@@ -725,7 +725,7 @@ define([
 				});
 
 				if(props.theme_style)
-					props.class += ' ' + props.theme_style;
+					props.class += ' ' + props.theme_style.toLowerCase();
 
 				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height});
 				template = _.template(_Upfront_Templates["object"], model);
@@ -1973,11 +1973,11 @@ define([
 
 				this.$("section").append(this.local_view.el);
 				this.update();
-				
+
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 384});
 				this.bg_setting.render();
 				this.$el.append(this.bg_setting.el);
-				
+
 				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function (e) {

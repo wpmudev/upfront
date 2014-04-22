@@ -3576,14 +3576,14 @@ define([
 		is_changed: false,
 
 		render: function () {
-			this.$el.empty();
-			this.$el.append('<div class="upfront-settings_label" />');
-			this.$el.append('<div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" /></div>');
+			this.$el.html('<div class="upfront-settings_label" /><div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" /></div>');
+
 			var $label = this.$el.find(".upfront-settings_label"),
 				$panel = this.$el.find(".upfront-settings_panel"),
 				$panel_scroll = this.$el.find(".upfront-settings_panel_scroll"),
 				me = this
 			;
+
 			$label.append(this.get_label());
 			this.settings.each(function (setting) {
 				if ( ! setting.panel )
@@ -3608,7 +3608,8 @@ define([
 			);
 			this.$el.fadeIn('fast', function() {
 				// Scroll the window if settings box clips vertically
-				var elementbottom = $(this).parent().offset().top+$(this).parent().height();
+				var parent = me.$el.parent();
+				var elementbottom = parent.offset().top + parent.height();
 				var winheight = jQuery(window).height();
 
 				if( (elementbottom +60) > (winheight+jQuery('body').scrollTop()))
@@ -3791,16 +3792,14 @@ define([
 			}));
 
 			// Adding anchor trigger
-			/*if (this.options.anchor && this.options.anchor.is_target) {
+			if (this.options.anchor && this.options.anchor.is_target) {
 				var item = new _Settings_AnchorSetting({model: this.for_view.model});
 
 				first.settings.push(item);
 				this.listenTo(item, "anchor:item:updated", function () {
 					this.toggle_panel(first);
 				});
-			}*/
-
-
+			}
 		},
 
 		set_title: function (title) {
@@ -4071,8 +4070,8 @@ var CSSEditor = Backbone.View.extend({
 		}
 		else
 			this.$style = $('#' + this.element_id + '-style');
-		
-		
+
+
 		if ( typeof options.change == 'function' )
 			this.on('change', options.change);
 
@@ -4099,7 +4098,7 @@ var CSSEditor = Backbone.View.extend({
 
 		if(!$('#' + this.id).length)
 			$('#page').append(this.$el);
-			
+
 		if (!this.sidebar)
 			this.$el.addClass('upfront-css-no-sidebar');
 		else
@@ -4447,7 +4446,8 @@ var CSSEditor = Backbone.View.extend({
 var _Settings_AnchorSetting = SettingsItem.extend({
 	className: "upfront-settings-item-anchor",
 	group: false,
-	initialize: function () {
+	initialize: function (opts) {
+		this.options = opts;
 		SettingsItem.prototype.initialize.call(this, this.options);
 		var item = new Field_Complex_Toggleable_Text_Field({
 			element_label: "Make this element an anchor",

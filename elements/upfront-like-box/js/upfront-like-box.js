@@ -216,7 +216,8 @@
             return url;
         },
 
-        initialize: function () {
+        initialize: function (opts) {
+            this.options = opts;
             this.panel = new Upfront.Views.Editor.Settings.Panel({
 
                     model: this.model,

@@ -175,7 +175,8 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 * Bootstrap the object - populate the internal
 	 * panels array with the panel instances we'll be showing (Form data and appearance).
 	 */
-	initialize: function() {
+	initialize: function(opts) {
+		this.options = opts;
 		var Panel = Upfront.Views.Editor.Settings.Panel,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
 			Fields = Upfront.Views.Editor.Field

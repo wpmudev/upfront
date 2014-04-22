@@ -238,7 +238,8 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 
 var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
-		initialize: function () {
+		initialize: function (opts) {
+			this.options= opts;
 
 		var widget_values = _.map(Upfront.data.uwidget.widgets, function (each) {
 			return { label: each.name, value: each.class };

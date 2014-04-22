@@ -9,7 +9,6 @@ class Upfront_UpostsView extends Upfront_Object {
 	public function get_markup ($page = false) {
 		global $wp_query;
 		$args = array();
-		$element_id = $this->_get_property('element_id');
 
 		$post_type = $this->_get_property('post_type');
 		$taxonomy = $this->_get_property('taxonomy');
@@ -29,7 +28,6 @@ class Upfront_UpostsView extends Upfront_Object {
 		}
 
 		$post_type = !empty($post_type) ? $post_type : get_query_var('post_type');
-		$element_id = $element_id ? "id='{$element_id}'" : '';
 		$args['post_type'] = $post_type;
 		if (!empty($taxonomy) && !empty($term)) {
 			$args['tax_query'] = array(array(
@@ -91,7 +89,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		$init = implode('&', $query);
 		*/
 
-		return $init . "<div class=' upfront-posts' id='" .  $properties['element_id'] . "'>" .
+		return $init . "<div class='upfront-posts'>" .
 			$markup .
 		"</div>";
 	}

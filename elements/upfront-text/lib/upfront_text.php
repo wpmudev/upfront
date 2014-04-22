@@ -23,6 +23,6 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		if($this->_get_property('border') && $this->_get_property('border')!='')
 			$style[] = 'border: '.$this->_get_property('border');
 
-		return "<div {$element_id}>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
+		return "<div>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
 	}
 }

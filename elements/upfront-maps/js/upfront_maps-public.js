@@ -79,7 +79,7 @@ function load_google_maps () {
 	document.body.appendChild(script);
 }
 function upfront_maps_public_init () {
-	$(".upfront_map-public").each(function () {
+	$(".ufm-gmap-container").each(function () {
 		init_map($(this));
 	});
 }
