@@ -629,7 +629,8 @@ define([
 
 		}),
 		ContextMenu = Backbone.View.extend({
-			initialize: function() {
+			initialize: function(opts) {
+				this.options = opts;
 				this.for_view = this.options.for_view;
 				this.menulists = _([]);
 			},

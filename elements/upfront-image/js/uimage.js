@@ -3052,8 +3052,9 @@ var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
 
 // Context Menu for the Image element
 var ImageMenuList = Upfront.Views.ContextMenuList.extend({
-	initialize: function() {
-		this.constructor.__super__.initialize.call(this, arguments);
+	initialize: function(opts) {
+		this.options = opts;
+		this.for_view = this.options.for_view;
 		var me = this;
 		var menuitemsarray = [
           new Upfront.Views.ContextMenuItem({
@@ -3104,8 +3105,9 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 });
 
 var ImageMenu = Upfront.Views.ContextMenu.extend({
-	initialize: function() {
-		this.constructor.__super__.initialize.call(this, arguments);
+	initialize: function(opts) {
+		this.options = opts;
+		this.for_view = this.options.for_view
 		this.menulists = _([
           new ImageMenuList({for_view: this.for_view})
         ]);

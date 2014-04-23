@@ -220,6 +220,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	destroy_properties: function () {
 		$(Upfront.Settings.LayoutEditor.Selectors.properties).html('');
 	},
+	
 	create_menu: function( view ) {
 
 		var current_object = _(this.Objects).reduce(function (obj, current) {

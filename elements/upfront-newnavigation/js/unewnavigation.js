@@ -43,8 +43,9 @@ var MenuItemView = Backbone.View.extend({
 		_.bindAll(this, 'render');
 
 		var ContextMenuList = Upfront.Views.ContextMenuList.extend({
-			initialize: function() {
-
+			initialize: function(opts) {
+				this.options = opts;
+				this.for_view = this.options.for_view;
 				this.menuitems = _([
 				  new Upfront.Views.ContextMenuItem({
 					  get_label: function() {
@@ -105,10 +106,12 @@ var MenuItemView = Backbone.View.extend({
 		});
 
 		this.ContextMenu = Upfront.Views.ContextMenu.extend({
-			initialize: function() {
-				this.constructor.__super__.initialize.apply(this, arguments);
+			initialize: function(opts) {
+				this.options = opts;
+				this.for_view = this.options.for_view;
+				//this.constructor.__super__.initialize.apply(this, arguments);
 				this.menulists = _([
-				  new ContextMenuList()
+				  new ContextMenuList({for_view: this.for_view})
 				]);
 
 			}
@@ -129,11 +132,12 @@ var MenuItemView = Backbone.View.extend({
 		//Upfront.Events.trigger("entity:contextmenu:activate", this);
 		context_menu_view = new this.ContextMenu({
 				model: this.model,
+				for_view: this,
 				el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
 			})
 		;
 
-		context_menu_view.for_view = this;
+		//context_menu_view.for_view = this;
 		this.context_menu_view = context_menu_view;
 		context_menu_view.render();
 
