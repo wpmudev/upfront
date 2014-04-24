@@ -29,8 +29,13 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this._save_layout(this.layout.get("current_layout"));
 	},
 
-	_save_layout: function (preferred_layout) {
-		var data = Upfront.Util.model_to_json(this.layout);
+	publish_layout: function () {
+		this._save_layout(this.layout.get("current_layout"), true);
+	},
+
+	_save_layout: function (preferred_layout, publish) {
+		var data = Upfront.Util.model_to_json(this.layout),
+			storage_key = publish === true ? _upfront_storage_key : _upfront_save_storage_key;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
 		data = JSON.stringify(data, undefined, 2);
@@ -42,7 +47,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			return false;
 		}
 
-		Upfront.Util.post({"action": Upfront.Application.actions.save, "data": data})
+		Upfront.Util.post({"action": Upfront.Application.actions.save, "data": data, "storage_key": storage_key})
 			.success(function () {
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
@@ -155,6 +160,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
+		this.listenTo(Upfront.Events, "command:layout:publish", this.publish_layout);
 
 		// Region
 		this.listenTo(Upfront.Events, "command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
@@ -486,6 +492,7 @@ var Application = new (Backbone.Router.extend({
 			request_data = {
 				action: this.actions.load,
 				data: layout_ids,
+				load_dev: ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
 			}
 		;
 		if (additional)

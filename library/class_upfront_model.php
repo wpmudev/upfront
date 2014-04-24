@@ -272,6 +272,8 @@ abstract class Upfront_Model {
 	public static function set_storage_key($storage_key) {
 		if (!empty($storage_key))
 			self::$storage_key = $storage_key;
+		else // restore to default if empty
+			self::$storage_key = self::STORAGE_KEY;
 	}
 
 	public static function get_storage_key() {
@@ -338,16 +340,28 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static $layout_slug;
 	protected static $scope_data = array();
 
-	public static function from_entity_ids ($cascade, $storage_key = '') {
+	public static function from_entity_ids ($cascade, $storage_key = '', $dev_first = false) {
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
 		self::$cascade = $cascade;
+		if ( current_user_can('switch_themes') && ($_GET['dev'] || $dev_first) ){
+			// try loading for dev stored layout first
+			$dev_storage_key = $storage_key ? $storage_key : self::get_storage_key();
+			if ( !preg_match("/_dev$/", $dev_storage_key) ){
+				$dev_storage_key .= '_dev';
+				$layout = self::from_entity_ids($cascade, $dev_storage_key);
+				if (!$layout->is_empty())
+					return $layout;
+			}
+		}
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
 		$order = array('specificity', 'item', 'type');
 		foreach ($order as $o) {
+			if (!$cascade[$o]) 
+				continue;
 			$id = $storage_key . '-' . $cascade[$o];
-			$layout = self::from_id($id);
+			$layout = self::from_id($id, $storage_key);
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
@@ -368,7 +382,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php(json_decode($json, true));
 	}
 
-	public static function from_id ($id) {
+	public static function from_id ($id, $storage_key = '') {
 		$regions_data = self::get_regions_data();
 		$data = json_decode( get_option($id, json_encode(array())), true );
 		if ( ! empty($data) ) {
@@ -401,7 +415,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			$data['properties'] = self::get_layout_properties();
 			$data['layout'] = self::$cascade;
 		}
-		return self::from_php($data);
+		return self::from_php($data, $storage_key);
 	}
 
 	public static function get_regions_data () {

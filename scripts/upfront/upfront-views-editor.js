@@ -372,6 +372,15 @@ define([
 		}
 
 	});
+	
+	var Command_PublishLayout = Command.extend({
+		render: function () {
+			this.$el.html("Publish layout");
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:publish");
+		}
+	});
 
 	var Command_Undo = Command.extend({
 		"className": "command-undo",
@@ -905,6 +914,7 @@ define([
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
 			Upfront.Events.on("command:layout:save_as", this.on_save, this);
+			Upfront.Events.on("command:layout:publish", this.on_save, this);
 			Upfront.Events.on("command:layout:preview", this.on_preview, this);
 			Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
 			Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
@@ -1485,6 +1495,8 @@ define([
 			}
 			if (!Upfront.Settings.Application.NO_SAVE) {
 				this.commands.push(new Command_SaveLayout({"model": this.model}));
+				if ( _upfront_save_storage_key != _upfront_storage_key )
+					this.commands.push(new Command_PublishLayout({"model": this.model}));
 			} else {
 				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}

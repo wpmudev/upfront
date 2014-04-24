@@ -61,6 +61,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'];
 		$layout_slug = $_POST['layout_slug'];
+		$load_dev = $_POST['load_dev'] == 1 ? true : false;
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
 		$parsed = false;
 		$string = '';
@@ -76,7 +77,7 @@ class Upfront_Ajax extends Upfront_Server {
 			$parsed = true;
 		}
 
-		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key);
+		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 
 		if ($layout->is_empty()){
 			// Instead of whining, create a stub layout and load that
@@ -419,7 +420,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
 		$styles = trim(stripslashes($_POST['styles']));
 		$element_type = isset($_POST['elementType']) ? sanitize_key($_POST['elementType']) : 'unknown';
-		$db_option = 'upfront_' . get_stylesheet() . '_styles';
+		$db_option = Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option);
 		if(!$current_styles)
 			$current_styles = array();
@@ -448,7 +449,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if(!$elementType || !$styleName)
 			$this->_out(new Upfront_JsonResponse_Error('No element type or style to delete.'));
 
-		$db_option = 'upfront_' . get_stylesheet() . '_styles';
+		$db_option = Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option);
 
 		if(!$current_styles || !isset($current_styles[$elementType]) || !isset($current_styles[$elementType][$styleName]))
@@ -463,14 +464,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 	function theme_styles(){
 		$separately = $_POST['separately'];
-		$styles = get_option('upfront_' . get_stylesheet() . '_styles');
+		$styles = get_option(Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles');
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
 		)));
 	}
 
 	function prepare_theme_styles(){
-		$styles = get_option('upfront_' . get_stylesheet() . '_styles');
+		$styles = get_option(Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles');
 		if(!$styles)
 			return '';
 

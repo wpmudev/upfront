@@ -104,16 +104,18 @@ function upfront_ajax_init () {
 		$layout_ids = $_POST['layout'];
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'];
+		$load_dev = $_POST['load_dev'] == 1 ? true : false;
 	}
 	else if ( isset($_GET['layout']) ){
 		$layout_ids = $_GET['layout'];
 		$storage_key = $_GET['storage_key'];
 		$stylesheet = $_GET['stylesheet'];
+		$load_dev = $_GET['load_dev'] == 1 ? true : false;
 	}
 	upfront_switch_stylesheet($stylesheet);
 	if ( !is_array($layout_ids) )
 		return;
-	$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key);
+	$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 	if ( $layout->is_empty() )
 		$layout = Upfront_Layout::create_layout($layout_ids);
 }
@@ -125,6 +127,8 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$args['layout'] = Upfront_EntityResolver::get_entity_ids();
+	if ( current_user_can('switch_themes') && $_GET['dev'] )
+		$args['load_dev'] = 1;
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );
 }
 

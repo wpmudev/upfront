@@ -179,10 +179,14 @@ EOAdminStyle;
 		if (isset($_GET['editmode']))
 			echo upfront_boot_editor_trigger();
 		
+		$storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
+		$save_storage_key = $storage_key;
 		if (isset($_GET['dev']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
 		  echo '<script src="' . $url . '/scripts/require.js"></script>';
 		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
 		  echo '<script src="' . $url . '/scripts/main.js"></script>';
+		  if ( current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true) )
+			  $save_storage_key .= '_dev';
 		} else {
 		  echo '<script src="' . $url . '/build/require.js"></script>';
 		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
@@ -193,7 +197,8 @@ EOAdminStyle;
 				'layout' => Upfront_EntityResolver::get_entity_ids(),
 				'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false)
 			)) . ';
-			var _upfront_storage_key = "' . apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY) . '";
+			var _upfront_storage_key = "' . $storage_key . '";
+			var _upfront_save_storage_key = "' . $save_storage_key . '";
 			var _upfront_stylesheet = "' . get_stylesheet() . '";
 		</script>';
 		echo <<<EOAdditivemarkup
@@ -221,13 +226,16 @@ EOAdditivemarkup;
 	function add_edit_menu ( $wp_admin_bar ) {
 		global $post, $tag, $wp_the_query;
 		$current_object = $wp_the_query->get_queried_object();
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-		$wp_admin_bar->add_menu( array(
-			'id' => 'upfront-create-theme',
-			'title' => __('Create New Theme'),
-			'href' => site_url('/create_new/theme'),
-			'meta' => array( 'class' => 'upfront-create_theme' )
-		) );
+		if ( is_plugin_active('upfront-theme-exporter/upfront-theme-exporter.php') ) {
+			$wp_admin_bar->add_menu( array(
+				'id' => 'upfront-create-theme',
+				'title' => __('Create New Theme'),
+				'href' => site_url('/create_new/theme'),
+				'meta' => array( 'class' => 'upfront-create_theme' )
+			) );
+		} 
 
 		if ( !is_admin() ){
 			$wp_admin_bar->add_menu( array(

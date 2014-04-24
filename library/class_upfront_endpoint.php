@@ -975,6 +975,7 @@ class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
 		upfront_switch_stylesheet('upfront');
 		add_filter('upfront-storage-key', array($this, 'storage_key_filter'));
 		add_filter('upfront-data-storage-key', array($this, 'storage_key_filter'));
+		add_filter('upfront-enable-dev-saving', __return_false);
 		query_posts('');
 	}
 
