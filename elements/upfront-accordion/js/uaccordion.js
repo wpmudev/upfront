@@ -25,7 +25,6 @@
         this.events = _.extend({}, this.events, {
           'click .accordion-add-panel': 'addPanel',
           'click .accordion-panel-title': 'onPanelTitleClick',
-         // 'keydown .accordion-panel-active .accordion-panel-content': 'onContentKeydown',
           'dblclick .accordion-panel-active .accordion-panel-content': 'onContentDblclick',
           'click i': 'deletePanel'
         });
@@ -36,9 +35,8 @@
         this.model.get("properties").bind("remove", this.render, this);
 
 
-        this.on('deactivated', this.onDeactivate, this);
+        //this.on('deactivated', this.onDeactivate, this);
 
-        this.debouncedSave = _.debounce(this.savePanelContent, 1000);
       },
 
       addPanel: function(event) {
@@ -61,202 +59,48 @@
      
 
       onPanelTitleClick: function(event) {
-		var me = this;
-        var $panelTitle = $(event.currentTarget);
-		
-		/*if((typeof currentEditItem != 'undefined') && currentEditItem != '' && currentEditItem != $panelTitle.attr('id')) {
-
-			this.onDeactivate();
-		}
-		
-		if ($panelTitle.parent().hasClass('accordion-panel-active') &&  $panelTitle.attr('contenteditable') == 'true')
-		return;
-		
-*/
-
-		
-        if ($panelTitle.parent().hasClass('accordion-panel-active')) {
-          //$panelTitle.attr('contenteditable', true);
-
-			/*var editor = Upfront.Content.editors.add({
-			type: Upfront.Content.TYPES.SIMPLE,
-			editor_id: $panelTitle.attr('id'),
-			element: '#'+$panelTitle.attr('id'),
-			});*/
-			
-			if(!$panelTitle.data('ueditor'))
-				$panelTitle.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					//autostart: true,
-					//focus: true,
-					//tabFocus: false,
-					airButtons: false,
-					allowedTags: ['h5'],
-				}).on('start', function(){
-	
-					Upfront.Events.trigger('upfront:element:edit:start', 'text');
-				}).on('blur', function() {
-					$panelTitle.data('ueditor').stop();
-				})
-				.on('stop', function(){
-					Upfront.Events.trigger('upfront:element:edit:stop');
-				})
-				.on('syncAfter', function(){
-					me.saveTitle($panelTitle);
-					//me.model.set_content($(this).html(), {silent: true});
-				}).on('keydown', function(e){
-					
-					if (e.which == 9) {
-						e.preventDefault();
-						
-						}
-					
-				});
-			else
-				$panelTitle.data('ueditor').start();
+		  
+		  var $panelTitle = $(event.currentTarget);
+		  if($panelTitle.parent().hasClass('accordion-panel-active')) {
+			  if($panelTitle.data('ueditor'))
+					$panelTitle.data('ueditor').start();			
+		  }
+		  else {
+			$panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
+ 	       $panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();  
+		  }
 				
-			
-			//currentEditItem = $panelTitle.attr('id');
-				/*.on('blur', function() {
-				$(target).data('ueditor').stop();
-			})*/
-	/*	else {
-			$panelTitle.data('ueditor').start();
-				$panelTitle.focus();
-		}
-			currentEditItem = $panelTitle.attr('id');
-
-		   //editor.start();
-		   
-		  // var deditor = CKEDITOR.instances[currentEditItem];
-		   
-		   var self = this;
-		   
-			/*editor.on( 'textcolor:change', function(color) {
-				var value = color.toRgbString();
-				$panelTitle.css('color', value);
-				self.saveTitle($panelTitle);
-			});
-			
-			editor.on( 'panelcolor:change', function(color) {
-				var value = color.toRgbString();
-				$panelTitle.css('background-color', value);
-				self.saveTitle($panelTitle);
-			});
-			
-			editor.on('change', function (e) {
-				self.saveTitle($panelTitle);
-			});
-			
-			deditor.on( 'key', function(key) {
-				if(key.data['keyCode'] == 13) {
-					self.onDeactivate();
-					return false;
-				}
-			});
-			deditor.on('saveSnapshot', function (e) {
-				self.saveTitle($panelTitle);
-			});
-			
-			deditor.on('afterCommandExec', function (e) {
-				self.saveTitle($panelTitle);
-			});
-			*/
-			
-          //$panelTitle.focus();
-		  //this.$el.parent().parent().parent().draggable('disable');
-          return;
-        }
-
-        $panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').show('normal');
-        $panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').hide('normal');
-		//$panelTitle.removeAttr('contenteditable');
-		
-
+		 
 
       },
 
-		onDeactivate: function() {
-			
 
-				
-			var target = $('#'+currentEditItem);
-			if(target.length > 0)
-				target.data('ueditor').stop();
-			/*
-			if(target.hasClass('accordion-panel-title')) {
-				target.removeAttr('contenteditable');
-				this.saveTitle(target);
-				//var editor = Upfront.Content.editors.get(currentEditItem);
-				//editor.stop();
-				console.log('saved title content');
-		        this.$el.parent().parent().parent().draggable('enable');
-			}
-			else if(target.hasClass('accordion-panel-content')) {
-				this.stopEdit();
-			}
-			
-			
-			
-			$('#'+currentEditItem).removeAttr('contenteditable');
-			*/
-			currentEditItem = '';
-		},
 
       onContentDblclick: function(event) {
-		  var me = this;
-		currentEditItem = $(event.target).attr('id');
-		if(!$(event.target).data('ueditor')) 
-			$(event.target).ueditor({
-				linebreaks: false,
-				autostart: true
-			})
-			.on('start', function(){
-				Upfront.Events.trigger('upfront:element:edit:start', 'text');
-			})
-			.on('stop', function(){
-				Upfront.Events.trigger('upfront:element:edit:stop');
-			})
-			.on('syncAfter', function(){
-				me.savePanelContent();
-				//me.model.set_content($(this).html(), {silent: true});
-			});
-		else
-			$(event.target).data('ueditor').start();
+
+			if($(event.target).data('ueditor'))
+				$(event.target).data('ueditor').start();
+			else
+				event.stopPropagation();				
+			
 	  },
-      onContentKeydown: function(event) {
-        this.debouncedSave();
-      },
 	  
-	saveTitle: function(target) {
-		//return;
-		id = target.closest('div.accordion-panel').index()-1;
-		this.property('accordion')[id].title = target.html();
-		//this.property('accordion')[id].title_color = target.css('color');
-		//this.property('accordion')[id].title_bgcolor = target.css('background-color');
-	},
+		saveTitle: function(target) {
+			id = target.closest('div.accordion-panel').index()-1;
+			this.property('accordion')[id].title = target.html();
+		},
 		
       savePanelContent: function() {
         var panel = this.$el.find('.accordion-panel-active');
 		var $content = panel.find('.accordion-panel-content');
         var panelId = panel.index()-1;
+
         this.property('accordion')[panelId].content = $content.html();
+
 		
       },
 	  
-      stopEdit: function() {
-
-        this.savePanelContent();
-        this.$el.find('.accordion-panel-active .accordion-panel-content')
-          .removeAttr('contenteditable')
-          .removeClass('upfront-object');
-       // if (this.editor && this.editor.destroy) this.editor.destroy();
-		console.log('saved content');
-        this.$el.parent().parent().parent().draggable('enable');
-        this.delegateEvents();
-      },
-
+      
       get_content_markup: function () {
         return this.accordionTpl(
           _.extend(
@@ -278,9 +122,62 @@
       },
 
       on_render: function() {
-
+				
         // Accordion won't be rendered in time if you do not delay.
        _.delay(function(self) {
+		   self.$el.find('.accordion-panel-title').each(function() {
+		   		if(!$(this).data('ueditor'))
+					$(this).ueditor({
+						linebreaks: true,
+						autostart: false,
+						disableLineBreak: true,
+						airButtons: false,
+						allowedTags: ['h5'],
+					}).on('start', function(){
+						self.$el.parent().parent().parent().draggable('disable');
+						Upfront.Events.trigger('upfront:element:edit:start', 'text');
+					})
+					.on('stop', function(){
+						self.$el.parent().parent().parent().draggable('enable');
+						Upfront.Events.trigger('upfront:element:edit:stop');
+					})
+					.on('syncAfter', function(){
+						self.saveTitle($(this));
+					}).on('keydown', function(e){
+						
+						if (e.which == 9) {
+							e.preventDefault();
+							
+							}
+						
+					});
+		   
+		   });
+		   
+		   
+			self.$el.find('.accordion-panel-content').each(function() {
+				if(!$(this).data('ueditor'))  {
+
+					$(this).ueditor({
+						linebreaks: false,
+						placeholder: false,
+						autostart: false,
+					})
+					.on('start', function(){
+						self.$el.parent().parent().parent().draggable('enable');
+						Upfront.Events.trigger('upfront:element:edit:start', 'text');
+					})
+					.on('stop', function(){
+						self.$el.parent().parent().parent().draggable('enable');
+						Upfront.Events.trigger('upfront:element:edit:stop');
+					})
+					.on('syncAfter', function(){
+						console.log('edited');
+						self.savePanelContent();
+						//self.model.set_content($(this).html(), {silent: true});
+					});
+				}
+			});
 
           self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 	

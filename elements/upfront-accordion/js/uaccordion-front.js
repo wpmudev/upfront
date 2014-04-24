@@ -10,8 +10,8 @@
         return;
       }
 
-      $panel.addClass('accordion-panel-active').find('.accordion-panel-content').show('normal');
-      $panel.siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').hide('normal');
+      $panel.addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
+      $panel.siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
     });
 
   });

@@ -64,10 +64,12 @@
 
 
 .upfront-accordion-container .upfront-entity_meta {
-	top: 48px;
+	top: 62px;
 	right: 5px;	
 }
-
+.upfront-accordion-container {
+	width: 100%;	
+}
 .upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
 background-position: -260px -130px;
 }
