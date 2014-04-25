@@ -691,6 +691,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'id' => $id,
 			'post_name' => $post->post_name,
+            'permalink' => get_permalink($id)
 		)));
 	}
 

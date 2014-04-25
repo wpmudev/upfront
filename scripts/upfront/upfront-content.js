@@ -779,6 +779,7 @@ define(function() {
 		},
 
 		save: function(status, loadingMsg, successMsg){
+
 			var me = this,
 				changed = this.changed,
 				updateMeta = changed.thumb,
@@ -802,14 +803,18 @@ define(function() {
 			}
 
 			this.post.set('post_status', status);
-			this.post.save().done(function(){
+			this.post.save().done(function(data){
 				if(metaUpdated){
 					loading.$el.remove();
 					Upfront.Views.Editor.notify(successMsg);
-					if(me.options.onUpdated)
+					if(typeof(me.options) != 'undefined' && me.options.onUpdated)
 						me.options.onUpdated(me.post.toJSON());
 				}
+				
 				postUpdated = true;
+
+				window.location.href = data.data['permalink']+(data.data['permalink'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
+				
 			});
 
 			if(updateMeta){
@@ -826,7 +831,22 @@ define(function() {
 
 			this.closeEditor();
 		},
+		isNewPost: function() {
+			var initial = this.post.get('post_status'),
+				date = this.post.get('post_date'),
+				now = new Date()
+			;
 
+			date = date ? date.getTime() : 0;
+			now = now.getTime();
+
+			if(now >= date) {
+				if(initial != 'publish')
+					return true;
+			}
+			
+			return false;
+		},
 		publish: function(){
 			this.save('publish', 'Publishing ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' published');
 		},
@@ -1128,7 +1148,7 @@ define(function() {
 				return 'Publish';
 			}
 		},
-
+		
 		calculateLimits: function(){
 			var ph = this.$('.ueditor-bar-ph'),
 				container = this.$el.parent()
