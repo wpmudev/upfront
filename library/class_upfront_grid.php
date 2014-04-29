@@ -3,9 +3,9 @@
 class Upfront_Grid {
 	protected $_grid_scope = 'upfront';
 	protected $_breakpoints = array(
-		"mobile" => "Upfront_GridBreakpoint_Mobile",
-		"tablet" => "Upfront_GridBreakpoint_Tablet",
 		"desktop" => "Upfront_GridBreakpoint_Desktop",
+		"tablet" => "Upfront_GridBreakpoint_Tablet",
+		"mobile" => "Upfront_GridBreakpoint_Mobile",
 	);
 	protected $_breakpoint_instances = array();
 	protected $_debugger;
@@ -125,6 +125,7 @@ abstract class Upfront_GridBreakpoint {
 	protected $_type_padding = 10;
 	protected $_baseline = 5;
 	protected $_line_height = 30;
+	protected $_default = false;
 	protected $_rule = 'min-width:1080px';
 	protected $_prefixes = array(
 		'width' => 'c',
@@ -300,13 +301,18 @@ abstract class Upfront_GridBreakpoint {
 
 	public function wrap ($style, $breakpoints) {
 		$media = '';
-		if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
-			$class_name = get_class($this);
-			$columns = $this->get_columns();
-			$media .= "/* Breakpoint {$class_name}: {$columns} columns */\n";
+		if ( !$this->_default ){
+			if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
+				$class_name = get_class($this);
+				$columns = $this->get_columns();
+				$media .= "/* Breakpoint {$class_name}: {$columns} columns */\n";
+			}
+			$media .= "@media " . $this->get_breakpoint_rule($breakpoints);
+			$rules = "{\n{$style} }\n\n";
 		}
-		$media .= "@media " . $this->get_breakpoint_rule($breakpoints);
-		$rules = "{\n{$style} }\n\n";
+		else {
+			$rules = "\n{$style}\n\n";
+		}
 		return "{$media}{$rules}";
 	}
 
@@ -412,6 +418,7 @@ abstract class Upfront_GridBreakpoint {
 class Upfront_GridBreakpoint_Desktop extends Upfront_GridBreakpoint {
 	protected $_columns = 24;
 	//protected $_rule = 'only screen and (min-width: 993px)';
+	protected $_default = true;
 	protected $_prefixes = array(
 		'width' => 'c',
 		'margin-left' => 'ml',
