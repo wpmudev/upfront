@@ -89,6 +89,7 @@ define([
 				}
 			},
 			update_background: function () {
+				var me = this;
 				var type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
 					image = this.model.get_property_value_by_name('background_image'),
@@ -99,7 +100,60 @@ define([
 					width = this.$el.outerWidth(),
 					height = this.$el.outerHeight(),
 					$overlay = this.$el.children('.upfront-region-bg-overlay');
-				if ( !type || type == 'color' || type == 'image' ){
+
+
+				if ( type == 'featured'){
+					if ( color )
+						this.$el.css('background-color', color);
+					else
+						this.$el.css('background-color', '');
+					
+					
+					Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
+						.done(function(response){
+							if(typeof(response.data.featured_image) != 'undefined'){
+								image = response.data.featured_image;
+								var temp_image = $('<img>').attr('src', response.data.featured_image);
+								temp_image.load(function(){
+									ratio = parseFloat(Math.round(temp_image.width()/temp_image.height()*100)/100);	
+									me.$el.css('background-image', "url('" + image + "')");
+									if ( style == 'full' ){
+										var size = me._get_full_size(me.$el, ratio, false);
+										me.$el.css({
+											backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
+											backgroundRepeat: "no-repeat",
+											backgroundPosition: "50% 50%"
+										});
+									}
+									else {
+										me.$el.css({
+											backgroundSize: "auto auto",
+											backgroundRepeat: repeat,
+											backgroundPosition: position
+										});
+									}
+									
+								});
+								
+							}
+							else {
+								me.$el.css({
+									backgroundImage: "none",
+									backgroundSize: "",
+									backgroundRepeat: "",
+									backgroundPosition: ""
+								});
+							}
+								
+
+	
+	
+						})
+					;
+
+				}
+
+				else if ( !type || type == 'color' || type == 'image'){
 					if ( color )
 						this.$el.css('background-color', color);
 					else

@@ -14,7 +14,9 @@ class Upfront_Output {
 		$this->_layout = $layout;
 		$this->_debugger = Upfront_Debug::get_debugger();
 	}
-
+	public static function get_post_id () {
+		return is_singular() ? get_the_ID() : false;
+	}
 	public static function get_layout ($layout_ids, $apply = false) {
 		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
@@ -223,15 +225,20 @@ abstract class Upfront_Entity {
 		$type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_property('background_color');
-		if ( !$type || $type == 'image' || $type == 'color' ){
-			$background_image = $this->_get_property('background_image');
+		if ( !$type || $type == 'image' || $type == 'featured' || $type == 'color' ){
+			if($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
+				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
+				$background_image = $featured_image[0];
+			}
+			else
+				$background_image = $this->_get_property('background_image');
 			$background_repeat = $this->_get_property('background_repeat');
 			$background_fill = $this->_get_property('background_fill');
 			$background_position = $this->_get_property('background_position');
 			$background_style = $this->_get_property('background_style');
 			if ( $background_color )
 				$css[] = 'background-color: ' . $background_color;
-			if ( $type == 'image' && $background_image ){
+			if ( $type == 'image' || $type == 'featured' && $background_image ){
 				$css[] = 'background-image: url("' . $background_image . '")';
 				if ( $background_style == 'full' ){
 					$css[] = 'background-size: 100% auto';

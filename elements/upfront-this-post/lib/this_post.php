@@ -163,8 +163,22 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 	private function _add_hooks () {
 		add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"));
+		add_action('wp_ajax_this_post-get_thumbnail', array($this, "get_thumbnail"));
 	}
-
+	public function get_thumbnail() {
+		$post_id = stripslashes($_POST['post_id']);
+		if (!is_numeric($post_id)) die('error');
+		$background_image = '';
+		if(has_post_thumbnail($post_id)) {
+			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'single-post-thumbnail' );
+			$background_image = $featured_image[0];
+		}
+		
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			"featured_image" => $background_image
+		)));
+			
+	}
 	public function load_markup () {
 		$data = json_decode(stripslashes($_POST['data']), true);
 		if (!is_numeric($data['post_id'])) die('error');

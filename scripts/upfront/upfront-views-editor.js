@@ -5039,6 +5039,7 @@ var Field_Anchor = Field_Select.extend({
 					values: [
 						{ label: "Solid color", value: 'color', icon: 'color' },
 						{ label: "Image", value: 'image', icon: 'image' },
+						{ label: "Featured Image", value: 'featured', icon: 'image' },
 						{ label: "Image slider", value: 'slider', icon: 'slider' },
 						{ label: "Map", value: 'map', icon: 'map' },
 						{ label: "Video", value: 'video', icon: 'video' }
@@ -5218,8 +5219,11 @@ var Field_Anchor = Field_Select.extend({
 					break;
 				case 'image':
 					$change_image.show();
-					this.render_modal_tab_image($tab);
+					this.render_modal_tab_image($tab, tab);
 					break;
+				case 'featured':
+					this.render_modal_tab_image($tab, tab);
+					break;				
 				case 'slider':
 					this.render_modal_tab_slider($tab);
 					break;
@@ -5276,7 +5280,7 @@ var Field_Anchor = Field_Select.extend({
 			this.model.set_property('background_color', this._default_color);
 		},
 		// Image tab
-		render_modal_tab_image: function ($tab) {
+		render_modal_tab_image: function ($tab, value) {
 			var me = this,
 				image = this.model.get_property_value_by_name('background_image'),
 				$style = $('<div class="upfront-region-bg-image-style"></div>'),
@@ -5285,9 +5289,11 @@ var Field_Anchor = Field_Select.extend({
 				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-setting-label-alt">Image Position:</div></div>'),
 				$fixed_pos_num = $('<div class="upfront-region-bg-image-fixed-pos-num" />'),
 				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-setting-label-alt">Background Color:</div></div>');
-			if ( !image ) {
+
+			if ( !image && value != 'featured') {
 				this.upload_image();
 			}
+			
 			var pos_option = {
 					default_value: 50,
 					min: 0,
