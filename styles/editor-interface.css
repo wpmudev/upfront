@@ -7320,7 +7320,7 @@ a.ueditor-select-option:hover {
 
 body .redactor_air {
 	position: absolute;
-	z-index: 1100;
+	z-index: 9999;
 	/* background: rgba(30, 47, 63, .95); */
 	border-radius: 2px;
 
