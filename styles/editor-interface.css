@@ -2004,7 +2004,7 @@ a.ueditor-action-pickercancel{
 	z-index: 1;
 }
 .upfront-region-editing .upfront-region-side-fixed {
-	display: none;
+	display: none !important;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-module,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-module {
