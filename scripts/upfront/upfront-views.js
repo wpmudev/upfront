@@ -406,7 +406,17 @@ define([
 					backgroundRepeat: "",
 					backgroundPosition: ""
 				});
-			}
+			},
+            disable_drag : function(e){
+                if( $(e.target).closest(".upfront-module").hasClass("ui-draggable") ){
+                    $(e.target).closest(".upfront-module").draggable("disable");
+                }
+            },
+            enable_drag : function(e){
+                if( $(e.target).closest(".upfront-module").hasClass("ui-draggable") ){
+                    $(e.target).closest(".upfront-module").draggable("enable");
+                }
+            }
 		})),
 
 		_Upfront_EditableEntity = _Upfront_SingularEditor.extend({
@@ -494,8 +504,7 @@ define([
 				}
 				return false;
 			}
-
-		}),
+        }),
 
 		_Upfront_PluralEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
 			initialize: function () {
@@ -738,8 +747,10 @@ define([
 		ObjectView = _Upfront_EditableContentEntity.extend({
 			events: {
 				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
-				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+                "click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
+				"mousemove .upfront-object > .upfront-entity_meta": "disable_drag",
+				"mouseleave .upfront-object > .upfront-entity_meta": "enable_drag",
 				"click": "on_click",
 				"dblclick": "on_edit",
 				"contextmenu": "on_context_menu"
@@ -961,6 +972,8 @@ define([
 				"click .upfront-module > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click .upfront-module > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-module > .upfront-entity_meta": "on_meta_click",
+				"mousemove .upfront-module > .upfront-entity_meta": "disable_drag",
+				"mouseleave .upfront-module > .upfront-entity_meta": "enable_drag",
 				"click": "on_click"
 			},
 			initialize: function () {
