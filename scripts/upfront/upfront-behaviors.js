@@ -474,6 +474,14 @@ var GridEditor = {
 	col_size: 0,
 	baseline: 0,
 	grid: null,
+	
+	// some more configurable setting
+	region_type_priority: {
+		wide: 1,
+		clip: 1,
+		full: 1,
+		fixed: 2
+	},
 
 	els: [],
 	wraps: [],
@@ -578,6 +586,15 @@ var GridEditor = {
 			},
 			region: region
 		};
+	},
+	
+	get_region_position: function (el) {
+		var ed = Upfront.Behaviors.GridEditor,
+			$el = $(el),
+			$modules_container = $el.find('.upfront-modules_container'),
+			position = ed.get_position($modules_container);
+		position.$el = $el;
+		return position;
 	},
 
 	/**
@@ -1044,11 +1061,10 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			main_pos = $main.offset(),
-			$layout = $main.find('.upfront-layout'),
-			$grid_layout = $layout.find('.upfront-grid-layout').eq(0);
+			$layout = $main.find('.upfront-layout');
 		ed.baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		ed.grid = Upfront.Settings.LayoutEditor.Grid;
-		ed.col_size = $grid_layout.outerWidth()/ed.grid.size;
+		ed.col_size = ed.grid.column_width;
 
 		ed.max_row = Math.floor(($(window).height()*.5)/ed.baseline);
 		ed.main = {
@@ -1085,23 +1101,23 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			main_pos = ed.main.$el.offset(),
 			$layout = ed.main.$el.find('.upfront-layout'),
-			$grid_layout = $layout.find('.upfront-grid-layout').eq(0),
-			grid_layout_pos = $grid_layout.offset(),
+			layout_pos = $layout.offset(),
 			is_object = view.$el.find(".upfront-editable_entity").eq(0).is(".upfront-object"),
 			$containment = $cont || view.$el.parents(".upfront-editable_entities_container").eq(0),
 			containment_pos = $containment.offset();
 		// Set variables
-		ed.col_size = $grid_layout.outerWidth()/ed.grid.size;
+		ed.col_size = ed.grid.column_width;
 		ed.el_selector = is_object ? '.upfront-object' : '.upfront-module';
 		ed.main.top = main_pos.top;
 		ed.main.bottom = main_pos.top + ed.main.$el.outerHeight();
 		ed.main.left = main_pos.left;
 		ed.main.right = main_pos.left + ed.main.$el.outerWidth();
+		var grid_layout_left = layout_pos.left + ($layout.outerWidth() - (ed.grid.size*ed.col_size))/2;
 		ed.grid_layout = {
-			top: grid_layout_pos.top,
-			bottom: grid_layout_pos.top + $grid_layout.outerHeight(),
-			left: grid_layout_pos.left,
-			right: grid_layout_pos.left + $grid_layout.outerWidth()
+			top: layout_pos.top,
+			bottom: layout_pos.top + $layout.outerHeight(),
+			left: grid_layout_left,
+			right: grid_layout_left + (ed.grid.size*ed.col_size)
 		};
 		var containment_width = $containment.outerWidth(),
 			containment_height = $containment.outerHeight(),
@@ -1141,7 +1157,7 @@ var GridEditor = {
 		ed.els = _.map($els, ed.get_position ); // Generate elements position data
 		$els.each(function(){ ed.init_margin(this); }); // Generate margin data
 		ed.wraps = _.map($wraps, ed.get_position ); // Generate wrappers position data
-		ed.regions = _.map($regions, ed.get_position ); // Generate regions position data
+		ed.regions = _.map($regions, ed.get_region_position ); // Generate regions position data
 		this.time_end('fn update_position_data');
 	},
 
@@ -1486,7 +1502,7 @@ var GridEditor = {
 		;
 		if ( model.get_property_value_by_name('disable_resize') === 1 )
 			return false;
-		if ( $me.hasClass('ui-resizable') ){
+		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
 			return false;
 		}
@@ -1827,7 +1843,7 @@ var GridEditor = {
 		;
 		if ( model.get_property_value_by_name('disable_drag') === 1 )
 			return false;
-		if ( $me.hasClass('ui-draggable') ){
+		if ( $me.data('ui-draggable') ){
 			$me.draggable('option', 'disabled', false);
 			return false;
 		}
@@ -1996,10 +2012,19 @@ var GridEditor = {
 					compare_area_right = compare_area_right > current_grid_right ? current_grid_right : compare_area_right,
 					compare_area_bottom = compare_area_top+ed.compare_row-1,
 					compare_area_bottom = compare_area_bottom > current_grid_bottom ? current_grid_bottom : compare_area_bottom,
-					compare_area_bottom = compare_area_bottom > compare_area_top+ed.max_row ? compare_area_top+ed.max_row : compare_area_bottom
+					compare_area_bottom = compare_area_bottom > compare_area_top+ed.max_row ? compare_area_top+ed.max_row : compare_area_bottom,
+					
+					compare_area_position = [grid.x, grid.y, compare_area_top, compare_area_right, compare_area_bottom, compare_area_left] // to store as reference
 				;
 
-				//console.log([grid.x, grid.y, compare_area_top, compare_area_right, compare_area_bottom, compare_area_left]);
+				//console.log(compare_area_position)
+				//console.log(ed._last_drag_position)
+				
+				if ( ed._last_drag_position && ed._last_drag_position == compare_area_position ){
+					// not moving? Then let's not bother
+					return;
+				}
+				ed._last_drag_position = compare_area_position;
 
 
 				//$helper.css('max-width', region.col*ed.col_size);
@@ -2013,16 +2038,20 @@ var GridEditor = {
 
 				function update_current_region () {
 					// Finding the regions we currently on
-					var $last_region_container = $('.upfront-region-container:not(.upfront-region-container-shadow):last'),
+					var $last_region_container = $('.upfront-region-container-wide, .upfront-region-container-clip').not('.upfront-region-container-shadow').last(),
 						regions_area = _.map(ed.regions, function(each){
 							var top, bottom, left, right, area,
-								region_bottom = ( each.$el.closest('.upfront-region-container').get(0) == $last_region_container.get(0) ) ? 999999 : each.grid.bottom; // Make this bottom-less if it's in the last region container
-							var area = get_area_compared({
-								top: each.grid.top,
-								bottom: region_bottom,
-								left: each.grid.left,
-								right: each.grid.right
-							});
+								is_same_container = ( each.$el.closest('.upfront-region-container').get(0) == $last_region_container.get(0) ),
+								region_bottom = ( is_same_container && ( !each.$el.hasClass('upfront-region-side') || each.$el.hasClass('upfront-region-side-left') || each.$el.hasClass('upfront-region-side-right') ) ) ? 999999 : each.grid.bottom, // Make this bottom-less if it's in the last region container
+								area = get_area_compared({
+									top: each.grid.top,
+									bottom: region_bottom,
+									left: each.grid.left,
+									right: each.grid.right
+								}),
+								type = each.$el.data('type'),
+								priority = ed.region_type_priority[type];
+							area *= priority;
 							if ( each.$el.hasClass('upfront-region-drag-active') )
 								area *= 1.2;
 							return {
@@ -2112,11 +2141,11 @@ var GridEditor = {
 						bottom = compare_area_bottom;
 					else if ( compare_area_bottom > compare.bottom )
 						bottom = compare.bottom;
-					if ( top && bottom && left && right && grid.x > 0 && grid.x <= ed.grid.size )
+					if ( top && bottom && left && right /*&& grid.x > 0 && grid.x <= ed.grid.size*/ )
 						area = (right-left+1) * (bottom-top+1);
 					else
 						area = 0;
-					return area;
+					return area ? area : 0;
 				}
 
 				function update_drop_position(){
@@ -2562,22 +2591,53 @@ var GridEditor = {
 			collection = model.collection,
 			index = collection.indexOf(model),
 			total = collection.size()-1, // total minus shadow region
-			next_model = index < total-1 ? collection.at(index+1) : false,
-			is_left = false,
+			sub = model.get('sub'),
 			container = model.get('container'),
-			direction, handles
+			directions, handles, axis, 
+			fixed_pos = {},
+			get_fixed_pos = function () {
+				var pos = {
+						top: model.get_property_value_by_name('top'),
+						left: model.get_property_value_by_name('left'),
+						bottom: model.get_property_value_by_name('bottom'),
+						right: model.get_property_value_by_name('right'),
+						width: model.get_property_value_by_name('width'),
+						height: model.get_property_value_by_name('height')
+					};
+				pos.is_top = ( typeof pos.top == 'number' );
+				pos.is_left = ( typeof pos.left == 'number' );
+				pos.is_bottom = ( typeof pos.bottom == 'number' );
+				pos.is_right = ( typeof pos.right == 'number' );
+				return pos;
+			}
 		;
-		if ( next_model !== false && (next_model.get('container') == container || next_model.get('name') == container) )
-			is_left = true;
-		if ( is_left ){
-			direction = 'e';
+		if ( $me.data('ui-resizable') )
+			return false;
+		if ( !sub || !sub.match(/^(fixed|left|right)$/) )
+			return;
+		if ( sub == 'left' ){
+			directions = ['e'];
 			handles = { e: '.upfront-region-resize-handle-e' };
 		}
-		else {
-			direction = 'w';
+		else if ( sub == 'right' ) {
+			directions = ['w'];
 			handles = { w: '.upfront-region-resize-handle-w' };
 		}
-		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-' + direction + ' upfront-region-resize-handle upfront-region-resize-handle-' + direction + ' ui-resizable-handle ui-resizable-' + direction + '"></div>');
+		else if ( sub == 'fixed' ) {
+			fixed_pos = get_fixed_pos();
+			if ( ( fixed_pos.is_top && fixed_pos.is_left ) || ( fixed_pos.is_bottom && fixed_pos.is_right ) ){
+				directions = ['nw', 'se'];
+				handles = { nw: '.upfront-region-resize-handle-nw', se: '.upfront-region-resize-handle-se' };
+			}
+			else{
+				directions = ['ne', 'sw'];
+				handles = { ne: '.upfront-region-resize-handle-ne', sw: '.upfront-region-resize-handle-sw' };
+			}
+		}
+		_.each(directions, function(direction){
+			var icon = ( direction == 'w' || direction == 'e' ) ? 'upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-' + direction : 'upfront-icon-control upfront-icon-control-resize upfront-icon-control-resize-' + direction;
+			$me.append('<div class="' + icon + ' upfront-region-resize-handle upfront-region-resize-handle-' + direction + ' ui-resizable-handle ui-resizable-' + direction + '"></div>');
+		});
 		$me.resizable({
 			containment: "document",
 			//handles: "n, e, s, w",
@@ -2586,51 +2646,90 @@ var GridEditor = {
 			disabled: true,
 			zIndex: 9999999,
 			start: function(e, ui){
-				var col = ed.get_class_num($me, ed.grid.class);
+				var col = ed.get_class_num($me, ed.grid.class),
+					data = $(this).data('ui-resizable'),
+					$helper = ui.helper;
+				axis = data.axis ? data.axis : 'se';
 
 				// Prevents quick scroll when resizing
 				ed.resizing = window.scrollY;
-
-				ed.col_size = $('.upfront-grid-layout:first').outerWidth()/ed.grid.size;
+				
 				$(this).resizable('option', 'minWidth', ed.col_size*3);
-				$(this).resizable('option', 'maxWidth', ed.col_size*10);
+				if ( sub != 'fixed' ){
+					$(this).resizable('option', 'maxWidth', ed.col_size*10);
+				}
+				else {
+					$(this).resizable('option', 'minHeight', ed.baseline*3);
+					$me.css('position', '');
+					view.update_region_position();
+					fixed_pos = get_fixed_pos();
+					// Hack into resizable instance
+					var me_pos = $me.position();
+					data.originalPosition.left = me_pos.left;
+					data.originalPosition.top = me_pos.top;
+					data.originalSize.width = fixed_pos.width;
+					data.originalSize.height = fixed_pos.height;
+					data._updateCache({
+						left: me_pos.left,
+						top: me_pos.top
+					});
+					$helper.css({
+						marginLeft: 0,
+						marginTop: 0,
+						left: me_pos.left,
+						top: me_pos.top,
+						position: 'fixed'
+					});
+				}
 				Upfront.Events.trigger("entity:region:resize_start", view, view.model);
 			},
 			resize: function(e, ui){
-				// @TODO Suppppperrrr annoying bug happen on resizable 1.10.3, fix only for this version and make sure to recheck in future update on this lib!
-				// Normalize the ui.size
-				/*var that = $(this).data('ui-resizable'),
-					woset = Math.abs( that.offset.left ) + that.sizeDiff.width,
-					isParent = that.containerElement.get(0) === that.element.parent().get(0),
-					isOffsetRelative = /relative|absolute/.test(that.containerElement.css("position"));
-					if(isParent && isOffsetRelative) {
-						woset -= that.parentData.left;
-					};
-					if ( woset + that.size.width >= that.parentData.width )
-						ui.size.width += that.parentData.left;*/
-				// End this fix
-				var $helper = ui.helper,
-					col = ed.get_class_num($me, ed.grid.class),
-					$prev = $me.prevAll('.upfront-region:first'),
-					$next = $me.nextAll('.upfront-region:first'),
-					prev_col = $prev.size() > 0 ? ed.get_class_num($prev, ed.grid.class) : 0,
-					next_col = $next.size() > 0 ? ed.get_class_num($next, ed.grid.class) : 0,
-					max_col = col + ( next_col > prev_col ? next_col : prev_col ),
-					current_col = Math.abs(Math.ceil(ui.size.width/ed.col_size)),
-					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
-					rsz_col = ( current_col > max_col ? max_col : current_col )
-				;
-				$helper.css({
-					height: ui.originalSize.height,
-					width: w,
-					minWidth: w,
-					maxWidth: w
-				});
-				$me.data('resize-col', rsz_col);
+				var $helper = ui.helper;
+				if ( sub != 'fixed' ){
+					var col = ed.get_class_num($me, ed.grid.class),
+						$prev = $me.prevAll('.upfront-region:first'),
+						$next = $me.nextAll('.upfront-region:first'),
+						prev_col = $prev.size() > 0 ? ed.get_class_num($prev, ed.grid.class) : 0,
+						next_col = $next.size() > 0 ? ed.get_class_num($next, ed.grid.class) : 0,
+						max_col = col + ( next_col > prev_col ? next_col : prev_col ),
+						current_col = Math.abs(Math.ceil(ui.size.width/ed.col_size)),
+						w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
+						rsz_col = ( current_col > max_col ? max_col : current_col )
+					;
+					$helper.css({
+						height: ui.originalSize.height,
+						width: w,
+						minWidth: w,
+						maxWidth: w
+					});
+					$me.data('resize-col', rsz_col);
+				}
+				else {
+					var offset = $me.offset(),
+						main_offset = $main.offset(),
+						height = $me.height(),
+						width = $me.width(),
+						max_height = max_width = false,
+						rsz_width, rsz_height;
+					if ( fixed_pos.is_top )
+						max_height = axis == 'nw' || axis == 'ne' ? fixed_pos.top + height : false;
+					if ( !fixed_pos.is_top && fixed_pos.is_bottom )
+						max_height = axis == 'se' || axis == 'sw' ? fixed_pos.bottom + height : false;
+					if ( fixed_pos.is_left ) 
+						max_width = axis == 'nw' || axis == 'sw' ? fixed_pos.left + width : false;
+					if ( !fixed_pos.is_left && fixed_pos.is_right )
+						max_width = axis == 'se' || axis == 'ne' ? fixed_pos.right + width : false;
+					rsz_height = Math.round( max_height && ui.size.height > max_height ? max_height : ui.size.height );
+					rsz_width = Math.round( max_width && ui.size.width > max_width ? max_width : ui.size.width );
+					$helper.css({
+						height: rsz_height,
+						width: rsz_width
+					});
+					$me.data('resize-height', rsz_height);
+					$me.data('resize-width', rsz_width);
+				}
 			},
 			stop: function(e, ui){
-				var rsz_col = $me.data('resize-col');
-
 				// Prevents quick scroll when resizing
 				ed.resizing = false;
 
@@ -2642,10 +2741,130 @@ var GridEditor = {
 					height: '',
 					position: '',
 					top: '',
-					left: ''
+					left: '',
+					right: '',
+					bottom: ''
 				});
-				model.set_property('col', rsz_col);
+				if ( sub != 'fixed' ){
+					var rsz_col = $me.data('resize-col');
+					model.set_property('col', rsz_col);
+				}
+				else {
+					var rsz_width = $me.data('resize-width'),
+						rsz_height = $me.data('resize-height'),
+						rsz_col = Math.floor(rsz_width/ed.col_size);
+					if ( ( axis == 'nw' || axis == 'ne' ) && fixed_pos.is_top )
+						model.set_property('top', fixed_pos.top + fixed_pos.height - rsz_height);
+					if ( ( axis == 'se' || axis == 'sw' ) && !fixed_pos.is_top && fixed_pos.is_bottom )
+						model.set_property('bottom', fixed_pos.bottom + fixed_pos.height - rsz_height);
+					if ( ( axis == 'nw' || axis == 'sw') && fixed_pos.is_left )
+						model.set_property('left', fixed_pos.left + fixed_pos.width - rsz_width);
+					if ( ( axis == 'se' || axis == 'ne' ) && !fixed_pos.is_left && fixed_pos.is_right )
+						model.set_property('right', fixed_pos.right + fixed_pos.width - rsz_width);
+					model.set_property('width', rsz_width, true);
+					model.set_property('height', rsz_height, true);
+					model.set_property('col', rsz_col, true);
+					model.get('properties').trigger('change');
+				}
 				Upfront.Events.trigger("entity:region:resize_stop", view, view.model);
+			}
+		});
+	},
+	
+	create_region_draggable: function(view, model) {
+		if ( !model.get("container") || model.get("container") == model.get("name") )
+			return;
+		var app = this,
+			ed = Upfront.Behaviors.GridEditor,
+			$me = view.$el,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			$layout = $main.find('.upfront-layout'),
+			sub = model.get('sub'),
+			fixed_pos = {},
+			get_fixed_pos = function () {
+				var pos = {
+						top: model.get_property_value_by_name('top'),
+						left: model.get_property_value_by_name('left'),
+						bottom: model.get_property_value_by_name('bottom'),
+						right: model.get_property_value_by_name('right'),
+						width: model.get_property_value_by_name('width'),
+						height: model.get_property_value_by_name('height')
+					};
+				pos.is_top = ( typeof pos.top == 'number' );
+				pos.is_left = ( typeof pos.left == 'number' );
+				pos.is_bottom = ( typeof pos.bottom == 'number' );
+				pos.is_right = ( typeof pos.right == 'number' );
+				return pos;
+			},
+			move = {}
+		;
+		if ( sub != 'fixed' )
+			return false;
+		if ( $me.data('ui-draggable') )
+			return false;
+		$me.draggable({
+			disabled: true,
+			revert: true,
+			revertDuration: 0,
+			zIndex: 100,
+			helper: 'clone',
+			delay: 15,
+			scroll: false,
+			start: function (e, ui) {
+				var $helper = ui.helper,
+					width = $me.width(),
+					height = $me.height();
+				$helper.css('width', width);
+				$helper.css('height', height);
+				$me.hide();
+				fixed_pos = get_fixed_pos();
+			},
+			drag: function (e, ui) {
+				var $helper = ui.helper,
+					main_offset = $main.offset(),
+					main_width = $main.width(),
+					win_height = $(window).height(),
+					left = ui.position.left,
+					top = ui.position.top,
+					width = $helper.width(),
+					height = $helper.height(),
+					limit_top = limit_left = helper_top = helper_left = false;
+				// reset move variable
+				move = {};
+				if ( fixed_pos.is_top ){
+					limit_top = 0;
+					helper_top = top < limit_top ? limit_top : top;
+					move.top = helper_top - limit_top;
+				}
+				else if ( fixed_pos.is_bottom ){
+					limit_top = win_height - height;
+					helper_top = top > limit_top ? limit_top : top;
+					move.bottom = limit_top - helper_top;
+				}
+				if ( fixed_pos.is_left ){
+					limit_left = main_offset.left;
+					helper_left = left < limit_left ? limit_left : left;
+					move.left = helper_left - limit_left;
+				}
+				else if ( fixed_pos.is_right ){
+					limit_left = main_width - width + main_offset.left;
+					helper_left = left > limit_left ? limit_left : left;
+					move.right = limit_left - helper_left;
+				}
+				ui.position.top = helper_top;
+				ui.position.left = helper_left;
+			},
+			stop: function (e, ui) {
+				if ( typeof move.top == 'number' )
+					model.set_property('top', move.top, true);
+				else if ( typeof move.bottom == 'number' )
+					model.set_property('bottom', move.bottom, true);
+				if ( typeof move.left == 'number' )
+					model.set_property('left', move.left, true);
+				else if ( typeof move.right == 'number' )
+					model.set_property('right', move.right, true);
+				model.get('properties').trigger('change');
+				$me.show();
 			}
 		});
 	},
@@ -2664,7 +2883,7 @@ var GridEditor = {
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout')
 		;
-		if ( $me.hasClass('ui-resizable') )
+		if ( $me.data('ui-resizable') )
 			return false;
 		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-s upfront-region-resize-handle upfront-region-resize-handle-s ui-resizable-handle ui-resizable-s"></div>');
 		$me.resizable({
@@ -2741,11 +2960,49 @@ var GridEditor = {
 	 *
 	 */
 	toggle_region_resizable: function(enable){
-		$('.upfront-region, .upfront-region-container').each(function(){
-			if ( !$(this).hasClass('ui-resizable') )
-				return;
-			$(this).resizable('option', 'disabled', (!enable));
-		});
+		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			$regions;
+		if ( enable ) {
+			if ( $main.hasClass('upfront-region-fixed-editing') )
+				$regions = $('.upfront-region-side-fixed');
+			else
+				$regions = $('.upfront-region-side-left, .upfront-region-side-right, .upfront-region-container-wide, .upfront-region-container-clip');
+			$regions.each(function(){
+				if ( $(this).data('ui-resizable') )
+					$(this).resizable('option', 'disabled', false);
+			});
+		}
+		else {
+			$('.upfront-region, .upfront-region-container').each(function(){
+				if ( $(this).data('ui-resizable') )
+					$(this).resizable('option', 'disabled', true);
+			});
+		}
+	},
+
+	/**
+	 * Toggle region draggable
+	 *
+	 */
+	toggle_region_draggable: function(enable){
+		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			$regions;
+		if ( enable ) {
+			if ( $main.hasClass('upfront-region-fixed-editing') )
+				$regions = $('.upfront-region-side-fixed');
+			else
+				$regions = $('.upfront-region-side-left, .upfront-region-side-right, .upfront-region-container-wide, .upfront-region-container-clip');
+			$regions.each(function(){
+				if ( $(this).data('ui-draggable') )
+					$(this).draggable('option', 'disabled', false);
+			});
+		}
+		else {
+			$('.upfront-region, .upfront-region-container').each(function(){
+				if ( $(this).data('ui-draggable') )
+					$(this).draggable('option', 'disabled', true);
+			});
+		}
 	},
 	
 	/**
@@ -3036,6 +3293,7 @@ var GridEditor = {
 	},
 	render_debug: function () {
 		var me = this,
+			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			$modal = $('<div id="behavior-debug" class="upfront-inline-modal"></div>'),
 			$wrap = $('<div class="upfront-inline-modal-wrap"></div>'),
 			field_delay = new Upfront.Views.Editor.Field.Number({
@@ -3074,6 +3332,7 @@ var GridEditor = {
 				}
 			}),
 			$close = $('<a href="#" class="upfront-close-debug">Close</a>');
+		$main.addClass('show-debug');
 		field_delay.render();
 		$wrap.append(field_delay.$el);
 		field_timeout.render();
@@ -3101,6 +3360,8 @@ var GridEditor = {
 		});
 	},
 	delete_debug: function () {
+		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+		$main.removeClass('show-debug');
 		$('#behavior-debug').remove();
 	}
 

@@ -3,7 +3,7 @@ jQuery(document).ready(function($){
 	// Making sure sidebar region height is fixed
 	function fix_region_height () {
 		$('.upfront-output-region-container').each(function(){
-			var $regions = $(this).find('.upfront-output-region'),
+			var $regions = $(this).find('.upfront-output-region').not('.upfront-region-fixed'),
 				is_full_screen = $(this).hasClass('upfront-region-container-full'),
 				min_height = height = 0,
 				exclude = [];
