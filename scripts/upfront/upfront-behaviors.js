@@ -2725,6 +2725,7 @@ var GridEditor = {
 						height: rsz_height,
 						width: rsz_width
 					});
+					view.update_size_hint(rsz_width, rsz_height, $helper);
 					$me.data('resize-height', rsz_height);
 					$me.data('resize-width', rsz_width);
 				}
@@ -2824,47 +2825,60 @@ var GridEditor = {
 					main_offset = $main.offset(),
 					main_width = $main.width(),
 					win_height = $(window).height(),
+					main_x = (main_width/2) + main_offset.left,
+					main_y = win_height/2,
 					left = ui.position.left,
 					top = ui.position.top,
 					width = $helper.width(),
 					height = $helper.height(),
+					x = (width/2) + left,
+					y = (height/2) + top,
 					limit_top = limit_left = helper_top = helper_left = false;
 				// reset move variable
 				move = {};
-				if ( fixed_pos.is_top ){
+				if ( /*fixed_pos.is_top*/ y <= main_y ){
 					limit_top = 0;
 					helper_top = top < limit_top ? limit_top : top;
 					move.top = helper_top - limit_top;
 				}
-				else if ( fixed_pos.is_bottom ){
+				else /*if ( fixed_pos.is_bottom )*/{
 					limit_top = win_height - height;
 					helper_top = top > limit_top ? limit_top : top;
 					move.bottom = limit_top - helper_top;
 				}
-				if ( fixed_pos.is_left ){
+				if ( /*fixed_pos.is_left*/ x <= main_x ){
 					limit_left = main_offset.left;
 					helper_left = left < limit_left ? limit_left : left;
 					move.left = helper_left - limit_left;
 				}
-				else if ( fixed_pos.is_right ){
+				else /*if ( fixed_pos.is_right )*/{
 					limit_left = main_width - width + main_offset.left;
 					helper_left = left > limit_left ? limit_left : left;
 					move.right = limit_left - helper_left;
 				}
+				view.update_position_hint(move, $helper);
 				ui.position.top = helper_top;
 				ui.position.left = helper_left;
 			},
 			stop: function (e, ui) {
-				if ( typeof move.top == 'number' )
-					model.set_property('top', move.top, true);
-				else if ( typeof move.bottom == 'number' )
-					model.set_property('bottom', move.bottom, true);
-				if ( typeof move.left == 'number' )
-					model.set_property('left', move.left, true);
-				else if ( typeof move.right == 'number' )
-					model.set_property('right', move.right, true);
-				model.get('properties').trigger('change');
 				$me.show();
+				if ( typeof move.top == 'number' ){
+					model.set_property('top', move.top, true);
+					model.remove_property('bottom', true);
+				}
+				else if ( typeof move.bottom == 'number' ){
+					model.set_property('bottom', move.bottom, true);
+					model.remove_property('top', true);
+				}
+				if ( typeof move.left == 'number' ){
+					model.set_property('left', move.left, true);
+					model.remove_property('right', true);
+				}
+				else if ( typeof move.right == 'number' ){
+					model.set_property('right', move.right, true);
+					model.remove_property('left', true);
+				}
+				model.get('properties').trigger('change');
 			}
 		});
 	},

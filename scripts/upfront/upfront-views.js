@@ -1313,6 +1313,50 @@ define([
 								  	me.trigger_edit(me.event);
 
 							  }
+						  }),
+						  new Upfront.Views.ContextMenuItem({
+							  get_label: function() {
+								  	return 'Add Floating Region';
+							  },
+							  action: function() {
+							  		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+							  			collection = me.model.collection,
+							  			index = collection.indexOf(me.model),
+							  			fixed = me.model.get_sub_region('fixed'),
+							  			title = me.model.get('title') + " Floating " + (fixed.length+1),
+							  			name = title.toLowerCase().replace(/\s/, '-'),
+								  		new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+											"name": name,
+											"container": me.model.get('name'),
+											"title": title,
+											"type": 'fixed',
+											"sub": 'fixed',
+											"scope": me.model.get('scope')
+										})),
+										end_t;
+									new_region.set_property('width', 225);
+									new_region.set_property('height', 225);
+									new_region.set_property('top', 30);
+									new_region.set_property('left', 30);
+									new_region.set_property('background_type', 'color');
+									new_region.set_property('background_color', '#aeb8c2');
+									Upfront.Events.once('entity:region:added', run_animation, this);
+									new_region.add_to(collection, index+1, {sub: 'fixed'});
+				 				 	if(!$main.hasClass('upfront-region-fixed-editing'))
+								  		me.trigger_edit_fixed(me.event);
+								  	function run_animation(view, model){
+								  		end_t = setTimeout(end, 2000);
+								  		view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-top-left");
+										view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+											end(view);
+											clearTimeout(end_t);
+										});
+								  	}
+									function end (view) {
+										view.$el.removeClass("upfront-add-region-ani upfront-add-region-ani-top-left");
+										Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
+									}
+							  }
 						  })
 						]);
 					}
@@ -1374,7 +1418,7 @@ define([
 				$edit.appendTo(this.$el);
 				$edit_fixed.appendTo(this.$el);
 				$finish.appendTo(this.$el);
-				this.render_fixed_panel();
+				//this.render_fixed_panel();
 				this.update();
 				//if ( type != 'clip' )
 					this.$el.append('<div class="upfront-region-active-overlay" />');
@@ -1884,6 +1928,7 @@ define([
 				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click > .upfront-region-edit-trigger": "trigger_edit",
+				"click > .upfront-region-finish-edit-fixed": "close_edit",
 			},
 			init: function () {
 				this.constructor.__super__.init.call(this);
@@ -1895,10 +1940,24 @@ define([
 			render: function () {
 				this.constructor.__super__.render.call(this);
 				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">Click to edit this<br /> Floating Region</div></div>');
+					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">Click to edit this<br /> Floating Region</div></div>'),
+					$ok = $('<div class="upfront-region-finish-edit-fixed upfront-ui">Ok</div>'),
+					$size = $('<div class="upfront-region-size-hint"></div>'),
+					$position = $('<div class="upfront-region-position-hint"></div>');
+				$size.appendTo(this.$el);
+				$position.appendTo(this.$el);
 				$edit.appendTo(this.$el);
 				$edit_full.appendTo(this.$el);
-				this.render_edit_position();
+				$ok.appendTo(this.$el);
+				//this.render_edit_position();
+			},
+			render_bg_setting: function () {
+				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 384});
+				this.bg_setting.render();
+				$main.append(this.bg_setting.el);
+				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
+				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 			},
 			update: function() {
 				this.constructor.__super__.update.call(this);
@@ -1928,19 +1987,23 @@ define([
 					this.model.set_property('height', 225, true);
 				if ( is_top || !is_bottom ){
 					css.top = is_top ? top : 30;
+					css.bottom = '';
 					if ( !is_top )
 						this.model.set_property('top', 30, true);
 				}
 				else {
 					css.bottom = bottom;
+					css.top = '';
 				}
 				if ( is_left || !is_right ){
 					css.left = ( is_left ? left : 30 ) + $main.offset().left;
+					css.right = '';
 					if ( !is_left )
 						this.model.set_property('left', 30, true);
 				}
 				else {
 					css.right = right;
+					css.left = '';
 				}
 				this.$el.find('.upfront-modules_container').css( {
 					width: Math.floor(css.width/grid.column_width) * grid.column_width,
@@ -1949,6 +2012,28 @@ define([
 				this.$el.css(css);
 				if ( this.edit_position )
 					this.edit_position.update_fields();
+				if ( this.$el.offset().top + this.$el.height() > $(window).height() - 35 )
+					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', 0);
+				else
+					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', '');
+				this.update_size_hint(css.width, css.minHeight);
+				this.update_position_hint(css);
+			},
+			update_size_hint: function (width, height, $helper) {
+				var hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
+				( $helper ? $helper : this.$el ).find('.upfront-region-size-hint').html(hint);
+			},
+			update_position_hint: function (pos, $helper) {
+				var hint = '';
+				if ( typeof pos.top == 'number' )
+					hint += '<b>top:</b>' + pos.top;
+				else if ( typeof pos.bottom == 'number' )
+					hint += '<b>bottom:</b>' + pos.bottom;
+				if ( typeof pos.left == 'number' )
+					hint += ' <b>left:</b>' + pos.left;
+				else if ( typeof pos.right == 'number' )
+					hint += ' <b>right:</b>' + pos.right;
+				( $helper ? $helper : this.$el ).find('.upfront-region-position-hint').html(hint);
 			},
 			render_panels: function () {
 			},
@@ -1960,6 +2045,11 @@ define([
 			trigger_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.trigger_edit_fixed();
+				e.stopPropagation();
+			},
+			close_edit: function (e) {
+				var container_view = this.parent_view.get_container_view(this.model);
+				container_view.close_edit();
 				e.stopPropagation();
 			},
 			check_modules: function () {

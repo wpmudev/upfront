@@ -74,6 +74,13 @@ var _alpha = "alpha",
 			if (!prop || !prop.set) return this.add_property(name, value, silent);
 			prop.set({"value": value}, {"silent": silent});
 		},
+		remove_property: function (name, silent) {
+			if (!name) return false;
+			if (!silent) silent = false;
+			var prop = this.get_property_by_name(name);
+			if (!prop || !prop.set) return;
+			this.get("properties").remove(prop, {"silent": silent});
+		},
 		init_property: function (name, value) {
 			if (!this.has_property(name)) this.add_property(name, value);
 		},

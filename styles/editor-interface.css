@@ -1935,7 +1935,8 @@ a.ueditor-action-pickercancel{
 	visibility: hidden;
 	opacity: 0;
 }
-.upfront-region-finish-edit {
+.upfront-region-finish-edit,
+.upfront-region-finish-edit-fixed {
 	position: absolute;
 	bottom: -51px;
 	right: 0;
@@ -1956,8 +1957,14 @@ a.ueditor-action-pickercancel{
 .upfront-region-fixed-editing .upfront-region-finish-edit {
 	bottom: 10px;
 }
+.upfront-region-finish-edit-fixed {
+	bottom: -35px;
+	border-bottom: 1px solid rgba(27,45,63,.5);
+	padding: 5px 36px;
+}
 .upfront-region-editing .upfront-region-container-active .upfront-region-finish-edit,
-.upfront-region-fixed-editing .upfront-region-container-active .upfront-region-finish-edit {
+.upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-finish-edit-fixed/*,
+.upfront-region-fixed-editing .upfront-region-container-active .upfront-region-finish-edit*/ {
 	display: block;
 }
 .upfront-region-title {
@@ -1988,6 +1995,26 @@ a.ueditor-action-pickercancel{
 }
 
 .upfront-dragging .upfront-region-drag-active .upfront-region-title {
+	display: block;
+}
+
+.upfront-region-size-hint,
+.upfront-region-position-hint {
+	position: absolute;
+	top: 15px;
+	left: 15px;
+	background: #3d5266;
+	color: #ADC3D8;
+	font-size: 14px !important;
+	padding: 0 5px;
+	z-index: 10;
+	display: none;
+}
+.upfront-region-position-hint {
+	top: 46px;
+}
+.upfront-region-fixed-editing .upfront-region-size-hint,
+.upfront-region-fixed-editing .upfront-region-position-hint {
 	display: block;
 }
 
@@ -2609,6 +2636,23 @@ a.ueditor-action-pickercancel{
 }
 .upfront-region-modal-bg .upfront-inline-modal-wrap {
 	width: 384px;
+}
+.upfront-region-bg-setting-fixed-region {
+	margin: 0 0 10px;
+}
+.upfront-region-bg-setting-fixed-region .upfront-region-bg-setting-label {
+	margin: 0 0 5px;
+}
+.upfront-region-bg-setting-fixed-region .upfront-field-wrap {
+	width: 50%;
+	float: left;
+}
+.upfront-region-bg-setting-fixed-region .upfront-field-number[type=number] {
+	width: 80px;
+}
+.upfront-region-bg-setting-fixed-region .upfront-field-wrap .upfront-field-label {
+	display: inline-block;
+	width: 40px;
 }
 .upfront-region-bg-setting-type {
 	width: 50%;
