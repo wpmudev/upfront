@@ -405,13 +405,15 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout = Upfront_Layout::get_instance();
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
-		$style = $preprocessor->process();
+		
+		//Add typography styles - rearranging so the imports from Google fonts come first, if needed
+		$style = $this->prepare_typography_styles($layout);
+		
+		$style .= $preprocessor->process();
 
 		//Add theme styles
 		$style .= $this->prepare_theme_styles();
 		
-		//Add typography styles
-		$style .= $this->prepare_typography_styles($layout);
 
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
@@ -494,8 +496,15 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (!$options)
 			return '';
 		$out = '';
+		$faces = array();
 		foreach ( $options as $element => $option ){
-			$font = $option['font_face'] ? "{$option['font_face']}, {$option['font_family']}" : "inherit";
+			$face = !empty($option['font_face'])
+				? $option['font_face']
+				: false
+			;
+			$faces[] = $face;
+			if (!empty($face) && false !== strpos($face, ' '))  $face = '"' . $face . '"';
+			$font = $option['font_face'] ? "{$face}, {$option['font_family']}" : "inherit";
 			$out .= ".upfront-output-object $element {\n" .
 					"font-family: {$font};\n" .
 					( $option['weight'] ? "font-weight: {$option['weight']};\n" : "" ) .
@@ -505,6 +514,16 @@ class Upfront_StylesheetMain extends Upfront_Server {
 					"color: {$option['color']};\n" .
 					"}\n";
 		}
+
+		$faces = array_values(array_filter(array_unique($faces)));
+		foreach ($faces as $face) {
+			// Naive import - this will send a request regardless if it's actually an Google font or not
+			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
+				preg_replace('/\s/', '+', $face) .
+			"\";\n";
+		}
+		if (!empty($imports)) $out = "{$imports}\n\n{$out}";
+
 		return $out;
 	}
 
