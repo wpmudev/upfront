@@ -1075,11 +1075,11 @@ define([
 
 	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
 		_loaded: false,
-	    fields: {},
-	    current_element: '',
-	    typefaces_list: [
-	    	{ name: "Default", value: '', family:'sans-serif' },
-	        { name: "Arial", family:'sans-serif' },
+		fields: {},
+		current_element: '',
+		typefaces_list: [
+			{ name: "Default", value: '', family:'sans-serif' },
+			{ name: "Arial", family:'sans-serif' },
             { name: "Arial Black", family:'sans-serif' },
             { name: "Arial Narrow", family:'sans-serif' },
             { name: "Arial Rounded MT Bold", family:'sans-serif' },
@@ -1123,6 +1123,7 @@ define([
             { name: "Lucida Sans Typewriter", family:'monospace' },
             { name: "Monaco", family:'monospace' },
 		],
+		google_typefaces_list: [],
 		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
 		inline_elements: ["a", "a:hover"],
 		typefaces: {},
@@ -1130,6 +1131,15 @@ define([
 		sizes: {},
 		colors: {},
 		line_heights: {},
+		initialize: function () {
+			var me = this;
+			SidebarPanel_Settings_Item.prototype.initialize.call(this);
+			Upfront.Util.post({action: "upfront_list_google_fonts"})
+				.success(function (response) {
+					if (response.data) me.google_typefaces_list = response.data;
+				})
+			;
+		},
 		on_render: function () {
 			var me = this,
 				tmp = $("body").append('<div id="upfront-font_test-root" style="position:absolute; left: -999999999999px" />'),
@@ -1142,16 +1152,23 @@ define([
 							obj = { label: typeface.name, value: value },
 							base_width = 0
 						;
-						$test_root
-							.css("font-family", typeface.family)
-							.text(test_string)
-						;
-						base_width = $test_root.width();
-						$test_root.css("font-family", typeface.name);
-						// Let's find out if we have this font
-						if (base_width !== $test_root.width()) lists.push(obj);
+						if (typeface.name.toLowerCase() === 'arial') lists.push(obj);
+						else {
+							$test_root
+								.css("font-family", typeface.family)
+								.text(test_string)
+							;
+							base_width = $test_root.width();
+							$test_root.css("font-family", typeface.name);
+							// Let's find out if we have this font
+							if (base_width !== $test_root.width()) lists.push(obj);
+						}
 					});
 					$test_root.remove(); // Clean up markup
+					if (me.google_typefaces_list.length) _.each(me.google_typefaces_list, function (typeface) {
+						var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.name;
+						lists.push({ label: typeface.name, value: value });
+					});
 					return lists;
 				})(),
 				styles_list = (function(){
@@ -1328,8 +1345,22 @@ define([
 					is_inline = _.contains(me.inline_elements, element),
 					typeface = me.typefaces[element],
 					face = _.findWhere(me.typefaces_list, {value: typeface}) || _.findWhere(me.typefaces_list, {name: typeface}),
-					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.name + '",' + face.family,
-					style = me.styles[element] ? me.styles[element].match(/^(\d+) +(\S+)/) : [false,false];
+					font = false,
+					style = false
+				;
+				if (face) {
+					// This is a regular font.
+					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.name + '",' + face.family;
+				} else {
+					// Is it a Google font?
+					face = _.findWhere(me.google_typefaces_list, {name: typeface});
+					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.name + '",' + face.family;
+					// If so, let's do this - load up the font
+					var url = '//fonts.googleapis.com/css?family=' + face.name.replace(/ /g, '+');
+					$("head").append('<link href="' + url + '" rel="stylesheet" type="text/css" />');
+					// All set, let the defaults carry on as normal...
+				}
+				style = me.styles[element] ? me.styles[element].match(/^(\d+) +(\S+)/) : [false,false];
 				rules.push('font-family: ' + font);
 				rules.push('font-weight: ' + style[1]);
 				rules.push('font-style: ' + style[2]);
