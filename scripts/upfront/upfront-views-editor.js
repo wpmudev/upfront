@@ -1122,36 +1122,50 @@ define([
             { name: "Lucida Console", family:'monospace' },
             { name: "Lucida Sans Typewriter", family:'monospace' },
             { name: "Monaco", family:'monospace' },
-	    ],
-	    elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
-	    inline_elements: ["a", "a:hover"],
-	    typefaces: {},
-	    styles: {},
-	    sizes: {},
-	    colors: {},
-	    line_heights: {},
+		],
+		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
+		inline_elements: ["a", "a:hover"],
+		typefaces: {},
+		styles: {},
+		sizes: {},
+		colors: {},
+		line_heights: {},
 		on_render: function () {
-		    var me = this,
-		        typefaces_list = (function(){
-		            var lists = [];
-		            _.each(me.typefaces_list, function(typeface){
-		            	var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.name;
-		                lists.push({ label: typeface.name, value: value });
-		            });
-		            return lists;
-		        })(),
-    		    styles_list = (function(){
+			var me = this,
+				tmp = $("body").append('<div id="upfront-font_test-root" style="position:absolute; left: -999999999999px" />'),
+				$test_root = $("#upfront-font_test-root"),
+				test_string = (new Array(99)).join('mwi '),
+				typefaces_list = (function(){
+					var lists = [];
+					_.each(me.typefaces_list, function(typeface){
+						var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.name,
+							obj = { label: typeface.name, value: value },
+							base_width = 0
+						;
+						$test_root
+							.css("font-family", typeface.family)
+							.text(test_string)
+						;
+						base_width = $test_root.width();
+						$test_root.css("font-family", typeface.name);
+						// Let's find out if we have this font
+						if (base_width !== $test_root.width()) lists.push(obj);
+					});
+					$test_root.remove(); // Clean up markup
+					return lists;
+				})(),
+				styles_list = (function(){
 					var lists = [{ label: "Default", value: "" }];
 					_.each(['normal', 'italic', 'oblique'], function(style){
 						_.each(_.range(100, 900, 100), function(weight){
 							lists.push({ label: weight+' '+style, value: weight+' '+style });
 						});
 					});
-  return lists;
-    		    })(),
-    		    options = this.model.get_property_value_by_name('typography'),
-    		    $wrap_left = $('<div class="upfront-typography-fields-left" />'),
-    		    $wrap_right = $('<div class="upfront-typography-fields-right" />');
+					return lists;
+				})(),
+				options = this.model.get_property_value_by_name('typography'),
+				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
+				$wrap_right = $('<div class="upfront-typography-fields-right" />');
 			_.each(this.elements, function(element){
 				var el = document.createElement(element.replace(/:.+?$/, ''));
 				$('body').append(el);
@@ -1159,8 +1173,8 @@ define([
 					styles = window.getComputedStyle(el),
 					style = styles.fontStyle,
 					weight = me._normalize_weight(styles.fontWeight),
-					size = parseInt(styles.fontSize),
-					line_height = parseInt(styles.lineHeight),
+					size = parseInt(styles.fontSize, 10),
+					line_height = parseInt(styles.lineHeight, 10),
 					color = styles.color;
 				me.typefaces[element] = '';
 				me.colors[element] = color;
