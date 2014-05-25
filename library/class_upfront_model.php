@@ -287,7 +287,7 @@ abstract class Upfront_Model {
 	public function get ($key) {
 		return isset($this->_data[$key]) ? $this->_data[$key] : false;
 	}
-	
+
 	public function get_property_value ($prop) {
 		return upfront_get_property_value($prop, $this->_data);
 	}
@@ -358,7 +358,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$storage_key = self::get_storage_key();
 		$order = array('specificity', 'item', 'type');
 		foreach ($order as $o) {
-			if (!$cascade[$o]) 
+			if (!$cascade[$o])
 				continue;
 			$id = $storage_key . '-' . $cascade[$o];
 			$layout = self::from_id($id, $storage_key);
@@ -441,7 +441,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function get_layout_properties () {
 		return json_decode( get_option(self::_get_layout_properties_id(), json_encode(array())), true );
 	}
-	
+
 	protected static function _apply_scoped_region ($region) {
 		$regions = array();
 		if ( $region['scope'] != 'local' ){
@@ -458,7 +458,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 		}
 		return $regions;
-		
+
 	}
 
 	public static function create_layout ($layout_ids = array(), $layout_slug = '') {
@@ -496,7 +496,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			));
 			$query->parse_query();
 			$post = $query->next_post();
-			
+
 			if ( $post_type->name == 'post' )
 				$list['single'] = array(
 					'layout' => array(
@@ -767,7 +767,7 @@ abstract class  Upfront_PostModel {
 				'post_type' => $post_type,
 				'post_status' => 'auto-draft',
 				'post_title' => 'Write a title...',
-				'post_content' => '',
+				'post_content' => 'Your content goes here :)',
 			),
 			$post_type
 		);

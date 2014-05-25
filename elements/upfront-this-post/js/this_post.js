@@ -30,11 +30,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}
 		this.constructor.__super__.initialize.call(this, [options]);
 
+		_.extend(this.events, {
+			'click .upfront-post-layout-trigger': 'editPostLayout'
+		});
+		this.delegateEvents();
+
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 
-		// Autostart will start the editor once rendered.
-		// It will be set to true by the Upfront.Application when creating a new entry
-		this.autostart = false;
+		this.prepareEditor();
 
 		Upfront.Events.trigger('post:initialized', this);
 	},
@@ -44,24 +47,41 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	 * @return {string} Markup to be shown.
 	 */
 	get_content_markup: function () {
-		if(this.changed || !this.markup){
-			this.refreshMarkup();
-			return 'Loading';
+		return 'loading';
+	},
+
+	prepareEditor: function(){
+		if(!this.editor){
+			this.editor = new Upfront.Content.PostEditor({
+				editor_id: 'this_post_' + this.postId,
+				post_id: this.postId,
+				preload: true,
+				node: this.$('.upfront-object-content'),
+				content_mode: 'post_content',
+				view: this,
+				layout: this.property('layout')
+			});
+			this.editor.render();
 		}
+	},
 
-		//Wait to trigger rendered only when the content is loaded
-		var me = this;
-		setTimeout(function(){
-			me.trigger('rendered');
-		}, 50);
+	on_render: function(){
+		this.editor.setElement(this.$('.upfront-object-content'));
+		this.editor.render();
+	},
 
-		return this.markup;
+	get_buttons: function(){
+		return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
 	},
 
 	on_edit: function (e) {
 		if(!this.editor){
 			this.createEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
 		}
+	},
+
+	editPostLayout: function(){
+		Upfront.Events.trigger('post:layout:edit', this, 'single');
 	},
 
 	refreshMarkup: function () {
@@ -267,17 +287,17 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 });
 
 var Settings = Upfront.Views.Editor.Settings.Settings.extend({
-		initialize: function (opts) {
-			this.options = opts;
-			this.panels = _([
-				new Settings_PostPanel({model: this.model})
-			]);
-		},
+	initialize: function (opts) {
+		this.options = opts;
+		this.panels = _([
+			new Settings_PostPanel({model: this.model})
+		]);
+	},
 
-		get_title: function () {
-			return "Post settings";
-		}
-	});
+	get_title: function () {
+		return "Post settings";
+	}
+});
 
 // ----- Bringing everything together -----
 // The definitions part is over.

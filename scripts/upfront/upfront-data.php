@@ -3,8 +3,12 @@ if(!current_user_can('edit_posts')){
 	header('Status: 403');
 	die();
 }
+header('Content-Type: application/javascript');
 
 $upfront_data = apply_filters('upfront_data', array('loading' => array(), 'posts' => array()));
+$insert_count = intval(get_option('ueditor_insert_count'));
+if(!$insert_count)
+	$insert_count = 0;
 $upfront_data['ueditor'] = array(
 	'selectors' => apply_filters('upfront_post_selectors', array()),
 	'filters' => array(
@@ -34,6 +38,7 @@ $upfront_data['ueditor'] = array(
 		__('Saturday'),
 		__('Sunday'),
 	),
+	'insertCount' => $insert_count,
 	'authors' => $this->get_authors() //$this references to Upfront_JavascriptMain
 );
 $upfront_data['region_default_args'] = upfront_get_region_default_args();

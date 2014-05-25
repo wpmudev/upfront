@@ -359,7 +359,7 @@ class Upfront_Virtual_Region {
 
 	public function add_side_region(Upfront_Virtual_Region $r, $sub = 'left') {
 		$r->container = $this;
-		$sub = is_string($sub) && preg_match('/^(left|top|bottom|right|fixed)$/', $sub) ? $sub : 'left';
+		$sub = is_string($sub) && preg_match('/^(top|bottom|right)$/', $sub) ? $sub : 'left';
 		$r->data['sub'] = $sub;
 		$r->data['container'] = $this->data['name'];
 		$r->data['position'] = $sub == 'left' ? -1 : ( $sub == 'top' ? -2 : ( $sub == 'right' ? 1 : 2 ) );

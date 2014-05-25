@@ -736,6 +736,46 @@ a.image-edit-button.deactivated:hover {
 	display: none;
 }
 
+.uimage-control-panel {
+	position: absolute;
+	min-width: 150px;
+	z-index: 10;
+	background: rgb(242, 249, 255);
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+	border: 1px solid rgb(99, 134, 166);
+	padding: 10px;
+	left: -65px;
+	top: 45px;
+	text-align: left;
+}
+
+.uimage-control-panel:before {
+	content: ' ';
+	position: absolute;
+	display: block;
+	top: -18px;
+	left: 72px;
+	border: 9px solid transparent;
+	border-bottom-color: rgb(99, 134, 166);
+}
+
+.uimage-control-panel:after {
+	display: block;
+	position: absolute;
+	top: -16px;
+	left: 73px;
+	border: 8px solid transparent;
+	border-bottom-color: rgb(242, 249, 255);
+	content: ' ';
+}
+
+.uimage-control-panel button {
+	position: absolute;
+	top: 100%;
+	right: -1px;
+}
+
+
 
 /* Controls */
 

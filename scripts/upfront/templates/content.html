@@ -1,0 +1,11 @@
+<?php for($i = 0; $i < $wrappersLength; $i++){ ?>
+<div class="upfront-output-wrapper upfront-postpart-wrapper <?php echo $wrappers[$i]['classes'] ?>">
+	<?php for($j = 0; $j < $wrappers[$i]['objectsLength']; $j++){ ?>
+	<div class="upfront-output-module upfront-postpart-module <?php echo $wrappers[$i]['objects'][$j]['classes'] ?>">
+		<div class="upfront-output-object upfront-postpart-object upfront-postpart-<?php echo $wrappers[$i]['objects'][$j]['slug'] ?> <?php echo $extraClasses[$wrappers[$i]['objects'][$j]['slug']] ?>" <?php echo $attributes[$wrappers[$i]['objects'][$j]['slug']] ?>>
+			<?php echo $wrappers[$i]['objects'][$j]['markup'] ?>
+		</div>
+	</div>
+	<?php } ?>
+</div>
+<?php } ?>

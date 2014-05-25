@@ -32,14 +32,17 @@ define(function() {
 		changed: false,
 		markup: false,
 		editors: {},
+		editor: false,
+		currentpost: false,
 		initialize: function(options){
 			if(! (this.model instanceof UpostsModel)){
 				this.model = new UpostsModel({properties: this.model.get('properties')});
 			}
 
-
 			this.events = _.extend({}, this.events, {
-				'click .uposts-pagination>a': 'paginate'
+				'click .uposts-pagination>a': 'paginate',
+				'click .upfront-post-layout-trigger': 'editPostLayout',
+				'mouseenter ul.uposts-posts > li.uposts-post': 'moveEditButton'
 			});
 
 			this.page = 1;
@@ -47,9 +50,9 @@ define(function() {
 
 			this.model.on('region:updated', this.refreshMarkup, this);
 			this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
+
 			//this.listenTo(this.model.get("properties"), 'add', this.refreshMarkup);
 			//this.listenTo(this.model.get("properties"), 'remove', this.refreshMarkup);
-
 			console.log('Posts element');
 		},
 
@@ -66,13 +69,52 @@ define(function() {
 			}
 			return this.markup;
 		},
+		moveEditButton: function(e) {
+			var target = $(e.target).closest('li.uposts-post');
+			var poisitontarget = target.find('div.upfront-output-wrapper:first-child');
+			if(poisitontarget.length)
+				target.prepend(this.$el.find('.upfront-post-layout-trigger').parent('b').addClass('post_layout_trigger').css({ top: poisitontarget.position().top+50, right: 5}));
+
+		},/*
+		on_render: function() {
+			this.refreshMarkup();
+		},*/
 
 		on_render: function(){
 			var me = this;
+			this.refreshMarkup();
 			//Give time to append when dragging.
 			setTimeout(function(){
 				me.updateEditors();
 			}, 100);
+		},
+
+		get_buttons: function(){
+			return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
+		},
+		editPostLayout: function(e){
+			this.editor = this.editors[$(e.target).closest('li.uposts-post').data('post_id')];
+
+			Upfront.Events.trigger('post:layout:edit', this, 'single');
+		},
+		prepareEditor: function(id, node){
+			if(this.editors[id])
+				return;
+			is_excerpt = this.property('content_type') == 'excerpt';
+			//this.currentpost = postId;
+			//if(!this.editor || this.editor.post_id!=postId){
+			var editor = new Upfront.Content.PostEditor({
+				editor_id: 'this_post_' + id,
+				post_id: id,
+				preload: true,
+				node: node,
+				content_mode: is_excerpt ? 'post_excerpt' : 'post_content',
+				view: this,
+				layout: this.property('layout')
+			});
+
+			//}
+			this.editors[id] = editor;
 		},
 
 		refreshMarkup: function(page) {
@@ -115,9 +157,30 @@ define(function() {
 				;
 				loading.$el.remove();
 				me.updateEditors();
+
+				//me.prepareEditor();
+			});
+		},
+		updateEditors: function(){
+			var me = this,
+				nodes = $('#' + this.property('element_id')).find('.uposts-post')
+			;
+			nodes.each(function(){
+				var node = $(this),
+					id = node.data('post_id')
+				;
+
+/*				if(me.editors[id])
+					me.editors[id].updateElement(node);
+				else*/
+					me.prepareEditor(id, node);
+					//me.createEditor(id, node);
 			});
 		},
 
+
+
+/*
 		updateEditors: function(){
 			var me = this,
 				nodes = $('#' + this.property('element_id')).find('.uposts-post')
@@ -135,6 +198,7 @@ define(function() {
 		},
 
 		createEditor: function(id, node){
+			return;
 			if(this.editors[id])
 				return;
 
@@ -159,7 +223,7 @@ define(function() {
 
 			me.editors[id] = editor ;
 		},
-
+*/
 		onPostUpdated: function(post){
 			var loading = new Upfront.Views.Editor.Loading({
 					loading: "Refreshing post ...",

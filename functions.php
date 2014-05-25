@@ -127,6 +127,7 @@ EOAdminStyle;
 	function inject_global_dependencies () {
 		//Basic styles for upfront to work are always loaded.
 		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css');
+		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'));
 
 		if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		wp_enqueue_script('jquery');
@@ -134,6 +135,7 @@ EOAdminStyle;
 		wp_enqueue_script('jquery-effects-core');
 		wp_enqueue_script('jquery-effects-slide');
 		wp_enqueue_script('jquery-ui-draggable');
+		wp_enqueue_script('jquery-ui-droppable');
 		wp_enqueue_script('jquery-ui-resizable');
 		wp_enqueue_script('jquery-ui-selectable');
 		wp_enqueue_script('jquery-ui-slider');
@@ -166,7 +168,7 @@ EOAdminStyle;
 
 		// Enqueue needed styles
 		//wp_enqueue_style('font-awesome', self::get_root_url() . '/styles/font-awesome.min.css'); // No mo font awesome
-		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
+		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_new_editor_grid'));
 		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
 
 		add_action('wp_footer', array($this, 'add_responsive_css'));
@@ -178,7 +180,7 @@ EOAdminStyle;
 		//Boot Edit Mode if the querystring contains the editmode param
 		if (isset($_GET['editmode']))
 			echo upfront_boot_editor_trigger();
-		
+
 		$storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
 		$save_storage_key = $storage_key;
 		if (isset($_GET['dev']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
@@ -235,7 +237,7 @@ EOAdditivemarkup;
 				'href' => site_url('/create_new/theme'),
 				'meta' => array( 'class' => 'upfront-create_theme' )
 			) );
-		} 
+		}
 
 		if ( !is_admin() ){
 			$wp_admin_bar->add_menu( array(

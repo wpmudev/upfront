@@ -21,7 +21,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	abstract public function get_slug ();
 	abstract public function parse ($request);
 	abstract public function render ($request);
-	
+
 	protected function _add_hooks () {
 		$this->_add_subpages();
 		add_action('template_redirect', array($this, "intercept_page"), 0);
@@ -34,7 +34,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 		//if ($this->get_slug() != get_query_var('name')) return false;
 		$this->render();
 	}
-	
+
 	public function parse_page () {
 		if (!$this->_parse_request(false)) return false;
 		return true;
@@ -118,7 +118,7 @@ abstract class Upfront_VirtualSubpage {
 
 /*
 class Upfront_NewPage_VirtualSubpage extends Upfront_VirtualSubpage {
-	
+
 	public function get_slug () {
 		return 'page';
 	}
@@ -130,7 +130,7 @@ class Upfront_NewPage_VirtualSubpage extends Upfront_VirtualSubpage {
 }
 
 class Upfront_NewPost_VirtualSubpage extends Upfront_VirtualSubpage {
-	
+
 	public function get_slug () {
 		return 'post';
 	}
@@ -141,7 +141,7 @@ class Upfront_NewPost_VirtualSubpage extends Upfront_VirtualSubpage {
 	}
 }
 class Upfront_ContentCreator_VirtualPage extends Virtual_Content_Page {
-	
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -168,11 +168,11 @@ Upfront_ContentCreator_VirtualPage::serve();
 
 
 class Upfront_EditPage_VirtualSubpage extends Upfront_VirtualSubpage {
-	
+
 	public function get_slug () {
 		return 'page';
 	}
-	
+
 	public function parse ($request) {
 		$post_id = end($request);
 		global $post, $wp_query;
@@ -194,7 +194,7 @@ class Upfront_EditPage_VirtualSubpage extends Upfront_VirtualSubpage {
 }
 
 class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
-	
+
 	public function get_slug () {
 		return 'post';
 	}
@@ -253,7 +253,7 @@ EOSEJS;
 }
 
 class Upfront_ContentEditor_VirtualPage extends Virtual_Content_Page {
-	
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -288,25 +288,25 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('wp_ajax_upfront-edit-publish', array($this, "publish_post"));
 		add_action('wp_ajax_upfront-edit-draft', array($this, "draft_post"));
-		
+
 		add_action('wp_ajax_upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
 		add_action('wp_ajax_upfront-post-create_term', array($this, "create_new_term"));
 		add_action('wp_ajax_upfront-post-update_terms', array($this, "update_post_terms"));
-		
+
 		//add_action('wp_ajax_upfront-get_page_data', array($this, "get_page_data"));
 		//add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
-		
+
 		add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
 		add_action('wp_ajax_upfront-post-update_status', array($this, "update_post_status"));
 		add_action('wp_ajax_upfront-post-update_password', array($this, "update_post_password"));
-		
+
 		add_action('wp_ajax_upfront-comments-approve', array($this, "approve_comment"));
 		add_action('wp_ajax_upfront-comments-unapprove', array($this, "unapprove_comment"));
 		add_action('wp_ajax_upfront-comments-thrash', array($this, "thrash_comment"));
 		add_action('wp_ajax_upfront-comments-unthrash', array($this, "unthrash_comment"));
 		add_action('wp_ajax_upfront-comments-spam', array($this, "spam_comment"));
 		add_action('wp_ajax_upfront-comments-unspam', array($this, "unthrash_comment"));
-		
+
 		add_action('wp_ajax_upfront-comments-reply_to', array($this, "post_comment"));
 		add_action('wp_ajax_upfront-comments-update_comment', array($this, "update_comment"));
 
@@ -316,10 +316,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	function handle_model_request(){
 		$data = stripslashes_deep($_POST);
 		$action = $data['model_action'];
-		
+
 		if(!method_exists($this, $action))
 			$this->_out(new Upfront_JsonResponse_Error($action . ' not implemented.'));
-		
+
 		call_user_func(array($this, $action), $data);
 	}
 
@@ -428,7 +428,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this"));
 		if(!$data['taxonomy'])
 			$this->_out(new Upfront_JsonResponse_Error("Invalid taxonomy."));
-		
+
 		$term = get_term(intval($data['term_id']), $data['taxonomy']);
 
 		if(!$term || is_wp_error($term)){
@@ -457,7 +457,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($data['allTerms']){
 				$response['allTerms'] = array_values(get_terms($data['taxonomy'], array('hide_empty' => false)));
 			}
-		}	
+		}
 		else{
 			$response['results'] = array_values(get_terms($data['taxonomy'], array('hide_empty' => true)));
 		}
@@ -487,7 +487,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success(get_the_terms($data['postId'], $data['taxonomy'])));
 	}
-	
+
 	/**
 	 * Updates the template file for a page.
 	 * @param  Object $data The data sent to update the template, at least a postId and a template name are needed.
@@ -541,13 +541,13 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$post->permalink = get_permalink($post->ID);
 			$post->sticky = is_sticky($post->ID);
 			$post->is_new = false;
-			
+
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
 		else if( $data['id'] === '0') { //New post
 			$post_type = $data['post_type'] ? $data['post_type'] : 'post';
 			$post = Upfront_PostModel::create($post_type, 'Please enter your new ' . $post_type . ' title here', 'Your ' . $post_type . ' content goes here. Have fun writing :)');
-			
+
 			if($post_type == 'page'){
 				$post->post_content = 'Type your page content here. Feel free to add some elements from the left sidebar.';
 			}
@@ -557,7 +557,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
-		
+
 		$this->_out(new Upfront_JsonResponse_Error("Post not found."));
 	}
 
@@ -580,7 +580,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
 
 		if($posts) {
-			for ($i=0; $i < sizeof($posts); $i++) { 
+			for ($i=0; $i < sizeof($posts); $i++) {
 				if($data['filterContent']){
 					$posts[$i]->post_content = apply_filters('the_content', $posts[$i]->post_content);
 					$posts[$i]->post_title = apply_filters('the_title', $posts[$i]->post_title);
@@ -652,7 +652,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($data['post_date']){
 				$data['post_date_gmt'] = get_gmt_from_date($data['post_date']);
 			}
-			
+
 			// Update if not deleted
 			if($post)
 				$id = wp_update_post($data);
@@ -665,14 +665,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		if(isset($data['sticky'])){
 			$is_sticky = is_sticky($id);
-			if($data['sticky'] && !$is_sticky){				
+			if($data['sticky'] && !$is_sticky){
 				$posts = get_option('sticky_posts');
 				if($posts)
 					$posts[] = $id;
 				else
 					$posts = array($id);
-				add_option('sticky_posts', $posts);	
-			}	
+				add_option('sticky_posts', $posts);
+			}
 			else if(!$data['sticky'] && $is_sticky) {
 				$posts = get_option('sticky_posts');
 				$index = array_search($id, $posts);
@@ -740,7 +740,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
 		$search = !empty($data['search']) ? $data['search'] : false;
-		
+
 		if(!isset($data['commentType']) || $data['commentType'] == 'all')
 			$comment_type = false;
 		else if ($data['commentType'] == 'comment')
@@ -805,7 +805,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if(is_array($val) && sizeof($val) == 1)
 				$meta[$key] = $val[0];
 		}
-		$this->_out(new Upfront_JsonResponse_Success($meta));
+		$this->_out(new Upfront_JsonResponse_Success(array('results' => $meta)));
 	}
 
 	function save_meta_list($data){
@@ -830,17 +830,17 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if($data['removed']){
 			foreach($data['removed'] as $meta)
 				delete_metadata($meta_type, $object_id, $meta['meta_key']);
-		}	
+		}
 
 		if($data['added']){
 			foreach($data['added'] as $meta)
 				update_metadata($meta_type, $object_id, $meta['meta_key'], $meta['meta_value']);
-		}	
+		}
 
 		if($data['changed']){
 			foreach($data['changed'] as $meta)
 				update_metadata($meta_type, $object_id, $meta['meta_key'], $meta['meta_value']);
-					
+
 		}
 
 		$meta = $this->parse_single_meta(get_metadata($meta_type, $object_id));
@@ -943,7 +943,7 @@ class Upfront_ElementDependiecies_Scripts_VirtualSubpage extends Upfront_Virtual
 }
 
 class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
-	
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -955,7 +955,7 @@ class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
 			new Upfront_ElementDependiecies_Scripts_VirtualSubpage(),
 		);
 	}
-	
+
 	public function get_slug () { return 'upfront-dependencies'; }
 
 	public function parse ($request) { }
@@ -967,9 +967,9 @@ Upfront_ElementDependencies_VirtualPage::serve();
 /**
  * Create new endpoint
  */
- 
+
 class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
-	
+
 	public function get_slug () { return 'theme'; }
 
 	public function parse ($request) {
@@ -991,19 +991,19 @@ class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
 	public function get_title () {
 		return 'Create New Theme';
 	}
-	
+
 	public function storage_key_filter ($key) {
 		return $key . '_new';
 	}
-	
+
 	public function template_filter () {
 		return 'upfront';
 	}
-	
+
 	public function stylesheet_filter () {
 		return 'upfront';
 	}
-	
+
 	public function start_editor () {
 		$layout = Upfront_Layout::from_entity_ids(Upfront_EntityResolver::get_entity_ids());
 		$new_theme = $layout->is_empty() ? 'true' : 'false';
@@ -1027,11 +1027,11 @@ class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
 			new Upfront_CreateNew_Theme_VirtualSubpage(),
 		);
 	}
-	
+
 	public function get_slug () { return 'create_new'; }
 
 	public function parse ($request) { }
 	public function render ($request) { die; }
-	
+
 }
 Upfront_CreateNew_VirtualPage::serve();

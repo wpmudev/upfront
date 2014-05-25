@@ -92,10 +92,6 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-output-wrapper { float: left; }
 
-.upfront-output-region.upfront-region-fixed {
-	position: fixed;
-}
-
 .upfront-module {}
 
 /* Clearfix for object container */
@@ -105,6 +101,10 @@ h2, h3 { page-break-after: avoid; }
 	display: table;
 }
 
+.upfront-output-region:before, .upfront-output-region:after { content: ""; display: table; }
+.upfront-output-region:after { clear: both; }
+.upfront-output-region { zoom: 1; }
+
 /* Object */
 .upfront-object,
 .upfront-output-object {
@@ -113,7 +113,60 @@ h2, h3 { page-break-after: avoid; }
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
+.upfront-output-object>*:first-child{
+  margin-top: 0;
+}
+.upfront-output-object>*:last-child{
+  margin-bottom: 0;
+}
 
+.upfront-output-object.upfront-postpart-object {
+  padding-top:0;
+  padding-bottom:0;
+}
 
+/* Post offsets */
 
+.uinsert-left-1 .alignleft,
+.uinsert-left-1 .alignfull{
+  margin-left: -4.43%;
+}
+.uinsert-left-2 .alignleft,
+.uinsert-left-2 .alignfull{
+  margin-left: -9.4%;
+}
+.uinsert-left-3 .alignleft,
+.uinsert-left-3 .alignfull{
+  margin-left: -14.8%;
+}
+.uinsert-right-1 .alignright{
+  margin-right: -4.43%;
+}
+.uinsert-right-2 .alignright{
+  margin-right: -9.4%;
+}
+.uinsert-right-3 .alignright{
+  margin-right: -14.8%;
+}
+.uinsert-full-1 .alignfull{
+  width: 104.43%;
+}
+.uinsert-full-2 .alignfull{
+  width: 109.4%;
+}
+.uinsert-full-3 .alignfull{
+  width: 114.8%;
+}
+.uinsert-full-4 .alignfull{
+  width: 122.5%;
+}
+.uinsert-full-5 .alignfull{
+  width: 130%;
+}
+.uinsert-full-6 .alignfull{
+  width: 139%;
+}
+.inserted_code_rendered{
+    display: inline-block;
+}
 

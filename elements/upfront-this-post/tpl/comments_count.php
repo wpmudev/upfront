@@ -1,0 +1,1 @@
+<div class="post_comments">%comments_count%</div>

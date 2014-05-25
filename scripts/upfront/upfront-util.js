@@ -1,5 +1,15 @@
 (function ($) {
 
+//requestFrameAnimation polyfill
+var rAFPollyfill = function(callback){
+	var currTime = new Date().getTime(),
+		timeToCall = Math.max(0, 16 - (currTime - lastTime)),
+		id = setTimeout(function() { callback(currTime + timeToCall); }, timeToCall)
+	;
+	lastTime = currTime + timeToCall;
+	return id;
+}
+
 define(function() {
   var Util = {
 	model_to_json: function (model) {
@@ -101,16 +111,20 @@ define(function() {
 
 	  return url + hash + '?d=mm&s=' + size;
 	},
-	
-	width_to_col: function (width) {
-		var column_width = Upfront.Settings.LayoutEditor.Grid.column_width;
-		return Math.floor(width/column_width);
-	},
-	
+
 	height_to_row: function (height) {
 		var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		return Math.ceil(height/baseline);
 	},
+
+	// Crossbrowser requestAnimationFrame
+	requestAnimationFrame:
+		$.proxy(window.requestAnimationFrame, window) ||
+		$.proxy(window.webkitRequestAnimationFrame, window) ||
+		$.proxy(window.mozRequestAnimationFrame, window) ||
+		$.proxy(window.oRequestAnimationFrame, window) ||
+		$.proxy(window.msRequestAnimationFrame, window) ||
+		rAFPollyfill,
 
 	/* JS - PHP compatible templates */
 	template: function(markup){
@@ -202,9 +216,9 @@ define(function() {
 
 	  }
 	}
-  };
+};
 
-  var Popup = {
+var Popup = {
 
 	$popup: {},
 	$background: {},
@@ -307,9 +321,9 @@ define(function() {
 	  this._deferred.resolve(this.$popup, result);
 	}
 
-  };
+};
 
-  var PreviewUpdate = function () {
+var PreviewUpdate = function () {
 	var _layout_data = false,
 		_layout = false,
 		_saving_flag = false,
@@ -400,7 +414,7 @@ define(function() {
 	  rebind_events: rebind_events
 	}
 
-  };
+};
 
   return {
 	Util: Util,
@@ -408,5 +422,6 @@ define(function() {
 	PreviewUpdate: new PreviewUpdate()
   };
 });
+
 
 })(jQuery);

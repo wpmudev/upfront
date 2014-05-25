@@ -4,6 +4,9 @@
  * Object implementation for Search entity.
  * A fairly simple implementation, with applied settings.
  */
+ 
+include_once dirname(dirname(dirname(__FILE__))) . '/upfront-this-post/lib/this_post.php'; 
+
 class Upfront_UpostsView extends Upfront_Object {
 
 	public function get_markup ($page = false) {
@@ -51,7 +54,6 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		$properties = $this->properties_to_array();
 		$properties['editing'] = $editing;
-
 		return self::get_template($args, $properties);
 	}
 
@@ -113,7 +115,12 @@ class Upfront_UpostsView extends Upfront_Object {
 			'prev' => 'Next Page »',
 			'next' => '',
 
-			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
+			'post_data' => array('author', 'date', 'comments_count', 'featured_image'), // also: categories,  tags
+			'layout' => array(
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
+			),
 		);
 	}
 

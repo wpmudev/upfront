@@ -20,7 +20,6 @@ var Subapplication = Backbone.Router.extend({
 });
 
 var LayoutEditorSubapplication = Subapplication.extend({
-
 	save_layout_as: function () {
 		Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this);
 	},
@@ -59,11 +58,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		;
 	},
 
-  get_layout_data: function() {
+	get_layout_data: function() {
 		var data = Upfront.Util.model_to_json(this.layout);
 		data.layout = _upfront_post_data.layout;
-    return data;
-  },
+		return data;
+	},
 
 	preview_layout: function () {
 		var preview = false,
@@ -145,7 +144,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		//Upfront.Behaviors.GridEditor.toggle_draggables(true);
 
 		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable);
-		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_draggable);
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 		this.listenTo(Upfront.Events, "layout:render", Upfront.Behaviors.GridEditor.refresh_draggables);
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
@@ -165,8 +163,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		// Region
 		this.listenTo(Upfront.Events, "command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
-		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
-		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_draggable);
 
 		// Undo / Redo
 		this.listenTo(Upfront.Events, "entity:activated", Upfront.Behaviors.LayoutEditor.create_undo);
@@ -229,7 +225,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	destroy_properties: function () {
 		$(Upfront.Settings.LayoutEditor.Selectors.properties).html('');
 	},
-	
+
 	create_menu: function( view ) {
 
 		var current_object = _(this.Objects).reduce(function (obj, current) {
@@ -264,7 +260,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		if (this.settings_view) return this.destroy_settings();
 		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
 		var current_object = _(this.Objects).reduce(function (obj, current) {
-				return (view instanceof current.View) ? current : obj;
+				if(view instanceof current.View){
+					console.log(obj + ' ' + current);
+					return current;
+				}
+				return obj;
 			}, false),
 			current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings)
 			settings_view = new current_object.Settings({
@@ -282,13 +282,13 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	destroy_settings: function () {
 		if (!this.settings_view) return false;
 
+		this.settings_view.trigger('closed');
+
 		this.settings_view.remove();
 		this.settings_view = false;
 
 		//Restore the settings div
 		$('body').append('<div id="settings"/>');
-
-		settings_view.trigger('closed');
 	},
 
 	create_post: function(postType){
@@ -298,7 +298,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 });
 
 var LayoutEditor = new (LayoutEditorSubapplication.extend({
-
 	Objects: {},
 
 	boot: function () {
@@ -311,15 +310,506 @@ var LayoutEditor = new (LayoutEditorSubapplication.extend({
 		this.set_up_editor_interface();
 
 		this.set_up_event_plumbing_after_render();
-		$("html").removeClass("upfront-edit-content upfront-edit-theme").addClass("upfront-edit-layout");
+		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout").addClass("upfront-edit-layout");
 	},
 
 	stop: function () {
 		return this.stopListening(Upfront.Events);
-	},
-
+	}
 
 }))();
+
+var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
+	initialize: function(opts){
+		this.listenTo(Upfront.Events, 'post:layout:edit', this.togglePostLayoutEditorMode);
+	},
+	boot: function () {
+		Upfront.Util.log("Preparing postlayout mode for execution");
+		this.started = 0;
+	},
+
+	start: function () {
+		if(this.started)
+			return;
+
+		this.started = 1;
+
+		this.Objects = Upfront.Application.LayoutEditor.Objects;
+
+		Upfront.Util.log("Starting the postlayout edit mode");
+
+		this.set_up_event_plumbing_before_render();
+
+		this.prepareSidebar();
+
+		this.listenTo(Upfront.Events, "post:layout:cancel", this.cancelEdition);
+		this.listenTo(Upfront.Events, "post:layout:save", this.saveEdition);
+		this.listenTo(Upfront.Events, "post:edit:templatepart", this.editTemplatePart);
+
+		$("html").removeClass("upfront-edit-layout upfront-edit-theme upfront-edit-content").addClass("upfront-edit-postlayout");
+
+		this.prepareViews();
+
+		this.set_up_event_plumbing_after_render();
+	},
+
+	stop: function () {
+		var sidebar = Application.sidebar;
+		Upfront.Util.log("Stopping the postlayout edit mode");
+
+		this.restoreSidebar();
+		this.restoreViews();
+
+		this.started = 0;
+
+		this.stopListening(Upfront.Events);
+		this.listenTo(Upfront.Events, 'post:layout:edit', this.togglePostLayoutEditorMode);
+	},
+
+	cancelEdition: function(){
+		if(Application.current_subapplication != PostLayoutEditor)
+			return;
+		Application.start(Application.mode.last);
+	},
+
+	saveEdition: function(){
+		if(Application.current_subapplication != PostLayoutEditor)
+			return;
+
+		var me = this,
+			saveDialog = new Upfront.Views.Editor.SaveDialog({
+				question: 'Do you wish to save the post layout just for this post or apply it to all posts?',
+				thisPostButton: 'This post only',
+				allPostsButton: 'All posts of this type'
+			})
+		;
+
+		saveDialog
+			.render()
+			.on('closed', function(){
+				saveDialog.remove();
+				saveDialog = false;
+			})
+		;
+
+		saveDialog.on('save', function(type){
+			var elementType = me.postView.property('type'),
+				elementSlug = elementType == 'ThisPostModel' ? 'single' : 'archive',
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Saving post layout...",
+					done: "Thank you for waiting",
+					fixed: false
+				}),
+				specificity
+			;
+			if(elementSlug == 'single')
+				specificity = type == 'this-post' ? me.postView.postId : me.postView.editor.post.get('post_type');
+			else
+				specificity = type == 'this-post' ? me.postView.property('element_id').replace('uposts-object-','') : me.postView.property('post_type');
+
+
+			console.log(type);
+
+			var layoutData = {
+				postLayout: me.exportPostLayout(),
+				partOptions: me.postView.partOptions || {}
+			}
+
+			loading.render();
+			saveDialog.$('#upfront-save-dialog').append(loading.$el);
+
+			Upfront.Util.post({
+				action: 'upfront_save_postlayout',
+				layoutData: layoutData,
+				cascade: elementSlug + '-' + specificity
+			}).done(function(response){
+				loading.done();
+				console.log(response);
+				saveDialog.close();
+
+				me.postView.postLayout = layoutData.postLayout;
+
+				me.postView.render();
+
+				Application.start(Application.mode.last);
+			});
+		});
+
+
+	},
+
+	exportPostLayout: function(){
+		var me = this,
+			regionLayout = Upfront.Util.model_to_json(this.regionView.model),
+			wrappers = regionLayout.wrappers,
+			modules = regionLayout.modules,
+			wrapperIds = {}
+			layout = []
+		;
+
+		_.each(modules, function(m){
+			var props = me.propertiesToObject(m.properties),
+				object = {classes: props['class']},
+				wrapper = wrapperIds[props.wrapper_id]
+			;
+
+			_.each(m.objects, function(o){
+				object.slug = me.propertiesToObject(o.properties).postPart;
+			});
+
+			if(wrapper)
+				wrapper.objects.push(object);
+			else{
+				wrapper = {objects: [object]};
+				layout.push(wrapper);
+				wrapperIds[props.wrapper_id] = wrapper;
+			}
+		});
+
+		_.each(wrappers, function(w){
+			var props = me.propertiesToObject(w.properties),
+				wrapper = wrapperIds[props.wrapper_id]
+			;
+			if(wrapper)
+				wrapper['classes'] = props['class'];
+
+		});
+
+		return layout;
+	},
+
+	importPostLayout: function(layout){
+		var me = this,
+			region = this.getPostRegionData(),
+			options = this.postView.property('partOptions')
+		;
+
+		if(!layout)
+			return region;
+
+		_.each(layout, function(w){
+			var wrapperId =	Upfront.Util.get_unique_id("wrapper"),
+				wrapper = new Upfront.Models.Wrapper({
+					name: "",
+					properties: [
+						{name: "wrapper_id", value: wrapperId},
+						{name: "class", value: w['classes']}
+					]
+				})
+			;
+			region.get('wrappers').add(wrapper);
+
+			_.each(w.objects, function(o){
+				var properties = {
+					type: 'PostPart_' + o.slug + 'Model',
+					view_class: 'PostPart_' + o.slug + 'View',
+					has_settings: 1,
+					id_slug: 'PostPart_' + o.slug,
+					postPart: o.slug
+				};
+				if(options[o.slug])
+					_.extend(properties, options[o.slug]);
+
+				var object = new Upfront.Content.PostPart({
+						properties: properties,
+						options: o.options
+					}),
+					module = new Upfront.Models.Module({
+						name: '',
+						properties: [
+							{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
+							{"name": "class", "value": o['classes']},
+							{"name": "has_settings", "value": 0},
+							{"name": "row", "value": 1},
+							{"name": "wrapper_id", "value": wrapperId}
+						],
+						objects: [object]
+					})
+				;
+				object.postModel = me.postView.model;
+				region.get('modules').add(module);
+			})
+		});
+
+		return region;
+	},
+
+	editTemplatePart: function(tpl, part){
+		if(this.templateEditor)
+			this.templateEditor.close();
+
+		this.templateEditor.open({tpl: tpl, postPart: part});
+	},
+
+	togglePostLayoutEditorMode: function(postView){
+		if(Application.current_subapplication != PostLayoutEditor){
+			this.postView = postView;
+			this.partMarkup = postView.editor.replacements;
+			Application.start(Application.MODE.POST);
+		}
+		else
+			Application.start(Application.mode.last);
+	},
+
+	prepareViews: function(){
+		console.log('Updating layout');
+		var me = this,
+			postView = this.postView,
+			region = this.importPostLayout(postView.postLayout),
+			layoutRegions = Application.layout.get('regions')
+		;
+
+		this.templateEditor = new Upfront.Content.TemplateEditor();
+		this.listenTo(this.templateEditor, 'save', function(tpl, postPart){
+			var templates = me.postView.property('templates');
+			if(!templates)
+				templates = {};
+			templates[postPart] = tpl;
+			me.postView.property('templates', templates, false);
+			me.postView.model.trigger('template:' + postPart);
+			me.templateEditor.close();
+		});
+
+		this.listenTo(this.templateEditor, 'cancel', function(){
+			me.templateEditor.close();
+		});
+
+		this.listenToOnce(Upfront.Events, 'entity:region:added', this.preparePostRegion);
+		region.add_to(layoutRegions, layoutRegions.length - 1);
+	},
+
+	getPostRegionData: function(postView){
+		var container = this.postView.parent_module_view.region,
+			elementSize =  this.postView.get_element_size()
+			region = {
+				title: 'Post Layout Editor',
+				name: 'postLayoutEditor',
+				container: 'postLayoutEditor',
+				allow_sidebar: false,
+				type: 'clip',
+				modules: [],
+				position: container.get('position') - 1,
+				properties: [
+//					{name: 'row', value: elementSize.row},
+					{name: 'col', value: elementSize.col}
+				],
+				scope: 'local'
+			}
+			regionModel = new Upfront.Models.Region(region);
+		;
+
+		return regionModel;
+	},
+
+	preparePostRegion: function(region){
+		this.regionView = region;
+		this.regionContainer = region.$el.closest('.upfront-region-container').detach();
+		this.postWrapper = this.postView.$el.closest('.upfront-wrapper');
+		//Gagan: The code inside the following if, is to accomodate the posts element
+		if(this.postView.$el.find('ul.uposts-posts').length > 0) {
+			var me = this;
+			var postindex = this.postView.$el.find('li.post-'+this.postView.editor.postId).index();
+console.log('here is the index'+postindex);
+			this.postWrapper.find('div.upfront-editable_entity').removeClass('main-module0-Uposts-module-module').css('min-height', 'inherit');
+			this.postwrapperclone = this.postWrapper.clone().removeClass('ui-draggable').addClass('temp_clone').css('z-index', '-1');
+			this.postwrapperclone.find('.ui-draggable').removeClass('ui-draggable');
+			this.postwrapperclone.find('ul.uposts-posts > li.uposts-post').remove();
+			var firstitem = true
+
+			this.postWrapper.find('li.uposts-post').slice(postindex-1).each(function() {
+				if(!firstitem)
+					me.postwrapperclone.find('ul.uposts-posts').append($(this));
+				else {
+					$(this).remove();
+					firstitem = false;
+				}
+			});
+			this.postWrapper.after(this.regionContainer);
+			this.regionContainer.after(this.postwrapperclone);
+		} else {
+			this.postWrapper.hide().after(this.regionContainer);
+		}
+		this.regionContainer.removeClass('c24');
+		if(!this.postRegionClass)
+			this.postRegionClass = this.regionContainer.attr('class');
+		this.regionContainer.attr('class', this.postRegionClass + ' ' + this.postView.parent_module_view.model.get_property_value_by_name('class'));
+
+		//The post region should be the only available for dropping
+		$('#page').find('.upfront-region')
+			.not('.upfront-region-postlayouteditor')
+			.not('.upfront-region-shadow')
+			.addClass('upfront-region-locked')
+			//Stop interaction with the rest of the page
+			.find('.upfront-module').filter('.ui-draggable').draggable('disable').resizable('disable')
+		;
+		$('#page').find('.upfront-region-postlayouteditor').find('.upfront-module')
+			.draggable('enable').resizable('enable');
+	},
+
+	restoreViews: function(){
+		this.regionContainer.remove();
+		this.regionContainer = false;
+		
+		//Gagan: The code inside the following if, is to accomodate the posts element
+		if(typeof(this.postwrapperclone) != 'undefined' && this.postwrapperclone)
+			this.postwrapperclone.remove();
+			
+		this.postWrapper.show();
+		this.postWrapper = false;
+
+		this.regionView.remove();
+		var regions = Application.layout.get('regions').filter(function(r){
+			return r.get('name') != 'postLayoutEditor';
+		});
+		Application.layout.get('regions').reset(regions, {silent:true});
+		this.regionView = false;
+
+		this.postView = false;
+
+		$('#page').find('.upfront-region-locked').removeClass('upfront-region-locked')
+			.find('.upfront-module').filter('.ui-draggable').draggable('enable').resizable('enable')
+		;
+	},
+
+	prepareSidebar: function(){
+		var commands = {},
+			sidebar = Application.sidebar
+		;
+
+		this.sidebarCommands = sidebar.sidebar_commands.control.commands;
+
+		//Show post components panel
+		sidebar.get_panel('posts').loadElements().active = true;
+		sidebar.get_panel('elements').active = false;
+
+		this.sidebarCommands.each(function(command){
+			var el = command.$el;
+			if(el.hasClass('command-undo'))
+				commands.undo = command;
+			else if(el.hasClass('command-redo'))
+				commands.redo = command;
+			else if(el.hasClass('command-grid'))
+				commands.grid = command;
+		});
+
+		sidebar.sidebar_commands.control.commands = _([
+			commands.undo,
+			commands.redo,
+			commands.grid,
+			new Upfront.Views.Editor.Command_SavePostLayout(this.sidebarCommands.model),
+			new Upfront.Views.Editor.Command_CancelPostLayout(this.sidebarCommands.model)
+		]);
+
+		//Hide not necessary parts
+		sidebar.sidebar_commands.primary.$el.hide();
+		sidebar.sidebar_profile.$el.hide();
+
+
+		this.listenToOnce(Upfront.Events, 'sidebar:rendered', function(){
+			sidebar.get_panel('posts').$('h3.sidebar-panel-title').click();
+		});
+	},
+
+	restoreSidebar: function(){
+		var sidebar = Application.sidebar;
+		//Show hidden parts
+		sidebar.sidebar_commands.primary.$el.hide();
+		sidebar.sidebar_profile.$el.hide();
+
+		//Restore commands
+		sidebar.sidebar_commands.control.commands = this.sidebarCommands;
+		this.sidebarCommands = false;
+
+		//Hide post component panel
+		sidebar.get_panel('posts').unloadElements().active = false;
+		sidebar.get_panel('elements').active = true;
+	},
+
+	create_settings: function (view) {
+		if (this.settings_view) return this.destroy_settings();
+		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
+		var slug = 'PostPart_' + view.postPart,
+			current_object = this.Objects[slug] ? this.Objects[slug] : Upfront.Views.Editor.Settings,
+			settings_view = new current_object.Settings({
+				model: view.model,
+				anchor: current_object.anchor,
+				el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
+			})
+		;
+		settings_view.for_view = view;
+		settings_view.render();
+		this.settings_view = settings_view;
+		settings_view.trigger('rendered');
+	},
+
+	objectToProperties: function(ob){
+		var props = [];
+		_.each(ob, function(value, key){
+			props.push({name: key, value: value});
+		});
+		return props;
+	},
+	propertiesToObject: function(properties){
+		var ob = {};
+		_.each(properties, function(p){
+			ob[p.name] = p.value;
+		});
+		return ob;
+	}
+}))();
+
+var PostContentEditor = new (Subapplication.extend({
+	initialize: function(){
+		this.listenTo(Upfront.Events, 'post:content:edit:start', this.startContentEditorMode);
+		this.listenTo(Upfront.Events, 'post:content:edit:stop', this.stopContentEditorMode);
+	},
+
+	boot: function () {
+		Upfront.Util.log("Preparing post content mode for execution")
+	},
+
+	start: function () {
+		Upfront.Util.log("Starting post the content edit mode");
+	},
+
+	stop: function () {
+		var $page = $('#page');
+		Upfront.Util.log("Stopping post the content edit mode");
+		$page.find('.upfront-module').draggable('enable').resizable('enable');
+		Upfront.Events.trigger('upfront:element:edit:stop');
+		$page.find('.upfront-region-edit-trigger').show();
+		this.contentEditor = false;
+	},
+
+	startContentEditorMode: function(contentEditor){
+		if(Application.current_subapplication == PostContentEditor)
+			return;
+
+		this.contentEditor = contentEditor;
+
+		var $page = $('#page');
+
+		//There is no need of start the application, just set the current one
+		Application.set_current(Application.MODE.POSTCONTENT);
+		$page.find('.upfront-module').draggable('disable').resizable('disable');
+		Upfront.Events.trigger('upfront:element:edit:start', 'write', contentEditor.post);
+		$page.find('.upfront-region-edit-trigger').hide();
+
+		Upfront.Events.on('content:insertcount:updated', this.updateInsertCount);
+	},
+
+	stopContentEditorMode: function(){
+		Upfront.Events.off('content:insertcount:updated', this.updateInsertCount);
+		if(Application.current_subapplication == PostContentEditor)
+			Application.start(Application.mode.last);
+	},
+	updateInsertCount: function(){
+		console.log('update insertcount');
+		Upfront.Util.post({
+			action: 'upfront_update_insertcount'
+		});
+	}
+}));
 
 
 var ContentEditor = new (Subapplication.extend({
@@ -330,13 +820,12 @@ var ContentEditor = new (Subapplication.extend({
 	start: function () {
 		Upfront.Util.log("Starting the content edit mode");
 
-		$("html").removeClass("upfront-edit-layout upfront-edit-theme").addClass("upfront-edit-content");
+		$("html").removeClass("upfront-edit-layout upfront-edit-theme upfront-edit-postlayout").addClass("upfront-edit-content");
 	},
 
 	stop: function () {
 		Upfront.Util.log("Stopping the content edit mode");
 	}
-
 }))();
 
 var ThemeEditor = new (LayoutEditorSubapplication.extend({
@@ -353,7 +842,7 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 		this.set_up_editor_interface();
 
 		this.set_up_event_plumbing_after_render();
-		$("html").removeClass("upfront-edit-layout upfront-edit-content").addClass("upfront-edit-theme");
+		$("html").removeClass("upfront-edit-layout upfront-edit-content upfront-edit-postlayout").addClass("upfront-edit-theme");
 		if ( _upfront_new_theme && this._first_start ){
 			this.listenToOnce(Upfront.Events, 'layout:render', function(){
 				Upfront.Events.trigger("command:layout:edit_structure");
@@ -379,6 +868,8 @@ var Application = new (Backbone.Router.extend({
 	LayoutEditor: LayoutEditor,
 	ContentEditor: ContentEditor,
 	ThemeEditor: ThemeEditor,
+	PostLayoutEditor: PostLayoutEditor,
+	PostContentEditor: PostContentEditor,
 
 	actions: {
 		"save": "upfront_save_layout",
@@ -395,7 +886,9 @@ var Application = new (Backbone.Router.extend({
 	MODE: {
 		CONTENT: "content",
 		LAYOUT: "layout",
-		THEME: "theme"
+		THEME: "theme",
+		POST: 'post layout',
+		POSTCONTENT: "post content"
 	},
 
 	mode: {
@@ -501,6 +994,9 @@ var Application = new (Backbone.Router.extend({
 		if (additional)
 			request_data = _.extend(request_data, additional);
 
+		if(_upfront_post_data)
+			request_data.post_id = _upfront_post_data.post_id;
+
 		$("body").removeClass(Upfront.Settings.LayoutEditor.Grid.scope);
 
 		//If we are already loading a layout, abort the load
@@ -585,10 +1081,6 @@ var Application = new (Backbone.Router.extend({
 
 		Upfront.data.currentEntity = false;
 
-		if(this.current_subapplication){
-			this.current_subapplication.stop();
-		}
-
 		if(Upfront.data.Ueditor){
 			_.each(Upfront.data.Ueditor.instances, function(ueditor){
 				ueditor.stop();
@@ -651,7 +1143,6 @@ var Application = new (Backbone.Router.extend({
 
 		//Set some listener for the new post view
 		Upfront.Events.once('post:initialized', function(postView){
-			postView.autostart = true; //Auto start
 			postView
 				.once('post:updated', function(post){
 					//Update the url on save
@@ -659,6 +1150,11 @@ var Application = new (Backbone.Router.extend({
 					me.navigate('/edit/' + post.post_type + '/' + post.ID, {trigger: false, replace: true});
 				})
 			;
+			me.listenToOnce(postView.editor, 'rendered', function(){
+				setTimeout(function(){
+					postView.editor.editContents(false, postView.$('.upfront-content-marker-title'));
+				}, 200);
+			});
 		});
 
 		//Load the new layout
@@ -723,6 +1219,12 @@ var Application = new (Backbone.Router.extend({
 		} else if(mode && this.MODE.THEME == mode) {
 			this.mode.current = this.MODE.THEME;
 			this.current_subapplication = this.ThemeEditor;
+		} else if(mode && this.MODE.POST == mode) {
+			this.mode.current = this.MODE.POST;
+			this.current_subapplication = this.PostLayoutEditor;
+		} else if(mode && this.MODE.POSTCONTENT == mode) {
+			this.mode.current = this.MODE.POSTCONTENT;
+			this.current_subapplication = this.PostContentEditor;
 		} else {
 			this.mode.current = this.MODE.LAYOUT;
 			this.current_subapplication = this.LayoutEditor;
@@ -773,6 +1275,9 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	fetchLayout: function(path, urlParams){
+		if(this.mode.current != this.MODE.LAYOUT)
+			this.start(this.MODE.LAYOUT);
+
 		var me = this,
 			urlQueryParts = urlParams ? [] : false,
 			fullPath = path ? '/' + path : '/',
@@ -823,10 +1328,10 @@ var Application = new (Backbone.Router.extend({
 				if(e.isDefaultPrevented())
 					return;
 
-				var bypass = $(e.target).data('bypass');
+				var bypass = $(e.currentTarget).data('bypass');
 				if(bypass)
 					return;
-					
+
 				var href = e.target.getAttribute('href'),
 					a = e.target,
 					now = window.location
@@ -847,7 +1352,7 @@ var Application = new (Backbone.Router.extend({
 				//Don't let the backspace go back in history
 				if(e.which == 8){
 					var tag = e.target.tagName.toUpperCase();
-					if(tag != 'INPUT' && tag != 'TEXTAREA' && !$(e.target).closest('.redactor_box').length)
+					if(tag != 'INPUT' && tag != 'TEXTAREA' && !$(e.target).closest('.redactor_box').length && !e.target.contentEditable)
 						e.preventDefault();
 				}
 			})

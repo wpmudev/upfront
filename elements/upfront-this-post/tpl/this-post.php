@@ -1,6 +1,6 @@
 <article id="post-<?php echo $post->ID ?>" data-post_id="<?php echo $post->ID ?>">
 	<header>
-		<h1 class="post_title"><a href="<?php echo get_permalink($post->ID) ?>"><?php the_title(); ?></a></h1>
+		<h1 class="post_title" data-tpl="title"><a href="<?php echo get_permalink($post->ID) ?>"><?php the_title(); ?></a></h1>
 		<?php /* Meta info */ ?>
 		<?php if ( get_post_type() == 'post' ) { ?>
 			<div class="post_meta">
@@ -29,7 +29,7 @@
 			</div>
 		<?php } ?>
 	</header>
-	
+
 	<?php /* Content */ ?>
 	<?php if (!empty($properties['content_type']) && 'excerpt' == $properties['content_type']) { ?>
 		<div class="post_content post_content-excerpt"><?php the_excerpt(); ?></div>
@@ -40,7 +40,7 @@
 	<footer>
 		<?php if (!empty($properties['post_data']) && in_array('tags', $properties['post_data'])) { ?>
 			<div class="post_tags">
-				<?php the_tags('', ' '); ?>				
+				<?php the_tags('', ' '); ?>
 			</div>
 		<?php } ?>
 	</footer>

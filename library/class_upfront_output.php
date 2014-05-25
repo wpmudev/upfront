@@ -257,7 +257,7 @@ abstract class Upfront_Entity {
 			if ( $background_video_style == 'inside' && $background_color )
 				$css[] = 'background-color: ' . $background_color;
 		}
-		return implode('; ', $css) . '; ';
+		return implode('; ', $css);
 	}
 
 	protected function _get_background_attr () {
@@ -522,8 +522,6 @@ class Upfront_Region extends Upfront_Container {
 		$css = '';
 		if ( $this->_is_background() )
 			$css .= $this->_get_background_css();
-		if ( $this->_data['type'] == 'fixed' )
-			$css .=  $this->_get_position_css();
 		return $css;
 	}
 
@@ -536,27 +534,6 @@ class Upfront_Region extends Upfront_Container {
 
 	public function get_sub () {
 		return $this->_data['sub'] ? $this->_data['sub'] : false;
-	}
-
-	public function _get_position_css () {
-		$css = array();
-		$width = $this->_get_property('width');
-		$height = $this->_get_property('height');
-		$top = $this->_get_property('top');
-		$left = $this->_get_property('left');
-		$bottom = $this->_get_property('bottom');
-		$right = $this->_get_property('right');
-		if ( $top !== false || $bottom === false )
-			$css[] = 'top: ' . ( $top !== false ? $top : 30 ) . 'px';
-		else
-			$css[] = 'bottom: ' . $bottom . 'px';
-		if ( $left !== false || $right === false )
-			$css[] = 'left: ' . ( $left !== false ? $left : 30 ) . 'px';
-		else
-			$css[] = 'right: ' . $right . 'px';
-		$css[] = 'width: ' . $width . 'px';
-		$css[] = 'min-height: ' . $height . 'px';
-		return implode('; ', $css) . '; ';
 	}
 }
 

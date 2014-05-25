@@ -566,6 +566,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				height: elementSize.height
 			}))
 		);
+
 		if(this.property('image_status') != 'ok'){
 			var starting = this.$('.upfront-image-starting-select');
 			if(!this.elementSize.height){
@@ -814,14 +815,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		data.elementSize = {width: resizer.width() - 30, height: resizer.height() - 30 - textHeight};
 
 		this.setSizeClasses(resizer.width(), resizer.height());
+
 		this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 				width: data.elementSize.width,
 				height: data.elementSize.height
 			})
 		).css({
-             // Todo Sam: remove the commented stuff, they used to make the resize hint jump up and down when resizing
-			//bottom: 'auto',
-			//top: resizer.height() - 39
+			bottom: 'auto',
+			top: resizer.height() - 39
 		});
 
 		if(starting.length){
@@ -2868,6 +2869,73 @@ var Control = Upfront.Views.Editor.InlinePanels.Item.extend({
 	}
 });
 
+var DialogControl = Control.extend({
+	panelTpl: $editorTpl.find('#panel-control-tpl').html(),
+	events: {
+		'click': 'onClickControl',
+		'click button': 'onClickOk'
+	},
+
+	render: function(){
+		Control.prototype.render.call(this, arguments);
+		var me = this;
+
+		if(!this.$el.hasClass('uimage-control-panel-item'))
+			this.$el.addClass('uimage-control-panel-item');
+
+		if(this.view){
+			this.view.render();
+			this.view.delegateEvents();
+		}
+
+		if(!this.panel){
+			//this is like initialize
+			var panel = $(this.panelTpl);
+			if(this.isopen)
+				panel.show();
+			this.$el.append(panel);
+			panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
+			this.panel = panel;
+
+			$(document).click(function(e){
+				var target = $(e.target);
+				if(target.closest('#page').length && target[0] != me.el && !target.closest(me.el).length)
+					me.close();
+			});
+		}
+	},
+
+	onClickControl: function(e){
+		if(!$(e.target).hasClass('upfront-icon'))
+			return;
+
+		if(this.isopen)
+			this.close();
+		else
+			this.open();
+	},
+
+	onClickOk: function(e){
+		this.trigger('panel:ok', this.view);
+	},
+
+	bindEvents: function(){
+		this.panel.find('button').on('click', function(){
+		});
+	},
+
+	open: function(){
+		this.panel.show();
+		this.isopen = true;
+		this.trigger('panel:open');
+	},
+	close: function(){
+		this.panel.hide();
+		this.isopen = false;
+		this.trigger('panel:close');
+	}
+})
+
 var TooltipControl = Control.extend({
 	events: {
 		'click': 'onClickControl',
@@ -3117,6 +3185,7 @@ Upfront.Views.Editor.InlinePanels.MultiControl = MultiControl;
 Upfront.Views.Editor.InlinePanels.Control = Control;
 Upfront.Views.Editor.InlinePanels.ControlPanel = ControlPanel;
 Upfront.Views.Editor.InlinePanels.TooltipControl = TooltipControl;
+Upfront.Views.Editor.InlinePanels.DialogControl = DialogControl;
 
 Upfront.Application.LayoutEditor.add_object("Uimage", {
 	"Model": UimageModel,

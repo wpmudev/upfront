@@ -1,6 +1,11 @@
 ;(function($){
 
-define(['text!scripts/redactor/ueditor-templates.html'], function(tpl){
+var deps = [
+	'text!scripts/redactor/ueditor-templates.html',
+	'scripts/redactor/ueditor-inserts'
+]
+
+define(deps, function(tpl, Inserts){
 var hackedRedactor = false;
 
 var UeditorEvents = _.extend({}, Backbone.Events);
@@ -95,6 +100,9 @@ var hackRedactor = function(){
 		var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
 
 		this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
+			if($(e.target).closest('.ueditor-insert').length)
+				return;
+
 			var text = this.getSelectionText();
 
 			if (e.type === 'mouseup' && text != '') this.airShow(e);
@@ -229,7 +237,19 @@ var hackRedactor = function(){
 			return this.doInsertLineBreak();
 		return false;
 	};
+/*
+	$.Redactor.prototype.getCurrent = function(){
+		var el = false;
+		var sel = this.getSelection();
 
+		if (sel.rangeCount > 0) el = sel.getRangeAt(0).startContainer;
+
+		if(el.nodeType === 3) //If we got a text node, get parent
+			el = el.parentNode;
+
+		return this.isParentRedactor(el);
+	};
+*/
 	hackedRedactor = true;
 
 	$.Redactor.prototype.events = UeditorEvents;
@@ -256,7 +276,6 @@ var Ueditor = function($el, options) {
 			air:true,
 			linebreaks: true,
 			disableLineBreak: false,
-			placeholder: 'Your text here...',
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
@@ -264,7 +283,9 @@ var Ueditor = function($el, options) {
 			buttonsCustom: {},
 			activeButtonsAdd: {},
 			observeLinks: false,
-			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre']
+			observeImages: false,
+			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
+			inserts: false
 		}, options)
 	;
 
@@ -292,12 +313,13 @@ var Ueditor = function($el, options) {
 	this.id = 'ueditor' + (Math.random() * 10000);
 
 	if(this.options.autostart){
-		this.redactor = this.start();
+		this.start();
 	}
 	else {
 		this.bindStartEvents();
 		this.startPlaceholder();
 	}
+
 };
 
 Ueditor.prototype = {
@@ -325,6 +347,10 @@ Ueditor.prototype = {
 		//Open the toolbar when releasing selection outside the element
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
+
+		if(this.options.inserts){
+			this.insertsSetUp();
+		}
 
 		//Listen for outer clicks to stop the editor if necessary
 		if(!this.options.autostart)
@@ -357,6 +383,28 @@ Ueditor.prototype = {
 					me.start(e);
 			})
 		;
+	},
+
+	insertsSetUp: function(){
+		var me = this,
+			manager = new InsertManager({el: this.$el, insertsData: this.options.inserts}),
+			redactorEvents = this.redactor.events
+		;
+
+		this.insertManager = manager;
+
+		var handler = $.proxy(manager.bindTriggerEvents, manager);
+		redactorEvents.on("ueditor:init", handler);
+		redactorEvents.on("ueditor:enter", handler);
+		redactorEvents.on("ueditor:insert:media", handler);
+		redactorEvents.on("ueditor:sync:after", function(){
+			me.insertManager.parseMarkup();
+		});
+
+		manager.on('insert:added', function(){
+			me.redactor.sync();
+			me.redactor.events.trigger("ueditor:insert:media");
+		});
 	},
 
 	listenToOuterClick: function(){
@@ -441,7 +489,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', 'upfrontMedia', 'upfrontImages', 'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -462,6 +510,19 @@ Ueditor.prototype = {
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
 		});
+	},
+	getValue: function(){
+		this.redactor.sync();
+		var html = this.redactor.$source.val();
+		if(this.insertManager)
+			html = this.insertManager.insertExport(html);
+		return html;
+	},
+	getInsertsData: function(){
+		if(!this.insertManager)
+			return {};
+
+		return this.insertManager.insertsData;
 	}
 };
 
@@ -1100,7 +1161,7 @@ RedactorPlugins.upfrontColor = {
 				}
 			});
 
-			redac.selectionSave();
+			//redac.selectionSave();
 		}
 	})
 }
@@ -1201,61 +1262,211 @@ RedactorPlugins.blockquote = {
 	}
 };
 
-RedactorPlugins.upfrontMedia = {
-	beforeInit: function () {
-		this.events.on("ueditor:init", this.reinsert_handlers_callback);
-		this.events.on("ueditor:enter", this.reinsert_handlers_callback);
-		this.events.on("ueditor:insert:media", this.reinsert_handlers_callback);
-		this.events.on("ueditor:stop", function () {
-			$(".upfront-image-attachment-bits").remove();
+var InsertManager = Backbone.View.extend({
+	initialize: function(opts){
+		this.inserts = {},
+		this.insertsData = opts.insertsData || {};
+		this.deletedInserts = {};
+		this.$el.children().addClass('nosortable');
+		this.insertLookUp();
+		this.bindTriggerEvents();
+		this.refreshTimeout = false;
+		this.sortableInserts();
+	},
+
+	bindTriggerEvents: function (redactor) {
+		var me = this,
+			parent = this.$el.parent(),
+			root_offset = this.$el.offset(),
+			updateTrigger = $.proxy(this.updateMediaTriggerPosition, this),
+			onMousemove = function(e){
+				if($(e.target).parent()[0] != me.$el[0] || !me.currentBlock)
+					return;
+
+				if(!this.ticking){
+					Upfront.Util.requestAnimationFrame(updateTrigger);
+					ticking = true;
+				}
+				var height = me.currentBlock.height(),
+					position = e.offsetY / height
+				;
+
+				me.triggerPosition = height > 60 ? position : Math.round(position);
+			},
+			onMouseenter = function(e){
+				if($(e.target).parent()[0] != me.$el[0])
+					return;
+				me.currentBlock = $(e.currentTarget);
+			},
+			onMouseleave = function(e){
+				if($(e.target).parent()[0] != me.$el[0] || !me.currentBlock)
+					return;
+
+				me.lastBlock = me.currentBlock;
+				if(me.currentBlock[0] == e.currentTarget){
+					me.currentBlock = false;
+					me.mediaTrigger.removeClass('upfront-post-media-trigger-visible');
+				}
+			},
+			bindMouseEvents = function(){
+				me.$el
+					.on('mousemove', 'p,div:not(.ueditor-insert),ul,ol', onMousemove)
+					.on('mouseenter', 'p,div:not(.ueditor-insert),ul,ol', onMouseenter)
+					.on('mouseleave', 'p,div:not(.ueditor-insert),ul,ol', onMouseleave)
+				;
+			}
+		;
+
+		this.ticking = false;
+
+		bindMouseEvents();
+
+		if(!parent.find('#upfront-post-media-trigger').length)
+			parent.append('<div class="upfront-image-attachment-bits" id="upfront-post-media-trigger">');
+
+		me.mediaTrigger = parent.find('#upfront-post-media-trigger')
+			.off('click')
+			.on('click', function (e){
+				e.preventDefault();
+
+				me.$el.off('mousemove', onMousemove);
+				me.$el.off('mouseenter', onMouseenter);
+				me.$el.off('mouseleave', onMouseleave);
+
+				me.mediaTrigger.addClass('upfront-post-media-trigger-visible');
+
+				var tooltip = $('<div class="uinsert-selector upfront-ui"></div>');
+
+				_.each(Inserts.inserts, function(insert, type){
+					tooltip.append('<a href="#" class="uinsert-selector-option uinsert-selector-' + type + '" data-insert="' + type + '">' + type + '</a>');
+				});
+
+				tooltip.on('click', 'a', function(e){
+					e.preventDefault();
+					var type = $(e.target).data('insert'),
+						insert = new Inserts.inserts[type](),
+						block = me.lastBlock,
+						where = me.mediaTrigger.data('insert')
+					;
+
+					insert.start()
+						.done(function(){
+							me.inserts[insert.cid] = insert;
+							insert.render();
+							block[where](insert.$el);
+							me.trigger('insert:added', insert);
+							me.insertsData[insert.data.id] = insert.data.toJSON();
+							me.listenTo(insert.data, 'change add remove', function(){
+								me.insertsData[insert.data.id] = insert.data.toJSON();
+							});
+						})
+					;
+				});
+
+				tooltip.css({top: me.mediaTrigger.css('top')});
+
+				parent.append(tooltip);
+
+				// We need to wait to finish the current event
+				setTimeout(function(){
+					$(document).one('click', function(e){
+						tooltip.fadeOut('fast', function(){
+							tooltip.remove();
+
+							//Reset mouse events, jsut in case...
+							me.$el.off('mousemove', onMousemove);
+							me.$el.off('mouseenter', onMouseenter);
+							me.$el.off('mouseleave', onMouseleave);
+							bindMouseEvents();
+						});
+					});
+				}, 10);
+			})
+		;
+
+
+	},
+
+	updateMediaTriggerPosition: function(){
+		if(this.currentBlock){
+			if(this.triggerPosition > 0.7)
+				this.mediaTrigger
+					.addClass('upfront-post-media-trigger-visible upfront-post-media-trigger')
+					.data('insert', 'after')
+					.css({top: this.currentBlock.position().top + this.currentBlock.height()});
+			else if(this.triggerPosition < 0.3)
+				this.mediaTrigger
+					.addClass('upfront-post-media-trigger-visible upfront-post-media-trigger')
+					.data('insert', 'before')
+					.css({top: this.currentBlock.position().top, display: 'block'});
+			else
+				this.mediaTrigger.removeClass('upfront-post-media-trigger-visible');
+		}
+	},
+
+	insertLookUp: function(){
+		var me = this,
+			insertsData = _.extend({}, me.insertsData, me.deletedInserts)
+		;
+
+		_.each(Inserts.inserts, function(Insert){
+			_.extend(me.inserts, Insert.prototype.importInserts(me.$el, insertsData));
+		});
+
+		_.each(me.inserts, function(insert){
+			me.insertsData[insert.data.id] = insert.data.toJSON();
+
+			// Listen to the inserts model to update the data on any change
+			me.stopListening(insert.data);
+			me.listenTo(insert.data, 'change add remove', function(){
+				if(me.insertsData[insert.data.id])
+					me.insertsData[insert.data.id] = insert.data.toJSON();
+			})
 		});
 	},
-	reinsert_handlers_callback: function (redactor) {
-		var	$root = redactor.$editor,
-			root_offset = $root.offset(),
-			$body = $("body"),
-			$blocks = $root.find("p:not(.upfront-inserted_image-wrapper),div,ul,ol")
-		;
-		$(document).off("click", ".upfront-image-attachment-bits");
-		$(".upfront-image-attachment-bits").remove();
-		$blocks.each(function (idx) {
-			var $block = $(this),
-				block_offset = $block.offset()
-			;
-			$body.append(
-				"<div data-idx='" + idx + "' class='upfront-image-attachment-bits' style='top:" + (block_offset.top-20) + "px;left:" + (root_offset.left-18) + "px;' />"
-			);
-			$block
-				.on("mouseenter", function () {
-					$('.upfront-image-attachment-bits').hide();
-					var $handle = $('.upfront-image-attachment-bits[data-idx="' + idx + '"]');
-					if ($handle.length) $handle.show();
-				})
-			;
+
+	insertExport: function(html){
+		var $html = $('<div>').html(html);
+		$html.find('.nosortable').removeClass('nosortable');
+		_.each(this.inserts, function(insert){
+			var elementId = '#' + insert.data.id;
+			$html.find(elementId).replaceWith(insert.getOutput());
 		});
-		$(document).on("click", ".upfront-image-attachment-bits", function (e) {
-			var $me = $(this),
-				idx = $me.attr("data-idx")
-			;
-			Upfront.Media.Manager
-				.open({ck_insert: true})
-				.done(function (popup, result) {
-					var html = Upfront.Media.Manager.results_html(result),
-						$el = $($blocks[idx])
-					;
-					$el.before("<div id='upfront-insert-media-insertion_point'>upfront:insert:media:insertion_point</div>");
-					$el = $("#upfront-insert-media-insertion_point");
-					var $point = redactor.$editor.find("#upfront-insert-media-insertion_point");
-					$point.replaceWith(html);
-					redactor.sync();
-					redactor.events.trigger("ueditor:insert:media", redactor, html);
-				})
-			;
-			return false;
-		});
+		return $html.html();
+	},
+
+	parseMarkup: function(){
+		var me = this;
+		if(this.refreshTimeout)
+			clearTimeout(this.refreshTimeout);
+
+		this.refreshTimeout = setTimeout(function(){
+			_.each(me.inserts, function(insert){
+				if(!insert.$el.parent().length){
+					var element = me.$el.find('#' + insert.data.id);
+					if(element.length)
+						insert.setElement(element);
+					else{
+						me.deletedInserts[insert.data.id] = insert;
+						delete me.inserts[insert.data.id];
+					}
+				}
+			});
+			me.$el.children(':not(.ueditor-insert)').addClass('nosortable');
+		}, 600);
+	},
+
+	sortableInserts: function(){
+		var me = this;
+		console.log('initializing sortable');
+		me.$el.sortable({cancel: '.nosortable', helper: 'clone'})
+			.on('sortstart', function(e, ui){
+				console.log('Sort start');
+				if(ui.item.css('float') != 'none')
+					ui.helper.css({marginTop: e.offsetY});
+			});
 	}
-	// No panel, we're better than that YAY!
-};
+});
 
 var ImagesHelper = {
 	Image: {

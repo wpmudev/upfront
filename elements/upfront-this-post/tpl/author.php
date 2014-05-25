@@ -1,0 +1,1 @@
+<a class="post_author" href="%author_url%">%author%</a>

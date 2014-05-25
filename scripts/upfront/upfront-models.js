@@ -74,13 +74,6 @@ var _alpha = "alpha",
 			if (!prop || !prop.set) return this.add_property(name, value, silent);
 			prop.set({"value": value}, {"silent": silent});
 		},
-		remove_property: function (name, silent) {
-			if (!name) return false;
-			if (!silent) silent = false;
-			var prop = this.get_property_by_name(name);
-			if (!prop || !prop.set) return;
-			this.get("properties").remove(prop, {"silent": silent});
-		},
 		init_property: function (name, value) {
 			if (!this.has_property(name)) this.add_property(name, value);
 		},
@@ -295,36 +288,37 @@ var _alpha = "alpha",
 				index = collection.indexOf(this),
 				total = collection.size()-1, // total minus shadow region
 				container = this.get('container') || this.get('name'),
-				ref_models = collection.filter(function(model){ return model.get('container') == container || model.get('name') == container; }),
-				ref_models2 = [],
-				ret = {
-					fixed: [],
-					top: false,
-					left: false,
-					right: false,
-					bottom: false
+				ref_models = [],
+				top = left = right = bottom = false;
+			if ( index > 0 ){
+				left = collection.at(index-1);
+				if ( left.get('sub') != 'top' ){
+					if ( index > 1 )
+						top = collection.at(index-2);
+				}
+				else {
+					top = left;
+					left = false;
 				};
-			if ( ref_models.length > 1 ){
-				_.each(ref_models, function(model, index){
-					var sub = model.get('sub');
-					if ( sub == 'fixed' )
-						ret.fixed.push(model);
-					else if ( sub && sub.match(/^(top|left|bottom|right)$/) )
-						ret[sub] = model;
-					else
-						ref_models2.push(model);
-				});
 			}
-			if ( ref_models2.length > 1 ){
-				var index = _.indexOf(ref_models2, this);
-				if ( index == 0 )
-					ret.right = ref_models2[1];
-				else if ( index == 1 ){
-					ret.left = ref_models2[0];
-					ret.right = ref_models2.length > 2 ? ref_models2[2] : false;
+			if ( index < total-1 ){
+				right = collection.at(index+1);
+				if ( right.get('sub') != 'bottom' ){
+					if ( index < total-2 )
+						bottom = collection.at(index+2);
+				}
+				else {
+					bottom = right;
+					right = false;
 				}
 			}
-			return ret;
+			return {
+				top: top && top.get('container') == container && top.get('sub') == 'top' ? top : false,
+				left: left && left.get('container') == container ? left : false,
+				right: right && right.get('container') == container ? right : false,
+				bottom: bottom && bottom.get('container') == container && bottom.get('sub') == 'bottom' ? bottom : false
+			};
+
 		},
 		get_sub_region: function (sub) {
 			return this.get_sub_regions()[sub];
@@ -352,7 +346,7 @@ var _alpha = "alpha",
 			});
 			return found;
 		},
-		
+
 		at_container: function (index) {
 			var i = 0;
 			return this.find(function(m){
@@ -365,7 +359,7 @@ var _alpha = "alpha",
 				return false;
 			});
 		},
-		
+
 		index_container: function (model) {
 			var collection = this.filter(function(m){
 					return m.is_main();
@@ -373,7 +367,7 @@ var _alpha = "alpha",
 				index = collection.indexOf(model);
 			return index;
 		},
-		
+
 		total_container: function () {
 			var collection = this.filter(function(m){
 					return m.is_main();
@@ -1320,9 +1314,14 @@ var _alpha = "alpha",
 		},
 		setValue: function(key, value){
 			var meta = this.get(key);
-			if(!meta)
-				return false;
-			meta.set('meta_value', value);
+			if(!meta){
+				meta = new Meta({meta_key: key, meta_value: value});
+				this.add(meta);
+			}
+			else{
+				meta.set('meta_value', value);
+				this.changedModels.push(meta.id);
+			}
 			return meta;
 		}
 	}),

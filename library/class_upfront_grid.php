@@ -45,7 +45,7 @@ class Upfront_Grid {
 	public function apply_breakpoints ($layout) {
 		$css = '';
 		$breakpoints = $this->get_breakpoints();
-		
+
 		foreach ($breakpoints as $name => $point) {
 			$point_css = '';
 			$line_height = $point->get_line_height();
@@ -145,7 +145,7 @@ abstract class Upfront_GridBreakpoint {
 	public function get_debug_rule ($scope) {
 		//return ".{$scope} * {color:{$this->_color}!important;}\n";
 	}
-	
+
 	protected function get_closest_breakpoints ($breakpoints) {
 		$prev = $next = false;
 		$prev_width = $next_width = 0;
@@ -196,9 +196,10 @@ abstract class Upfront_GridBreakpoint {
 			( $width_rule != "" ? "#page.{$scope} { {$width_rule} }" . "\n" : "" ) .
 			"#page.{$scope} .upfront-object {padding: {$column_padding}px;}" . "\n" .
 			"#page.{$scope} .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
+			"#page.{$scope} .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
 		'';
 	}
-	
+
 	public function get_frontend_rule () {
 		$line_height = $this->get_line_height();
 		$width = $this->get_width();
@@ -210,7 +211,7 @@ abstract class Upfront_GridBreakpoint {
 			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 		'';
 	}
-	
+
 	public function get_media () {
 		return $this->_media;
 	}
@@ -230,15 +231,15 @@ abstract class Upfront_GridBreakpoint {
 	public function get_type_padding () {
 		return $this->_type_padding;
 	}
-	
+
 	public function get_baseline () {
 		return $this->_baseline;
 	}
-	
+
 	public function get_line_height () {
 		return $this->_line_height;
 	}
-	
+
 	public function get_width () {
 		return $this->get_columns() * $this->get_column_width();
 	}
@@ -251,7 +252,7 @@ abstract class Upfront_GridBreakpoint {
 	public function get_prefix_regex ($pfx) {
 		$prefix = $this->get_prefix($pfx);
 		if (!$prefix) return false;
-		return '^' . preg_quote($prefix, '/') . '(\d+)$';	
+		return '^' . preg_quote($prefix, '/') . '(\d+)$';
 	}
 
 	public function get_column_size_for ($entity, $pfx=false) {
@@ -326,7 +327,7 @@ abstract class Upfront_GridBreakpoint {
 		foreach ($classes as $class) {
 			$style = $this->_map_class_to_style($class, $max_columns);
 			if (!$style) continue;
-			
+
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 		}
@@ -339,9 +340,9 @@ abstract class Upfront_GridBreakpoint {
 
 		$all_styles = '';
 		foreach ($raw_styles as $selector => $rules) {
-			$all_styles .= sprintf('%s #%s {%s}', 
-				'.' . ltrim($scope, '. '), 
-				$selector, 
+			$all_styles .= sprintf('%s #%s {%s}',
+				'.' . ltrim($scope, '. '),
+				$selector,
 				join(' ', $rules)
 			) . "\n";
 		}
@@ -351,16 +352,16 @@ abstract class Upfront_GridBreakpoint {
 	public function apply_col ($col, $entity, $scope=false, $selector='', $max_columns=false) {
 		$rule = self::PREFIX_WIDTH;
 		$size = $this->_columns_to_size($col, $max_columns) . '%';
-		return sprintf('%s %s {%s}', 
-			'.' . ltrim($scope, '. '), 
+		return sprintf('%s %s {%s}',
+			'.' . ltrim($scope, '. '),
 			$selector,
 			"{$rule}: {$size};"
 		) . "\n";
 	}
 
 	public function apply_row ($row, $entity, $scope=false, $selector='') {
-		return sprintf('%s %s {%s}', 
-			'.' . ltrim($scope, '. '), 
+		return sprintf('%s %s {%s}',
+			'.' . ltrim($scope, '. '),
 			$selector,
 			$this->_row_to_style($row)
 		) . "\n";
@@ -382,10 +383,10 @@ abstract class Upfront_GridBreakpoint {
 		}
 		if ( $class == 'clr' )
 			$style .= self::PREFIX_CLEAR . ": both";
-		
+
 		return $style;
 	}
-	
+
 	protected function _row_to_style ($row) {
 		$rule = self::PREFIX_HEIGHT;
 		$size = ($row * $this->_baseline) . 'px';
