@@ -1,11 +1,12 @@
 ;(function ($, undefined) {
+
 var deps = [
 	"text!upfront/templates/content.html",
 	'upfront/post-editor/upfront-post-content',
 	'upfront/post-editor/upfront-post-layout'
 ];
 
-define(deps, function(postTpl, ContentTools) {
+define("content", deps, function(postTpl, ContentTools) {
 	var PostEditor = Backbone.View.extend({
 		tpl: Upfront.Util.template(postTpl),
 		events: {
@@ -328,4 +329,5 @@ define(deps, function(postTpl, ContentTools) {
 	// Publish the post editor to the Upfront.Content object
 	Upfront.Content.PostEditor = PostEditor;
 });
+
 })(jQuery);

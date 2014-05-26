@@ -3,9 +3,9 @@
 var deps = [
 	'text!scripts/redactor/ueditor-templates.html',
 	'scripts/redactor/ueditor-inserts'
-]
+];
 
-define(deps, function(tpl, Inserts){
+define("ueditor", deps, function(tpl, Inserts){
 var hackedRedactor = false;
 
 var UeditorEvents = _.extend({}, Backbone.Events);
