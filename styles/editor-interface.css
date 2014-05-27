@@ -8256,7 +8256,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 /* Color Picker Labels */
 .sp-input-container:before,
 .sp-palette-container:before,
-.sp-palette-container:before {
+.sp-palette-row.sp-palette-row-selection:before {
 	font-family: Verdana, sans-serif!important;
 	font-size:11px;
 	color:#97b8da;
