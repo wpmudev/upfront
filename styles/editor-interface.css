@@ -685,10 +685,10 @@
 	-o-transition: -o-transform .1s ease-out;
 	transition: ransform .1s ease-out;
 }
-.draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
+/*.draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
 	padding-top: 12px;
 
-}
+}*/
 /*.draggable-element:nth-child(4n+1):hover {
 	margin-left: 0;
 	margin-right: -8px;
