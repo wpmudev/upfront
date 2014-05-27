@@ -62,36 +62,34 @@ define(function() {
 	},
 
 	format_date: function(date, show_time, show_seconds){
-	  var output = date.getFullYear() + '/',
-		day = date.getDate(),
-		month = (date.getMonth()+1)
-	  ;
-	  if(day < 10)
-		day = '0' + day;
-	  if(month < 10)
-		month = '0' + month;
-
-	  output += month + '/' + day;
-
-	  if(show_time){
-		var hours = date.getHours(),
-		  minutes = date.getMinutes()
+		var output = date.getFullYear() + '/',
+			day = date.getDate(),
+			month = (date.getMonth()+1)
 		;
-		output += ' ' +
-		  (hours < 10 ? '0' : '') +
-		  hours + ':' +
-		  (minutes < 10 ? '0' : '') +
-		  minutes
-		;
-		if(show_seconds){
-		  var seconds = date.getSeconds();
-		  output += ':' +
-			(seconds < 10 ? '0' : '') +
-			seconds
-		  ;
+		if(day < 10) day = '0' + day;
+		if(month < 10) month = '0' + month;
+
+		output += month + '/' + day;
+
+		if(show_time){
+			var hours = date.getHours(),
+				minutes = date.getMinutes()
+			;
+			output += ' ' +
+				(hours < 10 ? '0' : '') +
+				hours + ':' +
+				(minutes < 10 ? '0' : '') +
+				minutes
+			;
+			if(show_seconds){
+				var seconds = date.getSeconds();
+					output += ':' +
+						(seconds < 10 ? '0' : '') +
+						seconds
+				;
+			}
 		}
-	  }
-	  return output;
+		return output;
 	},
 
 	get_avatar: function(obj, size){
