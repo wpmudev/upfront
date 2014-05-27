@@ -890,8 +890,10 @@ var EditionBar = Backbone.View.extend({
 			tpl = _.template($(Upfront.data.tpls.popup).find('#upfront-slug-tpl').html())
 		;
 
+		var base = me.post.get("guid");
+		base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
 		$popup.content.html(tpl({
-			rootURL: window.location.origin + '/',
+			rootURL: base,
 			slug: me.post.get('post_name')
 		}));
 
