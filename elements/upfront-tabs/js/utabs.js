@@ -116,7 +116,13 @@
         $content.attr('contenteditable', true)
           .addClass('upfront-object');
 
-        this.editor = CKEDITOR.inline($content[0]);
+        //this.editor = CKEDITOR.inline($content[0]);
+        $content.ueditor({
+          linebreaks: false,
+          autostart: false,
+          upfrontMedia: false,
+          upfrontImages: false
+        });
         $content.focus();
         this.$el.parent().parent().parent().draggable('disable');
       },
