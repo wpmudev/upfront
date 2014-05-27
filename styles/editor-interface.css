@@ -682,14 +682,14 @@
 .draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
 	padding-top: 14px;
 }
-.draggable-element:nth-child(4n+1):hover {
+/*.draggable-element:nth-child(4n+1):hover {
 	margin-left: 0;
 	margin-right: -8px;
 }
 .draggable-element:nth-child(4n):hover {
 	margin-left: -8px;
 	margin-right: 0;
-}
+}*/
 .draggable-element.element-dragging-no-drop {
 	cursor: no-drop;
 	cursor: not-allowed;
