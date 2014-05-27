@@ -977,10 +977,13 @@ RedactorPlugins.upfrontLink = {
 			;
 			regions.each(function (r) {
 				r.get("modules").each(function (module) {
-					module.get("objects").each(function (object) {
-						var anchor = object.get_property_value_by_name("anchor");
-						if (anchor && anchor.length) anchors.push(anchor);
-					});
+					var objects = module.get("objects");
+					if ( objects ) {
+						objects.each(function (object) {
+							var anchor = object.get_property_value_by_name("anchor");
+							if (anchor && anchor.length) anchors.push(anchor);
+						});
+					}
 				});
 			});
 			return anchors;

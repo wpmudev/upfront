@@ -1,10 +1,10 @@
-<div> 
-<!-- 
-	Wrap everything in a div to convert this file's content in a jquery element 
+<div>
+<!--
+	Wrap everything in a div to convert this file's content in a jquery element
 	so it is possible to use $.find.
 -->
 
-<script type="text/template" id="link-tpl">	
+<script type="text/template" id="link-tpl">
 	<input type="hidden" id="ueditor-link" value="{{url}}">
 	<div class="upfront-field-wrap">
 		<input type="radio" name="ueditor-link" value="external" class="upfront-field-radio"  {{link == 'external' ? 'checked="checked"' : ''}} id="ueditor-link-external">
@@ -28,7 +28,7 @@
 			{[ }); ]}
 			</select>
 		</div>
-	</div>	
+	</div>
 	{[ } ]}
 
 	{[if(url) { ]}
@@ -38,5 +38,38 @@
 	{[ } ]}
 </script>
 
+<script type="text/template" id="image-insert-tpl">
+{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{src}}" />{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}
+</script>
 
+<script type="text/template" id="image-link-tpl">
+	<div class="upfront-field-wrap">
+		<input type="radio" name="uinsert-image-link" value="do_nothing" class="upfront-field-radio" id="uinsert-image-link-1" {{linkType == 'do_nothing' ? checked : ''}}>
+		<label for="uinsert-image-link-1">No link</label>
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="uinsert-image-link" value="external" class="upfront-field-radio" id="uinsert-image-link-2" {{linkType == 'external' ? checked : ''}}>
+		<label for="uinsert-image-link-2">External link</label>
+		<input type="text" value="{{linkUrl}}" id="uinsert-image-link-url" placeholder="Type link URL" style="{{linkType != 'external' ? 'display:none' : ''}}" class="upfront-field-text">
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="uinsert-image-link" value="post" class="upfront-field-radio" id="uinsert-image-link-3" {{linkType == 'post' ? checked : ''}}>
+		<label for="uinsert-image-link-3">Link to a post or page</label>
+		<a title="Change link" class="uinsert-change-link-post" style="{{linkType != 'post' ? 'display:none' : ''}}">{{linkUrl}}</a>
+	</div>
+	<div class="upfront-field-wrap">
+		<input type="radio" name="uinsert-image-link" value="show_larger_image" class="upfront-field-radio" id="uinsert-image-link-4" {{linkType == 'show_larger_image' ? checked : ''}}>
+		<label for="uinsert-image-link-4">Show larger image</label>
+	</div>
+</script>
+
+<script type="text/template" id="embed-insert-tpl">
+    <div class="inserted_code_rendered">{{code}}</div>
+</script>
+<script type="text/template" id="embed-insert-form-tpl">
+    <div class="upfront-field-embed_code-wrap">
+        <h3>Type or paste the embed code</h3>
+        <textarea name="upfront-field-embed_code" class="upfront-field-embed_code" id="upfront-field-embed_code" cols="30" rows="5">{{code}}</textarea>
+    </div>
+</script>
 </div>

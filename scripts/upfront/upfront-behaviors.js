@@ -1,38 +1,215 @@
 (function ($) {
 
 var LayoutEditor = {
-	create_mergeable: function () {
-		$(".ui-selectable").each(function () {
-			$(this).selectable("destroy");
-		});
+	create_mergeable: function (view, model) {
 		var app = this,
-			models = [],
-			region = app.layout.get("regions").active_region,
-			collection = (region ? region.get("modules") : false)
+			regions = app.layout.get('regions');
 		;
-		if (collection) $(".upfront-region").selectable({
+		view.$el.selectable({
 			filter: ".upfront-module",
-			stop: function () {
-				if ($(".ui-selected").length < 2) return false;
-				$(".ui-selected").each(function () {
-					var $node = $(this),
-						element_id = $node.attr("id"),
-						model = collection.get_by_element_id(element_id)
-					;
-					if (model && model.get && !model.get("name")) models.push(model);
-					else $node.removeClass("ui-selected");
+			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed",
+			selected: function (e, ui) {
+				var $el = $(ui.selected);
+				$el.prepend('<div class="upfront-selected-border" />');
+			},
+			unselected: function (e, ui) {
+				var $el = $(ui.unselected);
+				$el.find('.upfront-selected-border').remove();
+				$('.upfront-module-group-group').remove();
+			},
+			stop: function (e, ui) {
+				if ( !$(".ui-selected").length )
+					return false;
+				var me = this,
+					$region = $(".ui-selected:first").closest('.upfront-region'),
+					region = regions.get_by_name($region.data('name')),
+					region_modules = (region ? region.get("modules") : false),
+					region_wrappers = (region ? region.get("wrappers") : false),
+					unselect = function(){
+						$(this).find('.upfront-selected-border').remove();
+						$(this).removeClass('ui-selected');
+					},
+					$dont_select = $(".ui-selected").filter(function(){
+						// don't select any module in different region
+						return ( $(this).closest('.upfront-region').get(0) != $region.get(0) );
+					}).each(unselect),
+					$dont_select2 = $(".ui-selected").filter(function(){
+						// don't select any module inside group
+						return ( $(this).closest('.upfront-module-group').length > 0 );
+					}).each(unselect),
+					/*$dont_select3 = $(".ui-selected").filter(function(){
+						// don't select any module that don't have direct sibling selected
+						var $view = $(this).closest('.upfront-module-view'),
+							next_selected = ( $view.next('.upfront-module-view').find('.ui-selected').length > 0 ),
+							prev_selected = ( $view.prev('.upfront-module-view').find('.ui-selected').length > 0 ),
+							$wrap = $(this).closest('.upfront-wrapper'),
+							wrap_next_selected = ( $wrap.next('.upfront-wrapper').find('.ui-selected').length > 0 ),
+							wrap_prev_selected = ( $wrap.prev('.upfront-wrapper').find('.ui-selected').length > 0 )
+						;
+						return ( !next_selected && !prev_selected && !wrap_next_selected && !wrap_prev_selected );
+					}).each(unselect),*/
+					$selected = $(".ui-selected");
+				if ($selected.length < 2){
+					$selected.each(unselect);
+					return false;
+				};
+				$('.upfront-module-group-group').remove();
+				var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">Group</div>'),
+					sel_top = sel_left = sel_right = sel_bottom = false,
+					wrap_top = wrap_left = wrap_right = wrap_bottom = false,
+					group_top = group_left = 0;
+				$('body').append($group);
+				$selected.each(function(){
+					var off = $(this).offset(),
+						width = $(this).outerWidth(),
+						height = $(this).outerHeight(),
+						$wrap = $(this).closest('.upfront-wrapper'),
+						wrap_off = $wrap.offset(),
+						wrap_width = $wrap.outerWidth(),
+						wrap_height = $wrap.outerHeight();
+					off.right = off.left + width;
+					off.bottom = off.top + height;
+					sel_top = ( sel_top === false || off.top < sel_top ) ? off.top : sel_top;
+					sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
+					sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
+					sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
+					wrap_off.right = wrap_off.left + wrap_width;
+					wrap_off.bottom = wrap_off.top + wrap_height;
+					wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
+					wrap_bottom = ( wrap_bottom === false || wrap_off.bottom > wrap_bottom ) ? wrap_off.bottom : wrap_bottom;
+					wrap_left = ( wrap_left === false || wrap_off.left < wrap_left ) ? wrap_off.left : wrap_left;
+					wrap_right = ( wrap_right === false || wrap_off.right > wrap_right ) ? wrap_off.right : wrap_right;
 				});
-				$(".upfront-active_entity").removeClass("upfront-active_entity");
-				$(".ui-selected").removeClass("ui-selected").addClass("upfront-active_entity");
-				if (!models.length) return false;
-
-				// @TODO: refactor this!
-				app.command_view.commands.push(new Upfront.Views.Editor.Command_Merge({"model": _.extend({}, app.layout, {"merge": models})}));
-				app.command_view.render();
+				group_top = sel_top + Math.round( (sel_bottom-sel_top)/2 ) - Math.round( $group.outerHeight()/2 );
+				group_left = sel_left + Math.round( (sel_right-sel_left)/2 ) - Math.round( $group.outerWidth()/2 );
+				$group.css({
+					position: 'absolute',
+					zIndex: 999999,
+					top: group_top,
+					left: group_left
+				});
+				$group.on('click', function () {
+					var ed = Upfront.Behaviors.GridEditor,
+						group_id = Upfront.Util.get_unique_id("module-group"),
+						group = new Upfront.Models.ModuleGroup(),
+						group_view = false,
+						group_modules = group.get('modules'),
+						group_wrappers = group.get('wrappers'),
+						group_wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+						group_wrapper = new Upfront.Models.Wrapper(),
+						modules = [],
+						max_col = Math.round((wrap_right-wrap_left)/ed.grid.column_width),
+						last_index = 0,
+						module_index = margin_top = margin_left = col = false,
+						line = line_col = wrapper_index = wrapper_col = 0,
+						current_wrapper_id, new_wrapper_id, new_wrapper;
+					$selected.each(function (i) {
+						var $node = $(this),
+							element_id = $node.attr("id"),
+							module = region_modules.get_by_element_id(element_id),
+							module_class = module.get_property_value_by_name('class'),
+							module_col = ed.get_class_num(module_class, ed.grid.class),
+							module_top = ed.get_class_num(module_class, ed.grid.top_margin_class),
+							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
+							index = region_modules.indexOf(module),
+							is_next = ( index-last_index == 1 ),
+							wrapper_id = module.get_wrapper_id(),
+							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
+							wrapper_class = wrapper.get_property_value_by_name('class'),
+							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
+							position;
+						if ( module_index === false )
+							module_index = index;
+						if ( current_wrapper_id != wrapper_id )
+							wrapper_index++;
+						if ( i == 0 || !is_next || ( current_wrapper_id != wrapper_id && wrapper_class.match(/clr/) ) ) { // this module appear in a new line
+							line++;
+							line_col = wrapper_col;
+						}
+						else if ( current_wrapper_id != wrapper_id ) {
+							if ( line_col + wrapper_col > max_col ){
+								is_next = false;
+								line_col = ( wrapper_col < max_col && wrapper_col > line_col ? wrapper_col : line_col );
+							}
+							else {
+								line_col += wrapper_col;
+							}
+						}
+						modules.push({
+							model: module,
+							col: module_col,
+							is_next: is_next,
+							margin_top: module_top,
+							margin_left: module_left,
+							wrapper_class: wrapper_class,
+							wrapper_col: wrapper_col
+						});
+						if ( wrapper_index == 1 || wrapper_class.match(/clr/) )
+							margin_left = ( margin_left === false || module_left < margin_left ) ? module_left : margin_left;
+						if ( line == 1 && current_wrapper_id != wrapper_id )
+							margin_top = ( margin_top === false || module_top < margin_top ) ? module_top : margin_top;
+						col = ( col === false || line_col > col ) ? line_col : col;
+						current_wrapper_id = wrapper_id;
+						last_index = index;
+					});
+					margin_left = margin_left === false ? 0 : margin_left;
+					margin_top = margin_top === false ? 0 : margin_top;
+					col = col - margin_left;
+					line = 0;
+					wrapper_index = 0;
+					current_wrapper_id = false;
+					_.each(modules, function(module, index){
+						var wrapper_id = module.model.get_wrapper_id(),
+							new_classes = [];
+						if ( current_wrapper_id != wrapper_id ){
+							new_wrapper = new Upfront.Models.Wrapper({});
+							new_wrapper_id = Upfront.Util.get_unique_id("wrapper");
+							new_wrapper.set_property('wrapper_id', new_wrapper_id);
+							new_wrapper.set_property('class', module.wrapper_class);
+							group_wrappers.add(new_wrapper);
+							wrapper_col = 0;
+							wrapper_index++;
+						}
+						if ( index == 0 || !module.is_next || ( current_wrapper_id != wrapper_id && module.wrapper_class.match(/clr/) ) )
+							line++;
+						if ( wrapper_index == 1 || !module.is_next || module.wrapper_class.match(/clr/) ){
+							new_classes.push(ed.grid.left_margin_class + (module.margin_left-margin_left));
+							wrapper_col = module.wrapper_col - margin_left;
+						}
+						else {
+							wrapper_col = module.wrapper_col;
+						}
+						if ( line == 1 && current_wrapper_id != wrapper_id )
+							new_classes.push(ed.grid.top_margin_class + (module.margin_top-margin_top)); 
+						new_wrapper.replace_class(ed.grid.class + wrapper_col);
+						current_wrapper_id = wrapper_id;
+						module.model.set_property('wrapper_id', new_wrapper_id);
+						module.model.replace_class(new_classes.join(" "));
+						region_modules.remove(module.model, {silent: true});
+						group_modules.add(module.model);
+					});
+					group_wrapper.set_property('wrapper_id', group_wrapper_id);
+					group_wrapper.set_property('class', modules[0].wrapper_class);
+					region_wrappers.add(group_wrapper);
+					group.set_property('element_id', group_id);
+					group.set_property('wrapper_id', group_wrapper_id);
+					group.replace_class( ed.grid.class + col + " " + ed.grid.top_margin_class + margin_top + " " + ed.grid.left_margin_class + margin_left );
+					group.add_to(region_modules, module_index);
+					// now normalize the wrappers
+					group_view = Upfront.data.module_views[group.cid];
+					ed.start(group_view, group);
+					ed.update_wrappers(region);
+					$(this).remove();
+				});
 			}
 		});
 	},
-
+	
+	refresh_mergeable: function () {
+		$(".ui-selectable").each(function () {
+			$(this).selectable("refresh");
+		});
+	},
 
 	destroy_mergeable: function () {
 		$(".ui-selectable").each(function () {
@@ -91,7 +268,7 @@ var LayoutEditor = {
 			return false;
 		});
 	},
-	
+
 	create_layout_dialog: function() {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -116,13 +293,13 @@ var LayoutEditor = {
 			fields.layout.options.values = _.map(ed.available_layouts, function(layout, layout_id){
 				return {label: layout.label, value: layout_id, disabled: layout.saved};
 			});
-		
+
 		if ( !ed.layout_modal ){
 			ed.layout_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
 			ed.layout_modal.render();
 			$('body').append(ed.layout_modal.el);
 		}
-		
+
 		ed.layout_modal.open(function($content, $modal){
 			var $button = $('<span class="uf-button">Create</span>'),
 				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
@@ -131,7 +308,7 @@ var LayoutEditor = {
 				field.delegateEvents();
 			});
 			$content.html(
-				'<h1 class="upfront-modal-title">Create New Layout</h1>' + 
+				'<h1 class="upfront-modal-title">Create New Layout</h1>' +
 				'<p>In order to export a theme, you have to create at least 3 different layouts, Homepage, Single Post/Page and Archive layouts</p>'
 			);
 			$select_wrap.append(fields.layout.el);
@@ -152,7 +329,7 @@ var LayoutEditor = {
 			});
 		});
 	},
-	
+
 	browse_layout_dialog: function () {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -163,7 +340,7 @@ var LayoutEditor = {
 					default_value: app.layout.get('current_layout')
 				})
 			};
-		
+
 		if ( !ed.browse_modal ){
 			ed.browse_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
 			ed.browse_modal.render();
@@ -181,7 +358,7 @@ var LayoutEditor = {
 			fields.layout.render();
 			fields.layout.delegateEvents();
 		});
-		
+
 		ed.browse_modal.open(function($content, $modal){
 			var $button = $('<span class="uf-button">Edit</span>'),
 				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
@@ -208,9 +385,9 @@ var LayoutEditor = {
 			app.layout.set('current_layout', layout);
 			app.load_layout(data.layout, {layout_slug: layout_slug});
 		});
-		
+
 	},
-	
+
 	export_dialog: function () {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -347,9 +524,9 @@ var LayoutEditor = {
 				ed.message_dialog("You’ve made a great start!", "But you need to create more layouts in order to export and use the theme. Please click ‘New Layout’ in the sidebar to learn about necessary layouts to export the theme.");
 			});
 		});
-		
+
 	},
-	
+
 	first_save_dialog: function (success) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -358,7 +535,7 @@ var LayoutEditor = {
 			ed.message_dialog("Excellent start!", "Your HOMEPAGE — Static layout has been successfully created. You can create more Layouts for your theme by clicking ‘New Layout’ in  the left sidebar. Remember, the best themes in life <del>are free</del> have lots of layouts!");
 		}
 	},
-	
+
 	message_dialog: function (title, msg) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor;
@@ -375,7 +552,7 @@ var LayoutEditor = {
 			$content.append(msg);
 		}, ed);
 	},
-	
+
 	_get_saved_layout: function (){
 		var me = this,
 			deferred = new $.Deferred();
@@ -389,7 +566,7 @@ var LayoutEditor = {
 		});
 		return deferred.promise();
 	},
-	
+
 	_check_required_layout: function () {
 		var deferred = new $.Deferred(),
 			required_layout = ['archive', 'archive-home', 'single'];
@@ -407,7 +584,7 @@ var LayoutEditor = {
 		});
 		return deferred.promise();
 	},
-	
+
 	_get_themes: function () {
 		var me = this,
 			deferred = new $.Deferred();
@@ -421,7 +598,7 @@ var LayoutEditor = {
 		});
 		return deferred.promise();
 	},
-	
+
 	_create_theme: function (data) {
 		var deferred = new $.Deferred();
 		Upfront.Util.post({
@@ -437,7 +614,7 @@ var LayoutEditor = {
 		});
 		return deferred.promise();
 	},
-	
+
 	_export_layout: function (data) {
 		var deferred = new $.Deferred();
 		Upfront.Util.post({
@@ -453,7 +630,7 @@ var LayoutEditor = {
 		});
 		return deferred.promise();
 	},
-	
+
 	_build_query: function (data) {
 		return _.map(data, function(value, key){ return key + '=' + value; }).join('&');
 	}
@@ -490,7 +667,7 @@ var GridEditor = {
 
 	drop: null,
 
-	el_selector: '.upfront-module',
+	el_selector: '.upfront-module, .upfront-module-group',
 	_id: 0,
 
 	show_debug_element: false,
@@ -761,7 +938,7 @@ var GridEditor = {
 
 	get_wrap_els: function( use_wrap ){
 		var ed = Upfront.Behaviors.GridEditor,
-			$els = use_wrap.$el.find(ed.el_selector);
+			$els = use_wrap.$el.find('> .upfront-module-view > .upfront-module, > .upfront-module-group');
 		return _.map($els, function(el){
 			var el = ed.get_el($(el));
 			return _.find(ed.els, function(each){ return each._id == el._id; });
@@ -862,7 +1039,7 @@ var GridEditor = {
 			}
 			else {
 				modules.find(function(module){
-					var object_model = module.get('objects').get_by_element_id($el.attr('id'));
+					var object_model = ( module.get('objects') ) ? module.get('objects').get_by_element_id($el.attr('id')) : false;
 					if ( object_model ){
 						model = object_model;
 						return true;
@@ -1009,7 +1186,7 @@ var GridEditor = {
 			regions_need_update = [];
 		// Iterate through elements and check if it must be contained in separate wrapper
 		_.each(wraps, function(wrap){
-			var $wrap_els= wrap.$el.find('.upfront-module');
+			var $wrap_els= wrap.$el.find('> .upfront-module-view > .upfront-module, > .upfront-module-group');
 			if ( $wrap_els.size() > 1 ){
 				$wrap_els.each(function(){
 					var wrap_el = ed.get_el($(this)),
@@ -1107,7 +1284,7 @@ var GridEditor = {
 			containment_pos = $containment.offset();
 		// Set variables
 		ed.col_size = ed.grid.column_width;
-		ed.el_selector = is_object ? '.upfront-object' : '.upfront-module';
+		ed.el_selector = is_object ? '.upfront-object' : '.upfront-module, .upfront-module-group';
 		ed.main.top = main_pos.top;
 		ed.main.bottom = main_pos.top + ed.main.$el.outerHeight();
 		ed.main.left = main_pos.left;
@@ -1151,7 +1328,7 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			$layout = ed.main.$el.find('.upfront-layout'),
 			is_object = ( ed.el_selector == '.upfront-object' ),
-			$els = is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module'),
+			$els = is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module, .upfront-module-group'),
 			$wraps = $layout.find('.upfront-wrapper'),
 			$regions = $layout.find('.upfront-region').not('.upfront-region-locked');
 		ed.els = _.map($els, ed.get_position ); // Generate elements position data
@@ -1183,24 +1360,25 @@ var GridEditor = {
 				current_full_top = region.grid.top,
 				can_drop = function (top, bottom) {
 					return ( !expand_lock || ( expand_lock && bottom-top+1 >= me.row ) );
-				};
+				},
+				module_selector = '> .upfront-module-view > .upfront-module, > .upfront-module-group';
 			$wraps.each(function(index){
 				var $wrap = $(this),
 					wrap = ed.get_wrap($wrap),
 					wrap_clr = ( wrap.grid.left == region.grid.left ),
 					is_wrap_me = ( me_wrap && wrap._id == me_wrap._id ),
-					wrap_only = ( $wrap.find('.upfront-module').size() == 1 ),
+					wrap_only = ( $wrap.find(module_selector).size() == 1 ),
 					wrap_me_only = ( is_wrap_me && wrap_only ),
 					$prev_wrap = $wraps[index-1] ? $wraps.eq(index-1) : false,
 					prev_wrap = $prev_wrap ? ed.get_wrap($prev_wrap) : false,
 					prev_wrap_clr = ( prev_wrap && prev_wrap.grid.left == region.grid.left ),
 					is_prev_me = ( prev_wrap && me_wrap && prev_wrap._id == me_wrap._id ),
-					prev_me_only = ( is_prev_me && $prev_wrap.find('.upfront-module').size() == 1 ),
+					prev_me_only = ( is_prev_me && $prev_wrap.find(module_selector).size() == 1 ),
 					$next_wrap = $wraps[index+1] ? $wraps.eq(index+1) : false,
 					next_wrap = $next_wrap ? ed.get_wrap($next_wrap) : false,
 					next_wrap_clr = ( next_wrap && next_wrap.grid.left == region.grid.left ),
 					is_next_me = ( next_wrap && me_wrap && next_wrap._id == me_wrap._id ),
-					next_me_only = ( is_next_me && $next_wrap.find('.upfront-module').size() == 1 ),
+					next_me_only = ( is_next_me && $next_wrap.find(module_selector).size() == 1 ),
 					$next_clr = $wrap.nextAll('.upfront-wrapper.clr:first'),
 					next_clr = $next_clr.size() > 0 ? ed.get_wrap($next_clr) : false,
 					wrap_el_left = ed.get_wrap_el_min(wrap),
@@ -1213,12 +1391,12 @@ var GridEditor = {
 					max_row_wrap = _.max(row_wraps, function(row_wrap){ return row_wrap.grid.bottom; });
 				if (
 					( wrap.col >= min_col ) && (
-					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find('.upfront-module').size() > 1 || !is_next_me ) ) ||
-					( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find('.upfront-module').size() > 1 || !is_prev_me ) ) ||
+					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
+					( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
 					( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) )
 				){
 					var current_el_top = wrap.grid.top;
-					$els = $wrap.find('.upfront-module');
+					$els = $wrap.find(module_selector);
 					$els.each(function(i){
 						if ( $(this).get(0) == me.$el.get(0) )
 							return;
@@ -1456,7 +1634,7 @@ var GridEditor = {
 			if ( ! wrap_model )
 				return;
 			var child_els = _.map($wrap.children(), function(each){
-					var $el = $(each).find('>.upfront-editable_entity:first');
+					var $el = $(each).hasClass('upfront-module-group') ? $(each) : $(each).find('>.upfront-editable_entity:first');
 					return {
 						$el: $el,
 						col: ed.get_class_num($el, ed.grid.class),
@@ -1701,7 +1879,7 @@ var GridEditor = {
 				}
 				else{
 					model.replace_class(ed.grid.class+rsz_col);
-					ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
+					ed.update_model_margin_classes($region.find('.upfront-module, .upfront-module-group').not($me));
 				}
 
 				view.trigger('entity:resize', {row: rsz_row, col: rsz_col}, view, view.model);
@@ -1818,7 +1996,7 @@ var GridEditor = {
 		}
 		else{
 			model.replace_class(ed.grid.class+col);
-			ed.update_model_margin_classes($layout.find('.upfront-module').not($me));
+			ed.update_model_margin_classes($layout.find('.upfront-module, .upfront-module-group').not($me));
 		}
 
 		view.trigger('entity:resize', {row: row, col: col}, view, view.model);
@@ -1835,16 +2013,20 @@ var GridEditor = {
 	create_draggable: function(view, model){
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
-			$me = view.$el.find('.upfront-editable_entity:first'),
+			is_group = view.$el.hasClass('upfront-module-group'),
+			$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first'),
+			is_parent_group = ( typeof view.group_view != 'undefined' ),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
 			drop_top, drop_left, drop_col,
 			adjust_bottom = false
 		;
+		console.log(is_parent_group)
 		if ( model.get_property_value_by_name('disable_drag') === 1 )
 			return false;
 		if ( $me.data('ui-draggable') ){
-			$me.draggable('option', 'disabled', false);
+			if ( is_group || !is_parent_group )
+				$me.draggable('option', 'disabled', false);
 			return false;
 		}
 
@@ -1899,9 +2081,12 @@ var GridEditor = {
 			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
+			disabled: is_parent_group,
+			cancel: '.upfront-entity_meta',
 			delay: 15,
 			appendTo: $main,
 			start: function(e, ui){
+				is_parent_group = ( typeof view.group_view != 'undefined' );
 				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');
 
@@ -1962,8 +2147,7 @@ var GridEditor = {
 					$layout.append('<div id="upfront-compare-area"></div>');
 					$helper.find(".upfront-debug-info").size() || $helper.append('<div class="upfront-debug-info"></div>');
 				}/* */
-
-
+				
 				// Default drop to me
 				select_drop( _.find(ed.drops, function(each){ return each.is_me; }) );
 				$region.addClass('upfront-region-drag-active');
@@ -2380,7 +2564,7 @@ var GridEditor = {
 					$('#upfront-compare-area').remove();
 
 					ed.update_class($me, ed.grid.class, drop_col);
-					( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).each(function(){
+					( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).each(function(){
 						ed.update_margin_classes($(this));
 					});
 
@@ -2394,7 +2578,7 @@ var GridEditor = {
 					});
 
 					// Update model value
-					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module') ).not($me) );
+					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).not($me) );
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 
 					if ( wrapper_id )
@@ -2412,7 +2596,7 @@ var GridEditor = {
 							model.unset('shadow', {silent: true});
 						}
 						$me.removeAttr('data-shadow');
-						$('.upfront-region-drag-active').find('.upfront-module').each(function(){
+						$('.upfront-region-drag-active').find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled').each(function(){
 							var element_id = $(this).attr('id'),
 								each_model = modules.get_by_element_id(element_id);
 							if ( !each_model && element_id == $me.attr('id') )
@@ -2424,7 +2608,7 @@ var GridEditor = {
 					}
 
 					// Add drop animation
-					$me = view.$el.find('.upfront-editable_entity:first');
+					$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first');
 					$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
 						$(this).removeClass('upfront-dropped');
 						Upfront.Events.trigger("entity:drag_animate_stop", view, view.model);
@@ -3174,7 +3358,7 @@ var GridEditor = {
 		// Toggle grid on
 		if ( !Upfront.Application.get_gridstate() )
 			togglegrid.on_click();
-			
+
 		ed.structure_modal.open(function($content, $modal){
 			$modal.addClass('upfront-structure-modal');
 			_.each(fields, function(field){
@@ -3206,9 +3390,9 @@ var GridEditor = {
 				togglegrid.on_click();
 		});
 	},
-	
+
 	/**
-	 * Update grid value and appearance 
+	 * Update grid value and appearance
 	 */
 	update_grid: function (grid_data) {
 		var app = Upfront.Application,
@@ -3260,8 +3444,8 @@ var GridEditor = {
 		app.layout.set_property('grid', options);
 		this.init(); // re-init to update grid values
 	},
-	
-	
+
+
 	/**
 	 * Apply saved grid in layout
 	 */
@@ -3319,7 +3503,7 @@ var GridEditor = {
 				step: 1,
 				default_value: 300,
 				change: function () {
-					$('.upfront-module.ui-draggable').draggable('option', 'delay', this.get_value());
+					$('.upfront-module.ui-draggable, .upfront-module-group.ui-draggable').draggable('option', 'delay', this.get_value());
 				}
 			}),
 			field_timeout = new Upfront.Views.Editor.Field.Number({

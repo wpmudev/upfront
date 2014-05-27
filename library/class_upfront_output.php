@@ -517,6 +517,12 @@ class Upfront_Region extends Upfront_Container {
 		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
 		return parent::wrap( "{$out} {$overlay}" );
 	}
+	
+	public function instantiate_child ($child_data, $idx) {
+		$view = is_array($child_data['modules']) ? "Upfront_Module_Group" : $this->_child_view_class;
+		if (!class_exists($view)) $view = $this->_child_view_class;
+		return new $view($child_data, $this->_data);
+	}
 
 	public function get_css_inline () {
 		$css = '';
@@ -565,20 +571,30 @@ class Upfront_Wrapper extends Upfront_Entity {
 	protected $_type = 'Wrapper';
 	protected $_wrapper_id = '';
 
-	static public function get_instance ($wrapper_id) {
+	static public function get_instance ($wrapper_id, $data = '') {
 		foreach ( self::$_instances as $instance ){
 			if ( $instance->_wrapper_id == $wrapper_id )
 				return $instance;
 		}
-		$layout = Upfront_Output::get_layout_data();
-		if ( !$layout )
-			return false;
 		$wrapper_data = false;
-		foreach ( $layout['regions'] as $region ){
-			if (!empty($region['wrappers'])) foreach ( $region['wrappers'] as $wrapper ){
+		if ( empty($data) ){
+			$layout = Upfront_Output::get_layout_data();
+			if ( !$layout )
+				return false;
+			foreach ( $layout['regions'] as $region ){
+				if (!empty($region['wrappers'])) foreach ( $region['wrappers'] as $wrapper ){
+					if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
+						$wrapper_data = $wrapper;
+						break 2;
+					}
+				}
+			}
+		}
+		else {
+			if (!empty($data['wrappers'])) foreach ( $data['wrappers'] as $wrapper ){
 				if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
 					$wrapper_data = $wrapper;
-					break 2;
+					break;
 				}
 			}
 		}
@@ -619,13 +635,39 @@ class Upfront_Wrapper extends Upfront_Entity {
 	}
 }
 
+
+class Upfront_Module_Group extends Upfront_Container {
+	protected $_type = 'Module_Group';
+	protected $_children = 'modules';
+	protected $_child_view_class = 'Upfront_Module';
+
+	public function __construct ($data) {
+		parent::__construct($data);
+	}
+
+	public function get_markup () {
+		return parent::get_markup();
+	}
+
+	public function instantiate_child ($child_data, $idx) {
+		$view_class = upfront_get_property_value("view_class", $child_data);
+		$view = $view_class
+			? "Upfront_{$view_class}"
+			: $this->_child_view_class
+		;
+		if (!class_exists($view)) $view = $this->_child_view_class;
+		return new $view($child_data, $this->_data);
+	}
+}
+
 class Upfront_Module extends Upfront_Container {
 	protected $_type = 'Module';
 	protected $_children = 'objects';
 	protected $_child_view_class = 'Upfront_Object';
 
-	public function __construct ($data) {
+	public function __construct ($data, $parent_data = "") {
 		parent::__construct($data);
+		$this->_parent_data = $parent_data;
 		Upfront_Output::$current_module = $this;
 	}
 
@@ -637,6 +679,11 @@ class Upfront_Module extends Upfront_Container {
 			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '"></a>';
 		}
 		return $pre . parent::get_markup();
+	}
+
+	public function get_wrapper () {
+		$wrapper_id = $this->_get_property('wrapper_id');
+		return Upfront_Wrapper::get_instance($wrapper_id, $this->_parent_data);
 	}
 }
 

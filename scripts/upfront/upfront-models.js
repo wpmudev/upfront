@@ -195,8 +195,8 @@ var _alpha = "alpha",
 	Module = ObjectModel.extend({
 		"defaults": {
 			"name": "",
-			"objects": new Properties(),
-			"properties": new Objects()
+			"objects": new Objects(),
+			"properties": new Properties()
 		},
 		initialize: function () {
 			var args = arguments;
@@ -206,7 +206,43 @@ var _alpha = "alpha",
 					: new Objects(args[0]["objects"])
 				;
 				this.set("objects", args[0].objects);
-			}
+			} else this.set("objects", new Objects([]));
+			if (args && args[0] && args[0]["properties"]) {
+				args[0]["properties"] = args[0]["properties"] instanceof Properties
+					? args[0]["properties"]
+					: new Properties(args[0]["properties"])
+				;
+				this.set("properties", args[0]["properties"]);
+			} else this.set("properties", new Properties([]));
+			if (this.init) this.init();
+		}
+	}),
+	
+	ModuleGroup = ObjectModel.extend({
+		"defaults": function(){
+			return {
+				"name": "",
+				"modules": new Modules(),
+				"wrappers": new Wrappers(),
+				"properties": new Properties()
+			};
+		},
+		initialize: function () {
+			var args = arguments;
+			if (args && args[0] && args[0]["modules"]) {
+				args[0]["modules"] = args[0]["modules"] instanceof Modules
+					? args[0]["modules"]
+					: new Modules(args[0]["modules"])
+				;
+				this.set("modules", args[0]["modules"]);
+			} else this.set("modules", new Modules([]));
+			if (args && args[0] && args[0]["wrappers"]) {
+				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
+					? args[0]["wrappers"]
+					: new Wrappers(args[0]["wrappers"])
+				;
+				this.set("wrappers", args[0].wrappers)
+			} else this.set("wrappers", new Wrappers([]));
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
@@ -219,8 +255,8 @@ var _alpha = "alpha",
 	}),
 
 	Modules = Backbone.Collection.extend({
-		"model": Module,
 		/*
+		"model": Module,
 		initialize: function () {
 			if (!arguments.length) return false;
 			var _modules = [],
@@ -240,6 +276,12 @@ var _alpha = "alpha",
 			//console.log(this);
 		},
 		*/
+		
+		model: function (attrs, options) {
+			if ( attrs.modules )
+				return new ModuleGroup(attrs, options);
+			return new Module(attrs, options);
+		},
 
 		get_by_element_id: function (element_id) {
 			var found = false;
@@ -267,14 +309,14 @@ var _alpha = "alpha",
 					: new Modules(args[0]["modules"])
 				;
 				this.set("modules", args[0].modules)
-			}
+			} else this.set("modules", new Modules([]));
 			if (args && args[0] && args[0]["wrappers"]) {
 				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
 				this.set("wrappers", args[0].wrappers)
-			}
+			} else this.set("wrappers", new Wrappers([]));
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
@@ -395,7 +437,7 @@ var _alpha = "alpha",
 					: new Properties(args[0]["properties"])
 				;
 				this.set("properties", args[0].properties)
-			}
+			} else this.set("properties", new Properties([]));
 		},
 	}),
 
@@ -1437,6 +1479,7 @@ return {
       "Property": Property,
       "ObjectModel": ObjectModel,
       "Module": Module,
+      "ModuleGroup": ModuleGroup,
       "Region": Region,
       "Wrapper": Wrapper,
       "Layout": Layout,

@@ -1871,6 +1871,46 @@ div.uinsert-selector a:hover {
 	/*background: rgba(0,0,0,.04);
 	outline: 1px dashed #aaa;*/
 }
+.upfront-module-group {
+	float: left;
+	position: relative;
+}
+.upfront-module-group:hover {
+	
+}
+.upfront-module-group-toggle-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	height: 36px;
+	text-align: center;
+	display: none;
+}
+.upfront-module-group:hover .upfront-module-group-toggle-container {
+	display: block;
+}
+.upfront-module-group.upfront-module-group-disabled .upfront-module-group-toggle-container {
+	display: none;
+}
+.upfront-module-group-toggle {
+	position: relative;
+	display: inline-block;
+	background: rgba(61, 82, 102, .95);
+	-moz-box-shadow: 0 1px 0 #192d3f;
+	-webkit-box-shadow: 0 1px 0 #192d3f;
+	box-shadow: 0 1px 0 #192d3f;
+	color: #d8ecff;
+	font-size: 16px;
+	font-family: "Source Sans Pro", sans-serif;
+	line-height: 24px;
+	padding: 5px 10px;
+	cursor: pointer;
+	z-index: 5;
+}
+
 .upfront-module {
 	position: relative;
 	z-index: 2;
@@ -1986,9 +2026,9 @@ div.uinsert-selector a:hover {
 	min-height: 100%;
 }
 
-.upfront-region>.upfront-entity_meta {
+/*.upfront-region>.upfront-entity_meta {
 	display: none;
-}
+}*/
 
 .upfront-region-bg-overlay,
 .upfront-region-bg {
@@ -3066,6 +3106,35 @@ div.uinsert-selector a:hover {
 
 .ui-draggable {
 	cursor: move;
+}
+.ui-selectable-helper {
+	position: absolute;
+	z-index: 100;
+	border: 1px solid #1fcd8f;
+	background: rgba(31, 205, 143, .1);
+}
+.ui-selected {
+	position: relative;
+}
+.upfront-selected-border {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-image: linear-gradient(to right, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to right, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to bottom, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to bottom, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px);
+	background-size: 2px 1px, 2px 1px, 1px 2px, 1px 2px;
+	background-position: 0 0, 0 100%, 0 0, 100% 0;
+	background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+	z-index: -1;
+	display: none;
+}
+.ui-selected .upfront-selected-border,
+.upfront-module-group:hover .upfront-selected-border {
+	display: block;
+}
+.upfront-module-group.upfront-module-group-disabled .upfront-selected-border {
+	display: none;
 }
 
 .upfront-entity_meta {

@@ -167,7 +167,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	on_element_edit_start: function (edit, post) {
 		if ( edit == 'write' && this.parent_module_view){
 			if ( post.id != this.postId )
-				this.parent_module_view.disable();
+				this.parent_module_view.disable_interaction(false);
 			else
 				this.parent_module_view.$el.find('.upfront-module').addClass('upfront-module-editing');
 		}
@@ -176,7 +176,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	on_element_edit_stop: function (edit, post) {
 		if(this.parent_module_view){
 			this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing');
-			this.parent_module_view.enable();
+			this.parent_module_view.enable_interaction(false);
 		}
 	},
 

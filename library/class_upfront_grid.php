@@ -63,30 +63,7 @@ class Upfront_Grid {
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
 				if ( $region_row )
 					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
-				foreach ($region['modules'] as $module) {
-					// Particular overrides
-					$class = upfront_get_property_value('class', $module);
-					$module_col = upfront_get_class_num($width_pfx, $class);
-					$wrapper_id = upfront_get_property_value('wrapper_id', $module);
-					foreach ($region['wrappers'] as $wrapper){
-						if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
-							$wrapper_data = $wrapper;
-							break;
-						}
-					}
-					if ( isset($wrapper_data) ){
-						$wrapper_class = upfront_get_property_value('class', $wrapper_data);
-						$wrapper_col = upfront_get_class_num($width_pfx, $wrapper_class);
-						$point_css .= $point->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $region_col);
-						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
-					}
-					else{
-						$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $region_col);
-					}
-					foreach ($module['objects'] as $object) {
-						$point_css .= $point->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
-					}
-				}
+				$point_css .= $this->_apply_modules($region, $point, $region_col, $width_pfx);
 			}
 			if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$point_css .= $point->get_debug_rule($this->get_grid_scope());
@@ -94,6 +71,40 @@ class Upfront_Grid {
 			$css .= $point->wrap($point_css, $breakpoints, $this->get_grid_scope());
 		}
 		return $css;
+	}
+
+	protected function _apply_modules ($data, $point, $col, $width_pfx) {
+		$point_css = '';
+		foreach ($data['modules'] as $module) {
+			$class = upfront_get_property_value('class', $module);
+			$module_col = upfront_get_class_num($width_pfx, $class);
+			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
+			foreach ($data['wrappers'] as $wrapper){
+				if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
+					$wrapper_data = $wrapper;
+					break;
+				}
+			}
+			if ( isset($wrapper_data) ){
+				$wrapper_class = upfront_get_property_value('class', $wrapper_data);
+				$wrapper_col = upfront_get_class_num($width_pfx, $wrapper_class);
+				$point_css .= $point->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col);
+				$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
+			}
+			else{
+				$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $col);
+			}
+			
+			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
+				$point_css .= $this->_apply_modules($module, $point, $wrapper_col, $width_pfx);
+			}
+			else {
+				foreach ($module['objects'] as $object) {
+					$point_css .= $point->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
+				}
+			}
+		}
+		return $point_css;
 	}
 
 	protected function _get_available_container_col ($container, $regions, $columns) {

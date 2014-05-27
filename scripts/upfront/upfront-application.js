@@ -139,12 +139,14 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Set up behavior
 		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable);
 		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable);
+		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_draggable);
 		// Enable resizables and draggables
 		//Upfront.Behaviors.GridEditor.toggle_resizables(true);
 		//Upfront.Behaviors.GridEditor.toggle_draggables(true);
 
 		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable);
 		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_draggable);
+		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.LayoutEditor.create_mergeable);
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 		this.listenTo(Upfront.Events, "layout:render", Upfront.Behaviors.GridEditor.refresh_draggables);
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
