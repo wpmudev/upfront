@@ -8351,7 +8351,7 @@ border:none;
 
 .redactor_dropdown_box_upfrontColor ul.tablist > li {
 	background-color: #1e2f3f;
-	color: #97b8da;
+	color:#6c87a2;
 	line-height: 1.5;
 	font-size: 11px;
 	margin-right: 2px !important;
@@ -8362,6 +8362,7 @@ border:none;
 }
 .redactor_dropdown_box_upfrontColor ul.tablist > li.active {
 	background-color: #314252;
+	color: #97b8da;
 }
 .redactor_dropdown_box_upfrontColor ul.tabs > li {
 	display:none;
