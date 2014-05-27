@@ -673,10 +673,10 @@
 .draggable-element:hover, .draggable-element.element-dragging {
 	border: 1px solid #85a9cc;
 	background: #f2f9ff;
-	width: 70px;
-	height: 70px;
+	/*width: 70px;
+	height: 70px;*/
 	padding-top: 40px;
-	margin: -3px;
+	/*margin: -3px;*/
 	z-index: 2;
 }
 .draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
@@ -8409,7 +8409,7 @@ div.sp-val:active .sp-dragger:after { display:block;}
 
 .sp-picker-container .sp-choose {
 	width: 103px;
-	box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+	/*box-shadow: 0 3px 0 rgba(0,0,0,0.1);*/
 }
 
 .redactor_btn.redactor_btn_upfrontColor:after {
