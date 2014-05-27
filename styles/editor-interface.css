@@ -671,7 +671,7 @@
 	cursor: -webkit-grabbing;
 }
 .draggable-element:hover, .draggable-element.element-dragging {
-	border: 1px solid #85a9cc;
+	/*border: 1px solid #85a9cc;*/
 	background: #f2f9ff;
 	/*width: 70px;
 	height: 70px;*/
