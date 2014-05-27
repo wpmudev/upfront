@@ -680,7 +680,8 @@
 	z-index: 2;
 }
 .draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
-	padding-top: 14px;
+	/*padding-top: 14px;*/
+	padding-top: 12px;
 }
 /*.draggable-element:nth-child(4n+1):hover {
 	margin-left: 0;
