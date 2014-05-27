@@ -3,7 +3,7 @@
 var LayoutEditor = {
 	create_mergeable: function (view, model) {
 		var app = this,
-			regions = app.layout.get('regions');
+			regions = app.layout.get('regions')
 		;
 		view.$el.selectable({
 			filter: ".upfront-module",
@@ -180,7 +180,7 @@ var LayoutEditor = {
 							wrapper_col = module.wrapper_col;
 						}
 						if ( line == 1 && current_wrapper_id != wrapper_id )
-							new_classes.push(ed.grid.top_margin_class + (module.margin_top-margin_top)); 
+							new_classes.push(ed.grid.top_margin_class + (module.margin_top-margin_top));
 						new_wrapper.replace_class(ed.grid.class + wrapper_col);
 						current_wrapper_id = wrapper_id;
 						module.model.set_property('wrapper_id', new_wrapper_id);
@@ -204,7 +204,7 @@ var LayoutEditor = {
 			}
 		});
 	},
-	
+
 	refresh_mergeable: function () {
 		$(".ui-selectable").each(function () {
 			$(this).selectable("refresh");
@@ -490,11 +490,11 @@ var LayoutEditor = {
 								}
 								else {
 									loading.update_loading_text("Exporting layout:" + layout_id);
-									var parsed_layout = Upfront.themeExporter.parse(),
-										data = {
+									var data = {
 											theme: theme_name,
 											template: layout_id,
-											layout: parsed_layout
+											regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
+											functionsphp: 'functions'
 										};
 									ed._export_layout(data).always(function(){
 										export_layout(i+1, layout_ids);
@@ -618,7 +618,7 @@ var LayoutEditor = {
 	_export_layout: function (data) {
 		var deferred = new $.Deferred();
 		Upfront.Util.post({
-			action: 'upfront_thx-save-layout-to-template',
+			action: 'upfront_thx-export-layout',
 			data: data
 		}).success(function(response){
 			if ( response && response.error )
@@ -651,7 +651,7 @@ var GridEditor = {
 	col_size: 0,
 	baseline: 0,
 	grid: null,
-	
+
 	// some more configurable setting
 	region_type_priority: {
 		wide: 1,
@@ -764,7 +764,7 @@ var GridEditor = {
 			region: region
 		};
 	},
-	
+
 	get_region_position: function (el) {
 		var ed = Upfront.Behaviors.GridEditor,
 			$el = $(el),
@@ -2147,7 +2147,7 @@ var GridEditor = {
 					$layout.append('<div id="upfront-compare-area"></div>');
 					$helper.find(".upfront-debug-info").size() || $helper.append('<div class="upfront-debug-info"></div>');
 				}/* */
-				
+
 				// Default drop to me
 				select_drop( _.find(ed.drops, function(each){ return each.is_me; }) );
 				$region.addClass('upfront-region-drag-active');
@@ -2197,13 +2197,13 @@ var GridEditor = {
 					compare_area_bottom = compare_area_top+ed.compare_row-1,
 					compare_area_bottom = compare_area_bottom > current_grid_bottom ? current_grid_bottom : compare_area_bottom,
 					compare_area_bottom = compare_area_bottom > compare_area_top+ed.max_row ? compare_area_top+ed.max_row : compare_area_bottom,
-					
+
 					compare_area_position = [grid.x, grid.y, compare_area_top, compare_area_right, compare_area_bottom, compare_area_left] // to store as reference
 				;
 
 				//console.log(compare_area_position)
 				//console.log(ed._last_drag_position)
-				
+
 				if ( ed._last_drag_position && ed._last_drag_position == compare_area_position ){
 					// not moving? Then let's not bother
 					return;
@@ -2777,7 +2777,7 @@ var GridEditor = {
 			total = collection.size()-1, // total minus shadow region
 			sub = model.get('sub'),
 			container = model.get('container'),
-			directions, handles, axis, 
+			directions, handles, axis,
 			fixed_pos = {},
 			get_fixed_pos = function () {
 				var pos = {
@@ -2837,7 +2837,7 @@ var GridEditor = {
 
 				// Prevents quick scroll when resizing
 				ed.resizing = window.scrollY;
-				
+
 				$(this).resizable('option', 'minWidth', ed.col_size*3);
 				if ( sub != 'fixed' ){
 					$(this).resizable('option', 'maxWidth', ed.col_size*10);
@@ -2899,7 +2899,7 @@ var GridEditor = {
 						max_height = axis == 'nw' || axis == 'ne' ? fixed_pos.top + height : false;
 					if ( !fixed_pos.is_top && fixed_pos.is_bottom )
 						max_height = axis == 'se' || axis == 'sw' ? fixed_pos.bottom + height : false;
-					if ( fixed_pos.is_left ) 
+					if ( fixed_pos.is_left )
 						max_width = axis == 'nw' || axis == 'sw' ? fixed_pos.left + width : false;
 					if ( !fixed_pos.is_left && fixed_pos.is_right )
 						max_width = axis == 'se' || axis == 'ne' ? fixed_pos.right + width : false;
@@ -2955,7 +2955,7 @@ var GridEditor = {
 			}
 		});
 	},
-	
+
 	create_region_draggable: function(view, model) {
 		if ( !model.get("container") || model.get("container") == model.get("name") )
 			return;
@@ -3202,9 +3202,9 @@ var GridEditor = {
 			});
 		}
 	},
-	
+
 	/**
-	 * Edit structure/grid 
+	 * Edit structure/grid
 	 */
 	edit_structure: function () {
 		var ed = Upfront.Behaviors.GridEditor,

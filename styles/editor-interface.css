@@ -1639,6 +1639,15 @@ a.ueditor-action-pickercancel{
 	position: relative;
 }
 
+.redactor_box .ueditor-insert {
+	outline: 1px dotted #3ea;
+	background: rgba(255,255,255,.2);
+}
+
+.redactor_box .ueditor-insert:hover {
+	outline: 1px solid #3ea;
+}
+
 .ueditor-insert .upfront-inline-panel {
 	visibility: visible;
 	transform: none;
@@ -1667,15 +1676,18 @@ a.ueditor-action-pickercancel{
 
 .ueditor-insert.alignleft {
 	float: left;
+	clear:left;
 	margin-right: 15px;
 }
 .ueditor-insert.alignright {
+	float: right;
 	float: right;
 	margin-left: 15px;
 }
 .ueditor-insert.aligncenter,
 .ueditor-insert.alignfull {
 	float: none;
+	clear: both;
 	text-align: center;
 }
 
@@ -1723,11 +1735,14 @@ a.ueditor-action-pickercancel{
 	background-position: -637px -80px;
 }
 
+.ueditor-insert .upfront-icon-region-remove {
+	background-position: -722px -222px;
+}
+
 .ueditor-insert .upfront-icon-region-link {
 	background-position: -552px -164px;
 }
 .ueditor-insert .upfront-icon-region-embed {
-    background-color: #008000;
     background-position: -552px -164px;
     height: 100%;
 }

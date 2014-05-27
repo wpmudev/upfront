@@ -304,7 +304,7 @@ var Ueditor = function($el, options) {
 	this.options.syncBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:sync:before", this, html); return html; }; // <-- OOOH this one is different
 	this.options.syncAfterCallback = function (html) { UeditorEvents.trigger("ueditor:sync:after", this, html); $el.trigger('syncAfter', html); }; //Added syncAfter for east saving.
 	this.options.autosaveCallback = function () { UeditorEvents.trigger("ueditor:autosave", this); };
-	//this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, ref.redactor, param); }; // Do we need this?
+	this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, ref.redactor, param); }; // Do we need this? Yes, restore inserts on undo
 	// Also available ueditor events (not redactor callbacks:
 		// ueditor:start
 		// ueditor:stop
@@ -401,7 +401,13 @@ Ueditor.prototype = {
 			me.insertManager.parseMarkup();
 		});
 
-		manager.on('insert:added', function(){
+		manager.on('insert:prechange', function(){
+			//TODO: focus before bufferSet
+
+			//Store the state to allow undo
+			me.redactor.bufferSet();
+		})
+		manager.on('insert:added insert:removed', function(){
 			me.redactor.sync();
 			me.redactor.events.trigger("ueditor:insert:media");
 		});
@@ -1268,6 +1274,7 @@ RedactorPlugins.blockquote = {
 var InsertManager = Backbone.View.extend({
 	initialize: function(opts){
 		this.inserts = {},
+		this.onRemoveInsert = _.bind(this.removeInsert, this);
 		this.insertsData = opts.insertsData || {};
 		this.deletedInserts = {};
 		this.$el.children().addClass('nosortable');
@@ -1275,6 +1282,7 @@ var InsertManager = Backbone.View.extend({
 		this.bindTriggerEvents();
 		this.refreshTimeout = false;
 		this.sortableInserts();
+
 	},
 
 	bindTriggerEvents: function (redactor) {
@@ -1355,6 +1363,9 @@ var InsertManager = Backbone.View.extend({
 					insert.start()
 						.done(function(){
 							me.inserts[insert.cid] = insert;
+							//Allow to undo
+							this.trigger('insert:prechange');
+							//Create the insert
 							insert.render();
 							block[where](insert.$el);
 							me.trigger('insert:added', insert);
@@ -1362,6 +1373,8 @@ var InsertManager = Backbone.View.extend({
 							me.listenTo(insert.data, 'change add remove', function(){
 								me.insertsData[insert.data.id] = insert.data.toJSON();
 							});
+
+							me.listenTo(insert, 'remove', me.onRemoveInsert);
 						})
 					;
 				});
@@ -1386,8 +1399,6 @@ var InsertManager = Backbone.View.extend({
 				}, 10);
 			})
 		;
-
-
 	},
 
 	updateMediaTriggerPosition: function(){
@@ -1424,8 +1435,19 @@ var InsertManager = Backbone.View.extend({
 			me.listenTo(insert.data, 'change add remove', function(){
 				if(me.insertsData[insert.data.id])
 					me.insertsData[insert.data.id] = insert.data.toJSON();
-			})
+			});
+
+			me.listenTo(insert, 'remove', me.onRemoveInsert);
 		});
+
+		//Force first sync
+		this.trigger('insert:added');
+	},
+
+	removeInsert: function(insert){
+		this.trigger('insert:prechange');
+		insert.$el.detach();
+		this.trigger('insert:removed');
 	},
 
 	insertExport: function(html){
@@ -1444,14 +1466,33 @@ var InsertManager = Backbone.View.extend({
 			clearTimeout(this.refreshTimeout);
 
 		this.refreshTimeout = setTimeout(function(){
-			_.each(me.inserts, function(insert){
+			_.each(me.deletedInserts, function(insert, id){
+				var element = me.$el.find('#' + id);
+				if(element.length){
+					me.inserts[id] = insert;
+					delete me.deletedInserts[id];/*
+
+					//We need to re-create the controls in order to make them work again
+					element.replaceWith(insert.el);
+					insert.createControls();
+					if(insert.controls)
+						insert.$el.append(insert.controls.el);
+					insert.delegateEvents();*/
+				}
+			});
+			_.each(me.inserts, function(insert, id){
 				if(!insert.$el.parent().length){
-					var element = me.$el.find('#' + insert.data.id);
-					if(element.length)
-						insert.setElement(element);
+					var element = me.$el.find('#' + id);
+					if(element.length){
+						element.replaceWith(insert.el);
+						insert.delegateEvents();
+						insert.controls.delegateEvents();
+						if(insert.controlEvents)
+							insert.controlEvents();
+					}
 					else{
-						me.deletedInserts[insert.data.id] = insert;
-						delete me.inserts[insert.data.id];
+						me.deletedInserts[id] = insert;
+						delete me.inserts[id];
 					}
 				}
 			});

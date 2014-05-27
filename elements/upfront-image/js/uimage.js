@@ -3113,7 +3113,12 @@ var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
 				this.items = newitems;
 			}
 		}
-
+	},
+	delegateEvents: function(){
+		Backbone.View.prototype.delegateEvents.call(this, arguments);
+		this.items.each(function(item){
+			item.delegateEvents();
+		});
 	}
 });
 

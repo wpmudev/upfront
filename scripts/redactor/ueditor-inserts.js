@@ -215,6 +215,36 @@ var UeditorInsert = Backbone.View.extend({
 		control.tooltip = controlData.tooltip;
 		control.id = controlData.id;
 		return control;
+	},
+
+	getAligmnentControlData: function(alignments){
+		var types = {
+				left: {id: 'left', icon: 'alignleft', tooltip: 'Align left'},
+				right: {id: 'right', icon: 'alignright', tooltip: 'Align right'},
+				center: {id: 'center', icon: 'aligncenter', tooltip: 'Align center'},
+				full: {id: 'full', icon: 'alignfull', tooltip: 'Full width'}
+			},
+			control = {
+				id: 'alignment',
+				type: 'multi',
+				icon: 'alignment',
+				tooltip: 'Alignment',
+				subItems: []
+			}
+		;
+		_.each(alignments, function(align){
+			if(types[align])
+				control.subItems.push(types[align]);
+		});
+		return control;
+	},
+	getRemoveControlData: function(){
+		return {
+			id: 'remove',
+			type: 'simple',
+			icon: 'remove',
+			tooltip: 'Delete'
+		}
 	}
 });
 
@@ -224,21 +254,12 @@ var ImageInsert = UeditorInsert.extend({
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	//Called just after initialize
 	init: function(){
+		var alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
+		alignControl.selected = this.data.get('align');
 		this.controlsData = [
-			{
-				id: 'alignment',
-				type: 'multi',
-				icon: 'alignment',
-				tooltip: 'Align image',
-				selected: this.data.get('align'),
-				subItems: [
-					{id: 'left', icon: 'alignleft', tooltip: 'Align left'},
-					{id: 'right', icon: 'alignright', tooltip: 'Align right'},
-					{id: 'center', icon: 'aligncenter', tooltip: 'Align center'},
-					{id: 'full', icon: 'alignfull', tooltip: 'Full width'}
-				]
-			},
-			{id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()}
+			alignControl,
+			{id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
+			this.getRemoveControlData()
 		];
 
 		this.createControls();
@@ -281,8 +302,9 @@ var ImageInsert = UeditorInsert.extend({
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
 	controlEvents: function(){
 		this.stopListening(this.controls);
-		this.listenTo(this.controls, 'control:click', function(control){
+		this.listenTo(this.controls, 'control:click:remove', function(control){
 			console.log(control);
+			this.trigger('remove', this);
 		});
 
 		this.listenTo(this.controls, 'control:select:alignment', function(control){
@@ -502,21 +524,13 @@ var EmbedInsert = UeditorInsert.extend({
         },
         //Called just after initialize
         init: function(){
+        		var align = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
+            align.selected = this.data.get('align') || 'center',
+
             this.controlsData = [
-                {
-                    id: 'alignment',
-                    type: 'multi',
-                    icon: 'alignment',
-                    tooltip: 'Align embeded code',
-                    selected: this.data.get('align'),
-                    subItems: [
-                        {id: 'left', icon: 'alignleft', tooltip: 'Align left'},
-                        {id: 'right', icon: 'alignright', tooltip: 'Align right'},
-                        {id: 'center', icon: 'aligncenter', tooltip: 'Align center'},
-                        {id: 'full', icon: 'alignfull', tooltip: 'Full width'}
-                    ]
-                },
-               {id: 'code', type: 'dialog', icon: 'embed', tooltip: 'Change code', view: this.getFormView()}
+            	align,
+               {id: 'code', type: 'dialog', icon: 'embed', tooltip: 'Change code', view: this.getFormView()},
+               this.getRemoveControlData()
             ];
 
             this.createControls();
@@ -538,8 +552,8 @@ var EmbedInsert = UeditorInsert.extend({
         //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
         controlEvents: function(){
             this.stopListening(this.controls);
-            this.listenTo(this.controls, 'control:click', function(control){
-                console.log(control);
+            this.listenTo(this.controls, 'control:click:remove', function(control){
+                this.trigger('remove', this);
             });
 
             this.listenTo(this.controls, 'control:select:alignment', function(control){
@@ -575,13 +589,17 @@ var EmbedInsert = UeditorInsert.extend({
          * Returns output for the element to inserted into the dome
          * @returns html
          */
-        getOutput: function(){
-            this.$el.html(this.tpl(this.data.toJSON()));
-            var html = $('<div>').html(this.$el).html();
-            //Restore the current element
-            this.render();
-            return html;
-        },
+	getOutput: function(){
+		var out = this.el.cloneNode(),
+			data = this.data.toJSON()
+		;
+		if(data.align == 'full')
+			data.src = data.srcFull || data.src;
+
+		out.innerHTML = this.tpl(data);
+		// return the HTML in a string
+		return  $('<div>').html(out).html();
+	},
 
 
     // Parse the content of the post looking for embed insert elements.
