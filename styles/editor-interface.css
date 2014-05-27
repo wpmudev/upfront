@@ -680,10 +680,10 @@
 	-o-transform: scale(1.1);
 	transform: scale(1.1);
 	-webkit-transition: -webkit-transform .1s ease-out;
-	-moz-transition: -webkit-transform .1s ease-out;
-	-ms-transition: -webkit-transform .1s ease-out;
-	-o-transition: -webkit-transform .1s ease-out;
-	transition: -webkit-transform .1s ease-out;
+	-moz-transition: -moz-transform .1s ease-out;
+	-ms-transition: -ms-transform .1s ease-out;
+	-o-transition: -o-transform .1s ease-out;
+	transition: ransform .1s ease-out;
 }
 .draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
 	padding-top: 12px;
