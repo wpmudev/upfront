@@ -682,6 +682,16 @@
 .draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
 	/*padding-top: 14px;*/
 	padding-top: 12px;
+	-webkit-transform: scale(1.1);
+	-moz-transform: scale(1.1);
+	-ms-transform: scale(1.1);
+	-o-transform: scale(1.1);
+	transform: scale(1.1);
+	-webkit-transition: -webkit-transform .1s ease-out;
+	-moz-transition: -webkit-transform .1s ease-out;
+	-ms-transition: -webkit-transform .1s ease-out;
+	-o-transition: -webkit-transform .1s ease-out;
+	transition: -webkit-transform .1s ease-out;
 }
 /*.draggable-element:nth-child(4n+1):hover {
 	margin-left: 0;
