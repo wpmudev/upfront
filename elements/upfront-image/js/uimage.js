@@ -815,14 +815,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		data.elementSize = {width: resizer.width() - 30, height: resizer.height() - 30 - textHeight};
 
 		this.setSizeClasses(resizer.width(), resizer.height());
-
 		this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 				width: data.elementSize.width,
 				height: data.elementSize.height
 			})
 		).css({
-			bottom: 'auto',
-			top: resizer.height() - 39
+             // Todo Sam: remove the commented stuff, they used to make the resize hint jump up and down when resizing
+			//bottom: 'auto',
+			//top: resizer.height() - 39
 		});
 
 		if(starting.length){

@@ -109,7 +109,12 @@ define(function() {
 
 	  return url + hash + '?d=mm&s=' + size;
 	},
-
+	
+	width_to_col: function (width) {
+		var column_width = Upfront.Settings.LayoutEditor.Grid.column_width;
+		return Math.floor(width/column_width);
+	},
+	
 	height_to_row: function (height) {
 		var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		return Math.ceil(height/baseline);

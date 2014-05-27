@@ -144,6 +144,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		//Upfront.Behaviors.GridEditor.toggle_draggables(true);
 
 		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable);
+		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_draggable);
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 		this.listenTo(Upfront.Events, "layout:render", Upfront.Behaviors.GridEditor.refresh_draggables);
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
@@ -163,6 +164,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		// Region
 		this.listenTo(Upfront.Events, "command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
+		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
+		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_draggable);
 
 		// Undo / Redo
 		this.listenTo(Upfront.Events, "entity:activated", Upfront.Behaviors.LayoutEditor.create_undo);
