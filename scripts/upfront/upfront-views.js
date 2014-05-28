@@ -107,15 +107,15 @@ define([
 						this.$el.css('background-color', color);
 					else
 						this.$el.css('background-color', '');
-					
-					
+
+
 					Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
 						.done(function(response){
 							if(typeof(response.data.featured_image) != 'undefined'){
 								image = response.data.featured_image;
 								var temp_image = $('<img>').attr('src', response.data.featured_image);
 								temp_image.load(function(){
-									ratio = parseFloat(Math.round(temp_image.width()/temp_image.height()*100)/100);	
+									ratio = parseFloat(Math.round(temp_image.width()/temp_image.height()*100)/100);
 									me.$el.css('background-image', "url('" + image + "')");
 									if ( style == 'full' ){
 										var size = me._get_full_size(me.$el, ratio, false);
@@ -132,9 +132,9 @@ define([
 											backgroundPosition: position
 										});
 									}
-									
+
 								});
-								
+
 							}
 							else {
 								me.$el.css({
@@ -144,10 +144,10 @@ define([
 									backgroundPosition: ""
 								});
 							}
-								
 
-	
-	
+
+
+
 						})
 					;
 
@@ -973,7 +973,7 @@ define([
 				this.listenTo(this.model.get("properties"), 'change', callback);
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
-				
+
 				this.listenTo(Upfront.Events, 'command:region:edit_toggle', this.on_region_edit);
 				this.listenTo(Upfront.Events, 'command:region:fixed_edit_toggle', this.on_region_edit);
 
@@ -1080,6 +1080,8 @@ define([
 				}
 			},
 			on_region_edit: function (edit) {
+				if(Upfront.Application.PostContentEditor == Upfront.Application.current_subapplication)
+					return;
 				if ( edit )
 					this.disable_interaction(true);
 				else
@@ -1108,9 +1110,9 @@ define([
 			render: function () {
 				var $ungroup = $('<div class="upfront-module-group-toggle-container"><div class="upfront-module-group-toggle upfront-module-group-ungroup">Ungroup</div></div>'),
 					$border = $('<div class="upfront-selected-border"></div>');
-				
+
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
-				
+
 				this.$el.append($border);
 				this.$el.append($ungroup);
 				this.update();
@@ -1119,9 +1121,9 @@ define([
 				local_view.group_view = this;
 				local_view.render();
 				this.$el.append(local_view.el);
-				
+
 				Upfront.Events.trigger("entity:module_group:after_render", this, this.model);
-				
+
 				if ( ! this._modules_view )
 					this._modules_view = local_view;
 				else
@@ -1511,7 +1513,7 @@ define([
 				this.sub_model = [];
 				this.max_col = width ? Upfront.Util.width_to_col(width) : grid.size;
 				this.available_col = this.max_col;
-				
+
 				// this.model.get("properties").bind("change", this.update, this);
 				// this.model.get("properties").bind("add", this.update, this);
 				// this.model.get("properties").bind("remove", this.update, this);
@@ -1711,7 +1713,7 @@ define([
 						}
 					});
 					$regions.each(function(){
-						if ( _.indexOf(exclude, this) === -1 ){							
+						if ( _.indexOf(exclude, this) === -1 ){
 							$(this).add('.upfront-modules_container', this).css({
 								minHeight: height,
 								height: height,
@@ -2055,7 +2057,7 @@ define([
 				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 			}
 		}),
-		
+
 		RegionFixed = Region.extend({
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
@@ -2116,7 +2118,7 @@ define([
 					css = {
 						width: width || 225,
 						minHeight: height || 225
-					};	
+					};
 				if ( !width )
 					this.model.set_property('width', 225, true);
 				if ( !height )
@@ -2486,7 +2488,7 @@ define([
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 384});
 				this.bg_setting.render();
 				this.$el.append(this.bg_setting.el);
-				
+
 				this.fix_height();
 
 				Upfront.Events.trigger("layout:after_render");
@@ -2526,7 +2528,7 @@ define([
 			},
 			open_edit_background: function () {
 				this.bg_setting.open().always(function(){
-					
+
 				});
 			},
 			fix_height: function () {

@@ -205,7 +205,6 @@ define("content", deps, function(postTpl, ContentTools) {
 				return;
 
 			var target = e ? $(e.currentTarget) : focusElement;
-			debugger;
 			this.contentEditor = new ContentTools.PostContentEditor({
 				post: this.post,
 				el: this.el,
