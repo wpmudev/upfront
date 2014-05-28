@@ -7,7 +7,8 @@ var LayoutEditor = {
 		;
 		view.$el.selectable({
 			filter: ".upfront-module",
-			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed",
+			//cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed",
+			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-region-container", // <-- Had to add .upfront-region-container to the list, otherwise region editing breaks!!!
 			selected: function (e, ui) {
 				var $el = $(ui.selected);
 				$el.prepend('<div class="upfront-selected-border" />');
