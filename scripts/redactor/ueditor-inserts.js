@@ -423,14 +423,14 @@ var ImageInsert = UeditorInsert.extend({
 			height: image.height(),
 			linkType: 'do_nothing',
 			linkUrl: ''
-		}
+		};
 		var align = 'center';
 		if(image.hasClass('aligncenter'))
-			align: 'center';
+			align = 'center';
 		else if(image.hasClass('alignleft'))
-			align: 'left';
+			align = 'left';
 		else if(image.hasClass('alignright'))
-			align: 'right';
+			align = 'right';
 
 		imageData.align = align;
 
@@ -438,7 +438,7 @@ var ImageInsert = UeditorInsert.extend({
 
 		if(parent.is('a')){
 			imageData.linkUrl = parent.attr('href') ;
-			imageData.linkType = 'external'
+			imageData.linkType = 'external';
 		}
 
 
@@ -457,6 +457,7 @@ var ImageInsert = UeditorInsert.extend({
 		imageData.title = image.attr('title');
 
 		var insert = new ImageInsert({data: imageData});
+		insert.render();
 		image.replaceWith(insert.$el);
 		return insert;
 	},
@@ -468,7 +469,7 @@ var ImageInsert = UeditorInsert.extend({
 		var view = new LinkView({data: {linkType: this.data.get('linkType'), linkUrl: this.data.get('linkUrl')}});
 		this.linkView = view;
 
-		view.on()
+		//view.on()
 		return view;
 	}
 });
