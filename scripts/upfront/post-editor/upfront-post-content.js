@@ -70,6 +70,9 @@ var PostContentEditor = Backbone.View.extend({
 
 		this.$el.addClass('clearfix').css('paddong-bottom', '60px');
 
+		this.rawContent = opts.rawContent;
+		this.rawExcerpt = opts.rawExcerpt;
+
 		// prevent link navigation
 		this.$('a').data('bypass', true);
 
@@ -106,7 +109,7 @@ var PostContentEditor = Backbone.View.extend({
 		if(this.parts.contents.length){
 			this.onContentsEdited = _.bind(this.contentEdited, this);
 			this.editors = [];
-			this.parts.contents.ueditor({
+			this.parts.contents.html(this.rawContent).ueditor({
 				linebreaks: false,
 				autostart: true,
 				pastePlainText: true,

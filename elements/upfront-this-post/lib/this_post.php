@@ -417,8 +417,8 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			$tpls[$slug] = $contents['tpl'];
 			$replacements = array_merge($replacements, $contents['replacements']);
 			if($slug == 'contents'){
-				$output['raw_content'] = wpautop($post->post_content);
-				$output['raw_excerpt'] = wpautop(get_the_excerpt());
+				$replacements['%raw_content%'] = wpautop($post->post_content);
+				$replacements['%raw_excerpt%'] = wpautop(get_the_excerpt());
 			}
 		}
 

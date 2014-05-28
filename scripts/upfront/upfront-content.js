@@ -205,12 +205,15 @@ define("content", deps, function(postTpl, ContentTools) {
 				return;
 
 			var target = e ? $(e.currentTarget) : focusElement;
+			debugger;
 			this.contentEditor = new ContentTools.PostContentEditor({
 				post: this.post,
 				el: this.el,
 				triggeredBy: target,
 				authorTpl: this.getTemplate('author'),
-				partOptions: this.postView.partOptions
+				partOptions: this.postView.partOptions,
+				rawContent: this.parts.replacements['%raw_content%'],
+				rawExcerpt: this.parts.replacements['%raw_excerpt%']
 			});
 
 			this.$el.closest('.upfront-wrapper').addClass('upfront-postcontent-editor');
