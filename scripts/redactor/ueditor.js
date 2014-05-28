@@ -1364,7 +1364,8 @@ var InsertManager = Backbone.View.extend({
 						.done(function(){
 							me.inserts[insert.cid] = insert;
 							//Allow to undo
-							this.trigger('insert:prechange');
+							//this.trigger('insert:prechange'); // "this" is the embedded image object
+							me.trigger('insert:prechange'); // "me" is the view
 							//Create the insert
 							insert.render();
 							block[where](insert.$el);
