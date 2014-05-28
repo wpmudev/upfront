@@ -1543,7 +1543,7 @@ define([
 					data = _.extend(this.model.toJSON(), {size_class: grid.class, max_col: this.max_col, available_col: this.available_col}),
 					template = _.template(_Upfront_Templates["region_container"], data),
 					$edit = $('<div class="upfront-region-edit-trigger tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$edit_fixed = $('<div class="upfront-region-edit-fixed-trigger upfront-ui" style="display:none;"><div class="upfront-region-edit-text">Click to edit or add<br /> Floating Region</div></div>'),
+					//$edit_fixed = $('<div class="upfront-region-edit-fixed-trigger upfront-ui" style="display:none;"><div class="upfront-region-edit-text">Click to edit or add<br /> Floating Region</div></div>'),
 					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> Finish editing background</div>');
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
@@ -1553,7 +1553,7 @@ define([
 					this.$layout.find('.upfront-grid-layout-gutter').remove();
 				}
 				$edit.appendTo(this.$el);
-				$edit_fixed.appendTo(this.$el);
+				//$edit_fixed.appendTo(this.$el);
 				$finish.appendTo(this.$el);
 				//this.render_fixed_panel();
 				this.update();

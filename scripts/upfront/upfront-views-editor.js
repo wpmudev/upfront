@@ -6764,7 +6764,7 @@ var Field_Anchor = Field_Select.extend({
 					var panel_top = scroll_top > top-rel_top ? rel_top : top-scroll_top,
 						panel_bottom = bottom > scroll_bottom ? 0 : scroll_bottom-bottom,
 						panel_left = panel.position_h == 'left' ? panel_offset.left : 'auto',
-						panel_right = panel.position_h == 'right' ? $(window).width()-(offset.left+$region.width()) : 'auto';
+						panel_right = panel.position_h == 'right' ? $(window).width()-panel_offset.left : 'auto';
 					if ( panel.$el.css('position') != 'fixed' )
 						panel.$el.css({
 							position: 'fixed',

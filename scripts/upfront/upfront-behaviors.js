@@ -7,8 +7,7 @@ var LayoutEditor = {
 		;
 		view.$el.selectable({
 			filter: ".upfront-module",
-			//cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed",
-			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-region-container", // <-- Had to add .upfront-region-container to the list, otherwise region editing breaks!!!
+			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
 			selected: function (e, ui) {
 				var $el = $(ui.selected);
 				$el.prepend('<div class="upfront-selected-border" />');
