@@ -330,12 +330,12 @@
 		Time:
 		<select class="ueditor-hours-select">
 			{[ _.each(hours, function(h){ ]}
-			<option value="{{h}}" selected="{{h == currentHour ? 'selected' : ''}}">{{h}}</option>
+			<option value="{{h}}" "{{h == currentHour ? 'selected=\'selected\'' : ''}}" >{{h}}</option>
 			{[ }); ]}
 		</select>:
 		<select class="ueditor-minutes-select">
 			{[ _.each(minutes, function(m){ ]}
-			<option value="{{m}}" selected="{{m == currentMinute ? 'selected' : ''}}">{{m}}</option>
+			<option value="{{m}}" "{{m == currentMinute ? 'selected=\'selected'' : ''}}" >{{m}}</option>
 			{[ }); ]}
 		</select>
 	</div>

@@ -501,7 +501,11 @@ var EditionBar = Backbone.View.extend({
 		'click .ueditor-select-value': 'editSelect',
 		'click .ueditor-pass-ok': 'changePass',
 		'click .ueditor-action-schedule': 'openDatepicker',
-		'click .ueditor-bar-show_advanced': 'toggleAdvanced'
+		'click .ueditor-bar-show_advanced': 'toggleAdvanced',
+        'click .ueditor-action-pickercancel': 'close_date_picker',
+        'click .ueditor-action-pickerok': 'save_date_picker',
+        'change .ueditor-hours-select': 'set_time',
+        'change .ueditor-minutes-select': 'set_time'
 	},
 
 	initialize: function(options){
@@ -521,9 +525,8 @@ var EditionBar = Backbone.View.extend({
 		var me = this,
 			postData = this.post.toJSON(),
 			date = this.post.get('post_date'),
-			datepickerData = {}
+            datepickerData = {}
 		;
-
 		postData.status = this.getBarStatus();
 		postData.visibility = this.visibilityOptions[this.post.getVisibility()];
 
@@ -549,14 +552,16 @@ var EditionBar = Backbone.View.extend({
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			onChangeMonthYear: function(month, year){
+			onChangeMonthYear: function(year, month){
 				var picker = me.$('.upfront-bar-datepicker'),
-					day = picker.datepicker('getDate').getDate()
+					day = picker.datepicker('getDate').getDate();
 				;
-				day = day < 10 ? '0' + day : day;
-				month = month < 10 ? '0' + month : month;
+                var prev_date = new Date(  me.$('.ueditor-action-schedule').text()  ),
+                    d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() );
 
-				me.$('.upfront-bar-datepicker').datepicker('setDate', year + '-' + month + '-' + day);
+				me.$('.ueditor-action-schedule').html(Upfront.Util.format_date( d, true));
+				me.post.set("post_date", d);
+                picker.datepicker("setDate", d);
 			}
 		});
 
@@ -652,7 +657,28 @@ var EditionBar = Backbone.View.extend({
 			this.$('.ueditor-minutes-select').val(minutes);
 		}
 	},
-
+    close_date_picker : function(){
+        this.$('.upfront-date_picker').hide();
+    },
+    save_date_picker : function(){
+        var chosen_date = this.$('.upfront-bar-datepicker').datepicker('getDate'),
+            hours = this.$(".ueditor-hours-select").val(),
+            minutes = this.$(".ueditor-minutes-select").val();
+        chosen_date.setHours( hours );
+        chosen_date.setMinutes( minutes );
+        this.post.set("post_date", chosen_date);
+        this.close_date_picker();
+    },
+    set_time : function( event ){
+        var me = this,
+            date  = new Date(  me.$('.ueditor-action-schedule').text()  ),
+            hours = this.$(".ueditor-hours-select").val(),
+            minutes = this.$(".ueditor-minutes-select").val();
+        ;
+        date.setHours( hours );
+        date.setMinutes( minutes );
+        this.$('.ueditor-action-schedule').html(Upfront.Util.format_date( date, true));
+    },
 	getStatusOptions: function(postata){
 		var ops = [],
 			status = this.initialStatus
