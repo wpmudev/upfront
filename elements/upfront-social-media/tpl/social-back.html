@@ -45,7 +45,7 @@
 <script type="text/template" id="global-tpl">
 	<div class="upfront-global-social-settings">
 		<div class="upfront-settings-item">
-			<div class="upfront-settings-item-title">Set up your Social accounts</div>
+      <div class="upfront-settings-item-title"><span>Set up your Social accounts</span></div>
 			<div class="upfront-settings-item-content">
 				<ul class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes social_media_services_list ui-sortable">
 					{[ _.each(services, function(service){ ]}
@@ -65,7 +65,7 @@
 			</div>
 		</div>
 		<div class="upfront-settings-item">
-			<div class="upfront-settings-item-title">In-post social media</div>
+      <div class="upfront-settings-item-title"><span>In-post social media</span></div>
 			<div class="upfront-settings-item-content">
 				<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes">
 					<span class="upfront-field-multiple upfront-field-multiple-selected">
@@ -74,13 +74,13 @@
 							<span class="upfront-field-label-text">Add social media counters to all posts</span>
 						</label>
 					</span>
-				</div>				
+				</div>
 			</div>
 			<div class="">
 				<label for="usocial-global_after_title" class="upfront-field-label upfront-field-label-block">In-post location:</label>
 				<div class="usocial-global-add-post">
 					<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes">
-						
+
 						<span class="upfront-field-multiple {{after_title.length ? 'upfront-field-multiple-selected' : '' }}">
 							<input type="checkbox" id="usocial-global-after_title" name="after_title" value="yes" class="upfront-field-checkbox usocial_post_location" {{after_title.length ? 'checked="checked"' : ''}}>
 							<label for="usocial-global-after_title">

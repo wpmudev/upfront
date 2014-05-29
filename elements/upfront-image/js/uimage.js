@@ -1217,6 +1217,7 @@ var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function (opts) {
+    this.has_tabs = false;
 		this.options = opts;
 		var me = this;
 		this.panels = _([
@@ -1244,10 +1245,11 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.settings = _([
 			new SettingsItem({
 
-				title: 'alternative_text',
-				group: false,
+				title: 'Alternative Text',
 				fields: [
 					new Fields.Text({
+            className: 'image-alternative-text upfront-field-wrap upfront-field-wrap-text',
+            hide_label: true,
 						model: this.model,
 						property: 'alternative_text',
 						label: 'Alternative text'
@@ -1256,20 +1258,21 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			}),
 
 			new SettingsItem({
-				title: 'Show Caption:',
+				title: 'Caption Settings:',
 				fields: [
 					new Fields.Radios({
 						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 						model: this.model,
 						property: 'caption_trigger',
+            label: 'Show Caption:',
 						layout: "horizontal-inline",
 						values: [
 							{
-								label: 'always',
+								label: 'Always',
 								value: 'always_show'
 							},
 							{
-								label: 'on hover',
+								label: 'On Hover',
 								value: 'hover_show'
 							}
 						]

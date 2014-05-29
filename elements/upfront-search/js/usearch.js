@@ -132,7 +132,17 @@ var UsearchSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function (opts) {
 		this.options = opts;
 		this.settings = _([
-			new UsearchFieldSetting_Placeholder({model: this.model}),
+      new Upfront.Views.Editor.Settings.Item({
+        model: this.model,
+				title: 'Search Settings',
+				fields: [
+					new Upfront.Views.Editor.Field.Text({
+						model: this.model,
+						property: 'placeholder',
+						label: 'Placeholder text:'
+					})
+				]
+			}),
 			new UsearchButtonSetting_Label({model: this.model})
 		]);
 	},
@@ -152,66 +162,6 @@ var UsearchSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	}
 });
 
-/**
- * Field settings - Placeholder item
- * @type {Upfront.Views.Editor.Settings.Item}
- */
-var UsearchFieldSetting_Placeholder = Upfront.Views.Editor.Settings.Item.extend({
-	/**
-	 * Set up setting item appearance.
-	 */
-	render: function () {
-		var me = this;
-		var placeholder = this.model.get_property_value_by_name("placeholder"),
-			placeholder_text = placeholder || 'Search'
-		;
-		// Wrap method accepts an object, with defined "title" and "markup" properties.
-		// The "markup" one holds the actual Item markup.
-		this.wrap({
-			"title": "Placeholder",
-			"markup": '<input type="radio" id="search-placeholder-none" name="search_placeholder" value="" ' + (!placeholder ? 'checked="checked"' : '') + ' /> None' +
-				'<br />' +
-				'<input type="radio" id="search-placeholder-normal" name="search_placeholder" value="' + placeholder_text + '" ' + (placeholder ? 'checked="checked"' : '') + ' /> ' +
-					'<span class="search-search_placeholder'+(placeholder ? ' active' : '')+'" contenteditable="true">' + placeholder_text + '</span>'
-		});
-
-
-		this.$el.find(".search-search_placeholder").on('click', function() {
-			$(this).trigger('input');
-		});
-
-		this.$el.find(".search-search_placeholder").on("input", function () {
-			$("#search-placeholder-normal").val($(this).text()).attr("checked", true);
-			$(this).addClass('active');
-		});
-
-		this.$el.on("change", '#search-placeholder-normal, #search-placeholder-none', function() {
-
-			if($(this).attr('id') == 'search-placeholder-normal' && $(this).prop('checked'))
-				me.$el.find(".search-search_placeholder").addClass('active');
-			else
-				me.$el.find(".search-search_placeholder").removeClass('active');
-		});
-
-	},
-	/**
-	 * Defines under which Property name the value will be saved.
-	 * @return {string} Property name
-	 */
-	get_name: function () {
-		return "placeholder";
-	},
-	/**
-	 * Extracts the finalized value from the setting markup.
-	 * @return {mixed} Value.
-	 */
-	get_value: function () {
-		var $placeholder = this.$el.find(':radio[name="search_placeholder"]:checked');
-		return $placeholder.length ? $placeholder.val() : 0;
-	}
-
-});
-
 // --- Button settings ---
 
 /**
@@ -226,7 +176,7 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
 		var me = this;
 		var value = this.model.get_property_value_by_name("label"),
 			value_text = '__image__' == value || '' == value || !value ? 'Custom text' : value,
-			image = '<label for="search_type-image"><i class="icon-search"></i> Image</label>',
+			image = '<label for="search_type-image"><i class="icon-search"></i></label>',
 			text = '<span class="search-search_text' + ((value !='' && value != '__image__') ? ' active' : '') + '" contenteditable="true">' + value_text + '</span>'
 		;
 		// Wrap method accepts an object, with defined "title" and "markup" properties.
@@ -234,10 +184,7 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
 		this.wrap({
 			"title": "Button content",
 			"markup": '<input type="radio" id="search_type-image" name="search_type" value="__image__" ' + (value == '__image__' ? 'checked="checked"' : '') + ' /> ' + image +
-				'<br />' +
-				'<input type="radio" id="search_type-text" name="search_type" value="' + value_text + '" ' + ((value !='' && value != '__image__') ? 'checked="checked"' : '') + ' /> ' + text +
-				'<br />' +
-				'<input type="radio" id="search_type-none" name="search_type" value="" ' + (value == '' ? 'checked="checked"' : '') + ' /> <span>No Button</span>'
+				'<input type="radio" id="search_type-text" name="search_type" value="' + value_text + '" ' + ((value !='' && value != '__image__') ? 'checked="checked"' : '') + ' /> ' + text
 		});
 
 		this.$el.find(".search-search_placeholder").on('click', function() {
@@ -288,6 +235,7 @@ var UsearchSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 * panels array with the panel instances we'll be showing.
 	 */
 	initialize: function (opts) {
+    this.has_tabs = false;
 		this.options = opts;
 		this.panels = _([
 			new UsearchSettingsPanel({model: this.model})

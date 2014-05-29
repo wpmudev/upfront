@@ -18,10 +18,13 @@
 	padding-right: 0;
 }
 #settings .ufpront-maps_element-settings_panel .upfront-settings_panel {
-	width: 180px;
+	width: 240px;
 }
 #settings .ufpront-maps_element-settings_panel .upfront-settings_panel .upfront-settings_panel_scroll {
-	min-width: 180px;
+	min-width: 240px;
+}
+.ufpront-maps_element-settings_panel .upfront-settings-css .upfront-field-select-single {
+  width: 180px;
 }
 
 .ufm-context-menu{
@@ -156,7 +159,7 @@ border-width: 11px;
 
 /* initial experience layout */
 
-#upfront_map-location_overlay-wrapper, 
+#upfront_map-location_overlay-wrapper,
 .uf_el_map_initial-overlay {
 	background:rgb(227, 227, 220);
 	color:#fff;
@@ -194,7 +197,7 @@ border-width: 11px;
 	padding: 10px;
 }
 
-.uf_el_map_initial-overlay button , 
+.uf_el_map_initial-overlay button ,
 .uf_el_map_initial-overlay .uf-current-location {
 	margin:0;
 }

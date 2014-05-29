@@ -146,15 +146,6 @@ a.open-media-gallery:hover i {
 	padding: 0 15px;
 }
 
-#settings div.upfront-settings-item-content {
-	padding-bottom: 10px;
-}
-
-#settings .field-caption_trigger {
-	text-align: center;
-	margin:0;
-}
-
 .upfront-image {
 }
 .uimage-status-starting {
@@ -1171,4 +1162,8 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-image-caption-container {
 	position: relative;
 	display: inline-block;
+}
+
+.upfront-field-wrap.image-alternative-text {
+  margin-top: 6px;
 }

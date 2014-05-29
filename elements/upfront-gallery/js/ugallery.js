@@ -1364,12 +1364,12 @@ var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function (opts) {
+    this.has_tabs = false;
 		this.options = opts;
 		var me = this;
 
 		this.panels = _([
-			new LayoutPanel({model: this.model}),
-			new ThumbnailsPanel({model: this.model})
+			new LayoutPanel({model: this.model})
 		]);
 
 		this.on('closed', function(){
@@ -1408,6 +1408,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					})
 				],
 			}),
+			new ThumbnailFields({model: this.model}),
 			new Upfront.Views.Editor.Settings.Item({
 				title: 'Caption Settings',
 				fields: [
@@ -1415,14 +1416,27 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						property: 'captionWhen',
 						layout: "horizontal-inline",
+            label: 'Show Caption:',
 						values: [
 							{value: 'never', label: 'never'},
 							{value: 'hover', label: 'on hover'},
 							{value: 'always', label: 'always'}
 						]
 					}),
+					new fields.Radios({
+						model: this.model,
+						property: 'captionPosition',
+						layout: "horizontal-inline",
+            label: 'Caption Style',
+						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios ugallery-setting-caption-position',
+						values: [
+							{value: 'over', label: 'over img', icon: 'over'},
+							{value: 'below', label: 'under img',icon: 'below'}
+						]
+					}),
 					new fields.Color({
 						label: "Caption Background:",
+            label_style: 'inline',
 						spectrum: {
 							showAlpha: true,
 							showPalette: true,
@@ -1452,16 +1466,6 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 								me.parent_view.for_view.$el.find('.ugallery-thumb-title').css('background-color', currentColor);
 							}
 						}
-					}),
-					new fields.Radios({
-						model: this.model,
-						property: 'captionPosition',
-						layout: "horizontal-inline",
-						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios ugallery-setting-caption-position',
-						values: [
-							{value: 'over', label: 'over img', icon: 'over'},
-							{value: 'below', label: 'under img',icon: 'below'}
-						]
 					})
 				]
 			})
@@ -1485,6 +1489,18 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			setTimeout(function(){
 				me.toggleCaption();
 			}, 100);
+
+			$(me.$('.ugallery-thumbnail-fields')
+				.find('.upfront-field-wrap-number')
+				.get(0))
+				.after('<div class="ugallery-proportional"></div>')
+			;
+
+			me.setEvents([
+				//['click', '.ugallery-proportional', 'lockProportions'],
+				['change', 'input[name=thumbWidth]', 'onThumbChangeSize'],
+				['change', 'input[name=thumbProportions]', 'onThumbChangeProportions']
+			]);
 		});
 
 		this.$el.on('change', 'input[name=captionWhen]', function(e){
@@ -1507,41 +1523,6 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	get_label: function () {
 		return 'Layout';
-	},
-	get_title: function () {
-		return false;
-	}
-});
-
-
-var ThumbnailsPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	initialize: function (opts) {
-		this.options = opts;
-		var me = this,
-			fields = Upfront.Views.Editor.Field
-		;
-		this.settings = _([
-			new ThumbnailFields({model: this.model})
-		]);
-
-		this.on('rendered', function(){
-			$(me.$('.ugallery-thumbnail-fields')
-				.find('.upfront-field-wrap-number')
-				.get(0))
-				.after('<div class="ugallery-proportional"></div>')
-			;
-
-			me.setEvents([
-				//['click', '.ugallery-proportional', 'lockProportions'],
-				['change', 'input[name=thumbWidth]', 'onThumbChangeSize'],
-				['change', 'input[name=thumbProportions]', 'onThumbChangeProportions']
-			]);
-
-		});
-	},
-
-	get_label: function () {
-		return 'Thumbnails';
 	},
 	get_title: function () {
 		return false;
@@ -1629,7 +1610,7 @@ var Field_Button = Upfront.Views.Editor.Field.Field.extend({
 });
 
 var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
-	className: 'align-center ugallery-thumbnail-fields',
+	className: 'ugallery-thumbnail-fields',
 	initialize: function(){
 		var me = this,
 			fields = Upfront.Views.Editor.Field
@@ -1639,7 +1620,7 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 			new fields.Radios({
 				model: this.model,
 				property: 'thumbProportions',
-				label: 'Crop',
+				label: 'Thumbnail Ratio',
 				layout: 'vertical',
 				values: [
 					{
@@ -1671,8 +1652,8 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 				min: 100,
 				max: 250,
 				step: 5,
-				label: 'Size',
-				info: 'Slide to resize the thumbnails.',
+				label: 'Thumbnail Size',
+				// info: 'Slide to resize the thumbnails.',
 				valueTextFilter: function(value){
 					return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
 				}

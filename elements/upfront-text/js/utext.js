@@ -126,62 +126,44 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
         _.bindAll(this, 'onBgColor', 'onBorderColor');
 
 		this.settings = _([
-			  new Upfront.Views.Editor.Settings.Item({
+      new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: "Textbox Appearance",
 				fields: [
-				  /*new Upfront.Views.Editor.Field.Checkboxes({
-					className: 'inline-checkboxes plaintext-settings bg-color-enabled',
-					model: this.model,
-					property: 'bg_color_enabled',
-					label: "",
-					values: [
-					  { label: "Background Color:", value: 'yes' }
-					]
-				  }),
-				  new Upfront.Views.Editor.Field.Checkboxes({
-					className: 'inline-checkboxes plaintext-settings border-enabled',
-					model: this.model,
-					property: 'border_enabled',
-					label: "",
-					values: [
-					  { label: "Border", value: 'yes' }
-					]
-				  }),*/
 				  new Upfront.Views.Editor.Field.Radios({
-					className: 'inline-radios  plaintext-settings',
-					model: this.model,
-					property: 'border_style',
-					label: "Border",
-					default_value: "solid",
-					values: [
-					  { label: "None", value: 'none' },
-					  { label: "Solid", value: 'solid' },
-					  { label: "Dashed", value: 'dashed' },
-					  { label: "Dotted", value: 'dotted' }
-					]
+            className: 'inline-radios  plaintext-settings',
+            model: this.model,
+            property: 'border_style',
+            label: "Border",
+            default_value: "solid",
+            values: [
+              { label: "None", value: 'none' },
+              { label: "Solid", value: 'solid' },
+              { label: "Dashed", value: 'dashed' },
+              { label: "Dotted", value: 'dotted' }
+            ]
 				  }),
 				  new Upfront.Views.Editor.Field.Number({
-					className: 'inline-number plaintext-settings',
-					model: this.model,
-					min: 1,
-					property: 'border_width',
-					label: "Width",
-					default_value: "1",
-					values: [
-					  { label: "", value: '1' }
-					]
+            className: 'inline-number plaintext-settings',
+            model: this.model,
+            min: 1,
+            property: 'border_width',
+            label: "Width",
+            default_value: "1",
+            values: [
+              { label: "", value: '1' }
+            ]
 				  }),
 				  new Upfront.Views.Editor.Field.Color({
-					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color border-color',
-					model: this.model,
-					property: 'border_color',
-					label: 'Color',
-					spectrum: {
-					  preferredFormat: "hex",
-					  change: this.onBorderColor,
-					  move: this.onBorderColor
-					}
+            className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color border-color',
+            model: this.model,
+            property: 'border_color',
+            label: 'Color',
+            spectrum: {
+              preferredFormat: "hex",
+              change: this.onBorderColor,
+              move: this.onBorderColor
+            }
 				  }),
 
 
@@ -189,6 +171,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color',
 					model: this.model,
 					property: 'bg_color',
+          label_style: 'inline',
 					label: 'Background Color',
 					spectrum: {
 					  preferredFormat: "hex",
@@ -200,14 +183,6 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			  })
 			]);
 
-/*
-        this.$el.on('change', 'input[name=bg_color_enabled]', function(e){
-          me.onBgColorEnabled(e);
-        });
-        this.$el.on('change', 'input[name=border_enabled]', function(e){
-          me.onBorderEnabled(e);
-        });
-		*/
         this.$el.on('change', 'input[name=border_style]', function(e){
           me.onBorderStyle(e);
         });
@@ -215,19 +190,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
           me.onBorderWidth(e);
         });
 	},
-	/*
-	onBgColorEnabled: function(event) {
-        this.property('bg_color_enabled', $(event.currentTarget).prop('checked'), false);
-		this.processBg();
-	},*/
 	onBgColor: function(color) {
         this.property('bg_color', color.toRgbString(), false);
 		this.processBg();
-	}/*,
-	onBorderEnabled: function(event) {
-        this.property('border_enabled', $(event.currentTarget).prop('checked'), false);
-		this.processBorder();
-	}*/,
+	},
 	onBorderWidth: function(event) {
         this.property('border_width', $(event.currentTarget).val(), false);
 		this.processBorder();
@@ -241,18 +207,12 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.processBorder();
 	},
 	processBg: function() {
-		//if(this.property('bg_color_enabled')) {
-			if(this.property('bg_color') == 'rgba(0, 0, 0, 0)')
-				this.property('background_color', '', false);
-			else
-				this.property('background_color', this.property('bg_color'), false);
-		/*}
-		else {
-			this.property('background_color', '', false);
-		}*/
+    if(this.property('bg_color') == 'rgba(0, 0, 0, 0)')
+      this.property('background_color', '', false);
+    else
+      this.property('background_color', this.property('bg_color'), false);
 	},
 	processBorder: function() {
-		//if(this.property('border_enabled')) {
 		if(this.property('border_style') != 'none') {
 			this.property('border', this.property('border_width')+'px '+this.property('border_color')+' '+this.property('border_style'), false);
 			this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
@@ -276,40 +236,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	  render: function() {
 			// Render as usual
 			this.constructor.__super__.render.apply(this, arguments);
+      // Show border width if needed
+      if(this.property('border_style') != 'none') {
+        this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
+      }
+      else {
+        this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
+      }
 			// Remove panel tabs
-			var me = this;
-
-			if(this.property('border_style') != 'none') {
-
-						this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
-					}
-					else {
-
-						this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
-					}
-
-/*
-			if(this.property('bg_color_enabled') === true) {
-				this.$el.find('.bg-color-enabled input').attr('checked', true);
-			}
-			else
-				this.$el.find('.bg-color-enabled input').removeAttr('checked');
-
-			if(this.property('border_enabled') === true)
-				this.$el.find('.border-enabled input').attr('checked', true);
-			else
-				this.$el.find('.border-enabled input').removeAttr('checked');
-
-			if(!this.$el.find('.border-enabled input').prop('checked'))
-				me.$el.find('.upfront-field-number').prop('disabled', true);
-
-			this.$el.find('.border-enabled input').bind('change', function() {
-				if($(this).prop('checked'))
-					me.$el.find('.upfront-field-number').prop('disabled', false);
-				else
-					me.$el.find('.upfront-field-number').prop('disabled', true);
-			});
-*/
 			this.$el.find('.upfront-settings_label').remove();
 			this.$el.find('.upfront-settings_panel').css('left', 0);
 	  }
@@ -317,17 +251,18 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 
  var PlainTxtSettings = Upfront.Views.Editor.Settings.Settings.extend({
-      initialize: function (opts) {
-		  this.options = opts;
-        this.panels = _([
-          new AppearancePanel({model: this.model})
-        ]);
-      },
+   initialize: function (opts) {
+     this.has_tabs = false;
+     this.options = opts;
+     this.panels = _([
+       new AppearancePanel({model: this.model})
+     ]);
+   },
 
-      get_title: function () {
-        return "Textbox Appearance";
-      }
-    });
+   get_title: function () {
+     return "Textbox Appearance";
+   }
+ });
 
 
 var PlainTxtMenuList = Upfront.Views.ContextMenuList.extend({

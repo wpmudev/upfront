@@ -565,6 +565,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 
 	var MapSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		initialize: function (opts) {
+      this.has_tabs = false;
 			this.options = opts;
 			this.panels = _([
 				new MapSettings_Panel({model: this.model})
@@ -579,9 +580,9 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			this.options = opts;
 				this.settings = _([
 					new MapSettings_Field_Location({model: this.model}),
-					new MapSettings_Field_Zoom({model: this.model}),
-					new MapSettings_Field_Style({model: this.model}),
-					new MapSettings_Field_Controls({model: this.model})
+					new MapSettings_Settings({model: this.model})
+					// new MapSettings_Field_Style({model: this.model}),
+					// new MapSettings_Field_Controls({model: this.model})
 				]);
 			},
 			render: function () {
@@ -602,49 +603,26 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					this.fields = _([
 						new Map_Fields_Simple_Location({
 							model: this.model,
+              hide_label: true,
 							property: 'location'
 						})
 					]);
 				},
 				get_title: function () {
-					return "Location";
+					return "Map Location";
 				}
 			});
 
-			var MapSettings_Field_Zoom = Upfront.Views.Editor.Settings.Item.extend({
+			var MapSettings_Settings = Upfront.Views.Editor.Settings.Item.extend({
 				initialize: function () {
 					var zooms = [],
-						saved = this.model.get_property_value_by_name("zoom")
+						saved_zoom = this.model.get_property_value_by_name("zoom")
 					;
-					if (!saved) this.model.set_property("zoom", DEFAULTS.zoom, true);
+					if (!saved_zoom) this.model.set_property("zoom", DEFAULTS.zoom, true);
 					_(_.range(1,19)).each(function (idx) {
 						zooms.push({label: idx, value: idx});
 					});
-					this.fields = _([
-						/*
-						new Upfront.Views.Editor.Field.Select({
-							model: this.model,
-							property: 'zoom',
-							values: zooms
-						})
-						*/
-						new Upfront.Views.Editor.Field.Slider({
-							model: this.model,
-							property: 'zoom',
-							min: 1,
-							max: 19,
-							change: function () { this.property.set({value: this.get_value()}); }
-						})
-					]);
-				},
-				get_title: function () {
-					return "Map Zoom";
-				}
-			});
-
-			var MapSettings_Field_Style = Upfront.Views.Editor.Settings.Item.extend({
-				initialize: function () {
-					var saved = this.model.get_property_value_by_name("style")
+					var saved_style = this.model.get_property_value_by_name("style"),
 						styles = [
 							{label: "Roadmap", value: "ROADMAP"},
 							{label: "Satellite", value: "SATELLITE"},
@@ -652,23 +630,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 							{label: "Terrain", value: "TERRAIN"},
 						]
 					;
-					if (!saved) this.model.set_property("style", DEFAULTS.style, true);
-					this.fields = _([
-						new Upfront.Views.Editor.Field.Select({
-							model: this.model,
-							property: 'style',
-							values: styles,
-							change: function () { this.property.set({value: this.get_value()}); }
-						})
-					]);
-				},
-				get_title: function () {
-					return "Map Style";
-				}
-			});
-
-			var MapSettings_Field_Controls = Upfront.Views.Editor.Settings.Item.extend({
-				initialize: function () {
+					if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
 					var controls = [
 						{label: "Pan", value: "pan"},
 						{label: "Zoom", value: "zoom"},
@@ -678,8 +640,25 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						{label: "Overview Map", value: "overview_map"},
 					];
 					this.fields = _([
+						new Upfront.Views.Editor.Field.Slider({
+              className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
+							model: this.model,
+              label: 'Map Zoom Level:',
+							property: 'zoom',
+							min: 1,
+							max: 19,
+							change: function () { this.property.set({value: this.get_value()}); }
+						}),
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
+              label: 'Map Style:',
+							property: 'style',
+							values: styles,
+							change: function () { this.property.set({value: this.get_value()}); }
+						}),
+						new Upfront.Views.Editor.Field.Select({
+							model: this.model,
+              label: 'Map Controls:',
 							property: 'controls',
 							multiple: true,
 							values: controls,
@@ -688,7 +667,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					]);
 				},
 				get_title: function () {
-					return "Controls";
+					return "Map Settings";
 				}
 			});
 

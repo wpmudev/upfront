@@ -2849,9 +2849,9 @@ define([
 			this.multiple = typeof this.options.multiple != 'undefined' ? this.options.multiple : (typeof this.multiple != 'undefined' ? this.multiple : false);
 			this.label = typeof this.options.label != 'undefined' ? this.options.label : '';
 			this.default_value = typeof this.options.default_value != 'undefined' ? this.options.default_value : (this.multiple ? [] : '');
-			if ( this.options.property ){
+			if ( this.options.property ) {
 				this.property = this.model.get_property_by_name(this.options.property);
-				if ( this.property === false ){
+				if ( this.property === false ) {
 					this.model.init_property(this.options.property, this.default_value);
 					this.property = this.model.get_property_by_name(this.options.property);
 				}
@@ -2900,6 +2900,7 @@ define([
 			return this.$el.find( '[name=' + this.get_field_name() + ']' + (this.selected_state ? ':'+this.selected_state : '') );
 		},
 		get_label_html: function () {
+      if (this.options.hide_label === true) return '';
 			var attr = {
 				'for': this.get_field_id(),
 				'class': 'upfront-field-label ' + ( this.options.label_style == 'inline' ? 'upfront-field-label-inline' : 'upfront-field-label-block' )
@@ -3524,7 +3525,7 @@ define([
 			if(this.group){
 				this.$el.append(
 					'<div class="upfront-settings-item">' +
-						'<div class="upfront-settings-item-title">' + this.get_title() + '</div>' +
+						'<div class="upfront-settings-item-title"><span>' + this.get_title() + '</span></div>' +
 						'<div class="upfront-settings-item-content"></div>' +
 					'</div>'
 				);
@@ -3570,7 +3571,7 @@ define([
 			;
 			this.$el.append(
 				'<div id="usetting-' + this.get_name() + '" class="upfront-settings-item">' +
-					'<div class="upfront-settings-item-title">' + title + '</div>' +
+					'<div class="upfront-settings-item-title"><span>' + title + '</span></div>' +
 					'<div class="upfront-settings-item-content">' + markup + '</div>' +
 				'</div>'
 			);
@@ -3696,7 +3697,8 @@ define([
 		events: {
 			"click .upfront-save_settings": "on_save",
 			"click .upfront-cancel_settings": "on_cancel",
-			"click .upfront-settings_label": "on_toggle"
+			"click .upfront-settings_label": "on_toggle",
+      "click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common"
 		},
 
 		get_title: function () {
@@ -3722,11 +3724,12 @@ define([
 		is_changed: false,
 
 		render: function () {
-			this.$el.html('<div class="upfront-settings_label" /><div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" /></div>');
+			this.$el.html('<div class="upfront-settings_label" /><div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" /><div class="upfront-settings-common_panel"></div>');
 
 			var $label = this.$el.find(".upfront-settings_label"),
 				$panel = this.$el.find(".upfront-settings_panel"),
 				$panel_scroll = this.$el.find(".upfront-settings_panel_scroll"),
+        $common_panel = this.$el.find(".upfront-settings-common_panel"),
 				me = this
 			;
 
@@ -3746,12 +3749,35 @@ define([
 				$panel_scroll.append('<div class="upfront-settings-tab-height" />');
 			}
 			this.stop_scroll_propagation($panel_scroll);
+      // Add common fields
+      if(typeof this.cssEditor == 'undefined' || this.cssEditor){
+        // Adding CSS item
+        var css_settings = new _Settings_CSS({
+          model: this.model,
+          title: 'CSS Styles &amp; Anchor Settings'
+        });
+        css_settings.panel = me;
+        css_settings.render();
+        $common_panel.append(css_settings.el);
+      }
+			// Adding anchor trigger
+			//todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
+				var anchor_settings = new _Settings_AnchorSetting({model: this.model});
+        anchor_settings.panel = me;
+        anchor_settings.render();
+        $common_panel.append(anchor_settings.el);
+
+				// this.listenTo(anchor_settings, "anchor:item:updated", function () {
+					// this.toggle_panel(first); //todo don't know what this was for should investigate
+				// });
+			// }
+      // Save button
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +
-					//"<button type='button' class='upfront-cancel_settings'><i class='icon-arrow-left'></i> Back</button>" +
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
 				'</div>'
 			);
+
 			this.$el.fadeIn('fast', function() {
 				// Scroll the window if settings box clips vertically
 				var parent = me.$el.parent();
@@ -3764,6 +3790,17 @@ define([
 			});
 			this.trigger('rendered');
 		},
+
+    on_toggle_common: function () {
+      var me = this;
+      var panel = this.$el.find('.upfront-settings-common_panel');
+      panel.toggleClass('open');
+      if(panel.is('.open')) {
+        this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text('Element CSS Styles');
+      } else {
+        this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text('CSS Styles & Anchor Settings');
+      }
+    },
 
 		conceal: function () {
 			this.$el.find(".upfront-settings_panel").hide();
@@ -3867,6 +3904,8 @@ define([
 	}));
 
 	var Settings = Backbone.View.extend({
+    has_tabs: true,
+
 		initialize: function(opts) {
 			this.options = opts;
 		},
@@ -3895,8 +3934,6 @@ define([
 				)
 			;
 
-			this.add_common_items();
-
 			me.panels.each(function (panel) {
 				panel.render();
 
@@ -3913,6 +3950,13 @@ define([
 			var label_width = this.panels.first().$el.find('.upfront-settings_label').outerWidth(),
 				panel_width = this.panels.first().$el.find('.upfront-settings_panel').outerWidth();
 
+      // This will remove tabs from left side if element settings have specified so.
+      // Default is to show tabs.
+      if (!this.has_tabs) {
+        label_width = 0;
+        this.$el.addClass('settings-no-tabs');
+      }
+
 			this.$el
 				.css({
 					"position": "absolute",
@@ -3928,6 +3972,12 @@ define([
 			this.trigger('open');
 		},
 
+    /**
+     * @deprecated
+     *
+     * Info: I have moved this to SettingsPanel class since panel can better incorporate
+     * this into itself. [Ivan]
+     */
 		add_common_items: function(){
 			var first = this.panels.first();
 

@@ -493,7 +493,7 @@
             if(this.group){
                 this.$el.append(
                     '<div class="upfront-settings-item">' +
-                        '<div class="upfront-settings-item-title">' + this.get_title() + '</div>' +
+                        '<div class="upfront-settings-item-title"><span>' + this.get_title() + '</span></div>' +
                         '<div class="upfront-settings-item-content">' +
                         '<span class="social-toggle">Drag to re-order the services</span>' +
                         '<span class="social-sort"></span>' +
