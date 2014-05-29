@@ -609,10 +609,20 @@ var _alpha = "alpha",
 		 * @return {Mixed}      The attribute value or false if not found.
 		 */
 		get: function(attr){
-			var value = this.attributes[attr];
-			if(_.isString(value) && value.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
-				return new Date(Date.parse(value.replace(/ /, 'T')));
-			}
+			var value = this.attributes[attr],
+                dates = [
+                    "post_date",
+                    "post_date_gmt",
+                    'post_modified',
+                    "post_modified_gmt"
+                ];
+//			if(_.isString(value) && value.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
+//				return new Date(Date.parse(value.replace(/ /, 'T')));
+//			}
+
+            if( _.indexOf(dates, attr) !== -1 ){
+                return new Date( value  );
+            }
 			return this.attributes[attr];
 		},
 		/**

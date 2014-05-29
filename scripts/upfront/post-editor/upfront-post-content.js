@@ -408,7 +408,7 @@ var PostContentEditor = Backbone.View.extend({
 			this.bar.calculateLimits();
 			return;
 		}
-
+        console.log("post date", this.post);
 		this.bar = new EditionBar({post: this.post});
 		this.bindBarEvents();
 		this.bar.render();
