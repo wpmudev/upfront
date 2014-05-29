@@ -1204,6 +1204,7 @@ define([
 				ed.start(this, this.model);
 				this.remove();
 				ed.update_wrappers(region);
+				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
 			},
 			disable_interaction: function () {
 				this.$el.addClass('upfront-module-group-disabled');
@@ -1534,6 +1535,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:added", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
+				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
 
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
 			},
