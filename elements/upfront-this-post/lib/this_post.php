@@ -19,6 +19,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function get_post_part($type, $options = array(), $tpl = false){
+		$options = is_array($options) ? $options : array();
 		global $post;
 		$parts = array_values(self::$PARTNAMES);
 		if(array_search($type, $parts) === FALSE){
@@ -29,7 +30,6 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$part = array('replacements' => array());
 		$replacements = array();
-
 		$tpls = array();
 
 		if(!$tpl)
@@ -189,7 +189,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		foreach($layout['wrappers'] as $i => $w){
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
 			foreach($w['objects'] as $k => $o){
-				$opts = isset($options[$o['slug']]) ? $options[$o['slug']] : array();
+				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$tpl =  isset($templates[$o['slug']]) ? $templates[$o['slug']] : false;
 				$markups = self::get_post_part($o['slug'], $opts, $tpl);
 				$layout['wrappers'][$i]['objects'][$k]['markup'] = $markups['tpl'];
@@ -393,7 +393,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		$post_id = $_POST['post_id'];
 
-		$options = isset($_POST['options']) ? $_POST['options'] : array();
+		$options = !empty($_POST['options']) && is_array($_POST['options']) ? $_POST['options'] : array();
 		$templates = isset($_POST['templates']) ? $_POST['templates'] : array();
 
 		//Prepare the parts before rendering
@@ -413,7 +413,8 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$post_data = Upfront_ThisPostView::prepare_post($post);
 		foreach($parts as $part){
 			$slug = $part['slug'];
-			$contents = Upfront_ThisPostView::get_post_part($slug, $part['options'], isset($templates[$slug]) ? $templates[$slug] : '');
+			$part_options = !empty($part['options']) ? $part['options'] : array(); // This is for editor
+			$contents = Upfront_ThisPostView::get_post_part($slug, $part_options, isset($templates[$slug]) ? $templates[$slug] : '');
 			$tpls[$slug] = $contents['tpl'];
 			$replacements = array_merge($replacements, $contents['replacements']);
 			if($slug == 'contents'){
