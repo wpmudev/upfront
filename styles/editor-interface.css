@@ -13,6 +13,9 @@
   	margin: 0 0 0 260px;
   	width: auto;
 }
+.upfront-edit-responsive #page {
+  margin-top: 52px;
+}
 .upfront-edit-content #page {
 	position: relative;
 	min-height: 100%;
@@ -9542,4 +9545,32 @@ a.upfront-css-edit:before{
 }
 .post-settings-data .upfront-field-multiple {
   margin-top: 8px;
+}
+
+/* Topbar */
+#upfront-ui-topbar {
+  background: #2c3e50;
+  height: 52px;
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  z-index: 2;
+}
+.breakpoints-toggler {
+  text-align: center;
+}
+.breakpoints-toggler {
+  margin: 0;
+}
+.breakpoints-toggler li {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 20px;
+}
+.breakpoints-toggler li.active {
+  text-decoration: underline;
+}
+.breakpoints-toggler li:first-child {
+  margin-left: 0;
 }

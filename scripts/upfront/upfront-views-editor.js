@@ -7033,6 +7033,69 @@ var Field_Anchor = Field_Select.extend({
 		}
 	});
 
+  var Breakpoint = Backbone.View.extend({
+    tagName: 'li',
+    events: {
+      'click': 'on_click'
+    },
+    initialize: function(options) {
+      this.options = options || {};
+    },
+    render: function() {
+      this.$el.html(this.options.width);
+      return this;
+    },
+    on_click: function() {
+      this.$el.siblings().removeClass('active');
+      this.$el.addClass('active');
+      this.trigger('click', this.options.width);
+    }
+  });
+
+  var BreakpointsToggler = Backbone.View.extend({
+    tagName: 'ul',
+    className: 'breakpoints-toggler',
+    breakpoints: [
+      {width: 'mobile'},
+      {width: 'tablet'},
+      {width: 'desktop'}
+    ],
+    initialize: function() {
+      this.layoutsize = new LayoutSizes();
+    },
+    render: function() {
+      _.each(this.breakpoints, function(breakpoint_data) {
+        var breakpoint = new Breakpoint(breakpoint_data);
+        this.$el.append(breakpoint.render().el);
+        this.listenTo(breakpoint, 'click', this.change_breakpoint);
+      }, this);
+      return this;
+    },
+    change_breakpoint: function(width) {
+      this.layoutsize.change_size(width);
+    }
+  });
+
+  var Topbar = Backbone.View.extend({
+    id: 'upfront-ui-topbar',
+    content: '',
+    render: function() {
+      this.$el.append(this.content.el);
+      return this;
+    },
+    start: function() {
+      console.log(Upfront.Application.get_current());
+      if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.RESPONSIVE ) {
+        var toggler = new BreakpointsToggler();
+        this.content = toggler.render();
+      }
+      $('body').prepend(this.render().el);
+    },
+    stop: function() {
+      this.remove();
+    }
+  });
+
 	return {
 		"Editor": {
 			"Property": Property,
@@ -7077,6 +7140,9 @@ var Field_Anchor = Field_Select.extend({
 				"Panel": SidebarPanel,
 				"Element": DraggableElement
 			},
+      "Topbar": {
+        "Topbar": Topbar
+      },
 			notify : function(message, type){
 				notifier.addMessage(message, type);
 			},
