@@ -121,7 +121,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'</div>';
 	}
 
-	public static function get_post_markup ($post_id, $post_type, $properties=array()) {
+	public static function get_post_markup ($post_id, $post_type, $properties=array(), $layout = false) {
 		if($post_id === 0)
 			return self::get_new_post($post_type);
 
@@ -138,7 +138,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$properties['featured_image'] = array_search('featured_image', $properties['post_data']) !== FALSE;
 
-		return self::post_template($post, $properties);
+		return self::post_template($post, $properties, $layout);
 	}
 
 	public static function get_new_post($post_type = 'post', $properties=array(), $query_override=true) {
@@ -172,9 +172,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return self::post_template($post, $properties);
 	}
 
-	public static function post_template($this_post, $properties=array()) {
+	public static function post_template($this_post, $properties=array(), $layoutData = false) {
 		$post_data = self::prepare_post($this_post);
-		$layoutData = self::find_postlayout('single', $this_post->post_type, $this_post->ID);
+		if(!$layoutData)
+			$layoutData = self::find_postlayout('single', $this_post->post_type, $this_post->ID);
 		$options = $layoutData['partOptions'];
 		$templates = $properties['templates'];
 

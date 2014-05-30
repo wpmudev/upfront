@@ -110,7 +110,7 @@ define(function() {
         node: node,
         content_mode: is_excerpt ? 'post_excerpt' : 'post_content',
         view: this,
-        layout: this.property('layout')
+        //layout: this.property('layout')
       });
 
       //}

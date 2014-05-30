@@ -19,7 +19,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		$limit = $this->_get_property('limit');
 		$content_type = $this->_get_property('content_type');
 		$featured_image = $this->_get_property('featured_image');
-
+		$element_id = $this->_get_property('element_id');
 		$data = is_admin() && !empty($_POST['data'])
 			? json_decode(stripslashes_deep($_POST['data']), true)
 			: array()
@@ -54,7 +54,7 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		$properties = $this->properties_to_array();
 		$properties['editing'] = $editing;
-		return self::get_template($args, $properties);
+		return self::get_template($args, $properties, $element_id);
 	}
 
 	public static function set_featured_image($html, $post_id){
@@ -68,16 +68,34 @@ class Upfront_UpostsView extends Upfront_Object {
 		}
 		return $html;
 	}
-
-	public static function get_template($query_args, $properties) {
+	
+	public static function default_postlayout($type){
+		return array(
+			'postLayout' => array(
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'excerpt', 'classes' => ' post-part c24')))
+			),
+			'partOptions' => array('featured_image' => array('height' => 100))
+		);
+	}
+	
+	public static function get_template($query_args, $properties, $element_id) {
 		global $wp_query;
 		$temp_query = clone $wp_query;
 
 		query_posts($query_args);
+		
+		
+		$key = get_stylesheet() . '-archive-'.$element_id;
 
+		$layout = get_option($key);
+		if(!$layout)
+			$layout = self::default_postlayout($type);
+		
 		$markup = upfront_get_template(
 			'uposts',
-			array('properties' => $properties),
+			array('properties' => $properties, 'layout' => $layout),
 			dirname(dirname(__FILE__)) . '/tpl/uposts.php'
 		);
 
@@ -118,12 +136,11 @@ class Upfront_UpostsView extends Upfront_Object {
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image'), // also: categories,  tags
 			'layout' => array(
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
-				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 			),
 		);
 	}
-
+	
 	public static function add_js_defaults($data){
 		if(!isset($data['uposts']))
 			$data['uposts'] = array();
@@ -200,8 +217,24 @@ class Upfront_UpostsAjax extends Upfront_Server {
 		add_action('wp_ajax_upost_get_taxonomy_terms', array($this, "load_taxonomy_terms"));
 		add_action('wp_ajax_uposts_get_markup', array($this, 'load_markup'));
 		add_action('wp_ajax_uposts_single_markup', array($this, 'load_single_markup'));
-
+		add_action('wp_ajax_uposts_save_postlayout', array($this, "save_postlayout"));
 		if (is_user_logged_in()) add_action('wp_footer', array($this, 'pickle_query'), 99);
+	}
+
+	public function save_postlayout() {
+		$layoutData = isset($_POST['layoutData']) ? $_POST['layoutData'] : false;
+		$cascade = isset($_POST['cascade']) ? $_POST['cascade'] : false;
+		if(!$layoutData || !$cascade)
+			$this->_out(new Upfront_JsonResponse_Error('No layout data or cascade sent.'));
+
+		$key = get_stylesheet() . '-' . $cascade;
+
+		update_option($key, $layoutData);
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			"key" => $key,
+			"layoutData" => $layoutData
+		)));
 	}
 
 	public function pickle_query () {

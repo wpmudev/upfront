@@ -398,46 +398,48 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		;
 
 		saveDialog.on('save', function(type){
-			var elementType = me.postView.property('type'),
-				elementSlug = elementType == 'ThisPostModel' ? 'single' : 'archive',
-				loading = new Upfront.Views.Editor.Loading({
-					loading: "Saving post layout...",
-					done: "Thank you for waiting",
-					fixed: false
-				}),
-				specificity
-			;
-			if(elementSlug == 'single')
-				specificity = type == 'this-post' ? me.postView.postId : me.postView.editor.post.get('post_type');
-			else
-				specificity = type == 'this-post' ? me.postView.property('element_id').replace('uposts-object-','') : me.postView.property('post_type');
+			
+			var elementType = me.postView.property('type');
+			var specificity;
+					elementSlug = elementType == 'ThisPostModel' ? 'single' : 'archive',
+					loading = new Upfront.Views.Editor.Loading({
+						loading: "Saving post layout...",
+						done: "Thank you for waiting",
+						fixed: false
+					})
+					
+				;
+				if(elementSlug == 'single')
+					specificity = type == 'this-post' ? me.postView.postId : me.postView.editor.post.get('post_type');
+				else
+					specificity = type == 'this-post' ? me.postView.property('element_id').replace('uposts-object-','') : me.postView.property('post_type');
+	
+	
+				console.log(type);
+	
+				var layoutData = {
+					postLayout: me.exportPostLayout(),
+					partOptions: me.postView.partOptions || {}
+				}
+	
+				loading.render();
+				saveDialog.$('#upfront-save-dialog').append(loading.$el);
+	
+				Upfront.Util.post({
+					action: 'upfront_save_postlayout',
+					layoutData: layoutData,
+					cascade: elementSlug + '-' + specificity
+				}).done(function(response){
+					loading.done();
+					console.log(response);
+					saveDialog.close();
+	
+					me.postView.postLayout = layoutData.postLayout;
+					me.postView.render();
+	
+					Application.start(Application.mode.last);
+				});
 
-
-			console.log(type);
-
-			var layoutData = {
-				postLayout: me.exportPostLayout(),
-				partOptions: me.postView.partOptions || {}
-			}
-
-			loading.render();
-			saveDialog.$('#upfront-save-dialog').append(loading.$el);
-
-			Upfront.Util.post({
-				action: 'upfront_save_postlayout',
-				layoutData: layoutData,
-				cascade: elementSlug + '-' + specificity
-			}).done(function(response){
-				loading.done();
-				console.log(response);
-				saveDialog.close();
-
-				me.postView.postLayout = layoutData.postLayout;
-
-				me.postView.render();
-
-				Application.start(Application.mode.last);
-			});
 		});
 
 
