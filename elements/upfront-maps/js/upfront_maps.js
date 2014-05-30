@@ -111,7 +111,6 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			geocoder.geocode({address: location}, function (results, status) {
 				if (status != google.maps.GeocoderStatus.OK) return false;
 				var pos = results[0].geometry.location;
-				debugger;
 				var markers = me.model.get_property_value_by_name("markers") || [];
 				markers.push({lat:pos.lat(), lng:pos.lng()});
 				me.model.set_property("markers", markers, true);
@@ -133,7 +132,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				$el = this.$el.find('.ufm-gmap-container:first'),
 				height = (this.model.get_property_value_by_name("row") ? this.model.get_property_value_by_name("row") : this.parent_module_view.model.get_property_value_by_name("row")),
 				controls = this.model.get_property_value_by_name("controls") || [],
-				props =	 {
+				props = {
 					center: this.model.get_property_value_by_name("map_center") || DEFAULTS.center,
 					zoom: parseInt(this.model.get_property_value_by_name("zoom"), 10) || DEFAULTS.zoom,
 					type: this.model.get_property_value_by_name("style") || DEFAULTS.style,
@@ -230,9 +229,14 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						$(document).data(element_id + "-location", location);
 					});
 				}).end()
-				.find("#upfront_map-location_overlay-location").off("keypress").on("keypress", function (e) {
-					if (13 === e.which) $location.find("#upfront_map-location_overlay-use_location").click();
-				}).end()
+				.find("#upfront_map-location_overlay-location")
+					.off("keypress").on("keypress", function (e) {
+						if (13 === e.which) $location.find("#upfront_map-location_overlay-use_location").click();
+					})
+					.off("click").on("click", function (e) {
+						$(this).focus();
+					})
+				.end()
 				.find("#upfront_map-location_overlay-use_current").off("click").on("click", function () {
 					if (!(navigator && navigator.geolocation)) return false;
 					var markers = me.model.get_property_value_by_name("markers") || [];
@@ -361,7 +365,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			$info.on('input', function () {
 				marker.content = $info.text();
 				me.update_marker(marker);
-			})
+			});
 			if (marker.is_open) info.open(me.map, mrk);
 			google.maps.event.addListener(mrk, 'click', function() {
 				if (!marker.is_open) {
@@ -438,7 +442,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					all_imgs = '';
 
 				_.each(img_names, function(img){
-					all_imgs = all_imgs + '<div class="ufm-marker-demo ufm-rounded"> <img src="'+img_dir+img+'" /> </div>'
+					all_imgs = all_imgs + '<div class="ufm-marker-demo ufm-rounded"> <img src="'+img_dir+img+'" /> </div>';
 				});
 
 				$('.marker-imgs', t).html(all_imgs);
@@ -508,7 +512,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 
 				var panes = this.getPanes();
 				panes.floatPane.appendChild(this.div);
-			}
+			};
 
 			a.prototype.draw = function(){
 
@@ -528,12 +532,12 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				div.style.left = (xy.x-170) + 'px';
 				div.style.top = (xy.y + 15) + 'px';
 				div.style.width = '320px';
-			}
+			};
 
 			a.prototype.onRemove = function(){
 				this.div.parentNode.removeChild(this.div);
 				this.div = null;
-			}
+			};
 
 			return a;
 		}
