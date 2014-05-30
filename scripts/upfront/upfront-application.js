@@ -717,9 +717,10 @@ console.log('here is the index'+postindex);
 
 	restoreSidebar: function(){
 		var sidebar = Application.sidebar;
+
 		//Show hidden parts
-		sidebar.sidebar_commands.primary.$el.hide();
-		sidebar.sidebar_profile.$el.hide();
+		sidebar.sidebar_commands.primary.$el.show();
+		sidebar.sidebar_profile.$el.show();
 
 		//Restore commands
 		sidebar.sidebar_commands.control.commands = this.sidebarCommands;
