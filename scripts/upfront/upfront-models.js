@@ -621,7 +621,8 @@ var _alpha = "alpha",
 //			}
 
             if( _.indexOf(dates, attr) !== -1 ){
-                return new Date( value  );
+                //return new Date( value  ); // <-- Breaks in FF
+                return new Date(Date.parse(value.replace(/ /, 'T'))); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
             }
 			return this.attributes[attr];
 		},
