@@ -345,8 +345,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"THEME" => "theme",
 			"POST" => "post layout",
 			"POSTCONTENT" => "post content",
+      "RESPONSIVE" => "responsive",
 			"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
-			"ALLOW" => (current_user_can("manage_options") ? "layout,content,theme,postlayout" : "content")
+			"ALLOW" => (current_user_can("manage_options") ? "layout,content,theme,postlayout,responsive" : "content")
 		));
 
 		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);
@@ -422,10 +423,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout = Upfront_Layout::get_instance();
 
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
-		
+
 		//Add typography styles - rearranging so the imports from Google fonts come first, if needed
 		$style = $this->prepare_typography_styles($layout);
-		
+
 		$style .= $preprocessor->process();
 
 		//Add theme styles

@@ -315,7 +315,7 @@ var LayoutEditor = new (LayoutEditorSubapplication.extend({
 		this.set_up_editor_interface();
 
 		this.set_up_event_plumbing_after_render();
-		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout").addClass("upfront-edit-layout");
+		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-layout");
 	},
 
 	stop: function () {
@@ -654,11 +654,11 @@ console.log('here is the index'+postindex);
 	restoreViews: function(){
 		this.regionContainer.remove();
 		this.regionContainer = false;
-		
+
 		//Gagan: The code inside the following if, is to accomodate the posts element
 		if(typeof(this.postwrapperclone) != 'undefined' && this.postwrapperclone)
 			this.postwrapperclone.remove();
-			
+
 		this.postWrapper.show();
 		this.postWrapper = false;
 
@@ -826,7 +826,7 @@ var ContentEditor = new (Subapplication.extend({
 	start: function () {
 		Upfront.Util.log("Starting the content edit mode");
 
-		$("html").removeClass("upfront-edit-layout upfront-edit-theme upfront-edit-postlayout").addClass("upfront-edit-content");
+		$("html").removeClass("upfront-edit-layout upfront-edit-theme upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-content");
 	},
 
 	stop: function () {
@@ -848,7 +848,7 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 		this.set_up_editor_interface();
 
 		this.set_up_event_plumbing_after_render();
-		$("html").removeClass("upfront-edit-layout upfront-edit-content upfront-edit-postlayout").addClass("upfront-edit-theme");
+		$("html").removeClass("upfront-edit-layout upfront-edit-content upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-theme");
 		if ( _upfront_new_theme && this._first_start ){
 			this.listenToOnce(Upfront.Events, 'layout:render', function(){
 				Upfront.Events.trigger("command:layout:edit_structure");
@@ -869,6 +869,26 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 
 }))();
 
+var ResponsiveEditor = new (Subapplication.extend({
+	Objects: {},
+
+	boot: function () {
+		Upfront.Util.log("Preparing responsive mode for execution")
+	},
+
+	start: function () {
+		Upfront.Util.log("Starting responsive mode.")
+    Upfront.Application.sidebar.render();
+
+		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout upfront-edit-layout").addClass("upfront-edit-responsive");
+	},
+
+	stop: function () {
+		Upfront.Util.log("Leaving responsive mode.")
+		return this.stopListening(Upfront.Events);
+	}
+
+}))();
 
 var Application = new (Backbone.Router.extend({
 	LayoutEditor: LayoutEditor,
@@ -876,6 +896,7 @@ var Application = new (Backbone.Router.extend({
 	ThemeEditor: ThemeEditor,
 	PostLayoutEditor: PostLayoutEditor,
 	PostContentEditor: PostContentEditor,
+  ResponsiveEditor: ResponsiveEditor,
 
 	actions: {
 		"save": "upfront_save_layout",
@@ -894,7 +915,8 @@ var Application = new (Backbone.Router.extend({
 		LAYOUT: "layout",
 		THEME: "theme",
 		POST: 'post layout',
-		POSTCONTENT: "post content"
+		POSTCONTENT: "post content",
+    RESPONSIVE: "responsive"
 	},
 
 	mode: {
@@ -1231,6 +1253,9 @@ var Application = new (Backbone.Router.extend({
 		} else if(mode && this.MODE.POSTCONTENT == mode) {
 			this.mode.current = this.MODE.POSTCONTENT;
 			this.current_subapplication = this.PostContentEditor;
+		} else if(mode && this.MODE.RESPONSIVE == mode) {
+			this.mode.current = this.MODE.RESPONSIVE;
+			this.current_subapplication = this.ResponsiveEditor;
 		} else {
 			this.mode.current = this.MODE.LAYOUT;
 			this.current_subapplication = this.LayoutEditor;

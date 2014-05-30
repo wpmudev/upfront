@@ -31,8 +31,6 @@ define([
 		if (file.match(/text!/)) _Upfront_Templates[file.replace(/text!upfront\/templates\//, '').replace(/\.html/, '')] = _template_args[idx];
 	});
 
-	console.log('refresh');
-
 	Upfront.Events.on('data:ready', function(){
 		Upfront.data.tpls = _Upfront_Templates;
 	});
@@ -227,7 +225,7 @@ define([
 
 
 	var Command_NewPost = Command.extend({
-		"className": "command-new-post",
+		className: "command-new-post",
 		postView: false,
 		postType: 'post',
 		setMode: false,
@@ -688,6 +686,26 @@ define([
 		enable_toggle: function () {
 			this.$el.css('opacity', 1);
 			this.enabled = true;
+		}
+	});
+
+	var Command_StartResponsiveMode = Command.extend({
+		enabled: true,
+		render: function () {
+			this.$el.html("<span>Create Responsive Layouts</span>");
+		},
+		on_click: function () {
+			Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
+		}
+	});
+
+	var Command_StopResponsiveMode = Command.extend({
+		enabled: true,
+		render: function () {
+			this.$el.html("<span>Exit Responsive</span>");
+		},
+		on_click: function () {
+			Upfront.Application.start(Upfront.Application.MODE.DEFAULT);
 		}
 	});
 
@@ -1561,7 +1579,7 @@ define([
 		},
 		render: function () {
 			var me = this;
-			_.each(this.panels, function(panel, key){
+			_.each(this.panels, function(panel){
 				panel.render();
 				me.$el.append(panel.el);
 			});
@@ -1627,6 +1645,9 @@ define([
 			} else {
 				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}
+      this.commands.push(
+        new Command_StartResponsiveMode({model: this.model})
+      );
 			// Dev feature only
 			if ( Upfront.Settings.Debug.dev ){
 				//if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
@@ -1644,6 +1665,15 @@ define([
 			]);
 			if ( !Upfront.Settings.Application.NO_SAVE )
 				this.commands.push(new Command_Exit({"model": this.model}));
+		}
+	});
+
+	var SidebarCommands_Responsive = Commands.extend({
+		"className": "sidebar-commands sidebar-commands-responsive",
+		initialize: function () {
+			this.commands = _([
+				new Command_StopResponsiveMode({model: this.model})
+			]);
 		}
 	});
 
@@ -1746,33 +1776,46 @@ define([
 			$('#preventUsageOverlay').hide();
 		},
 		render: function () {
+      var current_app = Upfront.Application.get_current();
 			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
 
 			// Header
-			this.sidebar_commands.header.render();
-			output.append(this.sidebar_commands.header.el);
+      this.sidebar_commands.header.render();
+      output.append(this.sidebar_commands.header.el);
 
 			// Editor Mode
 			//this.editor_mode.render();
 			//this.$el.append(this.editor_mode.el);
 
-			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ){
+			if ( current_app !== Upfront.Settings.Application.MODE.THEME
+          && current_app !== Upfront.Settings.Application.MODE.RESPONSIVE){
 				// Profile
 				this.sidebar_profile.render();
 				output.append(this.sidebar_profile.el);
 			}
 
 			// Primary commands
-			this.sidebar_commands.primary.render();
-			output.append(this.sidebar_commands.primary.el);
+      if ( current_app !== Upfront.Settings.Application.MODE.RESPONSIVE) {
+        this.sidebar_commands.primary.render();
+        output.append(this.sidebar_commands.primary.el);
+      }
 
-			if ( this.sidebar_commands.additional ){
+			if ( this.sidebar_commands.additional
+          && current_app !== Upfront.Settings.Application.MODE.RESPONSIVE ) {
 				// Additional commands
 				this.sidebar_commands.additional.render();
 				output.append(this.sidebar_commands.additional.el);
 			}
 
-			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT ){
+      // Responsive
+      if (current_app === Upfront.Settings.Application.MODE.RESPONSIVE) {
+        var responsive_commands = new SidebarCommands_Responsive({model: this.model});
+        responsive_commands.render();
+        output.append(responsive_commands.el);
+      }
+
+			if ( current_app !== Upfront.Settings.Application.MODE.CONTENT
+          && current_app !== Upfront.Settings.Application.MODE.RESPONSIVE) {
 				// Sidebar panels
 				this.sidebar_panels.render();
 				output.append(this.sidebar_panels.el);
@@ -2777,9 +2820,9 @@ define([
 
 		initialize: function () {
 			this.sizes = _([
-				new LayoutSize_Desktop({"model": this.model}),
-				new LayoutSize_Tablet({"model": this.model}),
-				new LayoutSize_Mobile({"model": this.model}),
+				new LayoutSize_Desktop({model: this.model}),
+				new LayoutSize_Tablet({model: this.model}),
+				new LayoutSize_Mobile({model: this.model}),
 			]);
 		},
 		render: function () {
@@ -2788,7 +2831,7 @@ define([
 			me.$el.html("<nav><ul /></nav>")
 			me.sizes.each(function (size) {
 				size.render();
-				size.bind("upfront:layout_size:change_size", me.change_size, me);
+        me.listenTo(size, "upfront:layout_size:change_size", me.change_size);
 				me.$el.find("nav ul").append(size.el);
 			});
 			this.sizes.first().$el.trigger("click");
@@ -5514,7 +5557,7 @@ var Field_Anchor = Field_Select.extend({
 					break;
 				case 'featured':
 					this.render_modal_tab_image($tab, tab);
-					break;				
+					break;
 				case 'slider':
 					this.render_modal_tab_slider($tab);
 					break;
@@ -5584,7 +5627,7 @@ var Field_Anchor = Field_Select.extend({
 			if ( !image && value != 'featured') {
 				this.upload_image();
 			}
-			
+
 			var pos_option = {
 					default_value: 50,
 					min: 0,
@@ -6857,8 +6900,8 @@ var Field_Anchor = Field_Select.extend({
 			Backbone.View.prototype.remove.call(this);
 		}
 	});
-	
-	
+
+
 	var RegionFixedPanels = RegionPanels.extend({
 		className: 'upfront-inline-panels upfront-region-fixed-panels upfront-ui',
 		initialize: function () {
@@ -6904,11 +6947,11 @@ var Field_Anchor = Field_Select.extend({
 			Backbone.View.prototype.remove.call(this);
 		}
 	});
-	
+
 	var RegionFixedEditPosition = Backbone.View.extend({
 		className: 'upfront-region-fixed-edit-pos',
 		initialize: function () {
-			
+
 		},
 		render: function () {
 			var me = this,
