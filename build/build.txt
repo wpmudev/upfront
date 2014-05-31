@@ -26,6 +26,7 @@ text!upfront/templates/popup.html
 text!upfront/templates/region_edit_panel.html
 upfront/upfront-views-editor.js
 upfront/upfront-behaviors.js
+jquery/jquery-dateFormat.min.js
 /Volumes/Trunk/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/backbone-query-parameters/backbone-query-parameters.js
 upfront/objects/loading.js
 upfront/upfront-objects.js

@@ -44,6 +44,7 @@
         "ueditor_inserts": "redactor/ueditor-inserts",
         "redactor": "redactor/redactor",
         "ueditor": "redactor/ueditor",
+        "jquery-df": "jquery/jquery-dateFormat.min",
         "upfront_code": "../elements/upfront-code/js/upfront_code",
         "upfront_slider": "../elements/upfront-slider/js/uslider"
     },
