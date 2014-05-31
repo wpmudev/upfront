@@ -9,7 +9,6 @@ define('jquery', [], function(){
 	return jQuery;
 });
 
-
 require(['backbone'], function (Backbone) {
 	// Fix Underscore templating to Mustache style
 	_.templateSettings = {

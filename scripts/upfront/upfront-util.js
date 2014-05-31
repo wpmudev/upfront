@@ -218,7 +218,135 @@ define(function() {
 		return item;
 
 	  }
-	}
+	},
+    date : {
+        php_format_to_jquery :  function(php_format)
+        {
+            var SYMBOLS_MATCHING = {
+                // Day
+                'd': 'dd',
+                'D': 'D',
+                'j': 'd',
+                'l': 'DD',
+                'N': '',
+                'S': '',
+                'w': '',
+                'z': 'o',
+                // Week
+                'W': '',
+                // Month
+                'F': 'MM',
+                'm': 'mm',
+                'M': 'M',
+                'n': 'm',
+                't': '',
+                // Year
+                'L': '',
+                'o': '',
+                'Y': 'yy',
+                'y': 'y',
+                // Time
+                'a': '',
+                'A': '',
+                'B': '',
+                'g': '',
+                'G': '',
+                'h': '',
+                'H': '',
+                'i': '',
+                's': '',
+                'u': ''
+            };
+            jqueryui_format = "";
+            escaping = false;
+            for( var i = 0; i < php_format.length; i++)
+            {
+                char = php_format[i];
+                if(char === '\\') // PHP date format escaping character
+                {
+                    i++;
+                    if(escaping) jqueryui_format += php_format[i];
+                    else jqueryui_format += '\'' + php_format[i];
+                    escaping = true;
+                }
+                else
+                {
+                    if(escaping) { jqueryui_format += "'"; escaping = false; }
+                    if( _.isUndefined(SYMBOLS_MATCHING[char])){
+                        jqueryui_format += char;
+                    }else{
+                        jqueryui_format += SYMBOLS_MATCHING[char];
+                    }
+
+                }
+            }
+            return jqueryui_format;
+
+        },
+        php_format_to_js :  function(php_format)
+        {
+            var SYMBOLS_MATCHING = {
+                // Day
+                'd': 'dd',
+                'D': 'D',
+                'j': 'd',
+                'l': 'DD',
+                'N': '',
+                'S': '',
+                'w': '',
+                'z': 'o',
+                // Week
+                'W': '',
+                // Month
+                'F': 'MMMM',
+                'm': 'mmmm',
+                'M': 'M',
+                'n': 'm',
+                't': '',
+                // Year
+                'L': '',
+                'o': '',
+                'Y': 'yyyy',
+                'y': 'y',
+                // Time
+                'a': '',
+                'A': '',
+                'B': '',
+                'g': '',
+                'G': '',
+                'h': '',
+                'H': '',
+                'i': '',
+                's': '',
+                'u': ''
+            };
+            jqueryui_format = "";
+            escaping = false;
+            for( var i = 0; i < php_format.length; i++)
+            {
+                char = php_format[i];
+                if(char === '\\') // PHP date format escaping character
+                {
+                    i++;
+                    if(escaping) jqueryui_format += php_format[i];
+                    else jqueryui_format += '\'' + php_format[i];
+                    escaping = true;
+                }
+                else
+                {
+                    if(escaping) { jqueryui_format += "'"; escaping = false; }
+                    if( _.isUndefined(SYMBOLS_MATCHING[char])){
+                        jqueryui_format += char;
+                    }else{
+                        jqueryui_format += SYMBOLS_MATCHING[char];
+                    }
+
+                }
+            }
+            return jqueryui_format;
+
+        }
+    }
 };
 
 var Popup = {

@@ -52,7 +52,10 @@ var PostContentEditor = Backbone.View.extend({
 	events: {
 		'click a': 'preventLinkNavigation',
 		'click .upfront-content-marker-author' : 'editAuthor',
-		'click .upost_thumbnail_changer': 'editThumb'
+		'click .upfront-content-marker-date' : 'editDate',
+		'click .upost_thumbnail_changer': 'editThumb',
+		'click .ueditor-action-pickercancel': 'cancel_editdate',
+		'click .ueditor-action-pickerok': 'cancel_editdate'
 	},
 
 	initialize: function(opts){
@@ -143,6 +146,52 @@ var PostContentEditor = Backbone.View.extend({
 
 			this.$el.append(this.authorSelect.$el);
 		}
+
+        //Date
+        this.parts.dates = this.$('.upfront-content-marker-date');
+        if(this.parts.dates.length){
+            var me = this,
+                datepickerData = {}
+                dates = Upfront.data.ueditor.dates,
+                options = [],
+                date = this.post.get("post_date"),
+                dateFormat = Upfront.Util.date.php_format_to_js( this.partOptions.date.format !== "" ?  this.partOptions.date.format : Upfront.data.date.format )
+                dateFormatUI = Upfront.Util.date.php_format_to_jquery( this.partOptions.date.format !== "" ?  this.partOptions.date.format : Upfront.data.date.format )
+                ;
+
+            datepickerData.minutes = _.range(0,60);
+            datepickerData.hours = _.range(0,24);
+
+            datepickerData.currentHour = date.getHours();
+            datepickerData.currentMinute = date.getHours();
+
+
+//            _.each(dates, function(a){
+//                options.push({value: a.ID, name: a.display_name});
+//            });
+            this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
+            this.datepicker = this.datepickerTpl(datepickerData);
+            this.$el.prepend(this.datepicker);
+            this.$('.upfront-bar-datepicker').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: dateFormatUI,
+                onChangeMonthYear: function(year, month, inst){
+                    var picker = me.$('.upfront-bar-datepicker'),
+                        day = inst.selectedDay;
+                    ;
+                    var prev_date = new Date(  me.parts.dates.text()  ),
+                        d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() );
+                    me.parts.dates.text(Upfront.Util.format_date( d, true));
+                    me.parts.dates.text($.format.date(d, dateFormat));
+                    me.post.set("post_date", d);
+                    picker.datepicker("setDate", d);
+                },
+                onSelect : function(dateText){
+                    me.parts.dates.text(dateText);
+                }
+            });
+        }
 
 		//Featured image
 		this.parts.featured = this.$('.upfront-content-marker-featured_image');
@@ -333,7 +382,6 @@ var PostContentEditor = Backbone.View.extend({
 
 		console.log('Author changed to ' + authorId);
 	},
-
 	editAuthor: function(e) {
 		e.preventDefault();
 		var target = $(e.target);
@@ -347,6 +395,46 @@ var PostContentEditor = Backbone.View.extend({
 		});
 	},
 
+    editDate: function(e) {
+        e.preventDefault();
+        var $target = $(e.target);
+
+        var data = this.post.toJSON().post_date
+//            date = data ? data.split(' ')[0] : false
+            ;
+        /**
+         * Show date picker
+         */
+        this.$('.upfront-date_picker').show();
+        $(this.datepicker).toggle();
+        if(date){
+            /**
+             * update date in the date picker and the time picker
+             */
+            this.$('.upfront-bar-datepicker').datepicker('setDate', date);
+            date = this.post.get('post_date');
+
+            var hours = date.getHours(),
+                minutes = date.getMinutes()
+                ;
+
+            this.$('.ueditor-hours-select').val(hours);
+            this.$('.ueditor-minutes-select').val(minutes);
+        }
+
+        /**
+         * Place the datepicker in proper position
+         */
+        this.$(".upfront-date_picker").offset({
+            top : $target.offset().top + 30,
+            left : $target.offset().left
+        });
+
+    },
+    cancel_editdate : function(){
+        "use strict";
+        this.$('.upfront-date_picker').hide();
+    },
 	getAuthorData: function(authorId){
 		var i = -1,
 			found = false,
@@ -408,7 +496,6 @@ var PostContentEditor = Backbone.View.extend({
 			this.bar.calculateLimits();
 			return;
 		}
-        console.log("post date", this.post);
 		this.bar = new EditionBar({post: this.post});
 		this.bindBarEvents();
 		this.bar.render();

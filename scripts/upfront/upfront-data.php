@@ -56,7 +56,9 @@ if($styles){
 }
 
 $upfront_data['styles'] = $elementTypes;
-
+$upfront_data['date'] = array(
+    'format' => get_option('date_format')
+);
 ?>
 
 (function ($, undefined) {
