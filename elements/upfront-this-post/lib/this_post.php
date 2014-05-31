@@ -20,6 +20,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function get_post_part($type, $options = array(), $tpl = false){
 		$options = is_array($options) ? $options : array();
+		
 		global $post;
 		$parts = array_values(self::$PARTNAMES);
 		if(array_search($type, $parts) === FALSE){
@@ -66,6 +67,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 				ob_start();
 				the_excerpt();
 				$replacements['%excerpt%'] = ob_get_clean();
+				
+				if($options['excerpt'])
+					$replacements['%contents%'] = $replacements['%excerpt%'];
 
 				$offset = isset($options['content_offset']) ? $options['content_offset'] : '';
 				$replacements['%offset%'] = $offset;
@@ -174,8 +178,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function post_template($this_post, $properties=array(), $layoutData = false) {
 		$post_data = self::prepare_post($this_post);
+		$excerpt = false;
 		if(!$layoutData)
 			$layoutData = self::find_postlayout('single', $this_post->post_type, $this_post->ID);
+		else
+			$excerpt = $properties['content_type'] == 'excerpt'?true:false;
+
 		$options = $layoutData['partOptions'];
 		$templates = $properties['templates'];
 
@@ -191,6 +199,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
 			foreach($w['objects'] as $k => $o){
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
+				$opts['excerpt'] = $excerpt;
 				$tpl =  isset($templates[$o['slug']]) ? $templates[$o['slug']] : false;
 				$markups = self::get_post_part($o['slug'], $opts, $tpl);
 				$layout['wrappers'][$i]['objects'][$k]['markup'] = $markups['tpl'];

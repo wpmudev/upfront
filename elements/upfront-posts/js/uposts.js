@@ -28,6 +28,8 @@ define(function() {
     }
   });
 
+	
+
   var UpostsView = Upfront.Views.ObjectView.extend({
     changed: false,
     markup: false,
@@ -83,6 +85,7 @@ define(function() {
     on_render: function(){
       var me = this;
       this.refreshMarkup();
+	 
       //Give time to append when dragging.
       setTimeout(function(){
         me.updateEditors();
@@ -118,6 +121,9 @@ define(function() {
     },
 
     refreshMarkup: function(page) {
+		
+	this.$el.find('div.upfront-editable_entity.upfront-object.uposts-object').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
+		
       var props = this.model.get('properties').toJSON(),
         data = {},
         me = this,
