@@ -1214,7 +1214,8 @@ var Application = new (Backbone.Router.extend({
 
 
 		//Load body classes
-		var bodyClasses = 'logged-in admin-bar upfront customize-support flex-support';
+		//var bodyClasses = 'logged-in admin-bar upfront customize-support flex-support'; // NOPE! Don't re-add the .upfront, it should have been removed:
+		var bodyClasses = 'logged-in admin-bar customize-support flex-support';
 
 		if(postData.post_type == 'page')
 			bodyClasses += ' page page-id-' + post.id + ' page-template-default';
