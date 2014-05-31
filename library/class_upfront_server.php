@@ -241,12 +241,14 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"spectrum" => "scripts/spectrum/spectrum",
 			"responsive" => "scripts/responsive",
 			"redactor" => 'scripts/redactor/redactor',
+			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
       "ueditor" => 'scripts/redactor/ueditor'
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
     $shim = array(
-      'underscore' => array('exports' => '_')
+      'underscore' => array('exports' => '_'),
+      'jquery-df' => array('jquery'),
     );
 
 		$require_config = array(
