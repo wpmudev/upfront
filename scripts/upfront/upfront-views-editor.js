@@ -646,7 +646,7 @@ define([
 		},
 		on_click: function () {
 			var data = Upfront.Util.model_to_json(this.model);
-			Upfront.Util.post({"action": "upfront_reset_layout", "data": data})
+			Upfront.Util.post({"action": "upfront_reset_layout", "data": data, "storage_key": _upfront_save_storage_key})
 				.success(function () {
 					Upfront.Util.log("layout reset");
 					window.location.reload();

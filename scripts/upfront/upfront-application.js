@@ -179,11 +179,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change);
 		this.listenTo(Upfront.Events, "command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change);
 
-		// Set up element merging
-		this.listenTo(Upfront.Events, "command:select", Upfront.Behaviors.LayoutEditor.create_mergeable);
-		this.listenTo(Upfront.Events, "command:deselect", Upfront.Behaviors.LayoutEditor.destroy_mergeable);
-		this.listenTo(Upfront.Events, "command:merge", Upfront.Behaviors.LayoutEditor.destroy_mergeable);
-
 		// Set up entity settings (modules, for now)
 		this.listenTo(Upfront.Events, "entity:settings:activate", this.create_settings);
 		this.listenTo(Upfront.Events, "entity:settings:deactivate", this.destroy_settings);

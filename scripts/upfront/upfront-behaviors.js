@@ -122,8 +122,9 @@ var LayoutEditor = {
 							module_index = index;
 						if ( current_wrapper_id != wrapper_id )
 							wrapper_index++;
-						if ( i == 0 || !is_next || ( current_wrapper_id != wrapper_id && wrapper_class.match(/clr/) ) ) { // this module appear in a new line
+						if ( i == 0 || !is_next || line_col+wrapper_col > max_col || ( current_wrapper_id != wrapper_id && wrapper_class.match(/clr/) ) ) { // this module appear in a new line
 							line++;
+							is_next = false;
 							line_col = wrapper_col;
 						}
 						else if ( current_wrapper_id != wrapper_id ) {
@@ -152,6 +153,7 @@ var LayoutEditor = {
 						current_wrapper_id = wrapper_id;
 						last_index = index;
 					});
+					console.log(modules)
 					margin_left = margin_left === false ? 0 : margin_left;
 					margin_top = margin_top === false ? 0 : margin_top;
 					col = col - margin_left;
@@ -210,6 +212,18 @@ var LayoutEditor = {
 			$(this).selectable("refresh");
 		});
 	},
+	
+	enable_mergeable: function () {
+		$(".ui-selectable").each(function () {
+			$(this).selectable("enable");
+		});
+	},	
+	
+	disable_mergeable: function () {
+		$(".ui-selectable").each(function () {
+			$(this).selectable("disable");
+		});
+	},	
 
 	destroy_mergeable: function () {
 		$(".ui-selectable").each(function () {
