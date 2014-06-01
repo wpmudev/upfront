@@ -466,7 +466,8 @@ var ImageInsert = UeditorInsert.extend({
 	importFromWrapper: function(wrapper, insertsData){
 		var id = wrapper.attr('id'),
 			insert = false,
-			align = false
+			align = false,
+			caption = false
 		;
 		if(insertsData[id])
 			insert = new ImageInsert({data: insertsData[id]});
@@ -475,6 +476,18 @@ var ImageInsert = UeditorInsert.extend({
 			align = wrapper.css('float');
 			if(align != 'none')
 				insert.data.set('align', align);
+
+			caption = wrapper.find('.wp-caption-text');
+			if(caption.length){
+				insert.data.set('caption', caption.html());
+				if(wrapper.hasClass('uinsert-caption-left'))
+					insert.data.set('captionPosition', 'left');
+				else if(wrapper.hasClass('uinsert-caption-right'))
+					insert.data.set('captionPosition', 'right');
+				else
+					insert.data.set('captionPosition', 'bottom');
+			}
+
 		}
 		insert.render();
 		wrapper.replaceWith(insert.$el);
