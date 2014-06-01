@@ -1762,6 +1762,30 @@ a.ueditor-action-pickercancel{
     background-position: -552px -164px;
     height: 100%;
 }
+
+div.upfront-inserted_image-wrapper i.upfront-icon-region-nocaption {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -445px;
+}
+div.upfront-inserted_image-wrapper i.upfront-icon-region-caption-left {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -798px;
+}
+
+div.upfront-inserted_image-wrapper i.upfront-icon-region-caption-bottom {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -637px;
+}
+
+div.upfront-inserted_image-wrapper i.upfront-icon-region-caption-right {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -30px;
+}
+
 div.uinsert-selector a {
 	color: #ccc;
 	display: inline-block;
@@ -9316,6 +9340,10 @@ a.upfront-css-edit:before{
 	margin: 0;
 	padding: 0;
 	display: inline-block;
+}
+
+.upfront-content-marker-contents {
+	display: block;
 }
 
 .content-overflow-setting .upfront-field-wrap {

@@ -175,3 +175,17 @@ h2, h3 { page-break-after: avoid; }
     display: inline-block;
 }
 
+/* Image insert captions */
+.uinsert-image-caption-left {
+  min-width: 100px;
+  float: right;
+}
+.uinsert-image-caption-right {
+  min-width: 100px;
+  float: left;
+}
+.uinsert-image-caption-bottom,
+.uinsert-caption-bottom  {
+  display: block;
+  clear: both;
+}

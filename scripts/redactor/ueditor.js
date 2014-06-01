@@ -1282,7 +1282,6 @@ var InsertManager = Backbone.View.extend({
 		this.bindTriggerEvents();
 		this.refreshTimeout = false;
 		this.sortableInserts();
-
 	},
 
 	bindTriggerEvents: function (redactor) {
@@ -1330,6 +1329,10 @@ var InsertManager = Backbone.View.extend({
 
 		this.ticking = false;
 
+		//Left marker used to place the trigger correctly when
+		// there is an isert floated to the left
+		this.leftMarker = $('<span style="float:left">');
+
 		bindMouseEvents();
 
 		if(!parent.find('#upfront-post-media-trigger').length)
@@ -1347,6 +1350,8 @@ var InsertManager = Backbone.View.extend({
 				me.mediaTrigger.addClass('upfront-post-media-trigger-visible');
 
 				var tooltip = $('<div class="uinsert-selector upfront-ui"></div>');
+				console.log('click');
+				tooltip.css('margin-left', me.mediaTrigger.css('margin-left'));
 
 				_.each(Inserts.inserts, function(insert, type){
 					tooltip.append('<a href="#" class="uinsert-selector-option uinsert-selector-' + type + '" data-insert="' + type + '">' + type + '</a>');
@@ -1371,7 +1376,7 @@ var InsertManager = Backbone.View.extend({
 							block[where](insert.$el);
 							me.trigger('insert:added', insert);
 							me.insertsData[insert.data.id] = insert.data.toJSON();
-							me.listenTo(insert.data, 'change add remove', function(){
+							me.listenTo(insert.data, 'change add remove update', function(){
 								me.insertsData[insert.data.id] = insert.data.toJSON();
 							});
 
@@ -1403,17 +1408,28 @@ var InsertManager = Backbone.View.extend({
 	},
 
 	updateMediaTriggerPosition: function(){
+		var marginLeft,
+			leftMarker = this.leftMarker
+		;
 		if(this.currentBlock){
-			if(this.triggerPosition > 0.7)
+			if(this.triggerPosition > 0.7){
+				this.currentBlock.append(leftMarker);
+				marginLeft = leftMarker.offset().left - this.currentBlock.offset().left;
+				leftMarker.detach();
 				this.mediaTrigger
 					.addClass('upfront-post-media-trigger-visible upfront-post-media-trigger')
 					.data('insert', 'after')
-					.css({top: this.currentBlock.position().top + this.currentBlock.height()});
-			else if(this.triggerPosition < 0.3)
+					.css({top: this.currentBlock.position().top + this.currentBlock.height(), 'margin-left': marginLeft + 'px'});
+			}
+			else if(this.triggerPosition < 0.3){
+				this.currentBlock.prepend(leftMarker);
+				marginLeft = leftMarker.offset().left - this.currentBlock.offset().left;
+				leftMarker.detach();
 				this.mediaTrigger
 					.addClass('upfront-post-media-trigger-visible upfront-post-media-trigger')
 					.data('insert', 'before')
-					.css({top: this.currentBlock.position().top, display: 'block'});
+					.css({top: this.currentBlock.position().top, display: 'block', 'margin-left': marginLeft + 'px'});
+			}
 			else
 				this.mediaTrigger.removeClass('upfront-post-media-trigger-visible');
 		}
@@ -1433,7 +1449,7 @@ var InsertManager = Backbone.View.extend({
 
 			// Listen to the inserts model to update the data on any change
 			me.stopListening(insert.data);
-			me.listenTo(insert.data, 'change add remove', function(){
+			me.listenTo(insert.data, 'change add remove update', function(){
 				if(me.insertsData[insert.data.id])
 					me.insertsData[insert.data.id] = insert.data.toJSON();
 			});

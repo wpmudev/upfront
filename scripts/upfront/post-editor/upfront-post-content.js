@@ -155,8 +155,8 @@ var PostContentEditor = Backbone.View.extend({
                 dates = Upfront.data.ueditor.dates,
                 options = [],
                 date = this.post.get("post_date"),
-                dateFormat = Upfront.Util.date.php_format_to_js( this.partOptions.date.format !== "" ?  this.partOptions.date.format : Upfront.data.date.format )
-                dateFormatUI = Upfront.Util.date.php_format_to_jquery( this.partOptions.date.format !== "" ?  this.partOptions.date.format : Upfront.data.date.format )
+                dateFormat = Upfront.Util.date.php_format_to_js( this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format )
+                dateFormatUI = Upfront.Util.date.php_format_to_jquery( this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format )
                 ;
 
             datepickerData.minutes = _.range(0,60);

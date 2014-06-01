@@ -2972,7 +2972,9 @@ var TooltipControl = Control.extend({
 			}
 		});
 
-		this.$('.upfront-icon-region-caption').addClass('upfront-icon-region-' + this.selected);
+		var selectedItem = this.sub_items[this.selected];
+		if(selectedItem)
+			this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
 	},
 
 	get_selected_item: function () {

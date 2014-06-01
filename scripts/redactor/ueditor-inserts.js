@@ -20,14 +20,12 @@ Insert purpose is let upfront handle this kind of parts of a post content with e
 var UeditorInsert = Backbone.View.extend({
 	shortcodeName: 'ueditor-insert',
 	attributes: {contenteditable: 'false'},
-    defaultData : {},
+   defaultData : {},
 	initialize: function(opts){
 		opts = opts || {};
 		var data = opts.data || {};
+		data = _.extend({}, this.defaultData, data);
 		if(!data.id){
-            if(_.isEmpty( data ) ){
-                _.extend( data, this.defaultData );
-            }
 			data.id = 'uinsert-' + (++Upfront.data.ueditor.insertCount);
 			//Trigger the insertcount change for updating the server
 			Upfront.Events.trigger('content:insertcount:updated');
@@ -252,6 +250,12 @@ var ImageInsert = UeditorInsert.extend({
 	type: 'image',
 	className: 'ueditor-insert upfront-inserted_image-wrapper',
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
+	defaultData: {
+		captionPosition: 'nocaption',
+		caption: 'A wonderful image :)',
+		imageFull: {src:'', width:100, height: 100},
+		imageThumb: {src:'', width:100, height: 100}
+	},
 	//Called just after initialize
 	init: function(){
 		var alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
@@ -259,6 +263,18 @@ var ImageInsert = UeditorInsert.extend({
 		this.controlsData = [
 			alignControl,
 			{id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
+			{id: 'caption',
+				type: 'multi',
+				icon: 'caption',
+				tooltip: 'Caption',
+				selected: this.data.get('captionPosition') || 'nocaption',
+				subItems: [
+					{id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
+					{id: 'left', icon: 'caption-left', tooltip: 'At the left'},
+					{id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
+					{id: 'right', icon: 'caption-right', tooltip: 'At the right'}
+				]
+			},
 			this.getRemoveControlData()
 		];
 
@@ -286,9 +302,27 @@ var ImageInsert = UeditorInsert.extend({
 
 	// Insert editor UI
 	render: function(){
-		var data = this.data.toJSON();
+		var me = this,
+			data = this.data.toJSON()
+		;
+
 		if(data.align == 'full')
-			data.src = data.srcFull || data.src;
+			data.image = data.imageFull;
+		else
+			data.image = data.imageThumb;
+
+		console.log(data);
+		if(data.captionPosition == 'left' || data.captionPosition == 'right')
+			this.$el.css({
+				'min-width': (parseInt(data.image.width, 10) + 100) + 'px',
+				'max-width': (2* parseInt(data.image.width, 10)) + 'px'
+			});
+		else
+			this.$el.css({
+				'min-width': 'auto',
+				'max-width': 'auto'
+			});
+
 		this.$el
 			.html(this.tpl(data))
 			.removeClass('aligncenter alignleft alignright alignfull')
@@ -297,6 +331,19 @@ var ImageInsert = UeditorInsert.extend({
 
 		this.controls.render();
 		this.$el.append(this.controls.$el);
+
+		this.captionTimer = false;
+
+		this.$('.wp-caption-text')
+			.attr('contenteditable', true)
+			.addClass('nosortable')
+			.off('keyup')
+			.on('keyup', function(e){
+				me.data.set('caption', this.innerHTML, {silent: true});
+				//Update event makes InsertManager update its data without rendering.
+				me.data.trigger('update');
+			});
+		;
 	},
 
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
@@ -320,6 +367,10 @@ var ImageInsert = UeditorInsert.extend({
 			this.data.set(linkData);
 			control.close();
 		});
+
+		this.listenTo(this.controls, 'control:select:caption', function(captionPosition){
+			this.data.set({captionPosition: captionPosition});
+		});
 	},
 
 	getOutput: function(){
@@ -327,9 +378,15 @@ var ImageInsert = UeditorInsert.extend({
 			data = this.data.toJSON()
 		;
 		if(data.align == 'full')
-			data.src = data.srcFull || data.src;
+			data.image = data.imageFull;
+		else
+			data.image = data.imageThumb;
+
+		this.data.set('width', this.$el.width(), {silent: true});
+		this.data.trigger('update');
 
 		out.innerHTML = this.tpl(data);
+		$(out).width(this.data.get('width'));
 		// return the HTML in a string
 		return  $('<div>').html(out).html();
 	},
@@ -343,16 +400,25 @@ var ImageInsert = UeditorInsert.extend({
 			imageData = {
 				attachmentId: imagePost.ID,
 				title: imagePost.post_tite,
-				src: image.src,
-				srcFull: imagePost.image.src,
-				height: image.height,
-				width: image.width,
+				imageFull: imagePost.image,
+				imageThumb: this.getThumb(imagePost.additional_sizes),
 				linkType: 'do_nothing',
 				linkUrl: '',
-				align: 'center'
+				align: 'center',
+				captionPosition: 'nocaption',
+				caption: ''
 			}
 		;
 		return imageData;
+	},
+
+	getThumb: function(images){
+		var selected = {width: 0};
+		_.each(images, function(img){
+			if(img.width <= 500 && img.width > selected.width)
+				selected = img;
+		});
+		return selected;
 	},
 
 	//Get the image with the selected size
