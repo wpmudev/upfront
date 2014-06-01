@@ -70,11 +70,12 @@ class Upfront_UpostsView extends Upfront_Object {
 	}
 	
 	public static function default_postlayout($type){
+		//type can be later used to selectively return different layouts
 		return array(
 			'postLayout' => array(
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
-				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'excerpt', 'classes' => ' post-part c24')))
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 			),
 			'partOptions' => array('featured_image' => array('height' => 100))
 		);
@@ -85,13 +86,14 @@ class Upfront_UpostsView extends Upfront_Object {
 		$temp_query = clone $wp_query;
 
 		query_posts($query_args);
+	
 		
-		
-		$key = get_stylesheet() . '-archive-'.$element_id;
+		$key = get_stylesheet() . '-archive-'.str_replace('uposts-object-', '', $element_id);
 
 		$layout = get_option($key);
 		if(!$layout)
 			$layout = self::default_postlayout($type);
+
 		
 		$markup = upfront_get_template(
 			'uposts',
@@ -134,10 +136,12 @@ class Upfront_UpostsView extends Upfront_Object {
 			'next' => '',
 
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image'), // also: categories,  tags
-			'layout' => array(
+			'postLayout' => array(
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 			),
+			'partOptions' => array('featured_image' => array('height' => 100))
 		);
 	}
 	

@@ -97,7 +97,8 @@ define(function() {
     },
     editPostLayout: function(e){
       this.editor = this.editors[$(e.target).closest('li.uposts-post').data('post_id')];
-
+	  this.postLayout = this.property('postLayout');
+	  this.partOptions = this.property('partOptions');
       Upfront.Events.trigger('post:layout:edit', this, 'single');
     },
     prepareEditor: function(id, node){

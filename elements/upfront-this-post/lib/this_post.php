@@ -20,7 +20,6 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function get_post_part($type, $options = array(), $tpl = false){
 		$options = is_array($options) ? $options : array();
-		
 		global $post;
 		$parts = array_values(self::$PARTNAMES);
 		if(array_search($type, $parts) === FALSE){
