@@ -159,6 +159,31 @@ class Upfront_StylePreprocessor {
 		return $style;
 	}
 
+	protected function _get_width_classes ($col, $parent, $max_col, $width_class, $ml_class, $mr_class = false) {
+		$classes = array();
+		$classes[] = '.' . $width_class . $col;
+		$margin_classes = array();
+		$max_margin = $parent-$col;
+		if ( $ml_class && $mr_class ){
+			for ( $m = $max_margin; $m > 0; $m-- ){
+				if ( $m == $max_margin ){
+					$margin_classes[] = '.' . $ml_class . $m;
+					$margin_classes[] = '.' . $mr_class . $m;
+				}
+				else
+					$margin_classes[] = '.' . $ml_class . $m . '.' . $mr_class . ( $max_margin-$m );
+			}
+		}
+		else {
+			$margin_classes[] = '.' . $ml_class . $max_margin;
+		}
+		for ( $m = $max_col; $m > $col; $m-- ){
+			foreach ( $margin_classes as $margin_class )
+				$classes[] = $margin_class . '.' . $width_class . $m;
+		}
+		return $classes;
+	}
+
 	public function get_editor_grid () {
 		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval($_POST['baseline']) : intval($_GET['baseline']);
 		$breakpoints = $this->_grid->get_breakpoints();
@@ -186,11 +211,11 @@ class Upfront_StylePreprocessor {
 						sprintf('margin-left: %f%%;', (100.00 / $columns)*$i) .
 					'}' .
 				'';
-				$rules[] = ".{$scope} .{$margin_right}{$i}" . 
+				/*$rules[] = ".{$scope} .{$margin_right}{$i}" . 
 					'{' . 
 						sprintf('margin-right: %f%%;', (100.00 / $columns)*$i) .
 					'}' .
-				'';
+				'';*/
 				if ($i==$columns)
 					continue;
 				// getting sub rules, e.g: .desktop .c24 .c22
@@ -201,11 +226,11 @@ class Upfront_StylePreprocessor {
 				// the classes that got 100% width/margin applied
 				$max_classes_width = array();
 				$max_classes_margin_left = array();
-				$max_classes_margin_right = array();
+				//$max_classes_margin_right = array();
 				for ($x=$columns; $x>=$i; $x--) {
 					$max_classes_width[] = implode(" .{$width}{$x}, ", $sub_selector) . " .{$width}{$x}";
 					$max_classes_margin_left[] = implode(" .{$margin_left}{$x}, ", $sub_selector) . " .{$margin_left}{$x}";
-					$max_classes_margin_right[] = implode(" .{$margin_right}{$x}, ", $sub_selector) . " .{$margin_right}{$x}";
+					//$max_classes_margin_right[] = implode(" .{$margin_right}{$x}, ", $sub_selector) . " .{$margin_right}{$x}";
 				}
 				if (!empty($max_classes_width))
 					$rules[] = implode(', ', $max_classes_width) . 
@@ -219,15 +244,20 @@ class Upfront_StylePreprocessor {
 							sprintf('margin-left: %f%%;', 100.00) .
 						'}' .
 					'';
-				if (!empty($max_classes_margin_right))
+				/*if (!empty($max_classes_margin_right))
 					$rules[] = implode(', ', $max_classes_margin_right) . 
 						'{' . 
 							sprintf('margin-right: %f%%;', 100.00) .
 						'}' .
-					'';
+					'';*/
 				// the smaller ones
 				for ($c=$i-1; $c>=0; $c--) {
-					$rules[] = implode(" .{$width}{$c}, ", $sub_selector) . " .{$width}{$c}" . 
+					$width_classes = $this->_get_width_classes($c, $i, $columns, $width, $margin_left/*, $margin_right*/);
+					$width_selector = array();
+					foreach ( $width_classes as $width_class )
+						$width_selector[] = implode(" {$width_class}, ", $sub_selector) . " {$width_class}";
+					//$rules[] = implode(" .{$width}{$c}, ", $sub_selector) . " .{$width}{$c}" . 
+					$rules[] = implode(", ", $width_selector) .
 						'{' . 
 							sprintf('width: %f%%;', (100.00 / $i)*$c) .
 						'}' .
@@ -237,11 +267,11 @@ class Upfront_StylePreprocessor {
 							sprintf('margin-left: %f%%;', (100.00 / $i)*$c) .
 						'}' .
 					'';
-					$rules[] = implode(" .{$margin_right}{$c}, ", $sub_selector) . " .{$margin_right}{$c}" . 
+					/*$rules[] = implode(" .{$margin_right}{$c}, ", $sub_selector) . " .{$margin_right}{$c}" . 
 						'{' . 
 							sprintf('margin-right: %f%%;', (100.00 / $i)*$c) .
 						'}' .
-					'';
+					'';*/
 				}
 			}
 			// top and bottom margin, as we don't have any maximum rows/height specified, we use 2000 here (over 10000px for 5px baseline)
@@ -251,11 +281,11 @@ class Upfront_StylePreprocessor {
 						sprintf('margin-top: %dpx;', $i*$baseline_grid) .
 					'}' .
 				'';
-				$rules[] = ".{$margin_bottom}{$i}" . 
+				/*$rules[] = ".{$margin_bottom}{$i}" . 
 					'{' . 
 						sprintf('margin-bottom: %dpx;', $i*$baseline_grid) .
 					'}' .
-				'';
+				'';*/
 			}
 			$style .= $breakpoint->get_editor_root_rule($scope, $breakpoints) . "\n";
 			$style .= join("\n", $rules) . "\n\n";
