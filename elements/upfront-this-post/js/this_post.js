@@ -231,7 +231,8 @@ var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"properties": [
 					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 					{"name": "class", "value": "c6 upfront-this_post_module"},
-					{"name": "has_settings", "value": 0}
+					{"name": "has_settings", "value": 0},
+					{"name": "row", "value": 20}
 				],
 				"objects": [
 					object // The anonymous module will contain our search object model

@@ -66,7 +66,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 				ob_start();
 				the_excerpt();
 				$replacements['%excerpt%'] = ob_get_clean();
-				
+
 				if($options['excerpt'])
 					$replacements['%contents%'] = $replacements['%excerpt%'];
 
@@ -239,7 +239,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if($type == 'single')
 			return array(
 				'postLayout' => array(
-					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
+					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 				),
@@ -289,6 +289,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'class' => 'c24 upfront-this_post',
 			'has_settings' => 1,
 			'id_slug' => 'this_post',
+			'row' => 10,
 
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
 

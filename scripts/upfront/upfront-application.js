@@ -393,7 +393,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		;
 
 		saveDialog.on('save', function(type){
-			
+
 			var elementType = me.postView.property('type');
 			var specificity;
 					elementSlug = elementType == 'ThisPostModel' ? 'single' : 'archive',
@@ -402,24 +402,24 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 						done: "Thank you for waiting",
 						fixed: false
 					})
-					
+
 				;
 				if(elementSlug == 'single')
 					specificity = type == 'this-post' ? me.postView.postId : me.postView.editor.post.get('post_type');
 				else
 					specificity = type == 'this-post' ? me.postView.property('element_id').replace('uposts-object-','') : me.postView.property('post_type');
-	
-	
+
+
 				console.log(type);
-	
+
 				var layoutData = {
 					postLayout: me.exportPostLayout(),
 					partOptions: me.postView.partOptions || {}
 				}
-	
+
 				loading.render();
 				saveDialog.$('#upfront-save-dialog').append(loading.$el);
-	
+
 				Upfront.Util.post({
 					action: 'upfront_save_postlayout',
 					layoutData: layoutData,
@@ -428,10 +428,10 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 					loading.done();
 					console.log(response);
 					saveDialog.close();
-	
+
 					me.postView.postLayout = layoutData.postLayout;
 					me.postView.render();
-	
+
 					Application.start(Application.mode.last);
 				});
 
@@ -701,6 +701,8 @@ console.log('here is the index'+postindex);
 			new Upfront.Views.Editor.Command_SavePostLayout(this.sidebarCommands.model),
 			new Upfront.Views.Editor.Command_CancelPostLayout(this.sidebarCommands.model)
 		]);
+
+		Upfront.Events.trigger('post:layout:sidebarcommands');
 
 		//Hide not necessary parts
 		sidebar.sidebar_commands.primary.$el.hide();
