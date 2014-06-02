@@ -1,5 +1,4 @@
 (function ($) {
-
 define([
     "text!upfront/templates/property.html",
     "text!upfront/templates/properties.html",
@@ -2819,6 +2818,7 @@ define([
 		tagName: "ul",
 
 		initialize: function () {
+      this.flag = true;// for breakpoints toggleing remove when saving immplemented
 			this.sizes = _([
 				new LayoutSize_Desktop({model: this.model}),
 				new LayoutSize_Tablet({model: this.model}),
@@ -2842,6 +2842,13 @@ define([
 				$main.removeClass(size.get_size_class());
 			});
 			$main.addClass(new_size);
+      if (this.flag) {
+        Upfront.Events.trigger("upfront:layout_size:change_breakpoint", { width: 630, columns: 14 }); // hardcoded until we get saving done
+        this.flag = false;
+      } else {
+        Upfront.Events.trigger("upfront:layout_size:change_breakpoint", { width: 1080, columns: 24 }); // hardcoded until we get saving done
+        this.flag = true;
+      }
 
 			Upfront.Settings.LayoutEditor.Grid.size_name = new_size;
 			Upfront.Settings.LayoutEditor.Grid.size = Upfront.Settings.LayoutEditor.Grid.breakpoint_columns[new_size];
