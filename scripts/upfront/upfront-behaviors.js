@@ -6,7 +6,7 @@ var LayoutEditor = {
 			regions = app.layout.get('regions')
 		;
 		view.$el.selectable({
-      distance: 1, // Prevents global click hijack
+      		distance: 10, // Prevents global click hijack
 			filter: ".upfront-module",
 			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
 			selected: function (e, ui) {
@@ -2036,7 +2036,6 @@ var GridEditor = {
 			drop_top, drop_left, drop_col,
 			adjust_bottom = false
 		;
-		console.log(is_parent_group)
 		if ( model.get_property_value_by_name('disable_drag') === 1 )
 			return false;
 		if ( $me.data('ui-draggable') ){

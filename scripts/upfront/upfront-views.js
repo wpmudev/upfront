@@ -1510,7 +1510,8 @@ define([
 
 
 				var grid = Upfront.Settings.LayoutEditor.Grid,
-					width = this.model.get_property_value_by_name('width');
+					width = this.model.get_property_value_by_name('width'),
+					index = this.model.collection.index_container(this.model);
 				this.sub_model = [];
 				this.max_col = width ? Upfront.Util.width_to_col(width) : grid.size;
 				this.available_col = this.max_col;
@@ -1536,6 +1537,10 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
+				
+				if ( index === 0 ){
+					this.listenTo(Upfront.Events, "application:mode:after_switch", this.render_ruler);
+				}
 
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
 			},
@@ -1582,6 +1587,33 @@ define([
 				this.region_fixed_panels = new Upfront.Views.Editor.RegionFixedPanels({model: this.model});
 				this.region_fixed_panels.render();
 				this.$el.append(this.region_fixed_panels.el);
+			},
+			render_ruler: function () {
+				if ( Upfront.Application.get_current() !== Upfront.Settings.Application.MODE.RESPONSIVE )
+					return this.remove_ruler();
+				var width = this.$layout.width(),
+					$ruler_container = this.$el.find('.upfront-ruler-container'),
+					$ruler = this.$layout.find('.upfront-ruler'),
+					create_mark = function (at, size) {
+						return '<div class="upfront-ruler-mark" style="width:' + size + 'px;"><div class="upfront-ruler-mark-num">' + at + '</div></div>';
+					},
+					mark;
+				if ( !$ruler_container.length ) {
+					$ruler_container = $('<div class="upfront-ruler-container"></div>');
+					$ruler = $('<div class="upfront-ruler upfront-ui"></div>');
+					this.$el.prepend($ruler_container);
+					this.$layout.prepend($ruler);
+				}
+				$ruler.empty();
+				for ( mark = 0; mark < width; mark+=100 ){
+					$ruler.append(create_mark(mark, 100));
+				}
+				if ( width > (mark-100)+10 )
+					$ruler.append(create_mark(width, width-(mark-100)));
+			},
+			remove_ruler: function () {
+				this.$el.find('.upfront-ruler-container').remove();
+				this.$layout.find('.upfront-ruler').remove();
 			},
 			trigger_edit: function (e) {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )

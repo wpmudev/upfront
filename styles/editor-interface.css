@@ -9602,3 +9602,43 @@ a.upfront-css-edit:before{
 .breakpoints-toggler li:first-child {
   margin-left: 0;
 }
+
+/* The ruler */
+.upfront-ruler-container {
+	width: 100%;
+	height: 20px;
+	background: #1c2733;
+}
+.upfront-ruler {
+	position: absolute;
+	top: -20px;
+	left: -100px;
+	right: -100px;
+	height: 20px;
+	background: -webkit-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: -moz-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: -ms-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: -o-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: linear-gradient(to left, #185a4c 1px, transparent 1px, transparent);
+	background-size: 10px 3px;
+	background-repeat: repeat-x;
+	color: #cbe5ff;
+	font-family: "Verdana", sans-serif;
+	font-size: 10px;
+	line-height: 10px;
+}
+.upfront-ruler-mark {
+	float: left;
+	width: 100px;
+	height: 7px;
+	border-right: 1px solid #11a672;
+	position: relative;
+}
+.upfront-ruler-mark-num {
+	position: absolute;
+	top: 8px;
+	right: -20px;
+	width: 40px;
+	text-align: center;
+}
+
