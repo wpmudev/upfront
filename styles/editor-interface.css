@@ -1930,6 +1930,15 @@ div.uinsert-selector a:hover {
 	float: left;
 	position: relative;
 }
+.upfront-module-group:after {
+	content: " ";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
+}
 .upfront-module-group:hover {
 
 }
@@ -1939,6 +1948,7 @@ div.uinsert-selector a:hover {
 	left: 0;
 	right: 0;
 	bottom: 0;
+	z-index: 20;
 	margin: auto;
 	height: 36px;
 	text-align: center;
