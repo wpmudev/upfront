@@ -3412,7 +3412,7 @@ var GridEditor = {
 		var app = Upfront.Application,
 			styles = [],
 			grid = Upfront.Settings.LayoutEditor.Grid,
-			selector = '#page.' + grid.size_name,
+			selector = '#page',
 			options = app.layout.get_property_value_by_name('grid') || {
 				column_widths: {},
 				column_paddings: {},

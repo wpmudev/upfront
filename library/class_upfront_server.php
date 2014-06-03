@@ -312,6 +312,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$grid_info['margin_bottom_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_BOTTOM);
 			// @TODO temporary fix to keep old breakpoint work, before we move on to the new breakpoint system
 			if ( $breakpoint->is_default() ){
+				$grid_info['size_name'] = $context;
 				$grid_info['size'] = $breakpoint->get_columns();
 				$grid_info['column_width'] = $breakpoint->get_column_width();
 				$grid_info['column_padding'] = $breakpoint->get_column_padding();
