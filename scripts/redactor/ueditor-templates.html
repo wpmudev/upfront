@@ -39,7 +39,7 @@
 </script>
 
 <script type="text/template" id="image-insert-tpl">
-	<span class="uinsert-image-caption-{{ captionPosition }}">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{src || image.src}}" />{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</span>{[if(captionPosition != 'nocaption'){ ]}<span class="wp-caption-text uinsert-caption-{{ captionPosition }}" style="max-width: {{captionPosition == 'bottom' ? image.width + 'px' : ''}}">{{ caption }}</span>
+	<span class="uinsert-image-caption-{{ captionPosition }}">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src || src}}" />{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</span>{[if(captionPosition != 'nocaption'){ ]}<span class="wp-caption-text uinsert-caption-{{ captionPosition }}" style="max-width: {{captionPosition == 'bottom' ? image.width + 'px' : ''}}">{{ caption }}</span>
 {[ } ]}
 </script>
 

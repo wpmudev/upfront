@@ -209,7 +209,7 @@ var UeditorInsert = Backbone.View.extend({
 
 	createSimpleControl: function(controlData){
 		var control = new Upfront.Views.Editor.InlinePanels.Control();
-		control.icon = controlData.icon,
+		control.icon = controlData.icon;
 		control.tooltip = controlData.tooltip;
 		control.id = controlData.id;
 		return control;
@@ -242,7 +242,7 @@ var UeditorInsert = Backbone.View.extend({
 			type: 'simple',
 			icon: 'remove',
 			tooltip: 'Delete'
-		}
+		};
 	}
 });
 
@@ -277,7 +277,6 @@ var ImageInsert = UeditorInsert.extend({
 			},
 			this.getRemoveControlData()
 		];
-
 		this.createControls();
 	},
 
@@ -306,22 +305,34 @@ var ImageInsert = UeditorInsert.extend({
 			data = this.data.toJSON()
 		;
 
-		if(data.align == 'full')
-			data.image = data.imageFull;
-		else
-			data.image = data.imageThumb;
+		if(data.align == 'full') {
+			if (data.imageFull && data.imageFull.src) data.image = data.imageFull;
+		} else {
+			if (data.imageThumb && data.imageThumb.src) {
+				data.image = data.imageThumb;
+			} else {
+				data.image = $.extend({}, data.imageThumb, {
+					src: data.src,
+					height: data.height,
+					width: data.width
+				});
+			}
+		}
+		// Make sure we have *a* caption
+		data.caption = data.caption || this.defaultData.caption;
 
 		console.log(data);
-		if(data.captionPosition == 'left' || data.captionPosition == 'right')
+		if(data.captionPosition == 'left' || data.captionPosition == 'right') {
 			this.$el.css({
 				'min-width': (parseInt(data.image.width, 10) + 100) + 'px',
 				'max-width': (2* parseInt(data.image.width, 10)) + 'px'
 			});
-		else
+		} else {
 			this.$el.css({
 				'min-width': 'auto',
 				'max-width': 'auto'
 			});
+		}
 
 		this.$el
 			.html(this.tpl(data))
@@ -342,7 +353,7 @@ var ImageInsert = UeditorInsert.extend({
 				me.data.set('caption', this.innerHTML, {silent: true});
 				//Update event makes InsertManager update its data without rendering.
 				me.data.trigger('update');
-			});
+			})
 		;
 	},
 
@@ -397,7 +408,7 @@ var ImageInsert = UeditorInsert.extend({
 			return false;
 		var imagePost = libraryResult.at(0).toJSON(),
 			image = this.getSelectedImage(imagePost),
-			imageData = {
+			imageData = $.extend({}, this.defaultData, {
 				attachmentId: imagePost.ID,
 				title: imagePost.post_tite,
 				imageFull: imagePost.image,
@@ -405,9 +416,8 @@ var ImageInsert = UeditorInsert.extend({
 				linkType: 'do_nothing',
 				linkUrl: '',
 				align: 'center',
-				captionPosition: 'nocaption',
-				caption: ''
-			}
+				captionPosition: 'nocaption'
+			})
 		;
 		return imageData;
 	},
@@ -452,11 +462,11 @@ var ImageInsert = UeditorInsert.extend({
 				insert = false
 			;
 
-			if(wrapper.length)
+			if(wrapper.length) {
 				insert = me.importFromWrapper(wrapper, insertsData);
-			else
+			} else {
 				insert = me.importFromImage($img);
-
+			}
 			inserts[insert.data.id] = insert;
 		});
 		return inserts;
@@ -469,9 +479,10 @@ var ImageInsert = UeditorInsert.extend({
 			align = false,
 			caption = false
 		;
-		if(insertsData[id])
+
+		if(insertsData[id]) {
 			insert = new ImageInsert({data: insertsData[id]});
-		else {
+		} else {
 			insert = this.importFromImage(wrapper.find('img'));
 			align = wrapper.css('float');
 			if(align != 'none')
@@ -535,8 +546,8 @@ var ImageInsert = UeditorInsert.extend({
 		}
 
 		imageData.title = image.attr('title');
-console.log("importing from image", imageData);
 		var insert = new ImageInsert({data: imageData});
+
 		insert.render();
 		image.replaceWith(insert.$el);
 		return insert;
