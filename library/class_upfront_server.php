@@ -310,6 +310,19 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$grid_info['margin_right_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
 			$grid_info['margin_top_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_TOP);
 			$grid_info['margin_bottom_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_BOTTOM);
+			// @TODO temporary fix to keep old breakpoint work, before we move on to the new breakpoint system
+			if ( $breakpoint->is_default() ){
+				$grid_info['size'] = $breakpoint->get_columns();
+				$grid_info['column_width'] = $breakpoint->get_column_width();
+				$grid_info['column_padding'] = $breakpoint->get_column_padding();
+				$grid_info['type_padding'] = $breakpoint->get_type_padding();
+				$grid_info['baseline'] = $breakpoint->get_baseline();
+				$grid_info['class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
+				$grid_info['left_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
+				$grid_info['right_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
+				$grid_info['top_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_TOP);
+				$grid_info['bottom_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_BOTTOM);
+			}
 		}
 		$grid_info = json_encode(
 			apply_filters('upfront-settings-grid_info', $grid_info)

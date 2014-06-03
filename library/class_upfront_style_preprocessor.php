@@ -189,6 +189,8 @@ class Upfront_StylePreprocessor {
 		$breakpoints = $this->_grid->get_breakpoints();
 		$style = '';
 		foreach ($breakpoints as $scope => $breakpoint_class) {
+			if($scope != 'desktop')
+				continue;
 			$breakpoint = new $breakpoint_class;
 			$columns = $breakpoint->get_columns();
 			$baseline_grid = $override_baseline > 0 ? $override_baseline : $breakpoint->get_baseline();
@@ -200,29 +202,21 @@ class Upfront_StylePreprocessor {
 			$rules = array();
 			// the rules were rendered from bigger columns to smaller one, to allow CSS overriding to work properly
 			for ($i=$columns; $i>=0; $i--) {
-				// main rules, e.g: .desktop .c24
-				$rules[] = ".{$scope} .{$width}{$i}" . 
+				// main rules, e.g: .c24
+				$rules[] = ".{$width}{$i}" . 
 					'{' . 
 						sprintf('width: %f%%;', (100.00 / $columns)*$i) .
 					'}' .
 				'';
-				$rules[] = ".{$scope} .{$margin_left}{$i}" . 
+				$rules[] = ".{$margin_left}{$i}" . 
 					'{' . 
 						sprintf('margin-left: %f%%;', (100.00 / $columns)*$i) .
 					'}' .
 				'';
-				/*$rules[] = ".{$scope} .{$margin_right}{$i}" . 
-					'{' . 
-						sprintf('margin-right: %f%%;', (100.00 / $columns)*$i) .
-					'}' .
-				'';*/
 				if ($i==$columns)
 					continue;
-				// getting sub rules, e.g: .desktop .c24 .c22
-				$sub_selector = array(".{$scope} .{$width}{$i}");
-				/*for ($s=$columns; $s>=$i+1; $s--){
-					$sub_selector[] = ".{$scope} .{$width}{$s} .{$width}{$i}";
-				}*/
+				// getting sub rules, e.g: .c24 .c22
+				$sub_selector = array(".{$width}{$i}");
 				// the classes that got 100% width/margin applied
 				$max_classes_width = array();
 				$max_classes_margin_left = array();
@@ -244,12 +238,6 @@ class Upfront_StylePreprocessor {
 							sprintf('margin-left: %f%%;', 100.00) .
 						'}' .
 					'';
-				/*if (!empty($max_classes_margin_right))
-					$rules[] = implode(', ', $max_classes_margin_right) . 
-						'{' . 
-							sprintf('margin-right: %f%%;', 100.00) .
-						'}' .
-					'';*/
 				// the smaller ones
 				for ($c=$i-1; $c>=0; $c--) {
 					$width_classes = $this->_get_width_classes($c, $i, $columns, $width, $margin_left/*, $margin_right*/);
@@ -267,11 +255,6 @@ class Upfront_StylePreprocessor {
 							sprintf('margin-left: %f%%;', (100.00 / $i)*$c) .
 						'}' .
 					'';
-					/*$rules[] = implode(" .{$margin_right}{$c}, ", $sub_selector) . " .{$margin_right}{$c}" . 
-						'{' . 
-							sprintf('margin-right: %f%%;', (100.00 / $i)*$c) .
-						'}' .
-					'';*/
 				}
 			}
 			// top and bottom margin, as we don't have any maximum rows/height specified, we use 2000 here (over 10000px for 5px baseline)
@@ -281,11 +264,6 @@ class Upfront_StylePreprocessor {
 						sprintf('margin-top: %dpx;', $i*$baseline_grid) .
 					'}' .
 				'';
-				/*$rules[] = ".{$margin_bottom}{$i}" . 
-					'{' . 
-						sprintf('margin-bottom: %dpx;', $i*$baseline_grid) .
-					'}' .
-				'';*/
 			}
 			$style .= $breakpoint->get_editor_root_rule($scope, $breakpoints) . "\n";
 			$style .= join("\n", $rules) . "\n\n";

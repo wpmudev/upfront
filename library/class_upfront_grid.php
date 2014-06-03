@@ -202,12 +202,12 @@ abstract class Upfront_GridBreakpoint {
 		if ( $max_width > 0 )
 			$width_rule .= "max-width: {$max_width}px; ";
 		return '' .
-			"#page.{$scope} .upfront-grid-layout {width: {$width}px;}" . "\n" .
-			"#page.{$scope} .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
-			( $width_rule != "" ? "#page.{$scope} { {$width_rule} }" . "\n" : "" ) .
-			"#page.{$scope} .upfront-object {padding: {$column_padding}px;}" . "\n" .
-			"#page.{$scope} .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
-			"#page.{$scope} .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
+			"#page .upfront-grid-layout {width: {$width}px;}" . "\n" .
+			"#page .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
+			( $width_rule != "" ? "#page { {$width_rule} }" . "\n" : "" ) .
+			"#page .upfront-object {padding: {$column_padding}px;}" . "\n" .
+			"#page .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
+			"#page .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
 		'';
 	}
 
@@ -221,6 +221,10 @@ abstract class Upfront_GridBreakpoint {
 			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
 			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 		'';
+	}
+	
+	public function is_default () {
+		return $this->_default;
 	}
 
 	public function get_media () {
