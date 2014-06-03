@@ -503,6 +503,7 @@ var ImageInsert = UeditorInsert.extend({
 			linkType: 'do_nothing',
 			linkUrl: ''
 		};
+
 		var align = 'center';
 		if(image.hasClass('aligncenter'))
 			align = 'center';
@@ -534,7 +535,7 @@ var ImageInsert = UeditorInsert.extend({
 		}
 
 		imageData.title = image.attr('title');
-
+console.log("importing from image", imageData);
 		var insert = new ImageInsert({data: imageData});
 		insert.render();
 		image.replaceWith(insert.$el);
