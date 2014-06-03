@@ -56,7 +56,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 				break;
 
 			case self::$PARTNAMES['COMMENTS']:
-				$replacements['%categories%'] = get_comments_number();
+				$replacements['%comments_count%'] = get_comments_number();
 				break;
 
 			case self::$PARTNAMES['CONTENTS']:
