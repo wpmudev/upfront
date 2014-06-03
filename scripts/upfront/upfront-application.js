@@ -1274,14 +1274,6 @@ var Application = new (Backbone.Router.extend({
 			});
 		}
 		//this.sidebar.render(); <-- Subapplications do this
-
-		if (!this.layout_sizes) {
-			this.layout_sizes = new Upfront.Views.Editor.Layouts({
-				"model": this.layout,
-				"el": $(Upfront.Settings.LayoutEditor.Selectors.layouts)
-			});
-		}
-		this.layout_sizes.render();
 	},
 
 	create_cssEditor: function(){

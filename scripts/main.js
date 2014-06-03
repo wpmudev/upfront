@@ -48,6 +48,7 @@ require(['backbone'], function (Backbone) {
         },
         "Specificity": Upfront.mainData.specificity,
         "Grid": Upfront.mainData.gridInfo,
+        'Theme': Upfront.mainData.themeInfo
       },
       "Content": Upfront.mainData.content,
     };

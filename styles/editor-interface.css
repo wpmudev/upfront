@@ -9578,6 +9578,7 @@ a.upfront-css-edit:before{
 /* Topbar */
 #upfront-ui-topbar {
   background: #2c3e50;
+  color: white;
   height: 52px;
   position: fixed;
   top: 0;

@@ -630,12 +630,6 @@ define([
 				$(this).prepend(template);
 			});
 			!Upfront.Application.get_gridstate() || this.show_grid();
-		},
-		attach_event: function () {
-			var me = this;
-			Upfront.Application.layout_sizes.sizes.each(function (layout_size) {
-				layout_size.bind("upfront:layout_size:change_size", me.update_grid, me);
-			});
 		}
 	});
 
@@ -841,22 +835,8 @@ define([
 		}
 	});
 
-  var breakpoints_storage = {
-    get_breakpoints: function() {
-      return [
-        { name: 'Default Desktop', id: 'desktop', width: 1080, columns: 24, enabled: true },
-        { name: 'Tablet', id: 'tablet', width: 570, columns: 12, enabled: false },
-        { name: 'Mobile', id: 'mobile', width: 315, columns: 7, enabled: true },
-        { name: 'Custom Width', id: 'custom', width: 0, columns: 0, enabled: false }
-      ];
-    }
-  };
-
-	var Command_AddBreakpoint = Command.extend({
+	var Command_EnableBreakpoint = Command.extend({
 		enabled: true,
-    // events: {
-      // "click [type=button]": "add_breakpoint"
-    // },
     initialize: function() {
       var breakpoints = breakpoints_storage.get_breakpoints();
       var default_value = [];
@@ -871,7 +851,8 @@ define([
         }
 
         value = { label: label, value: breakpoint.id };
-        if (breakpoint.id === 'desktop') {
+
+        if (breakpoint.fixed) {
           value.disabled = true;
         }
         values.push(value);
@@ -892,8 +873,12 @@ define([
     },
 		render: function () {
       this.fields[0].render();
+      this.listenTo(this.fields[0], 'all', this.update_breakpoints);
       this.$el.append(this.fields[0].el);
 		},
+    update_breakpoints: function() {
+      breakpoints_storage.update_breakpoints(this.fields[0].get_value());
+    },
 		on_click: function () {
 
 		},
@@ -1734,7 +1719,7 @@ define([
 		"className": "sidebar-commands sidebar-commands-responsive",
 		initialize: function () {
 			this.commands = _([
-        new Command_AddBreakpoint(),
+        new Command_EnableBreakpoint(),
 				new Command_StopResponsiveMode({model: this.model})
 			]);
 		}
@@ -2835,100 +2820,6 @@ define([
 
 
 // ----- Done bringing things back
-
-	var LayoutSize = Backbone.View.extend({
-		"tagName": "li",
-		"events": {
-			"click": "on_click"
-		},
-		on_click: function () {
-			this.trigger("upfront:layout_size:change_size", this.get_size_class());
-			this.$el.parent().find(".active").removeClass("active");
-			this.$el.addClass("active");
-			//this.render();
-		},
-		//get_size_class: function () { return 'FUN!'; }
-	});
-
-	var LayoutSize_Desktop = LayoutSize.extend({
-		render: function () {
-			this.$el.html("<i class='icon-desktop'></i> Desktop");
-		},
-		get_size_class: function () {
-			return "desktop";
-		}
-	});
-
-	var LayoutSize_Tablet = LayoutSize.extend({
-		render: function () {
-			this.$el.html("<i class='icon-tablet'></i> Tablet");
-		},
-		get_size_class: function () {
-			return "tablet";
-		}
-	});
-
-	var LayoutSize_Mobile = LayoutSize.extend({
-		render: function () {
-			this.$el.html("<i class='icon-mobile-phone'></i> Mobile");
-		},
-		get_size_class: function () {
-			return "mobile";
-		}
-	});
-
-
-	var LayoutSizes = Backbone.View.extend({
-		tagName: "ul",
-
-		initialize: function () {
-      this.flag = true;// for breakpoints toggleing remove when saving immplemented
-			this.sizes = _([
-				new LayoutSize_Desktop({model: this.model}),
-				new LayoutSize_Tablet({model: this.model}),
-				new LayoutSize_Mobile({model: this.model}),
-			]);
-		},
-		render: function () {
-			var me = this;
-			me.$el.find("li").remove();
-			me.$el.html("<nav><ul /></nav>")
-			me.sizes.each(function (size) {
-				size.render();
-        me.listenTo(size, "upfront:layout_size:change_size", me.change_size);
-				me.$el.find("nav ul").append(size.el);
-			});
-			this.sizes.first().$el.trigger("click");
-		},
-		change_size: function (new_size) {
-      var grid = Upfront.Settings.LayoutEditor.Grid;
-			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-			this.sizes.each(function (size) {
-				$main.removeClass(size.get_size_class());
-			});
-			$main.addClass(new_size);
-      if (this.flag) {
-        Upfront.Events.trigger("upfront:layout_size:change_breakpoint", { width: 630, columns: 14 }); // hardcoded until we get saving done
-        this.flag = false;
-      } else {
-        Upfront.Events.trigger("upfront:layout_size:change_breakpoint", { width: 1080, columns: 24 }); // hardcoded until we get saving done
-        this.flag = true;
-      }
-
-			grid.size_name = new_size;
-			grid.size = grid.breakpoint_columns[new_size];
-			grid.column_width = grid.column_widths[new_size];
-			grid.column_padding = grid.column_paddings[new_size];
-			grid.type_padding = grid.type_paddings[new_size];
-			grid.baseline = grid.baselines[new_size];
-			grid.class = grid.size_classes[new_size];
-			grid.left_margin_class = grid.margin_left_classes[new_size];
-			grid.right_margin_class = grid.margin_right_classes[new_size];
-			grid.top_margin_class = grid.margin_top_classes[new_size];
-			grid.bottom_margin_class = grid.margin_bottom_classes[new_size];
-		}
-	});
-
 
 	var Upfront_Icon_Mixin = {
 		get_icon_html: function (src, classname) {
@@ -7126,7 +7017,49 @@ var Field_Anchor = Field_Select.extend({
 		}
 	});
 
-  var Breakpoint = Backbone.View.extend({
+  /** Responsive stuff, breakpoints, UI, etc */
+  var Breakpoints_Storage = function(stored_breakpoints) {
+    var breakpoints = stored_breakpoints;
+
+    this.get_breakpoints = function() {
+      return breakpoints;
+      // if (typeof breakpoints !== 'undefined') return breakpoints;
+
+      // Upfront.Util.post({action: 'upfront_get_breakpoints'})
+        // .success(function(response) {
+          // breakpoints = JSON.parse(response.data);
+          // return breakpoints;
+        // })
+        // .error(function() {
+          // notifier.addMessage('Breakpoints could not be retrieved.');
+        // });
+    };
+
+    this.update_breakpoints = function(ids) {
+      _.each(breakpoints, function(breakpoint, index) {
+        if (_.contains(ids, breakpoint.id)) {
+          breakpoints[index].enabled = true;
+        } else {
+          breakpoints[index].enabled = false;
+        }
+      });
+
+      var postData = {
+        action: 'upfront_update_breakpoints',
+        breakpoints: breakpoints
+      };
+
+      Upfront.Util.post(postData)
+        .error(function(){
+          return notifier.addMessage('Breakpoints not saved.');
+        });
+      Upfront.Events.trigger('breakpoint:update', breakpoints);
+    };
+  };
+
+  var breakpoints_storage = new Breakpoints_Storage(Upfront.mainData.themeInfo.breakpoints);
+
+  var Breakpoint_Button = Backbone.View.extend({
     tagName: 'li',
     events: {
       'click': 'on_click'
@@ -7141,33 +7074,56 @@ var Field_Anchor = Field_Select.extend({
     on_click: function() {
       this.$el.siblings().removeClass('active');
       this.$el.addClass('active');
-      this.trigger('click', this.options.width);
+      this.trigger('click', this.options);
     }
   });
 
   var BreakpointsToggler = Backbone.View.extend({
     tagName: 'ul',
     className: 'breakpoints-toggler',
-    breakpoints: [
-      {width: 'mobile'},
-      {width: 'tablet'},
-      {width: 'desktop'}
-    ],
     initialize: function() {
-      this.layoutsize = new LayoutSizes();
+      this.breakpoints = breakpoints_storage.get_breakpoints();
+
+      Upfront.Events.on('breakpoint:update', this.update_breakpoints, this);
+    },
+    update_breakpoints: function(breakpoints) {
+      this.breakpoints = breakpoints;
+      this.render();
     },
     render: function() {
+      this.$el.html('');
       _.each(this.breakpoints, function(breakpoint_data) {
-        var breakpoint = new Breakpoint(breakpoint_data);
-        this.$el.append(breakpoint.render().el);
-        this.listenTo(breakpoint, 'click', this.change_breakpoint);
+        // Add only enabled breakpoints
+        if (breakpoint_data.enabled === false) return;
+
+        var breakpoint_button = new Breakpoint_Button(breakpoint_data);
+        this.$el.append(breakpoint_button.render().el);
+        this.listenTo(breakpoint_button, 'click', this.change_breakpoint);
       }, this);
       return this;
     },
-    change_breakpoint: function(width) {
-      this.layoutsize.change_size(width);
-    }
+    change_breakpoint: function(breakpoint) {
+      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", breakpoint); // hardcoded until we get saving done
+
+      //todo find a place for commented code, that should do the grid sizing stuff
+      // var new_size = breakpoint.width;
+      // var grid = Upfront.Settings.LayoutEditor.Grid;
+
+			// grid.size_name = new_size;
+			// grid.size = grid.breakpoint_columns[new_size];
+			// grid.column_width = grid.column_widths[new_size];
+			// grid.column_padding = grid.column_paddings[new_size];
+			// grid.type_padding = grid.type_paddings[new_size];
+			// grid.baseline = grid.baselines[new_size];
+			// grid.class = grid.size_classes[new_size];
+			// grid.left_margin_class = grid.margin_left_classes[new_size];
+			// grid.right_margin_class = grid.margin_right_classes[new_size];
+			// grid.top_margin_class = grid.margin_top_classes[new_size];
+			// grid.bottom_margin_class = grid.margin_bottom_classes[new_size];
+		}
   });
+
+  /** End responsive stuff, breakpoints, UI, etc */
 
   var Topbar = Backbone.View.extend({
     id: 'upfront-ui-topbar',
@@ -7177,7 +7133,6 @@ var Field_Anchor = Field_Select.extend({
       return this;
     },
     start: function() {
-      console.log(Upfront.Application.get_current());
       if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.RESPONSIVE ) {
         var toggler = new BreakpointsToggler();
         this.content = toggler.render();
@@ -7201,7 +7156,6 @@ var Field_Anchor = Field_Select.extend({
 			"Command_Undo": Command_Undo,
 			"Command_ToggleGrid": Command_ToggleGrid,
 			"Command_Merge": Command_Merge,
-			"Layouts": LayoutSizes,
 			"Settings": {
 				"Settings": Settings,
 				"Panel": SettingsPanel,
