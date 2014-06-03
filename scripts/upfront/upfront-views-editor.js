@@ -688,26 +688,6 @@ define([
 		}
 	});
 
-	var Command_StartResponsiveMode = Command.extend({
-		enabled: true,
-		render: function () {
-			this.$el.html("<span>Create Responsive Layouts</span>");
-		},
-		on_click: function () {
-			Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
-		}
-	});
-
-	var Command_StopResponsiveMode = Command.extend({
-		enabled: true,
-		render: function () {
-			this.$el.html("<span>Exit Responsive</span>");
-		},
-		on_click: function () {
-			Upfront.Application.start(Upfront.Application.MODE.DEFAULT);
-		}
-	});
-
 	var Command_ToggleMode_Small = Command_ToggleMode.extend({
 		className: 'command-toggle-mode upfront-icon',
 		current_mode: false,
@@ -838,6 +818,89 @@ define([
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:export_theme");
 		}
+	});
+
+  /* Responsive commands */
+	var Command_StartResponsiveMode = Command.extend({
+		enabled: true,
+		render: function () {
+			this.$el.html("<span>Create Responsive Layouts</span>");
+		},
+		on_click: function () {
+			Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
+		}
+	});
+
+	var Command_StopResponsiveMode = Command.extend({
+		enabled: true,
+		render: function () {
+			this.$el.html("<span>Exit Responsive</span>");
+		},
+		on_click: function () {
+			Upfront.Application.start(Upfront.Application.MODE.DEFAULT);
+		}
+	});
+
+  var breakpoints_storage = {
+    get_breakpoints: function() {
+      return [
+        { name: 'Default Desktop', id: 'desktop', width: 1080, columns: 24, enabled: true },
+        { name: 'Tablet', id: 'tablet', width: 570, columns: 12, enabled: false },
+        { name: 'Mobile', id: 'mobile', width: 315, columns: 7, enabled: true },
+        { name: 'Custom Width', id: 'custom', width: 0, columns: 0, enabled: false }
+      ];
+    }
+  };
+
+	var Command_AddBreakpoint = Command.extend({
+		enabled: true,
+    // events: {
+      // "click [type=button]": "add_breakpoint"
+    // },
+    initialize: function() {
+      var breakpoints = breakpoints_storage.get_breakpoints();
+      var default_value = [];
+      var values = [];
+
+      _.each(breakpoints, function(breakpoint) {
+        var value;
+
+        var label = breakpoint.name;
+        if (breakpoint.width) {
+          label += ' (' + breakpoint.width + 'px)';
+        }
+
+        value = { label: label, value: breakpoint.id };
+        if (breakpoint.id === 'desktop') {
+          value.disabled = true;
+        }
+        values.push(value);
+
+        if (breakpoint.enabled) {
+          default_value.push(breakpoint.id);
+        }
+      });
+
+      this.fields = [
+        new Field_Compact_Label_Select({
+          multiple: true,
+          label_text: 'Add/Remove Breakpoint',
+          values: values,
+          default_value: default_value
+        })
+      ]
+    },
+		render: function () {
+      this.fields[0].render();
+      this.$el.append(this.fields[0].el);
+		},
+		on_click: function () {
+
+		},
+    // add_breakpoint: function(event) {
+      // event.preventDefault();
+      // console.log($('#add-breakpoint_size').val());
+    // }
 	});
 
 
@@ -1671,6 +1734,7 @@ define([
 		"className": "sidebar-commands sidebar-commands-responsive",
 		initialize: function () {
 			this.commands = _([
+        new Command_AddBreakpoint(),
 				new Command_StopResponsiveMode({model: this.model})
 			]);
 		}
@@ -2837,6 +2901,7 @@ define([
 			this.sizes.first().$el.trigger("click");
 		},
 		change_size: function (new_size) {
+      var grid = Upfront.Settings.LayoutEditor.Grid;
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 			this.sizes.each(function (size) {
 				$main.removeClass(size.get_size_class());
@@ -2850,17 +2915,17 @@ define([
         this.flag = true;
       }
 
-			Upfront.Settings.LayoutEditor.Grid.size_name = new_size;
-			Upfront.Settings.LayoutEditor.Grid.size = Upfront.Settings.LayoutEditor.Grid.breakpoint_columns[new_size];
-			Upfront.Settings.LayoutEditor.Grid.column_width = Upfront.Settings.LayoutEditor.Grid.column_widths[new_size];
-			Upfront.Settings.LayoutEditor.Grid.column_padding = Upfront.Settings.LayoutEditor.Grid.column_paddings[new_size];
-			Upfront.Settings.LayoutEditor.Grid.type_padding = Upfront.Settings.LayoutEditor.Grid.type_paddings[new_size];
-			Upfront.Settings.LayoutEditor.Grid.baseline = Upfront.Settings.LayoutEditor.Grid.baselines[new_size];
-			Upfront.Settings.LayoutEditor.Grid.class = Upfront.Settings.LayoutEditor.Grid.size_classes[new_size];
-			Upfront.Settings.LayoutEditor.Grid.left_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_left_classes[new_size];
-			Upfront.Settings.LayoutEditor.Grid.right_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_right_classes[new_size];
-			Upfront.Settings.LayoutEditor.Grid.top_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_top_classes[new_size];
-			Upfront.Settings.LayoutEditor.Grid.bottom_margin_class = Upfront.Settings.LayoutEditor.Grid.margin_bottom_classes[new_size];
+			grid.size_name = new_size;
+			grid.size = grid.breakpoint_columns[new_size];
+			grid.column_width = grid.column_widths[new_size];
+			grid.column_padding = grid.column_paddings[new_size];
+			grid.type_padding = grid.type_paddings[new_size];
+			grid.baseline = grid.baselines[new_size];
+			grid.class = grid.size_classes[new_size];
+			grid.left_margin_class = grid.margin_left_classes[new_size];
+			grid.right_margin_class = grid.margin_right_classes[new_size];
+			grid.top_margin_class = grid.margin_top_classes[new_size];
+			grid.bottom_margin_class = grid.margin_bottom_classes[new_size];
 		}
 	});
 
@@ -3583,7 +3648,7 @@ define([
 			else
 				this.$el.append('<div class="upfront-settings-item-content"></div>');
 
-			$content = this.$el.find('.upfront-settings-item-content');
+			var $content = this.$el.find('.upfront-settings-item-content');
 			this.fields.each(function(field){
 				field.render();
 				$content.append(field.el);
@@ -4790,6 +4855,27 @@ var Field_Anchor = Field_Select.extend({
 	}
 });
 
+  var Field_Compact_Label_Select = Field_Select.extend({
+		get_field_html: function () {
+			var attr = {
+				'class': 'upfront-field-select upfront-no-select upfront-field-compact-label-select',
+				'id': this.get_field_id()
+			};
+			attr.class += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
+			if ( this.options.disabled )
+				attr.class += ' upfront-field-select-disabled';
+			if ( this.options.style == 'zebra' )
+				attr.class += ' upfront-field-select-zebra';
+			//return '<select ' + this.get_field_attr_html(attr) + '>' + this.get_values_html() + '</select>';
+			return '<div ' + this.get_field_attr_html(attr) + '>' +
+        '<ul class="upfront-field-select-options">' +
+        '<li class="upfront-field-select-option">' +
+        '<label><span class="upfront-field-label-text">' + this.options.label_text + '</span></label>' +
+        '</li>' +
+        this.get_values_html() +
+        '</ul></div>';
+		},
+  });
 
 /*
 	var ContentEditorUploader = Backbone.View.extend({

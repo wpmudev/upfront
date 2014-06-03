@@ -9603,6 +9603,15 @@ a.upfront-css-edit:before{
   margin-left: 0;
 }
 
+/* Sidebaar breakpoints add/remove */
+#sidebar-ui .sidebar-commands-responsive li {
+  display: block;
+}
+
+.sidebar-commands-responsive .upfront-field-select {
+  width: 200px;
+}
+
 /* The ruler */
 .upfront-ruler-container {
 	width: 100%;
@@ -9642,3 +9651,11 @@ a.upfront-css-edit:before{
 	text-align: center;
 }
 
+.upfront-field-compact-label-select .upfront-field-select-option:first-child:hover {
+  background: none;
+  color: rgb(96, 127, 153);
+}
+.upfront-field-compact-label-select .upfront-field-select-options {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
