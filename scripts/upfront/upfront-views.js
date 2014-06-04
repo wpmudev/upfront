@@ -1540,6 +1540,7 @@ define([
 				
 				if ( index === 0 ){
 					this.listenTo(Upfront.Events, "application:mode:after_switch", this.render_ruler);
+					this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.render_ruler);
 				}
 
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
@@ -2550,6 +2551,8 @@ define([
 				// Close region editing on click anywhere out the region
 				if(!$(e.target).closest('.upfront-region-container-active').length || !$(e.target).closest('.upfront-inline-panels'))
 					Upfront.Events.trigger("entity:region:deactivated");
+				// Unselect selection
+				Upfront.Events.trigger("command:selection:remove");
 			},
 			remove: function(){
 				if(this.local_view)

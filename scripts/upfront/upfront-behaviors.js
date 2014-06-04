@@ -1,22 +1,47 @@
 (function ($) {
 
 var LayoutEditor = {
+	selection: [], // store selection
 	create_mergeable: function (view, model) {
 		var app = this,
+			ed = Upfront.Behaviors.LayoutEditor,
 			regions = app.layout.get('regions')
 		;
 		view.$el.selectable({
       		distance: 10, // Prevents global click hijack
 			filter: ".upfront-module",
 			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
-			selected: function (e, ui) {
+			selecting: function (e, ui) {
+				var $el = $(ui.selecting),
+					$region;
+				// make sure it's not inside module group
+				if ( $el.closest('.upfront-module-group').length > 0 )
+					return;
+				if ( ed.selection.length > 0 ){
+					// if we already have at least one selection, check if the next selection is mergeable or not
+					// make sure it's in the same region
+					$region = $(ed.selection[0]).closest('.upfront-region');
+					if ( $el.closest('.upfront-region').get(0) != $region.get(0) )
+						return;
+				}
+				ed._add_selection(ui.selecting);
+			},
+			unselecting: function (e, ui) {
+				var $el = $(ui.unselecting);
+				ed._remove_selection(ui.unselecting);
+			},
+			/*selected: function (e, ui) {
 				var $el = $(ui.selected);
 				$el.prepend('<div class="upfront-selected-border" />');
-			},
+			},*/
 			unselected: function (e, ui) {
 				var $el = $(ui.unselected);
 				$el.find('.upfront-selected-border').remove();
 				$('.upfront-module-group-group').remove();
+			},
+			start: function (e, ui) {
+				// reset selection on start
+				ed.selection = [];
 			},
 			stop: function (e, ui) {
 				if ( !$(".ui-selected").length )
@@ -31,24 +56,9 @@ var LayoutEditor = {
 						$(this).removeClass('ui-selected');
 					},
 					$dont_select = $(".ui-selected").filter(function(){
-						// don't select any module in different region
-						return ( $(this).closest('.upfront-region').get(0) != $region.get(0) );
+						// don't select any module outside of selection
+						return ! _.contains(ed.selection, this);
 					}).each(unselect),
-					$dont_select2 = $(".ui-selected").filter(function(){
-						// don't select any module inside group
-						return ( $(this).closest('.upfront-module-group').length > 0 );
-					}).each(unselect),
-					/*$dont_select3 = $(".ui-selected").filter(function(){
-						// don't select any module that don't have direct sibling selected
-						var $view = $(this).closest('.upfront-module-view'),
-							next_selected = ( $view.next('.upfront-module-view').find('.ui-selected').length > 0 ),
-							prev_selected = ( $view.prev('.upfront-module-view').find('.ui-selected').length > 0 ),
-							$wrap = $(this).closest('.upfront-wrapper'),
-							wrap_next_selected = ( $wrap.next('.upfront-wrapper').find('.ui-selected').length > 0 ),
-							wrap_prev_selected = ( $wrap.prev('.upfront-wrapper').find('.ui-selected').length > 0 )
-						;
-						return ( !next_selected && !prev_selected && !wrap_next_selected && !wrap_prev_selected );
-					}).each(unselect),*/
 					$selected = $(".ui-selected");
 				if ($selected.length < 2){
 					$selected.each(unselect);
@@ -230,6 +240,25 @@ var LayoutEditor = {
 		$(".ui-selectable").each(function () {
 			$(this).selectable("destroy");
 		});
+	},
+	
+	_add_selection: function (el) {
+		this.selection.push(el);
+		$(el).prepend('<div class="upfront-selected-border" />');
+	},
+	
+	_remove_selection: function (el) {
+		this.selection = _.reject(this.selection, function(sel){ return (sel == el); });
+		$(el).find('.upfront-selected-border').remove();
+		$(el).removeClass('ui-selected');
+	},
+	
+	remove_selections: function () {
+		var ed = Upfront.Behaviors.LayoutEditor;
+		$('.ui-selected').each(function(){
+			ed._remove_selection(this);
+		});
+		$('.upfront-module-group-group').remove();
 	},
 
 	create_undo: function () {
