@@ -87,14 +87,14 @@ h2, h3 { page-break-after: avoid; }
   max-width: 100%;
 }
 .clr {
-	clear: both;
+  clear: both;
 }
 
 .upfront-output-wrapper { float: left; }
 .upfront-output-module-group { float: left; }
 
 .upfront-output-region.upfront-region-fixed {
-	position: fixed;
+  position: fixed;
 }
 
 .upfront-module {}
@@ -104,12 +104,12 @@ h2, h3 { page-break-after: avoid; }
 .upfront-editable_entities_container>div:before,
 .upfront-output-module:after,
 .upfront-editable_entities_container>div:after {
-	content: " ";
-	display: table;
+  content: " ";
+  display: table;
 }
 .upfront-output-module:after,
 .upfront-editable_entities_container>div:after {
-	clear: both;
+  clear: both;
 }
 
 .upfront-output-region:before, .upfront-output-region:after { content: ""; display: table; }
@@ -119,8 +119,8 @@ h2, h3 { page-break-after: avoid; }
 /* Object */
 .upfront-object,
 .upfront-output-object {
-	float:left;
-	width:100%;
+  float:left;
+  width:100%;
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
@@ -196,9 +196,14 @@ h2, h3 { page-break-after: avoid; }
   clear: both;
 }
 
+.upfront-postpart-featured_image img {
+  max-width: 100%;
+  min-width: 100%;
+}
+
 /* Flexbox experiments *//* *
 .upfront-grid-layout {
-	display: flex;
+  display: flex;
 }
 /* End flexbox */
 
