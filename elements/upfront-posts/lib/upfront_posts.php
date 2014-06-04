@@ -4,8 +4,8 @@
  * Object implementation for Search entity.
  * A fairly simple implementation, with applied settings.
  */
- 
-include_once dirname(dirname(dirname(__FILE__))) . '/upfront-this-post/lib/this_post.php'; 
+
+include_once dirname(dirname(dirname(__FILE__))) . '/upfront-this-post/lib/this_post.php';
 
 class Upfront_UpostsView extends Upfront_Object {
 
@@ -68,7 +68,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		}
 		return $html;
 	}
-	
+
 	public static function default_postlayout($type){
 		//type can be later used to selectively return different layouts
 		return array(
@@ -80,21 +80,24 @@ class Upfront_UpostsView extends Upfront_Object {
 			'partOptions' => array('featured_image' => array('height' => 100))
 		);
 	}
-	
+
 	public static function get_template($query_args, $properties, $element_id) {
 		global $wp_query;
 		$temp_query = clone $wp_query;
 
 		query_posts($query_args);
-	
-		
-		$key = get_stylesheet() . '-archive-'.str_replace('uposts-object-', '', $element_id);
 
+
+		//$key = get_stylesheet() . '-archive-'.str_replace('uposts-object-', '', $element_id);
+		$type = $query_args['post_type'];
+		$layout = Upfront_ThisPostView::find_postlayout('archive', $type, str_replace('uposts-object-', '', $element_id));
+
+		/*
 		$layout = get_option($key);
 		if(!$layout)
 			$layout = self::default_postlayout($type);
+		*/
 
-		
 		$markup = upfront_get_template(
 			'uposts',
 			array('properties' => $properties, 'layout' => $layout),
@@ -144,7 +147,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			'partOptions' => array('featured_image' => array('height' => 100))
 		);
 	}
-	
+
 	public static function add_js_defaults($data){
 		if(!isset($data['uposts']))
 			$data['uposts'] = array();

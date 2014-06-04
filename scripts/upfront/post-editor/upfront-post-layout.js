@@ -52,6 +52,8 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		if(partOptions.extraClasses)
 			this.$('.upfront-object').addClass(partOptions.extraClasses);
 
+		Upfront.Events.trigger('post:layout:partrendered', this);
+
 		console.log('post part rendered');
 	},
 

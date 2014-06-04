@@ -254,7 +254,9 @@ var ImageInsert = UeditorInsert.extend({
 		captionPosition: 'nocaption',
 		caption: 'A wonderful image :)',
 		imageFull: {src:'', width:100, height: 100},
-		imageThumb: {src:'', width:100, height: 100}
+		imageThumb: {src:'', width:100, height: 100},
+		linkType: 'do_nothing',
+		linkUrl: ''
 	},
 	//Called just after initialize
 	init: function(){
@@ -306,22 +308,11 @@ var ImageInsert = UeditorInsert.extend({
 		;
 
 		if(data.align == 'full') {
-			if (data.imageFull && data.imageFull.src) data.image = data.imageFull;
+			data.image = data.imageFull;
 		} else {
-			if (data.imageThumb && data.imageThumb.src) {
-				data.image = data.imageThumb;
-			} else {
-				data.image = $.extend({}, data.imageThumb, {
-					src: data.src,
-					height: data.height,
-					width: data.width
-				});
-			}
+			data.image = data.imageThumb;
 		}
-		// Make sure we have *a* caption
-		data.caption = data.caption || this.defaultData.caption;
 
-		console.log(data);
 		if(data.captionPosition == 'left' || data.captionPosition == 'right') {
 			this.$el.css({
 				'min-width': (parseInt(data.image.width, 10) + 100) + 'px',
@@ -389,17 +380,9 @@ var ImageInsert = UeditorInsert.extend({
 			data = this.data.toJSON()
 		;
 		if(data.align == 'full') {
-			if (data.imageFull && data.imageFull.src) data.image = data.imageFull;
+			data.image = data.imageFull;
 		} else {
-			if (data.imageThumb && data.imageThumb.src) {
-				data.image = data.imageThumb;
-			} else {
-				data.image = $.extend({}, data.imageThumb, {
-					src: data.src,
-					height: data.height,
-					width: data.width
-				});
-			}
+			data.image = data.imageThumb;
 		}
 		// Make sure we have *a* caption
 		data.caption = data.caption || this.defaultData.caption;
@@ -518,13 +501,15 @@ var ImageInsert = UeditorInsert.extend({
 
 	//Import from any image tag
 	importFromImage: function(image){
-		var imageData = {
-			src: image.attr('src'),
-			width: image.width(),
-			height: image.height(),
-			linkType: 'do_nothing',
-			linkUrl: ''
-		};
+		var imageData = this.defaultData,
+			imageSpecs = {
+				src: image.attr('src'),
+				width: image.width(),
+				height: image.height()
+			}
+		;
+		imageData.imageFull = imageSpecs;
+		imageData.imageThumb = imageSpecs;
 
 		var align = 'center';
 		if(image.hasClass('aligncenter'))
@@ -542,8 +527,6 @@ var ImageInsert = UeditorInsert.extend({
 			imageData.linkUrl = parent.attr('href') ;
 			imageData.linkType = 'external';
 		}
-
-
 
 		var attachmentId = image.attr('class');
 		if(!attachmentId)
