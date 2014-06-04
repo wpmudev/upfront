@@ -835,58 +835,27 @@ define([
 		}
 	});
 
-	var Command_EnableBreakpoint = Command.extend({
-		enabled: true,
+  var Command_BreakpointDropdown = Command.extend({
+    enabled: true,
     initialize: function() {
       var breakpoints = breakpoints_storage.get_breakpoints();
-      var default_value = [];
-      var values = [];
-
-      _.each(breakpoints, function(breakpoint) {
-        var value;
-
-        var label = breakpoint.name;
-        if (breakpoint.width) {
-          label += ' (' + breakpoint.width + 'px)';
-        }
-
-        value = { label: label, value: breakpoint.id };
-
-        if (breakpoint.fixed) {
-          value.disabled = true;
-        }
-        values.push(value);
-
-        if (breakpoint.enabled) {
-          default_value.push(breakpoint.id);
-        }
-      });
 
       this.fields = [
         new Field_Compact_Label_Select({
           multiple: true,
           label_text: 'Add/Remove Breakpoint',
-          values: values,
-          default_value: default_value
+          collection: breakpoints
         })
       ]
     },
-		render: function () {
+    render: function () {
       this.fields[0].render();
-      this.listenTo(this.fields[0], 'all', this.update_breakpoints);
       this.$el.append(this.fields[0].el);
-		},
-    update_breakpoints: function() {
-      breakpoints_storage.update_breakpoints(this.fields[0].get_value());
     },
-		on_click: function () {
+    on_click: function () {
 
-		},
-    // add_breakpoint: function(event) {
-      // event.preventDefault();
-      // console.log($('#add-breakpoint_size').val());
-    // }
-	});
+    }
+  });
 
 
 	var Commands = Backbone.View.extend({
@@ -1719,7 +1688,7 @@ define([
 		"className": "sidebar-commands sidebar-commands-responsive",
 		initialize: function () {
 			this.commands = _([
-        new Command_EnableBreakpoint(),
+        new Command_BreakpointDropdown(),
 				new Command_StopResponsiveMode({model: this.model})
 			]);
 		}
@@ -4746,27 +4715,66 @@ var Field_Anchor = Field_Select.extend({
 	}
 });
 
-  var Field_Compact_Label_Select = Field_Select.extend({
-		get_field_html: function () {
-			var attr = {
-				'class': 'upfront-field-select upfront-no-select upfront-field-compact-label-select',
-				'id': this.get_field_id()
-			};
-			attr.class += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
-			if ( this.options.disabled )
-				attr.class += ' upfront-field-select-disabled';
-			if ( this.options.style == 'zebra' )
-				attr.class += ' upfront-field-select-zebra';
-			//return '<select ' + this.get_field_attr_html(attr) + '>' + this.get_values_html() + '</select>';
-			return '<div ' + this.get_field_attr_html(attr) + '>' +
-        '<ul class="upfront-field-select-options">' +
-        '<li class="upfront-field-select-option">' +
-        '<label><span class="upfront-field-label-text">' + this.options.label_text + '</span></label>' +
-        '</li>' +
-        this.get_values_html() +
-        '</ul></div>';
-		},
-  });
+
+/**
+ * This is ordinary select that will render first option as label which
+ * is disabled, has no hover effect and has no value.
+ * Specify label text with options.label_text
+ */
+var Field_Compact_Label_Select_Option = Backbone.View.extend({
+  tagName: 'li',
+  events: {
+    'change input': 'on_change'
+  },
+  className: function() {
+    var className = 'upfront-field-select-option';
+    if (this.model.get('fixed')) className += ' upfront-field-select-option-disabled';
+    if (this.model.get('enabled')) className += ' upfront-field-select-option-selected';
+    // select-option-odd
+    return className;
+  },
+  template: '<label><span class="upfront-field-label-text">{{ name }} {[ if (width > 0) { ]}({{width}}px){[ } ]}</span></label>' +
+    '<input type="checkbox" class="upfront-field-checkbox" value="{{ id }}" ' +
+    '{[ if (fixed) { ]} disabled="disabled"{[ } ]}' +
+    '{[ if (enabled) { ]} checked="checked"{[ } ]}>',
+  initilize: function(options) {
+    this.options = options || {};
+  },
+  on_change: function(event) {
+    this.model.set({'enabled': this.$el.find('input').is(':checked')});
+  },
+  render: function() {
+    this.$el.append(_.template(this.template, this.model.toJSON()));
+    return this;
+  }
+});
+var Field_Compact_Label_Select = Field_Select.extend({
+  className: 'upfront-field-select upfront-no-select upfront-field-compact-label-select',
+  template: '<ul class="upfront-field-select-options">' +
+      '<li class="upfront-field-select-option">' +
+      '<label><span class="upfront-field-label-text">{{ label_text }}</span></label>' +
+      '</li>' +
+      '</ul></div>',
+  initialize: function(options) {
+    this.options = options || {};
+  },
+  render: function () {
+    var me = this;
+    this.$el.html('');
+    this.$el.append(_.template(this.template, this.options));
+    this.$el.addClass(' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' ));
+    if ( this.options.disabled )
+      this.$el.addClass('upfront-field-select-disabled');
+    if ( this.options.style == 'zebra' )
+      this.$el.addClass('upfront-field-select-zebra');
+
+    // Add option views
+    _.each(this.collection.models, function(breakpoint) {
+      var option = new Field_Compact_Label_Select_Option({ model: breakpoint });
+      this.$el.find('ul').append(option.render().el);
+    }, this);
+  },
+});
 
 /*
 	var ContentEditorUploader = Backbone.View.extend({
@@ -7018,48 +7026,96 @@ var Field_Anchor = Field_Select.extend({
 	});
 
   /** Responsive stuff, breakpoints, UI, etc */
+
+  /**
+   * For easier setup of breakpoints.
+   */
+  var Breakpoint_Model = Backbone.Model.extend({
+    defaults: {
+      'default': false,
+      'fixed': false,
+      'enabled': false,
+      'width': 0,
+      'columns': 0
+    }
+  });
+
+  /**
+   * For centralized access to breakpoints for updating and watching on changes.
+   */
+  var Breakpoints_Collection = Backbone.Collection.extend({
+    model: Breakpoint_Model,
+    initialize: function() {
+      this.on( 'change:active', this.on_change_active, this);
+      this.on( 'change:enabled', this.on_change_enabled, this);
+    },
+    on_change_active: function(changed_model) {
+      _.each(this.models, function(model) {
+        if (model.get('id') === changed_model.get('id')) return;
+
+        model.set({ 'active': false }, { 'silent': true });
+      });
+    },
+    on_change_enabled: function(changed_model) {
+      // If active point is disabled it will disapear and leave UI in broken state.
+      if (!changed_model.get('active')) return;
+
+      // Activate default breakpoint and fire event.
+      var default_breakpoint = this.findWhere({ 'default': true })
+
+      default_breakpoint.set({ 'active': true });
+      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", default_breakpoint.toJSON());
+    },
+    sorted_by_width: function() {
+      return _.sortBy(this.models, function(model) {
+        return model.get('width')
+      });
+    },
+    get_active: function() {
+      return this.findWhere({ 'active': true });
+    }
+  });
+
+  /**
+   * Wrapper for Breakpoints_Collection since we can't use Backbone.Collection
+   * native saving.
+   */
   var Breakpoints_Storage = function(stored_breakpoints) {
-    var breakpoints = stored_breakpoints;
+    var breakpoints;
+
+    var initialize = function() {
+      breakpoints = new Breakpoints_Collection(stored_breakpoints);
+      breakpoints.findWhere({ 'default': true }).set({'active': true});
+
+      breakpoints.on('change:enabled', save_breakpoints);
+      breakpoints.on('change:width', save_breakpoints);
+    };
 
     this.get_breakpoints = function() {
       return breakpoints;
-      // if (typeof breakpoints !== 'undefined') return breakpoints;
-
-      // Upfront.Util.post({action: 'upfront_get_breakpoints'})
-        // .success(function(response) {
-          // breakpoints = JSON.parse(response.data);
-          // return breakpoints;
-        // })
-        // .error(function() {
-          // notifier.addMessage('Breakpoints could not be retrieved.');
-        // });
     };
 
-    this.update_breakpoints = function(ids) {
-      _.each(breakpoints, function(breakpoint, index) {
-        if (_.contains(ids, breakpoint.id)) {
-          breakpoints[index].enabled = true;
-        } else {
-          breakpoints[index].enabled = false;
-        }
-      });
-
+    var save_breakpoints = function() {
       var postData = {
         action: 'upfront_update_breakpoints',
-        breakpoints: breakpoints
+        breakpoints: breakpoints.toJSON()
       };
 
       Upfront.Util.post(postData)
         .error(function(){
-          return notifier.addMessage('Breakpoints not saved.');
+          return notifier.addMessage('Breakpoints could not be saved.');
         });
-      Upfront.Events.trigger('breakpoint:update', breakpoints);
     };
+
+    initialize();
   };
 
   var breakpoints_storage = new Breakpoints_Storage(Upfront.mainData.themeInfo.breakpoints);
 
-  var Breakpoint_Button = Backbone.View.extend({
+  /**
+   * Activates breakpoint which will change layout size.
+   */
+  var Breakpoint_Activate_Button = Backbone.View.extend({
     tagName: 'li',
     events: {
       'click': 'on_click'
@@ -7068,13 +7124,13 @@ var Field_Anchor = Field_Select.extend({
       this.options = options || {};
     },
     render: function() {
-      this.$el.html(this.options.width);
+      this.$el.html(this.model.get('width'));
+      if (this.model.get('active')) this.$el.addClass('active');
       return this;
     },
     on_click: function() {
-      this.$el.siblings().removeClass('active');
-      this.$el.addClass('active');
-      this.trigger('click', this.options);
+      this.model.set({ 'active': true });
+      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", this.model.toJSON());
     }
   });
 
@@ -7082,60 +7138,96 @@ var Field_Anchor = Field_Select.extend({
     tagName: 'ul',
     className: 'breakpoints-toggler',
     initialize: function() {
-      this.breakpoints = breakpoints_storage.get_breakpoints();
+      this.collection = breakpoints_storage.get_breakpoints();
 
-      Upfront.Events.on('breakpoint:update', this.update_breakpoints, this);
-    },
-    update_breakpoints: function(breakpoints) {
-      this.breakpoints = breakpoints;
-      this.render();
+      this.listenTo(this.collection, 'change', this.render);
     },
     render: function() {
       this.$el.html('');
-      _.each(this.breakpoints, function(breakpoint_data) {
+      _.each(this.collection.sorted_by_width(), function(breakpoint) {
         // Add only enabled breakpoints
-        if (breakpoint_data.enabled === false) return;
+        if (breakpoint.get('enabled') === false) return;
 
-        var breakpoint_button = new Breakpoint_Button(breakpoint_data);
+        var breakpoint_button = new Breakpoint_Activate_Button({ model: breakpoint});
         this.$el.append(breakpoint_button.render().el);
-        this.listenTo(breakpoint_button, 'click', this.change_breakpoint);
       }, this);
       return this;
+    }//,
+    // change_breakpoint: function(breakpoint) {
+
+      // //todo find a place for commented code, that should do the grid sizing stuff
+      // // var new_size = breakpoint.width;
+      // // var grid = Upfront.Settings.LayoutEditor.Grid;
+
+			// // grid.size_name = new_size;
+			// // grid.size = grid.breakpoint_columns[new_size];
+			// // grid.column_width = grid.column_widths[new_size];
+			// // grid.column_padding = grid.column_paddings[new_size];
+			// // grid.type_padding = grid.type_paddings[new_size];
+			// // grid.baseline = grid.baselines[new_size];
+			// // grid.class = grid.size_classes[new_size];
+			// // grid.left_margin_class = grid.margin_left_classes[new_size];
+			// // grid.right_margin_class = grid.margin_right_classes[new_size];
+			// // grid.top_margin_class = grid.margin_top_classes[new_size];
+			// // grid.bottom_margin_class = grid.margin_bottom_classes[new_size];
+		// }
+  });
+
+  var BreakpointWidthInput = Backbone.View.extend({
+    className: 'breakpoint-width-input',
+    initialize: function(options) {
+      this.options = options || {};
+      this.collection = breakpoints_storage.get_breakpoints();
+      this.listenTo(this.collection, 'change:active', this.render);
+
     },
-    change_breakpoint: function(breakpoint) {
-      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", breakpoint); // hardcoded until we get saving done
+    render: function() {
+      this.$el.html('');
+      this.active_breakpoint = this.collection.get_active();
+      // Debounce input value change event since it causes some heavy operations to kick in.
+      var lazy_propagate_change = _.debounce(this.propagate_change, 1000);
 
-      //todo find a place for commented code, that should do the grid sizing stuff
-      // var new_size = breakpoint.width;
-      // var grid = Upfront.Settings.LayoutEditor.Grid;
+      if (this.active_breakpoint.get('fixed')) return this;
 
-			// grid.size_name = new_size;
-			// grid.size = grid.breakpoint_columns[new_size];
-			// grid.column_width = grid.column_widths[new_size];
-			// grid.column_padding = grid.column_paddings[new_size];
-			// grid.type_padding = grid.type_paddings[new_size];
-			// grid.baseline = grid.baselines[new_size];
-			// grid.class = grid.size_classes[new_size];
-			// grid.left_margin_class = grid.margin_left_classes[new_size];
-			// grid.right_margin_class = grid.margin_right_classes[new_size];
-			// grid.top_margin_class = grid.margin_top_classes[new_size];
-			// grid.bottom_margin_class = grid.margin_bottom_classes[new_size];
-		}
+      this.input = new Upfront.Views.Editor.Field.Number({
+        className: 'inline-number plaintext-settings',
+        min: 1,
+        label: "Viewport Width",
+        suffix: "px",
+        default_value: this.active_breakpoint.get('width')
+      });
+
+      this.input.render();
+      this.$el.html(this.input.el);
+
+      this.listenTo(this.input, 'changed', lazy_propagate_change);
+
+      return this;
+    },
+    propagate_change: function() {
+      Upfront.Events.trigger("upfront:layout_size:viewport_width_change", this.input.get_value());
+      this.active_breakpoint.set({ 'width': this.input.get_value() });
+    }
   });
 
   /** End responsive stuff, breakpoints, UI, etc */
 
   var Topbar = Backbone.View.extend({
     id: 'upfront-ui-topbar',
-    content: '',
+    content_views: [],
     render: function() {
-      this.$el.append(this.content.el);
+      _.each(this.content_views, function(view) {
+        view.render();
+        this.$el.append(view.el);
+      }, this);
+
       return this;
     },
     start: function() {
+      this.content_views = [];
       if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.RESPONSIVE ) {
-        var toggler = new BreakpointsToggler();
-        this.content = toggler.render();
+        this.content_views.push(new BreakpointWidthInput());
+        this.content_views.push(new BreakpointsToggler());
       }
       $('body').prepend(this.render().el);
     },

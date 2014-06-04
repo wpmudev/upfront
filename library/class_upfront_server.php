@@ -336,6 +336,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$defaults = array(
         array(
           'name' => 'Default Desktop',
+          'default' => true,
           'id' => 'desktop',
           'width' => 1080,
           'columns' => 24,
@@ -346,22 +347,17 @@ class Upfront_JavascriptMain extends Upfront_Server {
           'name' => 'Tablet',
           'id' => 'tablet',
           'width' => 570,
-          'columns' => 12,
-          'enabled' => false,
+          'columns' => 12
         ),
         array(
           'name' => 'Mobile',
           'id' => 'mobile',
           'width' => 315,
-          'columns' => 7,
-          'enabled' => false,
+          'columns' => 7
         ),
         array(
           'name' => 'Custom Width',
-          'id' => 'custom',
-          'width' => 0,
-          'columns' => 0,
-          'enabled' => false,
+          'id' => 'custom'
         )
       );
       $theme_info = json_encode(array('breakpoints' => $defaults));
@@ -1090,6 +1086,7 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 			$defaults = array(
         array(
           'name' => 'Default Desktop',
+          'default' => true,
           'id' => 'desktop',
           'width' => 1080,
           'columns' => 24,
@@ -1100,22 +1097,17 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
           'name' => 'Tablet',
           'id' => 'tablet',
           'width' => 570,
-          'columns' => 12,
-          'enabled' => false,
+          'columns' => 12
         ),
         array(
           'name' => 'Mobile',
           'id' => 'mobile',
           'width' => 315,
-          'columns' => 7,
-          'enabled' => false,
+          'columns' => 7
         ),
         array(
           'name' => 'Custom Width',
-          'id' => 'custom',
-          'width' => 0,
-          'columns' => 0,
-          'enabled' => false,
+          'id' => 'custom'
         )
       );
       $responsive_settings = json_encode($defaults);
@@ -1128,6 +1120,7 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
     // Parse data types
     foreach ($breakpoints as $index=>$breakpoint) {
       $breakpoints[$index]['enabled'] = filter_var($breakpoint['enabled'], FILTER_VALIDATE_BOOLEAN);
+      $breakpoints[$index]['default'] = filter_var($breakpoint['default'], FILTER_VALIDATE_BOOLEAN);
       $breakpoints[$index]['width'] = filter_var($breakpoint['width'], FILTER_VALIDATE_INT);
       $breakpoints[$index]['columns'] = filter_var($breakpoint['columns'], FILTER_VALIDATE_INT);
       if (isset($breakpoint['fixed'])) {

@@ -9597,6 +9597,12 @@ a.upfront-css-edit:before{
   right: 0;
   z-index: 2;
 }
+#upfront-ui-topbar label {
+  color: white;
+}
+#upfront-ui-topbar .inline-number input {
+  width: 75px;
+}
 .breakpoints-toggler {
   text-align: center;
 }
@@ -9613,6 +9619,12 @@ a.upfront-css-edit:before{
 }
 .breakpoints-toggler li:first-child {
   margin-left: 0;
+}
+
+.breakpoint-width-input {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* Sidebaar breakpoints add/remove */
