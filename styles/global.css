@@ -100,10 +100,16 @@ h2, h3 { page-break-after: avoid; }
 .upfront-module {}
 
 /* Clearfix for object container */
+.upfront-output-module:before,
+.upfront-editable_entities_container>div:before,
 .upfront-output-module:after,
 .upfront-editable_entities_container>div:after {
 	content: " ";
 	display: table;
+}
+.upfront-output-module:after,
+.upfront-editable_entities_container>div:after {
+	clear: both;
 }
 
 .upfront-output-region:before, .upfront-output-region:after { content: ""; display: table; }
@@ -189,3 +195,10 @@ h2, h3 { page-break-after: avoid; }
   display: block;
   clear: both;
 }
+
+/* Flexbox experiments *//* *
+.upfront-grid-layout {
+	display: flex;
+}
+/* End flexbox */
+
