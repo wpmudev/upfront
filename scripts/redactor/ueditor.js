@@ -522,6 +522,7 @@ Ueditor.prototype = {
 		var html = this.redactor.$source.val();
 		if(this.insertManager)
 			html = this.insertManager.insertExport(html);
+
 		return html;
 	},
 	getInsertsData: function(){

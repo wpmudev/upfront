@@ -388,10 +388,21 @@ var ImageInsert = UeditorInsert.extend({
 		var out = this.el.cloneNode(),
 			data = this.data.toJSON()
 		;
-		if(data.align == 'full')
-			data.image = data.imageFull;
-		else
-			data.image = data.imageThumb;
+		if(data.align == 'full') {
+			if (data.imageFull && data.imageFull.src) data.image = data.imageFull;
+		} else {
+			if (data.imageThumb && data.imageThumb.src) {
+				data.image = data.imageThumb;
+			} else {
+				data.image = $.extend({}, data.imageThumb, {
+					src: data.src,
+					height: data.height,
+					width: data.width
+				});
+			}
+		}
+		// Make sure we have *a* caption
+		data.caption = data.caption || this.defaultData.caption;
 
 		this.data.set('width', this.$el.width(), {silent: true});
 		this.data.trigger('update');
