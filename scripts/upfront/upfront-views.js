@@ -2552,7 +2552,8 @@ define([
 				if(!$(e.target).closest('.upfront-region-container-active').length || !$(e.target).closest('.upfront-inline-panels'))
 					Upfront.Events.trigger("entity:region:deactivated");
 				// Unselect selection
-				Upfront.Events.trigger("command:selection:remove");
+				if ( !Upfront.Behaviors.LayoutEditor.selecting )
+					Upfront.Events.trigger("command:selection:remove");
 			},
 			remove: function(){
 				if(this.local_view)

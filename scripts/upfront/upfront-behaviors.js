@@ -2,6 +2,7 @@
 
 var LayoutEditor = {
 	selection: [], // store selection
+	selecting: false, // true when selecting start, false when stopped
 	create_mergeable: function (view, model) {
 		var app = this,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -42,6 +43,7 @@ var LayoutEditor = {
 			start: function (e, ui) {
 				// reset selection on start
 				ed.selection = [];
+				ed.selecting = true;
 			},
 			stop: function (e, ui) {
 				if ( !$(".ui-selected").length )
@@ -99,6 +101,7 @@ var LayoutEditor = {
 					top: group_top,
 					left: group_left
 				});
+				setTimeout(function(){ ed.selecting = false; }, 1000);
 				$group.on('click', function () {
 					var ed = Upfront.Behaviors.GridEditor,
 						group_id = Upfront.Util.get_unique_id("module-group"),
