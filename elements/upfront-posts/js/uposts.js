@@ -35,6 +35,7 @@ define(function() {
     markup: false,
     editors: {},
     editor: false,
+	editing: false,
     currentpost: false,
     initialize: function(options){
       if(! (this.model instanceof UpostsModel)){
@@ -52,7 +53,8 @@ define(function() {
 
       this.model.on('region:updated', this.refreshMarkup, this);
       this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
-
+	  this.listenTo(Upfront.Events, 'post:content:edit:start', this.editingOn);
+	  this.listenTo(Upfront.Events, 'post:content:edit:stop', this.editingOff);
       //this.listenTo(this.model.get("properties"), 'add', this.refreshMarkup);
       //this.listenTo(this.model.get("properties"), 'remove', this.refreshMarkup);
       console.log('Posts element');
@@ -62,6 +64,15 @@ define(function() {
      * Element contents markup.
      * @return {string} Markup to be shown.
      */
+	 
+	editingOn: function() {
+		this.editing = true;
+		this.$el.find('.upfront-object-content').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
+	},
+	editingOff: function() {
+		this.editing = false;
+		this.$el.find('.post_editor_container').removeClass('clearfix').css('position', '');
+	},
     get_content_markup: function () {
       if(this.changed || !this.markup){
         //Is it shadow?
@@ -72,6 +83,8 @@ define(function() {
       return this.markup;
     },
     moveEditButton: function(e) {
+		if(this.editing)
+			return;
       var target = $(e.target).closest('div.post_editor_container');
       var poisitontarget = target.find('div.upfront-output-wrapper:first-child');
       if(poisitontarget.length)
