@@ -7057,11 +7057,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
       });
     },
     on_change_enabled: function(changed_model) {
-      // If active point is disabled it will disapear and leave UI in broken state.
-      if (!changed_model.get('active')) return;
+      // If disabled point was active it will disapear and leave UI in broken state.
+      if (changed_model.get('active') === false) return;
 
       // Activate default breakpoint and fire event.
-      var default_breakpoint = this.findWhere({ 'default': true })
+      var default_breakpoint = this.get_default();
 
       default_breakpoint.set({ 'active': true });
       Upfront.Events.trigger("upfront:layout_size:change_breakpoint", default_breakpoint.toJSON());
@@ -7072,7 +7072,22 @@ var Field_Compact_Label_Select = Field_Select.extend({
       });
     },
     get_active: function() {
-      return this.findWhere({ 'active': true });
+      var active_breakpoint = this.findWhere({ 'active': true });
+      if (_.isUndefined(active_breakpoint) === false) return active_breakpoint;
+
+      active_breakpoint = this.get_default();
+      active_breakpoint.set({ 'active': true });
+      return active_breakpoint;
+    },
+    get_default: function() {
+      var default_breakpoint = this.findWhere({ 'default': true });
+      if (_.isUndefined(default_breakpoint)) {
+        default_breakpoint = this.findWhere({ 'id': 'desktop' });
+        if (default_breakpoint) default_breakpoint.set({ 'default': true });
+      }
+      if (_.isUndefined(default_breakpoint)) throw 'Breakpoints are not loaded properly.';
+
+      return default_breakpoint;
     }
   });
 
@@ -7085,7 +7100,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
     var initialize = function() {
       breakpoints = new Breakpoints_Collection(stored_breakpoints);
-      breakpoints.findWhere({ 'default': true }).set({'active': true});
+      var default_breakpoint = breakpoints.get_default();
+      default_breakpoint.set({'active': true});
 
       breakpoints.on('change:enabled', save_breakpoints);
       breakpoints.on('change:width', save_breakpoints);
