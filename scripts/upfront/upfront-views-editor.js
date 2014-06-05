@@ -7033,6 +7033,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
   var Breakpoint_Model = Backbone.Model.extend({
     defaults: {
       'default': false,
+      'short_name': 'short',
       'fixed': false,
       'enabled': false,
       'width': 0,
@@ -7133,6 +7134,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
    */
   var Breakpoint_Activate_Button = Backbone.View.extend({
     tagName: 'li',
+    template: '{{ short_name }} ({{ width }}px)',
+    className: function() {
+      return this.model.get('id') + '-breakpoint-activate';
+    },
     events: {
       'click': 'on_click'
     },
@@ -7140,7 +7145,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
       this.options = options || {};
     },
     render: function() {
-      this.$el.html(this.model.get('width'));
+      this.$el.html(_.template(this.template, this.model.toJSON()));
       if (this.model.get('active')) this.$el.addClass('active');
       return this;
     },

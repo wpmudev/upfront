@@ -336,6 +336,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$defaults = array(
         array(
           'name' => 'Default Desktop',
+          'short_name' => 'Default',
           'default' => true,
           'id' => 'desktop',
           'width' => 1080,
@@ -345,18 +346,21 @@ class Upfront_JavascriptMain extends Upfront_Server {
         ),
         array(
           'name' => 'Tablet',
+          'short_name' => 'Tablet',
           'id' => 'tablet',
           'width' => 570,
           'columns' => 12
         ),
         array(
           'name' => 'Mobile',
+          'short_name' => 'Mobile',
           'id' => 'mobile',
           'width' => 315,
           'columns' => 7
         ),
         array(
           'name' => 'Custom Width',
+          'short_name' => 'Custom',
           'id' => 'custom'
         )
       );
@@ -1074,6 +1078,7 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 			$defaults = array(
         array(
           'name' => 'Default Desktop',
+          'short_name' => 'Desktop',
           'default' => true,
           'id' => 'desktop',
           'width' => 1080,
@@ -1083,18 +1088,21 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
         ),
         array(
           'name' => 'Tablet',
+          'short_name' => 'Tablet',
           'id' => 'tablet',
           'width' => 570,
           'columns' => 12
         ),
         array(
           'name' => 'Mobile',
+          'short_name' => 'Mobile',
           'id' => 'mobile',
           'width' => 315,
           'columns' => 7
         ),
         array(
           'name' => 'Custom Width',
+          'short_name' => 'Custom',
           'id' => 'custom'
         )
       );
