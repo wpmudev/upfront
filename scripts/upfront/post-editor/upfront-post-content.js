@@ -5,6 +5,7 @@ var PartMarkupCreator = function(){
 	this.parts = {
 		title: {replacements: ['%title%', '%permalink%'], editable:['%title%']},
 		contents: {replacements: ['%contents%', '%excerpt%'], editable:['%contents%', '%excerpt%']},
+		excerpt: {replacements: ['%contents%', '%excerpt%'], editable:['%contents%', '%excerpt%']},
 		author: {replacements: ['%author%', '%author_url%', '%author_meta%'], editable:['%author%'], withParameters: ['%author_meta_', '%avatar_']},
 		categories: {replacements: ['%categories%'], editable:[]},
 		tags: {replacements: ['%tags%'], editable:[]},
@@ -22,6 +23,7 @@ var PartMarkupCreator = function(){
 		_.each(attributes, function(value, key){
 			attrs += key +'="' + value + '" ';
 		});
+		
 		_.each(this.parts[part].replacements, function(tag){
 			var markup = partContents[tag];
 			if(me.parts[part].editable.indexOf(tag) !== -1){

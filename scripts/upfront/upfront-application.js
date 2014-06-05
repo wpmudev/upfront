@@ -370,6 +370,18 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	},
 
 	cancelEdition: function(){
+		//Gagan: The code inside the following if, is to accomodate the posts element
+		var me = this;
+		if(typeof(this.postwrapperclone) != 'undefined' && this.postwrapperclone) {
+			this.postWrapper.find('.post_editor_container').css('display', '');
+			this.postwrapperclone.find('.post_editor_container').each(function() {
+				me.postWrapper.find('.upfront-object-content').append($(this));
+			});
+			
+			this.postwrapperclone.remove();
+			
+		}
+		
 		if(Application.current_subapplication != PostLayoutEditor)
 			return;
 		Application.start(Application.mode.last);
@@ -563,7 +575,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			region = this.importPostLayout(postView.postLayout),
 			layoutRegions = Application.layout.get('regions')
 		;
-
+		console.log(postView.postLayout);
 		this.templateEditor = new Upfront.Content.TemplateEditor();
 		this.listenTo(this.templateEditor, 'save', function(tpl, postPart){
 			var templates = me.postView.property('templates');
@@ -611,21 +623,21 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		this.regionContainer = region.$el.closest('.upfront-region-container').detach();
 		this.postWrapper = this.postView.$el.closest('.upfront-wrapper');
 		//Gagan: The code inside the following if, is to accomodate the posts element
-		if(this.postView.$el.find('ul.uposts-posts').length > 0) {
+		if(this.postView.$el.find('div.post_editor_container').length > 0) {
 			var me = this;
-			var postindex = this.postView.$el.find('li.post-'+this.postView.editor.postId).index();
-console.log('here is the index'+postindex);
+			var postindex = this.postView.$el.find('div.post_editor_container-'+this.postView.editor.postId).index();
+
 			this.postWrapper.find('div.upfront-editable_entity').removeClass('main-module0-Uposts-module-module').css('min-height', 'inherit');
 			this.postwrapperclone = this.postWrapper.clone().removeClass('ui-draggable').addClass('temp_clone').css('z-index', '-1');
 			this.postwrapperclone.find('.ui-draggable').removeClass('ui-draggable');
-			this.postwrapperclone.find('ul.uposts-posts > li.uposts-post').remove();
+			this.postwrapperclone.find('div.post_editor_container').remove();
 			var firstitem = true
 
-			this.postWrapper.find('li.uposts-post').slice(postindex-1).each(function() {
+			this.postWrapper.find('div.post_editor_container').slice(postindex).each(function() {
 				if(!firstitem)
-					me.postwrapperclone.find('ul.uposts-posts').append($(this));
+					me.postwrapperclone.find('.upfront-object-content').append($(this));
 				else {
-					$(this).remove();
+					$(this).css('display', 'none');
 					firstitem = false;
 				}
 			});

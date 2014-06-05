@@ -44,7 +44,7 @@ define(function() {
       this.events = _.extend({}, this.events, {
         'click .uposts-pagination>a': 'paginate',
         'click .upfront-post-layout-trigger': 'editPostLayout',
-        'mouseenter ul.uposts-posts > li.uposts-post': 'moveEditButton'
+        'mouseenter div.post_editor_container': 'moveEditButton'
       });
 
       this.page = 1;
@@ -72,7 +72,7 @@ define(function() {
       return this.markup;
     },
     moveEditButton: function(e) {
-      var target = $(e.target).closest('li.uposts-post');
+      var target = $(e.target).closest('div.post_editor_container');
       var poisitontarget = target.find('div.upfront-output-wrapper:first-child');
       if(poisitontarget.length)
         target.prepend(this.$el.find('.upfront-post-layout-trigger').parent('b').addClass('post_layout_trigger').css({ top: poisitontarget.position().top+50, right: 5}));
@@ -84,7 +84,7 @@ define(function() {
 
     on_render: function(){
       var me = this;
-      this.refreshMarkup();
+     // this.refreshMarkup();
 	 
       //Give time to append when dragging.
       setTimeout(function(){
@@ -96,9 +96,11 @@ define(function() {
       return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
     },
     editPostLayout: function(e){
-      this.editor = this.editors[$(e.target).closest('li.uposts-post').data('post_id')];
-	  this.postLayout = this.property('postLayout');
-	  this.partOptions = this.property('partOptions');
+      this.editor = this.editors[$(e.target).closest('div.post_editor_container').data('post_id')];
+	  if(!this.postLayout)
+		  this.postLayout = this.property('postLayout');
+	  if(!this.partOptions)
+	  	this.partOptions = this.property('partOptions');
       Upfront.Events.trigger('post:layout:edit', this, 'single');
     },
     prepareEditor: function(id, node){
@@ -114,7 +116,7 @@ define(function() {
         node: node,
         content_mode: is_excerpt ? 'post_excerpt' : 'post_content',
         view: this,
-        //layout: this.property('layout')
+        layout: this.property('layout')
       });
 
       //}
@@ -183,6 +185,20 @@ define(function() {
           me.prepareEditor(id, node);
           //me.createEditor(id, node);
       });
+	 
+	  me.$('.upfront-object-content').html('');
+
+	 nodes.each(function(){
+		 var node = $(this),
+          id = node.data('post_id')
+        ;
+		 
+		 var content = $('<div>').addClass('post_editor_container').addClass('post_editor_container-'+id).data('post_id', id);
+		 me.editors[id].setElement(content);
+		 me.editors[id].render();
+		 me.$('.upfront-object-content').append(content);
+	 });
+	  
     },
 
 
