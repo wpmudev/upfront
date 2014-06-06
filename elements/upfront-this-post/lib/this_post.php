@@ -328,7 +328,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	protected static function get_templates(){
-		$names = array('author', 'categories', 'comments_count', 'contents', 'date', 'featured_image', 'tags', 'title');
+		$names = array('author', 'categories', 'comments_count', 'contents', 'excerpt', 'date', 'featured_image', 'tags', 'title');
 		$templates = array();
 		$dir = dirname(dirname(__FILE__)) . '/tpl/';
 		foreach($names as $name){

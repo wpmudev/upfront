@@ -176,6 +176,10 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		getTemplate: function(part){
 			var templates = this.postView.property('templates');
+
+			if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
+				part = 'excerpt';
+			
 			if(templates && templates[part])
 				return templates[part];
 
