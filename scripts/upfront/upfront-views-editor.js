@@ -3668,6 +3668,8 @@ define([
 	var SettingsPanel = Backbone.View.extend(_.extend({}, Upfront_Scroll_Mixin, {
 		//tagName: "ul",
 		className: 'upfront-settings_panel_wrap',
+    // For Anchor & Styles settings
+    hide_common_fields: false,
 
 		events: {
 			"click .upfront-save_settings": "on_save",
@@ -3686,6 +3688,7 @@ define([
 
 		initialize: function (opts) {
 			var me = this;
+      this.hide_common_fields = _.isUndefined(opts.hide_common_fields) ? false : opts.hide_common_fields;
 			me.options = opts;
 			this.settings = opts.settings ? _(opts.settings) : _([]);
 			this.settings.each(function(setting){
@@ -3699,7 +3702,7 @@ define([
 		is_changed: false,
 
 		render: function () {
-			this.$el.html('<div class="upfront-settings_label" /><div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" /><div class="upfront-settings-common_panel"></div>');
+			this.$el.html('<div class="upfront-settings_label" /><div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" />');
 
 			var $label = this.$el.find(".upfront-settings_label"),
 				$panel = this.$el.find(".upfront-settings_panel"),
@@ -3725,27 +3728,29 @@ define([
 			}
 			this.stop_scroll_propagation($panel_scroll);
       // Add common fields
-      if(typeof this.cssEditor == 'undefined' || this.cssEditor){
-        // Adding CSS item
-        var css_settings = new _Settings_CSS({
-          model: this.model,
-          title: 'CSS Styles &amp; Anchor Settings'
-        });
-        css_settings.panel = me;
-        css_settings.render();
-        $common_panel.append(css_settings.el);
-      }
-			// Adding anchor trigger
-			//todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
-				var anchor_settings = new _Settings_AnchorSetting({model: this.model});
+      if (this.hide_common_fields === false) {
+        this.$el.append('<div class="upfront-settings-common_panel"></div>');
+        if(typeof this.cssEditor == 'undefined' || this.cssEditor){
+          // Adding CSS item
+          var css_settings = new _Settings_CSS({
+            model: this.model,
+            title: 'CSS Styles &amp; Anchor Settings'
+          });
+          css_settings.panel = me;
+          css_settings.render();
+          $common_panel.append(css_settings.el);
+        }
+        // Adding anchor trigger
+        //todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
+        var anchor_settings = new _Settings_AnchorSetting({model: this.model});
         anchor_settings.panel = me;
         anchor_settings.render();
         $common_panel.append(anchor_settings.el);
 
-				// this.listenTo(anchor_settings, "anchor:item:updated", function () {
-					// this.toggle_panel(first); //todo don't know what this was for should investigate
-				// });
-			// }
+        // this.listenTo(anchor_settings, "anchor:item:updated", function () {
+          // this.toggle_panel(first); //todo don't know what this was for should investigate
+        // });
+      }
       // Save button
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +

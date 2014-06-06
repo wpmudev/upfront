@@ -165,6 +165,7 @@ var Settings = Upfront.Views.Editor.Settings,
 ;
 
 var PostPartSettings = Settings.Settings.extend({
+  has_tabs: false,
 	initialize: function(opts){
 		this.options = opts;
 		this.cssEditor = false;
@@ -204,6 +205,7 @@ var DateSettings = PostPartSettings.extend({
 	init: function(opts){
 		this.panels = _([
 			new Settings.Panel({
+        hide_common_fields: true,
 				title: 'Date format',
 				model: this.model,
 				settings: [new Upfront.Views.Editor.Settings.Item({
@@ -226,6 +228,7 @@ var TagSettings = PostPartSettings.extend({
     init: function(opts){
         this.panels = _([
             new Settings.Panel({
+                hide_common_fields: true,
                 title: 'Tags',
                 model: this.model,
                 settings: [new Upfront.Views.Editor.Settings.Item({
@@ -251,6 +254,7 @@ var ContentSettings = PostPartSettings.extend({
 	init: function(opts){
 	  this.panels = _([
 	      new Settings.Panel({
+            hide_common_fields: true,
 	          title: 'Tags',
 	          model: this.model,
 	          settings: [new Upfront.Views.Editor.Settings.Item({
