@@ -48,7 +48,7 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		$args['post_status'] = 'publish'; //Making sure, because ajax call reset this to 'any'
 
-		$query = new WP_Query($args);
+		//$query = new WP_Query($args);
 
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
 
@@ -88,15 +88,8 @@ class Upfront_UpostsView extends Upfront_Object {
 		query_posts($query_args);
 
 
-		//$key = get_stylesheet() . '-archive-'.str_replace('uposts-object-', '', $element_id);
 		$type = $query_args['post_type'];
 		$layout = Upfront_ThisPostView::find_postlayout('archive', $type, str_replace('uposts-object-', '', $element_id));
-
-		/*
-		$layout = get_option($key);
-		if(!$layout)
-			$layout = self::default_postlayout($type);
-		*/
 
 		$markup = upfront_get_template(
 			'uposts',
@@ -106,13 +99,6 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		$wp_query = $temp_query;
 		$init = '';
-		/*
-		$query = array();
-		foreach ($query_args as $key => $value) {
-			$query[] = $key . '=' . $value;
-		}
-		$init = implode('&', $query);
-		*/
 
 		return $init . "<div class='upfront-posts'>" .
 			$markup .
