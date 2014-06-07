@@ -426,7 +426,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$post_id = $_POST['post_id'];
 
 		$options = !empty($_POST['options']) && is_array($_POST['options']) ? $_POST['options'] : array();
-		$templates = isset($_POST['templates']) ? $_POST['templates'] : array();
+		$templates = !empty($_POST['templates']) && is_array($_POST['templates']) ? $_POST['templates'] : array();
 
 		//Prepare the parts before rendering
 		if(isset($_POST['parts']))
@@ -448,6 +448,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			$part_options = !empty($part['options']) ? $part['options'] : array(); // This is for editor
 			$contents = Upfront_ThisPostView::get_post_part($slug, $part_options, isset($templates[$slug]) ? $templates[$slug] : '');
 			$tpls[$slug] = $contents['tpl'];
+//localhost_log($slug, $contents);
 			$replacements = array_merge($replacements, $contents['replacements']);
 			if($slug == 'contents'){
 				$replacements['%raw_content%'] = wpautop($post->post_content);
