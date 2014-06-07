@@ -178,13 +178,14 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function post_template($this_post, $properties=array(), $layoutData = false) {
 		$post_data = self::prepare_post($this_post);
 		$excerpt = false;
+
 		if(!$layoutData)
 			$layoutData = self::find_postlayout('single', $this_post->post_type, $this_post->ID);
 		else
-			$excerpt = $properties['content_type'] == 'excerpt'?true:false;
+			$excerpt = $properties['content_type'] == 'excerpt';//?true:false;
 
 		$options = $layoutData['partOptions'];
-		$templates = $properties['templates'];
+		$templates = !empty($properties['templates']) ? $properties['templates'] : array();
 
 		$layout = array(
 			'wrappers' => $layoutData['postLayout'],
@@ -229,7 +230,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$found = get_option($cascade[$i]);
 			$i++;
 		}
-		if(!$found)
+		if(!$found) 
 			$found = self::get_theme_layout($type, $post_type, $id);
 		if(!$found)
 			$found = self::default_postlayout($type);
@@ -271,7 +272,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'postLayout' => array(
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
-				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'excerpt', 'classes' => ' post-part c24')))
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 			),
 			'partOptions' => array('featured_image' => array('height' => 100))
 		);
@@ -448,7 +449,6 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			$part_options = !empty($part['options']) ? $part['options'] : array(); // This is for editor
 			$contents = Upfront_ThisPostView::get_post_part($slug, $part_options, isset($templates[$slug]) ? $templates[$slug] : '');
 			$tpls[$slug] = $contents['tpl'];
-//localhost_log($slug, $contents);
 			$replacements = array_merge($replacements, $contents['replacements']);
 			if($slug == 'contents'){
 				$replacements['%raw_content%'] = wpautop($post->post_content);
