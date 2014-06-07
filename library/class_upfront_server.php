@@ -349,19 +349,16 @@ class Upfront_JavascriptMain extends Upfront_Server {
           'short_name' => 'Tablet',
           'id' => 'tablet',
           'width' => 570,
-          'columns' => 12
+          'columns' => 12,
+          'fixed' => true
         ),
         array(
           'name' => 'Mobile',
           'short_name' => 'Mobile',
           'id' => 'mobile',
           'width' => 315,
-          'columns' => 7
-        ),
-        array(
-          'name' => 'Custom Width',
-          'short_name' => 'Custom',
-          'id' => 'custom'
+          'columns' => 7,
+          'fixed' => true
         )
       );
       $theme_info = json_encode(array('breakpoints' => $defaults));

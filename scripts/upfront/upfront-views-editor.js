@@ -836,6 +836,7 @@ define([
 	});
 
   var Command_BreakpointDropdown = Command.extend({
+    className: 'activate-breakpoints-dropdown',
     enabled: true,
     initialize: function() {
       var breakpoints = breakpoints_storage.get_breakpoints();
@@ -843,7 +844,7 @@ define([
       this.fields = [
         new Field_Compact_Label_Select({
           multiple: true,
-          label_text: 'Add/Remove Breakpoint',
+          label_text: 'Activate Breakpoints',
           collection: breakpoints
         })
       ]
@@ -857,6 +858,45 @@ define([
     }
   });
 
+	var Command_AddCustomBreakpoint = Backbone.View.extend({
+		tagName: 'li',
+    className: 'upfornt-icon upfront-icon-add',
+    id: 'new-custom-breakpoint',
+    events: {
+      'click': 'add_breakpoint'
+    },
+		render: function () {
+				this.$el.html('New Custom Breakpoint');
+		},
+    initialize: function(options) {
+      this.collection = breakpoints_storage.get_breakpoints();
+    },
+    add_breakpoint: function(event) {
+      event.preventDefault();
+      var popup;
+      var new_breakpoint = new Breakpoint_Model({ 'id': this.collection.get_unique_id() });
+      this.collection.add(new_breakpoint);
+      new_breakpoint.set({ 'enabled': true });
+      new_breakpoint.set({ 'active': true });
+
+      popup = Upfront.Popup.open(function (data, $top, $bottom) {
+        $top.empty();
+        var $content = $(this);
+        var editPanel = new BreakpointEditPanel({ model: new_breakpoint });
+
+        $content
+        .append(editPanel.render().el);
+        $bottom.append('<div class="breakpoint-edit-ok-button">OK</div>');
+        $('#upfront-popup-close').hide();
+        $('.breakpoint-edit-ok-button').on('click', function() {
+          Upfront.Popup.close();
+          $('#upfront-popup-close').show();
+        });
+      }, {
+        width: 400
+      });
+    }
+  });
 
 	var Commands = Backbone.View.extend({
 		"tagName": "ul",
@@ -1195,50 +1235,50 @@ define([
 		fields: {},
 		current_element: '',
 		typefaces_list: [
-			{ name: "Default", value: '', family:'sans-serif' },
-			{ name: "Arial", family:'sans-serif' },
-            { name: "Arial Black", family:'sans-serif' },
-            { name: "Arial Narrow", family:'sans-serif' },
-            { name: "Arial Rounded MT Bold", family:'sans-serif' },
-            { name: "Avant Garde", family:'sans-serif' },
-            { name: "Calibri", family:'sans-serif' },
-            { name: "Candara", family:'sans-serif' },
-            { name: "Century Gothic", family:'sans-serif' },
-            { name: "Franklin Gothic Medium", family:'sans-serif' },
-            { name: "Futura", family:'sans-serif' },
-            { name: "Geneva", family:'sans-serif' },
-            { name: "Gill Sans", family:'sans-serif' },
-            { name: "Helvetica", family:'sans-serif' },
-            { name: "Impact", family:'sans-serif' },
-            { name: "Lucida Grande", family:'sans-serif' },
-            { name: "Optima", family:'sans-serif' },
-            { name: "Segoe UI", family:'sans-serif' },
-            { name: "Tahoma", family:'sans-serif' },
-            { name: "Trebuchet MS", family:'sans-serif' },
-            { name: "Verdana", family:'sans-serif' },
-            { name: "Baskerville", family:'serif' },
-            { name: "Big Caslon", family:'serif' },
-            { name: "Bodoni MT", family:'serif' },
-            { name: "Book Antiqua", family:'serif' },
-            { name: "Calisto MT", family:'serif' },
-            { name: "Cambria", family:'serif' },
-            { name: "Didot", family:'serif' },
-            { name: "Garamond", family:'serif' },
-            { name: "Georgia", family:'serif' },
-            { name: "Goudy Old Style", family:'serif' },
-            { name: "Hoefler Text", family:'serif' },
-            { name: "Lucida Bright", family:'serif' },
-            { name: "Palatino", family:'serif' },
-            { name: "Perpetua", family:'serif' },
-            { name: "Rockwell", family:'serif' },
-            { name: "Rockwell Extra Bold", family:'serif' },
-            { name: "Times New Roman", family:'serif' },
-            { name: "Andale Mono", family:'monospace' },
-            { name: "Consolas", family:'monospace' },
-            { name: "Courier New", family:'monospace' },
-            { name: "Lucida Console", family:'monospace' },
-            { name: "Lucida Sans Typewriter", family:'monospace' },
-            { name: "Monaco", family:'monospace' },
+      { name: "Default", value: '', family:'sans-serif' },
+      { name: "Arial", family:'sans-serif' },
+      { name: "Arial Black", family:'sans-serif' },
+      { name: "Arial Narrow", family:'sans-serif' },
+      { name: "Arial Rounded MT Bold", family:'sans-serif' },
+      { name: "Avant Garde", family:'sans-serif' },
+      { name: "Calibri", family:'sans-serif' },
+      { name: "Candara", family:'sans-serif' },
+      { name: "Century Gothic", family:'sans-serif' },
+      { name: "Franklin Gothic Medium", family:'sans-serif' },
+      { name: "Futura", family:'sans-serif' },
+      { name: "Geneva", family:'sans-serif' },
+      { name: "Gill Sans", family:'sans-serif' },
+      { name: "Helvetica", family:'sans-serif' },
+      { name: "Impact", family:'sans-serif' },
+      { name: "Lucida Grande", family:'sans-serif' },
+      { name: "Optima", family:'sans-serif' },
+      { name: "Segoe UI", family:'sans-serif' },
+      { name: "Tahoma", family:'sans-serif' },
+      { name: "Trebuchet MS", family:'sans-serif' },
+      { name: "Verdana", family:'sans-serif' },
+      { name: "Baskerville", family:'serif' },
+      { name: "Big Caslon", family:'serif' },
+      { name: "Bodoni MT", family:'serif' },
+      { name: "Book Antiqua", family:'serif' },
+      { name: "Calisto MT", family:'serif' },
+      { name: "Cambria", family:'serif' },
+      { name: "Didot", family:'serif' },
+      { name: "Garamond", family:'serif' },
+      { name: "Georgia", family:'serif' },
+      { name: "Goudy Old Style", family:'serif' },
+      { name: "Hoefler Text", family:'serif' },
+      { name: "Lucida Bright", family:'serif' },
+      { name: "Palatino", family:'serif' },
+      { name: "Perpetua", family:'serif' },
+      { name: "Rockwell", family:'serif' },
+      { name: "Rockwell Extra Bold", family:'serif' },
+      { name: "Times New Roman", family:'serif' },
+      { name: "Andale Mono", family:'monospace' },
+      { name: "Consolas", family:'monospace' },
+      { name: "Courier New", family:'monospace' },
+      { name: "Lucida Console", family:'monospace' },
+      { name: "Lucida Sans Typewriter", family:'monospace' },
+      { name: "Monaco", family:'monospace' },
 		],
 		google_typefaces_list: [],
 		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
@@ -1331,40 +1371,40 @@ define([
 	    				me.line_heights[element] = values.line_height;
     			});
 		   	}
-	       	if ( !this.fields.length ){
-    	       this.fields = {
-    				element: new Upfront.Views.Editor.Field.Select({
-    					label: "Typographic Element",
-    					default_value: 'h1',
-    					values: [
-    						{ label: "Main Heading (H1)", value: "h1" },
-                            { label: "Sub Heading (H2)", value: "h2" },
-                            { label: "Sub Heading (H3)", value: "h3" },
-                            { label: "Sub Heading (H4)", value: "h4" },
-                            { label: "Sub Heading (H5)", value: "h5" },
-                            { label: "Sub Heading (H6)", value: "h6" },
-                            { label: "Paragraph (P)", value: "p" },
-                            { label: "Anchor Link (A)", value: "a" },
-                            { label: "Anchor Link Hover (A:HOVER)", value: "a:hover" },
-                            { label: "Unordered List (UL)", value: "ul" },
-                            { label: "Ordered List (OL)", value: "ol" },
-                            { label: "Blockquote (BLOCKQUOTE)", value: "blockquote" },
-    					],
-    					change: function () {
-    					    var value = this.get_value(),
-    					    	is_inline = _.contains(me.inline_elements, value);
-    					    me.current_element = value;
-    					    me.fields.typeface.set_value( me.typefaces[value] );
-                            me.fields.style.set_value( me.styles[value] ? me.styles[value] : "" );
-                            if ( is_inline ){
-                            	$([me.fields.size.el, me.fields.line_height.el]).hide();
-                            }
-                            else {
-                            	$([me.fields.size.el, me.fields.line_height.el]).show();
-	                            me.fields.size.set_value( me.sizes[value] );
-	                            me.fields.line_height.set_value( me.line_heights[value] );
-                            }
-                            me.fields.color.set_value( me.colors[value] );
+          if ( !this.fields.length ){
+            this.fields = {
+            element: new Upfront.Views.Editor.Field.Select({
+              label: "Typographic Element",
+              default_value: 'h1',
+              values: [
+                { label: "Main Heading (H1)", value: "h1" },
+                { label: "Sub Heading (H2)", value: "h2" },
+                { label: "Sub Heading (H3)", value: "h3" },
+                { label: "Sub Heading (H4)", value: "h4" },
+                { label: "Sub Heading (H5)", value: "h5" },
+                { label: "Sub Heading (H6)", value: "h6" },
+                { label: "Paragraph (P)", value: "p" },
+                { label: "Anchor Link (A)", value: "a" },
+                { label: "Anchor Link Hover (A:HOVER)", value: "a:hover" },
+                { label: "Unordered List (UL)", value: "ul" },
+                { label: "Ordered List (OL)", value: "ol" },
+                { label: "Blockquote (BLOCKQUOTE)", value: "blockquote" },
+              ],
+              change: function () {
+                var value = this.get_value(),
+                    is_inline = _.contains(me.inline_elements, value);
+                me.current_element = value;
+                me.fields.typeface.set_value( me.typefaces[value] );
+                me.fields.style.set_value( me.styles[value] ? me.styles[value] : "" );
+                if ( is_inline ){
+                  $([me.fields.size.el, me.fields.line_height.el]).hide();
+                }
+                else {
+                  $([me.fields.size.el, me.fields.line_height.el]).show();
+                  me.fields.size.set_value( me.sizes[value] );
+                  me.fields.line_height.set_value( me.line_heights[value] );
+                }
+                me.fields.color.set_value( me.colors[value] );
     					}
     				}),
     				typeface: new Upfront.Views.Editor.Field.Select({
@@ -1684,15 +1724,47 @@ define([
 		}
 	});
 
-	var SidebarCommands_Responsive = Commands.extend({
-		"className": "sidebar-commands sidebar-commands-responsive",
-		initialize: function () {
-			this.commands = _([
-        new Command_BreakpointDropdown(),
-				new Command_StopResponsiveMode({model: this.model})
-			]);
-		}
+  /* Responsive */
+	var SidebarPanel_ResponsiveSettings = Backbone.View.extend({
+		tagName: 'li',
+		className: 'sidebar-panel sidebar-panel-settings expanded',
+    template: '<div class="sidebar-panel-content"></div>',
+    initialize: function() {
+      this.collection = breakpoints_storage.get_breakpoints();
+      this.listenTo(this.collection, 'change:active', this.render);
+    },
+    render: function() {
+      var typography_section = new SidebarPanel_Settings_Section_Typography({
+        "model": breakpoints_storage.get_breakpoints().get_active()
+      });
+      typography_section.render();
+
+      this.$el.html(this.template);
+      this.$el.find('.sidebar-panel-content').html(typography_section.el);
+    }
 	});
+
+	var SidebarCommands_Responsive = Backbone.View.extend({
+    tagName: 'ul',
+		className: 'sidebar-commands sidebar-commands-responsive',
+		initialize: function () {
+			this.views = [
+        new Command_BreakpointDropdown(),
+        new Command_AddCustomBreakpoint(),
+        new SidebarPanel_ResponsiveSettings(),
+				new Command_StopResponsiveMode()
+			];
+		},
+    render: function() {
+      _.each(this.views, function(view) {
+        view.render();
+        this.$el.append(view.el);
+      }, this);
+
+      return this;
+    }
+	});
+  /* End Responsive */
 
 	var SidebarProfile = Backbone.View.extend({
 		className: "sidebar-profile",
@@ -1826,9 +1898,8 @@ define([
 
       // Responsive
       if (current_app === Upfront.Settings.Application.MODE.RESPONSIVE) {
-        var responsive_commands = new SidebarCommands_Responsive({model: this.model});
-        responsive_commands.render();
-        output.append(responsive_commands.el);
+        var responsive_commands = new SidebarCommands_Responsive();
+        output.append(responsive_commands.render().el);
       }
 
 			if ( current_app !== Upfront.Settings.Application.MODE.CONTENT
@@ -4733,23 +4804,27 @@ var Field_Compact_Label_Select_Option = Backbone.View.extend({
   },
   className: function() {
     var className = 'upfront-field-select-option';
-    if (this.model.get('fixed')) className += ' upfront-field-select-option-disabled';
+    if (this.model.get('default')) className += ' upfront-field-select-option-disabled';
     if (this.model.get('enabled')) className += ' upfront-field-select-option-selected';
     // select-option-odd
     return className;
   },
   template: '<label><span class="upfront-field-label-text">{{ name }} {[ if (width > 0) { ]}({{width}}px){[ } ]}</span></label>' +
     '<input type="checkbox" class="upfront-field-checkbox" value="{{ id }}" ' +
-    '{[ if (fixed) { ]} disabled="disabled"{[ } ]}' +
+    '{[ if (is_default) { ]} disabled="disabled"{[ } ]}' +
     '{[ if (enabled) { ]} checked="checked"{[ } ]}>',
   initilize: function(options) {
     this.options = options || {};
+    this.listenTo(this.model, 'change', this.render);
   },
   on_change: function(event) {
     this.model.set({'enabled': this.$el.find('input').is(':checked')});
   },
   render: function() {
-    this.$el.append(_.template(this.template, this.model.toJSON()));
+    var properties = this.model.toJSON();
+    // "default" is reserved word can't use it in template rendering. //todo fix this in model
+    properties.is_default = properties.default;
+    this.$el.append(_.template(this.template, properties));
     return this;
   }
 });
@@ -4762,6 +4837,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
       '</ul></div>',
   initialize: function(options) {
     this.options = options || {};
+    this.listenTo(this.collection, 'add remove change:name change:width', this.render);
   },
   render: function () {
     var me = this;
@@ -7038,11 +7114,69 @@ var Field_Compact_Label_Select = Field_Select.extend({
   var Breakpoint_Model = Backbone.Model.extend({
     defaults: {
       'default': false,
-      'short_name': 'short',
+      'name': 'Breakpoint',
+      'short_name': 'breakpoint',
       'fixed': false,
       'enabled': false,
-      'width': 0,
-      'columns': 0
+      'active': false,
+      'width': 240,
+      'columns': 5,
+      'typography': {}
+    },
+    initialize: function() {
+      // Fix 0 columns
+      if (this.attributes.columns === 0 && this.attributes.width > 0) {
+        this.attributes.columns = Math.round(this.attributes.width / 45); //todo get column width from theme
+      }
+
+      this.on('change:width', this.update_columns, this);
+      this.on('change:columns', this.update_width, this);
+      this.on('change:name', this.update_short_name, this);
+    },
+    update_width: function(me, new_columns) {
+      var columns = parseInt(new_columns, 10);
+
+      if (columns > 24) {
+        this.set({ 'columns': 24 });
+        return;
+      }
+      if (columns < 5) {
+        this.set({ 'columns': 5 });
+        return;
+      }
+
+      this.attributes.width = columns * 45; //todo get column width from theme
+    },
+    update_columns: function(me, new_width) {
+      var new_columns;
+      var width = parseInt(new_width, 10);
+
+      if (width > 1080) {
+        this.set({ 'width': 1080 });
+        return;
+      }
+      if (width < 240) {
+        this.set({ 'width': 240 });
+        return;
+      }
+
+      new_columns = Math.round(width / 45); //todo get column width from theme
+      if (this.attributes.columns !== new_columns) {
+        this.attributes.columns =  new_columns;
+      }
+    },
+    update_short_name: function(me, new_name) {
+      this.attributes.short_name = new_name;
+    },
+    /* For compatibility with typography editor */
+    get_property_value_by_name: function(name) {
+      return this.get(name);
+    },
+    /* For compatibility with typography editor */
+    set_property: function(name, value) {
+      var map = {};
+      map[name] = value;
+      this.set(map);
     }
   });
 
@@ -7054,6 +7188,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
     initialize: function() {
       this.on( 'change:active', this.on_change_active, this);
       this.on( 'change:enabled', this.on_change_enabled, this);
+      this.on( 'change:width', this.on_change_width, this);
     },
     on_change_active: function(changed_model) {
       _.each(this.models, function(model) {
@@ -7061,6 +7196,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
         model.set({ 'active': false }, { 'silent': true });
       });
+      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", changed_model.toJSON());
     },
     on_change_enabled: function(changed_model) {
       // If disabled point was active it will disapear and leave UI in broken state.
@@ -7070,7 +7206,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
       var default_breakpoint = this.get_default();
 
       default_breakpoint.set({ 'active': true });
-      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", default_breakpoint.toJSON());
+    },
+    on_change_width: function(changed_model, new_width) {
+      Upfront.Events.trigger("upfront:layout_size:viewport_width_change", new_width);
     },
     sorted_by_width: function() {
       return _.sortBy(this.models, function(model) {
@@ -7094,7 +7232,25 @@ var Field_Compact_Label_Select = Field_Select.extend({
       if (_.isUndefined(default_breakpoint)) throw 'Breakpoints are not loaded properly.';
 
       return default_breakpoint;
+    },
+    get_unique_id: function() {
+      var id = 'custom-' + +(new Date());
+
+      // Ensure id is unique
+      while (!_.isUndefined(this.findWhere({ 'id': id }))) {
+        id = 'custom-' + +(new Date());
+      }
+
+      return id;
     }
+  });
+
+  // Breakpoint events tests
+  Upfront.Events.on("upfront:layout_size:change_breakpoint", function(breakpoint) {
+    console.log(['Breakpoint activated', breakpoint.name, breakpoint.width].join(' '));
+  });
+  Upfront.Events.on("upfront:layout_size:viewport_width_change", function(new_width) {
+    console.log(['Viewport width changed:', new_width].join(' '));
   });
 
   /**
@@ -7107,10 +7263,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
     var initialize = function() {
       breakpoints = new Breakpoints_Collection(stored_breakpoints);
       var default_breakpoint = breakpoints.get_default();
-      default_breakpoint.set({'active': true});
+      default_breakpoint.set({ 'active': true });
 
-      breakpoints.on('change:enabled', save_breakpoints);
-      breakpoints.on('change:width', save_breakpoints);
+      breakpoints.on('change:enabled change:width change:name add remove change:typography', save_breakpoints);
     };
 
     this.get_breakpoints = function() {
@@ -7156,7 +7311,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
     },
     on_click: function() {
       this.model.set({ 'active': true });
-      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", this.model.toJSON());
     }
   });
 
@@ -7166,7 +7320,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
     initialize: function() {
       this.collection = breakpoints_storage.get_breakpoints();
 
-      this.listenTo(this.collection, 'change', this.render);
+      this.listenTo(this.collection, 'add remove change', this.render);
     },
     render: function() {
       this.$el.html('');
@@ -7231,8 +7385,98 @@ var Field_Compact_Label_Select = Field_Select.extend({
       return this;
     },
     propagate_change: function() {
-      Upfront.Events.trigger("upfront:layout_size:viewport_width_change", this.input.get_value());
       this.active_breakpoint.set({ 'width': this.input.get_value() });
+    }
+  });
+
+  var BreakpointEditPanel = Backbone.View.extend({
+    className: 'breakpoint-edit-panel',
+    template: '<div><span class="edit-breakpoint-popup-title">Set-up your custom Breakpoint:</span></div>' +
+      '<div>' +
+      '<label for="breakpoint-name">Name:</label><input type="text" value="{{ name }}" placeholder="Custom Breakpoint 01" id="breakpoint-name" />' +
+      '</div><div>' +
+      '<label for="breakpoint-width">Width:</label><input type="number" min="240" max="1080" value="{{ width }}" id="breakpoint-width" /><label>px</label>' +
+      '<label for="breakpoint-columns">Number of columns:</label><input min="5" max="24" type="number" value="{{ columns }}" id="breakpoint-columns" />' +
+      '</div>',
+    events: {
+      'change #breakpoint-name': 'on_name_change',
+      'change #breakpoint-width': 'on_width_change',
+      'change #breakpoint-columns': 'on_columns_change'
+    },
+    initialize: function(options) {
+      this.options = options || {};
+      if (_.isUndefined(this.model)) {
+        this.model = breakpoints_storage.get_breakpoints().get_active();
+      }
+
+      this.listenTo(this.model, 'change', this.update_values);
+
+      // When changing width to fast there is too much rendering
+      this.lazy_change_width = _.debounce(function(width) {
+        this.model.set({ 'width': width });
+      }, 500);
+    },
+    render: function() {
+      this.$el.html(_.template(this.template, this.model.toJSON()));
+
+      return this;
+    },
+    update_values: function() {
+      this.$el.find('#breakpoint-name').val(this.model.get('name'));
+      this.$el.find('#breakpoint-width').val(this.model.get('width'));
+      this.$el.find('#breakpoint-columns').val(this.model.get('columns'));
+    },
+    on_name_change: function(event) {
+      this.model.set({ 'name': $(event.currentTarget).val() });
+    },
+    on_width_change: function(event) {
+      this.lazy_change_width($(event.currentTarget).val());
+    },
+    on_columns_change: function(event) {
+      this.model.set({ 'columns': $(event.currentTarget).val() });
+    }
+  });
+
+  var BreakpointEditButton = Backbone.View.extend({
+    className: 'breakpoint-edit',
+    events: {
+      'click #edit-breakpoint': 'edit_breakpoint'
+    },
+    initialize: function(options) {
+      this.options = options || {};
+      this.collection = breakpoints_storage.get_breakpoints();
+      this.listenTo(this.collection, 'change:active', this.render);
+    },
+    render: function() {
+      this.$el.html('');
+      this.active_breakpoint = this.collection.get_active();
+
+      if (this.active_breakpoint.get('fixed')) return this;
+
+      this.$el.html('<a href="" id="edit-breakpoint">Edit breakpoint</a>');
+
+      return this;
+    },
+    edit_breakpoint: function(event) {
+      event.preventDefault();
+      var popup;
+
+      popup = Upfront.Popup.open(function (data, $top, $bottom) {
+        $top.empty();
+        var $content = $(this);
+        var editPanel = new BreakpointEditPanel();
+
+        $content
+        .append(editPanel.render().el);
+        $bottom.append('<div class="breakpoint-edit-ok-button">OK</div>');
+        $('#upfront-popup-close').hide();
+        $('.breakpoint-edit-ok-button').on('click', function() {
+          Upfront.Popup.close();
+          $('#upfront-popup-close').show();
+        });
+      }, {
+        width: 400
+      });
     }
   });
 
@@ -7252,7 +7496,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
     start: function() {
       this.content_views = [];
       if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.RESPONSIVE ) {
-        this.content_views.push(new BreakpointWidthInput());
+        this.content_views.push(new BreakpointEditButton());
         this.content_views.push(new BreakpointsToggler());
       }
       $('body').prepend(this.render().el);

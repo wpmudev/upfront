@@ -9623,42 +9623,49 @@ a.upfront-css-edit:before{
 	display: block;
   height: 20px;
   margin: 0 auto;
+  background-position: -1228px -622px; /* Default to custom */
+  width: 20px;
 }
-.mobile-breakpoint-activate:before {
+.breakpoints-toggler li:hover:before,
+.breakpoints-toggler li.active:before {
+  background-position: -1228px -658px; /* Default to custom */
+}
+.breakpoints-toggler .mobile-breakpoint-activate:before {
   background-position: -1233px -478px;
   width: 10px;
 }
-.mobile-breakpoint-activate:hover:before,
-.mobile-breakpoint-activate.active:before {
+.breakpoints-toggler .mobile-breakpoint-activate:hover:before,
+.breakpoints-toggler .mobile-breakpoint-activate.active:before {
   background-position: -1233px -513px;
 }
-.tablet-breakpoint-activate:before {
+.breakpoints-toggler .tablet-breakpoint-activate:before {
   background-position: -1231px -550px;
   width: 15px;
 }
-.tablet-breakpoint-activate:hover:before,
-.tablet-breakpoint-activate.active:before {
+.breakpoints-toggler .tablet-breakpoint-activate:hover:before,
+.breakpoints-toggler .tablet-breakpoint-activate.active:before {
   background-position: -1231px -586px;
 }
-.custom-breakpoint-activate:before {
+.breakpoints-toggler .custom-breakpoint-activate:before {
   background-position: -1228px -622px;
   width: 20px;
 }
-.custom-breakpoint-activate:hover:before,
-.custom-breakpoint-activate.active:before {
+.breakpoints-toggler .custom-breakpoint-activate:hover:before,
+.breakpoints-toggler .custom-breakpoint-activate.active:before {
   background-position: -1228px -658px;
 }
-.desktop-breakpoint-activate:before {
+.breakpoints-toggler .desktop-breakpoint-activate:before {
   background-position: -1231px -550px;
   width: 15px;
 }
-.desktop-breakpoint-activate:before:hover,
-.desktop-breakpoint-activate.active:before {
+.breakpoints-toggler .desktop-breakpoint-activate:before:hover,
+.breakpoints-toggler .desktop-breakpoint-activate.active:before {
   background-position: -1231px -586px;
 }
 
 /* Breakpoints width input */
-.breakpoint-width-input {
+.breakpoint-width-input,
+.breakpoint-edit {
   position: absolute;
   top: 0;
   left: 0;
@@ -9739,4 +9746,61 @@ a.upfront-css-edit:before{
 .upfront-field-compact-label-select .upfront-field-select-options {
   margin-top: 0 !important;
   padding-top: 0 !important;
+}
+
+/* Breakpoint edit popup */
+.breakpoint-edit-panel {
+  padding: 20px;
+  width: 400px;
+}
+.breakpoint-edit-panel div {
+  margin-top: 20px;
+}
+.breakpoint-edit-panel div:first-child {
+  margin-top: 0;
+}
+.breakpoint-edit-panel label[for=breakpoint-columns] {
+  margin-left: 41px;
+}
+.breakpoint-edit-panel input#breakpoint-name {
+  width: 311px;
+  margin-left: 10px;
+}
+.breakpoint-edit-panel input#breakpoint-width,
+.breakpoint-edit-panel input#breakpoint-columns {
+  width: 62px;
+  margin-left: 10px;
+  padding-right: 0;
+  padding-left: 5px;
+}
+.breakpoint-edit-ok-button {
+  line-height: 30px;
+  text-align: center;
+  float: right;
+  cursor: pointer;
+  background: #1fcd8f;
+  -moz-box-shadow: 0 1px 0 #192d3f;
+  -webkit-box-shadow: 0 1px 0 #192d3f;
+  box-shadow: 0 1px 0 #192d3f;
+  padding: 8px 30px;
+  color: #f1f8ff;
+  font-size: 18px;
+}
+.edit-breakpoint-popup-title {
+	font: 18px/18px 'Source Sans Pro', sans-serif;
+  color: #273a4c;
+}
+#edit-breakpoint, #new-custom-breakpoint {
+  color: #1fcd8f;
+	font: 'Source Sans Pro', sans-serif;
+  font-size: 15px;
+  line-height: 25px;
+  cursor: pointer;
+}
+li.activate-breakpoints-dropdown {
+  margin: 15px 0 10px 15px;
+  height: 23px;
+}
+li#new-custom-breakpoint {
+  margin: 10px 0 20px 15px;
 }
