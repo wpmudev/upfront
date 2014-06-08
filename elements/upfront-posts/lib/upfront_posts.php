@@ -75,7 +75,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			'postLayout' => array(
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
-				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'excerpt', 'classes' => ' post-part c24')))
 			),
 			'partOptions' => array('featured_image' => array('height' => 100))
 		);

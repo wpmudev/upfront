@@ -18,7 +18,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.postId = options.post_id;
 			this.setElement(options.node);
 			this.autostart = options.autostart || false;
-
+			this.content_mode = options.content_mode;
 			this.changed = {};
 
 			//If the post is in the cache, prepare it!
@@ -32,6 +32,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 
 			this.postView = options.view;
+			this.getPost();
 
 			this.getPostLayout();
 
@@ -88,11 +89,16 @@ define("content", deps, function(postTpl, ContentTools) {
 		getPostLayout: function(){
 			if(this.loadingLayout)
 				return this.loadingLayout;
+				
+
+				
 			var me = this,
 				deferred = $.Deferred(),
 				layoutType = me.postView.property('type') == 'ThisPostModel' ? 'single' : 'archive',
 				id = layoutType == 'single' ? this.postId : me.postView.property('element_id').replace('uposts-object-','')
 			;
+			
+
 			if(me.postView.postLayout){
 				me.layoutData = {
 					postLayout: me.postView.postLayout,
@@ -153,10 +159,10 @@ define("content", deps, function(postTpl, ContentTools) {
 					attributes: {}
 				}
 			;
-
 			_.each(wrappers, function(wrapper){
 				wrapper.objectsLength = wrapper.objects.length;
 				_.each(wrapper.objects, function(object){
+					
 					var attributes = options && options[object.slug] && options[object.slug].attributes ? options[object.slug].attributes : {},
 						attrs = ''
 					;
@@ -166,6 +172,9 @@ define("content", deps, function(postTpl, ContentTools) {
 
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
+					
+
+					
 					object.markup = markupper.markup(object.slug, me.replacements, me.getTemplate(object.slug));
 				});
 			});
@@ -176,7 +185,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		getTemplate: function(part){
 			var templates = this.postView.property('templates');
-
+			
 			if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
 				part = 'excerpt';
 			
@@ -211,6 +220,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			var target = e ? $(e.currentTarget) : focusElement;
 			this.contentEditor = new ContentTools.PostContentEditor({
 				post: this.post,
+				postView: this.postView,
 				el: this.el,
 				triggeredBy: target,
 				authorTpl: this.getTemplate('author'),
@@ -286,8 +296,12 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			if(results.title)
 				this.post.set('post_title', results.title);
-			if(results.content)
-				this.post.set('post_content', results.content);
+			if(results.content) {
+				if(this.postView.property('content_type') == 'excerpt')
+					this.post.set('post_excerpt', results.content);
+				else
+					this.post.set('post_content', results.content);			
+			}
 			if(results.author)
 				this.post.set('post_author', results.author);
 

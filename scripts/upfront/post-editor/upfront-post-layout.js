@@ -31,6 +31,7 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	get_content_markup: function(){
+		console.log(this.property('postPart'));
 		var part = this.property('postPart'),
 			markupper = ContentTools.getMarkupper(),
 			template = this.getTemplate(),
@@ -102,10 +103,16 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 	getTemplate: function(){
 		var templates = this.postView.property('templates');
-		if(templates && templates[this.postPart])
-			return templates[this.postPart];
+		
+		var part = this.postPart;
+		
+		if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
+			part = 'excerpt';
+		
+		if(templates && templates[part])
+			return templates[part];
 
-		return Upfront.data.thisPost.templates[this.postPart];
+		return Upfront.data.thisPost.templates[part];
 	},
 
 	refreshTemplate: function(){

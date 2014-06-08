@@ -110,15 +110,9 @@ define(function() {
     },
     editPostLayout: function(e){
       this.editor = this.editors[$(e.target).closest('div.post_editor_container').data('post_id')];
-	  if(!this.postLayout)
-		  this.postLayout = this.property('postLayout');
-	  if(!this.partOptions)
-	  	this.partOptions = this.property('partOptions');
       Upfront.Events.trigger('post:layout:edit', this, 'single');
     },
     prepareEditor: function(id, node){
-      if(this.editors[id])
-        return;
       is_excerpt = this.property('content_type') == 'excerpt';
       //this.currentpost = postId;
       //if(!this.editor || this.editor.post_id!=postId){
@@ -184,9 +178,16 @@ define(function() {
       });
     },
     updateEditors: function(){
+		
+	 /* if(!this.postLayout)
+		  this.postLayout = this.property('postLayout');
+	  if(!this.partOptions)
+	  	this.partOptions = this.property('partOptions');
+		*/
       var me = this,
         nodes = $('#' + this.property('element_id')).find('.uposts-post')
       ;
+	  console.log(nodes.length);
       nodes.each(function(){
         var node = $(this),
           id = node.data('post_id')
@@ -383,7 +384,7 @@ define(function() {
       ;
       this.settings = _([
         new QuerySettings({model: this.model}),
-        new SettingsItem({
+       /* new SettingsItem({
           title: 'Post Data',
           fields: [
             new Upfront.Views.Editor.Field.Checkboxes({
@@ -401,7 +402,7 @@ define(function() {
               ]
             })
           ]
-        })
+        }) */
       ]);
     },
     /**

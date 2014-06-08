@@ -19,6 +19,7 @@ var PartMarkupCreator = function(){
 			attributes = partOptions && partOptions.attributes ? partOptions.attributes : {},
 			attrs = ''
 		;
+	
 		_.each(attributes, function(value, key){
 			attrs += key +'="' + value + '" ';
 		});
@@ -61,8 +62,8 @@ var PostContentEditor = Backbone.View.extend({
 
 	initialize: function(opts){
 		this.post = opts.post;
+		this.postView = opts.postView;
 		this.triggeredBy = opts.triggeredBy || this.$('.upfront-content-marker').first();
-		console.log(opts);
 
 		this.parts = {};
 		this.partOptions = opts.partOptions;
@@ -113,7 +114,7 @@ var PostContentEditor = Backbone.View.extend({
 		if(this.parts.contents.length){
 			this.onContentsEdited = _.bind(this.contentEdited, this);
 			this.editors = [];
-			this.parts.contents.html(this.rawContent).ueditor({
+			this.parts.contents.html(this.postView.property('content_type') == 'excerpt' ? this.rawExcerpt: this.rawContent).ueditor({
 				linebreaks: false,
 				autostart: true,
 				pastePlainText: true,
