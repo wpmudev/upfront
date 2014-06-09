@@ -405,6 +405,7 @@ Ueditor.prototype = {
 			//TODO: focus before bufferSet
 
 			//Store the state to allow undo
+			var selection = me.redactor.getSelection();
 			me.redactor.bufferSet();
 		})
 		manager.on('insert:added insert:removed', function(){
@@ -526,10 +527,15 @@ Ueditor.prototype = {
 		return html;
 	},
 	getInsertsData: function(){
+		var insertsData = {};
 		if(!this.insertManager)
 			return {};
 
-		return this.insertManager.insertsData;
+		_.each(this.insertManager.inserts, function(insert){
+			insertsData[insert.data.id] = insert.data.toJSON();
+		});
+
+		return insertsData;
 	}
 };
 
@@ -1367,11 +1373,13 @@ var InsertManager = Backbone.View.extend({
 					;
 
 					insert.start()
-						.done(function(){
+						.done(function(popup, results){
+							if(!results)
+								return;
 							me.inserts[insert.cid] = insert;
 							//Allow to undo
 							//this.trigger('insert:prechange'); // "this" is the embedded image object
-							me.trigger('insert:prechange'); // "me" is the view
+							//me.trigger('insert:prechange'); // "me" is the view
 							//Create the insert
 							insert.render();
 							block[where](insert.$el);
@@ -1524,6 +1532,7 @@ var InsertManager = Backbone.View.extend({
 		me.$el.sortable({cancel: '.nosortable', helper: 'clone'})
 			.on('sortstart', function(e, ui){
 				console.log('Sort start');
+				ui.placeholder.width(ui.helper.width());
 				if(ui.item.css('float') != 'none')
 					ui.helper.css({marginTop: e.offsetY});
 			});

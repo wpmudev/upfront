@@ -21,6 +21,7 @@ var UeditorInsert = Backbone.View.extend({
 	shortcodeName: 'ueditor-insert',
 	attributes: {contenteditable: 'false'},
    defaultData : {},
+   resizable: false,
 	initialize: function(opts){
 		opts = opts || {};
 		var data = opts.data || {};
@@ -35,6 +36,7 @@ var UeditorInsert = Backbone.View.extend({
 		this.listenTo(this.data, 'change add remove reset', this.render);
 
 		this.createControls();
+
 
 		if(typeof this.init == 'function')
 			this.init();
@@ -243,6 +245,46 @@ var UeditorInsert = Backbone.View.extend({
 			icon: 'remove',
 			tooltip: 'Delete'
 		};
+	},
+	resizableInsert: function(){
+		var me = this,
+			align = this.data.get('align'),
+			leftControl = true,
+			rightControl = true,
+			targetSelector = '.upfront-icon-control-resize-se',
+			handles = {},
+			grid = Upfront.Behaviors.GridEditor
+		;
+
+
+		if(this.$el.hasClass('ui-resizable'))
+			this.$el.resizable('destroy');
+
+		if(align == 'left')
+			leftControl = false;
+		else if(align == 'right'){
+			rightControl = false;
+			targetSelector = '.upfront-icon-control-resize-sw';
+		}
+
+		if(this.$(targetSelector).length){
+		}
+		else{
+			if(rightControl){
+				this.$el.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
+				handles.se = '.upfront-icon-control-resize-se';
+			}
+			if(leftControl){
+				this.$el.append('<span class="upfront-icon-control upfront-icon-control-resize-sw upfront-resize-handle-sw ui-resizable-handle ui-resizable-sw nosortable" style="display: inline;"></span>');
+				handles.sw = '.upfront-icon-control-resize-sw';
+			}
+		}
+
+		var resizableOptions = this.getResizableOptions ? this.getResizableOptions() : {};
+		resizableOptions.handles = handles;
+		resizableOptions.grid = [grid.col_size, grid.baseline];
+
+		this.$el.resizable(resizableOptions);
 	}
 });
 
@@ -250,6 +292,7 @@ var ImageInsert = UeditorInsert.extend({
 	type: 'image',
 	className: 'ueditor-insert upfront-inserted_image-wrapper',
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
+	resizable: true,
 	defaultData: {
 		captionPosition: 'nocaption',
 		caption: 'A wonderful image :)',
@@ -257,6 +300,23 @@ var ImageInsert = UeditorInsert.extend({
 		imageThumb: {src:'', width:100, height: 100},
 		linkType: 'do_nothing',
 		linkUrl: ''
+	},
+	getResizableOptions: function(){
+		var options = {
+			resize: $.proxy(this.onResizing, this),
+			start: $.proxy(this.onStartResizing, this),
+			stop: $.proxy(this.onStopResizing, this)
+		};
+
+		if(['left', 'right'].indexOf(this.data.get('captionPosition')) != -1)
+			options.minWidth = 2 * Upfront.Behaviors.GridEditor.col_size + parseInt(this.data.get('imageThumb').width, 10);
+
+		if(this.data.get('align') == 'full'){
+			options.minWidth = this.data.get('width');
+			options.maxWidth = options.minWidth;
+		}
+
+		return options;
 	},
 	//Called just after initialize
 	init: function(){
@@ -280,6 +340,15 @@ var ImageInsert = UeditorInsert.extend({
 			this.getRemoveControlData()
 		];
 		this.createControls();
+
+		if(!this.data.get('width')){
+			var width = this.data.get('imageThumb').width;
+			if(['left', 'right'].indexOf(this.data.get('captionPosition')) != -1)
+				width += 3 * Upfront.Behaviors.GridEditor.col_size;
+			this.data.set({width: width}, {silent: true});
+		}
+
+		console.log(this.data.toJSON());
 	},
 
 	// The user want a new insert. Fetch all the required data to create a new image insert
@@ -304,7 +373,8 @@ var ImageInsert = UeditorInsert.extend({
 	// Insert editor UI
 	render: function(){
 		var me = this,
-			data = this.data.toJSON()
+			data = this.data.toJSON(),
+			wrapperSize = this.data.get('imageThumb')
 		;
 
 		if(data.align == 'full') {
@@ -313,23 +383,17 @@ var ImageInsert = UeditorInsert.extend({
 			data.image = data.imageThumb;
 		}
 
-		if(data.captionPosition == 'left' || data.captionPosition == 'right') {
-			this.$el.css({
-				'min-width': (parseInt(data.image.width, 10) + 100) + 'px',
-				'max-width': (2* parseInt(data.image.width, 10)) + 'px'
-			});
-		} else {
-			this.$el.css({
-				'min-width': 'auto',
-				'max-width': 'auto'
-			});
-		}
-
 		this.$el
 			.html(this.tpl(data))
 			.removeClass('aligncenter alignleft alignright alignfull')
-			.addClass('align' + this.data.get('align'))
+			.addClass('align' + data.align)
+			.addClass('clearfix')
 		;
+
+		if(data.align != 'full')
+			this.$el.width(parseInt(data.width, 10))
+		else
+			this.$el.css('width', 'auto');
 
 		this.controls.render();
 		this.$el.append(this.controls.$el);
@@ -346,10 +410,45 @@ var ImageInsert = UeditorInsert.extend({
 				me.data.trigger('update');
 			})
 		;
+
+		var wrapperData = {
+			display: 'inline-block',
+			overflow: 'hidden',
+			position: 'relative',
+			height: wrapperSize.height
+		};
+
+		if(data.align == 'full'){
+			if(data.captionPosition == 'left' || data.captionPosition == 'right')
+				wrapperData.width = wrapperSize.width;
+			else
+				wrapperData.width = '100%';
+		}
+		else {
+			wrapperData.width = wrapperSize.width;
+		}
+
+
+		this.$('.uinsert-image-wrapper')
+			.css(wrapperData)
+			.find('img')
+				.attr('src', this.data.get('imageFull').src)
+				.css({
+					position: 'absolute',
+					'max-width': 'none',
+					'max-height': 'none'
+				})
+				.css(this.calculateImageResize(wrapperSize, this.data.get('imageFull')))
+		;
+
+		this.resizableInsert();
+		if(data.captionPosition == 'left' || data.captionPosition == 'right')
+			this.resizableImage();
 	},
 
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
 	controlEvents: function(){
+		var me = this;
 		this.stopListening(this.controls);
 		this.listenTo(this.controls, 'control:click:remove', function(control){
 			console.log(control);
@@ -357,7 +456,46 @@ var ImageInsert = UeditorInsert.extend({
 		});
 
 		this.listenTo(this.controls, 'control:select:alignment', function(control){
-			this.data.set('align', control);
+			var alignData = {
+					align: control
+				},
+				colSize = Upfront.Behaviors.GridEditor.col_size,
+				thumb = this.data.get('imageThumb'),
+				captionPosition = this.data.get('captionPosition'),
+				sideCaption = captionPosition == 'left' || captionPosition == 'right',
+				width
+			;
+
+			if(control == 'full'){
+				this.data.set(alignData);
+				alignData.width = me.$el.width();
+
+				if(sideCaption)
+					thumb.width = (alignData.width / colSize - 3) * colSize;
+				else
+					thumb.width = alignData.width;
+
+				thumb.width = Math.round(thumb.width);
+
+				thumb.src = this.generateThumbSrc(thumb.width, thumb.height);
+				alignData.thumb = thumb;
+			}
+
+			else if(this.data.get('align') == 'full') {
+				width = Math.round((this.data.get('width') / colSize - 6) * colSize);
+				alignData.width = width;
+
+				if(sideCaption)
+					thumb.width = width - 3 * colSize;
+				else
+					thumb.width = width;
+
+				thumb.width = Math.round(thumb.width);
+
+				thumb.src = this.generateThumbSrc(thumb.width, thumb.height);
+				alignData.thumb = thumb;
+			}
+			this.data.set(alignData);
 		});
 
 		this.listenTo(this.controls, 'control:ok:link', function(view, control){
@@ -371,7 +509,27 @@ var ImageInsert = UeditorInsert.extend({
 		});
 
 		this.listenTo(this.controls, 'control:select:caption', function(captionPosition){
-			this.data.set({captionPosition: captionPosition});
+			var currentPosition = this.data.get('captionPosition'),
+				newData = {captionPosition: captionPosition},
+				isCurrentSide = ['left', 'right'].indexOf(this.data.get('captionPosition')) != -1,
+				isPositionSide = ['left', 'right'].indexOf(captionPosition) != -1,
+				align = this.data.get('align'),
+				thumb = this.data.get('imageThumb'),
+				colSize = Upfront.Behaviors.GridEditor.col_size
+			;
+
+			if(isCurrentSide != isPositionSide){
+				if(align == 'full'){
+					thumb.width = isPositionSide ? (this.data.get('width') / colSize - 3) * colSize : this.data.get('width');
+					thumb.width = Math.round(thumb.width);
+					thumb.src = this.generateThumbSrc(thumb.width, thumb.height);
+					newData.imageThumb = thumb;
+				}
+				else
+					newData.width = isPositionSide ? parseInt(this.data.get('imageThumb').width, 10) + 3 * colSize : parseInt(this.data.get('imageThumb').width, 10);
+			}
+
+			this.data.set(newData);
 		});
 	},
 
@@ -379,11 +537,9 @@ var ImageInsert = UeditorInsert.extend({
 		var out = this.el.cloneNode(),
 			data = this.data.toJSON()
 		;
-		if(data.align == 'full') {
-			data.image = data.imageFull;
-		} else {
-			data.image = data.imageThumb;
-		}
+
+		data.image = data.imageThumb;
+
 		// Make sure we have *a* caption
 		data.caption = data.caption || this.defaultData.caption;
 
@@ -556,6 +712,128 @@ var ImageInsert = UeditorInsert.extend({
 
 		//view.on()
 		return view;
+	},
+
+	generateThumbSrc: function(width, height) {
+		var src = this.data.get('imageFull').src,
+			parts = src.split('.'),
+			extension = parts.pop()
+		;
+
+		src = parts.join('.') + '-' + width + 'x' + height + '.' + extension;
+		return src;
+	},
+
+	onStartResizing: function(){
+		console.log('start resizing');
+		this.resizeCache = {
+			wrapper: this.$('.uinsert-image-wrapper'),
+			image: this.$('img'),
+			caption: this.$('wp-caption-text'),
+			imagedata: this.data.get('imageFull'),
+			captionPosition: this.data.get('captionPosition'),
+			align: this.data.get('align')
+		};
+	},
+	onStopResizing: function(e, ui){
+		console.log('stop resizing');
+		var wrapper = this.resizeCache.wrapper,
+			width = wrapper.width(),
+			height = wrapper.height()
+		;
+
+		this.data.set({
+			imageThumb: {width: width, height: height, src: this.generateThumbSrc(width, height)},
+			//imageWidth: wrapper.width(),
+			//imageHeight: wrapper.height(),
+			width: this.$el.width()
+		}, {silent: true});
+	},
+
+	onResizing: function(e, ui){
+		if(e.target != this.el)
+			return;
+
+		console.log('resizing');
+		if(this.resizeCache.align == 'right')
+			$(this.$el).css('left', 0);
+
+		var wrapper = this.resizeCache.wrapper,
+			captionPosition = this.resizeCache.captionPosition
+		;
+
+		if(captionPosition == 'nocaption')
+			wrapper.css(ui.size);
+		else if(captionPosition == 'bottom')
+			wrapper.css({width: ui.size.width, height: ui.size.height - this.resizeCache.caption.outerHeight()});
+		else
+			wrapper.height(ui.size.height);
+
+		//let it flow
+		this.$el.css({height: 'auto'});
+
+		//refresh image dimensions and position
+		var imageData = this.calculateImageResize({width: wrapper.width(), height: wrapper.height()}, this.resizeCache.imagedata);
+		this.resizeCache.image.css(imageData);
+		console.log(ui);
+	},
+
+	calculateImageResize: function(wrapperSize, imageSize){
+		var pivot = imageSize.width / imageSize.height > wrapperSize.width / wrapperSize.height ? 'height' : 'width',
+			factor = imageSize[pivot] / wrapperSize[pivot],
+			imageData = {
+				width: Math.round(imageSize.width / factor),
+				height: Math.round(imageSize.height / factor)
+			},
+			widthPivot = pivot == 'width'
+		;
+
+		imageData.top = widthPivot ? -Math.round((imageData.height - wrapperSize.height) / 2) : 0;
+		imageData.left = widthPivot ? 0 : -Math.round((imageData.width - wrapperSize.width) / 2);
+
+		return imageData;
+	},
+
+	resizableImage: function(){
+		var me = this,
+			captionPosition = this.data.get('captionPosition'),
+			handles = {w: '.upfront-resize-handle-w'},
+			h = 'w',
+			colSize = Upfront.Behaviors.GridEditor.col_size
+		;
+		if(captionPosition == 'right'){
+			handles = {e: '.upfront-resize-handle-e'};
+			h = 'e';
+		}
+
+		this.$('.uinsert-image-wrapper')
+			.append('<span class="upfront-icon-control upfront-icon-control-resize-' + h + ' upfront-resize-handle-' + h + ' ui-resizable-handle ui-resizable-' + h + ' nosortable" style="display: inline;"></span>')
+			.resizable({
+				handles:handles,
+				start: function(e){
+					var insertWidth = me.$el.width();
+					me.onStartResizing();
+					me.$el.width(me.$el.width());
+					$(this).resizable('option', {
+						maxWidth:  insertWidth - 2 * colSize,
+						minWidth: 2 * colSize
+					});
+				},
+				resize: function(e, ui){
+					var wrapper = me.resizeCache.wrapper;
+					//refresh image dimensions and position
+					var imageData = me.calculateImageResize({width: wrapper.width(), height: wrapper.height()}, me.resizeCache.imagedata);
+					me.resizeCache.image.css(imageData);
+					$(this).css({left: 0});
+				},
+				stop: function(e, ui){
+					me.onStopResizing();
+					me.$el.resizable('option', 'minWidth', me.resizeCache.wrapper.width() + 2 * Upfront.Behaviors.GridEditor.col_size);
+				},
+				grid: [colSize, Upfront.Behaviors.GridEditor.baseline]
+			})
+		;
+
 	}
 });
 
@@ -679,8 +957,8 @@ var EmbedInsert = UeditorInsert.extend({
 		var out = this.el.cloneNode(),
 			data = this.data.toJSON()
 		;
-		if(data.align == 'full')
-			data.src = data.srcFull || data.src;
+
+		data.image = data.imageThumb;
 
 		out.innerHTML = this.tpl(data);
 		// return the HTML in a string

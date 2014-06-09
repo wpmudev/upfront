@@ -2057,7 +2057,7 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-module-hidden-toggle {
-	
+
 }
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger {
 	float: right;
@@ -3337,6 +3337,28 @@ div.uinsert-selector a:hover {
 	left: 0;
 	right: auto;
 	cursor: sw-resize;
+}
+
+.upfront-resize-handle-e,
+.upfront-resize-handle-w {
+	background: #f2b530;
+	width: 5px;
+	height: 20px;
+	top: 48%;
+	display: none !important;
+}
+
+.ueditor-insert:hover .upfront-resize-handle-e,
+.ueditor-insert:hover .upfront-resize-handle-w {
+	display: block !important;
+}
+
+.ueditor-insert .upfront-resize-handle-e {
+	right: 0;
+}
+.ueditor-insert .upfront-resize-handle-w {
+	left: 0;
+	background: #f2b530;
 }
 
 
@@ -7464,11 +7486,11 @@ License: MIT
 .upfront-postcontent-editor{
 	z-index: 3;
 }
-
+/*
 .upfront-postcontent-editor .ui-resizable-handle{
 	display: none !important;
 }
-
+ */
 .ueditor-bar-wrapper{
 	position:absolute;
 	top:100%;

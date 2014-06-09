@@ -230,7 +230,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$found = get_option($cascade[$i]);
 			$i++;
 		}
-		if(!$found) 
+		if(!$found)
 			$found = self::get_theme_layout($type, $post_type, $id);
 		if(!$found)
 			$found = self::default_postlayout($type);
@@ -403,6 +403,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		add_action('wp_ajax_this_post-get_thumbnail', array($this, "get_thumbnail"));
 		add_action('wp_ajax_upfront_save_postlayout', array($this, "save_postlayout"));
 		add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
+		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
 	}
 	public function get_thumbnail() {
 		$post_id = stripslashes($_POST['post_id']);
@@ -523,5 +524,38 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success(Upfront_ThisPostView::find_postlayout($type, $post_type, $id)));
 	}
 
+	public function update_image_thumbs($meta_id, $post_id, $key, $value){
+		if($key != '_inserts_data')
+			return;
+
+		$inserts = maybe_unserialize($value);
+
+		foreach($inserts as $id => $img){
+			if(isset($img['imageThumb'])){
+				//We got an image
+				$image_path = $this->get_image_path($img['imageThumb']['src']);
+				//If the file doesn't exits, let's create it
+				if(!file_exists($image_path)){
+					// Get image data
+					$imageData = Upfront_Uimage_Server::calculate_image_resize_data($img['imageThumb'], $img['imageFull']);
+					// Add the full size image path
+					$imageData['image_path'] = $this->get_image_path($img['imageFull']['src']);
+					$imageData['skip_random_filename'] = true;
+
+					Upfront_Uimage_Server::resize_image($imageData);
+				}
+			}
+		}
+	}
+
+	protected function get_image_path($url){
+		$upload_data = wp_upload_dir();
+		$upload_dir = $upload_data['basedir'];
+		$upload_url = $upload_data['baseurl'];
+
+		$path = $upload_dir . str_replace($upload_url, '', $url);
+
+		return $path;
+	}
 }
 Upfront_ThisPostAjax::serve();

@@ -89,15 +89,15 @@ define("content", deps, function(postTpl, ContentTools) {
 		getPostLayout: function(){
 			if(this.loadingLayout)
 				return this.loadingLayout;
-				
 
-				
+
+
 			var me = this,
 				deferred = $.Deferred(),
 				layoutType = me.postView.property('type') == 'ThisPostModel' ? 'single' : 'archive',
 				id = layoutType == 'single' ? this.postId : me.postView.property('element_id').replace('uposts-object-','')
 			;
-			
+
 
 			if(me.postView.postLayout){
 				me.layoutData = {
@@ -162,7 +162,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			_.each(wrappers, function(wrapper){
 				wrapper.objectsLength = wrapper.objects.length;
 				_.each(wrapper.objects, function(object){
-					
+
 					var attributes = options && options[object.slug] && options[object.slug].attributes ? options[object.slug].attributes : {},
 						attrs = ''
 					;
@@ -172,9 +172,9 @@ define("content", deps, function(postTpl, ContentTools) {
 
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
-					
 
-					
+
+
 					object.markup = markupper.markup(object.slug, me.replacements, me.getTemplate(object.slug));
 				});
 			});
@@ -185,10 +185,10 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		getTemplate: function(part){
 			var templates = this.postView.property('templates');
-			
+
 			if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
 				part = 'excerpt';
-			
+
 			if(templates && templates[part])
 				return templates[part];
 
@@ -300,13 +300,24 @@ define("content", deps, function(postTpl, ContentTools) {
 				if(this.postView.property('content_type') == 'excerpt')
 					this.post.set('post_excerpt', results.content);
 				else
-					this.post.set('post_content', results.content);			
+					this.post.set('post_content', results.content);
 			}
 			if(results.author)
 				this.post.set('post_author', results.author);
 
-			if(results.inserts)
+			if(results.inserts){
+			/*	var images = [];
+				_.each(results.inserts, function(insert){
+					if(insert.imageThumb)
+						images.push(insert);
+				});
+				if(images.length)
+					Upfront.Util.post({
+						action: 'upfront_create_post_thumbs',
+						images: images
+					});*/
 				this.post.meta.setValue('_inserts_data', results.inserts);
+			}
 
 			this.post.set('post_status', status);
 			this.post.save().done(function(data){

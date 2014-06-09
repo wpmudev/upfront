@@ -244,8 +244,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 		if(!$rotate && !$resize && !$crop)
 			return array('error' => true, 'msg' => 'Not modifications');
-
-		$img = wp_get_image_editor( _load_image_to_edit_path( $imageData['id'] ) );
+		$image_path = isset($imageData['image_path']) ? $imageData['image_path'] : _load_image_to_edit_path( $imageData['id'] );
+		$img = wp_get_image_editor( $image_path );
 
 	    if ( is_wp_error( $img ) )
 			return array('error' => true, 'msg' => 'Image id not valid');
@@ -286,11 +286,14 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 
 		// generate new filename
-		$path = get_attached_file($imageData['id']);
+		$path = $image_path;
 		$path_parts = pathinfo( $path );
-		$filename = $path_parts['filename'] . '-' . $img->get_suffix() . '-' . rand(1000, 9999);
-		$imagepath = $path_parts['dirname'] . '/' . $filename . '.' . $path_parts['extension'];
 
+		$filename = $path_parts['filename'] . '-' . $img->get_suffix();
+		if(!isset($imageData['skip_random_filename']))
+			$filename .=  '-' . rand(1000, 9999);
+
+		$imagepath = $path_parts['dirname'] . '/' . $filename . '.' . $path_parts['extension'];
 
 		$img->set_quality(90);
 		$saved = $img->save($imagepath);
