@@ -112,11 +112,58 @@ define([
 					Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
 						.done(function(response){
 							if(typeof(response.data.featured_image) != 'undefined'){
+								
+								if(me.$el.find('.feature_image_selector').length < 1) {
+									me.$el.append($('<div>').addClass('feature_image_selector').html('feature image').css(  {'color':'#fff',
+  'font-size': '32px',
+  'position':'absolute',
+  'left':'50%',
+  'top': '50%',
+  'margin-left':'-50px', 'z-index' : '99999', 'cursor': 'pointer'}).bind('click', function() {
+											Upfront.Views.Editor.ImageSelector.open().done(function(images){
+												var sizes = {},
+													imageId = 0
+												;
+												_.each(images, function(image, id){
+													sizes = image;
+													imageId = id;
+												});
+												var imageInfo = {
+														src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+														srcFull: sizes.full[0],
+														srcOriginal: sizes.full[0],
+														fullSize: {width: sizes.full[1], height: sizes.full[2]},
+														size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+														position: false,
+														rotation: 0,
+														id: imageId
+													}
+												;
+												$('<img>').attr('src', imageInfo.srcFull).load(function(){
+													var post = Upfront.data.posts[_upfront_post_data.post_id];
+													post.meta.setValue('_thumbnail_id', imageInfo.id);
+													post.meta.setValue('_thumbnail_data', imageInfo);
+	
+													post.meta.save().done(function(){
+														$('<img>').attr('src', imageInfo.srcOriginal).load(function() {
+															me.update_background();
+															Upfront.Views.Editor.ImageSelector.close();
+														});
+													});
+												});
+											});
+										}));
+								
+								}
+								
+								
+								
 								image = response.data.featured_image;
 								var temp_image = $('<img>').attr('src', response.data.featured_image);
 								temp_image.load(function(){
 									ratio = parseFloat(Math.round(temp_image.width()/temp_image.height()*100)/100);
 									me.$el.css('background-image', "url('" + image + "')");
+									
 									if ( style == 'full' ){
 										var size = me._get_full_size(me.$el, ratio, false);
 										me.$el.css({
