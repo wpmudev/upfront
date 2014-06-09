@@ -809,12 +809,16 @@ define([
 				if ( this.on_render ) this.on_render();
 			},
 			on_element_edit_start: function (edit, post) {
-				if ( ( edit == 'text' || edit == 'write' ) && this.parent_module_view )
+				if ( ( edit == 'text' || edit == 'write' ) && this.parent_module_view ){
+					this.parent_module_view.$el.find('.upfront-module').addClass('upfront-module-editing')
 					this.parent_module_view.disable_interaction(false);
+				}
 			},
 			on_element_edit_stop: function (edit, post) {
-				if (this.parent_module_view && this.parent_module_view.enable_interaction)
+				if (this.parent_module_view && this.parent_module_view.enable_interaction){
+					this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing')
 					this.parent_module_view.enable_interaction(false);
+				}
 			},
 			on_element_resize: function (attr) {
 
@@ -958,10 +962,13 @@ define([
 
 		Module = _Upfront_EditableEntity.extend({
 			interaction: true,
+			lock_interaction: false,
 			className: "upfront-module-view",
 			events: {
 				"click .upfront-module > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click .upfront-module > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-module > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
+				"click .upfront-module-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click .upfront-module > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click"
 			},
@@ -981,6 +988,8 @@ define([
 				//this.on('entity:resize', this.on_resize, this);
 				//this.on('entity:drop', this.on_drop, this);
 				this.on('region:updated', this.on_region_update, this);
+				
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			render: function () {
 				var props = {},
@@ -1027,6 +1036,20 @@ define([
 							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
 					});
 				}
+				this.update_position();
+			},
+			update_position: function () {
+				if ( ! this.breakpoint )
+					return;
+				var data = this.model.get_property_value_by_name('breakpoint');
+				if ( ! data[this.breakpoint.id] || ! data[this.breakpoint.id].hide ){
+					this.$el.find('.upfront-module').show()
+					this.$el.find('.upfront-module-hidden-toggle').hide();
+				}
+				else if ( data[this.breakpoint.id].hide ){
+					this.$el.find('.upfront-module').hide()
+					this.$el.find('.upfront-module-hidden-toggle').show();
+				}
 			},
 			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
@@ -1038,27 +1061,41 @@ define([
 				else
 					this._objects_view.delegateEvents();
 			},
-			disable_interaction: function (prevent_edit) {
+			disable_interaction: function (prevent_edit, prevent_button, lock) {
 				var $el = this.$el.find('.upfront-editable_entity:first');
+				if ( prevent_edit && prevent_button )
+					$el.addClass('upfront-module-disabled-all');
 				if ( prevent_edit )
-					$el.addClass('upfront-module-disabled');
-				$el.resizable('option', 'disabled', true);
-				if ( typeof this.group_view == 'undefined' ) // don't toggle draggable when it's in group
-					$el.draggable('option', 'disabled', true);
+					$el.addClass('upfront-module-disabled-edit');
+				if ( prevent_button )
+					$el.addClass('upfront-module-disabled-button');
+				if ( $el.data('ui-resizable') )
+					$el.resizable('option', 'disabled', true);
+				if ( typeof this.group_view == 'undefined' ) { // don't toggle draggable when it's in group
+					if ( $el.data('ui-draggable') )
+						$el.draggable('option', 'disabled', true);
+				}
 				else
 					this.group_view.disable_interaction();
 				this.interaction = false;
+				if ( lock )
+					this.lock_interaction = true;
 			},
-			enable_interaction: function (enable_edit) {
+			enable_interaction: function (unlock) {
+				if ( this.lock_interaction && !unlock )
+					return;
 				var $el = this.$el.find('.upfront-editable_entity:first');
-				if ( enable_edit )
-					$el.removeClass('upfront-module-disabled');
-				$el.resizable('option', 'disabled', false);
-				if ( typeof this.group_view == 'undefined' ) // don't toggle draggable when it's in group
-					$el.draggable('option', 'disabled', false);
+				$el.removeClass('upfront-module-disabled-all upfront-module-disabled-edit upfront-module-disabled-button');
+				if ( $el.data('ui-resizable') )
+					$el.resizable('option', 'disabled', false);
+				if ( typeof this.group_view == 'undefined' ) { // don't toggle draggable when it's in group
+					if ( $el.data('ui-draggable') )
+						$el.draggable('option', 'disabled', false);
+				}
 				else
 					this.group_view.enable_interaction();
 				this.interaction = true;
+				this.lock_interaction = false;
 			},
 			on_click: function (e) {
 				if ( this.interaction )
@@ -1083,9 +1120,38 @@ define([
 				if(Upfront.Application.PostContentEditor == Upfront.Application.current_subapplication)
 					return;
 				if ( edit )
-					this.disable_interaction(true);
+					this.disable_interaction(true, true, true);
 				else
 					this.enable_interaction(true);
+			},
+			on_change_breakpoint: function (breakpoint) {
+				var $delete = this.$el.find('.upfront-module > .upfront-entity_meta > a.upfront-entity-delete_trigger'),
+					$hide = this.$el.find('.upfront-module > .upfront-entity_meta > a.upfront-entity-hide_trigger');
+				if ( !breakpoint.default ){
+					this.disable_interaction(true, false, true);
+					$delete.hide();
+					$hide.show();
+				}
+				else {
+					this.enable_interaction(true);
+					$delete.show();
+					$hide.hide();
+				}
+				// @TODO remove below and have a global breakpoint value for reference instead
+				this.breakpoint = breakpoint;
+				this.update_position();
+			},
+			on_hide_click: function (e) {
+				e.preventDefault();
+				var data = this.model.get_property_value_by_name('breakpoint') || {};
+				if ( typeof data[this.breakpoint.id] == 'undefined' )
+					data[this.breakpoint.id] = {};
+				if ( data[this.breakpoint.id].hide == 1 )
+					data[this.breakpoint.id].hide = 0;
+				else
+					data[this.breakpoint.id].hide = 1;
+				this.model.set_property('breakpoint', data, true);
+				this.update_position();
 			},
 			remove: function(){
 				if(this._objects_view)
@@ -1237,6 +1303,7 @@ define([
 				this.stopListening(this.model, 'remove', this.render);
 				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			on_entity_remove: function(e, view) {
 				Upfront.Events.trigger("entity:removed:before");
@@ -1361,6 +1428,13 @@ define([
 						me.render_module(module, {index: index});
 					});
 				}
+			},
+			on_change_breakpoint: function (breakpoint) {
+				var ed = Upfront.Behaviors.GridEditor,
+					is_group = ( typeof this.group_view != 'undefined' ),
+					wrappers = ( is_group ? this.group_view : this.region_view ).model.get('wrappers'),
+					col = Math.round( ( is_group ? this.group_view.$el : this.region_view.$el ).width() / ed.grid.column_width );
+				//ed.adapt_to_breakpoint(this.model, wrappers, breakpoint.id, col);
 			},
 			remove: function() {
 				var me = this;
@@ -1538,10 +1612,8 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
 				
-				if ( index === 0 ){
-					this.listenTo(Upfront.Events, "application:mode:after_switch", this.render_ruler);
-					this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.render_ruler);
-				}
+				// breakpoint changes
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
 			},
@@ -1556,10 +1628,6 @@ define([
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$layout = this.$el.find('.upfront-grid-layout');
-				if ( type == 'fixed' ){
-					this.$layout.width( this.max_col*grid.column_width );
-					this.$layout.find('.upfront-grid-layout-gutter').remove();
-				}
 				$edit.appendTo(this.$el);
 				//$edit_fixed.appendTo(this.$el);
 				$finish.appendTo(this.$el);
@@ -1589,32 +1657,12 @@ define([
 				this.region_fixed_panels.render();
 				this.$el.append(this.region_fixed_panels.el);
 			},
-			render_ruler: function () {
-				if ( Upfront.Application.get_current() !== Upfront.Settings.Application.MODE.RESPONSIVE )
-					return this.remove_ruler();
-				var width = this.$layout.width(),
-					$ruler_container = this.$el.find('.upfront-ruler-container'),
-					$ruler = this.$layout.find('.upfront-ruler'),
-					create_mark = function (at, size) {
-						return '<div class="upfront-ruler-mark" style="width:' + size + 'px;"><div class="upfront-ruler-mark-num">' + at + '</div></div>';
-					},
-					mark;
-				if ( !$ruler_container.length ) {
-					$ruler_container = $('<div class="upfront-ruler-container"></div>');
-					$ruler = $('<div class="upfront-ruler upfront-ui"></div>');
-					this.$el.prepend($ruler_container);
-					this.$layout.prepend($ruler);
-				}
-				$ruler.empty();
-				for ( mark = 0; mark < width; mark+=100 ){
-					$ruler.append(create_mark(mark, 100));
-				}
-				if ( width > (mark-100)+10 )
-					$ruler.append(create_mark(width, width-(mark-100)));
-			},
-			remove_ruler: function () {
-				this.$el.find('.upfront-ruler-container').remove();
-				this.$layout.find('.upfront-ruler').remove();
+			on_change_breakpoint: function (breakpoint) {
+				var grid = Upfront.Settings.LayoutEditor.Grid;
+				this.$layout.removeClass(grid.class + this.max_col);
+				this.max_col = breakpoint.columns;
+				this.$layout.addClass(grid.class + this.max_col);
+				this.refresh_background();
 			},
 			trigger_edit: function (e) {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
@@ -2239,6 +2287,7 @@ define([
 		}),
 
 		Regions = _Upfront_PluralEditor.extend({
+			className: "upfront-regions",
 			allow_edit: false,
 			init: function () {
 				this.stopListening(this.model, 'add', this.render);
@@ -2505,6 +2554,8 @@ define([
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
 				this.listenTo(Upfront.Events, "command:layout:edit_background", this.open_edit_background);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "application:mode:after_switch", this.on_mode_switch);
 				this.render();
 			},
 			update: function () {
@@ -2512,12 +2563,13 @@ define([
 			},
 			render: function () {
 				this.$el.html(this.tpl(this.model.toJSON()));
+				this.$layout = this.$(".upfront-layout");
 				//if(!this.local_view)
 					this.local_view = new Regions({"model": this.model.get("regions")});
 
 				this.local_view.render();
 
-				this.$(".upfront-layout").append(this.local_view.el);
+				this.$layout.append(this.local_view.el);
 				this.update();
 
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 384});
@@ -2554,6 +2606,85 @@ define([
 				// Unselect selection
 				if ( !Upfront.Behaviors.LayoutEditor.selecting )
 					Upfront.Events.trigger("command:selection:remove");
+			},
+			on_mode_switch: function () {
+				if ( Upfront.Application.get_current() !== Upfront.Settings.Application.MODE.RESPONSIVE )
+					this.remove_ruler();
+				else
+					this.render_ruler(true);
+			},
+			on_change_breakpoint: function (breakpoint) {
+				var grid = Upfront.Settings.LayoutEditor.Grid;
+				grid.size = breakpoint.columns;
+				if ( breakpoint.default ){
+					this.$layout.css('width', '');
+					this.render_ruler(true);
+					this.remove_gutter();
+				}
+				else {
+					this.$layout.width(breakpoint.width);
+					this.render_ruler(false);
+					this.render_gutter(breakpoint.width);
+				}
+				this.update_grid_css();
+			},
+			render_gutter: function (width) {
+				var $gutter = this.$el.find('.upfront-layout-gutter');
+				if ( ! $gutter.length ){
+					$gutter = $('<div class="upfront-layout-gutter"><div class="upfront-layout-gutter-left"></div><div class="upfront-layout-gutter-right"></div></div>');
+					this.$el.prepend($gutter);
+				}
+				$gutter.find('.upfront-layout-gutter-left').css('margin-right', Math.ceil(width/2));
+				$gutter.find('.upfront-layout-gutter-right').css('margin-left', Math.ceil(width/2));
+			},
+			remove_gutter: function () {
+				this.$el.find('.upfront-layout-gutter').remove();
+			},
+			render_ruler: function (follow_grid) {
+				var grid = Upfront.Settings.LayoutEditor.Grid,
+					width = follow_grid ? grid.size*grid.column_width : this.$layout.width(),
+					$ruler_container = this.$el.find('.upfront-ruler-container'),
+					$ruler = this.$layout.find('.upfront-ruler'),
+					create_mark = function (at, size, show_num) {
+						return '<div class="upfront-ruler-mark" style="width:' + size + 'px;">' +
+									( show_num ? '<div class="upfront-ruler-mark-num">' +  at + '</div>' : '' ) + 
+								'</div>';
+					},
+					mark;
+				if ( !$ruler_container.length ) {
+					$ruler_container = $('<div class="upfront-ruler-container"></div>');
+					$ruler = $('<div class="upfront-ruler upfront-ui"></div>');
+					this.$el.prepend($ruler_container);
+					this.$layout.prepend($ruler);
+				}
+				$ruler.empty();
+				if ( follow_grid )
+					$ruler.css('width', width);
+				else
+					$ruler.css('width', '');
+				for ( mark = 0; mark < width; mark+=100 ){
+					$ruler.append( create_mark(mark, 100, (mark+40 > width ? false : true)) );
+				}
+				if ( width > (mark-100)+10 )
+					$ruler.append( create_mark(width, width-(mark-100), true) );
+			},
+			remove_ruler: function () {
+				this.$el.find('.upfront-ruler-container').remove();
+				this.$layout.find('.upfront-ruler').remove();
+			},
+			update_grid_css: function () {
+				var grid = Upfront.Settings.LayoutEditor.Grid,
+					styles = [],
+					selector = '#page';
+				styles.push(selector + ' .upfront-grid-layout { width: ' + grid.column_width*grid.size + 'px; }');
+				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
+				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
+				styles.push(selector + ' .plaintxt_padding {padding: ' + grid.type_padding + 'px; }');
+				
+				if ( $('#upfront-grid-style-inline').length )
+					$('#upfront-grid-style-inline').html( styles.join("\n") );
+				else
+					$('body').append('<style id="upfront-grid-style-inline">' + styles.join("\n") + '</style>');
 			},
 			remove: function(){
 				if(this.local_view)

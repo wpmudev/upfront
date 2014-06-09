@@ -595,6 +595,7 @@ define([
 			this.$el.addClass('upfront-icon upfront-icon-grid');
 			//this.$el.html('Toggle grid');
 			this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
 		},
 		on_click: function () {
 			$('.upfront-overlay-grid').size() || this.create_grid();

@@ -2700,6 +2700,9 @@ var GridEditor = {
 
 	},
 
+	/**
+	 * Call this to normalize module placement on remove 
+	 */
 	normalize_module_remove: function (view, module, modules, wrapper, wrappers) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
@@ -2801,6 +2804,28 @@ var GridEditor = {
 				}
 			});
 		}
+	},
+	
+	/**
+	 * Call this to adapt module to the breakpoint 
+	 */
+	adapt_to_breakpoint: function (modules, wrappers, breakpoint_id, parent_col) {
+		var app = Upfront.Application,
+			ed = Upfront.Behaviors.GridEditor,
+			line_col = 0;
+		modules.each(function(module){
+			var data = module.get_property_value_by_name('breakpoint'),
+				module_class = module.get_property_value_by_name('class'),
+				module_col = ed.get_class_num(module_class, ed.grid.class),
+				module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
+				wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
+				wrapper_class = wrapper.get_property_value_by_name('class'),
+				is_clear = ( wrapper_class.match(/clr/) || line_col + module_col + module_left > parent_col);
+			line_col = is_clear ? 0 : line_col + module_col + module_left;
+			if ( typeof data[breakpoint_id] != 'undefined' )
+				return;
+			
+		});
 	},
 
 
@@ -3452,15 +3477,12 @@ var GridEditor = {
 				type_paddings: {}
 			};
 		if ( grid_data.column_width ){
-			styles.push(selector + ' .upfront-grid-layout { width: ' + grid_data.column_width*grid.size + 'px; }');
 			options.column_widths[grid.size_name] = grid_data.column_width;
 		}
 		if ( grid_data.column_padding ){
-			styles.push(selector + ' .upfront-object { padding: ' + grid_data.column_padding + 'px; }');
 			options.column_paddings[grid.size_name] = grid_data.column_padding;
 		}
 		if ( grid_data.baseline ){
-			styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid_data.baseline + 'px; }');
 			if ( grid_data.baseline != grid.baseline ){
 				// to prevent css loading at every change, we timeout to 1000ms before decide to load it
 				clearTimeout(this._load_editor_css);
@@ -3479,15 +3501,11 @@ var GridEditor = {
 			options.baselines[grid.size_name] = grid_data.baseline;
 		}
 		if ( grid_data.type_padding ){
-			styles.push(selector + ' .plaintxt_padding {padding: ' + grid_data.type_padding + 'px; }');
 			options.type_paddings[grid.size_name] = grid_data.type_padding;
 		}
-		if ( $('#upfront-grid-style-inline').length )
-			$('#upfront-grid-style-inline').html( styles.join("\n") );
-		else
-			$('body').append('<style id="upfront-grid-style-inline">' + styles.join("\n") + '</style>');
 		Upfront.Settings.LayoutEditor.Grid = _.extend(grid, grid_data);
 		app.layout.set_property('grid', options);
+		app.layout_view.update_grid_css();
 		this.init(); // re-init to update grid values
 	},
 

@@ -188,9 +188,9 @@
 				img_h = $img.height();
 				img_w = $img.width();
 				if ( height/width > img_h/img_w )
-					$img.css({ height: '100%', width: 'auto' });
+					$img.css({ height: '100%', width: 'auto', marginLeft: (width-Math.round(height/img_h*img_w))/2, marginTop: "" });
 				else
-					$img.css({ height: 'auto', width: '100%' });
+					$img.css({ height: 'auto', width: '100%', marginLeft: "", marginTop: (height-Math.round(width/img_w*img_h))/2 });
 			});
 		},
 
