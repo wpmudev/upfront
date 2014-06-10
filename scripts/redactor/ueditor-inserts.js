@@ -563,11 +563,10 @@ var ImageInsert = UeditorInsert.extend({
 
 		data.image = data.imageThumb;
 
-		// Make sure we have *a* caption
-		data.caption = data.caption || this.defaultData.caption;
-
 		this.data.set('width', this.$el.width(), {silent: true});
 		this.data.trigger('update');
+
+		data.isLocal = parseInt(data.isLocal, 10);
 
 		out.innerHTML = this.tpl(data);
 		$(out).width(this.data.get('width'));
@@ -1011,8 +1010,6 @@ var EmbedInsert = UeditorInsert.extend({
 		var out = this.el.cloneNode(),
 			data = this.data.toJSON()
 		;
-
-		data.image = data.imageThumb;
 
 		out.innerHTML = this.tpl(data);
 		// return the HTML in a string
