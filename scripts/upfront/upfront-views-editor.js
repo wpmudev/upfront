@@ -3758,50 +3758,51 @@ define([
 			return this.options.label ? this.options.label : '';
 		},
 
-		initialize: function (opts) {
-			var me = this;
-      this.hide_common_fields = _.isUndefined(opts.hide_common_fields) ? false : opts.hide_common_fields;
-			me.options = opts;
-			this.settings = opts.settings ? _(opts.settings) : _([]);
-			this.settings.each(function(setting){
-				setting.panel = me;
-				setting.trigger('panel:set');
-			});
-			this.tabbed = ( typeof opts.tabbed != 'undefined' ) ? opts.tabbed : this.tabbed;
-		},
+    initialize: function (options) {
+      var me = this;
+      this.hide_common_fields = _.isUndefined(options.hide_common_fields) ? false : options.hide_common_fields;
+      me.options = options;
+      this.settings = options.settings ? _(options.settings) : _([]);
+      this.settings.each(function(setting){
+        setting.panel = me;
+        setting.trigger('panel:set');
+      });
+      this.tabbed = ( typeof options.tabbed != 'undefined' ) ? options.tabbed : this.tabbed;
+    },
 
-		tabbed: false,
-		is_changed: false,
+    tabbed: false,
+    is_changed: false,
 
-		render: function () {
-			this.$el.html('<div class="upfront-settings_label" /><div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" />');
+    render: function () {
+      this.$el.html('<div class="upfront-settings_label" /><div class="upfront-settings_panel" ><div class="upfront-settings_panel_scroll" />');
 
-			var $label = this.$el.find(".upfront-settings_label"),
-				$panel = this.$el.find(".upfront-settings_panel"),
-				$panel_scroll = this.$el.find(".upfront-settings_panel_scroll"),
-        $common_panel = this.$el.find(".upfront-settings-common_panel"),
-				me = this
-			;
+      var $label = this.$el.find(".upfront-settings_label"),
+        $panel = this.$el.find(".upfront-settings_panel"),
+        $panel_scroll = this.$el.find(".upfront-settings_panel_scroll"),
+        $common_panel,
+        me = this
+      ;
 
-			$label.append(this.get_label());
-			this.settings.each(function (setting) {
-				if ( ! setting.panel )
-					setting.panel = me;
-				setting.render();
-				$panel_scroll.append(setting.el)
-			});
-			if ( this.options.min_height )
-				$panel_scroll.css('min-height', this.options.min_height);
-			if ( this.tabbed ) {
-				var first_tab = this.settings.first();
-				if ( !first_tab.radio )
-					first_tab.reveal();
-				$panel_scroll.append('<div class="upfront-settings-tab-height" />');
-			}
-			this.stop_scroll_propagation($panel_scroll);
+      $label.append(this.get_label());
+      this.settings.each(function (setting) {
+        if ( ! setting.panel )
+          setting.panel = me;
+        setting.render();
+        $panel_scroll.append(setting.el)
+      });
+      if ( this.options.min_height )
+        $panel_scroll.css('min-height', this.options.min_height);
+      if ( this.tabbed ) {
+        var first_tab = this.settings.first();
+        if ( !first_tab.radio )
+          first_tab.reveal();
+        $panel_scroll.append('<div class="upfront-settings-tab-height" />');
+      }
+      this.stop_scroll_propagation($panel_scroll);
       // Add common fields
       if (this.hide_common_fields === false) {
-        this.$el.append('<div class="upfront-settings-common_panel"></div>');
+        this.$el.find('.upfront-settings_panel_scroll').after('<div class="upfront-settings-common_panel"></div>');
+        $common_panel = this.$el.find(".upfront-settings-common_panel");
         if(typeof this.cssEditor == 'undefined' || this.cssEditor){
           // Adding CSS item
           var css_settings = new _Settings_CSS({
@@ -3824,24 +3825,24 @@ define([
         // });
       }
       // Save button
-			$panel.append(
-				"<div class='upfront-settings-button_panel'>" +
-					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
-				'</div>'
-			);
+      $panel.append(
+        "<div class='upfront-settings-button_panel'>" +
+          "<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
+        '</div>'
+      );
 
-			this.$el.fadeIn('fast', function() {
-				// Scroll the window if settings box clips vertically
-				var parent = me.$el.parent();
-				var elementbottom = parent.offset().top + parent.height();
-				var winheight = jQuery(window).height();
+      this.$el.fadeIn('fast', function() {
+        // Scroll the window if settings box clips vertically
+        var parent = me.$el.parent();
+        var elementbottom = parent.offset().top + parent.height();
+        var winheight = jQuery(window).height();
 
-				if( (elementbottom +60) > (winheight+jQuery('body').scrollTop()))
-					jQuery('body').animate({scrollTop:(elementbottom - winheight + 60)}, 'slow');
+        if( (elementbottom +60) > (winheight+jQuery('body').scrollTop()))
+          jQuery('body').animate({scrollTop:(elementbottom - winheight + 60)}, 'slow');
 
-			});
-			this.trigger('rendered');
-		},
+      });
+      this.trigger('rendered');
+    },
 
     on_toggle_common: function () {
       var me = this;
