@@ -185,6 +185,10 @@ h2, h3 { page-break-after: avoid; }
     display: inline-block;
 }
 
+.aligncenter {
+  margin: auto;
+}
+
 /* Image insert captions */
 .uinsert-image-caption-left {
   min-width: 100px;

@@ -531,7 +531,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$inserts = maybe_unserialize($value);
 
 		foreach($inserts as $id => $img){
-			if(isset($img['imageThumb']) && $img['isLocal']){
+			if(isset($img['imageThumb']) && $img['isLocal'] != 'false'){
 				//We got an image
 				$image_path = $this->get_image_path($img['imageThumb']['src']);
 				//If the file doesn't exits, let's create it

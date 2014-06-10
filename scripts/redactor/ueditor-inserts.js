@@ -300,7 +300,7 @@ var ImageInsert = UeditorInsert.extend({
 		imageThumb: {src:'', width:100, height: 100},
 		linkType: 'do_nothing',
 		linkUrl: '',
-		isLocal: true,
+		isLocal: 1,
 		externalImage: {top: 0, left: 0, width: 0, height: 0}
 	},
 	getResizableOptions: function(){
@@ -431,11 +431,13 @@ var ImageInsert = UeditorInsert.extend({
 		;
 
 		var wrapperData = {
-			display: 'inline-block',
-			overflow: 'hidden',
-			position: 'relative',
-			height: wrapperSize.height
-		};
+				display: 'inline-block',
+				overflow: 'hidden',
+				position: 'relative',
+				height: wrapperSize.height
+			},
+			imageSize = this.calculateImageResize(wrapperSize, this.data.get('imageFull'))
+		;
 
 		if(data.align == 'full'){
 			if(data.captionPosition == 'left' || data.captionPosition == 'right')
@@ -456,8 +458,11 @@ var ImageInsert = UeditorInsert.extend({
 					'max-width': 'none',
 					'max-height': 'none'
 				})
-				.css(this.calculateImageResize(wrapperSize, this.data.get('imageFull')))
+				.css(imageSize)
 		;
+
+		if(!this.data.get('isLocal'))
+			this.data.set({externalImage: imageSize}, {silent: true});
 
 		this.resizableInsert();
 		if(data.captionPosition == 'left' || data.captionPosition == 'right')
@@ -495,7 +500,7 @@ var ImageInsert = UeditorInsert.extend({
 
 				thumb.width = Math.round(thumb.width);
 
-				thumb.src = this.generateThumbSrc(thumb.width, thumb.height);
+				thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
 				alignData.thumb = thumb;
 			}
 
@@ -510,7 +515,7 @@ var ImageInsert = UeditorInsert.extend({
 
 				thumb.width = Math.round(thumb.width);
 
-				thumb.src = this.generateThumbSrc(thumb.width, thumb.height);
+				thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
 				alignData.thumb = thumb;
 			}
 			this.data.set(alignData);
@@ -540,7 +545,7 @@ var ImageInsert = UeditorInsert.extend({
 				if(align == 'full'){
 					thumb.width = isPositionSide ? (this.data.get('width') / colSize - 3) * colSize : this.data.get('width');
 					thumb.width = Math.round(thumb.width);
-					thumb.src = this.generateThumbSrc(thumb.width, thumb.height);
+					thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
 					newData.imageThumb = thumb;
 				}
 				else
@@ -686,7 +691,7 @@ var ImageInsert = UeditorInsert.extend({
 		;
 
 		if(link.origin != window.location.origin)
-			imageData.isLocal = false;
+			imageData.isLocal = 0;
 
 		this.calculateRealSize(imageSpecs.src);
 
@@ -783,7 +788,7 @@ var ImageInsert = UeditorInsert.extend({
 			}
 		;
 
-		if(!this.data.get('isLocal')){
+		if(!parseInt(this.data.get('isLocal'),10)){
 			var img = wrapper.find('img'),
 				externalImage = img.position()
 			;
@@ -794,7 +799,7 @@ var ImageInsert = UeditorInsert.extend({
 			console.log(externalImage);
 
 			//Restore the image src
-			resizeData.imageThumb.src = this.data.get('imageThumb').src;
+			resizeData.imageThumb.src = this.data.get('imageFull').src;
 			resizeData.externalImage = externalImage;
 		}
 
