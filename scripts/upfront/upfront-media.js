@@ -1067,7 +1067,8 @@ define(function() {
 		switch_to_upload: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
-			this.trigger("media_manager:switcher:to_upload");
+            this.trigger("media_manager:switcher:to_upload");
+
 		}
 	});
 
@@ -1089,8 +1090,11 @@ define(function() {
 			this.popup_data = data.data;
 
 			ActiveFilters.to_defaults();
-
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
+            this.switcher_view.on("media_manager:switcher:to_library", this.render_library, this);
+            this.switcher_view.on("media_manager:switcher:to_embed", this.render_embed, this);
+            this.switcher_view.on("media_manager:switcher:to_upload", this.render_upload, this);
+
 			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
 			this.embed_view = new MediaManager_EmbedMedia({});
@@ -1105,17 +1109,10 @@ define(function() {
 			Upfront.Events.on("media_manager:media:list", this.switch_media_type, this);
 		},
 		render: function () {
-			this.switcher_view.render();
-
-			this.switcher_view.on("media_manager:switcher:to_library", this.render_library, this);
-			this.switcher_view.on("media_manager:switcher:to_embed", this.render_embed, this);
-			this.switcher_view.on("media_manager:switcher:to_upload", this.render_upload, this);
-
-			this.command_view.render();
-			//this.command_view.on("media_manager:switcher:to_upload", this.render_upload, this);
-
-			this.render_library();
-		},
+            this.switcher_view.render();
+            this.command_view.render();
+            this.render_library();
+        },
 		render_library: function () {
 			this.load();
 			this.embed_view.model.clear({silent:true});
@@ -1134,15 +1131,16 @@ define(function() {
 			});
 			this.$el.empty().append(this.embed_view.$el);
 		},
-		render_upload: function () {
+		render_upload: function (e) {
 			if (!this.library_view.$el.is(":visible")) this.render_library();
 			var me = this,
 				new_media = new MediaItem_Model({progress: 0}),
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload + '-theme-image' : _upfront_media_upload
 			;
 
-			this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '">');
-			$("#fileupload").fileupload({
+            this.$("#fileupload").remove();
+            this.$el.append('<input id="fileupload" type="file" style="display:block" name="media" data-url="' + uploadUrl + '">');
+            this.$("#fileupload").fileupload({
 				dataType: 'json',
 				add: function (e, data) {
 					var media = data.files[0],
@@ -1197,6 +1195,7 @@ define(function() {
 					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 				}
 			}).trigger("click");
+
 		},
 		load: function (data) {
 			data = data && data.type ? data : ActiveFilters.to_request_json();
@@ -1848,7 +1847,6 @@ define(function() {
 			"click .remove": "remove_file"
 		},
 		render: function () {
-			console.log('rendering');
 			this.$el.empty()
 				.append("We recommend using services like YouTube, Vimeo or Soundcloud to store rich media files. You can then embed it easily into your site. Find out more here.")
 				.append('<a href="#" class="button keep">Keep file</a>')
@@ -1988,12 +1986,14 @@ define(function() {
 			return false;
 		},
 		load: function (options) {
-			var media = new MediaManager_View(_.extend({
-					el: this.out,
-					data: this.popup_data
-				}, options))
-			;
-			media.render();
+            if(_.isUndefined( this.media_manager ) ){
+                this.media_manager = new MediaManager_View(_.extend({
+                    el: this.out,
+                    data: this.popup_data
+                }, options))
+                ;
+            }
+			this.media_manager.render();
 			return false;
 		},
 		on_close: function (popup, result) {
