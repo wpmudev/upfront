@@ -33,8 +33,7 @@ var MenuItemView = Backbone.View.extend({
    'click i.delete_menu_item' : 'deleteMenuItem',
    'click i.navigation-add-item': 'addMenuItem',
      //'dblclick a.menu_item' : 'editMenuItem',
-   "contextmenu a.menu_item": "on_context_menu",
-
+   "contextmenu a.menu_item": "on_context_menu"
     },
   initialize: function(options) {
     this.parent_view = options.parent_view;
@@ -62,7 +61,8 @@ var MenuItemView = Backbone.View.extend({
             }
             else if(me.model['menu-item-target'] == '') {
 
-              window.location.href = me.model['menu-item-url']+(me.model['menu-item-url'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
+//              window.location.href = me.model['menu-item-url']+(me.model['menu-item-url'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
+              window.location.href = me.model['menu-item-url'];
             }
             else
               window.open(me.model['menu-item-url']);
@@ -614,7 +614,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
               $('html,body').animate({scrollTop: $('#'+thelink.getUrlanchor(thelink.model['menu-item-url'])).offset().top},'slow');
             }
             else if(thelink.model['menu-item-target'] == '')
-              window.location.href = thelink.model['menu-item-url']+(thelink.model['menu-item-url'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
+//              window.location.href = thelink.model['menu-item-url']+(thelink.model['menu-item-url'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
+              window.location.href = thelink.model['menu-item-url'];
             else
               window.open(thelink.model['menu-item-url']);
           //}
