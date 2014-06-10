@@ -1139,7 +1139,7 @@ define(function() {
 			;
 
             this.$("#fileupload").remove();
-            this.$el.append('<input id="fileupload" type="file" style="display:block" name="media" data-url="' + uploadUrl + '">');
+            this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '">');
             this.$("#fileupload").fileupload({
 				dataType: 'json',
 				add: function (e, data) {
