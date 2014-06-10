@@ -299,7 +299,9 @@ var ImageInsert = UeditorInsert.extend({
 		imageFull: {src:'', width:100, height: 100},
 		imageThumb: {src:'', width:100, height: 100},
 		linkType: 'do_nothing',
-		linkUrl: ''
+		linkUrl: '',
+		isLocal: true,
+		externalImage: {top: 0, left: 0, width: 0, height: 0}
 	},
 	getResizableOptions: function(){
 		var options = {
@@ -678,10 +680,22 @@ var ImageInsert = UeditorInsert.extend({
 				src: image.attr('src'),
 				width: image.width(),
 				height: image.height()
-			}
+			},
+			link = $('<a>').attr('href', imageSpecs.src)[0],
+			realSize = this.calculateRealSize(imageSpecs.src)
 		;
-		imageData.imageFull = imageSpecs;
+
+		if(link.origin != window.location.origin)
+			imageData.isLocal = false;
+
+		this.calculateRealSize(imageSpecs.src);
+
 		imageData.imageThumb = imageSpecs;
+		imageData.imageFull = {
+			width: realSize.width,
+			height: realSize.height,
+			src: imageSpecs.src
+		};
 
 		var align = 'center';
 		if(image.hasClass('aligncenter'))
@@ -730,6 +744,13 @@ var ImageInsert = UeditorInsert.extend({
 		return view;
 	},
 
+	calculateRealSize: function(src){
+		var img = new Image();
+		img.src = src;
+
+		return {width: img.width, height: img.height};
+	},
+
 	generateThumbSrc: function(width, height) {
 		var src = this.data.get('imageFull').src,
 			parts = src.split('.'),
@@ -755,15 +776,29 @@ var ImageInsert = UeditorInsert.extend({
 		console.log('stop resizing');
 		var wrapper = this.resizeCache.wrapper,
 			width = wrapper.width(),
-			height = wrapper.height()
+			height = wrapper.height(),
+			resizeData = {
+				imageThumb: {width: width, height: height, src: this.generateThumbSrc(width, height)},
+				width: this.$el.width()
+			}
 		;
 
-		this.data.set({
-			imageThumb: {width: width, height: height, src: this.generateThumbSrc(width, height)},
-			//imageWidth: wrapper.width(),
-			//imageHeight: wrapper.height(),
-			width: this.$el.width()
-		}, {silent: true});
+		if(!this.data.get('isLocal')){
+			var img = wrapper.find('img'),
+				externalImage = img.position()
+			;
+
+			externalImage.width = img.width();
+			externalImage.height = img.height();
+
+			console.log(externalImage);
+
+			//Restore the image src
+			resizeData.imageThumb.src = this.data.get('imageThumb').src;
+			resizeData.externalImage = externalImage;
+		}
+
+		this.data.set(resizeData, {silent: true});
 	},
 
 	onResizing: function(e, ui){
@@ -791,7 +826,6 @@ var ImageInsert = UeditorInsert.extend({
 		//refresh image dimensions and position
 		var imageData = this.calculateImageResize({width: wrapper.width(), height: wrapper.height()}, this.resizeCache.imagedata);
 		this.resizeCache.image.css(imageData);
-		console.log(ui);
 	},
 
 	calculateImageResize: function(wrapperSize, imageSize){
@@ -844,7 +878,6 @@ var ImageInsert = UeditorInsert.extend({
 				},
 				stop: function(e, ui){
 					me.onStopResizing();
-					me.$el.resizable('option', 'minWidth', me.resizeCache.wrapper.width() + 2 * Upfront.Behaviors.GridEditor.col_size);
 				},
 				grid: [colSize, Upfront.Behaviors.GridEditor.baseline]
 			})

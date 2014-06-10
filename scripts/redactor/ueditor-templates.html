@@ -39,7 +39,7 @@
 </script>
 
 <script type="text/template" id="image-insert-tpl">
-	<span class="uinsert-image-wrapper uinsert-image-caption-{{ captionPosition }}" style="width: {{image.width}}px; height: {{image.height}}px">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src}}" />{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</span>{[if(captionPosition != 'nocaption'){ ]}<span class="wp-caption-text uinsert-caption-{{ captionPosition }}" style="max-width: {{captionPosition == 'bottom' ? image.width + 'px' : ''}}">{{ caption }}</span>
+	<span class="uinsert-image-wrapper uinsert-image-caption-{{ captionPosition }} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="width: {{image.width}}px; height: {{image.height}}px">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</span>{[if(captionPosition != 'nocaption'){ ]}<span class="wp-caption-text uinsert-caption-{{ captionPosition }}" style="max-width: {{captionPosition == 'bottom' ? image.width + 'px' : ''}}">{{ caption }}</span>
 {[ } ]}
 </script>
 

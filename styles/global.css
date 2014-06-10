@@ -200,6 +200,18 @@ h2, h3 { page-break-after: avoid; }
   clear: both;
 }
 
+.uinsert-image-external {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.uinsert-image-external img {
+  position: absolute;
+  max-width: none !important;
+  max-height: none !important;
+}
+
 .upfront-postpart-featured_image img {
   max-width: 100%;
   min-width: 100%;
