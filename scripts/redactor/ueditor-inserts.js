@@ -377,10 +377,27 @@ var ImageInsert = UeditorInsert.extend({
 			wrapperSize = this.data.get('imageThumb')
 		;
 
+		if (!wrapperSize.src) {
+			wrapperSize = {
+				height: data.height,
+				width: data.width,
+				src: data.src
+			};
+		}
+
 		if(data.align == 'full') {
 			data.image = data.imageFull;
 		} else {
 			data.image = data.imageThumb;
+		}
+		var src = this.data.get('imageFull').src;
+		if (!src) {
+			this.data.set("imageFull", {
+				height: data.height,
+				width: data.width,
+				src: data.src
+			});
+			data.image = this.data.get("imageFull");
 		}
 
 		this.$el
@@ -391,7 +408,7 @@ var ImageInsert = UeditorInsert.extend({
 		;
 
 		if(data.align != 'full')
-			this.$el.width(parseInt(data.width, 10))
+			this.$el.width(parseInt(data.width, 10));
 		else
 			this.$el.css('width', 'auto');
 
@@ -428,11 +445,10 @@ var ImageInsert = UeditorInsert.extend({
 			wrapperData.width = wrapperSize.width;
 		}
 
-
 		this.$('.uinsert-image-wrapper')
 			.css(wrapperData)
 			.find('img')
-				.attr('src', this.data.get('imageFull').src)
+				.attr('src', this.data.get("imageFull").src)
 				.css({
 					position: 'absolute',
 					'max-width': 'none',
