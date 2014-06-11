@@ -966,6 +966,19 @@ define([
     }
   });
 
+	var ResponsiveCommand_BrowseLayout = Command.extend({
+		className: "command-browse-layout command-browse-layout-responsive",
+		render: function () {
+			this.$el.html('<span>Browse Layouts</span>');
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:browse");
+		}
+	});
+
+
+  /* End responsive commands */
+
 	var Commands = Backbone.View.extend({
 		"tagName": "ul",
 
@@ -1837,7 +1850,8 @@ define([
 			this.views = [
         new Command_BreakpointDropdown(),
         new Command_AddCustomBreakpoint(),
-        new SidebarPanel_ResponsiveSettings(),
+        new ResponsiveCommand_BrowseLayout(),
+        new SidebarPanel_ResponsiveSettings()
 			];
 		},
     render: function() {

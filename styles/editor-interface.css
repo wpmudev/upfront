@@ -9805,6 +9805,7 @@ a.upfront-css-edit:before{
 
 #sidebar-ui .sidebar-commands-responsive .panel-section {
   padding-top: 0;
+  padding-bottom: 0;
 }
 
 #sidebar-ui .sidebar-commands-responsive .sidebar-panel.expanded .sidebar-panel-content {
@@ -9833,8 +9834,19 @@ a.upfront-css-edit:before{
   height: 33px;
 }
 
-#sidebar-ui .sidebar-commands-responsvie-control .command-grid {
+#sidebar-ui .command-browse-layout-responsive {
+  overflow: hidden;
+  padding: 3px 0 15px 15px;
+  cursor: default;
+}
+#sidebar-ui .command-browse-layout-responsive span {
+  border: 3px solid #263a4d;
+  padding: 2px 5px;
+  cursor: pointer;
+}
+#sidebar-ui .sidebar-commands-responsive-control .command-grid {
   margin-left: 66px;
+  float: none;
 }
 
 #sidebar-ui .sidebar-commands-responsive .command-edit-css {
@@ -9993,8 +10005,16 @@ li.activate-breakpoints-dropdown {
   margin: 15px 0 10px 15px;
   height: 23px;
 }
+.activate-breakpoints-dropdown .upfront-field-select-options {
+  max-height: 30px;
+  border-top: 0 none;
+  border-right: 0 none;
+}
+.activate-breakpoints-dropdown .upfront-field-select-options.upfront-field-select-expanded {
+  border-right: 5px solid #1fcd8f;
+}
 li#new-custom-breakpoint {
-  margin: 10px 0 20px 15px;
+  margin: 10px 0 10px 15px;
 }
 .redactor_dropdown_box_icons div{
     font-size: 2.1em;
@@ -10019,4 +10039,5 @@ li#new-custom-breakpoint {
   height: 14px;
   width: 15px;
   background-position: -1441px -411px;
-  margin-right: 5px; }
+  margin-right: 5px;
+}

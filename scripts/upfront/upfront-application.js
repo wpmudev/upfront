@@ -168,7 +168,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
 		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
 		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_draggable);
-		
+
 		// Selection
 		this.listenTo(Upfront.Events, "command:selection:remove", Upfront.Behaviors.LayoutEditor.remove_selections);
 
@@ -377,11 +377,11 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			this.postwrapperclone.find('.post_editor_container').each(function() {
 				me.postWrapper.find('.upfront-object-content').append($(this));
 			});
-			
+
 			this.postwrapperclone.remove();
-			
+
 		}
-		
+
 		if(Application.current_subapplication != PostLayoutEditor)
 			return;
 		Application.start(Application.mode.last);
@@ -896,6 +896,7 @@ var ResponsiveEditor = new (Subapplication.extend({
     Upfront.Application.sidebar.render();
     this.topbar = new Upfront.Views.Editor.Topbar.Topbar();
     this.topbar.start();
+		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
 
 		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout upfront-edit-layout").addClass("upfront-edit-responsive");
 	},
