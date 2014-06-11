@@ -417,6 +417,8 @@ var ImageInsert = UeditorInsert.extend({
 		this.controls.render();
 		this.$el.append(this.controls.$el);
 
+		this.updateControlsPosition();
+
 		this.captionTimer = false;
 
 		this.$('.wp-caption-text')
@@ -451,6 +453,7 @@ var ImageInsert = UeditorInsert.extend({
 
 		this.$('.uinsert-image-wrapper')
 			.css(wrapperData)
+			.addClass('uinsert-drag-handle')
 			.find('img')
 				.attr('src', this.data.get("imageFull").src)
 				.css({
@@ -554,6 +557,22 @@ var ImageInsert = UeditorInsert.extend({
 
 			this.data.set(newData);
 		});
+	},
+
+	updateControlsPosition: function(){
+		var width = this.data.get('width'),
+			caption = this.data.get('captionPosition'),
+			imageWidth = this.data.get('imageThumb').width,
+			controls = this.controls.$el,
+			margin = 0
+		;
+
+		if(caption == 'left')
+			margin = Math.min(width - imageWidth + (imageWidth / 2) - (controls.width() / 2), width - controls.width());
+		else
+			margin = Math.max(0, imageWidth / 2 - controls.width() / 2);
+
+		controls.css('margin-left', margin + 'px');
 	},
 
 	getOutput: function(){
@@ -775,6 +794,7 @@ var ImageInsert = UeditorInsert.extend({
 			captionPosition: this.data.get('captionPosition'),
 			align: this.data.get('align')
 		};
+		this.controls.$el.hide();
 	},
 	onStopResizing: function(e, ui){
 		console.log('stop resizing');
@@ -803,6 +823,10 @@ var ImageInsert = UeditorInsert.extend({
 		}
 
 		this.data.set(resizeData, {silent: true});
+
+
+		this.controls.$el.show();
+		this.updateControlsPosition();
 	},
 
 	onResizing: function(e, ui){
@@ -934,7 +958,7 @@ var LinkView = Backbone.View.extend({
 
 var EmbedInsert = UeditorInsert.extend({
         type: 'embed',
-        className: 'ueditor-insert upfront-inserted_embed-wrapper',
+        className: 'ueditor-insert upfront-inserted_embed-wrapper uinsert-drag-handle',
         tpl: _.template($(tpls).find('#embed-insert-tpl').html()),
         defaultData : {
             code : " "

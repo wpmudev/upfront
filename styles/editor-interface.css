@@ -1731,6 +1731,10 @@ a.ueditor-action-pickercancel{
 	border-right-color: rgba(31, 48, 63, 0.95);
 }
 
+.uinsert-drag-handle {
+	cursor: move;
+}
+
 .ueditor-insert .upfront-inline-panel-item i {
 	background-image: url('../img/uf-ui-sprite.png');
 	background-image: url('../img/uf-ui-sprite.svg'), none;

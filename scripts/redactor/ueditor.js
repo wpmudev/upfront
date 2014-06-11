@@ -1529,7 +1529,7 @@ var InsertManager = Backbone.View.extend({
 	sortableInserts: function(){
 		var me = this;
 		console.log('initializing sortable');
-		me.$el.sortable({cancel: '.nosortable', helper: 'clone'})
+		me.$el.sortable({cancel: '.nosortable', helper: 'clone', handle: '.uinsert-drag-handle'})
 			.on('sortstart', function(e, ui){
 				console.log('Sort start');
 				ui.placeholder.width(ui.helper.width());
