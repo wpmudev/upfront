@@ -280,7 +280,7 @@ var Ueditor = function($el, options) {
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
-			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor'],
+			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'icons'],
 			buttonsCustom: {},
 			activeButtonsAdd: {},
 			observeLinks: false,
@@ -497,7 +497,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'icons'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -2084,6 +2084,43 @@ RedactorPlugins.upfrontPlaceholder = {
 	}
 };
 
+
+/*--------------------
+ Font icons button
+ -----------------------*/
+
+RedactorPlugins.icons = {
+    beforeInit: function(){
+        this.opts.buttonsCustom.icons = {
+            title: 'Icons',
+            panel: this.panel
+        };
+    },
+    panel: UeditorPanel.extend({
+        tpl: _.template($(tpl).find('#font-icons').html()),
+        events:{
+            'click .ueditor-font-icon': 'select_icon',
+            'open': 'open'
+        },
+        render: function(options){
+            this.$el.html(this.tpl());
+        },
+        open: function(e, redactor){
+            this.redactor = redactor;
+            this.redactor.selectionSave();
+            this.$el.parent().css({
+                left : 163
+            });
+//            this.render();
+        },
+        select_icon : function(e){
+            var icon = $(e.target).closest(".ueditor-font-icon").html();
+            this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + icon, true);
+            this.closePanel();
+        }
+
+    })
+};
 
 }); //End require
 

@@ -167,7 +167,7 @@ EOAdminStyle;
 		//wp_enqueue_media();
 
 		// Enqueue needed styles
-		//wp_enqueue_style('font-awesome', self::get_root_url() . '/styles/font-awesome.min.css'); // No mo font awesome
+		wp_enqueue_style('font-awesome', self::get_root_url() . '/styles/font-awesome.min.css'); // Just for testing icons in the redactor airbuttons
 		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
 		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
 

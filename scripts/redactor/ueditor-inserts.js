@@ -322,7 +322,8 @@ var ImageInsert = UeditorInsert.extend({
 	},
 	//Called just after initialize
 	init: function(){
-		var alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
+
+        var alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
 		alignControl.selected = this.data.get('align');
 		this.controlsData = [
 			alignControl,

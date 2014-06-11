@@ -8436,6 +8436,8 @@ body .redactor_toolbar li a.redactor_btn_quote.redactor_act { background-positio
 body .redactor_toolbar li a.ueditor-quote-alternative		{ background-position: -594px -208px; }
 
 body .redactor_toolbar li a.redactor_btn_pre		 		{ background-position: -875px; }
+body .redactor_toolbar li a.redactor_btn_icons				{ background-position: -594px -252px; }
+body .redactor_toolbar li a.redactor_btn_icons:hover	    { background-position: -636px -252px; }
 
 
 ul.redactor_toolbar li a.ueditor-justify {
@@ -9904,4 +9906,20 @@ li.activate-breakpoints-dropdown {
 }
 li#new-custom-breakpoint {
   margin: 10px 0 20px 15px;
+}
+.redactor_dropdown_box_icons div{
+    font-size: 2.1em;
+}
+.redactor_dropdown.redactor_dropdown_box_icons{
+    min-width: 184px;
+    width: 184px;
+    line-height: 38px;
+}
+.redactor_dropdown.redactor_dropdown_box_icons a,
+.redactor_dropdown.redactor_dropdown_box_icons a:link{
+    color: #97b8da !important;
+    margin: 5px;
+}
+.redactor_dropdown.redactor_dropdown_box_icons a:hover{
+    color: rgb(64, 166, 255) !important;
 }
