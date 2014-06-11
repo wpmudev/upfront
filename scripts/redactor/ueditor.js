@@ -100,7 +100,8 @@ var hackRedactor = function(){
 		var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
 
 		this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
-			if($(e.target).closest('.ueditor-insert').length)
+			var insert = $(e.target).closest('.ueditor-insert');
+			if(insert.length && insert.closest(this.$box).length)
 				return;
 
 			var text = this.getSelectionText();
@@ -304,7 +305,7 @@ var Ueditor = function($el, options) {
 	this.options.syncBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:sync:before", this, html); return html; }; // <-- OOOH this one is different
 	this.options.syncAfterCallback = function (html) { UeditorEvents.trigger("ueditor:sync:after", this, html); $el.trigger('syncAfter', html); }; //Added syncAfter for east saving.
 	this.options.autosaveCallback = function () { UeditorEvents.trigger("ueditor:autosave", this); };
-	this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, ref.redactor, param); }; // Do we need this? Yes, restore inserts on undo
+	this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, this, param); }; // Do we need this? Yes, restore inserts on undo
 	// Also available ueditor events (not redactor callbacks:
 		// ueditor:start
 		// ueditor:stop

@@ -421,16 +421,62 @@ var ImageInsert = UeditorInsert.extend({
 
 		this.captionTimer = false;
 
-		this.$('.wp-caption-text')
-			.attr('contenteditable', true)
-			.addClass('nosortable')
-			.off('keyup')
-			.on('keyup', function(e){
-				me.data.set('caption', this.innerHTML, {silent: true});
-				//Update event makes InsertManager update its data without rendering.
-				me.data.trigger('update');
-			})
-		;
+		if(data.captionPosition != 'nocaption'){
+			this.$('.wp-caption-text')
+				//.attr('contenteditable', true)
+				.off('keyup')
+				.on('keyup', function(e){
+					me.data.set('caption', this.innerHTML, {silent: true});
+					//Update event makes InsertManager update its data without rendering.
+					me.data.trigger('update');
+				})
+				.ueditor({
+					linebreaks: true,
+					autostart: true,
+					pastePlainText: true,
+					airButtons: ['bold', 'italic', 'upfrontLink', 'stateAlign']
+				})
+			;
+			this.ueditor = this.$('.wp-caption-text').data('ueditor');
+			this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
+				if(redactor != me.ueditor.redactor)
+					return;
+
+				var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+					parentRedactor = parentUeditor ? parentUeditor.redactor : false
+				;
+
+				if(!parentRedactor)
+					return;
+
+				parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
+				parentRedactor.$source.on('keydown.redactor-textarea');
+
+				//parentUeditor.stop();
+				console.log(parentRedactor);
+				console.log('focus');
+				console.log(arguments);
+			});
+
+			this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
+				if(redactor != me.ueditor.redactor)
+					return;
+
+				var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+					parentRedactor = parentUeditor ? parentUeditor.redactor : false
+				;
+
+				if(!parentRedactor)
+					return;
+
+				parentRedactor.buildBindKeyboard();
+
+				//var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
+				//parentUeditor.start();
+				console.log('blur');
+				console.log(arguments);
+			});
+		}
 
 		var wrapperData = {
 				display: 'inline-block',
