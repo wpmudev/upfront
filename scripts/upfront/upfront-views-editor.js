@@ -805,6 +805,34 @@ define([
 		}
 	});
 
+  var Command_GeneralEditCustomCSS = Command.extend({
+    tagName: 'div',
+    className: "command-edit-css",
+    initialize: function() {
+      this.lazy_save_styles = _.debounce(function(styles) {
+        this.model.set({ styles: styles });
+      }, 1000);
+    },
+    render: function () {
+      this.$el.text('Add Custom CSS Styling');
+    },
+    on_click: function () {
+      var editor,
+        me = this;
+
+      editor = new GeneralCSSEditor({
+        model: this.model,
+        page_class: this.model.get('id') + '-breakpoint',
+        type: "Layout",
+        sidebar: false,
+        global: true,
+        change: function(content) {
+          me.lazy_save_styles(content);
+        }
+      });
+    }
+  });
+
 	var Command_ExportLayout = Command.extend({
 		className: "command-export",
 		render: function (){
@@ -1576,6 +1604,23 @@ define([
 		}
 	});
 
+	var SidebarPanel_Responsive_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
+		initialize: function () {
+			this.settings = _([
+			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
+			]);
+			this.edit_css = new Command_GeneralEditCustomCSS({"model": this.model});
+		},
+		get_title: function () {
+			return "Typography and Colors";
+		},
+		on_render: function () {
+			this.edit_css.render();
+			this.edit_css.delegateEvents();
+			this.$el.find('.panel-section-content').append(this.edit_css.el);
+		}
+	});
+
 	var SidebarPanel_Settings_Section_Structure = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([]);
@@ -1735,7 +1780,7 @@ define([
       this.listenTo(this.collection, 'change:active', this.render);
     },
     render: function() {
-      var typography_section = new SidebarPanel_Settings_Section_Typography({
+      var typography_section = new SidebarPanel_Responsive_Settings_Section_Typography({
         "model": breakpoints_storage.get_breakpoints().get_active()
       });
       typography_section.render();
@@ -4701,6 +4746,215 @@ var CSSEditor = Backbone.View.extend({
 	}
 });
 
+/**
+ * Like css editor but does not do saving and managing of styles.
+ * Takes initial css from models "styles" property and fires change
+ * event with new css.
+ */
+var GeneralCSSEditor = Backbone.View.extend({
+  className: 'upfront-ui',
+  id: 'upfront-general-csseditor',
+  tpl: _.template($(_Upfront_Templates.popup).find('#csseditor-tpl').html()),
+  prepareAce: false,
+  ace: false,
+  events: {
+    'click .upfront-css-save-ok': 'fire_save',
+    'click .upfront-css-close': 'close',
+    'click .upfront-css-image': 'openImagePicker',
+    'click .upfront-css-selector': 'addSelector'
+  },
+  initialize: function(options) {
+    var me = this,
+      deferred = $.Deferred(),
+      style_selector,
+      $style;
+
+    this.options = options || {};
+    this.model = options.model;
+    this.sidebar = ( options.sidebar !== false );
+    this.global = ( options.global === true );
+
+    this.prepareAce = deferred.promise();
+    require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+      deferred.resolve();
+    });
+
+    this.resizeHandler = this.resizeHandler || function(){
+      me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
+    };
+
+    $(window).on('resize', this.resizeHandler);
+
+    style_selector = this.model.get('id') + '-breakpoint-style';
+    $style = $('#' + style_selector);
+    if ($style.length === 0) {
+      this.$style = $('<style id="' + style_selector + '"></style>');
+      $('body').append(this.$style);
+    } else {
+      this.$style = $style
+    }
+
+
+    if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
+
+    this.render();
+
+    this.startResizable();
+  },
+  close: function(event){
+    if(event)
+      event.preventDefault();
+
+    $(window).off('resize', this.resizeHandler);
+
+    if(this.editor)
+      this.editor.destroy();
+
+    $('#page').css('padding-bottom', 0);
+    this.remove();
+  },
+  render: function(){
+    var me = this;
+
+    $('#page').append(this.$el);
+
+    if (!this.sidebar)
+      this.$el.addClass('upfront-css-no-sidebar');
+    else
+      this.$el.removeClass('upfront-css-no-sidebar');
+
+    this.$el.html(this.tpl({
+      selectors: this.selectors,
+      elementType: false
+    }));
+
+    this.resizeHandler('.');
+
+    var bodyHeight = this.$el.height() - this.$('.upfront-css-top').outerHeight();
+    this.$('.upfront-css-body').height(bodyHeight);
+
+    this.prepareAce.done(function(){
+      me.startAce();
+    });
+
+    this.prepareSpectrum();
+
+    this.$el.show();
+  },
+  startAce: function() {
+    var me = this,
+      editor = ace.edit(this.$('.upfront-css-ace')[0]),
+      session = editor.getSession()
+    ;
+
+    session.setUseWorker(false);
+    editor.setShowPrintMargin(false);
+
+    session.setMode("ace/mode/css");
+    editor.setTheme('ace/theme/monokai');
+
+    editor.on('change', function(event){
+      var styles_with_selector;
+      var rules = editor.getValue().split('}'),
+        separator = '\n\n.' + me.options.page_class + ' ';
+
+      rules = _.map(rules, function(rule){return $.trim(rule);});
+      rules.pop();
+
+		  styles_with_selector = separator + rules.join('\n}' + separator) + '\n}';
+
+      me.$style.html(styles_with_selector);
+      me.trigger('change', styles_with_selector);
+    });
+
+    var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g'),
+      styles = this.model.get('styles').replace(scope, '')
+    ;
+    editor.setValue($.trim(styles), -1);
+
+    // Set up the proper vscroller width to go along with new change.
+    editor.renderer.scrollBar.width = 5;
+    editor.renderer.scroller.style.right = "5px";
+
+    editor.focus();
+    this.editor = editor;
+  },
+  prepareSpectrum: function(){
+    var me = this;
+
+    me.$('.upfront-css-color').spectrum({
+      showAlpha: true,
+      showPalette: true,
+      palette: ['fff', '000', '0f0'],
+      maxSelectionSize: 9,
+      localStorageKey: "spectrum.recent_bgs",
+      preferredFormat: "hex",
+      chooseText: "Ok",
+      showInput: true,
+      allowEmpty:true,
+      show: function(){
+        spectrum = $('.sp-container:visible');
+      },
+      change: function(color) {
+        var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+        me.editor.insert(colorString);
+        me.editor.focus();
+      },
+      move: function(color) {
+        var rgba = color.toRgbString();
+        spectrum.find('.sp-dragger').css('border-top-color', rgba);
+        spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+      },
+    });
+  },
+  startResizable: function(){
+    // Save the fetching inside the resize
+    var me = this,
+      $cssbody = me.$('.upfront-css-body'),
+      topHeight = me.$('.upfront-css-top').outerHeight(),
+      $selectors = me.$('.upfront-css-selectors'),
+      $saveform = me.$('.upfront-css-save-form'),
+      onResize = function(e, ui){
+        var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
+          bodyHeight = height  - topHeight;
+        $cssbody.height(bodyHeight);
+        if(me.editor)
+          me.editor.resize();
+        $selectors.height(bodyHeight - $saveform.outerHeight());
+        $('#page').css('padding-bottom', height);
+      }
+    ;
+    onResize();
+    this.$('.upfront-css-resizable').resizable({
+      handles: {n: '.upfront-css-top'},
+      resize: onResize,
+      minHeight: 200,
+      delay: 100
+    });
+  },
+  remove: function(){
+    Backbone.View.prototype.remove.call(this);
+    $(window).off('resize', this.resizeHandler);
+  },
+  openImagePicker: function(){
+    var me = this;
+    Upfront.Media.Manager.open({}).done(function(popup, result){
+      Upfront.Events.trigger('upfront:element:edit:stop');
+      if(!result)
+        return;
+
+      var url = result.models[0].get('image').src.replace(document.location.origin, '');
+      me.editor.insert('url("' + url + '")');
+      me.editor.focus();
+    });
+  },
+  addSelector: function(e){
+    var selector = $(e.target).data('selector');
+    this.editor.insert(selector);
+    this.editor.focus();
+  }
+});
+
 var _Settings_AnchorSetting = SettingsItem.extend({
 	className: "upfront-settings-item-anchor",
 	group: false,
@@ -7123,7 +7377,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
       'active': false,
       'width': 240,
       'columns': 5,
-      'typography': {}
+      'typography': {},
+      'styles': ''
     },
     initialize: function() {
       // Fix 0 columns
@@ -7193,12 +7448,23 @@ var Field_Compact_Label_Select = Field_Select.extend({
       this.on( 'change:width', this.on_change_width, this);
     },
     on_change_active: function(changed_model) {
+      var prev_active_json = this.active ? this.active.toJSON() : false;
+      this.prev_active = this.active;
+      this.active = changed_model;
+
       _.each(this.models, function(model) {
         if (model.get('id') === changed_model.get('id')) return;
 
         model.set({ 'active': false }, { 'silent': true });
       });
-      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", changed_model.toJSON());
+
+      Upfront.Events.trigger("upfront:layout_size:change_breakpoint", changed_model.toJSON(), prev_active_json);
+
+      //todo This should go somewhere else
+      if (this.prev_active) {
+        $('#page').removeClass(this.prev_active.get('id') + '-breakpoint');
+      }
+      $('#page').addClass(this.active.get('id') + '-breakpoint');
     },
     on_change_enabled: function(changed_model) {
       // If disabled point was active it will disapear and leave UI in broken state.
@@ -7248,7 +7514,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
   });
 
   // Breakpoint events tests
-  Upfront.Events.on("upfront:layout_size:change_breakpoint", function(breakpoint) {
+  Upfront.Events.on("upfront:layout_size:change_breakpoint", function(breakpoint, prev_breakpoint) {
+    if (prev_breakpoint) console.log(['Breakpoint deactivated', prev_breakpoint.name, prev_breakpoint.width].join(' '));
     console.log(['Breakpoint activated', breakpoint.name, breakpoint.width].join(' '));
   });
   Upfront.Events.on("upfront:layout_size:viewport_width_change", function(new_width) {
@@ -7267,7 +7534,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
       var default_breakpoint = breakpoints.get_default();
       default_breakpoint.set({ 'active': true });
 
-      breakpoints.on('change:enabled change:width change:name add remove change:typography', save_breakpoints);
+      breakpoints.on('change:enabled change:width change:name add remove change:typography change:styles', save_breakpoints);
+
+      // This should go somewhere else, just a temp
+      _.each(breakpoints.models, function(breakpoint) {
+        var $style = $('#' + breakpoint.get('id') + '-breakpoint-style');
+
+        if ($style.length > 0) return;
+
+        $('body').append('<style id="' + breakpoint.get('id') + '-breakpoint-style">' +
+          breakpoint.get('styles') +
+          '</style>'
+        );
+      });
     };
 
     this.get_breakpoints = function() {

@@ -913,6 +913,8 @@ span.draggable-post-element.element-dragging
 .upfront-filter-control::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar,
+#upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
+#upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar
 {
@@ -921,6 +923,7 @@ span.draggable-post-element.element-dragging
 }
 /* overwriting Ace editor scrollbar */
 #upfront-csseditor .ace_scrollbar,
+#upfront-general-csseditor .ace_scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar
 {
 	width: 5px! important;
@@ -936,6 +939,8 @@ span.draggable-post-element.element-dragging
 .upfront-filter-control::-webkit-scrollbar-track,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-track,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar-track,
+#upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar-track,
+#upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-track,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-track,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track
 {
@@ -952,6 +957,8 @@ span.draggable-post-element.element-dragging
 .upfront-filter-control::-webkit-scrollbar-thumb,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
+#upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb,
+#upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb
 {
@@ -9129,7 +9136,8 @@ div.inline-number.plaintext-settings input {
 }
 
 /* CSS EDITOR */
-#upfront-csseditor {
+#upfront-csseditor,
+#upfront-general-csseditor {
 	min-height: 200px;
 	position: fixed;
 	bottom: 0;
