@@ -830,6 +830,21 @@ define([
           me.lazy_save_styles(content);
         }
       });
+
+      Upfront.Events.on("upfront:layout_size:change_breakpoint", function() {
+        editor.close();
+      });
+    }
+  });
+
+  var Command_GoToTypePreviewPage = Command.extend({
+    tagName: 'div',
+    className: "command-go-to-type-preview",
+    render: function () {
+      this.$el.text('Go to Type Preview Page');
+    },
+    on_click: function () {
+      alert('This is just placeholder :)');
     }
   });
 
@@ -856,11 +871,23 @@ define([
 
 	var Command_StopResponsiveMode = Command.extend({
 		enabled: true,
+    className: 'exit-responsive',
 		render: function () {
 			this.$el.html("<span>Exit Responsive</span>");
 		},
 		on_click: function () {
 			Upfront.Application.start(Upfront.Application.MODE.DEFAULT);
+		}
+	});
+
+	var Command_SaveResponsive = Command.extend({
+		"className": "command-save",
+		render: function () {
+			this.$el.addClass('upfront-icon upfront-icon-save');
+			this.$el.html("Save");
+		},
+		on_click: function () {
+      console.log('responsive is saved');
 		}
 	});
 
@@ -924,6 +951,18 @@ define([
       }, {
         width: 400
       });
+    }
+  });
+
+  var Command_ResponsiveUndo = Command_Undo.extend({
+    on_click: function() {
+      alert('This is just placeholder.');
+    }
+  });
+
+  var Command_ResponsiveRedo = Command_Redo.extend({
+    on_click: function() {
+      alert('This is just placeholder.');
     }
   });
 
@@ -1607,6 +1646,7 @@ define([
 	var SidebarPanel_Responsive_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
+          new Command_GoToTypePreviewPage(),
 			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
 			this.edit_css = new Command_GeneralEditCustomCSS({"model": this.model});
@@ -1798,7 +1838,6 @@ define([
         new Command_BreakpointDropdown(),
         new Command_AddCustomBreakpoint(),
         new SidebarPanel_ResponsiveSettings(),
-				new Command_StopResponsiveMode()
 			];
 		},
     render: function() {
@@ -1809,6 +1848,23 @@ define([
 
       return this;
     }
+	});
+
+	var SidebarCommands_ResponsiveControl = Commands.extend({
+		"className": "sidebar-commands sidebar-commands-responsive-control sidebar-commands-control",
+		initialize: function () {
+			this.commands = _([
+				new Command_ResponsiveUndo({"model": this.model}),
+				new Command_ResponsiveRedo({"model": this.model}),
+				new Command_ToggleGrid({"model": this.model}),
+				new Command_SaveResponsive(),
+				new Command_StopResponsiveMode()
+			]);
+		},
+		render: function () {
+			this.$el.find("li").remove();
+			this.commands.each(this.add_command, this);
+		}
 	});
   /* End Responsive */
 
@@ -1963,8 +2019,15 @@ define([
 
 				//Collapsible
 				//this.addCollapsibleEvents();
-			}
-			else {
+			} else if (current_app === Upfront.Settings.Application.MODE.RESPONSIVE) {
+				// Responsvie Control
+				var responsive_controls = new SidebarCommands_ResponsiveControl({"model": this.model});
+				responsive_controls.render();
+				output.append(responsive_controls.el);
+
+				this.$el.html(output);
+        $('#sidebar-ui .sidebar-commands-responsive-control').height($(window).height() - 20 - $('#sidebar-ui .sidebar-commands-responsive').height() - $('#sidebar-ui .sidebar-commands-header').height());
+      } else {
 				this.$el.html(output);
 			}
 

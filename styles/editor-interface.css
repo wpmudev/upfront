@@ -9762,12 +9762,12 @@ a.upfront-css-edit:before{
   background-position: -1228px -658px;
 }
 .breakpoints-toggler .desktop-breakpoint-activate:before {
-  background-position: -1231px -550px;
-  width: 15px;
+  background-position: -1333px -404px;
+  width: 20px;
 }
-.breakpoints-toggler .desktop-breakpoint-activate:before:hover,
+.breakpoints-toggler .desktop-breakpoint-activate:hover:before,
 .breakpoints-toggler .desktop-breakpoint-activate.active:before {
-  background-position: -1231px -586px;
+  background-position: -1333px -440px;
 }
 
 /* Breakpoints width input */
@@ -9798,15 +9798,96 @@ a.upfront-css-edit:before{
   border-radius: 4px;
 }
 
-/* Sidebaar breakpoints add/remove */
+/* Responsive commands */
 #sidebar-ui .sidebar-commands-responsive li {
   display: block;
 }
 
-.sidebar-commands-responsive .upfront-field-select {
-  width: 200px;
+#sidebar-ui .sidebar-commands-responsive .panel-section {
+  padding-top: 0;
 }
 
+#sidebar-ui .sidebar-commands-responsive .sidebar-panel.expanded .sidebar-panel-content {
+  height: 330px;
+}
+
+#sidebar-ui .sidebar-commands-responsive-control.sidebar-commands-control {
+  padding-top: 4px;
+  position: relative;
+}
+#sidebar-ui .sidebar-commands-responsive-control .command-save {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  margin: 0;
+  padding: 8px 20px 0 10px;
+}
+
+#sidebar-ui .sidebar-commands-responsive-control .exit-responsive {
+  position: absolute;
+  bottom: 19px;
+  right: 15px;
+  margin: 0;
+  border: 3px solid #263a4d;
+  padding: 2px 5px;
+  height: 33px;
+}
+
+#sidebar-ui .sidebar-commands-responsvie-control .command-grid {
+  margin-left: 66px;
+}
+
+#sidebar-ui .sidebar-commands-responsive .command-edit-css {
+  border: 0 none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  padding: 0;
+  border-bottom: 1px solid #1fcd8f;
+  line-height: 1;
+}
+
+.command-go-to-type-preview {
+  text-decoration: underline;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 14px;
+  color: #11a672;
+  margin-bottom: 8px;
+}
+
+#sidebar-ui .sidebar-commands-responsive .upfront-field-label-block {
+  font-weight: normal;
+  margin-bottom: 8px;
+}
+
+#sidebar-ui .sidebar-commands-responsive .upfront-field-wrap-color .upfront-field-label-block {
+  margin-bottom: 10px;
+}
+
+#sidebar-ui .sidebar-commands-responsive .sp-preview {
+  background-position: -816px -105px;
+  width: 30px !important;
+  margin-bottom: 14px;
+}
+
+.sidebar-commands-responsive .upfront-field-select {
+  height: 30px;
+  max-height: 30px;
+  width: 228px;
+  margin-bottom: 5px;
+  line-height: 26px;
+}
+
+.sidebar-commands-responsive .upfront-typography-fields-left .upfront-field-select {
+  width: 108px;
+}
+
+#sidebar-ui .sidebar-commands-responsive .upfront-typography-fields-left {
+  width: 50%;
+}
+#sidebar-ui .sidebar-commands-responsive .upfront-typography-fields-right {
+  width: 50%;
+  padding-left: 4px;
+}
 /* The ruler */
 .upfront-ruler-container {
 	width: 100%;
@@ -9931,3 +10012,11 @@ li#new-custom-breakpoint {
 .redactor_dropdown.redactor_dropdown_box_icons a:hover{
     color: rgb(64, 166, 255) !important;
 }
+#new-custom-breakpoint:before {
+	content: " ";
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	display: inline-block;
+  height: 14px;
+  width: 15px;
+  background-position: -1441px -411px;
+  margin-right: 5px; }
