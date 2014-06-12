@@ -653,28 +653,43 @@ a.image-edit-button.deactivated:hover {
 }
 
 .uimage-drop-hint {
-	border:3px dashed #3f5870;
-	color: #3f5870;
+	/*border:3px dashed #3f5870;*/
+    content:'Drop Image Here';
+    color:rgba(37,58,78,1);
 	position:absolute;
 	width: 100%;
 	height: 100%;
 	background: rgba(255,255,255,.7);
 	top:0;
 	bottom:0;
-	font-family: 'Source Sans Pro';
-	text-align: center;
-	font-size: 24px;
-	font-weight: 200;
-	padding:50px 0;
-	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+    overflow: hidden;
+    box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+    font:300 24px Helvetica Neue, Helvetica, sans-serif;
 }
-
+.uimage-drop-hint div{
+    display: block;
+    top: 50%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    line-height: 0;
+    text-align: center;
+}
 
 .uimage-drop-hint.uimage-dragenter {
-	border:3px dashed #1fcd8f;
+    transition:border .3s ease-in-out;-moz-transition:border .3s ease-in-out; -webkit-transition:border .3s ease-in-out;
+    background:rgba(255,255,255,.7);
+    border:5px solid rgba(0,206,141,1);
+    /*width: 105%;*/
+    /*height: 105%;*/
 }
-
-
+.uimage-drop-hint.uimage-dragenter div{
+    /*top:47.5%;*/
+    /*left: -2.5%;*/
+}
 .upfront-quick-swap.uimage-quick-swap-small {
 	font-size: 18px;
 }

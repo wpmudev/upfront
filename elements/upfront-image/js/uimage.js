@@ -672,7 +672,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	handleDragEnter: function(e){
 		var me = this;
 		if(!this.$('.uimage-drop-hint').length){
-			var dropOverlay = $('<div class="uimage-drop-hint">Drop the image here<form </div>')
+			var dropOverlay = $('<div class="uimage-drop-hint"><div>Drop the image here</div></div>')
 				.on('drop', function(e){
 					e.preventDefault();
 					e.stopPropagation();
