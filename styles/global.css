@@ -136,6 +136,13 @@ h2, h3 { page-break-after: avoid; }
   padding-bottom:0;
 }
 
+/* Post Inserts */
+
+.ueditor-insert {
+  margin-bottom: 15px;
+  max-width: 100%;
+}
+
 /* Post offsets */
 
 .uinsert-left-1 .alignleft,
@@ -160,27 +167,29 @@ h2, h3 { page-break-after: avoid; }
   margin-right: -14.8%;
 }
 
+.uinsert-full-1 .ueditor-insert{
+  max-width: 104.43%;
+}
+.uinsert-full-2 .ueditor-insert{
+  max-width: 109.4%;
+}
+.uinsert-full-3 .ueditor-insert{
+  max-width: 114.8%;
+}
+.uinsert-full-4 .ueditor-insert{
+  max-width: 122.5%;
+}
+.uinsert-full-5 .ueditor-insert{
+  max-width: 130%;
+}
+.uinsert-full-6 .ueditor-insert{
+  max-width: 139%;
+}
+
 .alignfull{
-  width: 100%;
+  width: 150%;
 }
-.uinsert-full-1 .alignfull{
-  width: 104.43%;
-}
-.uinsert-full-2 .alignfull{
-  width: 109.4%;
-}
-.uinsert-full-3 .alignfull{
-  width: 114.8%;
-}
-.uinsert-full-4 .alignfull{
-  width: 122.5%;
-}
-.uinsert-full-5 .alignfull{
-  width: 130%;
-}
-.uinsert-full-6 .alignfull{
-  width: 139%;
-}
+
 .inserted_code_rendered{
     display: inline-block;
 }
@@ -193,10 +202,12 @@ h2, h3 { page-break-after: avoid; }
 .uinsert-image-caption-left {
   min-width: 100px;
   float: right;
+  margin-left: 15px;
 }
 .uinsert-image-caption-right {
   min-width: 100px;
   float: left;
+  margin-right: 15px;
 }
 .uinsert-image-caption-bottom,
 .uinsert-caption-bottom  {

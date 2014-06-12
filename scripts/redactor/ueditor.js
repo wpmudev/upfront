@@ -196,6 +196,10 @@ var hackRedactor = function(){
 				center, parent
 			;
 
+			//Hack to place the bar correctly with floating images
+			if(m1.top != m2.top && bounds.left > bounds.right)
+				bounds.right = bounds.left + 50;
+
 			if(!this.airWidth){
 				this.airWidth = width;
 				this.$air.width(width);
