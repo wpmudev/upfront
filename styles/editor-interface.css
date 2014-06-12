@@ -10016,6 +10016,7 @@ li.activate-breakpoints-dropdown {
 li#new-custom-breakpoint {
   margin: 10px 0 10px 15px;
 }
+/*------------ Font Icons --------------*/
 .redactor_dropdown_box_icons div{
     font-size: 2.1em;
 }
@@ -10028,10 +10029,19 @@ li#new-custom-breakpoint {
 .redactor_dropdown.redactor_dropdown_box_icons a:link{
     color: #97b8da !important;
     margin: 5px;
+    display: inline-block;
+    width: 0.915em;
 }
 .redactor_dropdown.redactor_dropdown_box_icons a:hover{
     color: rgb(64, 166, 255) !important;
 }
+.pictos {
+    font-weight: normal;
+    font-style: normal;
+    line-height: normal;
+    font-family: 'Pictos', sans-serif;
+}
+/*------------ End of Font Icons --------------*/
 #new-custom-breakpoint:before {
 	content: " ";
 	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
