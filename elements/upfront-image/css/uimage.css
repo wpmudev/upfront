@@ -996,8 +996,8 @@ div.uimage-controls i.upfront-icon:before {
 	padding: 0 5px;
 }
 .uimage-resize-hint.sizehint-top {
-	bottom: auto;
-	top: 15px;
+	bottom: 15px;
+	top: auto;
 }
 
 .ui-resizable-autohide .uimage-resize-hint {
