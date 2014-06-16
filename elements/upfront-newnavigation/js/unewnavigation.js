@@ -607,16 +607,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
         if(singleclickcount == 1) {
 
           //if(thelink.model['menu-item-type'] == 'custom') {
-            if(thelink.model['menu-item-url'].indexOf('#') > -1 && thelink.getCleanurl(thelink.model['menu-item-url']) == thelink.getCleanurl()) {
+            var menu_item_clean = thelink.getCleanurl(thelink.model['menu-item-url']);
+            if(thelink.model['menu-item-url'].indexOf('#') > -1 && ('' === menu_item_clean || thelink.getCleanurl() == menu_item_clean)) {
               //console.log($(thelink.model['menu-item-url']).length);
               //if(thelink.getCleanurl(thelink.model['menu-item-url']) == thelink.getCleanurl()) {
               var anchors = me.get_anchors();
               $('html,body').animate({scrollTop: $('#'+thelink.getUrlanchor(thelink.model['menu-item-url'])).offset().top},'slow');
             }
-            else if(thelink.model['menu-item-target'] == '')
-//              window.location.href = thelink.model['menu-item-url']+(thelink.model['menu-item-url'].indexOf('?') >= 0 ? '&' : '?')+'editmode=true';
+            else if(thelink.model['menu-item-target'] == '') {
               window.location.href = thelink.model['menu-item-url'];
-            else
+            } else
               window.open(thelink.model['menu-item-url']);
           //}
           //else
