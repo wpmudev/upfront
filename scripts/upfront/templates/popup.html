@@ -361,6 +361,7 @@
       {[ if (elementType) { ]}
 			<span class="upfront-css-type">{{ elementType }} Element</span>
       {[ } ]}
+			<a class="upfront-css-font" href="#">Pick a Font</a>
 			<a class="upfront-css-image" href="#">Link theme image</a>
 			<input class="upfront-css-color" type="text">
 			<a class="upfront-css-close" href="#">close</a>
@@ -389,6 +390,42 @@
 			</div>
 		</div>
 	</div>
+</script>
+
+<script id="font-picker-tpl" type="text/template">
+  <div class="add-font-panel">
+    <h3 class="panel-title">Add new Fonts to theme:</h3>
+    <div class="loading-fonts">Loading fonts...</div>
+    <div class="font-weights-list">
+      <div class="upfront-field-label-block upfront-field-label">Choose weight(s) to add:</div>
+      <div class="font-weights-list-wrapper"></div>
+    </div>
+    <span class="add-font-button">Add Selected Weights &raquo;</span>
+  </div>
+</script>
+
+<script id="theme-fonts-panel" type="text/template">
+    <h3 class="panel-title">Choose from added fonts:</h3>
+    <div class="font-list"></div>
+    <div class="font-stats">
+    </div>
+</script>
+
+<script id="theme-font-list-item" type="text/template">
+{{ family }} ({{ variant }})<span class="delete">x</span>
+</script>
+
+<script id="select-view-tpl" type="text/template">
+<div class="upfront-field-select-value">
+  <span>{{ selected_value }}</span>
+</div>
+<ul class="upfront-field-select-options"></ul>
+</script>
+
+<script id="select-option-view-tpl" type="text/template">
+<label>
+  <span class="upfront-field-label-text">{{ label }}</span>
+</label>
 </script>
 
 <script id="save-dialog-tpl" type="text/template">

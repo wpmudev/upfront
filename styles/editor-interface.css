@@ -9205,7 +9205,8 @@ div.inline-number.plaintext-settings input {
 	text-transform: capitalize;
 }
 
-a.upfront-css-image {
+a.upfront-css-image,
+a.upfront-css-font {
 	float:left;
 	display: block;
 	border: 2px solid #2E3D4C;
@@ -9214,7 +9215,7 @@ a.upfront-css-image {
 	height: 24px;
 	color: #dae6f2 !important;
 	line-height: 20px;
-	font-size:11px;
+	font-size: 11px;
 	font-family: verdana, sans-serif;
 }
 
@@ -9238,7 +9239,8 @@ input[type=text].upfront-css-color {
   background-clip:         padding-box;
 }
 
-a.upfront-css-image:hover {
+a.upfront-css-image:hover,
+a.upfront-css-font:hover {
 	border-color: #3ea;
 }
 
@@ -10091,4 +10093,127 @@ div.upfront-region-container:hover > a.feature_image_selector {
 }
 div.upfront-region-container-active > a.feature_image_selector {
 	display: none !important;
+}
+
+/* Font picker */
+#font-picker {
+  position: absolute;
+  top: -30px;
+  left: 175px;
+  top: -370px;
+  width: 451px;
+  height: 215px;
+  background: #e5f3fe;
+}
+#font-picker .panel-title {
+	font: 18px/15px 'Source Sans Pro', sans-serif;
+  color: #273a4c;
+  margin: 20px 0 10px 20px;
+}
+#font-picker > div {
+  float: left;
+  width: 225px;
+}
+
+#font-picker .add-font-panel {
+  border-right: 1px solid #c9dff1;
+}
+#font-picker .choose-font {
+  margin: 0 0 0 20px;
+  width: 185px;
+}
+#font-picker .choose-font .upfront-field-select-options {
+  position: absolute;
+}
+#font-picker .font-weights-list {
+  min-height: 100px;
+}
+#font-picker .font-weights-list .upfront-field-multiple {
+  margin: 0;
+  line-height: 25px;
+}
+#font-picker .font-weights-list .upfront-field-multiple:hover,
+#font-picker .font-weights-list .upfront-field-multiple-selected {
+  background: #85a9cc;
+}
+#font-picker .font-weights-list .upfront-field-multiple:hover label,
+#font-picker .font-weights-list .upfront-field-multiple-selected label {
+  color: #f2f7ea;
+}
+#font-picker .font-weights-list .upfront-field-multiple label {
+  margin-left: 20px;
+}
+#font-picker .font-weights-list-wrapper {
+  background: #f2f9fe;
+}
+#font-picker .font-weights-list-wrapper::-webkit-scrollbar,
+#font-picker .font-list::-webkit-scrollbar {
+  background: none;
+  width: 5px;
+}
+#font-picker .font-weights-list-wrapper::-webkit-scrollbar-thumb,
+#font-picker .font-list::-webkit-scrollbar-thumb {
+  border-right: 5px solid #1fcd8f;
+}
+#font-picker .font-weights-list input {
+  bottom: 7px;
+  left: 20px;
+}
+#font-picker .font-weights-list .upfront-field-wrap {
+  margin: 0;
+}
+#font-picker .font-weights-list .upfront-field-label {
+  margin-left: 20px;
+}
+.add-font-panel .font-weights-list-wrapper {
+  height: 92px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+#font-picker .theme-font-list-item {
+  color: rgb(48, 71, 94);
+  font-size: 11px;
+  font-weight: normal;
+  font-family: verdana, sans-serif;
+  padding-left: 20px;
+  cursor: pointer;
+  line-height: 24px;
+}
+#font-picker .theme-font-list-item:hover,
+#font-picker .theme-font-list-item-selected {
+  background: #85a9cc;
+  color: #f2f7ea;
+}
+#font-picker .theme-font-list-item .delete {
+  display: none;
+}
+#font-picker .theme-font-list-item-selected .delete {
+  display: inline;
+}
+#font-picker .font-list {
+  background: #f2f9fe;
+  height: 145px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+#font-picker .add-font-button {
+  line-height: 27px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  text-decoration: underline;
+  font-size: 12px;
+  font-family: verdana, sans-serif;
+  color: #537ea6;
+  cursor: pointer;
+}
+#font-picker .font-stats {
+  line-height: 25px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  font-family: verdana, sans-serif;
+  background: #d7e6f1;
+  color: #687887;
 }
