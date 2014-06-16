@@ -7930,6 +7930,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	};
 });
-
+    return Upfront_Scroll_Mixin;
 })(jQuery);
 

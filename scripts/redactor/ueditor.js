@@ -2092,7 +2092,6 @@ RedactorPlugins.upfrontPlaceholder = {
 /*--------------------
  Font icons button
  -----------------------*/
-
 RedactorPlugins.icons = {
     beforeInit: function(){
         this.opts.buttonsCustom.icons = {
@@ -2100,7 +2099,7 @@ RedactorPlugins.icons = {
             panel: this.panel
         };
     },
-    panel: UeditorPanel.extend({
+    panel: UeditorPanel.extend(_.extend({}, Upfront_Scroll_Mixin, {
         tpl: _.template($(tpl).find('#font-icons').html()),
         events:{
             'click .ueditor-font-icon': 'select_icon',
@@ -2108,22 +2107,22 @@ RedactorPlugins.icons = {
         },
         render: function(options){
             this.$el.html(this.tpl());
+            this.stop_scroll_propagation(this.$el);
         },
         open: function(e, redactor){
             this.redactor = redactor;
             this.redactor.selectionSave();
             this.$el.parent().css({
-                left : 163
+                left : 158
             });
-//            this.render();
         },
         select_icon : function(e){
-            var icon = $(e.target).closest(".ueditor-font-icon").html();
+            var icon = $(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html();
             this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + icon, true);
             this.closePanel();
         }
 
-    })
+    }))
 };
 
 }); //End require

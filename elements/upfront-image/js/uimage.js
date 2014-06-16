@@ -685,7 +685,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 						// Only call the handler if 1 or more files was dropped.
 						if (files.length && input.length){
 							Upfront.Views.Editor.ImageSelector.uploadImage(files);
-			            }
+			            }sidebar-panel-content
 			        }
 				})
 				.on('dragenter', function(e){
@@ -697,7 +697,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					e.preventDefault();
 					e.stopPropagation();
 					$(this).removeClass('uimage-dragenter');
-				})
+				}).on('dragover', function (e) {
+                    e.preventDefault();
+                })
 			;
 			this.$('.upfront-image').append(dropOverlay);
 		}
@@ -2533,7 +2535,7 @@ var ImageSelector = Backbone.View.extend({
 					console.log(response);
 					Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
 						.done(function(response){
-							me.deferred.resolve(response.data.images, response);
+                            me.deferred.resolve(response.data.images, response);
 						})
 						.error(function(){
 							Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');

@@ -901,7 +901,6 @@ span.draggable-post-element.element-dragging
 
 
 /* Scrollbar */
-
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content::-webkit-scrollbar,
 .upfront-scroll-panel::-webkit-scrollbar,
 .upfront-settings_panel_scroll::-webkit-scrollbar,
@@ -916,7 +915,8 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
-.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar
+.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
+.redactor_dropdown_box_icons div::-webkit-scrollbar
 {
 	background: none;
 	width: 5px;
@@ -960,7 +960,8 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
-.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb
+.upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
+.redactor_dropdown_box_icons div::-webkit-scrollbar-thumb
 {
 	border-right: 5px solid #1fcd8f;
 }
@@ -2035,6 +2036,9 @@ div.uinsert-selector a:hover {
 	bottom: 0;
 	z-index: 1999;
 }
+.upfront-module-disabled-edit .ui-resizable-handle {
+	display: none !important;
+}
 .show-debug .upfront-module {
 	/*border: 1px solid #b3da11;*/
 	background: rgba(44, 62, 80, 0.3)
@@ -2065,7 +2069,7 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-module-hidden-toggle {
-	
+
 }
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger {
 	float: right;
@@ -2115,9 +2119,9 @@ div.uinsert-selector a:hover {
 .show-debug .upfront-debug-info {
 	display: block;
 	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	bottom: -10px;
+	left: 5px;
+	right: 5px;
 	background: #fff;
 	border: 1px solid #ccc;
 	padding: 0 5px;
@@ -10017,10 +10021,13 @@ li#new-custom-breakpoint {
 /*------------ Font Icons --------------*/
 .redactor_dropdown_box_icons div{
     font-size: 2.1em;
+    height: 270px;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 .redactor_dropdown.redactor_dropdown_box_icons{
-    min-width: 184px;
-    width: 184px;
+    min-width: 190px;
+    width: 190px;
     line-height: 38px;
 }
 .redactor_dropdown.redactor_dropdown_box_icons a,
