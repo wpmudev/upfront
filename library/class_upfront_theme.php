@@ -279,17 +279,17 @@ class Upfront_Virtual_Region {
 	}
 
 	public function end_wrapper ($group = '') {
-		$breakpoints = $this->grid->get_breakpoints();
+		$breakpoint = $this->grid->get_default_breakpoint();
 		if ( $group && $this->modules[$group] ){
 			$class = $this->get_property('class', $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
 			$col = $this->current_group_col > $this->current_group_wrapper_col ? $this->current_group_wrapper_col : $this->current_group_col;
-			$this->_set_property('class', $class . ' ' . $breakpoints['desktop']->get_prefix('width') . $col, $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
+			$this->_set_property('class', $class . ' ' . $breakpoint->get_prefix('width') . $col, $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
 			$this->current_group_wrapper = null;
 			$this->current_group_wrapper_col = 0;
 		}
 		else {
 			$class = $this->get_property('class', $this->wrappers[$this->current_wrapper]);
-			$this->_set_property('class', $class . ' ' . $breakpoints['desktop']->get_prefix('width') . $this->current_wrapper_col, $this->wrappers[$this->current_wrapper]);
+			$this->_set_property('class', $class . ' ' . $breakpoint->get_prefix('width') . $this->current_wrapper_col, $this->wrappers[$this->current_wrapper]);
 			$this->current_wrapper = null;
 			$this->current_wrapper_col = 0;
 		}
@@ -300,7 +300,7 @@ class Upfront_Virtual_Region {
 		$module_data = array_merge(array('name' => '', 'properties' => array(), 'objects' => array()), $other_data);
 		$pos_class = '';
 		$total_col = 0;
-		$breakpoints = $this->grid->get_breakpoints();
+		$breakpoint = $this->grid->get_default_breakpoint();
 		$position = array_merge(array(
 			'width' => 1,
 			'margin-left' => 0,
@@ -309,7 +309,7 @@ class Upfront_Virtual_Region {
 			'margin-bottom' => 0
 		), $position);
 		foreach ( $position as $pfx => $value ) {
-			$pos_class .= $breakpoints['desktop']->get_prefix($pfx) . $value . ' ';
+			$pos_class .= $breakpoint->get_prefix($pfx) . $value . ' ';
 			if ( in_array($pfx, array('width', 'margin-left', 'margin-right')) )
 				$total_col += $value;
 		}
@@ -340,7 +340,7 @@ class Upfront_Virtual_Region {
 		$group_data = array_merge(array('name' => '', 'properties' => array(), 'modules' => array(), 'wrappers' => array()), $other_data);
 		$pos_class = '';
 		$total_col = 0;
-		$breakpoints = $this->grid->get_breakpoints();
+		$breakpoint = $this->grid->get_default_breakpoint();
 		$position = array_merge(array(
 			'width' => 1,
 			'margin-left' => 0,
@@ -349,7 +349,7 @@ class Upfront_Virtual_Region {
 			'margin-bottom' => 0
 		), $position);
 		foreach ( $position as $pfx => $value ) {
-			$pos_class .= $breakpoints['desktop']->get_prefix($pfx) . $value . ' ';
+			$pos_class .= $breakpoint->get_prefix($pfx) . $value . ' ';
 			if ( in_array($pfx, array('width', 'margin-left', 'margin-right')) )
 				$total_col += $value;
 		}
@@ -372,8 +372,8 @@ class Upfront_Virtual_Region {
 	public function add_object ($id = 'object', $properties = array(), $other_data = array(), $group = '') {
 		$object_id = !empty($properties['element_id']) ? $properties['element_id'] : upfront_get_unique_id($id);
 		$object_data = array_merge(array('name' => '', 'properties' => array()), $other_data);
-		$breakpoints = $this->grid->get_breakpoints();
-		$col_class = $breakpoints['desktop']->get_prefix('width') . $breakpoints['desktop']->get_columns();
+		$breakpoint = $this->grid->get_default_breakpoint();
+		$col_class = $breakpoint->get_prefix('width') . $breakpoint->get_columns();
 		$properties['class'] = rtrim($col_class) . ( isset($properties['class']) ? ' ' . $properties['class'] : '' );
 		foreach ( $properties as $prop => $value ) {
 			$this->_set_property($prop, $value, $object_data);

@@ -884,7 +884,7 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 
 }))();
 
-var ResponsiveEditor = new (Subapplication.extend({
+var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	Objects: {},
 
 	boot: function () {
@@ -893,16 +893,19 @@ var ResponsiveEditor = new (Subapplication.extend({
 
 	start: function () {
 		Upfront.Util.log("Starting responsive mode.")
-    Upfront.Application.sidebar.render();
-    this.topbar = new Upfront.Views.Editor.Topbar.Topbar();
-    this.topbar.start();
+		this.stop();
+		this.set_up_event_plumbing_before_render();
+    	Upfront.Application.sidebar.render();
+    	this.topbar = new Upfront.Views.Editor.Topbar.Topbar();
+    	this.topbar.start();
 		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
 
 		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout upfront-edit-layout").addClass("upfront-edit-responsive");
 	},
 
 	stop: function () {
-    this.topbar.stop();
+		if ( this.topbar )
+		    this.topbar.stop();
 		Upfront.Util.log("Leaving responsive mode.")
 		return this.stopListening(Upfront.Events);
 	}

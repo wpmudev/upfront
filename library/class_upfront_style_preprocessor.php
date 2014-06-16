@@ -24,11 +24,10 @@ class Upfront_StylePreprocessor {
 		$breakpoints = $this->_grid->get_breakpoints();
 		$style = '';
 		$top_prefixes = array();
-		foreach ($breakpoints as $scope => $breakpoint_class) {
+		foreach ($breakpoints as $scope => $breakpoint) {
 			if($scope != 'desktop')
 				continue;
 
-			$breakpoint = new $breakpoint_class;
 			$columns = $breakpoint->get_columns();
 			$baseline_grid = $override_baseline > 0 ? $override_baseline : $breakpoint->get_baseline();
 			if(!isset($top_prefixes[$baseline_grid]))
@@ -81,8 +80,7 @@ class Upfront_StylePreprocessor {
 		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval($_POST['baseline']) : intval($_GET['baseline']);
 		$breakpoints = $this->_grid->get_breakpoints();
 		$style = '';
-		foreach ($breakpoints as $scope => $breakpoint_class) {
-			$breakpoint = new $breakpoint_class;
+		foreach ($breakpoints as $scope => $breakpoint) {
 			$columns = $breakpoint->get_columns();
 			$baseline_grid = $override_baseline > 0 ? $override_baseline : $breakpoint->get_baseline();
 			$width = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
@@ -188,10 +186,9 @@ class Upfront_StylePreprocessor {
 		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval($_POST['baseline']) : intval($_GET['baseline']);
 		$breakpoints = $this->_grid->get_breakpoints();
 		$style = '';
-		foreach ($breakpoints as $scope => $breakpoint_class) {
+		foreach ($breakpoints as $scope => $breakpoint) {
 			if($scope != 'desktop')
 				continue;
-			$breakpoint = new $breakpoint_class;
 			$columns = $breakpoint->get_columns();
 			$baseline_grid = $override_baseline > 0 ? $override_baseline : $breakpoint->get_baseline();
 			$width = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
@@ -265,8 +262,10 @@ class Upfront_StylePreprocessor {
 					'}' .
 				'';
 			}
-			$style .= $breakpoint->get_editor_root_rule($scope, $breakpoints) . "\n";
-			$style .= join("\n", $rules) . "\n\n";
+			$style .= $breakpoint->wrap(
+				$breakpoint->get_editor_root_rule($scope, $breakpoints) . "\n" . join("\n", $rules) . "\n\n",
+				$breakpoints, true
+			);
 		}
 		return $style;
 	}

@@ -333,34 +333,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
     if (empty($theme_info)) {
       // Add defaults
       //todo - this is duplicated in responsive server - centralize
-			$defaults = array(
-        array(
-          'name' => 'Default Desktop',
-          'short_name' => 'Default',
-          'default' => true,
-          'id' => 'desktop',
-          'width' => 1080,
-          'columns' => 24,
-          'enabled' => true,
-          'fixed' => true
-        ),
-        array(
-          'name' => 'Tablet',
-          'short_name' => 'Tablet',
-          'id' => 'tablet',
-          'width' => 570,
-          'columns' => 12,
-          'fixed' => true
-        ),
-        array(
-          'name' => 'Mobile',
-          'short_name' => 'Mobile',
-          'id' => 'mobile',
-          'width' => 315,
-          'columns' => 7,
-          'fixed' => true
-        )
-      );
+			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
       $theme_info = json_encode(array('breakpoints' => $defaults));
     }
 
@@ -1072,37 +1045,7 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 		$responsive_settings = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
 		if(empty($responsive_settings)) {
       // Add defaults
-			$defaults = array(
-        array(
-          'name' => 'Default Desktop',
-          'short_name' => 'Desktop',
-          'default' => true,
-          'id' => 'desktop',
-          'width' => 1080,
-          'columns' => 24,
-          'enabled' => true,
-          'fixed' => true
-        ),
-        array(
-          'name' => 'Tablet',
-          'short_name' => 'Tablet',
-          'id' => 'tablet',
-          'width' => 570,
-          'columns' => 12
-        ),
-        array(
-          'name' => 'Mobile',
-          'short_name' => 'Mobile',
-          'id' => 'mobile',
-          'width' => 315,
-          'columns' => 7
-        ),
-        array(
-          'name' => 'Custom Width',
-          'short_name' => 'Custom',
-          'id' => 'custom'
-        )
-      );
+			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
       $responsive_settings = json_encode($defaults);
     }
 		$this->_out(new Upfront_JsonResponse_Success($responsive_settings));
