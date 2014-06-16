@@ -1258,6 +1258,7 @@ define(function() {
 				if (ActiveFilters.max_pages > 1) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></div>';
 
 				_.each(_.range(1, ActiveFilters.max_pages), function (idx) {
+					if (idx > ActiveFilters.max_pages) return;
 					var cls = idx == ActiveFilters.current_page ? 'current' : '';
 					markup += '<div class="upfront-pagination_item upfront-pagination_page-item ' + cls + '" data-idx="' + idx + '">' + idx + '</div>';
 				});

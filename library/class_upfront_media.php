@@ -94,7 +94,7 @@ class Upfront_MediaCollection extends Upfront_Media {
 			$ret[] = $item->to_php();
 		}
         $meta = array(
-            "max_pages" => $this->_query->max_num_pages,
+            "max_pages" => $this->_query->max_num_pages + 1,
         );
 		return array(
             'items' => $ret,
