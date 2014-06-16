@@ -2099,7 +2099,7 @@ RedactorPlugins.icons = {
             panel: this.panel
         };
     },
-    panel: UeditorPanel.extend(_.extend({}, Upfront_Scroll_Mixin, {
+    panel: UeditorPanel.extend(_.extend({}, Upfront.Views.Mixins.Upfront_Scroll_Mixin, {
         tpl: _.template($(tpl).find('#font-icons').html()),
         events:{
             'click .ueditor-font-icon': 'select_icon',

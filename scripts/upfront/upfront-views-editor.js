@@ -8224,10 +8224,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionPanels": RegionPanels,
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
-			"CSSEditor": CSSEditor
-		}
+			"CSSEditor": CSSEditor,
+		},
+    Mixins: {
+      "Upfront_Scroll_Mixin": Upfront_Scroll_Mixin
+    }
 	};
 });
-    return Upfront_Scroll_Mixin;
 })(jQuery);
 
