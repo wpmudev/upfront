@@ -558,6 +558,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 		this.destroy_settings();
 		this.templateEditor.open({tpl: tpl, postPart: part});
+		Upfront.Events.trigger('post:parttemplates:edit');
 	},
 
 	togglePostLayoutEditorMode: function(postView){

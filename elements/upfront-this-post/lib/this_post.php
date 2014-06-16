@@ -287,7 +287,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function get_theme_postpart_templates($type, $post_type, $id){
 		$tpl_path = get_stylesheet_directory() . '/templates/postparts';
-		if(!file_exists($layouts_path))
+		if(!file_exists($tpl_path))
 			return false;
 
 		$base_filename = $tpl_path . '/' . $type . '-';
@@ -553,7 +553,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 	}
 
 	public function save_part_template(){
-		$tpl = isset($_POST['tpl']) ? $_POST['tpl'] : false;
+		$tpl = isset($_POST['tpl']) ? stripslashes($_POST['tpl']) : false;
 		$type = isset($_POST['type']) ? $_POST['type'] : false;
 		$part = isset($_POST['part']) ? $_POST['part'] : false;
 		$id = isset($_POST['id']) ? $_POST['id'] : false;
