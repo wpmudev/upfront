@@ -36,7 +36,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			this.getPostLayout();
 
-			this.fetchParts();
+			//this.fetchParts();
 		},
 
 		fetchParts: function(parts){
@@ -48,7 +48,7 @@ define("content", deps, function(postTpl, ContentTools) {
 					action: 'content_part_markup',
 					post_id: this.postId,
 					options: this.postView.property('partOptions'),
-					templates: this.postView.property('templates')
+					templates: this.postView.partTemplates
 				}
 			;
 
@@ -90,39 +90,40 @@ define("content", deps, function(postTpl, ContentTools) {
 			if(this.loadingLayout)
 				return this.loadingLayout;
 
-
-
 			var me = this,
 				deferred = $.Deferred(),
 				layoutType = me.postView.property('type') == 'ThisPostModel' ? 'single' : 'archive',
 				id = layoutType == 'single' ? this.postId : me.postView.property('element_id').replace('uposts-object-','')
 			;
 
-
 			if(me.postView.postLayout){
-				me.layoutData = {
-					postLayout: me.postView.postLayout,
-					partOptions: me.postView.partOptions || {}
-				}
+				me.layoutData.postLayout = me.postView.postLayout;
+				me.layoutData.partOptions = me.postView.partOptions || {};
+
 				deferred.resolve(me.layoutData);
 				this.loadingLayout = deferred.promise();
 				return this.loadingLayout;
 			}
+
 			this.getPost().done(function(){
 				Upfront.Util.post({
 					action: 'upfront_get_postlayout',
 					type: layoutType,
 					id: id,
+					post_id: me.postId,
 					post_type: me.post.get('post_type')
 				}).done(function(response){
 					me.layoutData = response.data;
 					if(!me.layoutData.partOptions)
 						me.layoutData.partOptions = {};
-					me.postView.postLayout = me.layoutData.postLayout;
-					me.postView.partOptions = me.layoutData.partOptions;
+					_.extend(me.postView, me.layoutData);
+
+					me.parts = me.layoutData.partContents;
+					me.replacements = me.layoutData.partContents.replacements;
+
 					deferred.resolve(me.layoutData);
 				});
-			})
+			});
 			this.loadingLayout = deferred.promise();
 			return this.loadingLayout;
 		},
@@ -131,24 +132,24 @@ define("content", deps, function(postTpl, ContentTools) {
 			var me = this,
 				markupper = ContentTools.getMarkupper()
 			;
+			/*
 			if(!this.parts){
 				this.$el.html('Loading');
 				return this.loadingParts.done(function(){
 					me.render();
 				});
 			}
-
+*/
 			if(!this.layoutData){
 				this.$el.html('Loading');
 				return this.loadingLayout.done(function(){
 					me.render();
-				})
+				});
 			}
-			else // When rerender from saving the layout
-				this.layoutData = {
-					postLayout: this.postView.postLayout,
-					partOptions: this.postView.partOptions
-				}
+			else {// When rerender from saving the layout
+				this.layoutData.postLayout = this.postView.postLayout;
+				this.layoutData.partOptions = this.postView.partOptions;
+			}
 
 			var wrappers = this.layoutData.postLayout,
 				options = this.layoutData.partOptions || {},
@@ -184,7 +185,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		getTemplate: function(part){
-			var templates = this.postView.property('templates');
+			var templates = this.postView.partTemplates;
 
 			if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
 				part = 'excerpt';

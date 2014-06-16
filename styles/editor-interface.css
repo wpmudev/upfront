@@ -9198,6 +9198,7 @@ div.inline-number.plaintext-settings input {
 	cursor: pointer;
 	border-radius:3px;
 	font-weight:300;
+	text-transform: capitalize;
 }
 
 a.upfront-css-image {
@@ -10076,10 +10077,10 @@ a.feature_image_selector:after {
   margin-top: 36px;
 }
 a.feature_image_selector.change_feature_image:after {
-	content: 'Change feature image';	
+	content: 'Change feature image';
 }
 div.upfront-region-container:hover > a.feature_image_selector {
-	display:block;	
+	display:block;
 }
 div.upfront-region-container-active > a.feature_image_selector {
 	display: none !important;

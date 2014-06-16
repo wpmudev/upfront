@@ -2,7 +2,9 @@
 
 var PostPartView = Upfront.Views.ObjectView.extend({
 	initialize: function(opts){
-		var postPart = this.model.get_property_value_by_name('postPart');
+		var me = this,
+			postPart = this.model.get_property_value_by_name('postPart')
+		;
 		this.postPart = postPart;
 
 		console.log('initializing view');
@@ -10,11 +12,19 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, 'entity:resize_start', this.close_settings);
 		this.listenTo(Upfront.Events, 'entity:drag_start', this.close_settings);
 
+		//Add the options to the model
+		this.postView = Upfront.Application.PostLayoutEditor.postView;
+		if(this.postView.partOptions && this.postView.partOptions[this.postPart]){
+			_.each(this.postView.partOptions[this.postPart], function(value, key){
+				me.model.set_property(key, value, true);
+			});
+		}
+
+
 		this.listenTo(this.model.get('properties'), 'change add remove', this.updateOptions);
 
 		console.log(Upfront.Util.model_to_json(this.model));
 
-		this.postView = Upfront.Application.PostLayoutEditor.postView;
 
 		this.listenTo(this.postView.model, 'template:' + postPart, this.refreshTemplate);
 
@@ -102,13 +112,13 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	getTemplate: function(){
-		var templates = this.postView.property('templates');
-		
+		var templates = this.postView.partTemplates;
+
 		var part = this.postPart;
-		
+
 		if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
 			part = 'excerpt';
-		
+
 		if(templates && templates[part])
 			return templates[part];
 
@@ -413,7 +423,8 @@ var TemplateEditorField = Upfront.Views.Editor.Field.Field.extend({
 		this.$el.html('<a href="#" title="Edit template" class="upfront-css-edit upfront-template-edit">Edit HTML template</a>');
 		return this;
 	},
-	prepareTemplateEditor: function(){
+	prepareTemplateEditor: function(e){
+		e.preventDefault();
 		Upfront.Events.trigger('post:edit:templatepart', this.model.tpl, this.model.get_property_value_by_name('postPart'));
 	},
 });
@@ -465,7 +476,7 @@ var TemplateEditor = Backbone.View.extend({
 
 		editor.detach();
 
-		resizable.html('<div class="upfront-css-top ui-resizable-handle ui-resizable-n"><a class="upfront-css-close" href="#">close</a></div>');
+		resizable.html('<div class="upfront-css-top ui-resizable-handle ui-resizable-n"><span class="upfront-css-type">' + this.postPart + ' Part Template</span><a class="upfront-css-close" href="#">close</a></div>');
 		resizable.append('<div class="upfront-css-body"><div class="upfront_code-editor-section upfront_code-markup active"><div class="upfront-css-ace"></div></div><button>Save</button></div>');
 
 		this.resizeHandler = this.resizeHandler || function(){
@@ -540,7 +551,8 @@ var TemplateEditor = Backbone.View.extend({
 		this.trigger('save', this.ace.getSession().getValue(), this.postPart);
 	},
 
-	cancel: function(){
+	cancel: function(e){
+		e.preventDefault();
 		this.trigger('cancel');
 	},
 

@@ -13,6 +13,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 	);
 	protected $parts;
 
+	public static $partTemplates = array();
+
 	public function __construct($data){
 		parent::__construct($data);
 		$parts = array_values(self::$PARTNAMES);
@@ -32,8 +34,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$replacements = array();
 		$tpls = array();
 
+		if(!sizeof(self::$partTemplates))
+			self::$partTemplates = self::get_templates();
+
 		if(!$tpl)
-			$tpl = file_get_contents(dirname(dirname(__FILE__)) . '/tpl/' . $type . '.php');
+			$tpl = self::$partTemplates[$type];
 
 		switch($type){
 			case self::$PARTNAMES['AUTHOR']:
@@ -184,8 +189,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 		else
 			$excerpt = $properties['content_type'] == 'excerpt';//?true:false;
 
+		$templates = self::find_partTemplates('single', $this_post->post_type, $this_post->ID);
+
 		$options = $layoutData['partOptions'];
-		$templates = !empty($properties['templates']) ? $properties['templates'] : array();
 
 		$layout = array(
 			'wrappers' => $layoutData['postLayout'],
@@ -200,7 +206,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			foreach($w['objects'] as $k => $o){
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
-				$tpl =  isset($templates[$o['slug']]) ? $templates[$o['slug']] : false;
+				$tpl = $templates[$o['slug']];
 				$markups = self::get_post_part($o['slug'], $opts, $tpl);
 				$layout['wrappers'][$i]['objects'][$k]['markup'] = $markups['tpl'];
 				$layout['extraClasses'][$o['slug']] = isset($opts['extraClasses']) ? $opts['extraClasses'] : '';
@@ -222,7 +228,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function find_postlayout($type, $post_type, $id){
-		$key = get_stylesheet() . '-' . $type . '-';
+		$key = get_stylesheet() . '-postlayout-' . $type . '-';
 		$cascade = array($key . $id,  $key . $post_type);
 		$found = false;
 		$i = 0;
@@ -244,6 +250,47 @@ class Upfront_ThisPostView extends Upfront_Object {
 			return false;
 
 		$base_filename = $layouts_path . '/' . $type . '-';
+
+		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
+		$found = false;
+		$i = 0;
+
+		while(!$found && $i < sizeof($cascade)){
+			if(file_exists($cascade[$i]))
+				$found = require $cascade[$i];
+			$i++;
+		}
+
+		return $found;
+	}
+
+	public static function find_partTemplates($type, $post_type, $id){
+		$key = get_stylesheet() . '-parttemplates-' . $type . '-';
+		$cascade = array($key . $id,  $key . $post_type);
+		$found = false;
+		$i = 0;
+		$defaults = self::get_templates();
+		while(!$found && $i < sizeof($cascade)){
+			$found = get_option($cascade[$i]);
+			$i++;
+		}
+		if(!$found)
+			$found = self::get_theme_postpart_templates($type, $post_type, $id);
+
+		if($found)
+			$found = array_merge($defaults, $found);
+		else
+			$found = $defaults;
+
+		return $found;
+	}
+
+	public static function get_theme_postpart_templates($type, $post_type, $id){
+		$tpl_path = get_stylesheet_directory() . '/templates/postparts';
+		if(!file_exists($layouts_path))
+			return false;
+
+		$base_filename = $tpl_path . '/' . $type . '-';
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
 		$found = false;
@@ -329,13 +376,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	protected static function get_templates(){
-		$names = array('author', 'categories', 'comments_count', 'contents', 'excerpt', 'date', 'featured_image', 'tags', 'title');
-		$templates = array();
-		$dir = dirname(dirname(__FILE__)) . '/tpl/';
-		foreach($names as $name){
-			$templates[$name] = file_get_contents($dir . $name . '.php');
-		}
-		return $templates;
+		return include dirname(dirname(__FILE__)) . '/tpl/part_templates.php';
 	}
 
 	/**
@@ -401,6 +442,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"));
 		add_action('wp_ajax_content_part_markup', array($this, "get_part_contents"));
 		add_action('wp_ajax_this_post-get_thumbnail', array($this, "get_thumbnail"));
+		add_action('wp_ajax_upfront_save_postparttemplate', array($this, "save_part_template"));
 		add_action('wp_ajax_upfront_save_postlayout', array($this, "save_postlayout"));
 		add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
 		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
@@ -439,6 +481,19 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				array_push($parts, array('slug' => $slug, 'options' => isset($options[$slug]) ? $options[$slug] : array()));
 		}
 
+		$output = $this->generate_part_contents($post_id, $options, $templates, $parts);
+
+		$this->_out(new Upfront_JsonResponse_Success($output));
+	}
+
+	protected function generate_part_contents($post_id, $options, $templates, $parts = false){
+		//Prepare the parts before rendering
+		if(!$parts){
+			$parts = array();
+			foreach(Upfront_ThisPostView::$PARTNAMES as $slug)
+				array_push($parts, array('slug' => $slug, 'options' => isset($options[$slug]) ? $options[$slug] : array()));
+		}
+
 		$post = get_post($post_id);
 
 		$tpls = array();
@@ -462,7 +517,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			'replacements' => $replacements
 		);
 
-		$this->_out(new Upfront_JsonResponse_Success($output));
+		return $output;
 	}
 
 	public function render_markup(){
@@ -497,13 +552,44 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		)));
 	}
 
+	public function save_part_template(){
+		$tpl = isset($_POST['tpl']) ? $_POST['tpl'] : false;
+		$type = isset($_POST['type']) ? $_POST['type'] : false;
+		$part = isset($_POST['part']) ? $_POST['part'] : false;
+		$id = isset($_POST['id']) ? $_POST['id'] : false;
+
+		if(!$tpl || !$type || !$part || !$id)
+			$this->_out(new Upfront_JsonResponse_Error('Missing required data.'));
+
+		if($type == 'UpostsModel')
+			$type = 'archive';
+		else
+			$type = 'single';
+
+		$key = get_stylesheet() . '-parttemplates-' . $type . '-' . $id;
+
+		$templates = get_option($key);
+		if(!$templates)
+			$templates = array();
+
+		$templates[$part] = $tpl;
+
+		update_option($key, $templates);
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'stored' => true,
+			'key' => $key,
+			'tpl' => $tpl
+		)));
+	}
+
 	public function save_postlayout() {
 		$layoutData = isset($_POST['layoutData']) ? $_POST['layoutData'] : false;
 		$cascade = isset($_POST['cascade']) ? $_POST['cascade'] : false;
 		if(!$layoutData || !$cascade)
 			$this->_out(new Upfront_JsonResponse_Error('No layout data or cascade sent.'));
 
-		$key = get_stylesheet() . '-' . $cascade;
+		$key = get_stylesheet() . '-postlayout-' . $cascade;
 
 		update_option($key, $layoutData);
 
@@ -512,16 +598,25 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			"layoutData" => $layoutData
 		)));
 	}
-
+	/**
+	 * Loads all the data needed for a single post to be edited.
+	 * @return null
+	 */
 	public function get_postlayout() {
 		$post_type = isset($_POST['post_type']) ? $_POST['post_type'] : false;
 		$type = isset($_POST['type']) ? $_POST['type'] : false;
 		$id = isset($_POST['id']) ? $_POST['id'] : false;
+		$post_id = isset($_POST['post_id']) ? $_POST['post_id'] : false;
 
-		if(!$post_type || !$type || !$id)
+		if(!$post_type || !$type || !$id || !$post_id)
 			$this->_out(new Upfront_JsonResponse_Error('No post_type, type or id sent.'));
 
-		$this->_out(new Upfront_JsonResponse_Success(Upfront_ThisPostView::find_postlayout($type, $post_type, $id)));
+		$layout_data = Upfront_ThisPostView::find_postlayout($type, $post_type, $id);
+
+		$layout_data['partTemplates'] = stripslashes_deep(Upfront_ThisPostView::find_partTemplates($type, $post_type, $id));
+		$layout_data['partContents'] = $this->generate_part_contents($post_id, $layout_data['partOptions'], $layout_data['partTemplates']);
+
+		$this->_out(new Upfront_JsonResponse_Success($layout_data));
 	}
 
 	public function update_image_thumbs($meta_id, $post_id, $key, $value){

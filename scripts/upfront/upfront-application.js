@@ -556,6 +556,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		if(this.templateEditor)
 			this.templateEditor.close();
 
+		this.destroy_settings();
 		this.templateEditor.open({tpl: tpl, postPart: part});
 	},
 
@@ -577,15 +578,10 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			layoutRegions = Application.layout.get('regions')
 		;
 		console.log(postView.postLayout);
+
 		this.templateEditor = new Upfront.Content.TemplateEditor();
 		this.listenTo(this.templateEditor, 'save', function(tpl, postPart){
-			var templates = me.postView.property('templates');
-			if(!templates)
-				templates = {};
-			templates[postPart] = tpl;
-			me.postView.property('templates', templates, false);
-			me.postView.model.trigger('template:' + postPart);
-			me.templateEditor.close();
+			me.savePartTemplate(tpl, postPart);
 		});
 
 		this.listenTo(this.templateEditor, 'cancel', function(){
@@ -594,6 +590,72 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 		this.listenToOnce(Upfront.Events, 'entity:region:added', this.preparePostRegion);
 		region.add_to(layoutRegions, layoutRegions.length - 1);
+	},
+
+	destroy_settings: function(){
+		if (!this.settings_view) return false;
+
+		this.settings_view.trigger('closed');
+
+		this.settings_view.remove();
+		this.settings_view = false;
+
+		//Restore the settings div
+		$('body').append('<div id="settings"/>');
+	},
+
+	savePartTemplate: function(tpl, postPart){
+		var me = this,
+			saveDialog = new Upfront.Views.Editor.SaveDialog({
+				question: 'Do you wish to save this part template only for this element, or for all the elements of this post type?',
+				thisPostButton: 'This element only',
+				allPostsButton: 'All elements with the same post type'
+			})
+		;
+
+		saveDialog
+			.render()
+			.on('closed', function(){
+				saveDialog.remove();
+				saveDialog = false;
+			})
+			.on('save', function(type){
+				var id, element = me.postView.property('type');
+
+				if(type == 'this-post'){
+					if(element == 'UpostsModel')
+						id = me.postView.property('element_id').replace('uposts-object-', '');
+					else
+						id = me.postView.editor.postId;
+				}
+				else
+					id = me.postView.editor.post.get('post_type');
+
+				Upfront.Util.post({
+						action: 'upfront_save_postparttemplate',
+						part: postPart,
+						tpl: tpl,
+						type: element,
+						id: id
+					})
+					.done(function(response){
+						console.log('Saved template');
+						me.postView.partTemplates[postPart] = tpl;
+						me.postView.model.trigger('template:' + postPart);
+						me.templateEditor.close();
+						saveDialog.close();
+						Upfront.Views.Editor.notify('Saved template for ' + postPart + ' part.');
+					})
+				;
+			})
+		;
+
+/*
+		var templates = me.postView.property('templates');
+		if(!templates)
+			templates = {};
+		templates[postPart] = tpl;
+		me.postView.property('templates', templates, false);*/
 	},
 
 	getPostRegionData: function(postView){
@@ -608,7 +670,6 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 				modules: [],
 				position: container.get('position') - 1,
 				properties: [
-//					{name: 'row', value: elementSize.row},
 					{name: 'col', value: elementSize.col}
 				],
 				scope: 'local'
