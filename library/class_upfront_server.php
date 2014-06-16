@@ -332,10 +332,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
     $theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
     if (empty($theme_info)) {
       // Add defaults
-      //todo - this is duplicated in responsive server - centralize
 			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
       $theme_info = json_encode(array('breakpoints' => $defaults));
     }
+
+    $theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
+    if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
@@ -392,6 +394,7 @@ Upfront.mainData = {
   specificity: {$specificity},
   gridInfo: {$grid_info},
   themeInfo: {$theme_info},
+  themeFonts: {$theme_fonts},
   content: {$content}
 };
 EOMainJs;
@@ -1078,3 +1081,31 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
   }
 }
 Upfront_Server_ResponsiveServer::serve();
+
+
+class Upfront_Server_ThemeFontsServer extends Upfront_Server {
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		upfront_add_ajax('upfront_get_theme_fonts', array($this, 'get_theme_fonts'));
+		upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
+	}
+
+	public function get_theme_fonts() {
+		$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
+    if (empty($theme_fonts)) $theme_fonts = array();
+		$this->_out(new Upfront_JsonResponse_Success($theme_fonts));
+	}
+
+  public function update_theme_fonts() {
+    $theme_fonts = isset($_POST['theme_fonts']) ? $_POST['theme_fonts'] : array();
+		update_option('upfront_' . get_stylesheet() . '_theme_fonts', json_encode($theme_fonts));
+
+		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme fonts updated'));
+  }
+}
+Upfront_Server_ThemeFontsServer::serve();

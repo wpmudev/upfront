@@ -10098,12 +10098,12 @@ div.upfront-region-container-active > a.feature_image_selector {
 /* Font picker */
 #font-picker {
   position: absolute;
-  top: -30px;
   left: 175px;
-  top: -370px;
+  top: -150px;
   width: 451px;
   height: 215px;
   background: #e5f3fe;
+  z-index: 1;
 }
 #font-picker .panel-title {
 	font: 18px/15px 'Source Sans Pro', sans-serif;

@@ -4490,12 +4490,44 @@ var SelectView = Backbone.View.extend({
 });
 
 var ThemeFontModel = Backbone.Model.extend({
+  // toJSON: function() {
+    // return {
+      // font: this.get('font').toJSON(),
+      // variant: this.get('variant')
+    // };
+  // }
 });
 var ThemeFontsCollection = Backbone.Collection.extend({
   model: ThemeFontModel
 });
 
-var theme_fonts_collection = new ThemeFontsCollection();
+var theme_fonts_collection = new ThemeFontsCollection(Upfront.mainData.themeFonts);
+
+var Theme_Fonts_Storage = function(stored_fonts) {
+  var theme_fonts;
+
+  var initialize = function() {
+    // When more than one weights are added at once don't send bunch of server calls
+    var save_theme_fonts_debounced = _.debounce(save_theme_fonts, 100);
+    theme_fonts_collection.on('add remove', save_theme_fonts_debounced);
+  };
+
+  var save_theme_fonts = function() {
+    var postData = {
+      action: 'upfront_update_theme_fonts',
+      theme_fonts: theme_fonts_collection.toJSON()
+    };
+
+    Upfront.Util.post(postData)
+      .error(function(){
+        return notifier.addMessage('Theme fonts could not be saved.');
+      });
+  };
+
+  initialize();
+}
+
+var theme_fonts_storage = new Theme_Fonts_Storage();
 
 var ThemeFontListItem = Backbone.View.extend({
   className: 'theme-font-list-item',
@@ -4506,7 +4538,7 @@ var ThemeFontListItem = Backbone.View.extend({
 	template: $(_Upfront_Templates.popup).find('#theme-font-list-item').html(),
   render: function() {
     this.$el.html(_.template(this.template, {
-      family: this.model.get('font').get('family'),
+      family: this.model.get('font').family,
       variant: this.model.get('variant')
     }));
 
@@ -4596,7 +4628,7 @@ var FontPicker = Backbone.View.extend({
     _.each(this.choose_variants.get_value(), function(variant) {
       theme_fonts_collection.add({
         id: this.font_family_select.get_value().get('family') + variant,
-        font: this.font_family_select.get_value(),
+        font: this.font_family_select.get_value().toJSON(),
         variant: variant
       });
     }, this);
