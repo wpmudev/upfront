@@ -37,12 +37,12 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			content = $(content).html();
 		}
 
-		$(content).find('div.plaintxt_padding')
+		$(content).find('div.plaintxt_padding');
 		var data = {
 			"content" : content,
 			"background_color" : this.model.get_property_value_by_name("background_color"),
 			"border" : this.model.get_property_value_by_name("border")
-		}
+		};
 		var rendered = '';
 		rendered = _.template(template, data);
 		return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
@@ -115,73 +115,71 @@ var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
 var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
   className: 'plaintxt-settings-panel',
   initialize: function (opts) {
-	  this.options = opts;
-	var render_all,
-	  me = this;
+		this.options = opts;
+		var render_all,
+		me = this;
 
-	  render_all = function(){
-	  	this.settings.invoke('render');
-	  };
+		render_all = function(){
+			this.settings.invoke('render');
+		};
 
         _.bindAll(this, 'onBgColor', 'onBorderColor');
 
 		this.settings = _([
-      new Upfront.Views.Editor.Settings.Item({
+			new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: "Textbox Appearance",
 				fields: [
-				  new Upfront.Views.Editor.Field.Radios({
-            className: 'inline-radios  plaintext-settings',
-            model: this.model,
-            property: 'border_style',
-            label: "Border",
-            default_value: "solid",
-            values: [
-              { label: "None", value: 'none' },
-              { label: "Solid", value: 'solid' },
-              { label: "Dashed", value: 'dashed' },
-              { label: "Dotted", value: 'dotted' }
-            ]
-				  }),
-				  new Upfront.Views.Editor.Field.Number({
-            className: 'inline-number plaintext-settings',
-            model: this.model,
-            min: 1,
-            property: 'border_width',
-            label: "Width",
-            default_value: "1",
-            values: [
-              { label: "", value: '1' }
-            ]
-				  }),
-				  new Upfront.Views.Editor.Field.Color({
-            className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color border-color',
-            model: this.model,
-            property: 'border_color',
-            label: 'Color',
-            spectrum: {
-              preferredFormat: "hex",
-              change: this.onBorderColor,
-              move: this.onBorderColor
-            }
-				  }),
-
-
-				  new Upfront.Views.Editor.Field.Color({
-					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color',
-					model: this.model,
-					property: 'bg_color',
-          label_style: 'inline',
-					label: 'Background Color',
-					spectrum: {
-					  preferredFormat: "hex",
-					  change: this.onBgColor,
-					  move: this.onBgColor,
-					}
-				  })
+					new Upfront.Views.Editor.Field.Radios({
+						className: 'inline-radios  plaintext-settings',
+						model: this.model,
+						property: 'border_style',
+						label: "Border",
+						default_value: "none",
+						values: [
+							{ label: "None", value: 'none' },
+							{ label: "Solid", value: 'solid' },
+							{ label: "Dashed", value: 'dashed' },
+							{ label: "Dotted", value: 'dotted' }
+						]
+					}),
+					new Upfront.Views.Editor.Field.Number({
+						className: 'inline-number plaintext-settings',
+						model: this.model,
+						min: 1,
+						property: 'border_width',
+						label: "Width",
+						default_value: "0",
+						values: [
+							{ label: "", value: '1' }
+						]
+					}),
+					new Upfront.Views.Editor.Field.Color({
+						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color border-color',
+						model: this.model,
+						property: 'border_color',
+						label: 'Color',
+						spectrum: {
+							preferredFormat: "hex",
+							change: this.onBorderColor,
+							move: this.onBorderColor
+						}
+					}),
+					new Upfront.Views.Editor.Field.Color({
+						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color',
+						model: this.model,
+						property: 'bg_color',
+						label_style: 'inline',
+						label: 'Background Color',
+						spectrum: {
+							preferredFormat: "hex",
+							change: this.onBgColor,
+							move: this.onBgColor,
+						}
+					})
 				]
-			  })
-			]);
+			})
+		]);
 
         this.$el.on('change', 'input[name=border_style]', function(e){
           me.onBorderStyle(e);
