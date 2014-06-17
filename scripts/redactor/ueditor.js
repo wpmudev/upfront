@@ -265,6 +265,10 @@ var hackRedactor = function(){
 		//e.preventDefault();
 		Upfront.Util.log("Block styles keyboard shortcuts have been disabled");
 	};
+	
+	$.Redactor.prototype.placeholderStart = function (html) {
+		console.log('do nothing');
+	};
 };
 
 var Ueditor = function($el, options) {

@@ -106,3 +106,8 @@ div.upfront-navigation ul.menu li a, div.upfront-navigation ul.menu li {
 	position: relative;	
 }
 
+[data-already_floating="yes"] {
+    position: fixed !important;
+    top: 0px !important;
+    z-index: 99999999;
+}

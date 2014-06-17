@@ -27,9 +27,9 @@ class Upfront_UnewnavigationView extends Upfront_Object {
     //    if (is_user_logged_in()) {
       //      upfront_add_element_style('unewnavigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
       //  }
-        //if ($is_floating) {
-         //   upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
-       // }
+		if ($is_floating) {
+            wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
+        }
 
 		if($menu_name) {
 			$menu = wp_get_nav_menu_object($menu_name);
@@ -76,11 +76,13 @@ class Upfront_UnewnavigationView extends Upfront_Object {
     }
 
   public function add_styles_scripts() {
-	  wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
+	 		 wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
 
         if (is_user_logged_in()) {
 			 wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));
 		}
+		
+
   }
 }
 
