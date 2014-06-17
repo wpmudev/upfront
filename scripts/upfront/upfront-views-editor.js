@@ -6004,19 +6004,23 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				sub = this.model.is_main() ? false : this.model.get('sub'),
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
-				bg_type = new Field_Select({
+				region_types = [
+					{ label: "Solid color", value: 'color', icon: 'color' },
+					{ label: "Image", value: 'image', icon: 'image' },
+					{ label: "Image slider", value: 'slider', icon: 'slider' },
+					{ label: "Map", value: 'map', icon: 'map' },
+					{ label: "Video", value: 'video', icon: 'video' }
+				]
+			;
+			if (_upfront_post_data.post_id) {
+				region_types.push({ label: "Featured Image", value: 'featured', icon: 'image' });
+			}
+			var bg_type = new Field_Select({
 					model: this.model,
 					property: 'background_type',
 					default_value: 'color',
 					icon_class: 'upfront-region-field-icon',
-					values: [
-						{ label: "Solid color", value: 'color', icon: 'color' },
-						{ label: "Image", value: 'image', icon: 'image' },
-						{ label: "Featured Image", value: 'featured', icon: 'image' },
-						{ label: "Image slider", value: 'slider', icon: 'slider' },
-						{ label: "Map", value: 'map', icon: 'map' },
-						{ label: "Video", value: 'video', icon: 'video' }
-					],
+					values: region_types,
 					change: function () {
 						var value = this.get_value();
 						$content.find('.upfront-region-bg-setting-tab').not('.upfront-region-bg-setting-tab-'+value).hide();
