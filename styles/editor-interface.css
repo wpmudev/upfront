@@ -4614,6 +4614,13 @@ div.uinsert-selector a:hover {
 .upfront-region-field-icon-map-active:before {
 	background-position: -412px -578px;
 }
+.upfront-region-field-icon-feat:before {
+	background-position: -288px -511px;
+}
+.upfront-region-field-icon-feat:hover:before,
+.upfront-region-field-icon-feat-active:before {
+	background-position: -412px -511px;
+}
 .upfront-region-field-icon-expand-unlock:before {
 	/*background-position: -40px -612px;*/
 	background-position: -164px -612px;

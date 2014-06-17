@@ -6013,7 +6013,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				]
 			;
 			if (_upfront_post_data.post_id) {
-				region_types.push({ label: "Featured Image", value: 'featured', icon: 'image' });
+				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
 			}
 			var bg_type = new Field_Select({
 					model: this.model,
