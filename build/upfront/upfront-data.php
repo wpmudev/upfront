@@ -1,5 +1,5 @@
 <?php
-if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+if(!current_user_can('edit_posts')){
 	header('Status: 403');
 	die();
 }

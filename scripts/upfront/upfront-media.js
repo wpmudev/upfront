@@ -191,7 +191,7 @@ define(function() {
 		},
 		set_max_pages: function (max) {
 			this.max_pages = max || 1;
-			Upfront.Util.log("max pages " + this.max_pages);
+			//Upfront.Util.log("max pages " + this.max_pages);
 		},
 		prev_page: function () {
 			if (this.current_page > 1) return this.set_page(this.current_page-1);
@@ -645,7 +645,7 @@ define(function() {
 			render: function () {
 				var search = ActiveFilters.get("search").first(),
 					obj = search.toJSON();
-				console.log(ActiveFilters);
+				//console.log(ActiveFilters);
 				obj.total = ActiveFilters.get("search").length;
 				this.$el.empty().append(
 					_.template('Showing {{total}} results for <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">Clear search</a>', obj)

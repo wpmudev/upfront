@@ -691,7 +691,7 @@ class Upfront_MediaServer extends Upfront_Server {
         $this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
 }
-Upfront_MediaServer::serve();
+if (Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) Upfront_MediaServer::serve();
 
 function upfront_media_file_upload () {
     if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this
