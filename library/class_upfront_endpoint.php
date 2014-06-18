@@ -286,31 +286,59 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_upfront-edit-publish', array($this, "publish_post"));
-		add_action('wp_ajax_upfront-edit-draft', array($this, "draft_post"));
+		//add_action('wp_ajax_upfront-edit-publish', array($this, "publish_post"));
+		upfront_add_ajax('upfront-edit-publish', array($this, "publish_post"));
+		
+		//add_action('wp_ajax_upfront-edit-draft', array($this, "draft_post"));
+		upfront_add_ajax('upfront-edit-draft', array($this, "draft_post"));
 
-		add_action('wp_ajax_upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
-		add_action('wp_ajax_upfront-post-create_term', array($this, "create_new_term"));
-		add_action('wp_ajax_upfront-post-update_terms', array($this, "update_post_terms"));
+		//add_action('wp_ajax_upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
+		upfront_add_ajax('upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
+		
+		//add_action('wp_ajax_upfront-post-create_term', array($this, "create_new_term"));
+		upfront_add_ajax('upfront-post-create_term', array($this, "create_new_term"));
+		
+		//add_action('wp_ajax_upfront-post-update_terms', array($this, "update_post_terms"));
+		upfront_add_ajax('upfront-post-update_terms', array($this, "update_post_terms"));
 
 		//add_action('wp_ajax_upfront-get_page_data', array($this, "get_page_data"));
 		//add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
 
-		add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
-		add_action('wp_ajax_upfront-post-update_status', array($this, "update_post_status"));
-		add_action('wp_ajax_upfront-post-update_password', array($this, "update_post_password"));
+		//add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
+		upfront_add_ajax('upfront-post-update_slug', array($this, "update_post_slug"));
+		
+		//add_action('wp_ajax_upfront-post-update_status', array($this, "update_post_status"));
+		upfront_add_ajax('upfront-post-update_status', array($this, "update_post_status"));
+		
+		//add_action('wp_ajax_upfront-post-update_password', array($this, "update_post_password"));
+		upfront_add_ajax('upfront-post-update_password', array($this, "update_post_password"));
 
-		add_action('wp_ajax_upfront-comments-approve', array($this, "approve_comment"));
-		add_action('wp_ajax_upfront-comments-unapprove', array($this, "unapprove_comment"));
-		add_action('wp_ajax_upfront-comments-thrash', array($this, "thrash_comment"));
-		add_action('wp_ajax_upfront-comments-unthrash', array($this, "unthrash_comment"));
-		add_action('wp_ajax_upfront-comments-spam', array($this, "spam_comment"));
-		add_action('wp_ajax_upfront-comments-unspam', array($this, "unthrash_comment"));
+		//add_action('wp_ajax_upfront-comments-approve', array($this, "approve_comment"));
+		upfront_add_ajax('upfront-comments-approve', array($this, "approve_comment"));
+		
+		//add_action('wp_ajax_upfront-comments-unapprove', array($this, "unapprove_comment"));
+		upfront_add_ajax('upfront-comments-unapprove', array($this, "unapprove_comment"));
+		
+		//add_action('wp_ajax_upfront-comments-thrash', array($this, "thrash_comment"));
+		upfront_add_ajax('upfront-comments-thrash', array($this, "thrash_comment"));
+		
+		//add_action('wp_ajax_upfront-comments-unthrash', array($this, "unthrash_comment"));
+		upfront_add_ajax('upfront-comments-unthrash', array($this, "unthrash_comment"));
+		
+		//add_action('wp_ajax_upfront-comments-spam', array($this, "spam_comment"));
+		upfront_add_ajax('upfront-comments-spam', array($this, "spam_comment"));
+		
+		//add_action('wp_ajax_upfront-comments-unspam', array($this, "unthrash_comment"));
+		upfront_add_ajax('upfront-comments-unspam', array($this, "unthrash_comment"));
 
-		add_action('wp_ajax_upfront-comments-reply_to', array($this, "post_comment"));
-		add_action('wp_ajax_upfront-comments-update_comment', array($this, "update_comment"));
+		//add_action('wp_ajax_upfront-comments-reply_to', array($this, "post_comment"));
+		upfront_add_ajax('upfront-comments-reply_to', array($this, "post_comment"));
+		
+		//add_action('wp_ajax_upfront-comments-update_comment', array($this, "update_comment"));
+		upfront_add_ajax('upfront-comments-update_comment', array($this, "update_comment"));
 
-		add_action('wp_ajax_upfront-wp-model', array($this, "handle_model_request"));
+		//add_action('wp_ajax_upfront-wp-model', array($this, "handle_model_request"));
+		upfront_add_ajax('upfront-wp-model', array($this, "handle_model_request"));
 	}
 
 	function handle_model_request(){
@@ -324,10 +352,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function publish_post () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		$this->_process_post('publish');
 	}
 
 	function draft_post () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		$this->_process_post('draft');
 	}
 
@@ -351,6 +381,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function update_post_slug () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		$data = stripslashes_deep($_POST);
 		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
 		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
@@ -370,6 +401,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function update_post_status () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		$data = stripslashes_deep($_POST);
 		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
 		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
@@ -389,6 +421,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function update_post_password () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		$data = stripslashes_deep($_POST);
 		$post_id = !empty($data['post_id']) ? $data['post_id'] : false;
 		if (!$post_id) $this->_out(new Upfront_JsonResponse_Error("No post id"));
@@ -424,6 +457,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 
 	function save_term($data){
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		if(!current_user_can('manage_categories'))
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this"));
 		if(!$data['taxonomy'])
@@ -471,6 +505,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function save_term_list($data){
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		if(!$data['taxonomy'])
 			$this->_out(new Upfront_JsonResponse_Error("Invalid taxonomy."));
 
@@ -494,6 +529,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	 * @return null       Json response {postId, template}
 	 */
 	function update_page_template($data){
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
 		if(!current_user_can('edit_pages'))
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 

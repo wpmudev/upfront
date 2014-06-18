@@ -290,22 +290,47 @@ class Upfront_MediaServer extends Upfront_Server {
 	private function _add_hooks () {
         add_action('init', array($this, 'augment_attachments'));
 
-        add_action('wp_ajax_upfront-media-list_media', array($this, "list_media"));
-        add_action('wp_ajax_upfront-media-get_item', array($this, "get_item"));
-		add_action('wp_ajax_upfront-media-remove_item', array($this, "remove_item"));
-		add_action('wp_ajax_upfront-media-update_media_item', array($this, "update_media_item"));
-        add_action('wp_ajax_upfront-media-upload', array($this, "upload_media"));
-        add_action('wp_ajax_upfront-media-embed', array($this, "embed_media"));
-        add_action('wp_ajax_upfront-media-get_embed_raw', array($this, "get_embed_raw"));
+        //add_action('wp_ajax_upfront-media-list_media', array($this, "list_media"));
+        upfront_add_ajax('upfront-media-list_media', array($this, "list_media"));
+        
+        //add_action('wp_ajax_upfront-media-get_item', array($this, "get_item"));
+        upfront_add_ajax('upfront-media-get_item', array($this, "get_item"));
+		
+        //add_action('wp_ajax_upfront-media-remove_item', array($this, "remove_item"));
+        upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
+		
+        //add_action('wp_ajax_upfront-media-update_media_item', array($this, "update_media_item"));
+        upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
+        
+        //add_action('wp_ajax_upfront-media-upload', array($this, "upload_media"));
+        upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
+        
+        //add_action('wp_ajax_upfront-media-embed', array($this, "embed_media"));
+        upfront_add_ajax('upfront-media-embed', array($this, "embed_media"));
+        
+        //add_action('wp_ajax_upfront-media-get_embed_raw', array($this, "get_embed_raw"));
+        upfront_add_ajax('upfront-media-get_embed_raw', array($this, "get_embed_raw"));
 
-        add_action('wp_ajax_upfront-media-list_theme_images', array($this, "list_theme_images"));
-        add_action('wp_ajax_upfront-media-upload-theme-image', array($this, "upload_theme_image"));
+        //add_action('wp_ajax_upfront-media-list_theme_images', array($this, "list_theme_images"));
+        upfront_add_ajax('upfront-media-list_theme_images', array($this, "list_theme_images"));
+        
+        //add_action('wp_ajax_upfront-media-upload-theme-image', array($this, "upload_theme_image"));
+        upfront_add_ajax('upfront-media-upload-theme-image', array($this, "upload_theme_image"));
 
-        add_action('wp_ajax_upfront-media-get_labels', array($this, "list_labels"));
-        add_action('wp_ajax_upfront-media-add_label', array($this, "add_label"));
-        add_action('wp_ajax_upfront-media-associate_label', array($this, "associate_label"));
-        add_action('wp_ajax_upfront-media-disassociate_label', array($this, "disassociate_label"));
-        add_action('wp_ajax_upfront-media_get_image_labels', array($this, "get_image_labels"));
+        //add_action('wp_ajax_upfront-media-get_labels', array($this, "list_labels"));
+        upfront_add_ajax('upfront-media-get_labels', array($this, "list_labels"));
+        
+        //add_action('wp_ajax_upfront-media-add_label', array($this, "add_label"));
+        upfront_add_ajax('upfront-media-add_label', array($this, "add_label"));
+        
+        //add_action('wp_ajax_upfront-media-associate_label', array($this, "associate_label"));
+        upfront_add_ajax('upfront-media-associate_label', array($this, "associate_label"));
+        
+        //add_action('wp_ajax_upfront-media-disassociate_label', array($this, "disassociate_label"));
+        upfront_add_ajax('upfront-media-disassociate_label', array($this, "disassociate_label"));
+        
+        //add_action('wp_ajax_upfront-media_get_image_labels', array($this, "get_image_labels"));
+        upfront_add_ajax('upfront-media_get_image_labels', array($this, "get_image_labels"));
 	}
 
     /**
@@ -669,7 +694,7 @@ class Upfront_MediaServer extends Upfront_Server {
 Upfront_MediaServer::serve();
 
 function upfront_media_file_upload () {
-    if (!is_user_logged_in()) return false;
+    if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this
 	$base_url = Upfront::get_root_url();
 	wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
 	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));

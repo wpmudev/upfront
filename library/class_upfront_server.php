@@ -13,6 +13,8 @@ interface IUpfront_Server {
 
 abstract class Upfront_Server implements IUpfront_Server {
 
+	const REJECT_NOT_ALLOWED = "not allowed";
+
 	protected $_debugger;
 
 	protected function __construct () {
@@ -32,6 +34,12 @@ abstract class Upfront_Server implements IUpfront_Server {
 		header("Content-type: " . $out->get_content_type() . "; charset=utf-8");
 		die($out->get_output());
 	}
+
+	protected function _reject ($reason=false) {
+		$reason = $reason ? $reason : self::REJECT_NOT_ALLOWED;
+		$msg = new Upfront_JsonResponse_Error($reason);
+		$this->_out($msg);
+	}
 }
 
 
@@ -46,14 +54,29 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_upfront_load_layout', array($this, "load_layout"));
-		add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
-		add_action('wp_ajax_upfront_list_available_layout', array($this, "list_available_layout"));
-		add_action('wp_ajax_upfront_list_saved_layout', array($this, "list_saved_layout"));
-		add_action('wp_ajax_upfront_reset_layout', array($this, "reset_layout"));
-		add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
-		add_action('wp_ajax_upfront_update_layout_element', array($this, "update_layout_element"));
-		add_action('wp_ajax_upfront_update_insertcount', array($this, "update_insertcount"));
+		//add_action('wp_ajax_upfront_load_layout', array($this, "load_layout"));
+		upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
+		
+		//add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
+		upfront_add_ajax('upfront_save_layout', array($this, "save_layout"));
+		
+		//add_action('wp_ajax_upfront_list_available_layout', array($this, "list_available_layout"));
+		upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
+		
+		//add_action('wp_ajax_upfront_list_saved_layout', array($this, "list_saved_layout"));
+		upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
+		
+		//add_action('wp_ajax_upfront_reset_layout', array($this, "reset_layout"));
+		upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
+		
+		//add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
+		upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
+		
+		//add_action('wp_ajax_upfront_update_layout_element', array($this, "update_layout_element"));
+		upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
+		
+		//add_action('wp_ajax_upfront_update_insertcount', array($this, "update_insertcount"));
+		upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
 	}
 
 	// STUB LOADING
@@ -122,6 +145,8 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function save_layout () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$storage_key = $_POST['storage_key'];
@@ -146,6 +171,8 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function reset_layout () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
 		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
@@ -159,6 +186,8 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function update_layout_element() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
 
 		if(!$data)
@@ -183,6 +212,8 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function update_insertcount() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
 		$insertcount = get_option('ueditor_insert_count');
 		if(!$insertcount)
 			$insertcount = 0;
@@ -205,9 +236,11 @@ class Upfront_JavascriptMain extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_upfront_load_main', array($this, "load_main"));
-		add_action('wp_ajax_upfront_data', array($this, 'load_upfront_data'));
-		//add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
+		//add_action('wp_ajax_upfront_load_main', array($this, "load_main"));
+		upfront_add_ajax('upfront_load_main', array($this, "load_main"));
+
+		//add_action('wp_ajax_upfront_data', array($this, 'load_upfront_data'));
+		upfront_add_ajax('upfront_data', array($this, 'load_upfront_data'));
 	}
 
 	function load_main () {
@@ -464,6 +497,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function save_styles(){
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
 		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
 		$styles = trim(stripslashes($_POST['styles']));
 		$element_type = isset($_POST['elementType']) ? sanitize_key($_POST['elementType']) : 'unknown';
@@ -489,6 +524,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function delete_styles(){
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
 		$elementType = isset($_POST['elementType']) ? $_POST['elementType'] : false;
 		$styleName = isset($_POST['styleName']) ? $_POST['styleName'] : false;
@@ -588,9 +624,14 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_upfront_load_editor_grid', array($this, "load_styles"));
-		add_action('wp_ajax_upfront_load_new_editor_grid', array($this, "load_new_styles"));
-		add_action('wp_ajax_upfront_load_grid', array($this, "load_front_styles"));
+		//add_action('wp_ajax_upfront_load_editor_grid', array($this, "load_styles"));
+		upfront_add_ajax('upfront_load_editor_grid', array($this, "load_styles"));
+		
+		//add_action('wp_ajax_upfront_load_new_editor_grid', array($this, "load_new_styles"));
+		upfront_add_ajax('upfront_load_new_editor_grid', array($this, "load_new_styles"));
+		
+		//add_action('wp_ajax_upfront_load_grid', array($this, "load_front_styles"));
+		upfront_add_ajax('upfront_load_grid', array($this, "load_front_styles"));
 	}
 
 	function load_styles () {
@@ -633,11 +674,15 @@ class Upfront_ElementStyles extends Upfront_Server {
 		add_action('upfront-layout-applied', array($this, 'load_styles'));
 		add_action('upfront-layout-applied', array($this, 'load_scripts'));
 
-		add_action('wp_ajax_upfront-element-styles', array($this, 'serve_styles'));
-		add_action('wp_ajax_nopriv_upfront-element-styles', array($this, 'serve_styles'));
+		//add_action('wp_ajax_upfront-element-styles', array($this, 'serve_styles'));
+		//add_action('wp_ajax_nopriv_upfront-element-styles', array($this, 'serve_styles'));
+		upfront_add_ajax('upfront-element-styles', array($this, 'serve_styles'));
+		upfront_add_ajax_nopriv('upfront-element-styles', array($this, 'serve_styles'));
 
-		add_action('wp_ajax_upfront-element-scripts', array($this, 'serve_scripts'));
-		add_action('wp_ajax_nopriv_upfront-element-scripts', array($this, 'serve_scripts'));
+		//add_action('wp_ajax_upfront-element-scripts', array($this, 'serve_scripts'));
+		//add_action('wp_ajax_nopriv_upfront-element-scripts', array($this, 'serve_scripts'));
+		upfront_add_ajax('upfront-element-scripts', array($this, 'serve_scripts'));
+		upfront_add_ajax_nopriv('upfront-element-scripts', array($this, 'serve_scripts'));
 	}
 
 	function load_styles () {
@@ -731,8 +776,11 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		add_action('init', array($this, 'register_requirements'));
 
 		// Layout revisions AJAX handers
-		add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
-		add_action('wp_ajax_upfront_list_revisions', array($this, "list_revisions"));
+		//add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
+		upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
+		
+		//add_action('wp_ajax_upfront_list_revisions', array($this, "list_revisions"));
+		upfront_add_ajax('upfront_list_revisions', array($this, "list_revisions"));
 
 		// Cron request handlers
 		add_action('upfront_hourly_schedule', array($this, 'clean_up_deprecated_revisions'));
@@ -855,6 +903,8 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 	 * Builds preview layout model and dispatches save.
 	 */
 	public function build_preview () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
 		global $post;
 
 		$raw_data = stripslashes_deep($_POST);
@@ -1017,7 +1067,8 @@ class Upfront_Server_GoogleFontsServer extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_upfront_list_google_fonts', array($this, 'json_list_google_fonts'));
+		//add_action('wp_ajax_upfront_list_google_fonts', array($this, 'json_list_google_fonts'));
+		upfront_add_ajax('upfront_list_google_fonts', array($this, 'json_list_google_fonts'));
 	}
 
 	public function json_list_google_fonts () {
@@ -1055,6 +1106,8 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 	}
 
   public function update_breakpoints() {
+  	if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
     $breakpoints = isset($_POST['breakpoints']) ? $_POST['breakpoints'] : array();
     // Parse data types
     foreach ($breakpoints as $index=>$breakpoint) {
@@ -1102,6 +1155,8 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
 	}
 
   public function update_theme_fonts() {
+  	if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+  	
     $theme_fonts = isset($_POST['theme_fonts']) ? $_POST['theme_fonts'] : array();
 		update_option('upfront_' . get_stylesheet() . '_theme_fonts', json_encode($theme_fonts));
 
