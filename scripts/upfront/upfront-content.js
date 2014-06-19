@@ -165,8 +165,6 @@ define("content", deps, function(postTpl, ContentTools) {
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
 
-
-
 					object.markup = markupper.markup(object.slug, me.parts.replacements, me.getTemplate(object.slug));
 				});
 			});
