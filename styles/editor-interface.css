@@ -9988,6 +9988,7 @@ a.upfront-css-edit:before{
   padding-right: 0;
   padding-left: 5px;
 }
+.font-picker-use-button,
 .breakpoint-edit-ok-button {
   line-height: 30px;
   text-align: center;
@@ -10082,7 +10083,7 @@ a.feature_image_selector {
 	z-index: 10;
 }
 a.feature_image_selector.change_feature_image {
-	display: none;	
+	display: none;
 }
 a.feature_image_selector:after {
   content:'Add feature image';
@@ -10108,7 +10109,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 #font-picker {
   position: absolute;
   left: 175px;
-  top: -150px;
+  top: -170px;
   width: 451px;
   height: 215px;
   background: #e5f3fe;
@@ -10119,7 +10120,7 @@ div.upfront-region-container-active > a.feature_image_selector {
   color: #273a4c;
   margin: 20px 0 10px 20px;
 }
-#font-picker > div {
+#font-picker .panel {
   float: left;
   width: 225px;
 }
@@ -10181,6 +10182,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 #font-picker .theme-font-list-item {
   color: rgb(48, 71, 94);
+  position: relative;
   font-size: 11px;
   font-weight: normal;
   font-family: verdana, sans-serif;
@@ -10195,6 +10197,9 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 #font-picker .theme-font-list-item .delete {
   display: none;
+  position: absolute;
+  right: 10px;
+  top: 2px;
 }
 #font-picker .theme-font-list-item-selected .delete {
   display: inline;

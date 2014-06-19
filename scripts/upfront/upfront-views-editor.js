@@ -4490,12 +4490,35 @@ var SelectView = Backbone.View.extend({
 });
 
 var ThemeFontModel = Backbone.Model.extend({
-  // toJSON: function() {
-    // return {
-      // font: this.get('font').toJSON(),
-      // variant: this.get('variant')
-    // };
-  // }
+  initialize: function(attributes) {
+    var italic_weight;
+
+    // Parse font variant
+    if (attributes.variant === 'regular') {
+      this.set({ displayVariant: attributes.variant}, { silent: true });
+      return;
+    }
+    // Check if variant is just number
+    if (_.isNumber(+attributes.variant) && !_.isNaN(+attributes.variant)) {
+      this.set({ fontWeight: attributes.variant}, { silent: true });
+      this.set({ displayVariant: attributes.variant}, { silent: true });
+      return;
+    }
+
+    // Check if variant is italic
+    if (attributes.variant.indexOf('italic') > -1) {
+      italic_weight = attributes.variant.replace('italic', '');
+      this.set({ fontStyle: 'italic' }, { silent: true });
+      this.set({ displayVariant: 'italic' }, {silent: true });
+      if (italic_weight) {
+        this.set({ fontWeight: italic_weight }, { silent: true });
+        this.set({ displayVariant: italic_weight + ' italic' }, { silent: true });
+      }
+      return;
+    }
+
+    this.set({ displayVariant: attributes.variant }, { silent: true });
+  }
 });
 var ThemeFontsCollection = Backbone.Collection.extend({
   model: ThemeFontModel
@@ -4539,7 +4562,7 @@ var ThemeFontListItem = Backbone.View.extend({
   render: function() {
     this.$el.html(_.template(this.template, {
       family: this.model.get('font').family,
-      variant: this.model.get('variant')
+      variant: this.model.get('displayVariant')
     }));
 
     return this;
@@ -4547,6 +4570,8 @@ var ThemeFontListItem = Backbone.View.extend({
   on_click: function() {
     this.$el.siblings().removeClass('theme-font-list-item-selected');
     this.$el.addClass('theme-font-list-item-selected');
+
+    this.trigger('selected', this.model.toJSON());
   },
   on_delete: function() {
     theme_fonts_collection.remove(this.model);
@@ -4555,7 +4580,7 @@ var ThemeFontListItem = Backbone.View.extend({
 });
 
 var ThemeFontsPanel = Backbone.View.extend({
-  className: 'theme-fonts-panel',
+  className: 'theme-fonts-panel panel',
 	template: $(_Upfront_Templates.popup).find('#theme-fonts-panel').html(),
   initialize: function() {
     this.listenTo(this.collection, 'add', this.add_one);
@@ -4578,7 +4603,80 @@ var ThemeFontsPanel = Backbone.View.extend({
   },
   add_one: function(model) {
     var themeFontView = new ThemeFontListItem({ model: model });
+    this.listenTo(themeFontView, 'selected', this.replaceFont);
     this.$el.find('.font-list').append(themeFontView.render().el);
+  },
+  replaceFont: function(font) {
+    var editor, style_doc, row, line, font_weight_row, font_style_row, lines;
+    editor = Upfront.Application.cssEditor.editor;
+    style_doc = editor.getSession().getDocument();
+
+    // Store starting text, must be restored if exiting font picker without font chosen
+    if (!this.starting_text) this.starting_text = editor.getCopyText();
+
+    // Insert selected font family
+    if (!this.start_range) {
+      this.start_range = editor.getSelection().getRange();
+    } else {
+      this.start_range.end = this.end_point;
+    }
+    this.end_point = editor.getSession().getDocument().replace(this.start_range, font.font.family);
+
+    // Insert selected weight and style
+    // Search forward only from font family row since lower properties override upper
+    row = this.start_range.start.row + 1;
+    line = style_doc.getLine(row);
+    while (line.indexOf('}') < 0) {
+      if (line.indexOf('font-weight') !== -1) {
+        font_weight_row = row;
+      }
+      if (line.indexOf('font-style') !== -1) {
+        font_style_row = row;
+      }
+
+      row++;
+      line = style_doc.getLine(row);
+      if (!line) {
+        // Fix missing closing paren
+        style_doc.insertLines(row, ['}']);
+        break;
+      }
+    }
+
+    // Reset properties. This is complicated. If both font style and font weight properties are in current style rule
+    // we need to remove them carefully because when we remove first, seconds' row number might change
+    // so first remove one with higher row number.
+    if (font_weight_row && font_style_row) {
+      if (font_weight_row > font_style_row) {
+        style_doc.removeLines(font_weight_row, font_weight_row);
+        style_doc.removeLines(font_style_row, font_style_row);
+      } else {
+        style_doc.removeLines(font_style_row, font_style_row);
+        style_doc.removeLines(font_weight_row, font_weight_row);
+      }
+      font_weight_row = false;
+      font_style_row = false;
+    }
+    if (font_weight_row) {
+      style_doc.removeLines(font_weight_row, font_weight_row);
+      font_weight_row = false;
+    }
+    if (font_style_row) {
+      style_doc.removeLines(font_style_row, font_style_row);
+      font_style_row = false;
+    }
+
+    // Insert properties
+    lines = [];
+    if (font.fontWeight) {
+      lines.push('    font-weight: ' + font.fontWeight + ';');
+    }
+    if (font.fontStyle) {
+      lines.push('    font-style: ' + font.fontStyle + ';');
+    }
+    if (lines.length > 0) {
+      style_doc.insertLines(this.start_range.start.row + 1, lines);
+    }
   }
 });
 
@@ -4586,7 +4684,8 @@ var FontPicker = Backbone.View.extend({
   id: 'font-picker',
 	template: $(_Upfront_Templates.popup).find('#font-picker-tpl').html(),
   events: {
-    'click .add-font-button': 'add_font'
+    'click .add-font-button': 'add_font',
+    'click .font-picker-use-button': 'close'
   },
   initialize: function() {
     this.theme_fonts_panel = new ThemeFontsPanel({
@@ -4602,19 +4701,7 @@ var FontPicker = Backbone.View.extend({
       me.load_google_fonts(fonts_collection);
     });
 
-    this.$el.append(this.theme_fonts_panel.render().el);
-
-    // Adding list of already used google fonts ( a bit hacky )
-    var layout_fonts = _.uniq(
-      _.compact(
-        _.pluck(
-          _.toArray(
-            Upfront.Application.LayoutEditor.get_layout_data().properties[0].value
-          ),
-          'font_face'
-        )
-      )
-    );
+    this.$el.find('.add-font-panel').after(this.theme_fonts_panel.render().el);
 
     return this;
   },
@@ -4637,6 +4724,11 @@ var FontPicker = Backbone.View.extend({
         font: font.toJSON(),
         variant: variant
       });
+
+      // Check if font is added to page
+      if ($('#' + font.get('family').toLowerCase() + variant + '-css').length === 0) {
+        $('body').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
+      }
     }, this);
     this.update_variants();
   },
@@ -4659,6 +4751,7 @@ var FontPicker = Backbone.View.extend({
   },
   update_variants: function(model) {
     if (!model) model = this.font_family_select.get_value();
+    if (!model) return;
     // Choose variants
     var values = [];
     _.each(model.get('variants'), function(variant) {
@@ -4680,6 +4773,9 @@ var FontPicker = Backbone.View.extend({
     this.choose_variants.render();
     this.$el.find('.font-weights-list').html(this.choose_variants.el);
     this.choose_variants.$el.find('.upfront-field-multiple').wrapAll('<div class="font-weights-list-wrapper" />');
+  },
+  close: function() {
+    this.remove();
   }
 });
 
