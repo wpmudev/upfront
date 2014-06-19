@@ -1895,8 +1895,8 @@ define([
 				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" href="{{edit_url}}">edit profile</a></div>',
 				{
 					gravatar: data.gravatar,
-					name: data.display_name,
-					role: roles[0],
+					name: data.display_name || 'anonymous',
+					role: roles[0] || 'none',
 					edit_url: Upfront.Settings.admin_url + 'profile.php'
 				}
 			));
