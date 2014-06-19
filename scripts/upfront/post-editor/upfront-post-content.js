@@ -74,6 +74,8 @@ var PostContentEditor = Backbone.View.extend({
 		this.postAuthor = this.post.get('post_author');
 		this.authorTpl = opts.authorTpl;
 
+		this.contentMode = opts.content_mode;
+
 		this.inserts = this.post.meta.getValue('_inserts_data') || {};
 
 		this.$el.addClass('clearfix').css('paddong-bottom', '60px');
@@ -115,14 +117,13 @@ var PostContentEditor = Backbone.View.extend({
 		//Content
 		this.parts.contents = this.$('.upfront-content-marker-contents');
 		if(this.parts.contents.length){
+			var isExcerpt = this.contentMode == 'post_excerpt',
+				content = isExcerpt ? this.rawExcerpt: this.rawContent,
+				editorOptions = isExcerpt ? this.getExcerptEditorOptions() : this.getContentEditorOptions()
+			;
 			this.onContentsEdited = _.bind(this.contentEdited, this);
 			this.editors = [];
-			this.parts.contents.html(this.postView.property('content_type') == 'excerpt' ? this.rawExcerpt: this.rawContent).ueditor({
-				linebreaks: false,
-				autostart: true,
-				pastePlainText: true,
-				inserts: this.inserts
-			});
+			this.parts.contents.html(content).ueditor(editorOptions);
 			this.parts.contents.on('keyup', this.onContentsEdited);
 
 			this.parts.contents.each(function(){
@@ -214,6 +215,24 @@ var PostContentEditor = Backbone.View.extend({
 		setTimeout(function(){
 			me.focus(me.triggeredBy, false);
 		}, 200);
+	},
+
+	getExcerptEditorOptions: function(){
+		return {
+			linebreaks: true,
+			autostart: true,
+			pastePlainText: true,
+			airButtons: ['bold', 'italic']
+		};
+	},
+
+	getContentEditorOptions: function(){
+		return {
+			linebreaks: false,
+			autostart: true,
+			pastePlainText: true,
+			inserts: this.inserts
+		};
 	},
 
 	editThumb: function(e){

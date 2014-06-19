@@ -181,7 +181,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		getTemplate: function(part){
 			var templates = this.postView.partTemplates;
 
-			if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
+			if(part == 'contents' && this.content_mode == 'post_excerpt')
 				part = 'excerpt';
 
 			if(templates && templates[part])
@@ -210,13 +210,15 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		editContents: function(e, focusElement){
-			if(this.contentEditor)
+			//If we are already editing, don't do anything
+			if(this.contentEditor || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
 				return;
 
 			var target = e ? $(e.currentTarget) : focusElement;
 			this.contentEditor = new ContentTools.PostContentEditor({
 				post: this.post,
 				postView: this.postView,
+				content_mode: this.content_mode,
 				el: this.el,
 				triggeredBy: target,
 				authorTpl: this.getTemplate('author'),

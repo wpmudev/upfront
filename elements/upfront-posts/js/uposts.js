@@ -45,7 +45,7 @@ define(function() {
       this.events = _.extend({}, this.events, {
         'click .uposts-pagination>a': 'paginate',
         'click .upfront-post-layout-trigger': 'editPostLayout',
-        'mouseenter div.post_editor_container': 'moveEditButton'
+        //'mouseenter div.post_editor_container': 'moveEditButton'
       });
 
       this.page = 1;
@@ -53,8 +53,8 @@ define(function() {
 
       this.model.on('region:updated', this.refreshMarkup, this);
       this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
-	  this.listenTo(Upfront.Events, 'post:content:edit:start', this.editingOn);
-	  this.listenTo(Upfront.Events, 'post:content:edit:stop', this.editingOff);
+	  //this.listenTo(Upfront.Events, 'post:content:edit:start', this.editingOn);
+	  //this.listenTo(Upfront.Events, 'post:content:edit:stop', this.editingOff);
       //this.listenTo(this.model.get("properties"), 'add', this.refreshMarkup);
       //this.listenTo(this.model.get("properties"), 'remove', this.refreshMarkup);
       console.log('Posts element');
@@ -65,14 +65,15 @@ define(function() {
      * @return {string} Markup to be shown.
      */
 
-	editingOn: function() {
-		this.editing = true;
-		this.$el.find('.upfront-object-content').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
-	},
-	editingOff: function() {
-		this.editing = false;
-		this.$el.find('.post_editor_container').removeClass('clearfix').css('position', '');
-	},
+  	editingOn: function() {
+  		this.editing = true;
+  		this.$el.find('.upfront-object-content').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
+  	},
+  	editingOff: function() {
+  		this.editing = false;
+  		this.$el.find('.post_editor_container').removeClass('clearfix').css('position', '');
+  	},
+
     get_content_markup: function () {
       if(this.changed || !this.markup){
         //Is it shadow?
@@ -109,9 +110,10 @@ define(function() {
       return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
     },
     editPostLayout: function(e){
-      this.editor = this.editors[$(e.target).closest('div.post_editor_container').data('post_id')];
+      e.preventDefault();
       Upfront.Events.trigger('post:layout:edit', this, 'single');
     },
+
     prepareEditor: function(id, node){
       is_excerpt = this.property('content_type') == 'excerpt';
       //this.currentpost = postId;
@@ -126,13 +128,13 @@ define(function() {
         layout: this.property('layout')
       });
 
+      editor.render();
       //}
       this.editors[id] = editor;
     },
 
     refreshMarkup: function(page) {
-
-	this.$el.find('div.upfront-editable_entity.upfront-object.uposts-object').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
+      this.$el.find('div.upfront-editable_entity.upfront-object.uposts-object').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
 
       var props = this.model.get('properties').toJSON(),
         data = {},
@@ -177,90 +179,29 @@ define(function() {
         //me.prepareEditor();
       });
     },
+
     updateEditors: function(){
 
-	 /* if(!this.postLayout)
-		  this.postLayout = this.property('postLayout');
-	  if(!this.partOptions)
-	  	this.partOptions = this.property('partOptions');
-		*/
       var me = this,
-        nodes = $('#' + this.property('element_id')).find('.uposts-post')
+        nodes = $('#' + this.property('element_id')).find('.uposts-post'),
+        container = me.$('.upfront-object-content')
       ;
-	  console.log(nodes.length);
-      nodes.each(function(){
-        var node = $(this),
-          id = node.data('post_id')
-        ;
 
-/*        if(me.editors[id])
-          me.editors[id].updateElement(node);
-        else*/
-          me.prepareEditor(id, node);
-          //me.createEditor(id, node);
-      });
-
-	  me.$('.upfront-object-content').html('');
-
-	 nodes.each(function(){
-		 var node = $(this),
-          id = node.data('post_id')
-        ;
-
-		 var content = $('<div>').addClass('post_editor_container').addClass('post_editor_container-'+id).data('post_id', id);
-		 me.editors[id].setElement(content);
-		 me.editors[id].render();
-		 me.$('.upfront-object-content').append(content);
-	 });
-
-    },
-
-
-
-/*
-    updateEditors: function(){
-      var me = this,
-        nodes = $('#' + this.property('element_id')).find('.uposts-post')
-      ;
-      nodes.each(function(){
-        var node = $(this),
-          id = node.data('post_id')
-        ;
-
-        if(me.editors[id])
-          me.editors[id].updateElement(node);
-        else
-          me.createEditor(id, node);
-      });
-    },
-
-    createEditor: function(id, node){
-      return;
-      if(this.editors[id])
+      if(!nodes.length)
         return;
 
-      var me = this,
-        is_excerpt = this.property('content_type') == 'excerpt',
-        editor = new Upfront.Content.editor({
-          editor_id: 'uposts_meta_' + id,
-          post_id: id,
-          node: node,
-          content_mode: is_excerpt ? 'post_excerpt' : 'post_content',
-          view: me,
-          onUpdated: function(post){
-            me.onPostUpdated(post);
-          },
-          autostart: false
-        })
-      ;
+      nodes.each(function(){
+        var node = $(this),
+          id = node.data('post_id')
+        ;
 
-      editor.on('editor:cancel', function(){
-        editor.initEditAreas();
+        me.prepareEditor(id, node);
       });
 
-      me.editors[id] = editor ;
+      //The first editor will be used for post layout editing
+      this.editor = this.editors[$(nodes[0]).data('post_id')];
     },
-*/
+
     onPostUpdated: function(post){
       var loading = new Upfront.Views.Editor.Loading({
           loading: "Refreshing post ...",
