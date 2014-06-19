@@ -115,6 +115,14 @@ class Upfront_Output {
 
 	function add_styles () {
 		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), 0.1, 'all');
+
+    // Load theme fonts
+    foreach(json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts')) as $theme_font) {
+      wp_enqueue_style(
+        strtolower(str_replace(' ', '-', $theme_font->font->family)) . '-' . $theme_font->variant,
+        '//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
+      );
+    }
 	}
 
 	function add_scripts () {
@@ -517,7 +525,7 @@ class Upfront_Region extends Upfront_Container {
 		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
 		return parent::wrap( "{$out} {$overlay}" );
 	}
-	
+
 	public function instantiate_child ($child_data, $idx) {
 		$view = is_array($child_data['modules']) ? "Upfront_Module_Group" : $this->_child_view_class;
 		if (!class_exists($view)) $view = $this->_child_view_class;

@@ -4619,16 +4619,22 @@ var FontPicker = Backbone.View.extend({
     return this;
   },
   add_font: function() {
-    var variants = this.choose_variants.get_value();
+    var variants;
+    var font = this.font_family_select.get_value();
+    if (_.isEmpty(font)) {
+      alert('Choose font family and weight.');
+      return;
+    }
 
+    variants = this.choose_variants.get_value();
     if (_.isEmpty(variants)) {
       alert('Choose at least one font weight.');
       return;
     }
-    _.each(this.choose_variants.get_value(), function(variant) {
+    _.each(variants, function(variant) {
       theme_fonts_collection.add({
-        id: this.font_family_select.get_value().get('family') + variant,
-        font: this.font_family_select.get_value().toJSON(),
+        id: font.get('family') + variant,
+        font: font.toJSON(),
         variant: variant
       });
     }, this);
