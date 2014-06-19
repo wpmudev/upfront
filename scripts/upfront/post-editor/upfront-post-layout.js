@@ -88,7 +88,7 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		this.postView.partOptions = options;
 
 		this.updatePartContent();
-		this.$el.html('Loading');
+		this.$('.upfront-object-content').html('Loading');
 	},
 
 	updatePartContent: function(){
@@ -266,7 +266,8 @@ var TagSettings = PostPartSettings.extend({
 
 var ContentSettings = PostPartSettings.extend({
 	events: {
-		'keyup .upfront-field-number': 'offsetChanged'
+		'keyup .upfront-field-number': 'offsetChanged',
+		'change .upfront-field-number': 'updatePadding'
 	},
 	init: function(opts){
 	  this.panels = _([
@@ -275,13 +276,13 @@ var ContentSettings = PostPartSettings.extend({
 	          title: 'Tags',
 	          model: this.model,
 	          settings: [new Upfront.Views.Editor.Settings.Item({
-	              title: 'Content overflow',
+	              title: 'Content padding',
 	              className: 'content-overflow-setting',
 	              model: this.model,
 						fields: [
 							new Fields.Number({
 								label: 'Left',
-								property: 'overflow_left',
+								property: 'padding_left',
 								max : 3,
 								min: 0,
 								step : 1,
@@ -289,7 +290,7 @@ var ContentSettings = PostPartSettings.extend({
 							}),
 							new Fields.Number({
 								label: 'Right',
-								property: 'overflow_right',
+								property: 'padding_right',
 								max : 3,
 								min: 0,
 								step : 1,
@@ -303,9 +304,18 @@ var ContentSettings = PostPartSettings.extend({
 	offsetChanged: function(e){
 		var input = e.target;
 		if(isNaN(parseInt(input.value)) || input.value < 0 || input.value > 3){
-			Upfront.Views.Editor.notify('Content overflow needs to be an number between 0 and 3.', 'error');
+			Upfront.Views.Editor.notify('Content padding needs to be an number between 0 and 3.', 'error');
 			input.value = 0;
 		}
+		this.updatePadding();
+	},
+
+	updatePadding: function(){
+		var left = this.$('input[name=padding_left]').val() || 0,
+			right = this.$('input[name=padding_right]').val() || 0
+		;
+		if(this.for_view)
+			this.for_view.trigger('post:padding:update', left, right);
 	}
 });
 
@@ -326,32 +336,57 @@ var ContentView = PostPartView.extend({
 		});
 
 		var left = partOptions.overflow_left || 0,
-			right = partOptions.overflow_right || 0,
-			extraClasses = ''
+			right = partOptions.overflow_right || 0
 		;
 
-		if(left)
-			extraClasses = 'uinsert-left-' + left;
-		if(right)
-			extraClasses += ' uinsert-right-' + right;
-		if(left || right)
-			extraClasses += ' uinsert-full-' + (parseInt(left, 10) + parseInt(right, 10));
-
-		partOptions.extraClasses = extraClasses;
-
 		options[this.postPart] = partOptions;
+		options.colSize = Upfront.Behaviors.GridEditor.col_size;
 
 		this.postView.partOptions = options;
 
 		this.updatePartContent();
-		this.$el.html('Loading');
+		this.$('.upfront-object-content').html('Loading');
+	},
+
+	render: function(){
+		PostPartView.prototype.render.apply(this, arguments);
+
+		if(!this.paddingChangeHandler){
+			this.paddingChangeHandler = _.bind(this.refreshPaddings, this);
+			this.on('post:padding:update', this.paddingChangeHandler);
+		}
+		this.refreshPaddingsFromProperties();
+	},
+
+	refreshPaddingsFromProperties: function(){
+		this.refreshPaddings((this.property('padding_left') || 0), (this.property('padding_right') || 0));
+	},
+
+	refreshPaddings: function(left, right){
+		var colSize = Upfront.Behaviors.GridEditor.col_size,
+			rightPadding = right * colSize,
+			leftPadding = left * colSize,
+			styles = $('.upfront-region-postlayouteditor').find('.upfront-post-padding'),
+			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents>* {'
+		;
+
+		if(!styles.length){
+			//Give time to include the layout edition region in the dom
+			styles = $('<style class="upfront-post-padding"></style>');
+			setTimeout(function(){
+				$('.upfront-region-postlayouteditor').append(styles);
+			}, 200);
+		}
+
+		rules += 'padding-left: ' + leftPadding + 'px; padding-right: ' + rightPadding + 'px;}';
+
+		styles.html(rules);
 	}
 });
 
 var FeaturedImageView = PostPartView.extend({
 	init: function(options){
-		this.partOptions = this.postView.partOptions.featured_image || {}
-		console.log('Hello');
+		this.partOptions = this.postView.partOptions.featured_image || {};
 	},
 	on_render: function(){
 		var me = this,

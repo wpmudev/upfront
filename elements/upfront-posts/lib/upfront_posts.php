@@ -87,7 +87,6 @@ class Upfront_UpostsView extends Upfront_Object {
 
 		query_posts($query_args);
 
-
 		$type = $query_args['post_type'];
 		$layout = Upfront_ThisPostView::find_postlayout('archive', $type, str_replace('uposts-object-', '', $element_id));
 

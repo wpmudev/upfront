@@ -129,7 +129,30 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'</div>';
 	}
 
-	public static function get_post_markup ($post_id, $post_type, $properties=array(), $layout = false) {
+	protected static function get_padding_styles($properties, $archive, $post){
+		$layout_type = $archive ? 'archive' : 'single';
+		$post_type = $post->post_type;
+		$layout_id = $post->ID;
+		if($archive)
+			$layout_id = str_replace('uposts-object-', '', $properties['element_id']);
+		$layoutData = self::find_postlayout($layout_type, $post_type, $layout_id);
+		$options = $layoutData['partOptions'];
+		$styles = '<style>%s</style>';
+		$rules = '';
+
+		if(isset($options['contents'])){
+			$col_size = isset($properties['colSize']) ? $properties['colSize'] : 45;
+			$paddingLeft = $options['contents']['padding_left'] * $col_size;
+			$paddingRight = $options['contents']['padding_right'] * $col_size;
+			$rules = '#' . $properties['element_id'] . ' .upfront-postpart-contents>* { padding-left: ' . $paddingLeft . 'px; padding-right: ' . $paddingRight . 'px; }';
+		}
+
+		$out = sprintf($styles, $rules);
+
+		return $out;
+	}
+
+	public static function get_post_markup ($post_id, $post_type, $properties=array(), $layout = false, $archive = false) {
 		if($post_id === 0)
 			return self::get_new_post($post_type);
 
@@ -146,11 +169,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$properties['featured_image'] = array_search('featured_image', $properties['post_data']) !== FALSE;
 
-		return self::post_template($post, $properties, $layout);
+		$out = self::post_template($post, $properties, $layout, $archive) . self::get_padding_styles($properties, $archive, $post);
+		return $out;
 	}
 
 	public static function get_new_post($post_type = 'post', $properties=array(), $query_override=true) {
-
 		$title = sprintf(__('Enter your new %s title here', 'upfront'), $post_type);
 		$content = sprintf(__('Your %s content goes here. Have fun writing :)', 'upfront'), $post_type);
 
@@ -180,16 +203,22 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return self::post_template($post, $properties);
 	}
 
-	public static function post_template($this_post, $properties=array(), $layoutData = false) {
+	public static function post_template($this_post, $properties=array(), $layoutData = false, $archive = false) {
 		$post_data = self::prepare_post($this_post);
 		$excerpt = false;
+		$layout_type = $archive ? 'archive' : 'single';
+
+		$post_type = $this_post->post_type;
+		$layout_id = $this_post->ID;
+		if($archive)
+			$layout_id = str_replace('uposts-object-', '', $properties['element_id']);
 
 		if(!$layoutData)
-			$layoutData = self::find_postlayout('single', $this_post->post_type, $this_post->ID);
+			$layoutData = self::find_postlayout($layout_type, $post_type, $layout_id);
 		else
 			$excerpt = $properties['content_type'] == 'excerpt';//?true:false;
 
-		$templates = self::find_partTemplates('single', $this_post->post_type, $this_post->ID);
+		$templates = self::find_partTemplates($layout_type, $post_type, $layout_id);
 
 		$options = $layoutData['partOptions'];
 
@@ -633,6 +662,9 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			return;
 
 		$inserts = maybe_unserialize($value);
+
+		if(!is_array($inserts))
+			return;
 
 		foreach($inserts as $id => $img){
 			if(isset($img['imageThumb']) && $img['isLocal'] != 'false'){

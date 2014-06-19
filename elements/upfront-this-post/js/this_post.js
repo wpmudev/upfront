@@ -36,8 +36,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-
-		this.prepareEditor();
+		if(this.postId)
+			this.prepareEditor();
 
 		Upfront.Events.trigger('post:initialized', this);
 	},
@@ -66,6 +66,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function(){
+		if(!this.editor)
+			return;
 		this.editor.setElement(this.$('.upfront-object-content'));
 		this.editor.render();
 	},

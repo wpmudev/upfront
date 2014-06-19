@@ -28,7 +28,7 @@ define(function() {
     }
   });
 
-	
+
 
   var UpostsView = Upfront.Views.ObjectView.extend({
     changed: false,
@@ -64,7 +64,7 @@ define(function() {
      * Element contents markup.
      * @return {string} Markup to be shown.
      */
-	 
+
 	editingOn: function() {
 		this.editing = true;
 		this.$el.find('.upfront-object-content').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
@@ -98,7 +98,7 @@ define(function() {
     on_render: function(){
       var me = this;
      // this.refreshMarkup();
-	 
+
       //Give time to append when dragging.
       setTimeout(function(){
         me.updateEditors();
@@ -131,9 +131,9 @@ define(function() {
     },
 
     refreshMarkup: function(page) {
-		
+
 	this.$el.find('div.upfront-editable_entity.upfront-object.uposts-object').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
-		
+
       var props = this.model.get('properties').toJSON(),
         data = {},
         me = this,
@@ -178,7 +178,7 @@ define(function() {
       });
     },
     updateEditors: function(){
-		
+
 	 /* if(!this.postLayout)
 		  this.postLayout = this.property('postLayout');
 	  if(!this.partOptions)
@@ -199,20 +199,20 @@ define(function() {
           me.prepareEditor(id, node);
           //me.createEditor(id, node);
       });
-	 
+
 	  me.$('.upfront-object-content').html('');
 
 	 nodes.each(function(){
 		 var node = $(this),
           id = node.data('post_id')
         ;
-		 
+
 		 var content = $('<div>').addClass('post_editor_container').addClass('post_editor_container-'+id).data('post_id', id);
 		 me.editors[id].setElement(content);
 		 me.editors[id].render();
 		 me.$('.upfront-object-content').append(content);
 	 });
-	  
+
     },
 
 

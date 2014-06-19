@@ -19,18 +19,21 @@ var PartMarkupCreator = function(){
 			attributes = partOptions && partOptions.attributes ? partOptions.attributes : {},
 			attrs = ''
 		;
-	
+
 		_.each(attributes, function(value, key){
 			attrs += key +'="' + value + '" ';
 		});
-		
-		if (this.parts[part] && this.parts[part].replacements) _.each(this.parts[part].replacements, function(tag){
-			var markup = partContents[tag];
-			if(me.parts[part].editable.indexOf(tag) !== -1){
-                markup = '<div class="upfront-content-marker upfront-content-marker-' + part + ' ' + extraClasses + '" ' + attrs + '>' + markup + '</div>';
-            }
-			template = template.replace(tag, markup);
-		});
+
+		if (this.parts[part] && this.parts[part].replacements) {
+			_.each(this.parts[part].replacements, function(tag){
+				var markup = partContents[tag];
+				if(me.parts[part].editable.indexOf(tag) !== -1){
+	                markup = '<div class="upfront-content-marker upfront-content-marker-' + part + ' ' + extraClasses + '" ' + attrs + '>' + markup + '</div>';
+	            }
+				template = template.replace(tag, markup);
+			});
+		}
+
 		if (this.parts[part] && this.parts[part].withParameters) {
 				var withParameters = this.parts[part].withParameters;
 				if(withParameters){

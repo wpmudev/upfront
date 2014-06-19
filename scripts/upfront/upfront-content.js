@@ -35,34 +35,6 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.getPost();
 
 			this.getPostLayout();
-
-			//this.fetchParts();
-		},
-
-		fetchParts: function(parts){
-			if(this.loadinParts)
-				return this.loadingParts;
-
-			var me = this,
-				request = {
-					action: 'content_part_markup',
-					post_id: this.postId,
-					options: this.postView.property('partOptions'),
-					templates: this.postView.partTemplates
-				}
-			;
-
-			if(parts)
-				request.parts = JSON.stringify(parts);
-
-			this.loadingParts =  Upfront.Util.post(request).done(function(response){
-					me.parts = response.data;
-					me.replacements = response.data.replacements;
-					console.log(response);
-				})
-			;
-
-			return this.loadingParts;
 		},
 
 		setDefaults: function(){
@@ -70,16 +42,21 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		getPost: function(){
-			if(this.post || this.loadingPost) {
-				return this.loadingPost.promise();
+			var deferred = $.Deferred();
+			if(this.post){
+				deferred.resolve(this.post);
+				this.loadingPost = deferred.promise();
+			}
+			if(this.loadingPost) {
+				return this.loadingPost;
 			}
 
 			var post = Upfront.data.posts[this.postId];
 			if(post){
 				this.post = post;
-				this.loadingPost = $.Deferred();
-				this.loadingPost.resolve(post);
-				return this.loadingPost.promise();
+				deferred.resolve(post);
+				this.loadingPost = deferred.promise();
+				return this.loadingPost;
 			}
 
 			return this.fetchPost();
@@ -92,18 +69,34 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			var me = this,
 				deferred = $.Deferred(),
-				layoutType = me.postView.property('type') == 'ThisPostModel' ? 'single' : 'archive',
-				id = layoutType == 'single' ? this.postId : me.postView.property('element_id').replace('uposts-object-','')
+				layoutData
 			;
 
 			if(me.postView.postLayout){
-				me.layoutData.postLayout = me.postView.postLayout;
-				me.layoutData.partOptions = me.postView.partOptions || {};
+				layoutData = {
+					postLayout: me.postView.postLayout,
+					partOptions: me.postView.partOptions || {}
+				}
 
-				deferred.resolve(me.layoutData);
+				me.layoutData = true;
+				me.parts = me.postView.parts[me.postId];
+
+				deferred.resolve(layoutData);
 				this.loadingLayout = deferred.promise();
 				return this.loadingLayout;
 			}
+
+
+			this.loadingLayout = this.fetchPostLayout();
+			return this.loadingLayout;
+		},
+
+		fetchPostLayout: function(){
+			var deferred = $.Deferred(),
+				me = this,
+				layoutType = me.postView.property('type') == 'ThisPostModel' ? 'single' : 'archive',
+				id = layoutType == 'single' ? this.postId : me.postView.property('element_id').replace('uposts-object-','')
+			;
 
 			this.getPost().done(function(){
 				Upfront.Util.post({
@@ -113,46 +106,43 @@ define("content", deps, function(postTpl, ContentTools) {
 					post_id: me.postId,
 					post_type: me.post.get('post_type')
 				}).done(function(response){
-					me.layoutData = response.data;
-					if(!me.layoutData.partOptions)
-						me.layoutData.partOptions = {};
-					_.extend(me.postView, me.layoutData);
+					var layoutData = response.data;
+					if(!layoutData.partOptions)
+						layoutData.partOptions = {};
 
-					me.parts = me.layoutData.partContents;
-					me.replacements = me.layoutData.partContents.replacements;
+					_.extend(me.postView, layoutData);
 
-					deferred.resolve(me.layoutData);
+					if(!me.postView.parts)
+						me.postView.parts = {};
+
+					me.postView.parts[me.postId] = layoutData.partContents;
+					me.parts = layoutData.partContents;
+
+					me.layoutData = true;
+
+					deferred.resolve(layoutData);
+				}).fail(function(error){
+					console.log('error!!');
 				});
 			});
-			this.loadingLayout = deferred.promise();
-			return this.loadingLayout;
+
+			return deferred.promise();
 		},
 
 		render: function(){
 			var me = this,
 				markupper = ContentTools.getMarkupper()
 			;
-			/*
-			if(!this.parts){
-				this.$el.html('Loading');
-				return this.loadingParts.done(function(){
-					me.render();
-				});
-			}
-*/
+
 			if(!this.layoutData){
 				this.$el.html('Loading');
 				return this.loadingLayout.done(function(){
 					me.render();
 				});
 			}
-			else {// When rerender from saving the layout
-				this.layoutData.postLayout = this.postView.postLayout;
-				this.layoutData.partOptions = this.postView.partOptions;
-			}
 
-			var wrappers = this.layoutData.postLayout,
-				options = this.layoutData.partOptions || {},
+			var wrappers = this.postView.postLayout,
+				options = this.postView.partOptions || {},
 				layout = {
 					wrappers: wrappers,
 					wrappersLength: wrappers.length,
@@ -160,6 +150,7 @@ define("content", deps, function(postTpl, ContentTools) {
 					attributes: {}
 				}
 			;
+
 			_.each(wrappers, function(wrapper){
 				wrapper.objectsLength = wrapper.objects.length;
 				_.each(wrapper.objects, function(object){
@@ -176,11 +167,14 @@ define("content", deps, function(postTpl, ContentTools) {
 
 
 
-					object.markup = markupper.markup(object.slug, me.replacements, me.getTemplate(object.slug));
+					object.markup = markupper.markup(object.slug, me.parts.replacements, me.getTemplate(object.slug));
 				});
 			});
 
+
 			this.$el.html(this.tpl(layout));
+			this.setContentPadding();
+
 			this.trigger('rendered');
 		},
 
@@ -197,21 +191,22 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		fetchPost: function(){
-			var me = this;
+			var me = this,
+				deferred = $.Deferred()
+			;
 			this.post = new Upfront.Models.Post({ID: this.postId});
 
 			//this.bindPostEvents();
-
-			this.loadingPost = new $.Deferred();
+			me.loadingPost = deferred.promise();
 			this.post.fetch({withMeta: true, filterContent: true}).done(function(response){
 				if(!Upfront.data.posts)
 					Upfront.data.posts = {};
 				Upfront.data.posts[me.postId] = me.post;
-				me.loadingPost.resolve(me.post);
+				deferred.resolve(me.post);
 			});
 
 
-			return this.loadingPost.promise();
+			return this.loadingPost;
 		},
 
 		editContents: function(e, focusElement){
@@ -307,16 +302,6 @@ define("content", deps, function(postTpl, ContentTools) {
 				this.post.set('post_author', results.author);
 
 			if(results.inserts){
-			/*	var images = [];
-				_.each(results.inserts, function(insert){
-					if(insert.imageThumb)
-						images.push(insert);
-				});
-				if(images.length)
-					Upfront.Util.post({
-						action: 'upfront_create_post_thumbs',
-						images: images
-					});*/
 				this.post.meta.setValue('_inserts_data', results.inserts);
 			}
 
@@ -325,7 +310,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				if(metaUpdated){
 					loading.done();
 					Upfront.Views.Editor.notify(successMsg);
-					me.fetchParts().then(function(){
+					me.fetchPostLayout().then(function(){
 						me.stopEditContents();
 						me.render();
 					});
@@ -339,7 +324,7 @@ define("content", deps, function(postTpl, ContentTools) {
 					if(postUpdated){
 						loading.done();
 						Upfront.Views.Editor.notify(successMsg);
-						me.fetchParts().then(function(){
+						me.fetchPostLayout().then(function(){
 							me.stopEditContents();
 							me.render();
 						});
@@ -347,6 +332,8 @@ define("content", deps, function(postTpl, ContentTools) {
 					metaUpdated = true;
 				});
 			}
+			else
+				metaUpdated
 		},
 
 		capitalize: function(str){
@@ -355,6 +342,25 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		preventLinkNavigation: function(e){
 			e.preventDefault();
+		},
+
+		setContentPadding: function(){
+			var colSize = Upfront.Behaviors.GridEditor.col_size,
+				options = this.postView.partOptions,
+				rightPadding = options.contents ? options.contents.padding_right * colSize : 0,
+				leftPadding = options.contents ? options.contents.padding_left * colSize : 0,
+				styles = this.postView.$('.upfront-post-padding'),
+				rules = '#' + this.postView.property('element_id') + ' .upfront-content-marker-contents>* {'
+			;
+
+			if(!styles.length){
+				styles = $('<style class="upfront-post-padding"></style>');
+				this.postView.$el.append(styles);
+			}
+
+			rules += 'padding-left: ' + leftPadding + 'px; padding-right: ' + rightPadding + 'px;}';
+
+			styles.html(rules);
 		}
 	});
 

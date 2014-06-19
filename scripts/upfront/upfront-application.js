@@ -564,7 +564,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	togglePostLayoutEditorMode: function(postView){
 		if(Application.current_subapplication != PostLayoutEditor){
 			this.postView = postView;
-			this.partMarkup = postView.editor.replacements;
+			this.partMarkup = postView.editor.parts.replacements;
 			Application.start(Application.MODE.POST);
 		}
 		else
