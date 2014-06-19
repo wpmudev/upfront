@@ -439,12 +439,21 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"));
-		add_action('wp_ajax_content_part_markup', array($this, "get_part_contents"));
-		add_action('wp_ajax_this_post-get_thumbnail', array($this, "get_thumbnail"));
+		//add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"));
+		upfront_add_ajax('this_post-get_markup', array($this, "load_markup"));
+		
+		//add_action('wp_ajax_content_part_markup', array($this, "get_part_contents"));
+		upfront_add_ajax('content_part_markup', array($this, "get_part_contents"));
+		
+		//add_action('wp_ajax_this_post-get_thumbnail', array($this, "get_thumbnail"));
+		upfront_add_ajax('this_post-get_thumbnail', array($this, "get_thumbnail"));
+		
 		add_action('wp_ajax_upfront_save_postparttemplate', array($this, "save_part_template"));
 		add_action('wp_ajax_upfront_save_postlayout', array($this, "save_postlayout"));
-		add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
+		
+		//add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
+		upfront_add_ajax('upfront_get_postlayout', array($this, "get_postlayout"));
+		
 		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
 	}
 	public function get_thumbnail() {

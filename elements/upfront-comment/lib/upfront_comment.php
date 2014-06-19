@@ -65,8 +65,12 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_ucomment_get_comment_markup', array($this, "load_markup"));
-		add_action('wp_ajax_upfront-discussion_settings-get', array($this, "get_settings"));
+		//add_action('wp_ajax_ucomment_get_comment_markup', array($this, "load_markup"));
+		upfront_add_ajax('ucomment_get_comment_markup', array($this, "load_markup"));
+		
+		//add_action('wp_ajax_upfront-discussion_settings-get', array($this, "get_settings"));
+		upfront_add_ajax('upfront-discussion_settings-get', array($this, "get_settings"));
+		
 		add_action('wp_ajax_upfront-discussion_settings-settings-save', array($this, "save_discussion_settings"));
 		add_action('wp_ajax_upfront-discussion_settings-avatars-save', array($this, "save_avatars_settings"));
 	}
