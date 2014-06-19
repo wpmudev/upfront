@@ -161,7 +161,7 @@ var PostContentEditor = Backbone.View.extend({
                 options = [],
                 date = this.post.get("post_date"),
                 dateFormat = Upfront.Util.date.php_format_to_js( this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format )
-                dateFormatUI = Upfront.Util.date.php_format_to_jquery( this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format )
+                //dateFormatUI = Upfront.Util.date.php_format_to_jquery( this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format )
                 ;
 
             datepickerData.minutes = _.range(0,60);
@@ -170,30 +170,27 @@ var PostContentEditor = Backbone.View.extend({
             datepickerData.currentHour = date.getHours();
             datepickerData.currentMinute = date.getHours();
 
-
-//            _.each(dates, function(a){
-//                options.push({value: a.ID, name: a.display_name});
-//            });
             this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
             this.datepicker = this.datepickerTpl(datepickerData);
             this.$el.prepend(this.datepicker);
             this.$('.upfront-bar-datepicker').datepicker({
                 changeMonth: true,
                 changeYear: true,
-                dateFormat: dateFormatUI,
+                dateFormat: dateFormat,
                 onChangeMonthYear: function(year, month, inst){
                     var picker = me.$('.upfront-bar-datepicker'),
                         day = inst.selectedDay;
                     ;
                     var prev_date = new Date(  me.parts.dates.text()  ),
                         d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() );
-                    me.parts.dates.text(Upfront.Util.format_date( d, true));
-                    me.parts.dates.text($.format.date(d, dateFormat));
+
+                    me.parts.dates.html($.datepicker.formatDate(dateFormat, d));
+
                     me.post.set("post_date", d);
                     picker.datepicker("setDate", d);
                 },
                 onSelect : function(dateText){
-                    me.parts.dates.text(dateText);
+                    me.parts.dates.html(dateText);
                 }
             });
         }
@@ -410,7 +407,15 @@ var PostContentEditor = Backbone.View.extend({
         /**
          * Show date picker
          */
-        this.$('.upfront-date_picker').show();
+
+      this.$('.upfront-date_picker')
+        	.show()
+        	.offset({
+            top : $target.offset().top + 30,
+            left : $target.offset().left + $target.width()
+        	}
+     	);
+
         $(this.datepicker).toggle();
         if(date){
             /**
@@ -426,14 +431,6 @@ var PostContentEditor = Backbone.View.extend({
             this.$('.ueditor-hours-select').val(hours);
             this.$('.ueditor-minutes-select').val(minutes);
         }
-
-        /**
-         * Place the datepicker in proper position
-         */
-        this.$(".upfront-date_picker").offset({
-            top : $target.offset().top + 30,
-            left : $target.offset().left
-        });
 
     },
     cancel_editdate : function(){
