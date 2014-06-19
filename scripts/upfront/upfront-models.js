@@ -453,12 +453,27 @@ var _alpha = "alpha",
 		}
 	}),
 
+    Theme_Color = ObjectModel.extend({
+        defaults : {
+            color : "",
+            highlight : "",
+            shade : "",
+            selected : ""
+        }
+    });
+    Theme_Colors = Backbone.Collection.extend({
+        model : Theme_Color
+    });
 	Layout = ObjectModel.extend({
 		"defaults": {
 			"name": "",
 			"properties": new Properties(),
 			"regions": new Regions(),
 			"wrappers": new Wrappers(),
+            "theme_colors" : {
+                colors : new Theme_Colors(),
+                range : 0
+            },
 		},
 		initialize: function () {
 			var args = arguments;
@@ -469,7 +484,6 @@ var _alpha = "alpha",
 				;
 				this.set("regions", args[0].regions)
 			}
-
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
@@ -484,6 +498,13 @@ var _alpha = "alpha",
 				;
 				this.set("wrappers", args[0].wrappers)
 			}
+            if (args && args[0] && args[0]["theme_colors"]) {
+                args[0]["theme_colors"].colors = args[0]["theme_colors"].colors instanceof Theme_Colors
+                    ? args[0]["theme_colors"].colors
+                    : new Theme_Colors(args[0]["theme_colors"].colors)
+                ;
+                this.set("theme_colors", args[0].theme_colors)
+            }
 		},
 		get_current_state: function () {
 			return Upfront.Util.model_to_json(this.get("regions"));
@@ -1502,7 +1523,8 @@ return {
       "Comments": Comments,
       "Meta": Meta,
       "Term": Term,
-      "User": User
+      "User": User,
+      "Theme_color": Theme_Color
     },
     "Collections": {
       "Properties": Properties,
@@ -1513,7 +1535,8 @@ return {
       "CommentList": CommentList,
       "MetaList": MetaList,
       "PostList": PostList,
-      "TermList": TermList
+      "TermList": TermList,
+      "Theme_colors": Theme_Colors
     }
   };
 });

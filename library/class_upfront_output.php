@@ -117,12 +117,16 @@ class Upfront_Output {
 		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), 0.1, 'all');
 
     // Load theme fonts
-    foreach(json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts')) as $theme_font) {
-      wp_enqueue_style(
-        strtolower(str_replace(' ', '-', $theme_font->font->family)) . '-' . $theme_font->variant,
-        '//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
-      );
-    }
+        $theme_fonts = json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
+        if( $theme_fonts ){
+            foreach($theme_fonts as $theme_font) {
+                wp_enqueue_style(
+                    strtolower(str_replace(' ', '-', $theme_font->font->family)) . '-' . $theme_font->variant,
+                    '//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
+                );
+            }
+        }
+
 	}
 
 	function add_scripts () {

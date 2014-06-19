@@ -8,7 +8,8 @@ define([
 	"text!upfront/templates/sidebar_settings_lock_area.html",
 	"text!upfront/templates/sidebar_settings_background.html",
 	"text!upfront/templates/popup.html",
-	"text!upfront/templates/region_edit_panel.html"
+	"text!upfront/templates/region_edit_panel.html",
+    "text!upfront/templates/sidebar_settings_theme_colors.html"
 ], function () {
 	var _template_files = [
 		"text!upfront/templates/property.html",
@@ -19,7 +20,8 @@ define([
 		"text!upfront/templates/sidebar_settings_lock_area.html",
 		"text!upfront/templates/sidebar_settings_background.html",
 		"text!upfront/templates/popup.html",
-		"text!upfront/templates/region_edit_panel.html"
+		"text!upfront/templates/region_edit_panel.html",
+        "text!upfront/templates/sidebar_settings_theme_colors.html"
 	];
 
 	// Auto-assign the template contents to internal variable
@@ -75,7 +77,7 @@ define([
 		events: {
 			"click .upfront-property-change": "show_edit_property_partial",
 			"click .upfront-property-save": "save_property",
-			"click .upfront-property-remove": "remove_property",
+			"click .upfront-property-remove": "remove_property"
 		},
 		render: function () {
 			var template = _.template(_Upfront_Templates.property, this.model.toJSON());
@@ -1026,8 +1028,9 @@ define([
 		"tagName": "li",
 		"className": "sidebar-panel",
 		events: {
-			"click .sidebar-panel-title": "on_click"
-		},
+			"click .sidebar-panel-title": "on_click",
+            "click .sidebar-panel-tab" : "show_tab"
+        },
 		get_title: function () {},
 		render: function () {
 			if(this.active)
@@ -1038,11 +1041,28 @@ define([
 			this.$el.append('<div class="sidebar-panel-content" />');
 			this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 			if ( this.on_render ) this.on_render();
+            // Make first tab active
+            this.$el.find(".sidebar-panel-tab").first().addClass("active");
+            // show first tab content
+            this.$el.find(".sidebar-tab-content").first().show();
 		},
 		on_click: function () {
 			$('.sidebar-panel').not(this.$el).removeClass('expanded');
 			this.$el.addClass('expanded');
-		}
+
+            // take care of tabs if any
+            $('.sidebar-panel').not(this.$el).find(".sidebar-panel-tabspane").hide();
+            this.$el.find(".sidebar-panel-tabspane").show();
+		},
+        show_tab : function( e ){
+            var tab = "#" + $(e.target).data("target");
+            // Set current tab active
+            this.$el.find(".sidebar-panel-tab").removeClass("active");
+            $(e.target).addClass("active");
+            //Show current tab's content
+            this.$el.find(".sidebar-tab-content").hide();
+            this.$el.find(tab).show();
+        }
 	}));
 
 	var DraggableElement = Backbone.View.extend({
@@ -1647,7 +1667,7 @@ define([
 			this.edit_css = new Command_EditCustomCSS({"model": this.model});
 		},
 		get_title: function () {
-			return "Typography and Colors";
+			return "Typography";
 		},
 		on_render: function () {
 			this.edit_css.render();
@@ -1681,7 +1701,7 @@ define([
 			this.edit_background = new Command_EditLayoutBackground({"model": this.model});
 		},
 		get_title: function () {
-			return "";
+			return "Structure";
 		},
 		on_render: function () {
 			this.edit_background.render();
@@ -1694,14 +1714,198 @@ define([
 			}
 		}
 	});
+    var SidebarPanel_Settings_Item_Colors_Editor = SidebarPanel_Settings_Item.extend({
+        initialize : function(){
+            var self = this;
+            this.template = _.template(_Upfront_Templates.sidebar_settings_theme_colors);
+            this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-shades-wrap").html() );
+        },
+        events : {
+          "change #panel-setting-theme-colors-shades-range": "change_range",
+          "click .theme-colors-color-box" : "select_variation"
+        },
+        on_render : function(){
+            var self = this;
+            this.theme_colors = this.model.get("theme_colors"),
+            this.theme_color_range = this.theme_colors.range;
+            this.$el.html( this.template({
+                colors :  this.theme_colors.colors.toJSON(),
+                range  :  this.theme_color_range
+            } ) );
 
+            if( this.theme_colors.colors.length < 5 ){
+                this.add_empty_picker();
+            }
+            this.add_previous_pickers();
+        },
+        add_empty_picker : function(){
+            var self = this,
+                empty_picker = new Field_Color({
+                className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme_color_swatch_empty',
+                hide_label : true,
+                default_value: '#ffffff',
+                spectrum: {
+                    change: function (color) {
+                        self.add_new_color( color );
+                    }
+                }
+            });
+            empty_picker.render();
+            this.$(".theme_colors_empty_picker").html(empty_picker.$el);
+        },
+        add_previous_pickers : function(){
+            var self = this;
+            this.$(".theme-colors-color-picker").each(function(){
+                var $this = $(this),
+                    color = $this.data("color"),
+                    picker = new Field_Color({
+                        className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme_color_swatch_empty',
+                        hide_label : true,
+                        default_value: color,
+                        spectrum: {
+                            change: function (color){
+                                var index = $(this).closest(".theme-colors-color-picker").data("index"),
+                                    model = self.model.get("theme_colors").colors.at(index),
+                                    percentage = parseInt( self.model.get("theme_colors").range, 10) / 100 || 0;
+                                model.set({
+                                    color : color.toHexString(),
+                                    highlight : self.color_luminance( color.toHex(), percentage ),
+                                    shade : self.color_luminance( color.toHex(), (percentage * -1) )
+                                });
+                                $(this).parent().find(".sp-preview").css({
+                                    backgroundColor : color.toRgbString(),
+                                    backgroundImage : "none"
+                                });
+                                this.default_value = color.toRgbString();
+                                self.render_bottom();
+                            }
+                        }
+                    });
+                picker.render();
+                picker.$(".sp-preview").css({
+                    backgroundColor : color,
+                    backgroundImage : "none"
+                });
+                $this.html( picker.$el );
+            });
+        },
+        add_new_color : function( color ){
+                percentage = parseInt( this.model.get("theme_colors").range, 10) / 100 || 0;
+
+                var self = this,
+                    model = this.theme_colors.colors.add({
+                        color : color.toHexString(),
+                        highlight : self.color_luminance( color.toHex(), percentage ),
+                        shade : self.color_luminance( color.toHex(), (percentage * -1) )
+                    }),
+                    new_color_picker = new Field_Color({
+                    className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme-colors-color-picker',
+                    hide_label : true,
+                    default_value: color.toRgbString(),
+                    spectrum: {
+                            change: function (color){
+                                    var percentage = parseInt( self.model.get("theme_colors").range, 10) / 100 || 0;
+                                    model.set({
+                                        color : color.toHexString(),
+                                        highlight : self.color_luminance( color.toHex(), percentage ),
+                                        shade : self.color_luminance( color.toHex(), (percentage * -1) )
+                                    });
+                                    $(this).parent().find(".sp-preview").css({
+                                        backgroundColor : color.toRgbString(),
+                                        backgroundImage : "none"
+                                    });
+                                    this.default_value = color.toRgbString();
+                                    self.render_bottom();
+                                }
+                            }
+                    });
+
+            new_color_picker.render();
+            new_color_picker.$(".sp-preview").css({
+                backgroundColor : color.toRgbString(),
+                backgroundImage : "none"
+            });
+            this.$(".theme_colors_empty_picker").before(new_color_picker.$el);
+            this.model.set("theme_colors", this.theme_colors);
+
+            if( this.theme_colors.colors.length === 5 ){
+                this.$(".theme_colors_empty_picker").remove();
+            }
+            this.$("#theme-colors-no-color-notice").hide();
+            this.render_bottom();
+        },
+        render_bottom : function(){
+            this.$(".panel-setting-theme-colors-bottom").html(
+                this.bottomTemplate( {
+                    colors : this.model.get("theme_colors").colors.toJSON(),
+                    range  : this.model.get("theme_colors").range
+                } )
+            );
+        },
+        color_luminance : function (hex, lum) {
+            // validate hex string
+            hex = String(hex).replace(/[^0-9a-f]/gi, '');
+            if (hex.length < 6) {
+                hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+            }
+            lum = lum || 0;
+            // convert to decimal and change luminosity
+            var rgb = "#", c, i;
+            for (i = 0; i < 3; i++) {
+                c = parseInt(hex.substr(i*2,2), 16);
+                c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+                rgb += ("00"+c).substr(c.length);
+            }
+            return rgb;
+        },
+        change_range : function(e){
+            var self = this,
+                $this = $(e.target),
+                theme_colors = this.model.get("theme_colors");
+            theme_colors.range = $this.val();
+            percentage = parseInt( theme_colors.range, 10 ) / 100 || 0;
+            theme_colors.colors.each(function(model){
+                var original_color = model.get("color");
+                model.set("highlight", self.color_luminance( original_color, percentage ));
+                model.set("shade", self.color_luminance( original_color, (percentage * -1) ));
+            });
+            this.model.set("theme_colors", this.theme_colors );
+            this.render_bottom();
+        },
+        select_variation : function(e){
+            var self = this,
+                $this = $(e.target),
+                type = $this.data("type"),
+                index = $this.data("index"),
+                model = this.model.get("theme_colors").colors.at(index);
+            if( model ){
+                model.set("selected", type);
+            }
+            this.render_bottom();
+        }
+    });
+    var SidebarPanel_Settings_Section_Colors = SidebarPanel_Settings_Section.extend({
+        initialize: function () {
+            this.settings = _([]);
+            this.edit_colors = new SidebarPanel_Settings_Item_Colors_Editor({"model": this.model});
+        },
+        get_title: function () {
+            return "Colors";
+        },
+        on_render: function () {
+            this.edit_colors.render();
+            this.edit_colors.delegateEvents();
+            this.$el.find('.panel-section-content').append(this.edit_colors.el);
+        }
+    });
 	var SidebarPanel_Settings = SidebarPanel.extend({
 		"className": "sidebar-panel sidebar-panel-settings",
 		initialize: function () {
 			this.active = true;
 			this.sections = _([
 				new SidebarPanel_Settings_Section_Typography({"model": this.model}),
-				new SidebarPanel_Settings_Section_Structure({"model": this.model})
+				new SidebarPanel_Settings_Section_Structure({"model": this.model}),
+				new SidebarPanel_Settings_Section_Colors({"model": this.model})
 			]);
 		},
 		get_title: function () {
@@ -1710,10 +1914,15 @@ define([
 		on_render: function () {
 			var me = this;
 			this.$el.find('.sidebar-panel-title').addClass('upfront-icon upfront-icon-panel-settings');
-			this.sections.each(function (section) {
-				section.render();
-				me.$el.find('.sidebar-panel-content').append(section.el);
-			});
+            if( this.sections){
+                me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
+            }
+            this.sections.each(function (section) {
+                section.render();
+                me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
+                me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
+                me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
+            });
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME )
 				this.$el.find('.sidebar-panel-title').trigger('click');
 		}
