@@ -398,15 +398,24 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			),
 		));
 
+		$allowed_modes = array();
+		if (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $allowed_modes[] = 'layout';
+		if (Upfront_Permissions::current(Upfront_Permissions::CONTENT_MODE)) $allowed_modes[] = 'content';
+		if (Upfront_Permissions::current(Upfront_Permissions::THEME_MODE)) $allowed_modes[] = 'theme';
+		if (Upfront_Permissions::current(Upfront_Permissions::POSTLAYOUT_MODE)) $allowed_modes[] = 'postlayout';
+		if (Upfront_Permissions::current(Upfront_Permissions::RESPONSIVE_MODE)) $allowed_modes[] = 'responsive';
+
 		$application_modes = json_encode(array(
 			"LAYOUT" => "layout",
 			"CONTENT" => "content",
 			"THEME" => "theme",
 			"POST" => "post layout",
 			"POSTCONTENT" => "post content",
-      "RESPONSIVE" => "responsive",
-			"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
-			"ALLOW" => (current_user_can("manage_options") ? "layout,content,theme,postlayout,responsive" : "content")
+     		"RESPONSIVE" => "responsive",
+			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
+		// These need some finer control over
+			"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
+			"ALLOW" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? join(',', $allowed_modes) : "content")
 		));
 
 		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);

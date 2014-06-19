@@ -87,6 +87,7 @@ function upfront_add_layout_editor_entity ($name, $path) {
  */
 function upfront_add_ajax ($action, $callback, $admin = true) {
 	$hook = 'wp_ajax_' . ( !$admin ? 'nopriv_' : '' ) . $action;
+	$hook = apply_filters('upfront-access-ajax_hook', $hook, $action);
 	add_action($hook, 'upfront_ajax_init');
 	add_action($hook, $callback);
 }

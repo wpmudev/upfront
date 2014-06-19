@@ -2517,7 +2517,7 @@ var ImageSelector = Backbone.View.extend({
 				form = $('#upfront-upload-image')
 			;
 
-			form.fileupload({
+			if (!!form.fileupload) form.fileupload({
 					formData: {action: 'upfront-media-upload'}
 				})
 				.bind('fileuploadstart', function (e) {
