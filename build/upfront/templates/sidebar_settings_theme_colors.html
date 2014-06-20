@@ -1,0 +1,57 @@
+<div class="panel-setting-theme-colors">
+    <div class="pabel-setting-theme-colors-top">
+        <div id="panel-setting-theme-colors-pane">
+            {[ if (!colors.length){ ]}
+            <div id="theme-colors-no-color-notice">
+                No colors defined for this theme.
+                Click ( + ) below to define a color
+            </div>
+            {[ } ]}
+            {[ if (colors.length){ ]}
+            <div id="theme-colors-swatches">
+                <span class="theme-colors-swatch"></span>
+                {[ _.each(colors, function (color, idx){ ]}
+                <span class="theme-colors-color-picker" data-index="{{idx}}" data-color="{{color.color}}"></span>
+                {[ }); ]}
+                {[ if (colors.length < 5){ ]}
+                 <span class="theme_colors_empty_picker"></span>
+                {[ } ]}
+            </div>
+            {[ } ]}
+        </div>
+        {[ if (!colors.length){ ]}
+        <span class="theme_colors_empty_picker"></span>
+        {[ } ]}
+    </div>
+    <div class="panel-setting-theme-colors-bottom">
+        <div class="panel-setting-theme-colors-shades-wrap">
+            {[ if( colors.length ){ ]}
+            Define :hover for your swatches ?
+            <label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)</label>
+            <p>
+                <div type="range" class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>
+            </p>
+            <div class="panel-setting-theme-colors-meta">
+                Click either Highlight or Shade swatch to choose it. Hover for original color.
+                <p>
+                    Highlight:
+                <div class="panel-setting-theme-colors-highlights">
+
+                    {[ _.each(colors, function (color, idx){ ]}
+                    <span class="theme-colors-color-box theme-colors-highlight{[ if(color.selected === 'highlight') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}}" style="background-color: {{color.highlight}}" data-color="{{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>
+                    {[ }); ]}
+                </div>
+                </p>
+                <p>
+                    Shade:
+                <div class="panel-setting-theme-colors-shades">
+                    {[ _.each(colors, function (color, idx){ ]}
+                    <span class="theme-colors-color-box theme-colors-shade{[ if(color.selected === 'shade') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}}"  style="background-color: {{color.shade}}" data-index="{{idx}}" data-color="{{color.shade}}" data-type="shade"></span>
+                    {[ }); ]}
+                </div>
+                </p>
+            </div>
+            {[ } ]}
+        </div>
+    </div>
+</div>

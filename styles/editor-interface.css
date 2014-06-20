@@ -9989,6 +9989,7 @@ a.upfront-css-edit:before{
   padding-left: 5px;
 }
 .font-picker-use-button,
+.font-picker-revert-button,
 .breakpoint-edit-ok-button {
   line-height: 30px;
   text-align: center;
@@ -10233,6 +10234,12 @@ div.upfront-region-container-active > a.feature_image_selector {
   color: #687887;
 }
 
+.font-picker-use-button {
+	margin-left: 15px;
+}
+.font-picker-revert-button {
+  background: #85a9cc;
+}
 /*------------------- Setting sections tabs -----------------------*/
 #sidebar-ui ul.sidebar-panel-tabspane{
     width: 100%;

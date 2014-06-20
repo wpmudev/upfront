@@ -4842,7 +4842,8 @@ var ThemeFontListItem = Backbone.View.extend({
 var ThemeFontsPanel = Backbone.View.extend({
 	className: 'theme-fonts-panel panel',
 	template: $(_Upfront_Templates.popup).find('#theme-fonts-panel').html(),
-	initialize: function() {
+	initialize: function(options) {
+		this.options = options || {};
 		this.listenTo(this.collection, 'add', this.add_one);
 		this.listenTo(this.collection, 'add remove', this.update_stats);
 	},
@@ -4863,80 +4864,8 @@ var ThemeFontsPanel = Backbone.View.extend({
 	},
 	add_one: function(model) {
 		var themeFontView = new ThemeFontListItem({ model: model });
-		this.listenTo(themeFontView, 'selected', this.replaceFont);
+		this.options.parent_view.listenTo(themeFontView, 'selected', this.options.parent_view.replaceFont);
 		this.$el.find('.font-list').append(themeFontView.render().el);
-	},
-	replaceFont: function(font) {
-		var editor, style_doc, row, line, font_weight_row, font_style_row, lines;
-		editor = Upfront.Application.cssEditor.editor;
-		style_doc = editor.getSession().getDocument();
-
-		// Store starting text, must be restored if exiting font picker without font chosen
-		if (!this.starting_text) this.starting_text = editor.getCopyText();
-
-		// Insert selected font family
-		if (!this.start_range) {
-			this.start_range = editor.getSelection().getRange();
-		} else {
-			this.start_range.end = this.end_point;
-		}
-		this.end_point = editor.getSession().getDocument().replace(this.start_range, font.font.family);
-
-		// Insert selected weight and style
-		// Search forward only from font family row since lower properties override upper
-		row = this.start_range.start.row + 1;
-		line = style_doc.getLine(row);
-		while (line.indexOf('}') < 0) {
-			if (line.indexOf('font-weight') !== -1) {
-				font_weight_row = row;
-			}
-			if (line.indexOf('font-style') !== -1) {
-				font_style_row = row;
-			}
-
-			row++;
-			line = style_doc.getLine(row);
-			if (!line) {
-				// Fix missing closing paren
-				style_doc.insertLines(row, ['}']);
-				break;
-			}
-		}
-
-		// Reset properties. This is complicated. If both font style and font weight properties are in current style rule
-		// we need to remove them carefully because when we remove first, seconds' row number might change
-		// so first remove one with higher row number.
-		if (font_weight_row && font_style_row) {
-			if (font_weight_row > font_style_row) {
-				style_doc.removeLines(font_weight_row, font_weight_row);
-				style_doc.removeLines(font_style_row, font_style_row);
-			} else {
-				style_doc.removeLines(font_style_row, font_style_row);
-				style_doc.removeLines(font_weight_row, font_weight_row);
-			}
-			font_weight_row = false;
-			font_style_row = false;
-		}
-		if (font_weight_row) {
-			style_doc.removeLines(font_weight_row, font_weight_row);
-			font_weight_row = false;
-		}
-		if (font_style_row) {
-			style_doc.removeLines(font_style_row, font_style_row);
-			font_style_row = false;
-		}
-
-		// Insert properties
-		lines = [];
-		if (font.fontWeight) {
-			lines.push('		font-weight: ' + font.fontWeight + ';');
-		}
-		if (font.fontStyle) {
-			lines.push('		font-style: ' + font.fontStyle + ';');
-		}
-		if (lines.length > 0) {
-			style_doc.insertLines(this.start_range.start.row + 1, lines);
-		}
 	}
 });
 
@@ -4945,13 +4874,18 @@ var FontPicker = Backbone.View.extend({
 	template: $(_Upfront_Templates.popup).find('#font-picker-tpl').html(),
 	events: {
 		'click .add-font-button': 'add_font',
-		'click .font-picker-use-button': 'close'
+		'click .font-picker-use-button': 'close',
+		'change input[type=checkbox]': 'preview_font',
+		'click .font-picker-revert-button': 'revert'
 	},
 	initialize: function() {
 		this.theme_fonts_panel = new ThemeFontsPanel({
-			collection: this.collection
+			collection: this.collection,
+			parent_view: this
 		});
 		this.listenTo(this.collection, 'remove', this.update_variants_on_remove);
+		_.bindAll(this, 'close_on_outside_click');
+		$('body').on('click', this.close_on_outside_click);
 	},
 	render: function() {
 		var me = this;
@@ -4964,6 +4898,16 @@ var FontPicker = Backbone.View.extend({
 		this.$el.find('.add-font-panel').after(this.theme_fonts_panel.render().el);
 
 		return this;
+	},
+	close_on_outside_click: function(event) {
+		if (this.first_click_done && $(event.target).parents('#font-picker').length === 0) {
+			$('body').off('click', this.close_on_outside_click);
+			this.revert();
+			return;
+		}
+		// When opening font picker, click to open it will also be captured here
+		// so make sure to not close on that first click.
+		this.first_click_done = true;
 	},
 	add_font: function() {
 		var variants;
@@ -4987,7 +4931,7 @@ var FontPicker = Backbone.View.extend({
 
 			// Check if font is added to page
 			if ($('#' + font.get('family').toLowerCase() + variant + '-css').length === 0) {
-				$('body').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
+				$('head').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
 			}
 		}, this);
 		this.update_variants();
@@ -5035,6 +4979,151 @@ var FontPicker = Backbone.View.extend({
 		this.choose_variants.$el.find('.upfront-field-multiple').wrapAll('<div class="font-weights-list-wrapper" />');
 	},
 	close: function() {
+		$('body').off('click', this.close_on_outside_click);
+
+		// If last selected font is not theme font (user just tried out by clicking on font
+		// in left (add fonts) panel, than revert to font. User must add font to theme fonts
+		// if she wants to keep style.
+	  var last_font = theme_fonts_collection.get(this.last_selected_font.font.family + this.last_selected_font.variant);
+		if (last_font) {
+		  this.remove();
+			return;
+		}
+		this.revert();
+	},
+	preview_font: function(event) {
+		var themeFont, checkbox, font, variant;
+		font = this.font_family_select.get_value();
+		checkbox = $(event.currentTarget);
+		variant = checkbox.val();
+
+		if (!checkbox.is(':checked')) return;
+
+		themeFont = theme_fonts_collection.get(font.get('family') + variant);
+		if (themeFont) {
+			this.replaceFont(themeFont);
+			return;
+		}
+
+		themeFont = new ThemeFontModel({
+			id: font.get('family') + variant,
+			font: font.toJSON(),
+			variant: variant
+		});
+
+		if ($('#' + font.get('family').toLowerCase() + variant + '-css').length === 0) {
+			$('head').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
+		}
+
+		this.replaceFont(themeFont.toJSON());
+	},
+	replaceFont: function(font) {
+		var lines;
+		this.editor = Upfront.Application.cssEditor.editor;
+		this.style_doc = this.editor.getSession().getDocument();
+
+		this.last_selected_font = font;
+
+		// Store starting text, must be restored if exiting font picker without font chosen
+		if (!this.starting_font) this.starting_font = this.editor.getCopyText();
+
+		// Insert selected font family
+		if (!this.font_family_range) {
+			this.font_family_range = this.editor.getSelection().getRange();
+		} else {
+			this.font_family_range.end = this.end_point;
+		}
+		this.end_point = this.style_doc.replace(this.font_family_range, font.font.family);
+
+		// Insert selected weight and style, first reset them
+		this.reset_properties();
+		lines = [];
+		if (font.fontWeight) {
+			lines.push('    font-weight: ' + font.fontWeight + ';');
+		}
+		if (font.fontStyle) {
+			lines.push('    font-style: ' + font.fontStyle + ';');
+		}
+		if (lines.length > 0) {
+			this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
+		}
+	},
+	reset_properties: function() {
+		var row, line, result;
+		this.editor = Upfront.Application.cssEditor.editor;
+		this.style_doc = this.editor.getSession().getDocument();
+		// Search forward only from font family row since lower properties override upper
+		result = {};
+		row = this.font_family_range.start.row + 1;
+		line = this.style_doc.getLine(row);
+		while (line.indexOf('}') < 0) {
+			if (line.indexOf('font-weight') !== -1) {
+				result.weight = row;
+				if (!this.starting_weight) this.starting_weight = line;
+			}
+			if (line.indexOf('font-style') !== -1) {
+				result.style = row;
+				if (!this.starting_style) this.starting_style = line;
+			}
+
+			row++;
+			line = this.style_doc.getLine(row);
+			if (!line) {
+				// Fix missing closing paren
+				this.style_doc.insertLines(row, ['}']);
+				break;
+			}
+		}
+
+		// Reset properties. This is complicated. If both font style and font weight properties are in current style rule
+		// we need to remove them carefully because when we remove first, seconds' row number might change
+		// so first remove one with higher row number.
+		if (result.weight && result.style) {
+			if (result.weight > result.style) {
+				this.style_doc.removeLines(result.weight, result.weight);
+				this.style_doc.removeLines(result.style, result.style);
+			} else {
+				this.style_doc.removeLines(result.style, result.style);
+				this.style_doc.removeLines(result.weight, result.weight);
+			}
+			result.weight = false;
+			result.style = false;
+		}
+		if (result.weight) {
+			this.style_doc.removeLines(result.weight, result.weight);
+		}
+		if (result.style) {
+			this.style_doc.removeLines(result.style, result.style);
+		}
+	},
+	revert: function() {
+		var lines;
+		this.editor = Upfront.Application.cssEditor.editor;
+		this.style_doc = this.editor.getSession().getDocument();
+
+		if (!this.font_family_range) {
+			this.remove();
+			return;
+		}
+		// Revert font family
+		this.font_family_range.end = this.end_point;
+		this.style_doc.replace(this.font_family_range, this.starting_font);
+		this.starting_font = false;
+
+		// Revert weight and style
+		this.reset_properties();
+		lines = [];
+		if (this.starting_weight) {
+			lines.push(this.starting_weight);
+			this.starting_weight = false;
+		}
+		if (this.starting_style) {
+			lines.push(this.starting_style);
+		}
+		if (lines.length > 0) {
+			this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
+		}
+
 		this.remove();
 	}
 });
