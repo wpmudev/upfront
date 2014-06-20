@@ -10300,10 +10300,20 @@ div.upfront-region-container-active > a.feature_image_selector {
     height: 22px;
     border: 1px solid #9dbbd8;
     margin: 5px 10px;
+    cursor: pointer;
 }
 #panel-setting-theme-colors-shades-range{
     width: 100%;
 }
 .panel-setting-theme-colors-meta p{
     margin: 0;
+}
+.theme-colors-color-box-selected{
+    background-image: url('../img/uf-core-el-sprite.svg');
+}
+.theme-colors-color-box-selected.dark{
+    background-position: -809px -201px;
+}
+.theme-colors-color-box-selected.light{
+    background-position: -809px -169px;
 }

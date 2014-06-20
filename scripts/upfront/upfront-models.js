@@ -458,7 +458,8 @@ var _alpha = "alpha",
             color : "",
             highlight : "",
             shade : "",
-            selected : ""
+            selected : "",
+            luminance : ""
         }
     });
     Theme_Colors = Backbone.Collection.extend({

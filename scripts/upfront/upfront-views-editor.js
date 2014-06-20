@@ -1877,11 +1877,23 @@ define([
                 $this = $(e.target),
                 type = $this.data("type"),
                 index = $this.data("index"),
+                color = $this.data("color"),
                 model = this.model.get("theme_colors").colors.at(index);
             if( model ){
                 model.set("selected", type);
+                model.set("luminance", self.luminance( color ) );
             }
             this.render_bottom();
+        },
+        luminance : function(color){
+            color = color.substring(1);
+            var rgb = parseInt(color, 16);
+            var r = (rgb >> 16) & 0xff;
+            var g = (rgb >>  8) & 0xff;
+            var b = (rgb >>  0) & 0xff;
+
+            var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            return (luma < 80) ? "dark" : "light";
         }
     });
     var SidebarPanel_Settings_Section_Colors = SidebarPanel_Settings_Section.extend({
@@ -8238,7 +8250,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	// Breakpoint events tests
 	Upfront.Events.on("upfront:layout_size:change_breakpoint", function(breakpoint, prev_breakpoint) {
 		if (prev_breakpoint) console.log(['Breakpoint deactivated', prev_breakpoint.name, prev_breakpoint.width].join(' '));
-		console.log(['Breakpoint activated', breakpoint.name, breakpoint.width].join(' '));
+//		console.log(['Breakpoint activated', breakpoint.name, breakpoint.width].join(' '));
 	});
 	Upfront.Events.on("upfront:layout_size:viewport_width_change", function(new_width) {
 		console.log(['Viewport width changed:', new_width].join(' '));

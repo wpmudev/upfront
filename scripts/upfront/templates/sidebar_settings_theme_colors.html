@@ -34,8 +34,9 @@
                 <p>
                     Highlight:
                 <div class="panel-setting-theme-colors-highlights">
+
                     {[ _.each(colors, function (color, idx){ ]}
-                    <span class="theme-colors-color-box theme-colors-highlight" style="background-color: {{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>
+                    <span class="theme-colors-color-box theme-colors-highlight{[ if(color.selected === 'highlight') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}}" style="background-color: {{color.highlight}}" data-color="{{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>
                     {[ }); ]}
                 </div>
                 </p>
@@ -43,7 +44,7 @@
                     Shade:
                 <div class="panel-setting-theme-colors-shades">
                     {[ _.each(colors, function (color, idx){ ]}
-                    <span class="theme-colors-color-box theme-colors-shade" style="background-color: {{color.shade}}" data-index="{{idx}}" data-type="shade"></span>
+                    <span class="theme-colors-color-box theme-colors-shade{[ if(color.selected === 'shade') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}}"  style="background-color: {{color.shade}}" data-index="{{idx}}" data-color="{{color.shade}}" data-type="shade"></span>
                     {[ }); ]}
                 </div>
                 </p>
