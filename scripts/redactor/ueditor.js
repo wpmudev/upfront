@@ -2117,7 +2117,7 @@ RedactorPlugins.icons = {
             this.redactor = redactor;
             this.redactor.selectionSave();
             this.$el.parent().css({
-                left : 158
+                left : 156
             });
         },
         select_icon : function(e){
