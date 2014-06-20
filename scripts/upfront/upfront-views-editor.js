@@ -1721,7 +1721,7 @@ define([
             this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-shades-wrap").html() );
         },
         events : {
-          "change #panel-setting-theme-colors-shades-range": "change_range",
+          "change .panel-setting-theme-colors-shades-range": "change_range",
           "click .theme-colors-color-box" : "select_variation"
         },
         on_render : function(){
@@ -1737,6 +1737,7 @@ define([
                 this.add_empty_picker();
             }
             this.add_previous_pickers();
+            this.add_slider();
         },
         add_empty_picker : function(){
             var self = this,
@@ -1858,11 +1859,10 @@ define([
             }
             return rgb;
         },
-        change_range : function(e){
+        change_range : function(range){
             var self = this,
-                $this = $(e.target),
                 theme_colors = this.model.get("theme_colors");
-            theme_colors.range = $this.val();
+            theme_colors.range = range;
             percentage = parseInt( theme_colors.range, 10 ) / 100 || 0;
             theme_colors.colors.each(function(model){
                 var original_color = model.get("color");
@@ -1871,6 +1871,7 @@ define([
             });
             this.model.set("theme_colors", this.theme_colors );
             this.render_bottom();
+            this.add_slider();
         },
         select_variation : function(e){
             var self = this,
@@ -1894,6 +1895,17 @@ define([
 
             var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
             return (luma < 80) ? "dark" : "light";
+        },
+        add_slider : function(){
+            var self = this;
+            this.$(".panel-setting-theme-colors-shades-range").slider({
+                value :  this.model.get("theme_colors").range,
+                min : 0,
+                max : 100,
+                change: function( event, ui ) {
+                    self.change_range(ui.value);
+                }
+            });
         }
     });
     var SidebarPanel_Settings_Section_Colors = SidebarPanel_Settings_Section.extend({

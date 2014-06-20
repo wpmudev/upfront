@@ -28,7 +28,9 @@
             {[ if( colors.length ){ ]}
             Define :hover for your swatches ?
             <label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)</label>
-            <input type="range" value="{{range}}" id="panel-setting-theme-colors-shades-range" min="0" max="100" />
+            <p>
+                <div type="range" class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>
+            </p>
             <div class="panel-setting-theme-colors-meta">
                 Click either Highlight or Shade swatch to choose it. Hover for original color.
                 <p>

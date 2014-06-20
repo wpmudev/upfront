@@ -10302,7 +10302,7 @@ div.upfront-region-container-active > a.feature_image_selector {
     margin: 5px 10px;
     cursor: pointer;
 }
-#panel-setting-theme-colors-shades-range{
+.panel-setting-theme-colors-shades-range{
     width: 100%;
 }
 .panel-setting-theme-colors-meta p{
@@ -10316,4 +10316,8 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 .theme-colors-color-box-selected.light{
     background-position: -809px -169px;
+}
+.panel-setting-theme-colors .upfront-field-slider .ui-slider-handle{
+    background-color: #1fcd8f;
+    border-width: 4px;
 }
