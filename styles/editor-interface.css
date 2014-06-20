@@ -10273,6 +10273,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 .upfront-field-wrap-color .theme_color_swatch .sp-preview{
     border: none;
+    border-radius: 0;
 }
 .theme_color_swatch .sp-replacer{
     display: inline-block;
@@ -10291,6 +10292,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 .theme_color_swatch_empty .sp-preview{
     background-image: url('../img/uf-core-el-sprite.svg');
     background-position: -1361px -169px;
+    border-radius: 0;
 }
 #panel-setting-theme-colors-shades{
 

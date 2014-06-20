@@ -372,6 +372,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
     $theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
+    $theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+    if (empty($theme_colors)) $theme_colors = json_encode(array());
+
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
 			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
@@ -437,6 +440,7 @@ Upfront.mainData = {
   gridInfo: {$grid_info},
   themeInfo: {$theme_info},
   themeFonts: {$theme_fonts},
+  themeColors: {$theme_colors},
   content: {$content}
 };
 EOMainJs;
@@ -1155,6 +1159,7 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
 	private function _add_hooks () {
 		upfront_add_ajax('upfront_get_theme_fonts', array($this, 'get_theme_fonts'));
 		upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
+		upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
 	}
 
 	public function get_theme_fonts() {
@@ -1173,3 +1178,36 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
   }
 }
 Upfront_Server_ThemeFontsServer::serve();
+
+class Upfront_Server_ThemeColorsServer extends Upfront_Server {
+
+    public static function serve () {
+        $me = new self;
+        $me->_add_hooks();
+    }
+
+    private function _add_hooks () {
+        upfront_add_ajax('upfront_get_theme_color', array($this, 'get'));
+        upfront_add_ajax('upfront_update_theme_colors', array($this, 'update'));
+    }
+
+    public function get() {
+        $theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+        if (empty($theme_colors)) $theme_colors = array();
+        $this->_out(new Upfront_JsonResponse_Success($theme_colors));
+    }
+
+    public function update() {
+        if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
+        $theme_colors = isset($_POST['theme_colors']) ? $_POST['theme_colors'] : array();
+        $range = isset($_POST['range']) ? $_POST['range'] : 0;
+        update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode(array(
+            "colors" => $theme_colors,
+             "range" => $range
+        )));
+
+        $this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme colors updated'));
+    }
+}
+Upfront_Server_ThemeColorsServer::serve();

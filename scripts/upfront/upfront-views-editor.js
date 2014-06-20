@@ -1714,23 +1714,55 @@ define([
 			}
 		}
 	});
+
+    var Theme_Color = Backbone.Model.extend({
+        defaults : {
+            color : "",
+            highlight : "",
+            shade : "",
+            selected : "",
+            luminance : ""
+        }
+    });
+    var Theme_Colors_Collection = Backbone.Collection.extend({
+        model : Theme_Color
+    });
+    var Theme_Colors = {
+        colors : new Theme_Colors_Collection(Upfront.mainData.themeColors.colors),
+        range  : Upfront.mainData.themeColors.range || 0
+    };
+    window.Theme_Colors = Theme_Colors;
     var SidebarPanel_Settings_Item_Colors_Editor = SidebarPanel_Settings_Item.extend({
         initialize : function(){
             var self = this;
             this.template = _.template(_Upfront_Templates.sidebar_settings_theme_colors);
             this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-shades-wrap").html() );
+            Upfront.Events.on("command:layout:save", this.on_save, this);
+            Upfront.Events.on("command:layout:save_as", this.on_save, this);
         },
         events : {
           "change .panel-setting-theme-colors-shades-range": "change_range",
           "click .theme-colors-color-box" : "select_variation"
         },
+        on_save : function(){
+            var postData = {
+                action: 'upfront_update_theme_colors',
+                theme_colors: Theme_Colors.colors.toJSON(),
+                range : Theme_Colors.range
+            };
+
+            Upfront.Util.post(postData)
+                .error(function(){
+                    return notifier.addMessage('Theme colors could not be saved.');
+            });
+        },
         on_render : function(){
             var self = this;
-            this.theme_colors = this.model.get("theme_colors"),
-            this.theme_color_range = this.theme_colors.range;
+            this.theme_colors = Theme_Colors,
+            this.theme_color_range = Theme_Colors.range;
             this.$el.html( this.template({
                 colors :  this.theme_colors.colors.toJSON(),
-                range  :  this.theme_color_range
+                range  :  Theme_Colors.range
             } ) );
 
             if( this.theme_colors.colors.length < 5 ){
@@ -1766,8 +1798,8 @@ define([
                         spectrum: {
                             change: function (color){
                                 var index = $(this).closest(".theme-colors-color-picker").data("index"),
-                                    model = self.model.get("theme_colors").colors.at(index),
-                                    percentage = parseInt( self.model.get("theme_colors").range, 10) / 100 || 0;
+                                    model = Theme_Colors.colors.at(index),
+                                    percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
                                 model.set({
                                     color : color.toHexString(),
                                     highlight : self.color_luminance( color.toHex(), percentage ),
@@ -1791,7 +1823,7 @@ define([
             });
         },
         add_new_color : function( color ){
-                percentage = parseInt( this.model.get("theme_colors").range, 10) / 100 || 0;
+                percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
 
                 var self = this,
                     model = this.theme_colors.colors.add({
@@ -1805,7 +1837,7 @@ define([
                     default_value: color.toRgbString(),
                     spectrum: {
                             change: function (color){
-                                    var percentage = parseInt( self.model.get("theme_colors").range, 10) / 100 || 0;
+                                    var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
                                     model.set({
                                         color : color.toHexString(),
                                         highlight : self.color_luminance( color.toHex(), percentage ),
@@ -1827,9 +1859,8 @@ define([
                 backgroundImage : "none"
             });
             this.$(".theme_colors_empty_picker").before(new_color_picker.$el);
-            this.model.set("theme_colors", this.theme_colors);
 
-            if( this.theme_colors.colors.length === 5 ){
+            if( Theme_Colors.colors.length === 5 ){
                 this.$(".theme_colors_empty_picker").remove();
             }
             this.$("#theme-colors-no-color-notice").hide();
@@ -1838,10 +1869,11 @@ define([
         render_bottom : function(){
             this.$(".panel-setting-theme-colors-bottom").html(
                 this.bottomTemplate( {
-                    colors : this.model.get("theme_colors").colors.toJSON(),
-                    range  : this.model.get("theme_colors").range
+                    colors : Theme_Colors.colors.toJSON(),
+                    range  : Theme_Colors.range
                 } )
             );
+            this.add_slider();
         },
         color_luminance : function (hex, lum) {
             // validate hex string
@@ -1860,18 +1892,15 @@ define([
             return rgb;
         },
         change_range : function(range){
-            var self = this,
-                theme_colors = this.model.get("theme_colors");
-            theme_colors.range = range;
-            percentage = parseInt( theme_colors.range, 10 ) / 100 || 0;
-            theme_colors.colors.each(function(model){
+            var self = this;
+            Theme_Colors.range = range;
+            percentage = parseInt( range, 10 ) / 100 || 0;
+            Theme_Colors.colors.each(function(model){
                 var original_color = model.get("color");
                 model.set("highlight", self.color_luminance( original_color, percentage ));
                 model.set("shade", self.color_luminance( original_color, (percentage * -1) ));
             });
-            this.model.set("theme_colors", this.theme_colors );
             this.render_bottom();
-            this.add_slider();
         },
         select_variation : function(e){
             var self = this,
@@ -1879,7 +1908,7 @@ define([
                 type = $this.data("type"),
                 index = $this.data("index"),
                 color = $this.data("color"),
-                model = this.model.get("theme_colors").colors.at(index);
+                model = Theme_Colors.colors.at(index);
             if( model ){
                 model.set("selected", type);
                 model.set("luminance", self.luminance( color ) );
@@ -1899,7 +1928,7 @@ define([
         add_slider : function(){
             var self = this;
             this.$(".panel-setting-theme-colors-shades-range").slider({
-                value :  this.model.get("theme_colors").range,
+                value :  Theme_Colors.range,
                 min : 0,
                 max : 100,
                 change: function( event, ui ) {
@@ -3543,7 +3572,7 @@ define([
 			showSelectionPalette: true,
 			showAlpha: true,
 			showPalette: true,
-			palette: ['fff', '000', 'f00'],
+			palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
 			maxSelectionSize: 10,
 			preferredFormat: "hex",
 			showInput: true,
@@ -3553,8 +3582,7 @@ define([
 			this.options = opts;
 			var me = this,
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
-			;
-
+                ;
 			spectrumOptions.move = function(color){
 				var rgb = color.toHexString();
 				$('.sp-dragger').css({
@@ -3712,7 +3740,6 @@ define([
 			return '<li class="' + classes + '">' + '<label for="' + id + '">' + this.get_icon_html(value.icon, icon_class) + '<span class="upfront-field-label-text">' + value.label + '</span></label>' + input + '</li>';
 		}
 	}));
-
 
 	var Field_Multiple_Input = Field_Multiple.extend({
 		selected_state: 'checked',
@@ -4781,7 +4808,7 @@ var Theme_Fonts_Storage = function(stored_fonts) {
 	};
 
 	initialize();
-}
+};
 
 var theme_fonts_storage = new Theme_Fonts_Storage();
 
@@ -5198,7 +5225,7 @@ var CSSEditor = Backbone.View.extend({
 		me.$('.upfront-css-color').spectrum({
 			showAlpha: true,
 			showPalette: true,
-			palette: ['fff', '000', '0f0'],
+			palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") :  ['fff', '000', '0f0'],
 			maxSelectionSize: 9,
 			localStorageKey: "spectrum.recent_bgs",
 			preferredFormat: "hex",
@@ -5627,7 +5654,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		me.$('.upfront-css-color').spectrum({
 			showAlpha: true,
 			showPalette: true,
-			palette: ['fff', '000', '0f0'],
+			palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
 			maxSelectionSize: 9,
 			localStorageKey: "spectrum.recent_bgs",
 			preferredFormat: "hex",
@@ -8599,8 +8626,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
     Mixins: {
       "Upfront_Scroll_Mixin": Upfront_Scroll_Mixin
-    }
-	};
+    },
+    Theme_Colors : Theme_Colors
+
+    };
 });
 })(jQuery);
 

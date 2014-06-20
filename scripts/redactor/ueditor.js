@@ -1024,7 +1024,7 @@ RedactorPlugins.upfrontColor = {
 		current_color: false,
 		current_bg: false,
 		events:{
-			'open': 'open',
+			'open': 'open'
 		},
 		setCurrentColors: function() {
 			var parent = this.redactor.getParent();
@@ -1147,7 +1147,7 @@ RedactorPlugins.upfrontColor = {
 				flat: true,
 				showAlpha: true,
 				showPalette: true,
-				palette: ['fff', '000', 'f00'],
+				palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
 				localStorageKey: "spectrum.recent_colors",
 				maxSelectionSize: 10,
 				preferredFormat: "hex",
@@ -1170,7 +1170,7 @@ RedactorPlugins.upfrontColor = {
 				showPalette: true,
 				palette: ['fff', '000', '0f0'],
 				maxSelectionSize: 9,
-				localStorageKey: "spectrum.recent_bgs",
+                palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
 				preferredFormat: "hex",
 				chooseText: "Ok",
 				showInput: true,
