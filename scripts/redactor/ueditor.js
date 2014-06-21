@@ -953,9 +953,17 @@ RedactorPlugins.upfrontLink = {
 				url = ''
 			;
 			if(link){
-				if(link == 'external')
+				if(link == 'external') {
 					url = this.$('#ueditor-link-url').val();
-				else if(link == 'post')
+					// If it is not an already external link...
+					if (!(url.match(/https?:\/\//) || url.match(/\/\/:/))) {
+						// ... check if we want an external URL
+						url = url.match(/^www\./) || url.match(/\./)
+							? 'http://' + url
+							: url
+						;
+					}
+				} else if(link == 'post')
 					url = this.$('.ueditor-change-link-post').text();
 				else if(link == 'anchor')
 					url = this.$('.ueditor-anchor-selector').val();
