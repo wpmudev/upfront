@@ -417,6 +417,15 @@ define(function() {
                 if ( '' == data[0] || 'http://' == data[0] || '' == data[1] )
                     return false;
 
+                // If it is not an already external link...
+                    if (!(data[0].match(/https?:\/\//) || data[0].match(/\/\/:/))) {
+                    // ... check if we want an external URL
+                    data[0] = data[0].match(/^www\./) || data[0].match(/\./)
+                        ? 'http://' + data[0]
+                        : data[0]
+                    ;
+                }
+
                 if(!itemId){
                     this.addItemToMenu({
                         '-1': {

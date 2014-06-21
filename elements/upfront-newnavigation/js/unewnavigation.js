@@ -1211,7 +1211,7 @@ return;
               "menu-item-target": "",
               "menu-item-title": "",
               "menu-item-type": "custom",
-              "menu-item-url": "http://#"
+              "menu-item-url": ""
                         };
   },
   addPrimaryMenuItem : function(e) {
