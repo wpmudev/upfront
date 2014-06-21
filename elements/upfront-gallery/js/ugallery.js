@@ -1158,9 +1158,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			imageId = tooltip.find('#ugallery-image-id').val(),
 			urlVal = tooltip.find('#ugallery-image-link-url').val()
 		;
-		if(linkVal == 'external' || linkVal == 'post')
+		if(linkVal == 'external' || linkVal == 'post') {
+			if ('external' === linkVal && !(urlVal.match(/https?:\/\//) || urlVal.match(/\/\/:/))) {
+				urlVal = urlVal.match(/^www\./) || urlVal.match(/\./)
+					? 'http://' + urlVal
+					: urlVal
+				;
+			}
 			this.images.get(imageId).set({'link': linkVal, 'url': urlVal});
-		else
+		} else
 			this.images.get(imageId).set({link: 'original', url: ''});
 
 		this.closeTooltip();

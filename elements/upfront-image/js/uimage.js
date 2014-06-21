@@ -284,6 +284,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('when_clicked', linkVal);
 
 		if((linkVal == 'external' || linkVal == 'post') && urlVal){
+			if ('external' === linkVal && !(urlVal.match(/https?:\/\//) || urlVal.match(/\/\/:/))) {
+				urlVal = urlVal.match(/^www\./) || urlVal.match(/\./)
+					? 'http://' + urlVal
+					: urlVal
+				;
+			}
 			this.property('image_link', urlVal);
 		}
 		else if(linkVal == 'show_larger_image') {
