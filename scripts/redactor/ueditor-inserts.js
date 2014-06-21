@@ -572,12 +572,24 @@ var ImageInsert = UeditorInsert.extend({
 		});
 
 		this.listenTo(this.controls, 'control:ok:link', function(view, control){
-			var linkData = {
-				linkType: view.$('input[type=radio]:checked').val() || 'do_nothing',
-				linkUrl: view.$('input[type=text]').val()
+			var url = view.$('input[type=text]').val(),
+				type = view.$('input[type=radio]:checked').val() || 'do_nothing',
+				linkData = {}
+			;
+			if ("external" === type && !(url.match(/https?:\/\//) || url.match(/\/\/:/))) {
+				// ... check if we want an external URL
+				url = url.match(/^www\./) || url.match(/\./)
+					? 'http://' + url
+					: url
+				;
+			}
+			linkData = {
+				linkType: type,
+				linkUrl: url
 			};
 
 			this.data.set(linkData);
+			view.model.set(linkData);
 			control.close();
 		});
 
@@ -983,15 +995,15 @@ var LinkView = Backbone.View.extend({
             var me = this,
                 type = this.$('input:checked').val(),
                 url = this.$('#uinsert-image-link-url').val()
-                ;
+            ;
             if(type == 'post'){
                 var selectorOptions = {postTypes: this.postTypes()};
                 Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
                     me.model.set({linkType: 'post', linkUrl: post.get('permalink')});
                 });
-            }
-            else
+            } else {
                 this.model.set({linkType: type, linkUrl: url});
+            }
         },
         postTypes: function(){
             var types = [];
