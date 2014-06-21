@@ -1,1 +1,0 @@
-<time class="post_date" datetime="%date_iso%">%date%</time>

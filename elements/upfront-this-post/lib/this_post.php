@@ -122,11 +122,20 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public function get_markup () {
 		global $post;
-		$element_id = $this->_get_property('element_id');
-		return
-			'<div class=" upfront-this_post" id="' . $element_id . '">' .
-				self::get_post_markup(get_the_ID(), $post->post_type, $this->properties_to_array()) .
-			'</div>';
+		return self::get_template_markup($post, $this->properties_to_array());
+	}
+
+	public static function get_template_markup($post, $properties) {
+		$markup = upfront_get_template(
+			'this-post',
+			array(
+				'properties' => $properties,
+				'post' => $post
+			),
+			dirname(dirname(__FILE__)) . '/tpl/this-post.php'
+		);
+
+		return $markup;
 	}
 
 	protected static function get_padding_styles($properties, $archive, $post){
@@ -154,10 +163,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function get_post_markup ($post_id, $post_type, $properties=array(), $layout = false, $archive = false) {
 		if($post_id === 0)
-			return self::get_new_post($post_type);
+			return self::get_new_post_contents($post_type);
 
 		if (!$post_id || !is_numeric($post_id)) {
-			$post = self::get_new_post($post_type, array(), false);
+			$post = self::get_new_post_contents($post_type, array(), false);
 		} else {
 			$post = get_post($post_id);
 		}
@@ -173,23 +182,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return $out;
 	}
 
-	public static function get_new_post($post_type = 'post', $properties=array(), $query_override=true) {
-		$title = sprintf(__('Enter your new %s title here', 'upfront'), $post_type);
-		$content = sprintf(__('Your %s content goes here. Have fun writing :)', 'upfront'), $post_type);
-
-		$post_arr = array(
-			'ID' => 0,
-			'post_title' => $title,
-			'post_content' => $content,
-			'post_type' => $post_type,
-			'filter' => 'raw',
-			'post_author' => get_current_user_id()
-		);
-		$post_obj = new stdClass();
-		foreach($post_arr as $key => $value)
-			$post_obj->$key = $value;
-
-		$post = new WP_Post($post_obj);
+	public static function get_new_post_contents($post_type = 'post', $properties=array(), $query_override=true) {
+		$post = self::get_new_post($post_type);
 
 		if ($query_override) {
 			query_posts( 'post_type=' . $post_type . '&posts_per_page=1');
@@ -201,6 +195,28 @@ class Upfront_ThisPostView extends Upfront_Object {
 		}
 
 		return self::post_template($post, $properties);
+	}
+
+	public static function get_new_post($post_type, $title = 'Enter your new %s title here', $content = "Your %s content goes here. Have fun writing :)"){
+		$title = sprintf(__($title, 'upfront'), $post_type);
+		$content = sprintf(__($content, 'upfront'), $post_type);
+
+		$post_arr = array(
+			'ID' => 0,
+			'post_title' => $title,
+			'post_content' => $content,
+			'post_type' => $post_type,
+			'filter' => 'raw',
+			'post_author' => get_current_user_id()
+		);
+
+		$post_obj = new stdClass();
+		foreach($post_arr as $key => $value)
+			$post_obj->$key = $value;
+
+		$post = new WP_Post($post_obj);
+
+		return $post;
 	}
 
 	public static function post_template($this_post, $properties=array(), $layoutData = false, $archive = false) {
@@ -357,6 +373,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function prepare_post($this_post){
 		$post_data = array();
 
+		//We need to cheat telling WP we are not in admin area
+		// to get the same output than in the frontend
+		global $current_screen;
+		require_once(ABSPATH . '/wp-admin/includes/screen.php');
+		$current_screen = WP_Screen::get('front');
+
 		global $post;
 		$post = $this_post;
 		setup_postdata($post);
@@ -470,19 +492,19 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 	private function _add_hooks () {
 		//add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"));
 		upfront_add_ajax('this_post-get_markup', array($this, "load_markup"));
-		
+
 		//add_action('wp_ajax_content_part_markup', array($this, "get_part_contents"));
 		upfront_add_ajax('content_part_markup', array($this, "get_part_contents"));
-		
+
 		//add_action('wp_ajax_this_post-get_thumbnail', array($this, "get_thumbnail"));
 		upfront_add_ajax('this_post-get_thumbnail', array($this, "get_thumbnail"));
-		
+
 		add_action('wp_ajax_upfront_save_postparttemplate', array($this, "save_part_template"));
 		add_action('wp_ajax_upfront_save_postlayout', array($this, "save_postlayout"));
-		
+
 		//add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
 		upfront_add_ajax('upfront_get_postlayout', array($this, "get_postlayout"));
-		
+
 		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
 	}
 	public function get_thumbnail() {
@@ -563,7 +585,34 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		if (!is_numeric($data['post_id'])) die('error');
 	}
 
-	public function load_markup () {
+	public function load_markup() {
+		$data = json_decode(stripslashes($_POST['data']), true);
+		if (!is_numeric($data['post_id'])) die('error');
+
+		$content = '';
+
+		global $post;
+		if($data['post_id']){
+			$post = get_post($data['post_id']);
+			if(!$post)
+				return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
+		}
+		else if($data['post_type']) {
+			$post = Upfront_ThisPostView::get_new_post($data['post_type']);
+		}
+		else
+			$this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
+
+		Upfront_ThisPostView::prepare_post($post);
+
+		$content = Upfront_ThisPostView::get_template_markup($post, $data['properties']);
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			"filtered" => $content
+		)));
+	}
+
+	public function load_markup_old () {
 		$data = json_decode(stripslashes($_POST['data']), true);
 		if (!is_numeric($data['post_id'])) die('error');
 
@@ -580,7 +629,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				$content = Upfront_ThisPostView::get_post_markup($data['post_id'], null, $data['properties']);
 		}
 		else if($data['post_type'])
-			$content = Upfront_ThisPostView::get_new_post($data['post_type'], $data['properties']);
+			$content = Upfront_ThisPostView::get_new_post_contents($data['post_type'], $data['properties']);
 		else
 			$this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
 

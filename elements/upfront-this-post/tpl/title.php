@@ -1,1 +1,0 @@
-<h1 class="post_title"><a href="%permalink%">%title%</a></h1>

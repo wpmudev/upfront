@@ -591,6 +591,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 		this.listenToOnce(Upfront.Events, 'entity:region:added', this.preparePostRegion);
 		region.add_to(layoutRegions, layoutRegions.length - 1);
+		$('.upfront-region-postlayouteditor').addClass(postView.editor.$el.attr('class'));
 	},
 
 	destroy_settings: function(){

@@ -24,6 +24,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	editor: false,
 
 	initialize: function(options){
+		var me = this;
 		console.log('This post');
 		if(! (this.model instanceof ThisPostModel)){
 			this.model = new ThisPostModel({properties: this.model.get('properties')});
@@ -36,8 +37,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-		if(this.postId)
-			this.prepareEditor();
+
+		this.refreshMarkup().then(function(){
+			if(me.postId)
+				me.prepareEditor();
+		});
+		//let's also start the editor before getting the markup
+		//so its load will be faster
+		me.prepareEditor();
 
 		Upfront.Events.trigger('post:initialized', this);
 	},
@@ -47,28 +54,41 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	 * @return {string} Markup to be shown.
 	 */
 	get_content_markup: function () {
-		return 'loading';
+		if(!this.markup){
+			this.refreshMarkup();
+			return 'loading';
+		}
+		return this.markup;
 	},
 
 	prepareEditor: function(){
+		var node = this.$('.upfront-object-content').children();
+
+		//If we don't have the node rendered yet,
+		//start the editor in a separated div
+		if(!node.length)
+			node = [$('<div>')];
+
 		if(!this.editor){
 			this.editor = new Upfront.Content.PostEditor({
 				editor_id: 'this_post_' + this.postId,
 				post_id: this.postId,
 				preload: true,
-				node: this.$('.upfront-object-content'),
+				node: node[0],
 				content_mode: 'post_content',
 				view: this,
 				layout: this.property('layout')
 			});
 			this.editor.render();
 		}
+		else
+			this.editor.setElement(node[0]);
 	},
 
 	on_render: function(){
 		if(!this.editor)
 			return;
-		this.editor.setElement(this.$('.upfront-object-content'));
+
 		this.editor.render();
 	},
 
@@ -78,20 +98,23 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 	on_edit: function (e) {
 		if(!this.editor){
-			this.createEditor($('#' + this.property('element_id')).find(".upfront-object-content"));
+			this.prepareEditor();
 		}
 	},
 
 	editPostLayout: function(){
+		this.markup = false;
 		Upfront.Events.trigger('post:layout:edit', this, 'single');
 	},
 
 	refreshMarkup: function () {
 		var me = this;
 
+		if(this.loadingMarkup)
+			return this.loadingMarkup;
+
 		if(this.postId === false)
 			return new $.Deferred().resolve({data:{filtered: 'Error'}});
-
 
 		var node = $('#' + me.property('element_id')).find(".upfront-object-content"),
 			loading = !node.length ? false : new Upfront.Views.Editor.Loading({
@@ -106,12 +129,12 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			node.append(loading.$el);
 		}
 
-		return Upfront.Util.post({
+		this.loadingMarkup = Upfront.Util.post({
 				action: "this_post-get_markup",
 				data: JSON.stringify({
 					post_id: this.postId,
 					post_type: Upfront.Settings.LayoutEditor.newpostType,
-					properties: {post_data: this.property("post_data")}
+					properties: {post_data: this.property("post_data"), element_id: this.property('element_id')}
 				})
 			}).success(function(response){
 				if(loading){
@@ -121,13 +144,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				var node = node || $('#' + me.property('element_id')).find(".upfront-object-content");
 				me.markup = response.data.filtered;
 				node.html(me.get_content_markup());
-				if(!me.editor)
-					me.createEditor(node);
-				else
-					me.editor.initEditAreas();
 
+
+
+				me.loadingMarkup = false;
 			})
 		;
+
+		return this.loadingMarkup;
 	},
 
 	redirectPostEdit: function (post) {

@@ -1,1 +1,0 @@
-<div class="post_thumbnail">%image%</div>

@@ -13,8 +13,7 @@
 	$classes = 'uposts-post uposts-posts-' . $id . ' ';
  ?>
 	<li <?php apply_filters('upfront_posts_post_classes', post_class($classes), $post) ?> data-post_id="<?php echo $id ?>">
-		<?php echo Upfront_ThisPostView::get_post_markup($id, $type, $properties, $layout, true);
-		//upfront_get_template('upost', array('properties' => $properties), dirname(__FILE__) . '/upost.php'); ?>
+		<?php echo Upfront_ThisPostView::get_post_markup($id, $type, $properties, $layout, true); ?>
 	</li>
 <?php } ?>
 </ul>
