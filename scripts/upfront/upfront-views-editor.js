@@ -1723,10 +1723,43 @@ define([
             shade : "",
             selected : "",
             luminance : ""
+        },
+        get_hover_color : function(){
+            var self = this;
+            if( this.selected !== "" ){
+                return  this.get( self.get("selected") );
+            }
+            return this.get( "color" );
         }
     });
     var Theme_Colors_Collection = Backbone.Collection.extend({
-        model : Theme_Color
+        model : Theme_Color,
+        get_colors : function(){
+            return this.pluck("color") ? this.pluck("color") : [];
+        },
+        is_theme_color : function(color){
+            return _.indexOf(this.get_colors(), color) !== -1
+        },
+        get_css_class : function(color){
+            if( this.is_theme_color(color) ){
+                var model = this.findWhere({
+                    color : color
+                });
+                if( model ){
+                    var index = this.indexOf( model );
+                    return "upfront_theme_color_" + index;
+                }
+            }
+            return false
+        },
+        get_all_classes : function(){
+            var classes = [];
+            console.log(this.get_colors());
+            _.each( this.get_colors(), function(item, index){
+                classes.push("upfront_theme_color_" + index);
+            });
+            return classes;
+        }
     });
     var Theme_Colors = {
         colors : new Theme_Colors_Collection(Upfront.mainData.themeColors.colors),
@@ -1746,15 +1779,30 @@ define([
           "click .theme-colors-color-box" : "select_variation"
         },
         on_save : function(){
-            var postData = {
+            var post_data = {
                 action: 'upfront_update_theme_colors',
                 theme_colors: Theme_Colors.colors.toJSON(),
                 range : Theme_Colors.range
             };
 
-            Upfront.Util.post(postData)
+            Upfront.Util.post(post_data)
                 .error(function(){
                     return notifier.addMessage('Theme colors could not be saved.');
+            });
+
+            // Update the styles
+            var styles = "";
+            Theme_Colors.colors.each(function( item, index ){
+                styles += " .upfront_theme_color_" + index +"{ color: " + item.get("color") + ";}";
+                styles += " .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
+            });
+            var styles_post_data = {
+                action: 'upfront_save_theme_colors_styles',
+                styles: styles
+            };
+            Upfront.Util.post(styles_post_data)
+                .error(function(){
+                    return notifier.addMessage('Theme color styles could not be saved.');
             });
         },
         on_render : function(){
@@ -1801,17 +1849,21 @@ define([
                                 var index = $(this).closest(".theme-colors-color-picker").data("index"),
                                     model = Theme_Colors.colors.at(index),
                                     percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
-                                model.set({
-                                    color : color.toHexString(),
-                                    highlight : self.color_luminance( color.toHex(), percentage ),
-                                    shade : self.color_luminance( color.toHex(), (percentage * -1) )
-                                });
-                                $(this).parent().find(".sp-preview").css({
-                                    backgroundColor : color.toRgbString(),
-                                    backgroundImage : "none"
-                                });
-                                this.default_value = color.toRgbString();
-                                self.render_bottom();
+//                                console.log($(this).closest(".theme-colors-color-picker"), $(this).closest(".theme-colors-color-picker").data(), color, model, Theme_Colors.colors);
+                                if( model ){
+                                    model.set({
+                                        color : color.toHexString(),
+                                        highlight : self.color_luminance( color.toHex(), percentage ),
+                                        shade : self.color_luminance( color.toHex(), (percentage * -1) )
+                                    });
+                                    $(this).parent().find(".sp-preview").css({
+                                        backgroundColor : color.toRgbString(),
+                                        backgroundImage : "none"
+                                    });
+                                    this.default_value = color.toRgbString();
+                                    self.render_bottom();
+                                }
+
                             }
                         }
                     });
@@ -3579,6 +3631,13 @@ define([
 			showInput: true,
 			allowEmpty:true
 		},
+        events : {
+            "clicl ..sp-choose" : "flicked"
+        },
+        flicked : function(e){
+            "use strict";
+          console.log(e);
+        },
 		initialize: function(opts){
 			this.options = opts;
 			var me = this,
@@ -3608,6 +3667,7 @@ define([
 			this.on('rendered', function(){
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
 			});
+
 		},
 		get_field_html: function () {
 			var attr = {
@@ -8712,7 +8772,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionPanels": RegionPanels,
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
-			"CSSEditor": CSSEditor,
+			"CSSEditor": CSSEditor
 		},
     Mixins: {
       "Upfront_Scroll_Mixin": Upfront_Scroll_Mixin

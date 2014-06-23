@@ -490,6 +490,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		upfront_add_ajax('upfront_save_styles', array($this, "save_styles"));
 		upfront_add_ajax('upfront_theme_styles', array($this, "theme_styles"));
 		upfront_add_ajax('upfront_delete_styles', array($this, "delete_styles"));
+
+		upfront_add_ajax('upfront_save_theme_colors_styles', array($this, "save_theme_colors_styles"));
 	}
 
 	function load_styles () {
@@ -505,6 +507,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		//Add theme styles
 		$style .= $this->prepare_theme_styles();
+
+        // Add theme colors styles
+        $style .= $this->_get_theme_colors_styles();
 
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
@@ -624,6 +629,27 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		return $out;
 	}
 
+    /**
+     * Saves theme colors styles
+     * Hooks to upfront_save_theme_colors_styles ajax call
+     * @access public
+     */
+    function save_theme_colors_styles(){
+        if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
+        $styles = trim(stripslashes($_POST['styles']));
+        $styles = apply_filters('upfront-save_theme_colors_styles', $styles);
+
+        update_option("upfront_theme_colors_styles", $styles);
+
+        $this->_out(new Upfront_JsonResponse_Success(array(
+            'styles' => $styles
+        )));
+    }
+
+    private function _get_theme_colors_styles(){
+        return get_option("upfront_theme_colors_styles");
+    }
 }
 
 

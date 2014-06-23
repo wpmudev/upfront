@@ -112,7 +112,6 @@ class Upfront {
 		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic');
 
 		// Enqueue needed styles
-		wp_enqueue_style('pictos', self::get_root_url() . '/styles/pictos_base64.css');
 		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
 		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
 

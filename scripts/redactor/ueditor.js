@@ -1114,20 +1114,40 @@ RedactorPlugins.upfrontColor = {
 			};
 
 			var updateColors = function() {
+                if(self.current_color && typeof(self.current_color) == 'object') {
+                    var theme_color_classname =  Theme_Colors.colors.get_css_class( self.current_color.toHexString() );
+                    if( theme_color_classname ){
+                        var current = redac.getCurrent();
+                        if( !$(current).hasClass(theme_color_classname) ){
+                            // remove previous theme color classes if any
+                            _.each(Theme_Colors.colors.get_all_classes(), function( cls ){
+                                redac.inlineRemoveClass( cls );
+                            });
+                            // remove inline color if any
+                            redac.inlineRemoveStyle("color");
+                            // and new theme color class
+                            redac.inlineSetClass(theme_color_classname);
+                        }
+                    }else{
+                        redac.selectionRestore(true, false);
+                        // make sure it doesn't have any theme color classes
+                        _.each(Theme_Colors.colors.get_all_classes(), function( cls ){
+                            redac.inlineRemoveClass( cls );
+                        });
+                        redac.inlineRemoveStyle('color');
+                        redac.inlineSetStyle('color', self.current_color.toRgbString());
+                    }
 
-				if(self.current_color && typeof(self.current_color) == 'object') {
-					redac.selectionRestore(true, false);
-					redac.inlineRemoveStyle('color');
-					redac.inlineSetStyle('color', self.current_color.toRgbString());
 
-				}
-				if(self.current_bg && typeof(self.current_bg) == 'object') {
-					redac.selectionRestore(true, false);
-					redac.inlineRemoveStyle('background-color');
-					if(self.current_bg.toRgbString().toLowerCase() != 'rgba(0, 0, 0, 0)')
-						redac.inlineSetStyle('background-color', self.current_bg.toRgbString());
+                }
+                if(self.current_bg && typeof(self.current_bg) == 'object') {
+                    redac.selectionRestore(true, false);
+                    redac.inlineRemoveStyle('background-color');
+                    if(self.current_bg.toRgbString().toLowerCase() != 'rgba(0, 0, 0, 0)')
+                        redac.inlineSetStyle('background-color', self.current_bg.toRgbString());
 
-				}
+                }
+
 				updateIcon();
 				redac.selectionRemove();
 				redac.sync();
