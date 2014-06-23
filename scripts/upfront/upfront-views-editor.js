@@ -4217,7 +4217,7 @@ define([
 			this.$el.fadeIn('fast', function() {
 				// Scroll the window if settings box clips vertically
 				var parent = me.$el.parent();
-				var elementbottom = parent.offset().top + parent.height();
+				var elementbottom = (parent.offset() ? parent.offset().top : 0) + parent.height();
 				var winheight = jQuery(window).height();
 
 				if( (elementbottom +60) > (winheight+jQuery('body').scrollTop()))
