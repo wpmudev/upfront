@@ -9461,7 +9461,8 @@ a.upfront-css-edit:before{
   margin-bottom: 0;
 }
 
-#page div.upfront-object.upfront-this_post {
+#page div.upfront-object.upfront-this_post,
+#page div.upfront-object.uposts-object {
 	padding-left: 0;
 	padding-right: 0;
 }

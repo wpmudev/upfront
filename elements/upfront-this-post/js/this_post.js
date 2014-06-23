@@ -38,13 +38,15 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 
-		this.refreshMarkup().then(function(){
-			if(me.postId)
-				me.prepareEditor();
-		});
-		//let's also start the editor before getting the markup
-		//so its load will be faster
-		me.prepareEditor();
+		if(this.postId){
+			this.refreshMarkup().then(function(){
+				if(me.postId)
+					me.prepareEditor();
+			});
+			//let's also start the editor before getting the markup
+			//so its load will be faster
+			me.prepareEditor();
+		}
 
 		Upfront.Events.trigger('post:initialized', this);
 	},
