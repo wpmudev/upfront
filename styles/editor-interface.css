@@ -10033,7 +10033,7 @@ li#new-custom-breakpoint {
 /*------------ Font Icons --------------*/
 .redactor_dropdown_box_icons div{
     font-size: 2.1em;
-    height: 196px;
+    height: 175px;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -10041,6 +10041,7 @@ li#new-custom-breakpoint {
     min-width: 190px;
     width: 190px;
     line-height: 38px;
+    padding-right: 3px;
 }
 .redactor_dropdown.redactor_dropdown_box_icons a,
 .redactor_dropdown.redactor_dropdown_box_icons a:link{
