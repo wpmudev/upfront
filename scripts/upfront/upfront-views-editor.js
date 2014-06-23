@@ -1392,9 +1392,10 @@ define([
 		initialize: function () {
 			var me = this;
 			SidebarPanel_Settings_Item.prototype.initialize.call(this);
-			Upfront.Util.post({action: "upfront_list_google_fonts"})
+			if (!this.google_typefaces_list.length) Upfront.Util.post({action: "upfront_list_google_fonts"})
 				.success(function (response) {
 					if (response.data) me.google_typefaces_list = response.data;
+					me.render(); // Re-render in order to prevent race condition in responsive sidebar.
 				})
 			;
 		},
