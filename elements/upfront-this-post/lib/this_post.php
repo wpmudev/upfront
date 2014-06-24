@@ -671,7 +671,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 	}
 
 	public function save_postlayout() {
-		$layoutData = isset($_POST['layoutData']) ? $_POST['layoutData'] : false;
+		$layoutData = isset($_POST['layoutData']) ? stripslashes_deep($_POST['layoutData']) : false;
 		$cascade = isset($_POST['cascade']) ? $_POST['cascade'] : false;
 		if(!$layoutData || !$cascade)
 			$this->_out(new Upfront_JsonResponse_Error('No layout data or cascade sent.'));

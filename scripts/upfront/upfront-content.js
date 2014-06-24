@@ -305,6 +305,9 @@ define("content", deps, function(postTpl, ContentTools) {
 				this.post.meta.setValue('_inserts_data', results.inserts);
 			}
 
+			if(results.date)
+				this.post.set('post_date', results.date);
+
 			this.post.set('post_status', status);
 			this.post.save().done(function(data){
 				if(metaUpdated){

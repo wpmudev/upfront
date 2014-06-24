@@ -111,7 +111,7 @@ define(function() {
     },
     editPostLayout: function(e){
       e.preventDefault();
-      Upfront.Events.trigger('post:layout:edit', this, 'single');
+      Upfront.Events.trigger('post:layout:edit', this, 'archive');
     },
 
     prepareEditor: function(id, node){

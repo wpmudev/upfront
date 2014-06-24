@@ -561,9 +561,10 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		Upfront.Events.trigger('post:parttemplates:edit');
 	},
 
-	togglePostLayoutEditorMode: function(postView){
+	togglePostLayoutEditorMode: function(postView, elementType){
 		if(Application.current_subapplication != PostLayoutEditor){
 			this.postView = postView;
+			this.elementType = elementType;
 			this.partMarkup = postView.editor.parts.replacements;
 			Application.start(Application.MODE.POST);
 		}
@@ -686,30 +687,14 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		this.regionView = region;
 		this.regionContainer = region.$el.closest('.upfront-region-container').detach();
 		this.postWrapper = this.postView.$el.closest('.upfront-wrapper');
-		//Gagan: The code inside the following if, is to accomodate the posts element
-		if(this.postView.$el.find('div.post_editor_container').length > 0) {
-			var me = this;
-			var postindex = this.postView.$el.find('div.post_editor_container-'+this.postView.editor.postId).index();
 
-			this.postWrapper.find('div.upfront-editable_entity').removeClass('main-module0-Uposts-module-module').css('min-height', 'inherit');
-			this.postwrapperclone = this.postWrapper.clone().removeClass('ui-draggable').addClass('temp_clone').css('z-index', '-1');
-			this.postwrapperclone.find('.ui-draggable').removeClass('ui-draggable');
-			this.postwrapperclone.find('div.post_editor_container').remove();
-			var firstitem = true
-
-			this.postWrapper.find('div.post_editor_container').slice(postindex).each(function() {
-				if(!firstitem)
-					me.postwrapperclone.find('.upfront-object-content').append($(this));
-				else {
-					$(this).css('display', 'none');
-					firstitem = false;
-				}
-			});
-			this.postWrapper.after(this.regionContainer);
-			this.regionContainer.after(this.postwrapperclone);
+		if(this.elementType == 'archive'){
+			this.postView.editor.$el.hide();
+			this.postWrapper.before(this.regionContainer);
 		} else {
 			this.postWrapper.hide().after(this.regionContainer);
 		}
+
 		this.regionContainer.removeClass('c24');
 		if(!this.postRegionClass)
 			this.postRegionClass = this.regionContainer.attr('class');
@@ -735,7 +720,12 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		if(typeof(this.postwrapperclone) != 'undefined' && this.postwrapperclone)
 			this.postwrapperclone.remove();
 
-		this.postWrapper.show();
+		if(this.elementType == 'archive'){
+			this.postView.editor.$el.show();
+		} else {
+			this.postWrapper.show();
+		}
+
 		this.postWrapper = false;
 
 		this.regionView.remove();
