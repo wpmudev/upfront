@@ -308,7 +308,7 @@ var Ueditor = function($el, options) {
 	this.options.focusCallback = function () { UeditorEvents.trigger("ueditor:focus", this); };
 	this.options.blurCallback = function () { UeditorEvents.trigger("ueditor:blur", this); };
 	this.options.keyupCallback = function (e) { UeditorEvents.trigger("ueditor:key:up", this); };
-	this.options.keydownCallback = function (e) { UeditorEvents.trigger("ueditor:key:down", this); };
+	this.options.keydownCallback = function (e) { UeditorEvents.trigger("ueditor:key:down", this, e); };
 	this.options.textareaKeydownCallback = function () { UeditorEvents.trigger("ueditor:key:down:textarea", this); };
 	this.options.syncBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:sync:before", this, html); return html; }; // <-- OOOH this one is different
 	this.options.syncAfterCallback = function (html) { UeditorEvents.trigger("ueditor:sync:after", this, html); $el.trigger('syncAfter', html); }; //Added syncAfter for east saving.
@@ -2130,6 +2130,17 @@ RedactorPlugins.icons = {
             title: 'Icons',
             panel: this.panel
         };
+
+    },
+    init : function(){
+        console.log("inited icos");
+        UeditorEvents.on("ueditor:key:down", function(redactor, e){
+            if( $(redactor.getParent()).hasClass("parlyph") ){
+                if( !( e.keyCode < 48 || e.keyCode > 90 ) ){
+                    e.preventDefault();
+                }
+            }
+        });
     },
     panel: UeditorPanel.extend(_.extend({}, Upfront.Views.Mixins.Upfront_Scroll_Mixin, {
         tpl: _.template($(tpl).find('#font-icons').html()),
@@ -2147,10 +2158,14 @@ RedactorPlugins.icons = {
             this.$el.parent().css({
                 left : 156
             });
+//            this.redactor.on('keydown.redactor', function(e){
+//                console.log(e);
+//            });
         },
         select_icon : function(e){
             var icon = $(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html();
             this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + icon, true);
+            this.redactor
             this.closePanel();
         }
 
