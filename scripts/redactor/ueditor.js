@@ -1115,12 +1115,12 @@ RedactorPlugins.upfrontColor = {
 
 			var updateColors = function() {
                 if(self.current_color && typeof(self.current_color) == 'object') {
-                    var theme_color_classname =  Theme_Colors.colors.get_css_class( self.current_color.toHexString() );
+                    var theme_color_classname =  Upfront.Views.Theme_Colors.colors.get_css_class( self.current_color.toHexString() );
                     if( theme_color_classname ){
                         var current = redac.getCurrent();
                         if( !$(current).hasClass(theme_color_classname) ){
                             // remove previous theme color classes if any
-                            _.each(Theme_Colors.colors.get_all_classes(), function( cls ){
+                            _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
                                 redac.inlineRemoveClass( cls );
                             });
                             // remove inline color if any
@@ -1131,7 +1131,7 @@ RedactorPlugins.upfrontColor = {
                     }else{
                         redac.selectionRestore(true, false);
                         // make sure it doesn't have any theme color classes
-                        _.each(Theme_Colors.colors.get_all_classes(), function( cls ){
+                        _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
                             redac.inlineRemoveClass( cls );
                         });
                         redac.inlineRemoveStyle('color');
