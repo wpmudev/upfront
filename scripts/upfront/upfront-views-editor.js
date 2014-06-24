@@ -1320,7 +1320,8 @@ define([
 		get_title: function () {},
 		render: function () {
 			var me = this;
-			this.$el.html('<h4 class="panel-section-title">' + this.get_title() + '</h4>');
+//			this.$el.html('<h4 class="panel-section-title">' + this.get_title() + '</h4>');
+            this.$el.html("");
 			this.$el.append('<div class="panel-section-content" />');
 			this.settings.each(function (setting) {
 				setting.render();
@@ -1765,7 +1766,6 @@ define([
         colors : new Theme_Colors_Collection(Upfront.mainData.themeColors.colors),
         range  : Upfront.mainData.themeColors.range || 0
     };
-    window.Theme_Colors = Theme_Colors;
     var SidebarPanel_Settings_Item_Colors_Editor = SidebarPanel_Settings_Item.extend({
         initialize : function(){
             var self = this;
@@ -1849,7 +1849,6 @@ define([
                                 var index = $(this).closest(".theme-colors-color-picker").data("index"),
                                     model = Theme_Colors.colors.at(index),
                                     percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
-//                                console.log($(this).closest(".theme-colors-color-picker"), $(this).closest(".theme-colors-color-picker").data(), color, model, Theme_Colors.colors);
                                 if( model ){
                                     model.set({
                                         color : color.toHexString(),

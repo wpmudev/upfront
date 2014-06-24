@@ -540,6 +540,7 @@
 	padding: 0 10px;
 	overflow: hidden;
 }
+
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
 	height: 280px;
 	padding: 0;
@@ -10268,7 +10269,13 @@ div.upfront-region-container-active > a.feature_image_selector {
 
 /*---------------------- Settings Theme colors -------------------------*/
 #theme-colors-no-color-notice{
-    height: 53px;
+    height: 55px;
+    font-size: 14px;
+}
+#theme-colors-no-color-notice:before{
+    content: "";
+    background-image: url('../img/uf-ui-sprite.svg');
+    background-position: -339px -107px;
 }
 #panel-setting-theme-colors-pane{
     border-bottom: 1px solid #abc9e6;
@@ -10280,6 +10287,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui .theme_color_swatch .sp-preview{
     margin: 0;
     border: none;
+    border-radius: none;
 }
 .upfront-field-wrap-color .theme_color_swatch .sp-preview{
     border: none;
