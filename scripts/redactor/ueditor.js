@@ -936,16 +936,20 @@ RedactorPlugins.upfrontLink = {
 		},
 		unlink: function(e){
 			e.preventDefault();
-			this.redactor.execCommand('unlink');
+            var text = this.redactor.getSelectionHtml();
+            if( $.parseHTML(text).length > 1){// there is html inside
+                this.redactor.execCommand('inserthtml', text, true);
+            }else{
+                this.redactor.execCommand('unlink');
+            }
+
 			this.closeToolbar();
 		},
 		link: function(url, type){
 			if(url){
 				this.redactor.selectionRestore(true, false);
-
-				var text = this.redactor.getSelection().toString();
-				this.redactor.exec('insertHTML', '<a href="' + url + '" rel="' + type + '">' + text + '</a>');
-				this.redactor.selectionRemoveMarkers();
+                var caption = this.redactor.getSelectionHtml();
+                this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
 			}
 		},
 		prepareLink: function(e){
@@ -2133,9 +2137,8 @@ RedactorPlugins.icons = {
 
     },
     init : function(){
-        console.log("inited icos");
         UeditorEvents.on("ueditor:key:down", function(redactor, e){
-            if( $(redactor.getParent()).hasClass("parlyph") ){
+            if( $( redactor.getParent() ).hasClass("parlyph") || $( redactor.getCurrent() ).hasClass("parlyph")){
                 if( !( e.keyCode < 48 || e.keyCode > 90 ) ){
                     e.preventDefault();
                 }
@@ -2165,7 +2168,6 @@ RedactorPlugins.icons = {
         select_icon : function(e){
             var icon = $(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html();
             this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + icon, true);
-            this.redactor
             this.closePanel();
         }
 
