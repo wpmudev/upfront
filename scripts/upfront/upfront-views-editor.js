@@ -4572,7 +4572,10 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 	field_toggle: function () {
 		if (this.$el.find(":checkbox").is(":checked")) {
 			this.$el.find(".upfront-embedded_toggleable").show();
-		} else this.$el.find(".upfront-embedded_toggleable").hide();
+		} else {
+			this.$el.find(".upfront-embedded_toggleable").hide();
+		}
+		this.property.set({value: this.get_value()});
 		this.trigger("anchor:updated");
 	},
 	check_value: function () {
@@ -4599,7 +4602,7 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 			$subfield = this.$el.find('[name="' + this.options.field.get_name() + '"]'),
 			value = $subfield.val().replace(/[^a-zA-Z]/g, '')
 		;
-		return $field.is(":checked") && value ? value : false;
+		return $field.is(":checked") && value ? value : ''; // was false
 	}
 });
 
@@ -5889,6 +5892,10 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 			this.trigger("anchor:item:updated");
 		}, this);
 		this.fields = _([item]);
+	},
+	save_fields: function () {
+		this.fields.invoke("check_value");
+		SettingsItem.prototype.save_fields.call(this);
 	}
 });
 
