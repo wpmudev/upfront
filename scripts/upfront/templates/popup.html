@@ -361,7 +361,7 @@
       {[ if (elementType) { ]}
 			<span class="upfront-css-type">{{ elementType }} Element</span>
       {[ } ]}
-			<a class="upfront-css-font" href="#">Pick a Font</a>
+			<a class="upfront-css-font upfront-icon" href="#">Pick a Font</a>
 			<a class="upfront-css-image" href="#">Link theme image</a>
 			<input class="upfront-css-color" type="text">
 			<a class="upfront-css-close" href="#">close</a>
@@ -402,8 +402,8 @@
     </div>
     <span class="add-font-button">Add Selected Weights &raquo;</span>
   </div>
-  <div class="font-picker-use-button">OK</div>
-  <div class="font-picker-revert-button">Revert</div>
+  <div class="font-picker-use-button">Ok</div>
+  <div class="font-picker-revert-button upfront-icon">Revert</div>
 </script>
 
 <script id="theme-fonts-panel" type="text/template">
@@ -414,7 +414,7 @@
 </script>
 
 <script id="theme-font-list-item" type="text/template">
-{{ family }} ({{ variant }})<span class="delete">x</span>
+{{ family }} ({{ variant }})<span class="delete upfront-icon"></span>
 </script>
 
 <script id="select-view-tpl" type="text/template">

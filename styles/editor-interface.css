@@ -9218,14 +9218,19 @@ a.upfront-css-image,
 a.upfront-css-font {
 	float:left;
 	display: block;
-	border: 2px solid #2E3D4C;
 	padding: 0px 5px;
-	margin: 4px;
-	height: 24px;
+	margin: 0 0 0 20px;
 	color: #dae6f2 !important;
-	line-height: 20px;
+	line-height: 31px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
+}
+
+a.upfront-css-font:before {
+	background-position: -821px -202px;
+	width: 18px;
+	height: 16px;
+	margin: 4px 5px 0 0;
 }
 
 input[type=text].upfront-css-color {
@@ -9235,6 +9240,7 @@ input[type=text].upfront-css-color {
 
 .upfront-css-top .sp-replacer {
 	margin: 4px;
+	margin-left: 20px;
 	height: 24px;
 	overflow: hidden;
 }
@@ -10116,19 +10122,19 @@ div.upfront-region-container-active > a.feature_image_selector {
   position: absolute;
   left: 175px;
   top: -170px;
-  width: 451px;
-  height: 215px;
+  width: 452px;
+  height: 219px;
   background: #e5f3fe;
   z-index: 1;
 }
 #font-picker .panel-title {
 	font: 18px/15px 'Source Sans Pro', sans-serif;
   color: #273a4c;
-  margin: 20px 0 10px 20px;
+  margin: 16px 0 10px 20px;
 }
 #font-picker .panel {
   float: left;
-  width: 225px;
+  width: 226px;
 }
 
 #font-picker .add-font-panel {
@@ -10159,9 +10165,6 @@ div.upfront-region-container-active > a.feature_image_selector {
 #font-picker .font-weights-list .upfront-field-multiple label {
   margin-left: 20px;
 }
-#font-picker .font-weights-list-wrapper {
-  background: #f2f9fe;
-}
 #font-picker .font-weights-list-wrapper::-webkit-scrollbar,
 #font-picker .font-list::-webkit-scrollbar {
   background: none;
@@ -10181,8 +10184,9 @@ div.upfront-region-container-active > a.feature_image_selector {
 #font-picker .font-weights-list .upfront-field-label {
   margin-left: 20px;
 }
-.add-font-panel .font-weights-list-wrapper {
-  height: 92px;
+#font-picker .font-weights-list-wrapper {
+  background: #f2f9fe;
+  height: 97px;
   overflow: hidden;
   overflow-y: scroll;
 }
@@ -10194,7 +10198,7 @@ div.upfront-region-container-active > a.feature_image_selector {
   font-family: verdana, sans-serif;
   padding-left: 20px;
   cursor: pointer;
-  line-height: 24px;
+  line-height: 23px;
 }
 #font-picker .theme-font-list-item:hover,
 #font-picker .theme-font-list-item-selected {
@@ -10205,19 +10209,25 @@ div.upfront-region-container-active > a.feature_image_selector {
   display: none;
   position: absolute;
   right: 10px;
-  top: 2px;
+  top: 3px;
+}
+#font-picker .theme-font-list-item .upfront-icon:before {
+	background-position: -1080px -121px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
 }
 #font-picker .theme-font-list-item-selected .delete {
   display: inline;
 }
 #font-picker .font-list {
   background: #f2f9fe;
-  height: 145px;
+  height: 148px;
   overflow: hidden;
   overflow-y: scroll;
 }
 #font-picker .add-font-button {
-  line-height: 27px;
+  line-height: 30px;
   width: 100%;
   display: block;
   text-align: center;
@@ -10228,7 +10238,7 @@ div.upfront-region-container-active > a.feature_image_selector {
   cursor: pointer;
 }
 #font-picker .font-stats {
-  line-height: 25px;
+  line-height: 30px;
   width: 100%;
   display: block;
   text-align: center;
@@ -10238,11 +10248,22 @@ div.upfront-region-container-active > a.feature_image_selector {
   color: #687887;
 }
 
+.font-picker-use-button,
+.font-picker-revert-button {
+	line-height: 37px;
+	font-size: 16px;
+	padding: 0 28px 0 29px;
+}
 .font-picker-use-button {
-	margin-left: 15px;
+	margin-left: 20px;
 }
 .font-picker-revert-button {
-  background: #85a9cc;
+  background: #537ea6;
+	padding: 0 16px 0 12px;
+}
+.font-picker-revert-button:before {
+	background-position: -198px -34px;
+	width: 10px;
 }
 /*------------------- Setting sections tabs -----------------------*/
 #sidebar-ui ul.sidebar-panel-tabspane{
