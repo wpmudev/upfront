@@ -4586,6 +4586,7 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 		} else if (val.length) {
 			$root.addClass("ok");
 		}
+		this.property.set({value: this.get_value()});
 	},
 	get_field_html: function () {
 		this.options.field.render();
