@@ -1727,7 +1727,7 @@ define([
         },
         get_hover_color : function(){
             var self = this;
-            if( this.selected !== "" ){
+            if( this.get("selected") !== "" ){
                 return  this.get( self.get("selected") );
             }
             return this.get( "color" );
@@ -1773,6 +1773,8 @@ define([
             this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-shades-wrap").html() );
             Upfront.Events.on("command:layout:save", this.on_save, this);
             Upfront.Events.on("command:layout:save_as", this.on_save, this);
+            this.update_styles();
+            Theme_Colors.colors.bind('change reset add', this.update_styles, this);
         },
         events : {
           "change .panel-setting-theme-colors-shades-range": "change_range",
@@ -1789,21 +1791,26 @@ define([
                 .error(function(){
                     return notifier.addMessage('Theme colors could not be saved.');
             });
-
-            // Update the styles
-            var styles = "";
-            Theme_Colors.colors.each(function( item, index ){
-                styles += " .upfront_theme_color_" + index +"{ color: " + item.get("color") + ";}";
-                styles += " .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
-            });
             var styles_post_data = {
                 action: 'upfront_save_theme_colors_styles',
-                styles: styles
+                styles: this.styles
             };
             Upfront.Util.post(styles_post_data)
                 .error(function(){
                     return notifier.addMessage('Theme color styles could not be saved.');
             });
+
+        },
+        update_styles : function(){
+            // Update the styles
+            this.styles = "";
+            var self = this;
+            Theme_Colors.colors.each(function( item, index ){
+                self.styles += " .upfront_theme_color_" + index +"{ color: " + item.get("color") + ";}";
+                self.styles += " .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
+            });
+            $("#upfront_theme_colors_dom_styles").remove();
+            $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
         },
         on_render : function(){
             var self = this;
@@ -1917,6 +1924,7 @@ define([
             }
             this.$("#theme-colors-no-color-notice").hide();
             this.render_bottom();
+
         },
         render_bottom : function(){
             this.$(".panel-setting-theme-colors-bottom").html(
@@ -1961,7 +1969,10 @@ define([
                 index = $this.data("index"),
                 color = $this.data("color"),
                 model = Theme_Colors.colors.at(index);
-            if( model ){
+            if( model.get("selected") ){
+                model.set("selected", "");
+                model.set("luminance", self.luminance( color ) );
+            }else{
                 model.set("selected", type);
                 model.set("luminance", self.luminance( color ) );
             }
