@@ -5,6 +5,8 @@ class Upfront_Grid {
 	protected $_breakpoints = array();
 	protected $_breakpoint_instances = array();
 	protected $_debugger;
+	
+	protected $_current_breakpoint;
 
 	private $_max_columns = 0;
 
@@ -93,6 +95,7 @@ class Upfront_Grid {
 		$breakpoints = $this->get_breakpoints();
 
 		foreach ($breakpoints as $name => $point) {
+			$this->_current_breakpoint = $point;
 			$point_css = '';
 			$line_height = $point->get_line_height();
 			$point_css .= $point->get_frontend_rule();
@@ -100,8 +103,8 @@ class Upfront_Grid {
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
 				$container = !empty($region['container']) ? $region['container'] : $region['name'];
-				$region_col = $this->_get_property_col($region, $point);
-				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions'], $point);
+				$region_col = $this->_get_property_col($region);
+				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions']);
 				$region_row = upfront_get_property_value('row', $region);
 				$region_view = new Upfront_Region($region);
 				$name = strtolower(str_replace(" ", "-", $region_view->get_name()));
@@ -109,7 +112,7 @@ class Upfront_Grid {
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
 				if ( $region_row )
 					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
-				$point_css .= $this->_apply_modules($region, $point, $region_col, $point);
+				$point_css .= $this->_apply_modules($region, $region_col);
 			}
 			if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$point_css .= $point->get_debug_rule($this->get_grid_scope());
@@ -119,39 +122,44 @@ class Upfront_Grid {
 		return $css;
 	}
 
-	protected function _apply_modules ($data, $point, $col, $breakpoint) {
+	protected function _apply_modules ($data, $col, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		$point_css = '';
+		$wrappers = $data['wrappers'];
+		usort($wrappers, array($this, '_sort_cb'));
 		foreach ($data['modules'] as $module) {
-			$module_col = $this->_get_class_col($module, $breakpoint);
+			$module_col = $this->_get_class_col($module);
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
-			foreach ($data['wrappers'] as $wrapper){
+			foreach ($wrappers as $w => $wrapper){
 				if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
 					$wrapper_data = $wrapper;
+					$next_wrapper_data = $wrappers[$w+1] ? $wrappers[$w+1] : false;
 					break;
 				}
 			}
 			if ( isset($wrapper_data) ){
-				$wrapper_col = $this->_get_class_col($wrapper_data, $breakpoint);
-				$point_css .= $point->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col);
-				$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
+				$wrapper_col = $this->_get_class_col($wrapper_data);
+				$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_wrapper_data);
+				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
 			}
-			else{
-				$point_css .= $point->apply($module, $this->get_grid_scope(), 'element_id', $col);
+			else {
+				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col);
 			}
 			
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
-				$point_css .= $this->_apply_modules($module, $point, $wrapper_col, $breakpoint);
+				$point_css .= $this->_apply_modules($module, $wrapper_col);
 			}
 			else {
 				foreach ($module['objects'] as $object) {
-					$point_css .= $point->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
+					$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
 				}
 			}
 		}
 		return $point_css;
 	}
 
-	protected function _get_available_container_col ($container, $regions, $breakpoint) {
+	protected function _get_available_container_col ($container, $regions, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		$occupied = 0;
 		$columns = $breakpoint->get_columns();
 		foreach ( $regions as $region ){
@@ -164,7 +172,8 @@ class Upfront_Grid {
 		return ( $occupied > $columns ) ? $columns : $columns-$occupied;
 	}
 	
-	protected function _get_property_col ($data, $breakpoint) {
+	protected function _get_property_col ($data, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		if ( $breakpoint->is_default() ){
 			return upfront_get_property_value('col', $data);
 		}
@@ -173,7 +182,8 @@ class Upfront_Grid {
 		}	
 	}
 	
-	protected function _get_class_col ($data, $breakpoint) {
+	protected function _get_class_col ($data, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		if ( $breakpoint->is_default() ){
 			$width_pfx = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			$class = upfront_get_property_value('class', $data);
@@ -184,11 +194,34 @@ class Upfront_Grid {
 		}
 	}
 	
-	protected function _get_breakpoint_col ($data, $breakpoint) {
+	protected function _get_breakpoint_data ($data, $key, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		$model_breakpoint = upfront_get_property_value('breakpoint', $data);
 		$breakpoint_data = $model_breakpoint ? $model_breakpoint[$breakpoint->get_id()] : false;
-		if ( $breakpoint_data )
-			return $breakpoint_data['col'];
+		if ( $breakpoint_data && $breakpoint_data[$key] )
+			return $breakpoint_data[$key];
+		return;
+	}
+	
+	protected function _get_breakpoint_col ($data, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		return $this->_get_breakpoint_data($data, 'col', $breakpoint);
+	}
+	
+	protected function _get_breakpoint_order ($data, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		return $this->_get_breakpoint_data($data, 'order', $breakpoint);
+	}
+	
+	protected function _sort_cb ($a, $b) {
+		$cmp_a = intval($this->_get_breakpoint_order($a));
+		$cmp_b = intval($this->_get_breakpoint_order($b));
+		if ( $cmp_a > $cmp_b)
+			return 1;
+		else if( $cmp_a < $cmp_b )
+			return -1;
+		else
+			return 0;
 	}
 }
 
@@ -441,7 +474,7 @@ class Upfront_GridBreakpoint {
 		return "{$media}{$rules}";
 	}
 
-	public function apply ($entity, $scope=false, $property='element_id', $max_columns=false) {
+	public function apply ($entity, $scope=false, $property='element_id', $max_columns=false, $next_entity=false) {
 		$raw_classes = $this->_get_property('class', $entity);
 		$classes = array_map('trim', explode(' ', $raw_classes));
 		$selector = $this->_get_property($property, $entity);
@@ -452,7 +485,7 @@ class Upfront_GridBreakpoint {
 		$raw_styles = array();
 		if ( $this->is_default() ){
 			foreach ($classes as $class) {
-				$style = $this->_map_class_to_style($class, $max_columns);
+				$style = $this->_map_class_to_style($class, $max_columns, $next_entity);
 				if (!$style) continue;
 	
 				$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
@@ -462,7 +495,7 @@ class Upfront_GridBreakpoint {
 		}
 		else if ($breakpoint_data){
 			foreach ( $breakpoint_data as $key => $value ){
-				$style = $this->_map_value_to_style($key, $value, $max_columns);
+				$style = $this->_map_value_to_style($key, $value, $max_columns, $next_entity);
 				if (!$style) continue;
 	
 				$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
@@ -505,7 +538,7 @@ class Upfront_GridBreakpoint {
 		) . "\n";
 	}
 
-	protected function _map_class_to_style ($class, $max_columns) {
+	protected function _map_class_to_style ($class, $max_columns, $next) {
 		$style = '';
 
 		foreach ($this->_prefixes as $rule => $prefix) {
@@ -525,7 +558,7 @@ class Upfront_GridBreakpoint {
 		return $style;
 	}
 
-	protected function _map_value_to_style ($key, $value, $max_columns) {
+	protected function _map_value_to_style ($key, $value, $max_columns, $next) {
 		$style = '';
 		$rule = '';
 
@@ -548,6 +581,10 @@ class Upfront_GridBreakpoint {
 		else if ( $key == 'hide' && $value == 1 ) {
 			$rule = 'display';
 			$style_value = 'none';
+		}
+		else if ( $key == 'order' ) {
+			$rule = 'order';
+			$style_value = $value;
 		}
 		if ( $style_value )
 			$style .= "{$rule}: {$style_value}";

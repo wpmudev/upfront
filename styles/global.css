@@ -228,9 +228,22 @@ h2, h3 { page-break-after: avoid; }
   min-width: 100%;
 }
 
-/* Flexbox experiments *//* *
-.upfront-grid-layout {
-  display: flex;
+/* Flexbox experiments *//* */
+.upfront-output-region,
+.upfront-output-module-group {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	align-content: flex-start;
+}
+.upfront-output-region:before,
+.upfront-output-region:after {
+	width: 0;
+}
+.upfront-output-region > .upfront-wrapper,
+.upfront-output-module-group > .upfront-wrapper {
+	order: 0;
 }
 /* End flexbox */
 

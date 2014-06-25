@@ -119,6 +119,43 @@ define(function() {
 		var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		return Math.ceil(height/baseline);
 	},
+	
+	/**
+	 * Callback to sort jQuery elements 
+	 */
+	sort_elements_cb: function (a, b) {
+		var cmp_a = $(a).data('breakpoint_order') || 0,
+			cmp_b = $(b).data('breakpoint_order') || 0;
+		if ( cmp_a > cmp_b)
+			return 1;
+		else if( cmp_a < cmp_b )
+			return -1;
+		else
+			return 0;
+	},
+	
+	/**
+	 * For sorted elements, we use this function to perform traversing search (replacement for next, prev, nextAll, prevAll, nextUntil, prevUntil) 
+	 */
+	find_from_elements: function ($els, from, filter, reverse, until) {
+		var index = $els.index($(from)),
+			find_from = reverse ? _.first($els, index).reverse() : _.rest($els, index+1),
+			finish = false,
+			is_filter_cb = filter && _.isFunction(filter),
+			is_until_cb = until && _.isFunction(until);
+		return $(_.filter(find_from, function(el){
+			if ( finish )
+				return false;
+			if ( ( is_filter_cb && filter($(el), $els) ) || ( !is_filter_cb && $(el).is(filter) ) ){
+				if ( until && ( ( is_until_cb && until($(el), $els) ) || ( !is_until_cb && $(el).is(until) ) ) ){
+					finish = true;
+					return false;
+				}
+				return true;
+			}
+			return false;
+		}));
+	},
 
 	// Crossbrowser requestAnimationFrame
 	requestAnimationFrame:

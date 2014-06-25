@@ -1985,6 +1985,9 @@ div.uinsert-selector a:hover {
 	bottom: 0;
 	z-index: 10;
 }
+.upfront-module-group-on-edit:after {
+	display: none;
+}
 .upfront-module-group:hover {
 
 }
@@ -2000,10 +2003,12 @@ div.uinsert-selector a:hover {
 	text-align: center;
 	display: none;
 }
-.upfront-module-group:hover .upfront-module-group-toggle-container {
+.upfront-module-group:hover .upfront-module-group-toggle-ungroup-container,
+.upfront-module-group-edit-mode:hover .upfront-module-group-toggle-reorder-container {
 	display: block;
 }
-.upfront-module-group.upfront-module-group-disabled .upfront-module-group-toggle-container {
+.upfront-module-group.upfront-module-group-disabled .upfront-module-group-toggle-ungroup-container,
+.upfront-module-group.upfront-module-group-on-edit .upfront-module-group-toggle-container {
 	display: none;
 }
 .upfront-module-group-toggle {
@@ -2121,9 +2126,9 @@ div.uinsert-selector a:hover {
 .show-debug .upfront-debug-info {
 	display: block;
 	position: absolute;
-	bottom: -10px;
-	left: 5px;
-	right: 5px;
+	bottom: 0;
+	left: 0;
+	right: 0;
 	background: #fff;
 	border: 1px solid #ccc;
 	padding: 0 5px;
@@ -2241,7 +2246,8 @@ div.uinsert-selector a:hover {
 	opacity: 0;
 }
 .upfront-region-finish-edit,
-.upfront-region-finish-edit-fixed {
+.upfront-region-finish-edit-fixed,
+.upfront-module-group-finish-edit {
 	position: absolute;
 	bottom: -51px;
 	right: 0;
@@ -2269,7 +2275,8 @@ div.uinsert-selector a:hover {
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-finish-edit,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-finish-edit-fixed/*,
-.upfront-region-fixed-editing .upfront-region-container-active .upfront-region-finish-edit*/ {
+.upfront-region-fixed-editing .upfront-region-container-active .upfront-region-finish-edit*/,
+.upfront-module-group-on-edit .upfront-module-group-finish-edit {
 	display: block;
 }
 .upfront-region-title {
@@ -3275,6 +3282,10 @@ div.uinsert-selector a:hover {
 }
 .upfront-module-group.upfront-module-group-disabled .upfront-selected-border {
 	display: none;
+}
+.upfront-module-group.upfront-module-group-edit-mode:hover .upfront-selected-border,
+.upfront-module-group.upfront-module-group-on-edit .upfront-selected-border {
+	display: block;
 }
 
 .upfront-entity_meta {
@@ -10116,6 +10127,22 @@ div.upfront-region-container:hover > a.feature_image_selector {
 div.upfront-region-container-active > a.feature_image_selector {
 	display: none !important;
 }
+
+
+/* Flexbox */
+.upfront-modules_container > .upfront-editable_entities_container,
+.upfront-module-group > .upfront-editable_entities_container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	align-content: flex-start;
+}
+.upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
+.upfront-module-group > .upfront-editable_entities_container > .upfront-wrapper {
+	order: 0;
+}
+
 
 /* Font picker */
 #font-picker {
