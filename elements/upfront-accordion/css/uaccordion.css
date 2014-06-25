@@ -1,13 +1,13 @@
 
 .upfront-accordion-container .accordion-panel-title {
-	position: relative;	
+	position: relative;
 	padding: 7px 15px;
 }
 .upfront-accordion-container .accordion-panel {
-	position: relative;	
+	position: relative;
 }
 .upfront-accordion-container .accordion-panel-title {
-	border-top: 2px #000 solid;	
+	border-top: 2px #000 solid;
 }
 
 .upfront-accordion-wrap {
@@ -65,10 +65,10 @@
 
 .upfront-accordion-container .upfront-entity_meta {
 	top: 62px;
-	right: 5px;	
+	right: 5px;
 }
 .upfront-accordion-container {
-	width: 100%;	
+	width: 100%;
 }
 .upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
 background-position: -260px -130px;
@@ -91,6 +91,10 @@ background-position: -260px -130px;
 	width: 15px;
 }
 
+.uaccordion-settings-panel .inline-radios span:first-child {
+	height: 15px;
+	margin-bottom: 20px;
+}
 .uaccordion-settings-panel .upfront-field-select {
 	vertical-align: middle;
 	width: 110px;

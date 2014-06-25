@@ -471,7 +471,7 @@
         // Inline checkboxes
         this.$el.find('[name=multiple_show_description], [name=multiple_show_title], [name=show_title], [name=show_description]').parent().css({
           'float': 'left',
-          'margin-top': '2px'
+          'margin-top': '22px'
         });
       },
 

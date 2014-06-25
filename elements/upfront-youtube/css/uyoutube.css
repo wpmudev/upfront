@@ -95,6 +95,7 @@
 
 .uyoutube-settings .upfront-field-number[type=number] {
   width: 60px;
+	padding-right: 0;
 }
 
 /* Starting */
