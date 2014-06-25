@@ -288,16 +288,16 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	private function _add_hooks () {
 		//add_action('wp_ajax_upfront-edit-publish', array($this, "publish_post"));
 		upfront_add_ajax('upfront-edit-publish', array($this, "publish_post"));
-		
+
 		//add_action('wp_ajax_upfront-edit-draft', array($this, "draft_post"));
 		upfront_add_ajax('upfront-edit-draft', array($this, "draft_post"));
 
 		//add_action('wp_ajax_upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
 		upfront_add_ajax('upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
-		
+
 		//add_action('wp_ajax_upfront-post-create_term', array($this, "create_new_term"));
 		upfront_add_ajax('upfront-post-create_term', array($this, "create_new_term"));
-		
+
 		//add_action('wp_ajax_upfront-post-update_terms', array($this, "update_post_terms"));
 		upfront_add_ajax('upfront-post-update_terms', array($this, "update_post_terms"));
 
@@ -306,34 +306,34 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		//add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
 		upfront_add_ajax('upfront-post-update_slug', array($this, "update_post_slug"));
-		
+
 		//add_action('wp_ajax_upfront-post-update_status', array($this, "update_post_status"));
 		upfront_add_ajax('upfront-post-update_status', array($this, "update_post_status"));
-		
+
 		//add_action('wp_ajax_upfront-post-update_password', array($this, "update_post_password"));
 		upfront_add_ajax('upfront-post-update_password', array($this, "update_post_password"));
 
 		//add_action('wp_ajax_upfront-comments-approve', array($this, "approve_comment"));
 		upfront_add_ajax('upfront-comments-approve', array($this, "approve_comment"));
-		
+
 		//add_action('wp_ajax_upfront-comments-unapprove', array($this, "unapprove_comment"));
 		upfront_add_ajax('upfront-comments-unapprove', array($this, "unapprove_comment"));
-		
+
 		//add_action('wp_ajax_upfront-comments-thrash', array($this, "thrash_comment"));
 		upfront_add_ajax('upfront-comments-thrash', array($this, "thrash_comment"));
-		
+
 		//add_action('wp_ajax_upfront-comments-unthrash', array($this, "unthrash_comment"));
 		upfront_add_ajax('upfront-comments-unthrash', array($this, "unthrash_comment"));
-		
+
 		//add_action('wp_ajax_upfront-comments-spam', array($this, "spam_comment"));
 		upfront_add_ajax('upfront-comments-spam', array($this, "spam_comment"));
-		
+
 		//add_action('wp_ajax_upfront-comments-unspam', array($this, "unthrash_comment"));
 		upfront_add_ajax('upfront-comments-unspam', array($this, "unthrash_comment"));
 
 		//add_action('wp_ajax_upfront-comments-reply_to', array($this, "post_comment"));
 		upfront_add_ajax('upfront-comments-reply_to', array($this, "post_comment"));
-		
+
 		//add_action('wp_ajax_upfront-comments-update_comment', array($this, "update_comment"));
 		upfront_add_ajax('upfront-comments-update_comment', array($this, "update_comment"));
 
@@ -487,7 +487,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid taxonomy."));
 		$response = array();
 		if($data['postId']){
-			$response['results'] = get_the_terms($data['postId'], $data['taxonomy']);
+			$response['results'] = array_values(get_the_terms($data['postId'], $data['taxonomy']));
 			if($data['allTerms']){
 				$response['allTerms'] = array_values(get_terms($data['taxonomy'], array('hide_empty' => false)));
 			}

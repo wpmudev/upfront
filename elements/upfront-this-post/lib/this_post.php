@@ -530,7 +530,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$post_id = $_POST['post_id'];
 
 		$options = !empty($_POST['options']) && is_array($_POST['options']) ? $_POST['options'] : array();
-		$templates = !empty($_POST['templates']) && is_array($_POST['templates']) ? $_POST['templates'] : array();
+		$templates = !empty($_POST['templates']) && is_array($_POST['templates']) ? stripslashes_deep($_POST['templates']) : array();
 
 		//Prepare the parts before rendering
 		if(isset($_POST['parts']))

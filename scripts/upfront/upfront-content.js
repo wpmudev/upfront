@@ -286,6 +286,8 @@ define("content", deps, function(postTpl, ContentTools) {
 				postUpdated = false
 			;
 
+			console.log('Saving post');
+
 			loading.render();
 			this.$el.append(loading.$el);
 			this.contentEditor.bar.$el.hide()
@@ -307,6 +309,12 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			if(results.date)
 				this.post.set('post_date', results.date);
+
+			if(results.visibility){
+				this.post.setVisibility(results.visibility);
+				if(results.pass)
+					this.post.set('post_password', results.pass);
+			}
 
 			this.post.set('post_status', status);
 			this.post.save().done(function(data){

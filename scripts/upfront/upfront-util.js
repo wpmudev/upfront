@@ -109,19 +109,19 @@ define(function() {
 
 	  return url + hash + '?d=mm&s=' + size;
 	},
-	
+
 	width_to_col: function (width) {
 		var column_width = Upfront.Settings.LayoutEditor.Grid.column_width;
 		return Math.floor(width/column_width);
 	},
-	
+
 	height_to_row: function (height) {
 		var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
 		return Math.ceil(height/baseline);
 	},
-	
+
 	/**
-	 * Callback to sort jQuery elements 
+	 * Callback to sort jQuery elements
 	 */
 	sort_elements_cb: function (a, b) {
 		var cmp_a = $(a).data('breakpoint_order') || 0,
@@ -133,9 +133,9 @@ define(function() {
 		else
 			return 0;
 	},
-	
+
 	/**
-	 * For sorted elements, we use this function to perform traversing search (replacement for next, prev, nextAll, prevAll, nextUntil, prevUntil) 
+	 * For sorted elements, we use this function to perform traversing search (replacement for next, prev, nextAll, prevAll, nextUntil, prevUntil)
 	 */
 	find_from_elements: function ($els, from, filter, reverse, until) {
 		var index = $els.index($(from)),
@@ -485,6 +485,8 @@ var Popup = {
 	  this.$popup.find("#upfront-popup-bottom").empty();
 
 	  $('body').removeClass('upfront-popup-open');
+
+	  Upfront.Events.trigger('popup:closed');
 
 	  this._deferred.resolve(this.$popup, result);
 	}

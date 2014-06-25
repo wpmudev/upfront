@@ -83,534 +83,600 @@ var PostContentEditor = Backbone.View.extend({
 		this.rawContent = opts.rawContent;
 		this.rawExcerpt = opts.rawExcerpt;
 
-	// prevent link navigation
-	this.$('a').data('bypass', true);
+		// prevent link navigation
+		this.$('a').data('bypass', true);
 
-	//Prevent dragging from editable areas
-	var draggable = this.$el.closest('.ui-draggable');
-	if(draggable.length)
-		cancel = draggable.draggable('disable');
+		//Prevent dragging from editable areas
+		var draggable = this.$el.closest('.ui-draggable');
+		if(draggable.length)
+			cancel = draggable.draggable('disable');
 
-	this.prepareEditableRegions();
-	this.prepareBar();
-},
+		this.prepareEditableRegions();
+		this.prepareBar();
+	},
 
-prepareEditableRegions: function(){
-	var me = this;
-	//Title
-	this.parts.titles = this.$('.upfront-content-marker-title');
-	if(this.parts.titles.length){
-		this.onTitleEdited = _.bind(this.titleEdited, this);
-		this.parts.titles
-		.attr('contenteditable', true)
-		.on('keyup', this.onTitleEdited)
-		.on('keydown', function(e){
-				if(e.which != 9) //TAB
-					return;
+	prepareEditableRegions: function(){
+		var me = this;
+		//Title
+		this.parts.titles = this.$('.upfront-content-marker-title');
+		if(this.parts.titles.length){
+			this.onTitleEdited = _.bind(this.titleEdited, this);
+			this.parts.titles
+			.attr('contenteditable', true)
+			.on('keyup', this.onTitleEdited)
+			.on('keydown', function(e){
+					if(e.which != 9) //TAB
+						return;
 
-				e.preventDefault();
-				me.focus(me.$('.upfront-content-marker-contents'), true);
-			})
-		;
-	}
+					e.preventDefault();
+					me.focus(me.$('.upfront-content-marker-contents'), true);
+				})
+			;
+		}
 
-	//Content
-	this.parts.contents = this.$('.upfront-content-marker-contents');
-	if(this.parts.contents.length){
-		var isExcerpt = this.contentMode == 'post_excerpt',
-		content = isExcerpt ? this.rawExcerpt: this.rawContent,
-		editorOptions = isExcerpt ? this.getExcerptEditorOptions() : this.getContentEditorOptions()
-		;
-		this.onContentsEdited = _.bind(this.contentEdited, this);
-		this.editors = [];
-		this.parts.contents.html(content).ueditor(editorOptions);
-		this.parts.contents.on('keyup', this.onContentsEdited);
+		//Content
+		this.parts.contents = this.$('.upfront-content-marker-contents');
+		if(this.parts.contents.length){
+			var isExcerpt = this.contentMode == 'post_excerpt',
+			content = isExcerpt ? this.rawExcerpt: this.rawContent,
+			editorOptions = isExcerpt ? this.getExcerptEditorOptions() : this.getContentEditorOptions()
+			;
+			this.onContentsEdited = _.bind(this.contentEdited, this);
+			this.editors = [];
+			this.parts.contents.html(content).ueditor(editorOptions);
+			this.parts.contents.on('keyup', this.onContentsEdited);
 
-		this.parts.contents.each(function(){
-			me.editors.push($(this).data('ueditor'));
-		});
-		//There may be more than one editor, store the last one edited
-		this.currentContent = this.parts.contents[0];
-	}
+			this.parts.contents.each(function(){
+				me.editors.push($(this).data('ueditor'));
+			});
+			//There may be more than one editor, store the last one edited
+			this.currentContent = this.parts.contents[0];
+		}
 
-	//Author
-	this.parts.authors = this.$('.upfront-content-marker-author');
-	if(this.parts.authors.length){
+		//Author
+		this.parts.authors = this.$('.upfront-content-marker-author');
+		if(this.parts.authors.length){
+			var me = this,
+			authors = Upfront.data.ueditor.authors,
+			options = []
+			;
+
+			_.each(authors, function(a){
+				options.push({value: a.ID, name: a.display_name});
+			});
+
+			this.authorSelect = new MicroSelect({options: options});
+			this.authorSelect.on('select', function(authorId){
+				me.changeAuthor(authorId);
+			});
+
+			this.$el.append(this.authorSelect.$el);
+		}
+
+		//Date
+		this.parts.dates = this.$('.upfront-content-marker-date');
+		if(this.parts.dates.length){
+			var me = this,
+				datepickerData = {},
+				options = [],
+				date = this.post.get("post_date"),
+				dateFormat = this.getDateFormat()
+				 //dateFormatUI = Upfront.Util.date.php_format_to_jquery( this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format )
+			;
+
+			datepickerData.minutes = _.range(0,60);
+			datepickerData.hours = _.range(0,24);
+
+			datepickerData.currentHour = date.getHours();
+			datepickerData.currentMinute = date.getHours();
+
+			this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
+			this.$el.prepend(this.datepickerTpl(datepickerData));
+
+			this.datepicker = this.$('.upfront-bar-datepicker');
+
+			this.datepicker.datepicker({
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: dateFormat,
+				onChangeMonthYear: function(year, month, inst){
+					var day = inst.selectedDay,
+						prev_date = new Date(  me.parts.dates.text()  ),
+						d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() )
+					;
+
+					me.parts.dates.html($.datepicker.formatDate(dateFormat, d));
+
+					me.post.set("post_date", d);
+					me.datepicker.datepicker("setDate", d);
+				},
+				onSelect : function(dateText){
+					me.parts.dates.html(dateText);
+				}
+			});
+		}
+
+		//Featured image
+		this.parts.featured = this.$('.upfront-content-marker-featured_image');
+		if(this.parts.featured.length){
+			var thumbId = this.post.meta.getValue('_thumbnail_id'),
+			height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
+			;
+
+			this.parts.featured.addClass('ueditor_thumb ueditable')
+				.css({position:'relative', 'min-height': height + 'px', width: '100%'})
+				.append('<div class="upost_thumbnail_changer" ><div>Click to edit the post\'s featured image</div></div>')
+				.find('img').css({'z-index': '2', position: 'relative'})
+			;
+			console.log(this.post.meta.toJSON());
+		}
+
+
+		this.parts.tags = this.$('.upfront-postpart-tags');
+		this.parts.categories = this.$('.upfront-postpart-categories');
+
+		setTimeout(function(){
+			me.focus(me.triggeredBy, false);
+		}, 200);
+	},
+
+	getExcerptEditorOptions: function(){
+		return {
+			linebreaks: false,
+			autostart: true,
+			pastePlainText: true,
+			airButtons: ['bold', 'italic']
+		};
+	},
+
+	getContentEditorOptions: function(){
+		return {
+			linebreaks: false,
+			autostart: true,
+			pastePlainText: true,
+			inserts: this.inserts
+		};
+	},
+
+	editThumb: function(e){
+		e.preventDefault();
 		var me = this,
-		authors = Upfront.data.ueditor.authors,
-		options = []
+		target = $(e.target),
+		postId = this.postId,
+		img = target.parent().find('img'),
+		loading = new Upfront.Views.Editor.Loading({
+			loading: "Starting image editor ...",
+			done: "Here we are!",
+			fixed: false
+		}),
+		imageId = this.post.meta.getValue('_thumbnail_id')
 		;
 
-		_.each(authors, function(a){
-			options.push({value: a.ID, name: a.display_name});
-		});
-
-		this.authorSelect = new MicroSelect({options: options});
-		this.authorSelect.on('select', function(authorId){
-			me.changeAuthor(authorId);
-		});
-
-		this.$el.append(this.authorSelect.$el);
-	}
-
-	//Date
-	this.parts.dates = this.$('.upfront-content-marker-date');
-	if(this.parts.dates.length){
-		var me = this,
-			datepickerData = {},
-			options = [],
-			date = this.post.get("post_date"),
-			dateFormat = this.getDateFormat()
-			 //dateFormatUI = Upfront.Util.date.php_format_to_jquery( this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format )
-		;
-
-		datepickerData.minutes = _.range(0,60);
-		datepickerData.hours = _.range(0,24);
-
-		datepickerData.currentHour = date.getHours();
-		datepickerData.currentMinute = date.getHours();
-
-		this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
-		this.$el.prepend(this.datepickerTpl(datepickerData));
-
-		this.datepicker = this.$('.upfront-bar-datepicker');
-
-		this.datepicker.datepicker({
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: dateFormat,
-			onChangeMonthYear: function(year, month, inst){
-				var day = inst.selectedDay,
-					prev_date = new Date(  me.parts.dates.text()  ),
-					d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() )
-				;
-
-				me.parts.dates.html($.datepicker.formatDate(dateFormat, d));
-
-				me.post.set("post_date", d);
-				me.datepicker.datepicker("setDate", d);
-			},
-			onSelect : function(dateText){
-				me.parts.dates.html(dateText);
-			}
-		});
-	}
-
-	//Featured image
-	this.parts.featured = this.$('.upfront-content-marker-featured_image');
-	if(this.parts.featured.length){
-		var thumbId = this.post.meta.getValue('_thumbnail_id'),
-		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
-		;
-
-		this.parts.featured.addClass('ueditor_thumb ueditable')
-		.css({position:'relative', 'min-height': height + 'px', width: '100%'})
-		.append('<div class="upost_thumbnail_changer" ><div>Click to edit the post\'s featured image</div></div>')
-		.find('img').css({'z-index': '2', position: 'relative'})
-		;
-		console.log(this.post.meta.toJSON());
-	}
-
-
-	setTimeout(function(){
-		me.focus(me.triggeredBy, false);
-	}, 200);
-},
-
-getExcerptEditorOptions: function(){
-	return {
-		linebreaks: false,
-		autostart: true,
-		pastePlainText: true,
-		airButtons: ['bold', 'italic']
-	};
-},
-
-getContentEditorOptions: function(){
-	return {
-		linebreaks: false,
-		autostart: true,
-		pastePlainText: true,
-		inserts: this.inserts
-	};
-},
-
-editThumb: function(e){
-	e.preventDefault();
-	var me = this,
-	target = $(e.target),
-	postId = this.postId,
-	img = target.parent().find('img'),
-	loading = new Upfront.Views.Editor.Loading({
-		loading: "Starting image editor ...",
-		done: "Here we are!",
-		fixed: false
-	}),
-	imageId = this.post.meta.getValue('_thumbnail_id')
-	;
-
-	if(!imageId)
-		return me.openImageSelector();
-
-	loading.render();
-	target.parent().append(loading.$el);
-	me.getImageInfo(me.post).done(function(imageInfo){
-		loading.$el.remove();
-		me.openImageEditor(false, imageInfo, me.post.id);
-	});
-},
-
-getImageInfo: function(post){
-	var me = this,
-	imageData = post.meta.get('_thumbnail_data'),
-	imageId = post.meta.get('_thumbnail_id'),
-	deferred = $.Deferred(),
-	$img = this.$('.ueditor_thumb').find('img')
-	;
-
-	if(!imageData || !_.isObject(imageData.get('meta_value')) || imageData.get('meta_value').imageId != imageId.get('meta_value')){
 		if(!imageId)
-			return false;
-		Upfront.Views.Editor.ImageEditor.getImageData([imageId.get('meta_value')]).done(function(response){
-			var images = response.data.images,
-			sizes = {},
+			return me.openImageSelector();
+
+		loading.render();
+		target.parent().append(loading.$el);
+		me.getImageInfo(me.post).done(function(imageInfo){
+			loading.$el.remove();
+			me.openImageEditor(false, imageInfo, me.post.id);
+		});
+	},
+
+	getImageInfo: function(post){
+		var me = this,
+		imageData = post.meta.get('_thumbnail_data'),
+		imageId = post.meta.get('_thumbnail_id'),
+		deferred = $.Deferred(),
+		$img = this.$('.ueditor_thumb').find('img')
+		;
+
+		if(!imageData || !_.isObject(imageData.get('meta_value')) || imageData.get('meta_value').imageId != imageId.get('meta_value')){
+			if(!imageId)
+				return false;
+			Upfront.Views.Editor.ImageEditor.getImageData([imageId.get('meta_value')]).done(function(response){
+				var images = response.data.images,
+				sizes = {},
+				imageId = 0
+				;
+				_.each(images, function(image, id){
+					sizes = image;
+					imageId = id;
+				});
+
+				deferred.resolve({
+					src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+					srcFull: sizes.full[0],
+					srcOriginal: sizes.full[0],
+					fullSize: {width: sizes.full[1], height: sizes.full[2]},
+					size: {width: $img.width(), height: $img.height()},
+					position: {top: 0, left: 0},
+					rotation: 0,
+					id: imageId
+				});
+			});
+		}
+		else {
+			var data = imageData.get('meta_value'),
+			factor = $img.width() / data.cropSize.width
+			;
+			deferred.resolve({
+				src: data.src,
+				srcFull: data.srcFull,
+				srcOriginal: data.srcOriginal,
+				fullSize: data.fullSize,
+				size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},//data.imageSize,
+				position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},//data.imageOffset,
+				rotation: data.rotation,
+				id: data.imageId
+			});
+		}
+		return deferred.promise();
+	},
+
+	openImageSelector: function(postId){
+		var me = this;
+		Upfront.Views.Editor.ImageSelector.open().done(function(images){
+			var sizes = {},
 			imageId = 0
 			;
 			_.each(images, function(image, id){
 				sizes = image;
 				imageId = id;
 			});
-
-			deferred.resolve({
+			var imageInfo = {
 				src: sizes.medium ? sizes.medium[0] : sizes.full[0],
 				srcFull: sizes.full[0],
 				srcOriginal: sizes.full[0],
 				fullSize: {width: sizes.full[1], height: sizes.full[2]},
-				size: {width: $img.width(), height: $img.height()},
-				position: {top: 0, left: 0},
+				size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+				position: false,
 				rotation: 0,
 				id: imageId
+			}
+			;
+			$('<img>').attr('src', imageInfo.srcFull).load(function(){
+				Upfront.Views.Editor.ImageSelector.close();
+				me.openImageEditor(true, imageInfo, postId);
 			});
 		});
-	}
-	else {
-		var data = imageData.get('meta_value'),
-		factor = $img.width() / data.cropSize.width
-		;
-		deferred.resolve({
-			src: data.src,
-			srcFull: data.srcFull,
-			srcOriginal: data.srcOriginal,
-			fullSize: data.fullSize,
-			size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},//data.imageSize,
-			position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},//data.imageOffset,
-			rotation: data.rotation,
-			id: data.imageId
-		});
-	}
-	return deferred.promise();
-},
+	},
 
-openImageSelector: function(postId){
-	var me = this;
-	Upfront.Views.Editor.ImageSelector.open().done(function(images){
-		var sizes = {},
-		imageId = 0
-		;
-		_.each(images, function(image, id){
-			sizes = image;
-			imageId = id;
-		});
-		var imageInfo = {
-			src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-			srcFull: sizes.full[0],
-			srcOriginal: sizes.full[0],
-			fullSize: {width: sizes.full[1], height: sizes.full[2]},
-			size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
-			position: false,
-			rotation: 0,
-			id: imageId
-		}
-		;
-		$('<img>').attr('src', imageInfo.srcFull).load(function(){
-			Upfront.Views.Editor.ImageSelector.close();
-			me.openImageEditor(true, imageInfo, postId);
-		});
-	});
-},
-
-openImageEditor: function(newImage, imageInfo, postId){
-	var me = this,
-	mask = this.$('.ueditor_thumb'),
-	editorOptions = _.extend({}, imageInfo, {
-		maskOffset: mask.offset(),
-		maskSize: {width: mask.width(), height: mask.height()},
-		setImageSize: newImage,
-		extraButtons: [
-		{
-			id: 'image-edit-button-swap',
-			text: 'Swap Image',
-			callback: function(e, editor){
-				editor.cancel();
-				me.openImageSelector(postId);
+	openImageEditor: function(newImage, imageInfo, postId){
+		var me = this,
+		mask = this.$('.ueditor_thumb'),
+		editorOptions = _.extend({}, imageInfo, {
+			maskOffset: mask.offset(),
+			maskSize: {width: mask.width(), height: mask.height()},
+			setImageSize: newImage,
+			extraButtons: [
+			{
+				id: 'image-edit-button-swap',
+				text: 'Swap Image',
+				callback: function(e, editor){
+					editor.cancel();
+					me.openImageSelector(postId);
+				}
 			}
-		}
-		]
-	})
-	;
-
-	Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
-		var post = me.post,
-		img = mask.find('img'),
-		newimg = $('<img style="z-index:2;position:relative">')
-		;
-
-		me.post.meta.add([
-			{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
-			{meta_key: '_thumbnail_data', meta_value: imageData}
-			], {merge: true});
-		//post.meta.save();
-		if(!img.length)
-			img = newimg.appendTo(mask);
-		else{
-			img.replaceWith(newimg);
-			img = newimg;
-		}
-
-		img.attr('src', imageData.src);
-	});
-},
-
-focus: function(el, selectAll){
-	var marker = 'upfront-content-marker-';
-	if(typeof el.length == 'undefined')
-		el = $(el);
-
-	if(el.hasClass(marker + 'title') || el.hasClass(marker + 'contents')){
-		this.setSelection(el[0], selectAll);
-	}
-},
-
-changeAuthor: function(authorId){
-	var me = this,
-		authorData = me.getAuthorData(authorId)
-		//markupper = new PartMarkupCreator(),
-		//markup = markupper.markup('author', {'%author%': authorData.display_name, '%author_url%': authorData.posts_url}, me.authorTpl);
-	;
-
-	this.$('.upfront-content-marker-author').html(authorData.display_name);
-	this.postAuthor = authorId;
-
-	console.log('Author changed to ' + authorId);
-},
-
-editAuthor: function(e) {
-	e.preventDefault();
-	var target = $(e.target);
-
-	this.authorSelect.open();
-
-	this.authorSelect.$el.css({
-		top: e.offsetY + 50,
-		left: e.offsetX + target.width(),
-		display: 'block'
-	});
-},
-
-editDate: function(e) {
-	e.preventDefault();
-	var $target = $(e.target);
-
-	if(this.datepicker.is(':visible')){
-		// just update datepicker position
-		this.datepicker.offset({
-			top : $target.offset().top + 30,
-			left : $target.offset().left + $target.width()
-		});
-	}
-
-	var date = this.selectedDate || this.post.get('post_date');
-
-  /**
-	* Show date picker
-	*/
-	this.datepicker.parent()
-		.show()
-		.offset({
-			top : $target.offset().top + 30,
-			left : $target.offset().left + $target.width()
+			]
 		})
-	;
-
-	if(date){
-		/**
-		* update date in the date picker and the time picker
-		*/
-
-		var hours = date.getHours(),
-			minutes = date.getMinutes()
 		;
-		this.datepicker.datepicker('setDate', date);
 
-		this.$('.ueditor-hours-select').val(hours);
-		this.$('.ueditor-minutes-select').val(minutes);
-	}
-},
+		Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
+			var post = me.post,
+			img = mask.find('img'),
+			newimg = $('<img style="z-index:2;position:relative">')
+			;
 
-getDateFormat: function(){
-	return Upfront.Util.date.php_format_to_js(this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format);
-},
-
-updateDateParts: function(date){
-	this.parts.dates.html($.datepicker.formatDate(this.getDateFormat(), date));
-},
-
-editDateCancel : function(){
-	// User has cancelled the date edition, restore previous date.
-	this.updateDateParts(this.selectedDate || this.post.get('post_date'));
-	this.$('.upfront-date_picker').hide();
-},
-
-editDateOk: function(){
-	var chosen_date = this.datepicker.datepicker('getDate'),
-		parent = this.datepicker.parent(),
-		hours = parent.find(".ueditor-hours-select").val(),
-		minutes = parent.find(".ueditor-minutes-select").val()
-	;
-	chosen_date.setHours( hours );
-	chosen_date.setMinutes( minutes );
-
-	this.dateOk(chosen_date);
-	this.$('.upfront-date_picker').hide();
-},
-
-dateOk: function(date){
-	this.selectedDate = date;
-},
-
-updateDateFromBar: function(date){
-	this.updateDateParts(date);
-	this.dateOk(date);
-},
-
-getAuthorData: function(authorId){
-	var i = -1,
-	found = false,
-	authors = Upfront.data.ueditor.authors
-	;
-
-	while(++i < authors.length && !found){
-		if(authors[i].ID == authorId)
-			found = authors[i];
-	}
-
-	return found;
-},
-
-// Thanks to http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442#3866442
-setSelection: function(el, selectAll) {
-	var range,selection;
-	if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
-	{
-		range = document.createRange();//Create a range (a range is a like the selection but invisible)
-		range.selectNodeContents(el);//Select the entire contents of the element with the range
-		if(!selectAll)
-			range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
-		selection = window.getSelection();//get the selection object (allows you to change selection)
-		selection.removeAllRanges();//remove any selections already made
-		selection.addRange(range);//make the range you have just created the visible selection
-	}
-	else if(document.selection)//IE 8 and lower
-	{
-		range = document.body.createTextRange();//Create a range
-		range.moveToElementText(el);//Select the entire contents of the element with the range
-		if(!selectall)
-		range.collapse(false);//collapse the range to the end point.
-		range.select();//Select the range (make it the visible selection)
-	}
-},
-
-titleEdited: function(e){
-	var content = e.target.innerHTML;
-	this.parts.titles.each(function(){
-		if(this != e.target)
-			this.innerHTML = content;
-	});
-},
-
-contentEdited: function(e){
-	var contents = e.currentTarget.innerHTML;
-	this.parts.contents.each(function(){
-		if(this != e.currentTarget)
-			$(this).redactor('set', contents, false);
-	});
-
-	this.bar.calculateLimits();
-	this.currentContent = e.currentTarget;
-},
-
-prepareBar: function(){
-	if(this.bar){
-		this.bar.calculateLimits();
-		return;
-	}
-	this.bar = new EditionBar({post: this.post});
-	this.bindBarEvents();
-	this.bar.render();
-	this.$el.append(this.bar.$el);
-	this.bar.stick();
-
-	return;
-},
-
-bindBarEvents: function(){
-	var me = this,
-		events = ['cancel', 'publish', 'draft', 'trash']
-	;
-	_.each(events, function(e){
-		me.listenTo(me.bar, e, function(){
-			var results = {};
-			if(e=='publish' || e=='draft'){
-				if(me.parts.titles)
-					results.title = $.trim(me.parts.titles.html());
-				if(me.currentContent){
-					var editor = $(me.currentContent).data('ueditor');
-					results.content = $.trim(editor.getValue());
-					results.inserts = editor.getInsertsData();
-					results.author = me.postAuthor;
-				}
-				if(me.selectedDate){
-					results.date = me.selectedDate;
-				}
+			me.post.meta.add([
+				{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
+				{meta_key: '_thumbnail_data', meta_value: imageData}
+				], {merge: true});
+			//post.meta.save();
+			if(!img.length)
+				img = newimg.appendTo(mask);
+			else{
+				img.replaceWith(newimg);
+				img = newimg;
 			}
-			console.log(results);
-			me.trigger(e, results);
+
+			img.attr('src', imageData.src);
 		});
-	});
+	},
 
-	this
-		.listenTo(me.bar, 'date:updated', me.updateDateFromBar)
-		.listenTo(me.bar, 'date:cancel', me.editDateCancel)
-	;
-},
+	focus: function(el, selectAll){
+		var marker = 'upfront-content-marker-';
+		if(typeof el.length == 'undefined')
+			el = $(el);
 
-stop: function(){
-	if(this.onTitleEdited)
-		this.parts.titles.off('change', this.onTitleEdited);
+		if(el.hasClass(marker + 'title') || el.hasClass(marker + 'contents')){
+			this.setSelection(el[0], selectAll);
+		}
+	},
 
-	if(this.editors)
-		_.each(this.editors, function(e){e.stop()});
+	changeAuthor: function(authorId){
+		var me = this,
+			authorData = me.getAuthorData(authorId)
+			//markupper = new PartMarkupCreator(),
+			//markup = markupper.markup('author', {'%author%': authorData.display_name, '%author_url%': authorData.posts_url}, me.authorTpl);
+		;
 
-	var draggable = this.$el.closest('.ui-draggable');
-	if(draggable.length)
-		cancel = draggable.draggable('enable');
+		this.$('.upfront-content-marker-author').html(authorData.display_name);
+		this.postAuthor = authorId;
 
-	this.$('a').data('bypass', false);
-},
+		console.log('Author changed to ' + authorId);
+	},
 
-preventLinkNavigation: function(e){
-	e.preventDefault();
-}
+	editAuthor: function(e) {
+		e.preventDefault();
+		var target = $(e.target);
+
+		this.authorSelect.open();
+
+		this.authorSelect.$el.css({
+			top: e.offsetY + 50,
+			left: e.offsetX + target.width(),
+			display: 'block'
+		});
+	},
+
+	editDate: function(e) {
+		e.preventDefault();
+		var $target = $(e.target);
+
+		if(this.datepicker.is(':visible')){
+			// just update datepicker position
+			this.datepicker.offset({
+				top : $target.offset().top + 30,
+				left : $target.offset().left + $target.width()
+			});
+		}
+
+		var date = this.selectedDate || this.post.get('post_date');
+
+	  /**
+		* Show date picker
+		*/
+		this.datepicker.parent()
+			.show()
+			.offset({
+				top : $target.offset().top + 30,
+				left : $target.offset().left + $target.width()
+			})
+		;
+
+		if(date){
+			/**
+			* update date in the date picker and the time picker
+			*/
+
+			var hours = date.getHours(),
+				minutes = date.getMinutes()
+			;
+			this.datepicker.datepicker('setDate', date);
+
+			this.$('.ueditor-hours-select').val(hours);
+			this.$('.ueditor-minutes-select').val(minutes);
+		}
+	},
+
+	getDateFormat: function(){
+		return Upfront.Util.date.php_format_to_js(this.partOptions.date && this.partOptions.date.format ? this.partOptions.date.format : Upfront.data.date.format);
+	},
+
+	updateDateParts: function(date){
+		this.parts.dates.html($.datepicker.formatDate(this.getDateFormat(), date));
+	},
+
+	editDateCancel : function(){
+		// User has cancelled the date edition, restore previous date.
+		this.updateDateParts(this.selectedDate || this.post.get('post_date'));
+		this.$('.upfront-date_picker').hide();
+	},
+
+	editDateOk: function(){
+		var chosen_date = this.datepicker.datepicker('getDate'),
+			parent = this.datepicker.parent(),
+			hours = parent.find(".ueditor-hours-select").val(),
+			minutes = parent.find(".ueditor-minutes-select").val()
+		;
+		chosen_date.setHours( hours );
+		chosen_date.setMinutes( minutes );
+
+		this.dateOk(chosen_date);
+		this.$('.upfront-date_picker').hide();
+	},
+
+	dateOk: function(date){
+		this.selectedDate = date;
+	},
+
+	updateDateFromBar: function(date){
+		this.updateDateParts(date);
+		this.dateOk(date);
+	},
+
+	getAuthorData: function(authorId){
+		var i = -1,
+		found = false,
+		authors = Upfront.data.ueditor.authors
+		;
+
+		while(++i < authors.length && !found){
+			if(authors[i].ID == authorId)
+				found = authors[i];
+		}
+
+		return found;
+	},
+
+	updateStatus: function(status){
+		this.postStatus = status;
+	},
+
+	updateVisibility: function(visibility, password){
+		this.postVisibility = visibility;
+		this.postPassword = password;
+	},
+
+	// Thanks to http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442#3866442
+	setSelection: function(el, selectAll) {
+		var range,selection;
+		if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+		{
+			range = document.createRange();//Create a range (a range is a like the selection but invisible)
+			range.selectNodeContents(el);//Select the entire contents of the element with the range
+			if(!selectAll)
+				range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+			selection = window.getSelection();//get the selection object (allows you to change selection)
+			selection.removeAllRanges();//remove any selections already made
+			selection.addRange(range);//make the range you have just created the visible selection
+		}
+		else if(document.selection)//IE 8 and lower
+		{
+			range = document.body.createTextRange();//Create a range
+			range.moveToElementText(el);//Select the entire contents of the element with the range
+			if(!selectall)
+			range.collapse(false);//collapse the range to the end point.
+			range.select();//Select the range (make it the visible selection)
+		}
+	},
+
+	titleEdited: function(e){
+		var content = e.target.innerHTML;
+		this.parts.titles.each(function(){
+			if(this != e.target)
+				this.innerHTML = content;
+		});
+	},
+
+	contentEdited: function(e){
+		var contents = e.currentTarget.innerHTML;
+		this.parts.contents.each(function(){
+			if(this != e.currentTarget)
+				$(this).redactor('set', contents, false);
+		});
+
+		this.bar.calculateLimits();
+		this.currentContent = e.currentTarget;
+	},
+
+	prepareBar: function(){
+		if(this.bar){
+			this.bar.calculateLimits();
+			return;
+		}
+		this.bar = new EditionBar({post: this.post});
+		this.bindBarEvents();
+		this.bar.render();
+		this.$el.append(this.bar.$el);
+		this.bar.stick();
+
+		return;
+	},
+
+	bindBarEvents: function(){
+		var me = this,
+			events = ['cancel', 'publish', 'draft', 'trash']
+		;
+		_.each(events, function(e){
+			me.listenTo(me.bar, e, function(){
+				var results = {};
+				if(e=='publish' || e=='draft'){
+					if(me.parts.titles)
+						results.title = $.trim(me.parts.titles.html());
+					if(me.currentContent){
+						var editor = $(me.currentContent).data('ueditor');
+						results.content = $.trim(editor.getValue());
+						results.inserts = editor.getInsertsData();
+						results.author = me.postAuthor;
+					}
+					if(me.selectedDate)
+						results.date = me.selectedDate;
+					if(me.postStatus)
+						results.status = me.postStatus;
+					if(me.postVisibility)
+						results.visibility = me.postVisibility;
+					if(me.postPassword)
+						results.pass = me.postPassword;
+				}
+				console.log(results);
+				me.trigger(e, results);
+			});
+		});
+
+		this
+			.listenTo(me.bar, 'date:updated', me.updateDateFromBar)
+			.listenTo(me.bar, 'date:cancel', me.editDateCancel)
+			.listenTo(me.bar, 'status:change', me.updateStatus)
+			.listenTo(me.bar, 'visibility:change', me.updateVisibility)
+			.listenTo(me.bar, 'tax:refresh', me.refreshTaxonomies)
+		;
+	},
+
+	refreshTaxonomies: function(){
+		if(!this.parts.tags.length && !this.parts.categories.length)
+			return;
+
+		if(this.taxLoading)
+			return;
+
+		var me = this,
+			options = this.postView.partOptions || {},
+			templates = this.postView.partTemplates || {},
+			request = {
+				action: 'content_part_markup',
+				post_id: this.post.get('ID'),
+				parts: [],
+				templates: {}
+			}
+		;
+
+		if(this.parts.tags.length){
+			request.parts.push({slug: 'tags', options: options.tags || {}});
+			request.templates.tags = templates.tags || '';
+		}
+
+		if(this.parts.categories.length){
+			request.parts.push({slug: 'categories', options: options.categories || {}});
+			request.templates.categories = templates.categories || '';
+		}
+
+		request.parts = JSON.stringify(request.parts);
+
+		// Wait a bit to finish storing any pending taxonomy
+		setTimeout(function(){
+			me.taxLoading = Upfront.Util.post(request).done(function(response){
+				var partContents = me.postView.partContents;
+
+				_.extend(partContents.replacements, response.data.replacements);
+				_.extend(partContents.tpls, response.data.tpls);
+
+				me.parts.tags.html(response.data.tpls.tags);
+				me.parts.categories.html(response.data.tpls.categories);
+
+				me.taxLoading = false;
+			});
+		}, 300);
+	},
+
+	stop: function(){
+		if(this.onTitleEdited)
+			this.parts.titles.off('change', this.onTitleEdited);
+
+		if(this.editors)
+			_.each(this.editors, function(e){e.stop()});
+
+		var draggable = this.$el.closest('.ui-draggable');
+		if(draggable.length)
+			cancel = draggable.draggable('enable');
+
+		this.$('a').data('bypass', false);
+	},
+
+	preventLinkNavigation: function(e){
+		e.preventDefault();
+	}
 });
 
 var EditionBar = Backbone.View.extend({
@@ -664,7 +730,17 @@ var EditionBar = Backbone.View.extend({
 	initialize: function(options){
 		var me = this;
 		this.post = options.post;
+
+		// Store the initial and current status and upfront-content.js
+		// will store it in the post on saving/publishing.
 		this.initialStatus = this.post.get('post_status');
+		this.currentStatus = this.initialStatus;
+
+		this.postVisibility = this.post.getVisibility();
+		if(this.postVisibility == 'password')
+			this.postPassword = this.post.get('post_password');
+
+		// The same for the date, Bar mustn't update the post.
 		this.initialDate = this.post.get('post_date');
 		this.tpl = _.template(Upfront.data.uposts.barTemplate);
 		this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
@@ -680,7 +756,7 @@ var EditionBar = Backbone.View.extend({
 		;
 
 		postData.status = this.getBarStatus();
-		postData.visibility = this.visibilityOptions[this.post.getVisibility()];
+		postData.visibility = this.visibilityOptions[this.postVisibility];
 
 		postData.schedule = this.getSchedule();
 
@@ -709,7 +785,8 @@ var EditionBar = Backbone.View.extend({
 					day = picker.datepicker('getDate').getDate();
 				;
 				var prev_date = new Date(  me.$('.ueditor-action-schedule').text()  ),
-				d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() );
+					d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() )
+				;
 
 				me.$('.ueditor-action-schedule').html(Upfront.Util.format_date( d, true));
 				me.post.set("post_date", d);
@@ -732,16 +809,21 @@ var EditionBar = Backbone.View.extend({
 		this.visibilitySelect = new MicroSelect({options: this.getVisibilityOptions()});
 
 		this.statusSelect.on('select', function(status){
-			me.post.set('post_status', status);
+			me.currentStatus = status;
+			me.trigger('status:change', status);
 			me.render();
+			me.toggleAdvanced();
 		});
 
 		this.visibilitySelect.on('select', function(visibility){
 			if(visibility == 'password')
 				me.showPassEditor(me.$('.ueditor-select-visibility'));
 			else{
-				me.post.setVisibility(visibility);
+				me.trigger('visibility:change', visibility);
+				me.postVisibility = visibility;
+				//me.post.setVisibility(visibility);
 				me.render();
+				me.toggleAdvanced();
 			}
 		});
 
@@ -750,7 +832,7 @@ var EditionBar = Backbone.View.extend({
 	},
 
 	getBarStatus: function(){
-		var current = this.post.get('post_status');
+		var current = this.currentStatus;
 		if(['auto-draft', 'draft', 'pending'].indexOf(current) != -1)
 			return this.statusOptions[current];
 		return this.statusOptions[this.initialStatus];
@@ -797,16 +879,8 @@ var EditionBar = Backbone.View.extend({
 
 		this.$('.upfront-date_picker').toggle();
 
-		if(date){
-			this.$('.upfront-bar-datepicker').datepicker('setDate', date);
-
-			var hours = date.getHours(),
-				minutes = date.getMinutes()
-			;
-
-			this.$('.ueditor-hours-select').val(hours);
-			this.$('.ueditor-minutes-select').val(minutes);
-		}
+		if(date)
+			this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
 	},
 
 	close_date_picker : function(){
@@ -847,7 +921,7 @@ var EditionBar = Backbone.View.extend({
 
 	getStatusOptions: function(postata){
 		var ops = [],
-		status = this.initialStatus
+			status = this.initialStatus
 		;
 
 		if(status == 'publish'){
@@ -868,15 +942,15 @@ var EditionBar = Backbone.View.extend({
 
 	getVisibilityOptions: function(){
 		var now = this.post.getVisibility(),
-		ops = this.visibilityOptions
+			ops = this.visibilityOptions
 		;
 		if(now == 'password')
 			return [
-		{value: 'password', name: 'Edit password...'},
-		ops.public,
-		ops.sticky,
-		ops.private
-		]
+				{value: 'password', name: 'Edit password...'},
+				ops.public,
+				ops.sticky,
+				ops.private
+			]
 		;
 		return _.values(ops);
 	},
@@ -1029,12 +1103,12 @@ var EditionBar = Backbone.View.extend({
 	},
 
 	publish: function(e){
+		if(this.currentStatus == 'draft')
+			return this.saveDraft(e);
+
 		e.preventDefault();
 
 		this.destroy();
-
-		this.initialStatus = this.post.get('post_status');
-		this.initialDate = this.post.get('post_date').getTime();
 
 		this.post.trigger('editor:publish');
 		this.trigger('publish');
@@ -1045,9 +1119,6 @@ var EditionBar = Backbone.View.extend({
 		e.preventDefault();
 
 		this.destroy();
-
-		this.initialStatus = this.post.get('post_status');
-		this.initialDate = this.post.get('post_date').getTime();
 
 		this.post.trigger('editor:draft');
 		this.trigger('draft');
@@ -1110,65 +1181,66 @@ var EditionBar = Backbone.View.extend({
 			e.preventDefault();
 
 		var me = this,
-		tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
-		$tax = $("#upfront-post_taxonomies"),
-		$popup = {},
-		views = {category: false, post_tag: false},
-		currentView = 'category',
-		terms = {},
-		popup = Upfront.Popup.open(function (data, $top, $bottom) {
-			var $me = $(this);
-			$me.empty()
-			.append('<p class="upfront-popup-placeholder"><q>I enjoy eating cheese.</q></p>')
-			.append($tax)
-			;
-			$popup = {
-				"top": $top,
-				"content": $me,
-				"bottom": $bottom
-			};
-		}),
-		dispatch_taxonomy_call = function (el) {
-			var $el = $(el),
-			tax = $el.attr("data-type"),
-			type = $el.attr('rel'),
-			termsList = terms[tax] ? terms[tax] : false
-			;
-			$popup.top.find('.upfront-tabs li').removeClass('active');
-			$el.addClass('active');
-
-			currentView = tax;
-
-			if(views[tax])
-				return render_panel(views[tax]);
-
-			if(!termsList){
-				termsList = new Upfront.Collections.TermList([], {postId: me.post.id, taxonomy: tax});
-				terms[tax] = termsList;
-			}
-
-			$popup.content.html('<p class="upfront-popup-placeholder"><q>Them frogs chirp really loud today.</q></p>');
-
-			termsList.fetch({allTerms: true}).done(function(response){
-				var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
-				tax_view = new tax_view_constructor({collection: termsList})
+			tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
+			$tax = $("#upfront-post_taxonomies"),
+			$popup = {},
+			views = {category: false, post_tag: false},
+			currentView = 'category',
+			terms = {},
+			popup = Upfront.Popup.open(function (data, $top, $bottom) {
+				var $me = $(this);
+				$me.empty()
+				.append('<p class="upfront-popup-placeholder"><q>I enjoy eating cheese.</q></p>')
+				.append($tax)
 				;
+				$popup = {
+					"top": $top,
+					"content": $me,
+					"bottom": $bottom
+				};
+			}),
+			dispatch_taxonomy_call = function (el) {
+				var $el = $(el),
+				tax = $el.attr("data-type"),
+				type = $el.attr('rel'),
+				termsList = terms[tax] ? terms[tax] : false
+				;
+				$popup.top.find('.upfront-tabs li').removeClass('active');
+				$el.addClass('active');
 
-				tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+				currentView = tax;
 
-				views[tax] = tax_view;
-				render_panel();
+				if(views[tax])
+					return render_panel(views[tax]);
 
-			});
+				if(!termsList){
+					termsList = new Upfront.Collections.TermList([], {postId: me.post.id, taxonomy: tax});
+					terms[tax] = termsList;
+				}
 
-			return false;
-		},
-		render_panel = function(view){
-			var v = views[currentView];
-			v.render();
-			$popup.content.html(v.$el);
-			v.setElement(v.$el);
-		}
+				$popup.content.html('<p class="upfront-popup-placeholder"><q>Them frogs chirp really loud today.</q></p>');
+
+				termsList.fetch({allTerms: true}).done(function(response){
+					var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
+						tax_view = new tax_view_constructor({collection: termsList})
+					;
+
+					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+
+					views[tax] = tax_view;
+					render_panel();
+				});
+
+				me.listenToOnce(Upfront.Events, 'popup:closed', me.refreshTaxonomies);
+
+				return false;
+			},
+			render_panel = function(view){
+				var v = views[currentView];
+				v.render();
+				$popup.content.html(v.$el);
+				v.setElement(v.$el);
+			}
 		;
 
 		$(".upfront-popup-placeholder").remove();
@@ -1201,39 +1273,43 @@ var EditionBar = Backbone.View.extend({
 
 	showPassEditor: function(parent){
 		var op = this.visibilityOptions.password,
-		me = this
+			me = this
 		;
 
 		parent.find('.ueditor-select-value')
-		.data('id', op.value)
-		.text(op.name)
+			.data('id', op.value)
+			.text(op.name)
 		;
 
 		parent.find('.ueditor-select-options').hide();
 
 		parent.find('.ueditor-pass-editor').show()
-		.find('input')
-		.one('blur', function(e){
-			setTimeout(function(){
-				me.render();
-			}, 300);
-		})
-		.off('keydown')
-		.on('keydown', function(e){
-			if(e.which == 13){
-				me.changePass(e);
-			}
-		})
-		.focus()
+			.find('input').val(this.postPassword || '')
+			.one('blur', function(e){
+				setTimeout(function(){
+					me.render();
+				}, 300);
+			})
+			.off('keydown')
+			.on('keydown', function(e){
+				if(e.which == 13){
+					me.changePass(e);
+				}
+			})
+			.focus()
 		;
 	},
 
 	changePass: function(e){
 		var pass = $(e.target).parent().find('input').val();
 		if(pass){
-			this.post.setVisibility('password');
-			this.post.set('post_password', pass);
+			this.trigger('visibility:change', 'password', pass);
+			// this.post.setVisibility('password');
+			// this.post.set('post_password', pass);
+			this.postVisibility = 'password';
+			this.postPassword = pass;
 			this.render();
+			this.toggleAdvanced();
 		}
 	},
 
@@ -1241,6 +1317,10 @@ var EditionBar = Backbone.View.extend({
 		if(e)
 			e.preventDefault();
 		this.$('.ueditor-bar').toggleClass('show-advanced');
+	},
+
+	refreshTaxonomies: function(){
+		this.trigger('tax:refresh');
 	}
 });
 
