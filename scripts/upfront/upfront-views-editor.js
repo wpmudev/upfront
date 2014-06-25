@@ -1755,7 +1755,6 @@ define([
         },
         get_all_classes : function(){
             var classes = [];
-            console.log(this.get_colors());
             _.each( this.get_colors(), function(item, index){
                 classes.push("upfront_theme_color_" + index);
             });
@@ -1807,7 +1806,8 @@ define([
             var self = this;
             Theme_Colors.colors.each(function( item, index ){
                 self.styles += " .upfront_theme_color_" + index +"{ color: " + item.get("color") + ";}";
-                self.styles += " .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
+                self.styles += " a .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
+                self.styles += " button .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
@@ -1845,31 +1845,20 @@ define([
         add_previous_pickers : function(){
             var self = this;
             this.$(".theme-colors-color-picker").each(function(){
-                var $this = $(this),
+                var picker = this;
+                    $this = $(this),
+                    index = $this.data("index"),
                     color = $this.data("color"),
                     picker = new Field_Color({
-                        className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme_color_swatch_empty',
+                        className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
                         hide_label : true,
                         default_value: color,
                         spectrum: {
                             change: function (color){
-                                var index = $(this).closest(".theme-colors-color-picker").data("index"),
-                                    model = Theme_Colors.colors.at(index),
-                                    percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
-                                if( model ){
-                                    model.set({
-                                        color : color.toHexString(),
-                                        highlight : self.color_luminance( color.toHex(), percentage ),
-                                        shade : self.color_luminance( color.toHex(), (percentage * -1) )
-                                    });
-                                    $(this).parent().find(".sp-preview").css({
-                                        backgroundColor : color.toRgbString(),
-                                        backgroundImage : "none"
-                                    });
-                                    this.default_value = color.toRgbString();
-                                    self.render_bottom();
-                                }
-
+                               self.update_colors(this, color, index);
+                            },
+                            move : function(color){
+                                self.update_colors(this, color, index);
                             }
                         }
                     });
@@ -1998,6 +1987,23 @@ define([
                     self.change_range(ui.value);
                 }
             });
+        },
+        update_colors : function(picker, color, index){
+            var model = Theme_Colors.colors.at(index),
+                percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
+            if( model ){
+                model.set({
+                    color : color.toHexString(),
+                    highlight : this.color_luminance( color.toHex(), percentage ),
+                    shade : this.color_luminance( color.toHex(), (percentage * -1) )
+                });
+                $(picker).parent().find(".sp-preview").css({
+                    backgroundColor : color.toRgbString(),
+                    backgroundImage : "none"
+                });
+                picker.default_value = color.toRgbString();
+                this.render_bottom();
+            }
         }
     });
     var SidebarPanel_Settings_Section_Colors = SidebarPanel_Settings_Section.extend({

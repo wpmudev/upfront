@@ -1125,12 +1125,17 @@ RedactorPlugins.upfrontColor = {
                         if( !$(current).hasClass(theme_color_classname) ){
                             // remove previous theme color classes if any
                             _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
-                                redac.inlineRemoveClass( cls );
+//                                redac.inlineRemoveClass( cls );
                             });
                             // remove inline color if any
                             redac.inlineRemoveStyle("color");
-                            // and new theme color class
-                            redac.inlineSetClass(theme_color_classname);
+
+                            var html = "<span class='upfront_theme_colors " + theme_color_classname + "'>" + redac.getSelectionHtml() + "</span>";
+                            if( $(redac.getCurrent()).hasClass("upfront_theme_colors") ){
+                                $(redac.getCurrent()).replaceWith( html );
+                            }else{
+                                redac.execCommand("inserthtml", html, true);
+                            }
                         }
                     }else{
                         redac.selectionRestore(true, false);
@@ -1138,8 +1143,16 @@ RedactorPlugins.upfrontColor = {
                         _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
                             redac.inlineRemoveClass( cls );
                         });
-                        redac.inlineRemoveStyle('color');
-                        redac.inlineSetStyle('color', self.current_color.toRgbString());
+                        redac.inlineRemoveClass( "upfront_theme_colors" );
+
+//                        redac.inlineRemoveStyle('color');
+                        var html = "<span class='inline_color' style='color: " + self.current_color.toRgbString() + "'>" + redac.getSelectionHtml() + "</span>";
+                        if( $(redac.getCurrent()).hasClass("inline_color") ){
+                            $(redac.getCurrent()).replaceWith( html );
+                        }else{
+                            redac.execCommand("inserthtml", html, true);
+                        }
+//                        redac.inlineSetStyle('color', self.current_color.toRgbString());
                     }
 
 
