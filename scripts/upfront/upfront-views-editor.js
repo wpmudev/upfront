@@ -1844,10 +1844,9 @@ define([
         },
         add_previous_pickers : function(){
             var self = this;
-            this.$(".theme-colors-color-picker").each(function(){
+            this.$(".theme-colors-color-picker").each(function(index){
                 var picker = this;
                     $this = $(this),
-                    index = $this.data("index"),
                     color = $this.data("color"),
                     picker = new Field_Color({
                         className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
