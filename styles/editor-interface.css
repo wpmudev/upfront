@@ -2151,7 +2151,7 @@ div.uinsert-selector a:hover {
   min-height: 90px;
   /*z-index: 1;*/
 }
-.upfront-region-side-fixed {
+.upfront-region-side-fixed, .upfront-region-side-lightbox {
 	position: fixed;
 	z-index: 10;
 }
@@ -2230,6 +2230,8 @@ div.uinsert-selector a:hover {
 }
 .upfront-edit-layout .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-theme .upfront-region-container:hover > .upfront-region-edit-trigger,
+.upfront-edit-layout .upfront-region-side-lightbox:hover > .upfront-region-edit-trigger-small,
+.upfront-edit-theme .upfront-region-side-lightbox:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-layout .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-theme .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-layout .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
@@ -2246,6 +2248,8 @@ div.uinsert-selector a:hover {
 	opacity: 0;
 }
 .upfront-region-finish-edit,
+.upfront-region-finish-edit-fixed,
+.upfront-region-finish-edit-lightbox {
 .upfront-region-finish-edit-fixed,
 .upfront-module-group-finish-edit {
 	position: absolute;
@@ -2274,7 +2278,8 @@ div.uinsert-selector a:hover {
 	padding: 5px 36px;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-finish-edit,
-.upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-finish-edit-fixed/*,
+.upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-finish-edit-fixed,
+.upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox/*,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-region-finish-edit*/,
 .upfront-module-group-on-edit .upfront-module-group-finish-edit {
 	display: block;
@@ -3310,7 +3315,8 @@ div.uinsert-selector a:hover {
 	z-index: 999999;
 	display: none;
 }
-.upfront-region-editing .upfront-region > .upfront-entity_meta {
+.upfront-region-editing .upfront-region > .upfront-entity_meta,
+.upfront-region-lightbox-editing .upfront-region-side-lightbox > .upfront-entity_meta {
 	display: block;
 }
 .upfront-region-side-fixed > .upfront-entity_meta {
@@ -3417,7 +3423,8 @@ div.uinsert-selector a:hover {
 	visibility: visible;
 }
 .upfront-region-editing .upfront-region-active > .upfront-entity_meta .upfront-icon-button,
-.upfront-region-fixed-editing .upfront-region-side-fixed:hover > .upfront-entity_meta .upfront-icon-button {
+.upfront-region-fixed-editing .upfront-region-side-fixed:hover > .upfront-entity_meta .upfront-icon-button,
+.upfront-region-lightbox-editing .upfront-region-side-lightbox:hover > .upfront-entity_meta .upfront-icon-button {
 	opacity: 1;
 	visibility: visible;
 }

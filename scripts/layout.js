@@ -125,5 +125,49 @@ jQuery(document).ready(function($){
 	fix_full_bg();
 	$(window).on('resize', fix_full_bg);
 	
-	
+	/* Lightbox front end logic */
+	var overlay = $('<div class="upfront-lightbox-bg"></div>'),
+		close= $('<div class="upfront-ui close_lightbox"></div>'),
+		close_icon= $('<div class="upfront-icon upfront-icon-popup-close"></div>');
+		
+	$('a').bind('click', function(e) {
+      var url = $(this).attr('href');
+		if(url.indexOf('#') >=0) {
+		  var tempurl = url.split('#');
+		  if(tempurl[1].trim() != '')
+		  	if(tempurl[1].trim().indexOf('ltb-') == 0) {
+				var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
+				overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
+				
+				if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
+					lightbox.prepend(close);
+					
+					if(lightbox.data('addclosetext') == 'yes') {
+						close.append($('<h3 class="upfront-selector-title">'+lightbox.data('closetext')+'</h3>'));
+						if(lightbox.data('closeicon') == 'yes')
+							close.children('h3').css('margin-right', '40px');
+					}
+					if(lightbox.data('closeicon') == 'yes')
+						close.append(close_icon);
+					
+					close.bind('click', function() {
+						lightboxhide();
+					});
+				}
+				
+				if(lightbox.data('clickout') == 'yes')
+					overlay.bind('click', function() {
+						lightboxhide();
+					});
+				lightbox.css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))}).show();
+				
+				e.preventDefault();
+				function lightboxhide() {
+					close.html('').remove()
+					overlay.remove();
+					lightbox.hide();	
+				}
+			}
+		}
+	});
 });

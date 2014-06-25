@@ -5915,6 +5915,61 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 	}
 });
 
+var Settings_LightboxTrigger = SettingsItem.extend({
+	//className: "upfront-settings-item upfront-settings-item-lightbox",
+	initialize: function (opts) {
+		this.options = opts;
+		var lightboxes = this.get_lightboxes()
+		;
+
+		this.options.fields = _([
+			new Field_Select({
+				model: this.model, property: 'lightbox_target',
+				values: lightboxes
+			})
+		]);
+		
+		SettingsItem.prototype.initialize.call(this, this.options);
+	},
+	get_lightboxes: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			lightboxes = ['']
+		;
+
+		_.each(regions.models, function(model) {
+			if(model.attributes.sub == 'lightbox')
+				lightboxes.push({label: model.attributes.title, value: model.attributes.name});
+		});
+
+		
+		return lightboxes;
+	},
+	get_values: function () {
+        return this.fields._wrapped[0].get_value();
+    }
+});
+
+var Settings_LabeledLightboxTrigger = Settings_LightboxTrigger.extend({
+	//className: "upfront-settings-item upfront-settings-item-anchor",
+	initialize: function (opts) {
+		this.options = opts;
+		Settings_LightboxTrigger.prototype.initialize.call(this, this.options);
+		this.options.fields.push(
+			new Field_Text({
+				model: this.model,
+				property: 'lightbox_label',
+				label: 'Label'
+			})
+		);
+	},
+	get_values: function () {
+		return {
+			anchor: this.fields._wrapped[0].get_value(),
+			label: this.fields._wrapped[1].get_value()
+		}
+	}
+});
+
 var Settings_AnchorTrigger = SettingsItem.extend({
 	//className: "upfront-settings-item upfront-settings-item-anchor",
 	initialize: function (opts) {
@@ -6547,6 +6602,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					{ label: "Video", value: 'video', icon: 'video' }
 				]
 			;
+
 			if (_upfront_post_data.post_id) {
 				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
 			}
@@ -6677,6 +6733,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$modal.addClass('upfront-region-modal-bg');
 			$fixed = $content.find('.upfront-region-bg-setting-fixed-region');
 			$fixed.hide();
+			$lightbox = $content.find('.upfront-region-bg-setting-lightbox-region');
+			
+			$lightbox.hide();
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
 			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
@@ -6697,13 +6756,20 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region_nav.hide();
 				$region_auto.hide();
 			}
-			bg_type.render();
-			$content.find('.upfront-region-bg-setting-type').append(bg_type.$el);
-			$content.find('.upfront-region-bg-setting-change-image').on('click', function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				me.upload_image();
-			});
+			
+			if(this.model.attributes.sub != 'lightbox') { /* dont need too many background options for the lightbox */
+				bg_type.render();
+				$content.find('.upfront-region-bg-setting-type').append(bg_type.$el);
+				$content.find('.upfront-region-bg-setting-change-image').on('click', function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					me.upload_image();
+				});
+			}
+			else {
+				$content.find('.upfront-region-bg-setting-type').remove();
+				$content.find('.upfront-region-bg-setting-change-image').remove();
+			}
 			if ( is_region && this.model.is_main() ){
 				$content.find('.upfront-region-bg-setting-auto-resize').on('click', function (e) {
 					e.preventDefault();
@@ -6716,6 +6782,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else if ( is_region && sub == 'fixed' ) {
 				this.render_fixed_settings($fixed);
 				$fixed.show();
+			}
+			else if ( is_region && sub == 'lightbox' ) {
+				this.render_lightbox_settings($lightbox);
+				$lightbox.show();
 			}
 			else {
 				$content.find('.upfront-region-bg-setting-auto-resize').hide();
@@ -6818,6 +6888,135 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				field.delegateEvents();
 				$content.append(field.$el);
 			});
+		},
+		render_lightbox_settings: function ($content) {
+			var me = this,
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				/*top = this.model.get_property_value_by_name('top'),
+				is_top = ( typeof top == 'number' ),
+				left = this.model.get_property_value_by_name('left'),
+				is_left = ( typeof left == 'number' ),
+				bottom = this.model.get_property_value_by_name('bottom'),
+				is_bottom = ( typeof bottom == 'number' ),
+				right = this.model.get_property_value_by_name('right'),
+				is_right = ( typeof right == 'number' ),*/
+				set_value = function (me) {	 
+					if(typeof(me) == 'undefined')
+						me = this;
+					var value = me.get_value(),
+						saved = me.get_saved_value();
+					if ( value != saved ){
+						me.property.set({'value': value});
+					}
+				},
+				fields = {
+					width: new Upfront.Views.Editor.Field.Number({
+						model: this.model,
+						property: 'width',
+						label: "Width:",
+						label_style: "inline",
+						min: 3 * grid.column_width,
+						max: Math.floor(grid.size/2) * grid.column_width,
+						change: set_value
+					}),
+					height: new Upfront.Views.Editor.Field.Number({
+						model: this.model,
+						property: 'height',
+						label: "Height:",
+						label_style: "inline",
+						min: 3 * grid.baseline,
+						change: set_value
+					}),
+					click_out_close: new Upfront.Views.Editor.Field.Checkboxes({
+					    model: this.model,
+					    property: 'click_out_close',
+					    label: "",
+				  	    values: [
+						    { label: "Clicking outside Active Area closes lightbox", value: 'yes', checked: this.model.get_property_value_by_name('click_out_close') == 'yes' ? 'checked' : false }
+					    ],
+						change: set_value
+				    }),
+					show_close: new Upfront.Views.Editor.Field.Checkboxes({
+					    model: this.model,
+					    property: 'show_close',
+					    label: "",
+				  	    values: [
+						    { label: "Show Close Icon", value: 'yes', checked: this.model.get_property_value_by_name('show_close') == 'yes' ? 'checked' : false }
+					    ],
+						change: set_value
+				    }),
+					add_close_text: new Upfront.Views.Editor.Field.Checkboxes({
+					    model: this.model,
+					    property: 'add_close_text',
+					    label: "",
+				  	    values: [
+						    { label: "Add Close Text", value: 'yes', checked: this.model.get_property_value_by_name('add_close_text') == 'yes' ? 'checked' : false }
+					    ],
+						change: set_value
+				    }),
+					close_text: new Upfront.Views.Editor.Field.Text({
+						model: this.model,
+						default_value: 'Close',
+						property: 'close_text',
+						label_style: "inline",
+						change: set_value
+					})
+				};
+					
+				fields.overlay_color = new Upfront.Views.Editor.Field.Color({
+						model: this.model,
+						property: 'overlay_color',
+						default_value: 'rgba(38,58,77,0.75)',
+						label: "Overlay BG:",
+						change: set_value,
+						spectrum: {
+							move: function(color) {
+								var rgb = color.toRgb(),
+									rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+								fields.overlay_color.get_field().val(rgba_string)
+								set_value(fields.overlay_color);
+							},
+							change: function(color) {
+								var rgb = color.toRgb(),
+									rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+								fields.overlay_color.get_field().val(rgba_string)
+								set_value(fields.overlay_color);
+							},
+						}
+					});
+				
+				fields.lightbox_color = new Upfront.Views.Editor.Field.Color({
+						model: this.model,
+						property: 'lightbox_color',
+						default_value: 'rgba(248,254,255,0.9)',
+						label: "Active Area BG:",
+						change: set_value,
+						spectrum: {
+							move: function(color) {
+								var rgb = color.toRgb(),
+									rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+								fields.lightbox_color.get_field().val(rgba_string)
+								set_value(fields.lightbox_color);
+							},
+							change: function(color) {
+								var rgb = color.toRgb(),
+									rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+								fields.lightbox_color.get_field().val(rgba_string)
+								set_value(fields.lightbox_color);
+							},
+						}
+					});			
+			_.each(fields, function(field){
+				field.render();
+				field.delegateEvents();
+				$content.append(field.$el);
+			});
+			
+		},
+		update_lightbox_overlay: function(color) {
+			var rgb = color.toRgb(),
+				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+			console.log(this);
 		},
 		render_modal_tab: function (tab, $tab, $content) {
 			var $change_image = $content.find('.upfront-region-bg-setting-change-image');
@@ -8750,6 +8949,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Panel": SettingsPanel,
 				"Item": SettingsItem,
 				"ItemTabbed": SettingsItemTabbed,
+				"Lightbox": {
+					"Trigger": Settings_LightboxTrigger,
+					"LabeledTrigger": Settings_LabeledLightboxTrigger
+				},
 				"Anchor": {
 					"Trigger": Settings_AnchorTrigger,
 					"LabeledTrigger": Settings_LabeledAnchorTrigger

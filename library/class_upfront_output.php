@@ -232,7 +232,6 @@ abstract class Upfront_Entity {
 		}
 		return $type;
 	}
-
 	protected function _get_background_css () {
 		$type = $this->get_background_type();
 		$css = array();
@@ -540,8 +539,10 @@ class Upfront_Region extends Upfront_Container {
 		$css = '';
 		if ( $this->_is_background() )
 			$css .= $this->_get_background_css();
-		if ( $this->_data['type'] == 'fixed' )
+		if ( $this->_data['type'] == 'fixed')
 			$css .=  $this->_get_position_css();
+		elseif ( $this->_data['type'] == 'lightbox')
+			$css = 'background-color:'. $this->_get_property('lightbox_color').'; '.$this->_get_position_css();
 		return $css;
 	}
 
@@ -549,6 +550,16 @@ class Upfront_Region extends Upfront_Container {
 		$attr = '';
 		if ( $this->_is_background() )
 			$attr .= $this->_get_background_attr();
+			
+		if(	$this->_data['type'] == 'lightbox')
+			$attr .= ' data-overlay = "'.$this->_get_property('overlay_color').'"';
+			$attr .= ' data-closeicon = "'.(is_array($this->_get_property('show_close'))?array_pop($this->_get_property('show_close')):$this->_get_property('show_close')).'"';
+			$attr .= ' data-clickout = "'.(is_array($this->_get_property('click_out_close'))?array_pop($this->_get_property('click_out_close')):$this->_get_property('click_out_close')).'"';
+			$addclosetext = is_array($this->_get_property('add_close_text'))?array_pop($this->_get_property('add_close_text')):$this->_get_property('add_close_text');
+			$attr .= ' data-addclosetext = "'.$addclosetext.'"';
+			if($addclosetext == 'yes') {
+				$attr .= ' data-closetext = "'.$this->_get_property('close_text').'"';
+			}
 		return $attr;
 	}
 

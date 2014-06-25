@@ -341,6 +341,7 @@ var _alpha = "alpha",
 				ref_models2 = [],
 				ret = {
 					fixed: [],
+					lightbox: [],
 					top: false,
 					left: false,
 					right: false,
@@ -351,6 +352,8 @@ var _alpha = "alpha",
 					var sub = model.get('sub');
 					if ( sub == 'fixed' )
 						ret.fixed.push(model);
+					else if ( sub == 'lightbox' )
+						ret.lightbox.push(model);
 					else if ( sub && sub.match(/^(top|left|bottom|right)$/) )
 						ret[sub] = model;
 					else

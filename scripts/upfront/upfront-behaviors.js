@@ -703,7 +703,8 @@ var GridEditor = {
 		wide: 1,
 		clip: 1,
 		full: 1,
-		fixed: 2
+		fixed: 2,
+		lightbox: 2,
 	},
 
 	els: [],
