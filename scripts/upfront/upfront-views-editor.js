@@ -2950,6 +2950,8 @@ define([
 			$("#upfront-page_preview-edit button").one("click", function () {
 				//window.location = Upfront.Settings.Content.edit.post + post.id;
 				var path = '/edit/post/' + post.id;
+				// Respect dev=true
+				if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 				Upfront.Popup.close();
 				Upfront.Application.navigate(path, {trigger: true});
 			});
@@ -3006,6 +3008,8 @@ define([
 			this.$el.find("#upfront-page_preview-edit button").one("click", function () {
 				//window.location = Upfront.Settings.Content.edit.page + page.get('ID');
 				var path = '/edit/page/' + page.get('ID');
+				// Respect dev=true
+				if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 				Upfront.Popup.close();
 				Upfront.Application.navigate(path, {trigger: true});
 			});

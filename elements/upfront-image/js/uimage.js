@@ -502,9 +502,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		var rendered = this.imageTpl(props);
 
-		console.log('Image element');
-
-
 		if(this.property('quick_swap')){
 			var smallSwap = props.element_size.width < 150 || props.element_size.height < 90 ? 'uimage-quick-swap-small' : '';
 

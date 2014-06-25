@@ -1423,29 +1423,42 @@ var Application = new (Backbone.Router.extend({
 		console.log('Starting router history');
 		site_url.href = Upfront.Settings.site_url;
 		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true});
-		$(document).on('click', 'a', function(e){
-				if(e.isDefaultPrevented())
-					return;
 
-				var bypass = $(e.currentTarget).data('bypass');
-				if(bypass)
-					return;
+		$(document)
+			.on('click', 'a', function(e){
+				var bypass, href, a, pathname, search;
 
-				var href = e.target.getAttribute('href'),
-					a = e.target,
-					now = window.location
-				;
-				if(href == '#' || a.origin != now.origin || (a.pathname == now.pathname && a.search == now.search))
-					return;
+				if(e.isDefaultPrevented()) return;
+
+				bypass = $(e.currentTarget).data('bypass');
+				if(bypass) return;
+
+				a = e.target;
+				pathname = a.pathname;
+				href = a.getAttribute('href');
+				search = a.search;
+
+				if(href == '#' || a.origin != window.location.origin ||
+						(pathname == window.location.pathname && search == window.location.search)) return;
 
 				//If we are editing text, don't follow the link
-				if($(e.target).closest('.redactor_box').length)
-					return;
+				if($(e.target).closest('.redactor_box').length) return;
 
+				// Prevent crazy double url navigation
+				if (Upfront.mainData.site.indexOf('localhost') > -1
+						&& Upfront.mainData.site + '/' === a.origin + pathname) pathname = '/';
+
+				// Make dev=true remain in arguments
+				if (window.location.search.indexOf('dev=true') > -1
+						&& search.indexOf('dev=true') === -1) {
+					if (search === '') search = '?';
+					search += 'dev=true';
+				}
 
 				e.preventDefault();
+
 				if(!Upfront.PreviewUpdate._is_dirty || confirm("You have unsaved changes you're about to lose by navigating off this page. Do you really want to leave this page?"))
-					me.navigate(a.pathname + a.search, {trigger: true});
+					me.navigate(pathname + search, {trigger: true});
 			})
 			.on('keydown', function(e){
 				//Don't let the backspace go back in history

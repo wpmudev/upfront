@@ -265,7 +265,7 @@ var hackRedactor = function(){
 		//e.preventDefault();
 		Upfront.Util.log("Block styles keyboard shortcuts have been disabled");
 	};
-	
+
 	$.Redactor.prototype.placeholderStart = function (html) {
 		console.log('do nothing');
 	};
@@ -451,7 +451,6 @@ Ueditor.prototype = {
 		return result;
 	},
 	startPlaceholder: function(){
-		console.log('start placeholder');
 		var placeholder = this.options.placeholder;
 		if (this.$el.attr('placeholder')) placeholder = this.$el.attr('placeholder');
 		if (placeholder === '') placeholder = false;

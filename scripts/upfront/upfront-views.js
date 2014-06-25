@@ -148,26 +148,26 @@ define([
 						me.$el.append(feature_selector);
 					}
 
-					
+
 
 					Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
 						.done(function(response){
 							if(typeof(response.data.featured_image) != 'undefined'){
-								
-								
+
+
 								if(response.data.featured_image != '')
 									me.$el.children('.feature_image_selector').addClass('change_feature_image');
 								else
 									me.$el.children('.feature_image_selector').removeClass('change_feature_image');
-								
-								
-								
+
+
+
 								image = response.data.featured_image;
 								var temp_image = $('<img>').attr('src', response.data.featured_image);
 								temp_image.load(function(){
 									ratio = parseFloat(Math.round(temp_image.width()/temp_image.height()*100)/100);
 									me.$el.css('background-image', "url('" + image + "')");
-									
+
 									if ( style == 'full' ){
 										var size = me._get_full_size(me.$el, ratio, false);
 										me.$el.css({
@@ -243,7 +243,7 @@ define([
 				else {
 					if(me.$el.children('.feature_image_selector').length > 0)
 						me.$el.children('.feature_image_selector').remove();
-					
+
 					if ( ! $overlay.length ){
 						$overlay = $('<div class="upfront-region-bg-overlay" />');
 						this.$el.append($overlay);
@@ -600,7 +600,7 @@ define([
 				Upfront.Events.trigger("entity:deactivated", removed);
 				this.trigger('deactivated');
 			},
-			
+
 			fix_flexbox_clear: function ($el) {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					off = $el.offset(),
@@ -1061,7 +1061,7 @@ define([
 				//this.on('entity:resize', this.on_resize, this);
 				//this.on('entity:drop', this.on_drop, this);
 				this.on('region:updated', this.on_region_update, this);
-				
+
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			render: function () {
@@ -1276,7 +1276,7 @@ define([
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
 				this._prev_class = this.model.get_property_value_by_name('class');
-				
+
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 			},
@@ -1740,7 +1740,7 @@ define([
 
 							  }
 						  }),
-						 
+
 						  new Upfront.Views.ContextMenuItem({
 							  get_label: function() {
 								  	return 'Add Floating Region';
@@ -1826,7 +1826,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
-				
+
 				// breakpoint changes
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 
@@ -1942,7 +1942,7 @@ define([
 						});
 					});
 				}, 350);
-				
+
 			},
 			trigger_edit_fixed: function () {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
@@ -2257,7 +2257,6 @@ define([
 				return ( type == 'clip' || !type && this.model.get('clip') ) || ( !this.model.is_main() && ( !sub || (sub != 'top' && sub != 'bottom') ) );
 			},
 			render: function () {
-				console.log('Rendering Region');
 				var container = this.model.get("container"),
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON());
@@ -2388,7 +2387,7 @@ define([
 				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 			},
 			on_change_breakpoint: function (breakpoint) {
-				
+
 			}
 		}),
 
@@ -2570,24 +2569,24 @@ define([
 			render: function () {
 				this.constructor.__super__.render.call(this);
 				this.hide();
-					
+
 					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
 					$ok = $('<div class="upfront-region-finish-edit-lightbox upfront-ui">Finish Editing</div>');
-				
-				
+
+
 				this.$el.prepend(this.$bg);
 				var me = this;
-				
-			
-				
+
+
+
 				this.$close.appendTo(this.$el);
 
 				$edit.appendTo(this.$el);
 				$ok.appendTo(this.$el);
-				
-				
-				
-					
+
+
+
+
 
 			},
 			render_bg_setting: function () {
@@ -2607,7 +2606,7 @@ define([
 						me.hide();
 					});
 				}
-				
+
 				this.$el.show();
 			},
 			hide:function () {
@@ -2616,20 +2615,20 @@ define([
 			},
 			refresh_background: function () {
 				this.constructor.__super__.refresh_background.call(this);
-				
+
 			},
 			update: function() {
 				this.constructor.__super__.update.call(this);
 				this.check_modules();
 				this.update_region_position();
-				
+
 				if(this.model.get_property_value_by_name('show_close') == 'yes' || this.model.get_property_value_by_name('add_close_text') == 'yes') {
-					
+
 					this.$el.find('.close_lightbox').css('display', 'block');
-					
-										
+
+
 					if(this.model.get_property_value_by_name('add_close_text') == 'yes') {
-					
+
 						this.$close.html('<h3 class="upfront-selector-title">'+this.model.get_property_value_by_name('close_text')+'</h3>');
 						if(this.model.get_property_value_by_name('show_close') == 'yes')
 							this.$close.children('h3').css('margin-right', '40px');
@@ -2644,9 +2643,9 @@ define([
 				}
 				else
 					this.$el.find('.close_lightbox').css('display', 'none');
-					
+
 				var me = this;
-				
+
 				if(this.model.get_property_value_by_name('click_out_close') == 'yes') {
 					this.$bg.unbind('click');
 					this.$bg.bind('click', function() {
@@ -2655,15 +2654,15 @@ define([
 				} else {
 					this.$bg.unbind('click');
 				}
-				
+
 				this.$bg.css('background-color', this.model.get_property_value_by_name('overlay_color') );
 				this.$el.css('background-color', this.model.get_property_value_by_name('lightbox_color') );
-				
+
 				/*if(this.$el.hasClass('init_state')) {
 					this.$el.find('.upfront-region-edit-trigger-small').trigger('click');
 				}*/
 				this.$el.removeClass('init_state');
-				
+
 			},
 			update_region_position: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -2672,21 +2671,21 @@ define([
 					height = this.model.get_property_value_by_name('height');
 
 
-					
+
 				if ( !width )
 					this.model.set_property('width', 225, true);
 				if ( !height )
 					this.model.set_property('height', 225, true);
-					
-					
+
+
 				var css = {
 						width: width || 225,
 						minHeight: parseInt(height) || 225
 					};
-				
+
 				css['margin-left'] = -(width/2)+$('#sidebar-ui').width()/2;
 				css['margin-top'] = -(height/2);
-							
+
 				this.$el.find('.upfront-modules_container').css( {
 					width: Math.floor(css.width/grid.column_width) * grid.column_width,
 					'minHeight': css.minHeight
@@ -3030,7 +3029,7 @@ define([
 					this.$el.data('breakpoint_clear', breakpoint_data.clear);
 				else
 					this.$el.removeData('breakpoint_clear');
-				
+
 			},
 			render: function () {
 			},
@@ -3147,7 +3146,7 @@ define([
 					$ruler = this.$layout.find('.upfront-ruler'),
 					create_mark = function (at, size, show_num) {
 						return '<div class="upfront-ruler-mark" style="width:' + size + 'px;">' +
-									( show_num ? '<div class="upfront-ruler-mark-num">' +  at + '</div>' : '' ) + 
+									( show_num ? '<div class="upfront-ruler-mark-num">' +  at + '</div>' : '' ) +
 								'</div>';
 					},
 					mark;
@@ -3180,7 +3179,7 @@ define([
 				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
 				styles.push(selector + ' .plaintxt_padding {padding: ' + grid.type_padding + 'px; }');
-				
+
 				if ( $('#upfront-grid-style-inline').length )
 					$('#upfront-grid-style-inline').html( styles.join("\n") );
 				else
