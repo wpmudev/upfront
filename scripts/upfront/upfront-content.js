@@ -10,7 +10,7 @@ define("content", deps, function(postTpl, ContentTools) {
 	var PostEditor = Backbone.View.extend({
 		tpl: Upfront.Util.template(postTpl),
 		events: {
-			'dblclick .upfront-content-marker': 'editContents',
+			'dblclick': 'editContents',
 			'click a': 'preventLinkNavigation'
 		},
 		initialize: function(options){
