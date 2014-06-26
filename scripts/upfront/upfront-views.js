@@ -2734,10 +2734,7 @@ define([
 				}
 			},
 			on_change_breakpoint: function (breakpoint) {
-				if ( !breakpoint.default )
-					this.$el.hide();
-				else
-					this.$el.show();
+					this.hide();
 			}
 		}),
 
