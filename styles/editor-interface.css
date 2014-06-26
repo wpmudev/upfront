@@ -541,6 +541,10 @@
 	overflow: hidden;
 }
 
+#sidebar-ui .sidebar-panel-elements .sidebar-panel-content {
+	padding: 0;
+}
+
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
 	height: 280px;
 	padding: 0;
