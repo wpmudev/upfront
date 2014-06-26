@@ -10370,6 +10370,9 @@ div.upfront-region-container-active > a.feature_image_selector {
 #panel-setting-theme-colors-shades{
 
 }
+#sidebar-ui .panel-setting-theme-colors-shades-range a{
+    margin: 0;
+}
 .theme-colors-color-box{
     display: inline-block;
     width: 22px;

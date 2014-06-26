@@ -1981,7 +1981,7 @@ define([
             this.$(".panel-setting-theme-colors-shades-range").slider({
                 value :  Theme_Colors.range,
                 min : 0,
-                max : 100,
+                max : 50,
                 change: function( event, ui ) {
                     self.change_range(ui.value);
                 }
