@@ -2074,11 +2074,12 @@ define([
 	var SidebarCommands_PrimaryPostType = Commands.extend({
 		"className": "sidebar-commands sidebar-commands-primary",
 		initialize: function () {
-			this.commands = _([
-				new Command_NewPost({"model": this.model}),
-				new Command_NewPage({"model": this.model}),
-				new Command_PopupList({"model": this.model}),
-			]);
+			this.commands = _([]);
+			if (Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) {
+				this.commands.push(new Command_NewPost({"model": this.model}));
+				this.commands.push(new Command_NewPage({"model": this.model}));
+			}
+			this.commands.push(new Command_PopupList({"model": this.model}));
 			if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) != -1 )
 				this.commands.push( new Command_ToggleMode_Small({"model": this.model}) );
 		}
@@ -2130,9 +2131,11 @@ define([
 			} else {
 				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}
-			this.commands.push(
-				new Command_StartResponsiveMode({model: this.model})
-			);
+			if (Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.RESPONSIVE)) {
+				this.commands.push(
+					new Command_StartResponsiveMode({model: this.model})
+				);
+			}
 			// Dev feature only
 			if ( Upfront.Settings.Debug.dev ){
 				//if (!Upfront.Settings.Application.NO_SAVE) this.commands.push(new Command_SaveLayoutAs({"model": this.model}));
