@@ -1894,7 +1894,7 @@ define([
 				this.$el.find('.upfront-region-edit-fixed-trigger').show();
 				if ( Upfront.Application.sidebar.visible )
 					Upfront.Application.sidebar.toggleSidebar();
-				//e.stopPropagation();
+				e.stopPropagation();
 			},
 			finish_edit: function (e) {
 				Upfront.Events.trigger("entity:region:deactivated");
