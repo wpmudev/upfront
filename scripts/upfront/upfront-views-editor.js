@@ -1643,10 +1643,10 @@ define([
 				};
 			});
 			this.model.set_property('typography', options);
-			if ( $('#upfront-default-typography-inline').length )
-				$('#upfront-default-typography-inline').html( css.join("\n") );
+			if ( $('head').find('#upfront-default-typography-inline').length )
+				$('head').find('#upfront-default-typography-inline').html( css.join("\n") );
 			else
-				$('body').append('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>');
+				$('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>').insertAfter($('head').find('link[rel="stylesheet"]').first());
 		},
 		_normalize_weight: function (weight) {
 			if ( weight == 'normal' )

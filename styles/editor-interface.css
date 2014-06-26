@@ -3314,7 +3314,6 @@ div.uinsert-selector a:hover {
 	top: 30px;
 	right: 15px;
 	z-index: 999999;
-	display: none;
 }
 .upfront-region-editing .upfront-region > .upfront-entity_meta,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox > .upfront-entity_meta {
