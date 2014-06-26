@@ -362,6 +362,7 @@ var MenuItemView = Backbone.View.extend({
 	  	return name;
   },
   linkChanged: function(e){
+	  console.log('link changed');
     var me = this,
       val = $('#unewnavigation-tooltip').find('input[name=unavigation-link-type]:checked').val()
     ;
@@ -418,7 +419,7 @@ var MenuItemView = Backbone.View.extend({
 	addLightboxselect: function() {
     var me = this;
     var lightboxselect = new Upfront.Views.Editor.Settings.Lightbox.LabeledTrigger({
-                                        model: this.parent_view.model,
+                                        model: new Upfront.Models.ObjectModel(),
                                         title: "Lightbox"
                                     });
     lightboxselect.render();
@@ -446,7 +447,7 @@ var MenuItemView = Backbone.View.extend({
   addAnchorsselect: function() {
     var me = this;
     var anchorsselect = new Upfront.Views.Editor.Settings.Anchor.LabeledTrigger({
-                                        model: this.parent_view.model,
+                                        model: new Upfront.Models.ObjectModel(),
                                         title: "Anchor link"
                                     });
     anchorsselect.render();
