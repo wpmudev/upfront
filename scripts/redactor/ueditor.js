@@ -1410,7 +1410,6 @@ var InsertManager = Backbone.View.extend({
 				me.mediaTrigger.addClass('upfront-post-media-trigger-visible');
 
 				var tooltip = $('<div class="uinsert-selector upfront-ui"></div>');
-				console.log('click');
 				tooltip.css('margin-left', me.mediaTrigger.css('margin-left'));
 
 				_.each(Inserts.inserts, function(insert, type){
@@ -1581,7 +1580,6 @@ var InsertManager = Backbone.View.extend({
 
 	sortableInserts: function(){
 		var me = this;
-		console.log('initializing sortable');
 		me.$el.sortable({cancel: '.nosortable', helper: 'clone', handle: '.uinsert-drag-handle'})
 			.on('sortstart', function(e, ui){
 				console.log('Sort start');

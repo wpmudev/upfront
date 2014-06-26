@@ -72,7 +72,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				layoutData
 			;
 
-			if(me.postView.postLayout){
+			if(me.postView.postLayout && me.postView.parts[me.postId]){
 				layoutData = {
 					postLayout: me.postView.postLayout,
 					partOptions: me.postView.partOptions || {}
@@ -266,10 +266,13 @@ define("content", deps, function(postTpl, ContentTools) {
 			loading.render();
 			this.$el.append(loading.$el);
 			this.post.set('post_status', 'trash').save().done(function(){
+				console.log('Deleting');
 				loading.$el.remove();
 				Upfront.Views.Editor.notify('The ' + postType + ' has been deleted.');
-				if(me.options.onUpdated)
-					me.options.onUpdated(me.post.toJSON());
+				me.stopEditContents();
+
+				if(me.postView.property('type') == 'UpostsModel')
+					me.postView.refreshMarkup();
 			});
 		},
 

@@ -53,26 +53,8 @@ define(function() {
 
       this.model.on('region:updated', this.refreshMarkup, this);
       this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
-	  //this.listenTo(Upfront.Events, 'post:content:edit:start', this.editingOn);
-	  //this.listenTo(Upfront.Events, 'post:content:edit:stop', this.editingOff);
-      //this.listenTo(this.model.get("properties"), 'add', this.refreshMarkup);
-      //this.listenTo(this.model.get("properties"), 'remove', this.refreshMarkup);
       console.log('Posts element');
     },
-
-    /**
-     * Element contents markup.
-     * @return {string} Markup to be shown.
-     */
-
-  	editingOn: function() {
-  		this.editing = true;
-  		this.$el.find('.upfront-object-content').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
-  	},
-  	editingOff: function() {
-  		this.editing = false;
-  		this.$el.find('.post_editor_container').removeClass('clearfix').css('position', '');
-  	},
 
     get_content_markup: function () {
       if(this.changed || !this.markup){
@@ -83,6 +65,7 @@ define(function() {
       }
       return this.markup;
     },
+
     moveEditButton: function(e) {
 		if(this.editing)
 			return;
@@ -91,14 +74,10 @@ define(function() {
       if(poisitontarget.length)
         target.prepend(this.$el.find('.upfront-post-layout-trigger').parent('b').addClass('post_layout_trigger').css({ top: poisitontarget.position().top+50, right: 5}));
 
-    },/*
-    on_render: function() {
-      this.refreshMarkup();
-    },*/
+    },
 
     on_render: function(){
       var me = this;
-     // this.refreshMarkup();
 
       //Give time to append when dragging.
       setTimeout(function(){
@@ -181,7 +160,6 @@ define(function() {
     },
 
     updateEditors: function(){
-
       var me = this,
         nodes = $('#' + this.property('element_id')).find('.uposts-post'),
         container = me.$('.upfront-object-content')

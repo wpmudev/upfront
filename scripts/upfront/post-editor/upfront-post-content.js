@@ -59,11 +59,15 @@ var PostContentEditor = Backbone.View.extend({
 		'click .upfront-content-marker-author' : 'editAuthor',
 		'click .upfront-content-marker-date' : 'editDate',
 		'click .upost_thumbnail_changer': 'editThumb',
+		'click .upfront-postpart-tags': 'editTags',
+		'click .upfront-postpart-categories': 'editCategories',
 		'click .ueditor-action-pickercancel': 'editDateCancel',
 		'click .ueditor-action-pickerok': 'editDateOk'
 	},
 
 	initialize: function(opts){
+		console.log('Post content editor');
+
 		this.post = opts.post;
 		this.postView = opts.postView;
 		this.triggeredBy = opts.triggeredBy || this.$('.upfront-content-marker').first();
@@ -208,10 +212,10 @@ var PostContentEditor = Backbone.View.extend({
 				.append('<div class="upost_thumbnail_changer" ><div>Click to edit the post\'s featured image</div></div>')
 				.find('img').css({'z-index': '2', position: 'relative'})
 			;
-			console.log(this.post.meta.toJSON());
 		}
 
 
+		//Taxonomies
 		this.parts.tags = this.$('.upfront-postpart-tags');
 		this.parts.categories = this.$('.upfront-postpart-categories');
 
@@ -397,8 +401,6 @@ var PostContentEditor = Backbone.View.extend({
 	changeAuthor: function(authorId){
 		var me = this,
 			authorData = me.getAuthorData(authorId)
-			//markupper = new PartMarkupCreator(),
-			//markup = markupper.markup('author', {'%author%': authorData.display_name, '%author_url%': authorData.posts_url}, me.authorTpl);
 		;
 
 		this.$('.upfront-content-marker-author').html(authorData.display_name);
@@ -494,6 +496,14 @@ var PostContentEditor = Backbone.View.extend({
 	updateDateFromBar: function(date){
 		this.updateDateParts(date);
 		this.dateOk(date);
+	},
+
+	editTags: function(e){
+		this.bar.editTaxonomies(e, 'post_tag');
+	},
+
+	editCategories: function(e){
+		this.bar.editTaxonomies(e, 'category');
 	},
 
 	getAuthorData: function(authorId){
@@ -600,7 +610,6 @@ var PostContentEditor = Backbone.View.extend({
 					if(me.postPassword)
 						results.pass = me.postPassword;
 				}
-				console.log(results);
 				me.trigger(e, results);
 			});
 		});
@@ -1129,7 +1138,7 @@ var EditionBar = Backbone.View.extend({
 		e.preventDefault();
 		if(confirm('Are you sure you want to delete this ' + this.post.get('post_type') + '?')){
 			this.destroy();
-			this.post.trigger('editor:trash');
+			this.trigger('trash');
 			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
 		}
 	},
@@ -1176,7 +1185,8 @@ var EditionBar = Backbone.View.extend({
 		})
 		;
 	},
-	editTaxonomies: function(e){
+
+	editTaxonomies: function(e, taxName){
 		if(e)
 			e.preventDefault();
 
@@ -1185,7 +1195,7 @@ var EditionBar = Backbone.View.extend({
 			$tax = $("#upfront-post_taxonomies"),
 			$popup = {},
 			views = {category: false, post_tag: false},
-			currentView = 'category',
+			currentView = taxName || 'category',
 			terms = {},
 			popup = Upfront.Popup.open(function (data, $top, $bottom) {
 				var $me = $(this);
@@ -1246,8 +1256,8 @@ var EditionBar = Backbone.View.extend({
 		$(".upfront-popup-placeholder").remove();
 		$popup.top.html(
 			'<ul class="upfront-tabs">' +
-			'<li data-type="category">Categories</li>' +
-			'<li data-type="post_tag">Tags</li>' +
+			'<li data-type="category" class="tax-category">Categories</li>' +
+			'<li data-type="post_tag" class="tax-post_tag">Tags</li>' +
 			'</ul>' +
 			$popup.top.html()
 			);
@@ -1258,7 +1268,7 @@ var EditionBar = Backbone.View.extend({
 
 		$tax.show();
 
-		dispatch_taxonomy_call($popup.top.find('.upfront-tabs li:first'));
+		dispatch_taxonomy_call($popup.top.find('.tax-' + currentView));
 
 		Upfront.Events.on("upfront:post:taxonomy_changed", function () {
 			dispatch_taxonomy_call($popup.top.find('.upfront-tabs li.active'));

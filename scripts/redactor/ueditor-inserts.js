@@ -454,9 +454,6 @@ var ImageInsert = UeditorInsert.extend({
 				parentRedactor.$source.on('keydown.redactor-textarea');
 
 				//parentUeditor.stop();
-				console.log(parentRedactor);
-				console.log('focus');
-				console.log(arguments);
 			});
 
 			this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
@@ -474,8 +471,6 @@ var ImageInsert = UeditorInsert.extend({
 
 				//var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
 				//parentUeditor.start();
-				console.log('blur');
-				console.log(arguments);
 			});
 		}
 
