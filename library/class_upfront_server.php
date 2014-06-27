@@ -54,29 +54,21 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		//add_action('wp_ajax_upfront_load_layout', array($this, "load_layout"));
-		upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
+			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
+			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
+		}
 		
-		//add_action('wp_ajax_upfront_save_layout', array($this, "save_layout"));
-		upfront_add_ajax('upfront_save_layout', array($this, "save_layout"));
-		
-		//add_action('wp_ajax_upfront_list_available_layout', array($this, "list_available_layout"));
-		upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
-		
-		//add_action('wp_ajax_upfront_list_saved_layout', array($this, "list_saved_layout"));
-		upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
-		
-		//add_action('wp_ajax_upfront_reset_layout', array($this, "reset_layout"));
-		upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
-		
-		//add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
-		upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
-		
-		//add_action('wp_ajax_upfront_update_layout_element', array($this, "update_layout_element"));
-		upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
-		
-		//add_action('wp_ajax_upfront_update_insertcount', array($this, "update_insertcount"));
-		upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+			upfront_add_ajax('upfront_save_layout', array($this, "save_layout"));
+			upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
+			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
+			
+			upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
+			
+			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
+		}
 	}
 
 	// STUB LOADING
@@ -236,11 +228,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		//add_action('wp_ajax_upfront_load_main', array($this, "load_main"));
-		upfront_add_ajax('upfront_load_main', array($this, "load_main"));
-
-		//add_action('wp_ajax_upfront_data', array($this, 'load_upfront_data'));
-		upfront_add_ajax('upfront_data', array($this, 'load_upfront_data'));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_load_main', array($this, "load_main"));
+			upfront_add_ajax('upfront_data', array($this, 'load_upfront_data'));
+		}
 	}
 
 	function load_main () {
@@ -487,11 +478,15 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		upfront_add_ajax('upfront_load_styles', array($this, "load_styles"));
 		upfront_add_ajax_nopriv('upfront_load_styles', array($this, "load_styles"));
 
-		upfront_add_ajax('upfront_save_styles', array($this, "save_styles"));
-		upfront_add_ajax('upfront_theme_styles', array($this, "theme_styles"));
-		upfront_add_ajax('upfront_delete_styles', array($this, "delete_styles"));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_theme_styles', array($this, "theme_styles"));
+		}
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+			upfront_add_ajax('upfront_save_styles', array($this, "save_styles"));
+			upfront_add_ajax('upfront_delete_styles', array($this, "delete_styles"));
 
-		upfront_add_ajax('upfront_save_theme_colors_styles', array($this, "save_theme_colors_styles"));
+			upfront_add_ajax('upfront_save_theme_colors_styles', array($this, "save_theme_colors_styles"));
+		}
 	}
 
 	function load_styles () {
@@ -663,14 +658,11 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		//add_action('wp_ajax_upfront_load_editor_grid', array($this, "load_styles"));
-		upfront_add_ajax('upfront_load_editor_grid', array($this, "load_styles"));
-		
-		//add_action('wp_ajax_upfront_load_new_editor_grid', array($this, "load_new_styles"));
-		upfront_add_ajax('upfront_load_new_editor_grid', array($this, "load_new_styles"));
-		
-		//add_action('wp_ajax_upfront_load_grid', array($this, "load_front_styles"));
-		upfront_add_ajax('upfront_load_grid', array($this, "load_front_styles"));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_load_editor_grid', array($this, "load_styles"));		
+			upfront_add_ajax('upfront_load_new_editor_grid', array($this, "load_new_styles"));
+			upfront_add_ajax('upfront_load_grid', array($this, "load_front_styles"));
+		}
 	}
 
 	function load_styles () {
@@ -812,13 +804,13 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
+
 		add_action('init', array($this, 'register_requirements'));
 
 		// Layout revisions AJAX handers
-		//add_action('wp_ajax_upfront_build_preview', array($this, "build_preview"));
 		upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
 		
-		//add_action('wp_ajax_upfront_list_revisions', array($this, "list_revisions"));
 		upfront_add_ajax('upfront_list_revisions', array($this, "list_revisions"));
 
 		// Cron request handlers
@@ -1106,8 +1098,7 @@ class Upfront_Server_GoogleFontsServer extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		//add_action('wp_ajax_upfront_list_google_fonts', array($this, 'json_list_google_fonts'));
-		upfront_add_ajax('upfront_list_google_fonts', array($this, 'json_list_google_fonts'));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) upfront_add_ajax('upfront_list_google_fonts', array($this, 'json_list_google_fonts'));
 	}
 
 	public function json_list_google_fonts () {
@@ -1130,8 +1121,12 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		upfront_add_ajax('upfront_get_breakpoints', array($this, 'get_breakpoints'));
-		upfront_add_ajax('upfront_update_breakpoints', array($this, 'update_breakpoints'));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_get_breakpoints', array($this, 'get_breakpoints'));
+		}
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+			upfront_add_ajax('upfront_update_breakpoints', array($this, 'update_breakpoints'));
+		}
 	}
 
 	public function get_breakpoints() {
@@ -1183,9 +1178,13 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		upfront_add_ajax('upfront_get_theme_fonts', array($this, 'get_theme_fonts'));
-		upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
-		upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_get_theme_fonts', array($this, 'get_theme_fonts'));
+		}
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+			upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
+			upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
+		}
 	}
 
 	public function get_theme_fonts() {
@@ -1213,8 +1212,8 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
     }
 
     private function _add_hooks () {
-        upfront_add_ajax('upfront_get_theme_color', array($this, 'get'));
-        upfront_add_ajax('upfront_update_theme_colors', array($this, 'update'));
+        if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) upfront_add_ajax('upfront_get_theme_color', array($this, 'get'));
+        if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) upfront_add_ajax('upfront_update_theme_colors', array($this, 'update'));
     }
 
     public function get() {
