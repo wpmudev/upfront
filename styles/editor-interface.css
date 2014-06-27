@@ -652,6 +652,7 @@
 	cursor: move;
 	cursor: -moz-grab;
 	cursor: -webkit-grab;
+	box-shadow: inset 0 1px 0 #FFF;
 }
 .draggable-element:nth-child(4n+1) {
 	width: 64px;
