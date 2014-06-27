@@ -2667,24 +2667,25 @@ define([
 			update_region_position: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					grid = Upfront.Settings.LayoutEditor.Grid,
-					width = this.model.get_property_value_by_name('width'),
+					col = this.model.get_property_value_by_name('col'),
 					height = this.model.get_property_value_by_name('height');
 
 
 
-				if ( !width )
-					this.model.set_property('width', 225, true);
+				if ( !col )
+					this.model.set_property('col', 10, true);
 				if ( !height )
 					this.model.set_property('height', 225, true);
 
+				width =  col*grid.column_width
 
 				var css = {
 						width: width || 225,
 						minHeight: parseInt(height) || 225
 					};
 
-				css['margin-left'] = -(width/2)+$('#sidebar-ui').width()/2;
-				css['margin-top'] = -(height/2);
+				css['margin-left'] = parseInt(-(width/2)+$('#sidebar-ui').width()/2);
+				css['margin-top'] = parseInt(-(height/2));
 
 				this.$el.find('.upfront-modules_container').css( {
 					width: Math.floor(css.width/grid.column_width) * grid.column_width,

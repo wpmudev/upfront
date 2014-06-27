@@ -569,21 +569,27 @@ class Upfront_Region extends Upfront_Container {
 
 	public function _get_position_css () {
 		$css = array();
-		$width = $this->_get_property('width');
+
 		$height = $this->_get_property('height');
-		$top = $this->_get_property('top');
-		$left = $this->_get_property('left');
-		$bottom = $this->_get_property('bottom');
-		$right = $this->_get_property('right');
-		if ( $top !== false || $bottom === false )
-			$css[] = 'top: ' . ( $top !== false ? $top : 30 ) . 'px';
-		else
-			$css[] = 'bottom: ' . $bottom . 'px';
-		if ( $left !== false || $right === false )
-			$css[] = 'left: ' . ( $left !== false ? $left : 30 ) . 'px';
-		else
-			$css[] = 'right: ' . $right . 'px';
-		$css[] = 'width: ' . $width . 'px';
+
+		if ( $this->_data['type'] != 'lightbox') {
+			$width = $this->_get_property('width');
+			$top = $this->_get_property('top');
+			$left = $this->_get_property('left');
+			$bottom = $this->_get_property('bottom');
+			$right = $this->_get_property('right');
+			if ( $top !== false || $bottom === false )
+				$css[] = 'top: ' . ( $top !== false ? $top : 30 ) . 'px';
+			else
+				$css[] = 'bottom: ' . $bottom . 'px';
+			if ( $left !== false || $right === false )
+				$css[] = 'left: ' . ( $left !== false ? $left : 30 ) . 'px';
+			else
+				$css[] = 'right: ' . $right . 'px';
+	
+			$css[] = 'width: ' . $width . 'px';
+		}
+		
 		$css[] = 'min-height: ' . $height . 'px';
 		return implode('; ', $css) . '; ';
 	}

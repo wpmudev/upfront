@@ -3,7 +3,7 @@ jQuery(document).ready(function($){
 	// Making sure sidebar region height is fixed
 	function fix_region_height () {
 		$('.upfront-output-region-container').each(function(){
-			var $regions = $(this).find('.upfront-output-region').not('.upfront-region-fixed'),
+			var $regions = $(this).find('.upfront-output-region').not('.upfront-region-fixed, .upfront-region-lightbox'),
 				is_full_screen = $(this).hasClass('upfront-region-container-full'),
 				min_height = height = 0,
 				exclude = [];
@@ -159,8 +159,8 @@ jQuery(document).ready(function($){
 					overlay.bind('click', function() {
 						lightboxhide();
 					});
-				lightbox.css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))}).show();
-				
+					
+				lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
 				e.preventDefault();
 				function lightboxhide() {
 					close.html('').remove()

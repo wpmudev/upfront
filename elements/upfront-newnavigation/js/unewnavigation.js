@@ -346,7 +346,7 @@ var MenuItemView = Backbone.View.extend({
 			//"scope": me.model.get('scope')
 		}));
 		
-		new_region.set_property('width', 405);
+		new_region.set_property('col', 10);
 		new_region.set_property('height', 400);
 		new_region.set_property('click_out_close', 'yes');
 		new_region.set_property('show_close', 'yes');

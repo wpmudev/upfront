@@ -6919,11 +6919,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				fields = {
 					width: new Upfront.Views.Editor.Field.Number({
 						model: this.model,
-						property: 'width',
-						label: "Width:",
+						property: 'col',
+						label: "Width(Cols):",
 						label_style: "inline",
-						min: 3 * grid.column_width,
-						max: Math.floor(grid.size/2) * grid.column_width,
+						min: 3,// * grid.column_width,
+						max: 24,//Math.floor(grid.size/2) * grid.column_width,
 						change: set_value
 					}),
 					height: new Upfront.Views.Editor.Field.Number({
