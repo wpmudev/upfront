@@ -1161,6 +1161,15 @@ define([
 					$module.css('min-height', (row*grid.baseline) + 'px');
 					$module.removeData('breakpoint_row');
 				}
+				// order is applied to the view.$el
+				if ( breakpoint_data && typeof breakpoint_data.order == 'number' ){
+					this.$el.css('order', breakpoint_data.order);
+					$module.data('breakpoint_order', breakpoint_data.order);
+				}
+				else {
+					this.$el.css('order', '');
+					$module.removeData('breakpoint_order');
+				}
 			},
 			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});

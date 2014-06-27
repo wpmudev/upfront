@@ -10143,7 +10143,8 @@ div.upfront-region-container-active > a.feature_image_selector {
 
 /* Flexbox */
 .upfront-modules_container > .upfront-editable_entities_container,
-.upfront-module-group > .upfront-editable_entities_container {
+.upfront-module-group > .upfront-editable_entities_container,
+.upfront-editable_entities_container > .upfront-wrapper {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -10151,8 +10152,12 @@ div.upfront-region-container-active > a.feature_image_selector {
 	align-content: flex-start;
 }
 .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
-.upfront-module-group > .upfront-editable_entities_container > .upfront-wrapper {
+.upfront-module-group > .upfront-editable_entities_container > .upfront-wrapper,
+.upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
 	order: 0;
+}
+.upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
+	width: 100%;
 }
 
 

@@ -147,7 +147,7 @@ class Upfront_Grid {
 			}
 			
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
-				$point_css .= $this->_apply_modules($module, $wrapper_col);
+				$point_css .= $this->_apply_modules($module, $module_col);
 			}
 			else {
 				foreach ($module['objects'] as $object) {
@@ -184,13 +184,15 @@ class Upfront_Grid {
 	
 	protected function _get_class_col ($data, $breakpoint = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
-		if ( $breakpoint->is_default() ){
+		if ( !$breakpoint->is_default() ){
+			$col = $this->_get_breakpoint_col($data, $breakpoint);
+			if ( is_numeric($col) )
+				return $col;
+		}
+		if ( $breakpoint->is_default() || !is_numeric($col) ){
 			$width_pfx = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			$class = upfront_get_property_value('class', $data);
 			return upfront_get_class_num($width_pfx, $class);
-		}
-		else {
-			return $this->_get_breakpoint_col($data, $breakpoint);
 		}
 	}
 	

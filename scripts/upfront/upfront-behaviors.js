@@ -1069,27 +1069,29 @@ var GridEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			regions = app.layout.get('regions'),
+			find_model = function (modules) {
+				if ( !modules )
+					return false;
+				var module_model = modules.get_by_element_id($el.attr('id')),
+					found_model;
+				if ( module_model )
+					return module_model;
+				modules.find(function(module){
+					if ( module.get('modules') ) {
+						found_model = find_model(module.get('modules'));
+						return found_model ? true : false;
+					}
+					else if ( module.get('objects') ) {
+						found_model = module.get('objects').get_by_element_id($el.attr('id'));
+						return found_model ? true : false;
+					}
+				});
+				return found_model;
+			},
 			model;
 		regions.find(function(region){
-			var modules = region.get('modules'),
-				module_model = modules.get_by_element_id($el.attr('id'));
-			if ( module_model ){
-				model = module_model;
-				return true;
-			}
-			else {
-				modules.find(function(module){
-					var object_model = ( module.get('objects') ) ? module.get('objects').get_by_element_id($el.attr('id')) : false;
-					if ( object_model ){
-						model = object_model;
-						return true;
-					}
-					return false;
-				});
-				if ( model )
-					return true;
-			}
-			return false;
+			model = find_model(region.get('modules'));
+			return model ? true : false;
 		});
 		return model ? model : false;
 	},
@@ -1427,6 +1429,7 @@ var GridEditor = {
 		this.time_start('fn create_drop_point');
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
+			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			margin = me.$el.data('margin'),
 			col = me.col,
 			min_col = me.$el.hasClass('upfront-image_module') ? 1 : (col > ed.min_col ? ed.min_col : col),
@@ -1450,7 +1453,6 @@ var GridEditor = {
 			$wraps.each(function(index){
 				var $wrap = $(this),
 					clr_cb = function ($w, $ws) {
-						var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 						if ( ( !breakpoint || breakpoint.default ) && $w.is('.clr') )
 							return true;
 						else if ( breakpoint && !breakpoint.default && $w.data('breakpoint_clear') )
@@ -1490,10 +1492,11 @@ var GridEditor = {
 					( wrap.col >= min_col ) && (
 					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
 					( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
-					( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) )
+					( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ) ||
+					( breakpoint && !breakpoint.default && is_wrap_me )
 				){
 					var current_el_top = wrap.grid.top;
-					$els = $wrap.find(module_selector);
+					$els = $wrap.find(module_selector).sort(Upfront.Util.sort_elements_cb);
 					$els.each(function(i){
 						if ( $(this).get(0) == me.$el.get(0) )
 							return;
@@ -2187,7 +2190,7 @@ var GridEditor = {
 					Upfront.Events.trigger("entity:drag:drop_change", view, view.model);
 				},
 				$insert_rel = drop.type == 'inside' ? drop.insert[1].parent() : drop.insert[1],
-				insert_order = $insert_rel.data('breakpoint_order') || 0;
+				insert_order = drop.insert[1].data('breakpoint_order') || 0;
 			switch ( drop.insert[0] ){
 				case 'before':
 					$drop.insertBefore($insert_rel);
@@ -2278,7 +2281,7 @@ var GridEditor = {
 								height: (each.priority.bottom-each.priority.top+1) * ed.baseline
 							});
 						}
-						$view.find('.upfront-drop-view-pos').text('('+each.left+','+each.right+')'+'('+each.top+','+each.bottom+')');
+						$view.find('.upfront-drop-view-pos').text('('+each.left+','+each.right+')'+'('+each.top+','+each.bottom+')'+'('+each.type+')');
 						$layout.append($view);
 					});
 					$layout.append('<div id="upfront-compare-area"></div>');
@@ -2409,10 +2412,6 @@ var GridEditor = {
 					var drops_area = _.map(ed.drops, function(each){
 							if ( each.region._id != region._id )
 								return false;
-							if ( breakpoint && !breakpoint.default ) { // exclude some drop point on breakpoint drag
-								if ( each.type == 'inside' )
-									return false;
-							}
 							var area = get_area_compared(each);
 							return {
 								area: area,
@@ -2760,60 +2759,57 @@ var GridEditor = {
 						}
 					}
 					else {
-						var wrap_orders = [],
-							wrap_index = 0,
+						var orders = [],
+							index = 0,
+							is_drop_wrapper = ( ed.drop.type != 'inside' ),
 							insert_index = false;
-						$container.find('> .upfront-wrapper').sort(Upfront.Util.sort_elements_cb).each(function(){
-							var each_wrap = ed.get_wrap($(this));
+						  $container.find( is_drop_wrapper ? '> .upfront-wrapper' : '.upfront-module' ).sort(Upfront.Util.sort_elements_cb).each(function(){
+							var each_el = is_drop_wrapper ? ed.get_wrap($(this)) : ed.get_el($(this));
 							if ( !ed.drop.is_me && ed.drop.insert[1].get(0) == this ){
 								if ( ed.drop.insert[0] == 'before' ){
-									insert_index = wrap_index;
-									wrap_orders.push({
+									insert_index = index;
+									orders.push({
 										$el: $(this),
-										order: wrap_index+1,
+										order: index+1,
 										clear: true
 									});
 								}
 								else if ( ed.drop.type == 'side-after' && ed.drop.insert[0] == 'after' ){
-									insert_index = wrap_index+1;
-									wrap_orders.push({
+									insert_index = index+1;
+									orders.push({
 										$el: $(this),
-										order: wrap_index,
-										clear: ( each_wrap.outer_grid.left == 1 )
+										order: index,
+										clear: ( each_el.outer_grid.left == 1 )
 									});
 								}
-								wrap_index++;
+								index++;
 							}
 							else {
-								wrap_orders.push({
+								orders.push({
 									$el: $(this),
-									order: wrap_index,
-									clear: ( each_wrap.outer_grid.left == 1 )
+									order: index,
+									clear: ( each_el.outer_grid.left == 1 )
 								});
 							}
-							wrap_index++;
+							index++;
 						});
-						/*wrap_orders.push({
-							$el: $wrap,
-							order: insert_index === false ? wrap_index : insert_index,
-							clear: ed.drop.is_clear
-						});*/
-						_.each(wrap_orders, function(each_wrap){
-							var wrapper_id = each_wrap.$el.attr('id'),
-								each_model = wrappers.get_by_wrapper_id(wrapper_id),
-								each_view, wrap_breakpoint, wrap_breakpoint_data;
+						_.each(orders, function(each_el){
+							var id = each_el.$el.attr('id'),
+								each_model = is_drop_wrapper ? wrappers.get_by_wrapper_id(id) : ed.get_el_model(each_el.$el),
+								each_view, model_breakpoint, model_breakpoint_data;
 							if ( !each_model )
 								return;
-							if ( each_wrap.$el.get(0) == $wrap.get(0) ){
-								each_wrap.order = insert_index !== false ? insert_index : each_wrap.order;
-								each_wrap.clear = ed.drop.is_clear;
+							if ( ( is_drop_wrapper && each_el.$el.get(0) == $wrap.get(0) ) || ( !is_drop_wrapper && each_el.$el.get(0) == $me.get(0) ) ){
+								each_el.order = insert_index !== false ? insert_index : each_el.order;
+								each_el.clear = ed.drop.is_clear;
 							}
-							wrap_breakpoint = each_model.get_property_value_by_name('breakpoint');
-							wrap_breakpoint_data = wrap_breakpoint[breakpoint.id] || {};
-							wrap_breakpoint_data.order = each_wrap.order;
-							wrap_breakpoint_data.clear = each_wrap.clear;
-							each_model.set_property('breakpoint', wrap_breakpoint);
-							each_view = Upfront.data.wrapper_views[each_model.cid];
+							model_breakpoint = each_model.get_property_value_by_name('breakpoint');
+							model_breakpoint_data = model_breakpoint[breakpoint.id] || {};
+							model_breakpoint_data.order = each_el.order;
+							if ( is_drop_wrapper )
+								model_breakpoint_data.clear = each_el.clear;
+							each_model.set_property('breakpoint', model_breakpoint);
+							each_view = is_drop_wrapper ? Upfront.data.wrapper_views[each_model.cid] : Upfront.data.module_views[each_model.cid];
 							if ( each_view )
 								each_view.update_position();
 						});

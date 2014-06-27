@@ -230,7 +230,8 @@ h2, h3 { page-break-after: avoid; }
 
 /* Flexbox experiments *//* */
 .upfront-output-region,
-.upfront-output-module-group {
+.upfront-output-module-group,
+.upfront-output-wrapper {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -241,8 +242,9 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-region:after {
 	width: 0;
 }
-.upfront-output-region > .upfront-wrapper,
-.upfront-output-module-group > .upfront-wrapper {
+.upfront-output-region > .upfront-output-wrapper,
+.upfront-output-module-group > .upfront-output-wrapper,
+.upfront-output-wrapper > .upfront-output-module {
 	order: 0;
 }
 /* End flexbox */
