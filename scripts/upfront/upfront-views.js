@@ -463,6 +463,10 @@ define([
 					backgroundPosition: ""
 				});
 			},
+			on_window_resize: function (e) {
+				var me = e.data;
+				me.refresh_background();
+			}
 		})),
 
 		_Upfront_EditableEntity = _Upfront_SingularEditor.extend({
@@ -1835,6 +1839,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
+				$(window).on('resize', this, this.on_window_resize);
 
 				// breakpoint changes
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
@@ -2121,6 +2126,7 @@ define([
 			},
 			remove: function(){
 				$(window).off('scroll', this, this.on_scroll);
+				$(window).off('resize', this, this.on_window_resize);
 
 				if(this.context_menu_view){
 					this.context_menu_view.remove();
@@ -2151,6 +2157,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
+				$(window).on('resize', this, this.on_window_resize);
 			},
 			_get_region_type: function () {
 				return this.model.get('type') || ( this.model.get('clip') ? 'clip' : 'wide' );
@@ -2176,6 +2183,7 @@ define([
 			},
 			remove: function () {
 				this.event = false;
+				$(window).off('resize', this, this.on_window_resize);
 				Backbone.View.prototype.remove.call(this);
 			}
 		}),
@@ -2243,6 +2251,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				$(window).on('resize', this, this.on_window_resize);
 			},
 			on_click: function (e) {
 
@@ -2343,6 +2352,7 @@ define([
 			remove: function() {
 				if(this._modules_view)
 					this._modules_view.remove();
+				$(window).off('resize', this, this.on_window_resize);
 				var wrappers = this.model.get('wrappers');
 				if(wrappers)
 					wrappers.each(function(wrapper){
@@ -3058,6 +3068,7 @@ define([
 				this.listenTo(Upfront.Events, "command:layout:edit_background", this.open_edit_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "application:mode:after_switch", this.on_mode_switch);
+				$(window).on('resize', this, this.on_window_resize);
 				this.render();
 			},
 			update: function () {
@@ -3196,6 +3207,7 @@ define([
 				if(this.local_view)
 					this.local_view.remove();
 				this.local_view = null;
+				$(window).off('resize', this, this.on_window_resize);
 
 				Backbone.View.prototype.remove.call(this);
 				this.model = false;
