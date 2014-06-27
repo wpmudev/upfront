@@ -655,14 +655,14 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						}),
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-              label: 'Map Style:',
+              label: 'Map Style',
 							property: 'style',
 							values: styles,
 							change: function () { this.property.set({value: this.get_value()}); }
 						}),
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-              label: 'Map Controls:',
+              label: 'Map Controls',
 							property: 'controls',
 							multiple: true,
 							values: controls,
