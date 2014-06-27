@@ -878,6 +878,7 @@ define([
 			this.$el.html("<span>Exit Responsive</span>");
 		},
 		on_click: function () {
+			$('li.desktop-breakpoint-activate').trigger('click');
 			Upfront.Application.start(Upfront.Application.MODE.DEFAULT);
 		}
 	});
