@@ -1072,8 +1072,8 @@ RedactorPlugins.upfrontColor = {
 				this.$('input.background').spectrum('option', 'color', "#000");
 
 
-			this.$('input.foreground').spectrum('resetUI');
-			this.$('input.background').spectrum('resetUI');
+//			this.$('input.foreground').spectrum('resetUI');
+//			this.$('input.background').spectrum('resetUI');
 
 		},
 		render: function(){
@@ -1178,9 +1178,9 @@ RedactorPlugins.upfrontColor = {
 				tabs.children('li#'+$(this).attr('id')+'-content').addClass('active');
 
 				self.$('input.foreground').spectrum('option', 'color', typeof(self.current_color) == 'object' ? self.current_color.toRgbString() : self.current_color);
-				self.$('input.foreground').spectrum('resetUI');
+//				self.$('input.foreground').spectrum('resetUI');
 				self.$('input.background').spectrum('option', 'color',  typeof(self.current_bg) == 'object' ? self.current_bg.toRgbString() : self.current_bg);
-				self.$('input.background').spectrum('resetUI');
+//				self.$('input.background').spectrum('resetUI');
 			});
 
 
