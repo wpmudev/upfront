@@ -10313,19 +10313,34 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui ul.sidebar-panel-tabspane{
     width: 100%;
     background: #d9edff;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
     display: none;
 }
 .sidebar-panel-tabspane li{
     display: inline-block;
     margin-left: 5px;
-    color: #1fcd8f;
+    color: #0F9969;
     cursor: pointer;
     padding: 3px 5px;
+    font: 11px normal verdana, sans-serif;
+}
+#sidebar-ui ul.panel-setting-theme-colors-shades-range-labels{
+    width: 100%;
+    overflow: hidden;
+    margin-top: 5px;
+}
+.panel-setting-theme-colors-shades-range-labels li{
+    display: inline-block;
+    float: left;
+    font:11px normal verdana, sans-serif;
+    color: #476580;
+}
+.panel-setting-theme-colors-shades-range-labels li:last-child{
+    float: right;
 }
 .sidebar-panel-tabspane li.active{
-    color:#fff;
-    background: #85a9cc;
+    color:#E5F3FF;
+    background: #85A9CC;
     border-radius: 5px;-moz-border-radius: 5px;-webkit-border-radius: 5px;
 }
 .sidebar-tab-content{
@@ -10334,25 +10349,29 @@ div.upfront-region-container-active > a.feature_image_selector {
 
 /*---------------------- Settings Theme colors -------------------------*/
 #theme-colors-no-color-notice{
-    height: 55px;
-    font-size: 14px;
+    height: 42px;
+    font:normal 11px verdana, sans-serif;
+    line-height: 18px;
+    color: #607F99;
 }
 #theme-colors-no-color-notice:before{
     content: "";
     background-image: url('../img/uf-ui-sprite.svg');
     background-position: -339px -107px;
+    display: block;
+    height: 37px;
 }
 #panel-setting-theme-colors-pane{
-    border-bottom: 1px solid #abc9e6;
+    border-bottom: 1px solid #C8DFF2;
 }
 #sidebar-ui .upfront-field-wrap.theme_color_swatch{
     display: inline-block;
-    margin: 15px 10px;
+    margin:10px;
 }
 #sidebar-ui .theme_color_swatch .sp-preview{
     margin: 0;
     border: none;
-    border-radius: none;
+    border-radius: 0;
 }
 .upfront-field-wrap-color .theme_color_swatch .sp-preview{
     border: none;
@@ -10383,6 +10402,16 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui .panel-setting-theme-colors-shades-range a{
     margin: 0;
 }
+.panel-setting-theme-colors-shades-wrap,
+.panel-setting-theme-colors{
+    font:normal 11px "Verdana", sans-serif;
+    color: #607F99;
+}
+
+.panel-setting-theme-colors .special-hover{
+    font: normal 13px Courier;
+    color: #3F5568;
+}
 .theme-colors-color-box{
     display: inline-block;
     width: 22px;
@@ -10394,8 +10423,15 @@ div.upfront-region-container-active > a.feature_image_selector {
 .panel-setting-theme-colors-shades-range{
     width: 100%;
 }
-.panel-setting-theme-colors-meta p{
+#panel-setting-theme-colors-shades-label{
+    font:bold 11px verdana, sans-serif;
+}
+.panel-setting-theme-colors-shades-wrap p{
     margin: 0;
+    margin-top: 10px;
+}
+.panel-setting-theme-colors-meta p{
+    color: #263A4D;
 }
 .theme-colors-color-box-selected{
     background-image: url('../img/uf-core-el-sprite.svg');

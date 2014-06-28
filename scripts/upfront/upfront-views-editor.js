@@ -1547,7 +1547,7 @@ define([
 											element = me.current_element;
 										if ( me.colors[element] != rgba_string ){
 											me.colors[element] = rgba_string;
-											me.update_typography();
+											me.update_typography(color);
 										}
 									}
 								}
@@ -1581,7 +1581,7 @@ define([
 									me.update_typography();
 								}
 							}
-						}),
+						})
 				};
 			};
 			this.$el.html('');
@@ -1597,7 +1597,7 @@ define([
 			this.fields.element.trigger('changed');
 			this.update_typography();
 		},
-		update_typography: function () {
+		update_typography: function (color) {
 			var me = this,
 				css = [],
 				options = {};
@@ -1607,8 +1607,9 @@ define([
 					typeface = me.typefaces[element],
 					face = _.findWhere(me.typefaces_list, {value: typeface}) || _.findWhere(me.typefaces_list, {family: typeface}),
 					font = false,
-					style = false
-				;
+					style = false,
+                    $this_el = $('.upfront-object-content ' + element )
+                ;
 				if (face) {
 					// This is a regular font.
 					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.family + '",' + face.category;
@@ -1628,8 +1629,15 @@ define([
 				if ( !is_inline ){
 					rules.push('font-size: ' + me.sizes[element] + 'px');
 					rules.push('line-height: ' + me.line_heights[element] + 'em');
-				}
-				rules.push('color: ' + me.colors[element]);
+                }
+
+                Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
+                if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
+                     var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
+                     $this_el.addClass(theme_color_class);
+                }else{
+                    rules.push('color: ' + me.colors[element]);
+                }
 				css.push(
 					'.upfront-object-content ' + element + '{ ' + rules.join("; ") + '; }'
 				);
@@ -1640,7 +1648,8 @@ define([
 					line_height: !is_inline ? me.line_heights[element] : false,
 					font_face: typeof face.value != 'undefined' ? face.value : face.family,
 					font_family: face.category, //todo this font_family is inconsistent. It should be called font_category
-					color: me.colors[element]
+					color: me.colors[element],
+                    theme_color_class : theme_color_class
 				};
 			});
 			this.model.set_property('typography', options);
@@ -1668,6 +1677,7 @@ define([
 			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
 			this.edit_css = new Command_EditCustomCSS({"model": this.model});
+            this.structure = new SidebarPanel_Settings_Section_Structure({"model": this.model});
 		},
 		get_title: function () {
 			return "Typography";
@@ -1676,7 +1686,10 @@ define([
 			this.edit_css.render();
 			this.edit_css.delegateEvents();
 			this.$el.find('.panel-section-content').append(this.edit_css.el);
-		}
+
+            this.structure.render();
+            this.$el.find('.panel-section-content').append(this.structure.el);
+        }
 	});
 
 	var SidebarPanel_Responsive_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
@@ -1740,9 +1753,11 @@ define([
             return this.pluck("color") ? this.pluck("color") : [];
         },
         is_theme_color : function(color){
+            color = this.color_to_hex( color );
             return _.indexOf(this.get_colors(), color) !== -1
         },
         get_css_class : function(color){
+            color = this.color_to_hex( color );
             if( this.is_theme_color(color) ){
                 var model = this.findWhere({
                     color : color
@@ -1760,6 +1775,25 @@ define([
                 classes.push("upfront_theme_color_" + index);
             });
             return classes;
+        },
+        remove_theme_color_classes :  function( $el ){
+            _.each(this.get_all_classes(), function(cls){
+                $el.removeClass(cls);
+            });
+        },
+        color_to_hex : function(color) {
+            if (color.substr(0, 1) === '#') {
+                return color;
+            }
+            color = color.replace(/\s+/g, '');
+            var digits = /(.*?)rgb\((\d+),(\d+),(\d+)\)/.exec(color);
+            digits = _.isEmpty(digits) ?  /(.*?)rgba\((\d+),(\d+),(\d+),(\d+)\)/.exec(color) : digits;
+            var red = parseInt(digits[2]);
+            var green = parseInt(digits[3]);
+            var blue = parseInt(digits[4]);
+
+            var rgb = blue | (green << 8) | (red << 16);
+            return digits[1] + '#' + rgb.toString(16);
         }
     });
     var Theme_Colors = {
@@ -1770,7 +1804,7 @@ define([
         initialize : function(){
             var self = this;
             this.template = _.template(_Upfront_Templates.sidebar_settings_theme_colors);
-            this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-shades-wrap").html() );
+            this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
             Upfront.Events.on("command:layout:save", this.on_save, this);
             Upfront.Events.on("command:layout:save_as", this.on_save, this);
             this.update_styles();
@@ -2026,7 +2060,6 @@ define([
 			this.active = true;
 			this.sections = _([
 				new SidebarPanel_Settings_Section_Typography({"model": this.model}),
-				new SidebarPanel_Settings_Section_Structure({"model": this.model}),
 				new SidebarPanel_Settings_Section_Colors({"model": this.model})
 			]);
 		},
@@ -3644,7 +3677,6 @@ define([
 		spectrumDefaults: {
 			clickoutFiresChange: true,
 			chooseText: 'OK',
-			showPalette: true,
 			showSelectionPalette: true,
 			showAlpha: true,
 			showPalette: true,
@@ -3654,13 +3686,6 @@ define([
 			showInput: true,
 			allowEmpty:true
 		},
-        events : {
-            "clicl ..sp-choose" : "flicked"
-        },
-        flicked : function(e){
-            "use strict";
-          console.log(e);
-        },
 		initialize: function(opts){
 			this.options = opts;
 			var me = this,
@@ -3678,12 +3703,20 @@ define([
 
 			spectrumOptions.show = function(color){
 				var rgb = color.toHexString();
-				$('.sp-dragger').css({
+                $('.sp-dragger').css({
 					'border-color': rgb
 				});
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
 			};
+
+            spectrumOptions.beforeShow = function(color){
+                me.options.palette = Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'];
+                me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
+
+                if(me.options.spectrum && me.options.spectrum.beforeShow)
+                    me.options.spectrum.beforeShow(color);
+            };
 
 			Field_Color.__super__.initialize.apply(this, arguments);
 
@@ -5850,7 +5883,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 				var rgba = color.toRgbString();
 				spectrum.find('.sp-dragger').css('border-top-color', rgba);
 				spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-			},
+			}
 		});
 	},
 	startResizable: function(){
@@ -6589,7 +6622,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					top: this.top
 				});
 			}
-		},
+		}
 	});
 
 	var ModalBgSetting = Modal.extend({

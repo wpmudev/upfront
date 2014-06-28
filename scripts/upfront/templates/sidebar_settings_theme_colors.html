@@ -4,7 +4,7 @@
             {[ if (!colors.length){ ]}
             <div id="theme-colors-no-color-notice" class="upfront-icon">
                 No colors defined for this theme.
-                Click ( + ) below to define a color
+                Click (+) below to define a color
             </div>
             {[ } ]}
             {[ if (colors.length){ ]}
@@ -26,10 +26,20 @@
     <div class="panel-setting-theme-colors-bottom">
         <div class="panel-setting-theme-colors-shades-wrap">
             {[ if( colors.length ){ ]}
-            Define :hover for your swatches ?
-            <label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)</label>
             <p>
-                <div type="range" class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>
+                Define <span class="special-hover">:hover</span> for your swatches ?
+            </p>
+            <p>
+                <label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">
+                    Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)
+                </label>
+            </p>
+            <p>
+                <div class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>
+                <ul class="panel-setting-theme-colors-shades-range-labels">
+                    <li>0</li>
+                    <li>50</li>
+                </ul>
             </p>
             <div class="panel-setting-theme-colors-meta">
                 Click either Highlight or Shade swatch to choose it. Hover for original color.
