@@ -3693,17 +3693,24 @@ define([
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
                 ;
 			spectrumOptions.move = function(color){
-				var rgb = color.toHexString();
-				$('.sp-dragger').css({
-					'border-top-color': rgb,
-					'border-right-color': rgb
-				});
+				if( !_.isEmpty( color ) ){
+					var rgb = color.toHexString();
+					$('.sp-dragger').css({
+						'border-top-color': rgb,
+						'border-right-color': rgb
+					});
+
+					$(".sp-input").css({
+						borderColor : rgb
+					});
+				}
+				
 				if(me.options.spectrum && me.options.spectrum.move)
 					me.options.spectrum.move(color);
 			};
 
 			spectrumOptions.show = function(color){
-				if( !_.isEmpty( rgb ) ){
+				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
 	                $('.sp-dragger').css({
 						'border-color': rgb

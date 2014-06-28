@@ -1078,6 +1078,9 @@ RedactorPlugins.upfrontColor = {
 					self.current_color = color;
 					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
+					$(".sp-input").css({
+						borderColor : color.toRgbString()
+					});
 				}	
 			});
 
@@ -1101,6 +1104,9 @@ RedactorPlugins.upfrontColor = {
 					self.current_bg = color;
 					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
 					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
+					$(".sp-input").css({
+						borderColor : color.toRgbString()
+					});
 				}
 			});
 
