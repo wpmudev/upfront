@@ -1035,7 +1035,11 @@ RedactorPlugins.upfrontColor = {
 		current_color: false,
 		current_bg: false,
 		events:{
-			'open': 'open'
+			'open': 'open',
+			'click .sp-choose' : "close_panel"
+		},
+		close_panel : function(){
+				console.log("clicked");
 		},
 		setCurrentColors: function() {
 			var parent = this.redactor.getParent();
@@ -1053,6 +1057,53 @@ RedactorPlugins.upfrontColor = {
 			}
 		},
 		open: function(e, redactor){
+			var self = this;
+			this.$('input.foreground').spectrum({
+				flat: true,
+				showAlpha: true,
+				appendTo : self.$('input.foreground'),
+				showPalette: true,
+				palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
+				localStorageKey: "spectrum.recent_colors",
+				maxSelectionSize: 10,
+				preferredFormat: "hex",
+				chooseText: "Ok",
+				showInput: true,
+                allowEmpty: true,
+                change: function(color) {
+					self.updateColors();
+				},
+				move: function(color) {
+					redactor.selectionRestore(true, false);
+					self.current_color = color;
+					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
+					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
+				}	
+			});
+
+			this.$('input.background').spectrum({
+				flat: true,
+				showAlpha: true,
+				appendTo : self.$('input.background'),
+				showPalette: true,
+				maxSelectionSize: 9,
+                palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
+                localStorageKey: "spectrum.recent_colors",
+                preferredFormat: "hex",
+				chooseText: "Ok",
+				showInput: true,
+			    allowEmpty:true,
+				change: function(color) {
+					self.updateColors();
+					},
+				move: function(color) {
+					redactor.selectionRestore(true, false);
+					self.current_bg = color;
+					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
+					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
+				}
+			});
+
 			this.setCurrentColors();
 
 			if(this.current_color) {
@@ -1074,7 +1125,12 @@ RedactorPlugins.upfrontColor = {
 
 //			this.$('input.foreground').spectrum('resetUI');
 //			this.$('input.background').spectrum('resetUI');
+//			
 
+		    this.$(".sp-choose").on("click", function(){
+	    		self.closePanel();
+				self.closeToolbar();
+		    });
 		},
 		render: function(){
 
@@ -1087,88 +1143,13 @@ RedactorPlugins.upfrontColor = {
 			var redac = this.redactor;
 			var self = this;
 
-			var updateIcon = function () {
-				self.setCurrentColors();
-
-				if(self.current_bg)
-					redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').removeClass('transparent').css('border-color', self.current_bg);
-
-				else
-					redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').addClass('transparent').css('border-color', '');
-
-
-				if(self.current_color)
-					redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('color',  self.current_color );
-				else
-					redac.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('color',  '');
-
-			};
-
-
-
-
 			redac.bufferAirBindHide = this.redactor.airBindHide;
 
 			redac.airBindHide = function() {
 
-				updateIcon();
+				self.updateIcon();
 
 				redac.bufferAirBindHide();
-			};
-
-			var updateColors = function() {
-                if(self.current_color && typeof(self.current_color) == 'object') {
-                    var theme_color_classname =  Upfront.Views.Theme_Colors.colors.get_css_class( self.current_color.toHexString() );
-                    if( theme_color_classname ){
-                        var current = redac.getCurrent();
-                        if( !$(current).hasClass(theme_color_classname) ){
-                            // remove previous theme color classes if any
-                            _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
-//                                redac.inlineRemoveClass( cls );
-                            });
-                            // remove inline color if any
-                            redac.inlineRemoveStyle("color");
-
-                            var html = "<span class='upfront_theme_colors " + theme_color_classname + "'>" + redac.getSelectionHtml() + "</span>";
-                            if( $(redac.getCurrent()).hasClass("upfront_theme_colors") ){
-                                $(redac.getCurrent()).replaceWith( html );
-                            }else{
-                                redac.execCommand("inserthtml", html, true);
-                            }
-                        }
-                    }else{
-                        redac.selectionRestore(true, false);
-                        // make sure it doesn't have any theme color classes
-                        _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
-                            redac.inlineRemoveClass( cls );
-                        });
-                        redac.inlineRemoveClass( "upfront_theme_colors" );
-
-//                        redac.inlineRemoveStyle('color');
-                        var html = "<span class='inline_color' style='color: " + self.current_color.toRgbString() + "'>" + redac.getSelectionHtml() + "</span>";
-                        if( $(redac.getCurrent()).hasClass("inline_color") ){
-                            $(redac.getCurrent()).replaceWith( html );
-                        }else{
-                            redac.execCommand("inserthtml", html, true);
-                        }
-//                        redac.inlineSetStyle('color', self.current_color.toRgbString());
-                    }
-
-
-                }
-                if(self.current_bg && typeof(self.current_bg) == 'object') {
-                    redac.selectionRestore(true, false);
-                    redac.inlineRemoveStyle('background-color');
-                    if(self.current_bg.toRgbString().toLowerCase() != 'rgba(0, 0, 0, 0)')
-                        redac.inlineSetStyle('background-color', self.current_bg.toRgbString());
-
-                }
-
-				updateIcon();
-				redac.selectionRemove();
-				redac.sync();
-				self.closePanel();
-				self.closeToolbar();
 			};
 
 			tablist.children('li').on('click', function() {
@@ -1183,55 +1164,81 @@ RedactorPlugins.upfrontColor = {
 //				self.$('input.background').spectrum('resetUI');
 			});
 
-
 			this.$el.html(tablist).append(tabs);
-
-
-			this.$('input.foreground').spectrum({
-				flat: true,
-				showAlpha: true,
-				showPalette: true,
-				palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
-				localStorageKey: "spectrum.recent_colors",
-				maxSelectionSize: 10,
-				preferredFormat: "hex",
-				chooseText: "Ok",
-				showInput: true,
-				change: function(color) {
-					updateColors();
-				},
-				move: function(color) {
-					redac.selectionRestore(true, false);
-					self.current_color = color;
-					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
-					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
-				}
-			});
-
-			this.$('input.background').spectrum({
-				flat: true,
-				showAlpha: true,
-				showPalette: true,
-				palette: ['fff', '000', '0f0'],
-				maxSelectionSize: 9,
-                palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
-				preferredFormat: "hex",
-				chooseText: "Ok",
-				showInput: true,
-			    allowEmpty:true,
-				change: function(color) {
-					updateColors();
-					},
-				move: function(color) {
-					redac.selectionRestore(true, false);
-					self.current_bg = color;
-					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
-					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
-				}
-			});
-
 			//redac.selectionSave();
-		}
+		},
+		updateIcon : function () {
+				var self = this;
+				self.setCurrentColors();
+
+				if(self.current_bg)
+					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').removeClass('transparent').css('border-color', self.current_bg);
+
+				else
+					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').addClass('transparent').css('border-color', '');
+
+
+				if(self.current_color)
+					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('color',  self.current_color );
+				else
+					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('color',  '');
+
+		},
+		updateColors : function() {
+			var self = this;
+                if(self.current_color && typeof(self.current_color) == 'object') {
+                    var theme_color_classname =  Upfront.Views.Theme_Colors.colors.get_css_class( self.current_color.toHexString() );
+                    if( theme_color_classname ){
+                        var current = this.redactor.getCurrent();
+                        if( !$(current).hasClass(theme_color_classname) ){
+                            // remove previous theme color classes if any
+                            _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
+//                                redac.inlineRemoveClass( cls );
+                            });
+                            // remove inline color if any
+                            this.redactor.inlineRemoveStyle("color");
+
+                            var html = "<span class='upfront_theme_colors " + theme_color_classname + "'>" + this.redactor.getSelectionHtml() + "</span>";
+                            if( $(this.redactor.getCurrent()).hasClass("upfront_theme_colors") ){
+                                $(this.redactor.getCurrent()).replaceWith( html );
+                            }else{
+                                this.redactor.execCommand("inserthtml", html, true);
+                            }
+                        }
+                    }else{
+                        this.redactor.selectionRestore(true, false);
+                        // make sure it doesn't have any theme color classes
+                        _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
+                            self.redactor.inlineRemoveClass( cls );
+                        });
+                        this.redactor.inlineRemoveClass( "upfront_theme_colors" );
+
+//                        redac.inlineRemoveStyle('color');
+                        var html = "<span class='inline_color' style='color: " + self.current_color.toRgbString() + "'>" + this.redactor.getSelectionHtml() + "</span>";
+                        if( $(this.redactor.getCurrent()).hasClass("inline_color") ){
+                            $(this.redactor.getCurrent()).replaceWith( html );
+                        }else{
+                            this.redactor.execCommand("inserthtml", html, true);
+                        }
+//                        redac.inlineSetStyle('color', self.current_color.toRgbString());
+                    }
+
+
+                }
+                if(self.current_bg && typeof(self.current_bg) == 'object') {
+                    this.redactor.selectionRestore(true, false);
+                    this.redactor.inlineRemoveStyle('background-color');
+                    if(self.current_bg.toRgbString().toLowerCase() != 'rgba(0, 0, 0, 0)')
+                        this.redactor.inlineSetStyle('background-color', self.current_bg.toRgbString());
+
+                }
+
+				self.updateIcon();
+				self.redactor.selectionRemove();
+				self.redactor.sync();
+			
+			}
+
 	})
 }
 

@@ -3680,6 +3680,7 @@ define([
 			showSelectionPalette: true,
 			showAlpha: true,
 			showPalette: true,
+            localStorageKey: "spectrum.recent_colors",
 			palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
 			maxSelectionSize: 10,
 			preferredFormat: "hex",
@@ -3702,10 +3703,13 @@ define([
 			};
 
 			spectrumOptions.show = function(color){
-				var rgb = color.toHexString();
-                $('.sp-dragger').css({
-					'border-color': rgb
-				});
+				if( !_.isEmpty( rgb ) ){
+					var rgb = color.toHexString();
+	                $('.sp-dragger').css({
+						'border-color': rgb
+					});
+				}
+				
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
 			};
@@ -7022,7 +7026,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 									rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
 								fields.overlay_color.get_field().val(rgba_string)
 								set_value(fields.overlay_color);
-							},
+							}
 						}
 					});
 				

@@ -578,7 +578,6 @@
         }
 
         function hide(e) {
-
             // Return on right click
             if (e && e.type == "click" && e.button == 2) { return; }
 
