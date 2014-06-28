@@ -1888,12 +1888,13 @@ define([
                         hide_label : true,
                         default_value: color,
                         spectrum: {
-                            change: function (color){
-                               self.update_colors(this, color, index);
-                            },
                             move : function(color){
                                 self.update_colors(this, color, index);
-                            }
+	                            picker.$(".sp-preview").css({
+                                    backgroundColor : color.toRgbString(),
+                                    backgroundImage : "none"
+                                });
+                        	}        
                         }
                     });
                 picker.render();
