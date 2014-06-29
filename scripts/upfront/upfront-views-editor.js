@@ -1782,12 +1782,17 @@ define([
             });
         },
         color_to_hex : function(color) {
+        	if( typeof tinycolor === "function" ){
+        		color = tinycolor(color);
+            	return color.toHexString();
+        	}
+        	
             if (color.substr(0, 1) === '#') {
                 return color;
             }
             color = color.replace(/\s+/g, '');
             var digits = /(.*?)rgb\((\d+),(\d+),(\d+)\)/.exec(color);
-            digits = _.isEmpty(digits) ?  /(.*?)rgba\((\d+),(\d+),(\d+),(\d+)\)/.exec(color) : digits;
+            digits = _.isEmpty(digits) ?  /(.*?)rgba\((\d+),(\d+),(\d+),([0-9.]+)\)/.exec(color) : digits;
             var red = parseInt(digits[2]);
             var green = parseInt(digits[3]);
             var blue = parseInt(digits[4]);
