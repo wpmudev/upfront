@@ -1468,7 +1468,7 @@ var GridEditor = {
 					},
 					first_cb = function ($w, $ws) {
 						var w = ed.get_wrap($w);
-						return ( w.outer_grid.left == 1 );
+						return ( w.outer_grid.left == area.outer_grid.left );
 					},
 					wrap = ed.get_wrap($wrap),
 					wrap_clr = ( wrap.grid.left == area.grid.left ),
@@ -1492,169 +1492,167 @@ var GridEditor = {
 					next_wrap_el_left = next_wrap ? ed.get_wrap_el_min(next_wrap) : false,
 					next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false,
 					$row_wrap_first = !wrap_clr ? Upfront.Util.find_from_elements($wraps, $wrap, first_cb, true) : $wrap,
-					$row_wraps_next = Upfront.Util.find_from_elements($wraps, $row_wrap_first, '.upfront-wrapper', false, clr_cb);
-				if($row_wrap_first.length > 0 || $row_wraps_next.length > 0) {
-					var row_wraps = _.union( [ ed.get_wrap($row_wrap_first) ], $row_wraps_next.map(function(){ return ed.get_wrap($(this)); }).get() ),
-						max_row_wrap = _.max(row_wraps, function(row_wrap){ return row_wrap.grid.bottom; });
-					if (
-						( wrap.col >= min_col ) && (
-						( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
-						( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
-						( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ) ||
-						( breakpoint && !breakpoint.default && is_wrap_me )
-					){
-						var current_el_top = wrap.grid.top;
-						$els = $wrap.find(module_selector).sort(Upfront.Util.sort_elements_cb);
-						$els.each(function(i){
-							if ( $(this).get(0) == me.$el.get(0) )
-								return;
-							var $el = $(this),
-								el = ed.get_el($el),
-								top = ( el.outer_grid.top == wrap.grid.top ) ? wrap.grid.top : current_el_top,
-								bottom = el.grid_center.y,
-								$prev = $els[i-1] ? $els.eq(i-1) : false,
-								prev = $prev ? ed.get_el($prev) : false,
-								prev_me = ( prev && prev._id == me._id );
-							ed.drops.push({
-								_id: ed._new_id(),
-								top: top,
-								bottom: bottom,
+					$row_wraps_next = Upfront.Util.find_from_elements($wraps, $row_wrap_first, '.upfront-wrapper', false, clr_cb),
+					row_wraps = _.union( [ ed.get_wrap($row_wrap_first) ], $row_wraps_next.map(function(){ return ed.get_wrap($(this)); }).get() ),
+					max_row_wrap = _.max(row_wraps, function(row_wrap){ return row_wrap.grid.bottom; });
+				if (
+					( wrap.col >= min_col ) && (
+					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
+					( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
+					( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ) ||
+					( breakpoint && !breakpoint.default && is_wrap_me )
+				){
+					var current_el_top = wrap.grid.top;
+					$els = $wrap.find(module_selector).sort(Upfront.Util.sort_elements_cb);
+					$els.each(function(i){
+						if ( $(this).get(0) == me.$el.get(0) )
+							return;
+						var $el = $(this),
+							el = ed.get_el($el),
+							top = ( el.outer_grid.top == wrap.grid.top ) ? wrap.grid.top : current_el_top,
+							bottom = el.grid_center.y,
+							$prev = $els[i-1] ? $els.eq(i-1) : false,
+							prev = $prev ? ed.get_el($prev) : false,
+							prev_me = ( prev && prev._id == me._id );
+						ed.drops.push({
+							_id: ed._new_id(),
+							top: top,
+							bottom: bottom,
+							left: wrap.grid.left,
+							right: wrap.grid.right,
+							priority: {
+								top: ( prev_me ? prev.outer_grid.top : el.outer_grid.top ),
+								bottom: el.grid.top-1,
 								left: wrap.grid.left,
 								right: wrap.grid.right,
-								priority: {
-									top: ( prev_me ? prev.outer_grid.top : el.outer_grid.top ),
-									bottom: el.grid.top-1,
-									left: wrap.grid.left,
-									right: wrap.grid.right,
-									index: 5
-								},
-								priority_index: 5,
-								type: 'inside',
-								insert: ['before', $el],
-								region: region,
-								is_me: prev_me,
-								is_clear: false,
-								is_use: false,
-								is_switch: false
-							});
-							current_el_top = bottom+1;
+								index: 5
+							},
+							priority_index: 5,
+							type: 'inside',
+							insert: ['before', $el],
+							region: region,
+							is_me: prev_me,
+							is_clear: false,
+							is_use: false,
+							is_switch: false
 						});
-						var $last = $els.last(),
-							last = $last.size() > 0 ? ed.get_el($last) : false,
-							last_me = ( last && last._id == me._id ),
-							wrap_bottom = max_row_wrap.grid.bottom;
-						// Don't add dropping below the most bottom wrap in a row
-						if ( last_me || !max_row_wrap || max_row_wrap != wrap ){
-							ed.drops.push({
-								_id: ed._new_id(),
-								top: current_el_top,
+						current_el_top = bottom+1;
+					});
+					var $last = $els.last(),
+						last = $last.size() > 0 ? ed.get_el($last) : false,
+						last_me = ( last && last._id == me._id ),
+						wrap_bottom = max_row_wrap.grid.bottom;
+					// Don't add dropping below the most bottom wrap in a row
+					if ( last_me || !max_row_wrap || max_row_wrap != wrap ){
+						ed.drops.push({
+							_id: ed._new_id(),
+							top: current_el_top,
+							bottom: wrap_bottom,
+							left: wrap.grid.left,
+							right: wrap.grid.right,
+							priority: {
+								top: ( last_me ? last.outer_grid.top : wrap.grid.bottom ),
 								bottom: wrap_bottom,
 								left: wrap.grid.left,
 								right: wrap.grid.right,
-								priority: {
-									top: ( last_me ? last.outer_grid.top : wrap.grid.bottom ),
-									bottom: wrap_bottom,
-									left: wrap.grid.left,
-									right: wrap.grid.right,
-									index: 5
-								},
-								priority_index: 5,
-								type: 'inside',
-								insert: ['append', wrap.$el],
-								region: region,
-								is_me: last_me,
-								is_clear: false,
-								is_use: false,
-								is_switch: false
-							});
-						}
+								index: 5
+							},
+							priority_index: 5,
+							type: 'inside',
+							insert: ['append', wrap.$el],
+							region: region,
+							is_me: last_me,
+							is_clear: false,
+							is_use: false,
+							is_switch: false
+						});
 					}
-					// Add droppable before each wrapper that start in new line
-					if ( wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
-						var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top : current_full_top,
-							el_top = ed.get_wrap_el_min(wrap, false, true),
-							bottom = el_top.grid_center.y,
-							is_drop_me = ( prev_wrap_clr && is_prev_me ),
-							me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top );
-						if ( can_drop(me_top, el_top.grid.top-1) ){
-							ed.drops.push({
-								_id: ed._new_id(),
-								top: top,
-								bottom: bottom,
+				}
+				// Add droppable before each wrapper that start in new line
+				if ( wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
+					var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top : current_full_top,
+						el_top = ed.get_wrap_el_min(wrap, false, true),
+						bottom = el_top.grid_center.y,
+						is_drop_me = ( prev_wrap_clr && is_prev_me ),
+						me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top );
+					if ( can_drop(me_top, el_top.grid.top-1) ){
+						ed.drops.push({
+							_id: ed._new_id(),
+							top: top,
+							bottom: bottom,
+							left: area.grid.left,
+							right: area.grid.right,
+							priority: {
+								top: me_top,
+								bottom: el_top.grid.top-1,
 								left: area.grid.left,
 								right: area.grid.right,
-								priority: {
-									top: me_top,
-									bottom: el_top.grid.top-1,
-									left: area.grid.left,
-									right: area.grid.right,
-									index: 10
-								},
-								priority_index: 10,
-								type: 'full',
-								insert: ['before', wrap.$el],
-								region: region,
-								is_me: is_drop_me,
-								is_clear: true,
-								is_use: false,
-								is_switch: false
-							});
-							current_full_top = bottom+1;
-						}
+								index: 10
+							},
+							priority_index: 10,
+							type: 'full',
+							insert: ['before', wrap.$el],
+							region: region,
+							is_me: is_drop_me,
+							is_clear: true,
+							is_use: false,
+							is_switch: false
+						});
+						current_full_top = bottom+1;
 					}
-					// Check to see if the right side on wrapper has enough column to add droppable
-					if ( ( !next_wrap || next_wrap_clr ) && ( ( !is_wrap_me && area.grid.right-wrap.grid.right >= min_col ) || ( wrap_me_only && !wrap_clr ) || ( prev_me_only && !wrap_clr && wrap_only ) ) ){
-						var is_switch = ( prev_me_only && !wrap_clr && wrap_only ),
-							bottom = max_row_wrap.grid.bottom;
-						if ( can_drop(wrap.grid.top, bottom) ){
-							ed.drops.push({
-								_id: ed._new_id(),
-								top: wrap.grid.top,
-								bottom: bottom,
-								left: ( is_wrap_me ? wrap.grid.left : ( is_switch ? wrap_el_left.grid.left : wrap.grid.right+1 ) ),
-								right: area.grid.right,
-								priority: null,
-								priority_index: 8,
-								type: 'side-after',
-								insert: ['after', wrap.$el],
-								region: region,
-								is_me: is_wrap_me,
-								is_clear: false,
-								is_use: false,
-								is_switch: is_switch
-							});
-						}
+				}
+				// Check to see if the right side on wrapper has enough column to add droppable
+				if ( ( !next_wrap || next_wrap_clr ) && ( ( !is_wrap_me && area.grid.right-wrap.grid.right >= min_col ) || ( wrap_me_only && !wrap_clr ) || ( prev_me_only && !wrap_clr && wrap_only ) ) ){
+					var is_switch = ( prev_me_only && !wrap_clr && wrap_only ),
+						bottom = max_row_wrap.grid.bottom;
+					if ( can_drop(wrap.grid.top, bottom) ){
+						ed.drops.push({
+							_id: ed._new_id(),
+							top: wrap.grid.top,
+							bottom: bottom,
+							left: ( is_wrap_me ? wrap.grid.left : ( is_switch ? wrap_el_left.grid.left : wrap.grid.right+1 ) ),
+							right: area.grid.right,
+							priority: null,
+							priority_index: 8,
+							type: 'side-after',
+							insert: ['after', wrap.$el],
+							region: region,
+							is_me: is_wrap_me,
+							is_clear: false,
+							is_use: false,
+							is_switch: is_switch
+						});
 					}
-					// Now check the left side, finding spaces between wrapper and inner modules
-					if ( ( wrap_el_left.grid.left-wrap.grid.left >= min_col && (!is_prev_me || wrap_clr) && !is_wrap_me ) || ( wrap_me_only && next_wrap && !next_wrap_clr ) || ( next_me_only && !next_wrap_clr && wrap_only ) ){
-						var is_switch = ( next_me_only && !next_wrap_clr && wrap_only ),
-							//right = wrap_el_left.grid.left > wrap.grid.left+col ? wrap_el_left.grid.left-1 : wrap.grid.left+col-1,
-							right = wrap_el_left.grid.left-1,
-							bottom = max_row_wrap.grid.bottom;
-						if ( can_drop(wrap.grid.top, bottom) ){
-							ed.drops.push({
-								_id: ed._new_id(),
+				}
+				// Now check the left side, finding spaces between wrapper and inner modules
+				if ( ( wrap_el_left.grid.left-wrap.grid.left >= min_col && (!is_prev_me || wrap_clr) && !is_wrap_me ) || ( wrap_me_only && next_wrap && !next_wrap_clr ) || ( next_me_only && !next_wrap_clr && wrap_only ) ){
+					var is_switch = ( next_me_only && !next_wrap_clr && wrap_only ),
+						//right = wrap_el_left.grid.left > wrap.grid.left+col ? wrap_el_left.grid.left-1 : wrap.grid.left+col-1,
+						right = wrap_el_left.grid.left-1,
+						bottom = max_row_wrap.grid.bottom;
+					if ( can_drop(wrap.grid.top, bottom) ){
+						ed.drops.push({
+							_id: ed._new_id(),
+							top: wrap.grid.top,
+							bottom: bottom,
+							left: wrap.grid.left,
+							right: ( is_wrap_me ? next_wrap_el_left.grid.left-1 : ( is_switch ? wrap.grid.right : right ) ),
+							priority: {
 								top: wrap.grid.top,
 								bottom: bottom,
 								left: wrap.grid.left,
-								right: ( is_wrap_me ? next_wrap_el_left.grid.left-1 : ( is_switch ? wrap.grid.right : right ) ),
-								priority: {
-									top: wrap.grid.top,
-									bottom: bottom,
-									left: wrap.grid.left,
-									right: ( is_wrap_me ? next_wrap_el_left.grid.left-1 : wrap_el_left.grid.left-1 ),
-									index: 3
-								},
-								priority_index: 7,
-								type: 'side-before',
-								insert: ['before', wrap.$el],
-								region: region,
-								is_me: is_wrap_me,
-								is_clear: wrap_clr,
-								is_use: false,
-								is_switch: is_switch
-							});
-						}
+								right: ( is_wrap_me ? next_wrap_el_left.grid.left-1 : wrap_el_left.grid.left-1 ),
+								index: 3
+							},
+							priority_index: 7,
+							type: 'side-before',
+							insert: ['before', wrap.$el],
+							region: region,
+							is_me: is_wrap_me,
+							is_clear: wrap_clr,
+							is_use: false,
+							is_switch: is_switch
+						});
 					}
 				}
 			});

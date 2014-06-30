@@ -2048,7 +2048,7 @@ div.uinsert-selector a:hover {
 	bottom: 0;
 	z-index: 1999;
 }
-.ui-resizable-disabled .ui-resizable-handle {
+.ui-resizable-disabled > .ui-resizable-handle {
 	display: none !important;
 }
 .show-debug .upfront-module {
