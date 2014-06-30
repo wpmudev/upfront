@@ -120,6 +120,23 @@ define(function() {
 		return Math.ceil(height/baseline);
 	},
 
+	openLightboxRegion: function(regionName){
+		var regions = Upfront.Application.layout.get('regions'),
+			region = regions.get_by_name(regionName)
+		;
+
+		if(!region)
+			return;
+
+		//hide other lightboxes
+		_.each(regions.models, function(model) {
+			if(model.attributes.sub == 'lightbox')
+				Upfront.data.region_views[model.cid].hide();
+		});
+
+		Upfront.data.region_views[region.cid].show();
+	},
+
 	/**
 	 * Callback to sort jQuery elements
 	 */

@@ -2407,11 +2407,12 @@ define([
 			},
 			on_settings_click: function (e) {
 				console.log('yes this was clicked');
-				e.preventDefault();
+				if(e)
+					e.preventDefault();
 				var me = this,
 					container_view = this.parent_view.get_container_view(this.model);
 				this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(deac){
-					if(!this.$el.is($(e.target).closest('div.upfront-region'))) {
+					if(e && !this.$el.is($(e.target).closest('div.upfront-region'))) {
 						me.bg_setting.close(false);
 					}
 				});
@@ -2617,19 +2618,10 @@ define([
 
 
 				this.$el.prepend(this.$bg);
-				var me = this;
-
-
-
 				this.$close.appendTo(this.$el);
 
 				$edit.appendTo(this.$el);
 				$ok.appendTo(this.$el);
-
-
-
-
-
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);

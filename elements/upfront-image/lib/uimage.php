@@ -43,7 +43,7 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$markup = '<div id="' . $data['element_id'] . '">' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
-		if($data['when_clicked'] == 'show_larger_image'){
+		if($data['when_clicked'] == 'image'){
 			//Lightbox
 			wp_enqueue_style('magnific');
 			wp_enqueue_script('magnific');//Front script
@@ -81,7 +81,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'srcOriginal' => false,
 			'image_title' => '',
 			'alternative_text' => '',
-			'when_clicked' => 'do_nothing', // do_nothing | external | post | anchor | show_larger_image
+			'when_clicked' => false, // false | external | entry | anchor | image | lightbox
 			'image_link' => '',
 			'include_image_caption' => false,
 			'image_caption' => 'My awesome image caption',

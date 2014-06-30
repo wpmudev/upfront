@@ -708,6 +708,7 @@ a.image-edit-button.deactivated:hover {
 	position: absolute;
 	top: 0;
 	left: 0;
+	z-index: 2001;
 }
 
 .uimage-controls .upfront-inline-panel {
@@ -742,10 +743,14 @@ a.image-edit-button.deactivated:hover {
 	display: none;
 }
 
-.uimage-control-panel {
+.ui-resizable-autohide .uimage-controls.upfront-control-visible {
+	display: block;
+}
+
+.uimage-control-panel-light {
 	position: absolute;
 	min-width: 150px;
-	z-index: 10;
+	z-index: 2001;
 	background: rgb(242, 249, 255);
 	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
 	border: 1px solid rgb(99, 134, 166);
@@ -755,7 +760,19 @@ a.image-edit-button.deactivated:hover {
 	text-align: left;
 }
 
-.uimage-control-panel:before {
+.uimage-control-panel {
+	position: absolute;
+	min-width: 150px;
+	z-index: 2001;
+	background: #3d5266;
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+	padding: 10px;
+	left: 0px;
+	top: 39px;
+	text-align: left;
+}
+
+.uimage-control-panel-light:before {
 	content: ' ';
 	position: absolute;
 	display: block;
@@ -765,7 +782,13 @@ a.image-edit-button.deactivated:hover {
 	border-bottom-color: rgb(99, 134, 166);
 }
 
-.uimage-control-panel:after {
+.upfront-inline-panel-item.upfront-control-dialog-open {
+	background: #3d5266;
+	border-bottom: 1px solid #3d5266;
+	z-index: 51;
+}
+
+.uimage-control-panel-light:after {
 	display: block;
 	position: absolute;
 	top: -16px;
@@ -778,7 +801,7 @@ a.image-edit-button.deactivated:hover {
 .uimage-control-panel button {
 	position: absolute;
 	top: 100%;
-	right: -1px;
+	right: 0px;
 }
 
 

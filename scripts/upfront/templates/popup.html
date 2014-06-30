@@ -438,6 +438,68 @@
 	</div>
 </script>
 
+<script type="text/template" id="linkpanel-tpl">
+	<div class="ulinkpanel-title">Links to:</div>
+	{[if(types.external) { ]}
+	<div class="upfront-field-wrap ulinkpanel-external-wrap">
+		<input type="radio" name="ulinkpanel-link" value="external" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-2" {{link.type == 'external' ? checked : ''}}>
+		<label for="ulinkpanel-link-2">URL</label>
+		<input type="text" value="{{link.url}}" id="ulinkpanel-link-url" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+	</div>
+	{[ } ]}
+	{[if(types.entry) { ]}
+	<div class="upfront-field-wrap ulinkpanel-entry-wrap">
+		<input type="radio" name="ulinkpanel-link" value="entry" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-3" {{link.type == 'entry' ? checked : ''}}>
+		<label for="ulinkpanel-link-3">Post or Page</label>
+	</div>
+	{[ } ]}
+	{[if(types.anchor && anchors.length) { ]}
+	<div class="upfront-field-wrap ulinkpanel-anchor-wrap">
+		<input type="radio" name="ulinkpanel-link" value="anchor" class="upfront-field-radio js-ulinkpanel-type" {{link.type == 'anchor' ? checked : ''}} id="ulinkpanel-link-anchor">
+		<label for="ulinkpanel-link-anchor">Anchor</label>
+		<div id="ulinkpanel-anchor-select" class="js-ulinkpanel-input-url js-ulinkpanel-input-anchor">
+			<select class="ulinkpanel-anchor-selector">
+			{[ _.each(anchors, function(anchor){ ]}
+				<option value="#{{ anchor }}" {{ link.url == '#' + anchor ? 'selected="selected"' : '' }}>{{anchor}}</option>
+			{[ }); ]}
+			</select>
+		</div>
+	</div>
+	{[ } ]}
+	<a title="Change link" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{link.url}}</a>
+	{[if(types.image) { ]}
+	<div class="upfront-field-wrap ulinkpanel-image-wrap">
+		<input type="radio" name="ulinkpanel-link" value="image" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-4" {{link.type == 'image' ? checked : ''}}>
+		<label for="ulinkpanel-link-4">Larger image</label>
+	</div>
+	{[ } ]}
+	{[if(types.lightbox) { ]}
+	<div class="upfront-field-wrap ulinkpanel-lightbox-wrap">
+		<input type="radio" name="ulinkpanel-link" value="lightbox" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-6" {{link.type == 'lightbox' ? checked : ''}}>
+		<label for="ulinkpanel-link-6">Lightbox</label>
+	</div>
+	<div id="ulinkpanel-lightbox-extra" class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
+		<div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox" style="display: none">
+			<input type="text" name="new_lightbox" id="ulinkpanel-new-lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="Lightbox Name" />
+			<a href="#" class="ulinkpanel-lightbox-cancel js-ulinkpanel-lightbox-cancel">X</a>
+		</div>
+		{[ if(lightboxes.length) { ]}
+		<select class="ulinkpanel-lightbox-selector js-ulinkpanel-lightbox-select">
+		{[ _.each(lightboxes, function(lightbox){ ]}
+			<option value="{{ lightbox.id }}" {{ link.url == '#' + lightbox.id ? 'selected="selected"' : '' }}>{{lightbox.label}}</option>
+		{[ }) ]}
+		</select>
+		{[ } ]}
+		<a href="#" id="ulinkpanel-create-lightbox" class="js-show-lightbox-input">New Lightbox</a>
+	</div>
+	{[ } ]}
+	{[if(button) { ]}
+	<div class="upfront-settings-button_panel">
+		<button type="button" class="upfront-save_settings js-ulinkpanel-ok"><i class="icon-ok"></i> Ok</button>
+	</div>
+	{[ } ]}
+</script>
+
 
 <!-- end of the wrap div -->
 </div>

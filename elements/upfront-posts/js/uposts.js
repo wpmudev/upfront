@@ -112,7 +112,10 @@ define(function() {
       this.editors[id] = editor;
     },
 
-    refreshMarkup: function(page) {
+    refreshMarkup: function(changes, options, page) {
+    	if(changes && changes.id == 'row')
+    		return;
+
       this.$el.find('div.upfront-editable_entity.upfront-object.uposts-object').prepend(this.$el.find('.upfront-post-layout-trigger').parent('b'));
 
       var props = this.model.get('properties').toJSON(),
@@ -220,7 +223,7 @@ define(function() {
       console.log('Paginating!' + e.target.search);
       var search = e.target.search;
       if(search && search.match(/^\?paged=\d+$/))
-        this.refreshMarkup(search.replace('?paged=', ''));
+        this.refreshMarkup(null, null, search.replace('?paged=', ''));
     },
 
     /*

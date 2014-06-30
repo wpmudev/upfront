@@ -297,6 +297,56 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	create_post: function(postType){
 		Upfront.Settings.LayoutEditor.newpostType = postType;
 		this.load_layout({item: 'single-' + postType, type: 'single'});
+	},
+
+	openLightboxRegion: function(regionName){
+		var regions = Upfront.Application.layout.get('regions'),
+			region = regions.get_by_name(regionName)
+		;
+
+		if(!region)
+			return;
+
+		//hide other lightboxes
+		_.each(regions.models, function(model) {
+			if(model.attributes.sub == 'lightbox')
+				Upfront.data.region_views[model.cid].hide();
+		});
+
+		Upfront.data.region_views[region.cid].show();
+	},
+
+	createLightboxRegion: function(regionName){
+		var regions = this.layout.get('regions'),
+			safeName = 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1),
+			lightbox = new Upfront.Models.Region(_.extend({}, Upfront.data.region_default_args, {
+				name: safeName,
+				container: 'lightbox',
+				title: regionName,
+				type: 'lightbox',
+				sub: 'lightbox'
+			}))
+		;
+
+		lightbox.init_properties({
+			col: 10,
+			height: 400,
+			click_out_close: 'yes',
+			show_close: 'yes',
+			overlay_color: 'rgba(38,58,77,0.75)',
+			lightbox_color: 'rgba(248,254,255,0.9)'
+		});
+
+		//Lisen for the region view to be added and open it
+		this.listenToOnce(Upfront.Events, 'entity:region:added', this.openNewRegion);
+		lightbox.add_to(regions, regions.length-1, {sub: 'lightbox'});
+
+		return safeName;
+	},
+
+	openNewRegion: function(region){
+		region.show();
+		region.on_settings_click();
 	}
 });
 

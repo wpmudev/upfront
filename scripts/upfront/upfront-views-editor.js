@@ -1795,7 +1795,7 @@ define([
         		color = tinycolor(color);
             	return color.toHexString();
         	}
-        	
+
             if (color.substr(0, 1) === '#') {
                 return color;
             }
@@ -1908,7 +1908,7 @@ define([
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
                                 });
-                        	}        
+                        	}
                         }
                     });
                 picker.render();
@@ -3731,7 +3731,7 @@ define([
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.render_sidebar_rgba(me.rgba);
 				}
-				
+
 				if(me.options.spectrum && me.options.spectrum.move)
 					me.options.spectrum.move(color);
 			};
@@ -4542,7 +4542,7 @@ define([
 	}));
 
 	var Settings = Backbone.View.extend({
-    has_tabs: true,
+   	has_tabs: true,
 
 		initialize: function(opts) {
 			this.options = opts;
@@ -4610,12 +4610,12 @@ define([
 			this.trigger('open');
 		},
 
-    /**
-     * @deprecated
-     *
-     * Info: I have moved this to SettingsPanel class since panel can better incorporate
-     * this into itself. [Ivan]
-     */
+   	/**
+		* @deprecated
+		*
+		* Info: I have moved this to SettingsPanel class since panel can better incorporate
+		* this into itself. [Ivan]
+		*/
 		add_common_items: function(){
 			var first = this.panels.first();
 
@@ -6054,7 +6054,7 @@ var Settings_LightboxTrigger = SettingsItem.extend({
 				values: lightboxes
 			})
 		]);
-		
+
 		SettingsItem.prototype.initialize.call(this, this.options);
 	},
 	get_lightboxes: function () {
@@ -6067,7 +6067,7 @@ var Settings_LightboxTrigger = SettingsItem.extend({
 				lightboxes.push({label: model.attributes.title, value: model.attributes.name});
 		});
 
-		
+
 		return lightboxes;
 	},
 	get_values: function () {
@@ -6422,14 +6422,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		openTypesSelector: function(){
 			var selector = this.$('.upfront-field-select');
 			if(!selector.hasClass('open')) {
-				selector
-					.addClass('open')
-				;
-      } else {
-				selector
-					.removeClass('open')
-				;
-      }
+				selector.addClass('open');
+			}
+			else {
+					selector.removeClass('open');
+			}
 		},
 
 		selectType: function(e){
@@ -6860,7 +6857,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$fixed = $content.find('.upfront-region-bg-setting-fixed-region');
 			$fixed.hide();
 			$lightbox = $content.find('.upfront-region-bg-setting-lightbox-region');
-			
+
 			$lightbox.hide();
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
@@ -6882,7 +6879,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region_nav.hide();
 				$region_auto.hide();
 			}
-			
+
 			if(this.model.attributes.sub != 'lightbox') { /* dont need too many background options for the lightbox */
 				bg_type.render();
 				$content.find('.upfront-region-bg-setting-type').append(bg_type.$el);
@@ -7026,7 +7023,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				is_bottom = ( typeof bottom == 'number' ),
 				right = this.model.get_property_value_by_name('right'),
 				is_right = ( typeof right == 'number' ),*/
-				set_value = function (me) {	 
+				set_value = function (me) {
 					if(typeof(me) == 'undefined')
 						me = this;
 					var value = me.get_value(),
@@ -7088,7 +7085,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						change: set_value
 					})
 				};
-					
+
 				fields.overlay_color = new Upfront.Views.Editor.Field.Color({
 						model: this.model,
 						property: 'overlay_color',
@@ -7110,7 +7107,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							}
 						}
 					});
-				
+
 				fields.lightbox_color = new Upfront.Views.Editor.Field.Color({
 						model: this.model,
 						property: 'lightbox_color',
@@ -7131,13 +7128,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								set_value(fields.lightbox_color);
 							},
 						}
-					});			
+					});
 			_.each(fields, function(field){
 				field.render();
 				field.delegateEvents();
 				$content.append(field.$el);
 			});
-			
+
 		},
 		update_lightbox_overlay: function(color) {
 			var rgb = color.toRgb(),
@@ -9058,6 +9055,218 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
+	var LinkPanel = Backbone.View.extend({
+		tpl: _.template($(_Upfront_Templates.popup).find('#linkpanel-tpl').html()),
+		defaultLinkTypes: {
+			external: true,
+			entry: true,
+			anchor: true,
+			image: false,
+			lightbox: true
+		},
+		events: {
+			'click .js-ulinkpanel-ok': 'linkOk',
+			'change .js-ulinkpanel-type': 'changeType',
+			'click .js-ulinkpanel-input-entry': 'openPostSelector',
+			'click .js-show-lightbox-input': 'showLightboxInput',
+			'click .ulinkpanel-lightbox-cancel': 'hideLightboxInput',
+			'keydown .js-ulinkpanel-lightbox-input': 'checkCreateLightbox'
+		},
+
+		initialize: function(opts) {
+			var types = opts.linkTypes || {};
+			this.linkTypes = _.extend({}, this.defaultLinkTypes, types);
+			if(!this.model)
+				this.model = new Backbone.Model({type: false, url: ''});
+
+			this.theme = opts.theme || 'dark';
+
+			this.button = opts.button || false;
+		},
+
+		render: function() {
+			var tplData = {
+				link: this.model.toJSON(),
+				types: this.linkTypes,
+				theme: this.theme,
+				anchors: this.anchors || this.getAnchors(),
+				checked: 'checked="checked"',
+				lightboxes: this.getLightBoxes(),
+				button: this.button
+			};
+
+			this.setCurrentClass(this.model.get('type'));
+
+			this.$el
+				.html(this.tpl(tplData))
+			;
+
+			this.changeType();
+		},
+
+		linkOk: function(e) {
+			if(e) e.preventDefault();
+
+			var link = this.getCurrentValue();
+
+			this.model.set(link, {silent: true});
+
+			this.trigger('link:ok', link);
+		},
+
+		changeType: function(e){
+			var type = this.getCurrentLinkType();
+
+			console.log('change type ' + type);
+			this.$('.js-ulinkpanel-input-url').hide();
+			if(type)
+				this.$('.js-ulinkpanel-input-' + type).show();
+
+			this.setCurrentClass(type);
+
+			//Is it really an event or is it called by other function?
+			//Check the event object
+			if(e){
+				this.trigger('link:typechange', type);
+				if(type == 'entry')
+					this.openPostSelector();
+			}
+		},
+
+		getCurrentValue: function(){
+			var type = this.getCurrentLinkType(),
+				url = this.getTypeUrl(type)
+			;
+
+			return {type: type, url: url};
+		},
+
+		getCurrentLinkType: function() {
+			return this.$('.js-ulinkpanel-type:checked').val() || false;
+		},
+
+		getTypeUrl: function(type){
+			var url;
+			switch(type){
+				case 'external':
+				case 'entry':
+					// Check if the url is absolute or have a protocol.
+					url = this.$('#ulinkpanel-link-url').val();
+					return url.match(/https?:\/\//) || url.match(/\/\/:/) ? url : 'http://' + url;
+				case 'anchor':
+					return this.$('.ulinkpanel-anchor-selector').val();
+				case 'image':
+					return '#';
+				case 'lightbox':
+					url = this.$('.js-ulinkpanel-lightbox-select').val();
+					return url ? '#' + url : '';
+			}
+
+			//Not a type, return current url
+			return this.$('#ulinkpanel-link-url').val();
+		},
+
+		getAnchors: function(){
+			var regions = Upfront.Application.layout.get("regions"),
+				anchors = []
+			;
+			regions.each(function (r) {
+				r.get("modules").each(function (module) {
+					module.get("objects").each(function (object) {
+						var anchor = object.get_property_value_by_name("anchor");
+						if (anchor && anchor.length) anchors.push(anchor);
+					});
+				});
+			});
+
+			this.anchors = anchors;
+			return anchors;
+		},
+
+		openPostSelector: function(e){
+			if(e)
+				e.preventDefault();
+
+			var me = this,
+				selectorOptions = {
+					postTypes: this.postTypes()
+				}
+			;
+			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
+				var link = {
+					url: post.get('permalink'),
+					type: 'entry'
+				};
+				me.model.set(link);
+
+				me.trigger('link:postselected', link);
+			});
+		},
+
+		postTypes: function(){
+			var types = [];
+			_.each(Upfront.data.ugallery.postTypes, function(type){
+				if(type.name != 'attachment')
+					types.push({name: type.name, label: type.label});
+			});
+			return types;
+		},
+
+		showLightboxInput: function(e){
+			if(e)
+				e.preventDefault();
+
+			this.$('.js-ulinkpanel-lightbox-select').hide();
+			this.$('.js-ulinkpanel-new-lightbox').show().focus();
+
+			console.log(this.getLightBoxes());
+		},
+
+		hideLightboxInput: function(e) {
+			if(e)
+				e.preventDefault();
+
+			this.$('.js-ulinkpanel-lightbox-select').show();
+			this.$('.js-ulinkpanel-new-lightbox').hide();
+		},
+
+		getLightBoxes: function(){
+			var lightboxes = [],
+				regions = Upfront.Application.layout.get('regions')
+			;
+
+			_.each(regions.models, function(model) {
+				if(model.attributes.sub == 'lightbox')
+					lightboxes.push({id: model.get('name'), label: model.get('title')});
+			});
+
+			return lightboxes;
+		},
+
+		checkCreateLightbox: function(e){
+			if(e.which == 13){
+				e.preventDefault();
+				var name = $.trim(this.$('.js-ulinkpanel-lightbox-input').val());
+				if(!name)
+					return Upfront.Views.Editor.notify('Could not create a lightbox with an empty name.', 'error');
+
+				var safeName = Upfront.Application.LayoutEditor.createLightboxRegion(name);
+
+				//Set the name as the current value
+				this.$('.js-ulinkpanel-lightbox-select')
+					.append('<option value="' + safeName + '"></option>')
+					.val(safeName)
+				;
+
+				this.linkOk();
+			}
+		},
+
+		setCurrentClass: function(type) {
+			this.$el.attr('class', 'ulinkpanel ulinkpanel-' + this.theme + ' ulinkpanel-selected-' + type);
+		}
+	});
+
 	return {
 		"Editor": {
 			"Property": Property,
@@ -9105,9 +9314,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Panel": SidebarPanel,
 				"Element": DraggableElement
 			},
-      "Topbar": {
-        "Topbar": Topbar
-      },
+			"Topbar": {
+				"Topbar": Topbar
+			},
 			notify : function(message, type){
 				notifier.addMessage(message, type);
 			},
@@ -9124,7 +9333,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionPanels": RegionPanels,
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
-			"CSSEditor": CSSEditor
+			"CSSEditor": CSSEditor,
+			"LinkPanel": LinkPanel
 		},
     Mixins: {
       "Upfront_Scroll_Mixin": Upfront_Scroll_Mixin
