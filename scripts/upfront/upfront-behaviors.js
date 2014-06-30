@@ -1440,8 +1440,25 @@ var GridEditor = {
 			margin = me.$el.data('margin'),
 			col = me.col,
 			min_col = me.$el.hasClass('upfront-image_module') ? 1 : (col > ed.min_col ? ed.min_col : col),
-			row = me.row > ed.max_row ? ed.max_row : me.row,
-			areas = areas ? areas : ed.regions;
+			row = me.row > ed.max_row ? ed.max_row : me.row;
+
+		//check if there is a light box in active state
+		var lightbox = false;
+		var shadowregion;
+		_.each(ed.regions, function(region) {
+			if(region.$el.hasClass('upfront-region-side-lightbox') && region.$el.css('display') == 'block') {
+				console.log('found active lightbox');
+				lightbox = region;
+			}
+			if(region.$el.hasClass('upfront-region-shadow'))
+				shadowregion = region;
+				
+		});
+		
+		areas = areas ? areas : (lightbox ? [lightbox, shadowregion] : ed.regions);
+
+
+
 		ed.drops = [];
 
 		_.each(areas, function(area){

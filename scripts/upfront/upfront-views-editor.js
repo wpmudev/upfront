@@ -634,6 +634,13 @@ define([
 					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
 				$(this).prepend(template);
 			});
+			
+			$('.upfront-grid-layout, .upfront-region-side-lightbox .upfront-modules_container').each(function(){
+				var columns = grid.size,
+					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
+				$(this).prepend(template);
+			});			
+			
 			!Upfront.Application.get_gridstate() || this.show_grid();
 		}
 	});
