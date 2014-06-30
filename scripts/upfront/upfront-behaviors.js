@@ -116,7 +116,9 @@ var LayoutEditor = {
 						last_index = 0,
 						module_index = margin_top = margin_left = col = false,
 						line = line_col = wrapper_index = wrapper_col = 0,
-						current_wrapper_id, new_wrapper_id, new_wrapper;
+						current_wrapper_id, new_wrapper_id, new_wrapper,
+						group_wrapper_classes = [],
+						group_wrapper_col = 0;
 					$selected.each(function (i) {
 						var $node = $(this),
 							element_id = $node.attr("id"),
@@ -145,6 +147,7 @@ var LayoutEditor = {
 							if ( line_col + wrapper_col > max_col ){
 								is_next = false;
 								line_col = ( wrapper_col < max_col && wrapper_col > line_col ? wrapper_col : line_col );
+								group_wrapper_col = group_wrapper_col < line_col ? line_col : group_wrapper_col;
 							}
 							else {
 								line_col += wrapper_col;
@@ -167,6 +170,7 @@ var LayoutEditor = {
 						current_wrapper_id = wrapper_id;
 						last_index = index;
 					});
+					group_wrapper_col = group_wrapper_col < line_col ? line_col : group_wrapper_col;
 					margin_left = margin_left === false ? 0 : margin_left;
 					margin_top = margin_top === false ? 0 : margin_top;
 					col = col - margin_left;
@@ -204,7 +208,10 @@ var LayoutEditor = {
 						group_modules.add(module.model);
 					});
 					group_wrapper.set_property('wrapper_id', group_wrapper_id);
-					group_wrapper.set_property('class', modules[0].wrapper_class);
+					group_wrapper_classes.push(ed.grid.class + group_wrapper_col);
+					if ( modules[0].wrapper_class.match(/clr/) )
+						group_wrapper_classes.push('clr');
+					group_wrapper.set_property('class', group_wrapper_classes.join(' '));
 					region_wrappers.add(group_wrapper);
 					group.set_property('element_id', group_id);
 					group.set_property('wrapper_id', group_wrapper_id);
@@ -2836,6 +2843,7 @@ var GridEditor = {
 					Upfront.Events.trigger("entity:drag_stop", view, view.model);
 					if(move_region){
 						view.region = region;
+						view.region_view = Upfront.data.region_views[region.cid];
 						view.trigger('region:updated');
 					}
 					view.trigger("entity:drop", {col: drop_col, left: drop_left, top: drop_top}, view, view.model);

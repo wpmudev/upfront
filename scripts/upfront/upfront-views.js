@@ -609,7 +609,9 @@ define([
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					off = $el.offset(),
 					$prev;
-				$el.children().sort(Upfront.Util.sort_elements_cb).each(function(){
+				$el.children().sort(Upfront.Util.sort_elements_cb).filter(function(){
+					return $(this).children().size() > 0;
+				}).each(function(){
 					var order = $(this).data('breakpoint_order') || 0,
 						clear = $(this).data('breakpoint_clear'),
 						prev_off;
@@ -1388,8 +1390,27 @@ define([
 					index = region_modules.indexOf(this.model),
 					$next_wrap = this.$el.closest('.upfront-wrapper').next('.upfront-wrapper'),
 					modules_arr = modules.map(function(module){ return module; }),
-					wrappers_arr = wrappers.map(function(wrapper){ return wrapper; });
-				if ( $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ){
+					wrappers_arr = wrappers.map(function(wrapper){ return wrapper; }),
+					is_combine_wrap = false,
+					line_col = 0;
+				if ( $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) {
+					is_combine_wrap = true;
+					_.each(modules_arr, function(module, i){
+						var wrapper_id = module.get_wrapper_id(),
+							wrapper = wrappers.get_by_wrapper_id(wrapper_id),
+							wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
+							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class);
+						if ( line_col+wrapper_col <= col ){
+							if ( line_col > 0 )
+								is_combine_wrap = false;
+							line_col += wrapper_col;
+						}
+						else {
+							line_col = 0;
+						}
+					});
+				}
+				if ( is_combine_wrap ){
 					var new_wrapper = new Upfront.Models.Wrapper({}),
 						new_wrapper_id = Upfront.Util.get_unique_id("wrapper");
 					new_wrapper.set_property('wrapper_id', new_wrapper_id);
@@ -1421,6 +1442,7 @@ define([
 							wrapper_id = module.get_wrapper_id(),
 							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
 							wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
+							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
 							module_class = module.get_property_value_by_name('class'),
 							module_top = ed.get_class_num(module_class, ed.grid.top_margin_class),
 							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class);
@@ -1431,6 +1453,7 @@ define([
 						if ( wrapper_index == 1 || wrapper_class.match(/clr/) ){
 							if ( is_clr && wrapper_index == 1 )
 								wrapper.add_class('clr');
+							wrapper.replace_class(ed.grid.class + (wrapper_col+left));
 							module.replace_class(ed.grid.left_margin_class + (module_left+left));
 						}
 						if ( line == 1 && current_wrapper_id != wrapper_id )
