@@ -9,7 +9,8 @@ define([
 	"text!upfront/templates/sidebar_settings_background.html",
 	"text!upfront/templates/popup.html",
 	"text!upfront/templates/region_edit_panel.html",
-    "text!upfront/templates/sidebar_settings_theme_colors.html"
+    "text!upfront/templates/sidebar_settings_theme_colors.html",
+    "text!upfront/templates/color_picker.html"
 ], function () {
 	var _template_files = [
 		"text!upfront/templates/property.html",
@@ -21,7 +22,8 @@ define([
 		"text!upfront/templates/sidebar_settings_background.html",
 		"text!upfront/templates/popup.html",
 		"text!upfront/templates/region_edit_panel.html",
-        "text!upfront/templates/sidebar_settings_theme_colors.html"
+        "text!upfront/templates/sidebar_settings_theme_colors.html",
+        "text!upfront/templates/color_picker.html"
 	];
 
 	// Auto-assign the template contents to internal variable
@@ -3691,13 +3693,26 @@ define([
 			maxSelectionSize: 10,
 			preferredFormat: "hex",
 			showInput: true,
-			allowEmpty:true
+			allowEmpty:true,
+			appendTo : "parent"
+		},
+		events : {
+			'change .upfront_color_picker_rgba input' : 'rgba_sidebar_changed',
+			'click .upfront_color_picker_reset' : 'set_to_blank'
 		},
 		initialize: function(opts){
 			this.options = opts;
+			this.sidebar_template = _.template(_Upfront_Templates.color_picker);
 			var me = this,
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
                 ;
+            this.rgba = {
+            	r : 0,
+            	g : 0,
+            	b : 0,
+            	a : 0
+            };
+            this.spectrumOptions = spectrumOptions;    
 			spectrumOptions.move = function(color){
 				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
@@ -3705,10 +3720,9 @@ define([
 						'border-top-color': rgb,
 						'border-right-color': rgb
 					});
-
-					$(".sp-input").css({
-						borderColor : rgb
-					});
+					me.update_input_border_color(rgb);
+					me.rgba = _.extend(me.rgba, color.toRgb());
+					me.render_sidebar_rgba(me.rgba);
 				}
 				
 				if(me.options.spectrum && me.options.spectrum.move)
@@ -3721,7 +3735,11 @@ define([
 	                $('.sp-dragger').css({
 						'border-color': rgb
 					});
+
+					me.rgba = _.extend(me.rgba, color.toRgb());
+					me.render_sidebar_rgba(me.rgba);
 				}
+				me.spectrumOptions = spectrumOptions;
 				
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
@@ -3739,6 +3757,9 @@ define([
 
 			this.on('rendered', function(){
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
+				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
+				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
+
 			});
 
 		},
@@ -3751,6 +3772,46 @@ define([
 				'value': this.get_saved_value()
 			};
 			return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
+		},
+		update_input_border_color : function(rgb){
+			$(".sp-input").css({
+				borderColor : rgb
+			});
+		},
+		render_sidebar_rgba : function(rgba){
+			var self = this;
+			this.$(".color_picker_rgb_container").html(this.sidebar_template(rgba));
+			this.$(".upfront_color_picker_reset").on("click", function(e){
+				self.set_to_blank();
+			});
+		},
+		rgba_sidebar_changed : function(e){
+			var $el = $(e.target),
+				type = $el.data("type"),
+				val = parseFloat($el.val()),
+				color = this.$spectrum.spectrum("get"),
+				selection = {};
+				
+				selection[type] = val;
+				color = tinycolor(_.extend(color.toRgb(), selection));
+				// Set the new color
+				this.$spectrum.spectrum("set", color.toRgbString());
+				this.update_input_border_color( color.toRgbString() );
+				this.render_sidebar_rgba(  color.toRgb() );
+				// Trigger move event
+				this.options.spectrum.move(color);
+				
+		},
+		set_to_blank : function(){
+			var blank_color = 'rgba(0, 0, 0, 0)',
+				color = tinycolor(blank_color);
+			this.rgba = {r: 0, g: 0, b:0, a: 0};
+			this.$spectrum.spectrum("set", blank_color );
+			this.update_input_border_color( blank_color );
+			this.render_sidebar_rgba(  this.rgba );
+			
+			// Trigger move event
+			this.options.spectrum.move( color );
 		}
 
 	});
