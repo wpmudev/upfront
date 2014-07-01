@@ -63,6 +63,14 @@ function init_map ($el) {
 			info.open(map, mrk);
 		}
 	});
+	// Re-render the map when needed
+	$(document).on('upfront-lightbox-open', function () {
+		setTimeout(function () {
+			var center = map.getCenter();
+			google.maps.event.trigger(map, 'resize');
+			map.setCenter(center);
+		}, 300);
+	});
 }
 
 

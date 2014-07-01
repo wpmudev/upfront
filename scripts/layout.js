@@ -168,6 +168,7 @@ jQuery(document).ready(function($){
 					//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
 					lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
 					lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
+					$(document).trigger("upfront-lightbox-open");
 					console.log(lightbox.css('width'));
 					e.preventDefault();
 					function lightboxhide() {
