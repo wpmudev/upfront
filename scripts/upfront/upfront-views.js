@@ -2392,12 +2392,19 @@ define([
 			},
 			on_delete_click: function (e) {
 				var main, main_view;
-				e.preventDefault();
+	
+				if(typeof(e) != 'undefined')
+					e.preventDefault();
+
+					
 				if ( confirm("Are you sure you want to delete this section?") ){
 					// if ( this.model.get('container') ){
 						// main = this.model.collection.get_by_name(this.model.get('container'));
 						// main_view = Upfront.data.region_views[main.cid];
 					// }
+					if(this.model.get('type') == 'lightbox')
+						this.hide();
+						
 					this.model.collection.remove(this.model);
 					// if ( main_view ){
 						// Upfront.Events.trigger('command:region:edit_toggle', true);
@@ -2406,7 +2413,6 @@ define([
 				}
 			},
 			on_settings_click: function (e) {
-				console.log('yes this was clicked');
 				if(e)
 					e.preventDefault();
 				var me = this,
@@ -2613,15 +2619,15 @@ define([
 				this.constructor.__super__.render.call(this);
 				this.hide();
 
-					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$ok = $('<div class="upfront-region-finish-edit-lightbox upfront-ui">Finish Editing</div>');
+					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Edit Lightbox"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
+					//$ok = $('<div class="upfront-region-finish-edit-lightbox upfront-ui">Finish Editing</div>');
 
 
 				this.$el.prepend(this.$bg);
 				this.$close.appendTo(this.$el);
 
 				$edit.appendTo(this.$el);
-				$ok.appendTo(this.$el);
+				//$ok.appendTo(this.$el);
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
@@ -2696,6 +2702,12 @@ define([
 					this.$el.find('.upfront-region-edit-trigger-small').trigger('click');
 				}*/
 				this.$el.removeClass('init_state');
+				
+				if(this.model.get_property_value_by_name('delete')) {
+					this.model.set_property('delete', false);
+					this.on_delete_click();
+				}
+				
 
 			},
 			update_region_position: function () {
@@ -2748,9 +2760,12 @@ define([
 				this.$el.append(this.edit_position.el);
 			},
 			trigger_edit: function (e) {
+				this.on_settings_click();
+				/*
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.trigger_edit_lightbox();
 				e.stopPropagation();
+				*/
 			},
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);

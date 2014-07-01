@@ -7135,6 +7135,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$content.append(field.$el);
 			});
 
+			this.model.set_property('delete', false);
+			var me = this;
+			$content.on('click', 'a.upfront-entity-delete_trigger', function() {
+				me.model.set_property('delete', true);
+				me.close();
+			});
+
 		},
 		update_lightbox_overlay: function(color) {
 			var rgb = color.toRgb(),
