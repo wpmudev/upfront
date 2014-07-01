@@ -1165,7 +1165,7 @@ var GridEditor = {
 			model = this.get_el_model($el),
 			model_breakpoint;
 		if ( model && breakpoint && !breakpoint.default ){
-			model_breakpoint = model.get_property_value_by_name('breakpoint');
+			model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
 			model_breakpoint[breakpoint.id] = _.extend(model_breakpoint[breakpoint.id] || {}, data);
 			model_breakpoint[breakpoint.id].edited = true;
 			model.set_property('breakpoint', model_breakpoint);
@@ -1314,7 +1314,8 @@ var GridEditor = {
 			ed.update_wrappers(region_model);
 		});
 		_.each(wraps, function(wrap){
-			if ( wrap.outer_grid.left == 1 && !wrap.$el.hasClass('clr') )
+			var region = ed.get_region(wrap.$el.closest('.upfront-region'));
+			if ( wrap.outer_grid.left == region.grid.left && !wrap.$el.hasClass('clr') )
 				wrap.$el.addClass('clr');
 		});
 	},
@@ -1445,11 +1446,12 @@ var GridEditor = {
 		//check if there is a light box in active state
 		var lightbox = false;
 		var shadowregion;
+		ed.lightbox_cols = false;
 		_.each(ed.regions, function(region) {
 			if(region.$el.hasClass('upfront-region-side-lightbox') && region.$el.css('display') == 'block') {
 //				console.log('found active lightbox');
 				lightbox = region;
-				lightbox_cols = region.col;
+				ed.lightbox_cols = region.col;
 			}
 			if(region.$el.hasClass('upfront-region-shadow'))
 				shadowregion = region;
@@ -1518,7 +1520,7 @@ var GridEditor = {
 					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
 					( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
 					( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ) ||
-					( breakpoint && !breakpoint.default && is_wrap_me )
+					( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(module_selector).size() > 1 )
 				){
 					var current_el_top = wrap.grid.top;
 					$els = $wrap.find(module_selector).sort(Upfront.Util.sort_elements_cb);
@@ -1780,9 +1782,12 @@ var GridEditor = {
 					wrap_model.remove_class('clr');
 			}
 			else {
-				wrap_breakpoint = wrap_model.get_property_value_by_name('breakpoint');
-				breakpoint_data = wrap_breakpoint[breakpoint.id] || {};
-				breakpoint_data.col = wrap_col;
+				wrap_breakpoint = Upfront.Util.clone(wrap_model.get_property_value_by_name('breakpoint') || {});
+				if ( !_.isObject(wrap_breakpoint[breakpoint.id]) )
+					wrap_breakpoint[breakpoint.id] = {};
+				wrap_breakpoint[breakpoint.id].col = wrap_col;
+				if ( clear )
+					wrap_breakpoint[breakpoint.id].clear = (clear == 'clear');
 				wrap_model.set_property('breakpoint', wrap_breakpoint);
 			}
 			$wrap.stop().css({
@@ -1795,6 +1800,7 @@ var GridEditor = {
 			if ( $('#'+wrap.get_wrapper_id()).size() == 0 )
 				wraps.remove(wrap);
 		});
+		Upfront.Events.trigger("entity:wrappers:update", parent_model);
 		this.time_end('fn update_wrappers');
 	},
 
@@ -1979,8 +1985,6 @@ var GridEditor = {
 						ed.adjust_affected_bottom(wrap, aff_els.bottom, [me], me.grid.top+rsz_row-1, true);
 				}
 
-				ed.update_wrappers(region);
-
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				$me.css({
 					width: '',
@@ -2018,8 +2022,10 @@ var GridEditor = {
 					}
 				}
 				else {
-					model_breakpoint = model.get_property_value_by_name('breakpoint');
-					breakpoint_data = model_breakpoint[breakpoint.id] || {};
+					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
+					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+						model_breakpoint[breakpoint.id] = {};
+					breakpoint_data = model_breakpoint[breakpoint.id];
 					breakpoint_data.edited = true;
 					breakpoint_data.row = rsz_row;
 					breakpoint_data.col = rsz_col;
@@ -2030,19 +2036,21 @@ var GridEditor = {
 					else {
 						ed.update_model_margin_classes($region.find('.upfront-module, .upfront-module-group').not($me));
 					}
-					model.set_property('breakpoint', model_breakpoint, true);
-					view.update_position();
+					model.set_property('breakpoint', model_breakpoint);
 					// Also resize containing object if it's only one object
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
-							var obj_breakpoint = object.get_property_value_by_name('breakpoint'),
-								obj_data = obj_breakpoint[breakpoint.id] || {};
-							obj_data.row = rsz_row - Upfront.Util.height_to_row(ed.grid.column_padding*2);
-							object.set_property('breakpoint', obj_breakpoint, true);
+							var obj_breakpoint = Upfront.Util.clone(object.get_property_value_by_name('breakpoint') || {});
+							if ( !_.isObject(obj_breakpoint[breakpoint.id]) )
+								obj_breakpoint[breakpoint.id] = {};
+							obj_breakpoint[breakpoint.id].row = rsz_row - Upfront.Util.height_to_row(ed.grid.column_padding*2);
+							object.set_property('breakpoint', obj_breakpoint);
 						});
 					}
 				}
+
+				ed.update_wrappers(region);
 
 				view.trigger('entity:resize', {row: rsz_row, col: rsz_col}, view, view.model);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
@@ -2531,7 +2539,7 @@ var GridEditor = {
 					$('#upfront-drop-preview').css({
 						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
 						left: (ed.drop.left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left)//Lightbox region having odd number of cols requires to offset the preview by half of the column width
-						+((typeof(lightbox_cols) != 'undefined' && lightbox_cols)?(lightbox_cols%2)*ed.col_size/2:0), 
+						+(ed.lightbox_cols?(ed.lightbox_cols%2)*ed.col_size/2:0), 
 						width: drop_col*ed.col_size,
 						height: height
 					});
@@ -2659,7 +2667,8 @@ var GridEditor = {
 					else { // Moved
 						// normalize clear
 						_.each(ed.wraps, function(each){
-							each.$el.data('clear', (each.$el.hasClass('clr') ? 'clear' : 'none'));
+							var breakpoint_clear = ( !breakpoint || breakpoint.default ) ? each.$el.hasClass('clr') : each.$el.data('breakpoint_clear');
+							each.$el.data('clear', breakpoint_clear ? 'clear' : 'none');
 						});
 						if ( wrap && !ed.drop.is_switch )
 							ed.adjust_affected_right(wrap, aff_els.right, [me], wrap.grid.left-1);
@@ -2675,8 +2684,9 @@ var GridEditor = {
 										return ( me.$el.get(0) != each.$el.get(0) && each.outer_grid.left == nx_wrap.grid.left );
 									}),
 									need_adj_min = ed.get_wrap_el_min(nx_wrap),
-									nx_wrap_aff = ed.get_affected_wrapper_els(nx_wrap, ed.wraps, [], true);
-								if ( ! $nx_wrap.hasClass('clr') || ed.drop.is_clear ){
+									nx_wrap_aff = ed.get_affected_wrapper_els(nx_wrap, ed.wraps, [], true),
+									nx_wrap_clr = ( !breakpoint || breakpoint.default ) ? $nx_wrap.hasClass('clr') : $nx_wrap.data('breakpoint_clear');
+								if ( ! nx_wrap_clr || ed.drop.is_clear ){
 									ed.adjust_els_right(need_adj, nx_wrap.grid.left+drop_col+drop_left-1);
 									$nx_wrap.data('clear', 'none');
 								}
@@ -2740,12 +2750,11 @@ var GridEditor = {
 					$('#upfront-drop-preview').remove();
 					$('#upfront-compare-area').remove();
 
-					ed.update_class($me, ed.grid.class, drop_col);
+					/*ed.update_class($me, ed.grid.class, drop_col);
 					( is_object ? ed.containment.$el.find('.upfront-object') : $container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).each(function(){
 						ed.update_margin_classes($(this));
-					});
-
-					ed.update_wrappers( is_parent_group ? view.group_view.model : region );
+					});*/
+					
 					$me.css({
 						'position': '',
 						'top': '',
@@ -2757,6 +2766,8 @@ var GridEditor = {
 					// Update model value
 					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).not($me) );
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
+
+					ed.update_wrappers( is_parent_group ? view.group_view.model : region );
 					if ( !breakpoint || breakpoint.default ){
 						if ( wrapper_id )
 							model.set_property('wrapper_id', wrapper_id, true);
@@ -2797,7 +2808,7 @@ var GridEditor = {
 									orders.push({
 										$el: $(this),
 										order: index+1,
-										clear: true
+										clear: ( ed.drop.type != 'side-before' )
 									});
 								}
 								else if ( ed.drop.type == 'side-after' && ed.drop.insert[0] == 'after' ){
@@ -2805,7 +2816,7 @@ var GridEditor = {
 									orders.push({
 										$el: $(this),
 										order: index,
-										clear: ( each_el.outer_grid.left == 1 )
+										clear: ( each_el.outer_grid.left == region_el.grid.left )
 									});
 								}
 								index++;
@@ -2814,7 +2825,7 @@ var GridEditor = {
 								orders.push({
 									$el: $(this),
 									order: index,
-									clear: ( each_el.outer_grid.left == 1 )
+									clear: ( each_el.outer_grid.left == region_el.grid.left )
 								});
 							}
 							index++;
@@ -2829,17 +2840,16 @@ var GridEditor = {
 								each_el.order = insert_index !== false ? insert_index : each_el.order;
 								each_el.clear = ed.drop.is_clear;
 							}
-							model_breakpoint = each_model.get_property_value_by_name('breakpoint');
-							model_breakpoint_data = model_breakpoint[breakpoint.id] || {};
+							model_breakpoint = Upfront.Util.clone(each_model.get_property_value_by_name('breakpoint') || {});
+							if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+								model_breakpoint[breakpoint.id] = {};
+							model_breakpoint_data = model_breakpoint[breakpoint.id];
 							model_breakpoint_data.order = each_el.order;
 							if ( is_drop_wrapper )
 								model_breakpoint_data.clear = each_el.clear;
 							each_model.set_property('breakpoint', model_breakpoint);
 							each_view = is_drop_wrapper ? Upfront.data.wrapper_views[each_model.cid] : Upfront.data.module_views[each_model.cid];
-							if ( each_view )
-								each_view.update_position();
 						});
-						view.update_position();
 					}
 
 					// Add drop animation
@@ -3034,8 +3044,8 @@ var GridEditor = {
 				col: module_col,
 				left: module_left,
 				wrapper: wrapper,
-				breakpoint: ( data || {} ),
-				wrapper_breakpoint: ( wrapper_data || {} )
+				breakpoint: Upfront.Util.clone( data || {} ),
+				wrapper_breakpoint: Upfront.Util.clone( wrapper_data || {} )
 			});
 		});
 		_.each(lines, function(line_modules){
@@ -3046,16 +3056,20 @@ var GridEditor = {
 					data.breakpoint[breakpoint_id] = {};
 				if ( typeof data.wrapper_breakpoint[breakpoint_id] != 'object' )
 					data.wrapper_breakpoint[breakpoint_id] = {};
-				if ( data.breakpoint[breakpoint_id].edited )
-					return;
-				if ( index === 0 ){ // first of line, try to center
-					new_left = Math.floor((parent_col-(line_col-data.left))/2);
-					new_col = ( line_modules.length == 1 ) ? parent_col-(new_left*2) : data.col; // only resize if it's the only element
-					data.breakpoint[breakpoint_id].left = new_left;
-					data.breakpoint[breakpoint_id].col = new_col;
-					data.wrapper_breakpoint[breakpoint_id].col = new_col+new_left;
+				if ( !data.breakpoint[breakpoint_id].edited ){
+					if ( index === 0 ){ // first of line, try to center
+						new_left = Math.floor((parent_col-(line_col-data.left))/2);
+						new_col = ( line_modules.length == 1 ) ? parent_col-(new_left*2) : data.col; // only resize if it's the only element
+						data.breakpoint[breakpoint_id].left = new_left;
+						data.breakpoint[breakpoint_id].col = new_col;
+					}
+					data.module.set_property('breakpoint', data.breakpoint);
 				}
-				data.module.set_property('breakpoint', data.breakpoint);
+				else {
+					new_col = typeof data.breakpoint[breakpoint_id].col == 'number' ? data.breakpoint[breakpoint_id].col : data.col;
+					new_left = typeof data.breakpoint[breakpoint_id].left == 'number' ? data.breakpoint[breakpoint_id].left : data.left;
+				}
+				data.wrapper_breakpoint[breakpoint_id].col = new_col+new_left;
 				data.wrapper.set_property('breakpoint', data.wrapper_breakpoint);
 			});
 		});

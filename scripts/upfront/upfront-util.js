@@ -44,6 +44,13 @@ define(function() {
 	dbg: function () {
 	  Upfront.Util.log(JSON.stringify(arguments[0]));
 	},
+	
+	/**
+	 * Perform deep copy of an object 
+	 */
+	clone: function (obj) {
+		return jQuery.extend(true, {}, obj);
+	},
 
 	post: function (data, data_type) {
 	  var request = (_.isObject(data) && data.action)
