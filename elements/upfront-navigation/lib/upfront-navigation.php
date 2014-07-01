@@ -45,9 +45,9 @@ class Upfront_NavigationView extends Upfront_Object {
 
     // Inject style dependencies
     public static function add_public_dependencies () {
-        if(is_user_logged_in()):
+        if(Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             wp_enqueue_script(array('jquery-ui-sortable'));
-        endif;
+        }
     }
 
     public static function add_js_defaults($data){
