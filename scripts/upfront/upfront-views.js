@@ -788,7 +788,7 @@ define([
 				defaultmenulist.render();
 				defaultmenulist.parent_view = me;
 				me.$el.append(defaultmenulist.el);
-
+				
 				this.$el
 				.css({
 					"position": "absolute",
@@ -796,7 +796,7 @@ define([
 				})
 				.offset({
 					"top":me.for_view.event.pageY,
-					"left": me.for_view.event.pageX
+					"left": me.for_view.event.pageX-(($(document).width()-me.for_view.event.pageX <= this.$el.width() )?this.$el.width():0)
 				})
 				.addClass('uf-context-menu')
 				;
