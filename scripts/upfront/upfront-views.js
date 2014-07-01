@@ -2663,7 +2663,7 @@ define([
 
 					if(this.model.get_property_value_by_name('add_close_text') == 'yes') {
 
-						this.$close.html('<h3 class="upfront-selector-title">'+this.model.get_property_value_by_name('close_text')+'</h3>');
+						this.$close.html('<h3>'+this.model.get_property_value_by_name('close_text')+'</h3>');
 						if(this.model.get_property_value_by_name('show_close') == 'yes')
 							this.$close.children('h3').css('margin-right', '40px');
 					}

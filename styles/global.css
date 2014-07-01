@@ -257,7 +257,12 @@ div.close_lightbox {
 }
 div.close_lightbox h3 {
 	cursor:pointer;
-	color:#	
+	text-transform:none;
+	color:#cee1f2;
+	font-size: 26px;
+	line-height: 40px;
+	font-weight: normal;
+	margin: 0;
 }
 .upfront-region-container-lightbox {
   position:fixed;
@@ -286,4 +291,14 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 	top: 12px;
 	right: 12px;
 	cursor: pointer;	
+}
+.upfront-ui .upfront-icon-popup-close:before {
+	content: " ";
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	background-repeat: no-repeat;
+	float: left;
+	display: block;
+	width: 17px;
+	height: 17px;
+	background-position: -1080px -85px;
 }

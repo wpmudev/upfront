@@ -691,7 +691,7 @@ var LayoutEditor = {
 
 
 var GridEditor = {
-
+	lightbox_cols: false,
 	main: {$el: null, top: 0, left: 0, right: 0},
 	grid_layout: {top: 0, left: 0, right: 0},
 	containment: {$el: null, top: 0, left: 0, right: 0, col: 0, grid: {top: 0, left: 0, right: 0}},
@@ -1447,8 +1447,9 @@ var GridEditor = {
 		var shadowregion;
 		_.each(ed.regions, function(region) {
 			if(region.$el.hasClass('upfront-region-side-lightbox') && region.$el.css('display') == 'block') {
-				console.log('found active lightbox');
+//				console.log('found active lightbox');
 				lightbox = region;
+				lightbox_cols = region.col;
 			}
 			if(region.$el.hasClass('upfront-region-shadow'))
 				shadowregion = region;
@@ -2190,8 +2191,6 @@ var GridEditor = {
 		}
 
 		function select_drop (drop) {
-			if(typeof(drop) == 'undefined')
-				return;
 			ed.time_start('fn select_drop');
 			if ( drop.is_use )
 				return;
@@ -2531,7 +2530,8 @@ var GridEditor = {
 
 					$('#upfront-drop-preview').css({
 						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
-						left: (ed.drop.left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left),
+						left: (ed.drop.left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left)//Lightbox region having odd number of cols requires to offset the preview by half of the column width
+						+(lightbox_cols?(lightbox_cols%2)*ed.col_size/2:0), 
 						width: drop_col*ed.col_size,
 						height: height
 					});

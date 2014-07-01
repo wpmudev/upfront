@@ -553,6 +553,7 @@ class Upfront_Region extends Upfront_Container {
 
 		if(	$this->_data['type'] == 'lightbox')
 			$attr .= ' data-overlay = "'.$this->_get_property('overlay_color').'"';
+			$attr .= ' data-col = "'.$this->_get_property('col').'"';
 			$attr .= ' data-closeicon = "'.(is_array($this->_get_property('show_close'))?array_pop($this->_get_property('show_close')):$this->_get_property('show_close')).'"';
 			$attr .= ' data-clickout = "'.(is_array($this->_get_property('click_out_close'))?array_pop($this->_get_property('click_out_close')):$this->_get_property('click_out_close')).'"';
 			$addclosetext = is_array($this->_get_property('add_close_text'))?array_pop($this->_get_property('add_close_text')):$this->_get_property('add_close_text');

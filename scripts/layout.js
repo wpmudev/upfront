@@ -132,45 +132,50 @@ jQuery(document).ready(function($){
 
 	$(document).on('click', 'a', function(e) {
 		//If we are in the editor the lightbox is open using the region.
-		if(Upfront.Views)
+		//if(typeof(Upfront) != 'undefined' && Upfront.Views)
+			//return;
+			console.log($('div#sidebar-ui').length);
+		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block')
 			return;
-      var url = $(this).attr('href');
-		if(url.indexOf('#') >=0) {
-		  var tempurl = url.split('#');
-		  if(tempurl[1].trim() != '')
-		  	if(tempurl[1].trim().indexOf('ltb-') == 0) {
-				var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
-				overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
-
-				if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
-					lightbox.prepend(close);
-
-					if(lightbox.data('addclosetext') == 'yes') {
-						close.append($('<h3 class="upfront-selector-title">'+lightbox.data('closetext')+'</h3>'));
+		  var url = $(this).attr('href');
+			if(url.indexOf('#') >=0) {
+			  var tempurl = url.split('#');
+			  if(tempurl[1].trim() != '')
+				if(tempurl[1].trim().indexOf('ltb-') == 0) {
+					var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
+					overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
+	
+					if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
+						lightbox.prepend(close);
+	
+						if(lightbox.data('addclosetext') == 'yes') {
+							close.append($('<h3>'+lightbox.data('closetext')+'</h3>'));
+							if(lightbox.data('closeicon') == 'yes')
+								close.children('h3').css('margin-right', '40px');
+						}
 						if(lightbox.data('closeicon') == 'yes')
-							close.children('h3').css('margin-right', '40px');
+							close.append(close_icon);
+	
+						close.bind('click', function() {
+							lightboxhide();
+						});
 					}
-					if(lightbox.data('closeicon') == 'yes')
-						close.append(close_icon);
-
-					close.bind('click', function() {
-						lightboxhide();
-					});
-				}
-
-				if(lightbox.data('clickout') == 'yes')
-					overlay.bind('click', function() {
-						lightboxhide();
-					});
-
-				lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
-				e.preventDefault();
-				function lightboxhide() {
-					close.html('').remove()
-					overlay.remove();
-					lightbox.hide();
+	
+					if(lightbox.data('clickout') == 'yes')
+						overlay.bind('click', function() {
+							lightboxhide();
+						});
+					//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
+					lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
+					lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
+					console.log(lightbox.css('width'));
+					e.preventDefault();
+					function lightboxhide() {
+						close.html('').remove()
+						overlay.remove();
+						lightbox.hide();
+					}
 				}
 			}
-		}
-	});
+		});
 });
