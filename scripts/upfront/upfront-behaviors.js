@@ -3060,9 +3060,13 @@ var GridEditor = {
 					if ( index === 0 ){ // first of line, try to center
 						new_left = Math.floor((parent_col-(line_col-data.left))/2);
 						new_col = ( line_modules.length == 1 ) ? parent_col-(new_left*2) : data.col; // only resize if it's the only element
-						data.breakpoint[breakpoint_id].left = new_left;
-						data.breakpoint[breakpoint_id].col = new_col;
 					}
+					else {
+						new_left = data.left;
+						new_col = data.col;
+					}
+					data.breakpoint[breakpoint_id].left = new_left;
+					data.breakpoint[breakpoint_id].col = new_col;
 					data.module.set_property('breakpoint', data.breakpoint);
 				}
 				else {
