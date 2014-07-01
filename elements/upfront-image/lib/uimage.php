@@ -133,9 +133,13 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$me->_add_hooks();
 	}
 	private function _add_hooks() {
-		add_action('wp_ajax_upfront-media-image_sizes', array($this, "get_image_sizes"));
-		add_action('wp_ajax_upfront-media-image-create-size', array($this, "create_image_size"));
-		add_action('wp_ajax_upfront-media-save-images', array($this, "save_resizing"));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront-media-image_sizes', array($this, "get_image_sizes"));
+			upfront_add_ajax('upfront-media-image-create-size', array($this, "create_image_size"));
+		}
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+			upfront_add_ajax('upfront-media-save-images', array($this, "save_resizing"));
+		}
 	}
 
 	function create_image_size(){
@@ -153,7 +157,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				continue;
 				//return $this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
 
-			if(!current_user_can('edit_post', $imageData['id']) ){
+			//if(!current_user_can('edit_post', $imageData['id']) ){
+			if (!Upfront_Permissions::current(Upfront_Permissions::RESIZE, $imageData['id'])) {
 				$images[$imageData['id']] = array('error' => true, 'msg' => 'Not allowed');
 				continue;
 				//wp_die( -1 );

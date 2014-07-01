@@ -6,6 +6,7 @@ class Upfront_Permissions {
 	const EDIT = 'edit_posts';
 	const EMBED = 'embed_stuff';
 	const UPLOAD = 'upload_stuff';
+	const RESIZE = 'resize_media';
 	const SAVE = 'save_changes';
 
 	const DEFAULT_LEVEL = 'save_changes';
@@ -32,6 +33,7 @@ class Upfront_Permissions {
 		$this->_levels_map = apply_filters('upfront-access-permissions_map', array(
 			self::BOOT => 'edit_posts',
 			self::EDIT => 'edit_posts',
+			self::RESIZE => 'edit_post',
 			self::EMBED => 'edit_posts',
 			self::UPLOAD => 'upload_files',
 			self::SAVE => 'edit_theme_options',
@@ -51,7 +53,7 @@ class Upfront_Permissions {
 		self::$_me = new self;
 	}
 
-	private function _current_user_can ($level) {
+	private function _current_user_can ($level, $arg=false) {
 		$level = in_array($level, array_keys($this->_levels_map)) && !empty($this->_levels_map[$level])
 			? $this->_levels_map[$level]
 			: $this->_levels_map[self::DEFAULT_LEVEL]
@@ -61,6 +63,9 @@ class Upfront_Permissions {
 		// Allow anonymous boot
 		if (defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT && self::ANONYMOUS === $level) return true;
 
-		return current_user_can($level);
+		return !empty($arg)
+			? current_user_can($level, $arg)
+			: current_user_can($level)
+		;
 	}
 }
