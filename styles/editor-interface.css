@@ -251,16 +251,14 @@
 	overflow: hidden;
 }
 #sidebar-ui .command-logo {
-	padding: 18px 15px;
+	padding: 10px 15px 9px;
 	float: left;
 }
 #sidebar-ui .upfront-logo {
 	margin: 0;
 }
 #sidebar-ui .command-exit {
-	width: 68px;
-	height: 68px;
-	padding: 22px;
+	padding: 14px 13px 13px 11px;
 	background: #233140;
 	border-left: 1px solid #1a2d40;
 	float: right;
@@ -336,17 +334,20 @@
 	vertical-align: top;
 }
 #sidebar-ui .sidebar-commands-primary {
-	padding: 20px 15px 0;
+	padding: 10px 15px 0;
 	overflow: hidden;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page,
 #sidebar-ui .sidebar-commands-primary .command-new-post,
 #sidebar-ui .sidebar-commands-primary .command-new-layout{
-	height: 40px;
-	line-height: 24px;
-	padding: 7px 9px 0 9px;
-	margin: 0 0 10px;
+	line-height: 34px;
+	padding: 0 10px;
 	border: 2px solid #25394d;
+	font-size: 15px;
+	height: 36px;
+}
+#sidebar-ui .sidebar-commands-primary .command-new-layout{
+	height: 40px;
 }
 .upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-page,
 .upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-post,
@@ -366,20 +367,32 @@
 	border-color: #1fcd8f;
 	color: #cbe5ff;
 }
-#sidebar-ui .sidebar-commands-primary .command-popup-list,
-#sidebar-ui .sidebar-commands-primary .command-browse-layout {
+#sidebar-ui .sidebar-commands-primary .command-popup-list {
 	display: block;
-	font-size: 15px;
+	font-size: 11px;
 	color: #1fcc8f;
 	text-decoration: underline;
 	margin: 0 0 20px;
 }
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
 	clear: both;
+	padding-top: 10px;
+	margin-bottom: 4px;
 }
 #sidebar-ui .sidebar-commands-primary .command-browse-layout {
-	margin: 8px 0 28px 138px;
-	white-space: nowrap;
+	line-height: 34px;
+	padding: 0 10px;
+	border: 2px solid #25394d;
+	font-size: 15px;
+	height: 40px;
+	float: right;
+}
+#sidebar-ui .upfront-icon-browse-layouts:before {
+	background-position: -520px -93px;
+	width: 14px;
+	height: 13px;
+	margin-right: 6px;
+	margin-top: 11px;
 }
 #sidebar-ui .sidebar-commands-primary .command-toggle-mode {
 	margin: -23px -15px 0 0;
@@ -396,8 +409,9 @@
 	padding: 4px;
 }
 #sidebar-ui .sidebar-profile {
-	padding: 20px 15px 0;
-	font: 13px/16px Verdana, sans-serif;
+	padding: 9px 15px 0;
+	font: 11px/11px Verdana, sans-serif;
+	overflow: hidden; /* reset float */
 }
 #sidebar-ui .sidebar-profile-avatar {
 	float: left;
@@ -408,8 +422,11 @@
 	display: block;
 }
 #sidebar-ui .sidebar-profile-detail {
-	margin: 0 0 0 45px;
-	max-width: 135px;
+	margin: 0 0 0 10px;
+	width: 110px;
+	font-size: 11px;
+	line-height: 11px;
+	float: left;
 }
 #sidebar-ui .sidebar-profile-name,
 #sidebar-ui .sidebar-profile-role {
@@ -420,26 +437,26 @@
 }
 #sidebar-ui .sidebar-profile-name {
 	color: #dae6f2;
+	margin-top: 5px;
 }
 #sidebar-ui .sidebar-profile-role {
 	color: #7c9dbf;
+	margin-top: 3px;
 }
 #sidebar-ui .sidebar-profile-edit {
-	float: right;
-	margin: -27px 0 0;
-	font-size: 11px;
-	line-height: 24px;
-	text-align: right;
+	float: left;
+	margin: 0;
+	padding-top: 19px;
+	margin-left: 6px;
 }
 .upfront-edit-content #sidebar-ui .sidebar-profile-edit {
 	display: none;
 }
 #sidebar-ui .sidebar-profile-edit a {
-	margin: 0;
+	margin: 0 0 0 2px;
 	text-decoration: underline;
 }
 #sidebar-ui .sidebar-profile-edit .upfront-icon:before {
-	float: right;
 	margin: 0;
 	padding: 0 0 0 10px;
 }
@@ -455,18 +472,35 @@
 }
 #sidebar-ui .sidebar-commands-control .command-undo,
 #sidebar-ui .sidebar-commands-control .command-redo {
-	padding: 12px 0 9px;
+	padding: 4px 0 9px;
 	line-height: 18px;
+	margin-bottom: 0;
+	font-size: 14px;
+}
+#sidebar-ui .sidebar-commands-control .command-redo {
+	margin-left: 8px;
 }
 #sidebar-ui .sidebar-commands-control .command-save {
 	background: #1fcd8f;
 	-moz-box-shadow: 0 1px 0 #192d3f;
 	-webkit-box-shadow: 0 1px 0 #192d3f;
 	box-shadow: 0 1px 0 #192d3f;
-	padding: 8px 30px 0 20px;
 	color: #f1f8ff;
 	font-size: 18px;
 	float: right;
+	margin: 0;
+	position: absolute;
+	top: 613px;
+	right: 15px;
+	padding: 8px 20px 0 10px;
+	line-height: 22px;
+}
+#sidebar-ui .sidebar-commands-control .command-start-responsive {
+	position: absolute;
+	top: 611px;
+	left: 13px;
+	margin: 0;
+	font-size: 13px;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
 	border-color: #1fcd8f;
@@ -476,15 +510,34 @@
 }
 #sidebar-ui .sidebar-commands-control .command-export {
 	border: 2px solid #263a4d;
-	padding: 6px 15px 0;
+	padding: 6px 10px 0 10px;
+	position: absolute;
+	top: 613px;
+	left: 15px;
+	margin: 0;
+}
+#sidebar-ui .upfront-icon-export:before {
+	background-position: -520px -93px;
+	width: 19px;
+	height: 19px;
+	margin-right: 7px;
+	margin-top: 3px;
+}
+#sidebar-ui .sidebar-commands-control .command-create-responsive-layouts {
+	border: 2px solid #263a4d;
+	padding: 0 10px 0 8px;
+	line-height: 34px;
+	white-space: nowrap;
+}
+#sidebar-ui .sidebar-commands-control .command-create-responsive-layouts:before {
+	margin-top: 6px;
 }
 #sidebar-ui .sidebar-commands-control .command-grid {
-	float: right;
 	border: 2px solid #263a4d;
 	width: 24px;
 	height: 24px;
 	padding: 0;
-	margin: 8px 12px 8px 0;
+	margin: 1px 12px 8px 77px;
 }
 #sidebar-ui .sidebar-panels {
 	color: #395773;
@@ -496,41 +549,56 @@
 }
 
 #sidebar-ui .sidebar-panel-title {
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: normal;
-	line-height: 27px;
-	height: 45px;
+	line-height: 33px;
+	height: 39px;
 	background: #d9edff;
-	border-top: 2px solid #f2f9ff;
+	border-top: 1px solid #f2f9ff;
 	border-bottom: 1px solid #a3bfd9;
 	color: #395773;
-	padding: 8px 0 0 18px;
+	padding: 0 0 0 15px;
 	margin: 0;
 	cursor: pointer;
-}
-#sidebar-ui .sidebar-panel-title:before {
-	margin-right: 10px;
-}
-#sidebar-ui .sidebar-panel-title:after {
-	content: " ";
-	display: inline-block;
-	margin: 12px 20px 0 0;
-	float: right;
-	width: 0;
-	height: 0;
-	border-top: 5px solid #85aacc;
-	border-right: 5px solid transparent;
-	border-left: 5px solid transparent
+	position: relative;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-title {
 	border-bottom: none;
 }
+#sidebar-ui .sidebar-panel-title:before {
+	display: block;
+	content: "";
+	width: 16px;
+	height: 16px;
+	border-radius: 16px;
+	background: #c0ddf6;
+	position: absolute;
+	right: 15px;
+	top: 10px;
+}
+#sidebar-ui .sidebar-panel.expanded .sidebar-panel-title:before {
+	top: 9px;
+}
+#sidebar-ui .sidebar-panel-title:after {
+	content: " ";
+	display: block;
+	width: 0;
+	height: 0;
+	border-top: 3px solid #85aacc;
+	border-right: 4px solid transparent;
+	border-left: 4px solid transparent;
+	z-index: 5;
+	position: absolute;
+	top: 17px;
+	right: 19px;
+}
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-title:after {
-	margin-top: 7px;
 	border-right: none;
-	border-left: 5px solid #85aacc;
-	border-top: 5px solid transparent;
-	border-bottom: 5px solid transparent;
+	border-left: 3px solid #85aacc;
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	top: 13px;
+	right: 21px;
 }
 #sidebar-ui .sidebar-panel-content {
 	background: #e5f3ff;
@@ -546,7 +614,7 @@
 }
 
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
-	height: 280px;
+	height: 277px;
 	padding: 0;
 	border-top: 1px solid #accae6;
 	border-bottom: 1px solid #accae6;
@@ -745,6 +813,7 @@ span.draggable-post-element.element-dragging
 	color: #26394d;
 	font-size: 11px;
 	float: none;
+	font-weight: normal;
 }
 #sidebar-ui .panel-setting-switcher,
 #sidebar-ui .command-edit-switcher {
@@ -862,45 +931,59 @@ span.draggable-post-element.element-dragging
 #sidebar-ui .sp-preview {
 	margin: 0 0 6px;
 }
-
+#sidebar-ui .sidebar-panel-settings .panel-section {
+	padding-bottom: 0;
+}
 #sidebar-ui .upfront-typography-fields-left {
 	float: left;
 	width: 60%;
-	margin: 0 0 10px;
 }
 #sidebar-ui .upfront-typography-fields-right {
 	float: right;
 	width: 40%;
-	margin: 0 0 10px;
 }
 #sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number] {
-	width: 60px;
+	width: 52px;
 }
 #sidebar-ui .command-edit-css {
 	clear: both;
+	margin-top: 3px;
+  padding: 0;
+}
+#sidebar-ui .upfront-icon-edit-css:before {
+	background-position: -520px -93px;
+	width: 18px;
+	height: 15px;
+	margin-right: 4px;
+	margin-top: 7px;
+}
+#sidebar-ui .command-edit-css span {
 	display: inline-block;
-	padding: 0 10px;
-	line-height: 24px;
 	color: #5f7f99;
 	font-family: "Verdana";
 	font-size: 11px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	border: 1px solid #a3bfd9;
-	background-color: #e5f3ff;
-	-moz-box-shadow: inset 0 2px 0 #f1f9ff;
-	-webkit-box-shadow: inset 0 2px 0 #f1f9ff;
-	box-shadow: inset 0 2px 0 #f1f9ff;
+  border-bottom: 1px solid #1fcd8f;
+  line-height: 1;
+	cursor: pointer;
 }
+
 #sidebar-ui .command-link {
 	color: #11a571;
-	font-size: 14px;
-	font-weight: bold;
+	font-size: 11px;
 	text-decoration: underline;
 	display: inline;
-	margin: 0 30px 0 0;
 	cursor: pointer;
+}
+
+/* Made this to inline-block and gave width since later is positioned with margin-right. */
+#sidebar-ui .command-edit-structure {
+	margin-right: 100px;
+	display: inline-block;
+	width: 50px;
+}
+#sidebar-ui .command-edit-bg {
+	display: inline-block;
+	width: 80px;
 }
 
 
@@ -4010,13 +4093,21 @@ div.uinsert-selector a:hover {
 	margin: 0;
 }
 .upfront-icon-page:before {
-	background-position: -41px -177px;
+	background-position: -45px -177px;
+	width: 13px;
+	margin-top: 4px;
 }
 .upfront-icon-post:before {
-	background-position: -41px -210px;
+	background-position: -45px -210px;
+	width: 13px;
+	margin: 4px 5px 0 0;
+	font-size: 15px;
 }
 .upfront-icon-layout:before {
-	background-position: -41px -39px;
+	background-position: -45px -44px;
+	width: 15px;
+	height: 16px;
+	margin-top: 10px;
 }
 .upfront-icon-browse:before {
 	width: 10px;
@@ -4039,6 +4130,7 @@ div.uinsert-selector a:hover {
 .upfront-icon-panel-elements:before {
 	background-position: -41px -380px;
 }
+.upfront-icon-start-responsive:before,
 .upfront-icon-panel-settings:before {
 	background-position: -41px -415px;
 }
@@ -4046,7 +4138,9 @@ div.uinsert-selector a:hover {
 	background-position: -340px -380px;
 }
 .upfront-icon-edit:before {
-	background-position: -340px -346px;
+	background-position: -347px -352px;
+	width: 11px;
+	height: 11px;
 }
 .upfront-icon-delete:before {
 	width: 18px;
@@ -4336,16 +4430,18 @@ div.uinsert-selector a:hover {
 	margin: 0 6px 0 0;
 }
 .upfront-icon-undo:before {
-	background-position: -197px -42px;
+	background-position: -197px -44px;
+	height: 14px;
 }
 .upfront-icon-undo:hover:before {
-	background-position: -197px -76px;
+	background-position: -197px -78px;
 }
 .upfront-icon-redo:before {
-	background-position: -196px -110px;
+	background-position: -196px -112px;
+	height: 14px;
 }
 .upfront-icon-redo:hover:before {
-	background-position: -196px -144px;
+	background-position: -196px -146px;
 }
 .upfront-icon-grid:before {
 	width: 20px;
@@ -9175,11 +9271,11 @@ ul.upfront_color_picker_rgba{
 	  top:10px;
 	  left:-18px;
 	  background-color:#ff0000;
-	       -moz-transform: rotate(-45deg);  
-	       -o-transform: rotate(-45deg);  
-	  -webkit-transform: rotate(-45deg);  
-	      -ms-transform: rotate(-45deg);  
-	          transform: rotate(-45deg); 
+	       -moz-transform: rotate(-45deg);
+	       -o-transform: rotate(-45deg);
+	  -webkit-transform: rotate(-45deg);
+	      -ms-transform: rotate(-45deg);
+	          transform: rotate(-45deg);
 }
 .redactor_dropdown.redactor_dropdown_box_upfrontColor {
 line-height:0;
@@ -10134,21 +10230,13 @@ a.upfront-css-edit:before{
   float: none;
 }
 
-#sidebar-ui .sidebar-commands-responsive .command-edit-css {
-  border: 0 none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  padding: 0;
-  border-bottom: 1px solid #1fcd8f;
-  line-height: 1;
-}
-
 .command-go-to-type-preview {
   text-decoration: underline;
-  font-family: "Source Sans Pro", sans-serif;
-  font-size: 14px;
-  color: #11a672;
-  margin-bottom: 8px;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 11px;
+	color: #11a672;
+	margin-bottom: 4px;
+	line-height: 22px;
 }
 
 #sidebar-ui .sidebar-commands-responsive .upfront-field-label-block {
@@ -10552,32 +10640,35 @@ div.upfront-region-container-active > a.feature_image_selector {
 	width: 10px;
 }
 /*------------------- Setting sections tabs -----------------------*/
-#sidebar-ui ul.sidebar-panel-tabspane{
+#sidebar-ui ul.sidebar-panel-tabspane {
     width: 100%;
     background: #d9edff;
-    padding-bottom: 5px;
+    padding: 0 0 5px 10px;
     display: none;
+		line-height: 10px;
 }
-.sidebar-panel-tabspane li{
+.sidebar-panel-tabspane li {
     display: inline-block;
     margin-left: 5px;
     color: #0F9969;
     cursor: pointer;
     padding: 3px 5px;
-    font: 11px normal verdana, sans-serif;
+		font-size: 10px;
+		font-family: verdana, sans-serif;
+		line-height: 10px;
 }
-#sidebar-ui ul.panel-setting-theme-colors-shades-range-labels{
+#sidebar-ui ul.panel-setting-theme-colors-shades-range-labels {
     width: 100%;
     overflow: hidden;
-    margin-top: 5px;
+    margin-top: 9px;
 }
-.panel-setting-theme-colors-shades-range-labels li{
+.panel-setting-theme-colors-shades-range-labels li {
     display: inline-block;
     float: left;
     font:11px normal verdana, sans-serif;
     color: #476580;
 }
-.panel-setting-theme-colors-shades-range-labels li:last-child{
+.panel-setting-theme-colors-shades-range-labels li:last-child {
     float: right;
 }
 .sidebar-panel-tabspane li.active{
@@ -10644,22 +10735,12 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui .panel-setting-theme-colors-shades-range a{
     margin: 0;
 }
-.panel-setting-theme-colors-shades-wrap,
-.panel-setting-theme-colors{
-    font:normal 11px "Verdana", sans-serif;
-    color: #607F99;
-}
-
-.panel-setting-theme-colors .special-hover{
-    font: normal 13px Courier;
-    color: #3F5568;
-}
-.theme-colors-color-box{
+.theme-colors-color-box {
     display: inline-block;
-    width: 22px;
-    height: 22px;
-    border: 1px solid #9dbbd8;
-    margin: 5px 10px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    margin: 0 0 0 28px;
     cursor: pointer;
 }
 .panel-setting-theme-colors-shades-range{
@@ -10687,4 +10768,107 @@ div.upfront-region-container-active > a.feature_image_selector {
 .panel-setting-theme-colors .upfront-field-slider .ui-slider-handle{
     background-color: #1fcd8f;
     border-width: 4px;
+}
+
+/* Typography panel */
+.typography-panel {
+	overflow: hidden;
+}
+.typography-panel .upfront-field-select {
+	width: 230px;
+	height: 24px;
+
+}
+#sidebar-ui .typography-panel .upfront-field-wrap {
+	margin-top: 4px;
+}
+#sidebar-ui .typography-panel .upfront-field-wrap:first-child {
+	margin-top: 0;
+}
+#sidebar-ui .typography-panel .upfront-typography-fields-left,
+#sidebar-ui .typography-panel .upfront-typography-fields-right {
+	margin-top: 4px;
+}
+#sidebar-ui .typography-panel .upfront-typography-fields-left .upfront-field-select {
+	width: 120px;
+}
+.typography-panel .upfront-typography-fields-right .upfront-field-wrap:first-child label {
+	margin-bottom: 2px;
+}
+.typography-panel .upfront-field-wrap-number label {
+	margin-bottom: 5px;
+}
+.typography-panel .upfront-field-number[type=number] {
+	height: 26px;
+	font-size: 11px;
+	padding: 0 5px;
+}
+#sidebar-ui .typography-section-content {
+	width: 230px;
+}
+
+/* Colors panel */
+#sidebar-ui .colors-panel-section {
+	padding-top: 0;
+	margin: 0;
+}
+#theme-colors-swatches {
+	padding: 0 15px;
+	width: 255px;
+}
+#sidebar-ui .panel-setting-theme-colors-bottom {
+	margin: 0 15px;
+	font-size: 11px;
+	font-family: verdana;
+	padding-top: 3px;
+	line-height: 32px;
+}
+#panel-setting-theme-colors-shades-label {
+	font-weight: bold;
+	margin-bottom: 7px;
+	display: block;
+}
+#sidebar-ui .panel-setting-theme-colors-bottom .hovers {
+	font-family: "Courier New", monospace;
+	font-weight: bold;
+	font-size: 12px;
+}
+#sidebar-ui #theme-colors-swatches .theme-colors-color-picker.color-0 .upfront-field-wrap {
+	margin-left: 0;
+}
+#sidebar-ui #theme-colors-swatches .upfront-field-wrap {
+	margin: 14px 0 13px 28px;
+}
+#sidebar-ui .colors-panel-section .sp-preview {
+	width: 18px !important;
+	height: 18px !important;
+	border-radius: 0;
+	-webkit-border-radius: 0px;
+}
+.theme_color_swatch .sp-replacer {
+	height: auto;
+	width: auto;
+}
+.panel-setting-theme-colors-meta {
+	margin-top: 15px;
+	line-height: 13px;
+}
+#sidebar-ui .swatch-title {
+	margin-top: 9px;
+	color: #263a4d;
+}
+
+#sidebar-ui .panel-setting-theme-colors-highlights + .swatch-title {
+	margin-top: 4px;
+}
+.theme-colors-color-box:first-child {
+	margin-left: 0;
+}
+
+/* Corrections for create theme mode sidebar */
+#sidebar-ui .create-theme-sidebar .sidebar-commands-primary {
+	padding: 15px;
+}
+#sidebar-ui .create-theme-sidebar .command-edit-bg {
+	text-align: right;
 }
