@@ -3727,7 +3727,8 @@ define([
 						'border-top-color': rgb,
 						'border-right-color': rgb
 					});
-					me.update_input_border_color(rgb);
+					me.update_input_border_color( rgb );
+					me.update_input_val( rgb );
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.render_sidebar_rgba(me.rgba);
 				}
@@ -3742,9 +3743,10 @@ define([
 	                $('.sp-dragger').css({
 						'border-color': rgb
 					});
-
+				
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.render_sidebar_rgba(me.rgba);
+					me.update_input_val(rgb);
 				}
 				me.spectrumOptions = spectrumOptions;
 				
@@ -3785,6 +3787,9 @@ define([
 				borderColor : rgb
 			});
 		},
+		update_input_val : function(rgb){
+			$(".sp-input").val(rgb);
+		},
 		render_sidebar_rgba : function(rgba){
 			var self = this;
 			this.$(".color_picker_rgb_container").html(this.sidebar_template(rgba));
@@ -3804,6 +3809,7 @@ define([
 				// Set the new color
 				this.$spectrum.spectrum("set", color.toRgbString());
 				this.update_input_border_color( color.toRgbString() );
+				this.update_input_val( color.toHexString() );
 				this.render_sidebar_rgba(  color.toRgb() );
 				// Trigger move event
 				this.options.spectrum.move(color);
@@ -3815,6 +3821,7 @@ define([
 			this.rgba = {r: 0, g: 0, b:0, a: 0};
 			this.$spectrum.spectrum("set", blank_color );
 			this.update_input_border_color( blank_color );
+			this.update_input_val( "#000000" );
 			this.render_sidebar_rgba(  this.rgba );
 			
 			// Trigger move event
