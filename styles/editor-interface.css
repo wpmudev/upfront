@@ -7729,9 +7729,9 @@ a.ulinkpanel-entry-url:hover {
 
 .ulinkpanel-new-lightbox,
 .ulinkpanel-lightbox-selector {
-	width: 130px;
+	width: 131px;
 	float: right;
-	margin-left: 10px;
+	margin-left: 9px;
 	margin-top: 5px;
 }
 
@@ -7743,7 +7743,24 @@ a.ulinkpanel-entry-url:hover {
 	height: 21px;
 	width: 110px;
 	background: #fff;
-	margin-right: 5px;
+	margin-right: 2px;
+	vertical-align: top;
+}
+
+.ulinkpanel a.ulinkpanel-lightbox-cancel {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+
+	background-position: -483px -170px;
+	display: inline-block;
+	width: 15px;
+	height: 18px;
+
+	opacity: .7;
+}
+
+.ulinkpanel a.ulinkpanel-lightbox-cancel:hover {
+	opacity: .9;
 }
 
 .ulinkpanel-dark .upfront-field-wrap{
@@ -8808,7 +8825,9 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 
 /*
 	DROPDOWN
-*/
+
+	*/
+
 .redactor_dropdown {
 	position: absolute;
 	top: 28px;
@@ -8825,6 +8844,7 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	margin-top: 5px;
 	color: #97b8da;
 }
+/*
 .redactor_dropdown label {
 	color: #97b8da;
 }
@@ -8863,7 +8883,7 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	text-align: center;
 	padding: 0;
 }
-
+*/
 a.ueditor-format-option {
 	color: #97b8da !important;
 	width: 38px;

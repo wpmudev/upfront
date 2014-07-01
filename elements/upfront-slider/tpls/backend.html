@@ -1,22 +1,4 @@
 <div>
-<script type="text/template" id="link-tpl">
-	<input type="hidden" id="uslider-slide-id" value="{{id}}">
-	<h3>Links to:</h3>
-	<div class="upfront-field-wrap">
-		<input type="radio" name="ugallery-image-link" value="external" class="upfront-field-radio" id="ugallery-image-link-1" {{urlType == 'external' ? checked : ''}}>
-		<label for="ugallery-image-link-1">External link</label>
-		<input type="text" value="{{url}}" id="ugallery-image-link-url" placeholder="Type link URL" style="{{urlType != 'external' ? 'display:none' : ''}}" class="upfront-field-text">
-	</div>
-	<div class="upfront-field-wrap">
-		<input type="radio" name="ugallery-image-link" value="post" class="upfront-field-radio" id="ugallery-image-link-2" {{urlType == 'post' ? checked : ''}}>
-		<label for="ugallery-image-link-2">Link to a post or page</label>
-		<a title="Change link" class="ugallery-change-link-post" style="{{urlType != 'post' ? 'display:none' : ''}}">{{url}}</a>
-	</div>
-	<div class="upfront-settings-button_panel">
-		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
-	</div>
-</script>
-
 <script type="text/template" id="slides-setting-tpl">
 <div class="uslider-slides-setting">
 {[ slides.each(function(slide){ ]}

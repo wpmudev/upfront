@@ -375,6 +375,10 @@ div.ugallery-label-selector {
 	z-index: 2;
 }
 
+.ugallery-controls.upfront-control-visible {
+	display: block;
+}
+
 .ugallery_selected {
 	z-index:20;
 }

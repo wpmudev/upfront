@@ -24,7 +24,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	imageTpl: Upfront.Util.template(imageTpl),
 	selectorTpl: _.template($editorTpl.find('#selector-tpl').html()),
 	progressTpl: _.template($editorTpl.find('#progress-tpl').html()),
-	linkTpl: _.template($editorTpl.find('#link-tpl').html()),
 	formTpl: _.template($editorTpl.find('#upload-form-tpl').html()),
 	sizehintTpl: _.template($editorTpl.find('#sizehint-tpl').html()),
 	cropTimeAfterResize: 10000,
@@ -202,7 +201,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		panel.items = _([
 			this.createControl('crop', 'Edit image', 'editRequest'),
-			this.createLinkControl(), //this.createControl('link', 'Link image', 'openLinkEditor'),
+			this.createLinkControl(),
 			multi
 		]);
 
@@ -2898,6 +2897,8 @@ var DialogControl = Control.extend({
 					me.close();
 			});
 		}
+
+		return this;
 	},
 
 	onClickControl: function(e){
@@ -2926,6 +2927,7 @@ var DialogControl = Control.extend({
 		this.$el.closest('.upfront-wrapper').addClass('upfront-wrapper-current');
 		this.$el.addClass('upfront-control-dialog-open');
 		this.trigger('panel:open');
+		return this;
 	},
 	close: function(){
 		this.panel.hide();
@@ -2934,6 +2936,7 @@ var DialogControl = Control.extend({
 		this.$el.closest('.upfront-wrapper').removeClass('upfront-wrapper-current');
 		this.$el.removeClass('upfront-control-dialog-open');
 		this.trigger('panel:close');
+		return this;
 	}
 })
 

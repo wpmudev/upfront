@@ -29,6 +29,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['labels_length'] = sizeof($data['labels']);
 		$data['image_labels'] = $this->image_labels;
 
+		$lbTpl = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/lightbox.html');
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
 
 		$markup .= '
@@ -67,7 +68,12 @@ class Upfront_UgalleryView extends Upfront_Object {
 			';
 		}
 		else {
-			$markup .= '<!-- No lightbox ' . $data['linkTo'] . ' -->';
+			$tplObject = array('markup' => $lbTpl);
+			$markup .= '
+				<script type="text/javascript">
+					ugalleries["' . $data['element_id'] . '"].template = ' . json_encode($tplObject) . ';
+				</script>
+			';
 		}
 
 		return $markup;

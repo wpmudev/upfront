@@ -337,7 +337,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			lightbox_color: 'rgba(248,254,255,0.9)'
 		});
 
-		//Lisen for the region view to be added and open it
+		//Wait for the region view to be added and open it
 		this.listenToOnce(Upfront.Events, 'entity:region:added', this.openNewRegion);
 		lightbox.add_to(regions, regions.length-1, {sub: 'lightbox'});
 
@@ -345,8 +345,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	},
 
 	openNewRegion: function(region){
-		region.show();
-		region.on_settings_click();
+		if(region.show){
+			region.show();
+			region.on_settings_click();
+		}
 	}
 });
 

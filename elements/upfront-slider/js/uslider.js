@@ -41,7 +41,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	self: {},
 	module_settings: {},
 	tpl: Upfront.Util.template(sliderTpl),
-	linkTpl: _.template($(editorTpl).find('#link-tpl').html()),
 	startingTpl: _.template($(editorTpl).find('#startingTpl').html()),
 
 	initialize: function(options){
@@ -521,7 +520,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		panelItems.push(this.createControl('crop', 'Edit image', 'imageEditMask'));
-		panelItems.push(this.createControl('link', 'Link slide', 'slideEditLink'));
+		panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
 			panelItems.push(multi);
@@ -544,6 +543,92 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		return item;
+	},
+
+	createLinkControl: function(slide){
+		var me = this,
+			control = new Upfront.Views.Editor.InlinePanels.DialogControl()
+		;
+
+		control.view = new Upfront.Views.Editor.LinkPanel({
+			model: new Backbone.Model({
+				type: slide.get('urlType'),
+				url: slide.get('url')
+			})
+		});
+
+		control.slide = slide;
+
+		me.listenTo(control, 'panel:ok', function(view){
+			me.updateLink(control);
+		});
+
+		me.listenTo(control, 'panel:open', function(){
+			control.$el
+				.closest('.uimage-controls')
+					.addClass('upfront-control-visible').end()
+				.closest('.uslider-link')
+					.removeAttr('href') //Deactivate link when the panel is open
+			;
+
+			me.$el.closest('.ui-draggable').draggable('disable');
+			me.$('.uimage').sortable('disable');
+		});
+
+		me.listenTo(control, 'panel:close', function(){
+			control.$el
+				.closest('.uimage-controls')
+					.removeClass('upfront-control-visible').end()
+				.closest('.uslider-link')
+					.attr('href', control.slide.get('url'))
+			;
+
+			me.$el.closest('.ui-draggable').draggable('enable');
+
+			//Roll back the view, ready for reopen.
+			control.view.render();
+		});
+
+		me.listenTo(control.view, 'link:postselected', function(linkData){
+			control.slide.set({
+				urlType: linkData.type,
+				ur: linkData.url
+			}, {silent: true});
+
+			control.view.model.set(linkData);
+			control.view.render();
+			control.open();
+		});
+
+		me.listenTo(control.view, 'link:ok', function(){
+			me.updateLink(control);
+		});
+
+		control.icon = 'link';
+		control.tooltip = 'Image link';
+		control.id = 'link';
+
+		return control;
+	},
+
+	updateLink: function(control){
+		var data = control.view.getCurrentValue();
+
+		if(!data){
+			console.log('Error updating image link');
+			return;
+		}
+
+		if(data.type == 'image')
+			data.url = control.slide.get('srcFull');
+
+		control.slide.set({
+			urlType: data.type,
+			url: data.url
+		});
+
+		control.view.model.set(data);
+		control.render().close();
 	},
 
 	getElementColumns: function(){
@@ -907,62 +992,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		};
 	},
 
-	slideEditLink: function(e) {
-		e.preventDefault();
-		if(this.$el.hasClass('tooltip-open'))
-			return this.closeTooltip();
-		var me = this,
-			item = $(e.target).closest('.uimage-controls'),
-			slide = this.slides.get(item.attr('rel')),
-			tplOptions = slide.toJSON(),
-			contents = ''
-		;
-		tplOptions.checked = 'checked="checked"';
-
-		contents = $(this.linkTpl(tplOptions))
-			.on('change', 'input[name=ugallery-image-link]', function(ev){
-				me.slideLinkChanged(e);
-			})
-			.on('click', 'button.upfront-save_settings', function(e){
-				me.saveSlideLink(e);
-			})
-			.on('click', '.ugallery-change-link-post', function(ev){
-				me.slideLinkChanged(e);
-			})
-		;
-
-		this.openTooltip(contents, $(e.target));
-	},
-
-	slideLinkChanged: function(e){
-		var me = this,
-			val = $('#ugallery-tooltip').find('input[name=ugallery-image-link]:checked').val(),
-			slideId = $('#ugallery-tooltip').find('#uslider-slide-id').val()
-		;
-
-		if(val == 'external'){
-			$('#ugallery-image-link-url').show();
-		}
-		else{
-			$('#ugallery-image-link-url').hide();
-			if(val == 'post' || e.type != 'change'){
-				var selectorOptions = {
-						postTypes: this.postTypes()
-					}
-				;
-				this.closeTooltip();
-
-				Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
-					var slide = me.slides.get(slideId);
-					slide.set({
-						urlType: 'post',
-						url: post.get('permalink')
-					});
-				});
-			}
-		}
-	},
-
 	postTypes: function(){
 		var types = [];
 		_.each(Upfront.data.ugallery.postTypes, function(type){
@@ -970,69 +999,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				types.push({name: type.name, label: type.label});
 		});
 		return types;
-	},
-
-	saveSlideLink: function(e){
-		var tooltip = $('#ugallery-tooltip'),
-			linkVal = tooltip.find('input[name=ugallery-image-link]:checked').val(),
-			slideId = tooltip.find('#uslider-slide-id').val(),
-			urlVal = tooltip.find('#ugallery-image-link-url').val()
-		;
-		if((linkVal == 'external' || linkVal == 'post') && urlVal)
-			this.slides.get(slideId).set({urlType: linkVal, url: urlVal});
-		else
-			this.slides.get(slideId).set({urlType: 'original', url: ''});
-
-		this.closeTooltip();
-		return this.render();
-	},
-
-	openTooltip: function(content, element){
-		var tooltip = $('#ugallery-tooltip'),
-			elementPosition = element.offset(),
-			tooltipPosition = {
-				top: elementPosition.top + element.outerHeight(),
-				left: elementPosition.left - 125 + Math.floor(element.outerWidth() / 2)
-			},
-			tooltipClass = 'ugallery-tooltip-bottom',
-			me = this
-		;
-		if(!tooltip.length){
-			tooltip = $('<div id="ugallery-tooltip" class="upfront-ui"></div>');
-			$('body').append(tooltip);
-		}
-		tooltip.hide().html(content);
-		elementPosition.right = elementPosition.left + element.width();
-		if(elementPosition.left - 280 < 0){
-			tooltipPosition.left = elementPosition.left + element.width() + 20;
-			tooltipClass = 'ugallery-tooltip-bottom';
-		}
-		tooltip
-			.css(tooltipPosition)
-			.addClass(tooltipClass)
-			.show()
-			.on('click', function(e){
-				e.stopPropagation();
-			})
-			.on('blur', function(e){
-				me.closeTooltip();
-			})
-			.on('closed', function(e){
-				me.$el.removeClass('tooltip-open');
-			})
-		;
-
-		this.$el.addClass('tooltip-open');
-
-		Upfront.Events.trigger("entity:settings:deactivate");
-	},
-
-	closeTooltip: function(){
-		var tooltip = $('#ugallery-tooltip');
-		tooltip.hide().trigger('closed');
-		setTimeout(function(){
-			tooltip.remove();
-		}, 100);
 	},
 
 	cleanup: function(){

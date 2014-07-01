@@ -903,21 +903,24 @@ RedactorPlugins.upfrontLink = {
 	panel: UeditorPanel.extend({
 		tpl: _.template($(tpl).find('#link-tpl').html()),
 		events:{
-			'click .ueditor-unlink': 'unlink',
-			'change .upfront-field-radio': 'updateLinkType',
-			'click .ueditor-change-link-post': 'selectPost',
-			'open': 'open',
-			'close': 'close',
-			'ok': 'prepareLink'
+			open: 'open'
+		},
+		initialize: function(){
+			this.linkPanel = new Upfront.Views.Editor.LinkPanel({linkTypes: {unlink: true}, button: true});
+			this.bindEvents();
+			UeditorPanel.prototype.initialize.apply(this, arguments);
 		},
 		render: function(options){
 			options = options || {};
-			this.$el.html(this.tpl({
+			console.log(options);
+			this.linkPanel.model.set({
 				url: options.url,
-				link: options.link,
-				anchors: this.getAnchors()
-			}));
-			this.appendOkButton();
+				type: options.link || this.guessLinkType(options.url)
+			});
+
+			this.linkPanel.render();
+			this.$el.html(this.linkPanel.el);
+			this.linkPanel.delegateEvents();
 		},
 		open: function(e, redactor){
 			this.redactor = redactor;
@@ -934,15 +937,15 @@ RedactorPlugins.upfrontLink = {
 			this.redactor.selectionRemoveMarkers();
 		},
 		unlink: function(e){
-			e.preventDefault();
-            var text = this.redactor.getSelectionHtml();
-            if( $.parseHTML(text).length > 1){// there is html inside
-                this.redactor.execCommand('inserthtml', text, true);
-            }else{
-                this.redactor.execCommand('unlink');
-            }
+			if(e)
+				e.preventDefault();
+         var text = this.redactor.getSelectionHtml();
+         if( $.parseHTML(text).length > 1){// there is html inside
+             this.redactor.execCommand('inserthtml', text, true);
+         }else{
+             this.redactor.execCommand('unlink');
+         }
 
-			this.closeToolbar();
 		},
 		link: function(url, type){
 			if(url){
@@ -951,76 +954,36 @@ RedactorPlugins.upfrontLink = {
                 this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
 			}
 		},
-		prepareLink: function(e){
-			var link = this.$('input[name="ueditor-link"]:checked').val(),
-				url = ''
-			;
-			if(link){
-				if(link == 'external') {
-					url = this.$('#ueditor-link-url').val();
-					// If it is not an already external link...
-					if (!(url.match(/https?:\/\//) || url.match(/\/\/:/))) {
-						// ... check if we want an external URL
-						url = url.match(/^www\./) || url.match(/\./)
-							? 'http://' + url
-							: url
-						;
-					}
-				} else if(link == 'post')
-					url = this.$('.ueditor-change-link-post').text();
-				else if(link == 'anchor')
-					url = this.$('.ueditor-anchor-selector').val();
-			}
-			this.link(url, link);
-			this.closeToolbar();
-		},
-		updateLinkType: function(e){
-			var value = this.$('input[name="ueditor-link"]:checked').val();
-			this.$('.ueditor-link-hidden').hide();
 
-			if(value == 'external')
-				this.$('#ueditor-link-url').show();
-			else if(value == 'post')
-				this.selectPost();
-			else if(value == 'anchor')
-				this.$('.ueditor-anchor').show();
-		},
-		selectPost: function(){
-			var me = this,
-				options = {},
-				types = []
-			;
-			_.each(Upfront.data.ugallery.postTypes, function(type){
-				if(type.name != 'attachment')
-					types.push({name: type.name, label: type.label});
+		bindEvents: function(){
+			this.listenTo(this.linkPanel, 'link:ok', function(data){
+				if(data.type == 'unlink')
+					this.unlink();
+				else
+					this.link(data.url, data.type);
+
+				this.closeToolbar();
 			});
 
-			options.postTypes = types;
+			this.listenTo(this.linkPanel, 'link:postselector', this.disableEditorStop);
 
-			this.disableEditorStop();
-
-			Upfront.Views.Editor.PostSelector.open(options).done(function(post){
-        me.enableEditorStop();
-				me.link(post.get('permalink'), 'post');
+			this.listenTo(this.linkPanel, 'link:postselected', function(data){
+				this.enableEditorStop();
+				this.link(data.url, data.type);
 			});
 		},
-		getAnchors: function(){
-			var regions = Upfront.Application.layout.get("regions"),
-				anchors = ['']
-			;
-			regions.each(function (r) {
-				r.get("modules").each(function (module) {
-					var objects = module.get("objects");
-					if ( objects ) {
-						objects.each(function (object) {
-							var anchor = object.get_property_value_by_name("anchor");
-							if (anchor && anchor.length) anchors.push(anchor);
-						});
-					}
-				});
-			});
-			return anchors;
+
+		guessLinkType: function(url){
+			if(!$.trim(url))
+				return 'unlink';
+			if(url.lenght && url[0] == '#')
+				return 'anchor';
+			if(url.substring(0, location.origin.length) == location.origin)
+				return 'entry';
+
+			return 'external';
 		}
+
 	})
 }
 
@@ -1081,7 +1044,7 @@ RedactorPlugins.upfrontColor = {
 					$(".sp-input").css({
 						borderColor : color.toRgbString()
 					});
-				}	
+				}
 			});
 
 			this.$('input.background').spectrum({
@@ -1131,7 +1094,7 @@ RedactorPlugins.upfrontColor = {
 
 //			this.$('input.foreground').spectrum('resetUI');
 //			this.$('input.background').spectrum('resetUI');
-//			
+//
 
 		    this.$(".sp-choose").on("click", function(){
 	    		self.closePanel();
@@ -1242,7 +1205,7 @@ RedactorPlugins.upfrontColor = {
 				self.updateIcon();
 				self.redactor.selectionRemove();
 				self.redactor.sync();
-			
+
 			}
 
 	})

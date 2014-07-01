@@ -9074,6 +9074,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	var LinkPanel = Backbone.View.extend({
 		tpl: _.template($(_Upfront_Templates.popup).find('#linkpanel-tpl').html()),
 		defaultLinkTypes: {
+			unlink: false,
 			external: true,
 			entry: true,
 			anchor: true,
@@ -9202,6 +9203,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		openPostSelector: function(e){
 			if(e)
 				e.preventDefault();
+
+			this.trigger('link:postselector');
 
 			var me = this,
 				selectorOptions = {

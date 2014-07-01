@@ -1,6 +1,6 @@
-<div> 
-<!-- 
-	Wrap everything in a div to convert this file's content in a jquery element 
+<div>
+<!--
+	Wrap everything in a div to convert this file's content in a jquery element
 	so it is possible to use $.find.
 -->
 
@@ -15,9 +15,9 @@
 			<div class="upfront-image-media-container">
 			<i class="icon-picture"></i> <a class="open-media-gallery" href="#">media gallery</a>
 			</div>
-			<span class="dragimagehand"></span>	
+			<span class="dragimagehand"></span>
 		</div>
-	</div>	
+	</div>
 </div>
 </script>
 
@@ -93,38 +93,6 @@
 </div>
 </script>
 
-<script type="text/template" id="link-tpl">
-<div class="upfront-settings-panel">
-	<input type="hidden" id="ugallery-image-id" value="{{id}}">
-	<h3>Image links to:</h3>
-	<div class="upfront-field-wrap">
-		<input type="radio" name="ugallery-image-link" value="external" class="upfront-field-radio" id="ugallery-image-link-1" {{link == 'external' ? checked : ''}}>
-		<label for="ugallery-image-link-1">External link</label>
-		<input type="text" value="{{url}}" id="ugallery-image-link-url" placeholder="Type link URL" style="{{link != 'external' ? 'display:none' : ''}}" class="upfront-field-text">
-	</div>
-	<div class="upfront-field-wrap">
-		<input type="radio" name="ugallery-image-link" value="post" class="upfront-field-radio" id="ugallery-image-link-2" {{link == 'post' ? checked : ''}}>
-		<label for="ugallery-image-link-2">Link to a post or page</label>
-		<a title="Change link" class="ugallery-change-link-post" style="{{link != 'post' ? 'display:none' : ''}}">{{url}}</a>
-	</div>
-	<div class="upfront-settings-button_panel">
-		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
-	</div>
-
-	<div class="upfront-field-wrap upfront-additive_multiselection upfront-media-controls ugallery-label-selector">
-		<h3>Image labels:</h3>
-		<div class="existing_labels">
-		<a href="#remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="2">Una etiqueta</a>
-		</div>
-		<div class="label_selector">
-			<input type="text" name="ugallery-image-labels" placeholder="Add a new label" class="upfront-field-text">
-			<div class="labels_list">
-			</div>
-		</div>
-	</div>
-</div>
-</script>
-
 <script type="text/template" id="labels-tpl">
 	{[ _.each(labels, function(label){ ]}
 		<a href="#remove" title="Remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{label.id}}">{{label.text}}</a>
@@ -146,7 +114,7 @@
 			<div class="ugallery-magnific-wrapper existing_labels">
 				{{labels}}
 				<div class="ugallery-magnific-add">
-					
+
 					<div class="ugallery-magnific-addform label_selector">
 						<input type="hidden" id="ugallery-image-id" value="{{imageId}}">
 						<input type="text" id="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="Add label">
@@ -158,7 +126,7 @@
 		</div>
 		<div class="ugallery-magnific-toggle"></div>
 	</div>
-	
+
 </script>
 
 <!--

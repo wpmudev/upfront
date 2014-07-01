@@ -72,7 +72,6 @@ jQuery(function($){
 		});
 	});
 
-
 	if(typeof ugalleries != 'undefined'){
 		var titleSrc = function(item){
 			var itemId = item.el.closest('.ugallery_item').attr('rel'),
@@ -108,6 +107,25 @@ jQuery(function($){
 					};
 
 				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText};
+				gallery.magnificPopup(magOptions);
+			}
+			else {
+				gallery = $('#' + galleryId).find('.ugallery_lightbox_link');
+				magOptions = {
+					type: 'image',
+					gallery: {
+						enabled: 'true',
+						tCounter: '<span class="mfp-counter">%curr% / %total%</span>'
+					},
+					titleSrc: 'title',
+					verticalFit: true,
+					image: {
+						markup: ugalleries[galleryId].template.markup,
+						titleSrc: 'title',
+						verticalFit: true
+					},
+					callbacks: {resize: resizeWithText, afterChange: resizeWithText}
+				};
 				gallery.magnificPopup(magOptions);
 			}
 		}
