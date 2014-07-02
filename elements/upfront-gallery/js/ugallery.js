@@ -83,7 +83,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.listenTo(Upfront.Events, "entity:activated", this.closeTooltip);
 		this.listenTo(Upfront.Events, "entity:deactivated", this.closeTooltip);
 		this.listenTo(Upfront.Events, "entity:region:activated", this.closeTooltip);
-
+		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.calculateMargins);
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
 		if(typeof ugalleries != 'undefined' && ugalleries[elementId]){
