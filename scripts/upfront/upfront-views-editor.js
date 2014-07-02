@@ -3689,7 +3689,7 @@ define([
 		}
 	});
 
-	var Field_Color = Field_Text.extend({
+var Field_Color = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
 		spectrumDefaults: {
 			clickoutFiresChange: true,
@@ -3721,7 +3721,7 @@ define([
             	b : 0,
             	a : 0
             };
-            this.spectrumOptions = spectrumOptions;
+            this.spectrumOptions = spectrumOptions;    
 			spectrumOptions.move = function(color){
 				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
@@ -3742,16 +3742,17 @@ define([
 			spectrumOptions.show = function(color){
 				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
-	                $('.sp-dragger').css({
-						'border-color': rgb
-					});
-
 					me.rgba = _.extend(me.rgba, color.toRgb());
+					me.update_input_border_color( rgb );
 					me.render_sidebar_rgba(me.rgba);
-					me.update_input_val(rgb);
+					me.update_input_val( rgb );
+				}
+				if( !_.isEmpty( $(".sp-input").val() ) && !me.is_hex( $(".sp-input").val() )){
+					var t_color = tinycolor( $(".sp-input").val() );
+					$(".sp-input").val(t_color.toHexString());
 				}
 				me.spectrumOptions = spectrumOptions;
-
+				
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
 			};
@@ -3759,7 +3760,6 @@ define([
             spectrumOptions.beforeShow = function(color){
                 me.options.palette = Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'];
                 me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
-
                 if(me.options.spectrum && me.options.spectrum.beforeShow)
                     me.options.spectrum.beforeShow(color);
             };
@@ -3773,6 +3773,9 @@ define([
 
 			});
 
+		},
+		is_hex : function(color_code){
+			return color_code.indexOf( "#" ) === -1 ? false : true;
 		},
 		get_field_html: function () {
 			var attr = {
@@ -3789,13 +3792,14 @@ define([
 				borderColor : rgb
 			});
 		},
-		update_input_val : function(rgb){
-			$(".sp-input").val(rgb);
+		update_input_val : function(hex){
+			this.$(".sp-input").val(hex);
 		},
 		render_sidebar_rgba : function(rgba){
 			var self = this;
 			this.$(".color_picker_rgb_container").html(this.sidebar_template(rgba));
 			this.$(".upfront_color_picker_reset").on("click", function(e){
+				e.preventDefault();
 				self.set_to_blank();
 			});
 		},
@@ -3805,7 +3809,7 @@ define([
 				val = parseFloat($el.val()),
 				color = this.$spectrum.spectrum("get"),
 				selection = {};
-
+				
 				selection[type] = val;
 				color = tinycolor(_.extend(color.toRgb(), selection));
 				// Set the new color
@@ -3815,19 +3819,21 @@ define([
 				this.render_sidebar_rgba(  color.toRgb() );
 				// Trigger move event
 				this.options.spectrum.move(color);
-
+				
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, 0)',
 				color = tinycolor(blank_color);
 			this.rgba = {r: 0, g: 0, b:0, a: 0};
-			this.$spectrum.spectrum("set", blank_color );
+			this.$spectrum.spectrum("set", color.toRgbString() );
 			this.update_input_border_color( blank_color );
 			this.update_input_val( "#000000" );
 			this.render_sidebar_rgba(  this.rgba );
-
+			
 			// Trigger move event
-			this.options.spectrum.move( color );
+			this.options.spectrum.move(color);
+
+			this.options.spectrum.change(color);
 		}
 
 	});

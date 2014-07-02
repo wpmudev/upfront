@@ -999,10 +999,6 @@ RedactorPlugins.upfrontColor = {
 		current_bg: false,
 		events:{
 			'open': 'open',
-			'click .sp-choose' : "close_panel"
-		},
-		close_panel : function(){
-				console.log("clicked");
 		},
 		setCurrentColors: function() {
 			var parent = this.redactor.getParent();
@@ -1010,7 +1006,6 @@ RedactorPlugins.upfrontColor = {
 
 				var rgb_a = $(parent).css('background-color').split(',');
 				this.current_color = $(parent).css('color');
-
 				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
 					this.current_bg = $(parent).css('background-color');
 
@@ -1020,81 +1015,103 @@ RedactorPlugins.upfrontColor = {
 			}
 		},
 		open: function(e, redactor){
-			var self = this;
-			this.$('input.foreground').spectrum({
-				flat: true,
-				showAlpha: true,
-				appendTo : self.$('input.foreground'),
-				showPalette: true,
-				palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
-				localStorageKey: "spectrum.recent_colors",
-				maxSelectionSize: 10,
-				preferredFormat: "hex",
-				chooseText: "Ok",
-				showInput: true,
-                allowEmpty: true,
-                change: function(color) {
-					self.updateColors();
-				},
-				move: function(color) {
-					redactor.selectionRestore(true, false);
-					self.current_color = color;
-					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
-					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
-					$(".sp-input").css({
-						borderColor : color.toRgbString()
-					});
-				}
-			});
-
-			this.$('input.background').spectrum({
-				flat: true,
-				showAlpha: true,
-				appendTo : self.$('input.background'),
-				showPalette: true,
-				maxSelectionSize: 9,
-                palette: Upfront.Views.Theme_Colors.colors.pluck("color").length  ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', 'f00'],
-                localStorageKey: "spectrum.recent_colors",
-                preferredFormat: "hex",
-				chooseText: "Ok",
-				showInput: true,
-			    allowEmpty:true,
-				change: function(color) {
-					self.updateColors();
-					},
-				move: function(color) {
-					redactor.selectionRestore(true, false);
-					self.current_bg = color;
-					$(this).parent().find('.sp-dragger').css('border-top-color', color.toRgbString());
-					$(this).parent().find('.sp-dragger').css('border-right-color', color.toRgbString());
-					$(".sp-input").css({
-						borderColor : color.toRgbString()
-					});
-				}
-			});
-
 			this.setCurrentColors();
+			var self = this,
+				foreground_picker = new Upfront.Views.Editor.Field.Color({
+						spectrum: {
+							flat: true,
+							showAlpha: true,
+							appendTo : "parent",
+							showPalette: true,
+							localStorageKey: "spectrum.recent_colors",
+							maxSelectionSize: 10,
+							preferredFormat: "hex",
+							chooseText: "Ok",
+							showInput: true,
+			                allowEmpty: true,
+			                change: function(color) {
+								self.updateColors();
+							},
+							move: function(color) {
+								redactor.selectionRestore(true, false);
+								self.current_color = color;
+							}
+						}
+				}),
+				background_picker = new Upfront.Views.Editor.Field.Color({
+						spectrum: {
+							flat: true,
+							showAlpha: true,
+							appendTo : "parent",
+							showPalette: true,
+							localStorageKey: "spectrum.recent_colors",
+							maxSelectionSize: 10,
+							preferredFormat: "hex",
+							chooseText: "Ok",
+							showInput: true,
+			                allowEmpty: true,
+			                change: function(color) {
+								self.updateColors();
+							},
+							move: function(color) {
+								redactor.selectionRestore(true, false);
+								self.current_bg = color;	
+							}
+						}
+				});
 
+			foreground_picker.render();
+			this.$("#tabforeground-content").html( foreground_picker.el );
+
+			background_picker.render();
+			this.$("#tabbackground-content").html( background_picker.el );
+			
 			if(this.current_color) {
-				this.$('li#tabforeground-content').find('.sp-dragger').css('border-bottom-color', this.current_color);
-				this.$('li#tabforeground-content').find('.sp-dragger').css('border-left-color', this.current_color);
-				this.$('input.foreground').spectrum('option', 'color', this.current_color);
+				var color = tinycolor(self.current_color);
+				foreground_picker.$(".upfront-field-color").spectrum("option", "color", self.current_color);
+				foreground_picker.$(".upfront-field-color").spectrum("set", color);
+				foreground_picker.$(".sp-input").css({
+					"border-left-color" : self.current_color
+				});
+				foreground_picker.render_sidebar_rgba(color.toRgb());
+				foreground_picker.update_input_val( color.toHexString() );
 			}
-			else
-				this.$('input.foreground').spectrum('option', 'color', "#000");
+			else{
+				var color = tinycolor("#000000");
+				foreground_picker.$(".upfront-field-color").spectrum("option", "color", "#000000");
+				foreground_picker.$(".upfront-field-color").spectrum("set", color);
+				background_picker.$(".sp-input").css({
+					"border-left-color" : "#000000"
+				});	
+				foreground_picker.render_sidebar_rgba(color.toRgb());
+				foreground_picker.update_input_val( color.toHexString() );
+			}
 
 			if(this.current_bg) {
-				this.$('li#tabbackground-content').find('.sp-dragger').css('border-bottom-color', this.current_bg);
-				this.$('li#tabbackground-content').find('.sp-dragger').css('border-left-color', this.current_bg);
-				this.$('input.background').spectrum('option', 'color', this.current_bg);
+				var color = tinycolor(self.current_bg);
+				background_picker.$(".upfront-field-color").spectrum("option", "color", self.current_bg);
+				background_picker.$(".upfront-field-color").spectrum("set", color);
+				background_picker.$(".sp-input").css({
+					"border-left-color" : self.current_bg
+				});			
+				background_picker.render_sidebar_rgba(color.toRgb());
+				background_picker.update_input_val( color.toHexString() );	
 			}
-			else
-				this.$('input.background').spectrum('option', 'color', "#000");
+			else{
+				var color = tinycolor("rgba(0, 0, 0, 0)");
+				background_picker.$(".upfront-field-color").spectrum("option", "color", "rgba(0, 0, 0, 0)");
+				background_picker.$(".upfront-field-color").spectrum("set", color);
+				background_picker.$(".sp-input").css({
+					"border-left-color" : "rgba(0, 0, 0, 0)"
+				});		
+				background_picker.render_sidebar_rgba(color.toRgb());
+				background_picker.update_input_val( color.toHexString() );
+			}
 
 
 //			this.$('input.foreground').spectrum('resetUI');
 //			this.$('input.background').spectrum('resetUI');
-//
+//			
 
 		    this.$(".sp-choose").on("click", function(){
 	    		self.closePanel();
@@ -1140,11 +1157,17 @@ RedactorPlugins.upfrontColor = {
 				var self = this;
 				self.setCurrentColors();
 
-				if(self.current_bg)
-					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').removeClass('transparent').css('border-color', self.current_bg);
-
-				else
+				if(self.current_bg){
+					var color = tinycolor( self.current_bg );
+					if( color.getAlpha() === 0 ){
+						this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('border-color', color.toRgbString());
+					}else{
+						this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').removeClass('transparent').css('border-color', color.toRgbString());
+					}
+				}
+				else{
 					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').addClass('transparent').css('border-color', '');
+				}
 
 
 				if(self.current_color)
@@ -1197,19 +1220,19 @@ RedactorPlugins.upfrontColor = {
                 if(self.current_bg && typeof(self.current_bg) == 'object') {
                     this.redactor.selectionRestore(true, false);
                     this.redactor.inlineRemoveStyle('background-color');
-                    if(self.current_bg.toRgbString().toLowerCase() != 'rgba(0, 0, 0, 0)')
-                        this.redactor.inlineSetStyle('background-color', self.current_bg.toRgbString());
+                    // if(self.current_bg.toRgbString().toLowerCase() != 'rgba(0, 0, 0, 0)')
+                    this.redactor.inlineSetStyle('background-color', self.current_bg.toRgbString());
 
                 }
 
 				self.updateIcon();
 				self.redactor.selectionRemove();
 				self.redactor.sync();
-
+			
 			}
 
 	})
-}
+};
 
 
 RedactorPlugins.upfrontFormatting = {

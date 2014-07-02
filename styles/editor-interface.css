@@ -9328,6 +9328,12 @@ border:none;
 .redactor_dropdown_box_upfrontColor ul.tabs > li {
 	display:none;
 }
+.redactor_dropdown_box_upfrontColor ul.tabs > li .upfront-field-wrap-color.sp-cf{
+	margin-top: 0;
+}
+.redactor_dropdown_box_upfrontColor ul.tabs > li .upfront-field-wrap-color.sp-cf label{
+	display: none;
+}
 .redactor_dropdown_box_upfrontColor ul.tabs > li.active {
 	display:block;
 }
