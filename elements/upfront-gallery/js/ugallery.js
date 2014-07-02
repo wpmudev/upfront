@@ -187,6 +187,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		control.image = image;
 
 		me.listenTo(control, 'panel:ok', function(view){
+			//call the panel linkOk method to let it parse the link,
+			// later the link:ok event will be emitted and we will use it to
+			// save the link.
+			control.view.linkOk();
+		});
+
+		me.listenTo(control.view, 'link:ok', function(){
 			me.updateLink(control);
 		});
 
@@ -226,10 +233,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			control.view.model.set(linkData);
 			control.view.render();
 			control.open();
-		});
-
-		me.listenTo(control.view, 'link:ok', function(){
-			me.updateLink(control);
 		});
 
 		control.icon = 'link';

@@ -9142,8 +9142,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			var link = this.getCurrentValue();
 
-			this.model.set(link, {silent: true});
+			//If we are creating a lightbox just call the method.
+			if(link.type == 'lightbox' && this.$('.js-ulinkpanel-new-lightbox').is(':visible'))
+				return this.createLightBox();
 
+			this.model.set(link, {silent: true});
 			this.trigger('link:ok', link);
 		},
 
@@ -9257,8 +9260,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			this.$('.js-ulinkpanel-lightbox-select').hide();
 			this.$('.js-ulinkpanel-new-lightbox').show().focus();
-
-			console.log(this.getLightBoxes());
 		},
 
 		hideLightboxInput: function(e) {
@@ -9286,27 +9287,43 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		checkCreateLightbox: function(e){
 			if(e.which == 13){
 				e.preventDefault();
-				var name = $.trim(this.$('.js-ulinkpanel-lightbox-input').val());
-				if(!name)
-					return Upfront.Views.Editor.notify('Could not create a lightbox with an empty name.', 'error');
-
-				var safeName = Upfront.Application.LayoutEditor.createLightboxRegion(name);
-
-				//Set the name as the current value
-				this.$('.js-ulinkpanel-lightbox-select')
-					.append('<option value="' + safeName + '"></option>')
-					.val(safeName)
-				;
-
-				this.linkOk();
+				this.createLightBox();
 			}
+		},
+
+		createLightBox: function(){
+			var name = $.trim(this.$('.js-ulinkpanel-lightbox-input').val());
+			if(!name){
+				Upfront.Views.Editor.notify('Could not create a lightbox with an empty name.', 'error');
+				return false;
+			}
+
+			var safeName = Upfront.Application.LayoutEditor.createLightboxRegion(name),
+				url = this.getCleanurl() + '#' + safeName
+			;
+
+
+			//Hide the textbox before calling linkOk, avoiding an eternal loop
+			this.$('.js-ulinkpanel-new-lightbox').hide();
+
+			//Set the name as the current value
+			this.$('.js-ulinkpanel-lightbox-select')
+				.show()
+				.append('<option value="' + url + '"></option>')
+				.val(url)
+			;
+
+			this.linkOk();
 		},
 
 		getCleanurl: function(url) {
 			//this one removes any existing # anchor postfix from the url
 			var urlParts;
-			if(!url)
+			if(!url){
 				url = location.href;
+				if(location.search == '?dev=true')
+					url = url.toString().replace('?dev=true', '');
+			}
 
 			if(url.indexOf('#') == -1)
 				return url;

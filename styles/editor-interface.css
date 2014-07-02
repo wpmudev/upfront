@@ -7808,6 +7808,11 @@ a.ulinkpanel-entry-url:hover {
 	color: #cbe5ff;
 }
 
+.ulinkpanel-dark .upfront-settings-button_panel{
+	bottom: -36px;
+	right: 0;
+}
+
 /* ----- New Editor bar ----- */
 .upfront-postcontent-editor{
 	z-index: 3;

@@ -528,18 +528,19 @@ var MenuItemView = Backbone.View.extend({
   },
   */
   getCleanurl: function(url) {
-    //this one removes any existing # anchor postfix from the url
+		//this one removes any existing # anchor postfix from the url
+		var urlParts;
+		if(!url){
+			url = location.href;
+			if(location.search = '?dev=true')
+				url = url.replace('?dev=true', '');
+		}
 
-    if(typeof(url) == 'undefined')
-      var url = $(location).attr('href');
+		if(url.indexOf('#') == -1)
+			return url;
 
-    if(url.indexOf('#') >=0) {
-      var tempurl = url.split('#');
-      return tempurl[0];
-    }
-    else
-      return url;
-
+		urlParts = url.split('#');
+		return urlParts[0];
   },
   /*
   getUrlanchor: function(url) {

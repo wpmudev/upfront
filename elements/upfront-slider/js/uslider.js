@@ -559,8 +559,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		control.slide = slide;
 
-		me.listenTo(control, 'panel:ok', function(view){
-			me.updateLink(control);
+		me.listenTo(control, 'panel:ok', function(){
+			//call the panel linkOk method to let it parse the link,
+			// later the link:ok event will be emitted and we will use it to
+			// save the link.
+			control.view.linkOk();
 		});
 
 		me.listenTo(control, 'panel:open', function(){

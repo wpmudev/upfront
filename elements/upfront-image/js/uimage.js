@@ -222,8 +222,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		});
 
 		me.listenTo(control, 'panel:ok', function(view){
-			var data = view.getCurrentValue();
-			me.updateLink(data, view);
+			//call the panel linkOk method to let it parse the link,
+			// later the link:ok event will be emitted and we will use it to
+			// save the link.
+			control.view.linkOk();
+		});
+
+		me.listenTo(control.view, 'link:ok', function(data){
+			me.updateLink(data, control.view);
 		});
 
 
@@ -2905,6 +2911,8 @@ var DialogControl = Control.extend({
 		if(!$(e.target).hasClass('upfront-icon'))
 			return;
 
+		e.preventDefault();
+
 		if(this.isopen)
 			this.close();
 		else
@@ -2912,6 +2920,7 @@ var DialogControl = Control.extend({
 	},
 
 	onClickOk: function(e){
+		e.preventDefault();
 		this.trigger('panel:ok', this.view);
 	},
 
