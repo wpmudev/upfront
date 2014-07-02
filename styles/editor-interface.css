@@ -8375,7 +8375,8 @@ a.ueditor-select-option:hover {
   top: 0;
   right: 0;
   background: rgba(38,58,77,0.8);
-  display: none
+  display: none;
+	z-index: 10;
 }
 
 #preventUsageOverlay span {
