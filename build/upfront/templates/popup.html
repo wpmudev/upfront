@@ -461,7 +461,7 @@
 		<div id="ulinkpanel-anchor-select" class="js-ulinkpanel-input-url js-ulinkpanel-input-anchor">
 			<select class="ulinkpanel-anchor-selector">
 			{[ _.each(anchors, function(anchor){ ]}
-				<option value="#{{ anchor }}" {{ link.url == '#' + anchor ? 'selected="selected"' : '' }}>{{anchor}}</option>
+				<option value="{{ anchor.id }}" {{ link.url == anchor.id ? 'selected="selected"' : '' }}>{{anchor.label}}</option>
 			{[ }); ]}
 			</select>
 		</div>
@@ -495,7 +495,7 @@
 		{[ if(lightboxes.length) { ]}
 		<select class="ulinkpanel-lightbox-selector js-ulinkpanel-lightbox-select">
 		{[ _.each(lightboxes, function(lightbox){ ]}
-			<option value="{{ lightbox.id }}" {{ link.url == '#' + lightbox.id ? 'selected="selected"' : '' }}>{{lightbox.label}}</option>
+			<option value="{{ lightbox.id }}" {{ link.url == lightbox.id ? 'selected="selected"' : '' }}>{{lightbox.label}}</option>
 		{[ }) ]}
 		</select>
 		{[ } ]}
