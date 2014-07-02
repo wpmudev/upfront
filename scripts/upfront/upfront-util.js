@@ -44,9 +44,9 @@ define(function() {
 	dbg: function () {
 	  Upfront.Util.log(JSON.stringify(arguments[0]));
 	},
-	
+
 	/**
-	 * Perform deep copy of an object 
+	 * Perform deep copy of an object
 	 */
 	clone: function (obj) {
 		return jQuery.extend(true, {}, obj);
@@ -439,64 +439,63 @@ var Popup = {
 	},
 
 	open: function (callback, data) {
-	  data = data || {};
-	  this.init();
-	  var me = this,
-		sidebarWidth = $('#sidebar-ui').width(),
-		$win = $(window),
-		width = data.width || 630,
-		left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
-		height = ($win.height() / 3) * 2,
-		close_func = function () { me.close(); return false; }
-	  ;
-	  data.width = width, data.height = height;
-	  this.$background
-		.css({
-		  'height': $win.height(),
-		  'width': $win.width() - sidebarWidth,
-		  'left': sidebarWidth
-		})
-		.on("click", close_func)
-		.show()
-	  ;
-	  this.$popup
-		.css({
-		  'width': width,
-		  'height': height,
-		  'left': sidebarWidth
-		})
-		.show()
-		.find("#upfront-popup-close").on("click", close_func).end()
-	  ;
-	  $('body').addClass('upfront-popup-open');
-
-	  $win.off("resize.upfront-popup").on("resize.upfront-popup", function () {
-		var sidebarWidth = $('#sidebar-ui').width();
-
-		if (me.$background.is(":visible")) me.$background
-		  .css({
-			'height': $win.height(),
-			'width': $win.width() - sidebarWidth,
-			'left': sidebarWidth
-		  })
+		data = data || {};
+		this.init();
+		var me = this,
+			sidebarWidth = $('#sidebar-ui').width(),
+			$win = $(window),
+			width = data.width || 630,
+			left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
+			height = ($win.height() / 3) * 2,
+			close_func = function () { me.close(); return false; }
 		;
-		if (me.$popup.is(":visible")) {
-		  var left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
-			height = ($win.height() / 3) * 2
-		  ;
-		  me.$popup
-			.css({
-			  'width': width,
-			  'height': height,
-			  'left': left_pos
-			})
-		  ;
-		}
-	  });
 
-	  callback.apply(this.$popup.find("#upfront-popup-content").get(), [data, this.$popup.find("#upfront-popup-top"), this.$popup.find("#upfront-popup-bottom")]);
-	  this._deferred = new $.Deferred();
-	  return this._deferred.promise();
+		data.width = width, data.height = height;
+		this.$background
+			.css({
+				'height': $win.height(),
+				'width': $win.width() - sidebarWidth,
+				'left': sidebarWidth
+			})
+			.on("click", close_func)
+			.show()
+		;
+		this.$popup
+			.css({
+				'width': width,
+				'height': height,
+				'left': sidebarWidth
+			})
+			.show()
+			.find("#upfront-popup-close").on("click", close_func).end()
+		;
+		$('body').addClass('upfront-popup-open');
+
+		$win.off("resize.upfront-popup").on("resize.upfront-popup", function () {
+			if (me.$background.is(":visible")) me.$background
+				.css({
+					'height': $win.height(),
+					'width': $win.width() - sidebarWidth,
+					'left': sidebarWidth
+				})
+			;
+			if (me.$popup.is(":visible")) {
+				var left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
+					height = ($win.height() / 3) * 2
+				;
+				me.$popup
+				.css({
+					'width': width,
+					'height': height,
+					'left': left_pos
+				})
+				;
+			}
+		});
+
+		callback.apply(this.$popup.find("#upfront-popup-content").get(), [data, this.$popup.find("#upfront-popup-top"), this.$popup.find("#upfront-popup-bottom")]);
+		this._deferred = new $.Deferred();
+		return this._deferred.promise();
 	},
 
 	close: function (result) {

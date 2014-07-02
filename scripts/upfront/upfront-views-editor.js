@@ -2131,6 +2131,7 @@ define([
 				this.commands.push(new Command_NewPage({"model": this.model}));
 			}
 			this.commands.push(new Command_PopupList({"model": this.model}));
+			this.commands.push(new Command_OpenMediaGallery());
 		}
 	});
 
@@ -2356,7 +2357,7 @@ define([
 		},
 		allowUsage: function(type) {
 			if (this.writingIsOn && type !== 'write') {
-			this.preventUsage('write');
+				this.preventUsage('write');
 				return;
 			}
 
@@ -2704,6 +2705,17 @@ define([
 			views.search.render();
 			me.$popup.bottom.append(views.search.$el);
 			views.search.setElement(views.search.$el);
+		}
+	});
+
+	var Command_OpenMediaGallery = Command.extend({
+		tagName: 'li',
+		className: 'command-open-media-gallery upfront-icon upfront-icon-open-gallery',
+		render: function () {
+				this.$el.html('Media');
+		},
+		on_click: function () {
+			Upfront.Media.Manager.open();
 		}
 	});
 
@@ -3689,7 +3701,7 @@ define([
 		}
 	});
 
-var Field_Color = Field_Text.extend({
+	var Field_Color = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
 		spectrumDefaults: {
 			clickoutFiresChange: true,
@@ -3721,7 +3733,7 @@ var Field_Color = Field_Text.extend({
             	b : 0,
             	a : 0
             };
-            this.spectrumOptions = spectrumOptions;    
+            this.spectrumOptions = spectrumOptions;
 			spectrumOptions.move = function(color){
 				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
@@ -3752,7 +3764,7 @@ var Field_Color = Field_Text.extend({
 					$(".sp-input").val(t_color.toHexString());
 				}
 				me.spectrumOptions = spectrumOptions;
-				
+
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
 			};
@@ -3809,7 +3821,6 @@ var Field_Color = Field_Text.extend({
 				val = parseFloat($el.val()),
 				color = this.$spectrum.spectrum("get"),
 				selection = {};
-				
 				selection[type] = val;
 				color = tinycolor(_.extend(color.toRgb(), selection));
 				// Set the new color
@@ -3819,7 +3830,6 @@ var Field_Color = Field_Text.extend({
 				this.render_sidebar_rgba(  color.toRgb() );
 				// Trigger move event
 				this.options.spectrum.move(color);
-				
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, 0)',
@@ -3829,7 +3839,7 @@ var Field_Color = Field_Text.extend({
 			this.update_input_border_color( blank_color );
 			this.update_input_val( "#000000" );
 			this.render_sidebar_rgba(  this.rgba );
-			
+
 			// Trigger move event
 			this.options.spectrum.move(color);
 

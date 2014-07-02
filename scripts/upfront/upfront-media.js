@@ -1954,13 +1954,13 @@ define(function() {
 			}, options);
 
 			var me = this,
-				pop = false,
+				popup = false,
 				media_type = options.media_type,
 				multiple_selection = options.multiple_selection,
 				button_text = options.button_text
 			;
 			ActiveFilters.allowed_media_types = media_type;
-			pop = Upfront.Popup.open(function (data, $top, $bottom) {
+			popup = Upfront.Popup.open(function (data, $top, $bottom) {
 				me.out = this;
 				me.popup_data = data;
 				me.popup_data.$top = $top;
@@ -1968,11 +1968,18 @@ define(function() {
 				me.load(options);
 			}, {width: 800});
 
-			pop.always(this.cleanup_active_filters);
+			popup.always(this.cleanup_active_filters);
+			popup.progress(this.clean_up);
 
 			Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
 
-			return pop;
+			return popup;
+		},
+		/**
+		 * Ensure everything is off when popup is closed.
+		 */
+		clean_up: function(flag) {
+			if (flag === 'before_close') Upfront.Events.trigger('upfront:element:edit:stop', 'media-upload');
 		},
 		cleanup_active_filters: function () {
 			ActiveFilters.allowed_media_types = [];
@@ -2030,7 +2037,7 @@ define(function() {
 				}
 				editor.insertHtml(html);
 			}
-      Upfront.Events.trigger('upfront:element:edit:stop');
+      Upfront.Events.trigger('upfront:element:edit:stop', 'media-upload');
 		},
 		results_html: function (result) {
 			var html = '';

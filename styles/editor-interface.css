@@ -367,17 +367,33 @@
 	border-color: #1fcd8f;
 	color: #cbe5ff;
 }
+#sidebar-ui .sidebar-commands-primary .command-open-media-gallery,
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
-	display: block;
+	display: inline-block;
 	font-size: 11px;
 	color: #1fcc8f;
 	text-decoration: underline;
 	margin: 0 0 20px;
-}
-#sidebar-ui .sidebar-commands-primary .command-popup-list {
 	clear: both;
 	padding-top: 10px;
 	margin-bottom: 4px;
+}
+#sidebar-ui .sidebar-commands-primary .command-popup-list {
+	width: 150px;
+}
+#sidebar-ui .sidebar-commands-primary .command-open-media-gallery {
+	text-align: right;
+	width: 80px;
+	margin-bottom: 0;
+}
+#sidebar-ui .upfront-icon-open-gallery:before {
+	background-position: -520px -93px;
+	width: 14px;
+	height: 12px;
+	margin-right: 6px;
+	margin-top: 6px;
+	float: none;
+	display: inline-block;
 }
 #sidebar-ui .sidebar-commands-primary .command-browse-layout {
 	line-height: 34px;
