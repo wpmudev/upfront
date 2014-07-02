@@ -212,6 +212,10 @@ define("content", deps, function(postTpl, ContentTools) {
 			if(this.contentEditor || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
 				return;
 
+			//If we haven't fetched all the data, return too
+			if(!this.layoutData || !this.post)
+				return;
+
 			var target = e ? $(e.currentTarget) : focusElement;
 			this.contentEditor = new ContentTools.PostContentEditor({
 				post: this.post,
