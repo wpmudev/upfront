@@ -788,7 +788,7 @@ define([
 				defaultmenulist.render();
 				defaultmenulist.parent_view = me;
 				me.$el.append(defaultmenulist.el);
-				
+
 				this.$el
 				.css({
 					"position": "absolute",
@@ -2399,11 +2399,11 @@ define([
 			},
 			on_delete_click: function (e) {
 				var main, main_view;
-	
+
 				if(typeof(e) != 'undefined')
 					e.preventDefault();
 
-					
+
 				if ( confirm("Are you sure you want to delete this section?") ){
 					// if ( this.model.get('container') ){
 						// main = this.model.collection.get_by_name(this.model.get('container'));
@@ -2411,7 +2411,7 @@ define([
 					// }
 					if(this.model.get('type') == 'lightbox')
 						this.hide();
-						
+
 					this.model.collection.remove(this.model);
 					// if ( main_view ){
 						// Upfront.Events.trigger('command:region:edit_toggle', true);
@@ -2709,12 +2709,12 @@ define([
 					this.$el.find('.upfront-region-edit-trigger-small').trigger('click');
 				}*/
 				this.$el.removeClass('init_state');
-				
+
 				if(this.model.get_property_value_by_name('delete')) {
 					this.model.set_property('delete', false);
 					this.on_delete_click();
 				}
-				
+
 
 			},
 			update_region_position: function () {
@@ -2831,7 +2831,7 @@ define([
 			render_container: function (region, index) {
 				var container = region.get("container"),
 					name = region.get("name");
-				if ( region.is_main() ) {
+				if ( region.is_main() || (container == 'lightbox' && !this.container_views[region.cid])) {
 					var container_view = this.container_views[region.cid] || this.create_container_instance(region);
 					container_view.parent_view = this;
 					container_view.render();

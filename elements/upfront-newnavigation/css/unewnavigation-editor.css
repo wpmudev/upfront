@@ -1,5 +1,5 @@
 div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item {
-	display: none;	
+	display: none;
 	z-index:1;
 	cursor: pointer !important;
 }
@@ -11,12 +11,12 @@ div.upfront-navigation.upfront-editable_entity ul li > i.navigation-add-item {
 }
 
 div.upfront-navigation.upfront-editable_entity:hover ul li > i.navigation-add-item {
-	display: block;	
+	display: block;
 }
 
 
 div.upfront-navigation.upfront-editable_entity ul li.new_menu_item > i.navigation-add-item {
-	display:none !important;	
+	display:none !important;
 }
 
 div.upfront-navigation.upfront-editable_entity i.navigation-add-item:before {
@@ -28,21 +28,21 @@ div.upfront-navigation.upfront-editable_entity i.navigation-add-item:before {
 	background-image: url('../../../img/uf-core-el-sprite.svg');
 	cursor: pointer;
 	overflow: hidden;
-	line-height: 3em;	
+	line-height: 3em;
 }
 
 div.upfront-navigation.upfront-editable_entity  ul.menu > li > i.navigation-add-item {
-	display: none !important;	
+	display: none !important;
 }
 
 div.upfront-navigation.upfront-editable_entity ul.sub-menu {
-	padding-bottom:30px;	
+	padding-bottom:30px;
 }
 div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-add-item {
 	left: 0;
 	bottom: -28px !important;
 	position: absolute;
-	top: inherit;		
+	top: inherit;
 }
 div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-add-item:before {
 	display:inline-block !important;
@@ -53,7 +53,7 @@ div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-a
 	content: 'Add Item';
 	display:inline-block;
 	padding-left:4px;
-	
+
 	font-size:0.8em;
 	position:relative;
 	font-style:normal;
@@ -70,14 +70,14 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
 	top: -8px;
 	cursor: pointer;
 	overflow: hidden;
-	line-height: 3em;	
+	line-height: 3em;
 }
 div.upfront-navigation.upfront-editable_entity ul.menu li:hover {
-	cursor: move;	
+	cursor: move;
 }
 
 div.upfront-navigation.upfront-editable_entity ul.menu li.edit_mode:hover {
-	cursor: text;	
+	cursor: text;
 }
 
 div.upfront-navigation.upfront-editable_entity ul li:not(.edit_mode):hover:before {
@@ -96,11 +96,11 @@ div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover 
 }
 
 div.upfront-navigation.upfront-editable_entity ul.time_being_display {
-	display:block;	
+	display:block;
 }
 
 div.upfront-navigation.upfront-editable_entity a.menu_item.menu_item_placeholder {
-	min-width: 92px;	
+	min-width: 92px;
 }
 
 .upfront-navigation .upfront-entity_meta.newnavigation_add {
@@ -248,18 +248,18 @@ div.upfront-navigation [data-style="vertical"] .menu li {
 }
 
 #unewnavigation-tooltip div.upfront-field-select .upfront-field-select-value {
-	margin-top: -3px;	
+	margin-top: -3px;
 }
 #unewnavigation-tooltip div.upfront-field-select:after {
-	top: 8px;	
+	top: 8px;
 }
 div#label-anchors-select {
-	display: inline-block;	
+	display: inline-block;
 }
 
 div#unewnavigation-tooltip {
-  padding:0 4px !important;
-  width: 188px !important;
+  padding: 10px;
+  width: 250px;
 }
 
 div#unewnavigation-tooltip input[type="radio"] {
@@ -281,7 +281,7 @@ div#unewnavigation-tooltip span.tooltip-title {
 }
 
 input#unavigation-link-type-3 {
-	margin-left: 10px;	
+	margin-left: 10px;
 }
 
 
@@ -299,7 +299,7 @@ div.upfront-output-unewnavigation[data-aliment="right"] ul.menu  {
 
 div.upfront-output-unewnavigation[data-style="vertical"] ul.menu > li {
 	margin-left: 0 !important;
-	margin-right: 0 !important;	
+	margin-right: 0 !important;
 }
 
 div.upfront-output-unewnavigation[data-style="vertical"] ul.menu > li li {
@@ -307,7 +307,7 @@ div.upfront-output-unewnavigation[data-style="vertical"] ul.menu > li li {
 }
 div.upfront-output-unewnavigation[data-style="vertical"] ul.sub-menu {
 	left: 100%;
-	top: 0;	
+	top: 0;
 }
 div.upfront-output-unewnavigation ul.menu > li:first-child {
 	margin-left: 0 !important;
@@ -324,7 +324,7 @@ div.upfront-navigation.upfront-editable_entity ul.menu > li {
 	display: inline-block;
 	margin: 0 8px;
 	position: relative;
-    
+
 
 }
 

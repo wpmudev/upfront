@@ -9182,7 +9182,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					return '#';
 				case 'lightbox':
 					url = this.$('.js-ulinkpanel-lightbox-select').val();
-					return url ? '#' + url : '';
+					return url || '';
 			}
 
 			//Not a type, return current url
@@ -9191,13 +9191,15 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 		getAnchors: function(){
 			var regions = Upfront.Application.layout.get("regions"),
-				anchors = []
+				anchors = [],
+				baseUrl = this.getCleanurl()
 			;
 			regions.each(function (r) {
 				r.get("modules").each(function (module) {
 					module.get("objects").each(function (object) {
 						var anchor = object.get_property_value_by_name("anchor");
-						if (anchor && anchor.length) anchors.push(anchor);
+						if (anchor && anchor.length)
+							anchors.push({id: baseUrl + '#' + anchor, label: anchor});
 					});
 				});
 			});
@@ -9222,9 +9224,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					url: post.get('permalink'),
 					type: 'entry'
 				};
-				me.model.set(link);
 
-				me.trigger('link:postselected', link);
+				me.model.set(link);
+				me.render();
+
+				me.trigger('link:postselected', link, post);
 			});
 		},
 
@@ -9257,12 +9261,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 		getLightBoxes: function(){
 			var lightboxes = [],
-				regions = Upfront.Application.layout.get('regions')
+				regions = Upfront.Application.layout.get('regions'),
+				baseUrl = this.getCleanurl()
 			;
 
 			_.each(regions.models, function(model) {
 				if(model.attributes.sub == 'lightbox')
-					lightboxes.push({id: model.get('name'), label: model.get('title')});
+					lightboxes.push({id: baseUrl + '#' + model.get('name'), label: model.get('title')});
 			});
 
 			return lightboxes;
@@ -9285,6 +9290,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 				this.linkOk();
 			}
+		},
+
+		getCleanurl: function(url) {
+			//this one removes any existing # anchor postfix from the url
+			var urlParts;
+			if(!url)
+				url = location.href;
+
+			if(url.indexOf('#') == -1)
+				return url;
+
+			urlParts = url.split('#');
+			return urlParts[0];
 		},
 
 		setCurrentClass: function(type) {

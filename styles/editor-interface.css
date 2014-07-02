@@ -7723,8 +7723,12 @@ a.ulinkpanel-entry-url:hover {
 }
 
 #ulinkpanel-create-lightbox:hover {
-	color: #cbe5ff;
+	color: rgb(48, 71, 94);
 	border: 1px solid #3ea;
+}
+
+.ulinkpanel-dark #ulinkpanel-create-lightbox:hover {
+	color: #cbe5ff;
 }
 
 .ulinkpanel-new-lightbox,
@@ -8843,6 +8847,10 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	line-height: 21px;
 	margin-top: 5px;
 	color: #97b8da;
+}
+
+.redactor_dropdown .ulinkpanel-lightbox-wrap {
+	clear: left;
 }
 /*
 .redactor_dropdown label {

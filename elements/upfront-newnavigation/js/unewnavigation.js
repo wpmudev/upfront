@@ -2,9 +2,9 @@
 
   define([
     'text!elements/upfront-newnavigation/tpl/link_editor.html'
-  ], function(editorTpl) {
+  ], function(){//editorTpl) {
 
-var $editorTpl = $(editorTpl);
+//var $editorTpl = $(editorTpl);
 
 
 /**
@@ -27,7 +27,7 @@ var UnewnavigationModel = Upfront.Models.ObjectModel.extend({
 
 var MenuItemView = Backbone.View.extend({
   tagName: 'li',
-  linkTpl: _.template($editorTpl.find('#link-tpl').html()),
+  //linkTpl: _.template($editorTpl.find('#link-tpl').html()),
   events: {
      //'click a.menu_item' : 'editMenuItem',
    'click i.delete_menu_item' : 'deleteMenuItem',
@@ -133,6 +133,7 @@ var MenuItemView = Backbone.View.extend({
 
     Upfront.Events.on("entity:contextmenu:deactivate", this.remove_context_menu, this);
 
+    this.createLinkPanel();
   },
   on_context_menu: function(e) {
 
@@ -222,7 +223,63 @@ var MenuItemView = Backbone.View.extend({
     }
 
   },
-  editMenuItem: function(e) {
+
+  editMenuItem: function(e){
+		var target = typeof e.target == 'undefined' ? e : e.target,
+			linkType = 'external',
+			link = {url: this.model['menu-item-url']}
+		;
+
+		if(this.model['menu-item-type'] == 'post_type')
+			linkType = 'entry';
+		else if(link.url.indexOf('#') > -1 && this.getCleanurl(link.url) == this.getCleanurl()) {
+			linkType = link.url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+		}
+
+		link.type = linkType;
+
+		this.linkPanel.model.set(link);
+		this.linkPanel.render();
+
+		this.openTooltip(this.linkPanel.el, $(target));
+
+		this.linkPanel.delegateEvents();
+  },
+
+  createLinkPanel: function(){
+  		var linkPanel = new Upfront.Views.Editor.LinkPanel({
+  			theme: 'light',
+  			button: true
+  		});
+
+  		this.listenTo(linkPanel, 'link:ok', function(link){
+  			var itemType = 'custom';
+
+  			console.log('link ok');
+  			this.model['menu-item-url'] = link.url;
+
+  			if(link.type == 'entry'){
+  				itemType = 'post_type';
+  				if(this.postSelected && this.postSelected.get('permalink') == link.url){
+					this.model['menu-item-object'] =  this.postSelected.get('post_type');
+					this.model['menu-item-object-id'] =  this.postSelected.get('ID');
+  				}
+  			}
+
+  			this.model['menu-item-type'] = itemType;
+
+  			this.saveLink();
+  			this.closeTooltip();
+  		});
+
+  		this.listenTo(linkPanel, 'link:postselected', function(link, post){
+  			this.postSelected = post;
+  		});
+
+  		this.linkPanel = linkPanel;
+  },
+/*
+  editMenuItemOld: function(e) {
     //if(!this.parent_view.editmode)
       //return;
     //e.preventDefault();
@@ -469,6 +526,7 @@ var MenuItemView = Backbone.View.extend({
 
     });
   },
+  */
   getCleanurl: function(url) {
     //this one removes any existing # anchor postfix from the url
 
@@ -483,6 +541,7 @@ var MenuItemView = Backbone.View.extend({
       return url;
 
   },
+  /*
   getUrlanchor: function(url) {
     // this does almost the opposite of the above function
 
@@ -502,9 +561,8 @@ var MenuItemView = Backbone.View.extend({
   removeLightboxselect: function() {
     $('div.upfront-field-wrap-select').remove();
   },
-  saveLink: function(e) {
-
-
+  */
+  saveLink: function() {
     var me = this;
     //if( typeof me.$el.find('a.new_menu_item').data('redactor') != 'undefined')
       //me.$el.find('a.new_menu_item').data('ueditor').stop();
@@ -526,7 +584,11 @@ var MenuItemView = Backbone.View.extend({
     }
 
 
-    var postdata = {"action": "upfront_new_update_menu_item",'menu': me.parent_view.model.get_property_value_by_name('menu_id') , 'menu-item': this.model}
+	var postdata = {
+		'action': "upfront_new_update_menu_item",
+		'menu': me.parent_view.model.get_property_value_by_name('menu_id') ,
+		'menu-item': this.model
+	}
 
 
     if(typeof this.model['menu-item-db-id'] != 'undefined'){
@@ -607,6 +669,7 @@ var MenuItemView = Backbone.View.extend({
       tooltip.remove();
     }, 100);
   },
+  /*
   postTypes: function(){
     var types = [];
     _.each(Upfront.data.ugallery.postTypes, function(type){
@@ -615,6 +678,7 @@ var MenuItemView = Backbone.View.extend({
     });
     return types;
   },
+  */
 });
 
 var CurrentMenuItemData = Backbone.Model.extend({
