@@ -26,6 +26,10 @@
         model: LikeBoxModel,
         elementSize: {width: 0, height: 0},
 
+        cssSelectors: {
+        	'iframe': {label: 'Container', info: 'Facebook box wrapper layer.'}
+        },
+
         initialize: function(options){
             if(! (this.model instanceof LikeBoxModel)){
                 this.model = new LikeBoxModel({properties: this.model.get('properties')});

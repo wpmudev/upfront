@@ -994,18 +994,18 @@ span.draggable-post-element.element-dragging
 	content: ' ';
 	position:absolute;
 	width:0;
-	height: 0; 
+	height: 0;
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
 	border-top: 4px solid #6B8EB2;
 	bottom:2px;
 	left:3px;
-} 
+}
 #sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number]::-webkit-inner-spin-button:after {
 	content: ' ';
 	position:absolute;
 	width:0;
-	height: 0; 
+	height: 0;
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
 	border-bottom: 4px solid #6B8EB2;
@@ -4747,7 +4747,7 @@ div.uinsert-selector a:hover {
 }
 .upfront-field-icon-social-content-align:before {
 	width: 70px;
-	height: 42px;
+	height: 30px;
 	background-position: -1360px -330px;
 }
 
@@ -5162,6 +5162,10 @@ box-shadow: inset 0 2px 0 0 #fff;
 	width: 100%;
 	background: #c3dcf1;
 	border-top: 1px solid #a4b9cb;
+}
+
+#upfront-popup-content .upfront-settings-item-title span {
+	background: #e5f3fe;
 }
 
 /* Tabs */
@@ -10966,16 +10970,16 @@ div.upfront-region-container-active > a.feature_image_selector {
 	color: #263a4d;
 }
 
-.panel-setting-theme-colors-highlights, 
+.panel-setting-theme-colors-highlights,
 .panel-setting-theme-colors-shades {
 	text-align: justify;
 }
-.panel-setting-theme-colors-highlights:after, 
+.panel-setting-theme-colors-highlights:after,
 .panel-setting-theme-colors-shades:after {
 	content: '';
 	display: inline-block;
 	width: 100%;
-} 
+}
 
 #sidebar-ui .panel-setting-theme-colors-highlights + .swatch-title {
 	margin-top: 4px;
