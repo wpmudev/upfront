@@ -9210,16 +9210,22 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		getAnchors: function(){
 			var regions = Upfront.Application.layout.get("regions"),
 				anchors = [],
-				baseUrl = this.getCleanurl()
+				baseUrl = this.getCleanurl(),
+				find = function (modules) {
+					modules.each(function(module){
+						if ( module.get("objects") )
+							module.get("objects").each(function (object) {
+								var anchor = object.get_property_value_by_name("anchor");
+								if (anchor && anchor.length)
+									anchors.push({id: baseUrl + '#' + anchor, label: anchor});
+							});
+						else if ( module.get("modules") )
+							find(module.get("modules"));
+					});
+				}
 			;
 			regions.each(function (r) {
-				r.get("modules").each(function (module) {
-					module.get("objects").each(function (object) {
-						var anchor = object.get_property_value_by_name("anchor");
-						if (anchor && anchor.length)
-							anchors.push({id: baseUrl + '#' + anchor, label: anchor});
-					});
-				});
+				find(r.get("modules"));
 			});
 
 			this.anchors = anchors;
