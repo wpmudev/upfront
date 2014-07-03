@@ -1645,7 +1645,7 @@ define([
 					// All set, let the defaults carry on as normal...
 				}
 				style = me.styles[element] ? me.styles[element].match(/^(\d+) +(\S+)/) : [false,false];
-				rules.push('font-family: ' + font);
+				if ('inherit' !== font) rules.push('font-family: ' + font); /* don't include "inherit", as that's the default */
 				rules.push('font-weight: ' + style[1]);
 				rules.push('font-style: ' + style[2]);
 				if ( !is_inline ){
