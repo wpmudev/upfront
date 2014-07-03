@@ -1261,7 +1261,7 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 						model: this.model,
 						property: 'caption_trigger',
-            label: 'Show Caption:',
+                        label: 'Show Caption:',
 						layout: "horizontal-inline",
 						values: [
 							{
@@ -1305,43 +1305,77 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.on('rendered', function(){
 			var spectrum = false,
 				currentColor = me.model.get_property_value_by_name('background'),
-				input = $('<input type="text" value="' + currentColor + '">'),
+//				input = $('<input type="text" value="' + currentColor + '">'),
+                $picker_wrap = $("<span></span>");
 				setting = me.$('.ugallery-colorpicker-setting')
 			;
 
-			setting.find('.upfront-field-wrap').append(input);
+//			setting.find('.upfront-field-wrap').append(input);
+			setting.find('.upfront-field-wrap').append($picker_wrap);
 			setting.find('input[name="captionBackground"]').on('change', function(){
 				me.toggleColorPicker();
 			});
-
-			input.spectrum({
-				showAlpha: true,
-				showPalette: true,
-				palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
-				maxSelectionSize: 9,
-				localStorageKey: "spectrum.recent_bgs",
-				preferredFormat: "hex",
-				chooseText: "Ok",
-				showInput: true,
-				allowEmpty:true,
-				show: function(){
-					spectrum = $('.sp-container:visible');
-				},
-				change: function(color) {
-					var rgba = color.toRgbString();
-					me.model.set_property('background', rgba, true);
-					currentColor = rgba;
-				},
-				move: function(color) {
-					var rgba = color.toRgbString();
-					spectrum.find('.sp-dragger').css('border-top-color', rgba);
-					spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-					me.parent_view.for_view.$el.find('.wp-caption').css('background-color', rgba);
-				},
-				hide: function(){
-					me.parent_view.for_view.$el.find('.wp-caption').css('background-color', currentColor);
-				}
-			});
+            var color_picker = new Upfront.Views.Editor.Field.Color({
+                blank_alpha : 0,
+                model: me.model,
+                property: 'background',
+                default_value: '#ffffff',
+                spectrum: {
+                    maxSelectionSize: 9,
+                    localStorageKey: "spectrum.recent_bgs",
+                    preferredFormat: "hex",
+                    chooseText: "Ok",
+                    showInput: true,
+                    allowEmpty:true,
+                    show: function(){
+                        spectrum = $('.sp-container:visible');
+                    },
+                    change: function(color) {
+                        var rgba = color.toRgbString();
+                        me.model.set_property('background', rgba, true);
+                        currentColor = rgba;
+                    },
+                    move: function(color) {
+                        var rgba = color.toRgbString();
+                        spectrum.find('.sp-dragger').css('border-top-color', rgba);
+                        spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+                        me.parent_view.for_view.$el.find('.wp-caption').css('background-color', rgba);
+                    },
+                    hide: function(){
+                        me.parent_view.for_view.$el.find('.wp-caption').css('background-color', currentColor);
+                    }
+                }
+            });
+            color_picker.render();
+            $picker_wrap.html(color_picker.el);
+//			input.spectrum({
+//				showAlpha: true,
+//				showPalette: true,
+//				palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
+//				maxSelectionSize: 9,
+//				localStorageKey: "spectrum.recent_bgs",
+//				preferredFormat: "hex",
+//				chooseText: "Ok",
+//				showInput: true,
+//				allowEmpty:true,
+//				show: function(){
+//					spectrum = $('.sp-container:visible');
+//				},
+//				change: function(color) {
+//					var rgba = color.toRgbString();
+//					me.model.set_property('background', rgba, true);
+//					currentColor = rgba;
+//				},
+//				move: function(color) {
+//					var rgba = color.toRgbString();
+//					spectrum.find('.sp-dragger').css('border-top-color', rgba);
+//					spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+//					me.parent_view.for_view.$el.find('.wp-caption').css('background-color', rgba);
+//				},
+//				hide: function(){
+//					me.parent_view.for_view.$el.find('.wp-caption').css('background-color', currentColor);
+//				}
+//			});
 			setting.find('.sp-replacer').css('display', 'inline-block');
 			me.toggleColorPicker();
 		});
