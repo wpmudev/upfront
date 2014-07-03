@@ -3838,8 +3838,10 @@ define([
 				this.update_input_val( color.toHexString() );
 				this.render_sidebar_rgba(  color.toRgb() );
 				// Trigger move event
-				if(this.options.spectrum && this.options.spectrum.move)
-						this.options.spectrum.move(color);
+				if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
+					this.options.spectrum.move(color);
+				}
+						
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
@@ -3851,11 +3853,14 @@ define([
 			this.render_sidebar_rgba(  this.rgba );
 
 			// Trigger move event
-			if(this.options.spectrum && this.options.spectrum.move)
-					this.options.spectrum.move(color);
+			if(this.options.spectrum && typeof this.options.spectrum.move === "function"){	
+				this.options.spectrum.move(color);
+			}
 
-			if(this.options.spectrum && this.options.spectrum.change)
-					this.options.spectrum.change(color);
+			// Trigger change event
+			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){	
+				this.options.spectrum.change(color);
+			}
 		}
 
 	});
