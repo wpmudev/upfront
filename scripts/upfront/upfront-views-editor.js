@@ -646,6 +646,7 @@ define([
 	});
 
 	var Command_ResetEverything = Command.extend({
+		className: 'command-reset-everything',
 		render: function () {
 			this.$el.html("<span title='destroy the layout and clear everything up'>Reset everything</span>");
 		},
@@ -664,6 +665,7 @@ define([
 	});
 
 	var Command_ToggleMode = Command.extend({
+		className: 'command-toggle-mode',
 		enabled: true,
 		initialize: function () {
 			Upfront.Events.on('upfront:element:edit:start', this.disable_toggle, this);

@@ -443,7 +443,7 @@
 }
 #sidebar-ui .sidebar-profile-detail {
 	margin: 0 0 0 10px;
-	width: 105px;
+	width: 100px;
 	font-size: 11px;
 	line-height: 11px;
 	float: left;
@@ -464,7 +464,7 @@
 	margin-top: 3px;
 }
 #sidebar-ui .sidebar-profile-edit {
-	float: left;
+	float: right;
 	margin: 0;
 	padding-top: 19px;
 	margin-left: 6px;
@@ -492,10 +492,11 @@
 }
 #sidebar-ui .sidebar-commands-control .command-undo,
 #sidebar-ui .sidebar-commands-control .command-redo {
-	padding: 4px 0 9px;
+	padding: 4px 0 0;
 	line-height: 18px;
 	margin-bottom: 0;
 	font-size: 14px;
+	height: 20px;
 }
 #sidebar-ui .sidebar-commands-control .command-redo {
 	margin-left: 8px;
@@ -10994,4 +10995,24 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 #sidebar-ui .create-theme-sidebar .command-edit-bg {
 	text-align: right;
+}
+/* debug mode */
+#sidebar-ui .sidebar-commands-control .command-toggle-mode,
+#sidebar-ui .sidebar-commands-control .command-reset-everything {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 595px;
+	right: 15px;
+	font-size: 12px;
+	height: 12px;
+	line-height: 12px;
+}
+#sidebar-ui .sidebar-commands-control .command-toggle-mode:hover,
+#sidebar-ui .sidebar-commands-control .command-reset-everything:hover {
+	color: white;
+}
+#sidebar-ui .sidebar-commands-control .command-toggle-mode {
+	left: 15px;
+	right: auto;
 }
