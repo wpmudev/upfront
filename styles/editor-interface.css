@@ -345,6 +345,11 @@
 	border: 2px solid #25394d;
 	font-size: 15px;
 	height: 36px;
+	-webkit-transition: border .15s ease-in-out;
+	   -moz-transition: border .15s ease-in-out;
+	    -ms-transition: border .15s ease-in-out;
+	     -o-transition: border .15s ease-in-out;
+	        transition: border .15s ease-in-out;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-layout{
 	height: 40px;
@@ -379,20 +384,19 @@
 	margin-bottom: 4px;
 }
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
-	width: 150px;
+	width: 170px;
+	font:11px/22px Verdana, sans-serif;
 }
 #sidebar-ui .sidebar-commands-primary .command-open-media-gallery {
-	text-align: right;
-	width: 80px;
+	width: auto;
 	margin-bottom: 0;
+	font:11px/22px Verdana, sans-serif;
+	float:right;
 }
 #sidebar-ui .upfront-icon-open-gallery:before {
-	background-position: -520px -93px;
+	background-position: -196px -176px;
 	width: 14px;
-	height: 12px;
-	margin-right: 6px;
-	margin-top: 6px;
-	float: none;
+	margin-right: 4px;
 	display: inline-block;
 }
 #sidebar-ui .sidebar-commands-primary .command-browse-layout {
@@ -404,7 +408,7 @@
 	float: right;
 }
 #sidebar-ui .upfront-icon-browse-layouts:before {
-	background-position: -520px -93px;
+	background-position: -45px -80px;
 	width: 14px;
 	height: 13px;
 	margin-right: 6px;
@@ -533,7 +537,7 @@
 	margin: 0;
 }
 #sidebar-ui .upfront-icon-export:before {
-	background-position: -520px -93px;
+	background-position: -42px -384px;
 	width: 19px;
 	height: 19px;
 	margin-right: 7px;
@@ -967,11 +971,11 @@ span.draggable-post-element.element-dragging
   padding: 0;
 }
 #sidebar-ui .upfront-icon-edit-css:before {
-	background-position: -520px -93px;
+	background-position: -660px -44px;
 	width: 18px;
 	height: 15px;
-	margin-right: 4px;
-	margin-top: 7px;
+	margin-right: 5px;
+	margin-top: 6px;
 }
 #sidebar-ui .command-edit-css span {
 	display: inline-block;
@@ -3977,7 +3981,8 @@ div.uinsert-selector a:hover {
 .upfront-icon-control:before,
 .upfront-ui .upfront-field-icon:before,
 .upfront-ui .upfront-structure-field-icon:before,
-.upfront-util-icon:before {
+.upfront-util-icon:before,
+.upfront-ui .upfront-icon.upfront-icon-edit-css:before {
 	content: " ";
 	background-image: url('../img/uf-core-el-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
@@ -4127,7 +4132,7 @@ div.uinsert-selector a:hover {
 }
 .upfront-icon-browse:before {
 	width: 10px;
-	margin-right: 8px;
+	margin-right: 5px;
 	background-position: -736px -70px;
 }
 .upfront-icon-collapse:before,
@@ -10796,7 +10801,6 @@ div.upfront-region-container-active > a.feature_image_selector {
     width: 20px;
     height: 20px;
     border: 1px solid black;
-    margin: 0 0 0 28px;
     cursor: pointer;
 }
 .panel-setting-theme-colors-shades-range{
@@ -10913,6 +10917,17 @@ div.upfront-region-container-active > a.feature_image_selector {
 	margin-top: 9px;
 	color: #263a4d;
 }
+
+.panel-setting-theme-colors-highlights, 
+.panel-setting-theme-colors-shades {
+	text-align: justify;
+}
+.panel-setting-theme-colors-highlights:after, 
+.panel-setting-theme-colors-shades:after {
+	content: '';
+	display: inline-block;
+	width: 100%;
+} 
 
 #sidebar-ui .panel-setting-theme-colors-highlights + .swatch-title {
 	margin-top: 4px;
