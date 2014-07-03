@@ -2270,5 +2270,10 @@
 	</g>
 	<rect opacity="0.05" fill="#BDCCD4" width="1" height="1"/>
 	<rect x="1481" y="829" opacity="0.05" fill="#BDCCD4" width="1" height="1"/>
+	<g>
+		<path fill="#6A91B4" d="M196,182v12h12v-12H196z M207,193h-10v-10h10V193z"/>
+		<circle fill="#6A91B4" cx="199.5" cy="185.5" r="1.5"/>
+		<polygon fill="#6A91B4" points="206,190 203,187 198,192 206,192 		"/>
+	</g>
 </g>
 </svg>
