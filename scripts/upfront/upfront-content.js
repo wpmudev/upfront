@@ -172,7 +172,6 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			this.$el.html(this.tpl(layout));
 			this.setContentPadding();
-
 			this.trigger('rendered');
 		},
 
@@ -211,12 +210,19 @@ define("content", deps, function(postTpl, ContentTools) {
 			//If we are already editing, don't do anything
 			if(this.contentEditor || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
 				return;
-
+				
 			//If we haven't fetched all the data, return too
 			if(!this.layoutData || !this.post)
 				return;
 
 			var target = e ? $(e.currentTarget) : focusElement;
+			
+			// Make sure that the content is ready for editing, if not, render again and return
+			if(this.$el.find('.upfront-content-marker').length < 1) {
+				this.render();
+				return;
+			}
+			
 			this.contentEditor = new ContentTools.PostContentEditor({
 				post: this.post,
 				postView: this.postView,
