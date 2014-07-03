@@ -1630,6 +1630,7 @@ define([
 					face = _.findWhere(me.typefaces_list, {value: typeface}) || _.findWhere(me.typefaces_list, {family: typeface}),
 					font = false,
 					style = false,
+					selector = false,
                     $this_el = $('.upfront-object-content ' + element )
                 ;
 				if (face) {
@@ -1660,9 +1661,11 @@ define([
                 }else{
                     rules.push('color: ' + me.colors[element]);
                 }
-				css.push(
-					'.upfront-object-content ' + element + '{ ' + rules.join("; ") + '; }'
-				);
+                selector = 'blockquote' !== element
+					? '.upfront-object-content ' + element
+					: '.upfront-object-content blockquote, .upfront-object-content blockquote p'
+				;
+				css.push(selector + '{ ' + rules.join("; ") + '; }');
 				options[element] = {
 					weight: style[1],
 					style: style[2],
