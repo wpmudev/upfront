@@ -1039,6 +1039,7 @@ RedactorPlugins.upfrontColor = {
 						}
 				}),
 				background_picker = new Upfront.Views.Editor.Field.Color({
+						blank_alpha : 0,
 						spectrum: {
 							flat: true,
 							showAlpha: true,

@@ -3708,6 +3708,9 @@ define([
 
 	var Field_Color = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
+		defaults : {
+			blank_alpha : 1
+		},
 		spectrumDefaults: {
 			clickoutFiresChange: true,
 			chooseText: 'OK',
@@ -3727,7 +3730,8 @@ define([
 			'click .upfront_color_picker_reset' : 'set_to_blank'
 		},
 		initialize: function(opts){
-			this.options = opts;
+			this.options = _.extend({}, this.defaults, opts);
+			this.options.blank_alpha = _.isUndefined( this.options.blank_alpha ) ? 1 : this.options.blank_alpha;
 			this.sidebar_template = _.template(_Upfront_Templates.color_picker);
 			var me = this,
 				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
@@ -3834,10 +3838,11 @@ define([
 				this.update_input_val( color.toHexString() );
 				this.render_sidebar_rgba(  color.toRgb() );
 				// Trigger move event
-				this.options.spectrum.move(color);
+				if(this.options.spectrum && this.options.spectrum.move)
+						this.options.spectrum.move(color);
 		},
 		set_to_blank : function(){
-			var blank_color = 'rgba(0, 0, 0, 0)',
+			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
 				color = tinycolor(blank_color);
 			this.rgba = {r: 0, g: 0, b:0, a: 0};
 			this.$spectrum.spectrum("set", color.toRgbString() );
@@ -3846,9 +3851,11 @@ define([
 			this.render_sidebar_rgba(  this.rgba );
 
 			// Trigger move event
-			this.options.spectrum.move(color);
+			if(this.options.spectrum && this.options.spectrum.move)
+					this.options.spectrum.move(color);
 
-			this.options.spectrum.change(color);
+			if(this.options.spectrum && this.options.spectrum.change)
+					this.options.spectrum.change(color);
 		}
 
 	});
