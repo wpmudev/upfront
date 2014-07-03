@@ -85,6 +85,12 @@ class Upfront_UpostsView extends Upfront_Object {
 		global $wp_query;
 		$temp_query = clone $wp_query;
 
+		if (empty($wp_query->query) && !empty($properties['query']['query'])) {
+			$temp_query = new WP_Query($properties['query']['query']);
+		}
+
+		$query_args = apply_filters('upfront-posts-query', $query_args, $temp_query);
+
 		query_posts($query_args);
 
 		$type = $query_args['post_type'];
