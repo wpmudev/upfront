@@ -1435,7 +1435,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					}),
 					new fields.Color({
 						label: "Caption Background:",
-            label_style: 'inline',
+            			label_style: 'inline',
 						spectrum: {
 							showAlpha: true,
 							showPalette: true,

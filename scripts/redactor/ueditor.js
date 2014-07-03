@@ -1045,7 +1045,7 @@ RedactorPlugins.upfrontColor = {
 							showAlpha: true,
 							appendTo : "parent",
 							showPalette: true,
-							localStorageKey: "spectrum.recent_colors",
+							localStorageKey: "spectrum.recent_bgs",
 							maxSelectionSize: 10,
 							preferredFormat: "hex",
 							chooseText: "Ok",
