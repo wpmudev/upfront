@@ -1427,7 +1427,9 @@ define([
 				$test_root = $("#upfront-font_test-root"),
 				test_string = (new Array(99)).join('mwi '),
 				typefaces_list = (function(){
-					var lists = [];
+					var lists = [
+						{label: "- Default -", value:''} // This is the default value, aka "fall-through"
+					];
 					_.each(me.typefaces_list, function(typeface){
 						var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.family,
 							obj = { label: typeface.family, value: value },
