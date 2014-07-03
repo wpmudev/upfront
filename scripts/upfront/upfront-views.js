@@ -641,7 +641,8 @@ define([
 				this.$el.empty();
 				this.$el.append(this.label);
 
-				this.$el.bind('click', function() {
+				this.$el.bind('click', function(e) {
+					e.preventDefault();
 					me.action(this.for_view);
 					Upfront.Events.trigger("entity:contextmenu:deactivate", this);
 				});

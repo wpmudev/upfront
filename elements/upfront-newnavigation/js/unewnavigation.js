@@ -1,8 +1,6 @@
 (function ($) {
 
-  define([
-    'text!elements/upfront-newnavigation/tpl/link_editor.html'
-  ], function(){//editorTpl) {
+  define([], function(){//editorTpl) {
 
 //var $editorTpl = $(editorTpl);
 

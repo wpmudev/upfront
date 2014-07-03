@@ -9313,16 +9313,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				url = this.getCleanurl() + '#' + safeName
 			;
 
-
-			//Hide the textbox before calling linkOk, avoiding an eternal loop
-			this.$('.js-ulinkpanel-new-lightbox').hide();
-
-			//Set the name as the current value
-			this.$('.js-ulinkpanel-lightbox-select')
-				.show()
-				.append('<option value="' + url + '"></option>')
-				.val(url)
-			;
+			this.model.set({url: url, type: 'lightbox'});
+			this.render();
 
 			this.linkOk();
 		},
