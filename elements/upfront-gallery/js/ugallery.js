@@ -1439,7 +1439,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						spectrum: {
 							showAlpha: true,
 							showPalette: true,
-							palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
+							palette: Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
 							maxSelectionSize: 9,
 							localStorageKey: "spectrum.recent_bgs",
 							preferredFormat: "hex",
