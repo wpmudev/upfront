@@ -148,14 +148,13 @@ define(function() {
 	 * Callback to sort jQuery elements
 	 */
 	sort_elements_cb: function (a, b) {
-		var cmp_a = $(a).data('breakpoint_order') || 0,
-			cmp_b = $(b).data('breakpoint_order') || 0;
+		var cmp_a = $(a).data('breakpoint_order') || $(a).index(),
+			cmp_b = $(b).data('breakpoint_order') || $(b).index();
 		if ( cmp_a > cmp_b)
 			return 1;
-		else if( cmp_a < cmp_b )
-			return -1;
 		else
-			return 0;
+			return -1;
+		return 0;
 	},
 
 	/**

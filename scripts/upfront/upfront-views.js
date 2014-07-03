@@ -1396,6 +1396,7 @@ define([
 					wrappers_arr = wrappers.map(function(wrapper){ return wrapper; }),
 					is_combine_wrap = false,
 					line_col = 0;
+				ed.start(this, this.model);
 				if ( $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) {
 					is_combine_wrap = true;
 					_.each(modules_arr, function(module, i){
@@ -1467,8 +1468,8 @@ define([
 						module.add_to(region_modules, index+i);
 					});
 				}
-				ed.start(this, this.model);
 				this.remove();
+				ed.update_position_data();
 				ed.update_wrappers(region);
 				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
 			},
@@ -1546,6 +1547,7 @@ define([
 				this.listenTo(this.model, 'reset', this.on_reset);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.on_drop);
 				this.listenTo(Upfront.Events, "entity:resized", this.on_resize);
+				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			on_entity_remove: function(e, view) {
@@ -1681,6 +1683,9 @@ define([
 				this.fix_flexbox_clear(this.$el);
 			},
 			on_resize: function () {
+				this.fix_flexbox_clear(this.$el);
+			},
+			on_wrappers_update: function () {
 				this.fix_flexbox_clear(this.$el);
 			},
 			on_change_breakpoint: function (breakpoint) {
