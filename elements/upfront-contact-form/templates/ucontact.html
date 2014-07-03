@@ -13,21 +13,21 @@
 		<input type="hidden" name="entity_ids" value='<?php echo $entity_id ?>'>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="sendername"><?php echo $form_name_label ?></label>
-			<input type="text" class="text-field <?php echo $validate ?>" name="sendername" value="<?php echo $values['name'] ?>" <?php echo $placeholders['name'] ?> />
+			<input type="text" class="text-field <?php echo $validate ?> ucontact-input" name="sendername" value="<?php echo $values['name'] ?>" <?php echo $placeholders['name'] ?> />
 		</div>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="senderemail"><?php echo $form_email_label ?></label>
-			<input type="email" class="email-field <?php echo $validate ?>" name="senderemail" value="<?php echo $values['email'] ?>" <?php echo $placeholders['email'] ?> />
+			<input type="email" class="email-field <?php echo $validate ?> ucontact-input" name="senderemail" value="<?php echo $values['email'] ?>" <?php echo $placeholders['email'] ?> />
 		</div>
 		<?php if($show_subject){ ?>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="subject"><?php echo $form_subject_label ?></label>
-			<input type="text" class="text-field <?php echo $validate ?>" name="subject" value="<?php echo $values['subject'] ?>" <?php echo $placeholders['subject'] ?> />
+			<input type="text" class="text-field <?php echo $validate ?> ucontact-input" name="subject" value="<?php echo $values['subject'] ?>" <?php echo $placeholders['subject'] ?> />
 		</div>
 		<?php } ?>
 		<div class="upfront-field-container <?php echo $field_classes ?>">
 			<label for="sendermessage"><?php echo $form_message_label ?></label>
-			<textarea class="textarea-field <?php echo $validate ?>" name="sendermessage" <?php echo $placeholders['message'] ?>><?php echo $values['message'] ?></textarea>
+			<textarea class="textarea-field <?php echo $validate ?> ucontact-input" name="sendermessage" <?php echo $placeholders['message'] ?>><?php echo $values['message'] ?></textarea>
 		</div>
 		<div class="upfront-field-container upfront-submit-container <?php echo $field_classes ?>">
 			<input type="submit" name="send" value="<?php echo $form_button_text ?>" class="button submit-field">

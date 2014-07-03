@@ -25,6 +25,14 @@ var UcontactModel = Upfront.Models.ObjectModel.extend({
  */
 var UcontactView = Upfront.Views.ObjectView.extend({
 	tpl: Upfront.Util.template(tpl),
+
+	cssSelectors: {
+		'label': {label: 'Field labels', info: 'Text info for every field'},
+		'.ucontact-input': {label: 'Fields', info: 'Field inputs'},
+		'.ucontact-field-error': {label: 'Error fields', info: 'Fields with errors.'},
+		'.submit-field': {label: 'Send button', info: 'Form\'s send button'}
+	},
+
 	initialize: function(options){
 		if(! (this.model instanceof UcontactModel)){
 			this.model = new UcontactModel({properties: this.model.get('properties')});
