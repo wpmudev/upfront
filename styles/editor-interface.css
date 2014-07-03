@@ -3792,7 +3792,6 @@ div.uinsert-selector a:hover {
 }
 
 #settings .upfront-settings_panel_scroll {
-	position: relative;
 	padding: 15px 5px;
 	min-width: 270px;
 	max-height: 400px;
