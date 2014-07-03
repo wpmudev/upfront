@@ -3841,7 +3841,7 @@ define([
 				if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
 					this.options.spectrum.move(color);
 				}
-						
+
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
@@ -3853,12 +3853,12 @@ define([
 			this.render_sidebar_rgba(  this.rgba );
 
 			// Trigger move event
-			if(this.options.spectrum && typeof this.options.spectrum.move === "function"){	
+			if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
 				this.options.spectrum.move(color);
 			}
 
 			// Trigger change event
-			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){	
+			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
 				this.options.spectrum.change(color);
 			}
 		}
@@ -5475,6 +5475,8 @@ var CSSEditor = Backbone.View.extend({
 		this.render();
 
 		this.startResizable();
+
+		Upfront.Events.trigger('csseditor:open', this.model.get_property_value_by_name('element_id'));
 	},
 	close: function(e){
 		if(e)
@@ -5489,6 +5491,8 @@ var CSSEditor = Backbone.View.extend({
 
 		$('#page').css('padding-bottom', 0);
 		this.$el.hide();
+
+		Upfront.Events.trigger('csseditor:closed', this.model.get_property_value_by_name('element_id'));
 	},
 	render: function(){
 		var me = this;
@@ -5597,7 +5601,7 @@ var CSSEditor = Backbone.View.extend({
 				$cssbody.height(bodyHeight);
 				if(me.editor)
 					me.editor.resize();
-				$selectors.height(bodyHeight - $saveform.outerHeight());
+				$selectors.outerHeight(bodyHeight - $saveform.outerHeight());
 				$('#page').css('padding-bottom', height);
 			}
 		;

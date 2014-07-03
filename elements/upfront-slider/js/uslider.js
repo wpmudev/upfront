@@ -43,6 +43,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	tpl: Upfront.Util.template(sliderTpl),
 	startingTpl: _.template($(editorTpl).find('#startingTpl').html()),
 
+	cssSelectors: {
+		'.uslide-image img': {label: 'Images', info: 'Slider\'s images'},
+		'.uslide-image': {label: 'Image containers', info: 'The image wrapper layer'},
+		'.uslide-caption': {label: 'Captions', info: 'Slides\' captions'},
+		'.wp-caption': {label: 'Caption panel', info: 'Caption layer'},
+		'.upfront-default-slider-nav': {label: 'Navigation dots wrapper', info: 'Container of the navigation dots'},
+		'.upfront-default-slider-nav-item': {label: 'Navigation dots', info: 'Navigation item\'s markers'},
+		'.uslider-dotnav-current': {label: 'Current navigation dot', info: 'The dot representing the current slide'},
+		'.upfront-default-slider-nav-prev': {label: 'Navigation previous', info: 'Navigation\'s previous button'},
+		'.upfront-default-slider-nav-next': {label: 'Navigation next', info: 'Navigation\'s next button'},
+	},
+
 	initialize: function(options){
 		var me = this;
 		if(! (this.model instanceof USliderModel)){
@@ -90,6 +102,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		//Current Slide index
 		this.currentSlide =  0;
+
 	},
 
 	on_edit: function(){
@@ -174,6 +187,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this;
 
+		if(!me.parent_module_view)
+			return;
+
 		//Bind resizing events
 		if(!me.parent_module_view.$el.data('resizeHandling')){
 			me.parent_module_view.$el
@@ -187,13 +203,38 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(!this.slides.length)
 			return;
 
-		if(this.$el.parent().length)
+		if(this.$el.parent().length){
 			me.prepareSlider();
+			me.hideSliderNavigation();
+		}
 		else{
 			setTimeout(function(){
 				me.on_render();
 			}, 100);
 		}
+	},
+
+	hideSliderNavigation: function(){
+		this.$('.upfront-default-slider-nav').hide();
+		this.$('.upfront-default-slider-nav-prev').hide();
+		this.$('.upfront-default-slider-nav-next').hide();
+
+		this
+			.listenTo(Upfront.Events, 'csseditor:open', function(elementId){
+				if(elementId == this.property('element_id')){
+					this.$('.upfront-default-slider-nav').show();
+					this.$('.upfront-default-slider-nav-prev').show();
+					this.$('.upfront-default-slider-nav-next').show();
+				}
+			})
+			.listenTo(Upfront.Events, 'csseditor:closed', function(elementId){
+				if(elementId == this.property('element_id')){
+					this.$('.upfront-default-slider-nav').hide();
+					this.$('.upfront-default-slider-nav-prev').hide();
+					this.$('.upfront-default-slider-nav-next').hide();
+				}
+			})
+		;
 	},
 
 	prepareSlider: function(){

@@ -43,7 +43,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		'.ugallery': {label: 'Gallery container', info: 'The whole gallery'},
 		'.ugallery_item': {label: 'Gallery elements', info: 'The container of every gallery element.'},
 		'img.ugallery-image': {label: 'Gallery images', info: 'Every image in the gallery.'},
-		'.ugallery-thumb-title': {label: 'Image captions', info: 'Every caption of the gallery. Captions may not be available if they are deactivated using the options.'}
+		'.ugallery-thumb-title': {label: 'Image captions', info: 'Every caption of the gallery. Captions may not be available if they are deactivated using the options.'},
+		'.ugallery_labels': {label: 'Labels container', info: 'The wrapper of the image labels.'},
+		'.ugallery_label_filter': {label: 'Labels', info: 'Labels for gallery items filtering.'}
+
 	},
 
 	reopenSettings: false,

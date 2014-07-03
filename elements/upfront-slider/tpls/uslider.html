@@ -95,8 +95,8 @@ jQuery(function($){
 			effect: '<?php echo $transition ?>',
 			interval: <?php echo $rotateTime * 1000 ?>,
 			show_control: '<?php echo $controlsWhen ?>',
-			control_num: <?php echo $dots && $production ?>,
-			control_next_prev: <?php echo $arrows && $production ?>,
+			control_num: <?php echo $dots /* && $production */ ? 1 : 0 ?>,
+			control_next_prev: <?php echo $arrows /* && $production */ ? 1 : 0 ?>,
 			starting_slide: <?php echo $startingSlide ?>,
 			caption_height: <?php echo $primaryStyle == 'below' ? 1 : 0 ?>
 		}

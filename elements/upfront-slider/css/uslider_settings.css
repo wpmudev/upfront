@@ -12,12 +12,11 @@
 
 .uslider-rotate-settings .upfront-field-wrap {
 	display: inline-block;
-	vertical-align: middle;
+	margin-right: 10px;
 }
 
 
 .uslider-rotate-settings{
-	padding: 5px 15px 0;
 }
 
 .uslider_content_slide {

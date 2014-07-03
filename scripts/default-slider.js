@@ -197,12 +197,12 @@
 		update_nav: function(){
 			var me = this,
 				data = this.opts,
-				$nav = this.$slider.find(data.classname.nav)
+				$nav = this.$slider.find('.' + data.classname.nav)
 			;
 			$nav.html('');
 			if ( data.control_num ){
 				this.items.each(function(index){
-					$nav.append('<i class="' + data.classname.nav_item + '" data-slider-index="' + index + '">'+index+'</i>');
+					$nav.append('<i class="' + data.classname.nav_item + ' uslider-dotnav-' + index + '" data-slider-index="' + index + '">'+index+'</i>');
 				});
 				this.$slider.on('click', '.'+data.classname.nav_item, function(e){
 					e.preventDefault();
@@ -272,6 +272,10 @@
 						$slider.trigger('slidein', [$item, index]);
 				});
 			}
+
+			$slider.find('.upfront-default-slider-nav-item').removeClass('uslider-dotnav-current');
+			$slider.find('.uslider-dotnav-' + index).addClass('uslider-dotnav-current');
+
 			this.pause = false;
 		},
 
@@ -334,7 +338,7 @@
 			control: 'inside'
 		};
 		$('.upfront-bg-slider').upfront_default_slider(bg_slider);
-		
+
 		// Refresh size on window.load and window.resize
 		$(window).on('load', function(){
 			$('.upfront-inline_post-slider, .upfront-bg-slider').trigger('refresh');
