@@ -572,7 +572,7 @@
 #sidebar-ui .sidebar-panel-title {
 	font-size: 16px;
 	font-weight: normal;
-	line-height: 33px;
+	line-height: 36px;
 	height: 39px;
 	background: #d9edff;
 	border-top: 1px solid #f2f9ff;
@@ -1037,8 +1037,8 @@ span.draggable-post-element.element-dragging
 }
 
 #sidebar-ui .command-link {
-	color: #11a571;
-	font-size: 11px;
+	color: #0F9969;
+	font:normal 11px/14px Verdana, sans-serif;
 	text-decoration: underline;
 	display: inline;
 	cursor: pointer;
@@ -1052,7 +1052,7 @@ span.draggable-post-element.element-dragging
 }
 #sidebar-ui .command-edit-bg {
 	display: inline-block;
-	width: 80px;
+	width: 100px;
 }
 
 
@@ -10767,9 +10767,7 @@ div.upfront-region-container-active > a.feature_image_selector {
     color: #0F9969;
     cursor: pointer;
     padding: 3px 5px;
-		font-size: 10px;
-		font-family: verdana, sans-serif;
-		line-height: 10px;
+    font:normal 11px/10px Verdana, sans-serif;
 }
 #sidebar-ui ul.panel-setting-theme-colors-shades-range-labels {
     width: 100%;
@@ -10796,17 +10794,19 @@ div.upfront-region-container-active > a.feature_image_selector {
 
 /*---------------------- Settings Theme colors -------------------------*/
 #theme-colors-no-color-notice{
-    height: 42px;
+    height: 60px;
+    padding-top: 10px;
     font:normal 11px verdana, sans-serif;
     line-height: 18px;
     color: #607F99;
 }
 #theme-colors-no-color-notice:before{
     content: "";
-    background-image: url('../img/uf-ui-sprite.svg');
-    background-position: -339px -107px;
+    background-image: url('../img/uf-core-el-sprite.svg');
+    background-position: -469px -139px;
     display: block;
-    height: 37px;
+    height: 30px;
+    width: 34px;
 }
 #panel-setting-theme-colors-pane{
     border-bottom: 1px solid #C8DFF2;
@@ -10840,7 +10840,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 .theme_color_swatch_empty .sp-preview{
     background-image: url('../img/uf-core-el-sprite.svg');
-    background-position: -1361px -169px;
+    background-position: -1362px -170px;
     border-radius: 0;
 }
 #panel-setting-theme-colors-shades{
