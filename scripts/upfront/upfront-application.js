@@ -497,7 +497,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 					saveDialog.close();
 
 					me.postView.postLayout = layoutData.postLayout;
-
+					
 					me.postView.render();
 
 					Application.start(Application.mode.last);

@@ -35,6 +35,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.getPost();
 
 			this.getPostLayout();
+			
 		},
 
 		setDefaults: function(){
@@ -119,7 +120,7 @@ define("content", deps, function(postTpl, ContentTools) {
 					me.parts = layoutData.partContents;
 
 					me.layoutData = true;
-
+					
 					deferred.resolve(layoutData);
 				}).fail(function(error){
 					console.log('error!!');
@@ -173,6 +174,8 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.$el.html(this.tpl(layout));
 			this.setContentPadding();
 			this.trigger('rendered');
+
+			
 		},
 
 		getTemplate: function(part){
@@ -212,16 +215,18 @@ define("content", deps, function(postTpl, ContentTools) {
 				return;
 				
 			//If we haven't fetched all the data, return too
-			if(!this.layoutData || !this.post)
+			if(!this.layoutData || !this.post) {
 				return;
-
-			var target = e ? $(e.currentTarget) : focusElement;
-			
+			}
+				
 			// Make sure that the content is ready for editing, if not, render again and return
 			if(this.$el.find('.upfront-content-marker').length < 1) {
 				this.render();
 				return;
 			}
+			
+			var target = e ? $(e.currentTarget) : focusElement;
+			
 			
 			this.contentEditor = new ContentTools.PostContentEditor({
 				post: this.post,

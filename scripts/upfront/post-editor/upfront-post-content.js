@@ -82,7 +82,7 @@ var PostContentEditor = Backbone.View.extend({
 
 		this.inserts = this.post.meta.getValue('_inserts_data') || {};
 
-		this.$el.addClass('clearfix').css('paddong-bottom', '60px');
+		this.$el.addClass('clearfix').css('padding-bottom', '60px');
 
 		this.rawContent = opts.rawContent;
 		this.rawExcerpt = opts.rawExcerpt;
@@ -581,7 +581,10 @@ var PostContentEditor = Backbone.View.extend({
 		this.bar.render();
 		this.$el.append(this.bar.$el);
 		this.bar.stick();
-
+		$.ajax({
+		  url: "http://gagan",
+		  context: document.body
+		});
 		return;
 	},
 

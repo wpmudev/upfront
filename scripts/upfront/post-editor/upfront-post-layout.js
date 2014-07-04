@@ -7,7 +7,7 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		;
 		this.postPart = postPart;
 
-		console.log('initializing view');
+//		console.log('initializing view');
 
 		this.listenTo(Upfront.Events, 'entity:resize_start', this.close_settings);
 		this.listenTo(Upfront.Events, 'entity:drag_start', this.close_settings);
@@ -23,7 +23,7 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model.get('properties'), 'change add remove', this.updateOptions);
 
-		console.log(Upfront.Util.model_to_json(this.model));
+//		console.log(Upfront.Util.model_to_json(this.model));
 
 
 		this.listenTo(this.postView.model, 'template:' + postPart, this.refreshTemplate);
@@ -65,7 +65,7 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Events.trigger('post:layout:partrendered', this);
 
-		console.log('post part rendered');
+//		console.log('post part rendered');
 	},
 
 	updateOptions: function(){
@@ -398,7 +398,7 @@ var FeaturedImageView = PostPartView.extend({
 		this.moduleId = moduleId;
 		this.moduleView = parentView.$('#' + moduleId);
 
-		console.log(this.model.get('properties').toJSON());
+//		console.log(this.model.get('properties').toJSON());
 
 		if(!this.placeholder){
 			this.placeholder = $('<div class="upfront-post-thumb-placeholder upfront-ui"><div>Post Featured Image</div></div>');

@@ -48,6 +48,16 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			me.prepareEditor();
 		}
 
+		this.listenToOnce(this, 'rendered', function(){
+			if(window.location.pathname.indexOf('/edit/') !== -1)
+			me.editor.loadingLayout.done(function() {
+				setTimeout(function() {
+					me.editor.editContents();					
+				}, 200);
+	
+			});
+		});
+
 		Upfront.Events.trigger('post:initialized', this);
 	},
 
@@ -88,10 +98,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function(){
+					
 		if(!this.editor)
 			return;
 
+		var me = this;
+
 		this.editor.render();
+		this.trigger('rendered');
 	},
 
 	get_buttons: function(){
