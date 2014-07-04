@@ -1434,19 +1434,24 @@ define([
 					];
 					_.each(me.typefaces_list, function(typeface){
 						var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.family,
+							raw_family = "undefined" === typeof typeface.value ? typeface.family : typeface.value,
 							obj = { label: typeface.family, value: value },
 							base_width = 0
 						;
 						if (typeface.family.toLowerCase() === 'arial') lists.push(obj);
-						else {
+						else if (raw_family) {
 							$test_root
 								.css("font-family", typeface.category)
 								.text(test_string)
 							;
 							base_width = $test_root.width();
-							$test_root.css("font-family", typeface.family);
+							$test_root
+								.css("font-family", [raw_family, typeface.category].join(','))
+							;
 							// Let's find out if we have this font
-							if (base_width !== $test_root.width()) lists.push(obj);
+							if (base_width !== $test_root.width()) {
+								lists.push(obj);
+							}
 						}
 					});
 					$test_root.remove(); // Clean up markup
