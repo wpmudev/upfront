@@ -1074,7 +1074,7 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
-.redactor_dropdown_box_icons div::-webkit-scrollbar
+.redactor_dropdown_box_icons div.icons::-webkit-scrollbar
 {
 	background: none;
 	width: 5px;
@@ -1119,7 +1119,7 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
-.redactor_dropdown_box_icons div::-webkit-scrollbar-thumb
+.redactor_dropdown_box_icons div.icons::-webkit-scrollbar-thumb
 {
 	border-right: 5px solid #1fcd8f;
 }
@@ -8428,7 +8428,9 @@ a.ueditor-select-option:hover {
 .upfront-object:hover .upfront-quick-swap{
 	display:block;
 }
-
+.upfront-edit-responsive .upfront-object:hover .upfront-quick-swap{
+    display: none;
+}
 #preventUsageOverlay {
   text-align: center;
   cursor: not-allowed;
@@ -10506,17 +10508,20 @@ li#new-custom-breakpoint {
   margin: 10px 0 10px 15px;
 }
 /*------------ Font Icons --------------*/
-.redactor_dropdown_box_icons div{
-    font-size: 2.1em;
-    height: 175px;
+.redactor_dropdown_box_icons div.icons{
+    font-size: 27px;
+    height: 195px;
     overflow-x: hidden;
     overflow-y: scroll;
+    padding: 10px;
+    margin-right: 2px;
 }
 .redactor_dropdown.redactor_dropdown_box_icons{
     min-width: 190px;
     width: 190px;
     line-height: 38px;
-    padding-right: 3px;
+    padding: 0;
+    opacity: 0.95;
 }
 .redactor_dropdown.redactor_dropdown_box_icons a,
 .redactor_dropdown.redactor_dropdown_box_icons a:link{
@@ -10528,13 +10533,40 @@ li#new-custom-breakpoint {
 .redactor_dropdown.redactor_dropdown_box_icons a:hover{
     color: rgb(64, 166, 255) !important;
 }
-.pictos {
-    font-weight: normal;
-    font-style: normal;
-    line-height: normal;
-    font-family: 'Pictos', sans-serif;
-    text-transform: none;
+.upfront-font-icons-controlls{
+	display: block;
+	width: 100%;
+	padding: 10px 5px;
+	margin: 0;
+	background: #1d2b38;
+	height: 48px;
 }
+.upfront-font-icons-controlls li{
+	display: inline-block;
+	width: 50%;
+	height: 32px;
+
+}
+.upfront-font-icons-controlls li input{
+	width: 40px;
+	height: 30px;
+	background: #a5c2df;
+	-boz-boder-radius:5px;-webkit-border-radius:5px;border-radius: 5px;
+	border: none;
+	color: #273a4c;
+	font-size: 14px;
+	display: block;
+	visibility: visible;
+	padding: 5px;
+	text-align: center;
+}
+.upfront-font-icons-controlls li label{
+	float: left;
+	line-height: 30px;
+	padding-right: 5px;	
+	color:#a5c2df;
+}
+
 /*------------ End of Font Icons --------------*/
 #new-custom-breakpoint:before {
 	content: " ";

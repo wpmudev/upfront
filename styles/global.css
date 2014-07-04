@@ -116,6 +116,7 @@ h2, h3 { page-break-after: avoid; }
     font-variant: normal;
     text-transform: none;
     line-height: 1;
+    position: relative;
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

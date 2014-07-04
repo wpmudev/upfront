@@ -2171,13 +2171,17 @@ RedactorPlugins.icons = {
             this.$el.parent().css({
                 left : 156
             });
-//            this.redactor.on('keydown.redactor', function(e){
-//                console.log(e);
-//            });
         },
         select_icon : function(e){
-            var icon = $(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html();
-            this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + icon, true);
+            var $icon = $( $(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html() ),
+            	fontSize = this.$("#font-icons-size").val(),
+            	top = this.$("#font-icons-top").val();
+				$icon.css({
+	            	"font-size" : fontSize + "px",
+	            	top : top
+	            });
+            this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + $icon[0].outerHTML , true);
+
             this.closePanel();
         }
 
