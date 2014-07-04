@@ -1665,10 +1665,13 @@ define([
                 }else{
                     rules.push('color: ' + me.colors[element]);
                 }
-                selector = 'blockquote' !== element
-					? '.upfront-object-content ' + element
-					: '.upfront-object-content blockquote, .upfront-object-content blockquote p'
-				;
+                if ('blockquote' === element) {
+					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
+                } else if ('a' === element) {
+					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
+                } else {
+					selector = '.upfront-object-content ' + element;
+                }
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 				options[element] = {
 					weight: style[1],
