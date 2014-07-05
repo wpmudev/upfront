@@ -10509,26 +10509,27 @@ li#new-custom-breakpoint {
 }
 /*------------ Font Icons --------------*/
 .redactor_dropdown_box_icons div.icons{
-    font-size: 27px;
-    height: 195px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    padding: 10px;
-    margin-right: 2px;
+	font-size: 24px;
+	height: 155px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	padding: 7px;
+	margin-right: 1px;
 }
 .redactor_dropdown.redactor_dropdown_box_icons{
-    min-width: 190px;
-    width: 190px;
-    line-height: 38px;
-    padding: 0;
-    opacity: 0.95;
+	min-width: 153px;
+	width: 153px;
+	line-height: 38px;
+	padding: 0;
+	opacity: 0.9;
 }
 .redactor_dropdown.redactor_dropdown_box_icons a,
 .redactor_dropdown.redactor_dropdown_box_icons a:link{
     color: #97b8da !important;
-    margin: 5px;
+    /*margin: 5px;*/
     display: inline-block;
-    width: 0.915em;
+    width: 28px;
+    text-align: center;
 }
 .redactor_dropdown.redactor_dropdown_box_icons a:hover{
     color: rgb(64, 166, 255) !important;
@@ -10536,16 +10537,16 @@ li#new-custom-breakpoint {
 .upfront-font-icons-controlls{
 	display: block;
 	width: 100%;
-	padding: 10px 5px;
+	padding: 2px;
 	margin: 0;
 	background: #1d2b38;
-	height: 48px;
+	height: 40px;
 }
 .upfront-font-icons-controlls li{
 	display: inline-block;
 	width: 50%;
 	height: 32px;
-
+	padding-left: 2px;
 }
 .upfront-font-icons-controlls li input{
 	width: 40px;
@@ -10554,19 +10555,21 @@ li#new-custom-breakpoint {
 	-boz-boder-radius:5px;-webkit-border-radius:5px;border-radius: 5px;
 	border: none;
 	color: #273a4c;
-	font-size: 14px;
-	display: block;
-	visibility: visible;
+	font-size: 12px;
+	font-weight: bold;
 	padding: 5px;
 	text-align: center;
 }
 .upfront-font-icons-controlls li label{
 	float: left;
-	line-height: 30px;
-	padding-right: 5px;	
-	color:#a5c2df;
+	line-height: 38px;
+	padding-right: 4px;
+	color: #a5c2df;
+	font-size: 12px;
 }
-
+.font-icons-top-li{
+	padding-left: 3px;
+}
 /*------------ End of Font Icons --------------*/
 #new-custom-breakpoint:before {
 	content: " ";

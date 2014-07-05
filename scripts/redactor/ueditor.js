@@ -2169,7 +2169,7 @@ RedactorPlugins.icons = {
             this.redactor = redactor;
             this.redactor.selectionSave();
             this.$el.parent().css({
-                left : 156
+                left : 193
             });
         },
         select_icon : function(e){
@@ -2178,7 +2178,7 @@ RedactorPlugins.icons = {
             	top = this.$("#font-icons-top").val();
 				$icon.css({
 	            	"font-size" : fontSize + "px",
-	            	top : top
+	            	"top" : top + "px"
 	            });
             this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + $icon[0].outerHTML , true);
 
