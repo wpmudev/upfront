@@ -12,11 +12,18 @@
       }
     });
 
-    var UaccordionView = Upfront.Views.ObjectView.extend({
+	var UaccordionView = Upfront.Views.ObjectView.extend({
       model: UaccordionModel,
-	  currentEditItem: '',
+	 	currentEditItem: '',
       accordionTpl: Upfront.Util.template(accordionTpl),
       elementSize: {width: 0, height: 0},
+
+		cssSelectors: {
+			'.accordion-panel': {label: 'Panel containers', info: 'The wrapper layer of every panel.'},
+			'.accordion-panel-title': {label: 'Panel header', info: 'The header title of every panel'},
+			'.accordion-panel-content': {label: 'Panel body', info: 'The content part of every panel.'}
+		},
+
       initialize: function(){
         var me = this;
         if(! (this.model instanceof UaccordionModel)){
@@ -56,21 +63,21 @@
         this.property('accordion_count', this.property('accordion_count') - 1, false);
       },
 
-     
+
 
       onPanelTitleClick: function(event) {
-		  
+
 		  var $panelTitle = $(event.currentTarget);
 		  if($panelTitle.parent().hasClass('accordion-panel-active')) {
 			  if($panelTitle.data('ueditor'))
-					$panelTitle.data('ueditor').start();			
+					$panelTitle.data('ueditor').start();
 		  }
 		  else {
 			$panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
- 	       $panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();  
+ 	       $panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
 		  }
-				
-		 
+
+
 
       },
 
@@ -81,15 +88,15 @@
 			if($(event.target).data('ueditor'))
 				$(event.target).data('ueditor').start();
 			else
-				event.stopPropagation();				
-			
+				event.stopPropagation();
+
 	  },
-	  
+
 		saveTitle: function(target) {
 			id = target.closest('div.accordion-panel').index()-1;
 			this.property('accordion')[id].title = target.html();
 		},
-		
+
       savePanelContent: function() {
         var panel = this.$el.find('.accordion-panel-active');
 		var $content = panel.find('.accordion-panel-content');
@@ -97,10 +104,10 @@
 
         this.property('accordion')[panelId].content = $content.html();
 
-		
+
       },
-	  
-      
+
+
       get_content_markup: function () {
         return this.accordionTpl(
           _.extend(
@@ -122,7 +129,7 @@
       },
 
       on_render: function() {
-				
+
         // Accordion won't be rendered in time if you do not delay.
        _.delay(function(self) {
 		   self.$el.find('.accordion-panel-title').each(function() {
@@ -144,17 +151,17 @@
 					.on('syncAfter', function(){
 						self.saveTitle($(this));
 					}).on('keydown', function(e){
-						
+
 						if (e.which == 9) {
 							e.preventDefault();
-							
+
 							}
-						
+
 					});
-		   
+
 		   });
-		   
-		   
+
+
 			self.$el.find('.accordion-panel-content').each(function() {
 				if(!$(this).data('ueditor'))  {
 
@@ -180,7 +187,7 @@
 			});
 
           self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
-	
+
         }, 10, this);
       },
 
@@ -250,7 +257,7 @@
 
         render_all = function(){
           this.settings.invoke('render');
-        }; 
+        };
         _.bindAll(this, 'onHeaderBorderChange', 'onHeaderBgChange', 'onPanelBgChange');
 
         this.model.on('doit', render_all, this);

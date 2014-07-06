@@ -464,7 +464,7 @@ define([
 				});
 			},
 			on_window_resize: function (e) {
-				if ( e.target != window )
+				if ( e.target != window || !this.model)
 					return;
 				var me = e.data;
 				me.refresh_background();

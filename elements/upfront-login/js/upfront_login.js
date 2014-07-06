@@ -18,6 +18,17 @@ define([
 	var LoginView = Upfront.Views.ObjectView.extend({
 		markup: false,
 
+		cssSelectors: {
+			'p': {label: 'Field containers', info: 'Wrapper layer for every field'},
+			'label': {label: 'Field labels', info: 'Labels for the input fields'},
+			'input:not([type=submit]):not([type=checkbox])': {label: 'Input fields', info: 'Username and password fields'},
+			'input[type=submit]': {label: 'Login button', info: 'Login button'},
+			'input[type=checkbox]': {label: 'Remember me checkbox', info: 'Remember me checkbox input.'},
+			'.login-lostpassword': {label: 'Lost password wrapper', info: 'Container wrapper for the lost pasword function.'},
+			'.login-lostpassword-link': {label: 'Lost password link', info: 'Link for lost passwords'},
+			'.upfront_login-trigger': {label: 'Closed login link', info: 'The link that allows to open the login when the dropdown or lightbox option is selected.'}
+		},
+
 		initialize: function () {
 			if(! (this.model instanceof LoginModel)){
 				this.model = new LoginModel({properties: this.model.get('properties')});

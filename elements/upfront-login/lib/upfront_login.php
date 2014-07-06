@@ -8,7 +8,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'behavior' => 'click',
 			'appearance' => 'icon',
 			'label_image' => __('Login', 'upfront'),
-			
+
 			'type' => "LoginModel",
 			'view_class' => "LoginView",
 			"class" => "c24 upfront-login_element-object",
@@ -18,7 +18,7 @@ class Upfront_LoginView extends Upfront_Object {
 	}
 
 	public function get_markup () {
-		
+
 		// We're registering the styles as it turns out we'll need them
 		upfront_add_element_style('upfront_login', array('css/public.css', dirname(__FILE__)));
 		upfront_add_element_script('upfront_login', array('js/public.js', dirname(__FILE__)));
@@ -46,8 +46,8 @@ class Upfront_LoginView extends Upfront_Object {
 		$hover = !$block && !empty($properties['behavior']) && "hover" == $properties['behavior'];
 
 		$icon = !empty($properties['appearance']) && "icon" == $properties['appearance'];
-		$label = !empty($properties['label_text']) 
-			? $properties['label_text'] 
+		$label = !empty($properties['label_text'])
+			? $properties['label_text']
 			: (!empty($properties['label_image']) && 'icon' == $properties['appearance'] ? $properties['label_image'] : '')
 		;
 		if ('icon' == $label) $label = '';
@@ -60,19 +60,19 @@ class Upfront_LoginView extends Upfront_Object {
 		$trigger = '';
 		if (!$block) {
 			$icon_class = $icon ? 'upfront_login-trigger-icon' : '';
-			$trigger = '<div class="upfront_login-trigger ' . $icon_class . '"><span class="upfront_login-label">' . 
-				($icon ? '<img src="' . upfront_element_url('/img/icon.png', dirname(__FILE__)) . '" />' : '') . ($label ? '&nbsp;' . esc_html($label) : '') . 
+			$trigger = '<div class="upfront_login-trigger ' . $icon_class . '"><span class="upfront_login-label">' .
+				($icon ? '<img src="' . upfront_element_url('/img/icon.png', dirname(__FILE__)) . '" />' : '') . ($label ? '&nbsp;' . esc_html($label) : '') .
 			'</span></div>';
 		}
 
-		return '<div class="upfront_login ' . join(' ', $class) . '">' . 
+		return '<div class="upfront_login ' . join(' ', $class) . '">' .
 			$trigger .
 			'<div class="upfront_login-form-wrapper"><div class="upfront_login-form">' .
 				wp_login_form(array(
 					'echo' => false,
 					'remember' => true,
-				)) . 
-			'<p>Lost Password? <a href="' . 
+				)) .
+			'<p class="login-lostpassword">Lost Password? <a class="login-lostpassword-link" href="' .
 				wp_lostpassword_url( $redirect ) .
 			'">Click here</a></p></div>' .
 		'</div></div>';

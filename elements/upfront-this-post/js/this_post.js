@@ -52,9 +52,9 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			if(window.location.pathname.indexOf('/edit/') !== -1)
 			me.editor.loadingLayout.done(function() {
 				setTimeout(function() {
-					me.editor.editContents();					
+					me.editor.editContents();
 				}, 200);
-	
+
 			});
 		});
 
@@ -98,11 +98,17 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function(){
-					
+		debugger;
 		if(!this.editor)
 			return;
 
-		var me = this;
+		var me = this,
+			contents = this.$('.upfront-object-content').children()
+		;
+
+		if(contents[0] != this.editor.el){
+			this.editor.setElement( contents[0] );
+		}
 
 		this.editor.render();
 		this.trigger('rendered');
@@ -161,7 +167,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				me.markup = response.data.filtered;
 				node.html(me.get_content_markup());
 
-
+				me.on_render();
 
 				me.loadingMarkup = false;
 			})
@@ -316,7 +322,7 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function (opts) {
 		this.options = opts;
 		this.settings = _([
-			new Settings_PostPanel_PostData({model: this.model})
+			//new Settings_PostPanel_PostData({model: this.model})
 		]);
 	},
 

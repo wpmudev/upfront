@@ -1,6 +1,7 @@
 <?php
 	//Element properties can be used by the $properties variables
 	$classes = $properties['featured_image'] ? 'show-thumbnail ' : '';
+	$classes .= 'clearfix ';
 ?>
 <ul class='uposts-posts'>
 <?php
