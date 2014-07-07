@@ -17,7 +17,8 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-plain_txt',
 	cssSelectors: {
-		'.upfront-plain_txt': {label: 'Text container', info: 'The layer that contains all the text of the element.'}
+		'.upfront-plain_txt': {label: 'Text container', info: 'The layer that contains all the text of the element.'},
+		'.upfront-plain_txt p': {label: 'Text paragragh', info: 'The paragragh that contains all the text of the element.'},
 	},
 	initialize: function() {
 		this.constructor.__super__.initialize.apply(this, arguments);

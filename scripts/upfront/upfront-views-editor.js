@@ -5552,7 +5552,7 @@ var CSSEditor = Backbone.View.extend({
 				clearTimeout(me.timer);
 			me.timer = setTimeout(function(){
 				me.updateStyles(editor.getValue());
-			},1000);
+			},800);
 			me.trigger('change', editor);
 		});
 		if(this.name){
@@ -5829,7 +5829,6 @@ var CSSEditor = Backbone.View.extend({
 
 			selectors[id] = view.cssSelectors || {};
 		});
-
 		me.elementSelectors = selectors;
 	},
 

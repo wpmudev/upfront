@@ -13,7 +13,7 @@
 		{[ if(expandable){ ]}
 		<div class="upfront-field-wrap upfront-field-wrap-text" data-tooltip="link address" style="display:none">
 			<input type="text" class="upfront-field upfront-field-text usocial_text usocial_url" id="service-url-{{service.id}}" name="{{service.id}}_url" value="{{service.url}}" placeholder="{{service.name}} url" data-field="url" data-service="{{service.id}}">
-			{[if(meta){_.each(service.meta, function(meta){ ]}
+			{[if(service.meta){_.each(service.meta, function(meta){ ]}
 			<input type="text" class="upfront-field upfront-field-text usocial_text usocial_{{meta.id}} usocial_service_meta" id="service-{{meta.id}}-{{service.id}}" name="{{meta.id}}" value="{{meta.value}}" placeholder="{{service.name}} {{meta.name}}" data-field="{{meta.id}}" data-service="{{service.id}}">
 			{[ });} ]}
 		</div>
@@ -153,17 +153,17 @@
 </script>
 
 <script type="text/template" id="fb_like-tpl">
-<div data-id="upfront-icon-facebook" class="upfront-social-icon">
+<div data-id="upfront-icon-facebook" class="upfront-social-icon upfront-social-icon-facebook">
 	<iframe class="social-frame usocial-fb {{style}} like" src="//www.facebook.com/plugins/like.php?href={{url}}&amp;send=false&amp;layout={{layout}}&amp;width={{width}}px&amp;show_faces=true&amp;font&amp;colorscheme=light&amp;action=like&amp;height={{height}}px" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowTransparency="true"></iframe>
 </div>
 </script>
 <script type="text/template" id="tweet-tpl">
-<div data-id="upfront-icon-twitter" class="upfront-social-icon">
+<div data-id="upfront-icon-twitter" class="upfront-social-icon upfront-social-icon-twitter">
 	<iframe class="social-frame usocial-twitter {{style}} like" allowtransparency="true" frameborder="0" scrolling="no" src="//platform.twitter.com/widgets/tweet_button.html?text={{text}}&amp;url={{url}}&amp;original_referer={{url}}&amp;count={{style}}&amp;size=medium" style=""></iframe>
 </div>
 </script>
 <script type="text/template" id="plusone-tpl">
-<div data-id="upfront-icon-google" class="upfront-social-icon social-frame usocial-google {{style}} like">
+<div data-id="upfront-icon-google" class="upfront-social-icon social-frame usocial-google {{style}} like upfront-social-icon-google">
 	<script type="text/javascript" src="//apis.google.com/js/plusone.js"></{{'s'}}cript>
 	<div class="g-plusone" data-size="{{size}}"></div>
 </div>

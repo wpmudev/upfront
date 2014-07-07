@@ -26,6 +26,7 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 
 	tpl: Upfront.Util.template(tplSource),
 	cssSelectors: {
+		'.upfront-object-content': {label: 'Search container', info: 'The container that wraps search field and search button'},
 		'input.search-field': {label: 'Search field', info: 'The search input field'},
 		'button.search-button': {label: 'Search button', info: 'The search button'}
 	},

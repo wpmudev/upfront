@@ -248,6 +248,16 @@
     var SocialMediaView = Upfront.Views.ObjectView.extend({
         settings: false,
         counts: false,
+        cssSelectors: {
+            '.upfront-object-content': {label: 'Social Container', info: 'The layer that contains all the social buttons'},
+            '.upfront-social-icon ': {label: 'Social box', info: 'The wrapper that contains each social button'},
+            '.upfront-linked-in-link-box': {label: 'LinkedIn box', info: 'The box that contains LinkedIn button'},
+            '.upfront-twitter-link-box, .ufront-twitter-count-box, .upfront-social-icon-twitter': {label: 'Twitter box', info: 'The box that contains twitter button'},
+            '.upfront-google-link-box, .ufront-google-count-box, .upfront-social-icon-google': {label: 'Google box', info: 'The box that contains Google button'},
+            '.upfront-facebook-link-box, .ufront-facebook-count-box, .upfront-social-icon-facebook': {label: 'Facebook box', info: 'The box that contains Facebook button'},
+            '.upfront-pinterest-link-box': {label: 'Pinterest box', info: 'The box that contains Pinterest button'},
+            '.upfront-youtube-link-box': {label: 'Youtube box', info: 'The box that contains Youtube button'},
+        },
         initialize: function(){
             if(! (this.model instanceof SocialMediaModel)){
                 this.model = new SocialMediaModel({properties: this.model.get('properties')});
@@ -556,7 +566,6 @@
         },
 
         render: function(){
-            console.log('render');
             var me = this,
                 nonActive = [],
                 services = this.prop(this.options.prop)
@@ -628,7 +637,6 @@
             });
             //Update services
             this.prop(this.options.prop, all, true);
-
             //Animate all
             var $service = $(this.tpl({service: serviceData, expandable: this.options.expandable}))
                             .hide()
