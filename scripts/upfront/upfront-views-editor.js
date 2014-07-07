@@ -5861,8 +5861,11 @@ var CSSEditor = Backbone.View.extend({
 
 	addSelector: function(e){
 		var selector = $(e.target).data('selector');
-		this.editor.insert(selector);
-		this.editor.focus();
+		if( !_.isUndefined( this.editor ) ){
+			this.editor.insert(selector);
+			this.editor.focus();
+		}
+
 	}
 });
 

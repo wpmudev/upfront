@@ -156,6 +156,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					}),
 					new Upfront.Views.Editor.Field.Color({
 						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color border-color',
+						blank_alpha : 0,
 						model: this.model,
 						property: 'border_color',
 						label: 'Color',
@@ -167,6 +168,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					}),
 					new Upfront.Views.Editor.Field.Color({
 						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color',
+						blank_alpha : 0,
 						model: this.model,
 						property: 'bg_color',
 						label_style: 'inline',
