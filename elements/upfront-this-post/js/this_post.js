@@ -98,7 +98,6 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function(){
-		debugger;
 		if(!this.editor)
 			return;
 
