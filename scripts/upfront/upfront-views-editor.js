@@ -1053,9 +1053,11 @@ define([
 		"className": "sidebar-panel",
 		events: {
 			"click .sidebar-panel-title": "on_click",
-            "click .sidebar-panel-tab" : "show_tab"
-        },
-		get_title: function () {},
+			"click .sidebar-panel-tab" : "show_tab"
+		},
+		get_title: function () {
+			return '';
+		},
 		render: function () {
 			if(this.active)
 				this.$el.addClass('active');
@@ -1065,28 +1067,28 @@ define([
 			this.$el.append('<div class="sidebar-panel-content" />');
 			this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 			if ( this.on_render ) this.on_render();
-            // Make first tab active
-            this.$el.find(".sidebar-panel-tab").first().addClass("active");
-            // show first tab content
-            this.$el.find(".sidebar-tab-content").first().show();
+			// Make first tab active
+			this.$el.find(".sidebar-panel-tab").first().addClass("active");
+			// show first tab content
+			this.$el.find(".sidebar-tab-content").first().show();
 		},
 		on_click: function () {
 			$('.sidebar-panel').not(this.$el).removeClass('expanded');
 			this.$el.addClass('expanded');
 
-            // take care of tabs if any
-            $('.sidebar-panel').not(this.$el).find(".sidebar-panel-tabspane").hide();
-            this.$el.find(".sidebar-panel-tabspane").show();
+			// take care of tabs if any
+			$('.sidebar-panel').not(this.$el).find(".sidebar-panel-tabspane").hide();
+			this.$el.find(".sidebar-panel-tabspane").show();
 		},
-        show_tab : function( e ){
-            var tab = "#" + $(e.target).data("target");
-            // Set current tab active
-            this.$el.find(".sidebar-panel-tab").removeClass("active");
-            $(e.target).addClass("active");
-            //Show current tab's content
-            this.$el.find(".sidebar-tab-content").hide();
-            this.$el.find(tab).show();
-        }
+		show_tab : function( e ){
+			var tab = "#" + $(e.target).data("target");
+			// Set current tab active
+			this.$el.find(".sidebar-panel-tab").removeClass("active");
+			$(e.target).addClass("active");
+			//Show current tab's content
+			this.$el.find(".sidebar-tab-content").hide();
+			this.$el.find(tab).show();
+		}
 	}));
 
 	var DraggableElement = Backbone.View.extend({
@@ -2133,6 +2135,7 @@ define([
 			_.each(this.panels, function(panel){
 				panel.render();
 				me.$el.append(panel.el);
+				panel.delegateEvents();
 			});
 		}
 	});
@@ -2351,7 +2354,6 @@ define([
 
 			this.fetch_current_user();
 
-			//Upfront.Events.on("upfront:posts:post:post_updated", this.handle_post_change, this);
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT ){
 				Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
 				Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
@@ -2492,9 +2494,6 @@ define([
 			$(".sidebar-panel-title.upfront-icon.upfront-icon-panel-elements").trigger("click");
 			*/
 			console.log("from_content_editor got called")
-		},
-		handle_post_change: function (post) {
-			//this.to_content_editor();
 		},
 		fetch_current_user: function() {
 			var user = Upfront.data.currentUser;

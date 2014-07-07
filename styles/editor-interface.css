@@ -10798,6 +10798,9 @@ div.upfront-region-container-active > a.feature_image_selector {
     display: none;
 		line-height: 10px;
 }
+#sidebar-ui .expanded ul.sidebar-panel-tabspane {
+	display: block;
+}
 .sidebar-panel-tabspane li {
     display: inline-block;
     margin-left: 5px;

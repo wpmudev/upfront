@@ -123,8 +123,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Application.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
 				return element.priority;
 			}));
-
-			Upfront.Application.sidebar.render();
 		};
 		_set_up_draggables();
 		this.listenTo(Upfront.Events, "elements:requirements:async:added", _set_up_draggables);
@@ -497,7 +495,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 					saveDialog.close();
 
 					me.postView.postLayout = layoutData.postLayout;
-					
+
 					me.postView.render();
 
 					Application.start(Application.mode.last);
