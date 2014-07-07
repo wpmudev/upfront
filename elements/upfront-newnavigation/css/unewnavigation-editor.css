@@ -36,7 +36,12 @@ div.upfront-navigation.upfront-editable_entity  ul.menu > li > i.navigation-add-
 }
 
 div.upfront-navigation.upfront-editable_entity ul.sub-menu {
-	padding-bottom:30px;
+	/*line-height: 25px;*/
+	/*padding-bottom: 5px;*/
+}
+div.upfront-navigation.upfront-editable_entity ul.sub-menu li{
+	line-height: 25px;
+	padding: 5px 0;
 }
 div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-add-item {
 	left: 0;

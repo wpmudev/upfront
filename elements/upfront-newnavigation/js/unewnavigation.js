@@ -249,7 +249,7 @@ var MenuItemView = Backbone.View.extend({
   			theme: 'light',
   			button: true
   		});
-
+console.log("createLinkPanel");
   		this.listenTo(linkPanel, 'link:ok', function(link){
   			var itemType = 'custom';
 
@@ -616,7 +616,7 @@ var MenuItemView = Backbone.View.extend({
     var tooltip = $('#unewnavigation-tooltip'),
       elementPosition = element.offset(),
       tooltipPosition = {
-        top: elementPosition.top + element.outerHeight(),
+        top: elementPosition.top + element.outerHeight() + 11,
         left: elementPosition.left - 98 + Math.floor(element.outerWidth() / 2)
       },
       tooltipClass = 'unewnavigation-tooltip-bottom',
@@ -638,6 +638,7 @@ var MenuItemView = Backbone.View.extend({
       .addClass(tooltipClass)
       .show()
       .on('click', function(e){
+        console.log("click ok");
         e.stopPropagation();
       })
       .on('blur', function(e){
