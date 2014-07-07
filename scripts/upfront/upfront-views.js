@@ -2427,8 +2427,10 @@ define([
 				}
 			},
 			on_settings_click: function (e) {
-				if(e)
-					e.preventDefault();
+
+				e.preventDefault();
+				e.stopPropagation();
+
 				var me = this,
 					container_view = this.parent_view.get_container_view(this.model);
 				this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(deac){
@@ -2436,6 +2438,7 @@ define([
 						me.bg_setting.close(false);
 					}
 				});
+				
 				container_view.$el.addClass('upfront-region-bg-setting-open');
 				this.bg_setting.open().always(function(){
 					container_view.$el.removeClass('upfront-region-bg-setting-open');
