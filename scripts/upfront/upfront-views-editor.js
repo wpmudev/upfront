@@ -5570,32 +5570,36 @@ var CSSEditor = Backbone.View.extend({
 		this.editor = editor;
 	},
 	prepareSpectrum: function(){
-		var me = this;
-
-		me.$('.upfront-css-color').spectrum({
-			showAlpha: true,
-			showPalette: true,
-			palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") :  ['fff', '000', '0f0'],
-			maxSelectionSize: 9,
-			localStorageKey: "spectrum.recent_bgs",
-			preferredFormat: "hex",
-			chooseText: "Ok",
-			showInput: true,
-			allowEmpty:true,
-			show: function(){
-				spectrum = $('.sp-container:visible');
-			},
-			change: function(color) {
-				var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
-				me.editor.insert(colorString);
-				me.editor.focus();
-			},
-			move: function(color) {
-				var rgba = color.toRgbString();
-				spectrum.find('.sp-dragger').css('border-top-color', rgba);
-				spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-			},
-		});
+		var me = this,
+			color_picker = new Field_Color({
+					default_value: '#ffffff',
+					showAlpha: true,
+					showPalette: true,
+					maxSelectionSize: 9,
+					localStorageKey: "spectrum.recent_bgs",
+					preferredFormat: "hex",
+					chooseText: "Ok",
+					showInput: true,
+					allowEmpty:true,
+					spectrum: {
+						show: function(){
+							spectrum = $('.sp-container:visible');
+						},
+						change: function(color) {
+							var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+							me.editor.insert(colorString);
+							me.editor.focus();
+						},
+						move: function(color) {
+							var rgba = color.toRgbString();
+							spectrum.find('.sp-dragger').css('border-top-color', rgba);
+							spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+						},
+					}
+				})
+			;
+		color_picker.render();
+		me.$('.upfront-css-color').html(color_picker.el);
 	},
 	startResizable: function(){
 		// Save the fetching inside the resize

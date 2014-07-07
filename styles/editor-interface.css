@@ -9714,9 +9714,15 @@ a.upfront-css-font:before {
 	margin: 4px 5px 0 0;
 }
 
-input[type=text].upfront-css-color {
+span.upfront-css-color {
 	float:left;
 	width: auto;
+}
+span.upfront-css-color .upfront-field-wrap{
+	margin-top: 0;
+	padding: 0;
+	margin-top: -7px;
+	margin-left: -10px;
 }
 
 .upfront-css-top .sp-replacer {

@@ -12,7 +12,10 @@ var UwidgetModel = Upfront.Models.ObjectModel.extend({
 var UwidgetView = Upfront.Views.ObjectView.extend({
 
 	loading: null,
-
+	cssSelectors: {
+		'.widget': {label: 'Widget container', info: 'The container that wraps widget element'},
+		'.widget a': {label: 'Widget links', info: 'Links inside the widget element'},
+	},
 	content_loaded: false,
 	initialize: function(options){
 		if(! (this.model instanceof UwidgetModel)){
