@@ -464,7 +464,7 @@ define([
 				});
 			},
 			on_window_resize: function (e) {
-				if ( e.target != window || !this.model)
+				if ( e.target != window || !e.data.model)
 					return;
 				var me = e.data;
 				me.refresh_background();
@@ -1874,6 +1874,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:added", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
+				this.listenTo(Upfront.Events, "entity:module_group:group", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
 				$(window).on('resize', this, this.on_window_resize);
 

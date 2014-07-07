@@ -103,7 +103,7 @@ var LayoutEditor = {
 				});
 				setTimeout(function(){ ed.selecting = false; }, 1000);
 				$group.on('click', function () {
-					var ed = Upfront.Behaviors.GridEditor,
+					var grid_ed = Upfront.Behaviors.GridEditor,
 						group_id = Upfront.Util.get_unique_id("module-group"),
 						group = new Upfront.Models.ModuleGroup(),
 						group_view = false,
@@ -111,8 +111,12 @@ var LayoutEditor = {
 						group_wrappers = group.get('wrappers'),
 						group_wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 						group_wrapper = new Upfront.Models.Wrapper(),
+						first_module_view = first_module_el = false,
+						first_module_grid = first_module_outer_grid = false,
+						affected_els = false,
+						combined_els = [],
 						modules = [],
-						max_col = Math.round((wrap_right-wrap_left)/ed.grid.column_width),
+						max_col = Math.round((wrap_right-wrap_left)/grid_ed.grid.column_width),
 						last_index = 0,
 						module_index = margin_top = margin_left = col = false,
 						line = line_col = wrapper_index = wrapper_col = 0,
@@ -124,15 +128,15 @@ var LayoutEditor = {
 							element_id = $node.attr("id"),
 							module = region_modules.get_by_element_id(element_id),
 							module_class = module.get_property_value_by_name('class'),
-							module_col = ed.get_class_num(module_class, ed.grid.class),
-							module_top = ed.get_class_num(module_class, ed.grid.top_margin_class),
-							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
+							module_col = grid_ed.get_class_num(module_class, grid_ed.grid.class),
+							module_top = grid_ed.get_class_num(module_class, grid_ed.grid.top_margin_class),
+							module_left = grid_ed.get_class_num(module_class, grid_ed.grid.left_margin_class),
 							index = region_modules.indexOf(module),
 							is_next = ( index-last_index == 1 ),
 							wrapper_id = module.get_wrapper_id(),
 							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
 							wrapper_class = wrapper.get_property_value_by_name('class'),
-							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
+							wrapper_col = grid_ed.get_class_num(wrapper_class, grid_ed.grid.class),
 							position;
 						if ( module_index === false )
 							module_index = index;
@@ -170,6 +174,54 @@ var LayoutEditor = {
 						current_wrapper_id = wrapper_id;
 						last_index = index;
 					});
+					// initiate GridEditor start for the first module
+					first_module_view = Upfront.data.module_views[modules[0].model.cid];
+					grid_ed.start(first_module_view, first_module_view.model);
+					first_module_el = grid_ed.get_el(first_module_view.$el.find(".upfront-editable_entity:first"));
+					// modify the module el position to simulate the group position
+					first_module_grid = grid_ed.get_grid(sel_left, sel_top);
+					first_module_outer_grid = grid_ed.get_grid(wrap_left, wrap_top);
+					first_module_el.grid = {
+						top: first_module_grid.y,
+						left: first_module_grid.x,
+						right: first_module_grid.x + Math.round((sel_right-sel_left)/grid_ed.col_size) - 1,
+						bottom: first_module_grid.y + Math.round((sel_bottom-sel_top)/grid_ed.baseline) - 1
+					}
+					first_module_el.outer_grid = {
+						top: first_module_outer_grid.y,
+						left: first_module_outer_grid.x,
+						right: first_module_outer_grid.x + Math.round((wrap_right-wrap_left)/grid_ed.col_size) - 1,
+						bottom: first_module_outer_grid.y + Math.round((wrap_bottom-wrap_top)/grid_ed.baseline) - 1
+					}
+					// find affected els and look for els that must be combined in one wrapper
+					affected_els = grid_ed.get_affected_els(first_module_el, grid_ed.els, [first_module_el], false);
+					_.each(_.union(affected_els.left, affected_els.right), function(el){
+						var combined = false;
+						if ( _.isArray(combined_els) ) {
+							_.each(combined_els, function(comb, i){
+								if ( combined )
+									return;
+								if ( el.outer_grid.left < comb.right && el.outer_grid.right > comb.left && el.outer_grid.top >= comb.bottom ) {
+									comb.els.push(el);
+									comb.bottom = el.outer_grid.bottom;
+									comb.left = el.outer_grid.left < comb.left ? el.outer_grid.left : comb.left;
+									comb.right = el.outer_grid.right > comb.right ? el.outer_grid.right : comb.right;
+									combined = true;
+								}
+							});
+						}
+						if ( !combined ) {
+							combined_els.push({
+								top: el.outer_grid.top,
+								bottom: el.outer_grid.bottom,
+								left: el.outer_grid.left,
+								right: el.outer_grid.right,
+								els: [el]
+							});
+						}
+					});
+					
+					// grouping!
 					group_wrapper_col = group_wrapper_col < line_col ? line_col : group_wrapper_col;
 					margin_left = margin_left === false ? 0 : margin_left;
 					margin_top = margin_top === false ? 0 : margin_top;
@@ -192,15 +244,15 @@ var LayoutEditor = {
 						if ( index == 0 || !module.is_next || ( current_wrapper_id != wrapper_id && module.wrapper_class.match(/clr/) ) )
 							line++;
 						if ( wrapper_index == 1 || !module.is_next || module.wrapper_class.match(/clr/) ){
-							new_classes.push(ed.grid.left_margin_class + (module.margin_left-margin_left));
+							new_classes.push(grid_ed.grid.left_margin_class + (module.margin_left-margin_left));
 							wrapper_col = module.wrapper_col - margin_left;
 						}
 						else {
 							wrapper_col = module.wrapper_col;
 						}
 						if ( line == 1 && current_wrapper_id != wrapper_id )
-							new_classes.push(ed.grid.top_margin_class + (module.margin_top-margin_top));
-						new_wrapper.replace_class(ed.grid.class + wrapper_col);
+							new_classes.push(grid_ed.grid.top_margin_class + (module.margin_top-margin_top));
+						new_wrapper.replace_class(grid_ed.grid.class + wrapper_col);
 						current_wrapper_id = wrapper_id;
 						module.model.set_property('wrapper_id', new_wrapper_id);
 						module.model.replace_class(new_classes.join(" "));
@@ -208,20 +260,46 @@ var LayoutEditor = {
 						group_modules.add(module.model);
 					});
 					group_wrapper.set_property('wrapper_id', group_wrapper_id);
-					group_wrapper_classes.push(ed.grid.class + group_wrapper_col);
+					group_wrapper_classes.push(grid_ed.grid.class + group_wrapper_col);
 					if ( modules[0].wrapper_class.match(/clr/) )
 						group_wrapper_classes.push('clr');
 					group_wrapper.set_property('class', group_wrapper_classes.join(' '));
 					region_wrappers.add(group_wrapper);
 					group.set_property('element_id', group_id);
 					group.set_property('wrapper_id', group_wrapper_id);
-					group.replace_class( ed.grid.class + col + " " + ed.grid.top_margin_class + margin_top + " " + ed.grid.left_margin_class + margin_left );
+					group.replace_class( grid_ed.grid.class + col + " " + grid_ed.grid.top_margin_class + margin_top + " " + grid_ed.grid.left_margin_class + margin_left );
 					group.add_to(region_modules, module_index);
+					
+					// combine elements
+					_.each(combined_els, function(comb, i){
+						if ( comb.els.length <= 1 )
+							return;
+						var element_id = comb.els[0].$el.attr("id"),
+							model = region_modules.get_by_element_id(element_id),
+							index = region_modules.indexOf(model),
+							wrapper_id = model ? model.get_wrapper_id() : false,
+							wrap_model = wrapper_id ? region_wrappers.get_by_wrapper_id(wrapper_id) : false,
+							$wrap = comb.els[0].$el.closest('.upfront-wrapper');
+						if ( !model )
+							return;
+						_.each(_.rest(comb.els, 1), function(el, e){
+							var element_id = el.$el.attr("id"),
+								el_model = region_modules.get_by_element_id(element_id),
+								el_wrapper_id = el_model ? el_model.get_wrapper_id() : false;
+							if ( !el_model || el_wrapper_id == wrapper_id )
+								return;
+							el_model.set_property('wrapper_id', wrapper_id);
+							region_modules.remove(el_model, {silent: true});
+							el_model.add_to(region_modules, index+e+1);
+						});
+						wrap_model.replace_class(grid_ed.grid.class + (comb.right-comb.left+1));
+					});
+					
 					// now normalize the wrappers
-					group_view = Upfront.data.module_views[group.cid];
-					ed.start(group_view, group);
-					ed.update_wrappers(region);
+					grid_ed.update_position_data();
+					grid_ed.update_wrappers(region);
 					$(this).remove();
+					Upfront.Events.trigger("entity:module_group:group", group, region);
 				});
 			}
 		});
