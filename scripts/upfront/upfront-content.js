@@ -211,7 +211,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		editContents: function(e, focusElement){
 			//If we are already editing, don't do anything
-			if(this.contentEditor || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
+			if(this.contentEditor)// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor) 
 				return;
 
 			//If we haven't fetched all the data, return too

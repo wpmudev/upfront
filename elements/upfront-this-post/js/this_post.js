@@ -109,7 +109,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.editor.setElement( contents[0] );
 		}
 
-		this.editor.render();
+		//this.editor.render();
 		this.trigger('rendered');
 	},
 
