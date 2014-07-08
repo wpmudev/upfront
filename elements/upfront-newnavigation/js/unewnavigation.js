@@ -530,9 +530,10 @@ console.log("createLinkPanel");
 		var urlParts;
 		if(!url){
 			url = location.href;
-			if(location.search = '?dev=true')
-				url = url.replace('?dev=true', '');
 		}
+		
+		if(url.indexOf('?dev=true') != -1)
+			url = url.replace('?dev=true', '');
 
 		if(url.indexOf('#') == -1)
 			return url;
@@ -540,7 +541,7 @@ console.log("createLinkPanel");
 		urlParts = url.split('#');
 		return urlParts[0];
   },
-  /*
+
   getUrlanchor: function(url) {
     // this does almost the opposite of the above function
 
@@ -554,6 +555,7 @@ console.log("createLinkPanel");
     else
       return false;
   },
+    /*
   removeAnchorsselect: function() {
     $('div.upfront-field-wrap-select').remove();
   },
@@ -811,14 +813,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	}
 
     singleclickcount++;
-
     if(singleclickcount == 1) {
       setTimeout(function(){
         if(singleclickcount == 1) {
 			//try{
           //if(thelink.model['menu-item-type'] == 'custom') {
             var menu_item_clean = thelink.getCleanurl(thelink.model['menu-item-url']);
-            if(thelink.model['menu-item-url'].indexOf('#') > -1 && ('' === menu_item_clean || thelink.getCleanurl() == menu_item_clean)) {
+
+            if(thelink.model['menu-item-url'].indexOf('#') > -1 && thelink.getCleanurl() == menu_item_clean) {
 				if(thelink.model['menu-item-url'].indexOf('#ltb-') > -1)	 {
 					var regions = Upfront.Application.layout.get('regions');
 					region = regions ? regions.get_by_name(thelink.getUrlanchor(thelink.model['menu-item-url'])) : false;
@@ -837,6 +839,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				  var anchors = me.get_anchors();
 				  $('html,body').animate({scrollTop: $('#'+thelink.getUrlanchor(thelink.model['menu-item-url'])).offset().top},'slow');
 				}
+				
             }
             else if(thelink.model['menu-item-target'] == '') {
               window.location.href = thelink.model['menu-item-url'];

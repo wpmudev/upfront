@@ -2428,8 +2428,10 @@ define([
 			},
 			on_settings_click: function (e) {
 
-				e.preventDefault();
-				e.stopPropagation();
+				if(typeof(e) != 'undefined') {	
+					e.preventDefault();
+					e.stopPropagation();
+				}
 
 				var me = this,
 					container_view = this.parent_view.get_container_view(this.model);

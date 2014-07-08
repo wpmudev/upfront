@@ -134,15 +134,17 @@ jQuery(document).ready(function($){
 		//If we are in the editor the lightbox is open using the region.
 		//if(typeof(Upfront) != 'undefined' && Upfront.Views)
 			//return;
-			console.log($('div#sidebar-ui').length);
+
 		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block')
 			return;
+			
 		  var url = $(this).attr('href');
 			if(url.indexOf('#') >=0) {
 			  var tempurl = url.split('#');
 			  if(tempurl[1].trim() != '')
 				if(tempurl[1].trim().indexOf('ltb-') == 0) {
 					var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
+					
 					overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
 	
 					if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
@@ -169,7 +171,6 @@ jQuery(document).ready(function($){
 					lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
 					lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
 					$(document).trigger("upfront-lightbox-open");
-					console.log(lightbox.css('width'));
 					e.preventDefault();
 					function lightboxhide() {
 						close.html('').remove()
