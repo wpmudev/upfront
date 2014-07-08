@@ -1067,6 +1067,8 @@ var Application = new (Backbone.Router.extend({
 	sidebar: false,
 	layout: false,
 
+	responsiveMode: false,
+
 	boot: function () {
 		this.MODE = Upfront.Settings.Application.MODE;
 		var me = this;
@@ -1091,6 +1093,8 @@ var Application = new (Backbone.Router.extend({
 			Upfront.Util.log("Can't boot invalid subapplication");
 		}
 		Upfront.Events.trigger("application:mode:before_switch");
+
+		this.listenToResponsiveModes();
 
 		if (!!this.layout) {
 			var regions = this.layout.get("regions"),
@@ -1557,6 +1561,21 @@ var Application = new (Backbone.Router.extend({
 		this.loadingLayer = loading;
 
 		return loading;
+	},
+
+	listenToResponsiveModes: function(){
+		// If a responsive mode is set we already are listening
+		if(this.responsiveMode)
+			return;
+
+		var me = this;
+
+		// Initial mode is desktop
+		this.responsiveMode = 'desktop';
+
+		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode, previousMode){
+			me.responsiveMode = newMode.id;
+		});
 	}
 
 }))();

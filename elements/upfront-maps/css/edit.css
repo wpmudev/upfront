@@ -27,6 +27,10 @@
   width: 180px;
 }
 
+.ufpront-maps_element-settings_panel .upfront-field-select {
+	width: 100%;
+}
+
 .ufm-context-menu{
 background:white;
 -webkit-border-radius: 3px;

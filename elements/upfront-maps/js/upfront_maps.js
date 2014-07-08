@@ -126,6 +126,10 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	var UmapView = Upfront.Views.ObjectView.extend({
 		map: false,
 
+		cssSelectors: {
+			'.ufm-gmap-container': {label: 'Map container', info: 'The layer wrapping the map.'}
+		},
+
 		on_render: function () {
 			this.update_properties();
 			var me = this,

@@ -92,6 +92,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.listenTo(Upfront.Events, 'command:layout:save', this.saveResizing);
 		this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveResizing);
 
+		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode, previousMode){
+			if(newMode.id != 'desktop')
+				this.setMobileMode();
+			else
+				this.unsetMobileMode();
+		});
+
 		this.sizeClasses = {
 			narrow: false,
 			small: false,
@@ -527,6 +534,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var me = this,
 			onTop = ['bottom', 'fill_bottom'].indexOf(me.property('caption_alignment')) != -1 || me.property('caption_position') == 'below_image' ? ' sizehint-top' : ''
 		;
+
 		//Bind resizing events
 		if(!me.parent_module_view.$el.data('resizeHandling')){
 			me.parent_module_view.$el
@@ -583,6 +591,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.setSizeHTMLClasses();
 
 		}, 300);
+
+		// Show full image if we are in mobile mode
+		if(this.mobileMode){
+			this.$('.uimage').addClass('uimage-mobile-mode');
+			this.setMobileMode();
+		}
 	},
 
 	setSizeClasses: function(width, height) {
@@ -699,7 +713,34 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		;
 	},
 
+	setMobileMode: function(){
+		this.mobileMode = true;
+		this.$el
+			.find('.uimage-resize-hint').hide().end()
+			.find('.uimage').css('min-height', 'none')
+			.find('.upfront-image-caption-container').width('100%').end()
+			.find('.upfront-image-container').width('100%').height('auto').end()
+			.find('img')
+				.css({
+					position: 'static',
+					width: '100%',
+					height: 'auto'
+				})
+				.attr('src', this.property('src'))
+		;
+	},
+
+	unsetMobileMode: function(){
+		this.mobileMode = false;
+		if(this.parent_module_view){
+			this.render();
+		}
+	},
+
 	onElementResize: function(e, ui){
+		// In Mobile mode, don't handle resizing.
+		if(this.mobileMode)
+			return;
 		var starting = this.$('.upfront-image-starting-select');
 		if(starting.length){
 			this.elementSize = {
@@ -732,12 +773,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			position: imgPosition
 		};
 
-		this.cropTimer = setTimeout(function(){
-			me.saveTemporaryResizing();
-			console.log('resizingTimer');
-		}, this.cropTimeAfterResize);
-
 		this.property('element_size', resizingData.data.elementSize);
+
+		// Actually crop the image only in desktop mode;
+		//if(Upfront.Application.resizeMode == 'desktop'){
+			this.cropTimer = setTimeout(function(){
+				me.saveTemporaryResizing();
+				console.log('resizingTimer');
+			}, this.cropTimeAfterResize);
+		//}
 
 		this.setSizeHTMLClasses();
 		resizingData = {};
@@ -745,6 +789,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResizeStart: function(e, ui){
+		// In Mobile mode, don't handle resizing.
+		if(this.mobileMode)
+			return;
 		var starting = this.$('.upfront-image-starting-select');
 
 		if(this.property('caption_position') != 'below_image')
@@ -783,6 +830,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResizing: function(e, ui){
+		// In Mobile mode, don't handle resizing.
+		if(this.mobileMode)
+			return;
 		var starting = resizingData.starting,
 			resizer = resizingData.resizer,
 			data = resizingData.data,
@@ -1115,6 +1165,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	openEditor: function(newImage, imageInfo){
+		if(Upfront.Application.responsiveMode != 'desktop')
+			return Upfront.Views.Editor.notify('Image edition is only available in desktop mode.', 'error');
+
 		var me = this,
 			options = {
 				setImageSize: newImage,

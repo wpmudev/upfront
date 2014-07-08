@@ -10065,6 +10065,10 @@ a.upfront-css-edit:before{
   margin-top: 3px;
 }
 
+.ufpront-maps_element-settings_panel .upfront-field-select {
+	width: 100%;
+}
+
 .menu-settings .upfront-field-wrap {
   margin-top: 8px;
 }
