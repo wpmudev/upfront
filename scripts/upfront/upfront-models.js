@@ -496,11 +496,7 @@ var _alpha = "alpha",
 //                this.set("theme_colors", args[0].theme_colors)
 //            }
 
-			typography = this.get_property_value_by_name('typography');
-			// If typography is false than this is just empty initialization so skip it.
-			// ( empty initialization is used to initialize sidebar first time)
-			if (typography === false || _.isEmpty(typography)) return;
-			this.check_typography(typography);
+			this.check_typography();
 		},
 		/*
 		 * Run a check if the typography styles are matching the ones loaded on page.
@@ -508,9 +504,17 @@ var _alpha = "alpha",
 		 * synced with current theme.
 		 * If typography does not match one on page, update it.
 		 */
-		check_typography: function(typography) {
+		check_typography: function() {
+			var $test_root, typography_updated, typography;
+
+			typography = this.get_property_value_by_name('typography');
+
 			//todo if typography is empty do not check anything just fill it up with how stuff is formatted in page
-			var $test_root, typography_updated;
+			if (_.isEmpty(typography)) {
+				this.set_property('typography', this.get_default_typography(), false);
+				return;
+			}
+
 			$('body').append('<div id="typography-test-root" class="upfront-object-content upfront-output-object" />');
 			$test_root = $('#typography-test-root');
 
@@ -601,6 +605,118 @@ var _alpha = "alpha",
 				this.set_property('typography', typography, false);
 			}
 			$test_root.remove();
+		},
+		get_default_typography: function() {
+			return {
+				"h1": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"h2": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"h3": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"h4": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"h5": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"h6": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"p": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"a": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"a:hover": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"ul": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"ol": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				},
+				"blockquote": {
+					"weight": "700 normal",
+					"style": "",
+					"size": 14,
+					"line_height": 1,
+					"font_face": "Arial",
+					"font_family": "sans-serif",
+					"color": ""
+				}
+			};
 		},
 		_normalize_weight: function (weight) {
 			if ( weight == 'normal' )

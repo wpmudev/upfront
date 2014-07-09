@@ -1383,12 +1383,6 @@ define([
 				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
 				typography = this.model.get_property_value_by_name('typography');
 
-			if (_.isEmpty(typography)) {
-				// This occurs in built script because of order in which is stuff executed.
-				// If typography is empty than we are not yet ready to go further.
-				return;
-			}
-
 			_.each(system_fonts_storage.get_fonts().models, function(font)	{
 				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
 			});
