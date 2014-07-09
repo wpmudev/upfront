@@ -1,4 +1,4 @@
-// (function () {
+(function ($) {
 
 define(['backbone'], function(Backbone) {
 
@@ -217,7 +217,7 @@ var _alpha = "alpha",
 			if (this.init) this.init();
 		}
 	}),
-	
+
 	ModuleGroup = ObjectModel.extend({
 		"defaults": function(){
 			return {
@@ -276,7 +276,7 @@ var _alpha = "alpha",
 			//console.log(this);
 		},
 		*/
-		
+
 		model: function (attrs, options) {
 			if ( attrs.modules )
 				return new ModuleGroup(attrs, options);
@@ -465,6 +465,7 @@ var _alpha = "alpha",
 			"wrappers": new Wrappers()
 		},
 		initialize: function () {
+			var typography;
 			var args = arguments;
 			if (args && args[0] && args[0]["regions"]) {
 				args[0]["regions"] = args[0]["regions"] instanceof Regions
@@ -494,6 +495,122 @@ var _alpha = "alpha",
 //                ;
 //                this.set("theme_colors", args[0].theme_colors)
 //            }
+
+			typography = this.get_property_value_by_name('typography');
+			// If typography is false than this is just empty initialization so skip it.
+			// ( empty initialization is used to initialize sidebar first time)
+			if (typography === false) return;
+			this.check_typography(typography);
+		},
+		/*
+		 * Run a check if the typography styles are matching the ones loaded on page.
+		 * This is needed for the first time loading a theme when typography is not yet
+		 * synced with current theme.
+		 * If typography does not match one on page, update it.
+		 */
+		check_typography: function(typography) {
+			var $test_root, typography_updated;
+			$('body').append('<div id="typography-test-root" class="upfront-object-content upfront-output-object" />');
+			$test_root = $('#typography-test-root');
+
+			_.each(["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"], function(element) {
+				var el, el_tag_name, is_inline, styles, weight, size, line_height, pseudo_class,
+					font_family, computed_color, color_values, saved_color, saved_color_values,
+					color_alpha, computed_font_size;
+
+				el_tag_name = element.replace(/:.+?$/, '');
+				pseudo_class = element.indexOf('hover') > -1 ? ':hover' : null;
+				el = document.createElement(el_tag_name);
+				$test_root.append(el);
+				is_inline = _.contains(["a", "a:hover"], element);
+				styles = window.getComputedStyle(el, pseudo_class);
+				weight = this._normalize_weight(styles.fontWeight);
+				size = parseInt(styles.fontSize, 10);
+
+				// Font family
+				if (styles.fontFamily.indexOf(typography[element].font_face) === -1 ||
+						styles.fontFamily.indexOf(typography[element].font_family) === -1) {
+					font_family = styles.fontFamily.split(',');
+					typography[element].font_face = font_family[0].trim;
+					typography[element].font_family = font_family.lenght > 1 ? font_family[1].trim : '';
+					typography_updated = true;
+				}
+
+				// Color is pretty complicated to check
+				computed_color = styles.color;
+				// If it is rgb and does not have alpha, alpha is 1
+				if (computed_color.indexOf('rgb') > -1 &&	computed_color.indexOf('rgba') === -1) {
+					// Normalize to rgba
+					color_values = computed_color.match(/\((.+?)\)/)[1].split(',');
+					computed_color = ['rgba(', color_values[0].trim(), ', ', color_values[1].trim(), ', ',
+						color_values[2].trim(), ', 1)'].join('');
+				}
+				// Fix computed color has too many floating point spaces
+				if (computed_color.match(/\.\d{2,}/)) {
+					color_values = computed_color.match(/\((.+?)\)/)[1].split(',');
+					// Round alpha if needed.
+					color_alpha = color_values[3].trim().slice(0, 4);
+					if (color_alpha.charAt(3) === '0') color_alpha = color_alpha.slice(0, 3);
+
+					computed_color = ['rgba(', color_values[0].trim(), ', ', color_values[1].trim(), ', ',
+						color_values[2].trim(), ', ', color_alpha, ')'].join('');
+				}
+
+				saved_color = typography[element].color;
+				// If it is rgb and does not have alpha, alpha is 1
+				if (saved_color.indexOf('rgb') > -1 &&	saved_color.indexOf('rgba') === -1) {
+					// Normalize to rgba
+					saved_color_values = saved_color.match(/\((.+?)\)/)[1].split(',');
+					saved_color = ['rgba(', saved_color_values[0].trim(), ', ', saved_color_values[1].trim(), ', ',
+						saved_color_values[2].trim(), ', 1)'].join('');
+				}
+
+				// Finally check color
+				//TODO handle special cases 0.5 and 0.3 for alpha, since computed value from browser is 0.49 and 0.29 respectively
+				if (computed_color.replace(/ /g, '') != saved_color.replace(/ /g, '')) {
+					typography[element].color = computed_color;
+					typography_updated = true;
+				}
+
+				// Weight
+				if (typography[element].weight != 'regular' && typography[element].weight != weight) {
+					typography[element].weight = weight;
+					typography_updated = true;
+				}
+
+				if ( !is_inline ) {
+					// Font size
+					computed_font_size = parseInt(styles.fontSize, 10);
+					if (typography[element].size != computed_font_size) {
+						typography[element].size = computed_font_size;
+						typography_updated = true;
+					}
+
+					// Line height
+					line_height = parseInt(styles.lineHeight, 10);
+					line_height = Math.round(line_height / size * 10) / 10;
+					if (typography[element].line_height != line_height) {
+						typography[element].line_height = line_height;
+						typography_updated = true;
+					}
+				}
+				$(el).remove();
+			}, this);
+			if (typography_updated) {
+				this.set_property('typography', typography, false);
+			}
+			$test_root.remove();
+		},
+		_normalize_weight: function (weight) {
+			if ( weight == 'normal' )
+				return 400;
+			else if ( weight == 'bold' )
+				return 700;
+			else if ( weight == 'bolder' )
+				return 900; // either 800-900 depend to the available weight
+			else if ( weight == 'lighter' )
+				return 100; // either 100-300 depend to the available weight
+			return weight;
 		},
 		get_current_state: function () {
 			return Upfront.Util.model_to_json(this.get("regions"));
@@ -1528,5 +1645,5 @@ return {
   };
 });
 
-// })();
+})(jQuery);
 

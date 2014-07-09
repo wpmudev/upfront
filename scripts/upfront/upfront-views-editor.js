@@ -1,5 +1,6 @@
 (function ($) {
 define([
+	"chosen",
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
@@ -9,8 +10,8 @@ define([
 	"text!upfront/templates/sidebar_settings_background.html",
 	"text!upfront/templates/popup.html",
 	"text!upfront/templates/region_edit_panel.html",
-    "text!upfront/templates/sidebar_settings_theme_colors.html",
-    "text!upfront/templates/color_picker.html"
+	"text!upfront/templates/sidebar_settings_theme_colors.html",
+	"text!upfront/templates/color_picker.html"
 ], function () {
 	var _template_files = [
 		"text!upfront/templates/property.html",
@@ -22,12 +23,12 @@ define([
 		"text!upfront/templates/sidebar_settings_background.html",
 		"text!upfront/templates/popup.html",
 		"text!upfront/templates/region_edit_panel.html",
-        "text!upfront/templates/sidebar_settings_theme_colors.html",
-        "text!upfront/templates/color_picker.html"
+		"text!upfront/templates/sidebar_settings_theme_colors.html",
+		"text!upfront/templates/color_picker.html"
 	];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = arguments,
+	var _template_args = _.rest(arguments),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
@@ -1358,56 +1359,8 @@ define([
 	});
 
 	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
-		_loaded: false,
 		fields: {},
-		current_element: '',
-		typefaces_list: [
-			{ family: "Default", value: '', category:'sans-serif' },
-			{ family: "Arial", category:'sans-serif' },
-			{ family: "Arial Black", category:'sans-serif' },
-			{ family: "Arial Narrow", category:'sans-serif' },
-			{ family: "Arial Rounded MT Bold", category:'sans-serif' },
-			{ family: "Avant Garde", category:'sans-serif' },
-			{ family: "Calibri", category:'sans-serif' },
-			{ family: "Candara", category:'sans-serif' },
-			{ family: "Century Gothic", category:'sans-serif' },
-			{ family: "Franklin Gothic Medium", category:'sans-serif' },
-			{ family: "Futura", category:'sans-serif' },
-			{ family: "Geneva", category:'sans-serif' },
-			{ family: "Gill Sans", category:'sans-serif' },
-			{ family: "Helvetica", category:'sans-serif' },
-			{ family: "Impact", category:'sans-serif' },
-			{ family: "Lucida Grande", category:'sans-serif' },
-			{ family: "Optima", category:'sans-serif' },
-			{ family: "Segoe UI", category:'sans-serif' },
-			{ family: "Tahoma", category:'sans-serif' },
-			{ family: "Trebuchet MS", category:'sans-serif' },
-			{ family: "Verdana", category:'sans-serif' },
-			{ family: "Baskerville", category:'serif' },
-			{ family: "Big Caslon", category:'serif' },
-			{ family: "Bodoni MT", category:'serif' },
-			{ family: "Book Antiqua", category:'serif' },
-			{ family: "Calisto MT", category:'serif' },
-			{ family: "Cambria", category:'serif' },
-			{ family: "Didot", category:'serif' },
-			{ family: "Garamond", category:'serif' },
-			{ family: "Georgia", category:'serif' },
-			{ family: "Goudy Old Style", category:'serif' },
-			{ family: "Hoefler Text", category:'serif' },
-			{ family: "Lucida Bright", category:'serif' },
-			{ family: "Palatino", category:'serif' },
-			{ family: "Perpetua", category:'serif' },
-			{ family: "Rockwell", category:'serif' },
-			{ family: "Rockwell Extra Bold", category:'serif' },
-			{ family: "Times New Roman", category:'serif' },
-			{ family: "Andale Mono", category:'monospace' },
-			{ family: "Consolas", category:'monospace' },
-			{ family: "Courier New", category:'monospace' },
-			{ family: "Lucida Console", category:'monospace' },
-			{ family: "Lucida Sans Typewriter", category:'monospace' },
-			{ family: "Monaco", category:'monospace' },
-		],
-		google_typefaces_list: [],
+		current_element: 'h1',
 		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
 		inline_elements: ["a", "a:hover"],
 		typefaces: {},
@@ -1418,202 +1371,136 @@ define([
 		initialize: function () {
 			var me = this;
 			SidebarPanel_Settings_Item.prototype.initialize.call(this);
-			if (!this.google_typefaces_list.length) Upfront.Util.post({action: "upfront_list_google_fonts"})
-				.success(function (response) {
-					if (response.data) me.google_typefaces_list = response.data;
-					me.render(); // Re-render in order to prevent race condition in responsive sidebar.
-				})
-			;
+			$.when(google_fonts_storage.get_fonts()).done(function() {
+				me.render();
+			});
 		},
 		on_render: function () {
 			var me = this,
-				tmp = $("body").append('<div id="upfront-font_test-root" style="position:absolute; left: -999999999999px" />'),
-				$test_root = $("#upfront-font_test-root"),
-				test_string = (new Array(99)).join('mwi '),
-				typefaces_list = (function(){
-					var lists = [
-						//{label: "- Default -", value:''} // This is the default value, aka "fall-through"
-					];
-					_.each(me.typefaces_list, function(typeface){
-						var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.family,
-							raw_family = "undefined" === typeof typeface.value ? typeface.family : typeface.value,
-							obj = { label: typeface.family, value: value },
-							base_width = 0
-						;
-						if (typeface.family.toLowerCase() === 'arial') lists.push(obj);
-						else if (raw_family) {
-							$test_root
-								.css("font-family", typeface.category)
-								.text(test_string)
-							;
-							base_width = $test_root.width();
-							$test_root
-								.css("font-family", [raw_family, typeface.category].join(','))
-							;
-							// Let's find out if we have this font
-							if (base_width !== $test_root.width()) {
-								lists.push(obj);
-							}
-						}
-					});
-					$test_root.remove(); // Clean up markup
-					if (me.google_typefaces_list.length) _.each(me.google_typefaces_list, function (typeface) {
-						var value = typeof typeface.value != 'undefined' ? typeface.value : typeface.family;
-						lists.push({ label: typeface.family, value: value });
-					});
-					return lists;
-				})(),
-				styles_list = (function(){//googlefontstodo this needs to be reworked to match actual available styles
-					var lists = [{ label: "Default", value: "" }];
-					_.each(['normal', 'italic', 'oblique'], function(style){
-						_.each(_.range(100, 900, 100), function(weight){
-							lists.push({ label: weight+' '+style, value: weight+' '+style });
-						});
-					});
-					return lists;
-				})(),
-				options = this.model.get_property_value_by_name('typography'),
+				typefaces_list = [],
+				styles_list = [] // this will change with every font family change
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
 				$wrap_right = $('<div class="upfront-typography-fields-right" />');
 
-			_.each(this.elements, function(element){
-				var el = document.createElement(element.replace(/:.+?$/, ''));
-				$('body').append(el);
-				var is_inline = _.contains(me.inline_elements, element),
-					styles = window.getComputedStyle(el),
-					style = styles.fontStyle,
-					weight = me._normalize_weight(styles.fontWeight),
-					size = parseInt(styles.fontSize, 10),
-					line_height = parseInt(styles.lineHeight, 10),
-					color = styles.color;
-				me.typefaces[element] = '';
-				me.colors[element] = color;
-				if ( !is_inline ){
-					me.styles[element] = weight + ' ' + style;
-					me.sizes[element] = size;
-					me.line_heights[element] = Math.round(line_height/size*10)/10;
-				}
-				$(el).remove();
+			_.each(system_fonts_storage.get_fonts().models, function(font)	{
+				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
 			});
-		  	if ( options ){
-					_.each(options, function (values, element) {
-						me.typefaces[element] = values.font_face;
-						me.colors[element] = values.color;
-						if ( values.weight && values.style )
-							me.styles[element] = values.weight + ' ' + values.style;
-						if ( values.size )
-							me.sizes[element] = values.size;
-						if ( values.line_height )
-							me.line_heights[element] = values.line_height;
-					});
+			_.each(google_fonts_storage.get_fonts().models, function(font) {
+				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
+			});
+
+			// Load saved styles for all elements
+			_.each(this.model.get_property_value_by_name('typography'), function (value, element) {
+				me.typefaces[element] = value.font_face;
+				me.colors[element] = value.color;
+				if ( value.weight && value.style ) {
+					me.styles[element] = value.weight + ' ' + value.style;
+				} else if (value.weight) {
+					me.styles[element] = value.weight + '';
+				} else if (value.style) {
+					me.styles[element] = value.style + '';
 				}
-				if ( !this.fields.length ){
-					this.fields = {
-						element: new Upfront.Views.Editor.Field.Select({
-							label: "Type Element:",
-							default_value: 'h1',
-							values: [
-								{ label: "Main Heading (H1)", value: "h1" },
-								{ label: "Sub Heading (H2)", value: "h2" },
-								{ label: "Sub Heading (H3)", value: "h3" },
-								{ label: "Sub Heading (H4)", value: "h4" },
-								{ label: "Sub Heading (H5)", value: "h5" },
-								{ label: "Sub Heading (H6)", value: "h6" },
-								{ label: "Paragraph (P)", value: "p" },
-								{ label: "Anchor Link (A)", value: "a" },
-								{ label: "Anchor Link Hover (A:HOVER)", value: "a:hover" },
-								{ label: "Unordered List (UL)", value: "ul" },
-								{ label: "Ordered List (OL)", value: "ol" },
-								{ label: "Blockquote (BLOCKQUOTE)", value: "blockquote" },
-							],
-							change: function () {
-								var value = this.get_value(),
-										is_inline = _.contains(me.inline_elements, value);
-								me.current_element = value;
-								me.fields.typeface.set_value( me.typefaces[value] );
-								me.fields.style.set_value( me.styles[value] ? me.styles[value] : "" );
-								if ( is_inline ){
-									$([me.fields.size.el, me.fields.line_height.el]).hide();
-								}
-								else {
-									$([me.fields.size.el, me.fields.line_height.el]).show();
-									me.fields.size.set_value( me.sizes[value] );
-									me.fields.line_height.set_value( me.line_heights[value] );
-								}
-								me.fields.color.set_value( me.colors[value] );
+				if ( value.size )
+					me.sizes[element] = value.size;
+				if ( value.line_height )
+					me.line_heights[element] = value.line_height;
+			});
+
+			if ( !this.fields.length ) {
+				this.fields = {
+					element: new Upfront.Views.Editor.Field.Select({
+						label: "Type Element:",
+						default_value: 'h1',
+						values: [
+							{ label: "Main Heading (H1)", value: "h1" },
+							{ label: "Sub Heading (H2)", value: "h2" },
+							{ label: "Sub Heading (H3)", value: "h3" },
+							{ label: "Sub Heading (H4)", value: "h4" },
+							{ label: "Sub Heading (H5)", value: "h5" },
+							{ label: "Sub Heading (H6)", value: "h6" },
+							{ label: "Paragraph (P)", value: "p" },
+							{ label: "Anchor Link (A)", value: "a" },
+							{ label: "Anchor Link Hover (A:HOVER)", value: "a:hover" },
+							{ label: "Unordered List (UL)", value: "ul" },
+							{ label: "Ordered List (OL)", value: "ol" },
+							{ label: "Blockquote (BLOCKQUOTE)", value: "blockquote" },
+						],
+						change: function () {
+							var value = this.get_value(),
+								is_inline = _.contains(me.inline_elements, value);
+							me.current_element = value;
+							me.fields.typeface.set_value( me.typefaces[value] );
+							me.update_styles_field();
+							if ( is_inline ){
+								$([me.fields.size.el, me.fields.line_height.el]).hide();
+							} else {
+								$([me.fields.size.el, me.fields.line_height.el]).show();
+								me.fields.size.set_value( me.sizes[value] );
+								me.fields.line_height.set_value( me.line_heights[value] );
 							}
-						}),
-						typeface: new Upfront.Views.Editor.Field.Select({
-							label: "Typeface",
-							values: typefaces_list,
-							default_value: me.typefaces['h1'],
-							change: function () {
-								var value = this.get_value(),
-								element = me.current_element;
-								if ( me.typefaces[element] != value ){
-									me.typefaces[element] = value;
-									me.update_typography();
-								}
+							me.fields.color.set_value( me.colors[value] );
+						}
+					}),
+					typeface: new Field_Chosen_Select({
+						label: "Typeface",
+						values: typefaces_list,
+						default_value: me.typefaces['h1'],
+						change: function () {
+							var value = this.get_value(),
+							element = me.current_element;
+							if ( me.typefaces[element] != value ){
+								me.typefaces[element] = value;
+								me.update_styles_field();
+								me.update_typography();
 							}
-						}),
-						style: new Upfront.Views.Editor.Field.Select({
-								label: "Weight / Style",
-								values: styles_list,
-								default_value: me.styles['h1'],
-								change: function () {
-									var value = this.get_value(),
+						}
+					}),
+					style: this.get_styles_field(),
+					color: new Upfront.Views.Editor.Field.Color({
+							label: "Color",
+							default_value: me.colors['h1'],
+							spectrum: {
+								move: function (color) {
+									var rgb = color.toRgb(),
+										rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
 										element = me.current_element;
-									if ( me.styles[element] != value ){
-										me.styles[element] = value;
-										me.update_typography();
+									if ( me.colors[element] != rgba_string ){
+										me.colors[element] = rgba_string;
+										me.update_typography(color);
 									}
 								}
-						}),
-						color: new Upfront.Views.Editor.Field.Color({
-								label: "Color",
-								default_value: me.colors['h1'],
-								spectrum: {
-									move: function (color) {
-										var rgb = color.toRgb(),
-											rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
-											element = me.current_element;
-										if ( me.colors[element] != rgba_string ){
-											me.colors[element] = rgba_string;
-											me.update_typography(color);
-										}
-									}
-								}
-						}),
-						size: new Upfront.Views.Editor.Field.Number({
-							label: "Size",
-							min: 0,
-							max: 100,
-							suffix: 'px',
-							default_value: me.sizes['h1'],
-							change: function () {
-								var value = this.get_value(),
-									element = me.current_element;
-								if ( me.sizes[element] != value ){
-									me.sizes[element] = value;
-									me.update_typography();
-								}
 							}
-						}),
-						line_height: new Upfront.Views.Editor.Field.Number({
-							label: "Line Height",
-							min: 0,
-							max: 10,
-							step: .1,
-							default_value: me.line_heights['h1'],
-							change: function () {
-								var value = this.get_value(),
-									element = me.current_element;
-								if ( me.line_heights[element] != value ){
-									me.line_heights[element] = value;
-									me.update_typography();
-								}
+					}),
+					size: new Upfront.Views.Editor.Field.Number({
+						label: "Size",
+						min: 0,
+						max: 100,
+						suffix: 'px',
+						default_value: me.sizes['h1'],
+						change: function () {
+							var value = this.get_value(),
+								element = me.current_element;
+							if ( me.sizes[element] != value ){
+								me.sizes[element] = value;
+								me.update_typography();
 							}
-						})
+						}
+					}),
+					line_height: new Upfront.Views.Editor.Field.Number({
+						label: "Line Height",
+						min: 0,
+						max: 10,
+						step: .1,
+						default_value: me.line_heights['h1'],
+						change: function () {
+							var value = this.get_value(),
+								element = me.current_element;
+							if ( me.line_heights[element] != value ){
+								me.line_heights[element] = value;
+								me.update_typography();
+							}
+						}
+					})
 				};
 			};
 			this.$el.html('');
@@ -1621,74 +1508,153 @@ define([
 			_.each( this.fields, function(field){
 				field.render();
 				field.delegateEvents();
-			} );
+			});
 			this.$el.append([this.fields.element.el, this.fields.typeface.el]);
+			$('.upfront-chosen-select', this.$el).chosen({
+				width: '230px'
+			});
 			$wrap_left.append([this.fields.style.el, this.fields.size.el]);
 			this.$el.append($wrap_left);
 			$wrap_right.append([this.fields.color.el, this.fields.line_height.el]);
 			this.$el.append($wrap_right);
-			this.fields.element.trigger('changed');
 			this.update_typography();
+		},
+		/*
+		 * Style field needs some special treatment since options are completely changed
+		 * on every element dropdown or typeface dropdown value change.
+		 */
+		update_styles_field: function() {
+			console.log('update styles field');
+			this.fields.style.remove();
+			this.fields.style = this.get_styles_field();
+			this.fields.style.render();
+			this.fields.style.delegateEvents();
+			$('.upfront-typography-fields-left').prepend(this.fields.style.el);
+		},
+		get_styles_field: function() {
+			var me = this;
+			return new Field_Select({
+					label: "Weight / Style",
+					values: this.get_styles(),
+					default_value: me.styles[me.current_element],
+					change: function () {
+						var value = this.get_value(),
+							element = me.current_element;
+						if ( me.styles[element] != value ){
+							me.styles[element] = value;
+							me.update_typography();
+						}
+					}
+			});
+		},
+		get_styles: function() {
+			var font_family;
+			var typography = this.model.get_property_value_by_name('typography');
+			var styles = [];
+
+			if (typography === false) return styles;
+
+
+			font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
+			if (_.isUndefined(font_family)) {
+			  font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
+			}
+			_.each(font_family.get('variants'), function(variant) {
+				// Google fonts have "100italic" instead "100 italic" fix here
+				var variant_style = variant.match(/^(\d+)([A-Za-z]+)/);
+				if (!_.isEmpty(variant_style)) variant = variant_style[1] + ' ' + variant_style[2];
+				styles.push({ label: variant, value: variant });
+			});
+			return styles;
 		},
 		update_typography: function (color) {
 			var me = this,
 				css = [],
 				options = {};
-			_.each(this.elements, function(element){
+
+			_.each(this.elements, function(element) {
 				var rules = [],
+					url,
 					is_inline = _.contains(me.inline_elements, element),
 					typeface = me.typefaces[element],
-					face = _.findWhere(me.typefaces_list, {value: typeface}) || _.findWhere(me.typefaces_list, {family: typeface}),
-					font = false,
+					font_rule_value = false,
 					style = false,
+					weight = false,
 					selector = false,
-                    $this_el = $('.upfront-object-content ' + element )
-                ;
-				if (face) {
-					// This is a regular font.
-					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.family + '",' + face.category;
-				} else {
-					// Is it a Google font?
-					face = _.findWhere(me.google_typefaces_list, {family: typeface});
-					font = typeof face.value != 'undefined' ? ( face.value ? face.value : 'inherit' ) : '"' + face.family + '",' + face.category;
+					$this_el = $('.upfront-object-content ' + element ),
+					font_family,
+					style_base = me.styles[element];
+
+				if (typeface === '') {
+					font_family = system_fonts_storage.get_fonts().models[0];// default to first system font
+				}
+				// Try to get font family from system fonts.
+				if (_.isUndefined(font_family)) {
+					font_family = system_fonts_storage.get_fonts().findWhere({family: typeface});
+				}
+				if (_.isUndefined(font_family)) {
+					// This is a Google font
+					font_family = google_fonts_storage.get_fonts().findWhere({family: typeface});
 					// If so, let's do this - load up the font
-					var url = '//fonts.googleapis.com/css?family=' + face.family.replace(/ /g, '+');
+					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
 					$("head").append('<link href="' + url + '" rel="stylesheet" type="text/css" />');
 					// All set, let the defaults carry on as normal...
 				}
-				style = me.styles[element] ? me.styles[element].match(/^(\d+) +(\S+)/) : [false,false];
-				if ('inherit' !== font) rules.push('font-family: ' + font); /* don't include "inherit", as that's the default */
+
+				font_rule_value = '"' + font_family.get('family') + '",' + font_family.get('category');
+
+				// There are two variants of style notation, one is used by system fonts and is in a
+				// form of "{weight as number} {style}" e.g. "100 normal", "300 oblique", "500 italic",
+				// the other is used by google fonts and can be in several forms, just a number e.g.
+				// "100", "200", "300"; style as a word "regular";
+				// Check if style matches normal, italic, oblique; style is declared in "400 normal"
+				if (style_base && style_base.match(/(normal|italic|oblique)/)) {
+					style = style_base.match(/^(\d+) +(\S+)/);
+					weight = style[1];
+					style = style[2];
+				}
+				if (style_base && style_base === 'regular') {
+					style = false;
+					weight = style_base;
+				}
+				// Cover 100, 200, 500 etc styles
+				if (style_base && style_base.match(/^\d+$/)) {
+					style = false;
+					weight = style_base;
+				}
+				// console.log('original, style, weight', style_base, style, weight);
+				if ('inherit' !== font_rule_value) rules.push('font-family: ' + font_rule_value); /* don't include "inherit", as that's the default */
 				rules.push('font-weight: ' + style[1]);
 				rules.push('font-style: ' + style[2]);
 				if ( !is_inline ){
 					rules.push('font-size: ' + me.sizes[element] + 'px');
 					rules.push('line-height: ' + me.line_heights[element] + 'em');
-                }
+				}
 
-                Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
-                if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
-                     var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
-                     $this_el.addClass(theme_color_class);
-                }else{
-                    rules.push('color: ' + me.colors[element]);
-                }
-                if ('blockquote' === element) {
+				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
+				if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
+					 var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
+					 $this_el.addClass(theme_color_class);
+				} else {
+					rules.push('color: ' + me.colors[element]);
+				}
+				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
-                } else if ('a' === element) {
+				} else if ('a' === element) {
 					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
-                } else {
+				} else {
 					selector = '.upfront-object-content ' + element;
-                }
+				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 				options[element] = {
-					weight: style[1],
-					style: style[2],
+					weight: weight,
+					style: style,
 					size: !is_inline ? me.sizes[element] : false,
 					line_height: !is_inline ? me.line_heights[element] : false,
-					font_face: typeof face.value != 'undefined' ? face.value : face.family,
-					font_family: face.category, //todo this font_family is inconsistent. It should be called font_category
+					font_face: font_family.get('family'),
+					font_family: font_family.get('category'), //todo this font_family is inconsistent. It should be called font_category
 					color: me.colors[element],
-                    theme_color_class : theme_color_class
+					theme_color_class : theme_color_class
 				};
 			});
 			this.model.set_property('typography', options);
@@ -3880,7 +3846,7 @@ define([
 			return _.map(this.options.values, this.get_value_html, this).join('');
 		},
 		set_value: function (value) {
-		    this.$el.find('[value="'+value+'"]').trigger('click');
+			this.$el.find('[value="'+value+'"]').trigger('click');
 		}
 	}));
 
@@ -3889,12 +3855,11 @@ define([
 		className: 'upfront-field-wrap upfront-field-wrap-select',
 		render: function () {
 			var me = this;
-			var select_label = ( this.options.select_label ) ? this.options.select_label : '';
 			this.$el.html('');
 			if ( this.label )
 				this.$el.append(this.get_label_html());
 			this.$el.append(this.get_field_html());
-			if ( !this.multiple ){
+			if ( !this.multiple ) {
 				this.$el.on('click', '.upfront-field-select-value', function(e){
 					e.stopPropagation();
 					if ( me.options.disabled )
@@ -3915,42 +3880,46 @@ define([
 					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
 				});
 			}
-			this.$el.on('change', '.upfront-field-select-option input', function(){
-				var $select_value = me.$el.find('.upfront-field-select-value');
-				var $checked = me.$el.find('.upfront-field-select-option input:checked');
-				if ( $checked.size() == 1 && !this.multiple ){
-					var $option = $checked.closest('.upfront-field-select-option'),
-						select_text = $option.text(),
-						$select_icon = $option.find('.upfront-field-icon').clone();
-					$select_value.html('');
-					if ( $select_icon )
-						$select_value.append($select_icon);
-					$select_value.append('<span>'+select_text+'</span>');
-				}
-				else{
-					var select_texts = [];
-					$checked.each(function(){
-						select_texts.push( $(this).closest('.upfront-field-select-option').text() );
-					});
-					$select_value.text( $checked.size() == 0 ? select_label : select_texts.join(', ') );
-				}
-				me.$el.find('.upfront-field-select-option').each(function(){
-					if ( $(this).find('input:checked').size() > 0 )
-						$(this).addClass('upfront-field-select-option-selected');
-					else
-						$(this).removeClass('upfront-field-select-option-selected');
-				});
+			this.$el.on('change', '.upfront-field-select-option input', function() {
+				me.update_select_display_value();
 				me.trigger('changed');
 			});
 			this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
 			if ( ! this.multiple && ! this.get_saved_value() )
 				this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
-			this.$el.find('.upfront-field-select-option:eq(0) input').trigger('change');
+
+			this.update_select_display_value();
 
 			if ( this.options.width )
 				this.$el.find('.upfront-field-select').css('width', this.options.width);
 
 			this.trigger('rendered');
+		},
+		update_select_display_value: function() {
+			var select_label = ( this.options.select_label ) ? this.options.select_label : '';
+			var $select_value = this.$el.find('.upfront-field-select-value');
+			var $checked = this.$el.find('.upfront-field-select-option input:checked');
+			if ( $checked.size() == 1 && !this.multiple ) {
+				var $option = $checked.closest('.upfront-field-select-option'),
+					select_text = $option.text(),
+					$select_icon = $option.find('.upfront-field-icon').clone();
+				$select_value.html('');
+				if ( $select_icon )
+					$select_value.append($select_icon);
+				$select_value.append('<span>'+select_text+'</span>');
+			} else {
+				var select_texts = [];
+				$checked.each(function(){
+					select_texts.push( $(this).closest('.upfront-field-select-option').text() );
+				});
+				$select_value.text( $checked.size() == 0 ? select_label : select_texts.join(', ') );
+			}
+			this.$el.find('.upfront-field-select-option').each(function(){
+				if ( $(this).find('input:checked').size() > 0 )
+					$(this).addClass('upfront-field-select-option-selected');
+				else
+					$(this).removeClass('upfront-field-select-option-selected');
+			});
 		},
 		get_field_html: function () {
 			var attr = {
@@ -3993,6 +3962,29 @@ define([
 			return '<li class="' + classes + '">' + '<label for="' + id + '">' + this.get_icon_html(value.icon, icon_class) + '<span class="upfront-field-label-text">' + value.label + '</span></label>' + input + '</li>';
 		}
 	}));
+
+	var Field_Chosen_Select = Field_Select.extend({
+		events: {
+			'change select': 'on_change'
+		},
+		get_field_html: function() {
+			return ['<select class="upfront-chosen-select">', this.get_values_html(), '</select>'].join('');
+		},
+		get_value_html: function (value, index) {
+			var selected = '';
+			if (value.value === this.options.default_value) selected = ' selected="selected"';
+			return ['<option value="', value.value, '"', selected, '>', value.value, '</option>'].join('');
+		},
+		on_change: function(event) {
+			this.trigger('changed');
+		},
+		get_value: function() {
+			return this.$el.find('select').val();
+		},
+		set_value: function(value) {
+			this.$el.find('select').val(value).trigger('chosen:updated');
+		}
+	});
 
 	var Field_Multiple_Input = Field_Multiple.extend({
 		selected_state: 'checked',
@@ -4871,37 +4863,21 @@ var _Settings_CSS_Field = Field_Select.extend({
 	}
 });
 
-var GoogleFontModel = Backbone.Model.extend();
+var Font_Model = Backbone.Model.extend();
 
-var GoogleFontsCollection = Backbone.Collection.extend({
-	model: GoogleFontModel
-});
-
-var GoogleFontView = Backbone.View.extend({
-	className: 'google-font-item',
-	template: '{{ family }}',
-	selected: false,
-	events: {
-		'click': 'on_click'
-	},
-	render: function() {
-		this.$el.html(_.template(this.template, this.model.toJSON()));
-		return this;
-	},
-	on_click: function() {
-		this.selected = !this.selected;
-		this.trigger('change', this.selected, this.model.toJSON());
-		if (this.selected) this.$el.addClass('selected');
-		if (!this.selected) this.$el.removeClass('selected');
-	}
+var Fonts_Collection = Backbone.Collection.extend({
+	model: Font_Model
 });
 
 /**
- * Wrapper for GoogleFontsCollection.
+ * Takes care about Google fonts.
  */
 var Google_Fonts_Storage = function() {
 	var fonts = false;
 
+	/*
+	 * Returns deferred that resolves to fonts collection containing all Google fonts.
+	 */
 	this.get_fonts = function() {
 		if (fonts) return fonts;
 
@@ -4910,7 +4886,7 @@ var Google_Fonts_Storage = function() {
 		// We're gonna pipe response since we need to convert it to fonts collection first.
 		request = request.pipe(
 			function(response) {
-				fonts = new GoogleFontsCollection(response.data);
+				fonts = new Fonts_Collection(response.data);
 				// Return collection instead original response
 				return fonts;
 			}
@@ -4922,7 +4898,105 @@ var Google_Fonts_Storage = function() {
 
 var google_fonts_storage = new Google_Fonts_Storage();
 
-var SelectOptionView = Backbone.View.extend({
+var System_Fonts_Storage = function() {
+	var font_families = [
+		{ family: "Default", category:'sans-serif' },
+		{ family: "Arial", category:'sans-serif' },
+		{ family: "Arial Black", category:'sans-serif' },
+		{ family: "Arial Narrow", category:'sans-serif' },
+		{ family: "Arial Rounded MT Bold", category:'sans-serif' },
+		{ family: "Avant Garde", category:'sans-serif' },
+		{ family: "Calibri", category:'sans-serif' },
+		{ family: "Candara", category:'sans-serif' },
+		{ family: "Century Gothic", category:'sans-serif' },
+		{ family: "Franklin Gothic Medium", category:'sans-serif' },
+		{ family: "Futura", category:'sans-serif' },
+		{ family: "Geneva", category:'sans-serif' },
+		{ family: "Gill Sans", category:'sans-serif' },
+		{ family: "Helvetica", category:'sans-serif' },
+		{ family: "Impact", category:'sans-serif' },
+		{ family: "Lucida Grande", category:'sans-serif' },
+		{ family: "Optima", category:'sans-serif' },
+		{ family: "Segoe UI", category:'sans-serif' },
+		{ family: "Tahoma", category:'sans-serif' },
+		{ family: "Trebuchet MS", category:'sans-serif' },
+		{ family: "Verdana", category:'sans-serif' },
+		{ family: "Baskerville", category:'serif' },
+		{ family: "Big Caslon", category:'serif' },
+		{ family: "Bodoni MT", category:'serif' },
+		{ family: "Book Antiqua", category:'serif' },
+		{ family: "Calisto MT", category:'serif' },
+		{ family: "Cambria", category:'serif' },
+		{ family: "Didot", category:'serif' },
+		{ family: "Garamond", category:'serif' },
+		{ family: "Georgia", category:'serif' },
+		{ family: "Goudy Old Style", category:'serif' },
+		{ family: "Hoefler Text", category:'serif' },
+		{ family: "Lucida Bright", category:'serif' },
+		{ family: "Palatino", category:'serif' },
+		{ family: "Perpetua", category:'serif' },
+		{ family: "Rockwell", category:'serif' },
+		{ family: "Rockwell Extra Bold", category:'serif' },
+		{ family: "Times New Roman", category:'serif' },
+		{ family: "Andale Mono", category:'monospace' },
+		{ family: "Consolas", category:'monospace' },
+		{ family: "Courier New", category:'monospace' },
+		{ family: "Lucida Console", category:'monospace' },
+		{ family: "Lucida Sans Typewriter", category:'monospace' },
+		{ family: "Monaco", category:'monospace' }
+	];
+
+	var system_fonts = new Fonts_Collection();
+
+	var initialize = function() {
+		var variants,
+			$test_root,
+			test_string = (new Array(99)).join('mwi ');
+
+		// Default variants for system fonts
+		variants = [];
+		_.each(['normal', 'italic', 'oblique'], function(style) {
+			_.each(_.range(100, 900, 100), function(weight) {
+				variants.push(weight + ' ' + style );
+			});
+		});
+
+		// Add default font
+		system_fonts.add({ family: 'Arial', category: 'sans-serif', variants: variants });
+
+		// Check which fonts are available on system.
+		$("body").append('<div id="upfront-font_test-root" style="position:absolute; left: 0; top: 40px; white-space: nowrap; /*left: -999999999999px*/" />'),
+		$test_root = $("#upfront-font_test-root");
+		_.each(font_families, function(font_family) {
+			var base_width = 0;
+
+			// Get width with default font
+			$test_root
+				.css("font-family", font_family.category)
+				.text(test_string);
+			base_width = $test_root.width();
+
+			// Set font family and check if widths are different
+			$test_root.css("font-family", [font_family.family, font_family.category].join(','));
+			if (base_width !== $test_root.width()) {
+				font_family.variants = variants;
+				system_fonts.add(font_family);
+			}
+		});
+
+		$test_root.remove(); // Clean up markup
+	};
+
+	this.get_fonts = function() {
+		return system_fonts;
+	}
+
+	initialize();
+}
+
+var system_fonts_storage = new System_Fonts_Storage();
+
+var Select_Option_View = Backbone.View.extend({
 	tagName: 'li',
 	className: function() {
 // upfront-field-select-option-selected
@@ -4949,7 +5023,8 @@ var SelectOptionView = Backbone.View.extend({
 		this.$el.addClass('upfront-field-select-option-selected');
 	}
 });
-var SelectView = Backbone.View.extend({
+
+var Select_View = Backbone.View.extend({
 	className: 'upfront-field-select upfront-no-select upfront-field-select-single',
 	expanded: false,
 	template: $(_Upfront_Templates.popup).find('#select-view-tpl').html(),
@@ -4959,6 +5034,8 @@ var SelectView = Backbone.View.extend({
 	initialize: function(options) {
 		var me = this;
 		this.options = options || {};
+		// Collection click event is actually caused by view representing model from collection
+		// being click see Select_Option_View on_lick
 		this.listenTo(this.collection, 'click', this.on_collection_click);
 		$('body').on('mouseup', function(){
 			me.deactivate();
@@ -4989,7 +5066,7 @@ var SelectView = Backbone.View.extend({
 		this.$el.addClass(this.options.classes);
 
 		_.each(this.collection.models, function(option) {
-			var option = new SelectOptionView({ model: option, label_attribute: this.options.label_attribute });
+			var option = new Select_Option_View({ model: option, label_attribute: this.options.label_attribute });
 			this.$el.find('.upfront-field-select-options').append(option.render().el);
 		}, this);
 
@@ -5126,7 +5203,7 @@ var ThemeFontsPanel = Backbone.View.extend({
 	}
 });
 
-var FontPicker = Backbone.View.extend({
+var Font_Picker = Backbone.View.extend({
 	id: 'font-picker',
 	template: $(_Upfront_Templates.popup).find('#font-picker-tpl').html(),
 	events: {
@@ -5197,7 +5274,7 @@ var FontPicker = Backbone.View.extend({
 		var add_font_panel = this.$el.find('.add-font-panel');
 		add_font_panel.find('.loading-fonts').remove();
 		// Select font
-		this.font_family_select = new SelectView({
+		this.font_family_select = new Select_View({
 			collection: fonts_collection,
 			label_attribute: 'family',
 			default_value: 'Choose Font',
@@ -5850,7 +5927,7 @@ var CSSEditor = Backbone.View.extend({
 	},
 
   openFontPicker: function() {
-    var font_picker = new FontPicker({ collection: theme_fonts_collection });
+    var font_picker = new Font_Picker({ collection: theme_fonts_collection });
     this.$el.append(font_picker.render().el);
   },
 

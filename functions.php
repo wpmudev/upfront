@@ -114,6 +114,7 @@ class Upfront {
 		// Enqueue needed styles
 		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
 		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
+		wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css');
 
 		add_action('wp_footer', array($this, 'add_responsive_css'));
 	}

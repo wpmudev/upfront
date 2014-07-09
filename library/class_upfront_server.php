@@ -59,14 +59,14 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
 			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
 		}
-		
+
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_save_layout', array($this, "save_layout"));
 			upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
-			
+
 			upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
-			
+
 			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
 		}
 	}
@@ -266,13 +266,18 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"responsive" => "scripts/responsive",
 			"redactor" => 'scripts/redactor/redactor',
 			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
-      "ueditor" => 'scripts/redactor/ueditor'
+			"ueditor" => 'scripts/redactor/ueditor',
+			"chosen" => "scripts/chosen/chosen.jquery.min"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
     $shim = array(
       'underscore' => array('exports' => '_'),
       'jquery-df' => array('jquery'),
+			'chosen' => array(
+				'deps' => array('jquery'),
+				'exports' => 'jQuery.fn.chosen'
+			),
     );
 
 		$require_config = array(
@@ -659,7 +664,7 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 
 	private function _add_hooks () {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			upfront_add_ajax('upfront_load_editor_grid', array($this, "load_styles"));		
+			upfront_add_ajax('upfront_load_editor_grid', array($this, "load_styles"));
 			upfront_add_ajax('upfront_load_new_editor_grid', array($this, "load_new_styles"));
 			upfront_add_ajax('upfront_load_grid', array($this, "load_front_styles"));
 		}
@@ -810,7 +815,7 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 
 		// Layout revisions AJAX handers
 		upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
-		
+
 		upfront_add_ajax('upfront_list_revisions', array($this, "list_revisions"));
 
 		// Cron request handlers
@@ -1195,7 +1200,7 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
 
   public function update_theme_fonts() {
   	if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
-  	
+
     $theme_fonts = isset($_POST['theme_fonts']) ? $_POST['theme_fonts'] : array();
 		update_option('upfront_' . get_stylesheet() . '_theme_fonts', json_encode($theme_fonts));
 
