@@ -10380,40 +10380,6 @@ a.upfront-css-edit:before{
 	line-height: 22px;
 }
 
-#sidebar-ui .sidebar-commands-responsive .upfront-field-label-block {
-  font-weight: normal;
-  margin-bottom: 8px;
-}
-
-#sidebar-ui .sidebar-commands-responsive .upfront-field-wrap-color .upfront-field-label-block {
-  margin-bottom: 10px;
-}
-
-#sidebar-ui .sidebar-commands-responsive .sp-preview {
-  background-position: -816px -105px;
-  width: 30px !important;
-  margin-bottom: 14px;
-}
-
-.sidebar-commands-responsive .upfront-field-select {
-  height: 30px;
-  max-height: 30px;
-  width: 228px;
-  margin-bottom: 5px;
-  line-height: 26px;
-}
-
-.sidebar-commands-responsive .upfront-typography-fields-left .upfront-field-select {
-  width: 108px;
-}
-
-#sidebar-ui .sidebar-commands-responsive .upfront-typography-fields-left {
-  width: 50%;
-}
-#sidebar-ui .sidebar-commands-responsive .upfront-typography-fields-right {
-  width: 50%;
-  padding-left: 4px;
-}
 /* The ruler */
 .upfront-ruler-container {
 	width: 100%;

@@ -821,14 +821,14 @@ define([
 
 	var Command_GeneralEditCustomCSS = Command.extend({
 		tagName: 'div',
-		className: "command-edit-css",
+		className: "command-edit-css upfront-icon upfront-icon-edit-css",
 		initialize: function() {
 			this.lazy_save_styles = _.debounce(function(styles) {
 				this.model.set({ styles: styles });
 			}, 1000);
 		},
 		render: function () {
-			this.$el.text('Add Custom CSS Styling');
+			this.$el.html('<span>add custom css rules</span>');
 		},
 		on_click: function () {
 			var editor,
