@@ -602,9 +602,14 @@ var _alpha = "alpha",
 				}
 				$(el).remove();
 			}, this);
+
 			if (typography_updated) {
 				this.set_property('typography', typography, false);
+
+				// Also update/initialize typography of default (desktop) breakpoint
+				Upfront.Views.breakpoints_storage.get_breakpoints().get_default().set({ 'typography' : typography }, { silent : true });
 			}
+
 			$test_root.remove();
 		},
 		get_default_typography: function() {

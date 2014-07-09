@@ -8948,25 +8948,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.$el.append(breakpoint_button.render().el);
 			}, this);
 			return this;
-		}//,
-		// change_breakpoint: function(breakpoint) {
-
-			// //todo find a place for commented code, that should do the grid sizing stuff
-			// // var new_size = breakpoint.width;
-			// // var grid = Upfront.Settings.LayoutEditor.Grid;
-
-			// // grid.size_name = new_size;
-			// // grid.size = grid.breakpoint_columns[new_size];
-			// // grid.column_width = grid.column_widths[new_size];
-			// // grid.column_padding = grid.column_paddings[new_size];
-			// // grid.type_padding = grid.type_paddings[new_size];
-			// // grid.baseline = grid.baselines[new_size];
-			// // grid.class = grid.size_classes[new_size];
-			// // grid.left_margin_class = grid.margin_left_classes[new_size];
-			// // grid.right_margin_class = grid.margin_right_classes[new_size];
-			// // grid.top_margin_class = grid.margin_top_classes[new_size];
-			// // grid.bottom_margin_class = grid.margin_bottom_classes[new_size];
-		// }
+		}
 	});
 
 	var BreakpointWidthInput = Backbone.View.extend({
@@ -9439,12 +9421,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"CSSEditor": CSSEditor,
 			"LinkPanel": LinkPanel
 		},
-    Mixins: {
-      "Upfront_Scroll_Mixin": Upfront_Scroll_Mixin
-    },
-    Theme_Colors : Theme_Colors
-
-    };
+		Mixins: {
+			"Upfront_Scroll_Mixin": Upfront_Scroll_Mixin
+		},
+		Theme_Colors : Theme_Colors,
+		breakpoints_storage: breakpoints_storage
+	};
 });
 })(jQuery);
 
