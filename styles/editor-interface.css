@@ -4051,7 +4051,9 @@ div.uinsert-selector a:hover {
 .upfront-field-select-single .upfront-field-select-option-selected label:before,
 .upfront-ui .upfront-region-field-icon:before,
 .sp-preview,
-#upfront-popup-top.upfront-popup-meta .upload:before {
+#upfront-popup-top.upfront-popup-meta .upload:before,
+.upfront-icon-button-hide:before,
+.upfront-entity-hide_trigger:before {
 	content: " ";
 	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
@@ -4206,6 +4208,14 @@ div.uinsert-selector a:hover {
 .upfront-icon-start-responsive:before,
 .upfront-icon-panel-settings:before {
 	background-position: -41px -415px;
+}
+.upfront-icon-button-hide:before {
+	background-position: -1229px -407px;
+}
+.upfront-module-hidden-toggle .upfront-entity-hide_trigger:before {
+	background-position: -1229px -444px;
+	width: 24px;
+	height: 18px;
 }
 .upfront-icon-save:before {
 	background-position: -340px -380px;
