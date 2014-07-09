@@ -2167,7 +2167,10 @@ RedactorPlugins.icons = {
         },
         open: function(e, redactor){
             this.redactor = redactor;
+            this.redactor_current = redactor.getCurrent();
+            this.redactor_element = redactor.getElement();
             this.redactor.selectionSave();
+            this.select_current_icon();
             this.$el.parent().css({
                 left : 193
             });
@@ -2180,9 +2183,26 @@ RedactorPlugins.icons = {
 	            	"font-size" : fontSize + "px",
 	            	"top" : top + "px"
 	            });
-            this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + $icon[0].outerHTML , true);
+            // this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + $icon[0].outerHTML , true);
+           $(this.redactor_current).replaceWith( $icon );
 
             this.closePanel();
+        },
+        select_current_icon : function(){
+        	var $sel = $(this.redactor_element);
+        	if( $sel.hasClass("parlyph") ){
+            	this.$("#font-icons-size").val( parseFloat( $sel.css("font-size") ) );
+            	this.$("#font-icons-top").val( parseFloat( $sel.css("top") ) );
+            	this.$(".upfront-font-icons-controlls input").on("change", function(){
+            		var val = $(this).val() + "px";
+            		if( this.id === "font-icons-size" ){
+            			$sel.css("font-size", val);
+            		}
+            		if( this.id === "font-icons-top" ){
+            			$sel.css("top", val);
+            		}
+            	});
+            }
         }
 
     }))
