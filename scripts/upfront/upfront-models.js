@@ -505,19 +505,20 @@ var _alpha = "alpha",
 		 * If typography does not match one on page, update it.
 		 */
 		check_typography: function() {
-			var $test_root, typography_updated, typography;
+			var $test_root, typography_updated, typography, dont_compare;
 
 			typography = this.get_property_value_by_name('typography');
 
-			//todo if typography is empty do not check anything just fill it up with how stuff is formatted in page
-			if (_.isEmpty(typography)) {
-				this.set_property('typography', this.get_default_typography(), false);
-				return;
+			// If typography is empty do not check anything just fill it up with how stuff is formatted in page
+			if (typography === false || _.isEmpty(typography)) {
+				dont_compare = true;
+				typography = this.get_default_typography();
 			}
 
 			$('body').append('<div id="typography-test-root" class="upfront-object-content upfront-output-object" />');
 			$test_root = $('#typography-test-root');
 
+			//todo This should be improved to fill up empty typography more correctly (style and weight are not correct)
 			_.each(["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"], function(element) {
 				var el, el_tag_name, is_inline, styles, weight, size, line_height, pseudo_class,
 					font_family, computed_color, color_values, saved_color, saved_color_values,
@@ -533,11 +534,11 @@ var _alpha = "alpha",
 				size = parseInt(styles.fontSize, 10);
 
 				// Font family
-				if (styles.fontFamily.indexOf(typography[element].font_face) === -1 ||
+				if (dont_compare || styles.fontFamily.indexOf(typography[element].font_face) === -1 ||
 						styles.fontFamily.indexOf(typography[element].font_family) === -1) {
 					font_family = styles.fontFamily.split(',');
-					typography[element].font_face = font_family[0].trim;
-					typography[element].font_family = font_family.lenght > 1 ? font_family[1].trim : '';
+					typography[element].font_face = font_family[0].trim();
+					typography[element].font_family = font_family.lenght > 1 ? font_family[1].trim() : '';
 					typography_updated = true;
 				}
 
@@ -572,7 +573,7 @@ var _alpha = "alpha",
 
 				// Finally check color
 				//TODO handle special cases 0.5 and 0.3 for alpha, since computed value from browser is 0.49 and 0.29 respectively
-				if (computed_color.replace(/ /g, '') != saved_color.replace(/ /g, '')) {
+				if (dont_compare || computed_color.replace(/ /g, '') != saved_color.replace(/ /g, '')) {
 					typography[element].color = computed_color;
 					typography_updated = true;
 				}
@@ -586,7 +587,7 @@ var _alpha = "alpha",
 				if ( !is_inline ) {
 					// Font size
 					computed_font_size = parseInt(styles.fontSize, 10);
-					if (typography[element].size != computed_font_size) {
+					if (dont_compare || typography[element].size != computed_font_size) {
 						typography[element].size = computed_font_size;
 						typography_updated = true;
 					}
@@ -594,7 +595,7 @@ var _alpha = "alpha",
 					// Line height
 					line_height = parseInt(styles.lineHeight, 10);
 					line_height = Math.round(line_height / size * 10) / 10;
-					if (typography[element].line_height != line_height) {
+					if (dont_compare || typography[element].line_height != line_height) {
 						typography[element].line_height = line_height;
 						typography_updated = true;
 					}
@@ -607,116 +608,21 @@ var _alpha = "alpha",
 			$test_root.remove();
 		},
 		get_default_typography: function() {
-			return {
-				"h1": {
-					"weight": "700 normal",
-					"style": "",
+			var typography = {};
+
+			_.each(["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"], function(element) {
+				typography[element] = {
+					"weight": "700",
+					"style": "normal",
 					"size": 14,
 					"line_height": 1,
 					"font_face": "Arial",
 					"font_family": "sans-serif",
-					"color": ""
-				},
-				"h2": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"h3": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"h4": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"h5": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"h6": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"p": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"a": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"a:hover": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"ul": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"ol": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				},
-				"blockquote": {
-					"weight": "700 normal",
-					"style": "",
-					"size": 14,
-					"line_height": 1,
-					"font_face": "Arial",
-					"font_family": "sans-serif",
-					"color": ""
-				}
-			};
+					"color": "rgb(0, 0, 0)"
+				};
+			});
+
+			return typography;
 		},
 		_normalize_weight: function (weight) {
 			if ( weight == 'normal' )
