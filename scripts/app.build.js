@@ -46,7 +46,8 @@
         "ueditor": "redactor/ueditor",
         "jquery-df": "jquery/jquery-dateFormat.min",
         "upfront_code": "../elements/upfront-code/js/upfront_code",
-        "upfront_slider": "../elements/upfront-slider/js/uslider"
+        "upfront_slider": "../elements/upfront-slider/js/uslider",
+				"chosen": "chosen/chosen.jquery.min"
     },
     shim: {
       'underscore': {

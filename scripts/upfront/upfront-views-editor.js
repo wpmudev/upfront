@@ -1380,7 +1380,14 @@ define([
 				typefaces_list = [],
 				styles_list = [] // this will change with every font family change
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
-				$wrap_right = $('<div class="upfront-typography-fields-right" />');
+				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
+				typography = this.model.get_property_value_by_name('typography');
+
+			if (_.isEmpty(typography)) {
+				// This occurs in built script because of order in which is stuff executed.
+				// If typography is empty than we are not yet ready to go further.
+				return;
+			}
 
 			_.each(system_fonts_storage.get_fonts().models, function(font)	{
 				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
@@ -1390,7 +1397,7 @@ define([
 			});
 
 			// Load saved styles for all elements
-			_.each(this.model.get_property_value_by_name('typography'), function (value, element) {
+			_.each(typography, function (value, element) {
 				me.typefaces[element] = value.font_face;
 				me.colors[element] = value.color;
 				if ( value.weight && value.style ) {
@@ -1450,8 +1457,8 @@ define([
 							element = me.current_element;
 							if ( me.typefaces[element] != value ){
 								me.typefaces[element] = value;
-								me.update_styles_field();
 								me.update_typography();
+								me.update_styles_field();
 							}
 						}
 					}),
@@ -1524,7 +1531,6 @@ define([
 		 * on every element dropdown or typeface dropdown value change.
 		 */
 		update_styles_field: function() {
-			console.log('update styles field');
 			this.fields.style.remove();
 			this.fields.style = this.get_styles_field();
 			this.fields.style.render();
@@ -1553,7 +1559,6 @@ define([
 			var styles = [];
 
 			if (typography === false) return styles;
-
 
 			font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
 			if (_.isUndefined(font_family)) {
@@ -1608,8 +1613,8 @@ define([
 				// the other is used by google fonts and can be in several forms, just a number e.g.
 				// "100", "200", "300"; style as a word "regular";
 				// Check if style matches normal, italic, oblique; style is declared in "400 normal"
-				if (style_base && style_base.match(/(normal|italic|oblique)/)) {
-					style = style_base.match(/^(\d+) +(\S+)/);
+				if (style_base && style_base.match(/^(\d+) *(normal|italic|oblique)$/)) {
+					style = style_base.match(/^(\d+) *(normal|italic|oblique)/);
 					weight = style[1];
 					style = style[2];
 				}
@@ -1617,12 +1622,15 @@ define([
 					style = false;
 					weight = style_base;
 				}
+				if (style_base && style_base === 'italic') {
+					style = style_base;
+					weight = false;
+				}
 				// Cover 100, 200, 500 etc styles
 				if (style_base && style_base.match(/^\d+$/)) {
 					style = false;
 					weight = style_base;
 				}
-				// console.log('original, style, weight', style_base, style, weight);
 				if ('inherit' !== font_rule_value) rules.push('font-family: ' + font_rule_value); /* don't include "inherit", as that's the default */
 				rules.push('font-weight: ' + style[1]);
 				rules.push('font-style: ' + style[2]);
@@ -3893,6 +3901,8 @@ define([
 			if ( this.options.width )
 				this.$el.find('.upfront-field-select').css('width', this.options.width);
 
+			if (this.options.additional_classes) this.$el.addClass(this.options.additional_classes);
+
 			this.trigger('rendered');
 		},
 		update_select_display_value: function() {
@@ -4996,92 +5006,6 @@ var System_Fonts_Storage = function() {
 
 var system_fonts_storage = new System_Fonts_Storage();
 
-var Select_Option_View = Backbone.View.extend({
-	tagName: 'li',
-	className: function() {
-// upfront-field-select-option-selected
- // upfront-field-select-option-odd
-		return 'upfront-field-select-option';
-	},
-	initialize: function(options) {
-		this.options = options || {};
-	},
-	events: {
-		'click': 'on_click'
-	},
-	template: $(_Upfront_Templates.popup).find('#select-option-view-tpl').html(),
-	render: function() {
-		this.$el.html(_.template(this.template, {
-			label: this.model.get(this.options.label_attribute)
-		}));
-
-		return this;
-	},
-	on_click: function() {
-		this.model.trigger('click', this.model);
-		this.$el.siblings().removeClass('upfront-field-select-option-selected');
-		this.$el.addClass('upfront-field-select-option-selected');
-	}
-});
-
-var Select_View = Backbone.View.extend({
-	className: 'upfront-field-select upfront-no-select upfront-field-select-single',
-	expanded: false,
-	template: $(_Upfront_Templates.popup).find('#select-view-tpl').html(),
-	events: {
-		'click .upfront-field-select-value': 'on_value_click'
-	},
-	initialize: function(options) {
-		var me = this;
-		this.options = options || {};
-		// Collection click event is actually caused by view representing model from collection
-		// being click see Select_Option_View on_lick
-		this.listenTo(this.collection, 'click', this.on_collection_click);
-		$('body').on('mouseup', function(){
-			me.deactivate();
-		});
-	},
-	on_collection_click: function(model) {
-		this.$el.removeClass('upfront-field-select-expanded');
-		this.expanded = false;
-		this.$el.find('.upfront-field-select-value span').html(model.get(this.options.label_attribute));
-		if (this.value === model) return;
-		this.value = model;
-		this.trigger('change', model);
-	},
-	on_value_click: function() {
-		if (this.expanded) {
-			this.deactivate();
-			return;
-		}
-
-		this.$el.addClass('upfront-field-select-expanded');
-		this.expanded = true;
-	},
-	render: function() {
-		this.$el.html(_.template(this.template, {
-			selected_value: this.options.default_value
-		}));
-
-		this.$el.addClass(this.options.classes);
-
-		_.each(this.collection.models, function(option) {
-			var option = new Select_Option_View({ model: option, label_attribute: this.options.label_attribute });
-			this.$el.find('.upfront-field-select-options').append(option.render().el);
-		}, this);
-
-		return this;
-	},
-	get_value: function() {
-		return this.value;
-	},
-	deactivate: function() {
-		if (this.expanded) {
-			this.$el.removeClass('upfront-field-select-expanded');
-			this.expanded = false;
-		}
-	}
-});
 
 var ThemeFontModel = Backbone.Model.extend({
 	initialize: function(attributes) {
@@ -5245,7 +5169,7 @@ var Font_Picker = Backbone.View.extend({
 	},
 	add_font: function() {
 		var variants;
-		var font = this.font_family_select.get_value();
+		var font = google_fonts_storage.get_fonts().findWhere({ 'family': this.font_family_select.get_value() });
 		if (_.isEmpty(font)) {
 			alert('Choose font family and weight.');
 			return;
@@ -5272,23 +5196,30 @@ var Font_Picker = Backbone.View.extend({
 	},
 	load_google_fonts: function(fonts_collection) {
 		var add_font_panel = this.$el.find('.add-font-panel');
+		var typefaces_list = [];
+		_.each(fonts_collection.pluck('family'), function(family) {
+			typefaces_list.push({ label: family, value: family });
+		});
 		add_font_panel.find('.loading-fonts').remove();
 		// Select font
-		this.font_family_select = new Select_View({
-			collection: fonts_collection,
-			label_attribute: 'family',
+		this.font_family_select = new Field_Chosen_Select({
+			label: "Typeface",
+			values: typefaces_list,
 			default_value: 'Choose Font',
-			classes: 'choose-font'
+			additional_classes: 'choose-font'
 		});
 		this.font_family_select.render();
 		add_font_panel.find('.font-weights-list').before(this.font_family_select.el);
-		this.listenTo(this.font_family_select, 'change', this.update_variants);
+		$('.upfront-chosen-select', this.$el).chosen({
+			width: '185px'
+		});
+		this.listenTo(this.font_family_select, 'changed', this.update_variants);
 	},
 	update_variants_on_remove: function() {
 		this.update_variants();
 	},
 	update_variants: function(model) {
-		if (!model) model = this.font_family_select.get_value();
+		if (!model) model = google_fonts_storage.get_fonts().findWhere({ 'family' : this.font_family_select.get_value() });
 		if (!model) return;
 		// Choose variants
 		var values = [];
@@ -5327,7 +5258,7 @@ var Font_Picker = Backbone.View.extend({
 	},
 	preview_font: function(event) {
 		var themeFont, checkbox, font, variant;
-		font = this.font_family_select.get_value();
+		font = google_fonts_storage.get_fonts().findWhere({ family: this.font_family_select.get_value() }),
 		checkbox = $(event.currentTarget);
 		variant = checkbox.val();
 
@@ -5532,8 +5463,6 @@ var CSSEditor = Backbone.View.extend({
 
 		this.elementType = elementType || {label: 'Unknown', id: 'unknown'};
 		this.selectors = this.elementSelectors[modelType] || {};
-
-		console.log('Ace starting');
 
 		this.prepareAce = deferred.promise();
 		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
@@ -8929,7 +8858,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	// Breakpoint events tests
 	Upfront.Events.on("upfront:layout_size:change_breakpoint", function(breakpoint, prev_breakpoint) {
 		if (prev_breakpoint) console.log(['Breakpoint deactivated', prev_breakpoint.name, prev_breakpoint.width].join(' '));
-//		console.log(['Breakpoint activated', breakpoint.name, breakpoint.width].join(' '));
 	});
 	Upfront.Events.on("upfront:layout_size:viewport_width_change", function(new_width) {
 		console.log(['Viewport width changed:', new_width].join(' '));

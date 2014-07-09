@@ -499,7 +499,7 @@ var _alpha = "alpha",
 			typography = this.get_property_value_by_name('typography');
 			// If typography is false than this is just empty initialization so skip it.
 			// ( empty initialization is used to initialize sidebar first time)
-			if (typography === false) return;
+			if (typography === false || _.isEmpty(typography)) return;
 			this.check_typography(typography);
 		},
 		/*
@@ -509,6 +509,7 @@ var _alpha = "alpha",
 		 * If typography does not match one on page, update it.
 		 */
 		check_typography: function(typography) {
+			//todo if typography is empty do not check anything just fill it up with how stuff is formatted in page
 			var $test_root, typography_updated;
 			$('body').append('<div id="typography-test-root" class="upfront-object-content upfront-output-object" />');
 			$test_root = $('#typography-test-root');
@@ -572,11 +573,11 @@ var _alpha = "alpha",
 					typography_updated = true;
 				}
 
-				// Weight
-				if (typography[element].weight != 'regular' && typography[element].weight != weight) {
-					typography[element].weight = weight;
-					typography_updated = true;
-				}
+				// Weight - todo fix this to work when font style is just italic and weight is empty in built scipt
+				// if (typography[element].weight != 'regular' && typography[element].weight != weight) {
+					// typography[element].weight = weight;
+					// typography_updated = true;
+				// }
 
 				if ( !is_inline ) {
 					// Font size
