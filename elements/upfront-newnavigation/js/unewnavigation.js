@@ -182,7 +182,7 @@ var MenuItemView = Backbone.View.extend({
   createDropDown: function(e) {
     var placeholder = $('<ul>').addClass('sub-menu').addClass('time_being_display');
     $(e.target).closest('li').append(placeholder);
-    this.parent_view.addMenuItem(placeholder)
+    this.parent_view.addMenuItem(placeholder);
   },
 
   addMenuItem: function(e) {
@@ -196,11 +196,13 @@ var MenuItemView = Backbone.View.extend({
     var parentlist = me.$el.parent('ul');
     var newitemicon = me.$el.parent('ul').find('i.navigation-add-item');
     var removeparent = false;
-
+	var parentview = this.parent_view;
     if(me.$el.siblings().length < 1) {
       removeparent = true;
     }
-
+	
+	var neworder = parentview.new_menu_order(me.model['menu-item-db-id']);
+	
     me.$el.remove();
 
     if(removeparent)
@@ -209,8 +211,9 @@ var MenuItemView = Backbone.View.extend({
     parentlist.children('li:last').append(newitemicon);
 
     if(typeof me.model['menu-item-db-id'] != 'undefined') {
-      Upfront.Util.post({"action": "upfront_new_delete_menu_item", "menu_item_id": me.model['menu-item-db-id'], "new_menu_order" : me.parent_view.new_menu_order()})
+      Upfront.Util.post({"action": "upfront_new_delete_menu_item", "menu_item_id": me.model['menu-item-db-id'], "new_menu_order" : neworder})
         .success(function (ret) {
+			parentview.render();
           //Upfront.Events.trigger("navigation:get:this:menu:items");
           //Upfront.Events.trigger("entity:object:render_navigation");
           //Upfront.Events.trigger("navigation:render_menu_order");
@@ -576,8 +579,11 @@ console.log("createLinkPanel");
     if(me.$el.parent('ul').hasClass('time_being_display'))
       me.$el.parent('ul').removeClass('time_being_display')
 
-    this.model['menu-item-title'] = $(this.el).children('a.menu_item').text();
+	var menu_item = ($(this.el).children('a.menu_item').length > 0) ? $(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
 
+    this.model['menu-item-title'] = menu_item.text();
+	if($(this.el).children('div.redactor_box').length > 0)
+		menu_item.blur();
 
     if( me.model['menu-item-title'].trim() == '' ) {
       me.deleteMenuItem();
@@ -929,6 +935,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
       $(target).data('ueditor').start();
         $(target).focus();
     }
+	
+	
+	$(target).closest('ul').addClass('time_being_display');
+	
       /*.on('start', function(){
         console.log('wtf');
         $(e.target).closest('li').data('backboneview').editMenuItem(e);
@@ -990,8 +1000,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
     //  this.editmode = false;
       //this.$el.find('ul.menu').removeClass('edit_mode').addClass('drag_mode');
       //this.$el.find('ul.menu a.menu_item').removeAttr('contenteditable');
-      if(this.$el.find('.upfront-object-content ul.menu').hasClass('ui-sortable'))
-        this.$el.find('.upfront-object-content ul').sortable('enable');
+      this.$el.find('.upfront-object-content ul').each(function() {
+		  if($(this).hasClass('ui-sortable'))
+	        $(this).sortable('enable');
+	  });
     //}
   },
   onDeactivate: function() {
@@ -1254,8 +1266,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
     }
   },
   on_render: function() {
-
-
     var me = this;
     //Bind resizing events
     if(typeof(me.parent_module_view) != 'undefined') {
@@ -1335,22 +1345,26 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 //return;
     //console.log('making sortable');
     var me = this;
-    this.$el.find('.upfront-object-content ul').sortable({
-      //connectWith:'ul',
-      start: function ( event, ui ) {
-        ui.item.find('i.navigation-add-item').css('display', 'none');
-      },
-      stop: function( event, ui ) {
-        ui.item.find('i.navigation-add-item').css('display', 'block');
-        //if(ui.item.find('i.navigation-add-item').length > 0)
-        //if(ui.sender != null)
-          //ui.sender.children('li:last').append(ui.item.find('i.navigation-add-item'));
-        //else
-          ui.item.parent('ul').children('li:last').append(ui.item.parent('ul').children('li').children('i.navigation-add-item'));
-
-        me.saveMenuOrder();
-      }
-    });
+    this.$el.find('.upfront-object-content ul').each(function() {
+		if(!$(this).hasClass('ui-sortable')) {
+			$(this).sortable({
+			  //connectWith:'ul',
+			  start: function ( event, ui ) {
+				ui.item.find('i.navigation-add-item').css('display', 'none');
+			  },
+			  stop: function( event, ui ) {
+				ui.item.find('i.navigation-add-item').css('display', 'block');
+				//if(ui.item.find('i.navigation-add-item').length > 0)
+				//if(ui.sender != null)
+				  //ui.sender.children('li:last').append(ui.item.find('i.navigation-add-item'));
+				//else
+				  ui.item.parent('ul').children('li:last').append(ui.item.parent('ul').children('li').children('i.navigation-add-item'));
+		
+				me.saveMenuOrder();
+			  }
+			});
+		}
+	});
   },
   saveMenuOrder: function() {
     var me = this;
@@ -1367,20 +1381,36 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
         Upfront.Util.log("Error updating menu");
       });
   },
-  new_menu_order: function() {
+  new_menu_order: function(removed) {
     var i = 0;
 
     var new_menu_order = new Array();
     this.$el.find('.upfront-object-content ul li').each(function() {
+		
+		
       if($(this).parent().parent('li').length > 0)
         $(this).data('backboneview').model['menu-item-parent-id'] = $(this).parent().parent('li').data('backboneview').model['menu-item-db-id'];
       else
         $(this).data('backboneview').model['menu-item-parent-id'] = 0;
 
-      new_menu_order[i] = {'menu-item-db-id': $(this).data('backboneview').model['menu-item-db-id'], 'menu-item-parent-id': $(this).data('backboneview').model['menu-item-parent-id']};
+	new_menu_order[i] = {};
 
-      $(this).data('backboneview').model['menu-item-position'] = i;
-      i++;
+		if(typeof(removed) != 'undefined') {
+			if($(this).data('backboneview').model['menu-item-parent-id'] == parseInt(removed)) {
+				$(this).data('backboneview').model['menu-item-parent-id'] = 0;
+			//	new_menu_order[i]['refresh-parent'] = 1;
+			}
+		}
+
+	if(typeof(removed) == 'undefined' || $(this).data('backboneview').model['menu-item-db-id'] != removed) {
+    	new_menu_order[i]['menu-item-db-id'] =  $(this).data('backboneview').model['menu-item-db-id'];
+		new_menu_order[i]['menu-item-parent-id'] = $(this).data('backboneview').model['menu-item-parent-id'];
+		
+		
+		$(this).data('backboneview').model['menu-item-position'] = i;
+		  
+		  i++;
+		}
     });
     return new_menu_order;
   },

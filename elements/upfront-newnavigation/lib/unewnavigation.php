@@ -143,7 +143,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 				else
 					$children_elements[ $e->menu_item_parent ][] = $e;
 			}
-
+//echo sizeof($top_level_elements);
 			if ( empty($top_level_elements) ) {
 
 				$first = array_slice( $sorted_menu_items, 0, 1 );
@@ -218,15 +218,37 @@ class Upfront_newMenuSetting extends Upfront_Server {
     public function delete_menu_item () {
 
         $menu_item_id = isset($_POST['menu_item_id']) ? intval($_POST['menu_item_id']) : false;
-		$menu_items =  isset($_POST['new_menu_order']) ? intval($_POST['new_menu_order']) : false;
+		$menu_items =  isset($_POST['new_menu_order']) ? $_POST['new_menu_order'] : false;
         if ( $menu_item_id ){
 
             if ( is_nav_menu_item( $menu_item_id ) && wp_delete_post( $menu_item_id, true ) ) {
                 $messages[] = 'The menu item has been successfully deleted';
 			}
 
-			if($menu_items)
+			
+	//			update_post_meta($child['menu-item-db-id'], '_menu_item_menu_item_parent', 0);
+//echo $menu_items;
+//die(0);
+			if($menu_items) {
 				$this->update_menu_order($menu_items);
+
+				/*
+				foreach($menu_items as $menu_item) {
+					
+					if(isset($menu_item['refresh-parent']) && $menu_item['refresh-parent'] == 1) {
+						echo "yes this happend";
+						return;
+	//				     $current_menu_item = get_post( $menu_item['menu-item-db-id'], 'ARRAY_A' );
+//						$current_menu_item['menu_order'] = $count;
+						delete_post_meta($menu_item['menu-item-db-id'], '_menu_item_menu_item_parent');
+		//				wp_update_post($current_menu_item);
+					}
+					$count++;
+				}
+
+				*/
+				
+			}
             else
 				$this->_out(new Upfront_JsonResponse_Success($messages));
         }
