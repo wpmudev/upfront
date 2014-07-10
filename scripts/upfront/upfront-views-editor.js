@@ -1394,13 +1394,9 @@ define([
 			_.each(typography, function (value, element) {
 				me.typefaces[element] = value.font_face;
 				me.colors[element] = value.color;
-				if ( value.weight && value.style ) {
-					me.styles[element] = value.weight + ' ' + value.style;
-				} else if (value.weight) {
-					me.styles[element] = value.weight + '';
-				} else if (value.style) {
-					me.styles[element] = value.style + '';
-				}
+
+				me.styles[element] = Font_Model.get_variant(value.weight, value.style);
+
 				if ( value.size )
 					me.sizes[element] = value.size;
 				if ( value.line_height )
@@ -1559,9 +1555,7 @@ define([
 			  font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
 			}
 			_.each(font_family.get('variants'), function(variant) {
-				// Google fonts have "100italic" instead "100 italic" fix here
-				var variant_style = variant.match(/^(\d+)([A-Za-z]+)/);
-				if (!_.isEmpty(variant_style)) variant = variant_style[1] + ' ' + variant_style[2];
+				variant = Font_Model.normalize_variant(variant);
 				styles.push({ label: variant, value: variant });
 			});
 			return styles;
@@ -1582,7 +1576,7 @@ define([
 					selector = false,
 					$this_el = $('.upfront-object-content ' + element ),
 					font_family,
-					style_base = me.styles[element];
+					style_base;
 
 				if (typeface === '') {
 					font_family = system_fonts_storage.get_fonts().models[0];// default to first system font
@@ -1603,32 +1597,13 @@ define([
 
 				font_rule_value = '"' + font_family.get('family') + '",' + font_family.get('category');
 
-				// There are two variants of style notation, one is used by system fonts and is in a
-				// form of "{weight as number} {style}" e.g. "100 normal", "300 oblique", "500 italic",
-				// the other is used by google fonts and can be in several forms, just a number e.g.
-				// "100", "200", "300"; style as a word "regular";
-				// Check if style matches normal, italic, oblique; style is declared in "400 normal"
-				if (style_base && style_base.match(/^(\d+) *(normal|italic|oblique)$/)) {
-					style = style_base.match(/^(\d+) *(normal|italic|oblique)/);
-					weight = style[1];
-					style = style[2];
-				}
-				if (style_base && style_base === 'regular') {
-					style = false;
-					weight = style_base;
-				}
-				if (style_base && style_base === 'italic') {
-					style = style_base;
-					weight = false;
-				}
-				// Cover 100, 200, 500 etc styles
-				if (style_base && style_base.match(/^\d+$/)) {
-					style = false;
-					weight = style_base;
-				}
+				style_base = Font_Model.parse_variant(me.styles[element]);
+				weight = style_base.weight;
+				style = style_base.style;
+
 				if ('inherit' !== font_rule_value) rules.push('font-family: ' + font_rule_value); /* don't include "inherit", as that's the default */
-				rules.push('font-weight: ' + style[1]);
-				rules.push('font-style: ' + style[2]);
+				rules.push('font-weight: ' + weight);
+				rules.push('font-style: ' + style);
 				if ( !is_inline ){
 					rules.push('font-size: ' + me.sizes[element] + 'px');
 					rules.push('line-height: ' + me.line_heights[element] + 'em');
@@ -1665,17 +1640,6 @@ define([
 				$('head').find('#upfront-default-typography-inline').html( css.join("\n") );
 			else
 				$('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>').insertAfter($('head').find('link[rel="stylesheet"]').first());
-		},
-		_normalize_weight: function (weight) {
-			if ( weight == 'normal' )
-				return 400;
-			else if ( weight == 'bold' )
-				return 700;
-			else if ( weight == 'bolder' )
-				return 900; // either 800-900 depend to the available weight
-			else if ( weight == 'lighter' )
-				return 100; // either 100-300 depend to the available weight
-			return weight;
 		}
 	});
 
@@ -4870,7 +4834,96 @@ var _Settings_CSS_Field = Field_Select.extend({
 	}
 });
 
-var Font_Model = Backbone.Model.extend();
+var Font_Model = Backbone.Model.extend({}, {
+	/*
+	 * Parsing variant to get style and weight for font.
+	 * @return Object { style: style, weight: weight }
+	 */
+	parse_variant: function(variant) {
+		var parsed_variant;
+		// For system fonts there are variants in format "{number} {style}" where {number} is
+		// 100-900 with step of 100, and {style} is "normal", "italic" or "oblique"
+		//
+		// Fog google fonts variants can be in format "regular", "italic", "100" to "900",
+		// "100italic" to "900italic".
+		//
+		// From browser font-weight[s] we'll use: 100 to 900, normal.
+		// From browser font-style we'll use: italic, normal, oblique.
+		//
+		// Regular variant means that both font-weight and font-style are normal or not set.
+		// Always set both style and weight to make everything easier.
+		// Always use numbers for weight to make everything easier.
+
+		// Cover both '100italic' and '100 italic'
+		if (variant.match(/^(\d+) *(normal|italic|oblique)$/)) {
+			parsed_variant = variant.match(/^(\d+) *(normal|italic|oblique)/);
+			return {
+				weight: parsed_variant[1],
+				style: parsed_variant[2]
+			};
+		}
+
+		if (variant === 'italic') {
+			return {
+				weight: '400',
+				style: 'italic'
+			};
+		}
+
+		// Cover 100, 200, 500 etc styles
+		if (variant.match(/^\d+$/)) {
+			return {
+				weight: variant,
+				style: 'normal'
+			};
+		}
+
+		// Default return value, also covers "regular" variant
+		return {
+			weight: '400',
+			style: 'normal'
+		};
+	},
+	/*
+	 * Constructs variant from weight and style.
+	 *
+	 * Variant should always be displayed as:
+	 * "{weight} {style}"
+	 * where weight is {number} from 100 to 900 step 100 and {style} is
+	 * "normal", "italic" or "oblique".
+	 * Unless:
+	 * 1. weight is 400(normal) and style is "normal" than variant is "regular".
+	 * 2. weight is 400(normal) and style is "italic" than variant is "italic",
+	 *
+	 * @return String variant
+	 */
+	get_variant: function(weight, style) {
+		weight = this.normalize_weight(weight);
+		if (style === '') style = 'normal';
+
+		if (weight === '400' && style === 'normal') return 'regular';
+		if (weight === '400' && style === 'italic') return 'italic';
+
+		return weight + ' ' + style;
+	},
+	/*
+	 * @see get_variant()
+	 */
+	normalize_variant: function(variant) {
+		var parsed_variant = this.parse_variant(variant);
+		return this.get_variant(parsed_variant.weight, parsed_variant.style);
+	},
+	/*
+	 * Convert weight to number for comparison.
+	 */
+	normalize_weight: function (weight) {
+		if ( weight == 'normal' || weight == '' ) return 400;
+		if ( weight == 'lighter' ) return 100; // either 100-300 depend to the available weight
+		if ( weight == 'bold' ) return 700;
+		if ( weight == 'bolder' ) return 900; // either 800-900 depend to the available weight
+		return weight;
+	}
+});
 
 var Fonts_Collection = Backbone.Collection.extend({
 	model: Font_Model
@@ -5006,33 +5059,7 @@ var system_fonts_storage = new System_Fonts_Storage();
 
 var ThemeFontModel = Backbone.Model.extend({
 	initialize: function(attributes) {
-		var italic_weight;
-
-		// Parse font variant
-		if (attributes.variant === 'regular') {
-			this.set({ displayVariant: attributes.variant}, { silent: true });
-			return;
-		}
-		// Check if variant is just number
-		if (_.isNumber(+attributes.variant) && !_.isNaN(+attributes.variant)) {
-			this.set({ fontWeight: attributes.variant}, { silent: true });
-			this.set({ displayVariant: attributes.variant}, { silent: true });
-			return;
-		}
-
-		// Check if variant is italic
-		if (attributes.variant.indexOf('italic') > -1) {
-			italic_weight = attributes.variant.replace('italic', '');
-			this.set({ fontStyle: 'italic' }, { silent: true });
-			this.set({ displayVariant: 'italic' }, {silent: true });
-			if (italic_weight) {
-				this.set({ fontWeight: italic_weight }, { silent: true });
-				this.set({ displayVariant: italic_weight + ' italic' }, { silent: true });
-			}
-			return;
-		}
-
-		this.set({ displayVariant: attributes.variant }, { silent: true });
+		this.set({ displayVariant: Font_Model.normalize_variant(attributes.variant) }, { silent: true });
 	}
 });
 var ThemeFontsCollection = Backbone.Collection.extend({
@@ -5221,7 +5248,7 @@ var Font_Picker = Backbone.View.extend({
 		// Choose variants
 		var values = [];
 		_.each(model.get('variants'), function(variant) {
-			var value = { label: variant, value: variant }
+			var value = { label: Font_Model.normalize_variant(variant), value: variant }
 			if (theme_fonts_collection.get(model.get('family') + variant)) {
 				value.checked = 'checked';
 				value.disabled = 'disabled';
@@ -9428,7 +9455,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"Upfront_Scroll_Mixin": Upfront_Scroll_Mixin
 		},
 		Theme_Colors : Theme_Colors,
-		breakpoints_storage: breakpoints_storage
+		breakpoints_storage: breakpoints_storage,
+		Font_Model: Font_Model
 	};
 });
 })(jQuery);

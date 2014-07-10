@@ -520,7 +520,7 @@ var _alpha = "alpha",
 
 			//todo This should be improved to fill up empty typography more correctly (style and weight are not correct)
 			_.each(["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"], function(element) {
-				var el, el_tag_name, is_inline, styles, weight, size, line_height, pseudo_class,
+				var el, el_tag_name, is_inline, styles, computed_weight, saved_weight, size, line_height, pseudo_class,
 					font_family, computed_color, color_values, saved_color, saved_color_values,
 					color_alpha, computed_font_size;
 
@@ -530,7 +530,6 @@ var _alpha = "alpha",
 				$test_root.append(el);
 				is_inline = _.contains(["a", "a:hover"], element);
 				styles = window.getComputedStyle(el, pseudo_class);
-				weight = this._normalize_weight(styles.fontWeight);
 				size = parseInt(styles.fontSize, 10);
 
 				// Font family
@@ -578,11 +577,19 @@ var _alpha = "alpha",
 					typography_updated = true;
 				}
 
-				// Weight - todo fix this to work when font style is just italic and weight is empty in built scipt
-				// if (typography[element].weight != 'regular' && typography[element].weight != weight) {
-					// typography[element].weight = weight;
-					// typography_updated = true;
-				// }
+				// Weight
+				computed_weight = Upfront.Views.Font_Model.normalize_weight(styles.fontWeight);
+				console.log(typography[element].weight);
+				saved_weight = Upfront.Views.Font_Model.normalize_weight(typography[element].weight);
+				if (computed_weight != saved_weight) {
+					typography[element].weight = computed_weight;
+					typography_updated = true;
+				}
+
+				// Style - italic, normal, oblique
+				if (typography[element].style != styles.fontStyle) {
+					typography[element].style = styles.fontStyle;
+				}
 
 				if ( !is_inline ) {
 					// Font size
@@ -617,7 +624,7 @@ var _alpha = "alpha",
 
 			_.each(["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"], function(element) {
 				typography[element] = {
-					"weight": "700",
+					"weight": "normal",
 					"style": "normal",
 					"size": 14,
 					"line_height": 1,
@@ -628,17 +635,6 @@ var _alpha = "alpha",
 			});
 
 			return typography;
-		},
-		_normalize_weight: function (weight) {
-			if ( weight == 'normal' )
-				return 400;
-			else if ( weight == 'bold' )
-				return 700;
-			else if ( weight == 'bolder' )
-				return 900; // either 800-900 depend to the available weight
-			else if ( weight == 'lighter' )
-				return 100; // either 100-300 depend to the available weight
-			return weight;
 		},
 		get_current_state: function () {
 			return Upfront.Util.model_to_json(this.get("regions"));
