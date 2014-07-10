@@ -491,6 +491,18 @@ define(function() {
 				});
 				this.size_field.render();
 				$hub.append(this.size_field.$el);
+
+				// Add URL label
+				if (this.model.length < 2) {
+					var url_field = new Upfront.Views.Editor.Field.Text({
+						model: this.model.at(0),
+						label: "URL",
+						name: "document_url",
+					});
+					url_field.render();
+					$hub.append(url_field.$el);
+				}
+
 				this.size_field.$el.on("click", function (e) {
 					e.stopPropagation();
 				});
