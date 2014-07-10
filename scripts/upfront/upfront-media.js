@@ -139,8 +139,8 @@ define(function() {
 
 	var ActiveMediaFilter_Collection = Backbone.Model.extend({
 		CONST: {
-			CUTOFF_SIZE: 14,
-			CUTOFF_BIT: 6,
+			CUTOFF_SIZE: 8,
+			CUTOFF_BIT: 3,
 		},
 		labels_cache: false,
 		default_media_types: ['images', 'videos', 'audios'],
