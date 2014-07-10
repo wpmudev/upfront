@@ -138,6 +138,10 @@ define(function() {
 	});
 
 	var ActiveMediaFilter_Collection = Backbone.Model.extend({
+		CONST: {
+			CUTOFF_SIZE: 14,
+			CUTOFF_BIT: 6,
+		},
 		labels_cache: false,
 		default_media_types: ['images', 'videos', 'audios'],
 		allowed_media_types: [],
@@ -1253,12 +1257,25 @@ define(function() {
 				"click .upfront-pagination_page-item": "set_page"
 			},
 			render: function () {
-				var markup = '';
+				var markup = '',
+					has_clipoff = false
+				;
 				markup += '<div id="upfront-entity_list-pagination">';
 				if (ActiveFilters.max_pages > 1) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></div>';
 
 				_.each(_.range(1, ActiveFilters.max_pages), function (idx) {
 					if (idx > ActiveFilters.max_pages) return;
+					if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) {
+						// Alright, so we're set on paging more than we have to! Rectify...
+						var left = ActiveFilters.CONST.CUTOFF_BIT,
+							right = ActiveFilters.max_pages - ActiveFilters.CONST.CUTOFF_BIT
+						;
+						if (idx > left && idx < right) {
+							if (!has_clipoff) markup += '<div class="upfront-pagination_item upfront-pagination_page-item">&hellip;</div>';
+							has_clipoff = true;
+							return true;
+						}
+					}
 					var cls = idx == ActiveFilters.current_page ? 'current' : '';
 					markup += '<div class="upfront-pagination_item upfront-pagination_page-item ' + cls + '" data-idx="' + idx + '">' + idx + '</div>';
 				});
