@@ -143,7 +143,7 @@ define(function() {
 			CUTOFF_BIT: 3,
 		},
 		labels_cache: false,
-		default_media_types: ['images', 'videos', 'audios'],
+		default_media_types: ['images', 'videos', 'audios', 'other'],
 		allowed_media_types: [],
 		showing_titles: true,
 		current_page: 1,
@@ -162,14 +162,8 @@ define(function() {
 			if (has_images) types.add(new MediaFilter_Item({filter: "Images", value: 'images', state: true}), {silent: true});
 			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: "Videos", value: 'videos', state: !has_images}), {silent: true});
 			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: "Audios", value: 'audios', state: !has_images}), {silent: true});
+			if (this.allowed_media_types.indexOf('other') >= 0) types.add(new MediaFilter_Item({filter: "All", value: 'other', state: !has_images}), {silent: true});
 			this.set("type", types, {silent: true});
-				/*
-			this.set("type", new MediaFilter_Collection([
-				new MediaFilter_Item({filter: "Images", value: 'images', state: true}),
-				new MediaFilter_Item({filter: "Videos", value: 'videos', state: false}),
-				new MediaFilter_Item({filter: "Audios", value: 'audios', state: false})
-			]), {silent: true});
-*/
 
 			this.set("recent", new MediaFilter_Collection([
 				new MediaFilter_Item({filter: "5", value: 5, state: false}),
@@ -494,7 +488,7 @@ define(function() {
 					change: function(){
 						me.select_size();
 					}
-				})
+				});
 				this.size_field.render();
 				$hub.append(this.size_field.$el);
 				this.size_field.$el.on("click", function (e) {
@@ -580,7 +574,7 @@ define(function() {
 							$hub.append(item.$el);
 						}
 					});
-					if ( has_selection ) $hub.removeClass('empty')
+					if ( has_selection ) $hub.removeClass('empty');
 					else $hub.addClass('empty');
 				},
 				render_addition: function () {
@@ -2001,6 +1995,7 @@ define(function() {
 		cleanup_active_filters: function () {
 			ActiveFilters.allowed_media_types = [];
 		},
+		/*
 		ck_open: function () {
 			var pop = this.open({
 				button_text: "Insert image(s)",
@@ -2010,6 +2005,7 @@ define(function() {
 			pop.always(this.on_close);
 			return false;
 		},
+		*/
 		load: function (options) {
             if(_.isUndefined( this.media_manager ) ){
                 this.media_manager = new MediaManager_View(_.extend({
@@ -2021,22 +2017,8 @@ define(function() {
 			this.media_manager.render();
 			return false;
 		},
+		/*
 		on_close: function (popup, result) {
-			/*
-			var html = '';
-			if (result && result.each) result.each(function (item) {
-				html += _.template(
-					((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? Upfront.Media.Templates.embeddable : Upfront.Media.Templates.image),
-					item.toJSON()
-				);
-			});
-			if (result && result.length && result.length > 1) {
-				html = _.template(
-					Upfront.Media.Templates.gallery,
-					{content: html}
-				);
-			}
-			*/
 			var html = Upfront.Media.Manager.results_html(result),
 				editor = CKEDITOR.instances[Upfront.Media.Manager.instance];
 			if ( editor && result ){
@@ -2056,6 +2038,7 @@ define(function() {
 			}
       Upfront.Events.trigger('upfront:element:edit:stop', 'media-upload');
 		},
+		*/
 		results_html: function (result) {
 			var html = '';
 			if (result && result.each) result.each(function (item) {
@@ -2075,10 +2058,6 @@ define(function() {
 						class: 'popup'
 					};
 				data.type = result.type;
-				/*html += _.template(
-					((item.get("original_url") || "").match(/\.(jpe?g|gif|png)$/i) ? Upfront.Media.Templates.embeddable : Upfront.Media.Templates.image),
-					data
-				);*/
 				html += _.template( (data.link ? Upfront.Media.Templates.image_link : Upfront.Media.Templates.image), data);
 			});
 			if (result && result.length && result.length > 1) {

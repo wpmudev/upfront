@@ -4,7 +4,8 @@ abstract class Upfront_Media {
 
 	const MIME_TYPE_IMAGES = 'image/jpeg,image/png,image/gif';
 	const MIME_TYPE_AUDIOS = 'audio/mpeg';
-	const MIME_TYPE_VIDEOS = 'video/mp4';
+    const MIME_TYPE_VIDEOS = 'video/mp4';
+    const MIME_TYPE_OTHER = ':other:';
 
 	public function to_json () {
 		return json_encode($this->to_php());
@@ -115,7 +116,10 @@ class Upfront_MediaCollection extends Upfront_Media {
                 array_unique(array_map('trim', explode(',', $type)))
             );
         }
-        $this->_args['post_mime_type'] = apply_filters('upfront-media-arguments-post_mime_type', $mimes);
+        $mimes = apply_filters('upfront-media-arguments-post_mime_type', $mimes);
+        if (!in_array(Upfront_Media::MIME_TYPE_OTHER, $mimes)) {
+            $this->_args['post_mime_type'] = $mimes;
+        }
 
         // Also get oEmbed fake imports
         if (in_array('videos', $types)) {

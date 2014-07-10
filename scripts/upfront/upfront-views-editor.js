@@ -2698,7 +2698,9 @@ define([
 				this.$el.html('Media');
 		},
 		on_click: function () {
-			Upfront.Media.Manager.open();
+			Upfront.Media.Manager.open({
+				media_type: ["images", "videos", "audios", "other"]
+			});
 		}
 	});
 
