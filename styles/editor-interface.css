@@ -6959,14 +6959,13 @@ a.upfront-post-layout-trigger:before{
 	margin-left: 280px;
 	width: auto;
 	text-transform: none;
-	font-family: Verdana;
-	font-size:11px;
+	font:normal 11px/13px Verdana, sans-serif;
 	border:0;
 	background-color: rgb(182,214,242);
 	color: rgb(38,58,77);
 	border-radius: 3px;
 	padding:3px 6px 3px 6px;
-	margin-top: 8px;
+	margin-top: 9px;
 }
 
 #upfront-popup-top.upfront-popup-meta .upload:before {
