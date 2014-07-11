@@ -2176,6 +2176,7 @@ RedactorPlugins.icons = {
             });
         },
         close : function(){
+        	this.redactor.selectionRemoveMarkers();
         },
         select_icon : function(e){
         	this.redactor.selectionRestore(true, false);
@@ -2186,7 +2187,7 @@ RedactorPlugins.icons = {
 	            	"font-size" : fontSize + "px",
 	            	"top" : top + "px"
 	            });
-            this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + $icon[0].outerHTML , true);
+            this.redactor.execCommand("inserthtml", $icon[0].outerHTML , true);
            // $(this.redactor.getCurrent()).replaceWith( $icon );
            	this.redactor.sync();
             this.closePanel();
@@ -2196,6 +2197,10 @@ RedactorPlugins.icons = {
         	var $sel = $(this.redactor.getParent()).eq(0),
         		self = this;
 
+        	if( !$sel.hasClass("parlyph") ){
+        		if( $sel.parent().hasClass("parlyph") ) {$sel = $sel.parent()};
+        		if( $sel.children().hasClass("parlyph") ) {$sel = $sel.find(".parlyph")};
+        	}
         	if( $sel.hasClass("parlyph") ){
             	this.$("#font-icons-size").val( parseFloat( $sel.css("font-size") ) );
             	this.$("#font-icons-top").val( parseFloat( $sel.css("top") ) );
@@ -2212,9 +2217,9 @@ RedactorPlugins.icons = {
             		if( this.id === "font-icons-top" ){
             			$sel.css("top", val);
             		}
-
+					self.redactor.sync();
             		
-            		// self.redactor.selectionRestore();
+            		self.redactor.selectionRestore();
             		// self.redactor.execCommand("inserthtml",  $sel[0].outerHTML , true);
 
             	});
