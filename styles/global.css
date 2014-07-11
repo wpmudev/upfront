@@ -141,6 +141,12 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-region:after { clear: both; }
 .upfront-output-region { zoom: 1; }
 
+.upfront-output-region-container-bg {
+	position: relative;
+	margin: 0 auto;
+	width: 100%;
+}
+
 /* Object */
 .upfront-object,
 .upfront-output-object {

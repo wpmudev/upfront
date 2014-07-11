@@ -98,7 +98,7 @@ class Upfront_Grid {
 			$this->_current_breakpoint = $point;
 			$point_css = '';
 			$line_height = $point->get_line_height();
-			$point_css .= $point->get_frontend_rule();
+			$point_css .= $point->get_frontend_rule($layout);
 			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
@@ -339,12 +339,15 @@ class Upfront_GridBreakpoint {
 		'';
 	}
 
-	public function get_frontend_rule () {
+	public function get_frontend_rule ($layout) {
+		$contained_width = upfront_get_property_value('contained_region_width', $layout);
 		$line_height = $this->get_line_height();
 		$width = $this->get_grid_width();
 		$column_padding = $this->get_column_padding();
 		$type_padding = $this->get_type_padding();
+		$contained_width = $contained_width ? $contained_width : $width;
 		return '' .
+			( $this->is_default() ? ".upfront-region-container-clip .upfront-output-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
 			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
 			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .

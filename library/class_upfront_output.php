@@ -268,7 +268,7 @@ abstract class Upfront_Entity {
 			if ( $background_video_style == 'inside' && $background_color )
 				$css[] = 'background-color: ' . $background_color;
 		}
-		return implode('; ', $css) . '; ';
+		return ( !empty($css) ) ? implode('; ', $css) . '; ' : '';
 	}
 
 	protected function _get_background_attr () {
@@ -483,26 +483,23 @@ class Upfront_Layout_View extends Upfront_Container {
 class Upfront_Region_Container extends Upfront_Container {
 	protected $_type = 'Region_Container';
 
-	protected function _is_background () {
-		return ( $this->_data['type'] != 'clip' || ( !$this->_data['type'] && !$this->_data['clip'] ) );
-	}
-
 	public function wrap ($out, $before = '', $after = '') {
-		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
-		return parent::wrap("{$before}<div class='upfront-grid-layout'>{$out}</div>{$after} {$overlay}");
+		$overlay = $this->_get_background_overlay();
+		$bg_css = $this->_get_background_css();
+		$bg_css = $bg_css ? "style='{$bg_css}'" : '';
+		$bg_attr = $this->_get_background_attr();
+		$bg_node_start = "<div class='upfront-output-region-container-bg' {$bg_css} {$bg_attr}>";
+		$bg_node_end = "</div>";
+		return parent::wrap("{$before}{$bg_node_start}<div class='upfront-grid-layout'>{$out}</div>{$overlay}{$bg_node_end}{$after}");
 	}
 
 	public function get_css_inline () {
 		$css = '';
-		if ( $this->_is_background() )
-			$css .= $this->_get_background_css();
 		return $css;
 	}
 
 	public function get_attr () {
 		$attr = '';
-		if ( $this->_is_background() )
-			$attr .= $this->_get_background_attr();
 		return $attr;
 	}
 }
@@ -521,7 +518,7 @@ class Upfront_Region extends Upfront_Container {
 	protected $_child_view_class = 'Upfront_Module';
 
 	protected function _is_background () {
-		return ( ( $this->_data['type'] == 'clip'  || ( !$this->_data['type'] && $this->_data['clip'] ) ) || ( $this->get_container() != $this->get_name() && ( !$this->_data['sub'] || ( $this->_data['sub'] != 'top' && $this->_data['sub'] != 'bottom' ) ) ) );
+		return ( $this->get_container() != $this->get_name() && ( !$this->_data['sub'] || ( $this->_data['sub'] != 'top' && $this->_data['sub'] != 'bottom' ) ) );
 	}
 
 	public function wrap ($out) {

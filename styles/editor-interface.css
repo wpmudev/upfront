@@ -2079,7 +2079,7 @@ div.uinsert-selector a:hover {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: -1;
+	z-index: 0;
 	overflow: hidden;
 }
 .upfront-layout-gutter-left,
@@ -2300,7 +2300,12 @@ div.uinsert-selector a:hover {
 
 .upfront-region-container {
 	position: relative;
-	z-index: 0;
+	/*z-index: 0;*/ /* Don't use z-index on region-container for compatibility with floated region */
+}
+.upfront-region-container-bg {
+	position: relative;
+	margin: 0 auto;
+	width: 100%;
 }
 
 .upfront-region-current {
@@ -2399,10 +2404,13 @@ div.uinsert-selector a:hover {
 }
 .upfront-edit-layout .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-theme .upfront-region-container:hover > .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-layout .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-theme .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
+.upfront-edit-responsive .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-layout .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-theme .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
+.upfront-edit-responsive .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-region-editing .upfront-region-container .upfront-region-side-fixed:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-layout .upfront-region-side-lightbox:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-theme .upfront-region-side-lightbox:hover > .upfront-region-edit-trigger-small
@@ -3182,6 +3190,13 @@ div.uinsert-selector a:hover {
 .upfront-region-bg-setting-tab-secondary {
 	padding: 10px 0 0;
 	clear: both;
+}
+
+.upfront-region-bg-setting-heading {
+	color: #27394b;
+	font-size: 18px;
+	font-weight: bold;
+	margin: 0 0 10px;
 }
 .upfront-region-bg-setting-label {
 	color: #3f617f;
@@ -10383,6 +10398,8 @@ a.upfront-css-edit:before{
 	width: 100%;
 	height: 20px;
 	background: #1c2733;
+	position: relative;
+	z-index: 1;
 }
 .upfront-ruler {
 	position: absolute;

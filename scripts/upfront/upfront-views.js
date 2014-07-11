@@ -89,24 +89,24 @@ define([
 				}
 			},
 			update_background: function () {
-				var me = this;
-				var type = this.model.get_property_value_by_name('background_type'),
+				var me = this,
+					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
 					image = this.model.get_property_value_by_name('background_image'),
 					ratio = parseFloat(this.model.get_property_value_by_name('background_image_ratio')),
 					repeat = this.model.get_property_value_by_name('background_repeat'),
 					position = this.model.get_property_value_by_name('background_position'),
 					style = this.model.get_property_value_by_name('background_style'),
-					width = this.$el.outerWidth(),
-					height = this.$el.outerHeight(),
-					$overlay = this.$el.children('.upfront-region-bg-overlay');
-
+					width = $bg.outerWidth(),
+					height = $bg.outerHeight(),
+					$overlay = $bg.children('.upfront-region-bg-overlay');
 
 				if ( type == 'featured'){
 					if ( color )
-						this.$el.css('background-color', color);
+						$bg.css('background-color', color);
 					else
-						this.$el.css('background-color', '');
+						$bg.css('background-color', '');
 
 
 					if(me.$el.children('.feature_image_selector').length < 1) {
@@ -166,18 +166,18 @@ define([
 								var temp_image = $('<img>').attr('src', response.data.featured_image);
 								temp_image.load(function(){
 									ratio = parseFloat(Math.round(temp_image.width()/temp_image.height()*100)/100);
-									me.$el.css('background-image', "url('" + image + "')");
+									$bg.css('background-image', "url('" + image + "')");
 
 									if ( style == 'full' ){
-										var size = me._get_full_size(me.$el, ratio, false);
-										me.$el.css({
+										var size = me._get_full_size($bg, ratio, false);
+										$bg.css({
 											backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 											backgroundRepeat: "no-repeat",
 											backgroundPosition: "50% 50%"
 										});
 									}
 									else {
-										me.$el.css({
+										$bg.css({
 											backgroundSize: "auto auto",
 											backgroundRepeat: repeat,
 											backgroundPosition: position
@@ -188,7 +188,7 @@ define([
 
 							}
 							else {
-								me.$el.css({
+								$bg.css({
 									backgroundImage: "none",
 									backgroundSize: "",
 									backgroundRepeat: "",
@@ -208,21 +208,21 @@ define([
 					if(me.$el.children('.feature_image_selector').length > 0)
 						me.$el.children('.feature_image_selector').remove();
 					if ( color )
-						this.$el.css('background-color', color);
+						$bg.css('background-color', color);
 					else
-						this.$el.css('background-color', '');
+						$bg.css('background-color', '');
 					if ( type != 'color' && image ){
-						this.$el.css('background-image', "url('" + image + "')");
+						$bg.css('background-image', "url('" + image + "')");
 						if ( style == 'full' ){
-							var size = this._get_full_size(this.$el, ratio, false);
-							this.$el.css({
+							var size = this._get_full_size($bg, ratio, false);
+							$bg.css({
 								backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 								backgroundRepeat: "no-repeat",
 								backgroundPosition: "50% 50%"
 							});
 						}
 						else {
-							this.$el.css({
+							$bg.css({
 								backgroundSize: "auto auto",
 								backgroundRepeat: repeat,
 								backgroundPosition: position
@@ -230,7 +230,7 @@ define([
 						}
 					}
 					else {
-						this.$el.css({
+						$bg.css({
 							backgroundImage: "none",
 							backgroundSize: "",
 							backgroundRepeat: "",
@@ -246,7 +246,7 @@ define([
 
 					if ( ! $overlay.length ){
 						$overlay = $('<div class="upfront-region-bg-overlay" />');
-						this.$el.append($overlay);
+						$bg.append($overlay);
 					}
 					else {
 						$overlay.show();
@@ -260,7 +260,7 @@ define([
 						$type.show();
 					}
 					$overlay.find('.upfront-region-bg').not($type).hide();
-					this.$el.css({
+					$bg.css({
 						backgroundColor: "",
 						backgroundImage: "none",
 						backgroundSize: "",
@@ -354,6 +354,7 @@ define([
 			},
 			update_background_video: function ($type, $overlay) {
 				var me = this,
+					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					color = this.model.get_property_value_by_name('background_color'),
 					video = this.model.get_property_value_by_name('background_video'),
 					embed = this.model.get_property_value_by_name('background_video_embed'),
@@ -362,9 +363,9 @@ define([
 					style = this.model.get_property_value_by_name('background_video_style') || 'crop',
 					ratio, $embed;
 				if ( style == 'inside' && color )
-					this.$el.css('background-color', color);
+					$bg.css('background-color', color);
 				else
-					this.$el.css('background-color', '');
+					$bg.css('background-color', '');
 				if ( video && embed && ( this._prev_video && this._prev_video != video || !this._prev_video ) ){
 					ratio = height/width;
 					$embed = $(embed);
@@ -396,14 +397,15 @@ define([
 				}
 			},
 			refresh_background: function () {
-				var type = this.model.get_property_value_by_name('background_type'),
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
 					image = this.model.get_property_value_by_name('background_image');
 				if ( type == 'map' && this.bg_map ){
 					google.maps.event.trigger(this.bg_map, 'resize');
 				}
 				else if ( type == 'slider' ) {
-					this.$el.find('.upfront-region-bg-' + type).trigger('refresh');
+					$bg.find('.upfront-region-bg-' + type).trigger('refresh');
 				}
 				else if ( type == 'video' ) {
 					var video = this.model.get_property_value_by_name('background_video'),
@@ -412,7 +414,7 @@ define([
 						height = this.model.get_property_value_by_name('background_video_height'),
 						style = this.model.get_property_value_by_name('background_video_style') || 'crop',
 						ratio,
-						$type = this.$el.find('.upfront-region-bg-' + type),
+						$type = $bg.find('.upfront-region-bg-' + type),
 						$embed = $type.children('iframe');
 					if ( video && embed ){
 						ratio = height/width;
@@ -439,11 +441,11 @@ define([
 				else if ( ( !type || type == 'image' ) && image ) {
 					var style = this.model.get_property_value_by_name('background_style'),
 						ratio = this.model.get_property_value_by_name('background_image_ratio'),
-						width = this.$el.outerWidth(),
-						height = this.$el.outerHeight();
+						width = $bg.outerWidth(),
+						height = $bg.outerHeight();
 					if ( style == 'full' ){
-						var size = this._get_full_size(this.$el, ratio, false);
-						this.$el.css({
+						var size = this._get_full_size($bg, ratio, false);
+						$bg.css({
 							backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 							backgroundRepeat: "no-repeat",
 							backgroundPosition: "50% 50%"
@@ -452,10 +454,11 @@ define([
 				}
 			},
 			remove_background: function () {
-				var $overlay = this.$el.find('.upfront-region-bg-overlay');
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					$overlay = this.$el.find('.upfront-region-bg-overlay');
 				if ( $overlay.length )
 					$overlay.hide();
-				this.$el.css({
+				$bg.css({
 					backgroundColor: "",
 					backgroundImage: "none",
 					backgroundSize: "",
@@ -1876,6 +1879,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
+				this.listenTo(Upfront.Events, "upfront:layout:contained_region_width", this.on_contained_width_change);
 				$(window).on('resize', this, this.on_window_resize);
 
 				// breakpoint changes
@@ -1893,6 +1897,7 @@ define([
 					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> Finish editing background</div>');
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
+				this.$bg = this.$el.find('.upfront-region-container-bg');
 				this.$layout = this.$el.find('.upfront-grid-layout');
 				$edit.appendTo(this.$el);
 				//$edit_fixed.appendTo(this.$el);
@@ -1904,13 +1909,16 @@ define([
 				Upfront.Events.trigger("entity:region_container:after_render", this, this.model);
 			},
 			update: function () {
-				var expand_lock = this.model.get_property_value_by_name('expand_lock'),
+				var grid = Upfront.Settings.LayoutEditor.Grid,
+					expand_lock = this.model.get_property_value_by_name('expand_lock'),
 					type = this._get_region_type(),
-					previous_type = this._get_previous_region_type();
-				if ( type != 'clip' )
-					this.update_background();
+					previous_type = this._get_previous_region_type(),
+					contained_width = Upfront.Application.layout.get_property_value_by_name('contained_region_width') || (grid.size * grid.column_width);
+				if ( type == 'clip' )
+					this.$bg.css('max-width', contained_width + 'px');
 				else
-					this.remove_background();
+					this.$bg.css('max-width', '');
+				this.update_background();
 				this.$el.removeClass('upfront-region-container-' + previous_type);
 				this.$el.addClass('upfront-region-container-' + type);
 				if ( previous_type != type ){
@@ -1931,6 +1939,16 @@ define([
 				this.$layout.addClass(grid.class + this.max_col);
 				this.refresh_background();
 				setTimeout(function(){ me.fix_height(); }, 500);
+			},
+			on_contained_width_change: function (width) {
+				var type = this._get_region_type();
+				if ( type == 'clip' ) {
+					this.$bg.css('max-width', width + 'px');
+				}
+				else {
+					this.$bg.css('max-width', '');
+				}
+				this.refresh_background();
 			},
 			trigger_edit: function (e) {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
@@ -2309,7 +2327,7 @@ define([
 			_is_clipped: function () {
 				var type = this.model.get('type'),
 					sub = this.model.get('sub');
-				return ( type == 'clip' || !type && this.model.get('clip') ) || ( !this.model.is_main() && ( !sub || (sub != 'top' && sub != 'bottom') ) );
+				return ( !this.model.is_main() && ( !sub || (sub != 'top' && sub != 'bottom') ) );
 			},
 			render: function () {
 				var container = this.model.get("container"),

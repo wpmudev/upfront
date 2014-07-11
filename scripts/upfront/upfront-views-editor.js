@@ -1554,10 +1554,12 @@ define([
 			if (_.isUndefined(font_family)) {
 			  font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
 			}
-			_.each(font_family.get('variants'), function(variant) {
-				variant = Font_Model.normalize_variant(variant);
-				styles.push({ label: variant, value: variant });
-			});
+			if (!_.isUndefined(font_family)) {
+				_.each(font_family.get('variants'), function(variant) {
+					variant = Font_Model.normalize_variant(variant);
+					styles.push({ label: variant, value: variant });
+				});
+			}
 			return styles;
 		},
 		update_typography: function (color) {
@@ -6804,8 +6806,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		render_modal: function ($content, $modal) {
 			var me = this,
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				is_layout = ( this.model instanceof Upfront.Models.Layout ),
 				is_region = ( this.model instanceof Upfront.Models.Region ),
-				sub = this.model.is_main() ? false : this.model.get('sub'),
+				sub = is_region && this.model.is_main() ? false : this.model.get('sub'),
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
 				region_types = [
@@ -6834,7 +6838,26 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				}),
-				$region_global, $region_type, $region_nav;
+				$region_global, $region_type, $region_nav, $theme_body;
+			if ( is_layout ){
+				var contained_region = new Field_Number({
+					model: this.model,
+					property: 'contained_region_width',
+					label: "Contained Region width:",
+					label_style: "inline",
+					default_value: grid.size*grid.column_width,
+					min: grid.size*grid.column_width,
+					max: 2560,
+					step: 1,
+					suffix: 'px',
+					change: function () {
+						var value = this.get_value();
+						value = ( value < this.options.min ) ? this.options.min : value;
+						this.property.set({value: value});
+						Upfront.Events.trigger('upfront:layout:contained_region_width', value);
+					}
+				});
+			}
 			if ( is_region && this.model.is_main() ){
 				var collection = this.model.collection,
 					index = collection.indexOf(this.model),
@@ -6969,6 +6992,15 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region_type.hide();
 				$region_nav.hide();
 				$region_auto.hide();
+			}
+			
+			$theme_body = $content.find('.upfront-region-bg-setting-theme-body');
+			if ( is_layout ) {
+				contained_region.render();
+				$theme_body.append(contained_region.$el);
+			}
+			else {
+				$theme_body.hide();
 			}
 
 			if(this.model.attributes.sub != 'lightbox') { /* dont need too many background options for the lightbox */
@@ -9113,6 +9145,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	var Topbar = Backbone.View.extend({
 		id: 'upfront-ui-topbar',
 		content_views: [],
+		initialize: function () {
+			this.listenTo(Upfront.Events, 'sidebar:toggle', this.on_sidebar_toggle);
+		},
 		render: function() {
 			_.each(this.content_views, function(view) {
 				view.render();
@@ -9131,6 +9166,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		stop: function() {
 			this.remove();
+		},
+		on_sidebar_toggle: function (visible) {
+			if ( !visible )
+				this.$el.css('left', 0);
+			else
+				this.$el.css('left', '');
 		}
 	});
 
