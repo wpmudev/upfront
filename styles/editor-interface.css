@@ -9189,10 +9189,12 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 .sp-button-container {
 	margin-top: -12px;
 	margin-right: 1px;
+	margin-right: -14px;
 }
 .redactor_dropdown_box_upfrontColor .sp-button-container {
 	margin-top: -11px;
 	margin-right: 0;
+	margin-right: -14px;
 }
 .sp-hue {
 	width: 14px;
@@ -9343,6 +9345,8 @@ input[type=text].sp-input {
 	border-radius: 0;
 	margin-right: -30px;
 	margin-top: 23px;
+	border: solid 1px #a2c5e4;
+	border-top: none;
 }
 
 /* ------- color picker rgba sidebar ------ */
