@@ -11101,6 +11101,9 @@ div.upfront-region-container-active > a.feature_image_selector {
 	max-height: 150px;
 	margin-right: 5px;
 }
+#sidebar-ui .chosen-container .chosen-results {
+	max-height: 120px;
+}
 #font-picker .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .chosen-container .chosen-results li.highlighted {
 	background: #5f7f9a;
