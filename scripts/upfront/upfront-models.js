@@ -579,7 +579,6 @@ var _alpha = "alpha",
 
 				// Weight
 				computed_weight = Upfront.Views.Font_Model.normalize_weight(styles.fontWeight);
-				console.log(typography[element].weight);
 				saved_weight = Upfront.Views.Font_Model.normalize_weight(typography[element].weight);
 				if (computed_weight != saved_weight) {
 					typography[element].weight = computed_weight;

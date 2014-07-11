@@ -297,46 +297,46 @@ class Upfront_MediaServer extends Upfront_Server {
 
         //add_action('wp_ajax_upfront-media-list_media', array($this, "list_media"));
         upfront_add_ajax('upfront-media-list_media', array($this, "list_media"));
-        
+
         //add_action('wp_ajax_upfront-media-get_item', array($this, "get_item"));
         upfront_add_ajax('upfront-media-get_item', array($this, "get_item"));
-		
+
         //add_action('wp_ajax_upfront-media_get_image_labels', array($this, "get_image_labels"));
         upfront_add_ajax('upfront-media_get_image_labels', array($this, "get_image_labels"));
 
         //add_action('wp_ajax_upfront-media-get_labels', array($this, "list_labels"));
         upfront_add_ajax('upfront-media-get_labels', array($this, "list_labels"));
-        
+
         if (Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) {
             //add_action('wp_ajax_upfront-media-remove_item', array($this, "remove_item"));
             upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
-            
+
             //add_action('wp_ajax_upfront-media-update_media_item', array($this, "update_media_item"));
             upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
-            
+
             //add_action('wp_ajax_upfront-media-upload', array($this, "upload_media"));
             upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
 
             //add_action('wp_ajax_upfront-media-list_theme_images', array($this, "list_theme_images"));
             upfront_add_ajax('upfront-media-list_theme_images', array($this, "list_theme_images"));
-            
+
             //add_action('wp_ajax_upfront-media-upload-theme-image', array($this, "upload_theme_image"));
             upfront_add_ajax('upfront-media-upload-theme-image', array($this, "upload_theme_image"));
-            
+
             //add_action('wp_ajax_upfront-media-add_label', array($this, "add_label"));
             upfront_add_ajax('upfront-media-add_label', array($this, "add_label"));
-            
+
             //add_action('wp_ajax_upfront-media-associate_label', array($this, "associate_label"));
             upfront_add_ajax('upfront-media-associate_label', array($this, "associate_label"));
-            
+
             //add_action('wp_ajax_upfront-media-disassociate_label', array($this, "disassociate_label"));
             upfront_add_ajax('upfront-media-disassociate_label', array($this, "disassociate_label"));
         }
-        
+
         if (Upfront_Permissions::current(Upfront_Permissions::EMBED)) {
             //add_action('wp_ajax_upfront-media-embed', array($this, "embed_media"));
             upfront_add_ajax('upfront-media-embed', array($this, "embed_media"));
-            
+
             //add_action('wp_ajax_upfront-media-get_embed_raw', array($this, "get_embed_raw"));
             upfront_add_ajax('upfront-media-get_embed_raw', array($this, "get_embed_raw"));
         }
@@ -670,34 +670,34 @@ class Upfront_MediaServer extends Upfront_Server {
 
 	public function upload_media () {
 		$upload = new Upfront_UploadHandler;
-        $result = $upload->handle();
-        if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
+		$result = $upload->handle();
+		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
 
-        if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
-        $wp_upload_dir = wp_upload_dir();
-        $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
-        $new_ids = array();
-        foreach ($result['media'] as $media) {
-            if (!empty($media->error)) {
-                // We have an error happening!
-                @unlink("{$pfx}{$filename}");
-                $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
-            }
-            $filename = $media->name;
-            $wp_filetype = wp_check_filetype(basename($filename), null);
-            $attachment = array(
-                'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
-                'post_mime_type' => $wp_filetype['type'],
-                'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
-                'post_content' => '',
-                'post_status' => 'inherit'
-            );
-            $attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
-            $attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
-            wp_update_attachment_metadata( $attach_id, $attach_data );
-            $new_ids[] = $attach_id;
-        }
-        $this->_out(new Upfront_JsonResponse_Success($new_ids));
+		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
+		$wp_upload_dir = wp_upload_dir();
+		$pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
+		$new_ids = array();
+		foreach ($result['media'] as $media) {
+				if (!empty($media->error)) {
+						// We have an error happening!
+						@unlink("{$pfx}{$filename}");
+						$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
+				}
+				$filename = $media->name;
+				$wp_filetype = wp_check_filetype(basename($filename), null);
+				$attachment = array(
+						'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
+						'post_mime_type' => $wp_filetype['type'],
+						'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+						'post_content' => '',
+						'post_status' => 'inherit'
+				);
+				$attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
+				$attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
+				wp_update_attachment_metadata( $attach_id, $attach_data );
+				$new_ids[] = $attach_id;
+		}
+		$this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
 }
 Upfront_MediaServer::serve();
@@ -1700,31 +1700,31 @@ class Upfront_UploadHandler extends UploadHandler {
 		), false);
 	}
 	protected function initialize() {
-        switch ($this->get_server_var('REQUEST_METHOD')) {
-            case 'OPTIONS':
-            case 'HEAD':
-                return $this->head();
-                break;
-            case 'GET':
-                return $this->get();
-                break;
-            case 'PATCH':
-            case 'PUT':
-            case 'POST':
-                return $this->post();
-                break;
-            case 'DELETE':
-                return $this->delete();
-                break;
-            default:
-                $this->header('HTTP/1.1 405 Method Not Allowed');
-        }
-    }
-    public function handle () {
-        return $this->initialize();
-    }
+		switch ($this->get_server_var('REQUEST_METHOD')) {
+			case 'OPTIONS':
+			case 'HEAD':
+				return $this->head();
+				break;
+			case 'GET':
+				return $this->get();
+				break;
+			case 'PATCH':
+			case 'PUT':
+			case 'POST':
+				return $this->post();
+				break;
+			case 'DELETE':
+				return $this->delete();
+				break;
+			default:
+				$this->header('HTTP/1.1 405 Method Not Allowed');
+		}
+	}
+	public function handle () {
+		return $this->initialize();
+	}
 
-    protected function generate_response ($content, $out=false) {
-        return $content;
-    }
+	protected function generate_response ($content, $out=false) {
+		return $content;
+	}
 }

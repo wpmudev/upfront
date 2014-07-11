@@ -55,7 +55,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			elementId = this.property('element_id')
 		;
-		console.log('Gallery Element');
 
 		if(! (this.model instanceof UgalleryModel)){
 			this.model = new UgalleryModel({properties: this.model.get('properties')});
@@ -532,7 +531,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		return labels;
 	},
 
-	openImageSelector: function(e, replaceId){
+	openImageSelector: function(event, replaceId){
 		var me = this,
 			selectorOptions = {
 				multiple: true,
@@ -542,8 +541,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			}
 		;
 
-		if(e)
-			e.preventDefault();
+		if (event) event.preventDefault();
 
 		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 			me.addImages(images, replaceId);
@@ -564,7 +562,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		this.getNewLabels(_.keys(images));
 
-		_.each(images, function(image, id){
+		_.each(images, function(image, id) {
 			models.push(
 				new UgalleryImage({
 					id: id,
@@ -581,28 +579,23 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			);
 		});
 
-		if(me.property('status') != 'ok'){
+		if (me.property('status') != 'ok') {
 			me.property('status', 'ok');
 			me.property('has_settings', 1);
 			me.images.reset(models);
 			selectType = true;
-
-		}
-		else if(replaceId){
+		} else if (replaceId) {
 			var item = me.images.get(replaceId),
 				idx = me.images.indexOf(item);
 
 			me.images.remove(replaceId);
 			me.images.add(models, {at: idx});
-		}
-		else{
+		} else {
 			me.images.add(models);
 		}
 
 		me.render();
-		if(selectType)
-			this.selectOnClick();
-
+		if(selectType) this.selectOnClick();
 	},
 
 	selectOnClick: function(){

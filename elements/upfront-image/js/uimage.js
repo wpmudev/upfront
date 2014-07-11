@@ -2590,8 +2590,8 @@ var ImageSelector = Backbone.View.extend({
 
 	initialize: function(){
 		var me = this;
-		//Set the form up
-		if(! $('#upfront-upload-image').length){
+		// Set the form up
+		if ($('#upfront-upload-image').length === 0) {
 			$('body').append(me.formTpl({url: Upfront.Settings.ajax_url}));
 
 			var progress = $('#upfront-progress'),
@@ -2599,58 +2599,58 @@ var ImageSelector = Backbone.View.extend({
 				form = $('#upfront-upload-image')
 			;
 
-			if (!!form.fileupload) form.fileupload({
-					formData: {action: 'upfront-media-upload'}
-				})
-				.bind('fileuploadstart', function (e) {
-					progress.css('width', '0');
-				})
-				.bind('fileuploadprogressall', function (e, data) {
-					var percent = parseInt(data.loaded / data.total * 100, 10);
-					progress.css('width', percent + '%');
-					console.log(percent);
-				})
-			    .bind('fileuploaddone', function (e, data) {
-			    	var response = data.result;
-					progress.css('width', '100%');
-					$('#upfront-image-uploading h2').html('Preparing Image');
-					console.log(response);
-					Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
-						.done(function(response){
-                            me.deferred.resolve(response.data.images, response);
-						})
-						.error(function(){
-							Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
-							me.openSelector();
-						})
-					;
-					form[0].reset();
-
-			    })
-			    .bind('fileuploadfail', function (e, response) {
-					var error = response.jqXHR.responseJSON.error;
-					Upfront.Views.Editor.notify(error, 'error');
-					me.openSelector();
-					form[0].reset();
-			    })
-			;
+			if (!!form.fileupload) {
+				form.fileupload({
+						formData: {action: 'upfront-media-upload'},
+						fileInput: null, // disable change listener, we handle it below
+						paramName: 'media[]' // due to previous options we have to set this manually
+					})
+					.bind('fileuploadstart', function (e) {
+						progress.css('width', '0');
+					})
+					.bind('fileuploadprogressall', function (e, data) {
+						var percent = parseInt(data.loaded / data.total * 100, 10);
+						progress.css('width', percent + '%');
+					})
+					.bind('fileuploaddone', function (e, data) {
+						var response = data.result;
+						progress.css('width', '100%');
+						$('#upfront-image-uploading h2').html('Preparing Image');
+						Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
+							.done(function(response){
+								me.deferred.resolve(response.data.images, response);
+							})
+							.error(function(){
+								Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
+								me.openSelector();
+							});
+						form[0].reset();
+					})
+					.bind('fileuploadfail', function (e, response) {
+						var error = response.jqXHR.responseJSON.error;
+						Upfront.Views.Editor.notify(error, 'error');
+						me.openSelector();
+						form[0].reset();
+					});
+			}
 
 			fileInput.on('change', function(e){
-				if(this.files.length){
-					if(XMLHttpRequest && (new XMLHttpRequest()).upload) //XHR uploads!
+				if (this.files.length) {
+					if(XMLHttpRequest && (new XMLHttpRequest()).upload) { //XHR uploads!
 						me.uploadImage(this.files);
-					else
-						me.openProgress(function(){
+					} else {
+						me.openProgress(function() {
 							form.fileupload('add', {
 								fileInput: fileInput
 							});
-						})
+						});
+					}
 				}
 			});
 		}
 	},
 
-	open: function(options){
+	open: function(options) {
 		var me = this;
 		this.deferred = $.Deferred();
 
@@ -2661,68 +2661,67 @@ var ImageSelector = Backbone.View.extend({
 
 		this.openSelector();
 
-    	Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
+		Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
 
 		return this.deferred.promise();
 	},
 
-	openSelector: function(){
+	openSelector: function() {
 		var me = this;
-		this.openOverlaySection(this.selectorTpl, {}, function(overlay){
+		this.openOverlaySection(this.selectorTpl, {}, function(overlay) {
 			var input = $('#upfront-image-file-input');
-			if(me.options.multiple){
+
+			if (me.options.multiple) {
 				input.attr('multiple','multiple');
 				input.attr('name', 'media[]');
-			}
-			else{
+			} else {
 				input.attr('multiple', false);
 				input.attr('name', 'media');
 			}
 
 			$('#upront-image-placeholder')
-                .on('dragenter', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                })
-                .on('dragleave', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $(this).css('border-color', '#C3DCF1');
-                    $(this).css('background', 'none');
-                })
-                .on('dragover', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $(this).css('border-color', '#1fcd8f');
-                    $(this).css('background', 'rgba(255,255,255,.1)');
-                    $(this).find();
-                })
-                .on('drop', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if(e.originalEvent.dataTransfer){
-						var files = e.originalEvent.dataTransfer.files,
-							input = $('#upfront-image-file-input')
-						;
+				.on('dragenter', function(e){
+					e.preventDefault();
+					e.stopPropagation();
+				})
+				.on('dragleave', function(e){
+					e.preventDefault();
+					e.stopPropagation();
+					$(this).css('border-color', '#C3DCF1');
+					$(this).css('background', 'none');
+				})
+				.on('dragover', function(e){
+					e.preventDefault();
+					e.stopPropagation();
+					$(this).css('border-color', '#1fcd8f');
+					$(this).css('background', 'rgba(255,255,255,.1)');
+					$(this).find();
+				})
+				.on('drop', function(e){
+					var files, input;
 
-	                    // Only call the handler if 1 or more files was dropped.
-	                    if (files.length && input.length){
-							//input[0].files = files;
-							me.uploadImage(files);
-	                    }
-                    }
+					e.preventDefault();
+					e.stopPropagation();
+					if (e.originalEvent.dataTransfer) {
+						files = e.originalEvent.dataTransfer.files;
 
-                })
-            ;
-            me.resizeOverlay();
+						// Only call the handler if 1 or more files was dropped.
+						if (files.length && input.length) {
+								//input[0].files = files;
+								me.uploadImage(files);
+						}
+					}
+				});
+
+			me.resizeOverlay();
 		});
 	},
 
 	openProgress: function(callback){
 		var me = this;
-		this.openOverlaySection(this.progressTpl, {}, function(){
-            me.resizeOverlay();
-            callback();
+		this.openOverlaySection(this.progressTpl, {}, function() {
+			me.resizeOverlay();
+			callback();
 		});
 	},
 
@@ -2870,7 +2869,6 @@ var ImageSelector = Backbone.View.extend({
 
 		//$('#upfront-image-overlay').fadeIn('fast');
 	},
-
 	setOverlayEvents: function() {
 		var me = this;
 		$('#upfront-image-overlay')
@@ -2888,7 +2886,6 @@ var ImageSelector = Backbone.View.extend({
 			})
 		;
 	},
-
 	openMediaGallery: function(e) {
 		var me = this;
 		e.preventDefault();
@@ -2916,30 +2913,16 @@ var ImageSelector = Backbone.View.extend({
 	},
 	openFileBrowser: function(e){
 		e.preventDefault();
-	    console.log('clicking');
 		$('#upfront-image-file-input').click();
 	},
 	checkFileUpdate: function(e){
-	     console.log('here we are');
-	     return true;
+		 return true;
 	},
-
 	uploadImage: function(files){
-		var me = this,
-			progress = $('#upfront-progress'),
-			fileInput = $('#upfront-image-file-input'),
-			form = $('#upfront-upload-image')
-		;
-
-
-		me.openProgress(function(){
-			form.fileupload('send', {files: files});
+		this.openProgress(function() {
+			$('#upfront-upload-image').fileupload('send', {files: files});
 		});
-
-		return;
 	}
-
-
 });
 
 var Control = Upfront.Views.Editor.InlinePanels.Item.extend({

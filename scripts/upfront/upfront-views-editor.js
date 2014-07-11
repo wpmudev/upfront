@@ -6995,7 +6995,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region_nav.hide();
 				$region_auto.hide();
 			}
-			
+
 			$theme_body = $content.find('.upfront-region-bg-setting-theme-body');
 			if ( is_layout ) {
 				contained_region.render();
