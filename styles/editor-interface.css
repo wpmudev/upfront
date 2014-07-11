@@ -10274,11 +10274,10 @@ a.upfront-css-edit:before{
 }
 .breakpoints-toggler .mobile-breakpoint-activate:before {
   background-position: -1233px -478px;
-  width: 10px;
 }
 .breakpoints-toggler .mobile-breakpoint-activate:hover:before,
 .breakpoints-toggler .mobile-breakpoint-activate.active:before {
-  background-position: -1233px -513px;
+  background-position: -1233px -514px;
 }
 .breakpoints-toggler .tablet-breakpoint-activate:before {
   background-position: -1231px -550px;

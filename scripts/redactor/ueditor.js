@@ -2176,7 +2176,6 @@ RedactorPlugins.icons = {
             });
         },
         close : function(){
-        	this.redactor.selectionRemoveMarkers();
         },
         select_icon : function(e){
         	this.redactor.selectionRestore(true, false);
@@ -2187,8 +2186,8 @@ RedactorPlugins.icons = {
 	            	"font-size" : fontSize + "px",
 	            	"top" : top + "px"
 	            });
-            // this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + $icon[0].outerHTML , true);
-           $(this.redactor.getCurrent()).replaceWith( $icon );
+            this.redactor.execCommand("inserthtml", this.redactor.getSelectionText() + $icon[0].outerHTML , true);
+           // $(this.redactor.getCurrent()).replaceWith( $icon );
            	this.redactor.sync();
             this.closePanel();
         },
@@ -2214,13 +2213,14 @@ RedactorPlugins.icons = {
             			$sel.css("top", val);
             		}
 
-            		self.redactor.sync();
+            		
             		// self.redactor.selectionRestore();
             		// self.redactor.execCommand("inserthtml",  $sel[0].outerHTML , true);
 
             	});
             	
             }
+            self.redactor.sync();
         }
 
     }))
