@@ -761,6 +761,7 @@ var EditionBar = Backbone.View.extend({
 
 	render: function(){
 		this.destroy();
+		if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
 		var me = this,
 			postData = this.post.toJSON(),
 			date = this.initialDate,
