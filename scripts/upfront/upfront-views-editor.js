@@ -1550,9 +1550,11 @@ define([
 
 			if (typography === false) return styles;
 
-			font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
-			if (_.isUndefined(font_family)) {
-			  font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
+			var current_typography = typography[this.current_element]; // The undefined errors really need to stop
+
+			if (current_typography && current_typography.font_face) font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
+			if (_.isUndefined(font_family) && current_typography && current_typography.font_face) {
+				font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
 			}
 			if (!_.isUndefined(font_family)) {
 				_.each(font_family.get('variants'), function(variant) {
