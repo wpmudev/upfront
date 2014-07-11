@@ -2199,7 +2199,7 @@ RedactorPlugins.icons = {
 
         	if( !$sel.hasClass("parlyph") ){
         		if( $sel.parent().hasClass("parlyph") ) {$sel = $sel.parent()};
-        		if( $sel.children().hasClass("parlyph") ) {$sel = $sel.find(".parlyph")};
+        		// if( $sel.children().hasClass("parlyph") ) {$sel = $sel.find(".parlyph")};
         	}
         	if( $sel.hasClass("parlyph") ){
             	this.$("#font-icons-size").val( parseFloat( $sel.css("font-size") ) );
