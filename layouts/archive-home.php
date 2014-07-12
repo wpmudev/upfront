@@ -3,9 +3,9 @@
 Layout File, at least one main region must be added;
  */
 
-$type = $type ? $type : 'wide';
-$left_sidebar = $left_sidebar ? $left_sidebar : false;
-$right_sidebar = $right_sidebar ? $right_sidebar : false;
+$type = !empty($type) ? $type : 'wide';
+$left_sidebar = !empty($left_sidebar) ? $left_sidebar : false;
+$right_sidebar = !empty($right_sidebar) ? $right_sidebar : false;
 
 $main = upfront_create_region(array(
 	'name' => "main", 

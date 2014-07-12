@@ -170,6 +170,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		} else {
 			$post = get_post($post_id);
 		}
+		$post = !empty($post) && is_object($post) ? $post : new WP_Post(new StdClass);
 		if ($post->post_password && !is_user_logged_in() || $post->post_status != 'publish' && !is_user_logged_in())
 			return ''; // Augment this!
 

@@ -527,7 +527,7 @@ class Upfront_Region extends Upfront_Container {
 	}
 
 	public function instantiate_child ($child_data, $idx) {
-		$view = is_array($child_data['modules']) ? "Upfront_Module_Group" : $this->_child_view_class;
+		$view = !empty($child_data['modules']) && is_array($child_data['modules']) ? "Upfront_Module_Group" : $this->_child_view_class;
 		if (!class_exists($view)) $view = $this->_child_view_class;
 		return new $view($child_data, $this->_data);
 	}
@@ -562,7 +562,7 @@ class Upfront_Region extends Upfront_Container {
 	}
 
 	public function get_sub () {
-		return $this->_data['sub'] ? $this->_data['sub'] : false;
+		return !empty($this->_data['sub']) ? $this->_data['sub'] : false;
 	}
 
 	public function _get_position_css () {
@@ -741,7 +741,7 @@ class Upfront_Object extends Upfront_Entity {
 
 		$flat = array_merge($defaults, $flat);
 
-		if($flat['theme_style']){
+		if(!empty($flat['theme_style'])){
 			$flat['class'] .= ' ' . $flat['theme_style'];
 		}
 

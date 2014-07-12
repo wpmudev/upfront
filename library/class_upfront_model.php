@@ -156,8 +156,10 @@ abstract class Upfront_EntityResolver {
 		$_SERVER['PHP_SELF'] = $self;
 		$_GET = $get;
 
-		if(isset($stored_current_screen))
-			$current_screen = $current_screen::get($stored_current_screen);
+		if(isset($stored_current_screen)) {
+			//$current_screen = $current_screen::get($stored_current_screen);
+			$current_screen = call_user_func(array($current_screen, 'get', $stored_current_screen));
+		}
 
 		$cascade = self::get_entity_ids(self::get_entity_cascade($query));
 
@@ -344,7 +346,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
 		self::$cascade = $cascade;
-		if ( current_user_can('switch_themes') && ($_GET['dev'] || $dev_first) ){
+		if ( current_user_can('switch_themes') && (!empty($_GET['dev']) || $dev_first) ){
 			// try loading for dev stored layout first
 			$dev_storage_key = $storage_key ? $storage_key : self::get_storage_key();
 			if ( !preg_match("/_dev$/", $dev_storage_key) ){
@@ -358,7 +360,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$storage_key = self::get_storage_key();
 		$order = array('specificity', 'item', 'type');
 		foreach ($order as $o) {
-			if (!$cascade[$o])
+			if (empty($cascade[$o]))
 				continue;
 			$id = $storage_key . '-' . $cascade[$o];
 			$layout = self::from_id($id, $storage_key);

@@ -20,7 +20,7 @@ class Upfront_StylePreprocessor {
 	}
 
 	public function get_light_grid() {
-		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval($_POST['baseline']) : intval($_GET['baseline']);
+		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval((!empty($_POST['baseline']) ? $_POST['baseline'] : 0)) : intval((!empty($_GET['baseline']) ? $_GET['baseline'] : 0));
 		$breakpoints = $this->_grid->get_breakpoints();
 		$style = '';
 		$top_prefixes = array();
@@ -183,7 +183,7 @@ class Upfront_StylePreprocessor {
 	}
 
 	public function get_editor_grid () {
-		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval($_POST['baseline']) : intval($_GET['baseline']);
+		$override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval((!empty($_POST['baseline']) ? $_POST['baseline'] : 0)) : intval((!empty($_GET['baseline']) ? $_GET['baseline'] : 0));
 		$breakpoints = $this->_grid->get_breakpoints();
 		$style = '';
 		foreach ($breakpoints as $scope => $breakpoint) {

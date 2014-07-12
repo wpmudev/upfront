@@ -133,7 +133,7 @@ class Upfront_Grid {
 			foreach ($wrappers as $w => $wrapper){
 				if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
 					$wrapper_data = $wrapper;
-					$next_wrapper_data = $wrappers[$w+1] ? $wrappers[$w+1] : false;
+					$next_wrapper_data = !empty($wrappers[$w+1]) ? $wrappers[$w+1] : false;
 					break;
 				}
 			}
@@ -274,7 +274,7 @@ class Upfront_GridBreakpoint {
 			$this->_width = $width;
 		if ( $columns )
 			$this->_columns = $columns;
-		if ( $default )
+		if ( !empty($default) )
 			$this->_default = $default;
 		$this->_data = $data;
 	}
@@ -508,7 +508,7 @@ class Upfront_GridBreakpoint {
 			}
 			$row = $breakpoint_data['row'];
 		}
-		if ($row){
+		if (!empty($row)){
 			$style = $this->_row_to_style($row);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';

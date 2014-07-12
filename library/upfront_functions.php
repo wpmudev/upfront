@@ -100,6 +100,7 @@ function upfront_add_ajax_nopriv ($action, $callback) {
  * Run first on each AJAX action registered with upfront_add_ajax
  */
 function upfront_ajax_init () {
+	$stylesheet = $layout_ids = $storage_key = $load_dev = false;
 	// Automatically instantiate Upfront_Layout object
 	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
 		$layout_ids = $_POST['layout'];
@@ -108,10 +109,10 @@ function upfront_ajax_init () {
 		$load_dev = $_POST['load_dev'] == 1 ? true : false;
 	}
 	else if ( isset($_GET['layout']) ){
-		$layout_ids = $_GET['layout'];
-		$storage_key = $_GET['storage_key'];
-		$stylesheet = $_GET['stylesheet'];
-		$load_dev = $_GET['load_dev'] == 1 ? true : false;
+		$layout_ids = !empty($_GET['layout']) ? $_GET['layout'] : false;
+		$storage_key = !empty($_GET['storage_key']) ? $_GET['storage_key'] : false;
+		$stylesheet = !empty($_GET['stylesheet']) ? $_GET['stylesheet'] : false;
+		$load_dev = !empty($_GET['load_dev']) && $_GET['load_dev'] == 1 ? true : false;
 	}
 	upfront_switch_stylesheet($stylesheet);
 	if ( !is_array($layout_ids) )
@@ -128,7 +129,7 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$args['layout'] = Upfront_EntityResolver::get_entity_ids();
-	if ( current_user_can('switch_themes') && $_GET['dev'] )
+	if ( current_user_can('switch_themes') && !empty($_GET['dev']) )
 		$args['load_dev'] = 1;
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );
 }

@@ -34,7 +34,7 @@ function this_page_initialize () {
 	require_once (dirname(__FILE__) . '/lib/this_page.php');
 
 	// Add element defaults to data object
-	add_action('upfront_data', array(Upfront_ThisPageView, 'add_js_defaults'));
+	add_action('upfront_data', array('Upfront_ThisPageView', 'add_js_defaults'));
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('this_page', upfront_relative_element_url('js/this_page', __FILE__));
