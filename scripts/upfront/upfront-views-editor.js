@@ -365,7 +365,7 @@ define([
 		className: "command-preview",
 		can_preview: false,
 		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
+			this.$el.addClass('command-save command-preview upfront-icon upfront-icon-save');
 			//this.$el.html("Preview");
 			this.preview_built();
 			Upfront.Events.on("preview:build:start", this.building_preview, this);
