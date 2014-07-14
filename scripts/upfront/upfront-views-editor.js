@@ -1225,8 +1225,8 @@ define([
 					$clone.addClass('element-dragging');
 					$clone.css({
 						position: "absolute",
-						top: e.pageY-(clone_h/2),
-						left: e.pageX-(clone_w/2),
+						top: ui.offset.top + ( h/2 ),
+						left: ui.offset.left + ( w/2 ),
 						zIndex: 999
 					});
 				})
@@ -1245,8 +1245,8 @@ define([
 					else
 						$clone.removeClass('element-dragging-no-drop');
 					$clone.css({
-						top: e.pageY-(clone_h/2),
-						left: e.pageX-(clone_w/2)
+						top: ui.offset.top + ( h/2 ),
+						left: ui.offset.left + ( w/2 )
 					});
 				})
 				.one('dragstop', function (e, ui) {
