@@ -2236,11 +2236,16 @@ div.uinsert-selector a:hover {
 	position: relative;
 }
 
-.upfront-module-hidden-toggle {
-
+.upfront-module-hidden-toggle,
+.upfront-region-hidden-toggle {
+	text-align: center;
+	padding: 13px 0 14px;
+	line-height: 18px;
 }
-.upfront-module-hidden-toggle .upfront-entity-hide_trigger {
-	float: right;
+.upfront-module-hidden-toggle .upfront-entity-hide_trigger,
+.upfront-region-hidden-toggle .upfront-entity-hide_trigger {
+	/*float: right;*/
+	display: inline-block;
 	background-color: #e5f3fe;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -2253,6 +2258,10 @@ div.uinsert-selector a:hover {
 	padding: 0 3px;
 	cursor: pointer;
 	box-shadow: 1px 1px 1px #ADB7C0;
+}
+.upfront-region-hidden-toggle .upfront-entity-hide_trigger {
+	background-color: #dafed9;
+	box-shadow: 1px 1px 1px #e6ebe6;
 }
 
 
@@ -2329,6 +2338,12 @@ div.uinsert-selector a:hover {
 	position: fixed;
 	z-index: 10;
 }
+
+.upfront-region-hidden {
+	height: 45px !important;
+	min-height: 45px !important;
+}
+
 .upfront-modules_container {
 	position: relative;
 	width: 100%;
@@ -2404,10 +2419,11 @@ div.uinsert-selector a:hover {
 }
 .upfront-edit-layout .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-theme .upfront-region-container:hover > .upfront-region-edit-trigger,
-.upfront-edit-responsive .upfront-region-container:hover > .upfront-region-edit-trigger,
+.upfront-edit-responsive .default-breakpoint .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-layout .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-theme .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-responsive .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
+.upfront-edit-responsive .responsive-breakpoint .upfront-region:hover > .upfront-region-edit-trigger-small,
 .upfront-edit-layout .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-theme .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-responsive .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
@@ -2421,7 +2437,10 @@ div.uinsert-selector a:hover {
 .upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container .upfront-region-edit-trigger,
-.upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger {
+.upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-hidden > .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-editing.responsive-breakpoint .upfront-region:hover > .upfront-region-edit-trigger-small,
+.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small {
 	visibility: hidden;
 	opacity: 0;
 }
@@ -2785,6 +2804,9 @@ div.uinsert-selector a:hover {
 .upfront-region-editing .upfront-region-panels {
 	display: block;
 	z-index: 9998;
+}
+.upfront-edit-responsive .upfront-region-editing .upfront-region-panels {
+	display: none;
 }
 .upfront-region-fixed-editing .upfront-region-fixed-panels {
 	display: block;
@@ -4227,7 +4249,8 @@ div.uinsert-selector a:hover {
 .upfront-icon-button-hide:before {
 	background-position: -1229px -407px;
 }
-.upfront-module-hidden-toggle .upfront-entity-hide_trigger:before {
+.upfront-module-hidden-toggle .upfront-entity-hide_trigger:before,
+.upfront-region-hidden-toggle .upfront-entity-hide_trigger:before {
 	background-position: -1229px -444px;
 	width: 24px;
 	height: 18px;

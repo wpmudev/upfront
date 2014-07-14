@@ -8865,6 +8865,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$('#page').removeClass(this.prev_active.get('id') + '-breakpoint');
 			}
 			$('#page').addClass(this.active.get('id') + '-breakpoint');
+			
+			if (this.active.get('default'))
+				$('#page').removeClass('responsive-breakpoint').addClass('default-breakpoint');
+			else
+				$('#page').removeClass('default-breakpoint').addClass('responsive-breakpoint');
 		},
 		on_change_enabled: function(changed_model) {
 			// If disabled point was active it will disapear and leave UI in broken state.

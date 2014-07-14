@@ -105,13 +105,16 @@ class Upfront_Grid {
 				$container = !empty($region['container']) ? $region['container'] : $region['name'];
 				$region_col = $this->_get_property_col($region);
 				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions']);
-				$region_row = upfront_get_property_value('row', $region);
+				$region_row = $this->_get_property_row($region);
+				$region_hide = $this->_get_breakpoint_data($region, 'hide');
 				$region_view = new Upfront_Region($region);
 				$name = strtolower(str_replace(" ", "-", $region_view->get_name()));
 				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
 				if ( $region_row )
 					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
+				if ( $region_hide == 1 )
+					$point_css .= $point->apply_hide($region_hide, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
 				$point_css .= $this->_apply_modules($region, $region_col);
 			}
 			if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
@@ -194,6 +197,17 @@ class Upfront_Grid {
 			$class = upfront_get_property_value('class', $data);
 			return upfront_get_class_num($width_pfx, $class);
 		}
+	}
+	
+	protected function _get_property_row ($data, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		if ( !$breakpoint->is_default() ){
+			$row = $this->_get_breakpoint_data($data, 'row', $breakpoint);
+		}
+		if ( $breakpoint->is_default() || !is_numeric($row) ) {
+			$row = upfront_get_property_value('row', $data);
+		}
+		return $row;
 	}
 	
 	protected function _get_breakpoint_data ($data, $key, $breakpoint = false) {
@@ -540,6 +554,16 @@ class Upfront_GridBreakpoint {
 			'.' . ltrim($scope, '. '),
 			$selector,
 			$this->_row_to_style($row)
+		) . "\n";
+	}
+
+	public function apply_hide ($hide, $entity, $scope=false, $selector='') {
+		if ( $hide != 1 )
+			return '';
+		return sprintf('%s %s {%s}',
+			'.' . ltrim($scope, '. '),
+			$selector,
+			"display: none;"
 		) . "\n";
 	}
 

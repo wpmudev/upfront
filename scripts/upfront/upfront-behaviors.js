@@ -3519,7 +3519,7 @@ var GridEditor = {
 				Upfront.Events.trigger("entity:region_container:resize_start", view, view.model);
 				// Disable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', false);
-
+console.log('start resizing')
 				// Prevents quick scroll when resizing
 				ed.resizing = window.scrollY;
 			},
@@ -3545,13 +3545,15 @@ var GridEditor = {
 					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
 				}
 				$helper.css({
-					width: '100%',
+					width: $me.width(),
 					height: h
 				});
 				$me.data('resize-row', rsz_row);
 			},
 			stop: function(e, ui){
-				var rsz_row = $me.data('resize-row');
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					rsz_row = $me.data('resize-row'),
+					model_breakpoint, breakpoint_data;
 
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				$me.css({
@@ -3563,7 +3565,19 @@ var GridEditor = {
 					top: '',
 					left: ''
 				});
-				model.set_property('row', rsz_row);
+				
+				if ( !breakpoint || breakpoint.default ){
+					model.set_property('row', rsz_row);
+				}
+				else {
+					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
+					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+						model_breakpoint[breakpoint.id] = {};
+					breakpoint_data = model_breakpoint[breakpoint.id];
+					breakpoint_data.edited = true;
+					breakpoint_data.row = rsz_row;
+					model.set_property('breakpoint', model_breakpoint);
+				}
 				Upfront.Events.trigger("entity:region_container:resize_stop", view, view.model);
 				// Re-enable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', true);
