@@ -205,7 +205,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		if(this.$el.parent().length){
 			me.prepareSlider();
-			me.hideSliderNavigation();
+//			me.hideSliderNavigation();
 		}
 		else{
 			setTimeout(function(){
