@@ -627,7 +627,7 @@ define(function() {
 							used = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" checked />'),
 							free = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" />'),
 							label = _.template('<label for="{{id}}">{{name}}</label>'),
-							name = this.model.get("filter"),
+							name = this.model.get("filter") || '',
 							match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false,
 							obj = this.model.toJSON()
 						;
@@ -944,7 +944,7 @@ define(function() {
 					var checked = _.template('<input type="checkbox" for="{{id}}" class="upfront-field-checkbox" name="{{filter}}" value="{{value}}" checked />'),
 						unchecked = _.template('<input type="checkbox" for="{{id}}" class="upfront-field-checkbox" name="{{filter}}" value="{{value}}" />'),
 						label = _.template('<label for="{{id}}">{{name}}</label>'),
-						name = this.model.get("filter"),
+						name = this.model.get("filter") || '',
 						match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false,
 						obj = this.model.toJSON()
 					;

@@ -224,7 +224,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				$sizes['custom']['editdata'] =$image_custom_size;
 			}
 			else
-				$sizes['custom'] = $data['customSize'];
+				$sizes['custom'] = $custom_size ? $data['customSize'] : array();
 
 			if(sizeof($sizes) != 0)
 				$images[$id] = $sizes;

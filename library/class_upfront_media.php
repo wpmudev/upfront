@@ -175,7 +175,7 @@ class Upfront_MediaCollection extends Upfront_Media {
             remove_filter('posts_where', $recent_callback);
         }
 
-        if ($collection->_oembed_video_filter) {
+        if (!empty($collection->_oembed_video_filter)) {
             $video_oembed = new self;
             $video_oembed->_args['meta_query'] = array(array(
                 'key' => 'oembed_type',
@@ -203,7 +203,7 @@ class Upfront_MediaCollection extends Upfront_Media {
             );
             if ($video_oembed->_query->max_num_pages > $collection->_query->max_num_pages) $collection->_query->max_num_pages = $video_oembed->_query->max_num_pages;
         }
-        if ($collection->_oembed_audio_filter) {
+        if (!empty($collection->_oembed_audio_filter)) {
             $audio_oembed = new self;
             $audio_oembed->_args['meta_query'] = array(array(
                 'key' => 'oembed_type',
@@ -247,6 +247,7 @@ class Upfront_MediaItem extends Upfront_Media {
         $label_objs = wp_get_object_terms($this->_post->ID, 'media_label');
         $labels = array();
         foreach ($label_objs as $label) {
+            if (!is_object($label)) continue;
             $labels[] = $label->term_id;
         }
         $sizes = array();
@@ -293,7 +294,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-        add_action('init', array($this, 'augment_attachments'));
+        $this->augment_attachments();
 
         //add_action('wp_ajax_upfront-media-list_media', array($this, "list_media"));
         upfront_add_ajax('upfront-media-list_media', array($this, "list_media"));
@@ -700,7 +701,8 @@ class Upfront_MediaServer extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
 }
-Upfront_MediaServer::serve();
+//Upfront_MediaServer::serve();
+add_action('init', array('Upfront_MediaServer', 'serve'));
 
 function upfront_media_file_upload () {
     if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this

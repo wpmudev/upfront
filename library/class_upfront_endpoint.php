@@ -1,5 +1,6 @@
 <?php
 
+/*
 abstract class Upfront_Endpoint extends Upfront_Server {
 
 	abstract public function create_endpoint ();
@@ -12,6 +13,7 @@ abstract class Upfront_Endpoint extends Upfront_Server {
 	}
 
 }
+*/
 
 abstract class Upfront_VirtualPage extends Upfront_Server {
 
@@ -275,7 +277,8 @@ class Upfront_ContentEditor_VirtualPage extends Virtual_Content_Page {
 	public function render ($request) {}
 
 }
-Upfront_ContentEditor_VirtualPage::serve();
+//Upfront_ContentEditor_VirtualPage::serve();
+add_action('init', array('Upfront_ContentEditor_VirtualPage', 'serve'));
 
 // --- Save handlers
 
@@ -562,15 +565,15 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$post = get_post($data['id']);
 
 		if($post){
-			if($data['filterContent']){
+			if(!empty($data['filterContent'])){
 				$post->post_content = apply_filters('the_content', $post->post_content);
 				$post->post_title = apply_filters('the_title', $post->post_title);
 				$post->post_excerpt = apply_filters('the_excerpt', $post->post_excerpt);
 			}
-			if($data['withAuthor']){
+			if(!empty($data['withAuthor'])){
 				$post->author = $this->remove_private_user_fields(new WP_User($post->post_author));
 			}
-			if($data['withMeta']){
+			if(!empty($data['withMeta'])){
 				$post->meta = $this->parse_single_meta(get_metadata('post', $post->ID));
 			}
 
@@ -732,7 +735,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function fetch_user($data) {
-		if(!$data['ID'])
+		if(empty($data['ID']))
 			$data['ID'] = get_current_user_id();
 
 		$user = $this->remove_private_user_fields(new WP_User(wp_get_current_user()));
@@ -940,7 +943,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		return $post;
 	}
 }
-Upfront_Editor_Ajax::serve();
+//Upfront_Editor_Ajax::serve();
+add_action('init', array('Upfront_Editor_Ajax', 'serve'));
 
 
 
@@ -998,7 +1002,8 @@ class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
 	public function render ($request) { die; }
 
 }
-Upfront_ElementDependencies_VirtualPage::serve();
+//Upfront_ElementDependencies_VirtualPage::serve();
+add_action('init', array('Upfront_ElementDependencies_VirtualPage', 'serve'));
 
 /**
  * Create new endpoint
@@ -1070,4 +1075,5 @@ class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
 	public function render ($request) { die; }
 
 }
-Upfront_CreateNew_VirtualPage::serve();
+//Upfront_CreateNew_VirtualPage::serve();
+add_action('init', array('Upfront_CreateNew_VirtualPage', 'serve'));

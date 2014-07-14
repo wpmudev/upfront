@@ -103,10 +103,10 @@ function upfront_ajax_init () {
 	$stylesheet = $layout_ids = $storage_key = $load_dev = false;
 	// Automatically instantiate Upfront_Layout object
 	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
-		$layout_ids = $_POST['layout'];
-		$storage_key = $_POST['storage_key'];
-		$stylesheet = $_POST['stylesheet'];
-		$load_dev = $_POST['load_dev'] == 1 ? true : false;
+		$layout_ids = !empty($_POST['layout']) ? $_POST['layout'] : false;
+		$storage_key = !empty($_POST['storage_key']) ? $_POST['storage_key'] : false;
+		$stylesheet = !empty($_POST['stylesheet']) ? $_POST['stylesheet'] : false;
+		$load_dev = !empty($_POST['load_dev']) && $_POST['load_dev'] == 1 ? true : false;
 	}
 	else if ( isset($_GET['layout']) ){
 		$layout_ids = !empty($_GET['layout']) ? $_GET['layout'] : false;

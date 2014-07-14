@@ -72,7 +72,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 				the_excerpt();
 				$replacements['%excerpt%'] = ob_get_clean();
 
-				if($options['excerpt'])
+				if(!empty($options['excerpt']))
 					$replacements['%contents%'] = $replacements['%excerpt%'];
 
 				$offset = isset($options['content_offset']) ? $options['content_offset'] : '';

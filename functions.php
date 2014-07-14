@@ -206,4 +206,5 @@ EOAdditivemarkup;
 
 }
 
-Upfront::serve();
+//Upfront::serve(); // This is one potentially breaking change - TEST and REVIEW
+add_action('init', array('Upfront', 'serve'), 0);

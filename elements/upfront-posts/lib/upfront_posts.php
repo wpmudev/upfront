@@ -53,7 +53,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		upfront_add_element_style('upfront-posts', array('css/style.css', dirname(__FILE__)));
 
 		$properties = $this->properties_to_array();
-		$properties['editing'] = $editing;
+		$properties['editing'] = !empty($editing) ? $editing : false;
 		return self::get_template($args, $properties, $element_id);
 	}
 
@@ -61,8 +61,10 @@ class Upfront_UpostsView extends Upfront_Object {
 		$image_data = get_post_meta($post_id, '_thumbnail_data', true);
 		if($image_data && isset($image_data['src'])){
 			$newhtml = str_replace($image_data['srcOriginal'], $image_data['src'], $html);
-			$newhtml = preg_replace('/width=".*?"/', 'width="' . $image_data['cropSize']['width'] . '"', $newhtml);
-			$newhtml = preg_replace('/height=".*?"/', 'height="' . $image_data['cropSize']['height'] . '"', $newhtml);
+			if (!empty($image_data['cropSize'])) {
+				$newhtml = preg_replace('/width=".*?"/', 'width="' . $image_data['cropSize']['width'] . '"', $newhtml);
+				$newhtml = preg_replace('/height=".*?"/', 'height="' . $image_data['cropSize']['height'] . '"', $newhtml);
+			}
 
 			return $newhtml;
 		}
@@ -164,6 +166,7 @@ class Upfront_UpostsView extends Upfront_Object {
 		add_filter('excerpt_more', array('Upfront_UpostsView', 'get_excerpt_more'), $priority);
 
 		global $post;
+		if (empty($post) || !is_object($post)) return false;
 		$current_post = $post;
 
 		$post = new WP_Post(new stdClass());

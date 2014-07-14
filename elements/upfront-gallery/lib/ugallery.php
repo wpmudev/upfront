@@ -142,9 +142,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 	public function add_js_defaults($data){
 		$post_types = get_post_types(array('public' => true), 'objects');
 		$labels = get_terms('media_label', array('hide_empty' => false));
-		$label_names = array();
-		$label_ids = array();
+		$labels_names = array();
+		$labels_ids = array();
 		foreach($labels as $label){
+			if (!is_object($label)) continue;
 			$labels_ids[$label->term_id] = array('id' => $label->term_id, 'text' => $label->name);
 			$labels_names[$label->name] = array('id' => $label->term_id, 'text' => $label->name);
 		}

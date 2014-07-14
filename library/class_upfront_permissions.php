@@ -33,7 +33,7 @@ class Upfront_Permissions {
 		$this->_levels_map = apply_filters('upfront-access-permissions_map', array(
 			self::BOOT => 'edit_posts',
 			self::EDIT => 'edit_posts',
-			self::RESIZE => 'edit_post',
+			self::RESIZE => 'edit_posts',
 			self::EMBED => 'edit_posts',
 			self::UPLOAD => 'upload_files',
 			self::SAVE => 'edit_theme_options',
@@ -59,6 +59,7 @@ class Upfront_Permissions {
 			: $this->_levels_map[self::DEFAULT_LEVEL]
 		;
 		if (empty($level)) return false;
+		if (!is_user_logged_in()) return false;
 
 		// Allow anonymous boot
 		if (defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT && self::ANONYMOUS === $level) return true;

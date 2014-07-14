@@ -65,7 +65,7 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
 
-			upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
+			//upfront_add_ajax('upfront_build_preview', array($this, "build_preview")); // No more previews building
 
 			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
 		}
@@ -76,7 +76,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout_ids = $_POST['data'];
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'];
-		$layout_slug = $_POST['layout_slug'];
+		$layout_slug = !empty($_POST['layout_slug']) ? $_POST['layout_slug'] : false;
 		$load_dev = $_POST['load_dev'] == 1 ? true : false;
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
 		$parsed = false;
@@ -597,6 +597,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$out = '';
 		$faces = array();
 		foreach ( $options as $element => $option ){
+			$option = wp_parse_args($option, array(
+				'font_face' => false,
+				'weight' => false,
+				'style' => false,
+				'size' => false,
+				'line_height' => false,
+				'color' => false,
+			));
 			$face = !empty($option['font_face'])
 				? $option['font_face']
 				: false
@@ -811,7 +819,7 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 	private function _add_hooks () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
 
-		add_action('init', array($this, 'register_requirements'));
+		$this->register_requirements();
 
 		// Layout revisions AJAX handers
 		upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
@@ -962,7 +970,8 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 	}
 
 }
-Upfront_Server_LayoutRevisions::serve();
+//Upfront_Server_LayoutRevisions::serve();
+add_action('init', array('Upfront_Server_LayoutRevisions', 'serve'));
 
 
 /**
@@ -1116,7 +1125,8 @@ class Upfront_Server_GoogleFontsServer extends Upfront_Server {
 		$this->_out($response);
 	}
 }
-Upfront_Server_GoogleFontsServer::serve();
+//Upfront_Server_GoogleFontsServer::serve();
+add_action('init', array('Upfront_Server_GoogleFontsServer', 'serve'));
 
 class Upfront_Server_ResponsiveServer extends Upfront_Server {
 
@@ -1172,7 +1182,8 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' responsive settings updated'));
   }
 }
-Upfront_Server_ResponsiveServer::serve();
+//Upfront_Server_ResponsiveServer::serve();
+add_action('init', array('Upfront_Server_ResponsiveServer', 'serve'));
 
 
 class Upfront_Server_ThemeFontsServer extends Upfront_Server {
@@ -1207,7 +1218,8 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme fonts updated'));
   }
 }
-Upfront_Server_ThemeFontsServer::serve();
+//Upfront_Server_ThemeFontsServer::serve();
+add_action('init', array('Upfront_Server_ThemeFontsServer', 'serve'));
 
 class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 
@@ -1240,4 +1252,5 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
         $this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme colors updated'));
     }
 }
-Upfront_Server_ThemeColorsServer::serve();
+//Upfront_Server_ThemeColorsServer::serve();
+add_action('init', array('Upfront_Server_ThemeColorsServer', 'serve'));

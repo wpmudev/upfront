@@ -199,7 +199,7 @@ class Upfront_Grid {
 	protected function _get_breakpoint_data ($data, $key, $breakpoint = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		$model_breakpoint = upfront_get_property_value('breakpoint', $data);
-		$breakpoint_data = $model_breakpoint ? $model_breakpoint[$breakpoint->get_id()] : false;
+		$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
 		if ( $breakpoint_data && $breakpoint_data[$key] )
 			return $breakpoint_data[$key];
 		return;
@@ -485,7 +485,7 @@ class Upfront_GridBreakpoint {
 		$selector = $this->_get_property($property, $entity);
 		if (!$classes) return '';
 		$breakpoint = $this->_get_property('breakpoint', $entity);
-		$breakpoint_data = $breakpoint ? $breakpoint[$this->get_id()] : false;
+		$breakpoint_data = $breakpoint && !empty($breakpoint[$this->get_id()]) ? $breakpoint[$this->get_id()] : false;
 
 		$raw_styles = array();
 		if ( $this->is_default() ){
@@ -506,7 +506,7 @@ class Upfront_GridBreakpoint {
 				$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 				$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 			}
-			$row = $breakpoint_data['row'];
+			if (!empty($breakpoint_data['row'])) $row = $breakpoint_data['row'];
 		}
 		if (!empty($row)){
 			$style = $this->_row_to_style($row);
@@ -591,7 +591,7 @@ class Upfront_GridBreakpoint {
 			$rule = 'order';
 			$style_value = $value;
 		}
-		if ( $style_value )
+		if ( !empty($style_value) )
 			$style .= "{$rule}: {$style_value}";
 
 		return $style;
