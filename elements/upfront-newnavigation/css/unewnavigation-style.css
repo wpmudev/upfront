@@ -1,113 +1,134 @@
-
-.upfront-navigation ul.menu, .upfront-navigation ul.menu ul {
-	list-style-type:none;	
-}
-.upfront-navigation ul.menu li {
-	position:relative;	
-}
-.upfront-navigation ul.menu > li {
-	display: inline-block;
-}
-.upfront-navigation ul.menu > li li {
-	display:block;
-}
-.upfront-navigation ul.menu > li > ul {
-	display:none;
-	position:absolute;
-	left:0;
-	top: 1.6em;
-	padding:0;
+div.upfront-navigation ul, div.upfront-navigation ul li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-.upfront-navigation ul.menu li:hover > ul {
-	display:block;
+div.upfront-navigation ul.sub-menu {
+  display: none;
 }
 
-.upfront-navigation ul.menu > li {
-	margin: 0 2px;
+div.upfront-navigation li.menu-item:hover > ul.sub-menu {
+  display: block;
 }
 
-.upfront-navigation ul.menu  li > a {
-	display:block;
-	font-size: 16px;
-	text-decoration: none;
-	line-height: 1.2;
-
-}
-
-.upfront-navigation ul.menu  li > a, .upfront-navigation ul.menu  li > div > a {
-	padding: 4px 6px;
-}
-
-.upfront-navigation ul.sub-menu {
-	background-color:#ebeff2;	
-}
-
-.upfront-navigation ul.menu li li > a, .upfront-navigation ul.menu li li > div > a {
-
-	padding: 6px 6px;
-}
-.upfront-navigation ul.menu li a {
-	color: #333;	
-}
-.upfront-navigation ul.menu > li li {
-	min-width: 176px;	
-}
-
-.upfront-navigation ul.menu > li > ul.sub-menu > li > ul {
-  top: -1em !important;
-  left: 176px !important;
+div.upfront-navigation li.menu-item a {
+  display: block;
+  padding: 6px 20px;
+  font-size: 16px;
+  text-decoration: none;
 }
 
 
+div.upfront-navigation ul.menu li {
+  position: relative;
+}
+div.upfront-navigation ul.sub-menu > li {
+	min-width:176px;	
+}
+div.upfront-navigation ul.sub-menu > li a {
+	background-color:#ebeff2;
+	border-bottom:1px #dadee1 solid;
+}
 
-
-
-div.upfront-navigation[data-aliment="center"] ul.menu {
+div.upfront-navigation div[data-aliment="center"] ul.menu {
 	text-align: center;
 }
 
-div.upfront-navigation[data-aliment="right"] ul.menu {
+div.upfront-navigation div[data-aliment="right"] ul.menu  {
 	text-align: right;
 }
 
-ul.sub-menu {
-	text-align: left;	
+/* Has sub-menu, indicator */
+
+
+li.menu-item-has-children > a:after {
+	content:'';
+	width: 0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid black;
+	position: absolute;
+	right: 6px;
+	top:45%;
 }
 
-div.upfront-navigation ul.menu {
-	margin: 0;
-	padding: 0;	
-}
-
-div.upfront-navigation[data-style="vertical"] ul.menu > li {
-	margin-left: 0 !important;
-	margin-right: 0 !important;	
-}
-
-div.upfront-navigation[data-style="vertical"] ul.menu > li li {
-	width: auto;
-}
-div.upfront-navigation[data-style="vertical"] ul.sub-menu {
-	left: 100%;
-	top: 0;	
-}
-div.upfront-navigation ul.menu > li:first-child {
-	margin-left: 0 !important;
-}
-
-div.upfront-navigation ul.menu > li:last-child {
-	margin-right: 0 !important;
+li.menu-item-has-children:hover > a:after {
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	border-left: 4px solid black;
+	top:40%;
+	right: 4px;
 }
 
 
+/* HORIZONTAL */
 
-div.upfront-navigation ul.menu li a, div.upfront-navigation ul.menu li {
-	position: relative;	
+div.upfront-navigation div[data-style="horizontal"] ul.menu > li {
+  display: inline-block;
 }
 
-[data-already_floating="yes"] {
-    position: fixed !important;
-    top: 0px !important;
-    z-index: 99999999;
+div.upfront-navigation div[data-style="horizontal"] ul.sub-menu {
+  position: absolute;
+}
+
+div.upfront-navigation div[data-style="horizontal"] ul.sub-menu > li > ul {
+  left: 100%;
+  top: 0;
+}
+
+div.upfront-navigation div[data-style="horizontal"] ul.sub-menu > li > ul > li a {
+	border-left:1px #dadee1 solid;
+}
+
+/* VERTICAL */
+div.upfront-navigation div[data-style="vertical"] ul.menu > li {
+  display: block;
+}
+div.upfront-navigation div[data-style="vertical"] ul.sub-menu {
+  position: absolute;
+}
+div.upfront-navigation div[data-style="vertical"] ul.sub-menu {
+  left: 100%;
+  top: 0;
+}
+div.upfront-navigation div[data-style="vertical"] ul.sub-menu > li > ul > li a {
+	border-left:1px #dadee1 solid;
+}
+/* burger */
+
+div.upfront-navigation div[data-style="burger"] ul.menu > li {
+  display: block;
+}
+div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+  position: relative;
+}
+div.upfront-navigation div[data-style="burger"] ul.menu > li > a, div.upfront-navigation div[data-style="burger"] ul.menu > li > div > a {
+  background-color:#ebeff2;	
+  border-bottom:1px #dadee1 solid;
+}
+
+div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li a {
+  padding-left:35px;
+}
+
+div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li a {
+  padding-left:50px;
+}
+
+div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li > ul > li a {
+  padding-left:65px;
+}
+
+div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li > ul > li > ul > li a {
+  padding-left:80px;
+}
+
+div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li > ul > li > ul > li > ul > li a {
+  padding-left:95px;
+}
+
+div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li a {
+  padding-left:110px;
 }

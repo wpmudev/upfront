@@ -25,6 +25,8 @@ var UnewnavigationModel = Upfront.Models.ObjectModel.extend({
 
 var MenuItemView = Backbone.View.extend({
   tagName: 'li',
+  contextmenuContext: [],
+  removeContexts: true,
   //linkTpl: _.template($editorTpl.find('#link-tpl').html()),
   events: {
      //'click a.menu_item' : 'editMenuItem',
@@ -99,6 +101,7 @@ var MenuItemView = Backbone.View.extend({
             },
             action: function() {
              $(me.event.target).addClass('new_menu_item');
+			 me.removeContexts = false;
              me.parent_view.editMenuItem(me.$el.find('a.new_menu_item'));
              //$(me.event.target).trigger('click');
              //me.editMenuItem(me.event);
@@ -109,7 +112,8 @@ var MenuItemView = Backbone.View.extend({
              return "Create Drop-Down";
             },
             action: function() {
-             me.createDropDown(me.event);
+				me.removeContexts = false;
+             	me.createDropDown(me.event);
 
             }
           })
@@ -133,14 +137,31 @@ var MenuItemView = Backbone.View.extend({
 
     this.createLinkPanel();
   },
+  loadContexts: function(element) {
+	  if(this.contextmenuContext.length > 10)
+	  	return;
+	  var menu = element.parent().parent('ul');
+	  
+	  if(menu.length > 0 && menu.hasClass('sub-menu')) {
+		menu.addClass('time_being_display');
+	  	this.contextmenuContext.push(menu);
+		this.loadContexts(menu);
+	  }
+  },
   on_context_menu: function(e) {
-
+	
     e.stopPropagation();
     if(this.parent_view.$el.find('ul.menu').hasClass('edit_mode'))
       return;
 
     this.closeTooltip();
     e.preventDefault();
+
+	if($(e.target).closest('ul').hasClass('sub-menu')) {
+		this.contextmenuContext.push($(e.target).closest('ul').addClass('time_being_display'));
+		this.loadContexts($(e.target).closest('ul'));
+	}
+
     this.event = e;
     //Upfront.Events.trigger("entity:contextmenu:activate", this);
     context_menu_view = new this.ContextMenu({
@@ -155,8 +176,18 @@ var MenuItemView = Backbone.View.extend({
     context_menu_view.render();
 
   },
-  remove_context_menu: function(e) {
+  remove_context_menu: function(e) { 
     if (!this.context_menu_view) return false;
+	
+	if(this.contextmenuContext.length > 0) {
+		if(this.removeContexts)
+			for(var i = 0; i < 	this.contextmenuContext.length; i++) {
+				this.contextmenuContext[i].removeClass('time_being_display')	
+			}
+		this.contextmenuContext = [];
+		this.removeContexts = true;
+	}
+	
     $(Upfront.Settings.LayoutEditor.Selectors.contextmenu).html('').hide();
     this.context_menu_view = false;
 
@@ -576,8 +607,10 @@ console.log("createLinkPanel");
 
 
     //me.parent_view.editModeOff();
-    if(me.$el.parent('ul').hasClass('time_being_display'))
-      me.$el.parent('ul').removeClass('time_being_display')
+//    if(me.$el.parent('ul').hasClass('time_being_display'))
+  //    me.$el.parent('ul').removeClass('time_being_display')
+	  
+	me.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
 
 	var menu_item = ($(this.el).children('a.menu_item').length > 0) ? $(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
 
@@ -937,7 +970,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
     }
 	
 	
-	$(target).closest('ul').addClass('time_being_display');
+	var currentcontext = $(target).closest('ul');
+
+	
+	while(currentcontext.length > 0 && currentcontext.hasClass('sub-menu')) {
+			currentcontext.addClass('time_being_display');
+			currentcontext = currentcontext.parent().parent('ul');
+			
+	}
 	
       /*.on('start', function(){
         console.log('wtf');
