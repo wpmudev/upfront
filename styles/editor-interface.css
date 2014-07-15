@@ -2097,7 +2097,7 @@ div.uinsert-selector a:hover {
 	left: 50%;
 }
 
-.upfront-regions {
+.upfront-dragging .upfront-regions {
 	overflow: hidden;
 }
 
@@ -2242,15 +2242,29 @@ div.uinsert-selector a:hover {
 	padding: 0;
 	height: 20px;
 	line-height: 18px;
+}
+.upfront-region-hidden-toggle {
+	float: right;
+	height: 18px;
+	padding: 0 0 0 60px;
+	margin: 0 -135px 0 0;
 	position: relative;
+	top: -9px;
+}
+.upfront-region-hidden-toggle:before {
+	content: " ";
+	position: absolute;
+	top: 50%;
+	left: 0;
+	border-top: 1px dotted #3d5266;
+	width: 50px;
+	height: 0;
+	display: block;
+	margin-top: -1px;
 }
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-region-hidden-toggle .upfront-entity-hide_trigger {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	display: inline-block;
 	background-color: #e5f3fe;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -2262,7 +2276,7 @@ div.uinsert-selector a:hover {
 	height: 18px;
 	line-height: 18px;
 	padding: 0 3px;
-	margin: auto;
+	margin: 0;
 	cursor: pointer;
 	box-shadow: 1px 1px 1px #ADB7C0;
 }
@@ -2348,8 +2362,9 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-region-hidden {
-	height: 20px !important;
-	min-height: 20px !important;
+	height: 0 !important;
+	min-height: 0 !important;
+	width: 100% !important;
 }
 
 .upfront-modules_container {
@@ -2550,6 +2565,9 @@ div.uinsert-selector a:hover {
 	opacity: 0.5;
 	min-height: 90px;
 	z-index: 1;
+}
+.upfront-region-editing.responsive-breakpoint .upfront-region-container {
+	min-height: 0;
 }
 .upfront-region-editing .upfront-region-side-fixed {
 	display: none !important;
