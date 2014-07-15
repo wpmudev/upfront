@@ -32,6 +32,7 @@ class Upfront_Oembed {
 
     public function get_info () {
         if (!$this->_url) return false;
+        $provider = false;
 
         // Yay! Tight coupled code, so let's nab
         foreach ( $this->_wp_oembed->providers as $matchmask => $data ) {
@@ -472,6 +473,15 @@ class Upfront_MediaServer extends Upfront_Server {
         $this->_out(new Upfront_JsonResponse_Success($res));
     }
 
+    private function _media_to_clean_url ($media) {
+        $media_url = $media;
+        // Alright now, so first up drop query strings for extension check
+        if (false !== strpos($media, '?')) {
+            $media_url = array_shift(explode('?', $media));
+        }
+        return $media_url;
+    }
+
     private function _image_url_to_attachment ($media, $preferred_filename=false) {
          // Yes. Import into library
         $request = wp_remote_get($media, array(
@@ -487,7 +497,7 @@ class Upfront_MediaServer extends Upfront_Server {
             $filename = preg_replace('/[^-_.a-z0-9]/i', '', basename($preferred_filename));
             $filename .= '.' . pathinfo(parse_url($media, PHP_URL_PATH), PATHINFO_EXTENSION);
         } else {
-            $filename = basename($media);
+            $filename = basename($this->_media_to_clean_url($media));
         }
         $wp_upload_dir = wp_upload_dir();
         $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
@@ -521,8 +531,10 @@ class Upfront_MediaServer extends Upfront_Server {
         $media = !empty($data['media']) ? $data['media'] : false;
         if (!$media) $this->_out(new Upfront_JsonResponse_Error("Invalid media"));
 
+        $media_url = $this->_media_to_clean_url($media);
+
         // Is it an image?
-        if (preg_match('/\.(jpe?g|gif|png)$/i', trim($media))) {
+        if (preg_match('/\.(jpe?g|gif|png)$/i', trim($media_url))) {
             $attach_id = $this->_image_url_to_attachment($media);
 
             // Now, update the attachment post

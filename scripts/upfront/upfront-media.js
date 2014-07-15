@@ -1047,6 +1047,9 @@ define(function() {
 		template: _.template(
 			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul> <button type="button" class="upload">Upload new media</button>'
 		),
+		initialize: function () {
+			Upfront.Events.on("media_manager:media:show_library", this.switch_to_library, this);
+		},
 		render: function () {
 			this.$el.empty().append(
 				this.template({})
@@ -1055,15 +1058,18 @@ define(function() {
 			this.switch_to_library();
 		},
 		switch_to_library: function (e) {
+			var data = {};
 			this.$el
 				.find("li").removeClass("active")
 				.filter(".library").addClass("active")
 			;
-			if (e) {
+			if (e && e.preventDefault) {
 				e.preventDefault();
 				e.stopPropagation();
-				this.trigger("media_manager:switcher:to_library");
+			} else if (e) {
+				data = e;
 			}
+			this.trigger("media_manager:switcher:to_library", data);
 		},
 		switch_to_embed: function (e) {
 			e.preventDefault();
@@ -1131,6 +1137,16 @@ define(function() {
 				'height': this.popup_data.height - 88
 			});
 			this.$el.empty().append(this.library_view.$el);
+			if (arguments.length) {
+				var sel = arguments[0], me = this;
+				if ("ID" in sel) {
+					this.library_view.media_collection.on("reset", function () {
+						var found = me.library_view.media_collection.where({ID: sel.ID});
+						if (found.length) found[0].set({selected: true});
+					});
+				}
+			}
+
 		},
 		render_embed: function () {
 			this.embed_view.model.clear({silent:true});
@@ -1428,13 +1444,13 @@ define(function() {
 		className: "upfront-embed_media clearifx",
 		initialize: function () {
 			this.model = new MediaItem_Model();
-
+		},
+		render: function () {
 			this.embed_pane = new MediaManager_Embed_DetailsPane({model: this.model});
 			this.embed_pane.on("embed:editable:updated", this.embed_updated, this);
 
 			this.preview_pane = new MediaManager_Embed_PreviewPane({model: this.model});
-		},
-		render: function () {
+
 			this.embed_pane.render();
 			this.preview_pane.render();
 			this.$el.empty()
@@ -1443,7 +1459,7 @@ define(function() {
 			;
 		},
 		embed_updated: function () {
-			this.preview_pane.render();
+			this.preview_pane.render_progress();
 			var me = this;
 			Upfront.Util.post({
 				action: "upfront-media-embed",
@@ -1452,6 +1468,7 @@ define(function() {
 				me.model.set(response.data, {silent:true});
 				me.preview_pane.trigger("embed:media:imported");
 				me.embed_pane.render();
+				me.preview_pane.render();
 			});
 		}
 	});
@@ -1481,7 +1498,7 @@ define(function() {
 				this.trigger("embed:editable:updated");
 			},
 			save: function () {
-				this.editables.invoke("update");
+				//this.editables.invoke("update"); // Do NOT!! invoke the update
 				var me = this,
 					data = {
 						action: "upfront-media-update_media_item",
@@ -1490,8 +1507,9 @@ define(function() {
 				;
 				Upfront.Util.post(data)
 					.done(function () {
-						Upfront.Util.log('successfully saved data');
 						me.model.trigger("change");
+						// Swap back to media
+						Upfront.Events.trigger("media_manager:media:show_library", data.data);
 					})
 				;
 			}
@@ -1500,11 +1518,12 @@ define(function() {
 		var MediaManager_Embed_PreviewPane = Backbone.View.extend({
 			className: "upfront-pane",
 			initialize: function () {
+			},
+			render: function () {
 				this.preview_view = new MediaManager_Embed_Preview({model: this.model});
 				this.labels_view = new MediaItem_Labels({model: this.model});
 				this.on("embed:media:imported", this.update_media_preview, this);
-			},
-			render: function () {
+				
 				this.preview_view.render();
 				//this.labels_view.render();
 				this.$el.empty()
@@ -1512,18 +1531,31 @@ define(function() {
 					//.append(this.labels_view.$el)
 				;
 			},
+			render_progress: function () {
+				this.$el.empty().append('<div class="preview_loader" />');
+				var $loader = this.$el.find(".preview_loader");
+				$loader.css({
+					position: "relative",
+					minHeight: "250px", // Ugh...
+					width: "100%"
+				});
+				this.loading = new Upfront.Views.Editor.Loading({
+					loading: 'Loading embeddable preview...',
+					done: 'Loaded'
+				});
+				this.loading.render();
+				$loader.append(this.loading.$el);
+			},
 			update_media_preview: function () {
 				this.preview_view.render();
 				this.labels_view.render();
 				this.labels_view.delegateEvents();
-				var progress = this.preview_view.is_image() ? 100 : 33;
-				this.preview_view.set_progress(progress);
 			}
 		});
 
 			var MediaManager_Embed_Preview = Backbone.View.extend({
 				className: "upfront-media_manager-embed-preview",
-				template: _.template('{{thumbnail}} <div class="progress"><div class="bar" /></div>'),
+				template: _.template('{{thumbnail}} <div class="progress"></div>'),
 				render: function () {
 					if (!this.model.get("original_url")) return this.$el.empty();
 					var me = this,
@@ -1537,10 +1569,6 @@ define(function() {
 				},
 				get_media_thumbnail: function () {
 					return this.model.get("thumbnail");
-				},
-				set_progress: function (progress) {
-					var $bar = this.$el.find(".progress .bar");
-					$bar.css("width", progress + '%');
 				}
 			});
 

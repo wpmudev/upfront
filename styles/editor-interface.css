@@ -1575,6 +1575,9 @@ input.upfront-field-text:hover,
 	display: block;
 	padding: 7px 30px 7px 10px;
 }
+
+.upfront-additive_multiselection .upfront-field-checkbox { border: none; }
+
 .upfront-suggest-match,
 .upfront-additive_multiselection .labels_list .selection {
 	background: rgb(31, 205, 143);
