@@ -11169,7 +11169,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 #font-picker .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .chosen-container .chosen-results li.highlighted {
 	background: #5f7f9a;
-	color: #ffffe3;
+	color: #fff;
 }
 #font-picker .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search {
@@ -11204,4 +11204,13 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui .chosen-with-drop .chosen-single div b {
 	border-top: 0 none transparent;
 	border-bottom: 4px solid rgb(96, 127, 153);
+}
+
+.chosen-container .chosen-results li em {
+	background-color: #00CE8D;
+	color:#fff;
+	border-radius: 3px;
+	box-shadow: 0 1px 0 #00B47C;
+	padding:2px 0;
+	text-decoration: none!important;
 }
