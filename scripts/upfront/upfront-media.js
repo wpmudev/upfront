@@ -1140,7 +1140,7 @@ define(function() {
 			if (arguments.length) {
 				var sel = arguments[0], me = this;
 				if ("ID" in sel) {
-					this.library_view.media_collection.on("reset", function () {
+					this.library_view.media_collection.once("reset", function () {
 						var found = me.library_view.media_collection.where({ID: sel.ID});
 						if (found.length) found[0].set({selected: true});
 					});

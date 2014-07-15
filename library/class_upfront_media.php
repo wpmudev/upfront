@@ -554,7 +554,7 @@ class Upfront_MediaServer extends Upfront_Server {
                     'ID' => $attach_id,
                     'post_title' => $data->title,
                     'post_content' => $data->html,
-                    'post_excerpt' => $data->description,
+                    'post_excerpt' => (!empty($data->description) ? $data->description : ''),
                     'post_mime_type' => 'import',
                 ));
                 update_post_meta($attach_id, 'original_url', $media);
