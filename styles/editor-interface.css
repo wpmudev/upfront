@@ -2239,13 +2239,18 @@ div.uinsert-selector a:hover {
 .upfront-module-hidden-toggle,
 .upfront-region-hidden-toggle {
 	text-align: center;
-	padding: 13px 0 14px;
+	padding: 0;
+	height: 20px;
 	line-height: 18px;
+	position: relative;
 }
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-region-hidden-toggle .upfront-entity-hide_trigger {
-	/*float: right;*/
-	display: inline-block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	background-color: #e5f3fe;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -2253,15 +2258,18 @@ div.uinsert-selector a:hover {
 	color: #1b2733;
 	font-family: "Verdana";
 	font-size: 11px;
+	width: 110px;
 	height: 18px;
 	line-height: 18px;
 	padding: 0 3px;
+	margin: auto;
 	cursor: pointer;
 	box-shadow: 1px 1px 1px #ADB7C0;
 }
 .upfront-region-hidden-toggle .upfront-entity-hide_trigger {
 	background-color: #dafed9;
 	box-shadow: 1px 1px 1px #e6ebe6;
+	width: 100px;
 }
 
 
@@ -2340,8 +2348,8 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-region-hidden {
-	height: 45px !important;
-	min-height: 45px !important;
+	height: 20px !important;
+	min-height: 20px !important;
 }
 
 .upfront-modules_container {
