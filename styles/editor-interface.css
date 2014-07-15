@@ -2250,9 +2250,10 @@ div.uinsert-selector a:hover {
 	float: right;
 	height: 18px;
 	padding: 0 0 0 60px;
-	margin: 0 -135px 0 0;
+	margin: 0 -160px 2px 0;
 	position: relative;
 	top: -9px;
+	left: 0;
 }
 .upfront-region-hidden-toggle:before {
 	content: " ";
@@ -2336,6 +2337,11 @@ div.uinsert-selector a:hover {
 	position: relative;
 	/*z-index: 0;*/ /* Don't use z-index on region-container for compatibility with floated region */
 }
+.upfront-region-container-hidden .upfront-grid-layout:before,
+.upfront-region-container-hidden .upfront-grid-layout:after {
+	content: none;
+}
+
 .upfront-region-container-bg {
 	position: relative;
 	margin: 0 auto;
@@ -2365,9 +2371,10 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-region-hidden {
-	height: 0 !important;
+	height: auto !important;
 	min-height: 0 !important;
 	width: 100% !important;
+	float: none;
 }
 
 .upfront-modules_container {

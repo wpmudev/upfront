@@ -2283,6 +2283,9 @@ define([
 					classes.push('upfront-region-side');
 					classes.push('upfront-region-side-' + ( sub ? sub : (is_left ? 'left' : 'right') ));
 				}
+				else {
+					classes.push('upfront-region-center');
+				}
 				if ( this.model.collection && this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-active');
 				}
@@ -2314,6 +2317,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				$(window).on('resize', this, this.on_window_resize);
 			},
 			on_click: function (e) {
@@ -2421,6 +2425,7 @@ define([
 				var data = this.model.get_property_value_by_name('breakpoint'),
 					row = this.model.get_property_value_by_name('row'),
 					breakpoint_data = data[breakpoint.id],
+					container_view = this.parent_view.get_container_view(this.model),
 					$container = this.$el.find('.upfront-modules_container'),
 					$toggle = this.$el.find('.upfront-region-hidden-toggle'),
 					height = 0;
@@ -2428,11 +2433,16 @@ define([
 					$container.show();
 					$toggle.hide();
 					this.$el.removeClass('upfront-region-hidden');
+					// @TODO need to double-check this
+					container_view.$el.removeClass('upfront-region-container-hidden');
 				}
 				else if ( breakpoint_data.hide ){
 					$container.hide();
 					$toggle.show();
 					this.$el.addClass('upfront-region-hidden');
+					// @TODO need to double-check this
+					container_view.$el.addClass('upfront-region-container-hidden');
+					this.update_hide_toggle();
 				}
 				/*if ( breakpoint_data && typeof breakpoint_data.col == 'number' ){
 					this.$el.css('width', (breakpoint_data.col/(breakpoint_data.left+breakpoint_data.col)*100) + '%');
@@ -2444,9 +2454,11 @@ define([
 				}*/
 				if ( !breakpoint.default ) {
 					$edit.css('right', (breakpoint.width - (breakpoint.columns*grid.column_width)) / 2 * -1);
+					$toggle.css('left', (breakpoint.width - (breakpoint.columns*grid.column_width)) / 2);
 				}
 				else {
 					$edit.css('right', '');
+					$toggle.css('left', '');
 				}
 				if ( breakpoint_data && typeof breakpoint_data.row == 'number' ) {
 					height = (breakpoint_data.row*grid.baseline);
@@ -2540,6 +2552,15 @@ define([
 				else
 					data[breakpoint.id].hide = 1;
 				this.model.set_property('breakpoint', data);
+				Upfront.Events.trigger('entity:region:hide_toggle', data[breakpoint.id].hide, this);
+			},
+			update_hide_toggle: function () {
+				if ( ! this.$el.hasClass('upfront-region-hidden') )
+					return;
+				var $toggle = this.$el.find('.upfront-region-hidden-toggle'),
+					$regions = $('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
+					$hidden = Upfront.Util.find_from_elements($regions, this.$el, '.upfront-region', true, ':not(.upfront-region-hidden)');
+				$toggle.css('margin-top', ( $hidden.length * 20 ) + 'px');
 			},
 			trigger_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
