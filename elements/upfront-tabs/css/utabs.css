@@ -65,22 +65,17 @@
 
 .upfront-tabs-container .tabs-tab i {
   display: block;
-  width: 14px;
-  height: 14px;
-  color: white;
-  background: red;
-  border-radius: 20px;
-  font-style: normal;
-  line-height: 14px;
-  text-align: center;
-  font-weight: bold;
+  width: 16px;
+  height: 16px;
+  background-position: -483px -171px;
+  background-image: url('../../../img/uf-core-el-sprite.svg');
   position: absolute;
-  right: -5px;
-  top: 0px;
+  right: 0;
+  top: 0;
   visibility: hidden;
 }
 
-.upfront-tabs-container .tabs-tab-active:hover i {
+.upfront-tabs-container .tabs-tab:hover i {
   visibility: visible;
 }
 

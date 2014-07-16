@@ -168,7 +168,7 @@
           this.fixTabWidth();
           this.addTooltips();
           if ($(event.currentTarget).find('i').size() < 1) {
-            $(event.currentTarget).append('<i>x</i>');
+            $(event.currentTarget).append('<i></i>');
           }
         }
       },
