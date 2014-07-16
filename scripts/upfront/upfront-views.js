@@ -1659,6 +1659,7 @@ define([
 						local_view.delegateEvents();
 					}
 				}
+				Upfront.Events.trigger('entity:modules:render_module', local_view, local_view.model, this, this.model);
 			},
 			on_add: function (model, collection, options) {
 				this.current_wrapper_id = this.current_wrapper_el = null;

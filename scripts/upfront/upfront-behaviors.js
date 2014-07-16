@@ -2362,13 +2362,24 @@ var GridEditor = {
 					$region = $me.closest('.upfront-region'),
 					me = ed.get_el($me),
 					wrap = ed.get_wrap($wrap),
-					me_offset = $me.offset();
+					me_offset = $me.offset(),
+					max_height = ed.max_row*ed.baseline,
+					draggable = $(this).data('ui-draggable'),
+					cursor_top = e.pageY - me_offset.top;
+				
+				// hack the cursor position
+				if ( cursor_top > max_height/2 ) {
+					draggable._adjustOffsetFromHelper({
+						top: ( me.height > max_height ? max_height : me.height )/2
+					});
+				}
+					
 				$region.css('min-height', $region.css('height'));
 				//$me.hide();
 				$me.css('visibility', 'hidden');
 				$helper.css('max-width', me.width);
 				$helper.css('height', me.height);
-				$helper.css('max-height', ed.max_row*ed.baseline);
+				$helper.css('max-height', max_height);
 				$helper.css('margin-left', $me.css('margin-left')); // fix error with the percentage margin applied
 				
 				ed.create_drop_point(me, wrap, is_parent_group ? [ ed.get_el(view.group_view.$el) ] : false);
@@ -2976,18 +2987,6 @@ var GridEditor = {
 
 	toggle_draggables: function (enable) {
 		$('.upfront-editable_entity.ui-draggable').draggable('option', 'disabled', (!enable));
-	},
-
-	refresh_draggables: function(){
-		var app = this,
-			ed = Upfront.Behaviors.GridEditor,
-			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-			$layout = $main.find('.upfront-layout');
-		$layout.find('.ui-draggable').each(function(){
-			var cursor_top = $(this).outerHeight() > 60 ? 60 : $(this).outerHeight()/2;
-			$(this).draggable('option', 'cursorAt', {top: cursor_top});
-		});
-
 	},
 
 	/**

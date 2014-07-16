@@ -1209,8 +1209,8 @@ define([
 					$gutter = $('.upfront-grid-layout-gutter-left:first, .upfront-grid-layout-gutter-right:first');
 				$shadow.css({
 					position: "absolute",
-					top: ( e.pageY-( off.top-pos.top )-(h/2)+(clone_h/2) ) ,
-					left: (e.pageX-( off.left-pos.left )-(w/2)+(clone_w/2) ) * 2,
+					top: ( e.pageY-( off.top-pos.top )-(h/2) ) ,
+					left: ( e.pageX-( off.left-pos.left )-(w/2) ),
 					visibility: "hidden",
 					zIndex: -1
 				})
@@ -1225,8 +1225,8 @@ define([
 					$clone.addClass('element-dragging');
 					$clone.css({
 						position: "absolute",
-						top: e.pageY - ( clone_h /2 ),
-						left: e.pageX - ( clone_h/2 ),
+						top: e.pageY - ( clone_h/2 ),
+						left: e.pageX - ( clone_w/2 ),
 						zIndex: 999
 					});
 				})
@@ -1245,8 +1245,8 @@ define([
 					else
 						$clone.removeClass('element-dragging-no-drop');
 					$clone.css({
-						top: e.pageY - ( clone_h /2 ),
-						left: e.pageX - ( clone_h/2 )
+						top: e.pageY - ( clone_h/2 ),
+						left: e.pageX - ( clone_w/2 )
 					});
 				})
 				.one('dragstop', function (e, ui) {

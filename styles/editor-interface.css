@@ -10703,7 +10703,8 @@ div.upfront-region-container-active > a.feature_image_selector {
 .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
 	order: 0;
 }
-.upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
+.upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
+.upfront-editable_entities_container > .upfront-module-view {
 	width: 100%;
 }
 
