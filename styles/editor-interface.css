@@ -8785,7 +8785,7 @@ body .redactor_air .redactor_toolbar {
 	padding-right: 2px !important;
 }
 .redactor_toolbar li {
-	float: left !important;
+	float: left;
 	margin: 0 !important;
 	outline: none;
 	list-style: none !important;
@@ -10595,7 +10595,7 @@ li#new-custom-breakpoint {
 .redactor_dropdown.redactor_dropdown_box_icons a,
 .redactor_dropdown.redactor_dropdown_box_icons a:link{
     color: #97b8da !important;
-    /*margin: 5px;*/
+	text-decoration: none;
     display: inline-block;
     width: 28px;
     text-align: center;
@@ -10606,16 +10606,16 @@ li#new-custom-breakpoint {
 .upfront-font-icons-controlls{
 	display: block;
 	width: 100%;
-	padding: 2px;
+	padding: 2px 0 0 0;
 	margin: 0;
 	background: #1d2b38;
 	height: 40px;
+	position: absolute;
 }
 .upfront-font-icons-controlls li{
 	display: inline-block;
-	width: 50%;
-	height: 32px;
-	padding-left: 2px;
+	height: 38px;
+	padding-left: 3px;
 }
 .upfront-font-icons-controlls li input{
 	width: 40px;
@@ -10626,18 +10626,19 @@ li#new-custom-breakpoint {
 	color: #273a4c;
 	font-size: 12px;
 	font-weight: bold;
-	padding: 5px;
+	padding: 1px;
 	text-align: center;
 }
 .upfront-font-icons-controlls li label{
 	float: left;
 	line-height: 38px;
-	padding-right: 4px;
+	padding-right: 2px;
 	color: #a5c2df;
 	font-size: 12px;
 }
-.font-icons-top-li{
-	padding-left: 3px;
+.upfront-font-icons-controlls li.font-icons-top-li{
+	padding-right: 3px;
+	float: right;
 }
 /*------------ End of Font Icons --------------*/
 #new-custom-breakpoint:before {
