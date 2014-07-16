@@ -1549,9 +1549,10 @@ define([
 				this.stopListening(this.model, 'remove', this.render);
 				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
-				this.listenTo(Upfront.Events, "entity:drag_stop", this.on_drop);
-				this.listenTo(Upfront.Events, "entity:resized", this.on_resize);
-				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:wrappers:update", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "layout:render", this.apply_flexbox_clear);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			on_entity_remove: function(e, view) {
@@ -1684,13 +1685,7 @@ define([
 					this.fix_flexbox_clear(this.$el);
 				}
 			},
-			on_drop: function () {
-				this.fix_flexbox_clear(this.$el);
-			},
-			on_resize: function () {
-				this.fix_flexbox_clear(this.$el);
-			},
-			on_wrappers_update: function () {
+			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
 			},
 			on_change_breakpoint: function (breakpoint) {
