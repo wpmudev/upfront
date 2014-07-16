@@ -1552,6 +1552,7 @@ input.upfront-field-text:hover,
 }
 .upfront-additive_multiselection .labels_list ul.empty {
 	border: none;
+	display: none;
 }
 .upfront-suggest-list,
 .upfront-additive_multiselection .labels_list li {
