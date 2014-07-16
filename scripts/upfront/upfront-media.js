@@ -156,13 +156,15 @@ define(function() {
 		},
 		to_defaults: function () {
 			var types = new MediaFilter_Collection([]),
-				has_images = (this.allowed_media_types.indexOf('images') >= 0)
+				has_all = (this.allowed_media_types.indexOf('other') >= 0)
 			;
 			if (!this.allowed_media_types.length) this.allowed_media_types = this.default_media_types;
-			if (has_images) types.add(new MediaFilter_Item({filter: "Images", value: 'images', state: true}), {silent: true});
-			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: "Videos", value: 'videos', state: !has_images}), {silent: true});
-			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: "Audios", value: 'audios', state: !has_images}), {silent: true});
-			if (this.allowed_media_types.indexOf('other') >= 0) types.add(new MediaFilter_Item({filter: "All", value: 'other', state: !has_images}), {silent: true});
+
+			if (this.allowed_media_types.indexOf('images') >= 0) types.add(new MediaFilter_Item({filter: "Images", value: 'images', state: !has_all}), {silent: true});
+			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: "Videos", value: 'videos', state: !has_all}), {silent: true});
+			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: "Audios", value: 'audios', state: !has_all}), {silent: true});
+			if (this.allowed_media_types.indexOf('other') >= 0) types.add(new MediaFilter_Item({filter: "All", value: 'other', state: has_all}), {silent: true});
+
 			this.set("type", types, {silent: true});
 
 			this.set("recent", new MediaFilter_Collection([
@@ -285,7 +287,7 @@ define(function() {
 			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
 		},
 		render: function () {
-			this.render_filters();
+			var me = this; setTimeout(function () { me.render_filters(); }, 1); // Fixes the initial inability to toggle filters
 		},
 		render_filters: function () {
 			var control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
@@ -674,8 +676,7 @@ define(function() {
 		var MediaManager_FiltersControl = Backbone.View.extend({
 			className: "upfront-filter-control",
 			events: {
-				"click": "stop_prop",
-				"change #media_manager-show_titles": "toggle_titles"
+				//"click": "stop_prop"
 			},
 			stop_prop: function (e) { e.stopPropagation(); },
 			initialize: function () {
@@ -688,11 +689,6 @@ define(function() {
 				this.$el.empty()
 					.append(this.filter_selection.$el)
 					.append(this.filters_selected.$el)
-					/*.append(
-						"<input type='checkbox' checked id='media_manager-show_titles' />" +
-						'&nbsp;' +
-						'<label for="media_manager-show_titles">Show titles</label>'
-					)*/
 				;
 			},
 			toggle_titles: function (e) {
@@ -758,8 +754,6 @@ define(function() {
 
 		var MediaManager_FiltersSelectionControl = Backbone.View.extend({
 			className: "upfront-filter_selection-control clearfix",
-			events: {
-			},
 			initialize: function () {
 				this.controls = _([
 					new Control_MediaType(),
@@ -772,7 +766,7 @@ define(function() {
 			render: function () {
 				var me = this,
 					tpl = _.template("<li style='display:none'><a href='#' data-idx='{{idx}}'>{{name}}</a></li>"),
-					values = []
+					values = [{label: '&nbsp;', value: false}]
 				;
 				this.controls.each(function (ctl, idx) {
 					values.push({label: ctl.get_name(), value: idx});
@@ -788,20 +782,22 @@ define(function() {
 					name: "filter-selection",
 					width: '100%',
 					values: values,
+					multiple: false,
+					default_value: 'false',
 					change: function(){
 						me.select_control(this.get_value());
 					}
 				});
 				this.control_field.render();
 				this.$el.prepend(this.control_field.$el);
-
-				Upfront.Events.on("media_manager:media:filters_updated");
 			},
 			select_control: function (idx) {
-				var control = this.controls.toArray()[idx]
-				;
+				this.$control.empty();
+				if ('false' === idx) return false;
+
+				var control = this.controls.toArray()[idx];
 				control.render();
-				this.$control.empty().append(control.$el);
+				this.$control.append(control.$el);
 				return false;
 			}
 		});
