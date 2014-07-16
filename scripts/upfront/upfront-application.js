@@ -1011,6 +1011,7 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	start: function () {
 		Upfront.Util.log("Starting responsive mode.")
 		this.stop();
+		this.Objects = Upfront.Application.LayoutEditor.Objects;
 		this.set_up_event_plumbing_before_render();
     	Upfront.Application.sidebar.render();
     	this.topbar = new Upfront.Views.Editor.Topbar.Topbar();

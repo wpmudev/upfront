@@ -3283,7 +3283,6 @@ define([
 				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function (e) {
-				console.log(e)
 				//Check we are not selecting text
 				var selection = document.getSelection ? document.getSelection() : document.selection;
 				if(selection && selection.type == 'Range')
