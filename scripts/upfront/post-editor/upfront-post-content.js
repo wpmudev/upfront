@@ -581,10 +581,7 @@ var PostContentEditor = Backbone.View.extend({
 		this.bar.render();
 		this.$el.append(this.bar.$el);
 		this.bar.stick();
-		$.ajax({
-		  url: "http://gagan",
-		  context: document.body
-		});
+
 		return;
 	},
 
@@ -859,7 +856,7 @@ var EditionBar = Backbone.View.extend({
 		if(!date && !this.initialDate)
 			return {
 				key: 'Publish',
-				text: 'Inmediately'
+				text: 'Immediately'
 			};
 
 		if(date.getTime() == this.initialDate){

@@ -34,7 +34,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	public function intercept_page () {
 		if (!$this->_parse_request(true)) return false;
 		//if ($this->get_slug() != get_query_var('name')) return false;
-		$this->render();
+		//$this->render();
 	}
 
 	public function parse_page () {
@@ -866,19 +866,19 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$updated = array();
 
-		if($data['removed']){
+		if(!empty($data['removed'])){
 			foreach($data['removed'] as $meta)
 				delete_metadata($meta_type, $object_id, $meta['meta_key']);
 		}
 
-		if($data['added']){
+		if(!empty($data['added'])){
 			foreach($data['added'] as $meta)
-				update_metadata($meta_type, $object_id, $meta['meta_key'], $meta['meta_value']);
+				update_metadata($meta_type, $object_id, $meta['meta_key'], (!empty($meta['meta_value']) ? $meta['meta_value'] : false));
 		}
 
-		if($data['changed']){
+		if(!empty($data['changed'])){
 			foreach($data['changed'] as $meta)
-				update_metadata($meta_type, $object_id, $meta['meta_key'], $meta['meta_value']);
+				update_metadata($meta_type, $object_id, $meta['meta_key'], (!empty($meta['meta_value']) ? $meta['meta_value'] : false));
 
 		}
 
