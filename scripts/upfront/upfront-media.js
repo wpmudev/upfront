@@ -1467,6 +1467,7 @@ define(function() {
 			}).done(function (response) {
 				me.model.set(response.data, {silent:true});
 				me.preview_pane.trigger("embed:media:imported");
+				me.embed_pane.clear_updating_flag();
 				me.embed_pane.render();
 				me.preview_pane.render();
 			});
@@ -1474,6 +1475,7 @@ define(function() {
 	});
 		var MediaManager_Embed_DetailsPane = Backbone.View.extend({
 			className: "upfront-pane",
+			embed_is_being_updated: false,
 			events: {
 				"click button": "save"
 			},
@@ -1495,16 +1497,27 @@ define(function() {
 				this.$el.append('<button type="button">OK</button>');
 			},
 			editable_updated: function () {
+				this.embed_is_being_updated = true;
 				this.trigger("embed:editable:updated");
 			},
+			clear_updating_flag: function () {
+				this.embed_is_being_updated = false;
+			},
 			save: function () {
+				if (!this.model) return false;
+				var me = this;
+				if (!this.model.get("ID") && this.embed_is_being_updated) {
+					// A case when an embed is still being fetched but OK is clicked
+					setTimeout(function () {
+						me.save();
+					}, 500);
+					return false;
+				}
 				//this.editables.invoke("update"); // Do NOT!! invoke the update
-				var me = this,
-					data = {
-						action: "upfront-media-update_media_item",
-						data: this.model.toJSON()
-					}
-				;
+				var data = {
+					action: "upfront-media-update_media_item",
+					data: this.model.toJSON()
+				};
 				Upfront.Util.post(data)
 					.done(function () {
 						me.model.trigger("change");
