@@ -533,8 +533,8 @@ var _alpha = "alpha",
 				size = parseInt(styles.fontSize, 10);
 
 				// Font family
-				if (dont_compare || styles.fontFamily.indexOf(typography[element].font_face) === -1 ||
-						styles.fontFamily.indexOf(typography[element].font_family) === -1) {
+				if ( !_.isUndefined(typography[element]) && ( dont_compare || styles.fontFamily.indexOf(typography[element].font_face) === -1 ||
+						styles.fontFamily.indexOf(typography[element].font_family) === -1)) {
 					font_family = styles.fontFamily.split(',');
 					typography[element].font_face = font_family[0].trim();
 					typography[element].font_family = font_family.lenght > 1 ? font_family[1].trim() : '';
@@ -561,7 +561,7 @@ var _alpha = "alpha",
 						color_values[2].trim(), ', ', color_alpha, ')'].join('');
 				}
 
-				saved_color = typography[element].color;
+				saved_color = _.isUndefined( typography[element] ) ? "" :  typography[element].color;
 				// If it is rgb and does not have alpha, alpha is 1
 				if (saved_color.indexOf('rgb') > -1 &&	saved_color.indexOf('rgba') === -1) {
 					// Normalize to rgba
@@ -573,27 +573,32 @@ var _alpha = "alpha",
 				// Finally check color
 				//TODO handle special cases 0.5 and 0.3 for alpha, since computed value from browser is 0.49 and 0.29 respectively
 				if (dont_compare || computed_color.replace(/ /g, '') != saved_color.replace(/ /g, '')) {
-					typography[element].color = computed_color;
+					if( !( _.isUndefined( element ) ||  _.isUndefined( typography[element] ) ) ){
+						typography[element].color = computed_color;
+					}
 					typography_updated = true;
 				}
 
 				// Weight
 				computed_weight = Upfront.Views.Font_Model.normalize_weight(styles.fontWeight);
-				saved_weight = Upfront.Views.Font_Model.normalize_weight(typography[element].weight);
+				saved_weight = _.isUndefined( typography[element] ) ? "" : Upfront.Views.Font_Model.normalize_weight(typography[element].weight);
 				if (computed_weight != saved_weight) {
-					typography[element].weight = computed_weight;
+					if( !( _.isUndefined( element ) ||  _.isUndefined( typography[element] ) ) ){
+						typography[element].weight = computed_weight;
+					}
+					
 					typography_updated = true;
 				}
 
 				// Style - italic, normal, oblique
-				if (typography[element].style != styles.fontStyle) {
+				if (!( _.isUndefined( element ) ||  _.isUndefined( typography[element] ) ) && typography[element].style != styles.fontStyle) {
 					typography[element].style = styles.fontStyle;
 				}
 
 				if ( !is_inline ) {
 					// Font size
 					computed_font_size = parseInt(styles.fontSize, 10);
-					if (dont_compare || typography[element].size != computed_font_size) {
+					if (!( _.isUndefined( element ) ||  _.isUndefined( typography[element] ) ) && (dont_compare || typography[element].size != computed_font_size)) {
 						typography[element].size = computed_font_size;
 						typography_updated = true;
 					}
@@ -601,7 +606,7 @@ var _alpha = "alpha",
 					// Line height
 					line_height = parseInt(styles.lineHeight, 10);
 					line_height = Math.round(line_height / size * 10) / 10;
-					if (dont_compare || typography[element].line_height != line_height) {
+					if ( !( _.isUndefined( element ) ||  _.isUndefined( typography[element] ) ) &&  (dont_compare || typography[element].line_height != line_height)) {
 						typography[element].line_height = line_height;
 						typography_updated = true;
 					}

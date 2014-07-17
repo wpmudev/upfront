@@ -163,7 +163,10 @@ var hackRedactor = function(){
 			orgn = orgn.nextSibling;
 			orgo = 0;
 			focn = focn.previousSibling;
-			foco = typeof focn.length != 'undefined' ? focn.length : (focn.innerText ? focn.innerText.length - 1 : 0);
+			foco = ( !_.isEmpty(focn) && !_.isUndefined( focn.length ) ) 
+					? focn.length : 
+						( !_.isEmpty(focn) && !_.isUndefined( focn.innerText ) ) ? focn.innerText.length - 1 : 0;
+
 		}
 
 
@@ -2155,7 +2158,7 @@ RedactorPlugins.icons = {
     },
     init : function(){
         UeditorEvents.on("ueditor:key:down", function(redactor, e){
-            if( $( redactor.getParent() ).hasClass("parlyph") || $( redactor.getCurrent() ).hasClass("parlyph")){
+            if( $( redactor.getParent() ).hasClass("uf_font_icon") || $( redactor.getCurrent() ).hasClass("uf_font_icon")){
                 if( !( e.keyCode < 48 || e.keyCode > 90 ) ){
                     e.preventDefault();
                 }
@@ -2204,11 +2207,10 @@ RedactorPlugins.icons = {
         	var $sel = $(this.redactor.getParent()).eq(0),
         		self = this;
 
-        	if( !$sel.hasClass("parlyph") ){
-        		if( $sel.parent().hasClass("parlyph") ) {$sel = $sel.parent()};
-        		// if( $sel.children().hasClass("parlyph") ) {$sel = $sel.find(".parlyph")};
+        	if( !$sel.hasClass("uf_font_icon") ){
+        		if( $sel.parent().hasClass("uf_font_icon") ) {$sel = $sel.parent()};
         	}
-        	if( $sel.hasClass("parlyph") ){
+        	if( $sel.hasClass("uf_font_icon") ){
             	this.$("#font-icons-size").val( parseFloat( $sel.css("font-size") ) );
             	this.$("#font-icons-top").val( parseFloat( $sel.css("top") ) );
 
