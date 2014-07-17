@@ -38,7 +38,6 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			content = $(content).html();
 		}
 
-		$(content).find('div.plaintxt_padding');
 		var data = {
 			"content" : content,
 			"background_color" : this.model.get_property_value_by_name("background_color"),
@@ -77,7 +76,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 					text = ''
 				;
 				try { text = ed.getValue(); } catch (e) { text = ''; }
-				if (text) me.model.set_content($(text).html(), {silent: true});
+				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				Upfront.Events.trigger('upfront:element:edit:stop');
 			})
 			.on('syncAfter', function(){

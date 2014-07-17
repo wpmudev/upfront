@@ -681,7 +681,10 @@ var ImageInsert = UeditorInsert.extend({
 		if(imagePost.selected_size == 'full')
 			return imagePost.image;
 
-		var dimensions = imagePost.selected_size.split('x');
+		var dimensions = imagePost.selected_size
+			? imagePost.selected_size.split('x')
+			: []
+		;
 		if(dimensions.length != 2)
 			return imagePost.image;
 

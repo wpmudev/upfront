@@ -1439,6 +1439,7 @@ var InsertManager = Backbone.View.extend({
 console.log("POSITION BEFORE", block, where);
 if (!block) block = me.$el.find("p:last");
 if (!where) where = 'after';
+if (block.is(".nosortable")) where = 'append'; // Take padding into account
 console.log("POSITION AFTER", block, where);
 							block[where](insert.$el);
 							me.trigger('insert:added', insert);
