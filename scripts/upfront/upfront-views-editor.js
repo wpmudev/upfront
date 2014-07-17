@@ -6812,6 +6812,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				is_layout = ( this.model instanceof Upfront.Models.Layout ),
 				is_region = ( this.model instanceof Upfront.Models.Region ),
 				sub = is_region && this.model.is_main() ? false : this.model.get('sub'),
+				bg_image = this.model.get_property_value_by_name('background_image'),
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
 				region_types = [
@@ -6829,7 +6830,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			var bg_type = new Field_Select({
 					model: this.model,
 					property: 'background_type',
-					default_value: 'color',
+					default_value: !bg_image ? 'color' : 'image',
 					icon_class: 'upfront-region-field-icon',
 					values: region_types,
 					change: function () {

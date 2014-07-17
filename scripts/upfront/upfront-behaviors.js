@@ -3518,23 +3518,10 @@ var GridEditor = {
 				Upfront.Events.trigger("entity:region_container:resize_start", view, view.model);
 				// Disable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', false);
-console.log('start resizing')
 				// Prevents quick scroll when resizing
 				ed.resizing = window.scrollY;
 			},
 			resize: function(e, ui){
-				// @TODO Suppppperrrr annoying bug happen on resizable 1.10.3, fix only for this version and make sure to recheck in future update on this lib!
-				// Normalize the ui.size
-				/*var that = $(this).data('ui-resizable'),
-					woset = Math.abs( that.offset.left ) + that.sizeDiff.width,
-					isParent = that.containerElement.get(0) === that.element.parent().get(0),
-					isOffsetRelative = /relative|absolute/.test(that.containerElement.css("position"));
-					if(isParent && isOffsetRelative) {
-						woset -= that.parentData.left;
-					};
-					if ( woset + that.size.width >= that.parentData.width )
-						ui.size.width += that.parentData.left;*/
-				// End this fix
 				var $helper = ui.helper,
 					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
 					rsz_row = Math.ceil(h/ed.baseline)

@@ -1870,6 +1870,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.update_overlay);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
+				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:added", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
@@ -3303,7 +3304,7 @@ define([
 					}
 				}
 				// Close region editing on click anywhere out the region
-				if(!$(e.target).closest('.upfront-region-container-active').length || !$(e.target).closest('.upfront-inline-panels').length)
+				if ( $(e.target).hasClass('upfront-region-editing-overlay') && !$('.upfront-region-bg-setting-open').length )
 					Upfront.Events.trigger("entity:region:deactivated");
 				// Unselect selection
 				if ( !Upfront.Behaviors.LayoutEditor.selecting )
