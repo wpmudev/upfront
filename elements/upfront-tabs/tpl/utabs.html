@@ -47,12 +47,12 @@
         <div class="inner-box">
           <span style="width: <?php echo $tabs_fixed_width ?>"><?php echo $tabs[$i]['title'] ?></span>
         </div>
-        <?php if ($show_remove) { ?>
+        <?php if (!empty($show_remove)) { ?>
         <i></i>
         <?php } ?>
       </div>
       <?php } ?>
-      <?php if ($show_add) { ?>
+      <?php if (!empty($show_add)) { ?>
       <div class="add-tab">+</div>
       <?php } ?>
     </div>

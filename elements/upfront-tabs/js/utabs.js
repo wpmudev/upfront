@@ -37,7 +37,7 @@
           'click .tabs-tab': 'onTabClick',
           'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
           'keydown .tab-content-active': 'onContentKeydown',
-          'dblclick .tab-content-active': 'onContentDblclick',
+          //'dblclick .tab-content-active': 'onContentDblclick',
           'click i': 'deleteTab'
         });
         this.delegateEvents();
@@ -127,15 +127,13 @@
         $content.attr('contenteditable', true)
           .addClass('upfront-object');
 
-        //this.editor = CKEDITOR.inline($content[0]);
         $content.ueditor({
           linebreaks: false,
-          autostart: false,
-          upfrontMedia: false,
-          upfrontImages: false
+          inserts: {},
+          autostart: false
         });
-        $content.focus();
-        this.$el.parent().parent().parent().draggable('disable');
+        //$content.focus();
+        //this.$el.parent().parent().parent().draggable('disable');
       },
 
       onContentKeydown: function(event) {
@@ -143,9 +141,13 @@
       },
 
       saveTabContent: function() {
-        var $content = this.$el.find('.tab-content-active');
-        var tabId = $content.attr('id').split('-').pop();
-        this.property('tabs')[tabId].content = $content.html();
+        var $content = this.$el.find('.tab-content-active'),
+          tabId = $content.attr('id').split('-').pop(),
+          ed = $content.data("ueditor"),
+          text = ''
+        ;
+        try { text = ed.getValue(); } catch (e) { text = $content.html(); }
+        this.property('tabs')[tabId].content = text;
       },
 
       stopEdit: function() {
@@ -203,6 +205,23 @@
           self.fixTabWidth();
           self.addTooltips();
         }, 10, this);
+
+        var $tabs = this.$el.find(".tab-content");
+        $tabs.each(function () {
+          var $content = $(this);
+          $content.ueditor({
+            linebreaks: false,
+            inserts: {},
+            autostart: false
+          })
+            .on("start", function () {
+              Upfront.Events.trigger('upfront:element:edit:start', 'text');
+            })
+            .on("stop", function () {
+              Upfront.Events.trigger('upfront:element:edit:stop');
+            })
+          ;
+        });
       },
 
       addTooltips: function() {

@@ -1,5 +1,7 @@
 (function ($) {
 
+window.empty = function (what) { return "undefined" === typeof what; };
+
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
 	var currTime = new Date().getTime(),
