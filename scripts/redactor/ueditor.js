@@ -163,7 +163,7 @@ var hackRedactor = function(){
 			orgn = orgn.nextSibling;
 			orgo = 0;
 			focn = focn.previousSibling;
-			foco = typeof focn.length != 'undefined' ? focn.length : focn.innerText.length - 1;
+			foco = typeof focn.length != 'undefined' ? focn.length : (focn.innerText ? focn.innerText.length - 1 : 0);
 		}
 
 
@@ -1395,8 +1395,10 @@ var InsertManager = Backbone.View.extend({
 
 		bindMouseEvents();
 
-		if(!parent.find('#upfront-post-media-trigger').length)
+		if(!parent.find('#upfront-post-media-trigger').length) {
 			parent.append('<div class="upfront-image-attachment-bits" id="upfront-post-media-trigger">');
+			//me.$el.find("p").append('<div class="upfront-image-attachment-bits" id="upfront-post-media-trigger">');
+		}
 
 		me.mediaTrigger = parent.find('#upfront-post-media-trigger')
 			.off('click')
@@ -1434,6 +1436,10 @@ var InsertManager = Backbone.View.extend({
 							//me.trigger('insert:prechange'); // "me" is the view
 							//Create the insert
 							insert.render();
+console.log("POSITION BEFORE", block, where);
+if (!block) block = me.$el.find("p:last");
+if (!where) where = 'after';
+console.log("POSITION AFTER", block, where);
 							block[where](insert.$el);
 							me.trigger('insert:added', insert);
 							me.insertsData[insert.data.id] = insert.data.toJSON();

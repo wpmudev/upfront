@@ -676,7 +676,7 @@ define(function() {
 		var MediaManager_FiltersControl = Backbone.View.extend({
 			className: "upfront-filter-control",
 			events: {
-				//"click": "stop_prop"
+				"click": "stop_prop"
 			},
 			stop_prop: function (e) { e.stopPropagation(); },
 			initialize: function () {

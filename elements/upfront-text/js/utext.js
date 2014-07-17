@@ -61,6 +61,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			.addClass('upfront-plain_txt')
 			.ueditor({
 				linebreaks: false,
+				inserts: {},
 				autostart: false
 			})
 			.on('start', function(){
@@ -72,10 +73,16 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
+				var ed = me.$el.find('.upfront-object-content').data("ueditor"),
+					text = ''
+				;
+				try { text = ed.getValue(); } catch (e) { text = ''; }
+				if (text) me.model.set_content($(text).html(), {silent: true});
 				Upfront.Events.trigger('upfront:element:edit:stop');
 			})
 			.on('syncAfter', function(){
-				me.model.set_content($(this).html(), {silent: true});
+				var text = $(this).html();
+				if (text) me.model.set_content($(text).html(), {silent: true});
 			})
 		;
 
