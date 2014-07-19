@@ -1,6 +1,6 @@
 (function ($) {
 
-window.empty = function (what) { return "undefined" === typeof what; };
+window.empty = function (what) { return "undefined" === typeof what ? true : !what; };
 
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){

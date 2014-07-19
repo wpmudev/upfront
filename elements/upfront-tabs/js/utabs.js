@@ -47,7 +47,7 @@
 				this.model.get("properties").bind("remove", this.render, this);
 
 				Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-				this.on('deactivated', this.stopEdit, this);
+				//this.on('deactivated', this.stopEdit, this);
 
 				this.debouncedSave = _.debounce(this.saveTabContent, 1000);
 			},
@@ -118,15 +118,17 @@
 				$tab.siblings().removeClass('tabs-tab-active').removeAttr('contenteditable');
 
 				// If active content is edited save edits & destroy editor.
+				/*
 				if (this.$el.find('.tab-content-active').attr('contenteditable') === true) {
 					this.stopEdit();
 				}
+				*/
 				contentId = $tab.data('content-id');
 				$('.tab-content').removeClass('tab-content-active');
 				$('#' + contentId).addClass('tab-content-active');
 
 			},
-
+/*
 			onContentDblclick: function(event) {
 				var $content = $(event.currentTarget);
 
@@ -143,7 +145,7 @@
 				//$content.focus();
 				//this.$el.parent().parent().parent().draggable('disable');
 			},
-
+*/
 			onContentKeydown: function(event) {
 				this.debouncedSave();
 			},
@@ -157,7 +159,7 @@
 				try { text = ed.getValue(); } catch (e) { text = $content.html(); }
 				this.property('tabs')[tabId].content = text;
 			},
-
+/*
 			stopEdit: function() {
 				this.saveTabContent();
 				this.$el.find('.tab-content-active')
@@ -167,7 +169,7 @@
 				this.$el.parent().parent().parent().draggable('enable');
 				this.delegateEvents();
 			},
-
+*/
 			onTabKeydown: function(event) {
 				var id;
 				if (event.keyCode === 13) {
