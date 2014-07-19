@@ -1389,6 +1389,12 @@ var InsertManager = Backbone.View.extend({
 				;
 			}
 		;
+		var ed = this.$el.data("ueditor");
+		if (ed && ed.redactor) {
+			ed.redactor.events.on("ueditor:stop", function () {
+				me.currentBlock = me.lastBlock = false;
+			});
+		}
 
 		this.ticking = false;
 
@@ -1406,6 +1412,7 @@ var InsertManager = Backbone.View.extend({
 		me.mediaTrigger = parent.find('#upfront-post-media-trigger')
 			.off('click')
 			.on('click', function (e){
+				e.stopPropagation();
 				e.preventDefault();
 
 				me.$el.off('mousemove', onMousemove);
@@ -1423,6 +1430,7 @@ var InsertManager = Backbone.View.extend({
 
 				tooltip.on('click', 'a', function(e){
 					e.preventDefault();
+					e.stopPropagation();
 					var type = $(e.target).data('insert'),
 						insert = new Inserts.inserts[type](),
 						block = me.lastBlock,
@@ -1442,7 +1450,7 @@ var InsertManager = Backbone.View.extend({
 console.log("POSITION BEFORE", block, where);
 if (!block) block = me.$el.find("p:last");
 if (!where) where = 'after';
-if (block.is(".nosortable")) where = 'append'; // Take padding into account
+if (block.is(".nosortable") && !block.is("p")) where = 'append'; // Take padding into account
 console.log("POSITION AFTER", block, where);
 							block[where](insert.$el);
 							me.trigger('insert:added', insert);
