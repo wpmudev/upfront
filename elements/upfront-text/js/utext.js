@@ -75,7 +75,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 					text = ''
 				;
-				try { text = ed.getValue(); } catch (e) { text = ''; }
+				try { text = ed.getValue(true); } catch (e) { text = ''; }
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				Upfront.Events.trigger('upfront:element:edit:stop');
 			})

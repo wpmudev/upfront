@@ -629,6 +629,24 @@ var ImageInsert = UeditorInsert.extend({
 		controls.css('margin-left', margin + 'px');
 	},
 
+	getSimpleOutput: function () {
+		var out = this.el.cloneNode(),
+			data = this.data.toJSON()
+		;
+
+		data.image = data.imageFull;
+
+		this.data.set('width', this.$el.width(), {silent: true});
+		this.data.trigger('update');
+
+		data.isLocal = parseInt(data.isLocal, 10);
+
+		out.innerHTML = this.tpl(data);
+		$(out).width(this.data.get('width'));
+		// return the HTML in a string
+		return  $('<div>').html(out).html();
+	},
+
 	getOutput: function(){
 		var out = this.el.cloneNode(),
 			data = this.data.toJSON()
@@ -924,7 +942,7 @@ var ImageInsert = UeditorInsert.extend({
 			},
 			widthPivot = pivot == 'width'
 		;
-console.log("size info", wrapperSize, imageSize, widthPivot);
+
 		imageData.top = widthPivot ? -Math.round((imageData.height - wrapperSize.height) / 2) : 0;
 		imageData.left = widthPivot ? 0 : -Math.round((imageData.width - wrapperSize.width) / 2);
 

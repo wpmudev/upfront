@@ -72,7 +72,7 @@
 			} else {
 				this.$el.find('.accordion-panel-content').each(function () {
 					var ed = $(this).data("ueditor");
-					ed.stop();
+					if (ed) ed.stop();
 				});
 				$panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
 				$panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
@@ -96,10 +96,12 @@
 				ed = $content.data("ueditor"),
 				text = ''
 			;
-			try { text = ed.getValue(); } catch (e) { text = $content.html(); }
+			try { text = ed.getValue(true); } catch (e) { text = ''; }
 
-			//this.property('accordion')[panelId].content = $content.html();
-			this.property('accordion')[panelId].content = text;
+			this.property('accordion')[panelId].content = text || $content.html();
+			if (text) {
+				this.render();
+			}
 		},
 
 

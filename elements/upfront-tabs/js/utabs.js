@@ -156,7 +156,7 @@
 					ed = $content.data("ueditor"),
 					text = ''
 				;
-				try { text = ed.getValue(); } catch (e) { text = $content.html(); }
+				try { text = ed.getValue(true); } catch (e) { text = $content.html(); }
 				this.property('tabs')[tabId].content = text;
 			},
 /*

@@ -303,7 +303,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$img->set_quality(90);
 		$saved = $img->save($imagepath);
 
-		if ( is_wp_error( $img ) )
+		if ( is_wp_error( $img ) || empty($imageData['id']) )
 			return array('error' => true, 'msg' => 'There was an error saving the edited image');
 
 		$urlOriginal = wp_get_attachment_image_src($imageData['id'], 'full');

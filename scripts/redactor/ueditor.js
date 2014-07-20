@@ -529,11 +529,11 @@ Ueditor.prototype = {
 			}
 		});
 	},
-	getValue: function(){
+	getValue: function(is_simple_element){
 		this.redactor.sync();
 		var html = this.redactor.$source.val();
 		if(this.insertManager)
-			html = this.insertManager.insertExport(html);
+			html = this.insertManager.insertExport(html, is_simple_element);
 
 		return html;
 	},
@@ -1546,12 +1546,14 @@ console.log("POSITION AFTER", block, where);
 		this.trigger('insert:removed');
 	},
 
-	insertExport: function(html){
+	insertExport: function(html, is_simple_element){
 		var $html = $('<div>').html(html);
 		$html.find('.nosortable').removeClass('nosortable');
 		_.each(this.inserts, function(insert){
-			var elementId = '#' + insert.data.id;
-			$html.find(elementId).replaceWith(insert.getOutput());
+			var elementId = '#' + insert.data.id,
+				out = is_simple_element ? insert.getSimpleOutput() : insert.getOutput()
+			;
+			$html.find(elementId).replaceWith(out);
 		});
 		return $html.html();
 	},
