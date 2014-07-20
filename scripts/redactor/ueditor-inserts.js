@@ -890,17 +890,19 @@ var ImageInsert = UeditorInsert.extend({
 		if(e.target != this.el)
 			return;
 
-		console.log('resizing');
+		//console.log('resizing');
 		if(this.resizeCache.align == 'right')
 			$(this.$el).css('left', 0);
 
 		var wrapper = this.resizeCache.wrapper,
+			editable = wrapper.parents(".ueditable"),
 			captionPosition = this.resizeCache.captionPosition
 		;
 
-		if(captionPosition == 'nocaption')
-			wrapper.css(ui.size);
-		else if(captionPosition == 'bottom')
+		if(captionPosition == 'nocaption') {
+			if (editable.length && ui.size.width > editable.width()) return false;
+			else wrapper.css(ui.size);
+		} else if(captionPosition == 'bottom')
 			wrapper.css({width: ui.size.width, height: ui.size.height - this.resizeCache.caption.outerHeight()});
 		else
 			wrapper.height(ui.size.height);
@@ -922,7 +924,7 @@ var ImageInsert = UeditorInsert.extend({
 			},
 			widthPivot = pivot == 'width'
 		;
-
+console.log("size info", wrapperSize, imageSize, widthPivot);
 		imageData.top = widthPivot ? -Math.round((imageData.height - wrapperSize.height) / 2) : 0;
 		imageData.left = widthPivot ? 0 : -Math.round((imageData.width - wrapperSize.width) / 2);
 

@@ -2940,7 +2940,7 @@ var Control = Upfront.Views.Editor.InlinePanels.Item.extend({
 });
 
 var DialogControl = Control.extend({
-	panelTpl: $editorTpl.find('#panel-control-tpl').html(),
+	panelTpl: $.trim($editorTpl.find('#panel-control-tpl').html()),
 	events: {
 		'click': 'onClickControl',
 		'click button': 'onClickOk'
