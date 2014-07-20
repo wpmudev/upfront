@@ -21,7 +21,11 @@
 		cssSelectors: {
 			'.accordion-panel': {label: 'Panel containers', info: 'The wrapper layer of every panel.'},
 			'.accordion-panel-title': {label: 'Panel header', info: 'The header title of every panel'},
-			'.accordion-panel-content': {label: 'Panel body', info: 'The content part of every panel.'}
+			'.accordion-panel-content': {label: 'Panel body', info: 'The content part of every panel.'},
+			'.accordion-panel:first-of-type' : {label: 'First Panel container', info: 'The wrapper layer of first panel.'},
+			'.accordion-panel:last-child' : {label: 'Last Panel container', info: 'The wrapper layer of last panel.'},
+			'.accordion-panel:nth-child(2n+3)' : {label: 'Odd Panel containers', info: 'The wrapper layer of odd panels.'},
+			'.accordion-panel:nth-child(2n)' : {label: 'Even Panel containers', info: 'The wrapper layer of even panels.'}
 		},
 
 		initialize: function(){
@@ -174,6 +178,8 @@
 				});
 				self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 			}, 10, this);
+			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
+
 		},
 
 		addTooltips: function() {
@@ -222,7 +228,7 @@
 
 		var AccordionSettings = Upfront.Views.Editor.Settings.Settings.extend({
 			initialize: function (opts) {
-		this.options = opts;
+			this.options = opts;
 				this.panels = _([
 					new AppearancePanel({model: this.model})
 				]);
@@ -236,7 +242,7 @@
 		var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			className: 'uaccordion-settings-panel',
 			initialize: function (opts) {
-		this.options = opts;
+				this.options = opts;
 				var render_all,
 					me = this;
 
@@ -250,37 +256,37 @@
 				this.settings = _([
 					new Upfront.Views.Editor.Settings.Item({
 						model: this.model,
-						title: "Display style",
+						title: "Appearance",
 						fields: [
-							new Upfront.Views.Editor.Field.Radios({
-								className: 'inline-radios',
-								model: this.model,
-								property: 'style_type',
-								label: "",
-								values: [
-									{ label: "", value: 'theme_defined' },
-									{ label: "Custom", value: 'custom' }
-								]
-							}),
-							new Upfront.Views.Editor.Field.Select({
-								model: this.model,
-								property: 'theme_style',
-								label: "Theme Styles",
-								values: [
-									{ label: "Style 1", value: 'style1' },
-									{ label: "Style 2", value: 'style2' },
-									{ label: "Style 3", value: 'style3' },
-								]
-							}),
+							// new Upfront.Views.Editor.Field.Radios({
+							// 	className: 'inline-radios',
+							// 	model: this.model,
+							// 	property: 'style_type',
+							// 	label: "",
+							// 	values: [
+							// 		{ label: "", value: 'theme_defined' },
+							// 		{ label: "Custom", value: 'custom' }
+							// 	]
+							// }),
+							// new Upfront.Views.Editor.Field.Select({
+							// 	model: this.model,
+							// 	property: 'theme_style',
+							// 	label: "Theme Styles",
+							// 	values: [
+							// 		{ label: "Style 1", value: 'style1' },
+							// 		{ label: "Style 2", value: 'style2' },
+							// 		{ label: "Style 3", value: 'style3' },
+							// 	]
+							// }),
 							new Upfront.Views.Editor.Field.Color({
-								className: 'upfront-field-wrap upfront-field-wrap-color sp-cf header-border-color',
+								className: 'upfront-field-wrap upfront-field-wrap-color sp-cf panel-bg-color',
 								model: this.model,
-								property: 'header_border_color',
-								label: 'Header Border:',
+								property: 'panel_bg_color',
+								label: 'Section Background:',
 								spectrum: {
 									preferredFormat: "hsl",
-									change: this.onHeaderBorderChange,
-									move: this.onHeaderBorderChange
+									change: this.onPanelBgChange,
+									move: this.onPanelBgChange
 								}
 							}),
 							new Upfront.Views.Editor.Field.Color({
@@ -295,26 +301,31 @@
 								}
 							}),
 							new Upfront.Views.Editor.Field.Color({
-								className: 'upfront-field-wrap upfront-field-wrap-color sp-cf panel-bg-color',
+								className: 'upfront-field-wrap upfront-field-wrap-color sp-cf header-border-color',
 								model: this.model,
-								property: 'panel_bg_color',
-								label: 'Section Background:',
+								property: 'header_border_color',
+								label: 'Header Border:',
 								spectrum: {
 									preferredFormat: "hsl",
-									change: this.onPanelBgChange,
-									move: this.onPanelBgChange
+									change: this.onHeaderBorderChange,
+									move: this.onHeaderBorderChange
 								}
 							})
 						]
 					})
 				]);
-
-				this.$el .on('change', 'input[name=style_type]', function(e){
-					me.onStyleTypeChange(e);
-				});
-				this.$el .on('change', 'input[name=theme_style]', function(e){
-					me.onThemeStyleChange(e);
-				});
+				
+				// this.$el .on('change', 'input[name=style_type]', function(e){
+				// 	me.onStyleTypeChange(e);
+				// });
+				// this.$el .on('change', 'input[name=theme_style]', function(e){
+				// 	me.onThemeStyleChange(e);
+				// });
+				
+				/**
+				 * Set style to custom as default
+				 */
+				this.property('style_type', "custom");
 			},
 
 			onStyleTypeChange: function(event) {

@@ -3864,7 +3864,7 @@ div.uinsert-selector a:hover {
 }
 
 #settings .upfront-settings-item-content {
-	padding: 0 10px;
+	padding: 2px 10px;
 }
 
 #settings .upfront-settings_panel_scroll {
@@ -10202,6 +10202,7 @@ a.upfront-css-edit:before{
   text-transform: none;
   padding: 0 5px 12px;
   font-weight: normal;
+  line-height: 28px;
 }
 
 .upfront-settings-common_panel .upfront-settings-item-title span {
@@ -10231,7 +10232,7 @@ a.upfront-css-edit:before{
   background-color: #c3d7e6;
   display: inline-block;
   position: absolute;
-  right: 10px;
+  right: 11px;
   top: 10px;
   border-radius: 50%;
 }
@@ -11231,4 +11232,13 @@ div.upfront-region-container-active > a.feature_image_selector {
 	box-shadow: 0 1px 0 #00B47C;
 	padding:2px 0;
 	text-decoration: none!important;
+}
+.uaccordion-settings-panel label{
+	float: left;
+}
+.uaccordion-settings-panel .sp-replacer{
+	margin-top: -15px;
+}
+.upfront-settings_panel_scroll .upfront-settings-item-title{
+	line-height: 8px
 }
