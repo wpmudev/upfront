@@ -8897,6 +8897,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			active_breakpoint.set({ 'active': true });
 			return active_breakpoint;
 		},
+		get_enabled: function() {
+			var enabled_breakpoints = this.where({ 'enabled': true });
+			if (_.isUndefined(enabled_breakpoints) === false && enabled_breakpoints.length > 0) return enabled_breakpoints;
+			
+			return [this.get_active()];
+			
+			
+		},
 		get_default: function() {
 			var default_breakpoint = this.findWhere({ 'default': true });
 			if (_.isUndefined(default_breakpoint)) {

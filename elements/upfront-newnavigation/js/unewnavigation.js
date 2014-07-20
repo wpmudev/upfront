@@ -283,7 +283,7 @@ var MenuItemView = Backbone.View.extend({
   			theme: 'light',
   			button: true
   		});
-console.log("createLinkPanel");
+
   		this.listenTo(linkPanel, 'link:ok', function(link){
   			var itemType = 'custom';
 
@@ -1611,7 +1611,71 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
       save_settings: function(){
         Menu_Panel.__super__.save_settings.apply(this, arguments);
         this.model.set_property('menu_items', false, true);
-      }
+      },
+	  on_save: function() {
+		  
+		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+		
+		var current_set_value = this.settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').val();
+		var current_set_alignment = this.settings._wrapped[1].fields._wrapped[0].$el.find('input:checked').val(); 
+		var current_set_over = this.settings._wrapped[1].fields._wrapped[1].$el.find('input:checked').val(); 
+		
+		model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
+
+		
+		if ( breakpoint && !breakpoint.default ){
+			if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+				model_breakpoint[breakpoint.id] = {};
+				
+			breakpoint_data = model_breakpoint[breakpoint.id];
+			
+			breakpoint_data.burger_menu = current_set_value || '';
+			breakpoint_data.burger_alignment = current_set_alignment;
+			breakpoint_data.burger_over = current_set_over;
+			
+			if(this.model.get_property_value_by_name('burger_menu') == 'yes')
+				this.settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
+			else {
+				this.settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
+			}
+			
+			this.settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
+			this.settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('burger_alignment')+'"]').attr("checked", 'checked');
+
+			this.settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
+			this.settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('burger_over')+'"]').attr("checked", 'checked');			
+			
+		}
+		
+		//force breakpoints lower in hierarchy to use burger menu if the level above is using it
+		
+		if(typeof(breakpoint) == 'undefined')
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default();
+		
+		if(current_set_value == 'yes') {
+			
+			var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+			
+			var check = false;
+			_.each(enabled_breakpoints, function(bpoint) {
+				
+				if(check) {
+					if ( !_.isObject(model_breakpoint[bpoint.attributes.id]) )
+						model_breakpoint[bpoint.attributes.id] = {};
+					breakpoint_data = model_breakpoint[bpoint.attributes.id];
+					breakpoint_data.burger_menu = current_set_value;
+				}
+
+				if(breakpoint.id == bpoint.attributes.id)
+					check = true;
+					
+			});
+		}
+		
+		this.model.set_property('breakpoint', model_breakpoint);
+		
+		return this.constructor.__super__.on_save.call(this);
+		},
     });
 
 
@@ -1663,12 +1727,83 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
              * Bootstrap the object - populate the internal
              * panels array with the panel instances we'll be showing.
              */
+			render: function() {
+				this.constructor.__super__.render.call(this);
+				
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				if ( breakpoint && !breakpoint.default ){
+					model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
+					breakpoint_data = model_breakpoint[breakpoint.id];
+					if(typeof(breakpoint_data) != 'undefined' && breakpoint_data.burger_menu == 'yes') {
+						this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
+					}
+					else {
+						this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
+					}
+					
+					if(typeof(breakpoint_data) != 'undefined') {
+						if(breakpoint_data.burger_alignment) {
+							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
+							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
+						}
+						
+						if(breakpoint_data.burger_over) {
+							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
+							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
+						}
+						
+					}
+			
+				}
+				
+				// if any of items higher in hierarchy has burger menu on, then hide the option to select/deselect burger menu
+				if(typeof(breakpoint) == 'undefined')
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default();
+			
+				var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+				var check = false;
+				for(var i = enabled_breakpoints.length-1; i >= 0; i--) {
+					if(check) {
+						console.log(enabled_breakpoints[i].id);
+						breakpoint_data = model_breakpoint[enabled_breakpoints[i].id];
+
+						if((enabled_breakpoints[i].id == 'desktop' && this.model.get_property_value_by_name('burger_menu') == 'yes') || (breakpoint_data && breakpoint_data.burger_menu == 'yes')) {
+							
+							this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.css('display', 'none');
+
+							// extra care to ensure that the newly enabled items obey the hierarchy
+
+							if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+								model_breakpoint[breakpoint.id] = {};
+								
+							breakpoint_data = model_breakpoint[breakpoint.id];
+							
+							if(!breakpoint_data.burger_menu || breakpoint_data.burger_menu != 'yes') {
+								breakpoint_data.burger_menu = 'yes';
+								this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
+								this.model.set_property('breakpoint', model_breakpoint);
+							}
+						}
+					}					
+					if(breakpoint.id == enabled_breakpoints[i].id)
+						check = true;
+				}
+				
+				// this is to turn on the display for revealed menu alignment settings in case the option is selected
+				if(this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0)
+					this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
+				else
+					this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');	
+				
+				
+			},
             initialize: function (opts) {
+				var me = this;
               this.has_tabs = false;
               this.options= opts;
                 this.panels = _([
                   // Menu
-                  new Menu_Panel({
+                  new Menu_Panel({ 
                     model: this.model,
                     label: "Menu",
                     title: "Menu settings",
@@ -1682,8 +1817,52 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                               property: 'menu_id',
                               label: "",
                               values: currentMenuItemData.get('menuList')
-                          })
+                          }),
+						  new Upfront.Views.Editor.Field.Checkboxes({
+							  model: this.model,
+							  property: 'burger_menu',
+							  label: "",
+							  values: [
+								  { label: "Use button to open menu", value: 'yes' }
+							  ],
+							  change: function() {
+								var value = this.get_value();
+								if(value[0] == 'yes')
+									me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
+								else
+									me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');	
+							  }
+						  })
                         ]
+                      }),
+					  new Upfront.Views.Editor.Settings.Item({
+                          model: this.model,
+                          title: "Revealed Menu Appearance",
+                          fields: [
+                              new Upfront.Views.Editor.Field.Radios({
+                                  model: this.model,
+                                  property: 'burger_alignment',
+                                  default_value: 'left',
+                                  label: "",
+                                  layout: "vertical",
+                                  values: [
+                                      { label: "Left", value: 'left'},
+                                      { label: "Right", value: 'right'},
+                                      { label: "Top", value: 'top'},
+                                      { label: "Whole", value: 'whole'}
+                                  ]
+                              }),
+							  new Upfront.Views.Editor.Field.Radios({
+                                  model: this.model,
+                                  property: 'burger_over',
+                                  default_value: 'over',
+                                  label: "",
+                                  values: [
+                                      { label: "Over Content", value: 'over' },
+                                      { label: "Pushes Content", value: 'pushes' }
+                                  ]
+                              })
+                          ]
                       }),
                       new Upfront.Views.Editor.Settings.Item({
                           model: this.model,
