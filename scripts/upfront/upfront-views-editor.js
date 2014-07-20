@@ -3392,7 +3392,9 @@ define([
 			return this.property ? this.property.get('name') : this.name;
 		},
 		get_saved_value: function () {
+
 			if ( this.property ){
+
 				return this.property.get('value');
 			}
 			else if ( this.model ){

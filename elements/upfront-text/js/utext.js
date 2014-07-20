@@ -131,7 +131,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		};
 
         _.bindAll(this, 'onBgColor', 'onBorderColor');
-
+       
 		this.settings = _([
 			new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
@@ -156,7 +156,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						min: 1,
 						property: 'border_width',
 						label: "Width",
-						default_value: "0",
+						default_value: 1,
 						values: [
 							{ label: "", value: '1' }
 						]
