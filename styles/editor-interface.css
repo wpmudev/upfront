@@ -8603,7 +8603,25 @@ body .redactor_air.at-right:after {
 	left: auto;
 	right: 0;
 }
+body .redactor_air.under:after {
+	box-sizing: border-box;
+	height:14px;
+	width:14px;
+	border: 7px solid transparent;
+	border-bottom-color: rgba(30, 47, 63, .95);
+	position: absolute;
+	top: -14px;
+	left: 47%;
+	content: ' ';
+}
 
+body .redactor_air.under.at-right:after {
+	border-bottom-color: transparent;
+	border-right-color: rgba(30, 47, 63, .95);
+	top: -7px;
+	left: auto;
+	right: 0;
+}
 /*
 	Fullscreen
 */
@@ -10577,7 +10595,7 @@ li#new-custom-breakpoint {
 /*------------ Font Icons --------------*/
 .redactor_dropdown_box_icons div.icons{
 	font-size: 24px;
-	height: 155px;
+	height: 140px;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	padding: 7px;

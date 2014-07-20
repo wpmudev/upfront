@@ -105,7 +105,8 @@ var hackRedactor = function(){
 				return;
 
 			var text = this.getSelectionText();
-
+			console.log("this", this);
+			this.opts.toolbarFixedTopOffset = "50";
 			if (e.type === 'mouseup' && text != '') this.airShow(e);
 			if (e.type === 'keyup' && e.shiftKey && text != '') {
 				var $focusElem = $(this.getElement(this.getSelection().focusNode)), offset = $focusElem.offset();
@@ -115,7 +116,17 @@ var hackRedactor = function(){
 			// Additional ctrl/cmd stuffs
 			if ('keyup' === e.type && e.ctrlKey && '' != text) this.airShow(e); // Ctrl
 			if ('keyup' === e.type && _cmd_keys.indexOf(e.which) > 0 && '' != text) this.airShow(e); // Cmd (?)
-
+			/**
+			 * If redactor is to high for the user to see it, show it under the selected text
+			 */
+			if( this.$air.offset().top < 0 ){
+				this.$air.css({
+					top : e.clientY + 14 + this.$box.position().top + "px"
+				});
+				this.$air.addClass("under");
+			}else{
+				this.$air.removeClass("under");
+			}
 		}, this));
 	};
 
