@@ -770,20 +770,22 @@
 	cursor: -moz-grabbing;
 	cursor: -webkit-grabbing;
 }
+.draggable-element:hover {
+		-webkit-transform: scale(1.1);
+		-moz-transform: scale(1.1);
+		-ms-transform: scale(1.1);
+		-o-transform: scale(1.1);
+		transform: scale(1.1);
+		-webkit-transition: all .1s ease-out;
+		-moz-transition: all .1s ease-out;
+		-ms-transition: all .1s ease-out;
+		-o-transition: all .1s ease-out;
+		transition: all .1s ease-out;
+}
 .draggable-element:hover, .draggable-element.element-dragging {
 	background: #f2f9ff;
 	padding-top: 40px;
 	z-index: 2;
-/*	-webkit-transform: scale(1.1);
-	-moz-transform: scale(1.1);
-	-ms-transform: scale(1.1);
-	-o-transform: scale(1.1);
-	transform: scale(1.1);
-	-webkit-transition: all .1s ease-out;
-	-moz-transition: all .1s ease-out;
-	-ms-transition: all .1s ease-out;
-	-o-transition: all .1s ease-out;
-	transition: all .1s ease-out;*/
 }
 .draggable-element.upfront-icon-element:hover, .draggable-element.upfront-icon-element.element-dragging {
 	padding-top: 12px;
