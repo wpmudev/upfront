@@ -963,55 +963,10 @@ span.draggable-post-element.element-dragging
 	float: right;
 	width: 40%;
 }
-/* styling the type=number arrows (they are useless in chrome) */
+
 #sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number] {
 	width: 52px;
   height:26px;
-  border-radius:2px;
-  border:1px solid #BED2E7;
-  padding-left:5px;
-	-webkit-box-sizing: border-box;
-  	 -moz-box-sizing: border-box;
-  				box-sizing: border-box;
-}
-#sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number]:focus {
-	outline:none;
-	border-color: #A1C3E5;
-}
-#sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number]::-webkit-inner-spin-button {
-	-webkit-appearance:none;
-	width:14px;
-	padding:0;
-	margin:0;
-	height:90%;
-	background-color:#D8EDFF;
-	display:block;
-	position:relative;
-	color:#000;
-	border-left:1px solid #A1C3E5;
-	margin:3px;
-}
-#sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number]::-webkit-inner-spin-button:before {
-	content: ' ';
-	position:absolute;
-	width:0;
-	height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	border-top: 4px solid #6B8EB2;
-	bottom:2px;
-	left:3px;
-}
-#sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number]::-webkit-inner-spin-button:after {
-	content: ' ';
-	position:absolute;
-	width:0;
-	height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	border-bottom: 4px solid #6B8EB2;
-	top:4px;
-	left:3px;
 }
 
 #sidebar-ui .command-edit-css {
@@ -1283,8 +1238,49 @@ input.upfront-field-text:hover,
 	color: rgb(38, 58, 77);
 	width: auto;
 	height: 30px;
-	padding: 0 10px;
+	padding: 0 0 0 5px;
+  border-radius:2px;
 }
+.upfront-field-number[type=number]:focus {
+	outline:none;
+	border-color: rgb(124, 152, 179);
+}
+/* chrome input[type=number] styling */
+.upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance:none;
+	width:14px;
+	padding:0;
+	margin:0;
+	height:100%;
+	background-color:#D8EDFF;
+	display:inline-block;
+	position:relative;
+	border-left:1px solid #A1C3E5;
+	cursor: pointer;
+}
+.upfront-field-number[type=number]::-webkit-inner-spin-button:before {
+	content: ' ';
+	position:absolute;
+	width:0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #6B8EB2;
+	bottom:2px;
+	left:3px;
+}
+.upfront-field-number[type=number]::-webkit-inner-spin-button:after {
+	content: ' ';
+	position:absolute;
+	width:0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: 4px solid #6B8EB2;
+	top:4px;
+	left:3px;
+}
+/* end chrome input[type=number] styling */
 .upfront-field-select, .upfront-field-select-options {
 	background: #e6f3fe;
 	border: 1px solid rgb(163, 191, 217);
@@ -11019,7 +11015,6 @@ div.upfront-region-container-active > a.feature_image_selector {
 .typography-panel .upfront-field-number[type=number] {
 	height: 26px;
 	font-size: 11px;
-	padding: 0 5px;
 }
 #sidebar-ui .typography-section-content {
 	width: 230px;
