@@ -378,7 +378,7 @@ Ueditor.prototype = {
 			this.redactor.destroy();
 			this.redactor = false;
 		}
-		delete Upfront.data.Ueditor.instances[this.id];
+		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$(document).off('click', this.checkInnerClick);
 	},
