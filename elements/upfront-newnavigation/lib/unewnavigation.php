@@ -5,7 +5,7 @@
  * A fairly simple implementation, with applied settings.
  */
 class Upfront_UnewnavigationView extends Upfront_Object {
-
+	
 	public function get_markup () {
         $menu_id = $this->_get_property('menu_id');
         $menu_name = $this->_get_property('menu_name');
@@ -13,11 +13,29 @@ class Upfront_UnewnavigationView extends Upfront_Object {
         $layout_settings = json_decode($this->_get_property('layout_setting'));
 
         $menu_style = $this->_get_property('menu_style');
+		$breakpoint_data = $this->_get_property('breakpoint');
+		
+		
+		$breakpoints = Upfront_Grid::get_grid()->get_breakpoints();
+		foreach ($breakpoints as $name => $point) {
+			$data = $point->get_data();
+			if($data['enabled']) {
+				$breakpoint_data[$data['id']]['width'] = $data['width'];
+			}
+		}
+		$burgermenu_desktop =  $this->_get_property('burger_menu');
+		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
+		$breakpoint_data['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
+		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');	
+			
+		$breakpoint_data = json_encode($breakpoint_data);
+		
         $menu_aliment = $this->_get_property('menu_alignment');
         $sub_navigation = $this->_get_property('allow_sub_nav');
         $is_floating = $this->_get_property('is_floating');
 
         $menu_style = $menu_style ? "data-style='{$menu_style}'" : "";
+        $breakpoint_data = $breakpoint_data ? "data-breakpoints='{$breakpoint_data}'" : "";
         $menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}'" : "";
         $sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
 
@@ -30,6 +48,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		if ($is_floating) {
             wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
         }
+
+		wp_enqueue_script('unewnavigation_responsive', upfront_element_url('js/responsive.js', dirname(__FILE__)));
 
 		if($menu_name) {
 			$menu = wp_get_nav_menu_object($menu_name);
@@ -44,10 +64,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
                 'echo' => false
             ));
         else:
-            return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$sub_navigation}>Please select menu on settings</div>";
+            return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>Please select menu on settings</div>";
         endif;
 
-        return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$sub_navigation}>" . $menu . "</div>";
+        return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 	}
 
 	public static function add_js_defaults($data){
@@ -76,14 +96,14 @@ class Upfront_UnewnavigationView extends Upfront_Object {
     }
 
   public function add_styles_scripts() {
-	 		 wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
+	 	wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
 
         if (is_user_logged_in()) {
 			 wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));
 		}
-		
 
   }
+ 
 }
 
 /**
@@ -97,7 +117,6 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
     private function _add_hooks () {
         add_action('wp_ajax_upfront_new_load_menu_list', array($this, "load_menu_list"));
-
         add_action('wp_ajax_upfront_new_load_menu_array', array($this, "load_menu_array"));
         add_action('wp_ajax_upfront_new_load_menu_items', array($this, "load_menu_items"));
 		add_action('wp_ajax_upfront_new_menu_from_slug', array($this, "menu_from_slug"));
@@ -110,7 +129,9 @@ class Upfront_newMenuSetting extends Upfront_Server {
         add_action('wp_ajax_upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
 
     }
+	
 
+	
     public function load_menu_list () {
         $menus = wp_get_nav_menus();
         if ( $menus ){

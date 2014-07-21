@@ -420,6 +420,10 @@ class Upfront_GridBreakpoint {
 		return $this->_name;
 	}
 	
+	public function get_data () {
+		return $this->_data;	
+	}
+	
 	public function get_short_name () {
 		return $this->_short_name;
 	}
