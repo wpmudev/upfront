@@ -2524,9 +2524,9 @@ define([
 		render: function () {
 			this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
-				this.$el.html('Posts / Pages / Comments');
+				this.$el.html('<a>Posts / Pages / Comments</a>');
 			else
-				this.$el.html('Posts / Pages');
+				this.$el.html('<a>Posts / Pages</a>');
 		},
 		on_click: function () {
 			var me = this,
@@ -2663,7 +2663,7 @@ define([
 		tagName: 'li',
 		className: 'command-open-media-gallery upfront-icon upfront-icon-open-gallery',
 		render: function () {
-				this.$el.html('Media');
+				this.$el.html('<a>Media</a>');
 		},
 		on_click: function () {
 			Upfront.Media.Manager.open({

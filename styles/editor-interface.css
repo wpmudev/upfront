@@ -80,6 +80,14 @@
 .upfront-ui {
 	font: 16px/24px 'Source Sans Pro', sans-serif;
 }
+.upfront-ui a,
+.upfront-ui button,
+.upfront-ui input {
+	-webkit-transition: color,background-color,border,opacity .1s;
+	-o-transition: color,background-color,border,opacity .1s;
+	transition: color,background-color,border,opacity .1s;
+}
+
 .upfront-ui, .upfront-ui * {
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -377,12 +385,24 @@
 	display: inline-block;
 	font-size: 11px;
 	color: #1fcc8f;
-	text-decoration: underline;
 	margin: 0 0 20px;
 	clear: both;
 	padding-top: 10px;
 	margin-bottom: 4px;
 }
+
+#sidebar-ui .command-open-media-gallery a,
+#sidebar-ui .command-popup-list a,
+#sidebar-ui .sidebar-profile-edit a {
+	border-bottom:1px solid rgb(37,57,77);
+	margin:0;
+}
+#sidebar-ui .command-open-media-gallery a:hover,
+#sidebar-ui .command-popup-list a:hover,
+#sidebar-ui .sidebar-profile-edit a:hover {
+	border-color:rgb(31,205,143);
+}
+
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
 	width: 170px;
 	font:11px/22px Verdana, sans-serif;
@@ -474,7 +494,6 @@
 }
 #sidebar-ui .sidebar-profile-edit a {
 	margin: 0 0 0 5px;
-	text-decoration: underline;
 }
 #sidebar-ui .sidebar-profile-edit .upfront-icon:before {
 	margin: 0;
@@ -5049,17 +5068,12 @@ div.uinsert-selector a:hover {
 	color: #cce6ff;
 }
 
-
 #sidebar-ui a {
 	margin: 1em;
 	color: #1fcd8f;
 	text-decoration: none;
 	margin: 0 10px;
 }
-#sidebar-ui a:hover {
-	text-decoration: underline;
-}
-
 
 #sidebar-ui i{
 	font-size: 14px;
@@ -7003,7 +7017,7 @@ a.upfront-post-layout-trigger:before{
 	float: left;
 }
 .upfront-embed_media .upfront-pane input {
-	width: 100%;
+	/*width: 100%;*/
 }
 .upfront-media_manager-embed-preview .progress {
 	width: 100%;
