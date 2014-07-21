@@ -1624,6 +1624,11 @@
 				c-0.904,2.245-2.937,3.906-5.396,4.293L1188,132v4h14V132z"/>
 		</g>
 	</g>
+	<g>
+		<circle fill-rule="evenodd" clip-rule="evenodd" fill="#6B92B3" cx="352" cy="219" r="3"/>
+		<path fill-rule="evenodd" clip-rule="evenodd" fill="#6B92B3" d="M354.875,222.772C354.147,223.527,353.131,224,352,224
+			c-1.13,0-2.147-0.473-2.875-1.228C346,225,347,227,349,227c1,0,5,0,6,0C357,227,358,225,354.875,222.772z"/>
+	</g>
 </g>
 <g id="area-markers">
 	<rect x="40" fill="#263A4D" width="450" height="16"/>
