@@ -1669,6 +1669,7 @@ define(function() {
 				callback();
 		},
 		propagate_selection: function (model) {
+			console.log("propagate_selection", this.multiple_selection);
 			if (!this.multiple_selection) {
 				var has = this.model.where({selected: true});
 				if (has.length) _(has).each(function (item) {
@@ -2012,7 +2013,6 @@ define(function() {
 				button_text: "Ok",
 				ck_insert: false
 			}, options);
-
 			var me = this,
 				popup = false,
 				media_type = options.media_type,
@@ -2056,13 +2056,11 @@ define(function() {
 		},
 		*/
 		load: function (options) {
-            if(_.isUndefined( this.media_manager ) ){
-                this.media_manager = new MediaManager_View(_.extend({
-                    el: this.out,
-                    data: this.popup_data
-                }, options))
-                ;
-            }
+            this.media_manager = new MediaManager_View(_.extend({
+                el: this.out,
+                data: this.popup_data
+            }, options))
+            ;
 			this.media_manager.render();
 			return false;
 		},

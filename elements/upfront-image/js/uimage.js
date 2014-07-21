@@ -1077,7 +1077,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var me = this;
 		if(e)
 			e.preventDefault();
-
 		Upfront.Views.Editor.ImageSelector.open().done(function(images){
 			var sizes = {};
 			_.each(images, function(image, id){
@@ -2670,12 +2669,12 @@ var ImageSelector = Backbone.View.extend({
 		var me = this;
 		this.openOverlaySection(this.selectorTpl, {}, function(overlay) {
 			var input = $('#upfront-image-file-input');
-
-			if (me.options.multiple) {
+			if (me.options.multiple === true) {
 				input.attr('multiple','multiple');
 				input.attr('name', 'media[]');
 			} else {
 				input.attr('multiple', false);
+				input.removeAttr('multiple');
 				input.attr('name', 'media');
 			}
 
