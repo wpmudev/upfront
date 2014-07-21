@@ -57,6 +57,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
 			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
+			upfront_add_ajax('upfront_list_theme_layouts', array($this, "list_theme_layouts"));
 			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
 		}
 
@@ -80,7 +81,6 @@ class Upfront_Ajax extends Upfront_Server {
 		$load_dev = $_POST['load_dev'] == 1 ? true : false;
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
 		$parsed = false;
-		$string = '';
 
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
@@ -88,7 +88,6 @@ class Upfront_Ajax extends Upfront_Server {
 		upfront_switch_stylesheet($stylesheet);
 
 		if(is_string($layout_ids)){
-			$string = $layout_ids;
 			$layout_ids = Upfront_EntityResolver::ids_from_url($layout_ids);
 			$parsed = true;
 		}
@@ -154,6 +153,11 @@ class Upfront_Ajax extends Upfront_Server {
 	function list_available_layout () {
 		$layouts = Upfront_Layout::list_available_layout();
 		$this->_out(new Upfront_JsonResponse_Success($layouts));
+	}
+
+	function list_theme_layouts() {
+		$layouts = Upfront_Layout::list_theme_layouts();
+		$this->_out( new Upfront_JsonResponse_Success($layouts) );
 	}
 
 	function list_saved_layout () {

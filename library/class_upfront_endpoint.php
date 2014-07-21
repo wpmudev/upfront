@@ -1023,7 +1023,6 @@ class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
 
 	public function render ($request) {
 		$this->parse($request);
-		//add_filter('wp_title', array($this, 'get_title'));
 		add_action('wp_footer', array($this, 'start_editor'), 999);
 		load_template(get_home_template());
 		die;
@@ -1046,15 +1045,30 @@ class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
 	}
 
 	public function start_editor () {
-		$layout = Upfront_Layout::from_entity_ids(Upfront_EntityResolver::get_entity_ids());
-		$new_theme = $layout->is_empty() ? 'true' : 'false';
 		echo upfront_boot_editor_trigger('theme');
-		echo <<<EOSEJS
-<script>
-var _upfront_new_theme = $new_theme;
-</script>
-EOSEJS;
 	}
+}
+
+class Upfront_Builder_VirtualSubpage extends Upfront_CreateNew_Theme_VirtualSubpage {
+	public function __construct($stylesheet) {
+		$this->slug = $stylesheet;
+		$this->stylesheet = $stylesheet;
+		$this->storage_key = $stylesheet;
+	}
+	public function get_slug () {
+		return $this->slug;
+ 	}
+	public function parse ($request) {
+		upfront_switch_stylesheet($this->stylesheet);
+		add_filter('upfront-storage-key', array($this, 'storage_key_filter'));
+		add_filter('upfront-data-storage-key', array($this, 'storage_key_filter'));
+		add_filter('upfront-enable-dev-saving', __return_false);
+		query_posts('');
+	}
+	public function storage_key_filter ($key) {
+		return $this->storage_key;
+	}
+
 }
 
 class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
@@ -1064,9 +1078,17 @@ class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
 	}
 
 	protected function _add_subpages () {
-		$this->_subpages = array(
+		$subpages = array(
 			new Upfront_CreateNew_Theme_VirtualSubpage(),
 		);
+
+		// Add all Upfront child themes
+		// TODO add grandchild themes
+		foreach(wp_get_themes() as $stylesheet=>$theme) {
+			if ($theme->get('Template') !== 'upfront') continue;
+			$subpages[] =  new Upfront_Builder_VirtualSubpage($stylesheet);
+		}
+		$this->_subpages = $subpages;
 	}
 
 	public function get_slug () { return 'create_new'; }

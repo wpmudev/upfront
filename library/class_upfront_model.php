@@ -474,6 +474,68 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
 
+	public static function list_theme_layouts() {
+		$theme_slug = $_POST['stylesheet'];
+		$theme_directory = trailingslashit(get_theme_root($theme_slug)) . $theme_slug;
+		$templates_directory = trailingslashit($theme_directory) . 'layouts/';
+		// Exclude header, footer and system notation
+		$layout_files = array_diff(scandir($templates_directory), array('.', '..', 'header.php', 'footer.php'));
+
+		$layouts = [];
+		// Classify theme layout files into layouts
+		foreach($layout_files as $layout) {
+			$layout_id = str_replace('.php', '', $layout);
+			$properties = [];
+			$properties['layout'] = array(
+				'item' => $layout_id
+			);
+
+			switch ($layout_id) {
+			case 'archive':
+				$properties['label'] = 'Archive';
+				$properties['layout']['type'] = 'archive';
+				break;
+			case 'home':
+			case 'archive-home':
+				$properties['label'] = 'Home';
+				$properties['layout']['type'] = 'archive';
+				break;
+			case 'index':
+				$properties['label'] = 'Index page';
+				$properties['layout']['type'] = 'single';
+				break;
+			case 'single-page':
+				$properties['label'] = 'Single page';
+				$properties['layout']['type'] = 'single';
+				break;
+			case 'single-post':
+				$properties['label'] = 'Single post';
+				$properties['layout']['type'] = 'single';
+				break;
+			case 'single':
+				$properties['label'] = 'Single';
+				$properties['layout']['type'] = 'single';
+				break;
+			}
+
+			if ($layout_id !== 'single' && strpos($layout_id, 'single') !== false ) {
+				$layout = str_replace('single-', '', $layout_id);
+				$properties['label'] = 'Single ' . $layout;
+				$properties['layout']['type'] = 'single';
+			}
+
+			if ($layout_id !== 'archive' && strpos($layout_id, 'archive') !== false ) {
+				$layout = str_replace('archive-', '', $layout_id);
+				$properties['label'] = 'Archive ' . $layout;
+				$properties['layout']['type'] = 'archive';
+			}
+
+			$layouts[$layout_id] = $properties;
+		}
+
+		return $layouts;
+	}
+
 	public static function list_available_layout () {
 		$saved = self::list_saved_layout();
 		$saved_keys = array_keys($saved);

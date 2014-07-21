@@ -220,7 +220,7 @@ var LayoutEditor = {
 							});
 						}
 					});
-					
+
 					// grouping!
 					group_wrapper_col = group_wrapper_col < line_col ? line_col : group_wrapper_col;
 					margin_left = margin_left === false ? 0 : margin_left;
@@ -269,7 +269,7 @@ var LayoutEditor = {
 					group.set_property('wrapper_id', group_wrapper_id);
 					group.replace_class( grid_ed.grid.class + col + " " + grid_ed.grid.top_margin_class + margin_top + " " + grid_ed.grid.left_margin_class + margin_left );
 					group.add_to(region_modules, module_index);
-					
+
 					// combine elements
 					_.each(combined_els, function(comb, i){
 						if ( comb.els.length <= 1 )
@@ -294,7 +294,7 @@ var LayoutEditor = {
 						});
 						wrap_model.replace_class(grid_ed.grid.class + (comb.right-comb.left+1));
 					});
-					
+
 					// now normalize the wrappers
 					grid_ed.update_position_data();
 					grid_ed.update_wrappers(region);
@@ -310,36 +310,36 @@ var LayoutEditor = {
 			$(this).selectable("refresh");
 		});
 	},
-	
+
 	enable_mergeable: function () {
 		$(".ui-selectable").each(function () {
 			$(this).selectable("enable");
 		});
-	},	
-	
+	},
+
 	disable_mergeable: function () {
 		$(".ui-selectable").each(function () {
 			$(this).selectable("disable");
 		});
-	},	
+	},
 
 	destroy_mergeable: function () {
 		$(".ui-selectable").each(function () {
 			$(this).selectable("destroy");
 		});
 	},
-	
+
 	_add_selection: function (el) {
 		this.selection.push(el);
 		$(el).prepend('<div class="upfront-selected-border" />');
 	},
-	
+
 	_remove_selection: function (el) {
 		this.selection = _.reject(this.selection, function(sel){ return (sel == el); });
 		$(el).find('.upfront-selected-border').remove();
 		$(el).removeClass('ui-selected');
 	},
-	
+
 	remove_selections: function () {
 		var ed = Upfront.Behaviors.LayoutEditor;
 		$('.ui-selected').each(function(){
@@ -400,22 +400,51 @@ var LayoutEditor = {
 		});
 	},
 
+	/**
+	 * We are loading theme by reloading page since lots of stuff needs
+	 * to be setup like stylesheet etc. Only way to get this right is to
+	 * load page from scratch.
+	 */
+	load_theme: function(theme_slug) {
+		var url = location.origin;
+		// Add anything before create_new
+		url += location.pathname.split('create_new')[0];
+		// Add create_new and theme slug
+		url += 'create_new/' + theme_slug;
+		// Check for dev=true
+		if (location.toString().indexOf('dev=true') > -1) url += '?dev=true';
+
+		window.location = url;
+	},
+
 	create_layout_dialog: function() {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
 			fields = {
 				layout: new Upfront.Views.Editor.Field.Select({
 					name: 'layout',
-					values: [{label: "Loading...", value: ""}]
+					values: [{label: "Loading...", value: ""}],
+					change: function() {
+						var value = this.get_value();
+
+						if ( value === 'single-page' )
+							fields.page_name.$el.show();
+						else
+							fields.page_name.$el.hide();
+					}
+				}),
+				page_name: new Upfront.Views.Editor.Field.Text({
+					name: 'page_name',
+					label: 'Page name (leave empty for single-page.php)',
 				})
 			};
 		if ( !ed.available_layouts )
 			Upfront.Util.post({
 				action: 'upfront_list_available_layout'
-			}).done(function(data){
+			}).done(function(data) {
 				ed.available_layouts = data.data;
 				fields.layout.options.values = _.map(ed.available_layouts, function(layout, layout_id){
-					return {label: layout.label, value: layout_id, disabled: layout.saved};
+					return { label: layout.label, value: layout_id, disabled: layout.saved };
 				});
 				fields.layout.render();
 				fields.layout.delegateEvents();
@@ -432,18 +461,21 @@ var LayoutEditor = {
 		}
 
 		ed.layout_modal.open(function($content, $modal){
-			var $button = $('<span class="uf-button">Create</span>'),
+			var $button = $('<div style="clear:both"><span class="uf-button">Create</span></div>'),
 				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
-			_.each(fields, function(field){
+				$page_name_wrap = $('<div class="upfront-modal-select-wrap" />');
+			_.each(fields, function(field) {
 				field.render();
 				field.delegateEvents();
 			});
 			$content.html(
-				'<h1 class="upfront-modal-title">Create New Layout</h1>' +
-				'<p>In order to export a theme, you have to create at least 3 different layouts, Homepage, Single Post/Page and Archive layouts</p>'
+				'<h1 class="upfront-modal-title">Create New Layout</h1>'
 			);
 			$select_wrap.append(fields.layout.el);
 			$content.append($select_wrap);
+			fields.page_name.$el.hide();
+			$page_name_wrap.append(fields.page_name.el);
+			$content.append($page_name_wrap);
 			$content.append($button);
 			$button.on('click', function(){
 				ed.layout_modal.close(true);
@@ -452,11 +484,32 @@ var LayoutEditor = {
 		.done(function(){
 			var layout = fields.layout.get_value(),
 				layout_slug = app.layout.get('layout_slug'),
-				data = ed.available_layouts[layout];
+				data = ed.available_layouts[layout],
+				specific_layout = fields.page_name.get_value();
+
+			// Check if user is creating single page with specific name
+			if (layout === 'single-page' && specific_layout) {
+				layout = 'single-' + specific_layout.replace(' ', '-').toLowerCase();
+				data = {
+					layout: {
+						'item': layout,
+						'type': 'single'
+					}
+				};
+			}
+
 			if ( data.latest_post )
 				_upfront_post_data.post_id = data.latest_post;
-			app.load_layout(data.layout, {layout_slug: layout_slug}).done(function(){
+
+			app.load_layout(data.layout, {layout_slug: layout_slug}).done(function() {
 				app.layout.set('current_layout', layout);
+				// Immediately export layout to write initial state to file.
+				ed._export_layout({
+					theme: Upfront.themeExporter.currentTheme,
+					template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+					regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
+					functionsphp: 'functions'
+				});
 			});
 		});
 	},
@@ -522,147 +575,128 @@ var LayoutEditor = {
 	export_dialog: function () {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
-			fields = {
-				theme: new Upfront.Views.Editor.Field.Select({
-					name: 'theme',
-					label: 'Select Theme',
-					values: [{label: "New theme", value: ""}],
-					change: function(){
-						var value = this.get_value(),
-							$fields = $([fields.name.el, fields.directory.el, fields.author.el, fields.author_uri.el]);
-						if ( value != '' )
-							$fields.hide();
-						else
-							$fields.show();
-					}
-				}),
-				name: new Upfront.Views.Editor.Field.Text({
-					name: 'name',
-					label: 'Theme Name',
-				}),
-				directory: new Upfront.Views.Editor.Field.Text({
-					name: 'directory',
-					label: 'Directory',
-				}),
-				author: new Upfront.Views.Editor.Field.Text({
-					name: 'author',
-					label: 'Author',
-				}),
-				author_uri: new Upfront.Views.Editor.Field.Text({
-					name: 'author_uri',
-					label: 'Author URI',
-				})
-			};
-		// Save first
-		Upfront.Events.trigger("command:layout:save");
+			fields;
+
+		fields = {
+			theme: new Upfront.Views.Editor.Field.Select({
+				name: 'theme',
+				default_value: Upfront.themeExporter.currentTheme === 'upfront' ?
+					'' : Upfront.themeExporter.currentTheme,
+				label: 'Select Theme',
+				values: [{label: "New theme", value: ""}],
+				change: function(){
+					var value = this.get_value(),
+						$fields = $([fields.name.el, fields.directory.el, fields.author.el, fields.author_uri.el]);
+					if ( value != '' )
+						$fields.hide();
+					else
+						$fields.show();
+				}
+			}),
+			name: new Upfront.Views.Editor.Field.Text({
+				name: 'name',
+				label: 'Theme Name',
+			}),
+			directory: new Upfront.Views.Editor.Field.Text({
+				name: 'directory',
+				label: 'Directory',
+			}),
+			author: new Upfront.Views.Editor.Field.Text({
+				name: 'author',
+				label: 'Author',
+			}),
+			author_uri: new Upfront.Views.Editor.Field.Text({
+				name: 'author_uri',
+				label: 'Author URI',
+			})
+		};
+
 		if ( !ed.export_modal ){
 			ed.export_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
 			ed.export_modal.render();
 			$('body').append(ed.export_modal.el);
 		}
+
 		ed._get_themes().done(function(data){
 			fields.theme.options.values = _.union( [{label: "New theme", value: ""}], _.map(data, function(theme, directory){
 				return {label: theme.name, value: theme.directory};
 			}) );
 			fields.theme.render();
 			fields.theme.delegateEvents();
+			fields.theme.$el.find('input').trigger('change'); // to collapse other fields if theme is set
 		});
-		Upfront.Events.once("command:layout:save_done", function(success){
-			if ( !success )
-				return;
-			ed._check_required_layout().done(function(){
-				ed.export_modal.open(function($content, $modal){
-					var $button = $('<span class="uf-button">Export</span>');
-					_.each(fields, function(field){
-						field.render();
-						field.delegateEvents();
-					});
-					$content.html(
-						'<h1 class="upfront-modal-title">Export Theme</h1>'
-					);
-					$content.append(fields.theme.el);
-					$content.append(fields.name.el);
-					$content.append(fields.directory.el);
-					$content.append(fields.author.el);
-					$content.append(fields.author_uri.el);
-					$content.append($button);
-					$button.on('click', function(){
-						var loading = new Upfront.Views.Editor.Loading({
-								loading: "Checking layouts",
-								done: "Theme exported!",
-								fixed: true
-							}),
-							theme_name = fields.theme.get_value() ? fields.theme.get_value() : fields.directory.get_value(),
-							create_theme = function(){
-								var data = {
-										'thx-theme-name': fields.name.get_value(),
-										'thx-theme-slug': fields.directory.get_value(),
-										'thx-author': fields.author.get_value(),
-										'thx-author-uri': fields.author_uri.get_value(),
-										'thx-theme-template': 'upfront'
-								};
-								loading.update_loading_text("Creating theme");
-								return ed._create_theme(data);
-							},
-							export_deferred = new $.Deferred(),
-							export_layout = function(i, layout_ids){
-								if ( layout_ids.length <= i )
-									return export_deferred.resolve();
-								var layout_id = layout_ids[i];
-								if ( app.layout.get('current_layout') != layout_id ){
-									var layout_slug = app.layout.get('layout_slug'),
-										data = ed.saved_layouts[layout_id];
-									loading.update_loading_text("Loading layout: " + layout_id);
-									app.layout.set('current_layout', layout_id);
-									app.load_layout(data.layout, {layout_slug: layout_slug});
-									Upfront.Events.once("layout:render", function(){
-										export_layout(i, layout_ids);
-									});
-								}
-								else {
-									loading.update_loading_text("Exporting layout:" + layout_id);
-									var data = {
-											theme: theme_name,
-											template: layout_id,
-											regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
-											functionsphp: 'functions'
-										};
-									ed._export_layout(data).always(function(){
-										export_layout(i+1, layout_ids);
-									});
-								}
-							},
-							export_layouts = function(){
-								export_layout(0, _.map(ed.saved_layouts, function(layout, layout_id){ return layout_id; }));
-								return export_deferred.promise();
-							},
-							do_export = function(){
-								export_layouts().done(function(){
-									loading.done(function(){
-										ed.export_modal.close(true);
-									});
-								});
-							};
-						loading.render();
-						$('body').append(loading.el);
-						if ( fields.theme.get_value() )
-							do_export();
-						else
-							create_theme().done(do_export);
-					});
-				}, ed);
-			}).fail(function(){
-				ed.message_dialog("You’ve made a great start!", "But you need to create more layouts in order to export and use the theme. Please click ‘New Layout’ in the sidebar to learn about necessary layouts to export the theme.");
+
+		ed.export_modal.open(function($content, $modal) {
+			var $button = $('<span class="uf-button">Export</span>');
+			_.each(fields, function(field){
+				field.render();
+				field.delegateEvents();
 			});
-		});
+			$content.html(
+				'<h1 class="upfront-modal-title">Export Theme</h1>'
+			);
+			$content.append(fields.theme.el);
+			$content.append(fields.name.el);
+			$content.append(fields.directory.el);
+			$content.append(fields.author.el);
+			$content.append(fields.author_uri.el);
+			$content.append($button);
+			$button.on('click', function() {
+				var theme_name, create_theme, export_layout, export_layouts, do_export, loading;
+				loading = new Upfront.Views.Editor.Loading({
+					loading: "Checking layouts",
+					done: "Layout exported!",
+					fixed: true
+				});
+				theme_name = fields.theme.get_value() ? fields.theme.get_value() : fields.directory.get_value();
+				create_theme = function(){
+					var data = {
+						'thx-theme-name': fields.name.get_value(),
+						'thx-theme-slug': fields.directory.get_value(),
+						'thx-author': fields.author.get_value(),
+						'thx-author-uri': fields.author_uri.get_value(),
+						'thx-theme-template': 'upfront'
+					};
+					loading.update_loading_text("Creating theme");
+					return ed._create_theme(data);
+				};
+				export_layout = function() {
+					var layout_id = _upfront_post_data.layout.item;
+					var data = {
+						theme: theme_name,
+						template: layout_id,
+						regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
+						functionsphp: 'functions'
+					};
+					loading.update_loading_text("Exporting layout: " + layout_id);
+					return ed._export_layout(data).done(function() {
+						loading.done(function(){
+							ed.export_modal.close(true);
+						});
+					});
+				};
+				loading.render();
+				$('body').append(loading.el);
+				if ( fields.theme.get_value() ) {
+					export_layout();
+				} else {
+					create_theme().done(function() {
+						export_layout().done(function() {
+							ed.load_theme(theme_name);
+						});
+					});
+				}
+			});
+		}, ed);
 
 	},
 
+	// This function can probably be deleted.
 	first_save_dialog: function (success) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
 			current_layout = app.layout.get('current_layout');
-		if ( success && _upfront_new_theme && (!current_layout || current_layout == 'archive-home') ){
+		if ( success && (!current_layout || current_layout == 'archive-home') ){
 			ed.message_dialog("Excellent start!", "Your HOMEPAGE — Static layout has been successfully created. You can create more Layouts for your theme by clicking ‘New Layout’ in  the left sidebar. Remember, the best themes in life <del>are free</del> have lots of layouts!");
 		}
 	},
@@ -688,29 +722,11 @@ var LayoutEditor = {
 		var me = this,
 			deferred = new $.Deferred();
 		Upfront.Util.post({
-			action: 'upfront_list_saved_layout'
+			action: 'upfront_list_theme_layouts'
 		}).success(function(response){
 			me.saved_layouts = response.data;
 			deferred.resolve(response.data);
 		}).error(function(){
-			deferred.reject();
-		});
-		return deferred.promise();
-	},
-
-	_check_required_layout: function () {
-		var deferred = new $.Deferred(),
-			required_layout = ['archive', 'archive-home', 'single'];
-		this._get_saved_layout().done(function(data){
-			var layouts = _.map(data, function(layout, layout_id){
-					return layout_id;
-				}),
-				diff = _.difference(required_layout, layouts);
-			if ( diff.length == 0 )
-				deferred.resolve();
-			else
-				deferred.reject(diff);
-		}).fail(function(){
 			deferred.reject();
 		});
 		return deferred.promise();
@@ -1237,7 +1253,7 @@ var GridEditor = {
 		}
 		this.time_end('fn update_model_classes');
 	},
-	
+
 	update_model_breakpoint: function ($el, data) {
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			model = this.get_el_model($el),
@@ -1511,7 +1527,7 @@ var GridEditor = {
 		ed.regions = _.map($regions, ed.get_region_position ); // Generate regions position data
 		this.time_end('fn update_position_data');
 	},
-	
+
 	/**
 	 * Create droppable points
 	 */
@@ -1537,9 +1553,9 @@ var GridEditor = {
 			}
 			if(region.$el.hasClass('upfront-region-shadow'))
 				shadowregion = region;
-				
+
 		});
-		
+
 		areas = areas ? areas : (lightbox ? [lightbox, shadowregion] : ed.regions);
 
 
@@ -2063,7 +2079,7 @@ var GridEditor = {
 
 				$resize_placeholder.remove();
 				$resize.remove();
-				
+
 				ed.update_class($me, ed.grid.class, rsz_col);
 				if ( axis == 'nw' ){
 					margin.current.left = margin.original.left - (rsz_col-prev_col);
@@ -2089,7 +2105,7 @@ var GridEditor = {
 					marginLeft: '',
 					marginTop: ''
 				});
-				
+
 				if ( !breakpoint || breakpoint.default ){
 					model.set_property('row', rsz_row);
 					// Also resize containing object if it's only one object
@@ -2099,7 +2115,7 @@ var GridEditor = {
 							object.set_property('row', rsz_row - Upfront.Util.height_to_row(ed.grid.column_padding*2));
 						});
 					}
-	
+
 					// Update model value
 					if ( axis == 'nw' ){
 						model.replace_class([
@@ -2281,7 +2297,7 @@ var GridEditor = {
 			drop_top, drop_left, drop_col,
 			adjust_bottom = false
 		;
-		
+
 		if ( model.get_property_value_by_name('disable_drag') === 1 )
 			return false;
 		if ( $me.data('ui-draggable') ){
@@ -2366,14 +2382,14 @@ var GridEditor = {
 					max_height = ed.max_row*ed.baseline,
 					draggable = $(this).data('ui-draggable'),
 					cursor_top = e.pageY - me_offset.top;
-				
+
 				// hack the cursor position
 				if ( cursor_top > max_height/2 ) {
 					draggable._adjustOffsetFromHelper({
 						top: ( me.height > max_height ? max_height : me.height )/2
 					});
 				}
-					
+
 				$region.css('min-height', $region.css('height'));
 				//$me.hide();
 				$me.css('visibility', 'hidden');
@@ -2381,7 +2397,7 @@ var GridEditor = {
 				$helper.css('height', me.height);
 				$helper.css('max-height', max_height);
 				$helper.css('margin-left', $me.css('margin-left')); // fix error with the percentage margin applied
-				
+
 				ed.create_drop_point(me, wrap, is_parent_group ? [ ed.get_el(view.group_view.$el) ] : false);
 
 				$wrap.css('min-height', '1px');
@@ -2489,7 +2505,7 @@ var GridEditor = {
 
 
 				//$helper.css('max-width', region.col*ed.col_size);
-				
+
 				// change drop point on timeout
 				clearTimeout(ed._t);
 				ed._t = setTimeout(function(){
@@ -2525,7 +2541,7 @@ var GridEditor = {
 							};
 						}),
 						max_region = _.max(regions_area, function(each){ return each.area; });
-						
+
 					set_current_region( max_region.area > 0 ? max_region.region : false );
 
 					if ( ed.show_debug_element ){
@@ -2534,10 +2550,10 @@ var GridEditor = {
 						});
 					}
 				}
-				
+
 				function set_current_region (reg) {
 					region = reg && reg.$el ? reg : ed.get_region($me.closest('.upfront-region'));
-					
+
 					if ( !region.$el.hasClass('upfront-region-drag-active') ){
 						$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
 						region.$el.addClass('upfront-region-drag-active');
@@ -2641,7 +2657,7 @@ var GridEditor = {
 					$('#upfront-drop-preview').css({
 						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
 						left: (ed.drop.left+drop_priority_left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left)//Lightbox region having odd number of cols requires to offset the preview by half of the column width
-						+(ed.lightbox_cols?(ed.lightbox_cols%2)*ed.col_size/2:0), 
+						+(ed.lightbox_cols?(ed.lightbox_cols%2)*ed.col_size/2:0),
 						width: drop_col*ed.col_size,
 						height: height
 					});
@@ -2656,7 +2672,7 @@ var GridEditor = {
 					}
 
 				}
-				
+
 				update_drop_position();
 
 				if ( ed.show_debug_element ){
@@ -2856,7 +2872,7 @@ var GridEditor = {
 					( is_object ? ed.containment.$el.find('.upfront-object') : $container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).each(function(){
 						ed.update_margin_classes($(this));
 					});*/
-					
+
 					$me.css({
 						'position': '',
 						'top': '',
@@ -2873,7 +2889,7 @@ var GridEditor = {
 					if ( !breakpoint || breakpoint.default ){
 						if ( wrapper_id )
 							model.set_property('wrapper_id', wrapper_id, true);
-	
+
 						if ( !move_region ){
 							view.resort_bound_collection();
 						}
@@ -2990,7 +3006,7 @@ var GridEditor = {
 	},
 
 	/**
-	 * Call this to normalize module placement on remove 
+	 * Call this to normalize module placement on remove
 	 */
 	normalize_module_remove: function (view, module, modules, wrapper, wrappers) {
 		var app = Upfront.Application,
@@ -3094,9 +3110,9 @@ var GridEditor = {
 			});
 		}
 	},
-	
+
 	/**
-	 * Call this to adapt module to the breakpoint 
+	 * Call this to adapt module to the breakpoint
 	 */
 	adapt_to_breakpoint: function (modules, wrappers, breakpoint_id, parent_col) {
 		var app = Upfront.Application,
@@ -3167,15 +3183,15 @@ var GridEditor = {
 			});
 		});
 	},
-	
+
 	/**
-	 * Call this to adapt region to the breakpoint 
+	 * Call this to adapt region to the breakpoint
 	 */
 	adapt_region_to_breakpoint: function (regions, breakpoint_id, col) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			line_col = 0;
-		
+
 	},
 
 
@@ -3738,7 +3754,7 @@ var GridEditor = {
 						{label: "", value: "full-extended", icon: "full-extended"},
 					],
 					change: function(){
-						if ( _upfront_new_theme ){
+						if ( Upfront.themeExporter.currentTheme === 'upfront' ) {
 							var structure = fields.structure.get_value(),
 								layout_slug = app.layout.get('layout_slug');
 							if ( (layout_slug && layout_slug != structure) || ( !layout_slug && structure != 'blank' ) ){
@@ -3746,7 +3762,7 @@ var GridEditor = {
 								if ( Upfront.Application.get_gridstate() )
 									togglegrid.on_click();
 								app.load_layout(_upfront_post_data.layout, {layout_slug: structure});
-								Upfront.Events.once("layout:render", function(){
+								Upfront.Events.once("layout:render", function() {
 									if ( !Upfront.Application.get_gridstate() )
 										togglegrid.on_click();
 								});
@@ -3855,7 +3871,7 @@ var GridEditor = {
 				field.delegateEvents();
 			});
 			$content.html('');
-			if ( _upfront_new_theme ){
+			if (Upfront.themeExporter.currentTheme === 'upfront') {
 				$content.append(fields.structure.el);
 			}
 			$content.append(fields.grid.el);

@@ -148,7 +148,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_draggable);
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.LayoutEditor.create_mergeable);
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
-		
+
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
 	},
 
@@ -317,10 +317,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	},
 
 	createLightboxRegion: function(regionName){
-		
+
 		var regions = this.layout.get('regions'),
 			region = regions ? regions.get_by_name('lightbox') : false;
-			
+
 		if ( ! region ){
 			region = new Upfront.Models.Region({
 				"name": "lightbox",
@@ -329,7 +329,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			});
 			region.add_to(regions, regions.length-1);
 		}
-		
+
 		var	safeName = 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1),
 			lightbox = new Upfront.Models.Region(_.extend({}, Upfront.data.region_default_args, {
 				name: safeName,
@@ -967,7 +967,6 @@ var ContentEditor = new (Subapplication.extend({
 }))();
 
 var ThemeEditor = new (LayoutEditorSubapplication.extend({
-	_first_start: true,
 	boot: function () {
 
 	},
@@ -981,11 +980,10 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 
 		this.set_up_event_plumbing_after_render();
 		$("html").removeClass("upfront-edit-layout upfront-edit-content upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-theme");
-		if ( _upfront_new_theme && this._first_start ){
-			this.listenToOnce(Upfront.Events, 'layout:render', function(){
+		if ( Upfront.themeExporter.currentTheme === 'upfront') {
+			this.listenToOnce(Upfront.Events, 'layout:render', function() {
 				Upfront.Events.trigger("command:layout:edit_structure");
 			});
-			this._first_start = false;
 		}
 		this.listenToOnce(Upfront.Events, 'layout:render', Upfront.Behaviors.GridEditor.apply_grid);
 		this.listenToOnce(Upfront.Events, 'command:layout:save_done', Upfront.Behaviors.LayoutEditor.first_save_dialog);
@@ -993,6 +991,7 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
 		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
 		this.listenTo(Upfront.Events, "command:layout:export_theme", Upfront.Behaviors.LayoutEditor.export_dialog);
+		this.listenTo(Upfront.Events, "builder:load_theme", Upfront.Behaviors.LayoutEditor.load_theme);
 	},
 
 	stop: function () {

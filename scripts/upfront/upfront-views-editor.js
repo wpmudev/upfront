@@ -744,6 +744,38 @@ define([
 		}
 	});
 
+	var Command_ThemesDropdown = Command.extend({
+		className: 'themes-dropdown',
+		enabled: true,
+		initialize: function() {
+			var themes = _.union([{label: 'Choose theme', value: ''}], _.map(Upfront.themeExporter.themes, function(theme) {
+				return {
+					label: theme.name,
+					value: theme.directory
+				};
+			}));
+			this.fields = [
+				new Field_Select({
+					values: themes,
+					default_value: Upfront.themeExporter.currentTheme === 'upfront' ?
+						'' : Upfront.themeExporter.currentTheme,
+					change: function () {
+					  if (this.get_value() === ''
+							|| this.get_value() === Upfront.themeExporter.currentTheme) return;
+
+						Upfront.Events.trigger("builder:load_theme", this.get_value());
+					}
+				})
+			]
+		},
+		render: function () {
+			this.fields[0].render();
+			this.$el.append(this.fields[0].el);
+		},
+		// noop for preventing parent class rendering on click behaviour
+		on_click: function() {}
+	});
+
 	var Command_NewLayout = Command.extend({
 		className: "command-new-layout",
 		render: function () {
@@ -2094,8 +2126,9 @@ define([
 		"className": "sidebar-commands sidebar-commands-primary",
 		initialize: function () {
 			this.commands = _([
+				new Command_ThemesDropdown({"model": this.model}),
 				new Command_NewLayout({"model": this.model}),
-				new Command_BrowseLayout({"model": this.model}),
+				new Command_BrowseLayout({"model": this.model})
 			]);
 		}
 	});
@@ -2131,9 +2164,9 @@ define([
 			if ( current_app == MODE.THEME ) {
 				this.commands.push(new Command_ExportLayout({"model": this.model}));
 			}
-			if (!Upfront.Settings.Application.NO_SAVE) {
+			if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
 				this.commands.push(new Command_SaveLayout({"model": this.model}));
-			} else {
+			} else if (current_app !== MODE.THEME) {
 				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}
 			if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app !== MODE.THEME) {
@@ -3392,9 +3425,7 @@ define([
 			return this.property ? this.property.get('name') : this.name;
 		},
 		get_saved_value: function () {
-
 			if ( this.property ){
-
 				return this.property.get('value');
 			}
 			else if ( this.model ){
@@ -8868,7 +8899,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$('#page').removeClass(this.prev_active.get('id') + '-breakpoint');
 			}
 			$('#page').addClass(this.active.get('id') + '-breakpoint');
-			
+
 			if (this.active.get('default'))
 				$('#page').removeClass('responsive-breakpoint').addClass('default-breakpoint');
 			else
@@ -8902,10 +8933,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		get_enabled: function() {
 			var enabled_breakpoints = this.where({ 'enabled': true });
 			if (_.isUndefined(enabled_breakpoints) === false && enabled_breakpoints.length > 0) return enabled_breakpoints;
-			
+
 			return [this.get_active()];
-			
-			
+
+
 		},
 		get_default: function() {
 			var default_breakpoint = this.findWhere({ 'default': true });
