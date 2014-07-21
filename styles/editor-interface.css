@@ -2589,10 +2589,16 @@ div.uinsert-selector a:hover {
 }
 .upfront-region-editing .upfront-module {
 }
+.upfront-region-editing .upfront-regions {
+	padding-bottom: 60px;
+}
 .upfront-region-editing .upfront-region-container {
 	opacity: 0.5;
 	min-height: 90px;
 	z-index: 1;
+}
+.upfront-region-editing .upfront-region-container-shadow {
+	min-height: 0;
 }
 .upfront-region-editing.responsive-breakpoint .upfront-region-container {
 	min-height: 0;

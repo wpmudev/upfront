@@ -3519,22 +3519,24 @@ var GridEditor = {
 				// Disable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', false);
 				// Prevents quick scroll when resizing
-				ed.resizing = window.scrollY;
+				//ed.resizing = window.scrollY;
+				// Preparing for auto scrolling on resize event
+				ed._prepare_resize_auto_scroll(ui, $layout.find('> .upfront-regions'));
 			},
 			resize: function(e, ui){
 				var $helper = ui.helper,
 					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
-					rsz_row = Math.ceil(h/ed.baseline)
+					rsz_row = Math.ceil(h/ed.baseline),
+					data = $(this).data('ui-resizable')
 				;
-				if ( Math.abs($(window).height()-e.clientY) < 50 ){
-					h += (ed.baseline*10);
-					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
-				}
 				$helper.css({
 					width: $me.width(),
 					height: h
 				});
 				$me.data('resize-row', rsz_row);
+				
+				// Auto scrolling when it hits bottom
+				ed._start_resize_auto_scroll(e, ui, h, data);
 			},
 			stop: function(e, ui){
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -3551,6 +3553,9 @@ var GridEditor = {
 					top: '',
 					left: ''
 				});
+				
+				// Make sure auto scrolling is cleared
+				ed._clear_resize_auto_scroll();
 				
 				if ( !breakpoint || breakpoint.default ){
 					model.set_property('row', rsz_row);
@@ -3573,6 +3578,68 @@ var GridEditor = {
 				ed.resizing = false;
 			}
 		});
+	},
+	
+	/**
+	 * Auto scrolling when hit bottom 
+	 */
+	_auto_scroll_t: false,
+	_auto_scroll_data: {},
+	_auto_scroll_step: 3,
+	_auto_scroll_timeout: 100,
+	
+	/**
+	 * Preparing data for auto scroll 
+	 */
+	_prepare_resize_auto_scroll: function(ui, $parent){
+		var document_height = $(document).height(),
+			$scroller = $('<div class="upfront-auto-scroller"></div>');
+		$scroller.css({
+			width: 1,
+			height: 0,
+			visibility: 'hidden'
+		}).appendTo( $parent ? $parent : 'body' );
+		this._auto_scroll_data = {
+			document_height: document_height,
+			position_top: ui.originalPosition.top,
+			position_height: ui.originalSize.height,
+			position_rest: document_height - ( ui.originalPosition.top + ui.originalSize.height ),
+			$scroller: $scroller
+		};
+	},
+	
+	/**
+	 * Calling the auto scrolling on resize event, need direct access to resizable object
+	 */
+	_start_resize_auto_scroll: function (e, ui, height, data) {
+		var me = this,
+			window_height = $(window).height(),
+			mouse_offset = Math.abs( window_height - e.clientY ),
+			added_height = height - this._auto_scroll_data.position_height,
+			added_scroll = added_height - this._auto_scroll_data.position_rest,
+			auto_height = 0,
+			step = this._auto_scroll_step * this.baseline,
+			$helper = ui.helper;
+		clearTimeout(this._auto_scroll_t);
+		//if ( added_scroll > 0 )
+		//	this._auto_scroll_data.$scroller.height(added_scroll);
+		if ( mouse_offset > 50 )
+			return;
+		this._auto_scroll_t = setTimeout(function(){
+			auto_height += step;
+			if ( added_scroll + auto_height > 0 )
+				me._auto_scroll_data.$scroller.height(added_scroll + auto_height + mouse_offset);
+			data.size.height = height + auto_height;
+			data.parentData.height = $(document).height();
+			$helper.css('height', data.size.height);
+			$(window).scrollTop( $(window).scrollTop() + step );
+			data._trigger('resize', e, ui);
+		}, this._auto_scroll_timeout);
+	},
+	
+	_clear_resize_auto_scroll: function () {
+		this._auto_scroll_data.$scroller.remove();
+		clearTimeout(this._auto_scroll_t);
 	},
 
 	/**

@@ -613,17 +613,19 @@ define([
 			fix_flexbox_clear: function ($el) {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					off = $el.offset(),
+					width = $el.width(),
 					$prev;
 				$el.children().sort(Upfront.Util.sort_elements_cb).filter(function(){
 					return $(this).children().size() > 0;
 				}).each(function(){
 					var order = $(this).data('breakpoint_order') || 0,
 						clear = $(this).data('breakpoint_clear'),
-						prev_off;
+						prev_off, margin;
 					$(this).css('margin-right', 0);
 					if ( $prev && ( ( ( !breakpoint || breakpoint.default ) && $(this).hasClass('clr') ) || ( breakpoint && !breakpoint.default && clear) ) ){
 						prev_off = $prev.offset();
-						$prev.css('margin-right', Math.floor( (off.left+$el.width()) - (prev_off.left+$prev.width()) ));
+						margin = Math.floor( (off.left+width) - (prev_off.left+$prev.width()) );
+						$prev.css('margin-right', (margin/width*100-1) + '%' ); // Add -1 to prevent rounding error
 					}
 					$prev = $(this);
 				});
