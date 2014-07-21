@@ -1041,7 +1041,7 @@ define(function() {
 			"click .upload": "switch_to_upload"
 		},
 		template: _.template(
-			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul> <button type="button" class="upload">Upload new media</button>'
+			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul> <button type="button" class="upload">Upload Media</button>'
 		),
 		initialize: function () {
 			Upfront.Events.on("media_manager:media:show_library", this.switch_to_library, this);
