@@ -78,9 +78,10 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				Upfront.Events.trigger('upfront:element:edit:stop');
+				me.render();
 			})
 			.on('syncAfter', function(){
-				var text = $(this).html();
+				var text = $.trim($(this).html());
 				if (text) me.model.set_content($(text).html(), {silent: true});
 			})
 		;
