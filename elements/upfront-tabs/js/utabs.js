@@ -217,6 +217,7 @@
 				}, 10, this);
 
 				var $tabs = this.$el.find(".tab-content");
+				var me = this;
 				$tabs.each(function () {
 					var $content = $(this);
 					$content.ueditor({
@@ -228,7 +229,9 @@
 							Upfront.Events.trigger('upfront:element:edit:start', 'text');
 						})
 						.on("stop", function () {
+							me.saveTabContent();
 							Upfront.Events.trigger('upfront:element:edit:stop');
+							me.render();
 						})
 					;
 				});
