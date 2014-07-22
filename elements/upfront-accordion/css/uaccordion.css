@@ -38,7 +38,7 @@
 	right: 22px;
 }
 
-.upfront-accordion-container .accordion-panel i {
+.upfront-accordion-container .accordion-panel>i { /* Direct descendents only */
   display: block;
   width: 16px;
   height: 16px;
