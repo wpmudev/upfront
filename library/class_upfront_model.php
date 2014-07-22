@@ -481,11 +481,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 		// Exclude header, footer and system notation
 		$layout_files = array_diff(scandir($templates_directory), array('.', '..', 'header.php', 'footer.php'));
 
-		$layouts = [];
+		$layouts = array();
 		// Classify theme layout files into layouts
 		foreach($layout_files as $layout) {
 			$layout_id = str_replace('.php', '', $layout);
-			$properties = [];
+			$properties = array();
 			$properties['layout'] = array(
 				'item' => $layout_id
 			);
