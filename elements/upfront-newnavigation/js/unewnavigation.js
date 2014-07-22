@@ -742,6 +742,7 @@ var currentMenuItemData = new CurrentMenuItemData();
 var singleclickcount = 0;
 var UnewnavigationView = Upfront.Views.ObjectView.extend({
   elementSize: {width: 0, height: 0},
+  roll_responsive_settings: true,
   cssSelectors: {
     'ul.menu > li.menu-item > a': {label: 'Menu Item', info: 'Top level Menu item'},
     'ul.menu > li.menu-item:hover > a': {label: 'Menu Item hover', info: 'Hover state for Top level Menu item'},
@@ -806,11 +807,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
       //this.model.get("properties").on('all', this.update_model, this);
       //this.model.get("properties").on('all', this.getMenus, this);
 
-
-
   //  }
-    this.on('deactivated', this.onDeactivate, this)
-
+  
+    this.on('deactivated', this.onDeactivate, this);
+	this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", function(current, previous) {		
+		$.event.trigger({
+			type: "changed_breakpoint",
+			selector: ".upfront-output-unewnavigation",
+			width: current.width
+		}); 
+	});
+		
 
   },
   get_anchors: function () {
@@ -1336,13 +1343,55 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
     menuAliment = this.property("menu_alignment"),
     allowSubNav = this.property("allow_sub_nav"),
     $upfrontObjectContent;
-
+	
     $upfrontObjectContent = this.$el.find('.upfront-object-content');
     if(this.$el.find('a.newnavigation-add-item').length < 1)
       $('<b class="upfront-entity_meta newnavigation_add"><a href="#" class="upfront-icon-button newnavigation-add-item"></a></b>').insertBefore($upfrontObjectContent);
-
+	if(me.roll_responsive_settings) {
+		me.roll_responsive_settings = false;
+		setTimeout(function() {
+			var model_breakpoint = me.model.get_property_value_by_name('breakpoint');
+	
+			if(model_breakpoint) {
+				var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+			
+				for(key in enabled_breakpoints) {
+					if(typeof(model_breakpoint[enabled_breakpoints[key].id]) != 'undefined')
+						model_breakpoint[enabled_breakpoints[key].id].width = enabled_breakpoints[key].attributes.width;
+				}
+				
+				//manually add values for desktop
+				var default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default();
+				var is_burger_menu = me.property('burger_menu');
+				model_breakpoint[default_breakpoint.attributes.id] = {};
+				model_breakpoint[default_breakpoint.attributes.id].burger_menu = ( is_burger_menu instanceof Array ) ? is_burger_menu[0] : is_burger_menu;
+				model_breakpoint[default_breakpoint.attributes.id].burger_alignment = me.property('burger_alignment');
+				model_breakpoint[default_breakpoint.attributes.id].burger_over = me.property('burger_over');
+				model_breakpoint[default_breakpoint.attributes.id].width = default_breakpoint.attributes.width;
+				
+		
+				$upfrontObjectContent.attr('data-breakpoints',	JSON.stringify(model_breakpoint));
+		
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint, width;
+				if(!breakpoint) {
+					width = default_breakpoint.attributes.width;
+				}
+				else
+					width = breakpoint.width;
+				// To roll responsive nav settings into action
+				$.event.trigger({
+					type: "changed_breakpoint",
+					selector: ".upfront-output-unewnavigation",
+					width: width
+				}); 
+		
+			}
+			me.roll_responsive_settings = true;
+		}, 300);
+	}
     $upfrontObjectContent.attr('data-aliment',(menuAliment ? menuAliment : 'left'));
     $upfrontObjectContent.attr('data-style',(menuStyle ? menuStyle : 'horizontal'));
+    $upfrontObjectContent.attr('data-stylebk',(menuStyle ? menuStyle : 'horizontal'));
     $upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
 
 

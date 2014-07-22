@@ -27,44 +27,42 @@
 })(jQuery,'smartresize');
 
 jQuery(document).ready(function($) {
-	function roll_responsive_nav() {
-
-		$(".upfront-output-unewnavigation > .upfront-navigation").each(function () {
+	function roll_responsive_nav(selector, bpwidth) {
+		$(selector).each(function () {
 
 			var breakpoints = $(this).data('breakpoints');
 
 			var bparray = new Array();
-			var currentwidth = $(window).width();
+			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth):$(window).width();
+			
 			for (var key in breakpoints) {
 				bparray.push(breakpoints[key])
 			}
+			
 			bparray.sort(function(a, b) {
 				return a.width - b.width;
 			});
-			
+
 			for (var key in bparray) {
-					if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
-						if($(this).attr('style') != 'burger')
-							$(this).attr('data-stylebk', $(this).data('style'));
-						
-						if(bparray[key]['burger_menu'] == 'yes') {
-							$(this).attr('data-style', 'burger')
-							$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
-							$(this).attr('data-burger_over', bparray[key]['burger_over']);
-						}
-						else {
-							$(this).attr('data-style', $(this).data('stylebk'))
-							$(this).removeAttr('data-burger_alignment','');
-							$(this).removeAttr('data-burger_over', '');
-						}
-						
+				if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
+					if(bparray[key]['burger_menu'] == 'yes') {
+						$(this).attr('data-style', 'burger')
+						$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
+						$(this).attr('data-burger_over', bparray[key]['burger_over']);
 					}
-				
+					else {
+						$(this).attr('data-style', $(this).data('stylebk'))
+						$(this).removeAttr('data-burger_alignment','');
+						$(this).removeAttr('data-burger_over', '');
+					}
+					
+				}
 			}			
 		});
 	}
-	roll_responsive_nav();
+	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	
-	$(window).smartresize(roll_responsive_nav);
+	$(window).smartresize(function() {roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");});
+	$(document).on('changed_breakpoint', function(e) { roll_responsive_nav( e.selector, e.width);} );
 });
 

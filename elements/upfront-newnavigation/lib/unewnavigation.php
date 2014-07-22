@@ -34,7 +34,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
         $sub_navigation = $this->_get_property('allow_sub_nav');
         $is_floating = $this->_get_property('is_floating');
 
-        $menu_style = $menu_style ? "data-style='{$menu_style}'" : "";
+        $menu_style = $menu_style ? "data-style='{$menu_style}' data-stylebk='{$menu_style}'" : "";
         $breakpoint_data = $breakpoint_data ? "data-breakpoints='{$breakpoint_data}'" : "";
         $menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}'" : "";
         $sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
