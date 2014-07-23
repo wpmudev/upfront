@@ -32,8 +32,9 @@
         this.model.get("properties").bind("remove", this.render, this);
 
         Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-      },
 
+
+      },
       setType: function(e) {
         this.property('youtube_status', 'ok');
         if ($(e.currentTarget).hasClass('single-video')) {

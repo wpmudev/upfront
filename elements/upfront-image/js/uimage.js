@@ -680,7 +680,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 						// Only call the handler if 1 or more files was dropped.
 						if (files.length && input.length){
 							Upfront.Views.Editor.ImageSelector.uploadImage(files);
-			            }sidebar-panel-content
+			            }
 			        }
 				})
 				.on('dragenter', function(e){

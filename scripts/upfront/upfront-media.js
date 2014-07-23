@@ -1686,7 +1686,6 @@ define(function() {
 				callback();
 		},
 		propagate_selection: function (model) {
-			console.log("propagate_selection", this.multiple_selection);
 			if (!this.multiple_selection) {
 				var has = this.model.where({selected: true});
 				if (has.length) _(has).each(function (item) {

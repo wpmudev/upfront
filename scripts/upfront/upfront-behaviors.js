@@ -2365,7 +2365,9 @@ var GridEditor = {
 			cancel: '.upfront-entity_meta',
 			delay: 15,
 			appendTo: $main,
+			iframeFix: true,
 			start: function(e, ui){
+				console.log("iframeFix: true");
 				is_parent_group = ( typeof view.group_view != 'undefined' );
 				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');
@@ -3424,6 +3426,8 @@ var GridEditor = {
 			return false;
 		if ( $me.data('ui-draggable') )
 			return false;
+
+		console.log("here iframeFix: true");
 		$me.draggable({
 			disabled: true,
 			revert: true,
@@ -3432,6 +3436,7 @@ var GridEditor = {
 			helper: 'clone',
 			delay: 15,
 			scroll: false,
+			iframeFix: true,
 			start: function (e, ui) {
 				var $helper = ui.helper,
 					width = $me.width(),
