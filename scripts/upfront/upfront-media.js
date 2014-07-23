@@ -1097,6 +1097,7 @@ define(function() {
 	 * Main media dispatcher, has main level views.
 	 */
 	var MediaManager_View = Backbone.View.extend({
+		_request_in_progress: false,
 		initialize: function (data) {
 			data = _.extend({
 				type: "PostImage",
@@ -1229,6 +1230,7 @@ define(function() {
 
 		},
 		load: function (data) {
+			this._request_in_progress = true;
 			data = data && data.type ? data : ActiveFilters.to_request_json();
 			data.action = ActiveFilters.themeImages ? 'upfront-media-list_theme_images' : "upfront-media-list_media";
 			var me = this;
@@ -1243,9 +1245,13 @@ define(function() {
 					me.library_view.update([]);
 					me.command_view.render();
 				})
+				.always(function () {
+					me._request_in_progress = false;
+				})
 			;
 		},
 		switch_media_type: function (what) {
+			if (this._request_in_progress) return false;
 			this.load(what.to_request_json());
 		}
 	});
