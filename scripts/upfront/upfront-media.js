@@ -9,6 +9,8 @@ define(function() {
 		}
 	};
 
+	var l10n = Upfront.Settings.l10n.media;
+
 // ----- Models -----
 
 	var MediaCollection_Model = Backbone.Collection.extend({
@@ -65,7 +67,6 @@ define(function() {
 			this._update_label('', label);
 		},
 		disassociate_label: function (label) {
-			Upfront.Util.log("disassocisting labels");
 			this._update_label('dis', label);
 		},
 		_update_label: function (pfx, label) {
@@ -160,10 +161,10 @@ define(function() {
 			;
 			if (!this.allowed_media_types.length) this.allowed_media_types = this.default_media_types;
 
-			if (this.allowed_media_types.indexOf('images') >= 0) types.add(new MediaFilter_Item({filter: "Images", value: 'images', state: !has_all}), {silent: true});
-			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: "Videos", value: 'videos', state: !has_all}), {silent: true});
-			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: "Audios", value: 'audios', state: !has_all}), {silent: true});
-			if (this.allowed_media_types.indexOf('other') >= 0) types.add(new MediaFilter_Item({filter: "All", value: 'other', state: has_all}), {silent: true});
+			if (this.allowed_media_types.indexOf('images') >= 0) types.add(new MediaFilter_Item({filter: l10n.filter.images, value: 'images', state: !has_all}), {silent: true});
+			if (this.allowed_media_types.indexOf('videos') >= 0) types.add(new MediaFilter_Item({filter: l10n.filter.videos, value: 'videos', state: !has_all}), {silent: true});
+			if (this.allowed_media_types.indexOf('audios') >= 0) types.add(new MediaFilter_Item({filter: l10n.filter.audios, value: 'audios', state: !has_all}), {silent: true});
+			if (this.allowed_media_types.indexOf('other') >= 0) types.add(new MediaFilter_Item({filter: l10n.filter.all, value: 'other', state: has_all}), {silent: true});
 
 			this.set("type", types, {silent: true});
 
@@ -176,10 +177,10 @@ define(function() {
 			]), {silent: true});
 
 			this.set("order", new MediaFilter_Collection([
-				new MediaFilter_Item({filter: "Newest", value: 'date_desc', state: true}),
-				new MediaFilter_Item({filter: "Oldest", value: 'date_asc', state: false}),
-				new MediaFilter_Item({filter: "A>Z", value: 'title_asc', state: false}),
-				new MediaFilter_Item({filter: "Z>A", value: 'title_desc', state: false})
+				new MediaFilter_Item({filter: l10n.filter.newest, value: 'date_desc', state: true}),
+				new MediaFilter_Item({filter: l10n.filter.oldest, value: 'date_asc', state: false}),
+				new MediaFilter_Item({filter: l10n.filter.a_z, value: 'title_asc', state: false}),
+				new MediaFilter_Item({filter: l10n.filter.z_a, value: 'title_desc', state: false})
 			]), {silent: true});
 
 			this.set({"search": new MediaFilter_Collection([])}, {silent: true});
@@ -365,7 +366,7 @@ define(function() {
 				"click a.all": "select_all"
 			},
 			render: function () {
-				this.$el.empty().append('Select <a href="#all" class="all">All</a>&nbsp;|&nbsp;<a href="#none" class="none">None</a>');
+				this.$el.empty().append('Select <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
 			},
 			select_none: function (e) {
 				e.preventDefault();
@@ -403,7 +404,7 @@ define(function() {
 				this.model.each(function (item) {
 					if (item.get("parent")) show_nag = true;
 				});
-				if (!show_nag || (show_nag && confirm("The selected media file is already in use. Are you sure?"))) {
+				if (!show_nag || (show_nag && confirm(l10n.item_in_use_nag))) {
 					this.model.delete_media_items();
 				}
 			}
@@ -441,11 +442,12 @@ define(function() {
 					$hub = this.$el.find(".change_title");
 				$hub.empty();
 				if (this.model.length > 1) {
-					$hub.append('<span class="selected_length">' + this.model.length + ' files selected</span>');
+
+					$hub.append('<span class="selected_length">' + l10n.files_selected.replace(/%d/, this.model.length) + '</span>');
 				} else {
 					this.title_field = new Upfront.Views.Editor.Field.Text({
 						model: this.model.at(0),
-						label: "Media Title",
+						label: l10n.media_title,
 						name: 'post_title',
 						change: function(){
 							me.change_title();
@@ -460,7 +462,7 @@ define(function() {
 					$hub = this.$el.find(".add_labels"),
 					container = new MediaManager_ItemControl_LabelsContainer({model: this.model})
 				;
-				$hub.empty().append(this.templates.caption({title: "Add Label(s)"}));
+				$hub.empty().append(this.templates.caption({title: l10n.add_labels}));
 				container.render();
 				$hub.append(container.$el);
 			},
@@ -468,7 +470,7 @@ define(function() {
 				var me = this,
 					$hub = this.$el.find(".existing_labels"),
 					shared_labels = this.model.get_shared_labels(),
-					title = (shared_labels.length > 1 ? 'Current Label(s)' : '')
+					title = (shared_labels.length > 1 ? l10n.current_labels : '')
 				;
 				$hub.empty()
 					.append(this.templates.caption({title: title}))
@@ -481,7 +483,7 @@ define(function() {
 				var me = this,
 					$hub = this.$el.find(".additional_sizes"),
 					additional_sizes = this.model.get_additional_sizes(),
-					title = 'Additional sizes',
+					title = l10n.additional_sizes,
 					sizes = []
 				;
 				$hub.empty();
@@ -507,7 +509,7 @@ define(function() {
 				if (this.model.length < 2) {
 					var url_field = new Upfront.Views.Editor.Field.Text({
 						model: this.model.at(0),
-						label: "URL",
+						label: l10n.url,
 						name: "document_url",
 					});
 					url_field.render();
@@ -603,7 +605,7 @@ define(function() {
 				render_addition: function () {
 					var $hub = this.$el.find(".add_labels");
 					$hub.empty();
-					if (this.selection) $hub.append('<b class="add_value">' + this.selection + '</b> <a class="add_link" href="#add">+Add</a>').removeClass('empty');
+					if (this.selection) $hub.append('<b class="add_value">' + this.selection + '</b> <a class="add_link" href="#add">' + l10n.add + '</a>').removeClass('empty');
 					else $hub.addClass('empty');
 				},
 				update_selection: function (e) {
@@ -669,7 +671,7 @@ define(function() {
 				//console.log(ActiveFilters);
 				obj.total = ActiveFilters.get("search").length;
 				this.$el.empty().append(
-					_.template('Showing {{total}} results for <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">Clear search</a>', obj)
+					_.template(l10n.showing_total_results + ' <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">' + l10n.clear_search + '</a>', obj)
 				);
 			},
 			clear_search: function (e) {
@@ -720,13 +722,13 @@ define(function() {
 				var me = this,
 					tpl = _.template(' <a href="#" class="filter upfront-icon upfront-icon-media-label-delete" data-type="{{type}}" data-filter="{{filter}}">{{filter}}</a>')
 				;
-				this.$el.append('<label class="upfront-field-label upfront-field-label-block">Active filters</label>');
+				this.$el.append('<label class="upfront-field-label upfront-field-label-block">' + l10n.active_filters + '</label>');
 				_(this.model.to_list()).each(function (filters, type) {
 					_(filters).each(function (filter) {
 						me.$el.append(tpl({filter: filter, type: type}));
 					});
 				});
-				this.$el.append(" <a href='#' class='all_filters'>Clear</a>");
+				this.$el.append(" <a href='#' class='all_filters'>" + l10n.clear_all_filters + "</a>");
 			},
 			set_filters: function (filters) {
 				this.model = filters;
@@ -787,7 +789,7 @@ define(function() {
 				this.$control = this.$el.find("div.upfront-filter_control");
 
 				this.control_field = new Upfront.Views.Editor.Field.Select({
-					label: "Filter",
+					label: l10n.filter_label,
 					name: "filter-selection",
 					width: '100%',
 					values: values,
@@ -984,7 +986,7 @@ define(function() {
 
 		var Control_MediaType = Media_FilterSelection_Multiselection.extend({
 			initialize: function () {
-				this.filter_name = "Media type";
+				this.filter_name = l10n.media_type;
 				this.filter_type = "type";
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
@@ -995,7 +997,7 @@ define(function() {
 		var Control_MediaDate = Media_FilterSelection_Uniqueselection.extend({
 			allowed_values: ['date_asc', 'date_desc'],
 			initialize: function () {
-				this.filter_name = "Date";
+				this.filter_name = l10n.date;
 				this.filter_type = "order";
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
@@ -1006,7 +1008,7 @@ define(function() {
 		var Control_MediaFileName = Media_FilterSelection_Uniqueselection.extend({
 			allowed_values: ['title_desc', 'title_asc'],
 			initialize: function () {
-				this.filter_name = "File Name";
+				this.filter_name = l10n.file_name;
 				this.filter_type = "order";
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
@@ -1016,7 +1018,7 @@ define(function() {
 
 		var Control_MediaRecent = Media_FilterSelection_Uniqueselection.extend({
 			initialize: function () {
-				this.filter_name = "Recent";
+				this.filter_name = l10n.recent;
 				this.filter_type = "recent";
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
@@ -1026,7 +1028,7 @@ define(function() {
 
 		var Control_MediaLabels = Media_FilterSelection_AdditiveMultiselection.extend({
 			initialize: function () {
-				this.filter_name = "Labels";
+				this.filter_name = l10n.labels;
 				this.filter_type = "label";
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
@@ -1050,7 +1052,7 @@ define(function() {
 			"click .upload": "switch_to_upload"
 		},
 		template: _.template(
-			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">Library</li> <li class="embed">Embed</li> </ul> <button type="button" class="upload">Upload Media</button>'
+			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">' + l10n.library + '</li> <li class="embed">' + l10n.embed + '</li> </ul> <button type="button" class="upload">' + l10n.upload + '</button>'
 		),
 		initialize: function () {
 			Upfront.Events.on("media_manager:media:show_library", this.switch_to_library, this);
@@ -1425,12 +1427,12 @@ define(function() {
 				},
 				open_dialog: function () {
 					var $dialog = $('<div id="media-manager-multi-dialog" class="upfront-ui" />');
-					$dialog.append('<h3 class="multi-dialog-title">'+'How would you like to insert those images?'+'</h3>');
+					$dialog.append('<h3 class="multi-dialog-title">' + l10n.insertion_question + '</h3>');
 					$dialog.append(
 						'<ul class="multi-dialog-choices">' +
-							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-plain" data-choice="plain">' + 'plain images' + '</li>' +
-							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-slider" data-choice="slider">' + 'image slider' + '</li>' +
-							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-gallery" data-choice="gallery">' + 'image gallery' + '</li>' +
+							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-plain" data-choice="plain">' + l10n.plain_images + '</li>' +
+							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-slider" data-choice="slider">' + l10n.image_slider + '</li>' +
+							'<li class="multi-dialog-choice upfront-icon upfront-icon-media-insert-multi-gallery" data-choice="gallery">' + l10n.image_gallery + '</li>' +
 						'</ul>'
 					);
 					Upfront.Popup.$popup.find("#upfront-popup-content").append($dialog);
@@ -1505,7 +1507,7 @@ define(function() {
 					editable.on("embed:updated", me.editable_updated, me);
 					me.$el.append(editable.$el);
 				});
-				this.$el.append('<button type="button">OK</button>');
+				this.$el.append('<button type="button">' + l10n.ok + '</button>');
 			},
 			editable_updated: function () {
 				this.embed_is_being_updated = true;
@@ -1564,7 +1566,7 @@ define(function() {
 					width: "100%"
 				});
 				this.loading = new Upfront.Views.Editor.Loading({
-					loading: 'Loading embeddable preview...',
+					loading: l10n.loading_embeddable_preview,
 					done: 'Loaded'
 				});
 				this.loading.render();
@@ -1671,7 +1673,7 @@ define(function() {
 		},
 		start_loading: function () {
 			this.loading = new Upfront.Views.Editor.Loading({
-				loading: 'Loading media files...',
+				loading: l10n.loading_media_files,
 				done: 'Loaded'
 			});
 			this.loading.render();
@@ -1758,7 +1760,7 @@ define(function() {
 				this.$el.find('.thumbnail').append('<div class="upfront-media-progress-bar" />');
 			},
 			upload_progress: function (progress) {
-				Upfront.Util.log(_.template("{{post.post_title}} progress changed to {{progress}}", {post:this.model.toJSON(), progress:progress}));
+				//Upfront.Util.log(_.template("{{post.post_title}} progress changed to {{progress}}", {post:this.model.toJSON(), progress:progress}));
 				this.$el.find('.upfront-media-progress-bar').css('width', progress+'%');
 			},
 			upload_finish: function () {
@@ -1794,7 +1796,7 @@ define(function() {
 			labels.render();
 			this.$el.append(labels.$el);
 
-			this.$el.append('<button type="button">OK</button>');
+			this.$el.append('<button type="button">' + l10n.ok + '</button>');
 			if (!this.media) return true;
 
 			var type = this.media.type || 'application/octet-stream',
@@ -1816,7 +1818,7 @@ define(function() {
 			;
 			Upfront.Util.post(data)
 				.done(function () {
-					Upfront.Util.log('successfully saved data');
+					//Upfront.Util.log('successfully saved data');
 					me.model.trigger("change");
 				})
 			;
@@ -1851,13 +1853,13 @@ define(function() {
 				if (model_labels && model_labels.length && model_labels.indexOf(item.get("value")) >= 0) own_labels.push(own_labels_template(item.toJSON()));
 				else all_labels.push(all_labels_template(item.toJSON()));
 			});
-			me.$el.append("Applied labels: ");
+			me.$el.append(l10n.applied_labels + "&nbsp;");
 			_(own_labels).each(function (item) {
 				me.$el.append(item);
 			});
 			this.$el.append(
 				'<input type="text" placeholder="label..." />' +
-				'<button type="button">Add</button>'
+				'<button type="button">' + l10n.add + '</button>'
 			);
 			me.$el.append("All labels: ");
 			_(all_labels).each(function (item) {
@@ -1925,9 +1927,9 @@ define(function() {
 		},
 		render: function () {
 			this.$el.empty()
-				.append("We recommend using services like YouTube, Vimeo or Soundcloud to store rich media files. You can then embed it easily into your site. Find out more here.")
-				.append('<a href="#" class="button keep">Keep file</a>')
-				.append('<a href="#" class="button remove">Remove file</a>')
+				.append(l10n.video_recommendation_nag)
+				.append('<a href="#" class="button keep">' + l10n.keep_file + '</a>')
+				.append('<a href="#" class="button remove">' + l10n.remove_file + '</a>')
 			;
 		},
 		keep_file: function (e) {
@@ -1989,18 +1991,18 @@ define(function() {
 
 		var MediaItem_EmbedableUrl = MediaItem_EditorEmbedableEditable.extend({
 			get_name: function () { return "original_url"; },
-			get_label: function () { return "URL of the media"; },
+			get_label: function () { return l10n.media_url; },
 			get_placeholder: function () { return "http://sample.com/path-to-image/image.jpg"; }
 		});
 
 		var MediaItem_EditableTitle = MediaItem_EditorEditable.extend({
 			get_name: function () { return "post_title"; },
-			get_label: function () { return "Image Title"; },
-			get_placeholder: function () { return "Your image title"; }
+			get_label: function () { return l10n.image_title; },
+			get_placeholder: function () { return l10n.your_image_title; }
 		});
 
 		var MediaItem_EditableLabels = MediaItem_EditorEditable.extend({
-			get_label: function () { return "Labels"; },
+			get_label: function () { return l10n.labels; },
 			render: function () {
 				var collection = new MediaCollection_Selection([this.model]),
 					view = new MediaManager_ItemControl_LabelsContainer({model: collection})
@@ -2025,7 +2027,7 @@ define(function() {
 			options = _.extend({
 				media_type: ["images"],
 				multiple_selection: true,
-				button_text: "Ok",
+				button_text: l10n.ok,
 				ck_insert: false
 			}, options);
 			var me = this,

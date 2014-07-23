@@ -6842,12 +6842,16 @@ a.upfront-post-layout-trigger:before{
 }
 .upfront-filter_control > ul {
 	margin: 0;
-	padding: 0 0 0 10px;
+	/*padding: 0 0 0 10px;*/
+	padding: 0;
 }
 .upfront-filter_control > ul > li {
 	margin: 0;
 	padding: 0;
 	cursor: pointer;
+	/* */
+	display: inline;
+	padding-right: 10px;
 }
 .upfront-filter_selection-control ul, .upfront-filter_selection-control .upfront-filter_control {
 	display: block;

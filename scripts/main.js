@@ -52,6 +52,7 @@ require(['backbone'], function (Backbone) {
         'Theme': Upfront.mainData.themeInfo
       },
       "Content": Upfront.mainData.content,
+      "l10n": Upfront.mainData.l10n
     };
 
     // Populate basics

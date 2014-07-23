@@ -423,6 +423,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);
 
+		$l10n = apply_filters('upfront_l10n', $this->_get_l10n_strings());
+		$l10n = json_encode($l10n);
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -441,7 +444,8 @@ Upfront.mainData = {
   themeInfo: {$theme_info},
   themeFonts: {$theme_fonts},
   themeColors: {$theme_colors},
-  content: {$content}
+  content: {$content},
+  l10n: {$l10n}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));
@@ -470,6 +474,60 @@ EOMainJs;
 
 		usort($authors, array($this, 'sort_authors'));
 		return $authors;
+	}
+
+	private function _get_l10n_strings () {
+		return array(
+			'media' => array(
+				'clear_all_filters' => __('Clear all filters', 'upfront'),
+				'all' => __('All', 'upfront'),
+				'none' => __('None', 'upfront'),
+				'item_in_use_nag' => __("The selected media file is already in use. Are you sure?", 'upfront'),
+				'files_selected' => __('%d files selected', 'upfront'),
+				'media_title' => __("Media Title", 'upfront'),
+				'add_labels' => __("Add Label(s)", 'upfront'),
+				'current_labels' => __("Current Label(s)", 'upfront'),
+				'additional_sizes' => __("Additional sizes", 'upfront'),
+				'url' => __("URL", 'upfront'),
+				'add' => __("+Add", 'upfront'),
+				'clear_search' => __("Clear search", 'upfront'),
+				'showing_total_results' => __("Showing {{total}} results for", 'upfront'),
+				'active_filters' => __("Active filters", 'upfront'),
+				'filter_label' => __("Filter", 'upfront'),
+				'media_type' => __("Media type", 'upfront'),
+				'date' => __("Date", 'upfront'),
+				'file_name' => __("File Name", 'upfront'),
+				'recent' => __("Recent", 'upfront'),
+				'labels' => __("Labels", 'upfront'),
+				'library' => __("Library", 'upfront'),
+				'embed' => __("Embed", 'upfront'),
+				'upload' => __("Upload Media", 'upfront'),
+				'insertion_question' => __('How would you like to insert those images?', 'upfront'),
+				'plain_images' => __('plain images', 'upfront'),
+				'image_slider' => __('image slider', 'upfront'),
+				'image_gallery' => __('image gallery', 'upfront'),
+				'ok' => __('OK', 'upfront'),
+				'loading_embeddable_preview' => __('Loading embeddable preview...', 'upfront'),
+				'loading_media_files' => __('Loading media files...', 'upfront'),
+				'applied_labels' => __('Applied labels:', 'upfront'),
+				'video_recommendation_nag' => __('We recommend using services like YouTube, Vimeo or Soundcloud to store rich media files. You can then embed it easily into your site. Find out more here.', 'upfront'),
+				'keep_file' => __('Keep file', 'upfront'),
+				'remove_file' => __('Remove file', 'upfront'),
+				'media_url' => __('URL of the media', 'upfront'),
+				'image_title' => __('Image Title', 'upfront'),
+				'your_image_title' => __('Your image title', 'upfront'),
+				'filter' => array(
+					'images' => __('Images', 'upfront'),
+					'videos' => __('Videos', 'upfront'),
+					'audios' => __('Audios', 'upfront'),
+					'all' => __('All', 'upfront'),
+					'newest' => __('Newest', 'upfront'),
+					'oldest' => __('Oldest', 'upfront'),
+					'a_z' => __('A>Z', 'upfront'),
+					'z_a' => __('Z>A', 'upfront'),
+				),
+			),
+		);
 	}
 }
 
