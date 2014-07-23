@@ -49,7 +49,7 @@ define(function() {
 				});
 				item_sizes = _.intersection(item_sizes, tmp_sizes);
 			});
-			item_sizes.push(MEDIA_SIZES.FULL)
+			item_sizes.push(MEDIA_SIZES.FULL);
 			return item_sizes;
 		},
 		is_used_label: function (label) {
@@ -282,6 +282,7 @@ define(function() {
 	var MediaManager_Controls_View = Backbone.View.extend({
 		className: "upfront-media-controls",
 		is_search_active: false,
+		_item_control: false,
 		initialize: function () {
 			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
 			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
@@ -297,7 +298,15 @@ define(function() {
 			else this.$el.removeClass('upfront-media-controls-search');
 		},
 		render_media: function (selected) {
-			var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
+			//var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
+			// ^ Skip this and cache item control instead
+			if (!this._item_control) {
+				this._item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
+			} else {
+				this._item_control.model.reset(selected);
+			}
+			var item_control = this._item_control;
+
 			item_control.render();
 			this.$el.empty();
 			if (this.is_search_active) {
