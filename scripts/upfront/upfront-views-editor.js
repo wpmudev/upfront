@@ -630,13 +630,7 @@ define([
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 				grid = Upfront.Settings.LayoutEditor.Grid;
 			$('.upfront-overlay-grid').remove();
-			$('.upfront-grid-layout, .upfront-region-side-fixed .upfront-modules_container').each(function(){
-				var columns = grid.size,
-					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
-				$(this).prepend(template);
-			});
-
-			$('.upfront-grid-layout, .upfront-region-side-lightbox .upfront-modules_container').each(function(){
+			$('.upfront-grid-layout, .upfront-region-side-fixed .upfront-modules_container, .upfront-region-side-lightbox .upfront-modules_container').each(function(){
 				var columns = grid.size,
 					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
 				$(this).prepend(template);
@@ -8267,7 +8261,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
 				var sub_model_index = _.filter(_.map(sub_model, sub_index_func), function(i){ return i >= 0; }),
 					sub_model_fixed_index = sub_model.fixed.length > 0 ? _.map(sub_model.fixed, sub_index_func) : [];
-				sub_model_index = _.union(sub_model_index, sub_model_fixed_index);
+				sub_model_index = _.union(sub_model_index, sub_model_fixed_index, [index]);
 				if ( sub_model_index.length > 0 ){
 					if ( to == 'top' )
 						index = _.min(sub_model_index);

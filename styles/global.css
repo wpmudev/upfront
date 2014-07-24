@@ -212,22 +212,26 @@ h2, h3 { page-break-after: avoid; }
 }
 
 /* Flexbox experiments *//* */
-.upfront-output-region,
-.upfront-output-module-group,
-.upfront-output-wrapper {
+.flexbox-support .upfront-output-region,
+.flexbox-support .upfront-output-module-group,
+.flexbox-support .upfront-output-wrapper,
+.flexbox-support .upfront-output-region-container-bg > .upfront-grid-layout {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: flex-start;
 	align-content: flex-start;
 }
-.upfront-output-region:before,
-.upfront-output-region:after {
+.flexbox-support .upfront-output-region-container-bg > .upfront-grid-layout {
+	align-items: stretch;
+}
+.flexbox-support .upfront-output-region:before,
+.flexbox-support .upfront-output-region:after {
 	width: 0;
 }
-.upfront-output-region > .upfront-output-wrapper,
-.upfront-output-module-group > .upfront-output-wrapper,
-.upfront-output-wrapper > .upfront-output-module {
+.flexbox-support .upfront-output-region > .upfront-output-wrapper,
+.flexbox-support .upfront-output-module-group > .upfront-output-wrapper,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module {
 	order: 0;
 }
 /* End flexbox */
@@ -256,7 +260,8 @@ div.upfront-region-container-lightbox .upfront-grid-layout {
   max-height:1px;
   max-width: 1px;
 }
-div.upfront-region-lightbox, div.upfront-region-side-lightbox{
+div.upfront-region-lightbox, div.upfront-region-side-lightbox,
+.flexbox-support div.upfront-region-lightbox, .flexbox-support div.upfront-region-side-lightbox {
   position:fixed;
   display:none;
   top: 50% !important;

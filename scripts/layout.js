@@ -1,4 +1,14 @@
 jQuery(document).ready(function($){
+	function css_support( property )
+	{
+		var div = document.createElement('div'),
+		    reg = new RegExp("(khtml|moz|ms|webkit|)"+property, "i");
+		for ( s in div.style ) {
+			if ( s.match(reg) )
+				return true;
+		}
+		return false;
+	}
 
 	// Making sure sidebar region height is fixed
 	function fix_region_height () {
@@ -47,9 +57,14 @@ jQuery(document).ready(function($){
 			}
 		});
 	}
-	fix_region_height();
-	$(window).on('load', fix_region_height);
-	$(window).on('resize', fix_region_height);
+	if ( css_support('flex') ){
+		$('html').addClass('flexbox-support');
+	}
+	else {
+		fix_region_height();
+		$(window).on('load', fix_region_height);
+		$(window).on('resize', fix_region_height);
+	}
 
 	// Full width image and video background
 	function fix_full_bg () {

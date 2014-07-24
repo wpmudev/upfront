@@ -53,6 +53,19 @@ define(function() {
 	clone: function (obj) {
 		return jQuery.extend(true, {}, obj);
 	},
+	
+	/**
+	 * Check CSS support
+	 */
+	css_support: function ( property ) {
+		var div = document.createElement('div'),
+		    reg = new RegExp("(khtml|moz|ms|webkit|)"+property, "i");
+		for ( s in div.style ) {
+			if ( s.match(reg) )
+				return true;
+		}
+		return false;		
+	},
 
 	post: function (data, data_type) {
 	  var request = (_.isObject(data) && data.action)

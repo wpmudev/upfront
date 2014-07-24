@@ -2087,18 +2087,20 @@ define([
 				this.fix_height();
 			},
 			fix_height: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-					$regions = this.$el.find('.upfront-region').not('.upfront-region-side-fixed, .upfront-region-side-lightbox'),
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				// Don't need to adapt height if breakpoint isn't default or that flexbox is supported
+				// Make sure to test with non-flexbox browser whenever possible
+				if ( ( breakpoint && !breakpoint.default ) || Upfront.Util.css_support('flex') ){
+					this.refresh_background();
+					return;
+				}
+				var $regions = this.$el.find('.upfront-region').not('.upfront-region-side-fixed, .upfront-region-side-lightbox'),
 					$container = $regions.find('.upfront-modules_container'),
 					row = this.model.get_property_value_by_name('row'),
 					is_full_screen = ( this._get_region_type() == 'full' ),
 					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					height = 0,
 					exclude = [];
-				if ( breakpoint && !breakpoint.default ){
-					this.refresh_background();
-					return;
-				}
 				$regions.add($container).css({
 					minHeight: "",
 					height: "",
@@ -2403,6 +2405,7 @@ define([
 					if ( col && col != this.col )
 						this.region_resize(col);
 				}
+				this.$el.css('min-height', height + 'px');
 				if ( expand_lock )
 					this.$el.addClass('upfront-region-expand-lock');
 				else
@@ -3284,6 +3287,10 @@ define([
 				this.$el.append(this.bg_setting.el);
 
 				this.fix_height();
+				
+				// Use flexbox when we can
+				if ( Upfront.Util.css_support('flex') )
+					$('html').addClass('flexbox-support');
 
 				Upfront.Events.trigger("layout:after_render");
 			},

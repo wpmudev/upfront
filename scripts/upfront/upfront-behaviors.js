@@ -1562,7 +1562,7 @@ var GridEditor = {
 
 		ed.drops = [];
 
-		_.each(areas, function(area){
+		_.each(areas, function(area, area_index){
 			var is_region = area.$el.hasClass('upfront-region'),
 				$area = area.$el.find(".upfront-editable_entities_container:first"),
 				$region = is_region ? area.$el : area.$el.closest('.upfront-region'),
@@ -1644,7 +1644,7 @@ var GridEditor = {
 								bottom: el.grid.top-1,
 								left: wrap.grid.left,
 								right: wrap.grid.right,
-								index: 5
+								index: ( prev_me ? 1 : 5 )
 							},
 							priority_index: 5,
 							type: 'inside',
@@ -1674,7 +1674,7 @@ var GridEditor = {
 								bottom: wrap_bottom,
 								left: wrap.grid.left,
 								right: wrap.grid.right,
-								index: 5
+								index: ( last_me ? 1 : 5 )
 							},
 							priority_index: 5,
 							type: 'inside',
@@ -1689,7 +1689,7 @@ var GridEditor = {
 				}
 				// Add droppable before each wrapper that start in new line
 				if ( wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
-					var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top : current_full_top,
+					var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
 						el_top = ed.get_wrap_el_min(wrap, false, true),
 						bottom = el_top.grid_center.y,
 						is_drop_me = ( prev_wrap_clr && is_prev_me ),
@@ -1706,7 +1706,7 @@ var GridEditor = {
 								bottom: el_top.grid.top-1,
 								left: area.grid.left,
 								right: area.grid.right,
-								index: 10
+								index: ( is_drop_me ? 1 : 10 )
 							},
 							priority_index: 10,
 							type: 'full',
@@ -1738,7 +1738,7 @@ var GridEditor = {
 								bottom: bottom,
 								left: ( is_wrap_me ? wrap.grid.left : ( is_switch ? switch_left : wrap.grid.right+1 ) ),
 								right: area.grid.right,
-								index: 3
+								index: ( is_wrap_me ? 1 : 3 )
 							},
 							priority_index: 8,
 							type: 'side-after',
@@ -1770,7 +1770,7 @@ var GridEditor = {
 								bottom: bottom,
 								left: wrap.grid.left,
 								right: ( is_wrap_me ? next_wrap_el_left.grid.left-1 : ( is_switch ? switch_right : wrap_el_left.grid.left-1 ) ),
-								index: 3
+								index: ( is_wrap_me ? 1 : 3 )
 							},
 							priority_index: 7,
 							type: 'side-before',
@@ -1788,7 +1788,7 @@ var GridEditor = {
 				var last_wrap = ed.get_wrap($wraps.last()),
 					last_wrap_clr = ( last_wrap && last_wrap.grid.left == area.grid.left ),
 					is_drop_me = ( me_wrap && last_wrap_clr && last_wrap._id == me_wrap._id ),
-					bottom = ( area.grid.bottom-current_full_top > row ? area.grid.bottom : current_full_top + row ),
+					bottom = ( area.grid.bottom-current_full_top > row ? area.grid.bottom + 5 : current_full_top + row ),
 					bottom_wrap = _.max(ed.wraps, function(each){
 						if ( each.region != region_name )
 							return 0;
@@ -1806,7 +1806,8 @@ var GridEditor = {
 							top: top,
 							bottom: bottom,
 							left: area.grid.left,
-							right: area.grid.right
+							right: area.grid.right,
+							index: ( is_drop_me ? 1 : 10 )
 						},
 						priority_index: 10,
 						type: 'full',
@@ -2524,18 +2525,19 @@ var GridEditor = {
 						regions_area = _.map(ed.regions, function(each){
 							var top, bottom, left, right, area,
 								is_same_container = ( each.$el.closest('.upfront-region-container').get(0) == $last_region_container.get(0) ),
-								region_bottom = ( is_same_container && ( !each.$el.hasClass('upfront-region-side') || each.$el.hasClass('upfront-region-side-left') || each.$el.hasClass('upfront-region-side-right') ) ) ? 999999 : each.grid.bottom, // Make this bottom-less if it's in the last region container
+								region_bottom = ( is_same_container && ( !each.$el.hasClass('upfront-region-side') || each.$el.hasClass('upfront-region-side-left') || each.$el.hasClass('upfront-region-side-right') ) ) ? 999999 : each.grid.bottom, // Make this bottom-less if it's in the last region container,
+								is_active = each.$el.hasClass('upfront-region-drag-active'),
 								area = get_area_compared({
-									top: each.grid.top,
-									bottom: region_bottom,
+									top: each.grid.top - 5,
+									bottom: region_bottom + 5,
 									left: each.grid.left,
 									right: each.grid.right
 								}),
 								type = each.$el.data('type'),
 								priority = ed.region_type_priority[type];
 							area *= priority;
-							if ( each.$el.hasClass('upfront-region-drag-active') )
-								area *= 1.2;
+							if ( is_active )
+								area *= 1.5;
 							return {
 								area: area,
 								region: each
@@ -2581,7 +2583,7 @@ var GridEditor = {
 						var max_drops = _.filter(drops_area, function(each){ return each.area == max_drop.area; }),
 							max_drops_sort = _.sortBy(max_drops, function(each, index, list){
 								var priority_area = each.drop.priority ? get_area_compared(each.drop.priority) : 0;
-								if ( priority_area*2 > each.area )
+								if ( priority_area*1 >= each.area )
 									return each.drop.priority.index;
 								return each.drop.priority_index;
 							}),
