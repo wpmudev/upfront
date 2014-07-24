@@ -344,6 +344,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public static function from_entity_ids ($cascade, $storage_key = '', $dev_first = false) {
 		$layout = array();
+//        var_dump($cascade);die;
 		if (!is_array($cascade)) return $layout;
 		self::$cascade = $cascade;
 		if ( current_user_can('switch_themes') && (!empty($_GET['dev']) || $dev_first) ){

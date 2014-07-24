@@ -3428,7 +3428,6 @@ var GridEditor = {
 		if ( $me.data('ui-draggable') )
 			return false;
 
-		console.log("here iframeFix: true");
 		$me.draggable({
 			disabled: true,
 			revert: true,

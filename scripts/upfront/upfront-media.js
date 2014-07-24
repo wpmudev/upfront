@@ -2072,11 +2072,29 @@ define(function() {
 		},
 		*/
 		load: function (options) {
-            this.media_manager = new MediaManager_View(_.extend({
-                el: this.out,
-                data: this.popup_data
-            }, options))
-            ;
+            // this.media_manager = new MediaManager_View(_.extend({
+            //     el: this.out,
+            //     data: this.popup_data
+            // }, options))
+            // ;
+            // 
+            if( _.isUndefined( this.media_manage_options ) ){
+            	this.media_manage_options = _.extend({
+                    el: this.out,
+                    data: this.popup_data
+                }, options);
+                this.media_manager = new MediaManager_View( this.media_manage_options );
+            }else if( !_.isEqual( this.media_manage_options,  _.extend({ el: this.out, data: this.popup_data }, options)) ){
+				this.media_manage_options = _.extend({
+                    el: this.out,
+                    data: this.popup_data
+                }, options);
+                this.media_manager = new MediaManager_View( this.media_manage_options );
+            }
+         
+
+
+
 			this.media_manager.render();
 			return false;
 		},
