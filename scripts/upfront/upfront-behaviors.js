@@ -2367,7 +2367,6 @@ var GridEditor = {
 			appendTo: $main,
 			iframeFix: true,
 			start: function(e, ui){
-				console.log("iframeFix: true");
 				is_parent_group = ( typeof view.group_view != 'undefined' );
 				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');

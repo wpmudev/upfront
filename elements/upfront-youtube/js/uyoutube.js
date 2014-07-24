@@ -36,15 +36,19 @@
 
       },
       setType: function(e) {
+        var self = this;
         this.property('youtube_status', 'ok');
         if ($(e.currentTarget).hasClass('single-video')) {
           this.property('videoType', 'single', false);
         } else {
           this.property('videoType', 'multiple', false);
         }
+        
 				Upfront.Events.trigger("entity:settings:activate", this);
+        setTimeout(function(){
+          self.$(".upfront-entity-settings_trigger").click();
+        }, 100);
       },
-
       get_content_markup: function () {
         var rendered,
           props = this.extract_properties();

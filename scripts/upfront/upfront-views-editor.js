@@ -4694,6 +4694,7 @@ define([
 			this.$el.find(".upfront-settings_title").html(title);
 		},
 		toggle_panel: function (panel) {
+			console.log("toggling panel")
 			this.panels.invoke("conceal");
 			panel.$el.find(".upfront-settings_panel").css('height', '');
 			panel.show();

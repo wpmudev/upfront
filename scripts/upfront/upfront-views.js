@@ -535,7 +535,9 @@ define([
 				Upfront.Events.trigger("entity:contextmenu:activate", this);
 			},
 			on_settings_click: function (e) {
-				e.preventDefault();
+				if( typeof e !== "undefined" ){
+					e.preventDefault();
+				}
 				Upfront.Events.trigger("entity:settings:activate", this);
 			},
 			check_deactivated: function (){
