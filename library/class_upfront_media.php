@@ -97,6 +97,7 @@ class Upfront_MediaCollection extends Upfront_Media {
 		}
         $meta = array(
             "max_pages" => $this->_query->max_num_pages + 1,
+            "max_items" => (int)$this->_query->found_posts,
         );
 		return array(
             'items' => $ret,
@@ -203,6 +204,7 @@ class Upfront_MediaCollection extends Upfront_Media {
                 $video_oembed->_query->posts
             );
             if ($video_oembed->_query->max_num_pages > $collection->_query->max_num_pages) $collection->_query->max_num_pages = $video_oembed->_query->max_num_pages;
+            $collection->_query->found_posts = (int)$collection->_query->found_posts + (int)$video_oembed->_query->found_posts;
         }
         if (!empty($collection->_oembed_audio_filter)) {
             $audio_oembed = new self;
@@ -231,6 +233,7 @@ class Upfront_MediaCollection extends Upfront_Media {
                 $audio_oembed->_query->posts
             );
             if ($audio_oembed->_query->max_num_pages > $collection->_query->max_num_pages) $collection->_query->max_num_pages = $audio_oembed->_query->max_num_pages;
+            $collection->_query->found_posts = (int)$collection->_query->found_posts + (int)$audio_oembed->_query->found_posts;
         }
         return $collection;
     }
@@ -297,51 +300,96 @@ class Upfront_MediaServer extends Upfront_Server {
 	private function _add_hooks () {
         $this->augment_attachments();
 
-        //add_action('wp_ajax_upfront-media-list_media', array($this, "list_media"));
-        upfront_add_ajax('upfront-media-list_media', array($this, "list_media"));
+        add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
 
-        //add_action('wp_ajax_upfront-media-get_item', array($this, "get_item"));
+        upfront_add_ajax('upfront-media-list_media', array($this, "list_media"));
         upfront_add_ajax('upfront-media-get_item', array($this, "get_item"));
 
-        //add_action('wp_ajax_upfront-media_get_image_labels', array($this, "get_image_labels"));
         upfront_add_ajax('upfront-media_get_image_labels', array($this, "get_image_labels"));
-
-        //add_action('wp_ajax_upfront-media-get_labels', array($this, "list_labels"));
         upfront_add_ajax('upfront-media-get_labels', array($this, "list_labels"));
 
         if (Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) {
-            //add_action('wp_ajax_upfront-media-remove_item', array($this, "remove_item"));
             upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
-
-            //add_action('wp_ajax_upfront-media-update_media_item', array($this, "update_media_item"));
             upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
-
-            //add_action('wp_ajax_upfront-media-upload', array($this, "upload_media"));
             upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
 
-            //add_action('wp_ajax_upfront-media-list_theme_images', array($this, "list_theme_images"));
             upfront_add_ajax('upfront-media-list_theme_images', array($this, "list_theme_images"));
-
-            //add_action('wp_ajax_upfront-media-upload-theme-image', array($this, "upload_theme_image"));
             upfront_add_ajax('upfront-media-upload-theme-image', array($this, "upload_theme_image"));
 
-            //add_action('wp_ajax_upfront-media-add_label', array($this, "add_label"));
             upfront_add_ajax('upfront-media-add_label', array($this, "add_label"));
-
-            //add_action('wp_ajax_upfront-media-associate_label', array($this, "associate_label"));
             upfront_add_ajax('upfront-media-associate_label', array($this, "associate_label"));
-
-            //add_action('wp_ajax_upfront-media-disassociate_label', array($this, "disassociate_label"));
             upfront_add_ajax('upfront-media-disassociate_label', array($this, "disassociate_label"));
         }
 
         if (Upfront_Permissions::current(Upfront_Permissions::EMBED)) {
-            //add_action('wp_ajax_upfront-media-embed', array($this, "embed_media"));
             upfront_add_ajax('upfront-media-embed', array($this, "embed_media"));
-
-            //add_action('wp_ajax_upfront-media-get_embed_raw', array($this, "get_embed_raw"));
             upfront_add_ajax('upfront-media-get_embed_raw', array($this, "get_embed_raw"));
         }
+    }
+
+    public function add_l10n_strings ($strings) {
+        if (!empty($strings['media'])) return $strings;
+        $strings['media'] = $this->_get_l10n();
+        return $strings;
+    }
+
+    private function _get_l10n ($key=false) {
+        $l10n = array(
+            'clear_all_filters' => __('Clear all filters', 'upfront'),
+            'all' => __('All', 'upfront'),
+            'none' => __('None', 'upfront'),
+            'item_in_use_nag' => __("The selected media file is already in use. Are you sure?", 'upfront'),
+            'files_selected' => __('%d files selected', 'upfront'),
+            'media_title' => __("Media Title", 'upfront'),
+            'add_labels' => __("Add Label(s)", 'upfront'),
+            'current_labels' => __("Current Label(s)", 'upfront'),
+            'additional_sizes' => __("Additional sizes", 'upfront'),
+            'url' => __("URL", 'upfront'),
+            'add' => __("+Add", 'upfront'),
+            'clear_search' => __("Clear search", 'upfront'),
+            'showing_total_results' => __("Showing {{total}} results for", 'upfront'),
+            'active_filters' => __("Active filters", 'upfront'),
+            'filter_label' => __("Filter", 'upfront'),
+            'media_type' => __("Media type", 'upfront'),
+            'date' => __("Date", 'upfront'),
+            'file_name' => __("File Name", 'upfront'),
+            'recent' => __("Recent", 'upfront'),
+            'labels' => __("Labels", 'upfront'),
+            'library' => __("Library", 'upfront'),
+            'embed' => __("Embed", 'upfront'),
+            'upload' => __("Upload Media", 'upfront'),
+            'insertion_question' => __('How would you like to insert those images?', 'upfront'),
+            'plain_images' => __('plain images', 'upfront'),
+            'image_slider' => __('image slider', 'upfront'),
+            'image_gallery' => __('image gallery', 'upfront'),
+            'ok' => __('OK', 'upfront'),
+            'loading_embeddable_preview' => __('Loading embeddable preview...', 'upfront'),
+            'loading_media_files' => __('Loading media files...', 'upfront'),
+            'applied_labels' => __('Applied labels:', 'upfront'),
+            'video_recommendation_nag' => __('We recommend using services like YouTube, Vimeo or Soundcloud to store rich media files. You can then embed it easily into your site. Find out more here.', 'upfront'),
+            'keep_file' => __('Keep file', 'upfront'),
+            'remove_file' => __('Remove file', 'upfront'),
+            'media_url' => __('URL of the media', 'upfront'),
+            'image_title' => __('Image Title', 'upfront'),
+            'your_image_title' => __('Your image title', 'upfront'),
+            'entity_list_info' => __('{{items}} Media Files, {{pages}} pages', 'upfront'),
+            'filter' => array(
+                'images' => __('Images', 'upfront'),
+                'videos' => __('Videos', 'upfront'),
+                'audios' => __('Audios', 'upfront'),
+                'all' => __('All', 'upfront'),
+                'newest' => __('Newest', 'upfront'),
+                'oldest' => __('Oldest', 'upfront'),
+                'a_z' => __('A>Z', 'upfront'),
+                'z_a' => __('Z>A', 'upfront'),
+            ),
+            'media_labels' => __('Media Labels', 'upfront'),
+            'media_label' => __('Media Label', 'upfront'),
+        );
+        return !empty($key)
+            ? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+            : $l10n
+        ;
     }
 
     /**
@@ -353,8 +401,8 @@ class Upfront_MediaServer extends Upfront_Server {
             'attachment',
             array(
                 'labels' => array(
-                    'name' => __('Media Labels', 'upfront'), //UPFRONT_TEXTDOMAIN),
-                    'singular_name' => __('Media Label', 'upfront') //UPFRONT_TEXTDOMAIN),
+                    'name' => $this->_get_l10n('media_labels'),
+                    'singular_name' => $this->_get_l10n('media_label'),
                 ),
                 'hierarchical' => false,
                 'public' => true,
@@ -1704,41 +1752,41 @@ class UploadHandler
 
 class Upfront_UploadHandler extends UploadHandler {
 
-	public function __construct () {
-		$uploads = wp_upload_dir();
-		parent::__construct(array(
-			'script_url' => admin_url('admin-ajax.php?action=upfront-media-upload'),
-			'upload_dir' => trailingslashit($uploads['path']),
-			'upload_url' => trailingslashit($uploads['url']),
-			'param_name' => 'media',
-		), false);
-	}
-	protected function initialize() {
-		switch ($this->get_server_var('REQUEST_METHOD')) {
-			case 'OPTIONS':
-			case 'HEAD':
-				return $this->head();
-				break;
-			case 'GET':
-				return $this->get();
-				break;
-			case 'PATCH':
-			case 'PUT':
-			case 'POST':
-				return $this->post();
-				break;
-			case 'DELETE':
-				return $this->delete();
-				break;
-			default:
-				$this->header('HTTP/1.1 405 Method Not Allowed');
-		}
-	}
-	public function handle () {
-		return $this->initialize();
-	}
+    public function __construct () {
+        $uploads = wp_upload_dir();
+        parent::__construct(array(
+            'script_url' => admin_url('admin-ajax.php?action=upfront-media-upload'),
+            'upload_dir' => trailingslashit($uploads['path']),
+            'upload_url' => trailingslashit($uploads['url']),
+            'param_name' => 'media',
+        ), false);
+    }
+    protected function initialize() {
+        switch ($this->get_server_var('REQUEST_METHOD')) {
+            case 'OPTIONS':
+            case 'HEAD':
+                return $this->head();
+                break;
+            case 'GET':
+                return $this->get();
+                break;
+            case 'PATCH':
+            case 'PUT':
+            case 'POST':
+                return $this->post();
+                break;
+            case 'DELETE':
+                return $this->delete();
+                break;
+            default:
+                $this->header('HTTP/1.1 405 Method Not Allowed');
+        }
+    }
+    public function handle () {
+        return $this->initialize();
+    }
 
-	protected function generate_response ($content, $out=false) {
-		return $content;
-	}
+    protected function generate_response ($content, $out=false) {
+        return $content;
+    }
 }
