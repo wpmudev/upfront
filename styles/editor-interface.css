@@ -4806,6 +4806,26 @@ div.uinsert-selector a:hover {
 .upfront-field-multiple:hover .upfront-field-icon-navigation-right:before {
     background-position: -1028px -207px;
 }
+.upfront-field-icon-burger-left:before {
+    background-position: -920px -268px;
+    width: 22px;
+    height: 14px;
+}
+.upfront-field-icon-burger-right:before {
+    background-position: -920px -300px;
+    width: 22px;
+    height: 14px;
+}
+.upfront-field-icon-burger-top:before {
+    background-position: -1027px -268px;
+    width: 22px;
+    height: 14px;
+}
+.upfront-field-icon-burger-whole:before {
+    background-position: -1027px -300px;
+    width: 22px;
+    height: 14px;
+}
 .upfront-field-icon-contact-above-field:before {
 	background-position: -1140px -40px;
 }

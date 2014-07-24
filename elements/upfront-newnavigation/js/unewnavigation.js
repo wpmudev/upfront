@@ -1397,6 +1397,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 
   },
+  toggle_responsive_nav: function(e) {
+		if($(this).parent().find('ul.menu').css('display') == 'none') {
+			$(this).parent().find('ul.menu').show();
+		}
+		else {
+			$(this).parent().find('ul.menu').hide();
+			$(this).parent().find('ul.sub-menu').css('display', '');
+			
+		}  
+	  
+  },
   generate_menu: function() {
     var me = this;
     var menu_id = this.model.get_property_value_by_name('menu_id');
@@ -1415,8 +1426,26 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
       me.editMenuItem(this.$el.find('a.new_menu_item'));
 
     }
+	
+	var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+	
+	if(!breakpoint || breakpoint.default) {
+		if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
+			this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").bind('click', me.toggle_responsive_nav));
+			this.$el.find('ul.menu').hide();
+		}
+	}
+	else {
+		model_breakpoint = this.model.get_property_value_by_name('breakpoint')	
+		breakpoint_data = model_breakpoint[breakpoint.id];
+		if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
+			this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").bind('click', me.toggle_responsive_nav));
+			this.$el.find('ul.menu').hide();
+		}
+	}
+	
 
-
+	
     //this.$el.find('.upfront-object-content').append('<i class="navigation-add-item">+</i>');
     //me.toolTipAppend();
     // add attribute on anchor tag
@@ -1895,10 +1924,10 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                                   label: "",
                                   layout: "vertical",
                                   values: [
-                                      { label: "Left", value: 'left'},
-                                      { label: "Right", value: 'right'},
-                                      { label: "Top", value: 'top'},
-                                      { label: "Whole", value: 'whole'}
+                                      { label: "Left", value: 'left', icon: 'burger-left'},
+                                      { label: "Right", value: 'right', icon: 'burger-right'},
+                                      { label: "Top", value: 'top', icon: 'burger-top'},
+                                      { label: "Whole", value: 'whole', icon: 'burger-whole'}
                                   ]
                               }),
 							  new Upfront.Views.Editor.Field.Radios({
@@ -1906,6 +1935,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
                                   property: 'burger_over',
                                   default_value: 'over',
                                   label: "",
+                                  layout: "vertical",
                                   values: [
                                       { label: "Over Content", value: 'over' },
                                       { label: "Pushes Content", value: 'pushes' }

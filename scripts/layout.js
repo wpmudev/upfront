@@ -154,6 +154,9 @@ jQuery(document).ready(function($){
 			return;
 			
 		  var url = $(this).attr('href');
+		  if(!url)
+		  	return;
+			
 			if(url.indexOf('#') >=0) {
 			  var tempurl = url.split('#');
 			  if(tempurl[1].trim() != '')

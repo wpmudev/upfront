@@ -8,9 +8,11 @@ div.upfront-navigation ul.sub-menu {
   display: none;
 }
 
-div.upfront-navigation li.menu-item:hover > ul.sub-menu {
+div.upfront-navigation div[data-style="horizontal"] li.menu-item:hover > ul.sub-menu,
+div.upfront-navigation div[data-style="vertical"] li.menu-item:hover > ul.sub-menu {
   display: block;
 }
+
 
 div.upfront-navigation li.menu-item a {
   display: block;
@@ -96,7 +98,64 @@ div.upfront-navigation div[data-style="vertical"] ul.sub-menu {
 div.upfront-navigation div[data-style="vertical"] ul.sub-menu > li > ul > li a {
 	border-left:1px #dadee1 solid;
 }
-/* burger */
+
+/* BURGER */
+
+div.upfront-navigation div[data-style="burger"] ul.menu {
+  position:fixed;
+  top:0;
+  z-index:1;
+  background-color:#dadee1;
+}
+
+div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu,
+div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {
+  left:0;
+  right:0;
+}
+div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {
+	height: 100%;	
+}
+div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {
+  width:30%;
+  height: 100%;
+  left:0;
+}
+
+div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {
+  width:30%;
+  height: 100%;
+  right:0;
+}
+
+div.upfront-navigation div[data-style="burger"] div.responsive_nav_toggler {
+  position:relative;
+  z-index:2000;
+  display:block;
+  float: right;
+  height:26px;
+  width: 40px;
+  border-top: 6px #131313 solid;
+  border-bottom: 6px #131313 solid;
+  cursor:pointer;
+}
+
+div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_nav_toggler {
+	margin-right:20px;	
+}
+
+div.upfront-navigation div[data-style="burger"] div.responsive_nav_toggler:after {
+	content: '';
+	border-top: 6px #131313 solid;
+	top: 10px;
+	display: block;
+	position: relative;
+}
+
+
+div.upfront-navigation div[data-style="burger"] ul.menu li {
+	padding: 0;	
+}
 
 div.upfront-navigation div[data-style="burger"] ul.menu > li {
   display: block;

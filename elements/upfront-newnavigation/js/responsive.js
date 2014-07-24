@@ -27,6 +27,51 @@
 })(jQuery,'smartresize');
 
 jQuery(document).ready(function($) {
+	$('body').on('click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
+		if($(this).parent().find('ul.menu').css('display') == 'none') {
+			$(this).parent().find('ul.menu').show();
+			if($(this).parent().data('burger_over') == 'pushes')
+				pushContent($(this).parent());
+		}
+		else {
+			$(this).parent().find('ul.menu').hide();
+			$(this).parent().find('ul.sub-menu').css('display', '');
+			
+			if($(this).parent().data('burger_over') == 'pushes')
+				pullContent($(this).parent());
+		}
+	});
+	
+	$('body').on('click', 'div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > a, div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > span', null, function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		if($(this).closest('li').children('ul.sub-menu').css('display') == 'none')
+			$(this).closest('li').children('ul.sub-menu').show();
+		else
+			$(this).closest('li').children('ul.sub-menu').hide();
+	});
+	
+	function pushContent(nav) {
+		return;
+		var currentwidth = $('div#page').width();
+		var navwidth = nav.find('ul.menu').width();
+		var navheight = nav.find('ul.menu').height();
+		
+		$('div#page').css('margin-'+nav.data('burger_alignment'), (nav.data('burger_alignment') == 'top' || nav.data('burger_alignment') == 'whole')?navheight:navwidth);
+		
+		if(nav.data('burger_alignment') == 'left' || nav.data('burger_alignment') == 'right') {
+			$('div#page').css('width', currentwidth-navwidth);
+			$('div#page').css('minWidth', currentwidth-navwidth);
+		}
+	}
+	
+	function pullContent(nav) {
+		return;
+		$('div#page').css('margin-'+nav.data('burger_alignment'), '');
+		$('div#page').css('width', '');
+		$('div#page').css('minWidth', '');
+	}
+	
 	function roll_responsive_nav(selector, bpwidth) {
 		$(selector).each(function () {
 
@@ -49,11 +94,72 @@ jQuery(document).ready(function($) {
 						$(this).attr('data-style', 'burger')
 						$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
 						$(this).attr('data-burger_over', bparray[key]['burger_over']);
+						
+						// Add responsive nav toggler
+						if(!$(this).find('div.responsive_nav_toggler').length)
+							$(this).prepend($('<div class="responsive_nav_toggler"></div>'));
+						
+						// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
+						$(this).find('li.menu-item-has-children').each(function() {
+							if($(this).children('a').length && $(this).children('a').attr('href')) {
+								var itemclone = $(this).clone().removeClass('menu-item-has-children').addClass('active-clone').removeAttr('id');
+								itemclone.children('ul').remove();
+								$(this).children('ul').prepend(itemclone);
+								$(this).children('a').removeAttr('href');	
+							}
+						});
+						//offset a bit if admin bar or side bar is present
+						if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
+							$(this).find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
+							//$(this).find('div.responsive_nav_toggler').css('margin-top', $('div#wpadminbar').outerHeight());
+						}
+
+						
+						if(selector == '.upfront-output-unewnavigation') {
+							$('head').find('style#responsive_nav_sidebar_offset').remove();
+							var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
+							
+							responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:inherit !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important;} ';
+							
+							responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important; } ';
+							responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt($('div#upfront-ui-topbar').outerHeight())+'px !important; } ';
+							
+							$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
+						}
+						//Z-index the container module to always be on top, in the layout edit mode
+						$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
+						
+						
+						$(this).find('ul.menu').hide();
 					}
 					else {
 						$(this).attr('data-style', $(this).data('stylebk'))
 						$(this).removeAttr('data-burger_alignment','');
 						$(this).removeAttr('data-burger_over', '');
+						
+						// Remove responsive nav toggler
+						$(this).find('div.responsive_nav_toggler').remove();
+						$(this).find('ul.menu').show();
+
+						//remove any sub-menu item's parent's clones
+						$(this).find('li.active-clone').each(function() {
+							$(this).parent().parent().children('a').attr('href', $(this).children('a').attr('href'));
+							$(this).remove();
+						});
+						
+						//remove any display:block|none specifications from the sub-menus
+						$(this).find('ul.menu, ul.sub-menu').each(function() {
+							$(this).css('display', '');
+						});
+						
+						// remove any adjustments done because of the sidebar or the adminbar
+						if($('div#wpadminbar').length) {
+							$(this).find('ul.menu').css('margin-top', '');
+						}
+	
+						
+						//remove the z-index from the container module
+						$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 					}
 					
 				}

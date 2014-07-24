@@ -234,7 +234,7 @@ div.upfront-navigation div.new_menu_button input {
 	border-bottom-color: rgb(99, 134, 166);
 }
 
-
+`
 #unewnavigation-tooltip div.upfront-field-wrap-select {
 	display: inline-block;
 	vertical-align: middle;
@@ -292,3 +292,33 @@ input#unavigation-link-type-3 {
 div.upfront-output-unewnavigation .menu_item_placeholder.ueditor-placeholder {
 	z-index:1 !important;	
 }
+
+
+/* BURGER MENU */
+
+div.upfront-navigation div[data-style="burger"] i.navigation-add-item {
+  position: absolute;
+  display: block !important;
+  top: 2px !important;
+}
+div.upfront-navigation div[data-style="burger"] i.delete_menu_item  {
+  right:100px !important
+}
+div.upfront-navigation div[data-style="burger"][data-aliment="left"] i.navigation-add-item,
+div.upfront-navigation div[data-style="burger"][data-aliment="center"] i.navigation-add-item {
+  left:inherit !important;
+  margin-right:50px;
+}
+
+div.upfront-navigation div[data-style="burger"][data-aliment="right"] i.navigation-add-item {
+  right: inherit;
+  margin-left: 10px;
+}
+
+
+/* Hover to open sub-menu in the layout edit mode */
+div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > ul.sub-menu {
+  display: block;
+}
+
+
