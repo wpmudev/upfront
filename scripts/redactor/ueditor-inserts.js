@@ -357,7 +357,7 @@ var ImageInsert = UeditorInsert.extend({
 	// The user want a new insert. Fetch all the required data to create a new image insert
 	start: function(){
 		var me = this,
-			promise = Upfront.Media.Manager.open()
+			promise = Upfront.Media.Manager.open({multiple_selection: false})
 		;
 
 		promise.done(function(popup, result){
