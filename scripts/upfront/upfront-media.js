@@ -149,6 +149,7 @@ define(function() {
 		showing_titles: true,
 		current_page: 1,
 		max_pages: 1,
+		max_items: 1,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
@@ -192,7 +193,9 @@ define(function() {
 		},
 		set_max_pages: function (max) {
 			this.max_pages = max || 1;
-			//Upfront.Util.log("max pages " + this.max_pages);
+		},
+		set_max_items: function (max) {
+			this.max_items = max || 1;
 		},
 		prev_page: function () {
 			if (this.current_page > 1) return this.set_page(this.current_page-1);
@@ -1240,6 +1243,7 @@ define(function() {
 			Upfront.Util.post(data)
 				.done(function (response) {
 					ActiveFilters.set_max_pages(response.data.meta.max_pages);
+					ActiveFilters.set_max_items(response.data.meta.max_items);
 					me.library_view.update(response.data.items);
 					me.command_view.render();
 				})
@@ -1296,28 +1300,64 @@ define(function() {
 					has_clipoff = false
 				;
 				markup += '<div id="upfront-entity_list-pagination">';
-				if (ActiveFilters.max_pages > 1) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></div>';
+				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></div>';
 
+				markup += '<div class="upfront-pagination upfront-numeric_pagination">';
+				markup += '<div class="upfront-numeric_pagination-container">';
 				_.each(_.range(1, ActiveFilters.max_pages), function (idx) {
 					if (idx > ActiveFilters.max_pages) return;
-					if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) {
-						// Alright, so we're set on paging more than we have to! Rectify...
-						var left = ActiveFilters.CONST.CUTOFF_BIT,
-							right = ActiveFilters.max_pages - ActiveFilters.CONST.CUTOFF_BIT
-						;
-						if (idx > left && idx < right) {
-							if (!has_clipoff) markup += '<div class="upfront-pagination_item upfront-pagination_page-item">&hellip;</div>';
-							has_clipoff = true;
-							return true;
-						}
-					}
 					var cls = idx == ActiveFilters.current_page ? 'current' : '';
 					markup += '<div class="upfront-pagination_item upfront-pagination_page-item ' + cls + '" data-idx="' + idx + '">' + idx + '</div>';
 				});
-
-				if (ActiveFilters.max_pages > 1) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"><i class="icon-angle-right"></i></div>';
 				markup += '</div>';
+				markup += '</div>';
+
+				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"><i class="icon-angle-right"></i></div>';
+				markup += '</div>';
+
+				// Add max items
+				markup += '<div id="upfront-entity_list-info">';
+				markup += '<p>(' + _.template(l10n.entity_list_info, {items: ActiveFilters.max_items, pages: ActiveFilters.max_pages}) + ')</p>';
+				markup += '</div>';
+
 				this.$el.empty().append(markup);
+
+				// set up event listeners
+				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) {
+					var $numerics = this.$el.find(".upfront-pagination.upfront-numeric_pagination"),
+						$scroller = $numerics.find(".upfront-numeric_pagination-container")
+					;
+					$scroller.width(ActiveFilters.max_pages * 50); // Hardcoded item width
+					var delta = $scroller.width() - $numerics.width(),
+						timer = false
+					;
+					this.$el.find(".upfront-pagination_item-prev")
+						.on("mouseover", function () {
+							if (timer) clearInterval(timer);
+							timer = setInterval(function () {
+								var pos = parseInt($scroller.css("left"), 10) || 0;
+								if (0 === pos) return false;
+								else $scroller.css("left", (pos + 5) + 'px');
+							}, 100);
+						})
+						.on("mouseout", function () {
+							if (timer) clearInterval(timer);
+						})
+					;
+					this.$el.find(".upfront-pagination_item-next")
+						.on("mouseover", function () {
+							if (timer) clearInterval(timer);
+							timer = setInterval(function () {
+								var pos = parseInt($scroller.css("left"), 10) || 0;
+								if (Math.abs(pos) >= delta) return false;
+								else $scroller.css("left", (pos - 5) + 'px');
+							}, 100);
+						})
+						.on("mouseout", function () {
+							if (timer) clearInterval(timer);
+						})
+					;
+				}
 			},
 			prev_page: function (e) {
 				e.preventDefault();

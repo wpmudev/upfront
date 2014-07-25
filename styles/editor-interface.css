@@ -5383,6 +5383,29 @@ box-shadow: inset 0 2px 0 0 #fff;
 	background-position: -1340px -83px;
 }
 
+/* Scrollable pagination */
+.upfront-pagination.upfront-numeric_pagination {
+	width: 415px;
+	height: 40px;
+	overflow: hidden;
+	float: left;
+}
+.upfront-pagination.upfront-numeric_pagination .upfront-numeric_pagination-container {
+	position: relative;
+}
+.upfront-pagination_item-next {
+	float: left; 
+}
+
+#upfront-entity_list-info {
+	position: absolute;
+	width: 415px;
+	margin-top: 2em;
+}
+#upfront-entity_list-info p {
+	text-align: center;
+}
+
 
 /* Search */
 #upfront-entity_list-search {
