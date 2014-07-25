@@ -286,7 +286,6 @@ define(function() {
 	var MediaManager_Controls_View = Backbone.View.extend({
 		className: "upfront-media-controls",
 		is_search_active: false,
-		_item_control: false,
 		initialize: function () {
 			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
 			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
@@ -302,15 +301,7 @@ define(function() {
 			else this.$el.removeClass('upfront-media-controls-search');
 		},
 		render_media: function (selected) {
-			//var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
-			// ^ Skip this and cache item control instead
-			if (!this._item_control) {
-				this._item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
-			} else {
-				this._item_control.model.reset(selected);
-			}
-			var item_control = this._item_control;
-
+			var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
 			item_control.render();
 			this.$el.empty();
 			if (this.is_search_active) {
@@ -356,6 +347,7 @@ define(function() {
 			this.$el.addClass('upfront-media-aux_controls-has-select');
 		},
 		switch_controls: function (media_collection) {
+console.log("switching controls");
 			var positive = media_collection.where({selected: true});
 			if (positive.length) this.render_delete(positive);
 			else this.render_selection();
@@ -1106,7 +1098,7 @@ define(function() {
 		initialize: function (data) {
 			data = _.extend({
 				type: "PostImage",
-				multiple_selection: true
+				multiple_selection: false
 			}, data);
 
 			var type = data.type,
@@ -1643,6 +1635,11 @@ define(function() {
 	 */
 	var MediaManager_PostImage_View = MediaManager_View.extend({
 		className: "upfront-media_manager upfront-media_manager-post_image clearfix",
+		_subviews: {
+			media: false,
+			aux: false,
+			controls: false
+		},
 		initialize: function (collection) {
 
 			var data = data || {};
@@ -1654,10 +1651,19 @@ define(function() {
 		},
 		render: function () {
 
-			var media = new MediaCollection_View({model: this.media_collection}),
-				aux = new MediaManager_AuxControls_View({model: this.media_collection}),
-				controls = new MediaManager_Controls_View({model: this.media_collection})
-			;
+			if (!this._subviews.media) {
+				this._subviews.media = new MediaCollection_View({model: this.media_collection});
+			}
+			var media = this._subviews.media;
+			if (!this._subviews.aux) {
+				this._subviews.aux = new MediaManager_AuxControls_View({model: this.media_collection});
+			}
+			var aux = this._subviews.aux;
+			if (!this._subviews.controls) {
+				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection});
+			}
+			var controls = this._subviews.controls;
+			
 			media.multiple_selection = this.multiple_selection;
 
 			controls.render();
@@ -2060,7 +2066,6 @@ define(function() {
 	var ContentEditorUploader = Backbone.View.extend({
 		initialize: function (opts) {
 			this.options = opts;
-			Upfront.Events.on("upfront:editor:init", this.rebind_ckeditor_image, this);
 		},
 		open: function (options) {
 			options = _.extend({
@@ -2100,20 +2105,9 @@ define(function() {
 		cleanup_active_filters: function () {
 			ActiveFilters.allowed_media_types = [];
 		},
-		/*
-		ck_open: function () {
-			var pop = this.open({
-				button_text: "Insert image(s)",
-				ck_insert: true
-			});
-			Upfront.Media.Manager.instance = CKEDITOR.currentInstance.name;
-			pop.always(this.on_close);
-			return false;
-		},
-		*/
 		load: function (options) {
             if( _.isUndefined( this.media_manage_options ) ){
-            	this.media_manage_options = _.extend({
+				this.media_manage_options = _.extend({
                     el: this.out,
                     data: this.popup_data
                 }, options);
@@ -2125,35 +2119,9 @@ define(function() {
                 }, options);
                 this.media_manager = new MediaManager_View( this.media_manage_options );
             }
-         
-
-
-
 			this.media_manager.render();
 			return false;
 		},
-		/*
-		on_close: function (popup, result) {
-			var html = Upfront.Media.Manager.results_html(result),
-				editor = CKEDITOR.instances[Upfront.Media.Manager.instance];
-			if ( editor && result ){
-				// Check selection
-				var sel = editor.getSelection(),
-					el = sel.getStartElement();
-				if ( CKEDITOR.tools.trim(el.getText()) != '' ){
-					// not empty, move selection
-					var p = new CKEDITOR.dom.element('p'),
-						range = editor.createRange();
-					p.appendHtml('<br/>'); // Add empty <br>
-					p.insertBefore(el);
-					range.moveToElementEditablePosition(p, true);
-					editor.getSelection().selectRanges( [range] );
-				}
-				editor.insertHtml(html);
-			}
-      Upfront.Events.trigger('upfront:element:edit:stop', 'media-upload');
-		},
-		*/
 		results_html: function (result) {
 			var html = '';
 			if (result && result.each) result.each(function (item) {
@@ -2193,13 +2161,6 @@ define(function() {
 					);
 			}
 			return html;
-		},
-		rebind_ckeditor_image: function () {
-			var me = this;
-			_(CKEDITOR.instances).each(function (editor) {
-				var img = editor.getCommand('image');
-				if (img && img.on) img.on("exec", me.ck_open, me);
-			});
 		}
 	});
 
