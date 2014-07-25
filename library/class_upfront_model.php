@@ -469,10 +469,18 @@ class Upfront_Layout extends Upfront_JsonModel {
 				if (file_exists($settings_file)) {
 					include $settings_file;
 				}
-				$properties[] = array(
-					'name' => 'typography',
-					'value' => json_decode(stripslashes($typography))
-				);
+				if ($typography) {
+					$properties[] = array(
+						'name' => 'typography',
+						'value' => json_decode(stripslashes($typography))
+					);
+				}
+				if ($layout_style) {
+					$properties[] = array(
+						'name' => 'layout_style',
+						'value' => stripslashes($layout_style)
+					);
+				}
 			}
 			return $properties;
 		}

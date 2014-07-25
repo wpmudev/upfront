@@ -836,10 +836,16 @@ define([
 				element_id: 'layout',
 				global: true,
 				change: function(ed){
-					clearTimeout(save_t);
-					save_t = setTimeout(function(){
-						editor.$el.find('.upfront-css-save-ok').click();
-					}, 1000);
+					// Don't save stuff if we're in builder mode
+					if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
+						// Don't allow user to navigate if layout style is not saved
+						Upfront.themeExporter.layoutStyleDirty = true;
+						return;
+					}
+						clearTimeout(save_t);
+						save_t = setTimeout(function(){
+							editor.$el.find('.upfront-css-save-ok').click();
+						}, 1000);
 				}
 			});
 		}
@@ -5532,8 +5538,8 @@ var CSSEditor = Backbone.View.extend({
 		$(window).on('resize', this.resizeHandler);
 
 		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
-		if(!$('#' + this.element_id + '-styles').length){
-			this.$style = $('<style id="' + this.element_id + '-style"></style');
+		if(!$('#' + this.element_id + '-style').length){
+			this.$style = $('<style id="' + this.element_id + '-style"></style>');
 			$('body').append(this.$style);
 		}
 		else
@@ -5600,7 +5606,9 @@ var CSSEditor = Backbone.View.extend({
 	startAce: function(){
 		var me = this,
 			editor = ace.edit(this.$('.upfront-css-ace')[0]),
-			session = editor.getSession()
+			session = editor.getSession(),
+			scope,
+			styles
 		;
 
 		session.setUseWorker(false);
@@ -5617,10 +5625,12 @@ var CSSEditor = Backbone.View.extend({
 			},800);
 			me.trigger('change', editor);
 		});
-		if(this.name){
-			var scope = new RegExp(this.elementSelector+'.' + this.selector + '\s*', 'g'),
-				styles = $('#upfront-style-' + this.selector).html().replace(scope, '')
-			;
+		if(this.name === '_upfront-body_global') {
+			styles = $('#layout-style').html();
+			editor.setValue($.trim(styles), -1);
+		} else if (this.name) {
+			scope = new RegExp(this.elementSelector+'.' + this.selector + '\s*', 'g');
+			styles = $('#upfront-style-' + this.selector).html().replace(scope, '');
 			editor.setValue($.trim(styles), -1);
 		}
 

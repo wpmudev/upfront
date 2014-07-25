@@ -1200,7 +1200,9 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	set_layout_up: function(layoutData){
-		var me = this,
+		var $layout_style,
+			layout_style,
+			me = this,
 			data = $.extend(true, {}, layoutData.data.layout) || {} //Deep cloning
 		;
 
@@ -1220,6 +1222,16 @@ var Application = new (Backbone.Router.extend({
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
+
+		layout_style = this.layout.get_property_value_by_name('layout_style');
+		if (layout_style) {
+			$layout_style = $('#layout-style');
+			if ($layout_style.length === 0) {
+				$('body').append('<style id="layout-style">' + layout_style + '</style>');
+			} else {
+				$layout_style.html(layout_style);
+			}
+		}
 
 		var shadow = this.layout.get('regions').get_by_name("shadow");
 		if(shadow)

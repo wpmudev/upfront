@@ -753,6 +753,7 @@ var LayoutEditor = {
 
 	_export_layout: function (custom_data) {
 		var typography,
+			layout_style,
 			data = {};
 
 		typography = _.findWhere(
@@ -767,6 +768,11 @@ var LayoutEditor = {
 			template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
 			theme: Upfront.themeExporter.currentTheme
 		};
+
+		if (Upfront.themeExporter.layoutStyleDirty) {
+			data.layout_style = $('#layout-style').html();
+			Upfront.themeExporter.layoutStyleDirty = false;
+		}
 
 		if (custom_data) data = _.extend(data, custom_data);
 
