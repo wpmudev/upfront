@@ -1309,7 +1309,7 @@ console.log("switching controls");
 
 				// Add max items
 				markup += '<div id="upfront-entity_list-info">';
-				markup += '<p>(' + _.template(l10n.entity_list_info, {items: ActiveFilters.max_items, pages: ActiveFilters.max_pages}) + ')</p>';
+				markup += '<p>(' + _.template(l10n.entity_list_info, {items: ActiveFilters.max_items, pages: ActiveFilters.max_pages - 1}) + ')</p>';
 				markup += '</div>';
 
 				this.$el.empty().append(markup);
