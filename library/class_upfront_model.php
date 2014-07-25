@@ -294,6 +294,10 @@ abstract class Upfront_Model {
 		return upfront_get_property_value($prop, $this->_data);
 	}
 
+	public function set_property_value ($prop, $value) {
+		$this->_data = upfront_set_property_value($prop, $value, $this->_data);
+	}
+
 	public function is_empty () {
 		return empty($this->_data);
 	}
@@ -387,7 +391,21 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public static function from_id ($id, $storage_key = '') {
 		$regions_data = self::get_regions_data();
-		$data = json_decode( get_option($id, json_encode(array())), true );
+
+		// If in buiilder mode we need stuff from files
+		if (upfront_is_builder_running()) {
+			$stylesheet = upfront_get_builder_stylesheet();
+			if ($stylesheet) {
+				$settings_file = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'settings.php';
+				if (file_exists($settings_file)) {
+					include $settings_file;
+				}
+			}
+			// TODO load actual layout data from settings
+			$data = array();
+		} else {
+			$data = json_decode( get_option($id, json_encode(array())), true );
+		}
 		if ( ! empty($data) ) {
 			$regions = array();
 			$regions_added = array();
@@ -442,6 +460,24 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function get_layout_properties () {
+		// If in buiilder mode we need stuff from files
+		if (upfront_is_builder_running()) {
+			$properties = array();
+			$stylesheet = upfront_get_builder_stylesheet();
+			if ($stylesheet) {
+				$settings_file = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'settings.php';
+				if (file_exists($settings_file)) {
+					include $settings_file;
+				}
+				$properties[] = array(
+					'name' => 'typography',
+					'value' => json_decode(stripslashes($typography))
+				);
+			}
+			return $properties;
+		}
+
+		// Not in builder mode, load from db
 		return json_decode( get_option(self::_get_layout_properties_id(), json_encode(array())), true );
 	}
 

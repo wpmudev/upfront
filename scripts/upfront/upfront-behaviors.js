@@ -504,12 +504,7 @@ var LayoutEditor = {
 			app.load_layout(data.layout, {layout_slug: layout_slug}).done(function() {
 				app.layout.set('current_layout', layout);
 				// Immediately export layout to write initial state to file.
-				ed._export_layout({
-					theme: Upfront.themeExporter.currentTheme,
-					template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
-					regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
-					functionsphp: 'functions'
-				});
+				ed._export_layout();
 			});
 		});
 	},
@@ -661,16 +656,10 @@ var LayoutEditor = {
 					return ed._create_theme(data);
 				};
 				export_layout = function() {
-					var layout_id = _upfront_post_data.layout.item;
-					var data = {
-						theme: theme_name,
-						template: layout_id,
-						regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
-						functionsphp: 'functions'
-					};
+					var layout_id = _upfront_post_data.layout.item || _upfront_post_data.layout.type;
 					loading.update_loading_text("Exporting layout: " + layout_id);
-					return ed._export_layout(data).done(function() {
-						loading.done(function(){
+					return ed._export_layout({ theme: theme_name }).done(function() {
+						loading.done(function() {
 							ed.export_modal.close(true);
 						});
 					});
@@ -762,7 +751,25 @@ var LayoutEditor = {
 		return deferred.promise();
 	},
 
-	_export_layout: function (data) {
+	_export_layout: function (custom_data) {
+		var typography,
+			data = {};
+
+		typography = _.findWhere(
+			Upfront.Application.current_subapplication.get_layout_data().properties,
+			{ 'name': 'typography' }
+		);
+
+		data = {
+			typography: JSON.stringify(typography.value),
+			regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
+			functionsphp: 'functions',
+			template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+			theme: Upfront.themeExporter.currentTheme
+		};
+
+		if (custom_data) data = _.extend(data, custom_data);
+
 		var deferred = new $.Deferred();
 		Upfront.Util.post({
 			action: 'upfront_thx-export-layout',
@@ -3555,7 +3562,7 @@ var GridEditor = {
 					height: h
 				});
 				$me.data('resize-row', rsz_row);
-				
+
 				// Auto scrolling when it hits bottom
 				ed._start_resize_auto_scroll(e, ui, h, data);
 			},
@@ -3574,10 +3581,10 @@ var GridEditor = {
 					top: '',
 					left: ''
 				});
-				
+
 				// Make sure auto scrolling is cleared
 				ed._clear_resize_auto_scroll();
-				
+
 				if ( !breakpoint || breakpoint.default ){
 					model.set_property('row', rsz_row);
 				}
@@ -3600,17 +3607,17 @@ var GridEditor = {
 			}
 		});
 	},
-	
+
 	/**
-	 * Auto scrolling when hit bottom 
+	 * Auto scrolling when hit bottom
 	 */
 	_auto_scroll_t: false,
 	_auto_scroll_data: {},
 	_auto_scroll_step: 3,
 	_auto_scroll_timeout: 100,
-	
+
 	/**
-	 * Preparing data for auto scroll 
+	 * Preparing data for auto scroll
 	 */
 	_prepare_resize_auto_scroll: function(ui, $parent){
 		var document_height = $(document).height(),
@@ -3628,7 +3635,7 @@ var GridEditor = {
 			$scroller: $scroller
 		};
 	},
-	
+
 	/**
 	 * Calling the auto scrolling on resize event, need direct access to resizable object
 	 */
@@ -3657,7 +3664,7 @@ var GridEditor = {
 			data._trigger('resize', e, ui);
 		}, this._auto_scroll_timeout);
 	},
-	
+
 	_clear_resize_auto_scroll: function () {
 		this._auto_scroll_data.$scroller.remove();
 		clearTimeout(this._auto_scroll_t);

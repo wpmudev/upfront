@@ -17,6 +17,16 @@ function upfront_get_property_value ($prop, $data) {
 	return $value;
 }
 
+function upfront_set_property_value ($prop, $value, $data) {
+	$properties = !empty($data['properties']) ? $data['properties'] : array();
+	$properties[] = array(
+		'name' => $prop,
+		'value' => $value,
+	);
+	$data['properties'] = $properties;
+	return $data;
+}
+
 function upfront_get_class_num ($classname, $classes) {
 	$classes = array_map('trim', explode(' ', $classes));
 	$rx = '^' . preg_quote($classname, '/') . '(\d+)$';
@@ -96,6 +106,69 @@ function upfront_add_ajax_nopriv ($action, $callback) {
 	return upfront_add_ajax($action, $callback, false);
 }
 
+function upfront_is_builder_mode() {
+	$mode = isset($_POST['mode']) ? $_POST['mode'] : false;
+	return $mode === 'theme';
+}
+
+function upfront_is_builder_uri() {
+	$uri = $_SERVER['REQUEST_URI'];
+	$is_builder_uri = strpos($uri, 'create_new') !== false
+		&& strpos($uri, 'create_new/post') === false
+		&& strpos($uri, 'create_new/page') === false;
+
+	return $is_builder_uri;
+}
+
+function upfront_is_builder_referer() {
+	$referer = $_SERVER['HTTP_REFERER'];
+	$is_builder_referer = strpos($referer, 'create_new') !== false
+		&& strpos($referer, 'create_new/post') === false
+		&& strpos($referer, 'create_new/page') === false;
+
+	return $is_builder_referer;
+}
+function upfront_is_builder_running() {
+	// First try with set value, this is for ajax actions that are called from
+	// javascript, this is the cleanest way to find out if we're in builder
+	if (upfront_is_builder_mode()) return true;
+
+	// Than try to see if this is main document loading
+	if (upfront_is_builder_uri()) return true;
+
+	// Than try to see if this was called from referer builder since stylesheets
+	// and other dynamic assets will have builder for referer. This is a bit
+	// sketchy, we'll if this will need to be adjusted
+	return upfront_is_builder_referer();
+}
+
+function upfront_get_builder_stylesheet() {
+	// We'll follow same order as in upfront_is_builder_mode function.
+	// First check for mode set in javascript request
+	if (upfront_is_builder_mode() && isset($_POST['stylesheet']))
+	 	return $_POST['stylesheet'];
+
+	// Than check if this is main document.
+	if (upfront_is_builder_uri()) {
+		$uri = $_SERVER['REQUEST_URI'];
+		$matches = array();
+		preg_match('#create_new/([a-z\-]+)#', $uri, $matches);
+		if (isset($matches[1])) return $matches[1];
+	}
+
+	// Then check if builder is referer for dynamic resources
+	// TODO find a way to check if upfront is loading dynamic resource in this
+	// TODO request
+	if (upfront_is_builder_referer()) {
+		$referer = $_SERVER['HTTP_REFERER'];
+		$matches = array();
+		preg_match('#create_new/([a-z\-]+)#', $referer, $matches);
+		if (isset($matches[1])) return $matches[1];
+	}
+
+	return false;
+}
+
 /**
  * Run first on each AJAX action registered with upfront_add_ajax
  */
@@ -114,6 +187,12 @@ function upfront_ajax_init () {
 		$stylesheet = !empty($_GET['stylesheet']) ? $_GET['stylesheet'] : false;
 		$load_dev = !empty($_GET['load_dev']) && $_GET['load_dev'] == 1 ? true : false;
 	}
+
+	// If in builder mode, recalculate stylesheet
+	if ($stylesheet === false && upfront_is_builder_running()) {
+		$stylesheet = upfront_get_builder_stylesheet();
+	}
+
 	upfront_switch_stylesheet($stylesheet);
 	if ( !is_array($layout_ids) )
 		return;

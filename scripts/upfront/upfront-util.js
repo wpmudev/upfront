@@ -53,7 +53,7 @@ define(function() {
 	clone: function (obj) {
 		return jQuery.extend(true, {}, obj);
 	},
-	
+
 	/**
 	 * Check CSS support
 	 */
@@ -64,7 +64,7 @@ define(function() {
 			if ( s.match(reg) )
 				return true;
 		}
-		return false;		
+		return false;
 	},
 
 	post: function (data, data_type) {
@@ -80,6 +80,11 @@ define(function() {
 	  if ( !request.storage_key )
 		  request.storage_key = _upfront_storage_key;
 	  request.stylesheet = _upfront_stylesheet;
+
+		// Some stuff depends if in builder or editor mode so lets make that
+		// available for convenient server side check.
+		request.mode = Upfront.Application.get_current();
+
 	  return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
 	},
 
