@@ -448,7 +448,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static function _apply_scoped_region ($region) {
 		$regions = array();
 		if ( $region['scope'] != 'local' ){
-			if ( !self::$scope_data[$region['scope']] )
+			if ( empty(self::$scope_data[$region['scope']]) )
 				self::$scope_data[$region['scope']] = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
 			if ( empty(self::$scope_data[$region['scope']]) ){
 				$regions[] = $region;

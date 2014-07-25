@@ -19,7 +19,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoints = Upfront_Grid::get_grid()->get_breakpoints();
 		foreach ($breakpoints as $name => $point) {
 			$data = $point->get_data();
-			if($data['enabled']) {
+			if(!empty($data['enabled'])) {
 				$breakpoint_data[$data['id']]['width'] = $data['width'];
 			}
 		}
