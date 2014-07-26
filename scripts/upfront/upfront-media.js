@@ -1292,19 +1292,19 @@ console.log("switching controls");
 					has_clipoff = false
 				;
 				markup += '<div id="upfront-entity_list-pagination">';
-				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></div>';
+				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></a>';
 
 				markup += '<div class="upfront-pagination upfront-numeric_pagination">';
 				markup += '<div class="upfront-numeric_pagination-container">';
 				_.each(_.range(1, ActiveFilters.max_pages), function (idx) {
 					if (idx > ActiveFilters.max_pages) return;
 					var cls = idx == ActiveFilters.current_page ? 'current' : '';
-					markup += '<div class="upfront-pagination_item upfront-pagination_page-item ' + cls + '" data-idx="' + idx + '">' + idx + '</div>';
+					markup += '<a class="upfront-pagination_item upfront-pagination_page-item ' + cls + '" data-idx="' + idx + '">' + idx + '</a>';
 				});
 				markup += '</div>';
 				markup += '</div>';
 
-				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"><i class="icon-angle-right"></i></div>';
+				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"><i class="icon-angle-right"></i></a>';
 				markup += '</div>';
 
 				// Add max items

@@ -5350,13 +5350,16 @@ box-shadow: inset 0 2px 0 0 #fff;
 .upfront-pagination_item {
 	float: left;
 	line-height: 20px;
-	margin: 10px;
+	margin: 10px 5px 0 0;
 	text-align: center;
-	font-size: 18px;
+	font-size: 16px;
 	color: #aec4d8;
 	cursor: pointer;
 	border: 2px solid transparent;
-	padding: 0 5px;
+	padding: 3px;
+	width:30px;
+	height:30px;
+	background:rgba(35,49,64,.5);
 }
 
 .upfront-pagination_item:hover {
@@ -5365,7 +5368,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 .upfront-pagination_item.current {
 	color: #fff;
 	border: 2px solid #2ecc90;
-	font-weight: bold;
+	background:transparent;
 }
 
 .upfront-pagination_item i{
@@ -5400,7 +5403,8 @@ box-shadow: inset 0 2px 0 0 #fff;
 #upfront-entity_list-info {
 	position: absolute;
 	width: 415px;
-	margin-top: 2em;
+	margin-top: 40px;
+	color:rgba(184,208,230,.7);
 }
 #upfront-entity_list-info p {
 	text-align: center;
