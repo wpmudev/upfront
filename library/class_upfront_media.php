@@ -349,7 +349,7 @@ class Upfront_MediaServer extends Upfront_Server {
             'clear_search' => __("Clear search", 'upfront'),
             'showing_total_results' => __("Showing {{total}} results for", 'upfront'),
             'active_filters' => __("Active filters", 'upfront'),
-            'filter_label' => __("Filter", 'upfront'),
+            'filter_label' => __("Filter Media by:", 'upfront'),
             'media_type' => __("Media type", 'upfront'),
             'date' => __("Date", 'upfront'),
             'file_name' => __("File Name", 'upfront'),
