@@ -3568,7 +3568,7 @@ div.uinsert-selector a:hover {
 	right: 5px;
 }
 .upfront-object > .upfront-entity_meta {
-	top: 34px;
+	top: 28px;
 	right: 5px;
 }
 .upfront-object > .upfront-entity_meta_extra {
@@ -3670,12 +3670,12 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-icon-button {
-	width: 24px;
-	height: 24px;
+	width: 18px;
+	height: 18px;
 	z-index: 2000;
 	cursor:pointer;
 	display:block;
-	border-radius: 2px;
+	border-radius: 3px;
 	color:#fff;
 	text-decoration:none;
 	padding: 2px 0;
@@ -4654,10 +4654,10 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-icon-button-delete:before {
-	background-position: -261px -40px;
+	background-position: -261px -43px;
 }
 .upfront-icon-button-setting:before {
-	background-position: -261px -70px;
+	background-position: -261px -73px;
 }
 .upfront-icon-button-crop:before {
 	background-position: -261px -100px;
