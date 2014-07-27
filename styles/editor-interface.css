@@ -4826,6 +4826,14 @@ div.uinsert-selector a:hover {
     width: 22px;
     height: 14px;
 }
+.upfront-field-icon-burger-trigger:before {
+	background-position: -920px -330px;
+	width: 20px;
+	height: 18px;
+}
+i.upfront-field-icon-burger-trigger {
+	vertical-align:bottom;
+}
 .upfront-field-icon-contact-above-field:before {
 	background-position: -1140px -40px;
 }

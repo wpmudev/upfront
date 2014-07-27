@@ -127,7 +127,7 @@ div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] 
   height: 100%;
   right:0;
 }
-
+/*
 div.upfront-navigation div[data-style="burger"] div.responsive_nav_toggler {
   position:relative;
   z-index:2000;
@@ -139,11 +139,53 @@ div.upfront-navigation div[data-style="burger"] div.responsive_nav_toggler {
   border-bottom: 6px #131313 solid;
   cursor:pointer;
 }
-
+*/
 div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_nav_toggler {
 	margin-right:20px;	
 }
 
+.responsive_nav_toggler {
+float:right;
+  position:relative;
+  z-index:2000;
+  z-index:2000;
+  width:40px;
+  height:40px;
+  border:1px solid #d8d8d8;
+  border-radius:6px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding:6px 7px;
+  -webkit-transition: border .25s;
+  -moz-transition: border .25s;
+  -ms-transition: border .25s;
+  -o-transition: border .25s;
+  transition: border .25s;
+}
+
+.responsive_nav_toggler:hover {
+  cursor:pointer;
+  border-color:#B3B3B3;
+}
+.responsive_nav_toggler:hover > div {
+   background:#B3B3B3;
+}
+
+.responsive_nav_toggler > div {
+  width:24px;
+  height:6px;
+  background:#d8d8d8;
+  border-radius:4px;
+  margin-bottom:4px;
+  -webkit-transition: background .25s;
+  -moz-transition: background .25s;
+  -ms-transition: background .25s;background
+  -o-transition: background .25s;
+  transition: background .25s;
+}
+
+/*
 div.upfront-navigation div[data-style="burger"] div.responsive_nav_toggler:after {
 	content: '';
 	border-top: 6px #131313 solid;
@@ -151,7 +193,7 @@ div.upfront-navigation div[data-style="burger"] div.responsive_nav_toggler:after
 	display: block;
 	position: relative;
 }
-
+*/
 
 div.upfront-navigation div[data-style="burger"] ul.menu li {
 	padding: 0;	
@@ -190,4 +232,12 @@ div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li
 
 div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li a {
   padding-left:110px;
+}
+
+
+/* Accomodate Floating Nav */
+[data-already_floating="yes"] {
+    position: fixed !important;
+    top: 0px !important;
+    z-index: 99999999;
 }

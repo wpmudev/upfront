@@ -1719,7 +1719,7 @@ define([
 				"click > .upfront-region-edit-fixed-trigger": "trigger_edit_fixed",
 				"click > .upfront-region-finish-edit": "finish_edit" ,
 				"contextmenu": "on_context_menu",
-				"mouseover": "on_mouse_over"
+				//"mouseover": "on_mouse_over"
 			},
 			attributes: function(){
 				var name = this.model.get("container") || this.model.get("name"),
@@ -2254,7 +2254,7 @@ define([
 		Region = _Upfront_SingularEditor.extend({
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
-				"mouseover": "on_mouse_over",
+				//"mouseover": "on_mouse_over",
 				"click": "on_click",
 				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",

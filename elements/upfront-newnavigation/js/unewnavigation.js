@@ -597,8 +597,14 @@ var MenuItemView = Backbone.View.extend({
     $('div.upfront-field-wrap-select').remove();
   },
   */
-  saveLink: function() {
+  saveLink: function(remove) {
+
     var me = this;
+	
+	if(typeof(remove) != 'undefined') {
+		me.deleteMenuItem();
+		return;
+  	}
     //if( typeof me.$el.find('a.new_menu_item').data('redactor') != 'undefined')
       //me.$el.find('a.new_menu_item').data('ueditor').stop();
 
@@ -614,11 +620,15 @@ var MenuItemView = Backbone.View.extend({
 
 	var menu_item = ($(this.el).children('a.menu_item').length > 0) ? $(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
 
-    this.model['menu-item-title'] = menu_item.text();
+	if(!menu_item.hasClass('menu_item_placeholder') && menu_item.next('a.ueditor-placeholder').length < 1)
+	    this.model['menu-item-title'] = menu_item.text();
+	else
+		this.model['menu-item-title'] = '';
+
 	if($(this.el).children('div.redactor_box').length > 0)
 		menu_item.blur();
 
-    if( me.model['menu-item-title'].trim() == '' ) {
+    if( me.model['menu-item-title'].trim() == '') {
       me.deleteMenuItem();
       return;
     }
@@ -744,10 +754,18 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
   elementSize: {width: 0, height: 0},
   roll_responsive_settings: true,
   cssSelectors: {
-    'ul.menu > li.menu-item > a': {label: 'Menu Item', info: 'Top level Menu item'},
-    'ul.menu > li.menu-item:hover > a': {label: 'Menu Item hover', info: 'Hover state for Top level Menu item'},
-    'ul.sub-menu > li.menu-item > a': {label: 'Sub Menu Item', info: 'Sub level Menu item'},
-    'ul.sub-menu > li.menu-item:hover > a': {label: 'Sub Menu Item hover', info: 'Hover state for Sub level Menu item'}
+	"div[data-style='horizontal'] ul.menu, div[data-style='vertical'] ul.menu": {label: 'Menu Bar', info: 'Menu Bar'},
+    "div[data-style='horizontal'] ul.menu > li.menu-item > a, div[data-style='vertical'] ul.menu > li.menu-item > a": {label: "Menu Item", info: "Top level Menu item"},
+    "div[data-style='horizontal'] ul.menu > li.menu-item:hover > a, div[data-style='vertical'] ul.menu > li.menu-item:hover > a": {label: "Menu Item hover", info: "Hover state for Top level Menu item"},
+    "div[data-style='horizontal'] ul.sub-menu > li.menu-item > a, div[data-style='vertical'] ul.sub-menu > li.menu-item > a": {label: "Sub Menu Item", info: "Sub level Menu item"},
+    "div[data-style='horizontal'] ul.sub-menu > li.menu-item:hover > a, div[data-style='vertical'] ul.sub-menu > li.menu-item:hover > a": {label: "Sub Menu Item hover", info: "Hover state for Sub level Menu item"},
+
+
+	"div[data-style='burger'] ul.menu": {label: "Responsive Menu Bar", info: "Menu Bar"},
+   " div[data-style='burger'] ul.menu > li.menu-item > a": {label: "Responsive Menu Item", info: "Top level Menu item"},
+    "div[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: "Responsive Menu Item hover", info: "Hover state for Top level Menu item"},
+    "div[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: "Responsive Sub Menu Item", info: "Sub level Menu item"},
+    "div[data-style='burger'] ul.sub-menu > li.menu-item:hover > a": {label: "Responsive Sub Menu Item hover", info: "Hover state for Sub level Menu item"}
   },
 
   initialize: function(options){
@@ -942,7 +960,22 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		  }).on('start', function(e) {
 			$(target).focus();
 		  }).on('keydown', function(e){
-
+			if (e.which == 8) {
+				setTimeout(function() {
+					console.log($(target).text());
+					if($(target).text() == '' && !$(target).hasClass('menu_item_placeholder')) {
+						var e = jQuery.Event("keydown");
+						e.which = 8;
+						$(target).trigger(e);
+					}
+				}, 100);
+			}
+			if (e.which == 27) {
+				if($(target).hasClass('new_menu_item')) {
+					$(target).closest('li').data('backboneview').closeTooltip();
+					$(target).closest('li').data('backboneview').saveLink(true);	
+				}
+			}
 			if (e.which == 9) {
 			  e.preventDefault();
 			  if(!$(target).hasClass('new_menu_item')) {
@@ -965,8 +998,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			$(target).data('ueditor').stop();
 			$(target).closest('li').removeClass('edit_mode');
 			//console.log('blurred');
-			if(!$(target).hasClass('new_menu_item'))
+			if(!$(target).hasClass('new_menu_item')) {
 			  $(target).closest('li').data('backboneview').saveLink();
+			}
 		  }).on('stop', function() {
 			me.editModeOff();
 		  });
@@ -1305,12 +1339,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
   },*/
   onElementResize: function() {
 
-    if($('.upfront-resize').width() < 360) {
-      this.property('menu_style', 'vertical');
-    }
-    else if($('.upfront-resize').width() > 460) {
-      this.property('menu_style', 'horizontal');
-    }
+	if(this.property('burger_menu') != 'yes')
+		if($('.upfront-resize').width() < 360) {
+		  this.property('menu_style', 'vertical');
+		}
+		else if($('.upfront-resize').width() > 460) {
+		  this.property('menu_style', 'horizontal');
+		}
   },
   on_render: function() {
     var me = this;
@@ -1394,7 +1429,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
     $upfrontObjectContent.attr('data-stylebk',(menuStyle ? menuStyle : 'horizontal'));
     $upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
 
-
+	//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
+	var region_container = this.$el.closest('.upfront-region-container');
+	if(region_container.css('z-index') == 'auto' || parseInt(region_container.css('z-index')) < 11)
+		region_container.css('z-index', 11);
 
   },
   toggle_responsive_nav: function(e) {
@@ -1431,7 +1469,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	
 	if(!breakpoint || breakpoint.default) {
 		if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
-			this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").bind('click', me.toggle_responsive_nav));
+			this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 			this.$el.find('ul.menu').hide();
 		}
 	}
@@ -1901,7 +1939,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 							  property: 'burger_menu',
 							  label: "",
 							  values: [
-								  { label: "Use button to open menu", value: 'yes' }
+								  { label: "Use <i class='upfront-field-icon upfront-field-icon-burger-trigger'></i> button to open menu", value: 'yes' }
 							  ],
 							  change: function() {
 								var value = this.get_value();
