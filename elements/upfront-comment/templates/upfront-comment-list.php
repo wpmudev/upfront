@@ -14,7 +14,7 @@ switch ( $comment->comment_type ){
 	default:
 ?>
 
-<li class="<?php comment_class(); ?>" id="<?php comment_ID(); ?>">
+<li <?php comment_class(); ?> id="<?php comment_ID(); ?>">
 	<article id="comment-<?php comment_ID(); ?>" class="comment">
 		<header class="comment-meta comment-author vcard">
 			<?php echo get_avatar($comment, 50); ?>

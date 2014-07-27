@@ -14,9 +14,16 @@ class Upfront_UcommentView extends Upfront_Object {
 	public static function get_comment_markup ($post_id) {
 		if (!$post_id || !is_numeric($post_id)) return '';
 
+        $defaults = self::default_properties();
+        $prepend_form = (bool) $defaults['prepend_form'];
+        $form_args = apply_filters('upfront_comment_form_args', array());
 		$post = get_post($post_id);
 		if (post_password_required($post->ID)) return '';
 		ob_start();
+
+        if( $prepend_form ){
+            comment_form($form_args, $post->ID);
+        }
 		// Load comments
 		$comments = get_comments(array('post_id' => $post->ID));
 		if($comments && sizeof($comments)){
@@ -25,8 +32,9 @@ class Upfront_UcommentView extends Upfront_Object {
 			echo '</ol>';
 		}
 		// Load comment form
-		$args = apply_filters('upfront_comment_form_args', array());
-		comment_form($args, $post->ID);
+        if( !$prepend_form ){
+            comment_form($form_args, $post->ID);
+        }
 		return ob_get_clean();
 	}
 
@@ -53,7 +61,8 @@ class Upfront_UcommentView extends Upfront_Object {
 			'type' => "UcommentModel",
 			'view_class' => "UcommentView",
 			"class" => "c24 upfront-comment",
-			'has_settings' => 0
+			'has_settings' => 0,
+            "prepend_form" => false
 		);
 	}
 }

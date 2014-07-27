@@ -29,6 +29,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	cssSelectors: {
 		'label': {label: 'Field labels', info: 'Text info for every field'},
 		'.ucontact-input': {label: 'Fields', info: 'Field inputs'},
+		'.textarea-field' : {label: 'Mesage Field', info: 'Mesasge field'},
 		'.ucontact-field-error': {label: 'Error fields', info: 'Fields with errors.'},
 		'.submit-field': {label: 'Send button', info: 'Form\'s send button'}
 	},

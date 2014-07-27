@@ -11356,3 +11356,526 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui .sidebar-commands .upfront-field-select-option {
 	display: block;
 }
+
+
+
+/* Font picker */
+#font-picker {
+  position: absolute;
+  left: 175px;
+  top: -170px;
+  width: 452px;
+  height: 219px;
+  background: #e5f3fe;
+  z-index: 1;
+}
+#font-picker .panel-title {
+	font: 18px/15px 'Source Sans Pro', sans-serif;
+  color: #273a4c;
+  margin: 16px 0 10px 20px;
+}
+#font-picker .panel {
+  float: left;
+  width: 226px;
+}
+
+#font-picker .add-font-panel {
+  border-right: 1px solid #c9dff1;
+}
+#font-picker .choose-font {
+  margin: 0 0 0 20px;
+}
+#font-picker .font-weights-list {
+  min-height: 100px;
+}
+#font-picker .font-weights-list .upfront-field-multiple {
+  margin: 0;
+  line-height: 25px;
+}
+#font-picker .font-weights-list .upfront-field-multiple:hover,
+#font-picker .font-weights-list .upfront-field-multiple-selected {
+  background: #85a9cc;
+}
+#font-picker .font-weights-list .upfront-field-multiple:hover label,
+#font-picker .font-weights-list .upfront-field-multiple-selected label {
+  color: #f2f7ea;
+}
+#font-picker .font-weights-list .upfront-field-multiple label {
+  margin-left: 20px;
+}
+#font-picker .font-weights-list-wrapper::-webkit-scrollbar,
+#font-picker .font-list::-webkit-scrollbar {
+  background: none;
+  width: 5px;
+}
+#font-picker .font-weights-list-wrapper::-webkit-scrollbar-thumb,
+#font-picker .font-list::-webkit-scrollbar-thumb {
+  border-right: 5px solid #1fcd8f;
+}
+#font-picker .font-weights-list input {
+  bottom: 7px;
+  left: 20px;
+}
+#font-picker .font-weights-list .upfront-field-wrap {
+  margin: 0;
+}
+#font-picker .font-weights-list .upfront-field-label {
+  margin-left: 20px;
+}
+#font-picker .font-weights-list-wrapper {
+  background: #f2f9fe;
+  height: 97px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+#font-picker .theme-font-list-item {
+  color: rgb(48, 71, 94);
+  position: relative;
+  font-size: 11px;
+  font-weight: normal;
+  font-family: verdana, sans-serif;
+  padding-left: 20px;
+  cursor: pointer;
+  line-height: 23px;
+}
+#font-picker .theme-font-list-item:hover,
+#font-picker .theme-font-list-item-selected {
+  background: #85a9cc;
+  color: #f2f7ea;
+}
+#font-picker .theme-font-list-item .delete {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 3px;
+}
+#font-picker .theme-font-list-item .upfront-icon:before {
+	background-position: -1080px -121px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+}
+#font-picker .theme-font-list-item-selected .delete {
+  display: inline;
+}
+#font-picker .font-list {
+  background: #f2f9fe;
+  height: 148px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+#font-picker .add-font-button {
+  line-height: 30px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  text-decoration: underline;
+  font-size: 12px;
+  font-family: verdana, sans-serif;
+  color: #537ea6;
+  cursor: pointer;
+}
+#font-picker .font-stats {
+  line-height: 30px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  font-family: verdana, sans-serif;
+  background: #d7e6f1;
+  color: #687887;
+}
+
+.font-picker-use-button,
+.font-picker-revert-button {
+	line-height: 37px;
+	font-size: 16px;
+	padding: 0 28px 0 29px;
+}
+.font-picker-use-button {
+	margin-left: 20px;
+}
+.font-picker-revert-button {
+  background: #537ea6;
+	padding: 0 16px 0 12px;
+}
+.font-picker-revert-button:before {
+	background-position: -198px -34px;
+	width: 10px;
+}
+/*------------------- Setting sections tabs -----------------------*/
+#sidebar-ui ul.sidebar-panel-tabspane {
+    width: 100%;
+    background: #d9edff;
+    padding: 0 0 5px 10px;
+    display: none;
+		line-height: 10px;
+}
+#sidebar-ui .expanded ul.sidebar-panel-tabspane {
+	display: block;
+}
+.sidebar-panel-tabspane li {
+    display: inline-block;
+    margin-left: 5px;
+    color: #0F9969;
+    cursor: pointer;
+    padding: 3px 5px;
+    font:normal 11px/10px Verdana, sans-serif;
+}
+#sidebar-ui ul.panel-setting-theme-colors-shades-range-labels {
+    width: 100%;
+    overflow: hidden;
+    margin-top: 9px;
+}
+.panel-setting-theme-colors-shades-range-labels li {
+    display: inline-block;
+    float: left;
+    font:11px normal verdana, sans-serif;
+    color: #476580;
+}
+.panel-setting-theme-colors-shades-range-labels li:last-child {
+    float: right;
+}
+.sidebar-panel-tabspane li.active{
+    color:#E5F3FF;
+    background: #85A9CC;
+    border-radius: 5px;-moz-border-radius: 5px;-webkit-border-radius: 5px;
+}
+.sidebar-tab-content{
+    display: none;
+}
+
+/*---------------------- Settings Theme colors -------------------------*/
+#theme-colors-no-color-notice{
+    height: 60px;
+    padding-top: 10px;
+    font:normal 11px verdana, sans-serif;
+    line-height: 18px;
+    color: #607F99;
+}
+#theme-colors-no-color-notice:before{
+    content: "";
+    background-image: url('../img/uf-core-el-sprite.svg');
+    background-position: -469px -139px;
+    display: block;
+    height: 30px;
+    width: 34px;
+}
+#panel-setting-theme-colors-pane{
+    border-bottom: 1px solid #C8DFF2;
+}
+#sidebar-ui .upfront-field-wrap.theme_color_swatch{
+    display: inline-block;
+    margin:10px;
+}
+#sidebar-ui .theme_color_swatch .sp-preview{
+    margin: 0;
+    border: none;
+    border-radius: 0;
+}
+.upfront-field-wrap-color .theme_color_swatch .sp-preview{
+    border: none;
+    border-radius: 0;
+}
+.theme_color_swatch .sp-replacer{
+    display: inline-block;
+    height: 22px;
+    width: 22px;
+    border: 1px solid #253a4e;
+    cursor: pointer;
+}
+.theme_color_swatch_empty .sp-replacer{
+    border-color: #9dbbd8;
+    text-align: center;
+    line-height: 19px;
+    font-size: 20px;
+    background: none;
+}
+.theme_color_swatch_empty .sp-preview{
+    background-image: url('../img/uf-core-el-sprite.svg');
+    background-position: -1362px -170px;
+    border-radius: 0;
+}
+#panel-setting-theme-colors-shades{
+
+}
+#sidebar-ui .panel-setting-theme-colors-shades-range a{
+    margin: 0;
+}
+.theme-colors-color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    cursor: pointer;
+}
+.panel-setting-theme-colors-shades-range{
+    width: 100%;
+}
+#panel-setting-theme-colors-shades-label{
+    font:bold 11px verdana, sans-serif;
+}
+.panel-setting-theme-colors-shades-wrap p{
+    margin: 0;
+    margin-top: 10px;
+}
+.panel-setting-theme-colors-meta p{
+    color: #263A4D;
+}
+.theme-colors-color-box-selected{
+    background-image: url('../img/uf-core-el-sprite.svg');
+}
+.theme-colors-color-box-selected.dark{
+    background-position: -809px -201px;
+}
+.theme-colors-color-box-selected.light{
+    background-position: -809px -169px;
+}
+.panel-setting-theme-colors .upfront-field-slider .ui-slider-handle{
+    background-color: #1fcd8f;
+    border-width: 4px;
+}
+
+/* Typography panel */
+.typography-panel {
+	/* overflow: hidden; */
+}
+.typography-panel .upfront-field-select {
+	width: 230px;
+	height: 24px;
+
+}
+#sidebar-ui .typography-panel .upfront-field-wrap {
+	margin-top: 4px;
+}
+#sidebar-ui .typography-panel .upfront-field-wrap:first-child {
+	margin-top: 0;
+}
+#sidebar-ui .typography-panel .upfront-typography-fields-left,
+#sidebar-ui .typography-panel .upfront-typography-fields-right {
+	margin-top: 4px;
+}
+#sidebar-ui .typography-panel .upfront-typography-fields-left .upfront-field-select {
+	width: 120px;
+}
+.typography-panel .upfront-typography-fields-right .upfront-field-wrap:first-child label {
+	margin-bottom: 2px;
+}
+.typography-panel .upfront-field-wrap-number label {
+	margin-bottom: 5px;
+}
+.typography-panel .upfront-field-number[type=number] {
+	height: 26px;
+	font-size: 11px;
+}
+#sidebar-ui .typography-section-content {
+	width: 230px;
+}
+
+/* Colors panel */
+#sidebar-ui .colors-panel-section {
+	padding-top: 0;
+	margin: 0;
+}
+#theme-colors-swatches {
+	padding: 0 15px;
+	width: 255px;
+}
+#sidebar-ui .panel-setting-theme-colors-bottom {
+	margin: 0 15px;
+	font-size: 11px;
+	font-family: verdana;
+	padding-top: 3px;
+	line-height: 32px;
+}
+#panel-setting-theme-colors-shades-label {
+	font-weight: bold;
+	margin-bottom: 7px;
+	display: block;
+}
+#sidebar-ui .panel-setting-theme-colors-bottom .hovers {
+	font-family: "Courier New", monospace;
+	font-weight: bold;
+	font-size: 12px;
+}
+#sidebar-ui #theme-colors-swatches .theme-colors-color-picker.color-0 .upfront-field-wrap {
+	margin-left: 0;
+}
+#sidebar-ui #theme-colors-swatches .upfront-field-wrap {
+	margin: 14px 0 13px 28px;
+}
+#sidebar-ui .colors-panel-section .sp-preview {
+	width: 18px !important;
+	height: 18px !important;
+	border-radius: 0;
+	-webkit-border-radius: 0px;
+}
+.theme_color_swatch .sp-replacer {
+	height: auto;
+	width: auto;
+}
+.panel-setting-theme-colors-meta {
+	margin-top: 15px;
+	line-height: 13px;
+}
+#sidebar-ui .swatch-title {
+	margin-top: 9px;
+	color: #263a4d;
+}
+
+.panel-setting-theme-colors-highlights,
+.panel-setting-theme-colors-shades {
+	text-align: justify;
+}
+.panel-setting-theme-colors-highlights:after,
+.panel-setting-theme-colors-shades:after {
+	content: '';
+	display: inline-block;
+	width: 100%;
+}
+
+#sidebar-ui .panel-setting-theme-colors-highlights + .swatch-title {
+	margin-top: 4px;
+}
+.theme-colors-color-box:first-child {
+	margin-left: 0;
+}
+
+/* Corrections for create theme mode sidebar */
+#sidebar-ui .create-theme-sidebar .sidebar-commands-primary {
+	padding: 15px;
+}
+#sidebar-ui .create-theme-sidebar .command-edit-bg {
+	text-align: right;
+}
+/* debug mode */
+#sidebar-ui .sidebar-commands-control .command-toggle-mode,
+#sidebar-ui .sidebar-commands-control .command-reset-everything {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 595px;
+	right: 15px;
+	font-size: 12px;
+	height: 12px;
+	line-height: 12px;
+}
+#sidebar-ui .sidebar-commands-control .command-toggle-mode:hover,
+#sidebar-ui .sidebar-commands-control .command-reset-everything:hover {
+	color: white;
+}
+#sidebar-ui .sidebar-commands-control .command-toggle-mode {
+	left: 15px;
+	right: auto;
+}
+
+/* Chosen */
+#font-picker .chosen-container-single .chosen-single,
+#sidebar-ui .chosen-container-single .chosen-single {
+	margin: 0;
+	text-decoration: none;
+	background: #e6f3fe;
+	color: rgb(96, 127, 153);
+	font-size: 11px;
+	box-shadow: inset 0 2px 0 #f2f9ff;
+	font-family: Verdana, sans-serif;
+	line-height: 22px;
+	border-radius: 3px;
+	border-color: rgb(163, 191, 217);
+}
+#font-picker .chosen-container-single .chosen-single:hover,
+#sidebar-ui .chosen-container-single .chosen-single:hover {
+	border-color: rgb(96, 127, 153);
+}
+#font-picker .chosen-with-drop .chosen-single,
+#sidebar-ui .chosen-with-drop .chosen-single,
+#font-picker .chosen-with-drop .chosen-single:hover,
+#sidebar-ui .chosen-with-drop .chosen-single:hover {
+	border-color: rgb(163, 191, 217);
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+#font-picker .chosen-container .chosen-results li,
+#sidebar-ui .chosen-container .chosen-results li {
+	margin: 0 0 0 5px;
+}
+#font-picker .chosen-container-single .chosen-drop,
+#sidebar-ui .chosen-container-single .chosen-drop {
+	background: #e6f3fe;
+	color: rgb(96, 127, 153);
+	border-color: rgb(163, 191, 217);
+	font-size: 11px;
+	font-family: Verdana, sans-serif;
+	box-shadow: none;
+}
+#font-picker .chosen-container .chosen-results,
+#sidebar-ui .chosen-container .chosen-results {
+	max-height: 150px;
+	margin-right: 5px;
+}
+#sidebar-ui .chosen-container .chosen-results {
+	max-height: 120px;
+}
+#font-picker .chosen-container .chosen-results li.highlighted,
+#sidebar-ui .chosen-container .chosen-results li.highlighted {
+	background: #5f7f9a;
+	color: #fff;
+}
+#font-picker .chosen-container-single .chosen-search,
+#sidebar-ui .chosen-container-single .chosen-search {
+	padding: 3px 5px;
+}
+#font-picker .chosen-container-single .chosen-search input[type=text],
+#sidebar-ui .chosen-container-single .chosen-search input[type=text] {
+	background: #f7fbff;
+	border-color: #a4bfd8;
+}
+#font-picker .chosen-container-single .chosen-results::-webkit-scrollbar,
+#sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar {
+	background: #d4dee8;
+  width: 5px;
+}
+#font-picker .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb {
+	background-color: #1fcd8f;
+}
+#font-picker .chosen-container-single .chosen-single div b,
+#sidebar-ui .chosen-container-single .chosen-single div b {
+	display: block;
+	width: 0;
+	height: 0;
+	background: none;
+	border-top: 4px solid rgb(96, 127, 153);
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	margin-top: 9px;
+}
+#font-picker .chosen-with-drop .chosen-single div b,
+#sidebar-ui .chosen-with-drop .chosen-single div b {
+	border-top: 0 none transparent;
+	border-bottom: 4px solid rgb(96, 127, 153);
+}
+
+.chosen-container .chosen-results li em {
+	background-color: #00CE8D;
+	color:#fff;
+	border-radius: 3px;
+	box-shadow: 0 1px 0 #00B47C;
+	padding:2px 0;
+	text-decoration: none!important;
+}
+.uaccordion-settings-panel label{
+	float: left;
+}
+.uaccordion-settings-panel .sp-replacer{
+	margin-top: -15px;
+}
+.upfront-settings_panel_scroll .upfront-settings-item-title{
+	line-height: 8px
+}
+
+/* builder */
+#sidebar-ui .sidebar-commands .upfront-field-select-option {
+	display: block;
+}
+
