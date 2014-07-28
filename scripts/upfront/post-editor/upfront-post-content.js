@@ -5,6 +5,7 @@ var PartMarkupCreator = function(){
 	this.parts = {
 		title: {replacements: ['%title%', '%permalink%'], editable:['%title%']},
 		contents: {replacements: ['%contents%', '%excerpt%'], editable:['%contents%', '%excerpt%']},
+		excerpt: {replacements: ['%excerpt%'], editable:['%excerpt%']}, 
 		author: {replacements: ['%author%', '%author_url%', '%author_meta%'], editable:['%author%'], withParameters: ['%author_meta_', '%avatar_']},
 		categories: {replacements: ['%categories%'], editable:[]},
 		tags: {replacements: ['%tags%'], editable:[]},
