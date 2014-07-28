@@ -1163,58 +1163,66 @@ console.log("switching controls");
 		render_upload: function (e) {
 			if (!this.library_view.$el.is(":visible")) this.render_library();
 			var me = this,
-				new_media = new MediaItem_Model({progress: 0}),
+				uploaded = 0, progressing = 0, done =0,
+				new_media = [],
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload + '-theme-image' : _upfront_media_upload
 			;
 
             this.$("#fileupload").remove();
-            this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '">');
+            this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
             this.$("#fileupload").fileupload({
 				dataType: 'json',
 				add: function (e, data) {
 					var media = data.files[0],
+						count = uploaded,
 						name = media.name || 'tmp'
 					;
-					new_media.set({post_title: name});
-					me.library_view.media_collection.add(new_media, {at: 0});
+					uploaded +=1;
+					new_media[count] = new MediaItem_Model({progress: 0});
+					new_media[count].set({post_title: name});
+					me.library_view.media_collection.add(new_media[count], {at: 0});
 					data.submit();
-					new_media.on("upload:abort", function () {
+					new_media[count].on("upload:abort", function () {
 						data.abort();
-						if (new_media.get("ID")) {
+						if (new_media[count].get("ID")) {
 							// Already uploaded this file, remove on the server side
 							Upfront.Util.post({
 								action: "upfront-media-remove_item",
-								item_id: new_media.get("ID")
+								item_id: new_media[count].get("ID")
 							}).always(function () {
 								me.library_view.media_collection.trigger("change");
 							});
 						}
-						me.library_view.media_collection.remove(new_media);
+						me.library_view.media_collection.remove(new_media[count]);
 						me.library_view.media_collection.trigger("change");
 					});
-					new_media.trigger("upload:start", media);
+					new_media[count].trigger("upload:start", media);
 				},
 				progressall: function (e, data) {
+					var count = progressing;
+					progressing+=1;
 					var progress = parseInt(data.loaded / data.total * 100, 10);
-					new_media.trigger("upload:progress", progress);
+					new_media[count].trigger("upload:progress", progress);
 				},
 				done: function (e, data) {
+					var count = done;
+					done +=1;
 					if(ActiveFilters.themeImages){
-						new_media.set(data.result.data, {silent: true});
-						return new_media.trigger("upload:finish");
+						new_media[count].set(data.result.data, {silent: true});
+						return new_media[count].trigger("upload:finish");
 					}
 
 					var result = data.result.data || [],
 						uploaded_id = result[0]
 					;
 
-					new_media.set({ID: uploaded_id}, {silent:true});
+					new_media[count].set({ID: uploaded_id}, {silent:true});
 					Upfront.Util.post({
 						action: "upfront-media-get_item",
 						item_id: uploaded_id
 					}).done(function (response) {
-						new_media.set(response.data, {silent:true});
-						new_media.trigger("upload:finish");
+						new_media[count].set(response.data, {silent:true});
+						new_media[count].trigger("upload:finish");
 					}).fail(function () {
 						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 					});
