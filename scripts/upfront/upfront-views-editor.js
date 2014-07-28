@@ -1292,7 +1292,7 @@ define([
 
 	var SidebarPanel_Posts = SidebarPanel_DraggableElements.extend({
 		className: "sidebar-panel upfront-panel-post_panel",
-		parts: ['Title', 'Contents', 'Featured Image', 'Author', 'Date', 'Comments Count', 'Tags', 'Categories'],
+		parts: ['Title', 'Contents', 'Excerpt', 'Featured Image', 'Author', 'Date', 'Comments Count', 'Tags', 'Categories'],
 		partElements: [],
 		initialize: function (opts) {
 			//SidebarPanel_DraggableElements.prototype.constructor.call(this, opts);
@@ -1314,6 +1314,7 @@ define([
 			;
 
 			_.each(this.parts, function(part){
+                console.log(part);
 				var element = new PostPartElement({title: part, model: Upfront.Application.layout}),
 					elementSlug = 'PostPart_' + element.slug
 				;

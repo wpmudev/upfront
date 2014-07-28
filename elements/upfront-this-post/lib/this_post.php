@@ -2,8 +2,10 @@
 
 class Upfront_ThisPostView extends Upfront_Object {
 	public static $PARTNAMES = array(
+		'EXCERPT' => 'excerpt',
 		'AUTHOR' => 'author',
-		'CATEGORIES' => 'categories',
+//        'AUTHOR_AVATAR' => 'author_avatar',
+        'CATEGORIES' => 'categories',
 		'COMMENTS' => 'comments_count',
 		'CONTENTS' => 'contents',
 		'DATE' => 'date',
@@ -56,6 +58,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 				}
 
 				break;
+
+                break;
 			case self::$PARTNAMES['CATEGORIES']:
 				$replacements['%categories%'] = get_the_category_list();
 				break;
@@ -78,6 +82,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$offset = isset($options['content_offset']) ? $options['content_offset'] : '';
 				$replacements['%offset%'] = $offset;
 				break;
+
+            case self::$PARTNAMES['EXCERPT']:
+                $replacements['%excerpt%'] = get_the_excerpt();
+                break;
 
 			case self::$PARTNAMES['DATE']:
 				$format = isset($options['format']) ? $options['format'] : '';
@@ -451,6 +459,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 				'selector' => 'div.post_content',
 			);
 		}
+        if (!in_array('excerpt', $types)) {
+            $selectors[] = array(
+                'type' => 'excerpt',
+                'selector' => 'div.post_excerpt',
+            );
+        }
 		if (!in_array('thumbnail', $types)) {
 			$selectors[] = array(
 				'type' => 'thumbnail',
@@ -565,6 +579,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			$slug = $part['slug'];
 			$part_options = !empty($part['options']) ? $part['options'] : array(); // This is for editor
 			$contents = Upfront_ThisPostView::get_post_part($slug, $part_options, isset($templates[$slug]) ? $templates[$slug] : '');
+
 			$tpls[$slug] = $contents['tpl'];
 			$replacements = array_merge($replacements, $contents['replacements']);
 			if($slug == 'contents'){
@@ -572,7 +587,6 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				$replacements['%raw_excerpt%'] = wpautop(get_the_excerpt());
 			}
 		}
-
 		$output = array(
 			'tpls' => $tpls,
 			'replacements' => $replacements
@@ -703,7 +717,6 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		$layout_data['partTemplates'] = stripslashes_deep(Upfront_ThisPostView::find_partTemplates($type, $post_type, $id));
 		$layout_data['partContents'] = $this->generate_part_contents($post_id, $layout_data['partOptions'], $layout_data['partTemplates']);
-
 		$this->_out(new Upfront_JsonResponse_Success($layout_data));
 	}
 

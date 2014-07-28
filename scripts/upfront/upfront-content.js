@@ -183,7 +183,6 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			if(part == 'contents' && this.content_mode == 'post_excerpt')
 				part = 'excerpt';
-
 			if(templates && templates[part])
 				return templates[part];
 
@@ -309,7 +308,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			loading.render();
 			this.$el.append(loading.$el);
 			this.contentEditor.bar.$el.hide()
-
+            console.log("results", results);
 			if(results.title)
 				this.post.set('post_title', results.title);
 			if(results.content) {
@@ -320,6 +319,9 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 			if(results.author)
 				this.post.set('post_author', results.author);
+
+            if(results.excerpt)
+                this.post.set('post_excerpt', results.excerpt);
 
 			if(results.inserts){
 				this.post.meta.setValue('_inserts_data', results.inserts);

@@ -29,7 +29,7 @@ $templates['date'] = ob_get_contents();
 ob_clean();
 
 //*** EXCERPT
-?><div class="post_content">%excerpt%</div><?php
+?><div class="post_excerpt">%excerpt%</div><?php
 $templates['excerpt'] = ob_get_contents();
 ob_clean();
 
