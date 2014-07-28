@@ -112,7 +112,7 @@ function upfront_is_builder_mode() {
 }
 
 function upfront_is_builder_uri() {
-	$uri = $_SERVER['REQUEST_URI'];
+	$uri = !empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
 	$is_builder_uri = strpos($uri, 'create_new') !== false
 		&& strpos($uri, 'create_new/post') === false
 		&& strpos($uri, 'create_new/page') === false;
@@ -121,7 +121,7 @@ function upfront_is_builder_uri() {
 }
 
 function upfront_is_builder_referer() {
-	$referer = $_SERVER['HTTP_REFERER'];
+	$referer = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 	$is_builder_referer = strpos($referer, 'create_new') !== false
 		&& strpos($referer, 'create_new/post') === false
 		&& strpos($referer, 'create_new/page') === false;
