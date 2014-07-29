@@ -72,6 +72,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'form_validate_when' => 'submit',
 			'form_label_position' => 'above',
 
+
 			'type' => "UcontactModel",
 			'view_class' => "UcontactView",
 			"class" => "c24 upfront-contact-form",
@@ -187,6 +188,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			);
 
 			$emailto = $this->_get_property('form_email_to');
+
 
 			$headers = array('Reply-To: ' . $email);
 

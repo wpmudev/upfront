@@ -211,6 +211,11 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							property: 'form_email_to',
 							label: 'Send results to:'
 						}),
+						new Fields.Text({
+							model: this.model,
+							property: 'form_button_text',
+							label: 'Contact form submit button text:'
+						}),
 						new OptionalField({
 							model: this.model,
 							property: 'form_add_title',
