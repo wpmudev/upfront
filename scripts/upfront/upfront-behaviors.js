@@ -2173,6 +2173,9 @@ var GridEditor = {
 				}
 
 				ed.update_wrappers(region);
+				
+				$me.removeData('resize-col');
+				$me.removeData('resize-row');
 
 				view.trigger('entity:resize', {row: rsz_row, col: rsz_col}, view, view.model);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
@@ -3206,8 +3209,23 @@ var GridEditor = {
 	adapt_region_to_breakpoint: function (regions, breakpoint_id, col) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
+			default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON();
 			line_col = 0;
-
+		regions.each(function(region){
+			var data = Upfront.Util.clone( region.get_property_value_by_name('breakpoint') || {} ),
+				sub = region.get('sub');
+			if ( data.edited )
+				return;
+			if ( typeof data[breakpoint_id] != 'object' )
+				data[breakpoint_id] = {};
+			if ( !region.is_main() ){
+				// Sidebar, let's make the column to full width on responsive
+				if ( !sub || sub.match(/^(left|right)$/) ) {
+					data[breakpoint_id].col = default_breakpoint.columns;
+				}
+			}
+			region.set_property('breakpoint', data);
+		});
 	},
 
 
@@ -3218,8 +3236,6 @@ var GridEditor = {
 	 * @param {Object} model
 	 */
 	create_region_resizable: function(view, model){
-		if ( !model.get("container") || model.get("container") == model.get("name") )
-			return;
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
 			$me = view.$el,
@@ -3250,15 +3266,19 @@ var GridEditor = {
 		;
 		if ( $me.data('ui-resizable') )
 			return false;
-		if ( !sub || !sub.match(/^(fixed|left|right)$/) )
+		if ( !model.is_main() && sub && !sub.match(/^(fixed|left|right)$/) )
 			return;
-		if ( sub == 'left' ){
-			directions = ['e'];
-			handles = { e: '.upfront-region-resize-handle-e' };
+		if ( model.is_main() ){
+			directions = ['s'];
+			handles = { s: '.upfront-region-resize-handle-s' };
+		}
+		else if ( sub == 'left' ){
+			directions = ['e', 's'];
+			handles = { e: '.upfront-region-resize-handle-e', s: '.upfront-region-resize-handle-s' };
 		}
 		else if ( sub == 'right' ) {
-			directions = ['w'];
-			handles = { w: '.upfront-region-resize-handle-w' };
+			directions = ['w', 's'];
+			handles = { w: '.upfront-region-resize-handle-w', s: '.upfront-region-resize-handle-s' };
 		}
 		else if ( sub == 'fixed' ) {
 			fixed_pos = get_fixed_pos();
@@ -3272,7 +3292,7 @@ var GridEditor = {
 			}
 		}
 		_.each(directions, function(direction){
-			var icon = ( direction == 'w' || direction == 'e' ) ? 'upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-' + direction : 'upfront-icon-control upfront-icon-control-resize upfront-icon-control-resize-' + direction;
+			var icon = ( direction.match(/^(e|w|s|n)$/) ) ? 'upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-' + direction : 'upfront-icon-control upfront-icon-control-resize upfront-icon-control-resize-' + direction;
 			$me.append('<div class="' + icon + ' upfront-region-resize-handle upfront-region-resize-handle-' + direction + ' ui-resizable-handle ui-resizable-' + direction + '"></div>');
 		});
 		$me.resizable({
@@ -3323,23 +3343,39 @@ var GridEditor = {
 			resize: function(e, ui){
 				var $helper = ui.helper;
 				if ( sub != 'fixed' ){
-					var col = ed.get_class_num($me, ed.grid.class),
-						$prev = $me.prevAll('.upfront-region:first'),
-						$next = $me.nextAll('.upfront-region:first'),
-						prev_col = $prev.size() > 0 ? ed.get_class_num($prev, ed.grid.class) : 0,
-						next_col = $next.size() > 0 ? ed.get_class_num($next, ed.grid.class) : 0,
-						max_col = col + ( next_col > prev_col ? next_col : prev_col ),
-						current_col = Math.abs(Math.ceil(ui.size.width/ed.col_size)),
-						w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
-						rsz_col = ( current_col > max_col ? max_col : current_col )
-					;
-					$helper.css({
-						height: ui.originalSize.height,
-						width: w,
-						minWidth: w,
-						maxWidth: w
-					});
-					$me.data('resize-col', rsz_col);
+					if ( axis == 's' ) {
+						var current_row = Math.abs(Math.ceil(ui.size.height/ed.baseline)),
+							h = Math.round(current_row*ed.baseline);
+						$helper.css({
+							height: h,
+							width: ui.originalSize.width,
+							minWidth: ui.originalSize.width,
+							maxWidth: ui.originalSize.width
+						});
+						view.update_size_hint(ui.originalSize.width, h);
+						$me.data('resize-row', current_row);
+					}
+					else {
+						var col = ed.get_class_num($me, ed.grid.class),
+							$prev = $me.prevAll('.upfront-region:first'),
+							$next = $me.nextAll('.upfront-region:first'),
+							prev_col = $prev.size() > 0 ? ed.get_class_num($prev, ed.grid.class) : 0,
+							next_col = $next.size() > 0 ? ed.get_class_num($next, ed.grid.class) : 0,
+							max_col = col + ( next_col > prev_col ? next_col : prev_col ),
+							current_col = Math.abs(Math.ceil(ui.size.width/ed.col_size)),
+							rsz_col = ( current_col > max_col ? max_col : current_col ),
+							w = Math.round(rsz_col*ed.col_size)
+						;
+						$helper.css({
+							height: ui.originalSize.height,
+							width: w,
+							minWidth: w,
+							maxWidth: w,
+							marginLeft: axis == 'w' ? ui.size.width-w : 0
+						});
+						view.update_size_hint(w, ui.originalSize.height);
+						$me.data('resize-col', rsz_col);
+					}
 				}
 				else {
 					var offset = $me.offset(),
@@ -3368,6 +3404,8 @@ var GridEditor = {
 				}
 			},
 			stop: function(e, ui){
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					model_breakpoint, breakpoint_data;
 				// Prevents quick scroll when resizing
 				ed.resizing = false;
 
@@ -3384,8 +3422,30 @@ var GridEditor = {
 					bottom: ''
 				});
 				if ( sub != 'fixed' ){
-					var rsz_col = $me.data('resize-col');
-					model.set_property('col', rsz_col);
+					var rsz_col = $me.data('resize-col'),
+						rsz_row = $me.data('resize-row');
+					if ( !breakpoint || breakpoint.default ){
+						if ( rsz_col )
+							model.set_property('col', rsz_col);
+						if ( rsz_row )
+							model.set_property('row', rsz_row);
+					}
+					else {
+						if ( rsz_col || rsz_row ){
+							model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
+							if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+								model_breakpoint[breakpoint.id] = {};
+							breakpoint_data = model_breakpoint[breakpoint.id];
+							breakpoint_data.edited = true;
+							if ( rsz_col )
+								breakpoint_data.col = rsz_col;
+							if ( rsz_row )
+								breakpoint_data.row = rsz_row;
+							model.set_property('breakpoint', model_breakpoint);
+						}
+					}
+					$me.removeData('resize-col');
+					$me.removeData('resize-row');
 				}
 				else {
 					var rsz_width = $me.data('resize-width'),
@@ -3403,6 +3463,8 @@ var GridEditor = {
 					model.set_property('height', rsz_height, true);
 					model.set_property('col', rsz_col, true);
 					model.get('properties').trigger('change');
+					$me.removeData('resize-width');
+					$me.removeData('resize-height');
 				}
 				Upfront.Events.trigger("entity:region:resize_stop", view, view.model);
 			}
@@ -3565,10 +3627,19 @@ var GridEditor = {
 				;
 				$helper.css({
 					width: $me.width(),
-					height: h
+					height: rsz_row * ed.baseline
 				});
 				$me.data('resize-row', rsz_row);
 
+				var region_view = Upfront.data.region_views[model.cid];
+				if ( region_view )
+					region_view.update_size_hint(region_view.$el.width(), rsz_row * ed.baseline);
+				_.each(view.sub_model, function (sub_model) {
+					var sub_view = Upfront.data.region_views[sub_model.cid];
+					if ( sub_view && ( sub_view.$el.hasClass('upfront-region-side-left') || sub_view.$el.hasClass('upfront-region-side-right')) )
+						sub_view.update_size_hint(sub_view.$el.width(), rsz_row * ed.baseline);
+				});
+				
 				// Auto scrolling when it hits bottom
 				ed._start_resize_auto_scroll(e, ui, h, data);
 			},
@@ -3603,6 +3674,9 @@ var GridEditor = {
 					breakpoint_data.row = rsz_row;
 					model.set_property('breakpoint', model_breakpoint);
 				}
+				
+				$me.removeData('resize-row');
+				
 				Upfront.Events.trigger("entity:region_container:resize_stop", view, view.model);
 				// Re-enable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', true);
@@ -3687,7 +3761,7 @@ var GridEditor = {
 			if ( $main.hasClass('upfront-region-fixed-editing') )
 				$regions = $('.upfront-region-side-fixed');
 			else
-				$regions = $('.upfront-region-side-left, .upfront-region-side-right, .upfront-region-container-wide, .upfront-region-container-clip');
+				$regions = $('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right, .upfront-region-container-wide, .upfront-region-container-clip');
 			$regions.each(function(){
 				if ( $(this).data('ui-resizable') )
 					$(this).resizable('option', 'disabled', false);

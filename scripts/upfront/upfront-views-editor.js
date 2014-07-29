@@ -396,6 +396,7 @@ define([
 	});
 
 	var Command_PublishLayout = Command.extend({
+		className: "command-publish-layout",
 		render: function () {
 			this.$el.html("Publish layout");
 		},
@@ -2181,6 +2182,7 @@ define([
 					this.commands.push(new Command_ResetEverything({"model": this.model}));
 				}
 				this.commands.push(new Command_ToggleMode({"model": this.model}));
+				this.commands.push(new Command_PublishLayout({"model": this.model}));
 			}
 		}
 	});
@@ -5477,27 +5479,29 @@ var CSSEditor = Backbone.View.extend({
 
 	//elemenTypes' element id matches model's 'id_slug' attribute
 	elementTypes: {
-		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
-		UcommentModel: {label: 'Comments', id: 'ucomment'},
-		UcontactModel: {label: 'Contact Form', id: 'ucontact'},
-		UgalleryModel: {label: 'Gallery', id: 'ugallery'},
-		UimageModel: {label: 'Image', id: 'image'},
-		LoginModel: {label: 'Login', id: 'upfront-login_element'},
-		LikeBox: {label: 'Like Box', id: 'Like-box-object'},
-		MapModel: {label: 'Map', id: 'upfront-map_element'},
-		//NavigationModel: {label: 'Navigation', id: 'nav'},
-		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
-		UpostsModel: {label: 'Posts', id: 'uposts'},
-		UsearchModel: {label: 'Search', id: 'usearch'},
-		USliderModel: {label: 'Slider', id: 'uslider'},
-		SocialMediaModel: {label: 'Social', id: 'SocialMedia'},
-		UtabsModel: {label: 'Tabs', id: 'utabs'},
-		ThisPageModel: {label: 'Page', id: 'this_page'},
-		ThisPostModel: {label: 'Post', id: 'this_post'},
-		UwidgetModel: {label: 'Widget', id: 'uwidget'},
-		UyoutubeModel: {label: 'YoutTube', id: 'utube'},
-		PlainTxtModel: {label: 'Text', id:'plaintext'},
-		Layout: {label: 'Body', id: 'layout'}
+		UaccordionModel: {label: 'Accordion', id: 'uaccordion', type: 'element'},
+		UcommentModel: {label: 'Comments', id: 'ucomment', type: 'element'},
+		UcontactModel: {label: 'Contact Form', id: 'ucontact', type: 'element'},
+		UgalleryModel: {label: 'Gallery', id: 'ugallery', type: 'element'},
+		UimageModel: {label: 'Image', id: 'image', type: 'element'},
+		LoginModel: {label: 'Login', id: 'upfront-login_element', type: 'element'},
+		LikeBox: {label: 'Like Box', id: 'Like-box-object', type: 'element'},
+		MapModel: {label: 'Map', id: 'upfront-map_element', type: 'element'},
+		//NavigationModel: {label: 'Navigation', id: 'nav', type: 'element'},
+		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation', type: 'element'},
+		UpostsModel: {label: 'Posts', id: 'uposts', type: 'element'},
+		UsearchModel: {label: 'Search', id: 'usearch', type: 'element'},
+		USliderModel: {label: 'Slider', id: 'uslider', type: 'element'},
+		SocialMediaModel: {label: 'Social', id: 'SocialMedia', type: 'element'},
+		UtabsModel: {label: 'Tabs', id: 'utabs', type: 'element'},
+		ThisPageModel: {label: 'Page', id: 'this_page', type: 'element'},
+		ThisPostModel: {label: 'Post', id: 'this_post', type: 'element'},
+		UwidgetModel: {label: 'Widget', id: 'uwidget', type: 'element'},
+		UyoutubeModel: {label: 'YoutTube', id: 'utube', type: 'element'},
+		PlainTxtModel: {label: 'Text', id:'plaintext', type: 'element'},
+		Layout: {label: 'Body', id: 'layout', type: 'layout'},
+		RegionContainer: {label: 'Region Container', id: 'upfront-region-container', type: 'region'},
+		Region: {label: 'Region', id: 'upfront-region', type: 'region'}
 	},
 	initialize: function(){
 		if(!$('#' + this.id).length)
@@ -5509,7 +5513,9 @@ var CSSEditor = Backbone.View.extend({
 
 		this.model = options.model;
 		this.elementSelector = typeof options.elementSelector == 'string' ? options.elementSelector : '.upfront-object';
+		this.outputElementSelector = typeof options.outputElementSelector == 'string' ? options.outputElementSelector : '.upfront-output-object';
 		this.sidebar = ( options.sidebar !== false );
+		this.save_as = ( options.save_as !== false );
 		this.global = ( options.global === true );
 
 		var me = this,
@@ -5524,7 +5530,7 @@ var CSSEditor = Backbone.View.extend({
 		else
 			this.name = '';
 
-		this.elementType = elementType || {label: 'Unknown', id: 'unknown'};
+		this.elementType = elementType || {label: 'Unknown', id: 'unknown', type: 'unknown'};
 		this.selectors = this.elementSelectors[modelType] || {};
 
 		this.prepareAce = deferred.promise();
@@ -5539,8 +5545,8 @@ var CSSEditor = Backbone.View.extend({
 		$(window).on('resize', this.resizeHandler);
 
 		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
-		if(!$('#' + this.element_id + '-style').length){
-			this.$style = $('<style id="' + this.element_id + '-style"></style>');
+		if(!$('#' + this.element_id + '-styles').length){
+			this.$style = $('<style id="' + this.element_id + '-style"></style');
 			$('body').append(this.$style);
 		}
 		else
@@ -5582,6 +5588,11 @@ var CSSEditor = Backbone.View.extend({
 			this.$el.addClass('upfront-css-no-sidebar');
 		else
 			this.$el.removeClass('upfront-css-no-sidebar');
+
+		if (!this.save_as)
+			this.$el.addClass('upfront-css-no-save-as');
+		else
+			this.$el.removeClass('upfront-css-no-save-as');
 
 		this.$el.html(this.tpl({
 			name: this.name,
@@ -5730,7 +5741,7 @@ var CSSEditor = Backbone.View.extend({
 		var selector = $(e.target).data('selector');
 		if(!selector.length)
 			return;
-		var element = $('#' + this.element_id).parent();
+		var element = this.elementType.type == 'element' ? $('#' + this.element_id).parent() : $('#' + this.element_id);
 		element.find(selector).addClass('upfront-css-hilite');
 	},
 
@@ -5738,7 +5749,7 @@ var CSSEditor = Backbone.View.extend({
 		var selector = $(e.target).data('selector');
 		if(!selector.length)
 			return;
-		var element = $('#' + this.element_id).parent();
+		var element = this.elementType.type == 'element' ? $('#' + this.element_id).parent() : $('#' + this.element_id);
 		element.find(selector).removeClass('upfront-css-hilite');
 	},
 
@@ -5784,6 +5795,8 @@ var CSSEditor = Backbone.View.extend({
 			styles: styles,
 			action: 'upfront_save_styles',
 			elementType: this.elementType.id,
+			elementSelector: this.elementSelector,
+			outputElementSelector: this.outputElementSelector,
 			global: this.global
 		};
 
@@ -5905,8 +5918,16 @@ var CSSEditor = Backbone.View.extend({
 			;
 
 			selectors[id] = view.cssSelectors || {};
+			view.remove();
 		});
 		me.elementSelectors = selectors;
+	},
+	
+	createSelector: function(model_class, view_class, id) {
+		var model = new model_class(),
+			view = new view_class({model: model});
+		this.elementSelectors[id] = view.cssSelectors || {};
+		view.remove();
 	},
 
 	openImagePicker: function(){
@@ -7053,6 +7074,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					e.stopPropagation();
 					me.upload_image();
 				});
+				$content.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
+					e.preventDefault();
+					e.stopPropagation();
+					me.trigger_edit_css();
+				});
 			}
 			else {
 				$content.find('.upfront-region-bg-setting-type').remove();
@@ -7929,25 +7955,40 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		// Expand lock trigger
 		render_expand_lock: function ($el) {
 			var locked = this.model.get_property_value_by_name('expand_lock'),
-				$icon = $('<i class="upfront-field-icon upfront-region-field-icon" />'),
 				$status = $('<span />');
 			if ( locked ){
-				$icon.addClass('upfront-region-field-icon-expand-lock');
-				$status.addClass('auto-resize-off').text('OFF');
+				$status.addClass('auto-resize-off');
 			}
 			else {
-				$icon.addClass('upfront-region-field-icon-expand-unlock');
-				$status.addClass('auto-resize-on').text('ON');
+				$status.addClass('auto-resize-on');
 			}
 			$el.html('');
-			$el.append($icon);
-			$el.append('<span>Auto-resize is </span>');
+			$el.append('<span>Auto-resize</span>');
 			$el.append($status);
 		},
 		trigger_expand_lock: function ($el) {
 			var locked = this.model.get_property_value_by_name('expand_lock');
 			this.model.set_property('expand_lock', !locked);
 			this.render_expand_lock($el);
+		},
+		// Edit CSS trigger
+		trigger_edit_css: function () {
+			var editor = Upfront.Application.cssEditor,
+				is_main = this.model.is_main(),
+				name = this.model.get('name'),
+				selector = is_main ? editor.elementTypes.RegionContainer.id + '-' + name : editor.elementTypes.Region.id + '-' + name,
+				styleId = 'upfront-style-' + selector;
+			if(!$('#' + styleId).length)
+				$('body').append('<style id="' + styleId + '"></style>');
+			editor.init({
+				model: this.model,
+				name: selector,
+				save_as: false,
+				type: is_main ? "RegionContainer" : "Region",
+				elementSelector: is_main ? '.upfront-region-container' : '.upfront-region',
+				outputElementSelector: is_main ? '.upfront-output-region-container' : '.upfront-output-region',
+				element_id: is_main ? 'region-container-' + name : 'region-' + name
+			});
 		}
 	});
 
@@ -7956,20 +7997,22 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		className: 'upfront-inline-panel-item',
 		width: 40,
 		height: 40,
+		icon_class: 'upfront-icon-region',
 		render_icon: function () {
 			var icon = typeof this.icon == 'function' ? this.icon() : this.icon;
 			if ( !icon )
 				return;
-			var icons = icon.split(" "),
-				icons_class = [],
+			var me = this,
+				icons = icon.split(" "),
+				icons_class = ['upfront-icon'],
 				$icon = this.$el.find('.upfront-icon');
 			_.each(icons, function(each){
-				icons_class.push('upfront-icon-region-' + each);
+				icons_class.push(me.icon_class + '-' + each);
 			});
 			if ( !$icon.length )
-				this.$el.append('<i class="upfront-icon ' + icons_class.join(' ') + '" />');
+				this.$el.append('<i class="' + icons_class.join(' ') + '" />');
 			else
-				$icon.attr('class', 'upfront-icon ' + icons_class.join(' '));
+				$icon.attr('class', icons_class.join(' '));
 		},
 		render_label: function () {
 			var label = typeof this.label == 'function' ? this.label() : this.label;
@@ -8134,7 +8177,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 	});
 
-	var RegionPanelItem_ExpandLock = InlinePanelItem.extend({
+	var RegionPanelItem_ExpandLock = RegionPanelItem.extend({
 		events: {
 			'click .upfront-icon': 'toggle_lock'
 		},
@@ -8156,7 +8199,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	var RegionPanelItem_AddRegion = InlinePanelItem.extend({
+	var RegionPanelItem_AddRegion = RegionPanelItem.extend({
+		width: 24,
+		height: 24,
 		events: {
 			'click': 'add_region'
 		},
@@ -8173,9 +8218,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				case 'bottom':
 					var msg = "Insert new region below"; break;
 				case 'left':
-					var msg = "Insert new region before"; break;
+					var msg = "Insert sidebar region"; break;
 				case 'right':
-					var msg = "Insert new region after"; break;
+					var msg = "Insert sidebar region"; break;
 				case 'top':
 					var msg = "Insert new region above"; break;
 				case 'top-left':
@@ -8334,7 +8379,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	var RegionPanelItem_DeleteRegion = InlinePanelItem.extend({
+	var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
 		events: {
 			'click .upfront-icon': 'delete_region'
 		},

@@ -715,14 +715,15 @@ class Upfront_GridBreakpoint {
 	}
 
 	protected function _columns_to_size ($span, $max_columns=false) {
-		$base = (float)(100 / ($max_columns!==false ? $max_columns : $this->_columns));
+		$max = $max_columns!==false ? $max_columns : $this->_columns;
+		$base = $max > 0 ? (float)(100 / $max) : 0;
 		/*
 		if ($max_columns) {
 			$columns_modifier = $this->_columns / $max_columns;
 			$span *= $columns_modifier;
 		}
 		*/
-		return ((float)($max_columns!==false && $span > $max_columns ? $max_columns : $span) * $base);
+		return ((float)($span > $max ? $max : $span) * $base);
 	}
 }
 

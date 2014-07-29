@@ -1714,12 +1714,18 @@ define([
 		}),
 
 		RegionContainer = _Upfront_SingularEditor.extend({
+			cssSelectors: {
+				'.upfront-region-container-bg': {label: 'Region container', info: 'The layer that contains all the regions.'},
+				'.upfront-region-center': {label: 'Main content region', info: 'The main content region.'},
+				'.upfront-region-side-left': {label: 'Left sidebar region', info: 'The left sidebar region.'},
+				'.upfront-region-side-right': {label: 'Right sidebar region', info: 'The left sidebar region.'}
+			},
 			events: {
 				"click > .upfront-region-edit-trigger": "trigger_edit",
 				"click > .upfront-region-edit-fixed-trigger": "trigger_edit_fixed",
 				"click > .upfront-region-finish-edit": "finish_edit" ,
 				"contextmenu": "on_context_menu",
-				//"mouseover": "on_mouse_over"
+				"mouseover": "on_mouse_over"
 			},
 			attributes: function(){
 				var name = this.model.get("container") || this.model.get("name"),
@@ -1727,11 +1733,12 @@ define([
 				classes.push('upfront-region-container');
 				classes.push('upfront-region-container-' + name.toLowerCase().replace(/ /, "-"));
 				classes.push('upfront-region-container-' + this._get_region_type() );
-				if ( this.model.collection.active_region == this.model ){
+				if ( _.isObject(this.model.collection) && this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-container-active');
 				}
 				return {
-					"class": classes.join(' ')
+					"class": classes.join(' '),
+					"id": 'region-container-' + name
 				};
 			},
 			_get_region_type: function () {
@@ -1744,7 +1751,7 @@ define([
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				if ( $main.hasClass('upfront-region-fixed-editing') )
 					this.trigger('activate_region', this);
-				this.update_pos();
+				//this.update_pos();
 			},
 			remove_context_menu: function(e) {
 				if (!this.context_menu_view) return false;
@@ -1851,8 +1858,7 @@ define([
 
 
 				var grid = Upfront.Settings.LayoutEditor.Grid,
-					width = this.model.get_property_value_by_name('width'),
-					index = this.model.collection.index_container(this.model);
+					width = this.model.get_property_value_by_name('width');
 				this.sub_model = [];
 				this.max_col = width ? Upfront.Util.width_to_col(width) : grid.size;
 				this.available_col = this.max_col;
@@ -2252,9 +2258,12 @@ define([
 		}),
 
 		Region = _Upfront_SingularEditor.extend({
+			cssSelectors: {
+				'.upfront-region-wrapper': {label: 'Region wrapper', info: 'The layer that wrap region.'}
+			},
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
-				//"mouseover": "on_mouse_over",
+				"mouseover": "on_mouse_over",
 				"click": "on_click",
 				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
@@ -2293,7 +2302,8 @@ define([
 					classes.push('upfront-region-active');
 				}
 				return {
-					"class": classes.join(' ')
+					"class": classes.join(' '),
+					"id": 'region-' + name
 				};
 			},
 			init: function () {
@@ -2313,7 +2323,7 @@ define([
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
-				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_render);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
@@ -2332,7 +2342,10 @@ define([
 			on_mouse_over: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					container = this.parent_view.get_container_view(this.model),
-					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger');
+					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger'),
+					$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				if ( ! $main.hasClass('upfront-region-editing') )
+					return;
 				if ( container && container.$el.hasClass('upfront-region-container-active') )
 					this.trigger("activate_region", this);
 				if ( !breakpoint || breakpoint.default ){
@@ -2354,7 +2367,8 @@ define([
 				var container = this.model.get("container"),
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON()),
-					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Edit region"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
+					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Edit region"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+					$size = $('<div class="upfront-region-size-hint"></div>');
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
 				this.$el.html(template);
 				this.$el.append('<div class="upfront-debug-info"/>');
@@ -2362,6 +2376,7 @@ define([
 				this.$el.attr('data-title', this.model.get("title"));
 				this.$el.data('type', this.model.get("type"));
 				$edit.appendTo(this.$el);
+				$size.appendTo(this.$el);
 				
 				this.update();
 
@@ -2432,32 +2447,38 @@ define([
 					container_view = this.parent_view.get_container_view(this.model),
 					$container = this.$el.find('.upfront-modules_container'),
 					$toggle = this.$el.find('.upfront-region-hidden-toggle'),
-					height = 0;
+					$regions = container_view.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
+					height = 0,
+					width = 0;
 				if ( ! breakpoint_data || ! breakpoint_data.hide ){
 					$container.show();
 					$toggle.hide();
 					this.$el.removeClass('upfront-region-hidden');
-					// @TODO need to double-check this
-					container_view.$el.removeClass('upfront-region-container-hidden');
 				}
 				else if ( breakpoint_data.hide ){
 					$container.hide();
 					$toggle.show();
 					this.$el.addClass('upfront-region-hidden');
-					// @TODO need to double-check this
-					container_view.$el.addClass('upfront-region-container-hidden');
 					this.update_hide_toggle();
 				}
-				/*if ( breakpoint_data && typeof breakpoint_data.col == 'number' ){
-					this.$el.css('width', (breakpoint_data.col/(breakpoint_data.left+breakpoint_data.col)*100) + '%');
+				if ( $regions.length == container_view.$el.find('.upfront-region-hidden').length )
+					container_view.$el.addClass('upfront-region-container-hidden');
+				else
+					container_view.$el.removeClass('upfront-region-container-hidden');
+				if ( breakpoint_data && typeof breakpoint_data.col == 'number' ){
+					width = (breakpoint_data.col/(breakpoint.columns)*100);
+					this.$el.css('width', ( width > 100 ? 100 : width ) + '%');
 					this.$el.data('breakpoint_col', breakpoint_data.col);
 				}
 				else {
 					this.$el.css('width', '');
 					this.$el.removeData('breakpoint_col');
-				}*/
+				}
 				if ( !breakpoint.default ) {
-					$edit.css('right', (breakpoint.width - (breakpoint.columns*grid.column_width)) / 2 * -1);
+					if ( this.model.is_main() )
+						$edit.css('right', (breakpoint.width - (breakpoint.columns*grid.column_width)) / 2 * -1);
+					else
+						$edit.css('right', '');
 					$toggle.css('left', (breakpoint.width - (breakpoint.columns*grid.column_width)) / 2);
 				}
 				else {
@@ -2472,18 +2493,33 @@ define([
 					height = (row*grid.baseline);
 					this.$el.removeData('breakpoint_row');
 				}
-				this.$el.css('min-height', height + 'px');
-				$container.css('min-height', height + 'px');
+				if ( height > 0 ){
+					this.$el.css('min-height', height + 'px');
+					$container.css('min-height', height + 'px');
+				}
+				else {
+					this.$el.css('min-height', '');
+					$container.css('min-height', '');
+				}
 				this.trigger("region_changed", this);
+			},
+			update_size_hint: function (width, height, $helper) {
+				var hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
+				( $helper ? $helper : this.$el ).find('.upfront-region-size-hint').html(hint);
 			},
 			region_resize: function (col) {
 				var grid = Upfront.Settings.LayoutEditor.Grid;
 				this.$el.removeClass(grid.class + this.col);
 				this.col = col;
 				this.$el.addClass(grid.class + this.col);
+				this.update_size_hint(this.col * grid.column_width, this.$el.height());
 			},
 			on_module_update: function () {
 				this.trigger("region_changed", this);
+			},
+			on_layout_render: function () {
+				this.update_size_hint(this.$el.width(), this.$el.height());
+				this.refresh_background();
 			},
 			remove: function() {
 				if(this._modules_view)
@@ -2599,6 +2635,7 @@ define([
 					$hide.hide();
 				}
 				this.update_position();
+				this.update_size_hint(this.$el.width(), this.$el.height());
 			}
 		}),
 
@@ -2701,10 +2738,6 @@ define([
 					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', '');
 				this.update_size_hint(css.width, css.minHeight);
 				this.update_position_hint(css);
-			},
-			update_size_hint: function (width, height, $helper) {
-				var hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
-				( $helper ? $helper : this.$el ).find('.upfront-region-size-hint').html(hint);
 			},
 			update_position_hint: function (pos, $helper) {
 				var hint = '';
@@ -3175,7 +3208,8 @@ define([
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var ed = Upfront.Behaviors.GridEditor;
-				ed.adapt_region_to_breakpoint(this.model, breakpoint.id, breakpoint.columns);
+				if ( !breakpoint.default )
+					ed.adapt_region_to_breakpoint(this.model, breakpoint.id, breakpoint.columns);
 			},
 			remove: function(){
 				var me = this;
@@ -3438,6 +3472,7 @@ define([
 			"ContextMenuList": ContextMenuList,
 			"ContextMenuItem": ContextMenuItem,
 			"RegionView": Region,
+			"RegionContainerView": RegionContainer,
 			"RegionsView": Regions
 		},
 		"Mixins": {

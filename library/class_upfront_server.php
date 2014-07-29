@@ -533,6 +533,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
 		$styles = trim(stripslashes($_POST['styles']));
 		$element_type = isset($_POST['elementType']) ? sanitize_key($_POST['elementType']) : 'unknown';
+		$element_selector = isset($_POST['elementSelector']) ? sanitize_text_field($_POST['elementSelector']) : false;
+		$output_element_selector = isset($_POST['outputElementSelector']) ? sanitize_text_field($_POST['outputElementSelector']) : false;
 		$db_option = Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option);
 		if(!$current_styles)
@@ -542,8 +544,21 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		if(!isset($current_styles[$element_type]))
 			$current_styles[$element_type] = array();
+		$properties = array();
 
 		$current_styles[$element_type][$element_type . '-' . $name] = $styles;
+		
+		if ( $element_selector !== false )
+			$properties['element_selector'] = $element_selector;
+		else if ( isset($properties['element_selector']) )
+			unset($properties['element_selector']);
+			
+		if ( $output_element_selector !== false )
+			$properties['output_element_selector'] = $output_element_selector;
+		else if ( isset($properties['output_element_selector']) )
+			unset($properties['output_element_selector']);
+			
+		$current_styles[$element_type]['_properties'] = $properties;
 
 		global $wpdb;
 		update_option($db_option, $current_styles);
@@ -592,8 +607,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$out = '';
 
 		foreach($styles as $type => $elements){
+			$properties = !empty($elements['_properties']) ? $elements['_properties'] : array();
 			foreach($elements as $name => $content){
-				$selector = $type == 'layout' ? '' : '.upfront-output-object.' . $name;
+				if ( $name == '_properties' )
+					continue;
+				$element_selector = isset($properties['output_element_selector']) ? $properties['output_element_selector'] : '.upfront-output-object';
+				$selector = $element_selector . '.' . $name;
 				$rules = explode('}', $content);
 				array_pop($rules);
 				$out .= $selector . ' ' . implode("}\n" . $selector . ' ', $rules) . "} \n";

@@ -1437,19 +1437,29 @@ var Application = new (Backbone.Router.extend({
 
 			$('#upfront-theme-styles').remove();
 			_.each(styles, function(elementStyles, elementType){
+				var properties = elementStyles._properties || {};
 				_.each(elementStyles, function(style, name){
-					var styleNode = $('#upfront-style-' + name);
+					if ( name == '_properties' )
+						return;
+					var styleNode = $('#upfront-style-' + name),
+						elementSelector = typeof properties.element_selector == 'string' ? properties.element_selector : '.upfront-object',
+						selector = '';
 					if(!styleNode.length){
 						styleNode = $('<style id="upfront-style-' + name + '"></style>');
 						$('body').append(styleNode);
 					}
+					selector = elementSelector + '.' + name
 
-					styleNode.append(cssEditor.stylesAddSelector(style, (elementType == 'layout' ? '' : '.upfront-object.' + name)));
+					styleNode.append(cssEditor.stylesAddSelector(style, selector));
 				});
 			});
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
+		
+		// Region selectors
+		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionContainerView, 'RegionContainer');
+		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionView, 'Region');
 
 		this.cssEditor = cssEditor;
 	},

@@ -117,7 +117,7 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-region:after { clear: both; }
 .upfront-output-region { zoom: 1; }
 
-.upfront-output-region-container-bg {
+.upfront-region-container-bg {
 	position: relative;
 	margin: 0 auto;
 	width: 100%;
@@ -225,9 +225,13 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-region-container-bg > .upfront-grid-layout {
 	align-items: stretch;
 }
+.flexbox-support .upfront-output-region {
+	flex-wrap: nowrap;
+	align-items: stretch;
+}
 .flexbox-support .upfront-output-region:before,
 .flexbox-support .upfront-output-region:after {
-	width: 0;
+	content: none;
 }
 .flexbox-support .upfront-output-region > .upfront-output-wrapper,
 .flexbox-support .upfront-output-module-group > .upfront-output-wrapper,

@@ -488,7 +488,7 @@ class Upfront_Region_Container extends Upfront_Container {
 		$bg_css = $this->_get_background_css();
 		$bg_css = $bg_css ? "style='{$bg_css}'" : '';
 		$bg_attr = $this->_get_background_attr();
-		$bg_node_start = "<div class='upfront-output-region-container-bg' {$bg_css} {$bg_attr}>";
+		$bg_node_start = "<div class='upfront-region-container-bg' {$bg_css} {$bg_attr}>";
 		$bg_node_end = "</div>";
 		return parent::wrap("{$before}{$bg_node_start}<div class='upfront-grid-layout'>{$out}</div>{$overlay}{$bg_node_end}{$after}");
 	}
@@ -523,13 +523,28 @@ class Upfront_Region extends Upfront_Container {
 
 	public function wrap ($out) {
 		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
-		return parent::wrap( "{$out} {$overlay}" );
+		return parent::wrap( "<div class='upfront-region-wrapper'>{$out}</div> {$overlay}" );
 	}
 
 	public function instantiate_child ($child_data, $idx) {
 		$view = !empty($child_data['modules']) && is_array($child_data['modules']) ? "Upfront_Module_Group" : $this->_child_view_class;
 		if (!class_exists($view)) $view = $this->_child_view_class;
 		return new $view($child_data, $this->_data);
+	}
+
+	public function get_css_class () {
+		$classes = parent::get_css_class();
+		$more_classes = array();
+		$container = $this->get_container();
+		$is_main = ( empty($container) || $container == $this->get_name() );
+		if ( $is_main ) {
+			$more_classes[] = 'upfront-region-center';
+		}
+		else {
+			$more_classes[] = 'upfront-region-side';
+			$more_classes[] = 'upfront-region-side-' . $this->get_sub();
+		}
+		return $classes . ' ' . join(' ', $more_classes);
 	}
 
 	public function get_css_inline () {
