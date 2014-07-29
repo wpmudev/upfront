@@ -45,6 +45,7 @@
         "redactor": "redactor/redactor",
         "ueditor": "redactor/ueditor",
         "jquery-df": "jquery/jquery-dateFormat.min",
+        "jquery-simulate" => 'scripts/jquery/jquery.simulate',           
         "upfront_code": "../elements/upfront-code/js/upfront_code",
         "upfront_slider": "../elements/upfront-slider/js/uslider",
 				"chosen": "chosen/chosen.jquery.min"

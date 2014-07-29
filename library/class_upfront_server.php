@@ -271,6 +271,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"responsive" => "scripts/responsive",
 			"redactor" => 'scripts/redactor/redactor',
 			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
+			"jquery-simulate" => 'scripts/jquery/jquery.simulate',			
 			"ueditor" => 'scripts/redactor/ueditor',
 			"chosen" => "scripts/chosen/chosen.jquery.min"
 		);

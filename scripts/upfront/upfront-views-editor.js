@@ -7841,6 +7841,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$location.on('click', '.upfront-refresh-map', function () {
 				me.geocode_location();
 			});
+			$location.on('keypress', 'input[name="background_map_location"]', function (e) {
+				if( e.keyCode === 13 ){
+					me._location = $(this).val();
+					me._location_changed = true;
+					me.geocode_location();
+				}
+			});
 			$style_control.append(fields.style.$el);
 			$style_control.append(fields.controls.$el);
 			this._render_tab_template($tab, '', [$location, fields.zoom.$el, $style_control]);

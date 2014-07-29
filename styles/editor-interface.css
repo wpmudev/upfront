@@ -551,10 +551,6 @@
 #sidebar-ui .sidebar-commands-control .command-export {
 	border: 2px solid #263a4d;
 	padding: 6px 10px 0 10px;
-	position: absolute;
-	top: 613px;
-	left: 15px;
-	margin: 0;
 }
 #sidebar-ui .upfront-icon-export:before {
 	background-position: -42px -384px;

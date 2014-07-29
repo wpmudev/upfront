@@ -650,7 +650,7 @@ define([
 
 				this.$el.bind('click', function(e) {
 					e.preventDefault();
-					me.action(this.for_view);
+					me.action(this.for_view, e);
 					Upfront.Events.trigger("entity:contextmenu:deactivate", this);
 				});
 			},
@@ -737,7 +737,7 @@ define([
 							// Only show this menu on ObjectView instance
 							return this.for_view instanceof Upfront.Views.ObjectView;
 						},
-						action: function() {
+						action: function(for_view, e) {
 							var module_view = this.for_view.parent_module_view,
 								module = module_view.model,
 								modules = module_view.region.get('modules'),
@@ -750,6 +750,7 @@ define([
 								new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
 								index = modules.indexOf(module),
 								models = [];
+								
 							// Make sure new model element ids and wrapper id is unique
 							new_wrap_model.set_property('wrapper_id', wrapper_id);
 							new_model.set_property('wrapper_id', wrapper_id);
@@ -761,9 +762,29 @@ define([
 							wrappers.add(new_wrap_model);
 							new_model.add_to(modules, index+1);
 							// Normalize layout
-							var ed = Upfront.Behaviors.GridEditor;
-							ed.start(Upfront.data.module_views[new_model.cid], new_model);
+							var ed = Upfront.Behaviors.GridEditor,
+								new_module_view =  Upfront.data.module_views[new_model.cid],
+								$new_module_view = new_module_view.$el,
+								h = $new_module_view.outerHeight(),
+								w = $new_module_view.outerWidth();
+
+							ed.start(new_module_view, new_model);
 							ed.normalize(ed.els, ed.wraps);
+						
+
+							// properly possition the new module and show it under the cursor
+							$new_module_view.css({
+								position: "fixed",
+								top: e.clientY - (h / 2) ,
+								left: e.clientX - w  ,
+							});
+					
+							// Simulate and mousedown and actually trigger drag
+						    $new_module_view.find(".upfront-module").simulate("mousedown", {
+						        clientX: e.clientX,
+						        clientY: e.clientY
+						    });
+						
 						}
 					})
 				]);

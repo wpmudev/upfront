@@ -2387,7 +2387,8 @@ var GridEditor = {
 				is_parent_group = ( typeof view.group_view != 'undefined' );
 				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');
-
+				// remove position which might be set to the module view 
+				$(this).closest(".upfront-module-view").css("position", "");
 				ed.start(view, model);
 				ed.normalize(ed.els, ed.wraps);
 				ed.update_position_data();
