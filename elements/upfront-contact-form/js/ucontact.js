@@ -31,7 +31,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		'.ucontact-input': {label: 'Fields', info: 'Field inputs'},
 		'.textarea-field' : {label: 'Mesage Field', info: 'Mesasge field'},
 		'.ucontact-field-error': {label: 'Error fields', info: 'Fields with errors.'},
-		'.submit-field': {label: 'Send button', info: 'Form\'s send button'}
+		'.submit-field': {label: 'Submit button', info: 'Form\'s submit button'}
 	},
 
 	initialize: function(options){
@@ -170,7 +170,7 @@ var OptionalField = Upfront.Views.Editor.Field.Checkboxes.extend({
 			related.show();
 		else
 			related.hide();
-		console.log(related);
+
 		$('#settings').height(this.panel.$('.upfront-settings_panel').outerHeight());
 	}
 });
@@ -335,6 +335,9 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					fields: [
 						new Fields.Radios({
 							model: this.model,
+							change : function(e){
+								this.model.set_property("form_label_position", this.get_value());
+							},
 							property: 'form_label_position',
 							values: [
 								{
