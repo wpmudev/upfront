@@ -767,16 +767,14 @@ define([
 								$new_module_view = new_module_view.$el,
 								h = $new_module_view.outerHeight(),
 								w = $new_module_view.outerWidth();
-
 							ed.start(new_module_view, new_model);
 							ed.normalize(ed.els, ed.wraps);
-						
 
 							// properly possition the new module and show it under the cursor
 							$new_module_view.css({
 								position: "fixed",
-								top: e.clientY - (h / 2) ,
-								left: e.clientX - w  ,
+								top: e.clientY - (h /2 ) ,
+								left: e.clientX - ( w / 2 ) ,
 							});
 					
 							// Simulate and mousedown and actually trigger drag
