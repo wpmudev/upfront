@@ -89,7 +89,7 @@ class Upfront_UaccordionView extends Upfront_Object {
           $out[$prop['name']] = $prop['value'];
       return $out;
   }
-  public function add_styles_scripts() {
+  public static function add_styles_scripts() {
       wp_enqueue_style('uaccordion_style', upfront_element_url('css/uaccordion.css', dirname(__FILE__)));
   }
 

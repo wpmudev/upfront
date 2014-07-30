@@ -507,7 +507,7 @@ class Upfront_Region_Container extends Upfront_Container {
 class Upfront_Region_Sub_Container extends Upfront_Region_Container {
 	protected $_type = 'Region_Sub_Container';
 
-	public function wrap ($out) {
+	public function wrap ($out, $before = '', $after = '') {
 		return parent::wrap($out, '', '');
 	}
 }

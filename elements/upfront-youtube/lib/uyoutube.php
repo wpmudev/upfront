@@ -91,7 +91,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
       return $out;
   }
 
-  public function add_styles_scripts() {
+  public static function add_styles_scripts() {
       wp_enqueue_style('uyoutube-style', upfront_element_url('css/uyoutube.css', dirname(__FILE__)));
   }
 }

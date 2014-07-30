@@ -219,7 +219,7 @@ function upfront_ajax_url ($action, $args = '') {
 
 function upfront_register_vendor_scripts() {
 	//Magnific lightbox
-	if(SCRIPT_DEBUG)
+	if(defined( "SCRIPT_DEBUG" ) && SCRIPT_DEBUG)
 		wp_register_script(
 			'magnific',
 			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js',

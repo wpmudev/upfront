@@ -24,7 +24,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			}
 		}
 		$burgermenu_desktop =  $this->_get_property('burger_menu');
-		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
+		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
 		$breakpoint_data['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
 		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');	
 			
@@ -95,7 +95,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
         );
     }
 
-  public function add_styles_scripts() {
+  public static  function add_styles_scripts() {
 	 	wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
 
         if (is_user_logged_in()) {
