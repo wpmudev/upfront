@@ -347,7 +347,6 @@ define(function() {
 			this.$el.addClass('upfront-media-aux_controls-has-select');
 		},
 		switch_controls: function (media_collection) {
-console.log("switching controls");
 			var positive = media_collection.where({selected: true});
 			if (positive.length) this.render_delete(positive);
 			else this.render_selection();
@@ -986,6 +985,25 @@ console.log("switching controls");
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
+			},
+			apply_changes: function (model) {
+				var all = this.model.where({state: true}),
+					other = this.model.where({value: 'other'}),
+					edited = model.previousAttributes()
+				;
+				if (other.length) other = other[0]; // Do the model
+				else return;
+
+				if (edited && edited.value && "other" === edited.value) {
+					var no_other = !!edited.state;
+					this.model.each(function (mod) {
+						mod.set({state: no_other}, {silent: true});
+					});
+					other.set({state: !no_other}, {silent: true});
+				} else if (other.get("state")) other.set({state: false}, {silent: true});
+
+				Media_FilterSelection_Multiselection.prototype.apply_changes.call(this);
+				
 			}
 		});
 
