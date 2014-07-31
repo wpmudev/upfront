@@ -27,7 +27,9 @@ function init_map ($el) {
 			scaleControl: raw.controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
 			streetViewControl: raw.controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 			overviewMapControl: raw.controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
-			style_overlay: raw.styles || false
+			style_overlay: raw.styles || false,
+			draggable: !!raw.draggable,
+			scrollwheel: !!raw.scrollwheel
 		},
 		markers = raw.markers || [],
 		height = $el.closest(".upfront-output-module").height(),
@@ -44,7 +46,8 @@ function init_map ($el) {
 		scaleControl: props.scaleControl,
 		streetViewControl: props.streetViewControl,
 		overviewMapControl: props.overviewMapControl,
-		scrollwheel: false
+		draggable: props.draggable,
+		scrollwheel: props.scrollwheel
 	});
 	if (props.style_overlay) {
 		map.setOptions({styles: props.style_overlay});

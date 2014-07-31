@@ -146,7 +146,9 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					scaleControl: controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
 					streetViewControl: controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 					overviewMapControl: controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
-					style_overlay: this.model.get_property_value_by_name("styles") || false
+					style_overlay: this.model.get_property_value_by_name("styles") || false,
+					draggable: !!this.model.get_property_value_by_name("draggable"),
+					scrollwheel: !!this.model.get_property_value_by_name("scrollwheel")
 				}
 			;
 			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : DEFAULTS.OPTIMUM_MAP_HEIGHT;
@@ -172,7 +174,8 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					scaleControl: props.scaleControl,
 					streetViewControl: props.streetViewControl,
 					overviewMapControl: props.overviewMapControl,
-					scrollwheel: false
+					draggable: props.draggable,
+					scrollwheel: props.scrollwheel
 				});
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});
@@ -486,8 +489,8 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				url_textarea.click(function(){this.focus();});
 
 				url_textarea.on('input propertychange change', function(){
-					var url = $(this).val(),
-						url = url === '' ? null : url;
+					var url = $(this).val();
+					url = url === '' ? null : url;
 
 					if(/png$/.test(url) || url === null){
 						self.marker._raw.icon = url;
@@ -611,7 +614,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					this.fields = _([
 						new Map_Fields_Simple_Location({
 							model: this.model,
-              hide_label: true,
+							hide_label: true,
 							property: 'location'
 						})
 					]);
@@ -649,9 +652,9 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					];
 					this.fields = _([
 						new Upfront.Views.Editor.Field.Slider({
-              className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
+							className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
 							model: this.model,
-              label: 'Map Zoom Level:',
+							label: 'Map Zoom Level:',
 							property: 'zoom',
 							min: 1,
 							max: 19,
@@ -659,17 +662,26 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						}),
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-              label: 'Map Style',
+							label: 'Map Style',
 							property: 'style',
 							values: styles,
 							change: function () { this.property.set({value: this.get_value()}); }
 						}),
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-              label: 'Map Controls',
+							label: 'Map Controls',
 							property: 'controls',
 							multiple: true,
 							values: controls,
+							change: function () { this.property.set({value: this.get_value()}); }
+						}),
+						new Upfront.Views.Editor.Field.Checkboxes({
+							model: this.model,
+							label: "Draggable map",
+							property: "draggable",
+							hide_label: true,
+							values: [{label: "Draggable map", value: 1}],
+							multiple: false,
 							change: function () { this.property.set({value: this.get_value()}); }
 						})
 					]);

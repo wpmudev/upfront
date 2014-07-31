@@ -5,7 +5,7 @@ class Upfront_UmapView extends Upfront_Object{
 		$_id = $this->_get_property('element_id');
 		$element_id = $_id ? "id='{$_id}'" : '';
 		$raw_properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
-		$to_map = array('markers', 'map_center', 'zoom', 'style', 'controls', 'styles');
+		$to_map = array('markers', 'map_center', 'zoom', 'style', 'controls', 'styles', 'draggable', 'scrollwheel');
 
 		$properties = array();
 		foreach ($raw_properties as $prop) {
@@ -41,7 +41,10 @@ class Upfront_UmapView extends Upfront_Object{
             'map_center' => array(10.72250, 106.730762),
             'zoom' => 10,
             'style' => 'ROADMAP',
-            'styles' => false
+            'styles' => false,
+
+            'draggable' => true,
+            'scrollwheel' => false,
         );
     }
 
