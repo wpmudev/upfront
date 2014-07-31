@@ -545,7 +545,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 			me.addImages(images, replaceId);
-
 			if(response.given != response.returned)
 				Upfront.Views.Editor.notify("Not all images could be added.", "warning");
 
@@ -628,7 +627,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		;
 		Upfront.Util.post(data).done(function(results){
 			var images = results.data;
-			console.log(images);
 			_.each(images, function(labels, imageId){
 				var imageLabels = [];
 

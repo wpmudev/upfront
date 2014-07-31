@@ -2600,6 +2600,7 @@ var ImageSelector = Backbone.View.extend({
 
 			if (!!form.fileupload) {
 				form.fileupload({
+						sequentialUploads: true,
 						formData: {action: 'upfront-media-upload'},
 						fileInput: null, // disable change listener, we handle it below
 						paramName: 'media[]' // due to previous options we have to set this manually
@@ -2613,6 +2614,7 @@ var ImageSelector = Backbone.View.extend({
 					})
 					.bind('fileuploaddone', function (e, data) {
 						var response = data.result;
+						console.log(data.result);
 						progress.css('width', '100%');
 						$('#upfront-image-uploading h2').html('Preparing Image');
 						Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
