@@ -420,7 +420,7 @@ class Upfront_GridBreakpoint {
 		$type_padding = $this->get_type_padding();
 		$contained_width = $contained_width ? $contained_width : $width;
 		return '' .
-			( $this->is_default() ? ".upfront-region-container-clip .upfront-output-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
+			( $this->is_default() ? ".upfront-region-container-clip .upfront-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
 			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
 			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
