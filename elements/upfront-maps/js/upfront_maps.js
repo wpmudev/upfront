@@ -4,20 +4,22 @@
 // app setup maps will always we loaded before this script.
 define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], function (_ctx, maps_style) {
 
-  var DEFAULTS = {
-    OPTIMUM_MAP_HEIGHT: 300,
-    center: [10.722250, 106.730762],
-    zoom: 10,
-    style: 'ROADMAP',
-    controls: {
-      pan: false,
-      zoom: false,
-      map_type: false,
-      scale: false,
-      street_view: false,
-      overview_map: false
-    }
-  };
+	var DEFAULTS = {
+		OPTIMUM_MAP_HEIGHT: 300,
+		center: [10.722250, 106.730762],
+		zoom: 10,
+		style: 'ROADMAP',
+		controls: {
+			pan: false,
+			zoom: false,
+			map_type: false,
+			scale: false,
+			street_view: false,
+			overview_map: false
+		}
+	};
+
+	var l10n = Upfront.Settings.l10n.maps_element;
 
 	$("head").append("<style>" + maps_style + "</style>");
 
@@ -127,7 +129,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		map: false,
 
 		cssSelectors: {
-			'.ufm-gmap-container': {label: 'Map container', info: 'The layer wrapping the map.'}
+			'.ufm-gmap-container': {label: l10n.css.label, info: l10n.css.info}
 		},
 
 		on_render: function () {
@@ -192,7 +194,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				this.add_stored_markers();
 				this.init_rightclick_context_menu();
 			} else {
-				$el.html("<p class='upfront-util-icon'>Please, check your internet connectivity</p>");
+				$el.html("<p class='upfront-util-icon'>" + l10n.connectivity_warning + "</p>");
 			}
 		},
 
@@ -204,11 +206,11 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				this.$el.append(
 					'<div id="upfront_map-location_overlay-wrapper">' +
 						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay">' +
-							'<p id="upfront_map-location_overlay-instruction">Please enter address for us to generate a map from:</p>' +
+							'<p id="upfront_map-location_overlay-instruction">' + l10n.instructions + '</p>' +
 							'<div id="upfront_map-location_overlay-address" class="upfront-ui uf-address">' +
-								'<input type="text" id="upfront_map-location_overlay-location" placeholder="Street, city, country" />' +
+								'<input type="text" id="upfront_map-location_overlay-location" placeholder="' + l10n.placeholder + '" />' +
 								'<button type="button" id="upfront_map-location_overlay-use_location" class="upfront-field-icon upfront-icon-map-refresh"></button></div>' +
-								'<span class="uf-current-location">or <a id="upfront_map-location_overlay-use_current">Use my current location</a></span>' +
+								'<span class="uf-current-location">' + l10n.or + ' <a id="upfront_map-location_overlay-use_current">' + l10n.use_current_location + '</a></span>' +
 						'</div>' +
 					'</div>'
 				);
@@ -262,7 +264,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		},
 
 		get_content_markup: function () {
-			return '<div class="ufm-gmap-container"><p>Please, hold on</p></div>';
+			return '<div class="ufm-gmap-container"><p>' + l10n.hold_on + '</p></div>';
 		},
 
 		update_properties: function () {
@@ -282,8 +284,8 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 
 			//	create an array of ContextMenuItem objects
 			var menuItems=[];
-			menuItems.push({className:'ufm-context-menu-item', eventName:'center_map', label:'Center Map Here'});
-			menuItems.push({className:'ufm-context-menu-item', eventName:'add_marker', label:'Add Marker'});
+			menuItems.push({className:'ufm-context-menu-item', eventName:'center_map', label:l10n.menu.center_map});
+			menuItems.push({className:'ufm-context-menu-item', eventName:'add_marker', label:l10n.menu.add_marker});
 			contextMenuOptions.menuItems=menuItems;
 
 			//	create the ContextMenu object
@@ -316,8 +318,8 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 
 			//	create an array of ContextMenuItem objects
 			var menuItems=[];
-			menuItems.push({className:'ufm-context-menu-item', eventName:'remove_marker', label:'Remove Marker'});
-			menuItems.push({className:'ufm-context-menu-item', eventName:'change_icon', label:'Change Icon'});
+			menuItems.push({className:'ufm-context-menu-item', eventName:'remove_marker', label:l10n.menu.remove_marker});
+			menuItems.push({className:'ufm-context-menu-item', eventName:'change_icon', label:l10n.menu.change_icon});
 			contextMenuOptions.menuItems=menuItems;
 
 			// create next context menu based on marker state
@@ -363,7 +365,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					icon: marker.icon ? marker.icon : '',
 					map: this.map
 				}),
-				$info = $('<div contenteditable="true">' + (marker.content ? marker.content : 'Edit this...') + '</div>'),
+				$info = $('<div contenteditable="true">' + (marker.content ? marker.content : l10n.edit_this) + '</div>'),
 				info = new google.maps.InfoWindow({
 					content: $info.get(0)
 				})
@@ -436,7 +438,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					'<div class="ufm-map-marker-select ufm-rounded">' +
 						'<div class="marker-imgs"></div>' +
 						'<div class="marker-url">' +
-							'<label for="marker-url">Image URL (.png):</label>' +
+							'<label for="marker-url">' + l10n.image_url + '</label>' +
 							'<textarea id="marker-url" name="marker-url" value="" rows="4"/></textarea>' +
 						'</div>' +
 					'</div>'
@@ -554,7 +556,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		priority: 40,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-maps');
-			this.$el.html('Map');
+			this.$el.html(l10n.element_name);
 		},
 
 		add_element: function () {
@@ -583,7 +585,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			]);
 		},
 		get_title: function () {
-			return "Map settings";
+			return l10n.settings;
 		}
 	});
 		var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
@@ -601,10 +603,10 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				this.$el.addClass("ufpront-maps_element-settings_panel");
 			},
 			get_label: function () {
-				return "Google Map";
+				return l10n.label;
 			},
 			get_title: function () {
-				return "Google Map";
+				return l10n.label;
 			}
 		});
 
@@ -620,7 +622,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					]);
 				},
 				get_title: function () {
-					return "Map Location";
+					return l10n.location_label;
 				}
 			});
 
@@ -635,26 +637,26 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					});
 					var saved_style = this.model.get_property_value_by_name("style"),
 						styles = [
-							{label: "Roadmap", value: "ROADMAP"},
-							{label: "Satellite", value: "SATELLITE"},
-							{label: "Hybrid", value: "HYBRID"},
-							{label: "Terrain", value: "TERRAIN"},
+							{label: l10n.style.roadmap, value: "ROADMAP"},
+							{label: l10n.style.satellite, value: "SATELLITE"},
+							{label: l10n.style.hybrid, value: "HYBRID"},
+							{label: l10n.style.terrain, value: "TERRAIN"},
 						]
 					;
 					if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
 					var controls = [
-						{label: "Pan", value: "pan"},
-						{label: "Zoom", value: "zoom"},
-						{label: "Map Type", value: "map_type"},
-						{label: "Scale", value: "scale"},
-						{label: "Street View", value: "street_view"},
-						{label: "Overview Map", value: "overview_map"},
+						{label: l10n.ctrl.pan, value: "pan"},
+						{label: l10n.ctrl.zoom, value: "zoom"},
+						{label: l10n.ctrl.type, value: "map_type"},
+						{label: l10n.ctrl.scale, value: "scale"},
+						{label: l10n.ctrl.street_view, value: "street_view"},
+						{label: l10n.ctrl.overview, value: "overview_map"},
 					];
 					this.fields = _([
 						new Upfront.Views.Editor.Field.Slider({
 							className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
 							model: this.model,
-							label: 'Map Zoom Level:',
+							label: l10n.zoom_level,
 							property: 'zoom',
 							min: 1,
 							max: 19,
@@ -662,14 +664,14 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						}),
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-							label: 'Map Style',
+							label: l10n.map_style,
 							property: 'style',
 							values: styles,
 							change: function () { this.property.set({value: this.get_value()}); }
 						}),
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
-							label: 'Map Controls',
+							label: l10n.map_controls,
 							property: 'controls',
 							multiple: true,
 							values: controls,
@@ -677,17 +679,17 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						}),
 						new Upfront.Views.Editor.Field.Checkboxes({
 							model: this.model,
-							label: "Draggable map",
+							label: l10n.draggable_map,
 							property: "draggable",
 							hide_label: true,
-							values: [{label: "Draggable map", value: 1}],
+							values: [{label: l10n.draggable_map, value: 1}],
 							multiple: false,
 							change: function () { this.property.set({value: this.get_value()}); }
 						})
 					]);
 				},
 				get_title: function () {
-					return "Map Settings";
+					return l10n.settings;
 				}
 			});
 

@@ -19,7 +19,9 @@ class Upfront_UmapView extends Upfront_Object{
 		upfront_add_element_script('upfront_maps', array('js/upfront_maps-public.js', dirname(__FILE__)));
 		upfront_add_element_style('upfront_maps', array('css/visitor.css', dirname(__FILE__)));
 
-		return "<div class='ufm-gmap-container' {$element_id} {$map}>This is where the map comes in.</div>";
+		$msg = esc_html(self::_get_l10n('preloading_msg'));
+
+		return "<div class='ufm-gmap-container' {$element_id} {$map}>{$msg}</div>";
 	}
 
 	public static function add_js_defaults($data){
@@ -48,6 +50,62 @@ class Upfront_UmapView extends Upfront_Object{
         );
     }
 
+    public static function add_l10n_strings ($strings) {
+    	if (!empty($strings['maps_element'])) return $strings;
+    	$strings['maps_element'] = self::_get_l10n();
+        return $strings;
+    }
+
+    private static function _get_l10n ($key=false) {
+    	$l10n = array(
+            'element_name' => __('Map', 'upfront'),
+    		'preloading_msg' => __('This is where the map comes in.', 'upfront'),
+            'css' => array(
+                'label' => __('Map container', 'upfront'),
+                'info' => __('The layer wrapping the map.', 'upfront'),
+            ),
+            'menu' => array(
+                'center_map' => __('Center Map Here', 'upfront'),
+                'add_marker' => __('Add Marker', 'upfront'),
+                'remove_marker' => __('Remove Marker', 'upfront'),
+                'change_icon' => __('Change Icon', 'upfront'),
+            ),
+            'connectivity_warning' => __('Please, check your internet connectivity', 'upfront'),
+            'instructions' => __('Please enter address for us to generate a map from:', 'upfront'),
+            'placeholder' => __('Street, city, country', 'upfront'),
+            'or' => __('or', 'upfront'),
+            'use_current_location' => __('Use my current location', 'upfront'),
+            'hold_on' => __('Please, hold on', 'upfront'),
+            'edit_this' => __('Edit this...', 'upfront'),
+            'image_url' => __('Image URL (.png):', 'upfront'),
+            'settings' => __('Map settings', 'upfront'),
+            'label' => __('Google Map', 'upfront'),
+            'location_label' => __('Map Location', 'upfront'),
+            'style' => array(
+                'roadmap' => __('Roadmap', 'upfront'),
+                'satellite' => __('Satellite', 'upfront'),
+                'hybrid' => __('Hybrid', 'upfront'),
+                'terrain' => __('Terrain', 'upfront'),
+            ),
+            'ctrl' => array(
+                'pan' => __('Pan', 'upfront'),
+                'zoom' => __('Zoom', 'upfront'),
+                'type' => __('Map Type', 'upfront'),
+                'scale' => __('Scale', 'upfront'),
+                'street_view' => __('Street View', 'upfront'),
+                'overview' => __('Overview Map', 'upfront'),
+            ),
+            'zoom_level' => __('Map Zoom Level:', 'upfront'),
+            'map_style' => __('Map Style', 'upfront'),
+            'map_controls' => __('Map Controls', 'upfront'),
+            'draggable_map' => __('Draggable map', 'upfront'),
+            'label' => __('', 'upfront'),
+    	);
+    	return !empty($key)
+            ? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+            : $l10n
+        ;
+    }
 }
 
 function upfront_maps_add_context_menu ($paths) {
