@@ -752,7 +752,7 @@ class Upfront_Object extends Upfront_Entity {
 
 		if(isset($data['properties']))
 			foreach($data['properties'] as $prop)
-				$flat[$prop['name']] = $prop['value'];
+				$flat[$prop['name']] = !empty($prop['value']) ? $prop['value'] : false;
 
 		$flat = array_merge($defaults, $flat);
 
