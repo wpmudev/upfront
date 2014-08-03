@@ -768,6 +768,7 @@ var LayoutEditor = {
 
 	_export_layout: function (custom_data) {
 		var typography,
+			properties,
 			layout_style,
 			data = {};
 
@@ -776,11 +777,18 @@ var LayoutEditor = {
 			{ 'name': 'typography' }
 		);
 
+		properties = _.extend({}, Upfront.Util.model_to_json(Upfront.Application.current_subapplication.get_layout_data().properties));
+		properties = _.reject(properties, function(property) {
+			return property.name === 'typography';
+		});
+
+
 		data = {
 			typography: JSON.stringify(typography.value),
 			regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
 			functionsphp: 'functions',
 			template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+			layout_properties: JSON.stringify(properties),
 			theme: Upfront.themeExporter.currentTheme
 		};
 
@@ -2188,7 +2196,7 @@ var GridEditor = {
 				}
 
 				ed.update_wrappers(region);
-				
+
 				$me.removeData('resize-col');
 				$me.removeData('resize-row');
 
@@ -2402,7 +2410,7 @@ var GridEditor = {
 				is_parent_group = ( typeof view.group_view != 'undefined' );
 				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');
-				// remove position which might be set to the module view 
+				// remove position which might be set to the module view
 				$(this).closest(".upfront-module-view").css("position", "");
 				ed.start(view, model);
 				ed.normalize(ed.els, ed.wraps);
@@ -3655,7 +3663,7 @@ var GridEditor = {
 					if ( sub_view && ( sub_view.$el.hasClass('upfront-region-side-left') || sub_view.$el.hasClass('upfront-region-side-right')) )
 						sub_view.update_size_hint(sub_view.$el.width(), rsz_row * ed.baseline);
 				});
-				
+
 				// Auto scrolling when it hits bottom
 				ed._start_resize_auto_scroll(e, ui, h, data);
 			},
@@ -3690,9 +3698,9 @@ var GridEditor = {
 					breakpoint_data.row = rsz_row;
 					model.set_property('breakpoint', model_breakpoint);
 				}
-				
+
 				$me.removeData('resize-row');
-				
+
 				Upfront.Events.trigger("entity:region_container:resize_stop", view, view.model);
 				// Re-enable region changing
 				Upfront.Events.trigger('command:region:edit_toggle', true);
