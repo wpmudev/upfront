@@ -116,16 +116,24 @@ class Upfront_Output {
 	function add_styles () {
 		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), 0.1, 'all');
 
-    // Load theme fonts
-        $theme_fonts = json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
-        if( $theme_fonts ){
-            foreach($theme_fonts as $theme_font) {
-                wp_enqueue_style(
-                    strtolower(str_replace(' ', '-', $theme_font->font->family)) . '-' . $theme_font->variant,
-                    '//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
-                );
-            }
-        }
+		// Load theme fonts
+		if (upfront_is_builder_running()) {
+			$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => upfront_get_builder_stylesheet()));
+		} else {
+			$theme_fonts = json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
+			if (empty($theme_fonts)) {
+				// Maybe fonts are not initialized yet, try to load from theme files
+				$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => get_stylesheet()));
+			}
+		}
+		if( $theme_fonts ) {
+			foreach($theme_fonts as $theme_font) {
+				wp_enqueue_style(
+					strtolower(str_replace(' ', '-', $theme_font->font->family)) . '-' . $theme_font->variant,
+					'//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
+				);
+			}
+		}
 
 	}
 
@@ -599,10 +607,10 @@ class Upfront_Region extends Upfront_Container {
 				$css[] = 'left: ' . ( $left !== false ? $left : 30 ) . 'px';
 			else
 				$css[] = 'right: ' . $right . 'px';
-	
+
 			$css[] = 'width: ' . $width . 'px';
 		}
-		
+
 		$css[] = 'min-height: ' . $height . 'px';
 		return implode('; ', $css) . '; ';
 	}

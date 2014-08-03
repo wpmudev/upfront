@@ -371,7 +371,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
       $theme_info = json_encode(array('breakpoints' => $defaults));
     }
 
-    $theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
+		if (upfront_is_builder_running()) {
+			$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => upfront_get_builder_stylesheet(), 'json' => true));
+		} else {
+			$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
+			if (empty($theme_fonts)) {
+				// Maybe fonts are not initialized yet, try to load from theme files.
+				$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => get_stylesheet(), 'json' => true));
+			}
+		}
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
     $theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
@@ -1278,26 +1286,20 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			upfront_add_ajax('upfront_get_theme_fonts', array($this, 'get_theme_fonts'));
-		}
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
-			upfront_add_ajax('upfront_update_theme_fonts', array($this, 'update_theme_fonts'));
 		}
-	}
-
-	public function get_theme_fonts() {
-		$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
-    if (empty($theme_fonts)) $theme_fonts = array();
-		$this->_out(new Upfront_JsonResponse_Success($theme_fonts));
 	}
 
   public function update_theme_fonts() {
   	if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
     $theme_fonts = isset($_POST['theme_fonts']) ? $_POST['theme_fonts'] : array();
-		update_option('upfront_' . get_stylesheet() . '_theme_fonts', json_encode($theme_fonts));
+		if (upfront_is_builder_running()) {
+			do_action('upfront_update_theme_fonts', $theme_fonts);
+		} else {
+			update_option('upfront_' . get_stylesheet() . '_theme_fonts', json_encode($theme_fonts));
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme fonts updated'));
   }
