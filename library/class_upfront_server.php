@@ -271,7 +271,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"responsive" => "scripts/responsive",
 			"redactor" => 'scripts/redactor/redactor',
 			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
-			"jquery-simulate" => 'scripts/jquery/jquery.simulate',			
+			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
 			"ueditor" => 'scripts/redactor/ueditor',
 			"chosen" => "scripts/chosen/chosen.jquery.min"
 		);
@@ -519,11 +519,21 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$style .= $preprocessor->process();
 
+		// When loading styles in editor mode don't include element styles and colors since they
+		// will be loaded separately to the body. If they are included in main style than after
+		// style is edited in editor (e.g. some property is removed) inconsistencies may occur
+		// especially with rules removal since those would still be defined in main style.
+		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
+		if ($base_only) {
+			$this->_out(new Upfront_JsonResponse_Success(array('styles' => $style)));
+			return;
+		}
+
 		//Add theme styles
 		$style .= $this->prepare_theme_styles();
 
-        // Add theme colors styles
-        $style .= $this->_get_theme_colors_styles();
+		// Add theme colors styles
+		$style .= $this->_get_theme_colors_styles();
 
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
@@ -534,9 +544,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$name = sanitize_key(str_replace(' ', '_', trim($_POST['name'])));
 		$styles = trim(stripslashes($_POST['styles']));
 		$element_type = isset($_POST['elementType']) ? sanitize_key($_POST['elementType']) : 'unknown';
-		$element_selector = isset($_POST['elementSelector']) ? sanitize_text_field($_POST['elementSelector']) : false;
-		$output_element_selector = isset($_POST['outputElementSelector']) ? sanitize_text_field($_POST['outputElementSelector']) : false;
-		$db_option = Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles';
+
+		// Fix storage key missing _dev in dev mode. Called from ajax, use POST.
+		$storage_key = Upfront_Layout::get_storage_key();
+		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
+
+		$db_option = $storage_key . '_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option);
 		if(!$current_styles)
 			$current_styles = array();
@@ -547,19 +560,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			$current_styles[$element_type] = array();
 		$properties = array();
 
-		$current_styles[$element_type][$element_type . '-' . $name] = $styles;
-		
-		if ( $element_selector !== false )
-			$properties['element_selector'] = $element_selector;
-		else if ( isset($properties['element_selector']) )
-			unset($properties['element_selector']);
-			
-		if ( $output_element_selector !== false )
-			$properties['output_element_selector'] = $output_element_selector;
-		else if ( isset($properties['output_element_selector']) )
-			unset($properties['output_element_selector']);
-			
-		$current_styles[$element_type]['_properties'] = $properties;
+		$current_styles[$element_type][$name] = $styles;
 
 		global $wpdb;
 		update_option($db_option, $current_styles);
@@ -592,31 +593,81 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success(array()));
 	}
 
-	function theme_styles(){
-		$separately = $_POST['separately'];
-		$styles = get_option(Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles');
+	function theme_styles() {
+		// If in buiilder mode we need stuff from files
+		if (upfront_is_builder_running()) {
+			$theme_styles = array('styles' => array());
+			$stylesheet = upfront_get_builder_stylesheet();
+			if ($stylesheet) {
+				$styles_root = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'element-styles';
+				if (file_exists($styles_root) === false) {
+					$this->_out(new Upfront_JsonResponse_Success(array( 'styles' => $theme_styles )));
+					return;
+				}
+
+				// List subdirectories as element types
+				$element_types = array_diff(scandir($styles_root), array('.', '..'));
+				foreach($element_types as $type) {
+					$theme_style[$type] = array();
+					$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+					foreach ($styles as $style) {
+						$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
+						$theme_styles[$type][str_replace('.css', '', $style)] = $style_content;
+					}
+				}
+			}
+			$this->_out(new Upfront_JsonResponse_Success(array( 'styles' => $theme_styles )));
+			return;
+		}
+
+		// Fix storage key missing _dev in dev mode. This is called from ajax calls so use POST.
+		$storage_key = Upfront_Layout::get_storage_key();
+		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
+
+		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
 		)));
 	}
 
-	function prepare_theme_styles(){
-		$styles = get_option(Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles');
-		if(!$styles)
+	function prepare_theme_styles() {
+		// If in buiilder mode we need stuff from files
+		if (upfront_is_builder_running()) {
+			// In editor mode this would load element styles to main stylesheet. In builder mode
+			// don't load any since styles are gonna be loaded each separately.
 			return '';
+		}
+
+		// Fix storage key missing _dev in dev mode. This is regular GET request.
+		$storage_key = Upfront_Layout::get_storage_key();
+		if (isset($_GET['load_dev']) && $_GET['load_dev'] == 1 && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
+
+		// Preffer styles from database since they include user overrides
+		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
+
+		// If no overrides
+		if(!$styles) {
+			$out = '';
+			// See if there are styles in theme files
+			$styles_root = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'element-styles';
+			// List subdirectories as element types
+			$element_types = array_diff(scandir($styles_root), array('.', '..'));
+			foreach($element_types as $type) {
+				$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+				foreach ($style_files as $style) {
+					$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
+					$out .= $style_content;
+				}
+			}
+
+			return $styles;
+		}
 
 		$out = '';
-
-		foreach($styles as $type => $elements){
-			$properties = !empty($elements['_properties']) ? $elements['_properties'] : array();
-			foreach($elements as $name => $content){
-				if ( $name == '_properties' )
-					continue;
-				$element_selector = isset($properties['output_element_selector']) ? $properties['output_element_selector'] : '.upfront-output-object';
-				$selector = $element_selector . '.' . $name;
-				$rules = explode('}', $content);
-				array_pop($rules);
-				$out .= $selector . ' ' . implode("}\n" . $selector . ' ', $rules) . "} \n";
+		// Continue with parsing overrides from db
+		foreach($styles as $type => $elements) {
+			foreach($elements as $name => $content) {
+				$out .= $content;
 			}
 		}
 

@@ -822,31 +822,27 @@ define([
 		},
 		on_click: function () {
 			var editor = Upfront.Application.cssEditor,
-				name = '_upfront-body_global',
-				selector = editor.elementTypes.Layout.id + '-' + name,
-				styleId = 'upfront-style-' + selector,
 				save_t;
-			if(!$('#' + styleId).length)
-				$('body').append('<style id="' + styleId + '"></style>');
+
 			editor.init({
 				model: this.model,
-				name: selector,
 				type: "Layout",
 				sidebar: false,
-				elementSelector: '',
 				element_id: 'layout',
 				global: true,
-				change: function(ed){
+				change: function() {
 					// Don't save stuff if we're in builder mode
 					if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
 						// Don't allow user to navigate if layout style is not saved
 						Upfront.themeExporter.layoutStyleDirty = true;
 						return;
 					}
-						clearTimeout(save_t);
-						save_t = setTimeout(function(){
-							editor.$el.find('.upfront-css-save-ok').click();
-						}, 1000);
+
+					// Timed save
+					clearTimeout(save_t);
+					save_t = setTimeout(function(){
+						editor.$el.find('.upfront-css-save-ok').click();
+					}, 1000);
 				}
 			});
 		}
@@ -4377,7 +4373,6 @@ define([
 	}));
 
 	var SettingsPanel = Backbone.View.extend(_.extend({}, Upfront_Scroll_Mixin, {
-		//tagName: "ul",
 		className: 'upfront-settings_panel_wrap',
     // For Anchor & Styles settings
     hide_common_fields: false,
@@ -4664,34 +4659,6 @@ define([
 			this.trigger('open');
 		},
 
-   	/**
-		* @deprecated
-		*
-		* Info: I have moved this to SettingsPanel class since panel can better incorporate
-		* this into itself. [Ivan]
-		*/
-		add_common_items: function(){
-			var first = this.panels.first();
-
-			if(typeof this.cssEditor == 'undefined' || this.cssEditor){
-				//Adding CSS item
-				first.settings.push(new _Settings_CSS({
-					model: this.model,
-					title: ' Element Styles:'
-				}));
-			}
-
-			// Adding anchor trigger
-			if (this.options.anchor && this.options.anchor.is_target) {
-				var item = new _Settings_AnchorSetting({model: this.for_view.model});
-
-				first.settings.push(item);
-				this.listenTo(item, "anchor:item:updated", function () {
-					this.toggle_panel(first);
-				});
-			}
-		},
-
 		set_title: function (title) {
 			if (!title || !title.length) return false;
 			this.$el.find(".upfront-settings_title").html(title);
@@ -4815,26 +4782,25 @@ var _Settings_CSS = SettingsItem.extend({
 		if (!Upfront.Application.cssEditor) return false;
 
 		var styleType = Upfront.Application.cssEditor.getElementType(this.model),
-			values = [{label: 'Default', value: ''}],
-			prefix = new RegExp('^' + styleType.id + '-')
-		;
+			values = [{label: 'Default', value: '_default'}];
+
 		if(Upfront.data.styles[styleType.id])
 			_.each(Upfront.data.styles[styleType.id], function(styleName){
-				values.push({label: styleName.replace(prefix, ''), value: styleName});
+				if (styleName.indexOf('_default') > -1) return;
+				values.push({label: styleName, value: styleName});
 			});
 
 		this.fields = _([
 			new _Settings_CSS_Field({
 				model: this.model,
 				property: 'theme_style',
+				default_value: this.model.get_property_value_by_name('theme_style') || '_default',
 				values: values
 			})
 		]);
 	},
 	stylesChanged: function(e) {
-		var style = this.$('input[name=theme_style]:checked').val(),
-			$text = this.$('.upfront-css-new-text')
-		;
+		var style = this.$('input[name=theme_style]:checked').val();
 		this.model.set_property('theme_style', style);
 	},
 
@@ -4842,7 +4808,7 @@ var _Settings_CSS = SettingsItem.extend({
 		e.preventDefault();
 		Upfront.Application.cssEditor.init({
 			model: this.model,
-			name: this.fields._wrapped[0].get_value()
+			stylename: this.fields._wrapped[0].get_value()
 		});
 
 		Upfront.Events.trigger("entity:settings:deactivate");
@@ -4853,10 +4819,8 @@ var _Settings_CSS = SettingsItem.extend({
 		e.preventDefault();
 		Upfront.Application.cssEditor.init({
 			model: this.model,
-			name: ''
+			stylename: ''
 		});
-
-		this.model.set_property('theme_style', '');
 
 		Upfront.Events.trigger("entity:settings:deactivate");
 		//$('#settings').find('.upfront-save_settings').click();
@@ -4864,10 +4828,12 @@ var _Settings_CSS = SettingsItem.extend({
 });
 
 var _Settings_CSS_Field = Field_Select.extend({
-	render: function(){
+	render: function() {
 		Field_Select.prototype.render.call(this);
-		var text = 'add new style'; //this.model.get_property_value_by_name('theme_style') ? 'edit style' : 'add new style';
-		this.$el.append('<a href="#" title="Edit style" class="upfront-css-edit"></a><p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span> <span class="upfront-css-new-text">' + text + '</span></a></p>');
+		var html = ['<a href="#" title="Edit style" class="upfront-css-edit"></a>'];
+		html.push('<p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span>');
+		html.push('<span class="upfront-css-new-text">add new style</span></a></p>');
+		this.$el.append(html.join(''));
 		return this;
 	},
 	remove: function(){
@@ -5472,69 +5438,84 @@ var CSSEditor = Backbone.View.extend({
 		'click .upfront-css-selector': 'addSelector',
 		'click .upfront-css-type' : 'scrollToElement',
 		'click .upfront-css-delete': 'deleteStyle',
+		'change .upfront-css-save-name-field': 'updateStylename',
 		'mouseenter .upfront-css-selector': 'hiliteElement',
 		'mouseleave .upfront-css-selector': 'unhiliteElement',
-		'keyup .upfront-css-save-name': 'checkDeleteToggle'
+		'keyup .upfront-css-save-name-field': 'checkDeleteToggle'
 	},
 
 	//elemenTypes' element id matches model's 'id_slug' attribute
 	elementTypes: {
-		UaccordionModel: {label: 'Accordion', id: 'uaccordion', type: 'element'},
-		UcommentModel: {label: 'Comments', id: 'ucomment', type: 'element'},
-		UcontactModel: {label: 'Contact Form', id: 'ucontact', type: 'element'},
-		UgalleryModel: {label: 'Gallery', id: 'ugallery', type: 'element'},
-		UimageModel: {label: 'Image', id: 'image', type: 'element'},
-		LoginModel: {label: 'Login', id: 'upfront-login_element', type: 'element'},
-		LikeBox: {label: 'Like Box', id: 'Like-box-object', type: 'element'},
-		MapModel: {label: 'Map', id: 'upfront-map_element', type: 'element'},
-		//NavigationModel: {label: 'Navigation', id: 'nav', type: 'element'},
-		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation', type: 'element'},
-		UpostsModel: {label: 'Posts', id: 'uposts', type: 'element'},
-		UsearchModel: {label: 'Search', id: 'usearch', type: 'element'},
-		USliderModel: {label: 'Slider', id: 'uslider', type: 'element'},
-		SocialMediaModel: {label: 'Social', id: 'SocialMedia', type: 'element'},
-		UtabsModel: {label: 'Tabs', id: 'utabs', type: 'element'},
-		ThisPageModel: {label: 'Page', id: 'this_page', type: 'element'},
-		ThisPostModel: {label: 'Post', id: 'this_post', type: 'element'},
-		UwidgetModel: {label: 'Widget', id: 'uwidget', type: 'element'},
-		UyoutubeModel: {label: 'YoutTube', id: 'utube', type: 'element'},
-		PlainTxtModel: {label: 'Text', id:'plaintext', type: 'element'},
-		Layout: {label: 'Body', id: 'layout', type: 'layout'},
-		RegionContainer: {label: 'Region Container', id: 'upfront-region-container', type: 'region'},
-		Region: {label: 'Region', id: 'upfront-region', type: 'region'}
+		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
+		UcommentModel: {label: 'Comments', id: 'ucomment'},
+		UcontactModel: {label: 'Contact Form', id: 'ucontact'},
+		UgalleryModel: {label: 'Gallery', id: 'ugallery'},
+		UimageModel: {label: 'Image', id: 'image'},
+		LoginModel: {label: 'Login', id: 'upfront-login_element'},
+		LikeBox: {label: 'Like Box', id: 'Like-box-object'},
+		MapModel: {label: 'Map', id: 'upfront-map_element'},
+		//NavigationModel: {label: 'Navigation', id: 'nav'},
+		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
+		UpostsModel: {label: 'Posts', id: 'uposts'},
+		UsearchModel: {label: 'Search', id: 'usearch'},
+		USliderModel: {label: 'Slider', id: 'uslider'},
+		SocialMediaModel: {label: 'Social', id: 'SocialMedia'},
+		UtabsModel: {label: 'Tabs', id: 'utabs'},
+		ThisPageModel: {label: 'Page', id: 'this_page'},
+		ThisPostModel: {label: 'Post', id: 'this_post'},
+		UwidgetModel: {label: 'Widget', id: 'uwidget'},
+		UyoutubeModel: {label: 'YoutTube', id: 'uyoutube'},
+		PlainTxtModel: {label: 'Text', id:'plain_text'},
+		CodeModel: {label: 'Code', id: 'upfront-code_element'},
+		Layout: {label: 'Body', id: 'layout'}
 	},
-	initialize: function(){
+	initialize: function() {
 		if(!$('#' + this.id).length)
 			$('body').append(this.el);
 	},
-	init: function(options){
+	init: function(options) {
+		var me = this,
+			deferred = $.Deferred(),
+			modelType;
+
 		if(this.$style)
 			this.close();
 
 		this.model = options.model;
-		this.elementSelector = typeof options.elementSelector == 'string' ? options.elementSelector : '.upfront-object';
-		this.outputElementSelector = typeof options.outputElementSelector == 'string' ? options.outputElementSelector : '.upfront-output-object';
 		this.sidebar = ( options.sidebar !== false );
 		this.save_as = ( options.save_as !== false );
 		this.global = ( options.global === true );
 
-		var me = this,
-			deferred = $.Deferred(),
-			modelType = options.type ? options.type : me.model.get_property_value_by_name('type'),
-			elementType = this.elementTypes[modelType]
-		;
+		this.modelType = options.type ? options.type : this.model.get_property_value_by_name('type');
+		this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-		this.selector = options.name || '';
-		if(this.selector)
-			this.name = this.selector.replace(new RegExp('^' + elementType.id + '-'), '');
-		else
-			this.name = '';
+		// CSS editor treats global stylesheet as a separate case. When options.type is "Layout"
+		// and options.element_id is "layout" than global stylesheet is edited.
+		this.is_global_stylesheet = options.type === 'Layout' && options.element_id === 'layout';
+		// Style name will be used to identify style element inserted to page by id and
+		// to add class to elements that are using this style.
+		this.stylename = ''; // reset
+		if (this.is_global_stylesheet) this.stylename = 'layout-style';
+		else this.stylename = options.stylename;
+		// If stylename is still empty than editor is creating new style and user have not
+		// yet assigned name to style. Create temporary style name.
+		if (this.stylename === '') {
+			// User is adding element style so assign name according to element type
+			// and add class to element on which editor is started so changes to style
+			// reflect as edited.
+			this.stylename = this.get_temp_stylename();
+			$('#' + this.model.get_property_value_by_name('element_id')).addClass(this.stylename);
+		}
 
-		this.elementType = elementType || {label: 'Unknown', id: 'unknown', type: 'unknown'};
-		this.selectors = this.elementSelectors[modelType] || {};
+		// For default styles saving and loading process is a bit different hence this flag
+		this.is_default_style = this.stylename === '_default';
+
+		this.ensure_style_element();
+
+		this.selectors = this.elementSelectors[this.modelType] || {};
 
 		this.prepareAce = deferred.promise();
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
 			deferred.resolve();
 		});
 
@@ -5545,13 +5526,6 @@ var CSSEditor = Backbone.View.extend({
 		$(window).on('resize', this.resizeHandler);
 
 		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
-		if(!$('#' + this.element_id + '-styles').length){
-			this.$style = $('<style id="' + this.element_id + '-style"></style');
-			$('body').append(this.$style);
-		}
-		else
-			this.$style = $('#' + this.element_id + '-style');
-
 
 		if ( typeof options.change == 'function' )
 			this.on('change', options.change);
@@ -5560,7 +5534,33 @@ var CSSEditor = Backbone.View.extend({
 
 		this.startResizable();
 
-		Upfront.Events.trigger('csseditor:open', this.model.get_property_value_by_name('element_id'));
+		Upfront.Events.trigger('csseditor:open', this.element_id);
+	},
+	get_style_id: function() {
+		// Prepend element type if this is default style
+		return this.is_default_style ?
+			this.elementType.id + '_default' : this.stylename;
+	},
+	get_css_selector: function() {
+		if (this.is_global_stylesheet) return '';
+
+		// Add some specificity so this style would go over other
+		if (this.is_default_style === false) return '#page .' + this.stylename;
+
+		return '.upfront-output-' + this.elementType.id;
+	},
+	ensure_style_element: function() {
+		var $style_el = $('#' + this.get_style_id());
+		if($style_el.length !== 0) {
+			this.$style = $style_el;
+			return;
+		}
+
+		this.$style = $('<style id="' + this.get_style_id() + '"></style>');
+		$('body').append(this.$style);
+	},
+	get_style_element: function() {
+		return $('#' + this.get_style_id());
 	},
 	close: function(e){
 		if(e)
@@ -5576,7 +5576,7 @@ var CSSEditor = Backbone.View.extend({
 		$('#page').css('padding-bottom', 0);
 		this.$el.hide();
 
-		Upfront.Events.trigger('csseditor:closed', this.model.get_property_value_by_name('element_id'));
+		Upfront.Events.trigger('csseditor:closed', this.element_id);
 	},
 	render: function(){
 		var me = this;
@@ -5595,7 +5595,7 @@ var CSSEditor = Backbone.View.extend({
 			this.$el.removeClass('upfront-css-no-save-as');
 
 		this.$el.html(this.tpl({
-			name: this.name,
+			name: this.stylename,
 			elementType: this.elementType.label,
 			selectors: this.selectors
 		}));
@@ -5611,7 +5611,7 @@ var CSSEditor = Backbone.View.extend({
 
 		this.prepareSpectrum();
 
-		this.checkDeleteToggle(this.name);
+		this.checkDeleteToggle(this.stylename);
 
 		this.$el.show();
 	},
@@ -5637,14 +5637,10 @@ var CSSEditor = Backbone.View.extend({
 			},800);
 			me.trigger('change', editor);
 		});
-		if(this.name === '_upfront-body_global') {
-			styles = $('#layout-style').html();
-			editor.setValue($.trim(styles), -1);
-		} else if (this.name) {
-			scope = new RegExp(this.elementSelector+'.' + this.selector + '\s*', 'g');
-			styles = $('#upfront-style-' + this.selector).html().replace(scope, '');
-			editor.setValue($.trim(styles), -1);
-		}
+
+		scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+		styles = this.get_style_element().html().replace(scope, '');
+		editor.setValue($.trim(styles), -1);
 
 		// Set up the proper vscroller width to go along with new change.
 		editor.renderer.scrollBar.width = 5;
@@ -5759,16 +5755,16 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	updateStyles: function(contents){
-		if(!this.$style.parent().length)
-			$('body').append(this.$style);
-		this.$style.html(this.stylesAddSelector(contents, this.global ? '' : '#' + this.element_id));
+		this.get_style_element().html(
+			this.stylesAddSelector(
+				contents, this.get_css_selector()
+			)
+		);
 	},
 
-	stylesAddSelector: function(contents, selector){
+	stylesAddSelector: function(contents, selector) {
 		var rules = contents.split('}'),
-			separator = '\n\n' + selector + ' ',
-			styles
-		;
+			separator = '\n\n' + selector + ' ';
 
 		rules = _.map(rules, function(rule){return $.trim(rule);});
 
@@ -5777,54 +5773,86 @@ var CSSEditor = Backbone.View.extend({
 		return separator + rules.join('\n}' + separator) + '\n}';
 	},
 
-	save: function(e){
-		e.preventDefault();
-		var me = this,
-			styleName = $.trim(this.$('.upfront-css-save-name').val()),
-			styles = $.trim(this.editor.getValue())
-		;
+	// When stylename changes upfront needs to update element model theme_style property
+	// and also to save style under new stylename.
+	updateStylename: function() {
+		var new_name =  $.trim(this.$('.upfront-css-save-name-field').val()),
+			old_name = this.stylename;
 
-		if(!styleName)
+		if (old_name === '_default') {
+			this.$('.upfront-css-save-name-field').val('_default');
+			Upfront.Views.Editor.notify('Default style name can not be changed.', 'error');
+			return;
+		}
+
+		// Update class on element on which editor was called
+		$('#' + this.model.get_property_value_by_name('element_id')).removeClass(this.stylename);
+		$('#' + this.model.get_property_value_by_name('element_id')).addClass(new_name);
+
+		// Replace id on style element
+		this.get_style_element().attr('id', new_name);
+		this.stylename = new_name;
+
+		// Update element on which editor is called to have appropriate theme style
+		this.model.set_property('theme_style', new_name);
+
+		// If this is change of name from temp don't do anything
+		if (old_name === this.get_temp_stylename) return;
+
+		// TODO Delete old style from database/files
+		// this.delete(undefined, true);
+		// Need to save with new name and delete old name
+		this.save();
+	},
+
+	get_temp_stylename: function() {
+		return this.modelType.toLowerCase().replace('model', '') + '-new-style';
+	},
+
+	save: function(event) {
+		if (event) event.preventDefault();
+		var me = this,
+			styles = $.trim(this.editor.getValue()),
+			data;
+
+		if (this.is_global_stylesheet === false && this.stylename === this.get_temp_stylename())
 			return notifier.addMessage('You need to set a name for the style.', 'error');
+
 		if(!styles)
 			return notifier.addMessage('The slylesheet is empty.', 'error');
 
-
-		var postData = {
-			name: styleName,
+		styles = this.stylesAddSelector(styles, this.get_css_selector());
+		data = {
 			styles: styles,
-			action: 'upfront_save_styles',
 			elementType: this.elementType.id,
 			elementSelector: this.elementSelector,
 			outputElementSelector: this.outputElementSelector,
 			global: this.global
 		};
+		// If in exporter mode, export instead of saving
+		if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
+			data.stylename = this.get_style_id();
+			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
+			return;
+		}
 
-		Upfront.Util.post(postData)
-			.success(function(response){
+		data.name = this.get_style_id();
+		data.action = 'upfront_save_styles';
+
+		Upfront.Util.post(data)
+			.success(function(response) {
 				var data = response.data,
-					elementType = me.elementType.id,
-					selector = elementType + '-' + data.name,
-					$style = $('#upfront-style-' + selector)
-				;
-				if(!$style.length){
-					$style = $('<style id="upfront-style-' + selector + '"></style>');
-					$('body').append($style);
-				}
-
-				$style.html(me.stylesAddSelector(data.styles, me.elementSelector + '.' + selector));
+					elementType = me.elementType.id;
 
 				if(!Upfront.data.styles[elementType])
 					Upfront.data.styles[elementType] = [];
 
-				if(Upfront.data.styles[elementType].indexOf(selector) == -1)
-					Upfront.data.styles[elementType].push(selector);
-
-				me.model.set_property('theme_style', elementType + '-' + data.name);
+				if(Upfront.data.styles[elementType].indexOf(me.get_style_id()) === -1)
+					Upfront.data.styles[elementType].push(me.get_style_id());
 
 				me.checkDeleteToggle(data.name);
 
-				return notifier.addMessage('Styles saved as ' + data.name);
+				return notifier.addMessage('Styles saved as ' + me.get_style_id());
 			})
 			.error(function(response){
 				return notifier.addMessage('There was an error.');
@@ -5852,7 +5880,7 @@ var CSSEditor = Backbone.View.extend({
 		e.preventDefault();
 		var me = this,
 			elementType = this.elementType.id,
-			styleName = elementType + '-' + this.$('.upfront-css-save-name').val()
+			styleName = elementType + '-' + this.$('.upfront-css-save-name-field').val()
 		;
 
 		if(!confirm('If you delete the "' + styleName + '" style, all the elements with it will get unstyled. Are you sure?'))
@@ -5870,7 +5898,7 @@ var CSSEditor = Backbone.View.extend({
 				notifier.addMessage('The style "' + styleName + '" was deleted.');
 
 				//Clean the editor up
-				me.$('.upfront-css-save-name').val('');
+				me.$('.upfront-css-save-name-field').val('');
 				me.editor.setValue('');
 
 				//Remove the styles from the available styles
@@ -5922,7 +5950,7 @@ var CSSEditor = Backbone.View.extend({
 		});
 		me.elementSelectors = selectors;
 	},
-	
+
 	createSelector: function(model_class, view_class, id) {
 		var model = new model_class(),
 			view = new view_class({model: model});
@@ -6020,7 +6048,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 
 		this.startResizable();
 	},
-	close: function(event){
+	close: function(event) {
 		if(event)
 			event.preventDefault();
 
@@ -6032,7 +6060,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		$('#page').css('padding-bottom', 0);
 		this.remove();
 	},
-	render: function(){
+	render: function() {
 		var me = this;
 
 		$('#page').append(this.$el);
@@ -6126,7 +6154,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 			}
 		});
 	},
-	startResizable: function(){
+	startResizable: function() {
 		// Save the fetching inside the resize
 		var me = this,
 			$cssbody = me.$('.upfront-css-body'),
@@ -6151,11 +6179,11 @@ var GeneralCSSEditor = Backbone.View.extend({
 			delay: 100
 		});
 	},
-	remove: function(){
+	remove: function() {
 		Backbone.View.prototype.remove.call(this);
 		$(window).off('resize', this.resizeHandler);
 	},
-	openImagePicker: function(){
+	openImagePicker: function() {
 		var me = this;
 		Upfront.Media.Manager.open({}).done(function(popup, result){
 			Upfront.Events.trigger('upfront:element:edit:stop');
@@ -6167,7 +6195,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 			me.editor.focus();
 		});
 	},
-	addSelector: function(e){
+	addSelector: function(e) {
 		var selector = $(e.target).data('selector');
 		this.editor.insert(selector);
 		this.editor.focus();

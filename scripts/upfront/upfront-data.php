@@ -45,13 +45,36 @@ $upfront_data['region_default_args'] = upfront_get_region_default_args();
 
 
 //Upfront styles
-$styles = get_option('upfront_' . get_stylesheet() . '_styles');
-$elementTypes = array('unknown' => array());
-if($styles){
-	foreach($styles as $type => $rules){
-		if(!is_array($rules))
-			continue;
-		$elementTypes[$type] = array_keys($rules);
+if (upfront_is_builder_running()) {
+	// If in builder mode parse from theme files
+	$elementTypes = array();
+	$stylesheet = upfront_get_builder_stylesheet();
+	if ($stylesheet) {
+		$styles_root = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'element-styles';
+
+		if (file_exists($styles_root)) {
+			// List subdirectories as element types
+			$element_types = array_diff(scandir($styles_root), array('.', '..'));
+			foreach($element_types as $type) {
+				$elementTypes[$type] = array();
+				$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+				foreach ($styles as $style) {
+					$elementTypes[$type][] = str_replace('.css', '', $style);
+				}
+			}
+		}
+	}
+} else {
+	// In editor mode load from database
+	$dev = isset($_GET['dev']) && $_GET['dev'] ? 'dev_' : '';
+	$styles = get_option('upfront_' . $dev . get_stylesheet() . '_styles');
+	$elementTypes = array('unknown' => array());
+	if($styles) {
+		foreach($styles as $type => $rules){
+			if(!is_array($rules))
+				continue;
+			$elementTypes[$type] = array_keys($rules);
+		}
 	}
 }
 

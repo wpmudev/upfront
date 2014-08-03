@@ -551,6 +551,10 @@
 #sidebar-ui .sidebar-commands-control .command-export {
 	border: 2px solid #263a4d;
 	padding: 6px 10px 0 10px;
+	position: absolute;
+	top: 613px;
+	left: 15px;
+	margin: 0;
 }
 #sidebar-ui .upfront-icon-export:before {
 	background-position: -42px -384px;
@@ -4177,6 +4181,7 @@ div.uinsert-selector a:hover {
 
 
 
+
 /* ----- Save As dialog ----- */
 
 #upfront-save-dialog-background {
@@ -5495,7 +5500,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	position: relative;
 }
 .upfront-pagination_item-next {
-	float: left; 
+	float: left;
 }
 
 #upfront-entity_list-info {
@@ -10107,9 +10112,9 @@ div.ace_editor .ace_fold {
 	background: #2E3D4C;
 }
 
-.upfront-css-save-form input.upfront-css-save-name,
-.upfront-css-save-form input.upfront-css-save-name:active,
-.upfront-css-save-form input.upfront-css-save-name:focus{
+.upfront-css-save-form input.upfront-css-save-name-field,
+.upfront-css-save-form input.upfront-css-save-name-field:active,
+.upfront-css-save-form input.upfront-css-save-name-field:focus{
 	width: 72%;
 	padding: 2px 5px;
 	background: #405468;
@@ -10118,11 +10123,11 @@ div.ace_editor .ace_fold {
 	font-size: 14px;
 	color: #85a9cb;
 }
-.upfront-css-save-form input.upfront-css-save-name:active,
-.upfront-css-save-form input.upfront-css-save-name:focus{
+.upfront-css-save-form input.upfront-css-save-name-field:active,
+.upfront-css-save-form input.upfront-css-save-name-field:focus{
 	outline:1px solid rgba(31,205,143,.5);
 }
-.upfront-css-save-form input.upfront-css-save-name:focus{
+.upfront-css-save-form input.upfront-css-save-name-field:focus{
 	color: #cbe5ff;
 }
 

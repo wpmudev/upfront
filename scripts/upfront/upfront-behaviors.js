@@ -751,6 +751,21 @@ var LayoutEditor = {
 		return deferred.promise();
 	},
 
+	export_element_styles: function(data) {
+		Upfront.Util.post({
+			action: 'upfront_thx-export-element-styles',
+			data: data
+		}).success(function(response){
+			if ( response && response.error ) {
+				Upfront.Views.Editor.notify(response.error);
+				return;
+			}
+			Upfront.Views.Editor.notify('Style exported.');
+		}).error(function(){
+			Upfront.Views.Editor.notify('Style could not be exported.');
+		});
+	},
+
 	_export_layout: function (custom_data) {
 		var typography,
 			layout_style,

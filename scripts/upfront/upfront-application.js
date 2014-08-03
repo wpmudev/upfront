@@ -1078,6 +1078,22 @@ var Application = new (Backbone.Router.extend({
 		$("body").on("click", ".upfront-edit_layout", function () {
 			//$(".upfront-editable_trigger").hide();
 			//app.go("layout");
+
+			// Main stylesheet needs to be loaded without element styles
+			// which will be edited in upfront.
+			Upfront.Util.post({
+				action: 'upfront_load_styles',
+				layout: {
+					item: 'archive-home',
+					type: 'archive'
+				},
+				base_only: true // flag for w/o element styles
+			})
+				.success(function(response) {
+					// Switch styles
+					$('#upfront-main-css').after('<style id="upfront-main-base-css">' + response.data.styles + '</style>');
+					$('#upfront-main-css').remove();
+				});
 			me.start();
 			return false;
 		});
@@ -1439,24 +1455,17 @@ var Application = new (Backbone.Router.extend({
 			_.each(styles, function(elementStyles, elementType){
 				var properties = elementStyles._properties || {};
 				_.each(elementStyles, function(style, name){
-					if ( name == '_properties' )
-						return;
-					var styleNode = $('#upfront-style-' + name),
-						elementSelector = typeof properties.element_selector == 'string' ? properties.element_selector : '.upfront-object',
-						selector = '';
+					var styleNode = $(name);
 					if(!styleNode.length){
-						styleNode = $('<style id="upfront-style-' + name + '"></style>');
+						styleNode = $('<style id="' + name + '">' + style + '</style>');
 						$('body').append(styleNode);
 					}
-					selector = elementSelector + '.' + name
-
-					styleNode.append(cssEditor.stylesAddSelector(style, selector));
 				});
 			});
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
-		
+
 		// Region selectors
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionContainerView, 'RegionContainer');
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionView, 'Region');

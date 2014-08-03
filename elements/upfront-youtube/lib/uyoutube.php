@@ -9,7 +9,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
       'view_class' => 'UyoutubeView',
       'has_settings' => 1,
       'class' =>  'upfront-youtube',
-      'id_slug' => 'utube',
+      'id_slug' => 'uyoutube',
 
       'videoType' => false,
       'display_style' => 'gallery',

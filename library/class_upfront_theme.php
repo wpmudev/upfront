@@ -410,7 +410,7 @@ class Upfront_Virtual_Region {
 
 		if(!isset($options['close_wrapper']))
 			$options['close_wrapper'] = true;
-		
+
 		if(!isset($options['group']))
 			$options['group'] = $this->current_group ? $this->current_group : '';
 		else if (!$this->modules[$options['group']])
@@ -433,7 +433,7 @@ class Upfront_Virtual_Region {
 		if($options['close_wrapper'])
 			$this->end_wrapper($options['group']);
 	}
-	
+
 	public function add_group($options){
 		$properties = array();
 		if(!isset($options['id']))
@@ -454,11 +454,11 @@ class Upfront_Virtual_Region {
 		);
 		if(!$this->current_wrapper)
 			$this->start_wrapper(false, $options['new_line']);
-		
+
 		$this->start_module_group($position, $properties);
 		$group_id = $this->current_group;
 		$this->end_module_group();
-		
+
 		if($options['close_wrapper'])
 			$this->end_wrapper();
 		return $group_id;
@@ -719,27 +719,23 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if($styles && !$force)
 			return;
 
-		$stylesheet = file_get_contents(get_stylesheet_directory() . '/alternativeElementStyles.css');
-		if(!$stylesheet)
-			return;
-
-		//Let's parse the stylesheet
 		$styles = array();
-      	preg_match_all("/\/\* start ([^\s]+?) \*\/(.*?)\/\* end/s", $stylesheet, $matches);
+		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
+		if (file_exists($styles_root) === false) return;
 
-      	foreach($matches[1] as $i => $element){
-      		//The styles should be in the form element.style
-      		$parts = explode('.', $element);
-      		if(sizeof($parts) != 2)
-      			continue;
+		// List subdirectories as element types
+		$element_types = array_diff(scandir($styles_root), array('.', '..'));
+		foreach($element_types as $type) {
+			$styles[$type] = array();
+			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+			foreach ($style_files as $style) {
+				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
+				$styles[$type][str_replace('.css', '', $style)] = $style_content;
+			}
+		}
 
-      		if(!isset($styles[$parts[0]]))
-      			$styles[$parts[0]] = array();
-
-      		$styles[$parts[0]][$parts[1]] = $matches[2][$i];
-      	}
-
-      	update_option('upfront_' . $theme . '_styles', $styles);
+		$dev = isset($_GET['dev']) && $_GET['dev'] ? 'dev_' : '';
+		update_option('upfront_' . $dev . $theme . '_styles', $styles);
 	}
 
 /* --- Public interface --- */
@@ -885,7 +881,7 @@ class Upfront_Themes_RequiredPage {
 	}
 	public function get_post_id() {
 		if(isset($this->_post_id))
-			return $this->_post_id;	
+			return $this->_post_id;
 		else
 			return false;
 	}

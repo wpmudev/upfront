@@ -19,6 +19,7 @@ class Upfront_UtabsView extends Upfront_Object {
       'tabs_count' => 2,
       'tabs_fixed_width' => 'auto',
 
+			'id_slug' => 'utabs',
       'style_type' => 'theme_defined',
       'theme_style' => 'tabbed',
       'custom_style' => 'tabbed',

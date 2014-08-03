@@ -68,14 +68,13 @@ define(function() {
 	},
 
 	post: function (data, data_type) {
-	  var request = (_.isObject(data) && data.action)
-		? data
-		: {"action": "upfront_request", "data": data}
-	  ;
+	  var request = (_.isObject(data) && data.action) ?
+			data : {"action": "upfront_request", "data": data};
+
 	  // @TODO need a better way to attach upfront layout data on request?
 	  if ( Upfront.Application.layout ) {
-		//request.upfront_layout = Upfront.Application.layout.get('layout');
-		request.layout = Upfront.Application.layout.get('layout');
+			//request.upfront_layout = Upfront.Application.layout.get('layout');
+			request.layout = Upfront.Application.layout.get('layout');
 	  }
 	  if ( !request.storage_key )
 		  request.storage_key = _upfront_storage_key;
@@ -84,6 +83,9 @@ define(function() {
 		// Some stuff depends if in builder or editor mode so lets make that
 		// available for convenient server side check.
 		request.mode = Upfront.Application.get_current();
+
+		// Was request made from dev mode
+		request.dev = location.search.indexOf('dev=true') > -1;
 
 	  return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
 	},
