@@ -118,12 +118,22 @@ class Upfront_Output {
 
 		// Load theme fonts
 		if (upfront_is_builder_running()) {
-			$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => upfront_get_builder_stylesheet()));
+			$theme_fonts = apply_filters(
+				'upfront_get_theme_fonts',
+				array(),
+				array(
+					'stylesheet' => upfront_get_builder_stylesheet()
+				)
+			);
 		} else {
 			$theme_fonts = json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
 			if (empty($theme_fonts)) {
 				// Maybe fonts are not initialized yet, try to load from theme files
-				$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => get_stylesheet()));
+				$theme_fonts = apply_filters(
+					'upfront_get_theme_fonts',
+					array(),
+					array('stylesheet' => get_stylesheet())
+				);
 			}
 		}
 		if( $theme_fonts ) {

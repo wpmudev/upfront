@@ -372,17 +372,53 @@ class Upfront_JavascriptMain extends Upfront_Server {
     }
 
 		if (upfront_is_builder_running()) {
-			$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => upfront_get_builder_stylesheet(), 'json' => true));
+			$theme_fonts = apply_filters(
+				'upfront_get_theme_fonts',
+				array(),
+				array(
+					'stylesheet' => upfront_get_builder_stylesheet(),
+					'json' => true
+				)
+			);
 		} else {
 			$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
 			if (empty($theme_fonts)) {
 				// Maybe fonts are not initialized yet, try to load from theme files.
-				$theme_fonts = apply_filters('upfront_get_theme_fonts', array(), array('stylesheet' => get_stylesheet(), 'json' => true));
+				$theme_fonts = apply_filters(
+					'upfront_get_theme_fonts',
+					array(),
+					array(
+						'stylesheet' => get_stylesheet(),
+						'json' => true
+					)
+				);
 			}
 		}
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
-    $theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+		if (upfront_is_builder_running()) {
+			$theme_colors = apply_filters(
+				'upfront_get_theme_colors',
+				array(),
+				array(
+					'stylesheet' => upfront_get_builder_stylesheet(),
+					'json' => true
+				)
+			);
+		} else {
+			$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+			if (empty($theme_colors)) {
+				// Maybe fonts are not initialized yet, try to load from theme files.
+				$theme_colors = apply_filters(
+					'upfront_get_theme_colors',
+					array(),
+					array(
+						'stylesheet' => get_stylesheet(),
+						'json' => true
+					)
+				);
+			}
+		}
     if (empty($theme_colors)) $theme_colors = json_encode(array());
 
 		$debug = array(
@@ -1309,34 +1345,41 @@ add_action('init', array('Upfront_Server_ThemeFontsServer', 'serve'));
 
 class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 
-    public static function serve () {
-        $me = new self;
-        $me->_add_hooks();
-    }
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
 
-    private function _add_hooks () {
-        if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) upfront_add_ajax('upfront_get_theme_color', array($this, 'get'));
-        if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) upfront_add_ajax('upfront_update_theme_colors', array($this, 'update'));
-    }
+	private function _add_hooks () {
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) upfront_add_ajax('upfront_get_theme_color', array($this, 'get'));
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) upfront_add_ajax('upfront_update_theme_colors', array($this, 'update'));
+	}
 
-    public function get() {
-        $theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
-        if (empty($theme_colors)) $theme_colors = array();
-        $this->_out(new Upfront_JsonResponse_Success($theme_colors));
-    }
+	public function get() {
+		$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+		if (empty($theme_colors)) $theme_colors = array();
+		$this->_out(new Upfront_JsonResponse_Success($theme_colors));
+	}
 
-    public function update() {
-        if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+	public function update() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
-        $theme_colors = isset($_POST['theme_colors']) ? $_POST['theme_colors'] : array();
-        $range = isset($_POST['range']) ? $_POST['range'] : 0;
-        update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode(array(
-            "colors" => $theme_colors,
-             "range" => $range
-        )));
+		$theme_colors = isset($_POST['theme_colors']) ? $_POST['theme_colors'] : array();
+		$range = isset($_POST['range']) ? $_POST['range'] : 0;
 
-        $this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme colors updated'));
-    }
+		$data = array(
+			"colors" => $theme_colors,
+			"range" => $range
+		);
+
+		if (upfront_is_builder_running()) {
+			do_action('upfront_update_theme_colors', $data, upfront_get_builder_stylesheet());
+		} else {
+			update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode($data));
+		}
+
+		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme colors updated'));
+	}
 }
 //Upfront_Server_ThemeColorsServer::serve();
 add_action('init', array('Upfront_Server_ThemeColorsServer', 'serve'));

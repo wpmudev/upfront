@@ -1948,7 +1948,7 @@ define([
             }
             this.$("#theme-colors-no-color-notice").parent().hide();
             this.render_bottom();
-
+						this.on_save();
         },
         render_bottom : function(){
             this.$(".panel-setting-theme-colors-bottom").html(
