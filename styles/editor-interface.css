@@ -11995,3 +11995,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui .sidebar-commands .upfront-field-select-option {
 	display: block;
 }
+
+#sidebar-ui .sidebar-commands-theme .command-grid {
+	margin-left: 10px;
+}

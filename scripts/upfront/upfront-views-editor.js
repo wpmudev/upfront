@@ -2143,16 +2143,28 @@ define([
 	});
 
 	var SidebarCommands_Control = Commands.extend({
-		"className": "sidebar-commands sidebar-commands-control",
+		className: function() {
+			 var className = "sidebar-commands sidebar-commands-control";
+			 if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
+				className += ' sidebar-commands-theme';
+			 }
+			 return className;
+		},
 		initialize: function () {
 		  var MODE = Upfront.Settings.Application.MODE;
 			var current_app = Upfront.Application.get_current();
 
-			this.commands = _([
-				new Command_Undo({"model": this.model}),
-				new Command_Redo({"model": this.model}),
-				new Command_ToggleGrid({"model": this.model}),
-			]);
+			if ( current_app !== MODE.THEME ) {
+				this.commands = _([
+					new Command_Undo({"model": this.model}),
+					new Command_Redo({"model": this.model}),
+					new Command_ToggleGrid({"model": this.model}),
+				]);
+			} else {
+				this.commands = _([
+					new Command_ToggleGrid({"model": this.model}),
+				]);
+			}
 
 			if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app === MODE.THEME) {
 				this.commands.push(
