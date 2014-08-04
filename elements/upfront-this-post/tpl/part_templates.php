@@ -28,6 +28,10 @@ ob_clean();
 $templates['date'] = ob_get_contents();
 ob_clean();
 
+?><time class="post_update" datetime="%date_iso%">%update%</time><?php
+$templates['update'] = ob_get_contents();
+ob_clean();
+
 //*** EXCERPT
 ?><div class="post_excerpt">%excerpt%</div><?php
 $templates['excerpt'] = ob_get_contents();

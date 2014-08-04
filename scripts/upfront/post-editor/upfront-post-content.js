@@ -11,7 +11,8 @@ var PartMarkupCreator = function(){
 		tags: {replacements: ['%tags%'], editable:[]},
 		comments_count: {replacements: ['%comments_count%'], editable:[]},
 		featured_image: {replacements: ['%image%', '%permalink%'], editable:['%image%']},
-		date: {replacements: ['%date%', '%date_iso%'], editable:['%date%']}
+		date: {replacements: ['%date%', '%date_iso%'], editable:['%date%']},
+		update: {replacements: ['%update%', '%date_iso%'], editable:['%update%']}
 	};
 
 	this.markup = function(part, partContents, template, partOptions){
@@ -426,7 +427,7 @@ var PostContentEditor = Backbone.View.extend({
 	editDate: function(e) {
 		e.preventDefault();
 		var $target = $(e.target);
-
+        console.log("editDate");
 		if(this.datepicker.is(':visible')){
 			// just update datepicker position
 			this.datepicker.offset({

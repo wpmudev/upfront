@@ -9,6 +9,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		'COMMENTS' => 'comments_count',
 		'CONTENTS' => 'contents',
 		'DATE' => 'date',
+		'UPDATE' => 'update',
 		'IMAGE' => 'featured_image',
 		'TAGS' => 'tags',
 		'TITLE' => 'title',
@@ -92,6 +93,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$replacements['%date%'] = get_the_date($format);
 				$replacements['%date_iso%'] = get_the_date('c');
 				break;
+
+            case self::$PARTNAMES['UPDATE']:
+                $format = isset($options['format']) ? $options['format'] : '';
+                $replacements['%update%'] = get_the_modified_date($format);
+                $replacements['%date_iso%'] = get_the_modified_date('c');
+                break;
 
 			case self::$PARTNAMES['IMAGE']:
 				$replacements['%image%'] = get_the_post_thumbnail();

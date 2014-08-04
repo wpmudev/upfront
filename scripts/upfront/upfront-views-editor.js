@@ -1289,7 +1289,7 @@ define([
 
 	var SidebarPanel_Posts = SidebarPanel_DraggableElements.extend({
 		className: "sidebar-panel upfront-panel-post_panel",
-		parts: ['Title', 'Contents', 'Excerpt', 'Featured Image', 'Author', 'Date', 'Comments Count', 'Tags', 'Categories'],
+		parts: ['Title', 'Contents', 'Excerpt', 'Featured Image', 'Author', 'Date', 'Update', 'Comments Count', 'Tags', 'Categories'],
 		partElements: [],
 		initialize: function (opts) {
 			//SidebarPanel_DraggableElements.prototype.constructor.call(this, opts);

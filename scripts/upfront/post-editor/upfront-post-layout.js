@@ -241,6 +241,8 @@ var DateSettings = PostPartSettings.extend({
 	}
 });
 
+var UpdateSettings =  DateSettings.extend();
+
 var TagSettings = PostPartSettings.extend({
     init: function(opts){
         this.panels = _([
@@ -435,11 +437,12 @@ var FeaturedImageView = PostPartView.extend({
 			this.model.set_property('attributes', {style: 'max-height: ' + height + 'px' });
 			this.partOptions.height = height;
 		}
-	},
+	}
 });
 
 var partSettings = {
 	date: DateSettings,
+	update: UpdateSettings,
     tags : TagSettings,
     contents : ContentSettings
 };
@@ -461,7 +464,7 @@ var TemplateEditorField = Upfront.Views.Editor.Field.Field.extend({
 	prepareTemplateEditor: function(e){
 		e.preventDefault();
 		Upfront.Events.trigger('post:edit:templatepart', this.model.tpl, this.model.get_property_value_by_name('postPart'));
-	},
+	}
 });
 
 var TemplateEditor = Backbone.View.extend({
