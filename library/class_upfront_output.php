@@ -569,9 +569,9 @@ class Upfront_Region extends Upfront_Container {
 		$css = '';
 		if ( $this->_is_background() )
 			$css .= $this->_get_background_css();
-		if ( $this->_data['type'] == 'fixed')
+		if ( !empty($this->_data['type']) &&  'fixed' === $this->_data['type'] )
 			$css .=  $this->_get_position_css();
-		elseif ( $this->_data['type'] == 'lightbox')
+		elseif ( !empty($this->_data['type']) && 'lightbox' === $this->_data['type'] )
 			$css = 'background-color:'. $this->_get_property('lightbox_color').'; '.$this->_get_position_css();
 		return $css;
 	}
@@ -581,7 +581,7 @@ class Upfront_Region extends Upfront_Container {
 		if ( $this->_is_background() )
 			$attr .= $this->_get_background_attr();
 
-		if(	$this->_data['type'] == 'lightbox')
+		if(	!empty($this->_data['type']) && 'lightbox' === $this->_data['type'] ) {
 			$attr .= ' data-overlay = "'.$this->_get_property('overlay_color').'"';
 			$attr .= ' data-col = "'.$this->_get_property('col').'"';
 			$attr .= ' data-closeicon = "'.(is_array($this->_get_property('show_close'))?array_pop($this->_get_property('show_close')):$this->_get_property('show_close')).'"';
@@ -591,6 +591,7 @@ class Upfront_Region extends Upfront_Container {
 			if($addclosetext == 'yes') {
 				$attr .= ' data-closetext = "'.$this->_get_property('close_text').'"';
 			}
+		}
 		return $attr;
 	}
 
