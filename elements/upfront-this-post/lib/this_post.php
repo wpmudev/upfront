@@ -134,15 +134,16 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function get_template_markup($post, $properties) {
+        $post = !empty($post) ? $post : new WP_Post(new StdClass);
+        $markup = Upfront_ThisPostView::get_post_markup($post->ID, $post->post_type, $properties);
 		$markup = upfront_get_template(
 			'this-post',
 			array(
-				'properties' => $properties,
-				'post' => $post
+				'post' => $post,
+                "markup" => $markup
 			),
 			dirname(dirname(__FILE__)) . '/tpl/this-post.php'
 		);
-
 		return $markup;
 	}
 
@@ -602,6 +603,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 	public function load_markup() {
 		$data = json_decode(stripslashes($_POST['data']), true);
+
 		if (!is_numeric($data['post_id'])) die('error');
 
 		$content = '';
@@ -615,11 +617,12 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		else if($data['post_type']) {
 			$post = Upfront_ThisPostView::get_new_post($data['post_type']);
 		}
-		else
-			$this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
+		else{
+
+            $this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
+        }
 
 		Upfront_ThisPostView::prepare_post($post);
-
 		$content = Upfront_ThisPostView::get_template_markup($post, $data['properties']);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(

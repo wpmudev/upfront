@@ -3710,7 +3710,7 @@ define([
 			showAlpha: true,
 			showPalette: true,
             localStorageKey: "spectrum.recent_colors",
-			palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
+			palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : [],
 			maxSelectionSize: 10,
 			preferredFormat: "hex",
 			showInput: true,
