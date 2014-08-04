@@ -73,8 +73,8 @@ class Upfront_LoginView extends Upfront_Object {
 					'remember' => true,
 				)) .
 			'<p class="login-lostpassword">Lost Password? <a class="login-lostpassword-link" href="' .
-				wp_lostpassword_url( $redirect ) .
-			'">Click here</a></p></div>' .
+				wp_lostpassword_url( /*$redirect*/ ) .
+			'">' . self::_get_l10n('click_here') . '</a></p></div>' .
 		'</div></div>';
 	}
 
@@ -86,6 +86,52 @@ class Upfront_LoginView extends Upfront_Object {
 		}
 		return $properties;
 	}
+
+	public static function add_l10n_strings ($strings) {
+    	if (!empty($strings['login_element'])) return $strings;
+    	$strings['login_element'] = self::_get_l10n();
+        return $strings;
+    }
+
+    private static function _get_l10n ($key=false) {
+    	$l10n = array(
+            'element_name' => __('Login', 'upfront'),
+            'click_here' => __('Click here', 'upfront'),
+            'css' => array(
+            	'containers' => __('Field containers', 'upfront'),
+            	'containers_info' => __('Wrapper layer for every field', 'upfront'),
+            	'labels' => __('Field labels', 'upfront'),
+            	'labels_info' => __('Labels for the input fields', 'upfront'),
+            	'inputs' => __('Input fields', 'upfront'),
+            	'inputs_info' => __('Username and password fields', 'upfront'),
+            	'button' => __('Login button', 'upfront'),
+            	'button_info' => __('Login button', 'upfront'),
+            	'remember' => __('Remember me checkbox', 'upfront'),
+            	'remember_info' => __('Remember me checkbox input.', 'upfront'),
+            	'pwd_wrap' => __('Lost password wrapper', 'upfront'),
+            	'pwd_wrap_info' => __('Container wrapper for the lost pasword function.', 'upfront'),
+            	'pwd_link' => __('Lost password link', 'upfront'),
+            	'pwd_link_info' => __('Link for lost passwords', 'upfront'),
+            	'close' => __('Closed login link', 'upfront'),
+            	'close_info' => __('The link that allows to open the login when the dropdown or lightbox option is selected.', 'upfront'),
+            ),
+            'hold_on' => __('Please, hold on', 'upfront'),
+            'settings' => __("Login settings", 'upfront'),
+            'display' => __("Display", 'upfront'),
+            'show_on_hover' => __("Show on hover", 'upfront'),
+            'show_on_click' => __("Show on click", 'upfront'),
+            'behavior' => __("Display behavior", 'upfront'),
+            'on_page' => __("Form on page", 'upfront'),
+            'dropdown' => __("Drop down form", 'upfront'),
+            'in_lightbox' => __("Form in lightbox", 'upfront'),
+            'appearance' => __("Display Appearance", 'upfront'),
+            'trigger' => __("Trigger", 'upfront'),
+    	);
+    	return !empty($key)
+            ? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+            : $l10n
+        ;
+    }
 }
 
 class Upfront_LoginAjax extends Upfront_Server {

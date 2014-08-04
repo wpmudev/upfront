@@ -7,6 +7,8 @@ define([
 	$("head").append("<style>" + editor_style + "</style>");
 	$("head").append("<style>" + public_style + "</style>");
 
+	var l10n = Upfront.Settings.l10n.login_element;
+
 	var LoginModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
 			var properties = _.clone(Upfront.data.upfront_login.defaults);
@@ -19,14 +21,14 @@ define([
 		markup: false,
 
 		cssSelectors: {
-			'p': {label: 'Field containers', info: 'Wrapper layer for every field'},
-			'label': {label: 'Field labels', info: 'Labels for the input fields'},
-			'input:not([type=submit]):not([type=checkbox])': {label: 'Input fields', info: 'Username and password fields'},
-			'input[type=submit]': {label: 'Login button', info: 'Login button'},
-			'input[type=checkbox]': {label: 'Remember me checkbox', info: 'Remember me checkbox input.'},
-			'.login-lostpassword': {label: 'Lost password wrapper', info: 'Container wrapper for the lost pasword function.'},
-			'.login-lostpassword-link': {label: 'Lost password link', info: 'Link for lost passwords'},
-			'.upfront_login-trigger': {label: 'Closed login link', info: 'The link that allows to open the login when the dropdown or lightbox option is selected.'}
+			'p': {label: l10n.css.containers, info: l10n.css.containers_info},
+			'label': {label: l10n.css.labels, info: l10n.css.labels_info},
+			'input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
+			'input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
+			'input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
+			'.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
+			'.login-lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
+			'.upfront_login-trigger': {label: l10n.css.close, info: l10n.css.close_info}
 		},
 
 		initialize: function () {
@@ -60,7 +62,7 @@ define([
 			Upfront.Views.ObjectView.prototype.render.call(this);
 		},
 		get_content_markup: function () {
-			return !!this.markup ? this.markup : 'Please, hold on';
+			return !!this.markup ? this.markup : l10n.hold_on;
 		}
 	});
 
@@ -142,7 +144,7 @@ define([
 			]);
 		},
 		get_title: function () {
-			return "Login settings";
+			return l10n.settings;
 		}
 	});
 		var LoginSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
@@ -172,10 +174,10 @@ define([
 				});
 			},
 			get_label: function () {
-				return "Display";
+				return l10n.display;
 			},
 			get_title: function () {
-				return "Display";
+				return l10n.display;
 			}
 		});
 			var LoginSettings_Field_DisplayBehavior = Upfront.Views.Editor.Settings.Item.extend({
@@ -189,8 +191,8 @@ define([
 					var style = this.model.get_property_value_by_name("style");
 					var hover_disabled = !style || "popup" == style;
 					var behaviors = [
-						{label: "Show on hover", value: "hover", disabled: hover_disabled},
-						{label: "Show on click", value: "click"},
+						{label: l10n.show_on_hover, value: "hover", disabled: hover_disabled},
+						{label: l10n.show_on_click, value: "click"},
 					];
 					this.fields = _([
 						new Upfront.Views.Editor.Field.Radios({
@@ -209,7 +211,7 @@ define([
 					;
 				},
 				get_title: function () {
-					return "Display behavior";
+					return l10n.behavior;
 				},
 				register_change: function () {
 					this.fields.each(function (field) {
@@ -234,9 +236,9 @@ define([
 				},
 				initialize: function () {
 					var styles = [
-						{label: "Form on page", value: "form"},
-						{label: "Drop down form", value: "dropdown"},
-						{label: "Form in lightbox", value: "popup"},
+						{label: l10n.on_page, value: "form"},
+						{label: l10n.dropdown, value: "dropdown"},
+						{label: l10n.in_lightbox, value: "popup"},
 					];
 					this.fields = _([
 						new Upfront.Views.Editor.Field.Radios({
@@ -252,7 +254,7 @@ define([
 					this.$el.find(".upfront-settings-item-content").addClass("clearfix");
 				},
 				get_title: function () {
-					return "Display Appearance";
+					return l10n.appearance;
 				},
 				register_change: function () {
 					this.fields.each(function (field) {
@@ -302,7 +304,7 @@ define([
 					;
 				},
 				get_title: function () {
-					return "Trigger";
+					return l10n.trigger;
 				}
 			});
 
@@ -312,7 +314,7 @@ define([
 
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-login');
-			this.$el.html('Login');
+			this.$el.html(l10n.element_name);
 		},
 
 		add_element: function () {
