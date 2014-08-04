@@ -7,6 +7,7 @@ define([
 $("head").append('<style>' + style + '</style>');
 
 var tpls = $(tplSource);
+var l10n = Upfront.Settings.l10n.code_element;
 
 var CodeModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
@@ -37,9 +38,9 @@ var Views = {
 */
 			this.$el.empty()
 				.append(
-					'<p style="text-align:center"><button type="button" class="embed">Embed 3rd Party code</button>' +
+					'<p style="text-align:center"><button type="button" class="embed">' + l10n.intro.embed + '</button>' +
 					'&nbsp;or&nbsp;' +
-					'<button type="button" class="create">Write Custom Code</button></p>'
+					'<button type="button" class="create">' + l10n.intro.code + '</button></p>'
 				)
 			;
 		},
@@ -208,7 +209,7 @@ var Views = {
 				$root.remove();
 			}
 
-			$("body").append("<div class='upfront-code-editable-image' id='" + id + "'>Click to change</div>");
+			$("body").append("<div class='upfront-code-editable-image' id='" + id + "'>" + l10n.create.change + "</div>");
 			$root = $('#' + id);
 
 			$all = $img.add($root);
@@ -259,7 +260,8 @@ var Views = {
 			$editor.html(this.editorTpl({
 				markup: this.fallback('markup'),
 				style: this.fallback('style'),
-				script: this.fallback('script')
+				script: this.fallback('script'),
+				l10n: l10n.template
 			}));
 
 			$editor.show();
@@ -300,7 +302,7 @@ var Views = {
 							me.checkJS(value);
 
 						if(me.script_error)
-							$editor.find('.upfront_code-jsalert').show().find('i').attr('title', 'JS error: ' + me.script_error);
+							$editor.find('.upfront_code-jsalert').show().find('i').attr('title', l10n.create.js_error + ' ' + me.script_error);
 						else
 							$editor.find('.upfront_code-jsalert').hide();
 
@@ -390,11 +392,11 @@ var Views = {
 			$editor.find('.upfront-css-color').spectrum({
 				showAlpha: true,
 				showPalette: true,
-				palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
+				palette: Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
 				maxSelectionSize: 9,
 				localStorageKey: "spectrum.recent_bgs",
 				preferredFormat: "hex",
-				chooseText: "Ok",
+				chooseText: l10n.create.ok,
 				showInput: true,
 				allowEmpty:true,
 				show: function(){
@@ -555,7 +557,7 @@ var Views = {
 			var me = this;
 			this.$el
 				.find("section.upfront_code-element").hide().end()
-				.append(this.tpl({markup: this.fallback('markup')}))
+				.append(this.tpl({markup: this.fallback('markup'), l10n: l10n.template}))
 			;
 
 			this.$el
@@ -650,7 +652,7 @@ var CodeElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-code');
-		this.$el.html('Code');
+		this.$el.html(l10n.element_name);
 	},
 
 	add_element: function () {

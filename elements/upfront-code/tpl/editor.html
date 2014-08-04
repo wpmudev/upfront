@@ -5,14 +5,14 @@
 		<div class="upfront_code-editor-complex-wrapper">
 			<div class="upfront-css-top ui-resizable-handle ui-resizable-n">
 				<div class="upfront_code-switches">
-					<div class="upfront_code-switch active" data-for="markup">HTML</div>
-					<div class="upfront_code-switch" data-for="style">CSS</div>
-					<div class="upfront_code-switch" data-for="script">JS</div>
+					<div class="upfront_code-switch active" data-for="markup">{{ l10n.html }}</div>
+					<div class="upfront_code-switch" data-for="style">{{ l10n.css }}</div>
+					<div class="upfront_code-switch" data-for="script">{{ l10n.js }}</div>
 				</div>
-				<a class="upfront-css-image" href="#">Link image</a>
+				<a class="upfront-css-image" href="#">{{ l10n.link_image }}</a>
 				<input class="upfront-css-color" type="text">
-				<div class="upfront_code-jsalert error javascript"><i class="upfront-icon-button" title="There is an error in your JS code"></i></div>
-				<a class="upfront-css-close" href="#">close</a>
+				<div class="upfront_code-jsalert error javascript"><i class="upfront-icon-button" title="{{ l10n.code_error }}"></i></div>
+				<a class="upfront-css-close" href="#">{{ l10n.close }}</a>
 			</div>
 			<div class="upfront-css-body">
 				<div class="upfront_code-editor-section upfront_code-markup active">
@@ -24,16 +24,16 @@
 				<div class="upfront_code-editor-section upfront_code-script">
 					<div class="upfront_code-ace" data-type="script" >{{script}}</div>
 				</div>
-				<button>Save</button>
+				<button>{{ l10n.save }}</button>
 			</div>
 		</div>
 </div>
 
 <div id="embedTpl">
 	<section class="upfront_code-editor-simple">
-		<h3>Paste your embed code below</h3>
+		<h3>{{ l10n.paste_your_code }}</h3>
 		<textarea class="upfront_code-markup" data-type="markup">{{ markup }}</textarea>
-		<button>Save</button>
+		<button>{{ l10n.save }}</button>
 	</section>
 </div>
 

@@ -31,6 +31,8 @@ function ufcode_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_code.php');
 
+	add_filter('upfront_l10n', array('Upfront_CodeView', 'add_l10n_strings'));
+
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('upfront_code', upfront_relative_element_url('js/upfront_code', __FILE__));
 }
