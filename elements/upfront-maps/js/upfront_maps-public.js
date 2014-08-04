@@ -68,6 +68,7 @@ function init_map ($el) {
 	});
 	// Re-render the map when needed
 	$(document).on('upfront-lightbox-open', function () {
+		$el.height($el.closest(".upfront-output-module").height()); // This is to ensure the proper height once lightbox pops open
 		setTimeout(function () {
 			var center = map.getCenter();
 			google.maps.event.trigger(map, 'resize');
