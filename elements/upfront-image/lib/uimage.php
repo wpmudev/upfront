@@ -328,7 +328,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		// Drop the old resized image for this element, if any
 		$used = get_post_meta($imageData['id'], 'upfront_used_image_sizes', true);
 		$element_id = !empty($imageData['element_id']) ? $imageData['element_id'] : 0;
-		if (!empty($used[$element_id]['path']) && file_exists($used[$element_id]['path'])) {
+		if (!empty($used) && !empty($used[$element_id]['path']) && file_exists($used[$element_id]['path'])) {
 			// OOOH, so we have a previos crop!
 			@unlink($used[$element_id]['path']); // Drop the old one, we have new stuffs to replace it
 		}

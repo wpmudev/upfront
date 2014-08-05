@@ -693,9 +693,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if(!$styles) {
 			$out = '';
 			// See if there are styles in theme files
-			$styles_root = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'element-styles';
+			$styles_root = get_theme_root() . DIRECTORY_SEPARATOR . get_stylesheet() . DIRECTORY_SEPARATOR . 'element-styles';
 			// List subdirectories as element types
-			$element_types = array_diff(scandir($styles_root), array('.', '..'));
+			$element_types = is_dir($styles_root)
+				? array_diff(scandir($styles_root), array('.', '..'))
+				: array()
+			;
 			foreach($element_types as $type) {
 				$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
 				foreach ($style_files as $style) {
