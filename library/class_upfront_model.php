@@ -516,7 +516,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		// Classify theme layout files into layouts
 		foreach($layout_files as $layout) {
 			$layout_id = str_replace('.php', '', $layout);
-			$properties = array();
+			$properties = array(
+				'label' => $layout_id // provide default label
+			);
 			$properties['layout'] = array(
 				'item' => $layout_id
 			);
