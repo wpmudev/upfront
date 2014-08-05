@@ -1,16 +1,16 @@
 (function ($) {
 
-	/*var templates = [
-		'text!' + Upfront.data.uaccordion.template ];*/
+define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(accordionTpl) {
 
-	define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(accordionTpl) {
-		var UaccordionModel = Upfront.Models.ObjectModel.extend({
-			init: function () {
-				var properties = _.clone(Upfront.data.uaccordion.defaults);
-				properties.element_id = Upfront.Util.get_unique_id("uaccordion-object");
-				this.init_properties(properties);
-			}
-		});
+	var l10n = Upfront.Settings.l10n.accordion_element;
+		
+	var UaccordionModel = Upfront.Models.ObjectModel.extend({
+		init: function () {
+			var properties = _.clone(Upfront.data.uaccordion.defaults);
+			properties.element_id = Upfront.Util.get_unique_id("uaccordion-object");
+			this.init_properties(properties);
+		}
+	});
 
 	var UaccordionView = Upfront.Views.ObjectView.extend({
 		model: UaccordionModel,
@@ -19,13 +19,13 @@
 		elementSize: {width: 0, height: 0},
 
 		cssSelectors: {
-			'.accordion-panel': {label: 'Panel containers', info: 'The wrapper layer of every panel.'},
-			'.accordion-panel-title': {label: 'Panel header', info: 'The header title of every panel'},
-			'.accordion-panel-content': {label: 'Panel body', info: 'The content part of every panel.'},
-			'.accordion-panel:first-of-type' : {label: 'First Panel container', info: 'The wrapper layer of first panel.'},
-			'.accordion-panel:last-child' : {label: 'Last Panel container', info: 'The wrapper layer of last panel.'},
-			'.accordion-panel:nth-child(2n+3)' : {label: 'Odd Panel containers', info: 'The wrapper layer of odd panels.'},
-			'.accordion-panel:nth-child(2n)' : {label: 'Even Panel containers', info: 'The wrapper layer of even panels.'}
+			'.accordion-panel': {label: l10n.css.containers_label, info: l10n.css.containers_info},
+			'.accordion-panel-title': {label: l10n.css.header_label, info: l10n.css.header_info},
+			'.accordion-panel-content': {label: l10n.css.body_label, info: l10n.css.body_info},
+			'.accordion-panel:first-of-type' : {label: l10n.css.first_label, info: l10n.css.first_info},
+			'.accordion-panel:last-child' : {label: l10n.css.last_label, info: l10n.css.last_info},
+			'.accordion-panel:nth-child(2n+3)' : {label: l10n.css.odd_label, info: l10n.css.odd_info},
+			'.accordion-panel:nth-child(2n)' : {label: l10n.css.even_label, info: l10n.css.even_info}
 		},
 
 		initialize: function(){
@@ -205,7 +205,7 @@
 			priority: 200,
 			render: function () {
 				this.$el.addClass('upfront-icon-element upfront-icon-element-accordion');
-				this.$el.html('Accordion');
+				this.$el.html(l10n.element_name);
 			},
 			add_element: function () {
 				var object = new UaccordionModel(),
@@ -235,7 +235,7 @@
 			},
 
 			get_title: function () {
-				return "Accordion settings";
+				return l10n.settings;
 			}
 		});
 
@@ -256,7 +256,7 @@
 				this.settings = _([
 					new Upfront.Views.Editor.Settings.Item({
 						model: this.model,
-						title: "Appearance",
+						title: l10n.appearance,
 						fields: [
 							// new Upfront.Views.Editor.Field.Radios({
 							// 	className: 'inline-radios',
@@ -282,7 +282,7 @@
 								className: 'upfront-field-wrap upfront-field-wrap-color sp-cf panel-bg-color',
 								model: this.model,
 								property: 'panel_bg_color',
-								label: 'Section Background:',
+								label: l10n.section_bg,
 								spectrum: {
 									preferredFormat: "hsl",
 									change: this.onPanelBgChange,
@@ -293,7 +293,7 @@
 								className: 'upfront-field-wrap upfront-field-wrap-color sp-cf header-bg-color',
 								model: this.model,
 								property: 'header_bg_color',
-								label: 'Header Background:',
+								label: l10n.header_bg,
 								spectrum: {
 									preferredFormat: "hsl",
 									change: this.onHeaderBgChange,
@@ -304,7 +304,7 @@
 								className: 'upfront-field-wrap upfront-field-wrap-color sp-cf header-border-color',
 								model: this.model,
 								property: 'header_border_color',
-								label: 'Header Border:',
+								label: l10n.header_border,
 								spectrum: {
 									preferredFormat: "hsl",
 									change: this.onHeaderBorderChange,
@@ -366,7 +366,7 @@
 			},
 
 			get_label: function () {
-				return 'Appearance';
+				return l10n.appearance;
 			},
 
 			get_title: function () {
@@ -403,6 +403,6 @@
 		Upfront.Models.UaccordionModel = UaccordionModel;
 		Upfront.Views.UaccordionView = UaccordionView;
 
-	}); //End require
+}); //End require
 
 })(jQuery);

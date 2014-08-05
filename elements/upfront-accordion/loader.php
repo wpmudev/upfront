@@ -34,6 +34,7 @@ function uaccordion_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('uaccordion', upfront_relative_element_url('js/uaccordion', __FILE__));
 
+	add_filter('upfront_l10n', array('Upfront_UaccordionView', 'add_l10n_strings'));
 
 	// Add element defaults to data object
 	$uaccordion = new Upfront_UaccordionView(array());
