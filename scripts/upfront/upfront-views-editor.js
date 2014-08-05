@@ -1477,6 +1477,7 @@ define([
 							element = me.current_element;
 							if ( me.typefaces[element] != value ){
 								me.typefaces[element] = value;
+								me.styles[element] = Font_Model.get_default_variant(value);
 								me.update_typography();
 								me.update_styles_field();
 							}
@@ -1562,7 +1563,7 @@ define([
 			return new Field_Select({
 					label: "Weight / Style",
 					values: this.get_styles(),
-					default_value: me.styles[me.current_element],
+					default_value: me.get_styles_field_default_value(),
 					change: function () {
 						var value = this.get_value(),
 							element = me.current_element;
@@ -1573,24 +1574,35 @@ define([
 					}
 			});
 		},
+		get_styles_field_default_value: function() {
+			if (this.styles[this.current_element]) return this.styles[this.current_element];
+
+			if (this.typefaces[this.current_element]) return Font_Model.get_default_variant(this.typefaces[this.current_element]);
+
+			return 'regular';
+		},
 		get_styles: function() {
-			var font_family;
-			var typography = this.model.get_property_value_by_name('typography');
-			var styles = [];
+			var typography = this.model.get_property_value_by_name('typography'),
+				element = this.current_element,
+				styles = [],
+				font_family;
 
-			if (typography === false) return styles;
+			if (typography == false) typography = {};
 
-			var current_typography = typography[this.current_element]; // The undefined errors really need to stop
+			if (_.isUndefined(typography[element]) || _.isUndefined(typography[element].font_face)) typography[element] = { font_face: 'Arial' };
 
-			if (current_typography && current_typography.font_face) font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
-			if (_.isUndefined(font_family) && current_typography && current_typography.font_face) {
-				font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[this.current_element].font_face });
+			font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[element].font_face });
+			if (_.isUndefined(font_family)) {
+				font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[element].font_face });
 			}
 			if (!_.isUndefined(font_family)) {
+				styles = [];
 				_.each(font_family.get('variants'), function(variant) {
 					variant = Font_Model.normalize_variant(variant);
 					styles.push({ label: variant, value: variant });
 				});
+			} else {
+				styles = [{ label: 'Regular', value: 'regular' }];
 			}
 			return styles;
 		},
@@ -4941,6 +4953,14 @@ var Font_Model = Backbone.Model.extend({}, {
 		if ( weight == 'bold' ) return 700;
 		if ( weight == 'bolder' ) return 900; // either 800-900 depend to the available weight
 		return weight;
+	},
+	get_default_variant: function(family) {
+		var google_font = google_fonts_storage.get_fonts().findWhere({ 'family': family });
+		if (_.isUndefined(google_font)) return 'regular'; // default for system fonts
+
+		if (_.indexOf(google_font.get('variants'), 'regular') > -1) return 'regular';
+
+		return google_font.get('variants')[0]; // default to first variant
 	}
 });
 
