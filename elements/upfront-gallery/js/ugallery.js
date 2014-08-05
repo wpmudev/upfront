@@ -517,7 +517,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	extractImageLabels: function(imageId){
-		var ids = this.imageLabels[imageId].match(/-?\d+/g),
+		var ids = !_.isUndefined( this.imageLabels[imageId] ) ?  this.imageLabels[imageId].match(/-?\d+/g) : false ,
 			labels = []
 		;
 
