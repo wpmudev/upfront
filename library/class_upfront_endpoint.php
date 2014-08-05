@@ -894,11 +894,11 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$post_id = $data['postId'];
 
 		$extra = array('postId' => $post_id);
-		if($data['allTemplates'])
+		if(!empty($data['allTemplates']))
 			$extra['allTemplates'] = get_page_templates();
-		if($data['template'])
+		if(!empty($data['template']))
 			$extra['template'] = get_page_template_slug($post_id);
-		if($data['thumbnail']){
+		if(!empty($data['thumbnail'])){
 			$size = $data['thumbnail'] ? $data['thumbnail'] : 'post-thumbnail';
 				$extra['thumbnail'] = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), $size );
 		}
