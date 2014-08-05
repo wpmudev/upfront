@@ -41,7 +41,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 					labels: ' . json_encode($data['labels']) . ',
 					labels_length: ' . json_encode($data['labels_length']) . ',
 					image_labels: ' . json_encode($data['image_labels']) . ',
-					grid: ' . $data['labelFilters']['length'] . ',
+					grid: ' . ($data['labelFilters']['length'] ? $data['labelFilters']['length'] : 0) . ',
 					useLightbox: '. ($data['linkTo'] == 'image' ? '1' : '0') . '
 				};
 			</script>
