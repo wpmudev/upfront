@@ -65,6 +65,70 @@ class Upfront_UcommentView extends Upfront_Object {
             "prepend_form" => false
 		);
 	}
+
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['comments_element'])) return $strings;
+		$strings['comments_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Comment', 'upfront'),
+			'error_permissions' => __('You can not do this', 'upfront'),
+			'loading' => __('Loading', 'upfront'),
+			'loading_error' => __("Error loading comment", 'upfront'),
+			'discussion_settings' => __('Discussion Settings', 'upfront'),
+			'avatars' => __('Avatars', 'upfront'),
+			'ok' => __('OK', 'upfront'),
+			'please_wait' => __('Please, wait', 'upfront'),
+			'avatar_settings' => __('Avatar Settings', 'upfront'),
+			'show_avatars' => __('Show avatars', 'upfront'),
+			'max_rating' => __('Maximum rating', 'upfront'),
+			'rating' => array(
+				'g' => __('Suitable for all audiences', 'upfront'),
+				'pg' => __('Possibly offensive, usually for audiences 13 and above', 'upfront'),
+				'r' => __('Intended for adult audiences above 17', 'upfront'),
+				'x' => __('Even more mature than R', 'upfront'),
+			),
+			'default_avatar' => __('Default Avatar', 'upfront'),
+			'article' => array(
+				'label' => __('Default Article Settings', 'upfront'),
+				'pingback' => __('Attempt to notify any blogs linked to from the article', 'upfront'),
+				'ping_status' => __('Allow link notifications from other blogs (pingbacks and trackbacks)', 'upfront'),
+				'comment_status' => __('Allow people to post comments on new articles<br />(These settings may be overridden for individual articles.)', 'upfront'),
+				'attachments' => __('Allow attachments in comments', 'upfront'),
+				'email' => __('Show email subscription field', 'upfront'),
+			),
+			'other' => array(
+				'label' => __('Other Comment Settings', 'upfront'),
+				'require_name_email' => __('Comment author must fill out name and e-mail', 'upfront'),
+				'comment_registration' => __('Users must be registered and logged in to comment', 'upfront'),
+				'autoclose' => __('Automatically close comments on articles older than {{subfield}} days', 'upfront'),
+				'thread_comments' => __('Enable threaded (nested) comments {{subfield}} levels deep', 'upfront'),
+				'page_comments' => __('Paginate comments after {{depth}} top level comments and display {{page}} page by default', 'upfront'),
+				'last' => __('last', 'upfront'),
+				'first' => __('first', 'upfront'),
+				'order' => __('Comments should be displayed with the these comments at the top of each page', 'upfront'),
+				'older' => __('older', 'upfront'),
+				'newer' => __('newer', 'upfront'),
+				'email_me' => __('E-mail me whenever', 'upfront'),
+				'comments_notify' => __('Anyone posts a comment', 'upfront'),
+				'moderation_notify' => __('A comment is held for moderation', 'upfront'),
+				'before_comment_appears' => __('Before a comment appears', 'upfront'),
+				'comment_moderation' => __('An administrator must always approve the comment', 'upfront'),
+				'comment_whitelist' => __('Comment author must have a previously approved comment', 'upfront'),
+				'moderation_label' => __('Comment Moderation', 'upfront'),
+				'max_links' => __('Hold a comment in the queue if it contains {{field}} or more links. (A common characteristic of comment spam is a large number of hyperlinks.)', 'upfront'),
+				'moderation_keys' => __('When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be held in the moderation queue. One word or IP per line. It will match inside words, so “press” will match “WordPress”.', 'upfront'),
+				'blacklist_keys' => __('When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be marked as spam. One word or IP per line. It will match inside words, so “press” will match “WordPress”.', 'upfront'),
+			),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
 }
 
 class Upfront_UcommentAjax extends Upfront_Server {
@@ -211,7 +275,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function save_avatars_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error("You can not do this"));
+		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
 		$data = stripslashes_deep($_POST['data']);
 
 		if (isset($data['show_avatars'])) {
@@ -249,7 +313,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function get_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error("You can not do this"));
+		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
 		global $current_user;
 		$avatar_defaults = apply_filters('avatar_defaults', array(
 			'mystery' => __('Mystery Man'),

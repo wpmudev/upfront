@@ -2,6 +2,8 @@
 
 define(function() {
 
+var l10n = Upfront.Settings.l10n.comments_element;
+
 var UcommentModel = Upfront.Models.ObjectModel.extend({
 	/**
 	 * The init function is called after the contructor and Model intialize.
@@ -25,7 +27,7 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 
 	get_content_markup: function () {
 		var comment_data = $(document).data('upfront-comment-' + _upfront_post_data.post_id);
-		return comment_data ? comment_data : 'Loading';
+		return comment_data ? comment_data : l10n.loading;
 	},
 
 	on_render: function () {
@@ -45,8 +47,9 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 				me.render();
 			})
 			.error(function (ret) {
-				Upfront.Util.log("Error loading comment");
-		});
+				Upfront.Util.log(l10n.loading_error);
+			})
+		;
 	}
 });
 
@@ -172,8 +175,8 @@ var DiscussionSettings_Tabs_View = Backbone.View.extend({
 	render: function () {
 		this.$el
 			.empty()
-			.append('<li class="settings">Discussion Settings</li>')
-			.append('<li class="avatars">Avatars</li>')
+			.append('<li class="settings">' + l10n.discussion_settings + '</li>')
+			.append('<li class="avatars">' + l10n.avatars + '</li>')
 		;
 	},
 	switch_to: function (e) {
@@ -197,7 +200,7 @@ var DiscussionSettings_Actions_View = Backbone.View.extend({
 		"click a": "trigger_settings_save"
 	},
 	render: function () {
-		this.$el.empty().append('<a href="#">OK</a>');
+		this.$el.empty().append('<a href="#">' + l10n.ok + '</a>');
 	},
 	trigger_settings_save: function (e) {
 		e.preventDefault();
@@ -241,7 +244,7 @@ var DiscussionSettings_ActionView = Backbone.View.extend({
 		return data;
 	},
 	render: function () {
-		this.$el.empty().append("Please, wait");
+		this.$el.empty().append(l10n.please_wait);
 	}
 });
 
@@ -250,33 +253,33 @@ var DiscussionSettings_Avatars_View = DiscussionSettings_ActionView.extend({
 	populate_sections: function () {
 		this.sections = _([
 			{
-				label: "Avatar Settings",
+				label: l10n.avatar_settings,
 				fields: _([
 					new CheckboxField({
 						model: this.model,
 						property: 'show_avatars',
-						values: [{label: "Show avatars", value: '1'}]
+						values: [{label: l10n.show_avatars, value: '1'}]
 					}),
 				])
 			},
 			{
-				label: "Maximum rating",
+				label: l10n.max_rating,
 				fields: _([
 					new Upfront.Views.Editor.Field.Radios({
 						model: this.model,
 						property: 'avatar_rating',
 						layout: "vertical",
 						values: [
-							{label: "Suitable for all audiences", value: 'G', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
-							{label: "Possibly offensive, usually for audiences 13 and above", value: 'PG', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
-							{label: "Intended for adult audiences above 17", value: 'R', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
-							{label: "Even more mature than R", value: 'X', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
+							{label: l10n.rating.g, value: 'G', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
+							{label: l10n.rating.pg, value: 'PG', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
+							{label: l10n.rating.r, value: 'R', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
+							{label: l10n.rating.x, value: 'X', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
 						]
 					}),
 				])
 			},
 			{
-				label: "Default Avatar",
+				label: l10n.default_avatar,
 				fields: _([
 					new Upfront.Views.Editor.Field.Radios({
 						model: this.model,
@@ -304,20 +307,20 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 	populate_sections: function () {
 		this.sections = _([
 			{
-				label: "Default Article Settings",
+				label: l10n.article.label,
 				fields: _([
-					this.spawn_checkbox("Attempt to notify any blogs linked to from the article", 'default_pingback_flag'),
-					this.spawn_checkbox("Allow link notifications from other blogs (pingbacks and trackbacks)", 'default_ping_status', 'open'),
-					this.spawn_checkbox("Allow people to post comments on new articles<br />(These settings may be overridden for individual articles.)", 'default_comment_status', 'open'),
-					this.spawn_checkbox("Allow attachments in comments", 'allow_attachments'),
-					this.spawn_checkbox("Show email subscription field", 'show_email_subscription_field'),
+					this.spawn_checkbox(l10n.article.pingback, 'default_pingback_flag'),
+					this.spawn_checkbox(l10n.article.ping_status, 'default_ping_status', 'open'),
+					this.spawn_checkbox(l10n.article.comment_status, 'default_comment_status', 'open'),
+					this.spawn_checkbox(l10n.article.attachments, 'allow_attachments'),
+					this.spawn_checkbox(l10n.article.email, 'show_email_subscription_field'),
 				])
 			},
 			{
-				label: "Other Comment Settings",
+				label: l10n.other.label,
 				fields: _([
-					this.spawn_checkbox("Comment author must fill out name and e-mail", 'require_name_email'),
-					this.spawn_checkbox("Users must be registered and logged in to comment", 'comment_registration'),
+					this.spawn_checkbox(l10n.other.require_name_email, 'require_name_email'),
+					this.spawn_checkbox(l10n.other.comment_registration, 'comment_registration'),
 					new BooleanSubfieldField({
 						model: this.model,
 						property: '',
@@ -325,7 +328,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 							model: this.model,
 							property: "close_comments_for_old_posts",
 							values: [
-								{label: "Automatically close comments on articles older than {{subfield}} days", value: "1"}
+								{label: l10n.other.autoclose, value: "1"}
 							]
 						}),
 						subfield: new CounterField({
@@ -340,7 +343,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 							model: this.model,
 							property: "thread_comments",
 							values: [
-								{label: "Enable threaded (nested) comments {{subfield}} levels deep", value: "1"}
+								{label: l10n.other.thread_comments, value: "1"}
 							]
 						}),
 						subfield: new CounterField({
@@ -354,7 +357,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 							model: this.model,
 							property: "page_comments",
 							values: [
-								{label: "Paginate comments after {{depth}} top level comments and display {{page}} page by default", value: "1"}
+								{label: l10n.other.page_comments, value: "1"}
 							]
 						}),
 						depth: new CounterField({
@@ -365,54 +368,54 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 							model: this.model,
 							property: "default_comments_page",
 							values: [
-								{label: "last", value: 'newest'},
-								{label: "first", value: 'oldest'}
+								{label: l10n.other.last, value: 'newest'},
+								{label: l10n.other.first, value: 'oldest'}
 							]
 						}),
 					}),
 					new Upfront.Views.Editor.Field.Select({
 						model: this.model,
 						property: "comment_order",
-						label: "Comments should be displayed with the these comments at the top of each page",
+						label: l10n.other.order,
 						values: [
-							{label: "older", value: 'asc'},
-							{label: "newer", value: 'desc'}
+							{label: l10n.other.older, value: 'asc'},
+							{label: l10n.other.newer, value: 'desc'}
 						]
 					}),
 
 				])
 			},
 			{
-				label: "E-mail me whenever",
+				label: l10n.other.email_me,
 				fields: _([
-					this.spawn_checkbox("Anyone posts a comment", 'comments_notify'),
-					this.spawn_checkbox("A comment is held for moderation", 'moderation_notify')
+					this.spawn_checkbox(l10n.other.comments_notify, 'comments_notify'),
+					this.spawn_checkbox(l10n.other.moderation_notify, 'moderation_notify')
 				])
 			},
 			{
-				label: "Before a comment appears",
+				label: l10n.other.before_comment_appears,
 				fields: _([
-					this.spawn_checkbox("An administrator must always approve the comment", 'comment_moderation'),
-					this.spawn_checkbox("Comment author must have a previously approved comment", 'comment_whitelist'),
+					this.spawn_checkbox(l10n.other.comment_moderation, 'comment_moderation'),
+					this.spawn_checkbox(l10n.other.comment_whitelist, 'comment_whitelist'),
 				])
 			},
 			{
-				label: "Comment Moderation",
+				label: l10n.other.moderation_label,
 				fields: _([
 					new LabeledCounterField({
 						model: this.model,
 						property: "comment_max_links",
-						label: "Hold a comment in the queue if it contains {{field}} or more links. (A common characteristic of comment spam is a large number of hyperlinks.)"
+						label: l10n.other.max_links
 					}),
 					new Upfront.Views.Editor.Field.Textarea({
 						model: this.model,
 						property: 'moderation_keys',
-						label: "When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be held in the moderation queue. One word or IP per line. It will match inside words, so “press” will match “WordPress”."
+						label: l10n.other.moderation_keys
 					}),
 					new Upfront.Views.Editor.Field.Textarea({
 						model: this.model,
 						property: 'blacklist_keys',
-						label: "When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be marked as spam. One word or IP per line. It will match inside words, so “press” will match “WordPress”."
+						label: l10n.other.blacklist_keys
 					})
 				])
 			}
@@ -506,7 +509,7 @@ var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-comment');
-		this.$el.html('Comment');
+		this.$el.html(l10n.element_name);
 	},
 
 	add_element: function () {

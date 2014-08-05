@@ -39,6 +39,8 @@ function ucomment_initialize () {
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UcommentView', 'add_js_defaults'));
 
+	add_filter('upfront_l10n', array('Upfront_UcommentView', 'add_l10n_strings'));
+
 	add_action('wp_enqueue_scripts', array('Upfront_UcommentView', 'add_public_script'));
 }
 // Initialize the entity when Upfront is good and ready
