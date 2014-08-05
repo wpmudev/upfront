@@ -777,9 +777,14 @@ var LayoutEditor = {
 			{ 'name': 'typography' }
 		);
 
+		layout_style = _.findWhere(
+			Upfront.Application.current_subapplication.get_layout_data().properties,
+			{ 'name': 'layout_style' }
+		);
+
 		properties = _.extend({}, Upfront.Util.model_to_json(Upfront.Application.current_subapplication.get_layout_data().properties));
 		properties = _.reject(properties, function(property) {
-			return property.name === 'typography';
+			return property.name === 'typography' || property.name === 'layout_style';
 		});
 
 
@@ -789,7 +794,8 @@ var LayoutEditor = {
 			functionsphp: 'functions',
 			template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
 			layout_properties: JSON.stringify(properties),
-			theme: Upfront.themeExporter.currentTheme
+			theme: Upfront.themeExporter.currentTheme,
+			layout_style: layout_style.value
 		};
 
 		if (Upfront.themeExporter.layoutStyleDirty) {

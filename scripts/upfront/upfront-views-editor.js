@@ -5627,7 +5627,7 @@ var CSSEditor = Backbone.View.extend({
 
 		this.$el.show();
 	},
-	startAce: function(){
+	startAce: function() {
 		var me = this,
 			editor = ace.edit(this.$('.upfront-css-ace')[0]),
 			session = editor.getSession(),
@@ -5650,8 +5650,11 @@ var CSSEditor = Backbone.View.extend({
 			me.trigger('change', editor);
 		});
 
-		scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
-		styles = this.get_style_element().html().replace(scope, '');
+		styles = this.get_style_element().html();
+		if (this.is_global_stylesheet === false) {
+			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+			styles = styles.replace(scope, '');
+		}
 		editor.setValue($.trim(styles), -1);
 
 		// Set up the proper vscroller width to go along with new change.
