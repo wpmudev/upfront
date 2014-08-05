@@ -509,12 +509,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$theme_slug = $_POST['stylesheet'];
 		$theme_directory = trailingslashit(get_theme_root($theme_slug)) . $theme_slug;
 		$templates_directory = trailingslashit($theme_directory) . 'layouts/';
-		// Exclude header, footer and system notation
-		$layout_files = array_diff(scandir($templates_directory), array('.', '..', 'header.php', 'footer.php'));
+		// Exclude header and footer
+		$layout_files = array_diff(scandir($templates_directory), array('header.php', 'footer.php'));
 
 		$layouts = array();
 		// Classify theme layout files into layouts
 		foreach($layout_files as $layout) {
+			// We only want to use php files (excludes: ., .., .DS_STORE, etc)
+			if (strpos($layout, '.php') === false) continue;
+
 			$layout_id = str_replace('.php', '', $layout);
 			$properties = array(
 				'label' => $layout_id // provide default label
