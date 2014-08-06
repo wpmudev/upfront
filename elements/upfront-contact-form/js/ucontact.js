@@ -2,6 +2,8 @@
 
 define(['text!elements/upfront-contact-form/templates/ucontact.html'], function(tpl){
 
+var l10n = Upfront.Settings.l10n.contact_element;
+
 /**
  * Define the model for Upfront Contact form, initializing the properities
  * to their default values.
@@ -27,11 +29,11 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	tpl: Upfront.Util.template(tpl),
 
 	cssSelectors: {
-		'label': {label: 'Field labels', info: 'Text info for every field'},
-		'.ucontact-input': {label: 'Fields', info: 'Field inputs'},
-		'.textarea-field' : {label: 'Mesage Field', info: 'Mesasge field'},
-		'.ucontact-field-error': {label: 'Error fields', info: 'Fields with errors.'},
-		'.submit-field': {label: 'Submit button', info: 'Form\'s submit button'}
+		'label': {label: l10n.css.labels_label, info: l10n.css.labels_info},
+		'.ucontact-input': {label: l10n.css.fields_label, info: l10n.css.fields_info},
+		'.textarea-field' : {label: l10n.css.msg_label, info: l10n.css.msg_info},
+		'.ucontact-field-error': {label: l10n.css.err_label, info: l10n.css.err_info},
+		'.submit-field': {label: l10n.css.send_label, info: l10n.css.send_info}
 	},
 
 	initialize: function(options){
@@ -114,7 +116,7 @@ var UcontactElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 */
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-contact');
-		this.$el.html('Contact');
+		this.$el.html(l10n.element_name);
 	},
 
 	/**
@@ -199,7 +201,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 	get_general_panel: function(Panel, SettingsItem, Fields){
 		return new Panel({
-			label: 'General',
+			label: l10n.general.label,
 			model:  this.model,
 			settings: [
 				new SettingsItem({
@@ -209,12 +211,12 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 						new Fields.Email({
 							model: this.model,
 							property: 'form_email_to',
-							label: 'Send results to:'
+							label: l10n.general.send_to
 						}),
 						new Fields.Text({
 							model: this.model,
 							property: 'form_button_text',
-							label: 'Contact form submit button text:'
+							label: l10n.general.button_text
 						}),
 						new OptionalField({
 							model: this.model,
@@ -222,7 +224,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							relatedField: 'form_title',
 							values: [
 								{
-									label: 'Use form title',
+									label: l10n.general.use_title,
 									value: 'true'
 								}
 							]
@@ -230,12 +232,12 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 						new Fields.Text({
 							model: this.model,
 							property: 'form_title',
-							label: 'Contact form title:'
+							label: l10n.general.form_title
 						})
 					]
 				}),
 				new SettingsItem({
-					title: 'Form validation',
+					title: l10n.validation.label,
 					model: this.model,
 					fields: [
 						new Fields.Radios({
@@ -243,11 +245,11 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							property: 'form_validate_when',
 							values: [
 								{
-									label: 'Each field is filled out',
+									label: l10n.validation.on_field,
 									value: 'field'
 								},
 								{
-									label: 'Once send field button is clicked',
+									label: l10n.validation.on_submit,
 									value: 'submit'
 								}
 							]
@@ -260,8 +262,8 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 	get_fields_panel: function(Panel, SettingsItem, Fields){
 		return new Panel({
-			label: 'Form Fields',
-			title: 'Contact Form Fields',
+			label: l10n.fields.label,
+			title: l10n.fields.title,
 			model:  this.model,
 			settings: [
 				new SettingsItem({
@@ -271,17 +273,17 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 						new Fields.Text({
 							model: this.model,
 							property: 'form_name_label',
-							label: 'Name Field Text:'
+							label: l10n.fields.name
 						}),
 						new Fields.Text({
 							model: this.model,
 							property: 'form_email_label',
-							label: 'Email Field Text:'
+							label: l10n.fields.email
 						}),
 						new Fields.Text({
 							model: this.model,
 							property: 'form_message_label',
-							label: 'Message Field Text:'
+							label: l10n.fields.msg
 						}),
 						new OptionalField({
 							model: this.model,
@@ -289,7 +291,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							relatedField: 'form_subject_label',
 							values: [
 								{
-									label: 'Show subject field',
+									label: l10n.fields.show_subject,
 									value: 'true'
 								}
 							],
@@ -312,12 +314,12 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 						new Fields.Text({
 							model: this.model,
 							property: 'form_subject_label',
-							label: 'Subject Field text:'
+							label: l10n.fields.subject
 						}),
 						new Fields.Text({
 							model: this.model,
 							property: 'form_default_subject',
-							label: 'Default subject:'
+							label: l10n.fields.default_subject
 						})
 					]
 				})
@@ -327,7 +329,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 	get_appearance_panel: function(Panel, SettingsItem, Fields){
 		return new Panel({
-			label: 'Appearance',
+			label: l10n.apr.label,
 			model: this.model,
 			settings: [
 				new SettingsItem({
@@ -341,17 +343,17 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							property: 'form_label_position',
 							values: [
 								{
-									label: 'Above the field',
+									label: l10n.apr.above,
 									value: 'above',
 									icon: 'contact-above-field'
 								},
 								{
-									label: 'Over the field',
+									label: l10n.apr.over,
 									value: 'over',
 									icon: 'contact-over-field'
 								},
 								{
-									label: 'Inline with field',
+									label: l10n.apr.inline,
 									value: 'inline',
 									icon: 'contact-inline-field'
 								}
@@ -368,7 +370,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 * @return {String} Title
 	 */
 	get_title: function () {
-		return "Contact form settings";
+		return l10n.settings;
 	}
 });
 

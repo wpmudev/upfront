@@ -60,15 +60,15 @@ class Upfront_UcontactView extends Upfront_Object {
 	public static function default_properties(){
 		return array(
 			'form_add_title' => array(),
-			'form_title' => 'Contact form',
-			'form_name_label' => 'Your name:',
-			'form_email_label' => 'Your email:',
+			'form_title' => self::_get_l10n('contact_form'),
+			'form_name_label' => self::_get_l10n('name_label'),
+			'form_email_label' => self::_get_l10n('email_label'),
 			'form_email_to' => get_option('admin_email'),
 			'show_subject' => array(),
-			'form_subject_label' => 'Your subject:',
-			'form_default_subject' => 'Sent from the website',
-			'form_message_label' => 'Your message:',
-			'form_button_text' => 'Send',
+			'form_subject_label' => self::_get_l10n('subject_label'),
+			'form_default_subject' => self::_get_l10n('default_subject'),
+			'form_message_label' => self::_get_l10n('message_label'),
+			'form_button_text' => self::_get_l10n('button_text'),
 			'form_validate_when' => 'submit',
 			'form_label_position' => 'above',
 
@@ -90,7 +90,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		$settings  = self::get_settings_from_ajax();
 		$unknown_form_error = array(
 			'error' => true,
-			'message' => __('Unknown contact form.')
+			'message' => self::_get_l10n('unknown_form'),
 		);
 
 		if(!$settings)
@@ -113,7 +113,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		if(!$_POST['data'] || !$_POST['data']['properties'])
 			return array(
 				'error' => true,
-				'message' => 'The contact form data is not valid.'
+				'message' => self::_get_l10n('invalid_data')
 			);
 
 		$contact_form = array();
@@ -124,17 +124,17 @@ class Upfront_UcontactView extends Upfront_Object {
 		if(!$contact_form['element_id'])
 			return array(
 				'error' => true,
-				'message' => 'Unknown contact form.'
+				'message' => self::_get_l10n('unknown_form')
 			);
 
 		if(update_option($contact_form['element_id'], $_POST['data']))
 			return array(
 				'error' => false,
-				'message' => 'Contact form settings stored.'
+				'message' => self::_get_l10n('settings_stored')
 			);
 		return array(
 			'error' => true,
-			'message' => 'There was a problem storing the contact form settings.'
+			'message' => self::_get_l10n('store_error')
 		);
 	}
 
@@ -198,11 +198,11 @@ class Upfront_UcontactView extends Upfront_Object {
 				$this->msg_class = 'error';
 
 			else if(! wp_mail($emailto, $subject, $message, $headers)){
-				$this->msg = __('There was an error sending the email.');
+				$this->msg = self::_get_l10n('error_sending');
 				$this->msg_class = 'error';
 			}
 			else
-				$this->msg = __('The email has been sent successfully.');
+				$this->msg = self::_get_l10n('mail_sent');
 		}
 	}
 
@@ -219,14 +219,10 @@ class Upfront_UcontactView extends Upfront_Object {
 	 * @return String|Boolean          A message with the error or false if no errors.
 	 */
 	private function check_fields($name, $email, $subject, $message){
-		if(empty($name))
-			return __('You must write your name.');
-		if(!email)
-			return __('Your email address is not valid.');
-		if($this->_get_property('show_subject') && empty($subject))
-			return __('You must write a subject for the message.');
-		if(empty($message))
-			return __('You forgot to write the message.');
+		if (empty($name)) return self::_get_l10n('missing_name');
+		if (empty($email)) return self::_get_l10n('invalid_email');
+		if($this->_get_property('show_subject') && empty($subject)) return self::_get_l10n('missing_subject');
+		if(empty($message)) return self::_get_l10n('missing_message');
 		return false;
 	}
 
@@ -288,6 +284,80 @@ class Upfront_UcontactView extends Upfront_Object {
 		if($this->_get_property('form_label_position') == 'over')
 			return 'placeholder="' . $label . '"';
 		return '';
+	}
+
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['contact_element'])) return $strings;
+		$strings['contact_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Contact', 'upfront'),
+			'contact_form' => __('Contact form', 'upfront'),
+			'name_label' => __('Your name:', 'upfront'),
+			'email_label' => __('Your email:', 'upfront'),
+			'subject_label' => __('Your subject:', 'upfront'),
+			'default_subject' => __('Sent from the website', 'upfront'),
+			'message_label' => __('Your message:', 'upfront'),
+			'button_text' => __('Send', 'upfront'),
+			'unknown_form' => __('Unknown contact form.', 'upfront'),
+			'invalid_data' => __('The contact form data is not valid.', 'upfront'),
+			'settings_stored' => __('Contact form settings stored.', 'upfront'),
+			'store_error' => __('There was a problem storing the contact form settings.', 'upfront'),
+			'error_sending' => __('There was an error sending the email.', 'upfront'),
+			'mail_sent' => __('The email has been sent successfully.', 'upfront'),
+			'missing_name' => __('You must write your name.', 'upfront'),
+			'invalid_email' => __('Your email address is not valid.', 'upfront'),
+			'missing_subject' => __('You must write a subject for the message.', 'upfront'),
+			'missing_message' => __('You forgot to write the message.', 'upfront'),
+			'css' => array(
+				'labels_label' => __('Field labels', 'upfront'),
+				'labels_info' => __('Text info for every field', 'upfront'),
+				'fields_label' => __('Fields', 'upfront'),
+				'fields_info' => __('Field inputs', 'upfront'),
+				'msg_label' => __('Mesage Field', 'upfront'),
+				'msg_info' => __('Mesasge field', 'upfront'),
+				'err_label' => __('Error fields', 'upfront'),
+				'err_info' => __('Fields with errors.', 'upfront'),
+				'send_label' => __('Submit button', 'upfront'),
+				'send_info' => __('Form\'s submit button', 'upfront'),
+			),
+			'general' => array(
+				'label' => __('General', 'upfront'),
+				'send_to' => __('Send results to:', 'upfront'),
+				'button_text' => __('Contact form submit button text:', 'upfront'),
+				'use_title' => __('Use form title', 'upfront'),
+				'form_title' => __('Contact form title:', 'upfront'),
+			),
+			'validation' => array(
+				'label' => __('Form validation', 'upfront'),
+				'on_field' => __('Each field is filled out', 'upfront'),
+				'on_submit' => __('Once send field button is clicked', 'upfront'),
+			),
+			'fields' => array(
+				'label' => __('Form Fields', 'upfront'),
+				'title' => __('Contact Form Fields', 'upfront'),
+				'name' => __('Name Field Text:', 'upfront'),
+				'email' => __('Email Field Text:', 'upfront'),
+				'msg' => __('Message Field Text:', 'upfront'),
+				'show_subject' => __('Show subject field', 'upfront'),
+				'subject' => __('Subject Field text:', 'upfront'),
+				'default_subject' => __('Default subject:', 'upfront'),
+			),
+			'apr' => array(
+				'label' => __('Appearance', 'upfront'),
+				'above' => __('Above the field', 'upfront'),
+				'over' => __('Over the field', 'upfront'),
+				'inline' => __('Inline with field', 'upfront'),
+			),
+			'settings' => __('Contact form settings', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
 	}
 }
 

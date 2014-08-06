@@ -42,6 +42,8 @@ function ucontact_initialize () {
 	// Add the public stylesheet
 	add_action('wp_enqueue_scripts', array('Upfront_UcontactView', 'add_styles_scripts'));
 
+	add_filter('upfront_l10n', array('Upfront_UcontactView', 'add_l10n_strings'));
+
 	// Add the ajax handlers
 	Ucontact_Server::serve();
 }
