@@ -84,7 +84,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'when_clicked' => false, // false | external | entry | anchor | image | lightbox
 			'image_link' => '',
 			'include_image_caption' => false,
-			'image_caption' => 'My awesome image caption',
+			'image_caption' => self::_get_l10n('image_caption'),
 			'caption_position' => 'below_image',
 			'caption_alignment' => 'top',
 			'caption_trigger' => 'always_show',
@@ -125,6 +125,104 @@ class Upfront_UimageView extends Upfront_Object {
 		wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
 		wp_enqueue_script('wp-color-picker');
 	}
+
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['image_element'])) return $strings;
+		$strings['image_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Image', 'upfront'),
+			'no_images' => __("No images sent", 'upfront'),
+			'not_allowed' => __("Not allowed", 'upfront'),
+			'invalid_id' => __('Invalid image ID', 'upfront'),
+			'no_id' => __('No image ID supplied', 'upfront'),
+			'not_modifications' => __('Not modifications', 'upfront'), // wtf?
+			'edit_error' => __('There was an error editing the image', 'upfront'),
+			'save_error' => __('There was an error saving the edited image', 'upfront'),
+			'image_caption' => __('My awesome image caption', 'upfront'),
+			'css' => array(
+				'image_label' => __('Image element', 'upfront'),
+				'image_info' => __('The whole image element', 'upfront'),
+				'caption_label' => __('Caption panel', 'upfront'),
+				'caption_info' => __('Caption layer', 'upfront'),
+				'wrapper_label' => __('Image wrapper', 'upfront'),
+				'wrapper_info' => __('Image container', 'upfront'),
+			),
+			'ctrl' => array(
+				'caption_position' => __('Caption position', 'upfront'),
+				'over_top' => __('Over image, top', 'upfront'),
+				'over_bottom' => __('Over image, bottom', 'upfront'),
+				'cover_top' => __('Covers image, top', 'upfront'),
+				'cover_middle' => __('Covers image, middle', 'upfront'),
+				'cover_bottom' => __('Covers image, bottom', 'upfront'),
+				'below' => __('Below the image', 'upfront'),
+				'no_caption' => __('No caption', 'upfront'),
+				'edit_image' => __('Edit image', 'upfront'),
+				'image_link' => __('Image link', 'upfront'),
+				'add_image' => __('Add Image', 'upfront'),
+				'more_tools' => __('More tools', 'upfront'),
+				'edit_caption' => __('Edit Caption', 'upfront'),
+				'add_caption' => __('Add Caption', 'upfront'),
+			),
+			'drop_image' => __('Drop the image here', 'upfront'),
+			'external_nag' => __('Image editing it is only suitable for images uploaded to WordPress', 'upfront'),
+			'desktop_nag' => __('Image edition is only available in desktop mode.', 'upfront'),
+			'settings' => array(
+				'label' => __('Image settings', 'upfront'),
+				'alt' => __('Alternative Text', 'upfront'),
+				'caption' => __('Caption Settings:', 'upfront'),
+				'show_caption' => __('Show Caption:', 'upfront'),
+				'always' => __('Always', 'upfront'),
+				'hover' => __('On Hover', 'upfront'),
+				'caption_bg' => __('Caption Background', 'upfront'),
+				'none' => __('None', 'upfront'),
+				'pick' => __('Pick color', 'upfront'),
+				'ok' => __('Ok', 'upfront'),
+			),
+			'btn' => array(
+				'fit_label' => __('Fit to Element', 'upfront'),
+				'fit_info' => __('Adapt to the mask', 'upfront'),
+				'exp_label' => __('IMG 100%', 'upfront'),
+				'exp_info' => __('Expand image', 'upfront'),
+				'save_label' => __('Ok', 'upfront'),
+				'save_info' => __('Save image', 'upfront'),
+				'fit_element' => __('Fit to Element', 'upfront'),
+				'restore_label' => __('Restore image size', 'upfront'),
+				'restore_info' => __('Reset image size', 'upfront'),
+			),
+			'image_expanded' => __('The image is completely expanded', 'upfront'),
+			'cant_expand' => __('Can\'t expand the image', 'upfront'),
+			'saving' => __('Saving image...', 'upfront'),
+			'saving_done' => __('Here we are', 'upfront'),
+			'sel' => array(
+				'preparing' => __('Preparing image', 'upfront'),
+				'upload_error' => __('There was an error uploading the file. Please try again.', 'upfront'),
+			),
+			'template' => array(
+				'drop_files' => __('Drop files here to upload', 'upfront'),
+				'select_files' => __('Select Files', 'upfront'),
+				'max_file_size' => __('Maximum upload file size: 32MB', 'upfront'),
+				'or_browse' => __('or browse your', 'upfront'),
+				'media_gallery' => __('media gallery', 'upfront'),
+				'uploading' => __('Uploading...', 'upfront'),
+				'links_to' => __('Links to:', 'upfront'),
+				'no_link' => __('No link', 'upfront'),
+				'external_link' => __('External link', 'upfront'),
+				'post_link' => __('Link to a post or page', 'upfront'),
+				'larger_link' => __('Show larger image', 'upfront'),
+				'ok' => __('Ok', 'upfront'),
+				'move_image_nag' => __('To achieve full-width Image, please first move it so that there are no other elements in the way.', 'upfront'),
+				'dont_show_again' => __('Don\'t show this message again', 'upfront'),
+			),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
 }
 
 class Upfront_Uimage_Server extends Upfront_Server {
@@ -146,7 +244,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 
 		if(! $data['images'])
-			return $this->_out(new Upfront_JsonResponse_Error("No images sent"));
+			return $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('no_images')));
 
 		@ini_set( 'memory_limit', apply_filters( 'upfront_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 
@@ -159,7 +257,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 			//if(!current_user_can('edit_post', $imageData['id']) ){
 			if (!Upfront_Permissions::current(Upfront_Permissions::RESIZE, $imageData['id'])) {
-				$images[$imageData['id']] = array('error' => true, 'msg' => 'Not allowed');
+				$images[$imageData['id']] = array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_allowed'));
 				continue;
 				//wp_die( -1 );
 			}
@@ -196,12 +294,12 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
         $item_id = !empty($data['item_id']) ? $data['item_id'] : false;
         if (!$item_id)
-        	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
+        	$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
 
         $ids = json_decode($item_id);
 
         if(is_null($ids) || !is_array($ids))
-        	$this->_out(new Upfront_JsonResponse_Error("Invalid image ID 2"));
+        	$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
 
         $custom_size = isset($data['customSize']) && is_array($data['customSize']);
 
@@ -231,7 +329,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
     	}
 
         if(sizeof($images) == 0)
-        	$this->_out(new Upfront_JsonResponse_Error("No images ids given"));
+        	$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('no_id')));
 
         $result = array(
         	'given' => sizeof($ids),
@@ -248,21 +346,21 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
 		if(!$rotate && !$resize && !$crop)
-			return array('error' => true, 'msg' => 'Not modifications');
+			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_modifications'));
 		$image_path = isset($imageData['image_path']) ? $imageData['image_path'] : _load_image_to_edit_path( $imageData['id'] );
 		$img = wp_get_image_editor( $image_path );
 
 	    if ( is_wp_error( $img ) )
-			return array('error' => true, 'msg' => 'Image id not valid');
+			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('invalid_id'));
 
 
 		if($rotate && !$img->rotate(-$rotate))
-			return array('error' => true, 'msg' => 'There was an error editing the image');
+			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('edit_error'));
 
 		$full_size = $img->get_size();
 		//Cropping for resizing allows to make the image bigger
 		if($resize && !$img->crop(0, 0, $full_size['width'], $full_size['height'], $resize['width'], $resize['height'], false))
-			return array('error' => true, 'msg' => 'There was an error editing the image');
+			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('edit_error'));
 
 		//$cropped = array(round($crop['left']), round($crop['top']), round($crop['width']), round($crop['height']));
 
@@ -285,9 +383,10 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			$crop['width'] = $size['width'];
 
 
-		if($crop && !$img->crop($crop['left'], $crop['top'], $crop['width'], $crop['height']))
+		if($crop && !$img->crop($crop['left'], $crop['top'], $crop['width'], $crop['height'])) {
 		//if($crop && !$img->crop($cropped[0], $cropped[1], $cropped[2], $cropped[3]))
-			return $this->_out(new Upfront_JsonResponse_Error("There was an error editing the image."));
+			return $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('edit_error')));
+		}
 
 
 		// generate new filename
@@ -304,7 +403,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$saved = $img->save($imagepath);
 
 		if ( is_wp_error( $img ) || empty($imageData['id']) )
-			return array('error' => true, 'msg' => 'There was an error saving the edited image');
+			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('error_save'));
 
 		$urlOriginal = wp_get_attachment_image_src($imageData['id'], 'full');
 		$urlOriginal = $urlOriginal[0];

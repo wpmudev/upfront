@@ -8,6 +8,8 @@ define([
 
 var $editorTpl = $(editorTpl);
 
+var l10n = Upfront.Settings.l10n.image_element;
+
 // Variable used to speed resizing up;
 var resizingData = {};
 
@@ -29,9 +31,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	cropTimeAfterResize: 10000,
 
 	cssSelectors: {
-		'.upfront-image': {label: 'Image element', info: 'The whole image element'},
-		'.wp-caption': {label: 'Caption panel', info: 'Caption layer'},
-		'.upfront-image-container': {label: 'Image wrapper', info: 'Image container'}
+		'.upfront-image': {label: l10n.css.image_label, info: l10n.css.image_info},
+		'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
+		'.upfront-image-container': {label: l10n.css.wrapper_label, info: l10n.css.wrapper_info}
 	},
 
 	initialize: function(){
@@ -156,17 +158,17 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			multi = new TooltipControl()
 		;
 		multi.sub_items = {
-			topOver: this.createControl('topOver', 'Over image, top'),
-			bottomOver: this.createControl('bottomOver', 'Over image, bottom'),
-			topCover: this.createControl('topCover', 'Covers image, top'),
-			middleCover: this.createControl('middleCover', 'Covers image, middle'),
-			bottomCover: this.createControl('bottomCover', 'Covers image, bottom'),
-			below: this.createControl('below', 'Below the image'),
-			nocaption: this.createControl('nocaption', 'No caption')
+			topOver: this.createControl('topOver', l10n.ctrl.over_top),
+			bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
+			topCover: this.createControl('topCover', l10n.ctrl.cover_top),
+			middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
+			bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
+			below: this.createControl('below', l10n.ctrl.below),
+			nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
 		};
 
 		multi.icon = 'caption';
-		multi.tooltip = 'Caption position';
+		multi.tooltip = l10n.ctrl.caption_position;
 		multi.selected = this.getSelectedAlignment();
 
 		this.listenTo(multi, 'select', function(item){
@@ -207,7 +209,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		});
 
 		panel.items = _([
-			this.createControl('crop', 'Edit image', 'editRequest'),
+			this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
 			this.createLinkControl(),
 			multi
 		]);
@@ -263,7 +265,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		me.listenTo(control.view, 'link:ok', me.updateLink);
 
 		control.icon = 'link';
-		control.tooltip = 'Image link';
+		control.tooltip = l10n.ctrl.image_link;
 		control.id = 'link';
 
 		this.linkControl = control;
@@ -272,8 +274,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	updateLink: function(data, view){
-		console.log('update link');
-
 		if(!view)
 			view = this.linkControl.view;
 		this.property('when_clicked', data.type);
@@ -482,6 +482,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		props.gifLeft = 0;
 		props.gifTop = 0;
 
+		props.l10n = l10n.template;
+
 		var rendered = this.imageTpl(props);
 
 		if(this.property('quick_swap')){
@@ -491,7 +493,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 		else if(this.property('image_status') == 'starting'){
 			rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
-					'<span class="upfront-image-resizethiselement">Add Image</span><div class=""><a class="upfront-image-select" href="#" title="Add Image">+</a></div>'+
+					'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
 			'</div></div>';
 		}
 		else {
@@ -552,7 +554,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		me.$el.append(
 			$('<div>').addClass('uimage-resize-hint upfront-ui' + onTop).html(me.sizehintTpl({
 				width: elementSize.width,
-				height: elementSize.height
+				height: elementSize.height,
+				l10n: l10n.template
 			}))
 		);
 
@@ -667,7 +670,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	handleDragEnter: function(e){
 		var me = this;
 		if(!this.$('.uimage-drop-hint').length){
-			var dropOverlay = $('<div class="uimage-drop-hint"><div>Drop the image here</div></div>')
+			var dropOverlay = $('<div class="uimage-drop-hint"><div>' + l10n.drop_image + '</div></div>')
 				.on('drop', function(e){
 					e.preventDefault();
 					e.stopPropagation();
@@ -850,7 +853,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.setSizeClasses(resizer.width(), resizer.height());
 		this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 				width: data.elementSize.width,
-				height: data.elementSize.height
+				height: data.elementSize.height,
+				l10n: l10n.template
 			})
 		).css({
              // Todo Sam: remove the commented stuff, they used to make the resize hint jump up and down when resizing
@@ -1142,7 +1146,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(this.property('image_status') == 'ok' && this.property('image_id'))
 			return this.openEditor();
 
-		Upfront.Views.Editor.notify('Image editing it is only suitable for images uploaded to WordPress', 'error');
+		Upfront.Views.Editor.notify(l10n.external_nag, 'error');
 	},
 
 	getElementColumns: function(){
@@ -1165,7 +1169,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	openEditor: function(newImage, imageInfo){
 		if(Upfront.Application.responsiveMode != 'desktop')
-			return Upfront.Views.Editor.notify('Image edition is only available in desktop mode.', 'error');
+			return Upfront.Views.Editor.notify(l10n.desktop_nag, 'error');
 
 		var me = this,
 			options = {
@@ -1244,7 +1248,7 @@ var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	priority: 20,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-image');
-		this.$el.html('Image');
+		this.$el.html(l10n.element_name);
 	},
 	add_element: function () {
 		var object = new UimageModel(),
@@ -1278,7 +1282,7 @@ var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		});
 	},
 	get_title: function () {
-		return "Image settings";
+		return l10n.settings.label;
 	}
 });
 
@@ -1294,34 +1298,34 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.settings = _([
 			new SettingsItem({
 
-				title: 'Alternative Text',
+				title: l10n.settings.alt,
 				fields: [
 					new Fields.Text({
-            className: 'image-alternative-text upfront-field-wrap upfront-field-wrap-text',
-            hide_label: true,
+						className: 'image-alternative-text upfront-field-wrap upfront-field-wrap-text',
+						hide_label: true,
 						model: this.model,
 						property: 'alternative_text',
-						label: 'Alternative text'
+						label: l10n.settings.alt
 					})
 				]
 			}),
 
 			new SettingsItem({
-				title: 'Caption Settings:',
+				title: l10n.settings.caption,
 				fields: [
 					new Fields.Radios({
 						className: 'field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 						model: this.model,
 						property: 'caption_trigger',
-                        label: 'Show Caption:',
+                        label: l10n.settings.show_caption,
 						layout: "horizontal-inline",
 						values: [
 							{
-								label: 'Always',
+								label: l10n.settings.always,
 								value: 'always_show'
 							},
 							{
-								label: 'On Hover',
+								label: l10n.settings.hover,
 								value: 'hover_show'
 							}
 						]
@@ -1340,15 +1344,15 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		;
 
 		this.settings.push(new ColorPickerField({
-			title: 'Caption Background',
+			title: l10n.settings.caption_bg,
 			fields: [
 				new fields.Radios({
 					model: this.model,
 					property: 'captionBackground',
 					layout: "horizontal-inline",
 					values: [
-						{value: '0', label: 'None'},
-						{value: '1', label: 'Pick color'}
+						{value: '0', label: l10n.settings.none},
+						{value: '1', label: l10n.settings.pick}
 					]
 				}),
 			]
@@ -1376,7 +1380,7 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
                     maxSelectionSize: 9,
                     localStorageKey: "spectrum.recent_bgs",
                     preferredFormat: "hex",
-                    chooseText: "Ok",
+                    chooseText: l10n.settings.ok,
                     showInput: true,
                     allowEmpty:true,
                     show: function(){
@@ -1545,9 +1549,9 @@ var ImageEditor = Backbone.View.extend({
 		this.fullSize = {width: 0, height:0};
 		this.setImageInitialSize = false;
 		this.buttons = [
-			{id: 'image-edit-button-fit', text: 'Fit to Element', tooltip: 'Adapt to the mask'},
-			{id: 'image-edit-button-reset', text: 'IMG 100%', tooltip: 'Expand image'},
-			{id: 'image-edit-button-ok', text: 'Ok', tooltip: 'Save image'}
+			{id: 'image-edit-button-fit', text: l10n.btn.fit_label, tooltip: l10n.btn.fit_info},
+			{id: 'image-edit-button-reset', text: l10n.btn.exp_label, tooltip: l10n.btn.exp_info},
+			{id: 'image-edit-button-ok', text: l10n.btn.save_label, tooltip: l10n.btn.save_info}
 		];
 		this.sizes = false;
 		//this.promise = false;
@@ -1587,7 +1591,7 @@ var ImageEditor = Backbone.View.extend({
 		}
 
 		if(!this.options.editElement)
-			this.buttons = [{id: 'image-edit-button-ok', text: 'Ok', tooltip: 'Save image'}];
+			this.buttons = [{id: 'image-edit-button-ok', text: l10n.btn.save_label, tooltip: l10n.btn.save_info}];
 
 		var halfBorder = this.bordersWidth /2,
 			maskOffset = {
@@ -1704,9 +1708,9 @@ var ImageEditor = Backbone.View.extend({
 			button = this.$('#image-edit-button-reset')
 		;
 		if(this.elementSize.columns == fullColsRows.columns && this.elementSize.rows == fullColsRows.rows)
-			button.addClass('deactivated expanded').attr('data-tooltip', 'The image is completely expanded');
+			button.addClass('deactivated expanded').attr('data-tooltip', l10n.image_expanded);
 		else if(this.elementSize.columns == this.elementSize.maxColumns && this.elementSize.columns < fullColsRows.columns && this.elementSize.rows == fullColsRows.rows)
-			button.addClass('deactivated').attr('data-tooltip', 'Can\'t expand the image');
+			button.addClass('deactivated').attr('data-tooltip', l10n.cant_expand);
 	},
 
 	/**
@@ -1778,8 +1782,8 @@ var ImageEditor = Backbone.View.extend({
 		var results = this.getEditorResults(),
 			me = this,
 			loading = new Upfront.Views.Editor.Loading({
-				loading: "Saving image...",
-				done: "Here we are",
+				loading: l10n.saving,
+				done: l10n.saving_done,
 				fixed: false
 			}),
 			mask = this.$('#uimage-mask')
@@ -1957,7 +1961,7 @@ var ImageEditor = Backbone.View.extend({
 				start: function() {
 					me.$('#image-edit-button-reset')
 						.attr('class', 'image-edit-button')
-						.attr('data-tooltip', 'Expand image')
+						.attr('data-tooltip', l10n.bth.exp_info)
 					;
 					//Prevent editor closing after resizing. It is set to false by the initialize method.
 					me.isResizing = true;
@@ -2254,7 +2258,7 @@ var ImageEditor = Backbone.View.extend({
 
 		if(!this.fitImageButton){
 			var button = $('#image-edit-button-fit');
-			button.text('Fit to Element');
+			button.text(l10n.btn.fit_element);
 			this.fitImageButton = true;
 
 			return this.resetImage();
@@ -2287,12 +2291,12 @@ var ImageEditor = Backbone.View.extend({
 		$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
 		$('#image-edit-button-fit')
-			.attr('data-tooltip', 'Restore image size')
-			.text('Reset image size')
+			.attr('data-tooltip', l10n.btn.restore_label)
+			.text(l10n.btn.restore_info)
 		;
 		$('#image-edit-button-reset')
 			.attr('class', 'image-edit-button')
-			.attr('data-tooltip', 'Expand image')
+			.attr('data-tooltip', l10n.btn.exp_info)
 		;
 		this.fitImageButton = false;
 
@@ -2584,14 +2588,14 @@ var ImageSelector = Backbone.View.extend({
 	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
 	deferred: false,
-	defaultOptions: {multiple: false, preparingText: 'Preparing image'},
+	defaultOptions: {multiple: false, preparingText: l10n.sel.preparing},
 	options: {},
 
 	initialize: function(){
 		var me = this;
 		// Set the form up
 		if ($('#upfront-upload-image').length === 0) {
-			$('body').append(me.formTpl({url: Upfront.Settings.ajax_url}));
+			$('body').append(me.formTpl({url: Upfront.Settings.ajax_url, l10n: l10n.template}));
 
 			var progress = $('#upfront-progress'),
 				fileInput = $('#upfront-image-file-input'),
@@ -2616,13 +2620,13 @@ var ImageSelector = Backbone.View.extend({
 						var response = data.result;
 						console.log(data.result);
 						progress.css('width', '100%');
-						$('#upfront-image-uploading h2').html('Preparing Image');
+						$('#upfront-image-uploading h2').html(l10n.sel.preparing);
 						Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
 							.done(function(response){
 								me.deferred.resolve(response.data.images, response);
 							})
 							.error(function(){
-								Upfront.Views.Editor.notify("There was an error uploading the file. Please try again.", 'error');
+								Upfront.Views.Editor.notify(l10n.sel.upload_error, 'error');
 								me.openSelector();
 							});
 						form[0].reset();
@@ -2807,6 +2811,8 @@ var ImageSelector = Backbone.View.extend({
 			//,parent = this.parent_module_view.$('.upfront-editable_entity:first')
 		;
 
+		tplOptions.l10n = l10n.template;
+
 		/*
 		if(!this.elementSize.width)
 			this.setElementSize();
@@ -2961,7 +2967,7 @@ var DialogControl = Control.extend({
 
 		if(!this.panel){
 			//this is like initialize
-			var panel = $(this.panelTpl);
+			var panel = $(_.template(this.panelTpl, {l10n: l10n.template}));
 			if(this.isopen)
 				panel.show();
 			this.$el.append(panel);
@@ -3179,7 +3185,7 @@ var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
 			});
 
 			collapsedControl.icon = 'collapsedControl';
-			collapsedControl.tooltip = 'More tools';
+			collapsedControl.tooltip = l10n.ctrl.more_tools;
 			collapsedControl.position = 'left';
 
 			this.items = _([items[0], collapsedControl, items[items.length - 1]]);
@@ -3218,9 +3224,9 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
           new Upfront.Views.ContextMenuItem({
 			  get_label: function() {
 				  if(me.for_view.$el.find('div.upfront-image-container > img').length > 0)
-				  	return 'Edit Image';
+				  	return l10n.ctrl.edit_image;
 				  else
-				  	return 'Add Image';
+				  	return l10n.ctrl.add_image;
 			  },
 			  action: function() {
 				   if(me.for_view.$el.find('div.upfront-image-container > img').length > 0)
@@ -3236,9 +3242,9 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 			menuitemsarray.push( new Upfront.Views.ContextMenuItem({
 				  get_label: function() {
 					  if(me.for_view.$el.find('div.upfront-image-container div.wp-caption').length > 0)
-						return 'Edit Caption';
+						return l10n.ctrl.edit_caption;
 					  else
-					  	return 'Add Caption';
+					  	return l10n.ctrl.add_caption;
 				  },
 				  action: function() {
 					  if(me.for_view.$el.find('div.upfront-image-container > div.wp-caption').length > 0)
