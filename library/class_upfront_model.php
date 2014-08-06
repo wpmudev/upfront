@@ -463,7 +463,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		// If empty may need be initialzed from theme files.
 		if (empty($properties)) {
-			error_log('getting from builder cause empty');
 			$properties = apply_filters(
 				'upfront_get_layout_properties',
 				array(),
