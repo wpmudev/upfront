@@ -104,6 +104,7 @@ define("content", deps, function(postTpl, ContentTools) {
 					action: 'upfront_get_postlayout',
 					type: layoutType,
 					id: id,
+					layout_cascade: Upfront.Application.current_subapplication.get_layout_data().layout,
 					post_id: me.postId,
 					post_type: me.post.get('post_type')
 				}).done(function(response){
@@ -210,7 +211,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		editContents: function(e, focusElement){
 			//If we are already editing, don't do anything
-			if(this.contentEditor)// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor) 
+			if(this.contentEditor)// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
 				return;
 
 			//If we haven't fetched all the data, return too

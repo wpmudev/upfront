@@ -322,6 +322,15 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$base_filename = $layouts_path . DIRECTORY_SEPARATOR . $type . '-';
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
+
+		if (upfront_is_builder_running()) {
+			// Override brute force to ensure single-something page get their specific postlayout loaded
+			$layout_cascade = $_POST['layout_cascade'];
+			if (isset($layout_cascade)) {
+				$cascade = array($base_filename . $layout_cascade['item'] . '.php', $base_filename . $layout_cascade['type'] . '.php');
+			}
+		}
+
 		$found = false;
 		$i = 0;
 
@@ -373,10 +382,20 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$base_filename = $tpl_path . '/' . $type . '-';
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
+
+		if (upfront_is_builder_running()) {
+			// Override brute force to ensure single-something page get page specific post layout parts loaded
+			$layout_cascade = $_POST['layout_cascade'];
+			if (isset($layout_cascade)) {
+				$cascade = array($base_filename . $layout_cascade['item'] . '.php', $base_filename . $layout_cascade['type'] . '.php');
+			}
+		}
+
 		$found = false;
 		$i = 0;
 
 		while(!$found && $i < sizeof($cascade)){
+			error_log($cascade[$i]);
 			if(file_exists($cascade[$i]))
 				$found = require $cascade[$i];
 			$i++;

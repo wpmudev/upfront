@@ -148,6 +148,7 @@ define(function() {
 
       Upfront.Util.post({
         "action": "uposts_get_markup",
+				layout_cascade: Upfront.Application.current_subapplication.get_layout_data().layout,
         "data": JSON.stringify(data)
       }).success(function (response) {
         me.markup = response.data;
