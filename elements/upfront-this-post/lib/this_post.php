@@ -307,11 +307,19 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function get_theme_layout($type, $post_type, $id){
-		$layouts_path = get_stylesheet_directory() . '/postlayouts';
+		$layouts_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'postlayouts';
+		if (upfront_is_builder_running) $layouts_path = sprintf(
+			'%s%s%s%spostlayouts',
+			get_theme_root(),
+			DIRECTORY_SEPARATOR,
+			upfront_get_builder_stylesheet(),
+			DIRECTORY_SEPARATOR
+		);
+
 		if(!file_exists($layouts_path))
 			return false;
 
-		$base_filename = $layouts_path . '/' . $type . '-';
+		$base_filename = $layouts_path . DIRECTORY_SEPARATOR . $type . '-';
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
 		$found = false;
@@ -348,7 +356,17 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function get_theme_postpart_templates($type, $post_type, $id){
-		$tpl_path = get_stylesheet_directory() . '/templates/postparts';
+		$tpl_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'postparts';
+
+		if (upfront_is_builder_running) $tpl_path = sprintf(
+			'%s%s%s%stemplates%spostparts',
+			get_theme_root(),
+			DIRECTORY_SEPARATOR,
+			upfront_get_builder_stylesheet(),
+			DIRECTORY_SEPARATOR,
+			DIRECTORY_SEPARATOR
+		);
+
 		if(!file_exists($tpl_path))
 			return false;
 
