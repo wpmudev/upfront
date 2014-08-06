@@ -4,6 +4,9 @@ define([
 		'text!elements/upfront-gallery/tpl/ugallery.html', // Front
 		'text!elements/upfront-gallery/tpl/ugallery_editor.html'
 	], function(galleryTpl, editorTpl) {
+
+var l10n = Upfront.Settings.l10n.gallery_element;
+
 var UgalleryImage = Backbone.Model.extend({
 	defaults: Upfront.data.ugallery.imageDefaults
 });
@@ -40,12 +43,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	imageLabels: {},
 
 	cssSelectors: {
-		'.ugallery': {label: 'Gallery container', info: 'The whole gallery'},
-		'.ugallery_item': {label: 'Gallery elements', info: 'The container of every gallery element.'},
-		'img.ugallery-image': {label: 'Gallery images', info: 'Every image in the gallery.'},
-		'.ugallery-thumb-title': {label: 'Image captions', info: 'Every caption of the gallery. Captions may not be available if they are deactivated using the options.'},
-		'.ugallery_labels': {label: 'Labels container', info: 'The wrapper of the image labels.'},
-		'.ugallery_label_filter': {label: 'Labels', info: 'Labels for gallery items filtering.'}
+		'.ugallery': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.ugallery_item': {label: l10n.css.elements_label, info: l10n.css.elements_info},
+		'img.ugallery-image': {label: l10n.css.images_label, info: l10n.css.images_info},
+		'.ugallery-thumb-title': {label: l10n.css.captions_label, info: l10n.css.captions_info},
+		'.ugallery_labels': {label: l10n.css.lblcnt_label, info: l10n.css.lblcnt_info},
+		'.ugallery_label_filter': {label: l10n.css.labels_label, info: l10n.css.labels_info}
 
 	},
 
@@ -148,11 +151,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	createControls: function(image){
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
-		var linkControl = this.property('linkTo') == 'url' ? this.createLinkControl(image) : this.createControl('fullscreen', 'Show image', 'openLightbox');
+		var linkControl = this.property('linkTo') == 'url' ? this.createLinkControl(image) : this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox');
 		panel.items = _([
-			this.createControl('crop', 'Edit image', 'imageEditMask'),
+			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
 			linkControl,
-			this.createControl('remove', 'Remove image', 'removeImage')
+			this.createControl('remove', l10n.ctrl.rm_image, 'removeImage')
 		]);
 
 		return panel;
@@ -238,7 +241,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		});
 
 		control.icon = 'link';
-		control.tooltip = 'Image link';
+		control.tooltip = l10n.ctrl.image_link;
 		control.id = 'link';
 
 		return control;
@@ -297,7 +300,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				imageLoadComplete: function() {
 					var title = $(this.container).find('.mfp-title'),
 						wrapper = $(this.container).find('figure'),
-						labelsTpl = $.trim(me.labelsTpl({labels: me.extractImageLabels(image.id)}))
+						labelsTpl = $.trim(me.labelsTpl({labels: me.extractImageLabels(image.id), l10n: l10n.template}))
 					;
 					if(title.length){
 						title.ueditor({
@@ -315,7 +318,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						;
 					}
 
-					wrapper.append(me.magnificLabelTpl({labels: labelsTpl, imageId: image.id}));
+					wrapper.append(me.magnificLabelTpl({labels: labelsTpl, imageId: image.id, l10n: l10n.template}));
 
 					var panel = wrapper.find('.ugallery-magnific-panel'),
 						reveal = function(){
@@ -353,7 +356,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				},
 				beforeClose: function() {
 					if(titleUpdated)
-						Upfront.Views.Editor.notify("Image description has been successfully updated.");
+						Upfront.Views.Editor.notify(l10n.desc_update_success);
 				},
 				resize: resizeWithText,
 				afterChange: resizeWithText
@@ -376,6 +379,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		props.labels = this.labels;
 		props.labels_length = this.labels.length;
 		props.image_labels = this.imageLabels;
+
+		props.l10n = l10n.template;
 
 		rendered = this.tpl(props);
 
@@ -401,12 +406,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.images.each(function(image){
 			if(image.get('loading')){
 				me.$('.ugallery_item[rel="' + image.id  + '"]')
-					.find('.ugallery-image-wrapper').append('<p class="ugallery-image-loading">Loading...</p>');
+					.find('.ugallery-image-wrapper').append('<p class="ugallery-image-loading">' + l10n.loading + '</p>');
 			}
 		});
 
 		if(_.indexOf(['ok', 'starting'], me.property('status')) == -1) {
-			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>Click to personalize this gallery</p></div>');
+			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>' + l10n.personalize + '</p></div>');
 		}
 
 		//Calculate margins now if it is possible
@@ -454,7 +459,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					me.property('labelFilters').length &&
 					me.imageLabels[image.id].split(',').length < 2
 				){
-					item.find('.ugallery-image-wrapper').append('<div class="ugallery-nolabels-alert" title="This image has no labels"></div>');
+					item.find('.ugallery-image-wrapper').append('<div class="ugallery-nolabels-alert" title="' + l10n.no_labels + '"></div>');
 				}
 
 				if(image.controls)
@@ -512,7 +517,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	getLabelSelector: function(imageId){
-		var tpl = $($.trim(this.labelsTpl({labels: this.extractImageLabels(imageId)})));
+		var tpl = $($.trim(this.labelsTpl({labels: this.extractImageLabels(imageId), l10n: l10n.template})));
 		return tpl;
 	},
 
@@ -535,7 +540,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			selectorOptions = {
 				multiple: true,
-				preparingText: 'Preparing images',
+				preparingText: l10n.preparing,
 				customImageSize: {width: this.property('thumbWidth'), height: this.property('thumbHeight')},
 				element_id: this.model.get_property_value_by_name("element_id")
 			}
@@ -546,7 +551,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 			me.addImages(images, replaceId);
 			if(response.given != response.returned)
-				Upfront.Views.Editor.notify("Not all images could be added.", "warning");
+				Upfront.Views.Editor.notify(l10n.not_all_added, "warning");
 
 			Upfront.Views.Editor.ImageSelector.close();
 		});
@@ -599,7 +604,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	selectOnClick: function(){
 		var me = this,
-			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>When a gallery thumbnail is clicked</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">show larger image</a><a href="#" class="ugallery-linked_page" rel="url">go to linked page</a></div></div></div>')
+			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked + 
+				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger + 
+				'</a><a href="#" class="ugallery-linked_page" rel="url">' + l10n.go_to_linked + '</a></div></div></div>')
 		;
 
 		selector.on('click', 'a', function(e){
@@ -706,8 +713,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					action: 'upfront-media-image-create-size'
 				},
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Regenerating images...",
-					done: "Wow, those are cool!",
+					loading: l10n.regenerating,
+					done: l10n.regenerating_done,
 					fixed: false
 				})
 			;
@@ -800,7 +807,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		if(image.get('status') != 'ok'){
 			var selectorOptions = {
 				multiple: false,
-				preparingText: 'Preparing images',
+				preparingText: l10n.preparing,
 				element_id: this.model.get_property_value_by_name("element_id")
 			};
 			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
@@ -935,7 +942,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				}
 			});
 
-			return $('.labels_list').html(me.labelSelectorTpl({labels: labels}));
+			return $('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template}));
 		});
 		contents.on('keydown', 'input[name="ugallery-image-labels"]', function(e){
 
@@ -1146,7 +1153,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			this.labels.push(label);
 			this.imageLabels[imageId] = this.imageLabels[imageId] ? this.imageLabels[imageId] + ', "label_' + tempId + '"' : '"label_' + tempId + '"';
 
-			$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId)}));
+			$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId), l10n: l10n.template}));
 
 			Upfront.Util.post(data)
 				.success(function (response) {
@@ -1193,14 +1200,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	renderLabels: function(imageId){
-		$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId)}));
+		$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId), l10n: l10n.template}));
 	},
 
 	renderLightboxLabels: function(imageId) {
 		var lightboxLabels = $('.ugallery-magnific-wrapper');
 		if(lightboxLabels.length){
 			lightboxLabels.find('a').remove();
-			lightboxLabels.prepend($.trim(this.labelsTpl({labels: this.extractImageLabels(imageId)})));
+			lightboxLabels.prepend($.trim(this.labelsTpl({labels: this.extractImageLabels(imageId), l10n: l10n.template})));
 		}
 	},
 
@@ -1334,7 +1341,7 @@ var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	priority: 30,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-gallery');
-		this.$el.html('Gallery');
+		this.$el.html(l10n.element_name);
 	},
 	add_element: function () {
 		var object = new UgalleryModel(),
@@ -1370,7 +1377,7 @@ var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 		});
 	},
 	get_title: function () {
-		return "Gallery settings";
+		return l10n.settings;
 	},
 
 
@@ -1395,7 +1402,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						values: [
 							{
 								value: 'true',
-								label: 'Enable label sorting'
+								label: l10n.panel.sort
 							}
 						]
 					})
@@ -1409,26 +1416,26 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						property: 'captionWhen',
 						layout: "horizontal-inline",
-            label: 'Show Caption:',
+						label: l10n.panel.show_caption,
 						values: [
-							{value: 'never', label: 'never'},
-							{value: 'hover', label: 'on hover'},
-							{value: 'always', label: 'always'}
+							{value: 'never', label: l10n.panel.never},
+							{value: 'hover', label: l10n.panel.hover},
+							{value: 'always', label: l10n.panel.always}
 						]
 					}),
 					new fields.Radios({
 						model: this.model,
 						property: 'captionPosition',
 						layout: "horizontal-inline",
-            label: 'Caption Style',
+            			label: l10n.panel.caption_style,
 						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios ugallery-setting-caption-position',
 						values: [
-							{value: 'over', label: 'over img', icon: 'over'},
-							{value: 'below', label: 'under img',icon: 'below'}
+							{value: 'over', label: l10n.panel.over, icon: 'over'},
+							{value: 'below', label: l10n.panel.under, icon: 'below'}
 						]
 					}),
 					new fields.Color({
-						label: "Caption Background:",
+						label: l10n.panel.caption_bg,
             			label_style: 'inline',
 						spectrum: {
 							showAlpha: true,
@@ -1437,7 +1444,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 							maxSelectionSize: 9,
 							localStorageKey: "spectrum.recent_bgs",
 							preferredFormat: "hex",
-							chooseText: "Ok",
+							chooseText: l10n.panel.ok,
 							showInput: true,
 						    allowEmpty:true,
 						    show: function(){
@@ -1466,7 +1473,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.on('rendered', function(){
 			var help = $('<span class="upfront-field-info" data-tooltip=""></span>'),
-				tooltip = $('<span class="ugallery-field-tooltip tooltip-content">Adds sortable interface based on the labels given to the images.</span>')
+				tooltip = $('<span class="ugallery-field-tooltip tooltip-content">' + l10n.panel.adds_sortable + '</span>')
 			;
 			this.$('.ugallery-setting-labels').find('.upfront-field-multiple')
 				.append(help)
@@ -1613,11 +1620,11 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 			new fields.Radios({
 				model: this.model,
 				property: 'thumbProportions',
-				label: 'Thumbnail Ratio',
+				label: l10n.thumb.ratio,
 				layout: 'vertical',
 				values: [
 					{
-						label: 'Theme',
+						label: l10n.thumb.theme,
 						value: 'theme',
 						icon: 'gallery-crop-theme'
 					},
@@ -1645,7 +1652,7 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 				min: 100,
 				max: 250,
 				step: 5,
-				label: 'Thumbnail Size',
+				label: l10n.thumb.size,
 				// info: 'Slide to resize the thumbnails.',
 				valueTextFilter: function(value){
 					return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
@@ -1658,7 +1665,7 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 		]);
 	},
 	get_title: function(){
-		return "Thumbnails Settings";
+		return l10n.thumb.settings;
 	}
 });
 

@@ -24,7 +24,7 @@
 		</div><?php } ?>
 	<?php if($editing) { ?>
 		<div class="ugallery_addmore_wrapper upfront-ui" style="width: <?php echo $thumbWidth ?>px; min-height: <?php echo $thumbHeight ?>px">
-			<div class="ugallery_addmore"  title="Add new images to the Gallery">Add more</div></div>
+			<div class="ugallery_addmore"  title="<?php echo $l10n['add_new'] ?>"><?php echo $l10n['add_more'] ?></div></div>
 		<style>
 			.ugallery_addmore_wrapper {
 				height: 0px;
@@ -42,12 +42,12 @@
 	</div>
 <?php } else { ?>
 	<?php if(! $editing) { ?>
-		No images in this gallery
+		{{ l10n.no_images }}
 	<?php } else { ?>
 		<div class="ugallery-starting-wrapper upfront-ui">
 				<div class="uimage-centered">
-					<span class="upfront-image-resizethiselement">Add Images</span>
-					<div class=""><a class="upfront-image-select button" href="#" title="Add Images to the Gallery">+</a></div>
+					<span class="upfront-image-resizethiselement"><?php echo $l10n['add_img'] ?></span>
+					<div class=""><a class="upfront-image-select button" href="#" title="<?php echo $l10n['add_images'] ?>">+</a></div>
 				</div>
 		</div>
 	<?php } ?>

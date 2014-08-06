@@ -7,13 +7,13 @@
 <script type="text/template" id="selector-tpl">
 	<div id="upront-image-placeholder" class="upfront-image-section">
 		<div class="upfront-image-selector-container">
-			<h2>Drop images here</h2>
+			<h2>{{ l10n.drop_images }}</h2>
 			or<br>
-			<a class="button select-files" href="#">Select images</a>
-			<div id="upfront-image-maxsize">Maximum upload file size: 32MB</div>
-			or browse your
+			<a class="button select-files" href="#">{{ l10n.select_images }}</a>
+			<div id="upfront-image-maxsize">{{ l10n.max_upload_size }}</div>
+			{{ l10n.or_browse }}
 			<div class="upfront-image-media-container">
-			<i class="icon-picture"></i> <a class="open-media-gallery" href="#">media gallery</a>
+			<i class="icon-picture"></i> <a class="open-media-gallery" href="#">{{ l10n.media_gallery }}</a>
 			</div>
 			<span class="dragimagehand"></span>
 		</div>
@@ -23,7 +23,7 @@
 
 <script type="text/template" id="progress-tpl">
 	<div id="upfront-image-uploading" class="upfront-image-section">
-		<h2>Uploading...</h2>
+		<h2>{{ l10n.uploading }}</h2>
 		<div class="upfront-progress-container">
 			<div id="upfront-progress"></div>
 		</div>
@@ -42,8 +42,8 @@
 		</div>
 		<div class="image-edit-save-container">
 			<div class="no-shadow">
-				<a class="image-edit-save" href="#"><i class="icon-ok"></i> I like that</a>
-				<a class="image-edit-change" href="#"><i class="icon-upload-alt "></i> upload a different image</a>
+				<a class="image-edit-save" href="#"><i class="icon-ok"></i> {{ l10n.like }}</a>
+				<a class="image-edit-change" href="#"><i class="icon-upload-alt "></i> {{ l10n.upload_different }}</a>
 			</div>
 		</div>
 	</div>
@@ -54,37 +54,37 @@
 <form id="upfront-upload-image" name="upfront-upload-image" enctype="multipart/form-data" method="post" action="{{url}}">
 	<input type="file" name="media[]" id="upfront-image-file-input" multiple="multiple">
 	<input type="hidden" name="action" value="upfront-media-upload">
-	<input type="submit" value="Upload">
+	<input type="submit" value="{{ l10n.upload }}">
 </form>
 </script>
 
 <script type="text/template" id="details-tpl">
 <div class="upfront-settings-panel">
 	<input type="hidden" id="ugallery-image-id" value="{{id}}">
-	<h3>Edit image details</h3>
+	<h3>{{ l10n.edit_details }}</h3>
 	<div class="upfront-field-wrap">
-		<label for="ugallery-image-title">Title</label>
+		<label for="ugallery-image-title">{{ l10n.title }}</label>
 		<input type="text" name="ugallery-image-title" value="{{title}}" class="upfront-field-text">
 	</div>
 	<div class="upfront-field-wrap">
-		<label for="ugallery-image-title">Caption</label>
+		<label for="ugallery-image-title">{{ l10n.caption }}</label>
 		<input type="text" name="ugallery-image-caption" value="{{caption}}" class="upfront-field-text">
 	</div>
 	<div class="upfront-field-wrap">
-		<label for="ugallery-image-title">Alternative text</label>
+		<label for="ugallery-image-title">{{ l10n.alt }}</label>
 		<input type="text" name="ugallery-image-alt" value="{{alt}}" class="upfront-field-text">
 	</div>
 	<div class="upfront-settings-button_panel">
-		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> Ok</button>
+		<button type="button" class="upfront-save_settings"><i class="icon-ok"></i> {{ l10n.ok }}</button>
 	</div>
 
 	<div class="upfront-field-wrap upfront-additive_multiselection upfront-media-controls ">
-		<label for="ugallery-image-labels">Labels</label>
+		<label for="ugallery-image-labels">{{ l10n.labels }}</label>
 		<div class="existing_labels">
-		<a href="#remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="2">Una etiqueta</a>
+		<a href="#remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="2">{{ l10n.wtf }}</a>
 		</div>
 		<div class="label_selector">
-			<input type="text" name="ugallery-image-labels" placeholder="Add a new label" class="upfront-field-text">
+			<input type="text" name="ugallery-image-labels" placeholder="{{ l10n.add_new_label }}" class="upfront-field-text">
 			<div class="labels_list">
 			</div>
 		</div>
@@ -110,17 +110,17 @@
 <script type="text/template" id="magnific-labels-tpl">
 	<div class="ugallery-magnific-labels upfront-ui">
 		<div class="ugallery-magnific-panel closed upfront-media-controls">
-			<div class="ugallery-magnific-info">Turn on 'Label Sorting' in the settings to display gallery labels.</div>
+			<div class="ugallery-magnific-info">{{ l10n.label_sorting_nag }}</div>
 			<div class="ugallery-magnific-wrapper existing_labels">
 				{{labels}}
 				<div class="ugallery-magnific-add">
 
 					<div class="ugallery-magnific-addform label_selector">
 						<input type="hidden" id="ugallery-image-id" value="{{imageId}}">
-						<input type="text" id="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="Add label">
+						<input type="text" id="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="{{ l10n.add_label }}">
 						<div class="labels_list"></div>
 					</div>
-					<div class="ugallery-magnific-addbutton">Add label</div>
+					<div class="ugallery-magnific-addbutton">{{ l10n.add_label }}</div>
 				</div>
 			</div>
 		</div>

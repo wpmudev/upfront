@@ -29,6 +29,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['labels_length'] = sizeof($data['labels']);
 		$data['image_labels'] = $this->image_labels;
 
+		$data['l10n'] = self::_get_l10n('template');
+
 		$lbTpl = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/lightbox.html');
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
 
@@ -85,7 +87,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		foreach($images as $image){
 			$image_labels = '"label_0"';
 			$terms = get_the_terms($image['id'], 'media_label');
-      // Add tags from uploaded images
+			// Add tags from uploaded images
 			if(is_array($terms)){
 				foreach($terms as $label){
 					$image_labels .= ', "label_' . $label->term_id . '"';
@@ -95,17 +97,17 @@ class Upfront_UgalleryView extends Upfront_Object {
 					}
 				}
 			}
-      // Add tags from layouts
-      $image_tags = $image['tags'];
-      if (!empty($image_tags)) {
-        foreach($image['tags'] as $tag) {
+			// Add tags from layouts
+			$image_tags = $image['tags'];
+			if (!empty($image_tags)) {
+				foreach($image['tags'] as $tag) {
 					$image_labels .= ', "label_' . $tag . '"';
-          if (!in_array($tag, $label_keys)) {
-            $label_keys[] = $tag;
-            $all_labels[] = array('id' => $tag, 'text' => $tag);
-          }
-        }
-      }
+					if (!in_array($tag, $label_keys)) {
+						$label_keys[] = $tag;
+						$all_labels[] = array('id' => $tag, 'text' => $tag);
+					}
+				}
+			}
 			$this->image_labels[$image['id']] = $image_labels;
 		}
 		usort($all_labels, array($this, 'sort_labels'));
@@ -121,6 +123,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 	}
 
 	private function get_template_content($data){
+		$data['l10n'] = self::_get_l10n('template');
 		extract($data);
 		ob_start();
 		include dirname(dirname(__FILE__)) . '/tpl/ugallery.html';
@@ -185,8 +188,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 	}
 
 	//Defaults for properties
-    public static function default_properties(){
-        return array(
+	public static function default_properties(){
+		return array(
 			'type' => 'UgalleryModel',
 			'view_class' => 'UgalleryView',
 			'has_settings' => 1,
@@ -206,8 +209,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'captionWhen' => 'always', // 'always' | 'hover'
 			'linkTo' => 'image' // 'url' | 'image'
-        );
-    }
+		);
+	}
 
 	public static function add_styles_scripts () {
 		wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
@@ -232,5 +235,98 @@ class Upfront_UgalleryView extends Upfront_Object {
 		//Front script
 		wp_enqueue_script('ugallery', upfront_element_url('js/ugallery-front.js', dirname(__FILE__)), array('magnific', 'jquery-shuffle'));
 
+	}
+
+		public static function add_l10n_strings ($strings) {
+		if (!empty($strings['gallery_element'])) return $strings;
+		$strings['gallery_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Gallery', 'upfront'),
+			'css' => array(
+				'container_label' => __('Gallery container', 'upfront'),
+				'container_info' => __('The whole gallery', 'upfront'),
+				'elements_label' => __('Gallery elements', 'upfront'),
+				'elements_info' => __('The container of every gallery element.', 'upfront'),
+				'images_label' => __('Gallery images', 'upfront'),
+				'images_info' => __('Every image in the gallery.', 'upfront'),
+				'captions_label' => __('Image captions', 'upfront'),
+				'captions_info' => __('Every caption of the gallery. Captions may not be available if they are deactivated using the options.', 'upfront'),
+				'lblcnt_label' => __('Labels container', 'upfront'),
+				'lblcnt_info' => __('The wrapper of the image labels.', 'upfront'),
+				'labels_label' => __('Labels', 'upfront'),
+				'labels_info' => __('Labels for gallery items filtering.', 'upfront'),
+			),
+			'ctrl' => array(
+				'show_image' => __('Show image', 'upfront'),
+				'edit_image' => __('Edit image', 'upfront'),
+				'rm_image' => __('Remove image', 'upfront'),
+				'image_link' => __('Image link', 'upfront'),
+			),
+			'desc_update_success' => __('Image description has been successfully updated.', 'upfront'),
+			'loading' => __('Loading...', 'upfront'),
+			'personalize' => __('Click to personalize this gallery', 'upfront'),
+			'no_labels' => __('This image has no labels', 'upfront'),
+			'preparing' => __('Preparing images', 'upfront'),
+			'not_all_added' => __('Not all images could be added.', 'upfront'),
+			'thumbnail_clicked' => __('When a gallery thumbnail is clicked', 'upfront'),
+			'show_larger' => __('show larger image', 'upfront'),
+			'go_to_linked' => __('go to linked page', 'upfront'),
+			'regenerating' => __('Regenerating images...', 'upfront'),
+			'regenerating_done' => __('Wow, those are cool!', 'upfront'),
+			'settings' => __('Gallery settings', 'upfront'),
+			'panel' => array(
+				'sort' => __('Enable label sorting', 'upfront'),
+				'show_caption' => __('Show Caption:', 'upfront'),
+				'never' => __('never', 'upfront'),
+				'hover' => __('on hover', 'upfront'),
+				'always' => __('always', 'upfront'),
+				'caption_style' => __('Caption Style', 'upfront'),
+				'over' => __('over img', 'upfront'),
+				'under' => __('under img', 'upfront'),
+				'caption_bg' => __('Caption Background:', 'upfront'),
+				'ok' => __('Ok', 'upfront'),
+				'adds_sortable' => __('Adds sortable interface based on the labels given to the images.', 'upfront'),
+			),
+			'thumb' => array(
+				'ratio' => __('Thumbnail Ratio', 'upfront'),
+				'theme' => __('Theme', 'upfront'),
+				'size' => __('Thumbnail Size', 'upfront'),
+				'settings' => __('Thumbnails Settings', 'upfront'),
+			),
+			'template' => array(
+				'add_more' => __('Add more', 'upfront'),
+				'add_new' => __('Add new images to the Gallery', 'upfront'),
+				'no_images' => __('No images in this gallery', 'upfront'),
+				'add_img' => __('Add Images', 'upfront'),
+				'add_images' => __('Add Images to the Gallery', 'upfront'),
+				'drop_images' => __('Drop images here', 'upfront'),
+				'select_images' => __('Select images', 'upfront'),
+				'max_upload_size' => __('Maximum upload file size: 32MB', 'upfront'),
+				'or_browse' => __('or browse your', 'upfront'),
+				'media_gallery' => __('media gallery', 'upfront'),
+				'uploading' => __('Uploading...', 'upfront'),
+				'like' => __('I like that', 'upfront'),
+				'upload_different' => __('upload a different image', 'upfront'),
+				'upload' => __('Upload', 'upfront'),
+				'edit_details' => __('Edit image details', 'upfront'),
+				'title' => __('Title', 'upfront'),
+				'caption' => __('Caption', 'upfront'),
+				'alt' => __('Alternative text', 'upfront'),
+				'ok' => __('Ok', 'upfront'),
+				'labels' => __('Labels', 'upfront'),
+				'wtf' => __('Una etiqueta', 'upfront'),
+				'add_new_label' => __('Add a new label', 'upfront'),
+				'label_sorting_nag' => __('Turn on \'Label Sorting\' in the settings to display gallery labels.', 'upfront'),
+				'add_label' => __('Add label', 'upfront'),
+			),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
 	}
 }

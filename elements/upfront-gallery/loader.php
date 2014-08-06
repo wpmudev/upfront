@@ -41,6 +41,8 @@ function ugallery_initialize () {
 	$ugallery = new Upfront_UgalleryView(array());
 	add_action('upfront_data', array($ugallery, 'add_js_defaults'));
 
+	add_filter('upfront_l10n', array('Upfront_UgalleryView', 'add_l10n_strings'));
+
 	// Add the public stylesheet
 	add_action('wp_enqueue_scripts', array('Upfront_' . ucwords($domain) . 'View', 'add_styles_scripts'));
 }
