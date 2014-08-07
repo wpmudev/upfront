@@ -1624,6 +1624,10 @@ define([
 					font_family,
 					style_base;
 
+				style_base = Font_Model.parse_variant(me.styles[element]);
+				weight = style_base.weight;
+				style = style_base.style;
+
 				if (typeface === '') {
 					font_family = system_fonts_storage.get_fonts().models[0];// default to first system font
 				}
@@ -1637,15 +1641,12 @@ define([
 					if (!font_family) return true; // Missing typeface family, pretend we're normal
 					// If so, let's do this - load up the font
 					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
+					if (400 != weight) url += ':' + weight; // If not default weight, DO include the info
 					$("head").append('<link href="' + url + '" rel="stylesheet" type="text/css" />');
 					// All set, let the defaults carry on as normal...
 				}
 
 				font_rule_value = '"' + font_family.get('family') + '",' + font_family.get('category');
-
-				style_base = Font_Model.parse_variant(me.styles[element]);
-				weight = style_base.weight;
-				style = style_base.style;
 
 				if ('inherit' !== font_rule_value) rules.push('font-family: ' + font_rule_value); /* don't include "inherit", as that's the default */
 				rules.push('font-weight: ' + weight);
