@@ -1,6 +1,7 @@
 (function ($) {
-
 define(['text!upfront/templates/objects/plain_text/plain_text.html'], function(template) {
+
+var l10n = Upfront.Settings.l10n.text_element;
 
 var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
@@ -17,8 +18,8 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-plain_txt',
 	cssSelectors: {
-		'.upfront-plain_txt': {label: 'Text container', info: 'The layer that contains all the text of the element.'},
-		'.upfront-plain_txt p': {label: 'Text paragragh', info: 'The paragragh that contains all the text of the element.'},
+		'.upfront-plain_txt': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.upfront-plain_txt p': {label: l10n.css.p_label, info: l10n.css.p_info},
 	},
 	initialize: function() {
 		this.constructor.__super__.initialize.apply(this, arguments);
@@ -45,7 +46,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		};
 		var rendered = '';
 		rendered = _.template(template, data);
-		return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
+		return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
 
 	},
 	is_edited: function () {
@@ -94,7 +95,7 @@ var PlainTxtElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	priority: 10,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-text');
-		this.$el.html('Text');
+		this.$el.html(l10n.element_name);
 	},
 	add_element: function () {
 		var object = new PlainTxtModel({
@@ -131,24 +132,24 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			this.settings.invoke('render');
 		};
 
-        _.bindAll(this, 'onBgColor', 'onBorderColor');
-       
+		_.bindAll(this, 'onBgColor', 'onBorderColor');
+	   
 		this.settings = _([
 			new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
-				title: "Textbox Appearance",
+				title: l10n.appearance,
 				fields: [
 					new Upfront.Views.Editor.Field.Radios({
 						className: 'inline-radios  plaintext-settings',
 						model: this.model,
 						property: 'border_style',
-						label: "Border",
+						label: l10n.border,
 						default_value: "none",
 						values: [
-							{ label: "None", value: 'none' },
-							{ label: "Solid", value: 'solid' },
-							{ label: "Dashed", value: 'dashed' },
-							{ label: "Dotted", value: 'dotted' }
+							{ label: l10n.none, value: 'none' },
+							{ label: l10n.solid, value: 'solid' },
+							{ label: l10n.dashed, value: 'dashed' },
+							{ label: l10n.dotted, value: 'dotted' }
 						]
 					}),
 					new Upfront.Views.Editor.Field.Number({
@@ -156,7 +157,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						min: 1,
 						property: 'border_width',
-						label: "Width",
+						label: l10n.width,
 						default_value: 1,
 						values: [
 							{ label: "", value: '1' }
@@ -167,7 +168,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						blank_alpha : 0,
 						model: this.model,
 						property: 'border_color',
-						label: 'Color',
+						label: l10n.color,
 						spectrum: {
 							preferredFormat: "hex",
 							change: this.onBorderColor,
@@ -180,7 +181,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						property: 'bg_color',
 						label_style: 'inline',
-						label: 'Background Color',
+						label: l10n.bg_color,
 						spectrum: {
 							preferredFormat: "hex",
 							change: this.onBgColor,
@@ -191,34 +192,34 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			})
 		]);
 
-        this.$el.on('change', 'input[name=border_style]', function(e){
-          me.onBorderStyle(e);
-        });
-        this.$el.on('change', 'input[name=border_width]', function(e){
-          me.onBorderWidth(e);
-        });
+		this.$el.on('change', 'input[name=border_style]', function(e){
+		  me.onBorderStyle(e);
+		});
+		this.$el.on('change', 'input[name=border_width]', function(e){
+		  me.onBorderWidth(e);
+		});
 	},
 	onBgColor: function(color) {
-        this.property('bg_color', color.toRgbString(), false);
+		this.property('bg_color', color.toRgbString(), false);
 		this.processBg();
 	},
 	onBorderWidth: function(event) {
-        this.property('border_width', $(event.currentTarget).val(), false);
+		this.property('border_width', $(event.currentTarget).val(), false);
 		this.processBorder();
 	},
 	onBorderColor: function(color) {
-        this.property('border_color',  color.toRgbString(), false);
+		this.property('border_color',  color.toRgbString(), false);
 		this.processBorder();
 	},
 	onBorderStyle: function(event) {
-        this.property('border_style', $(event.currentTarget).val(), false);
+		this.property('border_style', $(event.currentTarget).val(), false);
 		this.processBorder();
 	},
 	processBg: function() {
-    if(this.property('bg_color') == 'rgba(0, 0, 0, 0)')
-      this.property('background_color', '', false);
-    else
-      this.property('background_color', this.property('bg_color'), false);
+	if(this.property('bg_color') == 'rgba(0, 0, 0, 0)')
+	  this.property('background_color', '', false);
+	else
+	  this.property('background_color', this.property('bg_color'), false);
 	},
 	processBorder: function() {
 		if(this.property('border_style') != 'none') {
@@ -244,13 +245,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	  render: function() {
 			// Render as usual
 			this.constructor.__super__.render.apply(this, arguments);
-      // Show border width if needed
-      if(this.property('border_style') != 'none') {
-        this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
-      }
-      else {
-        this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
-      }
+	  // Show border width if needed
+	  if(this.property('border_style') != 'none') {
+		this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
+	  }
+	  else {
+		this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
+	  }
 			// Remove panel tabs
 			this.$el.find('.upfront-settings_label').remove();
 			this.$el.find('.upfront-settings_panel').css('left', 0);
@@ -260,15 +261,15 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
  var PlainTxtSettings = Upfront.Views.Editor.Settings.Settings.extend({
    initialize: function (opts) {
-     this.has_tabs = false;
-     this.options = opts;
-     this.panels = _([
-       new AppearancePanel({model: this.model})
-     ]);
+	 this.has_tabs = false;
+	 this.options = opts;
+	 this.panels = _([
+	   new AppearancePanel({model: this.model})
+	 ]);
    },
 
    get_title: function () {
-     return "Textbox Appearance";
+	 return l10n.appearance;
    }
  });
 
@@ -277,12 +278,12 @@ var PlainTxtMenuList = Upfront.Views.ContextMenuList.extend({
 	initialize: function() {
 		var me = this;
 		this.menuitems = _([
-          new Upfront.Views.ContextMenuItem({
+		  new Upfront.Views.ContextMenuItem({
 			  get_label: function() {
-				  return 'Edit Text';
+				  return l10n.edit_text;
 			  },
 			  action: function() {
-				  	var editor = me.for_view.$el.find('div.upfront-object-content').data('ueditor');
+					var editor = me.for_view.$el.find('div.upfront-object-content').data('ueditor');
 					if(!me.for_view.$el.find('div.upfront-object-content').data('redactor')){
 						editor.start();
 						$(document).on('click', function(e){
@@ -297,15 +298,15 @@ var PlainTxtMenuList = Upfront.Views.ContextMenuList.extend({
 					}
 			  }
 		  })
-        ]);
+		]);
 	}
 });
 
 var PlainTxtMenu = Upfront.Views.ContextMenu.extend({
 	initialize: function() {
 		this.menulists = _([
-          new PlainTxtMenuList()
-        ]);
+		  new PlainTxtMenuList()
+		]);
 	}
 });
 
