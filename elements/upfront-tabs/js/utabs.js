@@ -33,7 +33,7 @@
 					this.model = new UtabsModel({properties: this.model.get('properties')});
 				}
 				this.events = _.extend({}, this.events, {
-					'click .add-tab': 'addTab',
+					'click .add-item': 'addTab',
 					'click .tabs-tab': 'onTabClick',
 					'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
 					'keydown .tab-content-active': 'onContentKeydown',
@@ -47,14 +47,14 @@
 				this.model.get("properties").bind("remove", this.render, this);
 
 				Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-				//this.on('deactivated', this.stopEdit, this);
+				this.on('deactivated', this.stopEdit, this);
 
 				this.debouncedSave = _.debounce(this.saveTabContent, 1000);
 			},
 
 			addTab: function() {
 				this.property('tabs').push({
-					title: 'Tab ' + (1 + this.property('tabs_count')),
+					title: '',
 					content: 'Content ' + (1 + this.property('tabs_count'))
 				});
 				this.property('tabs_count', this.property('tabs').length, false);
@@ -102,21 +102,36 @@
 
 				// Stop editor on switching tabs, always
 				var $all_tabs = this.$el.find(".tab-content");
+				
+
 				$all_tabs.each(function () {
 					var ed = $(this).data("ueditor");
-					ed.stop();
+					if(ed)
+						ed.stop();
 				});
 
 				if ($tab.hasClass('tabs-tab-active')) {
-					$tab.attr('contenteditable', true);
-					$tab.find('span').css('width', 'auto');
-					$tab.focus();
+					//$tab.attr('contenteditable', true);
+					var ed = $tab.find('.inner-box').data("ueditor");
+					if(ed) {
+						ed.start();
+					}
+					//$tab.find('span').css('width', 'auto');
+					//$tab.find('.inner-box').focus();
 					return;
 				}
+				else {
+					var $tabtitles = this.$el.find(".tabs-tab .inner-box");
+					$tabtitles.each(function() {
+						var ed = $(this).data('ueditor');
+						if(ed) {
+							$(this).trigger('blur');
+						}
+					});
+				}
 
-				$tab.addClass('tabs-tab-active');
-				$tab.siblings().removeClass('tabs-tab-active').removeAttr('contenteditable');
-
+				$tab.siblings().removeClass('tabs-tab-active');//.removeAttr('contenteditable');
+				
 				// If active content is edited save edits & destroy editor.
 				/*
 				if (this.$el.find('.tab-content-active').attr('contenteditable') === true) {
@@ -126,6 +141,9 @@
 				contentId = $tab.data('content-id');
 				$('.tab-content').removeClass('tab-content-active');
 				$('#' + contentId).addClass('tab-content-active');
+				console.log('did it reach here');
+				 this.$el.find(".tabs-tab[data-content-id='" + $tab.data('content-id') + "']").addClass('tabs-tab-active');
+				//$tab.addClass('tabs-tab-active');
 
 			},
 /*
@@ -215,9 +233,41 @@
 					self.fixTabWidth();
 					self.addTooltips();
 				}, 10, this);
+				
+				var me = this;
+				
+				var $tabtitles = this.$el.find(".tabs-tab .inner-box");
+				var count = 1;
+				$tabtitles.each(function () {
+					var $content = $(this);
+					$content.ueditor({
+						linebreaks: true,
+						disableLineBreak: true,
+						//focus: true,
+						//autostart: false,
+						//tabFocus: false,
+						airButtons: false,
+						allowedTags: ['h5'],
+						placeholder: 'Tab '+count
+					 }).on('start', function(e) {
+						Upfront.Events.trigger('upfront:element:edit:start', 'text');
+						$(this).focus();
+					 }).on("stop", function () {
+						//console.log($content.parent().parent());
+						id = $content.parent().parent().data('content-id').split('-').pop();
+						me.property('tabs')[id].title = $content.text();
+						Upfront.Events.trigger('upfront:element:edit:stop');
+						//me.render();
+					 }).on("blur", function() {
+						$content.data('ueditor').stop(); 
+					 })
+					;
+					$content.data('ueditor').stop();
+					count++;
+				});
 
 				var $tabs = this.$el.find(".tab-content");
-				var me = this;
+				
 				$tabs.each(function () {
 					var $content = $(this);
 					$content.ueditor({
@@ -235,6 +285,10 @@
 						})
 					;
 				});
+
+			$upfrontObjectContent = this.$el.find('.upfront-object-content');
+			    if(this.$el.find('a.add-item').length < 1)
+				      $('<b class="upfront-entity_meta add_item"><a href="#" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
 			},
 
 			addTooltips: function() {

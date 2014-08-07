@@ -842,7 +842,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
 		if(this.$el.find('a.newnavigation-add-item').length < 1) {
-			$('<b class="upfront-entity_meta newnavigation_add"><a href="#" class="upfront-icon-button newnavigation-add-item"></a></b>').insertBefore($upfrontObjectContent);
+			$('<b class="upfront-entity_meta newnavigation_add add_item"><a href="#" class="upfront-icon-button newnavigation-add-item add-item"></a></b>').insertBefore($upfrontObjectContent);
 		}
 		if(me.roll_responsive_settings) {
 			me.roll_responsive_settings = false;

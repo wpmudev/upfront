@@ -5,10 +5,10 @@
 class Upfront_UtabsView extends Upfront_Object {
   public static function default_properties() {
     $defaultTab = new StdClass();
-    $defaultTab->title = 'Tab 1';
+    $defaultTab->title = '';
     $defaultTab->content = 'Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.';
     $secondTab = new StdClass();
-    $secondTab->title = 'Tab 2';
+    $secondTab->title = '';
     $secondTab->content = 'Have fun with tabs.';
     return array(
       'type' => 'UtabsModel',

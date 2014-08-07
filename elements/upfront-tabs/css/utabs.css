@@ -1,3 +1,11 @@
+.tabs-tab .ueditor-placeholder {
+  z-index:2 !important;
+}
+
+.inner-box {
+  min-width: 75px;
+}
+
 #settings .utabs-settings-panel .upfront-settings_panel_scroll {
   min-width: 287px;
   overflow-y: auto;

@@ -109,31 +109,6 @@ div.upfront-navigation.upfront-editable_entity a.menu_item.menu_item_placeholder
 	min-width: 92px;
 }
 
-.upfront-navigation .upfront-entity_meta.newnavigation_add {
-	top: 51px;
-}
-
-.upfront-navigation .newnavigation-add-item:before {
-	background-position: -261px -133px;
-}
-
-.upfront-navigation .newnavigation-add-item
-{
-	box-shadow: inset 0 0 0 1px #e6ab2e;
-	background: #f2b530 -moz-linear-gradient(-45deg, rgba(255,190,51,1) 0%, rgba(255,190,51,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
-	background: #f2b530 -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(255,190,51,1)), color-stop(50%,rgba(255,190,51,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
-	background: #f2b530 -webkit-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
-	background: #f2b530 -o-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
-	background: #f2b530 -ms-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
-	background: #f2b530 linear-gradient(135deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
-}
-
-
-
-
-
-
-
 div.upfront-navigation.upfront-editable_entity  div.existing_menu_list ul li:before, div.upfront-navigation.upfront-editable_entity  div.existing_menu_list li label:before {
 	display: none !important;
 }

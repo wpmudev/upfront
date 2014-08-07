@@ -105,7 +105,7 @@ var hackRedactor = function(){
 				return;
 
 			var text = this.getSelectionText();
-			console.log("this", this);
+//			console.log("this", this);
 			this.opts.toolbarFixedTopOffset = "50";
 			if (e.type === 'mouseup' && text != '') this.airShow(e);
 			if (e.type === 'keyup' && e.shiftKey && text != '') {
@@ -293,6 +293,7 @@ var Ueditor = function($el, options) {
 	this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
+			startoninit: true,
 			stateButtons: {},
 
 			// Redactor options
@@ -336,7 +337,8 @@ var Ueditor = function($el, options) {
 	this.id = 'ueditor' + (Math.random() * 10000);
 
 	if(this.options.autostart){
-		this.start();
+		if(this.options.startoninit)
+			this.start();
 	}
 	else {
 		this.bindStartEvents();
@@ -470,6 +472,8 @@ Ueditor.prototype = {
 		if (placeholder === '') placeholder = false;
 		if (placeholder !== false && $.trim(this.$el.text()).length === 0)
 		{
+			//remove existing placeholder
+			this.$el.parent().children('.ueditor-placeholder').remove();
 			this.$placeholder = this.$el.clone(false);
 			this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html(placeholder);
 			this.$el.after(this.$placeholder);
