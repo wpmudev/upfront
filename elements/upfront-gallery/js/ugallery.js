@@ -56,7 +56,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	initialize: function(options){
 		var me = this,
-			elementId = this.property('element_id')
+			elementId = this.property('element_id'),
+			raw_labels;
 		;
 
 		if(! (this.model instanceof UgalleryModel)){
@@ -106,8 +107,25 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			ugalleries[elementId] = {};
 
+			raw_labels = ['All'];
+			_.each(this.images.models, function(image) {
+				raw_labels = _.union(raw_labels, image.get('tags'));
+			});
 			this.labels = [];
+			_.each(raw_labels, function(label, index) {
+				this.labels[index] = {
+					id: index,
+					text: label
+				};
+			}, this);
 			this.imageLabels = {};
+			_.each(this.images.models, function(image) {
+				var imageLabels = [];
+				_.each(this.labels, function(label) {
+					if (_.indexOf(image.get('tags'), label.text) > -1) imageLabels.push('label_' + label.id);
+				});
+				this.imageLabels[image.get('id')] = 'label_0,' + imageLabels.join(',');
+			}, this);
 
 			ugalleries[elementId].labels = this.labels;
 			ugalleries[elementId].imageLabels = this.imageLabels;
@@ -604,8 +622,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	selectOnClick: function(){
 		var me = this,
-			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked + 
-				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger + 
+			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked +
+				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger +
 				'</a><a href="#" class="ugallery-linked_page" rel="url">' + l10n.go_to_linked + '</a></div></div></div>')
 		;
 
