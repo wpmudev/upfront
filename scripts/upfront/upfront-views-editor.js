@@ -4886,8 +4886,8 @@ var Font_Model = Backbone.Model.extend({}, {
 		// Always use numbers for weight to make everything easier.
 
 		// Cover both '100italic' and '100 italic'
-		if (variant.match(/^(\d+) *(normal|italic|oblique)$/)) {
-			parsed_variant = variant.match(/^(\d+) *(normal|italic|oblique)/);
+		if (!_.isUndefined( variant ) && variant.match(/^(\d+) *(normal|italic|oblique)$/)) {
+			parsed_variant =  variant.match(/^(\d+) *(normal|italic|oblique)/);
 			return {
 				weight: parsed_variant[1],
 				style: parsed_variant[2]
@@ -4902,7 +4902,7 @@ var Font_Model = Backbone.Model.extend({}, {
 		}
 
 		// Cover 100, 200, 500 etc styles
-		if (variant.match(/^\d+$/)) {
+		if ( !_.isUndefined( variant ) && variant.match(/^\d+$/)) {
 			return {
 				weight: variant,
 				style: 'normal'
