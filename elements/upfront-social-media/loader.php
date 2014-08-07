@@ -11,6 +11,7 @@ function upfront_social_media_initialize(){
     // Add the public stylesheet
     add_action('wp_enqueue_scripts', array('Upfront_SocialMediaView', 'add_public_style'));
 	add_action('upfront_data', array('Upfront_SocialMediaView', 'add_upfront_data'));
+	add_filter('upfront_l10n', array('Upfront_SocialMediaView', 'add_l10n_strings'));
 
 	//Add social to the posts
 	Upfront_SocialMedia_Setting::add_post_filters();

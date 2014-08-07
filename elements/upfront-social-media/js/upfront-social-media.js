@@ -1,5 +1,7 @@
 (function ($) {
 
+    var l10n = Upfront.Settings.l10n.social_element;
+
     define([
             'text!elements/upfront-social-media/tpl/social-back.html'
         ], function(backTpl) {
@@ -40,14 +42,15 @@
             this.setElement($('#upfront-popup'));
 
             settings = _.clone(Upfront.data.usocial.globals ? Upfront.data.usocial.globals : Upfront.data.usocial.global_defaults);
+            settings.l10n = l10n.template
 
             this.$('#upfront-popup-top').html('<ul class="upfront-tabs">' +
-                    '<li class="active upfront-social-popup-hd">Global Social Settings</li>' +
+                    '<li class="active upfront-social-popup-hd">' + l10n.global_settings + '</li>' +
                     '</ul>'
             );
 
             this.$('#upfront-popup-bottom')
-                .html('<div class="use_selection_container"><a href="#use" class="use">OK</a></div>');
+                .html('<div class="use_selection_container"><a href="#use" class="use">' + l10n.ok + '</a></div>');
 
             this.$('#upfront-popup-content').html(this.tpl(settings));
 
@@ -95,7 +98,7 @@
             setDataProperties = this.arrayToProperties(setData);
 
             var loading = new Upfront.Views.Editor.Loading({
-                loading: 'Saving settings...',
+                loading: l10n.saving,
                 fixed: false
             });
 
@@ -105,7 +108,7 @@
                 .success(function (ret) {
                     loading.cancel();
                     Upfront.Popup.close();
-                    Upfront.Views.Editor.notify('Settings Updated. Reload posts to see in-post changes.');
+                    Upfront.Views.Editor.notify(l10n.updated);
                     Upfront.data.usocial.globals = setData;
                     me.deferred.resolve(setData);
                 })
@@ -171,7 +174,7 @@
             if(checked){
                 check.closest('.upfront-field-wrap')
                     .find('.usocial-global-align-label')
-                        .text('Aligned ' + check.val())
+                        .text(l10n.aligned + ' ' + check.val())
                 ;
             }
         },
@@ -249,14 +252,14 @@
         settings: false,
         counts: false,
         cssSelectors: {
-            '.upfront-object-content': {label: 'Social Container', info: 'The layer that contains all the social buttons'},
-            '.upfront-social-icon ': {label: 'Social box', info: 'The wrapper that contains each social button'},
-            '.upfront-linked-in-link-box': {label: 'LinkedIn box', info: 'The box that contains LinkedIn button'},
-            '.upfront-twitter-link-box, .ufront-twitter-count-box, .upfront-social-icon-twitter': {label: 'Twitter box', info: 'The box that contains twitter button'},
-            '.upfront-google-link-box, .ufront-google-count-box, .upfront-social-icon-google': {label: 'Google box', info: 'The box that contains Google button'},
-            '.upfront-facebook-link-box, .ufront-facebook-count-box, .upfront-social-icon-facebook': {label: 'Facebook box', info: 'The box that contains Facebook button'},
-            '.upfront-pinterest-link-box': {label: 'Pinterest box', info: 'The box that contains Pinterest button'},
-            '.upfront-youtube-link-box': {label: 'Youtube box', info: 'The box that contains Youtube button'},
+            '.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
+            '.upfront-social-icon ': {label: l10n.css.box_label, info: l10n.box_info},
+            '.upfront-linked-in-link-box': {label: l10n.css.linked_label, info: l10n.css.linked_info},
+            '.upfront-twitter-link-box, .ufront-twitter-count-box, .upfront-social-icon-twitter': {label: l10n.css.twitter_label, info: l10n.css.twitter_info},
+            '.upfront-google-link-box, .ufront-google-count-box, .upfront-social-icon-google': {label: l10n.css.google_label, info: l10n.css.google_info},
+            '.upfront-facebook-link-box, .ufront-facebook-count-box, .upfront-social-icon-facebook': {label: l10n.css.fb_label, info: l10n.css.fb_info},
+            '.upfront-pinterest-link-box': {label: l10n.css.pin_label, info: l10n.css.pin_info},
+            '.upfront-youtube-link-box': {label: l10n.css.yt_label, info: l10n.css.yt_info},
         },
         initialize: function(){
             if(! (this.model instanceof SocialMediaModel)){
@@ -294,7 +297,7 @@
             ;
 
             if(!services.length)
-                return 'Please, add some social media services.';
+                return l10n.add_some_services;
 
             _.each(services, function(s){
                 var alert = s.url ? '' : '<span class="alert-url">!</span>';
@@ -314,9 +317,9 @@
                 buttonStyle = this.property('button_style'),
                 buttonSize = this.property('button_size'),
                 words = {
-                    'facebook': 'Fans',
-                    'twitter': 'Followers',
-                    'google': 'Subscribers'
+                    'facebook': l10n.fans,
+                    'twitter': l10n.followers,
+                    'google': l10n.subscribers
                 }
             ;
 
@@ -335,7 +338,7 @@
             });
 
             if(!markup)
-                return "Please, add some social media services.";
+                return l10n.add_some_services;
 
             this.refreshCount();
 
@@ -404,7 +407,8 @@
                         height: hor ? 20 : 60,
                         size: hor ? 'medium' : 'tall',
                         layout: hor ? 'button_count' : 'box_count',
-                        text: document.title ? document.title : 'What an awesome stuff! '
+                        text: document.title ? document.title : l10n.awesome_stuff,
+                        l10n: l10n.template
                     },
                     tpls = {
                         facebook: 'fb_like-tpl',
@@ -420,7 +424,7 @@
                 });
             }
 
-            return markup ? markup : 'Please, select some social services.';
+            return markup ? markup : l10n.select_some;
         },
 
         /**
@@ -429,7 +433,7 @@
          */
         get_content_markup: function () {
             if(!Upfront.data.usocial.globals)
-                return 'There is no global settings for the social media. Please configure them pressing the settings button.'
+                return l10n.no_global_settings_nag;
 
             var me = this,
                 layoutStyle = this.property("social_type"),
@@ -462,7 +466,7 @@
         priority: 60,
         render: function () {
             this.$el.addClass('upfront-icon-element upfront-icon-element-social');
-            this.$el.html('Social');
+            this.$el.html(l10n.element_name);
         },
         add_element: function () {
             var object = new SocialMediaModel(),
@@ -505,7 +509,7 @@
                     '<div class="upfront-settings-item">' +
                         '<div class="upfront-settings-item-title"><span>' + this.get_title() + '</span></div>' +
                         '<div class="upfront-settings-item-content">' +
-                        '<span class="social-toggle">Drag to re-order the services</span>' +
+                        '<span class="social-toggle">' + l10n.drag_reorder + '</span>' +
                         '<span class="social-sort"></span>' +
                         '</div>' +
                         '</div>'
@@ -576,7 +580,8 @@
                     me.$('ul').append(me.tpl({
                         service: service,
                         expandable: me.options.expandable,
-                        meta: me.options.meta
+                        meta: me.options.meta,
+                        l10n: l10n.template
                     }));
                 }
 
@@ -587,7 +592,7 @@
             this.initSortable();
 
             if(this.options.variable){
-                this.$el.append(this.variableTpl({services: nonActive}));
+                this.$el.append(this.variableTpl({services: nonActive, l10n: l10n.template}));
             }
 
             this.trigger('rendered');
@@ -638,7 +643,7 @@
             //Update services
             this.prop(this.options.prop, all, true);
             //Animate all
-            var $service = $(this.tpl({service: serviceData, expandable: this.options.expandable}))
+            var $service = $(this.tpl({service: serviceData, expandable: this.options.expandable, l10n: l10n.template}))
                             .hide()
                             .find('.upfront-field-wrap-text')
                                 .show().end()
@@ -815,13 +820,13 @@
             this.options = opts;
             this.panel = new Upfront.Views.Editor.Settings.Panel({
                 model: this.model,
-                label: "Layout Style",
-                title: "Layout Style settings",
+                label: l10n.opts.layout_label,
+                title: l10n.opts.layout_title,
                 tabbed: true,
                 settings: [
                     new Upfront.Views.Editor.Settings.ItemTabbed({
                         model: this.model,
-                        title: "Like,<br> Tweet, +1",
+                        title: l10n.opts.action,
                         radio: true,
                         icon: "social-like",
                         property: 'social_type', // property value must be the same between radio tab
@@ -831,7 +836,7 @@
                     }),
                     new Upfront.Views.Editor.Settings.ItemTabbed({
                         model: this.model,
-                        title: "Fan, Follower count",
+                        title: l10n.opts.counts,
                         radio: true,
                         icon: "social-count",
                         property: 'social_type',
@@ -840,7 +845,7 @@
                     }),
                     new Upfront.Views.Editor.Settings.ItemTabbed({
                         model: this.model,
-                        title: "Call to action icon",
+                        title: l10n.opts.cta,
                         radio: true,
                         icon: "social-button",
                         property: 'social_type',
@@ -852,8 +857,8 @@
             this.panels = _([
 				new Upfront.Views.Editor.Settings.Panel({
                         model: this.model,
-                        label: "General",
-                        title: "General settings",
+                        label: l10n.opts.general_label,
+                        title: l10n.opts.general_title,
                         settings: []
 						}),
 				this.panel
@@ -873,7 +878,7 @@
             return [
                 new Upfront.Views.Editor.Settings.Item({
                     model: this.model,
-                    title: "Counter Options",
+                    title: l10n.opts.counter,
                     fields: [
                         new Upfront.Views.Editor.Field.Radios({
                             model: this.model,
@@ -890,7 +895,7 @@
                 new SocialServicesItem({
                     className: 'upfront-social-services-item',
                     model: this.model,
-                    title: "Social Media Services",
+                    title: l10n.opts.services,
                     fields: [services]
                 }),
                 this.getGlobalsButton()
@@ -909,7 +914,7 @@
                 new SocialServicesItem({
                     className: 'upfront-social-services-item',
                     model: this.model,
-                    title: "Social Media Services",
+                    title: l10n.opts.services,
                     fields: [services]
                 }),
                 this.getGlobalsButton()
@@ -928,7 +933,7 @@
                 new Upfront.Views.Editor.Settings.Item({
 
                     model: this.model,
-                    title: "Button Size",
+                    title: l10n.opts.button_size,
                     fields: [
                         new Upfront.Views.Editor.Field.Radios({
                             model: this.model,
@@ -936,16 +941,16 @@
                             layout: "vertical",
                             label: "",
                             values: [
-                                { label: "Small", value: 'small' },
-                                { label: "Medium", value: 'medium' },
-                                { label: "Large", value: 'large' }
+                                { label: l10n.opts.small, value: 'small' },
+                                { label: l10n.opts.medium, value: 'medium' },
+                                { label: l10n.opts.large, value: 'large' }
                             ]
                         })
                     ]
                 }),
                 new Upfront.Views.Editor.Settings.Item({
                     model: this.model,
-                    title: "Button Style",
+                    title: l10n.opts.button_style,
                     fields: [
                         new Upfront.Views.Editor.Field.Radios({
                             model: this.model,
@@ -963,7 +968,7 @@
                 new SocialServicesItem({
                     className: 'upfront-social-services-item',
                     model: this.model,
-                    title: "Social Media Services",
+                    title: l10n.opts.services,
                     fields: [services]
                 }),
                 this.getGlobalsButton()
@@ -977,8 +982,8 @@
                 fields: [
                     new Field_Button({
                         model: this.model,
-                        info: 'Back to your',
-                        label: 'global settings',
+                        info: l10n.opts.back_to,
+                        label: l10n.global_settings,
                         on_click: function(e){
                             e.preventDefault();
                             Upfront.Events.trigger("entity:settings:deactivate");
@@ -999,7 +1004,7 @@
         },
 
         get_title: function () {
-            return "Social Media settings";
+            return l10n.opts.social_settings;
         },
 
         render: function() {
