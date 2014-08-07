@@ -1,11 +1,11 @@
 (function ($) {
 
-    var l10n = Upfront.Settings.l10n.social_element;
 
     define([
             'text!elements/upfront-social-media/tpl/social-back.html'
         ], function(backTpl) {
 
+    var l10n = Upfront.Settings.l10n.social_element;
     var GlobalSettingsPanel = Backbone.View.extend({
         popup: false,
         deferred: false,
