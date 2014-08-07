@@ -12,6 +12,8 @@ function upfront_navigation_initialize(){
 	$ucontact = new Upfront_UcontactView(array());
 	add_action('upfront_data', array('Upfront_NavigationView', 'add_js_defaults'));
 
+    add_filter('upfront_l10n', array('Upfront_NavigationView', 'add_l10n_strings'));
+
     // Expose our JavaScript definitions to the Upfront API
     upfront_add_layout_editor_entity('upfront-navigation', upfront_relative_element_url('js/upfront-navigation', __FILE__));
 
