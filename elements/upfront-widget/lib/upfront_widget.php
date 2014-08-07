@@ -126,6 +126,34 @@ class Upfront_UwidgetView extends Upfront_Object {
 		);
 	}
 
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['widget_element'])) return $strings;
+		$strings['widget_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Widget', 'upfront'),
+			'loading' => __('Loading...', 'upfront'),
+			'done' => __('Done!', 'upfront'),
+			'widget' => __('Widget', 'upfront'),
+			'settings' => __('Widget settings', 'upfront'),
+			'widget_select' => __('Select Widget', 'upfront'),
+			'select_widget' => __('Please select widget on settings', 'upfront'),
+			'css' => array(
+				'container_label' => __('Widget container', 'upfront'),
+				'container_info' => __('The container that wraps widget element', 'upfront'),
+				'links_label' => __('Widget links', 'upfront'),
+				'links_info' => __('Widget links', 'upfront'),
+			),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
+
 }
 
 class Upfront_UwidgetAjax extends Upfront_Server {

@@ -1,6 +1,8 @@
 (function ($) {
 define(function() {
 
+var l10n = Upfront.Settings.l10n.widget_element;
+
 var UwidgetModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.uwidget.defaults);
@@ -13,8 +15,8 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 
 	loading: null,
 	cssSelectors: {
-		'.widget': {label: 'Widget container', info: 'The container that wraps widget element'},
-		'.widget a': {label: 'Widget links', info: 'Links inside the widget element'},
+		'.widget': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.widget a': {label: l10n.css.links_label, info: l10n.css.links_info},
 	},
 	content_loaded: false,
 	initialize: function(options){
@@ -44,10 +46,10 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 	get_content_markup: function () {
 
 		var widget = this.model.get_property_value_by_name('widget');
-		 	me = this;
+			me = this;
 
 			if ( !widget )
-				return "Please select widget on settings";
+				return l10n.select_widget;
 
 			var widget_data =  Upfront.data.uwidget.widgets_cache[widget+this.cid] || "";
 
@@ -68,8 +70,8 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 
 			if ( this.content_loaded ){ // only display loading if there's already content
 				this.loading = new Upfront.Views.Editor.Loading({
-					loading: "Loading...",
-					done: "Done!"
+					loading: l10n.loading,
+					done: l10n.done
 				});
 				this.loading.render();
 				this.$el.append(this.loading.el);
@@ -120,7 +122,7 @@ var UwidgetElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-widget');
-		this.$el.html('Widget');
+		this.$el.html(l10n.element_name);
 	},
 
 	add_element: function () {
@@ -250,8 +252,8 @@ var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 		var panel = new Upfront.Views.Editor.Settings.Panel({
 			model: this.model,
-			label: "Widget",
-			title: "Widget settings",
+			label: l10n.widget,
+			title: l10n.settings,
 			min_height: '200px'
 		});
 
@@ -259,7 +261,7 @@ var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 
 		var settings_item1 = new Upfront.Views.Editor.Settings.Item({
 			model: this.model,
-			title: "Select Widget",
+			title: l10n.widget_select,
 			fields: [
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
@@ -281,7 +283,7 @@ var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		this.panels = _([panel]);
 	},
 	get_title: function () {
-		return "Widget settings";
+		return l10n.settings;
 	}
 });
 
