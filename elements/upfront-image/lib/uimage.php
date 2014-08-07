@@ -132,7 +132,7 @@ class Upfront_UimageView extends Upfront_Object {
 		return $strings;
 	}
 
-	private static function _get_l10n ($key=false) {
+	public static function _get_l10n ($key=false) {
 		$l10n = array(
 			'element_name' => __('Image', 'upfront'),
 			'no_images' => __("No images sent", 'upfront'),
