@@ -70,12 +70,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 				break;
 
 			case self::$PARTNAMES['CONTENTS']:
+                $limit = isset($options['limit']) ? $options['limit'] : 1000;
+
 				ob_start();
 				the_content();
 				$replacements['%contents%'] = ob_get_clean();
-				ob_start();
-				the_excerpt();
-				$replacements['%excerpt%'] = ob_get_clean();
+				$replacements['%excerpt%'] = self::excerpt( $limit );
 
 				if(!empty($options['excerpt']))
 					$replacements['%contents%'] = $replacements['%excerpt%'];
@@ -85,7 +85,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 				break;
 
             case self::$PARTNAMES['EXCERPT']:
-                $replacements['%excerpt%'] = get_the_excerpt();
+                $limit = isset($options['limit']) ? $options['limit'] : 1000;
+                $replacements['%excerpt%'] = self::excerpt( $limit );
+                $replacements['%excerpt%'] = $limit;
                 break;
 
 			case self::$PARTNAMES['DATE']:
@@ -124,6 +126,17 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return $out;
 	}
 
+    protected static  function excerpt( $limit ) {
+        $excerpt = explode(' ', get_the_excerpt(), $limit);
+        if (count($excerpt)>=$limit) {
+            array_pop($excerpt);
+            $excerpt = implode(" ",$excerpt).'...';
+        } else {
+            $excerpt = implode(" ",$excerpt);
+        }
+        $excerpt = preg_replace('`\[[^\]]*\]`','',$excerpt);
+        return $excerpt;
+    }
 	protected static function replace($text, $replacements){
 		return str_replace(array_keys($replacements), array_values($replacements), $text);
 	}
