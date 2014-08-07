@@ -5600,7 +5600,6 @@ var CSSEditor = Backbone.View.extend({
 		$(window).off('resize', this.resizeHandler);
 		this.off('change');
 
-		this.$style.remove();
 		this.$style = false;
 		if(this.editor)
 			this.editor.destroy();
@@ -5827,6 +5826,11 @@ var CSSEditor = Backbone.View.extend({
 		// Replace id on style element
 		this.get_style_element().attr('id', new_name);
 		this.stylename = new_name;
+
+		// Replace selector in style element htnl
+		this.get_style_element().html(
+			this.get_style_element().html().replace(new RegExp(old_name, 'g'), new_name)
+		);
 
 		// Update element on which editor is called to have appropriate theme style
 		this.model.set_property('theme_style', new_name);

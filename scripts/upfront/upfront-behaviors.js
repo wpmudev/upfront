@@ -794,7 +794,7 @@ var LayoutEditor = {
 			template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
 			layout_properties: JSON.stringify(properties),
 			theme: Upfront.themeExporter.currentTheme,
-			layout_style: layout_style.value
+			layout_style: layout_style ? layout_style.value : ''
 		};
 
 		if (Upfront.themeExporter.layoutStyleDirty) {

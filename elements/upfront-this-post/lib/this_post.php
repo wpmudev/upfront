@@ -408,7 +408,6 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$i = 0;
 
 		while(!$found && $i < sizeof($cascade)){
-			error_log($cascade[$i]);
 			if(file_exists($cascade[$i]))
 				$found = require $cascade[$i];
 			$i++;

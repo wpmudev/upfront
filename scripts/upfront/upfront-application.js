@@ -387,7 +387,7 @@ var LayoutEditor = new (LayoutEditorSubapplication.extend({
 }))();
 
 var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
-	initialize: function(opts){
+	initialize: function(){
 		this.listenTo(Upfront.Events, 'post:layout:edit', this.togglePostLayoutEditorMode);
 	},
 	boot: function () {
