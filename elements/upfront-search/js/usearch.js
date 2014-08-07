@@ -1,6 +1,7 @@
 (function ($) {
-
 define(['text!elements/upfront-search/tpl/usearch.html'], function(tplSource) {
+
+var l10n = Upfront.Settings.l10n.search_element;
 
 /**
  * Define the model - initialize properties to their default values.
@@ -26,9 +27,9 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 
 	tpl: Upfront.Util.template(tplSource),
 	cssSelectors: {
-		'.upfront-object-content': {label: 'Search container', info: 'The container that wraps search field and search button'},
-		'input.search-field': {label: 'Search field', info: 'The search input field'},
-		'button.search-button': {label: 'Search button', info: 'The search button'}
+		'.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'input.search-field': {label: l10n.css.field_label, info: l10n.css.field_info},
+		'button.search-button': {label: l10n.css.button_label, info: l10n.css.button_info}
 	},
 
 	initialize: function(options){
@@ -83,7 +84,7 @@ var UsearchElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 */
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-search');
-		this.$el.html('Search');
+		this.$el.html(l10n.element_name);
 	},
 
 	/**
@@ -135,12 +136,12 @@ var UsearchSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.settings = _([
       new Upfront.Views.Editor.Settings.Item({
         model: this.model,
-				title: 'Search Settings',
+				title: l10n.settings,
 				fields: [
 					new Upfront.Views.Editor.Field.Text({
 						model: this.model,
 						property: 'placeholder',
-						label: 'Placeholder text:'
+						label: l10n.placeholder_label
 					})
 				]
 			}),
@@ -152,14 +153,14 @@ var UsearchSettingsPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	 * @return {string} Label.
 	 */
 	get_label: function () {
-		return "Field";
+		return l10n.field;
 	},
 	/**
 	 * Get the title (goes into settings title area)
 	 * @return {string} Title
 	 */
 	get_title: function () {
-		return "Field settings";
+		return l10n.field_settings;
 	}
 });
 
@@ -183,7 +184,7 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
 		// Wrap method accepts an object, with defined "title" and "markup" properties.
 		// The "markup" one holds the actual Item markup.
 		this.wrap({
-			"title": "Button content",
+			"title": l10n.btn_content,
 			"markup": '<input type="radio" id="search_type-image" name="search_type" value="__image__" ' + (value == '__image__' ? 'checked="checked"' : '') + ' /> ' + image +
 				'<input type="radio" id="search_type-text" name="search_type" value="' + value_text + '" ' + ((value !='' && value != '__image__') ? 'checked="checked"' : '') + ' /> ' + text
 		});
@@ -247,7 +248,7 @@ var UsearchSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 * @return {string} Title
 	 */
 	get_title: function () {
-		return "Search settings";
+		return l10n.settings;
 	}
 });
 
