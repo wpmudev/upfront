@@ -17,7 +17,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
             }
 
             if(!$url)
-                return $this->wrap('You need to set a Facebook URL in your global social settings.');
+                return $this->wrap(self::_get_l10n('url_nag'));
 		}
         if($url) {
 			$parts = parse_url($url);
@@ -28,7 +28,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
             );
         }
         else{
-            return $this->wrap('You need to set a Facebook URL in your global social settings 2.');
+            return $this->wrap(self::_get_l10n('url_nag'));
         }
     }
 
@@ -62,6 +62,36 @@ class Upfront_LikeBoxView extends Upfront_Object {
                 'height' => 270
             )
         );
+    }
+
+    public static function add_l10n_strings ($strings) {
+        if (!empty($strings['like_box_element'])) return $strings;
+        $strings['like_box_element'] = self::_get_l10n();
+        return $strings;
+    }
+
+    private static function _get_l10n ($key=false) {
+        $l10n = array(
+            'element_name' => __('Like Box', 'upfront'),
+            'url_nag' => __('You need to set a Facebook URL in your global social settings.', 'upfront'),
+            'container_label' => __('Container', 'upfront'),
+            'container_info' => __('Facebook box wrapper layer.', 'upfront'),
+            'you_need_to_set_url' => __('You need to set a Facebook URL in your', 'upfront'),
+            'global_social_settings' => __('global social settings', 'upfront'),
+            'opts' => array(
+                'style_label' => __('Layout Style', 'upfront'),
+                'style_title' => __('Layout Style settings', 'upfront'),
+                'page_url' => __('Your Facebook Page URL', 'upfront'),
+                'url_sample' => __('https://www.facebook.com/YourPage', 'upfront'),
+                'back_to' => __('Back to your', 'upfront'),
+                'global_settings' => __('global settings', 'upfront'),
+            ),
+            'settings' => __('LikeBox settings', 'upfront'),
+        );
+        return !empty($key)
+            ? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+            : $l10n
+        ;
     }
 }
 

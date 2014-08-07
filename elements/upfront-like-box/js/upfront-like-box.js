@@ -1,5 +1,8 @@
 (function ($) {
   define(function() {
+
+    var l10n = Upfront.Settings.l10n.like_box_element;
+
     /**
      * Define the model - initialize properties to their default values.
      * @type {Upfront.Models.ObjectModel}
@@ -27,7 +30,7 @@
         elementSize: {width: 0, height: 0},
 
         cssSelectors: {
-        	'iframe': {label: 'Container', info: 'Facebook box wrapper layer.'}
+        	'iframe': {label: l10n.container_label, info: l10n.container_info}
         },
 
         initialize: function(options){
@@ -123,7 +126,7 @@
 				
                 return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
             }else{
-                return 'You need to set a Facebook URL in your <a class="back_global_settings" href="#">global social settings</a>.';
+                return l10n.you_need_to_set_url + ' <a class="back_global_settings" href="#">' + l10n.global_social_settings + '</a>.';
             }
         },
 
@@ -153,7 +156,7 @@
         priority: 70,
         render: function () {
             this.$el.addClass('upfront-icon-element upfront-icon-element-likebox');
-            this.$el.html('Like Box');
+            this.$el.html(l10n.element_name);
         },
         add_element: function () {
             var object = new LikeBoxModel(),
@@ -234,19 +237,19 @@
             this.panel = new Upfront.Views.Editor.Settings.Panel({
 
                     model: this.model,
-                    label: "Layout Style",
-                    title: "Layout Style settings",
+                    label: l10n.opts.style_label,
+                    title: l10n.opts.style_title,
                     settings: [
                         new Upfront.Views.Editor.Settings.Item({
                             className: 'upfront-social-services-item',
                             model: this.model,
-                            title: "Your Facebook Page URL",
+                            title: l10n.opts.page_url,
                             fields: [
                                 new Field_Text({
                                     model: this.model,
                                     property: 'facebook_url',
                                     default_value: this.getGlobalFBUrl(),
-                                    label: "https://www.facebook.com/YourPage",
+                                    label: l10n.opts.url_sample,
                                     compact: true
                                 })
                             ]
@@ -257,8 +260,8 @@
                             fields: [
                                 new Field_Button({
                                     model: this.model,
-                                    info: 'Back to your',
-                                    label: 'global settings',
+                                    info: l10n.opts.back_to,
+                                    label: l10n.opts.global_settings,
                                     on_click: function(e){
                                         e.preventDefault();
 			                            Upfront.Events.trigger("entity:settings:deactivate");
@@ -277,7 +280,7 @@
          * @return {string} Title
          */
         get_title: function () {
-            return "LikeBox settings";
+            return l10n.settings;
         }
     });
 
