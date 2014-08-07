@@ -1624,7 +1624,7 @@ define([
 					font_family,
 					style_base;
 
-				style_base = Font_Model.parse_variant(me.styles[element]);
+				style_base = Font_Model.parse_variant(me.styles[element] || 'regular');
 				weight = style_base.weight;
 				style = style_base.style;
 
@@ -1643,7 +1643,6 @@ define([
 					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
 					if (400 != weight) url += ':' + weight; // If not default weight, DO include the info
 					$("head").append('<link href="' + url + '" rel="stylesheet" type="text/css" />');
-					// All set, let the defaults carry on as normal...
 				}
 
 				font_rule_value = '"' + font_family.get('family') + '",' + font_family.get('category');
