@@ -39,8 +39,13 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 	},
 
 	_get_comment_markup: function () {
-		var me = this;
-		Upfront.Util.post({"action": "ucomment_get_comment_markup", "data": JSON.stringify({"post_id": _upfront_post_data.post_id})})
+		var me = this,
+			post_id = _upfront_post_data.post_id
+		;
+		if (!post_id && "themeExporter" in Upfront) {
+			post_id = 'fake_post';
+		}
+		Upfront.Util.post({"action": "ucomment_get_comment_markup", "data": JSON.stringify({"post_id": post_id})})
 			.success(function (ret) {
 				var html = ret.data.replace(/<script.*?>.*?<\/script>/gim, ''); // strip script
 				$(document).data('upfront-comment-' + _upfront_post_data.post_id, html);

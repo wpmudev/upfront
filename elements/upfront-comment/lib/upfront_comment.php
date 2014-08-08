@@ -12,12 +12,21 @@ class Upfront_UcommentView extends Upfront_Object {
 	}
 
 	public static function get_comment_markup ($post_id) {
-		if (!$post_id || !is_numeric($post_id)) return '';
+		//if (!$post_id || !is_numeric($post_id)) return '';
+		if (!$post_id) return ''; 
+		if (!is_numeric($post_id) && 'fake_post' !== $post_id) return '';
 
         $defaults = self::default_properties();
         $prepend_form = (bool) $defaults['prepend_form'];
         $form_args = apply_filters('upfront_comment_form_args', array());
-		$post = get_post($post_id);
+		//$post = get_post($post_id);
+		if (is_numeric($post_id)) {
+			$post = get_post($post_id);
+		} else {
+			$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
+			if (!empty($posts[0])) $post = $posts[0];
+			else return '';
+		}
 		if (post_password_required($post->ID)) return '';
 		ob_start();
 
@@ -151,7 +160,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	public function load_markup () {
 		$data = json_decode(stripslashes($_POST['data']), true);
 		if (empty($data['post_id'])) die('error');
-		if (!is_numeric($data['post_id'])) die('error');
+		//if (!is_numeric($data['post_id'])) die('error');
 
 		$this->_out(new Upfront_JsonResponse_Success(Upfront_UcommentView::get_comment_markup($data['post_id'])));
 	}

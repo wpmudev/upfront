@@ -671,7 +671,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				if(!$post) return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
 			} else if ('fake_post' === $data['post_id']) {
 				// Let's fake a sample post by loading a random one
-				$posts = query_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
+				$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
 				if (!empty($posts[0])) $post = $posts[0];
 				else return $this->_out(new Upfront_JsonResponse_Error('Error'));
 			} else return $this->_out(new Upfront_JsonResponse_Error('Error'));
