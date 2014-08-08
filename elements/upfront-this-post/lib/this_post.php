@@ -174,7 +174,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if($archive)
 			$layout_id = str_replace('uposts-object-', '', $properties['element_id']);
 		$layoutData = self::find_postlayout($layout_type, $post_type, $layout_id);
-		$options = $layoutData['partOptions'];
+		$options = !empty($layoutData['partOptions']) ? $layoutData['partOptions'] : array();
 		$styles = '<style>%s</style>';
 		$rules = '';
 
@@ -266,7 +266,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$templates = self::find_partTemplates($layout_type, $post_type, $layout_id);
 
-		$options = $layoutData['partOptions'];
+		$options = !empty($layoutData['partOptions']) ? $layoutData['partOptions'] : array();
 
 		$layout = array(
 			'wrappers' => $layoutData['postLayout'],
@@ -321,7 +321,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function get_theme_layout($type, $post_type, $id){
 		$layouts_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'postlayouts';
-		if (upfront_is_builder_running) $layouts_path = sprintf(
+		if (upfront_is_builder_running()) $layouts_path = sprintf(
 			'%s%s%s%spostlayouts',
 			get_theme_root(),
 			DIRECTORY_SEPARATOR,
@@ -380,7 +380,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function get_theme_postpart_templates($type, $post_type, $id){
 		$tpl_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'postparts';
 
-		if (upfront_is_builder_running) $tpl_path = sprintf(
+		if (upfront_is_builder_running()) $tpl_path = sprintf(
 			'%s%s%s%stemplates%spostparts',
 			get_theme_root(),
 			DIRECTORY_SEPARATOR,

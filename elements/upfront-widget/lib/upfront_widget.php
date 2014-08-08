@@ -30,7 +30,7 @@ class Upfront_Uwidget {
 		$dwidget = $rc->newInstance();
 
 		ob_start();
-		$dwidget->form();
+		$dwidget->form(array());
 		$markup =  ob_get_clean();
 
 		$form = new DOMDocument();

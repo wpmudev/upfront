@@ -214,8 +214,10 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
 			$menu = wp_get_nav_menu_object( $menu_id > 0 ? $menu_id : $_POST['alternate'] );
 
-			if ( $menu )
-				$menu_items = wp_get_nav_menu_items( $menu->term_id, array( 'update_post_term_cache' => false ) );
+			$menu_items = $menu
+				? wp_get_nav_menu_items( $menu->term_id, array( 'update_post_term_cache' => false ) )
+				: array()
+			;
 
 			$sorted_menu_items = array();
 			foreach ( (array) $menu_items as $key => $menu_item )
@@ -234,7 +236,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			if ( empty($top_level_elements) ) {
 
 				$first = array_slice( $sorted_menu_items, 0, 1 );
-				$root = $first[0];
+				$root = !empty($first[0]) ? $first[0] : false;
 
 				$top_level_elements = array();
 				$children_elements  = array();

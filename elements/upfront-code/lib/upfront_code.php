@@ -11,6 +11,8 @@ class Upfront_CodeView extends Upfront_Object {
 
 		if (empty($properties)) return ''; // No info for this element, carry on.
 
+		$_id = false; // What's this supposed to be, except warning-inducing missing var?
+
 		// Alright! Let's see if we have any CSS here and scope it if we do
 		$style = !empty($properties['style'])
 			? $this->_to_scoped_style($properties['style'], $_id)
