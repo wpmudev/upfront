@@ -3,7 +3,7 @@
 Layout File, at least one main region must be added;
  */
 
-$extended = $extended ? $extended : false;
+$extended = !empty($extended) ? $extended : false;
 
 $main = upfront_create_region(array(
 	'name' => "main", 

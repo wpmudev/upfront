@@ -168,8 +168,8 @@ abstract class Upfront_EntityResolver {
 
 	public static function layout_to_name ($layout_ids) {
 		$type = $layout_ids['type'];
-		$item = $layout_ids['item'] ? preg_replace("/^{$type}-/", "", $layout_ids['item']) : "";
-		$specificity = $layout_ids['specificity'] ? preg_replace("/^{$type}-{$item}-/", "", $layout_ids['specificity']) : "";
+		$item = !empty($layout_ids['item']) ? preg_replace("/^{$type}-/", "", $layout_ids['item']) : "";
+		$specificity = !empty($layout_ids['specificity']) ? preg_replace("/^{$type}-{$item}-/", "", $layout_ids['specificity']) : "";
 		if ( $type == 'single' ){
 			$post_type = get_post_type_object($item ? $item : 'post');
 			$name = is_object($post_type->labels) ? $post_type->labels->singular_name : $post_type->labels['singular_name'];
