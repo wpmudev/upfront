@@ -340,7 +340,7 @@ define([
 							_.each(slide_images, function(id){
 								var image = images[id],
 									$image = $('<div class="upfront-default-slider-item" />');
-								$image.append('<img src="' + image.full[0] + '" />')
+								if (image && image.full) $image.append('<img src="' + image.full[0] + '" />');
 								$type.append($image);
 							});
 							me.slide_images = slide_images;
