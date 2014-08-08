@@ -3625,7 +3625,7 @@ div.uinsert-selector a:hover {
 .upfront-ui-selected, .ui-selecting {
 	position: relative;
 }
-.upfront-selected-border {
+#upfront-group-selection, .upfront-selected-border {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -3637,6 +3637,12 @@ div.uinsert-selector a:hover {
 	background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
 	z-index: -1;
 	display: none;
+}
+#upfront-group-selection {
+	bottom: auto;
+	right: auto;
+	display: block;
+	z-index: 10;
 }
 .upfront-ui-selected .upfront-selected-border,
 .ui-selecting .upfront-selected-border,
