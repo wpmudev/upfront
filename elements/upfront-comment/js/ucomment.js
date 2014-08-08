@@ -42,7 +42,7 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			post_id = _upfront_post_data.post_id
 		;
-		if (!post_id && "themeExporter" in Upfront) {
+		if (!post_id && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 			post_id = 'fake_post';
 		}
 		Upfront.Util.post({"action": "ucomment_get_comment_markup", "data": JSON.stringify({"post_id": post_id})})

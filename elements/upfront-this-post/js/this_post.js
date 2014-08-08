@@ -46,7 +46,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			//let's also start the editor before getting the markup
 			//so its load will be faster
 			me.prepareEditor();
-		} else if ("themeExporter" in Upfront) {
+		} else if ("themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 			// We're dealing with a theme exporter request
 			// Okay, so let's fake a post
 			this.postId = "fake_post";
