@@ -3622,7 +3622,7 @@ div.uinsert-selector a:hover {
 	border: 1px solid #1fcd8f;
 	background: rgba(31, 205, 143, .1);
 }
-.ui-selected, .ui-selecting {
+.upfront-ui-selected, .ui-selecting {
 	position: relative;
 }
 .upfront-selected-border {
@@ -3638,7 +3638,7 @@ div.uinsert-selector a:hover {
 	z-index: -1;
 	display: none;
 }
-.ui-selected .upfront-selected-border,
+.upfront-ui-selected .upfront-selected-border,
 .ui-selecting .upfront-selected-border,
 .upfront-module-group:hover .upfront-selected-border {
 	display: block;

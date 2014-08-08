@@ -14,7 +14,7 @@ var LayoutEditor = {
 			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
 			selecting: function (e, ui) {
 				var $el = $(ui.selecting),
-					$region;
+					$region, $selected, $affected, group, do_select;
 				// make sure it's not inside module group
 				if ( $el.closest('.upfront-module-group').length > 0 )
 					return;
@@ -24,11 +24,58 @@ var LayoutEditor = {
 					$region = $(ed.selection[0]).closest('.upfront-region');
 					if ( $el.closest('.upfront-region').get(0) != $region.get(0) )
 						return;
+					ed._add_selections( $region.find('.ui-selecting'), $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group') );
 				}
-				ed._add_selection(ui.selecting);
+				else {
+					ed._add_selection(ui.selecting);
+				}
 			},
 			unselecting: function (e, ui) {
-				var $el = $(ui.unselecting);
+				var $el = $(ui.unselecting),
+					$region, $selected, $affected, group;
+				if ( ed.selection.length > 0 ){
+					$region = $(ed.selection[0]).closest('.upfront-region');
+					// we have 2 different behavior to solve conflict
+					// @TODO need to select just one behavior, in the mean time, toggle with Upfront.data.include_affected_selection = true|false
+					if ( !Upfront.data.include_affected_selection ){
+						// 1. make sure to not include selection that can lead to conflict with other elements
+						// on unselecting, we'll remove selection one by one until there's no conflict
+						$selected = $(ed.selection).filter('.ui-selecting');
+						for ( var s = ed.selection.length-1; s > 0; s-- ){
+							$selected = $selected.not( ed.selection[s] );
+							group = ed._get_group_position( $selected );
+							$affected = ed._find_affected_el( $(_.rest(ed.selection, s)), group.element );
+							if ( $affected === false ){
+								_.each( _.rest(ed.selection, s), function(sel){
+									ed._remove_selection(sel);
+								} );
+								break;
+							}
+						}
+					}
+					else {
+						// 2. include all affected elements to selection automatically
+						// on unselecting, we'll only remove selection that's not in conflict anymore
+						$selected = $(ed.selection).filter('.ui-selecting');
+						group = ed._get_group_position( $selected );
+						$affected = ed._find_affected_el( $(ed.selection).not('.ui-selecting'), group.element );
+						_.each(ed.selection, function(sel){
+							var is_affected = false;
+							if ( $(sel).hasClass('ui-selecting') )
+								return;
+							if ( $affected !== false && $affected.length > 0 ){
+								$affected.each(function(){
+									if ( this == sel )
+										is_affected = true;
+								});
+							}
+							if ( is_affected )
+								return;
+							ed._remove_selection(sel);
+						});
+						return;
+					}
+				}
 				ed._remove_selection(ui.unselecting);
 			},
 			/*selected: function (e, ui) {
@@ -46,24 +93,22 @@ var LayoutEditor = {
 				ed.selecting = true;
 			},
 			stop: function (e, ui) {
-				if ( !$(".ui-selected").length )
+				if ( !$(".upfront-ui-selected").length )
 					return false;
 				var me = this,
-					$region = $(".ui-selected:first").closest('.upfront-region'),
+					$region = $(".upfront-ui-selected:first").closest('.upfront-region'),
 					region = regions.get_by_name($region.data('name')),
 					region_modules = (region ? region.get("modules") : false),
 					region_wrappers = (region ? region.get("wrappers") : false),
 					unselect = function(){
 						$(this).find('.upfront-selected-border').remove();
-						$(this).removeClass('ui-selected');
+						$(this).removeClass('upfront-ui-selected ui-selected');
 					},
-					$dont_select = $(".ui-selected").filter(function(){
-						// don't select any module outside of selection
-						return ! _.contains(ed.selection, this);
-					}).each(unselect),
-					$selected = $(".ui-selected");
+					$selected = $('.upfront-ui-selected');
 				if ($selected.length < 2){
-					$selected.each(unselect);
+					$selected.each(function(){
+						ed._remove_selection(this);					
+					})
 					return false;
 				};
 				$('.upfront-module-group-group').remove();
@@ -164,7 +209,8 @@ var LayoutEditor = {
 							margin_top: module_top,
 							margin_left: module_left,
 							wrapper_class: wrapper_class,
-							wrapper_col: wrapper_col
+							wrapper_col: wrapper_col,
+							wrapper_id: wrapper_id
 						});
 						if ( wrapper_index == 1 || wrapper_class.match(/clr/) )
 							margin_left = ( margin_left === false || module_left < margin_left ) ? module_left : margin_left;
@@ -174,6 +220,7 @@ var LayoutEditor = {
 						current_wrapper_id = wrapper_id;
 						last_index = index;
 					});
+
 					// initiate GridEditor start for the first module
 					first_module_view = Upfront.data.module_views[modules[0].model.cid];
 					grid_ed.start(first_module_view, first_module_view.model);
@@ -193,7 +240,7 @@ var LayoutEditor = {
 						right: first_module_outer_grid.x + Math.round((wrap_right-wrap_left)/grid_ed.col_size) - 1,
 						bottom: first_module_outer_grid.y + Math.round((wrap_bottom-wrap_top)/grid_ed.baseline) - 1
 					}
-					// find affected els and look for els that must be combined in one wrapper
+					// find affected els and look for affected els that must be combined in one wrapper
 					affected_els = grid_ed.get_affected_els(first_module_el, grid_ed.els, [first_module_el], false);
 					_.each(_.union(affected_els.left, affected_els.right), function(el){
 						var combined = false;
@@ -230,7 +277,7 @@ var LayoutEditor = {
 					wrapper_index = 0;
 					current_wrapper_id = false;
 					_.each(modules, function(module, index){
-						var wrapper_id = module.model.get_wrapper_id(),
+						var wrapper_id = module.wrapper_id,
 							new_classes = [];
 						if ( current_wrapper_id != wrapper_id ){
 							new_wrapper = new Upfront.Models.Wrapper({});
@@ -259,14 +306,19 @@ var LayoutEditor = {
 						region_modules.remove(module.model, {silent: true});
 						group_modules.add(module.model);
 					});
-					group_wrapper.set_property('wrapper_id', group_wrapper_id);
-					group_wrapper_classes.push(grid_ed.grid.class + group_wrapper_col);
-					if ( modules[0].wrapper_class.match(/clr/) )
-						group_wrapper_classes.push('clr');
-					group_wrapper.set_property('class', group_wrapper_classes.join(' '));
-					region_wrappers.add(group_wrapper);
+					if ( wrapper_index > 1 ){
+						group_wrapper.set_property('wrapper_id', group_wrapper_id);
+						group_wrapper_classes.push(grid_ed.grid.class + group_wrapper_col);
+						if ( modules[0].wrapper_class.match(/clr/) )
+							group_wrapper_classes.push('clr');
+						group_wrapper.set_property('class', group_wrapper_classes.join(' '));
+						region_wrappers.add(group_wrapper);
+						group.set_property('wrapper_id', group_wrapper_id);
+					}
+					else {
+						group.set_property('wrapper_id', current_wrapper_id);
+					}
 					group.set_property('element_id', group_id);
-					group.set_property('wrapper_id', group_wrapper_id);
 					group.replace_class( grid_ed.grid.class + col + " " + grid_ed.grid.top_margin_class + margin_top + " " + grid_ed.grid.left_margin_class + margin_left );
 					group.add_to(region_modules, module_index);
 
@@ -328,22 +380,129 @@ var LayoutEditor = {
 			$(this).selectable("destroy");
 		});
 	},
+	
+	_get_group_position: function ($selected) {
+		var sel_top = sel_left = sel_right = sel_bottom = false,
+			wrap_top = wrap_left = wrap_right = wrap_bottom = false;
+		$selected.each(function(){
+			var off = $(this).offset(),
+				width = $(this).outerWidth(),
+				height = $(this).outerHeight(),
+				$wrap = $(this).closest('.upfront-wrapper'),
+				wrap_off = $wrap.offset(),
+				wrap_width = $wrap.outerWidth(),
+				wrap_height = $wrap.outerHeight();
+			off.right = off.left + width;
+			off.bottom = off.top + height;
+			sel_top = ( sel_top === false || off.top < sel_top ) ? off.top : sel_top;
+			sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
+			sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
+			sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
+			wrap_off.right = wrap_off.left + wrap_width;
+			wrap_off.bottom = wrap_off.top + wrap_height;
+			wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
+			wrap_bottom = ( wrap_bottom === false || wrap_off.bottom > wrap_bottom ) ? wrap_off.bottom : wrap_bottom;
+			wrap_left = ( wrap_left === false || wrap_off.left < wrap_left ) ? wrap_off.left : wrap_left;
+			wrap_right = ( wrap_right === false || wrap_off.right > wrap_right ) ? wrap_off.right : wrap_right;
+		});
+		return {
+			element: {
+				top: sel_top,
+				bottom: sel_bottom,
+				left: sel_left,
+				right: sel_right
+			},
+			wrapper: {
+				top: wrap_top,
+				bottom: wrap_bottom,
+				left: wrap_left,
+				right: wrap_right
+			}
+		};
+	},
+	
+	_find_affected_el: function ($els, pos) {
+		if ( this.selection.length == 0 )
+			return false;
+		var $affected = false;
+		$els.each(function(){
+			var off = $(this).offset(),
+				width = $(this).width(),
+				height = $(this).height(),
+				bottom = off.top + height,
+				right = off.left + width;
+			if ( pos.top < bottom && pos.bottom > off.top && pos.left < right && pos.right > off.left )
+				$affected = $affected !== false ? $affected.add($(this)) : $(this);
+		})
+		return $affected;
+	},
 
 	_add_selection: function (el) {
+		var find = _.find(this.selection, function(sel){ return (sel == el); });
+		if ( find )
+			return;
 		this.selection.push(el);
+		$(el).addClass('upfront-ui-selected');
 		$(el).prepend('<div class="upfront-selected-border" />');
+	},
+	
+	/**
+	 * Automatically resolve conflict on adding multiple selections
+	 */
+	_add_selections: function ($selecting, $affected_els, include) {
+		var ed = this,
+			selected = false,
+			include = include ? include : 1,
+			total = $selecting.length;
+		// we have 2 different behavior to solve conflict
+		// @TODO need to select just one behavior, in the mean time, toggle with Upfront.data.include_affected_selection = true|false
+		if ( !Upfront.data.include_affected_selection ){ 
+			// 1. make sure to not include selection that can lead to conflict with other elements
+			$selecting.each(function(index){
+				if ( selected !== false || index + include > total )
+					return;
+				var sels = [this],
+					group, $affected;
+				if ( include > 1 ) {
+					for ( var i = index+1; i < index+include; i++ ){
+						sels.push( $selecting.get(i) );
+					}
+				}
+				group = ed._get_group_position( $(ed.selection).add(sels) ),
+				$affected = ed._find_affected_el( $affected_els.not(sels), group.element );
+				if ( $affected === false ){
+					selected = [];
+					_.each(sels, function(sel){
+						ed._add_selection(sel);
+						selected.push(sel);
+					});
+				}
+			});
+			if ( selected !== false )
+				return ed._add_selections( $selecting.not(selected), $affected_els.not(selected), include );
+			if ( include+1 <= total )
+				return ed._add_selections( $selecting, $affected_els, include+1 );
+		}
+		else {
+			// 2. include all affected elements to selection automatically
+			var group = ed._get_group_position( $selecting ),
+				$affected = ed._find_affected_el( $affected_els, group.element );
+			if ( $affected !== false )
+				$affected.each(function(){ ed._add_selection(this); });
+		}
+		return;
 	},
 
 	_remove_selection: function (el) {
 		this.selection = _.reject(this.selection, function(sel){ return (sel == el); });
 		$(el).find('.upfront-selected-border').remove();
-		$(el).removeClass('ui-selected');
+		$(el).removeClass('upfront-ui-selected ui-selected');
 	},
 
 	remove_selections: function () {
 		var ed = Upfront.Behaviors.LayoutEditor;
-		$('.ui-selected').each(function(){
-			ed._remove_selection(this);
+		_.each(ed.selection, function(sel){
+			ed._remove_selection(sel);
 		});
 		$('.upfront-module-group-group').remove();
 	},
@@ -1365,6 +1524,9 @@ var GridEditor = {
 		var	ed = Upfront.Behaviors.GridEditor,
 			wrap_el_max = ed.get_wrap_el_max(adj_wrap, ignore),
 			wrap_right = wrap_el_max ? ( cmp_right && cmp_right > wrap_el_max.grid.right ? cmp_right : wrap_el_max.grid.right ) : ( cmp_right ? cmp_right : adj_wrap.grid.left-1 );
+		adj_wrap_aff_right = _.reject(adj_wrap_aff_right, function(el){
+			return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false;
+		});
 		ed.adjust_els_right(adj_wrap_aff_right, wrap_right, update_class);
 		if ( cmp_right+1 == ed.containment.grid.left && ed.get_wrap_els(adj_wrap).length == 0 ) {
 			adj_wrap.$el.nextAll('.upfront-wrapper:eq(0)').data('clear', 'clear'); // @TODO check this
@@ -1393,6 +1555,9 @@ var GridEditor = {
 		var	ed = Upfront.Behaviors.GridEditor,
 			wrap_el_max = ed.get_wrap_el_max(adj_wrap, ignore, true),
 			wrap_bottom = wrap_el_max ? ( cmp_bottom && cmp_bottom > wrap_el_max.grid.bottom ? cmp_bottom : wrap_el_max.grid.bottom ) : ( cmp_bottom ? cmp_bottom : adj_wrap.grid.bottom-1 );
+		adj_wrap_aff_bottom = _.reject(adj_wrap_aff_bottom, function(el){
+			return ignore ? _.find(ignore, function(i){ return i.$el.get(0) == el.$el.get(0); }) : false;
+		});
 		ed.adjust_els_bottom(adj_wrap_aff_bottom, wrap_bottom, update_class);
 		this.time_end('fn adjust_affected_bottom');
 	},
@@ -1411,6 +1576,9 @@ var GridEditor = {
 			return;
 		// Iterate through elements and check if it must be contained in separate wrapper
 		_.each(wraps, function(wrap){
+			// Don't normalize element inside group
+			if ( wrap.$el.closest('.upfront-module-group').length > 0 )
+				return;
 			var $wrap_els= wrap.$el.find('> .upfront-module-view > .upfront-module, > .upfront-module-group');
 			if ( $wrap_els.size() > 1 ){
 				$wrap_els.each(function(){
@@ -2415,7 +2583,7 @@ var GridEditor = {
 				is_parent_group = ( typeof view.group_view != 'undefined' );
 				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');
-				// remove position which might be set to the module view
+				// remove position which might be set to the module view 
 				$(this).closest(".upfront-module-view").css("position", "");
 				ed.start(view, model);
 				ed.normalize(ed.els, ed.wraps);
@@ -2437,7 +2605,7 @@ var GridEditor = {
 					});
 				}
 
-				$region.css('min-height', $region.css('height'));
+				//$region.css('min-height', $region.css('height'));
 				//$me.hide();
 				$me.css('visibility', 'hidden');
 				$helper.css('max-width', me.width);
@@ -2842,6 +3010,7 @@ var GridEditor = {
 					//		ed.adjust_els_right(aff_els.right, me.grid.left-1);
 						margin_data.current.left = drop_left;
 						margin_data.current.top = drop_top;
+
 						if ( ed.drop.type == 'side-before' ){
 							var $nx_wrap = ed.drop.insert[1];
 							if ( $nx_wrap.size() > 0 ){

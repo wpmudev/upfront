@@ -1101,11 +1101,12 @@ define([
 			},
 			render: function () {
 				var props = {},
+					is_parent_group = ( typeof this.group_view != 'undefined' ),
 					run = this.model.get("properties").each(function (prop) {
 						props[prop.get("name")] = prop.get("value");
 					}),
 					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
-					model = _.extend(this.model.toJSON(), {"properties": props, "height": height}),
+					model = _.extend(this.model.toJSON(), {"properties": props, "height": height, "parent_group_class": is_parent_group ? 'upfront-module-parent-group' : ''}),
 					template = _.template(_Upfront_Templates["module"], model)
 				;
 				Upfront.Events.trigger("entity:module:before_render", this, this.model);
@@ -1355,6 +1356,7 @@ define([
 				var prop_class = this.model.get_property_value_by_name('class');
 				this.$el.removeClass(this._prev_class).addClass(prop_class);
 				this._prev_class = prop_class;
+				this.update_position();
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1411,7 +1413,9 @@ define([
 					col = ed.get_class_num(this.$el, ed.grid.class),
 					top = ed.get_class_num(this.$el, ed.grid.top_margin_class),
 					left = ed.get_class_num(this.$el, ed.grid.left_margin_class),
-					is_clr = this.$el.closest('.upfront-wrapper').hasClass('clr'),
+					$wrap = this.$el.closest('.upfront-wrapper'),
+					is_clr = $wrap.hasClass('clr'),
+					wrapper_id = this.model.get_wrapper_id(),
 					modules = this.model.get('modules'),
 					wrappers = this.model.get('wrappers'),
 					region = this.region,
@@ -1424,7 +1428,7 @@ define([
 					is_combine_wrap = false,
 					line_col = 0;
 				ed.start(this, this.model);
-				if ( $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) {
+				if ( $wrap.find('>.upfront-module-view, >.upfront-module-group').length > 1 || $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) {
 					is_combine_wrap = true;
 					_.each(modules_arr, function(module, i){
 						var wrapper_id = module.get_wrapper_id(),
@@ -1442,13 +1446,13 @@ define([
 					});
 				}
 				if ( is_combine_wrap ){
-					var new_wrapper = new Upfront.Models.Wrapper({}),
+					/*var new_wrapper = new Upfront.Models.Wrapper({}),
 						new_wrapper_id = Upfront.Util.get_unique_id("wrapper");
 					new_wrapper.set_property('wrapper_id', new_wrapper_id);
 					new_wrapper.replace_class(ed.grid.class + (col+left));
 					if ( is_clr )
 						new_wrapper.add_class('clr');
-					region_wrappers.add(new_wrapper, {silent: true});
+					region_wrappers.add(new_wrapper, {silent: true});*/
 					_.each(modules_arr, function(module, i){
 						var view = Upfront.data.module_views[module.cid],
 							module_class = module.get_property_value_by_name('class'),
@@ -1457,7 +1461,7 @@ define([
 						if ( i == 0 )
 							module.replace_class(ed.grid.top_margin_class + (module_top+top));
 						module.replace_class(ed.grid.left_margin_class + (module_left+left));
-						module.set_property('wrapper_id', new_wrapper_id);
+						module.set_property('wrapper_id', wrapper_id);
 						delete view.group_view;
 						modules.remove(module, {silent: true});
 						module.add_to(region_modules, index+i);
@@ -1622,6 +1626,7 @@ define([
 			render_module: function (module, options) {
 				var $el = this.$el,
 					index = options && typeof options.index != 'undefined' ? options.index-1 : -2,
+					$el_index = index >= 0 ? $el.find('> .upfront-wrapper > .upfront-module-view, > .upfront-wrapper > .upfront-module-group').eq(index) : false,
 					default_view_class = module.get('modules') ? "ModuleGroup" : "Module",
 					view_class_prop = module.get("properties").where({"name": "view_class"}),
 					view_class = view_class_prop.length ? view_class_prop[0].get("value") : default_view_class,
@@ -1644,7 +1649,7 @@ define([
 						else if ( index === -1 )
 							$el.prepend(local_view.el);
 						else
-							$el.find('> .upfront-wrapper > .upfront-module-view, > .upfront-wrapper > .upfront-module-group').eq(index).parent().after(local_view.el);
+							$el_index.parent().after(local_view.el);
 					}
 					else {
 						if ( this.current_wrapper_id == wrapper_id ){
@@ -1658,14 +1663,22 @@ define([
 						this.current_wrapper_id = wrapper_id;
 						this.current_wrapper_el = wrapper_el;
 						local_view.render();
-						$(wrapper_el).append(local_view.el);
+						if ( $el_index !== false ){
+							if ( $el_index.closest('.upfront-wrapper').get(0) == wrapper_el )
+								$el_index.after(local_view.el)
+							else
+								$(wrapper_el).prepend(local_view.el);
+						}
+						else {
+							$(wrapper_el).append(local_view.el);
+						}
 						if ( wrapper_view ){
 							if ( index === -2 )
 								$el.append(wrapper_el);
 							else if ( index === -1 )
 								$el.prepend(wrapper_el);
 							else
-								$el.find('> .upfront-wrapper > .upfront-module-view, > .upfront-wrapper > .upfront-module-group').eq(index).closest('.upfront-wrapper').after(wrapper_el);
+								$el_index.closest('.upfront-wrapper').after(wrapper_el);
 							if ( ! Upfront.data.wrapper_views[wrapper.cid] )
 								Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
 						}
