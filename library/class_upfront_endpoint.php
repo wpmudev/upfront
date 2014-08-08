@@ -1017,7 +1017,7 @@ class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
 		upfront_switch_stylesheet('upfront');
 		add_filter('upfront-storage-key', array($this, 'storage_key_filter'));
 		add_filter('upfront-data-storage-key', array($this, 'storage_key_filter'));
-		add_filter('upfront-enable-dev-saving', __return_false);
+		add_filter('upfront-enable-dev-saving', '__return_false');
 		query_posts('');
 	}
 
@@ -1062,7 +1062,7 @@ class Upfront_Builder_VirtualSubpage extends Upfront_CreateNew_Theme_VirtualSubp
 		upfront_switch_stylesheet($this->stylesheet);
 		add_filter('upfront-storage-key', array($this, 'storage_key_filter'));
 		add_filter('upfront-data-storage-key', array($this, 'storage_key_filter'));
-		add_filter('upfront-enable-dev-saving', __return_false);
+		add_filter('upfront-enable-dev-saving', '__return_false');
 		query_posts('');
 	}
 	public function storage_key_filter ($key) {

@@ -57,15 +57,15 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				$menu_id = $menu->term_id;
 		}
 
-		if ( $menu_id ) :
+		if ( $menu_id ) {
 			$menu = wp_nav_menu(array(
 				'menu' => $menu_id,
 				'fallback_cb'     => false,
 				'echo' => false
 			));
-		else:
+		} else {
 			return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
-		endif;
+		}
 
 		return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 	}
