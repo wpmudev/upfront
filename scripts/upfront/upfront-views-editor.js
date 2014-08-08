@@ -5499,7 +5499,9 @@ var CSSEditor = Backbone.View.extend({
 		UyoutubeModel: {label: 'YoutTube', id: 'uyoutube'},
 		PlainTxtModel: {label: 'Text', id:'plain_text'},
 		CodeModel: {label: 'Code', id: 'upfront-code_element'},
-		Layout: {label: 'Body', id: 'layout'}
+		Layout: {label: 'Body', id: 'layout'},
+		RegionContainer: {label: 'Region', id: 'region-container'},
+		Region: {label: 'Inner Region', id: 'region'}
 	},
 	initialize: function() {
 		if(!$('#' + this.id).length)
@@ -5515,7 +5517,6 @@ var CSSEditor = Backbone.View.extend({
 
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
-		this.save_as = ( options.save_as !== false );
 		this.global = ( options.global === true );
 
 		this.modelType = options.type ? options.type : this.model.get_property_value_by_name('type');
@@ -5524,23 +5525,8 @@ var CSSEditor = Backbone.View.extend({
 		// CSS editor treats global stylesheet as a separate case. When options.type is "Layout"
 		// and options.element_id is "layout" than global stylesheet is edited.
 		this.is_global_stylesheet = options.type === 'Layout' && options.element_id === 'layout';
-		// Style name will be used to identify style element inserted to page by id and
-		// to add class to elements that are using this style.
-		this.stylename = ''; // reset
-		if (this.is_global_stylesheet) this.stylename = 'layout-style';
-		else this.stylename = options.stylename;
-		// If stylename is still empty than editor is creating new style and user have not
-		// yet assigned name to style. Create temporary style name.
-		if (this.stylename === '') {
-			// User is adding element style so assign name according to element type
-			// and add class to element on which editor is started so changes to style
-			// reflect as edited.
-			this.stylename = this.get_temp_stylename();
-			$('#' + this.model.get_property_value_by_name('element_id')).addClass(this.stylename);
-		}
 
-		// For default styles saving and loading process is a bit different hence this flag
-		this.is_default_style = this.stylename === '_default';
+		this.resolve_stylename(options);
 
 		this.ensure_style_element();
 
@@ -5568,6 +5554,35 @@ var CSSEditor = Backbone.View.extend({
 
 		Upfront.Events.trigger('csseditor:open', this.element_id);
 	},
+	resolve_stylename: function(options) {
+		// Style name will be used to identify style element inserted to page by id and
+		// to add class to elements that are using this style.
+		this.stylename = ''; // reset
+		if (this.is_global_stylesheet) this.stylename = 'layout-style';
+		else this.stylename = options.stylename;
+
+		// Check for regions
+		if (this.is_region_style()) {
+			this.stylename = this.elementType.id + '-' + this.model.get('name') + '-style';
+		}
+
+		// If stylename is still empty than editor is creating new style and user have not
+		// yet assigned name to style. Create temporary style name.
+		if (this.stylename === '') {
+			// User is adding element style so assign name according to element type
+			// and add class to element on which editor is started so changes to style
+			// reflect as edited.
+			this.stylename = this.get_temp_stylename();
+			$('#' + this.model.get_property_value_by_name('element_id')).addClass(this.stylename);
+		}
+
+		// For default styles saving and loading process is a bit different hence this flag
+		this.is_default_style = this.stylename === '_default';
+	},
+	is_region_style: function() {
+		return this.elementType.id === 'region-container'
+			|| this.elementType.id === 'region';
+	},
 	get_style_id: function() {
 		// Prepend element type if this is default style
 		return this.is_default_style ?
@@ -5576,13 +5591,15 @@ var CSSEditor = Backbone.View.extend({
 	get_css_selector: function() {
 		if (this.is_global_stylesheet) return '';
 
+		if (this.is_region_style()) return '.upfront-' + this.get_style_id().replace('-style', '');
+
 		// Add some specificity so this style would go over other
 		if (this.is_default_style === false) return '#page .' + this.stylename;
 
 		return '.upfront-output-' + this.elementType.id;
 	},
 	ensure_style_element: function() {
-		var $style_el = $('#' + this.get_style_id());
+		var $style_el = this.get_style_element();
 		if($style_el.length !== 0) {
 			this.$style = $style_el;
 			return;
@@ -5592,7 +5609,7 @@ var CSSEditor = Backbone.View.extend({
 		$('body').append(this.$style);
 	},
 	get_style_element: function() {
-		return $('#' + this.get_style_id());
+		return $('style#' + this.get_style_id());
 	},
 	close: function(e){
 		if(e)
@@ -5607,6 +5624,8 @@ var CSSEditor = Backbone.View.extend({
 		$('#page').css('padding-bottom', 0);
 		this.$el.hide();
 
+		if (this.is_region_style()) this.save();
+
 		Upfront.Events.trigger('csseditor:closed', this.element_id);
 	},
 	render: function(){
@@ -5620,15 +5639,11 @@ var CSSEditor = Backbone.View.extend({
 		else
 			this.$el.removeClass('upfront-css-no-sidebar');
 
-		if (!this.save_as)
-			this.$el.addClass('upfront-css-no-save-as');
-		else
-			this.$el.removeClass('upfront-css-no-save-as');
-
 		this.$el.html(this.tpl({
 			name: this.stylename,
 			elementType: this.elementType.label,
-			selectors: this.selectors
+			selectors: this.selectors,
+			show_save: this.is_region_style() === false
 		}));
 
 		this.resizeHandler('.');
@@ -5864,8 +5879,6 @@ var CSSEditor = Backbone.View.extend({
 		data = {
 			styles: styles,
 			elementType: this.elementType.id,
-			elementSelector: this.elementSelector,
-			outputElementSelector: this.outputElementSelector,
 			global: this.global
 		};
 		// If in exporter mode, export instead of saving
@@ -5899,6 +5912,7 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	checkDeleteToggle: function(e){
+		if (_.isUndefined(e)) return;
 		if(!this.deleteToggle)
 			this.deleteToggle = $('<a href="#" class="upfront-css-delete">Delete this style</a>');
 
@@ -8049,21 +8063,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		// Edit CSS trigger
 		trigger_edit_css: function () {
-			var editor = Upfront.Application.cssEditor,
-				is_main = this.model.is_main(),
-				name = this.model.get('name'),
-				selector = is_main ? editor.elementTypes.RegionContainer.id + '-' + name : editor.elementTypes.Region.id + '-' + name,
-				styleId = 'upfront-style-' + selector;
-			if(!$('#' + styleId).length)
-				$('body').append('<style id="' + styleId + '"></style>');
-			editor.init({
+			Upfront.Application.cssEditor.init({
 				model: this.model,
-				name: selector,
-				save_as: false,
-				type: is_main ? "RegionContainer" : "Region",
-				elementSelector: is_main ? '.upfront-region-container' : '.upfront-region',
-				outputElementSelector: is_main ? '.upfront-output-region-container' : '.upfront-output-region',
-				element_id: is_main ? 'region-container-' + name : 'region-' + name
+				type: this.model.is_main() ? "RegionContainer" : "Region"
 			});
 		}
 	});
