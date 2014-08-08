@@ -69,8 +69,9 @@ jQuery(document).ready(function($){
 	// Full width image and video background
 	function fix_full_bg () {
 		$('[data-bg-image-ratio]').each(function(){
-			var width = $(this).outerWidth(),
-				height = $(this).outerHeight(),
+			var is_layout = $(this).is('.upfront-output-layout'),
+				width = is_layout ? $(window).width() : $(this).outerWidth(),
+				height = is_layout ? $(window).height() : $(this).outerHeight(),
 				ratio = parseFloat($(this).attr('data-bg-image-ratio'));
 			if ( Math.round(height/width*100)/100 > ratio )
 				$(this).css('background-size', (height/ratio) + "px " + height + "px" /*"auto 100%"*/);
@@ -78,8 +79,9 @@ jQuery(document).ready(function($){
 				$(this).css('background-size', width + "px " + (width*ratio) + "px" /*"100% auto"*/);
 		});
 		$('[data-bg-video-ratio]').each(function(){
-			var width = $(this).outerWidth(),
-				height = $(this).outerHeight(),
+			var is_layout = $(this).parent().is('.upfront-output-layout'),
+				width = is_layout ? $(window).width() : $(this).outerWidth(),
+				height = is_layout ? $(window).height() : $(this).outerHeight(),
 				ratio = parseFloat($(this).attr('data-bg-video-ratio')),
 				style = $(this).attr('data-bg-video-style') || 'crop',
 				$embed = $(this).children('iframe');

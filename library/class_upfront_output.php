@@ -250,7 +250,7 @@ abstract class Upfront_Entity {
 		}
 		return $type;
 	}
-	protected function _get_background_css () {
+	protected function _get_background_css ($is_layout = false) {
 		$type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_property('background_color');
@@ -289,7 +289,7 @@ abstract class Upfront_Entity {
 		return ( !empty($css) ) ? implode('; ', $css) . '; ' : '';
 	}
 
-	protected function _get_background_attr () {
+	protected function _get_background_attr ($is_layout = false) {
 		$type = $this->get_background_type();
 		$attr = '';
 		if ( !$type || $type == 'image' ){
@@ -486,12 +486,12 @@ class Upfront_Layout_View extends Upfront_Container {
 	}
 
 	public function get_css_inline () {
-		$css = $this->_get_background_css();
+		$css = $this->_get_background_css(true);
 		return $css;
 	}
 
 	public function get_attr () {
-		$attr = $this->_get_background_attr();
+		$attr = $this->_get_background_attr(true);
 		return $attr;
 	}
 

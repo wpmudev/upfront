@@ -78,6 +78,7 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-grid-layout {
   margin:0 auto;
+  position: relative;
 }
 
 .c1, .c2, .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11, .c12, .c13, .c14, .c15, .c16, .c17, .c18, .c19, .c20, .c21, .c22, .c23, .c24 {
@@ -92,6 +93,10 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-output-wrapper { float: left; }
 .upfront-output-module-group { float: left; }
+.upfront-output-module {
+  position: relative;
+  z-index: 1;
+}
 
 .upfront-output-region.upfront-region-fixed {
   position: fixed;
@@ -121,6 +126,28 @@ h2, h3 { page-break-after: avoid; }
 	position: relative;
 	margin: 0 auto;
 	width: 100%;
+}
+
+.upfront-output-region-container {
+	position: relative;
+}
+.upfront-output-region-sub-container {
+	position: relative;
+}
+.upfront-output-bg-overlay {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 0;
+}
+.upfront-output-layout {
+	background-attachment: fixed;
+}
+.upfront-output-layout > .upfront-output-bg-overlay {
+	position: fixed;
+	z-index: -1;
 }
 
 /* Object */

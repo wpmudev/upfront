@@ -6945,12 +6945,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				region_types = [
 					{ label: "Solid color", value: 'color', icon: 'color' },
 					{ label: "Image", value: 'image', icon: 'image' },
-					{ label: "Image slider", value: 'slider', icon: 'slider' },
-					{ label: "Map", value: 'map', icon: 'map' },
 					{ label: "Video", value: 'video', icon: 'video' }
 				]
 			;
-
+			
+			if ( !is_layout ) {
+				region_types.push({ label: "Image slider", value: 'slider', icon: 'slider' });
+				region_types.push({ label: "Map", value: 'map', icon: 'map' });
+			}
 			if (_upfront_post_data.post_id) {
 				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
 			}

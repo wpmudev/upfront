@@ -90,6 +90,7 @@ define([
 			},
 			update_background: function () {
 				var me = this,
+					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
@@ -214,7 +215,7 @@ define([
 					if ( type != 'color' && image ){
 						$bg.css('background-image', "url('" + image + "')");
 						if ( style == 'full' ){
-							var size = this._get_full_size($bg, ratio, false);
+							var size = this._get_full_size( ( is_layout ? $(window) : $bg ), ratio, false );
 							$bg.css({
 								backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 								backgroundRepeat: "no-repeat",
@@ -228,13 +229,16 @@ define([
 								backgroundPosition: position
 							});
 						}
+						if ( is_layout )
+							$bg.css('background-attachment', 'fixed');
 					}
 					else {
 						$bg.css({
 							backgroundImage: "none",
 							backgroundSize: "",
 							backgroundRepeat: "",
-							backgroundPosition: ""
+							backgroundPosition: "",
+							backgroundAttachment: ""
 						});
 					}
 					if ( $overlay.length )
@@ -354,6 +358,7 @@ define([
 			},
 			update_background_video: function ($type, $overlay) {
 				var me = this,
+					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					color = this.model.get_property_value_by_name('background_color'),
 					video = this.model.get_property_value_by_name('background_video'),
@@ -366,12 +371,14 @@ define([
 					$bg.css('background-color', color);
 				else
 					$bg.css('background-color', '');
+				if ( is_layout )
+					$overlay.css('position', 'fixed');
 				if ( video && embed && ( this._prev_video && this._prev_video != video || !this._prev_video ) ){
 					ratio = height/width;
 					$embed = $(embed);
 					$embed.css('position', 'absolute').appendTo($type);
 					if ( style == 'crop' || style == 'inside' ){
-						var size = this._get_full_size($type, ratio, (style == 'inside'));
+						var size = this._get_full_size( ( is_layout ? $(window) : $type ), ratio, (style == 'inside') );
 						$embed.css({
 							width: size[0],
 							height: size[1],
@@ -381,8 +388,8 @@ define([
 					}
 					else if ( style == 'full' ){
 						$embed.css({
-							width: $type.width(),
-							height: $type.height(),
+							width: is_layout ? $(window).width() : $type.width(),
+							height: is_layout ? $(window).height() : $type.height(),
 							left: 0,
 							top: 0
 						});
