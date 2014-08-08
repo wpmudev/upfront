@@ -660,20 +660,24 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 	public function load_markup() {
 		$data = json_decode(stripslashes($_POST['data']), true);
 
-		if (!is_numeric($data['post_id'])) die('error');
+		//if (!is_numeric($data['post_id'])) die('error');
 
 		$content = '';
 
 		global $post;
-		if($data['post_id']){
-			$post = get_post($data['post_id']);
-			if(!$post)
-				return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
-		}
-		else if($data['post_type']) {
+		if(!empty($data['post_id'])){
+			if (is_numeric($data['post_id'])) {
+				$post = get_post($data['post_id']);
+				if(!$post) return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
+			} else if ('fake_post' === $data['post_id']) {
+				// Let's fake a sample post by loading a random one
+				$posts = query_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
+				if (!empty($posts[0])) $post = $posts[0];
+				else return $this->_out(new Upfront_JsonResponse_Error('Error'));
+			} else return $this->_out(new Upfront_JsonResponse_Error('Error'));
+		} else if($data['post_type']) {
 			$post = Upfront_ThisPostView::get_new_post($data['post_type']);
-		}
-		else{
+		} else{
 
             $this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
         }
