@@ -610,7 +610,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 		if($(target).hasClass('new_menu_item') ) {
 			_.delay(function(self) {
-				$(target).closest('li').data('backboneview').editMenuItem(e);
+				var view = $(target).closest('li').data('backboneview');
+				if (view && view.editMenuItem) view.editMenuItem(e);
 			}, 30, this);
 		}
 	},
