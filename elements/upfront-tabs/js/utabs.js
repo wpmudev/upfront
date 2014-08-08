@@ -38,6 +38,7 @@
 					'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
 					'keydown .tab-content-active': 'onContentKeydown',
 					//'dblclick .tab-content-active': 'onContentDblclick',
+					'click .tab-content-active': 'onContentClick',
 					'click i': 'deleteTab'
 				});
 				this.delegateEvents();
@@ -48,10 +49,11 @@
 
 				Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
 				this.on('deactivated', this.stopEdit, this);
-
 				this.debouncedSave = _.debounce(this.saveTabContent, 1000);
 			},
-
+			onContentClick: function() {
+				this.$el.find('.tabs-tab-active .inner-box').trigger('blur');
+			},
 			addTab: function() {
 				this.property('tabs').push({
 					title: '',
@@ -177,17 +179,18 @@
 				try { text = ed.getValue(true); } catch (e) { text = $content.html(); }
 				this.property('tabs')[tabId].content = text;
 			},
-/*
+
 			stopEdit: function() {
-				this.saveTabContent();
-				this.$el.find('.tab-content-active')
-					.removeAttr('contenteditable')
-					.removeClass('upfront-object');
-				if (this.editor && this.editor.destroy) this.editor.destroy();
-				this.$el.parent().parent().parent().draggable('enable');
-				this.delegateEvents();
+				console.log("deactivated");
+				//this.saveTabContent();
+				this.$el.find('.tab-content-active').trigger('blur');
+//					.removeAttr('contenteditable')
+//					.removeClass('upfront-object');
+			//	if (this.editor && this.editor.destroy) this.editor.destroy();
+			//	this.$el.parent().parent().parent().draggable('enable');
+			//	this.delegateEvents();
 			},
-*/
+
 			onTabKeydown: function(event) {
 				var id;
 				if (event.keyCode === 13) {
@@ -271,7 +274,7 @@
 				$tabs.each(function () {
 					var $content = $(this);
 					$content.ueditor({
-						linebreaks: false,
+						//linebreaks: false,
 						inserts: {},
 						autostart: false
 					})

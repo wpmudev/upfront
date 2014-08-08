@@ -1709,6 +1709,7 @@ define([
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model, options);
 				this.fix_flexbox_clear(this.$el);
+				Upfront.Events.trigger("entity:added:after");
 			},
 			on_remove: function (model) {
 				var view = Upfront.data.module_views[model.cid];
@@ -2355,13 +2356,13 @@ define([
 				// this.model.get("properties").bind("remove", this.update, this);
 				// this.model.get("modules").bind("change", this.on_module_update, this);
 				// this.model.get("modules").bind("add", this.on_module_update, this);
-				// this.model.get("modules").bind("remove", this.on_module_update, this);
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
+				this.listenTo(Upfront.Events, 'entity:added:after', this.display_region_hint);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_render);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
@@ -2403,6 +2404,7 @@ define([
 				return ( !this.model.is_main() && ( !sub || (sub != 'top' && sub != 'bottom') ) );
 			},
 			render: function () {
+				
 				var container = this.model.get("container"),
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON()),
@@ -2427,6 +2429,7 @@ define([
 				this.render_bg_setting();
 				//if ( this._is_clipped() )
 				//	this.$el.append('<div class="upfront-region-active-overlay" />');
+				this.display_region_hint();
 				Upfront.Events.trigger("entity:region:after_render", this, this.model);
 				this.trigger("region_render", this);
 				if ( ! this._modules_view )
@@ -2555,6 +2558,19 @@ define([
 			},
 			on_module_update: function () {
 				this.trigger("region_changed", this);
+				this.display_region_hint();
+			},		
+			display_region_hint: function() {
+
+				if(Upfront.Application.get_current() != "theme" || this.$el.hasClass('upfront-region-floating') || this.$el.hasClass('upfront-region-lightbox') || this.$el.attr('id')=='region-shadow')
+					return
+				
+				if(this.$el.find('.upfront-modules_container .upfront-wrapper').size() < 1) {
+					this.$el.addClass('empty_in_theme_mode');
+				}
+				else {
+					this.$el.removeClass('empty_in_theme_mode');				
+				}
 			},
 			on_layout_render: function () {
 				this.update_size_hint(this.$el.width(), this.$el.height());
