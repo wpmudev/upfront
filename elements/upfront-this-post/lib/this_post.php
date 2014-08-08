@@ -338,8 +338,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if (upfront_is_builder_running()) {
 			// Override brute force to ensure single-something page get their specific postlayout loaded
-			$layout_cascade = $_POST['layout_cascade'];
-			if (isset($layout_cascade)) {
+			$layout_cascade = !empty($_POST['layout_cascade']) ? $_POST['layout_cascade'] : array();
+			if (!empty($layout_cascade)) {
 				$cascade = array($base_filename . $layout_cascade['item'] . '.php', $base_filename . $layout_cascade['type'] . '.php');
 			}
 		}
@@ -398,8 +398,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if (upfront_is_builder_running()) {
 			// Override brute force to ensure single-something page get page specific post layout parts loaded
-			$layout_cascade = $_POST['layout_cascade'];
-			if (isset($layout_cascade)) {
+			$layout_cascade = !empty($_POST['layout_cascade']) ? $_POST['layout_cascade'] : array();
+			if (!empty($layout_cascade)) {
 				$cascade = array($base_filename . $layout_cascade['item'] . '.php', $base_filename . $layout_cascade['type'] . '.php');
 			}
 		}
