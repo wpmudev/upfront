@@ -588,7 +588,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	protected function _get_page_default_layout ($cascade) {
 		$id = false;
 		if (!(defined('DOING_AJAX') && DOING_AJAX)) {
-			$id = get_the_ID();
+			$id = get_post() // A bug in WP API - get_the_ID() is implemented *quite* poorly
+				? get_the_ID()
+				: false
+			;
 		} else if (!empty($cascade['specificity'])) {
 			$id = intval(preg_replace('/^.*?(\d+)$/is', '\\1', $cascade['specificity']));
 		}
