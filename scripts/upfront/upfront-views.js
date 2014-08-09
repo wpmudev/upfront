@@ -2371,6 +2371,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
+				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
 				$(window).on('resize', this, this.on_window_resize);
 			},
 			on_click: function (e) {
@@ -2388,15 +2389,6 @@ define([
 					return;
 				if ( container && container.$el.hasClass('upfront-region-container-active') )
 					this.trigger("activate_region", this);
-				if ( !breakpoint || breakpoint.default ){
-					if ( this.model.is_main() && this.model.has_side_region() )
-						$delete_trigger.hide();
-					else
-						$delete_trigger.show();
-				}
-				else {
-					$delete_trigger.hide();
-				}
 			},
 			_is_clipped: function () {
 				var type = this.model.get('type'),
@@ -2462,7 +2454,8 @@ define([
 					if ( col && col != this.col )
 						this.region_resize(col);
 				}
-				this.$el.css('min-height', height + 'px');
+				if ( height > 0 )
+					this.$el.css('min-height', height + 'px');
 				if ( expand_lock )
 					this.$el.addClass('upfront-region-expand-lock');
 				else
@@ -2544,6 +2537,19 @@ define([
 					$container.css('min-height', '');
 				}
 				this.trigger("region_changed", this);
+			},
+			update_buttons: function () {
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger');
+				if ( !breakpoint || breakpoint.default ){
+					if ( this.model.is_main() && this.model.has_side_region() )
+						$delete_trigger.hide();
+					else
+						$delete_trigger.show();
+				}
+				else {
+					$delete_trigger.hide();
+				}
 			},
 			update_size_hint: function (width, height, $helper) {
 				var hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';

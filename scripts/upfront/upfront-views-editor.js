@@ -5624,8 +5624,6 @@ var CSSEditor = Backbone.View.extend({
 		$('#page').css('padding-bottom', 0);
 		this.$el.hide();
 
-		if (this.is_region_style()) this.save();
-
 		Upfront.Events.trigger('csseditor:closed', this.element_id);
 	},
 	render: function(){
@@ -5786,7 +5784,7 @@ var CSSEditor = Backbone.View.extend({
 		var selector = $(e.target).data('selector');
 		if(!selector.length)
 			return;
-		var element = this.elementType.type == 'element' ? $('#' + this.element_id).parent() : $('#' + this.element_id);
+		var element = this.is_region_style() === false ? $('#' + this.element_id).parent() : $('#' + this.element_id);
 		element.find(selector).addClass('upfront-css-hilite');
 	},
 
@@ -5794,7 +5792,7 @@ var CSSEditor = Backbone.View.extend({
 		var selector = $(e.target).data('selector');
 		if(!selector.length)
 			return;
-		var element = this.elementType.type == 'element' ? $('#' + this.element_id).parent() : $('#' + this.element_id);
+		var element = this.is_region_style() === false ? $('#' + this.element_id).parent() : $('#' + this.element_id);
 		element.find(selector).removeClass('upfront-css-hilite');
 	},
 
@@ -7144,6 +7142,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( is_layout ) {
 				contained_region.render();
 				$theme_body.append(contained_region.$el);
+				$content.find('.upfront-region-bg-setting-edit-css').hide();
 			}
 			else {
 				$theme_body.hide();
@@ -8065,7 +8064,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		trigger_edit_css: function () {
 			Upfront.Application.cssEditor.init({
 				model: this.model,
-				type: this.model.is_main() ? "RegionContainer" : "Region"
+				type: this.model.is_main() ? "RegionContainer" : "Region",
+				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
 		}
 	});
