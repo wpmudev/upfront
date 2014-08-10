@@ -2587,7 +2587,7 @@ var ImageSelector = Backbone.View.extend({
 	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
 	progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
 	formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
-	deferred: false,
+	deferred: $.Deferred(),
 	defaultOptions: {multiple: false, preparingText: l10n.sel.preparing},
 	options: {},
 
