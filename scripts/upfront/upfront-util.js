@@ -15,7 +15,8 @@ var rAFPollyfill = function(callback){
 define(function() {
   var Util = {
 	model_to_json: function (model) {
-	  var raw = (model.toJSON ? model.toJSON() : model),
+		if (!model) return {};
+	  var raw = (model && model.toJSON ? model.toJSON() : model),
 		data_str = JSON.stringify(raw),
 		json = JSON.parse(data_str)
 	  ;
