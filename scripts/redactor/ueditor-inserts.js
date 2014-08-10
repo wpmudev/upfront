@@ -917,13 +917,17 @@ var ImageInsert = UeditorInsert.extend({
 			captionPosition = this.resizeCache.captionPosition
 		;
 
+		wrapper.closest('.ueditor-insert').css({left: 0}); // Don't move to the left anymore plx
 		if(captionPosition == 'nocaption') {
-			if (editable.length && ui.size.width > editable.width()) return false;
+			if (editable.length && ui.size.width > editable.width()) {
+				return false;
+			}
 			else wrapper.css(ui.size);
-		} else if(captionPosition == 'bottom')
+		} else if(captionPosition == 'bottom') {
 			wrapper.css({width: ui.size.width, height: ui.size.height - this.resizeCache.caption.outerHeight()});
-		else
+		} else {
 			wrapper.height(ui.size.height);
+		}
 
 		//let it flow
 		this.$el.css({height: 'auto'});
