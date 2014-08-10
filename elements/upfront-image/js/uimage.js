@@ -65,7 +65,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			drop: function(e){
 				console.log('drop body');
 			}
-		}
+		};
 
 		$('body').on('dragover', this.bodyEventHandlers.dragover)
 			.on('dragenter', this.bodyEventHandlers.dragenter)
@@ -681,7 +681,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 							input = $('#upfront-image-file-input')
 						;
 						// Only call the handler if 1 or more files was dropped.
-						if (files.length && input.length){
+						if (files.length){
 							Upfront.Views.Editor.ImageSelector.uploadImage(files);
 			            }
 			        }
@@ -695,10 +695,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					e.preventDefault();
 					e.stopPropagation();
 					$(this).removeClass('uimage-dragenter');
+					$(this).removeClass('uimage-drageover');
 				}).on('dragover', function (e) {
                     e.preventDefault();
+                    $(this).addClass('uimage-drageover');
                 })
 			;
+			console.log("appending overlay", dropOverlay);
 			this.$('.upfront-image').append(dropOverlay);
 		}
 		if(this.dragTimer){
@@ -1227,11 +1230,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	cleanup: function(){
 		this.controls.remove();
-		if(this.bodyEventHandlers){
-			_.each(this.bodyEventHandlers, function(f, ev){
-				$('body').off(ev, f);
-			});
-		}
+		// if(this.bodyEventHandlers){
+		// 	_.each(this.bodyEventHandlers, function(f, ev){
+		// 		$('body').off(ev, f);
+		// 	});
+		// }
 	},
 
 	property: function(name, value, silent) {
@@ -2591,16 +2594,21 @@ var ImageSelector = Backbone.View.extend({
 	defaultOptions: {multiple: false, preparingText: l10n.sel.preparing},
 	options: {},
 
+
 	initialize: function(){
-		var me = this;
 		// Set the form up
-		if ($('#upfront-upload-image').length === 0) {
+		// this.setup_upload_form();
+	},
+	setup_upload_form : function(){
+			var me = this;
+			if ($('#upfront-upload-image').length === 0) {
 			$('body').append(me.formTpl({url: Upfront.Settings.ajax_url, l10n: l10n.template}));
 
 			var progress = $('#upfront-progress'),
 				fileInput = $('#upfront-image-file-input'),
 				form = $('#upfront-upload-image')
 			;
+
 
 			if (!!form.fileupload) {
 				form.fileupload({
@@ -2618,11 +2626,11 @@ var ImageSelector = Backbone.View.extend({
 					})
 					.bind('fileuploaddone', function (e, data) {
 						var response = data.result;
-						console.log(data.result);
 						progress.css('width', '100%');
 						$('#upfront-image-uploading h2').html(l10n.sel.preparing);
 						Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
 							.done(function(response){
+								console.log("done", response);
 								me.deferred.resolve(response.data.images, response);
 							})
 							.error(function(){
@@ -2630,16 +2638,19 @@ var ImageSelector = Backbone.View.extend({
 								me.openSelector();
 							});
 						form[0].reset();
+						$('#upfront-upload-image').remove();
 					})
 					.bind('fileuploadfail', function (e, response) {
 						var error = response.jqXHR.responseJSON.error;
 						Upfront.Views.Editor.notify(error, 'error');
 						me.openSelector();
 						form[0].reset();
+						$('#upfront-upload-image').remove();
 					});
 			}
 
 			fileInput.on('change', function(e){
+				console.log("change e", e);
 				if (this.files.length) {
 					if(XMLHttpRequest && (new XMLHttpRequest()).upload) { //XHR uploads!
 						me.uploadImage(this.files);
@@ -2654,7 +2665,6 @@ var ImageSelector = Backbone.View.extend({
 			});
 		}
 	},
-
 	open: function(options) {
 		var me = this;
 		this.deferred = $.Deferred();
@@ -2704,14 +2714,14 @@ var ImageSelector = Backbone.View.extend({
 				})
 				.on('drop', function(e){
 					var files, input;
-
 					e.preventDefault();
 					e.stopPropagation();
+					console.log("drop e", e);
 					if (e.originalEvent.dataTransfer) {
 						files = e.originalEvent.dataTransfer.files;
-
+					
 						// Only call the handler if 1 or more files was dropped.
-						if (files.length && input.length) {
+						if (files.length) {
 								//input[0].files = files;
 								me.uploadImage(files);
 						}
@@ -2926,6 +2936,9 @@ var ImageSelector = Backbone.View.extend({
 		 return true;
 	},
 	uploadImage: function(files){
+		var me = this;
+		console.log("files", files);
+		me.setup_upload_form();
 		this.openProgress(function() {
 			$('#upfront-upload-image').fileupload('send', {files: files});
 		});

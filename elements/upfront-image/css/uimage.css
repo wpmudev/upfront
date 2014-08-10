@@ -679,7 +679,7 @@ a.image-edit-button.deactivated:hover {
     text-align: center;
 }
 
-.uimage-drop-hint.uimage-dragenter {
+.uimage-drop-hint.uimage-drageover {
     transition:border .3s ease-in-out;-moz-transition:border .3s ease-in-out; -webkit-transition:border .3s ease-in-out;
     background:rgba(255,255,255,.7);
     border:5px solid rgba(0,206,141,1);
