@@ -474,7 +474,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'type' => 'ThisPostModel',
 			'view_class' => 'ThisPostView',
 			'class' => 'c24 upfront-this_post',
-			'has_settings' => 1,
+			'has_settings' => 0,
 			'id_slug' => 'this_post',
 			'row' => 10,
 
