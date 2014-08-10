@@ -12,36 +12,12 @@ jQuery(document).ready(function($){
 
 	// Making sure sidebar region height is fixed
 	function fix_region_height () {
+		set_full_screen();
 		$('.upfront-output-region-container').each(function(){
-			var $regions = $(this).find('.upfront-output-region').not('.upfront-region-fixed, .upfront-region-lightbox'),
+			var $regions = $(this).find('.upfront-output-region').filter('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
 				is_full_screen = $(this).hasClass('upfront-region-container-full'),
-				min_height = height = 0,
-				exclude = [];
-			if ( is_full_screen ){
-				height = $(window).height();
-				$regions.each(function(){
-					if ( $(this).closest('.upfront-output-region-sub-container').length ){
-						height -= $(this).outerHeight();
-						exclude.push(this);
-					}
-				});
-				$regions.each(function(){
-					var found = false,
-						me = this;
-					$.each(exclude, function(i, node){
-						if ( node == me )
-							found = true;
-					});
-					if ( !found ){
-						$(this).css({
-							minHeight: height,
-							height: height,
-							maxHeight: height
-						});
-					}
-				});
-			}
-			else if ( $regions.length > 1 ){
+				min_height = height = 0;
+			if ( $regions.length > 1 ){
 				$regions.each(function(){
 					var min = parseInt($(this).css('min-height')),
 						h = $(this).outerHeight();
@@ -57,8 +33,27 @@ jQuery(document).ready(function($){
 			}
 		});
 	}
+	function set_full_screen () {
+		$('.upfront-output-region-container.upfront-region-container-full').each(function(){
+			var $region = $(this).find('.upfront-region-center'),
+				$sub = $(this).find('.upfront-region-side-top, .upfront-region-side-bottom'),
+				body_off = $('body').offset(),
+				height = $(window).height() - body_off.top;
+			$sub.each(function(){
+				height -= $(this).outerHeight();
+			});
+			$region.css({
+				minHeight: height,
+				height: height,
+				maxHeight: height
+			});
+		});
+	}
 	if ( css_support('flex') ){
 		$('html').addClass('flexbox-support');
+		set_full_screen();
+		$(window).on('load', set_full_screen);
+		$(window).on('resize', set_full_screen);
 	}
 	else {
 		fix_region_height();

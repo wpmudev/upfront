@@ -508,7 +508,7 @@ class Upfront_Region_Container extends Upfront_Container {
 		$bg_attr = $this->_get_background_attr();
 		$bg_node_start = "<div class='upfront-region-container-bg' {$bg_css} {$bg_attr}>";
 		$bg_node_end = "</div>";
-		return parent::wrap("{$before}{$bg_node_start}<div class='upfront-grid-layout'>{$out}</div>{$overlay}{$bg_node_end}{$after}");
+		return parent::wrap("{$bg_node_start}{$before}<div class='upfront-grid-layout'>{$out}</div>{$overlay}{$after}{$bg_node_end}");
 	}
 
 	public function get_css_inline () {

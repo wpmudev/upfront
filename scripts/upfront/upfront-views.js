@@ -1922,8 +1922,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:added", this.fix_height);
-				this.listenTo(Upfront.Events, "entity:region:removed", this.fix_height);
-				this.listenTo(Upfront.Events, "entity:region:removed", this.close_edit);
+				this.listenTo(Upfront.Events, "entity:region:removed", this.on_region_remove);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
 				this.listenTo(Upfront.Events, "upfront:layout:contained_region_width", this.on_contained_width_change);
@@ -2132,57 +2131,72 @@ define([
 			on_region_changed: function () {
 				this.fix_height();
 			},
+			on_region_remove: function (view, model) {
+				var sub = model.get('sub');
+				this.fix_height();
+				if ( !sub || !sub.match(/(top|bottom|left|right)/) )
+					this.close_edit();
+			},
+			on_window_resize: function (e) {
+				if ( e.target != window || !e.data.model)
+					return;
+				var me = e.data;
+				me.fix_height();
+			},
 			fix_height: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 				// Don't need to adapt height if breakpoint isn't default or that flexbox is supported
 				// Make sure to test with non-flexbox browser whenever possible
 				if ( ( breakpoint && !breakpoint.default ) || Upfront.Util.css_support('flex') ){
+					this.set_full_screen();
 					this.refresh_background();
 					return;
 				}
-				var $regions = this.$el.find('.upfront-region').not('.upfront-region-side-fixed, .upfront-region-side-lightbox'),
+				var $regions = this.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
+					$sub = this.$el.find('.upfront-region-side-top, .upfront-region-side-bottom'),
 					$container = $regions.find('.upfront-modules_container'),
-					row = this.model.get_property_value_by_name('row'),
-					is_full_screen = ( this._get_region_type() == 'full' ),
-					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
-					height = 0,
-					exclude = [];
+					height = 0;
 				$regions.add($container).css({
 					minHeight: "",
 					height: "",
 					maxHeight: ""
 				});
-				if ( is_full_screen ){
-					height = $(window).height();
-					$regions.each(function(){
-						if ( $(this).closest('.upfront-region-sub-container').length ){
-							if ( min_height > 0 )
-								$(this).css('min-height', min_height);
-							height -= $(this).outerHeight();
-							exclude.push(this);
-						}
-					});
-					$regions.each(function(){
-						if ( _.indexOf(exclude, this) === -1 ){
-							$(this).add('.upfront-modules_container', this).css({
-								minHeight: height,
-								height: height,
-								maxHeight: height
-							});
-						}
-					});
-				}
-				else{
-					$regions.each(function(){
-						if ( min_height > 0 )
-							$(this).css('min-height', min_height);
-						var h = $(this).outerHeight();
-						height = h > height ? h : height;
-					});
-					height = height > min_height ? height : min_height;
-					$regions.add($container).css('min-height', height);
-				}
+				this.set_full_screen();
+				$sub.each(function(){
+					$(this).find('.upfront-modules_container').css('min-height', $(this).outerHeight());
+				});
+				$regions.each(function(){
+					var h = $(this).outerHeight();
+					height = h > height ? h : height;
+				});
+				$regions.add($container).css('min-height', height);
 				this.refresh_background();
+			},
+			set_full_screen: function () {
+				var $region = this.$el.find('.upfront-region-center'),
+					$sub = this.$el.find('.upfront-region-side-top, .upfront-region-side-bottom'),
+					row = this.model.get_property_value_by_name('row'),
+					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
+					height = $(window).height();
+				if ( this._get_region_type() == 'full' ) {
+					$sub.each(function(){
+						height -= $(this).outerHeight();
+					});
+					$region.css({
+						minHeight: height,
+						height: height,
+						maxHeight: height
+					});
+				}
+				else {
+					$region.css({
+						minHeight: '',
+						height: '',
+						maxHeight: ''
+					});
+					if ( min_height > 0 )
+						$region.css('min-height', min_height);
+				}
 			},
 			update_pos: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -2372,6 +2386,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
+				this.listenTo(Upfront.Events, "entity:region:removed", this.update_buttons);
 				$(window).on('resize', this, this.on_window_resize);
 			},
 			on_click: function (e) {
@@ -2468,6 +2483,7 @@ define([
 					this.remove_background();
 				}
 				this.update_position();
+				this.update_buttons();
 				this.trigger("region_update", this);
 			},
 			update_position: function () {
@@ -2542,10 +2558,13 @@ define([
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger');
 				if ( !breakpoint || breakpoint.default ){
-					if ( this.model.is_main() && this.model.has_side_region() )
+					if ( 
+						( this.model.is_main() && this.model.has_side_region() ) || 
+						( this.model.get('sub') == 'top' || this.model.get('sub') == 'bottom' )
+					)
 						$delete_trigger.hide();
 					else
-						$delete_trigger.show();
+						$delete_trigger.css('display', 'block');
 				}
 				else {
 					$delete_trigger.hide();
@@ -3265,7 +3284,7 @@ define([
 						if ( main_view ) main_view.update();
 					}
 				}
-				Upfront.Events.trigger("entity:region:removed", this, this.model);
+				Upfront.Events.trigger("entity:region:removed", view, model);
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var ed = Upfront.Behaviors.GridEditor;

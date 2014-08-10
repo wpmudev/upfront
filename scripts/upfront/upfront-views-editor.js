@@ -7009,6 +7009,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					total_container = collection.total_container(),
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-2, // don't include shadow region
+					types = [
+						{ label: "100% wide", value: 'wide' },
+						{ label: "Contained", value: 'clip' }
+					],
+					types = index_container > 0 ? types : _.union( [
+						{ label: "Full Screen", value: 'full' }
+					], types)
 					region_global = new Field_Checkboxes({
 						model: this.model,
 						name: 'scope',
@@ -7031,11 +7038,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						name: 'type',
 						default_value: 'wide',
 						layout: 'horizontal-inline',
-						values: [
-							{ label: "Full Screen", value: 'full', disabled: index_container > 0 },
-							{ label: "100% wide", value: 'wide' },
-							{ label: "Contained", value: 'clip' }
-						],
+						values: types,
 						change: function () {
 							var value = this.get_value();
 							this.model.set({type: value}, {silent: true});

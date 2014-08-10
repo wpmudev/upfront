@@ -118,6 +118,9 @@ class Upfront_Grid {
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
 				$container = !empty($region['container']) ? $region['container'] : $region['name'];
+				if ( $region['sub'] == 'top' || $region['sub'] == 'bottom' )
+					$region_col = $point->get_columns();
+				else
 				$region_col = $this->_get_property_col($region);
 				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions']);
 				$region_row = $this->_get_property_row($region);
