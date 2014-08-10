@@ -2623,6 +2623,7 @@ var ImageSelector = Backbone.View.extend({
 						$('#upfront-image-uploading h2').html(l10n.sel.preparing);
 						Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
 							.done(function(response){
+                                console.log(me.deferred, response);
 								me.deferred.resolve(response.data.images, response);
 							})
 							.error(function(){
