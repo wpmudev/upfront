@@ -406,12 +406,12 @@ class Upfront_GridBreakpoint {
 		if ( $max_width > 0 )
 			$width_rule .= "max-width: {$max_width}px; ";
 		return '' .
-			"#page .upfront-grid-layout {width: {$width}px;}" . "\n" .
-			"#page .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
-			( $width_rule != "" ? "#page { {$width_rule} }" . "\n" : "" ) .
-			"#page .upfront-object {padding: {$column_padding}px;}" . "\n" .
-			"#page .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
-			"#page .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
+			"#page.upfront-layout-view .upfront-grid-layout {width: {$width}px;}" . "\n" .
+			"#page.upfront-layout-view .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
+			( $width_rule != "" ? "#page.upfront-layout-view { {$width_rule} }" . "\n" : "" ) .
+			"#page.upfront-layout-view .upfront-object {padding: {$column_padding}px;}" . "\n" .
+			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
+			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
 		'';
 	}
 

@@ -262,10 +262,11 @@ class Upfront_StylePreprocessor {
 					'}' .
 				'';
 			}
-			$style .= $breakpoint->wrap(
+			/*$style .= $breakpoint->wrap(
 				$breakpoint->get_editor_root_rule($scope, $breakpoints) . "\n" . join("\n", $rules) . "\n\n",
 				$breakpoints, true
-			);
+			);*/
+			$style .= $breakpoint->get_editor_root_rule($scope, $breakpoints) . "\n" . join("\n", $rules) . "\n\n";
 		}
 		return $style;
 	}

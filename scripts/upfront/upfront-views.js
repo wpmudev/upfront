@@ -404,7 +404,8 @@ define([
 				}
 			},
 			refresh_background: function () {
-				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+				var is_layout = ( this instanceof Layout ),
+					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					type = this.model.get_property_value_by_name('background_type'),
 					color = this.model.get_property_value_by_name('background_color'),
 					image = this.model.get_property_value_by_name('background_image');
@@ -451,7 +452,7 @@ define([
 						width = $bg.outerWidth(),
 						height = $bg.outerHeight();
 					if ( style == 'full' ){
-						var size = this._get_full_size($bg, ratio, false);
+						var size = this._get_full_size( ( is_layout ? $(window) : $bg ), ratio, false );
 						$bg.css({
 							backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 							backgroundRepeat: "no-repeat",
@@ -3386,6 +3387,7 @@ define([
 				this.update_background();
 			},
 			render: function () {
+				this.$el.addClass('upfront-layout-view');
 				this.$el.html(this.tpl(this.model.toJSON()));
 				this.$layout = this.$(".upfront-layout");
 				//if(!this.local_view)
@@ -3509,7 +3511,7 @@ define([
 			update_grid_css: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
 					styles = [],
-					selector = '#page';
+					selector = '#page.upfront-layout-view';
 				styles.push(selector + ' .upfront-grid-layout { width: ' + grid.column_width*grid.size + 'px; }');
 				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
