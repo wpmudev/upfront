@@ -807,7 +807,7 @@ define([
 		tagName: 'div',
 		className: "command-link command-edit-bg",
 		render: function (){
-			this.$el.text('Edit <body> BG');
+			this.$el.text('Edit Global Background');
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_background");
