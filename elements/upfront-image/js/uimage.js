@@ -669,6 +669,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	handleDragEnter: function(e){
 		var me = this;
+		// todo Sam: re-enable this and start bug fixing
+		return; // disabled for now 
 		if(!this.$('.uimage-drop-hint').length){
 			var dropOverlay = $('<div class="uimage-drop-hint"><div>' + l10n.drop_image + '</div></div>')
 				.on('drop', function(e){
@@ -701,7 +703,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
                     $(this).addClass('uimage-drageover');
                 })
 			;
-			console.log("appending overlay", dropOverlay);
 			this.$('.upfront-image').append(dropOverlay);
 		}
 		if(this.dragTimer){

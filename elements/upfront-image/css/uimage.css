@@ -683,6 +683,7 @@ a.image-edit-button.deactivated:hover {
     transition:border .3s ease-in-out;-moz-transition:border .3s ease-in-out; -webkit-transition:border .3s ease-in-out;
     background:rgba(255,255,255,.7);
     border:5px solid rgba(0,206,141,1);
+    -khtml-user-drag: element;
     /*width: 105%;*/
     /*height: 105%;*/
 }
