@@ -2687,6 +2687,7 @@ div.uinsert-selector a:hover {
 	-o-transition: opacity 0.6s;
 	transition: opacity 0.6s;
 	z-index: 9997;
+	-webkit-backface-visibility:hidden;
 }
 .upfront-region-fixed-editing .upfront-grid-layout {
 	z-index: 9998;
