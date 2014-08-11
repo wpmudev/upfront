@@ -627,7 +627,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$data['regions'] = $theme->get_default_layout($ids);
 			//$data['regions'] = $theme->get_default_layout(array(), $layoutId);
 		}
-		return $data;
+		return apply_filters('upfront_augment_theme_layout', $data);
 	}
 
 	protected function _import_images ($path) {
