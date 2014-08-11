@@ -722,13 +722,13 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function prepare_typography_styles ($layout) {
-		$options = $layout->get_property_value('typography');
-		if (!$options)
+		$typography = $layout->get_property_value('typography');
+		if (!$typography)
 			return '';
 		$out = '';
 		$faces = array();
-		foreach ( $options as $element => $option ){
-			$option = wp_parse_args($option, array(
+		foreach ( $typography as $element=>$properties ){
+			$properties = wp_parse_args($properties, array(
 				'font_face' => false,
 				'weight' => false,
 				'style' => false,
@@ -736,32 +736,35 @@ class Upfront_StylesheetMain extends Upfront_Server {
 				'line_height' => false,
 				'color' => false,
 			));
-			$face = !empty($option['font_face'])
-				? $option['font_face']
+			$face = !empty($properties['font_face'])
+				? $properties['font_face']
 				: false
 			;
-			$faces[] = $face;
+			$faces[] = array(
+				'face' => $face,
+				'weight' => $properties['weight']
+			);
 			if (!empty($face) && false !== strpos($face, ' '))  $face = '"' . $face . '"';
-			$font = $option['font_face'] ? "{$face}, {$option['font_family']}" : "inherit";
+			$font = $properties['font_face'] ? "{$face}, {$properties['font_family']}" : "inherit";
 			$out .= ".upfront-output-object $element {\n" .
 					"font-family: {$font};\n" .
-					( $option['weight'] ? "font-weight: {$option['weight']};\n" : "" ) .
-					( $option['style'] ? "font-style: {$option['style']};\n" : "" ) .
-					( $option['size'] ? "font-size: {$option['size']}px;\n" : "" ) .
-					( $option['line_height'] ? "line-height: {$option['line_height']}em;\n" : "" ) .
-					"color: {$option['color']};\n" .
+					( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
+					( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
+					( $properties['size'] ? "font-size: {$properties['size']}px;\n" : "" ) .
+					( $properties['line_height'] ? "line-height: {$properties['line_height']}em;\n" : "" ) .
+					"color: {$properties['color']};\n" .
 					"}\n";
 		}
 
-		$faces = array_values(array_filter(array_unique($faces)));
+		$faces = array_values(array_filter(array_unique($faces, SORT_REGULAR)));
 		$google_fonts = new Upfront_Model_GoogleFonts;
 		$imports = '';
 		foreach ($faces as $face) {
-			if (!$google_fonts->is_from_google($face)) continue;
-			// Naive import - this will send a request regardless if it's actually an Google font or not
+			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
-				preg_replace('/\s/', '+', $face) .
-			"\";\n";
+				preg_replace('/\s/', '+', $face['face']);
+			if ($face['weight'] != 400) $imports .= ':' . $face['weight'];
+			$imports .= "\";\n";
 		}
 		if (!empty($imports)) $out = "{$imports}\n\n{$out}";
 
