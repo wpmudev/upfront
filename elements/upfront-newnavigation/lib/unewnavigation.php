@@ -5,17 +5,15 @@
  * A fairly simple implementation, with applied settings.
  */
 class Upfront_UnewnavigationView extends Upfront_Object {
-	
+
 	public function get_markup () {
 		$menu_id = $this->_get_property('menu_id');
-		$menu_name = $this->_get_property('menu_name');
+		$menu_slug = $this->_get_property('menu_slug');
 
 		$layout_settings = json_decode($this->_get_property('layout_setting'));
 
 		$menu_style = $this->_get_property('menu_style');
 		$breakpoint_data = $this->_get_property('breakpoint');
-		
-		
 		$breakpoints = Upfront_Grid::get_grid()->get_breakpoints();
 		foreach ($breakpoints as $name => $point) {
 			$data = $point->get_data();
@@ -26,10 +24,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$burgermenu_desktop =  $this->_get_property('burger_menu');
 		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
 		$breakpoint_data['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
-		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');	
-			
+		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');
+
 		$breakpoint_data = json_encode($breakpoint_data);
-		
+
 		$menu_aliment = $this->_get_property('menu_alignment');
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
@@ -51,10 +49,15 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		wp_enqueue_script('unewnavigation_responsive', upfront_element_url('js/responsive.js', dirname(__FILE__)));
 
-		if($menu_name) {
-			$menu = wp_get_nav_menu_object($menu_name);
+		if($menu_slug) {
+			$menu = wp_get_nav_menu_object($menu_slug);
 			if($menu)
 				$menu_id = $menu->term_id;
+		}
+
+		if ($menu_slug && $menu === false) {
+			// If there is no menu try to create one from theme
+			$menu_id = $this->get_theme_menu_from_slug($menu_slug);
 		}
 
 		if ( $menu_id ) {
@@ -68,6 +71,46 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		}
 
 		return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+	}
+
+	protected function get_theme_menu_from_slug($menu_slug) {
+		$settings_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php';
+		if (file_exists($settings_path) === false) return false;
+
+		$settings = require($settings_path);
+
+		if (empty($settings['menus'])) return false;
+
+		$theme_menus = json_decode($settings['menus']);
+		if (!$theme_menus) return false;
+
+		$stored_menu = false;
+		foreach($theme_menus as $theme_menu) {
+			if ($theme_menu->slug != $menu_slug) continue;
+
+			$stored_menu = $theme_menu;
+			break;
+		}
+
+		if (!$stored_menu) return false;
+
+		// Create new menu from theme menu
+		$new_menu_id = wp_create_nav_menu($stored_menu->name);
+		wp_update_nav_menu_object($new_menu_id, array('description' => $stored_menu->description));
+		foreach($stored_menu->items as $menu_item) {
+			wp_update_nav_menu_item(
+				$new_menu_id,
+				0,
+				array(
+					'menu-item-url' => $menu_item->url,
+					'menu-item-title' => $menu_item->title,
+					'menu-item-position' => $menu_item->menu_order,
+					'menu-item-status' => 'publish'
+				)
+			);
+		}
+
+		return $new_menu_id;
 	}
 
 	public static function add_js_defaults($data){
@@ -169,7 +212,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			: $l10n
 		;
 	}
- 
+
 }
 
 /**
@@ -195,9 +238,9 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		add_action('wp_ajax_upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
 
 	}
-	
 
-	
+
+
 	public function load_menu_list () {
 		$menus = wp_get_nav_menus();
 		if ( $menus ){
@@ -314,7 +357,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 				$messages[] = Upfront_UnewnavigationView::_get_l10n('delete_success');
 			}
 
-			
+
 	//			update_post_meta($child['menu-item-db-id'], '_menu_item_menu_item_parent', 0);
 //echo $menu_items;
 //die(0);
@@ -323,7 +366,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
 				/*
 				foreach($menu_items as $menu_item) {
-					
+
 					if(isset($menu_item['refresh-parent']) && $menu_item['refresh-parent'] == 1) {
 						echo "yes this happend";
 						return;
@@ -336,7 +379,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 				}
 
 				*/
-				
+
 			}
 			else
 				$this->_out(new Upfront_JsonResponse_Success($messages));
@@ -371,13 +414,19 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		return wp_update_post($current_menu_item);
 	}
 
-	public function create_menu(){
+	public function create_menu() {
 		$menu_name = isset($_POST['menu_name']) ? $_POST['menu_name'] : false;
-		if ( $menu_name ){
-			$response = wp_create_nav_menu($menu_name);
-			$this->_out(new Upfront_JsonResponse_Success($response));
-		}
-		$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_create')));
+		if ( $menu_name === false )
+			$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_create')));
+
+		$menu_id = wp_create_nav_menu($menu_name);
+		$menu = wp_get_nav_menu_object($menu_id);
+		$response = array(
+			'id' => $menu->term_id,
+			'slug' => $menu->slug
+		);
+
+		$this->_out(new Upfront_JsonResponse_Success($response));
 
 	}
 
@@ -393,16 +442,10 @@ class Upfront_newMenuSetting extends Upfront_Server {
 	}
 
 	public function add_menu_item ($menu_id, $menu_items) {
+		if ( empty($menu_id) || is_nav_menu($menu_id) === false ) return false;//$this->_out(new Upfront_JsonResponse_Error('Cannot create menu!'));
 
-	   // $menu_id = isset($_POST['menu-item']) ? intval($_POST['menu-item']) : false;
-
-		if ( $menu_id && is_nav_menu($menu_id) ){
-
-			$new_menu_items = wp_save_nav_menu_items( $menu_id, $menu_items );
-			//$this->_out(new Upfront_JsonResponse_Success($new_menu_items));
-			return($new_menu_items);
-		}
-		return false;//$this->_out(new Upfront_JsonResponse_Error('Cannot create menu!'));
+		$new_menu_items = wp_save_nav_menu_items( $menu_id, $menu_items );
+		return($new_menu_items);
 	}
 
 	public function update_menu_item () {
@@ -415,25 +458,24 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		if(!$menu_item_id) {
 			$menu_item_ids = $this->add_menu_item($menu_id, array($menu_item));
 			$menu_item_id = $menu_item_ids[0];
-
 		}
 
 		$items_saved = array();
 
-		if ( $menu_id && is_nav_menu($menu_id) ){
+		if (empty($menu_id) || is_nav_menu($menu_id) === false)
+			$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_update')));
 
-		   /* $args = array(
-				'menu-item-db-id' => $menu_item_id,
-				'menu-item-type' => 'custom',
-				'menu-item-title' => ( isset( $menu_item['menu-item-title'] ) ? $menu_item['menu-item-title'] : 'Custom menu' ),
-				'menu-item-url' => ( isset( $menu_item['menu-item-url'] ) ? $menu_item['menu-item-url'] : '' ),
-			); */
+		/* $args = array(
+		 *  'menu-item-db-id' => $menu_item_id,
+		 *  'menu-item-type' => 'custom',
+		 *  'menu-item-title' => ( isset( $menu_item['menu-item-title'] ) ? $menu_item['menu-item-title'] : 'Custom menu' ),
+		 *  'menu-item-url' => ( isset( $menu_item['menu-item-url'] ) ? $menu_item['menu-item-url'] : '' ),
+		 *);
+		 */
 
-			$items_updated[] = wp_update_nav_menu_item( $menu_id, $menu_item_id, $menu_item );
+		$items_updated[] = wp_update_nav_menu_item( $menu_id, $menu_item_id, $menu_item );
 
-			$this->_out(new Upfront_JsonResponse_Success($menu_item_id));
-		}
-		$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_update')));
+		$this->_out(new Upfront_JsonResponse_Success($menu_item_id));
 	}
 
 	 public function menu_from_slug () {
