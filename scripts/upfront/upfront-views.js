@@ -1567,6 +1567,7 @@ define([
 				this.region.get('modules').remove(this.model, {silent: true});
 				this.region_view = false;
 				this.region = false;
+				this.group_view = false;
 				Backbone.View.prototype.remove.call(this);
 			}
 		}),
@@ -3084,11 +3085,11 @@ define([
 			render: function () {
 				this.$el.html('');
 				var me = this;
-				if ( typeof this.container_views == 'undefined' )
+				if ( typeof this.container_views != 'object' )
 					this.container_views = {};
-				if ( typeof this.sub_container_views == 'undefined' )
+				if ( typeof this.sub_container_views != 'object' )
 					this.sub_container_views = {};
-				if ( typeof Upfront.data.region_views == 'undefined' )
+				if ( typeof Upfront.data.region_views != 'object' )
 					Upfront.data.region_views = {};
 				this.model.each(function (region) {
 					me.render_container(region);
@@ -3259,6 +3260,14 @@ define([
 					view.region_panels.unbind();
 					view.region_panels.remove();
 				}
+				if ( view.bg_setting ){
+					view.bg_setting.unbind();
+					view.bg_setting.remove();
+				}
+				if ( view.edit_position ){
+					view.edit_position.unbind();
+					view.edit_position.remove();
+				}
 				view.unbind();
 				view.remove();
 				if ( container_view){
@@ -3298,7 +3307,18 @@ define([
 					me.on_remove(model);
 				});
 				Backbone.View.prototype.remove.call(this);
-				this.container_views = false;
+				// Remove container views
+				_.each(this.container_views, function(view, index){
+					view.remove();
+					delete me.container_views[index];
+				});
+				this.container_views = null;
+				// Remove sub container views
+				_.each(this.sub_container_views, function(view, index){
+					view.remove();
+					delete me.sub_container_views[index];
+				});
+				this.sub_container_views = null;
 				this.model.reset([], {silent:true});
 				this.model = false;
 				this.options = false;
@@ -3527,6 +3547,9 @@ define([
 					this.local_view.remove();
 				this.local_view = null;
 				$(window).off('resize', this, this.on_window_resize);
+				if (this.bg_setting)
+					this.bg_setting.remove();
+				this.bg_setting = null;
 
 				Backbone.View.prototype.remove.call(this);
 				this.model = false;
