@@ -2598,7 +2598,7 @@ var ImageSelector = Backbone.View.extend({
 
 	initialize: function(){
 		// Set the form up
-		// this.setup_upload_form();
+		this.setup_upload_form();
 	},
 	setup_upload_form : function(){
 			var me = this;
@@ -2609,7 +2609,6 @@ var ImageSelector = Backbone.View.extend({
 				fileInput = $('#upfront-image-file-input'),
 				form = $('#upfront-upload-image')
 			;
-
 
 			if (!!form.fileupload) {
 				form.fileupload({
@@ -2639,14 +2638,14 @@ var ImageSelector = Backbone.View.extend({
 								me.openSelector();
 							});
 						form[0].reset();
-						$('#upfront-upload-image').remove();
+						//$('#upfront-upload-image').remove();
 					})
 					.bind('fileuploadfail', function (e, response) {
 						var error = response.jqXHR.responseJSON.error;
 						Upfront.Views.Editor.notify(error, 'error');
 						me.openSelector();
 						form[0].reset();
-						$('#upfront-upload-image').remove();
+						//$('#upfront-upload-image').remove();
 					});
 			}
 
