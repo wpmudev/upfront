@@ -21,21 +21,8 @@ class Upfront_Grid {
 	}
 
 	private function _instantiate_breakpoints () {
-		// If in buiilder mode we need stuff from files
-		if (upfront_is_builder_running()) {
-			$stylesheet = upfront_get_builder_stylesheet();
-			if ($stylesheet) {
-				$settings_file = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'settings.php';
-				if (file_exists($settings_file)) {
-					include $settings_file;
-				}
-				// TODO load actual breakpoints
-			}
-			$responsive_settings = array();
-			$responsive_settings['breakpoints'] = $this->get_default_breakpoints();
-		} else {
-			$responsive_settings = json_decode(get_option('upfront_' . get_stylesheet() . '_responsive_settings', "{}"), true);
-		}
+		$responsive_settings = json_decode(get_option('upfront_' . get_stylesheet() . '_responsive_settings', "{}"), true);
+		$responsive_settings = apply_filters('upfront_get_responsive_settings', $responsive_settings);
 
 		if ( $responsive_settings && $responsive_settings['breakpoints'] )
 			$this->_breakpoints = $responsive_settings['breakpoints'];

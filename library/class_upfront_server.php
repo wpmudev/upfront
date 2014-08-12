@@ -91,8 +91,6 @@ class Upfront_Ajax extends Upfront_Server {
 			$layout_ids = Upfront_EntityResolver::ids_from_url($layout_ids);
 			$parsed = true;
 		}
-//		  $layout_ids = array('item' => 'single-post');
-//		  $storage_key = 'upfront_dev';
 		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 
 		if ($layout->is_empty()){
@@ -371,54 +369,25 @@ class Upfront_JavascriptMain extends Upfront_Server {
       $theme_info = json_encode(array('breakpoints' => $defaults));
     }
 
-		if (upfront_is_builder_running()) {
-			$theme_fonts = apply_filters(
-				'upfront_get_theme_fonts',
-				array(),
-				array(
-					'stylesheet' => upfront_get_builder_stylesheet(),
-					'json' => true
-				)
-			);
-		} else {
-			$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
-			if (empty($theme_fonts)) {
-				// Maybe fonts are not initialized yet, try to load from theme files.
-				$theme_fonts = apply_filters(
-					'upfront_get_theme_fonts',
-					array(),
-					array(
-						'stylesheet' => get_stylesheet(),
-						'json' => true
-					)
-				);
-			}
-		}
+		$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
+		$theme_fonts = apply_filters(
+			'upfront_get_theme_fonts',
+			$theme_fonts,
+			array(
+				'json' => true
+			)
+		);
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
-		if (upfront_is_builder_running()) {
-			$theme_colors = apply_filters(
-				'upfront_get_theme_colors',
-				array(),
-				array(
-					'stylesheet' => upfront_get_builder_stylesheet(),
-					'json' => true
-				)
-			);
-		} else {
-			$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
-			if (empty($theme_colors)) {
-				// Maybe fonts are not initialized yet, try to load from theme files.
-				$theme_colors = apply_filters(
-					'upfront_get_theme_colors',
-					array(),
-					array(
-						'stylesheet' => get_stylesheet(),
-						'json' => true
-					)
-				);
-			}
-		}
+		$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+		$theme_colors = apply_filters(
+			'upfront_get_theme_colors',
+			$theme_colors,
+			array(
+				'json' => true
+			)
+		);
+
     if (empty($theme_colors)) $theme_colors = json_encode(array());
 
 		$debug = array(
@@ -594,15 +563,13 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
 
 		$db_option = $storage_key . '_' . get_stylesheet() . '_styles';
-		$current_styles = get_option($db_option);
-		if(!$current_styles)
-			$current_styles = array();
+		$current_styles = get_option($db_option, array());
+    $current_styles = apply_filters('upfront_get_theme_styles', $current_styles);
 
 		$styles = apply_filters('upfront-save_styles', $styles, $name, $element_type);
 
 		if(!isset($current_styles[$element_type]))
 			$current_styles[$element_type] = array();
-		$properties = array();
 
 		$current_styles[$element_type][$name] = $styles;
 
@@ -638,85 +605,32 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function theme_styles() {
-		// If in buiilder mode we need stuff from files
-		if (upfront_is_builder_running()) {
-			$theme_styles = array('styles' => array());
-			$stylesheet = upfront_get_builder_stylesheet();
-			if ($stylesheet) {
-				$styles_root = get_theme_root() . DIRECTORY_SEPARATOR . $stylesheet . DIRECTORY_SEPARATOR . 'element-styles';
-				if (file_exists($styles_root) === false) {
-					$this->_out(new Upfront_JsonResponse_Success(array( 'styles' => $theme_styles )));
-					return;
-				}
-
-				// List subdirectories as element types
-				$element_types = array_diff(scandir($styles_root), array('.', '..'));
-				foreach($element_types as $type) {
-					$theme_style[$type] = array();
-					$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
-					foreach ($styles as $style) {
-						$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
-						$theme_styles[$type][str_replace('.css', '', $style)] = $style_content;
-					}
-				}
-			}
-			$this->_out(new Upfront_JsonResponse_Success(array( 'styles' => $theme_styles )));
-			return;
-		}
-
 		// Fix storage key missing _dev in dev mode. This is called from ajax calls so use POST.
 		$storage_key = Upfront_Layout::get_storage_key();
 		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
 
 		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
+		$styles = apply_filters('upfront_get_theme_styles', $styles);
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
 		)));
 	}
 
 	function prepare_theme_styles() {
-		// If in buiilder mode we need stuff from files
-		if (upfront_is_builder_running()) {
-			// In editor mode this would load element styles to main stylesheet. In builder mode
-			// don't load any since styles are gonna be loaded each separately.
-			return '';
-		}
-
 		// Fix storage key missing _dev in dev mode. This is regular GET request.
 		$storage_key = Upfront_Layout::get_storage_key();
 		if (isset($_GET['load_dev']) && $_GET['load_dev'] == 1 && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
 
-		// Preffer styles from database since they include user overrides
-		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
-
-		// If no overrides
-		if(!$styles) {
-			$out = '';
-			// See if there are styles in theme files
-			$styles_root = get_theme_root() . DIRECTORY_SEPARATOR . get_stylesheet() . DIRECTORY_SEPARATOR . 'element-styles';
-			// List subdirectories as element types
-			$element_types = is_dir($styles_root)
-				? array_diff(scandir($styles_root), array('.', '..'))
-				: array()
-			;
-			foreach($element_types as $type) {
-				$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
-				foreach ($style_files as $style) {
-					$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
-					$out .= $style_content;
-				}
-			}
-
-			return $styles;
-		}
-
+		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles', array());
 		$out = '';
-		// Continue with parsing overrides from db
+
 		foreach($styles as $type => $elements) {
 			foreach($elements as $name => $content) {
 				$out .= $content;
 			}
 		}
+
+		$out = apply_filters('upfront_prepare_theme_styles', $out);
 
 		return $out;
 	}
@@ -767,6 +681,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			$imports .= "\";\n";
 		}
 		if (!empty($imports)) $out = "{$imports}\n\n{$out}";
+
+		$out = apply_filters('upfront_prepare_typography_styles', $out);
 
 		return $out;
 	}
@@ -1337,9 +1253,8 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
   	if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
     $theme_fonts = isset($_POST['theme_fonts']) ? $_POST['theme_fonts'] : array();
-		if (upfront_is_builder_running()) {
-			do_action('upfront_update_theme_fonts', $theme_fonts);
-		} else {
+		do_action('upfront_update_theme_fonts', $theme_fonts);
+		if(did_action('upfront_update_theme_fonts') === 0) {
 			update_option('upfront_' . get_stylesheet() . '_theme_fonts', json_encode($theme_fonts));
 		}
 
@@ -1378,9 +1293,8 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 			"range" => $range
 		);
 
-		if (upfront_is_builder_running()) {
-			do_action('upfront_update_theme_colors', $data, upfront_get_builder_stylesheet());
-		} else {
+		do_action('upfront_update_theme_colors', $data);
+		if (did_action('upfront_update_theme_color') === 0) {
 			update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode($data));
 		}
 

@@ -446,31 +446,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function get_layout_properties () {
-		// If in buiilder mode we need stuff from files
-		if (upfront_is_builder_running()) {
-			$properties = apply_filters(
-				'upfront_get_layout_properties',
-				array(),
-				array(
-					'stylesheet' => upfront_get_builder_stylesheet()
-				)
-			);
-			return $properties;
-		}
-
-		// Not in builder mode, load from db
 		$properties = json_decode( get_option(self::_get_layout_properties_id(), json_encode(array())), true );
+		$properties = apply_filters('upfront_get_layout_properties', $properties);
 
-		// If empty may need be initialzed from theme files.
-		if (empty($properties)) {
-			$properties = apply_filters(
-				'upfront_get_layout_properties',
-				array(),
-				array(
-					'stylesheet' => get_stylesheet()
-				)
-			);
-		}
 		return $properties;
 	}
 
@@ -482,8 +460,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			if ( empty(self::$scope_data[$region['scope']]) ){
 				$regions[] = $region;
 				return $regions;
-			}
-			foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
+			} foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
 				if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) ){
 					$regions[] = $data;
 				}

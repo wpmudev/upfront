@@ -320,14 +320,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function get_theme_layout($type, $post_type, $id){
-		$layouts_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'postlayouts';
-		if (upfront_is_builder_running()) $layouts_path = sprintf(
-			'%s%s%s%spostlayouts',
-			get_theme_root(),
-			DIRECTORY_SEPARATOR,
-			upfront_get_builder_stylesheet(),
-			DIRECTORY_SEPARATOR
-		);
+		$stylesheet_directory = apply_filters('upfront_get_stylesheet_directory', get_stylesheet_directory());
+		$layouts_path = $stylesheet_directory . DIRECTORY_SEPARATOR . 'postlayouts';
 
 		if(!file_exists($layouts_path))
 			return false;
@@ -336,13 +330,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
 
-		if (upfront_is_builder_running()) {
-			// Override brute force to ensure single-something page get their specific postlayout loaded
-			$layout_cascade = !empty($_POST['layout_cascade']) ? $_POST['layout_cascade'] : array();
-			if (!empty($layout_cascade)) {
-				$cascade = array($base_filename . $layout_cascade['item'] . '.php', $base_filename . $layout_cascade['type'] . '.php');
-			}
-		}
+		$cascade = apply_filters('upfront_theme_layout_cascade', $cascade, $base_filename);
 
 		$found = false;
 		$i = 0;
@@ -378,16 +366,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function get_theme_postpart_templates($type, $post_type, $id){
-		$tpl_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'postparts';
-
-		if (upfront_is_builder_running()) $tpl_path = sprintf(
-			'%s%s%s%stemplates%spostparts',
-			get_theme_root(),
-			DIRECTORY_SEPARATOR,
-			upfront_get_builder_stylesheet(),
-			DIRECTORY_SEPARATOR,
-			DIRECTORY_SEPARATOR
-		);
+		$stylesheet_directory = apply_filters('upfront_get_stylesheet_directory', get_stylesheet_directory());
+		$tpl_path = $stylesheet_directory . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'postparts';
 
 		if(!file_exists($tpl_path))
 			return false;
@@ -396,13 +376,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
 
-		if (upfront_is_builder_running()) {
-			// Override brute force to ensure single-something page get page specific post layout parts loaded
-			$layout_cascade = !empty($_POST['layout_cascade']) ? $_POST['layout_cascade'] : array();
-			if (!empty($layout_cascade)) {
-				$cascade = array($base_filename . $layout_cascade['item'] . '.php', $base_filename . $layout_cascade['type'] . '.php');
-			}
-		}
+		$cascade = apply_filters('upfront_theme_postpart_templates_cascade', $cascade, $base_filename);
 
 		$found = false;
 		$i = 0;

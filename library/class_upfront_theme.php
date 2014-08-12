@@ -574,11 +574,136 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	protected function __construct () {
 		$this->version = wp_get_theme()->version;
 		$this->initialize();
+		$this->themeSettings = new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php');
 		add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3);
+		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
+		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
+		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
+		add_filter('upfront_get_element_styles', array($this, 'getElementStyles'));
+		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
+		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
+		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'));
 	}
 
 	abstract public function get_prefix ();
 	abstract public function initialize ();
+
+	public function prepareThemeStyles($styles) {
+		// If styles are empty than there is no overrides in db, load from theme
+		if(empty($styles) === false) return $styles;
+
+		$out = '';
+		// See if there are styles in theme files
+		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
+		// List subdirectories as element types
+		$element_types = is_dir($styles_root)
+			? array_diff(scandir($styles_root), array('.', '..'))
+			: array()
+			;
+		foreach($element_types as $type) {
+			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+			foreach ($style_files as $style) {
+				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
+				$out .= $style_content;
+			}
+		}
+
+		return $out;
+
+	}
+
+	public function getThemeStyles($styles) {
+		if (empty($styles) === false) return $styles;
+
+		$theme_styles  = array();
+		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
+		if (file_exists($styles_root) === false) return $theme_styles;
+
+		// List subdirectories as element types
+		$element_types = array_diff(scandir($styles_root), array('.', '..'));
+		foreach($element_types as $type) {
+			$theme_styles[$type] = array();
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+			foreach ($styles as $style) {
+				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
+				$theme_styles[$type][str_replace('.css', '', $style)] = $style_content;
+			}
+		}
+		return $theme_styles;
+	}
+
+	public function getResponsiveSettings($settings) {
+		if (empty($settings) === false) return $settings;
+
+		// TODO this needs to be implemented
+		return array();
+	}
+
+	protected function parseElementStyles() {
+		$elementTypes = array();
+		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
+
+		if (file_exists($styles_root) === false) return $elementTypes;
+
+		// List subdirectories as element types
+		$element_types = array_diff(scandir($styles_root), array('.', '..'));
+		foreach($element_types as $type) {
+			$elementTypes[$type] = array();
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+			foreach ($styles as $style) {
+				$elementTypes[$type][] = str_replace('.css', '', $style);
+			}
+		}
+
+		return $elementTypes;
+	}
+
+	/**
+	 * Try to populate element style only if styles are empty. This will
+	 * provide that styles loaded from database don't get overwritten.
+	 */
+	public function getElementStyles($styles) {
+		if (empty($styles) === false) return $styles;
+		return $this->parseElementStyles();
+	}
+
+	public function getLayoutProperties($properties) {
+		if (empty($properties) === false) return $properties;
+
+		if ($this->themeSettings->get('layout_properties')) {
+			$properties = json_decode(stripslashes($this->themeSettings->get('layout_properties')), true);
+		}
+		if ($this->themeSettings->get('typography')) {
+			$properties[] = array(
+				'name' => 'typography',
+				'value' => json_decode(stripslashes($this->themeSettings->get('typography')))
+			);
+		}
+		if ($this->themeSettings->get('layout_style')) {
+			$properties[] = array(
+				'name' => 'layout_style',
+				'value' => addslashes($this->themeSettings->get('layout_style'))
+			);
+		}
+
+		return $properties;
+	}
+
+	public function getThemeFonts($theme_fonts, $args) {
+		if (empty($theme_fonts) === false) return $theme_fonts;
+
+		$theme_fonts = $this->themeSettings->get('theme_fonts');
+		if (isset($args['json']) && $args['json']) return $theme_fonts;
+
+		return is_array( $$theme_fonts ) ? $theme_fonts : json_decode($theme_fonts);
+	}
+
+	public function getThemeColors($theme_colors, $args) {
+		$theme_colors = $this->themeSettings->get('theme_colors');
+		if (isset($args['json']) && $args['json']) return $theme_colors;
+
+		return json_decode($theme_colors);
+	}
 
 	/**
 	 * Resolves the layout cascade to a layout name.
@@ -716,31 +841,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return get_option($key, array());
 	}
 
-	protected function _insert_element_styles($force = false){
-		$theme = get_stylesheet();
-		$styles = get_option('upfront_' . $theme . '_styles');
-		if($styles && !$force)
-			return;
-
-		$styles = array();
-		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
-		if (file_exists($styles_root) === false) return;
-
-		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), array('.', '..'));
-		foreach($element_types as $type) {
-			$styles[$type] = array();
-			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
-			foreach ($style_files as $style) {
-				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
-				$styles[$type][str_replace('.css', '', $style)] = $style_content;
-			}
-		}
-
-		$dev = isset($_GET['dev']) && $_GET['dev'] ? 'dev_' : '';
-		update_option('upfront_' . $dev . $theme . '_styles', $styles);
-	}
-
 /* --- Public interface --- */
 
 	/**
@@ -749,10 +849,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 */
 	public function get_version () {
 		return $this->_version;
-	}
-
-	public function import_element_styles($force = false){
-		$this->_insert_element_styles($force);
 	}
 
 	/**
@@ -941,3 +1037,58 @@ class Upfront_GrandchildTheme_Server implements IUpfront_Server {
 
 }
 Upfront_GrandchildTheme_Server::serve();
+
+
+/**
+ * Keeps theme settings providing simple interface for getting
+ * stored settings, updating and saving settings to file.
+ */
+class Upfront_Theme_Settings
+{
+	protected $filePath;
+	protected $settings = array();
+
+	public function __construct($filePath) {
+		$this->filePath = $filePath;
+
+		if (file_exists($this->filePath) === false) return;
+
+		$this->settings = include $this->filePath;
+
+		if ($this->settings === 1) $this->settings = array(); // happens with old format settings
+
+		if (empty($this->settings)) {
+			$this->tryOldSettingsFormat();
+		}
+	}
+
+	public function get($name) {
+		return isset($this->settings[$name]) ? $this->settings[$name] : null;
+	}
+
+	public function set($name, $value) {
+		$this->settings[$name] = $value;
+		$this->save();
+	}
+
+	protected function save() {
+		$fileContents = "<?php\nreturn array(\n";
+		foreach($this->settings as $setting=>$value) {
+			$fileContents .= "\t'$setting' => '$value',\n";
+		}
+		$fileContents .= ");";
+
+		file_put_contents($this->filePath, $fileContents);
+	}
+
+	/**
+	 * Ensure backward compatibility.
+	 */
+	protected function tryOldSettingsFormat() {
+		include $this->filePath;
+		$settings = ['typography', 'layout_style', 'theme_fonts', 'theme_colors', 'layout_properties', 'menus'];
+		foreach($settings  as $setting) {
+			if (isset($$setting)) $this->settings[$setting] = $$setting;
+		}
+	}
+}

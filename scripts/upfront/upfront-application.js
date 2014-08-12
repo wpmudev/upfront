@@ -1451,10 +1451,11 @@ var Application = new (Backbone.Router.extend({
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
 
-			$('#upfront-theme-styles').remove();
+			Upfront.data.styles = [];
 			_.each(styles, function(elementStyles, elementType){
-				var properties = elementStyles._properties || {};
+				Upfront.data.styles[elementType] = [];
 				_.each(elementStyles, function(style, name){
+					Upfront.data.styles[elementType].push(name);
 					var styleNode = $(name);
 					if(!styleNode.length){
 						styleNode = $('<style id="' + name + '">' + style + '</style>');
