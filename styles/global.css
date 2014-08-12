@@ -246,14 +246,14 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-region,
 .flexbox-support .upfront-output-module-group,
 .flexbox-support .upfront-output-wrapper,
-.flexbox-support .upfront-output-region-container-bg > .upfront-grid-layout {
+.flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: flex-start;
 	align-content: flex-start;
 }
-.flexbox-support .upfront-output-region-container-bg > .upfront-grid-layout {
+.flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	align-items: stretch;
 }
 .flexbox-support .upfront-output-region {
