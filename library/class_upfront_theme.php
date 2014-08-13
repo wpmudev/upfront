@@ -1086,7 +1086,7 @@ class Upfront_Theme_Settings
 	 */
 	protected function tryOldSettingsFormat() {
 		include $this->filePath;
-		$settings = ['typography', 'layout_style', 'theme_fonts', 'theme_colors', 'layout_properties', 'menus'];
+		$settings = array('typography', 'layout_style', 'theme_fonts', 'theme_colors', 'layout_properties', 'menus');
 		foreach($settings  as $setting) {
 			if (isset($$setting)) $this->settings[$setting] = $$setting;
 		}
