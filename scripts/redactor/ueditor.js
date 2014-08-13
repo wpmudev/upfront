@@ -1131,7 +1131,7 @@ RedactorPlugins.upfrontColor = {
 //			this.$('input.foreground').spectrum('resetUI');
 //			this.$('input.background').spectrum('resetUI');
 //			
-
+console.log("color picker opened");
 		    this.$(".sp-choose").on("click", function(){
 	    		self.closePanel();
 				self.closeToolbar();
@@ -1171,6 +1171,7 @@ RedactorPlugins.upfrontColor = {
 
 			this.$el.html(tablist).append(tabs);
 			//redac.selectionSave();
+			
 		},
 		updateIcon : function () {
 				var self = this;

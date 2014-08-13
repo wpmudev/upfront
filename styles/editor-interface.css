@@ -9543,7 +9543,9 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 	left: -30px !important;
 	font-family: Verdana, sans-serif!important;
 }
-
+.redactor_air.under .redactor_dropdown_box_upfrontColor{
+	top: 32px !important;
+}
 .sp-picker-container
 {
     width: 206px;
