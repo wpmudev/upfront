@@ -244,6 +244,7 @@ h2, h3 { page-break-after: avoid; }
 
 /* Flexbox experiments *//* */
 .flexbox-support .upfront-output-region,
+.flexbox-support .upfront-output-region > .upfront-region-wrapper,
 .flexbox-support .upfront-output-module-group,
 .flexbox-support .upfront-output-wrapper,
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
@@ -264,7 +265,7 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-region:after {
 	content: none;
 }
-.flexbox-support .upfront-output-region > .upfront-output-wrapper,
+.flexbox-support .upfront-output-region > .upfront-region-wrapper > .upfront-output-wrapper,
 .flexbox-support .upfront-output-module-group > .upfront-output-wrapper,
 .flexbox-support .upfront-output-wrapper > .upfront-output-module {
 	order: 0;
