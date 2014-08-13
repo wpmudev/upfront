@@ -16,7 +16,13 @@ var Subapplication = Backbone.Router.extend({
 	go: function (frag) {
 		Upfront.Events.trigger("subapplication:navigate:" + frag);
 		return this.navigate(frag);
-	}
+	},
+
+	get_layout_data: function() {
+		var data = Upfront.Util.model_to_json(this.layout);
+		data.layout = _upfront_post_data.layout;
+		return data;
+	},
 });
 
 var LayoutEditorSubapplication = Subapplication.extend({
@@ -56,12 +62,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				Upfront.Events.trigger("command:layout:save_error");
 			})
 		;
-	},
-
-	get_layout_data: function() {
-		var data = Upfront.Util.model_to_json(this.layout);
-		data.layout = _upfront_post_data.layout;
-		return data;
 	},
 
 	preview_layout: function () {
