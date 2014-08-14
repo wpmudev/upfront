@@ -3731,6 +3731,7 @@ define([
 		},
 		events : {
 			'change .upfront_color_picker_rgba input' : 'rgba_sidebar_changed',
+			'change .sp-input' : 'sp_input_changed',
 			'click .upfront_color_picker_reset' : 'set_to_blank'
 		},
 		initialize: function(opts){
@@ -3845,13 +3846,24 @@ define([
 				if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
 					this.options.spectrum.move(color);
 				}
-				// Trigger move event
+				// Trigger change event
 				if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
 					this.options.spectrum.change(color);
 				}
 				e.stopPropagation();
 				e.preventDefault();
 				this.$spectrum.trigger("dragstop.spectrum");
+		},
+		sp_input_changed : function(e){
+			var color = tinycolor($(e.target).val());
+			// Trigger move event
+			if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
+				this.options.spectrum.move(color);
+			}
+			// Trigger change event
+			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
+				this.options.spectrum.change(color);
+			}
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
