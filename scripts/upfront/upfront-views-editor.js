@@ -3845,7 +3845,13 @@ define([
 				if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
 					this.options.spectrum.move(color);
 				}
-
+				// Trigger move event
+				if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
+					this.options.spectrum.change(color);
+				}
+				e.stopPropagation();
+				e.preventDefault();
+				this.$spectrum.trigger("dragstop.spectrum");
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
