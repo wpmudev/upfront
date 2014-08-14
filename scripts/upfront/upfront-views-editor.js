@@ -5674,8 +5674,7 @@ var CSSEditor = Backbone.View.extend({
 		editor.setTheme('ace/theme/monokai');
 
 		editor.on('change', function(e){
-			if(me.timer)
-				clearTimeout(me.timer);
+			if(me.timer) clearTimeout(me.timer);
 			me.timer = setTimeout(function(){
 				me.updateStyles(editor.getValue());
 			},800);
@@ -5699,32 +5698,32 @@ var CSSEditor = Backbone.View.extend({
 	prepareSpectrum: function(){
 		var me = this,
 			color_picker = new Field_Color({
-					default_value: '#ffffff',
-					showAlpha: true,
-					showPalette: true,
-					maxSelectionSize: 9,
-					localStorageKey: "spectrum.recent_bgs",
-					preferredFormat: "hex",
-					chooseText: "Ok",
-					showInput: true,
-					allowEmpty:true,
-					spectrum: {
-						show: function(){
-							spectrum = $('.sp-container:visible');
-						},
-						change: function(color) {
-							var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
-							me.editor.insert(colorString);
-							me.editor.focus();
-						},
-						move: function(color) {
-							var rgba = color.toRgbString();
-							spectrum.find('.sp-dragger').css('border-top-color', rgba);
-							spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-						},
-					}
-				})
-			;
+				default_value: '#ffffff',
+				showAlpha: true,
+				showPalette: true,
+				maxSelectionSize: 9,
+				localStorageKey: "spectrum.recent_bgs",
+				preferredFormat: "hex",
+				chooseText: "Ok",
+				showInput: true,
+				allowEmpty:true,
+				spectrum: {
+					show: function(){
+						spectrum = $('.sp-container:visible');
+					},
+					change: function(color) {
+						var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+						me.editor.insert(colorString);
+						me.editor.focus();
+					},
+					move: function(color) {
+						var rgba = color.toRgbString();
+						spectrum.find('.sp-dragger').css('border-top-color', rgba);
+						spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+					},
+				}
+			})
+		;
 		color_picker.render();
 		me.$('.upfront-css-color').html(color_picker.el);
 	},
@@ -5810,14 +5809,43 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	stylesAddSelector: function(contents, selector) {
+		var me = this,
+			rules = contents.split('}'),
+			processed = ''
+		;
+		_.each(rules, function (rl) {
+			var src = $.trim(rl).split('{');
+			if (src.length != 2) return true; // wtf
+			var individual_selectors = src[0].split(','),
+				processed_selectors = []
+			;
+			_.each(individual_selectors, function (sel) {
+				sel = $.trim(sel);
+				var is_container = !!$(selector + sel).closest('#' + me.element_id).length,
+					spacer = is_container 
+						? '' // This is not a descentent selector - used for containers
+						: ' ' // This is a descentent selector
+				;
+				processed_selectors.push('' +
+					selector + spacer + sel +
+				'');
+			});
+			processed += processed_selectors.join(', ') + ' {' + 
+				src[1] + // Actual rule
+			'\n}\n';
+		});
+		return processed;
+	/*
 		var rules = contents.split('}'),
 			separator = '\n\n' + selector + ' ';
+			
 
 		rules = _.map(rules, function(rule){return $.trim(rule);});
 
 		rules.pop();
 
 		return separator + rules.join('\n}' + separator) + '\n}';
+	*/
 	},
 
 	// When stylename changes upfront needs to update element model theme_style property
