@@ -2237,7 +2237,7 @@ var ImageEditor = Backbone.View.extend({
 		;
 
 		$("#upfront-popup-content")
-			.append($(editorTpl).find('#fullwidth-alert-tpl').html());
+			.append(_.template($(editorTpl).find('#fullwidth-alert-tpl').html(), {l10n: l10n.template}));
 	},
 
 	resizeMask: function(columns, rows){
