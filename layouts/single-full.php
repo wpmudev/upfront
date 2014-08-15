@@ -48,7 +48,8 @@ if ( $extended ){
 		'margin_top' => 6,
 		'new_line' => false,
 		'options' => array(
-			'content' => "Text element on navigation area"
+			'content' => "Text element on navigation area",
+			"class" => "c24 upfront-plain_txt",
 		)
 	));
 	

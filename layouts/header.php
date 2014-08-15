@@ -12,8 +12,9 @@ $header->add_element('PlainTxt', array(
 	'rows' => 2,
 	'margin_top' => 6,
 	'options' => array(
-    'has_settings' => 1,
-		'content' => '<p style="text-align:center;">Text element in header</p>'
+    	'has_settings' => 1,
+		'content' => '<p style="text-align:center;">Text element in header</p>',
+		"class" => "c24 upfront-plain_txt",
 	)
 ));
 

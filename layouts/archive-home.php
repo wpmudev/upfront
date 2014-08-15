@@ -39,7 +39,8 @@ $main->add_element('PlainTxt', array(
 	'margin_left' => 1,
 	'new_line' => false,
 	'options' => array(
-		'content' => "<p>Text element with no background color applied<p>"
+		'content' => "<p>Text element with no background color applied<p>",
+		"class" => "c24 upfront-plain_txt",
 	)
 ));
 
@@ -52,7 +53,8 @@ $main->add_element('PlainTxt', array(
 	'new_line' => false,
 	'options' => array(
 		'content' => "<p>Text element with background color applied gets additional padding to prevent text running into sides</p>",
-		'background_color' => '#ffffff'
+		'background_color' => '#ffffff',
+		"class" => "c24 upfront-plain_txt",
 	)
 ));
 
@@ -75,7 +77,8 @@ if ( $left_sidebar ){
 		'margin_left' => 1,
 		'new_line' => false,
 		'options' => array(
-			'content' => "Text element on left sidebar"
+			'content' => "Text element on left sidebar",
+			"class" => "c24 upfront-plain_txt",
 		)
 	));
 	
@@ -101,7 +104,8 @@ if ( $right_sidebar ){
 		'margin_left' => 1,
 		'new_line' => false,
 		'options' => array(
-			'content' => "Text element on right sidebar"
+			'content' => "Text element on right sidebar",
+			"class" => "c24 upfront-plain_txt",
 		)
 	));
 	

@@ -50,7 +50,8 @@ if ( $left_sidebar ){
 		'margin_left' => 1,
 		'new_line' => false,
 		'options' => array(
-			'content' => "Text element on left sidebar"
+			'content' => "Text element on left sidebar",
+			"class" => "c24 upfront-plain_txt",
 		)
 	));
 	
@@ -76,7 +77,8 @@ if ( $right_sidebar ){
 		'margin_left' => 1,
 		'new_line' => false,
 		'options' => array(
-			'content' => "Text element on right sidebar"
+			'content' => "Text element on right sidebar",
+			"class" => "c24 upfront-plain_txt",
 		)
 	));
 	

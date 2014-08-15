@@ -45,7 +45,8 @@ if ( $extended ){
 		'margin_top' => 6,
 		'new_line' => false,
 		'options' => array(
-			'content' => "Text element on navigation area"
+			'content' => "Text element on navigation area",
+			"class" => "c24 upfront-plain_txt",
 		)
 	));
 	
@@ -74,7 +75,8 @@ if ( $extended ){
 		'margin_top' => 6,
 		'options' => array(
 	    'has_settings' => 1,
-			'content' => '<p style="text-align:center;">Text element in content</p>'
+			'content' => '<p style="text-align:center;">Text element in content</p>',
+			"class" => "c24 upfront-plain_txt",
 		)
 	));
 	
