@@ -128,11 +128,11 @@ class Upfront {
 
 		$storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
 		$save_storage_key = $storage_key;
-		if (isset($_GET['dev']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
+		if (isset($_GET['dev']) || isset($_GET['debug']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
 		  echo '<script src="' . $url . '/scripts/require.js"></script>';
 		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
 		  echo '<script src="' . $url . '/scripts/main.js"></script>';
-		  if ( current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true) )
+		  if ( isset($_GET['dev']) && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true) )
 			  $save_storage_key .= '_dev';
 		} else {
 		  echo '<script src="' . $url . '/build/require.js"></script>';
@@ -147,6 +147,7 @@ class Upfront {
 			var _upfront_storage_key = "' . $storage_key . '";
 			var _upfront_save_storage_key = "' . $save_storage_key . '";
 			var _upfront_stylesheet = "' . get_stylesheet() . '";
+			var _upfront_debug_mode = ' . (int)isset($_GET['debug']) . ';
 		</script>';
 		echo <<<EOAdditivemarkup
 <div id="layouts" style="display:none"></div>

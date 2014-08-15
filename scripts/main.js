@@ -33,7 +33,8 @@ require(['backbone'], function (Backbone) {
       },
       "Application": {
         "MODE": Upfront.mainData.applicationModes,
-        "NO_SAVE": Upfront.mainData.readOnly
+        "NO_SAVE": Upfront.mainData.readOnly,
+        "DEBUG": false,
       },
       "LayoutEditor": {
         "Requirements": Upfront.mainData.layoutEditorRequirements,
@@ -54,6 +55,11 @@ require(['backbone'], function (Backbone) {
       "Content": Upfront.mainData.content,
       "l10n": Upfront.mainData.l10n
     };
+
+    if (window._upfront_debug_mode) {
+      Upfront.Settings.Application.DEBUG = true;
+      Upfront.Settings.Application.NO_SAVE = true;
+    }
 
     // Populate basics
     _.extend(Upfront, application);

@@ -2202,7 +2202,7 @@ define([
 					this.commands.push(new Command_ResetEverything({"model": this.model}));
 				}
 				this.commands.push(new Command_ToggleMode({"model": this.model}));
-				this.commands.push(new Command_PublishLayout({"model": this.model}));
+				if (!Upfront.Settings.Application.DEBUG) this.commands.push(new Command_PublishLayout({"model": this.model}));
 			}
 		}
 	});
