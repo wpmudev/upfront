@@ -539,6 +539,7 @@ define(function() {
 			_is_dirty = false,
 			_preview_url = false,
 			run = function (layout) {
+				if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) return false; // Do not auto-save when in theme exporter mode.
 				_layout = layout;
 				//_is_dirty = false;
 
