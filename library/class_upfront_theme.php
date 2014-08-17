@@ -573,21 +573,59 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	protected function __construct () {
 		$this->version = wp_get_theme()->version;
-		$this->initialize();
 		$this->themeSettings = new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php');
 		add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3);
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
-		add_filter('upfront_get_element_styles', array($this, 'getElementStyles'));
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
 		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'));
+		$this->checkMenusExist();
+		$this->initialize();
 	}
 
 	abstract public function get_prefix ();
 	abstract public function initialize ();
 
+	protected function checkMenusExist() {
+		$menus = json_decode($this->themeSettings->get('menus'), true);
+		if (empty($menus)) return;
+
+		$existing_menus = $this->getExistingMenus();
+
+		foreach($menus as $menu) {
+			if (in_array($menu['slug'], $existing_menus)) continue;
+
+			// Create menu if it does not exists
+			$new_menu_id = wp_create_nav_menu($menu['name']);
+			wp_update_nav_menu_object($new_menu_id, array('description' => $menu['description']));
+			foreach($menu['items'] as $menu_item) {
+				wp_update_nav_menu_item(
+					$new_menu_id,
+					0,
+					array(
+						'menu-item-url' => $menu_item['url'],
+						'menu-item-title' => $menu_item['title'],
+						'menu-item-position' => $menu_item['menu_order'],
+						'menu-item-status' => 'publish'
+					)
+				);
+			}
+		}
+	}
+
+	protected function getExistingMenus() {
+		return array_map(array($this, 'extractSlug'), get_terms('nav_menu'));
+	}
+
+	protected function extractSlug($menu) {
+		return $menu->slug;
+	}
+
+	/**
+	 * Get theme styles as css output for stylesheet.
+	 */
 	public function prepareThemeStyles($styles) {
 		// If styles are empty than there is no overrides in db, load from theme
 		if(empty($styles) === false) return $styles;
@@ -662,7 +700,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * Try to populate element style only if styles are empty. This will
 	 * provide that styles loaded from database don't get overwritten.
 	 */
-	public function getElementStyles($styles) {
+	public function getElementStylesList($styles) {
 		if (empty($styles) === false) return $styles;
 		return $this->parseElementStyles();
 	}

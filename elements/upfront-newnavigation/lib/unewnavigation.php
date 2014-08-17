@@ -55,11 +55,6 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				$menu_id = $menu->term_id;
 		}
 
-		if ($menu_slug && $menu === false) {
-			// If there is no menu try to create one from theme
-			$menu_id = $this->get_theme_menu_from_slug($menu_slug);
-		}
-
 		if ( $menu_id ) {
 			$menu = wp_nav_menu(array(
 				'menu' => $menu_id,
@@ -71,46 +66,6 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		}
 
 		return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
-	}
-
-	protected function get_theme_menu_from_slug($menu_slug) {
-		$settings_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php';
-		if (file_exists($settings_path) === false) return false;
-
-		$settings = require($settings_path);
-
-		if (empty($settings['menus'])) return false;
-
-		$theme_menus = json_decode($settings['menus']);
-		if (!$theme_menus) return false;
-
-		$stored_menu = false;
-		foreach($theme_menus as $theme_menu) {
-			if ($theme_menu->slug != $menu_slug) continue;
-
-			$stored_menu = $theme_menu;
-			break;
-		}
-
-		if (!$stored_menu) return false;
-
-		// Create new menu from theme menu
-		$new_menu_id = wp_create_nav_menu($stored_menu->name);
-		wp_update_nav_menu_object($new_menu_id, array('description' => $stored_menu->description));
-		foreach($stored_menu->items as $menu_item) {
-			wp_update_nav_menu_item(
-				$new_menu_id,
-				0,
-				array(
-					'menu-item-url' => $menu_item->url,
-					'menu-item-title' => $menu_item->title,
-					'menu-item-position' => $menu_item->menu_order,
-					'menu-item-status' => 'publish'
-				)
-			);
-		}
-
-		return $new_menu_id;
 	}
 
 	public static function add_js_defaults($data){
@@ -251,11 +206,9 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
 	function load_menu_array() {
 
-		if(isset($_POST['data']) && is_numeric($_POST['data'])) {
-
-			$menu_id = intval($_POST['data']);
-
-			$menu = wp_get_nav_menu_object( $menu_id > 0 ? $menu_id : $_POST['alternate'] );
+		if(isset($_POST['data'])) {
+			$menu_id = $_POST['data'];
+			$menu = wp_get_nav_menu_object( $menu_id ? $menu_id : $_POST['alternate'] );
 
 			$menu_items = $menu
 				? wp_get_nav_menu_items( $menu->term_id, array( 'update_post_term_cache' => false ) )
@@ -328,7 +281,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 	}
 
 	public function load_menu_items () {
-		$menu_id = isset($_POST['data']) ? intval($_POST['data']) : false;
+		$menu_id = isset($_POST['data']) ? $_POST['data'] : false;
 		if ( $menu_id ){
 			$args = array(
 				'order'                  => 'ASC',
