@@ -1060,6 +1060,7 @@ define([
 		},
 
 		add_command: function (command) {
+			if (!command) return;
 			command.remove();
 			command.render();
 			this.$el.append(command.el);
