@@ -374,7 +374,9 @@ class Upfront_Virtual_Region {
 		$object_data = array_merge(array('name' => '', 'properties' => array()), $other_data);
 		$breakpoint = $this->grid->get_default_breakpoint();
 		$col_class = $breakpoint->get_prefix('width') . $breakpoint->get_columns();
-		$properties['class'] = rtrim($col_class) . ( isset($properties['class']) ? ' ' . $properties['class'] : '' );
+		$temp_class = isset($properties['class']) ? $properties['class'] : '';
+		$properties['class'] = strpos($temp_class, rtrim($col_class)) === false ?
+		 	rtrim($col_class) . ' ' . $temp_class : $temp_class;
 		foreach ( $properties as $prop => $value ) {
 			$this->_set_property($prop, $value, $object_data);
 		}
@@ -507,8 +509,8 @@ class Upfront_Virtual_Region {
 
 		$module = array(
 			'rows' => 6,
-			'module_class' => $slug . '-module',
-			'module_id' => $slug . '-module',
+			'module_class' => $slug,
+			'module_id' => $slug,
 			'sticky' => false
 		);
 		$module = array_merge($module, $options);
