@@ -55,7 +55,7 @@ if($styles) {
 		$elementTypes[$type] = array_keys($rules);
 	}
 }
-$element_styles = apply_filters('upfront_get_element_styles', $elementTypes);
+$element_styles = apply_filters('upfront_get_theme_styles', $elementTypes);
 
 $upfront_data['styles'] = $elementTypes;
 $upfront_data['date'] = array(
