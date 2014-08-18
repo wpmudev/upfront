@@ -318,7 +318,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 	createLightboxRegion: function(regionName){
 
-		var regions = this.layout.get('regions'),
+		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions')),
 			region = regions ? regions.get_by_name('lightbox') : false;
 
 		if ( ! region ){
