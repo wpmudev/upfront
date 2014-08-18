@@ -105,6 +105,7 @@ class Upfront_Grid {
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
 				$container = !empty($region['container']) ? $region['container'] : $region['name'];
+				$region['sub'] = !empty($region['sub']) ? $region['sub'] : false;
 				if ( $region['sub'] == 'top' || $region['sub'] == 'bottom' )
 					$region_col = $point->get_columns();
 				else
