@@ -1965,7 +1965,7 @@ var ImageEditor = Backbone.View.extend({
 				start: function() {
 					me.$('#image-edit-button-reset')
 						.attr('class', 'image-edit-button')
-						.attr('data-tooltip', l10n.bth.exp_info)
+						.attr('data-tooltip', l10n.btn.exp_info)
 					;
 					//Prevent editor closing after resizing. It is set to false by the initialize method.
 					me.isResizing = true;
