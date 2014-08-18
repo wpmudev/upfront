@@ -691,6 +691,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		// Ajax call for Menu list
 		Upfront.Util.post({"action": "upfront_new_load_menu_list"})
 			.success(function (ret) {
+				me.existingMenus = ret.data;
 				var values = _.map(ret.data, function (each, index) {
 					return  {label: each.name, value: each.term_id};
 				});
@@ -756,7 +757,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			me.$el.parent().parent().parent().draggable('enable');
 			if(me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val() != 0) {
 				if(!me.property('initialized')) me.property('initialized', true, true);
-				me.property('menu_id', me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val());
+				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
+				me.property('menu_id', id);
+				me.property('menu_slug', _.findWhere(me.existingMenus, {term_id: id}).slug);
 			}
 		});
 	},
