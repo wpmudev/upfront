@@ -5824,7 +5824,7 @@ var CSSEditor = Backbone.View.extend({
 	updateStyles: function(contents){
 		this.get_style_element().html(
 			this.stylesAddSelector(
-				contents, this.get_css_selector()
+				contents, (this.is_default_style ? '' : this.get_css_selector())
 			)
 		);
 	},
@@ -5923,7 +5923,7 @@ var CSSEditor = Backbone.View.extend({
 		if(!styles)
 			return notifier.addMessage('The slylesheet is empty.', 'error');
 
-		styles = this.stylesAddSelector(styles, this.get_css_selector());
+		styles = this.stylesAddSelector(styles, (this.is_default_style ? '' : this.get_css_selector()));
 		data = {
 			styles: styles,
 			elementType: this.elementType.id,
