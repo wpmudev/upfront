@@ -90,7 +90,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 			return $out;
 	}
 	public static function add_styles_scripts() {
-			wp_enqueue_style('uaccordion_style', upfront_element_url('css/uaccordion.css', dirname(__FILE__)));
+			upfront_add_element_style('uaccordion_style', array('css/uaccordion.css', dirname(__FILE__)));
 	}
 
 	public static function add_l10n_strings ($strings) {

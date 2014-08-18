@@ -41,7 +41,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
 
 	// Inject style dependencies
 	public static function add_public_style () {
-		wp_enqueue_style('upfront-like-box', upfront_element_url('css/upfront-like-box-style.css', dirname(__FILE__)));
+		upfront_add_element_style('upfront-like-box', array('css/upfront-like-box-style.css', dirname(__FILE__)));
 	}
 	public static function add_js_defaults($data){
 		$data['ulikebox'] = array(

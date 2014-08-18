@@ -602,6 +602,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			// Create menu if it does not exists
 			$new_menu_id = wp_create_nav_menu($menu['name']);
 			wp_update_nav_menu_object($new_menu_id, array('description' => $menu['description']));
+
+			if (empty($menu['items'])) continue;
 			foreach($menu['items'] as $menu_item) {
 				wp_update_nav_menu_item(
 					$new_menu_id,
