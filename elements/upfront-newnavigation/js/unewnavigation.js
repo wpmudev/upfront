@@ -739,6 +739,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		newMenuButton.render();
 		me.$el.find('div.upfront-object-content').append(newMenuButton.el);
 
+		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseover', function() {
+			me.$el.parent().parent().parent().draggable('disable');
+		});
+
+		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseout', function() {
+			me.$el.parent().parent().parent().draggable('enable');
+		});
+
 		me.$el.find('div.upfront-object-content > div.existing_menu_list').on('mouseover', function() {
 			me.$el.parent().parent().parent().draggable('disable');
 		});
