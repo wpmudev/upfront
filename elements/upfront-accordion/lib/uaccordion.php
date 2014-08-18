@@ -84,13 +84,14 @@ class Upfront_UaccordionView extends Upfront_Object {
 	}
 
 	private function properties_to_array(){
-			$out = array();
-			foreach($this->_data['properties'] as $prop)
-					$out[$prop['name']] = $prop['value'];
-			return $out;
+		$out = array();
+		foreach($this->_data['properties'] as $prop)
+				$out[$prop['name']] = $prop['value'];
+		return $out;
 	}
 	public static function add_styles_scripts() {
-			upfront_add_element_style('uaccordion_style', array('css/uaccordion.css', dirname(__FILE__)));
+		//upfront_add_element_style('uaccordion_style', array('css/uaccordion.css', dirname(__FILE__)));
+		wp_enqueue_style('uaccordion_style', upfront_element_url('css/uaccordion.css', dirname(__FILE__)));
 	}
 
 	public static function add_l10n_strings ($strings) {

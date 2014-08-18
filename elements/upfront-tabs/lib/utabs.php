@@ -82,7 +82,8 @@ class Upfront_UtabsView extends Upfront_Object {
   }
 
   public static function add_styles_scripts() {
-		upfront_add_element_style('utabs-style', array('css/utabs.css', dirname(__FILE__)));
+		//upfront_add_element_style('utabs-style', array('css/utabs.css', dirname(__FILE__)));
+    wp_enqueue_style('utabs-style', upfront_element_url('css/utabs.css', dirname(__FILE__)));
   }
 }
 
