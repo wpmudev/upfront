@@ -2906,7 +2906,6 @@ var GridEditor = {
 					if ( drop_row >= drop_top+me.row )
 						adjust_bottom = true;
 
-
 					$('#upfront-drop-preview').css({
 						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
 						left: (ed.drop.left+drop_priority_left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left)//Lightbox region having odd number of cols requires to offset the preview by half of the column width

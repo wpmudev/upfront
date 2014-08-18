@@ -6,6 +6,9 @@
 		var UtabsModel = Upfront.Models.ObjectModel.extend({
 			init: function () {
 				var properties = _.clone(Upfront.data.utabs.defaults);
+				
+				properties['tabs'] = _.clone(properties.tabs);
+				
 				properties.element_id = Upfront.Util.get_unique_id("utabs-object");
 				this.init_properties(properties);
 			}
@@ -32,6 +35,7 @@
 				if(! (this.model instanceof UtabsModel)){
 					this.model = new UtabsModel({properties: this.model.get('properties')});
 				}
+				console.log(Upfront.data.utabs.defaults);
 				this.events = _.extend({}, this.events, {
 					'click .add-item': 'addTab',
 					'click .tabs-tab': 'onTabClick',
@@ -42,7 +46,7 @@
 					'click i': 'deleteTab'
 				});
 				this.delegateEvents();
-
+				
 				this.model.get("properties").bind("change", this.render, this);
 				this.model.get("properties").bind("add", this.render, this);
 				this.model.get("properties").bind("remove", this.render, this);
@@ -141,9 +145,9 @@
 				}
 				*/
 				contentId = $tab.data('content-id');
-				$('.tab-content').removeClass('tab-content-active');
+				this.$el.find('.tab-content').removeClass('tab-content-active');
 				$('#' + contentId).addClass('tab-content-active');
-				console.log('did it reach here');
+
 				 this.$el.find(".tabs-tab[data-content-id='" + $tab.data('content-id') + "']").addClass('tabs-tab-active');
 				//$tab.addClass('tabs-tab-active');
 
@@ -167,17 +171,20 @@
 			},
 */
 			onContentKeydown: function(event) {
-				this.debouncedSave();
+				//this.debouncedSave();
 			},
 
 			saveTabContent: function() {
+								console.log(Upfront.data.utabs.defaults);
 				var $content = this.$el.find('.tab-content-active'),
 					tabId = $content.attr('id').split('-').pop(),
 					ed = $content.data("ueditor"),
 					text = ''
 				;
 				try { text = ed.getValue(true); } catch (e) { text = $content.html(); }
-				this.property('tabs')[tabId].content = text;
+var me = this;
+				setTimeout(function() {me.property('tabs')[tabId].content = text; console.log('saved')}, 10000);
+
 			},
 
 			stopEdit: function() {

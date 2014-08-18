@@ -708,8 +708,10 @@ define([
 		}),
 		DefaultMenuList = ContextMenuList.extend({
 			initialize: function() {
-					this.menuitems = _([
-					new Upfront.Views.ContextMenuItem({
+				var menuitems = [];
+				
+				if(Upfront.Application.get_current() != "theme") {
+				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
 							return 'Save';
 						},
@@ -717,8 +719,8 @@ define([
 							var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
 							savelayout.on_click();
 						}
-					}),
-					new Upfront.Views.ContextMenuItem({
+					}));
+				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
 							return 'Undo';
 						},
@@ -727,8 +729,10 @@ define([
 							var undo = new Upfront.Views.Editor.Command_Undo({"model": Upfront.Application.layout});
 							undo.on_click();
 						}
-					}),
-					new Upfront.Views.ContextMenuItem({
+					}));
+				}
+				
+				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
 							return Upfront.Application.get_gridstate() ? 'Hide Grid': 'Show Grid';
 						},
@@ -736,8 +740,9 @@ define([
 							var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
 							togglegrid.on_click();
 						}
-					}),
-					new Upfront.Views.ContextMenuItem({
+					}));
+					
+				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
 							return 'Clone';
 						},
@@ -792,8 +797,8 @@ define([
 						    });
 						
 						}
-					})
-				]);
+					}));
+				this.menuitems = _(menuitems);
 			}
 
 		}),

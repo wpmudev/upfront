@@ -16,7 +16,6 @@ class Upfront_UaccordionView extends Upfront_Object {
 			'accordion_count' => 1,
 			'accordion_fixed_width' => 'auto',
 			'id_slug' => 'uaccordion',
-
 			'style_type' => 'theme_defined',
 			'theme_style' => 'style1',
 			'header_border_color' => 'rgb(174, 196, 216)',
@@ -48,7 +47,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 	}
 
 	public function get_markup () {
-	// This data is passed on to the template to precompile template
+			// This data is passed on to the template to precompile template
 			$data = $this->properties_to_array();
 
 			$data['wrapper_id'] = str_replace('uaccordion-object-', 'wrapper-', $data['element_id']);
@@ -57,7 +56,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 
 		 // upfront_add_element_style('uaccordion_style', array('css/uaccordion.css', dirname(__FILE__)));
 			upfront_add_element_script('uaccordion_script', array('js/uaccordion-front.js', dirname(__FILE__)));
-
+return '';
 			return $markup;
 	}
 
