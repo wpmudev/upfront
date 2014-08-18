@@ -297,7 +297,7 @@
 			addTooltips: function() {
 				$('.tabs-tab').each(function() {
 					var span = $(this).find('span')[0];
-					if (span.offsetWidth < span.scrollWidth) {
+					if ( !_.isUndefined(span) && ( span.offsetWidth < span.scrollWidth ) ) {
 						$(this).attr('title', $(span).text().trim());
 					}
 				});
