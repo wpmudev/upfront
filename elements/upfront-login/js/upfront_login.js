@@ -21,8 +21,8 @@ define([
 		markup: false,
 
 		cssSelectors: {
-			'p': {label: l10n.css.containers, info: l10n.css.containers_info},
-			'label': {label: l10n.css.labels, info: l10n.css.labels_info},
+			'.upfront_login-form p': {label: l10n.css.containers, info: l10n.css.containers_info},
+			'.upfront_login-form form label': {label: l10n.css.labels, info: l10n.css.labels_info},
 			'input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
 			'input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
 			'input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
