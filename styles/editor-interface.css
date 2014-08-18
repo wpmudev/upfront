@@ -2692,6 +2692,11 @@ div.uinsert-selector a:hover {
 .upfront-region-fixed-editing .upfront-grid-layout {
 	z-index: 9998;
 }
+
+.upfront-region-editing .upfront-grid-layout {
+	-webkit-backface-visibility:hidden; 
+}
+
 .upfront-region-editing .upfront-region-active,
 .upfront-region-editing .upfront-region-container-active .upfront-grid-layout,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-grid-layout {
