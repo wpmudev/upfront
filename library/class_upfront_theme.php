@@ -583,12 +583,20 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
 		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'));
+
+		add_filter('upfront-storage-key', array($this, 'theme_storage_key'));
+
 		$this->checkMenusExist();
 		$this->initialize();
 	}
 
 	abstract public function get_prefix ();
 	abstract public function initialize ();
+
+	public function theme_storage_key ($key) {
+		$theme_key = $this->get_prefix();
+		return preg_replace('/' . preg_quote(Upfront_Model::STORAGE_KEY, '/') . '/', $theme_key, $key);
+	}
 
 	protected function checkMenusExist() {
 		$menus = json_decode($this->themeSettings->get('menus'), true);
