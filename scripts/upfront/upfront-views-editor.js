@@ -3742,15 +3742,15 @@ define([
 			this.options.blank_alpha = _.isUndefined( this.options.blank_alpha ) ? 1 : this.options.blank_alpha;
 			this.sidebar_template = _.template(_Upfront_Templates.color_picker);
 			var me = this,
-				spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
-                ;
-            this.rgba = {
-            	r : 0,
-            	g : 0,
-            	b : 0,
-            	a : 0
-            };
-            this.spectrumOptions = spectrumOptions;
+			spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
+			;
+			this.rgba = {
+				r : 0,
+				g : 0,
+				b : 0,
+				a : 0
+			};
+			this.spectrumOptions = spectrumOptions;
 			spectrumOptions.move = function(color){
 				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
@@ -3786,12 +3786,12 @@ define([
 					me.options.spectrum.show(color);
 			};
 
-            spectrumOptions.beforeShow = function(color){
-                me.options.palette = Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'];
-                me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
-                if(me.options.spectrum && me.options.spectrum.beforeShow)
-                    me.options.spectrum.beforeShow(color);
-            };
+			spectrumOptions.beforeShow = function(color){
+				me.options.palette = Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'];
+				me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
+				if(me.options.spectrum && me.options.spectrum.beforeShow)
+					me.options.spectrum.beforeShow(color);
+			};
 
 			Field_Color.__super__.initialize.apply(this, arguments);
 
@@ -5843,8 +5843,8 @@ var CSSEditor = Backbone.View.extend({
 			_.each(individual_selectors, function (sel) {
 				sel = $.trim(sel);
 				var clean_selector = sel.replace(/:[^\s]+/, ''), // Clean up states states such as :hover, so as to not mess up the matching
-					is_container = !!$(selector + clean_selector).closest('#' + me.element_id).length, 
-					spacer = is_container 
+					is_container = !!$(selector + clean_selector).closest('#' + me.element_id).length,
+					spacer = is_container
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
 				;
@@ -5852,7 +5852,7 @@ var CSSEditor = Backbone.View.extend({
 					selector + spacer + sel +
 				'');
 			});
-			processed += processed_selectors.join(', ') + ' {' + 
+			processed += processed_selectors.join(', ') + ' {' +
 				src[1] + // Actual rule
 			'\n}\n';
 		});
@@ -5860,7 +5860,7 @@ var CSSEditor = Backbone.View.extend({
 	/*
 		var rules = contents.split('}'),
 			separator = '\n\n' + selector + ' ';
-			
+
 
 		rules = _.map(rules, function(rule){return $.trim(rule);});
 
@@ -7010,7 +7010,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					{ label: "Video", value: 'video', icon: 'video' }
 				]
 			;
-			
+
 			if ( !is_layout ) {
 				region_types.push({ label: "Image slider", value: 'slider', icon: 'slider' });
 				region_types.push({ label: "Map", value: 'map', icon: 'map' });

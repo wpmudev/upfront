@@ -1294,7 +1294,7 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 		);
 
 		do_action('upfront_update_theme_colors', $data);
-		if (did_action('upfront_update_theme_color') === 0) {
+		if (did_action('upfront_update_theme_colors') === 0) {
 			update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode($data));
 		}
 
