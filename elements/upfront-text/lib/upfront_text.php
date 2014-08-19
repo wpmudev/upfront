@@ -58,4 +58,8 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			: $l10n
 		;
 	}
+
+	public static function export_content ($export, $object) {
+		return upfront_get_property_value('content', $object);
+	}
 }

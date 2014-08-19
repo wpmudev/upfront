@@ -6,6 +6,7 @@ function utext_init () {
 	require_once (dirname(__FILE__) . '/lib/upfront_text.php');
 
 	add_filter('upfront_l10n', array('Upfront_PlainTxtView', 'add_l10n_strings'));
+	add_filter('upfront-export-plaintxt-object_content', array('Upfront_PlainTxtView', 'export_content'));
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('utext', upfront_relative_element_url('js/utext', __FILE__));

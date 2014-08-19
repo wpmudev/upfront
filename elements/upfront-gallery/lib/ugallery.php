@@ -330,4 +330,16 @@ class Upfront_UgalleryView extends Upfront_Object {
 			: $l10n
 		;
 	}
+
+	public static function export_content ($export, $object) {
+		$images = upfront_get_property_value('images', $object);
+		if (!empty($images)) foreach ($images as $img) {
+			if (empty($img['src']) || (empty($img['title']) || empty($img['caption']))) continue;
+			$text = array();
+			if (!empty($img['title'])) $text[] = $img['title'];
+			if (!empty($img['caption'])) $text[] = $img['caption'];
+			$export .= $img['src'] . ': ' . join(', ', $text) . "\n";
+		}
+		return $export;
+	}
 }
