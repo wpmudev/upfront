@@ -2726,8 +2726,8 @@ div.uinsert-selector a:hover {
 	background: rgba(175, 185, 195, 0.5);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region {
-	border-left: 1px dotted #7f7f7f;
-	border-right: 1px dotted #7f7f7f;
+	outline: 1px dotted #7f7f7f;
+	/*border-right: 1px dotted #7f7f7f;*/
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-side {
 	border: none;
