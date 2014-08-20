@@ -23,11 +23,11 @@ define([
 		cssSelectors: {
 			'.upfront_login-form p': {label: l10n.css.containers, info: l10n.css.containers_info},
 			'.upfront_login-form form label': {label: l10n.css.labels, info: l10n.css.labels_info},
-			'input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
-			'input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
-			'input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
+			'.upfront_login-form form input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
+			'.upfront_login-form form  input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
+			'.upfront_login-form form  input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
 			'.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
-			'.login-lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
+			'.upfront_login-form p .login-lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
 			'.upfront_login-trigger': {label: l10n.css.close, info: l10n.css.close_info}
 		},
 

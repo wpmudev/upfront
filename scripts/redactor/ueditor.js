@@ -161,34 +161,34 @@ var hackRedactor = function(){
 	};
 
 	//Fix the selection, making the temporary markers not interfere with the style selection for the buttons.
-	$.Redactor.prototype.selectionSet = function(orgn, orgo, focn, foco) {
-		if (focn === null) focn = orgn;
-		if (foco === null) foco = orgo;
+	// $.Redactor.prototype.selectionSet = function(orgn, orgo, focn, foco) {
+	// 	if (focn === null) focn = orgn;
+	// 	if (foco === null) foco = orgo;
 
-		var sel = this.getSelection();
-		if (!sel) return;
+	// 	var sel = this.getSelection();
+	// 	if (!sel) return;
 
-		var range = this.getRange();
+	// 	var range = this.getRange();
 
-		if(focn != orgn && orgn.id == 'selection-marker-1'){
-			orgn = orgn.nextSibling;
-			orgo = 0;
-			focn = focn.previousSibling;
-			foco = ( !_.isEmpty(focn) && !_.isUndefined( focn.length ) ) 
-					? focn.length : 
-						( !_.isEmpty(focn) && !_.isUndefined( focn.innerText ) ) ? focn.innerText.length - 1 : 0;
+	// 	if(focn != orgn && orgn.id == 'selection-marker-1'){
+	// 		orgn = orgn.nextSibling;
+	// 		orgo = 0;
+	// 		focn = focn.previousSibling;
+	// 		foco = ( !_.isEmpty(focn) && !_.isUndefined( focn.length ) ) 
+	// 				? focn.length : 
+	// 					( !_.isEmpty(focn) && !_.isUndefined( focn.innerText ) ) ? focn.innerText.length - 1 : 0;
 
-		}
+	// 	}
 
 
-		try {
-			range.setStart(orgn, orgo);
-			range.setEnd(focn, foco );
-			sel.removeAllRanges();
-		} catch (e) {}
+	// 	try {
+	// 		range.setStart(orgn, orgo);
+	// 		range.setEnd(focn, foco );
+	// 		sel.removeAllRanges();
+	// 	} catch (e) {}
 
-		sel.addRange(range);
-	};
+	// 	sel.addRange(range);
+	// };
 
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
