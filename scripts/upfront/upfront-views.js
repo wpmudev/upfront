@@ -3440,7 +3440,6 @@ define([
 				var selection = document.getSelection ? document.getSelection() : document.selection;
 				if(selection && selection.type == 'Range')
 					return;
-
 				var currentEntity = Upfront.data.currentEntity;
 				// Deactivate settings on clicking anywhere in layout, but the settings button
 				if(!$(e.target).closest('.upfront-entity_meta').length && !$(e.target).closest('#upfront-csseditor').length)
@@ -3451,10 +3450,14 @@ define([
 					if(!$(e.target).closest(currentEntity.el).length){
 						currentEntity.trigger('deactivated');
 						currentEntity.$el.removeClass("upfront-active_entity");
-						Upfront.Events.trigger("entity:deactivated");
+						Upfront.Events.trigger("entity:deactivated", e);
 						Upfront.data.currentEntity = false;
 					}
 				}
+				// Deactivate if clicked on blank area of region
+				if($(e.target).hasClass('upfront-editable_entities_container'))
+					Upfront.Events.trigger("entity:deactivated");
+				
 				// Close region editing on click anywhere out the region
 				if ( $(e.target).hasClass('upfront-region-editing-overlay') && !$('.upfront-region-bg-setting-open').length )
 					Upfront.Events.trigger("entity:region:deactivated");

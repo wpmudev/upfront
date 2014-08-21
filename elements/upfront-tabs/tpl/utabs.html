@@ -43,7 +43,7 @@
   <div class="tabs-menu-wrapper">
     <div class="tabs-menu">
       <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
-      <div class="tabs-tab <?php if($i === 0) { ?><?php } ?>" data-content-id="<?php echo $element_id ?>-<?php echo $i ?>">
+      <div class="tabs-tab  <?php if($i === 0) { ?>tabs-tab-active<?php } ?>" data-content-id="<?php echo $element_id ?>-<?php echo $i ?>">
         <div class="inner-box">
           <span style="width: <?php echo $tabs_fixed_width ?>"><?php echo $tabs[$i]['title'] ?></span>
         </div>

@@ -26,6 +26,7 @@
 
 		var UtabsView = Upfront.Views.ObjectView.extend({
 			model: UtabsModel,
+			currenttabid: false,
 			tabsTpl: Upfront.Util.template(tabsTpl),
 			elementSize: {width: 0, height: 0},
 			cssSelectors: {
@@ -62,13 +63,16 @@
 				this.model.get("properties").bind("remove", this.render, this);
 
 				Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-				this.on('deactivated', this.stopEdit, this);
+				Upfront.Events.on("entity:deactivated", this.stopEdit, this);
+				
+				//this.on('deactivated', this.stopEdit, this);
 				this.debouncedSave = _.debounce(this.saveTabContent, 1000);
 			},
 			onContentClick: function() {
 				this.$el.find('.tabs-tab-active .inner-box').trigger('blur');
 			},
 			addTab: function() {
+				this.stopEdit();
 				this.property('tabs').push({
 					title: '',
 					content: 'Content ' + (1 + this.property('tabs_count'))
@@ -132,6 +136,7 @@
 					if(ed) {
 						ed.start();
 					}
+					
 					//$tab.find('span').css('width', 'auto');
 					//$tab.find('.inner-box').focus();
 					return;
@@ -146,8 +151,8 @@
 					});
 				}
 
-				$tab.siblings().removeClass('tabs-tab-active');//.removeAttr('contenteditable');
-				
+//				$tab.siblings().removeClass('tabs-tab-active');//.removeAttr('contenteditable');
+				this.$el.find('.tabs-tab-active').removeClass('tabs-tab-active');
 				// If active content is edited save edits & destroy editor.
 				/*
 				if (this.$el.find('.tab-content-active').attr('contenteditable') === true) {
@@ -155,8 +160,8 @@
 				}
 				*/
 				contentId = $tab.data('content-id');
-				this.$el.find('.tab-content').removeClass('tab-content-active');
-				$('#' + contentId).addClass('tab-content-active');
+				this.$el.find('#' + contentId).siblings().removeClass('tab-content-active');
+				this.$el.find('#' + contentId).addClass('tab-content-active');
 
 				 this.$el.find(".tabs-tab[data-content-id='" + $tab.data('content-id') + "']").addClass('tabs-tab-active');
 				//$tab.addClass('tabs-tab-active');
@@ -193,14 +198,41 @@
 				;
 				try { text = ed.getValue(true); } catch (e) { text = $content.html(); }
 var me = this;
+					this.currenttabid = $content.attr('id');
 					me.property('tabs')[tabId].content = text; 
-
+				
 			},
 
-			stopEdit: function() {
-				console.log("deactivated");
+			stopEdit: function(e) {
+				
+				
 				//this.saveTabContent();
-				this.$el.find('.tab-content-active').trigger('blur');
+				var $content = this.$el.find('.tab-content-active');
+				var ed = $content.data('ueditor');
+				if(ed)
+					ed.stop();
+				
+				if(typeof(e) != 'undefined' && $(e.target).hasClass('inner-box'))
+					return;
+					
+					
+				var $tab = this.$el.find('.tabs-tab-active .inner-box:not(.ueditor-placeholder)');
+				$tab.trigger('blur');
+				
+				
+				
+				/*if($tab.length > 0 && !($tab.siblings('.ueditor-placeholder').length && $tab.siblings('.ueditor-placeholder').css('display') != 'none')) {
+					$tab.trigger('blur');
+				}
+				else {
+					$tab.addClass('newtab');	
+				}*/
+				//var text='';
+				//ed = $tab.data('ueditor');
+				
+					
+				//if(ed)
+					//ed.stop();
 //					.removeAttr('contenteditable')
 //					.removeClass('upfront-object');
 			//	if (this.editor && this.editor.destroy) this.editor.destroy();
@@ -248,6 +280,7 @@ var me = this;
 			},
 
 			on_render: function() {
+
 				// Tabs won't be rendered in time if you do not delay.
 				_.delay(function(self) {
 					self.fixTabWidth();
@@ -307,6 +340,11 @@ var me = this;
 			$upfrontObjectContent = this.$el.find('.upfront-object-content');
 			    if(this.$el.find('a.add-item').length < 1)
 				      $('<b class="upfront-entity_meta add_item"><a href="#" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+			
+
+			this.$el.find('div#'+this.currenttabid).addClass('tab-content-active').siblings().removeClass('tab-content-active');
+					  
+			this.$el.find('div.tabs-tab[data-content-id="'+this.$el.find('div.tab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
 			},
 
 			addTooltips: function() {
