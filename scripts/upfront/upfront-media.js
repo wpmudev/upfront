@@ -128,7 +128,7 @@ define(function() {
 	});
 	var MediaItem_Model = Backbone.Model.extend({
 		defaults: {
-			thumbnail: "<img src='http://cdn5.iconfinder.com/data/icons/app-tab-bar-icons-for-iphone/60/Flickr_social_circle_square_social_media_icontexto_gray_button.png' />"
+			thumbnail: "<span class='upfront-image-upload-placeholder'></span>"
 		}
 	});
 
@@ -1104,7 +1104,6 @@ define(function() {
 			e.preventDefault();
 			e.stopPropagation();
             this.trigger("media_manager:switcher:to_upload");
-
 		}
 	});
 
@@ -1188,7 +1187,7 @@ define(function() {
 
             this.$("#fileupload").remove();
             this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
-            this.$("#fileupload").fileupload({
+            this.$("#fileupload").on("click", function (e) { e.stopPropagation(); }).fileupload({
 				dataType: 'json',
 				add: function (e, data) {
 					var media = data.files[0],
@@ -1220,7 +1219,7 @@ define(function() {
 					var count = progressing;
 					progressing+=1;
 					var progress = parseInt(data.loaded / data.total * 100, 10);
-					new_media[count].trigger("upload:progress", progress);
+					if (new_media[count]) new_media[count].trigger("upload:progress", progress);
 				},
 				done: function (e, data) {
 					var count = done;
@@ -1835,7 +1834,7 @@ define(function() {
 				this.$el.find('.upfront-media-progress-bar').css('width', progress+'%');
 			},
 			upload_finish: function () {
-				this.$el.find("img").replaceWith(this.model.get("thumbnail"));
+				this.$el.find(".thumbnail .upfront-image-upload-placeholder").replaceWith(this.model.get("thumbnail"));
 				this.$el.find('.upfront-media-progress-bar').remove();
 				this.model.set({selected: true});
 				Upfront.Events.trigger("media:item:selection_changed", this.model.collection);
