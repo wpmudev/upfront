@@ -789,8 +789,11 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
-				$path = upfront_element_dir($frags[0], $frags[1]);
-				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
+				//$path = upfront_element_dir($frags[0], $frags[1]);
+				//if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
+				if (empty($frags)) continue;
+				$style = $this->_get_style_contents($frags);
+				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) $cache = Upfront_StylePreprocessor::compress($cache);
 			set_transient($cache_key, $cache);
@@ -802,6 +805,53 @@ class Upfront_ElementStyles extends Upfront_Server {
 			'styles',
 			$raw_cache_key
 		)))); // But let's do pretty instead
+	}
+
+	/**
+	 * Fetching and pre-processing the relative/absolute paths in styles.
+	 */
+	private function _get_style_contents ($frags) {
+		$path = upfront_element_dir($frags[0], $frags[1]);
+		$url = upfront_element_url($frags[0], $frags[1]);
+		if (!file_exists($path)) return false;
+
+		$style = file_get_contents($path);
+
+		// Obtain the first "../" level
+		$base_url = trailingslashit(dirname(dirname($url)));
+
+		// First up, let's build up allowed directories list
+		$dirs = explode('/', $base_url);
+		$relatives = array();
+		$upfront_root = preg_quote(Upfront::get_root_url(), '/');
+		while (array_pop($dirs) !== NULL) {
+			$rel = join('/', $dirs);
+			$relatives[] = $rel;
+			if (preg_match('/^' . $upfront_root . '$/', $rel)) break; // Let's not allow relative paths inclusion higher than the Upfront root
+		}
+		if (empty($relatives)) return $style;
+
+		// Next, let's build the matching patterns list
+		$matchers = array();
+		foreach ($relatives as $idx => $relpath) {
+			$count = $idx+1;
+			$matchers[$count] = array(
+				'url' => $relpath,
+				'pattern' => str_repeat('../', $count)
+			);
+		}
+		$matchers = array_reverse($matchers); // Start with longest match first
+
+		// Lastly, let's actually replace the relative paths
+		$slash = preg_quote('/', '/');
+		foreach ($matchers as $match) {
+			if (empty($match['pattern']) || empty($match['url'])) continue;
+			$rx = "/([^{$slash}])" . preg_quote($match['pattern'], '/') . '([^.]{2})/'; // Let's start small
+			$rpl = '$1' . trailingslashit($match['url']) . '$2';
+			$style = preg_replace($rx, $rpl, $style);
+		}
+
+		return $style;
 	}
 
 	function load_scripts () {
