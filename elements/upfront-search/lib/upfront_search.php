@@ -73,4 +73,8 @@ class Upfront_UsearchView extends Upfront_Object {
 			: $l10n
 		;
 	}
+
+	public static function add_frontend_dependencies () {
+		upfront_add_element_style('usearch_style', array('css/search.css', dirname(__FILE__)));
+	}
 }

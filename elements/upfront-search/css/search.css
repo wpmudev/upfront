@@ -1,0 +1,58 @@
+/* Search */
+#upfront-entity_list-search {
+	float: right;
+}
+#upfront-search_action, #upfront-search_container {
+	float: right;
+	height: 50px;
+}
+#upfront-search_action {
+	line-height: 50px;
+	width: 50px;
+	background: #394a59;
+	background: rgba(59,77,91,0.9);
+	color: #cdd6dd;
+	font-size: 18px;
+	text-align: center;
+	cursor:pointer;
+}
+#upfront-search_action:hover {
+	color: #fff;
+}
+#upfront-search_container input[type=text] {
+	height: 50px;
+	border: none;
+	line-height: 1em;
+	font-size: 18px;
+	padding: 10px;
+	background: #364757;
+	background: rgba(59,77,91,0.7);
+	color: #cdd6dd;
+	width: 150px;
+}
+
+#upfront-search_container input:focus {
+	color: #fff;
+}
+
+span.search-search_placeholder.active, span.search-search_text.active {
+	font-size: 0.8em;
+	background-color: #fff;
+	padding: 0 6px;
+	border: 1px solid rgb(195, 216, 236);
+}
+i.icon-search {
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+	background-image: url('../../../img/uf-ui-sprite.svg?v=20131127');
+	background-position: -1182px -82px;
+	vertical-align:middle;
+}
+
+button.search-button.image {
+	padding: 0;
+	vertical-align: middle;
+	display: inline-block;
+	margin-top: -7px;
+}
