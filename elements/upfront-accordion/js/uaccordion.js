@@ -16,6 +16,10 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			properties['accordion'][0] = {};
 			properties['accordion'][0]['content'] = _.clone(defaults['accordion'][0]['content']);
 			properties['accordion'][0]['title'] = _.clone(defaults['accordion'][0]['title']);
+			
+			properties['accordion'][1] = {};
+			properties['accordion'][1]['content'] = _.clone(defaults['accordion'][1]['content']);
+			properties['accordion'][1]['title'] = _.clone(defaults['accordion'][1]['title']);
 		
 			properties.element_id = Upfront.Util.get_unique_id("uaccordion-object");
 			this.init_properties(properties);
@@ -57,9 +61,20 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 
 
 			//this.on('deactivated', this.onDeactivate, this);
-
+			Upfront.Events.on("entity:deactivated", this.stopEdit, this);
 		},
+		stopEdit: function(e) {
+				
+			
+			var $panelcontent = this.$el.find('.accordion-panel-active .accordion-panel-content');
+			$panelcontent.trigger('blur');
 
+			var $paneltitle = this.$el.find('.accordion-panel-active .accordion-panel-title:not(.ueditor-placeholder)');
+			$paneltitle.trigger('blur');
+			
+			
+		
+		},
 		addPanel: function(event) {
 			event.preventDefault();
 			this.property('accordion').push({
@@ -82,7 +97,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 		onPanelTitleClick: function(event) {
 			var $panelTitle = $(event.currentTarget);
 			if($panelTitle.parent().hasClass('accordion-panel-active')) {
-				//if($panelTitle.data('ueditor')) $panelTitle.data('ueditor').start();
+				if($panelTitle.data('ueditor')) $panelTitle.data('ueditor').start();
 			} else {
 				this.$el.find('.accordion-panel-content').each(function () {
 					var ed = $(this).data("ueditor");
@@ -141,53 +156,68 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 
 		on_render: function() {
 			// Accordion won't be rendered in time if you do not delay.
-			_.delay(function(self) {
-				self.$el.find('.accordion-panel-title').each(function() {
-					if ($(this).data("ueditor")) return true;
-					$(this).ueditor({
-						linebreaks: true,
-						autostart: false,
-						disableLineBreak: true,
-						airButtons: false,
-						allowedTags: ['h5'],
-					}).on('start', function(){
-						self.$el.parent().parent().parent().draggable('disable');
-						Upfront.Events.trigger('upfront:element:edit:start', 'text');
-					})
-					.on('stop', function(){
-						self.$el.parent().parent().parent().draggable('enable');
-						Upfront.Events.trigger('upfront:element:edit:stop');
-					})
-					.on('syncAfter', function(){
-						self.saveTitle($(this));
-					}).on('keydown', function(e){
-						if (e.which == 9) e.preventDefault();
-					});
+			//_.delay(function(self) {
+				
+			//	, 10, this);
+			var count = 1;
+			var self = this;
+			this.$el.find('.accordion-panel-title').each(function() {
+				if ($(this).data("ueditor")) return true;
+				var $content = $(this);
+				$(this).ueditor({
+					linebreaks: true,
+					disableLineBreak: true,
+					//focus: true,
+					//autostart: false,
+					//tabFocus: false,
+					airButtons: false,
+					allowedTags: ['h5'],
+					placeholder: 'Panel '+count
+				}).on('start', function(){
+					self.$el.parent().parent().parent().draggable('disable');
+					Upfront.Events.trigger('upfront:element:edit:start', 'text');
+				})
+				.on('stop', function(){
+					self.$el.parent().parent().parent().draggable('enable');
+					Upfront.Events.trigger('upfront:element:edit:stop');
+				})
+				.on('syncAfter', function(){
+					self.saveTitle($(this));
+				})
+				.on('keydown', function(e){
+					if (e.which == 9) e.preventDefault();
+				}).on("blur", function() {
+					$content.data('ueditor').stop(); 
 				});
-				self.$el.find('.accordion-panel-content').each(function() {
-					if ($(this).data("ueditor")) return true;
-					$(this).ueditor({
-						linebreaks: false,
-						placeholder: false,
+				
+				$(this).data('ueditor').stop();
+				count++;
+			});
+			self.$el.find('.accordion-panel-content').each(function() {
+				if ($(this).data("ueditor")) return true;
+				$(this).ueditor({
 						inserts: {},
 						autostart: false
-					})
-					.on('start', function(){
-						//self.$el.parent().parent().parent().draggable('enable');
-						Upfront.Events.trigger('upfront:element:edit:start', 'text');
-					})
-					.on('stop', function(){
-						//self.$el.parent().parent().parent().draggable('enable');
-						self.savePanelContent();
-						Upfront.Events.trigger('upfront:element:edit:stop');
-					})
-					.on('syncAfter', function(){
-						//console.log('edited');
-						//self.model.set_content($(this).html(), {silent: true});
-					});
+				})
+				.on('start', function(){
+					//self.$el.parent().parent().parent().draggable('enable');
+					Upfront.Events.trigger('upfront:element:edit:start', 'text');
+				})
+				.on('stop', function(){
+					//self.$el.parent().parent().parent().draggable('enable');
+					self.savePanelContent();
+					Upfront.Events.trigger('upfront:element:edit:stop');
+				})
+				.on('syncAfter', function(){
+					//console.log('edited');
+					//self.model.set_content($(this).html(), {silent: true});
+				})
+				.on('blur', function() {
+					$(this).data('ueditor').stop();
 				});
-				self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
-			}, 10, this);
+			});
+			self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
+			
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
 		},
