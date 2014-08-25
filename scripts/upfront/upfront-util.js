@@ -539,15 +539,43 @@ define(function() {
 			_is_dirty = false,
 			_preview_url = false,
 			run = function (layout) {
-				if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) return false; // Do not auto-save when in theme exporter mode.
-				_layout = layout;
-				//_is_dirty = false;
-
-				rebind_events();
-
+				if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
+					// Exporter mode
+					rebind_exporter_events();
+				} else {
+					// Normal mode
+					_layout = layout;
+					rebind_events();
+				}
 				// Bind beforeunload event listener
 				window.onbeforeunload = warn;
 			},
+			/**
+			 * Exporter events don't send out the preview saves, just manipulate flag directly.
+			 */
+			rebind_exporter_events = function () {
+				Upfront.Events.off("entity:region:deactivated", exporter_set_dirty);
+				Upfront.Events.off("entity:settings:deactivate", exporter_set_dirty);
+				Upfront.Events.off("entity:removed:after", exporter_set_dirty);
+				Upfront.Events.off("entity:resize_start", exporter_set_dirty);
+				Upfront.Events.off("entity:drag_stop", exporter_set_dirty);
+				Upfront.Events.off("entity:module:after_render", exporter_set_dirty);
+				Upfront.Events.off("upfront:element:edit:stop", exporter_set_dirty);
+
+				Upfront.Events.on("entity:region:deactivated", exporter_set_dirty, this);
+				Upfront.Events.on("entity:settings:deactivate", exporter_set_dirty, this);
+				Upfront.Events.on("entity:removed:after", exporter_set_dirty, this);
+				Upfront.Events.on("entity:resize_start", exporter_set_dirty, this);
+				Upfront.Events.on("entity:drag_stop", exporter_set_dirty, this);
+				Upfront.Events.on("entity:module:after_render", exporter_set_dirty, this);
+				Upfront.Events.on("upfront:element:edit:stop", exporter_set_dirty, this);
+
+				Upfront.Events.off("command:layout:export_theme", clear);
+				Upfront.Events.on("command:layout:export_theme", clear);
+			},
+			exporter_set_dirty = function () {
+				_is_dirty = true;
+			}
 			rebind_events = function(){
 				Upfront.Events.off("entity:region:deactivated", save);
 				Upfront.Events.off("entity:settings:deactivate", save);
