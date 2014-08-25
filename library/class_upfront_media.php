@@ -637,8 +637,17 @@ class Upfront_MediaServer extends Upfront_Server {
 
     public function list_theme_images () {
         $images = array();
-        $dirPath = get_stylesheet_directory() . '/img';
-        $dirUrl = get_stylesheet_directory_uri() . '/img/';
+        $relpath = false;
+        $supported_relpaths = array('img', 'images');
+        foreach ($supported_relpaths as $testpath) {
+            if (!is_dir(trailingslashit(get_stylesheet_directory()) . $testpath)) continue;
+            $relpath = $testpath;
+            break;
+        }
+        if (empty($relpath)) $this->_out(new Upfront_JsonResponse_Error("No theme images directory"));
+
+        $dirPath = trailingslashit(get_stylesheet_directory()) . $relpath;
+        $dirUrl = trailingslashit(get_stylesheet_directory_uri()) . trailingslashit($relpath);
         $i = 0;
         if($dir = opendir($dirPath)) {
             while (false !== ($file = readdir($dir))) {
@@ -672,11 +681,19 @@ class Upfront_MediaServer extends Upfront_Server {
         if(!preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $filename))
             $this->_out(new Upfront_JsonResponse_Error("The file is not an image."));
 
-        $dirPath = get_stylesheet_directory() . '/img/';
-        $dirUrl = get_stylesheet_directory_uri() . '/img/';
+        $relpath = false;
+        $supported_relpaths = array('img', 'images');
+        foreach ($supported_relpaths as $testpath) {
+            if (!is_dir(trailingslashit(get_stylesheet_directory()) . $testpath)) continue;
+            $relpath = $testpath;
+            break;
+        }
+        if (empty($relpath)) $this->_out(new Upfront_JsonResponse_Error("No theme images directory"));
+
+        $dirPath = trailingslashit(trailingslashit(get_stylesheet_directory()) . $relpath);
+        $dirUrl = trailingslashit(get_stylesheet_directory_uri()) . trailingslashit($relpath);
 
         move_uploaded_file($file["tmp_name"], $dirPath . $filename);
-
 
         $this->_out(new Upfront_JsonResponse_Success(array(
             'ID' => rand(1111,9999), //Whatever high number is ok
