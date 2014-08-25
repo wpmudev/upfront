@@ -195,4 +195,65 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
+	
+	
+	/* Lazy loaded image */
+	var image_lazy_load_t;
+	var image_lazy_scroll = true;
+	function image_lazy_load () {
+		clearTimeout(image_lazy_load_t);
+		image_lazy_load_t = setTimeout(function(){
+			var scroll = $(window).scrollTop(),
+				w_height = $(window).height(),
+				w_width = $(window).width();
+			$('.upfront-image-lazy').each(function(){
+				if ( $(this).hasClass('upfront-image-lazy-loading') )
+					return;
+				var me = this,
+					offset = $(this).offset(),
+					height = $(this).height(),
+					width = $(this).width(),
+					source, src, closest;
+				if (
+					( ( image_lazy_scroll && offset.top+height >= scroll && offset.top < scroll+w_height ) || !image_lazy_scroll ) &&
+					( width > 0 && height > 0 )
+				){
+					source = $(this).attr('data-sources');
+					if ( source )
+						source = JSON.parse(source);
+					else
+						src = $(this).attr('data-src');
+					if ( typeof source != 'undefined' && source.length || src ){
+						if ( typeof source != 'undefined' && source.length ){
+							for ( var s = 0; s < source.length; s++ ) {
+								if ( source[s][1] <= width || ( closest >= 0 && source[closest][1] < width && source[s][1] > width ) )
+									closest = s;
+							}
+							if ( $(this).data('loaded') == closest )
+								return;
+							src = source[closest][0];
+							$(this).data('loaded', closest);
+						}
+						else if ( src && $(this).hasClass('upfront-image-lazy-loaded') ){
+							return;
+						}
+						$(this).removeClass('upfront-image-lazy-loaded').addClass('upfront-image-lazy-loading');
+						$('<img>').attr('src', src).on('load', function(){
+							if ( $(me).hasClass('upfront-image-lazy-bg') )
+								$(me).css('background-image', 'url("' + $(this).attr('src') + '")');
+							else
+								$(me).attr('src', $(this).attr('src'));
+							console.log('loaded image:', $(this).attr('src'))
+							$(me).removeClass('upfront-image-lazy-loading').addClass('upfront-image-lazy-loaded');
+						});
+					}
+				}
+			});
+		}, 100);
+	}
+	
+	image_lazy_load();
+	$(window).on('resize', image_lazy_load);
+	if ( image_lazy_scroll )
+		$(window).on('scroll', image_lazy_load);
 });

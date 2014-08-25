@@ -79,6 +79,10 @@
 
 .upfront-ui {
 	font: 16px/24px 'Source Sans Pro', sans-serif;
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
 }
 .upfront-ui a,
 .upfront-ui button,
@@ -92,6 +96,17 @@
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+.upfront-ui * {
+	font-weight: inherit;
+	font-style: inherit;
+	text-transform: inherit;
+	text-decoration: inherit;
+	border: none;
+	outline: none;
+	margin: 0;
+	padding: 0;
 }
 
 .upfront-ui h1,
@@ -109,10 +124,6 @@
 
 .upfront-ui ul li:before {
 	display: none;
-}
-
-.upfront-ui a {
-	text-decoration: none;
 }
 
 .upfront-no-select {
@@ -2268,7 +2279,7 @@ div.uinsert-selector a:hover {
 .upfront-region-hidden-toggle {
 	float: right;
 	height: 18px;
-	padding: 0 0 0 60px;
+	padding: 0;
 	margin: 0 -160px 2px 0;
 	position: relative;
 	top: -9px;
@@ -2278,7 +2289,7 @@ div.uinsert-selector a:hover {
 	content: " ";
 	position: absolute;
 	top: 50%;
-	left: 0;
+	left: -60px;
 	border-top: 1px dotted #3d5266;
 	width: 50px;
 	height: 0;
@@ -2662,6 +2673,7 @@ div.uinsert-selector a:hover {
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
+.responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
 .upfront-region-editing .upfront-region-container-full .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-resize-handle {
 	visibility: hidden;

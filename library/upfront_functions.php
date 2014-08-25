@@ -215,3 +215,29 @@ function upfront_add_element_script ($slug, $path_info) {
 	$hub = Upfront_PublicScripts_Registry::get_instance();
 	return $hub->set($slug, $path_info);
 }
+
+
+
+function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') {
+	$attachment = get_post($attachment_id);
+	$imagedata = wp_get_attachment_metadata($attachment_id);
+	$full_src = wp_get_attachment_image_src($attachment_id, 'full');
+	$ref_src = wp_get_attachment_image_src($attachment_id, $ref_size);
+	$srcset = array();
+	$alt = trim(strip_tags( get_post_meta($attachment_id, '_wp_attachment_image_alt', true) ));
+	if ( empty($alt) )
+		$alt = trim(strip_tags( $attachment->post_excerpt )); // If not, Use the Caption
+	if ( empty($alt) )
+		$alt = trim(strip_tags( $attachment->post_title )); // Finally, use the title
+	$out = '<img class="upfront-image-lazy" src="' . get_template_directory_uri() . '/img/blank.gif" width="' . $ref_src[1] . '" height="' . $ref_src[2]. '" alt="' . $alt . '" ';
+	foreach ( $imagedata['sizes'] as $size => $data ){
+		$src = wp_get_attachment_image_src($attachment_id, $size);
+		$srcset[] = array($src[0], $src[1], $src[2]);
+	}
+	$srcset[] = array($full_src[0], $full_src[1], $full_src[2]);
+	$out .= "data-sources='" . json_encode($srcset) . "'";
+	$out .= '/>';
+	return $out;
+}
+
+

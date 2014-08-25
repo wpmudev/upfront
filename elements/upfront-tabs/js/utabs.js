@@ -339,7 +339,8 @@ var me = this;
 
 			$upfrontObjectContent = this.$el.find('.upfront-object-content');
 			    if(this.$el.find('a.add-item').length < 1)
-				      $('<b class="upfront-entity_meta add_item"><a href="#" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+				      $('<b class="upfront-entity_meta upfront-ui add_item"><a href="#" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+
 			
 
 			this.$el.find('div#'+this.currenttabid).addClass('tab-content-active').siblings().removeClass('tab-content-active');

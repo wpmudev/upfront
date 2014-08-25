@@ -196,6 +196,10 @@ abstract class Upfront_Entity {
 	public function get_attr () {
 		return '';
 	}
+	
+	public function get_id () {
+		return $this->_get_property('element_id');
+	}
 
 	protected function _get_property ($prop) {
 		return upfront_get_property_value($prop, $this->_data);
@@ -233,7 +237,7 @@ abstract class Upfront_Entity {
 		}
 		return $type;
 	}
-	protected function _get_background_css ($is_layout = false) {
+	protected function _get_background_css ($is_layout = false, $lazy_loading = false) {
 		$type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_property('background_color');
@@ -251,7 +255,8 @@ abstract class Upfront_Entity {
 			if ( $background_color )
 				$css[] = 'background-color: ' . $background_color;
 			if ( $type == 'image' || $type == 'featured' && $background_image ){
-				$css[] = 'background-image: url("' . $background_image . '")';
+				if ( !$lazy_loading )
+					$css[] = 'background-image: url("' . $background_image . '")';
 				if ( $background_style == 'full' ){
 					$css[] = 'background-size: 100% auto';
 					$css[] = 'background-repeat: no-repeat';
@@ -272,15 +277,24 @@ abstract class Upfront_Entity {
 		return ( !empty($css) ) ? implode('; ', $css) . '; ' : '';
 	}
 
-	protected function _get_background_attr ($is_layout = false) {
+	protected function _get_background_attr ($is_layout = false, $lazy_loading = false) {
 		$type = $this->get_background_type();
 		$attr = '';
-		if ( !$type || $type == 'image' ){
-			$background_image = $this->_get_property('background_image');
+		if ( !$type || $type == 'image' || $type == 'featured' ){
+			if($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
+				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
+				$background_image = $featured_image[0];
+			}
+			else
+				$background_image = $this->_get_property('background_image');
 			$background_style = $this->_get_property('background_style');
 			$background_image_ratio = $this->_get_property('background_image_ratio');
-			if ( $background_style == 'full' && $background_image ){
-				$attr .= "data-bg-image-ratio='{$background_image_ratio}'";
+			if ( $background_image ){
+				if ( $lazy_loading )
+					$attr .= "data-src='{$background_image}'";
+				if ( $background_style == 'full' ){
+					$attr .= "data-bg-image-ratio='{$background_image_ratio}'";
+				}	
 			}
 		}
 		return $attr;
@@ -316,7 +330,8 @@ abstract class Upfront_Entity {
 			else
 				$slide_attr .= " data-slider-auto='0'";
 	    	foreach ( $images as $image ){
-	    		$src = wp_get_attachment_image($image, 'full');
+	    		//$src = wp_get_attachment_image($image, 'full');
+	    		$src = upfront_get_attachment_image_lazy($image, 'full');
 				$slides[] = "<div class='upfront-default-slider-item'>{$src}</div>";
 	    	}
 			$slides_markup = join('', $slides);
@@ -435,7 +450,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$class = $this->get_css_class();
 		$style = $this->get_css_inline();
 		$attr = $this->get_attr();
-		$element_id = $this->_get_property('element_id');
+		$element_id = $this->get_id();
 
 		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
 			$name = $this->get_name();
@@ -469,12 +484,12 @@ class Upfront_Layout_View extends Upfront_Container {
 	}
 
 	public function get_css_inline () {
-		$css = $this->_get_background_css(true);
+		$css = $this->_get_background_css(true, false);
 		return $css;
 	}
 
 	public function get_attr () {
-		$attr = $this->_get_background_attr(true);
+		$attr = $this->_get_background_attr(true, false);
 		return $attr;
 	}
 
@@ -486,10 +501,10 @@ class Upfront_Region_Container extends Upfront_Container {
 
 	public function wrap ($out, $before = '', $after = '') {
 		$overlay = $this->_get_background_overlay();
-		$bg_css = $this->_get_background_css();
+		$bg_css = $this->_get_background_css(false, true);
 		$bg_css = $bg_css ? "style='{$bg_css}'" : '';
-		$bg_attr = $this->_get_background_attr();
-		$bg_node_start = "<div class='upfront-region-container-bg' {$bg_css} {$bg_attr}>";
+		$bg_attr = $this->_get_background_attr(false, true);
+		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg' {$bg_css} {$bg_attr}>";
 		$bg_node_end = "</div>";
 		return parent::wrap("{$bg_node_start}{$before}<div class='upfront-grid-layout'>{$out}</div>{$overlay}{$after}{$bg_node_end}");
 	}
@@ -502,6 +517,10 @@ class Upfront_Region_Container extends Upfront_Container {
 	public function get_attr () {
 		$attr = '';
 		return $attr;
+	}
+	
+	public function get_id () {
+		return 'upfront-region-container-' . $this->get_name();
 	}
 }
 
@@ -576,6 +595,10 @@ class Upfront_Region extends Upfront_Container {
 			}
 		}
 		return $attr;
+	}
+	
+	public function get_id () {
+		return 'upfront-region-' . $this->get_name();
 	}
 
 	public function get_sub () {

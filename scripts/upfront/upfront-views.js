@@ -1306,7 +1306,7 @@ define([
 				e.preventDefault();
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
-				if ( typeof data[breakpoint.id] == 'undefined' )
+				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				if ( data[breakpoint.id].hide == 1 )
 					data[breakpoint.id].hide = 0;
@@ -1930,6 +1930,7 @@ define([
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:added", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.on_region_remove);
+				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.on_region_hide);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
 				this.listenTo(Upfront.Events, "upfront:layout:contained_region_width", this.on_contained_width_change);
@@ -2142,6 +2143,13 @@ define([
 				var sub = model.get('sub');
 				this.fix_height();
 				if ( !sub || !sub.match(/(top|bottom|left|right)/) )
+					this.close_edit();
+			},
+			on_region_hide: function (hide, view) {
+				var container = view.parent_view.get_container_view(view.model);
+				if ( this != container )
+					return;
+				if ( hide && this.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right').not('.upfront-region-hidden').length == 0 )
 					this.close_edit();
 			},
 			on_window_resize: function (e) {
@@ -2423,7 +2431,7 @@ define([
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON()),
 					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Edit region"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$size = $('<div class="upfront-region-size-hint"></div>');
+					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>');
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
 				this.$el.html(template);
 				this.$el.append('<div class="upfront-debug-info"/>');
@@ -2506,17 +2514,21 @@ define([
 					$container = this.$el.find('.upfront-modules_container'),
 					$toggle = this.$el.find('.upfront-region-hidden-toggle'),
 					$regions = container_view.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
+					$hide_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
 					height = 0,
 					width = 0;
 				if ( ! breakpoint_data || ! breakpoint_data.hide ){
 					$container.show();
 					$toggle.hide();
 					this.$el.removeClass('upfront-region-hidden');
+					if ( !breakpoint.default )
+						$hide_trigger.show();
 				}
 				else if ( breakpoint_data.hide ){
 					$container.hide();
 					$toggle.show();
 					this.$el.addClass('upfront-region-hidden');
+					$hide_trigger.hide();
 					this.update_hide_toggle();
 				}
 				if ( $regions.length == container_view.$el.find('.upfront-region-hidden').length )
@@ -2672,7 +2684,7 @@ define([
 				e.preventDefault();
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
-				if ( typeof data[breakpoint.id] == 'undefined' )
+				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				if ( data[breakpoint.id].hide == 1 )
 					data[breakpoint.id].hide = 0;
@@ -2749,8 +2761,8 @@ define([
 				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
 					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">Click to edit this<br /> Floating Region</div></div>'),
 					$ok = $('<div class="upfront-region-finish-edit-fixed upfront-ui">Ok</div>'),
-					$size = $('<div class="upfront-region-size-hint"></div>'),
-					$position = $('<div class="upfront-region-position-hint"></div>');
+					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>'),
+					$position = $('<div class="upfront-region-position-hint upfront-ui"></div>');
 				$size.appendTo(this.$el);
 				$position.appendTo(this.$el);
 				$edit.appendTo(this.$el);

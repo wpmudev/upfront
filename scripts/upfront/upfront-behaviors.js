@@ -1500,7 +1500,9 @@ var GridEditor = {
 			model_breakpoint;
 		if ( model && breakpoint && !breakpoint.default ){
 			model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
-			model_breakpoint[breakpoint.id] = _.extend(model_breakpoint[breakpoint.id] || {}, data);
+			if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+				model_breakpoint[breakpoint.id] = {};
+			model_breakpoint[breakpoint.id] = _.extend(model_breakpoint[breakpoint.id], data);
 			model_breakpoint[breakpoint.id].edited = true;
 			model.set_property('breakpoint', model_breakpoint);
 		}
@@ -3414,10 +3416,10 @@ var GridEditor = {
 			var line_col = _.map(line_modules, function(data){ return data.col + data.left; }).reduce(function(sum, col){ return sum + col; });
 			_.each(line_modules, function(data, index){
 				var new_left = new_col = 0;
-				if ( typeof data.breakpoint[breakpoint_id] != 'object' )
-					data.breakpoint[breakpoint_id] = {};
-				if ( typeof data.wrapper_breakpoint[breakpoint_id] != 'object' )
-					data.wrapper_breakpoint[breakpoint_id] = {};
+				if ( ! _.isObject(data.breakpoint[breakpoint_id]) )
+					data.breakpoint[breakpoint_id] = { edited: false };
+				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) )
+					data.wrapper_breakpoint[breakpoint_id] = { edited: false };
 				if ( !data.breakpoint[breakpoint_id].edited ){
 					if ( index === 0 ){ // first of line, try to center
 						new_left = Math.floor((parent_col-(line_col-data.left))/2);
@@ -3452,14 +3454,14 @@ var GridEditor = {
 		regions.each(function(region){
 			var data = Upfront.Util.clone( region.get_property_value_by_name('breakpoint') || {} ),
 				sub = region.get('sub');
-			if ( data.edited )
-				return;
-			if ( typeof data[breakpoint_id] != 'object' )
-				data[breakpoint_id] = {};
-			if ( !region.is_main() ){
-				// Sidebar, let's make the column to full width on responsive
-				if ( !sub || sub.match(/^(left|right)$/) ) {
-					data[breakpoint_id].col = default_breakpoint.columns;
+			if ( !_.isObject(data[breakpoint_id]) )
+				data[breakpoint_id] = { edited: false };
+			if ( !data[breakpoint_id].edited ){
+				if ( !region.is_main() ){
+					// Sidebar, let's make the column to full width on responsive
+					if ( !sub || sub.match(/^(left|right)$/) ) {
+						data[breakpoint_id].col = default_breakpoint.columns;
+					}
 				}
 			}
 			region.set_property('breakpoint', data);

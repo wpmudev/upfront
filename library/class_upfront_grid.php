@@ -116,11 +116,11 @@ class Upfront_Grid {
 				$region_view = new Upfront_Region($region);
 				$name = strtolower(str_replace(" ", "-", $region_view->get_name()));
 				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
-				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
+				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				if ( $region_row )
-					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
+					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				if ( $region_hide == 1 )
-					$point_css .= $point->apply_hide($region_hide, $region, $this->get_grid_scope(), '.upfront-region-'.$name);
+					$point_css .= $point->apply_hide($region_hide, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				$point_css .= $this->_apply_modules($region, $region_col);
 			}
 			if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
