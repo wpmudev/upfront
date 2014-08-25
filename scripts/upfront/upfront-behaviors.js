@@ -954,6 +954,11 @@ var LayoutEditor = {
 				Upfront.Views.Editor.notify(response.error);
 				return;
 			}
+			if(!Upfront.data.styles[data.elementType])
+				Upfront.data.styles[data.elementType] = [];
+			if(Upfront.data.styles[data.elementType].indexOf(data.stylename) === -1)
+				Upfront.data.styles[data.elementType].push(data.stylename);
+
 			Upfront.Views.Editor.notify('Style exported.');
 		}).error(function(){
 			Upfront.Views.Editor.notify('Style could not be exported.');
