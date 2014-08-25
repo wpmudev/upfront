@@ -31,7 +31,7 @@ var MenuItemView = Backbone.View.extend({
 	events: {
 		'click i.delete_menu_item' : 'deleteMenuItem',
 		'click i.navigation-add-item': 'addMenuItem',
-		"contextmenu a.menu_item": "on_context_menu"
+		"contextmenu a.menu_item": "on_context_menu",
 	},
 	initialize: function(options) {
 		this.parent_view = options.parent_view;
@@ -445,11 +445,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.model = new UnewnavigationModel({properties: this.model.get('properties')});
 		}
 		Upfront.Views.ObjectView.prototype.initialize.call(this);
-
+		
 		this.events = _.extend({}, this.events, {
 			'click a.menu_item' : 'exitEditMode',
 			'dblclick a.menu_item' : 'editMenuItem',
 			'click a.newnavigation-add-item': 'addPrimaryMenuItem',
+
 		});
 
 		// get all menus
@@ -476,6 +477,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				width: current.width
 			});
 		});
+		this.listenTo(Upfront.Events, "entity:removed:before", this.on_removal);
+
+	},
+	on_removal: function() {
+		var tooltip = $('#unewnavigation-tooltip');
+		tooltip.hide().trigger('closed');
+		setTimeout(function(){
+			tooltip.remove();
+		}, 100);
 	},
 	get_anchors: function () {
 		var regions = Upfront.Application.layout.get("regions"),
