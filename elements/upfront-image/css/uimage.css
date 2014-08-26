@@ -36,7 +36,7 @@
 	width: 90%;
 }
 
-.upfront-image-selector-container {
+.ufront-ui .upfront-image-selector-container {
 	width: 280px;
 	margin: 0 auto;
 }
@@ -168,81 +168,19 @@ a.open-media-gallery:hover i {
 	position: relative;
 	overflow: hidden;
 	border: 1px solid #ddd;
+	display: table;
 }
-
-/**********************************
-OLD STYLE
-******************/
-.upfront-image-resizing-icons {
-	width: 138px;
-	height: 60px;
-	margin: 10px auto;
-}
-
-.upfront-image-resize-icon {
-	display: block;
-	width: 56px;
-	height: 56px;
-	border: 2px solid #F2B530;
-	border-radius: 56px;
-	float: left;
-	margin-right: 10px;
-	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -1558px -17px;
-}
-
-.upfront-image-starting-select a.upfront-image-select-button {
-	background: #28DC96 url(../../../img/uf-core-el-sprite.svg) no-repeat -1659px -30px;
-	border-radius: 60px;
-	color: #fff;
-	font-family: 'Source Sans Pro', sans-serif;
-	border:none;
-	border: 3px solid rgba(255,255,255,0.3);
-	display: block;
-	text-align: center;
-	font-weight: 200;
-	-moz-background-clip: padding;
-	-webkit-background-clip: padding;
-	background-clip: padding-box;
-	height: 60px;
-	width: 60px;
-	float:left;
-	margin:0;
-}
-
-.upfront-image-starting-select a.upfront-image-select-button:hover {
-	background-color: #3ea;
-	-moz-background-clip: padding;
-	-webkit-background-clip: padding;
-	background-clip: padding-box;
-}
-
-.upfront-image-and {
-	display: block;
-	text-indent: -4000px;
-	background: url('../img/ampersand.png') no-repeat center center;
-	height: 40px;
-	background-size: contain;
-	float: left;
-	width: 40px;
-	margin: 0 0 10px -10px;
-}
-
-.upfront-image-resizethiselement {
-	line-height: 1.1;
-	text-align: center;
-}
-
-/******** end OLD STYLE */
 
 .uimage-centered {
-	position: absolute;
+	/*position: absolute;*/
 	width: 100px;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	margin: auto;
-	height: 90px;
+	vertical-align: middle;
+	display: table-cell;
 }
 
 a.upfront-image-select,
@@ -256,7 +194,7 @@ a.upfront-image-select:visited {
 	margin: 0 auto;
 	background: none;
 	font-size: 31px;
-	line-height: 40px;
+	line-height: 110%;
 	padding: 0;
 }
 
@@ -1010,15 +948,24 @@ div.uimage-controls i.upfront-icon:before {
 	width: 100%;
 }
 
-.uimage-resize-hint {
+/* Image Element - Dimensions Corner Hint
+	 ====================================== */
+
+.upfront-ui.uimage-resize-hint {
 	position: absolute;
 	bottom: 15px;
 	left: 15px;
 	background: #3d5266;
-	color: #ADC3D8;
-	font-size: 14px !important;
-	padding: 0 5px;
+	padding:2px 5px;
+	font:normal 11px/13px Verdana, sans-serif;
+	color: #DCEBF8;
 }
+
+.upfront-ui.uimage-resize-hint b {
+	color: #ADC3D8;
+	font-weight: bold;
+}
+
 .uimage-resize-hint.sizehint-top {
 	bottom: 15px;
 	top: auto;
@@ -1030,7 +977,7 @@ div.uimage-controls i.upfront-icon:before {
 
 .uimage-small .uimage-resize-hint,
 .uimage-narrow .uimage-resize-hint {
-	font-size: 12px !important;
+	font-size: 11px;
 	padding: 0;
 	line-height: 14px;
 	bottom: -15px;

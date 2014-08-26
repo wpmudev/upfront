@@ -552,7 +552,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		var elementSize = me.property('element_size');
 		me.$el.append(
-			$('<div>').addClass('uimage-resize-hint upfront-ui' + onTop).html(me.sizehintTpl({
+			$('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(me.sizehintTpl({
 				width: elementSize.width,
 				height: elementSize.height,
 				l10n: l10n.template
