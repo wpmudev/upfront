@@ -166,8 +166,14 @@ var LayoutEditor = {
 						modules = [],
 						max_col = Math.round((wrap_right-wrap_left)/grid_ed.grid.column_width),
 						last_index = 0,
-						module_index = margin_top = margin_left = col = false,
-						line = line_col = wrapper_index = wrapper_col = 0,
+						module_index = false,
+						margin_top = false,
+						margin_left = false,
+						col = false,
+						line = 0,
+						line_col = 0,
+						wrapper_index = 0,
+						wrapper_col = 0,
 						current_wrapper_id, new_wrapper_id, new_wrapper,
 						group_wrapper_classes = [],
 						group_wrapper_col = 0;
@@ -196,14 +202,10 @@ var LayoutEditor = {
 							line_col = wrapper_col;
 						}
 						else if ( current_wrapper_id != wrapper_id ) {
-							if ( line_col + wrapper_col > max_col ){
-								is_next = false;
-								line_col = ( wrapper_col < max_col && wrapper_col > line_col ? wrapper_col : line_col );
-								group_wrapper_col = group_wrapper_col < line_col ? line_col : group_wrapper_col;
-							}
-							else {
-								line_col += wrapper_col;
-							}
+							line_col += wrapper_col;
+						}
+						else {
+							is_next = ( line_col == wrapper_col || wrapper_class.match(/clr/) ) ? false : true;
 						}
 						modules.push({
 							model: module,
@@ -215,7 +217,7 @@ var LayoutEditor = {
 							wrapper_col: wrapper_col,
 							wrapper_id: wrapper_id
 						});
-						if ( wrapper_index == 1 || wrapper_class.match(/clr/) )
+						if ( wrapper_index == 1 || !is_next || wrapper_class.match(/clr/) )
 							margin_left = ( margin_left === false || module_left < margin_left ) ? module_left : margin_left;
 						if ( line == 1 && current_wrapper_id != wrapper_id )
 							margin_top = ( margin_top === false || module_top < margin_top ) ? module_top : margin_top;
@@ -272,10 +274,10 @@ var LayoutEditor = {
 					});
 
 					// grouping!
-					group_wrapper_col = group_wrapper_col < line_col ? line_col : group_wrapper_col;
 					margin_left = margin_left === false ? 0 : margin_left;
 					margin_top = margin_top === false ? 0 : margin_top;
 					col = col - margin_left;
+					group_wrapper_col = col + margin_left;
 					line = 0;
 					wrapper_index = 0;
 					current_wrapper_id = false;

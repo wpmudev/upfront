@@ -1459,13 +1459,6 @@ define([
 					});
 				}
 				if ( is_combine_wrap ){
-					/*var new_wrapper = new Upfront.Models.Wrapper({}),
-						new_wrapper_id = Upfront.Util.get_unique_id("wrapper");
-					new_wrapper.set_property('wrapper_id', new_wrapper_id);
-					new_wrapper.replace_class(ed.grid.class + (col+left));
-					if ( is_clr )
-						new_wrapper.add_class('clr');
-					region_wrappers.add(new_wrapper, {silent: true});*/
 					_.each(modules_arr, function(module, i){
 						var view = Upfront.data.module_views[module.cid],
 							module_class = module.get_property_value_by_name('class'),
@@ -1481,7 +1474,8 @@ define([
 					});
 				}
 				else {
-					var line = wrapper_index = 0,
+					var line = 0,
+						wrapper_index = 0,
 						current_wrapper_id;
 					wrappers.remove(wrappers_arr, {silent: true});
 					region_wrappers.add(wrappers_arr, {silent: true});
@@ -1493,15 +1487,27 @@ define([
 							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
 							module_class = module.get_property_value_by_name('class'),
 							module_top = ed.get_class_num(module_class, ed.grid.top_margin_class),
-							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class);
-						if ( current_wrapper_id != wrapper_id )
+							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
+							is_wrapper_clr = false;
+						if ( current_wrapper_id != wrapper_id ){
 							wrapper_index++;
-						if ( i == 0 || wrapper_class.match(/clr/) ) // this module appear in a new line
-							line++;
-						if ( wrapper_index == 1 || wrapper_class.match(/clr/) ){
+							is_wrapper_clr = ( line_col+wrapper_col > col || wrapper_class.match(/clr/) );
+							if ( i == 0 || is_wrapper_clr ) { // this module appear in a new line
+								line++;
+								line_col = wrapper_col;
+							}
+							else {
+								line_col += wrapper_col;
+							}
+						}
+						else {
+							is_wrapper_clr = ( line_col+left == wrapper_col || wrapper_class.match(/clr/) );
+						}
+						if ( wrapper_index == 1 || is_wrapper_clr ){
 							if ( is_clr && wrapper_index == 1 )
 								wrapper.add_class('clr');
-							wrapper.replace_class(ed.grid.class + (wrapper_col+left));
+							if ( current_wrapper_id != wrapper_id )
+								wrapper.replace_class(ed.grid.class + (wrapper_col+left));
 							module.replace_class(ed.grid.left_margin_class + (module_left+left));
 						}
 						if ( line == 1 && current_wrapper_id != wrapper_id )
