@@ -713,8 +713,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getResponsiveSettings($settings) {
 		if (empty($settings) === false) return $settings;
 
-		// TODO this needs to be implemented
-		return array();
+		$properties = $this->themeSettings->get('responsive');
+		if (!empty($properties)) {
+			$properties = json_decode($properties, true);
+		}
+		return !empty($properties)
+			? $properties
+			: array()
+		;
 	}
 
 	protected function parseElementStyles() {
