@@ -11998,14 +11998,19 @@ div.upfront-region-container-active > a.feature_image_selector {
 
 
 div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before {
-	content: "Drag elements here";
-	font-size: 20px;
+	content: "Drop Elements from the sidebar here";
+	font:300 16px/150% Source Sans, Helvetica Neue, Helvetica, sans-serif;
 	position: absolute;
 	left:40%;
 	top:18%;
-	opacity: 0.2;
-	z-index:999999;	
+	z-index:999999;
+	color:#263A4D;
+	background-color:rgba(242,250,255,.9);
+	padding:8px 20px;	
+	border-radius:10px;
+	box-shadow:0px 2px 1px rgba(38,58,77,.3);
 }
+
 
 /* Inserts padding fix */
 .ueditor-insert {
