@@ -50,9 +50,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			// We're dealing with a theme exporter request
 			// Okay, so let's fake a post
 			this.postId = "fake_post";
-
 			this.refreshMarkup();
-			
+			me.prepareEditor();
 		}
 
 		this.listenToOnce(this, 'rendered', function(){
