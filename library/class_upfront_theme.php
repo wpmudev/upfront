@@ -507,6 +507,7 @@ class Upfront_Virtual_Region {
 			'margin-left' => $position['margin_left']
 		);
 
+
 		$module = array(
 			'rows' => 6,
 			'module_class' => $slug,
@@ -520,6 +521,8 @@ class Upfront_Virtual_Region {
 			'element_id' => $module['module_id'],
 			'sticky' => $module['sticky']
 		);
+		$breakpoint = !empty($options['breakpoint']) ? $options['breakpoint'] : false;
+		if (!empty($breakpoint)) $opts['module']['breakpoint'] = $breakpoint;
 
 		$opts['object_id'] = isset($options['object_id']) ? $options['object_id'] : $slug . '-object';
 
