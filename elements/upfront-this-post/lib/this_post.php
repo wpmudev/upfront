@@ -569,7 +569,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 	}
 
 	public function get_part_contents(){
-		if (!isset($_POST['post_id']) || !is_numeric($_POST['post_id']))
+		if (!isset($_POST['post_id']))
 			die('error');
 
 
@@ -600,7 +600,17 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				array_push($parts, array('slug' => $slug, 'options' => isset($options[$slug]) ? $options[$slug] : array()));
 		}
 
-		$post = get_post($post_id);
+		if( $post_id === "fake_post" ){
+			$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
+			if (!empty($posts[0])) {
+				$post = $posts[0];
+			}else{
+				return $this->_out(new Upfront_JsonResponse_Error('Error'));
+			}
+		}else{
+			$post = get_post($post_id);
+		}
+		
 
 		$tpls = array();
 		$replacements = array();

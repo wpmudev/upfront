@@ -562,7 +562,17 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function fetch_post($data) {
-		$post = get_post($data['id']);
+		if( is_numeric($data['id']) ){
+			$post = get_post($data['id']);
+		}elseif( $data['id'] === "fake_post" ){
+			$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
+			if (!empty($posts[0])) {
+				$post = $posts[0];
+			}else{
+				return $this->_out(new Upfront_JsonResponse_Error('Error'));
+			}
+		}
+		
 
 		if($post){
 			if(!empty($data['filterContent'])){
