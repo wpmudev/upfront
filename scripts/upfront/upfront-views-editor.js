@@ -7076,9 +7076,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						change: function(){
 							var value = this.get_value(),
 								sub_regions = this.model.get_sub_regions();
-							_.each(sub_regions, function(each){
-								if ( each )
-									each.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
+							_.each(sub_regions, function(sub){
+								if ( _.isArray(sub) )
+									_.each(sub, function(each){ each.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true}); })
+								else if ( sub )
+									sub.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
 							});
 							this.model.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
 						}
