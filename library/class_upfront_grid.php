@@ -344,7 +344,12 @@ class Upfront_GridBreakpoint {
 	}
 
 	public function get_debug_rule ($scope) {
-		//return ".{$scope} * {color:{$this->_color}!important;}\n";
+		if ($this->_debugger->is_active(Upfront_Debug::RESPONSIVE_BREAKPOINTS)) {
+			/*
+			$color = dechex(rand(1,200)) . dechex(rand(1,200)) . dechex(rand(1,200));
+			return ".{$scope} * {color:#{$color}!important;}\n";
+			*/
+		}
 	}
 
 	protected function get_closest_breakpoints ($breakpoints) {
