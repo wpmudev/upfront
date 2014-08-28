@@ -455,8 +455,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static function _apply_scoped_region ($region) {
 		$regions = array();
 		if ( $region['scope'] != 'local' ){
-			if ( empty(self::$scope_data[$region['scope']]) )
-				self::$scope_data[$region['scope']] = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+			if ( empty(self::$scope_data[$region['scope']]) ) {
+				$region_scope_data = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+				self::$scope_data[$region['scope']] = apply_filters('upfront_get_global_regions', $region_scope_data, self::_get_scope_id($region['scope']));
+			}
 			if ( empty(self::$scope_data[$region['scope']]) ){
 				$regions[] = $region;
 				return $regions;
@@ -694,6 +696,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		foreach ( $scopes as $scope => $data ) {
 			$current_scope = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+			$current_scope = apply_filters('upfront_get_global_regions', $current_scope, self::_get_scope_id($region['scope']));
 			$scope_data = $data;
 			if ( $current_scope ){ // merge with current scope if it's exist
 				foreach ( $current_scope as $current_region ){

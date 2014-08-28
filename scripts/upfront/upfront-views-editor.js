@@ -3446,6 +3446,8 @@ define([
 				this.init();
 			if ( this.options.change )
 				this.on('changed', this.options.change, this)
+			if (this.options.on_click)
+				this['on_click'] = this.options.on_click;
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -3540,6 +3542,9 @@ define([
 
 	var Field_Button = Field.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-button',
+		events: {
+			'click': 'on_click'
+		},
 		render: function () {
 			this.$el.html('');
 			if ( !this.options.compact )
@@ -7053,6 +7058,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				});
 			}
 			if ( is_region && this.model.is_main() ){
+			  var global_regions = _.findWhere(Upfront.Application.current_subapplication.get_layout_data().properties, {name: 'global_regions'});
+				var global_header_defined = _.isUndefined(global_regions) ?
+					false : _.findWhere(global_regions.value, {name: 'header'});
+				var global_footer_defined = _.isUndefined(global_regions) ?
+					false : _.findWhere(global_regions.value, {name: 'footer'});
+
 				var collection = this.model.collection,
 					index = collection.indexOf(this.model),
 					index_container = collection.index_container(this.model),
@@ -7083,6 +7094,18 @@ var Field_Compact_Label_Select = Field_Select.extend({
 									sub.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
 							});
 							this.model.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
+						}
+					}),
+					add_global_region = new Field_Button({
+						model: this.model,
+						label: is_bottom ? 'Add global footer' : 'Add global header',
+						compact: true,
+						on_click: function(e){
+							e.preventDefault();
+							// TODO we already have json for global regions in global_header_defined and global_footer_defined
+							// TODO here add respectively global header or global footer
+							if (is_top) console.log('adding global header');
+							if (is_bottom) console.log('adding global footer');
 						}
 					}),
 					region_type = new Field_Radios({
@@ -7173,13 +7196,25 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			$lightbox.hide();
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
+			$add_global_region = $content.find('.upfront-region-bg-setting-add-global-region');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
 			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
-					region_global.render();
-					$region_global.append(region_global.$el);
+					// This is global header or footer, or there is no global header/footer - show checkbox
+					if ((this.model.get('scope') == 'global' &&
+							(this.model.get('name') == 'header' || this.model.get('name') == 'footer' ))
+							|| (is_top && !global_header_defined)
+							|| (is_bottom && !global_footer_defined)
+					) {
+						region_global.render();
+						$region_global.append(region_global.$el);
+					} else {
+						// There are global header/footer but not used on this layout yet
+						add_global_region.render();
+						$add_global_region.append(add_global_region.$el);
+					}
 				}
 				region_type.render();
 				$region_type.append(region_type.$el);

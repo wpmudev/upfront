@@ -587,6 +587,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		 * */
 		// add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
+		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
 		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'));
 
@@ -648,7 +649,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			foreach($menu_items[0] as $menu_item) {
 				$this->up_update_nav_menu_item( $new_menu_id, 0, $menu_item, $menu_items);
 			}
-			
+
 			/*
 			foreach($menu['items'] as $menu_item) {
 				wp_update_nav_menu_item(
@@ -664,7 +665,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			}*/
 		}
 	}
-	
+
 	protected function up_update_nav_menu_item($menu_id, $db_id, $args = array(), $menu_items, $parent_id = 0) {
 
 		$id = wp_update_nav_menu_item($menu_id, $db_id, array(
@@ -739,6 +740,17 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return $theme_styles;
 	}
 
+	public function getGlobalRegions($global_regions)  {
+		if (empty($global_regions) === false) return $global_regions;
+
+		$global_regions = $this->themeSettings->get('global_regions');
+		if (!empty($global_regions)) {
+			return json_decode($global_regions, true);
+		}
+
+		return array();
+	}
+
 	public function getResponsiveSettings($settings) {
 		if (empty($settings) === false) return $settings;
 
@@ -796,6 +808,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$properties[] = array(
 				'name' => 'layout_style',
 				'value' => addslashes($this->themeSettings->get('layout_style'))
+			);
+		}
+		if ($this->themeSettings->get('global_regions')) {
+			$properties[] = array(
+				'name' => 'global_regions',
+				'value' => json_decode($this->themeSettings->get('global_regions'))
 			);
 		}
 
