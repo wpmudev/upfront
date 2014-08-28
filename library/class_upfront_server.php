@@ -1304,9 +1304,9 @@ class Upfront_Server_ThemeFontsServer extends Upfront_Server {
 
     $theme_fonts = isset($_POST['theme_fonts']) ? $_POST['theme_fonts'] : array();
 		do_action('upfront_update_theme_fonts', $theme_fonts);
-		if(did_action('upfront_update_theme_fonts') === 0) {
+		// if(did_action('upfront_update_theme_fonts') === 0) {
 			update_option('upfront_' . get_stylesheet() . '_theme_fonts', json_encode($theme_fonts));
-		}
+		// }
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme fonts updated'));
   }
@@ -1344,9 +1344,11 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 		);
 
 		do_action('upfront_update_theme_colors', $data);
-		if (did_action('upfront_update_theme_colors') === 0) {
+
+		// if (did_action('upfront_update_theme_colors') === 0) {
+
 			update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode($data));
-		}
+		// }
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme colors updated'));
 	}

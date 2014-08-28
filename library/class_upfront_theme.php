@@ -582,7 +582,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3);
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
-		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
+		/**
+		 * todo Sam: why this filter is used?
+		 * */
+		// add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
 		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'));
