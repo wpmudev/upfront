@@ -1973,7 +1973,8 @@ define([
 					expand_lock = this.model.get_property_value_by_name('expand_lock'),
 					type = this._get_region_type(),
 					previous_type = this._get_previous_region_type(),
-					contained_width = Upfront.Application.layout.get_property_value_by_name('contained_region_width') || (grid.size * grid.column_width);
+					default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
+					contained_width = Upfront.Application.layout.get_property_value_by_name('contained_region_width') || (default_breakpoint.columns * grid.column_width);
 				if ( type == 'clip' )
 					this.$bg.css('max-width', contained_width + 'px');
 				else
