@@ -671,7 +671,7 @@ var LayoutEditor = {
 
 			// Check if user is creating single page with specific name
 			if (layout === 'single-page' && specific_layout) {
-				layout = 'single-' + specific_layout.replace(' ', '-').toLowerCase();
+				layout = 'single-page-' + specific_layout.replace(/\s/g, '-').toLowerCase();
 				data = {
 					layout: {
 						'item': layout,

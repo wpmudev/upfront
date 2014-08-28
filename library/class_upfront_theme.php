@@ -589,8 +589,31 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_filter('upfront-storage-key', array($this, 'theme_storage_key'));
 
+		$this->_set_up_required_pages_from_settings();
+
 		$this->checkMenusExist();
 		$this->initialize();
+	}
+
+	/**
+	 * This will check the required pages settings content
+	 * and spawn some required pages based on whatever is in there.
+	 */
+	private function _set_up_required_pages_from_settings () {
+		$pages = $this->themeSettings->get('required_pages');
+		if (empty($pages)) return false;
+
+		$pages = json_decode($pages, true);
+		if (empty($pages)) return false;
+
+		$data = array(
+			'post_content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus id risus felis. Proin elit nulla, elementum sit amet diam rutrum, mollis venenatis felis. Nullam dapibus lacus justo, eget ullamcorper justo cursus ac. Aliquam lorem nulla, blandit id erat id, eleifend fermentum lorem. Suspendisse vitae nulla in dolor ultricies commodo eu congue arcu. Pellentesque et tincidunt tellus. Fusce commodo feugiat dictum. In hac habitasse platea dictumst. Morbi dignissim pellentesque ipsum, sed sollicitudin nulla ultricies in. Praesent eu mi sed massa sollicitudin bibendum in nec orci.',
+		);
+
+		foreach ($pages as $page) {
+			$data['post_title'] = $page['name'];
+			$this->add_required_page($page['slug'], $page['layout'], $data, false);
+		}
 	}
 
 	abstract public function get_prefix ();
@@ -782,7 +805,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$theme_fonts = $this->themeSettings->get('theme_fonts');
 		if (isset($args['json']) && $args['json']) return $theme_fonts;
 
-		return is_array( $$theme_fonts ) ? $theme_fonts : json_decode($theme_fonts);
+		return is_array( $theme_fonts ) ? $theme_fonts : json_decode($theme_fonts);
 	}
 
 	public function getThemeColors($theme_colors, $args) {
@@ -1024,8 +1047,7 @@ class Upfront_Themes_RequiredPage {
 		$this->_layout_name = $layout_name;
 		$this->_wp_template = $wp_template;
 
-		$slug = end(explode('-', $layout_name));
-		$slug = !empty($slug) ? $slug : $layout_name;
+		$slug = $layout_name;
 
 		$this->_key = "{$this->_prefix}_page_{$slug}";
 
