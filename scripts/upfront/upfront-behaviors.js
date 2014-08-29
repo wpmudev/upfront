@@ -674,8 +674,9 @@ var LayoutEditor = {
 				layout = 'single-page-' + specific_layout.replace(/\s/g, '-').toLowerCase();
 				data = {
 					layout: {
-						'item': layout,
-						'type': 'single'
+						'type': 'single', 
+						'item': 'single-page',
+						'specificity': layout
 					}
 				};
 			}
@@ -866,7 +867,7 @@ var LayoutEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor;
 
-		var layout_id = _upfront_post_data.layout.item || _upfront_post_data.layout.type;
+		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
 		loading.update_loading_text("Exporting layout: " + layout_id);
 		return ed._export_layout({ theme: theme_name }).done(function() {
 			loading.done(function() {
@@ -993,7 +994,7 @@ var LayoutEditor = {
 		data = {
 			typography: JSON.stringify(typography.value),
 			regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
-			template: _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+			template: _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type, // Respect proper cascade ordering
 			layout_properties: JSON.stringify(properties),
 			theme: Upfront.themeExporter.currentTheme,
 			layout_style: layout_style ? layout_style.value : '',
