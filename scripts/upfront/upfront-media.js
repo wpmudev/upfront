@@ -1798,11 +1798,9 @@ define(function() {
 				else this.$el.removeClass("has-parent");
 				if (this.model.get("selected") && !this.$el.hasClass("selected")) {
 					this.$el.addClass("selected");
-					this.$el.find(".thumbnail").append('<i class="upfront-icon upfront-icon-media-selected"></i>');
 				}
 				else if (!this.model.get("selected")) {
 					this.$el.removeClass("selected");
-					this.$el.find(".upfront-icon-media-selected").remove();
 				}
 				this.$el.find(".title").text(this.model.get('post_title'));
 			},

@@ -5470,6 +5470,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	color: #4e5e6d;
 	margin-right: 1px;
 	cursor: pointer;
+	margin-left: -2px;
 }
 .upfront-popup-meta .upfront-tabs li:hover {
 	border-top: 1px solid #2ecc90;
@@ -5483,7 +5484,7 @@ box-shadow: inset 0 2px 0 0 #fff;
 	position:relative;
 	margin-left: -1px;
 	margin-right: 0;
-	color: #8795A2;
+	color: #2F475F;
 	height: 38px;
 }
 
@@ -6791,11 +6792,42 @@ a.upfront-post-layout-trigger:before{
 	padding: 0 15px 15px;
 	cursor: pointer;
 }
+.upfront-media_manager-post_image li.upfront-media_item.selected .thumbnail {
+	/*border:1px solid #1FCD8F;*/
+	outline:#1FCD8F solid 3px;
+}
+.upfront-media_manager-post_image li.upfront-media_item.selected:before {
+	content:'';
+	width:30px;
+	height:30px;
+	background-color: #233140;
+	background-image: url(../img/uf-ui-sprite.svg);
+	background-position: -726px -132px;
+	display: block;
+	position: absolute;
+	right:7px;
+	top:-8px;
+	z-index: 1;
+}
+
 .upfront-media_manager-post_image li.upfront-media_item .thumbnail {
 	max-width: 100%;
 	height: 75px;
 	overflow: hidden;
 	position: relative;
+	/*border:1px solid #A1C5E6;*/
+	background-color: #C5D8EA;
+	background-image: -webkit-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA), 
+										-webkit-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA);
+	background-image:      -o-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA), 
+										     -o-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA);
+	background-image:        linear-gradient(to top right, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA), 
+										       linear-gradient(to top right, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA);
+										
+	-webkit-background-size: 20px 20px;
+		 -moz-background-size: 20px 20px;
+					background-size: 20px 20px;
+	background-position: 0 0, 10px 10px;
 }
 .upfront-media_manager-post_image li.upfront-media_item .thumbnail img {
 	position: absolute;
@@ -6804,7 +6836,8 @@ a.upfront-post-layout-trigger:before{
 	left: 0;
 	right: 0;
 	margin: auto;
-	max-height: 75px;
+	width:100%;
+	height: auto;
 }
 .upfront-media_manager-post_image li.upfront-media_item .upfront-media-progress-bar {
 	position: absolute;
@@ -6879,11 +6912,11 @@ a.upfront-post-layout-trigger:before{
 .upfront-media_manager .upfront-media_collection {
 	width: 70%;
 	position: absolute;
-	top: 48px;
+	top: 40px;
 	bottom: 0;
 	left: 0;
 	margin: 0;
-	padding: 0 15px;
+	padding: 7px 15px 0 15px;
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
@@ -7214,7 +7247,7 @@ a.upfront-post-layout-trigger:before{
 	border-radius: 3px;
 	padding:0;
 	margin-top: 9px;
-	opacity:.7;
+	opacity:.9;
 }
 #upfront-popup-top.upfront-popup-meta .upload:hover {
 	opacity:1;
