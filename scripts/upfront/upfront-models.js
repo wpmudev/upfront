@@ -419,11 +419,23 @@ var _alpha = "alpha",
 			return index;
 		},
 
-		total_container: function () {
-			var collection = this.filter(function(m){
-					return m.is_main();
-			});
+		total_container: function (excludes) {
+			var excludes = _.isArray(excludes) ? excludes : [excludes],
+				collection = this.filter(function(m){
+					return m.is_main() && ! _.contains(excludes, m.get('name'));
+				});
 			return collection.length;
+		},
+		
+		get_new_title: function (prefix, start) {
+			var title = prefix + start,
+				name = title.toLowerCase().replace(/\s/, '-');
+			if ( this.get_by_name(name) )
+				return this.get_new_title(prefix, start+1);
+			return {
+				title: title,
+				name: name
+			};
 		}
 	}),
 

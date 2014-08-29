@@ -1970,6 +1970,8 @@ define([
 			},
 			update: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
+					name = this.model.get("container") || this.model.get("name"),
+					previous_name = this.model.previous("container") || this.model.previous("name"),
 					expand_lock = this.model.get_property_value_by_name('expand_lock'),
 					type = this._get_region_type(),
 					previous_type = this._get_previous_region_type(),
@@ -1980,11 +1982,15 @@ define([
 				else
 					this.$bg.css('max-width', '');
 				this.update_background();
-				this.$el.removeClass('upfront-region-container-' + previous_type);
-				this.$el.addClass('upfront-region-container-' + type);
 				if ( previous_type != type ){
+					this.$el.removeClass('upfront-region-container-' + previous_type);
+					this.$el.addClass('upfront-region-container-' + type);
 					this.fix_height();
 					this.update_overlay();
+				}
+				if ( previous_name != name ){
+					this.$el.removeClass('upfront-region-container-' + previous_name.toLowerCase().replace(/ /, "-"));
+					this.$el.addClass('upfront-region-container-' + name.toLowerCase().replace(/ /, "-"));
 				}
 			},
 			render_fixed_panel: function () {
@@ -2361,8 +2367,6 @@ define([
 				classes.push('upfront-region');
 				classes.push('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
 				classes.push(grid.class + this.col);
-				if ( this.model.get('type') == 'clip' )
-					classes.push('upfront-region-clip');
 				if ( ! this.model.is_main() ){
 					var index = this.model.collection.indexOf(this.model),
 						sub = this.model.get('sub'),
@@ -2442,9 +2446,6 @@ define([
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
 				this.$el.html(template);
 				this.$el.append('<div class="upfront-debug-info"/>');
-				this.$el.data('name', name);
-				this.$el.attr('data-title', this.model.get("title"));
-				this.$el.data('type', this.model.get("type"));
 				$edit.appendTo(this.$el);
 				$size.appendTo(this.$el);
 				
@@ -2483,10 +2484,15 @@ define([
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					container = this.model.get("container"),
 					name = this.model.get("name"),
+					previous_name = this.model.previous("name"),
 					col = this.model.get_property_value_by_name('col'),
 					row = this.model.get_property_value_by_name('row'),
 					height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					expand_lock = this.model.get_property_value_by_name('expand_lock');
+				this.$el.data('name', name);
+				this.$el.attr('data-title', this.model.get("title"));
+				this.$el.data('type', this.model.get("type"));
+				this.$el.find('.upfront-region-title').html(this.model.get("title"));
 				if ( !breakpoint || breakpoint.default ){
 					if ( col && col != this.col )
 						this.region_resize(col);
@@ -2496,7 +2502,11 @@ define([
 				if ( expand_lock )
 					this.$el.addClass('upfront-region-expand-lock');
 				else
-					this.$el.removeClass('upfront-region-expand-lock');
+					this.$el.removeClass('upfront-region-expand-lock');	
+				if ( previous_name != name ){
+					this.$el.removeClass('upfront-region-' + previous_name.toLowerCase().replace(/ /, "-"));
+					this.$el.addClass('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
+				}
 				if ( this._is_clipped() ){
 					// This region is inside another region container
 					this.update_background(); // Allow background applied

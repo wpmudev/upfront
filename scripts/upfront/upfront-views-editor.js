@@ -7070,9 +7070,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				var collection = this.model.collection,
 					index = collection.indexOf(this.model),
 					index_container = collection.index_container(this.model),
-					total_container = collection.total_container(),
+					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
-					is_bottom = index_container == total_container-2, // don't include shadow region
+					is_bottom = index_container == total_container-1,
 					types = [
 						{ label: "100% wide", value: 'wide' },
 						{ label: "Contained", value: 'clip' }
@@ -7089,26 +7089,46 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						],
 						change: function(){
 							var value = this.get_value(),
-								sub_regions = this.model.get_sub_regions();
-							_.each(sub_regions, function(sub){
-								if ( _.isArray(sub) )
-									_.each(sub, function(each){ each.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true}); })
-								else if ( sub )
-									sub.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
-							});
-							this.model.set({scope: (value == 'global' ? 'global' : 'local')}, {silent: true});
+								sub_regions = this.model.get_sub_regions(),
+								new_title = false,
+								title = false,
+								name = false,
+								related_region = false;
+							if ( value == 'global' ){
+								title = ( is_top ? 'Header' : ( is_bottom ? 'Footer' : '' ) );
+								name = ( is_top ? 'header' : ( is_bottom ? 'footer' : '' ) );
+								if ( title && name ){
+									related_region = this.model.collection.get_by_name(name);
+									if ( related_region ){ // make sure to rename other region with the same name and change the scope to local
+										new_title = this.model.collection.get_new_title("Region ", total_container);
+										me.apply_region_scope(related_region, 'local', new_title.name, new_title.title);
+									}
+									me.apply_region_scope(this.model, 'global', name, title);
+								}
+							}
+							else {
+								me.apply_region_scope(this.model, 'local');
+							}
 						}
 					}),
 					add_global_region = new Field_Button({
 						model: this.model,
-						label: is_bottom ? 'Add global footer' : 'Add global header',
+						label: is_top ? 'Add global header' : 'Add global footer',
 						compact: true,
 						on_click: function(e){
 							e.preventDefault();
-							// TODO we already have json for global regions in global_header_defined and global_footer_defined
-							// TODO here add respectively global header or global footer
-							if (is_top) console.log('adding global header');
-							if (is_bottom) console.log('adding global footer');
+							var new_region = new Upfront.Models.Region( is_top ? global_header_defined : global_footer_defined ),
+								related_region = this.model.collection.get_by_name( is_top ? 'header' : 'footer' ),
+								new_title = false;
+							if ( related_region ) {// make sure to rename other region with the same name and change the scope to local
+								new_title = this.model.collection.get_new_title("Region ", total_container);
+								me.apply_region_scope(related_region, 'local', new_title.name, new_title.title);
+							}
+							Upfront.Events.once('entity:region:added', function(view){
+								view.trigger("activate_region", view);
+							}, this);
+							new_region.add_to( this.model.collection, ( is_top ? 0 : index+1 ) );
+							me.close();
 						}
 					}),
 					region_type = new Field_Radios({
@@ -7206,10 +7226,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox
-					if ((this.model.get('scope') == 'global' &&
-							(this.model.get('name') == 'header' || this.model.get('name') == 'footer' ))
-							|| (is_top && !global_header_defined)
-							|| (is_bottom && !global_footer_defined)
+					if (
+						(is_top && ( this.model.get('name') == 'header' || !global_header_defined ))
+						|| (!is_top && is_bottom && ( this.model.get('name') == 'footer' || !global_footer_defined ) )
 					) {
 						region_global.render();
 						$region_global.append(region_global.$el);
@@ -7288,6 +7307,41 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		notify: function () {
 			Upfront.Views.Editor.notify("Background settings have been updated");
+		},
+		apply_region_scope: function (model, scope, name, title) {
+			var sub_regions = model.get_sub_regions(),
+				prev_title = model.get('title'),
+				prev_name = model.get('name'),
+				set_sub = function (region) {
+					region.set({scope: scope}, {silent: true});
+					if ( name && prev_name != name ){
+						var title_rx = new RegExp('^' + prev_title, 'i'),
+							name_rx = new RegExp('^' + prev_name, 'i'),
+							sub_title = region.get('title').replace( title_rx, title ),
+							sub_name = region.get('name').replace( name_rx, name );
+						region.set({
+							container: name,
+							title: sub_title,
+							name: sub_name
+						}, {silent: true});
+					}
+					region.get('properties').trigger('change');
+				};
+			_.each(sub_regions, function(sub){
+				if ( _.isArray(sub) )
+					_.each(sub, function(each){ set_sub(each); })
+				else if ( sub )
+					set_sub(sub);
+			});
+			model.set({ scope: scope }, {silent: true});
+			if ( name && prev_name != name ){
+				model.set({
+					title: title,
+					name: name,
+					container: name
+				}, {silent: true});
+			}
+			model.get('properties').trigger('change');
 		},
 		render_fixed_settings: function ($content) {
 			var me = this,
@@ -8429,13 +8483,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( this.options.height )
 				this.height = this.options.height;
 		},
-		get_new_title: function (start) {
-			var title = 'Region ' + start,
-				name = title.toLowerCase().replace(/\s/, '-');
-			if ( this.model.collection.get_by_name(name) )
-				return this.get_new_title(start+1);
-			return title;
-		},
 		add_region: function (e) {
 			var to = this.options.to,
 				collection = this.model.collection,
@@ -8445,8 +8492,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				sub_model = this.model.get_sub_regions(),
 				is_new_container = ( to == 'top' || to == 'bottom' ),
 				is_before = ( to == 'top' || to == 'left' ),
-				title = is_new_container ? this.get_new_title(total) : this.model.get('name') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
-				name = title.toLowerCase().replace(/\s/, '-'),
+				new_title = is_new_container ? collection.get_new_title("Region ", total) : false,
+				title = new_title !== false ? new_title.title : this.model.get('title') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
+				name = new_title !== false ? new_title.name : this.model.get('name') + '-' + to,
 				new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 					"name": name,
 					"container": is_new_container ? name : this.model.get('name'),
@@ -8759,11 +8807,15 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				name = this.model.get('name');
 			this.listenTo(this.model.collection, 'add', this.render);
 			this.listenTo(this.model.collection, 'remove', this.render);
+			this.listenTo(this.model.get("properties"), 'change', this.render);
+			this.listenTo(this.model.get("properties"), 'add', this.render);
+			this.listenTo(this.model.get("properties"), 'remove', this.render);
 			this.listenTo(Upfront.Events, "entity:region:activated", this.on_region_active);
 			this.listenTo(Upfront.Events, "entity:region:deactivated", this.on_region_deactive);
 			//this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_pos);
-			this.edit_panel = new RegionPanel_Edit({model: this.model});
+			//this.edit_panel = new RegionPanel_Edit({model: this.model});
 			//this.delete_panel = new RegionPanel_Delete({model: this.model});
+			this.add_panel_top = new RegionPanel_Add({model: this.model, to: 'top'});
 			this.add_panel_bottom = new RegionPanel_Add({model: this.model, to: 'bottom'});
 			if ( this.model.is_main() && this.model.get('allow_sidebar') ){
 				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
@@ -8771,17 +8823,25 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 		},
 		panels: function () {
-			var panels = _([]);
-			panels.push( this.edit_panel );
+			var panels = _([]),
+				collection = this.model.collection,
+				index_container = collection.index_container(this.model),
+				total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
+				is_top = index_container == 0,
+				is_bottom = index_container == total_container-1,
+				is_global = this.model.get('scope') == 'global';
 			if ( this.model.is_main() ) {
 				var sub_models = this.model.get_sub_regions();
+				if ( !is_top || !is_global )
+					panels.push( this.add_panel_top );
 				if ( this.model.get('allow_sidebar') ){
 					if ( sub_models.left === false )
 						panels.push( this.add_panel_left );
 					if ( sub_models.right === false )
 						panels.push( this.add_panel_right );
 				}
-				panels.push( this.add_panel_bottom );
+				if ( !is_bottom || !is_global )
+					panels.push( this.add_panel_bottom );
 			}
 			this._panels = panels;
 			return panels;
@@ -8869,11 +8929,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			});
 		},
 		remove: function() {
-			this.edit_panel.remove();
+			//this.edit_panel.remove();
 			//this.delete_panel.remove();
+			this.add_panel_top.remove();
 			this.add_panel_bottom.remove();
 			this.edit_panel = false;
 			this.delete_panel = false;
+			this.add_panel_top = false;
 			this.add_panel_bottom = false;
 			if ( this.model.is_main() && this.model.get('allow_sidebar') ){
 				this.add_panel_left.remove();
