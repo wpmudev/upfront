@@ -799,6 +799,12 @@ var LayoutEditor = {
 				author_uri: new Upfront.Views.Editor.Field.Text({
 					name: 'author_uri',
 					label: 'Author URI',
+				}),
+				activate: new Upfront.Views.Editor.Field.Checkboxes({
+					name: 'activate',
+					default_value: true,
+					multiple: false,
+					values: [{ label: "Activate the new theme upon creation", value: 1 }],
 				})
 			};
 
@@ -831,6 +837,7 @@ var LayoutEditor = {
 				$content.append(fields.directory.el);
 				$content.append(fields.author.el);
 				$content.append(fields.author_uri.el);
+				$content.append(fields.activate.el);
 				$content.append($button);
 				$button.on('click', function() {
 					var theme_name, create_theme, export_layout, export_layouts, do_export;
@@ -841,7 +848,8 @@ var LayoutEditor = {
 							'thx-theme-slug': fields.directory.get_value(),
 							'thx-author': fields.author.get_value(),
 							'thx-author-uri': fields.author_uri.get_value(),
-							'thx-theme-template': 'upfront'
+							'thx-theme-template': 'upfront',
+							'thx-activate_theme': fields.activate.get_value() || ''
 						};
 						loading.update_loading_text("Creating theme");
 						return ed._create_theme(data);
