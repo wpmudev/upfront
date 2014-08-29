@@ -4856,9 +4856,12 @@ var _Settings_CSS = SettingsItem.extend({
 
 	openEditor: function(e){
 		e.preventDefault();
+		var value = this.fields._wrapped[0].get_value(),
+			default_value = this.fields._wrapped[0].default_value
+		;
 		Upfront.Application.cssEditor.init({
 			model: this.model,
-			stylename: this.fields._wrapped[0].get_value()
+			stylename: value || default_value // Let's make sure we have *something* to work with
 		});
 
 		Upfront.Events.trigger("entity:settings:deactivate");
@@ -5424,7 +5427,7 @@ var Font_Picker = Backbone.View.extend({
 			line = this.style_doc.getLine(row);
 			if (!line) {
 				// Fix missing closing paren
-				this.style_doc.insertLines(row, ['}']);
+				//this.style_doc.insertLines(row, ['}']); // This adds a standalone new brace for some reason
 				break;
 			}
 		}
