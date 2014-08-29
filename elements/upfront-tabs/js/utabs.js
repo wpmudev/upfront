@@ -71,7 +71,8 @@
 			onContentClick: function() {
 				this.$el.find('.tabs-tab-active .inner-box').trigger('blur');
 			},
-			addTab: function() {
+			addTab: function(e) {
+				e.preventDefault();
 				this.stopEdit();
 				this.property('tabs').push({
 					title: '',
@@ -100,19 +101,19 @@
 					padding = 47;
 					tabSpace = tabSpace + 5;
 				}
-				this.$el.find('.tabs-menu span').css('width', 'auto');
+				this.$el.find('.tabs-menu .tabs-tab').css('width', 'auto');
 				this.$el.find('.tabs-tab').each(function() {
 					tabsWidth += $(this).outerWidth();
 				});
 
 				if (tabsWidth > tabSpace) {
 					tabWidth = (tabSpace - 10) / this.property('tabs_count');
-					spanWidth = Math.floor(tabWidth) - padding + 'px';
+					spanWidth = Math.floor(tabWidth) + 'px';
 					this.property('tabs_fixed_width', spanWidth);
-					this.$el.find('.tabs-menu span').css('width', spanWidth);
+					this.$el.find('.tabs-menu .tabs-tab').css('width', spanWidth);
 				} else {
 					this.property('tabs_fixed_width', 'auto');
-					this.$el.find('.tabs-menu span').css('width', 'auto');
+					this.$el.find('.tabs-menu .tabs-tab').css('width', 'auto');
 				}
 			},
 
@@ -314,6 +315,8 @@ var me = this;
 					 })
 					;
 					$content.data('ueditor').stop();
+				
+					
 					count++;
 				});
 
@@ -322,14 +325,17 @@ var me = this;
 				$tabs.each(function () {
 					var $content = $(this);
 					$content.ueditor({
-						//linebreaks: false,
-						inserts: {},
-						autostart: false
+						linebreaks: false,
+						autostart: false,
+						placeholder: false
 					})
 						.on("start", function () {
 							Upfront.Events.trigger('upfront:element:edit:start', 'text');
 						})
 						.on("stop", function () {
+							if($content.text().trim() == '') {
+								$content.html('Tab Content');
+							}
 							me.saveTabContent();
 							Upfront.Events.trigger('upfront:element:edit:stop');
 							me.render();
@@ -339,7 +345,7 @@ var me = this;
 
 			$upfrontObjectContent = this.$el.find('.upfront-object-content');
 			    if(this.$el.find('a.add-item').length < 1)
-				      $('<b class="upfront-entity_meta upfront-ui add_item"><a href="#" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+				      $('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
 
 			
 

@@ -2,10 +2,6 @@
   z-index:2 !important;
 }
 
-.inner-box {
-  min-width: 75px;
-}
-
 #settings .utabs-settings-panel .upfront-settings_panel_scroll {
   min-width: 287px;
   overflow-y: auto;
@@ -67,8 +63,10 @@
 
 .upfront-tabs-container .tabs-tab {
   float: left;
+  /*display: inline-block;*/
   cursor: pointer;
   position: relative;
+  overflow:hidden;
 }
 
 .upfront-tabs-container .tabs-tab i {
@@ -153,6 +151,8 @@
   border: 2px solid #aec4d7;
   position: relative;
   border-radius: 2px 2px 0 0;
+  background-color:#fff;
+  padding-bottom: 4px !important;
 }
 
 .upfront-tabs-container.tabbed  .tabs-tab-active:after {
@@ -204,4 +204,11 @@
 .upfront-tabs-container.button_tabs .add-tab {
   margin-left: 0;
   line-height: 34px;
+  overflow:hidden;
+}
+
+.inner-box.ueditor-placeholder {
+	right: auto !important;
+	position: relative !important;
+	margin-top: -31px;
 }

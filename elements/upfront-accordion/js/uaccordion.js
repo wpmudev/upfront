@@ -196,6 +196,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			self.$el.find('.accordion-panel-content').each(function() {
 				if ($(this).data("ueditor")) return true;
 				$(this).ueditor({
+						linebreaks: false,
 						inserts: {},
 						autostart: false
 				})
