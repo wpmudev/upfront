@@ -108,8 +108,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 				break;
 
 			case self::$PARTNAMES['TAGS']:
-                $sep = isset($options['tag_separator']) ? $options['tag_separator'] : '';
-				$replacements['%tags%'] = get_the_tag_list('', $sep);
+                $sep = isset($options['tag_separator']) ? $options['tag_separator'] : ', ';
+                $tags = get_the_tag_list('', $sep);
+				$replacements['%tags%'] = !empty($tags) ? $tags : '';
 				break;
 
 			case self::$PARTNAMES['TITLE']:
@@ -448,7 +449,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'type' => 'ThisPostModel',
 			'view_class' => 'ThisPostView',
 			'class' => 'c24 upfront-this_post',
-			'has_settings' => 0,
+			'has_settings' => 1,
 			'id_slug' => 'this_post',
 			'row' => 10,
 

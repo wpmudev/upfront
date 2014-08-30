@@ -327,7 +327,7 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	initialize: function (opts) {
 		this.options = opts;
 		this.settings = _([
-			new Settings_PostPanel_PostData({model: this.model})
+			//new Settings_PostPanel_PostData({model: this.model})
 		]);
 	},
 
