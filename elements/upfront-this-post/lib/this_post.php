@@ -87,7 +87,7 @@ class Upfront_ThisPostView extends Upfront_Object {
             case self::$PARTNAMES['EXCERPT']:
                 $limit = isset($options['limit']) ? $options['limit'] : 1000;
                 $replacements['%excerpt%'] = self::excerpt( $limit );
-                $replacements['%excerpt%'] = $limit;
+                //$replacements['%excerpt%'] = $limit; // Why???
                 break;
 
 			case self::$PARTNAMES['DATE']:
@@ -616,6 +616,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$replacements = array();
 
 		$post_data = Upfront_ThisPostView::prepare_post($post);
+
 		foreach($parts as $part){
 			$slug = $part['slug'];
 			$part_options = !empty($part['options']) ? $part['options'] : array(); // This is for editor
