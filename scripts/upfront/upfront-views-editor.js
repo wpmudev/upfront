@@ -8824,7 +8824,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		panels: function () {
 			var panels = _([]),
-				collection = this.model.collection,
+				collection = this.model.collection
+			;
+			if (_.isUndefined(collection)) { // The collection can easily be undefined for some reason. This happens e.g. when switching back from post layouts editing mode in exporter
+				this._panels = panels; // This is so we don't error out a bit later on
+				return panels; // Same as this - "return false" doesn't play well here.
+			}
+			var // Well, all is goog with the collection, so carry on as intended...
 				index_container = collection.index_container(this.model),
 				total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 				is_top = index_container == 0,
