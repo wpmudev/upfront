@@ -564,7 +564,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$db_option = $storage_key . '_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option, array());
-    $current_styles = apply_filters('upfront_get_theme_styles', $current_styles);
+    	$current_styles = apply_filters('upfront_get_theme_styles', $current_styles);
 
 		$styles = apply_filters('upfront-save_styles', $styles, $name, $element_type);
 

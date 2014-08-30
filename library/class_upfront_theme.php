@@ -713,6 +713,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			}
 		}
 
+		// ALSO!!! Do the theme global styles >.<
+		$global_layout_styles = $this->themeSettings->get('layout_style');
+		if (!empty($global_layout_styles)) {
+			$out .= $global_layout_styles;
+		}
+
 		return $out;
 
 	}
@@ -804,7 +810,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if ($this->themeSettings->get('layout_style')) {
 			$properties[] = array(
 				'name' => 'layout_style',
-				'value' => addslashes($this->themeSettings->get('layout_style'))
+				'value' => $this->themeSettings->get('layout_style'),
 			);
 		}
 		if ($this->themeSettings->get('global_regions')) {
