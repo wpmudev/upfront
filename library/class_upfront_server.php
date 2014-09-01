@@ -1343,7 +1343,7 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 			"range" => $range
 		);
 
-		do_action('upfront_update_theme_colors', $data);
+		do_action('upfront_save_theme_colors', $data);
 
 		if (!has_action('upfront_update_theme_colors')) {
 			update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode($data));
