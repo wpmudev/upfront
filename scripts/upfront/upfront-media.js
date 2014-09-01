@@ -1312,12 +1312,13 @@ define(function() {
 				"click .upfront-pagination_item-next": "next_page",
 				"click .upfront-pagination_page-item": "set_page"
 			},
+			
 			render: function () {
 				var markup = '',
 					has_clipoff = false
 				;
 				markup += '<div id="upfront-entity_list-pagination">';
-				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"><i class="icon-angle-left"></i></a>';
+				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"></a>';
 
 				markup += '<div class="upfront-pagination upfront-numeric_pagination">';
 				markup += '<div class="upfront-numeric_pagination-container">';
@@ -1329,7 +1330,7 @@ define(function() {
 				markup += '</div>';
 				markup += '</div>';
 
-				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"><i class="icon-angle-right"></i></a>';
+				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>';
 				markup += '</div>';
 
 				// Add max items
@@ -1342,7 +1343,7 @@ define(function() {
 				// set up event listeners
 				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) {
 					var $numerics = this.$el.find(".upfront-pagination.upfront-numeric_pagination"),
-						$scroller = $numerics.find(".upfront-numeric_pagination-container")
+							$scroller = $numerics.find(".upfront-numeric_pagination-container")
 					;
 					$scroller.width(ActiveFilters.max_pages * 50); // Hardcoded item width
 					var delta = $scroller.width() - $numerics.width(),
@@ -1350,6 +1351,7 @@ define(function() {
 					;
 					this.$el.find(".upfront-pagination_item-prev")
 						.on("mouseover", function () {
+							console.log(this);
 							if (timer) clearInterval(timer);
 							timer = setInterval(function () {
 								var pos = parseInt($scroller.css("left"), 10) || 0;

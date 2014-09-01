@@ -68,7 +68,7 @@ class Upfront_MediaCollection extends Upfront_Media {
 	private $_args = array(
 		'post_type' => 'attachment',
 		'post_status' => 'any', // Required for attachment
-		'posts_per_page' => 24, // Paginate at most LIMIT items
+		'posts_per_page' => 16, // Paginate at most LIMIT items
 	);
 	private $_query = array();
 
