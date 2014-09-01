@@ -429,6 +429,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 
 		"div[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
+		"div.responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
+		"div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
 		" div[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
 		"div[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
 		"div[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
@@ -471,6 +473,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.on('deactivated', this.onDeactivate, this);
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", function(current, previous) {
+			me.render();
 			$.event.trigger({
 				type: "changed_breakpoint",
 				selector: ".upfront-output-unewnavigation",
@@ -832,7 +835,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	onElementResize: function() {
-		if(this.property('burger_menu') != 'yes') {
+		if(this.property('burger_menu') === false) {
 			if($('.upfront-resize').width() < 360) {
 				this.property('menu_style', 'vertical');
 			} else if($('.upfront-resize').width() > 460) {
@@ -950,7 +953,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model_breakpoint = this.model.get_property_value_by_name('breakpoint')
 			breakpoint_data = model_breakpoint[breakpoint.id];
 			if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").bind('click', me.toggle_responsive_nav));
+				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 				this.$el.find('ul.menu').hide();
 			}
 		}

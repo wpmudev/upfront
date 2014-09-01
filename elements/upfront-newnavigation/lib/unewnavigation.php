@@ -140,6 +140,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'subitem_hover_label' => __('Sub Menu Item hover', 'upfront'),
 				'subitem_hover_info' => __('Hover state for Sub level Menu item', 'upfront'),
 				'responsive_bar_label' => __('Responsive Menu Bar', 'upfront'),
+				'responsive_trigger' => __('Responsive Menu Trigger', 'upfront'),
+				'responsive_trigger_bars' => __('Responsive Trigger Bars', 'upfront'),
 				'responsive_item_label' => __('Responsive Menu Item', 'upfront'),
 				'responsive_hover_label' => __('Responsive Menu Item hover', 'upfront'),
 				'responsive_subitem_label' => __('Responsive Sub Menu Item', 'upfront'),
