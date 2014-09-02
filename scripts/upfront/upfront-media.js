@@ -1326,73 +1326,33 @@ define(function() {
 			events: {
 				"click .upfront-pagination_item-prev": "prev_page",
 				"click .upfront-pagination_item-next": "next_page",
-				"click .upfront-pagination_page-item": "set_page"
+				"click .upfront-pagination_page-item": "set_page",
+				"click .upfront-pagination_page-current": "stop_prop",
+				"keypress .upfront-pagination_page-current": "set_page_keypress",
 			},
-			
+			stop_prop: function (e) { e.stopPropagation(); },
 			render: function () {
-				var markup = '',
-					has_clipoff = false
-				;
-				markup += '<div id="upfront-entity_list-pagination">';
-				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"></a>';
+				var markup = '';
+				if (ActiveFilters.max_pages > 1) {
+					markup += '<div id="upfront-entity_list-pagination">';
+					markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"></a>';
 
-				markup += '<div class="upfront-pagination upfront-numeric_pagination">';
-				markup += '<div class="upfront-numeric_pagination-container">';
-				_.each(_.range(1, ActiveFilters.max_pages), function (idx) {
-					if (idx > ActiveFilters.max_pages) return;
-					var cls = idx == ActiveFilters.current_page ? 'current' : '';
-					markup += '<a class="upfront-pagination_item upfront-pagination_page-item ' + cls + '" data-idx="' + idx + '">' + idx + '</a>';
-				});
-				markup += '</div>';
-				markup += '</div>';
+					// Input
+					markup += '<div class="upfront-pagination_navigation">';
+					markup += 	'<input type="text" class="upfront-pagination_page-current" value="' + ActiveFilters.current_page + '" />';
+					markup += 	" of ";
+					markup += 	'<a class="upfront-pagination_page-item" data-idx="' + (ActiveFilters.max_pages - 1) + '">' + (ActiveFilters.max_pages - 1) + '</a>';
+					markup += '</div>';
 
-				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>';
-				markup += '</div>';
-
+					markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>';
+					markup += '</div>';
+				}
 				// Add max items
 				markup += '<div id="upfront-entity_list-info">';
 				markup += '<p>(' + _.template(l10n.entity_list_info, {items: ActiveFilters.max_items, pages: ActiveFilters.max_pages - 1}) + ')</p>';
 				markup += '</div>';
 
 				this.$el.empty().append(markup);
-
-				// set up event listeners
-				if (ActiveFilters.max_pages > ActiveFilters.CONST.CUTOFF_SIZE) {
-					var $numerics = this.$el.find(".upfront-pagination.upfront-numeric_pagination"),
-							$scroller = $numerics.find(".upfront-numeric_pagination-container")
-					;
-					$scroller.width(ActiveFilters.max_pages * 50); // Hardcoded item width
-					var delta = $scroller.width() - $numerics.width(),
-						timer = false
-					;
-					this.$el.find(".upfront-pagination_item-prev")
-						.on("mouseover", function () {
-							console.log(this);
-							if (timer) clearInterval(timer);
-							timer = setInterval(function () {
-								var pos = parseInt($scroller.css("left"), 10) || 0;
-								if (0 === pos) return false;
-								else $scroller.css("left", (pos + 5) + 'px');
-							}, 100);
-						})
-						.on("mouseout", function () {
-							if (timer) clearInterval(timer);
-						})
-					;
-					this.$el.find(".upfront-pagination_item-next")
-						.on("mouseover", function () {
-							if (timer) clearInterval(timer);
-							timer = setInterval(function () {
-								var pos = parseInt($scroller.css("left"), 10) || 0;
-								if (Math.abs(pos) >= delta) return false;
-								else $scroller.css("left", (pos - 5) + 'px');
-							}, 100);
-						})
-						.on("mouseout", function () {
-							if (timer) clearInterval(timer);
-						})
-					;
-				}
 			},
 			prev_page: function (e) {
 				e.preventDefault();
@@ -1409,6 +1369,20 @@ define(function() {
 				e.stopPropagation();
 				if (ActiveFilters.set_page($(e.target).data("idx"))) Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 			},
+			set_page_keypress: function (e) {
+				e.stopPropagation();
+				//e.preventDefault();
+				var string = String.fromCharCode(e.which),
+					num = parseInt(string, 10)
+				;
+				if (13 !== e.which) return true;
+				var string = $.trim($(e.target).val()),
+					num = parseInt(string, 10)
+				;
+				if (!num) return false;
+				if (num > ActiveFilters.max_pages) num = ActiveFilters.max_pages;
+				if (ActiveFilters.set_page(num)) Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+			}
 		});
 
 		var MediaManager_BottomCommand_Search = Backbone.View.extend({
