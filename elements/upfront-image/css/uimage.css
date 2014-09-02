@@ -7,7 +7,7 @@
 	background: rgba(57,82,105,0.9);
 	top:0;
 	z-index: 20001;
-	font-family: 'Source Sans Pro';
+	font-family: 'Lato';
 	font-size: 24px;
 	font-weight: 200;
 	cursor: pointer;
@@ -161,7 +161,6 @@ a.open-media-gallery:hover i {
 .upfront-image-starting-select {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
 	color: #273A4C;
-	font-family: 'Source Sans Pro';
 	font-size:18px;
 	width:100%;
 	background: #eeeff0;
@@ -303,7 +302,6 @@ a.upfront-image-select:hover {
 #upfront-image-edit a.image-edit-save {
 	border-radius: 20px;
 	color: #1C7F5B;
-	font-family: 'Source Sans Pro', sans-serif;
 	border: 3px solid #1fcd8f;
 	padding: 0.3em 0;
 	display: block;
