@@ -271,8 +271,14 @@ define(function() {
 				me = this
 			;
 			_(this.attributes).each(function (collection, idx) {
-				var active = me.get(idx).where({state:true});
-				data[idx] = _(active).invoke("get", "filter");
+				var active = me.get(idx).where({state:true}),
+					active_non_defaults = []
+				;
+				active_non_defaults = _(active).filter(function (filter) {
+					var value = filter.get("value");
+					return "other" !== value && "date_desc" !== value;
+				});
+				data[idx] = _(active_non_defaults).invoke("get", "filter");
 			});
 			return data;
 		}
@@ -714,13 +720,22 @@ define(function() {
 			render: function () {
 				this.$el.empty();
 				var me = this,
+					_list = _(this.model.to_list()),
+					_to_render = _([]),
 					tpl = _.template(' <a href="#" class="filter upfront-icon upfront-icon-media-label-delete" data-type="{{type}}" data-filter="{{filter}}">{{filter}}</a>')
 				;
-				this.$el.append('<label class="upfront-field-label upfront-field-label-block">' + l10n.active_filters + '</label>');
-				_(this.model.to_list()).each(function (filters, type) {
+				
+				_list.each(function (filters, type) {
 					_(filters).each(function (filter) {
-						me.$el.append(tpl({filter: filter, type: type}));
+						_to_render.push({filter: filter, type: type});
 					});
+				});
+				if (!_to_render.size()) return false; // Do not render the empty filter array (ie. only defaults)
+
+				this.$el.append('<label class="upfront-field-label upfront-field-label-block">' + l10n.active_filters + '</label>');
+
+				_to_render.each(function (item) {
+					me.$el.append(tpl(item));
 				});
 				this.$el.append(" <a href='#' class='all_filters'>" + l10n.clear_all_filters + "</a>");
 			},
@@ -762,9 +777,9 @@ define(function() {
 			initialize: function () {
 				this.controls = _([
 					new Control_MediaType(),
-					new Control_MediaDate(),
+					//new Control_MediaDate(),
 					new Control_MediaFileName(),
-					new Control_MediaRecent(),
+					//new Control_MediaRecent(),
 					new Control_MediaLabels()
 				]);
 			},
@@ -921,6 +936,7 @@ define(function() {
 				},
 				render: function () {
 					var name = this.model.get("filter");
+					if ("other" === this.model.get("value")) return false; // DO NOT RENDER "ALL", special case
 					if (this.model.get("state")) name = '<b>' + name + '</b>';
 					this.$el.empty().append(name);
 				},
@@ -1006,7 +1022,7 @@ define(function() {
 				
 			}
 		});
-
+/*
 		var Control_MediaDate = Media_FilterSelection_Uniqueselection.extend({
 			allowed_values: ['date_asc', 'date_desc'],
 			initialize: function () {
@@ -1017,7 +1033,7 @@ define(function() {
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
 		});
-
+*/
 		var Control_MediaFileName = Media_FilterSelection_Uniqueselection.extend({
 			allowed_values: ['title_desc', 'title_asc'],
 			initialize: function () {
@@ -1028,7 +1044,7 @@ define(function() {
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
 		});
-
+/*
 		var Control_MediaRecent = Media_FilterSelection_Uniqueselection.extend({
 			initialize: function () {
 				this.filter_name = l10n.recent;
@@ -1038,7 +1054,7 @@ define(function() {
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
 		});
-
+*/
 		var Control_MediaLabels = Media_FilterSelection_AdditiveMultiselection.extend({
 			initialize: function () {
 				this.filter_name = l10n.labels;
