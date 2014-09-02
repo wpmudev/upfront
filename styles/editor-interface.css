@@ -7422,8 +7422,8 @@ License: MIT
 	height: 12px;
 	position: absolute;
 	border-radius: 50%;
-	left: -6px;
-	top: -6px;
+	left: -7px;
+	top: -7px;
 }
 
 .sp-dragger:after {
@@ -7437,8 +7437,8 @@ License: MIT
 	border-right-color:inherit;
 	border-bottom-color:inherit;
 	border-left-color:inherit;
-	left: -34px;
-	top: -34px;
+	left: -35px;
+	top: -35px;
 	display:none;
 }
 
