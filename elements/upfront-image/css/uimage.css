@@ -25,7 +25,7 @@
 	width: 80%;
 	margin: 60px auto;
 	text-align: center;
-	border-radius: 100px;
+	border-radius: 0;
 	border: 5px dashed #C3DCF1;
 	color: #C3DCF1;
 }
@@ -42,7 +42,7 @@
 }
 
 #upfront-image-overlay h2 {
-	font-size: 42px;
+	font-size: 50px;
 	color: #F2F9FF;
 	line-height: 1;
 	margin-bottom: 30px;
@@ -63,26 +63,26 @@
 }
 
 
-#upfront-image-maxsize {
-	font-size: 12px;
-	margin-bottom: 20px;
+.upfront-image-selector-container small {
+	font-size: 15px;
+	margin:0px auto 20px;
+	display: block;
 }
 
 #upfront-image-overlay .select-files {
 	display: inline-block;
-	font-size: 14px;
-	line-height: 24px;
-	height: 56px;
-	width: 200px;
+	line-height: 34px;
+	width: 300px;
 	line-height: 48px;
 	color: #fff;
-	border: 4px solid #1fcd8f;
-	border-radius: 20px;
+	border:4px solid #253A4D;
 	text-decoration: none;
-	font-size: 22px;
-	font-weight: bold;
+	font-size: 28px;
 	background: none;
-	padding: 0;
+	padding: 10px 0;
+}
+#upfront-image-overlay .select-files:hover {
+	border-color:#1fcd8f;
 }
 
 #upfront-image-overlay.small_placeholder .select-files {
@@ -91,7 +91,9 @@
 	font-weight: 400;
 	font-size: 18px;
 }
-
+#upfront-image-overlay .upfront-image-media-container {
+	margin: 0px auto;
+}
 #upfront-image-overlay a.open-media-gallery {
 	color: #1fcd8f;
 	font-weight: 400;
@@ -122,7 +124,7 @@ a.open-media-gallery:hover i {
 	bottom: 0;
 }
 
-.upfront-progress-container {
+.upfront-ui .upfront-progress-container {
 	background: #1E2D3B;
 	border-radius: 15px;
 	width: 50%;
@@ -142,7 +144,7 @@ a.open-media-gallery:hover i {
 }
 
 #upfront-image-overlay .icon-picture{
-	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -806px -327px;
+	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -806px -322px;
 	padding: 0 15px;
 }
 

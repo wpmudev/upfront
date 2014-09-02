@@ -8,12 +8,14 @@
 	<div id="upront-image-placeholder" class="upfront-image-section">
 		<div class="upfront-image-selector-container">
 			<h2>{{ l10n.drop_files }}</h2>
-			<a class="select-files" href="#">{{ l10n.select_files }}</a>
-			<div id="upfront-image-maxsize">{{ l10n.max_file_size }}</div>
-			{{ l10n.or_browse }}
-			<div class="upfront-image-media-container">
-			<i class="icon-picture"></i> <a class="open-media-gallery" href="#">{{ l10n.media_gallery }}</a>
-			</div>
+			<p>
+				<a class="select-files" href="#">{{ l10n.select_files }}</a>
+				<small>{{ l10n.max_file_size }}</small>
+				{{ l10n.or_browse }}
+				<div class="upfront-image-media-container">
+				<i class="icon-picture"></i> <a class="open-media-gallery" href="#">{{ l10n.media_gallery }}</a>
+				</div>
+			</p>
 			<span class="dragimagehand"></span>
 		</div>
 	</div>
