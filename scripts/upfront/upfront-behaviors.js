@@ -1531,9 +1531,9 @@ var GridEditor = {
 			var $el = $(this),
 				margin = $el.data('margin'),
 				classes, data;
-			if ( margin &&
-				( margin.original.left != margin.current.left ||
-				margin.original.top != margin.current.top )
+			if ( 
+				( margin && ( margin.original.left != margin.current.left || margin.original.top != margin.current.top ) ) ||
+				more_classes
 			){
 				if ( !breakpoint || breakpoint.default ){
 					classes = [
@@ -3179,7 +3179,7 @@ var GridEditor = {
 						'z-index': '',
 						'visibility': 'visible'
 					});
-
+					
 					// Update model value
 					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).not($me) );
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
