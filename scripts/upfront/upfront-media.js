@@ -558,7 +558,7 @@ define(function() {
 		});
 
 			var MediaManager_ItemControl_LabelsContainer = Backbone.View.extend({
-				className: "upfront-additive_multiselection",
+				className: "upfront-additive_multiselection active",
 				selection: '',
 				events: {
 					"click :text": "stop_prop",
@@ -689,7 +689,10 @@ define(function() {
 			events: {
 				"click": "stop_prop"
 			},
-			stop_prop: function (e) { e.stopPropagation(); },
+			stop_prop: function (e) {
+				e.stopPropagation(); 
+				if (this.filter_selection) this.filter_selection.trigger("filters:outside_click")
+			},
 			initialize: function () {
 				this.filter_selection = new MediaManager_FiltersSelectionControl();
 				this.filters_selected = new MediaManager_FiltersSelectedControl({model: ActiveFilters});
@@ -782,6 +785,11 @@ define(function() {
 					//new Control_MediaRecent(),
 					new Control_MediaLabels()
 				]);
+				this.on("filters:outside_click", function () {
+					this.controls.each(function (ctrl) {
+						ctrl.trigger("filters:selection:click");
+					});
+				}, this);
 			},
 			render: function () {
 				var me = this,
@@ -814,6 +822,7 @@ define(function() {
 			select_control: function (idx) {
 				this.$control.empty();
 				if ('false' === idx) return false;
+
 
 				var control = this.controls.toArray()[idx];
 				control.render();
@@ -888,6 +897,9 @@ define(function() {
 					.append('<div class="labels_list"><ul></ul></div>')
 				;
 				this.render_items();
+				this.on("filters:selection:click", function () {
+					this.update_state();
+				}, this);
 			},
 			render_items: function () {
 				var me = this,
