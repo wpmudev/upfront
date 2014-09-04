@@ -1365,12 +1365,10 @@ define(function() {
 					markup += '</div>';
 
 					markup += '<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>';
+					// Add max items
+					markup += '<small>(' + _.template(l10n.entity_list_info, {items: ActiveFilters.max_items, pages: ActiveFilters.max_pages - 1}) + ')</small>';
 					markup += '</div>';
 				}
-				// Add max items
-				markup += '<div id="upfront-entity_list-info">';
-				markup += '<p>(' + _.template(l10n.entity_list_info, {items: ActiveFilters.max_items, pages: ActiveFilters.max_pages - 1}) + ')</p>';
-				markup += '</div>';
 
 				this.$el.empty().append(markup);
 			},

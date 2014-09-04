@@ -5572,6 +5572,8 @@ box-shadow: inset 0 2px 0 0 #fff;
 /* Pagination */
 #upfront-entity_list-pagination {
 	clear: both;
+	float: left;
+	padding-top: 10px;
 }
 .upfront-pagination_item {
 	float: left;
@@ -5591,7 +5593,12 @@ box-shadow: inset 0 2px 0 0 #fff;
 /* Previous & Next button triangles created with CSS */
 .upfront-pagination_item.upfront-pagination_item-prev,
 .upfront-pagination_item.upfront-pagination_item-next {
-	width:15px;
+	width:30px;
+	height: 30px;
+	border:2px solid rgb(124,157,191);
+	background: transparent;
+	opacity: .7;
+	margin:0;
 }
 .upfront-pagination_item.upfront-pagination_item-prev:after,
 .upfront-pagination_item.upfront-pagination_item-next:after {
@@ -5607,15 +5614,49 @@ box-shadow: inset 0 2px 0 0 #fff;
 }
 .upfront-pagination_item.upfront-pagination_item-prev:after {
 	border-right: 5px solid #E5F3FF;
+	left:-1px;
 }
 .upfront-pagination_item.upfront-pagination_item-next:after {
 	border-left: 5px solid #E5F3FF;
 }
-
 .upfront-pagination_item:hover {
-	color: #fff;
-	background:rgba(35,49,64,.8);
+	opacity: 1;
 }
+
+/* Pagination navigation */
+.upfront-pagination_navigation {
+	float: left;
+	line-height: 20px;
+	margin: 0px 10px;
+	text-align: center;
+	font-size: 16px;
+	color: #B8D0E6;
+	cursor: pointer;
+}
+#upfront-popup .upfront-pagination_navigation input,
+#upfront-popup .upfront-pagination_navigation input:focus  {
+	background:rgb(35,49,64);
+	background:rgba(35,49,64,.5);
+	color: #fff;
+	height: 30px;
+	width: 50px;
+	font-size: 16px;
+	border: 1px solid rgb(229,243,255);
+	border: 1px solid rgba(229,243,255,.4);
+	margin-right: 5px;
+}
+#upfront-popup .upfront-pagination_navigation input:focus {
+	background:rgba(35,49,64,.7);
+	border: 1px solid rgba(229,243,255,1);
+}
+
+.upfront-pagination_navigation .upfront-pagination_page-item {
+	font-weight: bold;
+	color: rgb(31, 205, 143);
+	border-bottom: 1px solid rgb(31, 205, 143);
+	margin-left:5px;
+}
+
 .upfront-pagination_item.current {
 	color: #fff;
 	border: 2px solid #2ecc90;
@@ -5652,39 +5693,13 @@ box-shadow: inset 0 2px 0 0 #fff;
 	float: left;
 }
 */
-#upfront-entity_list-info {
-	position: absolute;
-	/*width: 415px;*/
-	margin-top: 40px;
-	color:rgba(184,208,230,.7);
-}
-#upfront-entity_list-info p {
+#upfront-entity_list-pagination small {
+	width: 100%;
+	color:rgb(141,173,189);
 	text-align: center;
-}
-/* Pagination navigation */
-.upfront-pagination_navigation {
 	float: left;
-	line-height: 20px;
-	margin: 10px 5px 0 0;
-	text-align: center;
-	font-size: 16px;
-	color: #aec4d8;
-	cursor: pointer;
-	border: 2px solid transparent;
-	padding: 3px;
-}
-#upfront-popup .upfront-pagination_navigation input, #upfront-popup .upfront-pagination_navigation input:focus {
-	background:none;
-	color: #fff;
-	width: 2em;
-	font-size: 16px;
-	font-weight: bold;
-	border: 1px solid #aec4d8;
-}
-.upfront-pagination_navigation .upfront-pagination_page-item {
-	text-decoration: underline;
-	font-weight: bold;
-	color: rgb(31, 205, 143);
+	clear: both;
+	font-size: 13px;
 }
 
 /* Tax */
