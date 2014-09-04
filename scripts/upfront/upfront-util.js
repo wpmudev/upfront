@@ -165,12 +165,24 @@ define(function() {
 		 * Callback to sort jQuery elements
 		 */
 		sort_elements_cb: function (a, b) {
-			var cmp_a = $(a).data('breakpoint_order') || $(a).index(),
-					cmp_b = $(b).data('breakpoint_order') || $(b).index();
-			if ( cmp_a > cmp_b) return 1;
-			else return -1;
-
+			var cmp_a = $(a).data('breakpoint_order'),
+				cmp_b = $(b).data('breakpoint_order');
+			if ( ! _.isNumber(cmp_a) )
+				cmp_a = $(a).data('dom_order');
+			if ( ! _.isNumber(cmp_b) )
+				cmp_b = $(b).data('dom_order');
+			if ( cmp_a > cmp_b)
+				return 1;
+			else
+				return -1;
 			return 0;
+		},
+		
+		/**
+		 * Callback before sort jQuery element, to store DOM position, pass on $.each
+		 */
+		normalize_sort_elements_cb: function (index) {
+			$(this).data('dom_order', index);
 		},
 
 		/**

@@ -243,7 +243,6 @@ jQuery(document).ready(function($){
 								$(me).css('background-image', 'url("' + $(this).attr('src') + '")');
 							else
 								$(me).attr('src', $(this).attr('src'));
-							console.log('loaded image:', $(this).attr('src'))
 							$(me).removeClass('upfront-image-lazy-loading').addClass('upfront-image-lazy-loaded');
 						});
 					}
@@ -256,4 +255,27 @@ jQuery(document).ready(function($){
 	$(window).on('resize', image_lazy_load);
 	if ( image_lazy_scroll )
 		$(window).on('scroll', image_lazy_load);
+	
+	
+	/* Responsive custom theme styles */
+	function update_theme_styles () {
+		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
+		$('[data-theme-styles]').each(function(){
+			var theme_styles = $(this).attr('data-theme-styles'),
+				classes = [];
+			if ( theme_styles )
+				theme_styles = JSON.parse(theme_styles);
+			$.each(theme_styles, function(id, style_class){
+				classes.push(style_class);
+			});
+			$(this).removeClass(classes.join(' '));
+			if ( !breakpoint && theme_styles.default )
+				$(this).addClass( theme_styles.default );
+			else if ( breakpoint && ( theme_styles[breakpoint] || theme_styles.default ) )
+				$(this).addClass( theme_styles[breakpoint] ? theme_styles[breakpoint] : theme_styles.default );
+		});
+	}
+	update_theme_styles();
+	$(window).on('resize', update_theme_styles);
+	
 });

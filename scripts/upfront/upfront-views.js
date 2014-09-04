@@ -625,7 +625,7 @@ define([
 					off = $el.offset(),
 					width = $el.width(),
 					$prev;
-				$el.children().sort(Upfront.Util.sort_elements_cb).filter(function(){
+				$el.children().each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb).filter(function(){
 					return $(this).children().size() > 0;
 				}).each(function(){
 					var order = $(this).data('breakpoint_order') || 0,
@@ -878,6 +878,8 @@ define([
 				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
+				
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 
 				if (this.init) this.init();
 			},
@@ -886,10 +888,9 @@ define([
 			},
 			render: function () {
 				var props = {},
-					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
-					model, template
+					height, model, template
 				;
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
@@ -899,9 +900,15 @@ define([
 				this.model.get("properties").each(function (prop) {
 					props[prop.get("name")] = prop.get("value");
 				});
+				
+				var row = this.model.get_breakpoint_property_value('row', true);
+				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
 
-				if(props.theme_style)
-					props.class += ' ' + props.theme_style.toLowerCase();
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
+				if(theme_style){
+					props.class += ' ' + theme_style.toLowerCase();
+					this._theme_style = theme_style;
+				}
 
 				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height});
 				template = _.template(_Upfront_Templates["object"], model);
@@ -950,6 +957,17 @@ define([
 			on_after_layout_render: function () {
 
 			},
+			on_change_breakpoint: function (breakpoint) {
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true),
+					$obj = this.$el.find('.upfront-object');
+				if ( this._theme_style )
+					$obj.removeClass(this._theme_style.toLowerCase());
+				if ( theme_style ) {
+					$obj.addClass(theme_style.toLowerCase());
+					this._theme_style = theme_style;
+				}
+			},
+			
 
 			/* Getting dimension and resize element */
 			get_element_size: function (real) {
@@ -1599,7 +1617,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.apply_flexbox_clear);
-				this.listenTo(Upfront.Events, "layout:render", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			on_entity_remove: function(e, view) {
@@ -1742,6 +1760,10 @@ define([
 					this.fix_flexbox_clear(this.$el);
 				}
 			},
+			on_after_layout_render: function () {
+				this.fix_flexbox_clear(this.$el);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_flexbox_clear);
+			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
 			},
@@ -1753,7 +1775,6 @@ define([
 						col = Math.round( ( is_group ? this.group_view.$el : this.region_view.$el ).width() / ed.grid.column_width );
 					ed.adapt_to_breakpoint(this.model, wrappers, breakpoint.id, col);
 				}
-				this.fix_flexbox_clear(this.$el);
 			},
 			remove: function() {
 				var me = this;

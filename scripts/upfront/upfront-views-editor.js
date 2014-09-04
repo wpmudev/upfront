@@ -4843,15 +4843,15 @@ var _Settings_CSS = SettingsItem.extend({
 		this.fields = _([
 			new _Settings_CSS_Field({
 				model: this.model,
-				property: 'theme_style',
-				default_value: this.model.get_property_value_by_name('theme_style') || '_default',
+				name: 'theme_style',
+				default_value: this.model.get_breakpoint_property_value('theme_style', true) || '_default',
 				values: values
 			})
 		]);
 	},
 	stylesChanged: function(e) {
 		var style = this.$('input[name=theme_style]:checked').val();
-		this.model.set_property('theme_style', style);
+		this.model.set_breakpoint_property('theme_style', style);
 	},
 
 	openEditor: function(e){

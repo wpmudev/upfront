@@ -262,11 +262,7 @@ class Upfront_Grid {
 
 	protected function _get_breakpoint_data ($data, $key, $breakpoint = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
-		$model_breakpoint = upfront_get_property_value('breakpoint', $data);
-		$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
-		if ( $breakpoint_data && isset($breakpoint_data[$key]) )
-			return $breakpoint_data[$key];
-		return;
+		return upfront_get_breakpoint_property_value($key, $data, $breakpoint);
 	}
 
 	protected function _get_breakpoint_col ($data, $breakpoint = false) {
@@ -544,7 +540,9 @@ class Upfront_GridBreakpoint {
 				$media .= "/* Breakpoint {$class_name}: {$columns} columns */\n";
 			}
 			$media .= "@media " . $this->get_breakpoint_rule($breakpoints);
-			$rules = "{\n{$style} }\n\n";
+			$short_name = $this->get_id();
+			$conditional = "body:after { content: '{$short_name}'; display: none; }";
+			$rules = "{\n{$conditional}\n{$style} }\n\n";
 		}
 		else {
 			$rules = "\n{$style}\n\n";

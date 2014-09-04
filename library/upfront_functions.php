@@ -27,6 +27,16 @@ function upfront_set_property_value ($prop, $value, $data) {
 	return $data;
 }
 
+function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {
+	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
+	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
+	if ( $breakpoint_data && isset($breakpoint_data[$prop]) )
+		return $breakpoint_data[$prop];
+	if ( $return_default )
+		return upfront_get_property_value($prop, $data);
+	return;
+}
+
 function upfront_get_class_num ($classname, $classes) {
 	$classes = array_map('trim', explode(' ', $classes));
 	$rx = '^' . preg_quote($classname, '/') . '(\d+)$';

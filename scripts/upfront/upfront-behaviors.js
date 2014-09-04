@@ -1825,9 +1825,12 @@ var GridEditor = {
 
 		areas = areas ? areas : (lightbox ? [lightbox, shadowregion] : ed.regions);
 
-
-
 		ed.drops = [];
+		
+		var module_selector = '> .upfront-module-view > .upfront-module, > .upfront-module-group',
+			$sibling_els = me.$el.closest('.upfront-wrapper').find(module_selector).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
+			has_siblings = $sibling_els.length > 1,
+			sibling_index = $sibling_els.index(me.$el);
 
 		_.each(areas, function(area, area_index){
 			var is_region = area.$el.hasClass('upfront-region'),
@@ -1835,26 +1838,18 @@ var GridEditor = {
 				$region = is_region ? area.$el : area.$el.closest('.upfront-region'),
 				region_name = $region.data('name'),
 				region = is_region ? area : ed.get_region($region);
-				$wraps = $area.find('> .upfront-wrapper').sort(Upfront.Util.sort_elements_cb),
+				$wraps = $area.find('> .upfront-wrapper').each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
 				expand_lock = $region.hasClass('upfront-region-expand-lock'),
 				current_full_top = area.grid.top,
 				can_drop = function (top, bottom) {
 					return ( !expand_lock || ( expand_lock && bottom-top+1 >= me.row ) );
 				},
-				module_selector = '> .upfront-module-view > .upfront-module, > .upfront-module-group';
+				first_cb = function ($w, $ws) {
+					var w = ed.get_wrap($w);
+					return ( w.outer_grid.left == area.outer_grid.left );
+				};
 			$wraps.each(function(index){
 				var $wrap = $(this),
-					clr_cb = function ($w, $ws) {
-						if ( ( !breakpoint || breakpoint.default ) && $w.is('.clr') )
-							return true;
-						else if ( breakpoint && !breakpoint.default && $w.data('breakpoint_clear') )
-							return true;
-						return false;
-					},
-					first_cb = function ($w, $ws) {
-						var w = ed.get_wrap($w);
-						return ( w.outer_grid.left == area.outer_grid.left );
-					},
 					wrap = ed.get_wrap($wrap),
 					wrap_clr = ( wrap.grid.left == area.grid.left ),
 					is_wrap_me = ( me_wrap && wrap._id == me_wrap._id ),
@@ -1870,7 +1865,7 @@ var GridEditor = {
 					next_wrap_clr = ( next_wrap && next_wrap.grid.left == area.grid.left ),
 					is_next_me = ( next_wrap && me_wrap && next_wrap._id == me_wrap._id ),
 					next_me_only = ( is_next_me && $next_wrap.find(module_selector).size() == 1 ),
-					$next_clr = Upfront.Util.find_from_elements($wraps, $wrap, clr_cb, false),
+					$next_clr = Upfront.Util.find_from_elements($wraps, $wrap, first_cb, false),
 					next_clr = $next_clr.size() > 0 ? ed.get_wrap($next_clr) : false,
 					wrap_el_left = ed.get_wrap_el_min(wrap),
 					prev_wrap_el_left = prev_wrap ? ed.get_wrap_el_min(prev_wrap) : false,
@@ -1878,18 +1873,20 @@ var GridEditor = {
 					next_wrap_el_left = next_wrap ? ed.get_wrap_el_min(next_wrap) : false,
 					next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false,
 					$row_wrap_first = !wrap_clr ? Upfront.Util.find_from_elements($wraps, $wrap, first_cb, true) : $wrap,
-					$row_wraps_next = Upfront.Util.find_from_elements($wraps, $row_wrap_first, '.upfront-wrapper', false, clr_cb),
+					$row_wraps_next = Upfront.Util.find_from_elements($wraps, $row_wrap_first, '.upfront-wrapper', false, first_cb),
 					row_wraps = _.union( [ ed.get_wrap($row_wrap_first) ], $row_wraps_next.map(function(){ return ed.get_wrap($(this)); }).get() ),
 					max_row_wrap = _.max(row_wraps, function(row_wrap){ return row_wrap.grid.bottom; });
 				if (
-					( wrap.col >= min_col ) && (
-					( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
-					( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
-					( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ) ||
+					( 	( !breakpoint || breakpoint.default ) &&
+						wrap.col >= min_col && (
+						( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
+						( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
+						( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) )
+					) ||
 					( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(module_selector).size() > 1 )
 				){
 					var current_el_top = wrap.grid.top;
-					$els = $wrap.find(module_selector).sort(Upfront.Util.sort_elements_cb);
+					$els = $wrap.find(module_selector).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb);
 					$els.each(function(i){
 						if ( $(this).get(0) == me.$el.get(0) )
 							return;
@@ -1927,9 +1924,9 @@ var GridEditor = {
 					var $last = $els.last(),
 						last = $last.size() > 0 ? ed.get_el($last) : false,
 						last_me = ( last && last._id == me._id ),
-						wrap_bottom = max_row_wrap.grid.bottom;
+						wrap_bottom = ( breakpoint && !breakpoint.default && next_clr_el_top ) ? next_clr_el_top.grid_center.y : max_row_wrap.grid.bottom;
 					// Don't add dropping below the most bottom wrap in a row
-					if ( last_me || !max_row_wrap || max_row_wrap != wrap ){
+					if ( last_me || !max_row_wrap || max_row_wrap != wrap || ( breakpoint && !breakpoint.default ) ){
 						ed.drops.push({
 							_id: ed._new_id(),
 							top: current_el_top,
@@ -1938,7 +1935,7 @@ var GridEditor = {
 							right: wrap.grid.right,
 							priority: {
 								top: ( last_me ? last.outer_grid.top : wrap.grid.bottom ),
-								bottom: wrap_bottom,
+								bottom: ( breakpoint && !breakpoint.default && next_clr_el_top ) ? next_clr_el_top.grid.top : wrap_bottom,
 								left: wrap.grid.left,
 								right: wrap.grid.right,
 								index: ( last_me ? 1 : 5 )
@@ -1954,12 +1951,15 @@ var GridEditor = {
 						});
 					}
 				}
+				// Don't add another droppable if this is not the first el from wrapper, only on responsive
+				if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 )
+					return;
 				// Add droppable before each wrapper that start in new line
 				if ( wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
 					var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
 						el_top = ed.get_wrap_el_min(wrap, false, true),
 						bottom = el_top.grid_center.y,
-						is_drop_me = ( prev_wrap_clr && is_prev_me ),
+						is_drop_me = ( prev_wrap_clr && is_prev_me && !has_siblings ),
 						me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top );
 					if ( can_drop(me_top, el_top.grid.top-1) ){
 						ed.drops.push({
@@ -2051,10 +2051,15 @@ var GridEditor = {
 					}
 				}
 			});
+			
+			// Don't add another droppable if this is not the first el from wrapper, only on responsive
+			if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 )
+				return;
+				
 			if ( $wraps.size() > 0 ) {
 				var last_wrap = ed.get_wrap($wraps.last()),
 					last_wrap_clr = ( last_wrap && last_wrap.grid.left == area.grid.left ),
-					is_drop_me = ( me_wrap && last_wrap_clr && last_wrap._id == me_wrap._id ),
+					is_drop_me = ( me_wrap && last_wrap_clr && last_wrap._id == me_wrap._id && !has_siblings ),
 					bottom = ( area.grid.bottom-current_full_top > row ? area.grid.bottom + 5 : current_full_top + row ),
 					bottom_wrap = _.max(ed.wraps, function(each){
 						if ( each.region != region_name )
@@ -2646,7 +2651,8 @@ var GridEditor = {
 				ed.start(view, model);
 				ed.normalize(ed.els, ed.wraps);
 				ed.update_position_data();
-				var $helper = $('.ui-draggable-dragging'),
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					$helper = $('.ui-draggable-dragging'),
 					$wrap = $me.closest('.upfront-wrapper'),
 					$region = $me.closest('.upfront-region'),
 					me = ed.get_el($me),
@@ -2654,7 +2660,8 @@ var GridEditor = {
 					me_offset = $me.offset(),
 					max_height = ed.max_row*ed.baseline,
 					draggable = $(this).data('ui-draggable'),
-					cursor_top = e.pageY - me_offset.top;
+					cursor_top = e.pageY - me_offset.top,
+					drop_areas = false;
 
 				// hack the cursor position
 				if ( cursor_top > max_height/2 ) {
@@ -2670,8 +2677,14 @@ var GridEditor = {
 				$helper.css('height', me.height);
 				$helper.css('max-height', max_height);
 				$helper.css('margin-left', $me.css('margin-left')); // fix error with the percentage margin applied
+				
+				if ( is_parent_group )
+					drop_areas = [ ed.get_el(view.group_view.$el) ];
+				else if ( breakpoint && !breakpoint.default )
+					drop_areas = [ ed.get_region($region) ];
+				
 
-				ed.create_drop_point(me, wrap, is_parent_group ? [ ed.get_el(view.group_view.$el) ] : false);
+				ed.create_drop_point(me, wrap, drop_areas);
 
 				$wrap.css('min-height', '1px');
 
@@ -3033,6 +3046,9 @@ var GridEditor = {
 						move_limit = ed.get_move_limit(aff_els, ed.containment),
 						bottom_limit = (ed.drop.priority ? ed.drop.priority.top : ed.drop.top)+drop_top+me.row-1,
 						recalc_margin_x = false;
+						
+					if ( breakpoint && !breakpoint.default )
+						adjust_bottom = false;
 
 					if ( ed.drop.is_me ){
 						if ( margin_data.current.left != drop_left ){
@@ -3192,9 +3208,23 @@ var GridEditor = {
 						var orders = [],
 							index = 0,
 							is_drop_wrapper = ( ed.drop.type != 'inside' ),
+							$els = $container.find( is_drop_wrapper ? '> .upfront-wrapper' : '.upfront-module' ).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
+							inside_length = !is_drop_wrapper ? $me.closest('.upfront-wrapper').find('.upfront-module').length : 0,
 							insert_index = false;
-						  $container.find( is_drop_wrapper ? '> .upfront-wrapper' : '.upfront-module' ).sort(Upfront.Util.sort_elements_cb).each(function(){
+						if ( !ed.drop.is_me && ed.drop.insert[0] == 'append' && is_drop_wrapper ) {
+							insert_index = $els.length-1;
+						}
+						$els.each(function(){
 							var each_el = is_drop_wrapper ? ed.get_wrap($(this)) : ed.get_el($(this));
+							if ( insert_index === index )
+								index++;
+							if ( !ed.drop.is_me && ed.drop.insert[0] == 'append' ) {
+								if ( !is_drop_wrapper && insert_index === false && $(this).closest('.upfront-wrapper').get(0) == ed.drop.insert[1].get(0) ){
+									insert_index = index + inside_length - 1;
+								}
+								if ( ( is_drop_wrapper && $wrap.get(0) == this ) || ( !is_drop_wrapper && $me.get(0) == this ) )
+									index--;
+							}
 							if ( !ed.drop.is_me && ed.drop.insert[1].get(0) == this ){
 								if ( ed.drop.insert[0] == 'before' ){
 									insert_index = index;

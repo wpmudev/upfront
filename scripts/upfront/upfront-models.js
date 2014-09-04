@@ -145,6 +145,30 @@ var _alpha = "alpha",
 		is_visible: function () {
 			return this.get_property_value_by_name("visibility");
 		},
+		get_breakpoint_property_value: function (property, return_default) {
+			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+			if ( !breakpoint || breakpoint.default )
+				return this.get_property_value_by_name(property);
+			var data = this.get_property_value_by_name('breakpoint');
+			if ( _.isObject(data) && _.isObject(data[breakpoint.id]) && data[breakpoint.id][property] )
+				return data[breakpoint.id][property];
+			if ( return_default )
+				return this.get_property_value_by_name(property);
+			return false;
+		},
+		set_breakpoint_property: function (property, value) {
+			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+			if ( !breakpoint || breakpoint.default ) {
+				this.set_property(property, value);
+			}
+			else {
+				var data = Upfront.Util.clone(this.get_property_value_by_name('breakpoint') || {});
+				if ( !_.isObject(data[breakpoint.id]) )
+					data[breakpoint.id] = {};
+				data[breakpoint.id][property] = value;
+				this.model.set_property('breakpoint', data);
+			}
+		},
 		add_to: function (collection, index, options) {
 			var me = this,
 				models = [],

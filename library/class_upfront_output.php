@@ -412,8 +412,18 @@ abstract class Upfront_Container extends Upfront_Entity {
 					$theme_style = upfront_get_property_value('theme_style', $child);
 					if($theme_style)
 						$theme_style = strtolower($theme_style);
+					$breakpoint = upfront_get_property_value('breakpoint', $child);
+					$theme_styles = array( 'default' => $theme_style );
+					$theme_styles_attr = '';
+					if ( $breakpoint ) {
+						foreach ( $breakpoint as $id => $props ){
+							if ( !empty($props['theme_style']) )
+								$theme_styles[$id] = strtolower($props['theme_style']);
+						}
+						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
+					}
 					$slug = upfront_get_property_value('id_slug', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . upfront_get_property_value('class', $child) . '" id="' . upfront_get_property_value('element_id', $child) . '">' . $child_view->get_markup() . '</div>';
+					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . upfront_get_property_value('class', $child) . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
 				}
 				else
 					$html .= $child_view->get_markup();

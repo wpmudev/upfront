@@ -131,12 +131,16 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		cssSelectors: {
 			'.ufm-gmap-container': {label: l10n.css.label, info: l10n.css.info}
 		},
+		
+		init: function () {
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.refresh_map);
+		},
 
 		on_render: function () {
 			this.update_properties();
 			var me = this,
 				$el = this.$el.find('.ufm-gmap-container:first'),
-				height = (this.model.get_property_value_by_name("row") ? this.model.get_property_value_by_name("row") : this.parent_module_view.model.get_property_value_by_name("row")),
+				height = (this.model.get_breakpoint_property_value("row", true) ? this.model.get_breakpoint_property_value("row", true) : this.parent_module_view.model.get_breakpoint_property_value("row", true)),
 				controls = this.model.get_property_value_by_name("controls") || [],
 				props = {
 					center: this.model.get_property_value_by_name("map_center") || DEFAULTS.center,
@@ -196,6 +200,16 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			} else {
 				$el.html("<p class='upfront-util-icon'>" + l10n.connectivity_warning + "</p>");
 			}
+		},
+		
+		refresh_map: function () {
+			var $el = this.$el.find('.ufm-gmap-container:first'),
+				height = (this.model.get_breakpoint_property_value("row", true) ? this.model.get_breakpoint_property_value("row", true) : this.parent_module_view.model.get_breakpoint_property_value("row", true));
+			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : DEFAULTS.OPTIMUM_MAP_HEIGHT;
+			$el.css({
+				'height': height + 'px'
+			});
+			google.maps.event.trigger(this.map, 'resize');
 		},
 
 		add_location_overlay: function () {
