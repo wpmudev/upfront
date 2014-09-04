@@ -2,16 +2,16 @@
 
 abstract class Upfront_Media {
 
-	const MIME_TYPE_IMAGES = 'image/jpeg,image/png,image/gif';
-	const MIME_TYPE_AUDIOS = 'audio/mpeg';
+    const MIME_TYPE_IMAGES = 'image/jpeg,image/png,image/gif';
+    const MIME_TYPE_AUDIOS = 'audio/mpeg';
     const MIME_TYPE_VIDEOS = 'video/mp4';
     const MIME_TYPE_OTHER = ':other:';
 
-	public function to_json () {
-		return json_encode($this->to_php());
-	}
+    public function to_json () {
+        return json_encode($this->to_php());
+    }
 
-	abstract public function to_php();
+    abstract public function to_php();
 
 }
 
@@ -65,49 +65,49 @@ class Upfront_Oembed {
 
 class Upfront_MediaCollection extends Upfront_Media {
 
-	private $_args = array(
-		'post_type' => 'attachment',
-		'post_status' => 'any', // Required for attachment
-		'posts_per_page' => 16, // Paginate at most LIMIT items
-	);
-	private $_query = array();
+    private $_args = array(
+        'post_type' => 'attachment',
+        'post_status' => 'any', // Required for attachment
+        'posts_per_page' => 16, // Paginate at most LIMIT items
+    );
+    private $_query = array();
 
-	private function __construct () {}
+    private function __construct () {}
 
-	private function _spawn () {
-		$this->_query = new WP_Query(
-			apply_filters('upfront-media-query', $this->_args)
-		);
-	}
+    private function _spawn () {
+        $this->_query = new WP_Query(
+            apply_filters('upfront-media-query', $this->_args)
+        );
+    }
 
-	public function to_collection () {
-		if ($this->is_empty()) return array();
-		$ret = array();
-		foreach ($this->_query->posts as $post) {
-			$ret[] = new Upfront_MediaItem($post);
-		}
-		return $ret;
-	}
+    public function to_collection () {
+        if ($this->is_empty()) return array();
+        $ret = array();
+        foreach ($this->_query->posts as $post) {
+            $ret[] = new Upfront_MediaItem($post);
+        }
+        return $ret;
+    }
 
-	public function to_php () {
-		$collection = $this->to_collection();
-		$ret = array();
-		foreach ($collection as $item) {
-			$ret[] = $item->to_php();
-		}
+    public function to_php () {
+        $collection = $this->to_collection();
+        $ret = array();
+        foreach ($collection as $item) {
+            $ret[] = $item->to_php();
+        }
         $meta = array(
             "max_pages" => $this->_query->max_num_pages + 1,
             "max_items" => (int)$this->_query->found_posts,
         );
-		return array(
+        return array(
             'items' => $ret,
             'meta' => $meta,
         );
-	}
+    }
 
-	public function is_empty () {
-		return empty($this->_query) || empty($this->_query->posts);
-	}
+    public function is_empty () {
+        return empty($this->_query) || empty($this->_query->posts);
+    }
 
     private function _set_type_arguments ($types) {
         $mimes = array();
@@ -241,13 +241,13 @@ class Upfront_MediaCollection extends Upfront_Media {
 
 class Upfront_MediaItem extends Upfront_Media {
 
-	private $_post;
+    private $_post;
 
-	public function __construct ($post) {
-		$this->_post = $post;
-	}
+    public function __construct ($post) {
+        $this->_post = $post;
+    }
 
-	public function to_php () {
+    public function to_php () {
         $label_objs = wp_get_object_terms($this->_post->ID, 'media_label');
         $labels = array();
         foreach ($label_objs as $label) {
@@ -269,10 +269,10 @@ class Upfront_MediaItem extends Upfront_Media {
             );
         }
         $image_data = wp_get_attachment_image_src($this->_post->ID, 'full');
-		return array(
-			'ID' => $this->_post->ID,
-			'post_title' => $this->_post->post_title,
-			'thumbnail' => wp_get_attachment_image($this->_post->ID, array(103, 75), true),
+        return array(
+            'ID' => $this->_post->ID,
+            'post_title' => $this->_post->post_title,
+            'thumbnail' => wp_get_attachment_image($this->_post->ID, array(103, 75), true),
             'parent' => $this->_post->post_parent ? get_the_title($this->_post->post_parent) : false,
             'post_content' => $this->_post->post_content ? $this->_post->post_content : false,
             'post_excerpt' => $this->_post->post_excerpt ? $this->_post->post_excerpt : false,
@@ -286,18 +286,18 @@ class Upfront_MediaItem extends Upfront_Media {
                 "resized" => $image_data[3],
             ),
             'additional_sizes' => $sizes,
-		);
-	}
+        );
+    }
 }
 
 class Upfront_MediaServer extends Upfront_Server {
 
-	public static function serve () {
-		$me = new self;
-		$me->_add_hooks();
-	}
+    public static function serve () {
+        $me = new self;
+        $me->_add_hooks();
+    }
 
-	private function _add_hooks () {
+    private function _add_hooks () {
         $this->augment_attachments();
 
         add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
@@ -372,7 +372,7 @@ class Upfront_MediaServer extends Upfront_Server {
             'media_url' => __('URL of the media', 'upfront'),
             'image_title' => __('Image Title', 'upfront'),
             'your_image_title' => __('Your image title', 'upfront'),
-            'entity_list_info' => __('{{items}} Media Files, {{pages}} pages', 'upfront'),
+            'entity_list_info' => __('{{items}} Media Files', 'upfront'),
             'filter' => array(
                 'images' => __('Images', 'upfront'),
                 'videos' => __('Videos', 'upfront'),
@@ -614,26 +614,26 @@ class Upfront_MediaServer extends Upfront_Server {
         }
     }
 
-	public function get_embed_raw () {
+    public function get_embed_raw () {
         $data = stripslashes_deep($_POST);
         $media = !empty($data['media']) ? $data['media'] : false;
         if (!$media) $this->_out(new Upfront_JsonResponse_Error("Invalid media"));
 
-		$oembed = new Upfront_Oembed($media);
-		$oembed_data = $oembed->get_info();
-	    if (!empty($oembed_data)) {
-	        $this->_out(new Upfront_JsonResponse_Success($oembed_data));
-	    } else $this->_out(new Upfront_JsonResponse_Error("Not an image file or embeddable item"));
+        $oembed = new Upfront_Oembed($media);
+        $oembed_data = $oembed->get_info();
+        if (!empty($oembed_data)) {
+            $this->_out(new Upfront_JsonResponse_Success($oembed_data));
+        } else $this->_out(new Upfront_JsonResponse_Error("Not an image file or embeddable item"));
 
-	}
+    }
 
-	public function list_media () {
+    public function list_media () {
         $data = stripslashes_deep($_POST);
-		$data['type'] = !empty($data['type']) ? $data['type'] : array('images');
-		$query = Upfront_MediaCollection::apply_filters($data);
-		if (!$query->is_empty()) $this->_out(new Upfront_JsonResponse_Success($query->to_php()));
-		else $this->_out(new Upfront_JsonResponse_Error("No items"));
-	}
+        $data['type'] = !empty($data['type']) ? $data['type'] : array('images');
+        $query = Upfront_MediaCollection::apply_filters($data);
+        if (!$query->is_empty()) $this->_out(new Upfront_JsonResponse_Success($query->to_php()));
+        else $this->_out(new Upfront_JsonResponse_Error("No items"));
+    }
 
     public function list_theme_images () {
         $images = array();
@@ -733,60 +733,60 @@ class Upfront_MediaServer extends Upfront_Server {
         $this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
     }
 
-	public function update_media_item () {
-		$request = stripslashes_deep($_POST);
-		$data = !empty($request['data']) ? $request['data'] : false;
-		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Invalid request"));
+    public function update_media_item () {
+        $request = stripslashes_deep($_POST);
+        $data = !empty($request['data']) ? $request['data'] : false;
+        if (!$data) $this->_out(new Upfront_JsonResponse_Error("Invalid request"));
 
-		$id = !empty($data['ID']) ? $data['ID'] : false;
-		if (!$id) $this->_out(new Upfront_JsonResponse_Error("Invalid item ID"));
+        $id = !empty($data['ID']) ? $data['ID'] : false;
+        if (!$id) $this->_out(new Upfront_JsonResponse_Error("Invalid item ID"));
 
-		$updated = wp_update_post($data);
-		if (!empty($updated)) $this->_out(new Upfront_JsonResponse_Success($updated));
-		else $this->_out(new Upfront_JsonResponse_Error("Error updating the media item"));
-	}
+        $updated = wp_update_post($data);
+        if (!empty($updated)) $this->_out(new Upfront_JsonResponse_Success($updated));
+        else $this->_out(new Upfront_JsonResponse_Error("Error updating the media item"));
+    }
 
-	public function upload_media () {
-		$upload = new Upfront_UploadHandler;
-		$result = $upload->handle();
-		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
+    public function upload_media () {
+        $upload = new Upfront_UploadHandler;
+        $result = $upload->handle();
+        if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
 
-		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
-		$wp_upload_dir = wp_upload_dir();
-		$pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
-		$new_ids = array();
-		foreach ($result['media'] as $media) {
-				if (!empty($media->error)) {
-						// We have an error happening!
-						@unlink("{$pfx}{$filename}");
-						$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
-				}
-				$filename = $media->name;
-				$wp_filetype = wp_check_filetype(basename($filename), null);
-				$attachment = array(
-						'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
-						'post_mime_type' => $wp_filetype['type'],
-						'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
-						'post_content' => '',
-						'post_status' => 'inherit'
-				);
-				$attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
-				$attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
-				wp_update_attachment_metadata( $attach_id, $attach_data );
-				$new_ids[] = $attach_id;
-		}
-		$this->_out(new Upfront_JsonResponse_Success($new_ids));
-	}
+        if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
+        $wp_upload_dir = wp_upload_dir();
+        $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
+        $new_ids = array();
+        foreach ($result['media'] as $media) {
+                if (!empty($media->error)) {
+                        // We have an error happening!
+                        @unlink("{$pfx}{$filename}");
+                        $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
+                }
+                $filename = $media->name;
+                $wp_filetype = wp_check_filetype(basename($filename), null);
+                $attachment = array(
+                        'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
+                        'post_mime_type' => $wp_filetype['type'],
+                        'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+                        'post_content' => '',
+                        'post_status' => 'inherit'
+                );
+                $attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
+                $attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
+                wp_update_attachment_metadata( $attach_id, $attach_data );
+                $new_ids[] = $attach_id;
+        }
+        $this->_out(new Upfront_JsonResponse_Success($new_ids));
+    }
 }
 //Upfront_MediaServer::serve();
 add_action('init', array('Upfront_MediaServer', 'serve'));
 
 function upfront_media_file_upload () {
     if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this
-	$base_url = Upfront::get_root_url();
-	wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
-	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
-	echo '<script>var _upfront_media_upload="' . admin_url('admin-ajax.php?action=upfront-media-upload') . '";</script>';
+    $base_url = Upfront::get_root_url();
+    wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
+    wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
+    echo '<script>var _upfront_media_upload="' . admin_url('admin-ajax.php?action=upfront-media-upload') . '";</script>';
 }
 add_action('wp_head', 'upfront_media_file_upload', 99);
 
