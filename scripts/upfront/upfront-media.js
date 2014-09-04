@@ -870,13 +870,20 @@ define(function() {
 				click: "stop_prop",
 				"keyup :text.filter": "show_matching_labels"
 			},
-			stop_prop: function (e) { e.stopPropagation(); },
+			stop_prop: function (e) { 
+				e.stopPropagation(); 
+				this.$el.addClass("active");
+			},
+			update_state: function (e) {
+				this.$el.removeClass("active");	
+			},
 			render: function () {
 				var me = this,
 					sel = this.selection || ''
 				;
 				this.$el
 					.empty()
+					.append('<div class="title">' + 'Please, select labels...' + '</div>')
 					.append('<input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" />')
 					.append('<div class="labels_list"><ul></ul></div>')
 				;
@@ -892,6 +899,7 @@ define(function() {
 					var item = new Media_FilterSelection_AdditiveMultiselection_Item({model: model});
 					item.selection = me.selection;
 					item.render();
+					model.on("change:state", me.update_state, me);
 					$hub.append(item.$el);
 				});
 			},

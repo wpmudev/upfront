@@ -4024,13 +4024,15 @@ define([
 		events: {
 			'change select': 'on_change'
 		},
+		multiple: false,
 		get_field_html: function() {
-			return ['<select class="upfront-chosen-select">', this.get_values_html(), '</select>'].join('');
+			var multiple = this.multiple ? 'multiple' : '';
+			return ['<select class="upfront-chosen-select"' , multiple,  '>', this.get_values_html(), '</select>'].join('');
 		},
 		get_value_html: function (value, index) {
 			var selected = '';
 			if (value.value === this.options.default_value) selected = ' selected="selected"';
-			return ['<option value="', value.value, '"', selected, '>', value.value, '</option>'].join('');
+			return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 		},
 		on_change: function(event) {
 			this.trigger('changed');
@@ -9796,6 +9798,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Textarea": Field_Textarea,
 				"Color": Field_Color,
 				"Multiple_Suggest": Field_Multiple_Suggest,
+				"Chosen_Select": Field_Chosen_Select,
 				"Number": Field_Number,
 				"Slider": Field_Slider,
 				"Select": Field_Select,
