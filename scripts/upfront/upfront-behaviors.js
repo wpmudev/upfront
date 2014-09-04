@@ -2241,11 +2241,13 @@ var GridEditor = {
 					maxWidth: me.width,
 					position: 'absolute'
 				})
-				if ( axis == 'nw' )
+				if ( axis == 'nw' ) {
 					$resize.css({
-						bottom: $('body').height() - me.position.bottom + ed.baseline,
+						top: me.position.top,
+//						bottom: $('body').height() - me.position.bottom + ed.baseline,
 						right: $('body').width() - me.position.right
 					});
+				}
 				else
 					$resize.css({
 						top: me.position.top,
@@ -2321,8 +2323,14 @@ var GridEditor = {
 					height: rsz_row*ed.baseline,
 					width: rsz_col*ed.col_size,
 					minWidth: rsz_col*ed.col_size,
-					maxWidth: rsz_col*ed.col_size
+					maxWidth: rsz_col*ed.col_size,	
 				});
+				if(axis == 'nw') {
+					$resize.css({
+						top: me.$el.find('.upfront-resize-handle-nw').offset().top,
+						marginTop: me.$el.find('.upfront-resize-handle-se').offset().top+me.$el.find('.upfront-resize-handle-se').height()-me.$el.find('.upfront-resize-handle-nw').offset().top-rsz_row*ed.baseline
+					});
+				}
 				if ( !expand_lock && axis != 'nw' )
 					$resize_placeholder.css('height', rsz_row*ed.baseline);
 			},
