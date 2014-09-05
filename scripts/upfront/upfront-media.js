@@ -2137,7 +2137,7 @@ define(function() {
 				me.popup_data.$top = $top;
 				me.popup_data.$bottom = $bottom;
 				me.load(options);
-			}, {width: 800});
+			}, {width: 800}, 'media-manager');
 
 			popup.always(this.cleanup_active_filters);
 			popup.progress(this.clean_up);

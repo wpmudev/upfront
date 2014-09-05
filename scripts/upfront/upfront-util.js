@@ -464,8 +464,9 @@ define(function() {
 			this.$popup.find("#upfront-popup-content").empty();
 		},
 
-		open: function (callback, data) {
+		open: function (callback, data, classname) {
 				data = data || {};
+				classname = classname || 'default-popup';
 				this.init();
 				var me = this,
 						sidebarWidth = $('#sidebar-ui').width(),
@@ -473,30 +474,38 @@ define(function() {
 						width = data.width || 630,
 						left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
 						height = ($win.height() / 3) * 2,
-						close_func = function () { me.close(); return false; }
+						close_func = function () { 
+							$("#upfront-popup").attr('class', 'upfront-ui');
+							me.close(); 
+							return false; 
+						}
 				;
 
-				data.width = width, data.height = height;
+				// data.width = width, data.height = height;
 				this.$background
-					.css({
-						'height': $win.height(),
-						'width': $win.width() - sidebarWidth,
-						'left': sidebarWidth
-					})
+					// .css({
+					// 	'height': $win.height(),
+					// 	'width': $win.width() - sidebarWidth,
+					// 	'left': sidebarWidth
+					// })
 					.on("click", close_func)
 					.show()
 				;
 				this.$popup
-					.css({
-						'width': width,
-						'height': height,
-						'left': sidebarWidth
-					})
+					// .css({
+					// 	'width': width,
+					// 	'height': height,
+					// 	'left': sidebarWidth
+					// })
 					.show()
 					.find("#upfront-popup-close").on("click", close_func).end()
 				;
-				$('body').addClass('upfront-popup-open');
+				if ( classname ) { 
+					this.$popup.addClass( classname );  
+				}
 
+				$('body').addClass('upfront-popup-open');
+				/* 
 				$win.off("resize.upfront-popup").on("resize.upfront-popup", function () {
 						if (me.$background.is(":visible")) {
 							me.$background
@@ -520,6 +529,7 @@ define(function() {
 							;
 						}
 				});
+			*/
 
 				callback.apply(this.$popup.find("#upfront-popup-content").get(), [data, this.$popup.find("#upfront-popup-top"), this.$popup.find("#upfront-popup-bottom")]);
 				this._deferred = new $.Deferred();
@@ -530,7 +540,7 @@ define(function() {
 			this._deferred.notify('before_close');
 
 			this.$background.hide();
-			this.$popup.hide().css('height', 'auto').find("#upfront-popup-content").empty();
+			this.$popup.hide().find("#upfront-popup-content").empty();
 
 			this.$popup.find("#upfront-popup-top").empty();
 			this.$popup.find("#upfront-popup-bottom").empty();

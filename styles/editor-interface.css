@@ -5398,6 +5398,8 @@ i.upfront-field-icon-burger-trigger {
 /* Popup */
 #upfront-popup-background {
 	position: fixed;
+	width: 100%;
+	height:100%;
 	top: 0;
 	left: 0;
 	background: #263a4d;
@@ -6798,12 +6800,43 @@ a.upfront-post-layout-trigger:before{
     margin: 0 0 30px;
 }
 
+/* DEFAULT POPUP STYLING
+
+	 This styling will be applied if user does not pass 
+	 'classname' parameter when calling 
+	 Upfront.Popup.open( callback, data, classname )
+*/
+
+#upfront-popup.default-popup {
+	margin-top:120px;
+	max-width: 630px;
+	height:500px;
+}
+
+
 /* ----- Media manager ----- */
+#upfront-popup.media-manager {
+	margin-top:100px;
+	max-width:800px;
+	height: 760px;
+}
+
 .upfront-media_manager {
 	position: relative;
-	min-height: 550px;
+	min-height: 670px;
 	overflow: none;
 }
+
+@media screen and ( max-height: 880px ){
+		#upfront-popup.media-manager {
+			margin-top:50px;
+			height: 550px;
+		}
+    .upfront-media_manager { 
+    	min-height: 460px;
+    }
+}
+
 .upfront-media_manager ul, .upfront-media_manager li {
 	list-style: none;
 }
