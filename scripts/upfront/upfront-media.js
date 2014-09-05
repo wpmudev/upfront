@@ -465,6 +465,10 @@ define(function() {
 				$hub.empty().append(this.templates.caption({title: l10n.add_labels}));
 				container.render();
 				$hub.append(container.$el);
+				this.$el.on("click", function (e) {
+					e.stopPropagation();
+					container.trigger("filters:selection:click");
+				});
 			},
 			render_shared_labels: function () {
 				var me = this,
@@ -558,16 +562,26 @@ define(function() {
 		});
 
 			var MediaManager_ItemControl_LabelsContainer = Backbone.View.extend({
-				className: "upfront-additive_multiselection active",
+				className: "upfront-additive_multiselection",
 				selection: '',
 				events: {
 					"click :text": "stop_prop",
+					"click .title": "show_labels",
 					"keyup .search_labels :text": "update_selection",
 					"click .add_labels a": "add_new_labels"
 				},
 				stop_prop: function (e) { e.stopPropagation(); },
+				show_labels: function (e) {
+					e.stopPropagation();
+					e.preventDefault();
+					this.$el.addClass("active");
+				},
+				hide_labels: function (e) {
+					this.$el.removeClass("active");
+				},
 				render: function () {
 					this.$el.empty()
+						.append('<div class="title">' + 'Please, select labels...' + '</div>')
 						.append('<div class="search_labels" />')
 						.append('<div class="labels_list"><ul></ul></div>')
 						.append('<div class="add_labels" />')
@@ -575,6 +589,9 @@ define(function() {
 					this.render_search();
 					this.render_labels();
 					this.render_addition();
+					this.on("filters:selection:click", function () {
+						this.hide_labels();
+					}, this);
 				},
 				render_search: function () {
 					var $hub = this.$el.find(".search_labels");

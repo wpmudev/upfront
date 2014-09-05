@@ -1593,7 +1593,13 @@ input.upfront-field-text:hover,
     width: 100%;
 }
 .add_labels .upfront-additive_multiselection {
-	padding: 4px;
+	padding-bottom: 2px;
+}
+.add_labels .upfront-field-label {
+	margin-top: .6em;
+}
+.add_labels .upfront-additive_multiselection .add_labels {
+	border: none;
 }
 .upfront-additive_multiselection .title {
     padding: 1px 30px 1px 10px;
