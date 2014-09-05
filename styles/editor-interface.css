@@ -6795,6 +6795,8 @@ a.upfront-post-layout-trigger:before{
 /* ----- Media manager ----- */
 .upfront-media_manager {
 	position: relative;
+	min-height: 550px;
+	overflow: none;
 }
 .upfront-media_manager ul, .upfront-media_manager li {
 	list-style: none;
@@ -6932,7 +6934,7 @@ a.upfront-post-layout-trigger:before{
 	margin: 0;
 	padding: 7px 15px 0 15px;
 	overflow-x: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 .upfront-media_manager .upfront-media-controls {
 	width: 30%;
@@ -6952,7 +6954,7 @@ a.upfront-post-layout-trigger:before{
 	right: 0;
 	padding: 15px;
 	overflow-x: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 .upfront-media_manager .upfront-media-controls-search-selected .upfront-item-control {
 	top: 83px;

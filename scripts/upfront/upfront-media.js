@@ -1189,9 +1189,9 @@ define(function() {
 			this.load();
 			this.embed_view.model.clear({silent:true});
 			this.library_view.render();
-			this.library_view.$el.css({
-				'height': this.popup_data.height - 88
-			});
+			// this.library_view.$el.css({
+			// 	'height': this.popup_data.height - 88
+			// });
 			this.$el.empty().append(this.library_view.$el);
 			if (arguments.length) {
 				var sel = arguments[0], me = this;
