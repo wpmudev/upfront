@@ -1198,11 +1198,11 @@ class Upfront_Theme_Settings
 	}
 
 	public function get($name) {
-		return isset($this->settings[$name]) ? $this->settings[$name] : null;
+		return isset($this->settings[$name]) ? stripslashes($this->settings[$name]) : null;
 	}
 
 	public function set($name, $value) {
-		$this->settings[$name] = $value;
+		$this->settings[$name] = addslashes($value);
 		$this->save();
 	}
 
