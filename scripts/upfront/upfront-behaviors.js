@@ -674,7 +674,7 @@ var LayoutEditor = {
 				layout = 'single-page-' + specific_layout.replace(/\s/g, '-').toLowerCase();
 				data = {
 					layout: {
-						'type': 'single', 
+						'type': 'single',
 						'item': 'single-page',
 						'specificity': layout
 					}
@@ -995,7 +995,7 @@ var LayoutEditor = {
 
 		properties = _.extend({}, Upfront.Util.model_to_json(Upfront.Application.current_subapplication.get_layout_data().properties));
 		properties = _.reject(properties, function(property) {
-			return property.name === 'typography' || property.name === 'layout_style';
+			return _.contains(['typography', 'layout_style', 'global_regions'], property.name);
 		});
 
 
@@ -1531,7 +1531,7 @@ var GridEditor = {
 			var $el = $(this),
 				margin = $el.data('margin'),
 				classes, data;
-			if ( 
+			if (
 				( margin && ( margin.original.left != margin.current.left || margin.original.top != margin.current.top ) ) ||
 				more_classes
 			){
@@ -1826,7 +1826,7 @@ var GridEditor = {
 		areas = areas ? areas : (lightbox ? [lightbox, shadowregion] : ed.regions);
 
 		ed.drops = [];
-		
+
 		var module_selector = '> .upfront-module-view > .upfront-module, > .upfront-module-group',
 			$sibling_els = me.$el.closest('.upfront-wrapper').find(module_selector).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
 			has_siblings = $sibling_els.length > 1,
@@ -2051,11 +2051,11 @@ var GridEditor = {
 					}
 				}
 			});
-			
+
 			// Don't add another droppable if this is not the first el from wrapper, only on responsive
 			if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 )
 				return;
-				
+
 			if ( $wraps.size() > 0 ) {
 				var last_wrap = ed.get_wrap($wraps.last()),
 					last_wrap_clr = ( last_wrap && last_wrap.grid.left == area.grid.left ),
@@ -2323,7 +2323,7 @@ var GridEditor = {
 					height: rsz_row*ed.baseline,
 					width: rsz_col*ed.col_size,
 					minWidth: rsz_col*ed.col_size,
-					maxWidth: rsz_col*ed.col_size,	
+					maxWidth: rsz_col*ed.col_size,
 				});
 				if(axis == 'nw') {
 					$resize.css({
@@ -2685,12 +2685,12 @@ var GridEditor = {
 				$helper.css('height', me.height);
 				$helper.css('max-height', max_height);
 				$helper.css('margin-left', $me.css('margin-left')); // fix error with the percentage margin applied
-				
+
 				if ( is_parent_group )
 					drop_areas = [ ed.get_el(view.group_view.$el) ];
 				else if ( breakpoint && !breakpoint.default )
 					drop_areas = [ ed.get_region($region) ];
-				
+
 
 				ed.create_drop_point(me, wrap, drop_areas);
 
@@ -3054,7 +3054,7 @@ var GridEditor = {
 						move_limit = ed.get_move_limit(aff_els, ed.containment),
 						bottom_limit = (ed.drop.priority ? ed.drop.priority.top : ed.drop.top)+drop_top+me.row-1,
 						recalc_margin_x = false;
-						
+
 					if ( breakpoint && !breakpoint.default )
 						adjust_bottom = false;
 
@@ -3179,7 +3179,7 @@ var GridEditor = {
 						'z-index': '',
 						'visibility': 'visible'
 					});
-					
+
 					// Update model value
 					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).not($me) );
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
