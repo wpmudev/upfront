@@ -686,6 +686,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 						new Upfront.Views.Editor.Field.Select({
 							model: this.model,
 							label: l10n.map_controls,
+							placeholder: "Choose map controls",
 							property: 'controls',
 							multiple: true,
 							values: controls,

@@ -3956,7 +3956,7 @@ define([
 			this.trigger('rendered');
 		},
 		update_select_display_value: function() {
-			var select_label = ( this.options.select_label ) ? this.options.select_label : '';
+			var select_label = ( this.options.select_label ) ? this.options.select_label : ( this.options.placeholder ? this.options.placeholder : '' );
 			var $select_value = this.$el.find('.upfront-field-select-value');
 			var $checked = this.$el.find('.upfront-field-select-option input:checked');
 			if ( $checked.size() == 1 && !this.multiple ) {
@@ -8051,6 +8051,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					controls: new Field_Select({
 						model: this.model,
 						label: "Controls:",
+						placeholder: "Choose map controls",
 						property: 'background_map_controls',
 						multiple: true,
 						default_value: ["pan"],
