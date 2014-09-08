@@ -3914,27 +3914,30 @@ define([
 			if ( this.label )
 				this.$el.append(this.get_label_html());
 			this.$el.append(this.get_field_html());
-			if ( !this.multiple ) {
+			//if ( !this.multiple ) {
 				this.$el.on('click', '.upfront-field-select-value', function(e){
 					e.stopPropagation();
 					if ( me.options.disabled )
 						return;
 					$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
+					me.$el.find('.upfront-field-select').css('min-width', '').css('min-width', me.$el.find('.upfront-field-select').width());
 					me.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
 				});
-				this.$el.on('click', '.upfront-field-select-option label', function(e){
-					e.stopPropagation();
-					if ( $(this).closest('.upfront-field-select-option').hasClass('upfront-field-select-option-disabled') )
-						return;
-					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
-				});
+				if ( !this.multiple ) {
+					this.$el.on('click', '.upfront-field-select-option label', function(e){
+						e.stopPropagation();
+						if ( $(this).closest('.upfront-field-select-option').hasClass('upfront-field-select-option-disabled') )
+							return;
+						me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
+					});
+				}
 				this.$el.on('mouseup', '.upfront-field-select', function(e){
 					e.stopPropagation();
 				});
 				$('body').on('mouseup', function(){
 					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
 				});
-			}
+			//}
 			this.$el.on('change', '.upfront-field-select-option input', function() {
 				me.update_select_display_value();
 				me.trigger('changed');
@@ -8565,7 +8568,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		run_animation: function (view, model) {
 			var to = this.options.to,
 				ani_class = 'upfront-add-region-ani upfront-add-region-ani-' + to,
-				end_t = setTimeout(end, 2000);
+				end_t = setTimeout(end, 500);
+			view.$el.one('animationstart webkitAnimationStart MSAnimationStart oAnimationStart', function () {
+				clearTimeout(end_t);
+			});
+			view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+				end();
+			});
 			// add animation class to trigger css animation
 			view.$el.addClass(ani_class);
 			// scroll if needed
@@ -8583,10 +8592,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				if ( scroll_to !== false )
 					$('html,body').animate( {scrollTop: scroll_to}, 600 );
 			}
-			view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
-				end();
-				clearTimeout(end_t);
-			});
 			function end () {
 				var baseline = Upfront.Settings.LayoutEditor.Grid.baseline,
 					height = view.$el.outerHeight();

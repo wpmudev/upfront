@@ -32,7 +32,8 @@
         this.model.get("properties").bind("remove", this.render, this);
 
         Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-
+        
+		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.onResizeStop);
 
       },
       setType: function(e) {
