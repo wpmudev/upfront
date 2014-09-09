@@ -9323,10 +9323,10 @@ only screen and (                min-resolution: 2dppx) {
 */
 body .redactor_toolbar li a.redactor_btn_html				{ background-position: 0px; }
 body .redactor_toolbar li a.redactor_btn_formatting		    { background-position: -25px; }
-body .redactor_toolbar li a.redactor_btn_bold				{ background-position: -510px -41px; }
-body .redactor_toolbar li a.redactor_btn_bold.redactor_act	{ background-position: -552px -41px; }
-body .redactor_toolbar li a.redactor_btn_italic			    { background-position: -594px -42px; }
-body .redactor_toolbar li a.redactor_btn_italic.redactor_act { background-position: -636px -42px }
+body .redactor_toolbar li a.re-bold				{ background-position: -510px -41px; }
+body .redactor_toolbar li a.re-bold.redactor_act	{ background-position: -552px -41px; }
+body .redactor_toolbar li a.re-italic			    { background-position: -594px -42px; }
+body .redactor_toolbar li a.re-italic.redactor_act { background-position: -636px -42px }
 body .redactor_toolbar li a.redactor_btn_deleted		 	{ background-position: -500px; }
 body .redactor_toolbar li a.redactor_btn_unorderedlist 	    { background-position: -100px; }
 body .redactor_toolbar li a.redactor_btn_orderedlist   	    { background-position: -125px; }
@@ -9392,7 +9392,7 @@ ul.redactor_toolbar li a.ueditor-right {
 	background-position: -594px -82px;
 }
 
-ul.redactor_toolbar li a.ueditor-nolist {
+ul.redactor_toolbar li a.re-stateLists{
 	background-position: -510px -124px;
 }
 
@@ -9522,20 +9522,22 @@ body .redactor_toolbar li a.redactor_btn_upfrontLink.redactor_act	{ background-p
 	padding: 0;
 }
 */
-a.ueditor-format-option {
+.redactor_dropdown_box_upfrontFormatting a {
 	color: #97b8da !important;
 	width: 38px;
 	line-height: 30px;
 	padding: 2px 0;
 	display: block;
 }
-
+.redactor_dropdown_box_upfrontFormatting a.active{
+	color: #40a6ff !important;
+}
 a.ueditor-format-pre{
 	font-size: 15px;
 	font-weight: bold;
 }
 
-.redactor_toolbar li a.redactor_btn_upfrontFormatting {
+.redactor_toolbar li a.re-upfrontFormatting {
 	text-indent: 0;
 	font-family: Georgia, serif;
 	color: #97b8da;
@@ -9543,7 +9545,9 @@ a.ueditor-format-pre{
 	line-height: 36px;
 	text-align: center;
 }
-
+.redactor_toolbar li a.re-upfrontFormatting:after{
+	content : "¶";
+}
 /* MODAL */
 /* 300 lines deleted here, not using modals */
 
@@ -12345,9 +12349,4 @@ div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfron
 	height: 50px;
 	margin: 20px 30px;
 	width: 50px;
-}
-
-/* hack to fix empty paragraphs collapsing on each other */
-.upfront-plain_txt p:after {
-  content:'\00a0';
 }
