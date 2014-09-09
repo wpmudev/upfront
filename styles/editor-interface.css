@@ -7702,8 +7702,8 @@ License: MIT
    width: 0;
 
 
-			transform:	rotate(-45deg);
-		-ms-transform: 	rotate(-45deg); /* IE 9 */
+					transform:	rotate(-45deg);
+			-ms-transform: 	rotate(-45deg); /* IE 9 */
 	-webkit-transform: 	rotate(-45deg); /* Safari and Chrome */
 
 	webkit-box-shadow: 	0px 0px 1px 1px #a2c5e4;
@@ -7726,8 +7726,8 @@ License: MIT
 	height: 12px;
 	position: absolute;
 	border-radius: 50%;
-	left: -7px;
-	top: -7px;
+	left: -6px;
+	top: -6px;
 }
 
 .sp-dragger:after {
@@ -7741,8 +7741,8 @@ License: MIT
 	border-right-color:inherit;
 	border-bottom-color:inherit;
 	border-left-color:inherit;
-	left: -35px;
-	top: -35px;
+	left: -28px;
+	top: -28px;
 	display:none;
 }
 
