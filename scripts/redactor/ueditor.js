@@ -197,7 +197,7 @@ var hackRedactor = function(){
 
 			$('.redactor_air').hide();
 
-			this.selectionRemoveMarkers();
+			// this.selectionRemoveMarkers();
 			this.selectionSave();
 
 			var width = this.airWidth || this.$air.width(),
@@ -246,8 +246,68 @@ var hackRedactor = function(){
 
 			this.airBindHide();
 			this.$air.trigger('show');
-		},
+		};
 
+	$.Redactor.prototype.dropdownShow = function(e, key)
+		{
+			if (!this.opts.visual)
+			{
+				e.preventDefault();
+				return false;
+			}
+
+			var $button = this.buttonGet(key);
+
+			// Always re-append it to the end of <body> so it always has the highest sub-z-index.
+			var $dropdown  = $button.data('dropdown').appendTo(document.body);
+
+			if ($button.hasClass('dropact')) this.dropdownHideAll();
+			else
+			{
+				this.dropdownHideAll();
+				this.callback('dropdownShow', { dropdown: $dropdown, key: key, button: $button });
+
+				this.buttonActive(key);
+				$button.addClass('dropact');
+
+				var keyPosition = $button.offset();
+
+				// fix right placement
+				var dropdownWidth = $dropdown.width();
+				if ((keyPosition.left + dropdownWidth) > $(document).width())
+				{
+					keyPosition.left -= dropdownWidth;
+				}
+
+				var left = keyPosition.left + 'px';
+				var btnHeight = $button.innerHeight();
+
+				var position = 'absolute';
+				var top = (btnHeight + this.opts.toolbarFixedTopOffset) + 'px';
+
+				if (this.opts.toolbarFixed && this.toolbarFixed) position = 'fixed';
+				else top = keyPosition.top + btnHeight + 'px';
+
+				$dropdown.css({ position: position, left: left, top: top }).show();
+				this.callback('dropdownShown', { dropdown: $dropdown, key: key, button: $button });
+			}
+
+
+			var hdlHideDropDown = $.proxy(function(e)
+			{
+				this.dropdownHide(e, $dropdown);
+
+			}, this);
+
+			$(document).one('click', hdlHideDropDown);
+			this.$editor.one('click', hdlHideDropDown);
+			this.$editor.one('touchstart', hdlHideDropDown);
+
+
+			e.stopPropagation();
+			this.focusWithSaveScroll();
+		this.$air.trigger('dropdownShown');
+	};
 	// Add possiblity to disable linebreak (for one line title)
 	$.Redactor.prototype.doInsertLineBreak = $.Redactor.prototype.insertLineBreak;
 	$.Redactor.prototype.insertLineBreak = function()
@@ -269,6 +329,9 @@ var hackRedactor = function(){
 		return this.isParentRedactor(el);
 	};
 */
+
+
+
 	hackedRedactor = true;
 
 	$.Redactor.prototype.events = UeditorEvents;
@@ -314,7 +377,7 @@ var Ueditor = function($el, options) {
 	;
 
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
-
+	this.options.dropdownShown = function () { UeditorEvents.trigger("ueditor:dropdownShown", this); };
 	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
 	this.options.enterCallback = function () { UeditorEvents.trigger("ueditor:enter", this); };
 	this.options.changeCallback = function () { UeditorEvents.trigger("ueditor:change", this); };
@@ -577,25 +640,31 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 	STATE BUTTONS PLUGIN
  */
 RedactorPlugins.stateButtons = {
-	beforeInit: function(){
+	init: function(){
+		var self = this;
 		this.addStateButtons();
 		this.startStateObserver();
-	},
 
+	},
 	addStateButtons: function(){
 		if(this.stateButtons)
 			return;
 
 		var me = this;
-
 		this.stateButtons = {};
 		$.each(this.opts.stateButtons, function(id, data){
 			var button = new me.StateButton(id, data);
-			me.stateButtons[id] = button;
-			me.opts.buttonsCustom[id] = button;
+			me.buttonAdd(id, data.title, function(){ me.stateCallback( id, button ) });
+			// set state of button
+			me.$air.on("show", function(){
+				button.guessState(me);
+			});
 		});
 	},
-
+	stateCallback : function( id, button ){
+		button.guessState( this );
+		button.callback(id, this.buttonGet(id) ,button );
+	},
 	startStateObserver: function(){
 		var observer = $.proxy(this.stateObserver, this);
 		this.$element.on('mouseup.redactor keyup.redactor', observer);
@@ -640,7 +709,6 @@ RedactorPlugins.stateButtons = {
 		};
 		me.setState = function(id, el){
 			this.currentState = id;
-
 			el.removeClass(this.iconClasses)
 				.addClass(this.states[this.currentState].iconClass)
 			;
@@ -656,15 +724,11 @@ RedactorPlugins.stateButtons = {
 			});
 			if(!found)
 				found = this.defaultState;
-
-
-			this.setState(found, this.getElement(redactor));
+			this.setState(found, redactor.buttonGet(this.id));
 		};
-
 		me.getElement = function(redactor){
 			return redactor.$toolbar.find('.redactor_btn_' + this.id);
 		};
-
 		return {
 			id: id,
 			title: data.title,
@@ -687,6 +751,7 @@ RedactorPlugins.stateButtons = {
 --------------------- */
 RedactorPlugins.stateAlignment = {
 	beforeInit: function(){
+		var self = this;
 		this.opts.stateButtons.stateAlign = {
 			title: 'Text alignment',
 			defaultState: 'left',
@@ -700,7 +765,7 @@ RedactorPlugins.stateAlignment = {
 						return $parent.length && $parent.css('text-align') == 'left';
 					},
 					callback: function(name, el , button){
-						this.alignmentLeft();
+						self.alignmentLeft();
 					}
 				},
 				center: {
@@ -712,7 +777,7 @@ RedactorPlugins.stateAlignment = {
 						return $parent.length && $parent.css('text-align') == 'center';
 					},
 					callback: function(name, el , button){
-						this.alignmentCenter();
+						self.alignmentCenter();
 					}
 				},
 				right: {
@@ -724,7 +789,7 @@ RedactorPlugins.stateAlignment = {
 						return $parent.length && $parent.css('text-align') == 'right';
 					},
 					callback: function(name, el , button){
-						this.alignmentRight();
+						self.alignmentRight();
 					}
 				},
 				justify: {
@@ -736,7 +801,7 @@ RedactorPlugins.stateAlignment = {
 						return $parent.length && $parent.css('text-align') == 'justify';
 					},
 					callback: function(name, el , button){
-						this.alignmentJustify();
+						self.alignmentJustify();
 					}
 				}
 			}
@@ -744,8 +809,10 @@ RedactorPlugins.stateAlignment = {
 	}
 }
 
+
 RedactorPlugins.stateLists = {
 	beforeInit: function(){
+		var self = this;
 		this.opts.stateButtons.stateLists = {
 			title: 'List style',
 			defaultState: 'none',
@@ -757,7 +824,7 @@ RedactorPlugins.stateLists = {
 						return $parent.length && $parent.css('text-align') == 'left';
 					},
 					callback: function(name, el , button){
-						this.execLists('insertorderedlist', 'orderedlist');
+						self.execLists('insertorderedlist', 'orderedlist');
 					}
 				},
 				unordered: {
@@ -772,7 +839,7 @@ RedactorPlugins.stateLists = {
 						return false;
 					},
 					callback: function(name, el , button){
-						this.execLists('insertunorderedlist', 'unorderedlist');
+						self.execLists('insertunorderedlist', 'unorderedlist');
 					}
 				},
 				ordered: {
@@ -787,7 +854,7 @@ RedactorPlugins.stateLists = {
 						return false;
 					},
 					callback: function(name, el , button){
-						this.execLists('insertorderedlist', 'orderedlist');
+						self.execLists('insertorderedlist', 'orderedlist');
 					}
 				}
 			}
@@ -835,6 +902,10 @@ RedactorPlugins.panelButtons = {
 						e.stopPropagation();
 					})
 				;
+				
+				me.buttonGet( id ).on("click", function(e){
+					$panel.toggle();
+				});
 			}
 		});
 	}
@@ -1270,48 +1341,37 @@ console.log("color picker opened");
 
 
 RedactorPlugins.upfrontFormatting = {
-	beforeInit: function(){
-		this.opts.buttonsCustom.upfrontFormatting = {
-			title: 'Formatting',
-			panel: this.panel
-		};
-	},
-	panel: UeditorPanel.extend({
-		tags: {
-			p: 'P',
-			h1: 'H1',
-			h2: 'H2',
-			h3: 'H3',
-			h4: 'H4',
-			h5: 'H5',
-			pre: '&lt;/&gt;',
-			blockquote: '"'
-		},
-		events: {
-			'click .ueditor-format-option': 'applyTag',
-			'open': 'selectionSave'
-		},
-		render: function(){
-			var me = this,
-				out = ''
-			;
-			_.each(this.redactor.opts.formattingTags, function(tag){
-				out += '<a class="ueditor-format-option ueditor-format-' + tag + '" data-value="' + tag + '">' + me.tags[tag] + '</a>';
-			});
+	init: function(){
+		var self = this,
+			buttons = {},
+			tags =  {
+				p: 'P',
+				h1: 'H1',
+				h2: 'H2',
+				h3: 'H3',
+				h4: 'H4',
+				h5: 'H5',
+				pre: '&lt;/&gt;',
+				blockquote: '"'
+			};
+		$.each( tags, function( id, tag ){
+			buttons[id] = { title: tag, callback: self.applyTag };
+		} );
+		this.buttonAddFirst('upfrontFormatting', 'Formatting', false, buttons);
 
-			this.button.html('&para;');
-			this.$el.html(out);
-		},
-		applyTag: function(e){
-			var tag = $(e.target).data('value');
-			this.redactor.selectionRestore();
-			this.redactor.formatBlocks(tag);
-			this.closePanel();
-		},
-		selectionSave: function(e){
-			this.redactor.selectionSave();
-		}
-	})
+		this.$air.on("dropdownShown", function(){
+			var tag = $(self.getElement()).length ?  $(self.getElement())[0].tagName : false;
+			if( tag ){
+				tag = tag.toLowerCase();
+				$(".redactor_dropdown_box_upfrontFormatting a").removeClass("active");
+				$(".redactor_dropdown_" + tag).addClass("active");
+			}
+		});
+	},
+	applyTag: function(tag){
+		this.formatBlocks(tag);
+		this.dropdownHideAll();
+	}
 };
 
 RedactorPlugins.blockquote = {
