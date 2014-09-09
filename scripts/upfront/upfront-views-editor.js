@@ -647,8 +647,7 @@ define([
 			this.$el.html("<span title='destroy the layout and clear everything up'>Reset everything</span>");
 		},
 		on_click: function () {
-			var data = Upfront.Util.model_to_json(this.model);
-			Upfront.Util.post({"action": "upfront_reset_layout", "data": data, "storage_key": _upfront_save_storage_key})
+			Upfront.Util.reset()
 				.success(function () {
 					Upfront.Util.log("layout reset");
 					window.location.reload();
