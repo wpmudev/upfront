@@ -201,6 +201,11 @@ h2, h3 { page-break-after: avoid; }
   margin: auto;
 }
 
+/* hack to fix empty paragraphs collapsing on each other */
+.upfront-plain_txt p:after {
+  content:'\00a0';
+}
+
 /* post elements need no padding, because their elements have the padding */
 .upfront-output-object.upfront-output-uposts,
 .upfront-output-object.upfront-output-this_post {
