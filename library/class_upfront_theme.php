@@ -84,8 +84,17 @@ class Upfront_Theme {
 		$regions = new Upfront_Layout_Maker();
 
 		$template_path = $this->find_default_layout($cascade, $layout_slug);
+		$current_theme = Upfront_ChildTheme::get_instance();
+
+		if ($current_theme && $current_theme->has_global_region('header')) {
+			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'header.php');
+		}
 
 		require $template_path;
+
+		if ($current_theme && $current_theme->has_global_region('footer')) {
+			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'footer.php');
+		}
 
 		$layout = $regions->create_layout();
 
@@ -650,12 +659,19 @@ class Upfront_Layout_Maker {
 
 abstract class Upfront_ChildTheme implements IUpfront_Server {
 
+
 	private $_version = false;
 	private $_required_pages = array();
+	protected static $instance;
+
+	public static function get_instance () {
+		return self::$instance;
+	}
 
 	protected function __construct () {
 		$this->version = wp_get_theme()->version;
 		$this->themeSettings = new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php');
+		self::$instance = $this;
 		add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3);
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
@@ -830,6 +846,22 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return array();
 	}
+
+	public function has_global_region($name) {
+		$global_regions = $this->themeSettings->get('global_regions');
+		if (empty($global_regions)) return false;
+
+		$has_region = false;
+
+		foreach (json_decode($global_regions) as $region) {
+			if ($region->name !== $name) continue;
+			$has_region = true;
+			break;
+		}
+
+		return $has_region;
+	}
+
 
 	public function getResponsiveSettings($settings) {
 		if (empty($settings) === false) return $settings;
