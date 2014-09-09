@@ -366,7 +366,7 @@ var Ueditor = function($el, options) {
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
-			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'icons'],
+			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upftonIcons'],
 			buttonsCustom: {},
 			activeButtonsAdd: {},
 			observeLinks: false,
@@ -585,7 +585,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'icons'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'upftonIcons'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -636,6 +636,11 @@ Ueditor.prototype = {
 
 if (!RedactorPlugins) var RedactorPlugins = {};
 
+UpfrontRedactorPanels = _.extend(RedactorPlugins, {
+	init : function(){
+		console.log(this.buttons);
+	}
+});
 /*
 	STATE BUTTONS PLUGIN
  */
@@ -867,6 +872,13 @@ RedactorPlugins.stateLists = {
  -------------------*/
 
 RedactorPlugins.panelButtons = {
+	beforeInit : function(){
+		var self = this;
+		// $.each(this.opts.buttonsCustom, function(id, b){
+		// 	console.log(id, b);
+		// 		self.buttonAdd(id, b.title);
+		// });		
+	},
 	init: function(){
 		var me = this;
 		$.each(this.opts.buttonsCustom, function(id, b){
@@ -874,6 +886,7 @@ RedactorPlugins.panelButtons = {
 				var $panel = $('<div class="redactor_dropdown ueditor_panel redactor_dropdown_box_' + id + '" style="display: none;">'),
 					$button = me.$toolbar.find('.redactor_btn_' + id)
 				;
+
 				b.panel = new b.panel({redactor: me, button: $button, panel: $panel});
 				$panel.html(b.panel.$el);
 				$panel.appendTo(me.$toolbar);
@@ -902,9 +915,10 @@ RedactorPlugins.panelButtons = {
 						e.stopPropagation();
 					})
 				;
-				
-				me.buttonGet( id ).on("click", function(e){
-					$panel.toggle();
+				me.buttonAdd(id, b.title, function(){
+					var left = this.buttonGet( id ).position().left;
+					$(".redactor_dropdown.ueditor_panel").hide();
+					$panel.css("left", left + "px").toggle();
 				});
 			}
 		});
@@ -983,6 +997,13 @@ var UeditorPanel = Backbone.View.extend({
 -----------------------*/
 
 RedactorPlugins.upfrontLink = {
+	// init : function(){
+	// 	this.buttonAdd("link", "Link", this.openPanel);
+	// },
+	openPanel : function(){
+		var left = this.buttonGet( "link" ).position().left;
+		$(".redactor_dropdown_box_upfrontLink").css("left", left + "px").toggle();
+	},
 	beforeInit: function(){
 		this.opts.buttonsCustom.upfrontLink = {
 			title: 'Link',
@@ -2248,9 +2269,9 @@ RedactorPlugins.upfrontPlaceholder = {
 /*--------------------
  Font icons button
  -----------------------*/
-RedactorPlugins.icons = {
+RedactorPlugins.upftonIcons = {
     beforeInit: function(){
-        this.opts.buttonsCustom.icons = {
+        this.opts.buttonsCustom.upftonIcons = {
             title: 'Icons',
             panel: this.panel
         };
