@@ -72,9 +72,9 @@ define(function() {
 			var request = (_.isObject(data) && data.action) ? data : {"action": "upfront_request", "data": data};
 
 			// @TODO need a better way to attach upfront layout data on request?
-			if ( Upfront.Application.layout ) {
+			if ( Upfront.Application.current_subapplication.layout ) {
 				//request.upfront_layout = Upfront.Application.layout.get('layout');
-				request.layout = Upfront.Application.layout.get('layout');
+				request.layout = Upfront.Application.current_subapplication.layout.get('layout');
 			}
 			if ( !request.storage_key ) request.storage_key = _upfront_storage_key;
 			request.stylesheet = _upfront_stylesheet;
@@ -87,6 +87,20 @@ define(function() {
 			request.dev = location.search.indexOf('dev=true') > -1;
 
 			return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
+		},
+
+		reset: function () {
+			var request = {
+				action: "upfront_reset_layout"
+			};
+			return this.post(request);
+		},
+
+		reset_all: function () {
+			var request = {
+				action: "upfront_reset_all_from_db"
+			};
+			return this.post(request);
 		},
 
 		format_date: function(date, show_time, show_seconds){

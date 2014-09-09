@@ -64,6 +64,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_save_layout', array($this, "save_layout"));
 			upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
+			upfront_add_ajax('upfront_reset_all_from_db', array($this, "reset_all_from_db"));
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
 
 			//upfront_add_ajax('upfront_build_preview', array($this, "build_preview")); // No more previews building
@@ -168,16 +169,39 @@ class Upfront_Ajax extends Upfront_Server {
 	function reset_layout () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
-		$data = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : false;
-		$storage_key = $_POST['storage_key'];
-		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		$layout = !empty($data['layout']) ? $data['layout'] : array();
+		$storage_key = $data['storage_key'];
+		$stylesheet = $data['stylesheet'] ? $data['stylesheet'] : get_stylesheet();
+		$stylesheet_dev = false;
+		if (!empty($data['dev'])) {
+			$stylesheet_dev = "{$stylesheet}_dev"; // Handle dev-mode names
+		}
 
 		upfront_switch_stylesheet($stylesheet);
 
-		$layout = Upfront_Layout::from_php($data, $storage_key);
+		//$layout = Upfront_Layout::from_php($data, $storage_key);
+		$layout = Upfront_Layout::from_entity_ids($layout, null, !empty($stylesheet_dev));
 		$layout->delete(true);
 		delete_option('upfront_' . $stylesheet . '_styles');
+		delete_option('upfront_' . $stylesheet . '_theme_colors');
+		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_styles');
+		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_theme_colors');
 		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
+	}
+
+	function reset_all_from_db () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		$stylesheet = $data['stylesheet'] ? $data['stylesheet'] : get_stylesheet();
+
+		global $wpdb;
+		$theme_key = $wpdb->esc_like($stylesheet) . '%';
+		$global_theme_key = 'upfront_' . $wpdb->esc_like($stylesheet) . '%';
+		$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $theme_key, $global_theme_key);
+		$wpdb->query($sql);
+		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
 
 	function update_layout_element() {

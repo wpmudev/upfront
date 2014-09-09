@@ -356,8 +356,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			if ( !preg_match("/_dev$/", $dev_storage_key) ){
 				$dev_storage_key .= '_dev';
 				$layout = self::from_entity_ids($cascade, $dev_storage_key);
-				if (!$layout->is_empty())
-					return $layout;
+				if (is_object($layout) && !$layout->is_empty()) return $layout;
 			}
 		}
 		self::set_storage_key($storage_key);
@@ -722,7 +721,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public function delete ($all = false) {
 		if ( $all ){
 			$scopes = array();
-			foreach ( $this->_data['regions'] as $region ){
+			if (!empty($this->_data['regions'])) foreach ( $this->_data['regions'] as $region ){
 				if ( $region['scope'] != 'local' && !in_array($region['scope'], $scopes) ){
 					$scopes[] = $region['scope'];
 				}
