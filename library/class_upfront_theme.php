@@ -355,7 +355,7 @@ class Upfront_Virtual_Region {
 					$total_col += $value;
 			}
 			if ( $group && $this->modules[$group] ){
-				$wrapper_col = $this->current_group_wrapper_col[[$breakpoint->get_id()]];
+				$wrapper_col = $this->current_group_wrapper_col[$breakpoint->get_id()];
 				$this->current_group_wrapper_col[$breakpoint->get_id()] = ( $total_col > $wrapper_col ) ? $total_col : $wrapper_col;
 			}
 			else {
