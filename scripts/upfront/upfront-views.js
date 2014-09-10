@@ -2569,7 +2569,7 @@ define([
 					$hide_trigger.hide();
 					this.update_hide_toggle();
 				}
-				if ( $regions.length == container_view.$el.find('.upfront-region-hidden').length )
+				if ( $regions.length > 0 && $regions.length == container_view.$el.find('.upfront-region-hidden').length )
 					container_view.$el.addClass('upfront-region-container-hidden');
 				else
 					container_view.$el.removeClass('upfront-region-container-hidden');

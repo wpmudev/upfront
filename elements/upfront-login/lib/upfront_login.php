@@ -32,10 +32,13 @@ class Upfront_LoginView extends Upfront_Object {
 	}
 
 	public static function fake_upfront_init () {
+		return '';
+		/*
 		return !current_user_can('manage_options')
 			? ''
 			: upfront_boot_editor_trigger()
 		;
+		*/
 	}
 
 	public static function get_element_markup ($properties=array()) {
