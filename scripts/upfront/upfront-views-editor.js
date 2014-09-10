@@ -3548,10 +3548,16 @@ define([
 			this.$el.html('');
 			if ( !this.options.compact )
 				this.$el.append(this.get_label_html());
+			if ( this.options.info) {
+				this.$el.append(this.get_info_html());
+			}
 			this.$el.append(this.get_field_html());
 			var me = this;
 
 			this.trigger('rendered');
+		},
+		get_info_html: function() {
+			return '<span class="button-info">' + this.options.info + '</span>';
 		},
 		get_field_html: function () {
 			var attr = {
@@ -7118,6 +7124,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					add_global_region = new Field_Button({
 						model: this.model,
 						label: is_top ? 'Add global header' : 'Add global footer',
+						info: 'This layout doesn\'t use global ' + (is_top ? 'header' : 'footer'),
 						compact: true,
 						on_click: function(e){
 							e.preventDefault();

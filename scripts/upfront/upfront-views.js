@@ -709,7 +709,7 @@ define([
 		DefaultMenuList = ContextMenuList.extend({
 			initialize: function() {
 				var menuitems = [];
-				
+
 				if(Upfront.Application.get_current() != "theme") {
 				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
@@ -731,7 +731,7 @@ define([
 						}
 					}));
 				}
-				
+
 				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
 							return Upfront.Application.get_gridstate() ? 'Hide Grid': 'Show Grid';
@@ -741,7 +741,7 @@ define([
 							togglegrid.on_click();
 						}
 					}));
-					
+
 				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
 							return 'Clone';
@@ -763,7 +763,7 @@ define([
 								new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
 								index = modules.indexOf(module),
 								models = [];
-								
+
 							// Make sure new model element ids and wrapper id is unique
 							new_wrap_model.set_property('wrapper_id', wrapper_id);
 							new_model.set_property('wrapper_id', wrapper_id);
@@ -789,13 +789,13 @@ define([
 								top: e.clientY - (h /2 ) ,
 								left: e.clientX - ( w / 2 ) ,
 							});
-					
+
 							// Simulate and mousedown and actually trigger drag
 						    $new_module_view.find(".upfront-module").simulate("mousedown", {
 						        clientX: e.clientX,
 						        clientY: e.clientY
 						    });
-						
+
 						}
 					}));
 				this.menuitems = _(menuitems);
@@ -878,7 +878,7 @@ define([
 				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
-				
+
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 
 				if (this.init) this.init();
@@ -900,7 +900,7 @@ define([
 				this.model.get("properties").each(function (prop) {
 					props[prop.get("name")] = prop.get("value");
 				});
-				
+
 				var row = this.model.get_breakpoint_property_value('row', true);
 				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
 
@@ -967,7 +967,7 @@ define([
 					this._theme_style = theme_style;
 				}
 			},
-			
+
 
 			/* Getting dimension and resize element */
 			get_element_size: function (real) {
@@ -2458,7 +2458,7 @@ define([
 				return ( !this.model.is_main() && ( !sub || (sub != 'top' && sub != 'bottom') ) );
 			},
 			render: function () {
-				
+
 				var container = this.model.get("container"),
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON()),
@@ -2469,7 +2469,7 @@ define([
 				this.$el.append('<div class="upfront-debug-info"/>');
 				$edit.appendTo(this.$el);
 				$size.appendTo(this.$el);
-				
+
 				this.update();
 
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
@@ -2495,7 +2495,7 @@ define([
 			},
 			render_bg_setting: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: container_view.$el, width: 384});
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: container_view.$el, width: 420});
 				this.bg_setting.render();
 				container_view.$el.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
@@ -2523,7 +2523,7 @@ define([
 				if ( expand_lock )
 					this.$el.addClass('upfront-region-expand-lock');
 				else
-					this.$el.removeClass('upfront-region-expand-lock');	
+					this.$el.removeClass('upfront-region-expand-lock');
 				if ( previous_name != name ){
 					this.$el.removeClass('upfront-region-' + previous_name.toLowerCase().replace(/ /, "-"));
 					this.$el.addClass('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
@@ -2615,8 +2615,8 @@ define([
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger');
 				if ( !breakpoint || breakpoint.default ){
-					if ( 
-						( this.model.is_main() && this.model.has_side_region() ) || 
+					if (
+						( this.model.is_main() && this.model.has_side_region() ) ||
 						( this.model.get('sub') == 'top' || this.model.get('sub') == 'bottom' )
 					)
 						$delete_trigger.hide();
@@ -2641,17 +2641,17 @@ define([
 			on_module_update: function () {
 				this.trigger("region_changed", this);
 				this.display_region_hint();
-			},		
+			},
 			display_region_hint: function() {
 
 				if(Upfront.Application.get_current() != "theme" || this.$el.hasClass('upfront-region-floating') || this.$el.hasClass('upfront-region-lightbox') || this.$el.attr('id')=='region-shadow')
 					return
-				
+
 				if(this.$el.find('.upfront-modules_container .upfront-wrapper').size() < 1) {
 					this.$el.addClass('empty_in_theme_mode');
 				}
 				else {
-					this.$el.removeClass('empty_in_theme_mode');				
+					this.$el.removeClass('empty_in_theme_mode');
 				}
 			},
 			on_layout_render: function () {
@@ -2700,7 +2700,7 @@ define([
 			},
 			on_settings_click: function (e) {
 
-				if(typeof(e) != 'undefined') {	
+				if(typeof(e) != 'undefined') {
 					e.preventDefault();
 					e.stopPropagation();
 				}
@@ -2712,7 +2712,7 @@ define([
 						me.bg_setting.close(false);
 					}
 				});
-				
+
 				container_view.$el.addClass('upfront-region-bg-setting-open');
 				this.bg_setting.open().always(function(){
 					container_view.$el.removeClass('upfront-region-bg-setting-open');
@@ -2810,7 +2810,7 @@ define([
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 384});
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 420});
 				this.bg_setting.render();
 				$main.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
@@ -2963,7 +2963,7 @@ define([
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 384});
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 420});
 				this.bg_setting.render();
 				$main.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
@@ -3473,12 +3473,12 @@ define([
 				this.$layout.append(this.local_view.el);
 				this.update();
 
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 384});
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 420});
 				this.bg_setting.render();
 				this.$el.append(this.bg_setting.el);
 
 				this.fix_height();
-				
+
 				// Use flexbox when we can
 				if ( Upfront.Util.css_support('flex') )
 					$('html').addClass('flexbox-support');
@@ -3507,7 +3507,7 @@ define([
 				// Deactivate if clicked on blank area of region
 				if($(e.target).hasClass('upfront-editable_entities_container'))
 					Upfront.Events.trigger("entity:deactivated");
-				
+
 				// Close region editing on click anywhere out the region
 				if ( $(e.target).hasClass('upfront-region-editing-overlay') && !$('.upfront-region-bg-setting-open').length )
 					Upfront.Events.trigger("entity:region:deactivated");
