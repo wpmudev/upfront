@@ -87,9 +87,9 @@
 .upfront-ui a,
 .upfront-ui button,
 .upfront-ui input {
-	-webkit-transition: color,background-color,border,opacity .1s;
-	-o-transition: color,background-color,border,opacity .1s;
-	transition: color,background-color,border,opacity .1s;
+	-webkit-transition: color,background-color,border,opacity .25s;
+	-o-transition: color,background-color,border,opacity .25s;
+	transition: color,background-color,border,opacity .25s;
 }
 
 .upfront-ui, .upfront-ui *, .upfront-ui *:before, .upfront-ui *:after {
