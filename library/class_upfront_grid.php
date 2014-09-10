@@ -70,8 +70,14 @@ class Upfront_Grid {
 		return $this->_breakpoints;
 	}
 
-	public function get_breakpoints () {
+	public function get_breakpoints ($filter = false) {
+		if ( $filter )
+			return array_filter($this->_breakpoint_instances, array($this, "_filter_breakpoint"));
 		return $this->_breakpoint_instances;
+	}
+
+	public function _filter_breakpoint ($breakpoint) {
+		return ( $breakpoint->is_enabled() );
 	}
 
 	public function get_default_breakpoint () {
@@ -94,7 +100,7 @@ class Upfront_Grid {
 
 	public function apply_breakpoints ($layout) {
 		$css = '';
-		$breakpoints = $this->get_breakpoints();
+		$breakpoints = $this->get_breakpoints(true);
 
 		foreach ($breakpoints as $name => $point) {
 			$this->_current_breakpoint = $point;
@@ -309,6 +315,7 @@ class Upfront_GridBreakpoint {
 	protected $_baseline = 5;
 	protected $_line_height = 30;
 	protected $_default = false;
+	protected $_enabled = false;
 	protected $_rule = 'min-width:1080px';
 	protected $_prefixes = array(
 		'width' => 'c',
@@ -336,6 +343,8 @@ class Upfront_GridBreakpoint {
 			$this->_columns = $columns;
 		if ( !empty($default) )
 			$this->_default = $default;
+		if ( !empty($enabled) )
+			$this->_enabled = $enabled;
 		$this->_data = $data;
 	}
 
@@ -421,6 +430,10 @@ class Upfront_GridBreakpoint {
 
 	public function is_default () {
 		return $this->_default;
+	}
+
+	public function is_enabled () {
+		return $this->_enabled;
 	}
 
 	public function get_name () {

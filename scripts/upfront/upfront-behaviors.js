@@ -620,7 +620,7 @@ var LayoutEditor = {
 					label: 'Page name (leave empty for single-page.php)',
 				})
 			};
-		if ( !ed.available_layouts )
+		if ( !ed.available_layouts ) {
 			Upfront.Util.post({
 				action: 'upfront_list_available_layout'
 			}).done(function(data) {
@@ -631,10 +631,11 @@ var LayoutEditor = {
 				fields.layout.render();
 				fields.layout.delegateEvents();
 			});
-		else
+		} else {
 			fields.layout.options.values = _.map(ed.available_layouts, function(layout, layout_id){
 				return {label: layout.label, value: layout_id, disabled: layout.saved};
 			});
+		}
 
 		if ( !ed.layout_modal ){
 			ed.layout_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
