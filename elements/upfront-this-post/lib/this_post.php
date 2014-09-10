@@ -20,13 +20,13 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public function __construct($data){
 		parent::__construct($data);
-		$parts = array_values(self::$PARTNAMES);
+		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
 	}
 
 	public static function get_post_part($type, $options = array(), $tpl = false){
 		$options = is_array($options) ? $options : array();
 		global $post;
-		$parts = array_values(self::$PARTNAMES);
+		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
 		if(array_search($type, $parts) === FALSE){
 			$unknown = array();
 			$unknown[$type] = 'Unknown part';
