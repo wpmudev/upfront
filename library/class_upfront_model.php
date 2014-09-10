@@ -563,7 +563,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'layout' => array(
 					'type' => 'archive'
 				)
-			)
+			),
+			'404' => array(
+				'layout' => array(
+					'specificity' => 'single-404_page',
+					'item' => 'single-page',
+					'type' => 'single',
+				)
+			),
 		);
 		// add singular post type
 		foreach ( get_post_types(array('public' => true, 'show_ui' => true), 'objects') as $post_type ){
