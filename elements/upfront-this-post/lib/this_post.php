@@ -120,7 +120,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		}
 
 		$out = array(
-			'replacements' => $replacements,
+			'replacements' => apply_filters('upfront_post_part_replacements', $replacements, $type, $options, $tpl),
 			'tpl' => self::replace($tpl, $replacements)
 		);
 
