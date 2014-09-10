@@ -358,7 +358,8 @@
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page,
 #sidebar-ui .sidebar-commands-primary .command-new-post,
-#sidebar-ui .sidebar-commands-primary .command-new-layout{
+#sidebar-ui .sidebar-commands-primary .command-new-layout,
+#sidebar-ui .sidebar-commands-primary .command-browse-layout{
 	line-height: 34px;
 	padding: 0 10px;
 	border: 2px solid #25394d;
@@ -387,7 +388,8 @@
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
 #sidebar-ui .sidebar-commands-primary .command-new-post:hover,
-#sidebar-ui .sidebar-commands-primary .command-new-layout:hover {
+#sidebar-ui .sidebar-commands-primary .command-new-layout:hover,
+#sidebar-ui .sidebar-commands-primary .command-browse-layout:hover {
 	border-color: #1fcd8f;
 	color: #cbe5ff;
 }
@@ -2788,7 +2790,7 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-region-editing .upfront-grid-layout {
-	-webkit-backface-visibility:hidden; 
+	-webkit-backface-visibility:hidden;
 }
 
 .upfront-region-editing .upfront-region-active,
@@ -4631,7 +4633,7 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-tabs-container .tabs-tab i {
-	z-index: 2;	
+	z-index: 2;
 }
 
 .upfront-icon:before {
@@ -5757,8 +5759,8 @@ box-shadow: inset 0 2px 0 0 #fff;
 .upfront-pagination_item.upfront-pagination_item-prev:after,
 .upfront-pagination_item.upfront-pagination_item-next:after {
 	content: '';
-	width: 0; 
-	height: 0; 
+	width: 0;
+	height: 0;
 	font-size: 0;
 	line-height: 0;
 	top:-5px;
@@ -6976,8 +6978,8 @@ a.upfront-post-layout-trigger:before{
 
 /* DEFAULT POPUP STYLING
 
-	 This styling will be applied if user does not pass 
-	 'classname' parameter when calling 
+	 This styling will be applied if user does not pass
+	 'classname' parameter when calling
 	 Upfront.Popup.open( callback, data, classname )
 */
 
@@ -7006,7 +7008,7 @@ a.upfront-post-layout-trigger:before{
 			margin-top:50px;
 			height: 550px;
 		}
-    .upfront-media_manager { 
+    .upfront-media_manager {
     	min-height: 460px;
     }
 }
@@ -7046,13 +7048,13 @@ a.upfront-post-layout-trigger:before{
 	position: relative;
 	/*border:1px solid #A1C5E6;*/
 	background-color: #C5D8EA;
-	background-image: -webkit-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA), 
+	background-image: -webkit-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA),
 										-webkit-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA);
-	background-image:      -o-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA), 
+	background-image:      -o-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA),
 										     -o-linear-gradient(bottom left, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA);
-	background-image:        linear-gradient(to top right, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA), 
+	background-image:        linear-gradient(to top right, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA),
 										       linear-gradient(to top right, #A6C1DA 25%, transparent 25%, transparent 75%, #A6C1DA 75%, #A6C1DA);
-										
+
 	-webkit-background-size: 20px 20px;
 		 -moz-background-size: 20px 20px;
 					background-size: 20px 20px;
@@ -10468,18 +10470,18 @@ a.upfront-css-delete:before {
 	vertical-align: middle;
 }
 
-a.upfront-css-edit {
+a.upfront-css-edit, a.upfront-buttonpreset-edit {
 	vertical-align: top;
 	margin: 4px 0 0 5px;
 	display: inline-block;
 	opacity: .8;
 }
 
-a.upfront-css-edit:hover {
+a.upfront-css-edit:hover, a.upfront-buttonpreset-edit:hover {
 	opacity: 1;
 }
 
-a.upfront-css-edit:before{
+a.upfront-css-edit:before, a.upfront-buttonpreset-edit:before{
 	display: inline-block;
 	content: '';
 	width: 20px;
@@ -11630,7 +11632,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 
 /* Chosen */
 #font-picker .chosen-container-single .chosen-single,
-#sidebar-ui .chosen-container-single .chosen-single, 
+#sidebar-ui .chosen-container-single .chosen-single,
 #upfront-popup .chosen-container-single .chosen-single
 {
 	margin: 0;
@@ -11645,8 +11647,8 @@ div.upfront-region-container-active > a.feature_image_selector {
 	border-color: rgb(163, 191, 217);
 }
 #font-picker .chosen-container-single .chosen-single:hover,
-#sidebar-ui .chosen-container-single .chosen-single:hover, 
-#upfront-popup .chosen-container-single .chosen-single:hover 
+#sidebar-ui .chosen-container-single .chosen-single:hover,
+#upfront-popup .chosen-container-single .chosen-single:hover
 {
 	border-color: rgb(96, 127, 153);
 }
@@ -11666,7 +11668,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 #font-picker .chosen-container .chosen-results li,
 #sidebar-ui .chosen-container .chosen-results li,
-#upfront-popup .chosen-container .chosen-results li 
+#upfront-popup .chosen-container .chosen-results li
 {
 	margin: 0 0 0 5px;
 }
@@ -11693,7 +11695,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 	margin-right: 5px;
 }
 #sidebar-ui .chosen-container .chosen-results,
-#upfront-popup .chosen-container .chosen-results 
+#upfront-popup .chosen-container .chosen-results
 {
 	max-height: 120px;
 }
@@ -12330,7 +12332,7 @@ div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfron
 	z-index:999999;
 	color:#263A4D;
 	background-color:rgba(242,250,255,.9);
-	padding:8px 20px;	
+	padding:8px 20px;
 	border-radius:10px;
 	box-shadow:0px 2px 1px rgba(38,58,77,.3);
 }
@@ -12351,3 +12353,39 @@ div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfron
 	margin: 20px 30px;
 	width: 50px;
 }
+
+/* hack to fix empty paragraphs collapsing on each other */
+.upfront-plain_txt p:after {
+  content:'\00a0';
+}
+
+/* Disabled state fix for jquery UI theme-rolled css conflicts */
+.upfront-edit-layout #page .upfront-region-container.ui-state-disabled,
+.upfront-edit-layout #page .upfront-region.ui-state-disabled
+{
+	opacity: 1;
+}
+/* global regions button */
+.upfront-field-wrap-button .button-info:before {
+	display: inline-block;
+	content: "";
+	width: 13px;
+	height: 15px;
+	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -485px -141px;
+	margin-right: 5px;
+	margin-bottom: -2px;
+}
+
+.button-info + input {
+	background: #e6f3fe;
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+	padding: 4px 6px;
+	margin-left: 8px;
+}
+
+.upfront-region-bg-setting-add-global-region {
+	margin-bottom: 20px;
+}
+>>>>>>> eea43a57793d2b674014aac2b20fc534316c3fc9
