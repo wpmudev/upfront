@@ -1067,7 +1067,7 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
-.redactor_dropdown_box_icons div.icons::-webkit-scrollbar
+.redactor_dropdown_box_upftonIcons div.icons::-webkit-scrollbar
 {
 	background: none;
 	width: 5px;
@@ -1112,7 +1112,7 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
-.redactor_dropdown_box_icons div.icons::-webkit-scrollbar-thumb
+.redactor_dropdown_box_upftonIcons div.icons::-webkit-scrollbar-thumb
 {
 	border-right: 5px solid #1fcd8f;
 }
@@ -9528,6 +9528,8 @@ body .redactor_toolbar li a.re-upfrontLink.redactor_act	{ background-position: -
 	line-height: 30px;
 	padding: 2px 0;
 	display: block;
+	z-index: 99999;
+	margin-top: 0;
 }
 .redactor_dropdown_box_upfrontFormatting a.active{
 	color: #40a6ff !important;
@@ -11053,7 +11055,7 @@ li#new-custom-breakpoint {
   margin: 10px 0 10px 15px;
 }
 /*------------ Font Icons --------------*/
-.redactor_dropdown_box_icons div.icons{
+.redactor_dropdown_box_upftonIcons div.icons{
 	font-size: 24px;
 	height: 140px;
 	overflow-x: hidden;
@@ -11061,22 +11063,22 @@ li#new-custom-breakpoint {
 	padding: 7px;
 	margin-right: 1px;
 }
-.redactor_dropdown.redactor_dropdown_box_icons{
+.redactor_dropdown.redactor_dropdown_box_upftonIcons{
 	min-width: 153px;
 	width: 153px;
 	line-height: 38px;
 	padding: 0;
 	opacity: 0.9;
 }
-.redactor_dropdown.redactor_dropdown_box_icons a,
-.redactor_dropdown.redactor_dropdown_box_icons a:link{
+.redactor_dropdown.redactor_dropdown_box_upftonIcons a,
+.redactor_dropdown.redactor_dropdown_box_upftonIcons a:link{
     color: #97b8da !important;
 	text-decoration: none;
     display: inline-block;
     width: 28px;
     text-align: center;
 }
-.redactor_dropdown.redactor_dropdown_box_icons a:hover{
+.redactor_dropdown.redactor_dropdown_box_upftonIcons a:hover{
     color: rgb(64, 166, 255) !important;
 }
 .upfront-font-icons-controlls{

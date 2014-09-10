@@ -82,6 +82,41 @@ var hackRedactor = function(){
 		this.set(this.content, false, false);
 	};
 
+	// Let Ctrl/Cmd+A (yeah...) work normally
+	$.Redactor.prototype.airEnable = function () {
+			if (!this.opts.air || !this.opts.airButtons) return;
+			var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
+
+			this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
+				var insert = $(e.target).closest('.ueditor-insert');
+				if(insert.length && insert.closest(this.$box).length)
+					return;
+
+				var text = this.getSelectionText();
+				this.opts.toolbarFixedTopOffset = "50";
+				if (e.type === 'mouseup' && text != '') this.airShow(e);
+				if (e.type === 'keyup' && e.shiftKey && text != '') {
+					var $focusElem = $(this.getElement(this.getSelection().focusNode)), offset = $focusElem.offset();
+					offset.height = $focusElem.height();
+					this.airShow(offset, true);
+				}
+				// Additional ctrl/cmd stuffs
+				if ('keyup' === e.type && e.ctrlKey && '' != text) this.airShow(e); // Ctrl
+				if ('keyup' === e.type && _cmd_keys.indexOf(e.which) > 0 && '' != text) this.airShow(e); // Cmd (?)
+				/**
+				 * If redactor is to high for the user to see it, show it under the selected text
+				 */
+				if( this.$air.offset().top < 0 ){
+					this.$air.css({
+						top : e.clientY + 14 + this.$box.position().top + "px"
+					});
+					this.$air.addClass("under");
+				}else{
+					this.$air.removeClass("under");
+				}
+			}, this));
+	};
+
 	// We already have all the plugins' methods in redactor, just call init
 	$.Redactor.prototype.buildPlugins = function() {
 		var me = this;
@@ -94,42 +129,8 @@ var hackRedactor = function(){
 		});
 	};
 
-	// Let Ctrl/Cmd+A (yeah...) work normally
-	$.Redactor.prototype.airEnable = function () {
-		if (!this.opts.air || !this.opts.airButtons) return;
-		var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
 
-		this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
-			var insert = $(e.target).closest('.ueditor-insert');
-			if(insert.length && insert.closest(this.$box).length)
-				return;
-
-			var text = this.getSelectionText();
-//			console.log("this", this);
-			this.opts.toolbarFixedTopOffset = "50";
-			if (e.type === 'mouseup' && text != '') this.airShow(e);
-			if (e.type === 'keyup' && e.shiftKey && text != '') {
-				var $focusElem = $(this.getElement(this.getSelection().focusNode)), offset = $focusElem.offset();
-				offset.height = $focusElem.height();
-				this.airShow(offset, true);
-			}
-			// Additional ctrl/cmd stuffs
-			if ('keyup' === e.type && e.ctrlKey && '' != text) this.airShow(e); // Ctrl
-			if ('keyup' === e.type && _cmd_keys.indexOf(e.which) > 0 && '' != text) this.airShow(e); // Cmd (?)
-			/**
-			 * If redactor is to high for the user to see it, show it under the selected text
-			 */
-			if( this.$air.offset().top < 0 ){
-				this.$air.css({
-					top : e.clientY + 14 + this.$box.position().top + "px"
-				});
-				this.$air.addClass("under");
-			}else{
-				this.$air.removeClass("under");
-			}
-		}, this));
-	};
-
+	
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air) return;
@@ -248,66 +249,6 @@ var hackRedactor = function(){
 			this.$air.trigger('show');
 		};
 
-	$.Redactor.prototype.dropdownShow = function(e, key)
-		{
-			if (!this.opts.visual)
-			{
-				e.preventDefault();
-				return false;
-			}
-
-			var $button = this.buttonGet(key);
-
-			// Always re-append it to the end of <body> so it always has the highest sub-z-index.
-			var $dropdown  = $button.data('dropdown').appendTo(document.body);
-
-			if ($button.hasClass('dropact')) this.dropdownHideAll();
-			else
-			{
-				this.dropdownHideAll();
-				this.callback('dropdownShow', { dropdown: $dropdown, key: key, button: $button });
-
-				this.buttonActive(key);
-				$button.addClass('dropact');
-
-				var keyPosition = $button.offset();
-
-				// fix right placement
-				var dropdownWidth = $dropdown.width();
-				if ((keyPosition.left + dropdownWidth) > $(document).width())
-				{
-					keyPosition.left -= dropdownWidth;
-				}
-
-				var left = keyPosition.left + 'px';
-				var btnHeight = $button.innerHeight();
-
-				var position = 'absolute';
-				var top = (btnHeight + this.opts.toolbarFixedTopOffset) + 'px';
-
-				if (this.opts.toolbarFixed && this.toolbarFixed) position = 'fixed';
-				else top = keyPosition.top + btnHeight + 'px';
-
-				$dropdown.css({ position: position, left: left, top: top }).show();
-				this.callback('dropdownShown', { dropdown: $dropdown, key: key, button: $button });
-			}
-
-
-			var hdlHideDropDown = $.proxy(function(e)
-			{
-				this.dropdownHide(e, $dropdown);
-
-			}, this);
-
-			$(document).one('click', hdlHideDropDown);
-			this.$editor.one('click', hdlHideDropDown);
-			this.$editor.one('touchstart', hdlHideDropDown);
-
-
-			e.stopPropagation();
-			this.focusWithSaveScroll();
-		this.$air.trigger('dropdownShown');
-	};
 	// Add possiblity to disable linebreak (for one line title)
 	$.Redactor.prototype.doInsertLineBreak = $.Redactor.prototype.insertLineBreak;
 	$.Redactor.prototype.insertLineBreak = function()
@@ -316,6 +257,8 @@ var hackRedactor = function(){
 			return this.doInsertLineBreak();
 		return false;
 	};
+
+	
 /*
 	$.Redactor.prototype.getCurrent = function(){
 		var el = false;
@@ -377,7 +320,8 @@ var Ueditor = function($el, options) {
 	;
 
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
-	this.options.dropdownShown = function () { UeditorEvents.trigger("ueditor:dropdownShown", this); };
+	this.options.dropdownShowCallback = function () { UeditorEvents.trigger("ueditor:dropdownShow", this); };
+	this.options.dropdownHideCallback = function () { UeditorEvents.trigger("ueditor:dropdownHide", this); };
 	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
 	this.options.enterCallback = function () { UeditorEvents.trigger("ueditor:enter", this); };
 	this.options.changeCallback = function () { UeditorEvents.trigger("ueditor:change", this); };
@@ -884,7 +828,7 @@ RedactorPlugins.panelButtons = {
 		$.each(this.opts.buttonsCustom, function(id, b){
 			if(b.panel){
 				var $panel = $('<div class="redactor_dropdown ueditor_panel redactor_dropdown_box_' + id + '" style="display: none;">'),
-					$button = me.$toolbar.find('.redactor_btn_' + id)
+					$button = me.buttonGet( id )
 				;
 
 				b.panel = new b.panel({redactor: me, button: $button, panel: $panel});
@@ -916,10 +860,20 @@ RedactorPlugins.panelButtons = {
 					})
 				;
 				me.buttonAdd(id, b.title, function(){
-					var left = this.buttonGet( id ).position().left;
-					$(".redactor_dropdown.ueditor_panel").hide();
+					var $button = me.buttonGet( id ),
+						left = $button.position().left;
+					$(".re-icon").removeClass( "redactor_act dropact" );
+					$button.addClass("redactor_act dropact");
+					$(".redactor_dropdown").not($panel).hide();
+
 					$panel.css("left", left + "px").toggle();
-				});
+
+					var $last = $(".redactor_dropdown.ueditor_panel").last(),
+						lastDropdownLeft = left - $last.innerWidth() + $button.width();
+					$last.css( "left", lastDropdownLeft + "px" );
+				}, false);
+
+				
 			}
 		});
 	}
@@ -1223,7 +1177,7 @@ RedactorPlugins.upfrontColor = {
 //			this.$('input.foreground').spectrum('resetUI');
 //			this.$('input.background').spectrum('resetUI');
 //			
-console.log("color picker opened");
+
 		    this.$(".sp-choose").on("click", function(){
 	    		self.closePanel();
 				self.closeToolbar();
@@ -1380,7 +1334,7 @@ RedactorPlugins.upfrontFormatting = {
 		} );
 		this.buttonAddFirst('upfrontFormatting', 'Formatting', false, buttons);
 
-		this.$air.on("dropdownShown", function(){
+		UeditorEvents.on("ueditor:dropdownShow", function(){
 			var tag = $(self.getElement()).length ?  $(self.getElement())[0].tagName : false;
 			if( tag ){
 				tag = tag.toLowerCase();
@@ -2275,7 +2229,6 @@ RedactorPlugins.upftonIcons = {
             title: 'Icons',
             panel: this.panel
         };
-
     },
     init : function(){
         UeditorEvents.on("ueditor:key:down", function(redactor, e){
