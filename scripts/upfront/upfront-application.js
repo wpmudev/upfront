@@ -1215,6 +1215,49 @@ var Application = new (Backbone.Router.extend({
 		return this.loadingLayout;
 	},
 
+	create_layout: function (layout_ids, additional) {
+		var app = this,
+			request_data = {
+				action: 'upfront_create_layout',
+				data: layout_ids,
+				load_dev: ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
+			}
+		;
+		if (additional)
+			request_data = _.extend(request_data, additional);
+
+		if(_upfront_post_data)
+			request_data.post_id = _upfront_post_data.post_id;
+
+		$("body").removeClass(Upfront.Settings.LayoutEditor.Grid.scope);
+
+		//If we are already loading a layout, abort the load
+		if(this.loadingLayout)
+			this.loadingLayout.abort();
+
+		this.loadingLayout = Upfront.Util.post(request_data)
+			.success(function (response) {
+				app.set_layout_up(response);
+				if(app.saveCache){
+					app.urlCache[app.currentUrl] = $.extend(true, {}, response);
+					app.saveCache = false;
+				}
+			})
+			.error(function (xhr) {
+				if(xhr.statusText == 'abort') //we are ok
+					return;
+
+				Upfront.Util.log("Error creating layout " + layout_ids);
+				app.loading.cancel(function(){
+					$(Upfront.Settings.LayoutEditor.Selectors.sidebar).hide();
+					//$(".upfront-editable_trigger").show();
+					$('#wpadminbar').show();
+					$('html').removeAttr('style');
+				});
+			})
+		;
+		return this.loadingLayout;
+	},
 	set_layout_up: function(layoutData){
 		var $layout_style,
 			layout_style,

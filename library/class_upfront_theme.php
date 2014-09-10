@@ -80,19 +80,19 @@ class Upfront_Theme {
 		return $this->regions;
 	}
 
-	public function get_default_layout($cascade, $layout_slug = "") {
+	public function get_default_layout($cascade, $layout_slug = "", $add_global_regions = false) {
 		$regions = new Upfront_Layout_Maker();
 
 		$template_path = $this->find_default_layout($cascade, $layout_slug);
 		$current_theme = Upfront_ChildTheme::get_instance();
 
-		if ($current_theme && $current_theme->has_global_region('header')) {
+		if ($add_global_regions && $current_theme && $current_theme->has_global_region('header')) {
 			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'header.php');
 		}
 
 		require $template_path;
 
-		if ($current_theme && $current_theme->has_global_region('footer')) {
+		if ($add_global_regions && $current_theme && $current_theme->has_global_region('footer')) {
 			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'footer.php');
 		}
 
@@ -320,7 +320,7 @@ class Upfront_Virtual_Region {
 					$breakpoint_data[$breakpoint->get_id()]['col'] = $wrapper_col;
 				}
 			}
-			
+
 		}
 		if ( $group && $this->modules[$group] ){
 			$class = $this->get_property('class', $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
@@ -642,13 +642,13 @@ class Upfront_Layout_Maker {
 			}
 			usort($side_regions_before, array(Upfront_Theme, '_sort_region'));
 			usort($side_regions_after, array(Upfront_Theme, '_sort_region'));
-			
+
 			foreach($side_regions_before as $side){
 				$regions[] = $side;
 			}
-			
+
 			$regions[] = $region;
-			
+
 			foreach($side_regions_after as $side){
 				$regions[] = $side;
 			}

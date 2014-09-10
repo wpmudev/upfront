@@ -365,8 +365,18 @@ class Upfront_Layout extends Upfront_JsonModel {
 		foreach ($order as $o) {
 			if (empty($cascade[$o]))
 				continue;
-			$id = $storage_key . '-' . $cascade[$o];
-			$layout = self::from_id($id, $storage_key);
+
+			$layout = false;
+			// Allow plugins to prevent loading from database
+			$load_from_database = apply_filters('upfront_load_layout_from_database', true);
+			if ($load_from_database) {
+				$id = $storage_key . '-' . $cascade[$o];
+				$layout = self::from_id($id, $storage_key);
+			}
+			// Always try to load from theme files if layout is empty
+			if ($layout === false || $layout->is_empty()) {
+				$layout = self::from_files();
+			}
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
@@ -424,8 +434,16 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php($data, $storage_key);
 	}
 
-	public static function get_regions_data () {
-		$regions_data = self::_get_regions();
+	public static function from_files () {
+		$data['regions'] = self::get_regions_data();
+		$data['properties'] = self::get_layout_properties();
+		$data['layout'] = self::$cascade;
+
+		return self::from_php($data, $storage_key);
+	}
+
+	public static function get_regions_data ($add_global_regions = false) {
+		$regions_data = self::_get_regions($add_global_regions);
 		$regions_added = array();
 		$regions = array();
 		foreach ( $regions_data as $i => $region ) {
@@ -473,10 +491,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public static function create_layout ($layout_ids = array(), $layout_slug = '') {
 		self::$layout_slug = $layout_slug;
+		self::$cascade = $layout_ids;
 		$data = array(
 			"name" => "Default Layout",
 			"properties" => self::get_layout_properties(),
-			"regions" => self::get_regions_data(),
+			"regions" => self::get_regions_data(true),
 			"layout_slug" => self::$layout_slug
 		);
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
@@ -646,10 +665,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $return;
 	}
 
-	protected static function _get_regions () {
+	protected static function _get_regions ($add_global_regions = false) {
 		$regions = array();
 		do_action('upfront_get_regions', self::$cascade);
-		$regions = upfront_get_default_layout(self::$cascade, self::$layout_slug);
+		$regions = upfront_get_default_layout(self::$cascade, self::$layout_slug, $add_global_regions);
 		return apply_filters('upfront_regions', $regions, self::$cascade);
 	}
 
