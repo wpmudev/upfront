@@ -12352,3 +12352,10 @@ div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfron
 .upfront-plain_txt p:after {
   content:'\00a0';
 }
+
+/* Disabled state fix for jquery UI theme-rolled css conflicts */
+.upfront-edit-layout #page .upfront-region-container.ui-state-disabled, 
+.upfront-edit-layout #page .upfront-region.ui-state-disabled
+{
+	opacity: 1;
+}
