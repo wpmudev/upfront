@@ -2137,9 +2137,11 @@ define([
 		initialize: function () {
 			this.commands = _([
 				new Command_ThemesDropdown({"model": this.model}),
-				new Command_NewLayout({"model": this.model}),
-				new Command_BrowseLayout({"model": this.model})
 			]);
+			if ( Upfront.themeExporter.currentTheme !== 'upfront') {
+				this.commands.push(new Command_NewLayout({"model": this.model}));
+				this.commands.push(new Command_BrowseLayout({"model": this.model}));
+			}
 		}
 	});
 
