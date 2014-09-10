@@ -414,6 +414,18 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
     if (empty($theme_colors)) $theme_colors = json_encode(array());
 
+
+		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
+		$button_presets = apply_filters(
+			'upfront_get_button_presets',
+			$button_presets,
+			array(
+				'json' => true
+			)
+		);
+
+		if (empty($button_presets)) $button_presets = json_encode(array());
+		
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
 			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
@@ -481,6 +493,7 @@ Upfront.mainData = {
   gridInfo: {$grid_info},
   themeInfo: {$theme_info},
   themeFonts: {$theme_fonts},
+  buttonPresets: {$button_presets},
   themeColors: {$theme_colors},
   content: {$content},
   l10n: {$l10n}
@@ -1378,3 +1391,39 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 }
 //Upfront_Server_ThemeColorsServer::serve();
 add_action('init', array('Upfront_Server_ThemeColorsServer', 'serve'));
+
+class Upfront_Server_ButtonPresetsServer extends Upfront_Server {
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) upfront_add_ajax('upfront_get_button_presets', array($this, 'get'));
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) upfront_add_ajax('upfront_update_button_presets', array($this, 'update'));
+	}
+
+	public function get() {
+		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
+		if (empty($button_presets)) $button_presets = array();
+		$this->_out(new Upfront_JsonResponse_Success($button_presets));
+	}
+
+	public function update() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
+		$button_presets = isset($_POST['button_presets']) ? $_POST['button_presets'] : array();
+
+
+		//do_action('upfront_save_button_presets', $button_presets);
+
+		if (!has_action('upfront_update_button_presets')) {
+			update_option('upfront_' . get_stylesheet() . '_button_presets', json_encode($button_presets));
+		}
+
+		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' button presets updated'));
+	}
+}
+
+add_action('init', array('Upfront_Server_ButtonPresetsServer', 'serve'));

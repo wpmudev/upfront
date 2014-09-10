@@ -3896,6 +3896,12 @@ define([
 			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
 				this.options.spectrum.change(color);
 			}
+		},
+		get_value : function() {
+			return this.$el.find(".sp-preview-inner").css('background-color');
+		},
+		set_value : function(rgba) {
+			this.$spectrum.spectrum("set", rgba );
 		}
 
 	});
@@ -5134,6 +5140,41 @@ var System_Fonts_Storage = function() {
 
 var system_fonts_storage = new System_Fonts_Storage();
 
+var ButtonPresetModel = Backbone.Model.extend({
+	initialize: function(attributes) {
+		this.set({ presets: attributes });
+	}
+});
+var ButtonPresetsCollection = Backbone.Collection.extend({
+	model: ButtonPresetModel
+});
+
+var button_presets_collection = new ButtonPresetsCollection(Upfront.mainData.buttonPresets);
+
+var Button_Presets_Storage = function(stored_presets) {
+	var button_presets;
+
+	var initialize = function() {
+		// When more than one weights are added at once don't send bunch of server calls
+		var save_button_presets_debounced = _.debounce(save_button_presets, 100);
+		button_presets_collection.on('add remove edit', save_button_presets_debounced);
+	};
+
+	var save_button_presets = function() {
+		var postData = {
+			action: 'upfront_update_button_presets',
+			button_presets: button_presets_collection.toJSON()
+		};
+
+		Upfront.Util.post(postData)
+			.error(function(){
+				return notifier.addMessage('Button presets could not be saved.');
+			});
+	};
+
+	initialize();
+};
+var button_presets_storage = new Button_Presets_Storage();
 
 var ThemeFontModel = Backbone.Model.extend({
 	initialize: function(attributes) {
@@ -5527,6 +5568,7 @@ var CSSEditor = Backbone.View.extend({
 		MapModel: {label: 'Map', id: 'upfront-map_element'},
 		//NavigationModel: {label: 'Navigation', id: 'nav'},
 		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
+		UbuttonModel: {label: 'Button', id: 'ubutton'},
 		UpostsModel: {label: 'Posts', id: 'uposts'},
 		UsearchModel: {label: 'Search', id: 'usearch'},
 		USliderModel: {label: 'Slider', id: 'uslider'},
@@ -9800,6 +9842,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					"Trigger": Settings_AnchorTrigger,
 					"LabeledTrigger": Settings_LabeledAnchorTrigger
 				}
+			},
+			"Button": {
+				"Presets": button_presets_collection,
+			},
+			"Fonts": {
+				"System": system_fonts_storage,
+				"Google": google_fonts_storage,
 			},
 			"Field": {
 				"Field": Field,

@@ -1,0 +1,4 @@
+.hover_button_preset.active input, 
+.static_button_preset.active input{
+  background-color:#f00 !important;
+}
