@@ -1546,6 +1546,9 @@ var Application = new (Backbone.Router.extend({
 			}, 150);
 		}
 		else{
+			// First unload layout without any delay, since on fast environments load_layout
+			// could be done instantly which would lead to mix of layouts in page.
+			me.unset_layout();
 			this.load_layout(fullPath).done(function(response){
 				Upfront.Settings.LayoutEditor.newpostType = false;
 				loading.done();
@@ -1553,11 +1556,6 @@ var Application = new (Backbone.Router.extend({
 				me.urlCache[fullPath] = response;
 				this.currentUrl = fullPath;
 			});
-			//Wait a bit to let the loading screen render
-			setTimeout(function(){
-				//Unload the layout while fetching the new one
-				me.unset_layout();
-			}, 150);
 		}
 	},
 
