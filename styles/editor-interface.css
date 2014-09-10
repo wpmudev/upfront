@@ -358,7 +358,8 @@
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page,
 #sidebar-ui .sidebar-commands-primary .command-new-post,
-#sidebar-ui .sidebar-commands-primary .command-new-layout{
+#sidebar-ui .sidebar-commands-primary .command-new-layout,
+#sidebar-ui .sidebar-commands-primary .command-browse-layout{
 	line-height: 34px;
 	padding: 0 10px;
 	border: 2px solid #25394d;
@@ -387,7 +388,8 @@
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
 #sidebar-ui .sidebar-commands-primary .command-new-post:hover,
-#sidebar-ui .sidebar-commands-primary .command-new-layout:hover {
+#sidebar-ui .sidebar-commands-primary .command-new-layout:hover,
+#sidebar-ui .sidebar-commands-primary .command-browse-layout:hover {
 	border-color: #1fcd8f;
 	color: #cbe5ff;
 }
