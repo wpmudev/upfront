@@ -92,7 +92,7 @@
 	transition: color,background-color,border,opacity .1s;
 }
 
-.upfront-ui, .upfront-ui * {
+.upfront-ui, .upfront-ui *, .upfront-ui *:before, .upfront-ui *:after {
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;         /* Opera/IE 8+ */
@@ -7505,11 +7505,6 @@ https://github.com/bgrins/spectrum
 Author: Brian Grinstead
 License: MIT
 ***/
-.sp-container * {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
 
 .sp-container {
     position:absolute;
@@ -7518,7 +7513,7 @@ License: MIT
     display:inline-block;
     *display: inline;
     *zoom: 1;
-    z-index: 2147483647;
+    z-index: 99;
     overflow: hidden;
 }
 .sp-container.sp-flat {
