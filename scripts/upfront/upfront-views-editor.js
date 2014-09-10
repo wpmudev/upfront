@@ -9607,7 +9607,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			var type = this.getCurrentLinkType(),
 				url = this.getTypeUrl(type)
 			;
-
 			return {type: type, url: url};
 		},
 
@@ -9639,14 +9638,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		getAnchors: function(){
 			var regions = Upfront.Application.layout.get("regions"),
 				anchors = [],
-				baseUrl = this.getCleanurl(),
+				baseUrl = this.getCleanurl(), // WHY!!!!?????!!!!! o.0
 				find = function (modules) {
 					modules.each(function(module){
 						if ( module.get("objects") )
 							module.get("objects").each(function (object) {
 								var anchor = object.get_property_value_by_name("anchor");
 								if (anchor && anchor.length)
-									anchors.push({id: baseUrl + '#' + anchor, label: anchor});
+									anchors.push({id: /*baseUrl +*/ '#' + anchor, label: anchor}); // DUDE!!! WHY??!!!??? 0.o
 							});
 						else if ( module.get("modules") )
 							find(module.get("modules"));
