@@ -862,12 +862,29 @@ RedactorPlugins.panelButtons = {
 				me.buttonAdd(id, b.title, function(){
 					var $button = me.buttonGet( id ),
 						left = $button.position().left;
+
 					$(".re-icon").removeClass( "redactor_act dropact" );
 					$button.addClass("redactor_act dropact");
 					$(".redactor_dropdown").not($panel).hide();
 
 					$panel.css("left", left + "px").toggle();
 
+
+					/**
+					 * Triggers panel open or close events
+					 */
+					if( $panel.is(":visible") && typeof b.panel.open === "function" ){
+						b.panel.open.apply(b.panel, [jQuery.Event( "open" ), me]);
+					}else{
+						if( typeof b.panel.close === "function" ){
+							b.panel.close.apply(jQuery.Event( "close" ), [$.Event, me]);
+						}
+					}
+
+					/**
+					 * Makes sure the last button's panel is kept under the toolbar
+					 * @type {[type]}
+					 */
 					var $last = $(".redactor_dropdown.ueditor_panel").last(),
 						lastDropdownLeft = left - $last.innerWidth() + $button.width();
 					$last.css( "left", lastDropdownLeft + "px" );
@@ -1064,13 +1081,18 @@ RedactorPlugins.upfrontColor = {
 		events:{
 			'open': 'open'
 		},
+		close : function(e, redactor){
+			redactor.cleanRemoveEmptyTags(redactor.getCurrent());
+		},
 		setCurrentColors: function() {
-			var parent = this.redactor.getParent();
+
+			var parent = this.redactor.getCurrent();
+			window.red = this.redactor;
 			if(parent || (parent && $(parent).prop('tagName')=='INLINE')) {
 
-				var rgb_a = $(parent).css('background-color').split(',');
+				var color = tinycolor($(parent).css('background-color'));
 				this.current_color = $(parent).css('color');
-				if(rgb_a.length < 4 || parseFloat(rgb_a[3].replace(')', '')) > 0)
+				if(color.getAlpha() > 0)
 					this.current_bg = $(parent).css('background-color');
 
 			}
@@ -1079,6 +1101,7 @@ RedactorPlugins.upfrontColor = {
 			}
 		},
 		open: function(e, redactor){
+			redactor.selectionSave();
 			this.setCurrentColors();
 			var self = this,
 				foreground_picker = new Upfront.Views.Editor.Field.Color({
@@ -1222,24 +1245,23 @@ RedactorPlugins.upfrontColor = {
 		updateIcon : function () {
 				var self = this;
 				self.setCurrentColors();
-
 				if(self.current_bg){
 					var color = tinycolor( self.current_bg );
 					if( color.getAlpha() === 0 ){
-						this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('border-color', color.toRgbString());
+						this.redactor.$toolbar.find('.re-icon.re-upfrontColor').addClass('transparent').css('border-color', "");
 					}else{
-						this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').removeClass('transparent').css('border-color', color.toRgbString());
+						this.redactor.$toolbar.find('.re-icon.re-upfrontColor').removeClass('transparent').css('border-color', color.toRgbString());
 					}
 				}
 				else{
-					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').addClass('transparent').css('border-color', '');
+					this.redactor.$toolbar.find('.re-icon.re-upfrontColor').addClass('transparent').css('border-color', '');
 				}
 
 
 				if(self.current_color)
-					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('color',  self.current_color );
+					this.redactor.$toolbar.find('.re-icon.re-upfrontColor').css('color',  self.current_color );
 				else
-					this.redactor.$toolbar.find('.redactor_btn.redactor_btn_upfrontColor').css('color',  '');
+					this.redactor.$toolbar.find('.re-icon.re-upfrontColor').css('color',  '');
 
 		},
 		updateColors : function() {
@@ -1268,31 +1290,37 @@ RedactorPlugins.upfrontColor = {
                             }
                         }
                     }else{
-                        this.redactor.selectionRestore(true, false);
                         // make sure it doesn't have any theme color classes
-                        _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
-                            self.redactor.inlineRemoveClass( cls );
-                        });
-                        this.redactor.inlineRemoveClass( "upfront_theme_colors" );
-                        this.redactor.inlineRemoveClass( "inline_color" );
-                        var html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
+                        // _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
+                            // self.redactor.inlineRemoveClass( cls );
+                        // });
+      //                   this.redactor.inlineRemoveClass( "upfront_theme_colors" );
+      //                   this.redactor.inlineRemoveClass( "inline_color" );
+      //                   var html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
 
-						$(html).removeClass("upfront_theme_colors");
-     					$(html).removeClass("inline_color");
-                        $(html).css("color", "");
-                        $(html).children().removeClass("inline_color");
-                        $(html).children().removeClass("upfront_theme_colors");
-                        $(html).children().css("color", "");
-                       // $(this.redactor.getCurrent()).removeClass("inline_color");
-                        html = "<span class='inline_color' style='color: " + self.current_color.toRgbString() + "'>" + html + "</span>";
-                        if( $(this.redactor.getCurrent()).hasClass("inline_color") ){
-                            $(this.redactor.getCurrent()).replaceWith( html );
-                        }else{
-                            this.redactor.execCommand("inserthtml", html, true);
-                             // $(this.redactor.getCurrent()).replaceWith( html );
-                        }
+						// $(html).removeClass("upfront_theme_colors");
+     	// 				$(html).removeClass("inline_color");
+      //                   $(html).css("color", "");
+      //                   $(html).children().removeClass("inline_color");
+      //                   $(html).children().removeClass("upfront_theme_colors");
+      //                   $(html).children().css("color", "");
+      //                  // $(this.redactor.getCurrent()).removeClass("inline_color");
+      //                   html = "<span class='inline_color' style='color: " + self.current_color.toRgbString() + "'>" + html + "</span>";
+      //                   if( $(this.redactor.getCurrent()).hasClass("inline_color") ){
+      //                       $(this.redactor.getCurrent()).replaceWith( html );
+      //                   }else{
+      //                       this.redactor.execCommand("inserthtml", html, true);
+      //                        // $(this.redactor.getCurrent()).replaceWith( html );
+      //                   }
                         
                        // this.redactor.inlineSetStyle('color', self.current_color.toRgbString());
+                       // 
+                       window.re = this.redactor;
+                       // this.redactor.inlineRemoveStyle("color");
+                       // this.redactor.cleanEmpty( this.redactor.getCurrent() );
+                       // this.redactor.inlineSetStyle("color", self.current_color.toRgbString());
+                       // $( this.redactor.getCurrent() ).css("color", self.current_color.toRgbString());
+                       this.pickerSet("color", self.current_color.toRgbString());
                     }
 
 
@@ -1306,9 +1334,19 @@ RedactorPlugins.upfrontColor = {
                 }
 
 				self.updateIcon();
-				self.redactor.selectionRemove();
+				// self.redactor.selectionRemove();
 				self.redactor.sync();
 			
+			},
+			pickerSet: function(rule, type)
+			{
+				this.redactor.bufferSet();
+
+				this.redactor.$editor.focus();
+				this.redactor.inlineRemoveStyle(rule);
+				if (type !== false) this.redactor.inlineSetStyle(rule, type);
+				this.redactor.selectionRemoveMarkers();
+				this.redactor.sync();
 			}
 
 	})

@@ -9765,8 +9765,8 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 	width:auto;
 	background-color: transparent;
 	box-shadow: none;
-	top: -164px !important;
-	left: -30px !important;
+	/*top: -164px !important;*/
+	/*left: -30px !important;*/
 	font-family: Verdana, sans-serif!important;
 }
 .redactor_air.under .redactor_dropdown_box_upfrontColor{
@@ -10068,7 +10068,7 @@ div.sp-val:active .sp-dragger:after { display:block;}
 
 }
 
-.redactor_btn.re-color.transparent:after {
+.re-icon.re-upfrontColor.transparent:after {
 	border: none;
 	height: 24px;
 	width: 24px;
