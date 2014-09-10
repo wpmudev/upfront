@@ -7505,6 +7505,11 @@ https://github.com/bgrins/spectrum
 Author: Brian Grinstead
 License: MIT
 ***/
+.sp-container * {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
 
 .sp-container {
     position:absolute;
