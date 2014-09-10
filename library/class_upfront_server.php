@@ -444,6 +444,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
     $theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+		$theme_info = apply_filters('upfront_get_responsive_settings', $theme_info);
+		if (is_array($theme_info)) {
+			$theme_info = json_encode($theme_info);
+		}
     if (empty($theme_info)) {
       // Add defaults
 			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
@@ -482,7 +486,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		if (empty($button_presets)) $button_presets = json_encode(array());
-		
+
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
 			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
@@ -1364,14 +1368,22 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
     }
 
     $responsive_settings = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+		$responsive_settings = apply_filters('upfront_get_responsive_settings', $responsive_settings);
     if (empty($responsive_settings)) {
       $responsive_settings = array('breakpoints' => $breakpoints);
     } else {
-      $responsive_settings = json_decode($responsive_settings);
-      $responsive_settings->breakpoints = $breakpoints;
+			if (is_string($responsive_settings)) {
+				$responsive_settings = json_decode($responsive_settings);
+			}
+			$responsive_settings = (array) $responsive_settings;
+      $responsive_settings['breakpoints'] = $breakpoints;
     }
 
-		update_option('upfront_' . get_stylesheet() . '_responsive_settings', json_encode($responsive_settings));
+		do_action('upfront_update_responsive_settings', $responsive_settings);
+
+		if (!has_action('upfront_update_responsive_settings')) {
+			update_option('upfront_' . get_stylesheet() . '_responsive_settings', json_encode($responsive_settings));
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' responsive settings updated'));
   }

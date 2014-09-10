@@ -63,6 +63,8 @@ text!elements/upfront-login/css/public.css
 text!elements/upfront-maps/css/edit.css
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/unewnavigation.js
+text!elements/upfront-button/tpl/ubutton.html
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-button/js/ubutton.js
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-posts/js/uposts.js
 text!elements/upfront-search/tpl/usearch.html
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-search/js/usearch.js

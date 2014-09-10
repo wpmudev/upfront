@@ -53,6 +53,7 @@ class Upfront_Grid {
 	          'id' => 'tablet',
 	          'width' => 570,
 	          'columns' => 12,
+	          'enabled' => true,
 	          'fixed' => true
 	        ),
 	        array(
@@ -61,6 +62,7 @@ class Upfront_Grid {
 	          'id' => 'mobile',
 	          'width' => 315,
 	          'columns' => 7,
+	          'enabled' => true,
 	          'fixed' => true
 	        )
       	);
