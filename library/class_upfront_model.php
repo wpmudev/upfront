@@ -434,11 +434,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php($data, $storage_key);
 	}
 
-	public static function from_files () {
-		$data['regions'] = self::get_regions_data();
+	public static function from_files ($data, $cascade, $storage_key=false) {
+		$new_data = apply_filters('upfront_override_layout_data', $data, $cascade);
+		if ((empty($new_data) && empty($data)) || json_encode($new_data) == json_encode($data)) {
+			$data['regions'] = self::get_regions_data();
+		} else $data = $new_data;
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
-
 		return self::from_php($data, $storage_key);
 	}
 
