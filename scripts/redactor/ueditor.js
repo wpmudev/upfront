@@ -142,6 +142,7 @@ var hackRedactor = function(){
 					if (!this.getSelectionText()) {
 						this.$air.fadeOut(100);
 						$(".redactor_dropdown").hide();
+						this.$toolbar.find(".dropact").removeClass("dropact");
 						$(doc).off(e);
 					}
 				}
