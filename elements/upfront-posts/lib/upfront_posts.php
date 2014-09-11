@@ -17,6 +17,9 @@ class Upfront_UpostsView extends Upfront_Object {
 		$taxonomy = $this->_get_property('taxonomy');
 		$term = $this->_get_property('term');
 		$limit = $this->_get_property('limit');
+		$order = $this->_get_property('order');
+		$direction = strtoupper($this->_get_property('direction'));
+
 		$content_type = $this->_get_property('content_type');
 		$featured_image = $this->_get_property('featured_image');
 		$element_id = $this->_get_property('element_id');
@@ -47,6 +50,10 @@ class Upfront_UpostsView extends Upfront_Object {
 		$args['paged'] = $page ? $page : get_query_var('paged');
 
 		$args['post_status'] = 'publish'; //Making sure, because ajax call reset this to 'any'
+
+		// Alright, so let's sort too
+		$args['orderby'] = !empty($order) ? $order : 'date';
+		$args['order'] = !empty($direction) && in_array($direction, array('ASC', 'DESC')) ? $direction : 'DESC';
 
 		//$query = new WP_Query($args);
 
