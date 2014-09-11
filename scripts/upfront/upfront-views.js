@@ -2970,6 +2970,7 @@ define([
 				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 			},
 			show:function () {
+				Upfront.Events.trigger('upfront:element:edit:stop');
 				var me = this;
 				this.$bg.insertBefore(this.$el);
 				if(this.model.get_property_value_by_name('click_out_close') == 'yes') {
