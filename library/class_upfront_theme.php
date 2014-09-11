@@ -739,6 +739,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			if (empty($menu['items'])) continue;
 			$menu_items = array();
 			foreach($menu['items'] as $menu_item) {
+				$menu_item['url'] = str_replace('%siteurl%', site_url(), $menu_item['url']);
 				$menu_items[$menu_item['menu_item_parent']][] = $menu_item;
 			}
 			foreach($menu_items[0] as $menu_item) {
