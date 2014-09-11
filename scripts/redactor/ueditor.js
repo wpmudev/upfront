@@ -257,25 +257,6 @@ var hackRedactor = function(){
 		return false;
 	};
 
-	$.Redactor.prototype.getParentHtml =  function()
-		{
-			var html = '';
-
-			var sel = this.getParent();
-			if (sel.childElementCount)
-			{
-				var container = this.document.createElement( "div" );
-				var len = sel.rangeCount;
-				for (var i = 0; i < len; ++i)
-				{
-					container.appendChild(sel.getRangeAt(i).cloneContents());
-				}
-
-				html = container.innerHTML;
-			}
-
-			return this.syncClean(html);
-	};
 /*
 	$.Redactor.prototype.getCurrent = function(){
 		var el = false;
@@ -2264,6 +2245,7 @@ RedactorPlugins.upfrontPlaceholder = {
  Font icons button
  -----------------------*/
 RedactorPlugins.upftonIcons = {
+	$sel : false,
     beforeInit: function(){
         this.opts.buttonsCustom.upftonIcons = {
             title: 'Icons',
@@ -2282,7 +2264,8 @@ RedactorPlugins.upftonIcons = {
     panel: UeditorPanel.extend(_.extend({}, Upfront.Views.Mixins.Upfront_Scroll_Mixin, {
         tpl: _.template($(tpl).find('#font-icons').html()),
         events:{
-            'click .ueditor-font-icon': 'select_icon',
+            'click .ueditor-font-icon': 'insert_icon',
+            // "change input.font-icons-top" : 'update_offset',
             'open': 'open',
             'closed': 'close'
         },
@@ -2294,30 +2277,42 @@ RedactorPlugins.upftonIcons = {
             this.redactor = redactor;
             this.redactor.selectionRestore();
             this.redactor.selectionSave();
-            this.select_current_icon();
+            this.set_current_icon();
+            
             this.$el.parent().css({
                 left : 193
             });
         },
         close : function(){
-        	this.redactor.selectionRemoveMarkers();
+        	if( this.redactor ){
+        		this.redactor.selectionRemoveMarkers();
+        	}
         },
-        select_icon : function(e){
-        	this.redactor.selectionRestore(true, false);
+   //      update_offset : function( e ){
+			// console.log(this.$sel);
+   //      	if( this.$sel && this.$sel.hasClass( "uf_font_icon" ) ){
+   //      		window.$sel = this.$sel;
+   //      		this.$sel.css("top", parseFloat( $(e.target).val() ) +  "px" );
+   //      		this.redactor.selectionRestore();
+   //      		this.redactor.sync();
+   //      	}
+   //      },
+        insert_icon : function(e){
+			this.redactor.selectionRestore(true, false);
             var $icon = $( $(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html() ),
-            	fontSize = this.$("#font-icons-size").val(),
-            	top = this.$("#font-icons-top").val();
+            	fontSize = this.$(".font-icons-size").val(),
+            	top = this.$(".font-icons-top").val();
 				$icon.css({
 	            	"font-size" : fontSize + "px",
 	            	"top" : top + "px"
 	            });
             this.redactor.execCommand("inserthtml", $icon[0].outerHTML , true);
-           // $(this.redactor.getCurrent()).replaceWith( $icon );
            	this.redactor.sync();
             this.closePanel();
         },
-        select_current_icon : function(){
+        set_current_icon : function(){
         	this.redactor.selectionRestore(true, false);
+        	window.re = this.redactor;
         	var $sel = $(this.redactor.getParent()).eq(0),
         		self = this;
 
@@ -2325,25 +2320,26 @@ RedactorPlugins.upftonIcons = {
         		if( $sel.parent().hasClass("uf_font_icon") ) {$sel = $sel.parent()};
         	}
         	if( $sel.hasClass("uf_font_icon") ){
-            	this.$("#font-icons-size").val( parseFloat( $sel.css("font-size") ) );
-            	this.$("#font-icons-top").val( parseFloat( $sel.css("top") ) );
+            	this.$(".font-icons-size").val( parseFloat( $sel.css("font-size") ) );
+            	this.$(".font-icons-top").val( parseFloat( $sel.css("top") ) );
 
             	this.$(".upfront-font-icons-controlls input").on("change", function(e){
             		e.stopPropagation();
             		e.preventDefault();
+            		self.redactor.selectionSave();
+            		self.redactor.bufferSet();
             		var val = $(this).val() + "px";
-            		
-            		if( this.id === "font-icons-size" ){
+
+            		if( $(this).hasClass("font-icons-size") ){
             			$sel.css("font-size", val);
             		}
 
-            		if( this.id === "font-icons-top" ){
+            		if( $(this).hasClass( "font-icons-top" ) ){
             			$sel.css("top", val);
             		}
 					self.redactor.sync();
             		
             		self.redactor.selectionRestore();
-            		// self.redactor.execCommand("inserthtml",  $sel[0].outerHTML , true);
 
             	});
             	
