@@ -147,8 +147,32 @@ jQuery(document).ready(function($){
 		//if(typeof(Upfront) != 'undefined' && Upfront.Views)
 			//return;
 
-		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block')
+		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block') {
+		
+				console.log('this is happening');
+				var url = $(e.target).attr('href');
+				if(url.indexOf('#ltb-') > -1)	 {
+					
+					e.preventDefault();
+					var regions = Upfront.Application.layout.get('regions');
+					var urlanchor = url.split('#');
+		
+					
+					region = regions ? regions.get_by_name(urlanchor[1]) : false;
+					if(region){
+						//hide other lightboxes
+						_.each(regions.models, function(model) {
+							if(model.attributes.sub == 'lightbox')
+								Upfront.data.region_views[model.cid].hide();
+						});
+						var regionview = Upfront.data.region_views[region.cid];
+						regionview.show();
+					}
+				}
+
 			return;
+		}
+			
 			
 		  var url = $(this).attr('href');
 		  if(!url)

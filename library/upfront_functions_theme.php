@@ -40,8 +40,8 @@ function upfront_get_regions () {
 	return Upfront_Theme::get_instance()->get_regions();
 }
 
-function upfront_get_default_layout($cascade, $layout_slug = ''){
-	return Upfront_Theme::get_instance()->get_default_layout($cascade, $layout_slug);
+function upfront_get_default_layout($cascade, $layout_slug = '', $add_global_regions = false){
+	return Upfront_Theme::get_instance()->get_default_layout($cascade, $layout_slug, $add_global_regions);
 }
 
 function upfront_create_region($args, $region_properties = array()){

@@ -685,7 +685,7 @@ var LayoutEditor = {
 			if ( data.latest_post )
 				_upfront_post_data.post_id = data.latest_post;
 
-			app.load_layout(data.layout, {layout_slug: layout_slug}).done(function() {
+			app.create_layout(data.layout, {layout_slug: layout_slug}).done(function() {
 				app.layout.set('current_layout', layout);
 				// Immediately export layout to write initial state to file.
 				ed._export_layout();
@@ -850,7 +850,8 @@ var LayoutEditor = {
 							'thx-author': fields.author.get_value(),
 							'thx-author-uri': fields.author_uri.get_value(),
 							'thx-theme-template': 'upfront',
-							'thx-activate_theme': fields.activate.get_value() || ''
+							'thx-activate_theme': fields.activate.get_value() || '',
+							add_global_regions: Upfront.Application.current_subapplication.layout.get('layout_slug') !== 'blank'
 						};
 						loading.update_loading_text("Creating theme");
 						return ed._create_theme(data);
@@ -4148,7 +4149,7 @@ var GridEditor = {
 								app.layout.set('layout_slug', structure);
 								if ( Upfront.Application.get_gridstate() )
 									togglegrid.on_click();
-								app.load_layout(_upfront_post_data.layout, {layout_slug: structure});
+								app.create_layout(_upfront_post_data.layout, {layout_slug: structure});
 								Upfront.Events.once("layout:render", function() {
 									if ( !Upfront.Application.get_gridstate() )
 										togglegrid.on_click();

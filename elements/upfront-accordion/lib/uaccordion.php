@@ -59,7 +59,6 @@ class Upfront_UaccordionView extends Upfront_Object {
 
 		 // upfront_add_element_style('uaccordion_style', array('css/uaccordion.css', dirname(__FILE__)));
 			upfront_add_element_script('uaccordion_script', array('js/uaccordion-front.js', dirname(__FILE__)));
-return '';
 			return $markup;
 	}
 

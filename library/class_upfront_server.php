@@ -56,6 +56,7 @@ class Upfront_Ajax extends Upfront_Server {
 	private function _add_hooks () {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
+			upfront_add_ajax('upfront_create_layout', array($this, "create_layout"));
 			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
 			upfront_add_ajax('upfront_list_theme_layouts', array($this, "list_theme_layouts"));
 			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
@@ -98,6 +99,62 @@ class Upfront_Ajax extends Upfront_Server {
 			// Instead of whining, create a stub layout and load that
 			$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 		}
+
+		global $post, $upfront_ajax_query;
+
+		if(!$upfront_ajax_query)
+			$upfront_ajax_query = false;
+
+		if($post_type){
+			$post = Upfront_PostModel::create($post_type);
+			// set new layout IDS based on the created post ID
+			$cascade = array(
+				'type' => 'single',
+				'item'=> $post_type,
+				'specificity' => $post->ID
+			);
+			$layout_ids = Upfront_EntityResolver::get_entity_ids($cascade);
+		}
+		else {
+			$post = $post;
+			if ($post && is_singular())
+				$layout_ids = Upfront_EntityResolver::get_entity_ids();
+			else if($_POST['post_id']){
+				$posts = get_posts(array('include' => $_POST['post_id'], 'suppress_filters' => false));
+				if(sizeof($posts))
+					$post = $posts[0];
+			}
+		}
+
+		$response = array(
+			'post' => $post,
+			'layout' => $layout->to_php(),
+			'cascade' => $layout_ids,
+			'query' => $upfront_ajax_query
+		);
+
+		$this->_out(new Upfront_JsonResponse_Success($response));
+	}
+
+	function create_layout () {
+		$layout_ids = $_POST['data'];
+		$stylesheet = $_POST['stylesheet'];
+		$layout_slug = !empty($_POST['layout_slug']) ? $_POST['layout_slug'] : false;
+		$load_dev = $_POST['load_dev'] == 1 ? true : false;
+		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
+		$parsed = false;
+
+		if (empty($layout_ids))
+			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
+
+		upfront_switch_stylesheet($stylesheet);
+
+		if(is_string($layout_ids)){
+			$layout_ids = Upfront_EntityResolver::ids_from_url($layout_ids);
+			$parsed = true;
+		}
+
+		$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 
 		global $post, $upfront_ajax_query;
 
@@ -387,7 +444,11 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
     $theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
-    if (empty($theme_info)) {
+		$theme_info = apply_filters('upfront_get_responsive_settings', $theme_info);
+		if (is_array($theme_info)) {
+			$theme_info = json_encode($theme_info);
+		}
+    if (empty($theme_info) || $theme_info === '[]') {
       // Add defaults
 			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
       $theme_info = json_encode(array('breakpoints' => $defaults));
@@ -425,7 +486,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		if (empty($button_presets)) $button_presets = json_encode(array());
-		
+
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
 			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
@@ -1307,14 +1368,22 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
     }
 
     $responsive_settings = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+		$responsive_settings = apply_filters('upfront_get_responsive_settings', $responsive_settings);
     if (empty($responsive_settings)) {
       $responsive_settings = array('breakpoints' => $breakpoints);
     } else {
-      $responsive_settings = json_decode($responsive_settings);
-      $responsive_settings->breakpoints = $breakpoints;
+			if (is_string($responsive_settings)) {
+				$responsive_settings = json_decode($responsive_settings);
+			}
+			$responsive_settings = (array) $responsive_settings;
+      $responsive_settings['breakpoints'] = $breakpoints;
     }
 
-		update_option('upfront_' . get_stylesheet() . '_responsive_settings', json_encode($responsive_settings));
+		do_action('upfront_update_responsive_settings', $responsive_settings);
+
+		if (!has_action('upfront_update_responsive_settings')) {
+			update_option('upfront_' . get_stylesheet() . '_responsive_settings', json_encode($responsive_settings));
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' responsive settings updated'));
   }
