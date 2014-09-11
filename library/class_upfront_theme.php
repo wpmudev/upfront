@@ -507,12 +507,16 @@ class Upfront_Virtual_Region {
 
 	public function add_group($options){
 		$properties = array();
-		if(!isset($options['id']))
+		if(isset($options['id']) && !empty($options['id']))
 			$properties['element_id'] = $options['id'];
+		if(isset($options['breakpoint']) && !empty($options['breakpoint']))
+			$properties['breakpoint'] = $options['breakpoint'];
 		if(!isset($options['close_wrapper']))
 			$options['close_wrapper'] = true;
 		if(!isset($options['new_line']))
 			$options['new_line'] = false;
+		if(!isset($options['wrapper_id']))
+			$options['wrapper_id'] = false;
 		$pos = array_merge(array(
 			'columns' => 24,
 			'margin_left' => 0,
@@ -524,7 +528,7 @@ class Upfront_Virtual_Region {
 			'margin-top' => $pos['margin_top']
 		);
 		if(!$this->current_wrapper)
-			$this->start_wrapper(false, $options['new_line']);
+			$this->start_wrapper($options['wrapper_id'], $options['new_line']);
 
 		$this->start_module_group($position, $properties);
 		$group_id = $this->current_group;
