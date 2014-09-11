@@ -1293,17 +1293,34 @@ RedactorPlugins.upfrontColor = {
                         _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function( cls ){
                             self.redactor.inlineRemoveClass( cls );
                         });
-    
+
 					   this.redactor.selectionRestore(true, true);
                        this.redactor.bufferSet();
                        this.redactor.$editor.focus();
-                       this.redactor.inlineRemoveStyle("color");
+
+                      
                        this.redactor.inlineRemoveClass( "upfront_theme_colors" );
                        this.redactor.inlineRemoveClass( "inline_color" );
-                        var html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
-                        html = "<span class='inline_color' style='color: " + self.current_color.toRgbString() + "'>" + html + "</span>";
-             			this.redactor.execCommand("inserthtml", html, true);
-				
+                       this.redactor.inlineRemoveStyle("color");
+                        // console.log($(this.redactor.getParent()).prop('tagName') === "INLINE", $(this.redactor.getParent()).text() ==  this.redactor.getSelectionText(),typeof $(this.redactor.getParent()).text() , typepf this.redactor.getSelectionText());
+                        console.log( $(this.redactor.getParent()).prop('tagName') === "INLINE",  $(this.redactor.getParent()).text().trim().replace(this.redactor.getSelectionText().trim(), "").length < 2 );
+                       var html = $(this.redactor.getParent()).prop('tagName') === "INLINE" && ( $(this.redactor.getParent()).text().trim().replace(this.redactor.getSelectionText().trim(), "").length < 2 )  ?
+							$(this.redactor.getParent()).html() : 
+							this.redactor.getSelectionHtml();
+							
+						
+						// html = 	this.redactor.getSelectionHtml();
+                        html = this.redactor.syncClean( this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(html)) );
+
+						$(html).css("color", "");
+						$(html).removeClass(".inline_color");
+
+                        // console.log(html);
+                        html = "<inline class='inline_color' style='color: " + self.current_color.toRgbString() + "'>" + html + "</inline>";
+                      	this.redactor.execCommand("inserthtml", html, true);
+
+                      	console.log(html, $(html).closest(".inline_color"));
+             			
                     }
 
 
@@ -1315,10 +1332,13 @@ RedactorPlugins.upfrontColor = {
                     this.redactor.inlineSetStyle('background-color', self.current_bg.toRgbString());
 
                 }
+
+
+                
+
 				self.setCurrentColors();
 				self.updateIcon();
 				self.redactor.syncClean();
-			
 			}
 	})
 };
@@ -2198,7 +2218,7 @@ RedactorPlugins.upfrontPlaceholder = {
 		if (placeholder === '') placeholder = false;
 		if (placeholder !== false)
 		{
-			this.placeholderRemove();
+			this.placeholderRemoveFromEditor();
 			this.$placeholder = this.$editor.clone(false);
 			this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html( this.opts.linebreaks ? placeholder : this.cleanParagraphy(placeholder) );
 			this.$editor.after(this.$placeholder);
