@@ -33,10 +33,18 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		}, this);
 	},
 	get_content_markup: function () {
-		var content = this.model.get_content();
+		var content = this.model.get_content(),
+			$content;
 
-		if($(content).hasClass('plaintxt_padding')) {
-			content = $(content).html();
+		// Fix tagless content causes WSOD
+		try {
+		  $content = $(content);
+		} catch (error) {
+			$content = $('<p>' + content + '</p>');
+		}
+
+		if($content.hasClass('plaintxt_padding')) {
+			content = $content.html();
 		}
 
 		var data = {
@@ -133,7 +141,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		};
 
 		_.bindAll(this, 'onBgColor', 'onBorderColor');
-	   
+
 		this.settings = _([
 			new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
