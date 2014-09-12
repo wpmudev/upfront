@@ -149,7 +149,6 @@ jQuery(document).ready(function($){
 
 		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block') {
 		
-				console.log('this is happening');
 				var url = $(e.target).attr('href');
 				if(url.indexOf('#ltb-') > -1)	 {
 					
