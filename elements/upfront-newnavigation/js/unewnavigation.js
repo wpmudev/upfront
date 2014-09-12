@@ -447,7 +447,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.model = new UnewnavigationModel({properties: this.model.get('properties')});
 		}
 		Upfront.Views.ObjectView.prototype.initialize.call(this);
-		
+
 		this.events = _.extend({}, this.events, {
 			'click a.menu_item' : 'exitEditMode',
 			'dblclick a.menu_item' : 'editMenuItem',
@@ -527,9 +527,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(singleclickcount == 1) {
 			setTimeout(function(){
 				if(singleclickcount == 1) {
-					var menu_item_clean = thelink.getCleanurl(thelink.model['menu-item-url']);
+					var menu_item_clean = thelink.model['menu-item-url'];
+					if (!menu_item_clean.match(/^#[a-zA-Z0-9_-]+/)) {
+						menu_item_clean = thelink.getCleanurl(thelink.model['menu-item-url']);
+					}
 
-					if(thelink.model['menu-item-url'].indexOf('#') > -1 && thelink.getCleanurl() == menu_item_clean) {
+					if((thelink.model['menu-item-url'].indexOf('#') > -1 && thelink.getCleanurl() == menu_item_clean) || thelink.model['menu-item-url'].match(/^#/)) {
 						if(thelink.model['menu-item-url'].indexOf('#ltb-') > -1) {
 							var regions = Upfront.Application.layout.get('regions');
 							region = regions ? regions.get_by_name(thelink.getUrlanchor(thelink.model['menu-item-url'])) : false;

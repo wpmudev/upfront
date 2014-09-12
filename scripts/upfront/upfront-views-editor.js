@@ -9689,14 +9689,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		getAnchors: function(){
 			var regions = Upfront.Application.layout.get("regions"),
 				anchors = [],
-				baseUrl = this.getCleanurl(), // WHY!!!!?????!!!!! o.0
 				find = function (modules) {
 					modules.each(function(module){
 						if ( module.get("objects") )
 							module.get("objects").each(function (object) {
 								var anchor = object.get_property_value_by_name("anchor");
 								if (anchor && anchor.length)
-									anchors.push({id: /*baseUrl +*/ '#' + anchor, label: anchor}); // DUDE!!! WHY??!!!??? 0.o
+									anchors.push({id: '#' + anchor, label: anchor});
 							});
 						else if ( module.get("modules") )
 							find(module.get("modules"));
@@ -9762,13 +9761,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 		getLightBoxes: function(){
 			var lightboxes = [],
-				regions = Upfront.Application.layout.get('regions'),
-				baseUrl = this.getCleanurl()
+				regions = Upfront.Application.layout.get('regions')
 			;
 
 			_.each(regions.models, function(model) {
 				if(model.attributes.sub == 'lightbox')
-					lightboxes.push({id: baseUrl + '#' + model.get('name'), label: model.get('title')});
+					lightboxes.push({id: '#' + model.get('name'), label: model.get('title')});
 			});
 
 			return lightboxes;
@@ -9789,29 +9787,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 
 			var safeName = Upfront.Application.LayoutEditor.createLightboxRegion(name),
-				url = this.getCleanurl() + '#' + safeName
+				url = '#' + safeName
 			;
 
 			this.model.set({url: url, type: 'lightbox'});
 			this.render();
 
 			this.linkOk();
-		},
-
-		getCleanurl: function(url) {
-			//this one removes any existing # anchor postfix from the url
-			var urlParts;
-			if(!url){
-				url = location.href;
-				if(location.search == '?dev=true')
-					url = url.toString().replace('?dev=true', '');
-			}
-
-			if(url.indexOf('#') == -1)
-				return url;
-
-			urlParts = url.split('#');
-			return urlParts[0];
 		},
 
 		setCurrentClass: function(type) {

@@ -615,9 +615,13 @@ class Upfront_Layout_Maker {
 
 	function create_layout(){
 		$post_main = false;
-		$regions = array();
+		// Track added regions cause lightboxes might be included multiple times
+		$added_regions = array();
 		foreach($this->regions as $r){
 			$region = $r->get_data();
+
+			if (in_array($region['name'], $added_regions)) continue;
+			$added_regions[] = $region['name'];
 
 			if($region['name'] == 'main'){
 				$region['position'] = 10;
