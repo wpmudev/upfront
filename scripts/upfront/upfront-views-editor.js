@@ -2120,7 +2120,7 @@ define([
 	});
 
 	var SidebarCommands_PrimaryPostType = Commands.extend({
-		"className": "sidebar-commands sidebar-commands-primary",
+		"className": "sidebar-commands sidebar-commands-primary clearfix",
 		initialize: function () {
 			this.commands = _([]);
 			if (Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) {
@@ -2133,7 +2133,7 @@ define([
 	});
 
 	var SidebarCommands_PrimaryLayout = Commands.extend({
-		"className": "sidebar-commands sidebar-commands-primary",
+		"className": "sidebar-commands sidebar-commands-primary clearfix",
 		initialize: function () {
 			this.commands = _([
 				new Command_ThemesDropdown({"model": this.model}),

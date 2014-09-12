@@ -441,6 +441,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		} else $data = $new_data;
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
+
+		$data = apply_filters('upfront_augment_theme_layout', $data);
+
 		return self::from_php($data, $storage_key);
 	}
 

@@ -734,6 +734,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			if (empty($menu['items'])) continue;
 			$menu_items = array();
 			foreach($menu['items'] as $menu_item) {
+				$menu_item['url'] = str_replace('%siteurl%', site_url(), $menu_item['url']);
 				$menu_items[$menu_item['menu_item_parent']][] = $menu_item;
 			}
 			foreach($menu_items[0] as $menu_item) {
@@ -997,7 +998,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$data['regions'] = $theme->get_default_layout($ids);
 			//$data['regions'] = $theme->get_default_layout(array(), $layoutId);
 		}
-		return apply_filters('upfront_augment_theme_layout', $data);
+		//return apply_filters('upfront_augment_theme_layout', $data); // So, this doesn't work anymore either. Yay.
+		return $data;
 	}
 
 	protected function _import_images ($path) {
@@ -1164,6 +1166,43 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function add_required_posts ($limit, $thumbnails=array()) {
 		return $this->_insert_posts($limit, $thumbnails);
 	}
+
+	/**
+	 * Called from the implementing theme,
+	 * this method will actually import the background slider images.
+	 */
+	protected function _import_slider_image ($filepath) {
+        $key = $this->get_prefix() . '-slider-images';
+        $images = get_option($key, array());
+        if (!empty($images[$filepath])) return $images[$filepath];
+
+        // else import image
+        $wp_upload_dir = wp_upload_dir();
+        $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
+        if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
+        $filename = basename($filepath);
+        while (file_exists("{$pfx}{$filename}")) {
+            $filename = rand() . $filename;
+        }
+        $full_img_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . ltrim($filepath, '/');
+        @copy($full_img_path, "{$pfx}{$filename}");
+        $wp_filetype = wp_check_filetype(basename($filename), null);
+        $attachment = array(
+            'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
+            'post_mime_type' => $wp_filetype['type'],
+            'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+            'post_content' => '',
+            'post_status' => 'inherit'
+        );
+        $attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
+        $attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
+        wp_update_attachment_metadata( $attach_id, $attach_data );
+
+        $images[$filepath] = $attach_id;
+        update_option($key, $images);
+
+        return $attach_id;
+    }
 }
 
 
