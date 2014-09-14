@@ -14,7 +14,7 @@ var ButtonModel = Upfront.Models.ObjectModel.extend({
 	}
 });
 
-
+var singleclickcount = 0;
 var ButtonView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-button',
 	cssSelectors: {
@@ -27,11 +27,47 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.model = new ButtonModel({properties: this.model.get('properties')});
 		}
 
+
+		this.events = _.extend({}, this.events, {
+			'click a.upfront_cta' : 'processClick'
+		});
 		this.on('deactivated', function() {
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
-	
-		Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);	
+//		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
+/*		this.on('deactivated', function(e) {
+			console.log(e);
+			me.stopEdit();
+		}, this);
+*/
+		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);	
+	},
+	processClick: function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var me = this
+		singleclickcount++;
+		if(singleclickcount == 1) {
+			setTimeout(function(){
+				if(singleclickcount == 1) {
+					if(!$(e.target).hasClass('redactor_editor'))
+						me.visitLink(e);
+				}
+			singleclickcount = 0;
+			}, 400);
+		}
+		else 
+			me.editLink(e);
+	},
+	visitLink: function(e) {
+		console.log('visit the link');
+	},
+	editLink: function(e) {
+		var editor = $(e.target).data('ueditor');
+		
+		if(editor) {
+			editor.start();
+		}
 	},
 	revert_preset: function() {
 		this.render();
@@ -47,19 +83,41 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 					"background-color: "+preset.bgcolor+"; "+
 					"font-size: "+preset.fontsize+"px; "+
 					"font-family: "+preset.fontface+"; "+
-					"color: "+preset.color+"; "
-	
-			style_hover = "border: "+preset.hov_borderwidth+"px "+preset.hov_bordertype+" "+preset.hov_bordercolor+"; "+
-					"border-radius: "+preset.hov_borderradius1+"px "+preset.hov_borderradius2+"px "+preset.hov_borderradius4+"px "+preset.hov_borderradius3+"px; "+
-					"background-color: "+preset.hov_bgcolor+"; "+
-					"font-size: "+preset.hov_fontsize+"px; "+
-					"font-family: "+preset.hov_fontface+"; "+
-					"color: "+preset.hov_color+"; "
+					"color: "+preset.color+"; "+
+					"transition: all "+preset.hov_duration+"s "+preset.hov_transition+"; ";
+			
+			style_hover  =  '';
+			if(preset.hov_borderwidth)
+				style_hover = style_hover+'border-width: '+preset.hov_borderwidth+'px; ';
+			if(preset.hov_bordertype)
+				style_hover = style_hover+'border-style: '+preset.hov_bordertype+'; ';
+			if(preset.hov_bordercolor)
+				style_hover = style_hover+'border-color: '+preset.hov_bordercolor+'; ';
+			if(preset.hov_borderradius1)
+				style_hover = style_hover+'border-top-left-radius: '+preset.hov_borderradius1+'px; ';	
+			if(preset.hov_borderradius2)
+				style_hover = style_hover+'border-top-right-radius: '+preset.hov_borderradius2+'px; ';	
+			if(preset.hov_borderradius3)
+				style_hover = style_hover+'border-bottom-right-radius: '+preset.hov_borderradius3+'px; ';	
+			if(preset.hov_borderradius4)
+				style_hover = style_hover+'border-bottom-left-radius: '+preset.hov_borderradius4+'px; ';
+			if(preset.hov_bgcolor)
+				style_hover = style_hover+'background-color: '+preset.hov_bgcolor+'; ';
+			if(preset.hov_fontsize)
+				style_hover = style_hover+'font-size: '+preset.hov_fontsize+'px; ';
+			if(preset.hov_fontface)
+				style_hover = style_hover+'font-family: '+preset.hov_fontsize+'; ';
+			if(preset.hov_color)
+				style_hover = style_hover+'color: '+preset.hov_color+'; ';
+				
+
 		}
 
 		var data = {
 			"id" : this.model.get_property_value_by_name('element_id'),
 			"content" : content,
+			"href" : this.model.get_property_value_by_name('href'),
+			"align" : this.model.get_property_value_by_name('align'),
 			"style_static" : style_static,
 			"style_hover" : style_hover,
 		};
@@ -78,28 +136,33 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this,
 		blurTimeout = false;
-
-		this.$el.find('.upfront-object-content')
-			.addClass('upfront-button')
-			.ueditor({
-				linebreaks: false,
-				inserts: {},
+		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
+		
+		$target.ueditor({
+				linebreaks: true,
+				disableLineBreak: true,
+				//focus: true,
+				
+				airButtons: ['upfrontLinkCTA', 'stateAlignCTA'],
+				placeholder: 'Click here',
 				autostart: false
 			})
 			.on('start', function(){
-				var $swap = $(this).find('.upfront-quick-swap');
-				if ( $swap.length ){
-					$swap.remove();
-				}
+				
 				me.model.set_property('is_edited', true, true);
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
-				var ed = me.$el.find('.upfront-object-content').data("ueditor"),
+				var ed = $target.data("ueditor"),
 					text = ''
 				;
+
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
+								console.log(text);
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
+				me.property('href', $target.attr('href'), true);
+
+				me.property('align', $target.css('text-align'), true);
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				me.render();
 			})
@@ -107,9 +170,42 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				var text = $.trim($(this).html());
 				if (text) me.model.set_content($(text).html(), {silent: true});
 			})
-		;
+		/*.ueditor({
+				linebreaks: true,
+				disableLineBreak: true,
+				//focus: true,
+				
+				airButtons: ['upfrontLinkCTA', 'stateAlignCTA'],
+				placeholder: 'Click here',
+			}).on('start', function(e) {
+				Upfront.Events.trigger('upfront:element:edit:start', 'text');
+				$(this).focus();
+			 }).on("stop", function () {
+				me.property('content', $target.text(), true);
+				me.property('href', $target.attr('href'), true);
+				console.log($target.text());
+				me.property('align', $target.css('text-align'), true);
+				//Upfront.Events.trigger('upfront:element:edit:stop');
+			 }).on("blur", function(){
+				$target.data('ueditor').stop(); 
+			 });
+		
+			$target.data('ueditor').stop();
+			*/
+	},
+	stopEdit: function() {
+			var $target = this.$el.find('.upfront-object-content a.upfront_cta');
+			$target.trigger('blur');
 
 	},
+	property: function(name, value, silent) {
+		if(typeof value != "undefined"){
+			if(typeof silent == "undefined")
+				silent = true;
+			return this.model.set_property(name, value, silent);
+		}
+		return this.model.get_property_value_by_name(name);
+	}
 });
 
 
@@ -123,7 +219,9 @@ var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		var object = new ButtonModel({
 				"name": "",
 				"properties": [
-					{"name": "content", "value": "Click here"}
+					{"name": "content", "value": "Click here"},
+					{"name": "href", "value": "#"},
+					{"name": "align", "value": "center"},
 				]
 			}),
 			module = new Upfront.Models.Module({
@@ -241,7 +339,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				{ label: l10n.dashed, value: 'dashed' },
 				{ label: l10n.dotted, value: 'dotted' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.borderWidth= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings static',
@@ -253,20 +351,21 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '1' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}), 
-		me.borderColor= new Upfront.Views.Editor.Field.Color({
+		me.borderColor = new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf plaintext-settings inline-color border-color static',
 			blank_alpha : 0,
 			model: this.model,
 			//property: 'border_color',
+			default_value: '#000',
 			label: l10n.color,
 			spectrum: {
 				preferredFormat: "hex",
-				change: function() { me.updatelivecss(me);},
-				move: function() { me.updatelivecss(me);}
+				change: function() { me.updatelivecss(me, me.borderColor);},
+				move: function() { me.updatelivecss(me, me.borderColor, true);}
 			}
-		}),
+		});
 		me.borderRadius1= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings static',
 			model: this.model,
@@ -277,7 +376,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.borderRadius2= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings static',
@@ -289,7 +388,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.borderRadius4= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings static',
@@ -301,7 +400,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.borderRadius3= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings static',
@@ -313,19 +412,20 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}), 
 		me.bgColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color static',
 			blank_alpha : 0,
 			model: this.model,
 			//property: 'bg_color',
+			default_value: '#ccc',
 			label_style: 'inline',
 			label: l10n.bg_color,
 			spectrum: {
 				preferredFormat: "hex",
-				change: function() { me.updatelivecss(me);},
-				move: function() { me.updatelivecss(me);},
+				change: function() { me.updatelivecss(me, me.bgColor);},
+				move: function() { me.updatelivecss(me, me.bgColor, true);},
 			}
 		}),
 		me.fontSize= new Upfront.Views.Editor.Field.Number({
@@ -338,25 +438,26 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '12' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),			
 		me.fontFace = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				values: me.get_fonts(),
 				className: 'static',
-				change: function() { me.updatelivecss(me);}
+				change: function() { me.updatelivecss(me, this);}
 		}),
 		me.color= new Upfront.Views.Editor.Field.Color({
 				className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color static',
 				blank_alpha : 0,
 				model: this.model,
 				//property: 'bg_color',
+				default_value: '#000',
 				label_style: 'inline',
 				label: '',
 				spectrum: {
 					preferredFormat: "hex",
-					change: function() { me.updatelivecss(me);},
-					move: function() { me.updatelivecss(me);},
+					change: function() { me.updatelivecss(me, me.color);},
+					move: function() { me.updatelivecss(me, me.color);},
 				}
 		});
 
@@ -374,7 +475,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				{ label: l10n.dashed, value: 'dashed' },
 				{ label: l10n.dotted, value: 'dotted' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.hov_borderWidth= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings hover',
@@ -386,18 +487,19 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '1' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}), 
 		me.hov_borderColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color border-color hover',
 			blank_alpha : 0,
 			model: this.model,
 			//property: 'border_color',
+			default_value: '#000',
 			label: l10n.color,
 			spectrum: {
 				preferredFormat: "hex",
-				change: function() { me.updatelivecss(me);},
-				move: function() { me.updatelivecss(me);}
+				change: function() { me.updatelivecss(me, me.hov_borderColor);},
+				move: function() { me.updatelivecss(me, me.hov_borderColor);}
 			}
 		}),
 		me.hov_borderRadius1= new Upfront.Views.Editor.Field.Number({
@@ -410,7 +512,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius2= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings hover',
@@ -422,7 +524,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius4= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings hover',
@@ -434,7 +536,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius3= new Upfront.Views.Editor.Field.Number({
 			className: 'inline-number plaintext-settings hover',
@@ -446,7 +548,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}), 
 		me.hov_bgColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf plaintext-settings inline-color bg-color hover',
@@ -454,11 +556,12 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			model: this.model,
 			//property: 'bg_color',
 			label_style: 'inline',
+			default_value: '#ccc',
 			label: l10n.bg_color,
 			spectrum: {
 				preferredFormat: "hex",
-				change: function() { me.updatelivecss(me);},
-				move: function() { me.updatelivecss(me);},
+				change: function() { me.updatelivecss(me, me.hov_bgColor);},
+				move: function() { me.updatelivecss(me, me.hov_bgColor);},
 			}
 		}),
 		me.hov_fontSize= new Upfront.Views.Editor.Field.Number({
@@ -471,13 +574,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '12' }
 			],
-			change: function() { me.updatelivecss(me);}
+			change: function() { me.updatelivecss(me, this);}
 		}),			
 		me.hov_fontFace = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				values: me.get_fonts(),
 				className: 'hover',
-				change: function() { me.updatelivecss(me);}
+				change: function() { me.updatelivecss(me, this);}
 		});
 
 		me.hov_color= new Upfront.Views.Editor.Field.Color({
@@ -487,12 +590,37 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				//property: 'bg_color',
 				label_style: 'inline',
 				label: '',
+				default_value: '#000',
 				spectrum: {
 					preferredFormat: "hex",
-					change: function() { me.updatelivecss(me);},
-					move: function() { me.updatelivecss(me);},
+					change: function() { me.updatelivecss(me, me.hov_color);},
+					move: function() { me.updatelivecss(me, me.hov_color);},
 				}
 		});
+		me.hov_duration= new Upfront.Views.Editor.Field.Number({
+			className: 'inline-number plaintext-settings hover',
+			model: this.model,
+			min: 0,
+			//property: 'border_width',
+			label: 'sec',
+			default_value: 0.25,
+			step: 0.25,
+			values: [
+				{ label: "", value: '12' }
+			],
+			change: function() { me.updatelivecss(me, this);}
+		});
+		me.hov_transition = new Upfront.Views.Editor.Field.Select({
+				model: this.model,
+				values: [{ label: 'ease', value: 'ease' },
+				{ label: 'linear', value: 'linear' },
+				{ label: 'ease-in', value: 'ease-in' },
+				{ label: 'ease-out', value: 'ease-out' },
+				{ label: 'ease-in-out', value: 'ease-in-out' }
+				],
+				className: 'hover',
+				change: function() { me.updatelivecss(me, this);}
+		}),
 		me.static_button_preset = new Upfront.Views.Editor.Field.Button({
 			model: me.model,
 			label: 'Static',
@@ -503,7 +631,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				this.$el.addClass('active');
 				this.$el.siblings('div.hover').hide();
 				this.$el.siblings('div.static').show();
-				me.updatelivecss(me);
+				me.updatelivecss(me, this);
 			},
 		});
 		me.presetspecific = new Upfront.Views.Editor.Settings.Item({
@@ -530,7 +658,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 							this.$el.addClass('active');
 							this.$el.siblings('div.static').hide();
 							this.$el.siblings('div.hover').show();
-							me.updatelivecss(me);
+							me.updatelivecss(me, this);
 						},
 					}),
 					me.borderType,
@@ -554,7 +682,9 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					me.hov_bgColor,
 					me.hov_fontSize,
 					me.hov_fontFace,
-					me.hov_color
+					me.hov_color,
+					me.hov_duration,
+					me.hov_transition,
 				]
 			});
 		me.buttonpresets = new Settings_ButtonPresets({
@@ -590,22 +720,99 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			if(selectedpreset == 'undefined')
 				return;
 			me.load_preset(selectedpreset);
-			me.updatelivecss(me);
+			me.updatelivecss(me, this);
 		});
 		
 		
+		
+		if(!me.property('currentpreset')) {
+			setTimeout(function() {
+				var selectedpreset = me.buttonpresets.$el.find('input[type=radio]').first().val();
+				me.load_preset(selectedpreset);
+				me.updatelivecss(me, this);
+			}, 100);
+		}
+		
 	},
-	updatelivecss: function(me) {
+	updatelivecss: function(me, invoker, ignorehover) {
+		
+		if(typeof(ignorehover) == 'undefined')
+			ignorehover = false;
+
 		if(typeof(me) == 'undefined')
 			return;
+			
+			//var preset = Upfront.Views.Editor.Button.Presets.get(me.property('currentpreset'));
+			//if(!preset) {
+			if(typeof(invoker) != 'undefined' && typeof(invoker.$el) != 'undefined' && !ignorehover) {
+				invoker.$el.addClass('touched');
+				switch(invoker) {
+					case me.borderType:
+						if(!me.hov_borderType.$el.hasClass('touched')) {
+							me.hov_borderType.invoked = true;
+							me.hov_borderType.set_value(invoker.get_value());
+						}
+					break;	
+					case me.hov_borderType:	
+						if(me.hov_borderType.invoked) {
+							invoker.$el.removeClass('touched');
+							invoker.invoked = false;
+						}
+					break;
+					case me.borderWidth:
+						if(!me.hov_borderWidth.$el.hasClass('touched'))
+							me.hov_borderWidth.set_value(invoker.get_value());
+					break;		
+					case me.borderColor:
+						if(!me.hov_borderColor.$el.hasClass('touched'))
+							me.hov_borderColor.set_value(invoker.get_value());
+					break;
+
+					case me.borderRadius1:
+						if(!me.hov_borderRadius1.$el.hasClass('touched'))
+							me.hov_borderRadius1.set_value(invoker.get_value());
+					break;
+					case me.borderRadius2:
+						if(!me.hov_borderRadius2.$el.hasClass('touched'))
+							me.hov_borderRadius2.set_value(invoker.get_value());
+					break;
+					case me.borderRadius3:
+						if(!me.hov_borderRadius3.$el.hasClass('touched'))
+							me.hov_borderRadius3.set_value(invoker.get_value());
+					break;
+					case me.borderRadius4:
+						if(!me.hov_borderRadius4.$el.hasClass('touched'))
+							me.hov_borderRadius4.set_value(invoker.get_value());
+					break;	
+
+					case me.bgColor:
+						if(!me.hov_bgColor.$el.hasClass('touched'))
+							me.hov_bgColor.set_value(invoker.get_value());
+					break;	
+					case me.fontSize:
+						if(!me.hov_fontSize.$el.hasClass('touched'))
+							me.hov_fontSize.set_value(invoker.get_value());
+					break;	
+					case me.fontFace:
+						if(!me.hov_fontFace.$el.hasClass('touched'))
+							me.hov_fontFace.set_value(invoker.get_value());
+					break;	
+					case me.color:
+						if(!me.hov_color.$el.hasClass('touched'))
+							me.hov_color.set_value(invoker.get_value());
+					break;						
+				}
+			}
+			//}
 
 			var style_static = "border: "+me.borderWidth.get_value()+"px "+me.borderType.get_value()+" "+me.borderColor.get_value()+"; "+
 					"border-radius: "+me.borderRadius1.get_value()+"px "+me.borderRadius2.get_value()+"px "+me.borderRadius4.get_value()+"px "+me.borderRadius3.get_value()+"px; "+
 					"background-color: "+me.bgColor.get_value()+"; "+
 					"font-size: "+me.fontSize.get_value()+"px; "+
 					"font-family: "+me.fontFace.get_value()+"; "+
-					"color: "+me.color.get_value()+"; ";
-		
+					"color: "+me.color.get_value()+"; "+
+					"transition: all "+me.hov_duration.get_value()+"s "+me.hov_transition.get_value()+"; "
+					
 			var style_hover = "border: "+me.hov_borderWidth.get_value()+"px "+me.hov_borderType.get_value()+" "+me.hov_borderColor.get_value()+"; "+
 					"border-radius: "+me.hov_borderRadius1.get_value()+"px "+me.hov_borderRadius2.get_value()+"px "+me.hov_borderRadius4.get_value()+"px "+me.hov_borderRadius3.get_value()+"px; "+
 					"background-color: "+me.hov_bgColor.get_value()+"; "+
@@ -634,7 +841,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.property('currentpreset', selectedpreset, true);
 		this.ready_preset();
 		this.load_preset(selectedpreset);
-		
+		this.updatelivecss(this);
 	},
 	ready_preset: function() {
 		this.buttonpresets.$el.hide(),
@@ -646,58 +853,120 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	delete_preset: function(presetname) {
 		Upfront.Views.Editor.Button.Presets.remove(presetname);
 		Upfront.Events.trigger("entity:settings:deactivate");
-//		this.presetspecific.$el.hide();
-//		this.buttonpresets.$el.show();
-//		this.newpresets.$el.show();	
+
 	},
 
 	load_preset: function(presetname) {
 
-			this.borderType.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.bordertype);
+			var preset = Upfront.Views.Editor.Button.Presets.get(presetname).attributes;	
 
-			this.borderWidth.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.borderwidth);
+			this.borderType.set_value(preset.bordertype);
 
-			this.borderColor.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.bordercolor);	
+			this.borderWidth.set_value(preset.borderwidth);
 
-			this.borderRadius1.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.borderradius1);	
+			this.borderColor.set_value(preset.bordercolor);	
 
-			this.borderRadius2.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.borderradius2);
+			this.borderRadius1.set_value(preset.borderradius1);	
 
-			this.borderRadius4.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.borderradius4);	
+			this.borderRadius2.set_value(preset.borderradius2);
 
-			this.borderRadius3.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.borderradius3);	
+			this.borderRadius4.set_value(preset.borderradius4);	
 
-			this.bgColor.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.bgcolor);				
+			this.borderRadius3.set_value(preset.borderradius3);	
 
-			this.fontSize.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.fontsize);				
+			this.bgColor.set_value(preset.bgcolor);				
 
-			this.fontFace.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.fontface);
+			this.fontSize.set_value(preset.fontsize);				
 
-			this.color.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.color);
+			this.fontFace.set_value(preset.fontface);
 
-			this.hov_borderType.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_bordertype);
-
-			this.hov_borderWidth.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_borderwidth);
-
-			this.hov_borderColor.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_bordercolor);	
-
-			this.hov_borderRadius1.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_borderradius1);	
-
-			this.hov_borderRadius2.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_borderradius2);
-
-			this.hov_borderRadius4.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_borderradius4);	
-
-			this.hov_borderRadius3.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_borderradius3);	
-
-			this.hov_bgColor.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_bgcolor);				
-
-			this.hov_fontSize.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_fontsize);				
-
-			this.hov_fontFace.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_fontface);
-
-			this.hov_color.set_value(Upfront.Views.Editor.Button.Presets.get(presetname).attributes.hov_color);	
-		
+			this.color.set_value(preset.color);
 			
+			this.hov_duration.set_value(preset.hov_duration);
+
+			this.hov_transition.set_value(preset.hov_transition);
+			
+			if(preset.hov_bordertype) {
+				
+				this.hov_borderType.set_value(preset.hov_bordertype);
+				this.hov_borderType.$el.addClass('touched');	
+			}
+			else
+				this.hov_borderType.set_value(preset.bordertype);
+				
+
+			if(preset.hov_borderwidth) {
+				
+				this.hov_borderWidth.set_value(preset.hov_borderwidth);
+				this.hov_borderWidth.$el.addClass('touched');	
+			}
+			else
+				this.hov_borderWidth.set_value(preset.borderwidth);
+
+			if(preset.hov_bordercolor) {
+				
+				this.hov_borderColor.set_value(preset.hov_bordercolor);	
+				this.hov_borderColor.$el.addClass('touched');	
+			}
+			else
+				this.hov_borderColor.set_value(preset.bordercolor);
+
+			if(preset.hov_borderradius1) {
+				this.hov_borderRadius1.set_value(preset.hov_borderradius1);	
+				this.hov_borderRadius1.$el.addClass('touched');	
+			}
+			else
+				this.hov_borderRadius1.set_value(preset.borderradius1);
+
+			if(preset.hov_borderradius2) {
+				this.hov_borderRadius2.set_value(preset.hov_borderradius2);
+				this.hov_borderRadius2.$el.addClass('touched');	
+			}
+			else
+				this.hov_borderRadius2.set_value(preset.borderradius2);
+
+			if(preset.hov_borderradius4) {
+				this.hov_borderRadius4.set_value(preset.hov_borderradius4);	
+				this.hov_borderRadius4.$el.addClass('touched');	
+			}
+			else
+				this.hov_borderRadius4.set_value(preset.borderradius4);
+
+			if(preset.hov_borderradius3) {
+				this.hov_borderRadius3.set_value(preset.hov_borderradius3);	
+				this.hov_borderRadius3.$el.addClass('touched');	
+			}
+			else
+				this.hov_borderRadius3.set_value(preset.borderradius3);
+
+			if(preset.hov_bgcolor) {
+				this.hov_bgColor.set_value(preset.hov_bgcolor);	
+				this.hov_bgColor.$el.addClass('touched');	
+			}
+			else
+				this.hov_bgColor.set_value(preset.bgcolor);			
+
+			if(preset.hov_fontsize) {
+				this.hov_fontSize.set_value(preset.hov_fontsize);
+				this.hov_fontSize.$el.addClass('touched');	
+			}	
+			else
+				this.hov_fontSize.set_value(preset.fontsize);			
+
+			if(preset.hov_fontface) {
+				this.hov_fontFace.set_value(preset.hov_fontface);
+				this.hov_fontFace.$el.addClass('touched');	
+			}
+			else
+				this.hov_fontFace.set_value(preset.fontface);
+
+			if(preset.hov_color) {
+				this.hov_color.set_value(preset.hov_color);
+				this.hov_color.$el.addClass('touched');	
+			}
+			else
+				this.hov_color.set_value(preset.color);	
+	
 	},
 	save_preset: function(presetname) {
 		
@@ -714,80 +983,101 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			preset.attributes.fontsize = this.fontSize.get_value();
 			preset.attributes.fontface = this.fontFace.get_value();
 			preset.attributes.color = this.color.get_value();
-				
-			preset.attributes.hov_bordertype = this.hov_borderType.get_value();
-			preset.attributes.hov_borderwidth = this.hov_borderWidth.get_value();
-			preset.attributes.hov_bordercolor = this.hov_borderColor.get_value();
-			preset.attributes.hov_borderradius1 = this.hov_borderRadius1.get_value();
-			preset.attributes.hov_borderradius2 = this.hov_borderRadius2.get_value();
-			preset.attributes.hov_borderradius4 = this.hov_borderRadius4.get_value();
-			preset.attributes.hov_borderradius3 = this.hov_borderRadius3.get_value();
-			preset.attributes.hov_bgcolor = this.hov_bgColor.get_value();
-			preset.attributes.hov_fontsize = this.hov_fontSize.get_value();
-			preset.attributes.hov_fontface = this.hov_fontFace.get_value();
-			preset.attributes.hov_color = this.hov_color.get_value();			
+			preset.attributes.hov_duration = this.hov_duration.get_value();
+			preset.attributes.hov_transition = this.hov_transition.get_value();
+			
+			if(this.hov_borderType.$el.hasClass('touched'))
+				preset.attributes.hov_bordertype = this.hov_borderType.get_value();
+			
+			
+			if(this.hov_borderWidth.$el.hasClass('touched'))
+				preset.attributes.hov_borderwidth = this.hov_borderWidth.get_value();
+			
+			if(this.hov_borderColor.$el.hasClass('touched'))
+				preset.attributes.hov_bordercolor = this.hov_borderColor.get_value();
+			
+			if(this.hov_borderRadius1.$el.hasClass('touched'))
+				preset.attributes.hov_borderradius1 = this.hov_borderRadius1.get_value();
+			
+			if(this.hov_borderRadius2.$el.hasClass('touched'))
+				preset.attributes.hov_borderradius2 = this.hov_borderRadius2.get_value();
+			
+			if(this.hov_borderRadius4.$el.hasClass('touched'))
+				preset.attributes.hov_borderradius4 = this.hov_borderRadius4.get_value();
+			
+			if(this.hov_borderRadius3.$el.hasClass('touched'))
+				preset.attributes.hov_borderradius3 = this.hov_borderRadius3.get_value();
+			
+			if(this.hov_bgColor.$el.hasClass('touched'))
+				preset.attributes.hov_bgcolor = this.hov_bgColor.get_value();
+			
+			if(this.hov_fontSize.$el.hasClass('touched'))
+				preset.attributes.hov_fontsize = this.hov_fontSize.get_value();
+			
+			if(this.hov_fontFace.$el.hasClass('touched'))
+				preset.attributes.hov_fontface = this.hov_fontFace.get_value();
+			
+			if(this.hov_color.$el.hasClass('touched'))
+				preset.attributes.hov_color = this.hov_color.get_value();			
 			
 			Upfront.Views.Editor.Button.Presets.trigger('edit');		
 		}
-		else
-			Upfront.Views.Editor.Button.Presets.add({
-				id : presetname,
-				bordertype : this.borderType.get_value(),
-				borderwidth : this.borderWidth.get_value(),
-				bordercolor : this.borderColor.get_value(),
-				borderradius1 : this.borderRadius1.get_value(),
-				borderradius2 : this.borderRadius2.get_value(),
-				borderradius4 : this.borderRadius4.get_value(),
-				borderradius3 : this.borderRadius3.get_value(),
-				bgcolor : this.bgColor.get_value(),
-				fontsize : this.fontSize.get_value(),
-				fontface : this.fontFace.get_value(),
-				color : this.color.get_value(),
-						
-				hov_bordertype : this.hov_borderType.get_value(),
-				hov_borderwidth : this.hov_borderWidth.get_value(),
-				hov_bordercolor : this.hov_borderColor.get_value(),
-				hov_borderradius1 : this.hov_borderRadius1.get_value(),
-				hov_borderradius2 : this.hov_borderRadius2.get_value(),
-				hov_borderradius4 : this.hov_borderRadius4.get_value(),
-				hov_borderradius3 : this.hov_borderRadius3.get_value(),
-				hov_bgcolor : this.hov_bgColor.get_value(),
-				hov_fontsize : this.hov_fontSize.get_value(),
-				hov_fontface : this.hov_fontFace.get_value(),
-				hov_color : this.hov_color.get_value()
-			});
+		else {
+			var newpreset = {};
+			newpreset.id = presetname;
+			newpreset.bordertype = this.borderType.get_value();
+			newpreset.borderwidth = this.borderWidth.get_value();
+			newpreset.bordercolor = this.borderColor.get_value();
+			newpreset.borderradius1 = this.borderRadius1.get_value();
+			newpreset.borderradius2 = this.borderRadius2.get_value();
+			newpreset.borderradius4 = this.borderRadius4.get_value();
+			newpreset.borderradius3 = this.borderRadius3.get_value();
+			newpreset.bgcolor = this.bgColor.get_value();
+			newpreset.fontsize = this.fontSize.get_value();
+			newpreset.fontface = this.fontFace.get_value();
+			newpreset.color = this.color.get_value();
+			newpreset.fontface = this.fontFace.get_value();
+			newpreset.color = this.color.get_value();
+			newpreset.hov_duration = this.hov_duration.get_value();			
+			newpreset.hov_transition = this.hov_transition.get_value();			
 			
+			if(this.hov_borderType.$el.hasClass('touched'))
+				newpreset.hov_bordertype = this.hov_borderType.get_value();
+			if(this.hov_borderWidth.$el.hasClass('touched'))
+				newpreset.hov_borderwidth = this.hov_borderWidth.get_value();
+			if(this.hov_borderColor.$el.hasClass('touched'))
+				newpreset.hov_bordercolor = this.hov_borderColor.get_value();
+			if(this.hov_borderRadius1.$el.hasClass('touched'))
+				newpreset.hov_borderradius1 = this.hov_borderRadius1.get_value();
+			if(this.hov_borderRadius2.$el.hasClass('touched'))
+				newpreset.hov_borderradius2 = this.hov_borderRadius2.get_value();
+			if(this.hov_borderRadius4.$el.hasClass('touched'))
+				newpreset.hov_borderradius4 = this.hov_borderRadius4.get_value();
+			if(this.hov_borderRadius3.$el.hasClass('touched'))
+				newpreset.hov_borderradius3 = this.hov_borderRadius3.get_value();
+			if(this.hov_bgColor.$el.hasClass('touched'))
+				newpreset.hov_bgcolor = this.hov_bgColor.get_value();
+			if(this.hov_fontSize.$el.hasClass('touched'))
+				newpreset.hov_fontsize = this.hov_fontSize.get_value();
+			if(this.hov_fontFace.$el.hasClass('touched'))
+				newpreset.hov_fontface = this.hov_fontFace.get_value();
+			if(this.hov_color.$el.hasClass('touched'))
+				newpreset.hov_color = this.hov_color.get_value();
+			
+			Upfront.Views.Editor.Button.Presets.add(newpreset);
+		}
+		
 		if(this.buttonpresets.$el.find('input[value='+presetname+']').length > 0)
 			this.buttonpresets.$el.find('input[value='+presetname+']').trigger('click');
-		else
+		else if(this.buttonpresets.$el.find('input[type=radio]:checked').length > 0)
 			this.buttonpresets.$el.find('input[type=radio]:checked').val(presetname);
-//		this.buttonpresets.$el.find('input[value='+presetname+']').prop('checked', true);
+		else if(this.buttonpresets.$el.find('input[type=radio]').length > 0)
+			this.buttonpresets.$el.find('input[type=radio]').first().val(presetname).prop('checked', true);
+		else {
+			
+			this.buttonpresets.$el.find('ul.upfront-field-select-options').append($('<li>').append($('<input>').attr('type', 'radio').attr('name', 'currentpreset').val(presetname).prop('checked', true)));
+		}
 		
-		/*	
-		Upfront.Views.Editor.Button.Presets[presetname]['bordertype']=this.borderType.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['borderwidth']=this.borderWidth.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['bordercolor']=this.borderColor.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['borderradius1']=this.borderRadius1.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['borderradius2']=this.borderRadius2.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['borderradius4']=this.borderRadius4.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['borderradius3']=this.borderRadius3.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['bgcolor']=this.bgColor.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['fontsize']=this.fontSize.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['fontface']=this.fontFace.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['color']=this.color.get_value();
-		
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_bordertype']=this.hov_borderType.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_borderwidth']=this.hov_borderWidth.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_bordercolor']=this.hov_borderColor.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_borderradius1']=this.hov_borderRadius1.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_borderradius2']=this.hov_borderRadius2.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_borderradius4']=this.hov_borderRadius4.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_borderradius3']=this.hov_borderRadius3.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_bgcolor']=this.hov_bgColor.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_fontsize']=this.hov_fontSize.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_fontface']=this.hov_fontFace.get_value();
-		Upfront.Views.Editor.Button.Presets[presetname]['hov_color']=this.hov_color.get_value();
-		*/
 	},
 	property: function(name, value, silent) {
 		if(typeof value != "undefined"){

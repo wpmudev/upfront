@@ -9404,7 +9404,7 @@ ul.redactor_toolbar li a.ueditor-unorderedlist {
 	background-position: -552px -124px;
 }
 
-ul.redactor_toolbar li a.redactor_btn_upfrontLink{
+ul.redactor_toolbar li a.redactor_btn_upfrontLink, ul.redactor_toolbar li a.redactor_btn_upfrontLinkCTA{
 	background-position: -510px -167px;
 }
 

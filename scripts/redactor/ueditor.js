@@ -522,7 +522,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'icons'],
+		var allPlugins = ['stateAlignment', 'stateAlignmentCTA', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontLinkCTA', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'icons'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -737,6 +737,63 @@ RedactorPlugins.stateAlignment = {
 					},
 					callback: function(name, el , button){
 						this.alignmentJustify();
+					}
+				}
+			}
+		}
+	}
+}
+
+RedactorPlugins.stateAlignmentCTA = {
+	beforeInit: function(){
+		this.opts.stateButtons.stateAlignCTA = {
+			title: 'Text alignment',
+			defaultState: 'left',
+			states: {
+				left: {
+					iconClass: 'ueditor-left',
+					isActive: function(redactor){
+						
+						return true;
+
+					},
+					callback: function(name, el , button){
+						this.$element.css('text-align', 'left');
+						//this.alignmentLeft();
+					}
+				},
+				center: {
+					iconClass: 'ueditor-center',
+					isActive: function(redactor){
+						
+						return true;
+
+					},
+					callback: function(name, el , button){
+						this.$element.css('text-align', 'center');
+						//this.alignmentCenter();
+					}
+				},
+				right: {
+					iconClass: 'ueditor-right',
+					isActive: function(redactor){
+						
+						return true;
+
+					},
+					callback: function(name, el , button){
+						this.$element.css('text-align', 'right');
+					}
+				},
+				justify: {
+					iconClass: 'ueditor-justify',
+					isActive: function(redactor){
+						
+						return true;
+
+					},
+					callback: function(name, el , button){
+						this.$element.css('text-align', 'justify');
 					}
 				}
 			}
@@ -970,6 +1027,93 @@ RedactorPlugins.upfrontLink = {
 				this.redactor.selectionRestore(true, false);
                 var caption = this.redactor.getSelectionHtml();
                 this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
+			}
+		},
+
+		bindEvents: function(){
+			this.listenTo(this.linkPanel, 'link:ok', function(data){
+				if(data.type == 'unlink')
+					this.unlink();
+				else
+					this.link(data.url, data.type);
+
+				this.closeToolbar();
+			});
+
+			this.listenTo(this.linkPanel, 'link:postselector', this.disableEditorStop);
+
+			this.listenTo(this.linkPanel, 'link:postselected', function(data){
+				this.enableEditorStop();
+				this.link(data.url, data.type);
+			});
+		},
+
+		guessLinkType: function(url){
+			if(!$.trim(url))
+				return 'unlink';
+			if(url.lenght && url[0] == '#')
+				return 'anchor';
+			if(url.substring(0, location.origin.length) == location.origin)
+				return 'entry';
+
+			return 'external';
+		}
+
+	})
+}
+
+RedactorPlugins.upfrontLinkCTA = {
+	beforeInit: function(){
+		this.opts.buttonsCustom.upfrontLinkCTA = {
+			title: 'Link',
+			panel: this.panel
+		};
+	},
+	panel: UeditorPanel.extend({
+		tpl: _.template($(tpl).find('#link-tpl').html()),
+		events:{
+			open: 'open'
+		},
+		initialize: function(){
+			this.linkPanel = new Upfront.Views.Editor.LinkPanel({linkTypes: {unlink: true}, button: true});
+			this.bindEvents();
+			UeditorPanel.prototype.initialize.apply(this, arguments);
+		},
+		render: function(options){
+			options = options || {};
+			console.log(options);
+			this.linkPanel.model.set({
+				url: options.url,
+				type: options.link || this.guessLinkType(options.url)
+			});
+
+			this.linkPanel.render();
+			this.$el.html(this.linkPanel.el);
+			this.linkPanel.delegateEvents();
+		},
+		open: function(e, redactor){
+			this.redactor = redactor;
+
+			var link = redactor.currentOrParentIs('A');
+
+			if(link){
+				this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+			}
+			else
+				this.render();
+		},
+		close: function(e, redactor){
+			this.redactor.selectionRemoveMarkers();
+		},
+		unlink: function(e){
+			if(e)
+				e.preventDefault();
+			this.redactor.$element.attr('href', '#');
+
+		},
+		link: function(url, type){
+			if(url){
+				this.redactor.$element.attr('href', url);
 			}
 		},
 
