@@ -1114,7 +1114,7 @@ RedactorPlugins.upfrontColor = {
 							showInput: true,
 			                allowEmpty: true,
 			                change: function(color) {
-								self.updateColors();
+								self.current_color = color;	
 							},
 							move: function(color) {
 								redactor.selectionRestore(true, false);
@@ -1136,7 +1136,7 @@ RedactorPlugins.upfrontColor = {
 							showInput: true,
 			                allowEmpty: true,
 			                change: function(color) {
-								self.updateColors();
+								self.current_bg = color;	
 							},
 							move: function(color) {
 								redactor.selectionRestore(true, false);
@@ -1199,6 +1199,7 @@ RedactorPlugins.upfrontColor = {
 //			
 
 		    this.$(".sp-choose").on("click", function(){
+		    	self.updateColors();
 	    		self.closePanel();
 				self.closeToolbar();
 				self.redactor.dropdownHideAll();
@@ -1265,13 +1266,28 @@ RedactorPlugins.upfrontColor = {
 			var self = this,
 				parent = this.redactor.getParent(),
 				bg = "";
+				bg_class = "",
 				html = ""; 
 
+				/**
+				 * Set background color
+				 */
 				if(self.current_bg && typeof(self.current_bg) == 'object') {
                		this.redactor.inlineRemoveStyle("background-color");
                		bg = 'background-color:' + self.current_bg.toRgbString();
+               		bg_class =  Upfront.Views.Theme_Colors.colors.get_css_class( self.current_bg.toHexString(), true );
+               		
+               		if( bg_class ){
+               			bg = "";
+               			bg_class += " upfront_theme_colors";
+               		}else{
+               			bg_class = "inline_color";
+               		}
                 }
 
+                /**
+                 * Set font color
+                 */
                 if(self.current_color && typeof(self.current_color) == 'object') {
                     var theme_color_classname =  Upfront.Views.Theme_Colors.colors.get_css_class( self.current_color.toHexString() );
                     if( theme_color_classname ){
@@ -1286,8 +1302,8 @@ RedactorPlugins.upfrontColor = {
                        this.redactor.inlineRemoveClass( "inline_color" );
                        html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
 
-                        html = "<span class='upfront_theme_colors " + theme_color_classname + ";" + bg + "'>" + html + "</span>";
-                        this.redactor.execCommand("inserthtml", html, true);
+                        html = "<span class='upfront_theme_colors " + theme_color_classname + " " + bg_class + "' style='" + bg  + "'>"  + html + "</span>";
+                        //this.redactor.execCommand("inserthtml", html, true);
                         }
                     }else{
                         // Making sure it doesn't have any theme color classes
@@ -1308,9 +1324,10 @@ RedactorPlugins.upfrontColor = {
                     }
                 }
 
+
                 if( html === "" ){
                 	html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
-                    html = "<inline class='inline_color' style='" + bg +"'>" + html + "</inline>";
+                    html = "<inline class='" + bg_class +  "' style='" + bg +"'>" + html + "</inline>";
                 }
               
 				this.redactor.execCommand("inserthtml", html, true);
@@ -1321,6 +1338,7 @@ RedactorPlugins.upfrontColor = {
              	}
 
 				self.updateIcon();
+				self.redactor.selectionRemoveMarkers();
 				self.redactor.syncClean();
 			}
 	})

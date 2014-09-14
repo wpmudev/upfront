@@ -1763,28 +1763,30 @@ define([
             color = this.color_to_hex( color );
             return _.indexOf(this.get_colors(), color) !== -1
         },
-        get_css_class : function(color){
+        get_css_class : function(color, bg){
             color = this.color_to_hex( color );
+            var prefix = _.isUndefined( bg ) || bg === false ? "upfront_theme_color_" : "upfront_theme_bg_color_";
             if( this.is_theme_color(color) ){
                 var model = this.findWhere({
                     color : color
                 });
                 if( model ){
                     var index = this.indexOf( model );
-                    return "upfront_theme_color_" + index;
+                    return prefix + index;
                 }
             }
             return false
         },
-        get_all_classes : function(){
+        get_all_classes : function( bg ){
+        	var prefix = _.isUndefined( bg ) || bg === false ? "upfront_theme_color_" : "upfront_theme_bg_color_";
             var classes = [];
             _.each( this.get_colors(), function(item, index){
-                classes.push("upfront_theme_color_" + index);
+                classes.push(prefix + index);
             });
             return classes;
         },
-        remove_theme_color_classes :  function( $el ){
-            _.each(this.get_all_classes(), function(cls){
+        remove_theme_color_classes :  function( $el, bg ){
+            _.each(this.get_all_classes( bg ), function(cls){
                 $el.removeClass(cls);
             });
         },
@@ -1855,6 +1857,9 @@ define([
                 self.styles += " .upfront_theme_color_" + index +"{ color: " + item.get("color") + ";}";
                 self.styles += " a .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
+                self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + item.get("color") + ";}";
+                self.styles += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
+                self.styles += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
@@ -3731,7 +3736,7 @@ define([
 			blank_alpha : 1
 		},
 		spectrumDefaults: {
-			clickoutFiresChange: true,
+			clickoutFiresChange: false,
 			chooseText: 'OK',
 			showSelectionPalette: true,
 			showAlpha: true,
