@@ -1085,7 +1085,7 @@ RedactorPlugins.upfrontColor = {
 		setCurrentColors: function() {
 
 			var parent = this.redactor.getCurrent();
-			if(parent || (parent && $(parent).prop('tagName')=='INLINE') || $( parent ).hasClass(".upfront_theme_colors")) {
+			if( (parent && $(parent).prop('tagName')=='INLINE') || $( parent ).hasClass(".upfront_theme_colors")) {
 
 				var bg_color = tinycolor($(parent).css('background-color'));
 				this.current_color = $(parent).css('color');
@@ -1098,6 +1098,7 @@ RedactorPlugins.upfrontColor = {
 		},
 		open: function(e, redactor){
 			redactor.selectionSave();
+			this.updateIcon();
 			this.setCurrentColors();
 			var self = this,
 				foreground_picker = new Upfront.Views.Editor.Field.Color({
@@ -1200,6 +1201,7 @@ RedactorPlugins.upfrontColor = {
 		    this.$(".sp-choose").on("click", function(){
 	    		self.closePanel();
 				self.closeToolbar();
+				self.redactor.dropdownHideAll();
 		    });
 		},
 		render: function(){
@@ -1216,9 +1218,7 @@ RedactorPlugins.upfrontColor = {
 			redac.bufferAirBindHide = this.redactor.airBindHide;
 
 			redac.airBindHide = function() {
-
 				self.updateIcon();
-
 				redac.bufferAirBindHide();
 			};
 
@@ -1320,7 +1320,6 @@ RedactorPlugins.upfrontColor = {
      				// $(parent).replaceWith( html );
              	}
 
-				self.setCurrentColors();
 				self.updateIcon();
 				self.redactor.syncClean();
 			}
