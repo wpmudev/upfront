@@ -5298,40 +5298,29 @@ i.upfront-field-icon-burger-trigger {
 }
 
 .upfront-region-field-icon-color:before {
-	background-position: -40px -544px;
+	background-position: -40px -511px;
 }
-.upfront-region-field-icon-color:hover:before,
-.upfront-region-field-icon-color-active:before {
-	background-position: -164px -544px;
-}
+
 .upfront-region-field-icon-image:before {
-	background-position: -288px -544px;
+	background-position: -163px -511px;
 }
-.upfront-region-field-icon-image:hover:before,
-.upfront-region-field-icon-image-active:before {
-	background-position: -412px -544px;
+
+.upfront-region-field-icon-video:before {
+	background-position: -411px -510px;
 }
+
 .upfront-region-field-icon-slider:before {
-	background-position: -40px -578px;
+	background-position: -39px -544px;
 }
-.upfront-region-field-icon-slider:hover:before,
-.upfront-region-field-icon-slider-active:before {
-	background-position: -164px -578px;
-}
+
 .upfront-region-field-icon-map:before {
-	background-position: -288px -578px;
+	background-position: -162px -545px;
 }
-.upfront-region-field-icon-map:hover:before,
-.upfront-region-field-icon-map-active:before {
-	background-position: -412px -578px;
-}
+
 .upfront-region-field-icon-feat:before {
-	background-position: -288px -511px;
+	background-position: -287px -511px;
 }
-.upfront-region-field-icon-feat:hover:before,
-.upfront-region-field-icon-feat-active:before {
-	background-position: -412px -511px;
-}
+
 .upfront-region-field-icon-expand-unlock:before {
 	/*background-position: -40px -612px;*/
 	background-position: -164px -612px;
@@ -5341,13 +5330,13 @@ i.upfront-field-icon-burger-trigger {
 	background-position: -412px -612px;
 }
 .upfront-region-field-icon-bg-image-full:before {
-	background-position: -40px -780px;
+	background-position: -287px -545px;
 }
 .upfront-region-field-icon-bg-image-tile:before {
-	background-position: -164px -780px;
+	background-position: -411px -545px;
 }
 .upfront-region-field-icon-bg-image-fixed:before {
-	background-position: -288px -780px;
+	background-position: -39px -579px;
 }
 .upfront-region-field-icon-bg-image-change:before {
 	background-position: -412px -780px;
