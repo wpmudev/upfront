@@ -80,19 +80,19 @@ class Upfront_Theme {
 		return $this->regions;
 	}
 
-	public function get_default_layout($cascade, $layout_slug = "") {
+	public function get_default_layout($cascade, $layout_slug = "", $add_global_regions = false) {
 		$regions = new Upfront_Layout_Maker();
 
 		$template_path = $this->find_default_layout($cascade, $layout_slug);
 		$current_theme = Upfront_ChildTheme::get_instance();
 
-		if ($current_theme && $current_theme->has_global_region('header')) {
+		if ($add_global_regions && $current_theme && $current_theme->has_global_region('header')) {
 			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'header.php');
 		}
 
 		require $template_path;
 
-		if ($current_theme && $current_theme->has_global_region('footer')) {
+		if ($add_global_regions && $current_theme && $current_theme->has_global_region('footer')) {
 			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'footer.php');
 		}
 
@@ -320,7 +320,7 @@ class Upfront_Virtual_Region {
 					$breakpoint_data[$breakpoint->get_id()]['col'] = $wrapper_col;
 				}
 			}
-			
+
 		}
 		if ( $group && $this->modules[$group] ){
 			$class = $this->get_property('class', $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
@@ -507,12 +507,16 @@ class Upfront_Virtual_Region {
 
 	public function add_group($options){
 		$properties = array();
-		if(!isset($options['id']))
+		if(isset($options['id']) && !empty($options['id']))
 			$properties['element_id'] = $options['id'];
+		if(isset($options['breakpoint']) && !empty($options['breakpoint']))
+			$properties['breakpoint'] = $options['breakpoint'];
 		if(!isset($options['close_wrapper']))
 			$options['close_wrapper'] = true;
 		if(!isset($options['new_line']))
 			$options['new_line'] = false;
+		if(!isset($options['wrapper_id']))
+			$options['wrapper_id'] = false;
 		$pos = array_merge(array(
 			'columns' => 24,
 			'margin_left' => 0,
@@ -524,7 +528,7 @@ class Upfront_Virtual_Region {
 			'margin-top' => $pos['margin_top']
 		);
 		if(!$this->current_wrapper)
-			$this->start_wrapper(false, $options['new_line']);
+			$this->start_wrapper($options['wrapper_id'], $options['new_line']);
 
 		$this->start_module_group($position, $properties);
 		$group_id = $this->current_group;
@@ -644,15 +648,15 @@ class Upfront_Layout_Maker {
 				else
 					$side_regions_after[] = $sidedata;
 			}
-			usort($side_regions_before, array("Upfront_Theme", '_sort_region'));
-			usort($side_regions_after, array("Upfront_Theme", '_sort_region'));
-			
+			usort($side_regions_before, array(Upfront_Theme, '_sort_region'));
+			usort($side_regions_after, array(Upfront_Theme, '_sort_region'));
+
 			foreach($side_regions_before as $side){
 				$regions[] = $side;
 			}
-			
+
 			$regions[] = $region;
-			
+
 			foreach($side_regions_after as $side){
 				$regions[] = $side;
 			}
@@ -676,7 +680,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$this->version = wp_get_theme()->version;
 		$this->themeSettings = new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php');
 		self::$instance = $this;
-		add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3);
+		//add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3); // Soooo... this no longer works, yay
+		add_filter('upfront_override_layout_data', array($this, 'load_page_regions'), 10, 2); // This goes in instead of the above ^
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
@@ -871,7 +876,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getResponsiveSettings($settings) {
 		if (empty($settings) === false) return $settings;
 
-		$properties = $this->themeSettings->get('responsive');
+		$properties = $this->themeSettings->get('responsive_settings');
 		if (!empty($properties)) {
 			$properties = json_decode($properties, true);
 		}
@@ -994,12 +999,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		*/
 	}
 
-	public function load_page_regions($data, $ids, $cascade){
+	public function load_page_regions($data, $ids/*, $cascade*/){
 		$layoutId = $this->_get_page_default_layout($ids);
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
 			$ids['theme_defined'] = $layoutId;
-			$data['regions'] = $theme->get_default_layout($ids);
+			$data['regions'] = $theme->get_default_layout($ids, $layoutId);
 			//$data['regions'] = $theme->get_default_layout(array(), $layoutId);
 		}
 		//return apply_filters('upfront_augment_theme_layout', $data); // So, this doesn't work anymore either. Yay.
