@@ -2224,7 +2224,7 @@ define([
 			set_full_screen: function () {
 				var $region = this.$el.find('.upfront-region-center'),
 					$sub = this.$el.find('.upfront-region-side-top, .upfront-region-side-bottom'),
-					row = this.model.get_property_value_by_name('row'),
+					row = this.model.get_breakpoint_property_value('row', true),
 					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					height = $(window).height();
 				if ( this._get_region_type() == 'full' ) {
