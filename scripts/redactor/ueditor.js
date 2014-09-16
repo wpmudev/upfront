@@ -1540,8 +1540,8 @@ var InsertManager = Backbone.View.extend({
 
 					insert.start()
 						.done(function(popup, results){
-							if(!results)
-								return;
+							// if(!results) Let's allow promises without result for now!
+							//	return;
 							me.inserts[insert.cid] = insert;
 							//Allow to undo
 							//this.trigger('insert:prechange'); // "this" is the embedded image object

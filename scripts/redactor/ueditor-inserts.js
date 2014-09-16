@@ -294,9 +294,10 @@ var ImageInsert = UeditorInsert.extend({
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	resizable: true,
 	defaultData: {
-		captionPosition: 'nocaption',
+		captionPosition: 'bottom',
 		caption: 'A wonderful image :)',
 		imageFull: {src:'', width:100, height: 100},
+		image: {src:'', width:100, height: 100},
 		imageThumb: {src:'', width:100, height: 100},
 		linkType: 'do_nothing',
 		linkUrl: '',
@@ -351,26 +352,38 @@ var ImageInsert = UeditorInsert.extend({
 			this.data.set({width: width}, {silent: true});
 		}
 
-		console.log(this.data.toJSON());
 	},
 
 	// The user want a new insert. Fetch all the required data to create a new image insert
 	start: function(){
+		// var me = this,
+		// 	promise = Upfront.Media.Manager.open({multiple_selection: false})
+		// ;
+
+		// promise.done(function(popup, result){
+		// 	var imageData = me.getImageData(result);
+		// 	imageData.id = me.data.id;
+		// 	me.data.clear({silent: true});
+  //           console.log(imageData);
+		// 	me.data.set(imageData);
+		// 	me.controlsData[0].selected = me.data.get('align');
+		// 	me.createControls();
+		// });
+
+		// return promise;
 		var me = this,
-			promise = Upfront.Media.Manager.open({multiple_selection: false})
+			deferred = $.Deferred(),
+			data = this.data.toJSON();
+		this.$el
+			.html(this.tpl(me.defaultData))
+			.removeClass('aligncenter alignleft alignright alignfull')
+			.addClass('align' + data.align)
+			.addClass('clearfix')
+			.addClass('empty')
 		;
 
-		promise.done(function(popup, result){
-			var imageData = me.getImageData(result);
-			imageData.id = me.data.id;
-			me.data.clear({silent: true});
-            console.log(imageData);
-			me.data.set(imageData);
-			me.controlsData[0].selected = me.data.get('align');
-			me.createControls();
-		});
-
-		return promise;
+		deferred.resolve();
+		return deferred.promise();
 	},
 
 	// Insert editor UI
@@ -423,7 +436,8 @@ var ImageInsert = UeditorInsert.extend({
 		this.captionTimer = false;
 
 		if(data.captionPosition != 'nocaption'){
-			this.$('.wp-caption-text')
+			this.$('.wp-caption-text').wrap("<div class='uinsert-image-caption-drag-handle'></div>")
+                .addClass("upfront-inserted_image_caption")
 				//.attr('contenteditable', true)
 				.off('keyup')
 				.on('keyup', function(e){
@@ -433,45 +447,73 @@ var ImageInsert = UeditorInsert.extend({
 				})
 				.ueditor({
 					linebreaks: true,
-					autostart: true,
+                    autostart: false,
 					pastePlainText: true,
 					airButtons: ['bold', 'italic', 'upfrontLink', 'stateAlign']
-				})
+				}).on('start', function(){
+                    me.ueditor = $(this).data('ueditor');
+                    me.redactor = $(this).data('redactor');
+                    me.redactor.events.on('ueditor:focus', function(redactor){
+                        if(redactor != me.redactor)
+                            return;
+
+                        var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                            parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                            ;
+
+                        if(!parentRedactor)
+                            return;
+
+                        parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
+                        parentRedactor.$source.on('keydown.redactor-textarea');
+
+                        //parentUeditor.stop();
+                    });
+
+                    me.redactor.events.on('ueditor:blur', function(redactor){
+                        if(redactor != me.redactor)
+                            return;
+
+                        var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                            parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                            ;
+
+                        if(!parentRedactor)
+                            return;
+
+                        parentRedactor.buildBindKeyboard();
+
+                        //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
+                        //parentUeditor.start();
+                    });
+                })
+
 			;
-			this.ueditor = this.$('.wp-caption-text').data('ueditor');
-			this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-				if(redactor != me.ueditor.redactor)
-					return;
 
-				var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-					parentRedactor = parentUeditor ? parentUeditor.redactor : false
-				;
+            this.$(".uinsert-image-caption-drag-handle")
+                .draggable({
+                    containment : "parent",
+                    snap: true,
+                    snapMode: "both",
+                    drag: function( e, ui ){
+                        console.log(e, ui);
 
-				if(!parentRedactor)
-					return;
+                    }
+                })
+                //.resizable();
+            ;
 
-				parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
-				parentRedactor.$source.on('keydown.redactor-textarea');
+            this.$el.on("click", function(){
+               if( !$(this).hasClass("wp-caption-text") &&  typeof me.ueditor !== "undefined"){
+                   me.ueditor.stop();
+               }else{
+                   me.$(".wp-caption-text").on("dblclick", function(){
+                       console.log("dbl click");
+                       me.ueditor.start();
+                   });
+               }
+            });
 
-				//parentUeditor.stop();
-			});
-
-			this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-				if(redactor != me.ueditor.redactor)
-					return;
-
-				var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-					parentRedactor = parentUeditor ? parentUeditor.redactor : false
-				;
-
-				if(!parentRedactor)
-					return;
-
-				parentRedactor.buildBindKeyboard();
-
-				//var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
-				//parentUeditor.start();
-			});
 		}
 
 		var wrapperData = {
@@ -1055,7 +1097,7 @@ var EmbedInsert = UeditorInsert.extend({
                this.getRemoveControlData()
             ];
 
-            this.createControls();
+            //this.createControls();
         },
 
         // Insert editor UI
