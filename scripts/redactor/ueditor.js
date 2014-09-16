@@ -837,8 +837,6 @@ RedactorPlugins.panelButtons = {
 				$button.on('click', function(){
 					if($button.hasClass('dropact')){
 						me.selectionRemoveMarkers();
-						me.selectionSave();
-						me.selectionRemoveMarkers();
 						b.panel.trigger('open', me);
 					}
 					else{
@@ -1097,7 +1095,6 @@ RedactorPlugins.upfrontColor = {
 			}
 		},
 		open: function(e, redactor){
-			redactor.selectionSave();
 			this.updateIcon();
 			this.setCurrentColors();
 			var self = this,
@@ -2294,7 +2291,6 @@ RedactorPlugins.upftonIcons = {
         open: function(e, redactor){
             this.redactor = redactor;
             this.redactor.selectionRestore();
-            this.redactor.selectionSave();
             this.set_current_icon();
             
             this.$el.parent().css({
