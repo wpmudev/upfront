@@ -273,8 +273,54 @@ jQuery(document).ready(function($){
 			});
 		}, 100);
 	}
+
+	/**
+	 * Initial background loading of the images.
+	 */
+	function image_lazy_load_bg () {
+		var $images = $('.upfront-image-lazy');
+		if (!$images.length) return false;
+		$images.each(function () {
+			var $img = $(this),
+				source = $img.attr('data-sources'),
+				src = $img.attr('data-src')
+			;
+			if ($img.is(".upfront-image-lazy-loaded")) return true; // already loaded
+			if (!source && !src) return true; // we don't know how to load
+			
+			if (source) {
+				// Deal with source JSON and populate `src` from there
+				var width = $img.width(),
+					closest = 0
+				;
+				source = JSON.parse(source);
+				for ( var s = 0; s < source.length; s++ ) {
+					if ( source[s][1] <= width || ( closest >= 0 && source[closest][1] < width && source[s][1] > width ) )
+						closest = s;
+				}
+				if ( $(this).data('loaded') == closest ) return true;
+				src = source[closest][0]; // Use this to load
+				$(this).data('loaded', closest);
+			}
+
+			// Actually load the image
+			$img.removeClass('upfront-image-lazy-loaded').addClass('upfront-image-lazy-loading');
+			$('<img />')
+				.attr('src', src)
+				.on('load', function () {
+					if ($img.is(".upfront-image-lazy-bg")) $img.css('background-image', 'url("' + src + '")');
+					else ($img.attr('src', src));
+					$img.removeClass('upfront-image-lazy-loading').addClass('upfront-image-lazy-loaded');
+				})
+			;
+			// Done loading individual image
+		});
+		$(window).off('scroll', image_lazy_load); // Since we scheduled image loads, kill the scroll load
+	}
 	
-	image_lazy_load();
+	if (window._upfront_lazy_scroll_off) $(window).on("load", image_lazy_load_bg); // Do background load instead
+	else image_lazy_load(); // Don't do scroll-load initially
+
 	$(window).on('resize', image_lazy_load);
 	if ( image_lazy_scroll )
 		$(window).on('scroll', image_lazy_load);
