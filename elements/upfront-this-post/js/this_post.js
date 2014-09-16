@@ -55,16 +55,19 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.listenToOnce(this, 'rendered', function(){
-			if(window.location.pathname.indexOf('/edit/') !== -1)
-			me.editor.loadingLayout.done(function() {
-				setTimeout(function() {
-					me.editor.editContents();
-				}, 200);
-
-			});
+			if(window.location.pathname.indexOf('/create_new/') !== -1 || window.location.pathname.indexOf('/edit/') !== -1){
+				me.editor.loadingLayout.done(function() {
+					setTimeout(function() {
+						Upfront.Events.trigger('post:layout:edit', me, 'single');
+					}, 200);
+					
+				});
+			}
 		});
 
 		Upfront.Events.trigger('post:initialized', this);
+
+
 	},
 
 	/**
