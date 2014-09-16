@@ -475,6 +475,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	protected static function _apply_scoped_region ($region) {
+		if ($region['name'] === 'lightbox') return array($region);
 		$regions = array();
 		if ( $region['scope'] != 'local' ){
 			if ( empty(self::$scope_data[$region['scope']]) ) {
@@ -484,7 +485,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 			if ( empty(self::$scope_data[$region['scope']]) ){
 				$regions[] = $region;
 				return $regions;
-			} foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
+			}
+		 	foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
 				if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) ){
 					$regions[] = $data;
 				}

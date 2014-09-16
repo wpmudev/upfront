@@ -847,25 +847,41 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return $theme_styles;
 	}
 
-	public function getGlobalRegions($global_regions)  {
+	public function getGlobalRegions($global_regions = array())  {
 		if (empty($global_regions) === false) return $global_regions;
 
-		$global_regions = $this->themeSettings->get('global_regions');
-		if (!empty($global_regions)) {
-			return json_decode($global_regions, true);
+		// A bit reasoning about this. In global regions layout templates i.e. header & footer
+		// there can be more than one region since if there is element in header/footer region
+		// that links to lightbox, that lightbox is also included in layout template thus
+		// making layout template have more than one region. For this reason regions must be
+		// parsed to get actual global regions. This function needs to return just actual
+		// global regions if they exist i.e. header & footer.
+		$global_layouts = array();
+		$global_layouts_paths = glob(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . '*.php');
+		foreach ($global_layouts_paths as $path) {
+			$regions = new Upfront_Layout_Maker();
+			require $path;
+			$global_layouts[] = $regions->create_layout();
 		}
 
-		return array();
+		$global_regions = array();
+		foreach($global_layouts as $layout) {
+			foreach($layout as $region) {
+				if ($region['scope'] == 'global' && $region['name'] != 'lightbox') $global_regions[] = $region;
+			}
+		}
+
+		return $global_regions;
 	}
 
 	public function has_global_region($name) {
-		$global_regions = $this->themeSettings->get('global_regions');
+		$global_regions = $this->getGlobalRegions();
 		if (empty($global_regions)) return false;
 
 		$has_region = false;
 
-		foreach (json_decode($global_regions) as $region) {
-			if ($region->name !== $name) continue;
+		foreach ($global_regions as $region) {
+			if ($region['name'] !== $name) continue;
 			$has_region = true;
 			break;
 		}
