@@ -41,6 +41,15 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}, this);
 */
 		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);	
+		
+		Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
+
+	},
+	onResizeStop: function(view, model, ui) {
+		this.conformSize();
+	},
+	conformSize: function() {
+		this.$el.find('.upfront-output-button').css('height', this.$el.find('.upfront-object.upfront-button').height());
 	},
 	processClick: function(e) {
 		e.preventDefault();
@@ -192,6 +201,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		
 			$target.data('ueditor').stop();
 			*/
+			setTimeout(function() {
+				me.conformSize();
+			}, 100);
 	},
 	stopEdit: function() {
 			var $target = this.$el.find('.upfront-object-content a.upfront_cta');
@@ -245,7 +257,7 @@ var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
 var Settings_ButtonPresets_Field = Upfront.Views.Editor.Field.Select.extend({
 	render: function() {
 		Upfront.Views.Editor.Field.Select.prototype.render.call(this);
-		var html = ['<a href="#" title="Edit preset" class="upfront-buttonpreset-edit"></a>'];
+		var html = ['<a href="#" title="Edit preset" class="upfront-buttonpreset-edit">edit preset</a>'];
 		this.$el.append(html.join(''));
 		return this;
 	},
@@ -324,14 +336,15 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		//_.bindAll(this, 'onBgColor', 'onBorderColor');
 	   	var newpresetname = new Upfront.Views.Editor.Field.Text({
 						model: this.model,
-						compact: true
+						compact: true,
+						className: 'new_preset_name',
 					});
 					
 		me.borderType = new Upfront.Views.Editor.Field.Radios({
 			className: 'inline-radios plaintext-settings static',
 			model: this.model,
 			//property: 'border_style',
-			label: l10n.border,
+			label: 'Border:',
 			default_value: "none",
 			values: [
 				{ label: l10n.none, value: 'none' },
@@ -367,11 +380,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			}
 		});
 		me.borderRadius1= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings static',
+			className: 'border_radius border_radius1 static',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
-			label: '',
+			label: 'Rounded Corners:',
 			default_value: 0,
 			values: [
 				{ label: "", value: '0' }
@@ -379,7 +392,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.borderRadius2= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings static',
+			className: 'border_radius border_radius2 static',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
@@ -391,7 +404,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.borderRadius4= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings static',
+			className: 'border_radius border_radius4 static',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
@@ -403,7 +416,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.borderRadius3= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings static',
+			className: 'border_radius border_radius3 static',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
@@ -415,13 +428,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}), 
 		me.bgColor= new Upfront.Views.Editor.Field.Color({
-			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color static',
+			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  bg-color static',
 			blank_alpha : 0,
 			model: this.model,
 			//property: 'bg_color',
 			default_value: '#ccc',
-			label_style: 'inline',
-			label: l10n.bg_color,
+			//label_style: 'inline',
+			label: 'BG Color:',
 			spectrum: {
 				preferredFormat: "hex",
 				change: function() { me.updatelivecss(me, me.bgColor);},
@@ -429,11 +442,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			}
 		}),
 		me.fontSize= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings static',
+			className: 'font static',
 			model: this.model,
 			min: 8,
 			//property: 'border_width',
-			label: '',
+			label: 'Font: ',
 			default_value: 12,
 			values: [
 				{ label: "", value: '12' }
@@ -443,11 +456,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		me.fontFace = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				values: me.get_fonts(),
-				className: 'static',
+				label: 'px',
+				label_style: 'inline',
+				className: 'font_face static',
 				change: function() { me.updatelivecss(me, this);}
 		}),
 		me.color= new Upfront.Views.Editor.Field.Color({
-				className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color static',
+				className: 'upfront-field-wrap upfront-field-wrap-color sp-cf font_color bg-color static',
 				blank_alpha : 0,
 				model: this.model,
 				//property: 'bg_color',
@@ -467,7 +482,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			className: 'inline-radios  plaintext-settings hover',
 			model: this.model,
 			//property: 'border_style',
-			label: l10n.border,
+			label: "Border:",
 			default_value: "none",
 			values: [
 				{ label: l10n.none, value: 'none' },
@@ -503,11 +518,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			}
 		}),
 		me.hov_borderRadius1= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings hover',
+			className: 'border_radius border_radius1 hover',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
-			label: '',
+			label: 'Rounded Corners: ',
 			default_value: 0,
 			values: [
 				{ label: "", value: '0' }
@@ -515,7 +530,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius2= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings hover',
+			className: 'border_radius border_radius2 hover',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
@@ -527,7 +542,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius4= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings hover',
+			className: 'border_radius border_radius4 hover',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
@@ -539,7 +554,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius3= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings hover',
+			className: 'border_radius border_radius3 hover',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
@@ -551,13 +566,12 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			change: function() { me.updatelivecss(me, this);}
 		}), 
 		me.hov_bgColor= new Upfront.Views.Editor.Field.Color({
-			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf plaintext-settings inline-color bg-color hover',
+			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf bg-color hover',
 			blank_alpha : 0,
 			model: this.model,
 			//property: 'bg_color',
-			label_style: 'inline',
 			default_value: '#ccc',
-			label: l10n.bg_color,
+			label: 'BG Color:',
 			spectrum: {
 				preferredFormat: "hex",
 				change: function() { me.updatelivecss(me, me.hov_bgColor);},
@@ -565,11 +579,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			}
 		}),
 		me.hov_fontSize= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings hover',
+			className: 'font hover',
 			model: this.model,
 			min: 8,
 			//property: 'border_width',
-			label: '',
+			label: 'Font:',
 			default_value: 12,
 			values: [
 				{ label: "", value: '12' }
@@ -579,12 +593,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		me.hov_fontFace = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				values: me.get_fonts(),
-				className: 'hover',
+				className: 'font_face hover',
+				label: 'px',
+				label_style: 'inline',
 				change: function() { me.updatelivecss(me, this);}
 		});
 
 		me.hov_color= new Upfront.Views.Editor.Field.Color({
-				className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color bg-color hover',
+				className: 'upfront-field-wrap upfront-field-wrap-color sp-cf font_color bg-color hover',
 				blank_alpha : 0,
 				model: this.model,
 				//property: 'bg_color',
@@ -598,11 +614,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				}
 		});
 		me.hov_duration= new Upfront.Views.Editor.Field.Number({
-			className: 'inline-number plaintext-settings hover',
+			className: 'duration hover',
 			model: this.model,
 			min: 0,
 			//property: 'border_width',
-			label: 'sec',
+			label: 'Animate Hover Changes:',
 			default_value: 0.25,
 			step: 0.25,
 			values: [
@@ -612,13 +628,15 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		});
 		me.hov_transition = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
+				label: 'sec',
+				label_style: 'inline',
 				values: [{ label: 'ease', value: 'ease' },
 				{ label: 'linear', value: 'linear' },
 				{ label: 'ease-in', value: 'ease-in' },
 				{ label: 'ease-out', value: 'ease-out' },
 				{ label: 'ease-in-out', value: 'ease-in-out' }
 				],
-				className: 'hover',
+				className: 'transition hover',
 				change: function() { me.updatelivecss(me, this);}
 		}),
 		me.static_button_preset = new Upfront.Views.Editor.Field.Button({
@@ -636,7 +654,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		});
 		me.presetspecific = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
-				title: '',
+				className: 'preset_specific',
+				title: 'Edit '+me.property('currentpreset'),
 				fields: [
 					new Upfront.Views.Editor.Field.Button({
 						model: me.model,
@@ -666,9 +685,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					me.borderColor,
 					me.borderRadius1,
 					me.borderRadius2,
+					me.bgColor,
 					me.borderRadius4,
 					me.borderRadius3,
-					me.bgColor,
+
 					me.fontSize,
 					me.fontFace,
 					me.color,
@@ -677,9 +697,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					me.hov_borderColor,
 					me.hov_borderRadius1,
 					me.hov_borderRadius2,
+					me.hov_bgColor,
 					me.hov_borderRadius4,
 					me.hov_borderRadius3,
-					me.hov_bgColor,
+
 					me.hov_fontSize,
 					me.hov_fontFace,
 					me.hov_color,
@@ -694,16 +715,19 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		me.newpresets = new Upfront.Views.Editor.Settings.Item({
 			model: this.model,
 			title: 'Or',
+			className: 'or_divider',
 			fields: [
 				newpresetname,
 				new Upfront.Views.Editor.Field.Button({
 					model: me.model,
 					label: 'New Preset',
-					className: "new_menu_button",
+					className: "new_button_preset",
 					compact: true,
 					on_click: function() {
-						me.property('currentpreset',  newpresetname.$el.find('input').val(), true);
-						me.ready_preset();
+						if(newpresetname.$el.find('input').val().trim() != '') {
+							me.property('currentpreset',  newpresetname.$el.find('input').val(), true);
+							me.ready_preset();
+						}
 					},
 				})
 			]
@@ -844,6 +868,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.updatelivecss(this);
 	},
 	ready_preset: function() {
+		this.presetspecific.$el.find('.upfront-settings-item-title span').html('Edit ' + this.property('currentpreset'));
 		this.buttonpresets.$el.hide(),
 		this.newpresets.$el.hide(),
 		this.static_button_preset.$el.trigger('click');

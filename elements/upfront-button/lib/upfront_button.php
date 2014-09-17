@@ -5,7 +5,15 @@ class Upfront_ButtonView extends Upfront_Object {
 	public function get_markup () {
 		$data = array();
 		$data['id'] = $this->_get_property('element_id');
-		$presets = json_decode(get_option('upfront_' . get_stylesheet() . '_button_presets'), true);
+		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
+		$button_presets = apply_filters(
+			'upfront_get_button_presets',
+			$button_presets,
+			array(
+				'json' => true
+			)
+		);
+		$presets = json_decode($button_presets, true);
 		$preset = false;
 		$markup = "";
 		foreach($presets as $item) {
@@ -55,6 +63,21 @@ class Upfront_ButtonView extends Upfront_Object {
 		
 	}
 
+	//Defaults for properties
+	public static function default_properties(){
+		return array(
+			"content" => "Click here", 
+			"href" => "#", 
+			"align" => "center", 
+			"type" => "ButtonModel", 
+			"view_class" => "ButtonView", 
+			"element_id" => "button-object-1410952320306-1435", 
+			"class" => "c24 upfront-button", 
+			"has_settings" => 1, 
+			"id_slug" => "button"
+		);
+	}
+
 	public static function add_l10n_strings ($strings) {
 		if (!empty($strings['button_element'])) return $strings;
 		$strings['button_element'] = self::_get_l10n();
@@ -96,7 +119,4 @@ class Upfront_ButtonView extends Upfront_Object {
 
 	}
 
-	public static function export_content ($export, $object) {
-		return upfront_get_property_value('content', $object);
-	}
 }

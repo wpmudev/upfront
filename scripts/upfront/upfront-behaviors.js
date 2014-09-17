@@ -1011,7 +1011,8 @@ var LayoutEditor = {
 			theme_colors: {
 				colors: Upfront.Views.Theme_Colors.colors.toJSON(),
 				range: Upfront.Views.Theme_Colors.range
-			}
+			},
+			button_presets: Upfront.Views.Editor.Button.Presets.toJSON()
 		};
 
 		if (Upfront.themeExporter.layoutStyleDirty) {
