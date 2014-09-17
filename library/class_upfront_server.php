@@ -242,8 +242,10 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout->delete(true);
 		delete_option('upfront_' . $stylesheet . '_styles');
 		delete_option('upfront_' . $stylesheet . '_theme_colors');
+		delete_option('upfront_' . $stylesheet . '_button_presets');
 		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_styles');
 		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_theme_colors');
+		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_button_presets');
 		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
 	}
 

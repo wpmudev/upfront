@@ -685,6 +685,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
+		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -958,6 +959,15 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (isset($args['json']) && $args['json']) return $theme_colors;
 
 		return json_decode($theme_colors);
+	}
+	
+	public function getButtonPresets($button_presets, $args) {
+		if (empty($button_presets) === false) return $button_presets;
+
+		$button_presets = $this->themeSettings->get('button_presets');
+		if (isset($args['json']) && $args['json']) return $button_presets;
+
+		return json_decode($button_presets);
 	}
 
 	/**
