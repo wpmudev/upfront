@@ -58,7 +58,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			if(window.location.pathname.indexOf('/create_new/') !== -1 || window.location.pathname.indexOf('/edit/') !== -1)
 			me.editor.loadingLayout.done(function() {
 				setTimeout(function() {
-					me.editor.editContents();
+					Upfront.Events.trigger('post:layout:edit', me, 'archive');
+					// me.editor.editContents();
 				}, 200);
 
 			});

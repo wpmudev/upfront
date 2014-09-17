@@ -490,29 +490,28 @@ var ImageInsert = UeditorInsert.extend({
 
 			;
 
-            this.$(".uinsert-image-caption-drag-handle")
-                .draggable({
-                    containment : "parent",
-                    snap: true,
-                    snapMode: "both",
-                    drag: function( e, ui ){
-                        console.log(e, ui);
-
-                    }
-                })
+            this.$(".uinsert-image-caption-drag-handle, .uinsert-image-wrapper")
+                //.draggable({
+                //    containment : "parent",
+                //    snap: ".c22",
+                //    snapMode: "both",
+                //    drag: function( e, ui ){
+                //        //console.log(e, ui);
+                //    }
+                //})
                 //.resizable();
             ;
-
+            this.$(".uinsert-image-caption-drag-handle").append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>').resizable({ handles: "n, e, s, w" });
             this.$el.on("click", function(){
                if( !$(this).hasClass("wp-caption-text") &&  typeof me.ueditor !== "undefined"){
                    me.ueditor.stop();
-               }else{
-                   me.$(".wp-caption-text").on("dblclick", function(){
-                       console.log("dbl click");
-                       me.ueditor.start();
-                   });
                }
             });
+
+            //me.$(".wp-caption-text").on("dblclick", function(){
+            //    console.log("dbl click");
+            //    me.ueditor.start();
+            //});
 
 		}
 
@@ -1204,7 +1203,7 @@ var EmbedInsert = UeditorInsert.extend({
          var view = new EmbedFormView({data: {code: this.data.get('code')}});
          this.formView = view;
 
-         view.on()
+         view.on();
          return view;
      }
 });
