@@ -697,8 +697,8 @@ class Upfront_GridBreakpoint {
 			$style_value = 'none';
 		}
 		else if ( $key == 'order' ) {
-			$rule = 'order';
-			$style_value = $value;
+			$style .= "-webkit-order: {$value}; ";
+			$style .= "order: {$value}";
 		}
 		if ( !empty($style_value) )
 			$style .= "{$rule}: {$style_value}";

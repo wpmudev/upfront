@@ -11169,18 +11169,26 @@ div.upfront-region-container-active > a.feature_image_selector {
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper
  {
+ 	-webkit-display: flex;
 	display: flex;
+	-webkit-flex-direction: row;
 	flex-direction: row;
+	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
+	-webkit-align-items: flex-start;
 	align-items: flex-start;
+	-webkit-align-content: flex-start;
 	align-content: flex-start;
 }
 .flexbox-support .upfront-grid-layout {
+	-webkit-align-items: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper {
+	-webkit-flex-wrap: nowrap;
 	flex-wrap: nowrap;
+	-webkit-align-items: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-region-container-hidden .upfront-grid-layout,
@@ -11194,6 +11202,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-module-group > .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
+	-webkit-order: 0;
 	order: 0;
 }
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
