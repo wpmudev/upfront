@@ -604,7 +604,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			: '<p>test content</p>'
 		;
 		$post = new WP_Post((object)array(
-			'ID' => 0,
+			'ID' => 'fake_post',
 			'post_type' => (!empty($data['post_type']) ? $data['post_type'] : 'post'),
 			'post_status' => 'publish',
 			'post_title' => 'Sample Post',
