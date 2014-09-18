@@ -4448,6 +4448,7 @@ define([
 	var SettingsPanel = Backbone.View.extend(_.extend({}, Upfront_Scroll_Mixin, {
 		className: 'upfront-settings_panel_wrap',
     // For Anchor & Styles settings
+	hide_common_anchors: false,
     hide_common_fields: false,
 
 		events: {
@@ -4468,6 +4469,7 @@ define([
 		initialize: function (options) {
 			var me = this;
 			this.hide_common_fields = _.isUndefined(options.hide_common_fields) ? false : options.hide_common_fields;
+			this.hide_common_anchors = _.isUndefined(options.hide_common_anchors) ? false : options.hide_common_anchors;
 			me.options = options;
 			this.settings = options.settings ? _(options.settings) : _([]);
 			this.settings.each(function(setting){
@@ -4514,7 +4516,7 @@ define([
 					// Adding CSS item
 					var css_settings = new _Settings_CSS({
 						model: this.model,
-						title: 'CSS Styles &amp; Anchor Settings'
+						title: 'CSS Styles'+((this.hide_common_anchors === false)?' &amp; Anchor Settings':'')
 					});
 					css_settings.panel = me;
 					css_settings.render();
@@ -4522,10 +4524,13 @@ define([
 				}
 				// Adding anchor trigger
 				//todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
-				var anchor_settings = new _Settings_AnchorSetting({model: this.model});
-				anchor_settings.panel = me;
-				anchor_settings.render();
-				$common_panel.append(anchor_settings.el);
+					
+				if (this.hide_common_anchors === false) {	
+					var anchor_settings = new _Settings_AnchorSetting({model: this.model});
+					anchor_settings.panel = me;
+					anchor_settings.render();
+					$common_panel.append(anchor_settings.el);
+				}
 
 				// this.listenTo(anchor_settings, "anchor:item:updated", function () {
 					// this.toggle_panel(first); //todo don't know what this was for should investigate
@@ -4558,7 +4563,7 @@ define([
 			if(panel.is('.open')) {
 				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text('Element CSS Styles');
 			} else {
-				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text('CSS Styles & Anchor Settings');
+				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text('CSS Styles'+((me.hide_common_anchors === false)?' &amp; Anchor Settings':''));
 			}
 		},
 
@@ -4893,6 +4898,9 @@ var _Settings_CSS = SettingsItem.extend({
 	},
 	openNewEditor: function(e){
 		e.preventDefault();
+		
+		Upfront.Events.trigger("entity:settings:beforedeactivate");
+		
 		Upfront.Application.cssEditor.init({
 			model: this.model,
 			stylename: ''
@@ -5575,7 +5583,7 @@ var CSSEditor = Backbone.View.extend({
 		MapModel: {label: 'Map', id: 'upfront-map_element'},
 		//NavigationModel: {label: 'Navigation', id: 'nav'},
 		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
-		UbuttonModel: {label: 'Button', id: 'ubutton'},
+		ButtonModel: {label: 'Button', id: 'ubutton'},
 		UpostsModel: {label: 'Posts', id: 'uposts'},
 		UsearchModel: {label: 'Search', id: 'usearch'},
 		USliderModel: {label: 'Slider', id: 'uslider'},
@@ -6016,6 +6024,8 @@ var CSSEditor = Backbone.View.extend({
 
 				if(Upfront.data.styles[elementType].indexOf(me.get_style_id()) === -1)
 					Upfront.data.styles[elementType].push(me.get_style_id());
+
+				Upfront.Events.trigger('upfront:themestyle:saved', me.get_style_id());
 
 				me.checkDeleteToggle(data.name);
 

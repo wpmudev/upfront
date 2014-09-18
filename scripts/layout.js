@@ -150,7 +150,9 @@ jQuery(document).ready(function($){
 		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block') {
 		
 				var url = $(e.target).attr('href');
+
 				if(url && url.indexOf && url.indexOf('#ltb-') > -1)	 {
+
 					
 					e.preventDefault();
 					var regions = Upfront.Application.layout.get('regions');
