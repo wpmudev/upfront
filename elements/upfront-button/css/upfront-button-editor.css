@@ -204,3 +204,13 @@ div.button-settings-panel div.or_divider div.upfront-settings-item-title > span 
   color:#fff;
   text-transform: lowercase;
 }
+div.upfront-editable_entity.upfront-button {
+	display: table;	
+}
+div.upfront-output-button {
+	display: table-row;	
+}
+
+div.button-settings-panel div.upfront-settings-common_panel {
+	padding-bottom: 15px;	
+}
