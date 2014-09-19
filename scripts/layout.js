@@ -285,10 +285,13 @@ jQuery(document).ready(function($){
 		$images.each(function () {
 			var $img = $(this),
 				source = $img.attr('data-sources'),
-				src = $img.attr('data-src')
+				src = $img.attr('data-src'),
+				height = $img.height(),
+				width = $img.width()
 			;
 			if ($img.is(".upfront-image-lazy-loaded")) return true; // already loaded
 			if (!source && !src) return true; // we don't know how to load
+			if (height <= 0 && width <= 0) return true; // Don't lazy load backgrounds for hidden regions.
 			
 			if (source) {
 				// Deal with source JSON and populate `src` from there
