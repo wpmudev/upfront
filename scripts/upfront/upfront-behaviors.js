@@ -806,6 +806,12 @@ var LayoutEditor = {
 					default_value: true,
 					multiple: false,
 					values: [{ label: "Activate the new theme upon creation", value: 1 }],
+				}),
+				with_images: new Upfront.Views.Editor.Field.Checkboxes({
+					name: 'with_images',
+					default_value: true,
+					multiple: false,
+					values: [{ label: "Export images with the theme", value: 1 }],
 				})
 			};
 
@@ -839,6 +845,7 @@ var LayoutEditor = {
 				$content.append(fields.author.el);
 				$content.append(fields.author_uri.el);
 				$content.append(fields.activate.el);
+				$content.append(fields.with_images.el);
 				$content.append($button);
 				$button.on('click', function() {
 					var theme_name, create_theme, export_layout, export_layouts, do_export;
@@ -851,6 +858,7 @@ var LayoutEditor = {
 							'thx-author-uri': fields.author_uri.get_value(),
 							'thx-theme-template': 'upfront',
 							'thx-activate_theme': fields.activate.get_value() || '',
+							'thx-export_with_images': fields.with_images.get_value() || '',
 							add_global_regions: Upfront.Application.current_subapplication.layout.get('layout_slug') !== 'blank'
 						};
 						loading.update_loading_text("Creating theme");
