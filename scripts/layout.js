@@ -224,7 +224,7 @@ jQuery(document).ready(function($){
 	
 	/* Lazy loaded image */
 	var image_lazy_load_t;
-	var image_lazy_scroll = true;
+	var image_lazy_scroll = window._upfront_image_lazy_scroll;
 	function image_lazy_load () {
 		clearTimeout(image_lazy_load_t);
 		image_lazy_load_t = setTimeout(function(){
@@ -319,13 +319,15 @@ jQuery(document).ready(function($){
 		});
 		$(window).off('scroll', image_lazy_load); // Since we scheduled image loads, kill the scroll load
 	}
-	
-	if (window._upfront_lazy_scroll_off) $(window).on("load", image_lazy_load_bg); // Do background load instead
-	else image_lazy_load(); // Don't do scroll-load initially
 
-	$(window).on('resize', image_lazy_load);
-	if ( image_lazy_scroll )
+	// Initialize appropriate behavior
+	$(window).on('resize', image_lazy_load); // Okay, so this should keep on happening on resizes
+	if ( image_lazy_scroll ) {
 		$(window).on('scroll', image_lazy_load);
+		image_lazy_load();
+	} else {
+		$(window).on("load", image_lazy_load_bg); // Do background load instead
+	}
 	
 	
 	/* Responsive custom theme styles */
