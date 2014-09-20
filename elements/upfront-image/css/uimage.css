@@ -1153,3 +1153,27 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-field-wrap.image-alternative-text {
   margin-top: 6px;
 }
+
+
+/* front-end placeholder */
+.upfront-output-image .uimage.uimage-placeholder {
+	min-height: inherit;
+}
+.upfront-output-image .uimage.uimage-placeholder .upfront-image-caption-container {
+	min-height: inherit;
+	width: 100%;
+}
+.upfront-output-image .uimage.uimage-placeholder .upfront-image-caption-container .upfront-image-starting_placeholder {
+	min-height: inherit;
+	width: 100%;
+}
+.upfront-output-image .uimage.uimage-placeholder .upfront-image-caption-container .upfront-image-starting_placeholder p {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 48%;
+	width: 100%;
+
+	font-style: italic;
+	opacity: .3;
+}
