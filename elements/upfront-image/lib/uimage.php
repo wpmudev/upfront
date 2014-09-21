@@ -106,6 +106,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'vstretch' => false,
 			'quick_swap' => false,
 			'gifImage' => 0,
+			'placeholder_class' => '',
 
 			'type' => 'UimageModel',
 			'view_class' => 'UimageView',
