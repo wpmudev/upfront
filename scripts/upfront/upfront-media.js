@@ -1115,7 +1115,9 @@ define(function() {
 		events: {
 			"click .library": "switch_to_library",
 			"click .embed": "switch_to_embed",
-			"click .upload": "switch_to_upload"
+			"click .upload": "switch_to_upload",
+			"click .shortcode": "switch_to_shortcode",
+			"click .markup": "switch_to_markup",
 		},
 		template: _.template(
 			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">' + l10n.library + '</li> <li class="embed">' + l10n.embed + '</li> </ul> <button type="button" class="upload">' + l10n.upload + '</button>'
@@ -1127,6 +1129,15 @@ define(function() {
 			this.$el.empty().append(
 				this.template({})
 			);
+/*
+// Comes into play later on
+			if (this.is_in_editing_mode()) {
+				this.$el.find("ul")
+					.append('<li class="shortcode">Shortcode</li>')
+					.append('<li class="markup">Markup</li>')
+				;
+			}
+*/
 			this.$el.addClass('clearfix');
 			this.switch_to_library();
 		},
@@ -1157,6 +1168,32 @@ define(function() {
 			e.preventDefault();
 			e.stopPropagation();
             this.trigger("media_manager:switcher:to_upload");
+		},
+		switch_to_shortcode: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.$el
+				.find("li").removeClass("active")
+				.filter(".shortcode").addClass("active")
+			;
+			this.trigger("media_manager:switcher:to_shortcode");
+		},
+		switch_to_markup: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.$el
+				.find("li").removeClass("active")
+				.filter(".markup").addClass("active")
+			;
+			this.trigger("media_manager:switcher:to_markup");
+		},
+		/**
+		 * Boolean helper for determining if we're in some sort of a free-form or text editing mode
+		 */
+		is_in_editing_mode: function () {
+			var type = Upfront.Application.sidebar.prevented_usage_type;
+			console.log(type);
+			return !(type.match(/media/));
 		}
 	});
 
@@ -1183,6 +1220,8 @@ define(function() {
             this.switcher_view.on("media_manager:switcher:to_library", this.render_library, this);
             this.switcher_view.on("media_manager:switcher:to_embed", this.render_embed, this);
             this.switcher_view.on("media_manager:switcher:to_upload", this.render_upload, this);
+            this.switcher_view.on("media_manager:switcher:to_shortcode", this.render_shortcode, this);
+            this.switcher_view.on("media_manager:switcher:to_markup", this.render_markup, this);
 
 			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
@@ -1303,6 +1342,12 @@ define(function() {
 				}
 			}).trigger("click");
 
+		},
+		render_shortcode: function () {
+			console.log("SHORTCODE YAY");
+		},
+		render_markup: function () {
+			console.log("MARKUP YAY");
 		},
 		load: function (data) {
 			this._request_in_progress = true;
