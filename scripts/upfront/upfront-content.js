@@ -77,7 +77,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				layoutData = {
 					postLayout: me.postView.postLayout,
 					partOptions: me.postView.partOptions || {}
-				}
+				};
 
 				me.layoutData = true;
 				me.parts = me.postView.parts[me.postId];
@@ -162,7 +162,7 @@ define("content", deps, function(postTpl, ContentTools) {
 					;
 					_.each(attributes, function(value, key){
 						attrs += key +'="' + value + '" ';
-					})
+					});
 
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
@@ -308,7 +308,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			loading.render();
 			this.$el.append(loading.$el);
-			this.contentEditor.bar.$el.hide()
+			this.contentEditor.bar.$el.hide();
             console.log("results", results);
 			if(results.title)
 				this.post.set('post_title', results.title);

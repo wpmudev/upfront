@@ -525,7 +525,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			regionLayout = Upfront.Util.model_to_json(this.regionView.model),
 			wrappers = regionLayout.wrappers,
 			modules = regionLayout.modules,
-			wrapperIds = {}
+			wrapperIds = {},
 			layout = []
 		;
 
@@ -643,7 +643,6 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			region = this.importPostLayout(postView.postLayout),
 			layoutRegions = Application.layout.get('regions')
 		;
-		console.log(postView.postLayout);
 
 		this.templateEditor = new Upfront.Content.TemplateEditor();
 		this.listenTo(this.templateEditor, 'save', function(tpl, postPart){
@@ -727,7 +726,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 	getPostRegionData: function(postView){
 		var container = this.postView.parent_module_view.region,
-			elementSize =  this.postView.get_element_size()
+			elementSize =  this.postView.get_element_size(),
 			region = {
 				title: 'Post Layout Editor',
 				name: 'postLayoutEditor',
@@ -740,7 +739,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 					{name: 'col', value: elementSize.col}
 				],
 				scope: 'local'
-			}
+            },
 			regionModel = new Upfront.Models.Region(region);
 		;
 
@@ -949,6 +948,60 @@ var PostContentEditor = new (Subapplication.extend({
 	}
 }));
 
+var ContentStyleEditor = new (Subapplication.extend({
+    initialize: function(){
+        this.listenTo(Upfront.Events, 'post:content:style:start', this.startContentStyleMode);
+        this.listenTo(Upfront.Events, 'post:content:style:stop', this.stopContentStyleMode);
+    },
+
+    boot: function () {
+        Upfront.Util.log("Preparing post content style mode for execution")
+    },
+
+    start: function () {
+        Upfront.Util.log("Starting post the content style mode");
+    },
+
+    stop: function () {
+        var $page = $('#page');
+        Upfront.Util.log("Stopping post content style mode");
+        $page.find('.upfront-module').draggable('enable').resizable('enable');
+        Upfront.Events.trigger('upfront:element:edit:stop');
+        $page.find('.upfront-region-content-style-trigger').show();
+        this.contentStyleEditor = false;
+    },
+
+    startContentStyleMode: function(contentStyleEditor){
+        if(Application.current_subapplication == ContentStyleEditor)
+            return;
+
+        this.contentStyleEditor = contentStyleEditor;
+
+        var $page = $('#page');
+        window.pst = contentStyleEditor;
+        window.pst1 = this;
+        //console.log(contentStyleEditor., contentStyleEditor.postView.render());
+        //There is no need of start the application
+        //Application.set_current(Application.MODE.CONTENT_STYLE);
+
+        //if(Application.current_subapplication != contentStyleEditor){
+        //    contentStyleEditor = "";
+        //    this.contentStyleEditor = "";
+        //    this.elementType = "";
+        //    this.partMarkup = "";
+        //}
+        //else
+        //    Application.start(Application.mode.last);
+
+
+        $page.find('.upfront-module').draggable('disable').resizable('disable');
+        //Upfront.Events.trigger('upfront:element:edit:start', 'write', contentStyleEditor.post);
+        $page.find('.upfront-region-edit-trigger').hide();
+
+    },
+    stopContentStyleMode: function(){
+    }
+}));
 
 var ContentEditor = new (Subapplication.extend({
 	boot: function () {
@@ -1004,11 +1057,11 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	Objects: {},
 
 	boot: function () {
-		Upfront.Util.log("Preparing responsive mode for execution")
+		Upfront.Util.log("Preparing responsive mode for execution");
 	},
 
 	start: function () {
-		Upfront.Util.log("Starting responsive mode.")
+		Upfront.Util.log("Starting responsive mode.");
 		this.stop();
 		this.Objects = Upfront.Application.LayoutEditor.Objects;
 		this.set_up_event_plumbing_before_render();
@@ -1024,7 +1077,7 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	stop: function () {
 		if ( this.topbar )
 		    this.topbar.stop();
-		Upfront.Util.log("Leaving responsive mode.")
+		Upfront.Util.log("Leaving responsive mode.");
 		return this.stopListening(Upfront.Events);
 	}
 
@@ -1036,7 +1089,8 @@ var Application = new (Backbone.Router.extend({
 	ThemeEditor: ThemeEditor,
 	PostLayoutEditor: PostLayoutEditor,
 	PostContentEditor: PostContentEditor,
-  ResponsiveEditor: ResponsiveEditor,
+    ResponsiveEditor: ResponsiveEditor,
+    ContentStyleEditor : ContentStyleEditor,
 
 	actions: {
 		"save": "upfront_save_layout",
@@ -1056,8 +1110,9 @@ var Application = new (Backbone.Router.extend({
 		THEME: "theme",
 		POST: 'post layout',
 		POSTCONTENT: "post content",
-    RESPONSIVE: "responsive"
-	},
+        RESPONSIVE: "responsive",
+        CONTENT_STYLE : "post content style"
+    },
 
 	mode: {
 		last: false,
@@ -1469,6 +1524,9 @@ var Application = new (Backbone.Router.extend({
 		} else if(mode && this.MODE.POSTCONTENT == mode) {
 			this.mode.current = this.MODE.POSTCONTENT;
 			this.current_subapplication = this.PostContentEditor;
+        } else if(mode && this.MODE.CONTENT_STYLE == mode) {
+            this.mode.current = this.MODE.CONTENT_STYLE;
+            this.current_subapplication = this.ContentStyleEditor;
 		} else if(mode && this.MODE.RESPONSIVE == mode) {
 			this.mode.current = this.MODE.RESPONSIVE;
 			this.current_subapplication = this.ResponsiveEditor;

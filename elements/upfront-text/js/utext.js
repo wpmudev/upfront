@@ -95,7 +95,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			})
 		;
 
-	},
+	}
 });
 
 

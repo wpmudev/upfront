@@ -12417,4 +12417,29 @@ div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfron
 .upfront-region-bg-setting-add-global-region {
 	margin-bottom: 20px;
 }
->>>>>>> eea43a57793d2b674014aac2b20fc534316c3fc9
+.upfront_edit_content_style{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: #e5f3ff;
+    border-radius: 5px;
+    width: 281px;
+    margin-left: -140px !important;
+    margin-top: -23px !important;
+    height: 46px;
+    line-height: 46px;
+    text-align: center;
+    color: #263a4d;
+    box-shadow: 0px 5px 10px 2px #ccc;
+    display: none;
+    cursor: pointer;
+    padding: 0 !important;
+}
+.upfront-output-PostPart_contents:hover .upfront_edit_content_style{
+    display: block;
+}
+.upfront-disable-surroundings{
+    box-shadow: 0 0 0 5000px rgba(0,0,10,.5);
+    position:relative;
+    z-index: 1;
+}

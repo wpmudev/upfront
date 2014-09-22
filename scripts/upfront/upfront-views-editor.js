@@ -354,11 +354,20 @@ define([
 	});
 
 	var Command_CancelPostLayout = Command.extend({
+        className: "command-cancel",
 		render: function () {
-			this.$el.html("Cancel");
+			this.$el.html("Cancel").hide();
 		},
 		on_click: function () {
-			Upfront.Events.trigger("post:layout:cancel");
+            var current_mode = Upfront.Application.get_current();
+
+            if ( current_mode === Upfront.Application.MODE.THEME ) {
+                Upfront.Events.trigger("post:layout:cancel");
+            }else{
+                Upfront.Events.trigger("post:layout:cancel_content_style");
+
+            }
+
 		}
 	});
 	var Command_PreviewLayout = Command.extend({
@@ -593,7 +602,7 @@ define([
 			this._selecting = !this._selecting;
 			this.render();
 		}
-	})
+	});
 
 	var Command_ToggleGrid = Command.extend({
 		className: "command-grid",
@@ -2386,7 +2395,7 @@ define([
 		render: function () {
 			var current_app = Upfront.Application.get_current();
 			var is_responsive_app = current_app === Upfront.Settings.Application.MODE.RESPONSIVE;
-			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
+			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');
 			if ( current_app == Upfront.Settings.Application.MODE.THEME ) {
 				output.addClass('create-theme-sidebar');
 			}

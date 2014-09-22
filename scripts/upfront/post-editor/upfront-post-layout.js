@@ -41,7 +41,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	get_content_markup: function(){
-		console.log(this.property('postPart'));
 		var part = this.property('postPart'),
 			markupper = ContentTools.getMarkupper(),
 			template = this.getTemplate(),
@@ -152,7 +151,7 @@ var PostPartElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		this.slug = this.title.toLowerCase().replace(' ', '_');
 		this.Model = PostPartModel;
 		this.View = partViews[this.slug] ? partViews[this.slug] : PostPartView;
-		this.Settings = partSettings[this.slug] ? partSettings[this.slug] : PostPartSettings;
+        this.Settings = partSettings[this.slug] ? partSettings[this.slug] : PostPartSettings;
 	},
 	add_element: function(){
 		var object = new this.Model({properties:{
@@ -322,6 +321,78 @@ var ContentSettings = PostPartSettings.extend({
 });
 
 var ContentView = PostPartView.extend({
+    events : {
+        "click .upfront_edit_content_style" : 'start_content_styling'
+    },
+    populate_style_content : function(){
+        var me = this,
+            options = this.postView.partOptions || {},
+            request = {
+                action: 'content_part_markup',
+                post_id: "fake_styled_post",
+                parts: JSON.stringify([{slug: this.postPart, options: options[this.postPart] || {}}]),
+                templates: {}
+            }
+            ;
+
+        request.templates[this.postPart] = this.getTemplate();
+        var promise = Upfront.Util.post(request);
+        promise.done(function(response){
+            _.extend(Upfront.Application.PostLayoutEditor.partMarkup, response.data.replacements);
+            me.$el.html(  response.data.replacements["%contents%"] );
+            me.detect_inserts();
+        });
+        return promise;
+    },
+    start_content_styling : function( e ){
+        e.preventDefault();
+        e.stopPropagation();
+        $(".sidebar-commands-control .command-cancel").show();
+        $(e.target).closest(".upfront-module").addClass("upfront-disable-surroundings");
+        Upfront.Events.trigger("post:content:style:start", this, 'single');
+        this.populate_style_content();
+        //this.populate_style_content().on("done", function(){
+        //    console.log("done ");
+        //    this.detect_inserts();
+        //});
+
+
+
+
+        Upfront.Events.on("post:content:style:stop", function(){
+
+        });
+    },
+    detect_inserts : function(){
+        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
+        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        $(".upfront-inserted_image-wrapper").resizable({
+            grid : [Upfront.Behaviors.GridEditor.col_size, Upfront.Behaviors.GridEditor.baseline],
+            handles: "se, nw",
+            containment: ".upfront-module.post-part",
+            resize : function( event, ui ){
+                if( ui.position.left > 0 ){
+                    $(this).css("float", "right");
+                }else{
+                    $(this).css({
+                        float : "left",
+                        "left"  : "0px"
+                    });
+                }
+            },
+            stop : function( event, ui ){
+                if( ui.position.left > 0 ){
+                    $(this).css("float", "right");
+                }else{
+                    $(this).css({
+                        float : "left",
+                        "left"  : "0px"
+                    });
+                    $(this).css("left"  , "0px");
+                }
+            }
+        });
+    },
 	updateOptions: function(){
 		var properties = this.model.get('properties').toJSON(),
 			partOptions = {},
@@ -351,6 +422,7 @@ var ContentView = PostPartView.extend({
 	},
 
 	render: function(){
+        console.log(this);
 		PostPartView.prototype.render.apply(this, arguments);
 
 		if(!this.paddingChangeHandler){
@@ -358,6 +430,13 @@ var ContentView = PostPartView.extend({
 			this.on('post:padding:update', this.paddingChangeHandler);
 		}
 		this.refreshPaddingsFromProperties();
+
+        /**
+         * Creates content style button
+         * @type {*|HTMLElement}
+         */
+        var $editor = $('<div class="upfront_edit_content_style">Style Post Content</div>');
+        $editor.appendTo( this.$(".upfront-output-PostPart_contents") );
 	},
 
 	refreshPaddingsFromProperties: function(){
@@ -385,7 +464,9 @@ var ContentView = PostPartView.extend({
 		styles.html(rules);
 	}
 });
+var ImageInsert = Upfront.Views.ObjectView.extend({
 
+});
 var FeaturedImageView = PostPartView.extend({
 	init: function(options){
 		this.partOptions = this.postView.partOptions.featured_image || {};

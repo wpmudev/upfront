@@ -527,6 +527,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"CONTENT" => "content",
 			"THEME" => "theme",
 			"POST" => "post layout",
+            "CONTENT_STYLE" => "post content style",
 			"POSTCONTENT" => "post content",
      		"RESPONSIVE" => "responsive",
 			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),

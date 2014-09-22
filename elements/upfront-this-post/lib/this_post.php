@@ -604,7 +604,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		$post = !empty($post_id) && is_numeric($post_id)
 			? get_post($post_id)
-			: apply_filters('upfront-this_post-unknown_post', (object)array(), array('post_id' => $post_id));
+			:  apply_filters('upfront-this_post-unknown_post', (object)array(), array('post_id' => $post_id));
 		;
 		
 

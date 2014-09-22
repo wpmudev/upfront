@@ -25,7 +25,6 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 	initialize: function(options){
 		var me = this;
-		console.log('This post');
 		if(! (this.model instanceof ThisPostModel)){
 			this.model = new ThisPostModel({properties: this.model.get('properties')});
 		}
@@ -52,17 +51,32 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.postId = "fake_post";
 			this.refreshMarkup();
 			me.prepareEditor();
-		}
+		}else if("themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+            this.postId = "fake_styled_post";
+            this.refreshMarkup();
+            me.prepareEditor();
+        }
 
 		this.listenToOnce(this, 'rendered', function(){
-			if(window.location.pathname.indexOf('/create_new/') !== -1 || window.location.pathname.indexOf('/edit/') !== -1)
+			if( window.location.pathname.indexOf('/edit/') !== -1 )
 			me.editor.loadingLayout.done(function() {
 				setTimeout(function() {
-					Upfront.Events.trigger('post:layout:edit', me, 'archive');
-					// me.editor.editContents();
+					//Upfront.Events.trigger('post:layout:edit', me, 'archive');
+					me.editor.editContents();
 				}, 200);
 
 			});
+
+
+            if( Upfront.Application.MODE.THEME === Upfront.Application.get_current() ){
+                me.editor.loadingLayout.done(function() {
+                    setTimeout(function() {
+                        Upfront.Events.trigger('post:layout:edit', me, 'archive');
+                        // me.editor.editContents();
+                    }, 200);
+
+                });
+            }
 		});
 
 		Upfront.Events.trigger('post:initialized', this);

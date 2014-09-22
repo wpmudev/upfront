@@ -14,7 +14,7 @@ class Upfront_UcommentView extends Upfront_Object {
 	public static function get_comment_markup ($post_id) {
 		//if (!$post_id || !is_numeric($post_id)) return '';
 		if (!$post_id) return ''; 
-		if (!is_numeric($post_id) && 'fake_post' !== $post_id) return '';
+		if (!is_numeric($post_id) && ( 'fake_post' !== $post_id || 'fake_styled_post' !== $post_id )) return '';
 
         $defaults = self::default_properties();
         $prepend_form = (bool) $defaults['prepend_form'];

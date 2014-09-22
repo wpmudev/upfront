@@ -96,7 +96,7 @@ define(function() {
 		prepareEditor: function(id, node){
 			is_excerpt = this.property('content_type') == 'excerpt';
 			//this.currentpost = postId;
-			//if(!this.editor || this.editor.post_id!=postId){
+			//if(!this.editor || this.editor.post_id!=postId){post:layout:edit
 			var editor = new Upfront.Content.PostEditor({
 				editor_id: 'this_post_' + id,
 				post_id: id,
