@@ -232,8 +232,6 @@ var MenuItemView = Backbone.View.extend({
 
 		link.type = linkType;
 
-		console.log(this.getCleanurl(link.url));
-		console.log(this.getCleanurl());
 		this.linkPanel.model.set(link);
 		this.linkPanel.render();
 
