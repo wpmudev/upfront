@@ -313,7 +313,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-			inserts: false
+			inserts: false,
 		}, options)
 	;
 
@@ -2220,7 +2220,8 @@ RedactorPlugins.upfrontSink = {
 
 RedactorPlugins.upfrontPlaceholder = {
 	init: function () {
-		var placeholder = this.opts.placeholder;
+		
+		var placeholder = this.placeholderText;//opts.placeholder;
 		if (this.$element.attr('placeholder')) placeholder = this.$element.attr('placeholder');
 		if (placeholder === '') placeholder = false;
 		if (placeholder !== false)
