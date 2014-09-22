@@ -2371,6 +2371,7 @@ define([
 				this.writingIsOn = true;
 				tooltipText = 'Please publish your content<br>before modifying the layout.';
 			}
+			if (!this.prevented_usage_type) this.prevented_usage_type = type; // don't stack up on prevented types, keep the original
 			$('#preventUsageOverlay span').html(tooltipText);
 			$('#preventUsageOverlay').show();
 		},
@@ -2379,7 +2380,7 @@ define([
 				this.preventUsage('write');
 				return;
 			}
-
+			this.prevented_usage_type = false;
 			this.writingIsOn = false;
 			$('#preventUsageOverlay').hide();
 		},
