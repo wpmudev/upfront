@@ -307,7 +307,7 @@ var Ueditor = function($el, options) {
 			focus: true,
 			cleanup: false,
 			plugins: plugins,
-			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upftonIcons'],
+			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
 			buttonsCustom: {},
 			activeButtonsAdd: {},
 			observeLinks: false,
@@ -527,7 +527,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'upftonIcons'],
+		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'upfrontIcons'],
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -600,12 +600,15 @@ RedactorPlugins.stateButtons = {
 		var me = this;
 		this.stateButtons = {};
 		$.each(this.opts.stateButtons, function(id, data){
-			var button = new me.StateButton(id, data);
-			me.buttonAdd(id, data.title, function(){ me.stateCallback( id, button ) });
-			// set state of button
-			me.$air.on("show", function(){
-				button.guessState(me);
-			});
+			if( $.inArray(id, me.opts.airButtons) !== -1 ){
+				var button = new me.StateButton(id, data);
+				me.buttonAdd(id, data.title, function(){ me.stateCallback( id, button ) });
+				// set state of button
+				me.$air.on("show", function(){
+					button.guessState(me);
+				});
+			}
+			
 		});
 	},
 	stateCallback : function( id, button ){
@@ -855,6 +858,7 @@ RedactorPlugins.panelButtons = {
 						e.stopPropagation();
 					})
 				;
+				if( $.inArray( id, me.opts.airButtons ) === -1 ) return;
 				me.buttonAdd(id, b.title, function(){
 					var $button = me.buttonGet( id ),
 						left = $button.position().left;
@@ -1359,7 +1363,9 @@ RedactorPlugins.upfrontFormatting = {
 		$.each( tags, function( id, tag ){
 			buttons[id] = { title: tag, callback: self.applyTag };
 		} );
-		this.buttonAddFirst('upfrontFormatting', 'Formatting', false, buttons);
+		if( $.inArray( "upfrontFormatting", this.opts.airButtons ) !== -1 ){
+			this.buttonAddFirst('upfrontFormatting', 'Formatting', false, buttons);
+		}
 
 		UeditorEvents.on("ueditor:dropdownShow", function(){
 			var tag = $(self.getElement()).length ?  $(self.getElement())[0].tagName : false;
@@ -2260,10 +2266,10 @@ RedactorPlugins.upfrontPlaceholder = {
 /*--------------------
  Font icons button
  -----------------------*/
-RedactorPlugins.upftonIcons = {
+RedactorPlugins.upfrontIcons = {
 	$sel : false,
     beforeInit: function(){
-        this.opts.buttonsCustom.upftonIcons = {
+        this.opts.buttonsCustom.upfrontIcons = {
             title: 'Icons',
             panel: this.panel
         };
