@@ -12319,9 +12319,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 	margin-left: 10px;
 }
 
-
-div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before {
-	content: "Drop Elements from the sidebar here";
+div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before, div.upfront-regions a#no_region_add_one {
 	font:300 16px/150% Source Sans, Helvetica Neue, Helvetica, sans-serif;
 	position: absolute;
 	left:40%;
@@ -12334,6 +12332,13 @@ div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfron
 	box-shadow:0px 2px 1px rgba(38,58,77,.3);
 }
 
+div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before {
+	content: "Drop Elements from the sidebar here";
+}
+
+div.upfront-regions a#no_region_add_one {
+	cursor:pointer;
+}
 
 /* Inserts padding fix */
 .ueditor-insert {

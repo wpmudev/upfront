@@ -8578,6 +8578,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						return -1;
 					return collection.indexOf(model);
 				};
+				
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
 				if ( to == 'left' || to == 'right' ){
@@ -8625,6 +8626,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				Upfront.Events.once('entity:region:added', this.run_animation, this);
 			}
 			new_region.add_to(collection, (is_before ? index : index+1), options);
+
+			var wide_regions = collection.where({ type : 'wide'});
+			if(wide_regions.length > 0) {
+				$('div.upfront-regions a#no_region_add_one').remove();
+
+			}
+
 			e.stopPropagation();
 		},
 		before_animation: function (view, model) {
@@ -9889,6 +9897,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Item": InlinePanelItem
 			},
 			"RegionPanels": RegionPanels,
+			"RegionPanelsAddRegion": RegionPanelItem_AddRegion,
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
 			"CSSEditor": CSSEditor,
