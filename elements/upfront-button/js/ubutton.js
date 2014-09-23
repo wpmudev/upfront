@@ -163,7 +163,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				disableLineBreak: true,
 				//focus: true,
 				
-				airButtons: ['upfrontLinkCTA', 'stateAlignCTA'],
+				airButtons: ['formatting', 'bold', 'italic'],//airButtons: ['upfrontLinkCTA'],
+				//buttonsCustom: ['stateAlignCTA'],
 				placeholder: 'Click here',
 				autostart: false
 			})
@@ -835,9 +836,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 							me.hov_fontSize.set_value(invoker.get_value());
 					break;	
 					case me.fontFace:
-						if(!me.hov_fontFace.$el.hasClass('touched'))
+						if(!me.hov_fontFace.$el.hasClass('touched')) {
+							me.hov_fontFace.invoked = true;
 							me.hov_fontFace.set_value(invoker.get_value());
-					break;	
+						}
+					break;
+					case me.hov_fontFace:	
+						if(me.hov_fontFace.invoked) {
+							invoker.$el.removeClass('touched');
+							invoker.invoked = false;
+						}
+					break;
 					case me.color:
 						if(!me.hov_color.$el.hasClass('touched'))
 							me.hov_color.set_value(invoker.get_value());
