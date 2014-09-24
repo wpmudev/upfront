@@ -76,7 +76,11 @@ var MenuItemView = Backbone.View.extend({
 							return l10n.edit_url;
 						},
 						action: function() {
-							$(me.event.target).addClass('new_menu_item');
+							if($(me.event.target).hasClass('ueditor-placeholder'))
+								$(me.event.target).siblings('a.menu_item').addClass('new_menu_item');
+							else
+								$(me.event.target).addClass('new_menu_item');
+			 				
 			 				me.removeContexts = false;
 						 	me.parent_view.editMenuItem(me.$el.find('a.new_menu_item'));
 						}
@@ -195,7 +199,7 @@ var MenuItemView = Backbone.View.extend({
 		}
 
 		var neworder = parentview.new_menu_order(me.model['menu-item-db-id']);
-
+		this.closeTooltip();
 		me.$el.remove();
 
 		if(removeparent) parentlist.remove();
@@ -258,7 +262,7 @@ var MenuItemView = Backbone.View.extend({
 
 			this.model['menu-item-type'] = itemType;
 
-			this.saveLink();
+			this.saveLink(false, (this.model['menu-item-url'].trim().replace('http://') != ''));
 			this.closeTooltip();
 		});
 
@@ -281,7 +285,11 @@ var MenuItemView = Backbone.View.extend({
 		if(url.indexOf('#') == -1) return url;
 
 		urlParts = url.split('#');
-		return urlParts[0];
+
+		if(urlParts[0].trim() != '')
+			return urlParts[0];
+		else
+			return location.href.replace('?dev=true', '');
 	},
 
 	getUrlanchor: function(url) {
@@ -295,10 +303,10 @@ var MenuItemView = Backbone.View.extend({
 		} else return false;
 	},
 
-	saveLink: function(remove) {
+	saveLink: function(remove, keep) {
 		var me = this;
 
-		if(typeof(remove) != 'undefined') {
+		if(typeof(remove) != 'undefined' && remove) {
 			me.deleteMenuItem();
 			return;
 		}
@@ -315,9 +323,15 @@ var MenuItemView = Backbone.View.extend({
 
 		if($(this.el).children('div.redactor_box').length > 0) menu_item.blur();
 
-		if( me.model['menu-item-title'].trim() == '') {
-			me.deleteMenuItem();
-			return;
+
+		if(me.model['menu-item-title'].trim() == '') {
+			if(typeof(keep) != 'undefined' && keep) {
+				me.model['menu-item-title'] = menu_item.next('a.ueditor-placeholder').text();
+			}
+			else {
+				me.deleteMenuItem();
+				return;
+			}
 		}
 
 		var postdata = {
@@ -562,12 +576,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.editModeOn(e);
 		var me = this;
 		var target;
-		if(typeof e.target == 'undefined' || e.target.trim == '') target = e;
-		else target = e.target;
+		if(typeof e.target == 'undefined' || e.target.trim == '') target = $(e);
+		else target = $(e.target);
 
-		$(target).closest('li').addClass('edit_mode');
-		if(!$(target).data('ueditor')) {
-			$(target).ueditor({
+		if(target.hasClass('ueditor-placeholder'))
+			target = target.siblings('a.menu_item');
+
+		target.closest('li').addClass('edit_mode');
+		if(!target.data('ueditor')) {
+			target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				focus: true,
@@ -576,59 +593,61 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				allowedTags: ['h5'],
 				placeholder: 'Link Name'
 			}).on('start', function(e) {
-				$(target).focus();
+				target.focus();
 			}).on('keydown', function(e){
 				if (e.which == 8) {
 					setTimeout(function() {
-						console.log($(target).text());
-						if($(target).text() == '' && !$(target).hasClass('menu_item_placeholder')) {
+						//console.log($(target).text());
+						if(target.text() == '' && !target.hasClass('menu_item_placeholder')) {
 							var e = jQuery.Event("keydown");
 							e.which = 8;
-							$(target).trigger(e);
+							target.trigger(e);
 						}
 					}, 100);
 				}
 				if (e.which == 27) {
-					if($(target).hasClass('new_menu_item')) {
-						$(target).closest('li').data('backboneview').closeTooltip();
-						$(target).closest('li').data('backboneview').saveLink(true);
+					if(target.hasClass('new_menu_item')) {
+						target.closest('li').data('backboneview').closeTooltip();
+						target.closest('li').data('backboneview').saveLink(true);
 					}
 				}
 				if (e.which == 9) {
 					e.preventDefault();
-					if(!$(target).hasClass('new_menu_item')) {
-					$(target).blur();
-					$(target).closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
+					if(!target.hasClass('new_menu_item')) {
+					target.blur();
+					target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
 				}
-				if($(target).text().trim() != '') $(target).removeClass('menu_item_placeholder');
-				else $(target).addClass('menu_item_placeholder');
+				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
+				else target.addClass('menu_item_placeholder');
 			}).on('blur', function() {
-				$(target).data('ueditor').stop();
-				$(target).closest('li').removeClass('edit_mode');
-				if(!$(target).hasClass('new_menu_item')) {
-					$(target).closest('li').data('backboneview').saveLink();
+				target.data('ueditor').stop();
+				target.closest('li').removeClass('edit_mode');
+				if(!target.hasClass('new_menu_item')) {
+					target.closest('li').data('backboneview').saveLink();
 				}
 			}).on('stop', function() {
 				me.editModeOff();
 			});
 		} else {
-			$(target).data('ueditor').start();
-			$(target).focus();
+			target.data('ueditor').start();
+			target.focus();
 		}
 
 
-		var currentcontext = $(target).closest('ul');
+		var currentcontext = target.closest('ul');
 
 
 		while(currentcontext.length > 0 && currentcontext.hasClass('sub-menu')) {
 			currentcontext.addClass('time_being_display');
 			currentcontext = currentcontext.parent().parent('ul');
 		}
-		if($(target).hasClass('new_menu_item') ) {
-			_.delay(function(self) {
-				var view = $(target).closest('li').data('backboneview');
-				if (view && view.editMenuItem) view.editMenuItem(e);
-			}, 30, this);
+		if(target.hasClass('new_menu_item') ) {
+			if($('div#unewnavigation-tooltip').length <1 || $('div#unewnavigation-tooltip').css('display') == 'none') {
+				_.delay(function(self) {
+					var view = target.closest('li').data('backboneview');
+					if (view && view.editMenuItem) view.editMenuItem(e);
+				}, 30, this);
+			}
 		}
 	},
 	editModeOn: function(e) {
@@ -838,7 +857,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	onElementResize: function() {
-		if(this.property('burger_menu') === false) {
+		if(this.property('burger_menu') === false || (typeof(this.property('burger_menu')) == 'object' && this.property('burger_menu').length == 0)) {
 			if($('.upfront-resize').width() < 360) {
 				this.property('menu_style', 'vertical');
 			} else if($('.upfront-resize').width() > 460) {

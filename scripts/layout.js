@@ -308,7 +308,9 @@ jQuery(document).ready(function($){
 		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block') {
 		
 				var url = $(e.target).attr('href');
-				if(url.indexOf('#ltb-') > -1)	 {
+
+				if(url && url.indexOf && url.indexOf('#ltb-') > -1)	 {
+
 					
 					e.preventDefault();
 					var regions = Upfront.Application.layout.get('regions');
@@ -380,7 +382,7 @@ jQuery(document).ready(function($){
 	
 	/* Lazy loaded image */
 	var image_lazy_load_t;
-	var image_lazy_scroll = true;
+	var image_lazy_scroll = window._upfront_image_lazy_scroll;
 	function image_lazy_load () {
 		clearTimeout(image_lazy_load_t);
 		image_lazy_load_t = setTimeout(function(){
@@ -441,10 +443,13 @@ jQuery(document).ready(function($){
 		$images.each(function () {
 			var $img = $(this),
 				source = $img.attr('data-sources'),
-				src = $img.attr('data-src')
+				src = $img.attr('data-src'),
+				height = $img.height(),
+				width = $img.width()
 			;
 			if ($img.is(".upfront-image-lazy-loaded")) return true; // already loaded
 			if (!source && !src) return true; // we don't know how to load
+			if (height <= 0 && width <= 0) return true; // Don't lazy load backgrounds for hidden regions.
 			
 			if (source) {
 				// Deal with source JSON and populate `src` from there
@@ -475,13 +480,15 @@ jQuery(document).ready(function($){
 		});
 		$(window).off('scroll', image_lazy_load); // Since we scheduled image loads, kill the scroll load
 	}
-	
-	if (window._upfront_lazy_scroll_off) $(window).on("load", image_lazy_load_bg); // Do background load instead
-	else image_lazy_load(); // Don't do scroll-load initially
 
-	$(window).on('resize', image_lazy_load);
-	if ( image_lazy_scroll )
+	// Initialize appropriate behavior
+	$(window).on('resize', image_lazy_load); // Okay, so this should keep on happening on resizes
+	if ( image_lazy_scroll ) {
 		$(window).on('scroll', image_lazy_load);
+		image_lazy_load();
+	} else {
+		$(window).on("load", image_lazy_load_bg); // Do background load instead
+	}
 	
 	
 	/* Responsive custom theme styles */

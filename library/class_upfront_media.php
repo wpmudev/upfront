@@ -638,7 +638,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	public function list_theme_images () {
 		$images = array();
 		$relpath = false;
-		$supported_relpaths = array('img', 'images');
+		$supported_relpaths = array('ui');
 		foreach ($supported_relpaths as $testpath) {
 			if (!is_dir(trailingslashit(get_stylesheet_directory()) . $testpath)) continue;
 			$relpath = $testpath;
@@ -682,7 +682,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("The file is not an image."));
 
 		$relpath = false;
-		$supported_relpaths = array('img', 'images');
+		$supported_relpaths = array('ui');
 		foreach ($supported_relpaths as $testpath) {
 			if (!is_dir(trailingslashit(get_stylesheet_directory()) . $testpath)) continue;
 			$relpath = $testpath;

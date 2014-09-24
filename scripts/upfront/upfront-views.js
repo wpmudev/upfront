@@ -2717,8 +2717,50 @@ define([
 					// }
 					if(this.model.get('type') == 'lightbox')
 						this.hide();
+					
+					var thecollection = this.model.collection;
 
 					this.model.collection.remove(this.model);
+					
+					var wide_regions = thecollection.where({ type : 'wide'});
+
+
+					if(wide_regions.length < 1) {
+						//var add_region = new Upfront.Views.Editor.RegionPanelsAddRegion({model: this.model, to: 'top'});
+						//$('div.upfront-regions').append(add_region.$el);
+						if($('div.upfront-regions a#no_region_add_one').length < 1) {
+							$('div.upfront-regions').append($('<a>').attr('id', 'no_region_add_one').html('Click here to add a region').bind('click', function() {
+									
+								var new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+									"name": 'main',
+									"container": 'main',
+									"title": 'Main Area'
+								}));
+									
+
+								var options = {};
+
+
+								
+								new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
+
+
+								
+								
+								new_region.add_to(thecollection, 0, options);
+
+								var wide_regions = thecollection.where({ type : 'wide'});
+								if(wide_regions.length > 0) {
+									$('div.upfront-regions a#no_region_add_one').unbind('click');
+									$('div.upfront-regions a#no_region_add_one').remove();
+
+								}
+							}));
+
+						}
+
+					}
+
 					// if ( main_view ){
 						// Upfront.Events.trigger('command:region:edit_toggle', true);
 						// main_view.trigger('activate_region', main_view);

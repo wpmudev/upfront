@@ -693,10 +693,20 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_filter('upfront-storage-key', array($this, 'theme_storage_key'));
 
+		add_filter('upfront-thx-theme_exports_images', array($this, 'theme_exports_images'));
+
 		$this->_set_up_required_pages_from_settings();
 
 		$this->checkMenusExist();
 		$this->initialize();
+	}
+
+	/**
+	 * Check whether we're to export images or not.
+	 */
+	public function theme_exports_images ($exports) {
+		if (!isset($this->_exports_images)) return true; // Legacy themes don't have this switch set.
+		return !empty($this->_exports_images);
 	}
 
 	/**

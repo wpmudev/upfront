@@ -594,27 +594,6 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($output));
 	}
 
-	/**
-	 * This is only used when a "fake_id" is submitted - ie. in builder mode.
-	 */
-	protected function generate_preview_post () {
-		$template_file = upfront_get_template_path('preview_post', dirname(dirname(__FILE__)) . '/tpl/preview_post.html');
-		$content = file_exists($template_file)
-			? file_get_contents($template_file)
-			: '<p>test content</p>'
-		;
-		$post = new WP_Post((object)array(
-			'ID' => 0,
-			'post_type' => (!empty($data['post_type']) ? $data['post_type'] : 'post'),
-			'post_status' => 'publish',
-			'post_title' => 'Sample Post',
-			'post_content' => $content,
-			'filter' => 'raw',
-			'post_author' => get_current_user_id()
-		));
-		return $post;
-	}
-
 	protected function generate_part_contents($post_id, $options, $templates, $parts = false){
 		//Prepare the parts before rendering
 		if(!$parts){
@@ -623,11 +602,10 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				array_push($parts, array('slug' => $slug, 'options' => isset($options[$slug]) ? $options[$slug] : array()));
 		}
 
-		if( $post_id === "fake_post" ){
-			$post = $this->generate_preview_post();
-		}else{
-			$post = get_post($post_id);
-		}
+		$post = !empty($post_id) && is_numeric($post_id)
+			? get_post($post_id)
+			: apply_filters('upfront-this_post-unknown_post', (object)array(), array('post_id' => $post_id));
+		;
 		
 
 		$tpls = array();
@@ -672,16 +650,10 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			if (is_numeric($data['post_id'])) {
 				$post = get_post($data['post_id']);
 				if(!$post) return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
-			} else if ('fake_post' === $data['post_id']) {
-				/*
-				// Let's fake a sample post by loading a random one
-				$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
-				if (!empty($posts[0])) $post = $posts[0];
-				else return $this->_out(new Upfront_JsonResponse_Error('Error'));
-				*/
-				// Okay, so we create a sample post instead
-				$post = $this->generate_preview_post();
-			} else return $this->_out(new Upfront_JsonResponse_Error('Error'));
+			} else {
+				$post = apply_filters('upfront-this_post-unknown_post', $post, $data);
+				if (empty($post->ID) || $post->ID !== $data['post_id']) $this->_out(new Upfront_JsonResponse_Error('Invalid post.'));
+			}
 		} else if($data['post_type']) {
 			$post = Upfront_ThisPostView::get_new_post($data['post_type']);
 		} else{

@@ -1,6 +1,12 @@
 a.upfront_cta{
-	display: block;
+	display :table-cell;
 	padding: 4px 5px;
 	text-decoration: none;
 	height: 100%;
+	vertical-align: middle;
 }
+
+div.upfront-output-button.upfront-output-object {
+	display: table;	
+}
+
