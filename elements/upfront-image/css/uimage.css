@@ -650,9 +650,23 @@ a.image-edit-button.deactivated:hover {
 }
 
 .uimage-controls .upfront-inline-panel {
-	opacity: 1;
-	visibility: visible;
+	visibility: visible;0
+	background-image: -o-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+	background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+	background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+	background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
+	-moz-box-shadow:    inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
+	box-shadow:         inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
+	border-top-right-radius: 3px;
 }
+.uimage-controls .upfront-inline-panel-item {
+	background:transparent;
+	border-bottom: none;
+}
+.uimage-controls .upfront-inline-panel-item .upfront-icon {
+	padding:4px;
+}
+
 
 .uimage-controls div.upfront-inline-panel-subitem div.upfront-inline-panel-item:last-child,
 .upfront-editing .uimage-controls {
@@ -669,16 +683,10 @@ a.image-edit-button.deactivated:hover {
 	-webkit-transform: translate(0,0);
 }
 
-/*
-.uimage-controls .upfront-inline-panel-subitem {
-	display: none;
-}
-.uimage-controls .upfront-inline-panel-subitem-active:hover>.upfront-inline-panel-subitem {
-	display: block;
-}
-*/
 .ui-resizable-autohide .uimage-controls {
 	display: none;
+	/*  !!! remove the rule below for deployment */
+	display: block;
 }
 
 .ui-resizable-autohide .uimage-controls.upfront-control-visible {
@@ -721,7 +729,7 @@ a.image-edit-button.deactivated:hover {
 }
 
 .upfront-inline-panel-item.upfront-control-dialog-open {
-	background: #3d5266;
+	background: rgb(42,70,95);
 	border-bottom: 1px solid #3d5266;
 	z-index: 51;
 }
@@ -742,6 +750,11 @@ a.image-edit-button.deactivated:hover {
 	right: 0px;
 }
 
+/*.uimage-controls .tooltip-bottom:before,
+.uimage-controls .tooltip-bottom .tooltip-content {
+	top:auto;
+	bottom:35px;
+}*/
 
 
 /* Controls */
@@ -751,95 +764,95 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .upfront-icon-region-crop:before {
-	background-position: -699px -391px;
+	background-position: -700px -392px;
 }
 .upfront-icon-region-crop:hover:before {
-	background-position: -807px -391px;
+	background-position: -808px -392px;
 }
 
 .upfront-icon-region-link:before {
-	background-position: -699px -423px;
+	background-position: -700px -424px;
 }
 .upfront-icon-region-link:hover:before {
-	background-position: -807px -423px;
+	background-position: -808px -424px;
 }
 
 .upfront-icon-region-nocaption:before {
-	background-position: -699px -454px;
+	background-position: -700px -455px;
 }
 .upfront-icon-region-nocaption:hover:before {
-	background-position: -807px -454px;
+	background-position: -808px -455px;
 }
 .upfront-icon-region-nocaption-active:before {
-	background-position: -699px -454px;
+	background-position: -700px -455px;
 }
 .upfront-icon-region-nocaption-active:hover:before {
-	background-position: -807px -454px;
+	background-position: -808px -455px;
 }
 
 .upfront-icon-region-topOver:before {
-	background-position: -699px -519px;
+	background-position: -699px -520px;
 }
 .upfront-icon-region-topOver:hover:before {
-	background-position: -807px -519px;
+	background-position: -807px -520px;
 }
 .upfront-icon-region-topOver-active:before {
-	background-position: -699px -519px;
+	background-position: -699px -520px;
 }
 .upfront-icon-region-topOver-active:hover:before {
-	background-position: -807px -519px;
+	background-position: -807px -520px;
 }
 
 .upfront-icon-region-bottomOver:before {
-	background-position: -699px -487px;
+	background-position: -699px -488px;
 }
 .upfront-icon-region-bottomOver:hover:before {
-	background-position: -807px -487px;
+	background-position: -807px -488px;
 }
 .upfront-icon-region-bottomOver-active:before {
-	background-position: -699px -486px;
+	background-position: -699px -487px;
 }
 .upfront-icon-region-bottomOver-active:hover:before {
-	background-position: -807px -486px;
+	background-position: -807px -487px;
 }
 
 .upfront-icon-region-topCover:before {
-	background-position: -699px -551px;
+	background-position: -699px -552px;
 }
 .upfront-icon-region-topCover:hover:before {
-	background-position: -807px -551px;
+	background-position: -807px -552px;
 }
 .upfront-icon-region-topCover-active:before {
-	background-position: -699px -551px;
+	background-position: -699px -552px;
 }
 .upfront-icon-region-topCover-active:hover:before {
-	background-position: -807px -551px;
+	background-position: -807px -552px;
 }
 
 .upfront-icon-region-middleCover:before {
-	background-position: -699px -583px;
+	background-position: -699px -584px;
 }
 .upfront-icon-region-middleCover:hover:before {
-	background-position: -807px -583px;
+	background-position: -807px -584px;
 }
 .upfront-icon-region-middleCover-active:before {
-	background-position: -699px -583px;
+	background-position: -699px -584px;
 }
 .upfront-icon-region-middleCover-active:hover:before {
-	background-position: -807px -583px;
+	background-position: -807px -584px;
 }
 
 .upfront-icon-region-bottomCover:before {
-	background-position: -699px -615px;
+	background-position: -699px -616px;
 }
 .upfront-icon-region-bottomCover:hover:before {
-	background-position: -807px -615px;
+	background-position: -807px -616px;
 }
 .upfront-icon-region-bottomCover-active:before {
-	background-position: -699px -615px;
+	background-position: -699px -616px;
 }
 .upfront-icon-region-bottomCover-active:hover:before {
-	background-position: -807px -615px;
+	background-position: -807px -616px;
 }
 
 .upfront-icon-region-above:before {

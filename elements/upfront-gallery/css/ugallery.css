@@ -433,8 +433,12 @@ div.ugallery-label-selector {
 .ugallery-controls {
 	width: 100%;
 	position: absolute;
-	top: 0;
-	left: 0;
+
+}
+
+.ugallery-controls .upfront-inline-panel-bottom-left {
+	bottom:0;
+	left:0;
 }
 
 .ugallery-controls div.upfront-inline-panel-subitem div.upfront-inline-panel-item:last-child {

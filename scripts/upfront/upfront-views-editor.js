@@ -8292,8 +8292,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 	var InlinePanelItem = Backbone.View.extend({
 		className: 'upfront-inline-panel-item',
-		width: 40,
-		height: 40,
+		width: 30,
+		height: 30,
 		icon_class: 'upfront-icon-region',
 		render_icon: function () {
 			var icon = typeof this.icon == 'function' ? this.icon() : this.icon;

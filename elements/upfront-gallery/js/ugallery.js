@@ -1,3 +1,13 @@
+/* @ TODO: need to add [+] button and make sure it triggers the appropriate event.. 
+
+//Adding [+] control
+var $upfrontObjectContent = this.$el.find('.upfront-object-content');
+if(this.$el.find('a.add-gallery-item').length < 1) {
+	$('<b class="upfront-entity_meta add_item upfront-ui"><a href="#" class="upfront-icon-button a.add-gallery-item add-item"></a></b>').insertBefore($upfrontObjectContent);
+}
+
+*/
+
 (function ($) {
 
 define([
@@ -432,6 +442,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>' + l10n.personalize + '</p></div>');
 		}
 
+
 		//Calculate margins now if it is possible
 		if(me.$el.closest('body').length)
 			me.calculateMargins();
@@ -487,7 +498,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 
 		}, 300);
-
+		
 		this.activateSortable();
 	},
 
