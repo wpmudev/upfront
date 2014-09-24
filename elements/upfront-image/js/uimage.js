@@ -245,12 +245,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		me.listenTo(control, 'panel:open', function(){
 			me.controls.$el.parent().addClass('upfront-control-visible');
 			me.$el.closest('.ui-draggable').draggable('disable');
+			$('body').addClass('pauseEvents');
 		});
 
 		me.listenTo(control, 'panel:close', function(){
 			me.controls.$el.parent().removeClass('upfront-control-visible');
 			me.$el.closest('.ui-draggable').draggable('enable');
 			//Roll back the view, ready for reopen.
+			$('body').removeClass('pauseEvents');
 			control.view.render();
 		});
 

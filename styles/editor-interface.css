@@ -3132,6 +3132,15 @@ div.uinsert-selector a:hover {
 .upfront-inline-panel-top-left {
 	left: 8.3%;
 }
+
+/* media panels spec 2014 
+	 ====================== */
+
+.upfront-inline-panel-bottom-left {
+ bottom:15px;
+ left:15px;
+}
+
 .upfront-region-fixed-panels .upfront-inline-panel-top-left {
 	left: 0;
 	-webkit-transform: scale(0, 0);
@@ -3194,9 +3203,7 @@ div.uinsert-selector a:hover {
 	left: 0;
 	right: 0;
 }
-.upfront-inline-panel-bottom-left {
-	left: 8.3%;
-}
+
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-left {
 	left: 0;
 	-webkit-transform: scale(0, 0);

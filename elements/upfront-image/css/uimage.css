@@ -645,8 +645,7 @@ a.image-edit-button.deactivated:hover {
 .uimage-controls {
 	width: 100%;
 	position: absolute;
-	top: 0;
-	left: 0;
+	bottom: 0;
 	z-index: 2001;
 }
 
@@ -967,8 +966,8 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .uimage-resize-hint.sizehint-top {
-	bottom: 15px;
-	top: auto;
+	top: 15px;
+	bottom: auto;
 }
 
 .ui-resizable-autohide .uimage-resize-hint {
@@ -1019,7 +1018,7 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .uimage-small .uimage-controls {
-	top: 100%;
+/*	top: 100%;*/
 	margin-top: -10px;
 }
 
