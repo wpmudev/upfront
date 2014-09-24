@@ -1067,7 +1067,7 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
-.redactor_dropdown_box_upftonIcons div.icons::-webkit-scrollbar
+.redactor_dropdown_box_upfrontIcons div.icons::-webkit-scrollbar
 {
 	background: none;
 	width: 5px;
@@ -1112,7 +1112,7 @@ span.draggable-post-element.element-dragging
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
-.redactor_dropdown_box_upftonIcons div.icons::-webkit-scrollbar-thumb
+.redactor_dropdown_box_upfrontIcons div.icons::-webkit-scrollbar-thumb
 {
 	border-right: 5px solid #1fcd8f;
 }
@@ -2485,6 +2485,17 @@ div.uinsert-selector a:hover {
 	content: none;
 }
 
+.upfront-region-container-full .upfront-grid-layout {
+	overflow-y: scroll;
+}
+.upfront-region-container-full .upfront-grid-layout::-webkit-scrollbar {
+	background: none;
+	width: 0;
+}
+.upfront-region-container-full .upfront-grid-layout::-webkit-scrollbar-thumb {
+	
+}
+
 .upfront-region-container-bg {
 	position: relative;
 	margin: 0 auto;
@@ -2497,6 +2508,7 @@ div.uinsert-selector a:hover {
 
 .upfront-region-sub-container {
 	position: relative;
+	z-index: 10;
 }
 .upfront-region {
   /*background-color: rgba(127, 127, 127, .5);*/
@@ -3520,7 +3532,17 @@ div.uinsert-selector a:hover {
 .upfront-region-bg-setting-region-type {
 	margin: 0 0 20px;
 }
+.upfront-region-bg-setting-region-nav {
+	width: 50%;
+	float: left;
+	margin: 0 0 20px;
+}
+.upfront-region-bg-setting-region-behavior {
+	width: 50%;
+	float: right;
+}
 .upfront-region-bg-setting-type {
+	clear: both;
 	width: 50%;
 	float: left;
 }
@@ -3591,13 +3613,14 @@ div.uinsert-selector a:hover {
 	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
 	border: 1px solid rgb(163, 191, 217);
 	border-radius: 3px;
-	margin: 10px 30px 10px 0;
+	margin: 10px 30px 0 0;
 }
 .upfront-region-bg-setting-change-image:hover {
 	border-color: rgb(96, 127, 153);
 }
 .upfront-region-bg-setting-edit-css {
-	float: left;
+	display: inline-block;
+	vertical-align: top;
 	padding: 10px 0;
 }
 .upfront-region-bg-setting-edit-css.upfront-icon:before {
@@ -3615,6 +3638,10 @@ div.uinsert-selector a:hover {
   	border-bottom: 1px solid #1fcd8f;
   	line-height: 1;
 	cursor: pointer;
+}
+.upfront-region-bg-setting-floating-restrict {
+	float: right;
+	margin: 4px 0 10px;
 }
 .upfront-region-bg-setting-tab-primary {
 	width: 50%;
@@ -9391,8 +9418,8 @@ body .redactor_toolbar li a.redactor_btn_quote.redactor_act { background-positio
 body .redactor_toolbar li a.ueditor-quote-alternative		{ background-position: -594px -208px; }
 
 body .redactor_toolbar li a.redactor_btn_pre		 		{ background-position: -875px; }
-body .redactor_toolbar li a.re-upftonIcons				{ background-position: -593px -252px; }
-body .redactor_toolbar li a.re-upftonIcons:hover	    { background-position: -635px -252px; }
+body .redactor_toolbar li a.re-upfrontIcons				{ background-position: -593px -252px; }
+body .redactor_toolbar li a.re-upfrontIcons:hover	    { background-position: -635px -252px; }
 
 
 ul.redactor_toolbar li a.ueditor-justify {
@@ -11074,7 +11101,7 @@ li#new-custom-breakpoint {
   margin: 10px 0 10px 15px;
 }
 /*------------ Font Icons --------------*/
-.redactor_dropdown_box_upftonIcons div.icons{
+.redactor_dropdown_box_upfrontIcons div.icons{
 	font-size: 24px;
 	height: 140px;
 	overflow-x: hidden;
@@ -11082,22 +11109,22 @@ li#new-custom-breakpoint {
 	padding: 7px;
 	margin-right: 1px;
 }
-.redactor_dropdown.redactor_dropdown_box_upftonIcons{
+.redactor_dropdown.redactor_dropdown_box_upfrontIcons{
 	min-width: 153px;
 	width: 153px;
 	line-height: 38px;
 	padding: 0;
 	opacity: 0.9;
 }
-.redactor_dropdown.redactor_dropdown_box_upftonIcons a,
-.redactor_dropdown.redactor_dropdown_box_upftonIcons a:link{
+.redactor_dropdown.redactor_dropdown_box_upfrontIcons a,
+.redactor_dropdown.redactor_dropdown_box_upfrontIcons a:link{
     color: #97b8da !important;
 	text-decoration: none;
     display: inline-block;
     width: 28px;
     text-align: center;
 }
-.redactor_dropdown.redactor_dropdown_box_upftonIcons a:hover{
+.redactor_dropdown.redactor_dropdown_box_upfrontIcons a:hover{
     color: rgb(64, 166, 255) !important;
 }
 .upfront-font-icons-controlls{
@@ -12349,9 +12376,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 	margin-left: 10px;
 }
 
-
-div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before {
-	content: "Drop Elements from the sidebar here";
+div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before, div.upfront-regions a#no_region_add_one {
 	font:300 16px/150% Source Sans, Helvetica Neue, Helvetica, sans-serif;
 	position: absolute;
 	left:40%;
@@ -12364,6 +12389,13 @@ div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfron
 	box-shadow:0px 2px 1px rgba(38,58,77,.3);
 }
 
+div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before {
+	content: "Drop Elements from the sidebar here";
+}
+
+div.upfront-regions a#no_region_add_one {
+	cursor:pointer;
+}
 
 /* Inserts padding fix */
 .ueditor-insert {

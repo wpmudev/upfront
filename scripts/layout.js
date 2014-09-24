@@ -38,15 +38,53 @@ jQuery(document).ready(function($){
 			var $region = $(this).find('.upfront-region-center'),
 				$sub = $(this).find('.upfront-region-side-top, .upfront-region-side-bottom'),
 				body_off = $('body').offset(),
-				height = $(window).height() - body_off.top;
+				height = $(window).height() - body_off.top,
+				$bg_overlay = $(this).find('.upfront-output-bg-overlay');
 			$sub.each(function(){
 				height -= $(this).outerHeight();
 			});
 			$region.css({
-				minHeight: height,
-				height: height,
-				maxHeight: height
+				minHeight: height
 			});
+			// Keep element position to ratio if enabled
+			var behavior = $(this).attr('data-behavior'),
+				original_height = parseInt($(this).attr('data-original-height'));
+			if ( behavior == 'keep-ratio' && original_height > 0 ){
+				var $wrappers = $region.find('> .upfront-region-wrapper > .upfront-output-wrapper'),
+					modules = [],
+					pos_top = false,
+					pos_bottom = false,
+					available_space = false,
+					original_space = false,
+					top_ref = 0;
+				$wrappers.each(function(){
+					var $module = $(this).find('> .upfront-output-module, > .upfront-output-module-group').first();
+					$module.css('margin-top', ''); // Reset margin top first
+					var margin_top = parseInt($module.css('margin-top')),
+						pos = $(this).position(),
+						bottom = pos.top + $(this).height();
+					pos_bottom = ( pos_bottom === false || bottom > pos_bottom ) ? bottom : pos_bottom;
+					if ( pos.top != 0 )
+						return;
+					pos_top = ( pos_top === false || margin_top < pos_top ) ? margin_top : pos_top;
+					modules.push($module);
+				});
+				available_space = pos_top + ( height > pos_bottom ? height - pos_bottom : 0 );
+				original_space = pos_top + ( original_height > pos_bottom ? original_height - pos_bottom : 0 );
+				if ( available_space == original_space )
+					top_ref = ( original_height > height ) ? pos_top - ( original_height - height ) : pos_top;
+				else
+					top_ref = pos_top/original_space * available_space;
+				$.each(modules, function(i, $module){
+					var margin_top = parseInt($module.css('margin-top'));
+					if ( margin_top <= 0 )
+						return;
+					$module.css('margin-top', ( top_ref + margin_top - pos_top ) + 'px');
+				});
+			}
+			// Set background overlay height if available
+			if ( $bg_overlay.length )
+				$bg_overlay.css('height', height);
 		});
 	}
 	if ( css_support('flex') ){
@@ -65,18 +103,30 @@ jQuery(document).ready(function($){
 	function fix_full_bg () {
 		$('[data-bg-image-ratio]').each(function(){
 			var is_layout = $(this).is('.upfront-output-layout'),
+				is_full_screen = ( ( $(this).is('.upfront-region-container-bg') || $(this).is('.upfront-output-region') ) && $(this).closest('.upfront-region-container-full').length > 0 ),
 				width = is_layout ? $(window).width() : $(this).outerWidth(),
-				height = is_layout ? $(window).height() : $(this).outerHeight(),
+				height = is_layout ? $(window).height() : ( is_full_screen ? parseInt($(this).closest('.upfront-output-region-container').find('.upfront-region-center').css('min-height')) : $(this).outerHeight() ),
 				ratio = parseFloat($(this).attr('data-bg-image-ratio'));
-			if ( Math.round(height/width*100)/100 > ratio )
-				$(this).css('background-size', (height/ratio) + "px " + height + "px" /*"auto 100%"*/);
-			else
-				$(this).css('background-size', width + "px " + (width*ratio) + "px" /*"100% auto"*/);
+			if ( Math.round(height/width*100)/100 > ratio ) {
+				$(this).data('bg-position-y', 0);
+				$(this).css({
+					'background-position': '50% 0',
+					'background-size': (height/ratio) + "px " + height + "px" /*"auto 100%"*/
+				});
+			}
+			else {
+				$(this).data('bg-position-y', ( height - (width*ratio) )/2);
+				$(this).css({
+					'background-position': '0 ' + ( ( height - (width*ratio) )/2 ) + 'px',
+					'background-size': width + "px " + (width*ratio) + "px" /*"100% auto"*/
+				});
+			}
 		});
 		$('[data-bg-video-ratio]').each(function(){
 			var is_layout = $(this).parent().is('.upfront-output-layout'),
+				is_full_screen = (  $(this).parent().is('.upfront-output-region, .upfront-region-container-bg') && $(this).closest('.upfront-region-container-full').length > 0 ),
 				width = is_layout ? $(window).width() : $(this).outerWidth(),
-				height = is_layout ? $(window).height() : $(this).outerHeight(),
+				height = is_layout ? $(window).height() : ( is_full_screen ? parseInt($(this).closest('.upfront-output-region-container').find('.upfront-region-center').css('min-height')) : $(this).outerHeight() ),
 				ratio = parseFloat($(this).attr('data-bg-video-ratio')),
 				style = $(this).attr('data-bg-video-style') || 'crop',
 				$embed = $(this).children('iframe');
@@ -136,6 +186,114 @@ jQuery(document).ready(function($){
 	}
 	fix_full_bg();
 	$(window).on('resize', fix_full_bg);
+	
+	// Regions behavior on scroll
+	function regions_scroll_update () {
+		var body_off = $('body').offset(),
+			scroll_top = $(window).scrollTop(),
+			win_height = $(window).height(),
+			scroll_bottom = scroll_top + win_height;
+		if ( body_off.top > 0 ){
+			scroll_top += body_off.top;
+			win_height -= body_off.top;
+		}
+		$('.upfront-output-region-container.upfront-region-container-full, .upfront-output-region-container.upfront-region-container-full .upfront-output-region-sub-container, .upfront-output-region.upfront-region-side-fixed[data-restrict-to-container="1"]').each(function(){
+			var is_float = $(this).is('.upfront-region-side-fixed'),
+				is_full_screen = $(this).is('.upfront-region-container-full'),
+				is_sub_container = $(this).is('.upfront-output-region-sub-container'),
+				$container = $(this).closest('.upfront-output-region-container'),
+				container_height = $container.outerHeight(),
+				container_offset = $container.offset(),
+				container_bottom = container_offset.top + container_height,
+				height = $(this).height(),
+				top = is_float ? parseInt($(this).attr('data-top')) : 0,
+				is_top = is_float ? ( typeof $(this).attr('data-top') != "undefined" ) : ( $(this).nextAll('.upfront-grid-layout').length > 0 ),
+				bottom = is_float ? parseInt($(this).attr('data-bottom')) : 0,
+				is_bottom = is_float ? ( typeof $(this).attr('data-bottom') != "undefined" ) : ( $(this).prevAll('.upfront-grid-layout').length > 0 ),
+				css = {};
+			if ( is_full_screen ) {
+				var $bg_image = $(this).find('.upfront-region-container-bg'),
+					is_bg_image = ( $bg_image.css('background-image') != 'none' ),
+					$bg_overlay = $(this).find('.upfront-output-bg-overlay'),
+					is_bg_overlay = ( $bg_overlay.length > 0 ),
+					bg_position_y = 0,
+					full_screen_height = parseInt($(this).find('.upfront-region-center').css('min-height'));
+				if ( is_bg_image ) {
+					// @TODO didn't work very well with image set in fixed position
+					if ( typeof $bg_image.data('bg-position-y') == 'undefined' )
+						$bg_image.data('bg-position-y', $bg_image.css('background-position-y'));
+					bg_position_y = $bg_image.data('bg-position-y');
+				}
+			}
+			if ( scroll_top >= container_offset.top && scroll_bottom <= container_bottom ){
+				if ( is_float || is_sub_container ) {
+					css.position = 'fixed';
+					if ( is_top )
+						css.top = top + body_off.top;
+					else
+						css.bottom = bottom;
+				}
+				if ( is_sub_container ){
+					css.left = 0;
+					css.right = 0;
+					if ( is_top )
+						$container.css('padding-top', height);
+					else
+						$container.css('padding-bottom', height);
+				}
+				if ( is_full_screen ){
+					if ( is_bg_image ) {
+						$bg_image.css('background-position-y', ( bg_position_y + scroll_top ) + 'px');
+					}
+					else if ( is_bg_overlay ) {
+						$bg_overlay.css('top', ( scroll_top - body_off.top ));
+					}
+				}
+			}
+			else {
+				if ( is_float ) {
+					css.position = 'absolute';
+					if ( is_top ) {
+						if ( container_height > win_height && scroll_top >= ( container_offset.top + container_height - win_height ) )
+							css.top = container_height - win_height + top;
+						else
+							css.top = top;
+					}
+					else {
+						if ( container_height > win_height && scroll_bottom <= ( container_offset.top + win_height ) )
+							css.bottom =  container_height - win_height + bottom;
+						else
+							css.bottom = bottom;
+					}
+				}
+				else if ( is_sub_container ) {
+					css.position = 'relative';
+					if ( is_top )
+						css.top = container_height - win_height + top;
+					css.bottom = '';
+					css.left = '';
+					css.right = '';
+					if ( is_sub_container ) {
+						$container.css({
+							paddingTop: '',
+							paddingBottom: ''
+						});
+					}
+				}
+				else if ( is_full_screen ) {
+					if ( is_bg_image ) {
+						$bg_image.css('background-position-y', ( bg_position_y + ( container_height - ( is_top ? full_screen_height : win_height - body_off.top ) ) ) + 'px');
+					}
+					else if ( is_bg_overlay ) {
+						$bg_overlay.css('top', ( container_height - ( is_top ? full_screen_height : win_height ) ));
+					}
+				}
+			}
+			$(this).css(css);
+		});
+	}
+	regions_scroll_update();
+	$(window).on('scroll', regions_scroll_update);
 
 	/* Lightbox front end logic */
 	var overlay = $('<div class="upfront-lightbox-bg"></div>'),

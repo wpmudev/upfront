@@ -857,7 +857,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	onElementResize: function() {
-		if(this.property('burger_menu') === false) {
+		if(this.property('burger_menu') === false || (typeof(this.property('burger_menu')) == 'object' && this.property('burger_menu').length == 0)) {
 			if($('.upfront-resize').width() < 360) {
 				this.property('menu_style', 'vertical');
 			} else if($('.upfront-resize').width() > 460) {

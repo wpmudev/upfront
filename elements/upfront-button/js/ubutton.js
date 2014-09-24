@@ -163,7 +163,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				disableLineBreak: true,
 				//focus: true,
 				
-				airButtons: ['upfrontLinkCTA', 'stateAlignCTA'],
+				airButtons: ['formatting', 'bold', 'italic'],//airButtons: ['upfrontLinkCTA'],
+				//buttonsCustom: ['stateAlignCTA'],
 				placeholder: 'Click here',
 				autostart: false
 			})
@@ -391,6 +392,26 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				move: function() { me.updatelivecss(me, me.borderColor, true);}
 			}
 		});
+		me.borderRadiusLock = new Upfront.Views.Editor.Field.Checkboxes({
+			className: 'border_radius_lock static',
+			model: this.model,
+			label: "",
+			values: [
+				{ label: '', value: 'yes' }
+			],
+			change: function() { 
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius2.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius3.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+					me.borderRadius4.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+				me.updatelivecss(me, this);
+			}
+		});
 		me.borderRadius1= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius1 static',
 			model: this.model,
@@ -401,7 +422,18 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius2.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius3.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+					me.borderRadius4.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+				me.updatelivecss(me, this);
+			}
 		}),
 		me.borderRadius2= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius2 static',
@@ -413,7 +445,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius1.set_value(me.borderRadius2.get_value());
+					me.updatelivecss(me, me.borderRadius1);
+					me.borderRadius3.set_value(me.borderRadius2.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+					me.borderRadius4.set_value(me.borderRadius2.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.borderRadius4= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius4 static',
@@ -425,7 +467,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius1.set_value(me.borderRadius4.get_value());
+					me.updatelivecss(me, me.borderRadius1);
+					me.borderRadius2.set_value(me.borderRadius4.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius3.set_value(me.borderRadius4.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.borderRadius3= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius3 static',
@@ -437,7 +489,18 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius1.set_value(me.borderRadius3.get_value());
+					me.updatelivecss(me, me.borderRadius1);
+					me.borderRadius2.set_value(me.borderRadius3.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius4.set_value(me.borderRadius3.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+
+				me.updatelivecss(me, this);}
 		}), 
 		me.bgColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  bg-color static',
@@ -529,6 +592,26 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				move: function() { me.updatelivecss(me, me.hov_borderColor);}
 			}
 		}),
+		me.hov_borderRadiusLock = new Upfront.Views.Editor.Field.Checkboxes({
+			className: 'border_radius_lock hover',
+			model: this.model,
+			label: "",
+			values: [
+				{ label: '', value: 'yes' }
+			],
+			change: function() { 
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius2.set_value(me.hov_borderRadius1.get_value());
+				
+					me.hov_borderRadius3.set_value(me.hov_borderRadius1.get_value());
+		
+					me.hov_borderRadius4.set_value(me.hov_borderRadius1.get_value());
+	
+
+				}
+				me.updatelivecss(me, this);
+			}
+		}),
 		me.hov_borderRadius1= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius1 hover',
 			model: this.model,
@@ -539,7 +622,15 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius2.set_value(me.hov_borderRadius1.get_value());
+					me.hov_borderRadius3.set_value(me.hov_borderRadius1.get_value());
+					me.hov_borderRadius4.set_value(me.hov_borderRadius1.get_value());
+					
+				}
+
+				me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius2= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius2 hover',
@@ -551,7 +642,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius1.set_value(me.hov_borderRadius2.get_value());
+					me.hov_borderRadius3.set_value(me.hov_borderRadius2.get_value());
+					me.hov_borderRadius4.set_value(me.hov_borderRadius2.get_value());
+					
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius4= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius4 hover',
@@ -563,7 +661,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius1.set_value(me.hov_borderRadius4.get_value());
+					me.hov_borderRadius2.set_value(me.hov_borderRadius4.get_value());
+					me.hov_borderRadius3.set_value(me.hov_borderRadius4.get_value());
+					
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius3= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius3 hover',
@@ -575,7 +680,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() { 
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius1.set_value(me.hov_borderRadius3.get_value());
+					me.hov_borderRadius2.set_value(me.hov_borderRadius3.get_value());
+					me.hov_borderRadius4.set_value(me.hov_borderRadius3.get_value());
+					
+				}
+				me.updatelivecss(me, this);}
 		}), 
 		me.hov_bgColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf bg-color hover',
@@ -698,6 +810,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					me.borderRadius1,
 					me.borderRadius2,
 					me.bgColor,
+					me.borderRadiusLock,
 					me.borderRadius4,
 					me.borderRadius3,
 
@@ -710,6 +823,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					me.hov_borderRadius1,
 					me.hov_borderRadius2,
 					me.hov_bgColor,
+					me.hov_borderRadiusLock,
 					me.hov_borderRadius4,
 					me.hov_borderRadius3,
 
@@ -808,7 +922,23 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						if(!me.hov_borderColor.$el.hasClass('touched'))
 							me.hov_borderColor.set_value(invoker.get_value());
 					break;
-
+					case me.borderRadiusLock:
+						if(!me.hov_borderRadiusLock.$el.hasClass('touched')) {
+							me.hov_borderRadiusLock.invoked = true;
+							if(typeof(invoker.get_value()) == 'object' && invoker.get_value().length > 0){
+								me.hov_borderRadiusLock.set_value(invoker.get_value());
+							}
+							else {
+								me.hov_borderRadiusLock.$el.find(':checkbox').prop('checked', false);
+							}
+						}
+					break;	
+					case me.hov_borderRadiusLock:	
+						if(me.hov_borderRadiusLock.invoked) {
+							invoker.$el.removeClass('touched');
+							invoker.invoked = false;
+						}
+					break;
 					case me.borderRadius1:
 						if(!me.hov_borderRadius1.$el.hasClass('touched'))
 							me.hov_borderRadius1.set_value(invoker.get_value());
@@ -835,9 +965,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 							me.hov_fontSize.set_value(invoker.get_value());
 					break;	
 					case me.fontFace:
-						if(!me.hov_fontFace.$el.hasClass('touched'))
+						if(!me.hov_fontFace.$el.hasClass('touched')) {
+							me.hov_fontFace.invoked = true;
 							me.hov_fontFace.set_value(invoker.get_value());
-					break;	
+						}
+					break;
+					case me.hov_fontFace:	
+						if(me.hov_fontFace.invoked) {
+							invoker.$el.removeClass('touched');
+							invoker.invoked = false;
+						}
+					break;
 					case me.color:
 						if(!me.hov_color.$el.hasClass('touched'))
 							me.hov_color.set_value(invoker.get_value());
@@ -909,6 +1047,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	
 				this.borderColor.set_value(preset.bordercolor);	
 	
+				this.borderRadiusLock.set_value(preset.borderradiuslock);
+
 				this.borderRadius1.set_value(preset.borderradius1);	
 	
 				this.borderRadius2.set_value(preset.borderradius2);
@@ -954,6 +1094,16 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				else
 					this.hov_borderColor.set_value(preset.bordercolor);
 	
+				
+				if(preset.hov_borderradiuslock) {
+					this.hov_borderRadiusLock.set_value(preset.hov_borderradiuslock);	
+					this.hov_borderRadiusLock.$el.addClass('touched');	
+				}
+				else
+					this.hov_borderRadiusLock.set_value(preset.borderradiuslock);
+
+
+
 				if(preset.hov_borderradius1) {
 					this.hov_borderRadius1.set_value(preset.hov_borderradius1);	
 					this.hov_borderRadius1.$el.addClass('touched');	
@@ -1020,6 +1170,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			preset.attributes.bordertype = this.borderType.get_value();
 			preset.attributes.borderwidth = this.borderWidth.get_value();
 			preset.attributes.bordercolor = this.borderColor.get_value();
+			preset.attributes.borderradiuslock = this.borderRadiusLock.get_value();
 			preset.attributes.borderradius1 = this.borderRadius1.get_value();
 			preset.attributes.borderradius2 = this.borderRadius2.get_value();
 			preset.attributes.borderradius4 = this.borderRadius4.get_value();
@@ -1041,6 +1192,9 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			if(this.hov_borderColor.$el.hasClass('touched'))
 				preset.attributes.hov_bordercolor = this.hov_borderColor.get_value();
 			
+			if(this.hov_borderRadiusLock.$el.hasClass('touched'))
+				preset.attributes.hov_borderradiuslock = this.hov_borderRadiusLock.get_value();
+
 			if(this.hov_borderRadius1.$el.hasClass('touched'))
 				preset.attributes.hov_borderradius1 = this.hov_borderRadius1.get_value();
 			
@@ -1076,6 +1230,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			newpreset.bordertype = this.borderType.get_value();
 			newpreset.borderwidth = this.borderWidth.get_value();
 			newpreset.bordercolor = this.borderColor.get_value();
+			newpreset.borderradiuslock = this.borderRadiusLock.get_value();
 			newpreset.borderradius1 = this.borderRadius1.get_value();
 			newpreset.borderradius2 = this.borderRadius2.get_value();
 			newpreset.borderradius4 = this.borderRadius4.get_value();
@@ -1095,6 +1250,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				newpreset.hov_borderwidth = this.hov_borderWidth.get_value();
 			if(this.hov_borderColor.$el.hasClass('touched'))
 				newpreset.hov_bordercolor = this.hov_borderColor.get_value();
+			if(this.hov_borderRadiusLock.$el.hasClass('touched'))
+				newpreset.hov_borderradiuslock = this.hov_borderRadiusLock.get_value();
 			if(this.hov_borderRadius1.$el.hasClass('touched'))
 				newpreset.hov_borderradius1 = this.hov_borderRadius1.get_value();
 			if(this.hov_borderRadius2.$el.hasClass('touched'))

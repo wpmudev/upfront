@@ -7119,7 +7119,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				}),
-				$region_global, $region_type, $region_nav, $theme_body;
+				$region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $theme_body;
 			if ( is_layout ){
 				var contained_region = new Field_Number({
 					model: this.model,
@@ -7220,10 +7220,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						change: function () {
 							var value = this.get_value();
 							this.model.set({type: value}, {silent: true});
-							if ( value == 'full' )
+							if ( value == 'full' ){
 								$region_nav.show();
-							else
+								$region_behavior.show();
+							}
+							else {
 								$region_nav.hide();
+								$region_behavior.hide();
+							}
 							this.model.get('properties').trigger('change');
 						}
 					}),
@@ -7233,9 +7237,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "No nav", value: '' },
-							{ label: "Bottom nav", value: 'bottom' },
-							{ label: "Full screen, top", value: 'top' }
+							{ label: "No", value: '' },
+							{ label: "Bottom", value: 'bottom' },
+							{ label: "Top", value: 'top' }
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -7289,6 +7293,39 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							}
 							this.property.set({value: value});
 						}
+					}),
+					region_behavior = new Field_Radios({
+						model: this.model,
+						name: 'behavior',
+						default_value: 'keep-position',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Keep Position", value: 'keep-position' },
+							{ label: "Keep Ratio", value: 'keep-ratio' }
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set({behavior: value}, {silent: true});
+							this.model.get('properties').trigger('change');
+						}
+					});
+			}
+			else if ( is_region && sub == 'fixed' ) {
+				var region_restrict = new Field_Checkboxes({
+						model: this.model,
+						name: 'restrict_to_container',
+						default_value: '',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Restrict floating to Parent Region", value: '1' }
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set({restrict_to_container: value}, {silent: true});
+							this.model.trigger('restrict_to_container', value);
+							this.model.get('properties').trigger('change');
+						},
+						multiple: false
 					});
 			}
 			$content.html(setting);
@@ -7302,6 +7339,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$add_global_region = $content.find('.upfront-region-bg-setting-add-global-region');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
 			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
+			$region_behavior = $content.find('.upfront-region-bg-setting-region-behavior');
+			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
@@ -7322,13 +7361,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region_type.append(region_type.$el);
 				region_nav.render();
 				$region_nav.append(region_nav.$el);
+				region_behavior.render();
+				$region_behavior.append(region_behavior.$el);
 			}
 			else {
 				$region_global.hide();
 				$region_type.hide();
 				$region_nav.hide();
+				$region_behavior.hide();
 				$region_auto.hide();
 			}
+			$region_restrict.hide();
 
 			$theme_body = $content.find('.upfront-region-bg-setting-theme-body');
 			if ( is_layout ) {
@@ -7370,6 +7413,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else if ( is_region && sub == 'fixed' ) {
 				this.render_fixed_settings($fixed);
 				$fixed.show();
+				region_restrict.render();
+				$region_restrict.append(region_restrict.$el).show();
 			}
 			else if ( is_region && sub == 'lightbox' ) {
 				this.render_lightbox_settings($lightbox);
@@ -8587,6 +8632,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						return -1;
 					return collection.indexOf(model);
 				};
+				
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
 				if ( to == 'left' || to == 'right' ){
@@ -8634,6 +8680,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				Upfront.Events.once('entity:region:added', this.run_animation, this);
 			}
 			new_region.add_to(collection, (is_before ? index : index+1), options);
+
+			var wide_regions = collection.where({ type : 'wide'});
+			if(wide_regions.length > 0) {
+				$('div.upfront-regions a#no_region_add_one').remove();
+
+			}
+
 			e.stopPropagation();
 		},
 		before_animation: function (view, model) {
@@ -8690,8 +8743,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		tooltip: "Delete this section",
 		//label: "Delete this section",
 		delete_region: function () {
-			if ( confirm("Are you sure you want to delete this section?") )
+			if ( confirm("Are you sure you want to delete this section?") ){
+				// @TODO Make sure sub-regions is also removed to clean the region properly
 				this.model.collection.remove(this.model);
+			}
 		}
 	});
 
@@ -9898,6 +9953,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Item": InlinePanelItem
 			},
 			"RegionPanels": RegionPanels,
+			"RegionPanelsAddRegion": RegionPanelItem_AddRegion,
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
 			"CSSEditor": CSSEditor,

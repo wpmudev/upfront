@@ -3000,9 +3000,12 @@ var GridEditor = {
 					regions = app.layout.get("regions");
 					region = regions.get_by_name( $('.upfront-region-drag-active').data('name') ),
 					move_region = ( me.region != region.get('name') ),
+					prev_region = regions.get_by_name( me.region ),
 					wrappers = is_parent_group ? view.group_view.model.get('wrappers') : region.get('wrappers'),
 					region_el = ed.get_region($('.upfront-region-drag-active')),
-					$container = is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first');
+					prev_region_el = ed.get_region($me.closest('.upfront-region')),
+					$container = is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first'),
+					$prev_container = prev_region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first');
 
 				clearTimeout(ed._t); // clear remaining timeout immediately
 
@@ -3196,6 +3199,12 @@ var GridEditor = {
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 
 					ed.update_wrappers( is_parent_group ? view.group_view.model : region );
+					
+					if ( move_region ) {
+						ed.update_model_margin_classes( $prev_container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') );
+						ed.update_wrappers(prev_region);
+					}
+					
 					if ( !breakpoint || breakpoint.default ){
 						if ( wrapper_id )
 							model.set_property('wrapper_id', wrapper_id, true);
@@ -3784,8 +3793,10 @@ var GridEditor = {
 			$me = view.$el,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
+			container_view = view.parent_view.get_container_view(model),
 			sub = model.get('sub'),
 			fixed_pos = {},
+			restrict = false,
 			get_fixed_pos = function () {
 				var pos = {
 						top: model.get_property_value_by_name('top'),
@@ -3801,7 +3812,8 @@ var GridEditor = {
 				pos.is_right = ( typeof pos.right == 'number' );
 				return pos;
 			},
-			move = {}
+			move = {},
+			position = ''
 		;
 		if ( sub != 'fixed' )
 			return false;
@@ -3825,39 +3837,54 @@ var GridEditor = {
 				$helper.css('height', height);
 				$me.hide();
 				fixed_pos = get_fixed_pos();
+				restrict = model.get('restrict_to_container');
+				position = $helper.css('position');
 			},
 			drag: function (e, ui) {
 				var $helper = ui.helper,
 					main_offset = $main.offset(),
 					main_width = $main.width(),
+					container_offset = container_view.$el.offset(),
+					container_height = container_view.$el.height(),
+					container_bottom = container_offset.top + container_height,
+					scroll_top = $(window).scrollTop(),
 					win_height = $(window).height(),
-					main_x = (main_width/2) + main_offset.left,
-					main_y = win_height/2,
+					scroll_bottom = scroll_top + win_height,
+					main_x = ( main_width / 2 ) + main_offset.left,
+					main_y = ( position == 'fixed' || container_height > win_height ) ? win_height / 2 : container_height / 2,
 					left = ui.position.left,
 					top = ui.position.top,
 					width = $helper.width(),
 					height = $helper.height(),
 					x = (width/2) + left,
 					y = (height/2) + top,
-					limit_top = limit_left = helper_top = helper_left = false;
+					limit_top, limit_left, helper_top, helper_left;
 				// reset move variable
 				move = {};
-				if ( /*fixed_pos.is_top*/ y <= main_y ){
-					limit_top = 0;
+				if ( position == 'absolute' && container_height > win_height && container_bottom <= scroll_bottom )
+					main_y = container_height - ( win_height / 2 );
+				if ( y <= main_y ){
+					if ( position == 'fixed' || container_height < win_height || container_bottom >= scroll_bottom )
+						limit_top = 0;
+					else
+						limit_top = container_height - win_height;
 					helper_top = top < limit_top ? limit_top : top;
 					move.top = helper_top - limit_top;
 				}
-				else /*if ( fixed_pos.is_bottom )*/{
-					limit_top = win_height - height;
+				else {
+					if ( position == 'fixed' || ( container_height > win_height && container_offset.top >= scroll_top ) )
+						limit_top = win_height - height;
+					else
+						limit_top = container_height - height;
 					helper_top = top > limit_top ? limit_top : top;
 					move.bottom = limit_top - helper_top;
 				}
-				if ( /*fixed_pos.is_left*/ x <= main_x ){
+				if ( x <= main_x ){
 					limit_left = main_offset.left;
 					helper_left = left < limit_left ? limit_left : left;
 					move.left = helper_left - limit_left;
 				}
-				else /*if ( fixed_pos.is_right )*/{
+				else {
 					limit_left = main_width - width + main_offset.left;
 					helper_left = left > limit_left ? limit_left : left;
 					move.right = limit_left - helper_left;
