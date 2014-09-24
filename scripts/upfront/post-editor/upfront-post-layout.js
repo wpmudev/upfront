@@ -351,13 +351,6 @@ var ContentView = PostPartView.extend({
         $(e.target).closest(".upfront-module").addClass("upfront-disable-surroundings");
         Upfront.Events.trigger("post:content:style:start", this, 'single');
         this.populate_style_content();
-        //this.populate_style_content().on("done", function(){
-        //    console.log("done ");
-        //    this.detect_inserts();
-        //});
-
-
-
 
         Upfront.Events.on("post:content:style:stop", function(){
 
@@ -368,7 +361,9 @@ var ContentView = PostPartView.extend({
         $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
         $(".upfront-inserted_image-wrapper").resizable({
             grid : [Upfront.Behaviors.GridEditor.col_size, Upfront.Behaviors.GridEditor.baseline],
-            handles: "se, nw",
+            handles: "n, e, s, w, se, nw",
+            minHeight : 50,
+            minWidth : 50,
             containment: ".upfront-module.post-part",
             resize : function( event, ui ){
                 if( ui.position.left > 0 ){
