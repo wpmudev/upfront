@@ -1878,13 +1878,13 @@ define([
 							  get_label: function() {
 								  	return 'Add Floating Region';
 							  },
-							  action: function() {
+							  action: function(view, e) {
 							  		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 							  			collection = me.model.collection,
 							  			index = collection.indexOf(me.model),
 							  			fixed = me.model.get_sub_region('fixed'),
 							  			title = me.model.get('title') + " Floating " + (fixed.length+1),
-							  			name = title.toLowerCase().replace(/\s/, '-'),
+							  			name = title.toLowerCase().replace(/\s/g, '-'),
 								  		new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 											"name": name,
 											"container": me.model.get('name'),
@@ -1893,11 +1893,35 @@ define([
 											"sub": 'fixed',
 											"scope": me.model.get('scope')
 										})),
-										end_t;
-									new_region.set_property('width', 225);
-									new_region.set_property('height', 225);
-									new_region.set_property('top', 30);
-									new_region.set_property('left', 30);
+							  			offset = me.$el.offset(),
+							  			width = me.$el.width(),
+							  			height = me.$el.height(),
+							  			window_h = $(window).height(),
+							  			new_region_w = 225,
+							  			new_region_h = 225,
+										end_t, pos_x, pos_y, prop_x, prop_y;
+									new_region.set_property('width', new_region_w);
+									new_region.set_property('height', new_region_h);
+									if ( e.pageX > offset.left + (width/2) ){
+										pos_x = offset.left + width - e.pageX - Math.floor(new_region_w/2);
+										prop_x = 'right';
+									}
+									else {
+										pos_x = e.pageX - offset.left - Math.floor(new_region_w/2);
+										prop_x = 'left';
+									}
+									if ( height >= window_h && e.clientY > window_h/2 ){
+										pos_y = window_h - e.clientY - Math.floor(new_region_h/2);
+										prop_y = 'bottom';
+									}
+									else {
+										pos_y = e.clientY - Math.floor(new_region_h/2);
+										prop_y = 'top';
+									}
+									pos_x = pos_x > 0 ? pos_x : 0;
+									pos_y = pos_y > 0 ? pos_y : 0;
+									new_region.set_property(prop_x, pos_x);
+									new_region.set_property(prop_y, pos_y);
 									new_region.set_property('background_type', 'color');
 									new_region.set_property('background_color', '#aeb8c2');
 									Upfront.Events.once('entity:region:added', run_animation, this);
@@ -1906,14 +1930,14 @@ define([
 								  		me.trigger_edit_fixed(me.event);
 								  	function run_animation(view, model){
 								  		end_t = setTimeout(end, 2000);
-								  		view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-top-left");
+								  		view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
 										view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
 											end(view);
 											clearTimeout(end_t);
 										});
 								  	}
 									function end (view) {
-										view.$el.removeClass("upfront-add-region-ani upfront-add-region-ani-top-left");
+										view.$el.removeClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
 										Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
 									}
 							  }
@@ -1946,7 +1970,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:activated", this.update_pos);
 				this.listenTo(Upfront.Events, "entity:region:activated", this.update_overlay);
 				this.listenTo(Upfront.Events, "entity:region:deactivated", this.close_edit);
-				$(window).on('scroll', this, this.on_scroll);
+				$(window).on('scroll.region_container_' + this.model.get('name'), this, this.on_scroll);
 				this.listenTo(Upfront.Events, "layout:render", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.fix_height);
@@ -1961,7 +1985,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
 				this.listenTo(Upfront.Events, "upfront:layout:contained_region_width", this.on_contained_width_change);
-				$(window).on('resize', this, this.on_window_resize);
+				$(window).on('resize.region_container_' + this.model.get('name'), this, this.on_window_resize);
 
 				// breakpoint changes
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
@@ -2236,6 +2260,7 @@ define([
 						height: height,
 						maxHeight: height
 					});
+					this.model.set_property('original_height', height, true);
 				}
 				else {
 					$region.css({
@@ -2245,6 +2270,7 @@ define([
 					});
 					if ( min_height > 0 )
 						$region.css('min-height', min_height);
+					this.model.remove_property('original_height', true);
 				}
 			},
 			update_pos: function () {
@@ -2297,8 +2323,8 @@ define([
 				}
 			},
 			remove: function(){
-				$(window).off('scroll', this, this.on_scroll);
-				$(window).off('resize', this, this.on_window_resize);
+				$(window).off('scroll.region_container_' + this.model.get('name'));
+				$(window).off('resize.region_container_' + this.model.get('name'));
 
 				if(this.context_menu_view){
 					this.context_menu_view.remove();
@@ -2329,7 +2355,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
-				$(window).on('resize', this, this.on_window_resize);
+				$(window).on('resize.region_subcontainer_' + this.model.get('name'), this, this.on_window_resize);
 			},
 			_get_region_type: function () {
 				return this.model.get('type') || ( this.model.get('clip') ? 'clip' : 'wide' );
@@ -2355,7 +2381,7 @@ define([
 			},
 			remove: function () {
 				this.event = false;
-				$(window).off('resize', this, this.on_window_resize);
+				$(window).off('resize.region_subcontainer_' + this.model.get('name'));
 				Backbone.View.prototype.remove.call(this);
 			}
 		}),
@@ -2423,6 +2449,7 @@ define([
 				this.listenTo(this.model.get("modules"), 'change', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'add', this.on_module_update);
 				this.listenTo(this.model.get("modules"), 'remove', this.on_module_update);
+				this.listenTo(this.model.get("modules"), 'reset', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:added:after', this.display_region_hint);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_render);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
@@ -2434,7 +2461,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_buttons);
-				$(window).on('resize', this, this.on_window_resize);
+				$(window).on('resize.region_' + this.model.get('name'), this, this.on_window_resize);
 			},
 			on_click: function (e) {
 
@@ -2661,7 +2688,7 @@ define([
 			remove: function() {
 				if(this._modules_view)
 					this._modules_view.remove();
-				$(window).off('resize', this, this.on_window_resize);
+				$(window).off('resize.region_' + this.model.get('name'));
 				var wrappers = this.model.get('wrappers');
 				if(wrappers)
 					wrappers.each(function(wrapper){
@@ -2793,6 +2820,8 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.check_modules);
 				this.listenTo(Upfront.Events, "layout:after_render", this.check_modules);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(this.model, "restrict_to_container", this.update_position_on_restrict);
+				$(window).on('scroll.region_' + this.model.get('name'), this, this.on_scroll);
 			},
 			render: function () {
 				this.constructor.__super__.render.call(this);
@@ -2824,7 +2853,9 @@ define([
 			update_region_position: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					grid = Upfront.Settings.LayoutEditor.Grid,
+					restrict = this.model.get('restrict_to_container'),
 					width = this.model.get_property_value_by_name('width'),
+					col = this.model.get_property_value_by_name('col'),
 					height = this.model.get_property_value_by_name('height'),
 					top = this.model.get_property_value_by_name('top'),
 					is_top = ( typeof top == 'number' ),
@@ -2833,13 +2864,15 @@ define([
 					bottom = this.model.get_property_value_by_name('bottom'),
 					is_bottom = ( typeof bottom == 'number' ),
 					right = this.model.get_property_value_by_name('right'),
-					is_right = ( typeof right == 'number' )
+					is_right = ( typeof right == 'number' ),
 					css = {
 						width: width || 225,
 						minHeight: height || 225
 					};
 				if ( !width )
 					this.model.set_property('width', 225, true);
+				if ( !col )
+					this.model.set_property('col', Upfront.Util.width_to_col(css.width), true)
 				if ( !height )
 					this.model.set_property('height', 225, true);
 				if ( is_top || !is_bottom ){
@@ -2853,7 +2886,7 @@ define([
 					css.top = '';
 				}
 				if ( is_left || !is_right ){
-					css.left = ( is_left ? left : 30 ) + $main.offset().left;
+					css.left = ( is_left ? left : 30 ) + ( restrict ? 0 : $main.offset().left );
 					css.right = '';
 					if ( !is_left )
 						this.model.set_property('left', 30, true);
@@ -2875,6 +2908,7 @@ define([
 					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', '');
 				this.update_size_hint(css.width, css.minHeight);
 				this.update_position_hint(css);
+				this.update_position_scroll();
 			},
 			update_position_hint: function (pos, $helper) {
 				var hint = '';
@@ -2887,6 +2921,113 @@ define([
 				else if ( typeof pos.right == 'number' )
 					hint += ' <b>right:</b>' + pos.right;
 				( $helper ? $helper : this.$el ).find('.upfront-region-position-hint').html(hint);
+			},
+			update_position_on_restrict: function (value) {
+				var scroll_top = $(window).scrollTop(),
+					win_height = $(window).height(),
+					scroll_bottom = scroll_top + win_height,
+					container_view = this.parent_view.get_container_view(this.model),
+					container_height = container_view.$el.height(),
+					container_offset = container_view.$el.offset(),
+					container_bottom = container_offset.top + container_height,
+					height = this.model.get_property_value_by_name('height'),
+					top = this.model.get_property_value_by_name('top'),
+					is_top = ( typeof top == 'number' ),
+					bottom = this.model.get_property_value_by_name('bottom'),
+					is_bottom = ( typeof bottom == 'number' );
+				if ( value ){
+					if ( ( is_top || !is_bottom ) && scroll_top <= container_offset.top ){
+						top = top - ( container_offset.top - scroll_top );
+						if ( top + height > container_height )
+							top = container_height - height;
+						else if ( top < 0 )
+							top = 0;
+					}
+					else if ( is_bottom && ( scroll_bottom >= container_bottom ) ){
+						bottom = bottom - ( scroll_bottom - container_bottom );
+						if ( bottom + height > container_height )
+							bottom = container_height - height;
+						else if ( bottom < 0 )
+							bottom = 0;
+					}
+				}
+				else {
+					if ( is_top || !is_bottom ){
+						top = ( container_offset.top >= scroll_top ) ? container_offset.top - scroll_top + top : top;
+					}
+					else {
+						bottom = ( scroll_bottom >= container_bottom ) ? scroll_bottom - container_bottom + bottom : bottom;
+					}
+				}
+				if ( is_top || !is_bottom ) {
+					this.model.set_property('top', top, true);
+					// let's automatically scroll to avoid confusion with the correct absolute positioning
+					if ( container_height > win_height && scroll_bottom > container_bottom )
+						$('html,body').animate({scrollTop: container_bottom - win_height}, 600);
+				}
+				else {
+					this.model.set_property('bottom', bottom, true);
+					// let's automatically scroll to avoid confusion with the correct absolute positioning
+					if ( container_height > win_height && scroll_top < container_offset.top )
+						$('html,body').animate({scrollTop: container_offset.top}, 600);
+				}
+			},
+			update_position_scroll: function () {
+				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+					scroll_top = $(window).scrollTop(),
+					win_height = $(window).height(),
+					scroll_bottom = scroll_top + win_height,
+					container_view = this.parent_view.get_container_view(this.model),
+					container_height = container_view.$el.height(),
+					container_offset = container_view.$el.offset(),
+					container_bottom = container_offset.top + container_height,
+					restrict = this.model.get('restrict_to_container'),
+					height = this.model.get_property_value_by_name('height'),
+					top = this.model.get_property_value_by_name('top'),
+					is_top = ( typeof top == 'number' ),
+					left = this.model.get_property_value_by_name('left'),
+					is_left = ( typeof left == 'number' ),
+					bottom = this.model.get_property_value_by_name('bottom'),
+					is_bottom = ( typeof bottom == 'number' ),
+					css = {};
+				if ( restrict ){
+					if ( scroll_top >= container_offset.top && scroll_bottom <= container_bottom ){
+						css.position = 'fixed';
+						if ( is_top )
+							css.top = top;
+						else
+							css.bottom = bottom;
+					}
+					else {
+						css.position = 'absolute';
+						if ( is_top ) {
+							if ( container_height > win_height && scroll_top >= ( container_offset.top + container_height - win_height ) )
+								css.top = container_height - win_height + top;
+							else
+								css.top = top;
+						}
+						else {
+							if ( container_height > win_height && scroll_bottom <= ( container_offset.top + win_height ) )
+								css.bottom =  container_height - win_height + bottom;
+							else
+								css.bottom = bottom;
+						}
+					}
+				}
+				else {
+					css.position = 'fixed';
+					if ( is_top )
+						css.top = top;
+					else
+						css.bottom = bottom;
+				}
+				if ( is_left )
+					css.left = left + ( css.position == 'fixed' ? $main.offset().left : 0 );
+				this.$el.css(css);
+			},
+			on_scroll: function (e) {
+				var me = e.data;
+				me.update_position_scroll();
 			},
 			render_panels: function () {
 			},
@@ -2915,6 +3056,10 @@ define([
 					this.$el.removeClass('upfront-region-empty');
 					this.$el.addClass('upfront-region-has-modules');
 				}
+			},
+			remove: function() {
+				$(window).off('scroll.region_' + this.model.get('name'));
+				this.constructor.__super__.remove.call(this);
 			},
 			on_change_breakpoint: function (breakpoint) {
 				if ( !breakpoint.default )
@@ -3181,6 +3326,8 @@ define([
 					container_view = this.get_container_view(region),
 					sub = sub ? sub : region.get('sub'),
 					sub_container_view;
+				if ( !container_view )
+					return;
 				if ( !Upfront.data.region_views[region.cid] ){
 					local_view.parent_view = this;
 					container_view.listenTo(local_view, "region_render", container_view.on_region_render);
@@ -3224,6 +3371,9 @@ define([
 				}
 				else if ( sub == 'left' ) {
 					container_view.$layout.prepend(local_view.el);
+				}
+				else if ( sub == 'fixed' ) {
+					container_view.$el.append(local_view.el);
 				}
 				else {
 					container_view.$layout.append(local_view.el);
@@ -3456,7 +3606,7 @@ define([
 				this.listenTo(Upfront.Events, "command:layout:edit_background", this.open_edit_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "application:mode:after_switch", this.on_mode_switch);
-				$(window).on('resize', this, this.on_window_resize);
+				$(window).on('resize.upfront_layout', this, this.on_window_resize);
 				this.render();
 			},
 			update: function () {
@@ -3605,7 +3755,7 @@ define([
 				if(this.local_view)
 					this.local_view.remove();
 				this.local_view = null;
-				$(window).off('resize', this, this.on_window_resize);
+				$(window).off('resize.upfront_layout');
 				if (this.bg_setting)
 					this.bg_setting.remove();
 				this.bg_setting = null;

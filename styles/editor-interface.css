@@ -2455,6 +2455,17 @@ div.uinsert-selector a:hover {
 	content: none;
 }
 
+.upfront-region-container-full .upfront-grid-layout {
+	overflow-y: scroll;
+}
+.upfront-region-container-full .upfront-grid-layout::-webkit-scrollbar {
+	background: none;
+	width: 0;
+}
+.upfront-region-container-full .upfront-grid-layout::-webkit-scrollbar-thumb {
+	
+}
+
 .upfront-region-container-bg {
 	position: relative;
 	margin: 0 auto;
@@ -2467,6 +2478,7 @@ div.uinsert-selector a:hover {
 
 .upfront-region-sub-container {
 	position: relative;
+	z-index: 10;
 }
 .upfront-region {
   /*background-color: rgba(127, 127, 127, .5);*/
@@ -3490,7 +3502,17 @@ div.uinsert-selector a:hover {
 .upfront-region-bg-setting-region-type {
 	margin: 0 0 20px;
 }
+.upfront-region-bg-setting-region-nav {
+	width: 50%;
+	float: left;
+	margin: 0 0 20px;
+}
+.upfront-region-bg-setting-region-behavior {
+	width: 50%;
+	float: right;
+}
 .upfront-region-bg-setting-type {
+	clear: both;
 	width: 50%;
 	float: left;
 }
@@ -3561,13 +3583,14 @@ div.uinsert-selector a:hover {
 	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
 	border: 1px solid rgb(163, 191, 217);
 	border-radius: 3px;
-	margin: 10px 30px 10px 0;
+	margin: 10px 30px 0 0;
 }
 .upfront-region-bg-setting-change-image:hover {
 	border-color: rgb(96, 127, 153);
 }
 .upfront-region-bg-setting-edit-css {
-	float: left;
+	display: inline-block;
+	vertical-align: top;
 	padding: 10px 0;
 }
 .upfront-region-bg-setting-edit-css.upfront-icon:before {
@@ -3585,6 +3608,10 @@ div.uinsert-selector a:hover {
   	border-bottom: 1px solid #1fcd8f;
   	line-height: 1;
 	cursor: pointer;
+}
+.upfront-region-bg-setting-floating-restrict {
+	float: right;
+	margin: 4px 0 10px;
 }
 .upfront-region-bg-setting-tab-primary {
 	width: 50%;

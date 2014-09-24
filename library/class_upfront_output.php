@@ -81,19 +81,25 @@ class Upfront_Output {
 			$region_sub = $region_view->get_sub();
 			$markup = $region_view->get_markup();
 			$container = $region_view->get_container();
+			if ( ! isset($region_markups[$container]) )
+				$region_markups[$container] = '';
+			if ( ! isset($region_markups_before[$container]) )
+				$region_markups_before[$container] = '';
+			if ( ! isset($region_markups_after[$container]) )
+				$region_markups_after[$container] = '';
 			if ( $region_sub == 'top' || $region_sub == 'bottom' ){
 				$sub_container = new Upfront_Region_Sub_Container($region);
 				$markup = $sub_container->wrap( $markup );
 				if ( $region_sub == 'top' )
-					$region_markups_before[$container] = $markup;
+					$region_markups_before[$container] .= $markup;
 				else
-					$region_markups_after[$container] = $markup;
+					$region_markups_after[$container] .= $markup;
+			}
+			else if ( $region_sub == 'fixed' ){
+				$region_markups_after[$container] .= $markup;
 			}
 			else{
-				if ( !isset($region_markups[$container]) )
-					$region_markups[$container] = $markup;
-				else
-					$region_markups[$container] .= $markup;
+				$region_markups[$container] .= $markup;
 			}
 			if ( $region_view->get_name() == $container ) {
 				$container_views[$container] = new Upfront_Region_Container($region);
@@ -101,7 +107,7 @@ class Upfront_Output {
 		}
 		foreach ($container_views as $container => $container_view) {
 			$type = $container_view->get_entity_type();
-			$html_layout .= $container_view->wrap( $region_markups[$container], ($type == 'full' ? $region_markups_before[$container] : ''), ($type == 'full' ? $region_markups_after[$container] : '') );
+			$html_layout .= $container_view->wrap( $region_markups[$container], $region_markups_before[$container], $region_markups_after[$container] );
 		}
 		$html .= $layout_view->wrap($html_layout);
 		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
@@ -526,11 +532,15 @@ class Upfront_Region_Container extends Upfront_Container {
 
 	public function get_attr () {
 		$attr = '';
+		if ( !empty($this->_data['type']) && $this->_data['type'] == 'full' ) {
+			$attr .= ' data-behavior="' . ( !empty($this->_data['behavior']) ? $this->_data['behavior'] : 'keep-position' ) . '"';
+			$attr .= ' data-original-height="' . $this->_get_property('original_height') . '"';
+		}
 		return $attr;
 	}
 	
 	public function get_id () {
-		return 'upfront-region-container-' . $this->get_name();
+		return 'upfront-region-container-' . strtolower(str_replace(" ", "-", $this->get_name()));
 	}
 }
 
@@ -593,6 +603,23 @@ class Upfront_Region extends Upfront_Container {
 		if ( $this->_is_background() )
 			$attr .= $this->_get_background_attr();
 
+		if ( !empty($this->_data['type']) && 'fixed' === $this->_data['type'] ) {
+			$restrict = $this->_data['restrict_to_container'];
+			$top = $this->_get_property('top');
+			$bottom = $this->_get_property('bottom');
+			$left = $this->_get_property('left');
+			$right = $this->_get_property('right');
+			if ( !empty($restrict) )
+				$attr .= ' data-restrict-to-container="' . $restrict . '"';
+			if ( $top )
+				$attr .= ' data-top="' . $top . '"';
+			else
+				$attr .= ' data-bottom="' . $bottom . '"';
+			if ( $left )
+				$attr .= ' data-left="' . $left . '"';
+			else
+				$attr .= ' data-right="' . $right . '"';
+		}
 		if(	!empty($this->_data['type']) && 'lightbox' === $this->_data['type'] ) {
 			$attr .= ' data-overlay = "'.$this->_get_property('overlay_color').'"';
 			$attr .= ' data-col = "'.$this->_get_property('col').'"';
@@ -608,7 +635,7 @@ class Upfront_Region extends Upfront_Container {
 	}
 	
 	public function get_id () {
-		return 'upfront-region-' . $this->get_name();
+		return 'upfront-region-' . strtolower(str_replace(" ", "-", $this->get_name()));
 	}
 
 	public function get_sub () {
