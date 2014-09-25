@@ -1084,6 +1084,8 @@ RedactorPlugins.upfrontLink = {
 		unlink: function(e){
 			if(e)
 				e.preventDefault();
+
+
          var text = this.redactor.getSelectionHtml();
          if( $.parseHTML(text).length > 1){// there is html inside
              this.redactor.execCommand('inserthtml', text, true);
@@ -1096,7 +1098,11 @@ RedactorPlugins.upfrontLink = {
 			if(url){
 				this.redactor.selectionRestore(true, false);
                 var caption = this.redactor.getSelectionHtml();
-                this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
+                var link = this.redactor.currentOrParentIs('A');
+                if(link)
+                	$(link).attr('href', url).attr('rel', type);
+                else	
+                	this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
 			}
 		},
 
