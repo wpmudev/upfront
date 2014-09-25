@@ -38,6 +38,9 @@
 .upfront-grid-layout {
 	zoom: 1;
 }
+.upfront-grid-layout-current {
+	z-index: 11;
+}
 
 .upfront-grid-layout-gutter {
 	position: absolute;

@@ -3024,7 +3024,7 @@ var DialogControl = Control.extend({
 	open: function(){
 		this.panel.show();
 		this.isopen = true;
-		this.$el.closest('.upfront-region-container').addClass('upfront-region-current');
+		this.$el.closest('.upfront-grid-layout').addClass('upfront-grid-layout-current');
 		this.$el.closest('.upfront-wrapper').addClass('upfront-wrapper-current');
 		this.$el.addClass('upfront-control-dialog-open');
 		this.trigger('panel:open');
@@ -3033,7 +3033,7 @@ var DialogControl = Control.extend({
 	close: function(){
 		this.panel.hide();
 		this.isopen = false;
-		this.$el.closest('.upfront-region-container').removeClass('upfront-region-current');
+		this.$el.closest('.upfront-grid-layout').removeClass('upfront-grid-layout-current');
 		this.$el.closest('.upfront-wrapper').removeClass('upfront-wrapper-current');
 		this.$el.removeClass('upfront-control-dialog-open');
 		this.trigger('panel:close');
