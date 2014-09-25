@@ -28,7 +28,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			: array()
 		;
 
-		if (empty($post_type) && empty($taxonomy) && empty($term)) { // All empty, use whatever is global
+		if (/*empty($post_type) &&*/ empty($taxonomy) && empty($term)) { // All empty, use whatever is global
 			if (empty($data['query'])) $args = $wp_query->query_vars;
 			else  $args = $data['query']['query_vars'];
 		}
