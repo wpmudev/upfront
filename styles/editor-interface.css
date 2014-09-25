@@ -12475,14 +12475,42 @@ div.upfront-regions a#no_region_add_one {
     position:relative;
     z-index: 1;
 }
+.ueditor-insert-variant{
+    display: inline-block;
+}
+.ueditor-insert-variant:hover{
+    outline:1px dotted #7f7f7f;
+}
 .ueditor-insert-variant-wrap{
     display:block;
-    widht:300px;
-    height:300px;
+    width:100%;
+    min-height:50px;
+    overflow: hidden;
 }
 .ueditor-insert-variant-image{
-    display:block;
-    widht: 100%;
-    height:100%;
-    background:#ccc;
+    display:inline-block;
+    min-width: 10%;
+    min-height:10%;
+    height:250px;
+    padding:15px;
+    float: left;
+}
+
+.ueditor-insert-variant-wrap.editing .ueditor-insert-variant-image:hover{
+    outline:1px dotted #7f7f7f;
+}
+.ueditor-insert-variant-caption{
+    display:inline-block;
+    min-width: 5%;
+    min-height:2%;
+    padding:15px;
+    float: left;
+}
+.ueditor-insert-variant-wrap.editing .ueditor-insert-variant-caption:hover{
+    outline:1px dotted #7f7f7f;
+}
+.ueditor-insert-variant-image-inside{
+    background: #ccc;
+    display: block;
+    height: 100%;
 }

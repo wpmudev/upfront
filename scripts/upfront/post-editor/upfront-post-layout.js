@@ -1,4 +1,4 @@
-;(function($){define(['upfront/post-editor/upfront-post-content', 'text!upfront/templates/popup.html'], function(ContentTools, tpls){
+;(function($){define(['upfront/post-editor/upfront-post-content', 'text!upfront/templates/popup.html', 'text!upfront/templates/image_variants.html'], function(ContentTools, tpls, variant_tpl){
 
 var PostPartView = Upfront.Views.ObjectView.extend({
 	initialize: function(opts){
@@ -324,69 +324,15 @@ var ContentView = PostPartView.extend({
     events : {
         "click .upfront_edit_content_style" : 'start_content_styling'
     },
-    populate_style_content : function(){
-        var me = this,
-            options = this.postView.partOptions || {},
-            request = {
-                action: 'content_part_markup',
-                post_id: "fake_styled_post",
-                parts: JSON.stringify([{slug: this.postPart, options: options[this.postPart] || {}}]),
-                templates: {}
-            }
-            ;
-
-        request.templates[this.postPart] = this.getTemplate();
-        var promise = Upfront.Util.post(request);
-        promise.done(function(response){
-            _.extend(Upfront.Application.PostLayoutEditor.partMarkup, response.data.replacements);
-            me.$el.html(  response.data.replacements["%contents%"] );
-            me.detect_inserts();
-        });
-        return promise;
-    },
     start_content_styling : function( e ){
         e.preventDefault();
         e.stopPropagation();
         $(".sidebar-commands-control .command-cancel").show();
         $(e.target).closest(".upfront-module").addClass("upfront-disable-surroundings");
+        new PostContentInserts({
+            contentView : this
+        });
         Upfront.Events.trigger("post:content:style:start", this, 'single');
-        this.populate_style_content();
-
-        Upfront.Events.on("post:content:style:stop", function(){
-
-        });
-    },
-    detect_inserts : function(){
-        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
-        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
-        $(".upfront-inserted_image-wrapper").resizable({
-            grid : [Upfront.Behaviors.GridEditor.col_size, Upfront.Behaviors.GridEditor.baseline],
-            handles: "n, e, s, w, se, nw",
-            minHeight : 50,
-            minWidth : 50,
-            containment: ".upfront-module.post-part",
-            resize : function( event, ui ){
-                if( ui.position.left > 0 ){
-                    $(this).css("float", "right");
-                }else{
-                    $(this).css({
-                        float : "left",
-                        "left"  : "0px"
-                    });
-                }
-            },
-            stop : function( event, ui ){
-                if( ui.position.left > 0 ){
-                    $(this).css("float", "right");
-                }else{
-                    $(this).css({
-                        float : "left",
-                        "left"  : "0px"
-                    });
-                    $(this).css("left"  , "0px");
-                }
-            }
-        });
     },
 	updateOptions: function(){
 		var properties = this.model.get('properties').toJSON(),
@@ -417,7 +363,6 @@ var ContentView = PostPartView.extend({
 	},
 
 	render: function(){
-        console.log(this);
 		PostPartView.prototype.render.apply(this, arguments);
 
 		if(!this.paddingChangeHandler){
@@ -459,8 +404,121 @@ var ContentView = PostPartView.extend({
 		styles.html(rules);
 	}
 });
-var ImageInsert = Upfront.Views.ObjectView.extend({
+var PostContentInserts = Backbone.View.extend({
+    tpl : _.template($(variant_tpl).find('#upfront-post-image-variant-tpl').html()),
+    defaults : {
+        group : {
+          width_cls : "c24",
+          left_cls  :  "ml0",
+          top_cls   :   "mt0"
+        },
+        image : {
+            width_cls : "c18",
+            left_cls  :  "ml0",
+            top_cls   :   "mt0"
+        },
+        caption : {
+            width_cls : "c6",
+            left_cls  :  "ml18",
+            top_cls   :   "mt0"
+        }
+    },
+    initialize: function( options ){
+        this.contentView = options.contentView;
+        this.populate_style_content();
+        //Upfront.Events.on("post:content:style:start", this.populate_style_content);
+        Upfront.Events.on("post:content:style:stop", function(){
 
+        });
+        //
+    },
+    populate_style_content : function(){
+        var me = this,
+            options = this.contentView.postView.partOptions || {},
+            request = {
+                action: 'content_part_markup',
+                post_id: "fake_styled_post",
+                parts: JSON.stringify([{slug: this.contentView.postPart, options: options[this.contentView.postPart] || {}}]),
+                templates: {}
+            };
+
+        request.templates[this.contentView.postPart] = this.contentView.getTemplate();
+        var promise = Upfront.Util.post(request);
+        promise.done(function(response){
+            _.extend(Upfront.Application.PostLayoutEditor.partMarkup, response.data.replacements);
+            me.contentView.$el.html(  response.data.replacements["%contents%"] );
+            me.detect_inserts();
+        });
+
+        return promise;
+    },
+    detect_inserts : function() {
+        this.contentView.$el.find("#upfront-image-variants").html( this.tpl(this.defaults) );
+        this.make_resizable();
+        this.make_draggable();
+    },
+    make_draggable : function(){
+
+    },
+    make_resizable : function(){
+        var self = this,
+            ge = Upfront.Behaviors.GridEditor;
+        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
+        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        $(".upfront-inserted_image-wrapper").resizable({
+            autoHide: true,
+            delay: 50,
+            handles: {
+                nw: '.upfront-resize-handle-nw',
+                se: '.upfront-resize-handle-se'
+            },
+            //grid : [Upfront.Behaviors.GridEditor.col_size, Upfront.Behaviors.GridEditor.baseline],
+            minHeight: 50,
+            minWidth: 45,
+            containment: "parent",
+            alsoResize: $(this).find('.ueditor-insert-variant-image'),
+            resize: function (event, ui) {
+                if (ui.position.left > 0) {
+                    $(this).css({
+                        //float : "right",
+                        //left : 0
+                    });
+                } else {
+                    $(this).css({
+                        //float : "left",
+                        //right : 0
+                    });
+                }
+            },
+            stop: function (event, ui) {
+                var $this = $(this),
+                    col_class_size = Math.round(ui.size.width / ge.col_size),
+                    margin_left = ui.position.left,
+                    left_class_size = Math.round(margin_left / ge.col_size),
+                    height = Math.round(ui.size.height / ge.baseline) * ge.baseline;
+
+                //$this.data("margin_left", margin_left);
+
+                self.update_class($(this), ge.grid.class, col_class_size);
+                self.update_class($(this), ge.grid.left_margin_class, left_class_size);
+                $(this).css({
+                    height: height,
+                    width: "",
+                    left: ""
+                });
+
+            }
+        });
+    },
+    update_class :  function ($el, class_name, class_size) {
+        var rx = new RegExp('\\b' + class_name + '\\d+');
+        if ( ! $el.hasClass( class_name + class_size) ){
+            if ( $el.attr('class').match(rx) )
+                $el.attr('class', $el.attr('class').replace(rx, class_name + class_size));
+            else
+                $el.addClass( class_name + class_size );
+        }
+    }
 });
 var FeaturedImageView = PostPartView.extend({
 	init: function(options){
