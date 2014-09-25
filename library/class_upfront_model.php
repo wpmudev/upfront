@@ -590,6 +590,12 @@ class Upfront_Layout extends Upfront_JsonModel {
 					'type' => 'archive'
 				)
 			),
+			'archive-search' => array(
+				'layout' => array(
+					'item' => 'archive-search',
+					'type' => 'archive'
+				)
+			),
 			'404' => array(
 				'layout' => array(
 					'specificity' => 'single-404_page',

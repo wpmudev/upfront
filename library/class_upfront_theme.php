@@ -735,7 +735,9 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	public function theme_storage_key ($key) {
 		$theme_key = $this->get_prefix();
-		return preg_replace('/' . preg_quote(Upfront_Model::STORAGE_KEY, '/') . '/', $theme_key, $key);
+		if ($theme_key === $key) return $key;
+		$result = preg_replace('/' . preg_quote(Upfront_Model::STORAGE_KEY, '/') . '/', $theme_key, $key);
+		return $result;
 	}
 
 	protected function checkMenusExist() {
