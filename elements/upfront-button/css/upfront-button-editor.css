@@ -205,8 +205,14 @@ div.button-settings-panel div.or_divider div.upfront-settings-item-title > span 
 div.upfront-editable_entity.upfront-button {
 	display: table;	
 }
-div.upfront-output-button {
+div.upfront-output-button, div.upfront-output-button div.redactor_box {
 	display: table-row;	
+}
+
+div.upfront-output-button.being_edited {
+  display: inline-table;
+  height: 100%;
+  width: 100%;
 }
 
 div.button-settings-panel div.upfront-settings-common_panel {

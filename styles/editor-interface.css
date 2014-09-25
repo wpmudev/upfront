@@ -9420,7 +9420,7 @@ ul.redactor_toolbar li a.ueditor-unorderedlist {
 	background-position: -552px -124px;
 }
 
-ul.redactor_toolbar li a.re-upfrontLink{
+ul.redactor_toolbar li a.re-upfrontLink, ul.redactor_toolbar li a.re-upfrontLinkCTA{
 	background-position: -510px -167px;
 }
 

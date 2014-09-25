@@ -163,13 +163,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				disableLineBreak: true,
 				//focus: true,
 				
-				airButtons: ['formatting', 'bold', 'italic'],//airButtons: ['upfrontLinkCTA'],
-				//buttonsCustom: ['stateAlignCTA'],
+				airButtons: ['upfrontLinkCTA', 'stateAlignCTA', 'upfrontIcons'],
+				
 				placeholder: 'Click here',
 				autostart: false
 			})
 			.on('start', function(){
-				
+				me.$el.find('div.upfront-output-button').addClass('being_edited');
 				me.model.set_property('is_edited', true, true);
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
@@ -184,6 +184,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.property('href', $target.attr('href'), true);
 
 				me.property('align', $target.css('text-align'), true);
+				me.$el.find('div.being_edited').removeClass('being_edited');
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				me.render();
 			})
