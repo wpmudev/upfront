@@ -1407,18 +1407,25 @@ define([
 		},
 		on_render: function () {
 			var me = this,
-				typefaces_list = [],
 				styles_list = [] // this will change with every font family change
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
 				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
 				typography = this.model.get_property_value_by_name('typography');
 
-			_.each(system_fonts_storage.get_fonts().models, function(font)	{
-				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
+			// Check for theme fonts if no theme fonts just return string
+			var chooseButton = new Field_Button({
+				label: 'Select Fonts To Use',
+				compact: true,
+				on_click: function(e){
+					Upfront.Events.trigger('command:themefontsmanager:open');
+				}
 			});
-			_.each(google_fonts_storage.get_fonts().models, function(font) {
-				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
-			});
+			if (theme_fonts_collection.length === 0) {
+				this.$el.html('<p>(i) You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.</p>');
+				chooseButton.render();
+				this.$el.append(chooseButton.el);
+				return;
+			}
 
 			// Load saved styles for all elements
 			_.each(typography, function (value, element) {
@@ -1470,7 +1477,7 @@ define([
 					}),
 					typeface: new Field_Chosen_Select({
 						label: "Typeface",
-						values: typefaces_list,
+						values: theme_fonts_collection.get_fonts_for_select(),
 						default_value: me.typefaces['h1'],
 						change: function () {
 							var value = this.get_value(),
@@ -1483,6 +1490,7 @@ define([
 							}
 						}
 					}),
+					start_font_manager: chooseButton,
 					style: this.get_styles_field(),
 					color: new Upfront.Views.Editor.Field.Color({
 							label: "Color",
@@ -1537,7 +1545,7 @@ define([
 				field.render();
 				field.delegateEvents();
 			});
-			this.$el.append([this.fields.element.el, this.fields.typeface.el]);
+			this.$el.append([this.fields.element.el, this.fields.typeface.el, this.fields.start_font_manager.el]);
 			$('.upfront-chosen-select', this.$el).chosen({
 				width: '230px'
 			});
@@ -1585,25 +1593,17 @@ define([
 			var typography = this.model.get_property_value_by_name('typography'),
 				element = this.current_element,
 				styles = [],
-				font_family;
+				variants;
 
 			if (typography == false) typography = {};
 
 			if (_.isUndefined(typography[element]) || _.isUndefined(typography[element].font_face)) typography[element] = { font_face: 'Arial' };
 
-			font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[element].font_face });
-			if (_.isUndefined(font_family)) {
-				font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[element].font_face });
-			}
-			if (!_.isUndefined(font_family)) {
-				styles = [];
-				_.each(font_family.get('variants'), function(variant) {
-					variant = Font_Model.normalize_variant(variant);
-					styles.push({ label: variant, value: variant });
-				});
-			} else {
-				styles = [{ label: 'Regular', value: 'regular' }];
-			}
+			variants = theme_fonts_collection.get_variants(typography[element].font_face);
+			styles = [];
+			_.each(variants, function(variant) {
+				styles.push({ label: variant, value: variant });
+			});
 			return styles;
 		},
 		update_typography: function (color) {
@@ -4049,7 +4049,7 @@ define([
 		multiple: false,
 		get_field_html: function() {
 			var multiple = this.multiple ? 'multiple' : '';
-			return ['<select class="upfront-chosen-select"' , multiple,  '>', this.get_values_html(), '</select>'].join('');
+			return ['<select class="upfront-chosen-select"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
 		},
 		get_value_html: function (value, index) {
 			var selected = '';
@@ -4525,8 +4525,8 @@ define([
 				}
 				// Adding anchor trigger
 				//todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
-					
-				if (this.hide_common_anchors === false) {	
+
+				if (this.hide_common_anchors === false) {
 					var anchor_settings = new _Settings_AnchorSetting({model: this.model});
 					anchor_settings.panel = me;
 					anchor_settings.render();
@@ -4899,9 +4899,9 @@ var _Settings_CSS = SettingsItem.extend({
 	},
 	openNewEditor: function(e){
 		e.preventDefault();
-		
+
 		Upfront.Events.trigger("entity:settings:beforedeactivate");
-		
+
 		Upfront.Application.cssEditor.init({
 			model: this.model,
 			stylename: ''
@@ -4926,6 +4926,43 @@ var _Settings_CSS_Field = Field_Select.extend({
 	}
 });
 
+var ButtonPresetModel = Backbone.Model.extend({
+	initialize: function(attributes) {
+		this.set({ presets: attributes });
+	}
+});
+var ButtonPresetsCollection = Backbone.Collection.extend({
+	model: ButtonPresetModel
+});
+
+var button_presets_collection = new ButtonPresetsCollection(Upfront.mainData.buttonPresets);
+
+var Button_Presets_Storage = function(stored_presets) {
+	var button_presets;
+
+	var initialize = function() {
+		// When more than one weights are added at once don't send bunch of server calls
+		var save_button_presets_debounced = _.debounce(save_button_presets, 100);
+		button_presets_collection.on('add remove edit', save_button_presets_debounced);
+	};
+
+	var save_button_presets = function() {
+		var postData = {
+			action: 'upfront_update_button_presets',
+			button_presets: button_presets_collection.toJSON()
+		};
+
+		Upfront.Util.post(postData)
+			.error(function(){
+				return notifier.addMessage('Button presets could not be saved.');
+			});
+	};
+
+	initialize();
+};
+var button_presets_storage = new Button_Presets_Storage();
+
+// THEME FONTS START HERE //
 var Font_Model = Backbone.Model.extend({}, {
 	/*
 	 * Parsing variant to get style and weight for font.
@@ -5060,58 +5097,21 @@ var google_fonts_storage = new Google_Fonts_Storage();
 
 var System_Fonts_Storage = function() {
 	var font_families = [
-		{ family: "Default", category:'sans-serif' },
+		{ family: "Andale Mono", category:'monospace' },
 		{ family: "Arial", category:'sans-serif' },
 		{ family: "Arial Black", category:'sans-serif' },
-		{ family: "Arial Narrow", category:'sans-serif' },
-		{ family: "Arial Rounded MT Bold", category:'sans-serif' },
-		{ family: "Avant Garde", category:'sans-serif' },
-		{ family: "Calibri", category:'sans-serif' },
-		{ family: "Candara", category:'sans-serif' },
-		{ family: "Century Gothic", category:'sans-serif' },
-		{ family: "Franklin Gothic Medium", category:'sans-serif' },
-		{ family: "Futura", category:'sans-serif' },
-		{ family: "Geneva", category:'sans-serif' },
-		{ family: "Gill Sans", category:'sans-serif' },
-		{ family: "Helvetica", category:'sans-serif' },
-		{ family: "Impact", category:'sans-serif' },
-		{ family: "Lucida Grande", category:'sans-serif' },
-		{ family: "Optima", category:'sans-serif' },
-		{ family: "Segoe UI", category:'sans-serif' },
-		{ family: "Tahoma", category:'sans-serif' },
-		{ family: "Trebuchet MS", category:'sans-serif' },
-		{ family: "Verdana", category:'sans-serif' },
-		{ family: "Baskerville", category:'serif' },
-		{ family: "Big Caslon", category:'serif' },
-		{ family: "Bodoni MT", category:'serif' },
-		{ family: "Book Antiqua", category:'serif' },
-		{ family: "Calisto MT", category:'serif' },
-		{ family: "Cambria", category:'serif' },
-		{ family: "Didot", category:'serif' },
-		{ family: "Garamond", category:'serif' },
-		{ family: "Georgia", category:'serif' },
-		{ family: "Goudy Old Style", category:'serif' },
-		{ family: "Hoefler Text", category:'serif' },
-		{ family: "Lucida Bright", category:'serif' },
-		{ family: "Palatino", category:'serif' },
-		{ family: "Perpetua", category:'serif' },
-		{ family: "Rockwell", category:'serif' },
-		{ family: "Rockwell Extra Bold", category:'serif' },
-		{ family: "Times New Roman", category:'serif' },
-		{ family: "Andale Mono", category:'monospace' },
-		{ family: "Consolas", category:'monospace' },
 		{ family: "Courier New", category:'monospace' },
-		{ family: "Lucida Console", category:'monospace' },
-		{ family: "Lucida Sans Typewriter", category:'monospace' },
-		{ family: "Monaco", category:'monospace' }
+		{ family: "Georgia", category:'serif' },
+		{ family: "Impact", category:'sans-serif' },
+		{ family: "Times New Roman", category:'serif' },
+		{ family: "Trebuchet MS", category:'sans-serif' },
+		{ family: "Verdana", category:'sans-serif' }
 	];
 
 	var system_fonts = new Fonts_Collection();
 
 	var initialize = function() {
-		var variants,
-			$test_root,
-			test_string = (new Array(99)).join('mwi ');
+		var variants;
 
 		// Default variants for system fonts
 		variants = [];
@@ -5121,30 +5121,11 @@ var System_Fonts_Storage = function() {
 			});
 		});
 
-		// Add default font
-		system_fonts.add({ family: 'Arial', category: 'sans-serif', variants: variants });
-
-		// Check which fonts are available on system.
-		$("body").append('<div id="upfront-font_test-root" style="position:absolute; left: 0; top: 40px; white-space: nowrap; /*left: -999999999999px*/" />'),
-		$test_root = $("#upfront-font_test-root");
+		// Add variants
 		_.each(font_families, function(font_family) {
-			var base_width = 0;
-
-			// Get width with default font
-			$test_root
-				.css("font-family", font_family.category)
-				.text(test_string);
-			base_width = $test_root.width();
-
-			// Set font family and check if widths are different
-			$test_root.css("font-family", [font_family.family, font_family.category].join(','));
-			if (base_width !== $test_root.width()) {
 				font_family.variants = variants;
 				system_fonts.add(font_family);
-			}
 		});
-
-		$test_root.remove(); // Clean up markup
 	};
 
 	this.get_fonts = function() {
@@ -5194,7 +5175,43 @@ var ThemeFontModel = Backbone.Model.extend({
 	}
 });
 var ThemeFontsCollection = Backbone.Collection.extend({
-	model: ThemeFontModel
+	model: ThemeFontModel,
+	get_fonts_for_select: function() {
+		var typefaces_list = [{ label: "Choose font", value:'' }],
+			google_fonts = [];
+
+
+		_.each(theme_fonts_collection.models, function(theme_font) {
+			google_fonts.push(theme_font.get('font').family);
+		});
+		_.each(_.uniq(google_fonts), function(google_font) {
+			typefaces_list.push({label: google_font, value: google_font});
+		});
+		_.each(system_fonts_storage.get_fonts().models, function(font)	{
+			typefaces_list.push({ label: font.get('family'), value: font.get('family') });
+		});
+
+		return typefaces_list;
+	},
+	get_variants: function(font_family) {
+		var variants;
+
+		_.each(system_fonts_storage.get_fonts().models, function(font)	{
+			if (font_family === font.get('family')) {
+				variants = font.get('variants');
+			}
+		});
+		if (variants) return variants;
+
+		variants = [];
+		_.each(theme_fonts_collection.models, function(theme_font) {
+			if (font_family === theme_font.get('font').family) {
+				variants.push(theme_font.get('displayVariant'));
+			}
+		});
+
+		return variants;
+	}
 });
 
 var theme_fonts_collection = new ThemeFontsCollection(Upfront.mainData.themeFonts);
@@ -5254,15 +5271,15 @@ var ThemeFontListItem = Backbone.View.extend({
 
 var ThemeFontsPanel = Backbone.View.extend({
 	className: 'theme-fonts-panel panel',
-	template: $(_Upfront_Templates.popup).find('#theme-fonts-panel').html(),
+	template: _.template($(_Upfront_Templates.popup).find('#theme-fonts-panel').html()),
 	initialize: function(options) {
 		this.options = options || {};
-		this.listenTo(this.collection, 'add', this.add_one);
 		this.listenTo(this.collection, 'add remove', this.update_stats);
+		this.listenTo(this.collection, 'add remove', this.render);
 	},
 	render: function() {
 		this.$el.html('');
-		this.$el.html(this.template);
+		this.$el.html(this.template({show_no_styles_notice: this.collection.length === 0}));
 
 		_.each(this.collection.models, function(model) {
 			this.add_one(model);
@@ -5273,7 +5290,7 @@ var ThemeFontsPanel = Backbone.View.extend({
 		return this;
 	},
 	update_stats: function() {
-		this.$el.find('.font-stats').html('Total Fonts: <strong>' + this.collection.length + '</strong>');
+		this.$el.find('.font-stats').html('<strong>' + this.collection.length + ' font styles selected</strong>');
 	},
 	add_one: function(model) {
 		var themeFontView = new ThemeFontListItem({ model: model });
@@ -5282,14 +5299,61 @@ var ThemeFontsPanel = Backbone.View.extend({
 	}
 });
 
-var Font_Picker = Backbone.View.extend({
-	id: 'font-picker',
-	template: $(_Upfront_Templates.popup).find('#font-picker-tpl').html(),
+var Variant_View = Backbone.View.extend({
+	className: function() {
+		var className = 'font-variant-preview';
+		if (this.model.get('already_added')) {
+			className += ' font-variant-already-added';
+		}
+		return className;
+	},
+	template: _.template('{{family}} — {{name}}{[ if(already_added) { ]} <span class="already-added">Already added</span>{[ } ]}' +
+			'<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview">The Andromeda Galaxy</h1>'),
 	events: {
-		'click .add-font-button': 'add_font',
-		'click .font-picker-use-button': 'close',
-		'change input[type=checkbox]': 'preview_font',
-		'click .font-picker-revert-button': 'revert'
+		'click': 'on_click'
+	},
+	render: function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	},
+	on_click: function() {
+		if (this.model.get('already_added')) return;
+		this.model.set({selected: !this.model.get('selected')});
+		this.$el.toggleClass('font-variant-selected');
+	}
+});
+
+var Font_Variants_Preview = Backbone.View.extend({
+	id: 'font-variants-preview',
+	initialize: function(options) {
+		this.options = options || {};
+	},
+	addOne: function(model) {
+		var variant_view = new Variant_View({model: model});
+		this.$el.append(variant_view.render().el);
+	},
+	render: function() {
+		_.each(this.collection.models, function(model) {
+			this.addOne(model);
+		}, this);
+
+		return this;
+	},
+	get_selected: function() {
+		var selected = [];
+		_.each(this.collection.models, function(model) {
+			if (model.get('selected')) selected.push(model.get('variant'));
+		});
+		return selected;
+	}
+});
+
+var Text_Fonts_Manager = Backbone.View.extend({
+	id: 'text-fonts-manager',
+	className: 'clearfix',
+	template: _.template($(_Upfront_Templates.popup).find('#text-fonts-manager-tpl').html()),
+	events: {
+		'click .add-font-button': 'add_font'
 	},
 	initialize: function() {
 		this.theme_fonts_panel = new ThemeFontsPanel({
@@ -5297,13 +5361,11 @@ var Font_Picker = Backbone.View.extend({
 			parent_view: this
 		});
 		this.listenTo(this.collection, 'remove', this.update_variants_on_remove);
-		_.bindAll(this, 'close_on_outside_click');
-		$('body').on('click', this.close_on_outside_click);
 	},
 	render: function() {
 		var me = this;
 
-		this.$el.html(this.template);
+		this.$el.html(this.template({show_no_styles_notice: this.collection.length === 0}));
 		$.when(google_fonts_storage.get_fonts()).done(function(fonts_collection) {
 			me.load_google_fonts(fonts_collection);
 		});
@@ -5311,16 +5373,6 @@ var Font_Picker = Backbone.View.extend({
 		this.$el.find('.add-font-panel').after(this.theme_fonts_panel.render().el);
 
 		return this;
-	},
-	close_on_outside_click: function(event) {
-		if (this.first_click_done && $(event.target).parents('#font-picker').length === 0) {
-			$('body').off('click', this.close_on_outside_click);
-			this.revert();
-			return;
-		}
-		// When opening font picker, click to open it will also be captured here
-		// so make sure to not close on that first click.
-		this.first_click_done = true;
 	},
 	add_font: function() {
 		var variants;
@@ -5330,7 +5382,7 @@ var Font_Picker = Backbone.View.extend({
 			return;
 		}
 
-		variants = this.choose_variants.get_value();
+		variants = this.choose_variants.get_selected();
 		if (_.isEmpty(variants)) {
 			alert('Choose at least one font weight.');
 			return;
@@ -5341,17 +5393,12 @@ var Font_Picker = Backbone.View.extend({
 				font: font.toJSON(),
 				variant: variant
 			});
-
-			// Check if font is added to page
-			if ($('#' + font.get('family').toLowerCase() + variant + '-css').length === 0) {
-				$('head').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
-			}
-		}, this);
+		});
 		this.update_variants();
 	},
 	load_google_fonts: function(fonts_collection) {
 		var add_font_panel = this.$el.find('.add-font-panel');
-		var typefaces_list = [];
+		var typefaces_list = [{ label: 'Click here to pick a Google Font', value: ''}];
 		_.each(fonts_collection.pluck('family'), function(family) {
 			typefaces_list.push({ label: family, value: family });
 		});
@@ -5360,13 +5407,13 @@ var Font_Picker = Backbone.View.extend({
 		this.font_family_select = new Field_Chosen_Select({
 			label: "Typeface",
 			values: typefaces_list,
-			default_value: 'Choose Font',
+			placeholder: 'Choose Font',
 			additional_classes: 'choose-font'
 		});
 		this.font_family_select.render();
 		add_font_panel.find('.font-weights-list').before(this.font_family_select.el);
 		$('.upfront-chosen-select', this.$el).chosen({
-			width: '185px'
+			width: '289px'
 		});
 		this.listenTo(this.font_family_select, 'changed', this.update_variants);
 	},
@@ -5377,65 +5424,98 @@ var Font_Picker = Backbone.View.extend({
 		if (!model) model = google_fonts_storage.get_fonts().findWhere({ 'family' : this.font_family_select.get_value() });
 		if (!model) return;
 		// Choose variants
-		var values = [];
+		var variants = new Backbone.Collection();
 		_.each(model.get('variants'), function(variant) {
-			var value = { label: Font_Model.normalize_variant(variant), value: variant }
-			if (theme_fonts_collection.get(model.get('family') + variant)) {
-				value.checked = 'checked';
-				value.disabled = 'disabled';
+			// Add font to page so we can make preview with real fonts
+			if ($('#' + model.get('family').toLowerCase() + variant + '-css').length === 0) {
+				$('head').append('<link rel="stylesheet" id="' + model.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + model.get('family') + '%3A' + variant + '" type="text/css" media="all">');
 			}
-			values.push(value);
+			var weight_style = Font_Model.parse_variant(variant);
+			variants.add({
+				family: model.get('family'),
+				name: Font_Model.normalize_variant(variant),
+				variant: variant,
+				already_added: !!theme_fonts_collection.get(model.get('family') + variant),
+				weight: weight_style.weight,
+				style: weight_style.style
+			});
 		});
 		if (this.choose_variants) this.choose_variants.remove();
 
-		this.choose_variants = new Field_Checkboxes({
-			name: 'scope',
-			label: 'Choose weight(s) to add:',
-			multiple: true,
-			values: values
+		this.choose_variants = new Font_Variants_Preview({
+			collection: variants
 		});
 		this.choose_variants.render();
-		this.$el.find('.font-weights-list').html(this.choose_variants.el);
-		this.choose_variants.$el.find('.upfront-field-multiple').wrapAll('<div class="font-weights-list-wrapper" />');
+		this.$el.find('.font-weights-list-wrapper').html(this.choose_variants.el);
+	}
+});
+
+var Insert_Font_Widget = Backbone.View.extend({
+	initialize: function() {
+		var me = this;
+		this.fields = [
+			new Field_Chosen_Select({
+				label: '',
+				compact: true,
+				values: theme_fonts_collection.get_fonts_for_select(),
+				additional_classes: 'choose-typeface'
+			}),
+			new Field_Chosen_Select({
+				label: '',
+				compact: true,
+				values: [],
+				additional_classes: 'choose-variant'
+			}),
+			new Field_Button({
+				label: 'Insert Font',
+				compact: true,
+				on_click: function(){
+					me.finish();
+				}
+			})
+		];
 	},
-	close: function() {
-		$('body').off('click', this.close_on_outside_click);
+	render: function() {
+		$('#insert-font-widget').html('').addClass('open');
+		this.$el.html('');
+		_.each(this.fields, function(field) {
+			field.render();
+			this.$el.append(field.el);
+		}, this);
 
-		// If last selected font is not theme font (user just tried out by clicking on font
-		// in left (add fonts) panel, than revert to font. User must add font to theme fonts
-		// if she wants to keep style.
-	  var last_font = theme_fonts_collection.get(this.last_selected_font.font.family + this.last_selected_font.variant);
-		if (last_font) {
-		  this.remove();
-			return;
-		}
-		this.revert();
-	},
-	preview_font: function(event) {
-		var themeFont, checkbox, font, variant;
-		font = google_fonts_storage.get_fonts().findWhere({ family: this.font_family_select.get_value() }),
-		checkbox = $(event.currentTarget);
-		variant = checkbox.val();
-
-		if (!checkbox.is(':checked')) return;
-
-		themeFont = theme_fonts_collection.get(font.get('family') + variant);
-		if (themeFont) {
-			this.replaceFont(themeFont);
-			return;
-		}
-
-		themeFont = new ThemeFontModel({
-			id: font.get('family') + variant,
-			font: font.toJSON(),
-			variant: variant
+		this.listenTo(this.fields[0], 'changed', function() {
+			var variants = theme_fonts_collection.get_variants(this.fields[0].get_value());
+			this.render_variants(variants);
+		});
+		this.listenTo(this.fields[1], 'changed', function() {
+			this.preview_font();
 		});
 
-		if ($('#' + font.get('family').toLowerCase() + variant + '-css').length === 0) {
-			$('head').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
-		}
+		$('.choose-typeface select', this.$el).chosen({
+			width: '230px',
+			disable_search: true
+		});
+		$('.choose-variant select', this.$el).chosen({
+			width: '120px',
+			disable_search: true
+		});
 
-		this.replaceFont(themeFont.toJSON());
+		return this;
+	},
+	render_variants: function(variants) {
+		var $variant_field = this.$el.find('.choose-variant select');
+		$variant_field.find('option').remove();
+		$variant_field.append('<option value="">Choose variant</option>');
+		_.each(variants, function(variant) {
+			$variant_field.append('<option value="' + variant + '">' + variant + '</option>');
+		});
+		$variant_field.trigger('chosen:updated');
+	},
+	preview_font: function() {
+		this.replaceFont({
+			font_family: this.fields[0].get_value(),
+			variant: Font_Model.parse_variant(this.fields[1].get_value())
+		});
 	},
 	replaceFont: function(font) {
 		var lines;
@@ -5444,25 +5524,22 @@ var Font_Picker = Backbone.View.extend({
 
 		this.last_selected_font = font;
 
-		// Store starting text, must be restored if exiting font picker without font chosen
-		if (!this.starting_font) this.starting_font = this.editor.getCopyText();
-
 		// Insert selected font family
 		if (!this.font_family_range) {
 			this.font_family_range = this.editor.getSelection().getRange();
 		} else {
 			this.font_family_range.end = this.end_point;
 		}
-		this.end_point = this.style_doc.replace(this.font_family_range, font.font.family);
+		this.end_point = this.style_doc.replace(this.font_family_range, font.font_family);
 
 		// Insert selected weight and style, first reset them
 		this.reset_properties();
 		lines = [];
-		if (font.fontWeight) {
-			lines.push('    font-weight: ' + font.fontWeight + ';');
+		if (font.variant.weight) {
+			lines.push('    font-weight: ' + font.variant.weight + ';');
 		}
-		if (font.fontStyle) {
-			lines.push('    font-style: ' + font.fontStyle + ';');
+		if (font.variant.style) {
+			lines.push('    font-style: ' + font.variant.style + ';');
 		}
 		if (lines.length > 0) {
 			this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
@@ -5516,35 +5593,8 @@ var Font_Picker = Backbone.View.extend({
 			this.style_doc.removeLines(result.style, result.style);
 		}
 	},
-	revert: function() {
-		var lines;
-		this.editor = Upfront.Application.cssEditor.editor;
-		this.style_doc = this.editor.getSession().getDocument();
-
-		if (!this.font_family_range) {
-			this.remove();
-			return;
-		}
-		// Revert font family
-		this.font_family_range.end = this.end_point;
-		this.style_doc.replace(this.font_family_range, this.starting_font);
-		this.starting_font = false;
-
-		// Revert weight and style
-		this.reset_properties();
-		lines = [];
-		if (this.starting_weight) {
-			lines.push(this.starting_weight);
-			this.starting_weight = false;
-		}
-		if (this.starting_style) {
-			lines.push(this.starting_style);
-		}
-		if (lines.length > 0) {
-			this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
-		}
-
-		this.remove();
+	finish: function() {
+		$('#insert-font-widget').html('<a class="upfront-css-font" href="#">Insert Font</a>').removeClass('open');
 	}
 });
 
@@ -5558,7 +5608,7 @@ var CSSEditor = Backbone.View.extend({
 		'click .upfront-css-save-ok': 'save',
 		'click .upfront-css-close': 'close',
 		'click .upfront-css-image': 'openImagePicker',
-		'click .upfront-css-font': 'openFontPicker',
+		'click .upfront-css-font': 'startInsertFontWidget',
 		'click .upfront-css-selector': 'addSelector',
 		'click .upfront-css-type' : 'scrollToElement',
 		'click .upfront-css-delete': 'deleteStyle',
@@ -6146,9 +6196,9 @@ var CSSEditor = Backbone.View.extend({
 		});
 	},
 
-  openFontPicker: function() {
-    var font_picker = new Font_Picker({ collection: theme_fonts_collection });
-    this.$el.append(font_picker.render().el);
+  startInsertFontWidget: function() {
+    var insertFontWidget = new Insert_Font_Widget({ collection: theme_fonts_collection });
+    $('#insert-font-widget').html(insertFontWidget.render().el);
   },
 
 	getElementType: function(model){
@@ -8619,7 +8669,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						return -1;
 					return collection.indexOf(model);
 				};
-				
+
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
 				if ( to == 'left' || to == 'right' ){
@@ -9900,6 +9950,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"Fonts": {
 				"System": system_fonts_storage,
 				"Google": google_fonts_storage,
+				Text_Fonts_Manager: Text_Fonts_Manager,
+				theme_fonts_collection: theme_fonts_collection
 			},
 			"Field": {
 				"Field": Field,
