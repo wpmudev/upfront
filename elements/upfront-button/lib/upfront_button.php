@@ -16,12 +16,15 @@ class Upfront_ButtonView extends Upfront_Object {
 		$presets = json_decode($button_presets, true);
 		$preset = false;
 		$markup = "";
-		foreach($presets as $item) {
-			if($item['id'] == $this->_get_property('currentpreset')) {
-				$preset = $item;	
-				break;
+		if(is_array($presets)) {
+			foreach($presets as $item) {
+				if($item['id'] == $this->_get_property('currentpreset')) {
+					$preset = $item;	
+					break;
+				}
 			}
 		}
+		
 	
 		$data['content'] = $this->_get_property('content');
 		$data['href'] = $this->_get_property('href');

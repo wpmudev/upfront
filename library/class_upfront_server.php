@@ -1485,7 +1485,7 @@ class Upfront_Server_ButtonPresetsServer extends Upfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
 		$button_presets = isset($_POST['button_presets']) ? $_POST['button_presets'] : array();
-
+		
 
 		//do_action('upfront_save_button_presets', $button_presets);
 

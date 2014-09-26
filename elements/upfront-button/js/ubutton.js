@@ -1161,7 +1161,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				else
 					this.hov_color.set_value(preset.color);	
 		
-				this.$el.find('div.upfront-settings-css input[value='+preset.theme_style+']').trigger('click');
+				this.$el.find('div.upfront-settings-css input[value="'+preset.theme_style+'"]').trigger('click');
 			}
 	},
 	save_preset: function(presetname) {
@@ -1274,10 +1274,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			newpresettheme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
 			
 			Upfront.Views.Editor.Button.Presets.add(newpreset);
+			
 		}
 		
-		if(this.buttonpresets.$el.find('input[value='+presetname+']').length > 0)
-			this.buttonpresets.$el.find('input[value='+presetname+']').trigger('click');
+		if(this.buttonpresets.$el.find('input[value="'+presetname+'"]').length > 0)
+			this.buttonpresets.$el.find('input[value="'+presetname+'"]').trigger('click');
 		else if(this.buttonpresets.$el.find('input[type=radio]:checked').length > 0)
 			this.buttonpresets.$el.find('input[type=radio]:checked').val(presetname);
 		else if(this.buttonpresets.$el.find('input[type=radio]').length > 0)
