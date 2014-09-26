@@ -342,3 +342,15 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 	height: 17px;
 	background-position: -1080px -85px;
 }
+
+/* resets to match the editor exp */
+* {
+  font-weight: inherit;
+  font-style: inherit;
+  text-transform: inherit;
+  text-decoration: inherit;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
