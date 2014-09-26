@@ -5165,11 +5165,7 @@ var System_Fonts_Storage = function() {
 
 var system_fonts_storage = new System_Fonts_Storage();
 
-var ButtonPresetModel = Backbone.Model.extend({
-	initialize: function(attributes) {
-		this.set({ presets: attributes });
-	}
-});
+var ButtonPresetModel = Backbone.Model.extend();
 var ButtonPresetsCollection = Backbone.Collection.extend({
 	model: ButtonPresetModel
 });
