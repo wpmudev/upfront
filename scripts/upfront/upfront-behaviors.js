@@ -1003,6 +1003,7 @@ var LayoutEditor = {
 			{ 'name': 'layout_style' }
 		);
 
+
 		properties = _.extend({}, Upfront.Util.model_to_json(Upfront.Application.current_subapplication.get_layout_data().properties));
 		properties = _.reject(properties, function(property) {
 			return _.contains(['typography', 'layout_style', 'global_regions'], property.name);
@@ -1020,7 +1021,8 @@ var LayoutEditor = {
 				colors: Upfront.Views.Theme_Colors.colors.toJSON(),
 				range: Upfront.Views.Theme_Colors.range
 			},
-			button_presets: Upfront.Views.Editor.Button.Presets.toJSON()
+			button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
+			post_image_variants: Upfront.Content.ImageVariants.toJSON()
 		};
 
 		if (Upfront.themeExporter.layoutStyleDirty) {

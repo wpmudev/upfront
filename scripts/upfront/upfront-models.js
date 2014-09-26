@@ -1304,7 +1304,7 @@ var _alpha = "alpha",
 		}
 	});
 
-	Comment = WPModel.extend({
+	var Comment = WPModel.extend({
 		modelName: 'comment',
 		defaults: {
 			comment_ID: 0,
@@ -1523,6 +1523,28 @@ var _alpha = "alpha",
 		}
 	}),
 
+    ImageVariant = Backbone.Model.extend({
+        defaults : {
+            group : {
+                width_cls : "c24",
+                left_cls  :  "ml0",
+                top_cls   :   "mt0"
+            },
+            image : {
+                width_cls : "c24",
+                left_cls  :  "ml0",
+                top_cls   :   "mt0"
+            },
+            caption : {
+                width_cls : "c20",
+                left_cls  :  "ml2",
+                top_cls   :   "mt0"
+            }
+        }
+    }),
+    ImageVariants = Backbone.Collection.extend({
+        model : ImageVariant
+    }),
 _omega = 'omega';
 
 return {
@@ -1542,7 +1564,8 @@ return {
       "Comments": Comments,
       "Meta": Meta,
       "Term": Term,
-      "User": User
+      "User": User,
+      "ImageVariant" : ImageVariant
     },
     "Collections": {
       "Properties": Properties,
@@ -1553,7 +1576,8 @@ return {
       "CommentList": CommentList,
       "MetaList": MetaList,
       "PostList": PostList,
-      "TermList": TermList
+      "TermList": TermList,
+      "ImageVariants" : ImageVariants
     }
   };
 });

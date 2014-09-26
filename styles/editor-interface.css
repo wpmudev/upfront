@@ -12449,7 +12449,8 @@ div.upfront-regions a#no_region_add_one {
 .upfront-region-bg-setting-add-global-region {
 	margin-bottom: 20px;
 }
-.upfront_edit_content_style{
+.upfront_edit_content_style,
+.upfront_edit_image_insert{
     position: absolute;
     left: 50%;
     top: 50%;
@@ -12470,6 +12471,9 @@ div.upfront-regions a#no_region_add_one {
 .upfront-output-PostPart_contents:hover .upfront_edit_content_style{
     display: block;
 }
+.ueditor-insert-variant:hover .upfront_edit_image_insert{
+    display: block;
+}
 .upfront-disable-surroundings{
     box-shadow: 0 0 0 5000px rgba(0,0,10,.5);
     position:relative;
@@ -12484,11 +12488,12 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant-wrap{
     display:block;
     width:100%;
+    height: 100%;
     min-height:50px;
     overflow: hidden;
 }
 .ueditor-insert-variant-image{
-    display:inline-block;
+    display:block;
     min-width: 10%;
     min-height:10%;
     height:250px;
@@ -12500,7 +12505,7 @@ div.upfront-regions a#no_region_add_one {
     outline:1px dotted #7f7f7f;
 }
 .ueditor-insert-variant-caption{
-    display:inline-block;
+    display:block;
     min-width: 5%;
     min-height:2%;
     padding:15px;
@@ -12513,4 +12518,32 @@ div.upfront-regions a#no_region_add_one {
     background: #ccc;
     display: block;
     height: 100%;
+}
+
+.finish_editing_image_insert{
+    display: block;
+    background: #1fcc8f;
+    color:#fff;
+    position: absolute;
+    right: 0;
+    bottom:-38px;
+    height:38px;
+    width: 220px;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
+}
+.finish_editing_image_insert:hover{
+    color:#fff;
+}
+.upfront-add-image-insert-variant{
+    display: block;
+    height: 38px;
+    width: 200px;
+    color: #1fcc8f;
+    border: 3px #1fcc8f solid;
+    margin: 10px auto;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
 }

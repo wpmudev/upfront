@@ -329,7 +329,7 @@ var ContentView = PostPartView.extend({
         e.stopPropagation();
         $(".sidebar-commands-control .command-cancel").show();
         $(e.target).closest(".upfront-module").addClass("upfront-disable-surroundings");
-        new PostContentInserts({
+        new PostImageVariants({
             contentView : this
         });
         Upfront.Events.trigger("post:content:style:start", this, 'single');
@@ -404,33 +404,23 @@ var ContentView = PostPartView.extend({
 		styles.html(rules);
 	}
 });
-var PostContentInserts = Backbone.View.extend({
-    tpl : _.template($(variant_tpl).find('#upfront-post-image-variant-tpl').html()),
-    defaults : {
-        group : {
-          width_cls : "c24",
-          left_cls  :  "ml0",
-          top_cls   :   "mt0"
-        },
-        image : {
-            width_cls : "c18",
-            left_cls  :  "ml0",
-            top_cls   :   "mt0"
-        },
-        caption : {
-            width_cls : "c6",
-            left_cls  :  "ml18",
-            top_cls   :   "mt0"
-        }
-    },
-    initialize: function( options ){
+
+var ImageVariants = new Upfront.Collections.ImageVariants( Upfront.mainData.postImageVariants );
+
+var PostImageVariants =  Backbone.View.extend({
+    initialize: function( options ) {
         this.contentView = options.contentView;
         this.populate_style_content();
-        //Upfront.Events.on("post:content:style:start", this.populate_style_content);
-        Upfront.Events.on("post:content:style:stop", function(){
-
-        });
-        //
+    },
+    events : {
+        "click .upfront-add-image-insert-variant" : "add_new_variant"
+    },
+    add_new_variant : function(){
+        var variant = new PostImageVariant();
+        variant.render();
+        variant.$el.hide();
+        $(this).after( variant.el );
+        variant.$el.fadeIn();
     },
     populate_style_content : function(){
         var me = this,
@@ -447,25 +437,172 @@ var PostContentInserts = Backbone.View.extend({
         promise.done(function(response){
             _.extend(Upfront.Application.PostLayoutEditor.partMarkup, response.data.replacements);
             me.contentView.$el.html(  response.data.replacements["%contents%"] );
-            me.detect_inserts();
+            //me.detect_inserts();
+
+            ImageVariants.each(function( model ){
+                var variant = new PostImageVariant({ model : model });
+                variant.render();
+                me.contentView.$el.find("#upfront-image-variants").append( variant.el );
+            });
+            me.contentView.$el.find("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
+                .on("click", me.add_new_variant);
         });
 
         return promise;
-    },
-    detect_inserts : function() {
-        this.contentView.$el.find("#upfront-image-variants").html( this.tpl(this.defaults) );
-        this.make_resizable();
-        this.make_draggable();
-    },
-    make_draggable : function(){
+    }
+});
+var PostImageVariant = Backbone.View.extend({
+    tpl : _.template($(variant_tpl).find('#upfront-post-image-variant-tpl').html()),
+    initialize: function( options ){
+        this.opts = options;
+        this.model = _.isUndefined(options) || _.isUndefined( options.model ) ? new Upfront.Models.ImageVariant() : options.model;
+        //Upfront.Events.on("post:content:style:start", this.populate_style_content);
+        console.log(this.model );
+        Upfront.Events.on("post:content:style:stop", function(){
 
+        });
+    },
+    events : {
+        "click .upfront_edit_image_insert" : "start_editing",
+        "click .finish_editing_image_insert" : "finish_editing"
+    },
+    render : function() {
+        this.$el.html( this.tpl( this.model.toJSON() ) );
+        this.$self = this.$(".ueditor-insert-variant");
+        this.$image =  this.$(".ueditor-insert-variant-image");
+        this.$caption = this.$(".ueditor-insert-variant-caption");
+        this.make_resizable();
+
+        return this;
+    },
+    start_editing : function(e){
+        e.preventDefault();
+        // Hide edit button
+        this.$(".upfront_edit_image_insert").css({
+            visibility : "hidden"
+        });
+        //disable group's resizability
+        this.$self.resizable("disable");
+
+        // hide group's resize handles
+        this.$self.find(".upfront-icon-control").hide();
+
+        // explicitly set group's height
+        this.$self.css("height", this.$(".ueditor-insert-variant").height());
+
+        this.make_items_draggable();
+        this.make_items_resizable();
+        this.$self.append("<div class='finish_editing_image_insert'>Finish editing image insert</div>")
+    },
+    finish_editing : function( e ){
+        e.preventDefault();
+        // Show edit button
+        this.$(".upfront_edit_image_insert").css({
+            visibility : "visible"
+        });
+        //enable group's resizability
+        this.$self.resizable("enable");
+
+        // Show group's resize handles
+        this.$self.find(".upfront-icon-control").show();
+
+        this.$image.draggable("disable");
+        this.$image.resizable("disable");
+        this.$image.find(".upfront-icon-control").remove();
+
+        this.$caption.draggable("disable");
+        this.$caption.resizable("disable");
+        this.$caption.find(".upfront-icon-control").remove();
+
+        $(e.target).remove();
+
+    },
+    make_items_draggable : function(){
+        var options = {
+            containment : ".ueditor-insert-variant",
+            delay: 50,
+            start : function( event, ui ){
+              $(this).resizable("disable");
+            },
+            drag : function( event, ui ){
+                //$(this).css({
+                //    position : "relative"
+                //});
+            },
+            stop : function(event, ui){
+                $(this).resizable("enable");
+            }
+        };
+
+        /**
+         * Make image draggable
+         */
+        if( _.isEmpty( this.$image.data("uiDraggable") ) ){
+            this.$image.draggable( options );
+        }else{
+            this.$image.draggable( "enable" );
+        }
+
+        /**
+         * Make caption draggable
+         */
+        if( _.isEmpty( this.$caption.data("uiDraggable") ) ){
+            this.$caption.draggable( options );
+        }else{
+            this.$caption.draggable( "enable" );
+        }
+    },
+    make_items_resizable : function(){
+        var options = {
+            containment : ".ueditor-insert-variant",
+            handles: {
+                nw: '.upfront-resize-handle-nw',
+                se: '.upfront-resize-handle-se'
+            },
+            //autoHide: true,
+            delay: 50,
+            minHeight: 50,
+            minWidth: 45,
+            start : function( event, ui ){
+                $(this).draggable("disable");
+            },
+            resize: function( event, ui ){
+                //$(this).css({
+                //    position : "relative"
+                //});
+            },
+            stop : function(event, ui){
+                $(this).draggable("enable");
+            }
+        };
+        /**
+         * Make image resizable
+         */
+        this.$image.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
+        this.$image.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        if(_.isEmpty(  this.$image.data("uiResizable") ) ){
+            this.$image.resizable(options);
+        }else{
+            this.$image.resizable("enable");
+        }
+
+        /**
+         * Make caption resizable
+         */
+        this.$caption.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
+        this.$caption.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        if(_.isEmpty(  this.$caption.data("uiResizable") ) ){
+            this.$caption.resizable(options);
+        }else{
+            this.$caption.resizable("enable");
+        }
     },
     make_resizable : function(){
         var self = this,
             ge = Upfront.Behaviors.GridEditor;
-        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
-        $(".upfront-inserted_image-wrapper").append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
-        $(".upfront-inserted_image-wrapper").resizable({
+        this.$self.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
+        this.$self.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        this.$self.resizable({
             autoHide: true,
             delay: 50,
             handles: {
@@ -478,14 +615,14 @@ var PostContentInserts = Backbone.View.extend({
             containment: "parent",
             alsoResize: $(this).find('.ueditor-insert-variant-image'),
             resize: function (event, ui) {
-                if (ui.position.left > 0) {
+                if (ui.position.left ===  0) {
                     $(this).css({
-                        //float : "right",
-                        //left : 0
+                        float : "left",
+                        left : 0
                     });
                 } else {
                     $(this).css({
-                        //float : "left",
+                        float : "none"
                         //right : 0
                     });
                 }
@@ -495,12 +632,10 @@ var PostContentInserts = Backbone.View.extend({
                     col_class_size = Math.round(ui.size.width / ge.col_size),
                     margin_left = ui.position.left,
                     left_class_size = Math.round(margin_left / ge.col_size),
-                    height = Math.round(ui.size.height / ge.baseline) * ge.baseline;
+                    height =  Upfront.Util.height_to_row(ui.size.height) * ge.baseline;
 
-                //$this.data("margin_left", margin_left);
-
-                self.update_class($(this), ge.grid.class, col_class_size);
-                self.update_class($(this), ge.grid.left_margin_class, left_class_size);
+                self.update_class($this, ge.grid.class, col_class_size);
+                self.update_class($this, ge.grid.left_margin_class, left_class_size);
                 $(this).css({
                     height: height,
                     width: "",
@@ -753,6 +888,7 @@ var PostPartModel = Upfront.Models.ObjectModel.extend({
 	}
 });
 
+
 var SaveDialog = Backbone.View.extend({
 	tpl: _.template($(tpls).find('#save-dialog-tpl').html()),
 	attributes: {id: 'upfront-save-dialog-background'},
@@ -847,7 +983,8 @@ if(!Upfront.Content)
 _.extend(Upfront.Content, {
 	PostElement: PostPartElement,
 	TemplateEditor: TemplateEditor,
-	PostPart: PostPartModel
+	PostPart: PostPartModel,
+    ImageVariants : ImageVariants
 });
 
 return {};
