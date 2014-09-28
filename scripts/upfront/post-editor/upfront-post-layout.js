@@ -451,8 +451,19 @@ var PostImageVariants =  Backbone.View.extend({
                 variant.render();
                 me.contentView.$el.find("#upfront-image-variants").append( variant.el );
             });
-            me.contentView.$el.find("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
-                .on("click", me.add_new_variant);
+
+            if( ImageVariants.length === 0 ){
+                var model = new Upfront.Models.ImageVariant(),
+                    variant = new PostImageVariant({ model : model });
+                variant.render();
+                me.contentView.$el.find("#upfront-image-variants").append( variant.el );
+            }
+
+            /**
+             * Add new button
+             */
+            //me.contentView.$el.find("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
+            //    .on("click", me.add_new_variant);
         });
 
         return promise;
@@ -604,6 +615,13 @@ var PostImageVariant = Backbone.View.extend({
             this.$caption.resizable("enable");
         }
     },
+    ui_right : function( ui, el ){
+        var $el = $(el),
+            $content = $el.closest(".upfront-object-view"),
+            content_width = $content.width(),
+            left = ui.position.left;
+        return content_width - left - $el.width();
+    },
     make_resizable : function(){
         var self = this,
             ge = Upfront.Behaviors.GridEditor;
@@ -616,23 +634,32 @@ var PostImageVariant = Backbone.View.extend({
                 nw: '.upfront-resize-handle-nw',
                 se: '.upfront-resize-handle-se'
             },
-            //grid : [Upfront.Behaviors.GridEditor.col_size, Upfront.Behaviors.GridEditor.baseline],
             minHeight: 50,
             minWidth: 45,
             containment: "parent",
             alsoResize: $(this).find('.ueditor-insert-variant-image'),
             resize: function (event, ui) {
-                if (ui.position.left ===  0) {
+                if (ui.position.left ===  0 && self.ui_right( ui, this) !== 0) {
                     $(this).css({
                         float : "left",
-                        left : 0
+                        left  : 0,
+                        right : 0
                     });
-                } else {
+                } else if( ui.position.left > 0 && self.ui_right( ui, this) === 0 ) {
                     $(this).css({
-                        float : "none"
-                        //right : 0
+                        float : "right",
+                        left  : 0,
+                        right : 0
                     });
                 }
+
+                if(  (  ui.position.left ===  0 && self.ui_right( ui, this) === 0 ) ||  ( ui.position.left !==  0 && self.ui_right( ui, this) !== 0 )){
+                    $(this).css({
+                        float : "none"
+                    });
+                }
+
+
             },
             stop: function (event, ui) {
                 var $this = $(this),
@@ -642,13 +669,12 @@ var PostImageVariant = Backbone.View.extend({
                     height =  Upfront.Util.height_to_row(ui.size.height) * ge.baseline;
 
                 self.update_class($this, ge.grid.class, col_class_size);
-                self.update_class($this, ge.grid.left_margin_class, left_class_size);
                 $(this).css({
                     height: height,
                     width: "",
-                    left: ""
+                    "margin-left": ""
                 });
-
+                //self.update_class($this, ge.grid.left_margin_class, left_class_size);
             }
         });
     },

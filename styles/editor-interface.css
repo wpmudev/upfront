@@ -12491,6 +12491,7 @@ div.upfront-regions a#no_region_add_one {
 }
 .ueditor-insert-variant{
     display: inline-block;
+    overflow: hidden;
 }
 .ueditor-insert-variant:hover{
     outline:1px dotted #7f7f7f;
@@ -12506,7 +12507,7 @@ div.upfront-regions a#no_region_add_one {
     display:block;
     min-width: 10%;
     min-height:10%;
-    height:250px;
+    height:90%;
     padding:15px;
     float: left;
 }

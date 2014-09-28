@@ -1527,18 +1527,19 @@ var _alpha = "alpha",
         defaults : {
             group : {
                 width_cls : "c24",
-                left_cls  :  "ml0",
-                top_cls   :   "mt0"
+                height: 250
             },
             image : {
                 width_cls : "c24",
-                left_cls  :  "ml0",
-                top_cls   :   "mt0"
+                left_cls  : "ml0",
+                top_cls   : "mt0",
+                height    : 200
             },
             caption : {
                 width_cls : "c20",
-                left_cls  :  "ml2",
-                top_cls   :   "mt0"
+                left_cls  : "ml2",
+                top_cls   : "mt0",
+                height    : 50
             }
         }
     }),
