@@ -305,6 +305,9 @@ jQuery(document).ready(function($){
 		//if(typeof(Upfront) != 'undefined' && Upfront.Views)
 			//return;
 
+		if($(e.target).closest('div.redactor_box') > 0)
+			return;
+
 		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block') {
 		
 				var url = $(e.target).attr('href');
