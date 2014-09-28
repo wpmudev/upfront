@@ -345,8 +345,8 @@ define([
 	var Command_SavePostLayout = Command_SaveLayout.extend({
 		"className": "command-save",
 		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html("Save layout");
+                this.$el.addClass('upfront-icon upfront-icon-save');
+                this.$el.html("Save layout");
 		},
 		on_click: function () {
 			Upfront.Events.trigger("post:layout:save");

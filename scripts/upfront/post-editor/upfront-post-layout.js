@@ -371,12 +371,15 @@ var ContentView = PostPartView.extend({
 		}
 		this.refreshPaddingsFromProperties();
 
-        /**
-         * Creates content style button
-         * @type {*|HTMLElement}
-         */
-        var $editor = $('<div class="upfront_edit_content_style">Style Post Content</div>');
-        $editor.appendTo( this.$(".upfront-output-PostPart_contents") );
+        if( Upfront.Application.is_builder() ){
+            /**
+             * Creates content style button
+             * @type {*|HTMLElement}
+             */
+            var $editor = $('<div class="upfront_edit_content_style">Style Post Content</div>');
+            $editor.appendTo( this.$(".upfront-output-PostPart_contents") );
+        }
+
 	},
 
 	refreshPaddingsFromProperties: function(){
@@ -438,6 +441,10 @@ var PostImageVariants =  Backbone.View.extend({
             _.extend(Upfront.Application.PostLayoutEditor.partMarkup, response.data.replacements);
             me.contentView.$el.html(  response.data.replacements["%contents%"] );
             //me.detect_inserts();
+            var $page = $('#page');
+
+            $page.find('.upfront-module').draggable('disable').resizable('disable');
+            $page.find('.upfront-region-edit-trigger').hide();
 
             ImageVariants.each(function( model ){
                 var variant = new PostImageVariant({ model : model });

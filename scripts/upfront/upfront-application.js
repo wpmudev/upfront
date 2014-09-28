@@ -22,7 +22,7 @@ var Subapplication = Backbone.Router.extend({
 		var data = Upfront.Util.model_to_json(this.layout);
 		data.layout = _upfront_post_data.layout;
 		return data;
-	},
+	}
 });
 
 var LayoutEditorSubapplication = Subapplication.extend({
@@ -826,13 +826,18 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 				commands.grid = command;
 		});
 
-		sidebar.sidebar_commands.control.commands = _([
-			commands.undo,
-			commands.redo,
-			commands.grid,
-			new Upfront.Views.Editor.Command_SavePostLayout(this.sidebarCommands.model),
-			new Upfront.Views.Editor.Command_CancelPostLayout(this.sidebarCommands.model)
-		]);
+        sidebar.sidebar_commands.control._commands = [
+            commands.undo,
+            commands.redo,
+            commands.grid,
+            new Upfront.Views.Editor.Command_CancelPostLayout(this.sidebarCommands.model)
+        ];
+
+        if( Upfront.Application.is_editor() ){
+            sidebar.sidebar_commands.control._commands.push( new Upfront.Views.Editor.Command_SavePostLayout(this.sidebarCommands.model) );
+        }
+
+		sidebar.sidebar_commands.control.commands = _( sidebar.sidebar_commands.control._commands );
 
 		Upfront.Events.trigger('post:layout:sidebarcommands');
 
@@ -948,60 +953,7 @@ var PostContentEditor = new (Subapplication.extend({
 	}
 }));
 
-var ContentStyleEditor = new (Subapplication.extend({
-    initialize: function(){
-        this.listenTo(Upfront.Events, 'post:content:style:start', this.startContentStyleMode);
-        this.listenTo(Upfront.Events, 'post:content:style:stop', this.stopContentStyleMode);
-    },
 
-    boot: function () {
-        Upfront.Util.log("Preparing post content style mode for execution")
-    },
-
-    start: function () {
-        Upfront.Util.log("Starting post the content style mode");
-    },
-
-    stop: function () {
-        var $page = $('#page');
-        Upfront.Util.log("Stopping post content style mode");
-        $page.find('.upfront-module').draggable('enable').resizable('enable');
-        Upfront.Events.trigger('upfront:element:edit:stop');
-        $page.find('.upfront-region-content-style-trigger').show();
-        this.contentStyleEditor = false;
-    },
-
-    startContentStyleMode: function(contentStyleEditor){
-        if(Application.current_subapplication == ContentStyleEditor)
-            return;
-
-        this.contentStyleEditor = contentStyleEditor;
-
-        var $page = $('#page');
-        window.pst = contentStyleEditor;
-        window.pst1 = this;
-        //console.log(contentStyleEditor., contentStyleEditor.postView.render());
-        //There is no need of start the application
-        //Application.set_current(Application.MODE.CONTENT_STYLE);
-
-        //if(Application.current_subapplication != contentStyleEditor){
-        //    contentStyleEditor = "";
-        //    this.contentStyleEditor = "";
-        //    this.elementType = "";
-        //    this.partMarkup = "";
-        //}
-        //else
-        //    Application.start(Application.mode.last);
-
-
-        $page.find('.upfront-module').draggable('disable').resizable('disable');
-        //Upfront.Events.trigger('upfront:element:edit:start', 'write', contentStyleEditor.post);
-        $page.find('.upfront-region-edit-trigger').hide();
-
-    },
-    stopContentStyleMode: function(){
-    }
-}));
 
 var ContentEditor = new (Subapplication.extend({
 	boot: function () {
@@ -1090,7 +1042,6 @@ var Application = new (Backbone.Router.extend({
 	PostLayoutEditor: PostLayoutEditor,
 	PostContentEditor: PostContentEditor,
     ResponsiveEditor: ResponsiveEditor,
-    ContentStyleEditor : ContentStyleEditor,
 
 	actions: {
 		"save": "upfront_save_layout",
@@ -1118,7 +1069,12 @@ var Application = new (Backbone.Router.extend({
 		last: false,
 		current: false
 	},
-
+    is_builder: function(){
+        return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
+    },
+    is_editor: function(){
+        return !this.is_builder();
+    },
 	urlCache: {},
 
 	current_subapplication: false,
@@ -1524,9 +1480,6 @@ var Application = new (Backbone.Router.extend({
 		} else if(mode && this.MODE.POSTCONTENT == mode) {
 			this.mode.current = this.MODE.POSTCONTENT;
 			this.current_subapplication = this.PostContentEditor;
-        } else if(mode && this.MODE.CONTENT_STYLE == mode) {
-            this.mode.current = this.MODE.CONTENT_STYLE;
-            this.current_subapplication = this.ContentStyleEditor;
 		} else if(mode && this.MODE.RESPONSIVE == mode) {
 			this.mode.current = this.MODE.RESPONSIVE;
 			this.current_subapplication = this.ResponsiveEditor;
