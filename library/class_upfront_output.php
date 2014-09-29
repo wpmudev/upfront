@@ -536,6 +536,9 @@ class Upfront_Region_Container extends Upfront_Container {
 			$attr .= ' data-behavior="' . ( !empty($this->_data['behavior']) ? $this->_data['behavior'] : 'keep-position' ) . '"';
 			$attr .= ' data-original-height="' . $this->_get_property('original_height') . '"';
 		}
+		if ( !empty($this->_data['sticky']) ) {
+			$attr .= ' data-sticky="1"';
+		}
 		return $attr;
 	}
 	
