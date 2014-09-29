@@ -271,12 +271,15 @@ class Upfront_Virtual_Region {
 		return upfront_get_property_value($property, (is_null($data) ? $this->data : $data));
 	}
 
-	public function start_wrapper ($wrapper_id = false, $newline = true, $group = '') {
+	public function start_wrapper ($wrapper_id = false, $newline = true, $properties = array(), $group = '') {
 		$wrapper_id = $wrapper_id ? $wrapper_id : upfront_get_unique_id('wrapper');
 		$wrapper_data = array('name' => '', 'properties' => array());
 		if ( $newline )
 			$this->_set_property('class', 'clr', $wrapper_data);
 		$this->_set_property('wrapper_id', $wrapper_id, $wrapper_data);
+		foreach ( $properties as $prop => $value ) {
+			$this->_set_property($prop, $value, $wrapper_data);
+		}
 		if ( $group && $this->modules[$group] ){
 			$this->modules[$group]['wrappers'][$wrapper_id] = $wrapper_data;
 			$this->current_group_wrapper = $wrapper_id;
@@ -324,13 +327,25 @@ class Upfront_Virtual_Region {
 		}
 		if ( $group && $this->modules[$group] ){
 			$class = $this->get_property('class', $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
+			$current_breakpoint_data = $this->get_property('breakpoint', $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
 			$this->_set_property('class', $class . ' ' . $default_wrapper_class, $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
+			if ( !empty($current_breakpoint_data) ){
+				foreach ( $current_breakpoint_data as $id => $data ){
+					$breakpoint_data[$id] = array_merge($data, $breakpoint_data[$id]);
+				}
+			}
 			$this->_set_property('breakpoint', $breakpoint_data, $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
 			$this->current_group_wrapper = null;
 		}
 		else {
 			$class = $this->get_property('class', $this->wrappers[$this->current_wrapper]);
+			$current_breakpoint_data = $this->get_property('breakpoint', $this->wrappers[$this->current_wrapper]);
 			$this->_set_property('class', $class . ' ' . $default_wrapper_class, $this->wrappers[$this->current_wrapper]);
+			if ( !empty($current_breakpoint_data) ){
+				foreach ( $current_breakpoint_data as $id => $data ){
+					$breakpoint_data[$id] = array_merge($data, $breakpoint_data[$id]);
+				}
+			}
 			$this->_set_property('breakpoint', $breakpoint_data, $this->wrappers[$this->current_wrapper]);
 			$this->current_wrapper = null;
 		}
@@ -469,6 +484,8 @@ class Upfront_Virtual_Region {
 	 *           new_line: 		(true) 'Whether to add the element to a new line or continue a previous line',
 	 *           close_wrapper: (true) 'Close the wrapper or leave it open for the next element',
 	 * 			 group:			'The group id',
+	 *           breakpoint:    Array with breakpoint options
+	 *           wrapper_breakpoint: Array with breakpoint options for wrapper
 	 *           options: 		Array with the object options.
 	 */
 	public function add_element($type = false, $options = array()){
@@ -494,8 +511,12 @@ class Upfront_Virtual_Region {
 			return;
 		}
 
-		if((!$this->current_wrapper && !$options['group']) || (!$this->current_group_wrapper && $options['group']))
-			$this->start_wrapper($opts['wrapper_id'], $opts['new_line'], $options['group']);
+		if((!$this->current_wrapper && !$options['group']) || (!$this->current_group_wrapper && $options['group'])) {
+			$wrapper_props = array();
+			if (isset($options['wrapper_breakpoint']) && !empty($options['wrapper_breakpoint']))
+				$wrapper_props['breakpoint'] = $options['wrapper_breakpoint'];
+			$this->start_wrapper($opts['wrapper_id'], $opts['new_line'], $wrapper_props, $options['group']);
+		}
 
 		$this->start_module($opts['position'], $opts['module'], array(), $options['group']);
 		$this->add_object($opts['object_id'], $opts['object'], array(), $options['group']);
@@ -527,8 +548,12 @@ class Upfront_Virtual_Region {
 			'margin-left' => $pos['margin_left'],
 			'margin-top' => $pos['margin_top']
 		);
-		if(!$this->current_wrapper)
-			$this->start_wrapper($options['wrapper_id'], $options['new_line']);
+		if(!$this->current_wrapper) {
+			$wrapper_props = array();
+			if (isset($options['wrapper_breakpoint']) && !empty($options['wrapper_breakpoint']))
+				$wrapper_props['breakpoint'] = $options['wrapper_breakpoint'];
+			$this->start_wrapper($options['wrapper_id'], $options['new_line'], $wrapper_props);
+		}
 
 		$this->start_module_group($position, $properties);
 		$group_id = $this->current_group;
