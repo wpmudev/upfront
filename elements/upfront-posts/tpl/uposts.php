@@ -16,7 +16,11 @@
 	<li <?php apply_filters('upfront_posts_post_classes', post_class($classes), $post) ?> data-post_id="<?php echo $id ?>">
 		<?php echo Upfront_ThisPostView::get_post_markup($id, $type, $properties, $layout, true); ?>
 	</li>
-<?php } ?>
+<?php } 
+// Clean up after this post:
+global $wp_query;
+$wp_query->is_single = false;
+?>
 </ul>
 <?php if ($properties['pagination']): ?>
 <div class="uposts-pagination upfront-pagination <?php echo $properties['pagination'] ?>">
