@@ -1960,11 +1960,10 @@ a.ueditor-action-pickercancel{
 	display: block;
 }
 
-.ueditor-insert:hover .upfront-inserted_image-wrapper .upfront-inline-panel,
-.ueditor-insert .upfront-inserted_image-wrapper .upfront-inline-panel.uinsert-control-visible {
-    display: none;
-}
-
+/*.ueditor-insert:hover .upfront-inserted_image-wrapper .upfront-inline-panel,*/
+/*.ueditor-insert .upfront-inserted_image-wrapper .upfront-inline-panel.uinsert-control-visible {*/
+    /*display: none;*/
+/*}*/
 .ueditor-insert .upfront-inline-panel i.upfront-icon {
 	height: 25px;
 	 -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;
@@ -2054,10 +2053,9 @@ a.ueditor-action-pickercancel{
     background-position: -552px -164px;
     height: 100%;
 }
-div.upfront-inserted_image-wrapper{
-    position:relative;
-}
-div.upfront-inserted_image-wrapper
+/*div.upfront-inserted_image-wrapper{*/
+    /*position:relative;*/
+/*}*/
 div.upfront-inserted_image-wrapper i.upfront-icon-region-nocaption {
 	background-image: url('../img/uf-core-el-sprite.png');
 	background-image: url('../img/uf-core-el-sprite.svg'), none;
@@ -2079,29 +2077,6 @@ div.upfront-inserted_image-wrapper i.upfront-icon-region-caption-right {
 	background-image: url('../img/uf-core-el-sprite.png');
 	background-image: url('../img/uf-core-el-sprite.svg'), none;
 	background-position: -691px -30px;
-}
-div.upfront-inserted_image-wrapper.empty{
-    width: auto;
-    height: 200px;
-    display: inline-block;
-    overflow:hidden;
-    /*background-image: url('../img/uf-ui-sprite.svg?v=20131127');*/
-    /*background-repeat: no-repeat;*/
-    /*background-position: -509px -483px;*/
-}
-.uinsert-image-caption-drag-handle{
-    border:1px dotted #ccc;
-    display: inline-block;
-    width: auto;
-}
-.upfront-inserted_image_caption{
-    display: inline-block;
-}
-div.upfront-inserted_image-wrapper.empty .uinsert-image-wrapper{
-    background: #b6b6b6;
-    width: auto;
-    height: 70%;
-    margin: 2% auto;
 }
 div.uinsert-selector a {
 	color: #ccc;
@@ -12354,7 +12329,6 @@ div.upfront-regions a#no_region_add_one {
 .upfront-region-bg-setting-add-global-region {
 	margin-bottom: 20px;
 }
-<<<<<<< HEAD
 .upfront_edit_content_style,
 .upfront_edit_image_insert{
     position: absolute;
@@ -12401,6 +12375,8 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant-image{
     display:block;
     padding:15px;
+    position: relative;
+    float: left;
 }
 
 .ueditor-insert-variant-wrap.editing .ueditor-insert-variant-image:hover{
@@ -12409,6 +12385,8 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant-caption{
     display:block;
     padding:15px;
+    position: relative;
+    float: left;
 }
 .ueditor-insert-variant-wrap.editing .ueditor-insert-variant-caption:hover{
     outline:1px dotted #7f7f7f;
@@ -12435,7 +12413,7 @@ div.upfront-regions a#no_region_add_one {
 .finish_editing_image_insert:hover{
     color:#fff;
 }
-.upfront-add-image-insert-variant{
+.upfront-add-image-insert-variant {
     display: block;
     height: 38px;
     width: 200px;
@@ -12445,8 +12423,7 @@ div.upfront-regions a#no_region_add_one {
     line-height: 38px;
     text-align: center;
     cursor: pointer;
-=======
-
+}
 /* insert font widget */
 #insert-font-widget {
 	width: 95px;
@@ -12505,5 +12482,4 @@ a.upfront-css-font {
 	line-height: 31px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
->>>>>>> c6dc14a274467021f470545ba9c36959c215f12b
 }

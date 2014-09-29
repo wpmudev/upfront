@@ -543,18 +543,22 @@ var PostImageVariant = Backbone.View.extend({
             zIndex: 100,
             containment : 'parent',
             delay: 50,
-            refreshPositions: true,
+            //helper: 'clone',
             start : function( event, ui ){
               $(this).resizable("disable");
             },
             drag : function( event, ui ){
-                //$(this).css({
-                //    position : "relative"
-                //});
+                $(this).css({
+                    position : "relative"
+                });
             },
             stop : function(event, ui){
                 $(this).resizable("enable");
-                $(this).css("position", "relative");
+                $(this).css({
+                        position : "relative",
+                        top : '',
+                        left : ''
+                });
             }
         };
 
@@ -588,16 +592,17 @@ var PostImageVariant = Backbone.View.extend({
             minWidth: 45,
             containment: "parent",
             start : function( event, ui ){
-                //$(this).draggable("disable");
+                $(this).draggable("disable");
             },
             resize: function( event, ui ){
+                $(this).css("position", "relative");
                 //$(this).css({
                 //    marginLeft : 0,
                 //    left : 0
                 //});
             },
             stop : function(event, ui){
-                //$(this).draggable("enable");
+                $(this).draggable("enable");
             }
         };
         /**
@@ -680,6 +685,8 @@ var PostImageVariant = Backbone.View.extend({
                     height =  Upfront.Util.height_to_row(ui.size.height) * ge.baseline;
 
                 self.update_class($this, ge.grid.class, col_class_size);
+                self.model.get("group").height = height;
+                self.model.get("group").width_cls = ge.grid.class + col_class_size;
                 $(this).css({
                     height: height,
                     width: "",
