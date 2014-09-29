@@ -599,6 +599,33 @@ var LayoutEditor = {
 		window.location = url;
 	},
 
+	open_theme_fonts_manager: function() {
+		var me = {};
+		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
+		textFontsManager.render();
+		var popup = Upfront.Popup.open(function (data, $top, $bottom) {
+			var $me = $(this);
+			$me.empty()
+			.append('<p class="upfront-popup-placeholder">Loading content...</p>')
+			;
+			me.$popup = {
+				"top": $top,
+				"content": $me,
+				"bottom": $bottom
+			};
+		}, {
+			width: 750
+		});
+		me.$popup.top.html(
+			'<ul class="upfront-tabs">' +
+				'<li data-type="posts" class="active">Theme Text Fonts</li>' +
+				'<li data-type="pages">Icon fonts</li>' +
+				'</ul>' +
+				me.$popup.top.html()
+		);
+		me.$popup.content.html(textFontsManager.el);
+	},
+
 	create_layout_dialog: function() {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -3199,12 +3226,12 @@ var GridEditor = {
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 
 					ed.update_wrappers( is_parent_group ? view.group_view.model : region );
-					
+
 					if ( move_region ) {
 						ed.update_model_margin_classes( $prev_container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') );
 						ed.update_wrappers(prev_region);
 					}
-					
+
 					if ( !breakpoint || breakpoint.default ){
 						if ( wrapper_id )
 							model.set_property('wrapper_id', wrapper_id, true);

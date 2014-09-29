@@ -2463,7 +2463,7 @@ div.uinsert-selector a:hover {
 	width: 0;
 }
 .upfront-region-container-full .upfront-grid-layout::-webkit-scrollbar-thumb {
-	
+
 }
 
 .upfront-region-container-bg {
@@ -10242,7 +10242,6 @@ div.inline-number.plaintext-settings input {
 	font-size: 14px;
 	height:34px;
 	position: static;
-	overflow: hidden;
 }
 
 .upfront-css-ace{
@@ -10283,8 +10282,7 @@ div.inline-number.plaintext-settings input {
 	text-transform: capitalize;
 }
 
-a.upfront-css-image,
-a.upfront-css-font {
+a.upfront-css-image {
 	float:left;
 	display: block;
 	padding: 0px 5px;
@@ -10293,13 +10291,6 @@ a.upfront-css-font {
 	line-height: 31px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
-}
-
-a.upfront-css-font:before {
-	background-position: -821px -202px;
-	width: 18px;
-	height: 16px;
-	margin: 4px 5px 0 0;
 }
 
 span.upfront-css-color {
@@ -11045,8 +11036,6 @@ a.upfront-css-edit:before, a.upfront-buttonpreset-edit:before{
   padding-right: 0;
   padding-left: 5px;
 }
-.font-picker-use-button,
-.font-picker-revert-button,
 .breakpoint-edit-ok-button {
   line-height: 30px;
   text-align: center;
@@ -11254,150 +11243,6 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 
 
-/* Font picker */
-#font-picker {
-  position: absolute;
-  left: 175px;
-  top: -170px;
-  width: 452px;
-  height: 219px;
-  background: #e5f3fe;
-  z-index: 1;
-}
-#font-picker .panel-title {
-	font: 18px/15px 'Source Sans Pro', sans-serif;
-  color: #273a4c;
-  margin: 16px 0 10px 20px;
-}
-#font-picker .panel {
-  float: left;
-  width: 226px;
-}
-
-#font-picker .add-font-panel {
-  border-right: 1px solid #c9dff1;
-}
-#font-picker .choose-font {
-  margin: 0 0 0 20px;
-}
-#font-picker .font-weights-list {
-  min-height: 100px;
-}
-#font-picker .font-weights-list .upfront-field-multiple {
-  margin: 0;
-  line-height: 25px;
-}
-#font-picker .font-weights-list .upfront-field-multiple:hover,
-#font-picker .font-weights-list .upfront-field-multiple-selected {
-  background: #85a9cc;
-}
-#font-picker .font-weights-list .upfront-field-multiple:hover label,
-#font-picker .font-weights-list .upfront-field-multiple-selected label {
-  color: #f2f7ea;
-}
-#font-picker .font-weights-list .upfront-field-multiple label {
-  margin-left: 20px;
-}
-#font-picker .font-weights-list-wrapper::-webkit-scrollbar,
-#font-picker .font-list::-webkit-scrollbar {
-  background: none;
-  width: 5px;
-}
-#font-picker .font-weights-list-wrapper::-webkit-scrollbar-thumb,
-#font-picker .font-list::-webkit-scrollbar-thumb {
-  border-right: 5px solid #1fcd8f;
-}
-#font-picker .font-weights-list input {
-  bottom: 7px;
-  left: 20px;
-}
-#font-picker .font-weights-list .upfront-field-wrap {
-  margin: 0;
-}
-#font-picker .font-weights-list .upfront-field-label {
-  margin-left: 20px;
-}
-#font-picker .font-weights-list-wrapper {
-  background: #f2f9fe;
-  height: 97px;
-  overflow: hidden;
-  overflow-y: scroll;
-}
-#font-picker .theme-font-list-item {
-  color: rgb(48, 71, 94);
-  position: relative;
-  font-size: 11px;
-  font-weight: normal;
-  font-family: verdana, sans-serif;
-  padding-left: 20px;
-  cursor: pointer;
-  line-height: 23px;
-}
-#font-picker .theme-font-list-item:hover,
-#font-picker .theme-font-list-item-selected {
-  background: #85a9cc;
-  color: #f2f7ea;
-}
-#font-picker .theme-font-list-item .delete {
-  display: none;
-  position: absolute;
-  right: 10px;
-  top: 3px;
-}
-#font-picker .theme-font-list-item .upfront-icon:before {
-	background-position: -1080px -121px;
-	width: 16px;
-	height: 16px;
-	margin: 0;
-}
-#font-picker .theme-font-list-item-selected .delete {
-  display: inline;
-}
-#font-picker .font-list {
-  background: #f2f9fe;
-  height: 148px;
-  overflow: hidden;
-  overflow-y: scroll;
-}
-#font-picker .add-font-button {
-  line-height: 30px;
-  width: 100%;
-  display: block;
-  text-align: center;
-  text-decoration: underline;
-  font-size: 12px;
-  font-family: verdana, sans-serif;
-  color: #537ea6;
-  cursor: pointer;
-}
-#font-picker .font-stats {
-  line-height: 30px;
-  width: 100%;
-  display: block;
-  text-align: center;
-  font-size: 10px;
-  font-family: verdana, sans-serif;
-  background: #d7e6f1;
-  color: #687887;
-}
-
-.font-picker-use-button,
-.font-picker-revert-button {
-	line-height: 37px;
-	font-size: 16px;
-	padding: 0 28px 0 29px;
-}
-.font-picker-use-button {
-	margin-left: 20px;
-}
-.font-picker-revert-button {
-  background: #537ea6;
-	padding: 0 16px 0 12px;
-}
-.font-picker-revert-button:before {
-	background-position: -198px -34px;
-	width: 10px;
-}
 /*------------------- Setting sections tabs -----------------------*/
 #sidebar-ui ul.sidebar-panel-tabspane {
     width: 100%;
@@ -11671,7 +11516,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 
 /* Chosen */
-#font-picker .chosen-container-single .chosen-single,
+#insert-font-widget .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single,
 #upfront-popup .chosen-container-single .chosen-single
 {
@@ -11686,15 +11531,15 @@ div.upfront-region-container-active > a.feature_image_selector {
 	border-radius: 3px;
 	border-color: rgb(163, 191, 217);
 }
-#font-picker .chosen-container-single .chosen-single:hover,
+#insert-font-widget .chosen-container-single .chosen-single:hover,
 #sidebar-ui .chosen-container-single .chosen-single:hover,
 #upfront-popup .chosen-container-single .chosen-single:hover
 {
 	border-color: rgb(96, 127, 153);
 }
-#font-picker .chosen-with-drop .chosen-single,
+#insert-font-widget .chosen-with-drop .chosen-single,
 #sidebar-ui .chosen-with-drop .chosen-single,
-#font-picker .chosen-with-drop .chosen-single:hover,
+#insert-font-widget .chosen-with-drop .chosen-single:hover,
 #sidebar-ui .chosen-with-drop .chosen-single:hover,
 #upfront-popup .chosen-with-drop .chosen-single,
 #upfront-popup .chosen-with-drop .chosen-single:hover
@@ -11706,17 +11551,17 @@ div.upfront-region-container-active > a.feature_image_selector {
 #upfront-popup .chosen-container-multi .chosen-choices .search-choice {
 	display: none;
 }
-#font-picker .chosen-container .chosen-results li,
+#insert-font-widget .chosen-container .chosen-results li,
 #sidebar-ui .chosen-container .chosen-results li,
 #upfront-popup .chosen-container .chosen-results li
 {
 	margin: 0 0 0 5px;
 }
-#font-picker .chosen-container-single .chosen-drop,
+#insert-font-widget .chosen-container-single .chosen-drop,
 #sidebar-ui .chosen-container-single .chosen-drop,
 #upfront-popup .chosen-container-single .chosen-drop,
 
-#font-picker .chosen-container-multi .chosen-drop,
+#insert-font-widget .chosen-container-multi .chosen-drop,
 #sidebar-ui .chosen-container-multi .chosen-drop,
 #upfront-popup .chosen-container-multi .chosen-drop
 {
@@ -11727,7 +11572,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 	font-family: Verdana, sans-serif;
 	box-shadow: none;
 }
-#font-picker .chosen-container .chosen-results,
+#insert-font-widget .chosen-container .chosen-results,
 #sidebar-ui .chosen-container .chosen-results,
 #upfront-popup .chosen-container .chosen-results
 {
@@ -11739,28 +11584,28 @@ div.upfront-region-container-active > a.feature_image_selector {
 {
 	max-height: 120px;
 }
-#font-picker .chosen-container .chosen-results li.highlighted,
+#insert-font-widget .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .chosen-container .chosen-results li.highlighted,
 #upfront-popup .chosen-container .chosen-results li.highlighted
 {
 	background: #5f7f9a;
 	color: #fff;
 }
-#font-picker .chosen-container-single .chosen-search,
+#insert-font-widget .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search,
 #upfront-popup .chosen-container-single .chosen-search,
 
-#font-picker .chosen-container-multi .chosen-search,
+#insert-font-widget .chosen-container-multi .chosen-search,
 #sidebar-ui .chosen-container-multi .chosen-search,
 #upfront-popup .chosen-container-multi .chosen-search
 {
 	padding: 3px 5px;
 }
-#font-picker .chosen-container-single .chosen-search input[type=text],
+#insert-font-widget .chosen-container-single .chosen-search input[type=text],
 #sidebar-ui .chosen-container-single .chosen-search input[type=text],
 #upfront-popup .chosen-container-single .chosen-search input[type=text],
 
-#font-picker .chosen-container-multi .chosen-choices input[type=text],
+#insert-font-widget .chosen-container-multi .chosen-choices input[type=text],
 #sidebar-ui .chosen-container-multi .chosen-choices input[type=text],
 #upfront-popup .chosen-container-multi .chosen-choices input[type=text]
 {
@@ -11771,28 +11616,28 @@ div.upfront-region-container-active > a.feature_image_selector {
 	font-family: Verdana, sans-serif;
 	color: rgb(96, 127, 153);
 }
-#font-picker .chosen-container-single .chosen-results::-webkit-scrollbar,
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar,
 
-#font-picker .chosen-container-multi .chosen-results::-webkit-scrollbar,
+#insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar
 {
 	background: #d4dee8;
   width: 5px;
 }
-#font-picker .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 
-#font-picker .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
+#insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb
 {
 	background-color: #1fcd8f;
 }
-#font-picker .chosen-container-single .chosen-single div b,
+#insert-font-widget .chosen-container-single .chosen-single div b,
 #sidebar-ui .chosen-container-single .chosen-single div b,
 #upfront-popup .chosen-container-single .chosen-single div b
 {
@@ -11805,7 +11650,7 @@ div.upfront-region-container-active > a.feature_image_selector {
 	border-right: 4px solid transparent;
 	margin-top: 9px;
 }
-#font-picker .chosen-with-drop .chosen-single div b,
+#insert-font-widget .chosen-with-drop .chosen-single div b,
 #sidebar-ui .chosen-with-drop .chosen-single div b,
 #upfront-popup .chosen-with-drop .chosen-single div b
 {
@@ -11836,78 +11681,74 @@ div.upfront-region-container-active > a.feature_image_selector {
 	display: block;
 }
 
-
-
-/* Font picker */
-#font-picker {
-  position: absolute;
-  left: 175px;
-  top: -170px;
-  width: 452px;
-  height: 219px;
+/* Theme fonts manager */
+#text-fonts-manager {
+  width: 750px;
   background: #e5f3fe;
   z-index: 1;
 }
-#font-picker .panel-title {
+#text-fonts-manager .panel-title {
 	font: 18px/15px 'Source Sans Pro', sans-serif;
   color: #273a4c;
-  margin: 16px 0 10px 20px;
+  margin: 16px 0 10px 0;
 }
-#font-picker .panel {
+#text-fonts-manager .panel {
   float: left;
-  width: 226px;
 }
 
-#font-picker .add-font-panel {
-  border-right: 1px solid #c9dff1;
+#text-fonts-manager .add-font-panel {
+	width: 500px;
 }
-#font-picker .choose-font {
-  margin: 0 0 0 20px;
+#text-fonts-manager .choose-font {
+  margin: 20px 0 10px 15px;
 }
-#font-picker .font-weights-list {
-  min-height: 100px;
+#text-fonts-manager .font-weights-list {
+  height: 346px;
+	width: 400px;
+	margin-left: 15px;
 }
-#font-picker .font-weights-list .upfront-field-multiple {
+#text-fonts-manager .font-weights-list .upfront-field-multiple {
   margin: 0;
   line-height: 25px;
 }
-#font-picker .font-weights-list .upfront-field-multiple:hover,
-#font-picker .font-weights-list .upfront-field-multiple-selected {
+#text-fonts-manager .font-weights-list .upfront-field-multiple:hover,
+#text-fonts-manager .font-weights-list .upfront-field-multiple-selected {
   background: #85a9cc;
 }
-#font-picker .font-weights-list .upfront-field-multiple:hover label,
-#font-picker .font-weights-list .upfront-field-multiple-selected label {
+#text-fonts-manager .font-weights-list .upfront-field-multiple:hover label,
+#text-fonts-manager .font-weights-list .upfront-field-multiple-selected label {
   color: #f2f7ea;
 }
-#font-picker .font-weights-list .upfront-field-multiple label {
+#text-fonts-manager .font-weights-list .upfront-field-multiple label {
   margin-left: 20px;
 }
-#font-picker .font-weights-list-wrapper::-webkit-scrollbar,
-#font-picker .font-list::-webkit-scrollbar {
+#text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar,
+#text-fonts-manager .font-list::-webkit-scrollbar {
   background: none;
   width: 5px;
 }
-#font-picker .font-weights-list-wrapper::-webkit-scrollbar-thumb,
-#font-picker .font-list::-webkit-scrollbar-thumb {
+#text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar-thumb,
+#text-fonts-manager .font-list::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f;
 }
-#font-picker .font-weights-list input {
+#text-fonts-manager .font-weights-list input {
   bottom: 7px;
   left: 20px;
 }
-#font-picker .font-weights-list .upfront-field-wrap {
+#text-fonts-manager .font-weights-list .upfront-field-wrap {
   margin: 0;
 }
-#font-picker .font-weights-list .upfront-field-label {
+#text-fonts-manager .font-weights-list .upfront-field-label {
   margin-left: 20px;
 }
-#font-picker .font-weights-list-wrapper {
-  background: #f2f9fe;
-  height: 97px;
+#text-fonts-manager .font-weights-list-wrapper {
+  background: #ffffff;
+	border: 1px solid #a4bfd8;
+  height: 346px;
   overflow: hidden;
   overflow-y: scroll;
 }
-#font-picker .theme-font-list-item {
+#text-fonts-manager .theme-font-list-item {
   color: rgb(48, 71, 94);
   position: relative;
   font-size: 11px;
@@ -11917,70 +11758,110 @@ div.upfront-region-container-active > a.feature_image_selector {
   cursor: pointer;
   line-height: 23px;
 }
-#font-picker .theme-font-list-item:hover,
-#font-picker .theme-font-list-item-selected {
+#text-fonts-manager .theme-font-list-item:hover,
+#text-fonts-manager .theme-font-list-item-selected {
   background: #85a9cc;
   color: #f2f7ea;
 }
-#font-picker .theme-font-list-item .delete {
+#text-fonts-manager .theme-font-list-item .delete {
   display: none;
   position: absolute;
   right: 10px;
   top: 3px;
 }
-#font-picker .theme-font-list-item .upfront-icon:before {
+#text-fonts-manager .theme-font-list-item .upfront-icon:before {
 	background-position: -1080px -121px;
 	width: 16px;
 	height: 16px;
 	margin: 0;
 }
-#font-picker .theme-font-list-item-selected .delete {
+#text-fonts-manager .theme-font-list-item-selected .delete {
   display: inline;
 }
-#font-picker .font-list {
+#text-fonts-manager .font-list {
   background: #f2f9fe;
-  height: 148px;
-  overflow: hidden;
-  overflow-y: scroll;
+	height: 346px;
+	overflow: hidden;
+	overflow-y: scroll;
+	border: 1px solid #a4bfd8;
+	width: 228px;
 }
-#font-picker .add-font-button {
-  line-height: 30px;
-  width: 100%;
+#text-fonts-manager .add-font-button {
+  line-height: 12px;
   display: block;
   text-align: center;
-  text-decoration: underline;
   font-size: 12px;
   font-family: verdana, sans-serif;
   color: #537ea6;
   cursor: pointer;
+	position: absolute;
+	top: 262px;
+	left: 424px;
+	padding: 10px 17px;
+	border: 1px solid #a4bfd8;
+	box-shadow: 1px 1px 1px #537ea6;
+	border-radius: 4px;
 }
-#font-picker .font-stats {
+#text-fonts-manager .font-stats {
   line-height: 30px;
-  width: 100%;
   display: block;
   text-align: center;
   font-size: 10px;
   font-family: verdana, sans-serif;
   background: #d7e6f1;
   color: #687887;
+	position: absolute;
+	left: 0;
+	width: 750px;
+	background: #e5f3ff;
 }
-
-.font-picker-use-button,
-.font-picker-revert-button {
-	line-height: 37px;
-	font-size: 16px;
-	padding: 0 28px 0 29px;
+.font-stats strong {
+	font-weight: bold;
 }
-.font-picker-use-button {
-	margin-left: 20px;
+.font-variant-preview {
+	border-top: 1px solid #e4eef6;
+	cursor: pointer;
+	padding: 0 0 10px 10px;
+	color: #bab0cc;
 }
-.font-picker-revert-button {
-  background: #537ea6;
-	padding: 0 16px 0 12px;
+.font-variant-preview:first-child {
+	border-top: 0 none;
 }
-.font-picker-revert-button:before {
-	background-position: -198px -34px;
-	width: 10px;
+.font-variant-selected {
+	background: #e9faf4;
+	position: relative;
+}
+.font-variant-selected:after {
+	content: "";
+	display: block;
+	background: transparent url(../img/uf-ui-sprite.svg);
+	background-position: -735px -142px;
+	width: 12px;
+	height: 10px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+.heading-font-preview {
+	font-size: 35px;
+	line-height: 41px;
+	white-space: nowrap;
+	color: #000000;
+}
+.font-variant-already-added {
+	cursor: default;
+}
+.font-variant-already-added .already-added {
+	background-color: #00CE8D;
+	color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 1px 0 #00B47C;
+	padding: 2px 3px;
+	display: inline-block;
+}
+.theme-fonts-panel {
+	padding-top: 29px;
+	padding-left: 8px;
 }
 /*------------------- Setting sections tabs -----------------------*/
 #sidebar-ui ul.sidebar-panel-tabspane {
@@ -12249,7 +12130,8 @@ div.upfront-region-container-active > a.feature_image_selector {
 }
 
 /* Chosen */
-#font-picker .chosen-container-single .chosen-single,
+#insert-font-widget .chosen-container-single .chosen-single,
+#text-fonts-manager .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single {
 	margin: 0;
 	text-decoration: none;
@@ -12262,23 +12144,28 @@ div.upfront-region-container-active > a.feature_image_selector {
 	border-radius: 3px;
 	border-color: rgb(163, 191, 217);
 }
-#font-picker .chosen-container-single .chosen-single:hover,
+#insert-font-widget .chosen-container-single .chosen-single:hover,
+#text-fonts-manager .chosen-container-single .chosen-single:hover,
 #sidebar-ui .chosen-container-single .chosen-single:hover {
 	border-color: rgb(96, 127, 153);
 }
-#font-picker .chosen-with-drop .chosen-single,
+#insert-font-widget .chosen-with-drop .chosen-single,
+#text-fonts-manager .chosen-with-drop .chosen-single,
 #sidebar-ui .chosen-with-drop .chosen-single,
-#font-picker .chosen-with-drop .chosen-single:hover,
+#insert-font-widget .chosen-with-drop .chosen-single:hover,
+#text-fonts-manager .chosen-with-drop .chosen-single:hover,
 #sidebar-ui .chosen-with-drop .chosen-single:hover {
 	border-color: rgb(163, 191, 217);
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
-#font-picker .chosen-container .chosen-results li,
+#insert-font-widget .chosen-container .chosen-results li,
+#text-fonts-manager .chosen-container .chosen-results li,
 #sidebar-ui .chosen-container .chosen-results li {
 	margin: 0 0 0 5px;
 }
-#font-picker .chosen-container-single .chosen-drop,
+#insert-font-widget .chosen-container-single .chosen-drop,
+#text-fonts-manager .chosen-container-single .chosen-drop,
 #sidebar-ui .chosen-container-single .chosen-drop {
 	background: #e6f3fe;
 	color: rgb(96, 127, 153);
@@ -12287,7 +12174,8 @@ div.upfront-region-container-active > a.feature_image_selector {
 	font-family: Verdana, sans-serif;
 	box-shadow: none;
 }
-#font-picker .chosen-container .chosen-results,
+#insert-font-widget .chosen-container .chosen-results,
+#text-fonts-manager .chosen-container .chosen-results,
 #sidebar-ui .chosen-container .chosen-results {
 	max-height: 150px;
 	margin-right: 5px;
@@ -12295,30 +12183,36 @@ div.upfront-region-container-active > a.feature_image_selector {
 #sidebar-ui .chosen-container .chosen-results {
 	max-height: 120px;
 }
-#font-picker .chosen-container .chosen-results li.highlighted,
+#insert-font-widget .chosen-container .chosen-results li.highlighted,
+#text-fonts-manager .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .chosen-container .chosen-results li.highlighted {
 	background: #5f7f9a;
 	color: #fff;
 }
-#font-picker .chosen-container-single .chosen-search,
+#insert-font-widget .chosen-container-single .chosen-search,
+#text-fonts-manager .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search {
 	padding: 3px 5px;
 }
-#font-picker .chosen-container-single .chosen-search input[type=text],
+#insert-font-widget .chosen-container-single .chosen-search input[type=text],
+#text-fonts-manager .chosen-container-single .chosen-search input[type=text],
 #sidebar-ui .chosen-container-single .chosen-search input[type=text] {
 	background: #f7fbff;
 	border-color: #a4bfd8;
 }
-#font-picker .chosen-container-single .chosen-results::-webkit-scrollbar,
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
+#text-fonts-manager .chosen-container-single .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar {
 	background: #d4dee8;
   width: 5px;
 }
-#font-picker .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#text-fonts-manager .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb {
 	background-color: #1fcd8f;
 }
-#font-picker .chosen-container-single .chosen-single div b,
+#insert-font-widget .chosen-container-single .chosen-single div b,
+#text-fonts-manager .chosen-container-single .chosen-single div b,
 #sidebar-ui .chosen-container-single .chosen-single div b {
 	display: block;
 	width: 0;
@@ -12329,7 +12223,8 @@ div.upfront-region-container-active > a.feature_image_selector {
 	border-right: 4px solid transparent;
 	margin-top: 9px;
 }
-#font-picker .chosen-with-drop .chosen-single div b,
+#insert-font-widget .chosen-with-drop .chosen-single div b,
+#text-fonts-manager .chosen-with-drop .chosen-single div b,
 #sidebar-ui .chosen-with-drop .chosen-single div b {
 	border-top: 0 none transparent;
 	border-bottom: 4px solid rgb(96, 127, 153);
@@ -12435,4 +12330,63 @@ div.upfront-regions a#no_region_add_one {
 .upfront-region-bg-setting-add-global-region {
 	margin-bottom: 20px;
 }
->>>>>>> eea43a57793d2b674014aac2b20fc534316c3fc9
+
+/* insert font widget */
+#insert-font-widget {
+	width: 95px;
+	height: 30px;
+	float: left;
+	margin-left: 20px;
+	position: relative;
+}
+#insert-font-widget > div {
+	white-space: nowrap;
+}
+#insert-font-widget.open {
+	width: 465px;
+}
+#insert-font-widget .upfront-field-wrap-select {
+	margin-top: 4px;
+	margin-right: 5px;
+	display: inline-block;
+}
+#insert-font-widget .chosen-container .chosen-results {
+	max-height: 120px;
+}
+#insert-font-widget .upfront-field-wrap-button {
+	margin-top: 0px;
+	margin-right: 5px;
+	display: inline-block;
+}
+#insert-font-widget input[type=button] {
+	line-height: 21px;
+	padding: 0 5px;
+	border: 2px solid #25394d;
+	font-size: 12px;
+	background: transparent;
+	-webkit-transition: border .15s ease-in-out;
+	-moz-transition: border .15s ease-in-out;
+	-ms-transition: border .15s ease-in-out;
+	-o-transition: border .15s ease-in-out;
+	transition: border .15s ease-in-out;
+	color: #adc3d8;
+}
+#insert-font-widget input[type=button]:hover {
+	border-color: #1fcd8f;
+	color: #cbe5ff;
+}
+#insert-font-widget:before {
+	background-position: -821px -202px;
+	width: 18px;
+	height: 16px;
+	margin: 6px 5px 0 0;
+}
+a.upfront-css-font {
+	display: block;
+	padding: 0px 5px;
+	margin: 0;
+	color: #dae6f2 !important;
+	line-height: 31px;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+}
