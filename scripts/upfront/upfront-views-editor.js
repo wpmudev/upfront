@@ -1635,6 +1635,10 @@ define([
 				if (_.isUndefined(font_family)) {
 					font_family = system_fonts_storage.get_fonts().findWhere({family: typeface});
 				}
+				// Try to get font family from additional fonts
+				if (_.isUndefined(font_family)) {
+					font_family = theme_fonts_collection.get_additional_font(typeface);
+				}
 				if (_.isUndefined(font_family)) {
 					// This is a Google font
 					font_family = google_fonts_storage.get_fonts().findWhere({family: typeface});
@@ -5187,6 +5191,9 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 		_.each(_.uniq(google_fonts), function(google_font) {
 			typefaces_list.push({label: google_font, value: google_font});
 		});
+		_.each(Upfront.mainData.additionalFonts, function(font) {
+			typefaces_list.push({label: font.family, value: font.family});
+		});
 		_.each(system_fonts_storage.get_fonts().models, function(font)	{
 			typefaces_list.push({ label: font.get('family'), value: font.get('family') });
 		});
@@ -5203,6 +5210,13 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 		});
 		if (variants) return variants;
 
+		_.each(Upfront.mainData.additionalFonts, function(font) {
+			if (font_family === font.family) {
+				variants = font.variants;
+			}
+		});
+		if (variants) return variants;
+
 		variants = [];
 		_.each(theme_fonts_collection.models, function(theme_font) {
 			if (font_family === theme_font.get('font').family) {
@@ -5211,6 +5225,11 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 		});
 
 		return variants;
+	},
+	get_additional_font: function(font_family) {
+		var font = _.findWhere(Upfront.mainData.additionalFonts, {family: font_family});
+		if (font) return new Backbone.Model(font);
+		return;
 	}
 });
 

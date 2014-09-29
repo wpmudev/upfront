@@ -1005,6 +1005,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return is_array( $theme_fonts ) ? $theme_fonts : json_decode($theme_fonts);
 	}
 
+	public function getAdditionalFonts() {
+		$additional_fonts = $this->themeSettings->get('additional_fonts');
+		return empty($additional_fonts) ? '[]' : $additional_fonts;
+	}
+
 	public function getThemeColors($theme_colors, $args) {
 		if (empty($theme_colors) === false) return $theme_colors;
 
