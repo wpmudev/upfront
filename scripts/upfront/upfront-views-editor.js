@@ -7106,7 +7106,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				}),
-				$region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $theme_body;
+				$region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
 			if ( is_layout ){
 				var contained_region = new Field_Number({
 					model: this.model,
@@ -7139,6 +7139,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-1,
+					has_sticky = collection.findWhere({sticky: '1'}),
 					types = [
 						{ label: "100% wide", value: 'wide' },
 						{ label: "Contained", value: 'clip' }
@@ -7328,6 +7329,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
 			$region_behavior = $content.find('.upfront-region-bg-setting-region-behavior');
 			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
+			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
@@ -7359,6 +7361,30 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region_auto.hide();
 			}
 			$region_restrict.hide();
+			$region_sticky.hide();
+			
+			if ( is_region && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
+				// Show the sticky option if there's no sticky region yet AND the region is <= 300px height
+				if ( ( !has_sticky && this.for_view.$el.height() <= 300 ) || this.model.get('sticky') ) {
+					var region_sticky = new Field_Checkboxes({
+						model: this.model,
+						name: 'sticky',
+						default_value: '',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Sticky this region", value: '1' }
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set({sticky: value}, {silent: true});
+							this.model.get('properties').trigger('change');
+						},
+						multiple: false
+					});
+					region_sticky.render();
+					$region_sticky.append(region_sticky.$el).show();
+				}
+			}
 
 			$theme_body = $content.find('.upfront-region-bg-setting-theme-body');
 			if ( is_layout ) {
@@ -8730,9 +8756,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		tooltip: "Delete this section",
 		//label: "Delete this section",
 		delete_region: function () {
+			var collection = this.model.collection;
 			if ( confirm("Are you sure you want to delete this section?") ){
-				// @TODO Make sure sub-regions is also removed to clean the region properly
-				this.model.collection.remove(this.model);
+				collection.remove(this.model);
 			}
 		}
 	});

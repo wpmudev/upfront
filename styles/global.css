@@ -107,7 +107,6 @@ h2, h3 { page-break-after: avoid; }
   z-index: 12;
 }
 
-
 .upfront-module {}
 
 /* Clearfix for object container */
@@ -139,6 +138,9 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-region-sub-container {
 	position: relative;
 	z-index: 11;
+}
+.upfront-output-region-container-sticky {
+	z-index: 20;
 }
 .upfront-output-bg-overlay {
 	position: absolute;

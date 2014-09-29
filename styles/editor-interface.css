@@ -2495,6 +2495,10 @@ div.uinsert-selector a:hover {
 	z-index: 10;
 }
 
+.upfront-region-container-sticky {
+	z-index: 2999999;
+}
+
 .upfront-region-hidden {
 	height: auto !important;
 	min-height: 0 !important;
@@ -2806,6 +2810,7 @@ div.uinsert-selector a:hover {
 
 .upfront-region-editing .upfront-region-active,
 .upfront-region-editing .upfront-region-container-active .upfront-grid-layout,
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-grid-layout {
 	z-index: 9997;
 }
@@ -3609,7 +3614,8 @@ div.uinsert-selector a:hover {
   	line-height: 1;
 	cursor: pointer;
 }
-.upfront-region-bg-setting-floating-restrict {
+.upfront-region-bg-setting-floating-restrict,
+.upfront-region-bg-setting-sticky {
 	float: right;
 	margin: 4px 0 10px;
 }
