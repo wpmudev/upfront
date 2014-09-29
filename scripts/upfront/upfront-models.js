@@ -1527,6 +1527,7 @@ var _alpha = "alpha",
         defaults : {
             group : {
                 width_cls : "c24",
+                float: "none",
                 height: 250
             },
             image : {

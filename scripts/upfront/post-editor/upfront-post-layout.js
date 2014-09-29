@@ -455,6 +455,7 @@ var PostImageVariants =  Backbone.View.extend({
             if( ImageVariants.length === 0 ){
                 var model = new Upfront.Models.ImageVariant(),
                     variant = new PostImageVariant({ model : model });
+                ImageVariants.add( model );
                 variant.render();
                 me.contentView.$el.find("#upfront-image-variants").append( variant.el );
             }
@@ -471,11 +472,12 @@ var PostImageVariants =  Backbone.View.extend({
 });
 var PostImageVariant = Backbone.View.extend({
     tpl : _.template($(variant_tpl).find('#upfront-post-image-variant-tpl').html()),
+    se_handle : '<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable"></span>',
+    nw_handle : '<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable"></span>',
     initialize: function( options ){
         this.opts = options;
         this.model = _.isUndefined(options) || _.isUndefined( options.model ) ? new Upfront.Models.ImageVariant() : options.model;
         //Upfront.Events.on("post:content:style:start", this.populate_style_content);
-        console.log(this.model );
         Upfront.Events.on("post:content:style:stop", function(){
 
         });
@@ -537,8 +539,11 @@ var PostImageVariant = Backbone.View.extend({
     },
     make_items_draggable : function(){
         var options = {
-            containment : ".ueditor-insert-variant",
+            scope: "image_insert_items",
+            zIndex: 100,
+            containment : 'parent',
             delay: 50,
+            refreshPositions: true,
             start : function( event, ui ){
               $(this).resizable("disable");
             },
@@ -549,6 +554,7 @@ var PostImageVariant = Backbone.View.extend({
             },
             stop : function(event, ui){
                 $(this).resizable("enable");
+                $(this).css("position", "relative");
             }
         };
 
@@ -572,7 +578,6 @@ var PostImageVariant = Backbone.View.extend({
     },
     make_items_resizable : function(){
         var options = {
-            containment : ".ueditor-insert-variant",
             handles: {
                 nw: '.upfront-resize-handle-nw',
                 se: '.upfront-resize-handle-se'
@@ -581,23 +586,25 @@ var PostImageVariant = Backbone.View.extend({
             delay: 50,
             minHeight: 50,
             minWidth: 45,
+            containment: "parent",
             start : function( event, ui ){
-                $(this).draggable("disable");
+                //$(this).draggable("disable");
             },
             resize: function( event, ui ){
                 //$(this).css({
-                //    position : "relative"
+                //    marginLeft : 0,
+                //    left : 0
                 //});
             },
             stop : function(event, ui){
-                $(this).draggable("enable");
+                //$(this).draggable("enable");
             }
         };
         /**
          * Make image resizable
          */
-        this.$image.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
-        this.$image.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        this.$image.append(this.nw_handle);
+        this.$image.append(this.se_handle);
         if(_.isEmpty(  this.$image.data("uiResizable") ) ){
             this.$image.resizable(options);
         }else{
@@ -607,8 +614,8 @@ var PostImageVariant = Backbone.View.extend({
         /**
          * Make caption resizable
          */
-        this.$caption.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
-        this.$caption.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        this.$caption.append(this.nw_handle);
+        this.$caption.append(this.se_handle);
         if(_.isEmpty(  this.$caption.data("uiResizable") ) ){
             this.$caption.resizable(options);
         }else{
@@ -625,8 +632,8 @@ var PostImageVariant = Backbone.View.extend({
     make_resizable : function(){
         var self = this,
             ge = Upfront.Behaviors.GridEditor;
-        this.$self.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable" style="display: inline;"></span>');
-        this.$self.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable" style="display: inline;"></span>');
+        this.$self.append(this.nw_handle);
+        this.$self.append(this.se_handle);
         this.$self.resizable({
             autoHide: true,
             delay: 50,
@@ -645,18 +652,22 @@ var PostImageVariant = Backbone.View.extend({
                         left  : 0,
                         right : 0
                     });
+                    self.model.get("group").float = "left"
                 } else if( ui.position.left > 0 && self.ui_right( ui, this) === 0 ) {
                     $(this).css({
                         float : "right",
                         left  : 0,
                         right : 0
                     });
+                    self.model.get("group").float = "right";
+
                 }
 
                 if(  (  ui.position.left ===  0 && self.ui_right( ui, this) === 0 ) ||  ( ui.position.left !==  0 && self.ui_right( ui, this) !== 0 )){
                     $(this).css({
                         float : "none"
                     });
+                    self.model.get("group").float = "none";
                 }
 
 
