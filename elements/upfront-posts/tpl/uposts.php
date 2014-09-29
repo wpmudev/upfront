@@ -7,11 +7,11 @@
 <?php
 	$posts_array = array();
 	while(have_posts()): the_post();
- 	global $post, $wp_query;
+ 	global $post;//, $wp_query;
 		$posts_array[$post->ID] = $post->post_type;
 	endwhile;
 	foreach($posts_array as $id => $type) {
-	$classes = 'uposts-post uposts-posts-' . $id . ' ';
+		$classes = 'uposts-post uposts-posts-' . $id . ' ';
  ?>
 	<li <?php apply_filters('upfront_posts_post_classes', post_class($classes), $post) ?> data-post_id="<?php echo $id ?>">
 		<?php echo Upfront_ThisPostView::get_post_markup($id, $type, $properties, $layout, true); ?>
@@ -21,9 +21,9 @@
 <?php if ($properties['pagination']): ?>
 <div class="uposts-pagination upfront-pagination <?php echo $properties['pagination'] ?>">
 	<?php
-		if ($properties['pagination'] == 'prevnext'):
+		if ($properties['pagination'] == 'prevnext') {
 			posts_nav_link( $sep, $prelabel, $nextlabel );
-		else:
+		} else {
 			$big = 999999999; // need an unlikely integer
 			echo paginate_links(array(
 				'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
@@ -31,7 +31,7 @@
 				'current' => $properties['editing'] ? 2 : max( 1, get_query_var('paged') ),
 				'total' => $properties['editing'] ? 5 : $wp_query->max_num_pages
 			));
-		endif;
+		}
 	?>
 </div>
 <?php endif ?>
