@@ -973,7 +973,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getThemeFonts($theme_fonts, $args) {
-		if (empty($theme_fonts) === false) return $theme_fonts;
+		if (empty($theme_fonts) === false && $theme_fonts !== '[]') return $theme_fonts;
 
 		$theme_fonts = $this->themeSettings->get('theme_fonts');
 		if (isset($args['json']) && $args['json']) return $theme_fonts;
