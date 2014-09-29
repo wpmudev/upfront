@@ -127,6 +127,8 @@ class Upfront_Grid {
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				if ( $region_row )
 					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
+				if ( !$point->is_default() && $region['sub'] == 'fixed' ) // @TODO we hide float region by default for responsive for now
+					$region_hide = 1;
 				if ( $region_hide == 1 )
 					$point_css .= $point->apply_hide($region_hide, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				$point_css .= $this->_apply_modules($region, $region_col);
