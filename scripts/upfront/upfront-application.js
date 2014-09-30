@@ -215,6 +215,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save_start", start);
 		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
 		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
+		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
 	},
 
 	create_properties: function (view, model) {
