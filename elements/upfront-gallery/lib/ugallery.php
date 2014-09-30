@@ -214,8 +214,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 	}
 
 	public static function add_styles_scripts () {
-		wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
-		//upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
+		//wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
+		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
 
 		//Lightbox
 		wp_register_script(
