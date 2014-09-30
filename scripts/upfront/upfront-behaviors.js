@@ -615,15 +615,20 @@ var LayoutEditor = {
 			};
 		}, {
 			width: 750
-		});
+		},
+		'font-manager-popup');
 		me.$popup.top.html(
 			'<ul class="upfront-tabs">' +
 				'<li data-type="posts" class="active">Theme Text Fonts</li>' +
-				'<li data-type="pages">Icon fonts</li>' +
 				'</ul>' +
 				me.$popup.top.html()
 		);
+		me.$popup.bottom.append('<a class="theme-fonts-ok-button">OK</a>');
 		me.$popup.content.html(textFontsManager.el);
+		textFontsManager.set_ok_button(me.$popup.bottom.find('.theme-fonts-ok-button'));
+		me.$popup.bottom.find('.theme-fonts-ok-button').on('click', function() {
+			Upfront.Popup.close();
+		});
 	},
 
 	create_layout_dialog: function() {

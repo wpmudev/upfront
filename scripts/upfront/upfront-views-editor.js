@@ -1404,6 +1404,7 @@ define([
 			$.when(google_fonts_storage.get_fonts()).done(function() {
 				me.render();
 			});
+			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
 		},
 		on_render: function () {
 			var me = this,
@@ -1420,7 +1421,7 @@ define([
 					Upfront.Events.trigger('command:themefontsmanager:open');
 				}
 			});
-			if (theme_fonts_collection.length === 0) {
+			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
 				this.$el.html('<p>(i) You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.</p>');
 				chooseButton.render();
 				this.$el.append(chooseButton.el);
@@ -5466,6 +5467,16 @@ var Text_Fonts_Manager = Backbone.View.extend({
 		});
 		this.choose_variants.render();
 		this.$el.find('.font-weights-list-wrapper').html(this.choose_variants.el);
+	},
+	set_ok_button: function(button) {
+		button.on('click', this.set_ok);
+	},
+	set_ok: function(event) {
+		if (Upfront.mainData.userDoneFontsIntro) return;
+
+		Upfront.Util.post({action: "upfront_user_done_font_intro"});
+		Upfront.mainData.userDoneFontsIntro = true;
+		Upfront.Events.trigger("upfront:render_typography_sidebar");
 	}
 });
 
@@ -7431,7 +7442,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 			$region_restrict.hide();
 			$region_sticky.hide();
-			
+
 			if ( is_region && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
 				// Show the sticky option if there's no sticky region yet AND the region is <= 300px height
 				if ( ( !has_sticky && this.for_view.$el.height() <= 300 ) || this.model.get('sticky') ) {

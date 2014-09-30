@@ -11036,6 +11036,7 @@ a.upfront-css-edit:before, a.upfront-buttonpreset-edit:before{
   padding-right: 0;
   padding-left: 5px;
 }
+.theme-fonts-ok-button,
 .breakpoint-edit-ok-button {
   line-height: 30px;
   text-align: center;
@@ -12389,4 +12390,12 @@ a.upfront-css-font {
 	line-height: 31px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
+}
+.theme-fonts-ok-button {
+	margin-top: 30px;
+}
+#upfront-popup.font-manager-popup {
+	max-width: 750px;
+	margin-top: 120px;
+	height: 500px;
 }
