@@ -1534,12 +1534,16 @@ var _alpha = "alpha",
                 width_cls : "c24",
                 left_cls  : "ml0",
                 top_cls   : "mt0",
+                top       : 0,
+                left      : 0,
                 height    : 200
             },
             caption : {
                 width_cls : "c20",
                 left_cls  : "ml2",
                 top_cls   : "mt0",
+                top       : 0,
+                left      : 0,
                 height    : 50
             }
         }

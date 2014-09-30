@@ -502,7 +502,9 @@ var PostImageVariant = Backbone.View.extend({
             visibility : "hidden"
         });
         //disable group's resizability
-        this.$self.resizable("disable");
+        this.$self.resizable("option", "disabled", true);
+
+        this.$self.addClass("editing");
 
         // hide group's resize handles
         this.$self.find(".upfront-icon-control").hide();
@@ -521,67 +523,81 @@ var PostImageVariant = Backbone.View.extend({
             visibility : "visible"
         });
         //enable group's resizability
-        this.$self.resizable("enable");
+        this.$self.resizable("option", "disabled", false);
+
+        this.$self.removeClass("editing");
 
         // Show group's resize handles
         this.$self.find(".upfront-icon-control").show();
 
-        this.$image.draggable("disable");
-        this.$image.resizable("disable");
-        this.$image.find(".upfront-icon-control").remove();
+        this.$image.draggable("option", "disabled", true);
+        this.$image.resizable("option", "disabled", true);
+        this.$image.find(".upfront-icon-control").hide();
 
-        this.$caption.draggable("disable");
-        this.$caption.resizable("disable");
-        this.$caption.find(".upfront-icon-control").remove();
+        this.$caption.draggable("option", "disabled", true);
+        this.$caption.resizable("option", "disabled", true);
+        this.$caption.find(".upfront-icon-control").hide();
 
         $(e.target).remove();
 
     },
     make_items_draggable : function(){
-        var options = {
-            scope: "image_insert_items",
-            zIndex: 100,
-            containment : 'parent',
-            delay: 50,
-            //helper: 'clone',
-            start : function( event, ui ){
-              $(this).resizable("disable");
-            },
-            drag : function( event, ui ){
-                $(this).css({
-                    position : "relative"
-                });
-            },
-            stop : function(event, ui){
-                $(this).resizable("enable");
-                $(this).css({
+        var self = this,
+            ge = Upfront.Behaviors.GridEditor,
+            options = {
+                zIndex: 100,
+                containment : 'parent',
+                delay: 50,
+                //helper: 'clone',
+                start : function( event, ui ){
+                  $(this).resizable("option", "disabled", true);
+                },
+                drag : function( event, ui ){
+
+                },
+                stop : function(event, ui){
+                    var $this = $(this),
+                        top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline ,
+                        left  =  Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
+                        model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption");
+                    $this.resizable("option", "disabled", false);
+
+                    model.left = left;
+                    model.top = top;
+
+                    //self.update_class( $this, "ml", left  );
+                    //self.update_class( $this, "mt", top  );
+
+                    $(this).css({
                         position : "relative",
-                        top : '',
-                        left : ''
-                });
-            }
-        };
+                        top : top,
+                        left : left
+                    });
+                }
+            };
 
         /**
          * Make image draggable
          */
-        if( _.isEmpty( this.$image.data("uiDraggable") ) ){
+        if( _.isEmpty( this.$image.data("ui-draggable") ) ){
             this.$image.draggable( options );
         }else{
-            this.$image.draggable( "enable" );
+            this.$image.draggable( "option", "disabled", false );
         }
 
         /**
          * Make caption draggable
          */
-        if( _.isEmpty( this.$caption.data("uiDraggable") ) ){
+        if( _.isEmpty( this.$caption.data("ui-draggable") ) ){
             this.$caption.draggable( options );
         }else{
-            this.$caption.draggable( "enable" );
+            this.$caption.draggable( "option", "disabled", false );
         }
     },
     make_items_resizable : function(){
-        var options = {
+        var self = this,
+            ge = Upfront.Behaviors.GridEditor,
+            options = {
             handles: {
                 nw: '.upfront-resize-handle-nw',
                 se: '.upfront-resize-handle-se'
@@ -595,7 +611,17 @@ var PostImageVariant = Backbone.View.extend({
                 $(this).draggable("disable");
             },
             resize: function( event, ui ){
+                var $this = $(this),
+                    model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption"),
+                    left = Upfront.util.width_to_col( ui.position.left ) * ge.col_size,
+                    top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline,
+                    col_class_size = Upfront.Util.width_to_col( ui.size.width );
+                self.update_class($this, ge.grid.class, col_class_size);
+                model.left = left;
+                model.top = top;
+                model.width_cls = ge.grid.class + col_class_size;
                 $(this).css("position", "relative");
+
                 //$(this).css({
                 //    marginLeft : 0,
                 //    left : 0
@@ -608,24 +634,31 @@ var PostImageVariant = Backbone.View.extend({
         /**
          * Make image resizable
          */
-        this.$image.append(this.nw_handle);
-        this.$image.append(this.se_handle);
-        if(_.isEmpty(  this.$image.data("uiResizable") ) ){
+
+
+        if(_.isEmpty(  this.$image.data("ui-resizable") ) ){
+            this.$image.append(this.nw_handle);
+            this.$image.append(this.se_handle);
             this.$image.resizable(options);
         }else{
-            this.$image.resizable("enable");
+            this.$image.find(".upfront-icon-control").show();
+            this.$image.resizable("option", "disabled", false);
         }
+
 
         /**
          * Make caption resizable
          */
-        this.$caption.append(this.nw_handle);
-        this.$caption.append(this.se_handle);
-        if(_.isEmpty(  this.$caption.data("uiResizable") ) ){
+
+        if(_.isEmpty(  this.$caption.data("ui-resizable") ) ){
+            this.$caption.append(this.nw_handle);
+            this.$caption.append(this.se_handle);
             this.$caption.resizable(options);
         }else{
-            this.$caption.resizable("enable");
+            this.$caption.find(".upfront-icon-control").show();
+            this.$caption.resizable("option", "disabled", false);
         }
+
     },
     ui_right : function( ui, el ){
         var $el = $(el),
@@ -640,7 +673,7 @@ var PostImageVariant = Backbone.View.extend({
         this.$self.append(this.nw_handle);
         this.$self.append(this.se_handle);
         this.$self.resizable({
-            autoHide: true,
+            //autoHide: true,
             delay: 50,
             handles: {
                 nw: '.upfront-resize-handle-nw',
@@ -649,16 +682,28 @@ var PostImageVariant = Backbone.View.extend({
             minHeight: 50,
             minWidth: 45,
             containment: "parent",
-            alsoResize: $(this).find('.ueditor-insert-variant-image'),
+            //alsoResize: '.ueditor-insert-variant-image',
+            start : function(){
+                this.$image.css({
+                    left : 0,
+                    top : 0
+                });
+
+                this.$caption.css({
+                    left : 0,
+                    top : this.$image.height()
+                });
+
+            },
             resize: function (event, ui) {
-                if (ui.position.left ===  0 && self.ui_right( ui, this) !== 0) {
+                if (ui.position.left ===  0 && self.ui_right( ui, this) !== 0) { //float left
                     $(this).css({
                         float : "left",
                         left  : 0,
                         right : 0
                     });
                     self.model.get("group").float = "left"
-                } else if( ui.position.left > 0 && self.ui_right( ui, this) === 0 ) {
+                } else if( ui.position.left > 0 && self.ui_right( ui, this) === 0 ) { // float right
                     $(this).css({
                         float : "right",
                         left  : 0,
@@ -668,6 +713,7 @@ var PostImageVariant = Backbone.View.extend({
 
                 }
 
+                //Float none
                 if(  (  ui.position.left ===  0 && self.ui_right( ui, this) === 0 ) ||  ( ui.position.left !==  0 && self.ui_right( ui, this) !== 0 )){
                     $(this).css({
                         float : "none"
@@ -679,7 +725,7 @@ var PostImageVariant = Backbone.View.extend({
             },
             stop: function (event, ui) {
                 var $this = $(this),
-                    col_class_size = Math.round(ui.size.width / ge.col_size),
+                    col_class_size = Upfront.Util.width_to_col( ui.size.width),
                     margin_left = ui.position.left,
                     left_class_size = Math.round(margin_left / ge.col_size),
                     height =  Upfront.Util.height_to_row(ui.size.height) * ge.baseline;
@@ -687,11 +733,16 @@ var PostImageVariant = Backbone.View.extend({
                 self.update_class($this, ge.grid.class, col_class_size);
                 self.model.get("group").height = height;
                 self.model.get("group").width_cls = ge.grid.class + col_class_size;
-                $(this).css({
+
+                $this.css({
                     height: height,
                     width: "",
                     "margin-left": ""
                 });
+
+                var image_height = height - $this.find(".ueditor-insert-variant-caption").height() - 60;
+                $this.find(".ueditor-insert-variant-image").css("height", image_height);
+
                 //self.update_class($this, ge.grid.left_margin_class, left_class_size);
             }
         });

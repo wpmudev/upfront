@@ -466,6 +466,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
+		$additional_fonts = Upfront_ChildTheme::get_instance()->getAdditionalFonts();
+
 		$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
 		$theme_colors = apply_filters(
 			'upfront_get_theme_colors',
@@ -567,6 +569,7 @@ Upfront.mainData = {
   gridInfo: {$grid_info},
   themeInfo: {$theme_info},
   themeFonts: {$theme_fonts},
+	additionalFonts: {$additional_fonts},
   buttonPresets: {$button_presets},
   themeColors: {$theme_colors},
   postImageVariants: {$post_image_variants},
@@ -1497,7 +1500,7 @@ class Upfront_Server_ButtonPresetsServer extends Upfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
 		$button_presets = isset($_POST['button_presets']) ? $_POST['button_presets'] : array();
-		
+
 
 		//do_action('upfront_save_button_presets', $button_presets);
 

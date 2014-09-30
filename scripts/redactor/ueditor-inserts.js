@@ -287,6 +287,7 @@ var UeditorInsert = Backbone.View.extend({
 		this.$el.resizable(resizableOptions);
 	}
 });
+var ImageVariants = new Upfront.Collections.ImageVariants( Upfront.mainData.postImageVariants );
 
 var ImageInsert = UeditorInsert.extend({
     type: 'image',
@@ -326,20 +327,31 @@ var ImageInsert = UeditorInsert.extend({
         var alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
         alignControl.selected = this.data.get('align');
         this.controlsData = [
-            alignControl,
-            {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
-            {id: 'caption',
-                type: 'multi',
-                icon: 'caption',
-                tooltip: 'Caption',
-                selected: this.data.get('captionPosition') || 'nocaption',
+            //alignControl,
+            {id: 'style',
+                type: "multi",
+                icon : "style",
+                tooltip: "Style",
                 subItems: [
-                    {id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
-                    {id: 'left', icon: 'caption-left', tooltip: 'At the left'},
-                    {id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
-                    {id: 'right', icon: 'caption-right', tooltip: 'At the right'}
-                ]
+                        {id: '0', icon: 'nocaption', tooltip: 'No caption'},
+                        {id: '1', icon: 'caption-left', tooltip: 'At the left'},
+                        {id: '2', icon: 'caption-bottom', tooltip: 'At the bottom'},
+                        {id: '3', icon: 'caption-right', tooltip: 'At the right'}
+                    ]
             },
+            {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
+            //{id: 'caption',
+            //    type: 'multi',
+            //    icon: 'caption',
+            //    tooltip: 'Caption',
+            //    selected: this.data.get('captionPosition') || 'nocaption',
+            //    subItems: [
+            //        {id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
+            //        {id: 'left', icon: 'caption-left', tooltip: 'At the left'},
+            //        {id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
+            //        {id: 'right', icon: 'caption-right', tooltip: 'At the right'}
+            //    ]
+            //},
             this.getRemoveControlData()
         ];
         this.createControls();
@@ -523,6 +535,9 @@ var ImageInsert = UeditorInsert.extend({
             this.trigger('remove', this);
         });
 
+        this.listenTo(this.controls, 'control:select:style', function(control){
+            console.log(control);
+        });
         this.listenTo(this.controls, 'control:select:alignment', function(control){
             var alignData = {
                     align: control
@@ -533,7 +548,7 @@ var ImageInsert = UeditorInsert.extend({
                 sideCaption = captionPosition == 'left' || captionPosition == 'right',
                 width
                 ;
-
+console.log("alignment",  control);
             if(control == 'full'){
                 this.data.set(alignData);
                 alignData.width = me.$el.width();

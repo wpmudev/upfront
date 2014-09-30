@@ -1970,7 +1970,6 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:activated", this.update_pos);
 				this.listenTo(Upfront.Events, "entity:region:activated", this.update_overlay);
 				this.listenTo(Upfront.Events, "entity:region:deactivated", this.close_edit);
-				$(window).on('scroll.region_container_' + this.model.get('name'), this, this.on_scroll);
 				this.listenTo(Upfront.Events, "layout:render", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.fix_height);
@@ -1985,6 +1984,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.fix_height);
 				this.listenTo(Upfront.Events, "upfront:layout:contained_region_width", this.on_contained_width_change);
+				$(window).on('scroll.region_container_' + this.model.get('name'), this, this.on_scroll);
 				$(window).on('resize.region_container_' + this.model.get('name'), this, this.on_window_resize);
 
 				// breakpoint changes
@@ -2274,15 +2274,50 @@ define([
 				}
 			},
 			update_pos: function () {
-				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					offset = this.$el.offset(),
 					top = offset.top,
 					bottom = top + this.$el.outerHeight(),
 					scroll_top = $(document).scrollTop(),
 					scroll_bottom = scroll_top + $(window).height(),
-					rel_top = $main.offset().top,
+					main_off = $main.offset(),
+					rel_top = main_off.top,
 					$trig = this.$el.find('> .upfront-region-edit-trigger'),
-					trig_offset = $trig.offset();
+					trig_offset = $trig.offset(),
+					sticky = this.model.get('sticky'),
+					sticky_top = this.$el.data('sticky-top');
+				// Sticky behavior
+				// @TODO Need to have a proper behavior for responsive view, disable for now
+				if ( breakpoint && !breakpoint.default )
+					sticky = false;
+				if ( sticky ) { 
+					if ( !_.isNumber(sticky_top) && scroll_top > top-rel_top ) {
+						this.$el.css({
+							position: 'fixed',
+							top: rel_top,
+							left: main_off.left,
+							right: 0,
+							bottom: 'auto'
+						});
+						this.$el.addClass('upfront-region-container-sticky');
+						this.$el.data('sticky-top', top-rel_top);
+						this.$el.nextAll('.upfront-region-container:first').css('margin-top', this.$el.height());
+					}
+				}
+				if ( this.$el.css('position') == 'fixed' && ( !sticky || ( _.isNumber(sticky_top) && scroll_top <= sticky_top ) ) ) {
+					this.$el.css({
+						position: '',
+						top: '',
+						left: '',
+						right: '',
+						bottom: ''
+					});
+					this.$el.removeClass('upfront-region-container-sticky');
+					this.$el.removeData('sticky-top');
+					this.$el.nextAll('.upfront-region-container:first').css('margin-top', '');
+				}
+				
 				if ( scroll_top > top-rel_top && scroll_top < bottom-rel_top ) {
 					if ( $trig.css('position') != 'fixed' )
 						$trig.css({
@@ -2355,6 +2390,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
+				$(window).on('scroll.region_subcontainer_' + this.model.get('name'), this, this.on_scroll);
 				$(window).on('resize.region_subcontainer_' + this.model.get('name'), this, this.on_window_resize);
 			},
 			_get_region_type: function () {
@@ -2379,8 +2415,62 @@ define([
 					this.$el.hide();
 				}
 			},
+			on_scroll: function (e) {
+				var me = e.data;
+				me.update_pos();
+			},
+			update_pos: function () {
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+					offset = this.$el.offset(),
+					top = offset.top,
+					scroll_top = $(document).scrollTop(),
+					main_off = $main.offset(),
+					rel_top = main_off.top,
+					sticky = this.model.get('sticky'),
+					sticky_top = this.$el.data('sticky-top'),
+					sub = this.model.get('sub');
+				// @TODO Need to have a proper behavior for responsive view, disable for now
+				if ( breakpoint && !breakpoint.default )
+					sticky = false;
+				// Sticky behavior
+				if ( sticky ) { 
+					if ( !_.isNumber(sticky_top) && scroll_top > top-rel_top ) {
+						this.$el.css({
+							position: 'fixed',
+							top: rel_top,
+							left: main_off.left,
+							right: 0,
+							bottom: 'auto'
+						});
+						this.$el.addClass('upfront-region-container-sticky');
+						this.$el.data('sticky-top', top-rel_top);
+						if ( sub == 'top' )
+							this.$el.closest('.upfront-region-container-bg').css('padding-top', this.$el.height());
+						else
+							this.$el.closest('.upfront-region-container-bg').css('padding-bottom', this.$el.height());
+					}
+				}
+				if ( this.$el.css('position') == 'fixed' && ( !sticky || ( _.isNumber(sticky_top) && scroll_top <= sticky_top ) ) ) {
+					this.$el.css({
+						position: '',
+						top: '',
+						left: '',
+						right: '',
+						bottom: ''
+					});
+					this.$el.removeClass('upfront-region-container-sticky');
+					this.$el.removeData('sticky-top');
+					if ( sub == 'top' )
+						this.$el.closest('.upfront-region-container-bg').css('padding-top', '');
+					else
+						this.$el.closest('.upfront-region-container-bg').css('padding-bottom', '');
+				}
+				
+			},
 			remove: function () {
 				this.event = false;
+				$(window).off('scroll.region_subcontainer_' + this.model.get('name'));
 				$(window).off('resize.region_subcontainer_' + this.model.get('name'));
 				Backbone.View.prototype.remove.call(this);
 			}
@@ -2523,6 +2613,7 @@ define([
 			render_bg_setting: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: container_view.$el, width: 420});
+				this.bg_setting.for_view = this;
 				this.bg_setting.render();
 				container_view.$el.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
@@ -2720,6 +2811,16 @@ define([
 					
 					var thecollection = this.model.collection;
 
+					// Make sure sub-regions is also removed if it's main region
+					if ( this.model.is_main() ) {
+						var sub_regions = this.model.get_sub_regions();
+						_.each(sub_regions, function(sub_model, sub){
+							if ( _.isArray(sub_model) )
+								_.each(sub_model, function(sub_model2){ thecollection.remove(sub_model2) });
+							else if ( _.isObject(sub_model) )
+								thecollection.remove(sub_model);
+						});
+					}
 					this.model.collection.remove(this.model);
 					
 					var wide_regions = thecollection.where({ type : 'wide'});
@@ -3502,7 +3603,8 @@ define([
 				var view = Upfront.data.region_views[model.cid];
 				if ( !view )
 					return;
-				var container_view = this.get_container_view(model);
+				var container_view = this.get_container_view(model),
+					sub_container_view = this.sub_container_views[model.cid];
 				delete Upfront.data.region_views[model.cid];
 				if ( view.region_panels ){
 					view.region_panels.unbind();
@@ -3541,6 +3643,11 @@ define([
 						});
 						if ( main_view ) main_view.update();
 					}
+				}
+				if ( sub_container_view ){
+					delete this.sub_container_views[model.cid];
+					sub_container_view.unbind();
+					sub_container_view.remove();
 				}
 				Upfront.Events.trigger("entity:region:removed", view, model);
 			},
