@@ -125,8 +125,8 @@ class Upfront_UimageView extends Upfront_Object {
 
 	public static function add_styles_scripts () {
 		wp_enqueue_style( 'wp-color-picker' );
-		//upfront_add_element_style('upfront_image', array('css/uimage.css', dirname(__FILE__)));
-		wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
+		upfront_add_element_style('upfront_image', array('css/uimage.css', dirname(__FILE__)));
+		//wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
 		wp_enqueue_script('wp-color-picker');
 	}
 

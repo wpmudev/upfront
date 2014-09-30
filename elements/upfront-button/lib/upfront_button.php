@@ -115,9 +115,11 @@ class Upfront_ButtonView extends Upfront_Object {
 	}
 
 	public static  function add_styles_scripts() {
-		wp_enqueue_style('ubutton', upfront_element_url('css/upfront-button.css', dirname(__FILE__)));
+		//wp_enqueue_style('ubutton', upfront_element_url('css/upfront-button.css', dirname(__FILE__)));
+		upfront_add_element_style('ubutton', array('css/upfront-button.css', dirname(__FILE__)));
 		if (is_user_logged_in()) {
-			wp_enqueue_style('ubutton_editor', upfront_element_url('css/upfront-button-editor.css', dirname(__FILE__)));
+			//wp_enqueue_style('ubutton_editor', upfront_element_url('css/upfront-button-editor.css', dirname(__FILE__)));
+			upfront_add_element_style('ubutton_editor', array('css/upfront-button-editor.css', dirname(__FILE__)));
 		}
 
 	}

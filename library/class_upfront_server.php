@@ -60,6 +60,7 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
 			upfront_add_ajax('upfront_list_theme_layouts', array($this, "list_theme_layouts"));
 			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
+			upfront_add_ajax('upfront_user_done_font_intro', array($this, "user_done_font_intro"));
 		}
 
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
@@ -72,6 +73,13 @@ class Upfront_Ajax extends Upfront_Server {
 
 			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
 		}
+	}
+
+	public function user_done_font_intro() {
+		$users = get_option('upfront_users_done_font_intro', array());
+		$current_user = wp_get_current_user();
+		if (!in_array($current_user->user_login, $users)) $users[] = $current_user->user_login;
+		update_option('upfront_users_done_font_intro', $users);
 	}
 
 	// STUB LOADING
@@ -468,6 +476,11 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$additional_fonts = Upfront_ChildTheme::get_instance()->getAdditionalFonts();
 
+		$current_user = wp_get_current_user();
+		$user_done_font_intro = in_array($current_user->user_login, get_option('upfront_users_done_font_intro', array())) ?
+			'true' : 'false';
+
+
 		$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
 		$theme_colors = apply_filters(
 			'upfront_get_theme_colors',
@@ -570,6 +583,7 @@ Upfront.mainData = {
   themeInfo: {$theme_info},
   themeFonts: {$theme_fonts},
 	additionalFonts: {$additional_fonts},
+  userDoneFontsIntro: {$user_done_font_intro},
   buttonPresets: {$button_presets},
   themeColors: {$theme_colors},
   postImageVariants: {$post_image_variants},
