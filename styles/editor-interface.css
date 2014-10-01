@@ -2498,7 +2498,7 @@ div.uinsert-selector a:hover {
 .upfront-region-side-fixed,
 .upfront-region-side-lightbox {
 	position: fixed;
-	z-index: 10;
+	z-index: 12;
 }
 
 .upfront-region-container-sticky {
@@ -2707,8 +2707,8 @@ div.uinsert-selector a:hover {
 	left: 15px;
 }
 .upfront-region-editing .upfront-region-size-hint,
-.upfront-region-fixed-editing .upfront-region-size-hint,
-.upfront-region-fixed-editing .upfront-region-position-hint {
+.upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-size-hint,
+.upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-position-hint {
 	display: block;
 }
 
@@ -2774,6 +2774,7 @@ div.uinsert-selector a:hover {
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
+	z-index: 9998;
 }
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
@@ -2787,7 +2788,8 @@ div.uinsert-selector a:hover {
 .upfront-inline-panels,
 .upfront-inline-panels-wrap,
 .upfront-add-region-ani:after,
-.upfront-region-editing .upfront-region-editing-overlay {
+.upfront-region-editing .upfront-region-editing-overlay ,
+.upfront-region-fixed-editing .upfront-region:after {
 	content: " ";
 	position: absolute;
 	top: 0;
@@ -2796,18 +2798,11 @@ div.uinsert-selector a:hover {
 	bottom: 0;
 	z-index: 9996;
 }
-.upfront-region-editing .upfront-region-container-active {
+.upfront-region-editing .upfront-region-container-active,
+.upfront-region-fixed-editing .upfront-region-side-fixed {
 	opacity: 1;
-	-webkit-transition: opacity 0.6s;
-	-moz-transition: opacity 0.6s;
-	-ms-transition: opacity 0.6s;
-	-o-transition: opacity 0.6s;
-	transition: opacity 0.6s;
 	z-index: 9997;
 	-webkit-backface-visibility:hidden;
-}
-.upfront-region-fixed-editing .upfront-grid-layout {
-	z-index: 9998;
 }
 
 .upfront-region-editing .upfront-grid-layout {
@@ -2816,8 +2811,7 @@ div.uinsert-selector a:hover {
 
 .upfront-region-editing .upfront-region-active,
 .upfront-region-editing .upfront-region-container-active .upfront-grid-layout,
-.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container,
-.upfront-region-fixed-editing .upfront-region-container-active .upfront-grid-layout {
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container {
 	z-index: 9997;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,

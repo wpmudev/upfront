@@ -5732,6 +5732,16 @@ var CSSEditor = Backbone.View.extend({
 
 		this.render();
 
+		Upfront.Events.on("command:undo", function () {
+			setTimeout(function () { 
+				var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
+				if (styles) {
+					me.get_style_element().html(styles);
+					me.render(); 
+				}
+			}, 200);
+		});
+
 		this.startResizable();
 
 		Upfront.Events.trigger('csseditor:open', this.element_id);
@@ -5983,7 +5993,9 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	updateStyles: function(contents){
-		this.get_style_element().html(
+		var $el = this.get_style_element();
+		Upfront.Util.Transient.push('css-' + this.element_id, $el.html());
+		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())
 			)

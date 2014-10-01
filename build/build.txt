@@ -9,18 +9,8 @@ magnific-popup/magnific-popup.css
 
 main.js
 ----------------
-<<<<<<< HEAD
-<<<<<<< HEAD
 /Users/samnajian/Sites/incsub/wp-includes/js/underscore.min.js
 /Users/samnajian/Sites/incsub/wp-includes/js/backbone.min.js
-=======
-/var/www/upfront/wp-includes/js/underscore.min.js
-/var/www/upfront/wp-includes/js/backbone.min.js
->>>>>>> c6dc14a274467021f470545ba9c36959c215f12b
-=======
-d:/xampp/htdocs/upfront/wp-includes/js/underscore.min.js
-d:/xampp/htdocs/upfront/wp-includes/js/backbone.min.js
->>>>>>> 8e4f512a7697afb37e576cc7eaa42abda1e528cc
 upfront/upfront-models.js
 text.js
 text!upfront/templates/object.html
@@ -45,23 +35,13 @@ upfront/upfront-views-editor.js
 upfront/upfront-behaviors.js
 jquery/jquery-dateFormat.min.js
 jquery/jquery.simulate.js
-<<<<<<< HEAD
-<<<<<<< HEAD
 /Users/samnajian/Sites/incsub/wp-content/themes/upfront/scripts/backbone-query-parameters/backbone-query-parameters.js
-=======
-/var/www/upfront/wp-content/themes/upfront/scripts/backbone-query-parameters/backbone-query-parameters.js
->>>>>>> c6dc14a274467021f470545ba9c36959c215f12b
-=======
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/backbone-query-parameters/backbone-query-parameters.js
->>>>>>> 8e4f512a7697afb37e576cc7eaa42abda1e528cc
 upfront/objects/loading.js
 upfront/upfront-objects.js
 upfront/upfront-media.js
 upfront/upfront-content.js
 spectrum/spectrum.js
 responsive.js
-<<<<<<< HEAD
-<<<<<<< HEAD
 /Users/samnajian/Sites/incsub/wp-content/themes/upfront/elements/upfront-accordion/js/uaccordion.js
 redactor/redactor.js
 redactor/ueditor.js
@@ -102,55 +82,6 @@ text!elements/upfront-youtube/tpl/youtube.html
 text!elements/upfront-code/css/editor.css
 text!elements/upfront-code/tpl/editor.html
 /Users/samnajian/Sites/incsub/wp-content/themes/upfront/elements/upfront-code/js/upfront_code.js
-=======
-/var/www/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/uaccordion.js
-=======
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/uaccordion.js
->>>>>>> 8e4f512a7697afb37e576cc7eaa42abda1e528cc
-redactor/redactor.js
-redactor/ueditor.js
-text!upfront/templates/objects/plain_text/plain_text.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-text/js/utext.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-comment/js/ucomment.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-contact-form/js/ucontact.js
-text!elements/upfront-gallery/tpl/ugallery.html
-text!elements/upfront-gallery/tpl/ugallery_editor.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-gallery/js/ugallery.js
-text!elements/upfront-image/tpl/image.html
-text!elements/upfront-image/tpl/image_editor.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/uimage.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-like-box/js/upfront-like-box.js
-text!elements/upfront-login/css/edit.css
-text!elements/upfront-login/css/public.css
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
-text!elements/upfront-maps/css/edit.css
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/unewnavigation.js
-text!elements/upfront-button/tpl/ubutton.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-button/js/ubutton.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/uposts.js
-text!elements/upfront-search/tpl/usearch.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-search/js/usearch.js
-text!elements/upfront-slider/tpls/uslider.html
-text!elements/upfront-slider/tpls/backend.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-slider/js/uslider.js
-text!elements/upfront-social-media/tpl/social-back.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-social-media/js/upfront-social-media.js
-text!elements/upfront-tabs/tpl/utabs.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/utabs.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-this-post/js/this_post.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-this-page/js/this_page.js
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-widget/js/uwidget.js
-text!elements/upfront-youtube/tpl/youtube.html
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-youtube/js/uyoutube.js
-text!elements/upfront-code/css/editor.css
-text!elements/upfront-code/tpl/editor.html
-<<<<<<< HEAD
-/var/www/upfront/wp-content/themes/upfront/elements/upfront-code/js/upfront_code.js
->>>>>>> c6dc14a274467021f470545ba9c36959c215f12b
-=======
-d:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-code/js/upfront_code.js
->>>>>>> 8e4f512a7697afb37e576cc7eaa42abda1e528cc
 upfront/upfront-application.js
 upfront/upfront-util.js
 main.js
