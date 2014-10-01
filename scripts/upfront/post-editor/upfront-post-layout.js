@@ -487,16 +487,23 @@ var PostImageVariant = Backbone.View.extend({
     },
     events : {
         "click .upfront_edit_image_insert" : "start_editing",
-        "click .finish_editing_image_insert" : "finish_editing"
+        "click .finish_editing_image_insert" : "finish_editing",
+        "click .upfront-image-variant-delete_trigger" : "remove_variant"
     },
     render : function() {
         this.$el.html( this.tpl( this.model.toJSON() ) );
         this.$self = this.$(".ueditor-insert-variant");
+        this.$self.prepend('<a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-image-variant-delete_trigger"></a>');
         this.$image =  this.$(".ueditor-insert-variant-image");
         this.$caption = this.$(".ueditor-insert-variant-caption");
         this.make_resizable();
 
         return this;
+    },
+    remove_variant : function(e){
+        e.preventDefault();
+        ImageVariants.remove(this.model);
+        this.remove();
     },
     start_editing : function(e){
         e.preventDefault();
@@ -563,7 +570,6 @@ var PostImageVariant = Backbone.View.extend({
                         top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline ,
                         left  =  Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
                         model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption");
-                    $this.resizable("option", "disabled", false);
 
                     model.left = left;
                     model.top = top;
@@ -572,10 +578,11 @@ var PostImageVariant = Backbone.View.extend({
                     //self.update_class( $this, "mt", top  );
 
                     $(this).css({
-                        position : "relative",
                         top : top,
                         left : left
                     });
+
+                    $this.resizable("option", "disabled", false);
                 }
             };
 
@@ -618,17 +625,22 @@ var PostImageVariant = Backbone.View.extend({
                     model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption"),
                     left = Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
                     top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline,
+                    height = Upfront.Util.grid.normalize_height( ui.size.height > 0 ? ui.size.height : 0 ),
+                    width = Upfront.Util.grid.normalize_width( ui.size.width > 0 ? ui.size.width : 0 ),
                     col_class_size = Upfront.Util.width_to_col( ui.size.width );
-                Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
+
                 model.left = left;
                 model.top = top;
+                model.height = height;
                 model.width_cls = ge.grid.class + col_class_size;
-                $(this).css("position", "relative");
 
-                //$(this).css({
-                //    marginLeft : 0,
-                //    left : 0
-                //});
+                Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
+
+                $(this).css({
+                    left : left,
+                    top: top,
+                    height: height
+                });
             },
             stop : function(event, ui){
                 $(this).draggable("enable");

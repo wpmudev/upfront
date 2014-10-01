@@ -12367,6 +12367,15 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant:hover{
     outline:1px dotted #7f7f7f;
 }
+.upfront-image-variant-delete_trigger{
+    position: absolute;
+    right:5px;
+    top:5px;
+    display: none;
+}
+.ueditor-insert-variant:hover .upfront-image-variant-delete_trigger{
+    display: block;
+}
 .ueditor-insert-variant-wrap{
     display:block;
     width:100%;
@@ -12377,7 +12386,7 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant-image{
     display:block;
     padding:15px;
-    position: relative;
+    position: absolute;
 }
 
 .ueditor-insert-variant.editing .ueditor-insert-variant-image{
@@ -12386,7 +12395,7 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant-caption{
     display:block;
     padding:15px;
-    position: relative;
+    position: absolute;
 }
 .ueditor-insert-variant.editing .ueditor-insert-variant-caption{
     outline:1px dotted #7f7f7f;
@@ -12423,6 +12432,8 @@ div.upfront-regions a#no_region_add_one {
     line-height: 38px;
     text-align: center;
     cursor: pointer;
+    overflow: hidden;
+    clear: both;
 }
 /* insert font widget */
 #insert-font-widget {

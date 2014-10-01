@@ -177,6 +177,12 @@ define(function() {
             height_to_row: function (height) {
                 var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
                 return Math.ceil(height/baseline);
+            },
+            normalize_width: function(width){
+                return this.width_to_col( width ) * Upfront.Settings.LayoutEditor.Grid.col_size;
+            },
+            normalize_height: function( height ){
+                return this.height_to_row( height ) * Upfront.Settings.LayoutEditor.Grid.baseline;
             }
         },
 		width_to_col: function (width) {

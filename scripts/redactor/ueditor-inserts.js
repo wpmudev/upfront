@@ -306,24 +306,6 @@ var ImageInsert = UeditorInsert.extend({
         externalImage: {top: 0, left: 0, width: 0, height: 0},
         variant_id : ""
     },
-    getResizableOptions: function(){
-        return;
-        var options = {
-            resize: $.proxy(this.onResizing, this),
-            start: $.proxy(this.onStartResizing, this),
-            stop: $.proxy(this.onStopResizing, this)
-        };
-
-        if(['left', 'right'].indexOf(this.data.get('captionPosition')) != -1)
-            options.minWidth = 2 * Upfront.Behaviors.GridEditor.col_size + parseInt(this.data.get('imageThumb').width, 10);
-
-        if(this.data.get('align') == 'full'){
-            options.minWidth = this.data.get('width');
-            options.maxWidth = options.minWidth;
-        }
-
-        return options;
-    },
     //Called just after initialize
     init: function(){
 
@@ -339,28 +321,28 @@ var ImageInsert = UeditorInsert.extend({
                 subItems: this.get_style_control_data()
             },
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
-            {id: 'caption',
-                type: 'multi',
-                icon: 'caption',
-                tooltip: 'Caption',
-                selected: this.data.get('captionPosition') || 'nocaption',
-                subItems: [
-                    {id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
-                    {id: 'left', icon: 'caption-left', tooltip: 'At the left'},
-                    {id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
-                    {id: 'right', icon: 'caption-right', tooltip: 'At the right'}
-                ]
-            },
+            //{id: 'caption',
+            //    type: 'multi',
+            //    icon: 'caption',
+            //    tooltip: 'Caption',
+            //    selected: this.data.get('captionPosition') || 'nocaption',
+            //    subItems: [
+            //        {id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
+            //        {id: 'left', icon: 'caption-left', tooltip: 'At the left'},
+            //        {id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
+            //        {id: 'right', icon: 'caption-right', tooltip: 'At the right'}
+            //    ]
+            //},
             this.getRemoveControlData()
         ];
         this.createControls();
-        this.style_variant = style_variant ? style_variant : new Upfront.Models.ImageVariant();
-        if(!this.data.get('width')){
-            var width = this.data.get('imageThumb').width;
-            if(['left', 'right'].indexOf(this.data.get('captionPosition')) != -1)
-                width += 3 * Upfront.Behaviors.GridEditor.col_size;
-            this.data.set({width: width}, {silent: true});
-        }
+        this.data.set("style",  (style_variant ? style_variant : new Upfront.Models.ImageVariant()).toJSON() );
+        //if(!this.data.get('width')){
+        //    var width = this.data.get('imageThumb').width;
+        //    if(['left', 'right'].indexOf(this.data.get('captionPosition')) != -1)
+        //        width += 3 * Upfront.Behaviors.GridEditor.col_size;
+        //    this.data.set({width: width}, {silent: true});
+        //}
 
     },
 
@@ -374,7 +356,7 @@ var ImageInsert = UeditorInsert.extend({
             var imageData = me.getImageData(result);
             imageData.id = me.data.id;
             me.data.clear({silent: true});
-            console.log(imageData);
+            imageData.style = ( new Upfront.Models.ImageVariant() ).toJSON();
             me.data.set(imageData);
             me.controlsData[0].selected = me.data.get('align');
             me.createControls();
@@ -387,33 +369,35 @@ var ImageInsert = UeditorInsert.extend({
     render: function(){
         var me = this,
             data = this.data.toJSON(),
-            style_variant = this.style_variant.toJSON(),
+            style_variant = this.data.get("style"),
             wrapperSize = this.data.get('imageThumb');
 
+        data.image = data.imageFull;
 
-        if(data.align == 'full') {
-            data.image = data.imageFull;
-        } else {
-            data.image = data.imageThumb;
-        }
-
-        var src = this.data.get('imageFull').src;
-        if (!src) {
-            this.data.set("imageFull", {
-                height: data.style_variant.get("group").height,
-                //width: data.width,
-                src: data.src
-            });
-            data.image = this.data.get("imageFull");
-        }
-
+        //if(data.align == 'full') {
+        //    data.image = data.imageFull;
+        //} else {
+        //    data.image = data.imageThumb;
+        //}
+        //
+        //var src = this.data.get('imageFull').src;
+        //if (!src) {
+        //    this.data.set("imageFull", {
+        //        height: data.style_variant.get("group").height,
+        //        //width: data.width,
+        //        src: data.src
+        //    });
+        //    data.image = this.data.get("imageFull");
+        //}
+        //data.set("style", )
         //Adapt the caption with the variant style
-        style_variant.caption.text = data.caption;
-        data.caption = style_variant.caption;
-
-        //Adapt the image with the variant style
-        data.image = _.extend(data.image, style_variant.image);
-        console.log("rendering", data);
+        //style_variant.caption.text = data.caption;
+        //data.caption = style_variant.caption;
+        //
+        ////Adapt the image with the variant style
+        //data.image = _.extend(data.image, style_variant.image);
+        //data = _.extend( style_variant, data );
+        //console.log("rendering", data);
         this.$el
             .html(this.tpl(data))
         ;
@@ -550,7 +534,7 @@ var ImageInsert = UeditorInsert.extend({
                 var style = _style.toJSON();
                 Upfront.Util.grid.update_class( this.$el,  style.group.width_cls);
                 this.data.set("variant_id", variant_id );
-                this.style_variant = _style;
+                this.data.set("style", _style.toJSON());
             }
 
         });

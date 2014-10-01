@@ -39,7 +39,7 @@
 </script>
 
 <script type="text/template" id="image-insert-tpl">
-	<span class="uinsert-image-wrapper {{image.width_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="position:relative;width: {{image.width}}px; height: {{image.height}}px; top:{{image.top}}px;left:{{image.left}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</span>{[if(caption.show){ ]}<div class="wp-caption-text {{caption.width_cls}}" style="top:{{caption.top}}px;left:{{caption.left}}px;height:{{caption.height}}px;position:relative;">{{ caption.text }}</div>
+	<span class="uinsert-image-wrapper {{style.image.width_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="position:absolute;max-height: {{style.image.height}}px; top:{{style.image.top}}px;left:{{style.image.left}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</span>{[if(style.caption.show){ ]}<div class="wp-caption-text {{style.caption.width_cls}}" style="top:{{style.caption.top}}px;left:{{style.caption.left}}px;height:{{style.caption.height}}px;position:absolute;">{{ caption }}</div>
 {[ } ]}
 </script>
 
