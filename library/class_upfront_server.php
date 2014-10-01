@@ -338,6 +338,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$entities = Upfront_Entity_Registry::get_instance();
 		$registered = $entities->get_all();
+		
+		$child_instance = Upfront_ChildTheme::get_instance();
 
 		$paths = array(
       "backbone" => includes_url() . "js/backbone.min",
@@ -474,7 +476,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
-		$additional_fonts = Upfront_ChildTheme::get_instance()->getAdditionalFonts();
+		$additional_fonts = $child_instance ? $child_instance->getAdditionalFonts() : json_encode(array());
 
 		$current_user = wp_get_current_user();
 		$user_done_font_intro = in_array($current_user->user_login, get_option('upfront_users_done_font_intro', array())) ?
