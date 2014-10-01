@@ -3045,10 +3045,6 @@ define([
 				this.$el.css(css);
 				if ( this.edit_position )
 					this.edit_position.update_fields();
-				if ( this.$el.offset().top + this.$el.height() > $(window).height() - 35 )
-					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', 0);
-				else
-					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', '');
 				this.update_size_hint(css.width, css.minHeight);
 				this.update_position_hint(css);
 				this.update_position_scroll();
@@ -3167,6 +3163,11 @@ define([
 				if ( is_left )
 					css.left = left + ( css.position == 'fixed' ? $main.offset().left : 0 );
 				this.$el.css(css);
+				
+				if ( ( css.position == 'fixed' && css.bottom < 35 ) || ( css.position == 'absolute' && this.$el.offset().top+this.$el.height() > scroll_bottom-35 ) )
+					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', 0);
+				else
+					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', '');
 			},
 			on_scroll: function (e) {
 				var me = e.data;
