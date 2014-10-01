@@ -4440,18 +4440,20 @@ div.uinsert-selector a:hover {
 .upfront-save_settings {
 	height: 36px;
 	width: auto;
-	border: 1px solid rgb(0, 219, 143);
+	border: 1px solid rgb(0, 219, 141);
 	padding: 0 26px 0 20px;
-	background: rgb(31, 205, 143);
+	background: rgb(0, 206, 141);
 	line-height: 34px;
 	font-size: 18px;
-	font-family: 'Source Sans Pro';
-	color: rgb(242, 249, 255);
+	font-family: 'Source Sans Pro', Helvetica Neue, Helvetica, sans-serif;
+	font-weight: 600;
+	color: rgb(255, 255, 255);
 	border-radius: 0;
 	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+	-webkit-font-smoothing:antialiased;
 }
 .upfront-save_settings:hover {
-	background: #3ea;
+	background: rgb(0, 219, 141);
 }
 /* @TODO still using font awesome icon, need add it to sprite instead */
 .upfront-save_settings i {
@@ -8232,7 +8234,8 @@ License: MIT
 
 
 .ulinkpanel {
-	width: 230px;
+	/*width: 230px;*/
+	width:190px;
 }
 
 .ulinkpanel-title {
@@ -8241,7 +8244,7 @@ License: MIT
 }
 
 .ulinkpanel .upfront-field-wrap {
-	margin: 0 0 10px;
+	margin: 0 0 5px;
 	float: left;
 }
 
@@ -8251,7 +8254,7 @@ License: MIT
 
 .ulinkpanel-image-wrap,
 .ulinkpanel-entry-wrap {
-	width: 120px;
+	width: 100px;
 }
 
 .ulinkpanel-anchor-wrap,
@@ -8274,12 +8277,12 @@ License: MIT
 }
 
 .ulinkpanel-external-wrap label {
-	width: 30px;
+	width: 25px;
 	display: inline-block;
 }
 
 .ulinkpanel #ulinkpanel-link-url {
-	width: 170px;
+	width: 140px;
 	padding: 2px 4px;
 	height: 18px;
 }
@@ -8324,6 +8327,10 @@ a.ulinkpanel-entry-url:hover {
 	padding: 2px;
 	float: right;
 	margin-top: 5px;
+}
+
+.uimage-control-panel.upfront-ui #ulinkpanel-link-url {
+	border-color: #D9EDFE;
 }
 
 #ulinkpanel-create-lightbox:hover {
@@ -8386,20 +8393,37 @@ a.ulinkpanel-entry-url:hover {
 .ulinkpanel-dark .upfront-field-radio {
 	border-color: #85a9cb;
 }
+.ulinkpanel-dark .upfront-field-radio + label {
+	color:#97B8DA;
+	opacity: .7;
+	position: relative;
+	bottom: 1px;
+	left: -5px;
+}
 
 .ulinkpanel-dark .upfront-field-radio:checked {
 	border-color: #fff;
 	background: rgb(0, 219, 143);
 }
+.ulinkpanel-dark .upfront-field-radio:checked + label,
+.ulinkpanel-dark .upfront-field-radio:hover + label {
+	opacity: 1;
+}
 
 .ulinkpanel-dark .ulinkpanel-title {
 	color: #cbe5ff;
+	font:13px/100% Verdana, sans-serif;
 }
 
 .ulinkpanel-dark .upfront-settings-button_panel{
 	bottom: -36px;
 	right: 0;
 }
+
+/* custom link panel option widths */
+.ulinkpanel-entry-wrap { width: 95px; }
+.ulinkpanel-anchor-wrap { width:65px; }
+.ulinkpanel-lightbox-wrap { width: 75px; }
 
 /* ----- New Editor bar ----- */
 .upfront-postcontent-editor{

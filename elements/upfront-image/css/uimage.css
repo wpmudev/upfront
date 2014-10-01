@@ -706,16 +706,24 @@ a.image-edit-button.deactivated:hover {
 	text-align: left;
 }
 
-.uimage-control-panel {
+.upfront-ui.uimage-control-panel {
 	position: absolute;
 	min-width: 150px;
 	z-index: 2001;
-	background: #3d5266;
-	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
-	padding: 10px;
+	background: #2a465f;
+	padding: 5px;
 	left: 0px;
-	top: 39px;
+	top: 30px;
 	text-align: left;
+}
+.upfront-ui.uimage-control-panel .upfront-save_settings {
+	box-shadow: none;
+	height: 36px;
+	padding:0 25px;
+}
+
+.upfront-ui.uimage-control-panel label {
+	cursor: pointer;
 }
 
 .uimage-control-panel-light:before {
@@ -730,7 +738,7 @@ a.image-edit-button.deactivated:hover {
 
 .upfront-inline-panel-item.upfront-control-dialog-open {
 	background: rgb(42,70,95);
-	border-bottom: 1px solid #3d5266;
+	border-bottom: 1px solid #2A465F;
 	z-index: 51;
 }
 
@@ -965,7 +973,7 @@ div.uimage-controls i.upfront-icon:before {
 
 .upfront-ui.uimage-resize-hint {
 	position: absolute;
-	bottom: 15px;
+	top: 15px;
 	left: 15px;
 	background: #3d5266;
 	padding:2px 5px;
