@@ -5974,7 +5974,9 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	updateStyles: function(contents){
-		this.get_style_element().html(
+		var $el = this.get_style_element();
+		Upfront.Util.Transient.push('css-' + this.element_id, $el.html());
+		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())
 			)
