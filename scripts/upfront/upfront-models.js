@@ -1525,6 +1525,7 @@ var _alpha = "alpha",
 
     ImageVariant = Backbone.Model.extend({
         defaults : {
+            vid   : "",
             group : {
                 width_cls : "c24",
                 float: "none",
@@ -1534,14 +1535,17 @@ var _alpha = "alpha",
                 width_cls : "c24",
                 left_cls  : "ml0",
                 top_cls   : "mt0",
+                width     : "100%",
                 top       : 0,
                 left      : 0,
                 height    : 200
             },
             caption : {
+                show      : 1,
                 width_cls : "c20",
                 left_cls  : "ml2",
                 top_cls   : "mt0",
+                width     : "100%",
                 top       : 0,
                 left      : 0,
                 height    : 50

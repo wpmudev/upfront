@@ -419,11 +419,14 @@ var PostImageVariants =  Backbone.View.extend({
         "click .upfront-add-image-insert-variant" : "add_new_variant"
     },
     add_new_variant : function(){
-        var variant = new PostImageVariant();
+        var model = new Upfront.Models.ImageVariant();
+        model.set("vid", Upfront.Util.get_unique_id("variant"));
+        var variant = new PostImageVariant({ model : model});
         variant.render();
         variant.$el.hide();
         $(this).after( variant.el );
         variant.$el.fadeIn();
+        ImageVariants.add(model);
     },
     populate_style_content : function(){
         var me = this,
@@ -453,8 +456,9 @@ var PostImageVariants =  Backbone.View.extend({
             });
 
             if( ImageVariants.length === 0 ){
-                var model = new Upfront.Models.ImageVariant(),
-                    variant = new PostImageVariant({ model : model });
+                var model = new Upfront.Models.ImageVariant();
+                model.set("vid", Upfront.Util.get_unique_id("variant"));
+                var variant = new PostImageVariant({ model : model });
                 ImageVariants.add( model );
                 variant.render();
                 me.contentView.$el.find("#upfront-image-variants").append( variant.el );
@@ -463,8 +467,8 @@ var PostImageVariants =  Backbone.View.extend({
             /**
              * Add new button
              */
-            //me.contentView.$el.find("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
-            //    .on("click", me.add_new_variant);
+            me.contentView.$el.find("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
+                .on("click", me.add_new_variant);
         });
 
         return promise;
@@ -476,7 +480,6 @@ var PostImageVariant = Backbone.View.extend({
     nw_handle : '<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable"></span>',
     initialize: function( options ){
         this.opts = options;
-        this.model = _.isUndefined(options) || _.isUndefined( options.model ) ? new Upfront.Models.ImageVariant() : options.model;
         //Upfront.Events.on("post:content:style:start", this.populate_style_content);
         Upfront.Events.on("post:content:style:stop", function(){
 
@@ -613,10 +616,10 @@ var PostImageVariant = Backbone.View.extend({
             resize: function( event, ui ){
                 var $this = $(this),
                     model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption"),
-                    left = Upfront.util.width_to_col( ui.position.left ) * ge.col_size,
+                    left = Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
                     top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline,
                     col_class_size = Upfront.Util.width_to_col( ui.size.width );
-                self.update_class($this, ge.grid.class, col_class_size);
+                Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
                 model.left = left;
                 model.top = top;
                 model.width_cls = ge.grid.class + col_class_size;
@@ -684,15 +687,25 @@ var PostImageVariant = Backbone.View.extend({
             containment: "parent",
             //alsoResize: '.ueditor-insert-variant-image',
             start : function(){
-                this.$image.css({
+
+                /**
+                 * Reset caption and image styles
+                 */
+                self.$image.css({
                     left : 0,
                     top : 0
                 });
 
-                this.$caption.css({
+                self.$caption.css({
                     left : 0,
-                    top : this.$image.height()
+                    top : 0
                 });
+
+                Upfront.Util.grid.update_class( self.$image, "c24" );
+                Upfront.Util.grid.update_class( self.$caption, "c24" );
+
+                self.model.get("image").width_cls = "c24";
+                self.model.get("caption").width_cls = "c24";
 
             },
             resize: function (event, ui) {
@@ -725,12 +738,12 @@ var PostImageVariant = Backbone.View.extend({
             },
             stop: function (event, ui) {
                 var $this = $(this),
-                    col_class_size = Upfront.Util.width_to_col( ui.size.width),
+                    col_class_size = Upfront.Util.grid.width_to_col( ui.size.width),
                     margin_left = ui.position.left,
                     left_class_size = Math.round(margin_left / ge.col_size),
                     height =  Upfront.Util.height_to_row(ui.size.height) * ge.baseline;
 
-                self.update_class($this, ge.grid.class, col_class_size);
+                Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
                 self.model.get("group").height = height;
                 self.model.get("group").width_cls = ge.grid.class + col_class_size;
 

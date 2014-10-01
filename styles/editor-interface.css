@@ -1977,28 +1977,28 @@ a.ueditor-action-pickercancel{
 	display: none;
 }
 
-.ueditor-insert.alignleft {
-	float: left;
-	clear:left;
-	margin-right: 15px;
-}
-.ueditor-insert.alignright {
-	float: right;
-	float: right;
-	margin-left: 15px;
-}
-.ueditor-insert.aligncenter,
-.ueditor-insert.alignfull {
-	float: none;
-	clear: both;
-	text-align: center;
-}
+/*.ueditor-insert.alignleft {*/
+	/*float: left;*/
+	/*clear:left;*/
+	/*margin-right: 15px;*/
+/*}*/
+/*.ueditor-insert.alignright {*/
+	/*float: right;*/
+	/*float: right;*/
+	/*margin-left: 15px;*/
+/*}*/
+/*.ueditor-insert.aligncenter,*/
+/*.ueditor-insert.alignfull {*/
+	/*float: none;*/
+	/*clear: both;*/
+	/*text-align: center;*/
+/*}*/
 
-.ueditor-insert.ui-sortable-placeholder {
-	visibility: visible !important;
-	background: rgba(124,124,124,.2);
-	outline: 1px solid rgba(124, 124, 124, .4);
-}
+/*.ueditor-insert.ui-sortable-placeholder {*/
+	/*visibility: visible !important;*/
+	/*background: rgba(124,124,124,.2);*/
+	/*outline: 1px solid rgba(124, 124, 124, .4);*/
+/*}*/
 
 .uinsert-selector {
 	position: absolute;

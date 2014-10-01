@@ -133,7 +133,6 @@ define(function() {
 				}
 				return output;
 		},
-
 		get_avatar: function(obj, size){
 			var protocolParts = window.location.href.split('//'),
 				url = protocolParts[0] + '//www.gravatar.com/avatar/',
@@ -148,15 +147,44 @@ define(function() {
 
 			return url + hash + '?d=mm&s=' + size;
 		},
-
+        grid : {
+            /**
+             * Sets proper class to passed in jquery object of the element
+             *
+             * @param jQuery object $el
+             * @param string class_prefix|class_name either a class prefix like 'c' or a class name like c12
+             * @param string|int|null class_size either a string of the class size like 12 or '12'
+             */
+            update_class :  function ($el, class_prefix, class_size) {
+                if(  _.isUndefined( class_size ) ){
+                    var class_size = class_prefix.replace ( /[^\d.]/g, ''),
+                        class_name = class_prefix.replace(class_size, "");
+                }else{
+                    class_name = class_prefix;
+                }
+                var rx = new RegExp('\\b' + class_name + '\\d+');
+                if ( ! $el.hasClass( class_name + class_size) ){
+                    if ( $el.attr('class').match(rx) )
+                        $el.attr('class', $el.attr('class').replace(rx, class_name + class_size));
+                    else
+                        $el.addClass( class_name + class_size );
+                }
+            },
+            width_to_col: function (width) {
+                var column_width = Upfront.Settings.LayoutEditor.Grid.column_width;
+                return Math.floor(width/column_width);
+            },
+            height_to_row: function (height) {
+                var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
+                return Math.ceil(height/baseline);
+            }
+        },
 		width_to_col: function (width) {
-			var column_width = Upfront.Settings.LayoutEditor.Grid.column_width;
-			return Math.floor(width/column_width);
+			return this.grid.width_to_col(width);
 		},
 
 		height_to_row: function (height) {
-			var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;
-			return Math.ceil(height/baseline);
+			return this.grid.height_to_row(height);
 		},
 
 		openLightboxRegion: function(regionName){

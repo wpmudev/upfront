@@ -247,6 +247,7 @@ var UeditorInsert = Backbone.View.extend({
 		};
 	},
 	resizableInsert: function(){
+        if( !this.resizable ) return;
 		var me = this,
 			align = this.data.get('align'),
 			leftControl = true,
@@ -287,24 +288,26 @@ var UeditorInsert = Backbone.View.extend({
 		this.$el.resizable(resizableOptions);
 	}
 });
-var ImageVariants = new Upfront.Collections.ImageVariants( Upfront.mainData.postImageVariants );
+
 
 var ImageInsert = UeditorInsert.extend({
     type: 'image',
     className: 'ueditor-insert upfront-inserted_image-wrapper',
     tpl: _.template($(tpls).find('#image-insert-tpl').html()),
-    resizable: true,
+    resizable: false,
     defaultData: {
-        captionPosition: 'nocaption',
-        caption: 'A wonderful image :)',
+        captionPosition: 'bottom',
+        caption: 'Type your caption here ...',
         imageFull: {src:'', width:100, height: 100},
         imageThumb: {src:'', width:100, height: 100},
         linkType: 'do_nothing',
         linkUrl: '',
         isLocal: 1,
-        externalImage: {top: 0, left: 0, width: 0, height: 0}
+        externalImage: {top: 0, left: 0, width: 0, height: 0},
+        variant_id : ""
     },
     getResizableOptions: function(){
+        return;
         var options = {
             resize: $.proxy(this.onResizing, this),
             start: $.proxy(this.onStartResizing, this),
@@ -324,38 +327,34 @@ var ImageInsert = UeditorInsert.extend({
     //Called just after initialize
     init: function(){
 
-        var alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
-        alignControl.selected = this.data.get('align');
+        var style_variant = Upfront.Content.ImageVariants.findWhere({ vid : this.data.get("variant_id") }),
+            alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
+        alignControl.selected = this.data.get('variant_id');
         this.controlsData = [
             //alignControl,
             {id: 'style',
                 type: "multi",
                 icon : "style",
                 tooltip: "Style",
-                subItems: [
-                        {id: '0', icon: 'nocaption', tooltip: 'No caption'},
-                        {id: '1', icon: 'caption-left', tooltip: 'At the left'},
-                        {id: '2', icon: 'caption-bottom', tooltip: 'At the bottom'},
-                        {id: '3', icon: 'caption-right', tooltip: 'At the right'}
-                    ]
+                subItems: this.get_style_control_data()
             },
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
-            //{id: 'caption',
-            //    type: 'multi',
-            //    icon: 'caption',
-            //    tooltip: 'Caption',
-            //    selected: this.data.get('captionPosition') || 'nocaption',
-            //    subItems: [
-            //        {id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
-            //        {id: 'left', icon: 'caption-left', tooltip: 'At the left'},
-            //        {id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
-            //        {id: 'right', icon: 'caption-right', tooltip: 'At the right'}
-            //    ]
-            //},
+            {id: 'caption',
+                type: 'multi',
+                icon: 'caption',
+                tooltip: 'Caption',
+                selected: this.data.get('captionPosition') || 'nocaption',
+                subItems: [
+                    {id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
+                    {id: 'left', icon: 'caption-left', tooltip: 'At the left'},
+                    {id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
+                    {id: 'right', icon: 'caption-right', tooltip: 'At the right'}
+                ]
+            },
             this.getRemoveControlData()
         ];
         this.createControls();
-
+        this.style_variant = style_variant ? style_variant : new Upfront.Models.ImageVariant();
         if(!this.data.get('width')){
             var width = this.data.get('imageThumb').width;
             if(['left', 'right'].indexOf(this.data.get('captionPosition')) != -1)
@@ -363,7 +362,6 @@ var ImageInsert = UeditorInsert.extend({
             this.data.set({width: width}, {silent: true});
         }
 
-        console.log(this.data.toJSON());
     },
 
     // The user want a new insert. Fetch all the required data to create a new image insert
@@ -389,141 +387,61 @@ var ImageInsert = UeditorInsert.extend({
     render: function(){
         var me = this,
             data = this.data.toJSON(),
-            wrapperSize = this.data.get('imageThumb')
-            ;
+            style_variant = this.style_variant.toJSON(),
+            wrapperSize = this.data.get('imageThumb');
 
-        if (!wrapperSize.src) {
-            wrapperSize = {
-                height: data.height,
-                width: data.width,
-                src: data.src
-            };
-        }
 
         if(data.align == 'full') {
             data.image = data.imageFull;
         } else {
             data.image = data.imageThumb;
         }
+
         var src = this.data.get('imageFull').src;
         if (!src) {
             this.data.set("imageFull", {
-                height: data.height,
-                width: data.width,
+                height: data.style_variant.get("group").height,
+                //width: data.width,
                 src: data.src
             });
             data.image = this.data.get("imageFull");
         }
 
+        //Adapt the caption with the variant style
+        style_variant.caption.text = data.caption;
+        data.caption = style_variant.caption;
+
+        //Adapt the image with the variant style
+        data.image = _.extend(data.image, style_variant.image);
+        console.log("rendering", data);
         this.$el
             .html(this.tpl(data))
-            .removeClass('aligncenter alignleft alignright alignfull')
-            .addClass('align' + data.align)
-            .addClass('clearfix')
         ;
 
-        if(data.align != 'full')
-            this.$el.width(parseInt(data.width, 10));
-        else
-            this.$el.css('width', 'auto');
-
+        Upfront.Util.grid.update_class(this.$el, style_variant.group.width_cls);
+        this.$el.css({
+            float : style_variant.group.float,
+            height : style_variant.group.height
+        });
         this.controls.render();
         this.$el.append(this.controls.$el);
 
         this.updateControlsPosition();
 
-        this.captionTimer = false;
-
-        if(data.captionPosition != 'nocaption'){
-            this.$('.wp-caption-text')
-                //.attr('contenteditable', true)
-                .off('keyup')
-                .on('keyup', function(e){
-                    me.data.set('caption', this.innerHTML, {silent: true});
-                    //Update event makes InsertManager update its data without rendering.
-                    me.data.trigger('update');
-                })
-                .ueditor({
-                    linebreaks: true,
-                    autostart: true,
-                    pastePlainText: true,
-                    airButtons: ['bold', 'italic', 'upfrontLink', 'stateAlign']
-                })
-            ;
-            this.ueditor = this.$('.wp-caption-text').data('ueditor');
-            this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-                if(redactor != me.ueditor.redactor)
-                    return;
-
-                var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                    parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                    ;
-
-                if(!parentRedactor)
-                    return;
-
-                parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
-                parentRedactor.$source.on('keydown.redactor-textarea');
-
-                //parentUeditor.stop();
-            });
-
-            this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-                if(redactor != me.ueditor.redactor)
-                    return;
-
-                var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                    parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                    ;
-
-                if(!parentRedactor)
-                    return;
-
-                parentRedactor.buildBindKeyboard();
-
-                //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
-                //parentUeditor.start();
-            });
-        }
-
-        var wrapperData = {
-                display: 'inline-block',
-                overflow: 'hidden',
-                position: 'relative',
-                height: wrapperSize.height
-            },
-            imageSize = this.calculateImageResize(wrapperSize, this.data.get('imageFull'))
-            ;
-
-        if(data.align == 'full'){
-            if(data.captionPosition == 'left' || data.captionPosition == 'right')
-                wrapperData.width = wrapperSize.width;
-            else
-                wrapperData.width = '100%';
-        }
-        else {
-            wrapperData.width = wrapperSize.width;
-        }
-
         this.$('.uinsert-image-wrapper')
-            .css(wrapperData)
-            .addClass('uinsert-drag-handle')
+            //.css(wrapperData)
             .find('img')
             .attr('src', this.data.get("imageFull").src)
-            .css({
-                position: 'absolute',
-                'max-width': 'none',
-                'max-height': 'none'
-            })
-            .css(imageSize)
+            //.css({
+            //    position: 'absolute',
+            //    'max-width': 'none',
+            //    'max-height': 'none'
+            //})
+            //.css(imageSize)
         ;
 
         if(!this.data.get('isLocal'))
-            this.data.set({externalImage: imageSize}, {silent: true});
-
-        this.resizableInsert();
-        if(data.captionPosition == 'left' || data.captionPosition == 'right')
-            this.resizableImage();
+            this.data.set({externalImage: style_variant.image.width}, {silent: true});
     },
 
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
@@ -535,9 +453,7 @@ var ImageInsert = UeditorInsert.extend({
             this.trigger('remove', this);
         });
 
-        this.listenTo(this.controls, 'control:select:style', function(control){
-            console.log(control);
-        });
+
         this.listenTo(this.controls, 'control:select:alignment', function(control){
             var alignData = {
                     align: control
@@ -548,7 +464,6 @@ var ImageInsert = UeditorInsert.extend({
                 sideCaption = captionPosition == 'left' || captionPosition == 'right',
                 width
                 ;
-console.log("alignment",  control);
             if(control == 'full'){
                 this.data.set(alignData);
                 alignData.width = me.$el.width();
@@ -625,6 +540,19 @@ console.log("alignment",  control);
             }
 
             this.data.set(newData);
+        });
+        /**
+         * Image style from variants
+         */
+        this.listenTo(this.controls, 'control:select:style', function(variant_id, variant){
+            var _style = Upfront.Content.ImageVariants.findWhere({vid : variant_id});
+            if( _style ){
+                var style = _style.toJSON();
+                Upfront.Util.grid.update_class( this.$el,  style.group.width_cls);
+                this.data.set("variant_id", variant_id );
+                this.style_variant = _style;
+            }
+
         });
     },
 
@@ -874,83 +802,6 @@ console.log("alignment",  control);
         return src;
     },
 
-    onStartResizing: function(){
-        console.log('start resizing');
-        this.resizeCache = {
-            wrapper: this.$('.uinsert-image-wrapper'),
-            image: this.$('img'),
-            caption: this.$('wp-caption-text'),
-            imagedata: this.data.get('imageFull'),
-            captionPosition: this.data.get('captionPosition'),
-            align: this.data.get('align')
-        };
-        this.controls.$el.hide();
-    },
-    onStopResizing: function(e, ui){
-        console.log('stop resizing');
-        var wrapper = this.resizeCache.wrapper,
-            width = wrapper.width(),
-            height = wrapper.height(),
-            resizeData = {
-                imageThumb: {width: width, height: height, src: this.generateThumbSrc(width, height)},
-                width: this.$el.width()
-            }
-            ;
-
-        if(!parseInt(this.data.get('isLocal'),10)){
-            var img = wrapper.find('img'),
-                externalImage = img.position()
-                ;
-
-            externalImage.width = img.width();
-            externalImage.height = img.height();
-
-            console.log(externalImage);
-
-            //Restore the image src
-            resizeData.imageThumb.src = this.data.get('imageFull').src;
-            resizeData.externalImage = externalImage;
-        }
-
-        this.data.set(resizeData, {silent: true});
-
-
-        this.controls.$el.show();
-        this.updateControlsPosition();
-    },
-
-    onResizing: function(e, ui){
-        if(e.target != this.el)
-            return;
-
-        //console.log('resizing');
-        if(this.resizeCache.align == 'right')
-            $(this.$el).css('left', 0);
-
-        var wrapper = this.resizeCache.wrapper,
-            editable = wrapper.parents(".ueditable"),
-            captionPosition = this.resizeCache.captionPosition
-            ;
-
-        wrapper.closest('.ueditor-insert').css({left: 0}); // Don't move to the left anymore plx
-        if(captionPosition == 'nocaption') {
-            if (editable.length && ui.size.width > editable.width()) {
-                return false;
-            }
-            else wrapper.css(ui.size);
-        } else if(captionPosition == 'bottom') {
-            wrapper.css({width: ui.size.width, height: ui.size.height - this.resizeCache.caption.outerHeight()});
-        } else {
-            wrapper.height(ui.size.height);
-        }
-
-        //let it flow
-        this.$el.css({height: 'auto'});
-
-        //refresh image dimensions and position
-        var imageData = this.calculateImageResize({width: wrapper.width(), height: wrapper.height()}, this.resizeCache.imagedata);
-        this.resizeCache.image.css(imageData);
-    },
 
     calculateImageResize: function(wrapperSize, imageSize){
         var pivot = imageSize.width / imageSize.height > wrapperSize.width / wrapperSize.height ? 'height' : 'width',
@@ -969,6 +820,7 @@ console.log("alignment",  control);
     },
 
     resizableImage: function(){
+        return;
         var me = this,
             captionPosition = this.data.get('captionPosition'),
             handles = {w: '.upfront-resize-handle-w'},
@@ -1007,7 +859,16 @@ console.log("alignment",  control);
             })
         ;
 
-    }
+    },
+    get_style_control_data : function(){
+        return Upfront.Content.ImageVariants.map(function( variant, index ){
+            return {
+                id : variant.get("vid"),
+                icon : index % 2 === 0 ? "caption-left" : "caption-right",
+                tooltip : variant.get("vid")
+            }
+        });
+    },
 });
 var LinkView = Backbone.View.extend({
         tpl: _.template($(tpls).find('#image-link-tpl').html()),
