@@ -581,15 +581,14 @@ var ImageInsert = UeditorInsert.extend({
         /**
          * Image style from variants
          */
-        this.listenTo(this.controls, 'control:select:style', function(variant_id, variant){
+        this.listenTo(this.controls, 'control:select:style', function(variant_id){
             var _style = Upfront.Content.ImageVariants.findWhere({vid : variant_id});
+            console.log(variant_id);
             if( _style ){
                 var style = _style.toJSON();
-                Upfront.Util.grid.update_class( this.$el,  style.group.width_cls);
                 this.data.set("variant_id", variant_id );
                 this.data.set("style", _style.toJSON());
             }
-
         });
     },
 
@@ -898,14 +897,14 @@ var ImageInsert = UeditorInsert.extend({
 
     },
     get_style_control_data : function(){
-        return Upfront.Content.ImageVariants.map(function( variant, index ){
+        return  Upfront.Content.ImageVariants.map(function( variant, index ){
             return {
                 id : variant.get("vid"),
                 icon : index % 2 === 0 ? "caption-left" : "caption-right",
                 tooltip : variant.get("vid")
             }
         });
-    },
+    }
 });
 var LinkView = Backbone.View.extend({
         tpl: _.template($(tpls).find('#image-link-tpl').html()),
