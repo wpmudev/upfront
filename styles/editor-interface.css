@@ -98,7 +98,9 @@
 	box-sizing: border-box;         /* Opera/IE 8+ */
 }
 
-.upfront-ui * {
+.upfront-ui *,
+.upfront-ui *:before,
+.upfront-ui *:after {
 	font-weight: inherit;
 	font-style: inherit;
 	text-transform: inherit;
@@ -107,6 +109,14 @@
 	outline: none;
 	margin: 0;
 	padding: 0;
+	background:none;
+	border-radius:0;
+	position: static;
+	-webkit-transform: none;
+	   -moz-transform: none;
+	    -ms-transform: none;
+	     -o-transform: none;
+	        transform: none;
 }
 
 .upfront-ui h1,

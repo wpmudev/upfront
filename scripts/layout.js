@@ -478,14 +478,90 @@ jQuery(document).ready(function($){
 		}, 100);
 	}
 
+	
+	/**
+	 * The queue object, used to chain-load images within a load level.
+	 */
+	function LazyLoad_Queue () {
+		var deferreds = [],
+			targets = []
+		;
+
+		function get_lazy_loading_image_promise (obj) {
+			var deferred = new $.Deferred();
+			obj.$el.removeClass('upfront-image-lazy-loaded').addClass('upfront-image-lazy-loading');
+			$('<img />')
+				.attr('src', obj.url)
+				.on('load', function () {
+					if (obj.$el.is(".upfront-image-lazy-bg")) obj.$el.css('background-image', 'url("' + obj.url + '")');
+					else (obj.$el.attr('src', obj.url));
+					obj.$el.removeClass('upfront-image-lazy-loading').addClass('upfront-image-lazy-loaded');
+					deferred.resolve();
+				})
+			;
+			return deferred.promise();
+		}
+		function add (src, $img) {
+			targets.push({
+				url: src,
+				$el: $img
+			});
+		}
+		function start () {
+			var semaphore = new $.Deferred();
+			$.each(targets, function (idx, obj) {
+				deferreds.push(get_lazy_loading_image_promise(obj));
+			});
+			$.when.apply($, deferreds)
+				.always(function () {
+					semaphore.resolve();
+				})
+			;
+			return semaphore.promise();
+		}
+		return {
+			add: add,
+			start: start
+		}
+	}
+
+	/**
+	 * The stack of queues, used to chain-load queued levels.
+	 */
+	function LazyLoad_QueueStack (queues) {
+		function start () {
+			queues.reverse();
+			execute();
+		}
+		function execute () {
+			var q = queues.pop();
+			if (!q) return false;
+			q.start().done(execute);
+		}
+		return { start: start };
+	}
+
 	/**
 	 * Initial background loading of the images.
+	 * Separate images into priority queues and load each one appropriately.
 	 */
 	function image_lazy_load_bg () {
-		var $images = $('.upfront-image-lazy');
+		var secondary_delta = 1500,
+		// Sources
+			$images = $('.upfront-image-lazy'),
+		// Queues
+			primary = new LazyLoad_Queue(), 
+			secondary = new LazyLoad_Queue(),
+			tertiary = new LazyLoad_Queue(),
+		// Misc
+			scroll = $(window).scrollTop(),
+			w_height = $(window).height(),
+			w_width = $(window).width()
+		;
 		if (!$images.length) return false;
 		$images.each(function () {
 			var $img = $(this),
+				offset = $img.offset(),
 				source = $img.attr('data-sources'),
 				src = $img.attr('data-src'),
 				height = $img.height(),
@@ -510,19 +586,25 @@ jQuery(document).ready(function($){
 				$(this).data('loaded', closest);
 			}
 
-			// Actually load the image
-			$img.removeClass('upfront-image-lazy-loaded').addClass('upfront-image-lazy-loading');
-			$('<img />')
-				.attr('src', src)
-				.on('load', function () {
-					if ($img.is(".upfront-image-lazy-bg")) $img.css('background-image', 'url("' + src + '")');
-					else ($img.attr('src', src));
-					$img.removeClass('upfront-image-lazy-loading').addClass('upfront-image-lazy-loaded');
-				})
-			;
-			// Done loading individual image
+			if (offset.top+height >= scroll && offset.top < scroll+w_height) {
+				primary.add(src, $img);
+			} else if (offset.top+height+secondary_delta >= scroll && offset.top < scroll+w_height+secondary_delta) {
+				secondary.add(src, $img);
+			} else {
+				tertiary.add(src, $img);
+			}
+
 		});
 		$(window).off('scroll', image_lazy_load); // Since we scheduled image loads, kill the scroll load
+
+		// We're ready now
+		var stack = new LazyLoad_QueueStack([
+			// Order is significant
+			primary,
+			secondary,
+			tertiary
+		]).start();
+
 	}
 
 	// Initialize appropriate behavior
@@ -531,7 +613,7 @@ jQuery(document).ready(function($){
 		$(window).on('scroll', image_lazy_load);
 		image_lazy_load();
 	} else {
-		$(window).on("load", image_lazy_load_bg); // Do background load instead
+		$(image_lazy_load_bg); // Do background load instead
 	}
 	
 	
