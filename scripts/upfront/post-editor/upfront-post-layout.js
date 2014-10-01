@@ -415,16 +415,18 @@ var PostImageVariants =  Backbone.View.extend({
         this.contentView = options.contentView;
         this.populate_style_content();
     },
-    events : {
-        "click .upfront-add-image-insert-variant" : "add_new_variant"
-    },
-    add_new_variant : function(){
+    add_new_variant : function(e){
+        e.preventDefault();
+        e.stopPropagation();
         var model = new Upfront.Models.ImageVariant();
         model.set("vid", Upfront.Util.get_unique_id("variant"));
         var variant = new PostImageVariant({ model : model});
         variant.render();
         variant.$el.hide();
-        $(this).after( variant.el );
+        /**
+         * Add it after the last variant
+         */
+        $(".ueditor-insert-variant").last().after( variant.el );
         variant.$el.fadeIn();
         ImageVariants.add(model);
     },
@@ -467,7 +469,7 @@ var PostImageVariants =  Backbone.View.extend({
             /**
              * Add new button
              */
-            me.contentView.$el.find("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
+            $("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
                 .on("click", me.add_new_variant);
         });
 
@@ -502,11 +504,13 @@ var PostImageVariant = Backbone.View.extend({
     },
     remove_variant : function(e){
         e.preventDefault();
+        e.stopPropagation();
         ImageVariants.remove(this.model);
         this.remove();
     },
     start_editing : function(e){
         e.preventDefault();
+        e.stopPropagation();
         // Hide edit button
         this.$(".upfront_edit_image_insert").css({
             visibility : "hidden"
@@ -528,6 +532,8 @@ var PostImageVariant = Backbone.View.extend({
     },
     finish_editing : function( e ){
         e.preventDefault();
+        e.stopPropagation();
+
         // Show edit button
         this.$(".upfront_edit_image_insert").css({
             visibility : "visible"
@@ -558,14 +564,16 @@ var PostImageVariant = Backbone.View.extend({
                 zIndex: 100,
                 containment : 'parent',
                 delay: 50,
-                //helper: 'clone',
+                helper: 'clone',
                 start : function( event, ui ){
-                  $(this).resizable("option", "disabled", true);
+                    event.stopPropagation();
+                    $(this).resizable("option", "disabled", true);
                 },
                 drag : function( event, ui ){
-
+                    event.stopPropagation();
                 },
                 stop : function(event, ui){
+                    event.stopPropagation();
                     var $this = $(this),
                         top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline ,
                         left  =  Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
@@ -579,7 +587,9 @@ var PostImageVariant = Backbone.View.extend({
 
                     $(this).css({
                         top : top,
-                        left : left
+                        left : left,
+                        marginLeft : 0,
+                        marginTop: 0
                     });
 
                     $this.resizable("option", "disabled", false);
@@ -618,15 +628,41 @@ var PostImageVariant = Backbone.View.extend({
             minWidth: 45,
             containment: "parent",
             start : function( event, ui ){
-                $(this).draggable("disable");
+                event.stopPropagation();
+                $(this).draggable("option", "disabled", true);
             },
             resize: function( event, ui ){
+                event.stopPropagation();
+                //var $this = $(this),
+                //    model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption"),
+                //    left = Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
+                //    top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline,
+                //    height = Upfront.Util.grid.normalize_height( ui.size.height > 0 ? ui.size.height : 0 ),
+                //    width = Upfront.Util.grid.normalize_width( ui.size.width > 0 ? ui.size.width : 0 ),
+                //    col_class_size = Upfront.Util.width_to_col( ui.size.width );
+                //
+                //model.left = left;
+                //model.top = top;
+                //model.height = height;
+                //model.width_cls = ge.grid.class + col_class_size;
+                //
+                //Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
+                //
+                //$(this).css({
+                //    left : left,
+                //    top: top,
+                //    height: height
+                //});
+            },
+            stop : function(event, ui){
+                $(this).draggable("option", "disabled", false);
+                event.stopPropagation();
                 var $this = $(this),
                     model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption"),
                     left = Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
                     top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline,
-                    height = Upfront.Util.grid.normalize_height( ui.size.height > 0 ? ui.size.height : 0 ),
-                    width = Upfront.Util.grid.normalize_width( ui.size.width > 0 ? ui.size.width : 0 ),
+                    height = Upfront.Util.grid.normalize_height( ui.size.height ),
+                    width  = Upfront.Util.grid.normalize_width(  ui.size.width),
                     col_class_size = Upfront.Util.width_to_col( ui.size.width );
 
                 model.left = left;
@@ -639,11 +675,9 @@ var PostImageVariant = Backbone.View.extend({
                 $(this).css({
                     left : left,
                     top: top,
-                    height: height
+                    height: height,
+                    width : ""
                 });
-            },
-            stop : function(event, ui){
-                $(this).draggable("enable");
             }
         };
         /**

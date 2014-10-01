@@ -157,7 +157,7 @@ define(function() {
              */
             update_class :  function ($el, class_prefix, class_size) {
                 if(  _.isUndefined( class_size ) ){
-                    var class_size = class_prefix.replace ( /[^\d.]/g, ''),
+                    var class_size = class_prefix.replace( /[^\d.]/g, ''),
                         class_name = class_prefix.replace(class_size, "");
                 }else{
                     class_name = class_prefix;
@@ -179,7 +179,7 @@ define(function() {
                 return Math.ceil(height/baseline);
             },
             normalize_width: function(width){
-                return this.width_to_col( width ) * Upfront.Settings.LayoutEditor.Grid.col_size;
+                return this.width_to_col( width ) * Upfront.Settings.LayoutEditor.Grid.column_width;
             },
             normalize_height: function( height ){
                 return this.height_to_row( height ) * Upfront.Settings.LayoutEditor.Grid.baseline;

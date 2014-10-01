@@ -12375,6 +12375,8 @@ div.upfront-regions a#no_region_add_one {
 }
 .ueditor-insert-variant{
     display: inline-block;
+    margin:0;
+    padding:0;
 }
 .ueditor-insert-variant:hover{
     outline:1px dotted #7f7f7f;
