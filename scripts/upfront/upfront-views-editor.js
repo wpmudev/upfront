@@ -5723,6 +5723,16 @@ var CSSEditor = Backbone.View.extend({
 
 		this.render();
 
+		Upfront.Events.on("command:undo", function () {
+			setTimeout(function () { 
+				var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
+				if (styles) {
+					me.get_style_element().html(styles);
+					me.render(); 
+				}
+			}, 200);
+		});
+
 		this.startResizable();
 
 		Upfront.Events.trigger('csseditor:open', this.element_id);
