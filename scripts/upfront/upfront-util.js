@@ -597,7 +597,6 @@ define(function() {
 				Upfront.Events.off("entity:drag_stop", exporter_set_dirty);
 				Upfront.Events.off("entity:module:after_render", exporter_set_dirty);
 				Upfront.Events.off("upfront:element:edit:stop", exporter_set_dirty);
-				Upfront.Events.off("upfront:themestyle:saved", exporter_set_dirty);
 
 				Upfront.Events.on("entity:region:deactivated", exporter_set_dirty, this);
 				Upfront.Events.on("entity:settings:deactivate", exporter_set_dirty, this);
@@ -606,7 +605,6 @@ define(function() {
 				Upfront.Events.on("entity:drag_stop", exporter_set_dirty, this);
 				Upfront.Events.on("entity:module:after_render", exporter_set_dirty, this);
 				Upfront.Events.on("upfront:element:edit:stop", exporter_set_dirty, this);
-				Upfront.Events.on("upfront:themestyle:saved", exporter_set_dirty, this);
 
 				Upfront.Events.off("command:layout:export_theme", clear);
 				Upfront.Events.on("command:layout:export_theme", clear);
@@ -622,7 +620,6 @@ define(function() {
 				Upfront.Events.off("entity:drag_stop", save);
 				Upfront.Events.off("entity:module:after_render", save);
 				Upfront.Events.off("upfront:element:edit:stop", save);
-				Upfront.Events.off("upfront:themestyle:saved", save);
 
 				Upfront.Events.on("entity:region:deactivated", save, this);
 				Upfront.Events.on("entity:settings:deactivate", save, this);
@@ -631,7 +628,6 @@ define(function() {
 				Upfront.Events.on("entity:drag_stop", save, this);
 				Upfront.Events.on("entity:module:after_render", save, this);
 				Upfront.Events.on("upfront:element:edit:stop", save, this);
-				Upfront.Events.on("upfront:themestyle:saved", save, this);
 
 				Upfront.Events.off("command:layout:save_success", clear);
 				Upfront.Events.on("command:layout:save_success", clear);
