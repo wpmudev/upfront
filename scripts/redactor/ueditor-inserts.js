@@ -409,7 +409,7 @@ var ImageInsert = UeditorInsert.extend({
         });
         this.controls.render();
         this.$el.append(this.controls.$el);
-
+        this.make_caption_editable();
         this.updateControlsPosition();
 
         this.$('.uinsert-image-wrapper')
@@ -428,6 +428,59 @@ var ImageInsert = UeditorInsert.extend({
             this.data.set({externalImage: style_variant.image.width}, {silent: true});
     },
 
+    make_caption_editable: function(){
+        var me = this;
+        if( !this.data.get("style").caption.show ) return;
+            this.$('.wp-caption-text')
+                //.attr('contenteditable', true)
+                .off('keyup')
+                .on('keyup', function(e){
+                    me.data.set('caption', this.innerHTML, {silent: true});
+                    //Update event makes InsertManager update its data without rendering.
+                    me.data.trigger('update');
+                })
+                .ueditor({
+                    linebreaks: true,
+                    autostart: true,
+                    pastePlainText: true,
+                    airButtons: ['bold', 'italic', 'upfrontLink', 'stateAlign']
+                })
+            ;
+            this.ueditor = this.$('.wp-caption-text').data('ueditor');
+            this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
+                if(redactor != me.ueditor.redactor)
+                    return;
+
+                var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                    parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                    ;
+
+                if(!parentRedactor)
+                    return;
+
+                parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
+                parentRedactor.$source.on('keydown.redactor-textarea');
+
+                //parentUeditor.stop();
+            });
+
+            this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
+                if(redactor != me.ueditor.redactor)
+                    return;
+
+                var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                    parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                    ;
+
+                if(!parentRedactor)
+                    return;
+
+                parentRedactor.buildBindKeyboard();
+
+                //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
+                //parentUeditor.start();
+            });
+    },
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
     controlEvents: function(){
         var me = this;

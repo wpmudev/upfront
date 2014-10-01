@@ -356,3 +356,6 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
   margin: 0;
   padding: 0;
 }
+.upfront-inserted_image-wrapper{
+    position: relative;
+}

@@ -2110,7 +2110,9 @@ div.uinsert-selector a:hover {
 .upfront-postpart-featured_image {
 	overflow: hidden;
 }
-
+.uimage-control-panel-content label{
+    color:#fff;
+}
 #settings {
   position: fixed;
   left: 0;
