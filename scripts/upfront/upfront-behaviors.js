@@ -1046,7 +1046,7 @@ var LayoutEditor = {
 
 
 		data = {
-			typography: JSON.stringify(typography.value),
+			typography: (typography ? JSON.stringify(typography.value) : ''),
 			regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
 			template: _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type, // Respect proper cascade ordering
 			layout_properties: JSON.stringify(properties),
