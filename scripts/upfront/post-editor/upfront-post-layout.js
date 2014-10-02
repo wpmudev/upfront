@@ -64,7 +64,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Events.trigger('post:layout:partrendered', this);
 
-//		console.log('post part rendered');
 	},
 
 	updateOptions: function(){
@@ -145,7 +144,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 var PostPartElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	className: "draggable-element upfront-no-select draggable-post-element",
 	initialize: function(opts){
-		console.log('initializing element');
 		this.options = opts;
 		this.title = opts.title;
 		this.slug = this.title.toLowerCase().replace(' ', '_');
@@ -271,6 +269,7 @@ var ContentSettings = PostPartSettings.extend({
 		'change .upfront-field-number': 'updatePadding'
 	},
 	init: function(opts){
+        console.log("this.panels", this.panels);
 	  this.panels = _([
 	      new Settings.Panel({
             hide_common_fields: true,
@@ -321,9 +320,6 @@ var ContentSettings = PostPartSettings.extend({
 });
 
 var ContentView = PostPartView.extend({
-    events : {
-        "click .upfront_edit_content_style" : 'start_content_styling'
-    },
     start_content_styling : function( e ){
         e.preventDefault();
         e.stopPropagation();
@@ -363,6 +359,7 @@ var ContentView = PostPartView.extend({
 	},
 
 	render: function(){
+        var self = this;
 		PostPartView.prototype.render.apply(this, arguments);
 
 		if(!this.paddingChangeHandler){
@@ -378,6 +375,9 @@ var ContentView = PostPartView.extend({
              */
             var $editor = $('<div class="upfront_edit_content_style">Style Post Content</div>');
             $editor.appendTo( this.$(".upfront-output-PostPart_contents") );
+            $editor.on("click", function(e){
+                self.start_content_styling.call(self, e);
+            });
         }
 
 	},

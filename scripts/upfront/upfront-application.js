@@ -241,11 +241,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			else if (typeof current_object.ContextMenu == 'undefined')
 				current_object.ContextMenu = Upfront.Views.ContextMenu;
 
-			context_menu_view = new current_object.ContextMenu({
-				model: view.model,
-				for_view: view,
-				el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
-			})
+        var context_menu_view = new current_object.ContextMenu({
+            model: view.model,
+            for_view: view,
+            el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
+        })
 		;
 
 		context_menu_view.for_view = view;
@@ -1003,7 +1003,7 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 
 	stop: function () {
 		return this.stopListening(Upfront.Events);
-	},
+	}
 
 }))();
 
@@ -1063,8 +1063,7 @@ var Application = new (Backbone.Router.extend({
 		THEME: "theme",
 		POST: 'post layout',
 		POSTCONTENT: "post content",
-        RESPONSIVE: "responsive",
-        CONTENT_STYLE : "post content style"
+        RESPONSIVE: "responsive"
     },
 
 	mode: {
