@@ -499,7 +499,7 @@ var PostImageVariant = Backbone.View.extend({
         this.$image =  this.$(".ueditor-insert-variant-image");
         this.$caption = this.$(".ueditor-insert-variant-caption");
         this.make_resizable();
-        this.$title = this.$(".image-variant-title");
+        this.$label = this.$(".image-variant-label");
         return this;
     },
     remove_variant : function(e){
@@ -513,7 +513,7 @@ var PostImageVariant = Backbone.View.extend({
         e.stopPropagation();
 
         // Show title input
-        this.$title.show();
+        this.$label.show();
 
         // Hide edit button
         this.$(".upfront_edit_image_insert").css({
@@ -539,9 +539,9 @@ var PostImageVariant = Backbone.View.extend({
         e.stopPropagation();
 
         //Hide title
-        this.$title.hide();
+        this.$label.hide();
 
-        this.model.set( "title", this.$title.val() );
+        this.model.set( "label", this.$label.val() );
 
         // Show edit button
         this.$(".upfront_edit_image_insert").css({

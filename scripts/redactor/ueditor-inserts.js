@@ -900,7 +900,7 @@ var ImageInsert = UeditorInsert.extend({
         return  Upfront.Content.ImageVariants.map(function( variant, index ){
             return {
                 id: variant.get("vid"),
-                label: variant.get("title"),
+                label: variant.get("label")
             }
         });
     }
