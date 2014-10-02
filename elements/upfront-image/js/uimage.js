@@ -3048,10 +3048,17 @@ var TooltipControl = Control.extend({
 	},
 
 	onClickControl: function(e){
+		var  closestLayout = this.$el.closest('.upfront-grid-layout'),
+				closestWrapper = this.$el.closest('.upfront-wrapper');
+
 		e.preventDefault();
 		// Deactivate others controls
 		this.clicked(e);
 		this.$el.toggleClass('open');
+
+		closestLayout.toggleClass('upfront-grid-layout-current');
+		closestWrapper.toggleClass('upfront-wrapper-current');
+		console.log('clicked');
 	},
 
 	render: function() {
@@ -3112,6 +3119,7 @@ var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 	clicked: function(e){
 		this.trigger('click', e);
 		this.toggle_subitem();
+		console.log('i have been clicked ffs');
 	},
 	get_selected_item: function () {
 		return this.selected;

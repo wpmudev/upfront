@@ -741,6 +741,14 @@ a.image-edit-button.deactivated:hover {
 	border-bottom: 1px solid #2A465F;
 	z-index: 51;
 }
+.upfront-inline-panel-item.uimage-control-tooltip-item.open {
+	background: rgb(42,70,95);
+	border-bottom: 1px solid #2A465F;
+	z-index: 52;
+}
+
+.uimage-controls .upfront-inline-panel-item.upfront-control-dialog-open .tooltip-content,
+.uimage-controls .upfront-inline-panel-item.upfront-control-dialog-open:after { display:none; }
 
 .uimage-control-panel-light:after {
 	display: block;
