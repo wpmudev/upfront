@@ -391,7 +391,7 @@ var ContentView = PostPartView.extend({
 			rightPadding = right * colSize,
 			leftPadding = left * colSize,
 			styles = $('.upfront-region-postlayouteditor').find('.upfront-post-padding'),
-			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents>* {'
+			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents {'
 		;
 
 		if(!styles.length){
@@ -482,7 +482,6 @@ var PostImageVariant = Backbone.View.extend({
     nw_handle : '<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable"></span>',
     initialize: function( options ){
         this.opts = options;
-        //Upfront.Events.on("post:content:style:start", this.populate_style_content);
         Upfront.Events.on("post:content:style:stop", function(){
 
         });
