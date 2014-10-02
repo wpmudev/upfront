@@ -1,6 +1,6 @@
 (function ($) {
 
-define(['models', 'views', 'editor_views', 'behaviors', 'upfront-data', 'jquery-df', 'jquery-simulate', 'scripts/backbone-query-parameters/backbone-query-parameters'], function (models, views, editor, behaviors, data) {
+define(['models', 'views', 'editor_views', 'behaviors', 'upfront-data', 'jquery-df', 'jquery-simulate', 'scripts/backbone-query-parameters/backbone-query-parameters', 'responsive'], function (models, views, editor, behaviors, data) {
   _.extend(Upfront, data);
   Upfront.Events.trigger('data:ready');
   _.extend(Upfront, models);
