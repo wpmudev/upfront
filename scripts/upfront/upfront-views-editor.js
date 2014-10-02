@@ -1426,12 +1426,14 @@ define([
 			var chooseButton = new Field_Button({
 				label: 'Select Fonts To Use',
 				compact: true,
+				classname: 'open-theme-fonts-manager',
+
 				on_click: function(e){
 					Upfront.Events.trigger('command:themefontsmanager:open');
 				}
 			});
 			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
-				this.$el.html('<p>(i) You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.</p>');
+				this.$el.html('<p class="sidebar-info-notice upfront-icon">You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.</p>');
 				chooseButton.render();
 				this.$el.append(chooseButton.el);
 				return;
@@ -1706,9 +1708,11 @@ define([
 	var SidebarPanel_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
-					new Command_GoToTypePreviewPage(),
 			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
+
+			if (!Upfront.mainData.userDoneFontsIntro) return;
+
 			this.edit_css = new Command_EditCustomCSS({"model": this.model});
 			this.edit_background = new Command_EditLayoutBackground({"model": this.model});
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME ) {
@@ -1720,6 +1724,9 @@ define([
 		},
 		on_render: function () {
 			this.$el.find('.panel-section-content').addClass('typography-section-content');
+
+			if (!Upfront.mainData.userDoneFontsIntro) return;
+
 			this.edit_css.render();
 			this.edit_css.delegateEvents();
 			this.$el.find('.panel-section-content').append(this.edit_css.el);
@@ -1737,7 +1744,6 @@ define([
 	var SidebarPanel_Responsive_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
-					new Command_GoToTypePreviewPage(),
 					new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
 			this.edit_css = new Command_GeneralEditCustomCSS({"model": this.model});
@@ -3576,6 +3582,8 @@ define([
 			this.$el.append(this.get_field_html());
 			var me = this;
 
+			if (this.options.classname) this.$el.addClass(this.options.classname);
+
 			this.trigger('rendered');
 		},
 		get_info_html: function() {
@@ -5310,6 +5318,8 @@ var ThemeFontsPanel = Backbone.View.extend({
 		this.$el.html('');
 		this.$el.html(this.template({show_no_styles_notice: this.collection.length === 0}));
 
+		if (this.collection.length > 0) this.$el.find('.font-list').css('background', 'white');
+
 		_.each(this.collection.models, function(model) {
 			this.add_one(model);
 		}, this);
@@ -5329,6 +5339,9 @@ var ThemeFontsPanel = Backbone.View.extend({
 });
 
 var Variant_View = Backbone.View.extend({
+	initialize: function(options){
+		this.options = options || {};
+	},
 	className: function() {
 		var className = 'font-variant-preview';
 		if (this.model.get('already_added')) {
@@ -5336,13 +5349,14 @@ var Variant_View = Backbone.View.extend({
 		}
 		return className;
 	},
-	template: _.template('{{family}} — {{name}}{[ if(already_added) { ]} <span class="already-added">Already added</span>{[ } ]}' +
-			'<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview">The Andromeda Galaxy</h1>'),
+	template: _.template('<span class="font-family">{{family}} — {{name}}</span>{[ if(already_added) { ]} <span class="already-added">Already added</span>{[ } ]}' +
+			'{[ if(heading_preview) { ]}<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview font-preview">The Andromeda Galaxy</h1>{[ } else { ]}' +
+			'<p style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="paragraph-font-preview font-preview">"Imagination will often carry us to worlds that never were, but without it we go nowhere" — Carl Sagan</p>{[ } ]}'),
 	events: {
 		'click': 'on_click'
 	},
 	render: function() {
-		this.$el.html(this.template(this.model.toJSON()));
+		this.$el.html(this.template(_.extend({heading_preview: this.options.heading_preview}, this.model.toJSON())));
 		return this;
 	},
 	on_click: function() {
@@ -5358,7 +5372,7 @@ var Font_Variants_Preview = Backbone.View.extend({
 		this.options = options || {};
 	},
 	addOne: function(model) {
-		var variant_view = new Variant_View({model: model});
+		var variant_view = new Variant_View({model: model, heading_preview: this.options.heading_preview});
 		this.$el.append(variant_view.render().el);
 	},
 	render: function() {
@@ -5382,7 +5396,9 @@ var Text_Fonts_Manager = Backbone.View.extend({
 	className: 'clearfix',
 	template: _.template($(_Upfront_Templates.popup).find('#text-fonts-manager-tpl').html()),
 	events: {
-		'click .add-font-button': 'add_font'
+		'click .add-font-button': 'add_font',
+		'click .preview-size-p': 'on_p_click',
+		'click .preview-size-h1': 'on_h1_click'
 	},
 	initialize: function() {
 		this.theme_fonts_panel = new ThemeFontsPanel({
@@ -5400,8 +5416,23 @@ var Text_Fonts_Manager = Backbone.View.extend({
 		});
 
 		this.$el.find('.add-font-panel').after(this.theme_fonts_panel.render().el);
+		if (!Upfront.mainData.userDoneFontsIntro) this.$el.addClass('no-styles');
+
+		this.$el.find('.choose-font').after('<div class="preview-type"><span class="preview-type-title">Preview Size</span><span class="preview-size-p selected-preview-size">P</span><span class="preview-size-h1">H1</span></div>');
 
 		return this;
+	},
+	on_p_click: function() {
+		this.$el.find('.preview-size-h1').removeClass('selected-preview-size');
+		this.$el.find('.preview-size-p').addClass('selected-preview-size');
+		this.heading_preview = false;
+		this.update_variants();
+	},
+	on_h1_click: function() {
+		this.$el.find('.preview-size-h1').addClass('selected-preview-size');
+		this.$el.find('.preview-size-p').removeClass('selected-preview-size');
+		this.heading_preview = true;
+		this.update_variants();
 	},
 	add_font: function() {
 		var variants;
@@ -5450,6 +5481,7 @@ var Text_Fonts_Manager = Backbone.View.extend({
 		this.update_variants();
 	},
 	update_variants: function(model) {
+		this.$el.find('.font-weights-list').css('background', 'white');
 		if (!model) model = google_fonts_storage.get_fonts().findWhere({ 'family' : this.font_family_select.get_value() });
 		if (!model) return;
 		// Choose variants
@@ -5472,20 +5504,22 @@ var Text_Fonts_Manager = Backbone.View.extend({
 		if (this.choose_variants) this.choose_variants.remove();
 
 		this.choose_variants = new Font_Variants_Preview({
-			collection: variants
+			collection: variants,
+			heading_preview: this.heading_preview
 		});
 		this.choose_variants.render();
 		this.$el.find('.font-weights-list-wrapper').html(this.choose_variants.el);
 	},
 	set_ok_button: function(button) {
-		button.on('click', this.set_ok);
+		button.on('click', this.on_ok_click);
 	},
-	set_ok: function(event) {
+	on_ok_click: function(event) {
+		Upfront.Events.trigger("upfront:render_typography_sidebar");
+
 		if (Upfront.mainData.userDoneFontsIntro) return;
 
 		Upfront.Util.post({action: "upfront_user_done_font_intro"});
 		Upfront.mainData.userDoneFontsIntro = true;
-		Upfront.Events.trigger("upfront:render_typography_sidebar");
 	}
 });
 
@@ -5733,11 +5767,11 @@ var CSSEditor = Backbone.View.extend({
 		this.render();
 
 		Upfront.Events.on("command:undo", function () {
-			setTimeout(function () { 
+			setTimeout(function () {
 				var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
 				if (styles) {
 					me.get_style_element().html(styles);
-					me.render(); 
+					me.render();
 				}
 			}, 200);
 		});

@@ -11730,6 +11730,9 @@ div.upfront-region-container-active > a.feature_image_selector {
   height: 346px;
 	width: 400px;
 	margin-left: 15px;
+	background: #f2f9fe;
+}
+#text-fonts-manager .font-weights-list {
 }
 #text-fonts-manager .font-weights-list .upfront-field-multiple {
   margin: 0;
@@ -11766,7 +11769,6 @@ div.upfront-region-container-active > a.feature_image_selector {
   margin-left: 20px;
 }
 #text-fonts-manager .font-weights-list-wrapper {
-  background: #ffffff;
 	border: 1px solid #a4bfd8;
   height: 346px;
   overflow: hidden;
@@ -11848,6 +11850,15 @@ div.upfront-region-container-active > a.feature_image_selector {
 	padding: 0 0 10px 10px;
 	color: #bab0cc;
 }
+.font-variant-preview .font-family {
+	color: #85a9d0;
+}
+.font-variant-preivew .font-preview {
+	color: #181834;
+}
+.font-variant-already-added .font-preview {
+	color: #a3a3a3;
+}
 .font-variant-preview:first-child {
 	border-top: 0 none;
 }
@@ -11880,8 +11891,13 @@ div.upfront-region-container-active > a.feature_image_selector {
 	color: #fff;
 	border-radius: 3px;
 	box-shadow: 0 1px 0 #00B47C;
-	padding: 2px 3px;
+	padding: 0px 5px;
 	display: inline-block;
+	font-size: 13px;
+	line-height: 15px;
+}
+.font-variant-already-added .font-family {
+	color: #cfdde8;
 }
 .theme-fonts-panel {
 	padding-top: 29px;
@@ -12538,3 +12554,73 @@ a.upfront-css-font {
 	margin-top: 120px;
 	height: 500px;
 }
+.sidebar-info-notice{
+    padding-top: 10px;
+    font:normal 11px verdana, sans-serif;
+    line-height: 18px;
+    color: #607F99;
+		position: relative;
+		padding-left: 18px;
+		line-height: 13px;
+}
+.sidebar-info-notice:before{
+    content: "";
+    background-image: url('../img/uf-core-el-sprite.svg') !important;
+		background-position: -484px -141px;
+		display: block;
+		position: absolute;
+		height: 16px;
+		width: 14px;
+		left: 0px;
+		top: 11px;
+}
+.open-theme-fonts-manager input {
+	line-height: 36px;
+	border: 2px solid #1fcd8f;
+	margin-top: 13px;
+	font-size: 14px;
+	width: 228px;
+}
+.fonts-manager-panel-title {
+	text-align: center;
+	font-size: 16px;
+	color: #3e3a4d;
+}
+.font-weights-list-wrapper .fonts-manager-panel-title {
+	margin-top: 138px;
+}
+.font-list .fonts-manager-panel-title {
+	margin-top: 146px;
+}
+.fonts-weights-notice-text {
+	text-align: center;
+	color: #82a6c4;
+	font-size: 12px;
+	margin-top: 14px;
+	line-height: 18px;
+}
+.preview-type {
+	position: absolute;
+	top: 51px;
+	left: 323px;
+	font-size: 11px;
+	font-family: verdana,sans-serif;
+}
+.preview-type-title {
+	display: block;
+}
+.preview-size-p,
+.preview-size-h1 {
+	display: inline-block;
+	font-size: 15px;
+	font-family: serif;
+	line-height: 15px;
+	cursor: pointer;
+	color: #98b9d9;
+}
+.preview-size-p {
+	margin-right: 21px;
+}
+.selected-preview-size {
+	color: #1fcd8f;
+	cursor: default;
