@@ -188,20 +188,21 @@ var LayoutEditor = {
 							index = region_modules.indexOf(module),
 							is_next = ( index-last_index == 1 ),
 							wrapper_id = module.get_wrapper_id(),
+							is_current_wrapper = ( current_wrapper_id == wrapper_id ),
 							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
 							wrapper_class = wrapper.get_property_value_by_name('class'),
 							wrapper_col = grid_ed.get_class_num(wrapper_class, grid_ed.grid.class),
 							position;
 						if ( module_index === false )
 							module_index = index;
-						if ( current_wrapper_id != wrapper_id )
+						if ( !is_current_wrapper )
 							wrapper_index++;
-						if ( i == 0 || !is_next || line_col+wrapper_col > max_col || ( current_wrapper_id != wrapper_id && wrapper_class.match(/clr/) ) ) { // this module appear in a new line
+						if ( !is_current_wrapper && ( i == 0 || !is_next || line_col+wrapper_col > max_col || wrapper_class.match(/clr/) ) ) { // this module appear in a new line
 							line++;
 							is_next = false;
 							line_col = wrapper_col;
 						}
-						else if ( current_wrapper_id != wrapper_id ) {
+						else if ( !is_current_wrapper ) {
 							line_col += wrapper_col;
 						}
 						else {
@@ -219,7 +220,7 @@ var LayoutEditor = {
 						});
 						if ( wrapper_index == 1 || !is_next || wrapper_class.match(/clr/) )
 							margin_left = ( margin_left === false || module_left < margin_left ) ? module_left : margin_left;
-						if ( line == 1 && current_wrapper_id != wrapper_id )
+						if ( line == 1 && !is_current_wrapper )
 							margin_top = ( margin_top === false || module_top < margin_top ) ? module_top : margin_top;
 						col = ( col === false || line_col > col ) ? line_col : col;
 						current_wrapper_id = wrapper_id;
@@ -281,6 +282,7 @@ var LayoutEditor = {
 					line = 0;
 					wrapper_index = 0;
 					current_wrapper_id = false;
+					
 					_.each(modules, function(module, index){
 						var wrapper_id = module.wrapper_id,
 							new_classes = [];
@@ -325,6 +327,7 @@ var LayoutEditor = {
 					}
 					group.set_property('element_id', group_id);
 					group.replace_class( grid_ed.grid.class + col + " " + grid_ed.grid.top_margin_class + margin_top + " " + grid_ed.grid.left_margin_class + margin_left );
+					group.set_property('original_col', col);
 					group.add_to(region_modules, module_index);
 
 					// combine elements
@@ -2674,7 +2677,7 @@ var GridEditor = {
 					break;
 			}
 			$drop.css('order', insert_order);
-			if ( ( ( drop.type == 'full' || drop.type == 'inside' || ( drop.type == 'side-after' && !drop.is_switch ) ) && !drop.is_me ) && ( drop.priority && drop.priority.bottom-drop.priority.top+1 < me.row  ) )
+			if ( ( ( drop.type == 'full' || drop.type == 'inside' /*|| ( drop.type == 'side-after' && !drop.is_switch )*/ ) && !drop.is_me ) && ( drop.priority && drop.priority.bottom-drop.priority.top+1 < me.row  ) )
 				$drop.css('width', (drop.right-drop.left+1)*ed.col_size).css('max-height', ed.max_row*ed.baseline).animate({height: me.height}, 300, 'swing', drop_change);
 			else if (  drop.type == 'side-before' && drop.is_switch )
 				drop.insert[1].animate({left: me.width}, 300, 'swing', drop_change);
@@ -2981,7 +2984,14 @@ var GridEditor = {
 					drop_top = current_grid_top > (ed.drop.top+drop_priority_top) ? current_grid_top-ed.drop.top-drop_priority_top : 0;
 					drop_left = current_grid_left > (ed.drop.left+drop_priority_left) ? current_grid_left-ed.drop.left-drop_priority_left : 0;
 					drop_col = ed.drop.priority ? ed.drop.priority.right-ed.drop.priority.left+1 : ed.drop.right-ed.drop.left+1;
+
+					if ( is_group ) {
+						var original_col = model.get_property_value_by_name('original_col');
+						if ( _.isNumber(original_col) && original_col > col )
+							col = original_col;
+					}
 					drop_col = drop_col <= col ? drop_col : col;
+					
 					adjust_bottom = false;
 
 					if ( ed.drop.priority )
