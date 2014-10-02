@@ -1482,7 +1482,7 @@ define([
 							} else {
 								$([me.fields.size.el, me.fields.line_height.el]).show();
 								me.fields.size.set_value( me.sizes[value] );
-								me.fields.line_height.set_value( me.line_heights[value] );
+								me.fields.line_height.set_value( me.line_heights[value] || '1.1' );
 							}
 							me.fields.color.set_value( me.colors[value] );
 						}
@@ -1690,7 +1690,7 @@ define([
 					weight: weight,
 					style: style,
 					size: !is_inline ? me.sizes[element] : false,
-					line_height: !is_inline ? me.line_heights[element] : false,
+					line_height: !is_inline ? (me.line_heights[element] || '1.1') : false,
 					font_face: font_family.get('family'),
 					font_family: font_family.get('category'), //todo this font_family is inconsistent. It should be called font_category
 					color: me.colors[element],
