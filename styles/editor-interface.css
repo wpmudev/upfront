@@ -3367,6 +3367,17 @@ div.uinsert-selector a:hover {
 	display: block;
 	padding: 8px;
 }
+.upfront-inline-panel-item.labeled{
+    line-height: 40px !important;
+    color:#fff;
+    width: 100% !important;
+    padding: 0 10px;
+}
+.upfront-inline-panel-item .upfront-inline-panel-item-label{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
 .upfront-region-panel-item-add-region .upfront-icon {
 	padding: 2px;
 }
@@ -12410,6 +12421,17 @@ div.upfront-regions a#no_region_add_one {
     display:block;
     padding:15px;
     position: absolute;
+}
+.image-variant-title{
+    position: absolute;
+    height: 38px;
+    background: #e5f3ff;
+    color: #263a4d;
+    text-align: center;
+    top: -38px;
+    line-height: 38px;
+    width: 100%;
+    display: none;
 }
 .ueditor-insert-variant.editing .ueditor-insert-variant-caption{
     outline:1px dotted #7f7f7f;

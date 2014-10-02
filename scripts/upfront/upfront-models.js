@@ -1526,6 +1526,7 @@ var _alpha = "alpha",
     ImageVariant = Backbone.Model.extend({
         defaults : {
             vid   : "",
+            title : "Variant Title",
             group : {
                 width_cls : "c24",
                 float: "none",

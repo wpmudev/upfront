@@ -84,7 +84,6 @@ var UeditorInsert = Backbone.View.extend({
 			shortcode = {},
 			attrs
 		;
-		console.log('insert');
 
 		if(!scData)
 			return false;
@@ -196,6 +195,7 @@ var UeditorInsert = Backbone.View.extend({
 				control.icon = controlData.icon;
 				control.tooltip = controlData.tooltip;
 				control.id = controlData.id;
+				control.label = controlData.label;
 				items.push(control);
 			}
 		});
@@ -214,6 +214,7 @@ var UeditorInsert = Backbone.View.extend({
 		control.icon = controlData.icon;
 		control.tooltip = controlData.tooltip;
 		control.id = controlData.id;
+		control.label = controlData.label;
 		return control;
 	},
 
@@ -318,6 +319,7 @@ var ImageInsert = UeditorInsert.extend({
                 type: "multi",
                 icon : "style",
                 tooltip: "Style",
+                selected: this.data.get("variant_id"),
                 subItems: this.get_style_control_data()
             },
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
@@ -486,7 +488,6 @@ var ImageInsert = UeditorInsert.extend({
         var me = this;
         this.stopListening(this.controls);
         this.listenTo(this.controls, 'control:click:remove', function(control){
-            console.log(control);
             this.trigger('remove', this);
         });
 
@@ -583,7 +584,6 @@ var ImageInsert = UeditorInsert.extend({
          */
         this.listenTo(this.controls, 'control:select:style', function(variant_id){
             var _style = Upfront.Content.ImageVariants.findWhere({vid : variant_id});
-            console.log(variant_id);
             if( _style ){
                 var style = _style.toJSON();
                 this.data.set("variant_id", variant_id );
@@ -899,9 +899,8 @@ var ImageInsert = UeditorInsert.extend({
     get_style_control_data : function(){
         return  Upfront.Content.ImageVariants.map(function( variant, index ){
             return {
-                id : variant.get("vid"),
-                icon : index % 2 === 0 ? "caption-left" : "caption-right",
-                tooltip : variant.get("vid")
+                id: variant.get("vid"),
+                label: variant.get("title"),
             }
         });
     }

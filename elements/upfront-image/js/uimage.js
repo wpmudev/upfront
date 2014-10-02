@@ -3073,8 +3073,17 @@ var TooltipControl = Control.extend({
 		});
 
 		var selectedItem = this.sub_items[this.selected];
-		if(selectedItem)
-			this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
+        console.log(selectedItem, this.selected);
+
+        if(selectedItem){
+            if( typeof selectedItem.icon !== "undefined" ){
+                this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
+            }else if( typeof selectedItem.label !== "undefined" ){
+                console.log(this.$el.find(".tooltip-content").length);
+                this.$el.find(".tooltip-content").append( ": " +  selectedItem.label );
+            }
+
+        }
 	},
 
 	get_selected_item: function () {
@@ -3085,9 +3094,15 @@ var TooltipControl = Control.extend({
 		var found = false,
 			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
 		;
-		_.each(this.sub_items, function(item, key){
+
+        _.each(this.sub_items, function(item, key){
 			if(target.hasClass('upfront-icon-region-' + item.icon))
 				found = key;
+
+            if( !found && $(e.target).closest(".upfront-inline-panel-item").attr("id") === item.id ){
+                found = key;
+            }
+
 		});
 
 		if(found){

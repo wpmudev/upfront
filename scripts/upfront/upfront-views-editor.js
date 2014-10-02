@@ -8484,6 +8484,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( !label )
 				return;
 			var $label = this.$el.find('.upfront-inline-panel-item-label');
+            this.$el.addClass("labeled");
 			if ( !$label.length )
 				this.$el.append('<span class="upfront-inline-panel-item-label">' + label + '</span>');
 			else
@@ -8510,6 +8511,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				width: this.width,
 				height: this.height
 			});
+            this.$el.attr("id", this.id);
 			if ( typeof this.on_render == 'function' )
 				this.on_render();
 		},
