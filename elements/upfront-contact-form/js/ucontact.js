@@ -1,12 +1,12 @@
 (function($) {
 
 // Require the Upfront data, so the template resolution can work minified too
-require(['upfront-data'], function (upfront_data) { 
+define(['upfront-data'], function (upfront_data) { 
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
 	? upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
 ;
-define(['text!' + template], function(tpl){
+require(['text!' + template], function(tpl){
 
 var l10n = Upfront.Settings.l10n.contact_element;
 
