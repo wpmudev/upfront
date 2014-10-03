@@ -1246,7 +1246,8 @@ a:hover > .tooltip:before, a:hover > .tooltip:after,
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
-input.upfront-field-text[type] { /* add type attribute to add more specificity, fix input[type] rewrite */
+input.upfront-field-text[type], /* add type attribute to add more specificity, fix input[type] rewrite */
+textarea.upfront-field-text.upfront-field-textarea {
 	border: 1px solid rgb(163, 191, 217);
 	background: #fff;
 	color: rgb(38, 58, 77);
@@ -1256,6 +1257,9 @@ input.upfront-field-text[type] { /* add type attribute to add more specificity, 
 	font-size: 11px;
 	font-family: verdana, sans-serif;
 	line-height: 16px;
+}
+textarea.upfront-field-text.upfront-field-textarea {
+	height: auto;
 }
 input.upfront-field-text::-webkit-input-placeholder {
 	color: rgb(124, 158, 191);
