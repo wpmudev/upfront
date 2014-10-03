@@ -245,14 +245,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		me.listenTo(control, 'panel:open', function(){
 			me.controls.$el.parent().addClass('upfront-control-visible');
 			me.$el.closest('.ui-draggable').draggable('disable');
-			$('body').addClass('pauseEvents');
+
 		});
 
 		me.listenTo(control, 'panel:close', function(){
 			me.controls.$el.parent().removeClass('upfront-control-visible');
 			me.$el.closest('.ui-draggable').draggable('enable');
 			//Roll back the view, ready for reopen.
-			$('body').removeClass('pauseEvents');
+			console.log('panel got closed yo');
+
 			control.view.render();
 		});
 
@@ -2988,7 +2989,7 @@ var DialogControl = Control.extend({
 			this.$el.append(panel);
 			panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
 			this.panel = panel;
-
+			/* V */
 			$(document).click(function(e){
 				var target = $(e.target);
 				if(target.closest('#page').length && target[0] != me.el && !target.closest(me.el).length && me.isopen)
@@ -3052,13 +3053,18 @@ var TooltipControl = Control.extend({
 				closestWrapper = this.$el.closest('.upfront-wrapper');
 
 		e.preventDefault();
-		// Deactivate others controls
 		this.clicked(e);
-		this.$el.toggleClass('open');
 
-		closestLayout.toggleClass('upfront-grid-layout-current');
-		closestWrapper.toggleClass('upfront-wrapper-current');
-		console.log('clicked');
+		if (this.$el.hasClass('open')) {
+			this.$el.removeClass('open');
+			closestLayout.removeClass('upfront-grid-layout-current');
+			closestWrapper.removeClass('upfront-wrapper-current');
+		} else {
+			this.$el.addClass('open');
+			closestLayout.addClass('upfront-grid-layout-current');
+			closestWrapper.addClass('upfront-wrapper-current');
+			console.log( 'clicker ran, classes should have been added...' );
+		}
 	},
 
 	render: function() {
@@ -3073,7 +3079,6 @@ var TooltipControl = Control.extend({
 			tooltip = $('<div class="uimage-control-tooltip"></div>');
 			this.$el.append(tooltip);
 		}
-		tooltip.html('<div class="uimage-control-tooltip-tip"></div>');
 		_.each(this.sub_items, function(item, key){
 			if(key != me.selected){
 				item.render();
@@ -3084,6 +3089,16 @@ var TooltipControl = Control.extend({
 		var selectedItem = this.sub_items[this.selected];
 		if(selectedItem)
 			this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
+
+		$(document).click(function(e){
+			var target = $(e.target);
+			console.log(target[0]);
+
+			if (target.closest('#page').length && target[0] != me.el && !target.closest(me.el).length) {
+				me.$el.removeClass('open');
+			}
+
+		});
 	},
 
 	get_selected_item: function () {
@@ -3114,6 +3129,7 @@ var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 		'click .upfront-inline-panel-item': 'selectItem'
 	},
 	render: function(){
+		var me = this;
 		Upfront.Views.Editor.InlinePanels.ItemMulti.prototype.render.call(this, arguments);
 	},
 	clicked: function(e){

@@ -748,7 +748,9 @@ a.image-edit-button.deactivated:hover {
 }
 
 .uimage-controls .upfront-inline-panel-item.upfront-control-dialog-open .tooltip-content,
-.uimage-controls .upfront-inline-panel-item.upfront-control-dialog-open:after { display:none; }
+.uimage-controls .upfront-inline-panel-item.upfront-control-dialog-open:after,
+.upfront-inline-panel-item.uimage-control-tooltip-item.open > .tooltip-content,
+.upfront-inline-panel-item.uimage-control-tooltip-item.open:after { display:none; }
 
 .uimage-control-panel-light:after {
 	display: block;
@@ -758,6 +760,10 @@ a.image-edit-button.deactivated:hover {
 	border: 8px solid transparent;
 	border-bottom-color: rgb(242, 249, 255);
 	content: ' ';
+}
+
+.uimage-control-tooltip {
+	background: #2a465f;	
 }
 
 .uimage-control-panel button {
@@ -1122,11 +1128,11 @@ div.uimage-controls i.upfront-icon:before {
 
 }
 
-.uimage-control-tooltip {
+.upfront-ui .uimage-control-tooltip {
 	display: none;
-	width: 120px;
+	width: 92px;
 	line-height: 0px;
-	margin-left: -41px;
+	margin-top:0;
 }
 
 .open .uimage-control-tooltip {
