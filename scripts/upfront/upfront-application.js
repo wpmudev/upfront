@@ -123,11 +123,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Application.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
 				return element.priority;
 			}));
-
 			Upfront.Application.sidebar.render();
 		};
 		_set_up_draggables();
-		this.listenTo(Upfront.Events, "elements:requirements:async:added", _set_up_draggables);
+		//this.listenTo(Upfront.Events, "elements:requirements:async:added", _set_up_draggables); // Deprecated
 	},
 
 	add_object: function (name, data) {
@@ -1141,7 +1140,6 @@ var Application = new (Backbone.Router.extend({
 		}
 
 		var app = this;
-
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: "Loading...",
@@ -1157,10 +1155,9 @@ var Application = new (Backbone.Router.extend({
 
 		app.create_sidebar();
 
-		require(["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
-	        function(objects) {
-				_.extend(Upfront.Objects, objects);
-
+		require(
+			["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
+			function (objects) {
 				app.currentUrl = window.location.pathname + window.location.search;
 				app.saveCache = true;
 				app.load_layout(_upfront_post_data.layout);
