@@ -278,7 +278,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		);
 
 
-		foreach($layout['wrappers'] as $i => $w){
+		if (!empty($layout['wrappers']) && is_array($layout['wrappers'])) foreach($layout['wrappers'] as $i => $w){
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
 			foreach($w['objects'] as $k => $o){
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
