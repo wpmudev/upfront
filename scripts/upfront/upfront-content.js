@@ -143,7 +143,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				});
 			}
 
-			var wrappers = this.postView.postLayout,
+			var wrappers = this.postView.postLayout || {},
 				options = this.postView.partOptions || {},
 				layout = {
 					wrappers: wrappers,
