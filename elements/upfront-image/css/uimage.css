@@ -938,9 +938,11 @@ div.uimage-controls i.upfront-icon:before {
 }
 .uimage-fill_middle .redactor_box{
 	vertical-align: middle;
+	position: static;
 }
 .uimage-fill_bottom .redactor_box{
 	vertical-align: bottom;
+	position: static;
 }
 
 .uimage-caption-over_image-bottom .redactor_box {
@@ -1176,4 +1178,20 @@ div.uimage-controls i.upfront-icon:before {
 
 	font-style: italic;
 	opacity: .3;
+}
+
+/* fixes */
+.uimage-fill_middle .uimage-caption-cover {
+	display: table!important;
+	margin: auto;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	position: absolute;
+}
+.uimage-fill_bottom .uimage-caption-cover {
+	display: table!important;
+	bottom: 0px;
+	position: absolute;
 }
