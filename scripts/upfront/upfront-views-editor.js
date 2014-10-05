@@ -5722,6 +5722,7 @@ var CSSEditor = Backbone.View.extend({
 	initialize: function() {
 		if(!$('#' + this.id).length)
 			$('body').append(this.el);
+		Upfront.Events.on("command:region:edit_toggle", this.close, this);
 	},
 	init: function(options) {
 		var me = this,
@@ -5838,7 +5839,7 @@ var CSSEditor = Backbone.View.extend({
 		return $('style#' + this.get_style_id());
 	},
 	close: function(e){
-		if(e)
+		if(e && _.isFunction(e.preventDefault))
 			e.preventDefault();
 		$(window).off('resize', this.resizeHandler);
 		this.off('change');
