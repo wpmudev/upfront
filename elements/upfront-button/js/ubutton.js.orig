@@ -43,9 +43,15 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			me.stopEdit();
 		}, this);
 */
+<<<<<<< Updated upstream
+		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);
+
+//		Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
+=======
 		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);	
 		
 		//Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
+>>>>>>> Stashed changes
 
 		Upfront.Events.on("upfront:themestyle:saved", function(theme_style) {
 			var preset = Upfront.Views.Editor.Button.Presets.get(me.model.get_property_value_by_name("currentpreset"));
@@ -87,7 +93,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	editLink: function(e) {
 		/*e.preventDefault();
 		var editor = $(e.target).data('ueditor');
-		
+
 		if(editor) {
 			editor.start();
 		}*/s
@@ -160,13 +166,23 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var me = this,
 		blurTimeout = false;
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
 		$target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
+<<<<<<< Updated upstream
+
+				airButtons: ['upfrontLinkCTA', 'stateAlignCTA', 'upfrontIcons'],
+
+=======
 				
 				airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
 				
+>>>>>>> Stashed changes
 				placeholder: 'Click here',
 				autostart: false
 			})

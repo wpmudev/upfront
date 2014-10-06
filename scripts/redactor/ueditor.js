@@ -449,10 +449,10 @@ Ueditor.prototype = {
 		if(!this.checkInnerClick){
 			this.checkInnerClick = function(e){
 				//Check we are not selecting text
-				var selection = document.getSelection ? document.getSelection() : document.selection;
+				/*var selection = document.getSelection ? document.getSelection() : document.selection;
 				if(selection && selection.type == 'Range')
 					return;
-
+				*/
 				//Check if the click has been inner, or inthe popup, otherwise stop the editor
 				if(!me.options.autostart && me.redactor){
 					var $target = $(e.target);
@@ -527,7 +527,7 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignmentCTA', 'stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontLinkCTA', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'upfrontIcons'],
+		var allPlugins = ['stateAlignmentCTA', 'stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', /*'upfrontLinkCTA',*/ 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'upfrontIcons'],
 
 			pluginList = []
 		;
@@ -1057,7 +1057,6 @@ RedactorPlugins.upfrontLink = {
 		},
 		render: function(options){
 			options = options || {};
-			console.log(options);
 			this.linkPanel.model.set({
 				url: options.url,
 				type: options.link || this.guessLinkType(options.url)
@@ -1069,11 +1068,14 @@ RedactorPlugins.upfrontLink = {
 		},
 		open: function(e, redactor){
 			this.redactor = redactor;
-
-			var link = redactor.currentOrParentIs('A');
+			var link = false;
+			if(redactor.$element.hasClass('upfront_cta'))
+				link = redactor.$element;
+			else
+				link = redactor.currentOrParentIs('A');
 
 			if(link){
-				this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+				this.render({url: $(link).attr('href'), link: this.guessLinkType($(link).attr('href'))});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
 			}
 			else
 				this.render();
@@ -1085,24 +1087,30 @@ RedactorPlugins.upfrontLink = {
 			if(e)
 				e.preventDefault();
 
-
-         var text = this.redactor.getSelectionHtml();
-         if( $.parseHTML(text).length > 1){// there is html inside
-             this.redactor.execCommand('inserthtml', text, true);
-         }else{
-             this.redactor.execCommand('unlink');
-         }
-
+			if(this.redactor.$element.hasClass('upfront_cta'))
+				this.redactor.$element.attr('href', '#');
+			else {
+		        var text = this.redactor.getSelectionHtml();
+		        if($.parseHTML(text).length > 1){// there is html inside
+		            this.redactor.execCommand('inserthtml', text, true);
+		        }else{
+		            this.redactor.execCommand('unlink');
+		        }
+			}
 		},
 		link: function(url, type){
 			if(url){
-				this.redactor.selectionRestore(true, false);
-                var caption = this.redactor.getSelectionHtml();
-                var link = this.redactor.currentOrParentIs('A');
-                if(link)
-                	$(link).attr('href', url).attr('rel', type);
-                else	
-                	this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
+				if(this.redactor.$element.hasClass('upfront_cta'))
+					this.redactor.$element.attr('href', url);
+				else {
+					this.redactor.selectionRestore(true, false);
+	                var caption = this.redactor.getSelectionHtml();
+	                var link = this.redactor.currentOrParentIs('A');
+	                if(link)
+	                	$(link).attr('href', url).attr('rel', type);
+	                else	
+	                	this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
+				}
 			}
 		},
 
@@ -1137,6 +1145,7 @@ RedactorPlugins.upfrontLink = {
 
 	})
 }
+/*
 RedactorPlugins.upfrontLinkCTA = {
 	beforeInit: function(){
 		this.opts.buttonsCustom.upfrontLinkCTA = {
@@ -1221,7 +1230,7 @@ RedactorPlugins.upfrontLinkCTA = {
 		}
 
 	})
-}
+}*/
 RedactorPlugins.upfrontColor = {
 	beforeInit: function(){
 		this.opts.buttonsCustom.upfrontColor = {

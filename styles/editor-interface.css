@@ -8451,15 +8451,6 @@ a.ulinkpanel-entry-url:hover {
 	right: 0;
 }
 
-input.js-ulinkpanel-type:after {
-    content: '';
-    display: block;
-    width:100px;
-    height:20px;
-    position: relative;
-    top:-6px;
-}
-
 
 /* ----- New Editor bar ----- */
 .upfront-postcontent-editor{
