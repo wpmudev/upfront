@@ -469,8 +469,8 @@ var PostImageVariants =  Backbone.View.extend({
             /**
              * Add new button
              */
-            $("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
-                .on("click", me.add_new_variant);
+			var $add_new_button = $("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>").on("click", me.add_new_variant);
+            $("#upfront-image-variants").append($add_new_button);
         });
 
         return promise;
