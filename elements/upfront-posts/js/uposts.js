@@ -44,7 +44,7 @@ define(function() {
 
 			this.events = _.extend({}, this.events, {
 				'click .uposts-pagination>a': 'paginate',
-				'click .upfront-post-layout-trigger': 'editPostLayout',
+				'click .upfront-post-layout-trigger': 'editPostLayout'
 				//'mouseenter div.post_editor_container': 'moveEditButton'
 			});
 

@@ -68,11 +68,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			});
 
 
-            if( Upfront.Application.MODE.THEME === Upfront.Application.get_current() ){
+            if( Upfront.Application.is_builder() ){
                 me.editor.loadingLayout.done(function() {
                     setTimeout(function() {
-                        Upfront.Events.trigger('post:layout:edit', me, 'archive');
-                        // me.editor.editContents();
+                        Upfront.Events.trigger('post:layout:edit', me, 'single');
                     }, 200);
 
                 });
