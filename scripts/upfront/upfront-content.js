@@ -396,7 +396,9 @@ define("content", deps, function(postTpl, ContentTools) {
 		}
 	});
 
-	// Publish the post editor to the Upfront.Content object
+	// Publish the post editor to the Upfront.Content object, make sure Upfront.Content object exists
+	if(!Upfront.Content)
+		Upfront.Content = {};
 	Upfront.Content.PostEditor = PostEditor;
 });
 
