@@ -2673,7 +2673,7 @@ var GridEditor = {
 		var objects = model.get('objects');
 		if ( objects && objects.length == 1 ){
 			objects.each(function(object){
-				object.set_property('row', row - Upfront.Util.height_to_row(ed.grid.column_padding*2));
+				object.set_property('row', row);
 			});
 		}
 		// Update model value

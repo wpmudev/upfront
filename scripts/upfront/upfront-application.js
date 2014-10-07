@@ -363,7 +363,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			region.show();
 			region.on_settings_click();
 		}
-	},
+	}
 });
 
 var LayoutEditor = new (LayoutEditorSubapplication.extend({
