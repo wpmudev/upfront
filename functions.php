@@ -93,6 +93,14 @@ class Upfront {
 	private function _add_supports () {
 		add_theme_support('post-thumbnails');
 		register_nav_menu('default', _('Default'));
+		// Do widget text
+		$do_widget_text = apply_filters(
+			'upfront-shortcode-enable_in_widgets', 
+			(defined('UPFRONT_DISABLE_WIDGET_TEXT_SHORTCODES') && UPFRONT_DISABLE_WIDGET_TEXT_SHORTCODES ? false : true)
+		);
+		if ($do_widget_text) {
+			add_filter('widget_text', 'do_shortcode');
+		}
 	}
 
 	private function _run_server ($comp) {
@@ -241,6 +249,4 @@ EOAdditivemarkup;
 	}
 
 }
-
-//Upfront::serve(); // This is one potentially breaking change - TEST and REVIEW
 add_action('init', array('Upfront', 'serve'), 0);

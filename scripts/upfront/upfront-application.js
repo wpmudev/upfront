@@ -123,11 +123,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Application.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
 				return element.priority;
 			}));
-
 			Upfront.Application.sidebar.render();
 		};
 		_set_up_draggables();
-		this.listenTo(Upfront.Events, "elements:requirements:async:added", _set_up_draggables);
+		//this.listenTo(Upfront.Events, "elements:requirements:async:added", _set_up_draggables); // Deprecated
 	},
 
 	add_object: function (name, data) {
@@ -243,11 +242,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			else if (typeof current_object.ContextMenu == 'undefined')
 				current_object.ContextMenu = Upfront.Views.ContextMenu;
 
-			context_menu_view = new current_object.ContextMenu({
-				model: view.model,
-				for_view: view,
-				el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
-			})
+        var context_menu_view = new current_object.ContextMenu({
+            model: view.model,
+            for_view: view,
+            el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
+        })
 		;
 
 		context_menu_view.for_view = view;
@@ -1005,7 +1004,7 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 
 	stop: function () {
 		return this.stopListening(Upfront.Events);
-	},
+	}
 
 }))();
 
@@ -1065,8 +1064,7 @@ var Application = new (Backbone.Router.extend({
 		THEME: "theme",
 		POST: 'post layout',
 		POSTCONTENT: "post content",
-        RESPONSIVE: "responsive",
-        CONTENT_STYLE : "post content style"
+        RESPONSIVE: "responsive"
     },
 
 	mode: {
@@ -1144,7 +1142,6 @@ var Application = new (Backbone.Router.extend({
 		}
 
 		var app = this;
-
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: "Loading...",
@@ -1160,10 +1157,9 @@ var Application = new (Backbone.Router.extend({
 
 		app.create_sidebar();
 
-		require(["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
-	        function(objects) {
-				_.extend(Upfront.Objects, objects);
-
+		require(
+			["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
+			function (objects) {
 				app.currentUrl = window.location.pathname + window.location.search;
 				app.saveCache = true;
 				app.load_layout(_upfront_post_data.layout);

@@ -264,6 +264,7 @@ var Views = {
 				l10n: l10n.template
 			}));
 
+			$('#page').css('padding-bottom', '200px');
 			$editor.show();
 
 			this.resizeHandler = this.resizeHandler || function(){
@@ -375,6 +376,7 @@ var Views = {
 				.on('click', '.upfront-css-close', function(e){
 					e.preventDefault();
 					me.destroyEditor();
+					$('#page').css('padding-bottom', 0);
 				})
 			;
 

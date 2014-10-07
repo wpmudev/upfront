@@ -32,7 +32,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.events = _.extend({}, this.events, {
 			'click a.upfront_cta' : 'processClick'
 		});
+
 		this.on('deactivated', function() {
+			console.log('button got deactivated');
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
@@ -41,9 +43,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			me.stopEdit();
 		}, this);
 */
-		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);
-
-//		Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
+		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);	
+		
+		//Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
 
 		Upfront.Events.on("upfront:themestyle:saved", function(theme_style) {
 			var preset = Upfront.Views.Editor.Button.Presets.get(me.model.get_property_value_by_name("currentpreset"));
@@ -62,9 +64,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	conformSize: function() {
 		this.$el.find('.upfront-output-button').css('height', this.$el.find('.upfront-object.upfront-button').height());
 	},*/
+	
 	processClick: function(e) {
-		e.preventDefault();
-		e.stopPropagation();
+		//e.stopPropagation();
 		var me = this
 		singleclickcount++;
 		if(singleclickcount == 1) {
@@ -83,11 +85,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		console.log('visit the link');
 	},
 	editLink: function(e) {
+		/*e.preventDefault();
 		var editor = $(e.target).data('ueditor');
-
+		
 		if(editor) {
 			editor.start();
-		}
+		}*/s
 	},
 	revert_preset: function() {
 		this.render();
@@ -157,14 +160,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var me = this,
 		blurTimeout = false;
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
-
 		$target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
-
-				airButtons: ['upfrontLinkCTA', 'stateAlignCTA', 'upfrontIcons'],
-
+				
+				airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
+				
 				placeholder: 'Click here',
 				autostart: false
 			})

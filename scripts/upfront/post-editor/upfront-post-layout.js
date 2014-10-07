@@ -64,7 +64,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Events.trigger('post:layout:partrendered', this);
 
-//		console.log('post part rendered');
 	},
 
 	updateOptions: function(){
@@ -145,7 +144,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 var PostPartElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	className: "draggable-element upfront-no-select draggable-post-element",
 	initialize: function(opts){
-		console.log('initializing element');
 		this.options = opts;
 		this.title = opts.title;
 		this.slug = this.title.toLowerCase().replace(' ', '_');
@@ -271,6 +269,7 @@ var ContentSettings = PostPartSettings.extend({
 		'change .upfront-field-number': 'updatePadding'
 	},
 	init: function(opts){
+        console.log("this.panels", this.panels);
 	  this.panels = _([
 	      new Settings.Panel({
             hide_common_fields: true,
@@ -321,19 +320,6 @@ var ContentSettings = PostPartSettings.extend({
 });
 
 var ContentView = PostPartView.extend({
-    events : {
-        "click .upfront_edit_content_style" : 'start_content_styling'
-    },
-    start_content_styling : function( e ){
-        e.preventDefault();
-        e.stopPropagation();
-        $(".sidebar-commands-control .command-cancel").show();
-        $(e.target).closest(".upfront-module").addClass("upfront-disable-surroundings");
-        new PostImageVariants({
-            contentView : this
-        });
-        Upfront.Events.trigger("post:content:style:start", this, 'single');
-    },
 	updateOptions: function(){
 		var properties = this.model.get('properties').toJSON(),
 			partOptions = {},
@@ -363,6 +349,7 @@ var ContentView = PostPartView.extend({
 	},
 
 	render: function(){
+        var self = this;
 		PostPartView.prototype.render.apply(this, arguments);
 
 		if(!this.paddingChangeHandler){
@@ -370,16 +357,6 @@ var ContentView = PostPartView.extend({
 			this.on('post:padding:update', this.paddingChangeHandler);
 		}
 		this.refreshPaddingsFromProperties();
-
-        if( Upfront.Application.is_builder() ){
-            /**
-             * Creates content style button
-             * @type {*|HTMLElement}
-             */
-            var $editor = $('<div class="upfront_edit_content_style">Style Post Content</div>');
-            $editor.appendTo( this.$(".upfront-output-PostPart_contents") );
-        }
-
 	},
 
 	refreshPaddingsFromProperties: function(){
@@ -391,7 +368,7 @@ var ContentView = PostPartView.extend({
 			rightPadding = right * colSize,
 			leftPadding = left * colSize,
 			styles = $('.upfront-region-postlayouteditor').find('.upfront-post-padding'),
-			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents>* {'
+			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents {'
 		;
 
 		if(!styles.length){
@@ -408,423 +385,7 @@ var ContentView = PostPartView.extend({
 	}
 });
 
-var ImageVariants = new Upfront.Collections.ImageVariants( Upfront.mainData.postImageVariants );
 
-var PostImageVariants =  Backbone.View.extend({
-    initialize: function( options ) {
-        this.contentView = options.contentView;
-        this.populate_style_content();
-    },
-    add_new_variant : function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        var model = new Upfront.Models.ImageVariant();
-        model.set("vid", Upfront.Util.get_unique_id("variant"));
-        var variant = new PostImageVariant({ model : model});
-        variant.render();
-        variant.$el.hide();
-        /**
-         * Add it after the last variant
-         */
-        $(".ueditor-insert-variant").last().after( variant.el );
-        variant.$el.fadeIn();
-        ImageVariants.add(model);
-    },
-    populate_style_content : function(){
-        var me = this,
-            options = this.contentView.postView.partOptions || {},
-            request = {
-                action: 'content_part_markup',
-                post_id: "fake_styled_post",
-                parts: JSON.stringify([{slug: this.contentView.postPart, options: options[this.contentView.postPart] || {}}]),
-                templates: {}
-            };
-
-        request.templates[this.contentView.postPart] = this.contentView.getTemplate();
-        var promise = Upfront.Util.post(request);
-        promise.done(function(response){
-            _.extend(Upfront.Application.PostLayoutEditor.partMarkup, response.data.replacements);
-            me.contentView.$el.html(  response.data.replacements["%contents%"] );
-            //me.detect_inserts();
-            var $page = $('#page');
-
-            $page.find('.upfront-module').draggable('disable').resizable('disable');
-            $page.find('.upfront-region-edit-trigger').hide();
-
-            ImageVariants.each(function( model ){
-                var variant = new PostImageVariant({ model : model });
-                variant.render();
-                me.contentView.$el.find("#upfront-image-variants").append( variant.el );
-            });
-
-            if( ImageVariants.length === 0 ){
-                var model = new Upfront.Models.ImageVariant();
-                model.set("vid", Upfront.Util.get_unique_id("variant"));
-                var variant = new PostImageVariant({ model : model });
-                ImageVariants.add( model );
-                variant.render();
-                me.contentView.$el.find("#upfront-image-variants").append( variant.el );
-            }
-
-            /**
-             * Add new button
-             */
-            $("#upfront-image-variants").append("<div class='upfront-add-image-insert-variant'>Add Image Insert Variant</div>")
-                .on("click", me.add_new_variant);
-        });
-
-        return promise;
-    }
-});
-var PostImageVariant = Backbone.View.extend({
-    tpl : _.template($(variant_tpl).find('#upfront-post-image-variant-tpl').html()),
-    se_handle : '<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se nosortable"></span>',
-    nw_handle : '<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw nosortable"></span>',
-    initialize: function( options ){
-        this.opts = options;
-        //Upfront.Events.on("post:content:style:start", this.populate_style_content);
-        Upfront.Events.on("post:content:style:stop", function(){
-
-        });
-    },
-    events : {
-        "click .upfront_edit_image_insert" : "start_editing",
-        "click .finish_editing_image_insert" : "finish_editing",
-        "click .upfront-image-variant-delete_trigger" : "remove_variant"
-    },
-    render : function() {
-        this.$el.html( this.tpl( this.model.toJSON() ) );
-        this.$self = this.$(".ueditor-insert-variant");
-        this.$self.prepend('<a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-image-variant-delete_trigger"></a>');
-        this.$image =  this.$(".ueditor-insert-variant-image");
-        this.$caption = this.$(".ueditor-insert-variant-caption");
-        this.make_resizable();
-        this.$label = this.$(".image-variant-label");
-        return this;
-    },
-    remove_variant : function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        ImageVariants.remove(this.model);
-        this.remove();
-    },
-    start_editing : function(e){
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Show title input
-        this.$label.show();
-
-        // Hide edit button
-        this.$(".upfront_edit_image_insert").css({
-            visibility : "hidden"
-        });
-        //disable group's resizability
-        this.$self.resizable("option", "disabled", true);
-
-        this.$self.addClass("editing");
-
-        // hide group's resize handles
-        this.$self.find(".upfront-icon-control").hide();
-
-        // explicitly set group's height
-        this.$self.css("height", this.$(".ueditor-insert-variant").height());
-
-        this.make_items_draggable();
-        this.make_items_resizable();
-        this.$self.append("<div class='finish_editing_image_insert'>Finish editing image insert</div>")
-    },
-    finish_editing : function( e ){
-        e.preventDefault();
-        e.stopPropagation();
-
-        //Hide title
-        this.$label.hide();
-
-        this.model.set( "label", this.$label.val() );
-
-        // Show edit button
-        this.$(".upfront_edit_image_insert").css({
-            visibility : "visible"
-        });
-        //enable group's resizability
-        this.$self.resizable("option", "disabled", false);
-
-        this.$self.removeClass("editing");
-
-        // Show group's resize handles
-        this.$self.find(".upfront-icon-control").show();
-
-        this.$image.draggable("option", "disabled", true);
-        this.$image.resizable("option", "disabled", true);
-        this.$image.find(".upfront-icon-control").hide();
-
-        this.$caption.draggable("option", "disabled", true);
-        this.$caption.resizable("option", "disabled", true);
-        this.$caption.find(".upfront-icon-control").hide();
-
-        $(e.target).remove();
-
-    },
-    make_items_draggable : function(){
-        var self = this,
-            ge = Upfront.Behaviors.GridEditor,
-            options = {
-                zIndex: 100,
-                containment : 'parent',
-                delay: 50,
-                helper: 'clone',
-                start : function( event, ui ){
-                    event.stopPropagation();
-                    $(this).resizable("option", "disabled", true);
-                },
-                drag : function( event, ui ){
-                    event.stopPropagation();
-                },
-                stop : function(event, ui){
-                    event.stopPropagation();
-                    var $this = $(this),
-                        top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline ,
-                        left  =  Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
-                        model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption");
-
-                    model.left = left;
-                    model.top = top;
-
-                    //self.update_class( $this, "ml", left  );
-                    //self.update_class( $this, "mt", top  );
-
-                    $(this).css({
-                        top : top,
-                        left : left,
-                        marginLeft : 0,
-                        marginTop: 0
-                    });
-
-                    $this.resizable("option", "disabled", false);
-                }
-            };
-
-        /**
-         * Make image draggable
-         */
-        if( _.isEmpty( this.$image.data("ui-draggable") ) ){
-            this.$image.draggable( options );
-        }else{
-            this.$image.draggable( "option", "disabled", false );
-        }
-
-        /**
-         * Make caption draggable
-         */
-        if( _.isEmpty( this.$caption.data("ui-draggable") ) ){
-            this.$caption.draggable( options );
-        }else{
-            this.$caption.draggable( "option", "disabled", false );
-        }
-    },
-    make_items_resizable : function(){
-        var self = this,
-            ge = Upfront.Behaviors.GridEditor,
-            options = {
-            handles: {
-                nw: '.upfront-resize-handle-nw',
-                se: '.upfront-resize-handle-se'
-            },
-            //autoHide: true,
-            delay: 50,
-            minHeight: 50,
-            minWidth: 45,
-            containment: "parent",
-            start : function( event, ui ){
-                event.stopPropagation();
-                $(this).draggable("option", "disabled", true);
-            },
-            resize: function( event, ui ){
-                event.stopPropagation();
-                //var $this = $(this),
-                //    model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption"),
-                //    left = Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
-                //    top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline,
-                //    height = Upfront.Util.grid.normalize_height( ui.size.height > 0 ? ui.size.height : 0 ),
-                //    width = Upfront.Util.grid.normalize_width( ui.size.width > 0 ? ui.size.width : 0 ),
-                //    col_class_size = Upfront.Util.width_to_col( ui.size.width );
-                //
-                //model.left = left;
-                //model.top = top;
-                //model.height = height;
-                //model.width_cls = ge.grid.class + col_class_size;
-                //
-                //Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
-                //
-                //$(this).css({
-                //    left : left,
-                //    top: top,
-                //    height: height
-                //});
-            },
-            stop : function(event, ui){
-                $(this).draggable("option", "disabled", false);
-                event.stopPropagation();
-                var $this = $(this),
-                    model = $this.is( self.$image ) ? self.model.get("image") : self.model.get("caption"),
-                    left = Upfront.Util.width_to_col( ui.position.left ) * ge.col_size,
-                    top = Upfront.Util.height_to_row( ui.position.top > 0 ? ui.position.top : 0 ) * ge.baseline,
-                    height = Upfront.Util.grid.normalize_height( ui.size.height ),
-                    width  = Upfront.Util.grid.normalize_width(  ui.size.width),
-                    col_class_size = Upfront.Util.width_to_col( ui.size.width );
-
-                model.left = left;
-                model.top = top;
-                model.height = height;
-                model.width_cls = ge.grid.class + col_class_size;
-
-                Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
-
-                $(this).css({
-                    left : left,
-                    top: top,
-                    height: height,
-                    width : ""
-                });
-            }
-        };
-        /**
-         * Make image resizable
-         */
-
-
-        if(_.isEmpty(  this.$image.data("ui-resizable") ) ){
-            this.$image.append(this.nw_handle);
-            this.$image.append(this.se_handle);
-            this.$image.resizable(options);
-        }else{
-            this.$image.find(".upfront-icon-control").show();
-            this.$image.resizable("option", "disabled", false);
-        }
-
-
-        /**
-         * Make caption resizable
-         */
-
-        if(_.isEmpty(  this.$caption.data("ui-resizable") ) ){
-            this.$caption.append(this.nw_handle);
-            this.$caption.append(this.se_handle);
-            this.$caption.resizable(options);
-        }else{
-            this.$caption.find(".upfront-icon-control").show();
-            this.$caption.resizable("option", "disabled", false);
-        }
-
-    },
-    ui_right : function( ui, el ){
-        var $el = $(el),
-            $content = $el.closest(".upfront-object-view"),
-            content_width = $content.width(),
-            left = ui.position.left;
-        return content_width - left - $el.width();
-    },
-    make_resizable : function(){
-        var self = this,
-            ge = Upfront.Behaviors.GridEditor;
-        this.$self.append(this.nw_handle);
-        this.$self.append(this.se_handle);
-        this.$self.resizable({
-            //autoHide: true,
-            delay: 50,
-            handles: {
-                nw: '.upfront-resize-handle-nw',
-                se: '.upfront-resize-handle-se'
-            },
-            minHeight: 50,
-            minWidth: 45,
-            containment: "parent",
-            //alsoResize: '.ueditor-insert-variant-image',
-            start : function(){
-
-                /**
-                 * Reset caption and image styles
-                 */
-                self.$image.css({
-                    left : 0,
-                    top : 0
-                });
-
-                self.$caption.css({
-                    left : 0,
-                    top : 0
-                });
-
-                Upfront.Util.grid.update_class( self.$image, "c24" );
-                Upfront.Util.grid.update_class( self.$caption, "c24" );
-
-                self.model.get("image").width_cls = "c24";
-                self.model.get("caption").width_cls = "c24";
-
-            },
-            resize: function (event, ui) {
-                if (ui.position.left ===  0 && self.ui_right( ui, this) !== 0) { //float left
-                    $(this).css({
-                        float : "left",
-                        left  : 0,
-                        right : 0
-                    });
-                    self.model.get("group").float = "left"
-                } else if( ui.position.left > 0 && self.ui_right( ui, this) === 0 ) { // float right
-                    $(this).css({
-                        float : "right",
-                        left  : 0,
-                        right : 0
-                    });
-                    self.model.get("group").float = "right";
-
-                }
-
-                //Float none
-                if(  (  ui.position.left ===  0 && self.ui_right( ui, this) === 0 ) ||  ( ui.position.left !==  0 && self.ui_right( ui, this) !== 0 )){
-                    $(this).css({
-                        float : "none"
-                    });
-                    self.model.get("group").float = "none";
-                }
-
-
-            },
-            stop: function (event, ui) {
-                var $this = $(this),
-                    col_class_size = Upfront.Util.grid.width_to_col( ui.size.width),
-                    margin_left = ui.position.left,
-                    left_class_size = Math.round(margin_left / ge.col_size),
-                    height =  Upfront.Util.height_to_row(ui.size.height) * ge.baseline;
-
-                Upfront.Util.grid.update_class($this, ge.grid.class, col_class_size);
-                self.model.get("group").height = height;
-                self.model.get("group").width_cls = ge.grid.class + col_class_size;
-
-                $this.css({
-                    height: height,
-                    width: "",
-                    "margin-left": ""
-                });
-
-                var image_height = height - $this.find(".ueditor-insert-variant-caption").height() - 60;
-                $this.find(".ueditor-insert-variant-image").css("height", image_height);
-
-                //self.update_class($this, ge.grid.left_margin_class, left_class_size);
-            }
-        });
-    },
-    update_class :  function ($el, class_name, class_size) {
-        var rx = new RegExp('\\b' + class_name + '\\d+');
-        if ( ! $el.hasClass( class_name + class_size) ){
-            if ( $el.attr('class').match(rx) )
-                $el.attr('class', $el.attr('class').replace(rx, class_name + class_size));
-            else
-                $el.addClass( class_name + class_size );
-        }
-    }
-});
 var FeaturedImageView = PostPartView.extend({
 	init: function(options){
 		this.partOptions = this.postView.partOptions.featured_image || {};
@@ -839,7 +400,6 @@ var FeaturedImageView = PostPartView.extend({
 		this.moduleId = moduleId;
 		this.moduleView = parentView.$('#' + moduleId);
 
-//		console.log(this.model.get('properties').toJSON());
 
 		if(!this.placeholder){
 			this.placeholder = $('<div class="upfront-post-thumb-placeholder upfront-ui"><div>Post Featured Image</div></div>');
@@ -1145,6 +705,7 @@ var SaveDialog = Backbone.View.extend({
 });
 
 Upfront.Views.Editor.SaveDialog = SaveDialog;
+var ImageVariants = new Upfront.Collections.ImageVariants( Upfront.mainData.postImageVariants );
 
 //Set Upfront.Content
 if(!Upfront.Content)

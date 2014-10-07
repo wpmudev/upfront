@@ -29,6 +29,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.on('deactivated', function() {
+			console.log('deactivating the text element editor');
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 	},

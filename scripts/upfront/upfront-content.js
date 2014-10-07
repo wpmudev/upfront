@@ -143,7 +143,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				});
 			}
 
-			var wrappers = this.postView.postLayout,
+			var wrappers = this.postView.postLayout || {},
 				options = this.postView.partOptions || {},
 				layout = {
 					wrappers: wrappers,
@@ -211,7 +211,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		editContents: function(e, focusElement){
 			//If we are already editing, don't do anything
-			if(this.contentEditor)// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
+			if(this.contentEditor || Upfront.Application.is_builder())// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
 				return;
 
 			//If we haven't fetched all the data, return too

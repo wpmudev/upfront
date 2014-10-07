@@ -3073,13 +3073,11 @@ var TooltipControl = Control.extend({
 		});
 
 		var selectedItem = this.sub_items[this.selected];
-        console.log(selectedItem, this.selected);
 
         if(selectedItem){
             if( typeof selectedItem.icon !== "undefined" ){
                 this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
             }else if( typeof selectedItem.label !== "undefined" ){
-                console.log(this.$el.find(".tooltip-content").length);
                 this.$el.find(".tooltip-content").append( ": " +  selectedItem.label );
             }
 
