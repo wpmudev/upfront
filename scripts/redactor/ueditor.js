@@ -446,11 +446,8 @@ Ueditor.prototype = {
 
 	listenToOuterClick: function(){
 		var me = this;
-		console.log('listening to outer click');
 		if(!this.checkInnerClick){
-			console.log('is inner click?');
 			this.checkInnerClick = function(e){
-				console.log('checkInner Click');
 				//Check we are not selecting text
 				/*var selection = document.getSelection ? document.getSelection() : document.selection;
 				if(selection && selection.type == 'Range')

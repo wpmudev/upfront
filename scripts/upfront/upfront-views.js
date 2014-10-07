@@ -3228,6 +3228,10 @@ define([
 
 /*  Lightbox is extended from Region */
 		RegionLightbox = Region.extend({
+			cssSelectors: {
+				'.upfront-region-side-lightbox': {label: 'Lightbox Area', info: 'The Lightbox Area.'},
+				'.close_lightbox > .upfront-icon-popup-close': {label: 'Close Icon', info: 'Lightbox Close Icon.'}
+			},
 			$bg: $('<div class="upfront-lightbox-bg"></div>'),
 			$close: $('<div class="upfront-ui close_lightbox"></div>'),
 			$close_icon: $('<div class="upfront-icon upfront-icon-popup-close"></div>'),
@@ -3949,6 +3953,7 @@ define([
 			"ContextMenuList": ContextMenuList,
 			"ContextMenuItem": ContextMenuItem,
 			"RegionView": Region,
+			"RegionLightboxView": RegionLightbox,
 			"RegionContainerView": RegionContainer,
 			"RegionsView": Regions
 		},

@@ -1527,9 +1527,9 @@ var Application = new (Backbone.Router.extend({
 		// Region selectors
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionContainerView, 'RegionContainer');
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionView, 'Region');
-		
-		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
+		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionLightboxView, 'RegionLightbox');
 
+		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 		this.cssEditor = cssEditor;
 	},
 	

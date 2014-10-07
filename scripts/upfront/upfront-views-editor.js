@@ -5732,7 +5732,8 @@ var CSSEditor = Backbone.View.extend({
 		CodeModel: {label: 'Code', id: 'upfront-code_element'},
 		Layout: {label: 'Body', id: 'layout'},
 		RegionContainer: {label: 'Region', id: 'region-container'},
-		Region: {label: 'Inner Region', id: 'region'}
+		Region: {label: 'Inner Region', id: 'region'},
+		RegionLightbox: {label: 'Lightbox Region', id: 'region'}
 	},
 	initialize: function() {
 		if(!$('#' + this.id).length)
@@ -5831,6 +5832,7 @@ var CSSEditor = Backbone.View.extend({
 		this.is_default_style = this.stylename === '_default';
 	},
 	is_region_style: function() {
+		console.log(this.elementType.id);
 		return this.elementType.id === 'region-container'
 			|| this.elementType.id === 'region';
 	},
@@ -7727,16 +7729,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					e.stopPropagation();
 					me.upload_image();
 				});
-				$content.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
-					e.preventDefault();
-					e.stopPropagation();
-					me.trigger_edit_css();
-				});
+				
 			}
 			else {
 				$content.find('.upfront-region-bg-setting-type').remove();
 				$content.find('.upfront-region-bg-setting-change-image').remove();
 			}
+
+			$content.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				me.trigger_edit_css();
+			});
+
 			if ( is_region && this.model.is_main() ){
 				$content.find('.upfront-region-bg-setting-auto-resize').on('click', function (e) {
 					e.preventDefault();
@@ -8673,9 +8678,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		trigger_edit_css: function () {
 			Upfront.Application.cssEditor.init({
 				model: this.model,
-				type: this.model.is_main() ? "RegionContainer" : "Region",
+				type: this.model.is_main() ? "RegionContainer" : (this.model.get('type') == 'lightbox')?"RegionLightbox":"Region",
 				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
+
 		}
 	});
 
