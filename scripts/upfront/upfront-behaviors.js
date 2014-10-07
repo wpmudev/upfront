@@ -922,9 +922,11 @@ var LayoutEditor = {
 
 		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
 		loading.update_loading_text("Exporting layout: " + layout_id);
+		
 		return ed._export_layout({ theme: theme_name }).done(function() {
 			loading.done(function() {
 				if (ed.export_modal) ed.export_modal.close(true);
+				ed.clean_region_css();
 			});
 		});
 
@@ -1079,6 +1081,86 @@ var LayoutEditor = {
 		}).error(function(){
 			deferred.reject();
 		});
+		return deferred.promise();
+	},
+	
+	/* Cleanup region CSS, running on save/export */
+	clean_region_css: function () {
+		var me = this,
+			cssEditor = Upfront.Application.cssEditor,
+			elementTypes = [cssEditor.elementTypes.RegionContainer, cssEditor.elementTypes.Region],
+			layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+			regions = Upfront.Application.layout.get('regions'),
+			styleExists = [],
+			deleteDatas = [],
+			deleteFunc = function (index) {
+				if ( ! deleteDatas[index] ) {
+					Upfront.Views.Editor.notify("Region CSS cleaned");
+					deferred.resolve();
+					return;
+				}
+				var elementType = deleteDatas[index].elementType,
+					styleName = deleteDatas[index].styleName;
+				if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME ) {
+					data = {
+						action: 'upfront_thx-delete-element-styles',
+						data: {
+							stylename: styleName,
+							elementType: elementType
+						}
+					};
+				}
+				else {
+					data = {
+						action: 'upfront_delete_styles',
+						styleName: styleName,
+						elementType: elementType
+					}
+				}
+				Upfront.Util.post(data)
+					.done(function(){
+						var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
+		
+						//Remove the styles from the available styles
+						if(styleIndex != -1)
+							Upfront.data.styles[elementType].splice(styleIndex, 1);
+		
+						//Remove the styles from the dom
+						$('#upfront-style-' + styleName).remove();
+						
+						//Continue deleting
+						deleteFunc(index+1);
+					});
+				;
+			},
+			deferred = new $.Deferred()
+		;
+		
+		regions.each(function(region){
+			var elementType = region.is_main() ? cssEditor.elementTypes.RegionContainer.id : cssEditor.elementTypes.Region.id,
+				styleName = layout_id + '-' + region.get('name') + '-style';
+			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
+				styleExists.push(styleName);
+			// @TODO keep support for old name, but will deprecate soon
+			styleName = elementType + '-' + region.get('name') + '-style';
+			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
+				styleExists.push(styleName);
+		});
+		
+		_.each(elementTypes, function(elementType){
+			_.each(Upfront.data.styles[elementType.id], function(styleName){
+				if ( ! _.contains(styleExists, styleName) && styleName.match(new RegExp('^' + layout_id)) )
+					deleteDatas.push({
+						elementType: elementType.id,
+						styleName: styleName
+					});
+			});
+		});
+		
+		if ( deleteDatas.length > 0 ) {
+			Upfront.Views.Editor.notify("Cleaning Region CSS...")
+			deleteFunc(0); // Start deleting
+		}
 		return deferred.promise();
 	},
 

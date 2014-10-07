@@ -1802,10 +1802,10 @@ define([
 				"mouseover": "on_mouse_over"
 			},
 			attributes: function(){
-				var name = this.model.get("container") || this.model.get("name"),
+				var name = ( this.model.get("container") || this.model.get("name") ).toLowerCase().replace(/\s/g, "-"),
 					classes = [];
 				classes.push('upfront-region-container');
-				classes.push('upfront-region-container-' + name.toLowerCase().replace(/ /, "-"));
+				classes.push('upfront-region-container-' + name);
 				classes.push('upfront-region-container-' + this._get_region_type() );
 				if ( _.isObject(this.model.collection) && this.model.collection.active_region == this.model ){
 					classes.push('upfront-region-container-active');
@@ -2015,8 +2015,8 @@ define([
 			},
 			update: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
-					name = this.model.get("container") || this.model.get("name"),
-					previous_name = this.model.previous("container") || this.model.previous("name"),
+					name = ( this.model.get("container") || this.model.get("name") ).toLowerCase().replace(/\s/g, "-"),
+					previous_name = ( this.model.previous("container") || this.model.previous("name") ).toLowerCase().replace(/\s/g, "-"),
 					expand_lock = this.model.get_property_value_by_name('expand_lock'),
 					type = this._get_region_type(),
 					previous_type = this._get_previous_region_type(),
@@ -2034,8 +2034,9 @@ define([
 					this.update_overlay();
 				}
 				if ( previous_name != name ){
-					this.$el.removeClass('upfront-region-container-' + previous_name.toLowerCase().replace(/ /, "-"));
-					this.$el.addClass('upfront-region-container-' + name.toLowerCase().replace(/ /, "-"));
+					this.$el.removeClass('upfront-region-container-' + previous_name);
+					this.$el.addClass('upfront-region-container-' + name);
+					this.$el.attr('id', 'region-container-' + name);
 				}
 			},
 			render_fixed_panel: function () {
@@ -2493,7 +2494,7 @@ define([
 			attributes: function(){
 				var grid = Upfront.Settings.LayoutEditor.Grid,
 					container = this.model.get("container"),
-					name = this.model.get("name"),
+					name = this.model.get("name").toLowerCase().replace(/\s/, "-"),
 					classes = [],
 					col, width;
 				if ( ! this.col ){
@@ -2502,7 +2503,7 @@ define([
 					this.col = col || ( width ? Upfront.Util.width_to_col(width) : grid.size );
 				}
 				classes.push('upfront-region');
-				classes.push('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
+				classes.push('upfront-region-' + name);
 				classes.push(grid.class + this.col);
 				if ( ! this.model.is_main() ){
 					var index = this.model.collection.indexOf(this.model),
@@ -2562,11 +2563,10 @@ define([
 			on_mouse_over: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					container = this.parent_view.get_container_view(this.model),
-					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger'),
 					$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				if ( ! $main.hasClass('upfront-region-editing') )
 					return;
-				if ( container && container.$el.hasClass('upfront-region-container-active') )
+				if ( container && container.$el.hasClass('upfront-region-container-active') && !container.$el.hasClass('upfront-region-bg-setting-open') )
 					this.trigger("activate_region", this);
 			},
 			_is_clipped: function () {
@@ -2612,17 +2612,17 @@ define([
 			},
 			render_bg_setting: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: container_view.$el, width: 420});
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 420, top: 52, right:43, keep_position: false});
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
-				container_view.$el.append(this.bg_setting.el);
+				this.$el.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
 				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 			},
 			update: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					container = this.model.get("container"),
-					name = this.model.get("name"),
+					name = this.model.get("name").toLowerCase().replace(/\s/g, "-"),
 					previous_name = this.model.previous("name"),
 					col = this.model.get_property_value_by_name('col'),
 					row = this.model.get_property_value_by_name('row'),
@@ -2643,8 +2643,9 @@ define([
 				else
 					this.$el.removeClass('upfront-region-expand-lock');
 				if ( previous_name != name ){
-					this.$el.removeClass('upfront-region-' + previous_name.toLowerCase().replace(/ /, "-"));
-					this.$el.addClass('upfront-region-' + name.toLowerCase().replace(/ /, "-"));
+					this.$el.removeClass('upfront-region-' + previous_name.toLowerCase().replace(/\s/g, "-"));
+					this.$el.addClass('upfront-region-' + name);
+					this.$el.attr('id', 'region-' + name);
 				}
 				if ( this._is_clipped() ){
 					// This region is inside another region container
@@ -2882,6 +2883,18 @@ define([
 						me.bg_setting.close(false);
 					}
 				});
+				
+				// Make sure all other instance is closed
+				_.each(_.flatten([container_view.model, container_view.sub_model]), function(each){
+					if ( each == me.model )
+						return;
+					var each_view = Upfront.data.region_views[each.cid];
+					if ( each_view && each_view.bg_setting )
+						each_view.bg_setting.close(false);
+				});
+				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
+				
+				this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
 				this.bg_setting.open().always(function(){

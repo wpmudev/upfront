@@ -3472,9 +3472,24 @@ define([
 			if ( this.init )
 				this.init();
 			if ( this.options.change )
-				this.on('changed', this.options.change, this)
+				this.on('changed', this.options.change, this);
+			if ( this.options.focus )
+				this.on('focus', this.options.focus, this);
+			if ( this.options.blur )
+				this.on('blur', this.options.blur, this);
+			if ( this.options.rendered )
+				this.on('rendered', this.options.rendered, this);
 			if (this.options.on_click)
 				this['on_click'] = this.options.on_click;
+				
+			this.once('rendered', function(){
+				var me = this;
+				this.get_field().on('focus', function(){
+					me.trigger('focus');
+				}).on('blur', function(){
+					me.trigger('blur');
+				});
+			}, this);
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -5730,7 +5745,10 @@ var CSSEditor = Backbone.View.extend({
 
 		if(this.$style)
 			this.close();
-
+		
+		// Don't render the editor, only makes the API available
+		this.no_render = ( options.no_render === true );
+		
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
 		this.global = ( options.global === true );
@@ -5747,38 +5765,40 @@ var CSSEditor = Backbone.View.extend({
 		this.ensure_style_element();
 
 		this.selectors = this.elementSelectors[this.modelType] || {};
-
-		this.prepareAce = deferred.promise();
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
-			deferred.resolve();
-		});
-
-		this.resizeHandler = this.resizeHandler || function(){
-			me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
-		};
-
-		$(window).on('resize', this.resizeHandler);
-
+	
 		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
-
-		if ( typeof options.change == 'function' )
-			this.on('change', options.change);
-
-		this.render();
-
-		Upfront.Events.on("command:undo", function () {
-			setTimeout(function () {
-				var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
-				if (styles) {
-					me.get_style_element().html(styles);
-					me.render();
-				}
-			}, 200);
-		});
-
-		this.startResizable();
-
-		Upfront.Events.trigger('csseditor:open', this.element_id);
+		
+		if ( !this.no_render ) {
+			this.prepareAce = deferred.promise();
+			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
+				deferred.resolve();
+			});
+	
+			this.resizeHandler = this.resizeHandler || function(){
+				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
+			};
+	
+			$(window).on('resize', this.resizeHandler);
+	
+			if ( typeof options.change == 'function' )
+				this.on('change', options.change);
+	
+			this.render();
+	
+			Upfront.Events.on("command:undo", function () {
+				setTimeout(function () {
+					var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
+					if (styles) {
+						me.get_style_element().html(styles);
+						me.render();
+					}
+				}, 200);
+			});
+	
+			this.startResizable();
+	
+			Upfront.Events.trigger('csseditor:open', this.element_id);
+		}
 	},
 	resolve_stylename: function(options) {
 		// Style name will be used to identify style element inserted to page by id and
@@ -5789,7 +5809,11 @@ var CSSEditor = Backbone.View.extend({
 
 		// Check for regions
 		if (this.is_region_style()) {
-			this.stylename = this.elementType.id + '-' + this.model.get('name') + '-style';
+			var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type;
+			// @TODO support for old stylename, but will be deprecated soon to use one with layout_id instead
+			this.stylename = this.elementType.id + '-' + this.model.get('name') + '-style'; // old one, use if exists
+			if (_.isArray(Upfront.data.styles[this.elementType.id]) && Upfront.data.styles[this.elementType.id].indexOf(this.stylename) == -1)
+				this.stylename = layout_id + '-' + this.model.get('name') + '-style'; // new one
 		}
 
 		// If stylename is still empty than editor is creating new style and user have not
@@ -5817,7 +5841,7 @@ var CSSEditor = Backbone.View.extend({
 	get_css_selector: function() {
 		if (this.is_global_stylesheet) return '';
 
-		if (this.is_region_style()) return '.upfront-' + this.get_style_id().replace('-style', '');
+		if (this.is_region_style()) return '.upfront-' + this.elementType.id + '-' + this.model.get('name');
 
 		// Add some specificity so this style would go over other
 		if (this.is_default_style === false) return '#page .' + this.stylename;
@@ -6166,6 +6190,52 @@ var CSSEditor = Backbone.View.extend({
 			.error(function(response){
 				return notifier.addMessage('There was an error.');
 			});
+	},
+	
+	/* API to call save style without loading editor */
+	saveCall: function (notify) {
+		var me = this,
+			styles = $.trim(this.get_style_element().html()),
+			data;
+
+		if(!styles) {
+			return notify ? notifier.addMessage('The slylesheet is empty.', 'error') : false;
+		}
+		
+		data = {
+			styles: styles,
+			elementType: this.elementType.id,
+			global: this.global
+		};
+		// If in exporter mode, export instead of saving
+		if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
+			data.stylename = this.get_style_id();
+			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
+			return;
+		}
+
+		data.name = this.get_style_id();
+		data.action = 'upfront_save_styles';
+
+		Upfront.Util.post(data)
+			.success(function(response) {
+				var data = response.data,
+					elementType = me.elementType.id;
+
+				if(!Upfront.data.styles[elementType])
+					Upfront.data.styles[elementType] = [];
+
+				if(Upfront.data.styles[elementType].indexOf(me.get_style_id()) === -1)
+					Upfront.data.styles[elementType].push(me.get_style_id());
+
+				Upfront.Events.trigger('upfront:themestyle:saved', me.get_style_id());
+
+				return notify ? notifier.addMessage('Styles saved as ' + me.get_style_id()) : true;
+			})
+			.error(function(response){
+				return notify ? notifier.addMessage('There was an error.') : true;
+			});
+		
 	},
 
 	checkDeleteToggle: function(e){
@@ -7073,6 +7143,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.button = typeof opts.button != 'undefined' ? opts.button : true;
 			this.width = typeof opts.width != 'undefined' ? opts.width : '50%';
 			this.top = typeof opts.top != 'undefined' ? opts.top : -1;
+			this.left = typeof opts.left != 'undefined' ? opts.left : -1;
+			this.right = typeof opts.right != 'undefined' ? opts.right : -1;
+			this.keep_position = typeof opts.keep_position != 'undefined' ? opts.keep_position : true;
 		},
 		events: {
 			"click": "on_click",
@@ -7092,7 +7165,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$wrap = this.$el.find('.upfront-inline-modal-wrap'),
 				$content = this.$el.find('.upfront-inline-modal-content'),
 				$button = $('<button type="button" class="upfront-inline-modal-save">' + this.button_text + '</button>'),
-				top = this.top,
+				css = {},
 				height, parent_height;
 			this._deferred = $.Deferred();
 			this.$el.show();
@@ -7103,18 +7176,31 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			// this.listenTo(Upfront.Events, "entity:region:deactivated", function(){
 				// me.close(false);
 			// });
-			if ( top == -1 ){
+			css.width = this.width;
+			if ( this.top >= 0 ) {
+				css.top = this.top;
+				css.bottom = 'auto';
+			}
+			else {
 				parent_height = this.$el.height() > $(window).height() ? $(window).height() : this.$el.height();
 				height = $content.outerHeight();
 				this.top = parent_height-height > 0 ? (parent_height-height)/2 : 0;
+				css.top = this.top;
+				css.bottom = 'auto';
 			}
-			$wrap.css({
-				top: this.top,
-				bottom: 'auto',
-				width: this.width
-			});
-			this.update_pos();
-			$(window).on('scroll', this, this.on_scroll);
+			if ( this.left >= 0 ) {
+				css.left = this.left;
+				css.right = 'auto';
+			}
+			else if ( this.right >= 0 ) {
+				css.left = 'auto';
+				css.right = this.right;
+			}
+			$wrap.css(css);
+			if ( this.keep_position ) {
+				this.update_pos();
+				$(window).on('scroll', this, this.on_scroll);
+			}
 			this.trigger('modal:open');
 			return this._deferred.promise();
 		},
@@ -7122,6 +7208,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.$el.hide();
 			$(window).off('scroll', this.on_scroll);
 			this.trigger('modal:close');
+			if ( ! this._deferred )
+				return;
 			if ( save )
 				this._deferred.resolve(this);
 			else
@@ -7148,8 +7236,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				offset = this.$to.offset(),
 				top = offset.top,
 				bottom = top + this.$to.outerHeight(),
+				win_height = $(window).height(),
 				scroll_top = $(document).scrollTop(),
-				scroll_bottom = scroll_top + $(window).height(),
+				scroll_bottom = scroll_top + win_height,
 				rel_top = $main.offset().top,
 				rel_bottom = 50,
 				modal_offset = this.$el.offset(),
@@ -7181,7 +7270,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						right: $(window).width()-modal_right
 					});
 					$wrap.css({
-						top: ( bottom > modal_bottom ? $(window).height()-(bottom-top)-rel_bottom : $(window).height()-modal_height-rel_bottom ) + this.top
+						top: ( bottom > modal_bottom ? win_height-(bottom-top > win_height ? win_height : bottom-top)-rel_bottom : win_height-modal_height-rel_bottom ) + this.top
 					});
 				}
 			}
@@ -7227,7 +7316,81 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if (_upfront_post_data.post_id) {
 				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
 			}
-			var bg_type = new Field_Select({
+			var region_name = new Field_Text({
+					model: this.model,
+					name: 'title',
+					placeholder: "Enter name for this region...",
+					change: function () {
+					},
+					blur: function () {
+						var collection = this.model.collection,
+							prev_title = this.model.get('title'),
+							prev_name = this.model.get('name'),
+							title = $.trim(this.get_value().replace(/[^A-Za-z0-9\s_-]/g, '')), // strict filtering to prevent unwanted character
+							name = title.toLowerCase().replace(/\s/g, '-'),
+							new_title, sub_regions, styles, prev_selector, selector;
+						if ( prev_title != title ) {
+							// Check if the region name exists
+							if ( collection.get_by_name(name) ) {
+								new_title = collection.get_new_title(title + " ", 2);
+								title = new_title.title;
+								name = new_title.name;
+							}
+							
+							// Let's keep old CSS content
+							Upfront.Application.cssEditor.init({
+								model: this.model,
+								type: this.model.is_main() ? "RegionContainer" : "Region",
+								element_id: this.model.is_main() ? "region-container-" + prev_name : "region-" + prev_name,
+								no_render: true
+							});
+							styles = $.trim(Upfront.Application.cssEditor.get_style_element().html());
+							prev_selector = Upfront.Application.cssEditor.get_css_selector();
+							
+							// Also update the container attribute on sub regions
+							if ( this.model.is_main() ) {
+								sub_regions = this.model.get_sub_regions();
+								_.each(sub_regions, function(sub_model, sub){
+									if ( _.isArray(sub_model) )
+										_.each(sub_model, function(sub_model2){ sub_model2.set({container: name}, {silent:true}); });
+									else if ( _.isObject(sub_model) )
+										sub_model.set({container: name}, {silent:true});
+								});
+								this.model.set({title: title, name: name, container: name}, {silent: true});
+							}
+							else {
+								this.model.set({title: title, name: name}, {silent: true});
+							}
+							$region_name.find('.upfront-region-name-edit-value').text(title);
+							
+							// Save the region CSS to the new name, if styles is not empty
+							if ( styles ) {
+								Upfront.Application.cssEditor.init({
+									model: this.model,
+									type: this.model.is_main() ? "RegionContainer" : "Region",
+									element_id: this.model.is_main() ? "region-container-" + name : "region-" + name,
+									no_render: true
+								});
+								selector = Upfront.Application.cssEditor.get_css_selector();
+								styles = styles.replace(new RegExp(prev_selector.replace(/^\./, '\.'), 'g'), selector);
+								Upfront.Application.cssEditor.get_style_element().html(styles);
+								Upfront.Application.cssEditor.saveCall(false);
+							}
+							
+							this.model.get('properties').trigger('change');
+						}
+						$region_name.find('.upfront-region-bg-setting-name-edit').show();
+						this.$el.hide();
+					},
+					rendered: function () {
+						var me = this;
+						this.get_field().on('keyup', function(e){
+							if ( e.which === 13 )
+								me.trigger('blur');
+						});
+					}
+				}),
+				bg_type = new Field_Select({
 					model: this.model,
 					property: 'background_type',
 					default_value: !bg_image ? 'color' : 'image',
@@ -7241,7 +7404,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				}),
-				$region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
+				$region_name, $region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
 			if ( is_layout ){
 				var contained_region = new Field_Number({
 					model: this.model,
@@ -7458,6 +7621,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$lightbox = $content.find('.upfront-region-bg-setting-lightbox-region');
 
 			$lightbox.hide();
+			$region_name = $content.find('.upfront-region-bg-setting-name');
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
 			$add_global_region = $content.find('.upfront-region-bg-setting-add-global-region');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
@@ -7466,6 +7630,29 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
 			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
+			
+			if ( is_region ) {
+				region_name.render();
+				$region_name.append(region_name.$el);
+				region_name.$el.hide();
+				$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
+				// Let's not allow name change for header/footer, as the name is reserved for global region
+				if ( this.model.get('name') == 'header' || this.model.get('name') == 'footer' ){
+					$region_name.find('.upfront-region-name-edit-trigger').hide();
+				}
+				else {
+					$region_name.on('click', '.upfront-region-name-edit-trigger', function(e){
+						e.preventDefault();
+						$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+						region_name.$el.show();
+						region_name.get_field().trigger('focus').select();
+					});
+				}
+			}
+			else {
+				$region_name.hide();
+			}
+			
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox

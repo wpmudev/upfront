@@ -2732,7 +2732,7 @@ div.uinsert-selector a:hover {
 .upfront-region-editing .upfront-module {
 }
 .upfront-region-editing .upfront-regions {
-	padding-bottom: 60px;
+	padding-bottom: 260px;
 }
 .upfront-region-editing .upfront-region-container {
 	opacity: 0.5;
@@ -3118,7 +3118,7 @@ div.uinsert-selector a:hover {
 }
 .upfront-region-editing .upfront-region-panels {
 	display: block;
-	z-index: 9998;
+	z-index: 9996;
 }
 .upfront-edit-responsive .upfront-region-editing .upfront-region-panels {
 	display: none;
@@ -3452,11 +3452,8 @@ div.uinsert-selector a:hover {
 	z-index: 9999;
 }
 .upfront-inline-modal {
-	/*background: rgba(39, 59, 77, 0.55);*/
 }
 .upfront-inline-modal-wrap {
-	/*top: 60px;
-	bottom: auto;*/
 	margin: auto;
 	width: 50%;
 	border: 1px solid #fff;
@@ -3464,16 +3461,6 @@ div.uinsert-selector a:hover {
 	-moz-box-shadow: 0 0 20px rgba(39,58,76,.8);
 	-webkit-box-shadow: 0 0 20px rgba(39,58,76,.8);
 	box-shadow: 0 0 20px rgba(39,58,76,.8);
-	position: relative;
-}
-.upfront-region-side-right .upfront-inline-modal-wrap {
-	left: 50%;
-	right: auto;
-	-webkit-transform: translateX(-50%);
-	-moz-transform: translateX(-50%);
-	-ms-transform: translateX(-50%);
-	-o-transform: translateX(-50%);
-	transform: translateX(-50%);
 }
 .upfront-inline-modal-wrap .upfront-inline-modal-content {
 	padding: 16px;
@@ -3526,6 +3513,41 @@ div.uinsert-selector a:hover {
 .upfront-region-bg-setting-fixed-region .upfront-field-wrap .upfront-field-label {
 	display: inline-block;
 	width: 40px;
+}
+.upfront-region-bg-setting-name {
+	margin: -16px -16px 0;
+	padding: 0 16px 12px;
+	border-bottom: 1px solid #cce1f4;
+	color: #6a8eb5;
+}
+.upfront-region-bg-setting-name-edit {
+	padding: 16px 0 0;
+}
+a.upfront-region-name-edit-trigger {
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	color: #243877;
+	text-decoration: none;
+	position: relative;
+	top: -1px;
+	margin: 0 0 0 25px;
+	display: inline-block;
+	height: 18px;
+	line-height: 20px;
+}
+a.upfront-region-name-edit-trigger:hover {
+	border-bottom: 1px solid #00cf8b;
+	color: #243877;
+	text-decoration: none;
+}
+a.upfront-region-name-edit-trigger:before {
+	position: absolute;
+	top: 0;
+	left: -20px;
+}
+.upfront-region-bg-setting-name .upfront-field-wrap {
+	width: 210px;
+	
 }
 .upfront-region-bg-setting-region-type {
 	margin: 0 0 20px;
@@ -10522,11 +10544,11 @@ a.upfront-css-edit, a.upfront-buttonpreset-edit {
 	opacity: .8;
 }
 
-a.upfront-css-edit:hover, a.upfront-buttonpreset-edit:hover {
+a.upfront-css-edit:hover, a.upfront-buttonpreset-edit:hover, a.upfront-region-name-edit-trigger:hover {
 	opacity: 1;
 }
 
-a.upfront-css-edit:before, a.upfront-buttonpreset-edit:before{
+a.upfront-css-edit:before, a.upfront-buttonpreset-edit:before, a.upfront-region-name-edit-trigger:before {
 	display: inline-block;
 	content: '';
 	width: 20px;

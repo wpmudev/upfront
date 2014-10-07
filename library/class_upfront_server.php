@@ -754,9 +754,15 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles', array());
 		$out = '';
+		$layout = Upfront_Layout::get_cascade();
+		$layout_id = ( $layout['specificity'] ? $layout['specificity'] : ( $layout['item'] ? $layout['item'] : $layout['type'] ) );
 
 		foreach($styles as $type => $elements) {
 			foreach($elements as $name => $content) {
+				// If region CSS, only load the one saved matched the layout_id
+				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
+				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
+					continue;
 				$out .= $content;
 			}
 		}

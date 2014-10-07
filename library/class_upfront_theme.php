@@ -839,6 +839,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		// If styles are empty than there is no overrides in db, load from theme
 		if(empty($styles) === false) return $styles;
 
+		$layout = Upfront_Layout::get_cascade();
+		$layout_id = ( $layout['specificity'] ? $layout['specificity'] : ( $layout['item'] ? $layout['item'] : $layout['type'] ) );
 		$out = '';
 		// See if there are styles in theme files
 		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
@@ -850,6 +852,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		foreach($element_types as $type) {
 			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
 			foreach ($style_files as $style) {
+				// If region CSS, only load the one saved matched the layout_id
+				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
+				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style) )
+					continue;
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$out .= $style_content;
 			}

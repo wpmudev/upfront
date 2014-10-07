@@ -216,6 +216,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
 		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
 		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
+		
+		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_region_css);
 	},
 
 	create_properties: function (view, model) {
@@ -362,7 +364,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			region.show();
 			region.on_settings_click();
 		}
-	}
+	},
 });
 
 var LayoutEditor = new (LayoutEditorSubapplication.extend({
@@ -1503,11 +1505,12 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	create_cssEditor: function(){
-		var cssEditor = new Upfront.Views.Editor.CSSEditor();
+		var me = this,
+			cssEditor = new Upfront.Views.Editor.CSSEditor();
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
 
-			Upfront.data.styles = [];
+			Upfront.data.styles = {};
 			_.each(styles, function(elementStyles, elementType){
 				Upfront.data.styles[elementType] = [];
 				_.each(elementStyles, function(style, name){
@@ -1519,6 +1522,8 @@ var Application = new (Backbone.Router.extend({
 					}
 				});
 			});
+			
+			if (_upfront_post_data.layout) me.apply_region_css();
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
@@ -1526,8 +1531,30 @@ var Application = new (Backbone.Router.extend({
 		// Region selectors
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionContainerView, 'RegionContainer');
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionView, 'Region');
+		
+		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 
 		this.cssEditor = cssEditor;
+	},
+	
+	apply_region_css: function () {
+		var me = this,
+			layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type;
+		console.log(layout_id, Upfront.data.styles)
+		_.each(Upfront.data.styles, function(elementStyles, elementType){
+			console.log(elementStyles, elementType)
+			if ( elementType != me.cssEditor.elementTypes.RegionContainer.id && elementType != me.cssEditor.elementTypes.Region.id )
+				return;
+			if ( !_.isArray(elementStyles) )
+				return;
+			_.each(elementStyles, function(name){
+				var styleNode = $('#'+name);
+				if ( styleNode.length && ( name.match(new RegExp('^' + layout_id)) || name.match(new RegExp('^' + elementType)) ) )
+					styleNode.prop('disabled', false);
+				else
+					styleNode.prop('disabled', true);
+			});
+		});
 	},
 
 	fetchLayout: function(path, urlParams){
