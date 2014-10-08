@@ -1711,7 +1711,7 @@ define([
 			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
 
-			if (!Upfront.mainData.userDoneFontsIntro) return;
+			//if (!Upfront.mainData.userDoneFontsIntro) return;
 
 			this.edit_css = new Command_EditCustomCSS({"model": this.model});
 			this.edit_background = new Command_EditLayoutBackground({"model": this.model});
@@ -1725,7 +1725,7 @@ define([
 		on_render: function () {
 			this.$el.find('.panel-section-content').addClass('typography-section-content');
 
-			if (!Upfront.mainData.userDoneFontsIntro) return;
+			//if (!Upfront.mainData.userDoneFontsIntro) return;
 
 			this.edit_css.render();
 			this.edit_css.delegateEvents();
