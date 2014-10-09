@@ -1316,7 +1316,6 @@ define([
 			;
 
 			_.each(this.parts, function(part){
-                console.log(part);
 				var element = new PostPartElement({title: part, model: Upfront.Application.layout}),
 					elementSlug = 'PostPart_' + element.slug
 				;
@@ -5731,7 +5730,15 @@ var CSSEditor = Backbone.View.extend({
 		Region: {label: 'Inner Region', id: 'region'},
 		RegionLightbox: {label: 'Lightbox Region', id: 'region'},
 		PostPart_titleModel: {label: 'PostPart Title', id: 'PostPart_title'},
-		PostPart_contentsModel: {label: 'PostPart Contents', id: 'PostPart_contents'}
+		PostPart_contentsModel: {label: 'PostPart Contents', id: 'PostPart_contents'},
+		PostPart_excerptModel: {label: 'PostPart Excerpt', id: 'PostPart_excerpt'},
+		PostPart_featured_imageModel: {label: 'PostPart Featured Image', id: 'PostPart_featured_image'},
+		PostPart_authorModel: {label: 'PostPart Author', id: 'PostPart_author'},
+		PostPart_dateModel: {label: 'PostPart Date', id: 'PostPart_date'},
+		PostPart_updateModel: {label: 'PostPart Update', id: 'PostPart_update'},
+		PostPart_comments_countModel: {label: 'PostPart Comments Count', id: 'PostPart_comments_count'},
+		PostPart_tagsModel: {label: 'PostPart Tags', id: 'PostPart_tags'},
+		PostPart_categoriesModel: {label: 'PostPart Categories', id: 'PostPart_categories'}
 	},
 	initialize: function() {
 		if(!$('#' + this.id).length)

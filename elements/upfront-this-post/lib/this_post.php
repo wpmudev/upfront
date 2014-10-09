@@ -251,6 +251,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return $post;
 	}
 
+  	private static function _part_style_class($options, $slug){
+		return isset( $options[$slug] ) && isset( $options[$slug]["theme_style"] ) ? " " . $options[$slug]["theme_style"] : "";
+	}
+
 	public static function post_template($this_post, $properties=array(), $layoutData = false, $archive = false) {
 		$post_data = self::prepare_post($this_post);
 		$excerpt = false;
@@ -269,7 +273,6 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$templates = self::find_partTemplates($layout_type, $post_type, $layout_id);
 
 		$options = !empty($layoutData['partOptions']) ? $layoutData['partOptions'] : array();
-
 		$layout = array(
 			'wrappers' => $layoutData['postLayout'],
 			'wrappersLength' => sizeof($layoutData['postLayout']),
@@ -280,23 +283,27 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if (!empty($layout['wrappers']) && is_array($layout['wrappers'])) foreach($layout['wrappers'] as $i => $w){
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
+
 			foreach($w['objects'] as $k => $o){
+
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
 				$tpl = $templates[$o['slug']];
 				$markups = self::get_post_part($o['slug'], $opts, $tpl);
+
 				$layout['wrappers'][$i]['objects'][$k]['markup'] = $markups['tpl'];
 				$layout['extraClasses'][$o['slug']] = isset($opts['extraClasses']) ? $opts['extraClasses'] : '';
+
+			    $part_style_class = self::_part_style_class( $options,  $o["slug"] );
+			  	$layout['extraClasses'][$o['slug']] .= $part_style_class;
 				$attributes = '';
 				if(isset($opts['attributes'])){
 					foreach($opts['attributes'] as $key => $value)
 						$attributes .= $key . '="' . $value . '" ';
 				}
-
 				$layout['attributes'][$o['slug']] = $attributes;
 			}
 		}
-
 		$data = upfront_get_template('content', $layout, get_template_directory() . '/scripts/upfront/templates/content.html');
 
 		self::restore_post($post_data);
@@ -331,10 +338,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$base_filename = $layouts_path . DIRECTORY_SEPARATOR . $type . '-';
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
+	  $cascade = apply_filters('upfront_theme_layout_cascade', $cascade, $base_filename);
 
-		$cascade = apply_filters('upfront_theme_layout_cascade', $cascade, $base_filename);
-
-		$found = false;
+	  $found = false;
 		$i = 0;
 
 		while(!$found && $i < sizeof($cascade)){
@@ -342,7 +348,6 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$found = require $cascade[$i];
 			$i++;
 		}
-
 		return $found;
 	}
 
