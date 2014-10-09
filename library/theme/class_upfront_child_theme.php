@@ -156,11 +156,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
 		// List subdirectories as element types
 		$element_types = is_dir($styles_root)
-			? array_diff(scandir($styles_root), array('.', '..'))
+			? array_diff(scandir($styles_root), Upfront::$Excluded_Files)
 			: array()
 			;
+
 		foreach($element_types as $type) {
-			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
 				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
@@ -189,10 +190,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $theme_styles;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), array('.', '..'));
+		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
+
 		foreach($element_types as $type) {
 			$theme_styles[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($styles as $style) {
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$theme_styles[$type][str_replace('.css', '', $style)] = $style_content;
@@ -264,10 +266,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $elementTypes;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), array('.', '..'));
+		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
 		foreach($element_types as $type) {
 			$elementTypes[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), array('.', '..'));
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($styles as $style) {
 				$elementTypes[$type][] = str_replace('.css', '', $style);
 			}

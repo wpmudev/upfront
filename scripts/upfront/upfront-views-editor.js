@@ -356,18 +356,14 @@ define([
 	var Command_CancelPostLayout = Command.extend({
         className: "command-cancel",
 		render: function () {
-			this.$el.html("Cancel").hide();
+			this.$el.html("Cancel");
 		},
 		on_click: function () {
-            var current_mode = Upfront.Application.get_current();
-
-            if ( current_mode === Upfront.Application.MODE.THEME ) {
-                Upfront.Events.trigger("post:layout:cancel");
+            if ( Upfront.Application.is_builder() ) {
+				Upfront.Events.trigger("post:layout:style:cancel");
             }else{
-                Upfront.Events.trigger("post:layout:cancel_content_style");
-
+				Upfront.Events.trigger("post:layout:cancel");
             }
-
 		}
 	});
 	var Command_PreviewLayout = Command.extend({
@@ -5733,7 +5729,9 @@ var CSSEditor = Backbone.View.extend({
 		Layout: {label: 'Body', id: 'layout'},
 		RegionContainer: {label: 'Region', id: 'region-container'},
 		Region: {label: 'Inner Region', id: 'region'},
-		RegionLightbox: {label: 'Lightbox Region', id: 'region'}
+		RegionLightbox: {label: 'Lightbox Region', id: 'region'},
+		PostPart_titleModel: {label: 'PostPart Title', id: 'PostPart_title'},
+		PostPart_contentsModel: {label: 'PostPart Contents', id: 'PostPart_contents'}
 	},
 	initialize: function() {
 		if(!$('#' + this.id).length)
@@ -5817,6 +5815,7 @@ var CSSEditor = Backbone.View.extend({
 			if (_.isArray(Upfront.data.styles[this.elementType.id]) && Upfront.data.styles[this.elementType.id].indexOf(this.stylename) == -1)
 				this.stylename = layout_id + '-' + this.model.get('name') + '-style'; // new one
 		}
+
 
 		// If stylename is still empty than editor is creating new style and user have not
 		// yet assigned name to style. Create temporary style name.
@@ -6164,7 +6163,7 @@ var CSSEditor = Backbone.View.extend({
 			global: this.global
 		};
 		// If in exporter mode, export instead of saving
-		if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
+		if (Upfront.Application.is_builder()) {
 			data.stylename = this.get_style_id();
 			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
 			return;
@@ -6211,7 +6210,7 @@ var CSSEditor = Backbone.View.extend({
 			global: this.global
 		};
 		// If in exporter mode, export instead of saving
-		if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
+		if (Upfront.Application.is_builder()) {
 			data.stylename = this.get_style_id();
 			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
 			return;

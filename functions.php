@@ -21,7 +21,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 
 
 class Upfront {
-
+	public static $Excluded_Files = array(".", "..", ".DS_Store");
 	private $_servers = array(
 		'ajax',
 		'javascript_main',

@@ -1,4 +1,4 @@
-;(function($){define(['upfront/post-editor/upfront-post-content', 'text!upfront/templates/popup.html', 'text!upfront/templates/image_variants.html'], function(ContentTools, tpls, variant_tpl){
+;(function($){define(['upfront/post-editor/upfront-post-content', 'text!upfront/templates/popup.html'], function(ContentTools, tpls){
 
 var PostPartView = Upfront.Views.ObjectView.extend({
 	initialize: function(opts){

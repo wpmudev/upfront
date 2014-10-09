@@ -33,10 +33,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		//Add typography styles - rearranging so the imports from Google fonts come first, if needed
 		$style = $this->prepare_typography_styles($layout);
+	  $style .= $preprocessor->process();
 
-		$style .= $preprocessor->process();
-
-		// When loading styles in editor mode don't include element styles and colors since they
+	  // When loading styles in editor mode don't include element styles and colors since they
 		// will be loaded separately to the body. If they are included in main style than after
 		// style is edited in editor (e.g. some property is removed) inconsistencies may occur
 		// especially with rules removal since those would still be defined in main style.
@@ -48,11 +47,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		//Add theme styles
 		$style .= $this->prepare_theme_styles();
-
-		// Add theme colors styles
-		$style .= $this->_get_theme_colors_styles();
-
-		$this->_out(new Upfront_CssResponse_Success($style));
+	  // Add theme colors styles
+	  $style .= $this->_get_theme_colors_styles();
+	  $this->_out(new Upfront_CssResponse_Success($style));
 	}
 
 	function save_styles(){
@@ -112,10 +109,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Fix storage key missing _dev in dev mode. This is called from ajax calls so use POST.
 		$storage_key = Upfront_Layout::get_storage_key();
 		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
+	  $styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
+	  $styles = apply_filters('upfront_get_theme_styles', $styles);
 
-		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
-		$styles = apply_filters('upfront_get_theme_styles', $styles);
-		$this->_out(new Upfront_JsonResponse_Success(array(
+	  $this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
 		)));
 	}
@@ -130,15 +127,18 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout = Upfront_Layout::get_cascade();
 		$layout_id = ( $layout['specificity'] ? $layout['specificity'] : ( $layout['item'] ? $layout['item'] : $layout['type'] ) );
 
-		foreach($styles as $type => $elements) {
+		if( is_array( $styles ) ){
+		  foreach($styles as $type => $elements) {
 			foreach($elements as $name => $content) {
-				// If region CSS, only load the one saved matched the layout_id
-				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
-				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
-					continue;
-				$out .= $content;
+			  // If region CSS, only load the one saved matched the layout_id
+			  $style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
+			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
+				continue;
+			  $out .= $content;
 			}
+		  }
 		}
+
 
 		$out = apply_filters('upfront_prepare_theme_styles', $out);
 
