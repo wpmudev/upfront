@@ -201,7 +201,7 @@ function upfront_add_element_style ($slug, $path_info) {
 
 	if (current_theme_supports($slug)) return true; // Current theme supports this style
 
-	if (empty($_GET['dev'])) { // Yeah, so re-intorduce the hacks
+	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicStylesheets_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {
@@ -226,7 +226,7 @@ function upfront_add_element_script ($slug, $path_info) {
 		current_theme_supports("{$slug}-script")
 	) return true; // Current theme supports element scripts, and this script in particular
 
-	if (empty($_GET['dev'])) { // Yeah, so re-intorduce the hacks
+	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {
