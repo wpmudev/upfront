@@ -1,0 +1,318 @@
+<?php
+
+
+/**
+ * Serves require.js main config file and initializes Upfront.
+ */
+class Upfront_JavascriptMain extends Upfront_Server {
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_load_main', array($this, "load_main"));
+			upfront_add_ajax('upfront_data', array($this, 'load_upfront_data'));
+		}
+	}
+
+	function load_main () {
+		$root = Upfront::get_root_url();
+		$ajax = admin_url('admin-ajax.php');
+		$admin = admin_url();
+		$site = site_url();
+		$upfront_data_url = $ajax . '?action=upfront_data';
+
+
+		$entities = Upfront_Entity_Registry::get_instance();
+		$registered = $entities->get_all();
+		
+		$child_instance = Upfront_ChildTheme::get_instance();
+
+		$paths = array(
+      "backbone" => includes_url() . "js/backbone.min",
+      "underscore" => includes_url() . "js/underscore.min",
+      //"jquery" => includes_url() . "js/jquery/jquery",
+      "upfront-data" => $upfront_data_url,
+      "text" => 'scripts/text',
+      "async" => "scripts/async",
+      "upfront" => "scripts/upfront",
+			"models" => "scripts/upfront/upfront-models",
+			"views" => "scripts/upfront/upfront-views",
+			"editor_views" => "scripts/upfront/upfront-views-editor",
+			"util" => "scripts/upfront/upfront-util",
+			"behaviors" => "scripts/upfront/upfront-behaviors",
+			"application" => "scripts/upfront/upfront-application",
+			"objects" => "scripts/upfront/upfront-objects",
+			"media" => "scripts/upfront/upfront-media",
+			"content" => "scripts/upfront/upfront-content",
+			"spectrum" => "scripts/spectrum/spectrum",
+			"responsive" => "scripts/responsive",
+			"redactor" => 'scripts/redactor/redactor',
+			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
+			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
+			"ueditor" => 'scripts/redactor/ueditor',
+			"chosen" => "scripts/chosen/chosen.jquery.min"
+		);
+		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
+
+    $shim = array(
+      'underscore' => array('exports' => '_'),
+      'jquery-df' => array('jquery'),
+			'chosen' => array(
+				'deps' => array('jquery'),
+				'exports' => 'jQuery.fn.chosen'
+			),
+    );
+
+		$require_config = array(
+			'baseUrl' => "{$root}",
+			'paths' => $paths,
+			'shim' => $shim,
+			'waitSeconds' => 60, // allow longer wait period to prevent timeout
+		);
+		if ($this->_debugger->is_active(Upfront_Debug::CACHED_RESPONSE)) {
+			$require_config['urlArgs'] = "nocache=" + microtime(true);
+		}
+		$require_config = defined('JSON_PRETTY_PRINT')
+			? json_encode(apply_filters('upfront-settings-require_js_config', $require_config), JSON_PRETTY_PRINT)
+			: json_encode(apply_filters('upfront-settings-require_js_config', $require_config))
+		;
+
+		$layout_editor_requirements = array(
+			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'content', 'spectrum', 'responsive', 'redactor', 'ueditor' ),
+			"entities" => array_merge(array('objects'), array_keys($registered)),
+		);
+		$layout_editor_requirements = json_encode(
+			apply_filters('upfront-settings-layout_editor_requirements', $layout_editor_requirements)
+		);
+
+		$grid = Upfront_Grid::get_grid();
+		$breakpoints = $grid->get_breakpoints();
+
+		$grid_info = array(
+			'breakpoint_columns' => array(),
+			'size_classes' => array(),
+			'margin_left_classes' => array(),
+			'margin_right_classes' => array(),
+			'margin_top_classes' => array(),
+			'margin_bottom_classes' => array(),
+
+			'scope' => $grid->get_grid_scope(),
+			'baseline' => '',
+			'size' => '',
+			'class' => '',
+			'left_margin_class' => '',
+			'right_margin_class' => '',
+
+			'baseline' => '',
+			'column_width' => '',
+			'column_padding' => '',
+			'type_padding' => '',
+			'top_margin_class' => '',
+			'bottom_margin_class' => '',
+			'size_name' => ''
+		);
+		foreach ($breakpoints as $context => $breakpoint) {
+			$grid_info['breakpoint_columns'][$context] = $breakpoint->get_columns();
+			$grid_info['column_widths'][$context] = $breakpoint->get_column_width();
+			$grid_info['column_paddings'][$context] = $breakpoint->get_column_padding();
+			$grid_info['type_paddings'][$context] = $breakpoint->get_type_padding();
+			$grid_info['baselines'][$context] = $breakpoint->get_baseline();
+			$grid_info['size_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
+			$grid_info['margin_left_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
+			$grid_info['margin_right_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
+			$grid_info['margin_top_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_TOP);
+			$grid_info['margin_bottom_classes'][$context] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_BOTTOM);
+			// @TODO temporary fix to keep old breakpoint work, before we move on to the new breakpoint system
+			if ( $breakpoint->is_default() ){
+				$grid_info['size_name'] = $context;
+				$grid_info['size'] = $breakpoint->get_columns();
+				$grid_info['column_width'] = $breakpoint->get_column_width();
+				$grid_info['column_padding'] = $breakpoint->get_column_padding();
+				$grid_info['type_padding'] = $breakpoint->get_type_padding();
+				$grid_info['baseline'] = $breakpoint->get_baseline();
+				$grid_info['class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
+				$grid_info['left_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_LEFT);
+				$grid_info['right_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_RIGHT);
+				$grid_info['top_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_TOP);
+				$grid_info['bottom_margin_class'] = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_MARGIN_BOTTOM);
+			}
+		}
+		$grid_info = json_encode(
+			apply_filters('upfront-settings-grid_info', $grid_info)
+		);
+
+    $theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+		$theme_info = apply_filters('upfront_get_responsive_settings', $theme_info);
+		if (is_array($theme_info)) {
+			$theme_info = json_encode($theme_info);
+		}
+    if (empty($theme_info) || $theme_info === '[]') {
+      // Add defaults
+			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
+      $theme_info = json_encode(array('breakpoints' => $defaults));
+    }
+
+		$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
+		$theme_fonts = apply_filters(
+			'upfront_get_theme_fonts',
+			$theme_fonts,
+			array(
+				'json' => true
+			)
+		);
+    if (empty($theme_fonts)) $theme_fonts = json_encode(array());
+
+		$additional_fonts = $child_instance ? $child_instance->getAdditionalFonts() : json_encode(array());
+
+		$current_user = wp_get_current_user();
+		$user_done_font_intro = in_array($current_user->user_login, get_option('upfront_users_done_font_intro', array())) ?
+			'true' : 'false';
+
+
+		$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+		$theme_colors = apply_filters(
+			'upfront_get_theme_colors',
+			$theme_colors,
+			array(
+				'json' => true
+			)
+		);
+
+    if (empty($theme_colors)) $theme_colors = json_encode(array());
+
+	  $post_image_variants = get_option('upfront_' . get_stylesheet() . '_post_image_variants');
+	  $post_image_variants = apply_filters(
+		  'upfront_get_post_image_variants',
+		  $post_image_variants,
+		  array(
+			  'json' => true
+		  )
+	  );
+
+	  if (empty($post_image_variants)) $post_image_variants = json_encode(array());
+
+		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
+		$button_presets = apply_filters(
+			'upfront_get_button_presets',
+			$button_presets,
+			array(
+				'json' => true
+			)
+		);
+
+		if (empty($button_presets)) $button_presets = json_encode(array());
+
+		$debug = array(
+			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
+			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
+		);
+		$debug = json_encode(
+			apply_filters('upfront-settings-debug', $debug)
+		);
+
+
+		$specificity = json_encode(array(
+			'specificity' => __('This post only'),
+			'item' => __('All posts of this type'),
+			'type' => __('All posts'),
+		));
+
+		$content = json_encode(array(
+			'create' => array (
+				'page' => Upfront_VirtualPage::get_url('create/page'),
+				'post' => Upfront_VirtualPage::get_url('create/post'),
+			),
+			'edit' => array (
+				'page' => Upfront_VirtualPage::get_url('edit/page/'),
+				'post' => Upfront_VirtualPage::get_url('edit/post/'),
+			),
+		));
+
+		$allowed_modes = array();
+		if (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $allowed_modes[] = 'layout';
+		if (Upfront_Permissions::current(Upfront_Permissions::CONTENT_MODE)) $allowed_modes[] = 'content';
+		if (Upfront_Permissions::current(Upfront_Permissions::THEME_MODE)) $allowed_modes[] = 'theme';
+		if (Upfront_Permissions::current(Upfront_Permissions::POSTLAYOUT_MODE)) $allowed_modes[] = 'postlayout';
+		if (Upfront_Permissions::current(Upfront_Permissions::RESPONSIVE_MODE)) $allowed_modes[] = 'responsive';
+
+		$application_modes = json_encode(array(
+			"LAYOUT" => "layout",
+			"CONTENT" => "content",
+			"THEME" => "theme",
+			"POST" => "post layout",
+            "CONTENT_STYLE" => "post content style",
+			"POSTCONTENT" => "post content",
+     		"RESPONSIVE" => "responsive",
+			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
+		// These need some finer control over
+			"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
+			"ALLOW" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? join(',', $allowed_modes) : "content")
+		));
+
+		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);
+
+		$l10n = json_encode($this->_get_l10n_strings());
+
+		$main = <<<EOMainJs
+// Set up the global namespace
+var Upfront = window.Upfront || {};
+Upfront.mainData = {
+  requireConfig: $require_config,
+  root: '{$root}',
+  ajax: '{$ajax}',
+  admin: '{$admin}',
+  site: '{$site}',
+  debug: {$debug},
+  layoutEditorRequirements: {$layout_editor_requirements},
+  applicationModes: {$application_modes},
+  readOnly: {$read_only},
+  specificity: {$specificity},
+  gridInfo: {$grid_info},
+  themeInfo: {$theme_info},
+  themeFonts: {$theme_fonts},
+	additionalFonts: {$additional_fonts},
+  userDoneFontsIntro: {$user_done_font_intro},
+  buttonPresets: {$button_presets},
+  themeColors: {$theme_colors},
+  postImageVariants: {$post_image_variants},
+  content: {$content},
+  l10n: {$l10n}
+};
+EOMainJs;
+		$this->_out(new Upfront_JavascriptResponse_Success($main));
+	}
+
+	public function load_upfront_data(){
+		include Upfront::get_root_dir() . '/scripts/upfront/upfront-data.php';
+	}
+
+	public function sort_authors($a, $b){
+		return $a['display_name'] > $b['display_name'] ? 1 : -1;
+	}
+
+	private function get_authors(){
+		$data = get_users(array('who' => 'authors'));
+		$authors = array();
+		foreach($data as $a){
+			$authors[] = array(
+				'ID' => $a->ID,
+				'login' => $a->user_login,
+				'display_name' => $a->display_name,
+				'url' => $a->user_url,
+				'posts_url' => get_author_posts_url($a->ID)
+			);
+		}
+
+		usort($authors, array($this, 'sort_authors'));
+		return $authors;
+	}
+
+	private function _get_l10n_strings () {
+		$l10n = array();
+		return apply_filters('upfront_l10n', $l10n);
+	}
+}
