@@ -58,3 +58,4 @@ require_once('servers/class_upfront_theme_fonts_server.php');
 require_once('servers/class_upfront_theme_colors_server.php');
 require_once('servers/class_upfront_button_presets_server.php');
 require_once('servers/class_upfront_server_post_image_variants.php');
+require_once('servers/class_upfront_markup_server.php');
