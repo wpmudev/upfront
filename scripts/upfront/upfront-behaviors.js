@@ -1046,7 +1046,6 @@ var LayoutEditor = {
 			return _.contains(['typography', 'layout_style', 'global_regions'], property.name);
 		});
 
-
 		data = {
 			typography: (typography ? JSON.stringify(typography.value) : ''),
 			regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),

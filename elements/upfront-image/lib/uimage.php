@@ -43,7 +43,7 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['placeholder_class'] = !empty($data['src']) ? '' : 'uimage-placeholder';
 
-		$markup = '<div id="' . $data['element_id'] . '">' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
+		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($data['when_clicked'] == 'image'){
 			//Lightbox

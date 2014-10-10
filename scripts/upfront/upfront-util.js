@@ -20,6 +20,7 @@ define(function() {
 				data_str = JSON.stringify(raw),
 				json = JSON.parse(data_str)
 			;
+			
 			return json;
 		},
 

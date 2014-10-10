@@ -1536,7 +1536,9 @@ var Application = new (Backbone.Router.extend({
 	apply_region_css: function () {
 		var me = this,
 			layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type;
+
 		_.each(Upfront.data.styles, function(elementStyles, elementType){
+
 			if ( elementType != me.cssEditor.elementTypes.RegionContainer.id && elementType != me.cssEditor.elementTypes.Region.id )
 				return;
 			if ( !_.isArray(elementStyles) )
