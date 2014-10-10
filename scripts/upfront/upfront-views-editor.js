@@ -901,6 +901,11 @@ define([
 			this.$el.text('Export');
 		},
 		on_click: function () {
+			$('div.redactor_editor').each(function() {
+				var ed = $(this).data('ueditor');
+				if(ed)
+					ed.stop();
+			});
 			Upfront.Events.trigger("command:layout:export_theme");
 		}
 	});
