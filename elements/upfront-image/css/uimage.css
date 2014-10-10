@@ -665,6 +665,7 @@ a.image-edit-button.deactivated:hover {
 }
 .uimage-controls .upfront-inline-panel-item .upfront-icon {
 	padding:4px;
+	padding-bottom: 0;
 }
 
 

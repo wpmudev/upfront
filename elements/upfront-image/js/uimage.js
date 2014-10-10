@@ -2991,7 +2991,12 @@ var DialogControl = Control.extend({
 			this.panel = panel;
 			/* V */
 			$(document).click(function(e){
-				var target = $(e.target);
+				var 		target = $(e.target),
+				 panelRegionId = $(me.el).closest('.upfront-region-container').attr('id'),
+				targetRegionId = target.closest('.upfront-region-container').attr('id');
+
+				console.log('panel region id: ' + panelRegionId + ', clicked region id: ' + targetRegionId);
+
 				if(target.closest('#page').length && target[0] != me.el && !target.closest(me.el).length && me.isopen)
 					me.close();
 			});
@@ -3038,6 +3043,7 @@ var DialogControl = Control.extend({
 		this.$el.closest('.upfront-wrapper').removeClass('upfront-wrapper-current');
 		this.$el.removeClass('upfront-control-dialog-open');
 		this.trigger('panel:close');
+		console.log('i have been called');
 		return this;
 	}
 })
@@ -3053,6 +3059,7 @@ var TooltipControl = Control.extend({
 				closestWrapper = this.$el.closest('.upfront-wrapper');
 
 		e.preventDefault();
+
 		this.clicked(e);
 
 		if (this.$el.hasClass('open')) {
@@ -3092,7 +3099,6 @@ var TooltipControl = Control.extend({
 
 		$(document).click(function(e){
 			var target = $(e.target);
-			console.log(target[0]);
 
 			if (target.closest('#page').length && target[0] != me.el && !target.closest(me.el).length) {
 				me.$el.removeClass('open');
