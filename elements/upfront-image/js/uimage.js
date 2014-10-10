@@ -3030,8 +3030,6 @@ var DialogControl = Control.extend({
 	open: function(){
 		this.panel.show();
 		this.isopen = true;
-		this.$el.closest('.upfront-grid-layout').addClass('upfront-grid-layout-current');
-		this.$el.closest('.upfront-wrapper').addClass('upfront-wrapper-current');
 		this.$el.addClass('upfront-control-dialog-open');
 		this.trigger('panel:open');
 		return this;
@@ -3039,8 +3037,6 @@ var DialogControl = Control.extend({
 	close: function(){
 		this.panel.hide();
 		this.isopen = false;
-		this.$el.closest('.upfront-grid-layout').removeClass('upfront-grid-layout-current');
-		this.$el.closest('.upfront-wrapper').removeClass('upfront-wrapper-current');
 		this.$el.removeClass('upfront-control-dialog-open');
 		this.trigger('panel:close');
 		console.log('i have been called');
@@ -3214,6 +3210,8 @@ var CollapsedMultiControl = MultiControl.extend({
 });
 
 var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
+	position_v: 'bottom',
+	position_h: 'left',
 	setWidth: function(width){
 		var itemWidth = 40,
 			items = this.items._wrapped,

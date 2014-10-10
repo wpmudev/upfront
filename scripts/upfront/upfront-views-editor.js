@@ -8696,8 +8696,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 	var InlinePanel = Backbone.View.extend({
 		className: 'upfront-inline-panel upfront-no-select',
-		position_v: 'bottom',
-		position_h: 'left',
+		position_v: 'top',
+		position_h: 'center',
 		initialize: function () {
 			this.items = _([]);
 		},
@@ -8705,7 +8705,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			var me = this,
 				items = typeof this.items == 'function' ? this.items() : this.items,
 				classes = [
-					//'upfront-inline-panel-'+this.position_v,
+					'upfront-inline-panel-'+this.position_v,
 					'upfront-inline-panel-'+this.position_v+'-'+this.position_h
 				],
 				width = 0,
@@ -8822,8 +8822,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( this.options.height )
 				args.height = this.options.height;
 			this.items = _( [ new RegionPanelItem_AddRegion(args) ] );
-			if ( to == 'bottom' ){
-				this.position_v = 'bottom';
+			if ( to == 'top' || to == 'bottom' ){
+				this.position_v = to;
+				this.position_h = 'center';
 			}
 			else if ( to == 'left' || to == 'right' ) {
 				this.position_v = 'center';

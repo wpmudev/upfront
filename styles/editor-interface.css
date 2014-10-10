@@ -38,7 +38,7 @@
 .upfront-grid-layout {
 	zoom: 1;
 }
-.upfront-grid-layout-current {
+.upfront-region-container-active .upfront-grid-layout {
 	z-index: 11;
 }
 
@@ -2244,7 +2244,7 @@ div.uinsert-selector a:hover {
 	float: left;
 	position: relative;
 }
-.upfront-wrapper.upfront-wrapper-current {
+.upfront-wrapper.upfront-wrapper-active {
 	z-index: 3;
 }
 
@@ -2816,7 +2816,7 @@ div.uinsert-selector a:hover {
 	/*display: block;*/
 }
 .upfront-region-editing .upfront-region-editing-overlay {
-	z-index: 10;
+	z-index: 20;
 	background: rgba(31, 48, 63, 0.8);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-side,
@@ -3139,7 +3139,7 @@ div.uinsert-selector a:hover {
 /* media panels spec 2014 
 	 ====================== */
 
-.upfront-inline-panel-bottom-left {
+.uimage-controls .upfront-inline-panel-bottom-left {
  bottom:15px;
  left:15px;
 }

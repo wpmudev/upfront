@@ -2365,7 +2365,7 @@ define([
 				'.upfront-region-wrapper': {label: 'Region wrapper', info: 'The layer that wrap region.'}
 			},
 			events: {
-				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
+				"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
 				"mouseover": "on_mouse_over",
 				"click": "on_click",
 				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
@@ -3166,15 +3166,15 @@ define([
 
 		Regions = _Upfront_PluralEditor.extend({
 			className: "upfront-regions",
-			allow_edit: false,
+			allow_edit: true,
 			init: function () {
 				this.stopListening(this.model, 'add', this.render);
 				this.listenTo(this.model, 'add', this.on_add);
 				this.stopListening(this.model, 'remove', this.render);
 				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
-				this.listenTo(Upfront.Events, 'command:region:edit_toggle', this.on_edit_toggle);
-				this.listenTo(Upfront.Events, 'command:region:fixed_edit_toggle', this.on_edit_toggle);
+				//this.listenTo(Upfront.Events, 'command:region:edit_toggle', this.on_edit_toggle);
+				//this.listenTo(Upfront.Events, 'command:region:fixed_edit_toggle', this.on_edit_toggle);
 				this.listenTo(Upfront.Events, 'entity:region:resize_start', this.pause_edit);
 				this.listenTo(Upfront.Events, 'entity:region:resize_stop', this.resume_edit);
 				this.listenTo(Upfront.Events, "entity:region:deactivated", this.deactivate_region);
@@ -3424,6 +3424,9 @@ define([
 		}),
 
 		Wrapper = _Upfront_SingularEditor.extend({
+			events: {
+				"mouseup": "on_mouse_up"
+			},
 			attributes: function(){
 				var cls = "upfront-wrapper",
 					model_cls = this.model.get_property_value_by_name('class');
@@ -3479,6 +3482,11 @@ define([
 
 			},
 			render: function () {
+			},
+			on_mouse_up: function (e) {
+				$('.upfront-wrapper-active').not(this.$el).removeClass('upfront-wrapper-active');
+				if ( !this.$el.hasClass('upfront-wrapper-active') )
+					this.$el.addClass('upfront-wrapper-active');
 			},
 			on_remove: function () {
 				this.unbind();
