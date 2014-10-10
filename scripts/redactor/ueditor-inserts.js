@@ -946,7 +946,7 @@ var LinkView = Backbone.View.extend({
             return types;
         }
     });
-
+/*
 var EmbedInsert = UeditorInsert.extend({
         type: 'embed',
         className: 'ueditor-insert upfront-inserted_embed-wrapper uinsert-drag-handle',
@@ -1008,19 +1008,16 @@ var EmbedInsert = UeditorInsert.extend({
         },
         onStartActions : function() {
             var self = this;
-            /**
-             * Show the embed form after clicking on embed element
-             */
+
+            //Show the embed form after clicking on embed element
             this.controls.$el.show(function(){
                 self.controls.$el.find(".upfront-icon-region-embed").next(".uimage-control-panel").show();
                 self.controls.$el.find(".upfront-icon-region-embed").click();
                 self.controls.$el.find(".upfront-field-embed_code").focus();
             });
         },
-        /**
-         * Returns output for the element to inserted into the dome
-         * @returns html
-         */
+        // Returns output for the element to inserted into the dome
+        // @returns html
 	getOutput: function(){
 		var out = this.el.cloneNode(),
 			data = this.data.toJSON()
@@ -1094,6 +1091,271 @@ var EmbedFormView = Backbone.View.extend({
         this.$el.html(this.tpl(data));
     }
 });
+*/
+
+var EmbedInsert = UeditorInsert.extend({
+    type: 'embed',
+    className: 'ueditor-insert upfront-inserted_embed-wrapper uinsert-drag-handle',
+
+    data: {
+    	code: ''
+    },
+
+    start: function () {
+		var me = this,
+			manager = new EmbedManager(),
+			deferred = new $.Deferred()
+		;
+		this.data = {code: ''};
+		manager.on("done", function (embed) {
+			me.data = {code: embed};
+			manager.remove();
+			deferred.resolve(this, embed);
+		});
+		return deferred;
+    },
+
+    render: function () {
+    	this.$el.empty().append(this.data.code);
+    },
+
+    importInserts: function(contentElement, insertsData){
+        return {};
+    },
+});
+
+var EmbedManager = Backbone.View.extend({
+	className: "upfront-inserts-markup-editor",
+	initialize: function () {
+		var me = this;
+		require([
+			'//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'
+		], function () {
+			me.render();
+		});
+	},
+	render: function () {
+		var me = this,
+			main = new EmbedViews.Main(),
+			bar = new EmbedViews.Bar(),
+			ok = new EmbedViews.OK()
+		;
+		main.render();
+		bar.render();
+		ok.render();
+		this.$el
+			.empty()
+			.append(bar.$el)
+			.append(ok.$el)
+			.append(main.$el)
+		;
+
+		this.$el.css({
+			width: '100%',
+			position: 'fixed',
+			bottom: 0,
+			left: 0,
+			zIndex: 100
+		});
+
+		$("body").append(this.$el);
+		main.boot_editor();
+
+		bar.on("insert", function (stuff) {
+			main.insert(stuff);
+		});
+		ok.on("done", function () {
+			var value = main.get_value();
+			me.trigger("done", value);
+		});
+	}
+});
+
+var EmbedViews = {
+	OK: Backbone.View.extend({
+		className: 'upfront-inserts-markup-apply',
+		events: { click: 'propagate_apply' },
+		propagate_apply: function (e) { 
+			e.stopPropagation(); 
+			this.trigger("done");
+		},
+		render: function () {
+			this.$el.empty().append(
+				'<a href="#">Done</a>'
+			);
+		}
+	}),
+
+	Bar: Backbone.View.extend({
+		className: 'upfront-inserts-markup-bar',
+		events: { 
+			click: 'stop_prop',
+			'click .inserts-shortcode': 'request_shortcode',
+			'click .inserts-image': 'request_image',
+		},
+		stop_prop: function (e) { e.stopPropagation(); },
+		render: function () {
+			this.$el.empty().append(
+				'<ul>' +
+					'<li><a href="#" class="inserts-shortcode">Insert shortcode</a></li>' +
+					'<li><a href="#" class="inserts-image">Insert image</a></li>' +
+				'</ul>'
+			);
+		},
+		request_shortcode: function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			var me = this;
+			Upfront.Popup.open(function () {
+				var me = this,
+					shortcode = new EmbedViews.ShortcodesList()
+				;
+				shortcode.render();
+				shortcode.on("done", function (code) {
+					Upfront.Popup.close(code);
+				});
+				$(this).empty().append(shortcode.$el);
+			}, {}, /*'embed-shortcode'*/'media-manager').done(function (pop, code) {
+				me.trigger("insert", code);
+			});
+		},
+		request_image: function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			var me = this;
+			Upfront.Media.Manager.open({
+				multiple_selection: false,
+				media_type: ["images"]
+			}).done(function (pop, result) {
+				if(!result) return;
+				var imageModel = result.models[0],
+					url = imageModel.get('image').src
+				;
+				url = url.replace(document.location.origin, '');
+				me.trigger("insert", url);
+			});
+		}
+	}),
+
+	Main: Backbone.View.extend({
+		className: 'upfront-embed_editor',
+		events: { click: 'stop_prop' },
+		stop_prop: function (e) { e.stopPropagation(); },
+		render: function () {
+			this.$el.empty()
+				.append(
+					'<div class="upfront-inserts-markup active">' +
+						'<div class="upfront-inserts-ace"></div>' +
+					'</div>'
+				)
+		.find(".upfront-inserts-ace").css('height', '300px').end()
+				.show()
+				.css("background", "red")
+			;
+		},
+		boot_editor: function () {
+			var $editor_outer = this.$el,
+				$editor = $editor_outer.find('.upfront-inserts-ace')
+			;
+			var html = $editor.html(),
+				editor = ace.edit($editor.get(0)),
+				syntax = $editor.data('type')
+			;
+			editor.getSession().setUseWorker(false);
+			editor.setTheme("ace/theme/monokai");
+			editor.getSession().setMode("ace/mode/html");
+			editor.setShowPrintMargin(false);
+			//editor.getSession().setValue(html); // Need a way to shuttle values, later
+
+			editor.renderer.scrollBar.width = 5;
+			editor.renderer.scroller.style.right = "5px";
+
+			$editor.height($editor_outer.height());
+			editor.resize();
+
+			this.editor = editor;
+		},
+		insert: function (stuff) {
+			this.editor.insert(stuff);
+		},
+		get_value: function () {
+			return this.editor.getValue();
+		}
+	}),
+
+	ShortcodesList: Backbone.View.extend({
+		events: { click: 'stop_prop' },
+		stop_prop: function (e) { e.stopPropagation(); },
+		render: function () {
+			var me = this;
+			this.$el.empty().append("Waiting lol");
+			Upfront.Util.post({action: "upfront_list_shortcodes"}).done(function (response) {
+				me.$el
+					.empty()
+					.append('<div class="shortcode-types" />')
+					.append('<div class="shortcode-list" />')
+				;
+				me.render_types(response.data);
+				me.render_list();
+			});
+		},
+		render_types: function (types) {
+			var me = this,
+				values = [{label: '', value: 0}],
+				$root = this.$el.find(".shortcode-types")
+			;
+			_.each(_.keys(types), function (key) {
+				values.push({label: key, value: key});
+			});
+			var selection = new Upfront.Views.Editor.Field.Select({
+				label: '',
+				name: "shortcode-selection",
+				width: '100%',
+				values: values,
+				multiple: false,
+				change: function(){
+					var key = this.get_value();
+					if (!(key in types)) return false;
+					me.render_list(types[key]);
+				}
+			});
+			selection.render();
+			$root.empty().append(selection.$el);
+		},
+		render_list: function (shortcodes) {
+			var me = this,
+				$root = this.$el.find(".shortcode-list")
+			;
+			$root.empty();
+			if (empty(shortcodes)) return false;
+			_.each(shortcodes, function (code) {
+				var code = new EmbedViews.Shortcode({code: code});
+				code.render();
+				code.on("done", function (code) {
+					me.trigger("done", code);
+				});
+				$root.append(code.$el);
+			});
+		}
+	}),
+
+	Shortcode: Backbone.View.extend({
+		tagName: 'pre',
+		events: { click: 'send_shortcode' },
+		initialize: function (opts) {
+			this.code = opts.code;
+		},
+		send_shortcode: function (e) { 
+			e.stopPropagation(); 
+			e.preventDefault();
+			if (!this.code) return false;
+			this.trigger("done", '[' + this.code + ']');
+		},
+		render: function () {
+			this.$el.empty().append('<code>[' + this.code + ']</code>');
+		}
+	})
+};
 
 var insertObjects = {};
 insertObjects[TYPES.IMAGE] = ImageInsert;
