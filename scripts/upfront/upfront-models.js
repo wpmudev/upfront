@@ -166,7 +166,7 @@ var _alpha = "alpha",
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				data[breakpoint.id][property] = value;
-				this.model.set_property('breakpoint', data);
+				this.set_property('breakpoint', data);
 			}
 		},
 		add_to: function (collection, index, options) {

@@ -6136,7 +6136,7 @@ var CSSEditor = Backbone.View.extend({
 		);
 
 		// Update element on which editor is called to have appropriate theme style
-		this.model.set_property('theme_style', new_name);
+		this.model.set_breakpoint_property('theme_style', new_name);
 
 		// If this is change of name from temp don't do anything
 		if (old_name === this.get_temp_stylename) return;
