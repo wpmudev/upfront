@@ -12641,3 +12641,98 @@ a.upfront-css-font {
 .selected-preview-size {
 	color: #1fcd8f;
 	cursor: default;
+}
+
+
+/* --- New embed inserts --- */
+
+.upfront-inserts-markup-editor {
+	background: rgb(60,82,103);
+	width: 100%;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	z-index: 100;
+}
+
+.upfront-inserts-markup-bar {
+	float: left;
+}
+.upfront-inserts-markup-bar ul {
+	list-style-type: none;
+}
+.upfront-inserts-markup-bar ul li {
+	float: left;
+	height: 32px;
+	line-height: 32px;
+	margin-right: 2em;
+}
+.upfront-inserts-markup-bar ul li:hover {
+	background: rgb(216,237,255);
+}
+.upfront-inserts-markup-bar ul li a {
+	color: rgb(216,237,255);
+}
+.upfront-inserts-markup-bar ul li:hover a {
+	color: rgb(60,82,103);
+}
+
+.upfront-inserts-markup-apply {
+	position: absolute;
+	background: none repeat scroll 0 0 rgb(30, 205, 142);
+	height: 50px;
+	min-width: 130px;
+	text-align: center;
+	right: 0;
+	top: -18px;
+	z-index: 101;
+}
+.upfront-inserts-markup-apply a {
+	color: white;
+	line-height: 50px;
+}
+
+.upfront-embed_editor {
+	clear: both;
+}
+
+
+.upfront-inserted_embed-wrapper .upfront-edit_insert {
+	background: black;
+	color: white;
+	width: 3em;
+	text-align: center;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	cursor: pointer;
+	font-size: .8em;
+	display: none;
+}
+.upfront-inserted_embed-wrapper:hover .upfront-edit_insert {
+	display: block;
+}
+
+.upfront-embed_editor .upfront-inserts-ace {
+	height: 300px;
+}
+
+#upfront-popup.embed-shortcode {
+	height: 550px;
+	margin-top: 50px;
+	max-width: 800px;
+}
+#upfront-popup.embed-shortcode .shortcode-types {
+	padding: 2em;
+	background: rgb(216,237,255);
+}
+#upfront-popup.embed-shortcode .shortcode-list {
+	padding: 2em;
+	background: rgb(229,243,255);
+	max-height: 400px;
+	overflow-y: scroll;
+}
+#upfront-popup.embed-shortcode .shortcode-list pre {
+	cursor: pointer;
+	padding: 4px 0;
+}
