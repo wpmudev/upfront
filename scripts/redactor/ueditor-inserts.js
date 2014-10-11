@@ -1200,6 +1200,8 @@ var EmbedManager = Backbone.View.extend({
 });
 
 var EmbedViews = {
+	l10n: Upfront.Settings.l10n.markup_embeds,
+
 	OK: Backbone.View.extend({
 		className: 'upfront-inserts-markup-apply',
 		events: { click: 'propagate_apply' },
@@ -1209,7 +1211,7 @@ var EmbedViews = {
 		},
 		render: function () {
 			this.$el.empty().append(
-				'<a href="#">Done</a>'
+				'<a href="#">' + EmbedViews.l10n.done + '</a>'
 			);
 		}
 	}),
@@ -1225,8 +1227,8 @@ var EmbedViews = {
 		render: function () {
 			this.$el.empty().append(
 				'<ul>' +
-					'<li><a href="#" class="inserts-shortcode">Insert shortcode</a></li>' +
-					'<li><a href="#" class="inserts-image">Insert image</a></li>' +
+					'<li><a href="#" class="inserts-shortcode">' + EmbedViews.l10n.insert_shortcode + '</a></li>' +
+					'<li><a href="#" class="inserts-image">' + EmbedViews.l10n.insert_image + '</a></li>' +
 				'</ul>'
 			);
 		},
@@ -1320,7 +1322,7 @@ var EmbedViews = {
 		stop_prop: function (e) { e.stopPropagation(); },
 		render: function () {
 			var me = this;
-			this.$el.empty().append("Waiting lol");
+			this.$el.empty().append(EmbedViews.l10n.waiting);
 			Upfront.Util.post({action: "upfront_list_shortcodes"}).done(function (response) {
 				me.$el
 					.empty()
@@ -1333,7 +1335,7 @@ var EmbedViews = {
 		},
 		render_types: function (types) {
 			var me = this,
-				values = [{label: '', value: 0}],
+				values = [{label: EmbedViews.l10n.select_area, value: 0}],
 				$root = this.$el.find(".shortcode-types")
 			;
 			_.each(_.keys(types), function (key) {
