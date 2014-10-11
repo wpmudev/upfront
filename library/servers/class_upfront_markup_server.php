@@ -14,11 +14,18 @@ class Upfront_Server_MarkupServer extends Upfront_Server {
 	private function _add_hooks () {
 		//add_action('wp_loaded', array($this, 'populate_shortcodes_data'));
 		add_action('wp_ajax_upfront_list_shortcodes', array($this, 'json_list_shortcodes'));
+		add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
 	}
 
 	public function json_list_shortcodes () {
 		$shortcodes = $this->parse_shortcode_origins();
 		$this->_out(new Upfront_JsonResponse_Success($shortcodes));
+	}
+
+	public function add_l10n_strings ($strings) {
+		if (!empty($strings['markup_embeds'])) return $strings;
+		$strings['markup_embeds'] = $this->_get_l10n();
+		return $strings;
 	}
 
 	public function populate_shortcodes_data () {
@@ -36,7 +43,7 @@ class Upfront_Server_MarkupServer extends Upfront_Server {
 			if (empty($callback)) continue;
 			
 			$origin = $this->find_callback_origin($callback);
-			$origin = !empty($origin) ? $origin : self::ORIGIN_INTERNAL;
+			$origin = !empty($origin) ? $origin :  $this->_get_l10n(self::ORIGIN_INTERNAL);
 			
 			$by_origin[$origin] = is_array($by_origin[$origin]) ? $by_origin[$origin] : array();
 			$by_origin[$origin][] = $code;
@@ -74,11 +81,11 @@ class Upfront_Server_MarkupServer extends Upfront_Server {
 		else if (preg_match('/^' . $muplugin_path_rx . '/', $file)) $path_prefix = $muplugin_path_rx;
 		else if (preg_match('/^' . $theme_path_rx . '/', $file)) $path_prefix = $theme_path_rx;
 
-		if (empty($path_prefix)) return self::ORIGIN_INTERNAL; // Not a pugin, mu-plugin or a theme
+		if (empty($path_prefix)) return  $this->_get_l10n(self::ORIGIN_INTERNAL); // Not a pugin, mu-plugin or a theme
 
 		$clean_path = explode('/', ltrim(preg_replace('/^' . $path_prefix . '/', '', $file), '/'));
 		$basename = !empty($clean_path[0]) ? $clean_path[0] : false;
-		if (empty($basename)) return self::ORIGIN_INTERNAL; // We had an issue along the way and can't figure it out further
+		if (empty($basename)) return  $this->_get_l10n(self::ORIGIN_INTERNAL); // We had an issue along the way and can't figure it out further
 
 		if (!function_exists('get_plugin_data')) require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 		$all_plugins = get_plugins();
@@ -96,7 +103,7 @@ class Upfront_Server_MarkupServer extends Upfront_Server {
 			}
 			return !empty($info['Name'])
 				? $info['Name']
-				: self::ORIGIN_PLUGIN
+				: $this->_get_l10n(self::ORIGIN_PLUGIN)
 			;
 		} else if ($theme_path_rx === $path_prefix) {
 			$info = wp_get_theme($basename);
@@ -106,10 +113,27 @@ class Upfront_Server_MarkupServer extends Upfront_Server {
 			;
 			return !empty($name)
 				? $name
-				: self::ORIGIN_THEME
+				:  $this->_get_l10n(self::ORIGIN_THEME)
 			;
 		}
-		return self::ORIGIN_INTERNAL;
+		return  $this->_get_l10n(self::ORIGIN_INTERNAL);
+	}
+
+	private function _get_l10n ($key=false) {
+		$l10n = array(
+			self::ORIGIN_INTERNAL => __('WordPress internal', 'upfront'),
+			self::ORIGIN_PLUGIN => __('Unknown plugin', 'upfront'),
+			self::ORIGIN_THEME => __('Unknown theme', 'upfront'),
+			'done' => __('Done', 'upfront'),
+			'insert_shortcode' => __('Insert shortcode', 'upfront'),
+			'insert_image' => __('Insert image', 'upfront'),
+			'waiting' => __('Please, wait', 'upfront'),
+			'select_area' => __('Please, select an area', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
 	}
 }
 add_action('init', array('Upfront_Server_MarkupServer', 'serve'));
