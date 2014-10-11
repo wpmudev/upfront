@@ -1097,18 +1097,17 @@ var EmbedInsert = UeditorInsert.extend({
     type: 'embed',
     className: 'ueditor-insert upfront-inserted_embed-wrapper uinsert-drag-handle',
 
-    data: {
+    defaultData: {
     	code: ''
     },
 
     start: function () {
 		var me = this,
-			manager = new EmbedManager(),
+			manager = new EmbedManager({code: this.data.get("code")}),
 			deferred = new $.Deferred()
 		;
-		this.data = {code: ''};
 		manager.on("done", function (embed) {
-			me.data = {code: embed};
+			me.data.set({code: embed});
 			manager.remove();
 			deferred.resolve(this, embed);
 		});
