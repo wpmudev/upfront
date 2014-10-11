@@ -1303,6 +1303,8 @@ var EmbedViews = {
 			$editor.height($editor_outer.height());
 			editor.resize();
 
+			editor.focus();
+
 			this.editor = editor;
 		},
 		insert: function (stuff) {
