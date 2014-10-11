@@ -1239,6 +1239,10 @@ var EmbedViews = {
 	Main: Backbone.View.extend({
 		className: 'upfront-embed_editor',
 		events: { click: 'stop_prop' },
+		code: '',
+		initialize: function (opts) {
+			if (opts && opts.code) this.code = opts.code;
+		},
 		stop_prop: function (e) { e.stopPropagation(); },
 		render: function () {
 			this.$el.empty()
@@ -1264,7 +1268,7 @@ var EmbedViews = {
 			editor.setTheme("ace/theme/monokai");
 			editor.getSession().setMode("ace/mode/html");
 			editor.setShowPrintMargin(false);
-			//editor.getSession().setValue(html); // Need a way to shuttle values, later
+			editor.getSession().setValue(this.code);
 
 			editor.renderer.scrollBar.width = 5;
 			editor.renderer.scroller.style.right = "5px";
