@@ -1115,27 +1115,64 @@ var EmbedInsert = UeditorInsert.extend({
     },
 
     render: function () {
-    	this.$el.empty().append(this.data.code);
+    	var me = this,
+    		code = this.data.get("code"),
+    		$code = $("<div />").append(code)
+    	;
+    	this.$el.empty();
+    	if (!code) return;
+    	$code.append('<div class="upfront-edit_insert">edit</div>');
+    	this.$el.append(
+			$("<div />").append($code).html()
+    	);
+
+    	this.$el
+    		.off("click", ".upfront-edit_insert")
+    		.on("click", ".upfront-edit_insert", function (e) {
+		    	e.preventDefault();
+		    	e.stopPropagation();
+    			me.start();
+    		})
+    	;
+    },
+
+    getOutput: function () { return this._get_output(); },
+    getSimpleOutput: function () { return this._get_output(); },
+
+    _get_output: function () {
+    	var $out = $("<div />").append('<div class="upfront-inserted_embed">' + this.data.get("code") + '</div>');
+    	return $out.html();
     },
 
     importInserts: function(contentElement, insertsData){
-        return {};
+    	var inserts = {};
+    	contentElement.find('.upfront-inserted_embed').each(function () {
+    		var $code = $(this),
+    			insert = new EmbedInsert({data: {code: $code.html()}})
+    		;
+    		inserts[insert.data.id] = insert;
+    		insert.render();
+        	$code.replaceWith(insert.$el);
+    	});
+        return inserts;
     },
 });
 
 var EmbedManager = Backbone.View.extend({
 	className: "upfront-inserts-markup-editor",
-	initialize: function () {
-		var me = this;
+	initialize: function (opts) {
+		var me = this,
+			code = opts && opts.code ? opts.code : ''
+		;
 		require([
 			'//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'
 		], function () {
-			me.render();
+			me.render(code);
 		});
 	},
-	render: function () {
+	render: function (code) {
 		var me = this,
-			main = new EmbedViews.Main(),
+			main = new EmbedViews.Main({code: code}),
 			bar = new EmbedViews.Bar(),
 			ok = new EmbedViews.OK()
 		;
