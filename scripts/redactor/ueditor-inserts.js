@@ -1186,14 +1186,6 @@ var EmbedManager = Backbone.View.extend({
 			.append(main.$el)
 		;
 
-		this.$el.css({
-			width: '100%',
-			position: 'fixed',
-			bottom: 0,
-			left: 0,
-			zIndex: 100
-		});
-
 		$("body").append(this.$el);
 		main.boot_editor();
 
@@ -1251,7 +1243,7 @@ var EmbedViews = {
 					Upfront.Popup.close(code);
 				});
 				$(this).empty().append(shortcode.$el);
-			}, {}, /*'embed-shortcode'*/'media-manager').done(function (pop, code) {
+			}, {}, 'embed-shortcode').done(function (pop, code) {
 				me.trigger("insert", code);
 			});
 		},
@@ -1288,9 +1280,7 @@ var EmbedViews = {
 						'<div class="upfront-inserts-ace"></div>' +
 					'</div>'
 				)
-		.find(".upfront-inserts-ace").css('height', '300px').end()
 				.show()
-				.css("background", "red")
 			;
 		},
 		boot_editor: function () {
