@@ -1111,6 +1111,10 @@ var EmbedInsert = UeditorInsert.extend({
 			manager.remove();
 			deferred.resolve(this, embed);
 		});
+		Upfront.Events.on("upfront:element:edit:stop", function () {
+			manager.remove();
+			deferred.resolve();
+		});
 		return deferred;
     },
 
