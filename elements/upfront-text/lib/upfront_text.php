@@ -13,17 +13,30 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		$regex = '/<div class="plaintxt_padding([^>]*)>(.+?)<\/div>/s';
 		preg_match($regex, $content, $matches);
 
-		if(sizeof($matches) > 1)
-			$content = $matches[2];
+		if (sizeof($matches) > 1) $content = $matches[2];
 
 		$style = array();
-		if($this->_get_property('background_color') && $this->_get_property('background_color')!='')
+		if ($this->_get_property('background_color') && '' != $this->_get_property('background_color')) {
 			$style[] = 'background-color: '.$this->_get_property('background_color');
+		}
 
-		if($this->_get_property('border') && $this->_get_property('border')!='')
+		if ($this->_get_property('border') && '' != $this->_get_property('border')) {
 			$style[] = 'border: '.$this->_get_property('border');
+		}
+
+		$content = $this->_decorate_content($content);
 
 		return "<div>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
+	}
+
+	protected function _decorate_content ($content) {
+		if (defined('DOING_AJAX') && DOING_AJAX) return $content;
+		$do_processing = apply_filters(
+			'upfront-shortcode-enable_in_layout', 
+			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
+		);
+		if ($do_processing) $content = do_shortcode($content);
+		return $content;
 	}
 
 	public static function add_l10n_strings ($strings) {
