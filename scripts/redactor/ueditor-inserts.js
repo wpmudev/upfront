@@ -1144,8 +1144,10 @@ var EmbedInsert = UeditorInsert.extend({
     getSimpleOutput: function () { return this._get_output(); },
 
     _get_output: function () {
-    	var $out = $("<div />").append('<div class="upfront-inserted_embed">' + this.data.get("code") + '</div>');
-    	return $out.html();
+    	var code = this.data.get("code"),
+    		$out = $("<div />").append('<div class="upfront-inserted_embed">' + code + '</div>')
+    	;
+    	return code ? $out.html() : '';
     },
 
     importInserts: function(contentElement, insertsData){
