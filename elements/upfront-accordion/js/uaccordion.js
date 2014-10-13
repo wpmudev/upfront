@@ -67,12 +67,17 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 				
 			
 			var $panelcontent = this.$el.find('.accordion-panel-active .accordion-panel-content');
-			$panelcontent.trigger('blur');
+			$panelcontent.each(function () {
+				var $me = $(this),
+					editor = $me.data("ueditor")
+				;
+				if (editor && editor.stop) editor.stop();
+			});
 
 			var $paneltitle = this.$el.find('.accordion-panel-active .accordion-panel-title:not(.ueditor-placeholder)');
 			$paneltitle.trigger('blur');
 			
-			
+			Upfront.Events.trigger('upfront:element:edit:stop');
 		
 		},
 		addPanel: function(event) {
@@ -194,8 +199,9 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 				count++;
 			});
 			self.$el.find('.accordion-panel-content').each(function() {
-				if ($(this).data("ueditor")) return true;
-				$(this).ueditor({
+				var $me = $(this);
+				if ($me.data("ueditor")) return true;
+				$me.ueditor({
 						linebreaks: false,
 						inserts: {},
 						autostart: false
@@ -214,7 +220,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 					//self.model.set_content($(this).html(), {silent: true});
 				})
 				.on('blur', function() {
-					$(this).data('ueditor').stop();
+					//$(this).data('ueditor').stop();
 				});
 			});
 			self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
