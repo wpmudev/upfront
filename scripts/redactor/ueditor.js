@@ -351,12 +351,15 @@ var Ueditor = function($el, options) {
 	}
 
 };
-
+	UeditorEvents.trigger("ueditor:blur", function(redac){
+		console.log("blured", redac)
+	});
 Ueditor.prototype = {
 	disableStop: false,
 	mouseupListener: false,
 
 	start: function(){
+		var self = this;
 		this.stopPlaceholder();
 		this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
@@ -386,6 +389,14 @@ Ueditor.prototype = {
 		if(!this.options.autostart)
 			this.listenToOuterClick();
 
+		$(document).on("keyup", function(e){
+			if(e.keyCode === 27 ){
+				self.stop();
+			}
+		});
+
+
+
 	},
 	stop: function(){
 		if(this.redactor){
@@ -398,7 +409,7 @@ Ueditor.prototype = {
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
-		$(document).off('click', this.checkInnerClick);
+		//$("html").off('click', this.stopOnOutsideClick);
 	},
 
 	bindStartEvents: function() {
@@ -437,7 +448,7 @@ Ueditor.prototype = {
 			//Store the state to allow undo
 			var selection = me.redactor.getSelection();
 			me.redactor.bufferSet();
-		})
+		});
 		manager.on('insert:added insert:removed', function(){
 			me.redactor.sync();
 			me.redactor.events.trigger("ueditor:insert:media");
@@ -455,17 +466,22 @@ Ueditor.prototype = {
 				*/
 				//Check if the click has been inner, or inthe popup, otherwise stop the editor
 				if(!me.options.autostart && me.redactor){
-					var $target = $(e.target);
-					if(!me.disableStop && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
-						me.stop();
-						me.bindStartEvents();
-					}
+					//var $target = $(e.target);
+					//if(!me.disableStop && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
+					//	me.stop();
+					//	me.bindStartEvents();
+					//}
+					me.stop();
 				}
 			};
 		}
-		$(document).on('click', this.checkInnerClick);
+		$("html").on('click', {ueditor : me}, this.stopOnOutsideClick);
 	},
-
+	stopOnOutsideClick: function(e){
+		if( !( $(e.target).hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_box") ) ) {
+			e.data.ueditor.stop();
+		}
+	},
 	callMethod: function(method){
 		var result = this.$el.redactor(method);
 		UeditorEvents.trigger("ueditor:method:" + method, this.$el.redactor);

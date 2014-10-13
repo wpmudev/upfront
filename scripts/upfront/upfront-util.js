@@ -157,7 +157,7 @@ define(function() {
              * @param string|int|null class_size either a string of the class size like 12 or '12'
              */
             update_class :  function ($el, class_prefix, class_size) {
-                if(  !_.isUndefined( class_size ) ){
+                if(  _.isUndefined( class_size ) ){
                     var class_size = class_prefix.replace( /[^\d.]/g, ''),
                         class_name = class_prefix.replace(class_size, "");
                 }else{
