@@ -22,23 +22,6 @@
 
 			</a>
 		</div><?php } ?>
-	<?php if($editing) { ?>
-		<div class="ugallery_addmore_wrapper upfront-ui" style="width: <?php echo $thumbWidth ?>px; min-height: <?php echo $thumbHeight ?>px">
-			<div class="ugallery_addmore"  title="<?php echo $l10n['add_new'] ?>"><?php echo $l10n['add_more'] ?></div></div>
-		<style>
-			.ugallery_addmore_wrapper {
-				height: 0px;
-				-moz-transition:height .3s;
-			    -webkit-transition:height .3s;
-			    -o-transition:height .3s;
-			    transition:height .3s;
-				overflow: hidden;
-			}
-			.upfront-active_entity .ugallery_addmore_wrapper {
-				height: <?php echo $thumbHeight ?>px;
-			}
-		</style>
-	<?php } ?>
 	</div>
 <?php } else { ?>
 	<?php if(! $editing) { ?>
