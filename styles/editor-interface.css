@@ -12355,6 +12355,10 @@ div.upfront-regions a#no_region_add_one {
 .upfront-plain_txt p:after {
   content:'\00a0';
 }
+/* fixes the jump when exiting txt editing */
+.redactor_editor .nosortable br {
+	display: none;
+}
 
 /* Disabled state fix for jquery UI theme-rolled css conflicts */
 .upfront-edit-layout #page .upfront-region-container.ui-state-disabled,
