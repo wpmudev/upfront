@@ -34,7 +34,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.on('deactivated', function() {
-			console.log('button got deactivated');
+			
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
@@ -66,7 +66,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	},*/
 	
 	processClick: function(e) {
-		//e.stopPropagation();
+		e.stopPropagation();
 		var me = this
 		singleclickcount++;
 		if(singleclickcount == 1) {
@@ -78,23 +78,89 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			singleclickcount = 0;
 			}, 400);
 		}
-		else
-			me.editLink(e);
+		//else
+		//	me.editLink(e);
 	},
 	visitLink: function(e) {
+		e.preventDefault();
+		var me = this;
 		console.log('visit the link');
+		return;
+		var link = $(e.target).attr('href');
+
+
+		if(link.indexOf('#') > -1 && me.getCleanurl(link) == me.getCleanurl()) {
+			if(link.indexOf('#ltb-') > -1)	 {
+				var regions = Upfront.Application.layout.get('regions');
+				region = regions ? regions.get_by_name(me.getUrlanchor(link)) : false;
+				if(region){
+					//hide other lightboxes
+					_.each(regions.models, function(model) {
+						if(model.attributes.sub == 'lightbox')
+							Upfront.data.region_views[model.cid].hide();
+					});
+					var regionview = Upfront.data.region_views[region.cid];
+					regionview.show();
+				}
+			} else {
+				var anchors = me.get_anchors();
+				$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(link)).offset().top},'slow');
+			}
+		} else if(link == '') {
+			window.location.href = link;
+		} else window.open(link);
+		
 	},
-	editLink: function(e) {
-		/*e.preventDefault();
+	getCleanurl: function(url) {
+		//this one removes any existing # anchor postfix from the url
+		var urlParts;
+		if(!url){
+			url = location.href;
+		}
+
+		if(url.indexOf('?dev=true') != -1) url = url.replace('?dev=true', '');
+
+		if(url.indexOf('#') == -1) return url;
+
+		urlParts = url.split('#');
+
+		if(urlParts[0].trim() != '')
+			return urlParts[0];
+		else
+			return location.href.replace('?dev=true', '');
+	},
+	getUrlanchor: function(url) {
+		// this does almost the opposite of the above function
+
+		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+
+		if(url.indexOf('#') >=0) {
+			var tempurl = url.split('#');
+			return tempurl[1];
+		} else return false;
+	},
+	get_anchors: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			anchors = [];
+		;
+		regions.each(function (r) {
+			r.get("modules").each(function (module) {
+				module.get("objects").each(function (object) {
+					var anchor = object.get_property_value_by_name("anchor");
+					if (anchor && anchor.length) anchors[anchor] = object;
+				});
+			});
+		});
+		return anchors;
+	},
+	/*editLink: function(e) {
+		e.preventDefault();
 		var editor = $(e.target).data('ueditor');
 		
 		if(editor) {
 			editor.start();
-		}*/s
-	},
-	revert_preset: function() {
-		this.render();
-	},
+		}
+	},*/
 	get_content_markup: function () {
 		var content = this.model.get_content(), style_static = '', style_hover = '';
 
@@ -181,7 +247,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				;
 
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
-								console.log(text);
+								
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				me.property('href', $target.attr('href'), true);
 
@@ -191,8 +257,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.render();
 			})
 			.on('syncAfter', function(){
-				var text = $.trim($(this).html());
-				if (text) me.model.set_content($(text).html(), {silent: true});
+				var ed = $target.data("ueditor"),
+					text = ''
+				;
+
+				try { text = ed.getValue(true); } catch (e) { text = ''; }
+								
+				if (text) me.model.set_content(text, {silent: true});
 			})
 		/*.ueditor({
 				linebreaks: true,
@@ -220,6 +291,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.conformSize();
 			}, 100);
 			*/
+		this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
 	},
 	stopEdit: function() {
 			var $target = this.$el.find('.upfront-object-content a.upfront_cta');
@@ -880,6 +952,9 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		}, 100);
 
 		Upfront.Events.on("entity:settings:beforedeactivate", this.on_save, this);
+		Upfront.Events.once("entity:settings:deactivate", this.revert_preset, this);
+		me.is_saving = false;
+		me.original_style = $('style#style'+me.property('element_id')).html();
 
 	},
 	updatelivecss: function(me, invoker, ignorehover) {
@@ -999,16 +1074,28 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		$('style#style'+me.property('element_id')).html(style);
 	},
 	on_save: function() {
+		
+		this.is_saving = true;
 		var currentpreset = this.property('currentpreset');
 		if(this.buttonpresets.$el.css('display') == 'none')
 			this.save_preset(this.property('currentpreset'));
 		this.is_changed = true;
 		this.constructor.__super__.on_save.apply(this, arguments);
 	},
+	revert_preset: function(e) {
+		var me = this;
+		
+		setTimeout(function() {
+			if(me.is_saving)
+				return;
+			
+			$('style#style'+me.property('element_id')).html(me.original_style);
+		}, 200);
+	},
 	editPreset: function(e){
 		e.preventDefault();
 		var selectedpreset = this.$el.find('div.button_preset li.upfront-field-select-option-selected input').val();
-		if(selectedpreset == 'undefined')
+		if(!selectedpreset || selectedpreset == 'undefined')
 			return;
 		this.property('currentpreset', selectedpreset, true);
 		this.ready_preset();
@@ -1157,7 +1244,6 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			}
 	},
 	save_preset: function(presetname) {
-
 		var preset = Upfront.Views.Editor.Button.Presets.get(presetname);
 		if(preset) {
 			preset.attributes.bordertype = this.borderType.get_value();
