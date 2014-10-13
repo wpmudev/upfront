@@ -343,15 +343,14 @@ var me = this;
 					;
 				});
 
-			$upfrontObjectContent = this.$el.find('.upfront-object-content');
-			    if(this.$el.find('a.add-item').length < 1)
-				      $('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+				var $upfrontObjectContent = this.$el.find('.upfront-object-content');
+				if(this.$el.find('a.add-item').length < 1) {
+					$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+				}
 
-			
-
-			this.$el.find('div#'+this.currenttabid).addClass('tab-content-active').siblings().removeClass('tab-content-active');
-					  
-			this.$el.find('div.tabs-tab[data-content-id="'+this.$el.find('div.tab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
+				this.$el.find('div#'+this.currenttabid).addClass('tab-content-active').siblings().removeClass('tab-content-active');
+						  
+				this.$el.find('div.tabs-tab[data-content-id="'+this.$el.find('div.tab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
 			},
 
 			addTooltips: function() {
