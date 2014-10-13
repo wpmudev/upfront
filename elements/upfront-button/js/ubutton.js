@@ -57,6 +57,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			me.model.set_property('theme_style', '', true);
 		}, this);
 
+		
+		/*if ( objects && objects.length == 1 ){
+			objects.each(function(object){
+				object.set_property('row', rsz_row);
+			});
+		}*/
+
 	},
 	/*onResizeStop: function(view, model, ui) {
 		this.conformSize();
@@ -291,7 +298,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.conformSize();
 			}, 100);
 			*/
-		this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
+		//this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
+		this.property('row', this.parent_module_view.model.get('properties').get('row').attributes.value);
 	},
 	stopEdit: function() {
 			var $target = this.$el.find('.upfront-object-content a.upfront_cta');
@@ -612,7 +620,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				spectrum: {
 					preferredFormat: "hex",
 					change: function() { me.updatelivecss(me, me.color);},
-					move: function() { me.updatelivecss(me, me.color);},
+					move: function() { me.updatelivecss(me, me.color, true);},
 				}
 		});
 
