@@ -327,6 +327,7 @@ var me = this;
 					$content.ueditor({
 						linebreaks: false,
 						autostart: false,
+						inserts: {},
 						placeholder: false
 					})
 						.on("start", function () {
