@@ -1528,30 +1528,33 @@ var _alpha = "alpha",
             vid   : "",
             label : "Variant Label",
             group : {
-                width_cls : "c24",
-                float: "none",
-                height: 250
+                col: 24,
+                row: 50,
+                left: 0,
+                float: "none"
             },
             image : {
-                width_cls : "c24",
-                //left_cls  : "ml0",
-                //top_cls   : "mt0",
-                //width     : 150,
-                top       : 0,
-                left      : 0,
-                height    : 200
+            	order: 0,
+            	col: 24,
+            	top: 0,
+            	left: 0,
+            	row: 40,
+            	clear: true
             },
             caption : {
-                show      : 1,
-                width_cls : "c24",
-                //left_cls  : "ml2",
-                //top_cls   : "mt0",
-                //width     : "100%",
-                //width     : 150,
-                top       : 0,
-                left      : 0,
-                height    : 50
+                show: 1,
+                order: 1,
+                col: 24,
+                top: 0,
+                left: 0,
+                row: 10,
+                clear: true
             }
+        },
+        initialize: function () {
+        	this.set('group', Upfront.Util.clone(this.defaults.group));
+        	this.set('image', Upfront.Util.clone(this.defaults.image));
+        	this.set('caption', Upfront.Util.clone(this.defaults.caption));
         }
     }),
     ImageVariants = Backbone.Collection.extend({

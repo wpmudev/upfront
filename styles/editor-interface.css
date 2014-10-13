@@ -12422,9 +12422,9 @@ div.upfront-regions a#no_region_add_one {
     z-index: 1;
 }
 .ueditor-insert-variant{
-    display: inline-block;
-    margin:0;
+    display: block;
     padding:0;
+    clear: both;
 }
 .ueditor-insert-variant:hover{
     outline:1px dotted #7f7f7f;
@@ -12448,7 +12448,6 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant-image{
     display:block;
     padding:15px;
-    position: absolute;
 }
 
 .ueditor-insert-variant.editing .ueditor-insert-variant-image{
@@ -12457,7 +12456,6 @@ div.upfront-regions a#no_region_add_one {
 .ueditor-insert-variant-caption{
     display:block;
     padding:15px;
-    position: absolute;
 }
 .image-variant-label{
     position: absolute;
