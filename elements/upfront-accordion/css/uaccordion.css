@@ -30,7 +30,7 @@
 	content: '';
 	width: 0;
 	height: 0;
-	border-top: 5px solid transparent !important;
+	border-top: 5px solid transparent;
 	border-left: 5px solid #000;
 	border-bottom: 5px solid transparent;
 	position: absolute;
@@ -59,7 +59,7 @@
 
 .upfront-accordion-container .accordion-panel-content {
 	overflow: hidden;
-	padding: 7px 15px !important;
+	padding: 7px 15px;
 }
 
 
