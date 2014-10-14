@@ -259,7 +259,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		$(Upfront.Settings.LayoutEditor.Selectors.contextmenu).html('').hide();
 		this.context_menu_view = false;
 
-		context_menu_view.trigger('closed');
+		//context_menu_view.trigger('closed');
 	},
 	create_settings: function (view) {
 		if (this.settings_view) return this.destroy_settings();
