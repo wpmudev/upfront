@@ -12,7 +12,7 @@
 			<?php } ?>
 
 		<?php if($include_image_caption){// && $caption_position != 'below_image'){ ?>
-		<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?><?php echo $captionBackground == '1' ? ' uimage-padded-caption' : '' ?>" style="background:<?php echo $captionBackground == '1' ? $background : '' ?>; ">
+		<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?><?php echo $captionBackground == '1' ? ' uimage-padded-caption' : '' ?>" style="background:<?php echo $captionBackground == '1' ? $background : 'rgba(255, 255, 255, 0.5)' ?>; ">
 			<?php if($cover_caption) { ?>
 				<div class="uimage-caption-cover">
 			<?php } ?>
@@ -29,23 +29,11 @@
 	</div>
 </div>
 
+<?php if($gifImage){ ?>
 <style>
-	#<?php echo $element_id ?> .uimage {
-		line-height: 0;
-	}
-	#<?php echo $element_id ?> .wp-caption *{
-		-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
-	}
-	#<?php echo $element_id ?> .wp-caption {
-		line-height: initial;
-	}
-	#<?php echo $element_id ?> .upfront-image-container {
-		overflow: hidden;
-	}
 	#<?php echo $element_id ?>.uimage-gif .upfront-image-container {
 		height: <?php echo $element_size['height'] ?>px;
 		width: <?php echo $element_size['width'] ?>px;
-		position: relative;
 	}
 
 	#<?php echo $element_id ?>.uimage-gif img {
@@ -53,79 +41,6 @@
 		width: <?php echo $size['width'] ?>px !important;
 		margin-top: <?php echo $gifTop ?>;
 		margin-left: -<?php echo $gifLeft ?>;
-		max-width: none;
-	}
-
-	#<?php echo $element_id ?> .uimage-over_image {
-		position:relative;
-	}
-	#<?php echo $element_id ?> .uimage-over_image .wp-caption{
-		position:absolute;
-		width: 100%;
-		left: 0;
-		top: 0;
-	}
-	#<?php echo $element_id ?> .uimage-over_image .uimage-fill,
-	#<?php echo $element_id ?> .uimage-over_image .uimage-fill_middle,
-	#<?php echo $element_id ?> .uimage-over_image .uimage-fill_bottom{
-		text-align: left;
-		height: 100%;
-	}
-
-	#<?php echo $element_id ?> .uimage-caption-over_image-top .wp-caption{
-
-	}
-
-	#<?php echo $element_id ?> .uimage-caption-over_image-bottom .wp-caption{
-		top: auto;
-		bottom: 0;
-	}
-
-	#<?php echo $element_id ?>.uimage-over_image .uimage-fill_bottom:before,
-	#<?php echo $element_id ?>.uimage-over_image .uimage-fill_middle:before,
-	#<?php echo $element_id ?>.uimage-over_image .uimage-fill:before{
-		content: ' ';
-		display: inline-block;
-		vertical-align: middle;
-		width: 1px;
-		margin-right: -0.25em;
-		height: 100%;
-	}
-
-	#<?php echo $element_id ?> .uimage-caption-cover{
-		display: inline-block;
-		vertical-align: top;
-		width:99%;
-	}
-	#<?php echo $element_id ?> .uimage-fill_middle .uimage-caption-cover{
-		vertical-align: middle;
-	}
-	#<?php echo $element_id ?> .uimage-fill_bottom .uimage-caption-cover{
-		vertical-align: bottom;
-	}
-
-	#<?php echo $element_id ?> .uimage-over_image div.uimage-bottom{
-		top:auto;
-	}
-
-	#<?php echo $element_id ?> .uimage-over_image .uimage-hover_show {
-		opacity:0;
-	}
-
-	#<?php echo $element_id ?> .uimage-over_image:hover .uimage-hover_show {
-		opacity:1;
-	}
-
-	#<?php echo $element_id ?> .uimage-over_image .wp-caption,
-	#<?php echo $element_id ?> .uimage-padded-caption {
-		padding: 5px 15px;
-	}
-
-	#<?php echo $element_id ?> img {
-		<?php if($size['width'] > 30 || $size['height'] > 30){ ?>
-		max-width: 100%;
-		<?php } ?>
-		max-height: none;
-		vertical-align: top;
 	}
 </style>
+<?php } ?>

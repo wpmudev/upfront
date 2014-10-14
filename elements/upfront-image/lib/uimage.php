@@ -43,6 +43,8 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['placeholder_class'] = !empty($data['src']) ? '' : 'uimage-placeholder';
 
+		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
+
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($data['when_clicked'] == 'image'){

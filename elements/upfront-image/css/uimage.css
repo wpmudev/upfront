@@ -691,7 +691,7 @@ a.image-edit-button.deactivated:hover {
 	text-align: left;
 }
 
-.uimage-control-panel {
+.upfront-ui .uimage-control-panel {
 	position: absolute;
 	min-width: 150px;
 	z-index: 2001;
@@ -1103,25 +1103,28 @@ div.uimage-controls i.upfront-icon:before {
 	display: none !important;
 }
 
-.uimage-control-tooltip .upfront-inline-panel-item{
+.uimage-control-tooltip .upfront-inline-panel-item {
 	display: inline-block;
 	position: static;
 	float: none;
 	border: 0;
 }
 
-.uimage-control-tooltip-tip {
+.uimage-control-tooltip .uimage-control-tooltip-tip {
 	width: 100%;
-	height: 10px;
+	height: 5px;
 }
 
-.uimage-control-tooltip-tip:before {
+.uimage-control-tooltip .uimage-control-tooltip-tip:before {
 	content: '';
 	display: block;
 	width: 10px;
 	border: 5px solid transparent;
 	border-bottom: 5px solid rgba(31, 48, 63, 0.8);
 	margin: 0 auto;
+	position: absolute;
+	top: 35px;
+	left: 15px;
 }
 
 .uimage-control-tooltip .tooltip-bottom .tooltip-content {
@@ -1186,4 +1189,89 @@ div.uimage-controls i.upfront-icon:before {
 	display: table!important;
 	bottom: 0px;
 	position: absolute;
+}
+
+.upfront-image-container + .wp-caption {
+	box-sizing: border-box;
+	line-height: initial;
+}
+
+/* Rules that were in image template */
+.uimage {
+	line-height: 0;
+}
+.upfront-image-container + .wp-caption * {
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.upfront-image-container {
+	overflow: hidden;
+}
+.uimage-gif .upfront-image-container {
+	position: relative;
+}
+.uimage-gif img {
+	max-width: none;
+}
+.uimage-over_image {
+	position: relative;
+}
+.uimage-over_image .wp-caption{
+	position:absolute;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+.uimage-over_image .uimage-fill,
+.uimage-over_image .uimage-fill_middle,
+.uimage-over_image .uimage-fill_bottom{
+	text-align: left;
+	height: 100%;
+}
+
+.uimage-caption-over_image-bottom .wp-caption{
+	top: auto;
+	bottom: 0;
+}
+
+.uimage-over_image .uimage-fill_bottom:before,
+.uimage-over_image .uimage-fill_middle:before,
+.uimage-over_image .uimage-fill:before{
+	content: ' ';
+	display: inline-block;
+	vertical-align: middle;
+	width: 1px;
+	margin-right: -0.25em;
+	height: 100%;
+}
+
+.uimage-caption-cover{
+	display: inline-block;
+	vertical-align: top;
+	width:99%;
+}
+.uimage-fill_middle .uimage-caption-cover{
+	vertical-align: middle;
+}
+.uimage-fill_bottom .uimage-caption-cover{
+	vertical-align: bottom;
+}
+
+.uimage-over_image div.uimage-bottom{
+	top:auto;
+}
+
+.uimage-over_image .uimage-hover_show {
+	opacity:0;
+}
+
+.uimage-over_image:hover .uimage-hover_show {
+	opacity:1;
+}
+
+.uimage-padded-caption {
+	padding: 5px 15px;
+}
+.uimage img {
+	max-height: none;
+	vertical-align: top;
 }
