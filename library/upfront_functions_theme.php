@@ -50,6 +50,7 @@ function upfront_create_region($args, $region_properties = array()){
 
 
 function upfront_get_template ($slugs, $args = array(), $default_file = '') {
+	$args = apply_filters('upfront-theme-template', $args, $slugs, $default_file);
 	return Upfront_Theme::get_instance()->get_template($slugs, $args, $default_file);
 }
 function upfront_get_template_url($slugs, $default_file = '') {
