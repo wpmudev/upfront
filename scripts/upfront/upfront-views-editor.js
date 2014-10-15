@@ -10010,7 +10010,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	var LinkPanel = Backbone.View.extend({
 		tpl: _.template($(_Upfront_Templates.popup).find('#linkpanel-tpl').html()),
 		defaultLinkTypes: {
-			unlink: false,
+			unlink: true,
 			external: true,
 			entry: true,
 			anchor: true,
@@ -10097,12 +10097,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 
 		getCurrentLinkType: function() {
-			return this.$('.js-ulinkpanel-type:checked').val() || false;
+			var value = this.$('.js-ulinkpanel-type:checked').val();
+			if (value === 'unlink')
+				return false;
+				
+			return value || false;
 		},
 
 		getTypeUrl: function(type){
 			var url;
 			switch(type){
+				case 'unlink':
+				case false:
+					return '';
 				case 'external':
 				case 'entry':
 					// Check if the url is absolute or have a protocol.

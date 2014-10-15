@@ -1067,7 +1067,7 @@ RedactorPlugins.upfrontLink = {
 			open: 'open'
 		},
 		initialize: function(){
-			this.linkPanel = new Upfront.Views.Editor.LinkPanel({linkTypes: {unlink: true}, button: true});
+			this.linkPanel = new Upfront.Views.Editor.LinkPanel({button: true});
 			this.bindEvents();
 			UeditorPanel.prototype.initialize.apply(this, arguments);
 		},
@@ -1132,7 +1132,7 @@ RedactorPlugins.upfrontLink = {
 
 		bindEvents: function(){
 			this.listenTo(this.linkPanel, 'link:ok', function(data){
-				if(data.type == 'unlink')
+				if(data.type == 'unlink' || data.type == false)
 					this.unlink();
 				else
 					this.link(data.url, data.type);
@@ -1175,7 +1175,7 @@ RedactorPlugins.upfrontLinkCTA = {
 			open: 'open'
 		},
 		initialize: function(){
-			this.linkPanel = new Upfront.Views.Editor.LinkPanel({linkTypes: {unlink: true}, button: true});
+			this.linkPanel = new Upfront.Views.Editor.LinkPanel({button: true});
 			this.bindEvents();
 			UeditorPanel.prototype.initialize.apply(this, arguments);
 		},
