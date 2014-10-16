@@ -1747,6 +1747,7 @@ console.log("POSITION AFTER", block, where);
 							});
 
 							me.listenTo(insert, 'remove', me.onRemoveInsert);
+							$(".uinsert-selector").hide();
 						})
 					;
 				});

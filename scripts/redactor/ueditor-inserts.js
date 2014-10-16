@@ -305,7 +305,7 @@ var ImageInsert = UeditorInsert.extend({
 		linkUrl: '',
 		isLocal: 1,
 		externalImage: {top: 0, left: 0, width: 0, height: 0},
-		variant_id : "default"
+		variant_id : ""
 	},
 	//Called just after initialize
 	init: function(){
@@ -319,7 +319,7 @@ var ImageInsert = UeditorInsert.extend({
 				type: "multi",
 				icon : "style",
 				tooltip: "Style",
-				selected: this.data.get("variant_id"),
+				selected: alignControl.selected,
 				subItems: this.get_style_control_data()
 			},
 			{id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
@@ -357,6 +357,13 @@ var ImageInsert = UeditorInsert.extend({
 			grid = Upfront.Settings.LayoutEditor.Grid;
 
 		data.image = data.imageFull;
+
+		if( (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+			data.image = data.imageThumb;
+			console.info('data.imageThumb');
+
+		}
+
 		var apply_classes = function (d) {
 			d.height = d.row * grid.baseline;
 			d.width_cls = grid.class + d.col;
@@ -374,14 +381,9 @@ var ImageInsert = UeditorInsert.extend({
 			.html(this.tpl(data))
 		;
 
-
-console.log(style_variant.group);
 		Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
 		Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.top);
-		this.$el.css({
-			float : style_variant.group.float,
-			//height : style_variant.group.height
-		});
+		this.$el.css({float : style_variant.group.float});
 		this.controls.render();
 		this.$el.append(this.controls.$el);
 		this.make_caption_editable();
@@ -405,7 +407,7 @@ console.log(style_variant.group);
 
 	make_caption_editable: function(){
 		var me = this;
-		if( !this.data.get("style").caption.show ) return;
+		if( !this.data.get("style").caption.show || this.$('.wp-caption-text').length === 0) return;
 			this.$('.wp-caption-text')
 				//.attr('contenteditable', true)
 				.off('keyup')
@@ -582,7 +584,7 @@ console.log(style_variant.group);
 	},
 
 	getSimpleOutput: function () {
-		var out = this.el.cloneNode(),
+		var out = this.el.cloneNode(true),
 			data = this.data.toJSON()
 			;
 
