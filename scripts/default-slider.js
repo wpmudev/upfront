@@ -214,6 +214,7 @@
 		},
 
 		prev_next_navigation: function(){
+
 			var me = this,
 				data = this.opts
 			;
@@ -230,6 +231,7 @@
 		},
 
 		next: function(){
+
 			var data = this.opts,
 				fx = ( data.effect == 'slide-left' || data.effect == 'slide-right') ? 'slide-left' : ( data.effect == 'crossfade' ? 'crossfade' : 'slide-up' )
 			;
@@ -238,6 +240,7 @@
 		},
 
 		prev: function(){
+
 			var data = this.opts,
 				fx = ( data.effect == 'slide-left' || data.effect == 'slide-right') ? 'slide-right' : ( data.effect == 'crossfade' ? 'crossfade' : 'slide-down' )
 			;
