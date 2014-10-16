@@ -424,7 +424,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 	stop: function () {
 		var sidebar = Application.sidebar;
-		Upfront.Util.log("Stopping the postlayout edit mode");
+		//Upfront.Util.log("Stopping the postlayout edit mode");
 
 		this.restoreSidebar();
 		this.restoreViews();
