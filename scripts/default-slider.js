@@ -204,6 +204,7 @@
 				this.items.each(function(index){
 					$nav.append('<i class="' + data.classname.nav_item + ' uslider-dotnav-' + index + '" data-slider-index="' + index + '">'+index+'</i>');
 				});
+
 				this.$slider.on('click', '.'+data.classname.nav_item, function(e){
 					e.preventDefault();
 					var index = $(this).data('slider-index');
@@ -214,7 +215,6 @@
 		},
 
 		prev_next_navigation: function(){
-
 			var me = this,
 				data = this.opts
 			;
@@ -231,7 +231,6 @@
 		},
 
 		next: function(){
-
 			var data = this.opts,
 				fx = ( data.effect == 'slide-left' || data.effect == 'slide-right') ? 'slide-left' : ( data.effect == 'crossfade' ? 'crossfade' : 'slide-up' )
 			;
@@ -240,7 +239,6 @@
 		},
 
 		prev: function(){
-
 			var data = this.opts,
 				fx = ( data.effect == 'slide-left' || data.effect == 'slide-right') ? 'slide-right' : ( data.effect == 'crossfade' ? 'crossfade' : 'slide-down' )
 			;
