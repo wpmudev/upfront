@@ -34,7 +34,7 @@ define(function() {
 
 		log: function () {
 			var args = ["[UPFRONT]: "].concat(arguments);
-			console.log.apply(this, args);
+			console.log.apply(console, args);
 		},
 
 		dbg: function () {
