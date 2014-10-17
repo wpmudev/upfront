@@ -301,6 +301,7 @@ define([
 	var Command_NewPage = Command_NewPost.extend({
 		"className": "command-new-page",
 		postType: 'page',
+		_default_label: "New Page",
 		initialize: function () {
 			this.setMode = Upfront.Application.MODE.LAYOUT;
 		},
