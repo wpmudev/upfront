@@ -64,6 +64,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 		}*/
 
+
 	},
 	/*onResizeStop: function(view, model, ui) {
 		this.conformSize();
@@ -171,7 +172,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	get_content_markup: function () {
 		var content = this.model.get_content(), style_static = '', style_hover = '';
 
-		if(this.model.get_property_value_by_name("currentpreset") && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
+		//Apply Default preset if none is selected for a new item
+		if(!this.model.get_property_value_by_name('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
+			this.model.set_property('currentpreset', Upfront.Views.Editor.Button.Presets.first().id);
+
+
+		if(this.model.get_property_value_by_name("currentpreset") && this.model.get_property_value_by_name("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
 
 			var preset = Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset")).attributes;
 			style_static = "border: "+preset.borderwidth+"px "+preset.bordertype+" "+preset.bordercolor+"; "+
@@ -300,6 +306,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			*/
 		//this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
 		this.property('row', this.parent_module_view.model.get('properties').get('row').attributes.value);
+
 	},
 	stopEdit: function() {
 			var $target = this.$el.find('.upfront-object-content a.upfront_cta');
@@ -328,7 +335,7 @@ var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"name": "",
 				"properties": [
 					{"name": "content", "value": "Click here"},
-					{"name": "href", "value": "#"},
+					{"name": "href", "value": ""},
 					{"name": "align", "value": "center"},
 				]
 			}),
@@ -1092,7 +1099,9 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	revert_preset: function(e) {
 		var me = this;
-		
+		if(me.property('currentpreset') == '')
+			return;
+
 		setTimeout(function() {
 			if(me.is_saving)
 				return;
@@ -1121,6 +1130,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	delete_preset: function(presetname) {
 		Upfront.Views.Editor.Button.Presets.remove(presetname);
+		this.property('currentpreset', '','');
 		Upfront.Events.trigger("entity:settings:deactivate");
 
 	},
