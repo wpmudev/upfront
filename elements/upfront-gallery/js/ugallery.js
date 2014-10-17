@@ -82,7 +82,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			//'click .ugallery_addmore_wrapper': 'openImageSelector', // NOT USING THIS
 			'click .ugallery_op_link': 'imageEditLink',
 			'click .ugallery_op_mask': 'imageEditMask',
-			'click .ugallery_item_rm_yes': 'removeImage',
+			'click .remove-image': 'removeImage',
 			'click .ugallery-image-wrapper': 'selectItem',
 			'click .upfront-quick-swap': 'openImageSelector',
 			'click .ugallery-nolabels-alert': 'openLightboxLabels',
@@ -183,8 +183,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var linkControl = this.property('linkTo') == 'url' ? this.createLinkControl(image) : this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox');
 		panel.items = _([
 			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
-			linkControl,
-			this.createControl('remove', l10n.ctrl.rm_image, 'removeImage')
+			linkControl
 		]);
 
 		return panel;
@@ -410,6 +409,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		props.image_labels = this.imageLabels;
 
 		props.l10n = l10n.template;
+		props.in_editor = true;
 
 		rendered = this.tpl(props);
 
