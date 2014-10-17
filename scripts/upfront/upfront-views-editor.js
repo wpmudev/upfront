@@ -309,13 +309,106 @@ define([
 			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New page");
+				this.$el.removeClass('tooltip-inline tooltip-bottom').html(this._default_label);
 			else
-				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New page</span>');
+				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">' + this._default_label + '</span>');
 		},
 		on_click: function(e){
 			e.preventDefault();
-			Upfront.Application.navigate('/create_new/page', {trigger: true});
+			var me = this;
+			
+			this.spawn_modal();
+			this.modal.render();
+			$('body').append(this.modal.el);
+			
+			this.modal.open(function () {
+				me.render_modal();
+				me.trigger("new_page:modal:open");
+			}).done(function () {
+				me.trigger("new_page:modal:close");
+				Upfront.Util.post({
+					action: "upfront-create-post_type",
+					data: _.extend({post_type: me.postType}, me.modal._data)
+				}).done(function (resp) {
+					Upfront.Util.log(resp.data);
+					Upfront.Application.navigate('/edit/' + resp.data.post_id, {trigger: true});
+					
+				});
+				//Upfront.Application.navigate('/create_new/page', {trigger: true});
+			})
+		},
+		render_modal: function () {
+			var me = this,
+				$content = this.modal.$el.find('.upfront-inline-modal-content')
+			;
+			$content.empty();
+			_.each(me.modal._fields, function (field) {
+				field.render();
+				$content.append(field.$el);
+			});
+		},
+		spawn_modal: function () {
+			if (this.modal) return this.initialize_modal_data();
+			var me = this,
+				update_modal_data = function () {
+					_.each(me.modal._fields, function (field, key) {
+						me.modal._data[key] = field.get_value();
+					});
+					if (!me.modal._data.permalink) {
+						var title = me.modal._data.title || me._default_label,
+							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase(),
+							$permalink = me.modal.$el.find('.upfront-field-text[name="permalink"]')
+						;
+						me.modal._fields.permalink.set_value(permalink);
+						$permalink.val(permalink);
+					}
+				},
+				_initial_templates = [{label: "None", value: ""}],
+				templates_request = Upfront.Util.post({
+					action: "upfront-wp-model",
+					model_action: "get_post_extra",
+					postId: "fake", // Stupid walkaround for model handler insanity
+					allTemplates: true
+				})
+			;
+			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
+			this.modal._fields = {
+				title: new Upfront.Views.Editor.Field.Text({
+					label: "",
+					name: "title",
+					default_value: this._default_label,
+					change: update_modal_data
+				}),
+				permalink: new Upfront.Views.Editor.Field.Text({
+					label: "",
+					name: "permalink",
+					change: update_modal_data
+				}),
+				template: new Upfront.Views.Editor.Field.Select({
+					label: "Page Template",
+					name: "template",
+					values: _initial_templates
+				})
+			};
+			this.initialize_modal_data();
+			this.on("new_page:modal:open", update_modal_data, this);
+			this.on("new_page:modal:close", update_modal_data, this);
+			templates_request.done(function (response) {
+				me.modal._fields.template.options.values = _initial_templates; // Zero out the templates selection
+				if (!response.data || !response.data.allTemplates) return false;
+				_.each(response.data.allTemplates, function (tpl, title) {
+					me.modal._fields.template.options.values.push({label: title, value: tpl});
+				});
+				me.modal._fields.template.render();
+			});
+		},
+		initialize_modal_data: function () {
+			var me = this;
+			this.modal._data = {};
+			_.each(_.keys(this.modal._fields), function (key) {
+				me.modal._data[key] = "";
+			});
+
 		}
 	});
 
