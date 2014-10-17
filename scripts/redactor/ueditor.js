@@ -478,6 +478,7 @@ Ueditor.prototype = {
 		$("html").on('click', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
+
 		if( !( $(e.target).hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_air") || $(e.target).parents().hasClass("redactor_dropdown") ) ) {
 			e.data.ueditor.stop();
 		}
