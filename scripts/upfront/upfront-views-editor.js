@@ -331,7 +331,7 @@ define([
 					data: _.extend({post_type: me.postType}, me.modal._data)
 				}).done(function (resp) {
 					Upfront.Util.log(resp.data);
-					Upfront.Application.navigate('/edit/' + resp.data.post_id, {trigger: true});
+					Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
 					
 				});
 				//Upfront.Application.navigate('/create_new/page', {trigger: true});
