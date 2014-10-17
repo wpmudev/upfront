@@ -1418,8 +1418,11 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			},
 			onSaveSettings: function() {
 				this.model.get_property_by_name('allow_new_pages').trigger('change');
+				//console.log(_.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')}).slug);
 				// Update slug because it's depending on id and has to be updated properly
-				this.model.set_property('menu_slug', _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')}).slug);
+				var themenu = _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')});
+				if(themenu)
+					this.model.set_property('menu_slug', themenu.slug);
 			},
 			/**
 			 * Get the title (goes into settings title area)
