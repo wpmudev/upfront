@@ -188,20 +188,21 @@ var LayoutEditor = {
 							index = region_modules.indexOf(module),
 							is_next = ( index-last_index == 1 ),
 							wrapper_id = module.get_wrapper_id(),
+							is_current_wrapper = ( current_wrapper_id == wrapper_id ),
 							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
 							wrapper_class = wrapper.get_property_value_by_name('class'),
 							wrapper_col = grid_ed.get_class_num(wrapper_class, grid_ed.grid.class),
 							position;
 						if ( module_index === false )
 							module_index = index;
-						if ( current_wrapper_id != wrapper_id )
+						if ( !is_current_wrapper )
 							wrapper_index++;
-						if ( i == 0 || !is_next || line_col+wrapper_col > max_col || ( current_wrapper_id != wrapper_id && wrapper_class.match(/clr/) ) ) { // this module appear in a new line
+						if ( !is_current_wrapper && ( i == 0 || !is_next || line_col+wrapper_col > max_col || wrapper_class.match(/clr/) ) ) { // this module appear in a new line
 							line++;
 							is_next = false;
 							line_col = wrapper_col;
 						}
-						else if ( current_wrapper_id != wrapper_id ) {
+						else if ( !is_current_wrapper ) {
 							line_col += wrapper_col;
 						}
 						else {
@@ -219,7 +220,7 @@ var LayoutEditor = {
 						});
 						if ( wrapper_index == 1 || !is_next || wrapper_class.match(/clr/) )
 							margin_left = ( margin_left === false || module_left < margin_left ) ? module_left : margin_left;
-						if ( line == 1 && current_wrapper_id != wrapper_id )
+						if ( line == 1 && !is_current_wrapper )
 							margin_top = ( margin_top === false || module_top < margin_top ) ? module_top : margin_top;
 						col = ( col === false || line_col > col ) ? line_col : col;
 						current_wrapper_id = wrapper_id;
@@ -281,6 +282,7 @@ var LayoutEditor = {
 					line = 0;
 					wrapper_index = 0;
 					current_wrapper_id = false;
+					
 					_.each(modules, function(module, index){
 						var wrapper_id = module.wrapper_id,
 							new_classes = [];
@@ -325,6 +327,7 @@ var LayoutEditor = {
 					}
 					group.set_property('element_id', group_id);
 					group.replace_class( grid_ed.grid.class + col + " " + grid_ed.grid.top_margin_class + margin_top + " " + grid_ed.grid.left_margin_class + margin_left );
+					group.set_property('original_col', col);
 					group.add_to(region_modules, module_index);
 
 					// combine elements
@@ -597,6 +600,38 @@ var LayoutEditor = {
 		if (location.toString().indexOf('dev=true') > -1) url += '?dev=true';
 
 		window.location = url;
+	},
+
+	open_theme_fonts_manager: function() {
+		var me = {};
+		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
+		textFontsManager.render();
+		var popup = Upfront.Popup.open(function (data, $top, $bottom) {
+			var $me = $(this);
+			$me.empty()
+			.append('<p class="upfront-popup-placeholder">Loading content...</p>')
+			;
+			me.$popup = {
+				"top": $top,
+				"content": $me,
+				"bottom": $bottom
+			};
+		}, {
+			width: 750
+		},
+		'font-manager-popup');
+		me.$popup.top.html(
+			'<ul class="upfront-tabs">' +
+				'<li data-type="posts" class="active">Theme Text Fonts</li>' +
+				'</ul>' +
+				me.$popup.top.html()
+		);
+		me.$popup.bottom.append('<a class="theme-fonts-ok-button">OK</a>');
+		me.$popup.content.html(textFontsManager.el);
+		textFontsManager.set_ok_button(me.$popup.bottom.find('.theme-fonts-ok-button'));
+		me.$popup.bottom.find('.theme-fonts-ok-button').on('click', function() {
+			Upfront.Popup.close();
+		});
 	},
 
 	create_layout_dialog: function() {
@@ -887,9 +922,11 @@ var LayoutEditor = {
 
 		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
 		loading.update_loading_text("Exporting layout: " + layout_id);
+		
 		return ed._export_layout({ theme: theme_name }).done(function() {
 			loading.done(function() {
 				if (ed.export_modal) ed.export_modal.close(true);
+				ed.clean_region_css();
 			});
 		});
 
@@ -1003,14 +1040,14 @@ var LayoutEditor = {
 			{ 'name': 'layout_style' }
 		);
 
+
 		properties = _.extend({}, Upfront.Util.model_to_json(Upfront.Application.current_subapplication.get_layout_data().properties));
 		properties = _.reject(properties, function(property) {
 			return _.contains(['typography', 'layout_style', 'global_regions'], property.name);
 		});
 
-
 		data = {
-			typography: JSON.stringify(typography.value),
+			typography: (typography ? JSON.stringify(typography.value) : ''),
 			regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
 			template: _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type, // Respect proper cascade ordering
 			layout_properties: JSON.stringify(properties),
@@ -1020,7 +1057,8 @@ var LayoutEditor = {
 				colors: Upfront.Views.Theme_Colors.colors.toJSON(),
 				range: Upfront.Views.Theme_Colors.range
 			},
-			button_presets: Upfront.Views.Editor.Button.Presets.toJSON()
+			button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
+			post_image_variants: Upfront.Content.ImageVariants.toJSON()
 		};
 
 		if (Upfront.themeExporter.layoutStyleDirty) {
@@ -1042,6 +1080,86 @@ var LayoutEditor = {
 		}).error(function(){
 			deferred.reject();
 		});
+		return deferred.promise();
+	},
+	
+	/* Cleanup region CSS, running on save/export */
+	clean_region_css: function () {
+		var me = this,
+			cssEditor = Upfront.Application.cssEditor,
+			elementTypes = [cssEditor.elementTypes.RegionContainer, cssEditor.elementTypes.Region],
+			layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+			regions = Upfront.Application.layout.get('regions'),
+			styleExists = [],
+			deleteDatas = [],
+			deleteFunc = function (index) {
+				if ( ! deleteDatas[index] ) {
+					Upfront.Views.Editor.notify("Region CSS cleaned");
+					deferred.resolve();
+					return;
+				}
+				var elementType = deleteDatas[index].elementType,
+					styleName = deleteDatas[index].styleName;
+				if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME ) {
+					data = {
+						action: 'upfront_thx-delete-element-styles',
+						data: {
+							stylename: styleName,
+							elementType: elementType
+						}
+					};
+				}
+				else {
+					data = {
+						action: 'upfront_delete_styles',
+						styleName: styleName,
+						elementType: elementType
+					}
+				}
+				Upfront.Util.post(data)
+					.done(function(){
+						var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
+		
+						//Remove the styles from the available styles
+						if(styleIndex != -1)
+							Upfront.data.styles[elementType].splice(styleIndex, 1);
+		
+						//Remove the styles from the dom
+						$('#upfront-style-' + styleName).remove();
+						
+						//Continue deleting
+						deleteFunc(index+1);
+					});
+				;
+			},
+			deferred = new $.Deferred()
+		;
+		
+		regions.each(function(region){
+			var elementType = region.is_main() ? cssEditor.elementTypes.RegionContainer.id : cssEditor.elementTypes.Region.id,
+				styleName = layout_id + '-' + region.get('name') + '-style';
+			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
+				styleExists.push(styleName);
+			// @TODO keep support for old name, but will deprecate soon
+			styleName = elementType + '-' + region.get('name') + '-style';
+			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
+				styleExists.push(styleName);
+		});
+		
+		_.each(elementTypes, function(elementType){
+			_.each(Upfront.data.styles[elementType.id], function(styleName){
+				if ( ! _.contains(styleExists, styleName) && styleName.match(new RegExp('^' + layout_id)) )
+					deleteDatas.push({
+						elementType: elementType.id,
+						styleName: styleName
+					});
+			});
+		});
+		
+		if ( deleteDatas.length > 0 ) {
+			Upfront.Views.Editor.notify("Cleaning Region CSS...")
+			deleteFunc(0); // Start deleting
+		}
 		return deferred.promise();
 	},
 
@@ -2404,7 +2522,7 @@ var GridEditor = {
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
-							object.set_property('row', rsz_row - Upfront.Util.height_to_row(ed.grid.column_padding*2));
+							object.set_property('row', rsz_row);
 						});
 					}
 
@@ -2444,7 +2562,7 @@ var GridEditor = {
 							var obj_breakpoint = Upfront.Util.clone(object.get_property_value_by_name('breakpoint') || {});
 							if ( !_.isObject(obj_breakpoint[breakpoint.id]) )
 								obj_breakpoint[breakpoint.id] = {};
-							obj_breakpoint[breakpoint.id].row = rsz_row - Upfront.Util.height_to_row(ed.grid.column_padding*2);
+							obj_breakpoint[breakpoint.id].row = rsz_row;
 							object.set_property('breakpoint', obj_breakpoint);
 						});
 					}
@@ -2554,7 +2672,7 @@ var GridEditor = {
 		var objects = model.get('objects');
 		if ( objects && objects.length == 1 ){
 			objects.each(function(object){
-				object.set_property('row', row - Upfront.Util.height_to_row(ed.grid.column_padding*2));
+				object.set_property('row', row);
 			});
 		}
 		// Update model value
@@ -2640,7 +2758,7 @@ var GridEditor = {
 					break;
 			}
 			$drop.css('order', insert_order);
-			if ( ( ( drop.type == 'full' || drop.type == 'inside' || ( drop.type == 'side-after' && !drop.is_switch ) ) && !drop.is_me ) && ( drop.priority && drop.priority.bottom-drop.priority.top+1 < me.row  ) )
+			if ( ( ( drop.type == 'full' || drop.type == 'inside' /*|| ( drop.type == 'side-after' && !drop.is_switch )*/ ) && !drop.is_me ) && ( drop.priority && drop.priority.bottom-drop.priority.top+1 < me.row  ) )
 				$drop.css('width', (drop.right-drop.left+1)*ed.col_size).css('max-height', ed.max_row*ed.baseline).animate({height: me.height}, 300, 'swing', drop_change);
 			else if (  drop.type == 'side-before' && drop.is_switch )
 				drop.insert[1].animate({left: me.width}, 300, 'swing', drop_change);
@@ -2947,7 +3065,14 @@ var GridEditor = {
 					drop_top = current_grid_top > (ed.drop.top+drop_priority_top) ? current_grid_top-ed.drop.top-drop_priority_top : 0;
 					drop_left = current_grid_left > (ed.drop.left+drop_priority_left) ? current_grid_left-ed.drop.left-drop_priority_left : 0;
 					drop_col = ed.drop.priority ? ed.drop.priority.right-ed.drop.priority.left+1 : ed.drop.right-ed.drop.left+1;
+
+					if ( is_group ) {
+						var original_col = model.get_property_value_by_name('original_col');
+						if ( _.isNumber(original_col) && original_col > col )
+							col = original_col;
+					}
 					drop_col = drop_col <= col ? drop_col : col;
+					
 					adjust_bottom = false;
 
 					if ( ed.drop.priority )
@@ -3000,9 +3125,12 @@ var GridEditor = {
 					regions = app.layout.get("regions");
 					region = regions.get_by_name( $('.upfront-region-drag-active').data('name') ),
 					move_region = ( me.region != region.get('name') ),
+					prev_region = regions.get_by_name( me.region ),
 					wrappers = is_parent_group ? view.group_view.model.get('wrappers') : region.get('wrappers'),
 					region_el = ed.get_region($('.upfront-region-drag-active')),
-					$container = is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first');
+					prev_region_el = ed.get_region($me.closest('.upfront-region')),
+					$container = is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first'),
+					$prev_container = prev_region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first');
 
 				clearTimeout(ed._t); // clear remaining timeout immediately
 
@@ -3196,6 +3324,12 @@ var GridEditor = {
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 
 					ed.update_wrappers( is_parent_group ? view.group_view.model : region );
+
+					if ( move_region ) {
+						ed.update_model_margin_classes( $prev_container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') );
+						ed.update_wrappers(prev_region);
+					}
+
 					if ( !breakpoint || breakpoint.default ){
 						if ( wrapper_id )
 							model.set_property('wrapper_id', wrapper_id, true);
@@ -3784,8 +3918,10 @@ var GridEditor = {
 			$me = view.$el,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
+			container_view = view.parent_view.get_container_view(model),
 			sub = model.get('sub'),
 			fixed_pos = {},
+			restrict = false,
 			get_fixed_pos = function () {
 				var pos = {
 						top: model.get_property_value_by_name('top'),
@@ -3801,7 +3937,8 @@ var GridEditor = {
 				pos.is_right = ( typeof pos.right == 'number' );
 				return pos;
 			},
-			move = {}
+			move = {},
+			position = ''
 		;
 		if ( sub != 'fixed' )
 			return false;
@@ -3825,39 +3962,54 @@ var GridEditor = {
 				$helper.css('height', height);
 				$me.hide();
 				fixed_pos = get_fixed_pos();
+				restrict = model.get('restrict_to_container');
+				position = $helper.css('position');
 			},
 			drag: function (e, ui) {
 				var $helper = ui.helper,
 					main_offset = $main.offset(),
 					main_width = $main.width(),
+					container_offset = container_view.$el.offset(),
+					container_height = container_view.$el.height(),
+					container_bottom = container_offset.top + container_height,
+					scroll_top = $(window).scrollTop(),
 					win_height = $(window).height(),
-					main_x = (main_width/2) + main_offset.left,
-					main_y = win_height/2,
+					scroll_bottom = scroll_top + win_height,
+					main_x = ( main_width / 2 ) + main_offset.left,
+					main_y = ( position == 'fixed' || container_height > win_height ) ? win_height / 2 : container_height / 2,
 					left = ui.position.left,
 					top = ui.position.top,
 					width = $helper.width(),
 					height = $helper.height(),
 					x = (width/2) + left,
 					y = (height/2) + top,
-					limit_top = limit_left = helper_top = helper_left = false;
+					limit_top, limit_left, helper_top, helper_left;
 				// reset move variable
 				move = {};
-				if ( /*fixed_pos.is_top*/ y <= main_y ){
-					limit_top = 0;
+				if ( position == 'absolute' && container_height > win_height && container_bottom <= scroll_bottom )
+					main_y = container_height - ( win_height / 2 );
+				if ( y <= main_y ){
+					if ( position == 'fixed' || container_height < win_height || container_bottom >= scroll_bottom )
+						limit_top = 0;
+					else
+						limit_top = container_height - win_height;
 					helper_top = top < limit_top ? limit_top : top;
 					move.top = helper_top - limit_top;
 				}
-				else /*if ( fixed_pos.is_bottom )*/{
-					limit_top = win_height - height;
+				else {
+					if ( position == 'fixed' || ( container_height > win_height && container_offset.top >= scroll_top ) )
+						limit_top = win_height - height;
+					else
+						limit_top = container_height - height;
 					helper_top = top > limit_top ? limit_top : top;
 					move.bottom = limit_top - helper_top;
 				}
-				if ( /*fixed_pos.is_left*/ x <= main_x ){
+				if ( x <= main_x ){
 					limit_left = main_offset.left;
 					helper_left = left < limit_left ? limit_left : left;
 					move.left = helper_left - limit_left;
 				}
-				else /*if ( fixed_pos.is_right )*/{
+				else {
 					limit_left = main_width - width + main_offset.left;
 					helper_left = left > limit_left ? limit_left : left;
 					move.right = limit_left - helper_left;

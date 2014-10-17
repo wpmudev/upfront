@@ -42,10 +42,10 @@
 }
 
 #upfront-image-overlay h2 {
-	font-size: 50px;
-	color: #F2F9FF;
+	font-size: 42px;
+	color: #fff;
 	line-height: 1;
-	margin-bottom: 30px;
+	margin-bottom: 10px;
 	font-weight: 200;
 }
 
@@ -54,35 +54,41 @@
 	display: none;
 }
 
-.small_placeholder #upront-image-placeholder h2 {
-	font-size: 24px;
-	margin-bottom: 10px;
+.upfront-image-selector-container p {
+	font-size:20px;
+	color:#ebebeb;
 }
 
-#upfront-image-file-input {
-}
-
-
-.upfront-image-selector-container small {
-	font-size: 15px;
-	margin:0px auto 20px;
-	display: block;
-}
-
-#upfront-image-overlay .select-files {
+#upfront-image-overlay .upfront-image-selector-container ul li {
 	display: inline-block;
-	line-height: 34px;
-	width: 300px;
-	line-height: 48px;
-	color: #fff;
-	border:4px solid #253A4D;
-	text-decoration: none;
-	font-size: 28px;
-	background: none;
-	padding: 10px 0;
 }
+
+#upfront-image-overlay .select-files,
+#upfront-image-overlay a.open-media-gallery {
+	display: inline-block;
+	color: #fff;
+	text-decoration: none;
+	font-size: 24px;
+	background: #1FCD8F;
+	padding: 20px 70px;
+	border:5px solid #1FCD8F;
+	margin:30px 15px;
+}
+
+#upfront-image-overlay a.open-media-gallery {
+	background: transparent;
+	border:5px solid rgba(44,62,80,.7);
+	color:rgba(255,255,255,.7);
+}
+
 #upfront-image-overlay .select-files:hover {
-	border-color:#1fcd8f;
+	background-color:#1CB37D;
+	border-color: #1CB37D;
+}
+
+#upfront-image-overlay a.open-media-gallery:hover {
+	border:5px solid rgba(44,62,80,1);
+	color:rgba(255,255,255,1);
 }
 
 #upfront-image-overlay.small_placeholder .select-files {
@@ -91,37 +97,24 @@
 	font-weight: 400;
 	font-size: 18px;
 }
+
+#upfront-image-overlay .select-files:before {
+	background-position: -702px -872px;
+	content: " ";
+	background-image: url('../../../img/uf-core-el-sprite.svg');
+	background-repeat: no-repeat;
+	float: left;
+	display: block;
+	width: 28px;
+	height:24px;
+}
+
 #upfront-image-overlay .upfront-image-media-container {
 	margin: 0px auto;
-}
-#upfront-image-overlay a.open-media-gallery {
-	color: #1fcd8f;
-	font-weight: 400;
-	margin-top: 10px;
-	border-bottom: 1px dotted #fff;
-}
-
-a.open-media-gallery:hover {
-	color: #fff;
-}
-
-a.open-media-gallery:hover i {
-	text-decoration: none;
 }
 
 .small_placeholder .upfront-image-media-container {
 	display: inline;
-}
-
-.dragimagehand {
-	background: url(../img/hand.png) no-repeat center bottom;
-	background-size: contain;
-	height: 150px;
-	width: 13%;
-	display: block;
-	position: absolute;
-	left: 20%;
-	bottom: 0;
 }
 
 .upfront-ui .upfront-progress-container {
@@ -173,7 +166,6 @@ a.open-media-gallery:hover i {
 }
 
 .uimage-centered {
-	/*position: absolute;*/
 	width: 100px;
 	top: 0;
 	left: 0;
@@ -378,11 +370,11 @@ a.upfront-image-select:hover {
 	width: 300px;
 	height: 300px;
 	border-collapse: separate;
-	-moz-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
-	-webkit-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
-	box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
 	z-index:10;
 	position:absolute;
+		 -moz-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
+	-webkit-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
+					box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
 }
 
 #image-edit-buttons {
@@ -764,7 +756,7 @@ a.image-edit-button.deactivated:hover {
 }
 
 .uimage-control-tooltip {
-	background: #2a465f;	
+	background: #2a465f;
 }
 
 .uimage-control-panel button {
@@ -878,42 +870,42 @@ div.uimage-controls i.upfront-icon:before {
 	background-position: -807px -616px;
 }
 
-.upfront-icon-region-above:before {
+.upfront-ui .upfront-icon-region-above:before {
 	background-position: -699px -680px;
 }
-.upfront-icon-region-above:hover:before {
+.upfront-ui .upfront-icon-region-above:hover:before {
 	background-position: -807px -680px;
 }
-.upfront-icon-region-above-active:before {
+.upfront-ui .upfront-icon-region-above-active:before {
 	background-position: -699px -680px;
 }
-.upfront-icon-region-above-active:hover:before {
+.upfront-ui .upfront-icon-region-above-active:hover:before {
 	background-position: -807px -680px;
 }
 
-.upfront-icon-region-below:before {
+.upfront-ui .upfront-icon-region-below:before {
 	background-position: -699px -646px;
 }
-.upfront-icon-region-below:hover:before {
+.upfront-ui .upfront-icon-region-below:hover:before {
 	background-position: -807px -646px;
 }
-.upfront-icon-region-below-active:before {
+.upfront-ui .upfront-icon-region-below-active:before {
 	background-position: -699px -646px;
 }
-.upfront-icon-region-below-active:hover:before {
+.upfront-ui .upfront-icon-region-below-active:hover:before {
 	background-position: -807px -646px;
 }
 
-.upfront-icon-region-collapsedControl:before {
+.upfront-ui .upfront-icon-region-collapsedControl:before {
 	background-position: -699px -710px;
 }
-.upfront-icon-region-collapsedControl:hover:before {
+.upfront-ui .upfront-icon-region-collapsedControl:hover:before {
 	background-position: -807px -710px;
 }
-.upfront-icon-region-collapsedControl-active:before {
+.upfront-ui .upfront-icon-region-collapsedControl-active:before {
 	background-position: -699px -710px;
 }
-.upfront-icon-region-collapsedControl-active:hover:before {
+.upfront-ui .upfront-icon-region-collapsedControl-active:hover:before {
 	background-position: -807px -710px;
 }
 
@@ -973,9 +965,11 @@ div.uimage-controls i.upfront-icon:before {
 }
 .uimage-fill_middle .redactor_box{
 	vertical-align: middle;
+	position: static;
 }
 .uimage-fill_bottom .redactor_box{
 	vertical-align: bottom;
+	position: static;
 }
 
 .uimage-caption-over_image-bottom .redactor_box {
@@ -1131,7 +1125,7 @@ div.uimage-controls i.upfront-icon:before {
 
 .upfront-ui .uimage-control-tooltip {
 	display: none;
-	width: 92px;
+	min-width: 120px;
 	line-height: 0px;
 	margin-top:0;
 }
@@ -1144,25 +1138,28 @@ div.uimage-controls i.upfront-icon:before {
 	display: none !important;
 }
 
-.uimage-control-tooltip .upfront-inline-panel-item{
+.uimage-control-tooltip .upfront-inline-panel-item {
 	display: inline-block;
 	position: static;
 	float: none;
 	border: 0;
 }
 
-.uimage-control-tooltip-tip {
+.uimage-control-tooltip .uimage-control-tooltip-tip {
 	width: 100%;
-	height: 10px;
+	height: 5px;
 }
 
-.uimage-control-tooltip-tip:before {
+.uimage-control-tooltip .uimage-control-tooltip-tip:before {
 	content: '';
 	display: block;
 	width: 10px;
 	border: 5px solid transparent;
 	border-bottom: 5px solid rgba(31, 48, 63, 0.8);
 	margin: 0 auto;
+	position: absolute;
+	top: 36px;
+	left: 15px;
 }
 
 .uimage-control-tooltip .tooltip-bottom .tooltip-content {
@@ -1211,4 +1208,105 @@ div.uimage-controls i.upfront-icon:before {
 
 	font-style: italic;
 	opacity: .3;
+}
+
+/* fixes */
+.uimage-fill_middle .uimage-caption-cover {
+	display: table!important;
+	margin: auto;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	position: absolute;
+}
+.uimage-fill_bottom .uimage-caption-cover {
+	display: table!important;
+	bottom: 0px;
+	position: absolute;
+}
+
+.upfront-image-container + .wp-caption {
+	box-sizing: border-box;
+	line-height: initial;
+}
+
+/* Rules that were in image template */
+.uimage {
+	line-height: 0;
+}
+.upfront-image-container + .wp-caption * {
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.upfront-image-container {
+	overflow: hidden;
+}
+.uimage-gif .upfront-image-container {
+	position: relative;
+}
+.uimage-gif img {
+	max-width: none;
+}
+.uimage-over_image {
+	position: relative;
+}
+.uimage-over_image .wp-caption{
+	position:absolute;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+.uimage-over_image .uimage-fill,
+.uimage-over_image .uimage-fill_middle,
+.uimage-over_image .uimage-fill_bottom{
+	text-align: left;
+	height: 100%;
+}
+
+.uimage-caption-over_image-bottom .wp-caption{
+	top: auto;
+	bottom: 0;
+}
+
+.uimage-over_image .uimage-fill_bottom:before,
+.uimage-over_image .uimage-fill_middle:before,
+.uimage-over_image .uimage-fill:before{
+	content: ' ';
+	display: inline-block;
+	vertical-align: middle;
+	width: 1px;
+	margin-right: -0.25em;
+	height: 100%;
+}
+
+.uimage-caption-cover{
+	display: inline-block;
+	vertical-align: top;
+	width:99%;
+}
+.uimage-fill_middle .uimage-caption-cover{
+	vertical-align: middle;
+}
+.uimage-fill_bottom .uimage-caption-cover{
+	vertical-align: bottom;
+}
+
+.uimage-over_image div.uimage-bottom{
+	top:auto;
+}
+
+.uimage-over_image .uimage-hover_show {
+	opacity:0;
+}
+
+.uimage-over_image:hover .uimage-hover_show {
+	opacity:1;
+}
+
+.uimage-padded-caption {
+	padding: 5px 15px;
+}
+.uimage img {
+	max-height: none;
+	vertical-align: top;
 }

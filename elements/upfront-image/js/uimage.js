@@ -245,7 +245,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		me.listenTo(control, 'panel:open', function(){
 			me.controls.$el.parent().addClass('upfront-control-visible');
 			me.$el.closest('.ui-draggable').draggable('disable');
-
 		});
 
 		me.listenTo(control, 'panel:close', function(){
@@ -253,7 +252,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.$el.closest('.ui-draggable').draggable('enable');
 			//Roll back the view, ready for reopen.
 			console.log('panel got closed yo');
-
 			control.view.render();
 		});
 
@@ -363,7 +361,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		captionEl.ueditor({
 				autostart: false,
 				upfrontMedia: false,
-				upfrontImages: false
+				upfrontImages: false,
+				airButtons: ['upfrontFormatting', 'bold', 'italic', 'stateAlign', 'upfrontLink', 'upfrontColor', 'upfrontIcons'],
 			})
 			.on('start', function(){
 				me.$el.addClass('upfront-editing');
@@ -485,6 +484,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		props.gifLeft = 0;
 		props.gifTop = 0;
 
+		if (props.caption_position === 'below_image') props.captionBackground = false;
+
 		props.l10n = l10n.template;
 
 		var rendered = this.imageTpl(props);
@@ -587,7 +588,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.controls.render();
 			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
 
-			me.parent_module_view.$('.upfront-module').append($('<div class="uimage-controls upfront-ui"></div>').append(me.controls.$el));
+			if (me.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
+				me.parent_module_view.$('.upfront-module').append('<div class="uimage-controls upfront-ui"></div>');
+			}
+			me.parent_module_view.$('.upfront-module').find('.uimage-controls').append(me.controls.$el);
 			me.controls.delegateEvents();
 			me.$el.removeClass('upfront-editing');
 
@@ -673,7 +677,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	handleDragEnter: function(e){
 		var me = this;
 		// todo Sam: re-enable this and start bug fixing
-		return; // disabled for now 
+		return; // disabled for now
 		if(!this.$('.uimage-drop-hint').length){
 			var dropOverlay = $('<div class="uimage-drop-hint"><div>' + l10n.drop_image + '</div></div>')
 				.on('drop', function(e){
@@ -1365,7 +1369,7 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			]
 		}));
 
-		this.on('rendered', function(){
+		this.on('rendered', function() {
 			var spectrum = false,
 				currentColor = me.model.get_property_value_by_name('background'),
 //				input = $('<input type="text" value="' + currentColor + '">'),
@@ -1378,39 +1382,39 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			setting.find('input[name="captionBackground"]').on('change', function(){
 				me.toggleColorPicker();
 			});
-            var color_picker = new Upfront.Views.Editor.Field.Color({
-                blank_alpha : 0,
-                model: me.model,
-                property: 'background',
-                default_value: '#ffffff',
-                spectrum: {
-                    maxSelectionSize: 9,
-                    localStorageKey: "spectrum.recent_bgs",
-                    preferredFormat: "hex",
-                    chooseText: l10n.settings.ok,
-                    showInput: true,
-                    allowEmpty:true,
-                    show: function(){
-                        spectrum = $('.sp-container:visible');
-                    },
-                    change: function(color) {
-                        var rgba = color.toRgbString();
-                        me.model.set_property('background', rgba, true);
-                        currentColor = rgba;
-                    },
-                    move: function(color) {
-                        var rgba = color.toRgbString();
-                        spectrum.find('.sp-dragger').css('border-top-color', rgba);
-                        spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-                        me.parent_view.for_view.$el.find('.wp-caption').css('background-color', rgba);
-                    },
-                    hide: function(){
-                        me.parent_view.for_view.$el.find('.wp-caption').css('background-color', currentColor);
-                    }
-                }
-            });
-            color_picker.render();
-            $picker_wrap.html(color_picker.el);
+			var color_picker = new Upfront.Views.Editor.Field.Color({
+				blank_alpha : 0,
+				model: me.model,
+				property: 'background',
+				default_value: '#ffffff',
+				spectrum: {
+					maxSelectionSize: 9,
+					localStorageKey: "spectrum.recent_bgs",
+					preferredFormat: "hex",
+					chooseText: l10n.settings.ok,
+					showInput: true,
+					allowEmpty:true,
+					show: function(){
+						spectrum = $('.sp-container:visible');
+					},
+					change: function(color) {
+						var rgba = color.toRgbString();
+						me.model.set_property('background', rgba, true);
+						currentColor = rgba;
+					},
+					move: function(color) {
+						var rgba = color.toRgbString();
+						spectrum.find('.sp-dragger').css('border-top-color', rgba);
+						spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
+						me.parent_view.for_view.$el.find('.wp-caption').css('background-color', rgba);
+					},
+					hide: function(){
+						me.parent_view.for_view.$el.find('.wp-caption').css('background-color', currentColor);
+					}
+				}
+			});
+			color_picker.render();
+			$picker_wrap.html(color_picker.el);
 //			input.spectrum({
 //				showAlpha: true,
 //				showPalette: true,
@@ -2722,7 +2726,7 @@ var ImageSelector = Backbone.View.extend({
 					console.log("drop e", e);
 					if (e.originalEvent.dataTransfer) {
 						files = e.originalEvent.dataTransfer.files;
-					
+
 						// Only call the handler if 1 or more files was dropped.
 						if (files.length) {
 								//input[0].files = files;
@@ -3090,17 +3094,14 @@ var TooltipControl = Control.extend({
 		});
 
 		var selectedItem = this.sub_items[this.selected];
-		if(selectedItem)
-			this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
+        if(selectedItem){
+            if( typeof selectedItem.icon !== "undefined" ){
+                this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
+            }else if( typeof selectedItem.label !== "undefined" ){
+                this.$el.find(".tooltip-content").append( ": " +  selectedItem.label );
+            }
 
-		$(document).click(function(e){
-			var target = $(e.target);
-
-			if (target.closest('#page').length && target[0] != me.el && !target.closest(me.el).length) {
-				me.$el.removeClass('open');
-			}
-
-		});
+        }
 	},
 
 	get_selected_item: function () {
@@ -3111,9 +3112,15 @@ var TooltipControl = Control.extend({
 		var found = false,
 			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
 		;
-		_.each(this.sub_items, function(item, key){
+
+        _.each(this.sub_items, function(item, key){
 			if(target.hasClass('upfront-icon-region-' + item.icon))
 				found = key;
+
+            if( !found && $(e.target).closest(".upfront-inline-panel-item").attr("id") === item.id ){
+                found = key;
+            }
+
 		});
 
 		if(found){

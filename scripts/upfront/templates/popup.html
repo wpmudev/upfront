@@ -252,7 +252,7 @@
 <div id="upfront-entity_list-pagination" data-total="{{ pages }}" data-page_size="{{pageSize}}">
 	{[ if(pages > 1) { ]}
 	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev">
-		
+
 	</div>
 
 	{[ _.each(_.range(pages), function(i){ ]}
@@ -260,7 +260,7 @@
 	{[ }) ]}
 
 	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next">
-		
+
 	</div>
 	{[ } ]}
 </div>
@@ -361,7 +361,9 @@
       {[ if (elementType) { ]}
 			<span class="upfront-css-type">{{ elementType }} Element</span>
       {[ } ]}
-			<a class="upfront-css-font upfront-icon" href="#">Pick a Font</a>
+			<div id="insert-font-widget" class="upfront-icon">
+				<a class="upfront-css-font" href="#">Insert Font</a>
+			</div>
 			<a class="upfront-css-image" href="#">Link theme image</a>
 			<span class="upfront-css-color"></span>
 			<a class="upfront-css-close" href="#">close</a>
@@ -392,23 +394,33 @@
 	</div>
 </script>
 
-<script id="font-picker-tpl" type="text/template">
+<script id="text-fonts-manager-tpl" type="text/template">
   <div class="add-font-panel panel">
-    <h3 class="panel-title">Add new Fonts to theme:</h3>
     <div class="loading-fonts">Loading fonts...</div>
     <div class="font-weights-list">
-      <div class="upfront-field-label-block upfront-field-label">Choose weight(s) to add:</div>
-      <div class="font-weights-list-wrapper"></div>
+      <div class="font-weights-list-wrapper">
+				<div class="fonts-manager-panel-title">
+					Choose Typeface above to Preview it's Font Styles
+				</div>
+				{[ if (show_no_styles_notice) { ]}
+				<div class="fonts-weights-notice-text">
+					(If just want to stick to defaults like Arial and Times, click 'Ok'.<br>
+					You can always come back and add Google Fonts later.)
+				</div>
+				{[ } ]}
+			</div>
     </div>
-    <span class="add-font-button">Add Selected Weights &raquo;</span>
+    <span class="add-font-button">Add &raquo;</span>
   </div>
-  <div class="font-picker-use-button">Ok</div>
-  <div class="font-picker-revert-button upfront-icon">Revert</div>
 </script>
 
 <script id="theme-fonts-panel" type="text/template">
-    <h3 class="panel-title">Choose from added fonts:</h3>
-    <div class="font-list"></div>
+    <h3 class="panel-title">Theme Font Styles:</h3>
+		<div class="font-list">
+			{[ if (show_no_styles_notice) { ]}
+			<div class="fonts-manager-panel-title">You haven't added any font styles to theme yet.</div>
+			{[ } ]}
+		</div>
     <div class="font-stats">
     </div>
 </script>

@@ -44,7 +44,7 @@ define(function() {
 
 			this.events = _.extend({}, this.events, {
 				'click .uposts-pagination>a': 'paginate',
-				'click .upfront-post-layout-trigger': 'editPostLayout',
+				'click .upfront-post-layout-trigger': 'editPostLayout'
 				//'mouseenter div.post_editor_container': 'moveEditButton'
 			});
 
@@ -96,7 +96,7 @@ define(function() {
 		prepareEditor: function(id, node){
 			is_excerpt = this.property('content_type') == 'excerpt';
 			//this.currentpost = postId;
-			//if(!this.editor || this.editor.post_id!=postId){
+			//if(!this.editor || this.editor.post_id!=postId){post:layout:edit
 			var editor = new Upfront.Content.PostEditor({
 				editor_id: 'this_post_' + id,
 				post_id: id,

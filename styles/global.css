@@ -104,8 +104,8 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-output-region.upfront-region-fixed {
   position: fixed;
+  z-index: 12;
 }
-
 
 .upfront-module {}
 
@@ -137,6 +137,10 @@ h2, h3 { page-break-after: avoid; }
 }
 .upfront-output-region-sub-container {
 	position: relative;
+	z-index: 11;
+}
+.upfront-output-region-container-sticky {
+	z-index: 20;
 }
 .upfront-output-bg-overlay {
 	position: absolute;
@@ -339,4 +343,19 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 	width: 17px;
 	height: 17px;
 	background-position: -1080px -85px;
+}
+
+/* resets to match the editor exp */
+* {
+  font-weight: inherit;
+  font-style: inherit;
+  text-transform: inherit;
+  text-decoration: inherit;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+.upfront-inserted_image-wrapper{
+    position: relative;
 }

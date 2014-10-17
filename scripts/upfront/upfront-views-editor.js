@@ -301,6 +301,7 @@ define([
 	var Command_NewPage = Command_NewPost.extend({
 		"className": "command-new-page",
 		postType: 'page',
+		_default_label: "New Page",
 		initialize: function () {
 			this.setMode = Upfront.Application.MODE.LAYOUT;
 		},
@@ -308,13 +309,106 @@ define([
 			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New page");
+				this.$el.removeClass('tooltip-inline tooltip-bottom').html(this._default_label);
 			else
-				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New page</span>');
+				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">' + this._default_label + '</span>');
 		},
 		on_click: function(e){
 			e.preventDefault();
-			Upfront.Application.navigate('/create_new/page', {trigger: true});
+			var me = this;
+			
+			this.spawn_modal();
+			this.modal.render();
+			$('body').append(this.modal.el);
+			
+			this.modal.open(function () {
+				me.render_modal();
+				me.trigger("new_page:modal:open");
+			}).done(function () {
+				me.trigger("new_page:modal:close");
+				Upfront.Util.post({
+					action: "upfront-create-post_type",
+					data: _.extend({post_type: me.postType}, me.modal._data)
+				}).done(function (resp) {
+					Upfront.Util.log(resp.data);
+					Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
+					
+				});
+				//Upfront.Application.navigate('/create_new/page', {trigger: true});
+			})
+		},
+		render_modal: function () {
+			var me = this,
+				$content = this.modal.$el.find('.upfront-inline-modal-content')
+			;
+			$content.empty();
+			_.each(me.modal._fields, function (field) {
+				field.render();
+				$content.append(field.$el);
+			});
+		},
+		spawn_modal: function () {
+			if (this.modal) return this.initialize_modal_data();
+			var me = this,
+				update_modal_data = function () {
+					_.each(me.modal._fields, function (field, key) {
+						me.modal._data[key] = field.get_value();
+					});
+					if (!me.modal._data.permalink) {
+						var title = me.modal._data.title || me._default_label,
+							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase(),
+							$permalink = me.modal.$el.find('.upfront-field-text[name="permalink"]')
+						;
+						me.modal._fields.permalink.set_value(permalink);
+						$permalink.val(permalink);
+					}
+				},
+				_initial_templates = [{label: "None", value: ""}],
+				templates_request = Upfront.Util.post({
+					action: "upfront-wp-model",
+					model_action: "get_post_extra",
+					postId: "fake", // Stupid walkaround for model handler insanity
+					allTemplates: true
+				})
+			;
+			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
+			this.modal._fields = {
+				title: new Upfront.Views.Editor.Field.Text({
+					label: "",
+					name: "title",
+					default_value: this._default_label,
+					change: update_modal_data
+				}),
+				permalink: new Upfront.Views.Editor.Field.Text({
+					label: "",
+					name: "permalink",
+					change: update_modal_data
+				}),
+				template: new Upfront.Views.Editor.Field.Select({
+					label: "Page Template",
+					name: "template",
+					values: _initial_templates
+				})
+			};
+			this.initialize_modal_data();
+			this.on("new_page:modal:open", update_modal_data, this);
+			this.on("new_page:modal:close", update_modal_data, this);
+			templates_request.done(function (response) {
+				me.modal._fields.template.options.values = _initial_templates; // Zero out the templates selection
+				if (!response.data || !response.data.allTemplates) return false;
+				_.each(response.data.allTemplates, function (tpl, title) {
+					me.modal._fields.template.options.values.push({label: title, value: tpl});
+				});
+				me.modal._fields.template.render();
+			});
+		},
+		initialize_modal_data: function () {
+			var me = this;
+			this.modal._data = {};
+			_.each(_.keys(this.modal._fields), function (key) {
+				me.modal._data[key] = "";
+			});
+
 		}
 	});
 
@@ -345,8 +439,8 @@ define([
 	var Command_SavePostLayout = Command_SaveLayout.extend({
 		"className": "command-save",
 		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html("Save layout");
+                this.$el.addClass('upfront-icon upfront-icon-save');
+                this.$el.html("Save layout");
 		},
 		on_click: function () {
 			Upfront.Events.trigger("post:layout:save");
@@ -354,11 +448,16 @@ define([
 	});
 
 	var Command_CancelPostLayout = Command.extend({
+        className: "command-cancel",
 		render: function () {
 			this.$el.html("Cancel");
 		},
 		on_click: function () {
-			Upfront.Events.trigger("post:layout:cancel");
+            if ( Upfront.Application.is_builder() ) {
+				Upfront.Events.trigger("post:layout:style:cancel");
+            }else{
+				Upfront.Events.trigger("post:layout:cancel");
+            }
 		}
 	});
 	var Command_PreviewLayout = Command.extend({
@@ -593,7 +692,7 @@ define([
 			this._selecting = !this._selecting;
 			this.render();
 		}
-	})
+	});
 
 	var Command_ToggleGrid = Command.extend({
 		className: "command-grid",
@@ -896,6 +995,11 @@ define([
 			this.$el.text('Export');
 		},
 		on_click: function () {
+			$('div.redactor_editor').each(function() {
+				var ed = $(this).data('ueditor');
+				if(ed)
+					ed.stop();
+			});
 			Upfront.Events.trigger("command:layout:export_theme");
 		}
 	});
@@ -1311,7 +1415,6 @@ define([
 			;
 
 			_.each(this.parts, function(part){
-                console.log(part);
 				var element = new PostPartElement({title: part, model: Upfront.Application.layout}),
 					elementSlug = 'PostPart_' + element.slug
 				;
@@ -1404,21 +1507,31 @@ define([
 			$.when(google_fonts_storage.get_fonts()).done(function() {
 				me.render();
 			});
+			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
 		},
 		on_render: function () {
 			var me = this,
-				typefaces_list = [],
 				styles_list = [] // this will change with every font family change
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
 				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
 				typography = this.model.get_property_value_by_name('typography');
 
-			_.each(system_fonts_storage.get_fonts().models, function(font)	{
-				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
+			// Check for theme fonts if no theme fonts just return string
+			var chooseButton = new Field_Button({
+				label: 'Select Fonts To Use',
+				compact: true,
+				classname: 'open-theme-fonts-manager',
+
+				on_click: function(e){
+					Upfront.Events.trigger('command:themefontsmanager:open');
+				}
 			});
-			_.each(google_fonts_storage.get_fonts().models, function(font) {
-				typefaces_list.push({ label: font.get('family'), value: font.get('family') });
-			});
+			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
+				this.$el.html('<p class="sidebar-info-notice upfront-icon">You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.</p>');
+				chooseButton.render();
+				this.$el.append(chooseButton.el);
+				return;
+			}
 
 			// Load saved styles for all elements
 			_.each(typography, function (value, element) {
@@ -1463,14 +1576,14 @@ define([
 							} else {
 								$([me.fields.size.el, me.fields.line_height.el]).show();
 								me.fields.size.set_value( me.sizes[value] );
-								me.fields.line_height.set_value( me.line_heights[value] );
+								me.fields.line_height.set_value( me.line_heights[value] || '1.1' );
 							}
 							me.fields.color.set_value( me.colors[value] );
 						}
 					}),
 					typeface: new Field_Chosen_Select({
 						label: "Typeface",
-						values: typefaces_list,
+						values: theme_fonts_collection.get_fonts_for_select(),
 						default_value: me.typefaces['h1'],
 						change: function () {
 							var value = this.get_value(),
@@ -1483,6 +1596,7 @@ define([
 							}
 						}
 					}),
+					start_font_manager: chooseButton,
 					style: this.get_styles_field(),
 					color: new Upfront.Views.Editor.Field.Color({
 							label: "Color",
@@ -1537,7 +1651,7 @@ define([
 				field.render();
 				field.delegateEvents();
 			});
-			this.$el.append([this.fields.element.el, this.fields.typeface.el]);
+			this.$el.append([this.fields.element.el, this.fields.typeface.el, this.fields.start_font_manager.el]);
 			$('.upfront-chosen-select', this.$el).chosen({
 				width: '230px'
 			});
@@ -1585,25 +1699,17 @@ define([
 			var typography = this.model.get_property_value_by_name('typography'),
 				element = this.current_element,
 				styles = [],
-				font_family;
+				variants;
 
 			if (typography == false) typography = {};
 
 			if (_.isUndefined(typography[element]) || _.isUndefined(typography[element].font_face)) typography[element] = { font_face: 'Arial' };
 
-			font_family = system_fonts_storage.get_fonts().findWhere({ family: typography[element].font_face });
-			if (_.isUndefined(font_family)) {
-				font_family = google_fonts_storage.get_fonts().findWhere({ family: typography[element].font_face });
-			}
-			if (!_.isUndefined(font_family)) {
-				styles = [];
-				_.each(font_family.get('variants'), function(variant) {
-					variant = Font_Model.normalize_variant(variant);
-					styles.push({ label: variant, value: variant });
-				});
-			} else {
-				styles = [{ label: 'Regular', value: 'regular' }];
-			}
+			variants = theme_fonts_collection.get_variants(typography[element].font_face);
+			styles = [];
+			_.each(variants, function(variant) {
+				styles.push({ label: variant, value: variant });
+			});
 			return styles;
 		},
 		update_typography: function (color) {
@@ -1634,6 +1740,10 @@ define([
 				// Try to get font family from system fonts.
 				if (_.isUndefined(font_family)) {
 					font_family = system_fonts_storage.get_fonts().findWhere({family: typeface});
+				}
+				// Try to get font family from additional fonts
+				if (_.isUndefined(font_family)) {
+					font_family = theme_fonts_collection.get_additional_font(typeface);
 				}
 				if (_.isUndefined(font_family)) {
 					// This is a Google font
@@ -1674,7 +1784,7 @@ define([
 					weight: weight,
 					style: style,
 					size: !is_inline ? me.sizes[element] : false,
-					line_height: !is_inline ? me.line_heights[element] : false,
+					line_height: !is_inline ? (me.line_heights[element] || '1.1') : false,
 					font_face: font_family.get('family'),
 					font_family: font_family.get('category'), //todo this font_family is inconsistent. It should be called font_category
 					color: me.colors[element],
@@ -1692,9 +1802,11 @@ define([
 	var SidebarPanel_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
-					new Command_GoToTypePreviewPage(),
 			    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
+
+			//if (!Upfront.mainData.userDoneFontsIntro) return;
+
 			this.edit_css = new Command_EditCustomCSS({"model": this.model});
 			this.edit_background = new Command_EditLayoutBackground({"model": this.model});
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME ) {
@@ -1706,6 +1818,9 @@ define([
 		},
 		on_render: function () {
 			this.$el.find('.panel-section-content').addClass('typography-section-content');
+
+			//if (!Upfront.mainData.userDoneFontsIntro) return;
+
 			this.edit_css.render();
 			this.edit_css.delegateEvents();
 			this.$el.find('.panel-section-content').append(this.edit_css.el);
@@ -1723,7 +1838,6 @@ define([
 	var SidebarPanel_Responsive_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([
-					new Command_GoToTypePreviewPage(),
 					new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
 			]);
 			this.edit_css = new Command_GeneralEditCustomCSS({"model": this.model});
@@ -2387,7 +2501,7 @@ define([
 		render: function () {
 			var current_app = Upfront.Application.get_current();
 			var is_responsive_app = current_app === Upfront.Settings.Application.MODE.RESPONSIVE;
-			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');;
+			var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');
 			if ( current_app == Upfront.Settings.Application.MODE.THEME ) {
 				output.addClass('create-theme-sidebar');
 			}
@@ -3452,9 +3566,24 @@ define([
 			if ( this.init )
 				this.init();
 			if ( this.options.change )
-				this.on('changed', this.options.change, this)
+				this.on('changed', this.options.change, this);
+			if ( this.options.focus )
+				this.on('focus', this.options.focus, this);
+			if ( this.options.blur )
+				this.on('blur', this.options.blur, this);
+			if ( this.options.rendered )
+				this.on('rendered', this.options.rendered, this);
 			if (this.options.on_click)
 				this['on_click'] = this.options.on_click;
+				
+			this.once('rendered', function(){
+				var me = this;
+				this.get_field().on('focus', function(){
+					me.trigger('focus');
+				}).on('blur', function(){
+					me.trigger('blur');
+				});
+			}, this);
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -3561,6 +3690,8 @@ define([
 			}
 			this.$el.append(this.get_field_html());
 			var me = this;
+
+			if (this.options.classname) this.$el.addClass(this.options.classname);
 
 			this.trigger('rendered');
 		},
@@ -4049,7 +4180,7 @@ define([
 		multiple: false,
 		get_field_html: function() {
 			var multiple = this.multiple ? 'multiple' : '';
-			return ['<select class="upfront-chosen-select"' , multiple,  '>', this.get_values_html(), '</select>'].join('');
+			return ['<select class="upfront-chosen-select"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
 		},
 		get_value_html: function (value, index) {
 			var selected = '';
@@ -4525,8 +4656,8 @@ define([
 				}
 				// Adding anchor trigger
 				//todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
-					
-				if (this.hide_common_anchors === false) {	
+
+				if (this.hide_common_anchors === false) {
 					var anchor_settings = new _Settings_AnchorSetting({model: this.model});
 					anchor_settings.panel = me;
 					anchor_settings.render();
@@ -4899,9 +5030,9 @@ var _Settings_CSS = SettingsItem.extend({
 	},
 	openNewEditor: function(e){
 		e.preventDefault();
-		
+
 		Upfront.Events.trigger("entity:settings:beforedeactivate");
-		
+
 		Upfront.Application.cssEditor.init({
 			model: this.model,
 			stylename: ''
@@ -4926,6 +5057,43 @@ var _Settings_CSS_Field = Field_Select.extend({
 	}
 });
 
+var ButtonPresetModel = Backbone.Model.extend({
+	initialize: function(attributes) {
+		this.set({ presets: attributes });
+	}
+});
+var ButtonPresetsCollection = Backbone.Collection.extend({
+	model: ButtonPresetModel
+});
+
+var button_presets_collection = new ButtonPresetsCollection(Upfront.mainData.buttonPresets);
+
+var Button_Presets_Storage = function(stored_presets) {
+	var button_presets;
+
+	var initialize = function() {
+		// When more than one weights are added at once don't send bunch of server calls
+		var save_button_presets_debounced = _.debounce(save_button_presets, 100);
+		button_presets_collection.on('add remove edit', save_button_presets_debounced);
+	};
+
+	var save_button_presets = function() {
+		var postData = {
+			action: 'upfront_update_button_presets',
+			button_presets: button_presets_collection.toJSON()
+		};
+
+		Upfront.Util.post(postData)
+			.error(function(){
+				return notifier.addMessage('Button presets could not be saved.');
+			});
+	};
+
+	initialize();
+};
+var button_presets_storage = new Button_Presets_Storage();
+
+// THEME FONTS START HERE //
 var Font_Model = Backbone.Model.extend({}, {
 	/*
 	 * Parsing variant to get style and weight for font.
@@ -5060,58 +5228,21 @@ var google_fonts_storage = new Google_Fonts_Storage();
 
 var System_Fonts_Storage = function() {
 	var font_families = [
-		{ family: "Default", category:'sans-serif' },
+		{ family: "Andale Mono", category:'monospace' },
 		{ family: "Arial", category:'sans-serif' },
 		{ family: "Arial Black", category:'sans-serif' },
-		{ family: "Arial Narrow", category:'sans-serif' },
-		{ family: "Arial Rounded MT Bold", category:'sans-serif' },
-		{ family: "Avant Garde", category:'sans-serif' },
-		{ family: "Calibri", category:'sans-serif' },
-		{ family: "Candara", category:'sans-serif' },
-		{ family: "Century Gothic", category:'sans-serif' },
-		{ family: "Franklin Gothic Medium", category:'sans-serif' },
-		{ family: "Futura", category:'sans-serif' },
-		{ family: "Geneva", category:'sans-serif' },
-		{ family: "Gill Sans", category:'sans-serif' },
-		{ family: "Helvetica", category:'sans-serif' },
-		{ family: "Impact", category:'sans-serif' },
-		{ family: "Lucida Grande", category:'sans-serif' },
-		{ family: "Optima", category:'sans-serif' },
-		{ family: "Segoe UI", category:'sans-serif' },
-		{ family: "Tahoma", category:'sans-serif' },
-		{ family: "Trebuchet MS", category:'sans-serif' },
-		{ family: "Verdana", category:'sans-serif' },
-		{ family: "Baskerville", category:'serif' },
-		{ family: "Big Caslon", category:'serif' },
-		{ family: "Bodoni MT", category:'serif' },
-		{ family: "Book Antiqua", category:'serif' },
-		{ family: "Calisto MT", category:'serif' },
-		{ family: "Cambria", category:'serif' },
-		{ family: "Didot", category:'serif' },
-		{ family: "Garamond", category:'serif' },
-		{ family: "Georgia", category:'serif' },
-		{ family: "Goudy Old Style", category:'serif' },
-		{ family: "Hoefler Text", category:'serif' },
-		{ family: "Lucida Bright", category:'serif' },
-		{ family: "Palatino", category:'serif' },
-		{ family: "Perpetua", category:'serif' },
-		{ family: "Rockwell", category:'serif' },
-		{ family: "Rockwell Extra Bold", category:'serif' },
-		{ family: "Times New Roman", category:'serif' },
-		{ family: "Andale Mono", category:'monospace' },
-		{ family: "Consolas", category:'monospace' },
 		{ family: "Courier New", category:'monospace' },
-		{ family: "Lucida Console", category:'monospace' },
-		{ family: "Lucida Sans Typewriter", category:'monospace' },
-		{ family: "Monaco", category:'monospace' }
+		{ family: "Georgia", category:'serif' },
+		{ family: "Impact", category:'sans-serif' },
+		{ family: "Times New Roman", category:'serif' },
+		{ family: "Trebuchet MS", category:'sans-serif' },
+		{ family: "Verdana", category:'sans-serif' }
 	];
 
 	var system_fonts = new Fonts_Collection();
 
 	var initialize = function() {
-		var variants,
-			$test_root,
-			test_string = (new Array(99)).join('mwi ');
+		var variants;
 
 		// Default variants for system fonts
 		variants = [];
@@ -5121,30 +5252,11 @@ var System_Fonts_Storage = function() {
 			});
 		});
 
-		// Add default font
-		system_fonts.add({ family: 'Arial', category: 'sans-serif', variants: variants });
-
-		// Check which fonts are available on system.
-		$("body").append('<div id="upfront-font_test-root" style="position:absolute; left: 0; top: 40px; white-space: nowrap; /*left: -999999999999px*/" />'),
-		$test_root = $("#upfront-font_test-root");
+		// Add variants
 		_.each(font_families, function(font_family) {
-			var base_width = 0;
-
-			// Get width with default font
-			$test_root
-				.css("font-family", font_family.category)
-				.text(test_string);
-			base_width = $test_root.width();
-
-			// Set font family and check if widths are different
-			$test_root.css("font-family", [font_family.family, font_family.category].join(','));
-			if (base_width !== $test_root.width()) {
 				font_family.variants = variants;
 				system_fonts.add(font_family);
-			}
 		});
-
-		$test_root.remove(); // Clean up markup
 	};
 
 	this.get_fonts = function() {
@@ -5156,11 +5268,7 @@ var System_Fonts_Storage = function() {
 
 var system_fonts_storage = new System_Fonts_Storage();
 
-var ButtonPresetModel = Backbone.Model.extend({
-	initialize: function(attributes) {
-		this.set({ presets: attributes });
-	}
-});
+var ButtonPresetModel = Backbone.Model.extend();
 var ButtonPresetsCollection = Backbone.Collection.extend({
 	model: ButtonPresetModel
 });
@@ -5198,7 +5306,58 @@ var ThemeFontModel = Backbone.Model.extend({
 	}
 });
 var ThemeFontsCollection = Backbone.Collection.extend({
-	model: ThemeFontModel
+	model: ThemeFontModel,
+	get_fonts_for_select: function() {
+		var typefaces_list = [{ label: "Choose font", value:'' }],
+			google_fonts = [];
+
+
+		_.each(theme_fonts_collection.models, function(theme_font) {
+			google_fonts.push(theme_font.get('font').family);
+		});
+		_.each(_.uniq(google_fonts), function(google_font) {
+			typefaces_list.push({label: google_font, value: google_font});
+		});
+		_.each(Upfront.mainData.additionalFonts, function(font) {
+			typefaces_list.push({label: font.family, value: font.family});
+		});
+		_.each(system_fonts_storage.get_fonts().models, function(font)	{
+			typefaces_list.push({ label: font.get('family'), value: font.get('family') });
+		});
+
+		return typefaces_list;
+	},
+	get_variants: function(font_family) {
+		var variants;
+
+		_.each(system_fonts_storage.get_fonts().models, function(font)	{
+			if (font_family === font.get('family')) {
+				variants = font.get('variants');
+			}
+		});
+		if (variants) return variants;
+
+		_.each(Upfront.mainData.additionalFonts, function(font) {
+			if (font_family === font.family) {
+				variants = font.variants;
+			}
+		});
+		if (variants) return variants;
+
+		variants = [];
+		_.each(theme_fonts_collection.models, function(theme_font) {
+			if (font_family === theme_font.get('font').family) {
+				variants.push(theme_font.get('displayVariant'));
+			}
+		});
+
+		return variants;
+	},
+	get_additional_font: function(font_family) {
+		var font = _.findWhere(Upfront.mainData.additionalFonts, {family: font_family});
+		if (font) return new Backbone.Model(font);
+		return;
+	}
 });
 
 var theme_fonts_collection = new ThemeFontsCollection(Upfront.mainData.themeFonts);
@@ -5258,15 +5417,17 @@ var ThemeFontListItem = Backbone.View.extend({
 
 var ThemeFontsPanel = Backbone.View.extend({
 	className: 'theme-fonts-panel panel',
-	template: $(_Upfront_Templates.popup).find('#theme-fonts-panel').html(),
+	template: _.template($(_Upfront_Templates.popup).find('#theme-fonts-panel').html()),
 	initialize: function(options) {
 		this.options = options || {};
-		this.listenTo(this.collection, 'add', this.add_one);
 		this.listenTo(this.collection, 'add remove', this.update_stats);
+		this.listenTo(this.collection, 'add remove', this.render);
 	},
 	render: function() {
 		this.$el.html('');
-		this.$el.html(this.template);
+		this.$el.html(this.template({show_no_styles_notice: this.collection.length === 0}));
+
+		if (this.collection.length > 0) this.$el.find('.font-list').css('background', 'white');
 
 		_.each(this.collection.models, function(model) {
 			this.add_one(model);
@@ -5277,7 +5438,7 @@ var ThemeFontsPanel = Backbone.View.extend({
 		return this;
 	},
 	update_stats: function() {
-		this.$el.find('.font-stats').html('Total Fonts: <strong>' + this.collection.length + '</strong>');
+		this.$el.find('.font-stats').html('<strong>' + this.collection.length + ' font styles selected</strong>');
 	},
 	add_one: function(model) {
 		var themeFontView = new ThemeFontListItem({ model: model });
@@ -5286,14 +5447,67 @@ var ThemeFontsPanel = Backbone.View.extend({
 	}
 });
 
-var Font_Picker = Backbone.View.extend({
-	id: 'font-picker',
-	template: $(_Upfront_Templates.popup).find('#font-picker-tpl').html(),
+var Variant_View = Backbone.View.extend({
+	initialize: function(options){
+		this.options = options || {};
+	},
+	className: function() {
+		var className = 'font-variant-preview';
+		if (this.model.get('already_added')) {
+			className += ' font-variant-already-added';
+		}
+		return className;
+	},
+	template: _.template('<span class="font-family">{{family}} — {{name}}</span>{[ if(already_added) { ]} <span class="already-added">Already added</span>{[ } ]}' +
+			'{[ if(heading_preview) { ]}<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview font-preview">The Andromeda Galaxy</h1>{[ } else { ]}' +
+			'<p style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="paragraph-font-preview font-preview">"Imagination will often carry us to worlds that never were, but without it we go nowhere" — Carl Sagan</p>{[ } ]}'),
+	events: {
+		'click': 'on_click'
+	},
+	render: function() {
+		this.$el.html(this.template(_.extend({heading_preview: this.options.heading_preview}, this.model.toJSON())));
+		return this;
+	},
+	on_click: function() {
+		if (this.model.get('already_added')) return;
+		this.model.set({selected: !this.model.get('selected')});
+		this.$el.toggleClass('font-variant-selected');
+	}
+});
+
+var Font_Variants_Preview = Backbone.View.extend({
+	id: 'font-variants-preview',
+	initialize: function(options) {
+		this.options = options || {};
+	},
+	addOne: function(model) {
+		var variant_view = new Variant_View({model: model, heading_preview: this.options.heading_preview});
+		this.$el.append(variant_view.render().el);
+	},
+	render: function() {
+		_.each(this.collection.models, function(model) {
+			this.addOne(model);
+		}, this);
+
+		return this;
+	},
+	get_selected: function() {
+		var selected = [];
+		_.each(this.collection.models, function(model) {
+			if (model.get('selected')) selected.push(model.get('variant'));
+		});
+		return selected;
+	}
+});
+
+var Text_Fonts_Manager = Backbone.View.extend({
+	id: 'text-fonts-manager',
+	className: 'clearfix',
+	template: _.template($(_Upfront_Templates.popup).find('#text-fonts-manager-tpl').html()),
 	events: {
 		'click .add-font-button': 'add_font',
-		'click .font-picker-use-button': 'close',
-		'change input[type=checkbox]': 'preview_font',
-		'click .font-picker-revert-button': 'revert'
+		'click .preview-size-p': 'on_p_click',
+		'click .preview-size-h1': 'on_h1_click'
 	},
 	initialize: function() {
 		this.theme_fonts_panel = new ThemeFontsPanel({
@@ -5301,30 +5515,33 @@ var Font_Picker = Backbone.View.extend({
 			parent_view: this
 		});
 		this.listenTo(this.collection, 'remove', this.update_variants_on_remove);
-		_.bindAll(this, 'close_on_outside_click');
-		$('body').on('click', this.close_on_outside_click);
 	},
 	render: function() {
 		var me = this;
 
-		this.$el.html(this.template);
+		this.$el.html(this.template({show_no_styles_notice: this.collection.length === 0}));
 		$.when(google_fonts_storage.get_fonts()).done(function(fonts_collection) {
 			me.load_google_fonts(fonts_collection);
 		});
 
 		this.$el.find('.add-font-panel').after(this.theme_fonts_panel.render().el);
+		if (!Upfront.mainData.userDoneFontsIntro) this.$el.addClass('no-styles');
+
+		this.$el.find('.choose-font').after('<div class="preview-type"><span class="preview-type-title">Preview Size</span><span class="preview-size-p selected-preview-size">P</span><span class="preview-size-h1">H1</span></div>');
 
 		return this;
 	},
-	close_on_outside_click: function(event) {
-		if (this.first_click_done && $(event.target).parents('#font-picker').length === 0) {
-			$('body').off('click', this.close_on_outside_click);
-			this.revert();
-			return;
-		}
-		// When opening font picker, click to open it will also be captured here
-		// so make sure to not close on that first click.
-		this.first_click_done = true;
+	on_p_click: function() {
+		this.$el.find('.preview-size-h1').removeClass('selected-preview-size');
+		this.$el.find('.preview-size-p').addClass('selected-preview-size');
+		this.heading_preview = false;
+		this.update_variants();
+	},
+	on_h1_click: function() {
+		this.$el.find('.preview-size-h1').addClass('selected-preview-size');
+		this.$el.find('.preview-size-p').removeClass('selected-preview-size');
+		this.heading_preview = true;
+		this.update_variants();
 	},
 	add_font: function() {
 		var variants;
@@ -5334,7 +5551,7 @@ var Font_Picker = Backbone.View.extend({
 			return;
 		}
 
-		variants = this.choose_variants.get_value();
+		variants = this.choose_variants.get_selected();
 		if (_.isEmpty(variants)) {
 			alert('Choose at least one font weight.');
 			return;
@@ -5345,17 +5562,12 @@ var Font_Picker = Backbone.View.extend({
 				font: font.toJSON(),
 				variant: variant
 			});
-
-			// Check if font is added to page
-			if ($('#' + font.get('family').toLowerCase() + variant + '-css').length === 0) {
-				$('head').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
-			}
-		}, this);
+		});
 		this.update_variants();
 	},
 	load_google_fonts: function(fonts_collection) {
 		var add_font_panel = this.$el.find('.add-font-panel');
-		var typefaces_list = [];
+		var typefaces_list = [{ label: 'Click here to pick a Google Font', value: ''}];
 		_.each(fonts_collection.pluck('family'), function(family) {
 			typefaces_list.push({ label: family, value: family });
 		});
@@ -5364,13 +5576,13 @@ var Font_Picker = Backbone.View.extend({
 		this.font_family_select = new Field_Chosen_Select({
 			label: "Typeface",
 			values: typefaces_list,
-			default_value: 'Choose Font',
+			placeholder: 'Choose Font',
 			additional_classes: 'choose-font'
 		});
 		this.font_family_select.render();
 		add_font_panel.find('.font-weights-list').before(this.font_family_select.el);
 		$('.upfront-chosen-select', this.$el).chosen({
-			width: '185px'
+			width: '289px'
 		});
 		this.listenTo(this.font_family_select, 'changed', this.update_variants);
 	},
@@ -5378,68 +5590,114 @@ var Font_Picker = Backbone.View.extend({
 		this.update_variants();
 	},
 	update_variants: function(model) {
+		this.$el.find('.font-weights-list').css('background', 'white');
 		if (!model) model = google_fonts_storage.get_fonts().findWhere({ 'family' : this.font_family_select.get_value() });
 		if (!model) return;
 		// Choose variants
-		var values = [];
+		var variants = new Backbone.Collection();
 		_.each(model.get('variants'), function(variant) {
-			var value = { label: Font_Model.normalize_variant(variant), value: variant }
-			if (theme_fonts_collection.get(model.get('family') + variant)) {
-				value.checked = 'checked';
-				value.disabled = 'disabled';
+			// Add font to page so we can make preview with real fonts
+			if ($('#' + model.get('family').toLowerCase() + variant + '-css').length === 0) {
+				$('head').append('<link rel="stylesheet" id="' + model.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + model.get('family') + '%3A' + variant + '" type="text/css" media="all">');
 			}
-			values.push(value);
+			var weight_style = Font_Model.parse_variant(variant);
+			variants.add({
+				family: model.get('family'),
+				name: Font_Model.normalize_variant(variant),
+				variant: variant,
+				already_added: !!theme_fonts_collection.get(model.get('family') + variant),
+				weight: weight_style.weight,
+				style: weight_style.style
+			});
 		});
 		if (this.choose_variants) this.choose_variants.remove();
 
-		this.choose_variants = new Field_Checkboxes({
-			name: 'scope',
-			label: 'Choose weight(s) to add:',
-			multiple: true,
-			values: values
+		this.choose_variants = new Font_Variants_Preview({
+			collection: variants,
+			heading_preview: this.heading_preview
 		});
 		this.choose_variants.render();
-		this.$el.find('.font-weights-list').html(this.choose_variants.el);
-		this.choose_variants.$el.find('.upfront-field-multiple').wrapAll('<div class="font-weights-list-wrapper" />');
+		this.$el.find('.font-weights-list-wrapper').html(this.choose_variants.el);
 	},
-	close: function() {
-		$('body').off('click', this.close_on_outside_click);
-
-		// If last selected font is not theme font (user just tried out by clicking on font
-		// in left (add fonts) panel, than revert to font. User must add font to theme fonts
-		// if she wants to keep style.
-	  var last_font = theme_fonts_collection.get(this.last_selected_font.font.family + this.last_selected_font.variant);
-		if (last_font) {
-		  this.remove();
-			return;
-		}
-		this.revert();
+	set_ok_button: function(button) {
+		button.on('click', this.on_ok_click);
 	},
-	preview_font: function(event) {
-		var themeFont, checkbox, font, variant;
-		font = google_fonts_storage.get_fonts().findWhere({ family: this.font_family_select.get_value() }),
-		checkbox = $(event.currentTarget);
-		variant = checkbox.val();
+	on_ok_click: function(event) {
+		Upfront.Events.trigger("upfront:render_typography_sidebar");
 
-		if (!checkbox.is(':checked')) return;
+		if (Upfront.mainData.userDoneFontsIntro) return;
 
-		themeFont = theme_fonts_collection.get(font.get('family') + variant);
-		if (themeFont) {
-			this.replaceFont(themeFont);
-			return;
-		}
+		Upfront.Util.post({action: "upfront_user_done_font_intro"});
+		Upfront.mainData.userDoneFontsIntro = true;
+	}
+});
 
-		themeFont = new ThemeFontModel({
-			id: font.get('family') + variant,
-			font: font.toJSON(),
-			variant: variant
+var Insert_Font_Widget = Backbone.View.extend({
+	initialize: function() {
+		var me = this;
+		this.fields = [
+			new Field_Chosen_Select({
+				label: '',
+				compact: true,
+				values: theme_fonts_collection.get_fonts_for_select(),
+				additional_classes: 'choose-typeface'
+			}),
+			new Field_Chosen_Select({
+				label: '',
+				compact: true,
+				values: [],
+				additional_classes: 'choose-variant'
+			}),
+			new Field_Button({
+				label: 'Insert Font',
+				compact: true,
+				on_click: function(){
+					me.finish();
+				}
+			})
+		];
+	},
+	render: function() {
+		$('#insert-font-widget').html('').addClass('open');
+		this.$el.html('');
+		_.each(this.fields, function(field) {
+			field.render();
+			this.$el.append(field.el);
+		}, this);
+
+		this.listenTo(this.fields[0], 'changed', function() {
+			var variants = theme_fonts_collection.get_variants(this.fields[0].get_value());
+			this.render_variants(variants);
+		});
+		this.listenTo(this.fields[1], 'changed', function() {
+			this.preview_font();
 		});
 
-		if ($('#' + font.get('family').toLowerCase() + variant + '-css').length === 0) {
-			$('head').append('<link rel="stylesheet" id="' + font.get('family').toLowerCase() + '-' + variant + '-css" href="//fonts.googleapis.com/css?family=' + font.get('family') + '%3A' + variant + '" type="text/css" media="all">');
-		}
+		$('.choose-typeface select', this.$el).chosen({
+			width: '230px',
+			disable_search: true
+		});
+		$('.choose-variant select', this.$el).chosen({
+			width: '120px',
+			disable_search: true
+		});
 
-		this.replaceFont(themeFont.toJSON());
+		return this;
+	},
+	render_variants: function(variants) {
+		var $variant_field = this.$el.find('.choose-variant select');
+		$variant_field.find('option').remove();
+		$variant_field.append('<option value="">Choose variant</option>');
+		_.each(variants, function(variant) {
+			$variant_field.append('<option value="' + variant + '">' + variant + '</option>');
+		});
+		$variant_field.trigger('chosen:updated');
+	},
+	preview_font: function() {
+		this.replaceFont({
+			font_family: this.fields[0].get_value(),
+			variant: Font_Model.parse_variant(this.fields[1].get_value())
+		});
 	},
 	replaceFont: function(font) {
 		var lines;
@@ -5448,25 +5706,22 @@ var Font_Picker = Backbone.View.extend({
 
 		this.last_selected_font = font;
 
-		// Store starting text, must be restored if exiting font picker without font chosen
-		if (!this.starting_font) this.starting_font = this.editor.getCopyText();
-
 		// Insert selected font family
 		if (!this.font_family_range) {
 			this.font_family_range = this.editor.getSelection().getRange();
 		} else {
 			this.font_family_range.end = this.end_point;
 		}
-		this.end_point = this.style_doc.replace(this.font_family_range, font.font.family);
+		this.end_point = this.style_doc.replace(this.font_family_range, font.font_family);
 
 		// Insert selected weight and style, first reset them
 		this.reset_properties();
 		lines = [];
-		if (font.fontWeight) {
-			lines.push('    font-weight: ' + font.fontWeight + ';');
+		if (font.variant.weight) {
+			lines.push('    font-weight: ' + font.variant.weight + ';');
 		}
-		if (font.fontStyle) {
-			lines.push('    font-style: ' + font.fontStyle + ';');
+		if (font.variant.style) {
+			lines.push('    font-style: ' + font.variant.style + ';');
 		}
 		if (lines.length > 0) {
 			this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
@@ -5520,35 +5775,8 @@ var Font_Picker = Backbone.View.extend({
 			this.style_doc.removeLines(result.style, result.style);
 		}
 	},
-	revert: function() {
-		var lines;
-		this.editor = Upfront.Application.cssEditor.editor;
-		this.style_doc = this.editor.getSession().getDocument();
-
-		if (!this.font_family_range) {
-			this.remove();
-			return;
-		}
-		// Revert font family
-		this.font_family_range.end = this.end_point;
-		this.style_doc.replace(this.font_family_range, this.starting_font);
-		this.starting_font = false;
-
-		// Revert weight and style
-		this.reset_properties();
-		lines = [];
-		if (this.starting_weight) {
-			lines.push(this.starting_weight);
-			this.starting_weight = false;
-		}
-		if (this.starting_style) {
-			lines.push(this.starting_style);
-		}
-		if (lines.length > 0) {
-			this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
-		}
-
-		this.remove();
+	finish: function() {
+		$('#insert-font-widget').html('<a class="upfront-css-font" href="#">Insert Font</a>').removeClass('open');
 	}
 });
 
@@ -5562,7 +5790,7 @@ var CSSEditor = Backbone.View.extend({
 		'click .upfront-css-save-ok': 'save',
 		'click .upfront-css-close': 'close',
 		'click .upfront-css-image': 'openImagePicker',
-		'click .upfront-css-font': 'openFontPicker',
+		'click .upfront-css-font': 'startInsertFontWidget',
 		'click .upfront-css-selector': 'addSelector',
 		'click .upfront-css-type' : 'scrollToElement',
 		'click .upfront-css-delete': 'deleteStyle',
@@ -5598,11 +5826,23 @@ var CSSEditor = Backbone.View.extend({
 		CodeModel: {label: 'Code', id: 'upfront-code_element'},
 		Layout: {label: 'Body', id: 'layout'},
 		RegionContainer: {label: 'Region', id: 'region-container'},
-		Region: {label: 'Inner Region', id: 'region'}
+		Region: {label: 'Inner Region', id: 'region'},
+		RegionLightbox: {label: 'Lightbox Region', id: 'region'},
+		PostPart_titleModel: {label: 'PostPart Title', id: 'PostPart_title'},
+		PostPart_contentsModel: {label: 'PostPart Contents', id: 'PostPart_contents'},
+		PostPart_excerptModel: {label: 'PostPart Excerpt', id: 'PostPart_excerpt'},
+		PostPart_featured_imageModel: {label: 'PostPart Featured Image', id: 'PostPart_featured_image'},
+		PostPart_authorModel: {label: 'PostPart Author', id: 'PostPart_author'},
+		PostPart_dateModel: {label: 'PostPart Date', id: 'PostPart_date'},
+		PostPart_updateModel: {label: 'PostPart Update', id: 'PostPart_update'},
+		PostPart_comments_countModel: {label: 'PostPart Comments Count', id: 'PostPart_comments_count'},
+		PostPart_tagsModel: {label: 'PostPart Tags', id: 'PostPart_tags'},
+		PostPart_categoriesModel: {label: 'PostPart Categories', id: 'PostPart_categories'}
 	},
 	initialize: function() {
 		if(!$('#' + this.id).length)
 			$('body').append(this.el);
+		Upfront.Events.on("command:region:edit_toggle", this.close, this);
 	},
 	init: function(options) {
 		var me = this,
@@ -5611,7 +5851,10 @@ var CSSEditor = Backbone.View.extend({
 
 		if(this.$style)
 			this.close();
-
+		
+		// Don't render the editor, only makes the API available
+		this.no_render = ( options.no_render === true );
+		
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
 		this.global = ( options.global === true );
@@ -5628,28 +5871,40 @@ var CSSEditor = Backbone.View.extend({
 		this.ensure_style_element();
 
 		this.selectors = this.elementSelectors[this.modelType] || {};
-
-		this.prepareAce = deferred.promise();
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
-			deferred.resolve();
-		});
-
-		this.resizeHandler = this.resizeHandler || function(){
-			me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
-		};
-
-		$(window).on('resize', this.resizeHandler);
-
+	
 		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
-
-		if ( typeof options.change == 'function' )
-			this.on('change', options.change);
-
-		this.render();
-
-		this.startResizable();
-
-		Upfront.Events.trigger('csseditor:open', this.element_id);
+		
+		if ( !this.no_render ) {
+			this.prepareAce = deferred.promise();
+			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
+				deferred.resolve();
+			});
+	
+			this.resizeHandler = this.resizeHandler || function(){
+				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
+			};
+	
+			$(window).on('resize', this.resizeHandler);
+	
+			if ( typeof options.change == 'function' )
+				this.on('change', options.change);
+	
+			this.render();
+	
+			Upfront.Events.on("command:undo", function () {
+				setTimeout(function () {
+					var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
+					if (styles) {
+						me.get_style_element().html(styles);
+						me.render();
+					}
+				}, 200);
+			});
+	
+			this.startResizable();
+	
+			Upfront.Events.trigger('csseditor:open', this.element_id);
+		}
 	},
 	resolve_stylename: function(options) {
 		// Style name will be used to identify style element inserted to page by id and
@@ -5660,8 +5915,13 @@ var CSSEditor = Backbone.View.extend({
 
 		// Check for regions
 		if (this.is_region_style()) {
-			this.stylename = this.elementType.id + '-' + this.model.get('name') + '-style';
+			var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type;
+			// @TODO support for old stylename, but will be deprecated soon to use one with layout_id instead
+			this.stylename = this.elementType.id + '-' + this.model.get('name') + '-style'; // old one, use if exists
+			if (_.isArray(Upfront.data.styles[this.elementType.id]) && Upfront.data.styles[this.elementType.id].indexOf(this.stylename) == -1)
+				this.stylename = layout_id + '-' + this.model.get('name') + '-style'; // new one
 		}
+
 
 		// If stylename is still empty than editor is creating new style and user have not
 		// yet assigned name to style. Create temporary style name.
@@ -5677,6 +5937,7 @@ var CSSEditor = Backbone.View.extend({
 		this.is_default_style = this.stylename === '_default';
 	},
 	is_region_style: function() {
+		console.log(this.elementType.id);
 		return this.elementType.id === 'region-container'
 			|| this.elementType.id === 'region';
 	},
@@ -5688,7 +5949,7 @@ var CSSEditor = Backbone.View.extend({
 	get_css_selector: function() {
 		if (this.is_global_stylesheet) return '';
 
-		if (this.is_region_style()) return '.upfront-' + this.get_style_id().replace('-style', '');
+		if (this.is_region_style()) return '.upfront-' + this.elementType.id + '-' + this.model.get('name');
 
 		// Add some specificity so this style would go over other
 		if (this.is_default_style === false) return '#page .' + this.stylename;
@@ -5709,7 +5970,7 @@ var CSSEditor = Backbone.View.extend({
 		return $('style#' + this.get_style_id());
 	},
 	close: function(e){
-		if(e)
+		if(e && _.isFunction(e.preventDefault))
 			e.preventDefault();
 		$(window).off('resize', this.resizeHandler);
 		this.off('change');
@@ -5898,7 +6159,9 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	updateStyles: function(contents){
-		this.get_style_element().html(
+		var $el = this.get_style_element();
+		Upfront.Util.Transient.push('css-' + this.element_id, $el.html());
+		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())
 			)
@@ -5972,7 +6235,7 @@ var CSSEditor = Backbone.View.extend({
 		);
 
 		// Update element on which editor is called to have appropriate theme style
-		this.model.set_property('theme_style', new_name);
+		this.model.set_breakpoint_property('theme_style', new_name);
 
 		// If this is change of name from temp don't do anything
 		if (old_name === this.get_temp_stylename) return;
@@ -6006,7 +6269,7 @@ var CSSEditor = Backbone.View.extend({
 			global: this.global
 		};
 		// If in exporter mode, export instead of saving
-		if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
+		if (Upfront.Application.is_builder()) {
 			data.stylename = this.get_style_id();
 			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
 			return;
@@ -6035,6 +6298,52 @@ var CSSEditor = Backbone.View.extend({
 			.error(function(response){
 				return notifier.addMessage('There was an error.');
 			});
+	},
+	
+	/* API to call save style without loading editor */
+	saveCall: function (notify) {
+		var me = this,
+			styles = $.trim(this.get_style_element().html()),
+			data;
+
+		if(!styles) {
+			return notify ? notifier.addMessage('The slylesheet is empty.', 'error') : false;
+		}
+		
+		data = {
+			styles: styles,
+			elementType: this.elementType.id,
+			global: this.global
+		};
+		// If in exporter mode, export instead of saving
+		if (Upfront.Application.is_builder()) {
+			data.stylename = this.get_style_id();
+			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
+			return;
+		}
+
+		data.name = this.get_style_id();
+		data.action = 'upfront_save_styles';
+
+		Upfront.Util.post(data)
+			.success(function(response) {
+				var data = response.data,
+					elementType = me.elementType.id;
+
+				if(!Upfront.data.styles[elementType])
+					Upfront.data.styles[elementType] = [];
+
+				if(Upfront.data.styles[elementType].indexOf(me.get_style_id()) === -1)
+					Upfront.data.styles[elementType].push(me.get_style_id());
+
+				Upfront.Events.trigger('upfront:themestyle:saved', me.get_style_id());
+
+				return notify ? notifier.addMessage('Styles saved as ' + me.get_style_id()) : true;
+			})
+			.error(function(response){
+				return notify ? notifier.addMessage('There was an error.') : true;
+			});
+		
 	},
 
 	checkDeleteToggle: function(e){
@@ -6150,9 +6459,9 @@ var CSSEditor = Backbone.View.extend({
 		});
 	},
 
-  openFontPicker: function() {
-    var font_picker = new Font_Picker({ collection: theme_fonts_collection });
-    this.$el.append(font_picker.render().el);
+  startInsertFontWidget: function() {
+    var insertFontWidget = new Insert_Font_Widget({ collection: theme_fonts_collection });
+    $('#insert-font-widget').html(insertFontWidget.render().el);
   },
 
 	getElementType: function(model){
@@ -6942,6 +7251,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.button = typeof opts.button != 'undefined' ? opts.button : true;
 			this.width = typeof opts.width != 'undefined' ? opts.width : '50%';
 			this.top = typeof opts.top != 'undefined' ? opts.top : -1;
+			this.left = typeof opts.left != 'undefined' ? opts.left : -1;
+			this.right = typeof opts.right != 'undefined' ? opts.right : -1;
+			this.keep_position = typeof opts.keep_position != 'undefined' ? opts.keep_position : true;
 		},
 		events: {
 			"click": "on_click",
@@ -6961,7 +7273,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$wrap = this.$el.find('.upfront-inline-modal-wrap'),
 				$content = this.$el.find('.upfront-inline-modal-content'),
 				$button = $('<button type="button" class="upfront-inline-modal-save">' + this.button_text + '</button>'),
-				top = this.top,
+				css = {},
 				height, parent_height;
 			this._deferred = $.Deferred();
 			this.$el.show();
@@ -6972,18 +7284,31 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			// this.listenTo(Upfront.Events, "entity:region:deactivated", function(){
 				// me.close(false);
 			// });
-			if ( top == -1 ){
+			css.width = this.width;
+			if ( this.top >= 0 ) {
+				css.top = this.top;
+				css.bottom = 'auto';
+			}
+			else {
 				parent_height = this.$el.height() > $(window).height() ? $(window).height() : this.$el.height();
 				height = $content.outerHeight();
 				this.top = parent_height-height > 0 ? (parent_height-height)/2 : 0;
+				css.top = this.top;
+				css.bottom = 'auto';
 			}
-			$wrap.css({
-				top: this.top,
-				bottom: 'auto',
-				width: this.width
-			});
-			this.update_pos();
-			$(window).on('scroll', this, this.on_scroll);
+			if ( this.left >= 0 ) {
+				css.left = this.left;
+				css.right = 'auto';
+			}
+			else if ( this.right >= 0 ) {
+				css.left = 'auto';
+				css.right = this.right;
+			}
+			$wrap.css(css);
+			if ( this.keep_position ) {
+				this.update_pos();
+				$(window).on('scroll', this, this.on_scroll);
+			}
 			this.trigger('modal:open');
 			return this._deferred.promise();
 		},
@@ -6991,6 +7316,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.$el.hide();
 			$(window).off('scroll', this.on_scroll);
 			this.trigger('modal:close');
+			if ( ! this._deferred )
+				return;
 			if ( save )
 				this._deferred.resolve(this);
 			else
@@ -7017,8 +7344,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				offset = this.$to.offset(),
 				top = offset.top,
 				bottom = top + this.$to.outerHeight(),
+				win_height = $(window).height(),
 				scroll_top = $(document).scrollTop(),
-				scroll_bottom = scroll_top + $(window).height(),
+				scroll_bottom = scroll_top + win_height,
 				rel_top = $main.offset().top,
 				rel_bottom = 50,
 				modal_offset = this.$el.offset(),
@@ -7050,7 +7378,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						right: $(window).width()-modal_right
 					});
 					$wrap.css({
-						top: ( bottom > modal_bottom ? $(window).height()-(bottom-top)-rel_bottom : $(window).height()-modal_height-rel_bottom ) + this.top
+						top: ( bottom > modal_bottom ? win_height-(bottom-top > win_height ? win_height : bottom-top)-rel_bottom : win_height-modal_height-rel_bottom ) + this.top
 					});
 				}
 			}
@@ -7096,7 +7424,81 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if (_upfront_post_data.post_id) {
 				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
 			}
-			var bg_type = new Field_Select({
+			var region_name = new Field_Text({
+					model: this.model,
+					name: 'title',
+					placeholder: "Enter name for this region...",
+					change: function () {
+					},
+					blur: function () {
+						var collection = this.model.collection,
+							prev_title = this.model.get('title'),
+							prev_name = this.model.get('name'),
+							title = $.trim(this.get_value().replace(/[^A-Za-z0-9\s_-]/g, '')), // strict filtering to prevent unwanted character
+							name = title.toLowerCase().replace(/\s/g, '-'),
+							new_title, sub_regions, styles, prev_selector, selector;
+						if ( prev_title != title ) {
+							// Check if the region name exists
+							if ( collection.get_by_name(name) ) {
+								new_title = collection.get_new_title(title + " ", 2);
+								title = new_title.title;
+								name = new_title.name;
+							}
+							
+							// Let's keep old CSS content
+							Upfront.Application.cssEditor.init({
+								model: this.model,
+								type: this.model.is_main() ? "RegionContainer" : "Region",
+								element_id: this.model.is_main() ? "region-container-" + prev_name : "region-" + prev_name,
+								no_render: true
+							});
+							styles = $.trim(Upfront.Application.cssEditor.get_style_element().html());
+							prev_selector = Upfront.Application.cssEditor.get_css_selector();
+							
+							// Also update the container attribute on sub regions
+							if ( this.model.is_main() ) {
+								sub_regions = this.model.get_sub_regions();
+								_.each(sub_regions, function(sub_model, sub){
+									if ( _.isArray(sub_model) )
+										_.each(sub_model, function(sub_model2){ sub_model2.set({container: name}, {silent:true}); });
+									else if ( _.isObject(sub_model) )
+										sub_model.set({container: name}, {silent:true});
+								});
+								this.model.set({title: title, name: name, container: name}, {silent: true});
+							}
+							else {
+								this.model.set({title: title, name: name}, {silent: true});
+							}
+							$region_name.find('.upfront-region-name-edit-value').text(title);
+							
+							// Save the region CSS to the new name, if styles is not empty
+							if ( styles ) {
+								Upfront.Application.cssEditor.init({
+									model: this.model,
+									type: this.model.is_main() ? "RegionContainer" : "Region",
+									element_id: this.model.is_main() ? "region-container-" + name : "region-" + name,
+									no_render: true
+								});
+								selector = Upfront.Application.cssEditor.get_css_selector();
+								styles = styles.replace(new RegExp(prev_selector.replace(/^\./, '\.'), 'g'), selector);
+								Upfront.Application.cssEditor.get_style_element().html(styles);
+								Upfront.Application.cssEditor.saveCall(false);
+							}
+							
+							this.model.get('properties').trigger('change');
+						}
+						$region_name.find('.upfront-region-bg-setting-name-edit').show();
+						this.$el.hide();
+					},
+					rendered: function () {
+						var me = this;
+						this.get_field().on('keyup', function(e){
+							if ( e.which === 13 )
+								me.trigger('blur');
+						});
+					}
+				}),
+				bg_type = new Field_Select({
 					model: this.model,
 					property: 'background_type',
 					default_value: !bg_image ? 'color' : 'image',
@@ -7110,7 +7512,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						this.property.set({value: value});
 					}
 				}),
-				$region_global, $region_type, $region_nav, $theme_body;
+				$region_name, $region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
 			if ( is_layout ){
 				var contained_region = new Field_Number({
 					model: this.model,
@@ -7143,6 +7545,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-1,
+					has_sticky = collection.findWhere({sticky: '1'}),
 					types = [
 						{ label: "100% wide", value: 'wide' },
 						{ label: "Contained", value: 'clip' }
@@ -7211,10 +7614,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						change: function () {
 							var value = this.get_value();
 							this.model.set({type: value}, {silent: true});
-							if ( value == 'full' )
+							if ( value == 'full' ){
 								$region_nav.show();
-							else
+								$region_behavior.show();
+							}
+							else {
 								$region_nav.hide();
+								$region_behavior.hide();
+							}
 							this.model.get('properties').trigger('change');
 						}
 					}),
@@ -7224,9 +7631,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "No nav", value: '' },
-							{ label: "Bottom nav", value: 'bottom' },
-							{ label: "Full screen, top", value: 'top' }
+							{ label: "No", value: '' },
+							{ label: "Bottom", value: 'bottom' },
+							{ label: "Top", value: 'top' }
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -7280,6 +7687,39 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							}
 							this.property.set({value: value});
 						}
+					}),
+					region_behavior = new Field_Radios({
+						model: this.model,
+						name: 'behavior',
+						default_value: 'keep-position',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Keep Position", value: 'keep-position' },
+							{ label: "Keep Ratio", value: 'keep-ratio' }
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set({behavior: value}, {silent: true});
+							this.model.get('properties').trigger('change');
+						}
+					});
+			}
+			else if ( is_region && sub == 'fixed' ) {
+				var region_restrict = new Field_Checkboxes({
+						model: this.model,
+						name: 'restrict_to_container',
+						default_value: '',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Restrict floating to Parent Region", value: '1' }
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set({restrict_to_container: value}, {silent: true});
+							this.model.trigger('restrict_to_container', value);
+							this.model.get('properties').trigger('change');
+						},
+						multiple: false
 					});
 			}
 			$content.html(setting);
@@ -7289,11 +7729,38 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$lightbox = $content.find('.upfront-region-bg-setting-lightbox-region');
 
 			$lightbox.hide();
+			$region_name = $content.find('.upfront-region-bg-setting-name');
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
 			$add_global_region = $content.find('.upfront-region-bg-setting-add-global-region');
 			$region_type = $content.find('.upfront-region-bg-setting-region-type');
 			$region_nav = $content.find('.upfront-region-bg-setting-region-nav');
+			$region_behavior = $content.find('.upfront-region-bg-setting-region-behavior');
+			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
+			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
+			
+			if ( is_region ) {
+				region_name.render();
+				$region_name.append(region_name.$el);
+				region_name.$el.hide();
+				$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
+				// Let's not allow name change for header/footer, as the name is reserved for global region
+				if ( this.model.get('name') == 'header' || this.model.get('name') == 'footer' ){
+					$region_name.find('.upfront-region-name-edit-trigger').hide();
+				}
+				else {
+					$region_name.on('click', '.upfront-region-name-edit-trigger', function(e){
+						e.preventDefault();
+						$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+						region_name.$el.show();
+						region_name.get_field().trigger('focus').select();
+					});
+				}
+			}
+			else {
+				$region_name.hide();
+			}
+			
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox
@@ -7313,12 +7780,40 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region_type.append(region_type.$el);
 				region_nav.render();
 				$region_nav.append(region_nav.$el);
+				region_behavior.render();
+				$region_behavior.append(region_behavior.$el);
 			}
 			else {
 				$region_global.hide();
 				$region_type.hide();
 				$region_nav.hide();
+				$region_behavior.hide();
 				$region_auto.hide();
+			}
+			$region_restrict.hide();
+			$region_sticky.hide();
+
+			if ( is_region && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
+				// Show the sticky option if there's no sticky region yet AND the region is <= 300px height
+				if ( ( !has_sticky && this.for_view.$el.height() <= 300 ) || this.model.get('sticky') ) {
+					var region_sticky = new Field_Checkboxes({
+						model: this.model,
+						name: 'sticky',
+						default_value: '',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: "Sticky this region", value: '1' }
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set({sticky: value}, {silent: true});
+							this.model.get('properties').trigger('change');
+						},
+						multiple: false
+					});
+					region_sticky.render();
+					$region_sticky.append(region_sticky.$el).show();
+				}
 			}
 
 			$theme_body = $content.find('.upfront-region-bg-setting-theme-body');
@@ -7339,16 +7834,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					e.stopPropagation();
 					me.upload_image();
 				});
-				$content.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
-					e.preventDefault();
-					e.stopPropagation();
-					me.trigger_edit_css();
-				});
+				
 			}
 			else {
 				$content.find('.upfront-region-bg-setting-type').remove();
 				$content.find('.upfront-region-bg-setting-change-image').remove();
 			}
+
+			$content.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				me.trigger_edit_css();
+			});
+
 			if ( is_region && this.model.is_main() ){
 				$content.find('.upfront-region-bg-setting-auto-resize').on('click', function (e) {
 					e.preventDefault();
@@ -7361,6 +7859,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else if ( is_region && sub == 'fixed' ) {
 				this.render_fixed_settings($fixed);
 				$fixed.show();
+				region_restrict.render();
+				$region_restrict.append(region_restrict.$el).show();
 			}
 			else if ( is_region && sub == 'lightbox' ) {
 				this.render_lightbox_settings($lightbox);
@@ -8283,9 +8783,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		trigger_edit_css: function () {
 			Upfront.Application.cssEditor.init({
 				model: this.model,
-				type: this.model.is_main() ? "RegionContainer" : "Region",
+				type: this.model.is_main() ? "RegionContainer" : (this.model.get('type') == 'lightbox')?"RegionLightbox":"Region",
 				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
+
 		}
 	});
 
@@ -8316,6 +8817,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( !label )
 				return;
 			var $label = this.$el.find('.upfront-inline-panel-item-label');
+            this.$el.addClass("labeled");
 			if ( !$label.length )
 				this.$el.append('<span class="upfront-inline-panel-item-label">' + label + '</span>');
 			else
@@ -8342,6 +8844,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				width: this.width,
 				height: this.height
 			});
+            this.$el.attr("id", this.id);
 			if ( typeof this.on_render == 'function' )
 				this.on_render();
 		},
@@ -8578,7 +9081,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						return -1;
 					return collection.indexOf(model);
 				};
-				
+
 			if ( ! is_new_container ) {
 				new_region.set_property('col', 5);
 				if ( to == 'left' || to == 'right' ){
@@ -8689,8 +9192,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		tooltip: "Delete this section",
 		//label: "Delete this section",
 		delete_region: function () {
-			if ( confirm("Are you sure you want to delete this section?") )
-				this.model.collection.remove(this.model);
+			var collection = this.model.collection;
+			if ( confirm("Are you sure you want to delete this section?") ){
+				collection.remove(this.model);
+			}
 		}
 	});
 
@@ -9858,6 +10363,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"Fonts": {
 				"System": system_fonts_storage,
 				"Google": google_fonts_storage,
+				Text_Fonts_Manager: Text_Fonts_Manager,
+				theme_fonts_collection: theme_fonts_collection
 			},
 			"Field": {
 				"Field": Field,

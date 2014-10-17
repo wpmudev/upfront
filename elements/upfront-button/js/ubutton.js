@@ -32,7 +32,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.events = _.extend({}, this.events, {
 			'click a.upfront_cta' : 'processClick'
 		});
+
 		this.on('deactivated', function() {
+			
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
@@ -43,7 +45,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 */
 		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);	
 		
-//		Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
+		//Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
 
 		Upfront.Events.on("upfront:themestyle:saved", function(theme_style) {
 			var preset = Upfront.Views.Editor.Button.Presets.get(me.model.get_property_value_by_name("currentpreset"));
@@ -51,9 +53,17 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				preset.attributes.theme_style = theme_style;
 				Upfront.Views.Editor.Button.Presets.trigger('edit');
 			}
-			
+
 			me.model.set_property('theme_style', '', true);
-		}, this);	
+		}, this);
+
+		
+		/*if ( objects && objects.length == 1 ){
+			objects.each(function(object){
+				object.set_property('row', rsz_row);
+			});
+		}*/
+
 
 	},
 	/*onResizeStop: function(view, model, ui) {
@@ -62,8 +72,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	conformSize: function() {
 		this.$el.find('.upfront-output-button').css('height', this.$el.find('.upfront-object.upfront-button').height());
 	},*/
+	
 	processClick: function(e) {
-		e.preventDefault();
 		e.stopPropagation();
 		var me = this
 		singleclickcount++;
@@ -76,27 +86,99 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			singleclickcount = 0;
 			}, 400);
 		}
-		else 
-			me.editLink(e);
+		//else
+		//	me.editLink(e);
 	},
 	visitLink: function(e) {
+		e.preventDefault();
+		var me = this;
 		console.log('visit the link');
+		return;
+		var link = $(e.target).attr('href');
+
+
+		if(link.indexOf('#') > -1 && me.getCleanurl(link) == me.getCleanurl()) {
+			if(link.indexOf('#ltb-') > -1)	 {
+				var regions = Upfront.Application.layout.get('regions');
+				region = regions ? regions.get_by_name(me.getUrlanchor(link)) : false;
+				if(region){
+					//hide other lightboxes
+					_.each(regions.models, function(model) {
+						if(model.attributes.sub == 'lightbox')
+							Upfront.data.region_views[model.cid].hide();
+					});
+					var regionview = Upfront.data.region_views[region.cid];
+					regionview.show();
+				}
+			} else {
+				var anchors = me.get_anchors();
+				$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(link)).offset().top},'slow');
+			}
+		} else if(link == '') {
+			window.location.href = link;
+		} else window.open(link);
+		
 	},
-	editLink: function(e) {
+	getCleanurl: function(url) {
+		//this one removes any existing # anchor postfix from the url
+		var urlParts;
+		if(!url){
+			url = location.href;
+		}
+
+		if(url.indexOf('?dev=true') != -1) url = url.replace('?dev=true', '');
+
+		if(url.indexOf('#') == -1) return url;
+
+		urlParts = url.split('#');
+
+		if(urlParts[0].trim() != '')
+			return urlParts[0];
+		else
+			return location.href.replace('?dev=true', '');
+	},
+	getUrlanchor: function(url) {
+		// this does almost the opposite of the above function
+
+		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+
+		if(url.indexOf('#') >=0) {
+			var tempurl = url.split('#');
+			return tempurl[1];
+		} else return false;
+	},
+	get_anchors: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			anchors = [];
+		;
+		regions.each(function (r) {
+			r.get("modules").each(function (module) {
+				module.get("objects").each(function (object) {
+					var anchor = object.get_property_value_by_name("anchor");
+					if (anchor && anchor.length) anchors[anchor] = object;
+				});
+			});
+		});
+		return anchors;
+	},
+	/*editLink: function(e) {
+		e.preventDefault();
 		var editor = $(e.target).data('ueditor');
 		
 		if(editor) {
 			editor.start();
 		}
-	},
-	revert_preset: function() {
-		this.render();
-	},
+	},*/
 	get_content_markup: function () {
 		var content = this.model.get_content(), style_static = '', style_hover = '';
 
-		if(this.model.get_property_value_by_name("currentpreset") && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
-			
+		//Apply Default preset if none is selected for a new item
+		if(!this.model.get_property_value_by_name('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
+			this.model.set_property('currentpreset', Upfront.Views.Editor.Button.Presets.first().id);
+
+
+		if(this.model.get_property_value_by_name("currentpreset") && this.model.get_property_value_by_name("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
+
 			var preset = Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset")).attributes;
 			style_static = "border: "+preset.borderwidth+"px "+preset.bordertype+" "+preset.bordercolor+"; "+
 					"border-radius: "+preset.borderradius1+"px "+preset.borderradius2+"px "+preset.borderradius4+"px "+preset.borderradius3+"px; "+
@@ -105,7 +187,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 					"font-family: "+preset.fontface+"; "+
 					"color: "+preset.color+"; "+
 					"transition: all "+preset.hov_duration+"s "+preset.hov_transition+"; ";
-			
+
 			style_hover  =  '';
 			if(preset.hov_borderwidth)
 				style_hover = style_hover+'border-width: '+preset.hov_borderwidth+'px; ';
@@ -114,11 +196,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			if(preset.hov_bordercolor)
 				style_hover = style_hover+'border-color: '+preset.hov_bordercolor+'; ';
 			if(preset.hov_borderradius1)
-				style_hover = style_hover+'border-top-left-radius: '+preset.hov_borderradius1+'px; ';	
+				style_hover = style_hover+'border-top-left-radius: '+preset.hov_borderradius1+'px; ';
 			if(preset.hov_borderradius2)
-				style_hover = style_hover+'border-top-right-radius: '+preset.hov_borderradius2+'px; ';	
+				style_hover = style_hover+'border-top-right-radius: '+preset.hov_borderradius2+'px; ';
 			if(preset.hov_borderradius3)
-				style_hover = style_hover+'border-bottom-right-radius: '+preset.hov_borderradius3+'px; ';	
+				style_hover = style_hover+'border-bottom-right-radius: '+preset.hov_borderradius3+'px; ';
 			if(preset.hov_borderradius4)
 				style_hover = style_hover+'border-bottom-left-radius: '+preset.hov_borderradius4+'px; ';
 			if(preset.hov_bgcolor)
@@ -129,7 +211,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				style_hover = style_hover+'font-family: '+preset.hov_fontsize+'; ';
 			if(preset.hov_color)
 				style_hover = style_hover+'color: '+preset.hov_color+'; ';
-				
+
 
 		}
 
@@ -143,9 +225,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		};
 
 		var rendered = '';
-		
+
 		rendered = _.template(template, data);
-		
+
 		return rendered;// + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
 
 	},
@@ -157,19 +239,18 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var me = this,
 		blurTimeout = false;
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
-		
 		$target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
 				
-				airButtons: ['formatting', 'bold', 'italic'],//airButtons: ['upfrontLinkCTA'],
-				//buttonsCustom: ['stateAlignCTA'],
+				airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
+				
 				placeholder: 'Click here',
 				autostart: false
 			})
 			.on('start', function(){
-				
+				me.$el.find('div.upfront-output-button').addClass('being_edited');
 				me.model.set_property('is_edited', true, true);
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
@@ -179,23 +260,29 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				;
 
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
-								console.log(text);
+								
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				me.property('href', $target.attr('href'), true);
 
 				me.property('align', $target.css('text-align'), true);
+				me.$el.find('div.being_edited').removeClass('being_edited');
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				me.render();
 			})
 			.on('syncAfter', function(){
-				var text = $.trim($(this).html());
-				if (text) me.model.set_content($(text).html(), {silent: true});
+				var ed = $target.data("ueditor"),
+					text = ''
+				;
+
+				try { text = ed.getValue(true); } catch (e) { text = ''; }
+								
+				if (text) me.model.set_content(text, {silent: true});
 			})
 		/*.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
-				
+
 				airButtons: ['upfrontLinkCTA', 'stateAlignCTA'],
 				placeholder: 'Click here',
 			}).on('start', function(e) {
@@ -208,15 +295,18 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.property('align', $target.css('text-align'), true);
 				//Upfront.Events.trigger('upfront:element:edit:stop');
 			 }).on("blur", function(){
-				$target.data('ueditor').stop(); 
+				$target.data('ueditor').stop();
 			 });
-		
+
 			$target.data('ueditor').stop();
 			*/
 /*			setTimeout(function() {
 				me.conformSize();
 			}, 100);
 			*/
+		//this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
+		this.property('row', this.parent_module_view.model.get('properties').get('row').attributes.value);
+
 	},
 	stopEdit: function() {
 			var $target = this.$el.find('.upfront-object-content a.upfront_cta');
@@ -245,7 +335,7 @@ var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				"name": "",
 				"properties": [
 					{"name": "content", "value": "Click here"},
-					{"name": "href", "value": "#"},
+					{"name": "href", "value": ""},
 					{"name": "align", "value": "center"},
 				]
 			}),
@@ -295,7 +385,7 @@ var Settings_ButtonPresets = Upfront.Views.Editor.Settings.Item.extend({
 		this.options.fields = _([
 			me.presetsfield
 		]);
-		
+
 		Upfront.Views.Editor.Settings.Item.prototype.initialize.call(this, this.options);
 	},
 	get_presets: function () {
@@ -305,7 +395,7 @@ var Settings_ButtonPresets = Upfront.Views.Editor.Settings.Item.extend({
 			if (!preset.id || preset.id.indexOf('_default') > -1) return;
 			buttonpresets.push({label: preset.id, value: preset.id});
 		});
-		
+
 		return buttonpresets;
 	},
 	load_presets: function() {
@@ -321,17 +411,7 @@ var Settings_ButtonPresets = Upfront.Views.Editor.Settings.Item.extend({
 var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
   className: 'button-settings-panel',
   hide_common_anchors: true,
-    
-	get_fonts: function () {
-		var typefaces_list = [];
-		_.each(Upfront.Views.Editor.Fonts.System.get_fonts().models, function(font)	{
-			typefaces_list.push({ label: font.get('family'), value: font.get('family') });
-		});
-		_.each(Upfront.Views.Editor.Fonts.Google.get_fonts().models, function(font) {
-			typefaces_list.push({ label: font.get('family'), value: font.get('family') });
-		});
-		return typefaces_list;
-	},
+
 	initialize: function (opts) {
 		this.options = opts;
 		var render_all,
@@ -352,7 +432,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						compact: true,
 						className: 'new_preset_name',
 					});
-					
+
 		me.borderType = new Upfront.Views.Editor.Field.Radios({
 			className: 'inline-radios plaintext-settings static',
 			model: this.model,
@@ -378,7 +458,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				{ label: "", value: '1' }
 			],
 			change: function() { me.updatelivecss(me, this);}
-		}), 
+		}),
 		me.borderColor = new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf plaintext-settings inline-color border-color static',
 			blank_alpha : 0,
@@ -392,6 +472,26 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				move: function() { me.updatelivecss(me, me.borderColor, true);}
 			}
 		});
+		me.borderRadiusLock = new Upfront.Views.Editor.Field.Checkboxes({
+			className: 'border_radius_lock static',
+			model: this.model,
+			label: "",
+			values: [
+				{ label: '', value: 'yes' }
+			],
+			change: function() {
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius2.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius3.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+					me.borderRadius4.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+				me.updatelivecss(me, this);
+			}
+		});
 		me.borderRadius1= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius1 static',
 			model: this.model,
@@ -402,7 +502,18 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() {
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius2.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius3.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+					me.borderRadius4.set_value(me.borderRadius1.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+				me.updatelivecss(me, this);
+			}
 		}),
 		me.borderRadius2= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius2 static',
@@ -414,7 +525,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() {
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius1.set_value(me.borderRadius2.get_value());
+					me.updatelivecss(me, me.borderRadius1);
+					me.borderRadius3.set_value(me.borderRadius2.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+					me.borderRadius4.set_value(me.borderRadius2.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.borderRadius4= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius4 static',
@@ -426,7 +547,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() {
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius1.set_value(me.borderRadius4.get_value());
+					me.updatelivecss(me, me.borderRadius1);
+					me.borderRadius2.set_value(me.borderRadius4.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius3.set_value(me.borderRadius4.get_value());
+					me.updatelivecss(me, me.borderRadius3);
+
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.borderRadius3= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius3 static',
@@ -438,8 +569,19 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
-		}), 
+			change: function() {
+				if(typeof(me.borderRadiusLock.get_value()) == 'object' && me.borderRadiusLock.get_value().length > 0) {
+					me.borderRadius1.set_value(me.borderRadius3.get_value());
+					me.updatelivecss(me, me.borderRadius1);
+					me.borderRadius2.set_value(me.borderRadius3.get_value());
+					me.updatelivecss(me, me.borderRadius2);
+					me.borderRadius4.set_value(me.borderRadius3.get_value());
+					me.updatelivecss(me, me.borderRadius4);
+
+				}
+
+				me.updatelivecss(me, this);}
+		}),
 		me.bgColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  bg-color static',
 			blank_alpha : 0,
@@ -465,10 +607,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				{ label: "", value: '12' }
 			],
 			change: function() { me.updatelivecss(me, this);}
-		}),			
+		}),
 		me.fontFace = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
-				values: me.get_fonts(),
+				values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
 				label: 'px',
 				label_style: 'inline',
 				className: 'font_face static',
@@ -485,7 +627,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				spectrum: {
 					preferredFormat: "hex",
 					change: function() { me.updatelivecss(me, me.color);},
-					move: function() { me.updatelivecss(me, me.color);},
+					move: function() { me.updatelivecss(me, me.color, true);},
 				}
 		});
 
@@ -516,7 +658,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				{ label: "", value: '1' }
 			],
 			change: function() { me.updatelivecss(me, this);}
-		}), 
+		}),
 		me.hov_borderColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  plaintext-settings inline-color border-color hover',
 			blank_alpha : 0,
@@ -530,6 +672,26 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				move: function() { me.updatelivecss(me, me.hov_borderColor);}
 			}
 		}),
+		me.hov_borderRadiusLock = new Upfront.Views.Editor.Field.Checkboxes({
+			className: 'border_radius_lock hover',
+			model: this.model,
+			label: "",
+			values: [
+				{ label: '', value: 'yes' }
+			],
+			change: function() {
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius2.set_value(me.hov_borderRadius1.get_value());
+
+					me.hov_borderRadius3.set_value(me.hov_borderRadius1.get_value());
+
+					me.hov_borderRadius4.set_value(me.hov_borderRadius1.get_value());
+
+
+				}
+				me.updatelivecss(me, this);
+			}
+		}),
 		me.hov_borderRadius1= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius1 hover',
 			model: this.model,
@@ -540,7 +702,15 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() {
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius2.set_value(me.hov_borderRadius1.get_value());
+					me.hov_borderRadius3.set_value(me.hov_borderRadius1.get_value());
+					me.hov_borderRadius4.set_value(me.hov_borderRadius1.get_value());
+
+				}
+
+				me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius2= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius2 hover',
@@ -552,7 +722,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() {
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius1.set_value(me.hov_borderRadius2.get_value());
+					me.hov_borderRadius3.set_value(me.hov_borderRadius2.get_value());
+					me.hov_borderRadius4.set_value(me.hov_borderRadius2.get_value());
+
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius4= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius4 hover',
@@ -564,7 +741,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
+			change: function() {
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius1.set_value(me.hov_borderRadius4.get_value());
+					me.hov_borderRadius2.set_value(me.hov_borderRadius4.get_value());
+					me.hov_borderRadius3.set_value(me.hov_borderRadius4.get_value());
+
+				}
+				me.updatelivecss(me, this);}
 		}),
 		me.hov_borderRadius3= new Upfront.Views.Editor.Field.Number({
 			className: 'border_radius border_radius3 hover',
@@ -576,8 +760,15 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			values: [
 				{ label: "", value: '0' }
 			],
-			change: function() { me.updatelivecss(me, this);}
-		}), 
+			change: function() {
+				if(typeof(me.hov_borderRadiusLock.get_value()) == 'object' && me.hov_borderRadiusLock.get_value().length > 0) {
+					me.hov_borderRadius1.set_value(me.hov_borderRadius3.get_value());
+					me.hov_borderRadius2.set_value(me.hov_borderRadius3.get_value());
+					me.hov_borderRadius4.set_value(me.hov_borderRadius3.get_value());
+
+				}
+				me.updatelivecss(me, this);}
+		}),
 		me.hov_bgColor= new Upfront.Views.Editor.Field.Color({
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf bg-color hover',
 			blank_alpha : 0,
@@ -602,10 +793,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				{ label: "", value: '12' }
 			],
 			change: function() { me.updatelivecss(me, this);}
-		}),			
+		}),
 		me.hov_fontFace = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
-				values: me.get_fonts(),
+				values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
 				className: 'font_face hover',
 				label: 'px',
 				label_style: 'inline',
@@ -699,6 +890,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					me.borderRadius1,
 					me.borderRadius2,
 					me.bgColor,
+					me.borderRadiusLock,
 					me.borderRadius4,
 					me.borderRadius3,
 
@@ -711,6 +903,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					me.hov_borderRadius1,
 					me.hov_borderRadius2,
 					me.hov_bgColor,
+					me.hov_borderRadiusLock,
 					me.hov_borderRadius4,
 					me.hov_borderRadius3,
 
@@ -751,17 +944,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			me.presetspecific
 		]);
 		me.presetspecific.$el.hide();
-		
-		me.buttonpresets.$el.on('itemselected', function() { 
+
+		me.buttonpresets.$el.on('itemselected', function() {
 			var selectedpreset = me.$el.find('div.button_preset li.upfront-field-select-option-selected input').val();
 			if(selectedpreset == 'undefined')
 				return;
 			me.load_preset(selectedpreset);
 			me.updatelivecss(me, this);
 		});
-		
-		
-		
+
+
+
 		if(!me.property('currentpreset')) {
 			setTimeout(function() {
 				var selectedpreset = me.buttonpresets.$el.find('input[type=radio]').first().val();
@@ -772,18 +965,21 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		setTimeout(function() {
 			me.$el.find('div.upfront-settings-common_panel').css('display', 'none');
 		}, 100);
-		
+
 		Upfront.Events.on("entity:settings:beforedeactivate", this.on_save, this);
-		
+		Upfront.Events.once("entity:settings:deactivate", this.revert_preset, this);
+		me.is_saving = false;
+		me.original_style = $('style#style'+me.property('element_id')).html();
+
 	},
 	updatelivecss: function(me, invoker, ignorehover) {
-		
+
 		if(typeof(ignorehover) == 'undefined')
 			ignorehover = false;
 
 		if(typeof(me) == 'undefined')
 			return;
-			
+
 			//var preset = Upfront.Views.Editor.Button.Presets.get(me.property('currentpreset'));
 			//if(!preset) {
 			if(typeof(invoker) != 'undefined' && typeof(invoker.$el) != 'undefined' && !ignorehover) {
@@ -794,8 +990,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 							me.hov_borderType.invoked = true;
 							me.hov_borderType.set_value(invoker.get_value());
 						}
-					break;	
-					case me.hov_borderType:	
+					break;
+					case me.hov_borderType:
 						if(me.hov_borderType.invoked) {
 							invoker.$el.removeClass('touched');
 							invoker.invoked = false;
@@ -804,12 +1000,28 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					case me.borderWidth:
 						if(!me.hov_borderWidth.$el.hasClass('touched'))
 							me.hov_borderWidth.set_value(invoker.get_value());
-					break;		
+					break;
 					case me.borderColor:
 						if(!me.hov_borderColor.$el.hasClass('touched'))
 							me.hov_borderColor.set_value(invoker.get_value());
 					break;
-
+					case me.borderRadiusLock:
+						if(!me.hov_borderRadiusLock.$el.hasClass('touched')) {
+							me.hov_borderRadiusLock.invoked = true;
+							if(typeof(invoker.get_value()) == 'object' && invoker.get_value().length > 0){
+								me.hov_borderRadiusLock.set_value(invoker.get_value());
+							}
+							else {
+								me.hov_borderRadiusLock.$el.find(':checkbox').prop('checked', false);
+							}
+						}
+					break;
+					case me.hov_borderRadiusLock:
+						if(me.hov_borderRadiusLock.invoked) {
+							invoker.$el.removeClass('touched');
+							invoker.invoked = false;
+						}
+					break;
 					case me.borderRadius1:
 						if(!me.hov_borderRadius1.$el.hasClass('touched'))
 							me.hov_borderRadius1.set_value(invoker.get_value());
@@ -825,23 +1037,23 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					case me.borderRadius4:
 						if(!me.hov_borderRadius4.$el.hasClass('touched'))
 							me.hov_borderRadius4.set_value(invoker.get_value());
-					break;	
+					break;
 
 					case me.bgColor:
 						if(!me.hov_bgColor.$el.hasClass('touched'))
 							me.hov_bgColor.set_value(invoker.get_value());
-					break;	
+					break;
 					case me.fontSize:
 						if(!me.hov_fontSize.$el.hasClass('touched'))
 							me.hov_fontSize.set_value(invoker.get_value());
-					break;	
+					break;
 					case me.fontFace:
 						if(!me.hov_fontFace.$el.hasClass('touched')) {
 							me.hov_fontFace.invoked = true;
 							me.hov_fontFace.set_value(invoker.get_value());
 						}
 					break;
-					case me.hov_fontFace:	
+					case me.hov_fontFace:
 						if(me.hov_fontFace.invoked) {
 							invoker.$el.removeClass('touched');
 							invoker.invoked = false;
@@ -850,7 +1062,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					case me.color:
 						if(!me.hov_color.$el.hasClass('touched'))
 							me.hov_color.set_value(invoker.get_value());
-					break;						
+					break;
 				}
 			}
 			//}
@@ -862,14 +1074,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					"font-family: "+me.fontFace.get_value()+"; "+
 					"color: "+me.color.get_value()+"; "+
 					"transition: all "+me.hov_duration.get_value()+"s "+me.hov_transition.get_value()+"; "
-					
+
 			var style_hover = "border: "+me.hov_borderWidth.get_value()+"px "+me.hov_borderType.get_value()+" "+me.hov_borderColor.get_value()+"; "+
 					"border-radius: "+me.hov_borderRadius1.get_value()+"px "+me.hov_borderRadius2.get_value()+"px "+me.hov_borderRadius4.get_value()+"px "+me.hov_borderRadius3.get_value()+"px; "+
 					"background-color: "+me.hov_bgColor.get_value()+"; "+
 					"font-size: "+me.hov_fontSize.get_value()+"px; "+
 					"font-family: "+me.hov_fontFace.get_value()+"; "+
 					"color: "+me.hov_color.get_value()+"; ";
-		
+
 			var style ='div#'+me.property('element_id')+' a.upfront_cta {'+(me.static_button_preset.$el.hasClass('active')?style_static:style_hover)+"}\n"+
 						'div#'+me.property('element_id')+' a.upfront_cta:hover {'+style_hover+"}\n";
 
@@ -877,16 +1089,30 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		$('style#style'+me.property('element_id')).html(style);
 	},
 	on_save: function() {
+		
+		this.is_saving = true;
 		var currentpreset = this.property('currentpreset');
 		if(this.buttonpresets.$el.css('display') == 'none')
 			this.save_preset(this.property('currentpreset'));
 		this.is_changed = true;
 		this.constructor.__super__.on_save.apply(this, arguments);
 	},
+	revert_preset: function(e) {
+		var me = this;
+		if(me.property('currentpreset') == '')
+			return;
+
+		setTimeout(function() {
+			if(me.is_saving)
+				return;
+			
+			$('style#style'+me.property('element_id')).html(me.original_style);
+		}, 200);
+	},
 	editPreset: function(e){
 		e.preventDefault();
 		var selectedpreset = this.$el.find('div.button_preset li.upfront-field-select-option-selected input').val();
-		if(selectedpreset == 'undefined')
+		if(!selectedpreset || selectedpreset == 'undefined')
 			return;
 		this.property('currentpreset', selectedpreset, true);
 		this.ready_preset();
@@ -904,131 +1130,144 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	delete_preset: function(presetname) {
 		Upfront.Views.Editor.Button.Presets.remove(presetname);
+		this.property('currentpreset', '','');
 		Upfront.Events.trigger("entity:settings:deactivate");
 
 	},
 
 	load_preset: function(presetname) {
 			if(Upfront.Views.Editor.Button.Presets.get(presetname)) {
-				var preset = Upfront.Views.Editor.Button.Presets.get(presetname).attributes;	
-	
+				var preset = Upfront.Views.Editor.Button.Presets.get(presetname).attributes;
+
 				this.borderType.set_value(preset.bordertype);
-	
+
 				this.borderWidth.set_value(preset.borderwidth);
-	
-				this.borderColor.set_value(preset.bordercolor);	
-	
-				this.borderRadius1.set_value(preset.borderradius1);	
-	
+
+				this.borderColor.set_value(preset.bordercolor);
+
+				this.borderRadiusLock.set_value(preset.borderradiuslock);
+
+				this.borderRadius1.set_value(preset.borderradius1);
+
 				this.borderRadius2.set_value(preset.borderradius2);
-	
-				this.borderRadius4.set_value(preset.borderradius4);	
-	
-				this.borderRadius3.set_value(preset.borderradius3);	
-	
-				this.bgColor.set_value(preset.bgcolor);				
-	
-				this.fontSize.set_value(preset.fontsize);				
-	
+
+				this.borderRadius4.set_value(preset.borderradius4);
+
+				this.borderRadius3.set_value(preset.borderradius3);
+
+				this.bgColor.set_value(preset.bgcolor);
+
+				this.fontSize.set_value(preset.fontsize);
+
 				this.fontFace.set_value(preset.fontface);
-	
+
 				this.color.set_value(preset.color);
-				
+
 				this.hov_duration.set_value(preset.hov_duration);
-	
+
 				this.hov_transition.set_value(preset.hov_transition);
-				
+
 				if(preset.hov_bordertype) {
-					
+
 					this.hov_borderType.set_value(preset.hov_bordertype);
-					this.hov_borderType.$el.addClass('touched');	
+					this.hov_borderType.$el.addClass('touched');
 				}
 				else
 					this.hov_borderType.set_value(preset.bordertype);
-					
-	
+
+
 				if(preset.hov_borderwidth) {
-					
+
 					this.hov_borderWidth.set_value(preset.hov_borderwidth);
-					this.hov_borderWidth.$el.addClass('touched');	
+					this.hov_borderWidth.$el.addClass('touched');
 				}
 				else
 					this.hov_borderWidth.set_value(preset.borderwidth);
-	
+
 				if(preset.hov_bordercolor) {
-					
-					this.hov_borderColor.set_value(preset.hov_bordercolor);	
-					this.hov_borderColor.$el.addClass('touched');	
+
+					this.hov_borderColor.set_value(preset.hov_bordercolor);
+					this.hov_borderColor.$el.addClass('touched');
 				}
 				else
 					this.hov_borderColor.set_value(preset.bordercolor);
-	
+
+
+				if(preset.hov_borderradiuslock) {
+					this.hov_borderRadiusLock.set_value(preset.hov_borderradiuslock);
+					this.hov_borderRadiusLock.$el.addClass('touched');
+				}
+				else
+					this.hov_borderRadiusLock.set_value(preset.borderradiuslock);
+
+
+
 				if(preset.hov_borderradius1) {
-					this.hov_borderRadius1.set_value(preset.hov_borderradius1);	
-					this.hov_borderRadius1.$el.addClass('touched');	
+					this.hov_borderRadius1.set_value(preset.hov_borderradius1);
+					this.hov_borderRadius1.$el.addClass('touched');
 				}
 				else
 					this.hov_borderRadius1.set_value(preset.borderradius1);
-	
+
 				if(preset.hov_borderradius2) {
 					this.hov_borderRadius2.set_value(preset.hov_borderradius2);
-					this.hov_borderRadius2.$el.addClass('touched');	
+					this.hov_borderRadius2.$el.addClass('touched');
 				}
 				else
 					this.hov_borderRadius2.set_value(preset.borderradius2);
-	
+
 				if(preset.hov_borderradius4) {
-					this.hov_borderRadius4.set_value(preset.hov_borderradius4);	
-					this.hov_borderRadius4.$el.addClass('touched');	
+					this.hov_borderRadius4.set_value(preset.hov_borderradius4);
+					this.hov_borderRadius4.$el.addClass('touched');
 				}
 				else
 					this.hov_borderRadius4.set_value(preset.borderradius4);
-	
+
 				if(preset.hov_borderradius3) {
-					this.hov_borderRadius3.set_value(preset.hov_borderradius3);	
-					this.hov_borderRadius3.$el.addClass('touched');	
+					this.hov_borderRadius3.set_value(preset.hov_borderradius3);
+					this.hov_borderRadius3.$el.addClass('touched');
 				}
 				else
 					this.hov_borderRadius3.set_value(preset.borderradius3);
-	
+
 				if(preset.hov_bgcolor) {
-					this.hov_bgColor.set_value(preset.hov_bgcolor);	
-					this.hov_bgColor.$el.addClass('touched');	
+					this.hov_bgColor.set_value(preset.hov_bgcolor);
+					this.hov_bgColor.$el.addClass('touched');
 				}
 				else
-					this.hov_bgColor.set_value(preset.bgcolor);			
-	
+					this.hov_bgColor.set_value(preset.bgcolor);
+
 				if(preset.hov_fontsize) {
 					this.hov_fontSize.set_value(preset.hov_fontsize);
-					this.hov_fontSize.$el.addClass('touched');	
-				}	
+					this.hov_fontSize.$el.addClass('touched');
+				}
 				else
-					this.hov_fontSize.set_value(preset.fontsize);			
-	
+					this.hov_fontSize.set_value(preset.fontsize);
+
 				if(preset.hov_fontface) {
 					this.hov_fontFace.set_value(preset.hov_fontface);
-					this.hov_fontFace.$el.addClass('touched');	
+					this.hov_fontFace.$el.addClass('touched');
 				}
 				else
 					this.hov_fontFace.set_value(preset.fontface);
-	
+
 				if(preset.hov_color) {
 					this.hov_color.set_value(preset.hov_color);
-					this.hov_color.$el.addClass('touched');	
+					this.hov_color.$el.addClass('touched');
 				}
 				else
-					this.hov_color.set_value(preset.color);	
-		
-				this.$el.find('div.upfront-settings-css input[value='+preset.theme_style+']').trigger('click');
+					this.hov_color.set_value(preset.color);
+
+				this.$el.find('div.upfront-settings-css input[value="'+preset.theme_style+'"]').trigger('click');
 			}
 	},
 	save_preset: function(presetname) {
-		
 		var preset = Upfront.Views.Editor.Button.Presets.get(presetname);
 		if(preset) {
 			preset.attributes.bordertype = this.borderType.get_value();
 			preset.attributes.borderwidth = this.borderWidth.get_value();
 			preset.attributes.bordercolor = this.borderColor.get_value();
+			preset.attributes.borderradiuslock = this.borderRadiusLock.get_value();
 			preset.attributes.borderradius1 = this.borderRadius1.get_value();
 			preset.attributes.borderradius2 = this.borderRadius2.get_value();
 			preset.attributes.borderradius4 = this.borderRadius4.get_value();
@@ -1039,45 +1278,48 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			preset.attributes.color = this.color.get_value();
 			preset.attributes.hov_duration = this.hov_duration.get_value();
 			preset.attributes.hov_transition = this.hov_transition.get_value();
-			
+
 			if(this.hov_borderType.$el.hasClass('touched'))
 				preset.attributes.hov_bordertype = this.hov_borderType.get_value();
-			
-			
+
+
 			if(this.hov_borderWidth.$el.hasClass('touched'))
 				preset.attributes.hov_borderwidth = this.hov_borderWidth.get_value();
-			
+
 			if(this.hov_borderColor.$el.hasClass('touched'))
 				preset.attributes.hov_bordercolor = this.hov_borderColor.get_value();
-			
+
+			if(this.hov_borderRadiusLock.$el.hasClass('touched'))
+				preset.attributes.hov_borderradiuslock = this.hov_borderRadiusLock.get_value();
+
 			if(this.hov_borderRadius1.$el.hasClass('touched'))
 				preset.attributes.hov_borderradius1 = this.hov_borderRadius1.get_value();
-			
+
 			if(this.hov_borderRadius2.$el.hasClass('touched'))
 				preset.attributes.hov_borderradius2 = this.hov_borderRadius2.get_value();
-			
+
 			if(this.hov_borderRadius4.$el.hasClass('touched'))
 				preset.attributes.hov_borderradius4 = this.hov_borderRadius4.get_value();
-			
+
 			if(this.hov_borderRadius3.$el.hasClass('touched'))
 				preset.attributes.hov_borderradius3 = this.hov_borderRadius3.get_value();
-			
+
 			if(this.hov_bgColor.$el.hasClass('touched'))
 				preset.attributes.hov_bgcolor = this.hov_bgColor.get_value();
-			
+
 			if(this.hov_fontSize.$el.hasClass('touched'))
 				preset.attributes.hov_fontsize = this.hov_fontSize.get_value();
-			
+
 			if(this.hov_fontFace.$el.hasClass('touched'))
 				preset.attributes.hov_fontface = this.hov_fontFace.get_value();
-			
+
 			if(this.hov_color.$el.hasClass('touched'))
-				preset.attributes.hov_color = this.hov_color.get_value();			
-			
-			
+				preset.attributes.hov_color = this.hov_color.get_value();
+
+
 			preset.attributes.theme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
-			
-			Upfront.Views.Editor.Button.Presets.trigger('edit');		
+
+			Upfront.Views.Editor.Button.Presets.trigger('edit');
 		}
 		else {
 			var newpreset = {};
@@ -1085,6 +1327,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			newpreset.bordertype = this.borderType.get_value();
 			newpreset.borderwidth = this.borderWidth.get_value();
 			newpreset.bordercolor = this.borderColor.get_value();
+			newpreset.borderradiuslock = this.borderRadiusLock.get_value();
 			newpreset.borderradius1 = this.borderRadius1.get_value();
 			newpreset.borderradius2 = this.borderRadius2.get_value();
 			newpreset.borderradius4 = this.borderRadius4.get_value();
@@ -1095,15 +1338,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			newpreset.color = this.color.get_value();
 			newpreset.fontface = this.fontFace.get_value();
 			newpreset.color = this.color.get_value();
-			newpreset.hov_duration = this.hov_duration.get_value();			
-			newpreset.hov_transition = this.hov_transition.get_value();			
-			
+			newpreset.hov_duration = this.hov_duration.get_value();
+			newpreset.hov_transition = this.hov_transition.get_value();
+
 			if(this.hov_borderType.$el.hasClass('touched'))
 				newpreset.hov_bordertype = this.hov_borderType.get_value();
 			if(this.hov_borderWidth.$el.hasClass('touched'))
 				newpreset.hov_borderwidth = this.hov_borderWidth.get_value();
 			if(this.hov_borderColor.$el.hasClass('touched'))
 				newpreset.hov_bordercolor = this.hov_borderColor.get_value();
+			if(this.hov_borderRadiusLock.$el.hasClass('touched'))
+				newpreset.hov_borderradiuslock = this.hov_borderRadiusLock.get_value();
 			if(this.hov_borderRadius1.$el.hasClass('touched'))
 				newpreset.hov_borderradius1 = this.hov_borderRadius1.get_value();
 			if(this.hov_borderRadius2.$el.hasClass('touched'))
@@ -1120,24 +1365,25 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				newpreset.hov_fontface = this.hov_fontFace.get_value();
 			if(this.hov_color.$el.hasClass('touched'))
 				newpreset.hov_color = this.hov_color.get_value();
-			
-			
+
+
 			newpresettheme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
-			
+
 			Upfront.Views.Editor.Button.Presets.add(newpreset);
+
 		}
-		
-		if(this.buttonpresets.$el.find('input[value='+presetname+']').length > 0)
-			this.buttonpresets.$el.find('input[value='+presetname+']').trigger('click');
+
+		if(this.buttonpresets.$el.find('input[value="'+presetname+'"]').length > 0)
+			this.buttonpresets.$el.find('input[value="'+presetname+'"]').trigger('click');
 		else if(this.buttonpresets.$el.find('input[type=radio]:checked').length > 0)
 			this.buttonpresets.$el.find('input[type=radio]:checked').val(presetname);
 		else if(this.buttonpresets.$el.find('input[type=radio]').length > 0)
 			this.buttonpresets.$el.find('input[type=radio]').first().val(presetname).prop('checked', true);
 		else {
-			
+
 			this.buttonpresets.$el.find('ul.upfront-field-select-options').append($('<li>').append($('<input>').attr('type', 'radio').attr('name', 'currentpreset').val(presetname).prop('checked', true)));
 		}
-		
+
 	},
 	property: function(name, value, silent) {
 		if(typeof value != "undefined"){

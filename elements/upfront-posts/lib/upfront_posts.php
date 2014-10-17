@@ -28,9 +28,16 @@ class Upfront_UpostsView extends Upfront_Object {
 			: array()
 		;
 
-		if (empty($post_type) && empty($taxonomy) && empty($term)) { // All empty, use whatever is global
-			if (empty($data['query'])) $args = $wp_query->query_vars;
-			else  $args = $data['query']['query_vars'];
+		// Are we even capable of using the global query?
+		$is_singular = !empty($data['query']) && !empty($data['query']['is_singular'])
+			? true
+			: (!empty($wp_query) && !empty($wp_query->is_singular) ? true : false)
+		;
+
+		if (/*empty($post_type) &&*/ empty($taxonomy) && empty($term)) { // All empty, use whatever is global
+			if (!$is_singular && empty($data['query'])) $args = $wp_query->query_vars;
+			else if (!$is_singular) $args = $data['query']['query_vars'];
+			else $args = array();
 		}
 
 		$post_type = !empty($post_type) ? $post_type : get_query_var('post_type');

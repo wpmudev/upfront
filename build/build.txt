@@ -36,12 +36,12 @@ upfront/upfront-behaviors.js
 jquery/jquery-dateFormat.min.js
 jquery/jquery.simulate.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/backbone-query-parameters/backbone-query-parameters.js
+responsive.js
 upfront/objects/loading.js
 upfront/upfront-objects.js
 upfront/upfront-media.js
 upfront/upfront-content.js
 spectrum/spectrum.js
-responsive.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-accordion/js/uaccordion.js
 redactor/redactor.js
 redactor/ueditor.js

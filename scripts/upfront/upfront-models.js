@@ -166,7 +166,7 @@ var _alpha = "alpha",
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				data[breakpoint.id][property] = value;
-				this.model.set_property('breakpoint', data);
+				this.set_property('breakpoint', data);
 			}
 		},
 		add_to: function (collection, index, options) {
@@ -1304,7 +1304,7 @@ var _alpha = "alpha",
 		}
 	});
 
-	Comment = WPModel.extend({
+	var Comment = WPModel.extend({
 		modelName: 'comment',
 		defaults: {
 			comment_ID: 0,
@@ -1523,6 +1523,43 @@ var _alpha = "alpha",
 		}
 	}),
 
+    ImageVariant = Backbone.Model.extend({
+        defaults : {
+            vid   : "",
+            label : "Variant Label",
+            group : {
+                col: 24,
+                row: 50,
+                left: 0,
+                float: "none"
+            },
+            image : {
+            	order: 0,
+            	col: 24,
+            	top: 0,
+            	left: 0,
+            	row: 40,
+            	clear: true
+            },
+            caption : {
+                show: 1,
+                order: 1,
+                col: 24,
+                top: 0,
+                left: 0,
+                row: 10,
+                clear: true
+            }
+        },
+        initialize: function () {
+        	//this.set('group', Upfront.Util.clone(this.defaults.group));
+        	//this.set('image', Upfront.Util.clone(this.defaults.image));
+        	//this.set('caption', Upfront.Util.clone(this.defaults.caption));
+        }
+    }),
+    ImageVariants = Backbone.Collection.extend({
+        model : ImageVariant
+    }),
 _omega = 'omega';
 
 return {
@@ -1542,7 +1579,8 @@ return {
       "Comments": Comments,
       "Meta": Meta,
       "Term": Term,
-      "User": User
+      "User": User,
+      "ImageVariant" : ImageVariant
     },
     "Collections": {
       "Properties": Properties,
@@ -1553,7 +1591,8 @@ return {
       "CommentList": CommentList,
       "MetaList": MetaList,
       "PostList": PostList,
-      "TermList": TermList
+      "TermList": TermList,
+      "ImageVariants" : ImageVariants
     }
   };
 });

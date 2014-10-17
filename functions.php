@@ -15,14 +15,13 @@ require_once(dirname(__FILE__) . '/library/class_upfront_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_grid.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_style_preprocessor.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_output.php');
-//require_once(dirname(__FILE__) . '/library/class_upfront_form.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_endpoint.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 
 
 
 class Upfront {
-
+	public static $Excluded_Files = array(".", "..", ".DS_Store");
 	private $_servers = array(
 		'ajax',
 		'javascript_main',
@@ -53,11 +52,55 @@ class Upfront {
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
+
+		// Deal with parent deletion attempts
+		add_action('load-themes.php', array($this, 'detect_parent_theme_deletion'));
+		add_action('admin_notices', array($this, 'notify_about_parent_deletion_attempt'));
+	}
+
+	/**
+	 * So, we can't deal with parent theme deletion because, apparently, 
+	 * that's voodoo: https://core.trac.wordpress.org/ticket/14955#comment:16
+	 */
+	public function detect_parent_theme_deletion () {
+		if (empty($_GET['action']) || 'delete' !== $_GET['action']) return false;
+		$stylesheet = !empty($_GET['stylesheet'])
+			? $_GET['stylesheet']
+			: false
+		;
+		if ('upfront' !== $stylesheet) return false; // Not deleting Upfront core, no reason to stick around
+		
+		$current = wp_get_theme();
+		$parent = $current->parent();
+		if (empty($parent)) return false; // Current theme is not a child theme, carry on...
+		if ('upfront' !== $parent->get_template()) return false; // Not an Upfront child, carry on...
+
+		// We are here, so the user is deleting Upfront core with Upfront child theme active.
+		wp_safe_redirect(admin_url('themes.php?upfront-delete=refused'));
+		die;
+	}
+
+	/**
+	 * Cry out on refused deletion.
+	 */
+	public function notify_about_parent_deletion_attempt () {
+		if (empty($_GET['upfront-delete'])) return false;
+		echo '<div class="error"><p>' .
+			__('You have tried removing Upfront core while still having an Upfront child theme active. Please, activate a different theme and try again.', 'upfront') .
+		'</p></div>';
 	}
 
 	private function _add_supports () {
 		add_theme_support('post-thumbnails');
 		register_nav_menu('default', _('Default'));
+		// Do widget text
+		$do_widget_text = apply_filters(
+			'upfront-shortcode-enable_in_widgets', 
+			(defined('UPFRONT_DISABLE_WIDGET_TEXT_SHORTCODES') && UPFRONT_DISABLE_WIDGET_TEXT_SHORTCODES ? false : true)
+		);
+		if ($do_widget_text) {
+			add_filter('widget_text', 'do_shortcode');
+		}
 	}
 
 	private function _run_server ($comp) {
@@ -206,6 +249,4 @@ EOAdditivemarkup;
 	}
 
 }
-
-//Upfront::serve(); // This is one potentially breaking change - TEST and REVIEW
 add_action('init', array('Upfront', 'serve'), 0);

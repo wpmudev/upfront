@@ -2397,7 +2397,6 @@
 				}
 				else this.$box.prepend(this.$toolbar);
 			}
-
 			$.each(this.opts.buttons, $.proxy(function(i, btnName)
 			{
 				if (this.opts.toolbar[btnName])

@@ -29,6 +29,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.on('deactivated', function() {
+			console.log('deactivating the text element editor');
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 	},
@@ -69,6 +70,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			.addClass('upfront-plain_txt')
 			.ueditor({
 				linebreaks: false,
+                //airButtons : ["upfrontFormatting"],
 				inserts: {},
 				autostart: false
 			})
@@ -95,7 +97,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			})
 		;
 
-	},
+	}
 });
 
 

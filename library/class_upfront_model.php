@@ -590,6 +590,12 @@ class Upfront_Layout extends Upfront_JsonModel {
 					'type' => 'archive'
 				)
 			),
+			'archive-search' => array(
+				'layout' => array(
+					'item' => 'archive-search',
+					'type' => 'archive'
+				)
+			),
 			'404' => array(
 				'layout' => array(
 					'specificity' => 'single-404_page',
@@ -877,8 +883,8 @@ abstract class  Upfront_PostModel {
 			array(
 				'post_type' => $post_type,
 				'post_status' => 'auto-draft',
-				'post_title' => 'Write a title...',
-				'post_content' => 'Your content goes here :)',
+				'post_title' => (!empty($title) ? $title : 'Write a title...'),
+				'post_content' => (!empty($content) ? $content : 'Your content goes here :)'),
 			),
 			$post_type
 		);

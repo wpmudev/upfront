@@ -1,4 +1,4 @@
-/* @ TODO: need to add [+] button and make sure it triggers the appropriate event.. 
+/* @ TODO: need to add [+] button and make sure it triggers the appropriate event..
 
 //Adding [+] control
 var $upfrontObjectContent = this.$el.find('.upfront-object-content');
@@ -78,7 +78,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		//Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
 		this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select': 'openImageSelector',
-			'click .ugallery_addmore_wrapper': 'openImageSelector',
+			'click .add-item': 'openImageSelector',
+			//'click .ugallery_addmore_wrapper': 'openImageSelector', // NOT USING THIS
 			'click .ugallery_op_link': 'imageEditLink',
 			'click .ugallery_op_mask': 'imageEditMask',
 			'click .ugallery_item_rm_yes': 'removeImage',
@@ -442,6 +443,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>' + l10n.personalize + '</p></div>');
 		}
 
+		if (this.images && this.images.length) {
+			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
+			if(this.$el.find('a.add-item').length < 1) {
+				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+			}
+		}
 
 		//Calculate margins now if it is possible
 		if(me.$el.closest('body').length)
@@ -498,7 +505,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 
 		}, 300);
-		
+
 		this.activateSortable();
 	},
 
@@ -1393,7 +1400,7 @@ var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function (opts) {
-    this.has_tabs = false;
+	this.has_tabs = false;
 		this.options = opts;
 		var me = this;
 
@@ -1456,7 +1463,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						property: 'captionPosition',
 						layout: "horizontal-inline",
-            			label: l10n.panel.caption_style,
+						label: l10n.panel.caption_style,
 						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios ugallery-setting-caption-position',
 						values: [
 							{value: 'over', label: l10n.panel.over, icon: 'over'},
@@ -1465,7 +1472,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					}),
 					new fields.Color({
 						label: l10n.panel.caption_bg,
-            			label_style: 'inline',
+						label_style: 'inline',
 						spectrum: {
 							showAlpha: true,
 							showPalette: true,
@@ -1475,10 +1482,10 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 							preferredFormat: "hex",
 							chooseText: l10n.panel.ok,
 							showInput: true,
-						    allowEmpty:true,
-						    show: function(){
+							allowEmpty:true,
+							show: function(){
 								spectrum = $('.sp-container:visible');
-						    },
+							},
 							change: function(color) {
 								var rgba = color.toRgbString();
 								me.model.set_property('captionUseBackground', !!color.alpha);

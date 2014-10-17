@@ -130,7 +130,7 @@ var hackRedactor = function(){
 	};
 
 
-	
+	$.Redactor.prototype.airBindMousemoveHide = function () {};
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air) return;
@@ -351,12 +351,15 @@ var Ueditor = function($el, options) {
 	}
 
 };
-
+	UeditorEvents.trigger("ueditor:blur", function(redac){
+		console.log("blured", redac)
+	});
 Ueditor.prototype = {
 	disableStop: false,
 	mouseupListener: false,
 
 	start: function(){
+		var self = this;
 		this.stopPlaceholder();
 		this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
@@ -386,6 +389,14 @@ Ueditor.prototype = {
 		if(!this.options.autostart)
 			this.listenToOuterClick();
 
+		$(document).on("keyup", function(e){
+			if(e.keyCode === 27 ){
+				self.stop();
+			}
+		});
+
+
+
 	},
 	stop: function(){
 		if(this.redactor){
@@ -398,7 +409,7 @@ Ueditor.prototype = {
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
-		$(document).off('click', this.checkInnerClick);
+		//$("html").off('click', this.stopOnOutsideClick);
 	},
 
 	bindStartEvents: function() {
@@ -437,7 +448,7 @@ Ueditor.prototype = {
 			//Store the state to allow undo
 			var selection = me.redactor.getSelection();
 			me.redactor.bufferSet();
-		})
+		});
 		manager.on('insert:added insert:removed', function(){
 			me.redactor.sync();
 			me.redactor.events.trigger("ueditor:insert:media");
@@ -449,23 +460,29 @@ Ueditor.prototype = {
 		if(!this.checkInnerClick){
 			this.checkInnerClick = function(e){
 				//Check we are not selecting text
-				var selection = document.getSelection ? document.getSelection() : document.selection;
+				/*var selection = document.getSelection ? document.getSelection() : document.selection;
 				if(selection && selection.type == 'Range')
 					return;
-
+				*/
 				//Check if the click has been inner, or inthe popup, otherwise stop the editor
 				if(!me.options.autostart && me.redactor){
-					var $target = $(e.target);
-					if(!me.disableStop && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
-						me.stop();
-						me.bindStartEvents();
-					}
+					//var $target = $(e.target);
+					//if(!me.disableStop && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
+					//	me.stop();
+					//	me.bindStartEvents();
+					//}
+					me.stop();
 				}
 			};
 		}
-		$(document).on('click', this.checkInnerClick);
+		$("html").on('click', {ueditor : me}, this.stopOnOutsideClick);
 	},
+	stopOnOutsideClick: function(e){
 
+		if( !( $(e.target).hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_air") || $(e.target).parents().hasClass("redactor_dropdown") ) ) {
+			e.data.ueditor.stop();
+		}
+	},
 	callMethod: function(method){
 		var result = this.$el.redactor(method);
 		UeditorEvents.trigger("ueditor:method:" + method, this.$el.redactor);
@@ -527,7 +544,8 @@ Ueditor.prototype = {
 		}
 	},
 	pluginList: function(options){
-		var allPlugins = ['stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'upfrontIcons'],
+		var allPlugins = ['stateAlignmentCTA', 'stateAlignment', 'stateLists', 'blockquote', 'stateButtons', 'upfrontLink', /*'upfrontLinkCTA',*/ 'upfrontColor', 'panelButtons', /* 'upfrontMedia', 'upfrontImages', */'upfrontFormatting', 'upfrontSink', 'upfrontPlaceholder', 'upfrontIcons'],
+
 			pluginList = []
 		;
 		$.each(allPlugins, function(i, name){
@@ -759,6 +777,69 @@ RedactorPlugins.stateAlignment = {
 	}
 }
 
+RedactorPlugins.stateAlignmentCTA = {
+	beforeInit: function(){
+		var self = this;
+		this.opts.stateButtons.stateAlignCTA = {
+			title: 'Text alignment',
+			defaultState: 'left',
+			states: {
+				left: {
+					iconClass: 'ueditor-left',
+					isActive: function(redactor){
+						//console.log('returned left' + (self.$element.length && self.$element.css('text-align') == 'left'));
+						return self.$element.length && self.$element.css('text-align') == 'left';
+
+					},
+					callback: function(name, el , button){
+						
+						self.$element.css('text-align', 'left');
+						//.alignmentLeft();
+					}
+				},
+				center: {
+					iconClass: 'ueditor-center',
+					isActive: function(redactor){
+						
+						//console.log('returned center' + (self.$element.length && self.$element.css('text-align') == 'center'));
+						return self.$element.length && self.$element.css('text-align') == 'center';
+
+					},
+					callback: function(name, el , button){
+						
+						self.$element.css('text-align', 'center');
+						
+					}
+				},
+				right: {
+					iconClass: 'ueditor-right',
+					isActive: function(redactor){
+						
+						//console.log('returned right' + (self.$element.length && self.$element.css('text-align') == 'right'));
+						return self.$element.length && self.$element.css('text-align') == 'right';
+
+					},
+					callback: function(name, el , button){
+						
+						self.$element.css('text-align', 'right');
+					}
+				},
+				justify: {
+					iconClass: 'ueditor-justify',
+					isActive: function(redactor){
+						
+						//console.log('returned justify' + (self.$element.length && self.$element.css('text-align') == 'justify'));
+						return self.$element.length && self.$element.css('text-align') == 'justify';
+
+					},
+					callback: function(name, el , button){
+						self.$element.css('text-align', 'justify');
+					}
+				}
+			}
+		}
+	}
+}
 
 RedactorPlugins.stateLists = {
 	beforeInit: function(){
@@ -993,7 +1074,6 @@ RedactorPlugins.upfrontLink = {
 		},
 		render: function(options){
 			options = options || {};
-			console.log(options);
 			this.linkPanel.model.set({
 				url: options.url,
 				type: options.link || this.guessLinkType(options.url)
@@ -1005,11 +1085,14 @@ RedactorPlugins.upfrontLink = {
 		},
 		open: function(e, redactor){
 			this.redactor = redactor;
-
-			var link = redactor.currentOrParentIs('A');
+			var link = false;
+			if(redactor.$element.hasClass('upfront_cta'))
+				link = redactor.$element;
+			else
+				link = redactor.currentOrParentIs('A');
 
 			if(link){
-				this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+				this.render({url: $(link).attr('href'), link: this.guessLinkType($(link).attr('href'))});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
 			}
 			else
 				this.render();
@@ -1020,19 +1103,31 @@ RedactorPlugins.upfrontLink = {
 		unlink: function(e){
 			if(e)
 				e.preventDefault();
-         var text = this.redactor.getSelectionHtml();
-         if( $.parseHTML(text).length > 1){// there is html inside
-             this.redactor.execCommand('inserthtml', text, true);
-         }else{
-             this.redactor.execCommand('unlink');
-         }
 
+			if(this.redactor.$element.hasClass('upfront_cta'))
+				this.redactor.$element.attr('href', '#');
+			else {
+		        var text = this.redactor.getSelectionHtml();
+		        if($.parseHTML(text).length > 1){// there is html inside
+		            this.redactor.execCommand('inserthtml', text, true);
+		        }else{
+		            this.redactor.execCommand('unlink');
+		        }
+			}
 		},
 		link: function(url, type){
 			if(url){
-				this.redactor.selectionRestore(true, false);
-                var caption = this.redactor.getSelectionHtml();
-                this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
+				if(this.redactor.$element.hasClass('upfront_cta'))
+					this.redactor.$element.attr('href', url);
+				else {
+					this.redactor.selectionRestore(true, false);
+	                var caption = this.redactor.getSelectionHtml();
+	                var link = this.redactor.currentOrParentIs('A');
+	                if(link)
+	                	$(link).attr('href', url).attr('rel', type);
+	                else	
+	                	this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
+				}
 			}
 		},
 
@@ -1057,8 +1152,8 @@ RedactorPlugins.upfrontLink = {
 		guessLinkType: function(url){
 			if(!$.trim(url))
 				return 'unlink';
-			if(url.lenght && url[0] == '#')
-				return 'anchor';
+			if(url.length && url[0] == '#')
+				return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
 			if(url.substring(0, location.origin.length) == location.origin)
 				return 'entry';
 
@@ -1067,7 +1162,92 @@ RedactorPlugins.upfrontLink = {
 
 	})
 }
+/*
+RedactorPlugins.upfrontLinkCTA = {
+	beforeInit: function(){
+		this.opts.buttonsCustom.upfrontLinkCTA = {
+			title: 'Link',
+			panel: this.panel
+		};
+	},
+	panel: UeditorPanel.extend({
+		tpl: _.template($(tpl).find('#link-tpl').html()),
+		events:{
+			open: 'open'
+		},
+		initialize: function(){
+			this.linkPanel = new Upfront.Views.Editor.LinkPanel({linkTypes: {unlink: true}, button: true});
+			this.bindEvents();
+			UeditorPanel.prototype.initialize.apply(this, arguments);
+		},
+		render: function(options){
+			options = options || {};
+			this.linkPanel.model.set({
+				url: options.url,
+				type: options.link || this.guessLinkType(options.url)
+			});
 
+			this.linkPanel.render();
+			this.$el.html(this.linkPanel.el);
+			this.linkPanel.delegateEvents();
+		},
+		open: function(e, redactor){
+			this.redactor = redactor;
+
+			var link = redactor.$element;
+
+			if(link){
+				this.render({url: $(link).attr('href'), link: this.guessLinkType($(link).attr('href'))});
+			}
+			else
+				this.render();
+		},
+		close: function(e, redactor){
+			this.redactor.selectionRemoveMarkers();
+		},
+		unlink: function(e){
+			if(e)
+				e.preventDefault();
+			this.redactor.$element.attr('href', '#');
+
+		},
+		link: function(url, type){
+			if(url){
+				this.redactor.$element.attr('href', url);
+			}
+		},
+
+		bindEvents: function(){
+			this.listenTo(this.linkPanel, 'link:ok', function(data){
+				if(data.type == 'unlink')
+					this.unlink();
+				else
+					this.link(data.url, data.type);
+
+				this.closeToolbar();
+			});
+
+			this.listenTo(this.linkPanel, 'link:postselector', this.disableEditorStop);
+
+			this.listenTo(this.linkPanel, 'link:postselected', function(data){
+				this.enableEditorStop();
+				this.link(data.url, data.type);
+			});
+		},
+
+		guessLinkType: function(url){
+			if(!$.trim(url))
+				return 'unlink';
+			if(url.length && url[0] == '#')
+				return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+			if(url.substring(0, location.origin.length) == location.origin)
+				return 'entry';
+
+			return 'external';
+		}
+
+	})
+}*/
 RedactorPlugins.upfrontColor = {
 	beforeInit: function(){
 		this.opts.buttonsCustom.upfrontColor = {
@@ -1357,6 +1537,7 @@ RedactorPlugins.upfrontFormatting = {
 				h3: 'H3',
 				h4: 'H4',
 				h5: 'H5',
+				h6: 'H6',
 				pre: '&lt;/&gt;',
 				blockquote: '"'
 			};
@@ -1546,8 +1727,8 @@ var InsertManager = Backbone.View.extend({
 
 					insert.start()
 						.done(function(popup, results){
-							if(!results)
-								return;
+							// if(!results) Let's allow promises without result for now!
+							//	return;
 							me.inserts[insert.cid] = insert;
 							//Allow to undo
 							//this.trigger('insert:prechange'); // "this" is the embedded image object
@@ -1567,6 +1748,7 @@ console.log("POSITION AFTER", block, where);
 							});
 
 							me.listenTo(insert, 'remove', me.onRemoveInsert);
+							$(".uinsert-selector").hide();
 						})
 					;
 				});

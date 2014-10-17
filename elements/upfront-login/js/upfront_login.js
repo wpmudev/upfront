@@ -89,6 +89,7 @@ define([
 			var model = this.model;
 			this.fields.each(function (field) {
 				var data = field.get_value();
+				if (!_.isObject(data)) return;
 				_(data).each(function (val, idx) {
 					if ('appearance' == idx && !val) return true;
 					model.set_property(idx, val);

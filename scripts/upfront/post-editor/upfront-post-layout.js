@@ -41,7 +41,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	get_content_markup: function(){
-		console.log(this.property('postPart'));
 		var part = this.property('postPart'),
 			markupper = ContentTools.getMarkupper(),
 			template = this.getTemplate(),
@@ -65,7 +64,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Events.trigger('post:layout:partrendered', this);
 
-//		console.log('post part rendered');
 	},
 
 	updateOptions: function(){
@@ -146,13 +144,12 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 var PostPartElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	className: "draggable-element upfront-no-select draggable-post-element",
 	initialize: function(opts){
-		console.log('initializing element');
 		this.options = opts;
 		this.title = opts.title;
 		this.slug = this.title.toLowerCase().replace(' ', '_');
 		this.Model = PostPartModel;
 		this.View = partViews[this.slug] ? partViews[this.slug] : PostPartView;
-		this.Settings = partSettings[this.slug] ? partSettings[this.slug] : PostPartSettings;
+        this.Settings = partSettings[this.slug] ? partSettings[this.slug] : PostPartSettings;
 	},
 	add_element: function(){
 		var object = new this.Model({properties:{
@@ -272,6 +269,7 @@ var ContentSettings = PostPartSettings.extend({
 		'change .upfront-field-number': 'updatePadding'
 	},
 	init: function(opts){
+        console.log("this.panels", this.panels);
 	  this.panels = _([
 	      new Settings.Panel({
             hide_common_fields: true,
@@ -351,6 +349,7 @@ var ContentView = PostPartView.extend({
 	},
 
 	render: function(){
+        var self = this;
 		PostPartView.prototype.render.apply(this, arguments);
 
 		if(!this.paddingChangeHandler){
@@ -369,7 +368,7 @@ var ContentView = PostPartView.extend({
 			rightPadding = right * colSize,
 			leftPadding = left * colSize,
 			styles = $('.upfront-region-postlayouteditor').find('.upfront-post-padding'),
-			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents>* {'
+			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents {'
 		;
 
 		if(!styles.length){
@@ -386,6 +385,7 @@ var ContentView = PostPartView.extend({
 	}
 });
 
+
 var FeaturedImageView = PostPartView.extend({
 	init: function(options){
 		this.partOptions = this.postView.partOptions.featured_image || {};
@@ -400,7 +400,6 @@ var FeaturedImageView = PostPartView.extend({
 		this.moduleId = moduleId;
 		this.moduleView = parentView.$('#' + moduleId);
 
-//		console.log(this.model.get('properties').toJSON());
 
 		if(!this.placeholder){
 			this.placeholder = $('<div class="upfront-post-thumb-placeholder upfront-ui"><div>Post Featured Image</div></div>');
@@ -619,6 +618,7 @@ var PostPartModel = Upfront.Models.ObjectModel.extend({
 	}
 });
 
+
 var SaveDialog = Backbone.View.extend({
 	tpl: _.template($(tpls).find('#save-dialog-tpl').html()),
 	attributes: {id: 'upfront-save-dialog-background'},
@@ -705,6 +705,7 @@ var SaveDialog = Backbone.View.extend({
 });
 
 Upfront.Views.Editor.SaveDialog = SaveDialog;
+var ImageVariants = new Upfront.Collections.ImageVariants( Upfront.mainData.postImageVariants );
 
 //Set Upfront.Content
 if(!Upfront.Content)
@@ -713,7 +714,8 @@ if(!Upfront.Content)
 _.extend(Upfront.Content, {
 	PostElement: PostPartElement,
 	TemplateEditor: TemplateEditor,
-	PostPart: PostPartModel
+	PostPart: PostPartModel,
+    ImageVariants : ImageVariants
 });
 
 return {};

@@ -80,7 +80,7 @@ var MenuItemView = Backbone.View.extend({
 								$(me.event.target).siblings('a.menu_item').addClass('new_menu_item');
 							else
 								$(me.event.target).addClass('new_menu_item');
-			 				
+
 			 				me.removeContexts = false;
 						 	me.parent_view.editMenuItem(me.$el.find('a.new_menu_item'));
 						}
@@ -1418,6 +1418,11 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			},
 			onSaveSettings: function() {
 				this.model.get_property_by_name('allow_new_pages').trigger('change');
+				//console.log(_.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')}).slug);
+				// Update slug because it's depending on id and has to be updated properly
+				var themenu = _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')});
+				if(themenu)
+					this.model.set_property('menu_slug', themenu.slug);
 			},
 			/**
 			 * Get the title (goes into settings title area)

@@ -14,13 +14,15 @@
 	border-bottom: 2px #000 solid;
 }
 
+.upfront-accordion-container .accordion-panel-title:after,
+.upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
+  border:5px solid transparent;
+}
 .upfront-accordion-container .accordion-panel-title:after {
 	content: '';
 	width: 0;
 	height: 0;
 	border-top: 5px solid #000;
-	border-left: 5px solid transparent;
-	border-right: 5px solid transparent;
 	position: absolute;
 	top: 45%;
 	right: 22px;
@@ -30,9 +32,7 @@
 	content: '';
 	width: 0;
 	height: 0;
-	border-top: 5px solid transparent !important;
 	border-left: 5px solid #000;
-	border-bottom: 5px solid transparent;
 	position: absolute;
 	top: 45%;
 	right: 22px;
@@ -45,21 +45,25 @@
   background-position: -483px -171px;
   background-image: url('../../../img/uf-core-el-sprite.svg');
   position: absolute;
-  right: 50px;
-  top: 20px;
+  right: 20px;
+  top: 13px;
   visibility: hidden;
   cursor: pointer;
   overflow: hidden;
   line-height: 3em;
+  z-index: 1;
 }
 
 .upfront-accordion_module .upfront-accordion-container .accordion-panel-active:hover i {
   visibility: visible;
 }
+.upfront-accordion-container .accordion-panel-active:hover .accordion-panel-title:after {
+  display: none;
+}
 
 .upfront-accordion-container .accordion-panel-content {
 	overflow: hidden;
-	padding: 7px 15px !important;
+	padding: 7px 15px;
 }
 
 

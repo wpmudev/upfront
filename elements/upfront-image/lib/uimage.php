@@ -43,7 +43,9 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['placeholder_class'] = !empty($data['src']) ? '' : 'uimage-placeholder';
 
-		$markup = '<div id="' . $data['element_id'] . '">' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
+		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
+
+		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($data['when_clicked'] == 'image'){
 			//Lightbox
@@ -125,8 +127,8 @@ class Upfront_UimageView extends Upfront_Object {
 
 	public static function add_styles_scripts () {
 		wp_enqueue_style( 'wp-color-picker' );
-		//upfront_add_element_style('upfront_image', array('css/uimage.css', dirname(__FILE__)));
-		wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
+		upfront_add_element_style('upfront_image', array('css/uimage.css', dirname(__FILE__)));
+		//wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
 		wp_enqueue_script('wp-color-picker');
 	}
 
@@ -207,10 +209,10 @@ class Upfront_UimageView extends Upfront_Object {
 			),
 			'template' => array(
 				'drop_files' => __('Drop files here to upload', 'upfront'),
-				'select_files' => __('Select Files', 'upfront'),
+				'select_files' => __('Upload File', 'upfront'),
 				'max_file_size' => __('Maximum upload file size: 32MB', 'upfront'),
 				'or_browse' => __('or browse your', 'upfront'),
-				'media_gallery' => __('media gallery', 'upfront'),
+				'media_gallery' => __('Media Gallery', 'upfront'),
 				'uploading' => __('Uploading...', 'upfront'),
 				'links_to' => __('Links to:', 'upfront'),
 				'no_link' => __('No link', 'upfront'),

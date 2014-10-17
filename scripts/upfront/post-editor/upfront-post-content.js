@@ -68,8 +68,6 @@ var PostContentEditor = Backbone.View.extend({
 	},
 
 	initialize: function(opts){
-		console.log('Post content editor');
-
 		this.post = opts.post;
 		this.postView = opts.postView;
 		this.triggeredBy = opts.triggeredBy || this.$('.upfront-content-marker').first();
@@ -105,18 +103,24 @@ var PostContentEditor = Backbone.View.extend({
 		var me = this;
 		//Title
 		this.parts.titles = this.$('.upfront-content-marker-title');
+
 		if(this.parts.titles.length){
+			var parent = this.parts.titles.parent();
+			if (parent.is("a")) {
+				parent.replaceWith(this.parts.titles);
+			}
 			this.onTitleEdited = _.bind(this.titleEdited, this);
+
 			this.parts.titles
-			.attr('contenteditable', true)
-			.on('keyup', this.onTitleEdited)
-			.on('keydown', function(e){
+				.attr('contenteditable', true)
+				/*.on('keyup', this.onTitleEdited)
+				.on('keydown', function(e){
 					if(e.which != 9) //TAB
 						return;
 
 					e.preventDefault();
 					me.focus(me.$('.upfront-content-marker-contents'), true);
-				})
+				})*/
 			;
 		}
 

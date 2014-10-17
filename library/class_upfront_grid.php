@@ -117,7 +117,7 @@ class Upfront_Grid {
 				if ( $region['sub'] == 'top' || $region['sub'] == 'bottom' )
 					$region_col = $point->get_columns();
 				else
-				$region_col = $this->_get_property_col($region);
+					$region_col = $this->_get_property_col($region);
 				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions']);
 				$region_row = $this->_get_property_row($region);
 				$region_hide = $this->_get_breakpoint_data($region, 'hide');
@@ -127,6 +127,8 @@ class Upfront_Grid {
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				if ( $region_row )
 					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
+				if ( !$point->is_default() && $region['sub'] == 'fixed' ) // @TODO we hide float region by default for responsive for now
+					$region_hide = 1;
 				if ( $region_hide == 1 )
 					$point_css .= $point->apply_hide($region_hide, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				$point_css .= $this->_apply_modules($region, $region_col);
@@ -148,6 +150,7 @@ class Upfront_Grid {
 			usort($wrappers, array($this, '_sort_cb'));
 
 		$line_col = $col; // keep track of how many column has been applied for each line
+		$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
 		foreach ($modules as $m => $module) {
 			$module_col = $this->_get_class_col($module);
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
@@ -156,30 +159,33 @@ class Upfront_Grid {
 			$next_wrapper_id = false;
 			$next_wrapper_data = false;
 			if ( !empty($wrapper_data) ) {
-				if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
-					if ( isset($wrappers[$wrapper_index+1]) )
-						$next_wrapper_data = $wrappers[$wrapper_index+1];
-				}
-				if ( empty($next_wrapper_data) ) { // find next wrapper based on the module order
-					$next_modules = array_slice($modules, $m+1);
-					if ( !empty($next_modules) ){
-						foreach ( $next_modules as $n => $mod ){
-							$next_wrapper_id = upfront_get_property_value('wrapper_id', $mod);
-							if ( $next_wrapper_id != $wrapper_id ) {
-								$next_wrapper_data = $this->_find_wrapper($next_wrapper_id, $wrappers);
-								break;
+				$wrapper_col = $this->_get_class_col($wrapper_data);
+				if ( ! in_array($wrapper_id, $rendered_wrappers) ){
+					if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
+						if ( isset($wrappers[$wrapper_index+1]) )
+							$next_wrapper_data = $wrappers[$wrapper_index+1];
+					}
+					if ( empty($next_wrapper_data) ) { // find next wrapper based on the module order
+						$next_modules = array_slice($modules, $m+1);
+						if ( !empty($next_modules) ){
+							foreach ( $next_modules as $n => $mod ){
+								$next_wrapper_id = upfront_get_property_value('wrapper_id', $mod);
+								if ( $next_wrapper_id != $wrapper_id ) {
+									$next_wrapper_data = $this->_find_wrapper($next_wrapper_id, $wrappers);
+									break;
+								}
 							}
 						}
 					}
+					$line_col -= $wrapper_col;
+					$next_clear = $this->_get_property_clear($next_wrapper_data);
+					$next_fill = $next_clear ? $line_col : 0;
+					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
+					if ( $next_clear )
+						$line_col = $col;
+					$rendered_wrappers[] = $wrapper_id;
 				}
-				$wrapper_col = $this->_get_class_col($wrapper_data);
-				$line_col -= $wrapper_col;
-				$next_clear = $this->_get_property_clear($next_wrapper_data);
-				$next_fill = $next_clear ? $line_col : 0;
-				$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
 				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
-				if ( $next_clear )
-					$line_col = $col;
 			}
 			else {
 				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col);
@@ -214,6 +220,8 @@ class Upfront_Grid {
 		$columns = $breakpoint->get_columns();
 		foreach ( $regions as $region ){
 			if ( isset($region['container']) && $region['container'] != $container )
+				continue;
+			if ( $region['sub'] != 'left' && $region['sub'] != 'right' )
 				continue;
 			$region_col = $this->_get_property_col($region, $breakpoint);
 			if ( $region_col )

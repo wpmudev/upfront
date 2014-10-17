@@ -77,7 +77,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				layoutData = {
 					postLayout: me.postView.postLayout,
 					partOptions: me.postView.partOptions || {}
-				}
+				};
 
 				me.layoutData = true;
 				me.parts = me.postView.parts[me.postId];
@@ -143,7 +143,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				});
 			}
 
-			var wrappers = this.postView.postLayout,
+			var wrappers = this.postView.postLayout || {},
 				options = this.postView.partOptions || {},
 				layout = {
 					wrappers: wrappers,
@@ -162,7 +162,7 @@ define("content", deps, function(postTpl, ContentTools) {
 					;
 					_.each(attributes, function(value, key){
 						attrs += key +'="' + value + '" ';
-					})
+					});
 
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
@@ -211,7 +211,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		editContents: function(e, focusElement){
 			//If we are already editing, don't do anything
-			if(this.contentEditor)// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
+			if(this.contentEditor || Upfront.Application.is_builder())// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
 				return;
 
 			//If we haven't fetched all the data, return too
@@ -308,7 +308,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			loading.render();
 			this.$el.append(loading.$el);
-			this.contentEditor.bar.$el.hide()
+			this.contentEditor.bar.$el.hide();
             console.log("results", results);
 			if(results.title)
 				this.post.set('post_title', results.title);
@@ -396,7 +396,9 @@ define("content", deps, function(postTpl, ContentTools) {
 		}
 	});
 
-	// Publish the post editor to the Upfront.Content object
+	// Publish the post editor to the Upfront.Content object, make sure Upfront.Content object exists
+	if(!Upfront.Content)
+		Upfront.Content = {};
 	Upfront.Content.PostEditor = PostEditor;
 });
 
