@@ -1483,7 +1483,7 @@ RedactorPlugins.upfrontColor = {
                        this.redactor.inlineRemoveClass( "inline_color" );
                        html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
 
-                        html = "<span class='upfront_theme_colors " + theme_color_classname + " " + bg_class + "' style='" + bg  + "'>"  + html + "</span>";
+                        html = "<inline class='upfront_theme_colors " + theme_color_classname + " " + bg_class + "' style='" + bg  + "'>"  + html + "</inline>";
                         //this.redactor.execCommand("inserthtml", html, true);
                         }
                     }else{
