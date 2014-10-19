@@ -269,7 +269,6 @@ var ContentSettings = PostPartSettings.extend({
 		'change .upfront-field-number': 'updatePadding'
 	},
 	init: function(opts){
-        console.log("this.panels", this.panels);
 	  this.panels = _([
 	      new Settings.Panel({
             hide_common_fields: true,
@@ -283,7 +282,7 @@ var ContentSettings = PostPartSettings.extend({
 							new Fields.Number({
 								label: 'Left',
 								property: 'padding_left',
-								max : 3,
+								//max : 3,
 								min: 0,
 								step : 1,
 								model: this.model
@@ -291,7 +290,7 @@ var ContentSettings = PostPartSettings.extend({
 							new Fields.Number({
 								label: 'Right',
 								property: 'padding_right',
-								max : 3,
+								//max : 3,
 								min: 0,
 								step : 1,
 								model: this.model
@@ -303,17 +302,39 @@ var ContentSettings = PostPartSettings.extend({
 	},
 	offsetChanged: function(e){
 		var input = e.target;
-		if(isNaN(parseInt(input.value)) || input.value < 0 || input.value > 3){
-			Upfront.Views.Editor.notify('Content padding needs to be an number between 0 and 3.', 'error');
-			input.value = 0;
-		}
-		this.updatePadding();
+		//if(isNaN(parseInt(input.value)) || input.value < 0 || input.value > 3){
+		//	Upfront.Views.Editor.notify('Content padding needs to be an number between 0 and 3.', 'error');
+		//	input.value = 0;
+		//}
+		this.updatePadding(e);
 	},
 
-	updatePadding: function(){
-		var left = this.$('input[name=padding_left]').val() || 0,
-			right = this.$('input[name=padding_right]').val() || 0
-		;
+	updatePadding: function(e){
+		var input = e.target,
+			col_size = Upfront.Behaviors.GridEditor.col_size,
+			left = this.$('input[name=padding_left]').val() || 0,
+			right = this.$('input[name=padding_right]').val() || 0,
+			_left = left * col_size,
+			_right = right * col_size,
+			$el = $(".upfront-region-postlayouteditor .upfront-output-PostPart_contents"),
+			current_width = _.isUndefined( $el.data("width") ) ?  $el.width() : $el.data("width");
+			;
+
+		$el.data("width", current_width);
+
+		/**
+		 * Prevent width to be less than 10 cols
+		 */
+		if( ( current_width - _left - _right ) < ( 10 * col_size ) ){
+			if( input.name === "padding_left" ){
+				input.value = _.isUndefined( $el.css("padding-left") ) ? 0 : parseInt( $el.css("padding-left").replace("px", "") ) / col_size;
+			}
+			if( input.name === "padding_right" ){
+				input.value = _.isUndefined( $el.css("padding-right") ) ? 0 : parseInt( $el.css("padding-right").replace("px", "") ) / col_size;
+			}
+			return false;
+		}
+
 		if(this.for_view)
 			this.for_view.trigger('post:padding:update', left, right);
 	}
@@ -368,7 +389,8 @@ var ContentView = PostPartView.extend({
 			rightPadding = right * colSize,
 			leftPadding = left * colSize,
 			styles = $('.upfront-region-postlayouteditor').find('.upfront-post-padding'),
-			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents {'
+			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents {',
+			$el = $(".upfront-region-postlayouteditor .upfront-output-PostPart_contents")
 		;
 
 		if(!styles.length){
