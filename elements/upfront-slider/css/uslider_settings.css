@@ -80,7 +80,7 @@
 }
 
 .upfront-entity_meta a.upfront-icon-button-nav {
-	margin-bottom: 6px;
+	margin-bottom: 4px;
 	box-shadow: inset 0 0 0 1px #145064;
 	background: #145064 -moz-linear-gradient(-45deg, rgba(51, 91, 128,1) 0%, rgba(51, 91, 128,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
 	background: #145064 -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(51, 91, 128,1)), color-stop(50%,rgba(51, 91, 128,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
@@ -90,38 +90,38 @@
 	background: #145064 linear-gradient(135deg, rgba(51, 91, 128,1) 0%,rgba(51, 91, 128,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
 
-.upfront-icon-region-right:before {
+.upfront-ui .upfront-icon-region-right:before {
 	background-position: -699px -39px;
 }
-.upfront-icon-region-right:hover:before {
+.upfront-ui .upfront-icon-region-right:hover:before {
 	background-position: -807px -39px;
 }
-.upfront-icon-region-right-active:before {
+.upfront-ui .upfront-icon-region-right-active:before {
 	background-position: -699px -39px;
 }
-.upfront-icon-region-right-active:hover:before {
+.upfront-ui .upfront-icon-region-right-active:hover:before {
 	background-position: -807px -39px;
 }
 
-.upfront-icon-region-left:before {
+.upfront-ui .upfront-icon-region-left:before {
 	background-position: -698px -807px;
 }
-.upfront-icon-region-left:hover:before {
+.upfront-ui .upfront-icon-region-left:hover:before {
 	background-position: -806px -807px;
 }
-.upfront-icon-region-left-active:before {
+.upfront-ui .upfront-icon-region-left-active:before {
 	background-position: -698px -807px;
 }
-.upfront-icon-region-left-active:hover:before {
+.upfront-ui .upfront-icon-region-left-active:hover:before {
 	background-position: -806px -807px;
 }
 
-.upfront-icon-prev:before {
-	background-position: -291px -130px;
+.upfront-ui .upfront-icon-prev:before {
+	background-position: -291px -133px;
 }
 
-.upfront-icon-next:before {
-	background-position: -290px -100px;
+.upfront-ui .upfront-icon-next:before {
+	background-position: -290px -103px;
 }
 
 .uslider-settings .upfront-settings-item{
@@ -183,4 +183,12 @@ background-position: -699px -646px;
 	display: inline-block;
 	margin-top: 10px;
 	color: #666;
+}
+
+.uslides .uimage-control-tooltip {
+	min-width: 63px;
+}
+.uslides .uimage-controls .upfront-inline-panel-bottom-left {
+	bottom: 0;
+	left: 0;
 }

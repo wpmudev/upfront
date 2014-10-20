@@ -595,7 +595,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			model: new Backbone.Model({
 				type: slide.get('urlType'),
 				url: slide.get('url')
-			})
+			}),
+			linkTypes: {image:true}
 		});
 
 		control.slide = slide;

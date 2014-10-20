@@ -1310,3 +1310,7 @@ div.uimage-controls i.upfront-icon:before {
 	max-height: none;
 	vertical-align: top;
 }
+.uimage-controls .upfront-inline-panel-bottom-left {
+	bottom:15px;
+	left:15px;
+}
