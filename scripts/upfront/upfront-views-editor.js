@@ -4130,6 +4130,7 @@ var Field_ToggleableText = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-select',
 		render: function () {
 			var me = this;
+
 			this.$el.html('');
 			if ( this.label )
 				this.$el.append(this.get_label_html());
@@ -4142,6 +4143,22 @@ var Field_ToggleableText = Field_Text.extend({
 					$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
 					me.$el.find('.upfront-field-select').css('min-width', '').css('min-width', me.$el.find('.upfront-field-select').width());
 					me.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
+
+					// Make sure all select options are visible in scroll panel i.e. scroll scroll panel as needed
+					_.delay(function() { // Delay because opening animation causes wrong outerHeight results
+						var $scroll_panel,
+							scroll_panel_bottom,
+							$select_options,
+							options_bottom;
+
+						$scroll_panel = me.$el.parents('.upfront-settings_panel_scroll');
+						if ($scroll_panel) {
+							scroll_panel_bottom = $scroll_panel.offset().top + $scroll_panel.outerHeight();
+							$select_options = me.$el.find('.upfront-field-select-options');
+							options_bottom =  $select_options.offset().top + $select_options.outerHeight();
+							$scroll_panel.scrollTop(options_bottom);
+						}
+					}, 500);
 				});
 				if ( !this.multiple ) {
 					this.$el.on('click', '.upfront-field-select-option label', function(e){
