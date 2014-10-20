@@ -1420,6 +1420,7 @@ input.upfront-field-text:hover,
 	left: 0;
 	right: 0;
 	max-height: 142px;
+	z-index: 21;
 }
 .upfront-field-select-option {
 	margin: 0 10px 0 0 !important;
@@ -3563,7 +3564,7 @@ a.upfront-region-name-edit-trigger:before {
 }
 .upfront-region-bg-setting-name .upfront-field-wrap {
 	width: 210px;
-	
+
 }
 .upfront-region-bg-setting-region-type {
 	margin: 0 0 20px;
@@ -10724,6 +10725,7 @@ a.upfront-css-edit:before, a.upfront-buttonpreset-edit:before, a.upfront-region-
   overflow: hidden;
 }
 .upfront-settings-common_panel.open {
+	overflow: visible;
   height: auto;
 }
 .upfront-settings-common_panel .upfront-settings-item {
