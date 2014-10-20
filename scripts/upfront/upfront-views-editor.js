@@ -380,7 +380,8 @@ define([
 					change: update_modal_data
 				}),
 				permalink: new Upfront.Views.Editor.Field.Text({
-					label: "",
+					label: Upfront.Settings.site_url.replace(/\/$/, '') + '/',
+					label_style: "inline",
 					name: "permalink",
 					change: update_modal_data
 				}),
