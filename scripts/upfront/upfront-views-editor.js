@@ -341,7 +341,10 @@ define([
 			var me = this,
 				$content = this.modal.$el.find('.upfront-inline-modal-content')
 			;
-			$content.empty();
+			$content
+				.empty()
+				.append('<h2>Add New Page</h2>')
+			;
 			_.each(me.modal._fields, function (field) {
 				field.render();
 				$content.append(field.$el);
@@ -369,7 +372,7 @@ define([
 					allTemplates: true
 				})
 			;
-			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
+			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540, button_text: 'Create Page'});
 			this.modal._fields = {
 				title: new Upfront.Views.Editor.Field.Text({
 					label: "",
