@@ -3666,7 +3666,6 @@ define([
 				'name': this.get_field_name(),
 				'value': this.get_saved_value()
 			};
-			if ('inline' === this.options.label_style) attr.class += ' upfront-has_inline_label';
 			if ( this.options.compact ) {
 				attr.placeholder = this.label;
 				this.$el.attr('data-tooltip', this.label);
