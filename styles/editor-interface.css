@@ -12751,3 +12751,16 @@ a.upfront-css-font {
 	cursor: pointer;
 	padding: 4px 0;
 }
+
+
+/* Toggleable text field */
+.upfront-ui .upfront-field-wrap-toggleable label b {
+	font-weight: bold;
+}
+.upfront-ui .upfront-toggleable-button {
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+	padding: 4px 6px;
+	margin-left: 8px;
+}
+/* Toggleable text field */
