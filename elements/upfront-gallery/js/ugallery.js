@@ -148,6 +148,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				});
 		});
 
+		this.listenTo(this.model, 'no_padding_change', function(e){
+			me.calculateMargins();
+		});
+
 		if(this.property('status') != 'ok' || !this.images.length)
 			this.property('has_settings', 0);
 		/*
@@ -401,6 +405,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		props.l10n = l10n.template;
 
+		if (!props.no_padding) props.no_padding = ['false'];
+
 		rendered = this.tpl(props);
 
 		return rendered;
@@ -517,6 +523,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			margin, totalMargin, remaining
 		;
 
+		if (this.property('no_padding')[0] === "true") {
+			_.each(items, function(item, idx){
+				$(item).css('margin-right', 0);
+			});
+			return;
+		}
+
 		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
 			columns--;
 
@@ -524,11 +537,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		margin = Math.floor(totalMargin / (columns-1));
 		remaining = container - (columns * itemWidth + margin * (columns-1));
 
-		_.each(items, function(it, idx){
+		_.each(items, function(item, idx){
 			var safetyPixel = idx % columns == 0 ? 1 : 0, //This pixel asure we are not exceding container width
 				extra = columns - (idx % columns) < remaining ? 1 : 0
 			;
-			$(it).css('margin-right', (idx + 1) % columns ? margin + extra - safetyPixel : 0);
+			$(item).css('margin-right', (idx + 1) % columns ? margin + extra - safetyPixel : 0);
 		});
 
 		return 1;
@@ -1390,9 +1403,10 @@ var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function (opts) {
-	this.has_tabs = false;
-		this.options = opts;
 		var me = this;
+
+		this.has_tabs = false;
+		this.options = opts;
 
 		this.panels = _([
 			new LayoutPanel({model: this.model})
@@ -1524,6 +1538,7 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 			me.setEvents([
 				//['click', '.ugallery-proportional', 'lockProportions'],
+				['change', 'input[name=no_padding]', 'on_no_padding_change'],
 				['change', 'input[name=thumbWidth]', 'onThumbChangeSize'],
 				['change', 'input[name=thumbProportions]', 'onThumbChangeProportions']
 			]);
@@ -1561,6 +1576,11 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				me[event[2]](e);
 			});
 		});
+	},
+
+	on_no_padding_change: function(event) {
+		this.property('no_padding', [$(event.target).is(':checked') + '']);
+		this.model.trigger('no_padding_change');
 	},
 
 	onThumbChangeSize: function(e){
@@ -1643,6 +1663,16 @@ var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 		;
 
 		this.fields = _([
+			new fields.Checkboxes({
+				model: this.model,
+				property: 'no_padding',
+				values: [
+					{
+						value: 'true',
+						label: l10n.panel.no_padding
+					}
+				]
+			}),
 			new fields.Radios({
 				model: this.model,
 				property: 'thumbProportions',

@@ -440,6 +440,12 @@
 <script type="text/template" id="linkpanel-tpl">
 	<div class="ulinkpanel-title">Links to:</div>
 	<form>
+	{[if(types.unlink) { ]}
+	<div class="upfront-field-wrap ulinkpanel-unlink-wrap">
+		<input type="radio" name="ulinkpanel-link" value="unlink" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-0" {{ link.type == 'unlink' ? checked : ''}}>
+		<label for="ulinkpanel-link-0">No link</label>
+	</div>
+	{[ } ]}
 	{[if(types.external) { ]}
 	<div class="upfront-field-wrap ulinkpanel-external-wrap">
 		<input type="radio" name="ulinkpanel-link" value="external" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-2" {{link.type == 'external' ? checked : ''}}>
@@ -477,12 +483,6 @@
 	<div class="upfront-field-wrap ulinkpanel-lightbox-wrap">
 		<input type="radio" name="ulinkpanel-link" value="lightbox" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-6" {{link.type == 'lightbox' ? checked : ''}}>
 		<label for="ulinkpanel-link-6">Lightbox</label>
-	</div>
-	{[ } ]}
-	{[if(types.unlink) { ]}
-	<div class="upfront-field-wrap ulinkpanel-unlink-wrap">
-		<input type="radio" name="ulinkpanel-link" value="unlink" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-0" {{link.type == 'unlink' ? checked : ''}}>
-		<label for="ulinkpanel-link-0">No link</label>
 	</div>
 	{[ } ]}
 	{[if(types.lightbox) { ]}

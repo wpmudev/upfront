@@ -1,19 +1,22 @@
 jQuery(function($){
 
-	var calculateMargins =  function(gallery, absolute) {
+	var calculateMargins =  function(gallery, absolute, is_root_gallery) {
 		var container = gallery.find('.ugallery_items').width(),
 			items = gallery.find('.ugallery_item'),
 			itemWidth = items.outerWidth(),
 			minMargin = 30,
 			columns = Math.floor(container / itemWidth),
-			margin, totalMargin, remaining, grid
+			margin, totalMargin, remaining, grid, no_padding
 		;
+
+		if (is_root_gallery) no_padding = gallery.data('no-padding');
+		else no_padding = gallery.parent().data('no-padding');
 
 		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
 			columns--;
 
 		totalMargin = container - (columns * itemWidth);
-		margin = Math.floor(totalMargin / (columns-1));
+		margin = no_padding ? 0 : Math.floor(totalMargin / (columns-1));
 		grid = margin + itemWidth;
 		remaining = container - (columns * itemWidth + margin * (columns-1));
 
@@ -26,10 +29,12 @@ jQuery(function($){
 					col = Math.round(left / grid)
 				;
 				extra = col < remaining ? col : 0;
+				if (no_padding) extra = 0;
 				$this.css('left', col*grid + extra);
 			}
 			else{
 				extra = columns - (idx % columns) < remaining ? 1 : 0;
+				if (no_padding) extra = 0;
 				$this.css('margin-right', (idx + 1) % columns ? margin + extra : 0);
 			}
 		});
@@ -139,7 +144,7 @@ jQuery(function($){
 		$('.ugallery').each(function(){
 			var gallery = $(this);
 			if(!gallery.children('.ugallery_grid').length)
-				calculateMargins(gallery);
+				calculateMargins(gallery, false, true);
 		});
 	})
 });
