@@ -341,7 +341,10 @@ define([
 			var me = this,
 				$content = this.modal.$el.find('.upfront-inline-modal-content')
 			;
-			$content.empty();
+			$content
+				.empty()
+				.append('<h2>Add New Page</h2>')
+			;
 			_.each(me.modal._fields, function (field) {
 				field.render();
 				$content.append(field.$el);
@@ -354,13 +357,11 @@ define([
 					_.each(me.modal._fields, function (field, key) {
 						me.modal._data[key] = field.get_value();
 					});
-					if (!me.modal._data.permalink) {
+					if (!me.modal._fields.permalink.has_been_edited()) {
 						var title = me.modal._data.title || me._default_label,
-							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase(),
-							$permalink = me.modal.$el.find('.upfront-field-text[name="permalink"]')
+							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase()
 						;
 						me.modal._fields.permalink.set_value(permalink);
-						$permalink.val(permalink);
 					}
 				},
 				_initial_templates = [{label: "None", value: ""}],
@@ -371,7 +372,7 @@ define([
 					allTemplates: true
 				})
 			;
-			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
+			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540, button_text: 'Create Page'});
 			this.modal._fields = {
 				title: new Upfront.Views.Editor.Field.Text({
 					label: "",
@@ -379,8 +380,9 @@ define([
 					default_value: this._default_label,
 					change: update_modal_data
 				}),
-				permalink: new Upfront.Views.Editor.Field.Text({
-					label: "",
+				permalink: new Field_ToggleableText({
+					label: '<b>Permalink:</b> ' + Upfront.Settings.site_url.replace(/\/$/, '') + '/',
+					label_style: "inline",
 					name: "permalink",
 					change: update_modal_data
 				}),
@@ -407,6 +409,7 @@ define([
 			this.modal._data = {};
 			_.each(_.keys(this.modal._fields), function (key) {
 				me.modal._data[key] = "";
+				if (me.modal._fields[key].reset_state) me.modal._fields[key].reset_state();
 			});
 
 		}
@@ -3675,6 +3678,87 @@ define([
 			return '<input ' + this.get_field_attr_html(attr) + ' />';
 		}
 	});
+
+/**
+ * Start in initially not editable state.
+ * Used for things such as permalink fields in "New Page" dialog.
+ * Not exposed globally.
+ */
+var Field_ToggleableText = Field_Text.extend({
+	is_edited: false,
+	className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-toggleable',
+	render: function () {
+		Field_Text.prototype.render.call(this);
+		if (this.is_edited) return false;
+		this.$el.append(
+			' ' +
+			'<a href="#" class="upfront-toggleable-button">Edit</a>'
+		);
+		var me = this;
+		this.$el.on('click', '.upfront-toggleable-button', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var $me = $(this),
+				$el = me.get_field()
+			;
+			$me.hide();
+			$el.replaceWith(me.get_editable_html());
+			me.is_edited = true;
+		});
+	},
+	has_been_edited: function () {
+		return this.is_edited;
+	},
+	reset_state: function () {
+		this.is_edited = Field_ToggleableText.prototype.is_edited;
+	},
+	get_field_html: function () {
+		return this.is_edited
+			? this.get_editable_html()
+			: this.get_toggleable_html()
+		;
+	},
+	get_field: function () {
+		return this.is_edited
+			? Field_Text.prototype.get_field.call(this)
+			: this.$el.find(".upfront-field-toggleable-value")
+		;
+	},
+	get_value: function () {
+		return this.is_edited
+			? Field_Text.prototype.get_value.call(this)
+			: $.trim(this.get_field().text())
+		;
+	},
+	set_value: function (value) {
+		return this.is_edited
+			? this.get_field().val(value)
+			: this.get_field().text(value)
+		;
+	},
+	get_toggleable_html: function () {
+		var value = this.get_value() || this.get_saved_value();
+		return '<span class="upfront-field-toggleable-value">' + value + '</span>';
+	},
+	get_editable_html: function () {
+		var attr = {
+				'type': 'text',
+				'class': 'upfront-field upfront-field-text upfront-field-toggleable',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.get_value() || this.get_saved_value()
+			};
+			if ('inline' === this.options.label_style) attr.class += ' upfront-has_inline_label';
+			if ( this.options.compact ) {
+				attr.placeholder = this.label;
+				this.$el.attr('data-tooltip', this.label);
+			}
+			else if ( this.options.placeholder ) {
+				attr.placeholder = this.options.placeholder;
+			}
+			return '<input ' + this.get_field_attr_html(attr) + ' />';
+	}
+});
 
 	var Field_Button = Field.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-button',
