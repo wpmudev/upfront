@@ -1258,6 +1258,9 @@ textarea.upfront-field-text.upfront-field-textarea {
 	font-family: verdana, sans-serif;
 	line-height: 16px;
 }
+input.upfront-field-text.upfront-has_inline_label {
+	width: auto;
+}
 textarea.upfront-field-text.upfront-field-textarea {
 	height: auto;
 }
@@ -2037,6 +2040,14 @@ a.ueditor-action-pickercancel{
 	cursor: move;
 }
 
+.upfront-inserted_image-wrapper .wp-caption-text,
+.uinsert-image-wrapper{
+	padding: 15px;
+}
+.uinsert-image-wrapper img{
+	width: 100%;
+	height: 100%;
+}
 .ueditor-insert .upfront-inline-panel-item i {
 	background-image: url('../img/uf-ui-sprite.png');
 	background-image: url('../img/uf-ui-sprite.svg'), none;
@@ -3374,13 +3385,14 @@ div.uinsert-selector a:hover {
 .upfront-inline-panel-item.labeled{
     line-height: 40px !important;
     color:#fff;
-    width: 100% !important;
+    min-width: 200px !important;
     padding: 0 10px;
 }
 .upfront-inline-panel-item .upfront-inline-panel-item-label{
     display: block;
     width: 100%;
     height: 100%;
+	overflow: hidden;
 }
 .upfront-region-panel-item-add-region .upfront-icon {
 	padding: 2px;
@@ -12356,8 +12368,9 @@ div.upfront-regions a#no_region_add_one {
   content:'\00a0';
 }
 /* fixes the jump when exiting txt editing */
+/** Had to comment the following otherwise it would hide all the breaks inside post editor(Sam)  **/
 .redactor_editor .nosortable br {
-	display: none;
+	/*display: none;*/
 }
 
 /* Disabled state fix for jquery UI theme-rolled css conflicts */
@@ -12738,3 +12751,16 @@ a.upfront-css-font {
 	cursor: pointer;
 	padding: 4px 0;
 }
+
+
+/* Toggleable text field */
+.upfront-ui .upfront-field-wrap-toggleable label b {
+	font-weight: bold;
+}
+.upfront-ui .upfront-toggleable-button {
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+	padding: 4px 6px;
+	margin-left: 8px;
+}
+/* Toggleable text field */

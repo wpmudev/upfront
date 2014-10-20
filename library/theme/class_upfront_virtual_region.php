@@ -138,7 +138,10 @@ class Upfront_Virtual_Region {
 			$this->_set_property('class', $class . ' ' . $default_wrapper_class, $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
 			if ( !empty($current_breakpoint_data) ){
 				foreach ( $current_breakpoint_data as $id => $data ){
-					$breakpoint_data[$id] = array_merge($data, $breakpoint_data[$id]);
+					if ( !empty($breakpoint_data[$id]) )
+						$breakpoint_data[$id] = array_merge($data, $breakpoint_data[$id]);
+					else
+						$breakpoint_data[$id] = $data;
 				}
 			}
 			$this->_set_property('breakpoint', $breakpoint_data, $this->modules[$group]['wrappers'][$this->current_group_wrapper]);
@@ -150,7 +153,10 @@ class Upfront_Virtual_Region {
 			$this->_set_property('class', $class . ' ' . $default_wrapper_class, $this->wrappers[$this->current_wrapper]);
 			if ( !empty($current_breakpoint_data) ){
 				foreach ( $current_breakpoint_data as $id => $data ){
-					$breakpoint_data[$id] = array_merge($data, $breakpoint_data[$id]);
+					if ( !empty($breakpoint_data[$id]) )
+						$breakpoint_data[$id] = array_merge($data, $breakpoint_data[$id]);
+					else
+						$breakpoint_data[$id] = $data;
 				}
 			}
 			$this->_set_property('breakpoint', $breakpoint_data, $this->wrappers[$this->current_wrapper]);

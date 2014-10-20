@@ -33,16 +33,8 @@ define(function() {
 		},
 
 		log: function () {
-			var msg = "UPFRONT: ",
-				parts = "",
-				vessel = (typeof console != "undefined" && console && console.log ? console.log : alert)
-			;
-			if (arguments.length > 1) {
-				for (var idx in arguments) {
-					msg += "[" + idx + "]: " + arguments[idx] + "\n";
-				}
-			} else msg += arguments[0];
-			console.log(msg);
+			var args = ["[UPFRONT]: "].concat(arguments);
+			console.log.apply(console, args);
 		},
 
 		dbg: function () {

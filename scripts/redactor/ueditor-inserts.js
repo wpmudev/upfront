@@ -319,32 +319,13 @@ var ImageInsert = UeditorInsert.extend({
 				type: "multi",
 				icon : "style",
 				tooltip: "Style",
-				selected: this.data.get("variant_id"),
+				selected: alignControl.selected,
 				subItems: this.get_style_control_data()
 			},
 			{id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
-			//{id: 'caption',
-			//    type: 'multi',
-			//    icon: 'caption',
-			//    tooltip: 'Caption',
-			//    selected: this.data.get('captionPosition') || 'nocaption',
-			//    subItems: [
-			//        {id: 'nocaption', icon: 'nocaption', tooltip: 'No caption'},
-			//        {id: 'left', icon: 'caption-left', tooltip: 'At the left'},
-			//        {id: 'bottom', icon: 'caption-bottom', tooltip: 'At the bottom'},
-			//        {id: 'right', icon: 'caption-right', tooltip: 'At the right'}
-			//    ]
-			//},
 			this.getRemoveControlData()
 		];
 		this.createControls();
-		this.data.set("style",  (style_variant ? style_variant : new Upfront.Models.ImageVariant()).toJSON() );
-		//if(!this.data.get('width')){
-		//    var width = this.data.get('imageThumb').width;
-		//    if(['left', 'right'].indexOf(this.data.get('captionPosition')) != -1)
-		//        width += 3 * Upfront.Behaviors.GridEditor.col_size;
-		//    this.data.set({width: width}, {silent: true});
-		//}
 
 	},
 
@@ -372,43 +353,37 @@ var ImageInsert = UeditorInsert.extend({
 		var me = this,
 			data = this.data.toJSON(),
 			style_variant = this.data.get("style"),
-			wrapperSize = this.data.get('imageThumb');
+			wrapperSize = this.data.get('imageThumb'),
+			grid = Upfront.Settings.LayoutEditor.Grid;
 
 		data.image = data.imageFull;
 
-		//if(data.align == 'full') {
-		//    data.image = data.imageFull;
-		//} else {
-		//    data.image = data.imageThumb;
-		//}
-		//
-		//var src = this.data.get('imageFull').src;
-		//if (!src) {
-		//    this.data.set("imageFull", {
-		//        height: data.style_variant.get("group").height,
-		//        //width: data.width,
-		//        src: data.src
-		//    });
-		//    data.image = this.data.get("imageFull");
-		//}
-		//data.set("style", )
-		//Adapt the caption with the variant style
-		//style_variant.caption.text = data.caption;
-		//data.caption = style_variant.caption;
-		//
-		////Adapt the image with the variant style
-		//data.image = _.extend(data.image, style_variant.image);
-		//data = _.extend( style_variant, data );
-		//console.log("rendering", data);
+		if( (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+			data.image = data.imageThumb;
+			console.info('data.imageThumb');
+
+		}
+
+		var apply_classes = function (d) {
+			d.height = d.row * grid.baseline;
+			d.width_cls = grid.class + d.col;
+			d.left_cls = grid.left_margin_class + d.left;
+			if ( d.top )
+				d.top_cls = grid.top_margin_class + d.top;
+			d.clear_cls = d.clear ? 'clr' : '';
+		};
+		apply_classes( data.style.group );
+		apply_classes( data.style.image );
+		apply_classes( data.style.caption );
+
+
 		this.$el
 			.html(this.tpl(data))
 		;
 
-		Upfront.Util.grid.update_class(this.$el, style_variant.group.width_cls);
-		this.$el.css({
-			float : style_variant.group.float,
-			height : style_variant.group.height
-		});
+		Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
+		Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.top);
+		this.$el.css({float : style_variant.group.float});
 		this.controls.render();
 		this.$el.append(this.controls.$el);
 		this.make_caption_editable();
@@ -432,7 +407,7 @@ var ImageInsert = UeditorInsert.extend({
 
 	make_caption_editable: function(){
 		var me = this;
-		if( !this.data.get("style").caption.show ) return;
+		if( !this.data.get("style").caption.show || this.$('.wp-caption-text').length === 0) return;
 			this.$('.wp-caption-text')
 				//.attr('contenteditable', true)
 				.off('keyup')
@@ -609,7 +584,7 @@ var ImageInsert = UeditorInsert.extend({
 	},
 
 	getSimpleOutput: function () {
-		var out = this.el.cloneNode(),
+		var out = this.el.cloneNode(true),
 			data = this.data.toJSON()
 			;
 
@@ -734,15 +709,15 @@ var ImageInsert = UeditorInsert.extend({
 				insert.data.set('align', align);
 
 			caption = wrapper.find('.wp-caption-text');
-			if(caption.length){
-				insert.data.set('caption', caption.html());
-				if(wrapper.hasClass('uinsert-caption-left'))
-					insert.data.set('captionPosition', 'left');
-				else if(wrapper.hasClass('uinsert-caption-right'))
-					insert.data.set('captionPosition', 'right');
-				else
-					insert.data.set('captionPosition', 'bottom');
-			}
+			//if(caption.length){
+			//	insert.data.set('caption', caption.html());
+			//	if(wrapper.hasClass('uinsert-caption-left'))
+			//		insert.data.set('captionPosition', 'left');
+			//	else if(wrapper.hasClass('uinsert-caption-right'))
+			//		insert.data.set('captionPosition', 'right');
+			//	else
+			//		insert.data.set('captionPosition', 'bottom');
+			//}
 
 		}
 		insert.render();
@@ -855,47 +830,47 @@ var ImageInsert = UeditorInsert.extend({
 		return imageData;
 	},
 
-	resizableImage: function(){
-		return;
-		var me = this,
-			captionPosition = this.data.get('captionPosition'),
-			handles = {w: '.upfront-resize-handle-w'},
-			h = 'w',
-			colSize = Upfront.Behaviors.GridEditor.col_size
-			;
-		if(captionPosition == 'right'){
-			handles = {e: '.upfront-resize-handle-e'};
-			h = 'e';
-		}
-
-		this.$('.uinsert-image-wrapper')
-			.append('<span class="upfront-icon-control upfront-icon-control-resize-' + h + ' upfront-resize-handle-' + h + ' ui-resizable-handle ui-resizable-' + h + ' nosortable" style="display: inline;"></span>')
-			.resizable({
-				handles:handles,
-				start: function(e){
-					var insertWidth = me.$el.width();
-					me.onStartResizing();
-					me.$el.width(me.$el.width());
-					$(this).resizable('option', {
-						maxWidth:  insertWidth - 2 * colSize,
-						minWidth: 2 * colSize
-					});
-				},
-				resize: function(e, ui){
-					var wrapper = me.resizeCache.wrapper;
-					//refresh image dimensions and position
-					var imageData = me.calculateImageResize({width: wrapper.width(), height: wrapper.height()}, me.resizeCache.imagedata);
-					me.resizeCache.image.css(imageData);
-					$(this).css({left: 0});
-				},
-				stop: function(e, ui){
-					me.onStopResizing();
-				},
-				grid: [colSize, Upfront.Behaviors.GridEditor.baseline]
-			})
-		;
-
-	},
+	//resizableImage: function(){
+	//	return;
+	//	var me = this,
+	//		captionPosition = this.data.get('captionPosition'),
+	//		handles = {w: '.upfront-resize-handle-w'},
+	//		h = 'w',
+	//		colSize = Upfront.Behaviors.GridEditor.col_size
+	//		;
+	//	if(captionPosition == 'right'){
+	//		handles = {e: '.upfront-resize-handle-e'};
+	//		h = 'e';
+	//	}
+    //
+	//	this.$('.uinsert-image-wrapper')
+	//		.append('<span class="upfront-icon-control upfront-icon-control-resize-' + h + ' upfront-resize-handle-' + h + ' ui-resizable-handle ui-resizable-' + h + ' nosortable" style="display: inline;"></span>')
+	//		.resizable({
+	//			handles:handles,
+	//			start: function(e){
+	//				var insertWidth = me.$el.width();
+	//				me.onStartResizing();
+	//				me.$el.width(me.$el.width());
+	//				$(this).resizable('option', {
+	//					maxWidth:  insertWidth - 2 * colSize,
+	//					minWidth: 2 * colSize
+	//				});
+	//			},
+	//			resize: function(e, ui){
+	//				var wrapper = me.resizeCache.wrapper;
+	//				//refresh image dimensions and position
+	//				var imageData = me.calculateImageResize({width: wrapper.width(), height: wrapper.height()}, me.resizeCache.imagedata);
+	//				me.resizeCache.image.css(imageData);
+	//				$(this).css({left: 0});
+	//			},
+	//			stop: function(e, ui){
+	//				me.onStopResizing();
+	//			},
+	//			grid: [colSize, Upfront.Behaviors.GridEditor.baseline]
+	//		})
+	//	;
+    //
+	//},
 	get_style_control_data : function(){
 		return  Upfront.Content.ImageVariants.map(function( variant, index ){
 			return {

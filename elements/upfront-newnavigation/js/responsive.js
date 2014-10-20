@@ -37,7 +37,8 @@ jQuery(document).ready(function($) {
 		});
 	});
 	
-	$('body').on('click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
+	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
+		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).parent().find('ul.menu').show();
 			if($(this).parent().data('burger_over') == 'pushes')
@@ -52,7 +53,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
-	$('body').on('click', 'div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > a, div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > span', null, function(e) {
+	$('body').on('touchstart click', 'div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > a, div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > span', null, function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		if($(this).closest('li').children('ul.sub-menu').css('display') == 'none')

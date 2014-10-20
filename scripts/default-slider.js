@@ -204,6 +204,7 @@
 				this.items.each(function(index){
 					$nav.append('<i class="' + data.classname.nav_item + ' uslider-dotnav-' + index + '" data-slider-index="' + index + '">'+index+'</i>');
 				});
+
 				this.$slider.on('click', '.'+data.classname.nav_item, function(e){
 					e.preventDefault();
 					var index = $(this).data('slider-index');

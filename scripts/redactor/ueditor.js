@@ -130,7 +130,7 @@ var hackRedactor = function(){
 	};
 
 
-	
+	$.Redactor.prototype.airBindMousemoveHide = function () {};
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air) return;
@@ -478,7 +478,8 @@ Ueditor.prototype = {
 		$("html").on('click', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
-		if( !( $(e.target).hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_box") ) ) {
+
+		if( !( $(e.target).hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_air") || $(e.target).parents().hasClass("redactor_dropdown") ) ) {
 			e.data.ueditor.stop();
 		}
 	},
@@ -1747,6 +1748,7 @@ console.log("POSITION AFTER", block, where);
 							});
 
 							me.listenTo(insert, 'remove', me.onRemoveInsert);
+							$(".uinsert-selector").hide();
 						})
 					;
 				});

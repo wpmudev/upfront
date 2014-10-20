@@ -1552,9 +1552,9 @@ var _alpha = "alpha",
             }
         },
         initialize: function () {
-        	this.set('group', Upfront.Util.clone(this.defaults.group));
-        	this.set('image', Upfront.Util.clone(this.defaults.image));
-        	this.set('caption', Upfront.Util.clone(this.defaults.caption));
+        	//this.set('group', Upfront.Util.clone(this.defaults.group));
+        	//this.set('image', Upfront.Util.clone(this.defaults.image));
+        	//this.set('caption', Upfront.Util.clone(this.defaults.caption));
         }
     }),
     ImageVariants = Backbone.Collection.extend({

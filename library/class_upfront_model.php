@@ -883,8 +883,8 @@ abstract class  Upfront_PostModel {
 			array(
 				'post_type' => $post_type,
 				'post_status' => 'auto-draft',
-				'post_title' => 'Write a title...',
-				'post_content' => 'Your content goes here :)',
+				'post_title' => (!empty($title) ? $title : 'Write a title...'),
+				'post_content' => (!empty($content) ? $content : 'Your content goes here :)'),
 			),
 			$post_type
 		);

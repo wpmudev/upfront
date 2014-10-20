@@ -183,4 +183,7 @@
 	border-radius: 6px;
 	background: #465f80;
 }
-
+/* z-index fix for ball navigation in slider */
+.upfront-output-bg-overlay.upfront-output-bg-slider {
+	z-index: 20;
+}

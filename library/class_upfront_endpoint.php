@@ -291,6 +291,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	private function _add_hooks () {
 		//add_action('wp_ajax_upfront-edit-publish', array($this, "publish_post"));
 		upfront_add_ajax('upfront-edit-publish', array($this, "publish_post"));
+		
+		upfront_add_ajax('upfront-create-post_type', array($this, "create_post_type"));
 
 		//add_action('wp_ajax_upfront-edit-draft', array($this, "draft_post"));
 		upfront_add_ajax('upfront-edit-draft', array($this, "draft_post"));
@@ -352,6 +354,28 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error($action . ' not implemented.'));
 
 		call_user_func(array($this, $action), $data);
+	}
+
+	function create_post_type () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
+		$data = wp_parse_args(
+			stripslashes_deep($_POST['data']), 
+			array(
+				'post_type' => 'post',
+				'title' => 'Write a title...',
+			)
+		);
+
+		$post = Upfront_PostModel::create($data['post_type'], $data['title']);
+		if (!empty($data['permalink'])) $post->post_name = $data['permalink'];
+		if (!empty($data['template'])) update_post_meta($post->ID, '_wp_page_template', $data['template']);
+
+		$post->post_status = 'draft';
+		Upfront_PostModel::save($post);
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'post_id' => $post->ID,
+			'permalink' => get_permalink($post->ID),
+		)));
 	}
 
 	function publish_post () {

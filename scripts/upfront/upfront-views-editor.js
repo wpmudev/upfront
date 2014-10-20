@@ -301,6 +301,7 @@ define([
 	var Command_NewPage = Command_NewPost.extend({
 		"className": "command-new-page",
 		postType: 'page',
+		_default_label: "New Page",
 		initialize: function () {
 			this.setMode = Upfront.Application.MODE.LAYOUT;
 		},
@@ -308,13 +309,109 @@ define([
 			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New page");
+				this.$el.removeClass('tooltip-inline tooltip-bottom').html(this._default_label);
 			else
-				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New page</span>');
+				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">' + this._default_label + '</span>');
 		},
 		on_click: function(e){
 			e.preventDefault();
-			Upfront.Application.navigate('/create_new/page', {trigger: true});
+			var me = this;
+
+			this.spawn_modal();
+			this.modal.render();
+			$('body').append(this.modal.el);
+
+			this.modal.open(function () {
+				me.render_modal();
+				me.trigger("new_page:modal:open");
+			}).done(function () {
+				me.trigger("new_page:modal:close");
+				Upfront.Util.post({
+					action: "upfront-create-post_type",
+					data: _.extend({post_type: me.postType}, me.modal._data)
+				}).done(function (resp) {
+					Upfront.Util.log(resp.data);
+					Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
+
+				});
+				//Upfront.Application.navigate('/create_new/page', {trigger: true});
+			})
+		},
+		render_modal: function () {
+			var me = this,
+				$content = this.modal.$el.find('.upfront-inline-modal-content')
+			;
+			$content
+				.empty()
+				.append('<h2>Add New Page</h2>')
+			;
+			_.each(me.modal._fields, function (field) {
+				field.render();
+				$content.append(field.$el);
+			});
+		},
+		spawn_modal: function () {
+			if (this.modal) return this.initialize_modal_data();
+			var me = this,
+				update_modal_data = function () {
+					_.each(me.modal._fields, function (field, key) {
+						me.modal._data[key] = field.get_value();
+					});
+					if (!me.modal._fields.permalink.has_been_edited()) {
+						var title = me.modal._data.title || me._default_label,
+							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase()
+						;
+						me.modal._fields.permalink.set_value(permalink);
+					}
+				},
+				_initial_templates = [{label: "None", value: ""}],
+				templates_request = Upfront.Util.post({
+					action: "upfront-wp-model",
+					model_action: "get_post_extra",
+					postId: "fake", // Stupid walkaround for model handler insanity
+					allTemplates: true
+				})
+			;
+			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540, button_text: 'Create Page'});
+			this.modal._fields = {
+				title: new Upfront.Views.Editor.Field.Text({
+					label: "",
+					name: "title",
+					default_value: this._default_label,
+					change: update_modal_data
+				}),
+				permalink: new Field_ToggleableText({
+					label: '<b>Permalink:</b> ' + Upfront.Settings.site_url.replace(/\/$/, '') + '/',
+					label_style: "inline",
+					name: "permalink",
+					change: update_modal_data
+				}),
+				template: new Upfront.Views.Editor.Field.Select({
+					label: "Page Template",
+					name: "template",
+					values: _initial_templates
+				})
+			};
+			this.initialize_modal_data();
+			this.on("new_page:modal:open", update_modal_data, this);
+			this.on("new_page:modal:close", update_modal_data, this);
+			templates_request.done(function (response) {
+				me.modal._fields.template.options.values = _initial_templates; // Zero out the templates selection
+				if (!response.data || !response.data.allTemplates) return false;
+				_.each(response.data.allTemplates, function (tpl, title) {
+					me.modal._fields.template.options.values.push({label: title, value: tpl});
+				});
+				me.modal._fields.template.render();
+			});
+		},
+		initialize_modal_data: function () {
+			var me = this;
+			this.modal._data = {};
+			_.each(_.keys(this.modal._fields), function (key) {
+				me.modal._data[key] = "";
+				if (me.modal._fields[key].reset_state) me.modal._fields[key].reset_state();
+			});
+
 		}
 	});
 
@@ -833,21 +930,7 @@ define([
 				type: "Layout",
 				sidebar: false,
 				element_id: 'layout',
-				global: true,
-				change: function() {
-					// Don't save stuff if we're in builder mode
-					if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
-						// Don't allow user to navigate if layout style is not saved
-						Upfront.themeExporter.layoutStyleDirty = true;
-						return;
-					}
-
-					// Timed save
-					clearTimeout(save_t);
-					save_t = setTimeout(function(){
-						editor.$el.find('.upfront-css-save-ok').click();
-					}, 1000);
-				}
+				global: true
 			});
 		}
 	});
@@ -3481,7 +3564,7 @@ define([
 				this.on('rendered', this.options.rendered, this);
 			if (this.options.on_click)
 				this['on_click'] = this.options.on_click;
-				
+
 			this.once('rendered', function(){
 				var me = this;
 				this.get_field().on('focus', function(){
@@ -3581,6 +3664,87 @@ define([
 			return '<input ' + this.get_field_attr_html(attr) + ' />';
 		}
 	});
+
+/**
+ * Start in initially not editable state.
+ * Used for things such as permalink fields in "New Page" dialog.
+ * Not exposed globally.
+ */
+var Field_ToggleableText = Field_Text.extend({
+	is_edited: false,
+	className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-toggleable',
+	render: function () {
+		Field_Text.prototype.render.call(this);
+		if (this.is_edited) return false;
+		this.$el.append(
+			' ' +
+			'<a href="#" class="upfront-toggleable-button">Edit</a>'
+		);
+		var me = this;
+		this.$el.on('click', '.upfront-toggleable-button', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var $me = $(this),
+				$el = me.get_field()
+			;
+			$me.hide();
+			$el.replaceWith(me.get_editable_html());
+			me.is_edited = true;
+		});
+	},
+	has_been_edited: function () {
+		return this.is_edited;
+	},
+	reset_state: function () {
+		this.is_edited = Field_ToggleableText.prototype.is_edited;
+	},
+	get_field_html: function () {
+		return this.is_edited
+			? this.get_editable_html()
+			: this.get_toggleable_html()
+		;
+	},
+	get_field: function () {
+		return this.is_edited
+			? Field_Text.prototype.get_field.call(this)
+			: this.$el.find(".upfront-field-toggleable-value")
+		;
+	},
+	get_value: function () {
+		return this.is_edited
+			? Field_Text.prototype.get_value.call(this)
+			: $.trim(this.get_field().text())
+		;
+	},
+	set_value: function (value) {
+		return this.is_edited
+			? this.get_field().val(value)
+			: this.get_field().text(value)
+		;
+	},
+	get_toggleable_html: function () {
+		var value = this.get_value() || this.get_saved_value();
+		return '<span class="upfront-field-toggleable-value">' + value + '</span>';
+	},
+	get_editable_html: function () {
+		var attr = {
+				'type': 'text',
+				'class': 'upfront-field upfront-field-text upfront-field-toggleable',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.get_value() || this.get_saved_value()
+			};
+			if ('inline' === this.options.label_style) attr.class += ' upfront-has_inline_label';
+			if ( this.options.compact ) {
+				attr.placeholder = this.label;
+				this.$el.attr('data-tooltip', this.label);
+			}
+			else if ( this.options.placeholder ) {
+				attr.placeholder = this.options.placeholder;
+			}
+			return '<input ' + this.get_field_attr_html(attr) + ' />';
+	}
+});
 
 	var Field_Button = Field.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-button',
@@ -5716,7 +5880,6 @@ var CSSEditor = Backbone.View.extend({
 		LoginModel: {label: 'Login', id: 'upfront-login_element'},
 		LikeBox: {label: 'Like Box', id: 'Like-box-object'},
 		MapModel: {label: 'Map', id: 'upfront-map_element'},
-		//NavigationModel: {label: 'Navigation', id: 'nav'},
 		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
 		ButtonModel: {label: 'Button', id: 'ubutton'},
 		UpostsModel: {label: 'Posts', id: 'uposts'},
@@ -5757,10 +5920,10 @@ var CSSEditor = Backbone.View.extend({
 
 		if(this.$style)
 			this.close();
-		
+
 		// Don't render the editor, only makes the API available
 		this.no_render = ( options.no_render === true );
-		
+
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
 		this.global = ( options.global === true );
@@ -5772,31 +5935,33 @@ var CSSEditor = Backbone.View.extend({
 		// and options.element_id is "layout" than global stylesheet is edited.
 		this.is_global_stylesheet = options.type === 'Layout' && options.element_id === 'layout';
 
+		if (this.is_global_stylesheet) this.sidebar = true;
+
 		this.resolve_stylename(options);
 
 		this.ensure_style_element();
 
 		this.selectors = this.elementSelectors[this.modelType] || {};
-	
+
 		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
-		
+
 		if ( !this.no_render ) {
 			this.prepareAce = deferred.promise();
 			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
 				deferred.resolve();
 			});
-	
+
 			this.resizeHandler = this.resizeHandler || function(){
 				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
 			};
-	
+
 			$(window).on('resize', this.resizeHandler);
-	
+
 			if ( typeof options.change == 'function' )
 				this.on('change', options.change);
-	
+
 			this.render();
-	
+
 			Upfront.Events.on("command:undo", function () {
 				setTimeout(function () {
 					var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
@@ -5806,9 +5971,9 @@ var CSSEditor = Backbone.View.extend({
 					}
 				}, 200);
 			});
-	
+
 			this.startResizable();
-	
+
 			Upfront.Events.trigger('csseditor:open', this.element_id);
 		}
 	},
@@ -5843,7 +6008,6 @@ var CSSEditor = Backbone.View.extend({
 		this.is_default_style = this.stylename === '_default';
 	},
 	is_region_style: function() {
-		console.log(this.elementType.id);
 		return this.elementType.id === 'region-container'
 			|| this.elementType.id === 'region';
 	},
@@ -5905,7 +6069,7 @@ var CSSEditor = Backbone.View.extend({
 			name: this.stylename,
 			elementType: this.elementType.label,
 			selectors: this.selectors,
-			show_save: this.is_region_style() === false
+			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false
 		}));
 
 		this.resizeHandler('.');
@@ -6205,7 +6369,7 @@ var CSSEditor = Backbone.View.extend({
 				return notifier.addMessage('There was an error.');
 			});
 	},
-	
+
 	/* API to call save style without loading editor */
 	saveCall: function (notify) {
 		var me = this,
@@ -6215,7 +6379,7 @@ var CSSEditor = Backbone.View.extend({
 		if(!styles) {
 			return notify ? notifier.addMessage('The slylesheet is empty.', 'error') : false;
 		}
-		
+
 		data = {
 			styles: styles,
 			elementType: this.elementType.id,
@@ -6249,7 +6413,7 @@ var CSSEditor = Backbone.View.extend({
 			.error(function(response){
 				return notify ? notifier.addMessage('There was an error.') : true;
 			});
-		
+
 	},
 
 	checkDeleteToggle: function(e){
@@ -6520,7 +6684,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		editor.focus();
 		this.editor = editor;
 	},
-	prepareSpectrum: function(){
+	prepareSpectrum: function() {
 		var me = this;
 
 		me.$('.upfront-css-color').spectrum({
@@ -7350,7 +7514,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								title = new_title.title;
 								name = new_title.name;
 							}
-							
+
 							// Let's keep old CSS content
 							Upfront.Application.cssEditor.init({
 								model: this.model,
@@ -7360,7 +7524,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							});
 							styles = $.trim(Upfront.Application.cssEditor.get_style_element().html());
 							prev_selector = Upfront.Application.cssEditor.get_css_selector();
-							
+
 							// Also update the container attribute on sub regions
 							if ( this.model.is_main() ) {
 								sub_regions = this.model.get_sub_regions();
@@ -7376,7 +7540,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								this.model.set({title: title, name: name}, {silent: true});
 							}
 							$region_name.find('.upfront-region-name-edit-value').text(title);
-							
+
 							// Save the region CSS to the new name, if styles is not empty
 							if ( styles ) {
 								Upfront.Application.cssEditor.init({
@@ -7390,7 +7554,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								Upfront.Application.cssEditor.get_style_element().html(styles);
 								Upfront.Application.cssEditor.saveCall(false);
 							}
-							
+
 							this.model.get('properties').trigger('change');
 						}
 						$region_name.find('.upfront-region-bg-setting-name-edit').show();
@@ -7644,7 +7808,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
 			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
-			
+
 			if ( is_region ) {
 				region_name.render();
 				$region_name.append(region_name.$el);
@@ -7666,7 +7830,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else {
 				$region_name.hide();
 			}
-			
+
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox
@@ -7740,7 +7904,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					e.stopPropagation();
 					me.upload_image();
 				});
-				
+
 			}
 			else {
 				$content.find('.upfront-region-bg-setting-type').remove();
