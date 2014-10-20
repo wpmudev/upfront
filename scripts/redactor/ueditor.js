@@ -1133,7 +1133,7 @@ RedactorPlugins.upfrontLink = {
 
 		bindEvents: function(){
 			this.listenTo(this.linkPanel, 'link:ok', function(data){
-				if(data.type == 'unlink' || data.type == false)
+				if(data.type == 'unlink')
 					this.unlink();
 				else
 					this.link(data.url, data.type);

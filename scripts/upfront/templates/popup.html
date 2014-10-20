@@ -442,7 +442,7 @@
 	<form>
 	{[if(types.unlink) { ]}
 	<div class="upfront-field-wrap ulinkpanel-unlink-wrap">
-		<input type="radio" name="ulinkpanel-link" value="unlink" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-0" {{(!link.type || link.type == 'unlink') ? checked : ''}}>
+		<input type="radio" name="ulinkpanel-link" value="unlink" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-0" {{ link.type == 'unlink' ? checked : ''}}>
 		<label for="ulinkpanel-link-0">No link</label>
 	</div>
 	{[ } ]}

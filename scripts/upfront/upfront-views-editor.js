@@ -10193,8 +10193,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		initialize: function(opts) {
 			var types = opts.linkTypes || {};
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, types);
-			if(!this.model)
-				this.model = new Backbone.Model({type: false, url: ''});
+			
+			if(!this.model || this.model.get('type') === false || this.model.get('type') === undefined)
+				this.model = new Backbone.Model({type: 'unlink', url: ''});
 
 			this.theme = opts.theme || 'dark';
 
@@ -10261,18 +10262,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 
 		getCurrentLinkType: function() {
-			var value = this.$('.js-ulinkpanel-type:checked').val();
-			if (value === 'unlink')
-				return false;
-				
-			return value || false;
+			return this.$('.js-ulinkpanel-type:checked').val() || 'unlink';
 		},
 
 		getTypeUrl: function(type){
 			var url;
 			switch(type){
 				case 'unlink':
-				case false:
 					return '';
 				case 'external':
 				case 'entry':
