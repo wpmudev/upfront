@@ -354,13 +354,11 @@ define([
 					_.each(me.modal._fields, function (field, key) {
 						me.modal._data[key] = field.get_value();
 					});
-					if (!me.modal._data.permalink) {
+					if (!me.modal._fields.permalink.has_been_edited()) {
 						var title = me.modal._data.title || me._default_label,
-							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase(),
-							$permalink = me.modal.$el.find('.upfront-field-text[name="permalink"]')
+							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase()
 						;
 						me.modal._fields.permalink.set_value(permalink);
-						$permalink.val(permalink);
 					}
 				},
 				_initial_templates = [{label: "None", value: ""}],
