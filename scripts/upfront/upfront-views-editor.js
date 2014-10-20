@@ -3677,6 +3677,87 @@ define([
 		}
 	});
 
+/**
+ * Start in initially not editable state.
+ * Used for things such as permalink fields in "New Page" dialog.
+ * Not exposed globally.
+ */
+var Field_ToggleableText = Field_Text.extend({
+	is_edited: false,
+	className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-toggleable',
+	render: function () {
+		Field_Text.prototype.render.call(this);
+		if (this.is_edited) return false;
+		this.$el.append(
+			' ' +
+			'<a href="#" class="upfront-toggleable-button">Edit</a>'
+		);
+		var me = this;
+		this.$el.on('click', '.upfront-toggleable-button', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var $me = $(this),
+				$el = me.get_field()
+			;
+			$me.hide();
+			$el.replaceWith(me.get_editable_html());
+			me.is_edited = true;
+		});
+	},
+	has_been_edited: function () {
+		return this.is_edited;
+	},
+	reset_state: function () {
+		this.is_edited = Field_ToggleableText.prototype.is_edited;
+	},
+	get_field_html: function () {
+		return this.is_edited
+			? this.get_editable_html()
+			: this.get_toggleable_html()
+		;
+	},
+	get_field: function () {
+		return this.is_edited
+			? Field_Text.prototype.get_field.call(this)
+			: this.$el.find(".upfront-field-toggleable-value")
+		;
+	},
+	get_value: function () {
+		return this.is_edited
+			? Field_Text.prototype.get_value.call(this)
+			: $.trim(this.get_field().text())
+		;
+	},
+	set_value: function (value) {
+		return this.is_edited
+			? this.get_field().val(value)
+			: this.get_field().text(value)
+		;
+	},
+	get_toggleable_html: function () {
+		var value = this.get_value() || this.get_saved_value();
+		return '<span class="upfront-field-toggleable-value">' + value + '</span>';
+	},
+	get_editable_html: function () {
+		var attr = {
+				'type': 'text',
+				'class': 'upfront-field upfront-field-text upfront-field-toggleable',
+				'id': this.get_field_id(),
+				'name': this.get_field_name(),
+				'value': this.get_value() || this.get_saved_value()
+			};
+			if ('inline' === this.options.label_style) attr.class += ' upfront-has_inline_label';
+			if ( this.options.compact ) {
+				attr.placeholder = this.label;
+				this.$el.attr('data-tooltip', this.label);
+			}
+			else if ( this.options.placeholder ) {
+				attr.placeholder = this.options.placeholder;
+			}
+			return '<input ' + this.get_field_attr_html(attr) + ' />';
+	}
+});
+
 	var Field_Button = Field.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-button',
 		events: {
