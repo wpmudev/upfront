@@ -1528,6 +1528,8 @@ var _alpha = "alpha",
             vid   : "",
             label : "Variant Label",
             group : {
+				margin_left: 0,
+				margin_right: 0,
                 col: 24,
                 row: 50,
                 left: 0,

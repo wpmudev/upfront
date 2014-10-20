@@ -336,7 +336,8 @@ var ContentSettings = PostPartSettings.extend({
 		}
 
 		if(this.for_view)
-			this.for_view.trigger('post:padding:update', left, right);
+			Upfront.Events.trigger('post:padding:update', left, right);
+			//this.for_view.trigger('post:padding:update', left, right);
 	}
 });
 
@@ -375,7 +376,7 @@ var ContentView = PostPartView.extend({
 
 		if(!this.paddingChangeHandler){
 			this.paddingChangeHandler = _.bind(this.refreshPaddings, this);
-			this.on('post:padding:update', this.paddingChangeHandler);
+			Upfront.Events.on('post:padding:update', this.paddingChangeHandler);
 		}
 		this.refreshPaddingsFromProperties();
 	},
@@ -737,7 +738,8 @@ _.extend(Upfront.Content, {
 	PostElement: PostPartElement,
 	TemplateEditor: TemplateEditor,
 	PostPart: PostPartModel,
-    ImageVariants : ImageVariants
+    ImageVariants : ImageVariants,
+	ContentSettings: ContentSettings
 });
 
 return {};

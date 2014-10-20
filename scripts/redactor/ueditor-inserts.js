@@ -383,7 +383,18 @@ var ImageInsert = UeditorInsert.extend({
 
 		Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
 		Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.top);
-		this.$el.css({float : style_variant.group.float});
+		/**
+		 * Reset margins
+		 */
+		this.$el.css({
+			marginLeft: "0px",
+			marginRight: "0px"
+		});
+		this.$el.css({
+			float : style_variant.group.float,
+			marginLeft: style_variant.group.margin_left + "px",
+			marginRight: style_variant.group.margin_right + "px"
+		});
 		this.controls.render();
 		this.$el.append(this.controls.$el);
 		this.make_caption_editable();
