@@ -379,8 +379,8 @@ define([
 					default_value: this._default_label,
 					change: update_modal_data
 				}),
-				permalink: new Upfront.Views.Editor.Field.Text({
-					label: Upfront.Settings.site_url.replace(/\/$/, '') + '/',
+				permalink: new Field_ToggleableText({
+					label: '<b>Permalink:</b> ' + Upfront.Settings.site_url.replace(/\/$/, '') + '/',
 					label_style: "inline",
 					name: "permalink",
 					change: update_modal_data
@@ -408,6 +408,7 @@ define([
 			this.modal._data = {};
 			_.each(_.keys(this.modal._fields), function (key) {
 				me.modal._data[key] = "";
+				if (me.modal._fields[key].reset_state) me.modal._fields[key].reset_state();
 			});
 
 		}
