@@ -316,11 +316,11 @@ define([
 		on_click: function(e){
 			e.preventDefault();
 			var me = this;
-			
+
 			this.spawn_modal();
 			this.modal.render();
 			$('body').append(this.modal.el);
-			
+
 			this.modal.open(function () {
 				me.render_modal();
 				me.trigger("new_page:modal:open");
@@ -332,7 +332,7 @@ define([
 				}).done(function (resp) {
 					Upfront.Util.log(resp.data);
 					Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
-					
+
 				});
 				//Upfront.Application.navigate('/create_new/page', {trigger: true});
 			})
@@ -930,21 +930,7 @@ define([
 				type: "Layout",
 				sidebar: false,
 				element_id: 'layout',
-				global: true,
-				change: function() {
-					// Don't save stuff if we're in builder mode
-					if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
-						// Don't allow user to navigate if layout style is not saved
-						Upfront.themeExporter.layoutStyleDirty = true;
-						return;
-					}
-
-					// Timed save
-					clearTimeout(save_t);
-					save_t = setTimeout(function(){
-						editor.$el.find('.upfront-css-save-ok').click();
-					}, 1000);
-				}
+				global: true
 			});
 		}
 	});
@@ -3578,7 +3564,7 @@ define([
 				this.on('rendered', this.options.rendered, this);
 			if (this.options.on_click)
 				this['on_click'] = this.options.on_click;
-				
+
 			this.once('rendered', function(){
 				var me = this;
 				this.get_field().on('focus', function(){
@@ -4144,6 +4130,7 @@ var Field_ToggleableText = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-select',
 		render: function () {
 			var me = this;
+
 			this.$el.html('');
 			if ( this.label )
 				this.$el.append(this.get_label_html());
@@ -4156,6 +4143,22 @@ var Field_ToggleableText = Field_Text.extend({
 					$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
 					me.$el.find('.upfront-field-select').css('min-width', '').css('min-width', me.$el.find('.upfront-field-select').width());
 					me.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
+
+					// Make sure all select options are visible in scroll panel i.e. scroll scroll panel as needed
+					_.delay(function() { // Delay because opening animation causes wrong outerHeight results
+						var $scroll_panel,
+							scroll_panel_bottom,
+							$select_options,
+							options_bottom;
+
+						$scroll_panel = me.$el.parents('.upfront-settings_panel_scroll');
+						if ($scroll_panel) {
+							scroll_panel_bottom = $scroll_panel.offset().top + $scroll_panel.outerHeight();
+							$select_options = me.$el.find('.upfront-field-select-options');
+							options_bottom =  $select_options.offset().top + $select_options.outerHeight();
+							$scroll_panel.scrollTop(options_bottom);
+						}
+					}, 500);
 				});
 				if ( !this.multiple ) {
 					this.$el.on('click', '.upfront-field-select-option label', function(e){
@@ -5894,7 +5897,6 @@ var CSSEditor = Backbone.View.extend({
 		LoginModel: {label: 'Login', id: 'upfront-login_element'},
 		LikeBox: {label: 'Like Box', id: 'Like-box-object'},
 		MapModel: {label: 'Map', id: 'upfront-map_element'},
-		//NavigationModel: {label: 'Navigation', id: 'nav'},
 		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
 		ButtonModel: {label: 'Button', id: 'ubutton'},
 		UpostsModel: {label: 'Posts', id: 'uposts'},
@@ -5935,10 +5937,10 @@ var CSSEditor = Backbone.View.extend({
 
 		if(this.$style)
 			this.close();
-		
+
 		// Don't render the editor, only makes the API available
 		this.no_render = ( options.no_render === true );
-		
+
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
 		this.global = ( options.global === true );
@@ -5950,31 +5952,33 @@ var CSSEditor = Backbone.View.extend({
 		// and options.element_id is "layout" than global stylesheet is edited.
 		this.is_global_stylesheet = options.type === 'Layout' && options.element_id === 'layout';
 
+		if (this.is_global_stylesheet) this.sidebar = true;
+
 		this.resolve_stylename(options);
 
 		this.ensure_style_element();
 
 		this.selectors = this.elementSelectors[this.modelType] || {};
-	
+
 		this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
-		
+
 		if ( !this.no_render ) {
 			this.prepareAce = deferred.promise();
 			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
 				deferred.resolve();
 			});
-	
+
 			this.resizeHandler = this.resizeHandler || function(){
 				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
 			};
-	
+
 			$(window).on('resize', this.resizeHandler);
-	
+
 			if ( typeof options.change == 'function' )
 				this.on('change', options.change);
-	
+
 			this.render();
-	
+
 			Upfront.Events.on("command:undo", function () {
 				setTimeout(function () {
 					var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
@@ -5984,9 +5988,9 @@ var CSSEditor = Backbone.View.extend({
 					}
 				}, 200);
 			});
-	
+
 			this.startResizable();
-	
+
 			Upfront.Events.trigger('csseditor:open', this.element_id);
 		}
 	},
@@ -6021,7 +6025,6 @@ var CSSEditor = Backbone.View.extend({
 		this.is_default_style = this.stylename === '_default';
 	},
 	is_region_style: function() {
-		console.log(this.elementType.id);
 		return this.elementType.id === 'region-container'
 			|| this.elementType.id === 'region';
 	},
@@ -6083,7 +6086,7 @@ var CSSEditor = Backbone.View.extend({
 			name: this.stylename,
 			elementType: this.elementType.label,
 			selectors: this.selectors,
-			show_save: this.is_region_style() === false
+			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false
 		}));
 
 		this.resizeHandler('.');
@@ -6383,7 +6386,7 @@ var CSSEditor = Backbone.View.extend({
 				return notifier.addMessage('There was an error.');
 			});
 	},
-	
+
 	/* API to call save style without loading editor */
 	saveCall: function (notify) {
 		var me = this,
@@ -6393,7 +6396,7 @@ var CSSEditor = Backbone.View.extend({
 		if(!styles) {
 			return notify ? notifier.addMessage('The slylesheet is empty.', 'error') : false;
 		}
-		
+
 		data = {
 			styles: styles,
 			elementType: this.elementType.id,
@@ -6427,7 +6430,7 @@ var CSSEditor = Backbone.View.extend({
 			.error(function(response){
 				return notify ? notifier.addMessage('There was an error.') : true;
 			});
-		
+
 	},
 
 	checkDeleteToggle: function(e){
@@ -6698,7 +6701,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		editor.focus();
 		this.editor = editor;
 	},
-	prepareSpectrum: function(){
+	prepareSpectrum: function() {
 		var me = this;
 
 		me.$('.upfront-css-color').spectrum({
@@ -7528,7 +7531,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								title = new_title.title;
 								name = new_title.name;
 							}
-							
+
 							// Let's keep old CSS content
 							Upfront.Application.cssEditor.init({
 								model: this.model,
@@ -7538,7 +7541,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							});
 							styles = $.trim(Upfront.Application.cssEditor.get_style_element().html());
 							prev_selector = Upfront.Application.cssEditor.get_css_selector();
-							
+
 							// Also update the container attribute on sub regions
 							if ( this.model.is_main() ) {
 								sub_regions = this.model.get_sub_regions();
@@ -7554,7 +7557,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								this.model.set({title: title, name: name}, {silent: true});
 							}
 							$region_name.find('.upfront-region-name-edit-value').text(title);
-							
+
 							// Save the region CSS to the new name, if styles is not empty
 							if ( styles ) {
 								Upfront.Application.cssEditor.init({
@@ -7568,7 +7571,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								Upfront.Application.cssEditor.get_style_element().html(styles);
 								Upfront.Application.cssEditor.saveCall(false);
 							}
-							
+
 							this.model.get('properties').trigger('change');
 						}
 						$region_name.find('.upfront-region-bg-setting-name-edit').show();
@@ -7822,7 +7825,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
 			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
-			
+
 			if ( is_region ) {
 				region_name.render();
 				$region_name.append(region_name.$el);
@@ -7844,7 +7847,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else {
 				$region_name.hide();
 			}
-			
+
 			if ( is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox
@@ -7918,7 +7921,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					e.stopPropagation();
 					me.upload_image();
 				});
-				
+
 			}
 			else {
 				$content.find('.upfront-region-bg-setting-type').remove();
@@ -10188,7 +10191,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	var LinkPanel = Backbone.View.extend({
 		tpl: _.template($(_Upfront_Templates.popup).find('#linkpanel-tpl').html()),
 		defaultLinkTypes: {
-			unlink: false,
+			unlink: true,
 			external: true,
 			entry: true,
 			anchor: true,
@@ -10207,8 +10210,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		initialize: function(opts) {
 			var types = opts.linkTypes || {};
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, types);
-			if(!this.model)
-				this.model = new Backbone.Model({type: false, url: ''});
+			
+			if(!this.model || this.model.get('type') === false || this.model.get('type') === undefined)
+				this.model = new Backbone.Model({type: 'unlink', url: ''});
 
 			this.theme = opts.theme || 'dark';
 
@@ -10275,12 +10279,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 
 		getCurrentLinkType: function() {
-			return this.$('.js-ulinkpanel-type:checked').val() || false;
+			return this.$('.js-ulinkpanel-type:checked').val() || 'unlink';
 		},
 
 		getTypeUrl: function(type){
 			var url;
 			switch(type){
+				case 'unlink':
+					return '';
 				case 'external':
 				case 'entry':
 					// Check if the url is absolute or have a protocol.

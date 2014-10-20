@@ -1068,7 +1068,7 @@ RedactorPlugins.upfrontLink = {
 			open: 'open'
 		},
 		initialize: function(){
-			this.linkPanel = new Upfront.Views.Editor.LinkPanel({linkTypes: {unlink: true}, button: true});
+			this.linkPanel = new Upfront.Views.Editor.LinkPanel({button: true});
 			this.bindEvents();
 			UeditorPanel.prototype.initialize.apply(this, arguments);
 		},
@@ -1176,7 +1176,7 @@ RedactorPlugins.upfrontLinkCTA = {
 			open: 'open'
 		},
 		initialize: function(){
-			this.linkPanel = new Upfront.Views.Editor.LinkPanel({linkTypes: {unlink: true}, button: true});
+			this.linkPanel = new Upfront.Views.Editor.LinkPanel({button: true});
 			this.bindEvents();
 			UeditorPanel.prototype.initialize.apply(this, arguments);
 		},
