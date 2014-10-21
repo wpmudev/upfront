@@ -761,7 +761,7 @@ var LayoutEditor = {
 				};
 			}
 
-			data.use_existing = "existing" === fields.inherit.get_value()
+			data.use_existing = layout === 'single-page' && specific_layout && "existing" === fields.inherit.get_value()
 				? fields.existing.get_value()
 				: false
 			;
@@ -769,7 +769,7 @@ var LayoutEditor = {
 			if ( data.latest_post )
 				_upfront_post_data.post_id = data.latest_post;
 
-			app.create_layout(data.layout, {layout_slug: layout_slug}).done(function() {
+			app.create_layout(data.layout, {layout_slug: layout_slug, use_existing: data.use_existing}).done(function() {
 				app.layout.set('current_layout', layout);
 				// Immediately export layout to write initial state to file.
 				ed._export_layout();

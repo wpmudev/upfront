@@ -119,6 +119,14 @@ class Upfront_Ajax extends Upfront_Server {
 			$parsed = true;
 		}
 
+		/*
+		if (!empty($_POST['use_existing'])) {
+			// Resolve existing page template
+			// to a layout
+		} else {
+			$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
+		}
+		*/
 		$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 
 		global $post, $upfront_ajax_query;
