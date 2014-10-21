@@ -1,4 +1,4 @@
-<div class="ugallery ugallery_publish" data-no-padding="<?php echo $no_padding[0] ?>">
+<div class="ugallery ugallery_publish <?php if($no_padding[0] === 'true') { ?>no_padding<?php } ?>" data-no-padding="<?php echo $no_padding[0] ?>">
 <?php if ($labelFilters['length']){ ?>
 	<div class="ugallery_labels">
 	<?php for($i=0; $i<$labels_length; $i++) { ?>
