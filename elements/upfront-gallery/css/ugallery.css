@@ -497,6 +497,12 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -731px -231px;
 }
 
+.upfront-ui .upfront-icon-region-edit-labels:before {
+	background-position: -703px -745px;
+}
+.upfront-ui .upfront-icon-region-edit-labels:hover:before {
+	background-position: -811px -745px;
+}
 
 
 .ugallery-onclick {

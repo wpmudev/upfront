@@ -183,20 +183,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var linkControl = this.property('linkTo') == 'url' ? this.createLinkControl(image) : this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox');
 		panel.items = _([
 			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
-			linkControl
+			linkControl,
+			this.createControl('edit-labels', l10n.ctrl.edit_labels, 'openLightboxLabels')
 		]);
 
 		return panel;
 	},
 
-	createControl: function(icon, tooltip, click){
+	createControl: function(icon, tooltip, click_callback) {
 		var me = this,
 			item = new Upfront.Views.Editor.InlinePanels.Control();
+
 		item.icon = icon;
 		item.tooltip = tooltip;
-		if(click){
+		if(click_callback) {
 			this.listenTo(item, 'click', function(e){
-				me[click](e);
+				me[click_callback](e);
 			});
 		}
 
@@ -315,7 +317,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		$.magnificPopup.open({
 			items: {
-				src: item.find('.ugallery_link').attr('href')
+				src: item.find('.ugallery_link').attr('href') || item.find('.ugallery-image').attr('src')
 			},
 			type: 'image',
 			image: {

@@ -266,6 +266,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'edit_image' => __('Edit image', 'upfront'),
 				'rm_image' => __('Remove image', 'upfront'),
 				'image_link' => __('Image link', 'upfront'),
+				'edit_labels' => __('Edit labels', 'upfront'),
 			),
 			'desc_update_success' => __('Image description has been successfully updated.', 'upfront'),
 			'loading' => __('Loading...', 'upfront'),
