@@ -1,8 +1,5 @@
 jQuery(function($){
 
-	// Small trick to get shuffle stuff started and working
-	$('.ugallery_item').addClass('filtered');
-
 	var calculateMargins =  function(gallery, absolute) {
 		var container = gallery.find('.ugallery_items').width(),
 			items = gallery.find('.ugallery_item.filtered'),
@@ -57,19 +54,22 @@ jQuery(function($){
 		});
 
 		grid.shuffle({
-			itemSelector: '#' + $(this).attr('rel') + ' .filtered',
+			itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
 			gutterWidth: function(containerWidth){
 				var container = containerWidth,
 					minGutter = no_padding ? 0 : 30,
 					width = $(this.$items[0]).width(),
-					columns = Math.floor(container / width)
-				;
-				if(!no_padding && columns * width + (columns - 1) * minGutter > container)
+					columns = Math.floor(container / width),
+					totalGutter,
+					gutter;
+
+				if (no_padding) return 0;
+
+				if(columns * width + (columns - 1) * minGutter > container)
 					columns--;
 
-				var totalGutter = container - columns * width,
-					gutter = Math.floor(totalGutter / (columns - 1))
-				;
+				totalGutter = container - columns * width;
+				gutter = Math.floor(totalGutter / (columns - 1));
 
 				return gutter - 2 * columns;
 			},
