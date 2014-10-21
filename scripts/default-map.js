@@ -1,6 +1,8 @@
 (function($){
 
 	function init_map ($el) {
+		if ( $el.data('map') )
+			return;
 		var data = JSON.parse($el.attr('data-bg-map')),
 			options = {
 				center: new google.maps.LatLng(data.center[0], data.center[1]),
@@ -16,6 +18,7 @@
 				styles: data.styles
 			},
 			map = new google.maps.Map($el.get(0), options);
+		$el.data('map', map);
 	}
 
 	function load_google_maps () {
@@ -33,7 +36,8 @@
 
 	function upfront_bg_map_init () {
 		$("[data-bg-map]").each(function () {
-			init_map($(this));
+			if ( $(this).css('display') != 'none' )
+				init_map($(this));
 		});
 	}
 
@@ -43,6 +47,7 @@
 		window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
 			$(document).trigger("upfront-google_maps-loaded");
 			$(document).data("upfront-google_maps-loading", false);
+			$(window).on('resize', upfront_bg_map_init);
 		};
 		$(load_google_maps);
 	}

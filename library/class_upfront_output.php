@@ -9,10 +9,13 @@ class Upfront_Output {
 
 	public static $current_object;
 	public static $current_module;
+	public static $grid;
 
 	public function __construct ($layout, $post) {
 		$this->_layout = $layout;
 		$this->_debugger = Upfront_Debug::get_debugger();
+		
+		self::$grid = Upfront_Grid::get_grid();
 	}
 	public static function get_post_id () {
 		return is_singular() ? get_the_ID() : false;
@@ -210,6 +213,13 @@ abstract class Upfront_Entity {
 	protected function _get_property ($prop) {
 		return upfront_get_property_value($prop, $this->_data);
 	}
+	
+	protected function _get_breakpoint_property ($prop, $id) {
+		$breakpoint = $this->_get_property('breakpoint');
+		if ( !empty($breakpoint[$id]) && isset($breakpoint[$id][$prop]) )
+			return $breakpoint[$id][$prop];
+		return $this->_get_property($prop);
+	}
 
 	public function get_name () {
 		if (!empty($this->_data['name'])) return $this->_data['name'];
@@ -231,11 +241,11 @@ abstract class Upfront_Entity {
 		return upfront_get_class_num($classname, $classes);
 	}
 
-	public function get_background_type () {
-		$type = $this->_get_property('background_type');
+	public function get_background_type ($breakpoint_id = '') {
+		$type = $this->_get_breakpoint_property('background_type', $breakpoint_id);
 		if ( ! $type ){
-			$background_color = $this->_get_property('background_color');
-			$background_image = $this->_get_property('background_image');
+			$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
+			$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
 			if ( $background_image )
 				$type = 'image';
 			else if ( $background_color )
@@ -243,21 +253,22 @@ abstract class Upfront_Entity {
 		}
 		return $type;
 	}
-	protected function _get_background_css ($is_layout = false, $lazy_loading = false) {
-		$type = $this->get_background_type();
+	protected function _get_background_css ($is_layout = false, $lazy_loading = false, $breakpoint_id = '') {
+		$type = $this->get_background_type($breakpoint_id);
+		$default_type = $this->get_background_type();
 		$css = array();
-		$background_color = $this->_get_property('background_color');
-		if ( !$type || $type == 'image' || $type == 'featured' || $type == 'color' ){
+		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
+		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
 			if($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
 				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
 				$background_image = $featured_image[0];
 			}
 			else
-				$background_image = $this->_get_property('background_image');
-			$background_repeat = $this->_get_property('background_repeat');
-			$background_fill = $this->_get_property('background_fill');
-			$background_position = $this->_get_property('background_position');
-			$background_style = $this->_get_property('background_style');
+				$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
+			$background_repeat = $this->_get_breakpoint_property('background_repeat', $breakpoint_id);
+			$background_fill = $this->_get_breakpoint_property('background_fill', $breakpoint_id);
+			$background_position = $this->_get_breakpoint_property('background_position', $breakpoint_id);
+			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
 			if ( $background_color )
 				$css[] = 'background-color: ' . $background_color;
 			if ( $type == 'image' || $type == 'featured' && $background_image ){
@@ -276,60 +287,70 @@ abstract class Upfront_Entity {
 			}
 		}
 		else if ( $type == 'video' ){
-			$background_video_style = $this->_get_property('background_video_style');
+			$background_video_style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
 			if ( $background_video_style == 'inside' && $background_color )
 				$css[] = 'background-color: ' . $background_color;
+		}
+		if ( !empty($breakpoint_id) && ( $default_type == 'image' || $default_type == 'featured' ) ) {
+			$css[] = 'background-image: none';
 		}
 		return ( !empty($css) ) ? implode('; ', $css) . '; ' : '';
 	}
 
-	protected function _get_background_attr ($is_layout = false, $lazy_loading = false) {
-		$type = $this->get_background_type();
+	protected function _get_background_attr ($is_layout = false, $lazy_loading = false, $breakpoint_id = '') {
+		$type = $this->get_background_type($breakpoint_id);
 		$attr = '';
+		$breakpoint = empty($breakpoint_id) ? 'desktop' : $breakpoint_id;
 		if ( !$type || $type == 'image' || $type == 'featured' ){
 			if($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
 				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
 				$background_image = $featured_image[0];
 			}
 			else
-				$background_image = $this->_get_property('background_image');
-			$background_style = $this->_get_property('background_style');
-			$background_image_ratio = $this->_get_property('background_image_ratio');
+				$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
+			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
+			$background_image_ratio = $this->_get_breakpoint_property('background_image_ratio', $breakpoint_id);
 			if ( $background_image ){
 				if ( $lazy_loading )
-					$attr .= "data-src='{$background_image}'";
+					$attr .= " data-src-{$breakpoint}='{$background_image}'";
 				if ( $background_style == 'full' ){
-					$attr .= "data-bg-image-ratio='{$background_image_ratio}'";
-				}	
+					$attr .= " data-bg-image-ratio-{$breakpoint}='{$background_image_ratio}'";
+				}
+				if ( !$type )
+					$type = 'image';
 			}
 		}
+		if ( !$type )
+			$type = 'color';
+		$attr .= " data-bg-type-{$breakpoint}='{$type}'";
 		return $attr;
 	}
 
-	protected function _get_background_overlay () {
-		$type = $this->get_background_type();
-		if ( !$type || $type == 'image' || $type == 'color' )
+	protected function _get_background_overlay ($breakpoint_id = '') {
+		$type = $this->get_background_type($breakpoint_id);
+		if ( !$type || in_array($type, array('image', 'color', 'featured')) )
 			return '';
 		$attr = '';
 		$markup = '';
 		$classes = "upfront-output-bg-overlay upfront-output-bg-{$type}";
+		$classes .= ( $breakpoint_id ) ? " upfront-output-bg-{$breakpoint_id}" : "upfront-output-bg-desktop";
 		if ( $type == 'map' ) {
 			$data = array(
-				'center' => $this->_get_property('background_map_center'),
-				'zoom' => $this->_get_property('background_map_zoom'),
-				'style' => $this->_get_property('background_map_style'),
-        'controls' => $this->_get_property('background_map_controls'),
-        'styles' => $this->_get_property('background_map_styles')
+				'center' => $this->_get_breakpoint_property('background_map_center', $breakpoint_id),
+				'zoom' => $this->_get_breakpoint_property('background_map_zoom', $breakpoint_id),
+				'style' => $this->_get_breakpoint_property('background_map_style', $breakpoint_id),
+        		'controls' => $this->_get_breakpoint_property('background_map_controls', $breakpoint_id),
+        		'styles' => $this->_get_breakpoint_property('background_map_styles', $breakpoint_id)
 			);
 			$attr .= 'data-bg-map="' . esc_attr( json_encode($data) ) . '"';
 		}
 		else if ( $type == 'slider' ){
 			$slides = array();
-			$images = $this->_get_property('background_slider_images');
-			$auto = $this->_get_property('background_slider_rotate');
-			$interval = $this->_get_property('background_slider_rotate_time') * 1000;
-			$show_control = $this->_get_property('background_slider_control');
-			$effect = $this->_get_property('background_slider_transition');
+			$images = $this->_get_breakpoint_property('background_slider_images', $breakpoint_id);
+			$auto = $this->_get_breakpoint_property('background_slider_rotate', $breakpoint_id);
+			$interval = $this->_get_breakpoint_property('background_slider_rotate_time', $breakpoint_id) * 1000;
+			$show_control = $this->_get_breakpoint_property('background_slider_control', $breakpoint_id);
+			$effect = $this->_get_breakpoint_property('background_slider_transition', $breakpoint_id);
 			$slide_attr = "data-slider-show-control='{$show_control}' data-slider-effect='{$effect}'";
 			if ( $auto )
 				$slide_attr .= " data-slider-auto='1' data-slider-interval='{$interval}'";
@@ -344,12 +365,12 @@ abstract class Upfront_Entity {
 			$markup = "<div class='upfront-bg-slider' {$slide_attr}>{$slides_markup}</div>";
 		}
 		else if ( $type == 'video' ){
-			$video = $this->_get_property('background_video');
-			$embed = $this->_get_property('background_video_embed');
-			$width = $this->_get_property('background_video_width');
-			$height = $this->_get_property('background_video_height');
-			$style = $this->_get_property('background_video_style');
-			$mute = $this->_get_property('background_video_mute');
+			$video = $this->_get_breakpoint_property('background_video', $breakpoint_id);
+			$embed = $this->_get_breakpoint_property('background_video_embed', $breakpoint_id);
+			$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
+			$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
+			$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
+			$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
 			if ( $video && $embed ){
 				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
 				$attr .= 'data-bg-video-style="' . $style . '" ';
@@ -373,14 +394,12 @@ abstract class Upfront_Entity {
 							break;
 						}
 					}
-					$markup = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
+					$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
 				}
-				else{
-					$markup = $embed;
-				}
+				$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
 			}
 		}
-		return "<div class='{$classes}' {$attr}>{$markup}</div>";
+		return "<div class='{$classes}' {$attr}>{$markup}</div>" . "\n";
 	}
 }
 
@@ -495,18 +514,55 @@ class Upfront_Layout_View extends Upfront_Container {
 	protected $_type = 'Layout';
 
 	public function wrap ($out, $before = '', $after = '') {
-		$overlay = $this->_get_background_overlay();
-		return parent::wrap("{$before}{$out}{$after} {$overlay}");
+		$overlay = "";
+		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
+			$overlay .= $this->_get_background_overlay($breakpoint->get_id());
+		}
+		return parent::wrap("{$before}{$out}{$after}\n{$overlay}");
 	}
 
 	public function get_css_inline () {
-		$css = $this->_get_background_css(true, false);
+		$css = '';
 		return $css;
 	}
 
 	public function get_attr () {
-		$attr = $this->_get_background_attr(true, false);
+		$attr = '';
+		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
+			$attr .= $this->_get_background_attr(true, false, $breakpoint->get_id());
+		}
 		return $attr;
+	}
+	
+	public function get_style_for ($point, $scope) {
+		$css = '';
+		$type = $this->get_background_type($point->get_id());
+		$default_type = $this->get_background_type();
+		$bg_css = $this->_get_background_css(false, true, $point->get_id());
+		if ( !empty($bg_css) ) {
+			$css .= sprintf('%s %s {%s}',
+						'.' . ltrim($scope, '. '),
+						'.upfront-output-layout',
+						$bg_css
+					) . "\n";
+		}
+		if ( !$point->is_default() && $default_type && !in_array($default_type, array('image', 'color', 'featured')) ) {
+			$css .= sprintf('%s %s > %s {%s}',
+						'.' . ltrim($scope, '. '),
+						'.upfront-output-layout',
+						'.upfront-output-bg-overlay',
+						'display: none;'
+					) . "\n";
+		}
+		if ( $type && !in_array($type, array('image', 'color', 'featured')) ) {
+			$css .= sprintf('%s %s > %s {%s}',
+						'.' . ltrim($scope, '. '),
+						'.upfront-output-layout',
+						'.upfront-output-bg-' . $point->get_id(),
+						'display: block;'
+					) . "\n";
+		}
+		return $css;
 	}
 
 }
@@ -516,13 +572,15 @@ class Upfront_Region_Container extends Upfront_Container {
 	protected $_type = 'Region_Container';
 
 	public function wrap ($out, $before = '', $after = '') {
-		$overlay = $this->_get_background_overlay();
-		$bg_css = $this->_get_background_css(false, true);
-		$bg_css = $bg_css ? "style='{$bg_css}'" : '';
-		$bg_attr = $this->_get_background_attr(false, true);
-		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg' {$bg_css} {$bg_attr}>";
+		$overlay = '';
+		$bg_attr = '';
+		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
+			$overlay .= $this->_get_background_overlay($breakpoint->get_id());
+			$bg_attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
+		}
+		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg' {$bg_attr}>";
 		$bg_node_end = "</div>";
-		return parent::wrap("{$bg_node_start}{$before}<div class='upfront-grid-layout'>{$out}</div>{$overlay}{$after}{$bg_node_end}");
+		return parent::wrap("{$bg_node_start}{$before}<div class='upfront-grid-layout'>{$out}</div>\n{$overlay}{$after}{$bg_node_end}");
 	}
 
 	public function get_css_inline () {
@@ -545,6 +603,38 @@ class Upfront_Region_Container extends Upfront_Container {
 	public function get_id () {
 		return 'upfront-region-container-' . strtolower(str_replace(" ", "-", $this->get_name()));
 	}
+
+	public function get_style_for ($point, $scope) {
+		$css = '';
+		$type = $this->get_background_type($point->get_id());
+		$default_type = $this->get_background_type();
+		$bg_css = $this->_get_background_css(false, true, $point->get_id());
+		if ( !empty($bg_css) ) {
+			$css .= sprintf('%s #%s > %s {%s}',
+						'.' . ltrim($scope, '. '),
+						$this->get_id(),
+						'.upfront-region-container-bg',
+						$bg_css
+					) . "\n";
+		}
+		if ( !$point->is_default() && $default_type && !in_array($default_type, array('image', 'color', 'featured')) ) {
+			$css .= sprintf('%s #%s > %s {%s}',
+						'.' . ltrim($scope, '. '),
+						$this->get_id(),
+						'.upfront-region-container-bg > .upfront-output-bg-overlay',
+						'display: none;'
+					) . "\n";
+		}
+		if ( $type && !in_array($type, array('image', 'color', 'featured')) ) {
+			$css .= sprintf('%s #%s > %s {%s}',
+						'.' . ltrim($scope, '. '),
+						$this->get_id(),
+						'.upfront-region-container-bg > .upfront-output-bg-' . $point->get_id(),
+						'display: block;'
+					) . "\n";
+		}
+		return $css;
+	}
 }
 
 class Upfront_Region_Sub_Container extends Upfront_Region_Container {
@@ -565,8 +655,13 @@ class Upfront_Region extends Upfront_Container {
 	}
 
 	public function wrap ($out) {
-		$overlay = $this->_is_background() ? $this->_get_background_overlay() : "";
-		return parent::wrap( "<div class='upfront-region-wrapper'>{$out}</div> {$overlay}" );
+		$overlay = '';
+		if ( $this->_is_background() ) {
+			foreach ( Upfront_Output::$grid->get_breakpoints() as $breakpoint ) {
+				$overlay .= $this->_get_background_overlay($breakpoint->get_id());
+			}
+		}
+		return parent::wrap( "<div class='upfront-region-wrapper'>{$out}</div>\n{$overlay}" );
 	}
 
 	public function instantiate_child ($child_data, $idx) {
@@ -592,8 +687,6 @@ class Upfront_Region extends Upfront_Container {
 
 	public function get_css_inline () {
 		$css = '';
-		if ( $this->_is_background() )
-			$css .= $this->_get_background_css();
 		if ( !empty($this->_data['type']) &&  'fixed' === $this->_data['type'] )
 			$css .=  $this->_get_position_css();
 		elseif ( !empty($this->_data['type']) && 'lightbox' === $this->_data['type'] )
@@ -603,8 +696,11 @@ class Upfront_Region extends Upfront_Container {
 
 	public function get_attr () {
 		$attr = '';
-		if ( $this->_is_background() )
-			$attr .= $this->_get_background_attr();
+		if ( $this->_is_background() ) {
+			foreach ( Upfront_Output::$grid->get_breakpoints() as $breakpoint ) {
+				$attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
+			}
+		}
 
 		if ( !empty($this->_data['type']) && 'fixed' === $this->_data['type'] ) {
 			$restrict = $this->_data['restrict_to_container'];
@@ -643,6 +739,39 @@ class Upfront_Region extends Upfront_Container {
 
 	public function get_sub () {
 		return !empty($this->_data['sub']) ? $this->_data['sub'] : false;
+	}
+
+	public function get_style_for ($point, $scope) {
+		if ( ! $this->_is_background() )
+			return '';
+		$css = '';
+		$type = $this->get_background_type($point->get_id());
+		$default_type = $this->get_background_type();
+		$bg_css = $this->_get_background_css(false, true, $point->get_id());
+		if ( ! empty($bg_css) ) {
+			$css .= sprintf('%s #%s {%s}',
+						'.' . ltrim($scope, '. '),
+						$this->get_id(),
+						$bg_css
+					) . "\n";
+		}
+		if ( !$point->is_default() && $default_type && !in_array($default_type, array('image', 'color', 'featured')) ){
+			$css .= sprintf('%s #%s > %s {%s}',
+						'.' . ltrim($scope, '. '),
+						$this->get_id(),
+						'.upfront-output-bg-overlay',
+						'display: none;'
+					) . "\n";
+		}
+		if ( $type && !in_array($type, array('image', 'color', 'featured')) ) {
+			$css .= sprintf('%s #%s > %s {%s}',
+						'.' . ltrim($scope, '. '),
+						$this->get_id(),
+						'.upfront-output-bg-' . $point->get_id(),
+						'display: block;'
+					) . "\n";
+		}
+		return $css;
 	}
 
 	public function _get_position_css () {

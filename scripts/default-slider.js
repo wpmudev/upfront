@@ -335,16 +335,23 @@
 
 		// Bg slider
 		var bg_slider = {
-			auto_height: false,
-			control: 'inside'
-		};
-		$('.upfront-bg-slider').upfront_default_slider(bg_slider);
+				auto_height: false,
+				control: 'inside'
+			},
+			init_bg_slider = function () {
+				$('.upfront-bg-slider').each(function(){
+					if ( $(this).closest('.upfront-output-bg-overlay').css('display') != 'none' )
+						$(this).upfront_default_slider(bg_slider);
+				});
+			};
+		init_bg_slider();
 
 		// Refresh size on window.load and window.resize
 		$(window).on('load', function(){
 			$('.upfront-inline_post-slider, .upfront-bg-slider').trigger('refresh');
 		});
 		$(window).on('resize', function(){
+			init_bg_slider();
 			$('.upfront-inline_post-slider, .upfront-bg-slider').trigger('refresh');
 		});
 

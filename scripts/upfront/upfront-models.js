@@ -150,23 +150,23 @@ var _alpha = "alpha",
 			if ( !breakpoint || breakpoint.default )
 				return this.get_property_value_by_name(property);
 			var data = this.get_property_value_by_name('breakpoint');
-			if ( _.isObject(data) && _.isObject(data[breakpoint.id]) && data[breakpoint.id][property] )
+			if ( _.isObject(data) && _.isObject(data[breakpoint.id]) && !_.isUndefined(data[breakpoint.id][property]) )
 				return data[breakpoint.id][property];
 			if ( return_default )
 				return this.get_property_value_by_name(property);
 			return false;
 		},
-		set_breakpoint_property: function (property, value) {
+		set_breakpoint_property: function (property, value, silent) {
 			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 			if ( !breakpoint || breakpoint.default ) {
-				this.set_property(property, value);
+				this.set_property(property, value, silent);
 			}
 			else {
 				var data = Upfront.Util.clone(this.get_property_value_by_name('breakpoint') || {});
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				data[breakpoint.id][property] = value;
-				this.set_property('breakpoint', data);
+				this.set_property('breakpoint', data, silent);
 			}
 		},
 		add_to: function (collection, index, options) {

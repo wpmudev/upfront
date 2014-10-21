@@ -3547,6 +3547,9 @@ define([
 					this.model.init_property(this.options.property, this.default_value);
 					this.property = this.model.get_property_by_name(this.options.property);
 				}
+				this.property_name = this.options.property;
+				if ( typeof this.options.use_breakpoint_property != 'undefined' )
+					this.use_breakpoint_property = this.options.use_breakpoint_property;
 			}
 			else {
 				this.property = false;
@@ -3580,7 +3583,10 @@ define([
 		},
 		get_saved_value: function () {
 			if ( this.property ){
-				return this.property.get('value');
+				if ( this.use_breakpoint_property )
+					return this.model.get_breakpoint_property_value(this.property_name, true);
+				else
+					return this.property.get('value');
 			}
 			else if ( this.model ){
 				var value = this.model.get(this.name);
@@ -7492,10 +7498,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		render_modal: function ($content, $modal) {
 			var me = this,
 				grid = Upfront.Settings.LayoutEditor.Grid,
+				breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				is_responsive = ( breakpoint && !breakpoint.default ),
 				is_layout = ( this.model instanceof Upfront.Models.Layout ),
 				is_region = ( this.model instanceof Upfront.Models.Region ),
 				sub = is_region && this.model.is_main() ? false : this.model.get('sub'),
-				bg_image = this.model.get_property_value_by_name('background_image'),
+				bg_image = this.model.get_breakpoint_property_value('background_image', true),
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
 				region_types = [
@@ -7512,7 +7520,26 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if (_upfront_post_data.post_id) {
 				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
 			}
-			var region_name = new Field_Text({
+			
+			var	bg_type = new Field_Select({
+					model: this.model,
+					property: 'background_type',
+					use_breakpoint_property: true,
+					default_value: !bg_image ? 'color' : 'image',
+					icon_class: 'upfront-region-field-icon',
+					values: region_types,
+					change: function () {
+						var value = this.get_value();
+						$content.find('.upfront-region-bg-setting-tab').not('.upfront-region-bg-setting-tab-'+value).hide();
+						$content.find('.upfront-region-bg-setting-tab-'+value).show();
+						me.render_modal_tab(value, $content.find('.upfront-region-bg-setting-tab-'+value), $content);
+						this.model.set_breakpoint_property(this.property_name, value);
+					}
+				}),
+				$region_name, $region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
+				
+			if ( !is_responsive && is_region ) {
+				var region_name = new Field_Text({
 					model: this.model,
 					name: 'title',
 					placeholder: "Enter name for this region...",
@@ -7585,22 +7612,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								me.trigger('blur');
 						});
 					}
-				}),
-				bg_type = new Field_Select({
-					model: this.model,
-					property: 'background_type',
-					default_value: !bg_image ? 'color' : 'image',
-					icon_class: 'upfront-region-field-icon',
-					values: region_types,
-					change: function () {
-						var value = this.get_value();
-						$content.find('.upfront-region-bg-setting-tab').not('.upfront-region-bg-setting-tab-'+value).hide();
-						$content.find('.upfront-region-bg-setting-tab-'+value).show();
-						me.render_modal_tab(value, $content.find('.upfront-region-bg-setting-tab-'+value), $content);
-						this.property.set({value: value});
-					}
-				}),
-				$region_name, $region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
+				});
+			}
 			if ( is_layout ){
 				var contained_region = new Field_Number({
 					model: this.model,
@@ -7609,7 +7622,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					label_style: "inline",
 					default_value: grid.size*grid.column_width,
 					min: grid.size*grid.column_width,
-					max: 2560,
+					max: 5120,
 					step: 1,
 					suffix: 'px',
 					change: function () {
@@ -7826,8 +7839,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
 			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
-
-			if ( is_region ) {
+			
+			if ( !is_responsive && is_region ) {
 				region_name.render();
 				$region_name.append(region_name.$el);
 				region_name.$el.hide();
@@ -7848,8 +7861,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else {
 				$region_name.hide();
 			}
-
-			if ( is_region && this.model.is_main() ) {
+			
+			if ( !is_responsive && is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox
 					if (
@@ -7881,7 +7894,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_restrict.hide();
 			$region_sticky.hide();
 
-			if ( is_region && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
+			if ( !is_responsive && is_region && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
 				// Show the sticky option if there's no sticky region yet AND the region is <= 300px height
 				if ( ( !has_sticky && this.for_view.$el.height() <= 300 ) || this.model.get('sticky') ) {
 					var region_sticky = new Field_Checkboxes({
@@ -7942,7 +7955,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					me.trigger_expand_lock($(this));
 				});
 				this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
-				region_type.trigger('changed');
+				if ( !is_responsive )
+					region_type.trigger('changed');
 			}
 			else if ( is_region && sub == 'fixed' ) {
 				this.render_fixed_settings($fixed);
@@ -8266,6 +8280,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				picker = new Field_Color({
 					model: this.model,
 					property: 'background_color',
+					use_breakpoint_property: true,
 					default_value: '#ffffff',
 					spectrum: {
 						move: function (color) {
@@ -8279,7 +8294,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						}
 					}
 				});
-			this._default_color = this.model.get_property_value_by_name('background_color');
+			this._default_color = this.model.get_breakpoint_property_value('background_color', true);
 			picker.render();
 			$tab.html('');
 			this._render_tab_template($tab, picker.$el, '', 'color');
@@ -8287,14 +8302,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		preview_color: function (color) {
 			var rgb = color.toRgb(),
 				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-			this.model.set_property('background_color', rgba_string);
+			this.model.set_breakpoint_property('background_color', rgba_string);
 		},
 		update_color: function (color) {
 			this.preview_color(color);
-			this._default_color = this.model.get_property_value_by_name('background_color');
+			this._default_color = this.model.get_breakpoint_property_value('background_color', true);
 		},
 		reset_color: function () {
-			this.model.set_property('background_color', this._default_color);
+			this.model.set_breakpoint_property('background_color', this._default_color);
 		},
 		// Image tab
 		render_modal_tab_image: function ($tab, value) {
@@ -8321,6 +8336,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					bg_style: new Field_Select({
 						model: this.model,
 						property: 'background_style',
+						use_breakpoint_property: true,
 						default_value: 'full',
 						icon_class: 'upfront-region-field-icon',
 						values: [
@@ -8363,6 +8379,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					bg_color: new Field_Color({
 						model: this.model,
 						property: 'background_color',
+						use_breakpoint_property: true,
 						default_value: '#ffffff',
 						spectrum: {
 							move: function (color) {
@@ -8380,24 +8397,26 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						model: this.model,
 						orientation: 'vertical',
 						property: 'background_position_y',
+						use_breakpoint_property: true,
 						range: false,
 						change: function () {
 							var value = this.get_value();
 							fields.bg_position_y_num.get_field().val(value);
 							me._bg_position_y = value;
-							this.property.set({value: value});
+							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
 						}
 					}, pos_option)),
 					bg_position_x: new Field_Slider(_.extend({
 						model: this.model,
 						property: 'background_position_x',
+						use_breakpoint_property: true,
 						range: false,
 						change: function () {
 							var value = this.get_value();
 							fields.bg_position_x_num.get_field().val(value);
 							me._bg_position_x = value;
-							this.property.set({value: value});
+							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
 						}
 					}, pos_option)),
@@ -8463,8 +8482,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				});
 				$('<img>').attr('src', sizes.full[0]).load(function(){
 					Upfront.Views.Editor.ImageSelector.close();
-					me.model.set_property('background_image', sizes.full[0]);
-					me.model.set_property('background_image_ratio', Math.round(sizes.full[2]/sizes.full[1]*100)/100);
+					me.model.set_breakpoint_property('background_image', sizes.full[0]);
+					me.model.set_breakpoint_property('background_image_ratio', Math.round(sizes.full[2]/sizes.full[1]*100)/100);
 				});
 			});
 		},
@@ -8476,31 +8495,31 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				pos_y = this._bg_position_y,
 				pos_x = this._bg_position_x;
 			if ( style == 'full' ) {
-				this.model.set_property('background_style', 'full');
+				this.model.set_breakpoint_property('background_style', 'full');
 			}
 			else {
 				if ( style == 'tile' ){
-					this.model.set_property('background_style', 'tile');
+					this.model.set_breakpoint_property('background_style', 'tile');
 					if ( is_repeat_x && is_repeat_y )
-						this.model.set_property('background_repeat', 'repeat');
+						this.model.set_breakpoint_property('background_repeat', 'repeat');
 					else if ( is_repeat_y )
-						this.model.set_property('background_repeat', 'repeat-y');
+						this.model.set_breakpoint_property('background_repeat', 'repeat-y');
 					else if ( is_repeat_x )
-						this.model.set_property('background_repeat', 'repeat-x');
+						this.model.set_breakpoint_property('background_repeat', 'repeat-x');
 					else
-						this.model.set_property('background_repeat', 'no-repeat');
+						this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 				}
 				else if ( style == 'fixed' ){
-					this.model.set_property('background_style', 'fixed');
-					this.model.set_property('background_repeat', 'no-repeat');
-					this.model.set_property('background_position', pos_x + '% ' + pos_y + '%');
+					this.model.set_breakpoint_property('background_style', 'fixed');
+					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
+					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
 				}
 			}
 		},
 		// Slider tab
 		render_modal_tab_slider: function ($tab) {
 			var me = this,
-				slide_images = this.model.get_property_value_by_name('background_slider_images'),
+				slide_images = this.model.get_breakpoint_property_value('background_slider_images', true),
 				$rotate = $('<div class="upfront-region-bg-slider-rotate clearfix" />'),
 				$transition = $('<div class="upfront-region-bg-slider-transition upfront-settings-item"><div class="upfront-settings-item-title" /><div class="upfront-settings-item-content" /></div>'),
 				$transition_title = $transition.find('.upfront-settings-item-title'),
@@ -8510,7 +8529,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$slides_content = $slides.find('.upfront-settings-item-content'),
 				set_value = function () {
 					var value = this.get_value();
-					this.property.set({value: value});
+					this.model.set_breakpoint_property(this.property_name, value);
 				};
 			if ( !slide_images ){
 				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
@@ -8518,7 +8537,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					_.each(images, function(image, id){
 						image_ids.push(id);
 					});
-					me.model.set_property('background_slider_images', image_ids);
+					me.model.set_breakpoint_property('background_slider_images', image_ids);
 					me.update_slider_slides($slides_content);
 					Upfront.Views.Editor.ImageSelector.close();
 				});
@@ -8527,6 +8546,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					rotate: new Field_Checkboxes({
 						model: this.model,
 						property: 'background_slider_rotate',
+						use_breakpoint_property: true,
 						default_value: true,
 						layout: 'horizontal-inline',
 						multiple: false,
@@ -8539,6 +8559,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					rotate_time: new Field_Number({
 						model: this.model,
 						property: 'background_slider_rotate_time',
+						use_breakpoint_property: true,
 						default_value: 5,
 						min: 1,
 						max: 60,
@@ -8549,6 +8570,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					control: new Field_Radios({
 						model: this.model,
 						property: 'background_slider_control',
+						use_breakpoint_property: true,
 						default_value: 'always',
 						layout: 'horizontal-inline',
 						values: [
@@ -8560,6 +8582,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					transition: new Field_Select({
 						model: this.model,
 						property: 'background_slider_transition',
+						use_breakpoint_property: true,
 						default_value: 'crossfade',
 						icon_class: 'upfront-region-field-icon',
 						values: [
@@ -8585,11 +8608,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				e.preventDefault();
 				e.stopPropagation();
 				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
-					var slide_images = _.clone(me.model.get_property_value_by_name('background_slider_images') || []);
+					var slide_images = _.clone(me.model.get_breakpoint_property_value('background_slider_images', true) || []);
 					_.each(images, function(image, id){
 						slide_images.push(id);
 					});
-					me.model.set_property('background_slider_images', slide_images);
+					me.model.set_breakpoint_property('background_slider_images', slide_images);
 					Upfront.Views.Editor.ImageSelector.close();
 					me.update_slider_slides($slides_content);
 				});
@@ -8599,15 +8622,15 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				e.stopPropagation();
 				var $image = $(this).closest('.upfront-region-bg-slider-image'),
 					image_id = $image.data('image-id'),
-					slide_images = me.model.get_property_value_by_name('background_slider_images');
+					slide_images = me.model.get_breakpoint_property_value('background_slider_images', true);
 				slide_images = _.without(slide_images, image_id);
-				me.model.set_property('background_slider_images', slide_images);
+				me.model.set_breakpoint_property('background_slider_images', slide_images);
 				$image.remove();
 			});
 		},
 		update_slider_slides: function ($wrap) {
 			var me = this,
-				slide_images = me.model.get_property_value_by_name('background_slider_images'),
+				slide_images = me.model.get_breakpoint_property_value('background_slider_images', true),
 				$add = $('<div class="upfront-region-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">Add Slide</div>');
 			$wrap.html('');
 
@@ -8638,7 +8661,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 									if ( id )
 										slide_images.push(id);
 								});
-								me.model.set_property('background_slider_images', slide_images);
+								me.model.set_breakpoint_property('background_slider_images', slide_images);
 							}
 						});
 					$wrap.append($add);
@@ -8656,7 +8679,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$style_control = $('<div class="upfront-region-bg-map-style-control clearfix" />'),
 				set_value = function () {
 					var value = this.get_value();
-					this.property.set({value: value});
+					this.model.set_breakpoint_property(this.property_name, value);
 				};
 			if ( ! map_center ){
 				this.model.init_property('background_map_center', [10.722250, 106.730762]);
@@ -8672,10 +8695,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						model: this.model,
 						label: "Location:",
 						property: 'background_map_location',
+						use_breakpoint_property: true,
 						placeholder: "e.g 123 Nice St",
 						change: function () {
 							var value = this.get_value();
-							this.property.set({value: value}, {silent: true});
+							this.model.set_breakpoint_property(this.property_name, value, true);
 							me._location = value;
 							me._location_changed = true;
 						}
@@ -8684,6 +8708,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						model: this.model,
 						label: "Zoom:",
 						property: 'background_map_zoom',
+						use_breakpoint_property: true,
 						default_value: 8,
 						min: 1,
 						max: 19,
@@ -8694,6 +8719,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						model: this.model,
 						label: "Map Style:",
 						property: 'background_map_style',
+						use_breakpoint_property: true,
 						values: [
 							{ label: "Roadmap", value: 'ROADMAP' },
 							{ label: "Satellite", value: 'SATELLITE' },
@@ -8707,6 +8733,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						label: "Controls:",
 						placeholder: "Choose map controls",
 						property: 'background_map_controls',
+						use_breakpoint_property: true,
 						multiple: true,
 						default_value: ["pan"],
 						values: [
@@ -8752,7 +8779,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				if (status != google.maps.GeocoderStatus.OK) return false;
 				var pos = results[0].geometry.location;
 
-				me.model.set_property("background_map_center", [pos.lat(), pos.lng()]);
+				me.model.set_breakpoint_property("background_map_center", [pos.lat(), pos.lng()]);
 				me._geocoding = false;
 				me._location_changed = false;
 			});
@@ -8767,39 +8794,41 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					mute: new Field_Checkboxes({
 						model: this.model,
 						property: 'background_video_mute',
+						use_breakpoint_property: true,
 						default_value: true,
 						layout: 'horizontal-inline',
 						multiple: false,
 						values: [ { label: "Mute video on play?", value: true } ],
 						change: function () {
 							var value = this.get_value();
-							this.property.set({value: value ? true : false});
+							this.model.set_breakpoint_property(this.property_name, value ? true : false);
 						}
 					}),
 					video: new Field_Text({
 						model: this.model,
 						property: 'background_video',
+						use_breakpoint_property: true,
 						default_value: '',
 						placeholder: 'Video URL (YouTube, Vimeo or Wistia)',
 						change: function () {
 							var value = this.get_value();
 							if ( value ){
-								me.model.set_property('background_video_embed', "");
+								me.model.set_breakpoint_property('background_video_embed', "");
 								me.get_video_embed(value).done(function(response){
-									console.log(response);
 									if ( !response.data || !response.data.width || !response.data.height )
 										return;
-									me.model.set_property('background_video_width', response.data.width);
-									me.model.set_property('background_video_height', response.data.height);
-									me.model.set_property('background_video_embed', response.data.html);
+									me.model.set_breakpoint_property('background_video_width', response.data.width);
+									me.model.set_breakpoint_property('background_video_height', response.data.height);
+									me.model.set_breakpoint_property('background_video_embed', response.data.html);
 								});
 							}
-							this.property.set({value: value});
+							this.model.set_breakpoint_property(this.property_name, value);
 						}
 					}),
 					style: new Field_Radios({
 						model: this.model,
 						property: 'background_video_style',
+						use_breakpoint_property: true,
 						layout: 'horizontal-inline',
 						default_value: ["crop"],
 						values: [
@@ -8813,7 +8842,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								fields.color.$el.show();
 							else
 								fields.color.$el.hide();
-							this.property.set({value: value});
+							this.model.set_breakpoint_property(this.property_name, value);
 						}
 					}),
 					color: new Field_Color({
@@ -8821,6 +8850,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						label: "Area BG Color:",
 						label_style: 'inline',
 						property: 'background_color',
+						use_breakpoint_property: true,
 						default_value: '#ffffff',
 						spectrum: {
 							move: function (color) {
@@ -8850,7 +8880,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		// Expand lock trigger
 		render_expand_lock: function ($el) {
-			var locked = this.model.get_property_value_by_name('expand_lock'),
+			var locked = this.model.get_breakpoint_property_value('expand_lock', true),
 				$status = $('<span />');
 			if ( locked ){
 				$status.addClass('auto-resize-off');
@@ -8863,8 +8893,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$el.append($status);
 		},
 		trigger_expand_lock: function ($el) {
-			var locked = this.model.get_property_value_by_name('expand_lock');
-			this.model.set_property('expand_lock', !locked);
+			var locked = this.model.get_breakpoint_property_value('expand_lock');
+			this.model.set_breakpoint_property('expand_lock', !locked);
 			this.render_expand_lock($el);
 		},
 		// Edit CSS trigger

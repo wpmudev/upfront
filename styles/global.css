@@ -104,7 +104,7 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-output-region.upfront-region-fixed {
   position: fixed;
-  z-index: 12;
+  z-index: 25;
 }
 
 .upfront-module {}
@@ -140,7 +140,7 @@ h2, h3 { page-break-after: avoid; }
 	z-index: 11;
 }
 .upfront-output-region-container-sticky {
-	z-index: 20;
+	z-index: 30;
 }
 .upfront-output-bg-overlay {
 	position: absolute;
@@ -149,6 +149,7 @@ h2, h3 { page-break-after: avoid; }
 	left: 0;
 	right: 0;
 	z-index: 0;
+	display: none;
 }
 .upfront-output-layout {
 	background-attachment: fixed;
