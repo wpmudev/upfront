@@ -150,6 +150,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		this.listenTo(this.model, 'no_padding_change', function(e){
 			me.calculateMargins();
+			if (this.property('no_padding')[0] === "true") {
+				me.$el.addClass('no_padding');
+			} else {
+				me.$el.removeClass('no_padding');
+			}
 		});
 
 		if(this.property('status') != 'ok' || !this.images.length)
