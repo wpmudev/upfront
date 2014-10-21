@@ -1232,6 +1232,7 @@ define([
 		add_module: function (module) {
 			// Add module to shadow region so it's available to add by dragging
 			var region = this.model.get("regions").get_by_name('shadow');
+			if (!region || !region.get) return false; // Let's break out if we can't find the shadow region
 			this.shadow_id = Upfront.Util.get_unique_id("shadow");
 			module.set({"shadow": this.shadow_id}, {silent: true});
 			region.get("modules").add(module);
