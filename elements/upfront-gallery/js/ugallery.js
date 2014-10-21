@@ -357,7 +357,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						;
 					}
 
-					wrapper.append(me.magnificLabelTpl({labels: labelsTpl, imageId: image.id, l10n: l10n.template}));
+					wrapper.addClass('gallery-labels-figure');
+					wrapper.prepend(me.magnificLabelTpl({labels: labelsTpl, imageId: image.id, l10n: l10n.template}));
 
 					var panel = wrapper.find('.ugallery-magnific-panel'),
 						reveal = function(){

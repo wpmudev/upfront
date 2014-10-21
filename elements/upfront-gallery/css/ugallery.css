@@ -502,10 +502,10 @@ div.ugallery-controls i.upfront-icon:before {
 }
 
 .upfront-ui .upfront-icon-region-edit-labels:before {
-	background-position: -703px -745px;
+	background-position: -482px -231px;
 }
 .upfront-ui .upfront-icon-region-edit-labels:hover:before {
-	background-position: -811px -745px;
+	background-position: -482px -231px;
 }
 
 
@@ -602,29 +602,29 @@ a.ugallery-linked_page:hover:before {
 }
 
 div.ugallery-magnific-labels {
-	position: absolute;
-	top:0;
-	left:0;
-	width: 100%;
 	color: #A1C5E6;
 	font-size: 13px;
 	line-height: 1.2em;
+	min-width: 500px;
+	max-width: 500px;
+	position: relative;
+	margin: 40px auto -23px;
 }
 
 
 
-.ugallery-magnific-panel:before,
-.ugallery-magnific-panel:after {
+.upfront-ui .ugallery-magnific-panel:before,
+.upfront-ui .ugallery-magnific-panel:after {
 	display: table;
 	content: ' ';
 	width: 100%;
 }
 
-.ugallery-magnific-panel:after {
+.upfront-ui .ugallery-magnific-panel:after {
 	clear: both;
 }
 
-.ugallery-magnific-panel {
+.upfront-ui .ugallery-magnific-panel {
 	background: rgba(31, 48, 63, 0.8);
 	transition: max-height .5s;
 	-webkit-transition: max-height .5s; /* Safari */
@@ -632,20 +632,28 @@ div.ugallery-magnific-labels {
 	overflow: hidden;
 }
 
-.ugallery-magnific-panel.closed {
+.upfront-ui .ugallery-magnific-panel.closed {
 	max-height: 0px;
 }
 
-.ugallery-magnific-toggle {
+.upfront-ui .ugallery-magnific-toggle {
 	width: 30px;
 	height: 30px;
 	margin: 0 auto;
 	background: rgba(31, 48, 63, 0.8) url(../../../img/uf-core-el-sprite.svg) no-repeat -476px -229px;
 	cursor:	pointer;
 	opacity: 0.9;
+	position: absolute;
+	bottom: -30px;
+	left: 50%;
+	margin-left: -15px;
 }
 
-.ugallery-magnific-toggle:hover {
+.gallery-labels-figure .mfp-title {
+	text-align: center;
+}
+
+.upfront-ui .ugallery-magnific-toggle:hover {
 	opacity: 1;
 }
 
@@ -653,7 +661,7 @@ div.ugallery-magnific-addform {
 	display: none;
 }
 
-.ugallery-magnific-info {
+.upfront-ui .ugallery-magnific-info {
 	float:right;
 	width: 220px;
 	padding: 10px 10px 10px 25px;
@@ -685,16 +693,16 @@ div.ugallery-magnific-wrapper.existing_labels  {
 }
 
 
-.ugallery-magnific-addbutton {
+.upfront-ui .ugallery-magnific-addbutton {
 	cursor: pointer;
 	font-size: 16px;
 }
 
-.ugallery-magnific-addbutton:hover {
+.upfront-ui .ugallery-magnific-addbutton:hover {
 	color: #1fcd8f;
 }
 
-.ugallery-magnific-addbutton:before {
+.upfront-ui .ugallery-magnific-addbutton:before {
 	content: '+';
 	font-weight: bold;
 	color: #1fcd8f;
@@ -710,10 +718,6 @@ input#ugallery-addlabels {
 
 input#ugallery-addlabels:focus {
 	background: #fff;
-}
-
-.ugallery-magnific-addform {
-
 }
 
 .ugallery-magnific-addform ul{
@@ -780,7 +784,7 @@ button.mfp-close {
   bottom: auto;
 }
 
-.ugallery-field-tooltip {
+.upfront-ui .ugallery-field-tooltip {
 	position: absolute;
 	width: 200px;
 	top: 120%;
