@@ -2,41 +2,50 @@ jQuery(function($){
 
 	var calculateMargins =  function(gallery, absolute) {
 		var container = gallery.find('.ugallery_items').width(),
-			items = gallery.find('.ugallery_item'),
+			items = gallery.find('.ugallery_item.filtered'),
 			itemWidth = items.outerWidth(),
 			minMargin = 30,
+			row = 0,
 			columns = Math.floor(container / itemWidth),
-			margin, totalMargin, remaining, grid
+			margin, totalMargin, remaining, grid_cell, no_padding
 		;
 
-		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
+		no_padding = gallery.data('no-padding');
+
+		if(!no_padding && columns * itemWidth + (columns - 1 ) * minMargin > container)
 			columns--;
 
 		totalMargin = container - (columns * itemWidth);
-		margin = Math.floor(totalMargin / (columns-1));
-		grid = margin + itemWidth;
+		margin = no_padding ? 0 : Math.floor(totalMargin / (columns-1));
+		grid_cell = margin + itemWidth;
 		remaining = container - (columns * itemWidth + margin * (columns-1));
 
-		items.each(function(idx){
+		items.each(function(item_index){
 			var $this = $(this),
-				extra
-			;
-			if(absolute){
-				var left = $this.position().left,
-					col = Math.round(left / grid)
-				;
-				extra = col < remaining ? col : 0;
-				$this.css('left', col*grid + extra);
-			}
-			else{
-				extra = columns - (idx % columns) < remaining ? 1 : 0;
-				$this.css('margin-right', (idx + 1) % columns ? margin + extra : 0);
+				extra,
+				column;
+
+			if(absolute) {
+				column = item_index - (row * columns);
+				extra = column < remaining ? column : 0;
+				if(no_padding) extra = 0;
+
+				$this.css('left', grid_cell * column + extra);
+
+				if (item_index > 0 && (item_index + 1) % columns === 0) {
+					row++;
+				}
+			} else {
+				extra = columns - (item_index % columns) < remaining ? 1 : 0;
+				if (no_padding) extra = 0;
+				$this.css('margin-right', (item_index + 1) % columns ? margin + extra : 0);
 			}
 		});
 	};
 
 	$('.ugallery_grid').each(function(){
-		var grid = $(this);
+		var grid = $(this),
+			no_padding = grid.parent().data('no-padding');
 
 		grid.on('layout.shuffle', function(){
 			setTimeout(function(){
@@ -48,16 +57,19 @@ jQuery(function($){
 			itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
 			gutterWidth: function(containerWidth){
 				var container = containerWidth,
-					minGutter = 30,
+					minGutter = no_padding ? 0 : 30,
 					width = $(this.$items[0]).width(),
-					columns = Math.floor(container / width)
-				;
+					columns = Math.floor(container / width),
+					totalGutter,
+					gutter;
+
+				if (no_padding) return 0;
+
 				if(columns * width + (columns - 1) * minGutter > container)
 					columns--;
 
-				var totalGutter = container - columns * width,
-					gutter = Math.floor(totalGutter / (columns - 1))
-				;
+				totalGutter = container - columns * width;
+				gutter = Math.floor(totalGutter / (columns - 1));
 
 				return gutter - 2 * columns;
 			},
@@ -139,7 +151,7 @@ jQuery(function($){
 		$('.ugallery').each(function(){
 			var gallery = $(this);
 			if(!gallery.children('.ugallery_grid').length)
-				calculateMargins(gallery);
+				calculateMargins(gallery, false);
 		});
 	})
 });

@@ -92,13 +92,13 @@ define([
 				var me = this,
 					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
-					type = this.model.get_property_value_by_name('background_type'),
-					color = this.model.get_property_value_by_name('background_color'),
-					image = this.model.get_property_value_by_name('background_image'),
-					ratio = parseFloat(this.model.get_property_value_by_name('background_image_ratio')),
-					repeat = this.model.get_property_value_by_name('background_repeat'),
-					position = this.model.get_property_value_by_name('background_position'),
-					style = this.model.get_property_value_by_name('background_style'),
+					type = this.model.get_breakpoint_property_value('background_type', true),
+					color = this.model.get_breakpoint_property_value('background_color', true),
+					image = this.model.get_breakpoint_property_value('background_image', true),
+					ratio = parseFloat(this.model.get_breakpoint_property_value('background_image_ratio', true)),
+					repeat = this.model.get_breakpoint_property_value('background_repeat', true),
+					position = this.model.get_breakpoint_property_value('background_position', true),
+					style = this.model.get_breakpoint_property_value('background_style', true),
 					width = $bg.outerWidth(),
 					height = $bg.outerHeight(),
 					$overlay = $bg.children('.upfront-region-bg-overlay');
@@ -295,11 +295,12 @@ define([
 				} catch (e) {
 					return this.postpone_map_init($type, $overlay);
 				}
-				var center = this.model.get_property_value_by_name('background_map_center'),
-					zoom = this.model.get_property_value_by_name('background_map_zoom'),
-					style = this.model.get_property_value_by_name('background_map_style'),
-					styles = this.model.get_property_value_by_name('background_map_styles'),
-					controls = this.model.get_property_value_by_name('background_map_controls'),
+				var me = this,
+					center = this.model.get_breakpoint_property_value('background_map_center', true),
+					zoom = this.model.get_breakpoint_property_value('background_map_zoom', true),
+					style = this.model.get_breakpoint_property_value('background_map_style', true),
+					styles = this.model.get_breakpoint_property_value('background_map_styles', true),
+					controls = this.model.get_breakpoint_property_value('background_map_controls', true),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
 						zoom: parseInt(zoom),
@@ -319,15 +320,18 @@ define([
 				else {
 					$type.show();
 					this.bg_map.setOptions(options);
+					setTimeout(function(){
+						me.bg_map.setCenter(options.center);
+					}, 500);
 				}
 			},
 			update_background_slider: function ($type, $overlay) {
 				var me = this,
-					slide_images = this.model.get_property_value_by_name('background_slider_images'),
-					rotate = this.model.get_property_value_by_name('background_slider_rotate'),
-					rotate_time = this.model.get_property_value_by_name('background_slider_rotate_time'),
-					control = this.model.get_property_value_by_name('background_slider_control'),
-					transition = this.model.get_property_value_by_name('background_slider_transition');
+					slide_images = this.model.get_breakpoint_property_value('background_slider_images', true),
+					rotate = this.model.get_breakpoint_property_value('background_slider_rotate', true),
+					rotate_time = this.model.get_breakpoint_property_value('background_slider_rotate_time', true),
+					control = this.model.get_breakpoint_property_value('background_slider_control', true),
+					transition = this.model.get_breakpoint_property_value('background_slider_transition', true);
 				if ( slide_images ){
 					if ( rotate ){
 						$type.attr('data-slider-auto', 1);
@@ -360,12 +364,12 @@ define([
 				var me = this,
 					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
-					color = this.model.get_property_value_by_name('background_color'),
-					video = this.model.get_property_value_by_name('background_video'),
-					embed = this.model.get_property_value_by_name('background_video_embed'),
-					width = this.model.get_property_value_by_name('background_video_width'),
-					height = this.model.get_property_value_by_name('background_video_height'),
-					style = this.model.get_property_value_by_name('background_video_style') || 'crop',
+					color = this.model.get_breakpoint_property_value('background_color', true),
+					video = this.model.get_breakpoint_property_value('background_video', true),
+					embed = this.model.get_breakpoint_property_value('background_video_embed', true),
+					width = this.model.get_breakpoint_property_value('background_video_width', true),
+					height = this.model.get_breakpoint_property_value('background_video_height', true),
+					style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
 					ratio, $embed;
 				if ( style == 'inside' && color )
 					$bg.css('background-color', color);
@@ -406,9 +410,9 @@ define([
 			refresh_background: function () {
 				var is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
-					type = this.model.get_property_value_by_name('background_type'),
-					color = this.model.get_property_value_by_name('background_color'),
-					image = this.model.get_property_value_by_name('background_image');
+					type = this.model.get_breakpoint_property_value('background_type', true),
+					color = this.model.get_breakpoint_property_value('background_color', true),
+					image = this.model.get_breakpoint_property_value('background_image', true);
 				if ( type == 'map' && this.bg_map ){
 					google.maps.event.trigger(this.bg_map, 'resize');
 				}
@@ -416,11 +420,11 @@ define([
 					$bg.find('.upfront-region-bg-' + type).trigger('refresh');
 				}
 				else if ( type == 'video' ) {
-					var video = this.model.get_property_value_by_name('background_video'),
-						embed = this.model.get_property_value_by_name('background_video_embed'),
-						width = this.model.get_property_value_by_name('background_video_width'),
-						height = this.model.get_property_value_by_name('background_video_height'),
-						style = this.model.get_property_value_by_name('background_video_style') || 'crop',
+					var video = this.model.get_breakpoint_property_value('background_video', true),
+						embed = this.model.get_breakpoint_property_value('background_video_embed', true),
+						width = this.model.get_breakpoint_property_value('background_video_width', true),
+						height = this.model.get_breakpoint_property_value('background_video_height', true),
+						style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
 						ratio,
 						$type = $bg.find('.upfront-region-bg-' + type),
 						$embed = $type.children('iframe');
@@ -447,8 +451,8 @@ define([
 
 				}
 				else if ( ( !type || type == 'image' ) && image ) {
-					var style = this.model.get_property_value_by_name('background_style'),
-						ratio = this.model.get_property_value_by_name('background_image_ratio'),
+					var style = this.model.get_breakpoint_property_value('background_style', true),
+						ratio = this.model.get_breakpoint_property_value('background_image_ratio', true),
 						width = $bg.outerWidth(),
 						height = $bg.outerHeight();
 					if ( style == 'full' ){
@@ -2050,6 +2054,7 @@ define([
 				this.$layout.removeClass(grid.class + this.max_col);
 				this.max_col = breakpoint.columns;
 				this.$layout.addClass(grid.class + this.max_col);
+				this.update_background();
 				setTimeout(function(){ me.fix_height(); }, 500);
 			},
 			on_contained_width_change: function (width) {
@@ -2895,6 +2900,7 @@ define([
 				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
 				
 				this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
+				this.bg_setting.right = ( this.$el.offset().left + this.$el.width() - $settings_trigger.offset().left ) + 10;
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
 				this.bg_setting.open().always(function(){
@@ -2946,16 +2952,18 @@ define([
 					$hide = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger');
 				if ( !breakpoint.default ){
 					$delete.hide();
-					$settings.hide();
+					//$settings.hide();
 					$hide.show();
 				}
 				else {
 					$delete.show();
-					$settings.show();
+					//$settings.show();
 					$hide.hide();
 				}
 				this.update_position();
 				this.update_size_hint(this.$el.width(), this.$el.height());
+				if ( this._is_clipped() )
+					this.update_background();
 			}
 		}),
 

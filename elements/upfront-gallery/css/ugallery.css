@@ -31,6 +31,10 @@
 	overflow: visible;
 }
 
+.no_padding .ugallery_item {
+	margin: 0;
+}
+
 .ugallery .upfront-image-resizethiselement {
 }
 

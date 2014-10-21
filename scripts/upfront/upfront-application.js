@@ -215,7 +215,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
 		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
 		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
-		
+
 		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_region_css);
 	},
 
@@ -1270,9 +1270,7 @@ var Application = new (Backbone.Router.extend({
 		return this.loadingLayout;
 	},
 	set_layout_up: function(layoutData){
-		var $layout_style,
-			layout_style,
-			me = this,
+		var me = this,
 			data = $.extend(true, {}, layoutData.data.layout) || {} //Deep cloning
 		;
 
@@ -1292,16 +1290,6 @@ var Application = new (Backbone.Router.extend({
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
-
-		layout_style = this.layout.get_property_value_by_name('layout_style');
-		if (layout_style) {
-			$layout_style = $('#layout-style');
-			if ($layout_style.length === 0) {
-				$('body').append('<style id="layout-style">' + layout_style + '</style>');
-			} else {
-				$layout_style.html(layout_style);
-			}
-		}
 
 		var shadow = this.layout.get('regions').get_by_name("shadow");
 		if(shadow)
@@ -1505,7 +1493,6 @@ var Application = new (Backbone.Router.extend({
 			cssEditor = new Upfront.Views.Editor.CSSEditor();
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
-
 			Upfront.data.styles = {};
 			_.each(styles, function(elementStyles, elementType){
 				Upfront.data.styles[elementType] = [];
@@ -1518,7 +1505,7 @@ var Application = new (Backbone.Router.extend({
 					}
 				});
 			});
-			
+
 			if (_upfront_post_data.layout) me.apply_region_css();
 		});
 
@@ -1532,7 +1519,7 @@ var Application = new (Backbone.Router.extend({
 		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 		this.cssEditor = cssEditor;
 	},
-	
+
 	apply_region_css: function () {
 		var me = this,
 			layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type;

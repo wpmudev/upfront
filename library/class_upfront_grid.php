@@ -109,15 +109,25 @@ class Upfront_Grid {
 			$point_css = '';
 			$line_height = $point->get_line_height();
 			$point_css .= $point->get_frontend_rule($layout);
+			$layout_view = new Upfront_Layout_View($layout);
+			$point_css .= $layout_view->get_style_for($point, $this->get_grid_scope());
 			$width_pfx = $point->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			foreach ($layout['regions'] as $region) {
 				// Cascade defaults
 				$container = !empty($region['container']) ? $region['container'] : $region['name'];
 				$region['sub'] = !empty($region['sub']) ? $region['sub'] : false;
-				if ( $region['sub'] == 'top' || $region['sub'] == 'bottom' )
+				if ( $container == $region['name'] ) {
+					$container_view = new Upfront_Region_Container($region);
+					$point_css .= $container_view->get_style_for($point, $this->get_grid_scope());
+				}
+				if ( $region['sub'] == 'top' || $region['sub'] == 'bottom' ) {
+					$sub_container_view = new Upfront_Region_Sub_Container($region);
+					$point_css .= $sub_container_view->get_style_for($point, $this->get_grid_scope());
 					$region_col = $point->get_columns();
-				else
+				}
+				else {
 					$region_col = $this->_get_property_col($region);
+				}
 				$region_col = $region_col ? $region_col : $this->_get_available_container_col($container, $layout['regions']);
 				$region_row = $this->_get_property_row($region);
 				$region_hide = $this->_get_breakpoint_data($region, 'hide');

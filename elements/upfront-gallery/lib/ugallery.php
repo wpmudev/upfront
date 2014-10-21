@@ -209,7 +209,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionUseBackground' => 0,
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'captionWhen' => 'always', // 'always' | 'hover'
-			'linkTo' => 'image' // 'url' | 'image'
+			'linkTo' => 'image', // 'url' | 'image'
+			'no_padding' => array('false')
 		);
 	}
 
@@ -282,6 +283,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'settings' => __('Gallery settings', 'upfront'),
 			'panel' => array(
 				'sort' => __('Enable label sorting', 'upfront'),
+				'no_padding' => __('Remove padding'),
 				'show_caption' => __('Show Caption:', 'upfront'),
 				'never' => __('never', 'upfront'),
 				'hover' => __('on hover', 'upfront'),

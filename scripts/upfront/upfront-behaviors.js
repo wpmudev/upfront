@@ -645,14 +645,26 @@ var LayoutEditor = {
 						var value = this.get_value();
 
 						if ( value === 'single-page' )
-							fields.page_name.$el.show();
+							fields.$_page_name_wrap.show();
 						else
-							fields.page_name.$el.hide();
+							fields.$_page_name_wrap.hide();
 					}
 				}),
 				page_name: new Upfront.Views.Editor.Field.Text({
 					name: 'page_name',
 					label: 'Page name (leave empty for single-page.php)',
+				}),
+				inherit: new Upfront.Views.Editor.Field.Radios({
+					name: 'inherit',
+					layout: "horizontal-inline",
+					values: [
+						{label: 'Start fresh', value: ''},
+						{label: 'Start from existing layout', value: 'existing'}
+					]
+				}),
+				existing: new Upfront.Views.Editor.Field.Select({
+					name: 'existing',
+					values: []
 				})
 			};
 		if ( !ed.available_layouts ) {
@@ -671,6 +683,31 @@ var LayoutEditor = {
 				return {label: layout.label, value: layout_id, disabled: layout.saved};
 			});
 		}
+		if (!ed.all_templates) {
+			Upfront.Util.post({
+				action: "upfront-wp-model",
+				model_action: "get_post_extra",
+				postId: "fake", // Stupid walkaround for model handler insanity
+				allTemplates: true
+			}).done(function (response) {
+				if (!response.data || !response.data.allTemplates) return false;
+				if (0 === response.data.allTemplates.length) {
+					fields.inherit.$el.hide();
+					fields.existing.$el.hide();
+					return false;
+				}
+				ed.all_templates = response.data.allTemplates;
+				fields.existing.options.values = [];
+				_.each(response.data.allTemplates, function (tpl, title) {
+					fields.existing.options.values.push({label: title, value: tpl});
+				});
+				fields.existing.render();
+			});
+		} else {
+			fields.existing.options.values = _.map(ed.all_templates, function(tpl, title){
+				return {label: title, value: tpl};
+			});
+		}
 
 		if ( !ed.layout_modal ){
 			ed.layout_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
@@ -681,8 +718,11 @@ var LayoutEditor = {
 		ed.layout_modal.open(function($content, $modal){
 			var $button = $('<div style="clear:both"><span class="uf-button">Create</span></div>'),
 				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
-				$page_name_wrap = $('<div class="upfront-modal-select-wrap" />');
+				$page_name_wrap = $('<div class="upfront-modal-select-wrap" />')
+			;
+			fields.$_page_name_wrap = $page_name_wrap;
 			_.each(fields, function(field) {
+				if (!field.render) return true;
 				field.render();
 				field.delegateEvents();
 			});
@@ -691,9 +731,13 @@ var LayoutEditor = {
 			);
 			$select_wrap.append(fields.layout.el);
 			$content.append($select_wrap);
-			fields.page_name.$el.hide();
+			
+			$page_name_wrap.hide();
 			$page_name_wrap.append(fields.page_name.el);
+			$page_name_wrap.append(fields.inherit.el);
+			$page_name_wrap.append(fields.existing.el);
 			$content.append($page_name_wrap);
+			
 			$content.append($button);
 			$button.on('click', function(){
 				ed.layout_modal.close(true);
@@ -702,7 +746,7 @@ var LayoutEditor = {
 		.done(function(){
 			var layout = fields.layout.get_value(),
 				layout_slug = app.layout.get('layout_slug'),
-				data = ed.available_layouts[layout],
+				data = _.extend({}, ed.available_layouts[layout]),
 				specific_layout = fields.page_name.get_value();
 
 			// Check if user is creating single page with specific name
@@ -717,10 +761,15 @@ var LayoutEditor = {
 				};
 			}
 
+			data.use_existing = layout === 'single-page' && specific_layout && "existing" === fields.inherit.get_value()
+				? fields.existing.get_value()
+				: false
+			;
+
 			if ( data.latest_post )
 				_upfront_post_data.post_id = data.latest_post;
 
-			app.create_layout(data.layout, {layout_slug: layout_slug}).done(function() {
+			app.create_layout(data.layout, {layout_slug: layout_slug, use_existing: data.use_existing}).done(function() {
 				app.layout.set('current_layout', layout);
 				// Immediately export layout to write initial state to file.
 				ed._export_layout();

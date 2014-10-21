@@ -1,4 +1,4 @@
-<div class="ugallery ugallery_publish <?php if($in_editor) { ?>ugallery-in-editor<?php } ?>">
+<div class="ugallery ugallery_publish <?php if($in_editor) { ?>ugallery-in-editor<?php } ?> <?php if($no_padding[0] === 'true') { ?>no_padding<?php } ?>" data-no-padding="<?php echo $no_padding[0] ?>">
 <?php if ($labelFilters['length']){ ?>
 	<div class="ugallery_labels">
 	<?php for($i=0; $i<$labels_length; $i++) { ?>
@@ -23,26 +23,6 @@
 
 			</a>
 		</div><?php } ?>
-	<!--
-	<?php if($editing) { ?>
-		<div class="ugallery_addmore_wrapper upfront-ui" style="width: <?php echo $thumbWidth ?>px; min-height: <?php echo $thumbHeight ?>px">
-			<div class="ugallery_addmore"  title="<?php echo $l10n['add_new'] ?>"><?php echo $l10n['add_more'] ?></div></div>
-		<style>
-			.ugallery_addmore_wrapper {
-				height: 0px;
-				-moz-transition:height .3s;
-			    -webkit-transition:height .3s;
-			    -o-transition:height .3s;
-			    transition:height .3s;
-				overflow: hidden;
-			}
-			.upfront-active_entity .ugallery_addmore_wrapper {
-				height: <?php echo $thumbHeight ?>px;
-			}
-		</style>
-	<?php } ?>
-	-->
-
 	</div>
 <?php } else { ?>
 	<?php if(! $editing) { ?>
