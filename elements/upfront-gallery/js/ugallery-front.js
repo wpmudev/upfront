@@ -26,7 +26,7 @@ jQuery(function($){
 		items.each(function(item_index){
 			var $this = $(this),
 				extra,
-				col;
+				column;
 
 			if(absolute) {
 				column = item_index - (row * columns);
