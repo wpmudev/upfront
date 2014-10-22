@@ -546,7 +546,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.parent_module_view.$el
 				.on('resizestart', $.proxy(me.onElementResizeStart, me))
 				.on('resize', $.proxy(me.onElementResizing, me))
-				.on('resizestop', $.proxy(me.onElementResize, me))
+				.on('resizestop', $.proxy(me.onElementResizeStop, me))
 				.data('resizeHandling', true)
 			;
 		}
@@ -751,58 +751,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 	},
 
-	onElementResize: function(e, ui){
-		// In Mobile mode, don't handle resizing.
-		if(this.mobileMode)
-			return;
-		var starting = this.$('.upfront-image-starting-select');
-		if(starting.length){
-			this.elementSize = {
-				height: $('.upfront-resize').height() - 30,
-				width: $('.upfront-resize').width() - 30
-			};
-			this.property('element_size', this.elementSize);
-			return;
-		}
-		else if(this.property('quick_swap'))
-			return;
-
-		//Save resizing, be sure we have the good dimensions
-		this.onElementResizing();
-
-		var me = this,
-			img = resizingData.img,
-			size = resizingData.data.size,
-			position = resizingData.data.position,
-			imgSize = {width: img.width(), height: img.height()},
-			imgPosition = img.position()
-		;
-
-		//Change the sign
-		imgPosition.top = -imgPosition.top;
-		imgPosition.left = -imgPosition.left;
-
-		this.temporaryProps = {
-			size: imgSize,
-			position: imgPosition
-		};
-
-		this.property('element_size', resizingData.data.elementSize);
-
-		// Actually crop the image only in desktop mode;
-		//if(Upfront.Application.resizeMode == 'desktop'){
-			this.cropTimer = setTimeout(function(){
-				me.saveTemporaryResizing();
-				console.log('resizingTimer');
-			}, this.cropTimeAfterResize);
-		//}
-
-		this.setSizeHTMLClasses();
-		resizingData = {};
-		this.$('.wp-caption').fadeIn('fast');
-	},
-
-	onElementResizeStart: function(e, ui){
+	/***************************************************************************/
+	/*           Handling element resize events (jQuery resizeable)            */
+	/***************************************************************************/
+	onElementResizeStart: function(e, ui) {
 		// In Mobile mode, don't handle resizing.
 		if(this.mobileMode)
 			return;
@@ -843,7 +795,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.$('.uimage').css('min-height', 'auto');
 	},
 
-	onElementResizing: function(e, ui){
+	onElementResizing: function(e, ui) {
 		// In Mobile mode, don't handle resizing.
 		if(this.mobileMode)
 			return;
@@ -907,7 +859,58 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 	},
 
-	resizingH: function(img, data, size){
+	onElementResizeStop: function(e, ui) {
+		// In Mobile mode, don't handle resizing.
+		if(this.mobileMode)
+			return;
+		var starting = this.$('.upfront-image-starting-select');
+		if(starting.length){
+			this.elementSize = {
+				height: $('.upfront-resize').height() - 30,
+				width: $('.upfront-resize').width() - 30
+			};
+			this.property('element_size', this.elementSize);
+			return;
+		}
+		else if(this.property('quick_swap'))
+			return;
+
+		//Save resizing, be sure we have the good dimensions
+		this.onElementResizing();
+
+		var me = this,
+			img = resizingData.img,
+			size = resizingData.data.size,
+			position = resizingData.data.position,
+			imgSize = {width: img.width(), height: img.height()},
+			imgPosition = img.position()
+		;
+
+		//Change the sign
+		imgPosition.top = -imgPosition.top;
+		imgPosition.left = -imgPosition.left;
+
+		this.temporaryProps = {
+			size: imgSize,
+			position: imgPosition
+		};
+
+		this.property('element_size', resizingData.data.elementSize);
+
+		// Actually crop the image only in desktop mode;
+		//if(Upfront.Application.resizeMode == 'desktop'){
+			this.cropTimer = setTimeout(function(){
+				me.saveTemporaryResizing();
+				console.log('resizingTimer');
+			}, this.cropTimeAfterResize);
+		//}
+
+		this.setSizeHTMLClasses();
+		resizingData = {};
+		this.$('.wp-caption').fadeIn('fast');
+	},
+
+	resizingH: function(img, data, size) {
 		var elWidth = data.elementSize.width,
 			width = size ? data.size.width : img.width(), // The width has been modified if we don't need to set the size
 			left = data.position.left,
@@ -962,7 +965,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		img.css(css);
 	},
 
-	resizingV: function(img, data, size){
+	resizingV: function(img, data, size) {
 		var elHeight = data.elementSize.height,
 			height = size ? data.size.height : img.height(),
 			top = data.position.top,
@@ -1008,8 +1011,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 		img.css(css);
 	},
+	/***************************************************************************/
+	/*       End Handling element resize events (jQuery resizeable)            */
+	/***************************************************************************/
 
-	saveTemporaryResizing: function(){
+	saveTemporaryResizing: function() {
 		var me = this,
 			elementSize = me.property('element_size'),
 			crop = {},
@@ -1052,7 +1058,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		return promise;
 	},
 
-	saveResizing: function(){
+	saveResizing: function() {
 		var me = this;
 		if(this.cropTimer){
 			clearTimeout(this.cropTimer);
@@ -1070,7 +1076,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 	},
 
-	setElementSize: function(ui){
+	setElementSize: function(ui) {
 		var me = this,
 			parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 			resizer = ui ? $('.upfront-resize') : parent
@@ -1088,6 +1094,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.$('.upfront-object-content').height(me.elementSize.height);
 
 	},
+
 	openImageSelector: function(e){
 		var me = this;
 		if(e)
@@ -3144,7 +3151,6 @@ var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 	clicked: function(e){
 		this.trigger('click', e);
 		this.toggle_subitem();
-		console.log('i have been clicked ffs');
 	},
 	get_selected_item: function () {
 		return this.selected;
