@@ -261,6 +261,9 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.listenTo(this.contentEditor, 'publish', this.publish);
 			this.listenTo(this.contentEditor, 'draft', this.saveDraft);
 			this.listenTo(this.contentEditor, 'trash', this.trash);
+
+			// So let's focus on title
+			this.contentEditor.focus(this.contentEditor.parts.titles, true);
 		},
 
 		stopEditContents: function(){
