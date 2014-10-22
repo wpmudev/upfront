@@ -678,8 +678,6 @@ a.image-edit-button.deactivated:hover {
 
 .ui-resizable-autohide .uimage-controls {
 	display: none;
-	/*  !!! remove the rule below for deployment */
-	display: block;
 }
 
 .ui-resizable-autohide .uimage-controls.upfront-control-visible {

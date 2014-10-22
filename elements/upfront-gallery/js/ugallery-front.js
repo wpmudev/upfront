@@ -2,7 +2,7 @@ jQuery(function($){
 
 	var calculateMargins =  function(gallery, absolute) {
 		var container = gallery.find('.ugallery_items').width(),
-			items = gallery.find('.ugallery_item.filtered'),
+			items = gallery.find('.ugallery_labels').length ? gallery.find('.ugallery_item.filtered') : gallery.find('.ugallery_item'),
 			itemWidth = items.outerWidth(),
 			minMargin = 30,
 			row = 0,
