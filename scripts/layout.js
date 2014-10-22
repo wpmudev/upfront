@@ -28,7 +28,7 @@ jQuery(document).ready(function($){
 				if ( src )
 					$(this).attr('data-src', src);
 				else
-					$(ths).removeAttr('data-src');
+					$(this).removeAttr('data-src');
 				if ( ratio )
 					$(this).attr('data-bg-image-ratio', ratio);
 				else
