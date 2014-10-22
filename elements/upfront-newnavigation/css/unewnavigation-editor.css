@@ -1,4 +1,4 @@
-div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item {
+div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item, div.upfront-navigation i.edit_link {
 	display: none;
 	z-index:1;
 	cursor: pointer !important;
@@ -78,6 +78,20 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
 	overflow: hidden;
 	line-height: 3em;
 }
+
+div.upfront-navigation.upfront-editable_entity ul.menu li i.edit_link {
+	width: 16px;
+	height: 16px;
+	background-position: -923px -43px;
+	background-image: url('../../../img/uf-core-el-sprite.svg');
+	position: absolute;
+	left: 4px;
+	bottom: -8px;
+	cursor: pointer;
+	overflow: hidden;
+	line-height: 3em;
+}
+
 div.upfront-navigation.upfront-editable_entity ul.menu li:hover {
 	cursor: move;
 }
@@ -97,7 +111,8 @@ div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover 
 	border:1px #ddd dotted;
 
 }
-div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.delete_menu_item {
+div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.delete_menu_item,
+div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.edit_link {
 	display:block;
 }
 
@@ -279,6 +294,9 @@ div.upfront-navigation div[data-style="burger"] i.navigation-add-item {
 div.upfront-navigation div[data-style="burger"] i.delete_menu_item  {
   right:100px !important
 }
+div.upfront-navigation div[data-style="burger"] i.edit_link  {
+  right:60px !important
+}
 div.upfront-navigation div[data-style="burger"][data-aliment="left"] i.navigation-add-item,
 div.upfront-navigation div[data-style="burger"][data-aliment="center"] i.navigation-add-item {
   left:inherit !important;
@@ -296,4 +314,13 @@ div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > u
   display: block;
 }
 
+.newnavigation_squished .upfront-object > .upfront-entity_meta {
+	top: 0 !important;
+	right: 24px !important;
+}
 
+
+.newnavigation_squished .upfront-object > .upfront-entity_meta.newnavigation_add {
+	top: 0 !important;
+	right: 48px !important;
+}
