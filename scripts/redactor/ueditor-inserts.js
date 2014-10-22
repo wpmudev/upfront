@@ -358,7 +358,14 @@ var ImageInsert = UeditorInsert.extend({
 
 		data.image = data.imageFull;
 
-		if( (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+		data.style = data.style || {
+			image_col: 0,
+			group: '',
+			image: '',
+			caption: ''
+		};
+
+		if( data.style && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
 			data.image = data.imageThumb;
 			console.info('data.imageThumb');
 
@@ -381,8 +388,8 @@ var ImageInsert = UeditorInsert.extend({
 			.html(this.tpl(data))
 		;
 
-		Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
-		Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.top);
+		if (style_variant && style_variant.group && style_variant.group.col) Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
+		if (style_variant && style_variant.group && style_variant.group.top) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.top);
 		/**
 		 * Reset margins
 		 */
@@ -390,11 +397,13 @@ var ImageInsert = UeditorInsert.extend({
 			marginLeft: "0px",
 			marginRight: "0px"
 		});
-		this.$el.css({
-			float : style_variant.group.float,
-			marginLeft: style_variant.group.margin_left + "px",
-			marginRight: style_variant.group.margin_right + "px"
-		});
+		if (style_variant && style_variant.group) {
+			this.$el.css({
+				float : style_variant.group.float,
+				marginLeft: style_variant.group.margin_left + "px",
+				marginRight: style_variant.group.margin_right + "px"
+			});
+		}
 		this.controls.render();
 		this.$el.append(this.controls.$el);
 		this.make_caption_editable();
@@ -417,8 +426,11 @@ var ImageInsert = UeditorInsert.extend({
 	},
 
 	make_caption_editable: function(){
-		var me = this;
-		if( !this.data.get("style").caption.show || this.$('.wp-caption-text').length === 0) return;
+		var me = this,
+			data = this.data.get("style")
+		;
+		if (!data) return false;
+		if( !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 			this.$('.wp-caption-text')
 				//.attr('contenteditable', true)
 				.off('keyup')

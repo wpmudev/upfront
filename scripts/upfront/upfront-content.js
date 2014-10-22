@@ -210,18 +210,32 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		editContents: function(e, focusElement){
+			var me = this,
+				ram = function () {
+					arguments.callee.iter = arguments.callee.iter || 0; 
+					arguments.callee.iter++; 
+					if (arguments.callee.iter < 30) setTimeout(function () { // Total 3s wait time
+						me.editContents(e, focusElement); 
+					}, 100);
+				}
+			;
+
 			//If we are already editing, don't do anything
 			if(this.contentEditor || Upfront.Application.is_builder())// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
 				return;
 
 			//If we haven't fetched all the data, return too
 			if(!this.layoutData || !this.post) {
+				// Yeah, so wait a bit and ram this again. It'll give at some point.
+				ram();
 				return;
 			}
 
-			// Make sure that the content is ready for editing, if not, render again and return
+			// Make sure that the content is ready for editing, if not, render again and...
 			if(this.$el.find('.upfront-content-marker').length < 1) {
 				this.render();
+				// Yeah, so wait a bit and ram this again. It'll give at some point.
+				ram();
 				return;
 			}
 
@@ -247,6 +261,9 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.listenTo(this.contentEditor, 'publish', this.publish);
 			this.listenTo(this.contentEditor, 'draft', this.saveDraft);
 			this.listenTo(this.contentEditor, 'trash', this.trash);
+
+			// So let's focus on title
+			this.contentEditor.focus(this.contentEditor.parts.titles, true);
 		},
 
 		stopEditContents: function(){

@@ -226,7 +226,7 @@ var PostContentEditor = Backbone.View.extend({
 		this.parts.categories = this.$('.upfront-postpart-categories');
 
 		setTimeout(function(){
-			me.focus(me.triggeredBy, false);
+			if (me.triggeredBy.length) me.focus(me.triggeredBy, true);
 		}, 200);
 	},
 
@@ -234,6 +234,7 @@ var PostContentEditor = Backbone.View.extend({
 		return {
 			linebreaks: false,
 			autostart: true,
+			focus: false,
 			pastePlainText: true,
 			airButtons: ['bold', 'italic']
 		};
@@ -243,6 +244,7 @@ var PostContentEditor = Backbone.View.extend({
 		return {
 			linebreaks: false,
 			autostart: true,
+			focus: false,
 			pastePlainText: true,
 			inserts: this.inserts
 		};
@@ -400,6 +402,7 @@ var PostContentEditor = Backbone.View.extend({
 			el = $(el);
 
 		if(el.hasClass(marker + 'title') || el.hasClass(marker + 'contents')){
+			el.get(0).focus();
 			this.setSelection(el[0], selectAll);
 		}
 	},

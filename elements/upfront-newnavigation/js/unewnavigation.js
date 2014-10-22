@@ -30,6 +30,7 @@ var MenuItemView = Backbone.View.extend({
 	removeContexts: true,
 	events: {
 		'click i.delete_menu_item' : 'deleteMenuItem',
+		'click i.edit_link' : 'editLink',
 		'click i.navigation-add-item': 'addMenuItem',
 		"contextmenu a.menu_item": "on_context_menu",
 	},
@@ -167,7 +168,7 @@ var MenuItemView = Backbone.View.extend({
 
 		if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
-		content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i>';
+		content = content+'" >'+this.model['menu-item-title']+'</a><i class="edit_link">o</i><i class="delete_menu_item">x</i>';
 		$(this.el).html(content);
 		$(this.el).data('backboneview', me).addClass('menu-item');
 		if(me.newitem) $(this.el).addClass('new_menu_item');
@@ -239,7 +240,10 @@ var MenuItemView = Backbone.View.extend({
 
 		this.linkPanel.delegateEvents();
 	},
-
+	editLink: function(e) {
+		this.$el.find('a.menu_item').addClass('new_menu_item');
+		this.parent_view.editMenuItem(this.$el.find('a.new_menu_item'));
+	},
 	createLinkPanel: function(){
 		var linkPanel = new Upfront.Views.Editor.LinkPanel({
 			theme: 'light',
@@ -605,17 +609,22 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						}
 					}, 100);
 				}
-				if (e.which == 27) {
+				else if (e.which == 27) {
 					if(target.hasClass('new_menu_item')) {
 						target.closest('li').data('backboneview').closeTooltip();
 						target.closest('li').data('backboneview').saveLink(true);
 					}
 				}
-				if (e.which == 9) {
+				else if (e.which == 9) {
 					e.preventDefault();
 					if(!target.hasClass('new_menu_item')) {
 					target.blur();
 					target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
+				}
+				else if(e.which == 13) {
+					e.preventDefault();
+					target.blur();
+
 				}
 				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
@@ -661,6 +670,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 	},
 	onDeactivate: function() {
+		this.$el.find('li.edit_mode a.menu_item').blur();
 		this.editModeOff();
 		this.$el.find('.time_being_display').removeClass('time_being_display');
 	},
@@ -776,7 +786,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseover', function() {
 			me.$el.parent().parent().parent().draggable('disable');
-		});
+		}).on('keydown', function(e) {if(e.which == 13) me.$el.find('div.upfront-object-content > div.new_menu_button > input').trigger('click');});
 
 		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseout', function() {
 			me.$el.parent().parent().parent().draggable('enable');
@@ -802,7 +812,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				if(!me.property('initialized')) me.property('initialized', true, true);
 				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
 				me.property('menu_id', id);
-				me.property('menu_slug', _.findWhere(me.existingMenus, {term_id: id}).slug);
+				me.property('menu_slug', _.findWhere(me.existingMenus, {term_id: id}).slug, true);
 			}
 		});
 	},
@@ -812,7 +822,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": MenuName})
 			.success(function (ret) {
 				me.property('menu_id', ret.data.id);
-				me.property('menu_slug', ret.data.slug);
+				me.property('menu_slug', ret.data.slug, true);
 				me.getMenus();
 			})
 			.error(function (ret) {
@@ -821,6 +831,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	get_content_markup: function () {
+
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			me = this
 		;
@@ -836,7 +847,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					me.$el.find('.upfront-object-content').html('Please add menu items');
 					return;
 				}
-				me.property('menu_items', ret.data);
+				me.property('menu_items', ret.data, true);
 				me.generate_menu();
 			})
 			.error(function (ret) {
@@ -849,7 +860,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		Upfront.Util.post({"action": "upfront_new_menu_from_slug", "data": slug})
 			.success(function (ret) {
-				me.property('menu_id', ret.data);
+				me.property('menu_id', ret.data, true);
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error loading menu from slug");
@@ -863,6 +874,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			} else if($('.upfront-resize').width() > 460) {
 				this.property('menu_style', 'horizontal');
 			}
+		}
+
+		if($('.upfront-resize').height() < 80) {
+			this.$el.addClass('newnavigation_squished');
+		}
+		else {
+			this.$el.removeClass('newnavigation_squished');
 		}
 	},
 	on_render: function() {
@@ -941,6 +959,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(region_container.css('z-index') == 'auto' || parseInt(region_container.css('z-index')) < 11) {
 			region_container.css('z-index', 11);
 		}
+
+		setTimeout(function() {
+			if(me.$el.height() < 80) {
+				me.$el.addClass('newnavigation_squished');
+			}
+			else {
+				me.$el.removeClass('newnavigation_squished');
+			}
+		}, 200);
+
 	},
 	toggle_responsive_nav: function(e) {
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
@@ -959,10 +987,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(this.property('menu_items').length > 0) {
 			this.$el.find('.upfront-object-content').append(this.renderMenu(this.property('menu_items'), 'menu'));
 		} else {
-			this.$el.find('.upfront-object-content').append(this.renderMenu([me.menuItemTemplate()], 'menu'));
-			me.$el.find('ul.menu li.menu-item').addClass('new_menu_item').find('a.menu_item').addClass('new_menu_item').addClass('menu_item_placeholder')
-			me.editMenuItem(this.$el.find('a.new_menu_item'));
+			//	this.$el.find('.upfront-object-content').append(this.renderMenu([me.menuItemTemplate()], 'menu'));
+			//	me.$el.find('ul.menu li.menu-item').addClass('new_menu_item').find('a.menu_item').addClass('new_menu_item').addClass('menu_item_placeholder')
+			//	me.editMenuItem(this.$el.find('a.new_menu_item'));
+			this.$el.find('.upfront-object-content').append(this.renderMenu(this.property('menu_items'), 'menu'));
+			//*	this.$el.find('ul.menu').append(this.renderMenuItem(this.menuItemTemplate(), true));
+			setTimeout(function() {
+				me.$el.find('a.newnavigation-add-item').trigger('click');
+			}, 200);
 		}
+
+
 
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 
@@ -980,6 +1015,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 		}
 		this.makeSortable();
+		console.log('happened?');
 	},
 	makeSortable: function() {
 		var me = this;
@@ -1041,11 +1077,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 		return new_menu_order;
 	},
-	renderMenu : function(list, classname){
+	renderMenu: function(list, classname){
 		var $dom = $('<ul>').addClass(classname);
 		if(classname=='menu') $dom.addClass('drag_mode');
 		list.forEach( function(model){
-			if(model['menu-item-title'].trim() == '') model['menu-item-title'] = l10n.link_name;
+			//if(model['menu-item-title'].trim() == '') model['menu-item-title'] = l10n.link_name;
 			$dom.append(this.renderMenuItem(model));
 			if(!(typeof model.sub === 'undefined')) {
 				$dom.find(':last').parent().addClass('parent').append(this.renderMenu(model.sub, 'sub-menu'));
@@ -1058,6 +1094,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	renderMenuItem: function (model, newitem){
 		var me = this;
 		if(typeof newitem == 'undefined') newitem = false;
+
 		var view = new MenuItemView({model: model, parent_view: me, newitem: newitem});
 		return view.render().el;
 	},
@@ -1067,14 +1104,23 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			"menu-item-target": "",
 			"menu-item-title": "",
 			"menu-item-type": "custom",
-			"menu-item-url": ""
+			"menu-item-url": "#"
 		};
 	},
 	addPrimaryMenuItem : function(e) {
+		
 		e.preventDefault();
-		this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
+		if(this.$el.find('ul.menu > li > i.navigation-add-item').length > 0) {
+			
+			this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
+		}
+		else { 
+		//	this.$el.find('ul.menu').append(this.renderMenuItem(this.menuItemTemplate(), true));
+			this.addMenuItem(e);
+		}
 	},
 	addMenuItem : function(e) {
+
 		var me = this;
 		var menuItemId = false;
 		var menu_id = this.model.get_property_value_by_name('menu_id');
@@ -1093,11 +1139,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				menu_item["menu-item-parent-id"] = $(e.target).parent('li').parent('ul').parent('li').data('backboneview').model["menu-item-db-id"];
 				$(e.target).parent('li').parent('ul').addClass('time_being_display');
 			}
-
-			$(e.target).parent('li').parent('ul').append(this.renderMenuItem(menu_item, true));
-			$(e.target).parent('li').next('li').append(e.target);
+			if($(e.target).parent('li').length == 0) {
+				$(e.target).closest('div.upfront-navigation').find('ul.menu').append(this.renderMenuItem(menu_item, true));
+			}
+			else {
+				$(e.target).parent('li').parent('ul').append(this.renderMenuItem(menu_item, true));
+				$(e.target).parent('li').next('li').append(e.target);
+			}
 		}
-		me.editMenuItem(me.$el.find('a.new_menu_item'));
+		me.editMenuItem(me.$el.find('a.new_menu_item').removeClass('new_menu_item')); //linkPanel does not popup on new menu creation because of this class being removed
 	}
 
 });
@@ -1422,7 +1472,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				// Update slug because it's depending on id and has to be updated properly
 				var themenu = _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')});
 				if(themenu)
-					this.model.set_property('menu_slug', themenu.slug);
+					this.model.set_property('menu_slug', themenu.slug, true);
 			},
 			/**
 			 * Get the title (goes into settings title area)
