@@ -1127,7 +1127,9 @@ div.uimage-controls i.upfront-icon:before {
 	line-height: 0px;
 	margin-top:0;
 }
-
+.uimage-control-tooltip{
+	display: none;
+}
 .open .uimage-control-tooltip {
 	display: block;
 }

@@ -391,19 +391,30 @@ var ImageInsert = UeditorInsert.extend({
 
 		if (style_variant && style_variant.group && style_variant.group.col) Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
 		if (style_variant && style_variant.group && style_variant.group.left) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.left);
-		/**
-		 * Reset margins
-		 */
-		this.$el.css({
-			marginLeft: "0px",
-			marginRight: "0px"
-		});
+
 		if (style_variant && style_variant.group) {
-			this.$el.css({
+
+			var css = {
 				float : style_variant.group.float,
-				marginLeft: style_variant.group.margin_left + "px",
 				marginRight: style_variant.group.margin_right + "px"
-			});
+				},
+				reset_css = {
+					marginRight: "0px"
+				};
+			if( style_variant.group.left === 0 ){
+				reset_css.marginLeft =  "0px";
+				css.marginLeft =  style_variant.group.margin_left + "px";
+			}
+
+			/**
+			 * Reset margins
+			 */
+			this.$el.css(reset_css);
+
+			/**
+			 * Apply css
+			 */
+			this.$el.css(css);
 		}
 		this.controls.render();
 		this.$el.append(this.controls.$el);
