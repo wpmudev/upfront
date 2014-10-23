@@ -2,9 +2,8 @@
 
 define([
 		'text!elements/upfront-image/tpl/image.html',
-		'text!elements/upfront-image/tpl/image_editor.html',
-		'text!elements/upfront-gallery/tpl/ugallery_editor.html'
-	], function(imageTpl, editorTpl, galleryTpl) {
+		'text!elements/upfront-image/tpl/image_editor.html'
+	], function(imageTpl, editorTpl) {
 
 var $editorTpl = $(editorTpl);
 
@@ -61,9 +60,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			},
 			dragleave: function(e){
 				me.handleDragLeave(e);
-			},
-			drop: function(e){
-				console.log('drop body');
 			}
 		};
 
@@ -74,19 +70,21 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		;
 
 		// Set the full size current size if we don't have attachment id
-		if(!this.property('image_id'))
+		if(!this.property('image_id')) {
 			this.property('srcFull', this.property('src'));
+		}
 
-		this.listenTo(this.model.get("properties"), 'change', this.render);
-		this.listenTo(this.model.get("properties"), 'add', this.render);
-		this.listenTo(this.model.get("properties"), 'remove', this.render);
+		this.listenTo(this.model.get('properties'), 'change', this.render);
+		this.listenTo(this.model.get('properties'), 'add', this.render);
+		this.listenTo(this.model.get('properties'), 'remove', this.render);
 
 		this.listenTo(this.model, 'uimage:edit', this.editRequest);
 
 		this.controls = this.createControls();
 
-		if(this.property('image_status') != 'ok' || this.property('quick_swap'))
+		if(this.property('image_status') !== 'ok' || this.property('quick_swap')) {
 			this.property('has_settings', 0);
+		}
 
 		this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 		this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
@@ -94,11 +92,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.listenTo(Upfront.Events, 'command:layout:save', this.saveResizing);
 		this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveResizing);
 
-		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode, previousMode){
-			if(newMode.id != 'desktop')
+		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode){
+			if(newMode.id !== 'desktop') {
 				this.setMobileMode();
-			else
+			} else {
 				this.unsetMobileMode();
+			}
 		});
 
 		this.sizeClasses = {
@@ -129,10 +128,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	getSelectedAlignment: function(){
-		if(!this.property('include_image_caption'))
+		if(!this.property('include_image_caption')) {
 			return 'nocaption';
-		if(this.property('caption_position') == 'below_image')
+		}
+		if(this.property('caption_position') === 'below_image') {
 			return 'below';
+		}
 
 		var align = this.property('caption_alignment');
 
@@ -230,7 +231,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			linkTypes: {image:true}
 		});
 
-		me.listenTo(control, 'panel:ok', function(view){
+		me.listenTo(control, 'panel:ok', function(){
 			//call the panel linkOk method to let it parse the link,
 			// later the link:ok event will be emitted and we will use it to
 			// save the link.
@@ -251,7 +252,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.controls.$el.parent().removeClass('upfront-control-visible');
 			me.$el.closest('.ui-draggable').draggable('enable');
 			//Roll back the view, ready for reopen.
-			console.log('panel got closed yo');
 			control.view.render();
 		});
 
@@ -275,11 +275,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	updateLink: function(data, view){
-		if(!view)
+		if(!view) {
 			view = this.linkControl.view;
+		}
 		this.property('when_clicked', data.type);
-		if(data.type == 'image')
+		if(data.type === 'image') {
 			data.url = this.property('srcFull');
+		}
 		this.property('image_link', data.url);
 
 		view.model.set(data);
@@ -317,17 +319,17 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			.on('click', function(e){
 				e.stopPropagation();
 			})
-			.on('blur', function(e){
+			.on('blur', function(){
 				me.closeTooltip();
 			})
-			.on('closed', function(e){
+			.on('closed', function(){
 				me.$el.removeClass('tooltip-open');
 			})
 		;
 
 		this.$el.addClass('tooltip-open');
 
-		Upfront.Events.trigger("entity:settings:deactivate");
+		Upfront.Events.trigger('entity:settings:deactivate');
 	},
 
 	closeTooltip: function(){
@@ -340,29 +342,32 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	postTypes: function(){
 		var types = [];
 		_.each(Upfront.data.ugallery.postTypes, function(type){
-			if(type.name != 'attachment')
+			if(type.name !== 'attachment') {
 				types.push({name: type.name, label: type.label});
+			}
 		});
 		return types;
 	},
 
-	editCaption: function(e){
+	editCaption: function(){
 		var me = this,
 			captionEl = $('#' + this.property('element_id')).find('.wp-caption')
 		;
 
 
-		if(captionEl.find('.uimage-caption-cover').length)
+		if(captionEl.find('.uimage-caption-cover').length) {
 			captionEl = captionEl.find('.uimage-caption-cover');
+		}
 
-		if(captionEl.data('ueditor') || ! captionEl.length) //Already instantiated
+		if(captionEl.data('ueditor') || ! captionEl.length) { //Already instantiated
 			return;
+		}
 
 		captionEl.ueditor({
 				autostart: false,
 				upfrontMedia: false,
 				upfrontImages: false,
-				airButtons: ['upfrontFormatting', 'bold', 'italic', 'stateAlign', 'upfrontLink', 'upfrontColor', 'upfrontIcons'],
+				airButtons: ['upfrontFormatting', 'bold', 'italic', 'stateAlign', 'upfrontLink', 'upfrontColor', 'upfrontIcons']
 			})
 			.on('start', function(){
 				me.$el.addClass('upfront-editing');
@@ -395,9 +400,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			starting = this.$('.upfront-image-starting-select'),
 			size = this.temporaryProps.size, //this.property('size'),
 			position = this.temporaryProps.position, //this.property('position'),
-			stretch = this.property('stretch'),
-			img = this.$('img'),
-			textHeight = this.property('caption_position') == 'below_image' ? this.$('.wp-caption').outerHeight() : 0
+			textHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
 		;
 
 		if(starting.length){
@@ -416,7 +419,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			};
 			maskOffset = {
 				top: starting.offset().top,
-				left: starting.offset().left,
+				left: starting.offset().left
 			};
 		}
 /*
@@ -461,30 +464,34 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			props = this.extract_properties()
 		;
 
-		if(!this.temporaryProps || !this.temporaryProps.size)
+		if(!this.temporaryProps || !this.temporaryProps.size) {
 			this.temporaryProps = {
 				size: props.size,
 				position: props.position
 			};
+		}
 
 		props.url = this.property('when_clicked') ? this.property('image_link') : false;
 		props.size = this.temporaryProps.size;
 		props.position = this.temporaryProps.position;
 		props.marginTop = Math.max(0, -props.position.top);
 
-		props.cover_caption = props.caption_position != 'below_image'; //['top', 'bottom', 'fill', 'fill_bottom', 'fill_middle'].indexOf(props.caption_alignment) != -1;
+		props.cover_caption = props.caption_position !== 'below_image'; //['top', 'bottom', 'fill', 'fill_bottom', 'fill_middle'].indexOf(props.caption_alignment) != -1;
 
-		if(props.stretch)
+		if(props.stretch) {
 			props.imgWidth = '100%';
-		else
+		} else {
 			props.imgWidth = props.size.width + 'px';
+		}
 
 		//Gif image handled as normal ones in the backend
 		props.gifImage = '';
 		props.gifLeft = 0;
 		props.gifTop = 0;
 
-		if (props.caption_position === 'below_image') props.captionBackground = false;
+		if (props.caption_position === 'below_image') {
+			props.captionBackground = false;
+		}
 
 		props.l10n = l10n.template;
 
@@ -495,7 +502,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
 		}
-		else if(this.property('image_status') == 'starting'){
+		else if(this.property('image_status') === 'starting'){
 			rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
 					'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
 			'</div></div>';
@@ -538,7 +545,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	on_render: function(){
 		var me = this,
-			onTop = ['bottom', 'fill_bottom'].indexOf(me.property('caption_alignment')) != -1 || me.property('caption_position') == 'below_image' ? ' sizehint-top' : ''
+			onTop = ['bottom', 'fill_bottom'].indexOf(me.property('caption_alignment')) !== -1 || me.property('caption_position') === 'below_image' ? ' sizehint-top' : ''
 		;
 
 		//Bind resizing events
@@ -551,10 +558,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			;
 		}
 
-		if(me.property('when_clicked') == 'lightbox')
+		if(me.property('when_clicked') === 'lightbox') {
 			this.$('a').addClass('js-uimage-open-lightbox');
+		}
 
 		var elementSize = me.property('element_size');
+
 		me.$el.append(
 			$('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(me.sizehintTpl({
 				width: elementSize.width,
@@ -563,27 +572,21 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			}))
 		);
 
-		if(this.property('image_status') != 'ok'){
+		if(this.property('image_status') !== 'ok') {
 			var starting = this.$('.upfront-image-starting-select');
 			if(!this.elementSize.height){
 				this.setElementSize();
 				starting.height(this.elementSize.height);
 			}
-/*
-			me.$el.append(
-				$('<div>').addClass('uimage-resize-hint upfront-ui').html(me.sizehintTpl({
-					width: me.elementSize.width,
-					height: me.elementSize.height
-				}))
-			);
-*/
 			return;
 		}
 
 
-		if (this.property('quick_swap')) return false; // Do not show image controls for swappable images.
-		setTimeout(function(){
+		if (this.property('quick_swap')) { // Do not show image controls for swappable images.
+			return false;
+		}
 
+		setTimeout(function() {
 			me.controls.setWidth(elementSize.width);
 			me.controls.render();
 			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
@@ -641,25 +644,28 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	setSizeHTMLClasses: function(){
 		var me = this;
 
-		if(me.sizeClasses.small)
+		if(me.sizeClasses.small) {
 			this.parent_module_view.$el.addClass('uimage-small');
-		else
+		} else {
 			this.parent_module_view.$el.removeClass('uimage-small');
-
-		if(me.sizeClasses.tiny)
-			this.parent_module_view.$el.addClass('uimage-tiny uimage-narrow');
-		else {
-			this.parent_module_view.$el.removeClass('uimage-tiny');
-			if(me.sizeClasses.narrow)
-				this.parent_module_view.$el.addClass('uimage-narrow');
-			else
-				this.parent_module_view.$el.removeClass('uimage-narrow');
 		}
 
-		if(me.sizeClasses.small || me.sizeClasses.narrow)
+		if(me.sizeClasses.tiny) {
+			this.parent_module_view.$el.addClass('uimage-tiny uimage-narrow');
+		} else {
+			this.parent_module_view.$el.removeClass('uimage-tiny');
+			if(me.sizeClasses.narrow) {
+				this.parent_module_view.$el.addClass('uimage-narrow');
+			} else {
+				this.parent_module_view.$el.removeClass('uimage-narrow');
+			}
+		}
+
+		if(me.sizeClasses.small || me.sizeClasses.narrow) {
 			this.parent_module_view.$el.addClass('upfront-module-small');
-		else
+		} else {
 			this.parent_module_view.$el.removeClass('upfront-module-small');
+		}
 	},
 
 	on_edit: function(){
@@ -674,7 +680,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		return props;
 	},
 
-	handleDragEnter: function(e){
+	handleDragEnter: function(){
 		var me = this;
 		// todo Sam: re-enable this and start bug fixing
 		return; // disabled for now
@@ -686,9 +692,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					me.openImageSelector();
 					$('.uimage-drop-hint').remove();
 					if(e.originalEvent.dataTransfer){
-						var files = e.originalEvent.dataTransfer.files,
-							input = $('#upfront-image-file-input')
-						;
+						var files = e.originalEvent.dataTransfer.files;
 						// Only call the handler if 1 or more files was dropped.
 						if (files.length){
 							Upfront.Views.Editor.ImageSelector.uploadImage(files);
@@ -718,7 +722,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 	},
 
-	handleDragLeave: function(e){
+	handleDragLeave: function(){
 		var me = this;
 		this.dragTimer = setTimeout(function(){
 				me.$('.uimage-drop-hint').remove();
@@ -754,14 +758,17 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	/***************************************************************************/
 	/*           Handling element resize events (jQuery resizeable)            */
 	/***************************************************************************/
-	onElementResizeStart: function(e, ui) {
+	onElementResizeStart: function() {
 		// In Mobile mode, don't handle resizing.
-		if(this.mobileMode)
+		if(this.mobileMode) {
 			return;
+		}
+
 		var starting = this.$('.upfront-image-starting-select');
 
-		if(this.property('caption_position') != 'below_image')
+		if(this.property('caption_position') !== 'below_image') {
 			this.$('.wp-caption').fadeOut('fast');
+		}
 
 		//Initialize here the variables necessary for resizing to speed it up.
 		resizingData = {
@@ -773,18 +780,17 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				vstretch: this.property('vstretch')
 			},
 			img: this.$('img'),
-			setTextHeight: this.property('caption_position') == 'below_image'
+			setTextHeight: this.property('caption_position') === 'below_image'
 		};
 
-		//console.log('Stretching hor: ' + resizingData.data.stretch + ', ver: ' + resizingData.data.vstretch);
-
-		if(this.cropTimer){
+		if(this.cropTimer) {
 			clearTimeout(this.cropTimer);
 			this.cropTimer = false;
 		}
 
-		if(starting.length)
+		if(starting.length) {
 			return;
+		}
 
 		//let's get rid of the image-caption-container to proper resizing
 		this.$('.upfront-image-caption-container, .upfront-image-container').css({
@@ -795,10 +801,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.$('.uimage').css('min-height', 'auto');
 	},
 
-	onElementResizing: function(e, ui) {
+	onElementResizing: function() {
 		// In Mobile mode, don't handle resizing.
-		if(this.mobileMode)
+		if(this.mobileMode) {
 			return;
+		}
 		var starting = resizingData.starting,
 			resizer = resizingData.resizer,
 			data = resizingData.data,
@@ -859,10 +866,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 	},
 
-	onElementResizeStop: function(e, ui) {
+	onElementResizeStop: function() {
 		// In Mobile mode, don't handle resizing.
-		if(this.mobileMode)
+		if(this.mobileMode) {
 			return;
+		}
 		var starting = this.$('.upfront-image-starting-select');
 		if(starting.length){
 			this.elementSize = {
@@ -871,17 +879,15 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			};
 			this.property('element_size', this.elementSize);
 			return;
-		}
-		else if(this.property('quick_swap'))
+		} else if(this.property('quick_swap')) {
 			return;
+		}
 
 		//Save resizing, be sure we have the good dimensions
 		this.onElementResizing();
 
 		var me = this,
 			img = resizingData.img,
-			size = resizingData.data.size,
-			position = resizingData.data.position,
 			imgSize = {width: img.width(), height: img.height()},
 			imgPosition = img.position()
 		;
@@ -901,7 +907,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		//if(Upfront.Application.resizeMode == 'desktop'){
 			this.cropTimer = setTimeout(function(){
 				me.saveTemporaryResizing();
-				console.log('resizingTimer');
 			}, this.cropTimeAfterResize);
 		//}
 
@@ -920,32 +925,31 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(data.stretch){
 			if(elWidth < width - left){
 				css.left = -left;
-				if(size)
+				if(size) {
 					css.width = width;
-			}
-			else if(width > elWidth && elWidth >= width - left){
+				}
+			} else if(width > elWidth && elWidth >= width - left){
 				css.left = elWidth - width;
-				if(size)
+				if(size) {
 					css.width = width;
-			}
-			else{
+				}
+			} else{
 				css.left = 0;
-				if(size)
+				if(size) {
 					css.width = elWidth;
+				}
 			}
-			if(size)
+			if(size) {
 				css.height = 'auto';
-		}
-		else {
+			}
+		} else {
 			if(elWidth > width){
 				var align = this.property('align');
-				if(align == 'left'){
+				if(align === 'left'){
 					css.left = 0;
-				}
-				else if(align == 'center'){
+				} else if(align === 'center'){
 					css.left = (elWidth - width) / 2;
-				}
-				else{
+				} else{
 					css.left = 'auto';
 					css.right = 0;
 				}
@@ -953,8 +957,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					css.width = width;
 					css.height = 'auto';
 				}
-			}
-			else{
+			} else{
 				css.left = 0;
 				if(size){
 					css.width = elWidth;
@@ -974,40 +977,43 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		if(data.vstretch){
 			if(elHeight < height - top){
 				css.top = -top;
-				if(size)
+				if(size) {
 					css.height = height;
-			}
-			else if(height > elHeight && elHeight >= height - top){
+				}
+			} else if(height > elHeight && elHeight >= height - top){
 				css.top = elHeight - height;
-				if(size)
+				if(size) {
 					css.height = height;
-			}
-			else{
+				}
+			} else{
 				css.top = 0;
-				if(size)
+				if(size) {
 					css.height = elHeight;
+				}
 			}
-			if(size)
+			if(size) {
 				css.width = 'auto';
-		}
-		else {
+			}
+		} else {
 			if(elHeight > height - top){
 				css.top = -top;
-				if(size)
+				if(size) {
 					css.height = height;
-			}
-			else if(height - top >= elHeight && elHeight > height){
+				}
+			} else if(height - top >= elHeight && elHeight > height){
 				css.top = elHeight - height;
-				if(size)
+				if(size) {
 					css.height = height;
-			}
-			else {
+				}
+			} else {
 				css.top = 0;
-				if(size)
+				if(size) {
 					css.height = elHeight;
+				}
 			}
-			if(size)
+			if(size) {
 				css.width = 'auto';
+			}
 		}
 		img.css(css);
 	},
@@ -1040,7 +1046,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			var imageData = results.data.images[imageId];
 
 			if(imageData.error){
-				console.error(imageData.msg);
 				return;
 			}
 
@@ -1069,9 +1074,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					element: JSON.stringify(Upfront.Util.model_to_json(me.model)),
 					action: 'upfront_update_layout_element'
 				};
-				Upfront.Util.post(saveData).done(function(response){
-					console.log('Ok');
-				});
+				Upfront.Util.post(saveData);
 			});
 		}
 	},
@@ -1087,18 +1090,21 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			height: resizer.height() - 30
 		};
 
-		if(this.property('caption_position') == 'below_image')
+		if(this.property('caption_position') === 'below_image') {
 			this.elementSize.height -= parent.find('.wp-caption').outerHeight();
+		}
 
-		if(this.property('image_status') == 'starting')
+		if(this.property('image_status') === 'starting') {
 			this.$('.upfront-object-content').height(me.elementSize.height);
+		}
 
 	},
 
 	openImageSelector: function(e){
 		var me = this;
-		if(e)
+		if(e) {
 			e.preventDefault();
+		}
 		Upfront.Views.Editor.ImageSelector.open().done(function(images){
 			var sizes = {};
 			_.each(images, function(image, id){
@@ -1132,7 +1138,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('srcOriginal', result.srcOriginal, true);
 		this.property('size', result.imageSize, true);
 		this.property('position', result.imageOffset, true);
-		var marginTop = result.mode == 'horizontal' || result.mode == 'small' ? result.imageOffset.top * -1 : 0;
+		var marginTop = result.mode === 'horizontal' || result.mode === 'small' ? result.imageOffset.top * -1 : 0;
 		this.property('marginTop', marginTop, true);
 		this.property('rotation', result.rotation, true);
 		this.property('fullSize', result.fullSize, true);
@@ -1143,15 +1149,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.property('stretch', result.stretch, true);
 		this.property('vstretch', result.vstretch, true);
 		this.property('quick_swap', false, true);
-		if(result.imageId)
+		if(result.imageId) {
 			this.property('image_id', result.imageId, true);
+		}
 
 		this.property('gifImage', result.gif);
 
 
-		var moduleModel = this.parent_module_view.model;
 		if(result.elementSize){
-			console.log(result.elementSize);
 			this.set_element_size(result.elementSize.columns, result.elementSize.rows, 'all', true);
 		}
 
@@ -1160,9 +1165,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	editRequest: function () {
-		var me = this;
-		if(this.property('image_status') == 'ok' && this.property('image_id'))
+		if(this.property('image_status') === 'ok' && this.property('image_id')) {
 			return this.openEditor();
+		}
 
 		Upfront.Views.Editor.notify(l10n.external_nag, 'error');
 	},
@@ -1173,21 +1178,24 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			found = false
 		;
 
-		if(!module.length)
+		if(!module.length) {
 			return -1;
+		}
 
 		classes = module.attr('class').split(' ');
 
 		_.each(classes, function(c){
-			if(c.match(/^c\d+$/))
+			if(c.match(/^c\d+$/)) {
 				found = c.replace('c', '');
+			}
 		});
 		return found || -1;
 	},
 
 	openEditor: function(newImage, imageInfo){
-		if(Upfront.Application.responsiveMode != 'desktop')
+		if(Upfront.Application.responsiveMode !== 'desktop') {
 			return Upfront.Views.Editor.notify(l10n.desktop_nag, 'error');
+		}
 
 		var me = this,
 			options = {
@@ -1200,10 +1208,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		this.setElementSize();
 		this.setImageInfo();
 
-		if(imageInfo)
+		if(imageInfo) {
 			_.extend(options, this.imageInfo, imageInfo);
-		else
+		} else {
 			_.extend(options, this.imageInfo);
+		}
 
 		if(this.cropTimer){
 			this.stoppedTimer = true;
@@ -1211,7 +1220,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.cropTimer = false;
 		}
 
-		options.element_id = me.model.get_property_value_by_name("element_id");
+		options.element_id = me.model.get_property_value_by_name('element_id');
 
 		Upfront.Views.Editor.ImageEditor.open(options)
 			.done(function(result){
@@ -1219,9 +1228,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				this.stoppedTimer = false;
 			})
 			.fail(function(data){
-				if(data && data.reason == 'changeImage')
+				if(data && data.reason === 'changeImage') {
 					me.openImageSelector();
-				else if(me.stoppedTimer) {
+				} else if(me.stoppedTimer) {
 					me.saveTemporaryResizing();
 					me.stoppedTimer = false;
 				}
@@ -1230,15 +1239,17 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	openLightboxRegion: function(e){
-		if(e)
+		if(e) {
 			e.preventDefault();
+		}
 
 		var link = e.currentTarget,
 			href = link.href.split('#')
 		;
 
-		if(href.length != 2)
+		if(href.length !== 2) {
 			return;
+		}
 
 		Upfront.Application.LayoutEditor.openLightboxRegion(href[1]);
 	},
@@ -1253,9 +1264,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	property: function(name, value, silent) {
-		if(typeof value != "undefined"){
-			if(typeof silent == "undefined")
+		if(typeof value !== 'undefined'){
+			if(typeof silent === 'undefined') {
 				silent = true;
+			}
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
@@ -1271,14 +1283,14 @@ var ImageElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	add_element: function () {
 		var object = new UimageModel(),
 			module = new Upfront.Models.Module({
-				"name": "",
-				"properties": [
-					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c24 upfront-image_module"},
-					{"name": "has_settings", "value": 0},
-					{"name": "row", "value": Upfront.Util.height_to_row(255)}
+				'name': '',
+				'properties': [
+					{'name': 'element_id', 'value': Upfront.Util.get_unique_id('module')},
+					{'name': 'class', 'value': 'c24 upfront-image_module'},
+					{'name': 'has_settings', 'value': 0},
+					{'name': 'row', 'value': Upfront.Util.height_to_row(255)}
 				],
-				"objects": [
+				'objects': [
 					object
 				]
 			})
@@ -1308,8 +1320,7 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	className: 'upfront-settings_panel_wrap uimage-settings',
 	initialize: function (opts) {
 		this.options = opts;
-		var me = this,
-			SettingsItem =  Upfront.Views.Editor.Settings.Item,
+		var SettingsItem =  Upfront.Views.Editor.Settings.Item,
 			Fields = Upfront.Views.Editor.Field
 		;
 
@@ -1336,7 +1347,7 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						property: 'caption_trigger',
                         label: l10n.settings.show_caption,
-						layout: "horizontal-inline",
+						layout: 'horizontal-inline',
 						values: [
 							{
 								label: l10n.settings.always,
@@ -1352,8 +1363,9 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			})
 		]);
 
-		if(this.model.get_property_value_by_name('include_image_caption'))
+		if(this.model.get_property_value_by_name('include_image_caption')) {
 			this.addCaptionBackgroundPicker();
+		}
 	},
 
 	addCaptionBackgroundPicker: function(){
@@ -1367,12 +1379,12 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				new fields.Radios({
 					model: this.model,
 					property: 'captionBackground',
-					layout: "horizontal-inline",
+					layout: 'horizontal-inline',
 					values: [
 						{value: '0', label: l10n.settings.none},
 						{value: '1', label: l10n.settings.pick}
 					]
-				}),
+				})
 			]
 		}));
 
@@ -1380,7 +1392,7 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			var spectrum = false,
 				currentColor = me.model.get_property_value_by_name('background'),
 //				input = $('<input type="text" value="' + currentColor + '">'),
-                $picker_wrap = $("<span></span>");
+				$picker_wrap = $('<span></span>'),
 				setting = me.$('.ugallery-colorpicker-setting')
 			;
 
@@ -1396,8 +1408,8 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				default_value: '#ffffff',
 				spectrum: {
 					maxSelectionSize: 9,
-					localStorageKey: "spectrum.recent_bgs",
-					preferredFormat: "hex",
+					localStorageKey: 'spectrum.recent_bgs',
+					preferredFormat: 'hex',
 					chooseText: l10n.settings.ok,
 					showInput: true,
 					allowEmpty:true,
@@ -1459,16 +1471,17 @@ var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
 			color = setting.find('input:checked').val(),
 			picker = setting.find('.sp-replacer')
 		;
-		if(color == "1"){
+		if(color === '1'){
 			picker.show();
-			if(this.parent_view)
+			if(this.parent_view) {
 				this.parent_view.for_view.$el.find('.wp-caption').css('background-color', this.model.get_property_value_by_name('background'));
-		}
-		else{
+			}
+		} else {
 			picker.hide();
 
-			if(this.parent_view)
-			this.parent_view.for_view.$el.find('.wp-caption').css('background-color', 'transparent');
+			if(this.parent_view) {
+				this.parent_view.for_view.$el.find('.wp-caption').css('background-color', 'transparent');
+			}
 		}
 	},
 	get_label: function () {
@@ -1548,11 +1561,12 @@ var ImageEditor = Backbone.View.extend({
 	initialize: function(){
 		var me = this;
 		this.$el.on('click', function(e){
-			if(e.target == e.currentTarget){
-				if(me.saveOnClose)
+			if(e.target === e.currentTarget){
+				if(me.saveOnClose) {
 					me.imageOk();
-				else if(!me.isResizing)
+				} else if(!me.isResizing) {
 					me.cancel();
+				}
 			}
 			me.isResizing = false;
 		});
@@ -1608,30 +1622,32 @@ var ImageEditor = Backbone.View.extend({
 			return this.open(options);
 		}
 
-		if(!this.options.editElement)
+		if(!this.options.editElement) {
 			this.buttons = [{id: 'image-edit-button-ok', text: l10n.btn.save_label, tooltip: l10n.btn.save_info}];
+		}
 
 		var halfBorder = this.bordersWidth /2,
 			maskOffset = {
-				top: parseInt(options.maskOffset.top) - halfBorder,
-				left: parseInt(options.maskOffset.left) - halfBorder
+				top: parseInt(options.maskOffset.top, 10) - halfBorder,
+				left: parseInt(options.maskOffset.left, 10) - halfBorder
 			},
 			maskSize = {
-				width: parseInt(options.maskSize.width) + this.bordersWidth,
-				height: parseInt(options.maskSize.height) + this.bordersWidth
+				width: parseInt(options.maskSize.width, 10) + this.bordersWidth,
+				height: parseInt(options.maskSize.height, 10) + this.bordersWidth
 			}
 		;
 
-		if(!options.position)
+		if(!options.position) {
 			options.position = this.centerImageOffset(options.size, maskSize);
+		}
 
 		var canvasOffset = {
-				top: parseInt(maskOffset.top) - options.position.top + halfBorder,
-				left: parseInt(maskOffset.left) - options.position.left + halfBorder
+				top: parseInt(maskOffset.top, 10) - options.position.top + halfBorder,
+				left: parseInt(maskOffset.left, 10) - options.position.left + halfBorder
 			},
 			canvasSize = {
-				width: parseInt(options.size.width),
-				height: parseInt(options.size.height)
+				width: parseInt(options.size.width, 10),
+				height: parseInt(options.size.height, 10)
 			}
 		;
 
@@ -1639,8 +1655,9 @@ var ImageEditor = Backbone.View.extend({
 		this.src = options.srcOriginal;
 
 		this.fullSize = options.fullSize;
-		if(options.align)
+		if(options.align) {
 			this.align = options.align;
+		}
 
 
 		if(this.setImageInitialSize){
@@ -1698,13 +1715,15 @@ var ImageEditor = Backbone.View.extend({
 
 	setOptions: function(options) {
 		var me = this;
-		if(typeof options.rotation != 'undefined')
+		if(typeof options.rotation !== 'undefined') {
 			this.setRotation(options.rotation);
-		else
+		} else {
 			this.setRotation(0);
+		}
 
-		if(options.setImageSize)
+		if(options.setImageSize) {
 			this.setImageInitialSize = true;
+		}
 
 		if(options.extraButtons && options.extraButtons.length){
 			_.each(options.extraButtons, function(button){
@@ -1725,10 +1744,11 @@ var ImageEditor = Backbone.View.extend({
 			fullColsRows = this.getCurrentImageRowsCols(full.width, full.height),
 			button = this.$('#image-edit-button-reset')
 		;
-		if(this.elementSize.columns == fullColsRows.columns && this.elementSize.rows == fullColsRows.rows)
+		if(this.elementSize.columns === fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
 			button.addClass('deactivated expanded').attr('data-tooltip', l10n.image_expanded);
-		else if(this.elementSize.columns == this.elementSize.maxColumns && this.elementSize.columns < fullColsRows.columns && this.elementSize.rows == fullColsRows.rows)
+		} else if(this.elementSize.columns === this.elementSize.maxColumns && this.elementSize.columns < fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
 			button.addClass('deactivated').attr('data-tooltip', l10n.cant_expand);
+		}
 	},
 
 	/**
@@ -1738,8 +1758,9 @@ var ImageEditor = Backbone.View.extend({
 	 * @return {Mixed} False if the current size is ok or the {width, height} hash if it can be improved
 	 */
 	maybeResizeElement: function(options, stretch){
-		if(!options.editElement)
+		if(!options.editElement) {
 			return false;
+		}
 
 		var elementView = options.editElement,
 			elementSize = {
@@ -1749,8 +1770,9 @@ var ImageEditor = Backbone.View.extend({
 			}
 		;
 
-		if(!elementSize.maxRows)
+		if(!elementSize.maxRows) {
 			elementSize.maxRows = elementView.get_element_rows();
+		}
 
 		elementSize.columnWidth = elementView.get_element_max_columns_px() / elementSize.maxColumns;
 
@@ -1760,8 +1782,9 @@ var ImageEditor = Backbone.View.extend({
 		this.elementSize = elementSize;
 
 		// If the image is not new we are done
-		if(!options.setImageSize)
+		if(!options.setImageSize) {
 			return false;
+		}
 
 		var fullGrid = this.getFullWidthImage(options.fullSize).size,
 			current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
@@ -1771,8 +1794,9 @@ var ImageEditor = Backbone.View.extend({
 			}
 		;
 
-		if(current.columns > elementSize.columns || current.rows > elementSize.rows)
+		if(current.columns > elementSize.columns || current.rows > elementSize.rows) {
 			return false;
+		}
 
 		if(!stretch){
 			maskSize = {
@@ -1781,9 +1805,7 @@ var ImageEditor = Backbone.View.extend({
 			};
 		}
 		else if(this.elementSize.maxColumns < current.columns){
-			var ratio = fullGrid.height / fullGrid.width,
-				maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - 30
-			;
+			var maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - 30;
 			maskSize = {
 				width:  maskWidth,
 				height: fullGrid.height
@@ -1827,7 +1849,6 @@ var ImageEditor = Backbone.View.extend({
 				loading.done();
 
 				if(imageData.error){
-					console.error(imageData.msg);
 					return;
 				}
 
@@ -1835,14 +1856,12 @@ var ImageEditor = Backbone.View.extend({
 				results.srcFull = imageData.urlOriginal;
 				results.cropSize = imageData.crop;
 				results.gif = imageData.gif || 0;
-				if(me.options.resizedElement)
+				if(me.options.resizedElement) {
 					results.elementSize = me.getCurrentMaskRowsCols();
+				}
 				me.response.resolve(results);
 				me.close();
-			})
-			.error(function(result){
-				console.log(result);
-			})
+			});
 		}
 	},
 
@@ -1888,10 +1907,10 @@ var ImageEditor = Backbone.View.extend({
 			fullSize: this.fullSize,
 			srcOriginal: src,
 			align: this.align,
-			stretch : this.mode == 'big' || this.mode == 'horizontal',
-			vstretch: this.mode == 'big' || this.mode == 'vertical',
+			stretch : this.mode === 'big' || this.mode === 'horizontal',
+			vstretch: this.mode === 'big' || this.mode === 'vertical',
 			mode: this.mode
-		}
+		};
 	},
 
 	rotate: function(e){
@@ -1908,10 +1927,11 @@ var ImageEditor = Backbone.View.extend({
 			e.stopPropagation();
 		}
 
-		rotation = rotation == 270 ? 0 : rotation + 90;
+		rotation = rotation === 270 ? 0 : rotation + 90;
 
-		if(rotation)
+		if(rotation) {
 			rotationClass = 'rotate_' + rotation;
+		}
 
 		img.removeClass()
 			.addClass('uimage-img ' + rotationClass);
@@ -1955,12 +1975,13 @@ var ImageEditor = Backbone.View.extend({
 
 	setRotation: function(rotation){
 		this.rotation = rotation;
-		this.invert = [90,270].indexOf(rotation) != -1;
+		this.invert = [90,270].indexOf(rotation) !== -1;
 	},
 
 	imgOffset: function(size) {
-		if(! this.invert)
+		if(! this.invert) {
 			return {top: 0, left: 0};
+		}
 		return {
 			top: Math.floor((size.width - size.height) / 2),
 			left: Math.floor((size.height - size.width) / 2)
@@ -2013,16 +2034,16 @@ var ImageEditor = Backbone.View.extend({
 					dragHandle.css(canvasSize);
 					me.selectMode(canvasSize, true);
 					me.setImageSize(canvasSize);
-					if(me.mode == 'small' || me.mode == 'vertical')
+					if(me.mode === 'small' || me.mode === 'vertical') {
 						me.centerImage(false);
+					}
 
 					$('#uimage-drag-handle').draggable('option', 'containment', me.getContainment());
 				}
 			})
 			.draggable({
 				opacity:1,
-				start: function(e, ui){
-				},
+				start: function(){},
 				drag: function(e, ui){
 					canvas.css({
 						top: ui.position.top,
@@ -2065,34 +2086,37 @@ var ImageEditor = Backbone.View.extend({
 		;
 
 		if(size.width >= maskSize.width){
-			if(size.height >= maskSize.height)
+			if(size.height >= maskSize.height) {
 				mode = 'big';
-			else
+			} else {
 				mode = 'horizontal';
+			}
+		} else if(size.height >= maskSize.height) {
+			mode = 'vertical';
 		}
-		else if(size.height >= maskSize.height)
-				mode = 'vertical';
 
 		this.setMode(mode, constraints);
 	},
 
 	setMode: function(mode, constraints){
 		var editor = $('#uimage-drag-handle'),
-			centerImage = (mode == 'small' || mode == 'vertical') && mode != this.mode
+			centerImage = (mode === 'small' || mode === 'vertical') && mode !== this.mode
 		;
 		this.$el
 			.removeClass('uimage-mode-big uimage-mode-small uimage-mode-vertical uimage-mode-horizontal uimage-mode-tiny')
 			.addClass('uimage-mode-' + mode)
 		;
-		if(editor.width() < 40 || editor.height() < 40)
+		if(editor.width() < 40 || editor.height() < 40) {
 			this.$el.addClass('uimage-mode-tiny');
+		}
 
 		this.mode = mode;
 		if(constraints){
-			if(this.mode == 'horizontal' || this.mode == 'small')
+			if(this.mode === 'horizontal' || this.mode === 'small') {
 				editor.draggable('option', {snap: '.gridline', snapMode: 'outer', snapTolerance: 6});
-			else
+			} else {
 				editor.draggable('option', {snap: false});
+			}
 		}
 
 		if(centerImage){
@@ -2123,7 +2147,7 @@ var ImageEditor = Backbone.View.extend({
 		;
 
 
-		if(this.mode == 'big'){
+		if(this.mode === 'big'){
 			return [
 				initPoint.left - canvas.width() + mask.width() + halfBorder,
 				initPoint.top - canvas.height() + mask.height() + halfBorder,
@@ -2131,24 +2155,26 @@ var ImageEditor = Backbone.View.extend({
 				initPoint.top + halfBorder
 			];
 		}
-		if(this.mode == 'horizontal')
+		if(this.mode === 'horizontal') {
 			return [
 				initPoint.left - canvas.width() + mask.width() + halfBorder,
 				initPoint.top,
 				initPoint.left + halfBorder,
 				initPoint.top - canvas.height() + mask.height()
 			];
+		}
 
-		var left = this.align == 'left' ? initPoint.left: (this.align == 'right' ? initPoint.left + mask.width() - canvas.width() : initPoint.left + (mask.width() - canvas.width()) / 2);
+		var left = this.align === 'left' ? initPoint.left: (this.align === 'right' ? initPoint.left + mask.width() - canvas.width() : initPoint.left + (mask.width() - canvas.width()) / 2);
 		left += halfBorder;
 
-		if(this.mode == 'vertical')
+		if(this.mode === 'vertical') {
 			return [
 				left,
 				initPoint.top - canvas.height() + mask.height() + halfBorder,
 				left,
 				initPoint.top + halfBorder
 			];
+		}
 
 		return [
 			left,
@@ -2167,11 +2193,11 @@ var ImageEditor = Backbone.View.extend({
 				minHeight: 15
 			}
 		;
-		if(this.mode == 'big'){
+		if(this.mode === 'big'){
 			limits = {
 				minWidth: mask.width() + initPoint.left - canvas.offset().left + this.bordersWidth,
 				minHeight: mask.height() + initPoint.top - canvas.offset().top + this.bordersWidth
-			}
+			};
 		}
 
 		$('#uimage-drag-handle').resizable('option', limits);
@@ -2190,8 +2216,9 @@ var ImageEditor = Backbone.View.extend({
 
 	image100: function(e){
 		if($(e.target).hasClass('deactivated')){
-			if($(e.target).hasClass('expanded'))
+			if($(e.target).hasClass('expanded')) {
 				return;
+			}
 			return this.showExpandAlert();
 		}
 
@@ -2201,15 +2228,12 @@ var ImageEditor = Backbone.View.extend({
 		;
 
 		if(this.elementSize.maxColumns < current.columns){
-			var ratio = fullGrid.height / fullGrid.width,
-				maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - 30,
-				maskHeight = fullGrid.height
-			;
+			var maskHeight = fullGrid.height;
 			maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
 		}
-		if(maskSize.columns != this.elementSize.columns || maskSize.rows != this.elementSize.rows)
+		if(maskSize.columns !== this.elementSize.columns || maskSize.rows !== this.elementSize.rows) {
 			this.resizeMask(maskSize.columns, maskSize.rows);
-		else{
+		} else{
 			var maskOffset = this.$('#uimage-mask').offset();
 			fullGrid.top = maskOffset.top;
 			fullGrid.left = maskOffset.left;
@@ -2217,8 +2241,9 @@ var ImageEditor = Backbone.View.extend({
 			this.$('#uimage-drag-handle').css(fullGrid);
 		}
 
-		if(maskSize.columns != 22 && current.columns > maskSize.columns)
+		if(maskSize.columns !== 22 && current.columns > maskSize.columns) {
 			this.showExpandAlert();
+		}
 	},
 
 	getCurrentImageRowsCols: function(width, height){
@@ -2239,18 +2264,19 @@ var ImageEditor = Backbone.View.extend({
 	},
 
 	showExpandAlert: function(){
-		if(this.ignoreFullwidthAlert)
+		if(this.ignoreFullwidthAlert) {
 			return;
-
+		}
 		var me = this;
 		Upfront.Popup.open(function(){}, {width: 320})
 			.progress(function(progress){
-				if(progress == 'before_close')
-					me.ignoreFullwidthAlert = $("#upfront-popup-content").find('input:checked').length;
+				if(progress === 'before_close') {
+					me.ignoreFullwidthAlert = $('#upfront-popup-content').find('input:checked').length;
+				}
 			})
 		;
 
-		$("#upfront-popup-content")
+		$('#upfront-popup-content')
 			.append(_.template($(editorTpl).find('#fullwidth-alert-tpl').html(), {l10n: l10n.template}));
 	},
 
@@ -2324,13 +2350,12 @@ var ImageEditor = Backbone.View.extend({
 		var canvas = $('#uimage-canvas'),
 			mask = $('#uimage-mask'),
 			columnWidth = Math.round((mask.width() + 30) / this.options.fitMaskColumns),
-			halfBorder = this.bordersWidth / 2,
 			canvasSize = {width: canvas.width(), height: canvas.height()},
 			rowHeight = 15,
 			elementColumns = Math.ceil((canvasSize.width + 30) / columnWidth),
 			maskNewSize = {
 				height: Math.ceil(canvasSize.height / rowHeight) * rowHeight,
-				width: elementColumns * columnWidth - 30,
+				width: elementColumns * columnWidth - 30
 			},
 			optionsNew = this.options
 		;
@@ -2345,12 +2370,12 @@ var ImageEditor = Backbone.View.extend({
 
 		this.open(optionsNew);
 
-		console.log(canvasSize);
 	},
 
-	setImageFullSize: function(e, alert) {
-		if(e)
+	setImageFullSize: function(e) {
+		if(e) {
 			e.preventDefault();
+		}
 
 		var img = this.$('.uimage-img'),
 			mask = this.$('#uimage-mask'),
@@ -2379,18 +2404,20 @@ var ImageEditor = Backbone.View.extend({
 			handle = this.$('#uimage-drag-handle'),
 			border = this.bordersWidth / 2,
 			position = {
-				top: canvas.offset().top,
+				top: canvas.offset().top
 			}
 		;
-		if(vertical)
+		if(vertical) {
 			position.top = mask.offset().top - ((canvas.height() - mask.height()) / 2) + border;
+		}
 
-		if((this.mode != 'vertical' && this.mode != 'small') || this.align == 'center')
+		if((this.mode !== 'vertical' && this.mode !== 'small') || this.align === 'center') {
 			position.left = mask.offset().left - ((canvas.width() -  mask.width()) / 2);
-		else if(this.align == 'left')
+		} else if(this.align === 'left') {
 			position.left = mask.offset().left;
-		else
+		} else {
 			position.left = mask.offset().left + mask.width() - canvas.width();
+		}
 
 		position.left += border;
 
@@ -2401,12 +2428,12 @@ var ImageEditor = Backbone.View.extend({
 	getFullWidthImage: function(fullSize) {
 		var grid = $(document.querySelector('.upfront-grid-layout')),
 			gridWidth = grid.width() - 30,
-			gridMaxWidth = grid.css('max-width'),
 			size = fullSize || this.fullSize
 		;
 
-		if(size.width > gridWidth)
+		if(size.width > gridWidth) {
 			size = {width: gridWidth, height: Math.round(size.height / (size.width / gridWidth))};
+		}
 
 
 		return {
@@ -2435,17 +2462,18 @@ var ImageEditor = Backbone.View.extend({
 		//this.fullSize = this.getImageFullSize();
 
 		pivot = maskSize.width / maskSize.height < this.fullSize.width / this.fullSize.height ? 'height' : 'width';
-		invertPivot = this.invert ? (pivot == 'width' ? 'height' : 'width') : pivot;
+		invertPivot = this.invert ? (pivot === 'width' ? 'height' : 'width') : pivot;
 
 		factor = this.fullSize[pivot] / (maskSize[invertPivot] + overflow);
 
-		if(!stretchImage && factor < 1)
+		if(!stretchImage && factor < 1) {
 			size = this.fullSize;
-		else
+		} else {
 			size = {
 				width: Math.ceil(this.fullSize.width / factor),
 				height: Math.ceil(this.fullSize.height / factor)
 			};
+		}
 
 		return size;
 	},
@@ -2453,8 +2481,8 @@ var ImageEditor = Backbone.View.extend({
 	getResizeImageDimensions: function(imageDim, wrapperDim, fittingType, overflow){
 		var imageFactor = imageDim.width / imageDim.height,
 			wrapperFactor = wrapperDim.width / wrapperDim.height,
-			type = fittingType && fittingType == 'outer' ? 'outer' : 'inner',
-			pivot = type == 'inner'  ? (imageFactor > wrapperFactor ? 'width' : 'height') : (imageFactor > wrapperFactor ? 'height' : 'width'),
+			type = fittingType && fittingType === 'outer' ? 'outer' : 'inner',
+			pivot = type === 'inner'  ? (imageFactor > wrapperFactor ? 'width' : 'height') : (imageFactor > wrapperFactor ? 'height' : 'width'),
 			padding = overflow || 0,
 			targetDim = wrapperDim[pivot] + padding
 		;
@@ -2468,23 +2496,21 @@ var ImageEditor = Backbone.View.extend({
 	},
 
 	getImageData: function(ids, customImageSize, element_id) {
-		var me = this,
-			options = {
+		var options = {
 				action: 'upfront-media-image_sizes',
 				item_id: JSON.stringify(ids),
 				element_id: element_id
-			}
-		;
+			};
 
-		if(customImageSize)
+		if(customImageSize) {
 			options.customSize = customImageSize;
+		}
 
 		return Upfront.Util.post(options);
 	},
 
 	saveImageEdition: function(imageId, rotate, resize, crop){
-		var me = this,
-			opts = {
+		var opts = {
 				action: 'upfront-media-image-create-size',
 				images: [{
 					element_id: this.element_id,
@@ -2499,14 +2525,13 @@ var ImageEditor = Backbone.View.extend({
 		return Upfront.Util.post(opts);
 	},
 	selectAlign: function(){
-		if(this.align == 'left')
+		if(this.align === 'left') {
 			this.setAlign('center');
-
-		else if(this.align == 'center')
+		} else if(this.align === 'center') {
 			this.setAlign('right');
-
-		else if(this.align == 'right')
+		} else if(this.align === 'right') {
 			this.setAlign('left');
+		}
 	},
 
 	setAlign: function(direction){
@@ -2518,16 +2543,18 @@ var ImageEditor = Backbone.View.extend({
 
 		this.$('#image-edit-button-align').removeClass('align-left align-right align-center').addClass('align-' + direction);
 
-		if(direction != 'left' && direction != 'center' && direction != 'right')
+		if(direction !== 'left' && direction !== 'center' && direction !== 'right') {
 			return false;
+		}
 		this.align = direction;
 
-		if(this.align == 'center')
+		if(this.align === 'center') {
 			position.left = mask.offset().left - ((canvas.width() -  mask.width()) / 2);
-		else if(this.align == 'left')
+		} else if(this.align === 'left') {
 			position.left = mask.offset().left;
-		else
+		} else {
 			position.left = mask.offset().left + mask.width() - canvas.width();
+		}
 
 		position.left += this.bordersWidth / 2;
 
@@ -2550,7 +2577,7 @@ var ImageEditor = Backbone.View.extend({
 		});
 	},
 
-	hideTooltip: function(e) {
+	hideTooltip: function() {
 		this.$('#uimage-tooltip').hide();
 	},
 
@@ -2575,7 +2602,7 @@ var ImageEditor = Backbone.View.extend({
 	},
 
 	fixImageTop: function(offset){
-		if(offset && typeof offset.top != 'undefined'){
+		if(offset && typeof offset.top !== 'undefined'){
 			if(offset.top < 120){
 				var margin = $('body').css('marginTop');
 				margin = parseInt(margin.replace('px', ''), 10);
@@ -2631,7 +2658,7 @@ var ImageSelector = Backbone.View.extend({
 						fileInput: null, // disable change listener, we handle it below
 						paramName: 'media[]' // due to previous options we have to set this manually
 					})
-					.bind('fileuploadstart', function (e) {
+					.bind('fileuploadstart', function () {
 						progress.css('width', '0');
 					})
 					.bind('fileuploadprogressall', function (e, data) {
@@ -2644,7 +2671,6 @@ var ImageSelector = Backbone.View.extend({
 						$('#upfront-image-uploading h2').html(l10n.sel.preparing);
 						Upfront.Views.Editor.ImageEditor.getImageData(response.data, me.options.customImageSize)
 							.done(function(response){
-								console.log("done", response);
 								me.deferred.resolve(response.data.images, response);
 							})
 							.error(function(){
@@ -2663,8 +2689,7 @@ var ImageSelector = Backbone.View.extend({
 					});
 			}
 
-			fileInput.on('change', function(e){
-				console.log("change e", e);
+			fileInput.on('change', function(){
 				if (this.files.length) {
 					if(XMLHttpRequest && (new XMLHttpRequest()).upload) { //XHR uploads!
 						me.uploadImage(this.files);
@@ -2680,11 +2705,11 @@ var ImageSelector = Backbone.View.extend({
 		}
 	},
 	open: function(options) {
-		var me = this;
 		this.deferred = $.Deferred();
 
-		if(! _.isObject(options))
+		if(! _.isObject(options)) {
 			options = {};
+		}
 
 		this.options = _.extend({}, this.defaultOptions, options);
 
@@ -2697,7 +2722,7 @@ var ImageSelector = Backbone.View.extend({
 
 	openSelector: function() {
 		var me = this;
-		this.openOverlaySection(this.selectorTpl, {}, function(overlay) {
+		this.openOverlaySection(this.selectorTpl, {}, function() {
 			var input = $('#upfront-image-file-input');
 			if (me.options.multiple === true) {
 				input.attr('multiple','multiple');
@@ -2727,10 +2752,9 @@ var ImageSelector = Backbone.View.extend({
 					$(this).find();
 				})
 				.on('drop', function(e){
-					var files, input;
+					var files;
 					e.preventDefault();
 					e.stopPropagation();
-					console.log("drop e", e);
 					if (e.originalEvent.dataTransfer) {
 						files = e.originalEvent.dataTransfer.files;
 
@@ -2756,8 +2780,9 @@ var ImageSelector = Backbone.View.extend({
 
 	resizeOverlay: function(){
 		var overlay = $('#upfront-image-overlay');
-		if(!overlay.length)
+		if(!overlay.length) {
 			return;
+		}
 
 		var placeholder = $('#upront-image-placeholder'),
 			uploading = $('#upfront-image-uploading'),
@@ -2783,7 +2808,7 @@ var ImageSelector = Backbone.View.extend({
 		overlay.css(style);
 		phcss = {
 			height: style.height - 100,
-			'padding-top':  ptop,
+			'padding-top':  ptop
 		};
 
 		placeholder.css(phcss);
@@ -2795,11 +2820,11 @@ var ImageSelector = Backbone.View.extend({
 	},
 
 	cancelOverlay: function(e) {
-		if(e.target == e.currentTarget)
+		if(e.target === e.currentTarget) {
 			this.closeOverlay(e);
+		}
 	},
-	closeOverlay: function(e){
-		var me = this;
+	closeOverlay: function(){
 		$('#upfront-image-overlay')
 			.off('click')
 			.fadeOut('fast', function(){
@@ -2884,7 +2909,7 @@ var ImageSelector = Backbone.View.extend({
 
 		$(window)
 			.on('resize', function(e){
-				if(e.target == window){
+				if(e.target === window){
 					me.resizeOverlay();
 				}
 			})
@@ -2895,10 +2920,9 @@ var ImageSelector = Backbone.View.extend({
 			this.reopenSettings = true;
 		}
 
-		if(callback)
+		if(callback) {
 			callback(overlay);
-
-		//$('#upfront-image-overlay').fadeIn('fast');
+		}
 	},
 	setOverlayEvents: function() {
 		var me = this;
@@ -2946,12 +2970,11 @@ var ImageSelector = Backbone.View.extend({
 		e.preventDefault();
 		$('#upfront-image-file-input').click();
 	},
-	checkFileUpdate: function(e){
+	checkFileUpdate: function(){
 		 return true;
 	},
 	uploadImage: function(files){
 		var me = this;
-		console.log("files", files);
 		me.setup_upload_form();
 		this.openProgress(function() {
 			$('#upfront-upload-image').fileupload('send', {files: files});
@@ -2984,8 +3007,9 @@ var DialogControl = Control.extend({
 		Control.prototype.render.call(this, arguments);
 		var me = this;
 
-		if(!this.$el.hasClass('uimage-control-panel-item'))
+		if(!this.$el.hasClass('uimage-control-panel-item')) {
 			this.$el.addClass('uimage-control-panel-item');
+		}
 
 		if(this.view){
 			this.view.render();
@@ -2995,21 +3019,19 @@ var DialogControl = Control.extend({
 		if(!this.panel){
 			//this is like initialize
 			var panel = $(_.template(this.panelTpl, {l10n: l10n.template}));
-			if(this.isopen)
+			if(this.isopen) {
 				panel.show();
+			}
 			this.$el.append(panel);
 			panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
 			this.panel = panel;
 			/* V */
 			$(document).click(function(e){
-				var 		target = $(e.target),
-				 panelRegionId = $(me.el).closest('.upfront-region-container').attr('id'),
-				targetRegionId = target.closest('.upfront-region-container').attr('id');
+				var	target = $(e.target);
 
-				console.log('panel region id: ' + panelRegionId + ', clicked region id: ' + targetRegionId);
-
-				if(target.closest('#page').length && target[0] != me.el && !target.closest(me.el).length && me.isopen)
+				if(target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && me.isopen) {
 					me.close();
+				}
 			});
 		}
 
@@ -3017,15 +3039,17 @@ var DialogControl = Control.extend({
 	},
 
 	onClickControl: function(e){
-		if(!$(e.target).hasClass('upfront-icon'))
+		if(!$(e.target).hasClass('upfront-icon')) {
 			return;
+		}
 
 		e.preventDefault();
 
-		if(this.isopen)
+		if(this.isopen) {
 			this.close();
-		else
+		} else {
 			this.open();
+		}
 	},
 
 	onClickOk: function(e){
@@ -3050,10 +3074,9 @@ var DialogControl = Control.extend({
 		this.isopen = false;
 		this.$el.removeClass('upfront-control-dialog-open');
 		this.trigger('panel:close');
-		console.log('i have been called');
 		return this;
 	}
-})
+});
 
 var TooltipControl = Control.extend({
 	events: {
@@ -3077,7 +3100,6 @@ var TooltipControl = Control.extend({
 			this.$el.addClass('open');
 			closestLayout.addClass('upfront-grid-layout-current');
 			closestWrapper.addClass('upfront-wrapper-current');
-			console.log( 'clicker ran, classes should have been added...' );
 		}
 	},
 
@@ -3086,15 +3108,16 @@ var TooltipControl = Control.extend({
 		var tooltip = this.$('.uimage-control-tooltip'),
 			me = this
 		;
-		if(!this.$el.hasClass('uimage-control-tooltip-item'))
+		if(!this.$el.hasClass('uimage-control-tooltip-item')) {
 			this.$el.addClass('uimage-control-tooltip-item');
+		}
 
 		if(!tooltip.length){
 			tooltip = $('<div class="uimage-control-tooltip"></div>');
 			this.$el.append(tooltip);
 		}
 		_.each(this.sub_items, function(item, key){
-			if(key != me.selected){
+			if(key !== me.selected){
 				item.render();
 				tooltip.append(item.$el);
 			}
@@ -3102,10 +3125,10 @@ var TooltipControl = Control.extend({
 
 		var selectedItem = this.sub_items[this.selected];
         if(selectedItem){
-            if( typeof selectedItem.icon !== "undefined" ){
+            if( typeof selectedItem.icon !== 'undefined' ){
                 this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
-            }else if( typeof selectedItem.label !== "undefined" ){
-                this.$el.find(".tooltip-content").append( ": " +  selectedItem.label );
+            }else if( typeof selectedItem.label !== 'undefined' ){
+                this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
             }
 
         }
@@ -3121,12 +3144,13 @@ var TooltipControl = Control.extend({
 		;
 
         _.each(this.sub_items, function(item, key){
-			if(target.hasClass('upfront-icon-region-' + item.icon))
+			if(target.hasClass('upfront-icon-region-' + item.icon)) {
 				found = key;
+			}
 
-            if( !found && $(e.target).closest(".upfront-inline-panel-item").attr("id") === item.id ){
-                found = key;
-            }
+			if( !found && $(e.target).closest('.upfront-inline-panel-item').attr('id') === item.id ){
+				found = key;
+			}
 
 		});
 
@@ -3145,7 +3169,6 @@ var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 		'click .upfront-inline-panel-item': 'selectItem'
 	},
 	render: function(){
-		var me = this;
 		Upfront.Views.Editor.InlinePanels.ItemMulti.prototype.render.call(this, arguments);
 	},
 	clicked: function(e){
@@ -3160,8 +3183,9 @@ var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
 		;
 		_.each(this.sub_items, function(item, key){
-			if(target.hasClass('upfront-icon-region-' + item.icon))
+			if(target.hasClass('upfront-icon-region-' + item.icon)) {
 				found = key;
+			}
 		});
 
 		if(found){
@@ -3176,11 +3200,11 @@ var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
 var CollapsedMultiControl = MultiControl.extend({
 	collapsed: true,
 	render: function(){
-		if(!this.sub_items['collapsedControl']){
+		if(!this.sub_items.collapsedControl){
 			var control = new Control();
 			control.icon = 'collapsedControl';
 			control.tooltip = 'More tools';
-			this.sub_items['collapsedControl'] = control;
+			this.sub_items.collapsedControl = control;
 		}
 		this.selected = 'collapsedControl';
 
@@ -3212,13 +3236,13 @@ var CollapsedMultiControl = MultiControl.extend({
 	},
 
 	open_subitem: function () {
-		_.each(this.sub_items, function(item, key){
+		_.each(this.sub_items, function(item){
 			if(item instanceof MultiControl){
 				item.close_subitem();
 			}
 		});
 		this.constructor.__super__.open_subitem.call(this, arguments);
-	},
+	}
 
 });
 
@@ -3279,17 +3303,18 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 		var menuitemsarray = [
           new Upfront.Views.ContextMenuItem({
 			  get_label: function() {
-				  if(me.for_view.$el.find('div.upfront-image-container > img').length > 0)
+				  if(me.for_view.$el.find('div.upfront-image-container > img').length > 0) {
 				  	return l10n.ctrl.edit_image;
-				  else
+					} else {
 				  	return l10n.ctrl.add_image;
+					}
 			  },
 			  action: function() {
-				   if(me.for_view.$el.find('div.upfront-image-container > img').length > 0)
-				  		me.for_view.editRequest();
-				   else
+					if(me.for_view.$el.find('div.upfront-image-container > img').length > 0) {
+						me.for_view.editRequest();
+					} else {
 						me.for_view.openImageSelector();
-
+					}
 			  }
 		  })
         ];
@@ -3297,15 +3322,16 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 		if(this.for_view.$el.find('div.upfront-image-container > img').length > 0) {
 			menuitemsarray.push( new Upfront.Views.ContextMenuItem({
 				  get_label: function() {
-					  if(me.for_view.$el.find('div.upfront-image-container div.wp-caption').length > 0)
-						return l10n.ctrl.edit_caption;
-					  else
-					  	return l10n.ctrl.add_caption;
+						if(me.for_view.$el.find('div.upfront-image-container div.wp-caption').length > 0) {
+							return l10n.ctrl.edit_caption;
+						} else {
+							return l10n.ctrl.add_caption;
+						}
 				  },
 				  action: function() {
-					  if(me.for_view.$el.find('div.upfront-image-container > div.wp-caption').length > 0)
-						  me.for_view.$el.find('div.upfront-image-container > div.wp-caption').data("ueditor").start();
-					  else {
+					  if(me.for_view.$el.find('div.upfront-image-container > div.wp-caption').length > 0) {
+						  me.for_view.$el.find('div.upfront-image-container > div.wp-caption').data('ueditor').start();
+						} else {
 						 me.for_view.controls.items.value()[2].selected='topOver';
 						 me.for_view.controls.items.value()[2].trigger('select');
 
@@ -3327,7 +3353,7 @@ var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 var ImageMenu = Upfront.Views.ContextMenu.extend({
 	initialize: function(opts) {
 		this.options = opts;
-		this.for_view = this.options.for_view
+		this.for_view = this.options.for_view;
 		this.menulists = _([
           new ImageMenuList({for_view: this.for_view})
         ]);
@@ -3340,12 +3366,12 @@ Upfront.Views.Editor.InlinePanels.ControlPanel = ControlPanel;
 Upfront.Views.Editor.InlinePanels.TooltipControl = TooltipControl;
 Upfront.Views.Editor.InlinePanels.DialogControl = DialogControl;
 
-Upfront.Application.LayoutEditor.add_object("Uimage", {
-	"Model": UimageModel,
-	"View": UimageView,
-	"Element": ImageElement,
-	"Settings": ImageSettings,
-	"ContextMenu": ImageMenu
+Upfront.Application.LayoutEditor.add_object('Uimage', {
+	'Model': UimageModel,
+	'View': UimageView,
+	'Element': ImageElement,
+	'Settings': ImageSettings,
+	'ContextMenu': ImageMenu
 });
 
 Upfront.Views.Editor.ImageEditor = new ImageEditor();
