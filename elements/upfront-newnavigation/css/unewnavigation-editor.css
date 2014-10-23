@@ -314,13 +314,18 @@ div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > u
   display: block;
 }
 
+.newnavigation_squished > b.upfront-entity_meta {
+	top: 5px !important;
+	right: 5px !important;
+}
+
 .newnavigation_squished .upfront-object > .upfront-entity_meta {
-	top: 0 !important;
-	right: 24px !important;
+	top: 5px !important;
+	right: 28px !important;
 }
 
 
 .newnavigation_squished .upfront-object > .upfront-entity_meta.newnavigation_add {
-	top: 0 !important;
-	right: 48px !important;
+	top: 5px !important;
+	right: 51px !important;
 }

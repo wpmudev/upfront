@@ -821,8 +821,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		// Ajax call for creating menu
 		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": MenuName})
 			.success(function (ret) {
-				me.property('menu_id', ret.data.id);
 				me.property('menu_slug', ret.data.slug, true);
+				me.property('menu_id', ret.data.id);
 				me.getMenus();
 			})
 			.error(function (ret) {
@@ -836,6 +836,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			me = this
 		;
 		var menu_slug =  this.model.get_property_value_by_name('menu_slug');
+
+
 		if ( !menu_id ) {
 			if(typeof(menu_slug != 'undefined') && menu_slug != '') this.set_menu_id_from_slug(menu_slug);
 			return "";
@@ -860,7 +862,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		Upfront.Util.post({"action": "upfront_new_menu_from_slug", "data": slug})
 			.success(function (ret) {
-				me.property('menu_id', ret.data, true);
+				me.property('menu_id', ret.data);
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error loading menu from slug");
@@ -877,10 +879,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		if($('.upfront-resize').height() < 80) {
-			this.$el.addClass('newnavigation_squished');
+			this.$el.closest('div.upfront-module').addClass('newnavigation_squished');
 		}
 		else {
-			this.$el.removeClass('newnavigation_squished');
+			this.$el.closest('div.upfront-module').removeClass('newnavigation_squished');
 		}
 	},
 	on_render: function() {
