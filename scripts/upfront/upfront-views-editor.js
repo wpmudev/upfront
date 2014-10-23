@@ -7396,7 +7396,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 			else if ( this.right >= 0 ) {
 				css.left = 'auto';
-				css.right = this.right;
+				if (css.width > 0 && this.right + css.width <= $(window).width()) { // We need this for smaller screens, such as laptops
+					css.right = this.right;
+				}
 			}
 			$wrap.css(css);
 			if ( this.keep_position ) {
