@@ -50,6 +50,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"content" => "scripts/upfront/upfront-content",
 			"spectrum" => "scripts/spectrum/spectrum",
 			"responsive" => "scripts/responsive",
+			"redactor_plugins" => 'scripts/redactor/plugins',
 			"redactor" => 'scripts/redactor/redactor',
 			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
 			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
@@ -60,6 +61,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
     $shim = array(
       'underscore' => array('exports' => '_'),
+//      'redactor' => array('redactor_plugins'),
       'jquery-df' => array('jquery'),
 			'chosen' => array(
 				'deps' => array('jquery'),

@@ -124,7 +124,8 @@ var UeditorInsert = Backbone.View.extend({
 		if(!this.controlsData)
 			return;
 
-		this.controls = new Controls.ControlPanel();
+		this.controls =  Controls.ControlPanel.extend( { position_v: 'top' } );
+		this.controls = new this.controls();
 
 		/*
 		{
@@ -347,7 +348,15 @@ var ImageInsert = UeditorInsert.extend({
 
 		return promise;
 	},
-
+	apply_classes: function (d) {
+		var grid = Upfront.Settings.LayoutEditor.Grid;
+		d.height = d.row * grid.baseline;
+		d.width_cls = grid.class + d.col;
+		d.left_cls = grid.left_margin_class + d.left;
+		if ( d.top )
+			d.top_cls = grid.top_margin_class + d.top;
+		d.clear_cls = d.clear ? 'clr' : '';
+	},
 	// Insert editor UI
 	render: function(){
 		var me = this,
@@ -371,17 +380,9 @@ var ImageInsert = UeditorInsert.extend({
 
 		}
 
-		var apply_classes = function (d) {
-			d.height = d.row * grid.baseline;
-			d.width_cls = grid.class + d.col;
-			d.left_cls = grid.left_margin_class + d.left;
-			if ( d.top )
-				d.top_cls = grid.top_margin_class + d.top;
-			d.clear_cls = d.clear ? 'clr' : '';
-		};
-		apply_classes( data.style.group );
-		apply_classes( data.style.image );
-		apply_classes( data.style.caption );
+		this.apply_classes( data.style.group );
+		this.apply_classes( data.style.image );
+		this.apply_classes( data.style.caption );
 
 
 		this.$el
@@ -389,7 +390,7 @@ var ImageInsert = UeditorInsert.extend({
 		;
 
 		if (style_variant && style_variant.group && style_variant.group.col) Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
-		if (style_variant && style_variant.group && style_variant.group.top) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.top);
+		if (style_variant && style_variant.group && style_variant.group.left) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.left);
 		/**
 		 * Reset margins
 		 */
