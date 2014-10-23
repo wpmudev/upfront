@@ -241,7 +241,18 @@ var MenuItemView = Backbone.View.extend({
 		this.linkPanel.delegateEvents();
 	},
 	editLink: function(e) {
+		e.stopPropagation();
 		this.$el.find('a.menu_item').addClass('new_menu_item');
+/*
+		if(this.$el.closest('ul').hasClass('sub-menu')) {
+			this.contextmenuContext.push(this.$el.closest('ul').addClass('time_being_display'));
+			this.loadContexts(this.$el.closest('ul'));
+		}
+
+		
+
+		this.removeContexts = false;
+*/
 		this.parent_view.editMenuItem(this.$el.find('a.new_menu_item'));
 	},
 	createLinkPanel: function(){
@@ -653,6 +664,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(target.hasClass('new_menu_item') ) {
 			if($('div#unewnavigation-tooltip').length <1 || $('div#unewnavigation-tooltip').css('display') == 'none') {
 				_.delay(function(self) {
+					console.log(target);
 					var view = target.closest('li').data('backboneview');
 					if (view && view.editMenuItem) view.editMenuItem(e);
 				}, 30, this);
