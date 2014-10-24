@@ -40,13 +40,14 @@
 
 <script type="text/template" id="image-insert-tpl">
     {[if( style.caption.order == 0 ) {]}
-     <div class="wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="height:{{style.caption.height}}px">{{ caption }}</div>
+     <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="height:{{style.caption.height}}px">{{ caption }}</div>
     {[ } ]}
-    <div class="uinsert-image-wrapper {{style.image.width_cls}} {{style.image.left_cls}} {{style.image.top_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="min-height: {{style.image.height}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</div>{[if(style.caption.show){ ]}
+    <div class="upfront-wrapper uinsert-image-wrapper {{style.image.width_cls}} {{style.image.left_cls}} {{style.image.top_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="min-height: {{style.image.height}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</div>{[if(style.caption.show){ ]}
     {[if( style.caption.order == 1 ) {]}
-    <div class="wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="height:{{style.caption.height}}px">{{ caption }}</div>
+    <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="height:{{style.caption.height}}px">{{ caption }}</div>
     {[ } ]}
     {[ } ]}
+    <div style="clear:both;"></div>
 </script>
 
 <script type="text/template" id="image-link-tpl">
