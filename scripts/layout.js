@@ -592,19 +592,23 @@ jQuery(document).ready(function($){
 		// Misc
 			scroll = $(window).scrollTop(),
 			w_height = $(window).height(),
-			w_width = $(window).width()
+			w_width = $(window).width(),
+			breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content')
 		;
+		breakpoint = !breakpoint || 'none' === breakpoint ? 'desktop' : breakpoint; // "none" in FF
+
 		if (!$images.length) return false;
 		$images.each(function () {
 			var $img = $(this),
 				offset = $img.offset(),
 				source = $img.attr('data-sources'),
 				src = $img.attr('data-src'),
+				point_src = $img.attr('data-src-' + breakpoint),
 				height = $img.height(),
 				width = $img.width()
 			;
 			if ($img.is(".upfront-image-lazy-loaded")) return true; // already loaded
-			if (!source && !src) return true; // we don't know how to load
+			if (!source && !src && !point_src) return true; // we don't know how to load
 			if (height <= 0 && width <= 0) return true; // Don't lazy load backgrounds for hidden regions.
 			
 			if (source) {
@@ -620,7 +624,7 @@ jQuery(document).ready(function($){
 				if ( $(this).data('loaded') == closest ) return true;
 				src = source[closest][0]; // Use this to load
 				$(this).data('loaded', closest);
-			}
+			} else if (point_src) src = point_src;
 
 			if (offset.top+height >= scroll && offset.top < scroll+w_height) {
 				primary.add(src, $img);
