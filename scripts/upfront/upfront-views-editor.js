@@ -7181,6 +7181,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				.html('<div class="use_selection_container inactive"><a href="#use" class="use">Ok</a></div><div class="search_container clearfix"><input type="text" placeholder="Search" value=""><div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div></div>')
 				.append(this.pagination.$el)
 			;
+			$('#upfront-popup').addClass('upfront-postselector-popup');
+			
 			return this.deferred.promise();
 		},
 

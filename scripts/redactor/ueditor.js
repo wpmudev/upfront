@@ -138,7 +138,9 @@ var hackRedactor = function(){
 
 		var hideHandler = $.proxy(function(doc) {
 			$(doc).on('mouseup.redactor', $.proxy(function (e) {
-				if ($(e.target).closest(this.$toolbar).length === 0) {
+				if ($(e.target).closest(this.$toolbar).length === 0 
+					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
+				{
 					if (!this.getSelectionText()) {
 						this.$air.fadeOut(100);
 						$(".redactor_dropdown").hide();
@@ -478,8 +480,12 @@ Ueditor.prototype = {
 		$("html").on('click', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
-
-		if( !( $(e.target).hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_box") || $(e.target).parents().hasClass("redactor_air") || $(e.target).parents().hasClass("redactor_dropdown") ) ) {
+		if( !( $(e.target).hasClass("redactor_box") 
+				|| $(e.target).parents().hasClass("redactor_box") 
+				|| $(e.target).parents().hasClass("redactor_air") 
+				|| $(e.target).parents().hasClass("redactor_dropdown"))
+			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
+		{
 			e.data.ueditor.stop();
 		}
 	},
