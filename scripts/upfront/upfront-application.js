@@ -1525,7 +1525,7 @@ var Application = new (Backbone.Router.extend({
 		var style;
 
 		if (Upfront.Application.current_subapplication.layout) {
-			style = Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).get('value');
+			style = Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}) ?  Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).get('value') : "";
 			$('body').append('<style id="layout-style">' + style + '</style>');
 		}
 	},
