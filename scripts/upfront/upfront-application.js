@@ -1517,7 +1517,17 @@ var Application = new (Backbone.Router.extend({
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionLightboxView, 'RegionLightbox');
 
 		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
+		Upfront.Events.on("upfront:layout:loaded", me.ensure_layout_style, me);
 		this.cssEditor = cssEditor;
+	},
+
+	ensure_layout_style: function() {
+		var style;
+
+		if (Upfront.Application.current_subapplication.layout) {
+			style = Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).get('value');
+			$('body').append('<style id="layout-style">' + style + '</style>');
+		}
 	},
 
 	apply_region_css: function () {
