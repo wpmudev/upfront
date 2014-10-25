@@ -409,7 +409,7 @@ VRT;
 	}
 
 	public function load_page_regions($data, $ids/*, $cascade*/){
-		if (!is_singular()) return $data;
+		//if (!is_singular()) return $data;
 		$layoutId = $this->_get_page_default_layout($ids);
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
