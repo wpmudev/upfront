@@ -414,12 +414,13 @@ abstract class Upfront_Container extends Upfront_Entity {
 	public function get_markup () {
 		$html='';
 		$wrap='';
+
 		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
 			$child_view = $this->instantiate_child($child, $idx);
-
 			if ($child_view instanceof Upfront_Container){
 				// Have wrapper? If so, then add wrappers
 				$wrapper = $child_view->get_wrapper();
+
 				if ( $wrapper && !$this->_wrapper )
 					$this->_wrapper = $wrapper;
 				if ( $wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id() ){
@@ -448,7 +449,10 @@ abstract class Upfront_Container extends Upfront_Entity {
 						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
 					}
 					$slug = upfront_get_property_value('id_slug', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . upfront_get_property_value('class', $child) . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+					$classes = $this->_get_property('class');
+					$column = upfront_get_class_num('c', $classes);
+					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
+					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
 				}
 				else
 					$html .= $child_view->get_markup();

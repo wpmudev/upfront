@@ -16,6 +16,7 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		this.postView = Upfront.Application.PostLayoutEditor.postView;
 		if(this.postView.partOptions && this.postView.partOptions[this.postPart]){
 			_.each(this.postView.partOptions[this.postPart], function(value, key){
+				console.log(key, value);
 				me.model.set_property(key, value, true);
 			});
 		}

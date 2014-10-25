@@ -35,7 +35,7 @@ define(function() {
 		markup: false,
 		editors: {},
 		editor: false,
-	editing: false,
+		editing: false,
 		currentpost: false,
 		initialize: function(options){
 			if(! (this.model instanceof UpostsModel)){
