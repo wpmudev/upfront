@@ -10,10 +10,15 @@ jQuery(document).ready(function($){
 		return false;
 	}
 	
+	function get_breakpoint(){
+		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
+		return breakpoint.replace(/['"]/g, '');
+	}
+	
 	
 	/* Responsive background */
 	function update_background () {
-		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
+		var breakpoint = get_breakpoint();
 		breakpoint = !breakpoint ? 'desktop' : breakpoint;
 		$('[data-bg-type-'+breakpoint+']').each(function(){
 			var type = $(this).attr('data-bg-type-'+breakpoint);
@@ -227,7 +232,7 @@ jQuery(document).ready(function($){
 	
 	// Regions behavior on scroll
 	function regions_scroll_update () {
-		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content'),
+		var breakpoint = get_breakpoint(),
 			body_off = $('body').offset(),
 			scroll_top = $(window).scrollTop(),
 			win_height = $(window).height(),
@@ -593,7 +598,7 @@ jQuery(document).ready(function($){
 			scroll = $(window).scrollTop(),
 			w_height = $(window).height(),
 			w_width = $(window).width(),
-			breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content')
+			breakpoint = get_breakpoint()
 		;
 		breakpoint = !breakpoint || 'none' === breakpoint ? 'desktop' : breakpoint; // "none" in FF
 
@@ -659,7 +664,7 @@ jQuery(document).ready(function($){
 	
 	/* Responsive custom theme styles */
 	function update_theme_styles () {
-		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
+		var breakpoint = get_breakpoint();
 		$('[data-theme-styles]').each(function(){
 			var theme_styles = $(this).attr('data-theme-styles'),
 				classes = [];

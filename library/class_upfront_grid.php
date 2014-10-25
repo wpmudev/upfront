@@ -578,7 +578,8 @@ class Upfront_GridBreakpoint {
 			$rules = "{\n{$conditional}\n{$style} }\n\n";
 		}
 		else {
-			$rules = "\n{$style}\n\n";
+			$conditional = "body:after { content: ''; display: none; }";
+			$rules = "\n{$conditional}\n{$style}\n\n";
 		}
 		return "{$media}{$rules}";
 	}
