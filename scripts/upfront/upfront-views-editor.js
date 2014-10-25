@@ -6365,6 +6365,9 @@ var CSSEditor = Backbone.View.extend({
 		// If in exporter mode, export instead of saving
 		if (Upfront.Application.is_builder()) {
 			data.stylename = this.get_style_id();
+			if (this.is_global_stylesheet) {
+				Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).set({'value': styles});
+			}
 			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
 			return;
 		}
@@ -7182,7 +7185,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				.append(this.pagination.$el)
 			;
 			$('#upfront-popup').addClass('upfront-postselector-popup');
-			
+
 			return this.deferred.promise();
 		},
 
@@ -7524,7 +7527,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if (_upfront_post_data.post_id) {
 				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
 			}
-			
+
 			var	bg_type = new Field_Select({
 					model: this.model,
 					property: 'background_type',
@@ -7541,7 +7544,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					}
 				}),
 				$region_name, $region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
-				
+
 			if ( !is_responsive && is_region ) {
 				var region_name = new Field_Text({
 					model: this.model,
@@ -7843,7 +7846,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
 			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
-			
+
 			if ( !is_responsive && is_region ) {
 				region_name.render();
 				$region_name.append(region_name.$el);
@@ -7865,7 +7868,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else {
 				$region_name.hide();
 			}
-			
+
 			if ( !is_responsive && is_region && this.model.is_main() ) {
 				if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox
@@ -10246,7 +10249,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		initialize: function(opts) {
 			var types = opts.linkTypes || {};
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, types);
-			
+
 			if(!this.model || this.model.get('type') === false || this.model.get('type') === undefined)
 				this.model = new Backbone.Model({type: 'unlink', url: ''});
 
