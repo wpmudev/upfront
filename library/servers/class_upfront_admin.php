@@ -80,6 +80,10 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		}
 	}
 
+	private function _get_editable_theme_url () {
+		return home_url('?editmode=true');
+	}
+
 	/**
 	 * Cry out on refused deletion.
 	 */
