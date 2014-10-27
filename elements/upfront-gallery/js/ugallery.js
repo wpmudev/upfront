@@ -29,7 +29,7 @@ var UgalleryImages = Backbone.Collection.extend({
 var UgalleryModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.ugallery.defaults);
-		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
+		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
 		this.init_properties(properties);
 	}
 });
@@ -67,19 +67,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	initialize: function(options){
 		var me = this,
 			elementId = this.property('element_id'),
-			raw_labels;
-		;
+			raw_labels,
+			images;
 
 		if(! (this.model instanceof UgalleryModel)){
 			this.model = new UgalleryModel({properties: this.model.get('properties')});
 		}
 
 		this.constructor.__super__.initialize.call(this, [options]);
-		//Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
 		this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select': 'openImageSelector',
 			'click .add-item': 'openImageSelector',
-			//'click .ugallery_addmore_wrapper': 'openImageSelector', // NOT USING THIS
 			'click .ugallery_op_link': 'imageEditLink',
 			'click .ugallery_op_mask': 'imageEditMask',
 			'click .remove-image': 'removeImage',
@@ -88,7 +86,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			'click .ugallery-nolabels-alert': 'openLightboxLabels',
 			'click': 'preventNavigation'
 		});
-		var images = this.property('images');
+		images = this.property('images');
 
 		this.images = new UgalleryImages(images);
 		this.listenTo(this.images, 'add remove reset change', this.imagesChanged);
@@ -96,25 +94,24 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		$('body').on('click', this.closeTooltip);
 
-		this.listenTo(Upfront.Events, "entity:settings:activate", this.closeTooltip);
-		this.listenTo(Upfront.Events, "entity:activated", this.closeTooltip);
-		this.listenTo(Upfront.Events, "entity:deactivated", this.closeTooltip);
-		this.listenTo(Upfront.Events, "entity:region:activated", this.closeTooltip);
-		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.calculateMargins);
+		this.listenTo(Upfront.Events, 'entity:settings:activate', this.closeTooltip);
+		this.listenTo(Upfront.Events, 'entity:activated', this.closeTooltip);
+		this.listenTo(Upfront.Events, 'entity:deactivated', this.closeTooltip);
+		this.listenTo(Upfront.Events, 'entity:region:activated', this.closeTooltip);
+		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.calculateMargins);
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
-		if(typeof ugalleries != 'undefined' && ugalleries[elementId]){
-			if(ugalleries[elementId].labels)
+		if (typeof ugalleries !== 'undefined' && ugalleries[elementId]) {
+			if(ugalleries[elementId].labels) {
 				this.labels = ugalleries[elementId].labels;
-			if(ugalleries[elementId].image_labels)
+			}
+			if(ugalleries[elementId].image_labels) {
 				this.imageLabels = ugalleries[elementId].image_labels;
-		}
-		else{
-			/*
-			if(!ugalleries)
+			}
+		} else {
+			if ('undefined' === typeof ugalleries || !ugalleries) {
 				ugalleries = {};
-			*/
-			if ('undefined' === typeof ugalleries || !ugalleries) ugalleries = {};
+			}
 
 			ugalleries[elementId] = {};
 
@@ -133,7 +130,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			_.each(this.images.models, function(image) {
 				var imageLabels = [];
 				_.each(this.labels, function(label) {
-					if (_.indexOf(image.get('tags'), label.text) > -1) imageLabels.push('label_' + label.id);
+					if (_.indexOf(image.get('tags'), label.text) > -1) {
+						imageLabels.push('label_' + label.id);
+					}
 				});
 				this.imageLabels[image.get('id')] = 'label_0,' + imageLabels.join(',');
 			}, this);
@@ -160,36 +159,31 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		this.listenTo(this.model, 'no_padding_change', function(e){
 			me.calculateMargins();
-			if (this.property('no_padding')[0] === "true") {
+			if (this.property('no_padding')[0] === 'true') {
 				me.$el.addClass('no_padding');
 			} else {
 				me.$el.removeClass('no_padding');
 			}
 		});
 
-		if(this.property('status') != 'ok' || !this.images.length)
+		if (this.property('status') !== 'ok' || !this.images.length) {
 			this.property('has_settings', 0);
-		/*
-		$('body').on('click', function(e){
-			var gallery = $('#' + me.property('element_id'));
-			if(!e.gallerySelected && gallery.length)
-				gallery.find('.ugallery_selected').removeClass('ugallery_selected');
-		});
-		*/
+		}
 	},
 
-	selectItem: function(e){
+	selectItem: function(e) {
 		var item = $(e.target).hasClass('gallery_item') ? $(e.target) : $(e.target).closest('.ugallery_item');
 		item.siblings().removeClass('ugallery_selected');
-		if(!$(e.target).closest('.ugallery-controls').length)
+		if (!$(e.target).closest('.ugallery-controls').length) {
 			item.toggleClass('ugallery_selected');
+		}
 		e.gallerySelected = true;
 	},
 
-	createControls: function(image){
+	createControls: function(image) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
-		var linkControl = this.property('linkTo') == 'url' ? this.createLinkControl(image) : this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox');
+		var linkControl = this.property('linkTo') === 'url' ? this.createLinkControl(image) : this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox');
 		panel.items = _([
 			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
 			linkControl,
@@ -217,8 +211,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	createLinkControl: function(image){
 		var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl()
-		;
+			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
 		control.view = new Upfront.Views.Editor.LinkPanel({
 			model: new Backbone.Model({
@@ -294,8 +287,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			return;
 		}
 
-		if(data.type == 'image')
+		if (data.type === 'image') {
 			data.url = control.image.get('srcFull');
+		}
 
 		control.image.set({
 			urlType: data.type,
@@ -306,7 +300,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		control.render().close();
 	},
 
-	openLightbox: function(e, labels){
+	openLightbox: function(e, labels) {
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = me.images.get(item.attr('rel')),
@@ -395,8 +389,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					me.createLabelSelector(wrapper);
 				},
 				beforeClose: function() {
-					if(titleUpdated)
+					if (titleUpdated) {
 						Upfront.Views.Editor.notify(l10n.desc_update_success);
+					}
 				},
 				resize: resizeWithText,
 				afterChange: resizeWithText
@@ -408,10 +403,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.openLightbox(e, true);
 	},
 
-	get_content_markup: function () {
+	get_content_markup: function() {
 		var props = this.extract_properties();
-			rendered = {}
-		;
+			rendered = {};
 
 		props.imagesLength = props.images.length;
 		props.editing = true;
@@ -422,21 +416,20 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		props.l10n = l10n.template;
 		props.in_editor = true;
-		if (!props.no_padding) props.no_padding = ['false'];
+		if (!props.no_padding) {
+			props.no_padding = ['false'];
+		}
 
-		rendered = this.tpl(props);
-
-		return rendered;
+		return this.tpl(props);
 	},
 
-	on_render: function(){
+	on_render: function() {
 		var me = this,
 			resizingFunction,
-			skipMargins = me.$el.closest('body').length ? me.calculateMargins() : 0
-		;
+			skipMargins = me.$el.closest('body').length ? me.calculateMargins() : 0;
 
 		//Bind resizing events
-		if(!me.parent_module_view.$el.data('resizeHandling')){
+		if (!me.parent_module_view.$el.data('resizeHandling')) {
 			resizingFunction = $.proxy(me.onElementResizing, me);
 			me.parent_module_view.$el
 				.on('resize', resizingFunction)
@@ -445,74 +438,71 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			;
 		}
 
-		this.images.each(function(image){
+		this.images.each(function(image) {
 			if(image.get('loading')){
 				me.$('.ugallery_item[rel="' + image.id  + '"]')
 					.find('.ugallery-image-wrapper').append('<p class="ugallery-image-loading">' + l10n.loading + '</p>');
 			}
 		});
 
-		if(_.indexOf(['ok', 'starting'], me.property('status')) == -1) {
+		if(_.indexOf(['ok', 'starting'], me.property('status')) === -1) {
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>' + l10n.personalize + '</p></div>');
 		}
 
 		if (this.images && this.images.length) {
 			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
-			if(this.$el.find('a.add-item').length < 1) {
+			if (this.$el.find('a.add-item').length < 1) {
 				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
 			}
 		}
 
 		//Calculate margins now if it is possible
-		if(me.$el.closest('body').length)
+		if (me.$el.closest('body').length) {
 			me.calculateMargins();
+		}
 
-		setTimeout(function(){
+		setTimeout(function() {
 			//And now too
 			me.calculateMargins();
 
 			var items = me.$('.ugallery_item');
-			_.each(items, function(i){
+			_.each(items, function(i) {
 				var item = $(i),
 					image = me.images.get(item.attr('rel')),
 					controls = me.createControls(image),
-					title = item.find('.ugallery-thumb-title')
-				;
+					title = item.find('.ugallery-thumb-title');
 
 
 				controls.setWidth(item.width());
 				controls.render();
 				item.find('.ugallery-image-wrapper').append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 
-				if(me.property('captionPosition') != 'nocaption' && !title.data('ueditor')){
+				if (me.property('captionPosition') !== 'nocaption' && !title.data('ueditor')) {
 					title.ueditor({
 							linebreaks: false,
 							autostart: false,
 							upfrontMedia: false,
 							upfrontImages: false
 						})
-						.on('start', function(){
+						.on('start', function() {
 							me.$el.addClass('upfront-editing');
 						})
-						.on('stop', function(){
+						.on('stop', function() {
 							me.$el.removeClass('upfront-editing');
 						})
-						.on('syncAfter', function(){
+						.on('syncAfter', function() {
 							image.set('title', title.html());
 						})
 					;
 				}
 
-				if(
-					me.imageLabels[image.id] &&
-					me.property('labelFilters').length &&
-					me.imageLabels[image.id].split(',').length < 2
-				){
+				if (me.showNoLabelsAlert(image.id)) {
 					item.find('.ugallery-image-wrapper').append('<div class="ugallery-nolabels-alert" title="' + l10n.no_labels + '"></div>');
 				}
 
-				if(image.controls)
+				if(image.controls) {
 					image.controls.remove();
+				}
 				image.controls = controls;
 			});
 
@@ -520,6 +510,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		}, 300);
 
 		this.activateSortable();
+	},
+
+	showNoLabelsAlert: function(imageId) {
+		return this.imageLabels[imageId] &&
+			this.property('labelFilters').length &&
+			this.imageLabels[imageId].split(',').length < 2;
 	},
 
 	onElementResizing: function(){
@@ -540,15 +536,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			margin, totalMargin, remaining
 		;
 
-		if (this.property('no_padding')[0] === "true") {
+		if (this.property('no_padding')[0] === 'true') {
 			_.each(items, function(item, idx){
 				$(item).css('margin-right', 0);
 			});
 			return;
 		}
 
-		if(columns * itemWidth + (columns - 1 ) * minMargin > container)
+		if(columns * itemWidth + (columns - 1 ) * minMargin > container) {
 			columns--;
+		}
 
 		totalMargin = container - (columns * itemWidth);
 		margin = Math.floor(totalMargin / (columns-1));
@@ -617,8 +614,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			models = [],
 			selectType = false,
-			element_id = this.model.get_property_value_by_name("element_id")
-		;
+			element_id = this.model.get_property_value_by_name('element_id');
 
 		this.getNewLabels(_.keys(images));
 
@@ -639,7 +635,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			);
 		});
 
-		if (me.property('status') != 'ok') {
+		if (me.property('status') !== 'ok') {
 			me.property('status', 'ok');
 			me.property('has_settings', 1);
 			me.images.reset(models);
@@ -655,7 +651,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		}
 
 		me.render();
-		if(selectType) this.selectOnClick();
+		if (selectType) {
+			this.selectOnClick();
+		}
 	},
 
 	selectOnClick: function(){
@@ -921,7 +919,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			src: image.get('src'),
 			srcOriginal: full[0],
 			rotation: image.get('rotation'),
-			element_id: this.model.get_property_value_by_name("element_id"),
+			element_id: this.model.get_property_value_by_name('element_id')
 		};
 	},
 
@@ -936,12 +934,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			imageId = $('#ugallery-tooltip').find('#ugallery-image-id').val()
 		;
 
-		if(val == 'external'){
+		if (val === 'external') {
 			$('#ugallery-image-link-url').show();
-		}
-		else{
+		} else {
 			$('#ugallery-image-link-url').hide();
-			if(val == 'post' || e.type != 'change'){
+			if (val === 'post' || e.type !== 'change') {
 				var me = this,
 					selectorOptions = {
 						postTypes: this.postTypes()
@@ -1284,12 +1281,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var me = this,
 			item = this.getItemElement(e);
 		e.preventDefault();
-		item.fadeOut('fast', function(){
+		item.fadeOut('fast', function() {
 			var imageId = item.attr('rel');
 			me.images.remove(imageId);
 			me.imagesChanged();
-			if(!me.images.length)
+			if (!me.images.length) {
 				me.property('has_settings', 0);
+				me.property('status', 'starting');
+			}
 
 			//Remove labels
 			var labels = me.imageLabels[imageId].split(',');
