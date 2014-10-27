@@ -677,7 +677,7 @@ a.image-edit-button.deactivated:hover {
 }
 
 .ui-resizable-autohide .uimage-controls {
-	/* display: none; */
+	display: none;
 }
 
 .ui-resizable-autohide .uimage-controls.upfront-control-visible {
@@ -999,7 +999,7 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .ui-resizable-autohide .uimage-resize-hint {
-	/* display: none; */
+	display: none;
 }
 
 .uimage-small .upfront-ui.uimage-resize-hint {
