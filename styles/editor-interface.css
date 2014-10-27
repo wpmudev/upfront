@@ -38,6 +38,9 @@
 .upfront-grid-layout {
 	zoom: 1;
 }
+.upfront-region-container-active .upfront-grid-layout {
+	z-index: 11;
+}
 
 .upfront-grid-layout-gutter {
 	position: absolute;
@@ -2275,7 +2278,7 @@ div.uinsert-selector a:hover {
 	float: left;
 	position: relative;
 }
-.upfront-wrapper.upfront-wrapper-current {
+.upfront-wrapper.upfront-wrapper-active {
 	z-index: 3;
 }
 
@@ -2858,7 +2861,7 @@ div.uinsert-selector a:hover {
 	/*display: block;*/
 }
 .upfront-region-editing .upfront-region-editing-overlay {
-	z-index: 10;
+	z-index: 20;
 	background: rgba(31, 48, 63, 0.8);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-side,
@@ -3241,6 +3244,10 @@ div.uinsert-selector a:hover {
 }
 .upfront-inline-panel-bottom-left {
 	left: 8.3%;
+}
+.uimage-controls .upfront-inline-panel-bottom-left {
+	bottom: 15px;
+	left: 15px;
 }
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-left {
 	left: 0;
@@ -3970,7 +3977,8 @@ a.upfront-region-name-edit-trigger:before {
 }
 .upfront-ui-selected .upfront-selected-border,
 .ui-selecting .upfront-selected-border,
-.upfront-module-group:hover .upfront-selected-border {
+.upfront-module-group:hover .upfront-selected-border,
+.upfront-dragging .upfront-module-group .upfront-selected-border {
 	display: block;
 }
 .upfront-module-group.upfront-module-group-disabled .upfront-selected-border {
