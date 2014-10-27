@@ -999,7 +999,7 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .ui-resizable-autohide .uimage-resize-hint {
-	display: none;
+	/* display: none; */
 }
 
 .uimage-small .upfront-ui.uimage-resize-hint {
@@ -1013,10 +1013,11 @@ div.uimage-controls i.upfront-icon:before {
 	font-size: 11px;
 	padding: 0;
 	line-height: 14px;
-	bottom: -15px;
+	bottom: 0 !important;
+	top: auto;
 	left: 0;
-	width:45px;
 	text-align: center;
+	white-space: nowrap;
 }
 
 .uimage-small .uimage-resize-hint .uimage-sizehint-big,
@@ -1091,7 +1092,7 @@ div.uimage-controls i.upfront-icon:before {
 	height: 30px;
 }
 .uimage-narrow .uimage-control-tooltip-item {
-	display: none !important;
+	/* display: none !important; */
 }
 
 .uimage-narrow .uimage-controls .upfront-inline-panel-item {
@@ -1104,7 +1105,7 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .uimage-narrow .upfront-inline-panel {
-	width: 60px !important;
+	/* width: 60px !important; */
 }
 
 .uimage-fullwidth-alert {
