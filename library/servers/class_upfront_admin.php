@@ -10,8 +10,6 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
-
 		// Dispatch all notices
 		add_action('admin_notices', array($this, 'dispatch_notices'));
 
@@ -85,30 +83,6 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		// We are here, so the user is deleting Upfront core with Upfront child theme active.
 		wp_safe_redirect(admin_url('themes.php?upfront-delete=refused'));
 		die;
-	}
-
-	public function add_edit_menu ( $wp_admin_bar ) {
-		global $post, $tag, $wp_the_query;
-		$current_object = $wp_the_query->get_queried_object();
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-		if ( is_plugin_active('upfront-theme-exporter/upfront-theme-exporter.php') ) {
-			$wp_admin_bar->add_menu( array(
-				'id' => 'upfront-create-theme',
-				'title' => __('Create New Theme'),
-				'href' => site_url('/create_new/theme'),
-				'meta' => array( 'class' => 'upfront-create_theme' )
-			) );
-		}
-
-		if ( !is_admin() && Upfront_Permissions::current(Upfront_Permissions::BOOT) ){
-			$wp_admin_bar->add_menu( array(
-				'id' => 'upfront-edit_layout',
-				'title' => __('Edit Layout'),
-				'href' => '#',
-				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
-			) );
-		}
 	}
 
 	private function _get_editable_theme_url () {

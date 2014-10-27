@@ -50,12 +50,14 @@ class Upfront {
 		add_filter('wp_title', array($this, 'filter_wp_title'), 10, 2);
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
-		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
 
-		// if (is_admin()) { // This prevents "Edit layout" being shown on frontend
+		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
+		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
+
+		if (is_admin()) { // This prevents "Edit layout" being shown on frontend
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
-		// }
+		}
 	}
 
 	private function _add_supports () {
@@ -83,6 +85,31 @@ class Upfront {
 
 	public static function get_root_dir () {
 		return get_template_directory();
+	}
+
+
+	public function add_edit_menu ( $wp_admin_bar ) {
+		global $post, $tag, $wp_the_query;
+		$current_object = $wp_the_query->get_queried_object();
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+		if ( is_plugin_active('upfront-theme-exporter/upfront-theme-exporter.php') ) {
+			$wp_admin_bar->add_menu( array(
+				'id' => 'upfront-create-theme',
+				'title' => __('Create New Theme'),
+				'href' => site_url('/create_new/theme'),
+				'meta' => array( 'class' => 'upfront-create_theme' )
+			) );
+		}
+
+		if ( !is_admin() && Upfront_Permissions::current(Upfront_Permissions::BOOT) ){
+			$wp_admin_bar->add_menu( array(
+				'id' => 'upfront-edit_layout',
+				'title' => __('Edit Layout'),
+				'href' => '#',
+				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
+			) );
+		}
 	}
 
 	function filter_wp_title ( $title, $sep ) {
