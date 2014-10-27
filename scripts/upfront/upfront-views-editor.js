@@ -4160,7 +4160,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 						$scroll_panel = me.$el.parents('.upfront-settings_panel_scroll');
 						if ($scroll_panel) {
-							scroll_panel_bottom = $scroll_panel.offset().top + $scroll_panel.outerHeight();
+							scroll_panel_bottom = ($scroll_panel.offset()?$scroll_panel.offset().top:0) + $scroll_panel.outerHeight();
 							$select_options = me.$el.find('.upfront-field-select-options');
 							options_bottom =  $select_options.offset().top + $select_options.outerHeight();
 							$scroll_panel.scrollTop(options_bottom);

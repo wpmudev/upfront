@@ -84,11 +84,14 @@ jQuery(document).ready(function($) {
 	}
 	
 	function roll_responsive_nav(selector, bpwidth) {
-		$(selector).each(function () {
+
+		var elements = (typeof(selector) == 'object')?selector:$(selector);
+		elements.each(function () {
 
 			var breakpoints = $(this).data('breakpoints');
 
 			var bparray = new Array();
+
 			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth):$(window).width();
 			
 			for (var key in breakpoints) {
@@ -101,7 +104,9 @@ jQuery(document).ready(function($) {
 
 			for (var key in bparray) {
 				if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
+					
 					if(bparray[key]['burger_menu'] == 'yes') {
+						
 						$(this).attr('data-style', 'burger')
 						$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
 						$(this).attr('data-burger_over', bparray[key]['burger_over']);
@@ -119,14 +124,15 @@ jQuery(document).ready(function($) {
 								$(this).children('a').removeAttr('href');	
 							}
 						});
+
 						//offset a bit if admin bar or side bar is present
 						if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
 							$(this).find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
 							//$(this).find('div.responsive_nav_toggler').css('margin-top', $('div#wpadminbar').outerHeight());
 						}
-
 						
-						if(selector == '.upfront-output-unewnavigation') {
+						if($(this).hasClass('upfront-output-unewnavigation')) {
+							
 							$('head').find('style#responsive_nav_sidebar_offset').remove();
 							var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
 							
@@ -180,6 +186,8 @@ jQuery(document).ready(function($) {
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	
 	$(window).smartresize(function() {roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");});
-	$(document).on('changed_breakpoint', function(e) { roll_responsive_nav( e.selector, e.width);} );
+	console.log('this has been subscribed');
+	$(document).on('changed_breakpoint', function(e) {
+	 roll_responsive_nav( e.selector, e.width);} );
 });
 
