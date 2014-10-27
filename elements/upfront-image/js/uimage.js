@@ -400,7 +400,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			starting = this.$('.upfront-image-starting-select'),
 			size = this.temporaryProps.size, //this.property('size'),
 			position = this.temporaryProps.position, //this.property('position'),
-			textHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
+			captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
 		;
 
 		if(starting.length){
@@ -415,7 +415,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			starting = this.$('.uimage');
 			maskSize = {
 				width: starting.width(),
-				height: starting.height() - textHeight
+				height: starting.height() - captionHeight
 			};
 			maskOffset = {
 				top: starting.offset().top,
@@ -501,13 +501,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			var smallSwap = props.element_size.width < 150 || props.element_size.height < 90 ? 'uimage-quick-swap-small' : '';
 
 			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
-		}
-		else if(this.property('image_status') === 'starting'){
+		} else if (this.property('image_status') === 'starting') {
 			rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
 					'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
 			'</div></div>';
-		}
-		else {
+		} else {
 			var render = $('<div></div>').append(rendered),
 				elementSize = props.element_size,
 				size = props.size,
@@ -592,7 +590,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
 
 			if (me.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
-				me.parent_module_view.$('.upfront-module').append('<div class="uimage-controls upfront-ui"></div>');
+				me.parent_module_view.$('.upfront-module').append('<div class="uimage-controls image-element-controls upfront-ui"></div>');
 			}
 			me.parent_module_view.$('.upfront-module').find('.uimage-controls').append(me.controls.$el);
 			me.controls.delegateEvents();
@@ -613,29 +611,26 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	setSizeClasses: function(width, height) {
-		if(width < 131 && !this.sizeClasses.narrow){
+		if(width < 131 && !this.sizeClasses.narrow) {
 			this.sizeClasses.narrow = true;
 			this.parent_module_view.$el.addClass('uimage-narrow');
-		}
-		else if(width > 130 && this.sizeClasses.narrow){
+		} else if (width > 130 && this.sizeClasses.narrow) {
 			this.sizeClasses.narrow = false;
 			this.parent_module_view.$el.removeClass('uimage-narrow');
 		}
 
-		if(height < 60 && !this.sizeClasses.small){
+		if(height < 60 && !this.sizeClasses.small) {
 			this.sizeClasses.small = true;
 			this.parent_module_view.$el.addClass('uimage-small');
-		}
-		else if(height > 59 && this.sizeClasses.small){
+		} else if (height > 59 && this.sizeClasses.small) {
 			this.sizeClasses.small = false;
 			this.parent_module_view.$el.removeClass('uimage-small');
 		}
 
-		if(width < 50 && !this.sizeClasses.tiny){
+		if(width < 50 && !this.sizeClasses.tiny) {
 			this.sizeClasses.tiny = true;
 			this.parent_module_view.$el.addClass('uimage-tiny');
-		}
-		else if(width > 49 && this.sizeClasses.tiny){
+		} else if (width > 49 && this.sizeClasses.tiny) {
 			this.sizeClasses.tiny = false;
 			this.parent_module_view.$el.removeClass('uimage-tiny');
 		}
@@ -759,18 +754,17 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	/*           Handling element resize events (jQuery resizeable)            */
 	/***************************************************************************/
 	onElementResizeStart: function() {
-		// In Mobile mode, don't handle resizing.
 		if(this.mobileMode) {
 			return;
 		}
 
-		var starting = this.$('.upfront-image-starting-select');
+		var starting = this.$('.upfront-image-starting-select'); // Add image panel
 
 		if(this.property('caption_position') !== 'below_image') {
 			this.$('.wp-caption').fadeOut('fast');
 		}
 
-		//Initialize here the variables necessary for resizing to speed it up.
+		// Store variables used in resize event handlers
 		resizingData = {
 			starting: starting,
 			data: {
@@ -802,57 +796,50 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResizing: function() {
-		// In Mobile mode, don't handle resizing.
 		if(this.mobileMode) {
 			return;
 		}
+
 		var starting = resizingData.starting,
 			resizer = resizingData.resizer,
 			data = resizingData.data,
 			img = resizingData.img,
-			textHeight = resizingData.setTextHeight ? this.$('.wp-caption').outerHeight() : 0
-		;
+			captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+			ratio;
 
 		if(!resizer){
 			resizer = $('html').find('.upfront-resize');
 			resizingData.resizer = resizer;
 		}
 
-		data.elementSize = {width: resizer.width() - 30, height: resizer.height() - 30 - textHeight};
+		data.elementSize = {width: resizer.width() - 30, height: resizer.height() - 30 - captionHeight};
 
 		this.setSizeClasses(resizer.width(), resizer.height());
+
 		this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 				width: data.elementSize.width,
 				height: data.elementSize.height,
 				l10n: l10n.template
 			})
-		).css({
-             // Todo Sam: remove the commented stuff, they used to make the resize hint jump up and down when resizing
-			//bottom: 'auto',
-			//top: resizer.height() - 39
-		});
+		);
 
 		if(starting.length){
 			return starting.outerHeight(data.elementSize.height);
 		}
 
 		//Wonderful stuff from here down
-
-		//this.$('.upfront-image-container').css(data.elementSize);
 		this.$('.uimage').css('height', data.elementSize.height);
 
 		//Resizing the stretching dimension has priority, the other dimension just alter position
 		if(data.stretch && !data.vstretch){
 			this.resizingH(img, data, true);
 			this.resizingV(img, data);
-		}
-		else if(!data.stretch && data.vstretch){
+		} else if(!data.stretch && data.vstretch){
 			this.resizingV(img, data, true);
 			this.resizingH(img, data);
-		}
-		else {
+		} else {
 			//Both stretching or not stretching, calculate ratio difference
-			var ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+			ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
 
 			//Depending on the difference of ratio, the resizing is made horizontally or vertically
 			if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
@@ -867,11 +854,16 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	onElementResizeStop: function() {
-		// In Mobile mode, don't handle resizing.
 		if(this.mobileMode) {
 			return;
 		}
-		var starting = this.$('.upfront-image-starting-select');
+
+		var starting = resizingData.starting,
+			me = this,
+			img = resizingData.img,
+			imgSize = {width: img.width(), height: img.height()},
+			imgPosition = img.position();
+
 		if(starting.length){
 			this.elementSize = {
 				height: $('.upfront-resize').height() - 30,
@@ -879,20 +871,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			};
 			this.property('element_size', this.elementSize);
 			return;
-		} else if(this.property('quick_swap')) {
+		} else if (this.property('quick_swap')) {
 			return;
 		}
 
-		//Save resizing, be sure we have the good dimensions
+		// Save resizing, be sure we have the good dimensions
 		this.onElementResizing();
 
-		var me = this,
-			img = resizingData.img,
-			imgSize = {width: img.width(), height: img.height()},
-			imgPosition = img.position()
-		;
-
-		//Change the sign
+		// Change the sign
 		imgPosition.top = -imgPosition.top;
 		imgPosition.left = -imgPosition.left;
 
@@ -912,6 +898,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		this.setSizeHTMLClasses();
 		resizingData = {};
+		this.showCaption();
+	},
+
+	showCaption: function() {
 		this.$('.wp-caption').fadeIn('fast');
 	},
 
@@ -919,21 +909,21 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var elWidth = data.elementSize.width,
 			width = size ? data.size.width : img.width(), // The width has been modified if we don't need to set the size
 			left = data.position.left,
-			css = {}
-		;
+			css = {},
+			align;
 
-		if(data.stretch){
-			if(elWidth < width - left){
+		if(data.stretch) {
+			if(elWidth < width - left) {
 				css.left = -left;
 				if(size) {
 					css.width = width;
 				}
-			} else if(width > elWidth && elWidth >= width - left){
+			} else if(width > elWidth && elWidth >= width - left) {
 				css.left = elWidth - width;
 				if(size) {
 					css.width = width;
 				}
-			} else{
+			} else {
 				css.left = 0;
 				if(size) {
 					css.width = elWidth;
@@ -942,28 +932,32 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			if(size) {
 				css.height = 'auto';
 			}
-		} else {
-			if(elWidth > width){
-				var align = this.property('align');
-				if(align === 'left'){
-					css.left = 0;
-				} else if(align === 'center'){
-					css.left = (elWidth - width) / 2;
-				} else{
-					css.left = 'auto';
-					css.right = 0;
-				}
-				if(size){
-					css.width = width;
-					css.height = 'auto';
-				}
-			} else{
+			img.css(css);
+			return;
+		}
+
+		if(elWidth > width) {
+			align = this.property('align');
+			if(align === 'left') {
 				css.left = 0;
-				if(size){
-					css.width = elWidth;
-					css.height = 'auto';
-				}
+			} else if(align === 'center') {
+				css.left = (elWidth - width) / 2;
+			} else {
+				css.left = 'auto';
+				css.right = 0;
 			}
+			if(size) {
+				css.width = width;
+				css.height = 'auto';
+			}
+			img.css(css);
+			return;
+		}
+
+		css.left = 0;
+		if(size) {
+			css.width = elWidth;
+			css.height = 'auto';
 		}
 		img.css(css);
 	},
@@ -972,10 +966,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		var elHeight = data.elementSize.height,
 			height = size ? data.size.height : img.height(),
 			top = data.position.top,
-			css = {}
-		;
-		if(data.vstretch){
-			if(elHeight < height - top){
+			css = {};
+
+		if(data.vstretch) {
+			if(elHeight < height - top) {
 				css.top = -top;
 				if(size) {
 					css.height = height;
@@ -994,26 +988,29 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			if(size) {
 				css.width = 'auto';
 			}
-		} else {
-			if(elHeight > height - top){
-				css.top = -top;
-				if(size) {
-					css.height = height;
-				}
-			} else if(height - top >= elHeight && elHeight > height){
-				css.top = elHeight - height;
-				if(size) {
-					css.height = height;
-				}
-			} else {
-				css.top = 0;
-				if(size) {
-					css.height = elHeight;
-				}
-			}
+			img.css(css);
+			return;
+		}
+
+		if(elHeight > height - top) {
+			css.top = -top;
 			if(size) {
-				css.width = 'auto';
+				css.height = height;
 			}
+		} else if(height - top >= elHeight && elHeight > height){
+			css.top = elHeight - height;
+			if(size) {
+				css.height = height;
+			}
+		} else {
+			css.top = 0;
+			if(size) {
+				css.height = elHeight;
+			}
+		}
+
+		if(size) {
+			css.width = 'auto';
 		}
 		img.css(css);
 	},
@@ -3247,20 +3244,20 @@ var CollapsedMultiControl = MultiControl.extend({
 });
 
 var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
-	position_v: 'bottom',
-	position_h: 'left',
-	setWidth: function(width){
+	position_v: 'none', // Image view will handle this
+	position_h: 'none',
+	setWidth: function(width) {
 		var itemWidth = 40,
 			items = this.items._wrapped,
-			collapsed = !!items.collapsed
-		;
+			collapsed = !!items.collapsed,
+			collapsableItems,
+			collapsedControl;
 
 		if(!collapsed && items.length > 3 && width < items.length * itemWidth){
-			var collapsableItems = items.slice(1, items.length -1),
-				collapsedControl = new CollapsedMultiControl()
-			;
+			collapsableItems = items.slice(1, items.length -1);
+			collapsedControl = new CollapsedMultiControl();
 
-			_.each(collapsableItems, function(item){
+			_.each(collapsableItems, function(item) {
 				collapsedControl.sub_items[item.icon] = item;
 			});
 
@@ -3277,8 +3274,8 @@ var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
 				var newitems = [items[0]],
 					subitems = items[1].subitems
 				;
-				_.each(subitems, function(it){
-					newitems.push(it);
+				_.each(subitems, function(item) {
+					newitems.push(item);
 				});
 				newitems.push(items[2]);
 
