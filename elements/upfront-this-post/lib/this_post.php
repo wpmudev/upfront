@@ -92,7 +92,26 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 			case self::$PARTNAMES['DATE']:
 				$format = isset($options['format']) ? $options['format'] : '';
-				$replacements['%date%'] = get_the_date($format);
+
+				/**
+				 * label each part
+				 */
+				$date = "";
+				if( !empty( $format ) ){
+					$split = str_split( $format );
+					$f = 0;
+					foreach( $split as $part ){
+						if( str_word_count($part) === 0 ){ // if format's a free space
+							$date .= $part;
+						}else{
+							$date .= sprintf("<span class='date_part_%s'>%s</span>", $f , get_the_date( $part ) );
+							$f ++;
+						}
+					}
+				}
+
+
+				$replacements['%date%'] = $date;
 				$replacements['%date_iso%'] = get_the_date('c');
 				break;
 
