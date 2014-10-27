@@ -101,7 +101,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 					$split = str_split( $format );
 					$f = 0;
 					foreach( $split as $part ){
-						if( str_word_count($part) === 0 ){ // if format's a free space
+						if( str_word_count($part) === 0 ){ // if this part is a free space
 							$date .= $part;
 						}else{
 							$date .= sprintf("<span class='date_part_%s'>%s</span>", $f , get_the_date( $part ) );
