@@ -1002,15 +1002,22 @@ div.uimage-controls i.upfront-icon:before {
 	display: none;
 }
 
-.uimage-small .uimage-resize-hint,
+.uimage-small .upfront-ui.uimage-resize-hint {
+	font-size: 11px;
+	padding: 0;
+	line-height: 12px;
+	text-align: center;
+}
+
 .uimage-narrow .uimage-resize-hint {
 	font-size: 11px;
 	padding: 0;
 	line-height: 14px;
-	bottom: -15px;
+	bottom: 0 !important;
+	top: auto;
 	left: 0;
-	width:45px;
 	text-align: center;
+	white-space: nowrap;
 }
 
 .uimage-small .uimage-resize-hint .uimage-sizehint-big,
@@ -1046,16 +1053,30 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .uimage-small .uimage-controls {
-/*	top: 100%;*/
-	margin-top: -10px;
+	height: 8px;
+	overflow: hidden;
 }
 
 .uimage-small .upfront-inline-panel-item {
 	display: none;
 }
 
+.uimage-small .uimage-controls:hover {
+	bottom: -12px;
+	overflow: visible;
+	height: auto;
+}
+
+.uimage-small .uimage-controls:hover .upfront-inline-panel {
+	height: 40px !important; /* count in toggler */
+}
+
 .uimage-small .uimage-controls:hover .upfront-inline-panel-item {
 	display: block;
+}
+
+.uimage-small .uimage-controls:hover .upfront-inline-panel-item .upfront-inline-panel-item {
+	display: inline-block;
 }
 
 .uimage-small .uimage-controls-toggle {
@@ -1071,7 +1092,7 @@ div.uimage-controls i.upfront-icon:before {
 	height: 30px;
 }
 .uimage-narrow .uimage-control-tooltip-item {
-	display: none !important;
+	/* display: none !important; */
 }
 
 .uimage-narrow .uimage-controls .upfront-inline-panel-item {
@@ -1084,7 +1105,7 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .uimage-narrow .upfront-inline-panel {
-	width: 60px !important;
+	/* width: 60px !important; */
 }
 
 .uimage-fullwidth-alert {
@@ -1310,7 +1331,14 @@ div.uimage-controls i.upfront-icon:before {
 	max-height: none;
 	vertical-align: top;
 }
-.uimage-controls .upfront-inline-panel-bottom-left {
-	bottom:15px;
-	left:15px;
+.uimage-controls.image-element-controls .upfront-inline-panel {
+	bottom: 0;
+	left: 0;
+	position: relative;
+}
+
+.uimage-controls.image-element-controls {
+	width: auto;
+	bottom: 15px;
+	left: 15px;
 }
