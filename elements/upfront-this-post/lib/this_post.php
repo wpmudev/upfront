@@ -401,19 +401,21 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if($type == 'single')
 			return array(
 				'postLayout' => array(
+					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'featured_image', 'classes' => 'post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 				),
-				'partOptions' => array('featured_image' => array('height' => 100))
+				'partOptions' => array('featured_image' => array('height' => 150))
 			);
 		return array(
 			'postLayout' => array(
+				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'featured_image', 'classes' => 'post-part 24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 			),
-			'partOptions' => array('featured_image' => array('height' => 100))
+			'partOptions' => array('featured_image' => array('height' => 150))
 		);
 	}
 
