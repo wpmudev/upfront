@@ -186,3 +186,7 @@ div.uslide-image img {
 .uslider-resize-handler {
 	z-index: -10;
 }
+
+.uslide-caption {
+	box-sizing: border-box;
+}
