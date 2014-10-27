@@ -12433,7 +12433,7 @@ div.upfront-regions a#no_region_add_one {
     cursor: pointer;
     padding: 0 !important;
 }
-.upfront-output-PostPart_contents:hover .upfront_edit_content_style{
+.Postpart_contents:hover .upfront_edit_content_style{
     display: block;
 }
 .ueditor-insert-variant:hover .upfront_edit_image_insert{

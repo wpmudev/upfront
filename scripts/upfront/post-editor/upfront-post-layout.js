@@ -16,7 +16,6 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		this.postView = Upfront.Application.PostLayoutEditor.postView;
 		if(this.postView.partOptions && this.postView.partOptions[this.postPart]){
 			_.each(this.postView.partOptions[this.postPart], function(value, key){
-				console.log(key, value);
 				me.model.set_property(key, value, true);
 			});
 		}
@@ -62,6 +61,9 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		;
 		if(partOptions.extraClasses)
 			this.$('.upfront-object').addClass(partOptions.extraClasses);
+
+
+        this.$('.upfront-object').addClass("Postpart_" + this.postPart);
 
 		Upfront.Events.trigger('post:layout:partrendered', this);
 
