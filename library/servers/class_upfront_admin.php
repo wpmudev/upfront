@@ -17,6 +17,37 @@ class Upfront_Server_Admin implements IUpfront_Server {
 
 		// Deal with parent deletion attempts
 		add_action('load-themes.php', array($this, 'detect_parent_theme_deletion'));
+
+		// Deal with the themes list and overall customizer requests
+		add_filter('wp_prepare_themes_for_js', array($this, 'prepare_themes_list'));
+		add_action('admin_menu', array($this, 'prepare_menu'));
+	}
+
+	/**
+	 * Deal with appearance customizer menu.
+	 */
+	public function prepare_menu () {
+		global $submenu;
+		if (empty($submenu['themes.php'])) return false;
+		foreach ($submenu['themes.php'] as $key => $item) {
+			if (empty($item[1]) || 'customize' !== $item[1]) continue;
+			$submenu['themes.php'][$key][2] = $this->_get_editable_theme_url();
+			break;
+		}
+	}
+
+	/**
+	 * Preparing each of the theme's info for themes list in admin area.
+	 */
+	public function prepare_themes_list ($prepared_themes) {
+		if (!is_array($prepared_themes) || empty($prepared_themes)) return $prepared_themes;
+		foreach ($prepared_themes as $key => $theme) {
+			if (empty($theme['id']) || 'upfront' === $theme['id']) continue; // Don't deal with broken themes or UF core
+			if (empty($theme['parent']) || 'upfront' !== strtolower($theme['parent'])) continue; // Not dealing with the non-child themes or non-uf child themes
+
+			if (!empty($prepared_themes[$key]['actions'])) $prepared_themes[$key]['actions']['customize'] = $this->_get_editable_theme_url();
+		}
+		return $prepared_themes;
 	}
 
 	/**
@@ -78,6 +109,10 @@ class Upfront_Server_Admin implements IUpfront_Server {
 				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
 			) );
 		}
+	}
+
+	private function _get_editable_theme_url () {
+		return home_url('?editmode=true');
 	}
 
 	/**
