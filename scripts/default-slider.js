@@ -12,8 +12,6 @@
 			if(uslider){
 				if(isMethod)
 					result = uslider.callMethod(args);
-				else
-					$.error('jQuery-Uslider is already instantiated');
 			}
 			else{
 				if(isMethod)
