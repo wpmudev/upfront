@@ -50,44 +50,12 @@ class Upfront {
 		add_filter('wp_title', array($this, 'filter_wp_title'), 10, 2);
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
-		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
 
-		// Deal with parent deletion attempts
-		add_action('load-themes.php', array($this, 'detect_parent_theme_deletion'));
-		add_action('admin_notices', array($this, 'notify_about_parent_deletion_attempt'));
-	}
-
-	/**
-	 * So, we can't deal with parent theme deletion because, apparently, 
-	 * that's voodoo: https://core.trac.wordpress.org/ticket/14955#comment:16
-	 */
-	public function detect_parent_theme_deletion () {
-		if (empty($_GET['action']) || 'delete' !== $_GET['action']) return false;
-		$stylesheet = !empty($_GET['stylesheet'])
-			? $_GET['stylesheet']
-			: false
-		;
-		if ('upfront' !== $stylesheet) return false; // Not deleting Upfront core, no reason to stick around
-		
-		$current = wp_get_theme();
-		$parent = $current->parent();
-		if (empty($parent)) return false; // Current theme is not a child theme, carry on...
-		if ('upfront' !== $parent->get_template()) return false; // Not an Upfront child, carry on...
-
-		// We are here, so the user is deleting Upfront core with Upfront child theme active.
-		wp_safe_redirect(admin_url('themes.php?upfront-delete=refused'));
-		die;
-	}
-
-	/**
-	 * Cry out on refused deletion.
-	 */
-	public function notify_about_parent_deletion_attempt () {
-		if (empty($_GET['upfront-delete'])) return false;
-		echo '<div class="error"><p>' .
-			__('You have tried removing Upfront core while still having an Upfront child theme active. Please, activate a different theme and try again.', 'upfront') .
-		'</p></div>';
+		if (is_admin()) {
+			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
+			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
+		}
 	}
 
 	private function _add_supports () {
@@ -212,30 +180,6 @@ EOAdditivemarkup;
 
 	function add_responsive_css () {
 		include(self::get_root_dir().'/styles/editor-interface-responsive.html');
-	}
-
-	function add_edit_menu ( $wp_admin_bar ) {
-		global $post, $tag, $wp_the_query;
-		$current_object = $wp_the_query->get_queried_object();
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-		if ( is_plugin_active('upfront-theme-exporter/upfront-theme-exporter.php') ) {
-			$wp_admin_bar->add_menu( array(
-				'id' => 'upfront-create-theme',
-				'title' => __('Create New Theme'),
-				'href' => site_url('/create_new/theme'),
-				'meta' => array( 'class' => 'upfront-create_theme' )
-			) );
-		}
-
-		if ( !is_admin() && Upfront_Permissions::current(Upfront_Permissions::BOOT) ){
-			$wp_admin_bar->add_menu( array(
-				'id' => 'upfront-edit_layout',
-				'title' => __('Edit Layout'),
-				'href' => '#',
-				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
-			) );
-		}
 	}
 
 	function attachment_fields_to_edit ( $form_fields, $post ) {
