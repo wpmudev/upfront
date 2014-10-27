@@ -52,10 +52,10 @@ class Upfront {
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
 
-		if (is_admin()) {
+		// if (is_admin()) { // This prevents "Edit layout" being shown on frontend
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
-		}
+		// }
 	}
 
 	private function _add_supports () {
@@ -63,7 +63,7 @@ class Upfront {
 		register_nav_menu('default', _('Default'));
 		// Do widget text
 		$do_widget_text = apply_filters(
-			'upfront-shortcode-enable_in_widgets', 
+			'upfront-shortcode-enable_in_widgets',
 			(defined('UPFRONT_DISABLE_WIDGET_TEXT_SHORTCODES') && UPFRONT_DISABLE_WIDGET_TEXT_SHORTCODES ? false : true)
 		);
 		if ($do_widget_text) {
