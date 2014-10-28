@@ -92,7 +92,7 @@ var hackRedactor = function(){
 				if(insert.length && insert.closest(this.$box).length)
 					return;
 
-				var text = this.getSelectionText();
+				var text = this.selection.getText();
 				this.opts.toolbarFixedTopOffset = "50";
 				if (e.type === 'mouseup' && text != '') this.airShow(e);
 				if (e.type === 'keyup' && e.shiftKey && text != '') {
@@ -141,8 +141,8 @@ var hackRedactor = function(){
 				if ($(e.target).closest(this.$toolbar).length === 0 
 					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
 				{
-					if (!this.getSelectionText()) {
-						this.$air.fadeOut(100);
+					if (!this.selection.getText()) {
+						//this.$air.fadeOut(100);
 						$(".redactor_dropdown").hide();
 						this.$toolbar.find(".dropact").removeClass("dropact");
 						$(doc).off(e);
@@ -152,7 +152,7 @@ var hackRedactor = function(){
 				if (e.which === this.keyCode.ESC) {
 					this.getSelection().collapseToStart();
 				}
-				this.$air.fadeOut(100);
+				//this.$air.fadeOut(100);
 				$(doc).off(e);
 			}, this));
 		}, this);
@@ -197,11 +197,9 @@ var hackRedactor = function(){
 		{
 			if (!this.opts.air || !this.opts.airButtons.length) return;
 
-			$('.redactor_air').hide();
-
+			//$('.redactor_air').hide();
 			// this.selectionRemoveMarkers();
-			this.selectionSave();
-
+			this.selection.save();
 			var width = this.airWidth || this.$air.width(),
 				m1 = this.$editor.find('#selection-marker-1').offset(),
 				m2 = this.$editor.find('#selection-marker-2').offset(),
@@ -239,7 +237,7 @@ var hackRedactor = function(){
 				bounds.left = center - Math.floor((width + 1) / 2);
 			}
 
-			this.selectionRemoveMarkers();
+			this.selection.removeMarkers();
 
 			this.$air.css({
 				left: bounds.left  + 'px',
@@ -293,16 +291,19 @@ var hackRedactor = function(){
 
 var Ueditor = function($el, options) {
 	//Allow user disable plugins
-	var plugins = this.pluginList(options);
-
-	this.$el = $el;
-	this.options = $.extend({
+	var plugins = this.pluginList(options),
+        self = this;
+    this.$el = $el;
+    this.$air = $("<div  class='redactor_air' style='width: 200px;height:30px;background: red'></div>");
+    $el.before(this.$air);
+    this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
 			startoninit: true,
 			stateButtons: {},
-
-			// Redactor options
+            toolbarExternal: self.$air,
+            //toolbarFixedTopOffset: 100,
+        // Redactor options
 			air:true,
 			linebreaks: true,
 			disableLineBreak: false,
@@ -310,12 +311,13 @@ var Ueditor = function($el, options) {
 			cleanup: false,
 			plugins: plugins,
 			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
+			buttons: ['formatting', 'bold', 'italic', 'deleted'],
 			buttonsCustom: {},
 			activeButtonsAdd: {},
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-			inserts: false,
+			inserts: false
 		}, options)
 	;
 
@@ -356,6 +358,7 @@ var Ueditor = function($el, options) {
 	UeditorEvents.trigger("ueditor:blur", function(redac){
 		console.log("blured", redac)
 	});
+
 Ueditor.prototype = {
 	disableStop: false,
 	mouseupListener: false,
@@ -363,18 +366,23 @@ Ueditor.prototype = {
 	start: function(){
 		var self = this;
 		this.stopPlaceholder();
-		this.$el.addClass('ueditable')
+        //this.$el.append(this.$air);
+        console.log(this.$el.find(".redactor_air"));
+        this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
 			.attr('title', '')
 			.redactor(this.options)
 		;
 		this.$el.trigger('start', this);
 		this.redactor = this.$el.data('redactor');
-		this.redactor.ueditor = this;
+        this.redactor.$air = this.$air;
 		this.preventDraggable();
-		this.redactor.selectionRemoveMarkers();
+		this.redactor.selection.removeMarkers();
 		UeditorEvents.trigger('ueditor:start', this.redactor);
 
+        UeditorEvents.on("ueditor:init", function(redactor){
+            console.log(redactor);
+        });
 		if(!Upfront.data.Ueditor)
 			Upfront.data.Ueditor = {instances: {}};
 		Upfront.data.Ueditor.instances[this.id] = this;
@@ -406,7 +414,7 @@ Ueditor.prototype = {
 			this.$el.trigger('stop');
 			this.restoreDraggable();
 			this.$el.removeClass('ueditable');
-			this.redactor.destroy();
+			this.redactor.core.destroy();
 			this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
@@ -452,7 +460,7 @@ Ueditor.prototype = {
 			me.redactor.bufferSet();
 		});
 		manager.on('insert:added insert:removed', function(){
-			me.redactor.sync();
+			me.redactor.core.sync();
 			me.redactor.events.trigger("ueditor:insert:media");
 		});
 	},
@@ -526,7 +534,6 @@ Ueditor.prototype = {
 		}
 	},
 	stopPlaceholder: function() {
-		console.log('stop placeholder');
 		if (this.$placeholder)
 			this.$placeholder.remove();
 		if(this.$el.html() == '&nbsp;')
@@ -567,7 +574,7 @@ Ueditor.prototype = {
 		if(me.redactor)
 			me.redactor.waitForMouseUp = true;
 		$(document).one('mouseup', function(e){
-			if(me.redactor && me.redactor.waitForMouseUp && me.redactor.getSelectionText()){
+			if(me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
@@ -926,7 +933,7 @@ RedactorPlugins.panelButtons = {
 
 				$button.on('click', function(){
 					if($button.hasClass('dropact')){
-						me.selectionRemoveMarkers();
+						me.selection.removeMarkers();
 						b.panel.trigger('open', me);
 					}
 					else{
@@ -1114,7 +1121,7 @@ RedactorPlugins.upfrontLink = {
 				this.$el.find('.js-ulinkpanel-type:first').focus();
 		},
 		close: function(e, redactor){
-			this.redactor.selectionRemoveMarkers();
+			this.redactor.selection.removeMarkers();
 
 			if(redactor.$element.hasClass('menu_item')) {
 				var menuitem = redactor.$element.closest('li').data('backboneview');
@@ -1132,7 +1139,7 @@ RedactorPlugins.upfrontLink = {
 				menuitem.model['menu-item-url'] = '#';
 			}
 			else {
-		        var text = this.redactor.getSelectionHtml();
+		        var text = this.redactor.selection.getHtml();
 		        if($.parseHTML(text).length > 1){// there is html inside
 		            this.redactor.execCommand('inserthtml', text, true);
 		        }else{
@@ -1158,8 +1165,8 @@ RedactorPlugins.upfrontLink = {
 					menuitem.model['menu-item-url'] = url;
 				}
 				else {
-					this.redactor.selectionRestore(true, false);
-	                var caption = this.redactor.getSelectionHtml();
+					this.redactor.selection.restore(true, false);
+	                var caption = this.redactor.selection.getHtml();
 	                var link = this.redactor.currentOrParentIs('A');
 	                if(link)
 	                	$(link).attr('href', url).attr('rel', type);
@@ -1343,7 +1350,7 @@ RedactorPlugins.upfrontColor = {
 								self.current_color = color;	
 							},
 							move: function(color) {
-								redactor.selectionRestore(true, false);
+								redactor.selection.restore(true, false);
 								self.current_color = color;
 							}
 						}
@@ -1365,7 +1372,7 @@ RedactorPlugins.upfrontColor = {
 								self.current_bg = color;	
 							},
 							move: function(color) {
-								redactor.selectionRestore(true, false);
+								redactor.selection.restore(true, false);
 								self.current_bg = color;	
 							}
 						}
@@ -1520,13 +1527,13 @@ RedactorPlugins.upfrontColor = {
                         var current = this.redactor.getCurrent();
                         if( !$(current).hasClass(theme_color_classname) ){
 
- 					   this.redactor.selectionRestore(true, true);
+ 					   this.redactor.selection.restore(true, true);
                        this.redactor.bufferSet();
                        this.redactor.$editor.focus();
                        this.redactor.inlineRemoveStyle("color");
                        this.redactor.inlineRemoveClass( "upfront_theme_colors" );
                        this.redactor.inlineRemoveClass( "inline_color" );
-                       html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
+                       html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
 
                         html = "<inline class='upfront_theme_colors " + theme_color_classname + " " + bg_class + "' style='" + bg  + "'>"  + html + "</inline>";
                         //this.redactor.execCommand("inserthtml", html, true);
@@ -1537,14 +1544,14 @@ RedactorPlugins.upfrontColor = {
                             self.redactor.inlineRemoveClass( cls );
                         });
 
-					   this.redactor.selectionRestore(true, true);
+					   this.redactor.selection.restore(true, true);
                        this.redactor.bufferSet();
                        this.redactor.$editor.focus();
                        this.redactor.inlineRemoveStyle("color");
                        this.redactor.inlineRemoveClass( "upfront_theme_colors" );
                        this.redactor.inlineRemoveClass( "inline_color" );
 
-                       html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
+                       html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
                        html = "<inline class='inline_color' style='color: " + self.current_color.toRgbString() + ";" + bg +"'>" + html + "</inline>";
                        
                     }
@@ -1552,7 +1559,7 @@ RedactorPlugins.upfrontColor = {
 
 
                 if( html === "" ){
-                	html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.getSelectionHtml()));
+                	html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
                     html = "<inline class='" + bg_class +  "' style='" + bg +"'>" + html + "</inline>";
                 }
               
@@ -1564,7 +1571,7 @@ RedactorPlugins.upfrontColor = {
              	}
 
 				self.updateIcon();
-				self.redactor.selectionRemoveMarkers();
+				self.redactor.selection.removeMarkers();
 				self.redactor.syncClean();
 			}
 	})
@@ -1603,7 +1610,7 @@ RedactorPlugins.upfrontFormatting = {
 		});
 	},
 	applyTag: function(tag){
-		this.selectionRestore(true, true);
+		this.selection.restore(true, true);
         this.bufferSet();
         this.$editor.focus();
 		var text_align = $( this.getCurrent() ).css("text-align");
@@ -2524,7 +2531,7 @@ RedactorPlugins.upfrontIcons = {
         },
         open: function(e, redactor){
             this.redactor = redactor;
-            this.redactor.selectionRestore();
+            this.redactor.selection.restore();
             this.set_current_icon();
             
             this.$el.parent().css({
@@ -2533,7 +2540,7 @@ RedactorPlugins.upfrontIcons = {
         },
         close : function(){
         	if( this.redactor ){
-        		this.redactor.selectionRemoveMarkers();
+        		this.redactor.selection.removeMarkers();
         	}
         },
    //      update_offset : function( e ){
@@ -2546,7 +2553,7 @@ RedactorPlugins.upfrontIcons = {
    //      	}
    //      },
         insert_icon : function(e){
-			this.redactor.selectionRestore(true, false);
+			this.redactor.selection.restore(true, false);
             var $icon = $( $(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html() ),
             	fontSize = this.$(".font-icons-size").val(),
             	top = this.$(".font-icons-top").val();
@@ -2559,7 +2566,7 @@ RedactorPlugins.upfrontIcons = {
             this.closePanel();
         },
         set_current_icon : function(){
-        	this.redactor.selectionRestore(true, false);
+        	this.redactor.selection.restore(true, false);
         	window.re = this.redactor;
         	var $sel = $(this.redactor.getParent()).eq(0),
         		self = this;
@@ -2574,7 +2581,7 @@ RedactorPlugins.upfrontIcons = {
             	this.$(".upfront-font-icons-controlls input").on("change", function(e){
             		e.stopPropagation();
             		e.preventDefault();
-            		self.redactor.selectionSave();
+            		self.redactor.selection.save();
             		self.redactor.bufferSet();
             		var val = $(this).val() + "px";
 
@@ -2587,7 +2594,7 @@ RedactorPlugins.upfrontIcons = {
             		}
 					self.redactor.sync();
             		
-            		self.redactor.selectionRestore();
+            		self.redactor.selection.restore();
 
             	});
             	
