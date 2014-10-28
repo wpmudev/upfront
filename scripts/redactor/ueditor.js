@@ -410,6 +410,7 @@ Ueditor.prototype = {
 			this.$el.trigger('stop');
 			this.restoreDraggable();
 			this.$el.removeClass('ueditable');
+            this.$air.remove();
 			this.redactor.core.destroy();
 			this.redactor = false;
 		}
@@ -487,6 +488,7 @@ Ueditor.prototype = {
 		if( !( $(e.target).hasClass("redactor_box")
 				|| $(e.target).parents().hasClass("redactor-box")
 				|| $(e.target).parents().hasClass("redactor-air")
+                || $(e.target).parents().hasClass("redactor-toolbar")
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
 		{
