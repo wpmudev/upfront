@@ -1,10 +1,7 @@
 (function ($) {
 define([
 	"chosen",
-	"scripts/upfront/inline-panels/panels",
-	"scripts/upfront/inline-panels/panel",
-	"scripts/upfront/inline-panels/item",
-	"scripts/upfront/inline-panels/item-multi", // If adding more arguments adjust _.rest in line 35
+	"scripts/upfront/inline-panels/inline-panels", // If adding more arguments adjust _.rest in line 35
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
@@ -16,7 +13,7 @@ define([
 	"text!upfront/templates/region_edit_panel.html",
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html"
-], function (chosen, InlinePanelsPanels, InlinePanel, InlineItem, InlineItemMulti) {
+], function (chosen, InlinePanelsLoader) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
@@ -32,19 +29,14 @@ define([
 	];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = _.rest(arguments, 5),
+	var _template_args = _.rest(arguments, 2),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
 		if (file.match(/text!/)) _Upfront_Templates[file.replace(/text!upfront\/templates\//, '').replace(/\.html/, '')] = _template_args[idx];
 	});
 
-	var InlinePanels = {
-		'Panels': InlinePanelsPanels,
-		'Panel': InlinePanel,
-		'ItemMulti': InlineItemMulti,
-		'Item': InlineItem
-	};
+	var InlinePanels = InlinePanelsLoader;
 
 
 	Upfront.Events.on('data:ready', function(){

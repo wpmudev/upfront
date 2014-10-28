@@ -1,9 +1,8 @@
 (function ($) {
-
 define([
-		'text!elements/upfront-image/tpl/image.html',
-		'text!elements/upfront-image/tpl/image_editor.html'
-	], function(imageTpl, editorTpl) {
+	'text!elements/upfront-image/tpl/image.html',
+	'text!elements/upfront-image/tpl/image_editor.html'
+], function(imageTpl, editorTpl) {
 
 var $editorTpl = $(editorTpl);
 
@@ -155,8 +154,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	createControls: function() {
 		var me = this,
-			panel = new ControlPanel(),
-			multi = new TooltipControl()
+			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+			multi = new Upfront.Views.Editor.InlinePanels.TooltipControl()
 		;
 		multi.sub_items = {
 			topOver: this.createControl('topOver', l10n.ctrl.over_top),
@@ -383,7 +382,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	createControl: function(icon, tooltip, click){
 		var me = this,
-			item = new Control();
+			item = new Upfront.Views.Editor.InlinePanels.Control();
 		item.icon = icon;
 		item.tooltip = tooltip;
 		if(click){
@@ -2979,318 +2978,6 @@ var ImageSelector = Backbone.View.extend({
 	}
 });
 
-var Control = Upfront.Views.Editor.InlinePanels.Item.extend({
-	events: {
-		'click': 'clicked'
-	},
-	clicked: function(e){
-		e.preventDefault();
-		this.$el
-			.siblings('.upfront-inline-panel-subitem-active')
-			.removeClass('upfront-inline-panel-subitem-active')
-		;
-		this.trigger('click', e);
-	}
-});
-
-var DialogControl = Control.extend({
-	panelTpl: $.trim($editorTpl.find('#panel-control-tpl').html()),
-	events: {
-		'click': 'onClickControl',
-		'click button': 'onClickOk'
-	},
-
-	render: function(){
-		Control.prototype.render.call(this, arguments);
-		var me = this;
-
-		if(!this.$el.hasClass('uimage-control-panel-item')) {
-			this.$el.addClass('uimage-control-panel-item');
-		}
-
-		if(this.view){
-			this.view.render();
-			this.view.delegateEvents();
-		}
-
-		if(!this.panel){
-			//this is like initialize
-			var panel = $(_.template(this.panelTpl, {l10n: l10n.template}));
-			if(this.isopen) {
-				panel.show();
-			}
-			this.$el.append(panel);
-			panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
-			this.panel = panel;
-			/* V */
-			$(document).click(function(e){
-				var	target = $(e.target);
-
-				if(target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && me.isopen) {
-					me.close();
-				}
-			});
-		}
-
-		return this;
-	},
-
-	onClickControl: function(e){
-		if(!$(e.target).hasClass('upfront-icon')) {
-			return;
-		}
-
-		e.preventDefault();
-
-		if(this.isopen) {
-			this.close();
-		} else {
-			this.open();
-		}
-	},
-
-	onClickOk: function(e){
-		e.preventDefault();
-		this.trigger('panel:ok', this.view);
-	},
-
-	bindEvents: function(){
-		this.panel.find('button').on('click', function(){
-		});
-	},
-
-	open: function(){
-		this.panel.show();
-		this.isopen = true;
-		this.$el.addClass('upfront-control-dialog-open');
-		this.trigger('panel:open');
-		return this;
-	},
-	close: function(){
-		this.panel.hide();
-		this.isopen = false;
-		this.$el.removeClass('upfront-control-dialog-open');
-		this.trigger('panel:close');
-		return this;
-	}
-});
-
-var TooltipControl = Control.extend({
-	events: {
-		'click': 'onClickControl',
-		'click .upfront-inline-panel-item': 'selectItem'
-	},
-
-	onClickControl: function(e){
-		var  closestLayout = this.$el.closest('.upfront-grid-layout'),
-				closestWrapper = this.$el.closest('.upfront-wrapper');
-
-		e.preventDefault();
-
-		this.clicked(e);
-
-		if (this.$el.hasClass('open')) {
-			this.$el.removeClass('open');
-			closestLayout.removeClass('upfront-grid-layout-current');
-			closestWrapper.removeClass('upfront-wrapper-current');
-		} else {
-			this.$el.addClass('open');
-			closestLayout.addClass('upfront-grid-layout-current');
-			closestWrapper.addClass('upfront-wrapper-current');
-		}
-	},
-
-	render: function() {
-		Upfront.Views.Editor.InlinePanels.Item.prototype.render.call(this, arguments);
-		var tooltip = this.$('.uimage-control-tooltip'),
-			me = this
-		;
-		if(!this.$el.hasClass('uimage-control-tooltip-item')) {
-			this.$el.addClass('uimage-control-tooltip-item');
-		}
-
-		if(!tooltip.length){
-			tooltip = $('<div class="uimage-control-tooltip"></div>');
-			this.$el.append(tooltip);
-		}
-		_.each(this.sub_items, function(item, key){
-			if(key !== me.selected){
-				item.render();
-				tooltip.append(item.$el);
-			}
-		});
-
-		var selectedItem = this.sub_items[this.selected];
-        if(selectedItem){
-            if( typeof selectedItem.icon !== 'undefined' ){
-                this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
-            }else if( typeof selectedItem.label !== 'undefined' ){
-                this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
-            }
-
-        }
-	},
-
-	get_selected_item: function () {
-		return this.selected;
-	},
-
-	selectItem: function(e){
-		var found = false,
-			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
-		;
-
-        _.each(this.sub_items, function(item, key){
-			if(target.hasClass('upfront-icon-region-' + item.icon)) {
-				found = key;
-			}
-
-			if( !found && $(e.target).closest('.upfront-inline-panel-item').attr('id') === item.id ){
-				found = key;
-			}
-
-		});
-
-		if(found){
-			this.selected = found;
-			this.render();
-			this.trigger('select', found);
-		}
-	}
-
-});
-
-var MultiControl = Upfront.Views.Editor.InlinePanels.ItemMulti.extend({
-	events: {
-		'click': 'clicked',
-		'click .upfront-inline-panel-item': 'selectItem'
-	},
-	render: function(){
-		Upfront.Views.Editor.InlinePanels.ItemMulti.prototype.render.call(this, arguments);
-	},
-	clicked: function(e){
-		this.trigger('click', e);
-		this.toggle_subitem();
-	},
-	get_selected_item: function () {
-		return this.selected;
-	},
-	selectItem: function(e){
-		var found = false,
-			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
-		;
-		_.each(this.sub_items, function(item, key){
-			if(target.hasClass('upfront-icon-region-' + item.icon)) {
-				found = key;
-			}
-		});
-
-		if(found){
-			this.selected = found;
-			this.render();
-			this.trigger('select', found);
-		}
-	}
-
-});
-
-var CollapsedMultiControl = MultiControl.extend({
-	collapsed: true,
-	render: function(){
-		if(!this.sub_items.collapsedControl){
-			var control = new Control();
-			control.icon = 'collapsedControl';
-			control.tooltip = 'More tools';
-			this.sub_items.collapsedControl = control;
-		}
-		this.selected = 'collapsedControl';
-
-		this.constructor.__super__.render.call(this, arguments);
-	},
-
-	selectItem: function(e){
-		var found = false,
-			foundKey = false,
-			target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
-		;
-
-		_.each(this.sub_items, function(item, key){
-			if(target.hasClass('upfront-icon-region-' + item.icon)){
-				found = item;
-				foundKey = key;
-			}
-		});
-
-		if(found){
-			if(found instanceof MultiControl){
-				return false;
-			}
-			else {
-				this.render();
-				this.trigger('select', foundKey);
-			}
-		}
-	},
-
-	open_subitem: function () {
-		_.each(this.sub_items, function(item){
-			if(item instanceof MultiControl){
-				item.close_subitem();
-			}
-		});
-		this.constructor.__super__.open_subitem.call(this, arguments);
-	}
-
-});
-
-var ControlPanel = Upfront.Views.Editor.InlinePanels.Panel.extend({
-	position_v: 'none', // Image view will handle this
-	position_h: 'none',
-	setWidth: function(width) {
-		var itemWidth = 40,
-			items = this.items._wrapped,
-			collapsed = !!items.collapsed,
-			collapsableItems,
-			collapsedControl;
-
-		if(!collapsed && items.length > 3 && width < items.length * itemWidth){
-			collapsableItems = items.slice(1, items.length -1);
-			collapsedControl = new CollapsedMultiControl();
-
-			_.each(collapsableItems, function(item) {
-				collapsedControl.sub_items[item.icon] = item;
-			});
-
-			collapsedControl.icon = 'collapsedControl';
-			collapsedControl.tooltip = l10n.ctrl.more_tools;
-			collapsedControl.position = 'left';
-
-			this.items = _([items[0], collapsedControl, items[items.length - 1]]);
-			return;
-		}
-		if(collapsed) {
-			var total = 2 + items[1].sub_items.length;
-			if(total * itemWidth <= width) {
-				var newitems = [items[0]],
-					subitems = items[1].subitems
-				;
-				_.each(subitems, function(item) {
-					newitems.push(item);
-				});
-				newitems.push(items[2]);
-
-				this.items = newitems;
-			}
-		}
-	},
-	delegateEvents: function(){
-		Backbone.View.prototype.delegateEvents.call(this, arguments);
-		this.items.each(function(item){
-			item.delegateEvents();
-		});
-	}
-});
-
 // Context Menu for the Image element
 var ImageMenuList = Upfront.Views.ContextMenuList.extend({
 	initialize: function(opts) {
@@ -3356,12 +3043,6 @@ var ImageMenu = Upfront.Views.ContextMenu.extend({
         ]);
 	}
 });
-
-Upfront.Views.Editor.InlinePanels.MultiControl = MultiControl;
-Upfront.Views.Editor.InlinePanels.Control = Control;
-Upfront.Views.Editor.InlinePanels.ControlPanel = ControlPanel;
-Upfront.Views.Editor.InlinePanels.TooltipControl = TooltipControl;
-Upfront.Views.Editor.InlinePanels.DialogControl = DialogControl;
 
 Upfront.Application.LayoutEditor.add_object('Uimage', {
 	'Model': UimageModel,

@@ -24,6 +24,15 @@ chosen/chosen.jquery.min.js
 /var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/panel.js
 /var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/item.js
 /var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/item-multi.js
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/multi-control.js
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/tooltip-control.js
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/l10n.js
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/collapsed-multi-control.js
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control-panel.js
+text!scripts/upfront/inline-panels/templates/panel-control-template.html
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
+/var/www/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-panels.js
 text!upfront/templates/property.html
 text!upfront/templates/properties.html
 text!upfront/templates/property_edit.html
