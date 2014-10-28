@@ -224,6 +224,9 @@ define([
 				return (window.location.href = Upfront.Settings.site_url + '/?p=' + _upfront_post_data.post_id);
 
 			window.location.reload(true);
+			var tmout = setTimeout(function () {
+				loading.cancel();
+			}, 1000);
 		}
 	});
 

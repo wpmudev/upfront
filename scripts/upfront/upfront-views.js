@@ -2297,7 +2297,7 @@ define([
 				// @TODO Need to have a proper behavior for responsive view, disable for now
 				if ( breakpoint && !breakpoint.default )
 					sticky = false;
-				if ( sticky ) { 
+				if ( sticky ) {
 					if ( !_.isNumber(sticky_top) && scroll_top > top-rel_top ) {
 						this.$el.css({
 							position: 'fixed',
@@ -2323,7 +2323,7 @@ define([
 					this.$el.removeData('sticky-top');
 					this.$el.nextAll('.upfront-region-container:first').css('margin-top', '');
 				}
-				
+
 				if ( scroll_top > top-rel_top && scroll_top < bottom-rel_top ) {
 					if ( $trig.css('position') != 'fixed' )
 						$trig.css({
@@ -2440,7 +2440,7 @@ define([
 				if ( breakpoint && !breakpoint.default )
 					sticky = false;
 				// Sticky behavior
-				if ( sticky ) { 
+				if ( sticky ) {
 					if ( !_.isNumber(sticky_top) && scroll_top > top-rel_top ) {
 						this.$el.css({
 							position: 'fixed',
@@ -2472,7 +2472,7 @@ define([
 					else
 						this.$el.closest('.upfront-region-container-bg').css('padding-bottom', '');
 				}
-				
+
 			},
 			remove: function () {
 				this.event = false;
@@ -2814,7 +2814,7 @@ define([
 					// }
 					if(this.model.get('type') == 'lightbox')
 						this.hide();
-					
+
 					var thecollection = this.model.collection;
 
 					// Make sure sub-regions is also removed if it's main region
@@ -2828,7 +2828,7 @@ define([
 						});
 					}
 					this.model.collection.remove(this.model);
-					
+
 					var wide_regions = thecollection.where({ type : 'wide'});
 
 
@@ -2837,23 +2837,23 @@ define([
 						//$('div.upfront-regions').append(add_region.$el);
 						if($('div.upfront-regions a#no_region_add_one').length < 1) {
 							$('div.upfront-regions').append($('<a>').attr('id', 'no_region_add_one').html('Click here to add a region').bind('click', function() {
-									
+
 								var new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 									"name": 'main',
 									"container": 'main',
 									"title": 'Main Area'
 								}));
-									
+
 
 								var options = {};
 
 
-								
+
 								new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
 
 
-								
-								
+
+
 								new_region.add_to(thecollection, 0, options);
 
 								var wide_regions = thecollection.where({ type : 'wide'});
@@ -2888,17 +2888,23 @@ define([
 						me.bg_setting.close(false);
 					}
 				});
-				
+
 				// Make sure all other instance is closed
 				_.each(_.flatten([container_view.model, container_view.sub_model]), function(each){
-					if ( each == me.model )
-						return;
 					var each_view = Upfront.data.region_views[each.cid];
+					if ( each == me.model ) {
+						each_view.$el.find('.upfront-inline-modal-wrap').draggable({
+							delay: 300,
+							addClasses: false,
+							cancel: '.upfront-field-select, input,textarea,button,select,option'
+						});
+						return;
+					}
 					if ( each_view && each_view.bg_setting )
 						each_view.bg_setting.close(false);
 				});
 				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
-				
+
 				this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
 				this.bg_setting.right = ( this.$el.offset().left + this.$el.width() - $settings_trigger.offset().left ) + 10;
 
@@ -3184,7 +3190,7 @@ define([
 				if ( is_left )
 					css.left = left + ( css.position == 'fixed' ? $main.offset().left : 0 );
 				this.$el.css(css);
-				
+
 				if ( ( css.position == 'fixed' && css.bottom < 35 ) || ( css.position == 'absolute' && this.$el.offset().top+this.$el.height() > scroll_bottom-35 ) )
 					this.$el.find('.upfront-region-finish-edit-fixed').css('bottom', 0);
 				else

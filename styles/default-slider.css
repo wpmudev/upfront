@@ -185,5 +185,5 @@
 }
 /* z-index fix for ball navigation in slider */
 .upfront-output-bg-overlay.upfront-output-bg-slider {
-	z-index: 20;
+	/* z-index: 20; */
 }
