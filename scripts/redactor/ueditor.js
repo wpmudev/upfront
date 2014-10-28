@@ -135,14 +135,13 @@ var hackRedactor = function(){
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air) return;
 
-
 		var hideHandler = $.proxy(function(doc) {
 			$(doc).on('mouseup.redactor', $.proxy(function (e) {
 				if ($(e.target).closest(this.$toolbar).length === 0 
 					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
 				{
 					if (!this.selection.getText()) {
-						//this.$air.fadeOut(100);
+						this.$air.fadeOut(100);
 						$(".redactor_dropdown").hide();
 						this.$toolbar.find(".dropact").removeClass("dropact");
 						$(doc).off(e);
@@ -152,7 +151,7 @@ var hackRedactor = function(){
 				if (e.which === this.keyCode.ESC) {
 					this.getSelection().collapseToStart();
 				}
-				//this.$air.fadeOut(100);
+				this.$air.fadeOut(100);
 				$(doc).off(e);
 			}, this));
 		}, this);
@@ -243,7 +242,6 @@ var hackRedactor = function(){
 				left: bounds.left  + 'px',
 				top: bounds.top + 'px'
 			}).show();
-
 			this.airBindHide();
 			this.$air.trigger('show');
 		};
@@ -292,16 +290,17 @@ var hackRedactor = function(){
 var Ueditor = function($el, options) {
 	//Allow user disable plugins
 	var plugins = this.pluginList(options),
-        self = this;
+        self = this,
+        unique_id = Upfront.Util.get_unique_id("redactor");
     this.$el = $el;
-    this.$air = $("<div  class='redactor_air' style='width: 200px;height:30px;background: red'></div>");
-    $el.before(this.$air);
+    this.$air = $("<div  class='redactor_air' style='width: 200px;height:30px;'></div>").attr("id", unique_id ).hide();
+    $("body").append(this.$air);
     this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
 			startoninit: true,
 			stateButtons: {},
-            toolbarExternal: self.$air,
+            toolbarExternal: "#" + unique_id,
             //toolbarFixedTopOffset: 100,
         // Redactor options
 			air:true,
@@ -311,7 +310,8 @@ var Ueditor = function($el, options) {
 			cleanup: false,
 			plugins: plugins,
 			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
-			buttons: ['formatting', 'bold', 'italic', 'deleted'],
+            buttons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
+			//buttons: ['formatting', 'bold', 'italic', 'deleted'],
 			buttonsCustom: {},
 			activeButtonsAdd: {},
 			observeLinks: false,

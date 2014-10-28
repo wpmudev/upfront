@@ -1002,8 +1002,7 @@
                     if (this.opts.toolbarExternal)
                     {
                         this.$toolbar.addClass('redactor-toolbar-external');
-                        console.log(this.opts.toolbarExternal.length, this.$toolbar);
-                        this.opts.toolbarExternal.html(this.$toolbar);
+                        $(this.opts.toolbarExternal).html(this.$toolbar);
                     }
                     else
                     {
