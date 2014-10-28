@@ -571,15 +571,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.$('a').addClass('js-uimage-open-lightbox');
 		}
 
-
-		me.$el.append(
-			$('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(me.sizehintTpl({
-				width: elementSize.width,
-				height: elementSize.height,
-				l10n: l10n.template
-			}))
-		);
-
+		var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(me.sizehintTpl({
+			width: elementSize.width,
+			height: elementSize.height,
+			l10n: l10n.template
+		}));
 		if(this.property('image_status') !== 'ok') {
 			var starting = this.$('.upfront-image-starting-select');
 			if(!this.elementSize.height){
@@ -601,6 +597,13 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			});
 			me.controls.render();
 			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
+
+			if (elementSize.height < 100 || elementSize.width < 100) {
+				me.controls.$el.find('.inline-panel-collapsed-control').append(resizeHint);
+			} else {
+				me.$el.append(resizeHint);
+			}
+
 
 			if (me.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
 				me.parent_module_view.$('.upfront-module').append('<div class="uimage-controls image-element-controls upfront-ui"></div>');

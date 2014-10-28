@@ -12744,3 +12744,17 @@ a.upfront-css-font {
 	margin-left: 8px;
 }
 /* Toggleable text field */
+.upfront-inline-panel-collapsed-parent .uimage-resize-hint.sizehint-top,
+.upfront-inline-panel-collapsed-parent .uimage-resize-hint {
+	display: none;
+	top: 40px;
+	left: 0;
+}
+.upfront-control-visible .upfront-inline-panel-collapsed-parent .uimage-resize-hint.sizehint-top,
+.upfront-control-visible .upfront-inline-panel-collapsed-parent .uimage-resize-hint {
+	display: none;
+}
+.upfront-inline-panel-subitem-active .uimage-resize-hint.sizehint-top,
+.upfront-inline-panel-subitem-active .uimage-resize-hint {
+	display: block;
+}
