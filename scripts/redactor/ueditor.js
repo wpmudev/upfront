@@ -135,23 +135,24 @@ var hackRedactor = function(){
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air) return;
 
-		var hideHandler = $.proxy(function(doc) {
+		var self = this,
+            hideHandler = $.proxy(function(doc) {
 			$(doc).on('mouseup.redactor', $.proxy(function (e) {
 				if ($(e.target).closest(this.$toolbar).length === 0 
 					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
 				{
-					if (!this.selection.getText()) {
-						this.$air.fadeOut(100);
+					if (!self.selection.getText()) {
+						self.$air.fadeOut(100);
 						$(".redactor_dropdown").hide();
-						this.$toolbar.find(".dropact").removeClass("dropact");
+						self.$toolbar.find(".dropact").removeClass("dropact");
 						$(doc).off(e);
 					}
 				}
 			}, this)).on('keydown.redactor', $.proxy(function (e) {
 				if (e.which === this.keyCode.ESC) {
-					this.getSelection().collapseToStart();
+					//self.getSelection().collapseToStart();
 				}
-				this.$air.fadeOut(100);
+				self.$air.fadeOut(100);
 				$(doc).off(e);
 			}, this));
 		}, this);
@@ -293,7 +294,7 @@ var Ueditor = function($el, options) {
         self = this,
         unique_id = Upfront.Util.get_unique_id("redactor");
     this.$el = $el;
-    this.$air = $("<div  class='redactor_air' style='width: 200px;height:30px;'></div>").attr("id", unique_id ).hide();
+    this.$air = $("<div  class='redactor_air'></div>").attr("id", unique_id ).hide();
     $("body").append(this.$air);
     this.options = $.extend({
 			// Ueditor options
@@ -366,8 +367,6 @@ Ueditor.prototype = {
 	start: function(){
 		var self = this;
 		this.stopPlaceholder();
-        //this.$el.append(this.$air);
-        console.log(this.$el.find(".redactor_air"));
         this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
 			.attr('title', '')
@@ -380,9 +379,6 @@ Ueditor.prototype = {
 		this.redactor.selection.removeMarkers();
 		UeditorEvents.trigger('ueditor:start', this.redactor);
 
-        UeditorEvents.on("ueditor:init", function(redactor){
-            console.log(redactor);
-        });
 		if(!Upfront.data.Ueditor)
 			Upfront.data.Ueditor = {instances: {}};
 		Upfront.data.Ueditor.instances[this.id] = this;
@@ -460,7 +456,7 @@ Ueditor.prototype = {
 			me.redactor.bufferSet();
 		});
 		manager.on('insert:added insert:removed', function(){
-			me.redactor.core.sync();
+			me.redactor.code.sync();
 			me.redactor.events.trigger("ueditor:insert:media");
 		});
 	},
