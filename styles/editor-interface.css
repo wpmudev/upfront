@@ -3306,6 +3306,10 @@ div.uinsert-selector a:hover {
 	cursor: pointer;
 	float: left;
 }
+.inline-panel-item-selected .upfront-icon:before {
+	cursor: default;
+	opacity: 0.4;
+}
 .upfront-region-panel-item-add-region {
 	width: 24px;
 	height: 24px;
