@@ -1,0 +1,1 @@
+define(["scripts/upfront/inline-panels/item"],function(e){var t=e.extend({events:{click:"clicked"},clicked:function(e){e.preventDefault(),this.$el.siblings(".upfront-inline-panel-subitem-active").removeClass("upfront-inline-panel-subitem-active"),this.trigger("click",e)}});return t});

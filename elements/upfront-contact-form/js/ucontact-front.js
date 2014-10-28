@@ -53,6 +53,8 @@ jQuery(function($){
 	});
 	
 	$form.find('form').on('submit', function(e){
+		e.preventDefault();
+		e.stopPropagation();
 		var $this = $(this),
 			name = $this.find('input[name=sendername]'),
 			email = $this.find('input[name=senderemail]'),
@@ -72,12 +74,10 @@ jQuery(function($){
 
 		if(errors.length > 0){
 			//Stop sending
-			e.preventDefault();
 			show_message($this.parent(), errors.join('<br />'));
 		}
 		else{
 			//Everything ok, try to send it via ajax
-			e.preventDefault();
 			$.ajax({
 				url: ajax_url,
 				type: 'POST',
@@ -92,18 +92,32 @@ jQuery(function($){
 					entity_ids: $this.find('input[name=entity_ids]').val()
 				},
 				success: function(data){
-					show_message($this, data.message, !data.error);					
+					show_message($this, data.data.message, !data.data.error);
+					if (!data.data.error) {
+						/*
+						// Leaving this out for now
+						$form.find(".ucontact-message-container").css({
+							position: "absolute",
+							left:0, right:0,
+							height: $form.height(),
+						});
+						*/
+						$form.find("input,button,textarea").attr("disabled", true);
+					}
 				},
 				error: function(error){
 					var response = JSON.parse(error.responseText);
+					/*
 					if(response.error == 'Unknown contact form.'){
-						$this.off('submit').submit(); //Submit no ajax
+						//$this.off('submit').submit(); //Submit no ajax // <-- DO NOT!!! Do this
 					}
 					else
-						show_message($this, response.error);
+					*/
+					show_message($this, response.error);
 				}
 			});
 		}
+		return false;
 	});
 });
 })(jQuery);

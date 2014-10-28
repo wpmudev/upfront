@@ -9,7 +9,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	public function get_markup () {
 
 		//Check if the form has been sent
-		$this->check_form_received();
+		//$this->check_form_received(); // Do NOT just send out form data.
 		$args = array_merge($this->properties_to_array(), array(
 			'field_classes' => $this->get_field_classes(),
 			'validate' => $this->_get_property('form_validate_when') == 'field' ? 'ucontact-validate-field' : '',
@@ -235,7 +235,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public function get_entity_ids_value(){
 		$entities = Upfront_EntityResolver::get_entity_ids();
-		//var_dump($entities);
+		$entities['storage_key'] = Upfront_Model::get_storage_key();
 		return base64_encode(json_encode($entities));
 	}
 
@@ -246,7 +246,12 @@ class Upfront_UcontactView extends Upfront_Object {
 			return false;
 		}
 
-		$layout = Upfront_Layout::from_entity_ids($entity_ids);
+		$storage_key = false;
+		if (isset($entity_ids['storage_key'])) {
+			$storage_key = $entity_ids['storage_key'];
+			unset($entity_ids['storage_key']);
+		}
+		$layout = Upfront_Layout::from_entity_ids($entity_ids, $storage_key);
 
 		if($layout instanceof Upfront_Layout)
 			$layout = $layout->to_php();
