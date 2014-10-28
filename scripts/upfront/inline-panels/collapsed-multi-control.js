@@ -5,6 +5,7 @@ define([
 ], function (Control, MultiControl) {
 	var CollapsedMultiControl = MultiControl.extend({
 		collapsed: true,
+		className: 'upfront-inline-panel-item inline-panel-collapsed-control',
 		render: function(){
 			if(!this.sub_items.collapsedControl){
 				var control = new Control();
@@ -31,7 +32,7 @@ define([
 			});
 
 			if(found){
-				if(found instanceof MultiControl){
+				if(found instanceof MultiControl || found.multiControl === true){
 					return false;
 				}
 				else {

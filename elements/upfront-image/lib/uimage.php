@@ -159,6 +159,7 @@ class Upfront_UimageView extends Upfront_Object {
 			),
 			'ctrl' => array(
 				'caption_position' => __('Caption position', 'upfront'),
+				'caption_position_disabled' => __('Caption is disabled for images smaller or narrower than 100px', 'upfront'),
 				'over_top' => __('Over image, top', 'upfront'),
 				'over_bottom' => __('Over image, bottom', 'upfront'),
 				'cover_top' => __('Covers image, top', 'upfront'),

@@ -127,7 +127,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	},
 
 	getSelectedAlignment: function(){
-		if(!this.property('include_image_caption')) {
+		if(!this.property('include_image_caption') && this.property('caption_position') === false && this.property('caption_alignment') === false) {
 			return 'nocaption';
 		}
 		if(this.property('caption_position') === 'below_image') {
@@ -201,9 +201,12 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				case 'below':
 					me.property('include_image_caption', [1]);
 					me.property('caption_position', 'below_image');
+					me.property('caption_alignment', false);
 					break;
 				case 'nocaption':
 					me.property('include_image_caption', false);
+					me.property('caption_position', false);
+					me.property('caption_alignment', false);
 			}
 			me.render();
 		});
@@ -458,6 +461,14 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.property('element_size', this.elementSize);
 		}
 		*/
+		var elementSize = this.property('element_size');
+
+		if (elementSize.width < 100 || elementSize.height < 100) {
+			this.property('include_image_caption', false);
+		} else if(this.property('caption_position') !== false || this.property('caption_alignment') !== false) {
+			this.property('include_image_caption', true);
+		}
+
 
 		var me = this,
 			props = this.extract_properties()
@@ -506,7 +517,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			'</div></div>';
 		} else {
 			var render = $('<div></div>').append(rendered),
-				elementSize = props.element_size,
 				size = props.size,
 				img = render.find('img')
 			;
@@ -545,6 +555,8 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			onTop = ['bottom', 'fill_bottom'].indexOf(me.property('caption_alignment')) !== -1 || me.property('caption_position') === 'below_image' ? ' sizehint-top' : ''
 		;
 
+		var elementSize = me.property('element_size');
+
 		//Bind resizing events
 		if(!me.parent_module_view.$el.data('resizeHandling')){
 			me.parent_module_view.$el
@@ -559,7 +571,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			this.$('a').addClass('js-uimage-open-lightbox');
 		}
 
-		var elementSize = me.property('element_size');
 
 		me.$el.append(
 			$('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(me.sizehintTpl({
@@ -584,7 +595,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 
 		setTimeout(function() {
-			me.controls.setWidth(elementSize.width);
+			me.controls.setWidth({
+				width: elementSize.width,
+				height: elementSize.height
+			});
 			me.controls.render();
 			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
 

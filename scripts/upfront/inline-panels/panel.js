@@ -7,29 +7,44 @@ define([], function () {
 			this.items = _([]);
 		},
 		render: function() {
-			var me = this,
-				items = typeof this.items === 'function' ? this.items() : this.items,
+			var items = typeof this.items === 'function' ? this.items() : this.items,
 				classes = [
 					'upfront-inline-panel-'+this.position_v,
 					'upfront-inline-panel-'+this.position_v+'-'+this.position_h
 				],
 				width = 0,
 				height = 0;
+
 			this.$el.html('');
+			this.collapsedParent = false;
+
 			items.each(function(item){
-				item.panel_view = me;
+				item.panel_view = this;
 				item.render();
 				item.delegateEvents();
-				me.$el.append(item.el);
-				if ( me.position_v === 'center' ) {
+
+				this.$el.append(item.el);
+
+				if (item.collapsed) {
+					classes.push('upfront-inline-panel-collapsed-parent');
+					this.collapsedParent = true;
+				}
+
+				if ( this.position_v === 'center' ) {
 					width = item.width > width ? item.width : width;
 					height += item.height;
 				} else {
 					width += item.width;
 					height = item.height > height ? item.height : height;
 				}
-			});
-			this.$el.attr('class', this.className + ' ' + classes.join(' '));
+			}, this);
+
+			this.$el.addClass(this.className + ' ' + classes.join(' '));
+
+			if (this.collapsedParent) {
+				height = 13;
+			}
+
 			this.$el.css({
 				width: width,
 				height: height

@@ -5,6 +5,8 @@ define([
 	'text!scripts/upfront/inline-panels/templates/panel-control-template.html'
 ], function (l10n, Control, panelControlTemplate) {
 	var DialogControl = Control.extend({
+		multiControl: true,
+
 		events: {
 			'click': 'onClickControl',
 			'click button': 'onClickOk'

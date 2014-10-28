@@ -1,9 +1,12 @@
 (function ($) {
 define([
+	'scripts/upfront/inline-panels/l10n',
 	'scripts/upfront/inline-panels/item',
 	'scripts/upfront/inline-panels/control'
-], function (Item, Control) {
+], function (l10n, Item, Control) {
 	var TooltipControl = Control.extend({
+		multiControl: true,
+
 		events: {
 			'click': 'onClickControl',
 			'click .upfront-inline-panel-item': 'selectItem'
@@ -12,6 +15,10 @@ define([
 		onClickControl: function(e){
 			var  closestLayout = this.$el.closest('.upfront-grid-layout'),
 					closestWrapper = this.$el.closest('.upfront-wrapper');
+
+			if (this.isDisabled) {
+				return;
+			}
 
 			e.preventDefault();
 
@@ -86,6 +93,15 @@ define([
 				this.selected = found;
 				this.render();
 				this.trigger('select', found);
+			}
+		},
+
+		setDisabled: function(isDisabled) {
+			this.isDisabled = isDisabled;
+			if (isDisabled) {
+				this.tooltip = l10n.ctrl.caption_position_disabled;
+			} else {
+				this.tooltip = l10n.ctrl.caption_position;
 			}
 		}
 
