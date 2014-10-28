@@ -1208,7 +1208,6 @@
                 onClick: function(e, btnName, type, callback)
                 {
                     e.preventDefault();
-
                     if (this.utils.browser('msie')) e.returnValue = false;
 
                     if (type == 'command')

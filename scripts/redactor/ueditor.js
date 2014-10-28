@@ -2,13 +2,13 @@
 
 var deps = [
 	'text!scripts/redactor/ueditor-templates.html',
-	'scripts/redactor/ueditor-inserts'
+	'scripts/redactor/ueditor-inserts',
+    'redactor_plugins'
 ];
 
-define("ueditor", deps, function(tpl, Inserts){
+define("ueditor", deps, function(tpl, Inserts, redactor_plugins){
 var hackedRedactor = false;
-
-var UeditorEvents = _.extend({}, Backbone.Events);
+var UeditorEvents = redactor_plugins.UeditorEvents;
 
 $.fn.ueditor = function(options){
 	var isMethod = false,
@@ -484,10 +484,10 @@ Ueditor.prototype = {
 		$("html").on('click', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
-		if( !( $(e.target).hasClass("redactor_box") 
-				|| $(e.target).parents().hasClass("redactor_box") 
-				|| $(e.target).parents().hasClass("redactor_air") 
-				|| $(e.target).parents().hasClass("redactor_dropdown"))
+		if( !( $(e.target).hasClass("redactor_box")
+				|| $(e.target).parents().hasClass("redactor-box")
+				|| $(e.target).parents().hasClass("redactor-air")
+				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
 		{
 			e.data.ueditor.stop();
