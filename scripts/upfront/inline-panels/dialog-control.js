@@ -32,7 +32,6 @@ define([
 				this.$el.append(panel);
 				panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
 				this.panel = panel;
-				/* V */
 				$(document).click(function(e){
 					var	target = $(e.target);
 

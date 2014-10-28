@@ -155,9 +155,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 	createControls: function() {
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-			multi = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+			tooltipControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
 		;
-		multi.sub_items = {
+		tooltipControl.sub_items = {
 			topOver: this.createControl('topOver', l10n.ctrl.over_top),
 			bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
 			topCover: this.createControl('topCover', l10n.ctrl.cover_top),
@@ -167,11 +167,11 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 			nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
 		};
 
-		multi.icon = 'caption';
-		multi.tooltip = l10n.ctrl.caption_position;
-		multi.selected = this.getSelectedAlignment();
+		tooltipControl.icon = 'caption';
+		tooltipControl.tooltip = l10n.ctrl.caption_position;
+		tooltipControl.selected = this.getSelectedAlignment();
 
-		this.listenTo(multi, 'select', function(item){
+		this.listenTo(tooltipControl, 'select', function(item){
 			switch(item){
 				case 'topOver':
 					me.property('include_image_caption', [1]);
@@ -211,7 +211,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		panel.items = _([
 			this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
 			this.createLinkControl(),
-			multi
+			tooltipControl
 		]);
 
 		return panel;

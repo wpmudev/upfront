@@ -31,7 +31,8 @@ define([
 		render: function() {
 			Item.prototype.render.call(this, arguments);
 			var tooltip = this.$('.uimage-control-tooltip'),
-				me = this
+				me = this,
+				selectedItem
 			;
 			if(!this.$el.hasClass('uimage-control-tooltip-item')) {
 				this.$el.addClass('uimage-control-tooltip-item');
@@ -42,13 +43,16 @@ define([
 				this.$el.append(tooltip);
 			}
 			_.each(this.sub_items, function(item, key){
-				if(key !== me.selected){
-					item.render();
-					tooltip.append(item.$el);
+				if(key === me.selected){
+					item.setIsSelected(true);
+				} else {
+					item.setIsSelected(false);
 				}
+				item.render();
+				tooltip.append(item.$el);
 			});
 
-			var selectedItem = this.sub_items[this.selected];
+			selectedItem = this.sub_items[this.selected];
 					if(selectedItem){
 							if( typeof selectedItem.icon !== 'undefined' ){
 									this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
@@ -65,10 +69,9 @@ define([
 
 		selectItem: function(e){
 			var found = false,
-				target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i')
-			;
+				target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i');
 
-					_.each(this.sub_items, function(item, key){
+			_.each(this.sub_items, function(item, key){
 				if(target.hasClass('upfront-icon-region-' + item.icon)) {
 					found = key;
 				}

@@ -5,6 +5,7 @@ define([
 		events: {
 			'click': 'clicked'
 		},
+
 		clicked: function(e){
 			e.preventDefault();
 			this.$el
@@ -12,6 +13,15 @@ define([
 				.removeClass('upfront-inline-panel-subitem-active')
 			;
 			this.trigger('click', e);
+		},
+
+		setIsSelected: function(isSelected) {
+			if (isSelected) {
+				this.$el.addClass('inline-panel-item-selected');
+				return;
+			}
+
+			this.$el.removeClass('inline-panel-item-selected');
 		}
 	});
 
