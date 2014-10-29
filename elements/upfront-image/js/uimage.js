@@ -363,6 +363,7 @@ define([
 				})
 				.on('stop', function(){
 					me.$el.removeClass('upfront-editing');
+					me.render();
 				})
 				.on('syncAfter', function(){
 					me.property('image_caption', captionEl.html());
