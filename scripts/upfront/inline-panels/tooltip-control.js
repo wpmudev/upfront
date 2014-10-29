@@ -24,12 +24,14 @@ define([
 
 			this.clicked(e);
 
-			if (this.$el.hasClass('open')) {
-				this.$el.removeClass('open');
+			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
+
+			if (this.$el.hasClass('upfront-control-dialog-open')) {
+				this.$el.removeClass('upfront-control-dialog-open');
 				closestLayout.removeClass('upfront-grid-layout-current');
 				closestWrapper.removeClass('upfront-wrapper-current');
 			} else {
-				this.$el.addClass('open');
+				this.$el.addClass('upfront-control-dialog-open');
 				closestLayout.addClass('upfront-grid-layout-current');
 				closestWrapper.addClass('upfront-wrapper-current');
 			}
@@ -41,12 +43,13 @@ define([
 				me = this,
 				selectedItem
 			;
+
 			if(!this.$el.hasClass('uimage-caption-control-item')) {
 				this.$el.addClass('uimage-caption-control-item');
 			}
 
 			if(!captionControl.length){
-				captionControl = $('<div class="uimage-caption-control"></div>');
+				captionControl = $('<div class="uimage-caption-control inline-panel-control-dialog"></div>');
 				this.$el.append(captionControl);
 			}
 			_.each(this.sub_items, function(item, key){

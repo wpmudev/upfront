@@ -12624,3 +12624,9 @@ a.upfront-css-font {
 	bottom: 0;
 	left: 0;
 }
+.inline-panel-control-dialog {
+	display: none;
+}
+.upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog {
+	display: block;
+}
