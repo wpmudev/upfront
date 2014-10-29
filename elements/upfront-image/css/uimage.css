@@ -1141,17 +1141,6 @@ div.uimage-controls i.upfront-icon:before {
 	bottom: 0;
 }
 
-.uimage-over_image .uimage-fill_bottom:before,
-.uimage-over_image .uimage-fill_middle:before,
-.uimage-over_image .uimage-fill:before{
-	content: ' ';
-	display: inline-block;
-	vertical-align: middle;
-	width: 1px;
-	margin-right: -0.25em;
-	height: 100%;
-}
-
 .uimage-caption-cover{
 	display: inline-block;
 	vertical-align: top;
