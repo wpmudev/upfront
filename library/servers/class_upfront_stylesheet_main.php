@@ -125,7 +125,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles', array());
 		$out = '';
 		$layout = Upfront_Layout::get_cascade();
-		$layout_id = ( $layout['specificity'] ? $layout['specificity'] : ( $layout['item'] ? $layout['item'] : $layout['type'] ) );
+		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 
 		if( is_array( $styles ) ){
 		  foreach($styles as $type => $elements) {

@@ -231,7 +231,7 @@ class Upfront_Grid {
 		foreach ( $regions as $region ){
 			if ( isset($region['container']) && $region['container'] != $container )
 				continue;
-			if ( $region['sub'] != 'left' && $region['sub'] != 'right' )
+			if ( empty($region['sub']) || ($region['sub'] != 'left' && $region['sub'] != 'right') )
 				continue;
 			$region_col = $this->_get_property_col($region, $breakpoint);
 			if ( $region_col )

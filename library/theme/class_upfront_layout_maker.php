@@ -38,8 +38,8 @@ class Upfront_Layout_Maker {
 				else
 					$side_regions_after[] = $sidedata;
 			}
-			usort($side_regions_before, array(Upfront_Theme, '_sort_region'));
-			usort($side_regions_after, array(Upfront_Theme, '_sort_region'));
+			usort($side_regions_before, array('Upfront_Theme', '_sort_region'));
+			usort($side_regions_after, array('Upfront_Theme', '_sort_region'));
 
 			foreach($side_regions_before as $side){
 				$regions[] = $side;

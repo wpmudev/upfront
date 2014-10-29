@@ -172,7 +172,7 @@ class Upfront_Virtual_Region {
 		foreach ( $breakpoints as $breakpoint ){
 			$total_col = 0;
 			if ( !$breakpoint->is_default() ) {
-				$data = is_array($properties['breakpoint'][$breakpoint->get_id()]) ? $properties['breakpoint'][$breakpoint->get_id()] : array();
+				$data = !empty($properties['breakpoint'][$breakpoint->get_id()]) && is_array($properties['breakpoint'][$breakpoint->get_id()]) ? $properties['breakpoint'][$breakpoint->get_id()] : array();
 				if ( isset($data['col']) )
 					$position['width'] = $data['col'];
 				if ( isset($data['left']) )

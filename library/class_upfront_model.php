@@ -727,7 +727,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
 			if ( $region['scope'] != 'local' ){
-				if ( !is_array($scopes[$region['scope']]) )
+				if (empty($scopes[$region['scope']]) || !is_array($scopes[$region['scope']]) )
 					$scopes[$region['scope']] = array();
 				$scopes[$region['scope']][] = $region;
 			}

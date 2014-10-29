@@ -87,7 +87,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 			// Create menu if it does not exists
 			$new_menu_id = wp_create_nav_menu($menu['name']);
-			wp_update_nav_menu_object($new_menu_id, array('description' => $menu['description']));
+			if (is_numeric($new_menu_id)) wp_update_nav_menu_object($new_menu_id, array('description' => $menu['description'])); // The menu ID has to be numeric!
 
 			if (empty($menu['items'])) continue;
 			$menu_items = array();
@@ -150,7 +150,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if(empty($styles) === false) return $styles;
 
 		$layout = Upfront_Layout::get_cascade();
-		$layout_id = ( $layout['specificity'] ? $layout['specificity'] : ( $layout['item'] ? $layout['item'] : $layout['type'] ) );
+		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 		$out = '';
 		// See if there are styles in theme files
 		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
