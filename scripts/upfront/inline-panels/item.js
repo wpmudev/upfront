@@ -4,7 +4,6 @@ define([], function () {
 		width: 30,
 		height: 30,
 		icon_class: 'upfront-icon-region',
-
 		render_icon: function () {
 			var icon = typeof this.icon === 'function' ? this.icon() : this.icon;
 			if ( !icon ) {
@@ -23,7 +22,6 @@ define([], function () {
 				$icon.attr('class', icons_class.join(' '));
 			}
 		},
-
 		render_label: function () {
 			var label = typeof this.label === 'function' ? this.label() : this.label;
 			if ( !label ) {
@@ -37,15 +35,16 @@ define([], function () {
 				$label.html(label);
 			}
 		},
-
 		render_tooltip: function () {
 			var tooltip = typeof this.tooltip === 'function' ? this.tooltip() : this.tooltip;
 			if ( ! tooltip ) {
 				return;
 			}
+			var tooltip_pos = typeof this.tooltip_pos === 'function' ? this.tooltip_pos() : (this.tooltip_pos ? this.tooltip_pos : 'bottom');
+			this.$el.removeClass('tooltip-top tooltip-bottom tooltip-left tooltip-right');
+			this.$el.addClass('tooltip-inline tooltip-' + tooltip_pos);
 			this.$el.attr('title', tooltip);
 		},
-
 		render: function () {
 			this.render_icon();
 			this.render_label();
@@ -59,7 +58,6 @@ define([], function () {
 				this.on_render();
 			}
 		},
-
 		open_modal: function (render_callback, button) {
 			if ( ! this.modal ){
 				var me = this;
@@ -73,11 +71,9 @@ define([], function () {
 			});
 			return this.modal.open(render_callback, this, button);
 		},
-
 		close_modal: function (save) {
 			return this.modal.close(save);
 		},
-
 		remove: function(){
 			this.panel_view = false;
 		}
