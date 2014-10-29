@@ -14,7 +14,8 @@ define([
 
 		render: function(){
 			Control.prototype.render.call(this, arguments);
-			var me = this;
+			var me = this,
+				panel;
 
 			if(!this.$el.hasClass('uimage-control-panel-item')) {
 				this.$el.addClass('uimage-control-panel-item');
@@ -27,10 +28,8 @@ define([
 
 			if(!this.panel){
 				//this is like initialize
-				var panel = $(_.template(panelControlTemplate, {l10n: l10n.template}));
-				if(this.isopen) {
-					panel.show();
-				}
+				panel = $(_.template(panelControlTemplate, {l10n: l10n.template}));
+				panel.addClass('inline-panel-control-dialog');
 				this.$el.append(panel);
 				panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
 				this.panel = panel;
@@ -47,6 +46,8 @@ define([
 		},
 
 		onClickControl: function(e){
+			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
+
 			if(!$(e.target).hasClass('upfront-icon')) {
 				return;
 			}
@@ -70,15 +71,13 @@ define([
 			});
 		},
 
-		open: function(){
-			this.panel.show();
+		open: function() {
 			this.isopen = true;
 			this.$el.addClass('upfront-control-dialog-open');
 			this.trigger('panel:open');
 			return this;
 		},
-		close: function(){
-			this.panel.hide();
+		close: function() {
 			this.isopen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
 			this.trigger('panel:close');

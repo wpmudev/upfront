@@ -7,6 +7,7 @@ define([
 	var ControlPanel = Panel.extend({
 		position_v: 'none', // Image view will handle this
 		position_h: 'none',
+
 		setWidth: function(optionsArg) {
 			var items = this.items._wrapped,
 				collapsedControl,
@@ -52,6 +53,7 @@ define([
 				this.collapsed = false;
 			}
 		},
+
 		delegateEvents: function(){
 			Backbone.View.prototype.delegateEvents.call(this, arguments);
 			this.items.each(function(item){

@@ -3,9 +3,11 @@ define([], function () {
 		className: 'upfront-inline-panel upfront-no-select',
 		position_v: 'top',
 		position_h: 'center',
+
 		initialize: function () {
 			this.items = _([]);
 		},
+
 		render: function() {
 			var items = typeof this.items === 'function' ? this.items() : this.items,
 				classes = [
@@ -50,6 +52,7 @@ define([], function () {
 				height: height
 			});
 		},
+
 		remove: function() {
 			var items = typeof this.items === 'function' ? this.items() : this.items;
 
