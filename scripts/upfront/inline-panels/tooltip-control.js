@@ -12,18 +12,10 @@ define([
 			'click .upfront-inline-panel-item': 'selectItem'
 		},
 
-		initialize: function() {
-			var me = this;
-			$(document).click(function(e){
-				var	target = $(e.target);
-
-				if(target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && me.isOpen) {
-					me.close();
-				}
-			});
-		},
-
 		onClickControl: function(e){
+			var  closestLayout = this.$el.closest('.upfront-grid-layout'),
+					closestWrapper = this.$el.closest('.upfront-wrapper');
+
 			if (this.isDisabled) {
 				return;
 			}
@@ -32,23 +24,15 @@ define([
 
 			this.clicked(e);
 
-			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
-
-			if (this.isOpen) {
-				this.close();
+			if (this.$el.hasClass('open')) {
+				this.$el.removeClass('open');
+				closestLayout.removeClass('upfront-grid-layout-current');
+				closestWrapper.removeClass('upfront-wrapper-current');
 			} else {
-				this.open();
+				this.$el.addClass('open');
+				closestLayout.addClass('upfront-grid-layout-current');
+				closestWrapper.addClass('upfront-wrapper-current');
 			}
-		},
-
-		open: function() {
-			this.isOpen = true;
-			this.$el.addClass('upfront-control-dialog-open');
-		},
-
-		close: function() {
-			this.isOpen = false;
-			this.$el.removeClass('upfront-control-dialog-open');
 		},
 
 		render: function() {
@@ -57,13 +41,12 @@ define([
 				me = this,
 				selectedItem
 			;
-
 			if(!this.$el.hasClass('uimage-caption-control-item')) {
 				this.$el.addClass('uimage-caption-control-item');
 			}
 
 			if(!captionControl.length){
-				captionControl = $('<div class="uimage-caption-control inline-panel-control-dialog"></div>');
+				captionControl = $('<div class="uimage-caption-control"></div>');
 				this.$el.append(captionControl);
 			}
 			_.each(this.sub_items, function(item, key){
@@ -121,6 +104,7 @@ define([
 				this.tooltip = l10n.ctrl.caption_position;
 			}
 		}
+
 	});
 
 	return TooltipControl;

@@ -142,9 +142,9 @@ define([
 		createControls: function() {
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-				tooltipControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
 			;
-			tooltipControl.sub_items = {
+			captionControl.sub_items = {
 				topOver: this.createControl('topOver', l10n.ctrl.over_top),
 				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
 				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
@@ -154,11 +154,11 @@ define([
 				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
 			};
 
-			tooltipControl.icon = 'caption';
-			tooltipControl.tooltip = l10n.ctrl.caption_position;
-			tooltipControl.selected = this.getSelectedAlignment();
+			captionControl.icon = 'caption';
+			captionControl.tooltip = l10n.ctrl.caption_position;
+			captionControl.selected = this.getSelectedAlignment();
 
-			this.listenTo(tooltipControl, 'select', function(item){
+			this.listenTo(captionControl, 'select', function(item){
 				switch(item){
 					case 'topOver':
 						me.property('include_image_caption', [1]);
@@ -201,7 +201,7 @@ define([
 			panel.items = _([
 				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
 				this.createLinkControl(),
-				tooltipControl
+				captionControl
 			]);
 
 			return panel;
@@ -280,53 +280,6 @@ define([
 			this.render();
 		},
 
-		openTooltip: function(content, element){
-			var tooltip = $('#ugallery-tooltip'),
-				elementPosition = element.offset(),
-				tooltipPosition = {
-					top: elementPosition.top + element.outerHeight(),
-					left: elementPosition.left - 125 + Math.floor(element.outerWidth() / 2)
-				},
-				tooltipClass = 'ugallery-tooltip-bottom',
-				me = this
-			;
-			if(!tooltip.length){
-				tooltip = $('<div id="ugallery-tooltip" class="upfront-ui"></div>');
-				$('body').append(tooltip);
-			}
-			tooltip.hide().html(content);
-			elementPosition.right = elementPosition.left + element.width();
-			if(elementPosition.left - 280 < 0){
-				tooltipPosition.left = elementPosition.left + element.width() + 20;
-				tooltipClass = 'ugallery-tooltip-bottom';
-			}
-			tooltip
-				.css(tooltipPosition)
-				.addClass(tooltipClass)
-				.show()
-				.on('click', function(e){
-					e.stopPropagation();
-				})
-				.on('blur', function(){
-					me.closeTooltip();
-				})
-				.on('closed', function(){
-					me.$el.removeClass('tooltip-open');
-				})
-			;
-
-			this.$el.addClass('tooltip-open');
-
-			Upfront.Events.trigger('entity:settings:deactivate');
-		},
-
-		closeTooltip: function(){
-			var tooltip = $('#ugallery-tooltip');
-			tooltip.hide().trigger('closed');
-			setTimeout(function(){
-				tooltip.remove();
-			}, 100);
-		},
 		postTypes: function(){
 			var types = [];
 			_.each(Upfront.data.ugallery.postTypes, function(type){

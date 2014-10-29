@@ -40,9 +40,6 @@ define([], function () {
 			if ( ! tooltip ) {
 				return;
 			}
-			var tooltip_pos = typeof this.tooltip_pos === 'function' ? this.tooltip_pos() : (this.tooltip_pos ? this.tooltip_pos : 'bottom');
-			this.$el.removeClass('tooltip-top tooltip-bottom tooltip-left tooltip-right');
-			this.$el.addClass('tooltip-inline tooltip-' + tooltip_pos);
 			this.$el.attr('title', tooltip);
 		},
 		render: function () {
