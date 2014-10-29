@@ -4772,7 +4772,7 @@ var Field_ToggleableText = Field_Text.extend({
 			// Save button
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +
-					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> Save</button>" +
+					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> OK</button>" +
 				'</div>'
 			);
 
