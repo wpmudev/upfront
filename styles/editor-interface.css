@@ -1130,6 +1130,111 @@ span.draggable-post-element.element-dragging
 	border-right: 5px solid #1fcd8f;
 }
 
+/* Tooltip */
+.tooltip,
+.tooltip-inline {
+	position: relative;
+	z-index: 50;
+}
+.tooltip:before {
+	content: attr(data-tooltip);
+}
+.tooltip:before,
+.tooltip-content {
+	position: absolute;
+	top: auto;
+	bottom: 100%;
+	left: 50%;
+	display: none;
+	padding: 2px 5px;
+	margin-bottom: 14px;
+	-webkit-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-o-transform: translateX(-50%);
+	transform: translateX(-50%);
+	font: 10px/14px Verdana, sans-serif;
+	white-space: nowrap;
+	background: #2b445d;
+	color: #f2f9ff;
+	box-shadow: 0 0 0 2px rgba(219,236,252,.4);
+}
+.tooltip-bottom:before,
+.tooltip-bottom .tooltip-content {
+	top: 100%;
+	bottom: auto;
+	margin: 14px 0 0;
+}
+.tooltip-left:before,
+.tooltip-left .tooltip-content,
+.tooltip-right:before,
+.tooltip-right .tooltip-content {
+	top: 50%;
+	bottom: auto;
+	-webkit-transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+	margin: 0;
+}
+.tooltip-left:before,
+.tooltip-left .tooltip-content {
+	right: 100%;
+	left: auto;
+	margin-right: 14px;
+}
+.tooltip-right:before,
+.tooltip-right .tooltip-content {
+	left: 100%;
+	right: auto;
+	margin-left: 14px;
+}
+.tooltip.upfront-field-wrap:before {
+	left: -22px;
+}
+.tooltip:after,
+.tooltip-inline:after {
+	content: " ";
+	position: absolute;
+	top: -14px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	width: 0;
+	height: 0;
+	display: none;
+	border-color: #2b445d transparent #2b445d transparent;
+	border-width: 3px 3px 0 3px;
+	border-style: solid;
+}
+.tooltip-bottom:after {
+	top: auto;
+	bottom: -14px;
+	border-width: 0 3px 3px 3px;
+}
+.tooltip-left:after,
+.tooltip-right:after {
+	top: 0;
+	bottom: 0;
+	border-color: transparent #2b445d transparent #2b445d;
+}
+.tooltip-left:after {
+	right: auto;
+	left: -14px;
+	border-width: 3px 0 3px 3px;
+}
+.tooltip-right:after {
+	left: auto;
+	right: -14px;
+	border-width: 3px 3px 3px 0;
+}
+.tooltip:hover:before, .tooltip:hover:after,
+a:hover > .tooltip:before, a:hover > .tooltip:after,
+.tooltip-inline:hover > .tooltip-content, .tooltip-inline:hover:after {
+	display: block;
+}
+
 /* Fields */
 /* @TODO all fields styling here */
 /* @TODO !important stuff is temporary, need to remove */
@@ -1876,10 +1981,15 @@ a.ueditor-action-pickercancel{
 	display: block;
 }
 
+/*.ueditor-insert:hover .upfront-inserted_image-wrapper .upfront-inline-panel,*/
+/*.ueditor-insert .upfront-inserted_image-wrapper .upfront-inline-panel.uinsert-control-visible {*/
+    /*display: none;*/
+/*}*/
 .ueditor-insert .upfront-inline-panel i.upfront-icon {
 	height: 25px;
 	 -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;
 }
+
 .ueditor-insert .uimage-control-tooltip-tip:before {
 	width: 0;
 }
@@ -3198,8 +3308,6 @@ div.uinsert-selector a:hover {
 	border-bottom: 1px solid #162433;
 	cursor: pointer;
 	float: left;
-	position: relative;
-	z-index: 50;
 }
 .inline-panel-item-selected .upfront-icon:before {
 	cursor: default;
@@ -3221,14 +3329,15 @@ div.uinsert-selector a:hover {
 }
 .upfront-inline-panel-item.inline-panel-collapsed-control {
 	height: 10px;
-	position: relative;
-	z-index: 50;
 }
 .upfront-inline-panel-item.inline-panel-collapsed-control .upfront-icon-region-collapsedControl-active {
 	height: 10px;
 }
 .upfront-inline-panel-item.inline-panel-collapsed-control .upfront-icon-region-collapsedControl-active:before {
 	height: 6px;
+}
+.upfront-inline-panel-subitem-active > .tooltip-content {
+	display: none !important;
 }
 .upfront-inline-panel-subitem {
 	position: relative;
@@ -4759,9 +4868,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-icon-popup-close:before {
 	width: 17px;
 	height: 17px;
-	/*background-position: -1080px -85px;*/
-	background-image: none;
-	
+	background-position: -1080px -85px;
 }
 .upfront-icon-popup-search:before {
 	width: 15px;
@@ -12313,9 +12420,8 @@ div.upfront-regions a#no_region_add_one {
     display: block;
     padding:0;
     clear: both;
-    max-width: none;
 }
-.ueditor-insert-variant-group:hover{
+.ueditor-insert-variant:hover{
     outline:1px dotted #7f7f7f;
 }
 .upfront-image-variant-delete_trigger{
@@ -12640,3 +12746,20 @@ a.upfront-css-font {
 	margin-left: 8px;
 }
 /* Toggleable text field */
+.uimage-small .uimage-resize-hint.sizehint-top,
+.uimage-small .uimage-resize-hint {
+	top: -25px;
+	font-size: 9px;
+	line-height: 10px;
+	width: 55px;
+	left: 0;
+}
+.uimage-small .stuck-to-top .uimage-resize-hint.sizehint-top,
+.uimage-small .stuck-to-top .uimage-resize-hint {
+	top: 0;
+	left: -55px;
+}
+.uimage-small .uimage-controls.image-element-controls {
+	bottom: 0;
+	left: 0;
+}
