@@ -1130,75 +1130,6 @@ span.draggable-post-element.element-dragging
 	border-right: 5px solid #1fcd8f;
 }
 
-/* Tooltip */
-.tooltip,
-.tooltip-inline {
-	position: relative;
-	z-index: 50;
-}
-.tooltip:before {
-	content: attr(data-tooltip);
-}
-.tooltip:before,
-.tooltip-content {
-	position: absolute;
-	top: auto;
-	bottom: 100%;
-	left: 50%;
-	display: none;
-	padding: 2px 5px;
-	margin-bottom: 14px;
-	-webkit-transform: translateX(-50%);
-	-moz-transform: translateX(-50%);
-	-ms-transform: translateX(-50%);
-	-o-transform: translateX(-50%);
-	transform: translateX(-50%);
-	font: 10px/14px Verdana, sans-serif;
-	white-space: nowrap;
-	background: #2b445d;
-	color: #f2f9ff;
-	box-shadow: 0 0 0 2px rgba(219,236,252,.4);
-}
-.tooltip-bottom:before,
-.tooltip-bottom .tooltip-content {
-	top: 100%;
-	bottom: auto;
-	margin: 14px 0 0;
-}
-.tooltip-left:before,
-.tooltip-left .tooltip-content,
-.tooltip-right:before,
-.tooltip-right .tooltip-content {
-	top: 50%;
-	bottom: auto;
-	-webkit-transform: translateY(-50%);
-	-moz-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	-o-transform: translateY(-50%);
-	transform: translateY(-50%);
-	margin: 0;
-}
-.tooltip-left:before,
-.tooltip-left .tooltip-content {
-	right: 100%;
-	left: auto;
-	margin-right: 14px;
-}
-.tooltip-right:before,
-.tooltip-right .tooltip-content {
-	left: 100%;
-	right: auto;
-	margin-left: 14px;
-}
-.tooltip.upfront-field-wrap:before {
-	left: -22px;
-}
-.tooltip:hover:before,
-a:hover > .tooltip:before,
-.tooltip-inline:hover > .tooltip-content {
-	display: block;
-}
-
 /* Fields */
 /* @TODO all fields styling here */
 /* @TODO !important stuff is temporary, need to remove */
@@ -1945,45 +1876,10 @@ a.ueditor-action-pickercancel{
 	display: block;
 }
 
-/*.ueditor-insert:hover .upfront-inserted_image-wrapper .upfront-inline-panel,*/
-/*.ueditor-insert .upfront-inserted_image-wrapper .upfront-inline-panel.uinsert-control-visible {*/
-    /*display: none;*/
-/*}*/
 .ueditor-insert .upfront-inline-panel i.upfront-icon {
 	height: 25px;
 	 -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;
 }
-
-.ueditor-insert .uimage-control-tooltip-tip:before {
-	width: 0;
-}
-
-.ueditor-insert .tooltip-bottom:after {
-	display: none;
-}
-
-/*.ueditor-insert.alignleft {*/
-	/*float: left;*/
-	/*clear:left;*/
-	/*margin-right: 15px;*/
-/*}*/
-/*.ueditor-insert.alignright {*/
-	/*float: right;*/
-	/*float: right;*/
-	/*margin-left: 15px;*/
-/*}*/
-/*.ueditor-insert.aligncenter,*/
-/*.ueditor-insert.alignfull {*/
-	/*float: none;*/
-	/*clear: both;*/
-	/*text-align: center;*/
-/*}*/
-
-/*.ueditor-insert.ui-sortable-placeholder {*/
-	/*visibility: visible !important;*/
-	/*background: rgba(124,124,124,.2);*/
-	/*outline: 1px solid rgba(124, 124, 124, .4);*/
-/*}*/
 
 .uinsert-selector {
 	position: absolute;
@@ -3272,6 +3168,8 @@ div.uinsert-selector a:hover {
 	border-bottom: 1px solid #162433;
 	cursor: pointer;
 	float: left;
+	position: relative;
+	z-index: 50;
 }
 .inline-panel-item-selected .upfront-icon:before {
 	cursor: default;
@@ -3293,15 +3191,14 @@ div.uinsert-selector a:hover {
 }
 .upfront-inline-panel-item.inline-panel-collapsed-control {
 	height: 10px;
+	position: relative;
+	z-index: 50;
 }
 .upfront-inline-panel-item.inline-panel-collapsed-control .upfront-icon-region-collapsedControl-active {
 	height: 10px;
 }
 .upfront-inline-panel-item.inline-panel-collapsed-control .upfront-icon-region-collapsedControl-active:before {
 	height: 6px;
-}
-.upfront-inline-panel-subitem-active > .tooltip-content {
-	display: none !important;
 }
 .upfront-inline-panel-subitem {
 	position: relative;

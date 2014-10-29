@@ -37,17 +37,17 @@ define([
 
 		render: function() {
 			Item.prototype.render.call(this, arguments);
-			var tooltip = this.$('.uimage-control-tooltip'),
+			var captionControl = this.$('.uimage-caption-control'),
 				me = this,
 				selectedItem
 			;
-			if(!this.$el.hasClass('uimage-control-tooltip-item')) {
-				this.$el.addClass('uimage-control-tooltip-item');
+			if(!this.$el.hasClass('uimage-caption-control-item')) {
+				this.$el.addClass('uimage-caption-control-item');
 			}
 
-			if(!tooltip.length){
-				tooltip = $('<div class="uimage-control-tooltip"></div>');
-				this.$el.append(tooltip);
+			if(!captionControl.length){
+				captionControl = $('<div class="uimage-caption-control"></div>');
+				this.$el.append(captionControl);
 			}
 			_.each(this.sub_items, function(item, key){
 				if(key === me.selected){
@@ -56,7 +56,7 @@ define([
 					item.setIsSelected(false);
 				}
 				item.render();
-				tooltip.append(item.$el);
+				captionControl.append(item.$el);
 			});
 
 			selectedItem = this.sub_items[this.selected];

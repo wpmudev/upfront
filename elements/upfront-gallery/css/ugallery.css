@@ -260,73 +260,6 @@ button.ugallery-reset-button:hover {
 	max-height: none;
 }
 
-#ugallery-tooltip {
-	position: absolute;
-	width:250px;
-	z-index: 10;
-	background: rgb(242, 249, 255);
-	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
-	border: 1px solid rgb(99, 134, 166);
-	padding: 10px;
-}
-
-#ugallery-tooltip h3{
-	font-size: 17px;
-	line-height: 17px;
-	color: rgb(99, 134, 166);
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	font-family: 'Source Sans Pro';
-	margin: 0 0 10px;
-	font-weight: normal;
-}
-
-#ugallery-tooltip:before{
-	position: absolute;
-	top: 39px;
-	border: 9px solid transparent;
-	content: ' ';
-}
-
-#ugallery-tooltip:after{
-	position: absolute;
-	top: 40px;
-	border: 8px solid transparent;
-	content: ' ';
-}
-
-#ugallery-tooltip.ugallery-tooltip-left:after {
-	left: 100%;
-	border-left-color: rgb(242, 249, 255);
-}
-
-#ugallery-tooltip.ugallery-tooltip-left:before {
-	left: 100%;
-	border-left-color: rgb(99, 134, 166);
-}
-
-#ugallery-tooltip.ugallery-tooltip-right:after {
-	left: -16px;
-	border-right-color: rgb(242, 249, 255);
-}
-
-#ugallery-tooltip.ugallery-tooltip-right:before {
-	left: -18px;
-	border-right-color: rgb(99, 134, 166);
-}
-
-#ugallery-tooltip.ugallery-tooltip-bottom:after {
-	top: -16px;
-	left: 113px;
-	border-bottom-color: rgb(242, 249, 255);
-}
-
-#ugallery-tooltip.ugallery-tooltip-bottom:before {
-	top: -18px;
-	left: 112px;
-	border-bottom-color: rgb(99, 134, 166);
-}
-
 h3.upfront-selector-title {
 	font-size:26px;
 	line-height: 40px;
@@ -342,12 +275,6 @@ h3.upfront-selector-title {
 
 div.ugallery-label-selector {
 	margin-top: 20px;
-}
-
-#ugallery-tooltip .existing_labels {
-	border-top:0;
-	padding: 0;
-	margin:3px 0 0;
 }
 
 .existing_labels a.upfront-icon-media-label-delete:hover{
@@ -388,16 +315,17 @@ div.ugallery-label-selector {
 	z-index:20;
 }
 
-.tooltip-open .ugallery-controls,
 .ugallery_item:hover .ugallery-controls {
 	display: block;
 }
-
 .ugallery-controls .upfront-inline-panel {
 	opacity: 1;
 	visibility: visible;
 }
 
+.ugallery-controls .upfront-inline-panel-item {
+	position: relative;
+}
 .ugallery-controls .upfront-inline-panel-item:hover{
 	z-index: 51;
 }
@@ -776,23 +704,6 @@ button.mfp-close {
 
 .ugallery-settings .upfront-field-info:hover{
 	opacity: 1;
-}
-
-.ugallery-settings .tooltip-content {
-  white-space: normal;
-  top: 15px;
-  bottom: auto;
-}
-
-.upfront-ui .ugallery-field-tooltip {
-	position: absolute;
-	width: 200px;
-	top: 120%;
-	background: #3d5266;
-	color: #dae6f2;
-	padding: 5px 2px;
-	text-align:center;
-	z-index: 10;
 }
 
 .ugallery-in-editor .ugallery-image-wrapper .remove-image {

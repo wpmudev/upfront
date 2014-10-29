@@ -2001,8 +2001,7 @@ define([
 					type = this._get_region_type(),
 					data = _.extend(this.model.toJSON(), {size_class: grid.class, max_col: this.max_col, available_col: this.available_col}),
 					template = _.template(_Upfront_Templates["region_container"], data),
-					$edit = $('<div class="upfront-region-edit-trigger tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					//$edit_fixed = $('<div class="upfront-region-edit-fixed-trigger upfront-ui" style="display:none;"><div class="upfront-region-edit-text">Click to edit or add<br /> Floating Region</div></div>'),
+					$edit = $('<div class="upfront-region-edit-trigger upfront-ui" title="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
 					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> Finish editing background</div>');
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
@@ -2584,7 +2583,7 @@ define([
 				var container = this.model.get("container"),
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON()),
-					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Edit region"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="Edit region"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
 					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>');
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
 				this.$el.html(template);
@@ -2995,7 +2994,7 @@ define([
 			},
 			render: function () {
 				this.constructor.__super__.render.call(this);
-				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="Change Background"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
 					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">Click to edit this<br /> Floating Region</div></div>'),
 					$ok = $('<div class="upfront-region-finish-edit-fixed upfront-ui">Ok</div>'),
 					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>'),
@@ -3271,7 +3270,7 @@ define([
 				this.constructor.__super__.render.call(this);
 				this.hide();
 
-					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small tooltip tooltip-left upfront-ui" data-tooltip="Edit Lightbox"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
+					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="Edit Lightbox"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
 					//$ok = $('<div class="upfront-region-finish-edit-lightbox upfront-ui">Finish Editing</div>');
 
 

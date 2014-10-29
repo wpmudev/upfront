@@ -246,10 +246,7 @@ define([
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
-			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.removeClass('tooltip-inline tooltip-bottom').html("New Post");
-			else
-				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">New Post</span>');
+			this.$el.html("New Post");
 		},
 		on_click: function (e) {
 			e.preventDefault();
@@ -315,10 +312,7 @@ define([
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
-			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT )
-				this.$el.removeClass('tooltip-inline tooltip-bottom').html(this._default_label);
-			else
-				this.$el.addClass('tooltip-inline tooltip-bottom').html('<span class="tooltip-content">' + this._default_label + '</span>');
+				this.$el.html(this._default_label);
 		},
 		on_click: function(e){
 			e.preventDefault();
@@ -2474,16 +2468,16 @@ define([
 			Upfront.Events.on("application:mode:after_switch", this.render, this);
 		},
 		preventUsage: function(type) {
-			var tooltipText = 'Not available when<br>editing text.';
+			var preventUsageText = 'Not available when<br>editing text.';
 			if (type === 'media-upload') {
-				tooltipText = 'Not available when<br>uploading media.';
+				preventUsageText = 'Not available when<br>uploading media.';
 			}
 	 		if (type === 'write') {
 				this.writingIsOn = true;
-				tooltipText = 'Please publish your content<br>before modifying the layout.';
+				preventUsageText = 'Please publish your content<br>before modifying the layout.';
 			}
 			if (!this.prevented_usage_type) this.prevented_usage_type = type; // don't stack up on prevented types, keep the original
-			$('#preventUsageOverlay span').html(tooltipText);
+			$('#preventUsageOverlay span').html(preventUsageText);
 			$('#preventUsageOverlay').show();
 		},
 		allowUsage: function(type) {
@@ -3647,13 +3641,9 @@ define([
 			this.get_field().keyup(function(){
 				if ( $(this).val() == '' ){
 					$(this).addClass('upfront-field-empty');
-					if ( me.options.compact )
-						me.$el.removeClass('tooltip');
 				}
 				else if ( $(this).hasClass('upfront-field-empty') ) {
 					$(this).removeClass('upfront-field-empty');
-					if ( me.options.compact )
-						me.$el.addClass('tooltip');
 				}
 			}).trigger('keyup').change(function(){
 				me.trigger('changed');
@@ -3670,7 +3660,7 @@ define([
 			};
 			if ( this.options.compact ) {
 				attr.placeholder = this.label;
-				this.$el.attr('data-tooltip', this.label);
+				this.$el.attr('title', this.label);
 			}
 			else if ( this.options.placeholder ) {
 				attr.placeholder = this.options.placeholder;
@@ -3751,7 +3741,7 @@ var Field_ToggleableText = Field_Text.extend({
 			if ('inline' === this.options.label_style) attr.class += ' upfront-has_inline_label';
 			if ( this.options.compact ) {
 				attr.placeholder = this.label;
-				this.$el.attr('data-tooltip', this.label);
+				this.$el.attr('title', this.label);
 			}
 			else if ( this.options.placeholder ) {
 				attr.placeholder = this.options.placeholder;
@@ -3792,7 +3782,7 @@ var Field_ToggleableText = Field_Text.extend({
 			};
 			if ( this.options.compact ) {
 				attr.placeholder = this.label;
-				this.$el.attr('data-tooltip', this.label);
+				this.$el.attr('title', this.label);
 			}
 			else if ( this.options.placeholder ) {
 				attr.value = this.options.placeholder;
@@ -3812,7 +3802,7 @@ var Field_ToggleableText = Field_Text.extend({
 			};
 			if ( this.options.compact ) {
 				attr.placeholder = this.label;
-				this.$el.attr('data-tooltip', this.label);
+				this.$el.attr('title', this.label);
 			}
 			else if ( this.options.placeholder ) {
 				attr.placeholder = this.options.placeholder;
@@ -3833,7 +3823,7 @@ var Field_ToggleableText = Field_Text.extend({
 			};
 			if ( this.options.compact ) {
 				attr.placeholder = this.label;
-				this.$el.attr('data-tooltip', this.label);
+				this.$el.attr('title', this.label);
 			}
 			else if ( this.options.placeholder ) {
 				attr.placeholder = this.options.placeholder;

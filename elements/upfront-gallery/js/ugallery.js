@@ -929,41 +929,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.calculateMargins();
 	},
 
-	imageLinkChanged: function(e){
-		var val = $('#ugallery-tooltip').find('input[name=ugallery-image-link]:checked').val(),
-			imageId = $('#ugallery-tooltip').find('#ugallery-image-id').val()
-		;
-
-		if (val === 'external') {
-			$('#ugallery-image-link-url').show();
-		} else {
-			$('#ugallery-image-link-url').hide();
-			if (val === 'post' || e.type !== 'change') {
-				var me = this,
-					selectorOptions = {
-						postTypes: this.postTypes()
-					}
-				;
-				this.closeTooltip();
-
-				Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
-					var image = me.images.get(imageId);
-					image.set({
-						link: 'post',
-						url: post.get('permalink')
-					});
-					var tplOptions = image.toJSON();
-					tplOptions.checked = 'checked="checked"';
-					setTimeout(function(){
-						e.target = me.$('[rel=' + imageId + ']');
-						me.imageEditLink(e);
-					}, 200);
-					//console.log(post);
-				});
-			}
-		}
-	},
-
 	createLabelSelector: function(contents){
 		var me = this,
 			imageId = contents.find('#ugallery-image-id').val()
@@ -1172,7 +1137,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			}
 
 			if(newImageLabel){
-				this.renderLabels(imageId);
 				var data = {
 					"action": "upfront-media-associate_label",
 					"term": label.id,
@@ -1205,8 +1169,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			this.labels.push(label);
 			this.imageLabels[imageId] = this.imageLabels[imageId] ? this.imageLabels[imageId] + ', "label_' + tempId + '"' : '"label_' + tempId + '"';
-
-			$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId), l10n: l10n.template}));
 
 			Upfront.Util.post(data)
 				.success(function (response) {
@@ -1250,10 +1212,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		this.renderLightboxLabels(imageId);
 		this.render();
 
-	},
-
-	renderLabels: function(imageId){
-		$('#ugallery-tooltip').find('.existing_labels').html(this.labelsTpl({labels: this.extractImageLabels(imageId), l10n: l10n.template}));
 	},
 
 	renderLightboxLabels: function(imageId) {
@@ -1528,20 +1486,10 @@ var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		]);
 
 		this.on('rendered', function(){
-			var help = $('<span class="upfront-field-info" data-tooltip=""></span>'),
-				tooltip = $('<span class="ugallery-field-tooltip tooltip-content">' + l10n.panel.adds_sortable + '</span>')
-			;
-			this.$('.ugallery-setting-labels').find('.upfront-field-multiple')
-				.append(help)
-				.append(tooltip);
-			help
-				.on('mouseover', function(e){
-					tooltip.show();
-				})
-				.on('mouseout', function(e){
-					tooltip.hide();
-				})
-			;
+			var help = $('<span class="upfront-field-info" title="' + l10n.panel.adds_sortable + '"></span>');
+
+			this.$('.ugallery-setting-labels').find('.upfront-field-multiple').append(help);
+
 			setTimeout(function(){
 				me.toggleCaption();
 			}, 100);

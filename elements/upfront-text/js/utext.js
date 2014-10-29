@@ -56,7 +56,6 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		var rendered = '';
 		rendered = _.template(template, data);
 		return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
-
 	},
 	is_edited: function () {
 		var is_edited = this.model.get_property_value_by_name('is_edited');

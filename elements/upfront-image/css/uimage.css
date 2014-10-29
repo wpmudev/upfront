@@ -547,16 +547,6 @@ a.image-edit-button.deactivated:hover {
 	clear: both;
 }
 
-#uimage-tooltip {
-	display:none;
-	width: auto;
-	color: #eeeff0;
-	font-size: 12px;
-	text-align: center;
-	height: auto;
-	padding: 0 5px;
-}
-
 .uimage-drop-hint {
 	/*border:3px dashed #3f5870;*/
     content:'Drop Image Here';
@@ -629,6 +619,7 @@ a.image-edit-button.deactivated:hover {
 .uimage-controls .upfront-inline-panel-item {
 	background:transparent;
 	border-bottom: none;
+	position: relative;
 }
 .uimage-controls .upfront-inline-panel-item .upfront-icon {
 	padding:4px;
@@ -707,7 +698,7 @@ a.image-edit-button.deactivated:hover {
 	border-bottom: 1px solid #2A465F;
 	z-index: 51;
 }
-.upfront-inline-panel-item.uimage-control-tooltip-item.open {
+.upfront-inline-panel-item.uimage-caption-control.open {
 	background: rgb(42,70,95);
 	border-bottom: 1px solid #2A465F;
 	z-index: 52;
@@ -715,8 +706,8 @@ a.image-edit-button.deactivated:hover {
 
 .uimage-controls .upfront-inline-panel-item.upfront-control-dialog-open .tooltip-content,
 .uimage-controls .upfront-inline-panel-item.upfront-control-dialog-open:after,
-.upfront-inline-panel-item.uimage-control-tooltip-item.open > .tooltip-content,
-.upfront-inline-panel-item.uimage-control-tooltip-item.open:after { display:none; }
+.upfront-inline-panel-item.uimage-caption-control-item.open > .tooltip-content,
+.upfront-inline-panel-item.uimage-caption-control-item.open:after { display:none; }
 
 .uimage-control-panel-light:after {
 	display: block;
@@ -728,7 +719,7 @@ a.image-edit-button.deactivated:hover {
 	content: ' ';
 }
 
-.upfront-ui .uimage-control-tooltip {
+.upfront-ui .uimage-caption-control {
 	background: #2a465f;
 }
 
@@ -737,13 +728,6 @@ a.image-edit-button.deactivated:hover {
 	top: 100%;
 	right: 0px;
 }
-
-/*.uimage-controls .tooltip-bottom:before,
-.uimage-controls .tooltip-bottom .tooltip-content {
-	top:auto;
-	bottom:35px;
-}*/
-
 
 /* Controls */
 
@@ -1010,41 +994,36 @@ div.uimage-controls i.upfront-icon:before {
 .uimage-fullwidth-alert input {
 	margin: 6px 10px 0 0 !important;
 }
-
-.uimage-control-tooltip:before {
-
-}
-
-.upfront-ui .uimage-control-tooltip {
+.upfront-ui .uimage-caption-control {
 	display: none;
 	min-width: 120px;
 	line-height: 0px;
 	margin-top:0;
 }
-.uimage-control-tooltip{
+.uimage-caption-control {
 	display: none;
 }
-.open .uimage-control-tooltip {
+.open .uimage-caption-control {
 	display: block;
 }
 
-.uimage-control-tooltip-item.open>.tooltip-content {
+.uimage-caption-control-item.open>.tooltip-content {
 	display: none !important;
 }
 
-.uimage-control-tooltip .upfront-inline-panel-item {
+.uimage-caption-control .upfront-inline-panel-item {
 	display: inline-block;
 	position: static;
 	float: none;
 	border: 0;
 }
 
-.uimage-control-tooltip .uimage-control-tooltip-tip {
+.uimage-caption-control .uimage-caption-control-tip {
 	width: 100%;
 	height: 5px;
 }
 
-.uimage-control-tooltip .uimage-control-tooltip-tip:before {
+.uimage-caption-control .uimage-caption-control-tip:before {
 	content: '';
 	display: block;
 	width: 10px;
@@ -1056,7 +1035,7 @@ div.uimage-controls i.upfront-icon:before {
 	left: 15px;
 }
 
-.uimage-control-tooltip .tooltip-bottom .tooltip-content {
+.uimage-caption-control .tooltip-bottom .tooltip-content {
 	top: auto;
 	bottom: auto;
 	margin: 100% 0 0;

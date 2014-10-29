@@ -523,12 +523,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			},
 			primaryStyle = this.property('primaryStyle'),
 			multiControls = {},
-			multi = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
+			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
 			panelItems = [],
 			slide = this.slides.at(this.currentSlide)
 		;
 
-		multi.sub_items = {};
+		captionControl.sub_items = {};
 		if(primaryStyle == 'below')
 			multiControls = multiBelow;
 		else if(primaryStyle == 'over')
@@ -539,13 +539,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			multiControls = false;
 		if(multiControls){
 			_.each(multiControls, function(opts, key){
-				multi.sub_items[key] = me.createControl(opts[0], opts[1]);
+				captionControl.sub_items[key] = me.createControl(opts[0], opts[1]);
 			});
 
-			multi.icon = 'caption';
-			multi.tooltip = 'Caption position';
-			multi.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
-			this.listenTo(multi, 'select', function(item){
+			captionControl.icon = 'caption';
+			captionControl.tooltip = 'Caption position';
+			captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
+			this.listenTo(captionControl, 'select', function(item){
 				var previousStyle = slide.get('style');
 				slide.set('style', item);
 				me.slidesChange();
@@ -564,7 +564,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
-			panelItems.push(multi);
+			panelItems.push(captionControl);
 		panelItems.push(this.createControl('remove', 'Remove slide', 'removeSlide'));
 
 		panel.items = _(panelItems);

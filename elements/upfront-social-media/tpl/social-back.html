@@ -11,7 +11,7 @@
 			<span class="upfront-field-label-text">{{service.name}}</span>
 		</label>
 		{[ if(expandable){ ]}
-		<div class="upfront-field-wrap upfront-field-wrap-text" data-tooltip="link address" style="display:none">
+		<div class="upfront-field-wrap upfront-field-wrap-text" title="link address" style="display:none">
 			<input type="text" class="upfront-field upfront-field-text usocial_text usocial_url" id="service-url-{{service.id}}" name="{{service.id}}_url" value="{{service.url}}" placeholder="{{service.name}} url" data-field="url" data-service="{{service.id}}">
 			{[if(service.meta){_.each(service.meta, function(meta){ ]}
 			<input type="text" class="upfront-field upfront-field-text usocial_text usocial_{{meta.id}} usocial_service_meta" id="service-{{meta.id}}-{{service.id}}" name="{{meta.id}}" value="{{meta.value}}" placeholder="{{service.name}} {{meta.name}}" data-field="{{meta.id}}" data-service="{{service.id}}">
@@ -56,7 +56,7 @@
 						<label for="social_global_{{service.id}}">
 							<span class="upfront-field-label-text">{{service.name}}</span>
 						</label>
-						<div class="upfront-field-wrap upfront-field-wrap-text" data-tooltip="link address" style="display:none">
+						<div class="upfront-field-wrap upfront-field-wrap-text" title="link address" style="display:none">
 							<input type="text" class="upfront-field upfront-field-text" id="{{service.id}}-url" name="{{service.id}}-url" value="{{service.url}}" placeholder="{{service.name}} url">
 						</div>
 					</li>
