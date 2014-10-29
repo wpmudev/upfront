@@ -202,14 +202,6 @@ a.upfront-image-select:hover {
 	margin-bottom: 10px;
 }
 
-.uimage-tiny .upfront-image-select.button {
-	border:0;
-	width: 10px;
-	font-size: 14px;
-	margin-left: -1px;
-}
-
-
 .upfront-image-resize-buttons {
 	width: 120px;
 }
@@ -988,25 +980,6 @@ div.uimage-controls i.upfront-icon:before {
 .uimage-sizehint-small {
 	display: none;
 }
-
-.uimage-controls-toggle {
-	width: 100%;
-	height: 10px;
-	background: rgba(31, 48, 63, 0.8);
-	border-bottom: 1px solid #162433;
-	color: #ADC3D8;
-	display: none;
-	cursor: default;
-}
-
-.uimage-controls-toggle:before {
-	content: '▼';
-	display: block;
-	text-align: center;
-	font-size: 8px;
-	line-height: 8px;
-}
-
 
 .uimage-fullwidth-alert {
 	padding: 15px;

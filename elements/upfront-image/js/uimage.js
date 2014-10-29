@@ -98,12 +98,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				this.unsetMobileMode();
 			}
 		});
-
-		this.sizeClasses = {
-			narrow: false,
-			small: false,
-			tiny: false
-		};
 	},
 
 	setDefaults: function(){
@@ -454,25 +448,50 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 	},
 
-	get_content_markup: function () {
-		/*
-		if(!this.property('element_size').width || (!this.property('quick_swap') && !_.isNumber(this.property('element_size').height))){
-			this.setElementSize();
-			this.property('element_size', this.elementSize);
-		}
-		*/
+	isSmallImage: function() {
 		var elementSize = this.property('element_size');
+		if (resizingData.data && resizingData.data.elementSize) {
+			elementSize = resizingData.data.elementSize;
+		}
+		return elementSize.width < 100 || elementSize.height < 100;
+	},
 
-		if (elementSize.width < 100 || elementSize.height < 100) {
-			this.property('include_image_caption', false);
-		} else if(this.property('caption_position') !== false || this.property('caption_alignment') !== false) {
-			this.property('include_image_caption', true);
+	disableCaption: function() {
+		this.property('include_image_caption', false);
+	},
+
+	enableCaption: function() {
+		this.property('include_image_caption', true);
+	},
+
+	hasCaptionPosition: function() {
+		return this.property('caption_position') !== false || this.property('caption_alignment') !== false;
+	},
+
+	setupBySize: function() {
+		if (this.isSmallImage()) {
+			this.disableCaption();
+			this.parent_module_view.$el.addClass('uimage-small');
+		} else if(this.hasCaptionPosition()) {
+			this.enableCaption();
 		}
 
+		if (!this.isSmallImage()) {
+			this.parent_module_view.$el.removeClass('uimage-small');
+		}
+	},
 
-		var me = this,
-			props = this.extract_properties()
-		;
+	get_content_markup: function () {
+		var elementSize = this.property('element_size'),
+			me = this,
+			props = this.extract_properties(),
+			rendered,
+			smallSwap,
+			render,
+			size,
+			img;
+
+		this.setupBySize();
 
 		if(!this.temporaryProps || !this.temporaryProps.size) {
 			this.temporaryProps = {
@@ -486,7 +505,7 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		props.position = this.temporaryProps.position;
 		props.marginTop = Math.max(0, -props.position.top);
 
-		props.cover_caption = props.caption_position !== 'below_image'; //['top', 'bottom', 'fill', 'fill_bottom', 'fill_middle'].indexOf(props.caption_alignment) != -1;
+		props.cover_caption = props.caption_position !== 'below_image';
 
 		if(props.stretch) {
 			props.imgWidth = '100%';
@@ -505,10 +524,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		props.l10n = l10n.template;
 
-		var rendered = this.imageTpl(props);
+		rendered = this.imageTpl(props);
 
-		if(this.property('quick_swap')){
-			var smallSwap = props.element_size.width < 150 || props.element_size.height < 90 ? 'uimage-quick-swap-small' : '';
+		if (this.property('quick_swap')) {
+			smallSwap = props.element_size.width < 150 || props.element_size.height < 90 ? 'uimage-quick-swap-small' : '';
 
 			rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
 		} else if (this.property('image_status') === 'starting') {
@@ -516,11 +535,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 					'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
 			'</div></div>';
 		} else {
-			var render = $('<div></div>').append(rendered),
-				size = props.size,
-				img = render.find('img')
-			;
-
+			render = $('<div></div>').append(rendered);
+			size = props.size;
+			img = render.find('img');
 			props = this.temporaryProps;
 
 			// Let's load the full image to improve resizing
@@ -550,32 +567,31 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		return rendered;
 	},
 
-	on_render: function(){
+	on_render: function() {
 		var me = this,
-			onTop = ['bottom', 'fill_bottom'].indexOf(me.property('caption_alignment')) !== -1 || me.property('caption_position') === 'below_image' ? ' sizehint-top' : ''
-		;
-
-		var elementSize = me.property('element_size');
+			onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.property('caption_position') === 'below_image' ? ' sizehint-top' : '',
+			elementSize = this.property('element_size');
 
 		//Bind resizing events
-		if(!me.parent_module_view.$el.data('resizeHandling')){
-			me.parent_module_view.$el
-				.on('resizestart', $.proxy(me.onElementResizeStart, me))
-				.on('resize', $.proxy(me.onElementResizing, me))
-				.on('resizestop', $.proxy(me.onElementResizeStop, me))
-				.data('resizeHandling', true)
-			;
+		if (!this.parent_module_view.$el.data('resizeHandling')) {
+			this.parent_module_view.$el
+				.on('resizestart', $.proxy(this.onElementResizeStart, this))
+				.on('resize', $.proxy(this.onElementResizing, this))
+				.on('resizestop', $.proxy(this.onElementResizeStop, this))
+				.data('resizeHandling', true);
 		}
 
-		if(me.property('when_clicked') === 'lightbox') {
+		if(this.property('when_clicked') === 'lightbox') {
 			this.$('a').addClass('js-uimage-open-lightbox');
 		}
 
-		var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(me.sizehintTpl({
+		var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
 			width: elementSize.width,
 			height: elementSize.height,
 			l10n: l10n.template
 		}));
+		this.$el.append(resizeHint);
+
 		if(this.property('image_status') !== 'ok') {
 			var starting = this.$('.upfront-image-starting-select');
 			if(!this.elementSize.height){
@@ -591,92 +607,53 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 		}
 
 		setTimeout(function() {
-			me.controls.setWidth({
-				width: elementSize.width,
-				height: elementSize.height
-			});
-			me.controls.render();
-			me.controls.$el.prepend('<div class="uimage-controls-toggle"></div>');
-
-			if (elementSize.height < 100 || elementSize.width < 100) {
-				me.controls.$el.find('.inline-panel-collapsed-control').append(resizeHint);
-			} else {
-				me.$el.append(resizeHint);
-			}
-
-
-			if (me.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
-				me.parent_module_view.$('.upfront-module').append('<div class="uimage-controls image-element-controls upfront-ui"></div>');
-			}
-			me.parent_module_view.$('.upfront-module').find('.uimage-controls').append(me.controls.$el);
-			me.controls.delegateEvents();
+			me.updateControls(elementSize.width, elementSize.height);
 			me.$el.removeClass('upfront-editing');
 
 			me.editCaption();
-
-			me.setSizeClasses(elementSize.width, elementSize.height);
-			me.setSizeHTMLClasses();
-
 		}, 300);
 
 		// Show full image if we are in mobile mode
-		if(this.mobileMode){
+		if (this.mobileMode) {
 			this.$('.uimage').addClass('uimage-mobile-mode');
 			this.setMobileMode();
 		}
+
+		this.setStuckToTop();
+
+		setTimeout( function() {
+			me.$el.closest('.ui-draggable').on('dragstop', function() {
+				setTimeout(function() {
+					me.setStuckToTop();
+				}, 10);
+			});
+
+			me.$el.closest('.upfront-module-view').addClass('uimage-upfront-module-view');
+		}, 100);
 	},
 
-	setSizeClasses: function(width, height) {
-		if(width < 131 && !this.sizeClasses.narrow) {
-			this.sizeClasses.narrow = true;
-			this.parent_module_view.$el.addClass('uimage-narrow');
-		} else if (width > 130 && this.sizeClasses.narrow) {
-			this.sizeClasses.narrow = false;
-			this.parent_module_view.$el.removeClass('uimage-narrow');
-		}
-
-		if(height < 60 && !this.sizeClasses.small) {
-			this.sizeClasses.small = true;
-			this.parent_module_view.$el.addClass('uimage-small');
-		} else if (height > 59 && this.sizeClasses.small) {
-			this.sizeClasses.small = false;
-			this.parent_module_view.$el.removeClass('uimage-small');
-		}
-
-		if(width < 50 && !this.sizeClasses.tiny) {
-			this.sizeClasses.tiny = true;
-			this.parent_module_view.$el.addClass('uimage-tiny');
-		} else if (width > 49 && this.sizeClasses.tiny) {
-			this.sizeClasses.tiny = false;
-			this.parent_module_view.$el.removeClass('uimage-tiny');
+	setStuckToTop: function() {
+		if (this.$el.offset().top + this.parent_module_view.$el.offset().top < 25) {
+			this.$el.addClass('stuck-to-top');
+		} else {
+			this.$el.removeClass('stuck-to-top');
 		}
 	},
 
-	setSizeHTMLClasses: function(){
-		var me = this;
+	updateControls: function(width, height) {
+		var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 
-		if(me.sizeClasses.small) {
-			this.parent_module_view.$el.addClass('uimage-small');
-		} else {
-			this.parent_module_view.$el.removeClass('uimage-small');
-		}
+		this.controls.setWidth({
+			width: width,
+			height:height
+		});
+		this.controls.render();
 
-		if(me.sizeClasses.tiny) {
-			this.parent_module_view.$el.addClass('uimage-tiny uimage-narrow');
-		} else {
-			this.parent_module_view.$el.removeClass('uimage-tiny');
-			if(me.sizeClasses.narrow) {
-				this.parent_module_view.$el.addClass('uimage-narrow');
-			} else {
-				this.parent_module_view.$el.removeClass('uimage-narrow');
-			}
+		if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
+			this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
 		}
-
-		if(me.sizeClasses.small || me.sizeClasses.narrow) {
-			this.parent_module_view.$el.addClass('upfront-module-small');
-		} else {
-			this.parent_module_view.$el.removeClass('upfront-module-small');
-		}
+		this.parent_module_view.$('.upfront-module').find('.uimage-controls').append(this.controls.$el);
+		this.controls.delegateEvents();
 	},
 
 	on_edit: function(){
@@ -830,8 +807,6 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		data.elementSize = {width: resizer.width() - 30, height: resizer.height() - 30 - captionHeight};
 
-		this.setSizeClasses(resizer.width(), resizer.height());
-
 		this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 				width: data.elementSize.width,
 				height: data.elementSize.height,
@@ -867,6 +842,9 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 				this.resizingV(img, data);
 			}
 		}
+
+		this.updateControls(data.elementSize.width, data.elementSize.height);
+		this.setupBySize();
 	},
 
 	onElementResizeStop: function() {
@@ -905,14 +883,10 @@ var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.F
 
 		this.property('element_size', resizingData.data.elementSize);
 
-		// Actually crop the image only in desktop mode;
-		//if(Upfront.Application.resizeMode == 'desktop'){
-			this.cropTimer = setTimeout(function(){
-				me.saveTemporaryResizing();
-			}, this.cropTimeAfterResize);
-		//}
+		this.cropTimer = setTimeout(function(){
+			me.saveTemporaryResizing();
+		}, this.cropTimeAfterResize);
 
-		this.setSizeHTMLClasses();
 		resizingData = {};
 		this.showCaption();
 	},

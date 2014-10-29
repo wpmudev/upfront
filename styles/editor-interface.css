@@ -2273,6 +2273,9 @@ div.uinsert-selector a:hover {
 	overflow: hidden;
 	padding-bottom:15px;
 }
+.uimage-upfront-module-view .upfront-editable_entity.ui-resizable-resizing {
+	overflow: visible;
+}
 
 .upfront-wrapper {
 	float: left;
@@ -3353,7 +3356,6 @@ div.uinsert-selector a:hover {
 }
 .upfront-inline-panel-subitem .upfront-inline-panel-item:hover {
 	background: #22384c;
-	box-shadow: 0 0 0 2px rgba(219,236,252,.9);
 	z-index: 100;
 }
 .upfront-inline-panel-item .upfront-icon {
@@ -12744,17 +12746,20 @@ a.upfront-css-font {
 	margin-left: 8px;
 }
 /* Toggleable text field */
-.upfront-inline-panel-collapsed-parent .uimage-resize-hint.sizehint-top,
-.upfront-inline-panel-collapsed-parent .uimage-resize-hint {
-	display: none;
-	top: 40px;
+.uimage-small .uimage-resize-hint.sizehint-top,
+.uimage-small .uimage-resize-hint {
+	top: -25px;
+	font-size: 9px;
+	line-height: 10px;
+	width: 55px;
 	left: 0;
 }
-.upfront-control-visible .upfront-inline-panel-collapsed-parent .uimage-resize-hint.sizehint-top,
-.upfront-control-visible .upfront-inline-panel-collapsed-parent .uimage-resize-hint {
-	display: none;
+.uimage-small .stuck-to-top .uimage-resize-hint.sizehint-top,
+.uimage-small .stuck-to-top .uimage-resize-hint {
+	top: 0;
+	left: -55px;
 }
-.upfront-inline-panel-subitem-active .uimage-resize-hint.sizehint-top,
-.upfront-inline-panel-subitem-active .uimage-resize-hint {
-	display: block;
+.uimage-small .uimage-controls.image-element-controls {
+	bottom: 0;
+	left: 0;
 }
