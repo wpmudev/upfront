@@ -10057,7 +10057,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		changeType: function(e){
 			var type = this.getCurrentLinkType();
 
-			console.log('change type ' + type);
 			this.$('.js-ulinkpanel-input-url').hide();
 			if(type)
 				this.$('.js-ulinkpanel-input-' + type).show();
