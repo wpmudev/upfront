@@ -67,6 +67,15 @@ text!elements/upfront-gallery/tpl/ugallery_editor.html
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-gallery/js/ugallery.js
 text!elements/upfront-image/tpl/image.html
 text!elements/upfront-image/tpl/image_editor.html
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/context-menu/list.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-context-menu.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/settings/color-picker-field.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/settings/description-panel.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-settings.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-selector.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-editor.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/model.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-element.js
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-image/js/uimage.js
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-like-box/js/upfront-like-box.js
 text!elements/upfront-login/css/edit.css

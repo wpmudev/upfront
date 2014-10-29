@@ -61,7 +61,9 @@ define([
 			'click #image-edit-button-align': 'selectAlign',
 			'click .image-edit-rotate': 'rotate',
 			'click .image-fit-element-button': 'fitMask',
-			'click #image-edit-button-swap': 'changeImage'
+			'click #image-edit-button-swap': 'changeImage',
+			'mouseover a.image-edit-button': 'showTooltip',
+			'mouseout a.image-edit-button': 'hideTooltip'
 		},
 
 		initialize: function(){
@@ -251,9 +253,9 @@ define([
 				button = this.$('#image-edit-button-reset')
 			;
 			if(this.elementSize.columns === fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
-				button.addClass('deactivated expanded').attr('title', l10n.image_expanded);
+				button.addClass('deactivated expanded').attr('data-tooltip', l10n.image_expanded);
 			} else if(this.elementSize.columns === this.elementSize.maxColumns && this.elementSize.columns < fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
-				button.addClass('deactivated').attr('title', l10n.cant_expand);
+				button.addClass('deactivated').attr('data-tooltip', l10n.cant_expand);
 			}
 		},
 
@@ -506,7 +508,7 @@ define([
 					start: function() {
 						me.$('#image-edit-button-reset')
 							.attr('class', 'image-edit-button')
-							.attr('title', l10n.btn.exp_info)
+							.attr('data-tooltip', l10n.btn.exp_info)
 						;
 						//Prevent editor closing after resizing. It is set to false by the initialize method.
 						me.isResizing = true;
@@ -841,12 +843,12 @@ define([
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
 			$('#image-edit-button-fit')
-				.attr('title', l10n.btn.restore_label)
+				.attr('data-tooltip', l10n.btn.restore_label)
 				.text(l10n.btn.restore_info)
 			;
 			$('#image-edit-button-reset')
 				.attr('class', 'image-edit-button')
-				.attr('title', l10n.btn.exp_info)
+				.attr('data-tooltip', l10n.btn.exp_info)
 			;
 			this.fitImageButton = false;
 
@@ -1068,6 +1070,23 @@ define([
 			handle.css(position);
 
 			this.$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+		},
+
+		showTooltip: function(e){
+			var button = $(e.target),
+				tt = this.$('#uimage-tooltip')
+					.text(button.attr('data-tooltip'))
+					.show()
+				;
+
+			tt.css({
+				top: button.offset().top - Math.round(1.5*tt.height()),
+				left: button.offset().left + button.width() / 2 - tt.width() / 2 + 5
+			});
+		},
+
+		hideTooltip: function() {
+			this.$('#uimage-tooltip').hide();
 		},
 
 		keyMove: function(e) {
