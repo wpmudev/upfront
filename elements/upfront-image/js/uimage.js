@@ -209,8 +209,7 @@ define([
 
 		createLinkControl: function(){
 			var me = this,
-				control = new Upfront.Views.Editor.InlinePanels.DialogControl()
-			;
+				control = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
 			control.view = new Upfront.Views.Editor.LinkPanel({
 				model: new Backbone.Model({

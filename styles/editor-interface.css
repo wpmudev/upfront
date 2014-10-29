@@ -1193,45 +1193,9 @@ span.draggable-post-element.element-dragging
 .tooltip.upfront-field-wrap:before {
 	left: -22px;
 }
-.tooltip:after,
-.tooltip-inline:after {
-	content: " ";
-	position: absolute;
-	top: -14px;
-	left: 0;
-	right: 0;
-	margin: auto;
-	width: 0;
-	height: 0;
-	display: none;
-	border-color: #2b445d transparent #2b445d transparent;
-	border-width: 3px 3px 0 3px;
-	border-style: solid;
-}
-.tooltip-bottom:after {
-	top: auto;
-	bottom: -14px;
-	border-width: 0 3px 3px 3px;
-}
-.tooltip-left:after,
-.tooltip-right:after {
-	top: 0;
-	bottom: 0;
-	border-color: transparent #2b445d transparent #2b445d;
-}
-.tooltip-left:after {
-	right: auto;
-	left: -14px;
-	border-width: 3px 0 3px 3px;
-}
-.tooltip-right:after {
-	left: auto;
-	right: -14px;
-	border-width: 3px 3px 3px 0;
-}
-.tooltip:hover:before, .tooltip:hover:after,
-a:hover > .tooltip:before, a:hover > .tooltip:after,
-.tooltip-inline:hover > .tooltip-content, .tooltip-inline:hover:after {
+.tooltip:hover:before,
+a:hover > .tooltip:before,
+.tooltip-inline:hover > .tooltip-content {
 	display: block;
 }
 

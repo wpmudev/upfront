@@ -40,15 +40,10 @@ define([], function () {
 			if ( ! tooltip ) {
 				return;
 			}
-			var tooltip_pos = typeof this.tooltip_pos === 'function' ? this.tooltip_pos() : (this.tooltip_pos ? this.tooltip_pos : 'bottom'),
-				$content = this.$el.find('.tooltip-content');
+			var tooltip_pos = typeof this.tooltip_pos === 'function' ? this.tooltip_pos() : (this.tooltip_pos ? this.tooltip_pos : 'bottom');
 			this.$el.removeClass('tooltip-top tooltip-bottom tooltip-left tooltip-right');
 			this.$el.addClass('tooltip-inline tooltip-' + tooltip_pos);
-			if ( !$content.length ) {
-				this.$el.prepend('<span class="tooltip-content">' + tooltip + '</span>');
-			} else {
-				$content.html(tooltip);
-			}
+			this.$el.attr('title', tooltip);
 		},
 		render: function () {
 			this.render_icon();
