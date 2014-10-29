@@ -233,15 +233,22 @@ class Upfront_UcontactView extends Upfront_Object {
 		return upfront_get_template('ucontact', $args, dirname(dirname(__FILE__)) . '/templates/ucontact.html');
 	}
 
-	public function get_entity_ids_value(){
-		$entities = Upfront_EntityResolver::get_entity_ids();
+	public function get_entity_ids_value() {
+		$entities = array();
+		$entities = Upfront_Layout::get_cascade();
+
+		if (empty($entities)) {
+			$entities = Upfront_EntityResolver::get_entity_ids();
+		}
+
 		$entities['storage_key'] = Upfront_Model::get_storage_key();
 		return base64_encode(json_encode($entities));
 	}
 
 	private function get_settings_from_ajax(){
+		$entity_ids = array();
 		try{
-			$entity_ids = (array) json_decode(base64_decode($_POST['entity_ids']));
+			$entity_ids = (array)json_decode(base64_decode($_POST['entity_ids']));
 		} catch(Exception $e) {
 			return false;
 		}
