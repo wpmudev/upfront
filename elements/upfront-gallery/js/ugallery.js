@@ -1,3 +1,4 @@
+/*global ugalleries */
 /* @ TODO: need to add [+] button and make sure it triggers the appropriate event..
 
 //Adding [+] control
@@ -9,11 +10,13 @@ if(this.$el.find('a.add-gallery-item').length < 1) {
 */
 
 (function ($) {
-
 define([
-		'text!elements/upfront-gallery/tpl/ugallery.html', // Front
-		'text!elements/upfront-gallery/tpl/ugallery_editor.html'
-	], function(galleryTpl, editorTpl) {
+	'text!elements/upfront-gallery/tpl/ugallery.html', // Front
+	'text!elements/upfront-gallery/tpl/ugallery_editor.html',
+	'elements/upfront-gallery/js/settings',
+	'elements/upfront-gallery/js/model',
+	'elements/upfront-gallery/js/element'
+], function(galleryTpl, editorTpl, UgallerySettings, UgalleryModel, UgalleryElement) {
 
 var l10n = Upfront.Settings.l10n.gallery_element;
 
@@ -25,18 +28,9 @@ var UgalleryImages = Backbone.Collection.extend({
 	model: UgalleryImage
 });
 
-/* Model */
-var UgalleryModel = Upfront.Models.ObjectModel.extend({
-	init: function () {
-		var properties = _.clone(Upfront.data.ugallery.defaults);
-		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
-		this.init_properties(properties);
-	}
-});
-
 
 /* View */
-var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.FixedObjectInAnonymousModule,*/ {
+var UgalleryView = Upfront.Views.ObjectView.extend({
 	model: UgalleryModel,
 	tpl: Upfront.Util.template(galleryTpl), //PHP compatible templates
 	selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
@@ -148,7 +142,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			me.checkRegenerateThumbs(e);
 		});
 
-		this.listenTo(this.model, 'thumbChange', function(e){
+		this.listenTo(this.model, 'thumbChange', function(){
 			me.$('.ugallery-image-wrapper').css('overflow', 'hidden')
 				.find('img').css({
 					'min-width': '100%',
@@ -157,7 +151,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				});
 		});
 
-		this.listenTo(this.model, 'no_padding_change', function(e){
+		this.listenTo(this.model, 'no_padding_change', function(){
 			me.calculateMargins();
 			if (this.property('no_padding')[0] === 'true') {
 				me.$el.addClass('no_padding');
@@ -223,7 +217,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		control.image = image;
 
-		me.listenTo(control, 'panel:ok', function(view){
+		me.listenTo(control, 'panel:ok', function() {
 			//call the panel linkOk method to let it parse the link,
 			// later the link:ok event will be emitted and we will use it to
 			// save the link.
@@ -283,7 +277,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		var data = control.view.getCurrentValue();
 
 		if(!data){
-			console.log('Error updating image link');
 			return;
 		}
 
@@ -363,13 +356,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						}
 					;
 
-					if(labels)
+					if(labels) {
 						setTimeout(function(){
 							reveal();
 						}, 300);
+					}
 
 					wrapper
-						.on('click', '.ugallery-magnific-toggle', function(e){
+						.on('click', '.ugallery-magnific-toggle', function(){
 							var panel = wrapper.find('.ugallery-magnific-panel');
 							if(panel.hasClass('closed')){
 								reveal();
@@ -378,7 +372,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 								panel.css('overflow', 'hidden').addClass('closed');
 							}
 						})
-						.on('click', '.ugallery-magnific-addbutton', function(e){
+						.on('click', '.ugallery-magnific-addbutton', function(){
 							wrapper.find('.ugallery-magnific-addbutton').hide();
 							wrapper.find('.ugallery-magnific-addform').show()
 								.find('#ugallery-addlabels').focus()
@@ -405,7 +399,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	get_content_markup: function() {
 		var props = this.extract_properties();
-			rendered = {};
 
 		props.imagesLength = props.images.length;
 		props.editing = true;
@@ -425,8 +418,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	on_render: function() {
 		var me = this,
-			resizingFunction,
-			skipMargins = me.$el.closest('body').length ? me.calculateMargins() : 0;
+			resizingFunction;
 
 		//Bind resizing events
 		if (!me.parent_module_view.$el.data('resizeHandling')) {
@@ -537,7 +529,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		;
 
 		if (this.property('no_padding')[0] === 'true') {
-			_.each(items, function(item, idx){
+			_.each(items, function(item){
 				$(item).css('margin-right', 0);
 			});
 			return;
@@ -552,7 +544,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		remaining = container - (columns * itemWidth + margin * (columns-1));
 
 		_.each(items, function(item, idx){
-			var safetyPixel = idx % columns == 0 ? 1 : 0, //This pixel asure we are not exceding container width
+			var safetyPixel = idx % columns === 0 ? 1 : 0, //This pixel asure we are not exceding container width
 				extra = columns - (idx % columns) < remaining ? 1 : 0
 			;
 			$(item).css('margin-right', (idx + 1) % columns ? margin + extra - safetyPixel : 0);
@@ -562,11 +554,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	},
 
 	preventNavigation: function(e){
-		if(e.target.tagName.toUpperCase() == 'INPUT')
+		if(e.target.tagName.toUpperCase() === 'INPUT') {
 			return;
+		}
 
-		if(e.target.tagName.toUpperCase() == 'A' || $(e.target).closest('a').length)
+		if(e.target.tagName.toUpperCase() === 'A' || $(e.target).closest('a').length) {
 			e.preventDefault();
+		}
 	},
 
 	getLabelSelector: function(imageId){
@@ -581,8 +575,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		if(ids){
 			_.each(this.labels, function(label){
-				if(ids.indexOf(label.id.toString()) != -1 && label.id != 0)
+				if(ids.indexOf(label.id.toString()) !== -1 && label.id !== 0) {
 					labels.push(label);
+				}
 			});
 		}
 
@@ -595,16 +590,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				multiple: true,
 				preparingText: l10n.preparing,
 				customImageSize: {width: this.property('thumbWidth'), height: this.property('thumbHeight')},
-				element_id: this.model.get_property_value_by_name("element_id")
+				element_id: this.model.get_property_value_by_name('element_id')
 			}
 		;
 
-		if (event) event.preventDefault();
+		if (event) {
+			event.preventDefault();
+		}
 
 		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 			me.addImages(images, replaceId);
-			if(response.given != response.returned)
-				Upfront.Views.Editor.notify(l10n.not_all_added, "warning");
+			if (response.given !== response.returned) {
+				Upfront.Views.Editor.notify(l10n.not_all_added, 'warning');
+			}
 
 			Upfront.Views.Editor.ImageSelector.close();
 		});
@@ -698,14 +696,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 						newLabel = {id: label.term_id, text: label.name}
 					;
 
-					if(!globals.label_names[label.name])
+					if(!globals.label_names[label.name]) {
 						globals.label_names[label.name] = newLabel;
+					}
 
-					if(!globals.label_ids[label.term_id])
+					if(!globals.label_ids[label.term_id]) {
 						globals.label_ids[label.term_id] = newLabel;
+					}
 
-					if(!me.isLabelInGallery(newLabel))
+					if(!me.isLabelInGallery(newLabel)) {
 						me.labels.push(newLabel);
+					}
 
 					imageLabels.push('"label_' + label.term_id + '"');
 				});
@@ -721,7 +722,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			i = 0
 		;
 		while(i<me.labels.length && !labelInGallery){
-			labelInGallery = me.labels[i].id == label.id;
+			labelInGallery = me.labels[i].id === label.id;
 			i++;
 		}
 
@@ -760,7 +761,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	checkRegenerateThumbs: function(e, imageIds){
 		var me = this;
-		if(imageIds || this.lastThumbnailSize.width != this.property('thumbWidth') || this.lastThumbnailSize.height != this.property('thumbHeight')){
+		if(imageIds || this.lastThumbnailSize.width !== this.property('thumbWidth') || this.lastThumbnailSize.height !== this.property('thumbHeight')){
 
 			var editOptions = {
 					images: this.getRegenerateData(imageIds),
@@ -772,8 +773,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					fixed: false
 				})
 			;
-			console.log('sent');
-			console.log(editOptions.images);
 			loading.render();
 			this.parent_module_view.$el.append(loading.$el);
 
@@ -784,8 +783,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					models = []
 				;
 
-				console.log('received');
-				console.log(images);
 				_.each(editOptions.images, function(image){
 					var model = me.images.get(image.id),
 						changes = images[image.id]
@@ -815,10 +812,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			widthFactor = this.property('thumbWidth') / this.lastThumbnailSize.width,
 			heightFactor = this.property('thumbHeight') / this.lastThumbnailSize.height,
 			factor = widthFactor > heightFactor ? widthFactor : heightFactor,
-			size = {width: this.property('size').width * factor, height: this.property('size').height * factor},
 			imageData = [],
 			images = this.images,
-			element_id = this.model.get_property_value_by_name("element_id")
+			element_id = this.model.get_property_value_by_name('element_id')
 		;
 
 		if(imageIds){
@@ -858,13 +854,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			image = this.images.get(item.attr('rel')),
 			editorOpts = this.getEditorOptions(image)
 		;
-		if(image.get('status') != 'ok'){
+		if(image.get('status') !== 'ok'){
 			var selectorOptions = {
 				multiple: false,
 				preparingText: l10n.preparing,
-				element_id: this.model.get_property_value_by_name("element_id")
+				element_id: this.model.get_property_value_by_name('element_id')
 			};
-			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
+			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images){
 				me.addImages(images);
 
 				var index = me.images.indexOf(image);
@@ -896,17 +892,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 				});
 				me.render();
 			}).fail(function(data){
-				if(data && data.reason == 'changeImage')
+				if(data && data.reason === 'changeImage') {
 					me.openImageSelector(false, data.id);
-				else
+				} else {
 					me.render();
+				}
 			})
 		;
 	},
 
 	getEditorOptions: function(image){
-		var me = this,
-			mask = this.$('.ugallery_item[rel=' + image.id + ']').find('.ugallery-image-wrapper'),
+		var mask = this.$('.ugallery_item[rel=' + image.id + ']').find('.ugallery-image-wrapper'),
 			full = image.get('sizes').full
 		;
 		return {
@@ -934,24 +930,25 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			imageId = contents.find('#ugallery-image-id').val()
 		;
 		contents.on('keyup', 'input[name="ugallery-image-labels"]', function(e){
-			if([9, 13, 38, 40].indexOf(e.which) != -1)
+			if([9, 13, 38, 40].indexOf(e.which) !== -1) {
 				return;
+			}
 
 			var val = $(e.target).val(),
 				allLabels = _.keys(Upfront.data.ugallery.label_names),
 				labels = []
 			;
 
-			if(val.length < 2)
+			if(val.length < 2) {
 				return $('.labels_list').html('');
+			}
 
 			_.each(allLabels, function(label){
-				var idx = label.indexOf(val);
-				if(idx != -1){
+				if(label.indexOf(val) !== -1){
 					var lab = Upfront.data.ugallery.label_names[label],
 						imageLabels = me.imageLabels[imageId]
 					;
-					if(imageLabels.indexOf('"label_' + lab.id + '"') == -1){
+					if(imageLabels.indexOf('"label_' + lab.id + '"') === -1){
 						labels.push({
 							id: lab.id,
 							text: lab.text.replace(val, '<span class="selection">' + val + '</span>')
@@ -962,126 +959,121 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			return $('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template}));
 		});
-		contents.on('keydown', 'input[name="ugallery-image-labels"]', function(e){
 
-			var goDown = function(labelsLi){
-				var selected = labelsLi.find('label.selected');
-				if(selected.length){
-					selected.removeClass('selected');
-				}
-				var currentIdx = -1,
-					idx = 0
-				;
-				while(idx < labelsLi.length && currentIdx == -1){
-					currentIdx = labelsLi[idx] == selected.parent()[0] ? idx : -1;
-					idx++;
-				}
+		contents
+			.on('keydown', 'input[name="ugallery-image-labels"]', function(e){
+				var goDown = function(labelsLi){
+					var selected = labelsLi.find('label.selected'),
+						currentIdx = -1,
+						idx = 0;
 
-				if(currentIdx == -1)
-					$(labelsLi[0]).find('label').addClass('selected');
-				else if(currentIdx < labelsLi.length - 1)
-					$(labelsLi[currentIdx + 1]).find('label').addClass('selected');
+					if(selected.length){
+						selected.removeClass('selected');
+					}
 
-			};
+					while(idx < labelsLi.length && currentIdx === -1){
+						currentIdx = labelsLi[idx] === selected.parent()[0] ? idx : -1;
+						idx++;
+					}
 
-			var goUp = function(labelsLi){
-				var selected = labelsLi.find('label.selected');
-				if(selected.length){
-					selected.removeClass('selected');
-				}
-				var currentIdx = -1,
-					idx = 0
-				;
-				while(idx < labelsLi.length && currentIdx == -1){
-					currentIdx = labelsLi[idx] == selected.parent()[0] ? idx : -1;
-					idx++;
-				}
+					if(currentIdx === -1) {
+						$(labelsLi[0]).find('label').addClass('selected');
+					} else if(currentIdx < labelsLi.length - 1) {
+						$(labelsLi[currentIdx + 1]).find('label').addClass('selected');
+					}
+				};
 
-				if(currentIdx == -1)
-					$(labelsLi[labelsLi.length -1]).find('label').addClass('selected');
-				else if(currentIdx > 0)
-					$(labelsLi[currentIdx - 1]).find('label').addClass('selected');
+				var goUp = function(labelsLi){
+					var selected = labelsLi.find('label.selected'),
+						currentIdx = -1,
+						idx = 0;
 
-			};
+					if(selected.length){
+						selected.removeClass('selected');
+					}
 
-			if(e.which == 13){ // Enter
-				e.preventDefault();
-				var selected = contents.find('.labels_list label.selected');
-				if(selected.length){
-					var labelId = selected.attr('rel'),
-						label = Upfront.data.ugallery.label_ids[labelId]
-					;
+					while(idx < labelsLi.length && currentIdx === -1){
+						currentIdx = labelsLi[idx] === selected.parent()[0] ? idx : -1;
+						idx++;
+					}
 
-					$(e.target).val('').siblings('.labels_list').html('');
-					me.addLabel(label.text, imageId);
-				}
-				else{
-					var label = $.trim($(e.target).val());
-					if(label.length){
+					if(currentIdx === -1) {
+						$(labelsLi[labelsLi.length -1]).find('label').addClass('selected');
+					} else if(currentIdx > 0) {
+						$(labelsLi[currentIdx - 1]).find('label').addClass('selected');
+					}
+				};
+
+				var label, labelsLi;
+				if(e.which === 13){ // Enter
+					e.preventDefault();
+					var selected = contents.find('.labels_list label.selected');
+					if(selected.length){
+						var labelId = selected.attr('rel');
+						label = Upfront.data.ugallery.label_ids[labelId];
+
 						$(e.target).val('').siblings('.labels_list').html('');
-						me.addLabel(label, imageId);
+						me.addLabel(label.text, imageId);
+					} else{
+						label = $.trim($(e.target).val());
+						if(label.length){
+							$(e.target).val('').siblings('.labels_list').html('');
+							me.addLabel(label, imageId);
+						}
+					}
+				} else if(e.which === 9 || e.which === 40){ // Tab or down
+					labelsLi = contents.find('.labels_list li');
+					if(labelsLi.length){
+						e.preventDefault();
+						goDown(labelsLi);
+					}
+				} else if(e.which === 38){ // Up
+					labelsLi = contents.find('.labels_list li');
+					if(labelsLi.length){
+						e.preventDefault();
+						goUp(labelsLi);
+					}
+				} else if(e.which === 27){ //Esc
+					e.preventDefault();
+					$(e.target).siblings('.labels_list').html('');
+				}
+			})
+			.on('click', 'label', function(e){
+				var labelId = $(e.target).attr('rel');
+				if(labelId){
+					var label = Upfront.data.ugallery.label_ids[labelId];
+					me.addLabel(label.text, imageId);
+					contents.find('input[name="ugallery-image-labels"]').val('').siblings('.labels_list').html('');
+				}
+			})
+			.on('click', '.existing_labels a', function(e){
+				e.preventDefault();
+				var link = $(e.target),
+					labelId = link.data('idx'),
+					imageLabels = me.imageLabels[imageId].split(', '),
+					data = {
+						action: 'upfront-media-disassociate_label',
+						'term': labelId,
+						'post_id': imageId
+					}
+				;
+				Upfront.Util.post(data);
+
+				for(var idx in imageLabels){
+					if(imageLabels[idx] && imageLabels[idx] === '"label_' + labelId + '"' ) {
+						imageLabels.splice(idx, 1);
 					}
 				}
-			}
-			else if(e.which == 9 || e.which == 40){ // Tab or down
-				var labelsLi = contents.find('.labels_list li');
-				if(labelsLi.length){
-					e.preventDefault();
-					goDown(labelsLi);
-				}
-			}
-			else if(e.which == 38){ // Up
-				var labelsLi = contents.find('.labels_list li');
-				if(labelsLi.length){
-					e.preventDefault();
-					goUp(labelsLi);
-				}
-			}
-			else if(e.which == 27){ //Esc
-				e.preventDefault();
-				$(e.target).siblings('.labels_list').html('');
-			}
-		})
-		.on('click', 'label', function(e){
-			var labelId = $(e.target).attr('rel');
-			if(labelId){
-				var label = Upfront.data.ugallery.label_ids[labelId];
-				me.addLabel(label.text, imageId);
-				contents.find('input[name="ugallery-image-labels"]').val('').siblings('.labels_list').html('');
-			}
-		})
-		.on('click', '.existing_labels a', function(e){
-			e.preventDefault();
-			var link = $(e.target),
-				labelId = link.data('idx'),
-				imageLabels = me.imageLabels[imageId].split(', '),
-				deleteLabel = true,
-				data = {
-					action: 'upfront-media-disassociate_label',
-					"term": labelId,
-					"post_id": imageId
-				}
-			;
-			Upfront.Util.post(data)
-				.success(function (response) {
-					console.log(response);
-				})
-			;
 
-			for(var idx in imageLabels){
-				if(imageLabels[idx] && imageLabels[idx] == '"label_' + labelId + '"' )
-					imageLabels.splice(idx, 1);
-			}
+				me.imageLabels[imageId] = imageLabels.join(', ');
 
-			me.imageLabels[imageId] = imageLabels.join(', ');
+				me.deleteLabel(labelId, imageId);
 
-			me.deleteLabel(labelId, imageId);
-
-			$(e.target).fadeOut('fast', function(){
-				$(this).remove();
-				me.render();
+				$(e.target).fadeOut('fast', function(){
+					$(this).remove();
+					me.render();
+				});
 			});
-		});
 
 		return contents;
 	},
@@ -1097,28 +1089,31 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 			deleteLabel = true;
 
 		me.images.each(function(image){
-			if(image.id != imageId && me.imageLabels[image.id].indexOf('"label_' + labelId + '"') != -1){
+			if(image.id !== imageId && me.imageLabels[image.id].indexOf('"label_' + labelId + '"') !== -1){
 				deleteLabel = false;
 			}
 		});
 
 		if(deleteLabel){
 			for(var idx in me.labels){
-				if(me.labels[idx] && me.labels[idx].id == labelId)
+				if(me.labels[idx] && me.labels[idx].id === labelId) {
 					me.labels.splice(idx, 1);
+				}
 			}
 		}
 	},
 
 	addLabel: function(text, imageId){
-		var label = Upfront.data.ugallery.label_names[text];
+		var label = Upfront.data.ugallery.label_names[text],
+			data;
+
 		if(label){
 			var labelInGallery = false,
 				i = 0,
 				newImageLabel = false
 			;
 			while(i<this.labels.length && !labelInGallery){
-				labelInGallery = this.labels[i].id == label.id;
+				labelInGallery = this.labels[i].id === label.id;
 				i++;
 			}
 
@@ -1130,40 +1125,34 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 				this.imageLabels[imageId] = this.imageLabels[imageId] ? this.imageLabels[imageId] + ', "label_' + label.id + '"' : '"label_' + label.id + '"';
 				newImageLabel = true;
-			}
-			else if(this.imageLabels[imageId].indexOf('label_' + label.id) == -1){
+			} else if(this.imageLabels[imageId].indexOf('label_' + label.id) === -1){
 					this.imageLabels[imageId] += ', "label_' + label.id + '"';
 					newImageLabel = true;
 			}
 
 			if(newImageLabel){
-				var data = {
-					"action": "upfront-media-associate_label",
-					"term": label.id,
-					"post_id": imageId
-				}
-				Upfront.Util.post(data)
-					.success(function (response) {
-						console.log(response);
-					})
-				;
+				data = {
+					'action': 'upfront-media-associate_label',
+					'term': label.id,
+					'post_id': imageId
+				};
+				Upfront.Util.post(data);
 			}
-		}
-		else{
+		} else {
 			//Push a label with a temp id
 			var me = this,
-				tempId = - parseInt(Math.random() * 100, 10),
-				label = {
-					id: tempId,
-					term_id: tempId,
-					text: text
-				},
-				data = {
-					"action": "upfront-media-add_label",
-					"term": text,
-					"post_id": imageId
-				}
-			;
+				tempId = - parseInt(Math.random() * 100, 10);
+
+			label = {
+				id: tempId,
+				term_id: tempId,
+				text: text
+			};
+			data = {
+				'action': 'upfront-media-add_label',
+				'term': text,
+				'post_id': imageId
+			};
 			Upfront.data.ugallery.label_names[text] = label;
 			Upfront.data.ugallery.label_ids[tempId] = label;
 
@@ -1172,8 +1161,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 			Upfront.Util.post(data)
 				.success(function (response) {
-					console.log(response);
-
 					//Replace the temp label
 					var thisLabels = response.data[imageId],
 						imageLabels = [],
@@ -1183,15 +1170,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 					_.each(thisLabels, function(label){
 						imageLabels.push('"label_' + label + '"');
-						if(!Upfront.data.ugallery.label_ids[label])
+						if(!Upfront.data.ugallery.label_ids[label]) {
 							newId = label;
+						}
 					});
 
 					imageLabels = imageLabels.join(', ');
 					newLabel = {
 						id: newId,
 						text: text
-					}
+					};
 
 					Upfront.data.ugallery.label_names[text] = newLabel;
 					Upfront.data.ugallery.label_ids[newLabel.id] = newLabel;
@@ -1200,13 +1188,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 					me.imageLabels[imageId] = imageLabels;
 
 					_.each(me.labels, function(label){
-						if(label.text == text)
+						if(label.text === text) {
 							label.id = newLabel.id;
+						}
 					});
 				});
 
-				this.renderLightboxLabels(imageId);
-			;
+			this.renderLightboxLabels(imageId);
 		}
 
 		this.renderLightboxLabels(imageId);
@@ -1225,8 +1213,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	postTypes: function(){
 		var types = [];
 		_.each(Upfront.data.ugallery.postTypes, function(type){
-			if(type.name != 'attachment')
+			if(type.name !== 'attachment') {
 				types.push({name: type.name, label: type.label});
+			}
 		});
 		return types;
 	},
@@ -1265,21 +1254,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 		this.$('.ugallery').sortable({
 			items: 'div.ugallery_item:not(.ugallery_addmore)',
-			//placeholder: "ugallery-sortable-placeholder",
-			start: function(e, ui){
-				console.log('draggin');
+			start: function(){
 				me.$el.addClass('ugallery_sorting');
 			},
-			stop: function (e, ui){
+			stop: function (){
 				me.$el.removeClass('ugallery_sorting');
 			},
 			update: function() {
 				me.sortOk();
 			},
-			change: function(e, ui){
+			change: function(){
 			},
 			delay: 500,
-			cancel: ".ugallery-thumb-title"
+			cancel: '.ugallery-thumb-title'
 		});
 
 		this.$('.ugallery_item_removing').removeClass('ugallery_item_removing');
@@ -1292,8 +1279,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 		;
 		_.each(items, function(item){
 			var id = $(item).attr('rel');
-			if(id)
+			if(id) {
 				newOrder.push(me.images.get(id));
+			}
 		});
 
 		this.images.reset(newOrder);
@@ -1319,8 +1307,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 
 	cleanup: function(){
 		this.images.each(function(image){
-			if(image.controls)
+			if(image.controls) {
 				image.controls.remove();
+			}
 		});
 		$('body').off('click', this.closeTooltip);
 	},
@@ -1340,361 +1329,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins
 	Shorcut to set and get model's properties.
 	*/
 	property: function(name, value, silent) {
-		if(typeof value != "undefined"){
-			if(typeof silent == "undefined")
+		if(typeof value !== 'undefined'){
+			if(typeof silent === 'undefined') {
 				silent = true;
+			}
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
-	}
-}));
-
-/* Element */
-var UgalleryElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	priority: 30,
-	render: function () {
-		this.$el.addClass('upfront-icon-element upfront-icon-element-gallery');
-		this.$el.html(l10n.element_name);
-	},
-	add_element: function () {
-		var object = new UgalleryModel(),
-			module = new Upfront.Models.Module({
-				"name": "",
-				"properties": [
-					{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-					{"name": "class", "value": "c24 upfront-ugallery_module"},
-					{"name": "has_settings", "value": 0},
-					{"name": "row", "value": Upfront.Util.height_to_row(240)}
-				],
-				"objects": [
-					object
-				]
-			})
-		;
-		this.add_module(module);
-	}
-});
-
-var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
-	initialize: function (opts) {
-		var me = this;
-
-		this.has_tabs = false;
-		this.options = opts;
-
-		this.panels = _([
-			new LayoutPanel({model: this.model})
-		]);
-
-		this.on('closed', function(){
-			me.model.trigger('settings:closed');
-		});
-	},
-	get_title: function () {
-		return l10n.settings;
-	},
-
-
-});
-
-var LayoutPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	className: 'upfront-settings_panel_wrap ugallery-settings',
-	initialize: function (opts) {
-		this.options = opts;
-		var me = this,
-			fields = Upfront.Views.Editor.Field
-		;
-
-		this.settings = _([
-			new Upfront.Views.Editor.Settings.Item({
-				group: false,
-				fields: [
-					new fields.Checkboxes({
-						model: this.model,
-						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes ugallery-setting-labels',
-						property: 'labelFilters',
-						values: [
-							{
-								value: 'true',
-								label: l10n.panel.sort
-							}
-						]
-					})
-				],
-			}),
-			new ThumbnailFields({model: this.model}),
-			new Upfront.Views.Editor.Settings.Item({
-				title: 'Caption Settings',
-				fields: [
-					new fields.Radios({
-						model: this.model,
-						property: 'captionWhen',
-						layout: "horizontal-inline",
-						label: l10n.panel.show_caption,
-						values: [
-							{value: 'never', label: l10n.panel.never},
-							{value: 'hover', label: l10n.panel.hover},
-							{value: 'always', label: l10n.panel.always}
-						]
-					}),
-					new fields.Radios({
-						model: this.model,
-						property: 'captionPosition',
-						layout: "horizontal-inline",
-						label: l10n.panel.caption_style,
-						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios ugallery-setting-caption-position',
-						values: [
-							{value: 'over', label: l10n.panel.over, icon: 'over'},
-							{value: 'below', label: l10n.panel.under, icon: 'below'}
-						]
-					}),
-					new fields.Color({
-						label: l10n.panel.caption_bg,
-						label_style: 'inline',
-						spectrum: {
-							showAlpha: true,
-							showPalette: true,
-							palette: Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
-							maxSelectionSize: 9,
-							localStorageKey: "spectrum.recent_bgs",
-							preferredFormat: "hex",
-							chooseText: l10n.panel.ok,
-							showInput: true,
-							allowEmpty:true,
-							show: function(){
-								spectrum = $('.sp-container:visible');
-							},
-							change: function(color) {
-								var rgba = color.toRgbString();
-								me.model.set_property('captionUseBackground', !!color.alpha);
-								me.model.set_property('captionBackground', rgba, true);
-								currentColor = rgba;
-							},
-							move: function(color) {
-								var rgba = color.toRgbString();
-								spectrum.find('.sp-dragger').css('border-top-color', rgba);
-								spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-								me.parent_view.for_view.$el.find('.ugallery-thumb-title').css('background-color', rgba);
-							},
-							hide: function(){
-								me.parent_view.for_view.$el.find('.ugallery-thumb-title').css('background-color', currentColor);
-							}
-						}
-					})
-				]
-			})
-		]);
-
-		this.on('rendered', function(){
-			var help = $('<span class="upfront-field-info" title="' + l10n.panel.adds_sortable + '"></span>');
-
-			this.$('.ugallery-setting-labels').find('.upfront-field-multiple').append(help);
-
-			setTimeout(function(){
-				me.toggleCaption();
-			}, 100);
-
-			$(me.$('.ugallery-thumbnail-fields')
-				.find('.upfront-field-wrap-number')
-				.get(0))
-				.after('<div class="ugallery-proportional"></div>')
-			;
-
-			me.setEvents([
-				//['click', '.ugallery-proportional', 'lockProportions'],
-				['change', 'input[name=no_padding]', 'on_no_padding_change'],
-				['change', 'input[name=thumbWidth]', 'onThumbChangeSize'],
-				['change', 'input[name=thumbProportions]', 'onThumbChangeProportions']
-			]);
-		});
-
-		this.$el.on('change', 'input[name=captionWhen]', function(e){
-			me.toggleCaption();
-		});
-	},
-
-	toggleCaption: function(){
-		var when = this.$('input[name=captionWhen]:checked').val();
-		if(when == 'never'){
-			this.$('.ugallery-setting-caption-position').hide();
-			this.$('.upfront-field-wrap-color').hide();
-		}
-		else {
-			this.$('.ugallery-setting-caption-position').show();
-			this.$('.upfront-field-wrap-color').show();
-		}
-		var settings = $('#settings');
-		settings.height(settings.find('.upfront-settings_panel:visible').outerHeight());
-	},
-	get_label: function () {
-		return 'Layout';
-	},
-	get_title: function () {
-		return false;
-	},
-
-	setEvents: function(events){
-		var me = this;
-		_.each(events, function(event){
-			me.$el.on(event[0], event[1], function(e){
-				me[event[2]](e);
-			});
-		});
-	},
-
-	on_no_padding_change: function(event) {
-		this.property('no_padding', [$(event.target).is(':checked') + '']);
-		this.model.trigger('no_padding_change');
-	},
-
-	onThumbChangeSize: function(e){
-		var me = this,
-			factor = this.property('thumbProportions'),
-			width = $(e.target).val(),
-			height = Math.round($(e.target).val() / factor)
-		;
-		if(factor == 'theme')
-			factor = 1;
-		this.$('input[name=thumbHeight]').val(height);
-
-		this.property('thumbWidth', width);
-		this.property('thumbHeight', height, false);
-
-		this.model.trigger('thumbChange');
-
-		return height;
-	},
-
-	onThumbChangeProportions: function(e) {
-		var me = this,
-			factor = $(e.target).val(),
-			input = this.$('input[name=thumbWidth]'),
-			width = input.val()
-		;
-
-		if(factor == 'theme')
-			factor = 1;
-
-		this.property('thumbProportions', factor);
-		var height = this.onThumbChangeSize({target: input[0]});
-
-		this.$('input[name=thumbWidth]')
-			.siblings('.upfront-field-slider-value')
-				.text('(' + width +'px x ' + height + 'px)')
-		;
-
-		this.model.trigger('thumbChange');
-	},
-
-	/*
-	Shorcut to set and get model's properties.
-	*/
-	property: function(name, value, silent) {
-		if(typeof value != "undefined"){
-			if(typeof silent == "undefined")
-				silent = true;
-			return this.model.set_property(name, value, silent);
-		}
-		return this.model.get_property_value_by_name(name);
-	}
-});
-
-var Field_Button = Upfront.Views.Editor.Field.Field.extend({
-	init: function() {
-		console.log('Button!!');
-	},
-	events: {
-		'click button': 'buttonClicked'
-	},
-	render: function() {
-		this.$el.html(this.get_field_html());
-	},
-	get_field_html: function() {
-		return '<p class="upfront-field-button-info">' + this.options.info + '</p><button class="upfront-field-button ugallery-reset-button">' + this.options.label + '</button>';
-	},
-	buttonClicked: function(e) {
-		if(this.options.on_click)
-			this.options.on_click(e);
-	},
-	isProperty: false
-});
-
-var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
-	className: 'ugallery-thumbnail-fields',
-	initialize: function(){
-		var me = this,
-			fields = Upfront.Views.Editor.Field
-		;
-
-		this.fields = _([
-			new fields.Checkboxes({
-				model: this.model,
-				property: 'no_padding',
-				values: [
-					{
-						value: 'true',
-						label: l10n.panel.no_padding
-					}
-				]
-			}),
-			new fields.Radios({
-				model: this.model,
-				property: 'thumbProportions',
-				label: l10n.thumb.ratio,
-				layout: 'vertical',
-				values: [
-					{
-						label: l10n.thumb.theme,
-						value: 'theme',
-						icon: 'gallery-crop-theme'
-					},
-					{
-						label: '1:1',
-						value: '1',
-						icon: 'gallery-crop-1_1'
-					},
-					{
-						label: '2:3',
-						value: '0.66',
-						icon: 'gallery-crop-2_3'
-					},
-					{
-						label: '4:3',
-						value: '1.33',
-						icon: 'gallery-crop-4_3'
-					}
-				]
-			}),
-
-			new fields.Slider({
-				model: this.model,
-				property: 'thumbWidth',
-				min: 100,
-				max: 250,
-				step: 5,
-				label: l10n.thumb.size,
-				// info: 'Slide to resize the thumbnails.',
-				valueTextFilter: function(value){
-					return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
-				}
-			}),
-			new fields.Hidden({
-				model: this.model,
-				property: 'thumbHeight'
-			})
-		]);
-	},
-	get_title: function(){
-		return l10n.thumb.settings;
 	}
 });
 
 //Make the element parts available
-Upfront.Application.LayoutEditor.add_object("Ugallery", {
-	"Model": UgalleryModel,
-	"View": UgalleryView,
-	"Element": UgalleryElement,
-	"Settings": UgallerySettings
+Upfront.Application.LayoutEditor.add_object('Ugallery', {
+	'Model': UgalleryModel,
+	'View': UgalleryView,
+	'Element': UgalleryElement,
+	'Settings': UgallerySettings
 });
 
 Upfront.Models.UgalleryModel = UgalleryModel;
