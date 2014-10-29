@@ -92,17 +92,16 @@ jQuery(function($){
 					entity_ids: $this.find('input[name=entity_ids]').val()
 				},
 				success: function(data){
-					show_message($this, data.data.message, !data.data.error);
-					if (!data.data.error) {
-						/*
-						// Leaving this out for now
-						$form.find(".ucontact-message-container").css({
-							position: "absolute",
-							left:0, right:0,
-							height: $form.height(),
-						});
-						*/
-						$form.find("input,button,textarea").attr("disabled", true);
+					var msg = (data.data && "message" in data.data ? data.data.message : ''),
+						err = (data.data && "error" in data.data ? !!data.data.error : true)
+					;
+					if (!err) {
+						msg = '<div><p>' + msg + '</p></div>'; 
+					}
+					show_message($this, msg, !err);
+					if (!err) {
+						$form.find(".ucontact-message-container").addClass("ucontact-success-response")
+						//$form.find("input,button,textarea").attr("disabled", true);
 					}
 				},
 				error: function(error){
