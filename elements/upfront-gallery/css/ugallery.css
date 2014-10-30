@@ -749,3 +749,6 @@ figure.gallery-labels-figure {
 #settings .ugallery-settings .upfront-settings_panel_scroll {
 	max-height: 415px;
 }
+.ugallery_labels-enabled-0 {
+	display: none;
+}

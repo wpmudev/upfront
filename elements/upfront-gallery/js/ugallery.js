@@ -140,6 +140,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, 'settings:closed', function(e){
 			me.checkRegenerateThumbs(e);
+			if (this.property('labelFilters').length) {
+				Upfront.frontFunctions.galleryBindShuffle();
+			}
 		});
 
 		this.listenTo(this.model, 'thumbChange', function(){
@@ -200,20 +203,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	updateShowFilters: function() {
-		var html,
-			props;
-
 		if (this.property('labelFilters')[0] === 'true') {
-			html = '<div class="ugallery_labels">'; // It is impossible to extract and render from gallery template so handcoded this
-			props = this.getPropertiesForTemplate();
-			_.each(props.labels, function(label, index) {
-				html += '	<a href="#" class="ugallery_label_filter ' + (index === 0 ? 'filter_selected' : '') +
-					'" rel="label_' + label.id + '">' + label.text + '</a>';
-			});
-			html += '</div>';
-			this.$el.find('.ugallery').prepend(html);
+			this.$el.find('.ugallery_labels').show();
+			Upfront.frontFunctions.galleryBindShuffle();
 		} else {
-			this.$el.find('.ugallery_labels').remove();
+			this.$el.find('.ugallery_labels').hide();
 		}
 
 	},
