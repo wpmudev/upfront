@@ -911,6 +911,13 @@ div.uimage-controls i.upfront-icon:before {
 	left: 0;
 }
 
+.uimage-fill_middle .uimage-caption-cover,
+.uimage-fill_middle .redactor_box,
+.uimage-fill .uimage-caption-cover,
+.uimage-fill .redactor_box {
+	width: 100%;
+}
+
 .uimage-fill .redactor_box,
 .uimage-fill_middle .redactor_box,
 .uimage-fill_bottom .redactor_box{
@@ -1115,6 +1122,7 @@ div.uimage-controls i.upfront-icon:before {
 	right: auto;
 	left: auto;
 	bottom: auto;
+	width: 100%;
 }
 
 .upfront-image-container + .redactor_box,
