@@ -1578,10 +1578,13 @@ define([
 				this.model.get('modules').each(function(module){
 					var module_view = Upfront.data.module_views ? Upfront.data.module_views[module.cid] : false;
 					if ( module_view ) {
-						if ( enable )
+						if ( enable ) {
 							module_view.enable_interaction(true);
-						else
 							module_view.disable_interaction(true, false, true, true, true);
+						}
+						else {
+							module_view.disable_interaction(true, false, false, false, true);
+						}
 					}
 				});
 			},
@@ -1662,7 +1665,7 @@ define([
 				this.model.each(function (module) {
 					me.render_module(module);
 				});
-				this.fix_flexbox_clear(this.$el);
+				this.apply_flexbox_clear();
 				Upfront.Events.trigger("entity:modules:after_render", this, this.model);
 			},
 			render_module: function (module, options) {
@@ -1711,6 +1714,9 @@ define([
 							else
 								$(wrapper_el).prepend(local_view.el);
 						}
+						else if ( index === -1 ) {
+							$(wrapper_el).prepend(local_view.el);
+						}
 						else {
 							$(wrapper_el).append(local_view.el);
 						}
@@ -1743,7 +1749,7 @@ define([
 			on_add: function (model, collection, options) {
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model, options);
-				this.fix_flexbox_clear(this.$el);
+				this.apply_flexbox_clear();
 				Upfront.Events.trigger("entity:added:after");
 			},
 			on_remove: function (model) {
@@ -1765,13 +1771,14 @@ define([
 				}
 			},
 			on_after_layout_render: function () {
-				this.fix_flexbox_clear(this.$el);
+				this.apply_flexbox_clear();
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_flexbox_clear);
 			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
 			},
 			on_change_breakpoint: function (breakpoint) {
+				var me = this;
 				if ( !breakpoint.default ){
 					var ed = Upfront.Behaviors.GridEditor,
 						is_group = ( typeof this.group_view != 'undefined' ),
@@ -1779,6 +1786,8 @@ define([
 						col = Math.round( ( is_group ? this.group_view.$el : this.region_view.$el ).width() / ed.grid.column_width );
 					ed.adapt_to_breakpoint(this.model, wrappers, breakpoint.id, col);
 				}
+				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
+				setTimeout(function(){ me.apply_flexbox_clear(); }, 1000);
 			},
 			remove: function() {
 				var me = this;
