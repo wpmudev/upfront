@@ -3,10 +3,10 @@ define(function() {
 
 	var ThumbnailFields = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'ugallery-thumbnail-fields',
-		initialize: function(){
+
+		initialize: function(options) {
 			var me = this,
-				fields = Upfront.Views.Editor.Field
-			;
+				fields = Upfront.Views.Editor.Field;
 
 			this.fields = _([
 				new fields.Checkboxes({
@@ -17,7 +17,10 @@ define(function() {
 							value: 'true',
 							label: l10n.panel.no_padding
 						}
-					]
+					],
+					change: function(value) {
+						options.parent.updateProperty(this.options.property, value);
+					}
 				}),
 				new fields.Radios({
 					model: this.model,

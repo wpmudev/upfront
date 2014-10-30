@@ -4293,18 +4293,25 @@ var Field_ToggleableText = Field_Text.extend({
 		selected_state: 'checked',
 		render: function () {
 			var me = this;
+
 			this.$el.html('');
-			if ( this.label )
+
+			if ( this.label ) {
 				this.$el.append(this.get_label_html());
+			}
+
 			this.$el.append(this.get_field_html());
+
 			this.$el.on('change', '.upfront-field-multiple input', function(){
 				me.$el.find('.upfront-field-multiple').each(function(){
-					if ( $(this).find('input:checked').size() > 0 )
+					if ( $(this).find('input:checked').size() > 0 ) {
 						$(this).addClass('upfront-field-multiple-selected');
-					else
+					} else {
 						$(this).removeClass('upfront-field-multiple-selected');
+					}
 				});
-				me.trigger('changed');
+
+				me.trigger('changed', me.get_value());
 			});
 
 			this.trigger('rendered');

@@ -151,19 +151,75 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				});
 		});
 
-		this.listenTo(this.model, 'no_padding_change', function(){
-			me.calculateMargins();
-			if (this.property('no_padding')[0] === 'true') {
-				me.$el.addClass('no_padding');
-			} else {
-				me.$el.removeClass('no_padding');
-			}
+		this.listenTo(this.model, 'change:no_padding', function() {
+			me.updatePadding();
+		});
+
+		this.listenTo(this.model, 'change:labelFilters', function() {
+			me.updateShowFilters();
+		});
+
+		this.listenTo(this.model, 'change:captionWhen', function() {
+			me.updateCaptionWhen();
+		});
+
+		this.listenTo(this.model, 'change:captionPosition', function() {
+			me.updateCaptionPosition();
 		});
 
 		if (this.property('status') !== 'ok' || !this.images.length) {
 			this.property('has_settings', 0);
 		}
 	},
+
+	/****************************************************/
+	/*          Settings change live callbacks          */
+	/****************************************************/
+	updateCaptionPosition: function() {
+		this.$el.find('.ugallery-thumb-title')
+			.removeClass('ugallery-caption-over ugallery-caption-below')
+			.addClass('ugallery-caption-' + this.property('captionPosition'));
+	},
+
+	updateCaptionWhen: function() {
+		var classes = 'ugallery_caption_never ugallery_caption_always ugallery_caption_hover ugallery-caption-never ugallery-caption-always ugallery-caption-hover';
+
+		this.$el.find('.ugallery_item, .ugallery-thumb-title').removeClass(classes);
+
+		this.$el.find('.ugallery_item').addClass('ugallery_caption_' + this.property('captionWhen'));
+		this.$el.find('.ugallery-thumb-title').addClass('ugallery-caption-' + this.property('captionWhen'));
+	},
+
+	updatePadding: function() {
+		this.calculateMargins();
+		if (this.property('no_padding')[0] === 'true') {
+			this.$el.addClass('no_padding');
+		} else {
+			this.$el.removeClass('no_padding');
+		}
+	},
+
+	updateShowFilters: function() {
+		var html,
+			props;
+
+		if (this.property('labelFilters')[0] === 'true') {
+			html = '<div class="ugallery_labels">'; // It is impossible to extract and render from gallery template so handcoded this
+			props = this.getPropertiesForTemplate();
+			_.each(props.labels, function(label, index) {
+				html += '	<a href="#" class="ugallery_label_filter ' + (index === 0 ? 'filter_selected' : '') +
+					'" rel="label_' + label.id + '">' + label.text + '</a>';
+			});
+			html += '</div>';
+			this.$el.find('.ugallery').prepend(html);
+		} else {
+			this.$el.find('.ugallery_labels').remove();
+		}
+
+	},
+	/****************************************************/
+	/*        End settings change live callbacks        */
+	/****************************************************/
 
 	selectItem: function(e) {
 		var item = $(e.target).hasClass('gallery_item') ? $(e.target) : $(e.target).closest('.ugallery_item');
@@ -397,7 +453,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.openLightbox(e, true);
 	},
 
-	get_content_markup: function() {
+	getPropertiesForTemplate: function() {
 		var props = this.extract_properties();
 
 		props.imagesLength = props.images.length;
@@ -413,7 +469,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			props.no_padding = ['false'];
 		}
 
-		return this.tpl(props);
+		return props;
+	},
+
+	get_content_markup: function() {
+		return this.tpl(this.getPropertiesForTemplate());
 	},
 
 	on_render: function() {
