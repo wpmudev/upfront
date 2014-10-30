@@ -534,9 +534,9 @@ div.ugallery-magnific-labels {
 	font-size: 13px;
 	line-height: 1.2em;
 	min-width: 500px;
-	max-width: 500px;
-	position: relative;
-	margin: 40px auto -23px;
+	width: 100%;
+	position: absolute;
+	margin: 0;
 }
 
 
@@ -722,4 +722,13 @@ button.mfp-close {
 
 .ugallery-in-editor .ugallery-image-wrapper:hover .remove-image {
 	display: block;
+}
+
+figure.gallery-labels-figure img.mfp-img {
+	padding: 0;
+}
+
+figure.gallery-labels-figure {
+	margin: 0;
+	min-width: 500px;
 }
