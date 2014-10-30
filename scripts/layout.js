@@ -41,7 +41,10 @@ jQuery(document).ready(function($){
 				if ( src && before_src != src && $(this).hasClass('upfront-image-lazy') )
 					$(this).removeClass('upfront-image-lazy-loaded');
 			}
-			else if ( type != 'color' ) {
+			else if ( type == 'color' ) {
+				$(this).css('background-image', 'none');
+			}
+			else {
 				$(this).css('background-image', 'none');
 				$(this).find('> .upfront-output-bg-'+breakpoint).each(function(){
 					if ( $(this).is('.upfront-output-bg-video') && $(this).children().length == 1 )
