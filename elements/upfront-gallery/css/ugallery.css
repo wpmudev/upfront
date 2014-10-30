@@ -746,3 +746,6 @@ figure.gallery-labels-figure {
 .ugallery-caption-over {
 	box-sizing: border-box;
 }
+#settings .ugallery-settings .upfront-settings_panel_scroll {
+	max-height: 415px;
+}
