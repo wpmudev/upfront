@@ -33,7 +33,7 @@ abstract class Upfront_EntityResolver {
 	public static function get_entity_cascade ($query=false) {
 		$query = self::_get_query($query);
 
-		if ($query->post_count <= 1 && !$query->tax_query) return self::resolve_singular_entity($query/*, $scope*/);
+		if ($query->post_count <= 1 && !$query->tax_query) return self::resolve_singular_entity($query);
 		else return self::resolve_archive_entity($query);
 	}
 
@@ -88,10 +88,13 @@ abstract class Upfront_EntityResolver {
 			// Next, author archives
 			$wp_entity = self::_to_entity('author', $query->get('author'));
 
-		} else if (!empty($query->is_home)) {
-
-			// Lastly, home page
+		} else if (!empty($query->is_home) && 'posts' === get_option('show_on_front')) {
+			// Home page (posts)
 			$wp_entity = self::_to_entity('home');
+
+		} else if (is_front_page() && 'posts' !== get_option('show_on_front')) {
+			// Lastly, home page (singular page)
+			return self::resolve_singular_entity($query);
 		}
 
 		$wp_entity['type'] = 'archive';
