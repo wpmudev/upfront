@@ -27,7 +27,7 @@ var UsearchView = Upfront.Views.ObjectView.extend({
 
 	tpl: Upfront.Util.template(tplSource),
 	cssSelectors: {
-		'.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.upfront-search': {label: l10n.css.container_label, info: l10n.css.container_info},
 		'input.search-field': {label: l10n.css.field_label, info: l10n.css.field_info},
 		'button.search-button': {label: l10n.css.button_label, info: l10n.css.button_info}
 	},
