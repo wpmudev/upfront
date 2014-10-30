@@ -732,3 +732,14 @@ figure.gallery-labels-figure {
 	margin: 0;
 	min-width: 500px;
 }
+.ugallery-controls {
+	bottom: 0;
+	left: 0;
+	width: auto;
+}
+.ugallery-controls > .upfront-inline-panel {
+	position: relative;
+}
+.ugallery-controls .upfront-inline-panel-item .upfront-icon {
+	padding: 4px 4px 2px;
+}
