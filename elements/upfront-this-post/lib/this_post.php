@@ -307,10 +307,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
-				$tpl = $templates[$o['slug']];
+				$tpl = !empty($templates[$o['slug']]) ? $templates[$o['slug']] : false;
 				$markups = self::get_post_part($o['slug'], $opts, $tpl);
 
-				$layout['wrappers'][$i]['objects'][$k]['markup'] = $markups['tpl'];
+				$layout['wrappers'][$i]['objects'][$k]['markup'] = !empty($markups['tpl']) ? $markups['tpl'] : false;
 				$layout['extraClasses'][$o['slug']] = isset($opts['extraClasses']) ? $opts['extraClasses'] : '';
 
 			    $part_style_class = self::_part_style_class( $options,  $o["slug"] );

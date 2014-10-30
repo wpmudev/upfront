@@ -708,7 +708,7 @@ class Upfront_Region extends Upfront_Container {
 		}
 
 		if ( !empty($this->_data['type']) && 'fixed' === $this->_data['type'] ) {
-			$restrict = $this->_data['restrict_to_container'];
+			$restrict = !empty($this->_data['restrict_to_container']) ? $this->_data['restrict_to_container'] : false;
 			$top = $this->_get_property('top');
 			$bottom = $this->_get_property('bottom');
 			$left = $this->_get_property('left');
