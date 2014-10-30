@@ -743,3 +743,6 @@ figure.gallery-labels-figure {
 .ugallery-controls .upfront-inline-panel-item .upfront-icon {
 	padding: 4px 4px 2px;
 }
+.ugallery-caption-over {
+	box-sizing: border-box;
+}
