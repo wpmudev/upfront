@@ -31,10 +31,19 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_filter('upfront-thx-theme_exports_images', array($this, 'theme_exports_images'));
 
+		add_action('after_switch_theme', array($this, 'initial_theme_setup'));
+
 		$this->_set_up_required_pages_from_settings();
 
 		$this->checkMenusExist();
 		$this->initialize();
+	}
+
+	/**
+	 * Make sure this runs on initial theme setup
+	 */
+	public function initial_theme_setup () {
+		update_option('show_on_front', 'posts'); // Make sure we're showing our own archive page as home.
 	}
 
 	/**
