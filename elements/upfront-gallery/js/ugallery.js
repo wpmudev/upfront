@@ -601,7 +601,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			var safetyPixel = idx % columns === 0 ? 1 : 0, //This pixel asure we are not exceding container width
 				extra = columns - (idx % columns) < remaining ? 1 : 0
 			;
-			$(item).css('margin-right', (idx + 1) % columns ? margin + extra - safetyPixel : 0);
+			$(item).css('margin-right', (idx + 1) % (columns+1) ? margin + extra - safetyPixel : 0);
 		});
 
 		return 1;
