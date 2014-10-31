@@ -6280,7 +6280,7 @@ var CSSEditor = Backbone.View.extend({
 			_.each(individual_selectors, function (sel) {
 				sel = $.trim(sel);
 				var clean_selector = sel.replace(/:[^\s]+/, ''), // Clean up states states such as :hover, so as to not mess up the matching
-					is_container = !!$(selector + clean_selector).closest('#' + me.element_id).length,
+					is_container = clean_selector[0] === '@' || !!$(selector + clean_selector).closest('#' + me.element_id).length,
 					spacer = is_container
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
