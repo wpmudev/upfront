@@ -1,5 +1,5 @@
-<div class="ugallery ugallery_publish <?php if($in_editor) { ?>ugallery-in-editor<?php } ?> <?php if($no_padding[0] === 'true') { ?>no_padding<?php } ?>" data-no-padding="<?php echo $no_padding[0] ?>">
-<?php if ($labelFilters['length'] || $in_editor){ ?>
+<div class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?> <?php if($no_padding[0] === 'true') { ?>no_padding<?php } ?>" data-no-padding="<?php echo $no_padding[0] ?>">
+<?php if ($labelFilters['length'] || !empty($in_editor)){ ?>
 <div class="ugallery_labels <?php if($in_editor) { ?>ugallery_labels-enabled-<?php echo $labelFilters['length'] ?><?php } ?>">
 	<?php for($i=0; $i<$labels_length; $i++) { ?>
 		<a href="#" class="ugallery_label_filter <?php echo $i == 0 ? 'filter_selected' : '' ?>" rel="label_<?php echo $labels[$i]['id'] ?>"><?php echo $labels[$i]['text'] ?></a>
@@ -7,13 +7,13 @@
 	</div>
 <?php } ?>
 <?php if($imagesLength){ ?>
-	<div class="ugallery_items <?php echo $labelFilters['length'] || $in_editor ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
+	<div class="ugallery_items <?php echo $labelFilters['length'] || !empty($in_editor) ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
 	<div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : '' ?>" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
 			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i]['loading']) && $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">
-				<?php if($in_editor) { ?>
+				<?php if(!empty($in_editor)) { ?>
 				<i class="remove-image"></i>
 				<?php } ?>
 			</div>
