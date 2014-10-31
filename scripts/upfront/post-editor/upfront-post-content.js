@@ -1122,11 +1122,11 @@ var EditionBar = Backbone.View.extend({
 	},
 
 	publish: function(e){
-		if(this.currentStatus == 'draft')
-			return this.saveDraft(e);
+		/*
+		if(this.currentStatus == 'draft') return this.saveDraft(e); // Why? This is just asking for problems...
+		*/
 
 		e.preventDefault();
-
 		this.destroy();
 
 		this.post.trigger('editor:publish');
