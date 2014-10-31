@@ -44,7 +44,7 @@ jQuery(function($){
 				if (no_padding) {
 					extra = 0;
 				}
-				$this.css('margin-right', (item_index + 1) % (columns+1) ? margin + extra : 0);
+				$this.css('margin-right', (item_index + 1) % columns ? margin + extra : 0);
 			}
 		});
 	};
