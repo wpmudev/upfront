@@ -325,7 +325,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'wtf' => __('Una etiqueta', 'upfront'),
 				'add_new_label' => __('Add a new label', 'upfront'),
 				'label_sorting_nag' => __('Turn on \'Label Sorting\' in the settings to display gallery labels.', 'upfront'),
-				'add_label' => __('Add label', 'upfront'),
+				'add_label' => __('Add', 'upfront'),
 			),
 		);
 		return !empty($key)

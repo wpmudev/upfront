@@ -6,6 +6,7 @@ define([
 ], function (l10n, Control, panelControlTemplate) {
 	var DialogControl = Control.extend({
 		multiControl: true,
+		hideOnClick: true,
 
 		events: {
 			'click': 'onClickControl',
@@ -28,7 +29,7 @@ define([
 
 			if(!this.panel){
 				//this is like initialize
-				panel = $(_.template(panelControlTemplate, {l10n: l10n.template}));
+				panel = $(_.template(panelControlTemplate, {l10n: l10n.template, hideOkButton: this.hideOkButton}));
 				panel.addClass('inline-panel-control-dialog');
 				this.$el.append(panel);
 				panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
@@ -48,7 +49,7 @@ define([
 		onClickControl: function(e){
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
 
-			if(!$(e.target).hasClass('upfront-icon')) {
+			if(!$(e.target).hasClass('upfront-icon') || $(e.target).hasClass('upfront-icon-media-label-delete')) {
 				return;
 			}
 

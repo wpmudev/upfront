@@ -1,3 +1,8 @@
-{[ _.each(labels, function(label){ ]}
-	<a href="#remove" title="Remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{label.id}}">{{label.text}}</a>
-{[ }) ]}
+<span class="existing-labels-title">Image Labels</span>
+{[ if (labels.length) { ]}
+	{[ _.each(labels, function(label){ ]}
+		<a href="#remove" title="Remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{label.id}}">{{label.text}}</a>
+	{[ }) ]}
+{[ } else { ]}
+	<span class='no-labels-notice'>There are currently no labels added to this image...</span>
+{[ } ]}

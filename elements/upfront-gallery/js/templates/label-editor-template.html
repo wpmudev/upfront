@@ -1,18 +1,13 @@
 <div class="ugallery-magnific-labels upfront-ui">
-	<div class="ugallery-magnific-panel closed upfront-media-controls">
-		<div class="ugallery-magnific-info">{{ l10n.label_sorting_nag }}</div>
+	<div class="ugallery-magnific-panel upfront-media-controls">
 		<div class="ugallery-magnific-wrapper existing_labels">
 			{{labels}}
-			<div class="ugallery-magnific-add">
-
-				<div class="ugallery-magnific-addform label_selector">
-					<input type="hidden" id="ugallery-image-id" value="{{imageId}}">
-					<input type="text" id="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="{{ l10n.add_label }}">
-					<div class="labels_list"></div>
-				</div>
-				<div class="ugallery-magnific-addbutton">{{ l10n.add_label }}</div>
+		</div>
+		<div class="ugallery-magnific-add">
+			<div class="ugallery-magnific-addform label_selector">
+				<input type="text" class="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="{{ l10n.add_label }}"><div class="ugallery-magnific-addbutton">{{ l10n.add_label }}</div>
+				<div class="labels_list"></div>
 			</div>
 		</div>
 	</div>
-	<div class="ugallery-magnific-toggle"></div>
 </div>

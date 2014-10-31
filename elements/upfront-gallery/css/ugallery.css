@@ -284,7 +284,6 @@ div.ugallery-label-selector {
 	position: relative;
 }
 .label_selector .labels_list {
-	position: absolute;
 	z-index: 30;
 	width: 100%;
 	box-shadow: 0px 3px 3px rgba(0,0,0,.3);
@@ -432,8 +431,8 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-ui .upfront-icon-region-edit-labels:before {
 	background-position: -482px -231px;
 }
-.upfront-ui .upfront-icon-region-edit-labels:hover:before {
-	background-position: -482px -231px;
+.upfront-ui .upfront-icon-region-edit-labels-no-labels:before {
+	background-position: -479px -201px;
 }
 
 
@@ -507,23 +506,6 @@ a.ugallery-linked_page:hover:before {
 	text-align: center;
 }
 
-.ugallery-nolabels-alert{
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	background: rgba(31, 48, 63, 0.8) url(../../../img/uf-core-el-sprite.svg) no-repeat -475px -197px;
-	z-index: 1;
-	width: 30px;
-	height: 30px;
-	cursor: pointer;
-	opacity: .8;
-}
-
-.ugallery-nolabels-alert:hover{
-	opacity:1;
-}
-
-
 /* Lightbox labels */
 .mfp-figure figure {
 	position: relative;
@@ -533,9 +515,7 @@ div.ugallery-magnific-labels {
 	color: #A1C5E6;
 	font-size: 13px;
 	line-height: 1.2em;
-	min-width: 500px;
-	width: 100%;
-	position: absolute;
+	width: 200px;
 	margin: 0;
 }
 
@@ -585,10 +565,6 @@ div.ugallery-magnific-labels {
 	opacity: 1;
 }
 
-div.ugallery-magnific-addform {
-	display: none;
-}
-
 .upfront-ui .ugallery-magnific-info {
 	float:right;
 	width: 220px;
@@ -607,45 +583,35 @@ div.ugallery-magnific-info:before {
 }
 
 div.ugallery-magnific-wrapper.existing_labels  {
-	margin: 0 230px 0 0;
-	padding: 10px;
+	margin: 0;
+	padding: 5px;
 	border: 0;
+	background: #334d66;
 }
 
 .ugallery-magnific-wrapper div{
 	display: inline-block;
 }
 
-.ugallery-magnific-wrapper div.ugallery-magnific-addform {
-	display: none;
-}
-
-
 .upfront-ui .ugallery-magnific-addbutton {
 	cursor: pointer;
 	font-size: 16px;
+	background: #00ce8d;
+	color: white;
+	text-align: center;
+	width: 60px;
+	line-height: 34px;
+	display: inline-block;
+	height: 34px;
 }
 
-.upfront-ui .ugallery-magnific-addbutton:hover {
-	color: #1fcd8f;
-}
-
-.upfront-ui .ugallery-magnific-addbutton:before {
-	content: '+';
-	font-weight: bold;
-	color: #1fcd8f;
-	margin-right: 5px;
-}
-
-input#ugallery-addlabels {
-	background: #efefef;
-	padding: 0px 10px;
+input.ugallery-addlabels {
+	height: 31px;
 	font-size: 12px;
-	width: 120px;
-}
-
-input#ugallery-addlabels:focus {
-	background: #fff;
+	padding: 0 10px;
+	background: #273949;
+	width: 140px;
+	line-height: 32px;
 }
 
 .ugallery-magnific-addform ul{
@@ -655,7 +621,7 @@ input#ugallery-addlabels:focus {
 	font-size: 14px;
 }
 
-.ugallery-magnific-addform label{
+.uimage-control-panel-content .ugallery-magnific-addform label{
 	padding: 5px 10px;
 	display: block;
 	color: #335B80;
@@ -751,4 +717,25 @@ figure.gallery-labels-figure {
 }
 .ugallery_labels-enabled-0 {
 	display: none;
+}
+
+.upfront-icon-region-edit-labels-no-labels + .upfront-ui.uimage-control-panel,
+.upfront-icon-region-edit-labels + .upfront-ui.uimage-control-panel {
+	padding: 0;
+}
+
+.ugallery-magnific-panel.upfront-media-controls .existing_labels a {
+	position: relative;
+	padding: 0 17px 0 4px;
+	line-height: 17px;
+}
+.ugallery-magnific-panel.upfront-media-controls .existing_labels a:before {
+	position: absolute;
+	right: 5px;
+}
+
+.upfront-ui .existing-labels-title {
+	display: block;
+	margin-bottom: 5px;
+	font-size: 16px;
 }
