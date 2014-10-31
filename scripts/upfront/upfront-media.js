@@ -35,7 +35,11 @@ define(function() {
 			});
 			selected_labels = _.intersection.apply(this, _(tmp_shared).values());
 			known_labels.each(function (label) {
-				if (selected_labels.indexOf(label.get("value")) >= 0) shared_labels.push(label);
+				if (
+					selected_labels.indexOf(label.get("value")) >= 0
+					||
+					selected_labels.indexOf(parseInt(label.get("value"), 10)) >= 0
+				) shared_labels.push(label);
 			});
 			return shared_labels;
 		},
