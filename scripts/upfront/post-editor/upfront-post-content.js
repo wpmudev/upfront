@@ -602,8 +602,8 @@ var PostContentEditor = Backbone.View.extend({
 			me.listenTo(me.bar, e, function(){
 				var results = {};
 				if(e=='publish' || e=='draft'){
-					if(me.parts.titles)
-						results.title = $.trim(me.parts.titles.html());
+					//if(me.parts.titles) results.title = $.trim(me.parts.titles.html());
+					if(me.parts.titles) results.title = $.trim(me.parts.titles.text());
 					if(me.currentContent){
 						var editor = $(me.currentContent).data('ueditor');
 						results.content = $.trim(editor.getValue());
