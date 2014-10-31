@@ -1,0 +1,5 @@
+<ul {{labels.length ? '' : 'class="empty"'}}>
+{[ _.each(labels, function(label){ ]}
+	<li><label rel="{{label.id}}">{{label.text}}</label></li>
+{[ }) ]}
+</ul>

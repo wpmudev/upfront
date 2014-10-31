@@ -93,46 +93,4 @@
 </div>
 </script>
 
-<script type="text/template" id="labels-tpl">
-	{[ _.each(labels, function(label){ ]}
-		<a href="#remove" title="Remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{label.id}}">{{label.text}}</a>
-	{[ }) ]}
-</script>
-
-<script type="text/template" id="labels-selection-tpl">
-	<ul {{labels.length ? '' : 'class="empty"'}}>
-	{[ _.each(labels, function(label){ ]}
-		<li><label rel="{{label.id}}">{{label.text}}</label></li>
-	{[ }) ]}
-	</ul>
-</script>
-
-<script type="text/template" id="magnific-labels-tpl">
-	<div class="ugallery-magnific-labels upfront-ui">
-		<div class="ugallery-magnific-panel closed upfront-media-controls">
-			<div class="ugallery-magnific-info">{{ l10n.label_sorting_nag }}</div>
-			<div class="ugallery-magnific-wrapper existing_labels">
-				{{labels}}
-				<div class="ugallery-magnific-add">
-
-					<div class="ugallery-magnific-addform label_selector">
-						<input type="hidden" id="ugallery-image-id" value="{{imageId}}">
-						<input type="text" id="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="{{ l10n.add_label }}">
-						<div class="labels_list"></div>
-					</div>
-					<div class="ugallery-magnific-addbutton">{{ l10n.add_label }}</div>
-				</div>
-			</div>
-		</div>
-		<div class="ugallery-magnific-toggle"></div>
-	</div>
-
-</script>
-
-<!--
-{[ _.each(labels, function(label){ ]}
-					<div><label rel="{{label.id}}">{{label.text}}</label></div>
-					{[ }) ]}
-					-->
-
 </div>
