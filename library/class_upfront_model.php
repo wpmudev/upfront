@@ -123,7 +123,7 @@ abstract class Upfront_EntityResolver {
 
 		$urlParts = explode('?', $url);
 
-		if($urlParts > 1){
+		if(count($urlParts) > 1){
 			parse_str($urlParts[1], $_GET);
 		}
 
