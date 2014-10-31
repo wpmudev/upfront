@@ -56,6 +56,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		$notices = array_filter(apply_filters('upfront-admin-admin_notices', array(
 			$this->_notify_about_parent_deletion_attempt(),
 			$this->_permalink_setup_check_notice(),
+			$this->_direct_core_activation_notice(),
 		)));
 		if (empty($notices)) return false;
 		echo '<div class="error"><p>' .
@@ -107,6 +108,19 @@ class Upfront_Server_Admin implements IUpfront_Server {
 			admin_url('/options-permalink.php')
 		);
 		return $msg;
+	}
+
+	/**
+	 * Check if the active theme is Upfront core itself and cry out if it is.
+	 */
+	private function _direct_core_activation_notice () {
+		$current = wp_get_theme();
+		if ('upfront' !== $current->template) return false; // Don't deal with non-upfront themes.
+
+		$parent = $current->parent();
+		if (!empty($parent)) return false; // Don't deal with child themes.
+		
+		return __('Please, activate one of the Upfront child themes.', 'upfront');
 	}
 
 }
