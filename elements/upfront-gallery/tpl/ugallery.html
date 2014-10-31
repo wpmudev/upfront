@@ -17,7 +17,7 @@
 				<i class="remove-image"></i>
 				<?php } ?>
 			</div>
-			<?php if($captionWhen != 'never' || $in_editor) { ?>
+			<?php if($captionWhen != 'never' || !empty($in_editor)) { ?>
 			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?> ugallery-caption-<?php echo $captionPosition ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			<?php if($linkTo == 'image'){ ?>
