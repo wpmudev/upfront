@@ -30,9 +30,10 @@ var MenuItemView = Backbone.View.extend({
 	removeContexts: true,
 	events: {
 		'click i.delete_menu_item' : 'deleteMenuItem',
-		'click i.edit_link' : 'editLink',
+		//'click i.edit_link' : 'editLink',
 		'click i.navigation-add-item': 'addMenuItem',
 		"contextmenu a.menu_item": "on_context_menu",
+		'click i.visit_link': 'visitLink',
 	},
 	initialize: function(options) {
 		this.parent_view = options.parent_view;
@@ -47,9 +48,41 @@ var MenuItemView = Backbone.View.extend({
 				this.menuitems = _([
 					new Upfront.Views.ContextMenuItem({
 						get_label: function() {
-							return l10n.visit_url;
+							var linktype = me.guessLinkType();
+							if(linktype == 'lightbox')
+								return 'Open Lightbox';
+							else if(linktype == 'anchor')
+								return 'Scroll to Anchor';
+							else if(linktype == 'post')
+								return 'Visit Post/Page';
+							else
+								return 'Visit Link';
+
+							/*
+							if(me.model['menu-item-url'].indexOf('#') > -1 && me.getCleanurl(me.model['menu-item-url']) == me.getCleanurl()) {
+								if(me.model['menu-item-url'].indexOf('#ltb-') > -1)	 {
+									var regions = Upfront.Application.layout.get('regions');
+									region = regions ? regions.get_by_name(me.getUrlanchor(me.model['menu-item-url'])) : false;
+									if(region){
+										return 'Open Lightbox';
+										
+									}
+								} else {
+									return 'Scroll to Anchor';
+									
+								}
+							} else
+								return 'Visit Link';
+							*/
+						
+
+
+
+						//	return l10n.visit_url;
 						},
 						action: function() {
+							me.visitLink();
+							/*
 							if(me.model['menu-item-url'].indexOf('#') > -1 && me.getCleanurl(me.model['menu-item-url']) == me.getCleanurl()) {
 								if(me.model['menu-item-url'].indexOf('#ltb-') > -1)	 {
 									var regions = Upfront.Application.layout.get('regions');
@@ -70,6 +103,7 @@ var MenuItemView = Backbone.View.extend({
 							} else if(me.model['menu-item-target'] == '') {
 								window.location.href = me.model['menu-item-url'].replace('&editmode=true', '').replace('editmode=true', '')+((me.model['menu-item-url'].indexOf('?')>0)?'&editmode=true':'?editmode=true');
 							} else window.open(me.model['menu-item-url']);
+							*/
 						}
 					}),
 					new Upfront.Views.ContextMenuItem({
@@ -77,13 +111,13 @@ var MenuItemView = Backbone.View.extend({
 							return l10n.edit_url;
 						},
 						action: function() {
-							if($(me.event.target).hasClass('ueditor-placeholder'))
+							/*if($(me.event.target).hasClass('ueditor-placeholder'))
 								$(me.event.target).siblings('a.menu_item').addClass('new_menu_item');
 							else
 								$(me.event.target).addClass('new_menu_item');
-
+							*/
 			 				me.removeContexts = false;
-						 	me.parent_view.editMenuItem(me.$el.find('a.new_menu_item'));
+						 	me.parent_view.editMenuItem(me.$el.find('a.menu_item'));//'a.new_menu_item'));
 						}
 					}),
 					new Upfront.Views.ContextMenuItem({
@@ -168,14 +202,56 @@ var MenuItemView = Backbone.View.extend({
 
 		if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
-		content = content+'" >'+this.model['menu-item-title']+'</a><i class="edit_link">o</i><i class="delete_menu_item">x</i>';
+		content = content+'" >'+this.model['menu-item-title']+'</a><i class="visit_link visit_link_'+this.guessLinkType()+'"></i><i class="delete_menu_item">x</i>';
 		$(this.el).html(content);
 		$(this.el).data('backboneview', me).addClass('menu-item');
 		if(me.newitem) $(this.el).addClass('new_menu_item');
 
 		return this;
 	},
+	updateLinkType: function() {
+		this.$el.find('i.visit_link').attr('class', 'visit_link visit_link_'+this.guessLinkType());
+	},
+	guessLinkType: function(){
+		var url = this.model['menu-item-url'];
 
+
+		if(!$.trim(url) || $.trim(url) == '#')
+			return 'none';
+		if(url.length && url[0] == '#')
+			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+		if(url.substring(0, location.origin.length) == location.origin)
+			return 'post';
+
+		return 'external';
+
+
+	},
+	visitLink: function() {
+		var me = this;
+		var linktype = me.guessLinkType();
+		if(linktype == 'lightbox') {
+			var regions = Upfront.Application.layout.get('regions');
+			region = regions ? regions.get_by_name(me.getUrlanchor(me.model['menu-item-url'])) : false;
+			if(region){
+				//hide other lightboxes
+				_.each(regions.models, function(model) {
+					if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+				});
+				var regionview = Upfront.data.region_views[region.cid];
+				regionview.show();
+			}
+		}
+		else if(linktype == 'anchor') {
+			var anchors = me.parent_view.get_anchors();
+			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(me.model['menu-item-url'])).offset().top},'slow');
+		}
+		else if(linktype == 'post')
+			window.location.href = me.model['menu-item-url'].replace('&editmode=true', '').replace('editmode=true', '')+((me.model['menu-item-url'].indexOf('?')>0)?'&editmode=true':'?editmode=true');
+		else
+			window.open(me.model['menu-item-url']);
+	},
 	createDropDown: function(e) {
 		var placeholder = $('<ul>').addClass('sub-menu').addClass('time_being_display');
 		$(e.target).closest('li').append(placeholder);
@@ -240,21 +316,13 @@ var MenuItemView = Backbone.View.extend({
 
 		this.linkPanel.delegateEvents();
 	},
+	/*
 	editLink: function(e) {
 		e.stopPropagation();
 		this.$el.find('a.menu_item').addClass('new_menu_item');
-/*
-		if(this.$el.closest('ul').hasClass('sub-menu')) {
-			this.contextmenuContext.push(this.$el.closest('ul').addClass('time_being_display'));
-			this.loadContexts(this.$el.closest('ul'));
-		}
 
-		
-
-		this.removeContexts = false;
-*/
 		this.parent_view.editMenuItem(this.$el.find('a.new_menu_item'));
-	},
+	},*/
 	createLinkPanel: function(){
 		var linkPanel = new Upfront.Views.Editor.LinkPanel({
 			theme: 'light',
@@ -264,7 +332,7 @@ var MenuItemView = Backbone.View.extend({
 		this.listenTo(linkPanel, 'link:ok', function(link){
 			var itemType = 'custom';
 
-			console.log('link ok');
+			//console.log('link ok');
 			this.model['menu-item-url'] = link.url;
 
 			if(link.type == 'entry'){
@@ -358,6 +426,8 @@ var MenuItemView = Backbone.View.extend({
 		if(typeof this.model['menu-item-db-id'] != 'undefined'){
 			postdata['menu-item-id'] = me.model['menu-item-db-id'];
 		}
+		
+		this.updateLinkType();
 
 		Upfront.Util.post(postdata)
 			.success(function (ret) {
@@ -555,6 +625,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 
+		/*
 		singleclickcount++;
 		console.log(singleclickcount);
 		if(singleclickcount == 1) {
@@ -595,6 +666,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 		if(singleclickcount > 2)
 			singleclickcount = 0;
+		*/
 	},
 	editMenuItem: function(e) {
 		this.editModeOn(e);
@@ -613,7 +685,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				disableLineBreak: true,
 				focus: true,
 				tabFocus: false,
-				airButtons: false,
+				//airButtons: false,
+				airButtons: ['upfrontLink'],
 				allowedTags: ['h5'],
 				placeholder: 'Link Name'
 			}).on('start', function(e) {
@@ -648,12 +721,20 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				}
 				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
-			}).on('blur', function() {
-				target.data('ueditor').stop();
-				target.closest('li').removeClass('edit_mode');
-				if(!target.hasClass('new_menu_item')) {
-					target.closest('li').data('backboneview').saveLink();
-				}
+			}).on('blur', function(e) {
+					var being_edited = false;
+					if(target.closest('li').data('backboneview').model['being-edited'])
+						being_edited = target.closest('li').data('backboneview').model['being-edited'];
+
+					if($(e.relatedTarget).closest('.redactor_toolbar').length > 0 || being_edited)
+						return;
+
+						target.data('ueditor').stop();
+
+					target.closest('li').removeClass('edit_mode');
+					if(!target.hasClass('new_menu_item')) {
+						target.closest('li').data('backboneview').saveLink();
+					}
 			}).on('stop', function() {
 				me.editModeOff();
 			});
@@ -691,6 +772,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 	},
 	onDeactivate: function() {
+		console.log('navigation has been deactivated');
 		this.$el.find('li.edit_mode a.menu_item').blur();
 		this.editModeOff();
 		this.$el.find('.time_being_display').removeClass('time_being_display');

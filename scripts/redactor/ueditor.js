@@ -1091,20 +1091,35 @@ RedactorPlugins.upfrontLink = {
 		},
 		open: function(e, redactor){
 			this.redactor = redactor;
-			var link = false;
+			var url = false;
 			if(redactor.$element.hasClass('upfront_cta'))
-				link = redactor.$element;
-			else
-				link = redactor.currentOrParentIs('A');
+				url = redactor.$element.attr('href');
+			else if(redactor.$element.hasClass('menu_item')) {
+				var menuitem = redactor.$element.closest('li').data('backboneview');
+				url = menuitem.model['menu-item-url'];
+				menuitem.model['being-edited'] = true;
+			}
+			else {
+				url = redactor.currentOrParentIs('A').attr('href');
+			}
 
-			if(link){
-				this.render({url: $(link).attr('href'), link: this.guessLinkType($(link).attr('href'))});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+			if(url){
+				this.render({url: url, link: this.guessLinkType(url)});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
 			}
 			else
 				this.render();
+			if(this.$el.find('.js-ulinkpanel-type:checked').length > 0)
+				this.$el.find('.js-ulinkpanel-type:checked').focus();
+			else
+				this.$el.find('.js-ulinkpanel-type:first').focus();
 		},
 		close: function(e, redactor){
 			this.redactor.selectionRemoveMarkers();
+
+			if(redactor.$element.hasClass('menu_item')) {
+				var menuitem = redactor.$element.closest('li').data('backboneview');
+				menuitem.model['being-edited'] = false;
+			}
 		},
 		unlink: function(e){
 			if(e)
@@ -1112,6 +1127,10 @@ RedactorPlugins.upfrontLink = {
 
 			if(this.redactor.$element.hasClass('upfront_cta'))
 				this.redactor.$element.attr('href', '#');
+			else if(this.redactor.$element.hasClass('menu_item')) {
+				var menuitem = this.redactor.$element.closest('li').data('backboneview');
+				menuitem.model['menu-item-url'] = '#';
+			}
 			else {
 		        var text = this.redactor.getSelectionHtml();
 		        if($.parseHTML(text).length > 1){// there is html inside
@@ -1120,11 +1139,23 @@ RedactorPlugins.upfrontLink = {
 		            this.redactor.execCommand('unlink');
 		        }
 			}
+
+			if(this.redactor.$element.hasClass('menu_item')) {
+				var menuitem = this.redactor.$element.closest('li').data('backboneview');
+				menuitem.model['being-edited'] = false;
+			}
+			this.redactor.$element.focus();
 		},
 		link: function(url, type){
 			if(url){
 				if(this.redactor.$element.hasClass('upfront_cta'))
 					this.redactor.$element.attr('href', url);
+				if(this.redactor.$element.hasClass('menu_item')) {
+
+					var menuitem = this.redactor.$element.closest('li').data('backboneview');
+
+					menuitem.model['menu-item-url'] = url;
+				}
 				else {
 					this.redactor.selectionRestore(true, false);
 	                var caption = this.redactor.getSelectionHtml();
@@ -1134,6 +1165,13 @@ RedactorPlugins.upfrontLink = {
 	                else	
 	                	this.redactor.execCommand("inserthtml", '<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
 				}
+			
+				this.redactor.$element.focus();
+			}
+
+			if(this.redactor.$element.hasClass('menu_item')) {
+				var menuitem = this.redactor.$element.closest('li').data('backboneview');
+				menuitem.model['being-edited'] = false;
 			}
 		},
 
@@ -1156,7 +1194,7 @@ RedactorPlugins.upfrontLink = {
 		},
 
 		guessLinkType: function(url){
-			if(!$.trim(url))
+			if(!$.trim(url) || $.trim(url) == '#')
 				return 'unlink';
 			if(url.length && url[0] == '#')
 				return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';

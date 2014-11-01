@@ -1,4 +1,5 @@
-div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item, div.upfront-navigation i.edit_link {
+div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item
+/*, div.upfront-navigation i.edit_link*/ {
 	display: none;
 	z-index:1;
 	cursor: pointer !important;
@@ -73,13 +74,13 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
 	background-position: -483px -171px;
 	background-image: url('../../../img/uf-core-el-sprite.svg');
 	position: absolute;
-	right: 4px;
+	left: 4px;
 	top: -8px;
 	cursor: pointer;
 	overflow: hidden;
 	line-height: 3em;
 }
-
+/*
 div.upfront-navigation.upfront-editable_entity ul.menu li i.edit_link {
 	width: 16px;
 	height: 16px;
@@ -92,7 +93,7 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.edit_link {
 	overflow: hidden;
 	line-height: 3em;
 }
-
+*/
 div.upfront-navigation.upfront-editable_entity ul.menu li:hover {
 	cursor: move;
 }
@@ -112,8 +113,9 @@ div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover 
 	border:1px #ddd dotted;
 
 }
-div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.delete_menu_item,
-div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.edit_link {
+div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.delete_menu_item
+,div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.visit_link
+/*,div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.edit_link*/ {
 	display:block;
 }
 
@@ -295,9 +297,9 @@ div.upfront-navigation div[data-style="burger"] i.navigation-add-item {
 div.upfront-navigation div[data-style="burger"] i.delete_menu_item  {
   right:100px !important
 }
-div.upfront-navigation div[data-style="burger"] i.edit_link  {
+/*div.upfront-navigation div[data-style="burger"] i.edit_link  {
   right:60px !important
-}
+}*/
 div.upfront-navigation div[data-style="burger"][data-aliment="left"] i.navigation-add-item,
 div.upfront-navigation div[data-style="burger"][data-aliment="center"] i.navigation-add-item {
   left:inherit !important;
