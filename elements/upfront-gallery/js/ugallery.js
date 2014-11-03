@@ -88,7 +88,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, 'entity:activated', this.closeTooltip);
 		this.listenTo(Upfront.Events, 'entity:deactivated', this.closeTooltip);
 		this.listenTo(Upfront.Events, 'entity:region:activated', this.closeTooltip);
-		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.calculateMargins);
+		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.rebindShuffle);
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
 		if (typeof ugalleries !== 'undefined' && ugalleries[elementId]) {
@@ -190,12 +190,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	updatePadding: function() {
-		this.calculateMargins();
-		if (this.property('no_padding')[0] === 'true') {
-			this.$el.addClass('no_padding');
-		} else {
-			this.$el.removeClass('no_padding');
-		}
+		this.render();
 	},
 
 	updateShowFilters: function() {
@@ -489,15 +484,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}
 		}
 
-		//Calculate margins now if it is possible
-		if (me.$el.closest('body').length) {
-			me.calculateMargins();
-		}
-
 		setTimeout(function() {
-			//And now too
-			me.calculateMargins();
-
+			me.rebindShuffle();
 			var items = me.$('.ugallery_item');
 			_.each(items, function(i) {
 				var item = $(i),
@@ -543,45 +531,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	onElementResizing: function(){
 		this.$('.ugallery_items').width($('html').find('.upfront-resize').width() - 30);
-		this.calculateMargins();
 	},
 
 	onElementResizeStop: function(){
 		this.render();
 	},
 
-	calculateMargins: function() {
-		var container = this.$('.ugallery_items').width(),
-			items = this.$('.ugallery_item'),
-			itemWidth = items.outerWidth(),
-			minMargin = 30,
-			columns = Math.floor(container / itemWidth),
-			margin, totalMargin, remaining
-		;
-
-		if (this.property('no_padding')[0] === 'true') {
-			_.each(items, function(item){
-				$(item).css('margin-right', 0);
-			});
-			return;
-		}
-
-		if(columns * itemWidth + (columns - 1 ) * minMargin > container) {
-			columns--;
-		}
-
-		totalMargin = container - (columns * itemWidth);
-		margin = Math.floor(totalMargin / (columns-1));
-		remaining = container - (columns * itemWidth + margin * (columns-1));
-
-		_.each(items, function(item, idx){
-			var safetyPixel = idx % columns === 0 ? 1 : 0, //This pixel asure we are not exceding container width
-				extra = columns - (idx % columns) < remaining ? 1 : 0
-			;
-			$(item).css('margin-right', (idx + 1) % columns ? margin + extra - safetyPixel : 0);
-		});
-
-		return 1;
+	rebindShuffle: function() {
+		Upfront.frontFunctions.galleryBindShuffle();
 	},
 
 	preventNavigation: function(e){
@@ -952,8 +909,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	imagesChanged: function() {
 		this.property('images', this.images.toJSON());
-		//this.render();
-		this.calculateMargins();
+		this.rebindShuffle();
 	},
 
 	/**
