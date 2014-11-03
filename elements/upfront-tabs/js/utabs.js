@@ -7,19 +7,19 @@
 			init: function () {
 				var properties = _.clone(Upfront.data.utabs.defaults);
 				var defaults = Upfront.data.utabs.defaults;
-				
+
 				//copy the default tabs data by value, so that the source does not get updated if passed by reference
-				
-				properties['tabs'] = [];
-				properties['tabs'][0] = {};
-				properties['tabs'][0]['content'] = _.clone(defaults['tabs'][0]['content']);
-				properties['tabs'][0]['title'] = _.clone(defaults['tabs'][0]['title']);
 
-				properties['tabs'][1] = {};
-				properties['tabs'][1]['content'] = _.clone(defaults['tabs'][1]['content']);
-				properties['tabs'][1]['title'] = _.clone(defaults['tabs'][1]['title']);
+				properties.tabs = [];
+				properties.tabs[0] = {};
+				properties.tabs[0].content = _.clone(defaults.tabs[0].content);
+				properties.tabs[0].title = _.clone(defaults.tabs[0].title);
 
-				properties.element_id = Upfront.Util.get_unique_id("utabs-object");
+				properties.tabs[1] = {};
+				properties.tabs[1].content = _.clone(defaults.tabs[1].content);
+				properties.tabs[1].title = _.clone(defaults.tabs[1].title);
+
+				properties.element_id = Upfront.Util.get_unique_id('utabs-object');
 				this.init_properties(properties);
 			}
 		});
@@ -33,16 +33,15 @@
 				'.upfront-object-content': {label: 'Tabs container', info: 'The layer that contains all the contents of the tab element.'},
 				'.upfront-tabs-container .tabs-menu-wrapper': {label: 'Tabs menu', info: 'The row that contains all tabs'},
 				'.upfront-tabs-container .tabs-tab .inner-box': {label: 'Tabs', info: 'Each of the tabs.'},
-				'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: 'Active tab', info: "Active tab"},
-				'.upfront-tabs-container .tabs-content': {label: 'Tab content', info: "The layber that wraps tab content"},
-				'.upfront-tabs-container .tabs-content p': {label: 'Tab content paragraph', info: "The paragraph that contains tab content"},
-				'.upfront-tabs-container .tab-content-active': {label: 'Active tab content', info: "The layber that wraps active tab content"},
-				'.upfront-tabs-container .tab-content-active p': {label: 'Active tab content paragraph', info: "The paragraph that contains active tab content"}
+				'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: 'Active tab', info: 'Active tab'},
+				'.upfront-tabs-container .tabs-content': {label: 'Tab content', info: 'The layber that wraps tab content'},
+				'.upfront-tabs-container .tabs-content p': {label: 'Tab content paragraph', info: 'The paragraph that contains tab content'},
+				'.upfront-tabs-container .tab-content-active': {label: 'Active tab content', info: 'The layber that wraps active tab content'},
+				'.upfront-tabs-container .tab-content-active p': {label: 'Active tab content paragraph', info: 'The paragraph that contains active tab content'}
 
 			},
 
 			initialize: function(){
-				var me = this;
 				if(! (this.model instanceof UtabsModel)){
 					this.model = new UtabsModel({properties: this.model.get('properties')});
 				}
@@ -51,22 +50,17 @@
 					'click .add-item': 'addTab',
 					'click .tabs-tab': 'onTabClick',
 					'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
-					'keydown .tab-content-active': 'onContentKeydown',
-					//'dblclick .tab-content-active': 'onContentDblclick',
 					'click .tab-content-active': 'onContentClick',
 					'click i': 'deleteTab'
 				});
 				this.delegateEvents();
-				
-				this.model.get("properties").bind("change", this.render, this);
-				this.model.get("properties").bind("add", this.render, this);
-				this.model.get("properties").bind("remove", this.render, this);
 
-				Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-				Upfront.Events.on("entity:deactivated", this.stopEdit, this);
-				
-				//this.on('deactivated', this.stopEdit, this);
-				this.debouncedSave = _.debounce(this.saveTabContent, 1000);
+				this.model.get('properties').bind('change', this.render, this);
+				this.model.get('properties').bind('add', this.render, this);
+				this.model.get('properties').bind('remove', this.render, this);
+
+				Upfront.Events.on('entity:resize_stop', this.onResizeStop, this);
+				Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 			},
 			onContentClick: function() {
 				this.$el.find('.tabs-tab-active .inner-box').trigger('blur');
@@ -96,7 +90,9 @@
 				var tabWidth = 'auto';
 				var spanWidth;
 				var padding = 36;
-				if (this.property('theme_style') === 'simple_text') padding = 26;
+				if (this.property('theme_style') === 'simple_text') {
+					padding = 26;
+				}
 				if (this.property('theme_style') === 'button_tabs') {
 					padding = 47;
 					tabSpace = tabSpace + 5;
@@ -122,28 +118,25 @@
 				var contentId;
 
 				// Stop editor on switching tabs, always
-				var $all_tabs = this.$el.find(".tab-content");
-				
+				var $all_tabs = this.$el.find('.tab-content');
+
 
 				$all_tabs.each(function () {
-					var ed = $(this).data("ueditor");
-					if(ed)
+					var ed = $(this).data('ueditor');
+					if(ed) {
 						ed.stop();
+					}
 				});
 
 				if ($tab.hasClass('tabs-tab-active')) {
-					//$tab.attr('contenteditable', true);
-					var ed = $tab.find('.inner-box').data("ueditor");
+					var ed = $tab.find('.inner-box').data('ueditor');
 					if(ed) {
 						ed.start();
 					}
-					
-					//$tab.find('span').css('width', 'auto');
-					//$tab.find('.inner-box').focus();
+
 					return;
-				}
-				else {
-					var $tabtitles = this.$el.find(".tabs-tab .inner-box");
+				} else {
+					var $tabtitles = this.$el.find('.tabs-tab .inner-box');
 					$tabtitles.each(function() {
 						var ed = $(this).data('ueditor');
 						if(ed) {
@@ -152,93 +145,44 @@
 					});
 				}
 
-//				$tab.siblings().removeClass('tabs-tab-active');//.removeAttr('contenteditable');
 				this.$el.find('.tabs-tab-active').removeClass('tabs-tab-active');
-				// If active content is edited save edits & destroy editor.
-				/*
-				if (this.$el.find('.tab-content-active').attr('contenteditable') === true) {
-					this.stopEdit();
-				}
-				*/
 				contentId = $tab.data('content-id');
 				this.$el.find('#' + contentId).siblings().removeClass('tab-content-active');
 				this.$el.find('#' + contentId).addClass('tab-content-active');
 
-				 this.$el.find(".tabs-tab[data-content-id='" + $tab.data('content-id') + "']").addClass('tabs-tab-active');
-				//$tab.addClass('tabs-tab-active');
-
-			},
-/*
-			onContentDblclick: function(event) {
-				var $content = $(event.currentTarget);
-
-				if ($content.attr('contenteditable') === true) return;
-
-				$content.attr('contenteditable', true)
-					.addClass('upfront-object');
-
-				$content.ueditor({
-					linebreaks: false,
-					inserts: {},
-					autostart: false
-				});
-				//$content.focus();
-				//this.$el.parent().parent().parent().draggable('disable');
-			},
-*/
-			onContentKeydown: function(event) {
-				//this.debouncedSave();
+				 this.$el.find('.tabs-tab[data-content-id="' + $tab.data('content-id') + '"]').addClass('tabs-tab-active');
 			},
 
 			saveTabContent: function() {
-								
 				var $content = this.$el.find('.tab-content-active'),
 					tabId = $content.attr('id').split('-').pop(),
-					ed = $content.data("ueditor"),
-					text = ''
-				;
-				try { text = ed.getValue(true); } catch (e) { text = $content.html(); }
-var me = this;
-					this.currenttabid = $content.attr('id');
-					me.property('tabs')[tabId].content = text; 
-				
+					ed = $content.data('ueditor'),
+					text = '';
+
+				try {
+					text = ed.getValue(true);
+				} catch (e) {
+					text = $content.html();
+				}
+				this.currenttabid = $content.attr('id');
+				this.property('tabs')[tabId].content = text;
 			},
 
 			stopEdit: function(e) {
-				
-				
-				//this.saveTabContent();
-				var $content = this.$el.find('.tab-content-active');
-				var ed = $content.data('ueditor');
-				if(ed)
+				var $content = this.$el.find('.tab-content-active'),
+				  ed = $content.data('ueditor');
+
+				if (ed) {
 					ed.stop();
-				
-				if(typeof(e) != 'undefined' && $(e.target).hasClass('inner-box'))
+				}
+
+				if(typeof(e) !== 'undefined' && $(e.target).hasClass('inner-box')) {
 					return;
-					
-					
+				}
+
+
 				var $tab = this.$el.find('.tabs-tab-active .inner-box:not(.ueditor-placeholder)');
 				$tab.trigger('blur');
-				
-				
-				
-				/*if($tab.length > 0 && !($tab.siblings('.ueditor-placeholder').length && $tab.siblings('.ueditor-placeholder').css('display') != 'none')) {
-					$tab.trigger('blur');
-				}
-				else {
-					$tab.addClass('newtab');	
-				}*/
-				//var text='';
-				//ed = $tab.data('ueditor');
-				
-					
-				//if(ed)
-					//ed.stop();
-//					.removeAttr('contenteditable')
-//					.removeClass('upfront-object');
-			//	if (this.editor && this.editor.destroy) this.editor.destroy();
-			//	this.$el.parent().parent().parent().draggable('enable');
-			//	this.delegateEvents();
 			},
 
 			onTabKeydown: function(event) {
@@ -276,52 +220,50 @@ var me = this;
 				return props;
 			},
 
-			onResizeStop: function(view, model, ui) {
+			onResizeStop: function() {
 				this.fixTabWidth();
 			},
 
 			on_render: function() {
-
-				// Tabs won't be rendered in time if you do not delay.
+				// Tabs won't be rendered in time if no delay.
 				_.delay(function(self) {
 					self.fixTabWidth();
 					self.addTooltips();
 				}, 10, this);
-				
-				var me = this;
-				
-				var $tabtitles = this.$el.find(".tabs-tab .inner-box");
-				var count = 1;
+
+				var me = this,
+					$tabtitles = this.$el.find('.tabs-tab .inner-box'),
+					count = 1,
+					$tabs,
+					id;
+
 				$tabtitles.each(function () {
 					var $content = $(this);
+
 					$content.ueditor({
 						linebreaks: true,
 						disableLineBreak: true,
-						//focus: true,
-						//autostart: false,
-						//tabFocus: false,
 						airButtons: false,
 						allowedTags: ['h5'],
 						placeholder: 'Tab '+count
-					 }).on('start', function(e) {
-						Upfront.Events.trigger('upfront:element:edit:start', 'text');
-						$(this).focus();
-					 }).on("stop", function () {
-						id = $content.parent().parent().data('content-id').split('-').pop();
-						me.property('tabs')[id]['title'] = $content.text();
-						Upfront.Events.trigger('upfront:element:edit:stop');
-					 }).on("blur", function() {
-						$content.data('ueditor').stop(); 
-					 })
-					;
-					$content.data('ueditor').stop();
-				
-					
+				 }).on('start', function() {
+					 Upfront.Events.trigger('upfront:element:edit:start', 'text');
+					 $(this).focus();
+				 }).on('stop', function () {
+					 id = $content.parent().parent().data('content-id').split('-').pop();
+					 me.property('tabs')[id].title = $content.text();
+					 Upfront.Events.trigger('upfront:element:edit:stop');
+				 }).on('blur', function() {
+					 $content.data('ueditor').stop();
+				 });
+				 $content.data('ueditor').stop();
+
+
 					count++;
 				});
 
-				var $tabs = this.$el.find(".tab-content");
-				
+				$tabs = this.$el.find('.tab-content');
+
 				$tabs.each(function () {
 					var $content = $(this);
 					$content.ueditor({
@@ -330,11 +272,11 @@ var me = this;
 						inserts: {},
 						placeholder: false
 					})
-						.on("start", function () {
+						.on('start', function () {
 							Upfront.Events.trigger('upfront:element:edit:start', 'text');
 						})
-						.on("stop", function () {
-							if($content.text().trim() == '') {
+						.on('stop', function () {
+							if($content.text().trim() === '') {
 								$content.html('Tab Content');
 							}
 							me.saveTabContent();
@@ -350,7 +292,7 @@ var me = this;
 				}
 
 				this.$el.find('div#'+this.currenttabid).addClass('tab-content-active').siblings().removeClass('tab-content-active');
-						  
+
 				this.$el.find('div.tabs-tab[data-content-id="'+this.$el.find('div.tab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
 			},
 
@@ -364,9 +306,10 @@ var me = this;
 			},
 
 			property: function(name, value, silent) {
-				if(typeof value != "undefined"){
-					if(typeof silent == "undefined")
+				if(typeof value !== 'undefined'){
+					if(typeof silent === 'undefined') {
 						silent = true;
+					}
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
@@ -382,14 +325,14 @@ var me = this;
 			add_element: function () {
 				var object = new UtabsModel(),
 				module = new Upfront.Models.Module({
-					"name": "",
-					"properties": [
-						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-						{"name": "class", "value": "c9 upfront-tabs_module"},
-						{"name": "has_settings", "value": 0},
-						{"name": "row", "value": Upfront.Util.height_to_row(225)}
+					'name': '',
+					'properties': [
+						{'name': 'element_id', 'value': Upfront.Util.get_unique_id('module')},
+						{'name': 'class', 'value': 'c9 upfront-tabs_module'},
+						{'name': 'has_settings', 'value': 0},
+						{'name': 'row', 'value': Upfront.Util.height_to_row(225)}
 					],
-					"objects": [
+					'objects': [
 						object
 					]
 				})
@@ -407,7 +350,7 @@ var me = this;
 			},
 
 			get_title: function () {
-				return "Tabs settings";
+				return 'Tabs settings';
 			}
 		});
 
@@ -428,82 +371,18 @@ var me = this;
 				this.settings = _([
 					new Upfront.Views.Editor.Settings.Item({
 						model: this.model,
-						title: "Display style",
+						title: 'Display style',
 						fields: [
-							/*
-							 * new Upfront.Views.Editor.Field.Radios({
-							 *   className: 'inline-radios',
-							 *   model: this.model,
-							 *   property: 'style_type',
-							 *   label: "",
-							 *   values: [
-							 *     { label: "", value: 'theme_defined' },
-							 *     { label: "", value: 'custom' }
-							 *   ]
-							 * }),
-							 */
 							new Upfront.Views.Editor.Field.Select({
 								model: this.model,
 								property: 'theme_style',
-								label: "Theme Styles",
+								label: 'Theme Styles',
 								values: [
-									{ label: "Tabbed", value: 'tabbed' },
-									{ label: "Simple text", value: 'simple_text' },
-									{ label: "Button Tabs", value: 'button_tabs' },
+									{ label: 'Tabbed', value: 'tabbed' },
+									{ label: 'Simple text', value: 'simple_text' },
+									{ label: 'Button Tabs', value: 'button_tabs' }
 								]
-							}),
-							/*
-							 * new Upfront.Views.Editor.Field.Select({
-							 *   model: this.model,
-							 *   property: 'custom_style',
-							 *   label: "Custom",
-							 *   values: [
-							 *     { label: "Tabbed", value: 'tabbed' },
-							 *     { label: "Simple text", value: 'simple_text' },
-							 *     { label: "Button Tabs", value: 'button_tabs' },
-							 *   ]
-							 * }),
-							 * new Upfront.Views.Editor.Field.Color({
-							 *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
-							 *   model: this.model,
-							 *   property: 'active_tab_color',
-							 *   label: 'Active tab:',
-							 *   spectrum: {
-							 *     preferredFormat: "hsl",
-							 *     change: this.onActiveTabColorChange
-							 *   }
-							 * }),
-							 * new Upfront.Views.Editor.Field.Color({
-							 *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
-							 *   model: this.model,
-							 *   property: 'active_tab_text_color',
-							 *   label: 'Active tab text:',
-							 *   spectrum: {
-							 *     preferredFormat: "hsl",
-							 *     change: this.onActiveTabTextColorChange
-							 *   }
-							 * }),
-							 * new Upfront.Views.Editor.Field.Color({
-							 *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tab-color',
-							 *   model: this.model,
-							 *   property: 'inactive_tab_color',
-							 *   label: 'Inactive tab:',
-							 *   spectrum: {
-							 *     preferredFormat: "hsl",
-							 *     change: this.onInactiveTabColorChange
-							 *   }
-							 * }),
-							 * new Upfront.Views.Editor.Field.Color({
-							 *   className: 'upfront-field-wrap upfront-field-wrap-color sp-cf text-color',
-							 *   model: this.model,
-							 *   property: 'inactive_tab_text_color',
-							 *   label: 'Inactive tab text:',
-							 *   spectrum: {
-							 *     preferredFormat: "hsl",
-							 *     change: this.onInactiveTabTextColorChange
-							 *   }
-							 * })
-							 */
+							})
 						]
 					})
 				]);
@@ -574,9 +453,10 @@ var me = this;
 			},
 
 			property: function(name, value, silent) {
-				if(typeof value != "undefined"){
-					if(typeof silent == "undefined")
+				if(typeof value !== 'undefined'){
+					if(typeof silent === 'undefined') {
 						silent = true;
+					}
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
@@ -590,11 +470,11 @@ var me = this;
 			}
 		});
 
-		Upfront.Application.LayoutEditor.add_object("Utabs", {
-			"Model": UtabsModel,
-			"View": UtabsView,
-			"Element": TabsElement,
-			"Settings": TabsSettings,
+		Upfront.Application.LayoutEditor.add_object('Utabs', {
+			'Model': UtabsModel,
+			'View': UtabsView,
+			'Element': TabsElement,
+			'Settings': TabsSettings,
 			'anchor': {
 				is_target: false
 			}
