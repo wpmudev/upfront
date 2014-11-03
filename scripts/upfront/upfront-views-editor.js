@@ -6370,7 +6370,13 @@ var CSSEditor = Backbone.View.extend({
 		if (Upfront.Application.is_builder()) {
 			data.stylename = this.get_style_id();
 			if (this.is_global_stylesheet) {
-				Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).set({'value': styles});
+				var props = Upfront.Application.current_subapplication.layout.get('properties'),
+					layout_styles = props && props.findWhere ? props.findWhere({name: 'layout_style'}) : false
+				;
+				if (layout_styles && layout_styles.set) layout_styles.set({'value': styles});
+				else {
+					props.add({name: "layout_style", value: styles});
+				}
 			}
 			Upfront.Behaviors.LayoutEditor.export_element_styles(data);
 			return;
