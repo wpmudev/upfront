@@ -12283,8 +12283,9 @@ div.upfront-regions a#no_region_add_one {
     display: block;
     padding:0;
     clear: both;
+    max-width: none;
 }
-.ueditor-insert-variant:hover{
+.ueditor-insert-variant-group:hover{
     outline:1px dotted #7f7f7f;
 }
 .upfront-image-variant-delete_trigger{

@@ -389,7 +389,8 @@ var ContentView = PostPartView.extend({
 	},
 
 	refreshPaddings: function(left, right){
-		var colSize = Upfront.Behaviors.GridEditor.col_size,
+		var ge = Upfront.Behaviors.GridEditor,
+			colSize = ge.col_size,
 			rightPadding = right * colSize,
 			leftPadding = left * colSize,
 			styles = $('.upfront-region-postlayouteditor').find('.upfront-post-padding'),
@@ -406,6 +407,7 @@ var ContentView = PostPartView.extend({
 		}
 
 		rules += 'padding-left: ' + leftPadding + 'px; padding-right: ' + rightPadding + 'px;}';
+		rules += '.upfront-region-postlayouteditor .upfront-output-PostPart_contents .ueditor-insert-variant { margin-left: ' + (leftPadding*-1) + 'px; margin-right: ' + (rightPadding*-1) + 'px; }';
 
 		styles.html(rules);
 	}
