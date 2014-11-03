@@ -1,14 +1,3 @@
-/*global ugalleries */
-/* @ TODO: need to add [+] button and make sure it triggers the appropriate event..
-
-//Adding [+] control
-var $upfrontObjectContent = this.$el.find('.upfront-object-content');
-if(this.$el.find('a.add-gallery-item').length < 1) {
-	$('<b class="upfront-entity_meta add_item upfront-ui"><a href="#" class="upfront-icon-button a.add-gallery-item add-item"></a></b>').insertBefore($upfrontObjectContent);
-}
-
-*/
-
 (function ($) {
 define([
 	'text!elements/upfront-gallery/tpl/ugallery.html', // Front
@@ -218,10 +207,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	createControls: function(image) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
-		var linkControl = this.property('linkTo') === 'url' ? this.createLinkControl(image) : this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox');
 		panel.items = _([
 			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
-			linkControl,
+			this.createLinkControl(image),
 			this.createLabelControl(image)
 		]);
 
@@ -354,7 +342,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		control.render().close();
 	},
 
-	openLightbox: function(e, labels) {
+	openLightbox: function(e) {
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = me.images.get(item.attr('rel')),
@@ -599,7 +587,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	addImages: function(images, replaceId){
 		var me = this,
 			models = [],
-			selectType = false,
 			element_id = this.model.get_property_value_by_name('element_id');
 
 		this.getNewLabels(_.keys(images));
@@ -616,7 +603,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					src: image.custom.url,
 					loading: false,
 					status: 'ok',
-					element_id: element_id
+					element_id: element_id,
+					urlType: 'image',
+					url: image.full[0]
 				})
 			);
 		});
@@ -625,7 +614,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.property('status', 'ok');
 			me.property('has_settings', 1);
 			me.images.reset(models);
-			selectType = true;
 		} else if (replaceId) {
 			var item = me.images.get(replaceId),
 				idx = me.images.indexOf(item);
@@ -637,32 +625,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		me.render();
-		if (selectType) {
-			this.selectOnClick();
-		}
-	},
-
-	selectOnClick: function(){
-		var me = this,
-			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked +
-				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger +
-				'</a><a href="#" class="ugallery-linked_page" rel="url">' + l10n.go_to_linked + '</a></div></div></div>')
-		;
-
-		selector.on('click', 'a', function(e){
-			e.preventDefault();
-			var value = $(e.target).attr('rel');
-			me.property('linkTo', value, false);
-			setTimeout(function(){
-				selector.fadeOut('fast', function(){
-					selector.remove();
-					me.render();
-				});
-			}, 100);
-		});
-
-		this.$('.ugallery').append(selector.hide());
-		selector.fadeIn();
 	},
 
 	getNewLabels: function(ids){

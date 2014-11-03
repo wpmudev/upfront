@@ -13,6 +13,7 @@ define([
 		events: {
 			'keyup input[name="ugallery-image-labels"]': 'fillLabelSuggestionList',
 			'keydown input[name="ugallery-image-labels"]': 'onNameFieldKeydown',
+			'click input[name="ugallery-image-labels"]': 'onNameFieldClick',
 			'click label': 'onLabelClick',
 			'click .existing_labels a': 'removeLabel',
 			'click .ugallery-magnific-addbutton': 'focusNameField'
@@ -23,6 +24,16 @@ define([
 			this.gallery = options.gallery;
 			this.labels = options.labels;
 			this.imageId = options.imageId;
+		},
+
+		/*?
+		 * Prevent crazy click hijack that navigates and reloads the page.
+		 */
+		onNameFieldClick: function(event) {
+			$(event.target).focus();
+			event.preventDefault();
+			event.stopPropagation();
+			return false;
 		},
 
 		updateLabels: function() {
@@ -176,7 +187,6 @@ define([
 				label = $.trim($nameField.val());
 				if(label.length){
 					$nameField.val('').siblings('.labels_list').html('');
-					this.gallery.addLabel(label, this.imageId);
 					$.when(this.gallery.addLabel(label, this.imageId)).done(function(label) {
 						me.labels.push(label);
 						me.updateLabels();
@@ -198,11 +208,23 @@ define([
 		},
 
 		onLabelClick: function(e){
-			var labelId = $(e.target).attr('rel');
+			var me = this,
+				$label = $(e.target).hasClass('selection') ? $(e.target).parent() : $(e.target);
+
+			// Prevent click hijack that reloads the page
+			e.preventDefault();
+			e.stopPropagation();
+
+			var labelId = $label.attr('rel');
 			if (labelId) {
 				var label = Upfront.data.ugallery.label_ids[labelId];
 				this.gallery.addLabel(label.text, this.imageId);
-				this.$el.find('input[name="ugallery-image-labels"]').val('').siblings('.labels_list').html('');
+				$.when(this.gallery.addLabel(label.text, this.imageId)).done(function(label) {
+					me.labels.push(label);
+					me.updateLabels();
+					me.$el.find('.labels_list').html('');
+					me.$el.find('.ugallery-addlabels').val('');
+				});
 			}
 		},
 
