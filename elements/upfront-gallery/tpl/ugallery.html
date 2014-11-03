@@ -10,6 +10,7 @@
 	<div class="ugallery_items <?php echo $labelFilters['length'] || !empty($in_editor) ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
 	<div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+		<?php $images[$i]['urlType'] = !empty($images[$i]['urlType']) ? $images[$i]['urlType'] : false; ?>
 		  <?php if ($images[$i]['urlType'] !== 'unlink') { ?>
 			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
 			<?php } ?>
