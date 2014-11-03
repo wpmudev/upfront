@@ -23,13 +23,6 @@ class Upfront_UtabsView extends Upfront_Object {
 			'tabs_fixed_width' => 'auto',
 
 			'id_slug' => 'utabs',
-			'style_type' => 'theme_defined',
-			'theme_style' => 'tabbed',
-			'custom_style' => 'tabbed',
-			'active_tab_color' => '000',
-			'active_tab_text_color' => 'fff',
-			'inactive_tab_color' => 'fff',
-			'inactive_tab_text_color' => '000'
 		);
 	}
 

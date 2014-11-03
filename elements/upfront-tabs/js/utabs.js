@@ -20,7 +20,6 @@ define([
 			'.upfront-tabs-container .tabs-content p': {label: 'Tab content paragraph', info: 'The paragraph that contains tab content'},
 			'.upfront-tabs-container .tab-content-active': {label: 'Active tab content', info: 'The layber that wraps active tab content'},
 			'.upfront-tabs-container .tab-content-active p': {label: 'Active tab content paragraph', info: 'The paragraph that contains active tab content'}
-
 		},
 
 		initialize: function(){
@@ -43,11 +42,12 @@ define([
 			this.model.get('properties').bind('remove', this.render, this);
 
 			Upfront.Events.on('entity:resize_stop', this.onResizeStop, this);
-			// Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 		},
+
 		onContentClick: function() {
 			this.$el.find('.tabs-tab-active .inner-box').trigger('blur');
 		},
+
 		addTab: function(e) {
 			e.preventDefault();
 			this.stopEdit();
@@ -72,14 +72,6 @@ define([
 			var tabsWidth = 0;
 			var tabWidth = 'auto';
 			var spanWidth;
-			var padding = 36;
-			if (this.property('theme_style') === 'simple_text') {
-				padding = 26;
-			}
-			if (this.property('theme_style') === 'button_tabs') {
-				padding = 47;
-				tabSpace = tabSpace + 5;
-			}
 			this.$el.find('.tabs-menu .tabs-tab').css('width', 'auto');
 			this.$el.find('.tabs-tab').each(function() {
 				tabsWidth += $(this).outerWidth();
@@ -102,6 +94,7 @@ define([
 
 			// Stop editor on switching tabs, always
 			var $all_tabs = this.$el.find('.tab-content');
+
 
 			$all_tabs.each(function () {
 				var ed = $(this).data('ueditor');
