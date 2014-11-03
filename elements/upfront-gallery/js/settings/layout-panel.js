@@ -26,11 +26,14 @@ define([
 									value: 'true',
 									label: l10n.panel.sort
 								}
-							]
+							],
+							change: function(value) {
+								me.updateProperty(this.options.property, value);
+							}
 						})
 					]
 				}),
-				new ThumbnailFields({model: this.model}),
+				new ThumbnailFields({model: this.model, parent: me}),
 				new Upfront.Views.Editor.Settings.Item({
 					title: 'Caption Settings',
 					fields: [
@@ -43,7 +46,10 @@ define([
 								{value: 'never', label: l10n.panel.never},
 								{value: 'hover', label: l10n.panel.hover},
 								{value: 'always', label: l10n.panel.always}
-							]
+							],
+							change: function(value) {
+								me.updateProperty(this.options.property, value);
+							}
 						}),
 						new fields.Radios({
 							model: this.model,
@@ -54,7 +60,10 @@ define([
 							values: [
 								{value: 'over', label: l10n.panel.over, icon: 'over'},
 								{value: 'below', label: l10n.panel.under, icon: 'below'}
-							]
+							],
+							change: function(value) {
+								me.updateProperty(this.options.property, value);
+							}
 						}),
 						new fields.Color({
 							label: l10n.panel.caption_bg,
@@ -109,8 +118,6 @@ define([
 				;
 
 				me.setEvents([
-					//['click', '.ugallery-proportional', 'lockProportions'],
-					['change', 'input[name=no_padding]', 'on_no_padding_change'],
 					['change', 'input[name=thumbWidth]', 'onThumbChangeSize'],
 					['change', 'input[name=thumbProportions]', 'onThumbChangeProportions']
 				]);
@@ -150,9 +157,9 @@ define([
 			});
 		},
 
-		on_no_padding_change: function(event) {
-			this.property('no_padding', [$(event.target).is(':checked') + '']);
-			this.model.trigger('no_padding_change');
+		updateProperty: function(property, value) {
+			this.property(property, value);
+			this.model.trigger('change:' + property);
 		},
 
 		onThumbChangeSize: function(e){
@@ -201,7 +208,8 @@ define([
 				if(typeof silent === 'undefined') {
 					silent = true;
 				}
-				return this.model.set_property(name, value, silent);
+				this.model.set_property(name, value, silent);
+				return;
 			}
 			return this.model.get_property_value_by_name(name);
 		}
