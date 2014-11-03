@@ -30,11 +30,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 
 		this.events = _.extend({}, this.events, {
-			'click a.upfront_cta' : 'processClick'
+			//'click a.upfront_cta' : 'processClick'
+			'click i.visit_link' : 'visitLink'
 		});
 
 		this.on('deactivated', function() {
-			
+			console.log('deactiating');
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
@@ -75,6 +76,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	
 	processClick: function(e) {
 		e.stopPropagation();
+		e.preventDefault();
+		return;
 		var me = this
 		singleclickcount++;
 		if(singleclickcount == 1) {
@@ -89,35 +92,31 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		//else
 		//	me.editLink(e);
 	},
-	visitLink: function(e) {
-		e.preventDefault();
+	visitLink: function() {
 		var me = this;
-		console.log('visit the link');
-		return;
-		var link = $(e.target).attr('href');
-
-
-		if(link.indexOf('#') > -1 && me.getCleanurl(link) == me.getCleanurl()) {
-			if(link.indexOf('#ltb-') > -1)	 {
-				var regions = Upfront.Application.layout.get('regions');
-				region = regions ? regions.get_by_name(me.getUrlanchor(link)) : false;
-				if(region){
-					//hide other lightboxes
-					_.each(regions.models, function(model) {
-						if(model.attributes.sub == 'lightbox')
-							Upfront.data.region_views[model.cid].hide();
-					});
-					var regionview = Upfront.data.region_views[region.cid];
-					regionview.show();
-				}
-			} else {
-				var anchors = me.get_anchors();
-				$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(link)).offset().top},'slow');
+		var url = this.model.get_property_value_by_name('href');
+		var linktype = me.guessLinkType();
+		if(linktype == 'lightbox') {
+			var regions = Upfront.Application.layout.get('regions');
+			region = regions ? regions.get_by_name(me.getUrlanchor(url)) : false;
+			if(region){
+				//hide other lightboxes
+				_.each(regions.models, function(model) {
+					if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+				});
+				var regionview = Upfront.data.region_views[region.cid];
+				regionview.show();
 			}
-		} else if(link == '') {
-			window.location.href = link;
-		} else window.open(link);
-		
+		}
+		else if(linktype == 'anchor') {
+			var anchors = me.get_anchors();
+			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(url)).offset().top},'slow');
+		}
+		else if(linktype == 'post')
+			window.location.href = url.replace('&editmode=true', '').replace('editmode=true', '')+((url.indexOf('?')>0)?'&editmode=true':'?editmode=true');
+		else
+			window.open(url);
 	},
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
@@ -219,6 +218,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			"id" : this.model.get_property_value_by_name('element_id'),
 			"content" : content,
 			"href" : this.model.get_property_value_by_name('href'),
+			"linktype" : this.guessLinkType(),
 			"align" : this.model.get_property_value_by_name('align'),
 			"style_static" : style_static,
 			"style_hover" : style_hover,
@@ -226,9 +226,24 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		var rendered = '';
 
-		rendered = _.template(template, data);
+		rendered = _.template(template, data)+'<i class="visit_link visit_link_'+this.guessLinkType()+'"></i>';
 
 		return rendered;// + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
+
+	},
+	guessLinkType: function(){
+		var url = this.model.get_property_value_by_name('href');
+
+
+		if(!$.trim(url) || $.trim(url) == '#')
+			return 'none';
+		if(url.length && url[0] == '#')
+			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+		if(url.substring(0, location.origin.length) == location.origin)
+			return 'post';
+
+		return 'external';
+
 
 	},
 	is_edited: function () {
@@ -1427,31 +1442,28 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
    }
  });
 
-/*
+
 var ButtonMenuList = Upfront.Views.ContextMenuList.extend({
 	initialize: function() {
 		var me = this;
 		this.menuitems = _([
-		  new Upfront.Views.ContextMenuItem({
-			  get_label: function() {
-				  return l10n.edit_text;
-			  },
-			  action: function() {
-					var editor = me.for_view.$el.find('div.upfront-object-content').data('ueditor');
-					if(!me.for_view.$el.find('div.upfront-object-content').data('redactor')){
-						editor.start();
-						$(document).on('click', function(e){
-							//Check if the click has been inner, or inthe popup, or the context menu, otherwise stop the editor
-							if(!editor.options.autostart && editor.redactor){
-								var $target = $(e.target);
-								if(!editor.disableStop && !$target.closest('li').length && !$target.closest('.redactor_air').length && !$target.closest('.ueditable').length){
-									editor.stop();
-								}
-							}
-						});
-					}
-			  }
-		  })
+		    new Upfront.Views.ContextMenuItem({
+				get_label: function() {
+
+					var linktype = me.for_view.guessLinkType();
+					if(linktype == 'lightbox')
+						return 'Open Lightbox';
+					else if(linktype == 'anchor')
+						return 'Scroll to Anchor';
+					else if(linktype == 'post')
+						return 'Visit Post/Page';
+					else
+						return 'Visit Link';
+				},
+				action: function() {
+					me.for_view.visitLink();
+				}
+		    })
 		]);
 	}
 });
@@ -1464,13 +1476,13 @@ var ButtonMenu = Upfront.Views.ContextMenu.extend({
 	}
 });
 
-*/
+
 Upfront.Application.LayoutEditor.add_object("Button", {
 	"Model": ButtonModel,
 	"View": ButtonView,
 	"Element": ButtonElement,
 	"Settings": ButtonSettings,
-	//"ContextMenu": ButtonMenu
+	"ContextMenu": ButtonMenu
 });
 Upfront.Models.ButtonModel = ButtonModel;
 Upfront.Views.ButtonView = ButtonView;

@@ -246,3 +246,21 @@ div.button-settings-panel div.border_radius_lock input[type=checkbox]:checked:af
   background-position: -661px -140px;
 
 }
+
+
+
+div.upfront-output-button i.visit_link {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: block;
+  opacity: 0;
+}
+div.upfront-output-button.being_edited i.visit_link {
+  display:none !important;
+}
+div.upfront-output-button:hover i.visit_link {
+  opacity: 1;
+
+}
+

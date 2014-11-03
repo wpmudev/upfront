@@ -1148,9 +1148,10 @@ RedactorPlugins.upfrontLink = {
 		},
 		link: function(url, type){
 			if(url){
-				if(this.redactor.$element.hasClass('upfront_cta'))
+				if(this.redactor.$element.hasClass('upfront_cta')) {
 					this.redactor.$element.attr('href', url);
-				if(this.redactor.$element.hasClass('menu_item')) {
+				}
+				else if(this.redactor.$element.hasClass('menu_item')) {
 
 					var menuitem = this.redactor.$element.closest('li').data('backboneview');
 

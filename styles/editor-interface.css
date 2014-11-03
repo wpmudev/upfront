@@ -12647,6 +12647,7 @@ i.visit_link {
   right:-5px;
   border-radius:50%;
   display:none;
+  cursor: pointer;
 }
 
 i.visit_link {
@@ -12678,6 +12679,9 @@ i.visit_link.visit_link_post:after {
 }
 i.visit_link.visit_link_lightbox:after {
 	content:'Open Lightbox';
+}
+i.visit_link.visit_link_none:after {
+	content:'Not Linked';
 }
 i.visit_link:hover:after {
   display:block;

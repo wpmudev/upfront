@@ -395,6 +395,11 @@ jQuery(document).ready(function($){
 
 		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block') {
 		
+				if($(e.target).hasClass('upfront_cta')) {
+					e.preventDefault();
+					return;
+				}
+
 				var url = $(e.target).attr('href');
 
 				if(url && url.indexOf && url.indexOf('#ltb-') > -1)	 {
