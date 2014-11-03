@@ -147,12 +147,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.updateShowFilters();
 		});
 
-		this.listenTo(this.model, 'change:captionWhen', function() {
-			me.updateCaptionWhen();
+		this.listenTo(this.model, 'change:showCaptionOnHover', function() {
+			me.updateShowCaptionOnHover();
 		});
 
-		this.listenTo(this.model, 'change:captionPosition', function() {
-			me.updateCaptionPosition();
+		this.listenTo(this.model, 'change:captionType', function() {
+			me.updateCaptionType();
 		});
 
 		if (this.property('status') !== 'ok' || !this.images.length) {
@@ -163,19 +163,20 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	/****************************************************/
 	/*          Settings change live callbacks          */
 	/****************************************************/
-	updateCaptionPosition: function() {
+	updateCaptionType: function() {
 		this.$el.find('.ugallery-thumb-title')
-			.removeClass('ugallery-caption-over ugallery-caption-below')
-			.addClass('ugallery-caption-' + this.property('captionPosition'));
+			.removeClass('ugallery-caption-over ugallery-caption-below ugallery-caption-none')
+			.addClass('ugallery-caption-' + this.property('captionType'));
 	},
 
-	updateCaptionWhen: function() {
-		var classes = 'ugallery_caption_never ugallery_caption_always ugallery_caption_hover ugallery-caption-never ugallery-caption-always ugallery-caption-hover';
+	updateShowCaptionOnHover: function() {
+		var classes = 'ugallery_caption_on_hover_1 ugallery_caption_on_hover_0 ugallery-caption-on-hover-1 ugallery-caption-on-hover-0',
+			suffix = this.property('showCaptionOnHover').length;
 
 		this.$el.find('.ugallery_item, .ugallery-thumb-title').removeClass(classes);
 
-		this.$el.find('.ugallery_item').addClass('ugallery_caption_' + this.property('captionWhen'));
-		this.$el.find('.ugallery-thumb-title').addClass('ugallery-caption-' + this.property('captionWhen'));
+		this.$el.find('.ugallery_item').addClass('ugallery_caption_on_hover_' + suffix);
+		this.$el.find('.ugallery-thumb-title').addClass('ugallery-caption-on-hover-' + suffix);
 	},
 
 	updatePadding: function() {
@@ -209,9 +210,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		panel.items = _([
 			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
-			this.createLinkControl(image),
-			this.createLabelControl(image)
+			this.createLinkControl(image)
 		]);
+
+		if (this.property('labelFilters')[0] === 'true') {
+			panel.items.push(this.createLabelControl(image));
+		}
+
+		if (image.get('urlType') === 'image') {
+			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox'));
+		}
 
 		return panel;
 	},
@@ -486,7 +494,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				controls.render();
 				item.find('.ugallery-image-wrapper').append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 
-				if (me.property('captionPosition') !== 'nocaption' && !title.data('ueditor')) {
+				if (!title.data('ueditor')) {
 					title.ueditor({
 							linebreaks: false,
 							autostart: false,

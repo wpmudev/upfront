@@ -39,27 +39,27 @@ define([
 					fields: [
 						new fields.Radios({
 							model: this.model,
-							property: 'captionWhen',
-							layout: 'horizontal-inline',
-							label: l10n.panel.show_caption,
-							values: [
-								{value: 'never', label: l10n.panel.never},
-								{value: 'hover', label: l10n.panel.hover},
-								{value: 'always', label: l10n.panel.always}
-							],
-							change: function(value) {
-								me.updateProperty(this.options.property, value);
-							}
-						}),
-						new fields.Radios({
-							model: this.model,
-							property: 'captionPosition',
+							property: 'captionType',
 							layout: 'horizontal-inline',
 							label: l10n.panel.caption_style,
 							className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios ugallery-setting-caption-position',
 							values: [
+								{value: 'none', label: l10n.panel.none, icon: 'none'},
 								{value: 'over', label: l10n.panel.over, icon: 'over'},
 								{value: 'below', label: l10n.panel.under, icon: 'below'}
+							],
+							change: function(value) {
+								me.updateProperty(this.options.property, value);
+								me.showHoverCheckbox(value);
+								me.toggleCaptionBackground(value);
+							}
+						}),
+						new fields.Checkboxes({
+							model: this.model,
+							property: 'showCaptionOnHover',
+							className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes show-caption-on-hover-setting',
+							values: [
+								{value: 'true', label: l10n.panel.showCaptionOnHover}
 							],
 							change: function(value) {
 								me.updateProperty(this.options.property, value);
@@ -108,7 +108,8 @@ define([
 				this.$('.ugallery-setting-labels').find('.upfront-field-multiple').append(help);
 
 				setTimeout(function(){
-					me.toggleCaption();
+					me.toggleCaptionBackground(me.property('captionType'));
+					me.showHoverCheckbox(me.property('captionType'));
 				}, 100);
 
 				$(me.$('.ugallery-thumbnail-fields')
@@ -122,24 +123,23 @@ define([
 					['change', 'input[name=thumbProportions]', 'onThumbChangeProportions']
 				]);
 			});
-
-			this.$el.on('change', 'input[name=captionWhen]', function(){
-				me.toggleCaption();
-			});
 		},
 
-		toggleCaption: function(){
-			var when = this.$('input[name=captionWhen]:checked').val();
-			if(when === 'never'){
-				this.$('.ugallery-setting-caption-position').hide();
+		showHoverCheckbox: function(value) {
+			if (value === 'over') {
+				this.$el.find('.show-caption-on-hover-setting').show();
+			} else {
+				this.$el.find('.show-caption-on-hover-setting').hide();
+			}
+		},
+
+		toggleCaptionBackground: function(value){
+			if(value === 'none'){
 				this.$('.upfront-field-wrap-color').hide();
 			}
 			else {
-				this.$('.ugallery-setting-caption-position').show();
 				this.$('.upfront-field-wrap-color').show();
 			}
-			var settings = $('#settings');
-			settings.height(settings.find('.upfront-settings_panel:visible').outerHeight());
 		},
 		get_label: function () {
 			return 'Layout';

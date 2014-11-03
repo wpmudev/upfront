@@ -15,6 +15,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
 		$images = array();
+
+		// Flag for excluding stuff that is only for editor
+		$data['in_editor'] = false;
+
 		foreach($data['images'] as $im){
 			$images[] = array_merge(self::image_defaults(), $im);
 		}
@@ -204,11 +208,11 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
 			'thumbWidth' => 140,
 			'thumbHeight' => 140,
-			'captionPosition' => 'below', // 'above' | 'over' | 'nocaption'
+			'captionType' => 'below', // 'above' | 'over' | 'none'
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
 			'captionUseBackground' => 0,
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
-			'captionWhen' => 'always', // 'always' | 'hover'
+			'showCaptionOnHover' => ['true'],
 			'linkTo' => 'image', // 'url' | 'image'
 			'no_padding' => array('false')
 		);
@@ -289,8 +293,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'hover' => __('on hover', 'upfront'),
 				'always' => __('always', 'upfront'),
 				'caption_style' => __('Caption Style', 'upfront'),
+				'none' => __('none', 'upfront'),
 				'over' => __('over img', 'upfront'),
 				'under' => __('under img', 'upfront'),
+				'showCaptionOnHover' => __('Show caption on hover'),
 				'caption_bg' => __('Caption Background:', 'upfront'),
 				'ok' => __('Ok', 'upfront'),
 				'adds_sortable' => __('Adds sortable interface based on the labels given to the images.', 'upfront'),
