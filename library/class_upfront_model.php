@@ -369,7 +369,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			if (empty($cascade[$o]))
 				continue;
 
-			$layout = false;
+			$layout = $id = false;
 			// Allow plugins to prevent loading from database
 			$load_from_database = apply_filters('upfront_load_layout_from_database', true);
 			if ($load_from_database) {
