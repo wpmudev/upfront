@@ -240,7 +240,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	createLabelControl: function(image){
-		var control = new Upfront.Views.Editor.InlinePanels.DialogControl();
+		var control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			me = this;
 
 		control.hideOkButton = true;
 		control.hideOnClick = false;
@@ -256,6 +257,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 		control.tooltip = l10n.ctrl.edit_labels;
 		control.id = 'edit_labels';
+
+		me.listenTo(control, 'panel:open', function(){
+			control.$el
+				.closest('.ugallery-controls')
+					.addClass('upfront-control-visible');
+		});
+
+		me.listenTo(control, 'panel:close', function(){
+			control.$el
+				.closest('.ugallery-controls')
+					.removeClass('upfront-control-visible');
+		});
+
 
 		return control;
 	},
