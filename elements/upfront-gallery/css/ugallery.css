@@ -694,10 +694,6 @@ figure.gallery-labels-figure img.mfp-img {
 	padding: 0;
 }
 
-figure.gallery-labels-figure {
-	margin: 0;
-	min-width: 500px;
-}
 .ugallery-controls {
 	bottom: 0;
 	left: 0;
@@ -742,4 +738,43 @@ figure.gallery-labels-figure {
 
 .ugallery_item {
 	float: left;
+}
+.mfp-figure figure {
+	margin: 0;
+}
+
+.ugallery-caption-over,
+.ugallery-padded-caption {
+	padding:5px;
+}
+
+.ugallery-caption-over {
+	position: absolute;
+	width: 100%;
+	left: 0;
+	bottom: 0;
+}
+
+.ugallery-caption-above {
+	display: block;
+}
+
+.ugallery-caption-on-hover-0 {
+	display: block;
+}
+
+.ugallery-caption-on-hover-1 {
+	display: none;
+}
+.ugallery-caption-none {
+	display: none;
+}
+.ugallery-caption-below {
+	display: block;
+}
+.ugallery_caption_on_hover_1:hover .ugallery-caption-over.ugallery-caption-on-hover-1 {
+	display: block;
+}
+.ugallery_lb_text {
+	display: none;
 }

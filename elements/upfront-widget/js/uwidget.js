@@ -6,7 +6,7 @@ var l10n = Upfront.Settings.l10n.widget_element;
 var UwidgetModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.uwidget.defaults);
-		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + "-object");
+		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
 		this.init_properties(properties);
 	}
 });
@@ -16,7 +16,7 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 	loading: null,
 	cssSelectors: {
 		'.widget': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'.widget a': {label: l10n.css.links_label, info: l10n.css.links_info},
+		'.widget a': {label: l10n.css.links_label, info: l10n.css.links_info}
 	},
 	content_loaded: false,
 	initialize: function(options){
@@ -32,10 +32,11 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 
 	init: function () {
 
-		if ( !Upfront.data.uwidget.widgets_cache )
+		if ( !Upfront.data.uwidget.widgets_cache ) {
 			Upfront.data.uwidget.widgets_cache = {};
+		}
 
-		Upfront.Events.on("entity:settings:activate", this.clear_cache, this);
+		Upfront.Events.on('entity:settings:activate', this.clear_cache, this);
 
 	},
 
@@ -48,10 +49,11 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 		var widget = this.model.get_property_value_by_name('widget');
 			me = this;
 
-			if ( !widget )
-				return l10n.select_widget;
+			if ( !widget ) {
+				return '<span class="no-widget-notice">' + l10n.select_widget + '</span>';
+			}
 
-			var widget_data =  Upfront.data.uwidget.widgets_cache[widget+this.cid] || "";
+			var widget_data =  Upfront.data.uwidget.widgets_cache[widget+this.cid] || '';
 
 			if ( widget_data ) {
 				this.content_loaded = true;
@@ -63,8 +65,9 @@ var UwidgetView = Upfront.Views.ObjectView.extend({
 	on_render: function () {
 
 		var widget = this.model.get_property_value_by_name('widget');
-		if ( !widget )
+		if ( !widget ) {
 			return;
+		}
 
 		if ( typeof Upfront.data.uwidget.widgets_cache[widget+this.cid] == 'undefined' || Upfront.data.uwidget.widgets_cache[widget+this.cid] == null){
 

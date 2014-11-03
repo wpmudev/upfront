@@ -4731,7 +4731,7 @@ a.upfront-region-name-edit-trigger:before {
 	height: 17px;
 	/*background-position: -1080px -85px;*/
 	background-image: none;
-	
+
 }
 .upfront-icon-popup-search:before {
 	width: 15px;
@@ -6857,6 +6857,8 @@ a.upfront-post-layout-trigger:before{
 	top: 0;
 	left: 0;
 	z-index: 9999;
+	font-family: "Source Sans Pro", sans-serif;
+	font-weight: normal;
 }
 .upfront-loading-fixed {
 	position: fixed;
@@ -12649,12 +12651,15 @@ i.visit_link {
   width:18px;
   height:18px;
   background-color:#2C3E50;
+  background-image: url('../img/uf-ui-sprite.svg');
   display:inline-block;
   position:absolute;
   top:-5px;
   right:-5px;
   border-radius:50%;
   display:none;
+  cursor: pointer;
+  background-position: -910px -42px;
 }
 
 i.visit_link {
@@ -12678,21 +12683,61 @@ i.visit_link:after {
 i.visit_link.visit_link_anchor:after {
 	content:'Scroll to Anchor';
 }
+i.visit_link.visit_link_anchor {
+	background-position:-910px -42px;
+}
 i.visit_link.visit_link_external:after {
 	content:'Open Ext. Link';
+}
+i.visit_link.visit_link_external {
+	background-position:-910px -74px;
 }
 i.visit_link.visit_link_post:after {
 	content:'Visit Post/Page';
 }
+i.visit_link.visit_link_post {
+	background-position:-910px -106px;
+}
 i.visit_link.visit_link_lightbox:after {
 	content:'Open Lightbox';
+}
+i.visit_link.visit_link_lightbox {
+	background-position:-910px -138px;
+}
+i.visit_link.visit_link_none:after {
+	content:'Not Linked';
+}
+i.visit_link.visit_link_none {
+	background-position:-910px -106px;
 }
 i.visit_link:hover:after {
   display:block;
 }
-em{
-    font-style: italic;
+
+#upfront_map-location_overlay,
+.image-edit-button,
+.existing_menu_list + span,
+.new_menu_button input,
+.code-element-choose,
+.upfront_code-editor-simple,
+.upfront-quick-swap p,
+.no-widget-notice,
+.upfront-general-notice,
+.upfront-general-notice a,
+.upfront-general-notice a:link,
+.upfront-general-notice a:visited,
+.uslider-starting-centered a:link,
+#upfront-notifier {
+	font-family: "Source Sans Pro", sans-serif;
+	font-weight: normal;
 }
-strike{
-    text-decoration:line-through;
+.upfront-code_element-module button.create,
+.upfront-code_element-module button.embed,
+#upfront_map-location_overlay,
+#upfront_map-location_overlay p,
+.upfront-quick-swap p {
+	color: #3f5870;
+}
+.code-element-choose {
+	text-align: center;
 }

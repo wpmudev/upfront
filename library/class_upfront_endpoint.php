@@ -654,7 +654,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		if($posts) {
 			for ($i=0; $i < sizeof($posts); $i++) {
-				if($data['filterContent']){
+				if(!empty($data['filterContent'])){
 					$posts[$i]->post_content = apply_filters('the_content', $posts[$i]->post_content);
 					$posts[$i]->post_title = apply_filters('the_title', $posts[$i]->post_title);
 					$posts[$i]->post_excerpt = apply_filters('the_excerpt', $posts[$i]->post_excerpt);

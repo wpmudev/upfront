@@ -297,7 +297,7 @@
             ;
 
             if(!services.length)
-                return l10n.add_some_services;
+                return '<span class="upfront-general-notice">' + l10n.add_some_services + '</span>';
 
             _.each(services, function(s){
                 var alert = s.url ? '' : '<span class="alert-url">!</span>';
@@ -338,7 +338,7 @@
             });
 
             if(!markup)
-                return l10n.add_some_services;
+                return '<span class="upfront-general-notice">' + l10n.add_some_services + '</span>';
 
             this.refreshCount();
 
@@ -424,7 +424,7 @@
                 });
             }
 
-            return markup ? markup : l10n.select_some;
+            return markup ? markup : '<span class="upfront-general-notice">' + l10n.select_some + '</span>';
         },
 
         /**
@@ -432,8 +432,9 @@
          * @return {string} Markup to be shown.
          */
         get_content_markup: function () {
-            if(!Upfront.data.usocial.globals)
-                return l10n.no_global_settings_nag;
+            if(!Upfront.data.usocial.globals) {
+                return '<span class="upfront-general-notice">' + l10n.no_global_settings_nag + '</span>';
+						}
 
             var me = this,
                 layoutStyle = this.property("social_type"),

@@ -9,7 +9,8 @@
 <?php if($imagesLength){ ?>
 	<div class="ugallery_items <?php echo $labelFilters['length'] || !empty($in_editor) ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-	<div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+	<div class="ugallery_item ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+		<?php $images[$i]['urlType'] = !empty($images[$i]['urlType']) ? $images[$i]['urlType'] : false; ?>
 		  <?php if ($images[$i]['urlType'] !== 'unlink') { ?>
 			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
 			<?php } ?>
@@ -19,8 +20,8 @@
 				<i class="remove-image"></i>
 				<?php } ?>
 			</div>
-			<?php if($captionWhen != 'never' || !empty($in_editor)) { ?>
-			<div class="ugallery-thumb-title ugallery-caption-<?php echo $captionWhen ?> ugallery-caption-<?php echo $captionPosition ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
+			<?php if($captionType != 'none' || !empty($in_editor)) { ?>
+			<div class="ugallery-thumb-title ugallery-caption-on-hover-<?php echo $showCaptionOnHover['length'] ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			<?php if($linkTo == 'image'){ ?>
 			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>"><?php echo $images[$i]['caption'] ?></div>
@@ -49,38 +50,6 @@
 	#<?php echo $element_id ?> .ugallery-thumb-title {
 		color: <?php echo $captionColor ?>;
 		background: <?php echo  $captionBackground ?>;
-	}
-
-	#<?php echo $element_id ?> .ugallery-caption-above {
-		display: block;
-	}
-
-	#<?php echo $element_id ?> .ugallery-caption-over {
-		position: absolute;
-		width: 100%;
-		left: 0;
-		bottom: 0;
-	}
-
-	#<?php echo $element_id ?> .ugallery-caption-never {
-		display: none;
-	}
-
-	#<?php echo $element_id ?> .ugallery_caption_hover .ugallery-caption-over {
-		display: none;
-	}
-
-	#<?php echo $element_id ?> .ugallery_caption_hover:hover .ugallery-caption-over {
-		display: block;
-	}
-
-	#<?php echo $element_id ?> .ugallery-caption-over,
-	#<?php echo $element_id ?> .ugallery-padded-caption {
-		padding:5px;
-	}
-
-	#<?php echo $element_id ?> .ugallery_lb_text {
-		display: none;
 	}
 
 </style>

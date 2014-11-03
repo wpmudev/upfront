@@ -38,7 +38,7 @@ var Views = {
 */
 			this.$el.empty()
 				.append(
-					'<p style="text-align:center"><button type="button" class="embed">' + l10n.intro.embed + '</button>' +
+					'<p class="code-element-choose"><button type="button" class="embed">' + l10n.intro.embed + '</button>' +
 					'&nbsp;or&nbsp;' +
 					'<button type="button" class="create">' + l10n.intro.code + '</button></p>'
 				)
