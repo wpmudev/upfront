@@ -10,7 +10,9 @@
 	<div class="ugallery_items <?php echo $labelFilters['length'] || !empty($in_editor) ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
 	<div class="ugallery_item ugallery_caption_<?php echo $captionWhen ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
-			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : '' ?>" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
+		  <?php if ($images[$i]['urlType'] !== 'unlink') { ?>
+			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
+			<?php } ?>
 			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i]['loading']) && $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;">
 				<?php if(!empty($in_editor)) { ?>
@@ -24,7 +26,9 @@
 			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>"><?php echo $images[$i]['caption'] ?></div>
 			<?php } ?>
 
+			<?php if ($images[$i]['urlType'] !== 'unlink') { ?>
 			</a>
+			<?php } ?>
 		</div><?php } ?>
 	</div>
 <?php } else { ?>
