@@ -18,9 +18,9 @@ jQuery(function($){
 		}
 
 		totalMargin = container - (columns * itemWidth);
-		margin = no_padding ? 0 : Math.floor(totalMargin / (columns-1));
+		margin = no_padding ? 0 : Math.floor(totalMargin / columns);
 		grid_cell = margin + itemWidth;
-		remaining = container - (columns * itemWidth + margin * (columns-1));
+		remaining = container - (columns * itemWidth + margin * columns);
 
 		items.each(function(item_index){
 			var $this = $(this),

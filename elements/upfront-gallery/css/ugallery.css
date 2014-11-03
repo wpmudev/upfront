@@ -739,3 +739,7 @@ figure.gallery-labels-figure {
 	margin-bottom: 5px;
 	font-size: 16px;
 }
+
+.ugallery_item {
+	float: left;
+}
