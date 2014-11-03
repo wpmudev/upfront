@@ -51,7 +51,8 @@
 					'click .tabs-tab': 'onTabClick',
 					'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
 					'click .tab-content-active': 'onContentClick',
-					'click i': 'deleteTab'
+					'click i': 'deleteTab',
+					'dblclick .tab-content': 'checkEditorExists'
 				});
 				this.delegateEvents();
 
@@ -60,7 +61,7 @@
 				this.model.get('properties').bind('remove', this.render, this);
 
 				Upfront.Events.on('entity:resize_stop', this.onResizeStop, this);
-				Upfront.Events.on('entity:deactivated', this.stopEdit, this);
+				// Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 			},
 			onContentClick: function() {
 				this.$el.find('.tabs-tab-active .inner-box').trigger('blur');
@@ -234,8 +235,7 @@
 				var me = this,
 					$tabtitles = this.$el.find('.tabs-tab .inner-box'),
 					count = 1,
-					$tabs,
-					id;
+					$tabs;
 
 				$tabtitles.each(function () {
 					var $content = $(this);
@@ -250,7 +250,7 @@
 					 Upfront.Events.trigger('upfront:element:edit:start', 'text');
 					 $(this).focus();
 				 }).on('stop', function () {
-					 id = $content.parent().parent().data('content-id').split('-').pop();
+					 var id = $content.parent().parent().data('content-id').split('-').pop();
 					 me.property('tabs')[id].title = $content.text();
 					 Upfront.Events.trigger('upfront:element:edit:stop');
 				 }).on('blur', function() {
@@ -265,25 +265,7 @@
 				$tabs = this.$el.find('.tab-content');
 
 				$tabs.each(function () {
-					var $content = $(this);
-					$content.ueditor({
-						linebreaks: false,
-						autostart: false,
-						inserts: {},
-						placeholder: false
-					})
-						.on('start', function () {
-							Upfront.Events.trigger('upfront:element:edit:start', 'text');
-						})
-						.on('stop', function () {
-							if($content.text().trim() === '') {
-								$content.html('Tab Content');
-							}
-							me.saveTabContent();
-							Upfront.Events.trigger('upfront:element:edit:stop');
-							me.render();
-						})
-					;
+					me.initializeContentEditor($(this));
 				});
 
 				var $upfrontObjectContent = this.$el.find('.upfront-object-content');
@@ -291,9 +273,46 @@
 					$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
 				}
 
-				this.$el.find('div#'+this.currenttabid).addClass('tab-content-active').siblings().removeClass('tab-content-active');
+				this.$el.find('div#'+ this.currenttabid).addClass('tab-content-active').siblings().removeClass('tab-content-active');
 
-				this.$el.find('div.tabs-tab[data-content-id="'+this.$el.find('div.tab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
+				this.$el.find('.tabs-tab').removeClass('tabs-tab-active');
+				this.$el.find('div.tabs-tab[data-content-id="' + this.$el.find('div.tab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
+			},
+
+			checkEditorExists: function(event) {
+				var editor = $(event.target).data('ueditor');
+
+				if (!editor) {
+					this.initializeContentEditor($(event.target));
+					$(event.target).data('ueditor').start();
+				} else {
+					$(event.target).data('ueditor').start();
+				}
+			},
+
+			initializeContentEditor: function($content) {
+				var me = this;
+
+				$content.ueditor({
+					linebreaks: false,
+					autostart: false,
+					inserts: {},
+					placeholder: false
+				})
+				.on('start', function () {
+					Upfront.Events.trigger('upfront:element:edit:start', 'text');
+				})
+				.on('stop', function () {
+					me.stopContentEdit($content);
+				});
+			},
+
+			stopContentEdit: function($content) {
+				if($content.text().trim() === '') {
+					$content.html('Tab Content');
+				}
+				this.saveTabContent();
+				Upfront.Events.trigger('upfront:element:edit:stop');
 			},
 
 			addTooltips: function() {
