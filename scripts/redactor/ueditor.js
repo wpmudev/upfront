@@ -137,6 +137,7 @@ var hackRedactor = function(){
 			}).show();
 			this.airBindHide();
 			this.$air.trigger('show');
+            UeditorEvents.trigger("ueditor:air:show", this);
             this.selection.restore();
 		};
 

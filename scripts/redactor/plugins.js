@@ -27,19 +27,21 @@ var UeditorPanel = Backbone.View.extend({
             me.$el.trigger('closed', redactor);
         });
 
+        if( typeof this.init === "function" ){
+            this.init();
+        }
         this.render();
     },
 
     openToolbar: function(openPanel){
         var me = this;
-        me.redactor.$air.show();
-        me.redactor.airBindHide();
-        if(openPanel){
-            setTimeout(function(){
-                if(!me.panel.is(':visible'))
-                    me.button.click();
-            }, 300);
-        }
+        //me.redactor.$air.show();
+        //if(openPanel){
+        //    setTimeout(function(){
+        //        if(!me.panel.is(':visible'))
+        //            me.button.click();
+        //    }, 300);
+        //}
     },
 
     closeToolbar: function(){
@@ -842,11 +844,19 @@ RedactorPlugins.upfrontColor = function() {
             events: {
                 'open': 'open'
             },
+            init: function(){
+              this.listenTo( UeditorEvents, "ueditor:air:show", this.on_air_show );
+            },
+            on_air_show: function(e){
+                this.redactor.selection.save();
+                this.updateIcon();
+            },
             close: function (e, redactor) {
                 redactor.selection.restore();
             },
             setCurrentColors: function () {
                 var current = this.redactor.selection.getCurrent();
+                current = $(current).prop('tagName') ? current : $(current).parent();
                 if ( current && ( ['SPAN', 'DIV', 'INLINE'].indexOf(  $(current).prop('tagName')  ) !== -1 || $(current).hasClass(".upfront_theme_colors") ) ) {
 
                     var bg_color = tinycolor($(current).css('background-color'));
@@ -860,7 +870,6 @@ RedactorPlugins.upfrontColor = function() {
             },
             open: function (e, redactor) {
                 this.updateIcon();
-                this.setCurrentColors();
                 this.redactor.selection.save();
                 var self = this,
                     foreground_picker = new Upfront.Views.Editor.Field.Color({
@@ -879,7 +888,6 @@ RedactorPlugins.upfrontColor = function() {
                                 self.current_color = color;
                             },
                             move: function (color) {
-                                redactor.selection.restore(true, false);
                                 self.current_color = color;
                             }
                         }
@@ -901,7 +909,6 @@ RedactorPlugins.upfrontColor = function() {
                                 self.current_bg = color;
                             },
                             move: function (color) {
-                                redactor.selection.restore(true, false);
                                 self.current_bg = color;
                             }
                         }
@@ -956,7 +963,8 @@ RedactorPlugins.upfrontColor = function() {
                 }
 
 
-                this.$(".sp-choose").on("click", function () {
+                this.$(".sp-choose").on("click", function ( e ) {
+                    e.preventDefault();
                     self.updateColors();
                     self.closePanel();
                     self.closeToolbar();
@@ -974,14 +982,16 @@ RedactorPlugins.upfrontColor = function() {
                 var redac = this.redactor;
                 var self = this;
 
-                redac.bufferAirBindHide = this.redactor.airBindHide;
+                //redac.bufferAirBindHide = this.redactor.airBindHide;
 
-                redac.airBindHide = function () {
-                    self.updateIcon();
-                    redac.bufferAirBindHide();
-                };
+                //redac.airBindHide = function () {
+                //    self.updateIcon();
+                //    redac.bufferAirBindHide();
+                //};
 
-                tablist.children('li').on('click', function () {
+                tablist.children('li').on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     tablist.children('li').removeClass('active');
                     $(this).addClass('active');
                     tabs.children('li').removeClass('active');
@@ -1018,7 +1028,8 @@ RedactorPlugins.upfrontColor = function() {
 
             },
             updateColors: function () {
-
+                this.redactor.buffer.set();
+                this.redactor.selection.save();
                 var self = this,
                     parent = this.redactor.selection.getParent(),
                     bg = "";
@@ -1042,23 +1053,20 @@ RedactorPlugins.upfrontColor = function() {
 
                     color_remove( 'background-color' );
                     color_set( 'background-color',  self.current_bg.toRgbString() );
-                    self.updateIcon();
-                    self.redactor.selection.removeMarkers();
-                    return;
-                    this.redactor.inlineRemoveStyle("background-color");
-                    bg = 'background-color:' + self.current_bg.toRgbString();
-                    bg_class = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_bg.toHexString(), true);
 
-                    if (bg_class) {
-                        bg = "";
-                        bg_class += " upfront_theme_colors";
-                    } else {
-                        bg_class = "inline_color";
-                    }
+                    //this.redactor.inlineRemoveStyle("background-color");
+                    //bg = 'background-color:' + self.current_bg.toRgbString();
+                    //bg_class = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_bg.toHexString(), true);
+                    //
+                    //if (bg_class) {
+                    //    bg = "";
+                    //    bg_class += " upfront_theme_colors";
+                    //} else {
+                    //    bg_class = "inline_color";
+                    //}
 
-                    return;
+
                 }
-
                 /**
                  * Set font color
                  */
@@ -1067,43 +1075,44 @@ RedactorPlugins.upfrontColor = function() {
 
                     color_remove( 'color' );
                     color_set( 'color',  self.current_color.toRgbString() );
-                    self.updateIcon();
-                    self.redactor.selection.removeMarkers();
+                    self.redactor.selection.restore();
                     return;
-                    var theme_color_classname = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_color.toHexString());
-                    if (theme_color_classname) { // it's a theme color
-                        var current = this.redactor.getCurrent();
-                        if (!$(current).hasClass(theme_color_classname)) {
-
-                            this.redactor.selection.restore(true, true);
-                            this.redactor.buffer.set();
-                            this.redactor.$editor.focus();
-                            this.redactor.inline.removeStyle("color");
-                            this.redactor.inline.removeClass("upfront_theme_colors");
-                            this.redactor.inline.removeClass("inline_color");
-                            html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
-
-                            html = "<inline class='upfront_theme_colors " + theme_color_classname + " " + bg_class + "' style='" + bg + "'>" + html + "</inline>";
-                        }
-                    } else {
-                        // Making sure it doesn't have any theme color classes
-                        _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function (cls) {
-                            self.redactor.inline.removeClass(cls);
-                        });
-
-                        this.redactor.selection.restore(true, true);
-                        this.redactor.buffer.set();
-                        this.redactor.$editor.focus();
-                        this.redactor.inline.removeStyle("color");
-                        this.redactor.inline.removeClass("upfront_theme_colors");
-                        this.redactor.inline.removeClass("inline_color");
-
-                        html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
-                        html = "<inline class='inline_color' style='color: " + self.current_color.toRgbString() + ";" + bg + "'>" + html + "</inline>";
-
-                    }
+                    //var theme_color_classname = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_color.toHexString());
+                    //if (theme_color_classname) { // it's a theme color
+                    //    var current = this.redactor.getCurrent();
+                    //    if (!$(current).hasClass(theme_color_classname)) {
+                    //
+                    //        this.redactor.selection.restore(true, true);
+                    //        this.redactor.buffer.set();
+                    //        this.redactor.$editor.focus();
+                    //        this.redactor.inline.removeStyle("color");
+                    //        this.redactor.inline.removeClass("upfront_theme_colors");
+                    //        this.redactor.inline.removeClass("inline_color");
+                    //        html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
+                    //
+                    //        html = "<inline class='upfront_theme_colors " + theme_color_classname + " " + bg_class + "' style='" + bg + "'>" + html + "</inline>";
+                    //    }
+                    //} else {
+                    //    // Making sure it doesn't have any theme color classes
+                    //    _.each(Upfront.Views.Theme_Colors.colors.get_all_classes(), function (cls) {
+                    //        self.redactor.inline.removeClass(cls);
+                    //    });
+                    //
+                    //    this.redactor.selection.restore(true, true);
+                    //    this.redactor.buffer.set();
+                    //    this.redactor.$editor.focus();
+                    //    this.redactor.inline.removeStyle("color");
+                    //    this.redactor.inline.removeClass("upfront_theme_colors");
+                    //    this.redactor.inline.removeClass("inline_color");
+                    //
+                    //    html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
+                    //    html = "<inline class='inline_color' style='color: " + self.current_color.toRgbString() + ";" + bg + "'>" + html + "</inline>";
+                    //
+                    //}
                 }
-
+                self.updateIcon();
+                self.redactor.selection.restore();
+                return;
 
                 if (html === "") {
                     html = this.redactor.cleanHtml(this.redactor.cleanRemoveEmptyTags(this.redactor.selection.getHtml()));
