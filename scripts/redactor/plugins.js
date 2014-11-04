@@ -46,9 +46,11 @@ var UeditorPanel = Backbone.View.extend({
 
     closeToolbar: function(){
         this.redactor.$air.fadeOut(100);
+        this.redactor.dropdown.hideAll();
     },
 
     closePanel: function(){
+        console.log("trying to close panel");
         if(this.panel.is(':visible'))
             this.button.click();
     },
@@ -620,9 +622,7 @@ RedactorPlugins.upfrontIcons = function() {
             tpl: _.template($(tpl).find('#font-icons').html()),
             events: {
                 'click .ueditor-font-icon': 'insert_icon',
-                // "change input.font-icons-top" : 'update_offset',
-                'open': 'open',
-                'closed': 'close'
+                'open': 'open'
             },
             render: function (options) {
                 this.$el.html(this.tpl());
@@ -630,29 +630,20 @@ RedactorPlugins.upfrontIcons = function() {
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
-                this.redactor.selection.restore();
+                self.redactor.buffer.set();
+                this.redactor.selection.save();
                 this.set_current_icon();
-
                 this.$el.parent().css({
                     left: 193
                 });
             },
-            close: function () {
+            closed: function () {
+                console.log("closing panel");
                 if (this.redactor) {
-                    this.redactor.selection.removeMarkers();
+                    this.redactor.selection.restore();
                 }
             },
-            //      update_offset : function( e ){
-            // console.log(this.$sel);
-            //      	if( this.$sel && this.$sel.hasClass( "uf_font_icon" ) ){
-            //      		window.$sel = this.$sel;
-            //      		this.$sel.css("top", parseFloat( $(e.target).val() ) +  "px" );
-            //      		this.redactor.selectionRestore();
-            //      		this.redactor.sync();
-            //      	}
-            //      },
             insert_icon: function (e) {
-                this.redactor.selection.restore(true, false);
                 var $icon = $($(e.target).hasClass("ueditor-font-icon") ? $(e.target).html() : $(e.target).closest(".ueditor-font-icon").html()),
                     fontSize = this.$(".font-icons-size").val(),
                     top = this.$(".font-icons-top").val();
@@ -662,19 +653,15 @@ RedactorPlugins.upfrontIcons = function() {
                 });
                 this.redactor.insert.html($icon[0].outerHTML, true);
                 this.redactor.code.sync();
-                this.closePanel();
+                this.redactor.selection.restore();
+                this.closeToolbar();
             },
             set_current_icon: function () {
-                this.redactor.selection.restore(true, false);
-                window.re = this.redactor;
-                var $sel = $(this.redactor.selection.getParent()).eq(0),
+                var $sel = $(this.redactor.selection.getCurrent()),
                     self = this;
 
                 if (!$sel.hasClass("uf_font_icon")) {
-                    if ($sel.parent().hasClass("uf_font_icon")) {
-                        $sel = $sel.parent()
-                    }
-                    ;
+                    $sel = $(this.redactor.selection.getInlines()).filter( ".uf_font_icon" );
                 }
                 if ($sel.hasClass("uf_font_icon")) {
                     this.$(".font-icons-size").val(parseFloat($sel.css("font-size")));
@@ -683,8 +670,6 @@ RedactorPlugins.upfrontIcons = function() {
                     this.$(".upfront-font-icons-controlls input").on("change", function (e) {
                         e.stopPropagation();
                         e.preventDefault();
-                        self.redactor.selectionSave();
-                        self.redactor.bufferSet();
                         var val = $(this).val() + "px";
 
                         if ($(this).hasClass("font-icons-size")) {
@@ -694,10 +679,8 @@ RedactorPlugins.upfrontIcons = function() {
                         if ($(this).hasClass("font-icons-top")) {
                             $sel.css("top", val);
                         }
-                        self.redactor.code.sync();
 
-                        self.redactor.selection.restore();
-
+                        this.redactor.selection.restore();
                     });
 
                 }

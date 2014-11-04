@@ -133,7 +133,6 @@ var hackRedactor = function(){
 	};
 
 
-	$.Redactor.prototype.airBindMousemoveHide = function () {};
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air) return;
