@@ -212,7 +212,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
 			'captionUseBackground' => 0,
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
-			'showCaptionOnHover' => ['true'],
+			'showCaptionOnHover' => array( 'true' ),
 			'linkTo' => 'image', // 'url' | 'image'
 			'no_padding' => array('false')
 		);
