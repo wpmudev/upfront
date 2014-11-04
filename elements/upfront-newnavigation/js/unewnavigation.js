@@ -53,7 +53,7 @@ var MenuItemView = Backbone.View.extend({
 								return 'Open Lightbox';
 							else if(linktype == 'anchor')
 								return 'Scroll to Anchor';
-							else if(linktype == 'post')
+							else if(linktype == 'entry')
 								return 'Visit Post/Page';
 							else
 								return 'Visit Link';
@@ -217,11 +217,11 @@ var MenuItemView = Backbone.View.extend({
 
 
 		if(!$.trim(url) || $.trim(url) == '#')
-			return 'none';
+			return 'unlink';
 		if(url.length && url[0] == '#')
 			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
 		if(url.substring(0, location.origin.length) == location.origin)
-			return 'post';
+			return 'entry';
 
 		return 'external';
 
@@ -247,7 +247,7 @@ var MenuItemView = Backbone.View.extend({
 			var anchors = me.parent_view.get_anchors();
 			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(me.model['menu-item-url'])).offset().top},'slow');
 		}
-		else if(linktype == 'post')
+		else if(linktype == 'entry')
 			window.location.href = me.model['menu-item-url'].replace('&editmode=true', '').replace('editmode=true', '')+((me.model['menu-item-url'].indexOf('?')>0)?'&editmode=true':'?editmode=true');
 		else
 			window.open(me.model['menu-item-url']);

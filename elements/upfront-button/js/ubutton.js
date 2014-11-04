@@ -113,7 +113,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			var anchors = me.get_anchors();
 			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(url)).offset().top},'slow');
 		}
-		else if(linktype == 'post')
+		else if(linktype == 'entry')
 			window.location.href = url.replace('&editmode=true', '').replace('editmode=true', '')+((url.indexOf('?')>0)?'&editmode=true':'?editmode=true');
 		else
 			window.open(url);
@@ -236,11 +236,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 
 		if(!$.trim(url) || $.trim(url) == '#')
-			return 'none';
+			return 'unlink';
 		if(url.length && url[0] == '#')
 			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
 		if(url.substring(0, location.origin.length) == location.origin)
-			return 'post';
+			return 'entry';
 
 		return 'external';
 
@@ -1454,7 +1454,7 @@ var ButtonMenuList = Upfront.Views.ContextMenuList.extend({
 						return 'Open Lightbox';
 					else if(linktype == 'anchor')
 						return 'Scroll to Anchor';
-					else if(linktype == 'post')
+					else if(linktype == 'entry')
 						return 'Visit Post/Page';
 					else
 						return 'Visit Link';

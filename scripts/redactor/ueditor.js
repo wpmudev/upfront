@@ -363,6 +363,7 @@ Ueditor.prototype = {
 	start: function(){
 		var self = this;
 		this.stopPlaceholder();
+		this.hideLinkFlags();
 		this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
 			.attr('title', '')
@@ -426,8 +427,105 @@ Ueditor.prototype = {
 					me.start(e);
 			})
 		;
-	},
 
+
+
+		if(me.$el.prop('tagName') == 'DIV') {
+			me.$el.on('click', 'i.visit_link', function() {
+				me.visitLink($(this).attr('data-href'));
+			});
+
+			me.$el.on('mouseover', function() {
+				if(me.$el.hasClass('ueditable-inactive'))
+					me.displayLinkFlags();
+			});
+			me.$el.on('mouseout', function(e) {
+				if($(e.relatedTarget).hasClass('visit_link'))
+					return;
+				me.hideLinkFlags();
+
+			});
+		}
+	},
+	displayLinkFlags: function() {
+		var me = this;
+		this.$el.find('a').each(function(){
+			if($(this).find('i.visit_link').length > 0)
+				return;
+			$(this).css('position', 'relative');
+			$(this).append('<i class="visit_link visit_link_'+me.guessLinkType($(this).attr('href'))+'" data-href="'+$(this).attr('href')+'"></i>');
+			$(this).removeAttr('href');
+			//$(this).attr('onclick', 'return false;');
+		});
+	},
+	hideLinkFlags: function(area)  {
+		this.$el.find('a').each(function() {
+			$(this).css('position', '');
+			$(this).attr('href', $(this).children('i.visit_link').attr('data-href'));
+			$(this).children('i.visit_link').remove();
+			//$(this).attr('onclick', '');
+		});
+	},
+	visitLink: function(url) {
+		var me = this;
+		var linktype = me.guessLinkType(url);
+		if(linktype == 'lightbox') {
+			var regions = Upfront.Application.layout.get('regions');
+			region = regions ? regions.get_by_name(me.getUrlanchor(url)) : false;
+			if(region){
+				//hide other lightboxes
+				_.each(regions.models, function(model) {
+					if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+				});
+				var regionview = Upfront.data.region_views[region.cid];
+				regionview.show();
+			}
+		}
+		else if(linktype == 'anchor') {
+			var anchors = me.get_anchors();
+			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(url)).offset().top},'slow');
+		}
+		else if(linktype == 'entry')
+			window.location.href = url.replace('&editmode=true', '').replace('editmode=true', '')+((url.indexOf('?')>0)?'&editmode=true':'?editmode=true');
+		else
+			window.open(url);
+	},
+	guessLinkType: function(url){
+		
+		if(!$.trim(url) || $.trim(url) == '#')
+			return 'unlink';
+		if(url.length && url[0] == '#')
+			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+		if(url.substring(0, location.origin.length) == location.origin)
+			return 'entry';
+
+		return 'external';
+	},
+	get_anchors: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			anchors = [];
+		;
+		regions.each(function (r) {
+			r.get("modules").each(function (module) {
+				module.get("objects").each(function (object) {
+					var anchor = object.get_property_value_by_name("anchor");
+					if (anchor && anchor.length) anchors[anchor] = object;
+				});
+			});
+		});
+		return anchors;
+	},
+	getUrlanchor: function(url) {
+		// this does almost the opposite of the above function
+
+		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+
+		if(url.indexOf('#') >=0) {
+			var tempurl = url.split('#');
+			return tempurl[1];
+		} else return false;
+	},
 	insertsSetUp: function(){
 		var me = this,
 			manager = new InsertManager({el: this.$el, insertsData: this.options.inserts}),
