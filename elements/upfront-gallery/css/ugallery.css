@@ -399,16 +399,16 @@ div.ugallery-controls i.upfront-icon:before {
 }
 
 .upfront-ui .upfront-icon-region-fullscreen:before {
-	background-position: -699px -774px;
+	background-position: -700px -775px;
 }
 .upfront-ui .upfront-icon-region-fullscreen:hover:before {
-	background-position: -807px -774px;
+	background-position: -808px -775px;
 }
 .upfront-ui .upfront-icon-region-fullscreen-active:before {
-	background-position: -699px -774px;
+	background-position: -700px -775px;
 }
 .upfront-ui .upfront-icon-region-fullscreen-active:hover:before {
-	background-position: -807px -774px;
+	background-position: -808px -775px;
 }
 
 .upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
@@ -692,6 +692,11 @@ button.mfp-close {
 
 figure.gallery-labels-figure img.mfp-img {
 	padding: 0;
+}
+
+.ugallery_caption_on_hover_0 .ugallery-controls,
+.ugallery_caption_on_hover_1 .ugallery-controls {
+	top:0;
 }
 
 .ugallery-controls {
