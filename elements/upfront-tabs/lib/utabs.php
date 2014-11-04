@@ -3,13 +3,16 @@
  * Tabbed element for Upfront
  */
 class Upfront_UtabsView extends Upfront_Object {
+	
 	public static function default_properties() {
 		$defaultTab = new StdClass();
 		$defaultTab->title = '';
-		$defaultTab->content = 'Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.';
+		$defaultTab->content = self::_get_l10n('default_tab_content');
+		
 		$secondTab = new StdClass();
 		$secondTab->title = '';
-		$secondTab->content = 'Have fun with tabs.';
+		$secondTab->content = self::_get_l10n('second_tab_content');
+		
 		return array(
 			'type' => 'UtabsModel',
 			'view_class' => 'UtabsView',
@@ -84,6 +87,49 @@ class Upfront_UtabsView extends Upfront_Object {
 	public static function add_styles_scripts() {
 		upfront_add_element_style('utabs-style', array('css/utabs.css', dirname(__FILE__)));
 		//wp_enqueue_style('utabs-style', upfront_element_url('css/utabs.css', dirname(__FILE__)));
+	}
+
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['utabs_element'])) return $strings;
+		$strings['utabs_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Tabs', 'upfront'),
+			'default_tab_content' => __('Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.', 'upfront'),
+			'second_tab_content' => __('Have fun with tabs.', 'upfront'),
+			'css' => array(
+				'container_label' => __('Tabs container', 'upfront'),
+				'container_info' => __('The layer that contains all the contents of the tab element.', 'upfront'),
+				'menu_label' => __('Tabs menu', 'upfront'),
+				'menu_info' => __('The row that contains all tabs.', 'upfront'),
+				'tabs_label' => __('Tabs', 'upfront'),
+				'tabs_info' => __('Each of the tabs.', 'upfront'),
+				'active_tab_label' => __('Active tab', 'upfront'),
+				'active_tab_info' => __('Active tab', 'upfront'),
+				'tab_content_label' => __('Tab content', 'upfront'),
+				'tab_content_info' => __('The layer that wraps tab content', 'upfront'),
+				'tab_p_label' => __('Tab content paragraph', 'upfront'),
+				'tab_p_info' => __('The paragraph that contains tab content', 'upfront'),
+				'active_content_label' => __('Active tab content', 'upfront'),
+				'active_content_info' => __('The layer that wraps active tab content', 'upfront'),
+				'active_p_label' => __('Active tab content paragraph', 'upfront'),
+				'active_p_info' => __('The paragraph that contains active tab content', 'upfront'),
+			),
+			'display_style' => __('Display style', 'upfront'),
+			'theme_style' => __('Theme Styles', 'upfront'),
+			'simple_text' => __('Simple text', 'upfront'),
+			'button_tabs' => __('Button Tabs', 'upfront'),
+			'tabbed' => __('Tabbed', 'upfront'),
+			'settings' => __('Tabs settings', 'upfront'),
+			'appearance' => __('Appearance', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
 	}
 }
 

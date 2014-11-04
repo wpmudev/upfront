@@ -34,6 +34,7 @@ function utabs_initialize () {
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('utabs', upfront_relative_element_url('js/utabs', __FILE__));
 
+	add_filter('upfront_l10n', array('Upfront_UtabsView', 'add_l10n_strings'));
 
 	// Add element defaults to data object
 	$utabs = new Upfront_UtabsView(array());
