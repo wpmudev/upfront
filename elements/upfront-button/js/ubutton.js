@@ -44,8 +44,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			me.stopEdit();
 		}, this);
 */
-		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);	
-		
+		//Upfront.Events.on("entity:settings:deactivate", this.revert_preset, this);
+
 		//Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
 
 		Upfront.Events.on("upfront:themestyle:saved", function(theme_style) {
@@ -58,7 +58,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			me.model.set_property('theme_style', '', true);
 		}, this);
 
-		
+
 		/*if ( objects && objects.length == 1 ){
 			objects.each(function(object){
 				object.set_property('row', rsz_row);
@@ -73,7 +73,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	conformSize: function() {
 		this.$el.find('.upfront-output-button').css('height', this.$el.find('.upfront-object.upfront-button').height());
 	},*/
-	
+
 	processClick: function(e) {
 		e.stopPropagation();
 		e.preventDefault();
@@ -163,7 +163,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	/*editLink: function(e) {
 		e.preventDefault();
 		var editor = $(e.target).data('ueditor');
-		
+
 		if(editor) {
 			editor.start();
 		}
@@ -258,9 +258,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
-				
+
 				airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
-				
+
 				placeholder: 'Click here',
 				autostart: false
 			})
@@ -275,7 +275,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				;
 
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
-								
+
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				me.property('href', $target.attr('href'), true);
 
@@ -290,7 +290,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				;
 
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
-								
+
 				if (text) me.model.set_content(text, {silent: true});
 			})
 		/*.ueditor({
@@ -375,7 +375,7 @@ var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
 var Settings_ButtonPresets_Field = Upfront.Views.Editor.Field.Select.extend({
 	render: function() {
 		Upfront.Views.Editor.Field.Select.prototype.render.call(this);
-		var html = ['<a href="#" title="Edit preset" class="upfront-buttonpreset-edit">edit preset</a>'];
+		var html = ['<a href="#" title="Edit preset" class="upfront-preset-edit">edit preset</a>'];
 		this.$el.append(html.join(''));
 		return this;
 	},
@@ -393,7 +393,7 @@ var Settings_ButtonPresets = Upfront.Views.Editor.Settings.Item.extend({
 		this.presetsfield = new Settings_ButtonPresets_Field({
 				model: this.model, property: 'currentpreset',
 				values: presets,
-				className: 'button_preset',
+				className: 'preset',
 				change: function() { me.$el.trigger('itemselected');}
 			});
 
@@ -424,7 +424,7 @@ var Settings_ButtonPresets = Upfront.Views.Editor.Settings.Item.extend({
 
 
 var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
-  className: 'button-settings-panel',
+  className: 'button-settings-panel preset-manager-panel',
   hide_common_anchors: true,
 
 	initialize: function (opts) {
@@ -437,8 +437,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		};
 
 		this.events = _.extend({}, this.events, {
-			'click a.upfront-buttonpreset-edit': 'editPreset',
-
+			'click a.upfront-preset-edit': 'editPreset',
 		});
 
 		//_.bindAll(this, 'onBgColor', 'onBorderColor');
@@ -858,13 +857,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				className: 'transition hover',
 				change: function() { me.updatelivecss(me, this);}
 		}),
-		me.static_button_preset = new Upfront.Views.Editor.Field.Button({
+		me.static_preset = new Upfront.Views.Editor.Field.Button({
 			model: me.model,
 			label: 'Static',
-			className: "static_button_preset active",
+			className: "static_preset active",
 			compact: true,
 			on_click: function() {
-				this.$el.siblings('.hover_button_preset').removeClass('active');
+				this.$el.siblings('.hover_preset').removeClass('active');
 				this.$el.addClass('active');
 				this.$el.siblings('div.hover').hide();
 				this.$el.siblings('div.static').show();
@@ -879,20 +878,20 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					new Upfront.Views.Editor.Field.Button({
 						model: me.model,
 						label: 'Delete Preset',
-						className: "delete_button_preset",
+						className: "delete_preset",
 						compact: true,
 						on_click: function() {
 							me.delete_preset(me.property('currentpreset'));
 						},
 					}),
-					me.static_button_preset,
+					me.static_preset,
 					new Upfront.Views.Editor.Field.Button({
 						model: me.model,
 						label: 'Hover',
-						className: "hover_button_preset",
+						className: "hover_preset",
 						compact: true,
 						on_click: function() {
-							this.$el.siblings('.static_button_preset').removeClass('active');
+							this.$el.siblings('.static_preset').removeClass('active');
 							this.$el.addClass('active');
 							this.$el.siblings('div.static').hide();
 							this.$el.siblings('div.hover').show();
@@ -942,7 +941,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				new Upfront.Views.Editor.Field.Button({
 					model: me.model,
 					label: 'New Preset',
-					className: "new_button_preset",
+					className: "new_preset",
 					compact: true,
 					on_click: function() {
 						if(newpresetname.$el.find('input').val().trim() != '') {
@@ -961,7 +960,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		me.presetspecific.$el.hide();
 
 		me.buttonpresets.$el.on('itemselected', function() {
-			var selectedpreset = me.$el.find('div.button_preset li.upfront-field-select-option-selected input').val();
+			var selectedpreset = me.$el.find('div.preset li.upfront-field-select-option-selected input').val();
 			if(selectedpreset == 'undefined')
 				return;
 			me.load_preset(selectedpreset);
@@ -1097,14 +1096,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					"font-family: "+me.hov_fontFace.get_value()+"; "+
 					"color: "+me.hov_color.get_value()+"; ";
 
-			var style ='div#'+me.property('element_id')+' a.upfront_cta {'+(me.static_button_preset.$el.hasClass('active')?style_static:style_hover)+"}\n"+
+			var style ='div#'+me.property('element_id')+' a.upfront_cta {'+(me.static_preset.$el.hasClass('active')?style_static:style_hover)+"}\n"+
 						'div#'+me.property('element_id')+' a.upfront_cta:hover {'+style_hover+"}\n";
 
 
 		$('style#style'+me.property('element_id')).html(style);
 	},
 	on_save: function() {
-		
+
 		this.is_saving = true;
 		var currentpreset = this.property('currentpreset');
 		if(this.buttonpresets.$el.css('display') == 'none')
@@ -1120,13 +1119,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		setTimeout(function() {
 			if(me.is_saving)
 				return;
-			
+
 			$('style#style'+me.property('element_id')).html(me.original_style);
 		}, 200);
 	},
 	editPreset: function(e){
 		e.preventDefault();
-		var selectedpreset = this.$el.find('div.button_preset li.upfront-field-select-option-selected input').val();
+		var selectedpreset = this.$el.find('div.preset li.upfront-field-select-option-selected input').val();
 		if(!selectedpreset || selectedpreset == 'undefined')
 			return;
 		this.property('currentpreset', selectedpreset, true);
@@ -1139,7 +1138,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.buttonpresets.$el.hide(),
 		this.$el.find('div.upfront-settings-common_panel').show();
 		this.newpresets.$el.hide(),
-		this.static_button_preset.$el.trigger('click');
+		this.static_preset.$el.trigger('click');
 		this.presetspecific.$el.show();
 		//logic to hide preset selection and show preset fields
 	},
