@@ -934,7 +934,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	get_content_markup: function () {
-console.log('getting content markup');
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			me = this
 		;
