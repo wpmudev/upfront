@@ -12741,3 +12741,9 @@ i.visit_link:hover:after {
 .code-element-choose {
 	text-align: center;
 }
+strike{
+    text-decoration: line-through;
+}
+em{
+    font-style: italic;
+}
