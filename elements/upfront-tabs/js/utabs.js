@@ -5,6 +5,7 @@ define([
 	'elements/upfront-tabs/js/settings',
 	'text!elements/upfront-tabs/tpl/utabs.html'
 ], function(UtabsModel, TabsElement, TabsSettings, tabsTpl) {
+	var l10n = Upfront.Settings.l10n.utabs_element;
 
 	var UtabsView = Upfront.Views.ObjectView.extend({
 		model: UtabsModel,
@@ -12,14 +13,14 @@ define([
 		tabsTpl: Upfront.Util.template(tabsTpl),
 		elementSize: {width: 0, height: 0},
 		cssSelectors: {
-			'.upfront-object-content': {label: 'Tabs container', info: 'The layer that contains all the contents of the tab element.'},
-			'.upfront-tabs-container .tabs-menu-wrapper': {label: 'Tabs menu', info: 'The row that contains all tabs'},
-			'.upfront-tabs-container .tabs-tab .inner-box': {label: 'Tabs', info: 'Each of the tabs.'},
-			'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: 'Active tab', info: 'Active tab'},
-			'.upfront-tabs-container .tabs-content': {label: 'Tab content', info: 'The layber that wraps tab content'},
-			'.upfront-tabs-container .tabs-content p': {label: 'Tab content paragraph', info: 'The paragraph that contains tab content'},
-			'.upfront-tabs-container .tab-content-active': {label: 'Active tab content', info: 'The layber that wraps active tab content'},
-			'.upfront-tabs-container .tab-content-active p': {label: 'Active tab content paragraph', info: 'The paragraph that contains active tab content'}
+			'.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
+			'.upfront-tabs-container .tabs-menu-wrapper': {label: l10n.css.menu_label, info: l10n.css.menu_info},
+			'.upfront-tabs-container .tabs-tab .inner-box': {label: l10n.css.tabs_label, info: l10n.css.tabs_info},
+			'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: l10n.css.active_tab_label, info: l10n.css.active_tab_info},
+			'.upfront-tabs-container .tabs-content': {label: l10n.css.tab_content_label, info: l10n.css.tab_content_info},
+			'.upfront-tabs-container .tabs-content p': {label: l10n.css.tab_p_label, info: l10n.css.tab_p_info},
+			'.upfront-tabs-container .tab-content-active': {label: l10n.css.active_content_label, info: l10n.css.active_content_info},
+			'.upfront-tabs-container .tab-content-active p': {label: l10n.css.active_p_label, info: l10n.css.active_p_info}
 		},
 
 		initialize: function(){

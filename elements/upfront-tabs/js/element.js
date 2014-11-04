@@ -1,11 +1,13 @@
 define([
 	'elements/upfront-tabs/js/model'
 ], function(Model) {
+	var l10n = Upfront.Settings.l10n.utabs_element;
+
 	var Element = Upfront.Views.Editor.Sidebar.Element.extend({
 		priority: 100,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-tabs');
-			this.$el.html('Tabs');
+			this.$el.html(l10n.element_name);
 		},
 		add_element: function () {
 			var object = new Model(),

@@ -3,16 +3,16 @@
  * Tabbed element for Upfront
  */
 class Upfront_UtabsView extends Upfront_Object {
-	
+
 	public static function default_properties() {
 		$defaultTab = new StdClass();
 		$defaultTab->title = '';
 		$defaultTab->content = self::_get_l10n('default_tab_content');
-		
+
 		$secondTab = new StdClass();
 		$secondTab->title = '';
 		$secondTab->content = self::_get_l10n('second_tab_content');
-		
+
 		return array(
 			'type' => 'UtabsModel',
 			'view_class' => 'UtabsView',
@@ -111,13 +111,7 @@ class Upfront_UtabsView extends Upfront_Object {
 				'active_p_label' => __('Active tab content paragraph', 'upfront'),
 				'active_p_info' => __('The paragraph that contains active tab content', 'upfront'),
 			),
-			'display_style' => __('Display style', 'upfront'),
-			'theme_style' => __('Theme Styles', 'upfront'),
-			'simple_text' => __('Simple text', 'upfront'),
-			'button_tabs' => __('Button Tabs', 'upfront'),
-			'tabbed' => __('Tabbed', 'upfront'),
 			'settings' => __('Tabs settings', 'upfront'),
-			'appearance' => __('Appearance', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

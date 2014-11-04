@@ -1,6 +1,8 @@
 define([
 	'elements/upfront-tabs/js/settings/presets-panel'
 ], function(PresetsPanel) {
+	var l10n = Upfront.Settings.l10n.utabs_element;
+
 	var Settings = Upfront.Views.Editor.Settings.Settings.extend({
 		initialize: function (opts) {
 			this.options = opts;
@@ -11,7 +13,7 @@ define([
 		},
 
 		get_title: function () {
-			return 'Tabs settings';
+			return l10n.settings;
 		}
 	});
 
