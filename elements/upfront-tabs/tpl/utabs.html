@@ -1,45 +1,4 @@
-<?php if ($style_type === 'custom') { ?>
-    <style>
-      /* Tabbed style */
-      .upfront-tabs-container.custom.tabbed  .tabs-menu {
-        border-color: <?php echo $active_tab_color ?>;
-      }
-
-      .upfront-tabs-container.custom.tabbed  .tabs-tab .inner-box {
-        color: <?php echo $inactive_tab_text_color ?>;
-        background: <?php echo $inactive_tab_color ?>;
-      }
-
-      .upfront-tabs-container.custom.tabbed  .tabs-tab-active .inner-box {
-        color: <?php echo $active_tab_text_color ?>;
-        background: none;
-      }
-
-      .upfront-tabs-container.custom.tabbed  .tabs-tab-active {
-        border-color: <?php echo $active_tab_color ?>;
-      }
-      /* Simple text */
-      .upfront-tabs-container.custom.simple_text .tabs-tab .inner-box {
-        color: <?php echo $inactive_tab_text_color ?>;
-      }
-
-      .upfront-tabs-container.custom.simple_text .tabs-tab-active .inner-box {
-        color: <?php echo $active_tab_text_color ?>;
-      }
-
-      /* Button tabs */
-      .upfront-tabs-container.custom.button_tabs .tabs-tab {
-        color: <?php echo $inactive_tab_text_color ?>;
-        background: <?php echo $inactive_tab_color ?>;
-      }
-
-      .upfront-tabs-container.custom.button_tabs .tabs-tab-active {
-        color: <?php echo $active_tab_text_color ?>;
-        background: <?php echo $active_tab_color ?>;
-      }
-    </style>
-<?php } ?>
-<div class=" upfront-tabs-container <?php if($style_type === 'theme_defined') { ?><?php echo $theme_style ?><?php } else { ?>custom <?php echo $custom_style ?><?php } ?>">
+<div class=" upfront-tabs-container">
   <div class="tabs-menu-wrapper">
     <div class="tabs-menu">
       <?php for ($i = 0; $i < $tabs_count; $i++) { ?>

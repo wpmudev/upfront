@@ -56,7 +56,85 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
+	//Prevent Redactor code cleanup on init and early start of plugins
+	$.Redactor.prototype.buildEnable = function(){
+		// Start plugins here, before options are handled so we can modify them
+		if(!this.pluginsBuilt){
+			var me = this;
+			if (!this.opts.plugins )
+				this.opts.plugins = [];
 
+			this.pluginsBuilt = [];
+
+			$.each(this.opts.plugins, function(idx, name){
+				var plugin = RedactorPlugins[name];
+				if(plugin){
+					me.pluginsBuilt.push(plugin);
+					$.extend(me, plugin);
+					if($.isFunction(plugin.beforeInit))
+						me.beforeInit();
+				}
+			});
+		}
+
+		//Redactor.buildEnable
+		this.$editor.addClass('redactor_editor').attr({ 'contenteditable': true, 'dir': this.opts.direction });
+		this.$source.attr('dir', this.opts.direction).hide();
+
+		// set strip to false to prevent code cleaning
+		this.set(this.content, false, false);
+	};
+
+	// Let Ctrl/Cmd+A (yeah...) work normally
+	$.Redactor.prototype.airEnable = function () {
+			if (!this.opts.air || !this.opts.airButtons) return;
+			var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
+
+			this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
+				var insert = $(e.target).closest('.ueditor-insert');
+				if(insert.length && insert.closest(this.$box).length)
+					return;
+
+				var text = this.getSelectionText();
+				this.opts.toolbarFixedTopOffset = "50";
+				if (e.type === 'mouseup' && text != '') this.airShow(e);
+				if (e.type === 'keyup' && e.shiftKey && text != '') {
+					var $focusElem = $(this.getElement(this.getSelection().focusNode)), offset = $focusElem.offset();
+					offset.height = $focusElem.height();
+					this.airShow(offset, true);
+				}
+				// Additional ctrl/cmd stuffs
+				if ('keyup' === e.type && e.ctrlKey && '' != text) this.airShow(e); // Ctrl
+				if ('keyup' === e.type && _cmd_keys.indexOf(e.which) > 0 && '' != text) this.airShow(e); // Cmd (?)
+				/**
+				 * If redactor is to high for the user to see it, show it under the selected text
+				 */
+				if( this.$air.offset().top < 0 ){
+					this.$air.css({
+						top : e.clientY + 14 + this.$box.position().top + "px"
+					});
+					this.$air.addClass("under");
+				}else{
+					this.$air.removeClass("under");
+				}
+			}, this));
+	};
+
+	// We already have all the plugins' methods in redactor, just call init
+	$.Redactor.prototype.buildPlugins = function() {
+		var me = this;
+		$.each(this.pluginsBuilt, function(idx, plugin){
+
+			if($.isFunction(plugin.init)){
+				var init = $.proxy(plugin.init, me);
+				init();
+			}
+		});
+	};
+
+
+	$.Redactor.prototype.airBindMousemoveHide = function () {};
+	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air) return;
 
@@ -86,6 +164,33 @@ var hackRedactor = function(){
 		hideHandler(document);
 		if (this.opts.iframe) hideHandler(this.document);
 	};
+
+	//Fix the selection, making the temporary markers not interfere with the style selection for the buttons.
+	// $.Redactor.prototype.selectionSet = function(orgn, orgo, focn, foco) {
+	// 	if (focn === null) focn = orgn;
+	// 	if (foco === null) foco = orgo;
+
+	// 	var sel = this.getSelection();
+	// 	if (!sel) return;
+
+	// 	var range = this.getRange();
+
+	// 	if(focn != orgn && orgn.id == 'selection-marker-1'){
+	// 		orgn = orgn.nextSibling;
+	// 		orgo = 0;
+	// 		focn = focn.previousSibling;
+	// 		foco = ( !_.isEmpty(focn) && !_.isUndefined( focn.length ) ) 
+	// 				? focn.length : 
+	// 					( !_.isEmpty(focn) && !_.isUndefined( focn.innerText ) ) ? focn.innerText.length - 1 : 0;
+
+	// 	}
+
+
+	// 	try {
+	// 		range.setStart(orgn, orgo);
+	// 		range.setEnd(focn, foco );
+	// 		sel.removeAllRanges();
+	// 	} catch (e) {}
 
 
 	//Change the position of the air toolbar
@@ -239,6 +344,7 @@ Ueditor.prototype = {
 	start: function(){
 		var self = this;
 		this.stopPlaceholder();
+		this.hideLinkFlags();
         this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
 			.attr('title', '')
@@ -304,8 +410,105 @@ Ueditor.prototype = {
 					me.start(e);
 			})
 		;
-	},
 
+
+
+		if(me.$el.prop('tagName') == 'DIV') {
+			me.$el.on('click', 'i.visit_link', function() {
+				me.visitLink($(this).attr('data-href'));
+			});
+
+			me.$el.on('mouseover', function() {
+				if(me.$el.hasClass('ueditable-inactive'))
+					me.displayLinkFlags();
+			});
+			me.$el.on('mouseout', function(e) {
+				if($(e.relatedTarget).hasClass('visit_link'))
+					return;
+				me.hideLinkFlags();
+
+			});
+		}
+	},
+	displayLinkFlags: function() {
+		var me = this;
+		this.$el.find('a').each(function(){
+			if($(this).find('i.visit_link').length > 0)
+				return;
+			$(this).css('position', 'relative');
+			$(this).append('<i class="visit_link visit_link_'+me.guessLinkType($(this).attr('href'))+'" data-href="'+$(this).attr('href')+'"></i>');
+			$(this).removeAttr('href');
+			//$(this).attr('onclick', 'return false;');
+		});
+	},
+	hideLinkFlags: function(area)  {
+		this.$el.find('a').each(function() {
+			$(this).css('position', '');
+			$(this).attr('href', $(this).children('i.visit_link').attr('data-href'));
+			$(this).children('i.visit_link').remove();
+			//$(this).attr('onclick', '');
+		});
+	},
+	visitLink: function(url) {
+		var me = this;
+		var linktype = me.guessLinkType(url);
+		if(linktype == 'lightbox') {
+			var regions = Upfront.Application.layout.get('regions');
+			region = regions ? regions.get_by_name(me.getUrlanchor(url)) : false;
+			if(region){
+				//hide other lightboxes
+				_.each(regions.models, function(model) {
+					if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+				});
+				var regionview = Upfront.data.region_views[region.cid];
+				regionview.show();
+			}
+		}
+		else if(linktype == 'anchor') {
+			var anchors = me.get_anchors();
+			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(url)).offset().top},'slow');
+		}
+		else if(linktype == 'entry')
+			window.location.href = url.replace('&editmode=true', '').replace('editmode=true', '')+((url.indexOf('?')>0)?'&editmode=true':'?editmode=true');
+		else
+			window.open(url);
+	},
+	guessLinkType: function(url){
+		
+		if(!$.trim(url) || $.trim(url) == '#')
+			return 'unlink';
+		if(url.length && url[0] == '#')
+			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+		if(url.substring(0, location.origin.length) == location.origin)
+			return 'entry';
+
+		return 'external';
+	},
+	get_anchors: function () {
+		var regions = Upfront.Application.layout.get("regions"),
+			anchors = [];
+		;
+		regions.each(function (r) {
+			r.get("modules").each(function (module) {
+				module.get("objects").each(function (object) {
+					var anchor = object.get_property_value_by_name("anchor");
+					if (anchor && anchor.length) anchors[anchor] = object;
+				});
+			});
+		});
+		return anchors;
+	},
+	getUrlanchor: function(url) {
+		// this does almost the opposite of the above function
+
+		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+
+		if(url.indexOf('#') >=0) {
+			var tempurl = url.split('#');
+			return tempurl[1];
+		} else return false;
+	},
 	insertsSetUp: function(){
 		var me = this,
 			manager = new InsertManager({el: this.$el, insertsData: this.options.inserts}),

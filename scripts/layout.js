@@ -473,6 +473,9 @@ jQuery(document).ready(function($){
 		});
 	
 	
+	
+
+
 	/* Lazy loaded image */
 	var image_lazy_load_t;
 	var image_lazy_scroll = window._upfront_image_lazy_scroll;

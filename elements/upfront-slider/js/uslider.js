@@ -6,6 +6,8 @@ define([
 	'text!elements/upfront-slider/tpls/backend.html'
 ], function(sliderTpl, editorTpl){
 
+var l10n = Upfront.Settings.l10n.slider_element;
+
 //Slide Model
 var Uslider_Slide = Backbone.Model.extend({
 	//See library to know the defaults
@@ -44,15 +46,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	startingTpl: _.template($(editorTpl).find('#startingTpl').html()),
 
 	cssSelectors: {
-		'.uslide-image img': {label: 'Images', info: 'Slider\'s images'},
-		'.uslide-image': {label: 'Image containers', info: 'The image wrapper layer'},
-		'.uslide-caption': {label: 'Captions', info: 'Slides\' captions'},
-		'.wp-caption': {label: 'Caption panel', info: 'Caption layer'},
-		'.upfront-default-slider-nav': {label: 'Navigation dots wrapper', info: 'Container of the navigation dots'},
-		'.upfront-default-slider-nav-item': {label: 'Navigation dots', info: 'Navigation item\'s markers'},
-		'.uslider-dotnav-current': {label: 'Current navigation dot', info: 'The dot representing the current slide'},
-		'.upfront-default-slider-nav-prev': {label: 'Navigation previous', info: 'Navigation\'s previous button'},
-		'.upfront-default-slider-nav-next': {label: 'Navigation next', info: 'Navigation\'s next button'},
+		'.uslide-image img': {label: l10n.css.images_label, info: l10n.css.images_info},
+		'.uslide-image': {label: l10n.css.img_containers_label, info: l10n.css.img_containers_info},
+		'.uslide-caption': {label: l10n.css.captions_label, info: l10n.css.captions_info},
+		'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
+		'.upfront-default-slider-nav': {label: l10n.css.dots_wrapper_label, info: l10n.css.dots_wrapper_info},
+		'.upfront-default-slider-nav-item': {label: l10n.css.dots_label, info: l10n.css.dots_info},
+		'.uslider-dotnav-current': {label: l10n.css.dot_current_label, info: l10n.css.dot_current_info},
+		'.upfront-default-slider-nav-prev': {label: l10n.css.prev_label, info: l10n.css.prev_info},
+		'.upfront-default-slider-nav-next': {label: l10n.css.next_label, info: l10n.css.next_info},
 	},
 
 	initialize: function(options){
@@ -118,7 +120,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		if(!this.slides.length){
 			this.startingHeight = this.startingHeight || 225;
-			return this.startingTpl({startingHeight: this.startingHeight});
+			return this.startingTpl({startingHeight: this.startingHeight, l10n: l10n});
 		}
 
 		//Stop autorotate
@@ -145,6 +147,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		props.production = false;
 		props.startingSlide = this.currentSlide;
+
+		props.l10 = l10n;
 
 		rendered = this.tpl(props);
 
@@ -504,22 +508,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			multiBelow = {
-				above: ['above', 'Above the image'],
-				below: ['below', 'Below the image'],
-				nocaption: ['nocaption', 'No text']
+				above: ['above', l10n.above_img],
+				below: ['below', l10n.below_img],
+				nocaption: ['nocaption', l10n.no_text]
 			},
 			multiOver = {
-				topOver: ['topOver', 'Over image, top'],
-				bottomOver: ['bottomOver', 'Over image, bottom'],
-				topCover: ['topCover', 'Covers image, top'],
-				middleCover: ['middleCover', 'Covers image, middle'],
-				bottomCover: ['bottomCover', 'Covers image, bottom'],
-				nocaption: ['nocaption', 'No text']
+				topOver: ['topOver', l10n.over_top],
+				bottomOver: ['bottomOver', l10n.over_bottom],
+				topCover: ['topCover', l10n.cover_top],
+				middleCover: ['middleCover', l10n.cover_mid],
+				bottomCover: ['bottomCover', l10n.cover_bottom],
+				nocaption: ['nocaption', l10n.no_text]
 			},
 			multiSide = {
-				right: ['right', 'At the right'],
-				left: ['left', 'At the left'],
-				nocaption: ['nocaption', 'No text']
+				right: ['right', l10n.at_right],
+				left: ['left', l10n.at_left],
+				nocaption: ['nocaption', l10n.no_text]
 			},
 			primaryStyle = this.property('primaryStyle'),
 			multiControls = {},
@@ -543,7 +547,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			});
 
 			captionControl.icon = 'caption';
-			captionControl.tooltip = 'Caption position';
+			captionControl.tooltip = l10n.cap_position;
 			captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
 			this.listenTo(captionControl, 'select', function(item){
 				var previousStyle = slide.get('style');
@@ -560,12 +564,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			});
 		}
 
-		panelItems.push(this.createControl('crop', 'Edit image', 'imageEditMask'));
+		panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
 		panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
 			panelItems.push(captionControl);
-		panelItems.push(this.createControl('remove', 'Remove slide', 'removeSlide'));
+		panelItems.push(this.createControl('remove', l10n.remove_slide, 'removeSlide'));
 
 		panel.items = _(panelItems);
 
@@ -650,7 +654,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 
 		control.icon = 'link';
-		control.tooltip = 'Image link';
+		control.tooltip = l10n.img_link;
 		control.id = 'link';
 
 		return control;
@@ -711,7 +715,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			sizer = this.slides.length ? this.$('.upfront-default-slider-item-current').find('.uslide-image') : this.$('.upfront-object-content'),
 			selectorOptions = {
 				multiple: true,
-				preparingText: 'Preparing images',
+				preparingText: l10n.preparing_img,
 				element_id: this.model.get_property_value_by_name("element_id"),
 				customImageSize: {
 					width: sizer.width(),
@@ -969,7 +973,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(slide.get('status') != 'ok'){
 			var selectorOptions = {
 				multiple: false,
-				preparingText: 'Preparing slides',
+				preparingText: l10n.preparing_slides,
 				element_id: me.model.get_property_value_by_name("element_id")
 			};
 			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
@@ -1093,7 +1097,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 
 	render: function() {
 		var me = this;
-		this.$el.html(this.template({slides: this.slides}));
+		this.$el.html(this.template({slides: this.slides, l10n: l10n}));
 
 		//Make the thumbs sortable
 		this.$('.uslider-slides-setting').sortable({
@@ -1165,7 +1169,7 @@ var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	render: function () {
 		//this.$el.html(uslider_i18n['menu-add-slider']);
 		this.$el.addClass('upfront-icon-element upfront-icon-element-slider');
-		this.$el.html('Slider');
+		this.$el.html(l10n.element_name);
 	},
 
 	/**
@@ -1210,7 +1214,7 @@ var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 */
 	get_title: function () {
 		//return "Slider Module Settings";
-		return 'Settings';
+		return l10n.settings;
 	}
 });
 
@@ -1224,7 +1228,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 		;
 		this.settings = _([
 			new SettingsItem({
-				title: 'Slider styles',
+				title: l10n.slider_styles,
 				className: 'uslider-style-setting',
 				fields: [
 					new Fields.Radios({
@@ -1232,25 +1236,25 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 						property: 'primaryStyle',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "no txt", value: 'notext', icon: 'nocaption' },
-							{ label: "txt below", value: 'below', icon: 'below' },
-							{ label: "txt over", value: 'over', icon: 'bottomOver' },
-							{ label: "txt on side", value: 'side', icon: 'right' }/*,
+							{ label: l10n.notxt, value: 'notext', icon: 'nocaption' },
+							{ label: l10n.txtb, value: 'below', icon: 'below' },
+							{ label: l10n.txto, value: 'over', icon: 'bottomOver' },
+							{ label: l10n.txts, value: 'side', icon: 'right' }/*,
 							{ label: "txt / widget only", value: 'onlytext', icon: 'textonly' }*/
 						]
 					})
 				]
 			}),
 			new ColorPickerField({
-				title: 'Caption Background',
+				title: l10n.caption_bg,
 				fields: [
 					new Fields.Radios({
 						model: this.model,
 						property: 'captionUseBackground',
 						layout: "horizontal-inline",
 						values: [
-							{value: '0', label: 'None'},
-							{value: '1', label: 'Pick color'}
+							{value: '0', label: l10n.none},
+							{value: '1', label: l10n.pick_color}
 						]
 					}),
 				]
@@ -1265,7 +1269,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 						property: 'rotate',
 						layout: 'horizontal-inline',
 						multiple: true,
-						values: [ { label: "Rotate every ", value: 'true' } ]
+						values: [ { label: l10n.rotate_every, value: 'true' } ]
 					}),
 					new Fields.Number({
 						model: this.model,
@@ -1288,17 +1292,17 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 						icon_class: 'upfront-region-field-icon',
 						className: 'uslider-transition-setting upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
-							{ label: "Slide Down", value: 'slide-down', icon: 'bg-slider-slide-down' },
-							{ label: "Slide Up", value: 'slide-up', icon: 'bg-slider-slide-up' },
-							{ label: "Slide Right", value: 'slide-right', icon: 'bg-slider-slide-right' },
-							{ label: "Slide Left", value: 'slide-left', icon: 'bg-slider-slide-left' },
-							{ label: "Crossfade", value: 'crossfade', icon: 'bg-slider-crossfade' }
+							{ label: l10n.slide_down, value: 'slide-down', icon: 'bg-slider-slide-down' },
+							{ label: l10n.slide_up, value: 'slide-up', icon: 'bg-slider-slide-up' },
+							{ label: l10n.slide_right, value: 'slide-right', icon: 'bg-slider-slide-right' },
+							{ label: l10n.slide_left, value: 'slide-left', icon: 'bg-slider-slide-left' },
+							{ label: l10n.crossfade, value: 'crossfade', icon: 'bg-slider-crossfade' }
 						]
 					})
 				]
 			}),
 			new SettingsItem({
-				title: 'Slider Controls',
+				title: l10n.slider_controls,
 				fields: [
 					new Fields.Radios({
 						model: this.model,
@@ -1306,17 +1310,17 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 						layout: 'horizontal-inline',
 						className: 'uslider-controlswhen-setting upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
-							{ label: "show on hover", value: 'hover' },
-							{ label: "always show", value: 'always' }
+							{ label: l10n.on_hover, value: 'hover' },
+							{ label: l10n.always, value: 'always' }
 						]
 					}),
 					new Fields.Select({
 						model: this.model,
 						property: 'controls',
 						values: [
-							{label: 'Dots', value: 'dots'},
-							{label: 'Arrows', value: 'arrows'},
-							{label: 'Both', value: 'both'}
+							{label: l10n.dots, value: 'dots'},
+							{label: l10n.arrows, value: 'arrows'},
+							{label: l10n.both, value: 'both'}
 						]
 					})
 				]
@@ -1347,7 +1351,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 							maxSelectionSize: 9,
 							localStorageKey: "spectrum.recent_bgs",
 							preferredFormat: "hex",
-							chooseText: "Ok",
+							chooseText: l10n.ok,
 							showInput: true,
 						    allowEmpty:true,
 			   				show: function(){
@@ -1403,7 +1407,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	get_label: function(){
-		return 'General';
+		return l10n.general;
 	},
 
 	get_title: function(){
@@ -1422,7 +1426,7 @@ var SlidesPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.settings = _([
 			new SettingsItem({
-				title: 'Slides order',
+				title: l10n.slides_order,
 				fields: [
 					new SlidesField({
 						model: this.model
@@ -1433,7 +1437,7 @@ var SlidesPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	get_label: function(){
-		return 'Slides';
+		return l10n.slides;
 	},
 
 	get_title: function(){

@@ -99,6 +99,12 @@ text!elements/upfront-slider/tpls/backend.html
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-slider/js/uslider.js
 text!elements/upfront-social-media/tpl/social-back.html
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-social-media/js/upfront-social-media.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/model.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/element.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/settings/presets-field.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/settings/presets-item.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/settings/presets-panel.js
+/var/www/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/settings.js
 text!elements/upfront-tabs/tpl/utabs.html
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/utabs.js
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-this-post/js/this_post.js
