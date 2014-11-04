@@ -116,4 +116,90 @@ class Upfront_UsliderView extends Upfront_Object {
 			'rightWidth' => 6
 		);
 	}
+
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['slider_element'])) return $strings;
+		$strings['slider_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Slider', 'upfront'),
+			'css' => array(
+				'images_label' => __('Images', 'upfront'),
+				'images_info' => __('Slider\'s images', 'upfront'),
+				'captions_label' => __('Captions', 'upfront'),
+				'captions_info' => __('Slides\' captions', 'upfront'),
+				'caption_label' => __('Caption panel', 'upfront'),
+				'caption_info' => __('Caption layer', 'upfront'),
+				'img_containers_label' => __('Image containers', 'upfront'),
+				'img_containers_info' => __('The image wrapper layer', 'upfront'),
+				'dots_wrapper_label' => __('Navigation dots wrapper', 'upfront'),
+				'dots_wrapper_info' => __('Container of the navigation dots', 'upfront'),
+				'dots_label' => __('Navigation dots', 'upfront'),
+				'dots_info' => __('Navigation item\'s markers', 'upfront'),
+				'dot_current_label' => __('Current navigation dot', 'upfront'),
+				'dot_current_info' => __('The dot representing the current slide', 'upfront'),
+				'prev_label' => __('Navigation previous', 'upfront'),
+				'prev_info' => __('Navigation\'s previous button', 'upfront'),
+				'next_label' => __('Navigation next', 'upfront'),
+				'next_info' => __('Navigation\'s next button', 'upfront'),
+			),
+			'settings' => __('Settings', 'upfront'),
+			'general' => __('General', 'upfront'),
+			'above_img' => __('Above the image', 'upfront'),
+			'below_img' => __('Below the image', 'upfront'),
+			'no_text' => __('No text', 'upfront'),
+			'over_top' => __('Over image, top', 'upfront'),
+			'over_bottom' => __('Over image, bottom', 'upfront'),
+			'cover_top' => __('Covers image, top', 'upfront'),
+			'cover_mid' => __('Covers image, middle', 'upfront'),
+			'cover_bottom' => __('Covers image, bottom', 'upfront'),
+			'at_right' => __('At the right', 'upfront'),
+			'at_left' => __('At the left', 'upfront'),
+			'cap_position' => __('Caption position', 'upfront'),
+			'edit_img' => __('Edit image', 'upfront'),
+			'remove_slide' => __('Remove slide', 'upfront'),
+			'img_link' => __('Image link', 'upfront'),
+			'preparing_img' => __('Preparing images', 'upfront'),
+			'preparing_slides' => __('Preparing slides', 'upfront'),
+			'slider_styles' => __('Slider styles', 'upfront'),
+			'notxt' => __('no txt', 'upfront'),
+			'txtb' => __('txt below', 'upfront'),
+			'txto' => __('txt over', 'upfront'),
+			'txts' => __('txt on side', 'upfront'),
+			'caption_bg' => __('Caption Background', 'upfront'),
+			'none' => __('None', 'upfront'),
+			'pick_color' => __('Pick color', 'upfront'),
+			'rotate_every' => __('Rotate every ', 'upfront'),
+			'slide_down' => __('Slide Down', 'upfront'),
+			'slide_up' => __('Slide Up', 'upfront'),
+			'slide_right' => __('Slide Right', 'upfront'),
+			'slide_left' => __('Slide Left', 'upfront'),
+			'crossfade' => __('Crossfade', 'upfront'),
+			'slider_controls' => __('Slider Controls', 'upfront'),
+			'on_hover' => __('show on hover', 'upfront'),
+			'always' => __('always show', 'upfront'),
+			'dots' => __('Dots', 'upfront'),
+			'arrows' => __('Arrows', 'upfront'),
+			'both' => __('Both', 'upfront'),
+			'ok' => __('Ok', 'upfront'),
+			'slides_order' => __('Slides order', 'upfront'),
+			'slides' => __('Slides', 'upfront'),
+			'add_slide' => __('Add Slide', 'upfront'),
+			'choose_type' => __('Please choose the type of slider', 'upfront'),
+			'can_change' => __('This can later be cahanged via the settings panel', 'upfront'),
+			'img_only' => __('img only', 'upfront'),
+			'txt_over_img' => __('txt over img', 'upfront'),
+			'txt_below_img' => __('txt below img', 'upfront'),
+			'txt_on_side' => __('txt on the side', 'upfront'),
+			'txt_only' => __('txt / widget only', 'upfront'),
+			'choose_img' => __('Choose Images', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
 }
