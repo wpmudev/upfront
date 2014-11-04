@@ -3,6 +3,9 @@
 	define([
 		'text!elements/upfront-tabs/tpl/utabs.html'
 	], function(tabsTpl) {
+
+		var l10n = Upfront.Settings.l10n.utabs_element;
+
 		var UtabsModel = Upfront.Models.ObjectModel.extend({
 			init: function () {
 				var properties = _.clone(Upfront.data.utabs.defaults);
@@ -30,14 +33,14 @@
 			tabsTpl: Upfront.Util.template(tabsTpl),
 			elementSize: {width: 0, height: 0},
 			cssSelectors: {
-				'.upfront-object-content': {label: 'Tabs container', info: 'The layer that contains all the contents of the tab element.'},
-				'.upfront-tabs-container .tabs-menu-wrapper': {label: 'Tabs menu', info: 'The row that contains all tabs'},
-				'.upfront-tabs-container .tabs-tab .inner-box': {label: 'Tabs', info: 'Each of the tabs.'},
-				'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: 'Active tab', info: 'Active tab'},
-				'.upfront-tabs-container .tabs-content': {label: 'Tab content', info: 'The layber that wraps tab content'},
-				'.upfront-tabs-container .tabs-content p': {label: 'Tab content paragraph', info: 'The paragraph that contains tab content'},
-				'.upfront-tabs-container .tab-content-active': {label: 'Active tab content', info: 'The layber that wraps active tab content'},
-				'.upfront-tabs-container .tab-content-active p': {label: 'Active tab content paragraph', info: 'The paragraph that contains active tab content'}
+				'.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
+				'.upfront-tabs-container .tabs-menu-wrapper': {label: l10n.css.menu_label, info: l10n.css.menu_info},
+				'.upfront-tabs-container .tabs-tab .inner-box': {label: l10n.css.tabs_label, info: l10n.css.tabs_info},
+				'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: l10n.css.active_tab_label, info: l10n.css.active_tab_info},
+				'.upfront-tabs-container .tabs-content': {label: l10n.css.tab_content_label, info: l10n.css.tab_content_info},
+				'.upfront-tabs-container .tabs-content p': {label: l10n.css.tab_p_label, info: l10n.css.tab_p_info},
+				'.upfront-tabs-container .tab-content-active': {label: l10n.css.active_content_label, info: l10n.css.active_content_info},
+				'.upfront-tabs-container .tab-content-active p': {label: l10n.css.active_p_label, info: l10n.css.active_p_info}
 
 			},
 
@@ -339,7 +342,7 @@
 			priority: 100,
 			render: function () {
 				this.$el.addClass('upfront-icon-element upfront-icon-element-tabs');
-				this.$el.html('Tabs');
+				this.$el.html(l10n.element_name);
 			},
 			add_element: function () {
 				var object = new UtabsModel(),
@@ -362,21 +365,21 @@
 
 		var TabsSettings = Upfront.Views.Editor.Settings.Settings.extend({
 			initialize: function (opts) {
-		this.options = opts;
+				this.options = opts;
 				this.panels = _([
 					new AppearancePanel({model: this.model})
 				]);
 			},
 
 			get_title: function () {
-				return 'Tabs settings';
+				return l10n.settings;
 			}
 		});
 
 		var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			className: 'utabs-settings-panel',
 			initialize: function (opts) {
-		this.options = opts;
+				this.options = opts;
 				var render_all,
 					me = this;
 
@@ -390,16 +393,16 @@
 				this.settings = _([
 					new Upfront.Views.Editor.Settings.Item({
 						model: this.model,
-						title: 'Display style',
+						title: l10n.display_style,
 						fields: [
 							new Upfront.Views.Editor.Field.Select({
 								model: this.model,
 								property: 'theme_style',
-								label: 'Theme Styles',
+								label: l10n.theme_style,
 								values: [
-									{ label: 'Tabbed', value: 'tabbed' },
-									{ label: 'Simple text', value: 'simple_text' },
-									{ label: 'Button Tabs', value: 'button_tabs' }
+									{ label: l10n.tabbed, value: 'tabbed' },
+									{ label: l10n.simple_text, value: 'simple_text' },
+									{ label: l10n.button_tabs, value: 'button_tabs' }
 								]
 							})
 						]
@@ -464,7 +467,7 @@
 			},
 
 			get_label: function () {
-				return 'Appearance';
+				return l10n.appearance;
 			},
 
 			get_title: function () {
