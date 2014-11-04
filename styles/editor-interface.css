@@ -12958,3 +12958,9 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 }
 
 /* End Preset manager panels in elements' settings */
+strike{
+    text-decoration: line-through;
+}
+em{
+    font-style: italic;
+}
