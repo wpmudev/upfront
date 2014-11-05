@@ -164,6 +164,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		if (this.property('status') !== 'ok' || !this.images.length) {
 			this.property('has_settings', 0);
 		}
+
+		Upfront.Events.on('upfront:layout_size:change_breakpoint', function() {
+			setTimeout(function() {
+				me.render();
+			}, 100);
+		});
 	},
 
 	// Remove default dblclick behavior because it messes up things
