@@ -70,7 +70,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		;
 		url = Upfront.PreviewUpdate.preview_url();
 		if (!url) {
-			Upfront.Views.Editor.notify("Your preview is not ready yet");
+			Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.application.preview_not_ready);
 			return false;
 		}
 		preview = window.open(url, "_blank");
@@ -86,8 +86,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.done(function (resp) {
 				Upfront.Popup.open(function () {
 					var tpl = _.template(
-						'<h3>Revisions</h3><ul>{[ _.each(data, function (item) { ]}' +
-							'<li><a target="_blank" href="{{item.preview_url}}">{{item.date_created}}</a><br /><small>created by {{item.created_by.display_name}}</small></li>' +
+						'<h3>' + Upfront.Settings.l10n.global.application.revisions + '</h3><ul>{[ _.each(data, function (item) { ]}' +
+							'<li><a target="_blank" href="{{item.preview_url}}">{{item.date_created}}</a><br /><small>' +  Upfront.Settings.l10n.global.application.created_by + ' {{item.created_by.display_name}}</small></li>' +
 						'{[ }); ]}</ul>'
 					);
 					$(this).html(tpl(resp));
@@ -459,9 +459,9 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 		var me = this,
 			saveDialog = new Upfront.Views.Editor.SaveDialog({
-				question: 'Do you wish to save the post layout just for this post or apply it to all posts?',
-				thisPostButton: 'This post only',
-				allPostsButton: 'All posts of this type'
+				question: Upfront.Settings.l10n.global.application.save_layout_pop,
+				thisPostButton: Upfront.Settings.l10n.global.application.this_post_only,
+				allPostsButton: Upfront.Settings.l10n.global.application.all_posts_of_this_type
 			})
 		;
 
@@ -479,8 +479,8 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			var specificity;
 					elementSlug = elementType == 'ThisPostModel' ? 'single' : 'archive',
 					loading = new Upfront.Views.Editor.Loading({
-						loading: "Saving post layout...",
-						done: "Thank you for waiting",
+						loading: Upfront.Settings.l10n.global.application.saving_post_layout,
+						done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 						fixed: false
 					})
 
@@ -675,9 +675,9 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	savePartTemplate: function(tpl, postPart){
 		var me = this,
 			saveDialog = new Upfront.Views.Editor.SaveDialog({
-				question: 'Do you wish to save this part template only for this element, or for all the elements of this post type?',
-				thisPostButton: 'This element only',
-				allPostsButton: 'All elements with the same post type'
+				question: Upfront.Settings.l10n.global.application.save_part_pop,
+				thisPostButton: Upfront.Settings.l10n.global.application.this_element_only,
+				allPostsButton: Upfront.Settings.l10n.global.application.all_elements
 			})
 		;
 
@@ -707,12 +707,11 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 						id: id
 					})
 					.done(function(response){
-						console.log('Saved template');
 						me.postView.partTemplates[postPart] = tpl;
 						me.postView.model.trigger('template:' + postPart);
 						me.templateEditor.close();
 						saveDialog.close();
-						Upfront.Views.Editor.notify('Saved template for ' + postPart + ' part.');
+						Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.application.saved_template.replace(/%s/, postPart));
 					})
 				;
 			})
@@ -730,7 +729,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		var container = this.postView.parent_module_view.region,
 			elementSize =  this.postView.get_element_size(),
 			region = {
-				title: 'Post Layout Editor',
+				title: Upfront.Settings.l10n.global.application.post_layout_editor,
 				name: 'postLayoutEditor',
 				container: 'postLayoutEditor',
 				allow_sidebar: false,
@@ -1144,8 +1143,8 @@ var Application = new (Backbone.Router.extend({
 		var app = this;
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
-			loading: "Loading...",
-			done: "Thank you for waiting",
+			loading: Upfront.Settings.l10n.global.application.loading,
+			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true
 		});
 		app.loading.on_finish(function(){
@@ -1375,7 +1374,7 @@ var Application = new (Backbone.Router.extend({
 			},
 			deferred = new $.Deferred(),
 			postData = {},
-			loading = this.set_loading('Preparing new ' + post_type + '...', 'Here we are!')
+			loading = this.set_loading(Upfront.Settings.l10n.global.application.preparing_new_post_type.replace(/%s/, post_type), Upfront.Settings.l10n.global.application.here_we_are)
 		;
 
 		// @TODO is this correct to call stop before load_layout? fixed double event assignment
@@ -1567,7 +1566,7 @@ var Application = new (Backbone.Router.extend({
 			fullPath += '?' + urlQueryParts.join('&');
 		}
 
-		loading = this.set_loading('Loading ' + fullPath, 'Here we are!');
+		loading = this.set_loading(Upfront.Settings.l10n.global.application.loading_path.replace(/%s/, fullPath), Upfront.Settings.l10n.global.application.here_we_are);
 
 		if(this.urlCache[fullPath]){
 			//Wait a bit to let the loading screen render
@@ -1594,8 +1593,9 @@ var Application = new (Backbone.Router.extend({
 
 	start_navigation: function(){
 		var me = this,
-			site_url =  document.createElement('a');
-		console.log('Starting router history');
+			site_url =  document.createElement('a')
+		;
+
 		site_url.href = Upfront.Settings.site_url;
 		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true});
 
@@ -1632,7 +1632,7 @@ var Application = new (Backbone.Router.extend({
 
 				e.preventDefault();
 
-				if(!Upfront.PreviewUpdate._is_dirty || confirm("You have unsaved changes you're about to lose by navigating off this page. Do you really want to leave this page?"))
+				if(!Upfront.PreviewUpdate._is_dirty || confirm(Upfront.Settings.l10n.global.application.navigation_confirm))
 					me.navigate(pathname + search, {trigger: true});
 			})
 			.on('keydown', function(e){
@@ -1697,7 +1697,7 @@ return {
 $(function () {
 	$("body").on("click", ".upfront-edit_layout", function (e) {
 		e.preventDefault();
-		alert("Please, hold on for just a little bit more");
+		alert(Upfront.Settings.l10n.global.application.please_hold_on);
 	});
 })
 
