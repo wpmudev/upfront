@@ -74,7 +74,7 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
 	background-position: -483px -171px;
 	background-image: url('../../../img/uf-core-el-sprite.svg');
 	position: absolute;
-	left: 4px;
+	right: 4px;
 	top: -8px;
 	cursor: pointer;
 	overflow: hidden;
@@ -113,6 +113,13 @@ div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover 
 	border:1px #ddd dotted;
 
 }
+
+div.upfront-navigation.upfront-editable_entity ul.menu li > i.visit_link {
+	bottom: -9px;
+	top: inherit;
+	left:-9px;
+}
+
 div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.delete_menu_item
 ,div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.visit_link
 /*,div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover > i.edit_link*/ {
