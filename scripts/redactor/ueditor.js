@@ -56,82 +56,6 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
-	//Prevent Redactor code cleanup on init and early start of plugins
-	$.Redactor.prototype.buildEnable = function(){
-		// Start plugins here, before options are handled so we can modify them
-		if(!this.pluginsBuilt){
-			var me = this;
-			if (!this.opts.plugins )
-				this.opts.plugins = [];
-
-			this.pluginsBuilt = [];
-
-			$.each(this.opts.plugins, function(idx, name){
-				var plugin = RedactorPlugins[name];
-				if(plugin){
-					me.pluginsBuilt.push(plugin);
-					$.extend(me, plugin);
-					if($.isFunction(plugin.beforeInit))
-						me.beforeInit();
-				}
-			});
-		}
-
-		//Redactor.buildEnable
-		this.$editor.addClass('redactor_editor').attr({ 'contenteditable': true, 'dir': this.opts.direction });
-		this.$source.attr('dir', this.opts.direction).hide();
-
-		// set strip to false to prevent code cleaning
-		this.set(this.content, false, false);
-	};
-
-	// Let Ctrl/Cmd+A (yeah...) work normally
-	$.Redactor.prototype.airEnable = function () {
-			if (!this.opts.air || !this.opts.airButtons) return;
-			var _cmd_keys = [224, 17, 91, 93]; // Yay for Mac OS X
-
-			this.$editor.on('mouseup.redactor keyup.redactor', this, $.proxy(function(e) {
-				var insert = $(e.target).closest('.ueditor-insert');
-				if(insert.length && insert.closest(this.$box).length)
-					return;
-
-				var text = this.getSelectionText();
-				this.opts.toolbarFixedTopOffset = "50";
-				if (e.type === 'mouseup' && text != '') this.airShow(e);
-				if (e.type === 'keyup' && e.shiftKey && text != '') {
-					var $focusElem = $(this.getElement(this.getSelection().focusNode)), offset = $focusElem.offset();
-					offset.height = $focusElem.height();
-					this.airShow(offset, true);
-				}
-				// Additional ctrl/cmd stuffs
-				if ('keyup' === e.type && e.ctrlKey && '' != text) this.airShow(e); // Ctrl
-				if ('keyup' === e.type && _cmd_keys.indexOf(e.which) > 0 && '' != text) this.airShow(e); // Cmd (?)
-				/**
-				 * If redactor is to high for the user to see it, show it under the selected text
-				 */
-				if( this.$air.offset().top < 0 ){
-					this.$air.css({
-						top : e.clientY + 14 + this.$box.position().top + "px"
-					});
-					this.$air.addClass("under");
-				}else{
-					this.$air.removeClass("under");
-				}
-			}, this));
-	};
-
-	// We already have all the plugins' methods in redactor, just call init
-	$.Redactor.prototype.buildPlugins = function() {
-		var me = this;
-		$.each(this.pluginsBuilt, function(idx, plugin){
-
-			if($.isFunction(plugin.init)){
-				var init = $.proxy(plugin.init, me);
-				init();
-			}
-		});
-	};
-
 
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
@@ -164,88 +88,59 @@ var hackRedactor = function(){
 		if (this.opts.iframe) hideHandler(this.document);
 	};
 
-	//Fix the selection, making the temporary markers not interfere with the style selection for the buttons.
-	// $.Redactor.prototype.selectionSet = function(orgn, orgo, focn, foco) {
-	// 	if (focn === null) focn = orgn;
-	// 	if (foco === null) foco = orgo;
-
-	// 	var sel = this.getSelection();
-	// 	if (!sel) return;
-
-	// 	var range = this.getRange();
-
-	// 	if(focn != orgn && orgn.id == 'selection-marker-1'){
-	// 		orgn = orgn.nextSibling;
-	// 		orgo = 0;
-	// 		focn = focn.previousSibling;
-	// 		foco = ( !_.isEmpty(focn) && !_.isUndefined( focn.length ) ) 
-	// 				? focn.length : 
-	// 					( !_.isEmpty(focn) && !_.isUndefined( focn.innerText ) ) ? focn.innerText.length - 1 : 0;
-
-	// 	}
-
-
-	// 	try {
-	// 		range.setStart(orgn, orgo);
-	// 		range.setEnd(focn, foco );
-	// 		sel.removeAllRanges();
-	// 	} catch (e) {}
-
-
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
-		{
-			if (!this.opts.air || !this.opts.airButtons.length) return;
+    {
+        if (!this.opts.air || !this.opts.airButtons.length) return;
 
-			$('.redactor_air').hide();
-			this.selection.save();
-			var width = this.$air.width(),
-				m1 = this.$editor.find('#selection-marker-1').offset(),
-				m2 = this.$editor.find('#selection-marker-2').offset(),
-				bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
-				atRight = false,
-				$win = $(window),
-				winRight = $win.width() + $win.scrollLeft(),
-				center, parent
-			;
-			//Hack to place the bar correctly with floating images
-			if(m1.top != m2.top && bounds.left > bounds.right)
-				bounds.right = bounds.left + 50;
+        $('.redactor_air').hide();
+        this.selection.save();
+        var width = this.$air.width(),
+            m1 = this.$editor.find('#selection-marker-1').offset(),
+            m2 = this.$editor.find('#selection-marker-2').offset(),
+            bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
+            atRight = false,
+            $win = $(window),
+            winRight = $win.width() + $win.scrollLeft(),
+            center, parent
+        ;
+        //Hack to place the bar correctly with floating images
+        if(m1.top != m2.top && bounds.left > bounds.right)
+            bounds.right = bounds.left + 50;
 
-			if(!this.airWidth){
-				this.airWidth = width;
-				this.$air.width(width);
-			}
-			if(bounds.right < bounds.left || bounds.right > winRight){
-				var parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
-				bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
-			}
+        if(!this.airWidth){
+            this.airWidth = width;
+            this.$air.width(width);
+        }
+        if(bounds.right < bounds.left || bounds.right > winRight){
+            var parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
+            bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
+        }
 
-			center = Math.floor((bounds.right + bounds.left + 1) / 2);
+        center = Math.floor((bounds.right + bounds.left + 1) / 2);
 
-			if(center + width / 2 > winRight){
-				this.$air.addClass('at-right');
-				if(center > winRight)
-					center = winRight - 5;
-				bounds.left = center - width;
-			}
-			else {
-				this.$air.removeClass('at-right');
-				bounds.left = center - Math.floor((width + 1) / 2);
-			}
+        if(center + width / 2 > winRight){
+            this.$air.addClass('at-right');
+            if(center > winRight)
+                center = winRight - 5;
+            bounds.left = center - width;
+        }
+        else {
+            this.$air.removeClass('at-right');
+            bounds.left = center - Math.floor((width + 1) / 2);
+        }
 
 
-			this.$air.css({
-				left: bounds.left  + 'px',
-				top: bounds.top + 'px'
-			}).show();
-			this.airBindHide();
-			this.$air.trigger('show');
-            this.dropdown.hideAll();
-            UeditorEvents.trigger("ueditor:air:show", this);
-            this.selection.restore();
-		};
-
+        this.$air.css({
+            left: bounds.left  + 'px',
+            top: bounds.top + 'px'
+        }).show();
+        this.airBindHide();
+        this.$air.trigger('show');
+        this.dropdown.hideAll();
+        UeditorEvents.trigger("ueditor:air:show", this);
+        this.selection.restore();
+    };
 
 
 	hackedRedactor = true;

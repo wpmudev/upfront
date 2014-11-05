@@ -51,7 +51,6 @@ var UeditorPanel = Backbone.View.extend({
     },
 
     closePanel: function(){
-        console.log("trying to close panel");
         if(this.panel.is(':visible'))
             this.button.click();
     },
