@@ -2369,7 +2369,7 @@ var GridEditor = {
 						left: area.grid.left,
 						right: area.grid.right,
 						priority: {
-							top: ( top > current_full_top ? top : current_full_top ),
+							top: ( !is_drop_me && top > current_full_top ? top : current_full_top ),
 							bottom: bottom,
 							left: area.grid.left,
 							right: area.grid.right,
