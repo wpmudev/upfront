@@ -22,6 +22,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
+		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -354,6 +355,20 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (isset($args['json']) && $args['json']) return $button_presets;
 
 		return json_decode($button_presets);
+	}
+
+	public function getTabPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->themeSettings->get('tab_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
 	}
 
 	public function getPostImageVariants($image_variants, $args) {

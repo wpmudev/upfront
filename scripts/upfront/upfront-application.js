@@ -1518,6 +1518,37 @@ var Application = new (Backbone.Router.extend({
 		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 		Upfront.Events.on("upfront:layout:loaded", me.ensure_layout_style, me);
 		this.cssEditor = cssEditor;
+
+		// This could be a good place to load tab presets styles
+		this.loadTabPresetStyles();
+	},
+
+	loadTabPresetStyles: function() {
+		// This is duplicated in upfront-tabs/js/settings.js fix later
+		_.each(Upfront.mainData.tabPresets, function(properties) {
+			var css = ['.tab-preset-' + properties.id + ' .tabs-tab:hover {'];
+			css.push('	color: #' + properties['hover-font-color'] + ';');
+			css.push('	font-family: ' + properties['hover-font-family'] + ';');
+			css.push('	font-size: ' + properties['hover-font-size'] + 'px;');
+			css.push('}');
+			css.push('.tab-preset-' + properties.id + ' .tabs-tab.tabs-tab-active {');
+			css.push('	color: #' + properties['active-font-color'] + ';');
+			css.push('	font-family: ' + properties['active-font-family'] + ';');
+			css.push('	font-size: ' + properties['active-font-size'] + 'px;');
+			css.push('	transition: none;');
+			css.push('}');
+			css.push('.tab-preset-' + properties.id + ' .tabs-tab {');
+			css.push('	color: #' + properties['static-font-color'] + ';');
+			css.push('	font-family: ' + properties['static-font-family'] + ';');
+			css.push('	font-size: ' + properties['static-font-size'] + 'px;');
+			css.push('	transition: all ' + properties['hover-transition-duration'] + 's ' + properties['hover-transition-easing'] + ';');
+			css.push('}');
+
+			if ($('style#tab-preset-' + properties.id).length === 0) {
+				$('body').append('<style id="tab-preset-' + properties.id + '"></style>');
+			}
+			$('style#tab-preset-' + properties.id).text(css.join('\n'));
+		});
 	},
 
 	ensure_layout_style: function() {

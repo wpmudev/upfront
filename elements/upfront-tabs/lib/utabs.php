@@ -23,6 +23,7 @@ class Upfront_UtabsView extends Upfront_Object {
 			'tabs_fixed_width' => 'auto',
 
 			'id_slug' => 'utabs',
+			'preset' => 'default'
 		);
 	}
 
@@ -51,6 +52,10 @@ class Upfront_UtabsView extends Upfront_Object {
 	public function get_markup () {
 	// This data is passed on to the template to precompile template
 			$data = $this->properties_to_array();
+
+			if (!$data['preset']) {
+				$data['preset'] = 'default';
+			}
 
 			$data['wrapper_id'] = str_replace('utabs-object-', 'wrapper-', $data['element_id']);
 

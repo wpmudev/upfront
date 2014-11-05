@@ -12656,7 +12656,7 @@ i.visit_link {
   z-index:1000 !important;
   top:-5px;
   right:-5px;
-  
+
   display:none;
   cursor: pointer;
 
@@ -12763,11 +12763,13 @@ div.preset-manager-panel a.upfront-preset-edit {
 	text-decoration: underline;
 }
 div.preset-manager-panel .hover_preset,
+div.preset-manager-panel .state_settings_button,
 div.preset-manager-panel .static_preset {
 	display: inline;
 	margin-right: 15px;
 }
 div.preset-manager-panel .hover_preset input,
+div.preset-manager-panel .state_settings_button input,
 div.preset-manager-panel .static_preset input,
 div.preset-manager-panel .delete_preset input{
 	font-size: 13px;
@@ -12775,12 +12777,14 @@ div.preset-manager-panel .delete_preset input{
 	border-radius: 5px;
 }
 div.preset-manager-panel .hover_preset input,
+div.preset-manager-panel .state_settings_button input,
 div.preset-manager-panel .static_preset input {
 	color: #009a68;
 	background: none;
 	text-decoration: underline;
 }
 div.preset-manager-panel .hover_preset.active input,
+div.preset-manager-panel .state_settings_button.active input,
 div.preset-manager-panel .static_preset.active input{
 	background-color:#84a8ce !important;
 	color:#fff;
@@ -12957,6 +12961,34 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 	background-position: -661px -140px;
 }
 
+#settings .preset_specific .upfront-settings-item-content .upfront-settings-item-content {
+	margin: 0;
+	padding: 0;
+}
+.font_settings_item .upfront-settings-item-content > div {
+	display: inline-block;
+	vertical-align: bottom;
+}
+.font_settings_item .font-size {
+	width: 70px;
+}
+.font_settings_item .font-size input {
+	width: 50px;
+}
+.font_settings_item .font-size label {
+	white-space: nowrap;
+}
+.font_settings_item .font-face {
+	width: 125px;
+}
+.font_settings_item .font-face .upfront-field-select {
+	vertical-align: bottom;
+}
+.font_settings_item .font-color {
+}
+.select-preset-field .upfront-field-select {
+	width: 150px;
+}
 /* End Preset manager panels in elements' settings */
 strike{
     text-decoration: line-through;

@@ -177,15 +177,13 @@ define([
 		},
 
 		get_content_markup: function () {
-			return this.tabsTpl(
-				_.extend(
-					this.extract_properties(),
-					{
-						show_add: true,
-						show_remove: this.property('tabs_count') > 1 ? true : false
-					}
-				)
-			);
+			var props = this.extract_properties();
+
+			props.show_add = true;
+			props.show_remove = this.property('tabs_count') > 1 ? true : false;
+			props.preset = props.preset || 'default';
+
+			return this.tabsTpl(props);
 		},
 
 		extract_properties: function() {

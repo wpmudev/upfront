@@ -3646,7 +3646,7 @@ define([
 					$(this).removeClass('upfront-field-empty');
 				}
 			}).trigger('keyup').change(function(){
-				me.trigger('changed');
+				me.trigger('changed', me.get_value());
 			});
 			this.trigger('rendered');
 		},
@@ -4181,7 +4181,7 @@ var Field_ToggleableText = Field_Text.extend({
 			//}
 			this.$el.on('change', '.upfront-field-select-option input', function() {
 				me.update_select_display_value();
-				me.trigger('changed');
+				me.trigger('changed', me.get_value());
 			});
 			this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
 			if ( ! this.multiple && ! this.get_saved_value() )

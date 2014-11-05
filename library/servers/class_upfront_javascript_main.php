@@ -28,7 +28,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$entities = Upfront_Entity_Registry::get_instance();
 		$registered = $entities->get_all();
-		
+
 		$child_instance = Upfront_ChildTheme::get_instance();
 
 		$paths = array(
@@ -208,6 +208,17 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		if (empty($button_presets)) $button_presets = json_encode(array());
 
+		$tab_presets = get_option('upfront_' . get_stylesheet() . '_tab_presets');
+		$tab_presets = apply_filters(
+			'upfront_get_tab_presets',
+			$tab_presets,
+			array(
+				'json' => true
+			)
+		);
+
+		if (empty($tab_presets)) $tab_presets = json_encode(array());
+
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
 			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
@@ -279,6 +290,7 @@ Upfront.mainData = {
 	additionalFonts: {$additional_fonts},
   userDoneFontsIntro: {$user_done_font_intro},
   buttonPresets: {$button_presets},
+  tabPresets: {$tab_presets},
   themeColors: {$theme_colors},
   postImageVariants: {$post_image_variants},
   content: {$content},

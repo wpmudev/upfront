@@ -49,6 +49,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$style .= $this->prepare_theme_styles();
 	  // Add theme colors styles
 	  $style .= $this->_get_theme_colors_styles();
+		// Add tab presets styles
+		$style .= $this->_get_tab_presets_styles();
+
 	  $this->_out(new Upfront_CssResponse_Success($style));
 	}
 
@@ -218,4 +221,34 @@ class Upfront_StylesheetMain extends Upfront_Server {
     private function _get_theme_colors_styles(){
         return get_option("upfront_theme_colors_styles");
     }
+
+		private function _get_tab_presets_styles() {
+			$presets = json_decode(get_option('upfront_' . get_stylesheet() . '_tab_presets'), true);
+			if (empty($presets)) {
+				return '';
+			}
+
+			$styles = "\n";
+			foreach ($presets as $preset) {
+				$styles .= ' .tab-preset-' . $preset['id'] . ' .tabs-tab:hover {' . "\n" .
+					' color: #' . $preset['hover-font-color'] . ';' . "\n" .
+					' font-family: ' . $preset['hover-font-family'] . ';' . "\n" .
+					' font-size: ' . $preset['hover-font-size'] . 'px;' . "\n" .
+					'}' . "\n" .
+					' .tab-preset-' . $preset['id'] . ' .tabs-tab.tabs-tab-active {' . "\n" .
+					' color: #' . $preset['active-font-color'] . ';' . "\n" .
+					' font-family: ' . $preset['active-font-family'] . ';' . "\n" .
+					' font-size: ' . $preset['active-font-size'] . 'px;' . "\n" .
+					' transition: none;' . "\n" .
+					'}' . "\n" .
+					' .tab-preset-' . $preset['id'] . ' .tabs-tab {' . "\n" .
+					' color: #' . $preset['static-font-color'] . ';' . "\n" .
+					' font-family: ' . $preset['static-font-family'] . ';' . "\n" .
+					' font-size: ' . $preset['static-font-size'] . 'px;' . "\n" .
+			    ' transition: all ' . $preset['hover-transition-duration'] . 's ' . $preset['hover-transition-easing'] . ';' . "\n" .
+					'}' . "\n";
+			}
+
+			return $styles;
+		}
 }
