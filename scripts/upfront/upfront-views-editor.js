@@ -6176,7 +6176,7 @@ var CSSEditor = Backbone.View.extend({
 						var rgba = color.toRgbString();
 						spectrum.find('.sp-dragger').css('border-top-color', rgba);
 						spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-					},
+					}
 				}
 			})
 		;

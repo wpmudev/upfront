@@ -61,7 +61,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
     $shim = array(
       'underscore' => array('exports' => '_'),
-//      'redactor' => array('redactor_plugins'),
+      'redactor' => array('redactor_plugins'),
       'jquery-df' => array('jquery'),
 			'chosen' => array(
 				'deps' => array('jquery'),

@@ -19,7 +19,7 @@ define([
 		model: UimageModel,
 		imageTpl: Upfront.Util.template(imageTpl),
 		sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
-		cropTimeAfterResize: 1,// making this longer makes image resize not save
+		cropTimeAfterResize: 10000,
 
 		cssSelectors: {
 			'.upfront-image': {label: l10n.css.image_label, info: l10n.css.image_info},
@@ -964,8 +964,8 @@ define([
 			;
 
 
-			crop.top = position.top;
-			crop.left = position.left;
+			crop.top = Math.min(0, position.top);
+			crop.left = Math.min(0, position.left);
 
 			crop.width = Math.min(elementSize.width, resize.width);
 			crop.height = Math.min(elementSize.height, resize.height);

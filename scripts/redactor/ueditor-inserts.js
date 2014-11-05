@@ -455,7 +455,7 @@ var ImageInsert = UeditorInsert.extend({
 					linebreaks: true,
 					autostart: true,
 					pastePlainText: true,
-					airButtons: ['bold', 'italic', 'upfrontLink', 'stateAlign']
+					buttons: ['bold', 'italic', 'upfrontLink', 'stateAlign']
 				})
 			;
 			this.ueditor = this.$('.wp-caption-text').data('ueditor');
@@ -471,7 +471,7 @@ var ImageInsert = UeditorInsert.extend({
 					return;
 
 				parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
-				parentRedactor.$source.on('keydown.redactor-textarea');
+				parentRedactor.$textarea.on('keydown.redactor-textarea');
 
 				//parentUeditor.stop();
 			});
@@ -487,7 +487,7 @@ var ImageInsert = UeditorInsert.extend({
 				if(!parentRedactor)
 					return;
 
-				parentRedactor.buildBindKeyboard();
+				//parentRedactor.buildBindKeyboard();
 
 				//var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
 				//parentUeditor.start();
