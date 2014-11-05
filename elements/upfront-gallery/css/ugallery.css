@@ -701,6 +701,7 @@ figure.gallery-labels-figure img.mfp-img {
 .ugallery_caption_on_hover_0 .ugallery-controls,
 .ugallery_caption_on_hover_1 .ugallery-controls {
 	top:0;
+	bottom: auto;
 }
 
 .ugallery-controls {

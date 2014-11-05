@@ -40,7 +40,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		'.ugallery-thumb-title': {label: l10n.css.captions_label, info: l10n.css.captions_info},
 		'.ugallery_labels': {label: l10n.css.lblcnt_label, info: l10n.css.lblcnt_info},
 		'.ugallery_label_filter': {label: l10n.css.labels_label, info: l10n.css.labels_info}
-
 	},
 
 	reopenSettings: false,
@@ -64,8 +63,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'click .remove-image': 'removeImage',
 			'click .ugallery-image-wrapper': 'selectItem',
 			'click .upfront-quick-swap': 'openImageSelector',
-			'click': 'preventNavigation'
+			'click': 'preventNavigation',
+			'dblclick .ugallery-thumb-title': 'startCaptionEditor'
 		});
+
 		images = this.property('images');
 
 		this.images = new UgalleryImages(images);
@@ -164,6 +165,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.property('has_settings', 0);
 		}
 	},
+
+	// Remove default dblclick behavior because it messes up things
+	on_edit: function() {},
 
 	/****************************************************/
 	/*          Settings change live callbacks          */
@@ -532,35 +536,44 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				controls.render();
 				item.find('.ugallery-image-wrapper').append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 
-				if (!title.data('ueditor')) {
-					title.ueditor({
-							linebreaks: false,
-							autostart: false,
-							upfrontMedia: false,
-							upfrontImages: false
-						})
-						.on('start', function() {
-							me.$el.addClass('upfront-editing');
-						})
-						.on('stop', function() {
-							me.$el.removeClass('upfront-editing');
-						})
-						.on('syncAfter', function() {
-							image.set('title', title.html());
-						})
-					;
-				}
+				me.ensureCaptionEditorExists(title, image);
 
 				if(image.controls) {
 					image.controls.remove();
 				}
 				image.controls = controls;
 			});
-
-
 		}, 300);
 
 		this.activateSortable();
+	},
+
+	ensureCaptionEditorExists: function(title, image) {
+		var me = this;
+
+		if (!title.data('ueditor')) {
+			title.ueditor({
+				linebreaks: false,
+				autostart: false,
+				upfrontMedia: false,
+				upfrontImages: false
+			})
+			.on('start', function() {
+				me.$el.addClass('upfront-editing');
+			})
+			.on('stop', function() {
+				setTimeout(function() {
+					// Prevent on hover caption shows constantly
+					title.removeAttr('style');
+				}, 10);
+
+				me.$el.removeClass('upfront-editing');
+			})
+			.on('syncAfter', function() {
+				image.set('title', title.html());
+			})
+			;
+		}
 	},
 
 	onElementResizing: function(){
@@ -1157,6 +1170,24 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			delegate: '.upfront-icon-region-fullscreen',
 			items: items
 		});
+	},
+
+	startCaptionEditor: function(event) {
+		var $target = $(event.target),
+			$caption = $target.hasClass('ugallery-thumb-title') ? $target : $target.closest('.ugallery-thumb-title'),
+			image;
+
+		if (!$caption.length) {
+			return;
+		}
+
+		if ($caption.data('ueditor')) {
+			$caption.data('ueditor').start();
+		} else {
+			image = this.images.get($caption.closest('.ugallery_item').attr('rel'));
+			this.ensureCaptionEditorExists($caption, image);
+			$caption.data('ueditor').start();
+		}
 	},
 
 	cleanup: function(){
