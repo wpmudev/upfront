@@ -53,6 +53,14 @@ class Upfront_UtabsView extends Upfront_Object {
 	// This data is passed on to the template to precompile template
 			$data = $this->properties_to_array();
 
+			// Ensure tab title
+			foreach($data['tabs'] as $index=>$tab) {
+				if (empty(trim(str_replace("\n", '', $tab['title'])))) {
+					$tab['title'] = 'Tab ' . ($index + 1);
+					$data['tabs'][$index] = $tab;
+				}
+			}
+
 			if (!$data['preset']) {
 				$data['preset'] = 'default';
 			}
