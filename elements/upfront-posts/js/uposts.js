@@ -4,6 +4,8 @@ define(function() {
 
 	var _initial = {};
 
+	var l10n = Upfront.Settings.l10n.posts_element;
+
 
 	Upfront.Util.post({
 		"action": "uposts_list_initial_info"
@@ -53,7 +55,6 @@ define(function() {
 
 			this.model.on('region:updated', this.refreshMarkup, this);
 			this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
-			console.log('Posts element');
 		},
 
 		get_content_markup: function () {
@@ -61,7 +62,7 @@ define(function() {
 				//Is it shadow?
 				if(this.parent_module_view.region.get("name") != 'shadow')
 					this.refreshMarkup();
-				return 'Loading';
+				return l10n.loading;
 			}
 			return this.markup;
 		},
@@ -123,8 +124,8 @@ define(function() {
 				me = this,
 				content_selector = '#' + this.property('element_id'),
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Refreshing ...",
-					done: "Here we are!",
+					loading: l10n.refreshing,
+					done: l10n.here_we_are,
 					fixed: true
 				})
 			;
@@ -186,8 +187,8 @@ define(function() {
 
 		onPostUpdated: function(post){
 			var loading = new Upfront.Views.Editor.Loading({
-					loading: "Refreshing post ...",
-					done: "Here we are!",
+					loading: l10n.refreshing_post,
+					done: l10n.here_we_are,
 					fixed: false
 				}),
 				wrapper = $('#' + this.property('element_id')).find('[data-post_id=' + post.ID + ']'),
@@ -252,7 +253,7 @@ define(function() {
 		 */
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-posts');
-			this.$el.html('Posts');
+			this.$el.html(l10n.element_name);
 		},
 
 		/**
@@ -333,14 +334,14 @@ define(function() {
 		 * @return {string} Label.
 		 */
 		get_label: function () {
-			return "Query";
+			return l10n.query;
 		},
 		/**
 		 * Get the title (goes into settings title area)
 		 * @return {string} Title
 		 */
 		get_title: function () {
-			return "Query settings";
+			return l10n.query_settings;
 		}
 	});
 
@@ -374,18 +375,18 @@ define(function() {
 			});
 
 			var orders = [
-				{label: 'Date posted', value: 'date'},
-				{label: 'Date modified', value: 'modified'},
-				{label: 'Comment count', value: 'comment_count'},
-				{label: 'Author', value: 'author'},
-				{label: 'Title', value: 'title'},
-				{label: 'Slug', value: 'name'},
-				{label: 'Random', value: 'rand'}
+				{label: l10n.date_posted, value: 'date'},
+				{label: l10n.date_modified, value: 'modified'},
+				{label: l10n.comment_count, value: 'comment_count'},
+				{label: l10n.author, value: 'author'},
+				{label: l10n.title, value: 'title'},
+				{label: l10n.slug, value: 'name'},
+				{label: l10n.random, value: 'rand'}
 			];
 
 			var directions = [
-				{label: 'Descending', value: 'DESC'},
-				{label: 'Ascending', value: 'ASC'}
+				{label: l10n.descending, value: 'DESC'},
+				{label: l10n.ascending, value: 'ASC'}
 			];
 
 			var Fields = Upfront.Views.Editor.Field;
@@ -394,61 +395,61 @@ define(function() {
 				new Fields.Select({
 					className: 'upfront-field-wrap upfront-field-wrap-select post-settings-type',
 					model: this.model,
-					label: "Type:",
+					label: l10n.type,
 					property: "post_type",
 					values: pts
 				}),
 				new Fields.Select({
 					className: 'upfront-field-wrap upfront-field-wrap-select post-settings-taxonomy',
 					model: this.model,
-					label: 'Taxonomy:',
+					label: l10n.taxonomy,
 					property: "taxonomy",
 					values: taxs
 				}),
 				new Fields.Select({
 					className: 'upfront-field-wrap upfront-field-wrap-select post-settings-term',
 					model: this.model,
-					label: 'Term:',
+					label: l10n.term,
 					property: "term",
-					values: [{label:"Please, select a taxonomy", value:"", disabled: true}]
+					values: [{label:l10n.select_tax, value:"", disabled: true}]
 				}),
 				new Fields.Select({
 					className: 'upfront-field-wrap upfront-field-wrap-select post-settings-limit',
 					model: this.model,
-					label: "Limit:",
+					label: l10n.limit,
 					property: "limit",
 					values: limits
 				}),
 				new Fields.Select({
 					className: 'upfront-field-wrap upfront-field-wrap-select post-settings-order',
 					model: this.model,
-					label: "Order:",
+					label: l10n.order,
 					property: "order",
 					values: orders
 				}),
 				new Fields.Select({
 					className: 'upfront-field-wrap upfront-field-wrap-select post-settings-direction',
 					model: this.model,
-					label: "Direction:",
+					label: l10n.direction,
 					property: "direction",
 					values: directions
 				}),
 				new Fields.Radios({
 					className: 'inline-radios upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios plaintext-settings',
 					model: this.model,
-					label: 'Pagination:',
+					label: l10n.pagination,
 					property: 'pagination',
 					values: [
 						{
-							label: 'None',
+							label: l10n.none,
 							value: 0
 						},
 						{
-							label: 'Prev. / Next Page',
+							label: l10n.prev_next,
 							value: 'prevnext'
 						},
 						{
-							label: 'Numeric',
+							label: l10n.numeric,
 							value: 'numeric'
 						}
 					]
@@ -456,11 +457,11 @@ define(function() {
 				new Fields.Radios({
 					className: 'inline-radios upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios plaintext-settings',
 					model: this.model,
-					label: 'Result Length',
+					label: l10n.result_length,
 					property: "content_type",
 					values: [
-						{label: "Full", value: "full"},
-						{label: "Excerpt", value: "excerpt"}
+						{label: l10n.full, value: "full"},
+						{label: l10n.excerpt, value: "excerpt"}
 					]
 				})
 			]);
@@ -484,7 +485,7 @@ define(function() {
 				});
 				me.fields._wrapped[2] = new Upfront.Views.Editor.Field.Select({
 					model: me.model,
-					label: 'Term:',
+					label: l10n.term,
 					property: "term",
 					values: term_values
 				});
@@ -493,7 +494,7 @@ define(function() {
 			});
 		},
 		get_title: function () {
-			return "Query Settings";
+			return l10n.query_settings;
 		}
 	});
 
@@ -512,14 +513,14 @@ define(function() {
 					property: "featured_image",
 					layout: "vertical",
 					values: [
-						{label: "Yes", value: "1"},
-						{label: "No", value: "0"},
+						{label: l10n.yes, value: "1"},
+						{label: l10n.no, value: "0"},
 					]
 				})
 			]);
 		},
 		get_title: function () {
-			return "Show featured image?";
+			return l10n.show_featured;
 		}
 	});
 
@@ -546,7 +547,7 @@ define(function() {
 		 * @return {string} Title
 		 */
 		get_title: function () {
-			return "Posts settings";
+			return l10n.posts_settings;
 		}
 	});
 

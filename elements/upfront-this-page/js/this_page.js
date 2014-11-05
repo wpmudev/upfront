@@ -1,5 +1,7 @@
 (function ($) {
 define(function() {
+
+var l10n = Upfront.Settings.l10n.this_page_element;
 /**
  * Define the model - initialize properties to their default values.
  * @type {Upfront.Models.ObjectModel}
@@ -85,8 +87,8 @@ var ThisPageView = (function(){
 	
 			var node = me.$el.find(".upfront-object-content"),
 				loading = !node.length ? false : new Upfront.Views.Editor.Loading({
-					loading: "Refreshing...",
-					done: "Here we are!",
+					loading: l10n.refreshing,
+					done: l10n.here_we_are,
 					fixed: false
 				});
 			;
@@ -184,7 +186,7 @@ var ThisPageView = (function(){
 					disableLineBreak: true,
 					pastePlainText: true,
 					autostart: start === true,
-					placeholder: 'Write a title...',
+					placeholder: l10n.title_placeholder,
 					focus: focus
 				};
 			}
@@ -192,7 +194,7 @@ var ThisPageView = (function(){
 				params = {
 					linebreaks: false,
 					autostart: start === true,
-					placeholder: 'Your content goes here ;)',
+					placeholder: l10n.content_placeholder,
 					focus: focus,
 					upfrontMedia: true,
 					upfrontImages: true
@@ -269,7 +271,7 @@ var ThisPageTitleElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * Set up command appearance.
 	 */
 	render: function () {
-		this.$el.html('Page Title');
+		this.$el.html(l10n.page_title);
 	},
 
 	/**
@@ -307,7 +309,7 @@ var ThisPageContentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * Set up command appearance.
 	 */
 	render: function () {
-		this.$el.html('Page Content');
+		this.$el.html(l10n.page_content);
 	},
 
 	/**

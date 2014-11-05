@@ -552,6 +552,34 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$out[$prop['name']] = $prop['value'];
 		return $out;
 	}
+
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['this_post_element'])) return $strings;
+		$strings['this_post_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('This Post', 'upfront'),
+			'thrashed_post' => __('This %s has been deleted. To edit it, <a class="ueditor_restore">restore the %s</a>.', 'upfront'),
+			'refreshing' => __('Refreshing post ...', 'upfront'),
+			'here_we_are' => __('Here we are!', 'upfront'),
+			'post_author' => __('Post Author', 'upfront'),
+			'post_date' => __('Post Date', 'upfront'),
+			'categories' => __('Categories', 'upfront'),
+			'tags' => __('Tags', 'upfront'),
+			'comments_count' => __('Comments count', 'upfront'),
+			'featured_image' => __('Featured image', 'upfront'),
+			'show_post_data' => __('Show the following Post Data:', 'upfront'),
+			'post_data' => __('Post Data', 'upfront'),
+			'post_settings' => __('Post settings', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
 }
 
 /**
@@ -707,7 +735,9 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 				return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
 
 			if($post->post_status == 'trash')
-				$content = '<div class="ueditor_deleted_post ueditable upfront-ui">This ' . $post->post_type . ' has been deleted. To edit it, <a class="ueditor_restore">restore the ' . $post->post_type . '</a>.</div>';
+				$content = '<div class="ueditor_deleted_post ueditable upfront-ui">' .
+					sprintf(Upfront_ThisPostView::_get_l10n('thrashed_post'), $post->post_type, $post->post_type) . 
+				'</div>';
 			else
 				$content = Upfront_ThisPostView::get_post_markup($data['post_id'], null, $data['properties']);
 		}

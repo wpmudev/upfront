@@ -39,6 +39,29 @@ class Upfront_ThisPageView extends Upfront_Object {
 		return $data;
 	}
 
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['this_page_element'])) return $strings;
+		$strings['this_page_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Page', 'upfront'),
+			'thrashed_post' => __('This %s has been deleted. To edit it, <a class="ueditor_restore">restore the %s</a>.', 'upfront'),
+			'refreshing' => __('Refreshing...', 'upfront'),
+			'here_we_are' => __('Here we are!', 'upfront'),
+			'title_placeholder' => __('Write a title...', 'upfront'),
+			'content_placeholder' => __('Your content goes here ;)', 'upfront'),
+			'page_title' => __('Page Title', 'upfront'),
+			'page_content' => __('Page Content', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
+
 }
 
 
@@ -78,7 +101,9 @@ class Upfront_ThisPageAjax extends Upfront_Server {
 				return $this->_out(new Upfront_JsonResponse_Error('Unknown post.'));
 
 			if($post->post_status == 'trash'){
-				$return['content'] = '<div class="ueditor_deleted_post ueditable upfront-ui">This ' . $post->post_type . ' has been deleted. To edit it, <a class="ueditor_restore">restore the ' . $post->post_type . '</a>.</div>';
+				$return['content'] = '<div class="ueditor_deleted_post ueditable upfront-ui">' .
+					sprintf(Upfront_ThisPageView::_get_l10n('thrashed_post'), $post->post_type, $post->post_type) .
+				'</div>';
 			}
 			else{
 				$return['title'] = Upfront_ThisPageView::get_page_markup('title', $data['post_id']);

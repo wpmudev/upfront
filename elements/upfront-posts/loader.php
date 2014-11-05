@@ -38,6 +38,8 @@ function uposts_initialize () {
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UpostsView', 'add_js_defaults'));
 
+	add_filter('upfront_l10n', array('Upfront_UpostsView', 'add_l10n_strings'));
+
 	// Add the public stylesheet
 	//add_action('wp_enqueue_scripts', array('Upfront_UpostsView', 'add_public_style'));
 

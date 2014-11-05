@@ -215,6 +215,55 @@ class Upfront_UpostsView extends Upfront_Object {
 			$out[$prop['name']] = $prop['value'];
 		return $out;
 	}
+
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['posts_element'])) return $strings;
+		$strings['posts_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('Posts', 'upfront'),
+			'loading' => __('Loading', 'upfront'),
+			'refreshing' => __('Refreshing ...', 'upfront'),
+			'here_we_are' => __('Here we are!', 'upfront'),
+			'refreshing_post' => __('Refreshing post ...', 'upfront'),
+			'query' => __('Query', 'upfront'),
+			'query_settings' => __('Query settings', 'upfront'),
+			'date_posted' => __('Date posted', 'upfront'),
+			'date_modified' => __('Date modified', 'upfront'),
+			'comment_count' => __('Comment count', 'upfront'),
+			'author' => __('Author', 'upfront'),
+			'title' => __('Title', 'upfront'),
+			'slug' => __('Slug', 'upfront'),
+			'random' => __('Random', 'upfront'),
+			'descending' => __('Descending', 'upfront'),
+			'ascending' => __('Ascending', 'upfront'),
+			'type' => __('Type:', 'upfront'),
+			'taxonomy' => __('Taxonomy:', 'upfront'),
+			'select_tax' => __('Please, select a taxonomy', 'upfront'),
+			'term' => __('Term:', 'upfront'),
+			'order' => __('Order:', 'upfront'),
+			'limit' => __('Limit:', 'upfront'),
+			'direction' => __('Direction:', 'upfront'),
+			'pagination' => __('Pagination:', 'upfront'),
+			'none' => __('None', 'upfront'),
+			'prev_next' => __('Prev. / Next Page', 'upfront'),
+			'numeric' => __('Numeric', 'upfront'),
+			'result_length' => __('Result Length', 'upfront'),
+			'full' => __('Full', 'upfront'),
+			'excerpt' => __('Excerpt', 'upfront'),
+			'yes' => __('Yes', 'upfront'),
+			'no' => __('No', 'upfront'),
+			'show_featured' => __('Show featured image?', 'upfront'),
+			'posts_settings' => __('Posts settings', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
 }
 
 
@@ -324,7 +373,9 @@ class Upfront_UpostsAjax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Missing post."));
 
 		if($post->post_status == 'trash')
-			$this->_out(new Upfront_JsonResponse_Success('<div class="ueditor_deleted_post ueditable">This ' . $post->post_type . ' has been deleted. To edit it, <a class="ueditor_restore">restore the ' . $post->post_type . '</a>.</div>'));
+			$this->_out(new Upfront_JsonResponse_Success('<div class="ueditor_deleted_post ueditable">' . 
+				sprintf(Upfront_ThisPostView::_get_l10n('thrashed_post'), $post->post_type, $post->post_type) . 
+			'</div>'));
 
 		query_posts('p=' . $post->ID);
 

@@ -1,5 +1,8 @@
 (function ($) {
 define(function() {
+
+var l10n = Upfront.Settings.l10n.this_post_element;
+
 /**
  * Define the model - initialize properties to their default values.
  * @type {Upfront.Models.ObjectModel}
@@ -159,8 +162,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 		var node = $('#' + me.property('element_id')).find(".upfront-object-content"),
 			loading = !node.length ? false : new Upfront.Views.Editor.Loading({
-				loading: "Refreshing post ...",
-				done: "Here we are!",
+				loading: l10n.refreshing,
+				done: l10n.here_we_are,
 				fixed: false
 			})
 		;
@@ -280,7 +283,7 @@ var ThisPostElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * Set up command appearance.
 	 */
 	render: function () {
-		this.$el.html('This Post');
+		this.$el.html(l10n.element_name);
 	},
 
 	/**
@@ -315,29 +318,29 @@ var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
 	initialize: function (opts) {
 		this.options = opts;
 		var data = [
-			{label: "Post Author", value: "author"},
-			{label: "Post Date", value: "date"},
-			{label: "Categories", value: "categories"},
-			{label: "Tags", value: "tags"},
-			{label: "Comments count", value: "comments_count"},
-			{label: "Featured image", value: "featured_image"}
+			{label: l10n.post_author, value: "author"},
+			{label: l10n.post_date, value: "date"},
+			{label: l10n.categories, value: "categories"},
+			{label: l10n.tags, value: "tags"},
+			{label: l10n.comments_count, value: "comments_count"},
+			{label: l10n.featured_image, value: "featured_image"}
 		];
 		this.fields = _([
 			new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
-				label: "Show the following Post Data:",
+				label: l10n.show_post_data,
 				property: "post_data",
 				values: data
 			})
 		]);
 	},
 	get_title: function () {
-		return "Post Data";
+		return l10n.post_data;
 	}
 });
 
 var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	label: "This post",
+	label: l10n.element_name,
 	initialize: function (opts) {
 		this.options = opts;
 		this.settings = _([
@@ -350,7 +353,7 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	get_title: function () {
-		return "Post settings";
+		return l10n.post_settings;
 	}
 });
 
@@ -363,7 +366,7 @@ var Settings = Upfront.Views.Editor.Settings.Settings.extend({
 	},
 
 	get_title: function () {
-		return "Post settings";
+		return l10n.post_settings;
 	}
 });
 
