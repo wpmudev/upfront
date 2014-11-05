@@ -115,7 +115,7 @@ var LayoutEditor = {
 					return false;
 				};
 				$('.upfront-module-group-group').remove();
-				var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">Group</div>'),
+				var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">' + Upfront.Settings.l10n.global.behaviors.group + '</div>'),
 					sel_top = sel_left = sel_right = sel_bottom = false,
 					wrap_top = wrap_left = wrap_right = wrap_bottom = false,
 					group_top = group_left = 0;
@@ -554,7 +554,7 @@ var LayoutEditor = {
 			.width($(window).width())
 			.height($(document).height())
 		;
-		html += '<p>Do you wish to save layout just for this post or apply it to all posts?</p>';
+		html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
 			//html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
@@ -607,7 +607,7 @@ var LayoutEditor = {
 		var popup = Upfront.Popup.open(function (data, $top, $bottom) {
 			var $me = $(this);
 			$me.empty()
-			.append('<p class="upfront-popup-placeholder">Loading content...</p>')
+			.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>')
 			;
 			me.$popup = {
 				"top": $top,
@@ -620,11 +620,11 @@ var LayoutEditor = {
 		'font-manager-popup');
 		me.$popup.top.html(
 			'<ul class="upfront-tabs">' +
-				'<li data-type="posts" class="active">Theme Text Fonts</li>' +
+				'<li data-type="posts" class="active">' + Upfront.Settings.l10n.global.behaviors.theme_text_fonts + '</li>' +
 				'</ul>' +
 				me.$popup.top.html()
 		);
-		me.$popup.bottom.append('<a class="theme-fonts-ok-button">OK</a>');
+		me.$popup.bottom.append('<a class="theme-fonts-ok-button">' + Upfront.Settings.l10n.global.behaviors.ok + '</a>');
 		me.$popup.content.html(textFontsManager.el);
 		textFontsManager.set_ok_button(me.$popup.bottom.find('.theme-fonts-ok-button'));
 		me.$popup.bottom.find('.theme-fonts-ok-button').on('click', function() {
@@ -638,7 +638,7 @@ var LayoutEditor = {
 			fields = {
 				layout: new Upfront.Views.Editor.Field.Select({
 					name: 'layout',
-					values: [{label: "Loading...", value: ""}],
+					values: [{label: Upfront.Settings.l10n.global.behaviors.loading, value: ""}],
 					change: function() {
 						var value = this.get_value();
 
@@ -650,14 +650,14 @@ var LayoutEditor = {
 				}),
 				page_name: new Upfront.Views.Editor.Field.Text({
 					name: 'page_name',
-					label: 'Page name (leave empty for single-page.php)',
+					label: Upfront.Settings.l10n.global.behaviors.page_layout_name,
 				}),
 				inherit: new Upfront.Views.Editor.Field.Radios({
 					name: 'inherit',
 					layout: "horizontal-inline",
 					values: [
-						{label: 'Start fresh', value: ''},
-						{label: 'Start from existing layout', value: 'existing'}
+						{label: Upfront.Settings.l10n.global.behaviors.start_fresh, value: ''},
+						{label: Upfront.Settings.l10n.global.behaviors.start_from_existing, value: 'existing'}
 					]
 				}),
 				existing: new Upfront.Views.Editor.Field.Select({
@@ -714,7 +714,7 @@ var LayoutEditor = {
 		}
 
 		ed.layout_modal.open(function($content, $modal){
-			var $button = $('<div style="clear:both"><span class="uf-button">Create</span></div>'),
+			var $button = $('<div style="clear:both"><span class="uf-button">' + Upfront.Settings.l10n.global.behaviors.create + '</span></div>'),
 				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
 				$page_name_wrap = $('<div class="upfront-modal-select-wrap" />')
 			;
@@ -725,7 +725,7 @@ var LayoutEditor = {
 				field.delegateEvents();
 			});
 			$content.html(
-				'<h1 class="upfront-modal-title">Create New Layout</h1>'
+				'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.create_new_layout + '</h1>'
 			);
 			$select_wrap.append(fields.layout.el);
 			$content.append($select_wrap);
@@ -781,7 +781,7 @@ var LayoutEditor = {
 			fields = {
 				layout: new Upfront.Views.Editor.Field.Select({
 					name: 'layout',
-					values: [{label: "Loading...", value: ""}],
+					values: [{label: Upfront.Settings.l10n.global.behaviors.loading, value: ""}],
 					default_value: app.layout.get('current_layout')
 				})
 			};
@@ -793,7 +793,7 @@ var LayoutEditor = {
 		}
 		ed._get_saved_layout().done(function(data){
 			if ( !data || data.length == 0 ){
-				fields.layout.options.values = [{label: "No saved layout", value: ""}];
+				fields.layout.options.values = [{label: Upfront.Settings.l10n.global.behaviors.no_saved_layout, value: ""}];
 			}
 			else {
 				fields.layout.options.values = _.map(ed.saved_layouts, function(layout, layout_id){
@@ -805,14 +805,14 @@ var LayoutEditor = {
 		});
 
 		ed.browse_modal.open(function($content, $modal){
-			var $button = $('<span class="uf-button">Edit</span>'),
+			var $button = $('<span class="uf-button">' + Upfront.Settings.l10n.global.behaviors.edit + '</span>'),
 				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
 			_.each(fields, function(field){
 				field.render();
 				field.delegateEvents();
 			});
 			$content.html(
-				'<h1 class="upfront-modal-title">Edit Saved Layout</h1>'
+				'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.edit_saved_layout + '</h1>'
 			);
 			$select_wrap.append(fields.layout.el);
 			$content.append($select_wrap);
@@ -844,8 +844,8 @@ var LayoutEditor = {
 			loading;
 
 		loading = new Upfront.Views.Editor.Loading({
-			loading: "Checking layouts",
-			done: "Layout exported!",
+			loading: Upfront.Settings.l10n.global.behaviors.checking_layouts,
+			done: Upfront.Settings.l10n.global.behaviors.layout_exported,
 			fixed: true
 		});
 
@@ -856,8 +856,8 @@ var LayoutEditor = {
 					name: 'theme',
 					default_value: Upfront.themeExporter.currentTheme === 'upfront' ?
 						'' : Upfront.themeExporter.currentTheme,
-					label: 'Select Theme',
-					values: [{label: "New theme", value: ""}],
+					label: Upfront.Settings.l10n.global.behaviors.select_theme,
+					values: [{label: Upfront.Settings.l10n.global.behaviors.new_theme, value: ""}],
 					change: function(){
 						var value = this.get_value(),
 							$fields = $([fields.name.el, fields.directory.el, fields.author.el, fields.author_uri.el]);
@@ -869,31 +869,31 @@ var LayoutEditor = {
 				}),
 				name: new Upfront.Views.Editor.Field.Text({
 					name: 'name',
-					label: 'Theme Name',
+					label: Upfront.Settings.l10n.global.behaviors.theme_name,
 				}),
 				directory: new Upfront.Views.Editor.Field.Text({
 					name: 'directory',
-					label: 'Directory',
+					label: Upfront.Settings.l10n.global.behaviors.directory,
 				}),
 				author: new Upfront.Views.Editor.Field.Text({
 					name: 'author',
-					label: 'Author',
+					label: Upfront.Settings.l10n.global.behaviors.author,
 				}),
 				author_uri: new Upfront.Views.Editor.Field.Text({
 					name: 'author_uri',
-					label: 'Author URI',
+					label: Upfront.Settings.l10n.global.behaviors.author_uri,
 				}),
 				activate: new Upfront.Views.Editor.Field.Checkboxes({
 					name: 'activate',
 					default_value: true,
 					multiple: false,
-					values: [{ label: "Activate the new theme upon creation", value: 1 }],
+					values: [{ label: Upfront.Settings.l10n.global.behaviors.activate_upon_creation, value: 1 }],
 				}),
 				with_images: new Upfront.Views.Editor.Field.Checkboxes({
 					name: 'with_images',
 					default_value: true,
 					multiple: false,
-					values: [{ label: "Export images with the theme", value: 1 }],
+					values: [{ label: Upfront.Settings.l10n.global.behaviors.export_theme_images, value: 1 }],
 				})
 			};
 
@@ -904,7 +904,7 @@ var LayoutEditor = {
 			}
 
 			ed._get_themes().done(function(data){
-				fields.theme.options.values = _.union( [{label: "New theme", value: ""}], _.map(data, function(theme, directory){
+				fields.theme.options.values = _.union( [{label: Upfront.Settings.l10n.global.behaviors.new_theme, value: ""}], _.map(data, function(theme, directory){
 					return {label: theme.name, value: theme.directory};
 				}) );
 				fields.theme.render();
@@ -913,13 +913,13 @@ var LayoutEditor = {
 			});
 
 			ed.export_modal.open(function($content, $modal) {
-				var $button = $('<span class="uf-button">Export</span>');
+				var $button = $('<span class="uf-button">' + Upfront.Settings.l10n.global.behaviors.export_button + '</span>');
 				_.each(fields, function(field){
 					field.render();
 					field.delegateEvents();
 				});
 				$content.html(
-					'<h1 class="upfront-modal-title">Export Theme</h1>'
+					'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.export_theme + '</h1>'
 				);
 				$content.append(fields.theme.el);
 				$content.append(fields.name.el);
@@ -943,7 +943,7 @@ var LayoutEditor = {
 							'thx-export_with_images': fields.with_images.get_value() || '',
 							add_global_regions: Upfront.Application.current_subapplication.layout.get('layout_slug') !== 'blank'
 						};
-						loading.update_loading_text("Creating theme");
+						loading.update_loading_text(Upfront.Settings.l10n.global.behaviors.creating_theme);
 						return ed._create_theme(data);
 					};
 					loading.render();
@@ -968,7 +968,7 @@ var LayoutEditor = {
 			ed = Upfront.Behaviors.LayoutEditor;
 
 		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
-		loading.update_loading_text("Exporting layout: " + layout_id);
+		loading.update_loading_text(Upfront.Settings.l10n.global.behaviors.exporting_layout + layout_id);
 		
 		return ed._export_layout({ theme: theme_name }).done(function() {
 			loading.done(function() {
@@ -985,7 +985,7 @@ var LayoutEditor = {
 			ed = Upfront.Behaviors.LayoutEditor,
 			current_layout = app.layout.get('current_layout');
 		if ( success && (!current_layout || current_layout == 'archive-home') ){
-			ed.message_dialog("Excellent start!", "Your HOMEPAGE — Static layout has been successfully created. You can create more Layouts for your theme by clicking ‘New Layout’ in  the left sidebar. Remember, the best themes in life <del>are free</del> have lots of layouts!");
+			ed.message_dialog(Upfront.Settings.l10n.global.behaviors.excellent_start, Upfront.Settings.l10n.global.behaviors.homepage_created);
 		}
 	},
 
@@ -1064,9 +1064,9 @@ var LayoutEditor = {
 			if(Upfront.data.styles[data.elementType].indexOf(data.stylename) === -1)
 				Upfront.data.styles[data.elementType].push(data.stylename);
 
-			Upfront.Views.Editor.notify('Style exported.');
+			Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.style_exported);
 		}).error(function(){
-			Upfront.Views.Editor.notify('Style could not be exported.');
+			Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.style_export_fail);
 		});
 	},
 
@@ -1141,7 +1141,7 @@ var LayoutEditor = {
 			deleteDatas = [],
 			deleteFunc = function (index) {
 				if ( ! deleteDatas[index] ) {
-					Upfront.Views.Editor.notify("Region CSS cleaned");
+					Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.region_css_cleaned);
 					deferred.resolve();
 					return;
 				}
@@ -1204,7 +1204,7 @@ var LayoutEditor = {
 		});
 		
 		if ( deleteDatas.length > 0 ) {
-			Upfront.Views.Editor.notify("Cleaning Region CSS...")
+			Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css)
 			deleteFunc(0); // Start deleting
 		}
 		return deferred.promise();
@@ -4524,7 +4524,7 @@ var GridEditor = {
 			togglegrid = new Upfront.Views.Editor.Command_ToggleGrid(),
 			fields = {
 				structure: new Upfront.Views.Editor.Field.Radios({
-					label: "Structure",
+					label: Upfront.Settings.l10n.global.behaviors.structure,
 					layout: "vertical",
 					default_value: app.layout.get('layout_slug') || "blank",
 					icon_class: 'upfront-structure-field-icon',
@@ -4557,12 +4557,12 @@ var GridEditor = {
 					}
 				}),
 				grid: new Upfront.Views.Editor.Field.Radios({
-					label: "Grid Settings",
+					label: Upfront.Settings.l10n.global.behaviors.grid_settings,
 					layout: "horizontal-inline",
 					default_value: is_grid_custom ? "custom" : "recommended",
 					values: [
-						{label: "Recommended Settings", value: "recommended"},
-						{label: "Custom Settings", value: "custom"}
+						{label: Upfront.Settings.l10n.global.behaviors.recommended_settings, value: "recommended"},
+						{label: Upfront.Settings.l10n.global.behaviors.custom_settings, value: "custom"}
 					],
 					change: function () {
 						var value = this.get_value();
@@ -4580,16 +4580,16 @@ var GridEditor = {
 				recommended_padding: new Upfront.Views.Editor.Field.Select({
 					default_value: grid.column_padding,
 					values: [
-						{label: "15px column padding", value: "15"},
-						{label: "10px column padding", value: "10"},
-						{label: "5px column padding", value: "5"},
-						{label: "no column padding", value: "0"}
+						{label: Upfront.Settings.l10n.global.behaviors.padding_large, value: "15"},
+						{label: Upfront.Settings.l10n.global.behaviors.padding_medium, value: "10"},
+						{label: Upfront.Settings.l10n.global.behaviors.padding_small, value: "5"},
+						{label: Upfront.Settings.l10n.global.behaviors.no_padding, value: "0"}
 					],
 					change: update_grid_data
 				}),
 				bg_color: new Upfront.Views.Editor.Field.Color({
 					model: app.layout,
-					label: "Page Background Color",
+					label: Upfront.Settings.l10n.global.behaviors.page_bg_color,
 					label_style: "inline",
 					property: 'background_color',
 					spectrum: {
@@ -4601,7 +4601,7 @@ var GridEditor = {
 					}
 				}),
 				custom_width: new Upfront.Views.Editor.Field.Number({
-					label: "Column Width",
+					label: Upfront.Settings.l10n.global.behaviors.column_width,
 					label_style: "inline",
 					min: 40,
 					max: 100,
@@ -4609,7 +4609,7 @@ var GridEditor = {
 					change: update_grid_data
 				}),
 				custom_padding: new Upfront.Views.Editor.Field.Number({
-					label: "Column Padding",
+					label: Upfront.Settings.l10n.global.behaviors.column_padding,
 					label_style: "inline",
 					min: 0,
 					max: 100,
@@ -4617,7 +4617,7 @@ var GridEditor = {
 					change: update_grid_data
 				}),
 				custom_baseline: new Upfront.Views.Editor.Field.Number({
-					label: "Baseline Grid",
+					label: Upfront.Settings.l10n.global.behaviors.baseline_grid,
 					label_style: "inline",
 					min: 5,
 					max: 100,
@@ -4625,7 +4625,7 @@ var GridEditor = {
 					change: update_grid_data
 				}),
 				custom_type_padding: new Upfront.Views.Editor.Field.Number({
-					label: "Additional Type Padding",
+					label: Upfront.Settings.l10n.global.behaviors.additional_type_padding,
 					label_style: "inline",
 					min: 0,
 					max: 100,
@@ -4636,7 +4636,7 @@ var GridEditor = {
 					multiple: false,
 					default_value: true,
 					values: [
-						{label: "Allow floated areas outside main grid", value: true}
+						{label: Upfront.Settings.l10n.global.behaviors.allow_floats_outside_main_grid, value: true}
 					]
 				})
 			};
@@ -4780,7 +4780,7 @@ var GridEditor = {
 			$wrap = $('<div class="upfront-inline-modal-wrap"></div>'),
 			field_delay = new Upfront.Views.Editor.Field.Number({
 				name: 'delay',
-				label: 'Delay before drag:',
+				label: Upfront.Settings.l10n.global.behaviors.delay_before_drag,
 				label_style: 'inline',
 				min: 0,
 				max: 2000,
@@ -4792,7 +4792,7 @@ var GridEditor = {
 			}),
 			field_timeout = new Upfront.Views.Editor.Field.Number({
 				name: 'timeout',
-				label: 'Delay before changing position:',
+				label: Upfront.Settings.l10n.global.behaviors.delay_before_changing_position,
 				label_style: 'inline',
 				min: 0,
 				max: 2000,
@@ -4807,13 +4807,13 @@ var GridEditor = {
 				multiple: false,
 				default_value: true,
 				values: [
-					{ label: "Show debugging info/outline", value: true }
+					{ label: Upfront.Settings.l10n.global.behaviors.show_debug_info, value: true }
 				],
 				change: function () {
 					me.show_debug_element = this.get_value() ? true : false;
 				}
 			}),
-			$close = $('<a href="#" class="upfront-close-debug">Close</a>');
+			$close = $('<a href="#" class="upfront-close-debug">' + Upfront.Settings.l10n.global.behaviors.close + '</a>');
 		$main.addClass('show-debug');
 		field_delay.render();
 		$wrap.append(field_delay.$el);
