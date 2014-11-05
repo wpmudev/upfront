@@ -22,6 +22,19 @@ define(function() {
 						options.parent.updateProperty(this.options.property, value);
 					}
 				}),
+				new fields.Checkboxes({
+					model: this.model,
+					property: 'even_padding',
+					values: [
+						{
+							value: 'true',
+							label: l10n.panel.even_padding
+						}
+					],
+					change: function(value) {
+						options.parent.updateProperty(this.options.property, value);
+					}
+				}),
 				new fields.Radios({
 					model: this.model,
 					property: 'thumbProportions',

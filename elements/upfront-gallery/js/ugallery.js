@@ -1,3 +1,4 @@
+/*global ugalleries */
 (function ($) {
 define([
 	'text!elements/upfront-gallery/tpl/ugallery.html', // Front
@@ -143,6 +144,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.updatePadding();
 		});
 
+		this.listenTo(this.model, 'change:even_padding', function() {
+			me.updateEvenPadding();
+		});
+
 		this.listenTo(this.model, 'change:labelFilters', function() {
 			me.updateShowFilters();
 		});
@@ -180,6 +185,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	updatePadding: function() {
+		this.render();
+	},
+
+	updateEvenPadding: function() {
 		this.render();
 	},
 
@@ -453,6 +462,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		props.in_editor = true;
 		if (!props.no_padding) {
 			props.no_padding = ['false'];
+		}
+		if (!props.even_padding) {
+			props.even_padding = ['false'];
 		}
 
 		return props;

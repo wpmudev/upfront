@@ -1,4 +1,8 @@
-<div class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?> <?php if($no_padding[0] === 'true') { ?>no_padding<?php } ?>" data-no-padding="<?php echo $no_padding[0] ?>">
+<div
+	class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?> <?php if($no_padding[0] === 'true') { ?>no_padding<?php } ?> <?php if($even_padding[0] === 'true') { ?>even_padding<?php } ?>"
+	data-no-padding="<?php echo $no_padding[0] ?>"
+	data-even-padding="<?php echo $even_padding[0] ?>"
+>
 <?php if ($labelFilters['length'] || !empty($in_editor)){ ?>
 <div class="ugallery_labels <?php if($in_editor) { ?>ugallery_labels-enabled-<?php echo $labelFilters['length'] ?><?php } ?>">
 	<?php for($i=0; $i<$labels_length; $i++) { ?>

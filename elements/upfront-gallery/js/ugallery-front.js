@@ -8,10 +8,11 @@ jQuery(function($){
 			minMargin = 30,
 			row = 0,
 			columns = Math.floor(container / itemWidth),
-			margin, totalMargin, remaining, grid_cell, no_padding
+			margin, totalMargin, remaining, grid_cell, no_padding, even_padding
 		;
 
 		no_padding = gallery.data('no-padding');
+		even_padding = gallery.data('even-padding');
 
 		if (!no_padding && columns * itemWidth + (columns - 1 ) * minMargin > container) {
 			columns--;
@@ -36,8 +37,16 @@ jQuery(function($){
 
 				$this.css('left', grid_cell * column + extra);
 
+				// Set top margin for all thumbs that are not in first row
+				if (item_index + 1 > columns && even_padding) {
+					$this.css('top', parseInt($this.css('top'), 10) + margin * row);
+				}
+
 				if (item_index > 0 && (item_index + 1) % columns === 0) {
 					row++;
+					if (even_padding && !gallery.data('height-adjusted')) {
+						gallery.css('height', parseInt(gallery.css('height'), 10) + margin);
+					}
 				}
 			} else {
 				extra = columns - (item_index % columns) < remaining ? 1 : 0;
@@ -45,8 +54,14 @@ jQuery(function($){
 					extra = 0;
 				}
 				$this.css('margin-right', (item_index + 1) % columns ? margin + extra : 0);
+				// Set top margin for all thumbs that are not in first row
+				if (item_index + 1 > columns && even_padding) {
+					$this.css('margin-top', margin);
+				}
 			}
 		});
+
+		gallery.data('height-adjusted', true);
 	};
 
 	var bindShuffle = function() {

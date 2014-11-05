@@ -35,6 +35,10 @@
 	margin: 0;
 }
 
+.even_padding .ugallery_item {
+	margin-bottom: 0;
+}
+
 .ugallery .upfront-image-resizethiselement {
 }
 

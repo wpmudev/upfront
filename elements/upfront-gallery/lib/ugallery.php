@@ -18,6 +18,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 		// Flag for excluding stuff that is only for editor
 		$data['in_editor'] = false;
+		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
 
 		foreach($data['images'] as $im){
 			$images[] = array_merge(self::image_defaults(), $im);
@@ -214,7 +215,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'showCaptionOnHover' => array( 'true' ),
 			'linkTo' => 'image', // 'url' | 'image'
-			'no_padding' => array('false')
+			'no_padding' => array('false'),
+			'even_padding' => array('false')
 		);
 	}
 
@@ -288,6 +290,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'panel' => array(
 				'sort' => __('Enable label sorting', 'upfront'),
 				'no_padding' => __('Remove padding'),
+				'even_padding' => __('Even padding'),
 				'show_caption' => __('Show Caption:', 'upfront'),
 				'never' => __('never', 'upfront'),
 				'hover' => __('on hover', 'upfront'),
