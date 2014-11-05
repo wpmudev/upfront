@@ -13,7 +13,7 @@
 <?php if($imagesLength){ ?>
 	<div class="ugallery_items <?php echo $labelFilters['length'] || !empty($in_editor) ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-	<div class="ugallery_item ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+	<div class="ugallery_item <?php if($captionType === 'over') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 		<?php $images[$i]['urlType'] = !empty($images[$i]['urlType']) ? $images[$i]['urlType'] : false; ?>
 		  <?php if ($images[$i]['urlType'] !== 'unlink') { ?>
 			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
@@ -25,7 +25,7 @@
 				<?php } ?>
 			</div>
 			<?php if($captionType != 'none' || !empty($in_editor)) { ?>
-			<div class="ugallery-thumb-title ugallery-caption-on-hover-<?php echo $showCaptionOnHover['length'] ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
+			<div class="ugallery-thumb-title <?php if($captionType === 'over') { ?>ugallery-caption-on-hover-<?php echo $showCaptionOnHover['length'] ?><?php } ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			<?php if($linkTo == 'image'){ ?>
 			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>"><?php echo $images[$i]['caption'] ?></div>

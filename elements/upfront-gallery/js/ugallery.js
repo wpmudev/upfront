@@ -169,9 +169,21 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	/*          Settings change live callbacks          */
 	/****************************************************/
 	updateCaptionType: function() {
+		var classes,
+			suffix;
+
 		this.$el.find('.ugallery-thumb-title')
 			.removeClass('ugallery-caption-over ugallery-caption-below ugallery-caption-none')
 			.addClass('ugallery-caption-' + this.property('captionType'));
+
+		if (this.property('captionType') !== 'over') {
+			classes = 'ugallery_caption_on_hover_1 ugallery_caption_on_hover_0 ugallery-caption-on-hover-1 ugallery-caption-on-hover-0';
+			this.$el.find('.ugallery_item, .ugallery-thumb-title').removeClass(classes);
+		} else {
+			suffix = this.property('showCaptionOnHover').length;
+			this.$el.find('.ugallery_item').addClass('ugallery_caption_on_hover_' + suffix);
+			this.$el.find('.ugallery-thumb-title').addClass('ugallery-caption-on-hover-' + suffix);
+		}
 	},
 
 	updateShowCaptionOnHover: function() {
