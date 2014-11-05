@@ -1,11 +1,5 @@
 <?php
-
-/**
- * Object implementation for Search entity.
- * A fairly simple implementation, with applied settings.
- */
-
-include_once dirname(dirname(dirname(__FILE__))) . '/upfront-this-post/lib/this_post.php';
+if (!class_exists('Upfront_ThisPostView')) include_once dirname(dirname(dirname(__FILE__))) . '/upfront-this-post/lib/this_post.php';
 
 class Upfront_UpostsView extends Upfront_Object {
 
