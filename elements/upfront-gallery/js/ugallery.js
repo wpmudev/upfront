@@ -503,7 +503,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		//Bind resizing events
-		if (!me.parent_module_view.$el.data('resizeHandling')) {
+		if (me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling')) {
 			resizingFunction = $.proxy(me.onElementResizing, me);
 			me.parent_module_view.$el
 				.on('resize', resizingFunction)

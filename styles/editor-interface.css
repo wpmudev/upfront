@@ -3835,6 +3835,10 @@ a.upfront-region-name-edit-trigger:before {
 	top: 28px;
 	right: 5px;
 }
+.offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
+	right: 50px;
+}
 .upfront-object > .upfront-entity_meta_extra {
 	top: 50px;
 	right:5px;

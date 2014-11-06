@@ -27,7 +27,7 @@ define([
 			'.upfront-image-container': {label: l10n.css.wrapper_label, info: l10n.css.wrapper_info}
 		},
 
-		initialize: function(){
+		initialize: function() {
 			var me = this;
 			this.setDefaults();
 

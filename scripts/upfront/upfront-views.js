@@ -892,6 +892,7 @@ define([
 			},
 			render: function () {
 				var props = {},
+					me = this,
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
 					height, model, template
@@ -939,6 +940,34 @@ define([
 				Upfront.Events.trigger("entity:object:after_render", this, this.model);
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 				if ( this.on_render ) this.on_render();
+
+				setTimeout(function() {
+					me.checkUiOffset();
+				}, 300);
+				this.ensure_breakpoint_change_is_listened();
+			},
+			ensure_breakpoint_change_is_listened: function() {
+				if (this.breakpoint_change_setup) {
+					return;
+				}
+				this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.on_change_breakpoint);
+				this.breakpoint_change_setup = true;
+			},
+			checkUiOffset: function() {
+				var $parentRegionEl = this.parent_module_view.region_view && this.parent_module_view.region_view.$el;
+				if (!$parentRegionEl) {
+					return;
+				}
+				var topCornerMatches = this.$el.offset().top === $parentRegionEl.offset().top,
+					rightOffset = this.$el.offset().left + this.$el.width(),
+					containerRightOffset = $parentRegionEl.closest('.upfront-region-container').offset().left + $parentRegionEl.closest('.upfront-region-container').width(),
+					rightOffsetToClose = containerRightOffset - rightOffset < 30;
+
+				if (topCornerMatches && rightOffsetToClose) {
+					this.parent_module_view.$el.addClass('offset-ui-from-right-top');
+				} else {
+					this.parent_module_view.$el.removeClass('offset-ui-from-right-top');
+				}
 			},
 			on_element_edit_start: function (edit, post) {
 				if ( ( edit == 'text' || edit == 'write' ) && this.parent_module_view ){
@@ -970,6 +999,7 @@ define([
 					$obj.addClass(theme_style.toLowerCase());
 					this._theme_style = theme_style;
 				}
+				this.checkUiOffset();
 			},
 
 
