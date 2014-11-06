@@ -31,7 +31,7 @@
 	overflow: visible;
 }
 
-.no_padding .ugallery_item {
+.image-sorting-active .ugallery_item {
 	margin: 0;
 }
 
@@ -304,6 +304,11 @@ div.ugallery-label-selector {
 	background: #cee1f2;
 }
 
+.image-sorting-active .upfront-gallery .ugallery-thumb-title,
+.image-sorting-active .upfront-gallery .remove-image,
+.image-sorting-active .upfront-gallery .ugallery-controls {
+	display: none !important;
+}
 .ugallery-controls,
 .ui-resizable-autohide .ugallery_item:hover .ugallery-controls {
 	display: none;

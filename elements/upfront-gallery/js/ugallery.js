@@ -58,6 +58,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.events = _.extend({}, this.events, {
 			'click a.upfront-image-select': 'openImageSelector',
 			'click .add-item': 'openImageSelector',
+			'click .toggle-sorting': 'toggleSorting',
 			'click .ugallery_op_link': 'imageEditLink',
 			'click .ugallery_op_mask': 'imageEditMask',
 			'click .remove-image': 'removeImage',
@@ -525,6 +526,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		if (this.images && this.images.length) {
 			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
+			if (this.$el.find('a.toggle-sorting').length < 1) {
+				$('<b class="upfront-entity_meta upfront-ui toggle_sorting" title="Toggle drag\'n\'drop sorting of images"><a href="" class="upfront-icon-button toggle-sorting"></a></b>').insertBefore($upfrontObjectContent);
+			}
 			if (this.$el.find('a.add-item').length < 1) {
 				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
 			}
@@ -553,7 +557,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			});
 		}, 300);
 
-		this.activateSortable();
+		if (this.toggleSortingActive === true) {
+			this.activateSortable();
+			this.$el.addClass('image-sorting-active');
+			this.$el.find('.toggle_sorting').addClass('sorting-active');
+		} else {
+			this.$el.removeClass('image-sorting-active');
+			this.$el.find('.toggle_sorting').removeClass('sorting-active');
+		}
 	},
 
 	ensureCaptionEditorExists: function(title, image) {
@@ -592,8 +603,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.render();
 	},
 
+	toggleSorting: function() {
+		this.toggleSortingActive = !this.toggleSortingActive;
+		this.render();
+	},
+
 	rebindShuffle: function() {
-		Upfront.frontFunctions.galleryBindShuffle(this.$el.find('.ugallery_grid'));
+		if (!this.toggleSortingActive) {
+			Upfront.frontFunctions.galleryBindShuffle(this.$el.find('.ugallery_grid'));
+		}
 	},
 
 	preventNavigation: function(e){

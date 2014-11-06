@@ -3865,6 +3865,33 @@ a.upfront-region-name-edit-trigger:before {
 	top: 51px;
 }
 
+.upfront-object > .upfront-entity_meta.toggle_sorting {
+	top: 75px
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting a {
+	background: rgba(0, 0, 0, 0.5);
+	border: 1px solid black;
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting a:before {
+	content: "OFF";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	text-align: center;
+	font-size: 9px;
+	line-height: 19px;
+	color: white;
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting.sorting-active a:before {
+	content: 'ON';
+	color: black;
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting.sorting-active a {
+	background: white;
+}
+
 .upfront-entity_meta .add-item:before {
 	background-position: -261px -133px;
 }
