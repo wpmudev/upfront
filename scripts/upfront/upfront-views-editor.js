@@ -2553,22 +2553,14 @@ define([
 				output.append(this.sidebar_commands.control.el);
 
 				output.append('<div id="preventUsageOverlay"><span></span></div>');
-
-				this.$el.html(output);
-
-				//Collapsible
-				//this.addCollapsibleEvents();
 			} else if (is_responsive_app) {
 				// Responsvie Control
 				var responsive_controls = new SidebarCommands_ResponsiveControl({"model": this.model});
 				responsive_controls.render();
 				output.append(responsive_controls.el);
-
-				this.$el.html(output);
-				$('#sidebar-ui .sidebar-commands-responsive-control').height($(window).height() - 20 - $('#sidebar-ui .sidebar-commands-responsive').height() - $('#sidebar-ui .sidebar-commands-header').height());
-			} else {
-				this.$el.html(output);
 			}
+
+			this.$el.html(output);
 
 			Upfront.Events.trigger('sidebar:rendered');
 		},

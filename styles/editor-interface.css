@@ -10820,22 +10820,10 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   height: 330px;
 }
 
-#sidebar-ui .sidebar-commands-responsive-control.sidebar-commands-control {
-  padding-top: 4px;
-  position: relative;
-}
-#sidebar-ui .sidebar-commands-responsive-control .command-save {
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
-  margin: 0;
-  padding: 8px 20px 0 10px;
-}
-
 #sidebar-ui .sidebar-commands-responsive-control .exit-responsive {
   position: absolute;
-  bottom: 19px;
-  right: 15px;
+  top: 613px;
+  left: 15px;
   margin: 0;
   border: 3px solid #263a4d;
   padding: 2px 5px;
