@@ -1032,9 +1032,10 @@ span.draggable-post-element.element-dragging
 	margin-right: 5px;
 	margin-top: 6px;
 }
+#sidebar-ui .command-open-font-manager span,
 #sidebar-ui .command-edit-css span {
 	display: inline-block;
-	color: #5f7f99;
+	color: #0F9969;
 	font-family: "Verdana";
 	font-size: 11px;
   border-bottom: 1px solid #1fcd8f;
@@ -12419,11 +12420,15 @@ div.upfront-regions a#no_region_add_one {
 	border-color: #1fcd8f;
 	color: #cbe5ff;
 }
+.command-open-font-manager:before,
 #insert-font-widget:before {
 	background-position: -821px -202px;
 	width: 18px;
 	height: 16px;
 	margin: 6px 5px 0 0;
+}
+.command-open-font-manager:before {
+	margin: 2px 5px 0 0;
 }
 a.upfront-css-font {
 	display: block;

@@ -936,6 +936,17 @@ define([
 		}
 	});
 
+	var Command_OpenFontManager = Command.extend({
+		tagName: 'div',
+		className: "command-open-font-manager upfront-icon upfront-icon-open-font-manager",
+		render: function (){
+			this.$el.html('<span>Theme Font Manager</span>');
+		},
+		on_click: function () {
+			Upfront.Events.trigger('command:themefontsmanager:open');
+		}
+	});
+
 	var Command_GeneralEditCustomCSS = Command.extend({
 		tagName: 'div',
 		className: "command-edit-css upfront-icon upfront-icon-edit-css",
@@ -1508,15 +1519,19 @@ define([
 				typography = this.model.get_property_value_by_name('typography');
 
 			// Check for theme fonts if no theme fonts just return string
-			var chooseButton = new Field_Button({
-				label: 'Select Fonts To Use',
-				compact: true,
-				classname: 'open-theme-fonts-manager',
+			if (Upfront.mainData.userDoneFontsIntro) {
+				var chooseButton = new Command_OpenFontManager();
+			} else {
+				var chooseButton = new Field_Button({
+					label: 'Select Fonts To Use',
+					compact: true,
+					classname: 'open-theme-fonts-manager',
 
-				on_click: function(e){
-					Upfront.Events.trigger('command:themefontsmanager:open');
-				}
-			});
+					on_click: function(e){
+						Upfront.Events.trigger('command:themefontsmanager:open');
+					}
+				});
+			}
 			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
 				this.$el.html('<p class="sidebar-info-notice upfront-icon">You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.</p>');
 				chooseButton.render();
@@ -1539,6 +1554,7 @@ define([
 
 			if ( !this.fields.length ) {
 				this.fields = {
+					start_font_manager: chooseButton,
 					element: new Upfront.Views.Editor.Field.Select({
 						label: "Type Element:",
 						default_value: 'h1',
@@ -1587,7 +1603,6 @@ define([
 							}
 						}
 					}),
-					start_font_manager: chooseButton,
 					style: this.get_styles_field(),
 					color: new Upfront.Views.Editor.Field.Color({
 							label: "Color",
@@ -1642,7 +1657,7 @@ define([
 				field.render();
 				field.delegateEvents();
 			});
-			this.$el.append([this.fields.element.el, this.fields.typeface.el, this.fields.start_font_manager.el]);
+			this.$el.append([this.fields.start_font_manager.el, this.fields.element.el, this.fields.typeface.el]);
 			$('.upfront-chosen-select', this.$el).chosen({
 				width: '230px'
 			});
