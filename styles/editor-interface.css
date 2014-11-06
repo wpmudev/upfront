@@ -3865,6 +3865,10 @@ a.upfront-region-name-edit-trigger:before {
 	top: 51px;
 }
 
+.upfront-edit-responsive .upfront-object > .upfront-entity_meta.add_item,
+.upfront-edit-responsive .upfront-object > .upfront-entity_meta.toggle_sorting {
+	display: none;
+}
 .upfront-object > .upfront-entity_meta.toggle_sorting {
 	top: 75px
 }
