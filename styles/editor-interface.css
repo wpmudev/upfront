@@ -10918,6 +10918,19 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
 .upfront-field-compact-label-select .upfront-field-select-options {
   margin-top: 0 !important;
   padding-top: 0 !important;
+	overflow: hidden;
+}
+#sidebar-ui .upfront-field-compact-label-select .upfront-field-select-option:first-child * {
+	cursor: pointer;
+}
+.upfront-field-compact-label-select.compact-label-select-open {
+	overflow: visible;
+	max-height: none;
+	height: auto;
+}
+.upfront-field-compact-label-select.compact-label-select-open .upfront-field-select-options {
+	overflow: visible;
+	max-height: none;
 }
 
 /* Breakpoint edit popup */

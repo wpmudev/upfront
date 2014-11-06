@@ -7026,7 +7026,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			var option = new Field_Compact_Label_Select_Option({ model: breakpoint });
 			this.$el.find('ul').append(option.render().el);
 		}, this);
-	},
+
+		this.$el.on('click', '.upfront-field-select-option:first-child', function() {
+			me.$el.toggleClass('compact-label-select-open');
+		});
+	}
 });
 
 /*
