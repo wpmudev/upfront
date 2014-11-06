@@ -19,6 +19,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		// Flag for excluding stuff that is only for editor
 		$data['in_editor'] = false;
 		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
+		$data['thumbPadding'] = isset($data['thumbPadding']) ? $data['thumbPadding'] : 15;
 
 		foreach($data['images'] as $im){
 			$images[] = array_merge(self::image_defaults(), $im);
@@ -215,8 +216,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'showCaptionOnHover' => array( 'true' ),
 			'linkTo' => 'image', // 'url' | 'image'
-			'no_padding' => array('false'),
-			'even_padding' => array('false')
+			'even_padding' => array('false'),
+			'thumbPadding' => 15
 		);
 	}
 
@@ -289,7 +290,6 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'settings' => __('Gallery settings', 'upfront'),
 			'panel' => array(
 				'sort' => __('Enable label sorting', 'upfront'),
-				'no_padding' => __('Remove padding'),
 				'even_padding' => __('Even padding'),
 				'show_caption' => __('Show Caption:', 'upfront'),
 				'never' => __('never', 'upfront'),
@@ -309,6 +309,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'theme' => __('Theme', 'upfront'),
 				'size' => __('Thumbnail Size', 'upfront'),
 				'settings' => __('Thumbnails Settings', 'upfront'),
+				'padding' => __('Thumbnails Padding', 'upfront'),
 			),
 			'template' => array(
 				'add_more' => __('Add more', 'upfront'),

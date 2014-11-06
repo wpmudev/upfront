@@ -73,6 +73,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.listenTo(this.images, 'add remove reset change', this.imagesChanged);
 		this.property('images', this.images.toJSON()); // Hack to add image defaults;
 
+		if (typeof this.property('thumbPadding') === 'undefined') {
+			this.property('thumbPadding', 15);
+		}
+
 		$('body').on('click', this.closeTooltip);
 
 		this.listenTo(Upfront.Events, 'entity:settings:activate', this.closeTooltip);
@@ -80,6 +84,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, 'entity:deactivated', this.closeTooltip);
 		this.listenTo(Upfront.Events, 'entity:region:activated', this.closeTooltip);
 		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.rebindShuffle);
+
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
 		if (typeof ugalleries !== 'undefined' && ugalleries[elementId]) {
@@ -141,10 +146,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				});
 		});
 
-		this.listenTo(this.model, 'change:no_padding', function() {
-			me.updatePadding();
+		this.listenTo(this.model, 'change:thumbPadding', function() {
+			me.updateThumbPadding();
 		});
-
 		this.listenTo(this.model, 'change:even_padding', function() {
 			me.updateEvenPadding();
 		});
@@ -170,6 +174,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				me.render();
 			}, 100);
 		});
+		this. debouncedRender = _.debounce(this.render, 300);
 	},
 
 	// Remove default dblclick behavior because it messes up things
@@ -178,6 +183,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	/****************************************************/
 	/*          Settings change live callbacks          */
 	/****************************************************/
+	updateThumbPadding: function() {
+		this.$el.find('.ugallery').data('thumb-padding', this.property('thumbPadding'));
+		this.debouncedRender();
+	},
 	updateCaptionType: function() {
 		var classes,
 			suffix;
@@ -204,10 +213,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		this.$el.find('.ugallery_item').addClass('ugallery_caption_on_hover_' + suffix);
 		this.$el.find('.ugallery-thumb-title').addClass('ugallery-caption-on-hover-' + suffix);
-	},
-
-	updatePadding: function() {
-		this.render();
 	},
 
 	updateEvenPadding: function() {
@@ -482,9 +487,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		props.l10n = l10n.template;
 		props.in_editor = true;
-		if (!props.no_padding) {
-			props.no_padding = ['false'];
-		}
 		if (!props.even_padding) {
 			props.even_padding = ['false'];
 		}
@@ -591,7 +593,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	rebindShuffle: function() {
-		Upfront.frontFunctions.galleryBindShuffle();
+		Upfront.frontFunctions.galleryBindShuffle(this.$el.find('.ugallery_grid'));
 	},
 
 	preventNavigation: function(e){
@@ -1224,7 +1226,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			if(typeof silent === 'undefined') {
 				silent = true;
 			}
-			return this.model.set_property(name, value, silent);
+			this.model.set_property(name, value, silent);
+			return;
 		}
 		return this.model.get_property_value_by_name(name);
 	}

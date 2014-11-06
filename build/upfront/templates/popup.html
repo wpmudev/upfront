@@ -12,7 +12,7 @@
 	</div>
 	<div class="upfront-list-items upfront-scroll-panel">
 	{[ if(!posts.length){ ]}
-		<p class="upfront-no-results">No posts found</p>
+		<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_posts}}</p>
 	{[ } else { ]}
 	{[ _.each(posts, function (post, idx){ ]}
 		<div class="upfront-list_item-post upfront-list_item clearfix" data-post_id="{{ post.get("ID") }}">
@@ -28,19 +28,19 @@
 <script type="text/template" type="text/template" id="upfront-post-single-tpl">
 <div id="upfront-list-page" style="display:none">
 	<div id="upfront-list-page-path">
-		<a href="#" class="upfront-path-back">Posts</a> &nbsp;&raquo;&nbsp;
+		<a href="#" class="upfront-path-back">{{Upfront.Settings.l10n.global.content.posts}}</a> &nbsp;&raquo;&nbsp;
 		<a href="#" class="last">{{ post.get('post_title') }}</a>
 	</div>
 	<div id="upfront-list-page-preview">
 		<div id="upfront-page_preview-wrapper">
 			<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
 				<h4>Featured Image: </h4>
-				<div class="upfront-thumbnailinfo">Loading...</div>
+				<div class="upfront-thumbnailinfo">{{Upfront.Settings.l10n.global.content.loading}}</div>
 				<img src="{{post.featuredImage }}" style="{{post.featuredImage ? '' : 'display:none'}}" />
-			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
+			<div class="upfront-page_preview-edit_feature"><a href="#">{{Upfront.Settings.l10n.global.content.edit}} <i class="icon-pencil"></i></a></div>
 			</div>
 			<div class="upfront-page_preview-bottom" id="upfront-page_preview-edit">
-				<button type="button"><i class="icon-pencil"></i> Edit post</button>
+				<button type="button"><i class="icon-pencil"></i> {{Upfront.Settings.l10n.global.content.edit_post}}</button>
 			</div>
 		</div>
 	</div>
@@ -60,7 +60,7 @@
 	<div id="upfront-list-page-path"></div>
 	<div id="upfront-list-page-preview">
 		<div id="upfront-page_preview-wrapper">
-			<h4>Please select Page</h4>
+			<h4>{{Upfront.Settings.l10n.global.content.select_page}}</h4>
 		</div>
 	</div>
 	<div id="upfront-list-page-tree" class="upfront-list-items upfront-scroll-panel">
@@ -87,22 +87,22 @@
 <script type="text/template" id="upfront-page-preview-tpl">
 	<div id="upfront-page_preview-wrapper" class="upfront-scroll-panel">
 		<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
-			<h4>Featured Image: </h4>
+			<h4>{{Upfront.Settings.l10n.global.content.featured_image}}: </h4>
 			<div class="upfront-thumbnailinfo" style="{{page.thumbnail ? 'display:none' : ''}}">Loading...</div>
 			<img src="{{page.thumbnail }}" style="{{page.thumbnail ? '' : 'display:none'}}" />
 			<div class="upfront-page_preview-edit_feature"><a href="#">Edit <i class="icon-pencil"></i></a></div>
 		</div>
 		<div id="upfront-page_preview-template" class="upfront-page_preview-item">
-			<h4>Template: </h4>
+			<h4>{{Upfront.Settings.l10n.global.content.template}}: </h4>
 			<select id="upfront-page_template-select">
-				<option value="0">Default</option>
+				<option value="0">{{Upfront.Settings.l10n.global.content.default_opt}}</option>
 				{[ _.each(allTemplates, function(tpl, name){ var selected = tpl == template ? 'selected="selected"' : ""; ]}
 				<option value="{{tpl}}" {{selected}}>{{name}}</option>
 				{[ }) ]}
 			</select>
 		</div>
 		<div id="upfront-page_preview-edit">
-			<button type="button"><i class="icon-pencil"></i> Edit page</button>
+			<button type="button"><i class="icon-pencil"></i> {{Upfront.Settings.l10n.global.content.edit_page}}</button>
 		</div>
 	</div>
 </script>
@@ -110,12 +110,12 @@
 <script type="text/template"  id="upfront-comments-tpl">
 <div id="upfront-list" class="upfront-list-comments clearfix bordered-bottom">
 	{[ if(!comments.length){ ]}
-		<p class="upfront-no-results">This post or page has no comments.</p>
+		<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_comments}}</p>
 	{[ } else { ]}
 	<div id="upfront-list-meta" class="upfront-list_item">
-		<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">Author <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">Date <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-		<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">Comment <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">{{Upfront.Settings.l10n.global.content.author}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">{{Upfront.Settings.l10n.global.content.comment}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 	</div>
 	<div class="upfront-list-items upfront-list-comment-items upfront-scroll-panel">
 
@@ -144,44 +144,44 @@
 			<div class="upfront-comment_content-full upfront-comment_togglable">{{ comment.get("comment_content") }}</div>
 			<div class="upfront-comment_edit upfront-comment_togglable" data-comment_id="{{ comment.get('comment_ID') }}">
 				<textarea class="comment-edit-box" class="edit" rows="16">{{ comment.get("comment_content") }}</textarea>
-				<button type="button" class="comment-edit-ok">OK</button>
-				<button type="button" class="comment-edit-cancel">Cancel</button>
+				<button type="button" class="comment-edit-ok">{{Upfront.Settings.l10n.global.content.ok}}</button>
+				<button type="button" class="comment-edit-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</button>
 			</div>
 			<div class="upfront-comment_reply upfront-comment_togglable" data-comment_id="{{ comment.get('comment_ID') }}">
 				<textarea class="comment-edit-box" class="edit" rows="16" placeholder="Reply here..."></textarea>
-				<button type="button" class="comment-reply-ok">OK</button>
-				<button type="button" class="comment-reply-cancel">Cancel</button>
+				<button type="button" class="comment-reply-ok">{{Upfront.Settings.l10n.global.content.ok}}</button>
+				<button type="button" class="comment-reply-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</button>
 			</div>
 		</div>
 		<div class="upfront-comment_actions-wrapper">
 			{[ if(comment.get("comment_approved") !== 'trash'){ ]}
-			<a href="#reply" class="reply"><i class="icon-reply"></i> Reply</a>
+			<a href="#reply" class="reply"><i class="icon-reply"></i> {{Upfront.Settings.l10n.global.content.reply}}</a>
 			{[ } ]}
-			<a href="#edit" class="edit"><i class="icon-pencil"></i> Edit</a>
+			<a href="#edit" class="edit"><i class="icon-pencil"></i> {{Upfront.Settings.l10n.global.content.edit}}</a>
 			{[ if(comment.get("comment_approved") === '0'){ ]}
-			<a href="#approve" class="approve"><i class="icon-ok"></i> Approve</a>
+			<a href="#approve" class="approve"><i class="icon-ok"></i> {{Upfront.Settings.l10n.global.content.approve}}</a>
 			{[ } else if(comment.get("comment_approved") === '1'){ ]}
-			<a href="#unapprove" class="unapprove"><i class="icon-circle-blank"></i> Unapprove</a>
+			<a href="#unapprove" class="unapprove"><i class="icon-circle-blank"></i> {{Upfront.Settings.l10n.global.content.unapprove}}</a>
 			{[ } if(comment.get("comment_approved") === 'spam'){ ]}
-			<a href="#unspam" class="unspam"><i class="icon-comment-alt"></i> Unspam</a>
+			<a href="#unspam" class="unspam"><i class="icon-comment-alt"></i> {{Upfront.Settings.l10n.global.content.unspam}}</a>
 			{[ } else if(comment.get("comment_approved") !== 'trash') { ]}
-			<a href="#spam" class="spam"><i class="icon-ban-circle"></i> Spam</a>
+			<a href="#spam" class="spam"><i class="icon-ban-circle"></i> {{Upfront.Settings.l10n.global.content.spam}}</a>
 			{[ } if(comment.get("comment_approved") === 'trash'){ ]}
-			<a href="#unthrash" class="unthrash"><i class="icon-comment"></i> Untrash</a>
+			<a href="#unthrash" class="unthrash"><i class="icon-comment"></i> {{Upfront.Settings.l10n.global.content.untrash}}</a>
 			{[ } else { ]}
-			<a href="#thrash" class="thrash"><i class="icon-remove"></i> Trash</a>
+			<a href="#thrash" class="thrash"><i class="icon-remove"></i> {{Upfront.Settings.l10n.global.content.trash}}</a>
 			{[ } ]}
 		</div>
 </script>
 
 <script type="text/template" id="upfront-slug-tpl">
 <div class="upfront-slug_editor">
-	<div class="upfront-slug_editor-title">Edit the <b>URL</b> for this post</div>
-	<p class="upfront-slug_editor-info">By default, your URL is determined by a post's or page's title. You can change it here.<br/>It is a good idea to keep them short and memorable.</p>
+	<div class="upfront-slug_editor-title">{{Upfront.Settings.l10n.global.content.edit_post_url}}</div>
+	<p class="upfront-slug_editor-info">{{Upfront.Settings.l10n.global.content.post_url_info}}</p>
 	<p class="upfront-slug_editor-url">
 		{{ rootURL }}
 		<input type="text" id="upfront-post_slug" value	="{{ slug }}" />
-		<button id="upfront-post_slug-send" value="OK"><i class="icon-ok"></i> OK</button>
+		<button id="upfront-post_slug-send" value="{{Upfront.Settings.l10n.global.content.ok}}"><i class="icon-ok"></i> {{Upfront.Settings.l10n.global.content.ok}}</button>
 	</p>
 </div>
 </script>
@@ -195,7 +195,7 @@
 <div id="upfront-taxonomy-add">
 	<input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
 	<select id="upfront-taxonomy-parents">
-		<option value="0">-- Parent Category --</option>
+		<option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
 		{[ allTerms.each(function(term, idx) { ]}
 		<option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
 		{[ }) ]}
@@ -362,9 +362,9 @@
 			<span class="upfront-css-type">{{ elementType }} Element</span>
       {[ } ]}
 			<div id="insert-font-widget" class="upfront-icon">
-				<a class="upfront-css-font" href="#">Insert Font</a>
+				<a class="upfront-css-font" href="#">{{Upfront.Settings.l10n.global.content.insert_font}}</a>
 			</div>
-			<a class="upfront-css-image" href="#">Link theme image</a>
+			<a class="upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_theme_image}}</a>
 			<span class="upfront-css-color"></span>
 			<a class="upfront-css-close" href="#">close</a>
 		</div>
@@ -373,7 +373,7 @@
 			<div class="upfront-css-sidebar">
         {[ if (selectors) { ]}
 				<div class="upfront-css-selectors upfront-scroll-panel">
-					<p>Available element selectors:</p>
+					<p>{{Upfront.Settings.l10n.global.content.available_element_selectors}}</p>
 					{[ _.each(selectors, function(data, s){ ]}
 					<span class="upfront-css-selector" title="{{ data.info }}" data-selector="{{ s }}">{{data.label}}</span>
 					{[ }); ]}
@@ -387,7 +387,7 @@
 					<p>Style name</p>
 					<input type="text" class="upfront-css-save-name-field" value="{{ name }}">
         		{[ } ]}
-          			<button class="upfront-css-save-ok">Save</button>
+          			<button class="upfront-css-save-ok">{{Upfront.Settings.l10n.global.content.save}}</button>
 				</div>
 			</div>
 		</div>
@@ -396,16 +396,15 @@
 
 <script id="text-fonts-manager-tpl" type="text/template">
   <div class="add-font-panel panel">
-    <div class="loading-fonts">Loading fonts...</div>
+    <div class="loading-fonts">{{Upfront.Settings.l10n.global.content.loading_fonts}}</div>
     <div class="font-weights-list">
       <div class="font-weights-list-wrapper">
 				<div class="fonts-manager-panel-title">
-					Choose Typeface above to Preview it's Font Styles
+					{{Upfront.Settings.l10n.global.content.choose_typeface}}
 				</div>
 				{[ if (show_no_styles_notice) { ]}
 				<div class="fonts-weights-notice-text">
-					(If just want to stick to defaults like Arial and Times, click 'Ok'.<br>
-					You can always come back and add Google Fonts later.)
+					{{Upfront.Settings.l10n.global.content.typeface_info_text}}
 				</div>
 				{[ } ]}
 			</div>
@@ -415,10 +414,10 @@
 </script>
 
 <script id="theme-fonts-panel" type="text/template">
-    <h3 class="panel-title">Theme Font Styles:</h3>
+    <h3 class="panel-title">{{Upfront.Settings.l10n.global.content.theme_font_styles}}</h3>
 		<div class="font-list">
 			{[ if (show_no_styles_notice) { ]}
-			<div class="fonts-manager-panel-title">You haven't added any font styles to theme yet.</div>
+			<div class="fonts-manager-panel-title">{{Upfront.Settings.l10n.global.content.no_fonts_added}}</div>
 			{[ } ]}
 		</div>
     <div class="font-stats">
@@ -438,31 +437,31 @@
 </script>
 
 <script type="text/template" id="linkpanel-tpl">
-	<div class="ulinkpanel-title">Links to:</div>
+	<div class="ulinkpanel-title">{{Upfront.Settings.l10n.global.content.links_to}}</div>
 	<form>
 	{[if(types.unlink) { ]}
 	<div class="upfront-field-wrap ulinkpanel-unlink-wrap">
 		<input type="radio" name="ulinkpanel-link" value="unlink" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-0" {{ link.type == 'unlink' ? checked : ''}}>
-		<label for="ulinkpanel-link-0">No link</label>
+		<label for="ulinkpanel-link-0">{{Upfront.Settings.l10n.global.content.no_link}}</label>
 	</div>
 	{[ } ]}
 	{[if(types.external) { ]}
 	<div class="upfront-field-wrap ulinkpanel-external-wrap">
 		<input type="radio" name="ulinkpanel-link" value="external" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-2" {{link.type == 'external' ? checked : ''}}>
-		<label for="ulinkpanel-link-2">URL</label>
+		<label for="ulinkpanel-link-2">{{Upfront.Settings.l10n.global.content.url}}</label>
 		<input type="text" value="{{link.url}}" id="ulinkpanel-link-url" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
 	</div>
 	{[ } ]}
 	{[if(types.entry) { ]}
 	<div class="upfront-field-wrap ulinkpanel-entry-wrap">
 		<input type="radio" name="ulinkpanel-link" value="entry" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-3" {{link.type == 'entry' ? checked : ''}}>
-		<label for="ulinkpanel-link-3">Post or Page</label>
+		<label for="ulinkpanel-link-3">{{Upfront.Settings.l10n.global.content.post_or_page}}</label>
 	</div>
 	{[ } ]}
 	{[if(types.anchor && anchors.length) { ]}
 	<div class="upfront-field-wrap ulinkpanel-anchor-wrap">
 		<input type="radio" name="ulinkpanel-link" value="anchor" class="upfront-field-radio js-ulinkpanel-type" {{link.type == 'anchor' ? checked : ''}} id="ulinkpanel-link-anchor">
-		<label for="ulinkpanel-link-anchor">Anchor</label>
+		<label for="ulinkpanel-link-anchor">{{Upfront.Settings.l10n.global.content.anchor}}</label>
 		<div id="ulinkpanel-anchor-select" class="js-ulinkpanel-input-url js-ulinkpanel-input-anchor">
 			<select class="ulinkpanel-anchor-selector">
 			{[ _.each(anchors, function(anchor){ ]}
@@ -472,23 +471,23 @@
 		</div>
 	</div>
 	{[ } ]}
-	<a title="Change link" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')?'Select':link.url}}</a>
+	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')?'Select':link.url}}</a>
 	{[if(types.image) { ]}
 	<div class="upfront-field-wrap ulinkpanel-image-wrap">
 		<input type="radio" name="ulinkpanel-link" value="image" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-4" {{link.type == 'image' ? checked : ''}}>
-		<label for="ulinkpanel-link-4">Larger image</label>
+		<label for="ulinkpanel-link-4">{{Upfront.Settings.l10n.global.content.larger_image}}</label>
 	</div>
 	{[ } ]}
 	{[if(types.lightbox) { ]}
 	<div class="upfront-field-wrap ulinkpanel-lightbox-wrap">
 		<input type="radio" name="ulinkpanel-link" value="lightbox" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-6" {{link.type == 'lightbox' ? checked : ''}}>
-		<label for="ulinkpanel-link-6">Lightbox</label>
+		<label for="ulinkpanel-link-6">{{Upfront.Settings.l10n.global.content.lightbox}}</label>
 	</div>
 	{[ } ]}
 	{[if(types.lightbox) { ]}
 	<div id="ulinkpanel-lightbox-extra" class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
 		<div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox" style="display: none">
-			<input type="text" name="new_lightbox" id="ulinkpanel-new-lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="Lightbox Name" />
+			<input type="text" name="new_lightbox" id="ulinkpanel-new-lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
 			<a href="#" class="ulinkpanel-lightbox-cancel js-ulinkpanel-lightbox-cancel"></a>
 		</div>
 		{[ if(lightboxes.length) { ]}
@@ -498,13 +497,13 @@
 		{[ }) ]}
 		</select>
 		{[ } ]}
-		<a href="#" id="ulinkpanel-create-lightbox" class="js-show-lightbox-input">New Lightbox</a>
+		<a href="#" id="ulinkpanel-create-lightbox" class="js-show-lightbox-input">{{Upfront.Settings.l10n.global.content.new_lightbox}}</a>
 	</div>
 	{[ } ]}
 	</form>
 	{[if(button) { ]}
 	<div class="upfront-settings-button_panel">
-		<button type="button" class="upfront-save_settings js-ulinkpanel-ok"><i class="icon-ok"></i> Ok</button>
+		<button type="button" class="upfront-save_settings js-ulinkpanel-ok"><i class="icon-ok"></i> {{Upfront.Settings.l10n.global.content.ok}}</button>
 	</div>
 	{[ } ]}
 </script>

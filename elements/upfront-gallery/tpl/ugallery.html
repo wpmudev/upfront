@@ -1,7 +1,7 @@
 <div
-	class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?> <?php if($no_padding[0] === 'true') { ?>no_padding<?php } ?> <?php if($even_padding[0] === 'true') { ?>even_padding<?php } ?>"
-	data-no-padding="<?php echo $no_padding[0] ?>"
+	class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?> <?php if($even_padding[0] === 'true') { ?>even_padding<?php } ?>"
 	data-even-padding="<?php echo $even_padding[0] ?>"
+	data-thumb-padding="<?php echo $thumbPadding ?>"
 >
 <?php if ($labelFilters['length'] || !empty($in_editor)){ ?>
 <div class="ugallery_labels <?php if($in_editor) { ?>ugallery_labels-enabled-<?php echo $labelFilters['length'] ?><?php } ?>">
@@ -11,7 +11,7 @@
 	</div>
 <?php } ?>
 <?php if($imagesLength){ ?>
-	<div class="ugallery_items <?php echo $labelFilters['length'] || !empty($in_editor) ? 'ugallery_grid' : '' ?>" rel="<?php echo $element_id ?>">
+	<div class="ugallery_items ugallery_grid" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
 	<div class="ugallery_item <?php if($captionType === 'over') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 		<?php $images[$i]['urlType'] = !empty($images[$i]['urlType']) ? $images[$i]['urlType'] : false; ?>

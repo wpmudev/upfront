@@ -9,32 +9,6 @@ define(function() {
 				fields = Upfront.Views.Editor.Field;
 
 			this.fields = _([
-				new fields.Checkboxes({
-					model: this.model,
-					property: 'no_padding',
-					values: [
-						{
-							value: 'true',
-							label: l10n.panel.no_padding
-						}
-					],
-					change: function(value) {
-						options.parent.updateProperty(this.options.property, value);
-					}
-				}),
-				new fields.Checkboxes({
-					model: this.model,
-					property: 'even_padding',
-					values: [
-						{
-							value: 'true',
-							label: l10n.panel.even_padding
-						}
-					],
-					change: function(value) {
-						options.parent.updateProperty(this.options.property, value);
-					}
-				}),
 				new fields.Radios({
 					model: this.model,
 					property: 'thumbProportions',
@@ -79,6 +53,35 @@ define(function() {
 				new fields.Hidden({
 					model: this.model,
 					property: 'thumbHeight'
+				}),
+				new fields.Slider({
+					model: this.model,
+					property: 'thumbPadding',
+					min: 0,
+					max: 50,
+					step: 1,
+					label: l10n.thumb.padding,
+					valueTextFilter: function(value){
+						return value + 'px';
+					},
+					callbacks: {
+						slide: function(event, ui) {
+							options.parent.updateProperty('thumbPadding', ui.value);
+						}
+					}
+				}),
+				new fields.Checkboxes({
+					model: this.model,
+					property: 'even_padding',
+					values: [
+						{
+							value: 'true',
+							label: l10n.panel.even_padding
+						}
+					],
+					change: function(value) {
+						options.parent.updateProperty(this.options.property, value);
+					}
 				})
 			]);
 		},

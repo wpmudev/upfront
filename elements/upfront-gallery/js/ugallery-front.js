@@ -1,103 +1,76 @@
 /*global ugalleries */
 jQuery(function($){
 
-	var calculateMargins =  function(gallery, absolute) {
+	var updateHorizonalPadding =  function(gallery, absolute) {
 		var container = gallery.find('.ugallery_items').width(),
 			items = gallery.find('.ugallery_labels').length ? gallery.find('.ugallery_item.filtered') : gallery.find('.ugallery_item'),
 			itemWidth = items.outerWidth(),
-			minMargin = 30,
 			row = 0,
-			columns = Math.floor(container / itemWidth),
-			margin, totalMargin, remaining, grid_cell, no_padding, even_padding
-		;
+			columns,
+			even_padding,
+			thumbPaddingData,
+			thumbPadding,
+			itemsTotalWidth;
 
-		no_padding = gallery.data('no-padding');
 		even_padding = gallery.data('even-padding');
-
-		if (!no_padding && columns * itemWidth + (columns - 1 ) * minMargin > container) {
+		thumbPaddingData = gallery.data('thumb-padding');
+		thumbPadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+		columns = Math.floor(container / (itemWidth + thumbPadding));
+		columns++;// Increase for 1 besause upper calculation will always give one less
+		itemsTotalWidth = columns * itemWidth + (columns - 1) * thumbPadding;
+		if (itemsTotalWidth > container) {// But check if got too much
 			columns--;
 		}
 
-		totalMargin = container - (columns * itemWidth);
-		margin = no_padding ? 0 : Math.floor(totalMargin / columns);
-		grid_cell = margin + itemWidth;
-		remaining = container - (columns * itemWidth + margin * columns);
+		items.each(function(item_index) {
+			var $this = $(this);
 
-		items.each(function(item_index){
-			var $this = $(this),
-				extra,
-				column;
-
-			if(absolute) {
-				column = item_index - (row * columns);
-				extra = column < remaining ? column : 0;
-				if(no_padding) {
-					extra = 0;
-				}
-
-				$this.css('left', grid_cell * column + extra);
-
+			if (absolute) {
 				// Set top margin for all thumbs that are not in first row
 				if (item_index + 1 > columns && even_padding) {
-					$this.css('top', parseInt($this.css('top'), 10) + margin * row);
+					$this.css('top', parseInt($this.css('top'), 10) + thumbPadding * row);
 				}
 
 				if (item_index > 0 && (item_index + 1) % columns === 0) {
 					row++;
 					if (even_padding && !gallery.data('height-adjusted')) {
-						gallery.css('height', parseInt(gallery.css('height'), 10) + margin);
+						gallery.css('height', parseInt(gallery.css('height'), 10) + thumbPadding);
 					}
 				}
 			} else {
-				extra = columns - (item_index % columns) < remaining ? 1 : 0;
-				if (no_padding) {
-					extra = 0;
-				}
-				$this.css('margin-right', (item_index + 1) % columns ? margin + extra : 0);
 				// Set top margin for all thumbs that are not in first row
 				if (item_index + 1 > columns && even_padding) {
-					$this.css('margin-top', margin);
+					$this.css('margin-top', thumbPadding);
 				}
 			}
 		});
 
+		if (absolute && !gallery.data('height-adjusted')) {
+			gallery.css('height', parseInt(gallery.css('height'), 10) - parseInt(items.css('margin-bottom'), 10));
+		}
+
 		gallery.data('height-adjusted', true);
 	};
 
-	var bindShuffle = function() {
-		$('.ugallery_grid').each(function(){
+	var bindShuffle = function($ugallery_grid) {
+		var $grids = $ugallery_grid || $('.ugallery_grid');
+
+		$grids.each(function(){
 			var grid = $(this),
-				no_padding = grid.parent().data('no-padding');
+				thumbPaddingData = grid.parent().data('thumb-padding'),
+				thumbPadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+
+			grid.parent().data('height-adjusted', false);
 
 			grid.on('layout.shuffle', function(){
 				setTimeout(function(){
-					calculateMargins(grid.parent(), true);
+					updateHorizonalPadding(grid.parent(), true);
 				}, 20);
 			});
 
 			grid.shuffle({
 				itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
-				gutterWidth: function(containerWidth){
-					var container = containerWidth,
-						minGutter = no_padding ? 0 : 30,
-						width = $(this.$items[0]).width(),
-						columns = Math.floor(container / width),
-						totalGutter,
-						gutter;
-
-					if (no_padding) {
-						return 0;
-					}
-
-					if(columns * width + (columns - 1) * minGutter > container) {
-						columns--;
-					}
-
-					totalGutter = container - columns * width;
-					gutter = Math.floor(totalGutter / (columns - 1));
-
-					return gutter - 2 * columns;
-				},
+				gutterWidth: thumbPadding,
 				supported: false
 			});
 
@@ -117,12 +90,6 @@ jQuery(function($){
 	$(document).on('upfront-load', function() {
 		Upfront.frontFunctions = Upfront.frontFunctions || {};
 		Upfront.frontFunctions.galleryBindShuffle = bindShuffle;
-
-		Upfront.Events.on('upfront:layout:loaded', function() {
-			setTimeout(function() {
-				bindShuffle();
-			}, 2500);
-		});
 	});
 
 	if (typeof ugalleries !== 'undefined') {
@@ -191,7 +158,7 @@ jQuery(function($){
 		$('.ugallery').each(function(){
 			var gallery = $(this);
 			if(!gallery.children('.ugallery_grid').length) {
-				calculateMargins(gallery, false);
+				updateHorizonalPadding(gallery, false);
 			}
 		});
 	});
