@@ -131,10 +131,25 @@ var hackRedactor = function(){
         }
 
 
+
+
         this.$air.css({
             left: bounds.left  + 'px',
             top: bounds.top + 'px'
         }).show();
+
+        /**
+         * If redactor is to high for the user to see it, show it under the selected text
+         */
+        if( this.$air.offset().top < 0 ){
+            this.$air.css({
+                top : e.clientY + 14 + this.$box.position().top + "px"
+            });
+            this.$air.addClass("under");
+        }else{
+            this.$air.removeClass("under");
+        }
+        
         this.airBindHide();
         this.$air.trigger('show');
         this.dropdown.hideAll();
