@@ -55,7 +55,8 @@ class Upfront_UtabsView extends Upfront_Object {
 
 			// Ensure tab title
 			foreach($data['tabs'] as $index=>$tab) {
-				if (empty(trim(str_replace("\n", '', $tab['title'])))) {
+				$ttl = trim(str_replace("\n", '', $tab['title']));
+				if (empty($ttl)) {
 					$tab['title'] = 'Tab ' . ($index + 1);
 					$data['tabs'][$index] = $tab;
 				}
