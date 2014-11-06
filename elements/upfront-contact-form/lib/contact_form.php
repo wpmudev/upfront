@@ -235,7 +235,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public function get_entity_ids_value() {
 		$entities = array();
-		$entities = Upfront_Layout::get_cascade();
+		$entities = Upfront_Layout::get_parsed_cascade();
 
 		if (empty($entities)) {
 			$entities = Upfront_EntityResolver::get_entity_ids();

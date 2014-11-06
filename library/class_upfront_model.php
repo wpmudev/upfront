@@ -698,6 +698,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $storage_key . '-' . get_stylesheet() . '-layout-properties';
 	}
 
+	public static function get_parsed_cascade () { return self::$cascade; }
 
 	public function get_cascade () {
 		if (!empty(self::$cascade)) return self::$cascade;
