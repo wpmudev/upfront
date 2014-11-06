@@ -154,6 +154,9 @@ class Upfront {
 		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
 		wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css');
 
+		// Font icons
+		wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css');
+
 		add_action('wp_footer', array($this, 'add_responsive_css'));
 	}
 
