@@ -137,7 +137,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			;
 
 			if(!this.layoutData){
-				this.$el.html('Loading');
+				this.$el.html(Upfront.Settings.l10n.global.content.loading);
 				return this.loadingLayout.done(function(){
 					me.render();
 				});
@@ -280,27 +280,26 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		publish: function(results){
-			this.save(results, 'publish', 'Publishing ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' published');
+			this.save(results, 'publish', Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
 		saveDraft:function(results){
-			this.save(results, 'draft', 'Saving ' + this.post.get('post_type') + ' ...', this.capitalize(this.post.get('post_type')) + ' saved as a draft');
+			this.save(results, 'draft', Upfront.Settings.l10n.global.content.saving.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.drafted.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
 
 		trash: function(){
 			var me = this,
 				postType = this.post.get('post_type'),
 				loading = new Upfront.Views.Editor.Loading({
-					loading: 'Deleting ' + postType + ' ...',
-					done: "Here we are!",
+					loading: Upfront.Settings.l10n.global.content.deleting.replace(/%s/, postType),
+					done: Upfront.Settings.l10n.global.content.here_we_are,
 					fixed: false
 				})
 			;
 			loading.render();
 			this.$el.append(loading.$el);
 			this.post.set('post_status', 'trash').save().done(function(){
-				console.log('Deleting');
 				loading.$el.remove();
-				Upfront.Views.Editor.notify('The ' + postType + ' has been deleted.');
+				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.content.deleted.replace(/%s/, postType));
 				me.stopEditContents();
 
 				if(me.postView.property('type') == 'UpostsModel')
@@ -315,18 +314,16 @@ define("content", deps, function(postTpl, ContentTools) {
 				metaUpdated = !updateMeta,
 				loading = new Upfront.Views.Editor.Loading({
 					loading: loadingMsg,
-					done: "Here we are!",
+					done: Upfront.Settings.l10n.global.content.here_we_are,
 					fixed: false
 				}),
 				postUpdated = false
 			;
 
-			console.log('Saving post');
-
 			loading.render();
 			this.$el.append(loading.$el);
 			this.contentEditor.bar.$el.hide();
-            console.log("results", results);
+			
 			if(results.title)
 				this.post.set('post_title', results.title);
 			if(results.content) {

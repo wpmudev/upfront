@@ -215,7 +215,7 @@ var PostContentEditor = Backbone.View.extend({
 
 			this.parts.featured.addClass('ueditor_thumb ueditable')
 				.css({position:'relative', 'min-height': height + 'px', width: '100%'})
-				.append('<div class="upost_thumbnail_changer" ><div>Click to edit the post\'s featured image</div></div>')
+				.append('<div class="upost_thumbnail_changer" ><div>' + Upfront.Settings.l10n.global.content.trigger_edit_featured_image + '</div></div>')
 				.find('img').css({'z-index': '2', position: 'relative'})
 			;
 		}
@@ -257,8 +257,8 @@ var PostContentEditor = Backbone.View.extend({
 		postId = this.postId,
 		img = target.parent().find('img'),
 		loading = new Upfront.Views.Editor.Loading({
-			loading: "Starting image editor ...",
-			done: "Here we are!",
+			loading: Upfront.Settings.l10n.global.content.starting_img_editor,
+			done: Upfront.Settings.l10n.global.content.here_we_are,
 			fixed: false
 		}),
 		imageId = this.post.meta.getValue('_thumbnail_id')
@@ -364,7 +364,7 @@ var PostContentEditor = Backbone.View.extend({
 			extraButtons: [
 			{
 				id: 'image-edit-button-swap',
-				text: 'Swap Image',
+				text: Upfront.Settings.l10n.global.content.swap_image,
 				callback: function(e, editor){
 					editor.cancel();
 					me.openImageSelector(postId);
@@ -414,8 +414,6 @@ var PostContentEditor = Backbone.View.extend({
 
 		this.$('.upfront-content-marker-author').html(authorData.display_name);
 		this.postAuthor = authorId;
-
-		console.log('Author changed to ' + authorId);
 	},
 
 	editAuthor: function(e) {
@@ -707,20 +705,20 @@ var EditionBar = Backbone.View.extend({
 	onScrollFunction: false,
 
 	statusOptions: {
-		future: {value:'future', name:'Scheduled'},
-		publish: {value: 'publish', name: 'Published'},
-		pending: {value: 'pending', name: 'Pending Review'},
-		draft: {value: 'draft', name: 'Draft'},
-		'private': {value: 'private', name: 'Privately Published'},
-		'auto-draft': {value: 'auto-draft', name:'New'},
-		'trash': {value: 'trash', name: 'Deleted'}
+		future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
+		publish: {value: 'publish', name: Upfront.Settings.l10n.global.content.published},
+		pending: {value: 'pending', name: Upfront.Settings.l10n.global.content.pending_review},
+		draft: {value: 'draft', name: Upfront.Settings.l10n.global.content.draft},
+		'private': {value: 'private', name: Upfront.Settings.l10n.global.content.private_post},
+		'auto-draft': {value: 'auto-draft', name: Upfront.Settings.l10n.global.content.new_post},
+		'trash': {value: 'trash', name: Upfront.Settings.l10n.global.content.deleted_post}
 	},
 
 	visibilityOptions: {
-		'public': {value: 'public', name:'Public'},
-		'sticky': {value: 'sticky', name:'Sticky'},
-		'password': {value: 'password', name: 'Protected'},
-		'private': {value: 'private', name: 'Private'}
+		'public': {value: 'public', name:Upfront.Settings.l10n.global.content.public_post},
+		'sticky': {value: 'sticky', name:Upfront.Settings.l10n.global.content.sticky},
+		'password': {value: 'password', name: Upfront.Settings.l10n.global.content.protected_post},
+		'private': {value: 'private', name: Upfront.Settings.l10n.global.content.is_private}
 	},
 
 	statusSelect: false,
@@ -864,31 +862,31 @@ var EditionBar = Backbone.View.extend({
 		;
 		if(!date && !this.initialDate)
 			return {
-				key: 'Publish',
-				text: 'Immediately'
+				key: Upfront.Settings.l10n.global.content.publish,
+				text: Upfront.Settings.l10n.global.content.immediately
 			};
 
 		if(date.getTime() == this.initialDate){
 			if(date.getTime() < now.getTime())
 				return {
-					key: 'Published',
+					key: Upfront.Settings.l10n.global.content.published,
 					text: formatDate(date, true)
 				};
 			else
 				return {
-					key: 'Scheduled',
+					key: Upfront.Settings.l10n.global.content.scheduled,
 					text: formatDate(date, true)
 				};
 		}
 
 		if(date.getTime() < now.getTime())
 			return {
-				key: 'Publish on',
+				key: Upfront.Settings.l10n.global.content.publish_on,
 				text: formatDate(date, true)
 			};
 		else
 			return {
-				key: 'Schedule',
+				key: Upfront.Settings.l10n.global.content.schedule,
 				text: formatDate(date, true)
 			};
 	},
@@ -965,7 +963,7 @@ var EditionBar = Backbone.View.extend({
 		;
 		if(now == 'password')
 			return [
-				{value: 'password', name: 'Edit password...'},
+				{value: 'password', name: Upfront.Settings.l10n.global.content.edit_pwd},
 				ops.public,
 				ops.sticky,
 				ops.private
@@ -985,13 +983,13 @@ var EditionBar = Backbone.View.extend({
 
 		if(now < date) {
 			if(initial == 'future')
-				return 'Update';
-			return 'Schedule';
+				return Upfront.Settings.l10n.global.content.update;
+			return Upfront.Settings.l10n.global.content.schedule;
 		}
 		else {
 			if(initial == 'publish')
-				return 'Update';
-			return 'Publish';
+				return Upfront.Settings.l10n.global.content.update;
+			return Upfront.Settings.l10n.global.content.publish;
 		}
 	},
 
@@ -1113,7 +1111,7 @@ var EditionBar = Backbone.View.extend({
 
 	cancel: function(e){
 		e.preventDefault();
-		if(confirm('Are you sure to discard the changes made to ' + this.post.get('post_title') + '?')){
+		if(confirm(Upfront.Settings.l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
 			this.destroy();
 			this.post.trigger('editor:cancel');
 			this.trigger('cancel');
@@ -1146,7 +1144,7 @@ var EditionBar = Backbone.View.extend({
 
 	trash: function(e){
 		e.preventDefault();
-		if(confirm('Are you sure you want to delete this ' + this.post.get('post_type') + '?')){
+		if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
 			this.destroy();
 			this.trigger('trash');
 			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
@@ -1160,7 +1158,7 @@ var EditionBar = Backbone.View.extend({
 		popup = Upfront.Popup.open(function (data, $top, $bottom) {
 			var $me = $(this);
 			$me.empty()
-			.append('<p class="upfront-popup-placeholder">No such thing as <q>too many drinks</q>.</p>')
+			.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
 			;
 			$popup = {
 				"top": $top,
@@ -1210,7 +1208,7 @@ var EditionBar = Backbone.View.extend({
 			popup = Upfront.Popup.open(function (data, $top, $bottom) {
 				var $me = $(this);
 				$me.empty()
-				.append('<p class="upfront-popup-placeholder"><q>I enjoy eating cheese.</q></p>')
+				.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
 				.append($tax)
 				;
 				$popup = {
@@ -1238,7 +1236,7 @@ var EditionBar = Backbone.View.extend({
 					terms[tax] = termsList;
 				}
 
-				$popup.content.html('<p class="upfront-popup-placeholder"><q>Them frogs chirp really loud today.</q></p>');
+				$popup.content.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>');
 
 				termsList.fetch({allTerms: true}).done(function(response){
 					var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
@@ -1266,8 +1264,8 @@ var EditionBar = Backbone.View.extend({
 		$(".upfront-popup-placeholder").remove();
 		$popup.top.html(
 			'<ul class="upfront-tabs">' +
-			'<li data-type="category" class="tax-category">Categories</li>' +
-			'<li data-type="post_tag" class="tax-post_tag">Tags</li>' +
+			'<li data-type="category" class="tax-category">' + Upfront.Settings.l10n.global.content.categories + '</li>' +
+			'<li data-type="post_tag" class="tax-post_tag">' + Upfront.Settings.l10n.global.content.tags + '</li>' +
 			'</ul>' +
 			$popup.top.html()
 			);
