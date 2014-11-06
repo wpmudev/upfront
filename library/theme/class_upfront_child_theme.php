@@ -375,7 +375,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	  if (empty($image_variants) === false) return $image_variants;
 
 	  $image_variants = $this->themeSettings->get('post_image_variants');
-	  if( empty( $image_variants ) ){
+	  if( empty( $image_variants ) && false){
 		$image_variants = <<< VRT
 		[
 		{"vid":"variant-1414082104315-1342","label":"Left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"66","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"12","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
