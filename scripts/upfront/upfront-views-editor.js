@@ -2395,7 +2395,7 @@ define([
 				new Command_ResponsiveUndo({"model": this.model}),
 				new Command_ResponsiveRedo({"model": this.model}),
 				new Command_ToggleGrid({"model": this.model}),
-				new Command_SaveResponsive(),
+				new Command_SaveLayout(),
 				new Command_StopResponsiveMode()
 			]);
 		},
