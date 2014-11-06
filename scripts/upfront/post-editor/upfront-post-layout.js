@@ -195,7 +195,7 @@ var PostPartSettings = Settings.Settings.extend({
 	},
 	updatePanels: function(){
 		var templateSetting = new Upfront.Views.Editor.Settings.Item({
-			title: 'General setup',
+			title: Upfront.Settings.l10n.global.content.general_setup,
 			model: this.model,
 			fields: [
 				new TemplateEditorField({
@@ -209,7 +209,7 @@ var PostPartSettings = Settings.Settings.extend({
 		else
 			this.panels = _([
 				new Settings.Panel({
-					label: 'General',
+					label: Upfront.Settings.l10n.global.content.general,
 					model: this.model,
 					settings: [templateSetting]
 				})
@@ -223,14 +223,14 @@ var DateSettings = PostPartSettings.extend({
 		this.panels = _([
 			new Settings.Panel({
         hide_common_fields: true,
-				title: 'Date format',
+				title: Upfront.Settings.l10n.global.content.date_format,
 				model: this.model,
 				settings: [new Upfront.Views.Editor.Settings.Item({
-					title: 'Date setup',
+					title: Upfront.Settings.l10n.global.content.date_setup,
 					model: this.model,
 					fields: [
 						new Fields.Text({
-							label: 'PHP date format',
+							label: Upfront.Settings.l10n.global.content.php_date_fmt,
 							property: 'format',
 							model: this.model
 						})
@@ -248,14 +248,14 @@ var TagSettings = PostPartSettings.extend({
         this.panels = _([
             new Settings.Panel({
                 hide_common_fields: true,
-                title: 'Tags',
+                title: Upfront.Settings.l10n.global.content.tags,
                 model: this.model,
                 settings: [new Upfront.Views.Editor.Settings.Item({
-                    title: 'Tags settings',
+                    title: Upfront.Settings.l10n.global.content.tags_settings,
                     model: this.model,
                     fields: [
                         new Fields.Text({
-                            label: 'Tags separator',
+                            label: Upfront.Settings.l10n.global.content.tag_separator,
                             property: 'tag_separator',
                             model: this.model
                         })
@@ -275,15 +275,15 @@ var ContentSettings = PostPartSettings.extend({
 	  this.panels = _([
 	      new Settings.Panel({
             hide_common_fields: true,
-	          title: 'Tags',
+	          title: Upfront.Settings.l10n.global.content.tags,
 	          model: this.model,
 	          settings: [new Upfront.Views.Editor.Settings.Item({
-	              title: 'Content padding',
+	              title: Upfront.Settings.l10n.global.content.content_padding,
 	              className: 'content-overflow-setting',
 	              model: this.model,
 						fields: [
 							new Fields.Number({
-								label: 'Left',
+								label: Upfront.Settings.l10n.global.content.left,
 								property: 'padding_left',
 								//max : 3,
 								min: 0,
@@ -291,7 +291,7 @@ var ContentSettings = PostPartSettings.extend({
 								model: this.model
 							}),
 							new Fields.Number({
-								label: 'Right',
+								label: Upfront.Settings.l10n.global.content.right,
 								property: 'padding_right',
 								//max : 3,
 								min: 0,
@@ -430,7 +430,7 @@ var FeaturedImageView = PostPartView.extend({
 
 
 		if(!this.placeholder){
-			this.placeholder = $('<div class="upfront-post-thumb-placeholder upfront-ui"><div>Post Featured Image</div></div>');
+			this.placeholder = $('<div class="upfront-post-thumb-placeholder upfront-ui"><div>' + Upfront.Settings.l10n.global.content.post_featured_image + '</div></div>');
 			if(height)
 				this.placeholder.height(height);
 		}
@@ -485,7 +485,7 @@ var TemplateEditorField = Upfront.Views.Editor.Field.Field.extend({
 		'click .upfront-template-edit': 'prepareTemplateEditor'
 	},
 	render: function(){
-		this.$el.html('<a href="#" title="Edit template" class="upfront-css-edit upfront-template-edit">Edit HTML template</a>');
+		this.$el.html('<a href="#" title="Edit template" class="upfront-css-edit upfront-template-edit">' + Upfront.Settings.l10n.global.content.edit_html_tpl + '</a>');
 		return this;
 	},
 	prepareTemplateEditor: function(e){
@@ -542,7 +542,7 @@ var TemplateEditor = Backbone.View.extend({
 		editor.detach();
 
 		resizable.html('<div class="upfront-css-top ui-resizable-handle ui-resizable-n"><span class="upfront-css-type">' + this.postPart + ' Part Template</span><a class="upfront-css-close" href="#">close</a></div>');
-		resizable.append('<div class="upfront-css-body"><div class="upfront_code-editor-section upfront_code-markup active"><div class="upfront-css-ace"></div></div><button>Save</button></div>');
+		resizable.append('<div class="upfront-css-body"><div class="upfront_code-editor-section upfront_code-markup active"><div class="upfront-css-ace"></div></div><button>' + Upfront.Settings.l10n.global.content.save + '</button></div>');
 
 		this.resizeHandler = this.resizeHandler || function(){
 			editor.width($(window).width() - $('#sidebar-ui').width() -1);
@@ -702,7 +702,7 @@ var SaveDialog = Backbone.View.extend({
 			.width($(window).width())
 			.height($(document).height())
 		;
-		html += '<p>Do you wish to save layout just for this post or apply it to all posts?</p>';
+		html += '<p>' + Upfront.Settings.l10n.global.content.save_layout_nag + '</p>';
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
 			//html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
