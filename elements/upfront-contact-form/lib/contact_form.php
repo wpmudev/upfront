@@ -104,7 +104,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		$form->check_form_received();
 
 		return array(
-			'error'=> $form->msg_class == 'error',
+			'error'=> (bool)(!empty($form->msg_class) && 'error' === $form->msg_class),
 			'message' => $form->msg
 		);
 	}
