@@ -26,6 +26,8 @@ class Upfront_Uwidget {
 
 	public static function get_widget_admin_fields($widget) {
 
+		if (!class_exists($widget)) return ''; // This is so we don't choke on fatal error if there's no such thing (e.g. deactivated plugin)
+
 		$rc = new ReflectionClass($widget);
 		$dwidget = $rc->newInstance();
 
