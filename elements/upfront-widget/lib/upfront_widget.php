@@ -34,7 +34,7 @@ class Upfront_Uwidget {
 		$markup =  ob_get_clean();
 
 		$form = new DOMDocument();
-		$form->loadHTML($markup);
+		@$form->loadHTML($markup);
 
 		$xpath = new DOMXPath($form);
 		$nodes = $xpath->query('/html/body//label | /html/body//input | /html/body//select | /html/body//textarea');
