@@ -1,5 +1,10 @@
 (function ($) {
 
+var l10n = Upfront.Settings && Upfront.Settings.l10n
+	? Upfront.Settings.l10n.global.views
+	: Upfront.mainData.l10n.global.views
+;
+
 define([
 	"text!upfront/templates/object.html",
 	"text!upfront/templates/module.html",
@@ -717,7 +722,7 @@ define([
 				if(Upfront.Application.get_current() != "theme") {
 				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
-							return Upfront.Settings.l10n.global.views.save;
+							return l10n.save;
 						},
 						action: function() {
 							var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
@@ -726,7 +731,7 @@ define([
 					}));
 				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
-							return Upfront.Settings.l10n.global.views.undo;
+							return l10n.undo;
 						},
 						action: function(for_view) {
 							//console.log(Upfront.Application.layout);
@@ -738,7 +743,7 @@ define([
 
 				menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
-							return Upfront.Application.get_gridstate() ? Upfront.Settings.l10n.global.views.hide_grid: Upfront.Settings.l10n.global.views.show_grid;
+							return Upfront.Application.get_gridstate() ? l10n.hide_grid: l10n.show_grid;
 						},
 						action: function() {
 							var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
@@ -1392,9 +1397,9 @@ define([
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 			},
 			render: function () {
-				var $ungroup = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-ungroup-container"><div class="upfront-module-group-toggle upfront-module-group-ungroup">' + Upfront.Settings.l10n.global.views.ungroup + '</div></div>'),
-					$reorder = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-reorder-container"><div class="upfront-module-group-toggle upfront-module-group-reorder">' + Upfront.Settings.l10n.global.views.reorder + '</div></div>'),
-					$finish = $('<div class="upfront-module-group-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + Upfront.Settings.l10n.global.views.done + '</div>'),
+				var $ungroup = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-ungroup-container"><div class="upfront-module-group-toggle upfront-module-group-ungroup">' + l10n.ungroup + '</div></div>'),
+					$reorder = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-reorder-container"><div class="upfront-module-group-toggle upfront-module-group-reorder">' + l10n.reorder + '</div></div>'),
+					$finish = $('<div class="upfront-module-group-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + l10n.done + '</div>'),
 					$border = $('<div class="upfront-selected-border"></div>');
 
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
@@ -1832,10 +1837,10 @@ define([
 
 		RegionContainer = _Upfront_SingularEditor.extend({
 			cssSelectors: {
-				'.upfront-region-container-bg': {label: Upfront.Settings.l10n.global.views.region_container_label, info: Upfront.Settings.l10n.global.views.region_container_info},
-				'.upfront-region-center': {label: Upfront.Settings.l10n.global.views.main_content_label, info: Upfront.Settings.l10n.global.views.main_content_info},
-				'.upfront-region-side-left': {label: Upfront.Settings.l10n.global.views.lsr_label, info: Upfront.Settings.l10n.global.views.lsr_info},
-				'.upfront-region-side-right': {label: Upfront.Settings.l10n.global.views.rsr_label, info: Upfront.Settings.l10n.global.views.rsr_info}
+				'.upfront-region-container-bg': {label: l10n.region_container_label, info: l10n.region_container_info},
+				'.upfront-region-center': {label: l10n.main_content_label, info: l10n.main_content_info},
+				'.upfront-region-side-left': {label: l10n.lsr_label, info: l10n.lsr_info},
+				'.upfront-region-side-right': {label: l10n.rsr_label, info: l10n.rsr_info}
 			},
 			events: {
 				"click > .upfront-region-edit-trigger": "trigger_edit",
@@ -1903,9 +1908,9 @@ define([
 							  get_label: function() {
 								  var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				 				  if($main.hasClass('upfront-region-editing'))
-								  	return Upfront.Settings.l10n.global.views.finish_editing;
+								  	return l10n.finish_editing;
 								  else
-								  	return Upfront.Settings.l10n.global.views.edit_background;
+								  	return l10n.edit_background;
 							  },
 							  action: function() {
 							  		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
@@ -1919,7 +1924,7 @@ define([
 
 						  new Upfront.Views.ContextMenuItem({
 							  get_label: function() {
-								  	return Upfront.Settings.l10n.global.views.add_floating_region;
+								  	return l10n.add_floating_region;
 							  },
 							  action: function(view, e) {
 							  		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -2040,8 +2045,8 @@ define([
 					type = this._get_region_type(),
 					data = _.extend(this.model.toJSON(), {size_class: grid.class, max_col: this.max_col, available_col: this.available_col}),
 					template = _.template(_Upfront_Templates["region_container"], data),
-					$edit = $('<div class="upfront-region-edit-trigger upfront-ui" title="' + Upfront.Settings.l10n.global.views.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + Upfront.Settings.l10n.global.views.finish_edit_bg + '</div>');
+					$edit = $('<div class="upfront-region-edit-trigger upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + l10n.finish_edit_bg + '</div>');
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$bg = this.$el.find('.upfront-region-container-bg');
@@ -2522,7 +2527,7 @@ define([
 
 		Region = _Upfront_SingularEditor.extend({
 			cssSelectors: {
-				'.upfront-region-wrapper': {label: Upfront.Settings.l10n.global.views.rw_label, info: Upfront.Settings.l10n.global.views.rw_info}
+				'.upfront-region-wrapper': {label: l10n.rw_label, info: l10n.rw_info}
 			},
 			events: {
 				"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
@@ -2845,7 +2850,7 @@ define([
 					e.preventDefault();
 
 
-				if ( confirm(Upfront.Settings.l10n.global.views.section_delete_nag) ){
+				if ( confirm(l10n.section_delete_nag) ){
 					// if ( this.model.get('container') ){
 						// main = this.model.collection.get_by_name(this.model.get('container'));
 						// main_view = Upfront.data.region_views[main.cid];
@@ -2879,7 +2884,7 @@ define([
 								var new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 									"name": 'main',
 									"container": 'main',
-									"title": Upfront.Settings.l10n.global.views.main_area
+									"title": l10n.main_area
 								}));
 
 
@@ -3033,9 +3038,9 @@ define([
 			},
 			render: function () {
 				this.constructor.__super__.render.call(this);
-				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + Upfront.Settings.l10n.global.views.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">' + Upfront.Settings.l10n.global.views.click_to_edit_floating_region + '</div></div>'),
-					$ok = $('<div class="upfront-region-finish-edit-fixed upfront-ui">' + Upfront.Settings.l10n.global.views.ok + '</div>'),
+				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">' + l10n.click_to_edit_floating_region + '</div></div>'),
+					$ok = $('<div class="upfront-region-finish-edit-fixed upfront-ui">' + l10n.ok + '</div>'),
 					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>'),
 					$position = $('<div class="upfront-region-position-hint upfront-ui"></div>');
 				$size.appendTo(this.$el);
@@ -3281,8 +3286,8 @@ define([
 /*  Lightbox is extended from Region */
 		RegionLightbox = Region.extend({
 			cssSelectors: {
-				'.upfront-region-side-lightbox': {label: Upfront.Settings.l10n.global.views.ltbox_area_label, info: Upfront.Settings.l10n.global.views.ltbox_area_info},
-				'.close_lightbox > .upfront-icon-popup-close': {label: Upfront.Settings.l10n.global.views.ltbox_close_icon_label, info: Upfront.Settings.l10n.global.views.ltbox_close_icon_info}
+				'.upfront-region-side-lightbox': {label: l10n.ltbox_area_label, info: l10n.ltbox_area_info},
+				'.close_lightbox > .upfront-icon-popup-close': {label: l10n.ltbox_close_icon_label, info: l10n.ltbox_close_icon_info}
 			},
 			$bg: $('<div class="upfront-lightbox-bg"></div>'),
 			$close: $('<div class="upfront-ui close_lightbox"></div>'),
@@ -3309,7 +3314,7 @@ define([
 				this.constructor.__super__.render.call(this);
 				this.hide();
 
-					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + Upfront.Settings.l10n.global.views.edit_ltbox + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
+					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + l10n.edit_ltbox + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
 					//$ok = $('<div class="upfront-region-finish-edit-lightbox upfront-ui">Finish Editing</div>');
 
 
