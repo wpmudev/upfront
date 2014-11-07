@@ -1883,12 +1883,22 @@ a.ueditor-action-pickercancel{
 }
 
 .uinsert-selector {
+	/*position: absolute;*/
+	/*left: 50px;*/
+	/*background: rgba(31, 48, 63, 0.95);*/
+	/*height: 30px;*/
+	/*padding: 0 5px;*/
+    /*z-index: 99;*/
+    display: none;
 	position: absolute;
-	left: 15px;
+    margin-left: 50px;
 	background: rgba(31, 48, 63, 0.95);
 	height: 30px;
 	padding: 0 5px;
     z-index: 99;
+    margin-top: -25px;
+    width: auto;
+    display: inline-block;
 }
 
 .uinsert-selector:before {
@@ -1900,7 +1910,22 @@ a.ueditor-action-pickercancel{
 	border: 5px solid transparent;
 	border-right-color: rgba(31, 48, 63, 0.95);
 }
-
+.uinsert-text{
+    z-index: 1;
+    position: relative;
+}
+.uinsert-selector
+.uinsert-text-overlay{
+    height: 29px;
+    width: 100%;
+    background: rgba(31, 48, 63, 0.95);
+    display: block;
+    z-index: 9999;
+    position: relative;
+    margin-top: -29px;
+    padding: 0 3px;
+    opacity: 0;
+}
 .uinsert-drag-handle {
 	cursor: move;
 }
@@ -1974,6 +1999,7 @@ div.uinsert-selector a {
 	display: inline-block;
 	line-height: 30px;
 	padding: 0 5px;
+    cursor: pointer;
 }
 
 div.uinsert-selector a:hover {
@@ -8849,27 +8875,24 @@ a.ueditor-select-option:hover {
 
 
 .upfront-image-attachment-bits {
-	opacity: 0;
-	position: absolute;
+	opacity: 0.6;
+	position: relative;
 	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	background-position: -509px -483px;
 	height: 24px;
 	width: 60px;
 	z-index: 1;
-	left: -60px;
+	/*left: -60px;*/
 	cursor: pointer;
 	transition: opacity .5s ease, left .5s ease;
 }
 .upfront-image-attachment-bits.upfront-post-media-trigger-visible,
 .upfront-image-attachment-bits:hover {
-	left: -30px;
-	opacity: .7;
+	/*left: -30px;*/
+    opacity: 1;
 }
 
-.upfront-image-attachment-bits:hover {
-	opacity: 1 !important;
-}
 
 /* ----- CKE link selection ------ */
 #upfront-cke-link_editor {

@@ -9,7 +9,6 @@ var deps = [
 define("ueditor", deps, function(tpl, Inserts, redactor_plugins){
 var hackedRedactor = false;
 var UeditorEvents = redactor_plugins.UeditorEvents;
-
 $.fn.ueditor = function(options){
 	var isMethod = false,
 		elements = this,
@@ -149,7 +148,7 @@ var hackRedactor = function(){
         }else{
             this.$air.removeClass("under");
         }
-        
+
         this.airBindHide();
         this.$air.trigger('show');
         this.dropdown.hideAll();
@@ -228,6 +227,7 @@ var Ueditor = function($el, options) {
 	this.options.autosaveCallback = function () { UeditorEvents.trigger("ueditor:autosave", this); };
 	this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, this, param); }; // Do we need this? Yes, restore inserts on undo
 	this.options.destroyCallback = function () { UeditorEvents.trigger("ueditor:destroy", this); };
+	this.options.clickCallback = function () { UeditorEvents.trigger("ueditor:click", this); };
 	// Also available ueditor events (not redactor callbacks:
 		// ueditor:start
 		// ueditor:stop
@@ -244,6 +244,15 @@ var Ueditor = function($el, options) {
 		this.startPlaceholder();
 	}
 
+
+    UeditorEvents.on("ueditor:click", function(r){
+        console.log("click");
+
+    });
+
+    UeditorEvents.on("ueditor:enter", function(r){
+        console.log("Enter");
+    });
 };
 
 Ueditor.prototype = {
@@ -264,7 +273,6 @@ Ueditor.prototype = {
         this.redactor.$air = this.$air;
         this.redactor.ueditor = this;
 		this.preventDraggable();
-		//this.redactor.selection.removeMarkers();
 		UeditorEvents.trigger('ueditor:start', this.redactor);
 
 		if(!Upfront.data.Ueditor)
@@ -438,7 +446,7 @@ Ueditor.prototype = {
 			//TODO: focus before bufferSet
 
 			//Store the state to allow undo
-			var selection = me.redactor.getSelection();
+			var selection = me.redactor.selection.get();
 			me.redactor.buffer.set();
 		});
 		manager.on('insert:added insert:removed', function(){
@@ -584,7 +592,62 @@ Ueditor.prototype = {
 	}
 };
 
+var InsertManagerOptions = Backbone.View.extend({
+    tpl: _.template($(tpl).find('#insert-manager-tooltip-tpl').html()),
+    className: "uinsert-selector upfront-ui",
+    initialize: function(options){
+        this.insertsData = options.insertsData || {};
+        this.inserts = options.inserts || {};
+        this.redactor = options.redactor;
+        this.onRemoveInsert = options.onRemoveInsert;
+    },
+    events:{
+        "click .uinsert-selector-option": "on_insert_click"
+    },
+    render: function(){
+      this.$el.html( this.tpl( { inserts: Inserts.inserts } ) );
+    },
+    on_insert_click: function( e ){
+        e.preventDefault();
+        e.stopPropagation();
+        var type = $(e.target).data('insert'),
+            insert = new Inserts.inserts[type](),
+            self = this,
+            $block = this.$el.closest(".ueditor-post-insert-manager")
+            //where = me.mediaTrigger.data('insert')
+            ;
+
+        insert.start()
+            .done(function(popup, results){
+                // if(!results) Let's allow promises without result for now!
+                //	return;
+                self.inserts[insert.cid] = insert;
+                //Allow to undo
+                //this.trigger('insert:prechange'); // "this" is the embedded image object
+                //self.trigger('insert:prechange'); // "self" is the view
+                //Create the insert
+                insert.render();
+                $block.replaceWith(insert.$el);
+                $block.prev("br").remove();
+                //self.trigger('insert:added', insert);
+                self.insertsData[insert.data.id] = insert.data.toJSON();
+                self.listenTo(insert.data, 'change add remove update', function(){
+                    self.insertsData[insert.data.id] = insert.data.toJSON();
+                });
+
+                setTimeout(function(){
+                    self.redactor.$editor.find(".ueditor-post-insert-manager").remove();
+                }, 100);
+
+                self.redactor.code.sync();
+                self.listenTo(insert, 'remove', self.onRemoveInsert);
+            })
+        ;
+    }
+
+});
 var InsertManager = Backbone.View.extend({
+    tpl: _.template($(tpl).find('#insert-manager-tpl').html()),
 	initialize: function(opts){
 		this.inserts = {},
 		this.onRemoveInsert = _.bind(this.removeInsert, this);
@@ -595,8 +658,36 @@ var InsertManager = Backbone.View.extend({
 		this.bindTriggerEvents();
 		this.refreshTimeout = false;
 		this.sortableInserts();
-	},
-
+        this.listenTo( UeditorEvents, "ueditor:change", this.createInserts );
+    },
+    createInserts: function(redactor){
+        var self = this;
+            var $br = redactor.$editor.find("p").filter(function(i, el){   if($(el).text() === "") return el;   }).last();
+            redactor.$editor.find( ".ueditor-post-insert-manager").remove();
+            if($br.length > 0){
+                if(  $br.next( ".ueditor-post-insert-manager").length < 1  ) {
+                    var manager = self.tpl(),
+                        options = new InsertManagerOptions({
+                            insertsData: this.insertsData,
+                            inserts: this.inserts,
+                            redactor: redactor,
+                            onRemoveInsert: this.onRemoveInsert
+                        });
+                    options.render();
+                    $br.after(manager);
+                    var $manager = $br.next(".ueditor-post-insert-manager");
+                    $manager.append(options.$el);
+                    $manager.find(".uinsert-selector").hide();
+                    $manager.find(".upfront-post-media-trigger").on("click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $(this).parent().find(".uinsert-selector").toggle();
+                    });
+                }
+            }else{
+                redactor.$editor.find( ".ueditor-post-insert-manager").remove();
+            }
+    },
 	bindTriggerEvents: function (redactor) {
 		var me = this,
 			parent = this.$el.parent(),
@@ -652,89 +743,9 @@ var InsertManager = Backbone.View.extend({
 		// there is an isert floated to the left
 		this.leftMarker = $('<span style="float:left">');
 
-		bindMouseEvents();
+		//bindMouseEvents();
 
-		if(!parent.find('#upfront-post-media-trigger').length) {
-			parent.append('<div class="upfront-image-attachment-bits" id="upfront-post-media-trigger">');
-			//me.$el.find("p").append('<div class="upfront-image-attachment-bits" id="upfront-post-media-trigger">');
-		}
 
-		me.mediaTrigger = parent.find('#upfront-post-media-trigger')
-			.off('click')
-			.on('click', function (e){
-				e.stopPropagation();
-				e.preventDefault();
-
-				me.$el.off('mousemove', onMousemove);
-				me.$el.off('mouseenter', onMouseenter);
-				me.$el.off('mouseleave', onMouseleave);
-
-				me.mediaTrigger.addClass('upfront-post-media-trigger-visible');
-
-				var tooltip = $('<div class="uinsert-selector upfront-ui"></div>');
-				tooltip.css('margin-left', me.mediaTrigger.css('margin-left'));
-
-				_.each(Inserts.inserts, function(insert, type){
-					tooltip.append('<a href="#" class="uinsert-selector-option uinsert-selector-' + type + '" data-insert="' + type + '">' + type + '</a>');
-				});
-
-				tooltip.on('click', 'a', function(e){
-					e.preventDefault();
-					e.stopPropagation();
-					var type = $(e.target).data('insert'),
-						insert = new Inserts.inserts[type](),
-						block = me.lastBlock,
-						where = me.mediaTrigger.data('insert')
-					;
-
-					insert.start()
-						.done(function(popup, results){
-							// if(!results) Let's allow promises without result for now!
-							//	return;
-							me.inserts[insert.cid] = insert;
-							//Allow to undo
-							//this.trigger('insert:prechange'); // "this" is the embedded image object
-							//me.trigger('insert:prechange'); // "me" is the view
-							//Create the insert
-							insert.render();
-                            //console.log("POSITION BEFORE", block, where);
-                            if (!block) block = me.$el.find("p:last");
-                            if (!where) where = 'after';
-                            if (block.is(".nosortable") && !block.is("p")) where = 'append'; // Take padding into account
-                            //console.log("POSITION AFTER", block, where);
-							block[where](insert.$el);
-							me.trigger('insert:added', insert);
-							me.insertsData[insert.data.id] = insert.data.toJSON();
-							me.listenTo(insert.data, 'change add remove update', function(){
-								me.insertsData[insert.data.id] = insert.data.toJSON();
-							});
-
-							me.listenTo(insert, 'remove', me.onRemoveInsert);
-							$(".uinsert-selector").hide();
-						})
-					;
-				});
-
-				tooltip.css({top: me.mediaTrigger.css('top')});
-
-				parent.append(tooltip);
-
-				// We need to wait to finish the current event
-				setTimeout(function(){
-					$(document).one('click', function(e){
-						tooltip.fadeOut('fast', function(){
-							tooltip.remove();
-
-							//Reset mouse events, jsut in case...
-							me.$el.off('mousemove', onMousemove);
-							me.$el.off('mouseenter', onMouseenter);
-							me.$el.off('mouseleave', onMouseleave);
-							bindMouseEvents();
-						});
-					});
-				}, 10);
-			})
-		;
 	},
 
 	updateMediaTriggerPosition: function(){
@@ -845,7 +856,7 @@ var InsertManager = Backbone.View.extend({
 					}
 				}
 			});
-			me.$el.children(':not(.ueditor-insert)').addClass('nosortable');
+			me.$el.children(':not(.ueditor-insert), :not(.ueditor-post-insert-manager)').addClass('nosortable');
 		}, 600);
 	},
 
