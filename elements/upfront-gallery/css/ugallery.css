@@ -793,3 +793,14 @@ figure.gallery-labels-figure img.mfp-img {
 .ugallery_lb_text {
 	display: none;
 }
+.upfront-edit-responsive #settings .ugallery-settings .upfront-settings_panel_scroll {
+	display: none;
+}
+.upfront-edit-responsive .ugallery-settings .upfront-settings-common_panel {
+	overflow: visible;
+	height: auto;
+}
+.upfront-edit-responsive .ugallery-settings .upfront-settings-css .upfront-settings-item-title:before,
+.upfront-edit-responsive .ugallery-settings .upfront-settings-css .upfront-settings-item-title:after {
+	display: none;
+}

@@ -699,7 +699,7 @@ define(function() {
 			},
 			warn = function (e) {
 				var e = e || window.event,
-					going = "You have unsaved changes you're about to lose by navigating off this page."
+					going = Upfront.Settings.l10n.global.views.unsaved_changes_nag
 				;
 				if (!_saving_flag && !_is_dirty) return; // No changes
 				if (e) e.returnValue = going;
