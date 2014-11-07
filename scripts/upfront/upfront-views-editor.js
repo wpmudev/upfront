@@ -1,4 +1,10 @@
 (function ($) {
+
+var l10n = Upfront.Settings && Upfront.Settings.l10n
+	? Upfront.Settings.l10n.global.views
+	: Upfront.mainData.l10n.global.views
+;
+
 define([
 	"chosen",
 	"scripts/upfront/inline-panels/inline-panels", // If adding more arguments adjust _.rest in line 35
@@ -213,8 +219,8 @@ define([
 			// Upfront.Events.trigger("command:exit");
 			var url = window.location.pathname,
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Exiting upfront...",
-					done: "Wow, those are cool!",
+					loading: l10n.exiting_upfront,
+					done: l10n.exit_done,
 					fixed: true
 				})
 			;
@@ -252,15 +258,15 @@ define([
 			e.preventDefault();
 
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
-				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
+				return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
 
 			return Upfront.Application.navigate('/create_new/post', {trigger: true});
 
 			//window.location = Upfront.Settings.Content.create.post;
 			var me = this,
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Preparing new " + this.postType + "...",
-					done: "Wow, those are cool!",
+					loading: l10n.preparing_new_post.replace(/%s/, this.postType),
+					done: l10n.preparing_done,
 					fixed: true
 				})
 			;
@@ -269,7 +275,7 @@ define([
 			$('body').append(loading.$el);
 
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
-				return Upfront.Views.Editor.notify('You are already creating a new ' + this.postType + '.', 'warning');
+				return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
 
 			if (this.setMode !== false && Upfront.Application.mode.current != this.setMode)
 				Upfront.Application.set_current(Upfront.Settings.Application.MODE.CONTENT);
@@ -305,7 +311,7 @@ define([
 	var Command_NewPage = Command_NewPost.extend({
 		"className": "command-new-page",
 		postType: 'page',
-		_default_label: "New Page",
+		_default_label: l10n.new_page,
 		initialize: function () {
 			this.setMode = Upfront.Application.MODE.LAYOUT;
 		},
@@ -344,7 +350,7 @@ define([
 			;
 			$content
 				.empty()
-				.append('<h2>Add New Page</h2>')
+				.append('<h2>' + l10n.add_new_page + '</h2>')
 			;
 			_.each(me.modal._fields, function (field) {
 				field.render();
@@ -365,7 +371,7 @@ define([
 						me.modal._fields.permalink.set_value(permalink);
 					}
 				},
-				_initial_templates = [{label: "None", value: ""}],
+				_initial_templates = [{label: l10n.none, value: ""}],
 				templates_request = Upfront.Util.post({
 					action: "upfront-wp-model",
 					model_action: "get_post_extra",
@@ -373,7 +379,7 @@ define([
 					allTemplates: true
 				})
 			;
-			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540, button_text: 'Create Page'});
+			this.modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540, button_text: l10n.create_page});
 			this.modal._fields = {
 				title: new Upfront.Views.Editor.Field.Text({
 					label: "",
@@ -382,13 +388,13 @@ define([
 					change: update_modal_data
 				}),
 				permalink: new Field_ToggleableText({
-					label: '<b>Permalink:</b> ' + Upfront.Settings.site_url.replace(/\/$/, '') + '/',
+					label: '<b>' + l10n.permalink + ':</b> ' + Upfront.Settings.site_url.replace(/\/$/, '') + '/',
 					label_style: "inline",
 					name: "permalink",
 					change: update_modal_data
 				}),
 				template: new Upfront.Views.Editor.Field.Select({
-					label: "Page Template",
+					label: l10n.page_template,
 					name: "template",
 					values: _initial_templates
 				})
@@ -420,7 +426,7 @@ define([
 		"className": "command-save",
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html("Save");
+			this.$el.html(l10n.save);
 		},
 		on_click: function () {
 			if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item )
@@ -432,7 +438,7 @@ define([
 	});
 	var Command_SaveLayoutAs = Command.extend({
 		render: function () {
-			this.$el.html("Save As...");
+			this.$el.html(l10n.save_as);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:save_as");
@@ -444,7 +450,7 @@ define([
 		"className": "command-save",
 		render: function () {
                 this.$el.addClass('upfront-icon upfront-icon-save');
-                this.$el.html("Save layout");
+                this.$el.html(l10n.save_layout);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("post:layout:save");
@@ -454,7 +460,7 @@ define([
 	var Command_CancelPostLayout = Command.extend({
         className: "command-cancel",
 		render: function () {
-			this.$el.html("Cancel");
+			this.$el.html(l10n.cancel);
 		},
 		on_click: function () {
             if ( Upfront.Application.is_builder() ) {
@@ -478,11 +484,11 @@ define([
 			if (this.can_preview) Upfront.Events.trigger("command:layout:preview");
 		},
 		building_preview: function () {
-			this.$el.html("Building...");
+			this.$el.html(l10n.building);
 			this.can_preview = false;
 		},
 		preview_built: function () {
-			this.$el.html("Preview");
+			this.$el.html(l10n.preview);
 			this.can_preview = true;
 		},
 
@@ -490,7 +496,7 @@ define([
 
 	var Command_LoadLayout = Command.extend({
 		render: function () {
-			this.$el.html("Alternate layout");
+			this.$el.html(l10n.alternate_layout);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:load", 2)
@@ -501,7 +507,7 @@ define([
 	var Command_PublishLayout = Command.extend({
 		className: "command-publish-layout",
 		render: function () {
-			this.$el.html("Publish layout");
+			this.$el.html(l10n.publish_layout);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:publish");
@@ -518,7 +524,7 @@ define([
 		},
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-undo');
-			this.$el.html("Undo");
+			this.$el.html(l10n.undo);
 			if (this.model.has_undo_states()) this.activate();
 			else this.deactivate();
 		},
@@ -531,8 +537,8 @@ define([
 		on_click: function () {
 			var me = this,
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Undoing...",
-					done: "Thank you for waiting",
+					loading: l10n.undoing,
+					done: l10n.undoing_done,
 					fixed: true
 				})
 			;
@@ -563,7 +569,7 @@ define([
 		},
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-redo');
-			this.$el.html("Redo");
+			this.$el.html(l10n.redo);
 			if (this.model.has_redo_states()) this.activate();
 			else this.deactivate();
 		},
@@ -576,8 +582,8 @@ define([
 		on_click: function () {
 			var me = this,
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Redoing...",
-					done: "Thank you for waiting",
+					loading: l10n.redoing,
+					done: l10n.redoing_done,
 					fixed: true
 				})
 			;
@@ -600,7 +606,7 @@ define([
 
 	var Command_ExportHistory = Command.extend({
 		render: function () {
-			this.$el.html("Export history");
+			this.$el.html(l10n.export_history);
 		},
 		on_click: function () {
 			alert("Check console output");
@@ -614,7 +620,7 @@ define([
 	var Command_Merge = Command.extend({
 		render: function () {
 			if (!this.model.merge.length) return false;
-			this.$el.html("Merge selected");
+			this.$el.html(l10n.merge_selected);
 		},
 		on_click: function () {
 			var merge_models = this.model.merge,
@@ -652,7 +658,7 @@ define([
 			this.deactivate();
 		},
 		render: function () {
-			this.$el.html("Delete");
+			this.$el.html(l10n.delete_string);
 		},
 
 		on_click: function () {
@@ -689,6 +695,11 @@ define([
 		},
 		render: function () {
 			this.$el.html("Select mode " + (this._selecting ? 'on' : 'off'));
+			this.$el.html((
+				this._selecting 
+					? l10n.select_mode_on
+					: l10n.select_mode_off
+			));
 		},
 		on_click: function () {
 			if (!this._selecting) Upfront.Events.trigger("command:select");
@@ -747,7 +758,7 @@ define([
 	var Command_ResetEverything = Command.extend({
 		className: 'command-reset-everything',
 		render: function () {
-			this.$el.html("<span title='destroy the layout and clear everything up'>Reset everything</span>");
+			this.$el.html("<span title='" + l10n.destroy_layout + "'>" + l10n.reset_everything + "</span>");
 		},
 		on_click: function () {
 			Upfront.Util.reset()
@@ -771,7 +782,7 @@ define([
 		},
 		render: function () {
 			this.$el.html(_.template(
-				"<span title='toggle editing mode'>Current mode: {{mode}}</span>",
+				"<span title='toggle editing mode'>" + l10n.current_mode + "</span>",
 				{mode: Upfront.Application.get_current()}
 			));
 		},
@@ -845,7 +856,7 @@ define([
 		className: 'themes-dropdown',
 		enabled: true,
 		initialize: function() {
-			var themes = _.union([{label: 'Choose theme', value: ''}], _.map(Upfront.themeExporter.themes, function(theme) {
+			var themes = _.union([{label: l10n.choose_theme, value: ''}], _.map(Upfront.themeExporter.themes, function(theme) {
 				return {
 					label: theme.name,
 					value: theme.directory
@@ -877,7 +888,7 @@ define([
 		className: "command-new-layout",
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-layout');
-			this.$el.html('New Layout');
+			this.$el.html(l10n.new_layout);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:create");
@@ -887,7 +898,7 @@ define([
 	var Command_BrowseLayout = Command.extend({
 		className: "command-browse-layout upfront-icon upfront-icon-browse-layouts",
 		render: function () {
-			this.$el.html('Layouts');
+			this.$el.html(l10n.layouts);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:browse");
@@ -898,7 +909,7 @@ define([
 		tagName: 'div',
 		className: "command-link command-edit-structure",
 		render: function (){
-			this.$el.html('Edit Grid');
+			this.$el.html(l10n.edit_grid);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_structure");
@@ -909,7 +920,7 @@ define([
 		tagName: 'div',
 		className: "command-link command-edit-bg",
 		render: function (){
-			this.$el.text('Edit Global Background');
+			this.$el.text(l10n.edit_global_bg);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_background");
@@ -920,7 +931,7 @@ define([
 		tagName: 'div',
 		className: "command-edit-css upfront-icon upfront-icon-edit-css",
 		render: function (){
-			this.$el.html('<span>add custom css rules</span>');
+			this.$el.html('<span>' + l10n.add_custom_css_rules + '</span>');
 		},
 		on_click: function () {
 			var editor = Upfront.Application.cssEditor,
@@ -940,7 +951,7 @@ define([
 		tagName: 'div',
 		className: "command-open-font-manager upfront-icon upfront-icon-open-font-manager",
 		render: function (){
-			this.$el.html('<span>Theme Font Manager</span>');
+			this.$el.html('<span>' + l10n.theme_font_manager + '</span>');
 		},
 		on_click: function () {
 			Upfront.Events.trigger('command:themefontsmanager:open');
@@ -956,7 +967,7 @@ define([
 			}, 1000);
 		},
 		render: function () {
-			this.$el.html('<span>add custom css rules</span>');
+			this.$el.html('<span>' + l10n.add_custom_css_rules + '</span>');
 		},
 		on_click: function () {
 			var editor,
@@ -983,7 +994,7 @@ define([
 		tagName: 'div',
 		className: "command-go-to-type-preview",
 		render: function () {
-			this.$el.text('Go to Type Preview Page');
+			this.$el.text(l10n.go_to_preview_page);
 		},
 		on_click: function () {
 			alert('This is just placeholder :)');
@@ -993,7 +1004,7 @@ define([
 	var Command_ExportLayout = Command.extend({
 		className: "command-export upfront-icon upfront-icon-export",
 		render: function (){
-			this.$el.text('Export');
+			this.$el.text(l10n.export_str);
 		},
 		on_click: function () {
 			$('div.redactor_editor').each(function() {
@@ -1010,7 +1021,7 @@ define([
 		enabled: true,
 		className: 'command-create-responsive-layouts upfront-icon upfront-icon-start-responsive',
 		render: function () {
-			this.$el.html("<span>Create Responsive Layouts</span>");
+			this.$el.html("<span>" + l10n.create_responsive_layouts + "</span>");
 		},
 		on_click: function () {
 			Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
@@ -1021,7 +1032,7 @@ define([
 		enabled: true,
 		className: 'command-start-responsive upfront-icon upfront-icon-start-responsive',
 		render: function () {
-			this.$el.html("<span>Responsive Mode</span>");
+			this.$el.html("<span>" + l10n.responsive_mode + "</span>");
 		},
 		on_click: function () {
 			Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
@@ -1032,7 +1043,7 @@ define([
 		enabled: true,
 		className: 'exit-responsive',
 		render: function () {
-			this.$el.html("<span>Exit Responsive</span>");
+			this.$el.html("<span>" + l10n.exit_responsive + "</span>");
 		},
 		on_click: function () {
 			$('li.desktop-breakpoint-activate').trigger('click');
@@ -1044,7 +1055,7 @@ define([
 		"className": "command-save",
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html("Save");
+			this.$el.html(l10.save);
 		},
 		on_click: function () {
 			console.log('responsive is saved');
@@ -1060,7 +1071,7 @@ define([
 			this.fields = [
 				new Field_Compact_Label_Select({
 					multiple: true,
-					label_text: 'Activate Breakpoints',
+					label_text: l10n.activate_breakpoints,
 					collection: breakpoints
 				})
 			]
@@ -1082,7 +1093,7 @@ define([
 			'click': 'add_breakpoint'
 		},
 		render: function () {
-				this.$el.html('New Custom Breakpoint');
+				this.$el.html(l10n.new_breakpoint);
 		},
 		initialize: function(options) {
 			this.collection = breakpoints_storage.get_breakpoints();
@@ -1102,7 +1113,7 @@ define([
 
 				$content
 				.append(editPanel.render().el);
-				$bottom.append('<div class="breakpoint-edit-ok-button">OK</div>');
+				$bottom.append('<div class="breakpoint-edit-ok-button">' + l10n.ok + '</div>');
 				$('#upfront-popup-close').hide();
 				$('.breakpoint-edit-ok-button').on('click', function() {
 					Upfront.Popup.close();
@@ -1129,7 +1140,7 @@ define([
 	var ResponsiveCommand_BrowseLayout = Command.extend({
 		className: "command-browse-layout command-browse-layout-responsive",
 		render: function () {
-			this.$el.html('<span>Browse Layouts</span>');
+			this.$el.html('<span>' + l10n.browse_layouts + '</span>');
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:browse");
@@ -1234,7 +1245,7 @@ define([
 		"priority": 10000,
 		initialize: function(opts){
 			this.options = opts;
-			this.title = opts.title || 'No title';
+			this.title = opts.title || l10n.no_title;
 		},
 
 		render: function(){
@@ -1266,7 +1277,7 @@ define([
 			Upfront.Events.on("layout:render", this.apply_state_binding, this);
 		},
 		get_title: function () {
-			return "Draggable Elements";
+			return l10n.draggable_elements;
 		},
 		on_save: function () {
 			var regions = this.model.get('regions');
@@ -1405,7 +1416,7 @@ define([
 			Upfront.Events.on("layout:render", this.apply_state_binding, this);
 		},
 		get_title: function () {
-			return "Post components";
+			return l10n.post_components;
 		},
 
 		loadElements: function(){
@@ -1523,7 +1534,7 @@ define([
 				var chooseButton = new Command_OpenFontManager();
 			} else {
 				var chooseButton = new Field_Button({
-					label: 'Select Fonts To Use',
+					label: l10n.select_fonts_to_use,
 					compact: true,
 					classname: 'open-theme-fonts-manager',
 
@@ -1533,7 +1544,7 @@ define([
 				});
 			}
 			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
-				this.$el.html('<p class="sidebar-info-notice upfront-icon">You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.</p>');
+				this.$el.html('<p class="sidebar-info-notice upfront-icon">' + l10n.no_defined_fonts + '</p>');
 				chooseButton.render();
 				this.$el.append(chooseButton.el);
 				return;
@@ -1556,21 +1567,21 @@ define([
 				this.fields = {
 					start_font_manager: chooseButton,
 					element: new Upfront.Views.Editor.Field.Select({
-						label: "Type Element:",
+						label: l10n.type_element,
 						default_value: 'h1',
 						values: [
-							{ label: "Main Heading (H1)", value: "h1" },
-							{ label: "Sub Heading (H2)", value: "h2" },
-							{ label: "Sub Heading (H3)", value: "h3" },
-							{ label: "Sub Heading (H4)", value: "h4" },
-							{ label: "Sub Heading (H5)", value: "h5" },
-							{ label: "Sub Heading (H6)", value: "h6" },
-							{ label: "Paragraph (P)", value: "p" },
-							{ label: "Anchor Link (A)", value: "a" },
-							{ label: "Anchor Link Hover (A:HOVER)", value: "a:hover" },
-							{ label: "Unordered List (UL)", value: "ul" },
-							{ label: "Ordered List (OL)", value: "ol" },
-							{ label: "Blockquote (BLOCKQUOTE)", value: "blockquote" },
+							{ label: l10n.h1, value: "h1" },
+							{ label: l10n.h2, value: "h2" },
+							{ label: l10n.h3, value: "h3" },
+							{ label: l10n.h4, value: "h4" },
+							{ label: l10n.h5, value: "h5" },
+							{ label: l10n.h6, value: "h6" },
+							{ label: l10n.p, value: "p" },
+							{ label: l10n.a, value: "a" },
+							{ label: l10n.ahover, value: "a:hover" },
+							{ label: l10n.ul, value: "ul" },
+							{ label: l10n.ol, value: "ol" },
+							{ label: l10n.bq, value: "blockquote" },
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -1589,7 +1600,7 @@ define([
 						}
 					}),
 					typeface: new Field_Chosen_Select({
-						label: "Typeface",
+						label: l10n.typeface,
 						values: theme_fonts_collection.get_fonts_for_select(),
 						default_value: me.typefaces['h1'],
 						change: function () {
@@ -1605,7 +1616,7 @@ define([
 					}),
 					style: this.get_styles_field(),
 					color: new Upfront.Views.Editor.Field.Color({
-							label: "Color",
+							label: l10n.color,
 							default_value: me.colors['h1'],
 							spectrum: {
 								move: function (color) {
@@ -1620,7 +1631,7 @@ define([
 							}
 					}),
 					size: new Upfront.Views.Editor.Field.Number({
-						label: "Size",
+						label: l10n.size,
 						min: 0,
 						max: 100,
 						suffix: 'px',
@@ -1635,7 +1646,7 @@ define([
 						}
 					}),
 					line_height: new Upfront.Views.Editor.Field.Number({
-						label: "Line Height",
+						label: l10n.line_height,
 						min: 0,
 						max: 10,
 						step: .1,
@@ -1681,7 +1692,7 @@ define([
 		get_styles_field: function() {
 			var me = this;
 			return new Field_Select({
-					label: "Weight / Style",
+					label: l10n.weight_style,
 					values: this.get_styles(),
 					default_value: me.get_styles_field_default_value(),
 					change: function () {
@@ -1820,7 +1831,7 @@ define([
 			}
 		},
 		get_title: function () {
-			return "Typography";
+			return l10n.typography;
 		},
 		on_render: function () {
 			this.$el.find('.panel-section-content').addClass('typography-section-content');
@@ -1849,7 +1860,7 @@ define([
 			this.edit_css = new Command_GeneralEditCustomCSS({"model": this.model});
 		},
 		get_title: function () {
-			return "Typography and Colors";
+			return l10n.typography_and_colors;
 		},
 		on_render: function () {
 			this.edit_css.render();
@@ -1957,7 +1968,7 @@ define([
 
             Upfront.Util.post(post_data)
                 .error(function(){
-                    return notifier.addMessage('Theme colors could not be saved.');
+                    return notifier.addMessage(l10n.theme_colors_save_fail);
             });
             var styles_post_data = {
                 action: 'upfront_save_theme_colors_styles',
@@ -1965,7 +1976,7 @@ define([
             };
             Upfront.Util.post(styles_post_data)
                 .error(function(){
-                    return notifier.addMessage('Theme color styles could not be saved.');
+                    return notifier.addMessage(l10n.theme_color_style_save_fail);
             });
 
         },
@@ -2416,11 +2427,11 @@ define([
 			this.$el.html(_.template(
 				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
-				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" href="{{edit_url}}">edit profile</a></div>',
+				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>',
 				{
 					gravatar: data.gravatar,
-					name: data.display_name || 'anonymous',
-					role: roles[0] || 'none',
+					name: data.display_name || l10n.anonymous,
+					role: roles[0] || l10n.none,
 					edit_url: Upfront.Settings.admin_url + 'profile.php'
 				}
 			));
@@ -2483,13 +2494,13 @@ define([
 			Upfront.Events.on("application:mode:after_switch", this.render, this);
 		},
 		preventUsage: function(type) {
-			var preventUsageText = 'Not available when<br>editing text.';
+			var preventUsageText = l10n.not_available_in_text_edit;
 			if (type === 'media-upload') {
-				preventUsageText = 'Not available when<br>uploading media.';
+				preventUsageText = l10n.not_available_in_media_upload;
 			}
 	 		if (type === 'write') {
 				this.writingIsOn = true;
-				preventUsageText = 'Please publish your content<br>before modifying the layout.';
+				preventUsageText = l10n.publish_first_nag;
 			}
 			if (!this.prevented_usage_type) this.prevented_usage_type = type; // don't stack up on prevented types, keep the original
 			$('#preventUsageOverlay span').html(preventUsageText);
@@ -2599,7 +2610,7 @@ define([
 
 			panel.$el.find(".sidebar-panel-title").trigger("click");
 			*/
-			console.log("to_content_editor got called");
+			//console.log("to_content_editor got called");
 		},
 		from_content_editor: function () {
 			/*
@@ -2608,7 +2619,7 @@ define([
 			panel.hide();//render();
 			$(".sidebar-panel-title.upfront-icon.upfront-icon-panel-elements").trigger("click");
 			*/
-			console.log("from_content_editor got called")
+			//console.log("from_content_editor got called")
 		},
 		fetch_current_user: function() {
 			var user = Upfront.data.currentUser;
@@ -2702,16 +2713,16 @@ define([
 		render: function () {
 			this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
-				this.$el.html('<a>Posts / Pages / Comments</a>');
+				this.$el.html('<a>' + l10n.posts_pages_comments + '</a>');
 			else
-				this.$el.html('<a>Posts / Pages</a>');
+				this.$el.html('<a>' + l10n.posts_pages + '</a>');
 		},
 		on_click: function () {
 			var me = this,
 				popup = Upfront.Popup.open(function (data, $top, $bottom) {
 					var $me = $(this);
 					$me.empty()
-						.append('<p class="upfront-popup-placeholder">No such thing as <q>too many drinks</q>.</p>')
+						.append('<p class="upfront-popup-placeholder">' + l10n.popup_preloader + '</p>')
 					;
 					me.$popup = {
 						"top": $top,
@@ -2722,9 +2733,9 @@ define([
 			;
 			me.$popup.top.html(
 				'<ul class="upfront-tabs">' +
-					'<li data-type="posts" class="active">Posts</li>' +
-					'<li data-type="pages">Pages</li>' +
-					'<li data-type="comments">Comments</li>' +
+					'<li data-type="posts" class="active">' + l10n.posts + '</li>' +
+					'<li data-type="pages">' + l10n.pages + '</li>' +
+					'<li data-type="comments">' + l10n.comments + '</li>' +
 				'</ul>' +
 				me.$popup.top.html()
 			).find('.upfront-tabs li').on("click", function () {
@@ -2841,7 +2852,7 @@ define([
 		tagName: 'li',
 		className: 'command-open-media-gallery upfront-icon upfront-icon-open-gallery',
 		render: function () {
-				this.$el.html('<a>Media</a>');
+				this.$el.html('<a>' + l10n.media + '</a>');
 		},
 		on_click: function () {
 			Upfront.Media.Manager.open({
@@ -3135,8 +3146,8 @@ define([
 							post.featuredImage = response.data.thumbnail[0];
 						}
 						else{
-							me.$('.upfront-thumbnailinfo').text('No Image');
-							me.$('.upfront-page_preview-edit_feature a').html('<i class="icon-plus"></i> Add');
+							me.$('.upfront-thumbnailinfo').text(l10n.no_image);
+							me.$('.upfront-page_preview-edit_feature a').html('<i class="icon-plus"></i> ' + l10n.add);
 						}
 
 					})
@@ -3156,7 +3167,7 @@ define([
 			this.bottomContent = $('#upfront-popup-bottom').html();
 
 			$('#upfront-popup-bottom').html(
-				$('<a href="#" id="upfront-back_to_posts">&laquo; Back to posts</a>').on('click', function(e){
+				$('<a href="#" id="upfront-back_to_posts">' + l10n.back_to_posts + '</a>').on('click', function(e){
 					me.handle_return_to_posts();
 				})
 			);
@@ -3272,8 +3283,8 @@ define([
 							page.thumbnail = response.data.thumbnail[0];
 						}
 						else{
-							me.$('.upfront-thumbnailinfo').text('No Image');
-							me.$('.upfront-page_preview-edit_feature a').html('<i class="icon-plus"></i> Add');
+							me.$('.upfront-thumbnailinfo').text(l10n.no_image);
+							me.$('.upfront-page_preview-edit_feature a').html('<i class="icon-plus"></i> ' + l10n.add);
 						}
 
 						if(response.data.allTemplates)
@@ -4389,7 +4400,7 @@ var Field_ToggleableText = Field_Text.extend({
 			this.checked_list = this.get_saved_value();
 			var $list_wrap = this.$el.find('.upfront-suggest-list-wrap');
 			$list_wrap.append('<ul class="upfront-suggest-lists">' + this.get_suggest_list_html() + '</ul>');
-			$list_wrap.append('<div class="upfront-suggest-add-wrap"><span class="upfront-suggest-add-value"></span><span class="upfront-suggest-add">Add New</span></div>');
+			$list_wrap.append('<div class="upfront-suggest-add-wrap"><span class="upfront-suggest-add-value"></span><span class="upfront-suggest-add">' + l10n.add_new + '</span></div>');
 			this.stop_scroll_propagation(this.$el.find('.upfront-suggest-lists'));
 			this.$el.on('change', '.upfront-suggest-list input', function () {
 				var value = $(this).val();
@@ -4753,7 +4764,7 @@ var Field_ToggleableText = Field_Text.extend({
 					// Adding CSS item
 					var css_settings = new _Settings_CSS({
 						model: this.model,
-						title: 'CSS Styles'+((this.hide_common_anchors === false)?' &amp; Anchor Settings':'')
+						title: (false === this.hide_common_anchors ? l10n.css_and_anchor : l10n.css_styles)
 					});
 					css_settings.panel = me;
 					css_settings.render();
@@ -4776,7 +4787,7 @@ var Field_ToggleableText = Field_Text.extend({
 			// Save button
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +
-					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> OK</button>" +
+					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.ok + "</button>" +
 				'</div>'
 			);
 
@@ -4798,9 +4809,11 @@ var Field_ToggleableText = Field_Text.extend({
 			var panel = this.$el.find('.upfront-settings-common_panel');
 			panel.toggleClass('open');
 			if(panel.is('.open')) {
-				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text('Element CSS Styles');
+				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text(l10n.element_css_styles);
 			} else {
-				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text('CSS Styles'+((me.hide_common_anchors === false)?' &amp; Anchor Settings':''));
+				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text(
+					(false === me.hide_common_anchors ? l10n.css_and_anchor : l10n.css_styles)
+				);
 			}
 		},
 
@@ -4912,7 +4925,7 @@ var Field_ToggleableText = Field_Text.extend({
 			this.options = opts;
 		},
 		get_title: function () {
-			return "Settings";
+			return l10n.settings;
 		},
 
 		render: function () {
@@ -5019,7 +5032,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 var Field_Complex_Toggleable_Text_Field = Field.extend({
 	className: "upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple",
-	tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">Please, use ID that contains letters only, eg. <b>myProductSlider</b><br />No spaces or special characters.</div></div>',
+	tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">' + l10n.anchor_nag + '</div></div>',
 	initialize: function (opts) {
 		Field.prototype.initialize.call(this, opts);
 		this.options.field = new Field_Text(this.options);
@@ -5097,7 +5110,7 @@ var _Settings_CSS = SettingsItem.extend({
 		if (!Upfront.Application.cssEditor) return false;
 
 		var styleType = Upfront.Application.cssEditor.getElementType(this.model),
-			values = [{label: 'Default', value: '_default'}];
+			values = [{label: l10n.default_str, value: '_default'}];
 
 		if(Upfront.data.styles[styleType.id])
 			_.each(Upfront.data.styles[styleType.id], function(styleName){
@@ -5153,7 +5166,7 @@ var _Settings_CSS_Field = Field_Select.extend({
 		Field_Select.prototype.render.call(this);
 		var html = ['<a href="#" title="Edit style" class="upfront-css-edit"></a>'];
 		html.push('<p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span>');
-		html.push('<span class="upfront-css-new-text">add new style</span></a></p>');
+		html.push('<span class="upfront-css-new-text">' + l10n.add_new_style + '</span></a></p>');
 		this.$el.append(html.join(''));
 		return this;
 	},
@@ -5190,7 +5203,7 @@ var Button_Presets_Storage = function(stored_presets) {
 
 		Upfront.Util.post(postData)
 			.error(function(){
-				return notifier.addMessage('Button presets could not be saved.');
+				return notifier.addMessage(l10n.button_presets_save_fail);
 			});
 	};
 
@@ -5397,7 +5410,7 @@ var Button_Presets_Storage = function(stored_presets) {
 
 		Upfront.Util.post(postData)
 			.error(function(){
-				return notifier.addMessage('Button presets could not be saved.');
+				return notifier.addMessage(l10n.button_presets_save_fail);
 			});
 	};
 
@@ -5413,7 +5426,7 @@ var ThemeFontModel = Backbone.Model.extend({
 var ThemeFontsCollection = Backbone.Collection.extend({
 	model: ThemeFontModel,
 	get_fonts_for_select: function() {
-		var typefaces_list = [{ label: "Choose font", value:'' }],
+		var typefaces_list = [{ label: l10n.choose_font, value:'' }],
 			google_fonts = [];
 
 
