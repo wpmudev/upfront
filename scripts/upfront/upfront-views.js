@@ -949,26 +949,29 @@ define([
 				setTimeout(function() {
 					me.checkUiOffset();
 				}, 300);
+
+				// Put this here because initialize gets overriden by child classes
 				this.ensure_breakpoint_change_is_listened();
 			},
 			ensure_breakpoint_change_is_listened: function() {
-				if (this.breakpoint_change_setup) {
+				if (this.breakpoint_change_is_setup) {
 					return;
 				}
 				this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.on_change_breakpoint);
-				this.breakpoint_change_setup = true;
+				this.breakpoint_change_is_setup = true;
 			},
 			checkUiOffset: function() {
 				var $parentRegionEl = this.parent_module_view.region_view && this.parent_module_view.region_view.$el;
 				if (!$parentRegionEl) {
 					return;
 				}
-				var topCornerMatches = this.$el.offset().top === $parentRegionEl.offset().top,
+				var topOffsetTooClose = $parentRegionEl.offset().top - this.$el.offset().top < 50,
+					// $.offset does not have right side so calculate it
 					rightOffset = this.$el.offset().left + this.$el.width(),
 					containerRightOffset = $parentRegionEl.closest('.upfront-region-container').offset().left + $parentRegionEl.closest('.upfront-region-container').width(),
-					rightOffsetToClose = containerRightOffset - rightOffset < 30;
+					rightOffsetTooClose = containerRightOffset - rightOffset < 30;
 
-				if (topCornerMatches && rightOffsetToClose) {
+				if (topOffsetTooClose && rightOffsetTooClose) {
 					this.parent_module_view.$el.addClass('offset-ui-from-right-top');
 				} else {
 					this.parent_module_view.$el.removeClass('offset-ui-from-right-top');
