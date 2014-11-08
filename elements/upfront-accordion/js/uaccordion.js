@@ -3,25 +3,24 @@
 define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(accordionTpl) {
 
 	var l10n = Upfront.Settings.l10n.accordion_element;
-		
+
 	var UaccordionModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
 			var properties = _.clone(Upfront.data.uaccordion.defaults);
-			
+
 			var defaults = Upfront.data.uaccordion.defaults;
 
-			//copy the default panel data by value, so that the source does not get updated if passed by reference
+			// Copy the default panel data by value, so that the source does not get updated if passed by reference
+			properties.accordion = [];
+			properties.accordion[0] = {};
+			properties.accordion[0].content = _.clone(defaults.accordion[0].content);
+			properties.accordion[0].title = _.clone(defaults.accordion[0].title);
 
-			properties['accordion'] = [];
-			properties['accordion'][0] = {};
-			properties['accordion'][0]['content'] = _.clone(defaults['accordion'][0]['content']);
-			properties['accordion'][0]['title'] = _.clone(defaults['accordion'][0]['title']);
-			
-			properties['accordion'][1] = {};
-			properties['accordion'][1]['content'] = _.clone(defaults['accordion'][1]['content']);
-			properties['accordion'][1]['title'] = _.clone(defaults['accordion'][1]['title']);
-		
-			properties.element_id = Upfront.Util.get_unique_id("uaccordion-object");
+			properties.accordion[1] = {};
+			properties.accordion[1].content = _.clone(defaults.accordion[1].content);
+			properties.accordion[1].title = _.clone(defaults.accordion[1].title);
+
+			properties.element_id = Upfront.Util.get_unique_id('uaccordion-object');
 			this.init_properties(properties);
 		}
 	});
@@ -43,7 +42,6 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 		},
 
 		initialize: function(){
-			var me = this;
 			if(! (this.model instanceof UaccordionModel)){
 				this.model = new UaccordionModel({properties: this.model.get('properties')});
 			}
@@ -55,30 +53,30 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			});
 			this.delegateEvents();
 
-			this.model.get("properties").bind("change", this.render, this);
-			this.model.get("properties").bind("add", this.render, this);
-			this.model.get("properties").bind("remove", this.render, this);
+			this.model.get('properties').bind('change', this.render, this);
+			this.model.get('properties').bind('add', this.render, this);
+			this.model.get('properties').bind('remove', this.render, this);
 
 
 			//this.on('deactivated', this.onDeactivate, this);
-			Upfront.Events.on("entity:deactivated", this.stopEdit, this);
+			Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 		},
-		stopEdit: function(e) {
-				
-			
+		stopEdit: function() {
 			var $panelcontent = this.$el.find('.accordion-panel-active .accordion-panel-content');
 			$panelcontent.each(function () {
 				var $me = $(this),
-					editor = $me.data("ueditor")
-				;
-				if (editor && editor.stop) editor.stop();
+					editor = $me.data('ueditor');
+
+				if (editor && editor.stop) {
+					editor.stop();
+				}
 			});
 
 			var $paneltitle = this.$el.find('.accordion-panel-active .accordion-panel-title:not(.ueditor-placeholder)');
 			$paneltitle.trigger('blur');
-			
+
 			Upfront.Events.trigger('upfront:element:edit:stop');
-		
+
 		},
 		addPanel: function(event) {
 			event.preventDefault();
@@ -102,11 +100,15 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 		onPanelTitleClick: function(event) {
 			var $panelTitle = $(event.currentTarget);
 			if($panelTitle.parent().hasClass('accordion-panel-active')) {
-				if($panelTitle.data('ueditor')) $panelTitle.data('ueditor').start();
+				if($panelTitle.data('ueditor')) {
+					$panelTitle.data('ueditor').start();
+				}
 			} else {
 				this.$el.find('.accordion-panel-content').each(function () {
-					var ed = $(this).data("ueditor");
-					if (ed) ed.stop();
+					var ed = $(this).data('ueditor');
+					if (ed) {
+						ed.stop();
+					}
 				});
 				$panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
 				$panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
@@ -114,12 +116,15 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 		},
 
 		onContentDblclick: function(event) {
-			if($(event.target).data('ueditor')) $(event.target).data('ueditor').start();
-			else event.stopPropagation();
+			if($(event.target).data('ueditor')) {
+				$(event.target).data('ueditor').start();
+			} else {
+				event.stopPropagation();
+			}
 		},
 
 		saveTitle: function(target) {
-			id = target.closest('div.accordion-panel').index()-1;
+			var id = target.closest('div.accordion-panel').index()-1;
 			this.property('accordion')[id].title = target.html();
 		},
 
@@ -127,7 +132,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			var panel = this.$el.find('.accordion-panel-active'),
 				$content = panel.find('.accordion-panel-content'),
 				panelId = panel.index()-1,
-				ed = $content.data("ueditor"),
+				ed = $content.data('ueditor'),
 				text = ''
 			;
 			try { text = ed.getValue(true); } catch (e) { text = ''; }
@@ -162,19 +167,18 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 		on_render: function() {
 			// Accordion won't be rendered in time if you do not delay.
 			//_.delay(function(self) {
-				
+
 			//	, 10, this);
 			var count = 1;
 			var self = this;
 			this.$el.find('.accordion-panel-title').each(function() {
-				if ($(this).data("ueditor")) return true;
+				if ($(this).data('ueditor')) {
+					return true;
+				}
 				var $content = $(this);
 				$(this).ueditor({
 					linebreaks: true,
 					disableLineBreak: true,
-					//focus: true,
-					//autostart: false,
-					//tabFocus: false,
 					airButtons: false,
 					allowedTags: ['h5'],
 					placeholder: 'Panel '+count
@@ -190,17 +194,21 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 					self.saveTitle($(this));
 				})
 				.on('keydown', function(e){
-					if (e.which == 9) e.preventDefault();
-				}).on("blur", function() {
-					$content.data('ueditor').stop(); 
+					if (e.which === 9) {
+						e.preventDefault();
+					}
+				}).on('blur', function() {
+					$content.data('ueditor').stop();
 				});
-				
+
 				$(this).data('ueditor').stop();
 				count++;
 			});
 			self.$el.find('.accordion-panel-content').each(function() {
 				var $me = $(this);
-				if ($me.data("ueditor")) return true;
+				if ($me.data('ueditor')) {
+					return true;
+				}
 				$me.ueditor({
 						linebreaks: false,
 						inserts: {},
@@ -224,7 +232,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 				});
 			});
 			self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
-			
+
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
 		},
@@ -239,9 +247,10 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 		},
 
 		property: function(name, value, silent) {
-			if(typeof value != "undefined"){
-				if(typeof silent == "undefined")
+			if(typeof value !== 'undefined'){
+				if(typeof silent === 'undefined') {
 					silent = true;
+				}
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
@@ -257,14 +266,14 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			add_element: function () {
 				var object = new UaccordionModel(),
 				module = new Upfront.Models.Module({
-					"name": "",
-					"properties": [
-						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-						{"name": "class", "value": "c9 upfront-accordion_module"},
-						{"name": "has_settings", "value": 0},
-						{"name": "row", "value": Upfront.Util.height_to_row(225)}
+					'name': '',
+					'properties': [
+						{'name': 'element_id', 'value': Upfront.Util.get_unique_id('module')},
+						{'name': 'class', 'value': 'c9 upfront-accordion_module'},
+						{'name': 'has_settings', 'value': 0},
+						{'name': 'row', 'value': Upfront.Util.height_to_row(225)}
 					],
-					"objects": [
+					'objects': [
 						object
 					]
 				})
@@ -290,8 +299,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			className: 'uaccordion-settings-panel',
 			initialize: function (opts) {
 				this.options = opts;
-				var render_all,
-					me = this;
+				var render_all;
 
 				render_all = function(){
 					this.settings.invoke('render');
@@ -331,7 +339,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 								property: 'panel_bg_color',
 								label: l10n.section_bg,
 								spectrum: {
-									preferredFormat: "hsl",
+									preferredFormat: 'hsl',
 									change: this.onPanelBgChange,
 									move: this.onPanelBgChange
 								}
@@ -342,7 +350,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 								property: 'header_bg_color',
 								label: l10n.header_bg,
 								spectrum: {
-									preferredFormat: "hsl",
+									preferredFormat: 'hsl',
 									change: this.onHeaderBgChange,
 									move: this.onHeaderBgChange
 								}
@@ -353,7 +361,7 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 								property: 'header_border_color',
 								label: l10n.header_border,
 								spectrum: {
-									preferredFormat: "hsl",
+									preferredFormat: 'hsl',
 									change: this.onHeaderBorderChange,
 									move: this.onHeaderBorderChange
 								}
@@ -361,18 +369,9 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 						]
 					})
 				]);
-				
-				// this.$el .on('change', 'input[name=style_type]', function(e){
-				// 	me.onStyleTypeChange(e);
-				// });
-				// this.$el .on('change', 'input[name=theme_style]', function(e){
-				// 	me.onThemeStyleChange(e);
-				// });
-				
-				/**
-				 * Set style to custom as default
-				 */
-				this.property('style_type', "custom");
+
+				// Set style to custom as default
+				this.property('style_type', 'custom');
 			},
 
 			onStyleTypeChange: function(event) {
@@ -421,9 +420,10 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			},
 
 			property: function(name, value, silent) {
-				if(typeof value != "undefined"){
-					if(typeof silent == "undefined")
+				if(typeof value !== 'undefined'){
+					if(typeof silent === 'undefined') {
 						silent = true;
+					}
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
@@ -437,11 +437,11 @@ define(['text!' + 'elements/upfront-accordion/tpl/uaccordion.html'], function(ac
 			}
 		});
 
-		Upfront.Application.LayoutEditor.add_object("Uaccordion", {
-			"Model": UaccordionModel,
-			"View": UaccordionView,
-			"Element": AccordionElement,
-			"Settings": AccordionSettings,
+		Upfront.Application.LayoutEditor.add_object('Uaccordion', {
+			'Model': UaccordionModel,
+			'View': UaccordionView,
+			'Element': AccordionElement,
+			'Settings': AccordionSettings,
 			'anchor': {
 				is_target: false
 			}
