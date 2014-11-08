@@ -31,7 +31,7 @@ define([
 		},
 
 		get_presets: function () {
-			return _.union([{ label: 'Default', value: 'default'}], _.map(this.options.presets.models, function(model) {
+			return _.union([{ label: 'None', value: 'default'}], _.map(this.options.presets.models, function(model) {
 				return { label: model.get('name'), value: model.get('id') };
 			}));
 		}

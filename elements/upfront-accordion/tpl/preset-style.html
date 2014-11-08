@@ -1,0 +1,24 @@
+.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title {
+	color: #<?php echo $properties['active-font-color'] ?>;
+	font-family: <?php echo $properties['active-font-family'] ?>;
+	font-size: <?php echo $properties['active-font-size'] ?>px;
+	background: #<?php echo $properties['active-header-bg-color'] ?>;
+	transition: none';
+}
+.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content {
+	background: #<?php echo $properties['active-content-bg-color'] ?>;
+}
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:after {
+	border-top-color: #<?php echo $properties['static-triangle-icon-color'] ?>;
+	border-left-color: transparent;
+}
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title:after {
+	border-top-color: transparent;
+	border-left-color: #<?php echo $properties['active-triangle-icon-color'] ?>;
+}
+.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title {
+	color: #<?php echo $properties['static-font-color'] ?>;
+	font-family: <?php echo $properties['static-font-family'] ?>;
+	font-size: <?php echo $properties['static-font-size'] ?>px;
+	background: #<?php echo $properties['static-header-bg-color'] ?>;
+}

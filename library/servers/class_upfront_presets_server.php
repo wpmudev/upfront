@@ -54,7 +54,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	/**
 	 * @return array saved presets
 	 */
-	protected function get_presets() {
+	public function get_presets() {
 		$presets = json_decode(get_option($this->db_key, '[]'), true);
 
 		$presets = apply_filters(
@@ -105,5 +105,23 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success('Saved ' . $this->elementName . ' preset, yay.'));
+	}
+
+	public function get_presets_styles() {
+		$presets = $this->get_presets();
+		if (empty($presets)) {
+			return '';
+		}
+
+		$styles = '';
+		foreach ($presets as $preset) {
+			$args = array('properties' => $preset);
+			extract($args);
+			ob_start();
+			include $this->get_style_template_path();
+			$styles .= ob_get_clean();
+		}
+
+		return $styles;
 	}
 }

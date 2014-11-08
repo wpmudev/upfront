@@ -128,15 +128,13 @@ define([
 
 
 		get_content_markup: function () {
-			return this.accordionTpl(
-				_.extend(
-					this.extract_properties(),
-					{
-						show_add: true,
-						show_remove: this.property('accordion_count') > 1 ? true : false
-					}
-				)
-			);
+			var props = this.extract_properties();
+
+			props.preset = props.preset || 'default';
+			props.show_add = true;
+			props.show_remove = this.property('accordion_count') > 1 ? true : false;
+
+			return this.accordionTpl(props);
 		},
 
 		extract_properties: function() {

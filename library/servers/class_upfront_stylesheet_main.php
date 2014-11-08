@@ -1,5 +1,6 @@
 <?php
 
+require_once('class_upfront_accordion_presets_server.php');
 require_once('class_upfront_tab_presets_server.php');
 
 /**
@@ -52,6 +53,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	  $style .= $this->_get_theme_colors_styles();
 		// Add tab presets styles
 		$style .= Upfront_Tab_Presets_Server::get_instance()->get_presets_styles();
+		// Add accordion presets styles
+		$style .= Upfront_Accordion_Presets_Server::get_instance()->get_presets_styles();
 
 	  $this->_out(new Upfront_CssResponse_Success($style));
 	}
