@@ -7547,7 +7547,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				sub = is_region && this.model.is_main() ? false : this.model.get('sub'),
 				bg_image = this.model.get_breakpoint_property_value('background_image', true),
 				$template = $(_Upfront_Templates.region_edit_panel),
-				setting = $template.find('#upfront-region-bg-setting').html(),
+				setting_cback = _.template($template.find('#upfront-region-bg-setting').html()),
+				setting = setting_cback(),
 				region_types = [
 					{ label: l10n.solid_color, value: 'color', icon: 'color' },
 					{ label: l10n.image, value: 'image', icon: 'image' },
@@ -7865,6 +7866,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						multiple: false
 					});
 			}
+
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
 			$fixed = $content.find('.upfront-region-bg-setting-fixed-region');
@@ -8310,7 +8312,15 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		_render_tab_template: function($target, primary, secondary, template){
 			var $template = $(_Upfront_Templates.region_edit_panel),
-				$tab = $('<div>'+$template.find( template ? '#upfront-region-bg-setting-tab-'+template : '#upfront-region-bg-setting-tab').html()+'</div>');
+				$tab = false, tpl = false
+			;
+			if (template) {
+				tpl = _.template($template.find('#upfront-region-bg-setting-tab-'+template).html());
+			} else {
+				tpl = _.template($template.find('#upfront-region-bg-setting-tab').html());
+			}
+			if (tpl) $tab = $('<div>' + tpl() + '</div>');
+				//$tab = $('<div>'+$template.find( template ? '#upfront-region-bg-setting-tab-'+template : '#upfront-region-bg-setting-tab').html()+'</div>');
 			$tab.find('.upfront-region-bg-setting-tab-primary').append(primary);
 			if ( secondary )
 				$tab.find('.upfront-region-bg-setting-tab-secondary').append(secondary);
