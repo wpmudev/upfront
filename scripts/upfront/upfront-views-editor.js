@@ -5556,7 +5556,7 @@ var ThemeFontsPanel = Backbone.View.extend({
 		return this;
 	},
 	update_stats: function() {
-		var msg = 1l0n.font_styles_selected.replace(/%d/, this.collection.length);
+		var msg = l10n.font_styles_selected.replace(/%d/, this.collection.length);
 		this.$el.find('.font-stats').html('<strong>' + msg + '</strong>');
 	},
 	add_one: function(model) {
@@ -8764,7 +8764,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						use_breakpoint_property: true,
 						values: [
 							{ label: l10n.roadmap, value: 'ROADMAP' },
-							{ label: 1l0n.satellite, value: 'SATELLITE' },
+							{ label: l10n.satellite, value: 'SATELLITE' },
 							{ label: l10n.hybrid, value: 'HYBRID' },
 							{ label: l10n.terrain, value: 'TERRAIN' }
 						],
