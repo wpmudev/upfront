@@ -1055,7 +1055,7 @@ define([
 		"className": "command-save",
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html(l10.save);
+			this.$el.html(l10n.save);
 		},
 		on_click: function () {
 			console.log('responsive is saved');
@@ -5497,7 +5497,7 @@ var Theme_Fonts_Storage = function(stored_fonts) {
 
 		Upfront.Util.post(postData)
 			.error(function(){
-				return notifier.addMessage('Theme fonts could not be saved.');
+				return notifier.addMessage(l10n.theme_fonts_save_fail);
 			});
 	};
 
@@ -5556,7 +5556,8 @@ var ThemeFontsPanel = Backbone.View.extend({
 		return this;
 	},
 	update_stats: function() {
-		this.$el.find('.font-stats').html('<strong>' + this.collection.length + ' font styles selected</strong>');
+		var msg = 1l0n.font_styles_selected.replace(/%d/, this.collection.length);
+		this.$el.find('.font-stats').html('<strong>' + msg + '</strong>');
 	},
 	add_one: function(model) {
 		var themeFontView = new ThemeFontListItem({ model: model });
@@ -5576,9 +5577,9 @@ var Variant_View = Backbone.View.extend({
 		}
 		return className;
 	},
-	template: _.template('<span class="font-family">{{family}} — {{name}}</span>{[ if(already_added) { ]} <span class="already-added">Already added</span>{[ } ]}' +
-			'{[ if(heading_preview) { ]}<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview font-preview">The Andromeda Galaxy</h1>{[ } else { ]}' +
-			'<p style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="paragraph-font-preview font-preview">"Imagination will often carry us to worlds that never were, but without it we go nowhere" — Carl Sagan</p>{[ } ]}'),
+	template: _.template('<span class="font-family">{{family}} — {{name}}</span>{[ if(already_added) { ]} <span class="already-added">' + l10n.already_added + '</span>{[ } ]}' +
+			'{[ if(heading_preview) { ]}<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview font-preview">' + l10n.header_preview_quote + '</h1>{[ } else { ]}' +
+			'<p style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="paragraph-font-preview font-preview">' + l10n.body_preview_quote + '</p>{[ } ]}'),
 	events: {
 		'click': 'on_click'
 	},
@@ -5665,13 +5666,13 @@ var Text_Fonts_Manager = Backbone.View.extend({
 		var variants;
 		var font = google_fonts_storage.get_fonts().findWhere({ 'family': this.font_family_select.get_value() });
 		if (_.isEmpty(font)) {
-			alert('Choose font family and weight.');
+			alert(l10n.choose_font_weight);
 			return;
 		}
 
 		variants = this.choose_variants.get_selected();
 		if (_.isEmpty(variants)) {
-			alert('Choose at least one font weight.');
+			alert(l10n.choose_one_font_weight);
 			return;
 		}
 		_.each(variants, function(variant) {
@@ -5685,16 +5686,16 @@ var Text_Fonts_Manager = Backbone.View.extend({
 	},
 	load_google_fonts: function(fonts_collection) {
 		var add_font_panel = this.$el.find('.add-font-panel');
-		var typefaces_list = [{ label: 'Click here to pick a Google Font', value: ''}];
+		var typefaces_list = [{ label: l10n.click_to_pick_google_font, value: ''}];
 		_.each(fonts_collection.pluck('family'), function(family) {
 			typefaces_list.push({ label: family, value: family });
 		});
 		add_font_panel.find('.loading-fonts').remove();
 		// Select font
 		this.font_family_select = new Field_Chosen_Select({
-			label: "Typeface",
+			label: l10n.typeface,
 			values: typefaces_list,
-			placeholder: 'Choose Font',
+			placeholder: l10n.choose_font,
 			additional_classes: 'choose-font'
 		});
 		this.font_family_select.render();
@@ -5767,7 +5768,7 @@ var Insert_Font_Widget = Backbone.View.extend({
 				additional_classes: 'choose-variant'
 			}),
 			new Field_Button({
-				label: 'Insert Font',
+				label: l10n.insert_font,
 				compact: true,
 				on_click: function(){
 					me.finish();
@@ -5805,7 +5806,7 @@ var Insert_Font_Widget = Backbone.View.extend({
 	render_variants: function(variants) {
 		var $variant_field = this.$el.find('.choose-variant select');
 		$variant_field.find('option').remove();
-		$variant_field.append('<option value="">Choose variant</option>');
+		$variant_field.append('<option value="">' + l10n.choose_variant + '</option>');
 		_.each(variants, function(variant) {
 			$variant_field.append('<option value="' + variant + '">' + variant + '</option>');
 		});
@@ -5894,7 +5895,7 @@ var Insert_Font_Widget = Backbone.View.extend({
 		}
 	},
 	finish: function() {
-		$('#insert-font-widget').html('<a class="upfront-css-font" href="#">Insert Font</a>').removeClass('open');
+		$('#insert-font-widget').html('<a class="upfront-css-font" href="#">' + l10n.insert_font + '</a>').removeClass('open');
 	}
 });
 
@@ -5920,41 +5921,41 @@ var CSSEditor = Backbone.View.extend({
 
 	//elemenTypes' element id matches model's 'id_slug' attribute
 	elementTypes: {
-		UaccordionModel: {label: 'Accordion', id: 'uaccordion'},
-		UcommentModel: {label: 'Comments', id: 'ucomment'},
-		UcontactModel: {label: 'Contact Form', id: 'ucontact'},
-		UgalleryModel: {label: 'Gallery', id: 'ugallery'},
-		UimageModel: {label: 'Image', id: 'image'},
-		LoginModel: {label: 'Login', id: 'upfront-login_element'},
-		LikeBox: {label: 'Like Box', id: 'Like-box-object'},
-		MapModel: {label: 'Map', id: 'upfront-map_element'},
-		UnewnavigationModel: {label: 'Navigation', id: 'unewnavigation'},
-		ButtonModel: {label: 'Button', id: 'ubutton'},
-		UpostsModel: {label: 'Posts', id: 'uposts'},
-		UsearchModel: {label: 'Search', id: 'usearch'},
-		USliderModel: {label: 'Slider', id: 'uslider'},
-		SocialMediaModel: {label: 'Social', id: 'SocialMedia'},
-		UtabsModel: {label: 'Tabs', id: 'utabs'},
-		ThisPageModel: {label: 'Page', id: 'this_page'},
-		ThisPostModel: {label: 'Post', id: 'this_post'},
-		UwidgetModel: {label: 'Widget', id: 'uwidget'},
-		UyoutubeModel: {label: 'YoutTube', id: 'uyoutube'},
-		PlainTxtModel: {label: 'Text', id:'plain_text'},
-		CodeModel: {label: 'Code', id: 'upfront-code_element'},
-		Layout: {label: 'Body', id: 'layout'},
-		RegionContainer: {label: 'Region', id: 'region-container'},
-		Region: {label: 'Inner Region', id: 'region'},
-		RegionLightbox: {label: 'Lightbox Region', id: 'region'},
-		PostPart_titleModel: {label: 'PostPart Title', id: 'PostPart_title'},
-		PostPart_contentsModel: {label: 'PostPart Contents', id: 'PostPart_contents'},
-		PostPart_excerptModel: {label: 'PostPart Excerpt', id: 'PostPart_excerpt'},
-		PostPart_featured_imageModel: {label: 'PostPart Featured Image', id: 'PostPart_featured_image'},
-		PostPart_authorModel: {label: 'PostPart Author', id: 'PostPart_author'},
-		PostPart_dateModel: {label: 'PostPart Date', id: 'PostPart_date'},
-		PostPart_updateModel: {label: 'PostPart Update', id: 'PostPart_update'},
-		PostPart_comments_countModel: {label: 'PostPart Comments Count', id: 'PostPart_comments_count'},
-		PostPart_tagsModel: {label: 'PostPart Tags', id: 'PostPart_tags'},
-		PostPart_categoriesModel: {label: 'PostPart Categories', id: 'PostPart_categories'}
+		UaccordionModel: {label: l10n.accordion, id: 'uaccordion'},
+		UcommentModel: {label: l10n.comments, id: 'ucomment'},
+		UcontactModel: {label: l10n.contact_form, id: 'ucontact'},
+		UgalleryModel: {label: l10n.gallery, id: 'ugallery'},
+		UimageModel: {label: l10n.image, id: 'image'},
+		LoginModel: {label: l10n.login, id: 'upfront-login_element'},
+		LikeBox: {label: l10n.like_box, id: 'Like-box-object'},
+		MapModel: {label: l10n.map, id: 'upfront-map_element'},
+		UnewnavigationModel: {label: l10n.navigation, id: 'unewnavigation'},
+		ButtonModel: {label: l10n.button, id: 'ubutton'},
+		UpostsModel: {label: l10n.posts, id: 'uposts'},
+		UsearchModel: {label: l10n.search, id: 'usearch'},
+		USliderModel: {label: l10n.slider, id: 'uslider'},
+		SocialMediaModel: {label: l10n.social, id: 'SocialMedia'},
+		UtabsModel: {label: l10n.tabs, id: 'utabs'},
+		ThisPageModel: {label: l10n.page, id: 'this_page'},
+		ThisPostModel: {label: l10n.post, id: 'this_post'},
+		UwidgetModel: {label: l10n.widget, id: 'uwidget'},
+		UyoutubeModel: {label: l10n.youtube, id: 'uyoutube'},
+		PlainTxtModel: {label: l10n.text, id:'plain_text'},
+		CodeModel: {label: l10n.code, id: 'upfront-code_element'},
+		Layout: {label: l10n.body, id: 'layout'},
+		RegionContainer: {label: l10n.region, id: 'region-container'},
+		Region: {label: l10n.inner_region, id: 'region'},
+		RegionLightbox: {label: l10n.ltbox_region, id: 'region'},
+		PostPart_titleModel: {label: l10n.postpart_title, id: 'PostPart_title'},
+		PostPart_contentsModel: {label: l10n.postpart_content, id: 'PostPart_contents'},
+		PostPart_excerptModel: {label: l10n.postpart_excerpt, id: 'PostPart_excerpt'},
+		PostPart_featured_imageModel: {label: l10n.postpart_featured, id: 'PostPart_featured_image'},
+		PostPart_authorModel: {label: l10n.postpart_author, id: 'PostPart_author'},
+		PostPart_dateModel: {label: l10n.postpart_date, id: 'PostPart_date'},
+		PostPart_updateModel: {label: l10n.postpart_update, id: 'PostPart_update'},
+		PostPart_comments_countModel: {label: l10n.postpart_comments, id: 'PostPart_comments_count'},
+		PostPart_tagsModel: {label: l10n.postpart_tags, id: 'PostPart_tags'},
+		PostPart_categoriesModel: {label: l10n.postpart_categories, id: 'PostPart_categories'}
 	},
 	initialize: function() {
 		if(!$('#' + this.id).length)
@@ -6335,7 +6336,7 @@ var CSSEditor = Backbone.View.extend({
 
 		if (old_name === '_default') {
 			this.$('.upfront-css-save-name-field').val('_default');
-			Upfront.Views.Editor.notify('Default style name can not be changed.', 'error');
+			Upfront.Views.Editor.notify(l10n.default_style_name_nag, 'error');
 			return;
 		}
 
@@ -6375,10 +6376,10 @@ var CSSEditor = Backbone.View.extend({
 			data;
 
 		if (this.is_global_stylesheet === false && this.stylename === this.get_temp_stylename())
-			return notifier.addMessage('You need to set a name for the style.', 'error');
+			return notifier.addMessage(l10n.style_name_nag, 'error');
 
 		if(!styles)
-			return notifier.addMessage('The slylesheet is empty.', 'error');
+			return notifier.addMessage(l10n.style_empty_nag, 'error');
 
 		styles = this.stylesAddSelector(styles, (this.is_default_style ? '' : this.get_css_selector()));
 		data = {
@@ -6420,10 +6421,10 @@ var CSSEditor = Backbone.View.extend({
 
 				me.checkDeleteToggle(data.name);
 
-				return notifier.addMessage('Styles saved as ' + me.get_style_id());
+				return notifier.addMessage(l10n.style_saved_as.replace(/%s/,  me.get_style_id()));
 			})
 			.error(function(response){
-				return notifier.addMessage('There was an error.');
+				return notifier.addMessage(l10n.there_was_an_error);
 			});
 	},
 
@@ -6434,7 +6435,7 @@ var CSSEditor = Backbone.View.extend({
 			data;
 
 		if(!styles) {
-			return notify ? notifier.addMessage('The slylesheet is empty.', 'error') : false;
+			return notify ? notifier.addMessage(l10n.style_empty_nag, 'error') : false;
 		}
 
 		data = {
@@ -6465,10 +6466,10 @@ var CSSEditor = Backbone.View.extend({
 
 				Upfront.Events.trigger('upfront:themestyle:saved', me.get_style_id());
 
-				return notify ? notifier.addMessage('Styles saved as ' + me.get_style_id()) : true;
+				return notify ? notifier.addMessage(l10n.style_saved_as.replace(/%s/,  me.get_style_id())) : true;
 			})
 			.error(function(response){
-				return notify ? notifier.addMessage('There was an error.') : true;
+				return notify ? notifier.addMessage(l10n.there_was_an_error) : true;
 			});
 
 	},
@@ -6476,7 +6477,7 @@ var CSSEditor = Backbone.View.extend({
 	checkDeleteToggle: function(e){
 		if (_.isUndefined(e)) return;
 		if(!this.deleteToggle)
-			this.deleteToggle = $('<a href="#" class="upfront-css-delete">Delete this style</a>');
+			this.deleteToggle = $('<a href="#" class="upfront-css-delete">' + l10n.delete_style + '</a>');
 
 		var value = _.isString(e) ? e : e.target.value,
 			elementType = this.elementType.id,
@@ -6498,7 +6499,7 @@ var CSSEditor = Backbone.View.extend({
 			styleName = elementType + '-' + this.$('.upfront-css-save-name-field').val()
 		;
 
-		if(!confirm('If you delete the "' + styleName + '" style, all the elements with it will get unstyled. Are you sure?'))
+		if(!confirm(l10n.delete_stylename_nag.replace(/%s/, styleName)))
 			return;
 
 		var deleteData = {
@@ -6510,7 +6511,7 @@ var CSSEditor = Backbone.View.extend({
 		Upfront.Util.post(deleteData)
 			.done(function(){
 				var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
-				notifier.addMessage('The style "' + styleName + '" was deleted.');
+				notifier.addMessage(l10n.stylename_deleted.replace(/%s/, styleName));
 
 				//Clean the editor up
 				me.$('.upfront-css-save-name-field').val('');
@@ -6751,7 +6752,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 			maxSelectionSize: 9,
 			localStorageKey: "spectrum.recent_bgs",
 			preferredFormat: "hex",
-			chooseText: "Ok",
+			chooseText: l10n.ok,
 			showInput: true,
 			allowEmpty:true,
 			show: function(){
@@ -6824,7 +6825,7 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 		this.options = opts;
 		SettingsItem.prototype.initialize.call(this, this.options);
 		var item = new Field_Complex_Toggleable_Text_Field({
-			element_label: "Make this element an anchor",
+			element_label: l10n.make_element_anchor,
 			model: this.model,
 			property: 'anchor'
 		});
@@ -6882,7 +6883,7 @@ var Settings_LabeledLightboxTrigger = Settings_LightboxTrigger.extend({
 			new Field_Text({
 				model: this.model,
 				property: 'lightbox_label',
-				label: 'Label'
+				label: l10n.label
 			})
 		);
 	},
@@ -6940,7 +6941,7 @@ var Settings_LabeledAnchorTrigger = Settings_AnchorTrigger.extend({
 			new Field_Text({
 				model: this.model,
 				property: 'anchor_label',
-				label: 'Label'
+				label: l10n.label
 			})
 		);
 	},
@@ -7093,7 +7094,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		addMessage: function(message, type){
 			var notice = {
-				message: message ? message : 'No message',
+				message: message ? message : l10n.no_message,
 				type: type ? type : 'info'
 			};
 
@@ -7170,10 +7171,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		popup: false,
 		defaultOptions: {
 			// Title for the top
-			title: 'Select a content to link',
+			title: l10n.select_content_to_link,
 			postTypes: [
-				{name: 'post', label: 'Posts'},
-				{name: 'pages', label: 'Pages'}
+				{name: 'post', label: l10n.posts},
+				{name: 'pages', label: l10n.pages}
 			]
 		},
 		events: {
@@ -7215,7 +7216,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.fetch({});
 
 			this.$('#upfront-popup-bottom')
-				.html('<div class="use_selection_container inactive"><a href="#use" class="use">Ok</a></div><div class="search_container clearfix"><input type="text" placeholder="Search" value=""><div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div></div>')
+				.html('<div class="use_selection_container inactive"><a href="#use" class="use">Ok</a></div><div class="search_container clearfix"><input type="text" placeholder="' + l10n.search + '" value=""><div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div></div>')
 				.append(this.pagination.$el)
 			;
 			$('#upfront-popup').addClass('upfront-postselector-popup');
@@ -7262,8 +7263,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		fetch: function(options){
 			var me = this,
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Loading...",
-					done: "Thank you for waiting",
+					loading: l10n.loading,
+					done: l10n.thank_you_for_waiting,
 					fixed: false
 				})
 			;
@@ -7548,18 +7549,18 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$template = $(_Upfront_Templates.region_edit_panel),
 				setting = $template.find('#upfront-region-bg-setting').html(),
 				region_types = [
-					{ label: "Solid color", value: 'color', icon: 'color' },
-					{ label: "Image", value: 'image', icon: 'image' },
-					{ label: "Video", value: 'video', icon: 'video' }
+					{ label: l10n.solid_color, value: 'color', icon: 'color' },
+					{ label: l10n.image, value: 'image', icon: 'image' },
+					{ label: l10n.video, value: 'video', icon: 'video' }
 				]
 			;
 
 			if ( !is_layout ) {
-				region_types.push({ label: "Image slider", value: 'slider', icon: 'slider' });
-				region_types.push({ label: "Map", value: 'map', icon: 'map' });
+				region_types.push({ label: l10n.image_slider, value: 'slider', icon: 'slider' });
+				region_types.push({ label: l10n.map, value: 'map', icon: 'map' });
 			}
 			if (_upfront_post_data.post_id) {
-				region_types.push({ label: "Featured Image", value: 'featured', icon: 'feat' });
+				region_types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
 			}
 
 			var	bg_type = new Field_Select({
@@ -7583,7 +7584,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				var region_name = new Field_Text({
 					model: this.model,
 					name: 'title',
-					placeholder: "Enter name for this region...",
+					placeholder: l10n.region_name_placeholder,
 					change: function () {
 					},
 					blur: function () {
@@ -7659,7 +7660,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				var contained_region = new Field_Number({
 					model: this.model,
 					property: 'contained_region_width',
-					label: "Contained Region width:",
+					label: l10n.contained_region_width,
 					label_style: "inline",
 					default_value: grid.size*grid.column_width,
 					min: grid.size*grid.column_width,
@@ -7689,18 +7690,18 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					is_bottom = index_container == total_container-1,
 					has_sticky = collection.findWhere({sticky: '1'}),
 					types = [
-						{ label: "100% wide", value: 'wide' },
-						{ label: "Contained", value: 'clip' }
+						{ label: l10n.full_width, value: 'wide' },
+						{ label: l10n.contained, value: 'clip' }
 					],
 					types = index_container > 0 ? types : _.union( [
-						{ label: "Full Screen", value: 'full' }
+						{ label: l10n.full_screen, value: 'full' }
 					], types)
 					region_global = new Field_Checkboxes({
 						model: this.model,
 						name: 'scope',
 						multiple: false,
 						values: [
-							{ label: "Use this area as a global theme " + ( is_top ? 'header' : ( is_bottom ? 'footer' : '' ) ), value: 'global' }
+							{ label: (is_top ? l10n.use_as_global_header : (is_bottom ? l10n.use_as_global_footer : '')), value: 'global' }
 						],
 						change: function(){
 							var value = this.get_value(),
@@ -7710,7 +7711,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								name = false,
 								related_region = false;
 							if ( value == 'global' ){
-								title = ( is_top ? 'Header' : ( is_bottom ? 'Footer' : '' ) );
+								title = ( is_top ? l10n.header : ( is_bottom ? l10n.footer : '' ) );
 								name = ( is_top ? 'header' : ( is_bottom ? 'footer' : '' ) );
 								if ( title && name ){
 									related_region = this.model.collection.get_by_name(name);
@@ -7728,8 +7729,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					}),
 					add_global_region = new Field_Button({
 						model: this.model,
-						label: is_top ? 'Add global header' : 'Add global footer',
-						info: 'This layout doesn\'t use global ' + (is_top ? 'header' : 'footer'),
+						label: is_top ? l10n.add_global_header : l10n.add_global_footer,
+						info: (is_top ? l10n.layout_no_global_header : l10n.layout_no_global_footer),
 						compact: true,
 						on_click: function(e){
 							e.preventDefault();
@@ -7773,9 +7774,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "No", value: '' },
-							{ label: "Bottom", value: 'bottom' },
-							{ label: "Top", value: 'top' }
+							{ label: l10n.no, value: '' },
+							{ label: l10n.bottom, value: 'bottom' },
+							{ label: l10n.top, value: 'top' }
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -7836,8 +7837,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: 'keep-position',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "Keep Position", value: 'keep-position' },
-							{ label: "Keep Ratio", value: 'keep-ratio' }
+							{ label: l10n.keep_position, value: 'keep-position' },
+							{ label: l10n.keep_ratio, value: 'keep-ratio' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -7853,7 +7854,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "Restrict floating to Parent Region", value: '1' }
+							{ label: l10n.restrict_to_parent, value: '1' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -7944,7 +7945,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "Sticky this region", value: '1' }
+							{ label: l10n.sticky_region, value: '1' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -8020,7 +8021,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			me.render_icon();
 		},
 		notify: function () {
-			Upfront.Views.Editor.notify("Background settings have been updated");
+			Upfront.Views.Editor.notify(l10n.bg_updated);
 		},
 		apply_region_scope: function (model, scope, name, title) {
 			var sub_regions = model.get_sub_regions(),
@@ -8089,7 +8090,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					width: new Upfront.Views.Editor.Field.Number({
 						model: this.model,
 						property: 'width',
-						label: "Width:",
+						label: l10n.width + ':',
 						label_style: "inline",
 						min: 3 * grid.column_width,
 						max: Math.floor(grid.size/2) * grid.column_width,
@@ -8098,7 +8099,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					height: new Upfront.Views.Editor.Field.Number({
 						model: this.model,
 						property: 'height',
-						label: "Height:",
+						label: l10n.height + ':',
 						label_style: "inline",
 						min: 3 * grid.baseline,
 						change: set_value
@@ -8108,7 +8109,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				fields.top = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'top',
-					label: "Top:",
+					label: l10n.top + ':',
 					label_style: "inline",
 					min: 0,
 					change: set_value
@@ -8117,7 +8118,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				fields.bottom = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'bottom',
-					label: "Bottom:",
+					label: l10n.bottom + ':',
 					label_style: "inline",
 					min: 0,
 					change: set_value
@@ -8126,7 +8127,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				fields.left = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'left',
-					label: "Left:",
+					label: l10n.left + ':',
 					label_style: "inline",
 					min: 0,
 					change: set_value
@@ -8135,7 +8136,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				fields.right = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'right',
-					label: "Right:",
+					label: l10n.right + ":",
 					label_style: "inline",
 					min: 0,
 					change: set_value
@@ -8170,7 +8171,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					width: new Upfront.Views.Editor.Field.Number({
 						model: this.model,
 						property: 'col',
-						label: "Width(Cols):",
+						label: l10n.col_width + ":",
 						label_style: "inline",
 						min: 3,// * grid.column_width,
 						max: 24,//Math.floor(grid.size/2) * grid.column_width,
@@ -8179,7 +8180,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					height: new Upfront.Views.Editor.Field.Number({
 						model: this.model,
 						property: 'height',
-						label: "Height:",
+						label: l10n.height + ":",
 						label_style: "inline",
 						min: 3 * grid.baseline,
 						change: set_value
@@ -8189,7 +8190,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					    property: 'click_out_close',
 					    label: "",
 				  	    values: [
-						    { label: "Clicking outside Active Area closes lightbox", value: 'yes', checked: this.model.get_property_value_by_name('click_out_close') == 'yes' ? 'checked' : false }
+						    { label: l10n.click_close_ltbox, value: 'yes', checked: this.model.get_property_value_by_name('click_out_close') == 'yes' ? 'checked' : false }
 					    ],
 						change: set_value
 				    }),
@@ -8198,7 +8199,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					    property: 'show_close',
 					    label: "",
 				  	    values: [
-						    { label: "Show Close Icon", value: 'yes', checked: this.model.get_property_value_by_name('show_close') == 'yes' ? 'checked' : false }
+						    { label: l10n.show_close_icon, value: 'yes', checked: this.model.get_property_value_by_name('show_close') == 'yes' ? 'checked' : false }
 					    ],
 						change: set_value
 				    }),
@@ -8207,13 +8208,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					    property: 'add_close_text',
 					    label: "",
 				  	    values: [
-						    { label: "Add Close Text", value: 'yes', checked: this.model.get_property_value_by_name('add_close_text') == 'yes' ? 'checked' : false }
+						    { label: l10n.add_close_text, value: 'yes', checked: this.model.get_property_value_by_name('add_close_text') == 'yes' ? 'checked' : false }
 					    ],
 						change: set_value
 				    }),
 					close_text: new Upfront.Views.Editor.Field.Text({
 						model: this.model,
-						default_value: 'Close',
+						default_value: l10n.close,
 						property: 'close_text',
 						label_style: "inline",
 						change: set_value
@@ -8224,7 +8225,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						model: this.model,
 						property: 'overlay_color',
 						default_value: 'rgba(38,58,77,0.75)',
-						label: "Overlay BG:",
+						label: l10n.overlay_bg + ":",
 						change: set_value,
 						spectrum: {
 							move: function(color) {
@@ -8246,7 +8247,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						model: this.model,
 						property: 'lightbox_color',
 						default_value: 'rgba(248,254,255,0.9)',
-						label: "Active Area BG:",
+						label: l10n.active_area_bg + ":",
 						change: set_value,
 						spectrum: {
 							move: function(color) {
@@ -8359,9 +8360,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$style = $('<div class="upfront-region-bg-image-style"></div>'),
 				$tile = $('<div class="upfront-region-bg-image-tile" />'),
 				$fixed = $('<div class="upfront-region-bg-image-fixed clearfix" />'),
-				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-setting-label-alt">Image Position:</div></div>'),
+				$fixed_pos = $('<div class="upfront-region-bg-image-fixed-pos"><div class="upfront-region-bg-setting-label-alt">' + l10n.image_position + ':</div></div>'),
 				$fixed_pos_num = $('<div class="upfront-region-bg-image-fixed-pos-num" />'),
-				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-setting-label-alt">Background Color:</div></div>');
+				$fixed_color = $('<div class="upfront-region-bg-image-fixed-color"><div class="upfront-region-bg-setting-label-alt">' + l10n.bg_color + ':</div></div>');
 
 			if ( !image && value != 'featured') {
 				this.upload_image();
@@ -8381,9 +8382,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: 'full',
 						icon_class: 'upfront-region-field-icon',
 						values: [
-							{ label: "Full Width", value: 'full', icon: 'bg-image-full' },
-							{ label: "Tiled / Pattern", value: 'tile', icon: 'bg-image-tile' },
-							{ label: "Fixed Position", value: 'fixed', icon: 'bg-image-fixed' }
+							{ label: l10n.full_width_bg, value: 'full', icon: 'bg-image-full' },
+							{ label: l10n.tiled_pattern, value: 'tile', icon: 'bg-image-tile' },
+							{ label: l10n.fixed_position, value: 'fixed', icon: 'bg-image-fixed' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -8408,8 +8409,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						layout: 'horizontal-inline',
 						default_value: ['y', 'x'],
 						values: [
-							{ label: "Tile Vertically", value: 'y' },
-							{ label: "Tile Horizontally", value: 'x' }
+							{ label: l10n.tile_vertically, value: 'y' },
+							{ label: l10n.tile_horizontally, value: 'x' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -8591,7 +8592,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: true,
 						layout: 'horizontal-inline',
 						multiple: false,
-						values: [ { label: "Rotate automatically every ", value: true } ],
+						values: [ { label: l10n.autorotate_each + " ", value: true } ],
 						change: function () {
 							var value = this.get_value();
 							this.property.set({value: value ? true : false});
@@ -8615,8 +8616,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: 'always',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: "Always show slider controls", value: 'always' },
-							{ label: "Show controls on hover", value: 'hover' }
+							{ label: l10n.always_show_ctrl, value: 'always' },
+							{ label: l10n.show_ctrl_hover, value: 'hover' }
 						],
 						change: set_value
 					}),
@@ -8627,11 +8628,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: 'crossfade',
 						icon_class: 'upfront-region-field-icon',
 						values: [
-							{ label: "Slide Down", value: 'slide-down', icon: 'bg-slider-slide-down' },
-							{ label: "Slide Up", value: 'slide-up', icon: 'bg-slider-slide-up' },
-							{ label: "Slide Left", value: 'slide-left', icon: 'bg-slider-slide-left' },
-							{ label: "Slide Right", value: 'slide-right', icon: 'bg-slider-slide-right' },
-							{ label: "Crossfade", value: 'crossfade', icon: 'bg-slider-crossfade' }
+							{ label: l10n.slide_down, value: 'slide-down', icon: 'bg-slider-slide-down' },
+							{ label: l10n.slide_up, value: 'slide-up', icon: 'bg-slider-slide-up' },
+							{ label: l10n.slide_left, value: 'slide-left', icon: 'bg-slider-slide-left' },
+							{ label: l10n.slide_right, value: 'slide-right', icon: 'bg-slider-slide-right' },
+							{ label: l10n.crossfade, value: 'crossfade', icon: 'bg-slider-crossfade' }
 						],
 						change: set_value
 					})
@@ -8642,7 +8643,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			});
 			$rotate.append(fields.rotate.$el);
 			$rotate.append(fields.rotate_time.$el);
-			$slides_title.text("Slides Order:");
+			$slides_title.text(l10n.slides_order + ":");
 			this._render_tab_template($tab, fields.transition.$el, [$rotate, fields.control.$el, $slides], 'slider');
 			me.update_slider_slides($slides_content);
 			$slides_content.on('click', '.upfront-region-bg-slider-add-image', function (e) {
@@ -8672,7 +8673,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		update_slider_slides: function ($wrap) {
 			var me = this,
 				slide_images = me.model.get_breakpoint_property_value('background_slider_images', true),
-				$add = $('<div class="upfront-region-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">Add Slide</div>');
+				$add = $('<div class="upfront-region-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">' + l10n.add_slide + '</div>');
 			$wrap.html('');
 
 			if ( slide_images ) {
@@ -8734,7 +8735,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			var fields = {
 					location: new Field_Text({
 						model: this.model,
-						label: "Location:",
+						label: l10n.location + ":",
 						property: 'background_map_location',
 						use_breakpoint_property: true,
 						placeholder: "e.g 123 Nice St",
@@ -8747,7 +8748,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					}),
 					zoom: new Field_Slider({
 						model: this.model,
-						label: "Zoom:",
+						label: l10n.zoom + ":",
 						property: 'background_map_zoom',
 						use_breakpoint_property: true,
 						default_value: 8,
@@ -8758,32 +8759,32 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					}),
 					style: new Field_Select({
 						model: this.model,
-						label: "Map Style:",
+						label: l10n.map_style + ":",
 						property: 'background_map_style',
 						use_breakpoint_property: true,
 						values: [
-							{ label: "Roadmap", value: 'ROADMAP' },
-							{ label: "Satellite", value: 'SATELLITE' },
-							{ label: "Hybrid", value: 'HYBRID' },
-							{ label: "Terrain", value: 'TERRAIN' }
+							{ label: l10n.roadmap, value: 'ROADMAP' },
+							{ label: 1l0n.satellite, value: 'SATELLITE' },
+							{ label: l10n.hybrid, value: 'HYBRID' },
+							{ label: l10n.terrain, value: 'TERRAIN' }
 						],
 						change: set_value
 					}),
 					controls: new Field_Select({
 						model: this.model,
-						label: "Controls:",
-						placeholder: "Choose map controls",
+						label: l10n.controls + ":",
+						placeholder: l10n.choose_ctrl,
 						property: 'background_map_controls',
 						use_breakpoint_property: true,
 						multiple: true,
 						default_value: ["pan"],
 						values: [
-							{ label: "Pan", value: "pan" },
-							{ label: "Zoom", value: "zoom" },
-							{ label: "Map Type", value: "map_type" },
-							{ label: "Scale", value: "scale" },
-							{ label: "Street View", value: "street_view" },
-							{ label: "Overview Map", value: "overview_map" }
+							{ label: l10n.pan, value: "pan" },
+							{ label: l10n.zoom, value: "zoom" },
+							{ label: l10n.map_type, value: "map_type" },
+							{ label: l10n.scale, value: "scale" },
+							{ label: l10n.street_view, value: "street_view" },
+							{ label: l10n.overview_map, value: "overview_map" }
 						],
 						change: set_value
 					})
@@ -8829,8 +8830,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		render_modal_tab_video: function ($tab) {
 			var me = this,
 				label_html = '<div class="upfront-region-bg-setting-label"></div>',
-				$style_label = $(label_html).text("Video background behavior"),
-				$video_label = $(label_html).text("Video URL"),
+				$style_label = $(label_html).text(l10n.vide_bg_behavior),
+				$video_label = $(label_html).text(l10n.video_url),
 				fields = {
 					mute: new Field_Checkboxes({
 						model: this.model,
@@ -8839,7 +8840,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						default_value: true,
 						layout: 'horizontal-inline',
 						multiple: false,
-						values: [ { label: "Mute video on play?", value: true } ],
+						values: [ { label: l10n.mute_on_play, value: true } ],
 						change: function () {
 							var value = this.get_value();
 							this.model.set_breakpoint_property(this.property_name, value ? true : false);
@@ -8850,7 +8851,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						property: 'background_video',
 						use_breakpoint_property: true,
 						default_value: '',
-						placeholder: 'Video URL (YouTube, Vimeo or Wistia)',
+						placeholder: l10n.video_source,
 						change: function () {
 							var value = this.get_value();
 							if ( value ){
@@ -8873,9 +8874,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						layout: 'horizontal-inline',
 						default_value: ["crop"],
 						values: [
-							{ label: "Scale & crop", value: "crop" },
-							{ label: "No crop embed", value: "full" },
-							{ label: "No crop + bg color", value: "inside" }
+							{ label: l10n.scale_and_crop, value: "crop" },
+							{ label: l10n.no_crop_embed, value: "full" },
+							{ label: l10n.no_crop_bg, value: "inside" }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -8888,7 +8889,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					}),
 					color: new Field_Color({
 						model: this.model,
-						label: "Area BG Color:",
+						label: l10n.area_bg_color + ":",
 						label_style: 'inline',
 						property: 'background_color',
 						use_breakpoint_property: true,
@@ -8972,7 +8973,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		icon: function(){
 			return this._active ? 'bg-setting-active' : 'bg-setting';
 		},
-		tooltip: "Change Background",
+		tooltip: l10n.change_background,
 		_active: false,
 		open_bg_setting: function () {
 			var type = this.model.get_property_value_by_name('background_type');
@@ -8997,8 +8998,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		tooltip: function () {
 			var locked = this.model.get_property_value_by_name('expand_lock'),
-				status = '<span class="' + (locked ? 'expand-lock-active' : 'expand-lock-inactive') + '">' + (locked ? 'OFF' : 'ON') + '</span>';
-			return "Auto-expand to fit <br />elements as they <br />are added " + status;
+				status = '<span class="' + (locked ? 'expand-lock-active' : 'expand-lock-inactive') + '">' + (locked ? l10n.off : l10n.on) + '</span>';
+			return l10n.autoexpand.replace(/%s/, status);
 		},
 		toggle_lock: function () {
 			var locked = this.model.get_property_value_by_name('expand_lock');
@@ -9025,18 +9026,18 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			var to = this.options.to;
 			switch ( to ){
 				case 'bottom':
-					var msg = "Insert new region below"; break;
+					var msg = l10n.new_region_below; break;
 				case 'left':
-					var msg = "Insert sidebar region"; break;
+					var msg = l10n.new_sidebar_region; break;
 				case 'right':
-					var msg = "Insert sidebar region"; break;
+					var msg = l10n.new_sidebar_region; break;
 				case 'top':
-					var msg = "Insert new region above"; break;
+					var msg = l10n.new_region_above; break;
 				case 'top-left':
 				case 'top-right':
 				case 'bottom-left':
 				case 'bottom-right':
-					var msg = "Add floating region"; break;
+					var msg = l10n.add_floating_region; break;
 			}
 			return msg;
 		},
@@ -9198,11 +9199,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		className: 'upfront-inline-panel-item upfront-region-panel-item-delete-region',
 		icon: 'delete',
-		tooltip: "Delete this section",
+		tooltip: l10n.delete_section,
 		//label: "Delete this section",
 		delete_region: function () {
 			var collection = this.model.collection;
-			if ( confirm("Are you sure you want to delete this section?") ){
+			if ( confirm(l10n.delete_section_nag) ){
 				collection.remove(this.model);
 			}
 		}
@@ -9540,7 +9541,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				width: new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'width',
-					label: "Width",
+					label: l10n.width,
 					label_style: "inline",
 					min: 3 * grid.column_width,
 					max: Math.floor(grid.size/2) * grid.column_width
@@ -9548,7 +9549,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				height: new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'height',
-					label: "Height",
+					label: l10n.height,
 					label_style: "inline",
 					min: 3 * grid.baseline
 				})
@@ -9557,7 +9558,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.fields.top = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'top',
-					label: "Top",
+					label: l10n.top,
 					label_style: "inline",
 					min: 0
 				});
@@ -9565,7 +9566,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.fields.bottom = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'bottom',
-					label: "Bottom",
+					label: l10n.bottom,
 					label_style: "inline",
 					min: 0
 				});
@@ -9573,7 +9574,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.fields.left = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'left',
-					label: "Left",
+					label: l10n.left,
 					label_style: "inline",
 					min: 0
 				});
@@ -9581,7 +9582,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.fields.right = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					property: 'right',
-					label: "Right",
+					label: l10n.right,
 					label_style: "inline",
 					min: 0
 				});
@@ -9810,7 +9811,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			Upfront.Util.post(postData)
 				.error(function(){
-					return notifier.addMessage('Breakpoints could not be saved.');
+					return notifier.addMessage(l10n.breakpoint_save_fail);
 				});
 		};
 
@@ -9884,7 +9885,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.input = new Upfront.Views.Editor.Field.Number({
 				className: 'inline-number plaintext-settings',
 				min: 1,
-				label: "Viewport Width",
+				label: l10n.viewport_width,
 				suffix: "px",
 				default_value: this.active_breakpoint.get('width')
 			});
@@ -9903,12 +9904,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 	var BreakpointEditPanel = Backbone.View.extend({
 		className: 'breakpoint-edit-panel',
-		template: '<div><span class="edit-breakpoint-popup-title">Set-up your custom Breakpoint:</span></div>' +
+		template: '<div><span class="edit-breakpoint-popup-title">' + l10n.set_custom_breakpoint + ':</span></div>' +
 			'<div>' +
-			'<label for="breakpoint-name">Name:</label><input type="text" value="{{ name }}" placeholder="Custom Breakpoint 01" id="breakpoint-name" />' +
+			'<label for="breakpoint-name">' + l10n.name + ':</label><input type="text" value="{{ name }}" placeholder="' + l10n.custom_breakpoint_placeholder + '" id="breakpoint-name" />' +
 			'</div><div>' +
-			'<label for="breakpoint-width">Width:</label><input type="number" min="240" max="1080" value="{{ width }}" id="breakpoint-width" /><label>px</label>' +
-			'<label for="breakpoint-columns">Number of columns:</label><input min="5" max="24" type="number" value="{{ columns }}" id="breakpoint-columns" />' +
+			'<label for="breakpoint-width">' + l10n.width + ':</label><input type="number" min="240" max="1080" value="{{ width }}" id="breakpoint-width" /><label>px</label>' +
+			'<label for="breakpoint-columns">' + l10n.number_of_columns + ':</label><input min="5" max="24" type="number" value="{{ columns }}" id="breakpoint-columns" />' +
 			'</div>',
 		events: {
 			'change #breakpoint-name': 'on_name_change',
@@ -9965,7 +9966,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			if (this.active_breakpoint.get('fixed')) return this;
 
-			this.$el.html('<a href="" id="edit-breakpoint">Edit breakpoint</a>');
+			this.$el.html('<a href="" id="edit-breakpoint">' + l10n.edit_breakpoint + '</a>');
 
 			return this;
 		},
@@ -9980,7 +9981,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 				$content
 				.append(editPanel.render().el);
-				$bottom.append('<div class="breakpoint-edit-ok-button">OK</div>');
+				$bottom.append('<div class="breakpoint-edit-ok-button">' + l10n.ok + '</div>');
 				$('#upfront-popup-close').hide();
 				$('.breakpoint-edit-ok-button').on('click', function() {
 					Upfront.Popup.close();
@@ -10239,7 +10240,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		createLightBox: function(){
 			var name = $.trim(this.$('.js-ulinkpanel-lightbox-input').val());
 			if(!name){
-				Upfront.Views.Editor.notify('Could not create a lightbox with an empty name.', 'error');
+				Upfront.Views.Editor.notify(l10n.ltbox_empty_name_nag, 'error');
 				return false;
 			}
 
