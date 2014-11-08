@@ -1,5 +1,5 @@
 define([
-	'elements/upfront-tabs/js/settings/edit-preset-item'
+	'scripts/upfront/preset-settings/edit-preset-item'
 ], function(EditPresetItem) {
 	var EditPresetPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		className: 'preset-manager-panel',
@@ -8,7 +8,8 @@ define([
 			this.options = options || {};
 
 			this.editPresetItem = new EditPresetItem({
-				model: this.options.preset
+				model: this.options.preset,
+				stateFields: this.options.stateFields
 			});
 
 			this.listenTo(this.options.preset, 'change', this.onPresetChange);

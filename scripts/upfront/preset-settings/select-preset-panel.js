@@ -1,6 +1,6 @@
 define([
-	'elements/upfront-tabs/js/settings/select-preset-item',
-	'elements/upfront-tabs/js/settings/new-preset-item'
+	'scripts/upfront/preset-settings/select-preset-item',
+	'scripts/upfront/preset-settings/new-preset-item'
 ], function(SelectPresetItem, NewPresetItem) {
 	var SelectPresetPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		className: 'preset-manager-panel',
@@ -31,6 +31,7 @@ define([
 			this.trigger('upfront:presets:new', presetName);
 		},
 
+		// Propagate to parent
 		editPreset: function(preset) {
 			this.trigger('upfront:presets:edit', preset);
 		}
@@ -38,3 +39,4 @@ define([
 
 	return SelectPresetPanel;
 });
+
