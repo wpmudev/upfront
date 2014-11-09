@@ -438,61 +438,75 @@ var ImageInsert = UeditorInsert.extend({
 	},
 
 	make_caption_editable: function(){
-		var me = this,
+		var self = this,
 			data = this.data.get("style")
 		;
 		if (!data) return false;
 		if( !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 			this.$('.wp-caption-text')
+                .on( "click", function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var ueditor = $(this).data("ueditor");
+                    if( ueditor.active === false ){
+                        ueditor.start();
+                        self.on_redactor_start();
+                    }
+                } )
 				//.attr('contenteditable', true)
 				.off('keyup')
 				.on('keyup', function(e){
-					me.data.set('caption', this.innerHTML, {silent: true});
+					self.data.set('caption', this.innerHTML, {silent: true});
 					//Update event makes InsertManager update its data without rendering.
-					me.data.trigger('update');
+                    self.data.trigger('update');
 				})
 				.ueditor({
 					linebreaks: true,
-					autostart: true,
+					autostart: false,
 					pastePlainText: true,
-					buttons: ['bold', 'italic', 'upfrontLink', 'stateAlign']
+					buttons: ['bold', 'italic', 'upfrontLink', 'stateAlign'],
+                    inserts: false
 				})
 			;
-			this.ueditor = this.$('.wp-caption-text').data('ueditor');
-			this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-				if(redactor != me.ueditor.redactor)
-					return;
 
-				var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-					parentRedactor = parentUeditor ? parentUeditor.redactor : false
-					;
-
-				if(!parentRedactor)
-					return;
-
-				parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
-				parentRedactor.$textarea.on('keydown.redactor-textarea');
-
-				//parentUeditor.stop();
-			});
-
-			this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-				if(redactor != me.ueditor.redactor)
-					return;
-
-				var parentUeditor = me.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-					parentRedactor = parentUeditor ? parentUeditor.redactor : false
-					;
-
-				if(!parentRedactor)
-					return;
-
-				//parentRedactor.buildBindKeyboard();
-
-				//var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
-				//parentUeditor.start();
-			});
 	},
+    on_redactor_start: function(){
+        var self = this;
+        this.ueditor = this.$('.wp-caption-text').data('ueditor');
+
+        this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
+            if( ! _.isEqual(redactor,  self.ueditor.redactor ))
+                return;
+
+            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                ;
+
+            if(!parentRedactor)
+                return;
+
+            parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
+            parentRedactor.$textarea.on('keydown.redactor-textarea');
+            self.ueditor.start();
+            parentUeditor.stop();
+            self.ueditor.start();
+
+        });
+
+        this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
+            if(redactor != self.ueditor.redactor)
+                return;
+
+            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                ;
+
+            if(!parentRedactor)
+                return;
+
+            //parentUeditor.start();
+        });
+    },
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
 	controlEvents: function(){
 		var me = this;

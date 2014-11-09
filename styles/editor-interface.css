@@ -1881,7 +1881,12 @@ a.ueditor-action-pickercancel{
 	height: 25px;
 	 -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;
 }
-
+.ueditor-post-insert-manager{
+    position:absolute;
+    display: none;
+    /*margin-top:-25px;*/
+    width: 100%;
+}
 .uinsert-selector {
 	/*position: absolute;*/
 	/*left: 50px;*/
@@ -1891,21 +1896,20 @@ a.ueditor-action-pickercancel{
     /*z-index: 99;*/
     display: none;
 	position: absolute;
-    margin-left: 50px;
+    /*margin-left: 50px;*/
 	background: rgba(31, 48, 63, 0.95);
 	height: 30px;
 	padding: 0 5px;
     z-index: 99;
     margin-top: -25px;
     width: auto;
-    display: inline-block;
 }
 
 .uinsert-selector:before {
 	content: '';
 	display: block;
 	position: absolute;
-	left: -10px;
+	left: -8px;
 	top: 35%;
 	border: 5px solid transparent;
 	border-right-color: rgba(31, 48, 63, 0.95);
@@ -8883,7 +8887,7 @@ a.ueditor-select-option:hover {
 	height: 24px;
 	width: 60px;
 	z-index: 1;
-	/*left: -60px;*/
+	left: -45px;
 	cursor: pointer;
 	transition: opacity .5s ease, left .5s ease;
 }

@@ -93,7 +93,7 @@ var hackRedactor = function(){
         if (!this.opts.air || !this.opts.airButtons.length) return;
 
         $('.redactor_air').hide();
-        this.selection.save();
+        this.selection.createMarkers();
         var width = this.$air.width(),
             m1 = this.$editor.find('#selection-marker-1').offset(),
             m2 = this.$editor.find('#selection-marker-2').offset(),
@@ -174,6 +174,7 @@ var hackRedactor = function(){
 };
 
 var Ueditor = function($el, options) {
+    this.active = false;
 	//Allow user disable plugins
 	var plugins = this.pluginList(options),
         self = this,
@@ -213,8 +214,8 @@ var Ueditor = function($el, options) {
 	this.options.dropdownShowCallback = function () { UeditorEvents.trigger("ueditor:dropdownShow", this); };
 	this.options.dropdownHideCallback = function () { UeditorEvents.trigger("ueditor:dropdownHide", this); };
 	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
-	this.options.enterCallback = function () { UeditorEvents.trigger("ueditor:enter", this); };
-	this.options.changeCallback = function () { UeditorEvents.trigger("ueditor:change", this); };
+	this.options.enterCallback = function (e) {  UeditorEvents.trigger("ueditor:enter", this, e); };
+	this.options.changeCallback = function (e) { UeditorEvents.trigger("ueditor:change", this, e); };
 	this.options.pasteBeforeCallback = function () { UeditorEvents.trigger("ueditor:paste:before", this); };
 	this.options.pasteCallback = function () { UeditorEvents.trigger("ueditor:paste:after", this); };
 	this.options.focusCallback = function () { UeditorEvents.trigger("ueditor:focus", this); };
@@ -245,14 +246,14 @@ var Ueditor = function($el, options) {
 	}
 
 
-    UeditorEvents.on("ueditor:click", function(r){
-        console.log("click");
-
-    });
-
-    UeditorEvents.on("ueditor:enter", function(r){
-        console.log("Enter");
-    });
+    //UeditorEvents.on("ueditor:click", function(r){
+    //    console.log("click");
+    //
+    //});
+    //
+    //UeditorEvents.on("ueditor:enter", function(r){
+    //    console.log("Enter");
+    //});
 };
 
 Ueditor.prototype = {
@@ -297,6 +298,7 @@ Ueditor.prototype = {
 			}
 		});
 
+        this.active = true;
 
 
 	},
@@ -313,6 +315,7 @@ Ueditor.prototype = {
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$("html").off('click', this.stopOnOutsideClick);
+        this.active = false;
 	},
 
 	bindStartEvents: function() {
@@ -428,7 +431,7 @@ Ueditor.prototype = {
 	},
 	insertsSetUp: function(){
 		var me = this,
-			manager = new InsertManager({el: this.$el, insertsData: this.options.inserts}),
+			manager = new InsertManager({el: this.$el, insertsData: this.options.inserts, ueditor: this}),
 			redactorEvents = this.redactor.events
 		;
 
@@ -592,29 +595,38 @@ Ueditor.prototype = {
 	}
 };
 
-var InsertManagerOptions = Backbone.View.extend({
+var InsertManagerInserts = Backbone.View.extend({
     tpl: _.template($(tpl).find('#insert-manager-tooltip-tpl').html()),
-    className: "uinsert-selector upfront-ui",
+    className: "ueditor-post-insert-manager",
+    $block: false,
     initialize: function(options){
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;
         this.onRemoveInsert = options.onRemoveInsert;
+        this.listenTo( UeditorEvents, "ueditor:insert:relocate", this.insert_relocate );
     },
     events:{
-        "click .uinsert-selector-option": "on_insert_click"
+        "click .uinsert-selector-option": "on_insert_click",
+        "click .upfront-post-media-trigger": "toggle_inserts"
     },
     render: function(){
       this.$el.html( this.tpl( { inserts: Inserts.inserts } ) );
+    },
+    insert_relocate: function( $current ){
+      this.$block = $current;
+    },
+    toggle_inserts: function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        this.$el.find(".uinsert-selector").toggle();
     },
     on_insert_click: function( e ){
         e.preventDefault();
         e.stopPropagation();
         var type = $(e.target).data('insert'),
             insert = new Inserts.inserts[type](),
-            self = this,
-            $block = this.$el.closest(".ueditor-post-insert-manager")
-            //where = me.mediaTrigger.data('insert')
+            self = this
             ;
 
         insert.start()
@@ -627,8 +639,8 @@ var InsertManagerOptions = Backbone.View.extend({
                 //self.trigger('insert:prechange'); // "self" is the view
                 //Create the insert
                 insert.render();
-                $block.replaceWith(insert.$el);
-                $block.prev("br").remove();
+                self.$block.replaceWith(insert.$el);
+                self.$block.prev("br").remove();
                 //self.trigger('insert:added', insert);
                 self.insertsData[insert.data.id] = insert.data.toJSON();
                 self.listenTo(insert.data, 'change add remove update', function(){
@@ -636,7 +648,8 @@ var InsertManagerOptions = Backbone.View.extend({
                 });
 
                 setTimeout(function(){
-                    self.redactor.$editor.find(".ueditor-post-insert-manager").remove();
+                    $(".uinsert-selector").hide();
+                    $(".ueditor-post-insert-manager").hide();
                 }, 100);
 
                 self.redactor.code.sync();
@@ -649,7 +662,8 @@ var InsertManagerOptions = Backbone.View.extend({
 var InsertManager = Backbone.View.extend({
     tpl: _.template($(tpl).find('#insert-manager-tpl').html()),
 	initialize: function(opts){
-		this.inserts = {},
+		this.inserts = {};
+        this.ueditor = opts.ueditor;
 		this.onRemoveInsert = _.bind(this.removeInsert, this);
 		this.insertsData = opts.insertsData || {};
 		this.deletedInserts = {};
@@ -658,35 +672,35 @@ var InsertManager = Backbone.View.extend({
 		this.bindTriggerEvents();
 		this.refreshTimeout = false;
 		this.sortableInserts();
-        this.listenTo( UeditorEvents, "ueditor:change", this.createInserts );
+        this.render_tooltips();
+
+        if( opts.ueditor.options.inserts ){
+            this.listenTo( UeditorEvents, "ueditor:click", this.position_tooltips );
+            this.listenTo( UeditorEvents, "ueditor:key:up", this.position_tooltips );
+        }
     },
-    createInserts: function(redactor){
-        var self = this;
-            var $br = redactor.$editor.find("p").filter(function(i, el){   if($(el).text() === "") return el;   }).last();
-            redactor.$editor.find( ".ueditor-post-insert-manager").remove();
-            if($br.length > 0){
-                if(  $br.next( ".ueditor-post-insert-manager").length < 1  ) {
-                    var manager = self.tpl(),
-                        options = new InsertManagerOptions({
-                            insertsData: this.insertsData,
-                            inserts: this.inserts,
-                            redactor: redactor,
-                            onRemoveInsert: this.onRemoveInsert
-                        });
-                    options.render();
-                    $br.after(manager);
-                    var $manager = $br.next(".ueditor-post-insert-manager");
-                    $manager.append(options.$el);
-                    $manager.find(".uinsert-selector").hide();
-                    $manager.find(".upfront-post-media-trigger").on("click", function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        $(this).parent().find(".uinsert-selector").toggle();
-                    });
-                }
-            }else{
-                redactor.$editor.find( ".ueditor-post-insert-manager").remove();
-            }
+    render_tooltips: function(){
+        var self = this,
+            tooltips = new InsertManagerInserts({
+            insertsData: this.insertsData,
+            inserts: this.inserts,
+            redactor: this.ueditor.redactor,
+            onRemoveInsert: this.onRemoveInsert
+        });
+        tooltips.render();
+        this.ueditor.$el.after( tooltips.$el );
+        this.$tooltips = tooltips.$el;
+    },
+    position_tooltips: function(redactor){
+        var $current = $( redactor.selection.getCurrent());
+        if( $current.html() === "<br>" ){
+            var css = _.extend( $current.position(), { marginLeft: $current.css("padding-left") } );
+            this.$tooltips.css( css );
+            this.$tooltips.show();
+            UeditorEvents.trigger("ueditor:insert:relocate", $current);
+        }else{
+            this.$tooltips.hide();
+        }
     },
 	bindTriggerEvents: function (redactor) {
 		var me = this,

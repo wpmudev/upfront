@@ -140,8 +140,11 @@
 </script>
 
 <script type="text/template" id="insert-manager-tooltip-tpl">
-        {[ _.each(inserts, function(insert, type){  ]}
+    <div class="upfront-image-attachment-bits upfront-post-media-trigger"></div>
+    <div class="uinsert-selector upfront-ui">
+    {[ _.each(inserts, function(insert, type){  ]}
         <a href="#" class="uinsert-selector-option uinsert-selector-{{type}}" data-insert="{{type}}"><span class="uinsert-text">{{type}}</span><span  data-insert="{{type}}" class="uinsert-text-overlay"></span></a>
-        {[ }); ]}
+    {[ }); ]}
+    </div>
 </script>
 </div>
