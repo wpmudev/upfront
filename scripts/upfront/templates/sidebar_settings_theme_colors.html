@@ -3,8 +3,7 @@
         <div id="panel-setting-theme-colors-pane">
             {[ if (!colors.length){ ]}
             <div id="theme-colors-no-color-notice" class="upfront-icon">
-                No colors defined for this theme.
-                Click (+) below to define a color
+                {{Upfront.Settings.l10n.global.views.no_colors_click_plus}}
             </div>
             {[ } ]}
             {[ if (colors.length){ ]}
@@ -26,7 +25,7 @@
     <div class="panel-setting-theme-colors-bottom">
         <div class="panel-setting-theme-colors-shades-wrap">
             {[ if( colors.length ){ ]}
-						Define <span class="hovers">:hovers</span> for your swatches ?
+						{{Upfront.Settings.l10n.global.views.define_swatch_hovers}}
             <label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">
 							Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)
 						</label>
@@ -36,8 +35,8 @@
 								<li>50</li>
 						</ul>
             <div class="panel-setting-theme-colors-meta">
-                Click either Highlight or Shade swatch to choose it. Hover for original color.
-								<p class="swatch-title">Highlight:</p>
+                {{Upfront.Settings.l10n.global.views.click_hilite_shade}}
+								<p class="swatch-title">{{Upfront.Settings.l10n.global.views.hilite}}:</p>
                 <div class="panel-setting-theme-colors-highlights">
                     {[ _.each(colors, function (color, idx){ ]}
 										<span class="theme-colors-color-box theme-colors-highlight{[ if(color.selected === 'highlight') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}" style="background-color: {{color.highlight}}" data-color="{{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>

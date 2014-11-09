@@ -29,7 +29,9 @@ abstract class Upfront_Server implements IUpfront_Server {
 	}
 
 	protected function _out (Upfront_HttpResponse $out) {
-		if (!$this->_debugger->is_active(Upfront_Debug::RESPONSE) && extension_loaded('zlib')) ob_start('ob_gzhandler');
+		if (!$this->_debugger->is_active(Upfront_Debug::RESPONSE) && extension_loaded('zlib') && defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) {
+			ob_start('ob_gzhandler');
+		}
 		status_header($out->get_status());
 		header("Content-type: " . $out->get_content_type() . "; charset=utf-8");
 		die($out->get_output());
