@@ -10,8 +10,12 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 		$me->_add_hooks();
 	}
 
+	public static function schedule () {
+		$me = new self;
+		$me->media_cleanup();
+	}
+
 	private function _add_hooks () {
-		//add_action('upfront_hourly_schedule', array($this, 'media_cleanup'));
 		//add_action('wp', array($this, 'media_cleanup'));
 	}
 
@@ -103,4 +107,5 @@ class Upfront_Server_MediaCleanup implements IUpfront_Server {
 		update_post_meta($item->ID, 'upfront_media_cleanup_time', time());
 	}
 }
-//Upfront_Server_MediaCleanup::serve();
+//add_action('init', array('Upfront_Server_MediaCleanup', 'serve'), 0);
+//add_action('upfront_hourly_schedule', array('Upfront_Server_MediaCleanup', 'schedule'));

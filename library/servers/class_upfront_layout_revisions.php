@@ -14,6 +14,12 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		$me = new self;
 		$me->_add_hooks();
 	}
+	
+	public static function schedule () {
+		$me = new self;
+		$me->register_requirements();
+		$me->clean_up_deprecated_revisions();
+	}
 
 	private function _add_hooks () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
@@ -26,7 +32,7 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		upfront_add_ajax('upfront_list_revisions', array($this, "list_revisions"));
 
 		// Cron request handlers
-		add_action('upfront_hourly_schedule', array($this, 'clean_up_deprecated_revisions'));
+		//add_action('upfront_hourly_schedule', array($this, 'clean_up_deprecated_revisions'));
 
 		// Preview listener setup
 		if (is_admin()) return false;
@@ -170,4 +176,5 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 
 }
 //Upfront_Server_LayoutRevisions::serve();
-add_action('init', array('Upfront_Server_LayoutRevisions', 'serve'));
+add_action('init', array('Upfront_Server_LayoutRevisions', 'serve'), 0);
+add_action('upfront_hourly_schedule', array('Upfront_Server_LayoutRevisions', 'schedule'));
