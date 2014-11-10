@@ -58,11 +58,13 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 	}
 
 	public function clean_up_deprecated_revisions () {
-		$revisions = $this->_data->get_all_deprecated_revisions();
+		$revisions = $this->_data->get_all_deprecated_revisions(array('fields' => 'ids'));
 		if (empty($revisions)) return false;
 
 		foreach ($revisions as $revision) {
-			$this->_data->drop_revision($revision->ID);
+			$rid = !empty($revision->ID) ? $revision->ID : (int)$revision;
+			if (!$revision) continue;
+			$this->_data->drop_revision($rid);
 		}
 	}
 
