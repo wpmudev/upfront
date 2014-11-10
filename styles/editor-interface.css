@@ -12703,7 +12703,7 @@ a.upfront-css-font {
 .inline-panel-control-dialog {
 	display: none;
 }
-.upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog {
+.upfront-control-dialog-open .inline-panel-control-dialog {
 	display: block;
 }
 

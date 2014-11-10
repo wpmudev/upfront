@@ -14,7 +14,6 @@ $.fn.ueditor = function(options){
 		elements = this,
 		result
 	;
-console.log(options);
 	//Modify redactor to work as we need
 	if(!hackedRedactor)
 		hackRedactor();
@@ -28,7 +27,6 @@ console.log(options);
 		var $el = $(this),
 			ueditor = $el.data('ueditor')
 		;
-        console.log(options,$el );
 		if(ueditor){
 			if(isMethod)
 				result = ueditor.callMethod(options);
