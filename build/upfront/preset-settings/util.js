@@ -1,0 +1,1 @@
+(function(e){define([],function(){var t=function(e,t){var n=Upfront.Util.template(t);return n({properties:e})};return{generateCss:t,generatePresetsToPage:function(n,r){_.each(Upfront.mainData[n+"Presets"],function(i){var s=n+"-preset-"+i.id;e("style#"+s).length===0&&e("body").append('<style id="'+s+'"></style>'),e("style#"+s).text(t(i,r))})}}})})(jQuery);

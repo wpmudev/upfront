@@ -1,5 +1,5 @@
 define([
-	'elements/upfront-tabs/js/settings/select-preset-field'
+	'scripts/upfront/preset-settings/select-preset-field'
 ], function(SelectPresetField) {
 	var SelectPresetItem = Upfront.Views.Editor.Settings.Item.extend({
 		initialize: function (options) {
@@ -31,13 +31,9 @@ define([
 		},
 
 		get_presets: function () {
-			return _.union([{ label: 'Default', value: 'default'}], _.map(this.options.presets.models, function(model) {
+			return _.union([{ label: 'None', value: 'default'}], _.map(this.options.presets.models, function(model) {
 				return { label: model.get('name'), value: model.get('id') };
 			}));
-		},
-
-		get_values: function () {
-			return this.fields._wrapped[0].get_value();
 		}
 	});
 

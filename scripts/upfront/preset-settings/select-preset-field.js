@@ -8,7 +8,9 @@ define(function() {
 			var html = ['<a href="#" title="Edit preset" class="upfront-preset-edit">edit preset</a>'];
 			this.$el.append(html.join(''));
 
-			this.$el.on('click', '.upfront-preset-edit', function() {
+			this.$el.on('click', '.upfront-preset-edit', function(event) {
+				event.preventDefault();
+
 				if (me.get_value() === 'default') {
 					alert('Default preset can not be edited.');
 					return;

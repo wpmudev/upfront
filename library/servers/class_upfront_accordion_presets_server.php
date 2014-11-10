@@ -2,11 +2,11 @@
 
 require_once('class_upfront_presets_server.php');
 
-class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
+class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 	private static $instance;
 
 	public function get_element_name() {
-		return 'tab';
+		return 'accordion';
 	}
 
 	public static function serve () {
@@ -19,8 +19,8 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 	}
 
 	protected function get_style_template_path() {
-		return realpath(Upfront::get_root_dir() . '/elements/upfront-tabs/tpl/preset-style.html');
+		return realpath(Upfront::get_root_dir() . '/elements/upfront-accordion/tpl/preset-style.html');
 	}
 }
 
-add_action('init', array('Upfront_Tab_Presets_Server', 'serve'));
+add_action('init', array('Upfront_Accordion_Presets_Server', 'serve'));

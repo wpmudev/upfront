@@ -219,6 +219,17 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		if (empty($tab_presets)) $tab_presets = json_encode(array());
 
+		$accordion_presets = get_option('upfront_' . get_stylesheet() . '_accordion_presets');
+		$accordion_presets = apply_filters(
+			'upfront_get_accordion_presets',
+			$accordion_presets,
+			array(
+				'json' => true
+			)
+		);
+
+		if (empty($accordion_presets)) $accordion_presets = json_encode(array());
+
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
 			"dev" => $this->_debugger->is_active(Upfront_Debug::DEV)
@@ -291,6 +302,7 @@ Upfront.mainData = {
   userDoneFontsIntro: {$user_done_font_intro},
   buttonPresets: {$button_presets},
   tabPresets: {$tab_presets},
+  accordionPresets: {$accordion_presets},
   themeColors: {$theme_colors},
   postImageVariants: {$post_image_variants},
   content: {$content},

@@ -70,7 +70,6 @@
 		<label for="uinsert-image-link-4">Show larger image</label>
 	</div>
 </script>
-
 <script type="text/template" id="embed-insert-tpl">
     <div class="inserted_code_rendered">{{code}}</div>
 </script>
@@ -132,5 +131,20 @@
             <input class="upfront-field-number font-icons-top"  type="number" value="0" step="1" min="-35" max="45">
         </li>
     </ul>
+</script>
+
+<script type="text/template" id="insert-manager-tpl">
+    <div class="ueditor-post-insert-manager">
+        <div class="upfront-image-attachment-bits upfront-post-media-trigger"></div>
+    </div>
+</script>
+
+<script type="text/template" id="insert-manager-tooltip-tpl">
+    <div class="upfront-image-attachment-bits upfront-post-media-trigger"></div>
+    <div class="uinsert-selector upfront-ui">
+    {[ _.each(inserts, function(insert, type){  ]}
+        <a href="#" class="uinsert-selector-option uinsert-selector-{{type}}" data-insert="{{type}}"><span class="uinsert-text">{{type}}</span><span  data-insert="{{type}}" class="uinsert-text-overlay"></span></a>
+    {[ }); ]}
+    </div>
 </script>
 </div>

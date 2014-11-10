@@ -1,0 +1,35 @@
+define(
+function() {
+	var StateSettings = Upfront.Views.Editor.Settings.Item.extend({
+		group: false,
+
+		initialize: function(options) {
+			this.options = options || {};
+
+			this.$el.addClass('state_settings state_settings_' + this.options.state.toLowerCase());
+
+			var fields = [];
+
+			_.each(this.options.fields, function(field) {
+				var fieldOnChangeCallback = field.options.change;
+				var me = this;
+				if (fieldOnChangeCallback) {
+					// Proxy change callback and tie to this
+					field.options.change = function(value) {
+						fieldOnChangeCallback(value, me);
+					};
+				}
+				var stateField = new field.fieldClass(_.extend({
+						model: this.options.model
+					}, field.options)
+				);
+
+				fields.push(stateField);
+			}, this);
+
+			this.fields = _(fields);
+		}
+	});
+
+	return StateSettings;
+});
