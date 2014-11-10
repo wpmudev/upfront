@@ -2386,17 +2386,6 @@ div.uinsert-selector a:hover {
 	content: none;
 }
 
-.upfront-region-container-full .upfront-grid-layout {
-	overflow-y: scroll;
-}
-.upfront-region-container-full .upfront-grid-layout::-webkit-scrollbar {
-	background: none;
-	width: 0;
-}
-.upfront-region-container-full .upfront-grid-layout::-webkit-scrollbar-thumb {
-
-}
-
 .upfront-region-container-bg {
 	position: relative;
 	margin: 0 auto;
@@ -2409,7 +2398,7 @@ div.uinsert-selector a:hover {
 
 .upfront-region-sub-container {
 	position: relative;
-	z-index: 10;
+	z-index: 12;
 }
 .upfront-region {
   /*background-color: rgba(127, 127, 127, .5);*/
@@ -2713,7 +2702,7 @@ div.uinsert-selector a:hover {
 .upfront-inline-panels,
 .upfront-inline-panels-wrap,
 .upfront-add-region-ani:after,
-.upfront-region-editing .upfront-region-editing-overlay ,
+.upfront-region-editing .upfront-region-editing-overlay,
 .upfront-region-fixed-editing .upfront-region:after {
 	content: " ";
 	position: absolute;
@@ -2735,9 +2724,14 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-region-editing .upfront-region-active,
-.upfront-region-editing .upfront-region-container-active .upfront-grid-layout,
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container {
 	z-index: 9997;
+}
+.upfront-region-editing .upfront-region-container-active .upfront-grid-layout {
+    z-index: 9998;
+}
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {
+    z-index: 9999;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,
 .upfront-region-editing .upfront-region-active .upfront-region-active-overlay,

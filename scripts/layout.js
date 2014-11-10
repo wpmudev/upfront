@@ -129,8 +129,8 @@ jQuery(document).ready(function($){
 				});
 			}
 			// Set background overlay height if available
-			if ( $bg_overlay.length )
-				$bg_overlay.css('height', height);
+			//if ( $bg_overlay.length )
+			//	$bg_overlay.css('height', height);
 		});
 	}
 	if ( css_support('flex') ){
@@ -147,11 +147,12 @@ jQuery(document).ready(function($){
 
 	// Full width image and video background
 	function fix_full_bg () {
+		var body_off = $('body').offset();
 		$('[data-bg-image-ratio]').each(function(){
 			var is_layout = $(this).is('.upfront-output-layout'),
 				is_full_screen = ( ( $(this).is('.upfront-region-container-bg') || $(this).is('.upfront-output-region') ) && $(this).closest('.upfront-region-container-full').length > 0 ),
 				width = is_layout ? $(window).width() : $(this).outerWidth(),
-				height = is_layout ? $(window).height() : ( is_full_screen ? parseInt($(this).closest('.upfront-output-region-container').find('.upfront-region-center').css('min-height')) : $(this).outerHeight() ),
+				height = is_layout ? $(window).height() : ( is_full_screen ? $(window).height()-body_off.top : $(this).outerHeight() ),
 				ratio = parseFloat($(this).attr('data-bg-image-ratio'));
 			if ( Math.round(height/width*100)/100 > ratio ) {
 				$(this).data('bg-position-y', 0);
@@ -161,9 +162,9 @@ jQuery(document).ready(function($){
 				});
 			}
 			else {
-				$(this).data('bg-position-y', ( height - (width*ratio) )/2);
+				$(this).data('bg-position-y', Math.round( ( height - (width*ratio) ) / 2 ));
 				$(this).css({
-					'background-position': '0 ' + ( ( height - (width*ratio) )/2 ) + 'px',
+					'background-position': '0 ' + Math.round( ( ( height - (width*ratio) ) / 2) ) + 'px',
 					'background-size': width + "px " + (width*ratio) + "px" /*"100% auto"*/
 				});
 			}
@@ -172,7 +173,7 @@ jQuery(document).ready(function($){
 			var is_layout = $(this).parent().is('.upfront-output-layout'),
 				is_full_screen = (  $(this).parent().is('.upfront-output-region, .upfront-region-container-bg') && $(this).closest('.upfront-region-container-full').length > 0 ),
 				width = is_layout ? $(window).width() : $(this).outerWidth(),
-				height = is_layout ? $(window).height() : ( is_full_screen ? parseInt($(this).closest('.upfront-output-region-container').find('.upfront-region-center').css('min-height')) : $(this).outerHeight() ),
+				height = is_layout ? $(window).height() : ( is_full_screen ? $(window).height()-body_off.top : $(this).outerHeight() ),
 				ratio = parseFloat($(this).attr('data-bg-video-ratio')),
 				style = $(this).attr('data-bg-video-style') || 'crop',
 				$embed = $(this).children('iframe');
@@ -244,6 +245,7 @@ jQuery(document).ready(function($){
 			scroll_top += body_off.top;
 			win_height -= body_off.top;
 		}
+		scroll_top = scroll_top < body_off.top ? body_off.top : scroll_top;
 		
 		// Sticky region behavior
 		$('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').each(function(){
@@ -306,10 +308,17 @@ jQuery(document).ready(function($){
 					bg_position_y = 0,
 					full_screen_height = parseInt($(this).find('.upfront-region-center').css('min-height'));
 				if ( is_bg_image ) {
-					// @TODO didn't work very well with image set in fixed position
 					if ( typeof $bg_image.data('bg-position-y') == 'undefined' )
 						$bg_image.data('bg-position-y', $bg_image.css('background-position-y'));
 					bg_position_y = $bg_image.data('bg-position-y');
+					if ( typeof bg_position_y == 'string' && bg_position_y.match(/%$/) ){
+						var img = new Image;
+						img.src = $bg_image.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, '');
+						bg_position_y = parseInt(bg_position_y)/100 * (height-img.height);
+					}
+					else {
+						bg_position_y = parseInt(bg_position_y);
+					}
 				}
 			}
 			if ( scroll_top >= container_offset.top && scroll_bottom <= container_bottom ){
@@ -324,13 +333,13 @@ jQuery(document).ready(function($){
 					css.left = 0;
 					css.right = 0;
 					if ( is_top )
-						$container.css('padding-top', height);
+						$container.find('> .upfront-region-container-bg').css('padding-top', height);
 					else
-						$container.css('padding-bottom', height);
+						$container.find('> .upfront-region-container-bg').css('padding-bottom', height);
 				}
 				if ( is_full_screen ){
 					if ( is_bg_image ) {
-						$bg_image.css('background-position-y', ( bg_position_y + scroll_top ) + 'px');
+						$bg_image.css('background-position-y', ( bg_position_y + scroll_top - body_off.top ) + 'px');
 					}
 					else if ( is_bg_overlay ) {
 						$bg_overlay.css('top', ( scroll_top - body_off.top ));
@@ -360,17 +369,17 @@ jQuery(document).ready(function($){
 					css.bottom = '';
 					css.left = '';
 					css.right = '';
-					$container.css({
+					$container.find('> .upfront-region-container-bg').css({
 						paddingTop: '',
 						paddingBottom: ''
 					});
 				}
 				else if ( is_full_screen ) {
 					if ( is_bg_image ) {
-						$bg_image.css('background-position-y', ( bg_position_y + ( container_height - ( is_top ? full_screen_height : win_height - body_off.top ) ) ) + 'px');
+						$bg_image.css('background-position-y', ( bg_position_y + ( container_height - win_height ) ) + 'px');
 					}
 					else if ( is_bg_overlay ) {
-						$bg_overlay.css('top', ( container_height - ( is_top ? full_screen_height : win_height ) ));
+						$bg_overlay.css('top', ( container_height - win_height ));
 					}
 				}
 			}
@@ -378,6 +387,7 @@ jQuery(document).ready(function($){
 		});
 	}
 	regions_scroll_update();
+	$(window).on('load', regions_scroll_update);
 	$(window).on('scroll', regions_scroll_update);
 
 	/* Lightbox front end logic */
