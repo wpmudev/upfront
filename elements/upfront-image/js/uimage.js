@@ -594,6 +594,19 @@ define([
 
 				me.$el.closest('.upfront-module-view').addClass('uimage-upfront-module-view');
 			}, 100);
+
+			setTimeout(function() {
+				me.toggleResizableHandles();
+			}, 100);
+		},
+
+		toggleResizableHandles: function() {
+			var container = this.$el.parents('.upfront-objects_container');
+			if (this.isThemeImage() && !Upfront.themeExporter) {
+				container.siblings('.ui-resizable-handle').addClass('ui-resizable-handle-hidden');
+			} else {
+				container.siblings('.ui-resizable-handle').removeClass('ui-resizable-handle-hidden');
+			}
 		},
 
 		setStuckToTop: function() {

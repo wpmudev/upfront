@@ -13071,3 +13071,6 @@ strike{
 em{
     font-style: italic;
 }
+.ui-resizable-handle-hidden {
+	display: none !important;
+}
