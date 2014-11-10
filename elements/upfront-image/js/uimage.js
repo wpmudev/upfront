@@ -15,7 +15,7 @@ define([
 	// Variable used to speed resizing up;
 	var resizingData = {};
 
-	var UimageView = Upfront.Views.ObjectView.extend(_.extend({}, /*Upfront.Mixins.FixedObjectInAnonymousModule,*/ {
+	var UimageView = Upfront.Views.ObjectView.extend({
 		model: UimageModel,
 		imageTpl: Upfront.Util.template(imageTpl),
 		sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
@@ -62,7 +62,7 @@ define([
 			;
 
 			// Set the full size current size if we don't have attachment id
-			if(!this.property('image_id')) {
+			if (!this.property('image_id')) {
 				this.property('srcFull', this.property('src'));
 			}
 
@@ -139,11 +139,29 @@ define([
 			return 'nocaption';
 		},
 
+		isThemeImage: function() {
+			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
+		},
+
+		replaceImage: function() {
+			this.openImageSelector();
+		},
+
 		createControls: function() {
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
 			;
+
+			// Do not allow editing of theme images if not in builder
+			if (this.isThemeImage() && !Upfront.themeExporter) {
+				panel.items = _([
+					this.createControl('replace-image', l10n.ctrl.replace_for_edit, 'replaceImage')
+				]);
+
+				return panel;
+			}
+
 			captionControl.sub_items = {
 				topOver: this.createControl('topOver', l10n.ctrl.over_top),
 				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
@@ -589,6 +607,8 @@ define([
 		updateControls: function(width, height) {
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 
+			this.controls = this.createControls();
+
 			this.controls.setWidth({
 				width: width,
 				height:height
@@ -598,7 +618,7 @@ define([
 			if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
 				this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
 			}
-			this.parent_module_view.$('.upfront-module').find('.uimage-controls').append(this.controls.$el);
+			this.parent_module_view.$('.upfront-module').find('.uimage-controls').html('').append(this.controls.$el);
 			this.controls.delegateEvents();
 		},
 
@@ -1205,7 +1225,7 @@ define([
 			}
 			return this.model.get_property_value_by_name(name);
 		}
-	}));
+	});
 
 	Upfront.Application.LayoutEditor.add_object('Uimage', {
 		'Model': UimageModel,
