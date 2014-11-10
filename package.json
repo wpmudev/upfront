@@ -1,0 +1,11 @@
+{
+  "name": "upfront",
+  "description": "Tools for Upfront",
+  "devDependencies": {
+    "grunt-sass": "~0.16.1",
+    "grunt-cli": "~0.1.13",
+    "grunt": "~0.4.5",
+    "load-grunt-tasks": "~1.0.0",
+    "grunt-contrib-watch": "~0.6.1"
+  }
+}
