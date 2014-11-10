@@ -13052,6 +13052,18 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 .select-preset-field .upfront-field-select {
 	width: 150px;
 }
+.colors_settings_item .upfront-settings-item-title span {
+	padding: 0;
+	margin: 0;
+}
+.colors_settings_item .upfront-field-wrap-color {
+	float: left;
+	clear: none;
+	margin-right: 10px;
+}
+.state_settings > .upfront-settings-item-content > div {
+	margin-top: 20px;
+}
 /* End Preset manager panels in elements' settings */
 strike{
     text-decoration: line-through;
