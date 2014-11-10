@@ -14,7 +14,7 @@ $.fn.ueditor = function(options){
 		elements = this,
 		result
 	;
-
+console.log(options);
 	//Modify redactor to work as we need
 	if(!hackedRedactor)
 		hackRedactor();
@@ -28,7 +28,7 @@ $.fn.ueditor = function(options){
 		var $el = $(this),
 			ueditor = $el.data('ueditor')
 		;
-
+        console.log(options,$el );
 		if(ueditor){
 			if(isMethod)
 				result = ueditor.callMethod(options);
@@ -90,7 +90,7 @@ var hackRedactor = function(){
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {
-        if (!this.opts.air || !this.opts.airButtons.length) return;
+        if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length )) return;
 
         $('.redactor_air').hide();
         this.selection.createMarkers();
@@ -182,6 +182,9 @@ var Ueditor = function($el, options) {
     this.$el = $el;
     this.$air = $("<div  class='redactor_air'></div>").attr("id", unique_id ).hide();
     $("body").append(this.$air);
+    if( !_.isEmpty(options.airButtons) ){
+        options.buttons = options.airButtons;
+    }
     this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
@@ -196,7 +199,7 @@ var Ueditor = function($el, options) {
 			cleanup: true,
 			plugins: plugins,
 			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
-            buttons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
+            buttons: [ 'upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
 			//buttons: ['formatting', 'bold', 'italic', 'deleted'],
 			buttonsCustom: {},
 			activeButtonsAdd: {},
@@ -209,7 +212,6 @@ var Ueditor = function($el, options) {
             linkTooltip: false
 		}, options)
 	;
-
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
 	this.options.dropdownShowCallback = function () { UeditorEvents.trigger("ueditor:dropdownShow", this); };
 	this.options.dropdownHideCallback = function () { UeditorEvents.trigger("ueditor:dropdownHide", this); };
