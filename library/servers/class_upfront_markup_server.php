@@ -30,7 +30,6 @@ class Upfront_Server_MarkupServer extends Upfront_Server {
 
 	public function populate_shortcodes_data () {
 		$shortcodes = $this->parse_shortcode_origins();
-		localhost_dbg($shortcodes);
 	}
 
 	public function parse_shortcode_origins () {

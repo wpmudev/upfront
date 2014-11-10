@@ -19,5 +19,6 @@ class Upfront_Server_Schedule implements IUpfront_Server {
 			wp_schedule_event(time(), 'hourly', 'upfront_hourly_schedule');
 		}
 	}
+
 }
 Upfront_Server_Schedule::serve();
