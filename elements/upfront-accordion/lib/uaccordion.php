@@ -109,6 +109,8 @@ class Upfront_UaccordionView extends Upfront_Object {
 				'containers_info' => __('The wrapper layer of every panel.', 'upfront'),
 				'header_label' => __('Panel header', 'upfront'),
 				'header_info' => __('The header title of every panel', 'upfront'),
+				'active_header_label' => __('Active Panel header', 'upfront'),
+				'active_header_info' => __('The header title of active panel', 'upfront'),
 				'body_label' => __('Panel body', 'upfront'),
 				'body_info' => __('The content part of every panel.', 'upfront'),
 				'first_label' => __('First Panel container', 'upfront'),

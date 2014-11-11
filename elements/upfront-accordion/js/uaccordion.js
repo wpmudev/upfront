@@ -17,6 +17,7 @@ define([
 		cssSelectors: {
 			'.accordion-panel': {label: l10n.css.containers_label, info: l10n.css.containers_info},
 			'.accordion-panel-title': {label: l10n.css.header_label, info: l10n.css.header_info},
+			'.accordion-panel-active .accordion-panel-title': {label: l10n.css.active_header_label, info: l10n.css.active_header_info},
 			'.accordion-panel-content': {label: l10n.css.body_label, info: l10n.css.body_info},
 			'.accordion-panel:first-of-type' : {label: l10n.css.first_label, info: l10n.css.first_info},
 			'.accordion-panel:last-child' : {label: l10n.css.last_label, info: l10n.css.last_info},
