@@ -190,6 +190,7 @@ class Upfront {
 			var _upfront_save_storage_key = "' . $save_storage_key . '";
 			var _upfront_stylesheet = "' . get_stylesheet() . '";
 			var _upfront_debug_mode = ' . (int)isset($_GET['debug']) . ';
+			var _upfront_please_hold_on = ' . json_encode(__('Please, hold on for just a little bit more', 'upfront')) . ';
 		</script>';
 		echo <<<EOAdditivemarkup
 <div id="layouts" style="display:none"></div>
