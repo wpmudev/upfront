@@ -243,9 +243,10 @@ var PostContentEditor = Backbone.View.extend({
 	getContentEditorOptions: function(){
 		return {
 			linebreaks: false,
+            replaceDivs: false,
 			autostart: true,
 			focus: false,
-			pastePlainText: true,
+			pastePlainText: false,
 			inserts: this.inserts
 		};
 	},

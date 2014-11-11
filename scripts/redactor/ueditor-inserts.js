@@ -306,7 +306,8 @@ var ImageInsert = UeditorInsert.extend({
 		linkUrl: '',
 		isLocal: 1,
 		externalImage: {top: 0, left: 0, width: 0, height: 0},
-		variant_id : ""
+		variant_id : "",
+        style: new Upfront.Models.ImageVariant()
 	},
 	//Called just after initialize
 	init: function(){
@@ -382,11 +383,6 @@ var ImageInsert = UeditorInsert.extend({
 		this.apply_classes( data.style.image );
 		this.apply_classes( data.style.caption );
 
-
-		this.$el
-			.html(this.tpl(data))
-		;
-
         var $group = this.$el.find(".ueditor-insert-variant-group"),
             ge = Upfront.Behaviors.GridEditor,
             $parent = $('.upfront-content-marker-contents'),
@@ -401,14 +397,30 @@ var ImageInsert = UeditorInsert.extend({
         padding_left = padding_left ? parseInt(padding_left) : 0;
         padding_right = padding_right ? parseInt(padding_right) : 0;
 
-        if ( style_variant.group.float == 'left' && padding_left > 0 )
-            $group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size);
-        else if ( style_variant.group.float == 'right' && padding_right > 0 )
-            $group.css('margin-right', ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size);
-        else if ( style_variant.group.float == 'none' && padding_left > 0 )
-            $group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size);
+        if ( style_variant.group.float == 'left' && padding_left > 0 ){
+            //$group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size);
+            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
+            data.style.group.marginRight = 0;
+        }
+        else if ( style_variant.group.float == 'right' && padding_right > 0 ){
+            data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
+            data.style.group.marginLeft = 0;
+            //$group.css('margin-right', ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size);
+        }
+        else if ( style_variant.group.float == 'none' && padding_left > 0 ){
+            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
+            data.style.group.marginRight = 0;
+            //$group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size);
+        }
 
-console.log($group.css('margin-left'));
+        console.log( data.style.group );
+
+		this.$el
+			.html(this.tpl(data))
+		;
+
+
+
 		//if (style_variant && style_variant.group && style_variant.group.col) Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
 		//if (style_variant && style_variant.group && style_variant.group.left) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.left);
 
@@ -442,17 +454,17 @@ console.log($group.css('margin-left'));
 		this.make_caption_editable();
 		this.updateControlsPosition();
         //
-		//this.$('.uinsert-image-wrapper')
-		//	//.css(wrapperData)
-		//	.find('img')
-		//	.attr('src', this.data.get("imageFull").src)
-		//	//.css({
-		//	//    position: 'absolute',
-		//	//    'max-width': 'none',
-		//	//    'max-height': 'none'
-		//	//})
-		//	//.css(imageSize)
-		//;
+		this.$('.uinsert-image-wrapper')
+			//.css(wrapperData)
+			.find('img')
+			.attr('src', this.data.get("imageFull").src)
+			//.css({
+			//    position: 'absolute',
+			//    'max-width': 'none',
+			//    'max-height': 'none'
+			//})
+			//.css(imageSize)
+		;
 
 		if(!this.data.get('isLocal'))
 			this.data.set({externalImage: style_variant.image.width}, {silent: true});

@@ -194,7 +194,7 @@ var Ueditor = function($el, options) {
 			linebreaks: true,
 			disableLineBreak: false,
 			focus: true,
-			cleanup: true,
+			cleanup: false,
 			plugins: plugins,
 			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
             buttons: [ 'upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
@@ -205,10 +205,13 @@ var Ueditor = function($el, options) {
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
 			inserts: false,
-            cleanStyleOnEnter: true,
-            removeDataAttr: true,
             linkTooltip: false,
-            cleanOnPaste: false
+            cleanOnPaste: false,
+            replaceDivs: false,
+            //pastePlainText: false,
+            //cleanStyleOnEnter: false,
+            //removeDataAttr: false,
+            removeEmpty: false
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
