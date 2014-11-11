@@ -74,6 +74,9 @@ text!elements/upfront-accordion/tpl/preset-style.html
 text!elements/upfront-accordion/tpl/uaccordion.html
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/uaccordion.js
 redactor/redactor.js
+text!scripts/redactor/ueditor-templates.html
+/var/www/upfront/wp-content/themes/upfront/scripts/redactor/ueditor-inserts.js
+redactor/plugins.js
 redactor/ueditor.js
 text!upfront/templates/objects/plain_text/plain_text.html
 /var/www/upfront/wp-content/themes/upfront/elements/upfront-text/js/utext.js
