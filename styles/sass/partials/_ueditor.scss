@@ -23,6 +23,10 @@
 .ueditor-insert-variant:hover .upfront_edit_image_insert{
     display: block;
 }
+#page .upfront-region-postlayouteditor .upfront-object.upfront-editing-content-style {
+    padding-left: 0;
+    padding-right: 0;
+}
 .upfront-disable-surroundings{
     box-shadow: 0 0 0 5000px rgba(0,0,10,.5);
     position:relative;
