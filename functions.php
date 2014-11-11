@@ -169,15 +169,16 @@ class Upfront {
 
 		$storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
 		$save_storage_key = $storage_key;
+		$is_ssl = is_ssl() ? '&ssl=1' : '';
 		if (isset($_GET['dev']) || isset($_GET['debug']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
 		  echo '<script src="' . $url . '/scripts/require.js"></script>';
-		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl) . '"></script>';
 		  echo '<script src="' . $url . '/scripts/main.js"></script>';
 		  if ( isset($_GET['dev']) && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true) )
 			  $save_storage_key .= '_dev';
 		} else {
 		  echo '<script src="' . $url . '/build/require.js"></script>';
-		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main') . '"></script>';
+		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl) . '"></script>';
 		  echo '<script src="' . $url . '/build/main.js"></script>';
 		}
 		echo '<script type="text/javascript">

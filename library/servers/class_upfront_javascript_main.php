@@ -19,12 +19,23 @@ class Upfront_JavascriptMain extends Upfront_Server {
 	}
 
 	function load_main () {
+
+		$is_ssl = !empty($_GET['ssl']);
+
 		$root = Upfront::get_root_url();
 		$ajax = admin_url('admin-ajax.php');
-		$admin = admin_url();
 		$site = site_url();
-		$upfront_data_url = $ajax . '?action=upfront_data';
+		$includes_url = includes_url();
 
+		if (empty($is_ssl) && is_ssl()) {
+			$root = preg_replace('/https:/', 'http:', $root);
+			$includes_url = preg_replace('/https:/', 'http:', $includes_url);
+			$ajax = preg_replace('/https:/', 'http:', $ajax);
+			$site = preg_replace('/https:/', 'http:', $site);
+		}
+		
+		$admin = admin_url();
+		$upfront_data_url = $ajax . '?action=upfront_data';
 
 		$entities = Upfront_Entity_Registry::get_instance();
 		$registered = $entities->get_all();
@@ -32,8 +43,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$child_instance = Upfront_ChildTheme::get_instance();
 
 		$paths = array(
-      "backbone" => includes_url() . "js/backbone.min",
-      "underscore" => includes_url() . "js/underscore.min",
+      "backbone" => $includes_url . "js/backbone.min",
+      "underscore" => $includes_url . "js/underscore.min",
       //"jquery" => includes_url() . "js/jquery/jquery",
       "upfront-data" => $upfront_data_url,
       "text" => 'scripts/text',
