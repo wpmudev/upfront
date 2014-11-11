@@ -1,0 +1,182 @@
+/* ----- Image Details dialog ----- */
+#upfront-image-details {
+	position: absolute;
+	background: rgba(22, 44, 64, .85);
+	color: #c1dbf1;
+	font-size: 13px;
+	line-height: 17px;
+	font-family: Verdana, sans-serif;
+	z-index: 9999;
+}
+.no-orientation .upfront-image-orientation {
+	display: none;
+}
+.upfront-image-orientation {
+	float: left;
+	text-align: center;
+	padding: 32px 5px 22px;
+}
+.upfront-image-align-left,
+.upfront-image-align-center,
+.upfront-image-align-right,
+.upfront-image-align-full {
+	display: inline-block;
+	width: 70px;
+	cursor: pointer;
+	vertical-align: top;
+	white-space: nowrap;
+}
+.upfront-image-align-left:hover,
+.upfront-image-align-center:hover,
+.upfront-image-align-right:hover,
+.upfront-image-align-full:hover {
+	color: #1fcc8f;
+}
+.upfront-image-orientation .upfront-icon:before {
+	display: block;
+	float: none;
+	margin: 0 auto 10px;
+}
+.upfront-image-actions {
+	width: 30%;
+	float: right;
+	padding: 24px 30px 0 0;
+	text-align: left;
+}
+.no-orientation .upfront-image-actions {
+	width: auto;
+	float: none;
+	padding: 14px 30px 0;
+	text-align: center;
+}
+.upfront-image-action-change,
+.upfront-image-action-details {
+	display: inline-block;
+	background: #c1dbf1;
+	color: #2c333d;
+	margin: 0 9px 14px;
+	padding: 0 10px;
+	border-radius: 3px;
+	font-size: 12px;
+	line-height: 25px;
+	white-space: nowrap;
+	-moz-box-shadow: 0 1px 0 #2b3139;
+	-webkit-box-shadow: 0 1px 0 #2b3139;
+	box-shadow: 0 1px 0 #2b3139;
+	cursor: pointer;
+}
+.upfront-image-action-change:hover,
+.upfront-image-action-details:hover,
+.upfront-image-action-details-active {
+	background: #85a3bf;
+	color: #2b3239;
+	-moz-box-shadow: inset 0 0 0 1px rgba(242,249,255,.15);
+	-webkit-box-shadow: inset 0 0 0 1px rgba(242,249,255,.15);
+	box-shadow: inset 0 0 0 1px rgba(242,249,255,.15);
+}
+.upfront-image-actions .upfront-icon:before {
+	margin: 7px 6px 0 0;
+}
+.upfront-image-delete {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+#upfront-image-details-image_details {
+	min-width: 255px;
+	background: #f1f9ff;
+	-moz-box-shadow: 0 0 10px rgba(38,58,77,.72);
+	-webkit-box-shadow: 0 0 10px rgba(38,58,77,.72);
+	box-shadow: 0 0 10px rgba(38,58,77,.72);
+	border-radius: 4px;
+	border: 1px solid #fff;
+	color: #395169;
+	padding: 18px;
+	margin: 10px 0 0;
+	position: relative;
+	z-index: 19999;
+}
+#upfront-image-details-image_details:before,
+#upfront-image-details-image_details:after {
+	content: " ";
+	position: absolute;
+	top: -6px;
+	left: 50%;
+	margin-left: -5px;
+	border-bottom: 5px solid #fff;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+}
+#upfront-image-details-image_details:after {
+	top: -4px;
+	border-bottom-color: #f1f9ff;
+}
+#upfront-image-details-image_details .upfront-field-label {
+	display: block;
+	font-size: 16px;
+	line-height: 24px;
+	padding-left: 16px;
+	margin: 0 0 6px;
+}
+.upfront-image-detail-button {
+	min-width: 76px;
+	padding: 0 20px;
+	background: #31475b;
+	color: #f1f8ff;
+	border: none;
+	border-radius: 3px;
+	font-size: 13px;
+	font-family: Verdana, sans-serif;
+	line-height: 28px;
+	float: right;
+}
+.upfront-image-detail-alt {
+	margin-bottom: 16px;
+}
+.upfront-image-detail-link ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	color: #2f475d;
+	font-size: 11px;
+	font-family: Verdana, sans-serif;
+}
+.upfront-image-detail-link ul em {
+	color: #1fcd8f;
+}
+.upfront-image-detail-link ul li {
+	line-height: 30px;
+	margin: 0 0 6px;
+}
+.upfront-image-detail-link .upfront-field-radio {
+	vertical-align: top;
+	margin: 9px 3px 0 0;
+}
+.upfront-image-detail-link .upfront-field-text {
+	width: 75%;
+	margin: 0 0 0 3px;
+}
+
+.upfront-editable_entity .upfront-inline_post-slider {
+	position: relative;
+	width: 100%;
+	height: 450px;
+	margin: 0 0 60px;
+}
+.upfront-editable_entity .upfront-inline_post-slider .upfront-inserted_image-wrapper {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	padding: 0;
+	margin: 0;
+	opacity: 0;
+	z-index: -1;
+	-webkit-transition: opacity 1s;
+}
+.upfront-editable_entity .upfront-inline_post-slider .upfront-inserted_image-wrapper.slide-edit-active {
+	opacity: 1;
+	z-index: 0;
+}

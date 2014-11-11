@@ -173,6 +173,7 @@ class Upfront_UimageView extends Upfront_Object {
 				'more_tools' => __('More tools', 'upfront'),
 				'edit_caption' => __('Edit Caption', 'upfront'),
 				'add_caption' => __('Add Caption', 'upfront'),
+				'replace_for_edit' => __('Replace image', 'upfront'),
 			),
 			'drop_image' => __('Drop the image here', 'upfront'),
 			'external_nag' => __('Image editing it is only suitable for images uploaded to WordPress', 'upfront'),

@@ -1,0 +1,45 @@
+/* Plain Text Element */
+div.plaintext-settings.inline-radios > span.upfront-field-multiple {
+  display: inline-block !important;
+  margin-right:6px
+}
+
+
+#settings .plaintxt-settings-panel .upfront-settings_panel_scroll {
+	min-width: 287px;
+	max-height: 400px !important
+}
+
+div.plaintext-settings {
+  display: inline-block;
+}
+
+
+
+div.inline-number.plaintext-settings label, div.inline-color.plaintext-settings.border-color label {
+  display: inline;
+  font-size: 11px;
+  color: #26394d;
+}
+
+
+.inline-color {
+  margin: 0;
+}
+div.inline-color.plaintext-settings.border-color {
+  min-width: 100px;
+}
+div.inline-color.plaintext-settings.bg-color {
+  min-width: 220px;
+  margin-top: 10px;
+  color: rgb(125, 153, 179);
+  font-weight: bold !important;
+}
+div.inline-number.plaintext-settings {
+  margin-right: 20px;
+}
+
+div.inline-number.plaintext-settings input {
+  width: 50px
+}
+

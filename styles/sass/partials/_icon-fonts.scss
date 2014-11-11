@@ -1,0 +1,69 @@
+/*------------ Font Icons --------------*/
+.redactor-dropdown-box-upfrontIcons div.icons{
+	font-size: 24px;
+	height: 140px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	padding: 7px;
+	margin-right: 1px;
+}
+.redactor-dropdown.redactor-dropdown-box-upfrontIcons{
+	min-width: 153px;
+	width: 153px;
+	line-height: 38px;
+	padding: 0;
+	opacity: 0.9;
+}
+.redactor-dropdown.redactor-dropdown-box-upfrontIcons a,
+.redactor-dropdown.redactor-dropdown-box-upfrontIcons a:link{
+    color: #97b8da !important;
+	text-decoration: none;
+    display: inline-block;
+    width: 28px;
+    text-align: center;
+}
+.redactor-dropdown.redactor-dropdown-box-upfrontIcons a:hover{
+    color: rgb(64, 166, 255) !important;
+}
+.upfront-font-icons-controlls{
+	display: block;
+	width: 100%;
+	padding: 2px 0 0 0;
+	margin: 0;
+	background: #1d2b38;
+	height: 40px;
+	position: absolute;
+}
+.upfront-font-icons-controlls li{
+	display: inline-block;
+	height: 38px;
+	padding-left: 2px;
+}
+.upfront-font-icons-controlls li input{
+	width: 40px;
+	height: 30px;
+	background: #a5c2df;
+	-boz-boder-radius:5px;-webkit-border-radius:5px;border-radius: 5px;
+	border: none;
+	color: #273a4c;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 1px;
+	text-align: center;
+}
+.upfront-font-icons-controlls li label{
+	float: left;
+	line-height: 38px;
+	padding-right: 1px;
+	color: #a5c2df;
+	font-size: 12px;
+}
+.upfront-font-icons-controlls li.font-icons-top-li{
+	padding-right: 3px;
+	float: right;
+}
+.upfront-font-icons-controlls .upfront-field-number{
+	width: 42px;
+	padding:0 0 0 2px
+}
+/*------------ End of Font Icons --------------*/

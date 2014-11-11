@@ -1,0 +1,117 @@
+/* Tax */
+.upfront-taxonomy-hierarchical #upfront-taxonomy-list {
+	padding: 30px;
+}
+#upfront-taxonomy-list, #upfront-taxonomy-add {
+	color: #476d8a;
+}
+#upfront-taxonomy-list {
+	max-height: 300px;
+}
+#upfront-taxonomy-list label {
+	clear:right;
+	margin-bottom: 10px;
+}
+#upfront-taxonomy-add {
+	padding: 30px 20px;
+}
+#upfront-taxonomy-add input#upfront-new_term{
+	width: 40%;
+	margin-right: 4%;
+	background: #E5F3FE;
+}
+#upfront-taxonomy-add select{
+	padding: 7px 5px;
+	width: 25%;
+	margin-right: 4%;
+}
+#upfront-taxonomy-add button {
+	width: 25%;
+
+}
+.upfront-taxonomy-hierarchical .upfront-taxonomy_item {
+	padding-left: 1em;
+	width: 33%;
+	float: left;
+	margin: 0 0 10px;
+}
+.upfront-taxonomy-hierarchical .upfront-taxonomy_item input {
+	margin-right: 5px;
+}
+.upfront-taxonomy-hierarchical .upfront-taxonomy_item .upfront-taxonomy_item {
+	clear:left;
+	width: 100%;
+	padding: 10px 0 0 10px;
+	margin: 0 0 0 7px;
+}
+#upfront-taxonomy-add {
+	background: #c3dcf1;
+}
+
+/* Flat tax */
+.upfront-taxonomy-flat #upfront-taxonomy-list {
+	padding: 0;
+}
+.upfront-taxonomy-list-panel {
+	float: left;
+	width: 50%;
+	color: #7a94ac;
+}
+
+.upfront-taxonomy-list-panel i {
+	margin: 2px 5px 0 0;
+	display: block;
+	background-image: url(../img/uf-ui-sprite.svg);
+	height: 20px;
+	width: 16px;
+	float: left;
+}
+
+.upfront-taxonomy_item .icon-remove-circle {
+	background-position: -1336px -191px;
+}
+
+.upfront-taxonomy_item:hover .icon-remove-circle {
+	background-position: -1441px -191px;
+}
+
+.upfront-taxonomy_item .icon-plus {
+	background-position: -1438px -155px;
+}
+
+.upfront-taxonomy_item:hover .icon-plus {
+	background-position: -1228px -191px;
+}
+
+#upfront-taxonomy-list-current .icon-plus,
+#upfront-taxonomy-list-all .icon-remove-circle {
+	display: none;
+}
+
+
+.upfront-taxonomy-list-title {
+	font-size: 18px;
+	margin-bottom: 30px;
+	color: #476d8a;
+}
+#upfront-taxonomy-list-current {
+	padding: 30px 20px;
+	max-height: 300px;
+}
+#upfront-taxonomy-list-all {
+	background: #d9edfe;
+}
+#upfront-taxonomy-list-all>div {
+	padding: 30px 20px;
+	max-height: 300px;
+}
+.upfront-taxonomy-flat #upfront-new_term {
+	width: 250px;
+}
+.upfront-taxonomy-flat .upfront-taxonomy_item {
+	width: 48%;
+	float: left;
+	margin: 0 2% 10px 0;
+	cursor: pointer;
+}
+

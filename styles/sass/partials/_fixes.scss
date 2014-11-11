@@ -1,0 +1,34 @@
+/* Inserts padding fix */
+.ueditor-insert {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+.upfront-image-upload-placeholder {
+	background-image: url('../img/uf-ui-sprite.png');
+	background-position: -36px -570px;
+	background-repeat: no-repeat;
+	display: block;
+	height: 50px;
+	margin: 20px 30px;
+	width: 50px;
+}
+
+/* hack to fix empty paragraphs collapsing on each other */
+.upfront-plain_txt p:after {
+  content:'\00a0';
+}
+/* fixes the jump when exiting txt editing */
+/** Had to comment the following otherwise it would hide all the breaks inside post editor(Sam)  **/
+.redactor_editor .nosortable br {
+	/*display: none;*/
+}
+
+/* Disabled state fix for jquery UI theme-rolled css conflicts */
+.upfront-edit-layout #page .upfront-region-container.ui-state-disabled,
+.upfront-edit-layout #page .upfront-region.ui-state-disabled,
+.upfront-edit-theme #page .upfront-region-container.ui-state-disabled,
+.upfront-edit-theme #page .upfront-region.ui-state-disabled
+{
+	opacity: 1;
+}

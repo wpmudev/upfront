@@ -866,6 +866,13 @@ div.uimage-controls i.upfront-icon:before {
 	background-position: -807px -721px;
 }
 
+.upfront-ui .upfront-icon-region-replace-image:before {
+	background-position: -699px -744px;
+}
+.upfront-ui .upfront-icon-region-replace-image:hover:before {
+	background-position: -807px -744px;
+}
+
 .upfront-inline-panel-subitem .upfront-inline-panel-subitem {
 	position: absolute;
 	top:0;

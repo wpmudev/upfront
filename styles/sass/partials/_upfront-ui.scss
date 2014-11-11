@@ -1,0 +1,59 @@
+.upfront-ui {
+	font: 16px/24px 'Source Sans Pro', sans-serif;
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+}
+.upfront-ui a,
+.upfront-ui button,
+.upfront-ui input {
+	-webkit-transition: color,background-color,border,opacity .25s;
+	-o-transition: color,background-color,border,opacity .25s;
+	transition: color,background-color,border,opacity .25s;
+}
+
+.upfront-ui, .upfront-ui *, .upfront-ui *:before, .upfront-ui *:after {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+.upfront-ui *,
+.upfront-ui *:before,
+.upfront-ui *:after {
+	font-weight: inherit;
+	font-style: inherit;
+	text-transform: inherit;
+	text-decoration: inherit;
+	border: none;
+	outline: none;
+	margin: 0;
+	padding: 0;
+	background:none;
+	border-radius:0;
+	position: static;
+	-webkit-transform: none;
+	   -moz-transform: none;
+	    -ms-transform: none;
+	     -o-transform: none;
+	        transform: none;
+}
+
+.upfront-ui h1,
+.upfront-ui h2,
+.upfront-ui h3,
+.upfront-ui h4,
+.upfront-ui h5 {
+	font-family: 'Source Sans Pro', sans-serif;
+	text-transform: none;
+}
+
+.upfront-ui ul {
+	list-style: none;
+}
+
+.upfront-ui ul li:before {
+	display: none;
+}
+

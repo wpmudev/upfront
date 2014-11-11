@@ -1,0 +1,401 @@
+@import "sass/partials/layout";
+@import 'sass/partials/upfront-ui';
+@import 'sass/partials/general-stuff';
+@import 'sass/partials/button';
+@import 'sass/partials/sidebar-ui';
+@import 'sass/partials/fields';
+@import 'sass/partials/ueditor-inserts';
+@import 'sass/partials/region';
+@import 'sass/partials/layout-grid-module-object';
+@import 'sass/partials/sidebar-buttons-commands';
+@import 'sass/partials/modal';
+@import 'sass/partials/drag-n-drop';
+@import 'sass/partials/settings';
+@import 'sass/partials/save-as-dialog';
+@import 'sass/partials/icon';
+@import 'sass/partials/tooltips';
+@import 'sass/partials/popup';
+@import 'sass/partials/tabs';
+@import 'sass/partials/pagination';
+@import 'sass/partials/taxonomy';
+@import 'sass/partials/post-list';
+@import 'sass/partials/single-post';
+@import 'sass/partials/notifier';
+@import 'sass/partials/loading';
+@import 'sass/partials/popup_media-manager';
+@import 'sass/partials/color-picker';
+@import 'sass/partials/image-details-dialog';
+
+#upfront-inline-slider-nav {
+	position: absolute;
+	right: auto;
+	z-index: 9999;
+}
+
+@import 'sass/partials/ulinkpanel';
+@import 'sass/partials/editor-bar';
+@import 'sass/partials/thumbnail-changer';
+@import 'sass/partials/selector';
+#settings .upfront-settings-item-anchor .upfront-settings-item {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+.upfront-field-complex_field-boolean_toggleable_text label,
+.upfront-field-complex_field-boolean_toggleable_text .upfront-embedded_toggleable-notice
+{
+	font-size: 11px;
+}
+.upfront-field-complex_field-boolean_toggleable_text .upfront-embedded_toggleable-notice {
+	margin-top: 3px;
+	font:11px/13px Verdana, sans-serif;
+	color:#26394d;
+	padding:5px;
+}
+#settings .upfront-embedded_toggleable.error .upfront-embedded_toggleable-notice {
+	background-color: #edafaf;
+}
+#settings .upfront-embedded_toggleable.error input {
+	border: 1px solid #dc6060;
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	background-repeat: no-repeat;
+	background-position: 170px -310px;
+}
+#settings .upfront-embedded_toggleable.ok input {
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	background-repeat: no-repeat;
+	background-position: 170px -345px;
+}
+
+
+.upfront-image-attachment-bits {
+	opacity: 0.6;
+	position: relative;
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	background-repeat: no-repeat;
+	background-position: -509px -483px;
+	height: 24px;
+	width: 60px;
+	z-index: 1;
+	left: -45px;
+	cursor: pointer;
+	transition: opacity .5s ease, left .5s ease;
+}
+.upfront-image-attachment-bits.upfront-post-media-trigger-visible,
+.upfront-image-attachment-bits:hover {
+	/*left: -30px;*/
+    opacity: 1;
+}
+
+
+/* ----- CKE link selection ------ */
+#upfront-cke-link_editor {
+	position: absolute;
+	z-index: 999;
+	top: 0;
+	right: 110px;
+	width: 235px;
+}
+
+#upfront-cke-link_editor .wrap {
+	border: 1px solid rgb(99, 134, 166);
+	background: rgb(242, 249, 255);
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+	padding: 10px;
+}
+#upfront-cke-link_editor .upfront-save_settings {
+	float: right;
+}
+
+
+.upfront-quick-swap{
+	color: #3f5870;
+	background: rgba(255, 255, 255, .9);
+	font-family: 'Source Sans Pro';
+	text-align: center;
+	font-size: 18px;
+	width: 100%;
+	height: 100%;
+	min-height: 60px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	z-index: 1;
+	cursor: pointer;
+	padding: 10px;
+	display:none;
+}
+
+.upfront-quick-swap p {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	height: 1.6em;
+}
+
+.upfront-object:hover .upfront-quick-swap{
+	display:block;
+}
+.upfront-edit-responsive .upfront-object:hover .upfront-quick-swap{
+    display: none;
+}
+#preventUsageOverlay {
+  text-align: center;
+  cursor: not-allowed;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  background: rgba(38,58,77,0.8);
+  display: none;
+	z-index: 10;
+}
+
+#preventUsageOverlay span {
+  padding: 2px 5px;
+  margin-bottom: 14px;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
+  font: 10px/14px Verdana, sans-serif;
+  white-space: nowrap;
+  background: #2b445d;
+  color: #f2f9ff;
+  box-shadow: 0 0 0 2px rgba(219,236,252,.4);
+  position: absolute;
+  top: 50%;
+  margin-top: -20px;
+  visibility: hidden;
+}
+
+#preventUsageOverlay:hover span {
+  visibility: visible;
+}
+
+.upfront-region-container-shadow .upfront-region-edit-trigger {
+  /* This is very important fix for anchor linking to element cuts off top of page. */
+  display: none;
+}
+
+
+
+@import 'sass/partials/redactor';
+@import 'sass/partials/new-color-picker';
+@import 'sass/partials/plaintext';
+@import 'sass/partials/context-menu';
+@import 'sass/partials/css-editor';
+/* Layout editor region */
+.upfront-edit-postlayout .upfront-overlay-grid {
+	display: none;
+}
+.upfront-edit-postlayout .upfront-region-container-postlayouteditor  .upfront-overlay-grid{
+	display: block;
+}
+.upfront-edit-postlayout .upfront-region-postlayouteditor {
+	box-shadow: 0 0 0 5000px rgba(0,0,10,.5);
+	position:relative;
+	z-index: 1;
+}
+
+#page.desktop .upfront-region-container-postlayouteditor .upfront-grid-layout {
+	width: 100%;
+}
+
+#page .upfront-region-postlayouteditor div.upfront-object {
+	padding-top:0;
+	padding-bottom:0;
+}
+
+.upfront-object-content>*:first-child{
+  margin-top: 0;
+}
+.upfront-object-content>*:last-child{
+  margin-bottom: 0;
+}
+
+#page div.upfront-object.upfront-this_post,
+#page div.upfront-object.uposts-object {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.upfront-content-marker {
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+}
+
+.upfront-content-marker-contents {
+	display: block;
+}
+
+.content-overflow-setting .upfront-field-wrap {
+	width: 45%;
+	display: inline-block;
+	margin-left: 10%;
+}
+.content-overflow-setting .upfront-field-wrap:first-child {
+	margin-left: 0;
+}
+
+.content-overflow-setting input.upfront-field-number {
+	width: 100%;
+}
+
+.upfront-post-thumb-placeholder {
+	background: rgba(255,255,255,.1);
+	border: 1px dashed #3d5266;
+	position: relative;
+}
+.upfront-post-thumb-placeholder div {
+	position: absolute;
+	width: 150px;
+	height: 30px !important;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	margin:auto;
+	text-align: center;
+}
+
+
+
+/* Fix for the 1px element movement glitch */
+
+.upfront-region-bg-slider,
+.upfront-overlay-grid,
+.upfront-region-side-fixed,
+.upfront-region-edit-trigger,
+.upfront-region-finish-edit,
+.upfront-inline-panel {
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.inline-radios.plaintext-settings .upfront-field-label-block {
+  margin-bottom: 3px;
+}
+
+.ugallery-setting-labels {
+  margin-top: 0;
+}
+
+.upfront-field-wrap-radios .upfront-field-label-block {
+  margin-bottom: 5px;
+}
+
+.upfront-field-wrap-select .upfront-field-label-block {
+  margin-bottom: 3px;
+}
+
+.ugallery-thumbnail-fields .upfront-field-wrap-radios {
+  margin-top: 9px;
+}
+.ugallery-thumbnail-fields .upfront-field-wrap-slider {
+  margin-top: 5px;
+}
+.ugallery-thumbnail-fields .upfront-field-wrap-slider label {
+  margin-bottom: 13px;
+}
+
+.upfront-field-wrap-hidden,
+.upfront-field-wrap-hidden label,
+.upfront-field-wrap-hidden input {
+  margin: 0 !important;
+}
+
+.map-zoom-level {
+  position: relative;
+  margin-bottom: 20px;
+}
+.map-zoom-level .upfront-field-slider-value {
+  position: absolute;
+  color: #1fcd8f;
+  top: -9px;
+  left: 109px;
+  font-weight: bold;
+}
+
+.upfront_map-fields-simple_location .upfront-field-wrap {
+  margin-top: 3px;
+}
+
+.ufpront-maps_element-settings_panel .upfront-field-select {
+	width: 100%;
+}
+
+.menu-settings .upfront-field-wrap {
+  margin-top: 8px;
+}
+
+.upfront-field-wrap.inline-color label,
+.inline-number label {
+  font-weight: normal;
+}
+@import 'sass/partials/styles-and-anchor-settings';
+@import 'sass/partials/post-settings';
+@import 'sass/partials/responsive-ui';
+@import 'sass/partials/icon-fonts';
+@import 'sass/partials/feature-image';
+@import 'sass/partials/flexbox';
+@import 'sass/partials/theme-colors-ui';
+@import 'sass/partials/typography-panel';
+@import 'sass/partials/chosen';
+@import 'sass/partials/theme-fonts-manager';
+@import 'sass/partials/sidebar-ui-section-tabs';
+@import 'sass/partials/builder';
+@import 'sass/partials/fixes';
+@import 'sass/partials/global-regions';
+@import 'sass/partials/ueditor';
+@import 'sass/partials/embed-inserts';
+@import 'sass/partials/insert-font-widget';
+/* Toggleable text field */
+.upfront-ui .upfront-field-wrap-toggleable label b {
+	font-weight: bold;
+}
+.upfront-ui .upfront-toggleable-button {
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+	padding: 4px 6px;
+	margin-left: 8px;
+}
+/* Toggleable text field */
+.uimage-small .uimage-resize-hint.sizehint-top,
+.uimage-small .uimage-resize-hint {
+	top: -25px;
+	font-size: 9px;
+	line-height: 10px;
+	width: 55px;
+	left: 0;
+}
+.uimage-small .stuck-to-top .uimage-resize-hint.sizehint-top,
+.uimage-small .stuck-to-top .uimage-resize-hint {
+	top: 0;
+	left: -55px;
+}
+.uimage-small .uimage-controls.image-element-controls {
+	bottom: 0;
+	left: 0;
+}
+.inline-panel-control-dialog {
+	display: none;
+}
+.upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog {
+	display: block;
+}
+
+@import 'sass/partials/visit-link';
+@import 'sass/partials/fix-theme-style-messes-ui';
+@import 'sass/partials/_preset-manager.scss';

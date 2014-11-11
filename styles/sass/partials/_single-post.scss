@@ -1,0 +1,151 @@
+/* Post single view */
+
+.upfront-post_content-wrapper {
+	padding: 0 30px;
+	font-size: 16px;
+	line-height: 1.4em;
+}
+
+.upfront-post_content{
+}
+
+.upfront-post_content h1,
+.upfront-post_content h2,
+.upfront-post_content h3,
+.upfront-post_content h4,
+.upfront-post_content h5 {
+	color: #273a4c;
+	font-weight: bold;
+}
+.upfront-post_content h1 {
+	font-size: 27px;
+}
+.upfront-post_content h2 {
+	font-size: 27px;
+}
+.upfront-post_content h3 {
+	font-size: 24px;
+}
+.upfront-post_content h4 {
+	font-size: 21px;
+}
+.upfront-post_content h5 {
+	font-size: 18px;
+}
+
+.upfront-post_content p {
+}
+
+
+
+.upfront-page_preview-bottom {
+	position: absolute;
+	width:100%;
+	bottom:0;
+	left: 0;
+	padding: 20px 30px;
+}
+
+
+
+
+#upfront-back_to_posts {
+	display: block;
+	float: left;
+	font-size: 18px;
+	color: #fff;
+	text-decoration: none;
+	line-height: 50px;
+}
+
+/* Post slug popup */
+
+.upfront-post_password-wrapper {
+	padding: 5px;
+	margin: 1em;
+}
+#upfront-post_password {
+	padding: 5px;
+	margin-right: 1em;
+}
+#upfront-post_password-send {
+	padding: 5px;
+}
+
+/* Visibility slug popup */
+
+.upfront-slug_editor{
+	padding: 30px;
+	margin: 1em;
+	color: #3A5268;
+}
+.upfront-slug_editor-title {
+	font-size: 30px;
+	font-weight: 200;
+	margin-bottom: 5px;
+}
+.upfront-slug_editor-info {
+	color: #7a94ac;
+	font-size: 15px;
+	margin: 0 0 30px;
+	line-height: 1.4em;
+}
+
+.upfront-slug_editor-url {
+	font-size: 15px;
+}
+#upfront-post_slug {
+	padding: 8px 5px;
+	font-size: 15px;
+
+	width: 270px;
+}
+.upfront-slug_editor button#upfront-post_slug-send {
+	width: 100px;
+	float: right;
+}
+
+a.upfront-post-layout-trigger:before{
+	content: '#';
+	line-height: 19px;
+	font-style: normal;
+	text-align: center;
+	font-weight: bold;
+	width: 20px;
+	color:#fff;
+}
+
+/* Posts panel fix
+#sidebar-ui .sidebar-panels .upfront-panel-post_panel .sidebar-panel-content {
+	background: #33475b;
+	border-top: 1px solid #273A4C;
+}
+
+.sidebar-panels .upfront-panel-post_panel h3.sidebar-panel-title {
+	display: none;
+}
+*/
+.sidebar-panel {
+	display: none;
+}
+
+.sidebar-panel.active {
+	display: block;
+}
+.upfront-post-state {
+	color: #7a94ac;
+	padding: 0 20px;
+}
+.upfront-post-state b {
+	color: #cde6fe;
+}
+.upfront-post-state a {
+	color: #1fcd8f;
+}
+
+.upfront-post-schedule {
+	padding-bottom: 15px;
+	border-bottom: 1px solid #2E4153;
+	margin-bottom: 15px;
+}
+

@@ -1,0 +1,40 @@
+.upfront-message-modal {
+	font-family: "Source Sans Pro", sans-serif;
+	color: #3c5266;
+}
+.upfront-modal-title {
+	font-size: 20px;
+	font-weight: bold;
+	margin: 12px 0;
+}
+.upfront-modal-select-wrap {
+	float: left;
+	margin: 0 25px 0 0;
+}
+.upfront-modal-select-wrap .upfront-field-select {
+	height: 40px;
+	max-height: 40px;
+	line-height: 36px;
+}
+.upfront-modal-select-wrap .upfront-field-select:after {
+	top: 18px;
+}
+.upfront-modal-select-wrap .upfront-field-select .upfront-field-select-value {
+	height: 38px;
+}
+.upfront-modal-select-wrap .upfront-field-select-options {
+	max-height: 40px;
+}
+.upfront-modal-select-wrap .upfront-field-select-expanded .upfront-field-select-options,
+.upfront-modal-select-wrap .upfront-field-select-multiple:hover .upfront-field-select-options {
+	margin-top: -39px !important;
+	max-height: 212px;
+}
+.upfront-modal-select-wrap .upfront-field-select-single .upfront-field-select-option-selected label:before {
+	margin-top: 14px;
+}
+
+
+
+
+

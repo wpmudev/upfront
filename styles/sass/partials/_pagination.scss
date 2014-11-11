@@ -1,0 +1,133 @@
+/* Pagination */
+#upfront-entity_list-pagination {
+	clear: both;
+	float: left;
+	padding-top: 10px;
+}
+.upfront-pagination_item {
+	float: left;
+	line-height: 20px;
+	margin: 10px 5px 0 0;
+	text-align: center;
+	font-size: 16px;
+	color: #aec4d8;
+	cursor: pointer;
+	border: 2px solid transparent;
+	padding: 3px;
+	width:30px;
+	height:30px;
+	background:rgba(35,49,64,.5);
+}
+
+/* Previous & Next button triangles created with CSS */
+.upfront-pagination_item.upfront-pagination_item-prev,
+.upfront-pagination_item.upfront-pagination_item-next {
+	width:30px;
+	height: 30px;
+	border:2px solid rgb(124,157,191);
+	background: transparent;
+	opacity: .7;
+	margin:0;
+}
+.upfront-pagination_item.upfront-pagination_item-prev:after,
+.upfront-pagination_item.upfront-pagination_item-next:after {
+	content: '';
+	width: 0;
+	height: 0;
+	font-size: 0;
+	line-height: 0;
+	top:-5px;
+	position: relative;
+	border-bottom: 5px solid transparent;
+	border-top: 5px solid transparent;
+}
+.upfront-pagination_item.upfront-pagination_item-prev:after {
+	border-right: 5px solid #E5F3FF;
+	left:-1px;
+}
+.upfront-pagination_item.upfront-pagination_item-next:after {
+	border-left: 5px solid #E5F3FF;
+}
+.upfront-pagination_item:hover {
+	opacity: 1;
+}
+
+/* Pagination navigation */
+.upfront-pagination_navigation {
+	float: left;
+	line-height: 20px;
+	margin: 0px 10px;
+	text-align: center;
+	font-size: 16px;
+	color: #B8D0E6;
+	cursor: pointer;
+}
+#upfront-popup .upfront-pagination_navigation input,
+#upfront-popup .upfront-pagination_navigation input:focus  {
+	background:rgb(35,49,64);
+	background:rgba(35,49,64,.5);
+	color: #fff;
+	height: 30px;
+	width: 50px;
+	font-size: 16px;
+	border: 1px solid rgb(229,243,255);
+	border: 1px solid rgba(229,243,255,.4);
+	margin-right: 5px;
+}
+#upfront-popup .upfront-pagination_navigation input:focus {
+	background:rgba(35,49,64,.7);
+	border: 1px solid rgba(229,243,255,1);
+}
+
+.upfront-pagination_navigation .upfront-pagination_page-item {
+	font-weight: bold;
+	color: rgb(31, 205, 143);
+	border-bottom: 1px solid rgb(31, 205, 143);
+	margin-left:5px;
+}
+
+.upfront-pagination_item.current {
+	color: #fff;
+	border: 2px solid #2ecc90;
+	background:transparent;
+}
+
+.upfront-pagination_item i{
+	display: block;
+	width: 16px;
+	height: 20px;
+	background-image: url(../img/uf-ui-sprite.svg);
+}
+
+.upfront-pagination_item i.icon-angle-left {
+	background-position: -1234px -83px;
+}
+
+.upfront-pagination_item i.icon-angle-right {
+	background-position: -1340px -83px;
+}
+
+/* Scrollable pagination */
+/*
+.upfront-pagination.upfront-numeric_pagination {
+	width: 415px;
+	height: 42px;
+	overflow: hidden;
+	float: left;
+}
+.upfront-pagination.upfront-numeric_pagination .upfront-numeric_pagination-container {
+	position: relative;
+}
+.upfront-pagination_item-next {
+	float: left;
+}
+*/
+#upfront-entity_list-pagination small {
+	width: 100%;
+	color:rgb(141,173,189);
+	text-align: center;
+	float: left;
+	clear: both;
+	font-size: 13px;
+}
+

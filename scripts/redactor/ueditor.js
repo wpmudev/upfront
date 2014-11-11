@@ -207,7 +207,8 @@ var Ueditor = function($el, options) {
 			inserts: false,
             cleanStyleOnEnter: true,
             removeDataAttr: true,
-            linkTooltip: false
+            linkTooltip: false,
+            cleanOnPaste: false
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */

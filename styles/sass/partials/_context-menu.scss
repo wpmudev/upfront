@@ -1,0 +1,46 @@
+/* Context Menu */
+.uf-context-menu * {
+  box-sizing:border-box;
+}
+.uf-context-menu {
+  position:absolute;
+  z-index:9999;
+  padding:5px 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size:15px;
+  color:#465f80;
+  width:auto;
+  border-radius:3px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  background-color: #e5f3ff;
+  -moz-box-shadow: 0 0 10px rgba(29,51,80,.3);
+  -webkit-box-shadow: 0 0 10px rgba(29,51,80,.3);
+  box-shadow: 0 0 10px rgba(29,51,80,.3);
+  display:none;
+}
+
+.uf-context-menu ul {
+  padding:0;
+  margin:0;
+}
+
+.uf-context-menu ul:nth-child(2) {
+  /* this makes sure that the border is only displayed if >1 uls */
+  border-top:1px solid rgba(29,51,80,.1);
+}
+
+.uf-context-menu li {
+  width:100%;
+  height:30px;
+  list-style:none;
+  padding:4px 15px 0;
+}
+
+.uf-context-menu li:hover {
+  background:#85aacc;
+  color:#fff;
+  cursor:pointer;
+}
+

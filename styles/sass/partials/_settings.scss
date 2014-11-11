@@ -1,0 +1,261 @@
+/* ----- Settings ----- */
+
+#settings, #settings * {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+#settings {
+	background-color: rgb(218, 231, 242);
+	border-left: 3px solid rgb(99, 134, 166);
+	width: 92px;
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+}
+#settings .upfront-settings_title {
+	display: none;
+}
+#settings .upfront-settings_label {
+	position: relative;
+	padding-left: 7px;
+	width: 89px;
+	height: 40px;
+	line-height: 40px;
+	background: rgb(143, 174, 204);
+	color: rgb(242, 249, 255);
+	border-top: 1px solid rgb(99, 134, 166);
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 11px;
+	cursor: pointer;
+}
+#settings .upfront-settings_label.active {
+	color: rgb(99, 134, 166);
+	background: rgb(242, 249, 255);
+	width: 90px;
+	z-index: 10;
+}
+#settings .upfront-settings_panel_wrap:last-child .upfront-settings_label.active {
+	border-bottom: 1px solid rgb(99, 134, 166);
+}
+#settings .upfront-settings_label.active:before {
+	content: " ";
+	display: block;
+	height: 100%;
+	width: 3px;
+	background: rgb(31, 205, 143);
+	position: absolute;
+	top: 0;
+	left: -3px;
+}
+#settings .upfront-settings_panel {
+	position: absolute;
+	left: 89px;
+	top: 0;
+	border: 1px solid rgb(99, 134, 166);
+	background: rgb(242, 249, 255);
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+	z-index: 5;
+}
+
+#settings.settings-no-tabs {
+  width: 0;
+  border: 0 none;
+}
+#settings.settings-no-tabs .upfront-settings_panel {
+  left: 0;
+  border-left: 4px solid rgb(99, 134, 166);/* this should be 3px but browser calculates it wrong for some reason */
+}
+#settings.settings-no-tabs .upfront-settings_label {
+  display: none;
+}
+
+#settings .upfront-settings-item-content {
+	padding: 2px 10px;
+}
+
+#settings .upfront-settings_panel_scroll {
+	padding: 15px 5px;
+	min-width: 270px;
+	max-height: 400px;
+	min-height: 150px;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+.upfront-settings-item {
+  padding-top: 15px;
+}
+#settings .upfront-settings_panel_scroll div:first-child .upfront-settings-item {
+  padding-top: 0;
+}
+#settings .upfront-settings-item-tab-wrap {
+	display: inline;
+}
+#settings .upfront-settings-item-tab {
+	position: relative;
+	z-index: 11;
+	float: left;
+	font-size: 11px;
+	font-family: Verdana, sans-serif;
+	padding: 0 5px;
+	margin: 2px 0 0 1px;
+	height: 24px;
+	line-height: 24px;
+	background: rgb(221, 234, 246);
+	color: rgb(48, 71, 94);
+	color: rgba(48, 71, 94, 0.7);
+	cursor: pointer;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab {
+	max-width: 72px;
+	height: 80px;
+	margin: 0 5px;
+	padding: 0;
+	line-height: 12px;
+	background: none;
+	opacity: 0.7;
+	color: rgb(48, 71, 94);
+	text-align: center;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab label {
+	display: block;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab .upfront-field-icon {
+	margin: 0 0 4px;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab .upfront-settings-item-tab-radio-text {
+	display: block;
+	font-weight: normal;
+	height: 24px;
+	margin: 0 0 4px;
+	overflow: hidden;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab .upfront-field-radio {
+	float: none;
+	margin: 0;
+}
+#settings .upfront-settings-item-tab-wrap:first-child  .upfront-settings-item-tab {
+	margin-left: 10px;
+}
+#settings .upfront-settings-item-tab-active .upfront-settings-item-tab {
+	margin-top: 0;
+	font-weight: bold;
+	height: 27px;
+	background: none;
+	color: rgb(48, 71, 94);
+	border: 1px solid rgb(149, 184, 217);
+	border-bottom-color: rgb(242, 249, 255);
+}
+#settings .upfront-settings-item-tab-radio.upfront-settings-item-tab-active .upfront-settings-item-tab {
+	opacity: 1;
+	height: 80px;
+	border: none;
+}
+#settings .upfront-settings-item-tab-radio.upfront-settings-item-tab-active .upfront-settings-item-tab:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin-left: -3px;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-bottom: 3px solid rgb(149, 184, 217);
+}
+#settings .upfront-settings-item-tab-content {
+	position: absolute;
+	top: 36px;
+	left: 0;
+	z-index: 10;
+	width: 100%;
+	padding: 10px;
+	display: none;
+}
+#settings .upfront-settings-item-tab-radio .upfront-settings-item-tab-content {
+	top: 90px;
+}
+#settings .upfront-settings-item-tab-content:before {
+	content: " ";
+	display: block;
+	border-top: 1px solid rgb(149, 184, 217);
+	position: relative;
+	top: -10px;
+	height: 0;
+}
+#settings .upfront-settings-item-tab-active .upfront-settings-item-tab-content {
+	display: block;
+}
+#settings .upfront-settings-tab-height {
+	width: 0;
+}
+
+.upfront-settings-item-title,
+.upfront-global-social-settings .upfront-settings-item-title {
+	font-size: 11px;
+  text-transform: uppercase;
+	line-height: 35px;
+	color: rgb(70, 106, 140);
+	font-family: Verdana, sans-serif;
+  font-weight: bold;
+  position: relative;
+}
+
+.upfront-settings-item-title span,
+.upfront-global-social-settings .upfront-settings-item-title span {
+  background-color:#f2f9ff;
+  padding:0 5px 0;
+  position: relative;
+  z-index: 1;
+  margin-left: 5px;
+}
+
+.upfront-settings-item-title:after {
+  content: "";
+  width: 100%;
+  display: block;
+	border-top: 1px solid rgb(195, 216, 236);
+	position: absolute;
+	top: 4px;
+}
+.upfront-region-modal-bg .upfront-settings-item-title,
+.upfront-global-social-settings .upfront-settings-item-title
+{
+    background-color: #e5f3fe;
+}
+.upfront-settings-item-content,
+.upfront-global-social-settings .upfront-settings-item-content{
+	margin: 0;
+}
+.upfront-settings-button_panel {
+	position: absolute;
+	bottom: -37px;
+	right: -1px;
+	margin: 0;
+	z-index:20;
+}
+.upfront-save_settings {
+	height: 36px;
+	width: auto;
+	border: 1px solid rgb(0, 219, 143);
+	padding: 0 26px 0 20px;
+	background: rgb(31, 205, 143);
+	line-height: 34px;
+	font-size: 18px;
+	font-family: 'Source Sans Pro';
+	color: rgb(242, 249, 255);
+	border-radius: 0;
+	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+}
+.upfront-save_settings:hover {
+	background: #3ea;
+}
+/* @TODO still using font awesome icon, need add it to sprite instead */
+.upfront-save_settings i {
+	color: rgb(25, 166, 116);
+}
+
+.upfront-settings_panel_scroll .upfront-settings-item-title{
+	line-height: 8px
+}
+

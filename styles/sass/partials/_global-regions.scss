@@ -1,0 +1,23 @@
+/* global regions button */
+.upfront-field-wrap-button .button-info:before {
+	display: inline-block;
+	content: "";
+	width: 13px;
+	height: 15px;
+	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -485px -141px;
+	margin-right: 5px;
+	margin-bottom: -2px;
+}
+
+.button-info + input {
+	background: #e6f3fe;
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+	padding: 4px 6px;
+	margin-left: 8px;
+}
+
+.upfront-region-bg-setting-add-global-region {
+	margin-bottom: 20px;
+}

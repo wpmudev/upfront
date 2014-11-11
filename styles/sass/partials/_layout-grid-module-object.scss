@@ -1,0 +1,546 @@
+#settings {
+  position: fixed;
+  left: 0;
+  top: 480px;
+}
+
+#layouts {
+  position: fixed;
+  top: 28px;
+  width: 100%;
+  height: 0;
+  overflow: hidden; /* @TODO temporary hide this with CSS, need to remove this on the code? */
+  background: #eee;
+  z-index: 5;
+}
+#layouts nav {
+  display: table;
+  width: 100%;
+}
+#layouts ul {
+  display: table-row;
+  width: 100%;
+}
+#layouts li {
+  display: table-cell;
+  text-align: center;
+  line-height: 22px;
+  padding-left: 1em;
+}
+#layouts li:first-child {
+  text-align: right;
+}
+#layouts li:last-child {
+  text-align: left;
+}
+#layouts li.active {
+  text-shadow: 1px 1px 3px #000;
+  color: #fff;
+}
+
+.upfront-overlay-grid {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 0;
+	visibility: hidden;
+	opacity: 0;
+	background: -webkit-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: -moz-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: -ms-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: -o-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background: linear-gradient(to top, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
+	background-size: 100% 15px;
+	border-left: 1px solid #3bffff;
+	-webkit-transition: opacity 0.6s;
+	-moz-transition: opacity 0.6s;
+	-ms-transition: opacity 0.6s;
+	-o-transition: opacity 0.6s;
+	transition: opacity 0.6s;
+	overflow: hidden;
+}
+.upfront-overlay-grid-show {
+	visibility: visible;
+	opacity: 1;
+}
+.upfront-overlay-grid .c1 {
+	height: 100%;
+	text-align: center;
+	font-size: 10px;
+	color: #aaa;
+}
+.upfront-grid-border {
+	background: -webkit-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 0 0, -webkit-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 100% 0;
+	background: -moz-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 0 0, -moz-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 100% 0;
+	background: -ms-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 0 0, -ms-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 100% 0;
+	background: -o-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 0 0, -o-linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 100% 0;
+	background: linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 0 0, linear-gradient(rgba(6,118,190,0.1), rgba(6,118,190,0.1)) repeat-y 100% 0;
+	background-size: 15px 100%;
+	border-right: 1px solid #3bffff;
+}
+.upfront-overlay-grid-simple .upfront-grid-border {
+	background: none;
+	float:left;
+}
+
+
+.upfront-layout {
+	position: relative;
+	z-index: 1;
+	margin: 0 auto;
+}
+
+.upfront-layout-gutter {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 0;
+	overflow: hidden;
+}
+.upfront-layout-gutter-left,
+.upfront-layout-gutter-right {
+	position: absolute;
+	width: 3000px;
+	top: 0;
+	bottom: 0;
+	background: #c8cbcf;
+}
+.upfront-layout-gutter-left {
+	right: 50%;
+}
+.upfront-layout-gutter-right {
+	left: 50%;
+}
+
+.upfront-dragging .upfront-regions {
+	overflow: hidden;
+}
+
+/* Transition */
+.upfront-region-container,
+.upfront-region,
+.upfront-module {
+	/*-webkit-transition: background .6s, opacity .6s;
+	-moz-transition: background .6s, opacity .6s;
+	-ms-transition: background .6s, opacity .6s;
+	-o-transition: background .6s, opacity .6s;
+	transition: background .6s, opacity .6s;*/
+}
+
+.upfront-active_entity > .upfront-editable_entity {
+	/* Commented out as we seem to be doubling up on those dotted lines */
+	/* outline: 1px dotted #5c7c9b; */
+}
+.upfront-editable_entity.ui-resizable-resizing {
+	overflow: hidden;
+	padding-bottom:15px;
+}
+.uimage-upfront-module-view .upfront-editable_entity.ui-resizable-resizing {
+	overflow: visible;
+}
+
+.upfront-wrapper {
+	float: left;
+	position: relative;
+}
+.upfront-wrapper.upfront-wrapper-active {
+	z-index: 3;
+}
+
+.show-debug .upfront-wrapper {
+	/*background: rgba(0,0,0,.04);
+	outline: 1px dashed #aaa;*/
+}
+.upfront-module-group {
+	float: left;
+	position: relative;
+}
+.upfront-module-group:after {
+	content: " ";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
+}
+.upfront-module-group-on-edit:after {
+	display: none;
+}
+.upfront-module-group:hover {
+
+}
+.upfront-module-group-toggle-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 20;
+	margin: auto;
+	height: 36px;
+	text-align: center;
+	display: none;
+}
+.upfront-module-group:hover .upfront-module-group-toggle-ungroup-container,
+.upfront-module-group-edit-mode:hover .upfront-module-group-toggle-reorder-container {
+	display: block;
+}
+.upfront-module-group.upfront-module-group-disabled .upfront-module-group-toggle-ungroup-container,
+.upfront-module-group.upfront-module-group-on-edit .upfront-module-group-toggle-container {
+	display: none;
+}
+.upfront-module-group-toggle {
+	position: relative;
+	display: inline-block;
+	background: rgba(61, 82, 102, .95);
+	-moz-box-shadow: 0 1px 0 #192d3f;
+	-webkit-box-shadow: 0 1px 0 #192d3f;
+	box-shadow: 0 1px 0 #192d3f;
+	color: #d8ecff;
+	font-size: 16px;
+	font-family: "Source Sans Pro", sans-serif;
+	line-height: 24px;
+	padding: 5px 10px;
+	cursor: pointer;
+	z-index: 5;
+}
+
+.upfront-module {
+	position: relative;
+	z-index: 2;
+}
+.upfront-module-disabled-all {
+	opacity: 0.5;
+}
+.upfront-module-disabled-edit .upfront-object:after {
+	content: " ";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1999;
+}
+.ui-resizable-disabled > .ui-resizable-handle {
+	display: none !important;
+}
+.show-debug .upfront-module {
+	/*border: 1px solid #b3da11;*/
+	background: rgba(44, 62, 80, 0.3)
+}
+.upfront-module:hover {
+	outline: 1px dotted #7f7f7f;
+	/*z-index: 40;*/
+}
+.upfront-module-disabled-all:hover,
+.upfront-module-editing:hover {
+	outline: none;
+}
+.upfront-module-disabled-all .upfront-entity_meta,
+.upfront-module-editing .upfront-entity_meta {
+	display: none;
+}
+.upfront-dragging .upfront-module {
+	outline: 1px dotted #7f7f7f;
+	overflow: hidden;
+}
+.upfront-dragging .upfront-module:hover {
+	outline: 1px dotted #7f7f7f;
+	/*z-index: 40;*/
+}
+.upfront-objects_container {
+	width: 100%;
+	position: relative;
+}
+
+.upfront-module-hidden-toggle,
+.upfront-region-hidden-toggle {
+	text-align: center;
+	padding: 0;
+	height: 20px;
+	line-height: 18px;
+}
+.upfront-region-hidden-toggle {
+	float: right;
+	height: 18px;
+	padding: 0;
+	margin: 0 -160px 2px 0;
+	position: relative;
+	top: -9px;
+	left: 0;
+}
+.upfront-region-hidden-toggle:before {
+	content: " ";
+	position: absolute;
+	top: 50%;
+	left: -60px;
+	border-top: 1px dotted #3d5266;
+	width: 50px;
+	height: 0;
+	display: block;
+	margin-top: 0;
+}
+.upfront-module-hidden-toggle .upfront-entity-hide_trigger,
+.upfront-region-hidden-toggle .upfront-entity-hide_trigger {
+	display: inline-block;
+	background-color: #e5f3fe;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	color: #1b2733;
+	font-family: "Verdana";
+	font-size: 11px;
+	width: 110px;
+	height: 18px;
+	line-height: 18px;
+	padding: 0 3px;
+	margin: 0;
+	cursor: pointer;
+	box-shadow: 1px 1px 1px #ADB7C0;
+}
+.upfront-region-hidden-toggle .upfront-entity-hide_trigger {
+	background-color: #dafed9;
+	box-shadow: 1px 1px 1px #e6ebe6;
+	width: 100px;
+}
+
+
+.upfront-object {
+	position: relative;
+	/*z-index: 10;*/
+}
+.show-debug .upfront-object {
+	/*border: 1px solid #bada55;
+	background: rgba(255, 255, 255, 0.4);*/
+}
+.upfront-object-content {
+	min-height: 15px;
+}
+.upfront-drag-handle {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 20;
+	display: none;
+}
+.upfront-active_entity > .upfront-module > .upfront-drag-handle {
+	display: none;
+}
+.handle-active .upfront-drag-handle {
+	display: block;
+}
+.upfront-debug-info {
+	display: none;
+}
+.show-debug .upfront-debug-info {
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	border: 1px solid #ccc;
+	padding: 0 5px;
+	font-size: 10px;
+	line-height: 15px;
+}
+
+.upfront-editable_entity img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.ui-draggable {
+	cursor: move;
+}
+.ui-selectable-helper {
+	position: absolute;
+	z-index: 100;
+	border: 1px solid #1fcd8f;
+	background: rgba(31, 205, 143, .1);
+}
+.upfront-ui-selected, .ui-selecting {
+	position: relative;
+}
+#upfront-group-selection, .upfront-selected-border {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-image: linear-gradient(to right, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to right, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to bottom, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to bottom, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px);
+	background-size: 2px 1px, 2px 1px, 1px 2px, 1px 2px;
+	background-position: 0 0, 0 100%, 0 0, 100% 0;
+	background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+	z-index: -1;
+	display: none;
+}
+#upfront-group-selection {
+	bottom: auto;
+	right: auto;
+	display: block;
+	z-index: 10;
+}
+.upfront-ui-selected .upfront-selected-border,
+.ui-selecting .upfront-selected-border,
+.upfront-module-group:hover .upfront-selected-border,
+.upfront-dragging .upfront-module-group .upfront-selected-border {
+	display: block;
+}
+.upfront-module-group.upfront-module-group-disabled .upfront-selected-border {
+	display: none;
+}
+.upfront-module-group.upfront-module-group-edit-mode:hover .upfront-selected-border,
+.upfront-module-group.upfront-module-group-on-edit .upfront-selected-border {
+	display: block;
+}
+
+.upfront-entity_meta {
+	position: absolute;
+	z-index: 2000;
+}
+.upfront-module > .upfront-entity_meta {
+	top: 5px;
+	right: 5px;
+}
+.upfront-object > .upfront-entity_meta {
+	top: 28px;
+	right: 5px;
+}
+.offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
+	right: 50px;
+}
+.upfront-object > .upfront-entity_meta_extra {
+	top: 50px;
+	right:5px;
+}
+.upfront-region > .upfront-entity_meta {
+	top: 30px;
+	right: 15px;
+	z-index: 999999;
+	display: none;
+}
+.upfront-region-editing .upfront-region > .upfront-entity_meta,
+.upfront-region-lightbox-editing .upfront-region-side-lightbox > .upfront-entity_meta {
+	display: block;
+}
+.upfront-region-side-fixed > .upfront-entity_meta {
+	top: 10px;
+	right: 15px;
+	z-index: 999999;
+	display: block;
+}
+
+
+.upfront-object > .upfront-entity_meta.add_item {
+	top: 51px;
+}
+
+.upfront-edit-responsive .upfront-object > .upfront-entity_meta.add_item,
+.upfront-edit-responsive .upfront-object > .upfront-entity_meta.toggle_sorting {
+	display: none;
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting {
+	top: 75px
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting a {
+	background: rgba(0, 0, 0, 0.5);
+	border: 1px solid black;
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting a:before {
+	content: "OFF";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	text-align: center;
+	font-size: 9px;
+	line-height: 19px;
+	color: white;
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting.sorting-active a:before {
+	content: 'ON';
+	color: black;
+}
+.upfront-object > .upfront-entity_meta.toggle_sorting.sorting-active a {
+	background: white;
+}
+
+.upfront-entity_meta .add-item:before {
+	background-position: -261px -133px;
+}
+
+.upfront-entity_meta .add-item
+{
+	box-shadow: inset 0 0 0 1px #e6ab2e;
+	background: #f2b530 -moz-linear-gradient(-45deg, rgba(255,190,51,1) 0%, rgba(255,190,51,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+	background: #f2b530 -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(255,190,51,1)), color-stop(50%,rgba(255,190,51,1)), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+	background: #f2b530 -webkit-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: #f2b530 -o-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+	background: #f2b530 -ms-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
+	background: #f2b530 linear-gradient(135deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
+}
+
+
+
+.upfront-resize-handle-nw,
+.upfront-resize-handle-se,
+.upfront-resize-handle-ne,
+.upfront-resize-handle-sw,
+.upfront-region-resize-handle-nw,
+.upfront-region-resize-handle-se,
+.upfront-region-resize-handle-ne,
+.upfront-region-resize-handle-sw {
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	z-index: 2000;
+	overflow: hidden;
+}
+.upfront-resize-handle-nw,
+.upfront-region-resize-handle-nw {
+	top: 0;
+	left: 0;
+	right: auto;
+	cursor: nw-resize;
+}
+.upfront-resize-handle-se,
+.upfront-region-resize-handle-se {
+	bottom: 0;
+	right: 0;
+	left: auto;
+	cursor: se-resize;
+}
+.upfront-resize-handle-ne,
+.upfront-region-resize-handle-ne {
+	top: 0;
+	right: 0;
+	left: auto;
+	cursor: ne-resize;
+}
+.upfront-resize-handle-sw,
+.upfront-region-resize-handle-sw {
+	bottom: 0;
+	left: 0;
+	right: auto;
+	cursor: sw-resize;
+}
+
+.upfront-resize-handle-e,
+.upfront-resize-handle-w {
+	background: #f2b530;
+	width: 5px;
+	height: 20px;
+	top: 48%;
+	display: none !important;
+}
+
