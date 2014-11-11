@@ -21,7 +21,8 @@ define([
 			'.accordion-panel:first-of-type' : {label: l10n.css.first_label, info: l10n.css.first_info},
 			'.accordion-panel:last-child' : {label: l10n.css.last_label, info: l10n.css.last_info},
 			'.accordion-panel:nth-child(2n+3)' : {label: l10n.css.odd_label, info: l10n.css.odd_info},
-			'.accordion-panel:nth-child(2n)' : {label: l10n.css.even_label, info: l10n.css.even_info}
+			'.accordion-panel:nth-child(2n)' : {label: l10n.css.even_label, info: l10n.css.even_info},
+			'.upfront-accordion-wrap': {label: l10n.css.wrap, info: l10n.css.wrap_info}
 		},
 
 		initialize: function(){

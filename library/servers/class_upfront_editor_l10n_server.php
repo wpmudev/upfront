@@ -38,7 +38,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'here_we_are' => __('Here we are!', 'upfront'),
 				'loading_path' => __('Loading %s...', 'upfront'),
 				'navigation_confirm' => __('You have unsaved changes you\'re about to lose by navigating off this page. Do you really want to leave this page?', 'upfront'),
-				'please_hold_on' => __('Please, hold on for just a little bit more', 'upfront'),
+				//'please_hold_on' => __('Please, hold on for just a little bit more', 'upfront'),
 			),
 			'behaviors' => array(
 				'group' => __('Group', 'upfront'),

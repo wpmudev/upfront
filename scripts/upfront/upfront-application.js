@@ -1697,7 +1697,7 @@ return {
 $(function () {
 	$("body").on("click", ".upfront-edit_layout", function (e) {
 		e.preventDefault();
-		alert(Upfront.Settings.l10n.global.application.please_hold_on);
+		alert(_upfront_please_hold_on);
 	});
 })
 

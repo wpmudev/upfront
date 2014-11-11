@@ -119,6 +119,8 @@ class Upfront_UaccordionView extends Upfront_Object {
 				'odd_info' => __('The wrapper layer of odd panels.', 'upfront'),
 				'even_label' => __('Even Panel containers', 'upfront'),
 				'even_info' => __('The wrapper layer of even panels.', 'upfront'),
+				'wrap' => __('Element Wrapper', 'upfront'),
+				'wrap_info' => __('The wrapper of the whole element.', 'upfront'),
 			),
 			'settings' => __('Accordion settings', 'upfront'),
 			'appearance' => __('Appearance', 'upfront'),
