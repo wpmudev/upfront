@@ -307,9 +307,9 @@ Ueditor.prototype = {
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
 			this.restoreDraggable();
-			this.$el.removeClass('ueditable');
 			this.redactor.core.destroy();
             this.$air.remove();
+            this.$el.removeClass('ueditable');
             this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
