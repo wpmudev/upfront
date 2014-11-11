@@ -1,0 +1,116 @@
+.upfront_edit_content_style,
+.upfront_edit_image_insert{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: #e5f3ff;
+    border-radius: 5px;
+    width: 281px;
+    margin-left: -140px !important;
+    margin-top: -23px !important;
+    height: 46px;
+    line-height: 46px;
+    text-align: center;
+    color: #263a4d;
+    box-shadow: 0px 5px 10px 2px #ccc;
+    display: none;
+    cursor: pointer;
+    padding: 0 !important;
+}
+.Postpart_contents:hover .upfront_edit_content_style{
+    display: block;
+}
+.ueditor-insert-variant:hover .upfront_edit_image_insert{
+    display: block;
+}
+.upfront-disable-surroundings{
+    box-shadow: 0 0 0 5000px rgba(0,0,10,.5);
+    position:relative;
+    z-index: 1;
+}
+.ueditor-insert-variant{
+    display: block;
+    padding:0;
+    clear: both;
+    max-width: none;
+}
+.ueditor-insert-variant-group:hover{
+    outline:1px dotted #7f7f7f;
+}
+.upfront-image-variant-delete_trigger{
+    position: absolute;
+    right:5px;
+    top:5px;
+    display: none;
+}
+.ueditor-insert-variant:hover .upfront-image-variant-delete_trigger{
+    display: block;
+}
+.ueditor-insert-variant-wrap{
+    display:block;
+    width:100%;
+    height: 100%;
+    min-height:50px;
+    overflow: hidden;
+}
+.ueditor-insert-variant-image{
+    display:block;
+    padding:15px;
+}
+
+.ueditor-insert-variant.editing .ueditor-insert-variant-image{
+    outline:1px dotted #7f7f7f;
+}
+.ueditor-insert-variant-caption{
+    display:block;
+    padding:15px;
+}
+.image-variant-label{
+    position: absolute;
+    height: 38px;
+    background: #e5f3ff;
+    color: #263a4d;
+    text-align: center;
+    top: -38px;
+    line-height: 38px;
+    width: 100%;
+    display: none;
+}
+.ueditor-insert-variant.editing .ueditor-insert-variant-caption{
+    outline:1px dotted #7f7f7f;
+}
+.ueditor-insert-variant-image-inside{
+    background: #ccc;
+    display: block;
+    height: 100%;
+}
+
+.finish_editing_image_insert{
+    display: block;
+    background: #1fcc8f;
+    color:#fff;
+    position: absolute;
+    right: 0;
+    bottom:-38px;
+    height:38px;
+    width: 220px;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
+}
+.finish_editing_image_insert:hover{
+    color:#fff;
+}
+.upfront-add-image-insert-variant {
+    display: block;
+    height: 38px;
+    width: 200px;
+    color: #1fcc8f;
+    border: 3px #1fcc8f solid;
+    margin: 10px auto;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
+    clear: both;
+}

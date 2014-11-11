@@ -1,0 +1,100 @@
+.upfront-settings-common_panel {
+  background: #dae7f2;
+  height: 35px;
+  overflow: hidden;
+}
+.upfront-settings-common_panel.open {
+	overflow: visible;
+  height: auto;
+}
+.upfront-settings-common_panel .upfront-settings-item {
+  padding: 0;
+}
+.upfront-settings-common_panel.open .upfront-settings-item-title {
+  font-weight: bold;
+  padding-bottom: 9px;
+}
+.upfront-settings-common_panel .upfront-settings-item-title {
+  cursor: pointer;
+  text-transform: none;
+  padding: 0 5px 12px;
+  font-weight: normal;
+  line-height: 28px;
+}
+
+.upfront-settings-common_panel .upfront-settings-item-title span {
+  background: none;
+  margin-left: 0;
+}
+
+
+/* CSS Styles settings */
+.upfront-settings-css {
+  padding: 0 5px;
+}
+.upfront-settings-css .upfront-field-select-single {
+  width: 215px;
+}
+.upfront-settings-css .upfront-settings-item-title span {
+  margin-top: 3px;
+  display: inline-block;
+}
+.upfront-settings-css .upfront-field-wrap-select {
+  margin-top: 0;
+}
+.upfront-settings-css .upfront-settings-item-title:after {
+  content: "";
+  border: 0 none;
+  width: 15px;
+  height: 15px;
+  background-color: #c3d7e6;
+  display: inline-block;
+  position: absolute;
+  right: 11px;
+  top: 10px;
+  border-radius: 50%;
+}
+.upfront-settings-common_panel.open .upfront-settings-css .upfront-settings-item-title:before {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #273a4c;
+  border-bottom: 0 none;
+  top: 17px;
+  right: 15px;
+}
+.upfront-settings-css .upfront-settings-item-title:before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid #273a4c;
+  display: block;
+  top: 14px;
+  right: 16px;
+  position: absolute;
+  z-index: 1;
+}
+/* Anchor settings */
+.upfront-settings-item-anchor {
+  padding: 10px 5px 15px;
+  position: relative;
+  margin-top: 10px;
+}
+.upfront-settings-item-anchor:before {
+  content: "";
+  display: block;
+  position: absolute;
+  border-top: 1px solid #a3bfd9;
+  left: 15px;
+  right: 15px;
+  top: 0;
+}
+.upfront-settings-item-anchor .upfront-settings-item-title {
+  display: none;
+}
+
+.upfront-settings-item-anchor .upfront-embedded_toggleable {
+  margin-top: 10px;
+}
+

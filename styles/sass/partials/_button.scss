@@ -1,0 +1,15 @@
+/* Let's have a standard class for common button, text, etc */
+.uf-button {
+	display: inline-block;
+	background: #1fcd8f;
+	padding: 8px 20px 0 20px;
+	color: #f1f8ff;
+	font-size: 18px;
+	height: 40px;
+	line-height: 24px;
+	font-size: 16px;
+	cursor: pointer;
+}
+.uf-button:hover {
+	border-color: #1fcd8f;
+}

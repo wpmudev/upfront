@@ -1,0 +1,40 @@
+/* ----- Save As dialog ----- */
+
+#upfront-save-dialog-background {
+  background: rgba(31, 48, 63, 0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999998;
+}
+
+#upfront-save-dialog {
+  border: 1px solid #fff;
+  background: #e5f3ff;
+  -moz-box-shadow: 0 0 20px rgba(39,58,76,.8);
+  -webkit-box-shadow: 0 0 20px rgba(39,58,76,.8);
+  box-shadow: 0 0 20px rgba(39,58,76,.8);
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  width: 400px;
+  margin-left: -200px;
+  z-index: 999999;
+  padding: 20px;
+  text-align: center;
+}
+
+.upfront-save-button {
+	display: inline-block;
+	font-size: 14px;
+	font-family: 'Source Sans Pro';
+	border: 1px solid #a3bfd9;
+	color: #395269;
+	margin: 0 10px 10px;
+	padding: 0 20px;
+	cursor: pointer;
+}
+.upfront-save-button:hover {
+	border-color: #537ea6;
+}
+

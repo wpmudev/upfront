@@ -1,0 +1,171 @@
+.ulinkpanel {
+	width: 230px;
+}
+
+.ulinkpanel-title {
+	margin-bottom: 10px;
+	line-height: 1em;
+}
+
+.ulinkpanel .upfront-field-wrap {
+	margin: 0 0 10px;
+	float: left;
+}
+
+.ulinkpanel-external-wrap {
+	width: 100%;
+}
+
+.ulinkpanel-image-wrap,
+.ulinkpanel-entry-wrap {
+	width: 120px;
+}
+
+.ulinkpanel-anchor-wrap,
+.ulinkpanel-lightbox-wrap {
+	width: 110px;
+}
+
+.ulinkpanel div.ulinkpanel-image-wrap,
+.ulinkpanel div.ulinkpanel-lightbox-wrap {
+	margin-bottom: 0;
+}
+
+.ulinkpanel-selected-entry .ulinkpanel-entry-wrap,
+.ulinkpanel-selected-entry .ulinkpanel-anchor-wrap {
+	margin-bottom: 2px;
+}
+
+.ulinkpanel .upfront-field-radio {
+	margin-right: 5px;
+}
+
+.ulinkpanel-external-wrap label {
+	width: 30px;
+	display: inline-block;
+}
+
+.ulinkpanel #ulinkpanel-link-url {
+	width: 170px;
+	padding: 2px 4px;
+	height: 18px;
+}
+
+a.ulinkpanel-entry-url,
+a.ulinkpanel-entry-url:link {
+	display: block;
+	width: 100%;
+	margin-bottom: 12px;
+	font-size: 13px;
+	float: left;
+	line-height: 1em;
+	color: #7c9dbf;
+}
+
+a.ulinkpanel-entry-url:hover {
+	color: #3ea;
+}
+
+.ueditor-placeholder {
+	opacity: 0.5;
+}
+
+.ulinkpanel-anchor-selector {
+	height: 18px;
+	width: 100%;
+}
+
+#ulinkpanel-lightbox-extra {
+	width: 100%;
+	clear: both;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+#ulinkpanel-create-lightbox {
+	color: #7c9dbf;
+	border: 1px solid #7c9dbf;
+	width: 90px;
+	text-align: center;
+	display: block;
+	padding: 2px;
+	float: right;
+	margin-top: 5px;
+}
+
+#ulinkpanel-create-lightbox:hover {
+	color: rgb(48, 71, 94);
+	border: 1px solid #3ea;
+}
+
+.ulinkpanel-dark #ulinkpanel-create-lightbox:hover {
+	color: #cbe5ff;
+}
+
+.ulinkpanel-new-lightbox,
+.ulinkpanel-lightbox-selector {
+	width: 131px;
+	float: right;
+	margin-left: 9px;
+	margin-top: 5px;
+}
+
+.ulinkpanel-lightbox-selector {
+	border: 1px solid #7c9dbf;
+}
+
+.ulinkpanel input.ulinkpanel-lightbox-input {
+	height: 21px;
+	width: 110px;
+	background: #fff;
+	margin-right: 2px;
+	vertical-align: top;
+}
+
+.ulinkpanel a.ulinkpanel-lightbox-cancel {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+
+	background-position: -483px -170px;
+	display: inline-block;
+	width: 15px;
+	height: 18px;
+
+	opacity: .7;
+}
+
+.ulinkpanel a.ulinkpanel-lightbox-cancel:hover {
+	opacity: .9;
+}
+
+.ulinkpanel-dark .upfront-field-wrap{
+	color: #cbe5ff;
+}
+
+.ulinkpanel-dark a.ulinkpanel-entry-url, .ulinkpanel-dark a.ulinkpanel-entry-url:link {
+	color: rgb(0, 219, 143);
+}
+
+.ulinkpanel-dark a.ulinkpanel-entry-url:hover {
+	color: #3ea;
+}
+
+.ulinkpanel-dark .upfront-field-radio {
+	border-color: #85a9cb;
+}
+
+.ulinkpanel-dark .upfront-field-radio:checked {
+	border-color: #fff;
+	background: rgb(0, 219, 143);
+}
+
+.ulinkpanel-dark .ulinkpanel-title {
+	color: #cbe5ff;
+}
+
+.ulinkpanel-dark .upfront-settings-button_panel{
+	bottom: -36px;
+	right: 0;
+}
+
+

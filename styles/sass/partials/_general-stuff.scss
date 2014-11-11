@@ -1,0 +1,25 @@
+[contenteditable="true"] {
+	outline: none;
+}
+
+.upfront-no-select {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+strike{
+    text-decoration: line-through;
+}
+em{
+    font-style: italic;
+}
+.ui-resizable-handle-hidden {
+	display: none !important;
+}
+/* --- Make text editing look better --- */
+[contenteditable=true]:focus {
+	outline: none;
+}
+

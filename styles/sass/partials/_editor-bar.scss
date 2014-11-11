@@ -1,0 +1,333 @@
+/* ----- New Editor bar ----- */
+.upfront-postcontent-editor{
+	z-index: 3;
+}
+/*
+.upfront-postcontent-editor .ui-resizable-handle{
+	display: none !important;
+}
+ */
+.ueditor-bar-wrapper{
+	position:absolute;
+	top:100%;
+	width: 100%;
+}
+
+.ueditor-bar {
+	font-size: 14px;
+	z-index: 100;
+	right: 0;
+}
+.ueditor-bar:hover {
+	opacity: 1 !important;
+}
+
+.ueditable {
+	cursor: text;
+}
+
+.ueditor-bar {
+	cursor: default;
+}
+
+.ueditor-bar>div {
+	padding: 10px;
+}
+
+.ueditor-bar:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+
+.ueditor-bar div a, .ueditor-bar a:link{
+	color: #1fcd8f;
+	cursor:pointer;
+}
+.ueditor-bar a:hover {
+	text-decoration: underline;
+}
+
+.ueditor-bar-buttons {
+	float: right;
+	clear: right;
+	background:rgba( 206, 212, 217, .85 );
+	padding: 10px;
+	font-size: 16px;
+	position:relative;
+}
+
+.show-advanced .ueditor-bar-buttons:after{
+	position: absolute;
+	content: '';
+	border:7px solid transparent;
+	left: 15px;
+	top: 100%;
+	border-top-color: #DADEE2;
+}
+
+.ueditor-bar-buttons a {
+	display: inline-block;
+	margin: 0 10px 0 0;
+}
+
+.ueditor-bar-buttons a:last-child {
+	margin-right: 0;
+}
+
+.ueditor-bar div a.ueditor-action-draft {
+	border: 2px solid #9BADBC;
+	color: #9BADBC;
+	padding: 2px 15px;
+	text-decoration: none;
+}
+
+.ueditor-bar div a.ueditor-action-draft:hover {
+	border-color: #1fcd8f;
+}
+
+.ueditor-bar-icon {
+	opacity: 0.8;
+}
+
+.ueditor-bar-icon:hover {
+	opacity: 1;
+}
+
+.ueditor-bar-icon:before {
+	content: '';
+	background: transparent url(../img/uf-ui-sprite.svg);
+	padding: 3px 12px;
+	margin-right: 5px;
+}
+
+a.ueditor-bar-icon-only:before {
+	margin-right: 0;
+}
+
+.ueditor-bar-icon-selectable:after {
+	content: '▾';
+	display: inline-block;
+	margin-left: 5px;
+}
+
+a.ueditor-action-publish {
+	text-align: center;
+	color: #fff !important;
+	padding: 7px 20px;
+	background: #1fcd8f;
+	margin: 0 auto;
+}
+
+a.ueditor-action-publish:before {
+	background-position: -650px -425px;
+	padding: 2px 6px;
+}
+a.ueditor-action-publish:hover {
+	text-decoration: none;
+	background: #3ea;
+}
+
+a.ueditor-action-cancel {
+	color: #A3B9CC !important;
+}
+
+a.ueditor-action-cancel:before {
+	background-position: -1233px -153px;
+	padding: 2px 6px;
+}
+
+a.ueditor-action-cancel:hover {
+	text-decoration: none;
+}
+
+a.ueditor-action-cancel:hover:before {
+	background-position: -735px -230px;
+}
+
+.ueditor-bar-show_advanced:hover{
+	/*background: #E9EEF3;*/
+	opacity:1;
+}
+
+.ueditor-bar-show_advanced:before {
+	background-position: -517px -382px;
+	margin-right: 0;
+}
+
+.ueditor-action-tags:before{
+	background-position: -517px -425px;
+}
+
+.ueditor-action-url:before{
+	background-position: -559px -425px;
+}
+
+.ueditor-action-trash:before{
+	background-position: -601px -425px;
+}
+
+.ueditor-select-status a:before {
+	background-position: -559px -383px;
+
+}
+
+.ueditor-select-visibility a:before {
+	background-position: -601px -383px;
+
+}
+
+.ueditor-action-schedule:before {
+	background-position: -642px -383px;
+}
+
+.ueditor-bar-advanced {
+	float: right;
+	background: rgba( 230, 236, 242, .85 );
+	clear:right;
+	display:none;
+}
+
+.show-advanced .ueditor-bar-advanced {
+	display: block;
+}
+
+.ueditor-bar-cancel {
+	float:left;
+	width: 120px;
+	text-align: center;
+	padding: 10px 20px;
+}
+
+.ueditor-bar .ueditor-bar-cancel a{
+	color: #E5575A;
+}
+
+.ueditor-bar-options {
+	margin: 0 200px 0 120px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.ueditor-row-item {
+	display: inline-block;
+	margin-right: 20px;
+}
+
+.ueditor-row-item:last-child {
+	margin-right: 0;
+}
+
+.ueditor-bar-key {
+	color: #7E99B1;
+}
+
+.ueditor-bar-value {
+	color: #CDE6FE;
+	margin: 0 4px;
+}
+
+
+.ueditor_deleted_post {
+	border: 1px solid #8fa9bf;
+	padding: 15px;
+	background: #cee1f2;
+	color: #395269;
+	margin-bottom: 15px;
+}
+
+div.ueditor_deleted_post a.ueditor_restore {
+	color: #1fcd8f;
+	cursor: pointer;
+}
+div.ueditor_deleted_post a.ueditor_restore:hover {
+	text-decoration: underline;
+}
+
+.ueditor-bar div a.ueditor-action-trash:hover {
+	color: #E5575A;
+	text-decoration: none;
+}
+
+.ueditor-select-wrapper {
+	display: inline-block;
+	position: relative;
+}
+div.ueditor-select {
+	position:relative;
+	display:none;
+	font-size: 13px;
+	text-align: left;
+	display: none;
+}
+.ueditor-select-value {
+	cursor: pointer;
+}
+div.ueditor-select-options,
+.ueditor-pass-editor {
+	position:absolute;
+	top: 100%;
+	left: -10px;
+	background: #F2F9FF;
+	border: 1px solid #6386A6;
+	z-index:10000;
+}
+
+.floating .ueditor-select-options,
+.floating .ueditor-pass-editor {
+	top: auto;
+	bottom: 100%;
+}
+
+a.ueditor-select-option {
+	display:block;
+	padding: 3px 10px;
+	color: #6386A6 !important;
+	cursor: pointer;
+	text-transform: none;
+	text-decoration: none;
+	font-weight: normal !important;
+}
+
+a.ueditor-select-option:hover {
+	background: #607F99;
+	color: #F2F9FF !important;
+	text-decoration: none !important;
+}
+.ueditor-select input.ueditor-select-focus {
+	position:absolute;
+	background: none;
+	border:0;
+	margin:0;
+	padding:1;
+	height:1px;
+	width:1px;
+	outline: 0;
+	left: -5000px;
+}
+
+.ueditor-pass-editor {
+	width:250px;
+	padding: 5px 10px;
+	display: none;
+}
+.upfront-date_picker a.small-button,
+.ueditor-bar a.small-button {
+	background: #1fcd8f;
+	color: #fff !important;
+	display: block;
+	float:right;
+	font-size: 14px;
+	padding: 2px 15px;
+	margin-top: 10px;
+}
+.upfront-date_picker a.small-button:hover,
+.ueditor-bar a.small-button:hover {
+	background: #3ea;
+	text-decoration: none;
+}
+
+.ueditor-action-status, .ueditor-action-visibility {
+	width: 140px;
+}
+

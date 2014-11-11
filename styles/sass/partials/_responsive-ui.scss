@@ -1,0 +1,293 @@
+/* Topbar */
+#upfront-ui-topbar {
+  background: #2c3e50;
+  color: white;
+  height: 52px;
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  z-index: 2;
+}
+
+/* Breakpoints toggler */
+.breakpoints-toggler {
+  text-align: center;
+}
+.breakpoints-toggler {
+  margin: 10px 0 0;
+}
+.breakpoints-toggler li {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 23px;
+  font-family: Verdana, sans-serif;
+  font-size: 10px;
+  color: #adc3d9;
+  text-transform: lowercase;
+}
+.breakpoints-toggler li:first-child {
+  margin-left: 0;
+}
+.breakpoints-toggler li:before {
+	content: " ";
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	display: block;
+  height: 20px;
+  margin: 0 auto;
+  background-position: -1228px -622px; /* Default to custom */
+  width: 20px;
+}
+.breakpoints-toggler li:hover:before,
+.breakpoints-toggler li.active:before {
+  background-position: -1228px -658px; /* Default to custom */
+}
+.breakpoints-toggler .mobile-breakpoint-activate:before {
+  background-position: -1233px -478px;
+}
+.breakpoints-toggler .mobile-breakpoint-activate:hover:before,
+.breakpoints-toggler .mobile-breakpoint-activate.active:before {
+  background-position: -1233px -514px;
+}
+.breakpoints-toggler .tablet-breakpoint-activate:before {
+  background-position: -1231px -550px;
+  width: 15px;
+}
+.breakpoints-toggler .tablet-breakpoint-activate:hover:before,
+.breakpoints-toggler .tablet-breakpoint-activate.active:before {
+  background-position: -1231px -586px;
+}
+.breakpoints-toggler .custom-breakpoint-activate:before {
+  background-position: -1228px -622px;
+  width: 20px;
+}
+.breakpoints-toggler .custom-breakpoint-activate:hover:before,
+.breakpoints-toggler .custom-breakpoint-activate.active:before {
+  background-position: -1228px -658px;
+}
+.breakpoints-toggler .desktop-breakpoint-activate:before {
+  background-position: -1333px -404px;
+  width: 20px;
+}
+.breakpoints-toggler .desktop-breakpoint-activate:hover:before,
+.breakpoints-toggler .desktop-breakpoint-activate.active:before {
+  background-position: -1333px -440px;
+}
+
+/* Breakpoints width input */
+.breakpoint-width-input,
+.breakpoint-edit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 52px;
+  font: Verdana, sans-serif;
+  color: #adc3d9;
+  font-size: 11px;
+  padding-left: 15px;
+}
+
+.breakpoint-width-input div.inline-number.plaintext-settings label {
+  font: Verdana, sans-serif;
+  color: #adc3d9;
+  font-size: 11px;
+}
+.breakpoint-width-input div.inline-number.plaintext-settings input {
+  font-family: Verdana, sans-serif;
+  color: #26394d;
+  font-size: 12px;
+  padding-left: 5px;
+  width: 60px;
+  padding-right: 0px;
+  border-radius: 4px;
+}
+
+/* Responsive commands */
+#sidebar-ui .sidebar-commands-responsive li {
+  display: block;
+}
+
+#sidebar-ui .sidebar-commands-responsive .panel-section {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#sidebar-ui .sidebar-commands-responsive .sidebar-panel.expanded .sidebar-panel-content {
+  height: 330px;
+}
+
+#sidebar-ui .sidebar-commands-responsive-control .exit-responsive {
+  position: absolute;
+  top: 613px;
+  left: 15px;
+  margin: 0;
+  border: 3px solid #263a4d;
+  padding: 2px 5px;
+  height: 33px;
+}
+
+#sidebar-ui .command-browse-layout-responsive {
+  overflow: hidden;
+  padding: 3px 0 15px 15px;
+  cursor: default;
+}
+#sidebar-ui .command-browse-layout-responsive span {
+  border: 3px solid #263a4d;
+  padding: 2px 5px;
+  cursor: pointer;
+}
+#sidebar-ui .sidebar-commands-responsive-control .command-grid {
+  margin-left: 66px;
+  float: none;
+}
+
+.command-go-to-type-preview {
+  text-decoration: underline;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 11px;
+	color: #11a672;
+	margin-bottom: 4px;
+	line-height: 22px;
+}
+
+/* The ruler */
+.upfront-ruler-container {
+	width: 100%;
+	height: 20px;
+	background: #1c2733;
+	position: relative;
+	z-index: 1;
+}
+.upfront-ruler {
+	position: absolute;
+	top: -20px;
+	left: 0;
+	right: 0;
+	height: 20px;
+	background: -webkit-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: -moz-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: -ms-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: -o-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
+	background: linear-gradient(to left, #185a4c 1px, transparent 1px, transparent);
+	background-size: 10px 3px;
+	background-repeat: repeat-x;
+	color: #cbe5ff;
+	font-family: "Verdana", sans-serif;
+	font-size: 10px;
+	line-height: 10px;
+	margin: auto;
+}
+.upfront-ruler-mark {
+	float: left;
+	width: 100px;
+	height: 7px;
+	border-right: 1px solid #11a672;
+	position: relative;
+}
+.upfront-ruler-mark:first-child {
+	margin-left: -100px;
+}
+.upfront-ruler-mark-num {
+	position: absolute;
+	top: 8px;
+	right: -20px;
+	width: 40px;
+	text-align: center;
+}
+
+.upfront-field-compact-label-select .upfront-field-select-option:first-child:hover {
+  background: none;
+  color: rgb(96, 127, 153);
+}
+.upfront-field-compact-label-select .upfront-field-select-options {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+	overflow: hidden;
+}
+#sidebar-ui .upfront-field-compact-label-select .upfront-field-select-option:first-child * {
+	cursor: pointer;
+}
+.upfront-field-compact-label-select.compact-label-select-open {
+	overflow: visible;
+	max-height: none;
+	height: auto;
+}
+.upfront-field-compact-label-select.compact-label-select-open .upfront-field-select-options {
+	overflow: visible;
+	max-height: none;
+}
+
+/* Breakpoint edit popup */
+.breakpoint-edit-panel {
+  padding: 20px;
+  width: 400px;
+}
+.breakpoint-edit-panel div {
+  margin-top: 20px;
+}
+.breakpoint-edit-panel div:first-child {
+  margin-top: 0;
+}
+.breakpoint-edit-panel label[for=breakpoint-columns] {
+  margin-left: 41px;
+}
+.breakpoint-edit-panel input#breakpoint-name {
+  width: 311px;
+  margin-left: 10px;
+}
+.breakpoint-edit-panel input#breakpoint-width,
+.breakpoint-edit-panel input#breakpoint-columns {
+  width: 62px;
+  margin-left: 10px;
+  padding-right: 0;
+  padding-left: 5px;
+}
+.theme-fonts-ok-button,
+.breakpoint-edit-ok-button {
+  line-height: 30px;
+  text-align: center;
+  float: right;
+  cursor: pointer;
+  background: #1fcd8f;
+  -moz-box-shadow: 0 1px 0 #192d3f;
+  -webkit-box-shadow: 0 1px 0 #192d3f;
+  box-shadow: 0 1px 0 #192d3f;
+  padding: 8px 30px;
+  color: #f1f8ff;
+  font-size: 18px;
+}
+.edit-breakpoint-popup-title {
+	font: 18px/18px 'Source Sans Pro', sans-serif;
+  color: #273a4c;
+}
+#edit-breakpoint, #new-custom-breakpoint {
+  color: #1fcd8f;
+	font: 'Source Sans Pro', sans-serif;
+  font-size: 15px;
+  line-height: 25px;
+  cursor: pointer;
+}
+li.activate-breakpoints-dropdown {
+  margin: 15px 0 10px 15px;
+  height: 23px;
+}
+.activate-breakpoints-dropdown .upfront-field-select-options {
+  max-height: 30px;
+  border-top: 0 none;
+  border-right: 0 none;
+}
+.activate-breakpoints-dropdown .upfront-field-select-options.upfront-field-select-expanded {
+  border-right: 5px solid #1fcd8f;
+}
+li#new-custom-breakpoint {
+  margin: 10px 0 10px 15px;
+}
+#new-custom-breakpoint:before {
+	content: " ";
+	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	display: inline-block;
+  height: 14px;
+  width: 15px;
+  background-position: -1441px -411px;
+  margin-right: 5px;
+}

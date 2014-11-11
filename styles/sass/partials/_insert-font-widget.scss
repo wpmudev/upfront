@@ -1,0 +1,144 @@
+/* insert font widget */
+#insert-font-widget {
+	width: 95px;
+	height: 30px;
+	float: left;
+	margin-left: 20px;
+	position: relative;
+}
+#insert-font-widget > div {
+	white-space: nowrap;
+}
+#insert-font-widget.open {
+	width: 465px;
+}
+#insert-font-widget .upfront-field-wrap-select {
+	margin-top: 4px;
+	margin-right: 5px;
+	display: inline-block;
+}
+#insert-font-widget .chosen-container .chosen-results {
+	max-height: 120px;
+}
+#insert-font-widget .upfront-field-wrap-button {
+	margin-top: 0px;
+	margin-right: 5px;
+	display: inline-block;
+}
+#insert-font-widget input[type=button] {
+	line-height: 21px;
+	padding: 0 5px;
+	border: 2px solid #25394d;
+	font-size: 12px;
+	background: transparent;
+	-webkit-transition: border .15s ease-in-out;
+	-moz-transition: border .15s ease-in-out;
+	-ms-transition: border .15s ease-in-out;
+	-o-transition: border .15s ease-in-out;
+	transition: border .15s ease-in-out;
+	color: #adc3d8;
+}
+#insert-font-widget input[type=button]:hover {
+	border-color: #1fcd8f;
+	color: #cbe5ff;
+}
+.command-open-font-manager:before,
+#insert-font-widget:before {
+	background-position: -821px -202px;
+	width: 18px;
+	height: 16px;
+	margin: 6px 5px 0 0;
+}
+.command-open-font-manager:before {
+	margin: 2px 5px 0 0;
+}
+a.upfront-css-font {
+	display: block;
+	padding: 0px 5px;
+	margin: 0;
+	color: #dae6f2 !important;
+	line-height: 31px;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+}
+.theme-fonts-ok-button {
+	margin-top: 30px;
+}
+#upfront-popup.font-manager-popup {
+	max-width: 750px;
+	margin-top: 120px;
+	height: 500px;
+}
+.sidebar-info-notice{
+    padding-top: 10px;
+    font:normal 11px verdana, sans-serif;
+    line-height: 18px;
+    color: #607F99;
+		position: relative;
+		padding-left: 18px;
+		line-height: 13px;
+}
+.sidebar-info-notice:before{
+    content: "";
+    background-image: url('../img/uf-core-el-sprite.svg') !important;
+		background-position: -484px -141px;
+		display: block;
+		position: absolute;
+		height: 16px;
+		width: 14px;
+		left: 0px;
+		top: 11px;
+}
+.open-theme-fonts-manager input {
+	line-height: 36px;
+	border: 2px solid #1fcd8f;
+	margin-top: 13px;
+	font-size: 14px;
+	width: 228px;
+}
+.fonts-manager-panel-title {
+	text-align: center;
+	font-size: 16px;
+	color: #3e3a4d;
+}
+.font-weights-list-wrapper .fonts-manager-panel-title {
+	margin-top: 138px;
+}
+.font-list .fonts-manager-panel-title {
+	margin-top: 146px;
+}
+.fonts-weights-notice-text {
+	text-align: center;
+	color: #82a6c4;
+	font-size: 12px;
+	margin-top: 14px;
+	line-height: 18px;
+}
+.preview-type {
+	position: absolute;
+	top: 51px;
+	left: 323px;
+	font-size: 11px;
+	font-family: verdana,sans-serif;
+}
+.preview-type-title {
+	display: block;
+}
+.preview-size-p,
+.preview-size-h1 {
+	display: inline-block;
+	font-size: 15px;
+	font-family: serif;
+	line-height: 15px;
+	cursor: pointer;
+	color: #98b9d9;
+}
+.preview-size-p {
+	margin-right: 21px;
+}
+.selected-preview-size {
+	color: #1fcd8f;
+	cursor: default;
+}
+
+

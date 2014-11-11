@@ -1,0 +1,198 @@
+/* Theme fonts manager */
+#text-fonts-manager {
+  width: 750px;
+  background: #e5f3fe;
+  z-index: 1;
+}
+#text-fonts-manager .panel-title {
+	font: 18px/15px 'Source Sans Pro', sans-serif;
+  color: #273a4c;
+  margin: 16px 0 10px 0;
+}
+#text-fonts-manager .panel {
+  float: left;
+}
+
+#text-fonts-manager .add-font-panel {
+	width: 500px;
+}
+#text-fonts-manager .choose-font {
+  margin: 20px 0 10px 15px;
+}
+#text-fonts-manager .font-weights-list {
+  height: 346px;
+	width: 400px;
+	margin-left: 15px;
+	background: #f2f9fe;
+}
+#text-fonts-manager .font-weights-list {
+}
+#text-fonts-manager .font-weights-list .upfront-field-multiple {
+  margin: 0;
+  line-height: 25px;
+}
+#text-fonts-manager .font-weights-list .upfront-field-multiple:hover,
+#text-fonts-manager .font-weights-list .upfront-field-multiple-selected {
+  background: #85a9cc;
+}
+#text-fonts-manager .font-weights-list .upfront-field-multiple:hover label,
+#text-fonts-manager .font-weights-list .upfront-field-multiple-selected label {
+  color: #f2f7ea;
+}
+#text-fonts-manager .font-weights-list .upfront-field-multiple label {
+  margin-left: 20px;
+}
+#text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar,
+#text-fonts-manager .font-list::-webkit-scrollbar {
+  background: none;
+  width: 5px;
+}
+#text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar-thumb,
+#text-fonts-manager .font-list::-webkit-scrollbar-thumb {
+  border-right: 5px solid #1fcd8f;
+}
+#text-fonts-manager .font-weights-list input {
+  bottom: 7px;
+  left: 20px;
+}
+#text-fonts-manager .font-weights-list .upfront-field-wrap {
+  margin: 0;
+}
+#text-fonts-manager .font-weights-list .upfront-field-label {
+  margin-left: 20px;
+}
+#text-fonts-manager .font-weights-list-wrapper {
+	border: 1px solid #a4bfd8;
+  height: 346px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+#text-fonts-manager .theme-font-list-item {
+  color: rgb(48, 71, 94);
+  position: relative;
+  font-size: 11px;
+  font-weight: normal;
+  font-family: verdana, sans-serif;
+  padding-left: 20px;
+  cursor: pointer;
+  line-height: 23px;
+}
+#text-fonts-manager .theme-font-list-item:hover,
+#text-fonts-manager .theme-font-list-item-selected {
+  background: #85a9cc;
+  color: #f2f7ea;
+}
+#text-fonts-manager .theme-font-list-item .delete {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 3px;
+}
+#text-fonts-manager .theme-font-list-item .upfront-icon:before {
+	background-position: -1080px -121px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+}
+#text-fonts-manager .theme-font-list-item-selected .delete {
+  display: inline;
+}
+#text-fonts-manager .font-list {
+  background: #f2f9fe;
+	height: 346px;
+	overflow: hidden;
+	overflow-y: scroll;
+	border: 1px solid #a4bfd8;
+	width: 228px;
+}
+#text-fonts-manager .add-font-button {
+  line-height: 12px;
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  font-family: verdana, sans-serif;
+  color: #537ea6;
+  cursor: pointer;
+	position: absolute;
+	top: 262px;
+	left: 424px;
+	padding: 10px 17px;
+	border: 1px solid #a4bfd8;
+	box-shadow: 1px 1px 1px #537ea6;
+	border-radius: 4px;
+}
+#text-fonts-manager .font-stats {
+  line-height: 30px;
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  font-family: verdana, sans-serif;
+  background: #d7e6f1;
+  color: #687887;
+	position: absolute;
+	left: 0;
+	width: 750px;
+	background: #e5f3ff;
+}
+.font-stats strong {
+	font-weight: bold;
+}
+.font-variant-preview {
+	border-top: 1px solid #e4eef6;
+	cursor: pointer;
+	padding: 0 0 10px 10px;
+	color: #bab0cc;
+}
+.font-variant-preview .font-family {
+	color: #85a9d0;
+}
+.font-variant-preivew .font-preview {
+	color: #181834;
+}
+.font-variant-already-added .font-preview {
+	color: #a3a3a3;
+}
+.font-variant-preview:first-child {
+	border-top: 0 none;
+}
+.font-variant-selected {
+	background: #e9faf4;
+	position: relative;
+}
+.font-variant-selected:after {
+	content: "";
+	display: block;
+	background: transparent url(../img/uf-ui-sprite.svg);
+	background-position: -735px -142px;
+	width: 12px;
+	height: 10px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+.heading-font-preview {
+	font-size: 35px;
+	line-height: 41px;
+	white-space: nowrap;
+	color: #000000;
+}
+.font-variant-already-added {
+	cursor: default;
+}
+.font-variant-already-added .already-added {
+	background-color: #00CE8D;
+	color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 1px 0 #00B47C;
+	padding: 0px 5px;
+	display: inline-block;
+	font-size: 13px;
+	line-height: 15px;
+}
+.font-variant-already-added .font-family {
+	color: #cfdde8;
+}
+.theme-fonts-panel {
+	padding-top: 29px;
+	padding-left: 8px;
+}

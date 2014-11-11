@@ -1,0 +1,300 @@
+/* CSS EDITOR */
+#upfront-csseditor,
+#upfront-general-csseditor {
+	min-height: 200px;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	z-index: 2000;
+	display: none;
+}
+
+.upfront-css-resizable {
+	background: #3d5266;
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	min-height: 200px;
+}
+
+.upfront-css-top{
+	border-bottom: 1px solid #26333F;
+	border-top: 1px solid #26333F;
+	color: #dae6f2;
+	font-size: 14px;
+	height:34px;
+	position: static;
+}
+
+.upfront-css-ace{
+	height: 100%;
+	width: 75%;
+	float: left;
+}
+.upfront-css-no-sidebar .upfront-css-ace {
+	width: 100%;
+}
+
+.upfront-css-sidebar {
+	background: #4E677F;
+	width: 25%;
+	height: 100%;
+	float:right;
+	position: relative;
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+}
+.upfront-css-sidebar p {
+	font-size: 11px;
+}
+.upfront-css-no-sidebar .upfront-css-sidebar {
+	display: none;
+}
+
+.upfront-css-type {
+	float:left;
+	display: block;
+	background-color: #2E3D4C;
+	padding: 0px 10px;
+	margin: 4px;
+	height: 24px;
+	cursor: pointer;
+	border-radius:3px;
+	font-weight:300;
+	text-transform: capitalize;
+}
+
+a.upfront-css-image {
+	float:left;
+	display: block;
+	padding: 0px 5px;
+	margin: 0 0 0 20px;
+	color: #dae6f2 !important;
+	line-height: 31px;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+}
+
+span.upfront-css-color {
+	float:left;
+	width: auto;
+}
+span.upfront-css-color .upfront-field-wrap{
+	margin-top: 0;
+	padding: 0;
+	margin-top: -7px;
+	margin-left: -10px;
+}
+
+.upfront-css-top .sp-replacer {
+	margin: 4px;
+	margin-left: 20px;
+	height: 24px;
+	overflow: hidden;
+}
+
+.upfront-css-top .sp-preview {
+	border-radius: 3px;
+	margin: 0;
+	border:1px solid rgb(54,72,89) !important;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip:    padding;
+  background-clip:         padding-box;
+}
+
+a.upfront-css-image:hover,
+a.upfront-css-font:hover {
+	border-color: #3ea;
+}
+
+.upfront-css-close {
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -1230px -155px;
+	opacity: .8;
+	width:24px;
+	height:24px;
+	text-indent: -9999px;
+	display: inline-block;
+	float:right;
+	margin: 5px 2px;
+}
+.upfront-css-close:hover {
+	opacity:1;
+}
+
+div.ace_content {
+	background: #26333F;
+	color: #dae6f2;
+}
+
+.ace_editor div.ace_gutter{
+	background: #2E3D4C;
+	color: #cbe5ff;
+}
+div.ace_editor div.ace_gutter-active-line {
+	background: #26333F;
+}
+div.ace_editor .ace_marker-layer div.ace_active-line {
+	background: #1d2d36;
+}
+div.ace_editor .ace_fold {
+	background-color: #1fcd8f;
+}
+
+.upfront-css-save-form {
+	padding: 8px 15px 15px;
+	background: #465D72;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+.upfront-css-no-save-as .upfront-css-save-form {
+	padding-top: 15px;
+}
+
+.upfront-css-sidebar p{
+	color: #dae6f2;
+	margin: 0;
+}
+
+.upfront-css-selectors {
+	padding: 10px 15px;
+	color: #cbe5ff;
+	line-height: 20px;
+}
+
+.upfront-css-selector {
+	border: 1px solid rgb(46, 61, 76);
+	display: inline-block;
+	padding: 2px 5px;
+	cursor: pointer;
+	margin: 5px 5px 0 0;
+	border-radius: 4px;
+	line-height: 14px;
+	color: rgb(170, 191, 210);
+}
+
+.upfront-css-selector:hover {
+	background: #2E3D4C;
+}
+
+.upfront-css-save-form input.upfront-css-save-name-field,
+.upfront-css-save-form input.upfront-css-save-name-field:active,
+.upfront-css-save-form input.upfront-css-save-name-field:focus{
+	width: 72%;
+	padding: 2px 5px;
+	background: #405468;
+	border: 1px solid #374858;
+	height: 25px;
+	font-size: 14px;
+	color: #85a9cb;
+}
+.upfront-css-save-form input.upfront-css-save-name-field:active,
+.upfront-css-save-form input.upfront-css-save-name-field:focus{
+	outline:1px solid rgba(31,205,143,.5);
+}
+.upfront-css-save-form input.upfront-css-save-name-field:focus{
+	color: #cbe5ff;
+}
+
+.upfront-css-no-save-as .upfront-css-save-form p,
+.upfront-css-no-save-as .upfront-css-save-form input.upfront-css-save-name {
+	display: none;
+}
+
+.upfront-css-save-form button{
+	width: 22%;
+	background: #1fcd8f;
+	color:#fff;
+	height: 25px;
+	float: right;
+	border-radius: 0;
+	padding: 0;
+	text-align: center;
+	line-height: 25px;
+	font-size: 14px;
+	border:0;
+}
+.upfront-css-save-form button:hover{
+	background: #3ea;
+}
+
+.upfront-css-hilite {
+	outline: 3px solid #3ea !important;
+}
+
+.upfront-settings-css .upfront-field-select {
+	margin-bottom: 6px;
+}
+
+.upfront-css-new {
+	line-height: 14px;
+	margin: 0;
+}
+
+.upfront-css-new a {
+	color: #30475E !important;
+	vertical-align: bottom;
+}
+
+.upfront-css-new a:hover {
+	color: #1fcd8f !important;
+}
+
+span.upfront-css-new-text {
+	border-bottom: 1px solid #1fcd8f;
+	font-size: 11px;
+}
+
+.upfront-css-new span.codeicon {
+	color: #1fcd8f;
+	background: #30475E;
+	font-family: tahoma, sans-serif;
+	font-size: 10px;
+	padding: 0px 2px 2px;
+	border-radius: 2px;
+}
+
+a.upfront-css-delete {
+	color: #dae6f2 !important;
+	display: inline-block;
+}
+a.upfront-css-delete:hover {
+	color: #F44C4F !important;
+}
+
+a.upfront-css-delete:before {
+	content: '';
+	display: inline-block;
+	width: 10px;
+	height: 14px;
+	margin-right: 5px;
+	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -664px -78px;
+	vertical-align: middle;
+}
+
+a.upfront-css-edit, a.upfront-preset-edit {
+	vertical-align: top;
+	margin: 4px 0 0 5px;
+	display: inline-block;
+	opacity: .8;
+}
+
+a.upfront-css-edit:hover, a.upfront-preset-edit:hover, a.upfront-region-name-edit-trigger:hover {
+	opacity: 1;
+}
+
+a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-edit-trigger:before {
+	display: inline-block;
+	content: '';
+	width: 20px;
+	height: 20px;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -560px -385px;
+	vertical-align: top;
+}
+
+

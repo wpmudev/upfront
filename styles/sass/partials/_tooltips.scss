@@ -1,0 +1,39 @@
+/* Tooltips */
+.nav_tooltip {
+    background: rgba(38,58,77,0.9);
+    border: 1px solid #395269;
+    width: 82px;
+    height: 38px;
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    position: absolute;
+    z-index: 999999;
+    top: 0px;
+}
+
+.nav_tooltip:after, .nav_tooltip:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.nav_tooltip:after {
+    border-color: rgba(57, 82, 105, 0);
+    border-top-color: rgba(38,58,77,0.9);
+    border-width: 7px;
+    left: 50%;
+    margin-left: -7px;
+}
+
+.nav_tooltip:before {
+    border-color: rgba(57, 82, 105, 0);
+    border-top-color: #395269;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+

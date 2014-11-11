@@ -1,0 +1,76 @@
+.upfront-selector-option {
+	padding:5px;
+}
+
+#upfront-selector-post_type .upfront-field-select {
+	min-width: 200px;
+	margin-left: 10px;
+}
+
+#upfront-selector-post_type .upfront-field-select.open {
+	overflow: visible;
+}
+
+#upfront-selector-post_type .upfront-field-select-options{
+	height: auto;
+	max-height: 250px;
+	margin-top: 2px !important;
+}
+
+#upfront-selector-posts #upfront-list{
+	width: 100%;
+}
+
+#upfront-selector-posts #upfront-list td{
+	float:none;
+	cursor: pointer;
+}
+
+#upfront-selector-posts tr.upfront-list_item:hover td{
+	background: #cee1f2;
+}
+
+#upfront-selector-posts tr.upfront-list_item.selected td{
+	background: #cee1f2;
+}
+
+.upfront-selector-post-checked{
+	width:65px;
+}
+.upfront-selector-post-title{
+	width:70%;
+}
+
+.selected .upfront-selector-post-checked:before{
+	content: '';
+	display: block;
+	background: url('../img/uf-ui-sprite.svg') no-repeat -733px -139px;
+	width: 20px;
+	height: 18px;
+}
+
+#upfront-selector-post_type {
+	padding: 20px 30px 10px;
+	vertical-align: top;
+	border-bottom:1px solid #CAD9E4;
+}
+
+#upfront-selector-posts {
+	max-height: 350px;
+	border-bottom:1px solid #CAD9E4;
+}
+
+.ugallery-change-link-post {
+	color: rgb(99, 134, 166);
+	cursor: pointer;
+	margin-left: 26px;
+}
+.ugallery-change-link-post:hover {
+	color: rgb(31, 205, 143);
+}
+
+.upfront-selector-navigation #upfront-entity_list-pagination{
+	clear:none;
+	padding-top:4px;
+}
+

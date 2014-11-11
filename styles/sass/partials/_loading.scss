@@ -1,0 +1,120 @@
+#upfront-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12000px;
+  background-color: rgba(33,33,33,.7);
+  color: #fff;
+  font-size: 72pt;
+  font-weight: bold;
+  padding-top: 2em;
+  text-align: center;
+  z-index: 10;
+}
+
+@-webkit-keyframes upfront-loading-start {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 0 -1008px;
+	}
+}
+@-webkit-keyframes upfront-loading-repeat {
+	0% {
+		background-position: 0 -1008px;
+	}
+	100% {
+		background-position: 0 -1512px;
+	}
+}
+@-webkit-keyframes upfront-loading-done {
+	0% {
+		background-position: -72px 0;
+	}
+	100% {
+		/*background-position: -72px -864px;*/
+		background-position: -72px -865px; /* fixed the 1px jump on one frame */
+	}
+}
+@keyframes upfront-loading-start {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 0 -1008px;
+	}
+}
+@keyframes upfront-loading-repeat {
+	0% {
+		background-position: 0 -1008px;
+	}
+	100% {
+		background-position: 0 -1512px;
+	}
+}
+@keyframes upfront-loading-done {
+	0% {
+		background-position: -72px 0;
+	}
+	100% {
+		/*background-position: -72px -864px;*/
+		background-position: -72px -865px; /* fixed the 1px jump on one frame */
+	}
+}
+.upfront-loading {
+	background: rgba(19,42,64,0.8);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 9999;
+	font-family: "Source Sans Pro", sans-serif;
+	font-weight: normal;
+}
+.upfront-loading-fixed {
+	position: fixed;
+}
+.upfront-loading .upfront-loading-ani {
+	background: url("../img/panel-loader-01.svg") no-repeat;
+	width: 72px;
+	height: 72px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	-webkit-animation: upfront-loading-start 1.4s steps(14) 1;
+	animation: upfront-loading-start 1.4s steps(14) 1;
+}
+.upfront-loading-repeat .upfront-loading-ani {
+	-webkit-animation: upfront-loading-repeat 0.7s steps(7) 1;
+	animation: upfront-loading-repeat 0.7s steps(7) 1;
+}
+.upfront-loading-done .upfront-loading-ani {
+	-webkit-animation: upfront-loading-done 1.2s steps(12) 1;
+	animation: upfront-loading-done 1.2s steps(12) 1;
+}
+.upfront-loading .upfront-loading-text {
+	position: absolute;
+	width: 200px;
+	height: 72px;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	color: #cbe5ff;
+	font-size: 15px;
+	text-align: center;
+}
+.upfront-loading .upfront-loading-text:before {
+    content: " ";
+    display: block;
+    height: 100%;
+    margin: 0 0 30px;
+}
+

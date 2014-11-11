@@ -1,0 +1,212 @@
+.ueditor-datepicker-buttons {
+	border-top: 1px solid #accae6;
+	padding: 5px 10px;
+	text-align:left;
+}
+.ueditor-datepicker-buttons:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+
+.ueditor-datepicker-buttons a.button {
+	margin-top: 0 !important;
+}
+a.ueditor-action-pickercancel{
+	line-height: 28px;
+	color: #607F99 !important;
+	cursor: pointer;
+}
+
+.ueditor_author,
+.ueditor_date {
+	cursor: pointer !important;
+}
+
+.ueditor-insert {
+	position: relative;
+}
+
+.redactor-box .ueditor-insert {
+	outline: 1px dotted #3ea;
+	background: rgba(255,255,255,.2);
+}
+
+.redactor-box .ueditor-insert:hover {
+	outline: 1px solid #3ea;
+}
+
+.ueditor-insert .upfront-inline-panel {
+	visibility: visible;
+	transform: none;
+	-webkit-transform: none;
+	opacity: 1;
+	margin: 0 auto;
+	display: none;
+}
+
+.ueditor-insert:hover .upfront-inline-panel,
+.ueditor-insert .upfront-inline-panel.uinsert-control-visible {
+	display: block;
+}
+
+.ueditor-insert .upfront-inline-panel i.upfront-icon {
+	height: 25px;
+	 -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;
+}
+.ueditor-post-insert-manager{
+    position:absolute;
+    display: none;
+    /*margin-top:-25px;*/
+    width: 100%;
+}
+.uinsert-selector {
+	/*position: absolute;*/
+	/*left: 50px;*/
+	/*background: rgba(31, 48, 63, 0.95);*/
+	/*height: 30px;*/
+	/*padding: 0 5px;*/
+    /*z-index: 99;*/
+    display: none;
+	position: absolute;
+    /*margin-left: 50px;*/
+	background: rgba(31, 48, 63, 0.95);
+	height: 30px;
+	padding: 0 5px;
+    z-index: 99;
+    margin-top: -25px;
+    width: auto;
+}
+
+.uinsert-selector:before {
+	content: '';
+	display: block;
+	position: absolute;
+	left: -8px;
+	top: 35%;
+	border: 5px solid transparent;
+	border-right-color: rgba(31, 48, 63, 0.95);
+}
+.uinsert-text{
+    z-index: 1;
+    position: relative;
+}
+.uinsert-selector
+.uinsert-text-overlay{
+    height: 29px;
+    width: 100%;
+    background: rgba(31, 48, 63, 0.95);
+    display: block;
+    z-index: 9999;
+    position: relative;
+    margin-top: -29px;
+    padding: 0 3px;
+    opacity: 0;
+}
+.uinsert-drag-handle {
+	cursor: move;
+}
+
+.upfront-inserted_image-wrapper .wp-caption-text,
+.uinsert-image-wrapper{
+	padding: 15px;
+}
+.uinsert-image-wrapper img{
+	width: 100%;
+	height: 100%;
+}
+.ueditor-insert .upfront-inline-panel-item i {
+	background-image: url('../img/uf-ui-sprite.png');
+	background-image: url('../img/uf-ui-sprite.svg'), none;
+
+}
+
+.ueditor-insert .upfront-icon-region-alignleft,
+.ueditor-insert .upfront-icon-region-alignment {
+	background-position: -510px -80px;
+}
+.ueditor-insert .upfront-icon-region-alignright {
+	background-position: -594px -80px;
+}
+.ueditor-insert .upfront-icon-region-aligncenter {
+	background-position: -552px -80px;
+}
+.ueditor-insert .upfront-icon-region-alignfull {
+	background-position: -637px -80px;
+}
+
+.ueditor-insert .upfront-icon-region-remove {
+	background-position: -722px -222px;
+}
+
+.ueditor-insert .upfront-icon-region-link {
+	background-position: -552px -164px;
+}
+.ueditor-insert .upfront-icon-region-embed {
+    background-position: -552px -164px;
+    height: 100%;
+}
+/*div.upfront-inserted_image-wrapper{*/
+    /*position:relative;*/
+/*}*/
+div.upfront-inserted_image-wrapper i.upfront-icon-region-nocaption {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -445px;
+}
+div.upfront-inserted_image-wrapper i.upfront-icon-region-caption-left {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -798px;
+}
+
+div.upfront-inserted_image-wrapper i.upfront-icon-region-caption-bottom {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -637px;
+}
+
+div.upfront-inserted_image-wrapper i.upfront-icon-region-caption-right {
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -691px -30px;
+}
+div.uinsert-selector a {
+	color: #ccc;
+	display: inline-block;
+	line-height: 30px;
+	padding: 0 5px;
+    cursor: pointer;
+}
+
+div.uinsert-selector a:hover {
+	color: #3ea;
+	background: rgba(255,255,255,.1);
+}
+
+.ueditor-insert a.uinsert-change-link-post {
+	margin: 5px 0 5px 25px;
+	display: block;
+	color: #1fcd8f;
+}
+
+.upfront-postpart-featured_image {
+	overflow: hidden;
+}
+.uimage-control-panel-content label{
+    color:#fff;
+}
+.ueditor-insert:hover .upfront-resize-handle-e,
+.ueditor-insert:hover .upfront-resize-handle-w {
+	display: block !important;
+}
+
+.ueditor-insert .upfront-resize-handle-e {
+	right: 0;
+}
+.ueditor-insert .upfront-resize-handle-w {
+	left: 0;
+	background: #f2b530;
+}
+
+
