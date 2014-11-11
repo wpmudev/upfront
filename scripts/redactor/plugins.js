@@ -737,19 +737,30 @@ RedactorPlugins.upfrontLink = function() {
                 this.redactor = redactor;
                 redactor.selection.save();
                 var link = false;
+                var url = false;
                 if (redactor.$element.hasClass('upfront_cta'))
                     link = redactor.$element;
-                else
+                else if(redactor.$element.hasClass('menu_item')) {
+                    var menuitem = redactor.$element.closest('li').data('backboneview');
+                    url = menuitem.model['menu-item-url'];
+                    menuitem.model['being-edited'] = true;
+                }
+                else {
                     link = redactor.utils.isCurrentOrParent('A');
+                }
 
-                if (link) {
-                    this.render({url: $(link).attr('href'), link: this.guessLinkType($(link).attr('href'))});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+                if (link || url) {
+                    this.render({url: link?$(link).attr('href'):url, link: this.guessLinkType(link?$(link).attr('href'):url)});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
                 }
                 else
                     this.render();
             },
             close: function (e, redactor) {
                 redactor.selection.restore();
+                if(redactor.$element.hasClass('menu_item')) {
+                    var menuitem = redactor.$element.closest('li').data('backboneview');
+                    menuitem.model['being-edited'] = false;
+                }
             },
             unlink: function (e) {
                 if (e)
@@ -757,6 +768,10 @@ RedactorPlugins.upfrontLink = function() {
 
                 if (this.redactor.$element.hasClass('upfront_cta'))
                     this.redactor.$element.attr('href', '#');
+                else if(this.redactor.$element.hasClass('menu_item')) {
+                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
+                    menuitem.model['menu-item-url'] = '#';
+                }
                 else {
                     var text = this.redactor.selection.getHtml();
                     if ($.parseHTML(text).length > 1) {// there is html inside
@@ -765,12 +780,24 @@ RedactorPlugins.upfrontLink = function() {
                         this.redactor.link.unlink();
                     }
                 }
+
+                if(this.redactor.$element.hasClass('menu_item')) {
+                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
+                    menuitem.model['being-edited'] = false;
+                }
+                this.redactor.$element.focus();
             },
             link: function (url, type) {
                 this.redactor.selection.restore();
                 if (url) {
                     if (this.redactor.$element.hasClass('upfront_cta'))
                         this.redactor.$element.attr('href', url);
+                    else if(this.redactor.$element.hasClass('menu_item')) {
+
+                        var menuitem = this.redactor.$element.closest('li').data('backboneview');
+
+                        menuitem.model['menu-item-url'] = url;
+                    }
                     else {
                         var caption = this.redactor.selection.getHtml();
                         var link = this.redactor.utils.isCurrentOrParent('A');
@@ -780,6 +807,12 @@ RedactorPlugins.upfrontLink = function() {
                             this.redactor.link.set(caption, url);
                             //this.redactor.insert.html('<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
                     }
+                    this.redactor.$element.focus();
+                }
+
+                if(this.redactor.$element.hasClass('menu_item')) {
+                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
+                    menuitem.model['being-edited'] = false;
                 }
             },
 
@@ -801,17 +834,16 @@ RedactorPlugins.upfrontLink = function() {
                 });
             },
 
-            guessLinkType: function (url) {
-                if (!$.trim(url))
+            guessLinkType: function(url){
+                if(!$.trim(url) || $.trim(url) == '#')
                     return 'unlink';
-                if (url.length && url[0] == '#')
+                if(url.length && url[0] == '#')
                     return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-                if (url.substring(0, location.origin.length) == location.origin)
+                if(url.substring(0, location.origin.length) == location.origin)
                     return 'entry';
 
                 return 'external';
             }
-
         })
     }
 };
