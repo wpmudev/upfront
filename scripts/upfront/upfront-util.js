@@ -163,9 +163,10 @@ define(function() {
                         $el.addClass( class_name + class_size );
                 }
             },
-            width_to_col: function (width) {
+            width_to_col: function (width, ceil) {
+                ceil = typeof  ceil === "undefined" ? false : ceil;
                 var column_width = Upfront.Settings.LayoutEditor.Grid.column_width;
-                return Math.floor(width/column_width);
+                return Math[ ceil ? "ceil" : "floor" ](width/column_width);
             },
             height_to_row: function (height) {
                 var baseline = Upfront.Settings.LayoutEditor.Grid.baseline;

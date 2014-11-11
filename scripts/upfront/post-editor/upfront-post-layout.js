@@ -407,7 +407,7 @@ var ContentView = PostPartView.extend({
 		}
 
 		rules += 'padding-left: ' + leftPadding + 'px; padding-right: ' + rightPadding + 'px;}';
-		rules += '.upfront-region-postlayouteditor .upfront-output-PostPart_contents .ueditor-insert-variant { margin-left: ' + (leftPadding*-1) + 'px; margin-right: ' + (rightPadding*-1) + 'px; }';
+		rules += '.ueditor-insert-variant { margin-left: ' + (leftPadding*-1) + 'px; margin-right: ' + (rightPadding*-1) + 'px; }';
 
 		styles.html(rules);
 	}

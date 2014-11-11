@@ -376,8 +376,6 @@ var ImageInsert = UeditorInsert.extend({
 
 		if( data.style && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
 			data.image = data.imageThumb;
-			console.info('data.imageThumb');
-
 		}
 
 		this.apply_classes( data.style.group );
@@ -389,49 +387,72 @@ var ImageInsert = UeditorInsert.extend({
 			.html(this.tpl(data))
 		;
 
-		if (style_variant && style_variant.group && style_variant.group.col) Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
-		if (style_variant && style_variant.group && style_variant.group.left) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.left);
+        var $group = this.$el.find(".ueditor-insert-variant-group"),
+            ge = Upfront.Behaviors.GridEditor,
+            $parent = $('.upfront-content-marker-contents'),
+            padding_left = parseFloat( $(".upfront-content-marker-contents>*").css("padding-left")) / ge.col_size ,
+            padding_right = parseFloat( $(".upfront-content-marker-contents>*").css("padding-right")) / ge.col_size,
+            parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true ) ,
+            max_col =   parent_col  - padding_left - padding_right,
+            col_size = $(".upfront-content-marker-contents>*").width()/max_col
+            ;
 
-		if (style_variant && style_variant.group) {
 
-			var css = {
-				float : style_variant.group.float,
-				marginRight: style_variant.group.margin_right + "px"
-				},
-				reset_css = {
-					marginRight: "0px"
-				};
-			if( style_variant.group.left === 0 ){
-				reset_css.marginLeft =  "0px";
-				css.marginLeft =  style_variant.group.margin_left + "px";
-			}
+        padding_left = padding_left ? parseInt(padding_left) : 0;
+        padding_right = padding_right ? parseInt(padding_right) : 0;
 
-			/**
-			 * Reset margins
-			 */
-			this.$el.css(reset_css);
+        if ( style_variant.group.float == 'left' && padding_left > 0 )
+            $group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size);
+        else if ( style_variant.group.float == 'right' && padding_right > 0 )
+            $group.css('margin-right', ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size);
+        else if ( style_variant.group.float == 'none' && padding_left > 0 )
+            $group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size);
 
-			/**
-			 * Apply css
-			 */
-			this.$el.css(css);
-		}
+console.log($group.css('margin-left'));
+		//if (style_variant && style_variant.group && style_variant.group.col) Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
+		//if (style_variant && style_variant.group && style_variant.group.left) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.left);
+
+		//if (style_variant && style_variant.group) {
+        //
+		//	var css = {
+		//		float : style_variant.group.float,
+		//		marginRight: style_variant.group.margin_right + "px"
+		//		},
+		//		reset_css = {
+		//			marginRight: "0px"
+		//		};
+		//	if( style_variant.group.left === 0 ){
+		//		reset_css.marginLeft =  "0px";
+		//		css.marginLeft =  style_variant.group.margin_left + "px";
+		//	}
+        //
+		//	/**
+		//	 * Reset margins
+		//	 */
+		//	this.$el.css(reset_css);
+        //
+		//	/**
+		//	 * Apply css
+		//	 */
+		//	this.$el.css(css);
+		//}
 		this.controls.render();
 		this.$el.append(this.controls.$el);
+        this.$el.addClass("ueditor-insert-variant");
 		this.make_caption_editable();
 		this.updateControlsPosition();
-
-		this.$('.uinsert-image-wrapper')
-			//.css(wrapperData)
-			.find('img')
-			.attr('src', this.data.get("imageFull").src)
-			//.css({
-			//    position: 'absolute',
-			//    'max-width': 'none',
-			//    'max-height': 'none'
-			//})
-			//.css(imageSize)
-		;
+        //
+		//this.$('.uinsert-image-wrapper')
+		//	//.css(wrapperData)
+		//	.find('img')
+		//	.attr('src', this.data.get("imageFull").src)
+		//	//.css({
+		//	//    position: 'absolute',
+		//	//    'max-width': 'none',
+		//	//    'max-height': 'none'
+		//	//})
+		//	//.css(imageSize)
+		//;
 
 		if(!this.data.get('isLocal'))
 			this.data.set({externalImage: style_variant.image.width}, {silent: true});
