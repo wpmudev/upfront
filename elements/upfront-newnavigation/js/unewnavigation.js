@@ -207,6 +207,8 @@ var MenuItemView = Backbone.View.extend({
 		$(this.el).data('backboneview', me).addClass('menu-item');
 		if(me.newitem) $(this.el).addClass('new_menu_item');
 
+		
+
 		return this;
 	},
 	updateLinkType: function() {
@@ -615,6 +617,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.$el.find('a.ueditable').each(function() {
 				try {
 					$(this).data('ueditor').stop();
+					$(this).closest('li').removeClass('edit_mode');
+					$(this).closest('li').data('backboneview').model['being-edited'] = false;
 				} catch (err) { }
 				editablefound = true;
 			});
@@ -669,17 +673,31 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		*/
 	},
 	editMenuItem: function(e) {
+
 		this.editModeOn(e);
 		var me = this;
 		var target;
 		if(typeof e.target == 'undefined' || e.target.trim == '') target = $(e);
 		else target = $(e.target);
 
+		if(target.closest('li').hasClass('edit_mode')) {
+			return;
+		}
+		if(typeof e.target != 'undefined') {
+			e.preventDefault();		
+			e.stopPropagation();
+		}
 		if(target.hasClass('ueditor-placeholder'))
 			target = target.siblings('a.menu_item');
 
 		target.closest('li').addClass('edit_mode');
+
+		var ueditor = target.data('ueditor');
+		ueditor = null;
+		target.data('ueditor', '');
+		
 		if(!target.data('ueditor')) {
+			console.log('initializing a new editor');
 			target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
@@ -688,7 +706,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				//airButtons: false,
 				airButtons: ['upfrontLink'],
 				allowedTags: ['h5'],
-				placeholder: 'Link Name'
+				placeholder: 'Link Name',
+				//autostart: false,
 			}).on('start', function(e) {
 				target.focus();
 			}).on('keydown', function(e){
@@ -715,6 +734,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
 				}
 				else if(e.which == 13) {
+					console.log('entered d d d d');
 					e.preventDefault();
 					target.blur();
 
@@ -722,26 +742,37 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
 			}).on('blur', function(e) {
+				
 					var being_edited = false;
 					if(target.closest('li').data('backboneview').model['being-edited'])
 						being_edited = target.closest('li').data('backboneview').model['being-edited'];
 
 					if($(e.relatedTarget).closest('.redactor_toolbar').length > 0 || being_edited)
 						return;
-
-						target.data('ueditor').stop();
+					
+					target.data('ueditor').stop();
 
 					target.closest('li').removeClass('edit_mode');
 					if(!target.hasClass('new_menu_item')) {
 						target.closest('li').data('backboneview').saveLink();
 					}
+
+
 			}).on('stop', function() {
+				//target.data('ueditor', false);
 				me.editModeOff();
+				
 			});
+
+			target.data('ueditor').start();
+			target.focus();
+
 		} else {
 			target.data('ueditor').start();
 			target.focus();
 		}
+		
+
 
 
 		var currentcontext = target.closest('ul');
@@ -773,6 +804,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	onDeactivate: function() {
 		console.log('navigation has been deactivated');
+		if(this.$el.find('li.edit_mode').data('backboneview'))
+			this.$el.find('li.edit_mode').data('backboneview').model['being-edited']= false;
 		this.$el.find('li.edit_mode a.menu_item').blur();
 		this.editModeOff();
 		this.$el.find('.time_being_display').removeClass('time_being_display');

@@ -1,12 +1,9 @@
 ;(function($){
-
-var deps = [
+define("ueditor", [ // For require to include scripts in build and not load them separately they must be passes as an array and not variable that points to array
 	'text!scripts/redactor/ueditor-templates.html',
 	'scripts/redactor/ueditor-inserts',
     'redactor_plugins'
-];
-
-define("ueditor", deps, function(tpl, Inserts, redactor_plugins){
+], function(tpl, Inserts, redactor_plugins){
 var hackedRedactor = false;
 var UeditorEvents = redactor_plugins.UeditorEvents;
 $.fn.ueditor = function(options){
@@ -65,6 +62,12 @@ var hackRedactor = function(){
 					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
 				{
 					if (!self.selection.getText()) {
+
+						if(self.$element.closest('li').hasClass('menu-item')) {
+				    		var menu_item = self.$element.closest('li.menu-item').data('backboneview');
+				    		menu_item.model['being-edited'] = false;
+				    	}
+
 						self.$air.fadeOut(100);
 						$(".redactor-dropdown").hide();
 						self.$toolbar.find(".dropact").removeClass("dropact");
@@ -88,7 +91,16 @@ var hackRedactor = function(){
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {
+
+
         if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length )) return;
+
+		if(this.$element.closest('li').hasClass('menu-item')) {
+    		var menu_item = this.$element.closest('li.menu-item').data('backboneview');
+
+    		menu_item.model['being-edited'] = true;
+    	}
+
 
         $('.redactor_air').hide();
         this.selection.createMarkers();

@@ -1012,6 +1012,7 @@ define([
 				var imageData = results.data.images[imageId];
 
 				if(imageData.error){
+					Upfront.Views.Editor.notify('Image failed to process.', 'error');
 					return;
 				}
 

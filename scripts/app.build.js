@@ -44,6 +44,7 @@
         "uyoutube": "../elements/upfront-youtube/js/uyoutube",
         "ueditor_inserts": "redactor/ueditor-inserts",
         "redactor": "redactor/redactor",
+				"redactor_plugins": "redactor/plugins",
         "ueditor": "redactor/ueditor",
         "jquery-df": "jquery/jquery-dateFormat.min",
         "jquery-simulate": 'jquery/jquery.simulate',
@@ -61,7 +62,7 @@
       }
     },
     // optimize: "none", // in case you want to debug something uncomment this for unoptimized output.
-    fileExclusionRegExp: /test/, // exclude ckeeditor from build
+    fileExclusionRegExp: /test/,
     removeCombined: true, // this affects build dir, it makes clearer what is in built main
     findNestedDependencies: true, // we need this since we have nested require calls
     modules: [
