@@ -28,10 +28,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$includes_url = includes_url();
 
 		if (empty($is_ssl) && is_ssl()) {
-			$root = preg_replace('/https:/', 'http:', $root);
-			$includes_url = preg_replace('/https:/', 'http:', $includes_url);
-			$ajax = preg_replace('/https:/', 'http:', $ajax);
-			$site = preg_replace('/https:/', 'http:', $site);
+			$root = preg_replace('/^https:/', 'http:', $root);
+			$includes_url = preg_replace('/^https:/', 'http:', $includes_url);
+			$ajax = preg_replace('/^https:/', 'http:', $ajax);
+			$site = preg_replace('/^https:/', 'http:', $site);
 		}
 		
 		$admin = admin_url();
