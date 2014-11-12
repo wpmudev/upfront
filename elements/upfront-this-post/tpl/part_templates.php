@@ -8,6 +8,13 @@ ob_start();
 $templates['author'] = ob_get_contents();
 ob_clean();
 
+
+//** AUTHOR_GRAVATAR
+?><span class="author_gravatar">%avatar_{size}%</span><?php
+$templates['author_gravatar'] = ob_get_contents();
+ob_clean();
+
+
 //*** CATEGORIES
 ?><div class="post_categories">%categories%</div><?php
 $templates['categories'] = ob_get_contents();

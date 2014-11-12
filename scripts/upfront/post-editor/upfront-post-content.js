@@ -12,7 +12,8 @@ var PartMarkupCreator = function(){
 		comments_count: {replacements: ['%comments_count%'], editable:[]},
 		featured_image: {replacements: ['%image%', '%permalink%'], editable:['%image%']},
 		date: {replacements: ['%date%', '%date_iso%'], editable:['%date%']},
-		update: {replacements: ['%update%', '%date_iso%'], editable:['%update%']}
+		update: {replacements: ['%update%', '%date_iso%'], editable:['%update%']},
+		author_gravatar: {replacements: ['%avatar_%'], editable:['%avatar%'], withParameters: ['%avatar_']}
 	};
 
 	this.markup = function(part, partContents, template, partOptions){
@@ -163,6 +164,26 @@ var PostContentEditor = Backbone.View.extend({
 			this.$el.append(this.authorSelect.$el);
 		}
 
+
+        //Author Gravatar
+        this.parts.author_gravatars = this.$('.upfront-content-marker-author-gravatar');
+        if(this.parts.authors.length){
+            var me = this,
+                authors = Upfront.data.ueditor.authors,
+                options = []
+                ;
+
+            _.each(authors, function(a){
+                options.push({value: a.ID, name: a.display_name});
+            });
+
+            this.authorSelect = new MicroSelect({options: options});
+            this.authorSelect.on('select', function(authorId){
+                me.changeAuthor(authorId);
+            });
+
+            this.$el.append(this.authorSelect.$el);
+        }
 		//Date
 		this.parts.dates = this.$('.upfront-content-marker-date');
 		if(this.parts.dates.length){

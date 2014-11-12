@@ -1406,7 +1406,7 @@ define([
 
 	var SidebarPanel_Posts = SidebarPanel_DraggableElements.extend({
 		className: "sidebar-panel upfront-panel-post_panel",
-		parts: ['Title', 'Contents', 'Excerpt', 'Featured Image', 'Author', 'Date', 'Update', 'Comments Count', 'Tags', 'Categories'],
+		parts: ['Title', 'Contents', 'Excerpt', 'Featured Image', 'Author', 'Author Gravatar', 'Date', 'Update', 'Comments Count', 'Tags', 'Categories'],
 		partElements: [],
 		initialize: function (opts) {
 			//SidebarPanel_DraggableElements.prototype.constructor.call(this, opts);
@@ -5951,6 +5951,7 @@ var CSSEditor = Backbone.View.extend({
 		PostPart_excerptModel: {label: l10n.postpart_excerpt, id: 'PostPart_excerpt'},
 		PostPart_featured_imageModel: {label: l10n.postpart_featured, id: 'PostPart_featured_image'},
 		PostPart_authorModel: {label: l10n.postpart_author, id: 'PostPart_author'},
+		PostPart_author_gravatarModel: {label: l10n.postpart_author_gravatar, id: 'PostPart_author_gravatar'},
 		PostPart_dateModel: {label: l10n.postpart_date, id: 'PostPart_date'},
 		PostPart_updateModel: {label: l10n.postpart_update, id: 'PostPart_update'},
 		PostPart_comments_countModel: {label: l10n.postpart_comments, id: 'PostPart_comments_count'},

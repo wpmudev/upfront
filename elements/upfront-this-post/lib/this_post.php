@@ -4,7 +4,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static $PARTNAMES = array(
 		'EXCERPT' => 'excerpt',
 		'AUTHOR' => 'author',
-//        'AUTHOR_AVATAR' => 'author_avatar',
+        'AUTHOR_GRAVATAR' => 'author_gravatar',
         'CATEGORIES' => 'categories',
 		'COMMENTS' => 'comments_count',
 		'CONTENTS' => 'contents',
@@ -135,6 +135,15 @@ class Upfront_ThisPostView extends Upfront_Object {
 			case self::$PARTNAMES['TITLE']:
 				$replacements['%title%'] = get_the_title();
 				$replacements['%permalink%'] = get_permalink();
+				break;
+
+			case self::$PARTNAMES['AUTHOR_GRAVATAR']:
+				$avatar = self::get_tpl_parameter('avatar', $tpl);
+
+				foreach($avatar as $size){
+					$_size = str_replace( array("{", "}"), "", $size );
+					$replacements['%avatar_' . $size . '%'] = get_avatar($post->post_author, $_size);
+				}
 				break;
 		}
 
