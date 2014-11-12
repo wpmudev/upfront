@@ -1524,39 +1524,36 @@ var _alpha = "alpha",
 	}),
 
     ImageVariant = Backbone.Model.extend({
-        defaults : {
-            vid   : "",
-            label : "Variant Label",
-            group : {
-				margin_left: 0,
-				margin_right: 0,
-                col: 24,
-                row: 50,
-                left: 0,
-                float: "none"
-            },
-            image : {
-            	order: 0,
-            	col: 24,
-            	top: 0,
-            	left: 0,
-            	row: 40,
-            	clear: true
-            },
-            caption : {
-                show: 1,
-                order: 1,
-                col: 24,
-                top: 0,
-                left: 0,
-                row: 10,
-                clear: true
-            }
-        },
-        initialize: function () {
-        	//this.set('group', Upfront.Util.clone(this.defaults.group));
-        	//this.set('image', Upfront.Util.clone(this.defaults.image));
-        	//this.set('caption', Upfront.Util.clone(this.defaults.caption));
+        defaults : function () {
+        	return {
+	            vid   : "",
+	            label : "Variant Label",
+	            group : {
+					margin_left: 0,
+					margin_right: 0,
+	                col: 24,
+	                row: 50,
+	                left: 0,
+	                float: "none"
+	            },
+	            image : {
+	            	order: 0,
+	            	col: 24,
+	            	top: 0,
+	            	left: 0,
+	            	row: 40,
+	            	clear: true
+	            },
+	            caption : {
+	                show: 1,
+	                order: 1,
+	                col: 24,
+	                top: 0,
+	                left: 0,
+	                row: 10,
+	                clear: true
+	            }
+        	};
         }
     }),
     ImageVariants = Backbone.Collection.extend({
