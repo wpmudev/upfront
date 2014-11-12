@@ -635,7 +635,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function remove_private_user_fields($user) {
-		$user->gravatar = md5($user->data->user_email);
+		if (!empty($user->data) && !empty($user->data->user_email)) $user->gravatar = md5($user->data->user_email);
 		unset($user->data->user_pass);
 		unset($user->data->user_registered);
 		unset($user->data->user_activation_key);
