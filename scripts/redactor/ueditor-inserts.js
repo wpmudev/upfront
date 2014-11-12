@@ -294,7 +294,7 @@ var UeditorInsert = Backbone.View.extend({
 
 var ImageInsert = UeditorInsert.extend({
 	type: 'image',
-	className: 'upfront-inserted_image-wrapper',
+	className: 'ueditor-insert upfront-inserted_image-wrapper',
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	resizable: false,
 	defaultData: {
@@ -313,15 +313,13 @@ var ImageInsert = UeditorInsert.extend({
 	init: function(){
 
 		var style_variant = Upfront.Content.ImageVariants.findWhere({ vid : this.data.get("variant_id") }),
-			alignControl = this.getAligmnentControlData(['left', 'center', 'full', 'right']);
-		alignControl.selected = this.data.get('variant_id');
+		    selected = this.data.get('variant_id');
 		this.controlsData = [
-			//alignControl,
 			{id: 'style',
 				type: "multi",
 				icon : "style",
 				tooltip: "Style",
-				selected: alignControl.selected,
+				selected: selected,
 				subItems: this.get_style_control_data()
 			},
 			{id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
@@ -452,18 +450,18 @@ var ImageInsert = UeditorInsert.extend({
         this.$el.addClass("ueditor-insert-variant");
 		this.make_caption_editable();
 		this.updateControlsPosition();
-        //
-		this.$('.uinsert-image-wrapper')
-			//.css(wrapperData)
-			.find('img')
-			.attr('src', this.data.get("imageFull").src)
-			//.css({
-			//    position: 'absolute',
-			//    'max-width': 'none',
-			//    'max-height': 'none'
-			//})
-			//.css(imageSize)
-		;
+        ////
+		//this.$('.uinsert-image-wrapper')
+		//	//.css(wrapperData)
+		//	.find('img')
+		//	.attr('src', this.data.get("imageFull").src)
+		//	//.css({
+		//	//    position: 'absolute',
+		//	//    'max-width': 'none',
+		//	//    'max-height': 'none'
+		//	//})
+		//	//.css(imageSize)
+		//;
 
 		if(!this.data.get('isLocal'))
 			this.data.set({externalImage: style_variant.image.width}, {silent: true});
@@ -585,47 +583,47 @@ var ImageInsert = UeditorInsert.extend({
 		});
 
 
-		this.listenTo(this.controls, 'control:select:alignment', function(control){
-			var alignData = {
-					align: control
-				},
-				colSize = Upfront.Behaviors.GridEditor.col_size,
-				thumb = this.data.get('imageThumb'),
-				captionPosition = this.data.get('captionPosition'),
-				sideCaption = captionPosition == 'left' || captionPosition == 'right',
-				width
-				;
-			if(control == 'full'){
-				this.data.set(alignData);
-				alignData.width = me.$el.width();
-
-				if(sideCaption)
-					thumb.width = (alignData.width / colSize - 3) * colSize;
-				else
-					thumb.width = alignData.width;
-
-				thumb.width = Math.round(thumb.width);
-
-				thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
-				alignData.thumb = thumb;
-			}
-
-			else if(this.data.get('align') == 'full') {
-				width = Math.round((this.data.get('width') / colSize - 6) * colSize);
-				alignData.width = width;
-
-				if(sideCaption)
-					thumb.width = width - 3 * colSize;
-				else
-					thumb.width = width;
-
-				thumb.width = Math.round(thumb.width);
-
-				thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
-				alignData.thumb = thumb;
-			}
-			this.data.set(alignData);
-		});
+		//this.listenTo(this.controls, 'control:select:alignment', function(control){
+		//	var alignData = {
+		//			align: control
+		//		},
+		//		colSize = Upfront.Behaviors.GridEditor.col_size,
+		//		thumb = this.data.get('imageThumb'),
+		//		captionPosition = this.data.get('captionPosition'),
+		//		sideCaption = captionPosition == 'left' || captionPosition == 'right',
+		//		width
+		//		;
+		//	if(control == 'full'){
+		//		this.data.set(alignData);
+		//		alignData.width = me.$el.width();
+        //
+		//		if(sideCaption)
+		//			thumb.width = (alignData.width / colSize - 3) * colSize;
+		//		else
+		//			thumb.width = alignData.width;
+        //
+		//		thumb.width = Math.round(thumb.width);
+        //
+		//		thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
+		//		alignData.thumb = thumb;
+		//	}
+        //
+		//	else if(this.data.get('align') == 'full') {
+		//		width = Math.round((this.data.get('width') / colSize - 6) * colSize);
+		//		alignData.width = width;
+        //
+		//		if(sideCaption)
+		//			thumb.width = width - 3 * colSize;
+		//		else
+		//			thumb.width = width;
+        //
+		//		thumb.width = Math.round(thumb.width);
+        //
+		//		thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
+		//		alignData.thumb = thumb;
+		//	}
+		//	this.data.set(alignData);
+		//});
 
 		this.listenTo(this.controls, 'control:ok:link', function(view, control){
 			var url = view.$('input[type=text]').val(),
@@ -649,29 +647,29 @@ var ImageInsert = UeditorInsert.extend({
 			control.close();
 		});
 
-		this.listenTo(this.controls, 'control:select:caption', function(captionPosition){
-			var currentPosition = this.data.get('captionPosition'),
-				newData = {captionPosition: captionPosition},
-				isCurrentSide = ['left', 'right'].indexOf(this.data.get('captionPosition')) != -1,
-				isPositionSide = ['left', 'right'].indexOf(captionPosition) != -1,
-				align = this.data.get('align'),
-				thumb = this.data.get('imageThumb'),
-				colSize = Upfront.Behaviors.GridEditor.col_size
-				;
-
-			if(isCurrentSide != isPositionSide){
-				if(align == 'full'){
-					thumb.width = isPositionSide ? (this.data.get('width') / colSize - 3) * colSize : this.data.get('width');
-					thumb.width = Math.round(thumb.width);
-					thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
-					newData.imageThumb = thumb;
-				}
-				else
-					newData.width = isPositionSide ? parseInt(this.data.get('imageThumb').width, 10) + 3 * colSize : parseInt(this.data.get('imageThumb').width, 10);
-			}
-
-			this.data.set(newData);
-		});
+		//this.listenTo(this.controls, 'control:select:caption', function(captionPosition){
+		//	var currentPosition = this.data.get('captionPosition'),
+		//		newData = {captionPosition: captionPosition},
+		//		isCurrentSide = ['left', 'right'].indexOf(this.data.get('captionPosition')) != -1,
+		//		isPositionSide = ['left', 'right'].indexOf(captionPosition) != -1,
+		//		align = this.data.get('align'),
+		//		thumb = this.data.get('imageThumb'),
+		//		colSize = Upfront.Behaviors.GridEditor.col_size
+		//		;
+        //
+		//	if(isCurrentSide != isPositionSide){
+		//		if(align == 'full'){
+		//			thumb.width = isPositionSide ? (this.data.get('width') / colSize - 3) * colSize : this.data.get('width');
+		//			thumb.width = Math.round(thumb.width);
+		//			thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
+		//			newData.imageThumb = thumb;
+		//		}
+		//		else
+		//			newData.width = isPositionSide ? parseInt(this.data.get('imageThumb').width, 10) + 3 * colSize : parseInt(this.data.get('imageThumb').width, 10);
+		//	}
+        //
+		//	this.data.set(newData);
+		//});
 		/**
 		 * Image style from variants
 		 */
@@ -680,6 +678,7 @@ var ImageInsert = UeditorInsert.extend({
 			if( _style ){
 				var style = _style.toJSON();
 				this.data.set("variant_id", variant_id );
+                this.controls.selected = variant_id;
 				this.data.set("style", _style.toJSON());
 			}
 		});

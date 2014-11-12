@@ -396,7 +396,9 @@
 .upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog {
 	display: block;
 }
-
+.inline-panel-item-selected.labeled{
+  display: none;
+}
 @import 'sass/partials/visit-link';
 @import 'sass/partials/fix-theme-style-messes-ui';
 @import 'sass/partials/_preset-manager.scss';
