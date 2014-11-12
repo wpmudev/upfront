@@ -41,25 +41,17 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).parent().find('ul.menu').show();
+			$(this).parent().find('ul.sub-menu').show();
 			if($(this).parent().data('burger_over') == 'pushes')
 				pushContent($(this).parent());
 		}
 		else {
 			$(this).parent().find('ul.menu').hide();
-			$(this).parent().find('ul.sub-menu').css('display', '');
+			$(this).parent().find('ul.sub-menu').hide();
 			
 			if($(this).parent().data('burger_over') == 'pushes')
 				pullContent($(this).parent());
 		}
-	});
-	
-	$('body').on('touchstart click', 'div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > a, div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > span', null, function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		if($(this).closest('li').children('ul.sub-menu').css('display') == 'none')
-			$(this).closest('li').children('ul.sub-menu').show();
-		else
-			$(this).closest('li').children('ul.sub-menu').hide();
 	});
 	
 	function pushContent(nav) {
@@ -114,16 +106,6 @@ jQuery(document).ready(function($) {
 						// Add responsive nav toggler
 						if(!$(this).find('div.responsive_nav_toggler').length)
 							$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
-						
-						// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
-						$(this).find('li.menu-item-has-children').each(function() {
-							if($(this).children('a').length && $(this).children('a').attr('href')) {
-								var itemclone = $(this).clone().removeClass('menu-item-has-children').addClass('active-clone').removeAttr('id');
-								itemclone.children('ul').remove();
-								$(this).children('ul').prepend(itemclone);
-								$(this).children('a').removeAttr('href');	
-							}
-						});
 
 						//offset a bit if admin bar or side bar is present
 						if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
@@ -157,12 +139,6 @@ jQuery(document).ready(function($) {
 						// Remove responsive nav toggler
 						$(this).find('div.responsive_nav_toggler').remove();
 						$(this).find('ul.menu').show();
-
-						//remove any sub-menu item's parent's clones
-						$(this).find('li.active-clone').each(function() {
-							$(this).parent().parent().children('a').attr('href', $(this).children('a').attr('href'));
-							$(this).remove();
-						});
 						
 						//remove any display:block|none specifications from the sub-menus
 						$(this).find('ul.menu, ul.sub-menu').each(function() {
