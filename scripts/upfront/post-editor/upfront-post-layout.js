@@ -421,7 +421,7 @@ var FeaturedImageView = PostPartView.extend({
 	on_render: function(){
 		var me = this,
 			moduleId = this.moduleId || this.parent_module_view.model.get_property_value_by_name('element_id'),
-			height = this.partOptions.height || 100,
+            height = this.partOptions.height || 100,
 			parentView = this.parent_module_view
 		;
 
@@ -466,7 +466,39 @@ var FeaturedImageView = PostPartView.extend({
 		}
 	}
 });
+var DateView = PostPartView.extend({
+    init: function(options){
+        this.partOptions = this.postView.partOptions.date || {};
+    },
+    on_render: function(){
+        var me = this,
+            moduleId = this.moduleId || this.parent_module_view.model.get_property_value_by_name('element_id'),
+            height = this.partOptions.height || 30,
+            parentView = this.parent_module_view
+            ;
 
+        this.moduleId = moduleId;
+        this.moduleView = parentView.$('#' + moduleId);
+        this.moduleView.height( height );
+        if(!this.update_attributes_callback)
+            this.update_attributes_callback = _.bind(this.update_attributes, this);
+
+        this.moduleView
+            .off('resizestop', me.update_attributes_callback)
+            .off('resize', me.update_attributes_callback)
+            .on('resize', me.update_attributes_callback)
+            .on('resizestop', me.update_attributes_callback)
+        ;
+    },
+    update_attributes: function(e){
+        if(e && e.type == 'resizestop') {
+            var height = $('.upfront-resize').height();
+            this.model.set_property('height', height, true);
+            this.model.set_property('attributes', {style: 'min-height: ' + height + 'px' });
+            this.partOptions.height = height;
+        }
+    }
+});
 var partSettings = {
 	date: DateSettings,
 	update: UpdateSettings,
@@ -476,7 +508,8 @@ var partSettings = {
 
 var partViews = {
 	contents: ContentView,
-	featured_image: FeaturedImageView
+	featured_image: FeaturedImageView,
+    date: DateView
 };
 
 

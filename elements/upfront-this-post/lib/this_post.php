@@ -91,7 +91,7 @@ class Upfront_ThisPostView extends Upfront_Object {
                 break;
 
 			case self::$PARTNAMES['DATE']:
-				$format = isset($options['format']) ? $options['format'] : '';
+				$format = isset($options['format']) ? $options['format'] : 'd M Y';
 
 				/**
 				 * label each part
@@ -420,21 +420,37 @@ class Upfront_ThisPostView extends Upfront_Object {
 		if($type == 'single')
 			return array(
 				'postLayout' => array(
+					array('classes' => 'c6', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'featured_image', 'classes' => 'post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part c24'))),
-					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 				),
-				'partOptions' => array('featured_image' => array('height' => 150))
+				'partOptions' => array(
+					'featured_image' => array('height' => 150),
+					'date' => array(
+						'height' => 40,
+						"attributes" => array(
+							"style" => "min-height: 40px"
+						)
+					)
+				)
 			);
 		return array(
 			'postLayout' => array(
+				array('classes' => 'c6', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'featured_image', 'classes' => 'post-part 24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part 24'))),
-				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 				array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
 			),
-			'partOptions' => array('featured_image' => array('height' => 150))
+			'partOptions' => array(
+				'featured_image' => array('height' => 150),
+				'date' => array(
+					'height' => 40,
+					"attributes" => array(
+						"style" => "min-height: 40px"
+					)
+				)
+			)
 		);
 	}
 
