@@ -629,7 +629,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 						'item' => 'single-' . $post_type->name,
 						'type' => 'single'
 					),
-					'latest_post' => $post->ID
+					'latest_post' => is_object( $post ) ?  $post->ID : ""
 				);
 		}
 		// add taxonomy archive
