@@ -82,12 +82,59 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		else {
 			$post = $post;
-			if ($post && is_singular())
-				$layout_ids = Upfront_EntityResolver::get_entity_ids();
-			else if($_POST['post_id']){
+			if ($post && is_singular()) {
+				if (!is_page($post->ID)) {
+					$layout_ids = Upfront_EntityResolver::get_entity_ids();
+				} else {
+					// Deal with page templates
+					$template = get_post_meta((int)$post->ID, '_wp_page_template', true);
+					$theme = Upfront_ChildTheme::get_instance();
+					if (!empty($template) && !empty($theme->themeSettings)) {
+						$tpl = preg_replace('/page-(.*)\.php$/', '\1', $template);
+						$required_pages = $theme->themeSettings->get('required_pages');
+						if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
+						$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
+						if (!empty($specificity)) {
+							$template_layout = Upfront_Layout::from_entity_ids(array('specificity' => $specificity));
+							if (!empty($template_layout) && !$template_layout->is_empty()) {
+								$layout = $template_layout;
+								$query = new WP_Query(array(
+									'page_id' => (int)$post->ID,
+								));
+								$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
+								$layout->set('layout', $layout_ids);
+								$layout->set('current_layout', $layout_ids['specificity']);
+							}
+						}
+					}
+					// End page templates workaround
+				}
+			} else if($_POST['post_id']){
 				$posts = get_posts(array('include' => $_POST['post_id'], 'suppress_filters' => false));
-				if(sizeof($posts))
-					$post = $posts[0];
+				if(sizeof($posts)) $post = $posts[0];
+				
+				// Deal with page templates
+				$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
+				$theme = Upfront_ChildTheme::get_instance();
+				if (!empty($template) && !empty($theme->themeSettings)) {
+					$tpl = preg_replace('/page-(.*)\.php$/', '\1', $template);
+					$required_pages = $theme->themeSettings->get('required_pages');
+					if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
+					$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
+					if (!empty($specificity)) {
+						$template_layout = Upfront_Layout::from_entity_ids(array('specificity' => $specificity));
+						if (!empty($template_layout) && !$template_layout->is_empty()) {
+							$layout = $template_layout;
+							$query = new WP_Query(array(
+								'page_id' => (int)$_POST['post_id'],
+							));
+							$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
+							$layout->set('layout', $layout_ids);
+							$layout->set('current_layout', $layout_ids['specificity']);
+						}
+					}
+				}
+				// End page templates workaround
 			}
 		}
 
