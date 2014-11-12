@@ -294,7 +294,7 @@ var UeditorInsert = Backbone.View.extend({
 
 var ImageInsert = UeditorInsert.extend({
 	type: 'image',
-	className: 'ueditor-insert upfront-inserted_image-wrapper',
+	className: 'upfront-inserted_image-wrapper',
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	resizable: false,
 	defaultData: {
@@ -413,7 +413,6 @@ var ImageInsert = UeditorInsert.extend({
             //$group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size);
         }
 
-        console.log( data.style.group );
 
 		this.$el
 			.html(this.tpl(data))
@@ -449,7 +448,7 @@ var ImageInsert = UeditorInsert.extend({
 		//	this.$el.css(css);
 		//}
 		this.controls.render();
-		this.$el.append(this.controls.$el);
+		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
         this.$el.addClass("ueditor-insert-variant");
 		this.make_caption_editable();
 		this.updateControlsPosition();
