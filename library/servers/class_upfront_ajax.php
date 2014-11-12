@@ -177,6 +177,18 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$key = $layout->save();
+
+		// For single page layouts, also drop page templates
+		$layout_data = $layout->get('layout');
+		if (!empty($layout_data['specificity']) && preg_match('/single-page-\d+$/', $layout_data['specificity'])) {
+			$page_id = preg_replace('/single-page-(\d+)$/', '\1', $layout_data['specificity']);
+			// If we have a page template set...
+			if (!empty($page_id) && get_post_meta($page_id, '_wp_page_template', true)) {
+				// Kill it, as we just saved the layout for it
+				delete_post_meta($page_id, '_wp_page_template');
+			}
+		}
+
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
 
