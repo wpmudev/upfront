@@ -186,7 +186,17 @@ class Upfront_EditPage_VirtualSubpage extends Upfront_VirtualSubpage {
 
 	public function render ($request) {
 		$this->parse($request);
-		load_template(get_single_template());
+		$post_id = end($request);
+		$template = !empty($post_id)
+			? get_post_meta($post_id, '_wp_page_template', true)
+			: false
+		;
+		if (!empty($template)) {
+			$template = locate_template($template);
+		}
+
+		if (empty($template)) $template = get_single_template();
+		load_template($template);
 		die;
 	}
 
