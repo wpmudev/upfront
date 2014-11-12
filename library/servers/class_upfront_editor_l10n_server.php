@@ -173,7 +173,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'lightbox_name' => __('Lightbox Name', 'upfront'),
 				'new_lightbox' => __('New Lightbox', 'upfront'),
 				'advanced_tools' => __('Advanced tools', 'upfront'),
-				'save_draft' => __('save_draft', 'upfront'),
+				'save_draft' => __('Save Draft', 'upfront'),
 				'password' => __('Password', 'upfront'),
 				'edit_tax' => __('Edit Categories and Tags', 'upfront'),
 				'edit_url' => __('Edit URL', 'upfront'),
