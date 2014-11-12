@@ -180,6 +180,7 @@ define([
 									if ( style == 'full' ){
 										var size = me._get_full_size_el($bg, ratio, false);
 										$bg.data('bg-position-y', size[3]);
+										$bg.data('bg-position-x', size[2]);
 										$bg.css({
 											backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 											backgroundRepeat: "no-repeat",
@@ -226,6 +227,7 @@ define([
 						if ( style == 'full' ){
 							var size = this._get_full_size_el( ( is_layout ? $(window) : $bg ), ratio, false );
 							$bg.data('bg-position-y', size[3]);
+							$bg.data('bg-position-x', size[2]);
 							$bg.css({
 								backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 								backgroundRepeat: "no-repeat",
@@ -468,6 +470,7 @@ define([
 					if ( style == 'full' ){
 						var size = this._get_full_size_el( ( is_layout ? $(window) : $bg ), ratio, false );
 						$bg.data('bg-position-y', size[3]);
+						$bg.data('bg-position-x', size[2]);
 						$bg.css({
 							backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
 							backgroundRepeat: "no-repeat",
@@ -2319,6 +2322,7 @@ define([
 					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					height = $(window).height();
 				if ( this._get_region_type() == 'full' ) {
+					this.$bg.children('.upfront-region-bg-overlay').css('height', height);
 					$sub.each(function(){
 						height -= $(this).outerHeight();
 					});
@@ -2328,6 +2332,7 @@ define([
 					this.model.set_property('original_height', height, true);
 				}
 				else {
+					this.$bg.children('.upfront-region-bg-overlay').css('height', '');
 					$region.css({
 						minHeight: ''
 					});
@@ -2391,6 +2396,7 @@ define([
 						bg_image = this.model.get_breakpoint_property_value('background_image', true),
 						bg_style = this.model.get_breakpoint_property_value('background_style', true),
 						bg_position_y = this.model.get_breakpoint_property_value('background_position_y', true),
+						bg_position_x = this.model.get_breakpoint_property_value('background_position_x', true),
 						is_bg_image = ( ( !bg_type || bg_type == 'image' || bg_type == 'featured' ) && bg_image ),
 						is_bg_overlay = ( bg_type && bg_type != 'color' && !is_bg_image ),
 						full_screen_height = parseInt(this.$layout.find('.upfront-region-center').css('min-height'));
@@ -2399,14 +2405,16 @@ define([
 							var img = new Image;
 							img.src = bg_image;
 							bg_position_y = parseInt(bg_position_y)/100 * (height-img.height);
+							bg_position_x = bg_position_x + '%';
 						}
 						else {
 							bg_position_y = parseInt(this.$bg.data('bg-position-y'));
+							bg_position_x = parseInt(this.$bg.data('bg-position-x')) + 'px';
 						}
 					}
 					if ( scroll_top >= top-rel_top && scroll_bottom <= bottom ) {
 						if ( is_bg_image ) {
-							this.$bg.css('background-position-y', ( bg_position_y + scroll_top - rel_top ) + 'px');
+							this.$bg.css('background-position', bg_position_x + ' ' + ( bg_position_y + scroll_top - rel_top ) + 'px');
 						}
 						else if ( is_bg_overlay ) {
 							this.$bg.children('.upfront-region-bg-overlay').css('top', ( scroll_top - rel_top ))
@@ -2414,7 +2422,7 @@ define([
 					}
 					else {
 						if ( is_bg_image ) {
-							this.$bg.css('background-position-y', ( bg_position_y + ( height - win_height ) ) + 'px');
+							this.$bg.css('background-position', bg_position_x + ' ' + ( bg_position_y + ( height - win_height ) ) + 'px');
 						}
 						else if ( is_bg_overlay ) {
 							this.$bg.children('.upfront-region-bg-overlay').css('top', ( height - win_height ));

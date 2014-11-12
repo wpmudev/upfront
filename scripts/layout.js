@@ -86,6 +86,8 @@ jQuery(document).ready(function($){
 				body_off = $('body').offset(),
 				height = $(window).height() - body_off.top,
 				$bg_overlay = $(this).find('.upfront-output-bg-overlay');
+			if ( $bg_overlay.length )
+				$bg_overlay.css('height', height);
 			$sub.each(function(){
 				height -= $(this).outerHeight();
 			});
@@ -121,6 +123,7 @@ jQuery(document).ready(function($){
 					top_ref = ( original_height > height ) ? pos_top - ( original_height - height ) : pos_top;
 				else
 					top_ref = pos_top/original_space * available_space;
+				top_ref = top_ref < 0 ? 0 : top_ref;
 				$.each(modules, function(i, $module){
 					var margin_top = parseInt($module.css('margin-top'));
 					if ( margin_top <= 0 )
@@ -128,9 +131,6 @@ jQuery(document).ready(function($){
 					$module.css('margin-top', ( top_ref + margin_top - pos_top ) + 'px');
 				});
 			}
-			// Set background overlay height if available
-			//if ( $bg_overlay.length )
-			//	$bg_overlay.css('height', height);
 		});
 	}
 	if ( css_support('flex') ){
@@ -156,6 +156,7 @@ jQuery(document).ready(function($){
 				ratio = parseFloat($(this).attr('data-bg-image-ratio'));
 			if ( Math.round(height/width*100)/100 > ratio ) {
 				$(this).data('bg-position-y', 0);
+				$(this).data('bg-position-x', '50%');
 				$(this).css({
 					'background-position': '50% 0',
 					'background-size': (height/ratio) + "px " + height + "px" /*"auto 100%"*/
@@ -163,6 +164,7 @@ jQuery(document).ready(function($){
 			}
 			else {
 				$(this).data('bg-position-y', Math.round( ( height - (width*ratio) ) / 2 ));
+				$(this).data('bg-position-x', '0');
 				$(this).css({
 					'background-position': '0 ' + Math.round( ( ( height - (width*ratio) ) / 2) ) + 'px',
 					'background-size': width + "px " + (width*ratio) + "px" /*"100% auto"*/
@@ -306,11 +308,16 @@ jQuery(document).ready(function($){
 					$bg_overlay = $(this).find('.upfront-output-bg-overlay'),
 					is_bg_overlay = ( $bg_overlay.length > 0 ),
 					bg_position_y = 0,
+					bg_position_x = 0,
+					bg_position_css = $bg_image.css('background-position'),
 					full_screen_height = parseInt($(this).find('.upfront-region-center').css('min-height'));
 				if ( is_bg_image ) {
 					if ( typeof $bg_image.data('bg-position-y') == 'undefined' )
-						$bg_image.data('bg-position-y', $bg_image.css('background-position-y'));
+						$bg_image.data('bg-position-y', bg_position_css.match(/\d+(%|px|)$/)[0]);
+					if ( typeof $bg_image.data('bg-position-x') == 'undefined' )
+						$bg_image.data('bg-position-x', bg_position_css.match(/^\d+(%|px|)/)[0]);
 					bg_position_y = $bg_image.data('bg-position-y');
+					bg_position_x = $bg_image.data('bg-position-x');
 					if ( typeof bg_position_y == 'string' && bg_position_y.match(/%$/) ){
 						var img = new Image;
 						img.src = $bg_image.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, '');
@@ -339,7 +346,7 @@ jQuery(document).ready(function($){
 				}
 				if ( is_full_screen ){
 					if ( is_bg_image ) {
-						$bg_image.css('background-position-y', ( bg_position_y + scroll_top - body_off.top ) + 'px');
+						$bg_image.css('background-position', bg_position_x + ' ' + ( bg_position_y + scroll_top - body_off.top ) + 'px');
 					}
 					else if ( is_bg_overlay ) {
 						$bg_overlay.css('top', ( scroll_top - body_off.top ));
@@ -376,7 +383,7 @@ jQuery(document).ready(function($){
 				}
 				else if ( is_full_screen ) {
 					if ( is_bg_image ) {
-						$bg_image.css('background-position-y', ( bg_position_y + ( container_height - win_height ) ) + 'px');
+						$bg_image.css('background-position', bg_position_x + ' ' + ( bg_position_y + ( container_height - win_height ) ) + 'px');
 					}
 					else if ( is_bg_overlay ) {
 						$bg_overlay.css('top', ( container_height - win_height ));
