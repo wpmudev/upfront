@@ -1,5 +1,8 @@
-/*global ugalleries */
+/*global ugalleries, Modernizr */
 jQuery(function($){
+
+	var resizedInDesktop = false;
+	var initialized = false;
 
 	var updateHorizonalPadding =  function(gallery, absolute) {
 		var container = gallery.find('.ugallery_items').width(),
@@ -52,7 +55,17 @@ jQuery(function($){
 		gallery.data('height-adjusted', true);
 	};
 
-	var bindShuffle = function($ugallery_grid) {
+	var bindShuffle = function($ugallery_grid, force) {
+		if (Modernizr.mq('only all and (max-width: 1079px)')) {
+			return;
+		}
+		if (!force) {
+			if (resizedInDesktop) {
+				return;
+			}
+		}
+		resizedInDesktop = true;
+
 		var $grids = $ugallery_grid || $('.ugallery_grid');
 
 		$grids.each(function(){
@@ -85,8 +98,6 @@ jQuery(function($){
 		});
 	};
 
-	bindShuffle();
-
 	$(document).on('upfront-load', function() {
 		Upfront.frontFunctions = Upfront.frontFunctions || {};
 		Upfront.frontFunctions.galleryBindShuffle = bindShuffle;
@@ -114,6 +125,7 @@ jQuery(function($){
 				'max-height': maxHeight
 			});
 		};
+
 		var gallery, magOptions;
 		for (var galleryId in ugalleries) {
 			gallery = false;
@@ -155,11 +167,16 @@ jQuery(function($){
 	}
 
 	$(window).on('resize', function(){
-		$('.ugallery').each(function(){
-			var gallery = $(this);
-			if(!gallery.children('.ugallery_grid').length) {
-				updateHorizonalPadding(gallery, false);
-			}
-		});
+		if (initialized === false) {
+			initialized = true;
+			bindShuffle();
+			return;
+		}
+
+		if (Modernizr.mq('only all and (max-width: 1079px)')) {
+			return;
+		}
+
+		bindShuffle();
 	});
 });

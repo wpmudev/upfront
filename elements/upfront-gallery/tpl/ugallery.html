@@ -1,7 +1,8 @@
 <div
 	class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?> <?php if($even_padding[0] === 'true') { ?>even_padding<?php } ?>"
 	data-even-padding="<?php echo $even_padding[0] ?>"
-	data-thumb-padding="<?php echo $thumbPadding ?>"
+	data-thumb-padding="<?php echo $thumbPadding ?>",
+	data-thumb-proportions="<?php echo $thumbProportions ?>"
 >
 <?php if ($labelFilters['length'] || !empty($in_editor)){ ?>
 <div class="ugallery_labels <?php if($in_editor) { ?>ugallery_labels-enabled-<?php echo $labelFilters['length'] ?><?php } ?>">
@@ -18,12 +19,10 @@
 		  <?php if ($images[$i]['urlType'] !== 'unlink') { ?>
 			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $linkTo == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
 			<?php } ?>
-			<div class="ugallery-image-wrapper" style="position: relative; width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i]['loading']) && $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<?php if(!empty($in_editor)) { ?>
 				<i class="remove-image"></i>
 				<?php } ?>
-			</div>
 			<?php if($captionType != 'none' || !empty($in_editor)) { ?>
 			<div class="ugallery-thumb-title <?php if($captionType === 'over') { ?>ugallery-caption-on-hover-<?php echo $showCaptionOnHover['length'] ?><?php } ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>

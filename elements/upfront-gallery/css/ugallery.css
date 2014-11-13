@@ -25,10 +25,15 @@
 }
 
 .ugallery_item {
-	display: inline-block;
+	float: left;
 	vertical-align: top;
 	margin: 0 0 35px 0;
 	overflow: visible;
+}
+
+.ugallery_item img,
+.ugallery_item a {
+	display: block;
 }
 
 .image-sorting-active .ugallery_item {
@@ -681,7 +686,7 @@ button.mfp-close {
 	opacity: 1;
 }
 
-.ugallery-in-editor .ugallery-image-wrapper .remove-image {
+.ugallery-in-editor .ugallery_item .remove-image {
 	width: 16px;
 	height: 16px;
 	background-position: -483px -171px;
@@ -695,7 +700,7 @@ button.mfp-close {
 	display: none;
 }
 
-.ugallery-in-editor .ugallery-image-wrapper:hover .remove-image {
+.ugallery-in-editor .ugallery_item:hover .remove-image {
 	display: block;
 }
 
@@ -751,9 +756,6 @@ figure.gallery-labels-figure img.mfp-img {
 	font-size: 16px;
 }
 
-.ugallery_item {
-	float: left;
-}
 .mfp-figure figure {
 	margin: 0;
 }
@@ -803,4 +805,122 @@ figure.gallery-labels-figure img.mfp-img {
 .upfront-edit-responsive .ugallery-settings .upfront-settings-css .upfront-settings-item-title:before,
 .upfront-edit-responsive .ugallery-settings .upfront-settings-css .upfront-settings-item-title:after {
 	display: none;
+}
+
+/* Force thumb dimensions on tablet and mobile breakpoints,
+   basically use desktop thumbs and force size on 'em */
+@media screen and (max-width: 1079px) {
+	.ugallery,
+	.ugallery_items {
+		height: auto !important;
+	}
+	.upfront-ugallery_module,
+	.upfront-gallery {
+		min-height: 0 !important;
+	}
+	.ugallery_item {
+		position: relative !important;
+		left: auto !important;
+		top: auto !important;
+		margin-bottom: 15px !important;
+		margin-right: 15px !important;
+	}
+	.ugallery_item,
+	.ugallery_item img {
+		width: 116px !important;
+		height: 116px !important;
+	}
+	.ugallery[data-thumb-proportions="0.66"] .ugallery_item,
+	.ugallery[data-thumb-proportions="0.66"] .ugallery_item img {
+		height: 176px !important;
+	}
+	.ugallery[data-thumb-proportions="1.33"] .ugallery_item,
+	.ugallery[data-thumb-proportions="1.33"] .ugallery_item img {
+		height: 87px !important;
+	}
+	.ugallery_item:nth-child(4n) {
+		margin-right: 0 !important;
+	}
+}
+@media screen and (max-width: 569px) {
+	.ugallery_item,
+	.ugallery_item img {
+		width: 135px !important;
+		height: 135px !important;
+	}
+	.ugallery[data-thumb-proportions="0.66"] .ugallery_item,
+	.ugallery[data-thumb-proportions="0.66"] .ugallery_item img {
+		height: 176px !important;
+	}
+	.ugallery[data-thumb-proportions="1.33"] .ugallery_item,
+	.ugallery[data-thumb-proportions="1.33"] .ugallery_item img {
+		height: 101px !important;
+	}
+	.ugallery_item {
+		margin-bottom: 15px !important;
+		margin-right: 0 !important;
+	}
+	.ugallery_item:nth-child(odd) {
+		margin-right: 15px !important;
+	}
+}
+.mobile-breakpoint .ugallery,
+.mobile-breakpoint .ugallery_items,
+.tablet-breakpoint .ugallery,
+.tablet-breakpoint .ugallery_items {
+	height: auto !important;
+}
+
+.mobile-breakpoint .upfront-ugallery_module,
+.tablet-breakpoint .upfront-ugallery_module,
+.mobile-breakpoint .upfront-gallery,
+.tablet-breakpoint .upfront-gallery {
+	min-height: 0 !important;
+}
+.mobile-breakpoint .ugallery_item,
+.tablet-breakpoint .ugallery_item {
+	position: relative !important;
+	left: auto !important;
+	top: auto !important;
+}
+
+.tablet-breakpoint .ugallery_item,
+.tablet-breakpoint .ugallery_item img {
+	width: 116px !important;
+	height: 116px !important;
+}
+.tablet-breakpoint .ugallery_item {
+	margin-bottom: 15px;
+	margin-right: 15px;
+}
+.tablet-breakpoint .ugallery_item:nth-child(4n) {
+	margin-right: 0;
+}
+.tablet-breakpoint .ugallery[data-thumb-proportions="0.66"] .ugallery_item,
+.tablet-breakpoint .ugallery[data-thumb-proportions="0.66"] .ugallery_item img {
+	height: 176px !important;
+}
+.tablet-breakpoint .ugallery[data-thumb-proportions="1.33"] .ugallery_item,
+.tablet-breakpoint .ugallery[data-thumb-proportions="1.33"] .ugallery_item img {
+	height: 87px !important;
+}
+
+.mobile-breakpoint .ugallery_item,
+.mobile-breakpoint .ugallery_item img {
+	width: 135px !important;
+	height: 135px !important;
+}
+.mobile-breakpoint .ugallery_item {
+	margin-bottom: 15px;
+}
+.mobile-breakpoint .ugallery_item:nth-child(odd) {
+	margin-right: 15px;
+}
+.mobile-breakpoint .ugallery[data-thumb-proportions="0.66"] .ugallery_item,
+.mobile-breakpoint .ugallery[data-thumb-proportions="0.66"] .ugallery_item img {
+	height: 176px !important;
+}
+.mobile-breakpoint .ugallery[data-thumb-proportions="1.33"] .ugallery_item,
+.mobile-breakpoint .ugallery[data-thumb-proportions="1.33"] .ugallery_item img {
+	height: 101px !important;
 }

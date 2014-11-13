@@ -62,7 +62,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'click .ugallery_op_link': 'imageEditLink',
 			'click .ugallery_op_mask': 'imageEditMask',
 			'click .remove-image': 'removeImage',
-			'click .ugallery-image-wrapper': 'selectItem',
+			'click .ugallery_item': 'selectItem',
 			'click .upfront-quick-swap': 'openImageSelector',
 			'click': 'preventNavigation',
 			'dblclick .ugallery-thumb-title': 'startCaptionEditor'
@@ -136,15 +136,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			if (this.property('labelFilters').length) {
 				Upfront.frontFunctions.galleryBindShuffle();
 			}
-		});
-
-		this.listenTo(this.model, 'thumbChange', function(){
-			me.$('.ugallery-image-wrapper').css('overflow', 'hidden')
-				.find('img').css({
-					'min-width': '100%',
-					'min-height': '100%',
-					'margin': '0'
-				});
 		});
 
 		this.listenTo(this.model, 'change:thumbPadding', function() {
@@ -516,7 +507,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.images.each(function(image) {
 			if(image.get('loading')){
 				me.$('.ugallery_item[rel="' + image.id  + '"]')
-					.find('.ugallery-image-wrapper').append('<p class="ugallery-image-loading">' + l10n.loading + '</p>');
+					.append('<p class="ugallery-image-loading">' + l10n.loading + '</p>');
 			}
 		});
 
@@ -535,6 +526,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		setTimeout(function() {
+			console.log('on render set timeout');
 			me.rebindShuffle();
 			var items = me.$('.ugallery_item');
 			_.each(items, function(i) {
@@ -546,7 +538,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 				controls.setWidth(item.width());
 				controls.render();
-				item.find('.ugallery-image-wrapper').append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+				item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 
 				me.ensureCaptionEditorExists(title, image);
 
@@ -557,7 +549,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			});
 		}, 300);
 
-		if (this.toggleSortingActive === true) {
+		if (this.isSortingActive === true) {
 			this.activateSortable();
 			this.$el.addClass('image-sorting-active');
 			this.$el.find('.toggle_sorting').addClass('sorting-active');
@@ -600,17 +592,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	onElementResizeStop: function(){
-		this.render();
+		// Not gonna do this because render will be triggered by parent class model changing
+		// 'row' property on resize.
+		// this.render(); <-- this is redundant and creates misscalculation of padding
 	},
 
 	toggleSorting: function() {
-		this.toggleSortingActive = !this.toggleSortingActive;
+		this.isSortingActive = !this.isSortingActive;
 		this.render();
 	},
 
 	rebindShuffle: function() {
-		if (!this.toggleSortingActive) {
-			Upfront.frontFunctions.galleryBindShuffle(this.$el.find('.ugallery_grid'));
+		if (!this.isSortingActive) {
+			Upfront.frontFunctions.galleryBindShuffle(this.$el.find('.ugallery_grid'), true);
 		}
 	},
 
@@ -887,8 +881,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			item = $(e.target).closest('.ugallery_item'),
 			image = this.images.get(item.attr('rel')),
-			editorOpts = this.getEditorOptions(image)
-		;
+			editorOpts;
+
 		if(image.get('status') !== 'ok'){
 			var selectorOptions = {
 				multiple: false,
@@ -932,18 +926,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				} else {
 					me.render();
 				}
-			})
-		;
+			});
 	},
 
 	getEditorOptions: function(image){
-		var mask = this.$('.ugallery_item[rel=' + image.id + ']').find('.ugallery-image-wrapper'),
-			full = image.get('sizes').full
-		;
+		var $img = this.$('.ugallery_item[rel=' + image.id + '] img'),
+			full = image.get('sizes').full;
+
 		return {
 			id: image.id,
-			maskSize: {width: mask.width(), height: mask.height()},
-			maskOffset: mask.offset(),
+			maskSize: {width: $img.width(), height: $img.height()},
+			maskOffset: $img.offset(),
 			position: image.get('cropOffset'),
 			size: image.get('size'),
 			fullSize: {width: full[1], height: full[2]},
