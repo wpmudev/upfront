@@ -1,4 +1,4 @@
-;(function($){define(['upfront/post-editor/upfront-post-content', 'text!upfront/templates/popup.html'], function(ContentTools, tpls){
+;(function($){define(['upfront/post-editor/upfront-post-content', 'text!upfront/templates/popup.html', 'text!elements/upfront-image/tpl/image_editor.html'], function(ContentTools, tpls, editorTpl){
 
 var PostPartView = Upfront.Views.ObjectView.extend({
 	initialize: function(opts){
@@ -415,9 +415,10 @@ var ContentView = PostPartView.extend({
 
 
 var FeaturedImageView = PostPartView.extend({
-	init: function(options){
+    sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
+    init: function(options){
 		this.partOptions = this.postView.partOptions.featured_image || {};
-	},
+    },
 	on_render: function(){
 		var me = this,
 			moduleId = this.moduleId || this.parent_module_view.model.get_property_value_by_name('element_id'),
@@ -437,6 +438,7 @@ var FeaturedImageView = PostPartView.extend({
 
 		this.$('.upfront-content-marker').replaceWith(this.placeholder);
 
+
 		if(!height)
 			this.resizePlaceholder();
 
@@ -455,6 +457,8 @@ var FeaturedImageView = PostPartView.extend({
 			.on('resize', me.resizePlaceholderCallback)
 			.on('resizestop', me.resizePlaceholderCallback)
 		;
+
+        this.update_size_hint();
 	},
 	resizePlaceholder: function(e){
 		this.placeholder.height(this.moduleView.height());
@@ -464,7 +468,16 @@ var FeaturedImageView = PostPartView.extend({
 			this.model.set_property('attributes', {style: 'max-height: ' + height + 'px' });
 			this.partOptions.height = height;
 		}
-	}
+	},
+    update_size_hint: function(){
+        var width = this.$(".upfront-editable_entity").width() ? this.$(".upfront-editable_entity").width() : "100%";
+        width = width !== "100%" ? Upfront.Util.grid.normalize_width( width ) : width;
+        var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint sizehint-top featured-image-sizehint' ).html(this.sizehintTpl({
+            width: width ,
+            height: this.property("height")
+        }));
+        this.placeholder.closest(".upfront-object-view").append(resizeHint);
+    }
 });
 var DateView = PostPartView.extend({
     init: function(options){

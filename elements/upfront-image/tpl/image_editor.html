@@ -108,8 +108,8 @@
 
 
 <script type="text/template" id="sizehint-tpl">
-	<b>w:</b>{{width}}px
-	<b>h:</b>{{height}}px
+	<b>w:</b>{{width}}{[ if(width.toString().indexOf("%") === -1){ ]}px{[ } ]}
+	<b>h:</b>{{height}}{[ if(height.toString().indexOf("%") === -1){ ]}px{[ } ]}
 </div>
 </script>
 

@@ -958,6 +958,7 @@ div.uimage-controls i.upfront-icon:before {
 	padding:2px 5px;
 	font:normal 11px/13px Verdana, sans-serif;
 	color: #DCEBF8;
+    height: 16px !important;
 }
 
 .upfront-ui.uimage-resize-hint b {
@@ -968,6 +969,10 @@ div.uimage-controls i.upfront-icon:before {
 .uimage-resize-hint.sizehint-top {
 	top: 15px;
 	bottom: auto;
+}
+
+.upfront-ui.uimage-resize-hint.featured-image-sizehint{
+    top: 0;
 }
 
 .ui-resizable-autohide .uimage-resize-hint {
