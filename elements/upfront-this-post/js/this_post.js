@@ -136,10 +136,12 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		this.trigger('rendered');
 	},
 
-	get_buttons: function(){
-		return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
-	},
-
+	//get_buttons: function(){
+	//	return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
+	//},
+    get_extra_buttons: function(){
+        return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
+    },
 	on_edit: function (e) {
 		if(!this.editor){
 			this.prepareEditor();

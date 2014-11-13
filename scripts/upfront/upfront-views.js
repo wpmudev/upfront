@@ -908,6 +908,7 @@ define([
 				var props = {},
 					me = this,
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
+					extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
 					height, model, template
 				;
@@ -929,7 +930,7 @@ define([
 					this._theme_style = theme_style;
 				}
 
-				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height});
+				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons});
 				template = _.template(_Upfront_Templates["object"], model);
 
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
