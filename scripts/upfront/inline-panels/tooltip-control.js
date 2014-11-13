@@ -1,9 +1,10 @@
 (function ($) {
 define([
-	'scripts/upfront/inline-panels/l10n',
 	'scripts/upfront/inline-panels/item',
 	'scripts/upfront/inline-panels/control'
-], function (l10n, Item, Control) {
+], function (Item, Control) {
+	var l10n = Upfront.mainData.l10n.image_element;
+
 	var TooltipControl = Control.extend({
 		multiControl: true,
 

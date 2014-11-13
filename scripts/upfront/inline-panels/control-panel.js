@@ -1,9 +1,10 @@
 define([
-	'scripts/upfront/inline-panels/l10n',
 	'scripts/upfront/inline-panels/panel',
 	'scripts/upfront/inline-panels/collapsed-multi-control',
 	'scripts/upfront/inline-panels/tooltip-control'
-], function (l10n, Panel, CollapsedMultiControl, TooltipControl) {
+], function (Panel, CollapsedMultiControl, TooltipControl) {
+	var l10n = Upfront.mainData.l10n.image_element;
+
 	var ControlPanel = Panel.extend({
 		position_v: 'none', // Image view will handle this
 		position_h: 'none',
