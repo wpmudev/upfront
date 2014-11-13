@@ -526,6 +526,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		setTimeout(function() {
+			console.log('on render set timeout');
 			me.rebindShuffle();
 			var items = me.$('.ugallery_item');
 			_.each(items, function(i) {
@@ -591,7 +592,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	onElementResizeStop: function(){
-		this.render();
+		// Not gonna do this because render will be triggered by parent class model changing
+		// 'row' property on resize.
+		// this.render(); <-- this is redundant and creates misscalculation of padding
 	},
 
 	toggleSorting: function() {
