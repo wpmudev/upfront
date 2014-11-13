@@ -556,7 +556,9 @@ var Views = {
 
 			this.is_editing = true;
 
-			var me = this;
+			var me = this,
+				$module = this.$el.parents(".upfront-module")
+			;
 			this.$el
 				.find("section.upfront_code-element").hide().end()
 				.append(this.tpl({markup: this.fallback('markup'), l10n: l10n.template}))
@@ -567,6 +569,10 @@ var Views = {
 					.on("keyup change", function () {
 						me.update_property.apply(this, [me.model]);
 					})
+					.on("focus click", function () {
+						$module.draggable("disable")
+					})
+					.focus()
 				.end()
 				.find("button").on("click", function () {
 					me.$el.find("pre code").each(function () {
