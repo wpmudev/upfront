@@ -1,0 +1,11 @@
+<style id="sorting-style">
+	#{{ element_id }} .ugallery_item {
+		margin-right: {{ thumbPadding }}px;
+		{[ if (even_padding.length) { ]}
+		margin-bottom: {{ thumbPadding }}px;
+		{[ } ]}
+	}
+	#{{ element_id }} .ugallery_item:nth-child({{ itemsInRow }}n) {
+		margin-right: 0;
+	}
+</style>

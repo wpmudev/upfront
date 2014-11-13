@@ -1,9 +1,10 @@
 (function ($) {
 define([
-	'scripts/upfront/inline-panels/l10n',
 	'scripts/upfront/inline-panels/control',
 	'text!scripts/upfront/inline-panels/templates/panel-control-template.html'
-], function (l10n, Control, panelControlTemplate) {
+], function (Control, panelControlTemplate) {
+	var l10n = Upfront.mainData.l10n.image_element;
+
 	var DialogControl = Control.extend({
 		multiControl: true,
 		hideOnClick: true,
