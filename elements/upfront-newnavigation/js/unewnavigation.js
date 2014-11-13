@@ -734,10 +734,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
 				}
 				else if(e.which == 13) {
-					console.log('entered d d d d');
-					e.preventDefault();
-					target.blur();
-
+					//target.html(target.text());
+					target.closest('li').data('backboneview').model['being-edited'] = false;
+					setTimeout(function() {target.blur();}, 100);
+					//e.stopPropagation();
+					//e.preventDefault();
 				}
 				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
