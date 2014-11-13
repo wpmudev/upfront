@@ -337,7 +337,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			;
 
 			me.$el.closest('.ui-draggable').draggable('disable');
-			me.$('.ugallery').sortable('disable');
 		});
 
 		me.listenTo(control, 'panel:close', function(){
@@ -349,7 +348,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');
-			me.$('.ugallery').sortable('enable');
 
 			//Roll back the view, ready for reopen.
 			control.view.render();
