@@ -4902,6 +4902,7 @@ var Field_ToggleableText = Field_Text.extend({
 						);
 				}
 			});
+			Upfront.Events.trigger("entity:settings:saved");
 		},
 
 		on_cancel: function () {

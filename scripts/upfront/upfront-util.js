@@ -642,7 +642,7 @@ define(function() {
 			}
 			rebind_events = function(){
 				Upfront.Events.off("entity:region:deactivated", save);
-				Upfront.Events.off("entity:settings:deactivate", save);
+				Upfront.Events.off("entity:settings:saved", save);
 				Upfront.Events.off("entity:removed:after", save);
 				Upfront.Events.off("entity:resize_start", save);
 				Upfront.Events.off("entity:drag_stop", save);
@@ -650,7 +650,7 @@ define(function() {
 				Upfront.Events.off("upfront:element:edit:stop", save);
 
 				Upfront.Events.on("entity:region:deactivated", save, this);
-				Upfront.Events.on("entity:settings:deactivate", save, this);
+				Upfront.Events.on("entity:settings:saved", save, this);
 				Upfront.Events.on("entity:removed:after", save, this);
 				Upfront.Events.on("entity:resize_start", save, this);
 				Upfront.Events.on("entity:drag_stop", save, this);
