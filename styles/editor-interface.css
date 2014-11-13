@@ -12838,6 +12838,11 @@ div.upfront-regions a#no_region_add_one {
 .upfront-edit-layout #page .upfront-region-container.ui-state-disabled, .upfront-edit-layout #page .upfront-region.ui-state-disabled, .upfront-edit-theme #page .upfront-region-container.ui-state-disabled, .upfront-edit-theme #page .upfront-region.ui-state-disabled {
   opacity: 1; }
 
+/* Fixes gallery lightbox image numbering */
+/* line 37, /var/www/upfront/wp-content/themes/upfront/styles/sass/partials/fixes */
+.mfp-counter {
+  white-space: nowrap; }
+
 /* global regions button */
 /* line 2, /var/www/upfront/wp-content/themes/upfront/styles/sass/partials/global-regions */
 .upfront-field-wrap-button .button-info:before {
