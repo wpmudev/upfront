@@ -282,6 +282,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
             "CONTENT_STYLE" => "post content style",
 			"POSTCONTENT" => "post content",
      		"RESPONSIVE" => "responsive",
+			"POSTCONTENT_STYLE" => false,
 			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
 		// These need some finer control over
 			"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),

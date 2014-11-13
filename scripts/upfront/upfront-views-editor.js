@@ -463,10 +463,9 @@ define([
 			this.$el.html(l10n.cancel);
 		},
 		on_click: function () {
+            Upfront.Events.trigger("post:layout:cancel");
             if ( Upfront.Application.is_builder() ) {
-				Upfront.Events.trigger("post:layout:style:cancel");
-            }else{
-				Upfront.Events.trigger("post:layout:cancel");
+                Upfront.Events.trigger("post:layout:style:cancel");
             }
 		}
 	});

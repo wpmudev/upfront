@@ -436,6 +436,8 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	},
 
 	cancelEdition: function(){
+        if( Upfront.Application.is_post_content_style() ) return;
+
 		//Gagan: The code inside the following if, is to accomodate the posts element
 		var me = this;
 		if(typeof(this.postwrapperclone) != 'undefined' && this.postwrapperclone) {
@@ -1070,6 +1072,9 @@ var Application = new (Backbone.Router.extend({
 		last: false,
 		current: false
 	},
+    is_post_content_style: function(){
+      return this.MODE.POSTCONTENT_STYLE;
+    },
     is_builder: function(){
         return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
     },
