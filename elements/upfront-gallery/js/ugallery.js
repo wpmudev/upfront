@@ -2,12 +2,13 @@
 (function ($) {
 define([
 	'text!elements/upfront-gallery/tpl/ugallery.html', // Front
+	'text!elements/upfront-gallery/tpl/sorting-style.html',
 	'text!elements/upfront-gallery/tpl/ugallery_editor.html',
 	'elements/upfront-gallery/js/settings',
 	'elements/upfront-gallery/js/model',
 	'elements/upfront-gallery/js/label-editor',
 	'elements/upfront-gallery/js/element'
-], function(galleryTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement) {
+], function(galleryTpl, sortingStyleTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement) {
 
 var l10n = Upfront.Settings.l10n.gallery_element;
 
@@ -526,19 +527,18 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		setTimeout(function() {
-			console.log('on render set timeout');
 			me.rebindShuffle();
 			var items = me.$('.ugallery_item');
-			_.each(items, function(i) {
-				var item = $(i),
-					image = me.images.get(item.attr('rel')),
+			_.each(items, function(item) {
+				var $item = $(item),
+					image = me.images.get($item.attr('rel')),
 					controls = me.createControls(image),
-					title = item.find('.ugallery-thumb-title');
+					title = $item.find('.ugallery-thumb-title');
 
 
-				controls.setWidth(item.width());
+				controls.setWidth($item.width());
 				controls.render();
-				item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+				$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
 
 				me.ensureCaptionEditorExists(title, image);
 
@@ -551,11 +551,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		if (this.isSortingActive === true) {
 			this.activateSortable();
-			this.$el.addClass('image-sorting-active');
-			this.$el.find('.toggle_sorting').addClass('sorting-active');
 		} else {
-			this.$el.removeClass('image-sorting-active');
-			this.$el.find('.toggle_sorting').removeClass('sorting-active');
+			this.cleanupSortable();
 		}
 	},
 
@@ -597,8 +594,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// this.render(); <-- this is redundant and creates misscalculation of padding
 	},
 
-	toggleSorting: function() {
+	toggleSorting: function(event) {
+		if (event) {
+			event.preventDefault();
+		}
 		this.isSortingActive = !this.isSortingActive;
+		this.itemsInRow = this.$el.find('.ugallery_item').filter(function(){ return $(this).css('top') === '0px'; }).length;
 		this.render();
 	},
 
@@ -1156,6 +1157,23 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.$('.ugallery_item_removing').removeClass('ugallery_item_removing');
+
+		this.$el.addClass('image-sorting-active');
+		this.$el.find('.toggle_sorting').addClass('sorting-active');
+		$('body').append(_.template(sortingStyleTpl, {
+			element_id: this.model.get_property_value_by_name('element_id'),
+			thumbPadding: this.model.get_property_value_by_name('thumbPadding'),
+			even_padding: this.model.get_property_value_by_name('even_padding'),
+			itemsInRow: this.itemsInRow
+		}));
+	},
+
+	cleanupSortable: function() {
+		this.$el.removeClass('image-sorting-active');
+		this.$el.find('.toggle_sorting').removeClass('sorting-active');
+		if ($('#sorting-style').length > 0) {
+			$('#sorting-style').remove();
+		}
 	},
 
 	sortOk: function() {
