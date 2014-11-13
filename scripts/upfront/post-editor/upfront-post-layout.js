@@ -462,19 +462,21 @@ var FeaturedImageView = PostPartView.extend({
 	},
 	resizePlaceholder: function(e){
 		this.placeholder.height(this.moduleView.height());
-		if(e && e.type == 'resizestop') {
-			var height = $('.upfront-resize').height();
+        var height = $('.upfront-resize').height();
+        if(e && e.type == 'resizestop') {
 			this.model.set_property('height', height, true);
 			this.model.set_property('attributes', {style: 'max-height: ' + height + 'px' });
 			this.partOptions.height = height;
 		}
+        this.update_size_hint( height );
 	},
-    update_size_hint: function(){
+    update_size_hint: function( height ){
+        height = typeof height === "undefined" ? this.property("height") : height;
         var width = this.$(".upfront-editable_entity").width() ? this.$(".upfront-editable_entity").width() : "100%";
         width = width !== "100%" ? Upfront.Util.grid.normalize_width( width ) : width;
         var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint sizehint-top featured-image-sizehint' ).html(this.sizehintTpl({
             width: width ,
-            height: this.property("height")
+            height: height
         }));
         this.placeholder.closest(".upfront-object-view").append(resizeHint);
     }
