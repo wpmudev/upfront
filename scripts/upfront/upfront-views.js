@@ -961,6 +961,7 @@ define([
 
 				// Put this here because initialize gets overriden by child classes
 				this.ensure_breakpoint_change_is_listened();
+				this.ensureUiOffsetCalls();
 			},
 			ensure_breakpoint_change_is_listened: function() {
 				if (this.breakpoint_change_is_setup) {
@@ -968,6 +969,22 @@ define([
 				}
 				this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.on_change_breakpoint);
 				this.breakpoint_change_is_setup = true;
+			},
+			ensureUiOffsetCalls: function() {
+				var me = this;
+				if (this.parent_module_view && this.parent_module_view.$el && !this.offset_check_set_for_parent) {
+					this.offset_check_set_for_parent = true;
+					this.parent_module_view.$el.on('dragstop', function() {
+						setTimeout(function() {
+							me.checkUiOffset();
+						}, 100);
+					});
+				}
+				if (this.window_resize_offset_check_set) {
+					return;
+				}
+				$(window).on('resize', $.proxy(me.checkUiOffset, me));
+				this.window_resize_offset_check_set = true;
 			},
 			checkUiOffset: function() {
 				var $parentRegionEl = this.parent_module_view.region_view && this.parent_module_view.region_view.$el;
@@ -1089,6 +1106,7 @@ define([
 
 			remove: function(){
 				this.cleanup();
+				$(window).off('resize', this.checkUiOffset);
 				this.parent_view = false;
 				this.parent_module_view = false;
 				Backbone.View.prototype.remove.call(this);
@@ -2389,7 +2407,7 @@ define([
 					this.$el.removeData('sticky-top');
 					this.$el.nextAll('.upfront-region-container:first').css('margin-top', '');
 				}
-				
+
 				// Keep background position on scroll for full screen region
 				if ( this._get_region_type() == 'full' ) {
 					var bg_type = this.model.get_breakpoint_property_value('background_type', true),
@@ -2429,7 +2447,7 @@ define([
 						}
 					}
 				}
-				
+
 
 				if ( scroll_top > top-rel_top && scroll_top < bottom-rel_top ) {
 					if ( $trig.css('position') != 'fixed' )
@@ -2601,13 +2619,13 @@ define([
 					else
 						this.$el.removeClass('upfront-region-container-sticky');
 				}
-				else if ( 
-					this.$el.css('position') == 'fixed' && 
-					( 
-						!sticky || 
-						( _.isNumber(sticky_top) && scroll_top <= sticky_top ) || 
-						( !_.isNumber(sticky_top) && ( scroll_top < container_offset.top || scroll_bottom > container_bottom ) ) 
-					) 
+				else if (
+					this.$el.css('position') == 'fixed' &&
+					(
+						!sticky ||
+						( _.isNumber(sticky_top) && scroll_top <= sticky_top ) ||
+						( !_.isNumber(sticky_top) && ( scroll_top < container_offset.top || scroll_bottom > container_bottom ) )
+					)
 				) {
 					this.$el.css({
 						position: '',
