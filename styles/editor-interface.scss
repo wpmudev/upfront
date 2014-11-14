@@ -399,6 +399,20 @@
 .inline-panel-item-selected.labeled{
   display: none;
 }
+.uf-exporter-save-post-design{
+  display: block;
+  width: 214px;
+  text-align: center;
+  cursor: pointer;
+  background: #00d08b ;
+//  padding: 10px 0;
+  color:#fff;
+  line-height:36px;
+  position: absolute;
+  right: 0;
+  z-index: 999;
+  margin-bottom: -36px;
+}
 @import 'sass/partials/visit-link';
 @import 'sass/partials/fix-theme-style-messes-ui';
 @import 'sass/partials/_preset-manager.scss';
