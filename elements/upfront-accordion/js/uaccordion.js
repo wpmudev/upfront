@@ -165,24 +165,27 @@ define([
 					airButtons: false,
 					allowedTags: ['h5'],
 					placeholder: 'Panel '+count
-				}).on('start', function(){
-					self.$el.parent().parent().parent().draggable('disable');
-					Upfront.Events.trigger('upfront:element:edit:start', 'text');
 				})
-				.on('stop', function(){
-					self.$el.parent().parent().parent().draggable('enable');
-					Upfront.Events.trigger('upfront:element:edit:stop');
-				})
-				.on('syncAfter', function(){
-					self.saveTitle($(this));
-				})
-				.on('keydown', function(e){
-					if (e.which === 9) {
-						e.preventDefault();
-					}
-				}).on('blur', function() {
-					$content.data('ueditor').stop();
-				});
+					.on('start', function(){
+						self.$el.parent().parent().parent().draggable('disable');
+						Upfront.Events.trigger('upfront:element:edit:start', 'text');
+					})
+					.on('stop', function(){
+						self.$el.parent().parent().parent().draggable('enable');
+						Upfront.Events.trigger('upfront:element:edit:stop');
+					})
+					.on('syncAfter', function(){
+						self.saveTitle($(this));
+					})
+					.on('keydown', function(e){
+						if (e.which === 9) {
+							e.preventDefault();
+							self.editContent();
+						}
+					})
+					.on('blur', function() {
+						$content.data('ueditor').stop();
+					});
 
 				$(this).data('ueditor').stop();
 				count++;
@@ -218,6 +221,13 @@ define([
 
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
+		},
+
+		editContent: function() {
+			this.$el.find('.accordion-panel-active .accordion-panel-content').data('ueditor').start();
+			setTimeout(function() {
+				Upfront.Events.trigger('upfront:element:edit:start');
+			}, 250);
 		},
 
 		addTooltips: function() {
