@@ -40,6 +40,7 @@ jQuery(document).ready(function($) {
 	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
+			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
 			$(this).parent().find('ul.menu').show();
 			$(this).parent().find('ul.sub-menu').show();
 			if($(this).parent().data('burger_over') == 'pushes')
@@ -48,12 +49,11 @@ jQuery(document).ready(function($) {
 		else {
 			$(this).parent().find('ul.menu').hide();
 			$(this).parent().find('ul.sub-menu').hide();
-			
+			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 			if($(this).parent().data('burger_over') == 'pushes')
 				pullContent($(this).parent());
 		}
 	});
-	
 	function pushContent(nav) {
 		return;
 		var currentwidth = $('div#page').width();

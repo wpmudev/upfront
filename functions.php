@@ -204,6 +204,7 @@ class Upfront {
   <div id="sidebar-ui" class="upfront-ui"></div>
   <div id="settings" style="display:none"></div>
   <div id="contextmenu" style="display:none"></div>
+  <div id="burgermenuholder" style="display:none"></div>
 EOAdditivemarkup;
 
 
