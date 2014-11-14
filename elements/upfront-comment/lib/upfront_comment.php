@@ -343,7 +343,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 			$avatars[] = array(
 				"value" => $key,
 				"label" => $av,
-				"icon" => get_avatar($current_user->user_email, 32, $key),
+				"icon" => preg_replace("/src='(.+?)'/", "src='\$1&amp;forcedefault=1'", get_avatar($current_user->user_email, 32, $key)),
 			);
 		}
 		update_option('show_avatars', $show_avatars);
