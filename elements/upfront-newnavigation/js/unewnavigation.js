@@ -1098,9 +1098,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 		var region_container = this.$el.closest('.upfront-region-container');
-		if(region_container.css('z-index') == 'auto' || parseInt(region_container.css('z-index')) < 11) {
-			region_container.css('z-index', 11);
-		}
+		region_container.addClass('upfront-region-container-has-nav');
 
 		setTimeout(function() {
 			if(me.$el.height() < 80) {
