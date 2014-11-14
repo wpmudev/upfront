@@ -25,10 +25,7 @@
 }
 
 /* Disabled state fix for jquery UI theme-rolled css conflicts */
-.upfront-edit-layout #page .upfront-region-container.ui-state-disabled,
-.upfront-edit-layout #page .upfront-region.ui-state-disabled,
-.upfront-edit-theme #page .upfront-region-container.ui-state-disabled,
-.upfront-edit-theme #page .upfront-region.ui-state-disabled
+#page.upfront-layout-view .ui-state-disabled
 {
 	opacity: 1;
 }
