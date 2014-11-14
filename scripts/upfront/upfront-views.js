@@ -1010,7 +1010,7 @@ define([
 					this.parent_module_view.disable_interaction(false);
 				}
 			},
-			on_element_edit_stop: function (edit, post) {
+			on_element_edit_stop: function (edit, post) {		
 				if (this.parent_module_view && this.parent_module_view.enable_interaction){
 					this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing')
 					this.parent_module_view.enable_interaction(false);

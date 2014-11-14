@@ -699,6 +699,8 @@ var PostContentEditor = Backbone.View.extend({
 	},
 
 	stop: function(){
+		Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
+
 		if(this.onTitleEdited)
 			this.parts.titles.off('change', this.onTitleEdited);
 
@@ -783,6 +785,16 @@ var EditionBar = Backbone.View.extend({
 		this.tpl = _.template(Upfront.data.uposts.barTemplate);
 		this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
 		Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
+
+		Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
+	},
+
+	element_stop_prop: function () {
+		if (
+			Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
+			&&
+			Upfront.Application.current_subapplication.contentEditor
+		) $('.upfront-module').draggable('disable').resizable('disable');
 	},
 
 	render: function(){
