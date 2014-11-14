@@ -3754,8 +3754,7 @@ define([
 				if ( ! this.allow_edit )
 					return;
 				var region = region.model ? region : Upfront.data.region_views[region.cid],
-					new_active_region = region.model,
-					container = this.get_container_view(new_active_region);
+					new_active_region = region.model;
 				if ( this.model.active_region == new_active_region )
 					return;
 				this.model.active_region = new_active_region;

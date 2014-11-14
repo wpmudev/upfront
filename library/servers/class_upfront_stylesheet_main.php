@@ -37,6 +37,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$style = $this->prepare_typography_styles($layout);
 	  $style .= $preprocessor->process();
 
+		// Always load original theme styles into theme unless we're in builder, yay
+		// Reasoning behind it: we want theme users to always have original theme styles loaded
+		// because if they want to override some style they can add their own additional properties
+		// or nullify explicitly existing rules. So, to avoid complex initialization logic depending
+		// on wheather there is something in database just load theme styles always. In builder though
+		// we don't want this because user is editing actual theme styles.
+		$style .= $this->load_theme_styles_unless_in_builder();
+
 	  // When loading styles in editor mode don't include element styles and colors since they
 		// will be loaded separately to the body. If they are included in main style than after
 		// style is edited in editor (e.g. some property is removed) inconsistencies may occur
@@ -122,6 +130,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	  $this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
 		)));
+	}
+
+	function load_theme_styles_unless_in_builder() {
+		if (strpos($_SERVER['HTTP_REFERER'], 'create_new') !== false) {
+			return '';
+		}
+
+		return Upfront_ChildTheme::get_instance()->getThemeStylesAsCss();
 	}
 
 	function prepare_theme_styles() {

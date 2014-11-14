@@ -268,7 +268,7 @@ jQuery(document).ready(function($){
 					$(this).closest('.upfront-region-container-bg').css( ( is_top ? 'padding-top' : 'padding-bottom' ), $(this).height() );
 				}
 				else {
-					$(this).next('.upfront-output-region-container').css('margin-top', $(this).height());
+					$(this).next('.upfront-output-region-container').css('padding-top', $(this).height());
 				}
 			}
 			else if ( typeof sticky_top == 'number' && scroll_top <= sticky_top ) {
@@ -282,7 +282,7 @@ jQuery(document).ready(function($){
 				if ( is_sub_container )
 					$(this).closest('.upfront-region-container-bg').css( ( is_top ? 'padding-top' : 'padding-bottom' ), '');
 				else
-					$(this).next('.upfront-output-region-container').css('margin-top', '');
+					$(this).next('.upfront-output-region-container').css('padding-top', '');
 			}
 			$(this).css(css);
 		});

@@ -153,13 +153,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return $menu->slug;
 	}
 
-	/**
-	 * Get theme styles as css output for stylesheet.
-	 */
-	public function prepareThemeStyles($styles) {
-		// If styles are empty than there is no overrides in db, load from theme
-		if(empty($styles) === false) return $styles;
-
+	public function getThemeStylesAsCss() {
 		$layout = Upfront_Layout::get_cascade();
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 		$out = '';
@@ -182,6 +176,18 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				$out .= $style_content;
 			}
 		}
+
+		return $out;
+	}
+
+	/**
+	 * Get theme styles as css output for stylesheet.
+	 */
+	public function prepareThemeStyles($styles) {
+		// If styles are empty than there is no overrides in db, load from theme
+		if(empty($styles) === false) return $styles;
+
+		$out = $this->getThemeStylesAsCss();
 
 		// ALSO!!! Do the theme global styles >.<
 		$global_layout_styles = $this->themeSettings->get('layout_style');

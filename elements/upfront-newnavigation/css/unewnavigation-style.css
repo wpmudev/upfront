@@ -237,6 +237,10 @@ div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li
   z-index:99999;
 }
 
+.upfront-region-container-has-nav > .upfront-region-container-bg > .upfront-grid-layout {
+  z-index: 12;
+}
+
 /* Accomodate Floating Nav */
 [data-already_floating="yes"] {
     position: fixed !important;
