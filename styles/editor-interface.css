@@ -7200,13 +7200,8 @@ i.upfront-field-icon-burger-trigger {
 
 /* line 108, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
 a.upfront-post-layout-trigger:before {
-  content: '#';
-  line-height: 19px;
-  font-style: normal;
-  text-align: center;
-  font-weight: bold;
   width: 20px;
-  color: #fff; }
+  background-position: -293px -163px; }
 
 /* Posts panel fix
 #sidebar-ui .sidebar-panels .upfront-panel-post_panel .sidebar-panel-content {
@@ -7218,28 +7213,28 @@ a.upfront-post-layout-trigger:before {
 	display: none;
 }
 */
-/* line 128, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
+/* line 123, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
 .sidebar-panel {
   display: none; }
 
-/* line 132, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
+/* line 127, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
 .sidebar-panel.active {
   display: block; }
 
-/* line 135, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
+/* line 130, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
 .upfront-post-state {
   color: #7a94ac;
   padding: 0 20px; }
 
-/* line 139, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
+/* line 134, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
 .upfront-post-state b {
   color: #cde6fe; }
 
-/* line 142, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
+/* line 137, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
 .upfront-post-state a {
   color: #1fcd8f; }
 
-/* line 146, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
+/* line 141, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/single-post */
 .upfront-post-schedule {
   padding-bottom: 15px;
   border-bottom: 1px solid #2E4153;
