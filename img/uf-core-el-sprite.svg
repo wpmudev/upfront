@@ -1683,17 +1683,17 @@
 	<path fill="#6386A6" d="M1262,111c0,2.209-0.791,5-3,5s-3-2.791-3-5s0.791-3,3-3S1262,108.791,1262,111z"/>
 	<polygon fill="#6386A6" points="1264,81 1267,84 1270,81 	"/>
 	<g>
-		<path fill-rule="evenodd" clip-rule="evenodd" fill="#8FAECC" d="M1140,106v18h22v-18H1140z M1161,123h-20v-16h20V123z"/>
+		<path fill-rule="evenodd" clip-rule="evenodd" fill="#8FAECC" d="M1142,106v18h18v-18H1142z M1159,123h-16v-16h16V123z"/>
 		<rect x="1145" y="110" fill-rule="evenodd" clip-rule="evenodd" fill="#C3D8EC" width="12" height="3"/>
 		<rect x="1145" y="114" fill-rule="evenodd" clip-rule="evenodd" fill="#C3D8EC" width="12" height="3"/>
 		<rect x="1147" y="118" fill-rule="evenodd" clip-rule="evenodd" fill="#1FCD8F" width="8" height="2"/>
 	</g>
 	<g>
-		<rect x="1145" y="146" fill-rule="evenodd" clip-rule="evenodd" fill="#C3D8EC" width="12" height="3"/>
-		<rect x="1145" y="150" fill-rule="evenodd" clip-rule="evenodd" fill="#C3D8EC" width="12" height="3"/>
-		<rect x="1147" y="154" fill-rule="evenodd" clip-rule="evenodd" fill="#1FCD8F" width="8" height="2"/>
-		<path fill-rule="evenodd" clip-rule="evenodd" fill="#8FAECC" d="M1153,143l-2-2l-2,2h-7v15h18v-15H1153z M1159,157h-16v-13h7l1-1
-			l1,1h7V157z"/>
+		<rect x="1145" y="146" fill-rule="evenodd" clip-rule="evenodd" fill="#C3D8EC" width="12" height="2"/>
+		<rect x="1145" y="149" fill-rule="evenodd" clip-rule="evenodd" fill="#C3D8EC" width="12" height="2"/>
+		<rect x="1147" y="152" fill-rule="evenodd" clip-rule="evenodd" fill="#1FCD8F" width="8" height="2"/>
+		<path fill-rule="evenodd" clip-rule="evenodd" fill="#8FAECC" d="M1153,143l-2-2l-2,2h-7v14h18v-14H1153z M1159,156h-16v-12h7l1-1
+			l1,1h7V156z"/>
 		<g>
 			<circle fill-rule="evenodd" clip-rule="evenodd" fill="#4D6780" cx="1145.5" cy="137.5" r="1.5"/>
 			<path fill-rule="evenodd" clip-rule="evenodd" fill="#4D6780" d="M1146,139h-0.5h-0.5c-2,0-2,2-2,2h5C1148,139,1146,139,1146,139
@@ -2189,9 +2189,9 @@
 		<rect x="716" y="841" fill-rule="evenodd" clip-rule="evenodd" fill="#21394E" width="1" height="1"/>
 	</g>
 	<g>
-		<path fill="#21394E" d="M809,841v19h19v-19H809z M827,859h-17v-17h17V859z"/>
-		<polygon fill="#21394E" points="823.5,857 825.5,857 821.5,851 820.323,852.765 817.5,849 811.5,857 817.5,857 		"/>
-		<circle fill="#21394E" cx="814" cy="846" r="2"/>
+		<path fill="#21394E" d="M810,842v18h18v-18H810z M827,859h-16v-16h16V859z"/>
+		<polygon fill="#21394E" points="826,857 822,851 820,854 817,849 812,857 818,857 		"/>
+		<circle fill="#21394E" cx="823" cy="847" r="2"/>
 	</g>
 	<g>
 		<rect x="569" y="232" fill="#E6E6E6" width="68" height="79"/>
@@ -2506,6 +2506,37 @@
 		<path fill="#CD1F1F" d="M491,172c-3.866,0-7,3.134-7,7s3.134,7,7,7s7-3.134,7-7S494.866,172,491,172z"/>
 		<polygon fill="#FFFFFF" points="494,177 492,179 494,181 494,182 493,182 491,180 489,182 488,182 488,181 490,179 488,177 
 			488,176 489,176 491,178 493,176 494,176 		"/>
+	</g>
+	<g>
+		<defs>
+			<path id="SVGID_25_" d="M306,166v-2l-8,1v2v5.25c-0.5-0.25-1-0.25-1-0.25h-1c0,0-2,0-2,2s2,2,2,2h1c0,0,2,0,2-2v-4.5v-1.625
+				l6-0.75v4.125c-0.5-0.25-1-0.25-1-0.25h-1c0,0-2,0-2,2s2,2,2,2h1c0,0,2,0,2-2V166z"/>
+		</defs>
+		<clipPath id="SVGID_26_">
+			<use xlink:href="#SVGID_25_"  overflow="visible"/>
+		</clipPath>
+		
+			<rect x="289" y="159" clip-path="url(#SVGID_26_)" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" width="22" height="22"/>
+	</g>
+	<g>
+		<rect x="706" y="907" fill="#21394E" width="14" height="1"/>
+		<rect x="706" y="922" fill="#21394E" width="14" height="1"/>
+		<rect x="715" y="910" fill="#21394E" width="5" height="1"/>
+		<rect x="715" y="913" fill="#21394E" width="5" height="1"/>
+		<rect x="715" y="916" fill="#21394E" width="5" height="1"/>
+		<rect x="715" y="919" fill="#21394E" width="5" height="1"/>
+		<path fill="#21394E" d="M713,910h-11v10h11V910z M703,919l4.5-5l4.5,5H703z M710.5,914c-0.828,0-1.5-0.672-1.5-1.5
+			s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S711.328,914,710.5,914z"/>
+	</g>
+	<g>
+		<rect x="814" y="907" fill="#1FCD8F" width="14" height="1"/>
+		<rect x="814" y="922" fill="#1FCD8F" width="14" height="1"/>
+		<rect x="823" y="910" fill="#1FCD8F" width="5" height="1"/>
+		<rect x="823" y="913" fill="#1FCD8F" width="5" height="1"/>
+		<rect x="823" y="916" fill="#1FCD8F" width="5" height="1"/>
+		<rect x="823" y="919" fill="#1FCD8F" width="5" height="1"/>
+		<path fill="#1FCD8F" d="M821,910h-11v10h11V910z M811,919l4.5-5l4.5,5H811z M818.5,914c-0.828,0-1.5-0.672-1.5-1.5
+			s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S819.328,914,818.5,914z"/>
 	</g>
 </g>
 </svg>
