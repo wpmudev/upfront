@@ -212,7 +212,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$col_size = isset($properties['colSize']) ? $properties['colSize'] : 45;
 			$paddingLeft = $options['contents']['padding_left'] * $col_size;
 			$paddingRight = $options['contents']['padding_right'] * $col_size;
-			$rules = '#' . $properties['element_id'] . ' .upfront-postpart-contents>* { padding-left: ' . $paddingLeft . 'px; padding-right: ' . $paddingRight . 'px; }';
+			$rules = '#' . $properties['element_id'] . ' .post_content>* { padding-left: ' . $paddingLeft . 'px; padding-right: ' . $paddingRight . 'px; }';
 		}
 
 		$out = sprintf($styles, $rules);
