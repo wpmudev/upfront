@@ -1167,7 +1167,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 buttons[id] = {title: tag, func: self.upfrontFormatting.applyTag};
             });
             if ($.inArray("upfrontFormatting", this.opts.airButtons) !== -1) {
-                var button = this.button.add('upfrontFormatting', 'Formatting');
+                var button = this.button.addFirst('upfrontFormatting', 'Formatting');
                 this.button.addDropdown(button, buttons);
             }
 
