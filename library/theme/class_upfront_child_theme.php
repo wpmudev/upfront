@@ -98,7 +98,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 			// Create menu if it does not exists
 			$new_menu_id = wp_create_nav_menu($menu['name']);
-			if (is_numeric($new_menu_id)) wp_update_nav_menu_object($new_menu_id, array('description' => $menu['description'])); // The menu ID has to be numeric!
+			if (is_numeric($new_menu_id)) { // The menu ID has to be numeric!
+				wp_update_nav_menu_object($new_menu_id, array(
+					'description' => $menu['description'],
+					'menu-name' => $menu['name'], // This member is required because of the way the `wp_update_nav_menu_object` works in WPv4.0 (direct array member access without existence check)
+				));
+			}
 
 			if (empty($menu['items'])) continue;
 			$menu_items = array();
