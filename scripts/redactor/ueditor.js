@@ -200,8 +200,8 @@ var Ueditor = function($el, options) {
 			autostart: true, //If false ueditor start on dblclick and stops on blur
 			stateButtons: {},
             toolbarExternal: "#" + unique_id,
-            //toolbarFixedTopOffset: 100,
-        // Redactor options
+            // toolbarFixedTopOffset: 100,
+        	// Redactor options
 			air:true,
 			linebreaks: true,
 			disableLineBreak: false,
@@ -255,12 +255,15 @@ var Ueditor = function($el, options) {
 	if(this.options.autostart){
 		if(this.options.startoninit)
 			this.start();
+
+		//this.startPlaceholder();
 	}
 	else {
 		this.bindStartEvents();
 		this.startPlaceholder();
 	}
 
+	//this.startPlaceholder();
 
     //UeditorEvents.on("ueditor:click", function(r){
     //    console.log("click");
@@ -514,16 +517,21 @@ Ueditor.prototype = {
 		return result;
 	},
 	startPlaceholder: function(){
+		console.log('this happend here');
 		var placeholder = this.options.placeholder;
 		if (this.$el.attr('placeholder')) placeholder = this.$el.attr('placeholder');
 		if (placeholder === '') placeholder = false;
+		console.log('the place holder is '+ placeholder);
 		if (placeholder !== false && $.trim(this.$el.text()).length === 0)
 		{
+			console.log('did it reach here');
 			//remove existing placeholder
+			console.log(this.$el);
 			this.$el.parent().children('.ueditor-placeholder').remove();
 			this.$placeholder = this.$el.clone(false);
 			this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html(placeholder);
 			this.$el.after(this.$placeholder);
+
 			var $parent = this.$el.parent();
 			if ($parent.css('position') == 'static')
 				$parent.css('position', 'relative');
@@ -542,6 +550,9 @@ Ueditor.prototype = {
 			//Make sure that the editor has one line of text
 			this.$el.html('&nbsp;');
 			this.options.placeholder = placeholder;
+			var me = this;
+
+			setTimeout(function() { console.log(me.$el.parent().html());}, 200);
 		}
 	},
 	stopPlaceholder: function() {

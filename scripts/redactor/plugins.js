@@ -480,41 +480,58 @@ RedactorPlugins.upfrontSink = {
 };
 
 
-RedactorPlugins.upfrontPlaceholder = {
-    init: function () {
+RedactorPlugins.upfrontPlaceholder = function() {
+    return {
+        init: function () {
+            var me = this;
+            var placeholder = this.placeholderText;//opts.placeholder;
+            if (this.$element.attr('placeholder')) placeholder = this.$element.attr('placeholder');
+            if (placeholder === '') placeholder = false;
+            if (placeholder !== false)
+            {
+                //this.placeholderRemoveFromEditor();
+                this.$editor.find('span.redactor_placeholder').remove();
+                this.$editor.off('focus.redactor_placeholder');
 
-        var placeholder = this.placeholderText;//opts.placeholder;
-        if (this.$element.attr('placeholder')) placeholder = this.$element.attr('placeholder');
-        if (placeholder === '') placeholder = false;
-        if (placeholder !== false)
-        {
-            this.placeholderRemoveFromEditor();
-            this.$placeholder = this.$editor.clone(false);
-            this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html( this.opts.linebreaks ? placeholder : this.cleanParagraphy(placeholder) );
-            this.$editor.after(this.$placeholder);
-            if ( this.$editor.css('position') == 'static' )
-                this.$editor.css('position', 'relative');
-            this.$editor.css('z-index', 1);
-            var editor_pos = this.$editor.position();
-            this.$placeholder.css({
-                'position': 'absolute',
-                'z-index': '0',
-                'top': editor_pos.top,
-                'left': editor_pos.left,
-                'right': this.$box.outerWidth() - (editor_pos.left + this.$editor.outerWidth())
-            });
-            this.opts.placeholder = placeholder;
-            this.$editor.on('focus keyup', $.proxy(this.placeholderUpdate, this));
-            this.placeholderUpdate();
-        }
-    },
-    placeholderUpdate: function () {
-        this.code.sync(); // sync first before get
-        var html = this.get();
-        if ( html == '' )
-            this.$placeholder.show();
-        else
-            this.$placeholder.hide();
+                this.$placeholder = this.$editor.clone(false);
+                this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html( this.opts.linebreaks ? placeholder : this.cleanParagraphy(placeholder) );
+                this.$editor.after(this.$placeholder);
+                if ( this.$editor.css('position') == 'static' )
+                    this.$editor.css('position', 'relative');
+                this.$editor.css('z-index', 1);
+                var editor_pos = this.$editor.position();
+                this.$placeholder.css({
+                    'position': 'absolute',
+                    'z-index': '0',
+                    'top': editor_pos.top,
+                    'left': editor_pos.left,
+                    'right': this.$box.outerWidth() - (editor_pos.left + this.$editor.outerWidth())
+                });
+                this.opts.placeholder = placeholder;
+                this.$editor.on('keyup', $.proxy(placeholderUpdate, this));
+                placeholderUpdate();
+                function placeholderUpdate() {
+                    me.code.sync(); // sync first before get
+                    
+                    var html = me.$editor.text().trim();//$source.val();//this.get();
+
+                    if ( html == '' || html == '&nbsp;' )
+                        me.$placeholder.show();
+                    else
+                        me.$placeholder.hide();
+                    }
+                }
+        },
+       /* placeholderUpdate: function () {
+            this.code.sync(); // sync first before get
+            var html = this.get();
+            if ( html == '' )
+                this.$placeholder.show();
+            else
+                this.$placeholder.hide();
+
+            console.log('wtf wtf');
+        }*/
     }
 };
 
