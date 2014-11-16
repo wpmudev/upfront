@@ -228,10 +228,15 @@ define([
 			loading.render();
 			$('body').append(loading.$el);
 
-			if(url.indexOf('/create_new/') !== -1)
+			if (url.indexOf('/create_new/') !== -1) {
 				return (window.location.href = Upfront.Settings.site_url);
-			if(url.indexOf('/edit/') !== -1 && _upfront_post_data && _upfront_post_data.post_id)
+			}
+			if (url.indexOf('/edit/') !== -1 && _upfront_post_data && _upfront_post_data.post_id) {
 				return (window.location.href = Upfront.Settings.site_url + '/?p=' + _upfront_post_data.post_id);
+			}
+			if (window.location.search.match(/(\?|\&)editmode/)) {
+				return window.location.search = window.location.search.replace(/(\?|\&)editmode(=[^?&]+)?/, '');
+			}
 
 			window.location.reload(true);
 			var tmout = setTimeout(function () {
