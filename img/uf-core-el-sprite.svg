@@ -2519,13 +2519,13 @@
 			<rect x="289" y="159" clip-path="url(#SVGID_26_)" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" width="22" height="22"/>
 	</g>
 	<g>
-		<rect x="706" y="907" fill="#21394E" width="14" height="1"/>
-		<rect x="706" y="922" fill="#21394E" width="14" height="1"/>
-		<rect x="715" y="910" fill="#21394E" width="5" height="1"/>
-		<rect x="715" y="913" fill="#21394E" width="5" height="1"/>
-		<rect x="715" y="916" fill="#21394E" width="5" height="1"/>
-		<rect x="715" y="919" fill="#21394E" width="5" height="1"/>
-		<path fill="#21394E" d="M713,910h-11v10h11V910z M703,919l4.5-5l4.5,5H703z M710.5,914c-0.828,0-1.5-0.672-1.5-1.5
+		<rect x="706" y="907" fill="#97B8DA" width="14" height="1"/>
+		<rect x="706" y="922" fill="#97B8DA" width="14" height="1"/>
+		<rect x="715" y="910" fill="#97B8DA" width="5" height="1"/>
+		<rect x="715" y="913" fill="#97B8DA" width="5" height="1"/>
+		<rect x="715" y="916" fill="#97B8DA" width="5" height="1"/>
+		<rect x="715" y="919" fill="#97B8DA" width="5" height="1"/>
+		<path fill="#97B8DA" d="M713,910h-11v10h11V910z M703,919l4.5-5l4.5,5H703z M710.5,914c-0.828,0-1.5-0.672-1.5-1.5
 			s0.672-1.5,1.5-1.5s1.5,0.672,1.5,1.5S711.328,914,710.5,914z"/>
 	</g>
 	<g>
