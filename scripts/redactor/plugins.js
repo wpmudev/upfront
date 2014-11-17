@@ -494,9 +494,8 @@ RedactorPlugins.upfrontPlaceholder = function() {
                 this.$editor.off('focus.redactor_placeholder');
 
                 this.$placeholder = this.$editor.clone(false);
-                //Todo Gagan: you have had this.cleanParagraphy(placeholder) and cleanParagraphy is deprecated, i'm not sure what u needed to do with this
-                //So please take a look to see what new method can replace this
-                this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html( this.opts.linebreaks ? placeholder : placeholder );
+                
+                this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html( placeholder);//this.opts.linebreaks ? placeholder : placeholder );
                 this.$editor.after(this.$placeholder);
                 if ( this.$editor.css('position') == 'static' )
                     this.$editor.css('position', 'relative');
