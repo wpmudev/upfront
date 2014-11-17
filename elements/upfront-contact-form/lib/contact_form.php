@@ -83,7 +83,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public static function add_styles_scripts () {
 		upfront_add_element_style('ucontact-style', array('css/ucontact.css', dirname(__FILE__)));
-		wp_enqueue_script('ucontact-front', upfront_element_url('js/ucontact-front.js', dirname(__FILE__)), array('jquery'));
+		upfront_add_element_script('ucontact-front', array('js/ucontact-front.js', dirname(__FILE__)));
 	}
 
 	public static function ajax_send () {
