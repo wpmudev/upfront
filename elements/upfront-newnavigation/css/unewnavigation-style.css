@@ -6,6 +6,7 @@ div.upfront-navigation ul, div.upfront-navigation ul li {
 
 div.upfront-navigation ul.sub-menu {
   display: none;
+  z-index:2;
 }
 
 div.upfront-navigation div[data-style="horizontal"] li.menu-item:hover > ul.sub-menu,
