@@ -41,7 +41,8 @@ class Upfront_UsliderView extends Upfront_Object {
 		//wp_enqueue_style( 'uslider_css', upfront_element_url('css/uslider.css', dirname(__FILE__)), array(), "0.1" );
 		//wp_enqueue_style( 'uslider_settings_css', upfront_element_url('css/uslider_settings.css', dirname(__FILE__)), array(), "0.1" );
 		
-		wp_enqueue_script('uslider-front', upfront_element_url('js/uslider-front.js', dirname(__FILE__)), array('jquery'));
+		//wp_enqueue_script('uslider-front', upfront_element_url('js/uslider-front.js', dirname(__FILE__)), array('jquery'));
+		upfront_add_element_script('uslider-front', array('js/uslider-front.js', dirname(__FILE__)));
 	}
 
 	public static function add_js_defaults($data){
