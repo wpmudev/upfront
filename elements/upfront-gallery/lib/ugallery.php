@@ -224,25 +224,14 @@ class Upfront_UgalleryView extends Upfront_Object {
 	public static function add_styles_scripts () {
 		//wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
 		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
-
+		
 		//Lightbox
-		wp_register_script(
-			'magnific',
-			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.js',
-			array('jquery')
-		);
-		wp_register_style(
-			'magnific',
-			Upfront::get_root_url() . '/scripts/magnific-popup/magnific-popup.css'
-		);
 		wp_enqueue_style('magnific');
 		wp_enqueue_script('magnific');
-
-
-		wp_enqueue_script('jquery-shuffle', upfront_element_url('js/jquery.shuffle.js', dirname(__FILE__)), array('jquery'));
+		upfront_add_element_script('jquery-shuffle', array('js/jquery.shuffle.js', dirname(__FILE__)));
 
 		//Front script
-		wp_enqueue_script('ugallery', upfront_element_url('js/ugallery-front.js', dirname(__FILE__)), array('magnific', 'jquery-shuffle'));
+		upfront_add_element_script('ugallery', array('js/ugallery-front.js', dirname(__FILE__)));
 
 	}
 
