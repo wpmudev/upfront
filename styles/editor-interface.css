@@ -13346,7 +13346,7 @@ i.visit_link {
   height: 18px;
   display: inline-block;
   position: absolute;
-  z-index: 1000 !important;
+  z-index: 10000 !important;
   top: -5px;
   right: -5px;
   display: none;
@@ -13374,7 +13374,8 @@ div.ueditable-inactive i.visit_link {
 
 /* line 35, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/visit-link */
 i.visit_link:after {
-  font: normal 10px/18px Verdana, sans-serif;
+  font: normal 10px/18px Verdana, sans-serif !important;
+  text-transform: none !important;
   width: 84px;
   padding-left: 20px;
   padding-right: 5px;
