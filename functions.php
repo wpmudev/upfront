@@ -96,17 +96,17 @@ class Upfront {
 		if ( is_plugin_active('upfront-theme-exporter/upfront-theme-exporter.php') ) {
 			$wp_admin_bar->add_menu( array(
 				'id' => 'upfront-create-theme',
-				'title' => __('Create New Theme'),
+				'title' => __('Create New Theme', 'upfront'),
 				'href' => site_url('/create_new/theme'),
 				'meta' => array( 'class' => 'upfront-create_theme' )
 			) );
 		}
 
-		if ( !is_admin() && Upfront_Permissions::current(Upfront_Permissions::BOOT) ){
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			$wp_admin_bar->add_menu( array(
 				'id' => 'upfront-edit_layout',
-				'title' => __('Edit Layout'),
-				'href' => '#',
+				'title' => __('Upfront', 'upfront'),
+				'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
 				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
 			) );
 		}
