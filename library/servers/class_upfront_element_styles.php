@@ -14,13 +14,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 		add_action('upfront-layout-applied', array($this, 'load_styles'));
 		add_action('upfront-layout-applied', array($this, 'load_scripts'));
 
-		//add_action('wp_ajax_upfront-element-styles', array($this, 'serve_styles'));
-		//add_action('wp_ajax_nopriv_upfront-element-styles', array($this, 'serve_styles'));
 		upfront_add_ajax('upfront-element-styles', array($this, 'serve_styles'));
 		upfront_add_ajax_nopriv('upfront-element-styles', array($this, 'serve_styles'));
 
-		//add_action('wp_ajax_upfront-element-scripts', array($this, 'serve_scripts'));
-		//add_action('wp_ajax_nopriv_upfront-element-scripts', array($this, 'serve_scripts'));
 		upfront_add_ajax('upfront-element-scripts', array($this, 'serve_scripts'));
 		upfront_add_ajax_nopriv('upfront-element-scripts', array($this, 'serve_scripts'));
 	}
@@ -50,7 +46,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			'upfront-dependencies',
 			'styles',
 			$raw_cache_key
-		)))); // But let's do pretty instead
+		))), array(), $this->_get_enqueue_version()); // But let's do pretty instead
 	}
 
 	/**
@@ -115,13 +111,12 @@ class Upfront_ElementStyles extends Upfront_Server {
 			}
 			set_transient($cache_key, $cache);
 		}
-
 		//wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery')); // It'll also work as an AJAX request
 		wp_enqueue_script('upfront-element-scripts', Upfront_VirtualPage::get_url(join('/', array(
 			'upfront-dependencies',
 			'scripts',
 			$raw_cache_key
-		))), array('jquery'));
+		))), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
 	}
 
 	function serve_styles () {
@@ -143,5 +138,10 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _get_raw_cache_key ($stuff) {
 		//return substr(md5(serialize($stuff)), 0, 24); // Forced length for transients API key length limitation
 		return md5(serialize($stuff));
+	}
+
+	private function _get_enqueue_version () {
+		$version = Upfront_ChildTheme::get_instance()->get_version();
+		return !empty($version) ? $version : '1.0';
 	}
 }
