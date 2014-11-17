@@ -315,20 +315,26 @@ var ImageInsert = UeditorInsert.extend({
 		var style_variant = Upfront.Content.ImageVariants.findWhere({ vid : this.data.get("variant_id") }),
 		    selected = this.data.get('variant_id');
 		this.controlsData = [
-			{id: 'style',
-				type: "multi",
-				icon : "style",
-				tooltip: "Style",
-				selected: selected,
-				subItems: this.get_style_control_data()
-			},
-			{id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
-			this.getRemoveControlData()
+			//{id: 'style',
+			//	type: "multi",
+			//	icon : "style",
+			//	tooltip: "Style",
+			//	selected: selected,
+			//	subItems: this.get_style_control_data()
+			//},
+            {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
+            {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()}
 		];
 		this.createControls();
 
 	},
-
+    events:{
+        "click .ueditor-insert-remove": "click_remove"
+    },
+    click_remove: function( e ){
+        e.preventDefault();
+        this.trigger('remove', this);
+    },
 	// The user want a new insert. Fetch all the required data to create a new image insert
 	start: function(){
 		var me = this,
@@ -418,50 +424,11 @@ var ImageInsert = UeditorInsert.extend({
 
 
 
-		//if (style_variant && style_variant.group && style_variant.group.col) Upfront.Util.grid.update_class(this.$el, "c", style_variant.group.col);
-		//if (style_variant && style_variant.group && style_variant.group.left) Upfront.Util.grid.update_class(this.$el, "ml", style_variant.group.left);
-
-		//if (style_variant && style_variant.group) {
-        //
-		//	var css = {
-		//		float : style_variant.group.float,
-		//		marginRight: style_variant.group.margin_right + "px"
-		//		},
-		//		reset_css = {
-		//			marginRight: "0px"
-		//		};
-		//	if( style_variant.group.left === 0 ){
-		//		reset_css.marginLeft =  "0px";
-		//		css.marginLeft =  style_variant.group.margin_left + "px";
-		//	}
-        //
-		//	/**
-		//	 * Reset margins
-		//	 */
-		//	this.$el.css(reset_css);
-        //
-		//	/**
-		//	 * Apply css
-		//	 */
-		//	this.$el.css(css);
-		//}
 		this.controls.render();
 		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
         this.$el.addClass("ueditor-insert-variant");
 		this.make_caption_editable();
 		this.updateControlsPosition();
-        ////
-		//this.$('.uinsert-image-wrapper')
-		//	//.css(wrapperData)
-		//	.find('img')
-		//	.attr('src', this.data.get("imageFull").src)
-		//	//.css({
-		//	//    position: 'absolute',
-		//	//    'max-width': 'none',
-		//	//    'max-height': 'none'
-		//	//})
-		//	//.css(imageSize)
-		//;
 
 		if(!this.data.get('isLocal'))
 			this.data.set({externalImage: style_variant.image.width}, {silent: true});
@@ -578,52 +545,6 @@ var ImageInsert = UeditorInsert.extend({
 	controlEvents: function(){
 		var me = this;
 		this.stopListening(this.controls);
-		this.listenTo(this.controls, 'control:click:remove', function(control){
-			this.trigger('remove', this);
-		});
-
-
-		//this.listenTo(this.controls, 'control:select:alignment', function(control){
-		//	var alignData = {
-		//			align: control
-		//		},
-		//		colSize = Upfront.Behaviors.GridEditor.col_size,
-		//		thumb = this.data.get('imageThumb'),
-		//		captionPosition = this.data.get('captionPosition'),
-		//		sideCaption = captionPosition == 'left' || captionPosition == 'right',
-		//		width
-		//		;
-		//	if(control == 'full'){
-		//		this.data.set(alignData);
-		//		alignData.width = me.$el.width();
-        //
-		//		if(sideCaption)
-		//			thumb.width = (alignData.width / colSize - 3) * colSize;
-		//		else
-		//			thumb.width = alignData.width;
-        //
-		//		thumb.width = Math.round(thumb.width);
-        //
-		//		thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
-		//		alignData.thumb = thumb;
-		//	}
-        //
-		//	else if(this.data.get('align') == 'full') {
-		//		width = Math.round((this.data.get('width') / colSize - 6) * colSize);
-		//		alignData.width = width;
-        //
-		//		if(sideCaption)
-		//			thumb.width = width - 3 * colSize;
-		//		else
-		//			thumb.width = width;
-        //
-		//		thumb.width = Math.round(thumb.width);
-        //
-		//		thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
-		//		alignData.thumb = thumb;
-		//	}
-		//	this.data.set(alignData);
-		//});
 
 		this.listenTo(this.controls, 'control:ok:link', function(view, control){
 			var url = view.$('input[type=text]').val(),
@@ -647,41 +568,20 @@ var ImageInsert = UeditorInsert.extend({
 			control.close();
 		});
 
-		//this.listenTo(this.controls, 'control:select:caption', function(captionPosition){
-		//	var currentPosition = this.data.get('captionPosition'),
-		//		newData = {captionPosition: captionPosition},
-		//		isCurrentSide = ['left', 'right'].indexOf(this.data.get('captionPosition')) != -1,
-		//		isPositionSide = ['left', 'right'].indexOf(captionPosition) != -1,
-		//		align = this.data.get('align'),
-		//		thumb = this.data.get('imageThumb'),
-		//		colSize = Upfront.Behaviors.GridEditor.col_size
-		//		;
-        //
-		//	if(isCurrentSide != isPositionSide){
-		//		if(align == 'full'){
-		//			thumb.width = isPositionSide ? (this.data.get('width') / colSize - 3) * colSize : this.data.get('width');
-		//			thumb.width = Math.round(thumb.width);
-		//			thumb.src = this.data.get('isLocal') ? this.generateThumbSrc(thumb.width, thumb.height) : thumb.src;
-		//			newData.imageThumb = thumb;
-		//		}
-		//		else
-		//			newData.width = isPositionSide ? parseInt(this.data.get('imageThumb').width, 10) + 3 * colSize : parseInt(this.data.get('imageThumb').width, 10);
-		//	}
-        //
-		//	this.data.set(newData);
-		//});
+
 		/**
-		 * Image style from variants
-		 */
-		this.listenTo(this.controls, 'control:select:style', function(variant_id){
-			var _style = Upfront.Content.ImageVariants.findWhere({vid : variant_id});
-			if( _style ){
-				var style = _style.toJSON();
-				this.data.set("variant_id", variant_id );
-                this.controls.selected = variant_id;
-				this.data.set("style", _style.toJSON());
-			}
-		});
+		* Image style from variants
+		*/
+        this.listenTo(this.controls, 'control:ok:style', function(view, control){
+            if( view._style ){
+                var style = view._style.toJSON();
+                this.data.set("variant_id", view.variant_id );
+                this.data.set("style", view._style.toJSON());
+                view.data.set( "selected", view.variant_id   );
+            }
+            control.close();
+        });
+
 	},
 
 	updateControlsPosition: function(){
@@ -904,7 +804,7 @@ var ImageInsert = UeditorInsert.extend({
 
 	getLinkView: function(){
 		if(this.linkView)
-			return linkView;
+			return this.linkView;
 
 		var view = new LinkView({data: {linkType: this.data.get('linkType'), linkUrl: this.data.get('linkUrl')}});
 		this.linkView = view;
@@ -912,6 +812,14 @@ var ImageInsert = UeditorInsert.extend({
 		//view.on()
 		return view;
 	},
+
+    getStyleView: function(){
+        if(this.styleView)
+            return this.styleView;
+        var view = new ImageStylesView( this.data );
+        this.styleView = view;
+        return view;
+    },
 
 	calculateRealSize: function(src){
 		var img = new Image();
@@ -997,6 +905,8 @@ var ImageInsert = UeditorInsert.extend({
 		});
 	}
 });
+
+
 var LinkView = Backbone.View.extend({
 		tpl: _.template($(tpls).find('#image-link-tpl').html()),
 		initialize: function(opts){
@@ -1038,6 +948,27 @@ var LinkView = Backbone.View.extend({
 			return types;
 		}
 	});
+var ImageStylesView = Backbone.View.extend({
+    tpl: _.template($(tpls).find('#image-style-tpl').html()),
+    initialize: function( options ){
+        this.data = new Backbone.Model();
+        this.listenTo(this.data, 'change', this.render);
+        this.data.set("variants", Upfront.Content.ImageVariants.toJSON());
+        this.data.set( "selected", options.get('variant_id') );
+
+    },
+    events: {
+        'change input[type=radio]': 'update_data'
+    },
+    render: function(){
+        this.$el.html(this.tpl( { data: this.data.toJSON() } ));
+        return this;
+    },
+    update_data: function(e){
+        this.variant_id = $(e.target).val();
+        this._style = Upfront.Content.ImageVariants.findWhere({vid : this.variant_id});
+    }
+});
 /*
 var EmbedInsert = UeditorInsert.extend({
 		type: 'embed',
@@ -1253,7 +1184,7 @@ var EmbedInsert = UeditorInsert.extend({
 			$code.replaceWith(insert.$el);
 		});
 		return inserts;
-	},
+	}
 });
 
 var EmbedManager = Backbone.View.extend({

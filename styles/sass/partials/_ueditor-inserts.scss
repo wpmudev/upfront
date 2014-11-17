@@ -28,12 +28,12 @@ a.ueditor-action-pickercancel{
 }
 
 .redactor-box .ueditor-insert {
-	outline: 1px dotted #3ea;
-	background: rgba(255,255,255,.2);
+	outline: 1px dotted #979797;
+//	background: rgba(255,255,255,.2);
 }
 
 .redactor-box .ueditor-insert:hover {
-	outline: 1px solid #3ea;
+	outline: 1px solid #979797;
 }
 
 .ueditor-insert .upfront-inline-panel {
@@ -128,10 +128,10 @@ a.ueditor-action-pickercancel{
   content: "";
 }
 i.upfront-icon.upfront-icon-region-style:before{
-  background-position: -701px -902px;
+  background-position: -700px -902px;
 }
 i.upfront-icon.upfront-icon-region-style:hover:before{
-  background-position:-807px -900px;
+  background-position:-808px -902px;
 }
 i.upfront-icon.upfront-icon-region-remove:before{
 //  background-position:-807px -900px;
@@ -157,11 +157,11 @@ i.upfront-icon.upfront-icon-region-remove:before{
 }
 
 .ueditor-insert .upfront-icon-region-link:before {
-	background-position: -700px -420px;
+	background-position: -700px -421px;
 }
 
 .ueditor-insert .upfront-icon-region-link:hover:before {
-  background-position: -808px -420px;
+  background-position: -808px -421px;
 }
 
 .ueditor-insert .upfront-icon-region-embed {
@@ -232,5 +232,14 @@ div.uinsert-selector a:hover {
 }
 
 .upfront-control-dialog-open .inline-panel-control-dialog{
+  display: block;
+}
+.ueditor-insert-variant-group .ueditor-insert-remove{
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  display: none;
+}
+.ueditor-insert-variant-group:hover .ueditor-insert-remove{
   display: block;
 }

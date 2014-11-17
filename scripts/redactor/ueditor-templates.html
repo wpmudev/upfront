@@ -40,6 +40,7 @@
 
 <script type="text/template" id="image-insert-tpl">
     <div class="ueditor-insert ueditor-insert-variant-group {{style.group.width_cls}}" style="min-height: {{style.group.height}}px;float:{{style.group.float}}; margin-right:{{style.group.marginRight}}px; margin-left:{{style.group.marginLeft}}px;" >
+        <a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>
         {[if( style.caption.order == 0 ) {]}
          <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="height:{{style.caption.height}}px">{{ caption }}</div>
         {[ } ]}
@@ -148,5 +149,14 @@
         <a href="#" class="uinsert-selector-option uinsert-selector-{{type}}" data-insert="{{type}}"><span class="uinsert-text">{{type}}</span><span  data-insert="{{type}}" class="uinsert-text-overlay"></span></a>
     {[ }); ]}
     </div>
+</script>
+
+<script type="text/template" id="image-style-tpl">
+    {[ _.each(data.variants, function(variant, index){  ]}
+    <div class="upfront-field-wrap">
+        <input type="radio" name="uinsert-image-style-variant" value="{{variant.vid}}" {{console.log(data.selected, variant.vid)}} {{data.selected == variant.vid ? "checked='checked'" : ""}} class="upfront-field-radio" id="uinsert-image-variant-{{variant.vid}}">
+        <label for="uinsert-image-variant-{{variant.vid}}">{{variant.label}}</label>
+    </div>
+    {[ }); ]}
 </script>
 </div>

@@ -242,13 +242,14 @@ input.upfront-field-text:hover,
 }
 .upfront-field-radio {
 	border-radius: 6px;
+    border:3px solid #97aec6;
 }
 .upfront-field-radio:focus {
 	border-width: 3px;
 	outline: none;
 }
 .upfront-field-radio:checked {
-	border-width: 3px;
+	border:3px solid #fff;
 	background: rgb(31, 205, 143);
 }
 .upfront-field-checkbox {
