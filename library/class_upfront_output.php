@@ -926,6 +926,15 @@ class Upfront_Module extends Upfront_Container {
 		$wrapper_id = $this->_get_property('wrapper_id');
 		return Upfront_Wrapper::get_instance($wrapper_id, $this->_parent_data);
 	}
+    
+    public function get_css_class () {
+        $classes = parent::get_css_class();
+        $more_classes = array();
+        $prop_class = $this->_get_property('class');
+        $column = upfront_get_class_num('c', $prop_class);
+        $more_classes[] = 'c' . $column;
+        return $classes . ' ' . join(' ', $more_classes);
+    }
 }
 
 class Upfront_Object extends Upfront_Entity {

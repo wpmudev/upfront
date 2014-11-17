@@ -259,7 +259,7 @@
 }
 .upfront-region-editing .upfront-region-container {
 	opacity: 0.5;
-	min-height: 90px;
+	/*min-height: 90px;*/
 	z-index: 1;
 }
 .upfront-region-editing .upfront-region-container-shadow {
@@ -348,7 +348,7 @@
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container {
 	z-index: 9997;
 }
-.upfront-region-editing .upfront-region-container-active .upfront-grid-layout {
+.upfront-region-editing .upfront-region-container-active div.upfront-grid-layout {
     z-index: 9998;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {

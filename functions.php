@@ -131,7 +131,10 @@ class Upfront {
 	function inject_global_dependencies () {
 		//Basic styles for upfront to work are always loaded.
 		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css');
-		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'));
+        if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+            // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
+    		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'));
+        }
 
 		//if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
