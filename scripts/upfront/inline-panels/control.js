@@ -8,6 +8,7 @@ define([
 
 		clicked: function(e){
 			e.preventDefault();
+            e.stopPropagation();
 			this.$el
 				.siblings('.upfront-inline-panel-subitem-active')
 				.removeClass('upfront-inline-panel-subitem-active')

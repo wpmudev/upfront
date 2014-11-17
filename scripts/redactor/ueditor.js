@@ -92,7 +92,8 @@ var hackRedactor = function(){
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {
 
-
+        if($(e.target).is(".upfront-icon")) return;
+        
         if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length )) return;
 
 		if(this.$element.closest('li').hasClass('menu-item')) {

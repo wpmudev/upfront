@@ -154,7 +154,7 @@
 <script type="text/template" id="image-style-tpl">
     {[ _.each(data.variants, function(variant, index){  ]}
     <div class="upfront-field-wrap">
-        <input type="radio" name="uinsert-image-style-variant" value="{{variant.vid}}" {{console.log(data.selected, variant.vid)}} {{data.selected == variant.vid ? "checked='checked'" : ""}} class="upfront-field-radio" id="uinsert-image-variant-{{variant.vid}}">
+        <input type="radio" name="uinsert-image-style-variant" value="{{variant.vid}}" {{data.selected == variant.vid ? "checked='checked'" : ""}} class="upfront-field-radio" id="uinsert-image-variant-{{variant.vid}}">
         <label for="uinsert-image-variant-{{variant.vid}}">{{variant.label}}</label>
     </div>
     {[ }); ]}
