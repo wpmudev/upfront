@@ -373,7 +373,7 @@ Ueditor.prototype = {
 	displayLinkFlags: function() {
 		var me = this;
 		this.$el.find('a').each(function(){
-			if($(this).find('i.visit_link').length > 0)
+			if($(this).find('i.visit_link').length > 0 || !$(this).attr('href') || $(this).text().trim() == '')
 				return;
 			$(this).css('position', 'relative');
 			$(this).append('<i class="visit_link visit_link_'+me.guessLinkType($(this).attr('href'))+'" data-href="'+$(this).attr('href')+'"></i>');

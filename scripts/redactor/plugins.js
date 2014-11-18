@@ -792,6 +792,7 @@ RedactorPlugins.upfrontLink = function() {
                 }
                 else {
                     var text = this.redactor.selection.getHtml();
+                    this.redactor.selection.restore();
                     if ($.parseHTML(text).length > 1) {// there is html inside
                         this.redactor.insert.html(text, true);
                     } else {
@@ -804,6 +805,7 @@ RedactorPlugins.upfrontLink = function() {
                     menuitem.model['being-edited'] = false;
                 }
                 this.redactor.$element.focus();
+
             },
             link: function (url, type) {
                 this.redactor.selection.restore();
