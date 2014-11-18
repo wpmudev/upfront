@@ -1,10 +1,12 @@
 div.upfront-editable_entity.upfront-button {
 	display: table;
 }
-div.upfront-output-button, div.upfront-output-button div.redactor_box {
+div.upfront-output-button, div.upfront-output-button div.redactor-box {
 	display: table-row;
 }
-
+div.upfront-output-button div.redactor-box {
+  display: table-row;
+}
 div.upfront-output-button.being_edited {
   display: inline-table;
   height: 100%;
