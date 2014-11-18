@@ -311,22 +311,11 @@ var ImageInsert = UeditorInsert.extend({
 	},
 	//Called just after initialize
 	init: function(){
-
-		var style_variant = Upfront.Content.ImageVariants.findWhere({ vid : this.data.get("variant_id") }),
-		    selected = this.data.get('variant_id');
 		this.controlsData = [
-			//{id: 'style',
-			//	type: "multi",
-			//	icon : "style",
-			//	tooltip: "Style",
-			//	selected: selected,
-			//	subItems: this.get_style_control_data()
-			//},
             {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()}
 		];
 		this.createControls();
-
 	},
     events:{
         "click .ueditor-insert-remove": "click_remove"
@@ -345,9 +334,8 @@ var ImageInsert = UeditorInsert.extend({
 			var imageData = me.getImageData(result);
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
-			imageData.style = ( new Upfront.Models.ImageVariant() ).toJSON();
+			imageData.style =  Upfront.Content.ImageVariants ?  Upfront.Content.ImageVariants.first().toJSON() : ( new Upfront.Models.ImageVariant() ).toJSON();
 			me.data.set(imageData);
-			me.controlsData[0].selected = me.data.get('align');
 			me.createControls();
 		});
 
@@ -904,14 +892,7 @@ var ImageInsert = UeditorInsert.extend({
 	//	;
     //
 	//},
-	get_style_control_data : function(){
-		return  Upfront.Content.ImageVariants.map(function( variant, index ){
-			return {
-				id: variant.get("vid"),
-				label: variant.get("label")
-			}
-		});
-	}
+
 });
 
 
