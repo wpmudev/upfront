@@ -159,7 +159,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getThemeStylesAsCss() {
-		$layout = Upfront_Layout::get_cascade();
+		//$layout = Upfront_Layout::get_cascade();
+		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 		$out = '';
 		// See if there are styles in theme files

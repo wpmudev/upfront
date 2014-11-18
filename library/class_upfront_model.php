@@ -318,7 +318,7 @@ abstract class Upfront_JsonModel extends Upfront_Model {
 		self::$instance = $this;
 	}
 
-	public function get_instance () {
+	public static function get_instance () {
 		return self::$instance;
 	}
 
