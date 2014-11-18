@@ -386,7 +386,6 @@ var ImageInsert = UeditorInsert.extend({
 		this.apply_classes( data.style.group );
 		this.apply_classes( data.style.image );
 		this.apply_classes( data.style.caption );
-
         var $group = this.$el.find(".ueditor-insert-variant-group"),
             ge = Upfront.Behaviors.GridEditor,
             $parent = $('.upfront-content-marker-contents'),
@@ -429,6 +428,7 @@ var ImageInsert = UeditorInsert.extend({
         this.$el.addClass("ueditor-insert-variant");
 		this.make_caption_editable();
 		this.updateControlsPosition();
+        this.$(".ueditor-insert-variant-group").prepend( '<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>' );
 
 		if(!this.data.get('isLocal'))
 			this.data.set({externalImage: style_variant.image.width}, {silent: true});
