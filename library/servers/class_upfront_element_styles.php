@@ -141,7 +141,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 	private function _get_enqueue_version () {
-		$version = Upfront_ChildTheme::get_instance()->get_version();
+		$version = Upfront_ChildTheme::get_instance()?Upfront_ChildTheme::get_instance()->get_version():'1.0';
 		return !empty($version) ? $version : '1.0';
 	}
 }
