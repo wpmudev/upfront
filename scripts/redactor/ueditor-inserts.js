@@ -370,18 +370,7 @@ var ImageInsert = UeditorInsert.extend({
 			wrapperSize = this.data.get('imageThumb'),
 			grid = Upfront.Settings.LayoutEditor.Grid;
 
-		data.image = data.imageFull;
-
-		data.style = data.style || {
-			image_col: 0,
-			group: '',
-			image: '',
-			caption: ''
-		};
-
-		if( data.style && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
-			data.image = data.imageThumb;
-		}
+		data.image = this.get_proper_image();
 
 		this.apply_classes( data.style.group );
 		this.apply_classes( data.style.image );
@@ -617,13 +606,32 @@ var ImageInsert = UeditorInsert.extend({
 		// return the HTML in a string
 		return  $('<div>').html(out).html();
 	},
+    get_proper_image: function(){
+        var data = this.data.toJSON(),
+            image = data.imageFull,
+            grid = Upfront.Settings.LayoutEditor.Grid
+            ;
 
+        data.style = data.style || {
+            image_col: 0,
+            group: '',
+            image: '',
+            caption: ''
+        };
+
+        if( data.style && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+            image = data.imageThumb;
+        }
+
+        return image;
+    },
 	getOutput: function(){
 		var out = this.el.cloneNode(),
 			data = this.data.toJSON()
-			;
+        ;
 
-		data.image = data.imageThumb;
+
+		data.image = this.get_proper_image();
 
 		this.data.set('width', this.$el.width(), {silent: true});
 		this.data.trigger('update');
