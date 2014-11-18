@@ -33,9 +33,12 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}
 		this.constructor.__super__.initialize.call(this, [options]);
 
-		_.extend(this.events, {
-			'click .upfront-post-layout-trigger': 'editPostLayout'
-		});
+		if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
+			// Only extend events with post layout editing in theme editing mode
+			_.extend(this.events, {
+				'click .upfront-post-layout-trigger': 'editPostLayout'
+			});
+		}
 		this.delegateEvents();
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
@@ -140,7 +143,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	//	return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
 	//},
     get_extra_buttons: function(){
-        return '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>';
+        return Upfront.Application.mode.current === Upfront.Application.MODE.THEME
+        	? '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>'
+        	: ''
+        ;
     },
 	on_edit: function (e) {
 		if(!this.editor){
