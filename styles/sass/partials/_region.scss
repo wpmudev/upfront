@@ -57,9 +57,19 @@
 	min-height: 100%;
 }
 
-/*.upfront-region>.upfront-entity_meta {
-	display: none;
-}*/
+.upfront-region-side-lightbox> b.upfront-entity_meta {
+	display: block;
+	position: fixed;
+	top: 50px;
+	right:50px
+}
+.upfront-region-side-lightbox> b.upfront-entity_meta > a.upfront-entity-delete_trigger,
+.upfront-region-side-lightbox> b.upfront-entity_meta > a.upfront-entity-settings_trigger {
+	display: block;
+	opacity: 1;
+	visibility: visible;
+
+}
 
 .upfront-region-bg-overlay,
 .upfront-region-bg {
@@ -133,9 +143,7 @@
 .upfront-edit-layout .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-theme .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-responsive .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
-.upfront-region-editing .upfront-region-container .upfront-region-side-fixed:hover > .upfront-region-edit-trigger-full,
-.upfront-edit-layout .upfront-region-side-lightbox:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-theme .upfront-region-side-lightbox:hover > .upfront-region-edit-trigger-small
+.upfront-region-editing .upfront-region-container .upfront-region-side-fixed:hover > .upfront-region-edit-trigger-full
 {
 	visibility: visible;
 	opacity: 1;
@@ -1328,3 +1336,13 @@ a.upfront-region-name-edit-trigger:before {
 	overflow: hidden;
 }
 
+.upfront-region-bg-setting-lightbox-region .upfront-field-wrap-number,
+.upfront-region-bg-setting-lightbox-region .sp-cf,
+.upfront-region-bg-setting-lightbox-region .sp-cf label {
+  display: inline-block;
+}
+
+.upfront-region-bg-setting-lightbox-region .sp-cf.overlay_color,
+.upfront-region-bg-setting-lightbox-region .upfront-field-wrap-number.width_cols {
+  margin-right:40px;
+}

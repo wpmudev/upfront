@@ -3444,14 +3444,14 @@ define([
 				this.constructor.__super__.render.call(this);
 				this.hide();
 
-					var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + l10n.edit_ltbox + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
+					//var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + l10n.edit_ltbox + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
 					//$ok = $('<div class="upfront-region-finish-edit-lightbox upfront-ui">Finish Editing</div>');
 
 
-				this.$el.prepend(this.$bg);
+				//this.$el.prepend(this.$bg);
 				this.$close.appendTo(this.$el);
 
-				$edit.appendTo(this.$el);
+				//$edit.appendTo(this.$el);
 				//$ok.appendTo(this.$el);
 			},
 			render_bg_setting: function () {

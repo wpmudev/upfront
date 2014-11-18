@@ -8166,9 +8166,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				is_bottom = ( typeof bottom == 'number' ),
 				right = this.model.get_property_value_by_name('right'),
 				is_right = ( typeof right == 'number' ),*/
-				set_value = function (me) {
-					if(typeof(me) == 'undefined')
-						me = this;
+				set_value = function (object) {
+					
+					me = object.$spectrum?object:this;
+					
 					var value = me.get_value(),
 						saved = me.get_saved_value();
 					if ( value != saved ){
@@ -8179,6 +8180,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					width: new Upfront.Views.Editor.Field.Number({
 						model: this.model,
 						property: 'col',
+						className: 'upfront-field-wrap upfront-field-wrap-number width_cols',
 						label: l10n.col_width + ":",
 						label_style: "inline",
 						min: 3,// * grid.column_width,
@@ -8188,9 +8190,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					height: new Upfront.Views.Editor.Field.Number({
 						model: this.model,
 						property: 'height',
-						label: l10n.height + ":",
+						label: l10n.px_height + ":",
 						label_style: "inline",
 						min: 3 * grid.baseline,
+						max: 99999,
 						change: set_value
 					}),
 					click_out_close: new Upfront.Views.Editor.Field.Checkboxes({
@@ -8211,7 +8214,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					    ],
 						change: set_value
 				    }),
-					add_close_text: new Upfront.Views.Editor.Field.Checkboxes({
+					/*add_close_text: new Upfront.Views.Editor.Field.Checkboxes({
 					    model: this.model,
 					    property: 'add_close_text',
 					    label: "",
@@ -8226,12 +8229,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						property: 'close_text',
 						label_style: "inline",
 						change: set_value
-					})
+					})*/
 				};
 
 				fields.overlay_color = new Upfront.Views.Editor.Field.Color({
 						model: this.model,
 						property: 'overlay_color',
+						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf overlay_color',
 						default_value: 'rgba(38,58,77,0.75)',
 						label: l10n.overlay_bg + ":",
 						change: set_value,
@@ -8272,6 +8276,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							},
 						}
 					});
+
 			_.each(fields, function(field){
 				field.render();
 				field.delegateEvents();
@@ -8280,11 +8285,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			this.model.set_property('delete', false);
 			var me = this;
+
 			$content.on('click', 'a.upfront-entity-delete_trigger', function() {
 				me.model.set_property('delete', true);
 				me.close();
 			});
 
+			$content.closest('.upfront-inline-modal-wrap').draggable();
 		},
 		update_lightbox_overlay: function(color) {
 			var rgb = color.toRgb(),
@@ -10218,11 +10225,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 
 		showLightboxInput: function(e){
+			var me = this;
 			if(e)
 				e.preventDefault();
 
 			this.$('.js-ulinkpanel-lightbox-select').hide();
-			this.$('.js-ulinkpanel-new-lightbox').show().focus();
+			this.$('.js-ulinkpanel-new-lightbox').show()
+			setTimeout(function() { me.$('#ulinkpanel-new-lightbox').focus(); }, 100);
 		},
 
 		hideLightboxInput: function(e) {
