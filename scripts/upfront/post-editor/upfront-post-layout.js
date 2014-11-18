@@ -407,7 +407,9 @@ var ContentView = PostPartView.extend({
 		}
 
 		rules += 'padding-left: ' + leftPadding + 'px; padding-right: ' + rightPadding + 'px;}';
-		rules += '.ueditor-insert-variant { margin-left: ' + (leftPadding*-1) + 'px; margin-right: ' + (rightPadding*-1) + 'px; }';
+		// Set negative margin to allow image variant resizing on full grid
+		rules += '.upfront-region-postlayouteditor  .upfront-output-PostPart_contents .ueditor-insert-variant {';
+		rules += ' margin-left: ' + (leftPadding*-1) + 'px; margin-right: ' + (rightPadding*-1) + 'px; }';
 
 		styles.html(rules);
 	}
