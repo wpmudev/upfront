@@ -56,3 +56,6 @@ button.search-button.image {
 	display: inline-block;
 	margin-top: -7px;
 }
+
+.upfront-search input[type=text]::-ms-clear {  display: none; width : 0; height: 0; }
+.upfront-search input[type=text]::-ms-reveal {  display: none; width : 0; height: 0; }
