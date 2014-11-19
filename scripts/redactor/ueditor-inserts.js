@@ -631,7 +631,7 @@ var ImageInsert = UeditorInsert.extend({
 		data.isLocal = parseInt(data.isLocal, 10);
 
 		out.innerHTML = this.tpl(data);
-		$(out).width(this.data.get('width'));
+		//$(out).width(this.data.get('width'));
 		// return the HTML in a string
 		return  $('<div>').html(out).html();
 	},
