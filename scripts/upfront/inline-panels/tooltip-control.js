@@ -75,6 +75,7 @@ define([
 				}
 				item.render();
 				captionControl.append(item.$el);
+				me.listenTo(item, 'click', me.selectItem);
 			});
 
 			selectedItem = this.sub_items[this.selected];
