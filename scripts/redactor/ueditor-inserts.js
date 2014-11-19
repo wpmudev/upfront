@@ -334,7 +334,7 @@ var ImageInsert = UeditorInsert.extend({
 			var imageData = me.getImageData(result);
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
-			imageData.style =  Upfront.Content.ImageVariants ?  Upfront.Content.ImageVariants.first().toJSON() : ( new Upfront.Models.ImageVariant() ).toJSON();
+			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : ( new Upfront.Models.ImageVariant() ).toJSON();
 			me.data.set(imageData);
 			me.createControls();
 		});
@@ -612,7 +612,7 @@ var ImageInsert = UeditorInsert.extend({
                 image = data.imageThumb;
             }
         }
-        
+
         return image;
     },
 	getOutput: function(){
