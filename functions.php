@@ -129,6 +129,7 @@ class Upfront {
 	}
 
 	function inject_global_dependencies () {
+		wp_enqueue_script('jquery');
 		//Basic styles for upfront to work are always loaded.
 		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css', array(), Upfront_ChildTheme::get_version());
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
@@ -138,7 +139,6 @@ class Upfront {
 
 		//if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
-		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-ui');
 		wp_enqueue_script('jquery-effects-core');
 		wp_enqueue_script('jquery-effects-slide');
