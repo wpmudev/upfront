@@ -607,10 +607,12 @@ var ImageInsert = UeditorInsert.extend({
             caption: ''
         };
 
-        if( data.style && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
-            image = data.imageThumb;
+        if( data.imageThumb ){
+            if( data.style && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+                image = data.imageThumb;
+            }
         }
-
+        
         return image;
     },
 	getOutput: function(){
