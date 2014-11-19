@@ -509,8 +509,6 @@ RedactorPlugins.upfrontPlaceholder = function() {
                     'right': this.$box.outerWidth() - (editor_pos.left + this.$editor.outerWidth())
                 });
                 this.opts.placeholder = placeholder;
-                this.$editor.on('keyup', $.proxy(placeholderUpdate, this));
-                placeholderUpdate();
                 function placeholderUpdate() {
                     me.code.sync(); // sync first before get
                     
@@ -522,6 +520,8 @@ RedactorPlugins.upfrontPlaceholder = function() {
                         me.$placeholder.hide();
                     }
                 }
+                this.$editor.on('keyup', $.proxy(placeholderUpdate, this));
+                placeholderUpdate();
         },
        /* placeholderUpdate: function () {
             this.code.sync(); // sync first before get
