@@ -520,12 +520,9 @@ Ueditor.prototype = {
 		var placeholder = this.options.placeholder;
 		if (this.$el.attr('placeholder')) placeholder = this.$el.attr('placeholder');
 		if (placeholder === '') placeholder = false;
-		console.log('the place holder is '+ placeholder);
 		if (placeholder !== false && $.trim(this.$el.text()).length === 0)
 		{
-			console.log('did it reach here');
 			//remove existing placeholder
-			console.log(this.$el);
 			this.$el.parent().children('.ueditor-placeholder').remove();
 			this.$placeholder = this.$el.clone(false);
 			this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html(placeholder);

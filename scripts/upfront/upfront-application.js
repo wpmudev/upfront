@@ -1072,6 +1072,11 @@ var Application = new (Backbone.Router.extend({
 		last: false,
 		current: false
 	},
+    set_post_content_style: function(mode){
+        var mode = typeof mode === "undefined" ? true : mode;
+        this.MODE.POSTCONTENT_STYLE = mode;
+        return true;
+    },
     is_post_content_style: function(){
       return this.MODE.POSTCONTENT_STYLE;
     },
