@@ -124,7 +124,7 @@ class Upfront_Output {
 	}
 
 	function add_styles () {
-		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), 0.1, 'all');
+		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
 
 		// Load theme fonts
 		$theme_fonts = json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
@@ -133,7 +133,9 @@ class Upfront_Output {
 			foreach($theme_fonts as $theme_font) {
 				wp_enqueue_style(
 					strtolower(str_replace(' ', '-', $theme_font->font->family)) . '-' . $theme_font->variant,
-					'//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
+					'//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant,
+					array(),
+					Upfront_ChildTheme::get_version()
 				);
 			}
 		}

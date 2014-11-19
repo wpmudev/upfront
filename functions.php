@@ -130,10 +130,10 @@ class Upfront {
 
 	function inject_global_dependencies () {
 		//Basic styles for upfront to work are always loaded.
-		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css');
+		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css', array(), Upfront_ChildTheme::get_version());
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
-    		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'));
+    		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
         }
 
 		//if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
@@ -150,17 +150,17 @@ class Upfront {
 		wp_enqueue_script('jquery-ui-datepicker');
 
 		wp_enqueue_style('wp-jquery-ui-dialog');
-		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic');
+		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic', array(), Upfront_ChildTheme::get_version());
 
 		// Enqueue needed styles
-		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'));
-		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css');
-		wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css');
+		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'), array(), Upfront_ChildTheme::get_version());
+		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
+		wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css', array(), Upfront_ChildTheme::get_version());
 
 		// Font icons
-		wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css');
+		wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css', array(), Upfront_ChildTheme::get_version());
 
-		add_action('wp_footer', array($this, 'add_responsive_css'));
+		add_action('wp_footer', array($this, 'add_responsive_css'), array(), Upfront_ChildTheme::get_version());
 	}
 
 	function inject_upfront_dependencies () {
