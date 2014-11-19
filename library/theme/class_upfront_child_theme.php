@@ -11,8 +11,17 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return self::$instance;
 	}
 
+	/**
+	 * Gets cached theme version.
+	 * @return string theme version
+	 */
+	public static function get_version () {
+		if (!empty(self::$instance) && !empty(self::$instance->_version)) return self::$instance->_version;
+		return '1.0';
+	}
+
 	protected function __construct () {
-		$this->version = wp_get_theme()->version;
+		$this->_version = wp_get_theme()->version;
 		$this->themeSettings = new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php');
 		self::$instance = $this;
 		//add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3); // Soooo... this no longer works, yay
@@ -564,9 +573,11 @@ VRT;
 	 * Gets cached theme version.
 	 * @return string theme version
 	 */
+/*
 	public function get_version () {
 		return $this->_version;
 	}
+*/
 
 	/**
 	 * Fetches an array of pages required by the theme.
