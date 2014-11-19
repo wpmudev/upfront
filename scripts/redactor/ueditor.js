@@ -265,15 +265,6 @@ var Ueditor = function($el, options) {
 	}
 
 	//this.startPlaceholder();
-
-    //UeditorEvents.on("ueditor:click", function(r){
-    //    console.log("click");
-    //
-    //});
-    //
-    //UeditorEvents.on("ueditor:enter", function(r){
-    //    console.log("Enter");
-    //});
 };
 
 Ueditor.prototype = {
@@ -303,6 +294,13 @@ Ueditor.prototype = {
 		//Open the toolbar when releasing selection outside the element
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
+
+        // Open air when selecting text with keyboard
+		this.$el.on('keyup', function(e){
+            if(self.redactor && self.redactor.selection.getText() && [37, 38, 39, 40].indexOf( e.keyCode ) !== -1 ){
+                    self.redactor.airShow(e);
+            }
+        });
 
 		if(this.options.inserts){
 			this.insertsSetUp();
