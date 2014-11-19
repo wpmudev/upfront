@@ -243,3 +243,33 @@ div.uinsert-selector a:hover {
 .ueditor-insert-variant-group:hover .ueditor-insert-remove{
   display: block;
 }
+
+
+/* Responsive fix */
+#page.responsive-breakpoint .upfront-content-marker-contents > * {
+    padding-left: 0;
+    padding-right: 0;
+}
+#page.responsive-breakpoint .upfront-inserted_image-wrapper {
+    text-align: center;
+}
+#page.responsive-breakpoint .ueditor-insert-variant-group {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    min-height: 0 !important;
+    float: none !important;
+    display: inline-block;
+    width: auto;
+    text-align: center;
+}
+#page.responsive-breakpoint .upfront-inserted_image-wrapper .wp-caption-text, 
+#page.responsive-breakpoint .upfront-inserted_image-wrapper .uinsert-image-wrapper {
+    min-height: 0 !important;
+    margin-top: 0;
+    width: auto;
+    float: none;
+}
+
+
+
+

@@ -227,10 +227,6 @@ h2, h3 { page-break-after: avoid; }
   margin: auto;
 }
 
-.uf-responsive #page .post_content > * {
-    padding-left: 0;
-    padding-right: 0;
-}
 
 /* hack to fix empty paragraphs collapsing on each other */
 .upfront-plain_txt p:after {
@@ -276,6 +272,31 @@ h2, h3 { page-break-after: avoid; }
 .upfront-postpart-featured_image img {
   max-width: 100%;
   min-width: 100%;
+  height: auto;
+}
+
+.uf-responsive #page .post_content > * {
+    padding-left: 0;
+    padding-right: 0;
+}
+.uf-responsive .upfront-inserted_image-wrapper {
+    text-align: center;
+}
+.uf-responsive .ueditor-insert-variant-group {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    min-height: 0 !important;
+    float: none !important;
+    display: inline-block;
+    width: auto;
+    text-align: center;
+}
+.uf-responsive .upfront-inserted_image-wrapper .wp-caption-text, 
+.uf-responsive .upfront-inserted_image-wrapper .uinsert-image-wrapper {
+    min-height: 0 !important;
+    margin-top: 0;
+    width: auto;
+    float: none;
 }
 
 /* Flexbox experiments *//* */

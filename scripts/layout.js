@@ -711,4 +711,22 @@ jQuery(document).ready(function($){
 	update_theme_styles();
 	$(window).on('resize', update_theme_styles);
 	
+	/* Apply responsive class */
+	function update_responsive_class () {
+		var breakpoint = get_breakpoint();
+		if ( $('#page').hasClass('upfront-layout-view') ){
+			return remove_responsive_class();
+		}
+		if ( breakpoint && breakpoint !== 'none' && breakpoint !== 'desktop' )
+			$('html').addClass('uf-responsive');
+		else
+			remove_responsive_class();
+	}
+	function remove_responsive_class () {
+		$('html').removeClass('uf-responsive');
+	}
+	update_responsive_class();
+	$(window).on('resize', update_responsive_class);
+	$(document).on('upfront-load', function(){ Upfront.Events.on("layout:render", remove_responsive_class); });
+	
 });
