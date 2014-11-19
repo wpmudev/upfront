@@ -357,6 +357,8 @@ var ImageInsert = UeditorInsert.extend({
 			style_variant = this.data.get("style"),
 			wrapperSize = this.data.get('imageThumb'),
 			grid = Upfront.Settings.LayoutEditor.Grid;
+        
+        if( !style_variant ) return;
 
 		data.image = this.get_proper_image();
 
