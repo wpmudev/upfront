@@ -160,7 +160,7 @@ class Upfront {
 		// Font icons
 		wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css', array(), Upfront_ChildTheme::get_version());
 
-		add_action('wp_footer', array($this, 'add_responsive_css'), array(), Upfront_ChildTheme::get_version());
+		add_action('wp_footer', array($this, 'add_responsive_css'));
 	}
 
 	function inject_upfront_dependencies () {
