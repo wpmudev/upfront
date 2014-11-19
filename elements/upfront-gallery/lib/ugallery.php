@@ -226,8 +226,12 @@ class Upfront_UgalleryView extends Upfront_Object {
 		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
 		
 		//Lightbox
-		wp_enqueue_style('magnific');
-		wp_enqueue_script('magnific');
+		//wp_enqueue_style('magnific');
+		upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
+
+		//wp_enqueue_script('magnific');
+		upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
+		
 		upfront_add_element_script('jquery-shuffle', array('js/jquery.shuffle.js', dirname(__FILE__)));
 
 		//Front script

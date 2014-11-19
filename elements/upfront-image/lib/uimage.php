@@ -8,8 +8,10 @@ class Upfront_UimageView extends Upfront_Object {
 		$data = $this->properties_to_array();
 
 		if($data['when_clicked'] == 'show_larger_image'){
-			wp_enqueue_style('magnific');
-			wp_enqueue_script('magnific');
+			//wp_enqueue_style('magnific');
+			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
+			//wp_enqueue_script('magnific');
+			upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
 		}
 
 		$data['url'] = $data['when_clicked'] == 'do_nothing' ? false : $data['image_link'];
@@ -49,8 +51,11 @@ class Upfront_UimageView extends Upfront_Object {
 
 		if($data['when_clicked'] == 'image'){
 			//Lightbox
-			wp_enqueue_style('magnific');
-			wp_enqueue_script('magnific');//Front script
+			//wp_enqueue_style('magnific');
+			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
+			//wp_enqueue_script('magnific');//Front script
+			upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
+
 			upfront_add_element_script('uimage', array('js/uimage-front.js', dirname(__FILE__)));
 
 			//
