@@ -178,12 +178,24 @@ h2, h3 { page-break-after: avoid; }
   padding-top:0;
   padding-bottom:0;
 }
+.upfront-output-object.upfront-postpart-contents {
+  padding-left:0;
+  padding-right:0;
+}
 
 /* Post Inserts */
 
 .ueditor-insert {
   margin-bottom: 15px;
   max-width: 100%;
+}
+.ueditor-insert-variant-group.ueditor-insert-float-left {
+  float: left;
+  margin-right: 15px;
+}
+.ueditor-insert-variant-group.ueditor-insert-float-right {
+  float: right;
+  margin-left: 15px;
 }
 
 /* Post paddings */
