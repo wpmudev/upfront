@@ -91,7 +91,7 @@ h2, h3 { page-break-after: avoid; }
   clear: both;
 }
 
-.upfront-output-wrapper { float: left; }
+.upfront-output-wrapper, .upfront-wrapper { float: left; }
 .upfront-output-module-group { float: left; }
 .upfront-output-module {
   position: relative;
@@ -188,6 +188,8 @@ h2, h3 { page-break-after: avoid; }
 .ueditor-insert {
   margin-bottom: 15px;
   max-width: 100%;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
 }
 .ueditor-insert-variant-group.ueditor-insert-float-left {
   float: left;
@@ -196,6 +198,13 @@ h2, h3 { page-break-after: avoid; }
 .ueditor-insert-variant-group.ueditor-insert-float-right {
   float: right;
   margin-left: 15px;
+}
+.uinsert-image-wrapper img {
+  width: 100%;
+  height: 100%:
+}
+.upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {
+  padding: 15px;
 }
 
 /* Post paddings */
@@ -216,6 +225,11 @@ h2, h3 { page-break-after: avoid; }
 
 .aligncenter {
   margin: auto;
+}
+
+.uf-responsive #page .post_content > * {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* hack to fix empty paragraphs collapsing on each other */
