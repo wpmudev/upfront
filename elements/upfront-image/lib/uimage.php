@@ -126,10 +126,10 @@ class Upfront_UimageView extends Upfront_Object {
 	}
 
 	public static function add_styles_scripts () {
-		wp_enqueue_style( 'wp-color-picker' );
+		//wp_enqueue_style( 'wp-color-picker' ); // Why do we need this? Especially for all users!
 		upfront_add_element_style('upfront_image', array('css/uimage.css', dirname(__FILE__)));
 		//wp_enqueue_style('uimage-style', upfront_element_url('css/uimage.css', dirname(__FILE__)));
-		wp_enqueue_script('wp-color-picker');
+		//wp_enqueue_script('wp-color-picker'); // Why do we need this? We surely don't need it at least for visitors
 	}
 
 	public static function add_l10n_strings ($strings) {
