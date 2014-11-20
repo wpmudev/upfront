@@ -6,7 +6,7 @@
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper
  {
- 	-webkit-display: flex;
+ 	display: -webkit-flex;
 	display: flex;
 	-webkit-flex-direction: row;
 	flex-direction: row;
