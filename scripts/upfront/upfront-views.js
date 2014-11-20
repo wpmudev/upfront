@@ -163,22 +163,20 @@ define([
 						.done(function(response){
 							if(typeof(response.data.featured_image) != 'undefined'){
 
-
 								if(response.data.featured_image != '')
 									me.$el.children('.feature_image_selector').addClass('change_feature_image');
 								else
 									me.$el.children('.feature_image_selector').removeClass('change_feature_image');
 
-
-
 								image = response.data.featured_image;
 								var temp_image = $('<img>').attr('src', response.data.featured_image);
 								temp_image.load(function(){
-									ratio = parseFloat(Math.round(temp_image.width()/temp_image.height()*100)/100);
+									ratio = parseFloat(Math.round(this.height/this.width*100)/100);
 									$bg.css('background-image', "url('" + image + "')");
+									$bg.data('bg-featured-image-ratio', ratio);
 
 									if ( style == 'full' ){
-										var size = me._get_full_size_el($bg, ratio, false);
+										var size = me._get_full_size_el( ( is_layout ? $(window) : $bg ), ratio, false );
 										$bg.data('bg-position-y', size[3]);
 										$bg.data('bg-position-x', size[2]);
 										$bg.css({
@@ -196,7 +194,8 @@ define([
 									}
 
 								});
-
+								if ( is_layout )
+									$bg.css('background-attachment', 'fixed');
 							}
 							else {
 								$bg.css({
@@ -462,11 +461,9 @@ define([
 					}
 
 				}
-				else if ( ( !type || type == 'image' ) && image ) {
+				else if ( type == 'featured' || ( ( !type || type == 'image' ) && image ) ) {
 					var style = this.model.get_breakpoint_property_value('background_style', true),
-						ratio = this.model.get_breakpoint_property_value('background_image_ratio', true),
-						width = $bg.outerWidth(),
-						height = $bg.outerHeight();
+						ratio = ( type == 'featured' ) ? $bg.data('bg-featured-image-ratio') : this.model.get_breakpoint_property_value('background_image_ratio', true);
 					if ( style == 'full' ){
 						var size = this._get_full_size_el( ( is_layout ? $(window) : $bg ), ratio, false );
 						$bg.data('bg-position-y', size[3]);

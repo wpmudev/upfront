@@ -269,6 +269,9 @@ h2, h3 { page-break-after: avoid; }
   max-height: none !important;
 }
 
+.upfront-postpart-featured_image {
+  overflow: hidden;
+}
 .upfront-postpart-featured_image img {
   max-width: 100%;
   min-width: 100%;
