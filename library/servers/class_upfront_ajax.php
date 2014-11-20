@@ -104,6 +104,10 @@ class Upfront_Ajax extends Upfront_Server {
 								$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
 								$layout->set('layout', $layout_ids);
 								$layout->set('current_layout', $layout_ids['specificity']);
+								wp_update_post(array(
+									'ID' => (int)$post->ID,
+									'post_status' => 'publish',
+								));
 							}
 						}
 					}
@@ -131,6 +135,10 @@ class Upfront_Ajax extends Upfront_Server {
 							$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
 							$layout->set('layout', $layout_ids);
 							$layout->set('current_layout', $layout_ids['specificity']);
+							wp_update_post(array(
+								'ID' => (int)$post->ID,
+								'post_status' => 'publish',
+							));
 						}
 					}
 				}
