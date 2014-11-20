@@ -104,10 +104,6 @@ class Upfront_Ajax extends Upfront_Server {
 								$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
 								$layout->set('layout', $layout_ids);
 								$layout->set('current_layout', $layout_ids['specificity']);
-								wp_update_post(array(
-									'ID' => (int)$post->ID,
-									'post_status' => 'publish',
-								));
 							}
 						}
 					}
@@ -135,10 +131,6 @@ class Upfront_Ajax extends Upfront_Server {
 							$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
 							$layout->set('layout', $layout_ids);
 							$layout->set('current_layout', $layout_ids['specificity']);
-							wp_update_post(array(
-								'ID' => (int)$post->ID,
-								'post_status' => 'publish',
-							));
 						}
 					}
 				}
@@ -241,6 +233,12 @@ class Upfront_Ajax extends Upfront_Server {
 			if (!empty($page_id) && get_post_meta($page_id, '_wp_page_template', true)) {
 				// Kill it, as we just saved the layout for it
 				delete_post_meta($page_id, '_wp_page_template');
+			}
+			if (!empty($page_id)) {
+				wp_update_post(array(
+					'ID' => $page_id,
+					'post_status' => 'publish',
+				));
 			}
 		}
 
