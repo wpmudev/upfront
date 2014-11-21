@@ -557,9 +557,9 @@ RedactorPlugins.panelButtons = function () {
             $.each(this.opts.buttonsCustom, function (id, b) {
                 if (b.panel) {
                     var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + '" style="display: none;">'),
-                        $button = self.button.get(id)
+                        $button = self.button.get(id),
+                        addMethod = _.isUndefined(  b.first ) ? "add" : "addFirst"
                         ;
-
                     b.panel = new b.panel({redactor: self, button: $button, panel: $panel});
                     $panel.html(b.panel.$el);
                     $panel.appendTo( self.$toolbar );
@@ -587,7 +587,7 @@ RedactorPlugins.panelButtons = function () {
                         })
                     ;
                     if ($.inArray(id, self.opts.airButtons) === -1) return;
-                    var btn = self.button.add(id, b.title);
+                    var btn = self.button[addMethod](id, b.title);
                     self.button.addCallback( btn, function () {
                         var $button = self.button.get(id),
                             left = $button.position().left;
@@ -1163,51 +1163,94 @@ RedactorPlugins.upfrontColor = function() {
 RedactorPlugins.upfrontFormatting = function() {
 
     return {
+
         init: function () {
             if( !this.$toolbar  ) return;
-            var self = this,
-                buttons = {},
-                tags = {
-                    p: 'P',
-                    h1: 'H1',
-                    h2: 'H2',
-                    h3: 'H3',
-                    h4: 'H4',
-                    h5: 'H5',
-                    h6: 'H6',
-                    pre: '&lt;/&gt;',
-                    blockquote: '"'
-                };
-            $.each(tags, function (id, tag) {
-                buttons[id] = {title: tag, func: self.upfrontFormatting.applyTag};
-            });
-            if ($.inArray("upfrontFormatting", this.opts.airButtons) !== -1) {
-                var button = this.button.addFirst('upfrontFormatting', 'Formatting');
-                this.button.addDropdown(button, buttons);
-            }
-
-            UeditorEvents.on("ueditor:dropdownShow", function () {
-                var tag = $(self.selection.getBlock()).length ? $(self.selection.getBlock())[0].tagName : false;
+            this.opts.buttonsCustom.upfrontFormatting = {
+                title: 'Formatting',
+                panel: this.upfrontFormatting.panel,
+                first: true
+            };
+        },
+        panel: UeditorPanel.extend({
+            selected_class: "",
+            tpl: _.template($(tpl).find('#upfront-formatting').html()),
+            className: "ufront-air-formatting",
+            init: function(){
+                this.custom_classes = ["first-class", "second-class", "third-class"];
+            },
+            events: {
+                "click a" : "select_tag",
+                "change .ufront-formatting-custom-class": "change_custom_class"
+            },
+            render: function (options) {
+                this.$el.html(this.tpl({
+                    custom_classes: this.custom_classes,
+                    selected_class: this.selected_class
+                }));
+            },
+            open: function (e, redactor) {
+                this.redactor = redactor;
+                this.set_previously_selected_tag();
+                this.set_previously_selected_class();
+            },
+            close: function () {
+                if (this.redactor) {
+                    this.redactor.selection.restore();
+                    this.$sel = false;
+                }
+            },
+            set_previously_selected_tag: function(){
+                var tag = $(redactor.selection.getBlock()).length ? $(redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
                     tag = tag.toLowerCase();
-                    $(".redactor-dropdown-box-upfrontFormatting a").removeClass("active");
-                    $(".redactor-dropdown-" + tag).addClass("active");
+                    this.$(".tags-list li a").removeClass("dropact");
+                    this.$("a[data-tag='" + tag + "']").addClass("dropact");
                 }
-            });
-        },
-        applyTag: function (tag) {
-            this.selection.restore(true, true);
-            this.buffer.set();
-            this.$editor.focus();
-            var text_align = $(this.selection.getCurrent()).css("text-align");
+            },
+            set_previously_selected_class: function(){
+                var self = this,
+                    selected_class = $(redactor.selection.getBlock()).length ? $(redactor.selection.getBlock())[0].className : false;
+                if( selected_class ){
+                    this.selected_class = selected_class.split(" ").filter( function(cls){
+                        return self.custom_classes.indexOf( cls ) !== -1;
+                    });
 
-            this.block.format(tag);
+                    if( this.selected_class.length === 1){
 
-            //if (typeof text_align !== "undefined")
-                //this.inline.toggleStyle("text-align", text_align);
+                        this.$("option").map(function(){
+                            var $this = $(this);
+                            if($this.val() === self.selected_class[0]){
+                                $this.attr("selected", true);
+                            }else{
+                                $this.attr("selected", false);
+                            }
+                        });
+                    }
+                }
+            },
+            select_tag: function( e ){
+                e.preventDefault();
+                var tag = $(e.target).data("tag");
+                this.redactor.buffer.set();
+                this.redactor.$editor.focus();
+                this.redactor.block.format(tag);
+                this.redactor.dropdown.hideAll();
+            },
+            change_custom_class: function(e){
+                var self = this,
+                    custom_class = $(e.target).val();
 
-            this.dropdown.hideAll();
-        }
+                this.redactor.buffer.set();
+                this.redactor.$editor.focus();
+                _(this.custom_classes).each( function(custom_class){
+                    self.redactor.block.removeClass( custom_class );
+                });
+                this.redactor.block.setClass(custom_class);
+                this.redactor.dropdown.hideAll();
+            }
+        })
+
     }
 };
 

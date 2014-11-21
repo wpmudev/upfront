@@ -465,7 +465,7 @@ body .redactor-toolbar  li a.re-upfrontLink.redactor-act	{ background-position: 
 
 .redactor-dropdown {
 	position: absolute;
-	top: 28px;
+	top: 29px;
 	left: 0;
 	z-index: 2004;
 	padding: 10px;
@@ -678,3 +678,33 @@ a.ueditor-unlink {
 	color: #97b8da !important;
 }
 
+// upfrontFormatting
+.redactor-dropdown-box-upfrontFormatting{
+  min-width: 0;
+}
+.ufront-air-formatting{
+  width: 152px;
+}
+.ufront-air-formatting ul{
+  height: 80px;
+}
+.ufront-air-formatting li{
+  display: inline-block;
+  margin: 0;
+  height: 38px;
+  width:38px;
+}
+.ufront-air-formatting li a{
+  color: #97b8da !important;
+  font-size: 17px;
+  width: 100%;
+  height: 100%;
+  line-height: 38px;
+  text-indent: 0;
+  text-align: center;
+}
+.ufront-formatting-custom-class{
+  width: 145px;
+  margin: 0 auto;
+  display: block;
+}
