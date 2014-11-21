@@ -298,8 +298,6 @@ var ImageInsert = UeditorInsert.extend({
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	resizable: false,
 	defaultData: {
-		captionPosition: 'bottom',
-		caption: 'Type your caption here ...',
 		imageFull: {src:'', width:100, height: 100},
 		imageThumb: {src:'', width:100, height: 100},
 		linkType: 'do_nothing',
@@ -381,27 +379,22 @@ var ImageInsert = UeditorInsert.extend({
         padding_right = padding_right ? parseInt(padding_right) : 0;
 
         if ( style_variant.group.float == 'left' && padding_left > 0 ){
-            //$group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size);
             data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
             data.style.group.marginRight = 0;
         }
         else if ( style_variant.group.float == 'right' && padding_right > 0 ){
             data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
             data.style.group.marginLeft = 0;
-            //$group.css('margin-right', ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size);
         }
         else if ( style_variant.group.float == 'none' && padding_left > 0 ){
             data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
             data.style.group.marginRight = 0;
-            //$group.css('margin-left', ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size);
         }
 
 
 		this.$el
 			.html(this.tpl(data))
 		;
-
-
 
 		this.controls.render();
 		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
@@ -422,11 +415,12 @@ var ImageInsert = UeditorInsert.extend({
 		if( !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 			this.$('.wp-caption-text')
                 .attr('contenteditable', true)
-				.off('keyup')
+				//.off('keyup')
 				.on('keyup', function(e){
+                    e.stopPropagation();
 					self.data.set('caption', this.innerHTML, {silent: true});
 					//Update event makes InsertManager update its data without rendering.
-                    self.data.trigger('update');
+                    //self.data.trigger('update');
 				})
 			;
 	},
@@ -688,7 +682,7 @@ var ImageInsert = UeditorInsert.extend({
 
 		}
 		insert.render();
-		//wrapper.replaceWith(insert.$el);
+		wrapper.replaceWith(insert.$el);
 		return insert;
 	},
 
