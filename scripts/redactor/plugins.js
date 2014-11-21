@@ -340,7 +340,6 @@ RedactorPlugins.stateLists = function() {
 
     return {
         init: function () {
-            if( !this.$toolbar  ) return;
             var self = this;
             this.opts.stateButtons.stateLists = {
                 title: 'List style',
@@ -489,7 +488,6 @@ RedactorPlugins.upfrontSink = {
 RedactorPlugins.upfrontPlaceholder = function() {
     return {
         init: function () {
-            if( !this.$toolbar  ) return;
             var me = this;
             var placeholder = this.placeholderText;//opts.placeholder;
             if (this.$element.attr('placeholder')) placeholder = this.$element.attr('placeholder');
@@ -632,7 +630,6 @@ RedactorPlugins.upfrontIcons = function() {
     return {
         $sel: false,
         init: function () {
-            if( !this.$toolbar  ) return;
             this.opts.buttonsCustom.upfrontIcons = {
                 title: 'Icons',
                 panel: this.upfrontIcons.panel
@@ -730,7 +727,6 @@ RedactorPlugins.upfrontLink = function() {
 
     return {
         init: function () {
-            if( !this.$toolbar  ) return;
             this.opts.buttonsCustom.upfrontLink = {
                 title: 'Link',
                 panel: this.upfrontLink.panel
@@ -882,7 +878,6 @@ RedactorPlugins.upfrontColor = function() {
 
     return {
         init: function () {
-            if( !this.$toolbar  ) return;
             this.opts.buttonsCustom.upfrontColor = {
                 title: 'Color',
                 panel: this.upfrontColor.panel
@@ -1165,7 +1160,7 @@ RedactorPlugins.upfrontFormatting = function() {
     return {
 
         init: function () {
-            if( !this.$toolbar  ) return;
+
             this.opts.buttonsCustom.upfrontFormatting = {
                 title: 'Formatting',
                 panel: this.upfrontFormatting.panel,
@@ -1258,7 +1253,7 @@ RedactorPlugins.blockquote = function() {
 
     return {
         init: function () {
-            if( !this.$toolbar  ) return;
+
             var me = this;
             this.opts.stateButtons.blockquote = {
                 title: 'Set a quote',
