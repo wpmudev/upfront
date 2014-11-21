@@ -895,13 +895,18 @@ var ImageStylesView = Backbone.View.extend({
 
     },
     events: {
-        'change input[type=radio]': 'update_data'
+        'change input[type=radio]': 'update_data',
+        'click input[type=radio]': 'on_click'
     },
     render: function(){
         this.$el.html(this.tpl( { data: this.data.toJSON() } ));
         return this;
     },
+    on_click: function(e){
+        e.stopPropagation();
+    },
     update_data: function(e){
+        e.stopPropagation();
         this.variant_id = $(e.target).val();
         this._style = Upfront.Content.ImageVariants.findWhere({vid : this.variant_id});
     }
