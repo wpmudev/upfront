@@ -360,6 +360,7 @@ var ImageInsert = UeditorInsert.extend({
         
         if( !style_variant ) return;
 
+        data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
 		data.image = this.get_proper_image();
 
 		this.apply_classes( data.style.group );
@@ -420,65 +421,14 @@ var ImageInsert = UeditorInsert.extend({
 		if (!data) return false;
 		if( !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 			this.$('.wp-caption-text')
-                //.on( "click", function(e){
-                //    e.preventDefault();
-                //    e.stopPropagation();
-                //    var ueditor = $(this).data("ueditor");
-                //    if( ueditor.active === false ){
-                //        ueditor.start();
-                //        self.on_redactor_start();
-                //    }
-                //} )
-				//.attr('contenteditable', true)
+                .attr('contenteditable', true)
 				.off('keyup')
 				.on('keyup', function(e){
 					self.data.set('caption', this.innerHTML, {silent: true});
 					//Update event makes InsertManager update its data without rendering.
                     self.data.trigger('update');
 				})
-				.ueditor({
-					linebreaks: true,
-					autostart: true,
-					pastePlainText: true,
-                    focus: false,
-					buttons: ['bold', 'italic', 'upfrontLink', 'stateAlign'],
-                    inserts: false
-				})
 			;
-        this.ueditor = this.$('.wp-caption-text').data('ueditor');
-        this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-            if(redactor != self.ueditor.redactor)
-                return;
-
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
-
-            if(!parentRedactor)
-                return;
-
-            parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
-            parentRedactor.$textarea.on('keydown.redactor-textarea');
-
-            parentUeditor.stop();
-        });
-
-        this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-            if(redactor != self.ueditor.redactor)
-                return;
-
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
-
-            if(!parentRedactor)
-                return;
-
-            parentRedactor.build.setEvents();
-
-            var parentUeditor = self.$el.closest('.ueditable').data('ueditor');
-            parentUeditor.start();
-        });
 	},
     on_redactor_start: function(){
         var self = this;
@@ -738,7 +688,7 @@ var ImageInsert = UeditorInsert.extend({
 
 		}
 		insert.render();
-		wrapper.replaceWith(insert.$el);
+		//wrapper.replaceWith(insert.$el);
 		return insert;
 	},
 

@@ -92,6 +92,7 @@ RedactorPlugins.stateButtons = function() {
 
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             this.$air = this.$toolbar.closest(".redactor_air");
             this.stateButtons.addStateButtons();
             this.stateButtons.startStateObserver();
@@ -210,6 +211,7 @@ RedactorPlugins.stateButtons = function() {
 RedactorPlugins.stateAlignment = function() {
     return {
         init: function(){
+            if( !this.$toolbar  ) return;
             var self = this;
             this.opts.stateButtons.stateAlign = {
                 title: 'Text alignment',
@@ -271,6 +273,7 @@ RedactorPlugins.stateAlignment = function() {
 
 RedactorPlugins.stateAlignmentCTA = {
     beforeInit: function(){
+        if( !this.$toolbar  ) return;
         var self = this;
         this.opts.stateButtons.stateAlignCTA = {
             title: 'Text alignment',
@@ -337,6 +340,7 @@ RedactorPlugins.stateLists = function() {
 
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             var self = this;
             this.opts.stateButtons.stateLists = {
                 title: 'List style',
@@ -393,6 +397,7 @@ RedactorPlugins.stateLists = function() {
 RedactorPlugins.upfrontImages = {
 
     beforeInit: function () {
+        if( !this.$toolbar  ) return;
         var redactor = this;
         redactor.events.on("ueditor:stop", function () {
             ImagesHelper.Image.unbind_events();
@@ -430,6 +435,7 @@ RedactorPlugins.upfrontSink = {
         };
     },
     init: function(){
+        if( !this.$toolbar  ) return;
         var me = this,
             $button = this.$toolbar.find('.redactor_btn_upfrontSink').parent().addClass('upfront-sink-button'),
             sinkElements = this.$toolbar.find('.upfront-sink-button ~ li'),
@@ -483,6 +489,7 @@ RedactorPlugins.upfrontSink = {
 RedactorPlugins.upfrontPlaceholder = function() {
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             var me = this;
             var placeholder = this.placeholderText;//opts.placeholder;
             if (this.$element.attr('placeholder')) placeholder = this.$element.attr('placeholder');
@@ -544,6 +551,7 @@ RedactorPlugins.panelButtons = function () {
 
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             var self = this;
 
             $.each(this.opts.buttonsCustom, function (id, b) {
@@ -624,6 +632,7 @@ RedactorPlugins.upfrontIcons = function() {
     return {
         $sel: false,
         init: function () {
+            if( !this.$toolbar  ) return;
             this.opts.buttonsCustom.upfrontIcons = {
                 title: 'Icons',
                 panel: this.upfrontIcons.panel
@@ -721,6 +730,7 @@ RedactorPlugins.upfrontLink = function() {
 
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             this.opts.buttonsCustom.upfrontLink = {
                 title: 'Link',
                 panel: this.upfrontLink.panel
@@ -872,6 +882,7 @@ RedactorPlugins.upfrontColor = function() {
 
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             this.opts.buttonsCustom.upfrontColor = {
                 title: 'Color',
                 panel: this.upfrontColor.panel
@@ -1153,6 +1164,7 @@ RedactorPlugins.upfrontFormatting = function() {
 
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             var self = this,
                 buttons = {},
                 tags = {
@@ -1203,6 +1215,7 @@ RedactorPlugins.blockquote = function() {
 
     return {
         init: function () {
+            if( !this.$toolbar  ) return;
             var me = this;
             this.opts.stateButtons.blockquote = {
                 title: 'Set a quote',

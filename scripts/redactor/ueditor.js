@@ -53,7 +53,7 @@ var hackRedactor = function(){
 
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
-		if (!this.opts.air) return;
+		if (!this.opts.air || !this.$toolbar) return;
 
 		var self = this,
             hideHandler = $.proxy(function(doc) {
@@ -92,9 +92,9 @@ var hackRedactor = function(){
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {
 
-        if( $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") ) return;
+        if( $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "true" )) return;
 
-        if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length )) return;
+        if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length ) || !this.$toolbar) return;
 
 		if(this.$element.closest('li').hasClass('menu-item')) {
     		var menu_item = this.$element.closest('li.menu-item').data('backboneview');
