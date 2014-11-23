@@ -293,11 +293,13 @@ var UeditorInsert = Backbone.View.extend({
 
 
 var ImageInsert = UeditorInsert.extend({
+    caption_active: false,
 	type: 'image',
 	className: 'ueditor-insert upfront-inserted_image-wrapper',
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	resizable: false,
 	defaultData: {
+        caption: "Default caption",
 		imageFull: {src:'', width:100, height: 100},
 		imageThumb: {src:'', width:100, height: 100},
 		linkType: 'do_nothing',
@@ -413,16 +415,61 @@ var ImageInsert = UeditorInsert.extend({
 		;
 		if (!data) return false;
 		if( !data.caption.show || this.$('.wp-caption-text').length === 0) return;
-			this.$('.wp-caption-text')
-                .attr('contenteditable', true)
-				//.off('keyup')
-				.on('keyup', function(e){
-                    e.stopPropagation();
-					self.data.set('caption', this.innerHTML, {silent: true});
-					//Update event makes InsertManager update its data without rendering.
-                    //self.data.trigger('update');
-				})
-			;
+
+        this.$('.wp-caption-text')
+            //.attr('contenteditable', true)
+            .off('keyup')
+            .on('keyup', function(e){
+                self.data.set('caption', this.innerHTML, {silent: true});
+                //Update event makes InsertManager update its data without rendering.
+                self.data.trigger('update');
+            })
+            .ueditor({
+                linebreaks: true,
+                autostart: true,
+                pastePlainText: true,
+                buttons: []
+            })
+        ;
+        this.ueditor = this.$('.wp-caption-text').data('ueditor');
+        this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
+            if(redactor != self.ueditor.redactor || self.caption_active === true)
+                return;
+
+            self.caption_active = true;
+            
+            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                ;
+
+            if(!parentRedactor)
+                return;
+
+            parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
+            parentRedactor.$textarea.on('keydown.redactor-textarea');
+
+            //parentUeditor.stop();
+        });
+
+        this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
+            if(redactor != self.ueditor.redactor)
+                return;
+
+            self.caption_active = false;
+
+            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+                parentRedactor = parentUeditor ? parentUeditor.redactor : false
+                ;
+
+            if(!parentRedactor)
+                return;
+
+            parentRedactor.build.setEvents();
+            //parentRedactor.buildBindKeyboard();
+
+            //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
+            //parentUeditor.start();
+        });
 	},
     on_redactor_start: function(){
         var self = this;
