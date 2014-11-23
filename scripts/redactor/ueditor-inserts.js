@@ -437,7 +437,7 @@ var ImageInsert = UeditorInsert.extend({
                 return;
 
             self.caption_active = true;
-            
+
             var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
                 parentRedactor = parentUeditor ? parentUeditor.redactor : false
                 ;
@@ -452,7 +452,7 @@ var ImageInsert = UeditorInsert.extend({
         });
 
         this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-            if(redactor != self.ueditor.redactor)
+            if(redactor != self.ueditor.redactor ||  self.caption_active === false)
                 return;
 
             self.caption_active = false;
