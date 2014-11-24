@@ -695,13 +695,35 @@ a.ueditor-unlink {
   width:38px;
 }
 .ufront-air-formatting li a{
-  color: #97b8da !important;
-  font-size: 17px;
   width: 100%;
   height: 100%;
   line-height: 38px;
   text-indent: 0;
   text-align: center;
+}
+.ufront-air-formatting li a.tag-list-tag-h1{
+  background-position: -512px -291px;
+}
+.ufront-air-formatting li a.tag-list-tag-h2{
+  background-position: -554px -291px;
+}
+.ufront-air-formatting li a.tag-list-tag-h3{
+  background-position: -594px -291px;
+}
+.ufront-air-formatting li a.tag-list-tag-h4{
+  background-position: -636px -291px;
+}
+.ufront-air-formatting li a.tag-list-tag-h5{
+  background-position: -512px -333px;
+}
+.ufront-air-formatting li a.tag-list-tag-h6{
+  background-position: -554px -333px;
+}
+.ufront-air-formatting li a.tag-list-tag-p{
+  background-position: -594px -333px;
+}
+.ufront-air-formatting li a.tag-list-tag-pre{
+  background-position: -636px -333px;
 }
 .ufront-formatting-custom-class{
   width: 145px;

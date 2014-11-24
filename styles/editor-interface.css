@@ -10650,15 +10650,45 @@ a.ueditor-unlink {
 
 /* line 697, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
 .ufront-air-formatting li a {
-  color: #97b8da !important;
-  font-size: 17px;
   width: 100%;
   height: 100%;
   line-height: 38px;
   text-indent: 0;
   text-align: center; }
 
-/* line 706, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+/* line 704, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-h1 {
+  background-position: -512px -291px; }
+
+/* line 707, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-h2 {
+  background-position: -554px -291px; }
+
+/* line 710, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-h3 {
+  background-position: -594px -291px; }
+
+/* line 713, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-h4 {
+  background-position: -636px -291px; }
+
+/* line 716, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-h5 {
+  background-position: -512px -333px; }
+
+/* line 719, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-h6 {
+  background-position: -554px -333px; }
+
+/* line 722, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-p {
+  background-position: -594px -333px; }
+
+/* line 725, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
+.ufront-air-formatting li a.tag-list-tag-pre {
+  background-position: -636px -333px; }
+
+/* line 728, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/redactor */
 .ufront-formatting-custom-class {
   width: 145px;
   margin: 0 auto;
