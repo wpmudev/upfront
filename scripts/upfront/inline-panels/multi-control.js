@@ -11,6 +11,9 @@ define([
 		ItemMulti.prototype.render.call(this, arguments);
 	},
 	clicked: function(e){
+		var $subitem = this.$el.children('.upfront-inline-panel-subitem');
+		if ( $(e.target).closest($subitem).length > 0 )
+			return;
 		this.trigger('click', e);
 		this.toggle_subitem();
 	},
