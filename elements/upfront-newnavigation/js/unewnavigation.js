@@ -1737,7 +1737,7 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 	"Model": UnewnavigationModel,
 	"View": UnewnavigationView,
 	"Element": UnewnavigationElement,
-		"Settings": NavigationSettings
+	"Settings": NavigationSettings
 });
 Upfront.Models.UnewnavigationModel = UnewnavigationModel;
 Upfront.Views.UnewnavigationView = UnewnavigationView;

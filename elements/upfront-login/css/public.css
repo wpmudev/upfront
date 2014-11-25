@@ -1,8 +1,8 @@
 /* GENERAL FORM STYLE 
 	 ================== */
 .upfront_login-form form input {
-	height:34px;
-	border:2px solid #c2dbf2;
+	height:40px;
+	border:3px solid #ceddea;
 	background-color: #fff;
 	padding:0 10px;
 }
@@ -26,7 +26,7 @@
 	position: relative;
 	top: 3px;
 }
-.upfront_login-form form label, .upfront_login-form p { color:#6486a6; }
+/*.upfront_login-form form label, .upfront_login-form p { color:#6486a6; }*/
 .upfront_login-form p { margin-bottom: 0; text-align: center; }
 .upfront_login-form p a { color:#39a678; }
 
@@ -34,32 +34,36 @@
 /* HOVER FORM 
 	 ========== */
 
-.upfront_login.upfront_login-hover { position: relative; }
-.upfront_login.upfront_login-hover .upfront_login-form-wrapper{
+.upfront_login.upfront_login-hover,
+.upfront_login.upfront_login-click { position: relative; }
+.upfront_login.upfront_login-hover .upfront_login-form-wrapper,
+.upfront_login.upfront_login-click .upfront_login-form-wrapper
+ {
 	 display: none; 
 }
-.upfront_login.upfront_login-hover .upfront_login-form-wrapper { 
+.upfront_login.upfront_login-hover .upfront_login-form-wrapper,
+.upfront_login.upfront_login-click .upfront_login-form-wrapper { 
 	position: absolute;
 	z-index: 1;
 	top:15px;
 	width:210px;
 	left:-50px;
 }
-.upfront_login.upfront_login-hover .upfront_login-form-wrapper {
-	display: none;
-}
-.upfront_login.upfront_login-hover:hover .upfront_login-form-wrapper{
+
+.upfront_login.upfront_login-hover:hover .upfront_login-form-wrapper,
+.upfront_login.upfront_login-click.active .upfront_login-form-wrapper {
 	display: block;
 }
 
 /* login panel styling */
-.upfront_login.upfront_login-hover .upfront_login-form {
+.upfront_login.upfront_login-hover .upfront_login-form,
+.upfront_login.upfront_login-click .upfront_login-form {
 	position: relative;
 	display: block;
 	background-color: #fff;
 	border-radius: 3px;
 	cursor: default;
-	border:2px solid #aec4d8;
+	border:2px solid #527caa;
 	top:20px;
 	left:0;
 	padding:15px;
@@ -67,7 +71,8 @@
 }
 
 /* triangular tooltip */
-.upfront_login.upfront_login-hover:hover .upfront_login-form:before {
+.upfront_login.upfront_login-hover:hover .upfront_login-form:before,
+.upfront_login.upfront_login-click.active .upfront_login-form:before {
 	content:'';
 	display:inline-block;
 	width:10px;
@@ -75,19 +80,23 @@
 	background-color:#fff;
 	transform:rotate(45deg);
 	-webkit-transform:rotate(45deg);
-	border-top:2px solid #aec4d8;
-	border-left:2px solid #aec4d8;
+	border-top:2px solid #527caa;
+	border-left:2px solid #527caa;
 	position:absolute;
 	top:-7px;
 	left:25%;
 }
-.upfront_login.upfront_login-hover .upfront_login-form label { text-align: left; display: block; padding-left: 15px; }
+.upfront_login.upfront_login-hover .upfront_login-form label,
+.upfront_login.upfront_login-click .upfront_login-form label
+ { text-align: left; display: block;}
 
-.upfront_login.upfront_login-hover:hover .upfront_login-trigger {
+.upfront_login.upfront_login-hover:hover .upfront_login-trigger,
+.upfront_login.upfront_login-click.active .upfront_login-trigger {
 	display: inline-block;
 }
 
 /* Click */
+/*
 .upfront_login.upfront_login-click .upfront_login-form form input[type="submit"]{
 	width: 70%;
 }
@@ -106,8 +115,8 @@
 	bottom: 0; right: 0;
 	z-index: 9;
 	padding-top: 5em;
-}
-.upfront_login.upfront_login-click.active .upfront_login-form {
+}*/
+/*.upfront_login.upfront_login-click.active .upfront_login-form {
 	display: block;
 	background: #fff;
 	z-index: 10;
@@ -115,13 +124,14 @@
 	max-width: 350px;
 	margin: 0 auto;
 	padding: 2em;
-}
-.upfront_login.upfront_login-click.active .upfront_login-trigger {
+}*/
+/*.upfront_login.upfront_login-click.active .upfront_login-trigger {
 	display: none;
-}
+}*/
 
 /* css animation */
-.upfront_login.upfront_login-hover .upfront_login-form{-webkit-animation-fill-mode:both;-moz-animation-fill-mode:both;-ms-animation-fill-mode:both;-o-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-duration:0.5s;-moz-animation-duration:0.5s;-ms-animation-duration:0.5s;-o-animation-duration:0.5s;animation-duration:0.5s;}
+.upfront_login.upfront_login-hover .upfront_login-form,
+.upfront_login.upfront_login-click .upfront_login-form {-webkit-animation-fill-mode:both;-moz-animation-fill-mode:both;-ms-animation-fill-mode:both;-o-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-duration:0.5s;-moz-animation-duration:0.5s;-ms-animation-duration:0.5s;-o-animation-duration:0.5s;animation-duration:0.5s;}
 @-webkit-keyframes fadeInDown {
 	0% {
 		opacity: 0;
@@ -175,3 +185,47 @@
 	animation-name: fadeInDown;
 }
 
+
+
+
+
+
+
+
+div.upfront-output-upfront-login_element form#loginform input:not([type=checkbox]) {
+  width: 100%;
+  padding:0 10px;
+  box-sizing: border-box;
+}
+
+
+div.upfront-output-upfront-login_element form#loginform p {
+  text-align:left;
+  line-height: 1.2;
+  margin-top:1em
+}
+
+div.upfront-output-upfront-login_element form#loginform label {
+	margin-bottom:0.3em;
+	display: inline-block;
+	font-weight: 100;
+}
+input#rememberme {
+  width:18px;
+  height:18px;  
+  vertical-align:middle;
+  margin-right:10px
+}
+input#rememberme:before {
+  content:'';
+  display: block;
+  width:100%;
+  height:100%;
+  border:3px solid #CEDDEA;
+  background-color:#fff;
+}
+input#rememberme:checked:before {
+	background-position: -733px -138px;
+	background-image: url('../../../img/uf-ui-sprite.svg');
+	background-repeat: no-repeat;
+}

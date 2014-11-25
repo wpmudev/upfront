@@ -51,17 +51,20 @@ define([
 				var me = this,
 					options = Upfront.Util.model_to_json(this.model)
 				;
+				
 				Upfront.Util.post({
 					"action": "upfront-login_element-get_markup",
 					properties: options.properties
 				}).done(function (response) {
 					me.markup = response.data;
+
 					Upfront.Views.ObjectView.prototype.render.call(me);
 				});
 			}
 			Upfront.Views.ObjectView.prototype.render.call(this);
 		},
 		get_content_markup: function () {
+			
 			return !!this.markup ? this.markup : l10n.hold_on;
 		}
 	});
@@ -138,6 +141,7 @@ define([
 
 	var LoginSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		initialize: function (opts) {
+			this.has_tabs = false;
 			this.options = opts;
 			var panel = new LoginSettings_Panel({model: this.model});
 			this.panels = _([
@@ -159,7 +163,49 @@ define([
 				this.settings = _([
 					appearance,
 					behavior,
-					trigger
+					trigger,
+					new Upfront.Views.Editor.Settings.Item({
+						model: this.model,
+						title: 'Logged in Users see',
+						fields: [
+							new Upfront.Views.Editor.Field.Checkboxes({
+								//className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios",
+								model: this.model,
+								property: 'logged_in_preview',
+								label: "",
+								values: [
+									{ label: "Preview", value: 'yes' }
+								],
+								change: function() {
+									this.property.set({'value': this.get_value()}, {'silent': false});
+								}
+							}),
+							new Upfront.Views.Editor.Field.Radios({
+								className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios",
+								model: this.model,
+								property: "logout_style",
+								
+								values: [
+									{label: 'Nothing', value: "nothing"},
+									{label: 'Log Out Link', value: "link"}
+								],
+								change: function() {
+									this.property.set({'value': this.get_value()}, {'silent': false});
+								}
+							}),
+							new Upfront.Views.Editor.Field.Text({
+								className: "upfront_login-logout_text upfront-field-wrap upfront-field-wrap-text",
+								model: this.model,
+								property: 'logout_link',
+								label: 'Log Out Link:',
+								change: function() {
+									this.property.set({'value': this.get_value()}, {'silent': false});
+								}
+							}),
+							
+						]
+
+					})
 				]);
 				appearance.on("login:appearance:changed", behavior.update, behavior);
 				appearance.on("login:appearance:changed", trigger.update, trigger);
@@ -182,6 +228,7 @@ define([
 			}
 		});
 			var LoginSettings_Field_DisplayBehavior = Upfront.Views.Editor.Settings.Item.extend({
+				className: 'display_behavior',
 				events: function () {
 					return _.extend({},
 						Upfront.Views.Editor.Settings.Item.prototype.events,
@@ -210,9 +257,10 @@ define([
 						.find(".upfront-settings-item-content").addClass("clearfix").end()
 						.hide()
 					;
+				
 				},
 				get_title: function () {
-					return l10n.behavior;
+					return "Show Drop-Down Form on:";
 				},
 				register_change: function () {
 					this.fields.each(function (field) {
@@ -229,25 +277,33 @@ define([
 				}
 			});
 			var LoginSettings_Field_DisplayAppearance = Login_SettingsItem_ComplexItem.extend({
-				events: function () {
+				/*events: function () {
 					return _.extend({},
 						Upfront.Views.Editor.Settings.Item.prototype.events,
-						{"click": "register_change"}
+						{"change": "register_change"}
 					);
-				},
+				}*/
 				initialize: function () {
+					var me = this;
 					var styles = [
 						{label: l10n.on_page, value: "form"},
 						{label: l10n.dropdown, value: "dropdown"},
-						{label: l10n.in_lightbox, value: "popup"},
+						/*{label: l10n.in_lightbox, value: "popup"},*/
 					];
 					this.fields = _([
 						new Upfront.Views.Editor.Field.Radios({
 							model: this.model,
 							property: "style",
-							layout: "vertical",
-							values: styles
-						})
+							
+							values: styles,
+							change: function() { me.register_change(me) }
+						}),
+						new Upfront.Views.Editor.Field.Text({
+							model: this.model,
+							property: 'label_text',
+							label: 'Log In Button:',
+							change: function() { me.register_change(me) }
+						}),
 					]);
 				},
 				render: function () {
@@ -258,6 +314,7 @@ define([
 					return l10n.appearance;
 				},
 				register_change: function () {
+					
 					this.fields.each(function (field) {
 						field.property.set({'value': field.get_value()}, {'silent': false});
 					});
@@ -265,30 +322,23 @@ define([
 				}
 			});
 			var LoginSettings_Field_DisplayTrigger = Login_SettingsItem_ComplexItem.extend({
+				className: 'upfront_login-item-display_trigger',
 				initialize: function () {
+					var me = this;
 					this.fields = _([
-						new Login_Fields_Complex_BooleanField({
+						new Upfront.Views.Editor.Field.Text({
 							model: this.model,
-							additional_class: "upfront_login-appearance-icon",
-							boolean_field: {
-								property: 'appearance',
-								values: [{label: '', value: 'icon'}]
-							},
-							subfield: new Login_Fields_FieldAppearance_Icon_Image({model: this.model, property: 'label_image'})
-						}),
-						new Login_Fields_Complex_BooleanField({
-							model: this.model,
-							additional_class: "upfront_login-appearance-label",
-							boolean_field: {
-								property: 'appearance',
-								values: [{label: '', value: 'label'}]
-							},
-							subfield: new Upfront.Views.Editor.Field.Text({
-								model: this.model,
-								property: 'label_text'
-							})
+							property: 'trigger_text',
+							label: 'Log In Trigger:',
+							change: function() { me.register_change(me) }
 						}),
 					]);
+				},
+				register_change: function () {
+					this.fields.each(function (field) {
+						field.property.set({'value': field.get_value()}, {'silent': false});
+					});
+					//this.trigger("login:behavior:changed");
 				},
 				update: function () {
 					var style = this.model.get_property_value_by_name("style");
@@ -303,9 +353,10 @@ define([
 						.find(".upfront-settings-item-content").addClass("clearfix").end()
 						.hide()
 					;
+					this.$el.find('.upfront-settings-item-title').remove();
 				},
 				get_title: function () {
-					return l10n.trigger;
+					return "";
 				}
 			});
 

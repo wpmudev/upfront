@@ -8,12 +8,16 @@ class Upfront_LoginView extends Upfront_Object {
 			'behavior' => 'click',
 			'appearance' => 'icon',
 			'label_image' => __('Login', 'upfront'),
-
+			'label_text' => __('log in', 'upfront'),
+			'logout_link' => __('log out', 'upfront'),
+			'trigger_text' => __('Wassup', 'upfront'),
+			'logged_in_preview' => '',
 			'type' => "LoginModel",
 			'view_class' => "LoginView",
 			"class" => "c24 upfront-login_element-object",
 			'has_settings' => 1,
-			'id_slug' => 'upfront-login_element'
+			'id_slug' => 'upfront-login_element',
+			'logout_style' => 'link',
 		);
 	}
 
@@ -25,14 +29,26 @@ class Upfront_LoginView extends Upfront_Object {
 		// They'll get concatenated and cached later on, we're done with this. Get the actual markup.
 
 		$properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
+
+		
 		return is_user_logged_in ()
-			? self::fake_upfront_init()
+			? self::fake_upfront_init(self::_normalize_properties($properties))
 			: self::get_element_markup($properties)
 		;
 	}
 
-	public static function fake_upfront_init () {
-		return '';
+	public static function fake_upfront_init ($properties = array()) {
+
+		$show_logout_link = !empty($properties['logout_style'])?$properties['logout_style']:false;
+
+		if($show_logout_link == 'link') {
+			$logout_link = !empty($properties['logout_link'])?$properties['logout_link']:__('log out', 'upfront');
+			return '<a href="'.wp_logout_url().'">'.$logout_link.'</a>';
+		} 
+		else {
+			return " ";
+		}
+		
 		/*
 		return !current_user_can('manage_options')
 			? ''
@@ -44,15 +60,26 @@ class Upfront_LoginView extends Upfront_Object {
 	public static function get_element_markup ($properties=array()) {
 		$properties = self::_normalize_properties($properties);
 
+
+		$logged_in_property = is_array($properties['logged_in_preview'])?$properties['logged_in_preview'][0]:$properties['logged_in_preview'];
+
+		$logged_in_preview =!empty($logged_in_property) ? $logged_in_property :false;
+
+		if($logged_in_preview == 'yes') {
+			return self::fake_upfront_init($properties);
+		}
+		
 		$block = !empty($properties['style']) && 'form' == $properties['style'];
 		$click = !$block && !empty($properties['behavior']) && "click" == $properties['behavior'];
 		$hover = !$block && !empty($properties['behavior']) && "hover" == $properties['behavior'];
-
+		//$log_in_label = !empty($properties['login_button'])? $properties['login_button']:
 		$icon = !empty($properties['appearance']) && "icon" == $properties['appearance'];
 		$label = !empty($properties['label_text'])
 			? $properties['label_text']
-			: (!empty($properties['label_image']) && 'icon' == $properties['appearance'] ? $properties['label_image'] : '')
-		;
+			: 'Log in';//(!empty($properties['label_image']) && 'icon' == $properties['appearance'] ? $properties['label_image'] : '')	;
+
+		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text']:"$label";
+
 		if ('icon' == $label) $label = '';
 		$class = array();
 
@@ -63,8 +90,8 @@ class Upfront_LoginView extends Upfront_Object {
 		$trigger = '';
 		if (!$block) {
 			$icon_class = $icon ? 'upfront_login-trigger-icon' : '';
-			$trigger = '<div class="upfront_login-trigger ' . $icon_class . '"><span class="upfront_login-label">' .
-				($icon ? '<img src="' . upfront_element_url('/img/icon.png', dirname(__FILE__)) . '" />' : '') . ($label ? '&nbsp;' . esc_html($label) : '') .
+			$trigger = '<div class="upfront_login-trigger ' . $icon_class . '"><span class="upfront_login-label">' . esc_html($trigger_label);
+				
 			'</span></div>';
 		}
 
@@ -74,15 +101,16 @@ class Upfront_LoginView extends Upfront_Object {
 				wp_login_form(array(
 					'echo' => false,
 					'remember' => true,
+					'label_log_in' => $label,
 				)) .
-			'<p class="login-lostpassword">Lost Password? <a class="login-lostpassword-link" href="' .
+			'<p class="login-lostpassword"><small>Lost Password? <br /> <a class="login-lostpassword-link" href="' .
 				wp_lostpassword_url( /*$redirect*/ ) .
-			'">' . self::_get_l10n('click_here') . '</a></p></div>' .
+			'">' . self::_get_l10n('click_here') . '</a></small></p></div>' .
 		'</div></div>';
 	}
 
 	private static function _normalize_properties ($raw_properties) {
-		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'label_image');
+		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image');
 		$properties = array();
 		foreach ($raw_properties as $prop) {
 			if (in_array($prop['name'], $to_map)) $properties[$prop['name']] = $prop['value'];
@@ -99,7 +127,7 @@ class Upfront_LoginView extends Upfront_Object {
 	private static function _get_l10n ($key=false) {
 		$l10n = array(
 			'element_name' => __('Login', 'upfront'),
-			'click_here' => __('Click here', 'upfront'),
+			'click_here' => __('Click here to reset it', 'upfront'),
 			'css' => array(
 				'containers' => __('Field containers', 'upfront'),
 				'containers_info' => __('Wrapper layer for every field', 'upfront'),
