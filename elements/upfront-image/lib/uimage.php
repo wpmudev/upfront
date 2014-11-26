@@ -330,7 +330,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		// Try to find images from slider in database.
 		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) {
 			// Convert image theme paths to image ids
-			$image_ids = [];
+			$image_ids = array();
 			foreach ($ids as $id) {
 				// Leave integers alone!
 				if (is_numeric($id)) {
