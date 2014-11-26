@@ -1,0 +1,202 @@
+.ueditor-box-wrapper{
+  position: fixed;
+  top: 40px;
+  display: block;
+  width: 280px;
+  background: #f2f9ff;
+  min-height: 292px;
+  border: 1px solid #b8d0e6;
+  z-index: 99;
+  right:0;
+}
+
+.ueditor-box-title{
+  height: 40px;
+  text-align: left;
+  color: #3d5266;
+  padding-left: 10px;
+  border-bottom: 1px solid #b8d0e6;
+  line-height: 40px;
+  font-size: 17px;
+  font-weight: bold;
+  background: #e5f3ff;
+  position: relative;
+  cursor: pointer;
+}
+
+.ueditor-box-section .ueditor-box-title:after{
+  border-right: none;
+  border-left: 4px solid #85aacc;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  top: 17px;
+  right: 14px;
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 5;
+  position: absolute;
+}
+
+.ueditor-box-section.active .ueditor-box-title:after{
+  border-right: none;
+  border-top: 4px solid #85aacc;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  top: 17px;
+  right: 14px;
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 5;
+  position: absolute;
+}
+.ueditor-box-content-wrap{
+//  display: none;
+}
+.ueditor-box-content-wrap:first-child{
+  display: block;
+}
+.ueditor-box-content{
+  min-height: 160px;
+  padding: 15px 0;
+}
+.screen-reader-text {
+  position: absolute;
+  margin: -1px;
+  padding: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+.ueditor-togglable,
+.ueditor-togglable-child{
+  display: none;
+  padding-left: 12px;
+}
+.misc-pub-section{
+  line-height: 40px;
+  padding: 0 15px;
+}
+.ueditor-previous-data{
+  color:#3d5266;
+  font-size: 15px;
+  font-weight: bold;
+}
+.ueditor-previous-data-small{
+  font-size: 13px;
+  font-weight: normal;
+}
+.ueditor-box-wrapper label{
+  color:#3d5276;
+  font-size: 15px;
+  font-weight: normal;
+}
+#ueditor-box-cats-tags .ueditor-box-wrapper label{
+  font-weight: bold;
+}
+.ueditor-box-wrapper label.ueditor-icon-label:before{
+  background: transparent url(../img/uf-ui-sprite.svg);
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  content: "";
+  margin: 0 10px -10px 0;
+}
+.ueditor-box-wrapper label#post-status-display-label:before{
+  background-position: -564px -385px;
+}
+.ueditor-box-wrapper label#post-visibility-display:before{
+  background-position: -604px -385px;
+}
+.ueditor-box-wrapper label#publication-time:before{
+  background-position: -644px -385px;
+}
+
+a.ueditor-btn-edit{
+  color: #00ce97;
+  text-decoration: underline;
+  font-size: 14px;
+  display: inline;
+}
+.ueditor-bix-top-buttons{
+  height: 60px;
+  padding: 9px 11px;
+  border-bottom:1px solid #b8d0e6;
+}
+
+.ueditor-box-bottom-buttons{
+  height: 54px;
+  padding: 9px 11px;
+  display: block;
+  border-top: 1px solid #b8d0e6;
+  border-bottom: 1px solid #b8d0e6;
+  overflow: hidden;
+}
+
+a.ueditor-action-publish {
+  text-align: center;
+  color: #fff !important;
+  padding: 7px 20px;
+  background: #1fcd8f;
+  float: right;
+  display: block;
+  height: 36px;
+  width: 120px;
+  line-height: 23px;
+}
+.ueditor-action-draft{
+  float: left;
+}
+a.ueditor-action-publish:hover {
+  text-decoration: none;
+  background: #3ea;
+}
+a.ueditor-action,
+a.ueditor-action:visited,
+a.ueditor-action:link{
+  line-height: 34px;
+  padding: 0;
+  border: 2px solid #8fafcc;
+  font-size: 15px;
+  height: 36px;
+  display: inline-block;
+  float: right;
+  width: 98px;
+  text-align: center;
+  color:#3d527d;
+}
+a.ueditor-action:hover{
+  border: 2px solid #25394d;
+  color:#25394d;
+}
+a.ueditor-action-preview{
+  float: right;
+}
+a.ueditor-action-trash{
+  float: left;
+  background-position: -605px -422px;
+  color: #e75757;
+  padding-top: 5px;
+}
+
+a.ueditor-action-trash:hover {
+  color: #E5575A;
+  text-decoration: none;
+}
+.ueditor-box-icon {
+  background: transparent url(../img/uf-ui-sprite.svg);
+  padding: 3px 12px;
+  margin-right: 5px;
+  display: block;
+  height: 36px;
+  width: 30px;
+  font-size: 13px;
+}
+.ueditor-box-icon-text{
+  padding-left: 20px;
+}

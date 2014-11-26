@@ -1,4 +1,4 @@
-;(function($){define([], function(){
+;(function($){define(["text!upfront/templates/post-editor/edition-box.html"], function(editionBox_tpl){
 
 // Replaces the tags in the templates
 var PartMarkupCreator = function(){
@@ -601,6 +601,7 @@ var PostContentEditor = Backbone.View.extend({
 	},
 
 	prepareBar: function(){
+        var self = this;
 		if(this.bar){
 			this.bar.calculateLimits();
 			return;
@@ -608,8 +609,8 @@ var PostContentEditor = Backbone.View.extend({
 		this.bar = new EditionBar({post: this.post});
 		this.bindBarEvents();
 		this.bar.render();
-		this.$el.append(this.bar.$el);
-		this.bar.stick();
+        this.$el.append(this.bar.$el);
+        self.bar.stick();
 
 		return;
 	},
@@ -718,664 +719,6 @@ var PostContentEditor = Backbone.View.extend({
 		e.preventDefault();
 	}
 });
-
-var EditionBar = Backbone.View.extend({
-	className: 'ueditor-bar-wrapper upfront-ui',
-	post: false,
-
-	offset: {min:0, max:0},
-	position: {min:0, max:0},
-
-	onScrollFunction: false,
-
-	statusOptions: {
-		future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
-		publish: {value: 'publish', name: Upfront.Settings.l10n.global.content.published},
-		pending: {value: 'pending', name: Upfront.Settings.l10n.global.content.pending_review},
-		draft: {value: 'draft', name: Upfront.Settings.l10n.global.content.draft},
-		'private': {value: 'private', name: Upfront.Settings.l10n.global.content.private_post},
-		'auto-draft': {value: 'auto-draft', name: Upfront.Settings.l10n.global.content.new_post},
-		'trash': {value: 'trash', name: Upfront.Settings.l10n.global.content.deleted_post}
-	},
-
-	visibilityOptions: {
-		'public': {value: 'public', name:Upfront.Settings.l10n.global.content.public_post},
-		'sticky': {value: 'sticky', name:Upfront.Settings.l10n.global.content.sticky},
-		'password': {value: 'password', name: Upfront.Settings.l10n.global.content.protected_post},
-		'private': {value: 'private', name: Upfront.Settings.l10n.global.content.is_private}
-	},
-
-	statusSelect: false,
-	visibilitySelect: false,
-
-	initialStatus: false,
-
-	events: {
-		'click .ueditor-action-cancel': 'cancel',
-		'click .ueditor-action-publish': 'publish',
-		'click .ueditor-action-draft': 'saveDraft',
-		'click .ueditor-action-trash': 'trash',
-		'click .ueditor-action-url': 'editUrl',
-		'click .ueditor-action-tags': 'editTaxonomies',
-		'click .ueditor-select-value': 'editSelect',
-		'click .ueditor-pass-ok': 'changePass',
-		'click .ueditor-action-schedule': 'openDatepicker',
-		'click .ueditor-bar-show_advanced': 'toggleAdvanced',
-		'click .ueditor-action-pickercancel': 'close_date_picker',
-		'click .ueditor-action-pickerok': 'save_date_picker',
-		'change .ueditor-hours-select': 'set_time',
-		'change .ueditor-minutes-select': 'set_time'
-	},
-
-	initialize: function(options){
-		var me = this;
-		this.post = options.post;
-
-		// Store the initial and current status and upfront-content.js
-		// will store it in the post on saving/publishing.
-		this.initialStatus = this.post.get('post_status');
-		this.currentStatus = this.initialStatus;
-
-		this.postVisibility = this.post.getVisibility();
-		if(this.postVisibility == 'password')
-			this.postPassword = this.post.get('post_password');
-
-		// The same for the date, Bar mustn't update the post.
-		this.initialDate = this.post.get('post_date');
-		this.tpl = _.template(Upfront.data.uposts.barTemplate);
-		this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
-		Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
-
-		Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
-	},
-
-	element_stop_prop: function () {
-		if (
-			Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
-			&&
-			Upfront.Application.current_subapplication.contentEditor
-		) $('.upfront-module').draggable('disable').resizable('disable');
-	},
-
-	render: function(){
-		this.destroy();
-		if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
-		var me = this,
-			postData = this.post.toJSON(),
-			date = this.initialDate,
-			datepickerData = {}
-		;
-
-		postData.status = this.getBarStatus();
-		postData.visibility = this.visibilityOptions[this.postVisibility];
-
-		postData.schedule = this.getSchedule();
-
-		postData.buttonText = this.getButtonText();
-		postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
-		postData.cancelButton = !(this.post.is_new);
-
-		postData.cid = this.cid;
-
-		datepickerData.minutes = _.range(0,60);
-		datepickerData.hours = _.range(0,24);
-
-		datepickerData.currentHour = date.getHours();
-		datepickerData.currentMinute = date.getHours();
-
-		postData.datepicker = this.datepickerTpl(datepickerData);
-
-		this.$el.html(this.tpl(postData));
-
-		this.$('.upfront-bar-datepicker').datepicker({
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy/mm/dd',
-			onChangeMonthYear: function(year, month){
-				var picker = me.$('.upfront-bar-datepicker'),
-					day = picker.datepicker('getDate').getDate();
-				;
-				var prev_date = new Date(  me.$('.ueditor-action-schedule').text()  ),
-					d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() )
-				;
-
-				me.$('.ueditor-action-schedule').html(Upfront.Util.format_date( d, true));
-				me.post.set("post_date", d);
-				picker.datepicker("setDate", d);
-			},
-			onSelect: function(textDate){
-				me.updateBarDate(me.getDatepickerDate());
-			}
-		});
-
-		this.prepareSelectBoxes();
-
-		if($('#' + this.cid).length)
-			this.stick();
-	},
-
-	prepareSelectBoxes: function(){
-		var me = this;
-		this.statusSelect = new MicroSelect({options: this.getStatusOptions()});
-		this.visibilitySelect = new MicroSelect({options: this.getVisibilityOptions()});
-
-		this.statusSelect.on('select', function(status){
-			me.currentStatus = status;
-			me.trigger('status:change', status);
-			me.render();
-			me.toggleAdvanced();
-		});
-
-		this.visibilitySelect.on('select', function(visibility){
-			if(visibility == 'password')
-				me.showPassEditor(me.$('.ueditor-select-visibility'));
-			else{
-				me.trigger('visibility:change', visibility);
-				me.postVisibility = visibility;
-				//me.post.setVisibility(visibility);
-				me.render();
-				me.toggleAdvanced();
-			}
-		});
-
-		this.$('.ueditor-select-visibility').append(this.visibilitySelect.$el);
-		this.$('.ueditor-select-status').append(this.statusSelect.$el);
-	},
-
-	getBarStatus: function(){
-		var current = this.currentStatus;
-		if(['auto-draft', 'draft', 'pending'].indexOf(current) != -1)
-			return this.statusOptions[current];
-		return this.statusOptions[this.initialStatus];
-	},
-
-	getSchedule: function(){
-		var now = new Date(),
-			date = this.initialDate,
-			formatDate = Upfront.Util.format_date
-		;
-		if(!date && !this.initialDate)
-			return {
-				key: Upfront.Settings.l10n.global.content.publish,
-				text: Upfront.Settings.l10n.global.content.immediately
-			};
-
-		if(date.getTime() == this.initialDate){
-			if(date.getTime() < now.getTime())
-				return {
-					key: Upfront.Settings.l10n.global.content.published,
-					text: formatDate(date, true)
-				};
-			else
-				return {
-					key: Upfront.Settings.l10n.global.content.scheduled,
-					text: formatDate(date, true)
-				};
-		}
-
-		if(date.getTime() < now.getTime())
-			return {
-				key: Upfront.Settings.l10n.global.content.publish_on,
-				text: formatDate(date, true)
-			};
-		else
-			return {
-				key: Upfront.Settings.l10n.global.content.schedule,
-				text: formatDate(date, true)
-			};
-	},
-
-	openDatepicker: function(e){
-		var date = this.initialDate;
-
-		this.$('.upfront-date_picker').toggle();
-
-		if(date)
-			this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
-	},
-
-	close_date_picker : function(){
-		this.trigger('date:cancel');
-		this.updateBarDate(this.initialDate);
-		this.$('.upfront-date_picker').hide();
-	},
-
-	save_date_picker : function(){
-		var date = this.getDatepickerDate();
-
-		this.initialDate = date;
-
-		this.trigger('date:updated', date);
-		this.$('.upfront-date_picker').hide();
-		this.render();
-		this.toggleAdvanced();
-	},
-
-	set_time : function( event ){
-		this.updateBarDate(this.getDatepickerDate());
-	},
-
-	updateBarDate: function(date){
-		this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
-	},
-
-	getDatepickerDate: function(){
-		var chosen_date = this.$('.upfront-bar-datepicker').datepicker('getDate'),
-			hours = this.$(".ueditor-hours-select").val(),
-			minutes = this.$(".ueditor-minutes-select").val()
-		;
-		chosen_date.setHours( hours );
-		chosen_date.setMinutes( minutes );
-
-		return chosen_date;
-	},
-
-	getStatusOptions: function(postata){
-		var ops = [],
-			status = this.initialStatus
-		;
-
-		if(status == 'publish'){
-			ops.push(this.statusOptions.publish);
-		}
-		else if(status == 'future'){
-			ops.push(this.statusOptions.future);
-		}
-		ops.push(this.statusOptions.pending);
-		ops.push(this.statusOptions.draft);
-
-		if(status == 'private'){
-			ops = [ this.statusOptions.private ];
-		}
-
-		return ops;
-	},
-
-	getVisibilityOptions: function(){
-		var now = this.post.getVisibility(),
-			ops = this.visibilityOptions
-		;
-		if(now == 'password')
-			return [
-				{value: 'password', name: Upfront.Settings.l10n.global.content.edit_pwd},
-				ops.public,
-				ops.sticky,
-				ops.private
-			]
-		;
-		return _.values(ops);
-	},
-
-	getButtonText: function(){
-		var initial = this.initialStatus,
-		date = this.post.get('post_date'),
-		now = new Date()
-		;
-
-		date = date ? date.getTime() : 0;
-		now = now.getTime();
-
-		if(now < date) {
-			if(initial == 'future')
-				return Upfront.Settings.l10n.global.content.update;
-			return Upfront.Settings.l10n.global.content.schedule;
-		}
-		else {
-			if(initial == 'publish')
-				return Upfront.Settings.l10n.global.content.update;
-			return Upfront.Settings.l10n.global.content.publish;
-		}
-	},
-
-	calculateLimits: function(){
-		var ph = this.$('.ueditor-bar-ph'),
-		container = this.$el.parent()
-		;
-		if (!container.length) return false;
-
-		var height = container.height();
-		if(height == this.containerHeight)
-			return;
-
-		var offset = container.offset().top;
-
-		this.position = {
-			min: 100,
-			max: height
-		}
-
-		this.offset ={
-			min: this.position.min + offset,
-			max: this.position.max + offset + 2 * this.$el.height()
-		}
-
-		this.onScroll(null, this.$('.ueditor-bar'));
-	},
-
-	onScroll: function(e, bar){
-		var me = this,
-		now = $(window).scrollTop() + $(window).height(),
-		position = bar.css('position')
-		;
-		if(position == 'fixed'){
-			if (now <= me.offset.min){
-				bar.css({
-					position: 'absolute',
-					bottom: 'auto',
-					top: me.position.min + 'px',
-					left:0,
-					width: '100%',
-					opacity: 1
-				})
-				.removeClass('floating')
-				;
-				me.calculateLimits();
-			}
-			else if( now >= me.offset.max){
-				bar.css({
-					position: 'absolute',
-					bottom: 'auto',
-					top: '100%',
-					left:0,
-					width: '100%',
-					opacity: 1
-				})
-				.removeClass('floating')
-				;
-				me.calculateLimits();
-			}
-		}
-		else if(position == 'absolute'){
-			if(now < me.offset.max && now > me.offset.min){
-				bar.css({
-					position: 'fixed',
-					bottom: '0px',
-					left: bar.offset().left + 'px',
-					top: 'auto',
-					width: bar.outerWidth() + 'px',
-					opacity: 0.4
-				})
-				.addClass('floating')
-				.removeClass('show-advanced')
-				;
-				me.calculateLimits();
-			}
-		}
-
-	},
-
-	stick: function(){
-		var ph = this.$('.ueditor-bar-ph'),
-		bar = this.$('.ueditor-bar'),
-		container = this.$el.parent(),
-		me = this
-		;
-
-		ph.height(bar.height());
-
-		container.css('position', 'relative');
-
-		bar.css({
-			position: 'absolute',
-			bottom: '0',
-			left: '0',
-			width: '100%'
-		});
-
-		this.calculateLimits();
-
-		this.onScrollFunction = function(e){
-			me.onScroll(e, bar);
-		};
-
-		$(window)
-		.on('scroll', this.onScrollFunction)
-		.on('resize', this.onScrollFunction)
-		;
-		this.onScroll(null, bar);
-	},
-
-	destroy: function(){
-		$(window)
-		.off('scroll', this.onScrollFunction)
-		.off('resize', this.onScrollFunction)
-		;
-		this.onScrollFunction = false;
-	},
-
-	cancel: function(e){
-		e.preventDefault();
-		if(confirm(Upfront.Settings.l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
-			this.destroy();
-			this.post.trigger('editor:cancel');
-			this.trigger('cancel');
-			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-		}
-	},
-
-	publish: function(e){
-		/*
-		if(this.currentStatus == 'draft') return this.saveDraft(e); // Why? This is just asking for problems...
-		*/
-
-		e.preventDefault();
-		this.destroy();
-
-		this.post.trigger('editor:publish');
-		this.trigger('publish');
-		Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-	},
-
-	saveDraft: function(e){
-		e.preventDefault();
-
-		this.destroy();
-
-		this.post.trigger('editor:draft');
-		this.trigger('draft');
-		Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-	},
-
-	trash: function(e){
-		e.preventDefault();
-		if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
-			this.destroy();
-			this.trigger('trash');
-			Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-		}
-	},
-
-	editUrl: function(e){
-		e.preventDefault();
-		var me = this,
-		$popup = {},
-		popup = Upfront.Popup.open(function (data, $top, $bottom) {
-			var $me = $(this);
-			$me.empty()
-			.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
-			;
-			$popup = {
-				"top": $top,
-				"content": $me,
-				"bottom": $bottom
-			};
-		}),
-		update = function(slug){
-			me.post.set('post_name', slug);
-			Upfront.Popup.close();
-		},
-		tpl = _.template($(Upfront.data.tpls.popup).find('#upfront-slug-tpl').html())
-		;
-
-		var base = me.post.get("guid");
-		base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
-		$popup.content.html(tpl({
-			rootURL: base,
-			slug: me.post.get('post_name')
-		}));
-
-		$popup.content.off('click', '#upfront-post_slug-send')
-		.on('click', '#upfront-post_slug-send', function(){
-			update($('#upfront-post_slug').val());
-		})
-		.off('keydown', '#upfront-post_slug')
-		.on('keydown', '#upfront-post_slug', function(e){
-			if(e.which == 13){
-				e.preventDefault();
-				update($('#upfront-post_slug').attr('disabled', true).val());
-			}
-		})
-		;
-	},
-
-	editTaxonomies: function(e, taxName){
-		if(e)
-			e.preventDefault();
-
-		var me = this,
-			tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
-			$tax = $("#upfront-post_taxonomies"),
-			$popup = {},
-			views = {category: false, post_tag: false},
-			currentView = taxName || 'category',
-			terms = {},
-			popup = Upfront.Popup.open(function (data, $top, $bottom) {
-				var $me = $(this);
-				$me.empty()
-				.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
-				.append($tax)
-				;
-				$popup = {
-					"top": $top,
-					"content": $me,
-					"bottom": $bottom
-				};
-			}),
-			dispatch_taxonomy_call = function (el) {
-				var $el = $(el),
-				tax = $el.attr("data-type"),
-				type = $el.attr('rel'),
-				termsList = terms[tax] ? terms[tax] : false
-				;
-				$popup.top.find('.upfront-tabs li').removeClass('active');
-				$el.addClass('active');
-
-				currentView = tax;
-
-				if(views[tax])
-					return render_panel(views[tax]);
-
-				if(!termsList){
-					termsList = new Upfront.Collections.TermList([], {postId: me.post.id, taxonomy: tax});
-					terms[tax] = termsList;
-				}
-
-				$popup.content.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>');
-
-				termsList.fetch({allTerms: true}).done(function(response){
-					var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
-						tax_view = new tax_view_constructor({collection: termsList})
-					;
-
-					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
-
-					views[tax] = tax_view;
-					render_panel();
-				});
-
-				me.listenToOnce(Upfront.Events, 'popup:closed', me.refreshTaxonomies);
-
-				return false;
-			},
-			render_panel = function(view){
-				var v = views[currentView];
-				v.render();
-				$popup.content.html(v.$el);
-				v.setElement(v.$el);
-			}
-		;
-
-		$(".upfront-popup-placeholder").remove();
-		$popup.top.html(
-			'<ul class="upfront-tabs">' +
-			'<li data-type="category" class="tax-category">' + Upfront.Settings.l10n.global.content.categories + '</li>' +
-			'<li data-type="post_tag" class="tax-post_tag">' + Upfront.Settings.l10n.global.content.tags + '</li>' +
-			'</ul>' +
-			$popup.top.html()
-			);
-
-		$popup.top.find('.upfront-tabs li').on("click", function () {
-			dispatch_taxonomy_call(this);
-		});
-
-		$tax.show();
-
-		dispatch_taxonomy_call($popup.top.find('.tax-' + currentView));
-
-		Upfront.Events.on("upfront:post:taxonomy_changed", function () {
-			dispatch_taxonomy_call($popup.top.find('.upfront-tabs li.active'));
-		});
-	},
-
-	editSelect: function(e){
-		e.preventDefault();
-		var type = $(e.target).data('id');
-		this[type + 'Select'].open();
-	},
-
-	showPassEditor: function(parent){
-		var op = this.visibilityOptions.password,
-			me = this
-		;
-
-		parent.find('.ueditor-select-value')
-			.data('id', op.value)
-			.text(op.name)
-		;
-
-		parent.find('.ueditor-select-options').hide();
-
-		parent.find('.ueditor-pass-editor').show()
-			.find('input').val(this.postPassword || '')
-			.one('blur', function(e){
-				setTimeout(function(){
-					me.render();
-				}, 300);
-			})
-			.off('keydown')
-			.on('keydown', function(e){
-				if(e.which == 13){
-					me.changePass(e);
-				}
-			})
-			.focus()
-		;
-	},
-
-	changePass: function(e){
-		var pass = $(e.target).parent().find('input').val();
-		if(pass){
-			this.trigger('visibility:change', 'password', pass);
-			// this.post.setVisibility('password');
-			// this.post.set('post_password', pass);
-			this.postVisibility = 'password';
-			this.postPassword = pass;
-			this.render();
-			this.toggleAdvanced();
-		}
-	},
-
-	toggleAdvanced: function(e){
-		if(e)
-			e.preventDefault();
-		this.$('.ueditor-bar').toggleClass('show-advanced');
-	},
-
-	refreshTaxonomies: function(){
-		this.trigger('tax:refresh');
-	}
-});
-
 
 var ContentEditorTaxonomy_Hierarchical = Backbone.View.extend({
 	className: "upfront-taxonomy-hierarchical",
@@ -1594,6 +937,701 @@ var MicroSelect = Backbone.View.extend({
 		return false;
 	}
 });
+
+var EditionBar = Backbone.View.extend({
+        className: 'ueditor-box-wrapper upfront-ui',
+        post: false,
+
+        offset: {min:0, max:0},
+        position: {min:0, max:0},
+
+        onScrollFunction: false,
+
+        statusOptions: {
+            future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
+            publish: {value: 'publish', name: Upfront.Settings.l10n.global.content.published},
+            pending: {value: 'pending', name: Upfront.Settings.l10n.global.content.pending_review},
+            draft: {value: 'draft', name: Upfront.Settings.l10n.global.content.draft},
+            'private': {value: 'private', name: Upfront.Settings.l10n.global.content.private_post},
+            'auto-draft': {value: 'auto-draft', name: Upfront.Settings.l10n.global.content.new_post},
+            'trash': {value: 'trash', name: Upfront.Settings.l10n.global.content.deleted_post}
+        },
+
+        visibilityOptions: {
+            'public': {value: 'public', name:Upfront.Settings.l10n.global.content.public_post},
+            'sticky': {value: 'sticky', name:Upfront.Settings.l10n.global.content.sticky},
+            'password': {value: 'password', name: Upfront.Settings.l10n.global.content.protected_post},
+            'private': {value: 'private', name: Upfront.Settings.l10n.global.content.is_private}
+        },
+
+        statusSelect: false,
+        visibilitySelect: false,
+
+        initialStatus: false,
+
+        events: {
+            'click .ueditor-action-cancel': 'cancel',
+            'click .ueditor-action-publish': 'publish',
+            'click .ueditor-action-draft': 'saveDraft',
+            'click .ueditor-action-trash': 'trash',
+            'click .ueditor-action-url': 'editUrl',
+            'click .ueditor-action-tags': 'editTaxonomies',
+            'click .ueditor-select-value': 'editSelect',
+            'click .ueditor-pass-ok': 'changePass',
+            'click .ueditor-action-schedule': 'openDatepicker',
+            'click .ueditor-bar-show_advanced': 'toggleAdvanced',
+            'click .ueditor-action-pickercancel': 'close_date_picker',
+            'click .ueditor-action-pickerok': 'save_date_picker',
+            'change .ueditor-hours-select': 'set_time',
+            'change .ueditor-minutes-select': 'set_time',
+            'click .ueditor-btn-edit': 'toggleEditor',
+            'click .ueditor-button-cancel': 'cancelEdit',
+            'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
+            'click .ueditor-box-title': 'show_section'
+        },
+
+        initialize: function(options){
+            var me = this;
+            this.post = options.post;
+
+            // Store the initial and current status and upfront-content.js
+            // will store it in the post on saving/publishing.
+            this.initialStatus = this.post.get('post_status');
+            this.currentStatus = this.initialStatus;
+
+            this.postVisibility = this.post.getVisibility();
+            if(this.postVisibility == 'password')
+                this.postPassword = this.post.get('post_password');
+
+            // The same for the date, Bar mustn't update the post.
+            this.initialDate = this.post.get('post_date');
+            this.tpl = _.template(editionBox_tpl);
+            this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
+            Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
+
+            Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
+        },
+
+        element_stop_prop: function () {
+            if (
+                Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
+                &&
+                Upfront.Application.current_subapplication.contentEditor
+            ) $('.upfront-module').draggable('disable').resizable('disable');
+        },
+
+        render: function(){
+            this.destroy();
+            if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
+            var me = this,
+                postData = this.post.toJSON(),
+                date = this.initialDate,
+                datepickerData = {}
+                ;
+
+            postData.status = this.getBarStatus();
+            postData.visibility = this.visibilityOptions[this.postVisibility];
+
+            postData.schedule = this.getSchedule();
+
+            postData.buttonText = this.getButtonText();
+            postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
+            postData.cancelButton = !(this.post.is_new);
+
+            postData.cid = this.cid;
+
+            datepickerData.minutes = _.range(0,60);
+            datepickerData.hours = _.range(0,24);
+
+            datepickerData.currentHour = date.getHours();
+            datepickerData.currentMinute = date.getHours();
+
+            postData.datepicker = this.datepickerTpl(datepickerData);
+
+            this.$el.html(this.tpl(postData));
+
+            this.$('.upfront-bar-datepicker').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'yy/mm/dd',
+                onChangeMonthYear: function(year, month){
+                    var picker = me.$('.upfront-bar-datepicker'),
+                        day = picker.datepicker('getDate').getDate();
+                    ;
+                    var prev_date = new Date(  me.$('.ueditor-action-schedule').text()  ),
+                        d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() )
+                        ;
+
+                    me.$('.ueditor-action-schedule').html(Upfront.Util.format_date( d, true));
+                    me.post.set("post_date", d);
+                    picker.datepicker("setDate", d);
+                },
+                onSelect: function(textDate){
+                    me.updateBarDate(me.getDatepickerDate());
+                }
+            });
+
+            this.prepareSelectBoxes();
+
+            //if($('#' + this.cid).length)
+            //    this.stick();
+        },
+
+        prepareSelectBoxes: function(){
+            var me = this;
+            this.statusSelect = new MicroSelect({options: this.getStatusOptions()});
+            this.visibilitySelect = new MicroSelect({options: this.getVisibilityOptions()});
+
+            this.statusSelect.on('select', function(status){
+                me.currentStatus = status;
+                me.trigger('status:change', status);
+                me.render();
+                me.toggleAdvanced();
+            });
+
+            this.visibilitySelect.on('select', function(visibility){
+                if(visibility == 'password')
+                    me.showPassEditor(me.$('.ueditor-select-visibility'));
+                else{
+                    me.trigger('visibility:change', visibility);
+                    me.postVisibility = visibility;
+                    //me.post.setVisibility(visibility);
+                    me.render();
+                    me.toggleAdvanced();
+                }
+            });
+
+            this.$('.ueditor-select-visibility').append(this.visibilitySelect.$el);
+            this.$('.ueditor-select-status').append(this.statusSelect.$el);
+        },
+
+        getBarStatus: function(){
+            var current = this.currentStatus;
+            if(['auto-draft', 'draft', 'pending'].indexOf(current) != -1)
+                return this.statusOptions[current];
+            return this.statusOptions[this.initialStatus];
+        },
+
+        getSchedule: function(){
+            var now = new Date(),
+                date = this.initialDate,
+                formatDate = Upfront.Util.format_date
+                ;
+            if(!date && !this.initialDate)
+                return {
+                    key: Upfront.Settings.l10n.global.content.publish,
+                    text: Upfront.Settings.l10n.global.content.immediately
+                };
+
+            if(date.getTime() == this.initialDate){
+                if(date.getTime() < now.getTime())
+                    return {
+                        key: Upfront.Settings.l10n.global.content.published,
+                        text: formatDate(date, true)
+                    };
+                else
+                    return {
+                        key: Upfront.Settings.l10n.global.content.scheduled,
+                        text: formatDate(date, true)
+                    };
+            }
+
+            if(date.getTime() < now.getTime())
+                return {
+                    key: Upfront.Settings.l10n.global.content.publish_on,
+                    text: formatDate(date, true)
+                };
+            else
+                return {
+                    key: Upfront.Settings.l10n.global.content.schedule,
+                    text: formatDate(date, true)
+                };
+        },
+
+        openDatepicker: function(e){
+            var date = this.initialDate;
+
+            this.$('.upfront-date_picker').toggle();
+
+            if(date)
+                this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
+        },
+
+        close_date_picker : function(){
+            this.trigger('date:cancel');
+            this.updateBarDate(this.initialDate);
+            this.$('.upfront-date_picker').hide();
+        },
+
+        save_date_picker : function(){
+            var date = this.getDatepickerDate();
+
+            this.initialDate = date;
+
+            this.trigger('date:updated', date);
+            this.$('.upfront-date_picker').hide();
+            this.render();
+            this.toggleAdvanced();
+        },
+
+        set_time : function( event ){
+            this.updateBarDate(this.getDatepickerDate());
+        },
+
+        updateBarDate: function(date){
+            this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
+        },
+
+        getDatepickerDate: function(){
+            var chosen_date = this.$('.upfront-bar-datepicker').datepicker('getDate'),
+                hours = this.$(".ueditor-hours-select").val(),
+                minutes = this.$(".ueditor-minutes-select").val()
+                ;
+            chosen_date.setHours( hours );
+            chosen_date.setMinutes( minutes );
+
+            return chosen_date;
+        },
+
+        getStatusOptions: function(postata){
+            var ops = [],
+                status = this.initialStatus
+                ;
+
+            if(status == 'publish'){
+                ops.push(this.statusOptions.publish);
+            }
+            else if(status == 'future'){
+                ops.push(this.statusOptions.future);
+            }
+            ops.push(this.statusOptions.pending);
+            ops.push(this.statusOptions.draft);
+
+            if(status == 'private'){
+                ops = [ this.statusOptions.private ];
+            }
+
+            return ops;
+        },
+
+        getVisibilityOptions: function(){
+            var now = this.post.getVisibility(),
+                ops = this.visibilityOptions
+                ;
+            if(now == 'password')
+                return [
+                    {value: 'password', name: Upfront.Settings.l10n.global.content.edit_pwd},
+                    ops.public,
+                    ops.sticky,
+                    ops.private
+                ]
+                    ;
+            return _.values(ops);
+        },
+
+        getButtonText: function(){
+            var initial = this.initialStatus,
+                date = this.post.get('post_date'),
+                now = new Date()
+                ;
+
+            date = date ? date.getTime() : 0;
+            now = now.getTime();
+
+            if(now < date) {
+                if(initial == 'future')
+                    return Upfront.Settings.l10n.global.content.update;
+                return Upfront.Settings.l10n.global.content.schedule;
+            }
+            else {
+                if(initial == 'publish')
+                    return Upfront.Settings.l10n.global.content.update;
+                return Upfront.Settings.l10n.global.content.publish;
+            }
+        },
+
+        calculateLimits: function(){
+            var ph = this.$('.ueditor-bar-ph'),
+                container = this.$el.parent()
+                ;
+            if (!container.length) return false;
+
+            var height = container.height();
+            if(height == this.containerHeight)
+                return;
+
+            var offset = container.offset().top;
+
+            this.position = {
+                min: 100,
+                max: height
+            }
+
+            this.offset ={
+                min: this.position.min + offset,
+                max: this.position.max + offset + 2 * this.$el.height()
+            }
+
+            //this.onScroll(null, this.$('.ueditor-bar'));
+        },
+
+        //onScroll: function(e, bar){
+        //    var me = this,
+        //        now = $(window).scrollTop() + $(window).height(),
+        //        position = bar.css('position')
+        //        ;
+        //    if(position == 'fixed'){
+        //        if (now <= me.offset.min){
+        //            bar.css({
+        //                position: 'absolute',
+        //                bottom: 'auto',
+        //                top: me.position.min + 'px',
+        //                left:0,
+        //                width: '100%',
+        //                opacity: 1
+        //            })
+        //                .removeClass('floating')
+        //            ;
+        //            me.calculateLimits();
+        //        }
+        //        else if( now >= me.offset.max){
+        //            bar.css({
+        //                position: 'absolute',
+        //                bottom: 'auto',
+        //                top: '100%',
+        //                left:0,
+        //                width: '100%',
+        //                opacity: 1
+        //            })
+        //                .removeClass('floating')
+        //            ;
+        //            me.calculateLimits();
+        //        }
+        //    }
+        //    else if(position == 'absolute'){
+        //        if(now < me.offset.max && now > me.offset.min){
+        //            bar.css({
+        //                position: 'fixed',
+        //                bottom: '0px',
+        //                left: bar.offset().left + 'px',
+        //                top: 'auto',
+        //                width: bar.outerWidth() + 'px',
+        //                opacity: 0.4
+        //            })
+        //                .addClass('floating')
+        //                .removeClass('show-advanced')
+        //            ;
+        //            me.calculateLimits();
+        //        }
+        //    }
+        //
+        //},
+
+        stick: function(){
+            var $container = this.$el.closest(".upfront-output-this_post"),
+                $content_part = $(".upfront-postpart-contents"),
+                right_space = $("body").width() - ( $container.width() + $container.offset().left ),
+                right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
+                ;
+            //ph.height(bar.height());
+
+            //container.css('position', 'relative');
+
+            this.$el.css({
+                right: right + 10
+            });
+
+            //this.calculateLimits();
+
+            //this.onScrollFunction = function(e){
+            //    me.onScroll(e, bar);
+            //};
+
+            //$(window)
+            //    .on('scroll', this.onScrollFunction)
+            //    .on('resize', this.onScrollFunction)
+            //;
+            //this.onScroll(null, bar);
+        },
+
+        destroy: function(){
+            //$(window)
+            //    .off('scroll', this.onScrollFunction)
+            //    .off('resize', this.onScrollFunction)
+            //;
+            //this.onScrollFunction = false;
+        },
+
+        cancel: function(e){
+            e.preventDefault();
+            if(confirm(Upfront.Settings.l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
+                this.destroy();
+                this.post.trigger('editor:cancel');
+                this.trigger('cancel');
+                Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+            }
+        },
+
+        publish: function(e){
+            /*
+             if(this.currentStatus == 'draft') return this.saveDraft(e); // Why? This is just asking for problems...
+             */
+
+            e.preventDefault();
+            this.destroy();
+
+            this.post.trigger('editor:publish');
+            this.trigger('publish');
+            Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+        },
+
+        saveDraft: function(e){
+            e.preventDefault();
+
+            this.destroy();
+
+            this.post.trigger('editor:draft');
+            this.trigger('draft');
+            Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+        },
+
+        trash: function(e){
+            e.preventDefault();
+            if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
+                this.destroy();
+                this.trigger('trash');
+                Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+            }
+        },
+
+        editUrl: function(e){
+            e.preventDefault();
+            var me = this,
+                $popup = {},
+                popup = Upfront.Popup.open(function (data, $top, $bottom) {
+                    var $me = $(this);
+                    $me.empty()
+                        .append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
+                    ;
+                    $popup = {
+                        "top": $top,
+                        "content": $me,
+                        "bottom": $bottom
+                    };
+                }),
+                update = function(slug){
+                    me.post.set('post_name', slug);
+                    Upfront.Popup.close();
+                },
+                tpl = _.template($(Upfront.data.tpls.popup).find('#upfront-slug-tpl').html())
+                ;
+
+            var base = me.post.get("guid");
+            base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+            $popup.content.html(tpl({
+                rootURL: base,
+                slug: me.post.get('post_name')
+            }));
+
+            $popup.content.off('click', '#upfront-post_slug-send')
+                .on('click', '#upfront-post_slug-send', function(){
+                    update($('#upfront-post_slug').val());
+                })
+                .off('keydown', '#upfront-post_slug')
+                .on('keydown', '#upfront-post_slug', function(e){
+                    if(e.which == 13){
+                        e.preventDefault();
+                        update($('#upfront-post_slug').attr('disabled', true).val());
+                    }
+                })
+            ;
+        },
+
+        editTaxonomies: function(e, taxName){
+            if(e)
+                e.preventDefault();
+
+            var me = this,
+                tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
+                $tax = $("#upfront-post_taxonomies"),
+                $popup = {},
+                views = {category: false, post_tag: false},
+                currentView = taxName || 'category',
+                terms = {},
+                popup = Upfront.Popup.open(function (data, $top, $bottom) {
+                    var $me = $(this);
+                    $me.empty()
+                        .append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
+                        .append($tax)
+                    ;
+                    $popup = {
+                        "top": $top,
+                        "content": $me,
+                        "bottom": $bottom
+                    };
+                }),
+                dispatch_taxonomy_call = function (el) {
+                    var $el = $(el),
+                        tax = $el.attr("data-type"),
+                        type = $el.attr('rel'),
+                        termsList = terms[tax] ? terms[tax] : false
+                        ;
+                    $popup.top.find('.upfront-tabs li').removeClass('active');
+                    $el.addClass('active');
+
+                    currentView = tax;
+
+                    if(views[tax])
+                        return render_panel(views[tax]);
+
+                    if(!termsList){
+                        termsList = new Upfront.Collections.TermList([], {postId: me.post.id, taxonomy: tax});
+                        terms[tax] = termsList;
+                    }
+
+                    $popup.content.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>');
+
+                    termsList.fetch({allTerms: true}).done(function(response){
+                        var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
+                            tax_view = new tax_view_constructor({collection: termsList})
+                            ;
+
+                        tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+
+                        views[tax] = tax_view;
+                        render_panel();
+                    });
+
+                    me.listenToOnce(Upfront.Events, 'popup:closed', me.refreshTaxonomies);
+
+                    return false;
+                },
+                render_panel = function(view){
+                    var v = views[currentView];
+                    v.render();
+                    $popup.content.html(v.$el);
+                    v.setElement(v.$el);
+                }
+                ;
+
+            $(".upfront-popup-placeholder").remove();
+            $popup.top.html(
+                '<ul class="upfront-tabs">' +
+                '<li data-type="category" class="tax-category">' + Upfront.Settings.l10n.global.content.categories + '</li>' +
+                '<li data-type="post_tag" class="tax-post_tag">' + Upfront.Settings.l10n.global.content.tags + '</li>' +
+                '</ul>' +
+                $popup.top.html()
+            );
+
+            $popup.top.find('.upfront-tabs li').on("click", function () {
+                dispatch_taxonomy_call(this);
+            });
+
+            $tax.show();
+
+            dispatch_taxonomy_call($popup.top.find('.tax-' + currentView));
+
+            Upfront.Events.on("upfront:post:taxonomy_changed", function () {
+                dispatch_taxonomy_call($popup.top.find('.upfront-tabs li.active'));
+            });
+        },
+
+        editSelect: function(e){
+            e.preventDefault();
+            var type = $(e.target).data('id');
+            this[type + 'Select'].open();
+        },
+
+        showPassEditor: function(parent){
+            var op = this.visibilityOptions.password,
+                me = this
+                ;
+
+            parent.find('.ueditor-select-value')
+                .data('id', op.value)
+                .text(op.name)
+            ;
+
+            parent.find('.ueditor-select-options').hide();
+
+            parent.find('.ueditor-pass-editor').show()
+                .find('input').val(this.postPassword || '')
+                .one('blur', function(e){
+                    setTimeout(function(){
+                        me.render();
+                    }, 300);
+                })
+                .off('keydown')
+                .on('keydown', function(e){
+                    if(e.which == 13){
+                        me.changePass(e);
+                    }
+                })
+                .focus()
+            ;
+        },
+
+        changePass: function(e){
+            var pass = $(e.target).parent().find('input').val();
+            if(pass){
+                this.trigger('visibility:change', 'password', pass);
+                // this.post.setVisibility('password');
+                // this.post.set('post_password', pass);
+                this.postVisibility = 'password';
+                this.postPassword = pass;
+                this.render();
+                this.toggleAdvanced();
+            }
+        },
+
+        toggleAdvanced: function(e){
+            if(e)
+                e.preventDefault();
+            this.$('.ueditor-bar').toggleClass('show-advanced');
+        },
+
+        refreshTaxonomies: function(){
+            this.trigger('tax:refresh');
+        },
+        toggleEditor: function(e){
+            e.preventDefault();
+            var $button = $(e.target),
+                $this_togglable = $button.siblings(".ueditor-togglable");
+            $(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
+            $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
+            $this_togglable.slideDown(100, function(){
+                $button.hide();
+            });
+        },
+        cancelEdit: function(e){
+            e.preventDefault();
+            var $button = $(e.target);
+            $button.closest(".ueditor-togglable").slideUp(100, function(){
+                $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
+            });
+
+        },
+        visibility_radio_change: function(e){
+            var $this = $(e.target),
+                val = $this.val(),
+                $this_togglable = $(".ueditor-togglable-child-" + val)
+            ;
+            $this.closest(".ueditor-togglable").find(".ueditor-togglable-child").not($this_togglable).hide();
+            $this_togglable.show();
+        },
+        show_section: function(e){
+            var $this = $(e.target),
+                $this_section = $this.closest(".ueditor-box-section"),
+                $this_wrap = $this_section.find(".ueditor-box-content-wrap")
+            ;
+
+            $(".ueditor-box-section").not( $this_section).removeClass("active")
+            $(".ueditor-box-content-wrap").not( $this_wrap ).slideUp();
+
+            $this_section.addClass("active");
+            $this_wrap.slideDown();
+        }
+    });
 
 
 return {

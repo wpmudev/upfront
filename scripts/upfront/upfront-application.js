@@ -910,8 +910,9 @@ var PostContentEditor = new (Subapplication.extend({
 	},
 
 	boot: function () {
-		Upfront.Util.log("Preparing post content mode for execution")
-	},
+		Upfront.Util.log("Preparing post content mode for execution");
+        Upfront.Events.trigger('upfront:post:edit:booted', this);
+    },
 
 	start: function () {
 		Upfront.Util.log("Starting post the content edit mode");
@@ -1477,6 +1478,8 @@ var Application = new (Backbone.Router.extend({
 		} else if(mode && this.MODE.POSTCONTENT == mode) {
 			this.mode.current = this.MODE.POSTCONTENT;
 			this.current_subapplication = this.PostContentEditor;
+            if ( this.sidebar.visible && this.is_editor())
+                this.sidebar.toggleSidebar();
 		} else if(mode && this.MODE.RESPONSIVE == mode) {
 			this.mode.current = this.MODE.RESPONSIVE;
 			this.current_subapplication = this.ResponsiveEditor;
