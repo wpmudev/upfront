@@ -353,6 +353,24 @@ define([
 					}
 					$type.attr('data-slider-show-control', control);
 					$type.attr('data-slider-effect', transition);
+					if (!_.isUndefined(Upfront.themeExporter)) {
+						// In builder always replace slide_images with server response
+						Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
+							var images = response.data.images;
+							// Rewrite slide images because in builder mode they will be just paths of theme images
+							// and slider needs image objects to work.
+							slide_images = images;
+							_.each(slide_images, function(id){
+								var image = _.isObject(id) ? id : images[id],
+									$image = $('<div class="upfront-default-slider-item" />');
+								if (image && image.full) $image.append('<img src="' + image.full[0] + '" />');
+								$type.append($image);
+							});
+							me.slide_images = slide_images;
+							$type.trigger('refresh');
+						});
+						return;
+					}
 					if ( this.slide_images != slide_images ){
 						Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
 							var images = response.data.images;
@@ -1007,7 +1025,7 @@ define([
 					this.parent_module_view.disable_interaction(false);
 				}
 			},
-			on_element_edit_stop: function (edit, post) {		
+			on_element_edit_stop: function (edit, post) {
 				if (this.parent_module_view && this.parent_module_view.enable_interaction){
 					this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing')
 					this.parent_module_view.enable_interaction(false);

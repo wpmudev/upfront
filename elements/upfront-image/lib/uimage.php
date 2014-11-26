@@ -302,55 +302,94 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		);
 	}
 
+	function get_image_id_by_filename($filename) {
+		global $wpdb;
+		// Query post meta because it contains literal filename
+		$query = $wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value like '%%%s';", $filename);
+		$image = $wpdb->get_col($query);
+		if (is_array($image) && isset($image[0])) {
+			return $image[0];
+		}
+		return null;
+	}
+
 	function get_image_sizes() {
-        $data = stripslashes_deep($_POST);
+		$data = stripslashes_deep($_POST);
 
-        $item_id = !empty($data['item_id']) ? $data['item_id'] : false;
-        if (!$item_id)
-        	$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+		$item_id = !empty($data['item_id']) ? $data['item_id'] : false;
+		if (!$item_id)
+			$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
 
-        $ids = json_decode($item_id);
+		$ids = json_decode($item_id);
 
-        if(is_null($ids) || !is_array($ids))
-        	$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+		if(is_null($ids) || !is_array($ids))
+			$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
 
-        $custom_size = isset($data['customSize']) && is_array($data['customSize']);
+		$custom_size = isset($data['customSize']) && is_array($data['customSize']);
 
-    	$images = array();
-    	$intermediate_sizes = get_intermediate_image_sizes();
-    	$intermediate_sizes[] = 'full';
-    	foreach($ids as $id){
-    		$sizes = array();
-    		foreach ( $intermediate_sizes as $size ) {
-				$image = wp_get_attachment_image_src( $id, $size);
-				if($image)
-					$sizes[$size] = $image;
+		// Try to find images from slider in database.
+		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) {
+			// Convert image theme paths to image ids
+			$image_ids = [];
+			foreach ($ids as $id) {
+				// Leave integers alone!
+				if (is_numeric($id)) {
+					$image_ids[] = $id;
+					continue;
+				}
+				// Check if it really is image path
+				if (!is_string($id) || strpos($id, 'images/') === false) {
+					continue;
+				}
+
+				$image_filename = str_replace('/images/', '', $id);
+				$image_id = $this->get_image_id_by_filename($image_filename);
+				if (!is_null($image_id)) {
+					$image_ids[] = $image_id;
+				}
 			}
-
-			if($custom_size){
-				$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
-				$image_custom_size['id'] = $id;
-				if (!empty($data['element_id'])) $image_custom_size['element_id'] = $data['element_id'];
-				$sizes['custom'] = $this->resize_image($image_custom_size);
-				$sizes['custom']['editdata'] =$image_custom_size;
+			$ids = $image_ids;
+			if(empty($ids)) {
+				$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('Images have not been found in local WordPress.')));
 			}
-			else
-				$sizes['custom'] = $custom_size ? $data['customSize'] : array();
+		}
 
-			if(sizeof($sizes) != 0)
-				$images[$id] = $sizes;
-    	}
 
-        if(sizeof($images) == 0)
-        	$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('no_id')));
+		$images = array();
+		$intermediate_sizes = get_intermediate_image_sizes();
+		$intermediate_sizes[] = 'full';
+		foreach($ids as $id){
+			$sizes = array();
+			foreach ( $intermediate_sizes as $size ) {
+			$image = wp_get_attachment_image_src( $id, $size);
+			if($image)
+				$sizes[$size] = $image;
+		}
 
-        $result = array(
-        	'given' => sizeof($ids),
-        	'returned' => sizeof($ids),
-        	'images' => $images
-    	);
+		if($custom_size){
+			$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
+			$image_custom_size['id'] = $id;
+			if (!empty($data['element_id'])) $image_custom_size['element_id'] = $data['element_id'];
+			$sizes['custom'] = $this->resize_image($image_custom_size);
+			$sizes['custom']['editdata'] =$image_custom_size;
+		}
+		else
+			$sizes['custom'] = $custom_size ? $data['customSize'] : array();
 
-        return $this->_out(new Upfront_JsonResponse_Success($result));
+		if(sizeof($sizes) != 0)
+			$images[$id] = $sizes;
+		}
+
+			if(sizeof($images) == 0)
+				$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('no_id')));
+
+			$result = array(
+				'given' => sizeof($ids),
+				'returned' => sizeof($ids),
+				'images' => $images
+		);
+
+		return $this->_out(new Upfront_JsonResponse_Success($result));
 	}
 
 	function resize_image($imageData) {
@@ -363,7 +402,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$image_path = isset($imageData['image_path']) ? $imageData['image_path'] : _load_image_to_edit_path( $imageData['id'] );
 		$img = wp_get_image_editor( $image_path );
 
-	    if ( is_wp_error( $img ) )
+			if ( is_wp_error( $img ) )
 			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('invalid_id'));
 
 

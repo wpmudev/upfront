@@ -700,7 +700,7 @@ define([
 		render: function () {
 			this.$el.html("Select mode " + (this._selecting ? 'on' : 'off'));
 			this.$el.html((
-				this._selecting 
+				this._selecting
 					? l10n.select_mode_on
 					: l10n.select_mode_off
 			));
@@ -8167,9 +8167,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				right = this.model.get_property_value_by_name('right'),
 				is_right = ( typeof right == 'number' ),*/
 				set_value = function (object) {
-					
+
 					me = object.$spectrum?object:this;
-					
+
 					var value = me.get_value(),
 						saved = me.get_saved_value();
 					if ( value != saved ){
@@ -8702,11 +8702,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( slide_images ) {
 				Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
 					var images = response.data.images;
+					// Rewrite slide images because in builder mode they will be just paths of theme images
+					// and slider needs image objects to work.
+					slide_images = images;
 					_.each(slide_images, function (id) {
-						var image = images[id],
+						var image = _.isObject(id) ? id : images[id],
 							$image = $('<div class="upfront-region-bg-slider-image" />');
 						$image.data('image-id', id);
-						//$image.append('<img src="' + image.thumbnail[0] + '" alt="" />');
 						$image.css({
 							background: 'url("' + image.thumbnail[0] + '") no-repeat 50% 50%',
 							backgroundSize: '100% auto'

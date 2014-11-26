@@ -243,6 +243,12 @@ function upfront_add_element_script ($slug, $path_info) {
 
 function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') {
 	$attachment = get_post($attachment_id);
+  // Safe guard for builder mode for slider images. This is only triggered on initial
+  // page load which in builder will be instantly replaced by js app so it's safe to
+  // skip this in builder mode.
+  if (!is_object($attachment)) {
+    return;
+  }
 	$imagedata = wp_get_attachment_metadata($attachment_id);
 	$full_src = wp_get_attachment_image_src($attachment_id, 'full');
 	$ref_src = wp_get_attachment_image_src($attachment_id, $ref_size);

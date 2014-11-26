@@ -445,7 +445,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
 
-		$data = apply_filters('upfront_augment_theme_layout', $data);
+    // Do not do this is in builder mode since it will duplicate slider images. Alternative
+    // is to fix augment_regions to not re-import images every time page reloads.
+    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
+      $data = apply_filters('upfront_augment_theme_layout', $data);
+    }
 
 		return self::from_php($data, $storage_key);
 	}
