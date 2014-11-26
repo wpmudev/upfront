@@ -606,7 +606,7 @@ var PostContentEditor = Backbone.View.extend({
 			this.bar.calculateLimits();
 			return;
 		}
-		this.bar = new EditionBar({post: this.post});
+		this.bar = new EditionBox({post: this.post});
 		this.bindBarEvents();
 		this.bar.render();
         this.$el.append(this.bar.$el);
@@ -734,8 +734,8 @@ var ContentEditorTaxonomy_Hierarchical = Backbone.View.extend({
 	allTerms: false,
 	initialize: function(options){
 		//this.collection.on('add remove', this.render, this);
-		this.termListTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-term-list-tpl').html());
-		this.termSingleTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-term-single-tpl').html());
+		this.termListTpl = _.template($(editionBox_tpl).find('#upfront-term-list-tpl').html());
+		this.termSingleTpl = _.template($(editionBox_tpl).find('#upfront-term-single-tpl').html());
 	},
 
 	render: function() {
@@ -814,8 +814,8 @@ var ContentEditorTaxonomy_Flat = Backbone.View.extend({
 	},
 	initialize: function(options){
 		this.collection.on('add remove', this.render, this);
-		this.termListTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-flat-term-list-tpl').html());
-		this.termSingleTpl = _.template($(Upfront.data.tpls.popup).find('#upfront-term-flat-single-tpl').html());
+		this.termListTpl = _.template($(editionBox_tpl).find('#upfront-flat-term-list-tpl').html());
+		this.termSingleTpl = _.template($(editionBox_tpl).find('#upfront-term-flat-single-tpl').html());
 	},
 	render: function () {
 		var	me = this,
@@ -938,7 +938,7 @@ var MicroSelect = Backbone.View.extend({
 	}
 });
 
-var EditionBar = Backbone.View.extend({
+var EditionBox = Backbone.View.extend({
         className: 'ueditor-box-wrapper upfront-ui',
         post: false,
 
@@ -987,7 +987,8 @@ var EditionBar = Backbone.View.extend({
             'click .ueditor-btn-edit': 'toggleEditor',
             'click .ueditor-button-cancel': 'cancelEdit',
             'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
-            'click .ueditor-box-title': 'show_section'
+            'click .ueditor-box-title': 'show_section',
+            'click .ueditor-save-post-data': 'save_post_data'
         },
 
         initialize: function(options){
@@ -1005,7 +1006,7 @@ var EditionBar = Backbone.View.extend({
 
             // The same for the date, Bar mustn't update the post.
             this.initialDate = this.post.get('post_date');
-            this.tpl = _.template(editionBox_tpl);
+            this.tpl = _.template($(editionBox_tpl).find("#ueditor-box-main").html());
             this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
             Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
@@ -1026,9 +1027,13 @@ var EditionBar = Backbone.View.extend({
             var me = this,
                 postData = this.post.toJSON(),
                 date = this.initialDate,
-                datepickerData = {}
+                datepickerData = {},
+                extraData = {},
+                base = me.post.get("guid")
                 ;
 
+
+            extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
             postData.status = this.getBarStatus();
             postData.visibility = this.visibilityOptions[this.postVisibility];
 
@@ -1048,7 +1053,12 @@ var EditionBar = Backbone.View.extend({
 
             postData.datepicker = this.datepickerTpl(datepickerData);
 
-            this.$el.html(this.tpl(_.extend(postData, datepickerData) ));
+
+            this.$el.html(this.tpl(_.extend(postData, datepickerData, extraData) ));
+
+            this.renderUrlEditor();
+            this.renderTaxonomyEditor( this.$(".misc-pub-section.misc-pub-post-category"), "category");
+            this.renderTaxonomyEditor( this.$(".misc-pub-section.misc-pub-post-tags"), "post_tag");
 
             this.$('.upfront-bar-datepicker').datepicker({
                 changeMonth: true,
@@ -1076,7 +1086,26 @@ var EditionBar = Backbone.View.extend({
             //if($('#' + this.cid).length)
             //    this.stick();
         },
+        renderUrlEditor: function(){
+            var urlEditor = new PostUrlEditor( { post: this.post } );
+            urlEditor.render();
+            this.$(".misc-pub-section.misc-pub-post-url").html( urlEditor.$el  );
+        },
+        renderTaxonomyEditor: function($el, tax){
+            var self = this,
+                tax = typeof tax === "undefined" ? "category" : tax;
+                termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax});
+            termsList.fetch({allTerms: true}).done(function(response){
+                var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
+                    tax_view = new tax_view_constructor({collection: termsList})
+                    ;
 
+                tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+                tax_view.render();
+                $el.html( tax_view.$el );
+            });
+
+        },
         prepareSelectBoxes: function(){
             var me = this;
             this.statusSelect = new MicroSelect({options: this.getStatusOptions()});
@@ -1596,16 +1625,23 @@ var EditionBar = Backbone.View.extend({
         toggleEditor: function(e){
             e.preventDefault();
             var $button = $(e.target),
-                $this_togglable = $button.siblings(".ueditor-togglable");
+                $this_togglable = $button.siblings(".ueditor-togglable"),
+                $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
+                ;
             $(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
             $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
-            $this_togglable.slideDown(100, function(){
-                $button.hide();
-            });
+            $(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
+
+            $this_prev_data_toggle.hide();
+            $button.hide();
+            $this_togglable.slideDown(100);
         },
         cancelEdit: function(e){
             e.preventDefault();
-            var $button = $(e.target);
+            var $button = $(e.target),
+                $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
+                ;
+            $this_prev_data_toggle.show();
             $button.closest(".ueditor-togglable").slideUp(100, function(){
                 $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
             });
@@ -1620,23 +1656,54 @@ var EditionBar = Backbone.View.extend({
             $this_togglable.show();
         },
         show_section: function(e){
+            e.preventDefault();
             var $this = $(e.target),
                 $this_section = $this.closest(".ueditor-box-section"),
                 $this_wrap = $this_section.find(".ueditor-box-content-wrap")
             ;
 
-            $(".ueditor-box-section").not( $this_section).removeClass("active")
+            $(".ueditor-box-section").not( $this_section).removeClass("active");
             $(".ueditor-box-content-wrap").not( $this_wrap ).slideUp();
 
             $this_section.addClass("active");
             $this_wrap.slideDown();
+        },
+        save_post_data: function(e){
+
+
         }
     });
-
+var PostUrlEditor = Backbone.View.extend({
+    className: "upfront-slug_editor-url",
+    tpl : _.template($(editionBox_tpl).find("#post-url-editor").html()),
+    initialize: function(opts){
+        this.post = opts.post;
+    },
+    events: {
+        "click .ueditor-button-save": "save"
+    },
+    render: function(){
+        var self = this,
+            base = this.post.get("guid");
+        base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+        this.$el.html(this.tpl({
+            rootUrl: base,
+            slug: self.post.get('post_name')
+        }));
+    },
+    save: function(e){
+        e.preventDefault();
+        var val = this.$(".ueditor-post-url-text").val();
+        if( val.length > 1 ){
+            this.post.set( "post_name", val );
+            this.render();
+        }
+    }
+});
 
 return {
 	PostContentEditor: PostContentEditor,
-	getMarkupper: function getMarkupper(){return markupper;},
+	getMarkupper: function getMarkupper(){return markupper;}
 }
 
 

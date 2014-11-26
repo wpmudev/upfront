@@ -9743,6 +9743,16 @@ a.ueditor-action-trash:hover {
 .ueditor-box-icon-text {
   padding-left: 20px; }
 
+/* line 203, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/editor-box */
+.ueditor-post-url-root {
+  display: inline;
+  font-size: 11px; }
+
+/* line 207, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/editor-box */
+.ueditor-post-url-text {
+  width: 110px !important;
+  display: inline; }
+
 /* line 1, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/thumbnail-changer */
 .upost_thumbnail_changer {
   color: #3f5870;

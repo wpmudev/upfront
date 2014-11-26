@@ -1,138 +1,211 @@
-<div class="ueditor-box ueditable" id="{{cid}}">
-    <ul>
-        <li id="ueditor-box-publish" class="ueditor-box-section active">
-            <div class="ueditor-box-title">Publish</div>
-            <div class="ueditor-box-content-wrap">
-                <div class="ueditor-bix-top-buttons">
-                    {[ if(draftButton){ ]}
-                    <a class="ueditor-action ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
-                    {[ } ]}
-                    <a class="ueditor-action ueditor-action-preview" href="#">{{Upfront.Settings.l10n.global.content.preview}}</a>
-                </div>
-                <div class="ueditor-box-content">
-                    <div class="misc-pub-section misc-pub-post-status">
-                        <label id="post-status-display-label" class="ueditor-icon-label">Status:</label>
-                        <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
-                        <a href="#post_status" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
-                        </a>
-                        <div id="post-status-select" class="ueditor-togglable">
-                            <select name="post_status" id="post_status">
-                                <option value="pending">Pending Review</option>
-                                <option selected="selected" value="draft">Draft</option>
-                            </select>
-                            <a href="#post_status" class="save-post-status  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                            <a href="#post_status" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                        </div>
-
+<div>
+<script id="ueditor-box-main" type="text/template">
+    <div class="ueditor-box ueditable" id="{{cid}}">
+        <ul>
+            <li id="ueditor-box-publish" class="ueditor-box-section active">
+                <div class="ueditor-box-title">Publish</div>
+                <div class="ueditor-box-content-wrap">
+                    <div class="ueditor-bix-top-buttons">
+                        {[ if(draftButton){ ]}
+                        <a class="ueditor-action ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
+                        {[ } ]}
+                        <a class="ueditor-action ueditor-action-preview" href="#">{{Upfront.Settings.l10n.global.content.preview}}</a>
                     </div>
-                    <div class="misc-pub-section misc-pub-visibility" id="visibility">
-                        <label id="post-visibility-display" class="ueditor-icon-label">Visibility:</label>
-                        <span class="ueditor-previous-data">Public</span>
-                        <a href="#visibility" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
-                        </a>
-
-                        <div id="post-visibility-select" class="ueditor-togglable">
-                            <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
-                            <input type="radio" name="visibility" id="visibility-radio-public" value="public" checked="checked">
-                            <label for="visibility-radio-public">Public</label>
-                            <br>
-                            <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public">
-                                <input id="sticky" name="sticky" type="checkbox" value="sticky">
-                                <label for="sticky" class="selectit">Stick this post to the front page</label>
-                                <br>
-                            </span>
-                            <input type="radio" name="visibility" id="visibility-radio-password" value="password">
-                            <label for="visibility-radio-password">Password protected</label>
-                            <br>
-                            <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password">
-                                <label>{{Upfront.Settings.l10n.global.content.password}}:</label>
-					            <input type="password" class="upfront-field-text ueditor-pass" value="{{post_password}}">
-                                <br>
-                            </span>
-                            <input type="radio" name="visibility" id="visibility-radio-private" value="private">
-                            <label for="visibility-radio-private" class="selectit">Private</label>
-                            <br>
-                            <p>
-                                <a href="#visibility" class="save-post-visibility  button ueditor-small-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                                <a href="#visibility" class="cancel-post-visibility  ueditor-button-cancel ueditor-small-button">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="misc-pub-section curtime misc-pub-curtime">
-	                    <span id="timestamp">
-	                        <label id="publication-time" class="ueditor-icon-label">Publish:</label>
-                            <b class="ueditor-previous-data">immediately</b>
-                        </span>
-                        <a href="#edit_timestamp" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-                        <div class="ueditor-togglable">
-                            <div class="timestamp-wrap">
-                                <label for="mm" class="screen-reader-text">Month</label>
-                                <select id="mm" name="mm">
-                                    <option value="01">01-Jan</option>
-                                    <option value="02">02-Feb</option>
-                                    <option value="03">03-Mar</option>
-                                    <option value="04">04-Apr</option>
-                                    <option value="05">05-May</option>
-                                    <option value="06">06-Jun</option>
-                                    <option value="07">07-Jul</option>
-                                    <option value="08">08-Aug</option>
-                                    <option value="09">09-Sep</option>
-                                    <option value="10">10-Oct</option>
-                                    <option value="11" selected="selected">11-Nov</option>
-                                    <option value="12">12-Dec</option>
+                    <div class="ueditor-box-content">
+                        <div class="misc-pub-section misc-pub-post-status">
+                            <label id="post-status-display-label" class="ueditor-icon-label">Status:</label>
+                            <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
+                            <a href="#post_status" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
+                            </a>
+                            <div id="post-status-select" class="ueditor-togglable">
+                                <select name="post_status" id="post_status">
+                                    <option value="pending">Pending Review</option>
+                                    <option selected="selected" value="draft">Draft</option>
                                 </select>
-                            <label for="jj" class="screen-reader-text">Day</label>
-                                <input type="text" id="jj" name="jj" value="25" size="2" maxlength="2" autocomplete="off">,
-                                <label for="aa" class="screen-reader-text">Year</label>
-                                <input type="text" id="aa" name="aa" value="2014" size="4" maxlength="4" autocomplete="off">
-                                @
-                                <label class="screen-reader-text">Hour</label>
-                                <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
-                                : <label class="screen-reader-text">Minute</label>
-                                <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
+                                <a href="#post_status" class="save-post-status  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                                <a href="#post_status" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
                             </div>
 
-                            <p>
-                                <a href="#edit_timestamp" class="save-timestamp  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                                <a href="#edit_timestamp" class="cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                            </p>
+                        </div>
+                        <div class="misc-pub-section misc-pub-visibility" id="visibility">
+                            <label id="post-visibility-display" class="ueditor-icon-label">Visibility:</label>
+                            <span class="ueditor-previous-data">Public</span>
+                            <a href="#visibility" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
+                            </a>
+
+                            <div id="post-visibility-select" class="ueditor-togglable">
+                                <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
+                                <input type="radio" name="visibility" id="visibility-radio-public" value="public" checked="checked">
+                                <label for="visibility-radio-public">Public</label>
+                                <br>
+                                <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public">
+                                    <input id="sticky" name="sticky" type="checkbox" value="sticky">
+                                    <label for="sticky" class="selectit">Stick this post to the front page</label>
+                                    <br>
+                                </span>
+                                <input type="radio" name="visibility" id="visibility-radio-password" value="password">
+                                <label for="visibility-radio-password">Password protected</label>
+                                <br>
+                                <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password">
+                                    <label>{{Upfront.Settings.l10n.global.content.password}}:</label>
+                                    <input type="password" class="upfront-field-text ueditor-pass" value="{{post_password}}">
+                                    <br>
+                                </span>
+                                <input type="radio" name="visibility" id="visibility-radio-private" value="private">
+                                <label for="visibility-radio-private" class="selectit">Private</label>
+                                <br>
+                                <p>
+                                    <a href="#visibility" class="save-post-visibility  button ueditor-small-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                                    <a href="#visibility" class="cancel-post-visibility  ueditor-button-cancel ueditor-small-button">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="misc-pub-section curtime misc-pub-curtime">
+                            <span id="timestamp">
+                                <label id="publication-time" class="ueditor-icon-label">Publish:</label>
+                                <b class="ueditor-previous-data">immediately</b>
+                            </span>
+                            <a href="#edit_timestamp" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+                            <div class="ueditor-togglable">
+                                <div class="timestamp-wrap">
+                                    <label for="mm" class="screen-reader-text">Month</label>
+                                    <select id="mm" name="mm">
+                                        <option value="01">01-Jan</option>
+                                        <option value="02">02-Feb</option>
+                                        <option value="03">03-Mar</option>
+                                        <option value="04">04-Apr</option>
+                                        <option value="05">05-May</option>
+                                        <option value="06">06-Jun</option>
+                                        <option value="07">07-Jul</option>
+                                        <option value="08">08-Aug</option>
+                                        <option value="09">09-Sep</option>
+                                        <option value="10">10-Oct</option>
+                                        <option value="11" selected="selected">11-Nov</option>
+                                        <option value="12">12-Dec</option>
+                                    </select>
+                                <label for="jj" class="screen-reader-text">Day</label>
+                                    <input type="text" id="jj" name="jj" value="25" size="2" maxlength="2" autocomplete="off">,
+                                    <label for="aa" class="screen-reader-text">Year</label>
+                                    <input type="text" id="aa" name="aa" value="2014" size="4" maxlength="4" autocomplete="off">
+                                    @
+                                    <label class="screen-reader-text">Hour</label>
+                                    <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
+                                    : <label class="screen-reader-text">Minute</label>
+                                    <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
+                                </div>
+
+                                <p>
+                                    <a href="#edit_timestamp" class="save-timestamp  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                                    <a href="#edit_timestamp" class="cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ueditor-box-bottom-buttons">
+                        <a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
+                        <a class="ueditor-action-publish" href="#">{{buttonText}}</a>
+                    </div>
+                </div>
+            </li>
+            <li id="ueditor-box-cats-tags" class="ueditor-box-section">
+                <div class="ueditor-box-title">Categories, Tags & URL</div>
+                <div class="ueditor-box-content-wrap">
+                    <div class="ueditor-box-content">
+                        <div class="misc-pub-section misc-pub-post-category">
+                            <label id="post-categories-display-label">{{Upfront.Settings.l10n.global.content.categories}}:</label>
+                            <a href="#edit_categories" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+                            <br/>
+                            <span id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">Prev cats, cat2, cat3</span>
+                        </div>
+                        <div class="misc-pub-section misc-pub-post-tags">
+                            <label id="post-tags-display-label">{{Upfront.Settings.l10n.global.content.tags}}:</label>
+                            <a href="#edit_tags" class="ueditor-edit-tags ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+                            <br/>
+                            <span id="post-tags-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">Tag1, tag2, tag2</span>
+                        </div>
+                        <div class="misc-pub-section misc-pub-post-url">
+
                         </div>
                     </div>
                 </div>
-                <div class="ueditor-box-bottom-buttons">
-                    <a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
-                    <a class="ueditor-action-publish" href="#">{{buttonText}}</a>
-                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+<script id="post-url-editor" type="text/template">
+    <label id="post-url-display-label">{{Upfront.Settings.l10n.global.content.post_url}}:</label>
+    <a href="#edit_post-url" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+    <br/>
+    <span id="post-url-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">{{rootUrl}}{{slug}}<br/></span>
+
+    <div class="ueditor-togglable ueditor-togglable-post-url">
+        <span class="ueditor-post-url-root">{{rootUrl}}</span>
+        <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
+        <p>
+            <a href="#" class="ueditor-save-post-data  ueditor-button-save">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#" class="cancel-post-url  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+        </p>
+    </div>
+</script>
+
+
+<script type="text/template" id="upfront-term-list-tpl">
+    <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+        {[ _.each(allTerms.where({'parent': '0'}), function(term, idx){ ]}
+        {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+        {[ }); ]}
+    </div>
+    <div id="upfront-taxonomy-add">
+        <input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
+        <select id="upfront-taxonomy-parents">
+            <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
+            {[ allTerms.each(function(term, idx) { ]}
+            <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
+            {[ }) ]}
+        </select>
+        <button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
+    </div>
+</script>
+
+<script type="text/template" id="upfront-term-single-tpl">
+    <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
+        <label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
+            <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ postTerms.get(termId) ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
+        </label>
+        {[ term.children.each(function(child, idx){ ]}
+        {{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
+        {[ }) ]}
+    </div>
+</script>
+
+<script type="text/template" id="upfront-flat-term-list-tpl">
+    <div id="upfront-taxonomy-list" class="clearfix">
+        <div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-current">
+            <div class="upfront-taxonomy-list-title">{{ labels.name }} applied to this post</div>
+            {[ _.each(currentTerms, function(term, idx){ ]}
+            {{ termTemplate({ term: term }) }}
+            {[ }); ]}
+        </div>
+        <div class="upfront-taxonomy-list-panel" id="upfront-taxonomy-list-all">
+            <div class="upfront-scroll-panel upfront-inner-scroll-panel">
+                <div class="upfront-taxonomy-list-title">Previously used {{ labels.name }}</div>
+                {[ _.each(otherTerms, function(term, idx){ ]}
+                {{ termTemplate({ term: term }) }}
+                {[ }); ]}
             </div>
-        </li>
-        <li id="ueditor-box-cats-tags" class="ueditor-box-section">
-            <div class="ueditor-box-title">Categories, Tags & URL</div>
-            <div class="ueditor-box-content-wrap">
-                <div class="ueditor-box-content">
-                    <div class="misc-pub-section misc-pub-post-category">
-                        <label id="post-categories-display-label">{{Upfront.Settings.l10n.global.content.categories}}:</label>
-                        <a href="#edit_categories" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-                        <br/>
-                        <span id="post-category-display" class="ueditor-previous-data ueditor-previous-data-small">Prev cats, cat2, cat3</span>
-                    </div>
-                    <div class="misc-pub-section misc-pub-post-tags">
-                        <label id="post-tags-display-label">{{Upfront.Settings.l10n.global.content.tags}}:</label>
-                        <a href="#edit_tags" class="ueditor-edit-tags ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-                        <br/>
-                        <span id="post-tags-display" class="ueditor-previous-data ueditor-previous-data-small">Tag1, tag2, tag2</span>
-                    </div>
-                    <div class="misc-pub-section misc-pub-post-url">
-                        <label id="post-url-display-label">{{Upfront.Settings.l10n.global.content.post_url}}:</label>
-                        <a href="#edit_post-url" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-                        <span id="post-url-display" class="ueditor-previous-data ueditor-previous-data-small">Url</span>
-                        <br/>
-                        <div class="ueditor-togglable ueditor-togglable-post-url">
-                                <label>Password:</label>
-					            <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{}}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </li>
-    </ul>
-</div>
+        </div>
+    </div>
+    <div id="upfront-taxonomy-add">
+        <input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
+        <button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
+    </div>
+</script>
+
+<script type="text/template" id="upfront-term-flat-single-tpl">
+    <div class="upfront-taxonomy_item upfront-taxonomy_item-flat" id="upfront-term_item-{{ term.get('term_id') }}" data-term_id="{{ term.get('term_id') }}">
+        <i class="icon-plus"></i>
+        <i class="icon-remove-circle"></i>
+        {{ term.get('name') }}
+    </div>
+</script>
+<div>
