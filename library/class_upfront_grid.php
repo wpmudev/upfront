@@ -170,6 +170,7 @@ class Upfront_Grid {
 			$next_wrapper_data = false;
 			if ( !empty($wrapper_data) ) {
 				$wrapper_col = $this->_get_class_col($wrapper_data);
+                $wrapper_col = $wrapper_col > $col ? $col : $wrapper_col;
 				if ( ! in_array($wrapper_id, $rendered_wrappers) ){
 					if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
 						if ( isset($wrappers[$wrapper_index+1]) )
@@ -189,9 +190,11 @@ class Upfront_Grid {
 					}
 					$line_col -= $wrapper_col;
 					$next_clear = $this->_get_property_clear($next_wrapper_data);
+                    $next_wrapper_col = $this->_get_class_col($next_wrapper_data);
+                    $next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
 					$next_fill = $next_clear ? $line_col : 0;
 					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
-					if ( $next_clear )
+					if ( $next_clear || $line_col < $next_wrapper_col )
 						$line_col = $col;
 					$rendered_wrappers[] = $wrapper_id;
 				}
