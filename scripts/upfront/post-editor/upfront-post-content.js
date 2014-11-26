@@ -1048,7 +1048,7 @@ var EditionBar = Backbone.View.extend({
 
             postData.datepicker = this.datepickerTpl(datepickerData);
 
-            this.$el.html(this.tpl(postData));
+            this.$el.html(this.tpl(_.extend(postData, datepickerData) ));
 
             this.$('.upfront-bar-datepicker').datepicker({
                 changeMonth: true,

@@ -13,10 +13,9 @@
                     <div class="misc-pub-section misc-pub-post-status">
                         <label id="post-status-display-label" class="ueditor-icon-label">Status:</label>
                         <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
-                        <a href="#post_status" class="edit-post-status ueditor-btn-edit">Edit</span>
+                        <a href="#post_status" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
                         </a>
                         <div id="post-status-select" class="ueditor-togglable">
-                            <input type="hidden" name="hidden_post_status" id="hidden_post_status" value="draft">
                             <select name="post_status" id="post_status">
                                 <option value="pending">Pending Review</option>
                                 <option selected="selected" value="draft">Draft</option>
@@ -29,7 +28,7 @@
                     <div class="misc-pub-section misc-pub-visibility" id="visibility">
                         <label id="post-visibility-display" class="ueditor-icon-label">Visibility:</label>
                         <span class="ueditor-previous-data">Public</span>
-                        <a href="#visibility" class="edit-visibility ueditor-btn-edit">Edit</span>
+                        <a href="#visibility" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
                         </a>
 
                         <div id="post-visibility-select" class="ueditor-togglable">
@@ -64,8 +63,8 @@
 	                        <label id="publication-time" class="ueditor-icon-label">Publish:</label>
                             <b class="ueditor-previous-data">immediately</b>
                         </span>
-                        <a href="#edit_timestamp" class="edit-timestamp ueditor-btn-edit">Edit</a>
-                        <div id="timestampdiv" class="ueditor-togglable">
+                        <a href="#edit_timestamp" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+                        <div class="ueditor-togglable">
                             <div class="timestamp-wrap">
                                 <label for="mm" class="screen-reader-text">Month</label>
                                 <select id="mm" name="mm">
@@ -87,22 +86,12 @@
                                 <label for="aa" class="screen-reader-text">Year</label>
                                 <input type="text" id="aa" name="aa" value="2014" size="4" maxlength="4" autocomplete="off">
                                 @
-                                <label for="hh" class="screen-reader-text">Hour</label>
-                                <input type="text" id="hh" name="hh" value="10" size="2" maxlength="2" autocomplete="off">
-                                : <label for="mn" class="screen-reader-text">Minute</label>
-                                <input type="text" id="mn" name="mn" value="35" size="2" maxlength="2" autocomplete="off">
+                                <label class="screen-reader-text">Hour</label>
+                                <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
+                                : <label class="screen-reader-text">Minute</label>
+                                <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
                             </div>
-                            <input type="hidden" id="ss" name="ss" value="55">
-                            <input type="hidden" id="hidden_mm" name="hidden_mm" value="11">
-                            <input type="hidden" id="cur_mm" name="cur_mm" value="11">
-                            <input type="hidden" id="hidden_jj" name="hidden_jj" value="25">
-                            <input type="hidden" id="cur_jj" name="cur_jj" value="25">
-                            <input type="hidden" id="hidden_aa" name="hidden_aa" value="2014">
-                            <input type="hidden" id="cur_aa" name="cur_aa" value="2014">
-                            <input type="hidden" id="hidden_hh" name="hidden_hh" value="10">
-                            <input type="hidden" id="cur_hh" name="cur_hh" value="10">
-                            <input type="hidden" id="hidden_mn" name="hidden_mn" value="35">
-                            <input type="hidden" id="cur_mn" name="cur_mn" value="35">
+
                             <p>
                                 <a href="#edit_timestamp" class="save-timestamp  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
                                 <a href="#edit_timestamp" class="cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
@@ -122,19 +111,25 @@
                 <div class="ueditor-box-content">
                     <div class="misc-pub-section misc-pub-post-category">
                         <label id="post-categories-display-label">{{Upfront.Settings.l10n.global.content.categories}}:</label>
-                        <a href="#edit_categories" class="ueditor-edit-categories ueditor-btn-edit">Edit</a>
+                        <a href="#edit_categories" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
                         <br/>
                         <span id="post-category-display" class="ueditor-previous-data ueditor-previous-data-small">Prev cats, cat2, cat3</span>
                     </div>
-                    <div class="misc-pub-section misc-pub-post-category">
+                    <div class="misc-pub-section misc-pub-post-tags">
                         <label id="post-tags-display-label">{{Upfront.Settings.l10n.global.content.tags}}:</label>
-                        <a href="#edit_tags" class="ueditor-edit-tags ueditor-btn-edit">Edit</a>
+                        <a href="#edit_tags" class="ueditor-edit-tags ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+                        <br/>
                         <span id="post-tags-display" class="ueditor-previous-data ueditor-previous-data-small">Tag1, tag2, tag2</span>
                     </div>
-                    <div class="misc-pub-section misc-pub-post-category">
+                    <div class="misc-pub-section misc-pub-post-url">
                         <label id="post-url-display-label">{{Upfront.Settings.l10n.global.content.post_url}}:</label>
-                        <a href="#edit_post-url" class="ueditor-edit-post-url ueditor-btn-edit">Edit</a>
+                        <a href="#edit_post-url" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
                         <span id="post-url-display" class="ueditor-previous-data ueditor-previous-data-small">Url</span>
+                        <br/>
+                        <div class="ueditor-togglable ueditor-togglable-post-url">
+                                <label>Password:</label>
+					            <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{}}">
+                        </div>
                     </div>
                 </div>
             </div>
