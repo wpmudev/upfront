@@ -163,6 +163,7 @@ class Upfront_Grid {
 		$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
 		foreach ($modules as $m => $module) {
 			$module_col = $this->_get_class_col($module);
+            $module_col = $module_col > $col ? $col : $module_col;
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
 			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
 			$wrapper_index = array_search($wrapper_data, $wrappers);
