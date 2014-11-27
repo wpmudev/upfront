@@ -2324,7 +2324,7 @@ define([
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 				// Don't need to adapt height if breakpoint isn't default or that flexbox is supported
 				// Make sure to test with non-flexbox browser whenever possible
-				if ( ( breakpoint && !breakpoint.default ) || Upfront.Util.css_support('flex') ){
+				if ( ( breakpoint && !breakpoint.default ) || this.$layout.css('display').indexOf('flex') != -1 ){
 					this.set_full_screen();
 					this.refresh_background();
 					return;

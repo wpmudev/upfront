@@ -47,4 +47,17 @@
 	width: 100%;
 }
 
+/* Firefox specific hack (lighter usage of Flexbox) */
+@media screen and (min--moz-device-pixel-ratio:0) {
+  .flexbox-support .upfront-grid-layout,
+  .flexbox-support .upfront-region,
+  .flexbox-support .upfront-region > .upfront-region-wrapper {
+    display: block;
+  }
+  .flexbox-support .upfront-grid-layout:before,
+  .flexbox-support .upfront-grid-layout:after {
+    content: "";
+  }
+}
+
 
