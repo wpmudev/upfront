@@ -197,7 +197,7 @@ class Upfront_Grid {
                     $next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
 					$next_fill = $next_clear ? $line_col : 0;
 					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
-					if ( $next_clear || $line_col < $next_wrapper_col )
+					if ( !$module_hide && ( $next_clear || $line_col < $next_wrapper_col ) )
 						$line_col = $col;
 					$rendered_wrappers[] = $wrapper_id;
 				}
