@@ -8,7 +8,11 @@
 				min_height = normalize_size($(this).attr('data-min-height')),
 				max_height = normalize_size($(this).attr('data-max-height')),
 				styles = $(this).html(),
-				applied_styles = {};
+				applied_styles = {},
+				lazyApplyBindingAll = _.debounce(function(sel) {
+					var $sel = _.isString(sel) ? $(sel) :  $('body');
+					return apply_binding($sel);
+				}, 1000);
 			$(window).on('load', apply_binding_all);
 			$(window).on('resize', function(e){
 				if ( e.target == this )
@@ -34,8 +38,7 @@
 				}
 			});
 			function apply_binding_all (sel) {
-				var $sel = _.isString(sel) ? $(sel) :  $('body');
-				return apply_binding($sel);
+				lazyApplyBindingAll(sel);
 			}
 			function apply_binding_view (view) {
 				return apply_binding(view.$el.parent());
@@ -83,7 +86,7 @@
 			}
 		});
 	};
-	
+
 	$('[type="text/responsive_css"]').responsiveElement();
-	
+
 })(jQuery);

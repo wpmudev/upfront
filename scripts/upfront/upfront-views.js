@@ -999,7 +999,8 @@ define([
 				if (this.window_resize_offset_check_set) {
 					return;
 				}
-				$(window).on('resize', $.proxy(me.checkUiOffset, me));
+				var lazyCheckUiOffsett = _.debounce(me.checkUiOffset, 1000);
+				$(window).on('resize', $.proxy(lazyCheckUiOffsett, me));
 				this.window_resize_offset_check_set = true;
 			},
 			checkUiOffset: function() {
@@ -2131,6 +2132,8 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
+
+				this.lazyFixHeight = _.debounce(this.fix_height, 1000);
 			},
 			render: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -2355,7 +2358,7 @@ define([
 				if ( e.target != window || !e.data.model)
 					return;
 				var me = e.data;
-				me.fix_height();
+				me.lazyFixHeight();
 			},
 			fix_height: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;

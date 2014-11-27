@@ -9,13 +9,13 @@ jQuery(document).ready(function($){
 		}
 		return false;
 	}
-	
+
 	function get_breakpoint(){
 		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
 		return breakpoint.replace(/['"]/g, '');
 	}
-	
-	
+
+
 	/* Responsive background */
 	function update_background () {
 		var breakpoint = get_breakpoint();
@@ -54,7 +54,8 @@ jQuery(document).ready(function($){
 		});
 	}
 	update_background();
-	$(window).on('resize', update_background);
+	var lazyUpdateBackground = _.debounce(update_background, 1000);
+	$(window).on('resize', lazyUpdateBackground);
 
 	// Making sure sidebar region height is fixed
 	function fix_region_height () {
@@ -255,7 +256,7 @@ jQuery(document).ready(function($){
 	}
 	fix_full_bg();
 	$(window).on('resize', fix_full_bg);
-	
+
 	// Regions behavior on scroll
 	function regions_scroll_update () {
 		var breakpoint = get_breakpoint(),
@@ -268,7 +269,7 @@ jQuery(document).ready(function($){
 			win_height -= body_off.top;
 		}
 		scroll_top = scroll_top < body_off.top ? body_off.top : scroll_top;
-		
+
 		// Sticky region behavior
 		$('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').each(function(){
 			var is_sub_container = $(this).hasClass('upfront-output-region-sub-container'),
@@ -306,7 +307,7 @@ jQuery(document).ready(function($){
 			}
 			$(this).css(css);
 		});
-		
+
 		// Floating behavior
 		$('.upfront-output-region-container.upfront-region-container-full, .upfront-output-region-container.upfront-region-container-full .upfront-output-region-sub-container:not(.upfront-output-region-container-sticky), .upfront-output-region.upfront-region-side-fixed[data-restrict-to-container="1"]').each(function(){
 			var is_float = $(this).is('.upfront-region-side-fixed'),
@@ -431,7 +432,7 @@ jQuery(document).ready(function($){
 			return;
 
 		if($('div#sidebar-ui').length > 0 && $('div#sidebar-ui').css('display') == 'block') {
-		
+
 				if($(e.target).hasClass('upfront_cta')) {
 					e.preventDefault();
 					return;
@@ -441,12 +442,12 @@ jQuery(document).ready(function($){
 
 				if(url && url.indexOf && url.indexOf('#ltb-') > -1)	 {
 
-					
+
 					e.preventDefault();
 					var regions = Upfront.Application.layout.get('regions');
 					var urlanchor = url.split('#');
-		
-					
+
+
 					region = regions ? regions.get_by_name(urlanchor[1]) : false;
 					if(region){
 						//hide other lightboxes
@@ -461,23 +462,23 @@ jQuery(document).ready(function($){
 
 			return;
 		}
-			
-			
+
+
 		  var url = $(this).attr('href');
 		  if(!url)
 		  	return;
-			
+
 			if(url.indexOf('#') >=0) {
 			  var tempurl = url.split('#');
 			  if(tempurl[1].trim() != '')
 				if(tempurl[1].trim().indexOf('ltb-') == 0) {
 					var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
-					
+
 					overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
-	
+
 					if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
 						lightbox.prepend(close);
-	
+
 						if(lightbox.data('addclosetext') == 'yes') {
 							close.append($('<h3>'+lightbox.data('closetext')+'</h3>'));
 							if(lightbox.data('closeicon') == 'yes')
@@ -485,12 +486,12 @@ jQuery(document).ready(function($){
 						}
 						if(lightbox.data('closeicon') == 'yes')
 							close.append(close_icon);
-	
+
 						close.bind('click', function() {
 							lightboxhide();
 						});
 					}
-	
+
 					if(lightbox.data('clickout') == 'yes')
 						overlay.bind('click', function() {
 							lightboxhide();
@@ -508,9 +509,9 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
-	
-	
-	
+
+
+
 
 
 	/* Lazy loaded image */
@@ -567,7 +568,7 @@ jQuery(document).ready(function($){
 		}, 100);
 	}
 
-	
+
 	/**
 	 * The queue object, used to chain-load images within a load level.
 	 */
@@ -639,7 +640,7 @@ jQuery(document).ready(function($){
 		// Sources
 			$images = $('.upfront-image-lazy'),
 		// Queues
-			primary = new LazyLoad_Queue(), 
+			primary = new LazyLoad_Queue(),
 			secondary = new LazyLoad_Queue(),
 			tertiary = new LazyLoad_Queue(),
 		// Misc
@@ -663,7 +664,7 @@ jQuery(document).ready(function($){
 			if ($img.is(".upfront-image-lazy-loaded")) return true; // already loaded
 			if (!source && !src && !point_src) return true; // we don't know how to load
 			if (height <= 0 && width <= 0) return true; // Don't lazy load backgrounds for hidden regions.
-			
+
 			if (source) {
 				// Deal with source JSON and populate `src` from there
 				var width = $img.width(),
@@ -708,8 +709,8 @@ jQuery(document).ready(function($){
 	} else {
 		$(image_lazy_load_bg); // Do background load instead
 	}
-	
-	
+
+
 	/* Responsive custom theme styles */
 	function update_theme_styles () {
 		var breakpoint = get_breakpoint();
@@ -730,7 +731,7 @@ jQuery(document).ready(function($){
 	}
 	update_theme_styles();
 	$(window).on('resize', update_theme_styles);
-	
+
 	/* Apply responsive class */
 	function update_responsive_class () {
 		var breakpoint = get_breakpoint();
@@ -748,5 +749,5 @@ jQuery(document).ready(function($){
 	update_responsive_class();
 	$(window).on('resize', update_responsive_class);
 	$(document).on('upfront-load', function(){ Upfront.Events.on("layout:render", remove_responsive_class); });
-	
+
 });
