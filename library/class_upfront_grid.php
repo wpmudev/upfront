@@ -164,6 +164,7 @@ class Upfront_Grid {
 		foreach ($modules as $m => $module) {
 			$module_col = $this->_get_class_col($module);
             $module_col = $module_col > $col ? $col : $module_col;
+            $module_hide = ( !$breakpoint->is_default() ) ? $this->_get_breakpoint_data($module, 'hide') : false;
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
 			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
 			$wrapper_index = array_search($wrapper_data, $wrappers);
@@ -189,7 +190,8 @@ class Upfront_Grid {
 							}
 						}
 					}
-					$line_col -= $wrapper_col;
+                    if ( !$module_hide )
+    					$line_col -= $wrapper_col;
 					$next_clear = $this->_get_property_clear($next_wrapper_data);
                     $next_wrapper_col = $this->_get_class_col($next_wrapper_data);
                     $next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
