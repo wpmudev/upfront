@@ -1093,7 +1093,7 @@ var EditionBox = Backbone.View.extend({
         },
         renderTaxonomyEditor: function($el, tax){
             var self = this,
-                tax = typeof tax === "undefined" ? "category" : tax;
+                tax = typeof tax === "undefined" ? "category" : tax,
                 termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax});
             termsList.fetch({allTerms: true}).done(function(response){
                 var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
