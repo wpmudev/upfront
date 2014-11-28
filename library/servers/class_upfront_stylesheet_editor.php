@@ -13,8 +13,8 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 	private function _add_hooks () {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_load_editor_grid', array($this, "load_styles"));
-			upfront_add_ajax('upfront_load_grid', array($this, "load_front_styles"));
 		}
+        upfront_add_ajax('upfront_load_grid', array($this, "load_front_styles"));
 		upfront_add_ajax_nopriv('upfront_load_grid', array($this, "load_front_styles"));
 	}
 
