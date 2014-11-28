@@ -74,6 +74,12 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 			if (!empty($query['query_vars']['paged'])) $args['paged'] = $query['query_vars']['paged'];
 		}
 
+		// Misc queries: time, search...
+		foreach (array('year', 'monthnum', 'w', 'day', 's') as $q) {
+			if (!empty($query['query_vars'][$q])) $args[$q] = $query['query_vars'][$q];
+		}
+		
+		// Tax queries
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
 		}
