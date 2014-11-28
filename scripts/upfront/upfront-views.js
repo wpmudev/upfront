@@ -992,10 +992,8 @@ define([
 				var me = this;
 				if (this.parent_module_view && this.parent_module_view.$el && !this.offset_check_set_for_parent) {
 					this.offset_check_set_for_parent = true;
-					this.parent_module_view.$el.on('dragstop', function() {
-						setTimeout(function() {
-							me.checkUiOffset();
-						}, 100);
+					this.listenTo(this.parent_module_view, 'entity:drop', function(){
+						me.checkUiOffset();
 					});
 				}
 				if (this.window_resize_offset_check_set) {
