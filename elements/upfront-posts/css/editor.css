@@ -1,0 +1,57 @@
+.upfront_posts-list > ul, .upfront_posts-list > ul li {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+/* --- Custom posts list --- */
+
+.upfront-settings-item .custom_posts ol li a {
+	display: none;
+	text-decoration: none;
+}
+.upfront-settings-item .custom_posts ol li:hover a {
+	display: inline;
+}
+.upfront-settings-item .custom_posts ol li a i {
+	display: inline-block;
+	color: white;
+	background: red;
+	height: 12px;
+	width: 12px;
+	line-height: 10px;
+	font-size: 12px;
+	border-radius: 6px;
+	margin-left: 1em;
+	text-align: center;
+}
+.upfront-settings-item .custom_posts a {
+	color: rgb(31, 205, 143);
+	text-decoration: underline;
+}
+
+
+/* --- Post parts list --- */
+.upfront-settings-item .post_parts.ui-sortable {
+	margin-top: 1em;
+}
+.upfront-settings-item .post_parts.ui-sortable li {
+	border: 1px solid #6386a6;
+	margin: 2px;
+	border-radius: 4px;
+	height: 36px;
+	line-height: 36px;
+}
+.upfront-settings-item .post_parts.ui-sortable li:before {
+	display: block;
+	float: left;
+	content: "";
+	background: #8faecc;
+	width: 14px;
+	height: 34px;
+}
+.upfront-settings-item .post_parts.ui-sortable li span {
+	display: block;
+	float: left;
+	margin-left: 8px;
+}
