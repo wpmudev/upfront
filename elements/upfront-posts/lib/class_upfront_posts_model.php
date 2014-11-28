@@ -62,8 +62,8 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		if (empty($data['query'])) {
 			global $wp_query;
 			$query = json_decode(json_encode($wp_query), true);
-		}
-		
+		} else $query = $data['query'];
+
 		$args = array();
 		$args['posts_per_page'] = self::get_limit($data);
 		

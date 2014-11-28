@@ -45,12 +45,17 @@ var Views = {
 		render: function () {
 			var me = this,
 				model = Upfront.Util.model_to_json(this.model),
-				props = model.properties || {}
+				props = model.properties || {},
+				query = {}
 			;
+			if (window._upfront_get_current_query) query = window._upfront_get_current_query();
 			Upfront.Util
 				.post({
 					action: "upfront_posts-load",
-					data: props
+					data: {
+						props: props,
+						query: query
+					}
 				})
 				.success(function (response) {
 					if (response.data && response.data.posts) {
