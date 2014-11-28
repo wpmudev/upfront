@@ -310,7 +310,6 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 				model: this.model,
 				property: 'enabled_post_parts',
 				layout: 'horizontal-inline',
-				title: l10n.post_parts_picker,
 				values: parts
 			})
 		;
@@ -318,6 +317,7 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 		this.settings = _([
 			new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
+				title: l10n.post_parts_picker,
 				fields: [post_parts]
 			}),
 			sorter
