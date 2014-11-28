@@ -1007,10 +1007,12 @@ define([
 				if (!$parentRegionEl) {
 					return;
 				}
-				var topOffsetTooClose = $parentRegionEl.offset().top - this.$el.offset().top < 50,
+				var containerOffset = $parentRegionEl.closest('.upfront-region-container').offset(),
+					offset = this.$el.offset(),
+					topOffsetTooClose = containerOffset.top - offset.top < 50,
 					// $.offset does not have right side so calculate it
-					rightOffset = this.$el.offset().left + this.$el.width(),
-					containerRightOffset = $parentRegionEl.closest('.upfront-region-container').offset().left + $parentRegionEl.closest('.upfront-region-container').width(),
+					rightOffset = offset.left + this.$el.width(),
+					containerRightOffset = containerOffset.left + $parentRegionEl.closest('.upfront-region-container').width(),
 					rightOffsetTooClose = containerRightOffset - rightOffset < 30;
 
 				if (topOffsetTooClose && rightOffsetTooClose) {

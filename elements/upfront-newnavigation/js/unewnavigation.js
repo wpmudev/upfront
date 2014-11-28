@@ -1126,6 +1126,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		bparray.sort(function(a, b) {
 			return a.width - b.width;
 		});
+		
+		var regions_off = $('div.upfront-regions').offset(),
+			regions_width = $('div.upfront-regions').outerWidth(),
+			win_width = $(window).width(),
+			sidebar_width = $('div#sidebar-ui').outerWidth(),
+			topbar_height = $('div#upfront-ui-topbar').outerHeight();
 
 		for (var key in bparray) {
 			if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
@@ -1151,20 +1157,20 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					});
 
 					//offset a bit if admin bar or side bar is present
-					if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
-						selector.find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
+					//if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
+					//	selector.find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
 						//selector.find('div.responsive_nav_toggler').css('margin-top', $('div#wpadminbar').outerHeight());
-					}
+					//}
 					
 					if(selector.hasClass('upfront-output-unewnavigation')) {
 						
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
-						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
+						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; } ';
 						
-						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:inherit !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important;} ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 						
-						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important; } ';
-						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt($('div#upfront-ui-topbar').outerHeight())+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt(topbar_height)+'px !important; } ';
 						
 						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
 					}
