@@ -1,7 +1,23 @@
-.upfront_posts-list > ul, .upfront_posts-list > ul li {
+.upfront_posts-list > ul, .upfront_posts-list > ul li, 
+.upfront_posts-single > ul, .upfront_posts-single > ul li
+{
 	list-style: none !important;
 	margin: 0 !important;
 	padding: 0 !important;
+}
+
+/* --- Initial screen --- */
+.upfront_posts-initial {
+	width: 300px;
+	margin: 0 auto;
+	text-align: center;
+}
+.upfront_posts-initial a {
+	display: inline-block;
+	border: 1px solid #7d99b3;
+	margin: 8px;
+	padding: 4px 8px;
+	color: #30475e;
 }
 
 /* --- Custom posts list --- */

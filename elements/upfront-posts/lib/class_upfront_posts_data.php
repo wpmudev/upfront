@@ -64,6 +64,7 @@ class Upfront_Posts_PostsData {
 			'query_settings' => __('Query Settings', 'upfront'),
 			'post_parts' => __('Post Parts', 'upfront'),
 			'display_type_label' => __('What to display:', 'upfront'),
+			'display_type_label_initial' => __('What should the element display?', 'upfront'),
 			'list_type_label' => __('How to display post(s):', 'upfront'),
 			'post_list_custom' => __('Custom Posts(s)', 'upfront'),
 			'post_list_tax' => __('Post(s) by Taxonomy', 'upfront'),

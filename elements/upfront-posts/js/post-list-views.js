@@ -15,22 +15,26 @@ var Views = {
 		className: 'upfront_posts-initial',
 		tpl: _.template($template.filter("#initial").html()),
 		events: {
-			'click [href="#single"]': "initiate_single",
-			'click [href="#list"]': "initiate_list",
 			'click [href="#continue"]': "dispatch",
 		},
 		render: function () {
+			var opts = new Upfront.Views.Editor.Field.Radios({
+				model: this.model,
+				property: 'display_type',
+				label: l10n.display_type_label_initial,
+				layout: 'horizontal-inline',
+				values: [
+					{label: l10n.single_post, value: 'single'},
+					{label: l10n.post_list, value: 'list'}
+				]
+			});
+			opts.on("changed", function (value) {
+				this.model.set_property(this.options.property, value, true);
+			}, opts);
+			opts.render();
+
 			this.$el.empty().append(this.tpl({l10n: l10n}));
-		},
-		initiate_single: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.model.set_property("display_type", "single", true);
-		},
-		initiate_list: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.model.set_property("display_type", "list", true);
+			this.$el.find(".options").empty().append(opts.$el);
 		},
 		dispatch: function (e) {
 			e.preventDefault();
